@@ -58,7 +58,7 @@
 
 #include "effects/pseffectmanager.h"
 #include "effects/pseffect.h"
-#include "sound/pssoundmngr.h"
+#include "sound/sound.h"
 
 #include "pscal3dcallback.h"
 
@@ -78,7 +78,6 @@
 #include "eeditrequestcombo.h"
 
 #include "iclient/ibgloader.h"
-#include "iclient/isoundmngr.h"
 
 const char * EEditApp::CONFIG_FILENAME = "/this/eedit.cfg";
 const char * EEditApp::APP_NAME        = "planeshift.eedit.application";
@@ -88,6 +87,8 @@ const char * EEditApp::KEY_DEFS_FILENAME = "/this/data/eedit/keys_def.xml";
 CS_IMPLEMENT_APPLICATION
 
 EEditApp *editApp;
+/* FIXME NAMESPACE */
+SoundSystemManager *SndSysMgr;
 
 EEditApp::EEditApp(iObjectRegistry * obj_reg, EEditReporter * _reporter)
             :camFlags(CAM_COUNT)
@@ -119,7 +120,7 @@ EEditApp::EEditApp(iObjectRegistry * obj_reg, EEditReporter * _reporter)
 
 EEditApp::~EEditApp()
 {
-    object_reg->Unregister ((iSoundManager*)soundmanager, "iSoundManager");
+//    object_reg->Unregister ((iSoundManager*)soundmanager, "iSoundManager");
 
     delete rand;
 
@@ -239,20 +240,16 @@ bool EEditApp::Init()
     }
 
     // Set up sound
-    {
-        psSoundManager* pssound = new psSoundManager(0);
-        pssound->Initialize(object_reg);
-
-        soundmanager.AttachNew(pssound);
-        object_reg->Register ((iSoundManager*) soundmanager, "iSoundManager");
-
-        if (!pssound->Setup())
-        {
-            SevereError("Cannot initialize SoundManager!");
-            return false;
-        }
-    }
-
+    // i cant test this app :( i initialize GUI and ACTION Volume to default
+    SndSysMgr = new SoundSystemManager;
+    SndSysMgr->Initialize ( object_reg );
+    /* set GUI Volume to 1 */
+    SndSysMgr->guiSndCtrl->SetToggle(true);
+    SndSysMgr->guiSndCtrl->SetVolume((float) 1);
+    /* set ACTION(effect) Volume to 1 */
+    SndSysMgr->effectSndCtrl->SetToggle(true);
+    SndSysMgr->effectSndCtrl->SetVolume((float) 1);
+    
     // paws initialization
     paws = new PawsManager(object_reg, "/this/art/eedit.zip", NULL, "/this/eedit.cfg");
     if (!paws)
@@ -269,7 +266,7 @@ bool EEditApp::Init()
     RegisterFactories();
 
     // Load and assign a default button click sound for pawsbutton
-    paws->LoadSound("/this/art/music/gui/ccreate/next.wav","sound.standardButtonClick");
+    //paws->LoadSound("/this/art/music/gui/ccreate/next.wav","sound.standardButtonClick");
 
     if (!LoadWidgets())
     {

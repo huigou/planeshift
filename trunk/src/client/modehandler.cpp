@@ -50,8 +50,6 @@
 #include "net/messages.h"
 #include "net/clientmsghandler.h"
 
-#include "iclient/isoundmngr.h"
-
 #include "effects/pseffectmanager.h"
 
 #include "util/psscf.h"
@@ -100,13 +98,11 @@ bool psPortalCallback::Traverse(iPortal* portal,iBase* base)
     return true;
 }
 
-ModeHandler::ModeHandler(iSoundManager *sm,
-                         psCelClient *cc,
+ModeHandler::ModeHandler(psCelClient *cc,
                          MsgHandler* mh,
                          iObjectRegistry* obj_reg)
 {
     msghandler   = mh;
-    soundmanager = sm;
     celclient    = cc;
     actorEntity  = 0;
     object_reg   = obj_reg;
@@ -380,14 +376,13 @@ void ModeHandler::SetModeSounds(uint8_t mode)
     switch (mode)
     {
         case psModeMessage::PEACE:
-            soundmanager->SetCombatMusicMode(false);
+        	psengine->GetSoundManager()->SetCombatStance(0);
             break;
         case psModeMessage::COMBAT:
-            soundmanager->SetCombatMusicMode(true);
+            psengine->GetSoundManager()->SetCombatStance(1);
             break;
         case psModeMessage::DEAD:
-            if (soundmanager->PlayingMusic())
-                soundmanager->OverrideBGSong("sound.msg.death",iSoundManager::LOOP_SOUND);
+            psengine->GetSoundManager()->SetCombatStance(2);
             break;
     }
 }
@@ -728,9 +723,6 @@ void ModeHandler::HandleNewSectorMessage(MsgEntry* me)
 
 void ModeHandler::UpdateWeatherSounds()
 {
-    if(!soundmanager || !psengine->GetSoundStatus())
-        return;
-
     WeatherSound sound;
 
     if(downfall)
@@ -742,7 +734,7 @@ void ModeHandler::UpdateWeatherSounds()
         sound = WEATHER_SOUND_CLEAR;
     }
 
-    soundmanager->UpdateWeather((int)sound);
+	psengine->GetSoundManager()->SetWeather((int) sound);
 }
 
 void ModeHandler::SetSectorMusic(const char *sectorname)
@@ -762,10 +754,9 @@ void ModeHandler::SetSectorMusic(const char *sectorname)
     }
 
     csString sector(sectorname);
-    if(psengine->GetSoundStatus())
-    {
-        soundmanager->EnterSector( sector, clockHour, (int)sound , pos );
-    }
+    psengine->GetSoundManager()->Load (sector, pos);
+    psengine->GetSoundManager()->SetWeather((int) sound);
+    psengine->GetSoundManager()->SetTimeOfDay(clockHour);
 }
 
 void ModeHandler::ClearLightFadeSettings()
@@ -793,11 +784,9 @@ void ModeHandler::FinishLightFade()
 void ModeHandler::PublishTime( int newTime )
 {
     Debug2(LOG_WEATHER,0, "*New time of the Day: %d\n", newTime );
-    if(psengine->GetSoundStatus())
-    {
-        psengine->GetSoundManager()->ChangeTimeOfDay( newTime );
-    }
-
+    
+    psengine->GetSoundManager()->SetTimeOfDay(newTime);
+    
     // Publish raw time first
     PawsManager::GetSingleton().Publish("TimeOfDay", newTime);
 
@@ -1066,19 +1055,6 @@ void ModeHandler::ProcessDownfall(psWeatherMessage::NetWeatherInfo& info)
 void ModeHandler::PreProcess()
 {
     csTicks now = csGetTicks();
-
-    // Check if we need to update sound.
-    if (sound_queued)
-    {
-        if (now >= sound_when)
-        {
-            if(psengine->GetSoundStatus())
-            {
-                csRef<iSndSysSource> toPlay = soundmanager->StartAmbientSound(sound_name, iSoundManager::NO_LOOP);
-            }
-            sound_queued = false;
-        }
-    }
 
     UpdateLights(now);
     UpdateWeather(now);
@@ -1754,8 +1730,10 @@ void ModeHandler::AttackDeath( GEMClientActor* atObject, GEMClientActor* tarObje
 {
     if (atObject != tarObject) //not killing self
     {
-        if (psengine->GetSoundStatus() && soundmanager->PlayingCombatMusic())
-            psengine->GetEffectManager()->RenderEffect("combatVictory", csVector3(0, 0, 0), atObject->GetMesh());
+        if (psengine->GetSoundManager()->GetCombatStance() == 1)
+        {
+          psengine->GetEffectManager()->RenderEffect("combatVictory", csVector3(0, 0, 0), atObject->GetMesh()); /* FIXMESOUND sound played by effect */
+        } /* FIXMESOUND */
 
         psSystemMessage ev(0,MSG_COMBAT_VICTORY,"You have killed %s!", MungeName(tarObject).GetData() );
         msghandler->Publish(ev.msg);
@@ -2135,44 +2113,45 @@ void ModeHandler::HandleCachedFile(MsgEntry* me)
     psCachedFileMessage msg(me);
     if (!msg.valid) 
     {
-        printf("Cached File Message received was not valid!\n");
+        csPrintf("Cached File Message received was not valid!\n");
         return;
     }
-    if (psengine->GetSoundStatus() && soundmanager->PlayingVoices()) // PS#2744
+    if (psengine->GetSoundManager()->GetVoiceToggle() == true)
     {
         csString fname;
         fname.Format("/planeshift/userdata/cache/%s",msg.hash.GetDataSafe() );
 
-        printf(">>Got audio file '%s' to play, in '%s'.\n", msg.hash.GetDataSafe(), fname.GetDataSafe() );
+        csPrintf(">>Got audio file '%s' to play, in '%s'.\n", msg.hash.GetDataSafe(), fname.GetDataSafe() );
 
         // Check for cached version
         if (!msg.databuf.IsValid())
         {
-            printf(">>Checking if file exists locally already.\n");
+            csPrintf(">>Checking if file exists locally already.\n");
             if (!vfs->Exists(fname))  // doesn't exist so we need to request it
             {
 				psengine->GetMsgHandler()->GetNextSequenceNumber(MSGTYPE_CACHEFILE);
-                printf(">>Requesting file '%s' from server.\n", msg.hash.GetDataSafe() );
+                csPrintf(">>Requesting file '%s' from server.\n", msg.hash.GetDataSafe() );
                 psCachedFileMessage request(0,0,msg.hash,NULL); // cheating here to send the hash back in the filename field
                 request.SendMessage();
             }
             else // does exist, and we're done
             {
-                printf("Yes, it is cached already.  Playing immediately.\n");
-				soundmanager->StartVoiceSound(fname.GetData());
+                csPrintf("Yes, it is cached already.  Playing immediately.\n");
+                // Queue that file
+                psengine->GetSoundManager()->voicequeue->AddItem(fname.GetData());
             }
         }
         else
         {
-            printf(">>Received file from server.  Putting in cache.\n");
+            csPrintf(">>Received file from server.  Putting in cache.\n");
             // Save sound file
             if (!vfs->WriteFile(fname,msg.databuf->GetData(), msg.databuf->GetSize() ))
             {
                 Error2(">>Could not write cached file '%s'.",fname.GetData());
                 return;
             }
-            // Play sound file
-			soundmanager->StartVoiceSound(fname.GetData());
+            // Queue that file
+            psengine->GetSoundManager()->voicequeue->AddItem(fname.GetData());
         }
     }
 }

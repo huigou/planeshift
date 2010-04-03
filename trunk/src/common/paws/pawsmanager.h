@@ -32,16 +32,6 @@
 
 #include <iutil/vfs.h>
 #include <iutil/document.h>
-#include "isndsys/ss_structs.h"
-#include "isndsys/ss_data.h"
-#include "isndsys/ss_loader.h"
-#include "isndsys/ss_stream.h"
-// Until someone reworks the sound system, there's no point in spamming
-// everyone with a million iSndSysSourceSoftware3D deprecation warnings.
-#include <csutil/deprecated_warn_off.h>
-#include "isndsys/ss_source.h"
-#include <csutil/deprecated_warn_on.h>
-#include "isndsys/ss_renderer.h"
 
 #include "util/mathscript.h"
 #include "util/log.h"
@@ -49,6 +39,7 @@
 #include "pawsmouse.h"
 #include "psmousebinds.h"
 #include "pawsstyles.h"
+#include "sound/sound.h"
 
 struct iObjectRegistry;
 struct iGraphics2D;
@@ -304,46 +295,11 @@ public:
     /*                          Sound Functions
     ------------------------------------------------------------------------*/
 
-    /** @brief Registers a pre-processed sound in the list of available sounds.
-     *
-      * This allows an application to handle its own sound loading prior to
-      * initializing anyPaws widgets that use sounds.  The widgets may then
-      * reference the registered sounds by any name provided here.
-      *
-      * @return FALSE if registration was not possible (conflict of name or
-      * memory allocation error).
-     */
-    bool RegisterSound(const char *name, csRef<iSndSysData> sounddata);
-
-    /** @brief Loads a sound given a filename and an optional 'registered' name.
-      *
-      * If the registered name is specified, it is used for all operations
-      * except loading the sound data from the VFS.  Otherwise the filename
-      * is used for all operations. The name is first checked against the list
-      * of previously registered or loaded sounds. If no match is found, a
-      * file with the given filename is loaded. If no file is found or the
-      * file cannot be processed into a sound handle the function fails and
-      * returns an invalid csRef<>  (return.IsValid() == false).
-     */
-    csRef<iSndSysData> LoadSound(const char *filename, const char *registeredname=NULL);
-
-    /// Plays a sound given the iSndSysData returned from LoadSound.
-    bool PlaySound(csRef<iSndSysData> sound);
-
-    /// Sets the volume for PAWS sound playback.
-    void SetVolume(float vol)  { volume = vol; }
-
-    /// Returns the current sound volume.
-    float GetVolume() { return volume; }
-
     /// Returns the pawsConfig data.
     const char * GetConfigFile() { return pawsConfig.GetData(); }
 
     /// Turns sound on and off by setting useSounds.
     void ToggleSounds(bool value);
-
-    /// Returns play status.
-    bool PlayingSounds() { return useSounds; }
 
     /*                       Subcription Functions
     ------------------------------------------------------------------------*/

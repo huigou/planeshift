@@ -46,6 +46,8 @@
 #define APPNAME "PlaneShift World Editor"
 #define WEDIT_CONFIG_FILENAME "/this/worldeditor.cfg"
 
+SoundSystemManager *SndSysMgr;
+
 WorldEditor::WorldEditor(int argc, char* argv[]) :
 editMode(Select), moveCamera(true), paws(NULL), rotX(0), rotY(0)
 {
@@ -163,6 +165,14 @@ bool WorldEditor::Init()
         return false;
     }
 
+    // Set up sound
+    // i cant test this app :(
+    SndSysMgr = new SoundSystemManager;
+    SndSysMgr->Initialize ( objectReg );
+    /* set GUI Volume to 1 */
+    SndSysMgr->guiSndCtrl->SetToggle(true);
+    SndSysMgr->guiSndCtrl->SetVolume((float) 1);
+
     loader->SetLoadRange(1000);
     sceneManipulator = scfQueryInterface<iSceneManipulate>(loader);
 
@@ -190,7 +200,7 @@ bool WorldEditor::Init()
     paws->SetMainWidget(mainWidget);
 
     // Load and assign a default button click sound for pawsbutton
-    paws->LoadSound("/planeshift/art/sounds/gui/next.wav","sound.standardButtonClick");
+    //paws->LoadSound("/planeshift/art/sounds/gui/next.wav","sound.standardButtonClick");
 
     // Set mouse image.
     paws->GetMouse()->ChangeImage("Standard Mouse Pointer");

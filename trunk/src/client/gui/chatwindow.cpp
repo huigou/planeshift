@@ -41,7 +41,6 @@
 //=============================================================================
 // Project Includes
 //=============================================================================
-#include "iclient/isoundmngr.h"
 
 #include "paws/pawstextbox.h"
 #include "paws/pawsprefmanager.h"
@@ -122,7 +121,6 @@ pawsChatWindow::pawsChatWindow()
 
     chatHistory = new pawsChatHistory();
     awayText.Clear();
-    soundmgr = NULL;
 
     settings.meFilters = 0;
     settings.vicinityFilters = 0;
@@ -173,8 +171,6 @@ bool pawsChatWindow::PostSetup()
 
     if ( !psCmdBase::Setup( psengine->GetMsgHandler(), psengine->GetCmdHandler()) )
         return false;
-
-    soundmgr = psengine->GetSoundManager();
 
     msgqueue->Subscribe(this, MSGTYPE_CHAT);
     msgqueue->Subscribe(this, MSGTYPE_CHANNEL_JOINED);
@@ -1225,10 +1221,10 @@ void pawsChatWindow::HandleSystemMessage(MsgEntry *me)
             bool hasCharName = noCaseMsg.Find(playerName[0].Downcase().GetData()) != (size_t)-1;
             ChatOutput(buff.GetData(), colour, chatType, true, hasCharName);
 
-            if (soundmgr && psengine->GetSoundStatus())
+/*            if (soundmgr && psengine->GetSoundStatus())
             {
                 soundmgr->HandleSoundType(msg.type);
-            }
+            } i think this is misplaced FIXMESOUND*/
 
             LogMessage((msg.type == MSG_INFO_BASE || msg.type == MSG_INFO_SERVER) ? CHAT_LOG_ALL : CHAT_LOG_SYSTEM, buff.GetData());
         }
@@ -1291,12 +1287,19 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
 
     switch( msg.iChatType )
     {
-        case CHAT_TELL:
-        case CHAT_AWAY:
+        case CHAT_ADVISOR:
+        case CHAT_GUILD:
         case CHAT_SERVER_TELL:
         case CHAT_TELLSELF:
-        case CHAT_GUILD:
-        case CHAT_ADVISOR:
+        case CHAT_TELL:
+            if (psengine->GetSoundManager()->GetChatToggle() == true)
+            {
+                SoundHandle *tmphandle;
+                SndSysMgr->Play2DSound ("sound.standardButtonClick", DONT_LOOP,
+                                        0, 0, VOLUME_NORM, SndSysMgr->guiSndCtrl,
+                                        tmphandle);
+            }                                        
+        case CHAT_AWAY:
         case CHAT_ADVICE:
         case CHAT_ADVICE_LIST:
             break;

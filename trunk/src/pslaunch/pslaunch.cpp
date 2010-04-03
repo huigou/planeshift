@@ -46,6 +46,8 @@ CS_IMPLEMENT_APPLICATION
 psLauncherGUI* psLaunchGUI;
 
 using namespace CS::Threading;
+
+SoundSystemManager *SndSysMgr;
     
 psLauncherGUI::psLauncherGUI(iObjectRegistry* _object_reg, InfoShare *_infoShare, bool *_execPSClient)
 {
@@ -144,14 +146,19 @@ bool psLauncherGUI::InitApp()
         return false;
     }
 
+	// Initialise Sound
+	
+	SndSysMgr = new SoundSystemManager;
+    SndSysMgr->Initialize ( object_reg );
+    /* set GUI Volume to 1 */
+    SndSysMgr->guiSndCtrl->SetToggle(true);
+    SndSysMgr->guiSndCtrl->SetVolume((float) 1);
+
     mainWidget = new pawsMainWidget();
     paws->SetMainWidget(mainWidget);
 
     // Register factory
     launcherWidget = new pawsLauncherWindowFactory();
-
-    // Load and assign a default button click sound for pawsbutton
-    paws->LoadSound("/planeshift/art/sounds/gui/next.wav","sound.standardButtonClick");
 
     // Load widgets
     if (!paws->LoadWidget("data/gui/pslaunch.xml"))
@@ -282,6 +289,7 @@ bool psLauncherGUI::HandleEvent (iEvent &ev)
             FrameLimit();
             g3d->BeginDraw(CSDRAW_2DGRAPHICS);
             paws->Draw();
+            SndSysMgr->Update();
         }
         else
         {

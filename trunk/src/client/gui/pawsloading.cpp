@@ -29,9 +29,7 @@
 #include "net/cmdhandler.h"
 #include "net/messages.h"
 #include "net/clientmsghandler.h"
-#include "iclient/isoundmngr.h"
 #include "pscharcontrol.h"
-
 
 pawsLoadWindow::~pawsLoadWindow()
 {
@@ -91,23 +89,12 @@ void pawsLoadWindow::HandleMessage(MsgEntry *me)
 
 void pawsLoadWindow::Show()
 {
-    // Play some music
-    if(psengine->GetSoundStatus())
-    {
-        psengine->GetSoundManager()->OverrideBGSong("connect");
-    }
     PawsManager::GetSingleton().GetMouse()->Hide(true);
     pawsWidget::Show();
 }
 
 void pawsLoadWindow::Hide()
 {
-    // Play some music
-    if (psengine->GetSoundStatus())
-    {
-        psengine->GetSoundManager()->StopOverrideBG();
-    }
-
     if (!psengine->GetCharControl()->GetMovementManager()->MouseLook()) // do not show the mouse if it was hidden
     PawsManager::GetSingleton().GetMouse()->Hide(false);
     pawsWidget::Hide();

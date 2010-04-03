@@ -65,7 +65,7 @@ class pawsMessageTextBox;
 class pawsEditTextBox;
 class pawsChatHistory;
 class pawsTabWindow;
-struct iSoundManager;
+//struct iSoundManager;
 
 // Struct for returning and setting settings
 struct ChatSettings
@@ -242,9 +242,6 @@ protected:
     
     /// Current line, stored for when scrolling back in the chat history
     csString currLine;
-
-    /// Chat can trigger sound effects with this
-    iSoundManager *soundmgr;
 
     ChatSettings settings;
 

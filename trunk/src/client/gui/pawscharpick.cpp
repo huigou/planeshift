@@ -36,7 +36,6 @@
 #include "paws/pawsokbox.h"
 #include "net/messages.h"
 #include "net/clientmsghandler.h"
-#include "iclient/isoundmngr.h"
 #include "psnetmanager.h"
 #include "pscelclient.h"
 #include "psclientdr.h"
@@ -406,10 +405,9 @@ void pawsCharacterPickerWindow::Show()
     }        
         
     // Play some music
-    if(psengine->GetSoundStatus())
-    {
-        psengine->GetSoundManager()->OverrideBGSong("mainmenu");
-    }
+    
+    psengine->GetSoundManager()->Load("main", NULL);
+    
     PawsManager::GetSingleton().SetCurrentFocusedWidget(this);
 
     pawsWidget::Show();

@@ -74,6 +74,7 @@ const char * PawsEditorApp::KEY_DEFS_FILENAME = "/this/data/pawseditor/keys_def.
 CS_IMPLEMENT_APPLICATION
 
 PawsEditorApp *editApp;
+SoundSystemManager *SndSysMgr;
 
 PawsEditorApp::PawsEditorApp(iObjectRegistry *obj_reg)
             :camFlags(CAM_COUNT)
@@ -163,6 +164,15 @@ bool PawsEditorApp::Init()
         return false;
     }
 
+    // init sound
+    // i cant test this app :(
+    SndSysMgr = new SoundSystemManager;
+    SndSysMgr->Initialize ( object_reg );
+    /* set GUI Volume to 1 */
+    SndSysMgr->guiSndCtrl->SetToggle(true);
+    SndSysMgr->guiSndCtrl->SetVolume((float) 1);
+
+
     // set the window caption
     iNativeWindow *nw = g3d->GetDriver2D()->GetNativeWindow();
     if (nw)
@@ -188,7 +198,7 @@ bool PawsEditorApp::Init()
     RegisterFactories();
 
     // Load and assign a default button click sound for pawsbutton
-    paws->LoadSound("/this/art/music/gui/ccreate/next.wav","sound.standardButtonClick");
+    //paws->LoadSound("/this/art/music/gui/ccreate/next.wav","sound.standardButtonClick");
 
     if (!LoadWidgets())
     {

@@ -7,7 +7,7 @@ Application pslaunch :
 
 ExternalLibs pslaunch : CRYSTAL CURL ;
 CompileGroups pslaunch : client ;
-LinkWith pslaunch : xdelta3 paws psutil fparser ;
+LinkWith pslaunch : xdelta3 paws psutil sound fparser ;
 
 if $(HAVE_STATIC_PLUGINS) = "yes"
 {

@@ -1631,6 +1631,52 @@ csString psAdminCmdMessage::ToString(AccessPointers * /*access_ptrs*/)
     return msgtext;
 }
 
+// ---------------------------------------------------------------------------
+
+PSF_IMPLEMENT_MSG_FACTORY(psGenericCmdMessage,MSGTYPE_GENERICCMD);
+
+psGenericCmdMessage::psGenericCmdMessage(const char *cmd)
+{
+    msg.AttachNew(new MsgEntry(strlen(cmd) + 1));
+
+    msg->SetType(MSGTYPE_ADMINCMD);
+    msg->clientnum      = 0;
+    msg->priority       = PRIORITY_HIGH;
+
+    msg->Add(cmd);
+
+    // Sets valid flag based on message overrun state
+    valid=!(msg->overrun);
+}
+
+psGenericCmdMessage::psGenericCmdMessage(const char *cmd, uint32_t client)
+{
+    msg.AttachNew(new MsgEntry(strlen(cmd) + 1));
+
+    msg->SetType(MSGTYPE_GENERICCMD);
+    msg->clientnum      = client;
+    msg->priority       = PRIORITY_HIGH;
+
+    msg->Add(cmd);
+
+    // Sets valid flag based on message overrun state
+    valid=!(msg->overrun);
+}
+
+psGenericCmdMessage::psGenericCmdMessage(MsgEntry *message)
+{
+    valid = true;
+    cmd = message->GetStr();
+}
+
+csString psGenericCmdMessage::ToString(AccessPointers * /*access_ptrs*/)
+{
+    csString msgtext;
+
+    msgtext.AppendFmt("Cmd: '%s'",cmd.GetDataSafe());
+
+    return msgtext;
+}
 
 // ---------------------------------------------------------------------------
 

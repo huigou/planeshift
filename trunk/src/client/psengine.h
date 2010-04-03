@@ -33,6 +33,7 @@
 #include <iutil/eventh.h>
 
 #include "psnetmanager.h"
+#include "pssound/pssoundmngr.h"
 
 #include "util/slots.h"
 
@@ -50,7 +51,6 @@ struct iFont;
 struct iGraphics2D;
 struct iGraphics3D;
 struct iSceneManipulate;
-struct iSoundManager;
 struct iTextureManager;
 struct iThreadReturn;
 struct iVFS;
@@ -175,7 +175,6 @@ public:
     iVFS*                 GetVFS()                { return vfs; }
     iVirtualClock*        GetVirtualClock()       { return vc; }
     iDocumentSystem*      GetXMLParser()          { return xmlparser; }
-    iSoundManager*        GetSoundManager()       { return soundmanager; }
     iConfigManager*       GetConfig()             { return cfgmgr; }  ///< config file
     iBgLoader*            GetLoader()             { return loader; }
     iSceneManipulate*     GetSceneManipulator()   { return scenemanipulator; }
@@ -200,6 +199,7 @@ public:
     psNetManager*          GetNetManager()     { return netmanager; }
     psCSSetup*             GetCSSetup()        { return CS_Setup; }
     ZoneHandler*           GetZoneHandler()    { return zonehandler; }
+    psSoundManager*        GetSoundManager()   { return SoundManager; }
 
     /// Access the player's petitioner target
     void SetTargetPetitioner(const char * pet) { targetPetitioner = pet; }
@@ -385,7 +385,6 @@ private:
     csRef<iVFS>               vfs;            ///< Virtual File System
     csRef<iGraphics2D>        g2d;            ///< 2d canvas
     csRef<iGraphics3D>        g3d;            ///< 3d canvas
-    csRef<iSoundManager>      soundmanager;   ///< PS Sound manager
     csRef<iEventQueue>        queue;          ///< Event Queue
     csRef<iVirtualClock>      vc;             ///< Clock
     csRef<iDocumentSystem>    xmlparser;      ///< XML Parser
@@ -411,6 +410,7 @@ private:
     PawsManager*              paws;          ///< Hold the ps AWS manager
     psMainWidget*             mainWidget;    ///< Hold the ps overridden version of the desktop
     psInventoryCache*	      inventoryCache;///< inventory cache for client
+    psSoundManager*           SoundManager;  ///< planehift soundmanager
     psCSSetup*                CS_Setup;
     csRef<iBgLoader>          loader;
     csRef<iSceneManipulate>   scenemanipulator;

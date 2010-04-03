@@ -7,4 +7,5 @@ SubInclude TOP src common util ;
 SubInclude TOP src common paws ;
 SubInclude TOP src common effects ;
 SubInclude TOP src common bgloader ;
-
+SubInclude TOP src common sound ;
+SubInclude TOP src common pssound ;

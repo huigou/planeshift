@@ -28,7 +28,6 @@
 #include "net/messages.h"
 #include "net/clientmsghandler.h"
 #include "net/charmessages.h"
-#include "iclient/isoundmngr.h"
 
 #include "paws/pawsmanager.h"
 #include "paws/pawstextbox.h"
@@ -991,10 +990,8 @@ bool pawsCreationMain::OnChange(pawsWidget *widget)
 void pawsCreationMain::Show()
 {
     // Play some music
-    if(psengine->GetSoundStatus())
-    {
-        psengine->GetSoundManager()->OverrideBGSong("charcreation");
-    }
+    
+    psengine->GetSoundManager()->Load("charcreation", NULL);
 
     pawsWidget::Show();
     UpdateCP();

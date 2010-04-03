@@ -40,7 +40,6 @@
 #include <ivideo/material.h>
 
 #include "iclient/ibgloader.h"
-#include "iclient/isoundmngr.h"
 #include "pscelclient.h"
 #include "globals.h"
 #include "weather.h"
@@ -73,7 +72,6 @@ void WeatherInfo::Fade(WeatherParams* wp, int delta)
 WeatherObject::WeatherObject(WeatherInfo* parent)
 {
     this->parent = parent;
-    weather_sound = NULL;
 }
 WeatherObject::~WeatherObject()
 {

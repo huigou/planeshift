@@ -42,7 +42,6 @@
 
 // PS include
 #include "pawscreditswindow.h"
-#include "iclient/isoundmngr.h"
 #include "util/psxmlparser.h"
 #include "util/localization.h"
 
@@ -59,10 +58,7 @@ bool pawsCreditsWindow::PostSetup()
 {
     char endOfLine[2] = {10, 0};
 
-    if(psengine->GetSoundStatus())
-    {
-        psengine->GetSoundManager()->OverrideBGSong("mainmenu");
-    }
+    psengine->GetSoundManager()->Load("main", NULL);
 
     font = PawsManager::GetSingleton().GetPrefs()->GetDefaultFont();
 
@@ -252,10 +248,7 @@ void pawsCreditsWindow::Hide()
     pawsWidget::Hide();
     loginWnd->Show();
 
-    if(psengine->GetSoundStatus())
-    {
-        psengine->GetSoundManager()->OverrideBGSong("mainmenu");
-    }
+    psengine->GetSoundManager()->Load("main", NULL);
 }
 
 void pawsCreditsWindow::Draw()

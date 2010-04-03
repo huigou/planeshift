@@ -134,10 +134,6 @@ bool psEffect::Load(iDocumentNode * node, iView * parentView, psEffect2DRenderer
         }
     }
 
-    // Check if sound is available
-    csRef<iSndSysRenderer> sndRender =  csQueryRegistry<iSndSysRenderer> (psCSSetup::object_reg);
-    bool sound = ( sndRender != NULL );
-
     // objs
     xmlbinds = node->GetNodes("obj");
     csRef<iDocumentNode> objNode;
@@ -171,12 +167,7 @@ bool psEffect::Load(iDocumentNode * node, iView * parentView, psEffect2DRenderer
         }
         else if (type == "sound")
         {
-            if (sound)
-            {
-                obj = new psEffectObjSound(parentView, renderer2d);
-            } else {
-                continue; // Sound is off; ignore this obj
-            }
+            obj = new psEffectObjSound(parentView, renderer2d);
         }
         else if (type == "star")
         {

@@ -260,7 +260,8 @@ enum MSG_TYPES
     MSGTYPE_CACHEFILE,
     MSGTYPE_DIALOG_MENU,
     MSGTYPE_SIMPLE_STRING,
-    MSGTYPE_ORDEREDTEST
+    MSGTYPE_ORDEREDTEST,
+    MSGTYPE_GENERICCMD
 };
 
 class psMessageCracker;
@@ -1311,6 +1312,32 @@ public:
 
 //--------------------------------------------------------------------------
 
+/**
+ * Generic commands.
+ * Those are processed by the GenericCommandManager.
+ */
+class psGenericCmdMessage : public psMessageCracker
+{
+public:
+    csString cmd;
+
+    psGenericCmdMessage(const char *cmd);
+    psGenericCmdMessage(const char *cmd, uint32_t client = 0);
+
+    psGenericCmdMessage(MsgEntry *message);
+
+    PSF_DECLARE_MSG_FACTORY();
+
+    /**
+     * @brief Converts the message into human readable string.
+     *
+     * @param access_ptrs A struct to a number of access pointers.
+     * @return Return a human readable string for the message.
+     */
+    virtual csString ToString(AccessPointers * access_ptrs);
+};
+
+//--------------------------------------------------------------------------
 class psDisconnectMessage : public psMessageCracker
 {
 public:

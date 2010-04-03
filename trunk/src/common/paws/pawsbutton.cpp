@@ -30,6 +30,8 @@
 #include "pawstexturemanager.h"
 #include "pawsprefmanager.h"
 
+extern SoundSystemManager *SndSysMgr;
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -187,34 +189,23 @@ void pawsButton::SetOnSpecialImage( const csString & image )
 }
 
 
-void pawsButton::SetSound(const csString & soundName)
+void pawsButton::SetSound(const char *soundName)
 {
-    if(PawsManager::GetSingleton().GetSoundStatus())
-    {
-        sound_click = PawsManager::GetSingleton().LoadSound(soundName);
-
-        if(sound_click == NULL)
-        {
-            sound_click = PawsManager::GetSingleton().LoadSound("sound.standardButtonClick");
-        }
-    }
+  sound_click = soundName;
 }
 
 void pawsButton::SetText(const char* text)
 {
     buttonLabel = text;
 
-    // Try to parse new sound if standard is active
-    if(PawsManager::GetSingleton().GetSoundStatus() && 
-        sound_click == PawsManager::GetSingleton().LoadSound("sound.standardButtonClick"))
-    {
-        if(buttonLabel == "ok")
-            SetSound("gui.ok");
-        else if(buttonLabel == "quit")
-            SetSound("gui.quit");
-        else if(buttonLabel == "cancel")
-            SetSound("gui.cancel");
-    }
+    if(buttonLabel == "ok")
+        SetSound("gui.ok");
+    else if(buttonLabel == "quit")
+        SetSound("gui.quit");
+    else if(buttonLabel == "cancel")
+        SetSound("gui.cancel");
+    else
+        SetSound("sound.standardButtonClick");
 }
 
 
@@ -329,6 +320,8 @@ bool pawsButton::OnMouseExit()
 
 bool pawsButton::OnMouseDown( int button, int modifiers, int x, int y )
 {  
+	SoundHandle *Handle;
+	
     if ( !enabled )
     {
         return true;
@@ -346,7 +339,8 @@ bool pawsButton::OnMouseDown( int button, int modifiers, int x, int y )
     }
 
     // plays a sound
-    PawsManager::GetSingleton().PlaySound(sound_click);
+    SndSysMgr->Play2DSound (sound_click, DONT_LOOP, 0, 0, VOLUME_NORM,
+                            SndSysMgr->guiSndCtrl, Handle);
 
     if ( toggle )
     {
