@@ -388,6 +388,7 @@ bool psEngine::Initialize (int level)
         //Check if sound is on or off in psclient.cfg
         csString soundPlugin;
 
+        soundOn = true; // FIXMESOUND is this variable REALLY needed and if not how do we handle this in future? 
         SndSysMgr = new SoundSystemManager;
         SndSysMgr->Initialize ( object_reg );
         SoundManager = new psSoundManager;
