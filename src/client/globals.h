@@ -24,8 +24,10 @@
 #define __GLOBALS_H__
 
 #include "psengine.h"
+#include "sound/sound.h"
 
 extern psEngine * psengine;
+extern SoundSystemManager * SndSysMgr;
 
 #endif
 

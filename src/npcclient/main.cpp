@@ -17,6 +17,7 @@
 
 // global vars
 psNPCClient* npcclient;
+SoundSystemManager   *SndSysMgr;
 
 CS_IMPLEMENT_APPLICATION
 
@@ -38,6 +39,8 @@ int main(int argc, char **argv)
     iObjectRegistry *object_reg = CSSetup->InitCS();
 
     pslog::Initialize (object_reg);
+    
+    SndSysMgr->Initialize (object_reg);
 
     // Start the server
     npcclient = new psNPCClient;

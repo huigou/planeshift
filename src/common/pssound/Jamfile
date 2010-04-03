@@ -1,0 +1,9 @@
+SubDir TOP src common pssound ;
+
+Library pssound
+	: [ Wildcard *.cpp *.h ]
+	: noinstall
+;
+
+LinkWith paws : psutil ;
+ExternalLibs pssound : CRYSTAL CEL ;

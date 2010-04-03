@@ -64,9 +64,6 @@ if (!myref)                                                  \
 #include <iutil/vfs.h>
 #include <iutil/stringarray.h>
 
-//Sound
-#include "iclient/isoundmngr.h"
-
 #include <csver.h>
 #include <cstool/collider.h>
 #include <cstool/initapp.h>
@@ -87,8 +84,6 @@ if (!myref)                                                  \
 #include "guihandler.h"
 
 #include "pscal3dcallback.h"
-
-#include "sound/pssoundmngr.h"
 
 #include "net/connection.h"
 #include "net/cmdhandler.h"
@@ -215,6 +210,8 @@ HWND psEngine::hwnd = 0;
 MacCrashReport* macReporter = NULL;
 #endif
 
+SoundSystemManager *SndSysMgr;
+
 // ----------------------------------------------------------------------------
 
 CS_IMPLEMENT_APPLICATION
@@ -326,8 +323,6 @@ void psEngine::Cleanup()
     // Effect manager needs to be destroyed before the soundmanager.
     effectManager.Invalidate();
 
-    object_reg->Unregister ((iSoundManager*)soundmanager, "iSoundManager");
-
     delete options;
 }
 
@@ -393,24 +388,10 @@ bool psEngine::Initialize (int level)
         //Check if sound is on or off in psclient.cfg
         csString soundPlugin;
 
-        soundOn = GetConfig()->KeyExists("System.PlugIns.iSndSysRenderer") &&
-            strcmp(GetConfig()->GetStr("System.PlugIns.iSndSysRenderer"), "crystalspace.sndsys.renderer.null");
-
-        if (soundOn)
-        {
-            psSoundManager* pssound = new psSoundManager(0);
-
-            pssound->Initialize(object_reg);
-            soundmanager.AttachNew(pssound);
-            object_reg->Register ((iSoundManager*) soundmanager, "iSoundManager");
-
-            if (!soundmanager->Setup())
-            {
-                csReport(object_reg, CS_REPORTER_SEVERITY_NOTIFY, PSAPP,
-                    "Warning: Cannot initialize SoundManager");
-                soundOn = false;
-            }
-        }
+        SndSysMgr = new SoundSystemManager;
+        SndSysMgr->Initialize ( object_reg );
+        SoundManager = new psSoundManager;
+        SoundManager->Initialize ( object_reg );
 
         LoadLogSettings();
 
@@ -449,25 +430,10 @@ bool psEngine::Initialize (int level)
 
         DeclareExtraFactories();
 
-        // Register default PAWS sounds
-        if (soundmanager.IsValid() && soundOn)
+        if(!LoadSoundSettings(false))
         {
-            paws->RegisterSound("sound.standardButtonClick",soundmanager->GetSoundResource("sound.standardButtonClick"));
-            // Standard GUI stuff
-            paws->RegisterSound("gui.toolbar",      soundmanager->GetSoundResource("gui.toolbar"));
-            paws->RegisterSound("gui.cancel",       soundmanager->GetSoundResource("gui.cancel"));
-            paws->RegisterSound("gui.ok",           soundmanager->GetSoundResource("gui.ok"));
-            paws->RegisterSound("gui.scrolldown",   soundmanager->GetSoundResource("gui.scrolldown"));
-            paws->RegisterSound("gui.scrollup",     soundmanager->GetSoundResource("gui.scrollup"));
-            paws->RegisterSound("gui.shortcut",     soundmanager->GetSoundResource("gui.shortcut"));
-            paws->RegisterSound("gui.quit",         soundmanager->GetSoundResource("gui.quit"));
-            // Load sound settings
-             if(!LoadSoundSettings(false))
-             {
-                return false;
-             }
+			return false;
         }
-
 
         if ( ! paws->LoadWidget("splash.xml") )
             return false;
@@ -595,7 +561,7 @@ bool psEngine::Initialize (int level)
         guiHandler = new GUIHandler();
         celclient = csPtr<psCelClient> (new psCelClient());
         slotManager = new psSlotManager();
-        modehandler = csPtr<ModeHandler> (new ModeHandler (soundmanager, celclient,netmanager->GetMsgHandler(),object_reg));
+        modehandler = csPtr<ModeHandler> (new ModeHandler (celclient,netmanager->GetMsgHandler(),object_reg));
         actionhandler = csPtr<ActionHandler> ( new ActionHandler ( netmanager->GetMsgHandler(), object_reg ) );
         zonehandler = csPtr<ZoneHandler> (new ZoneHandler(netmanager->GetMsgHandler(),object_reg,celclient));
         questionclient = new psQuestionClient(GetMsgHandler(), object_reg);
@@ -955,8 +921,8 @@ bool psEngine::Process3D(iEvent& ev)
     // Update the sound system
     else if (GetSoundStatus())
     {
-        soundmanager->Update( camera->GetView() );
-        soundmanager->Update( celclient->GetMainPlayer()->Pos() );
+    	SoundManager->UpdateListener( camera->GetView() );
+        SoundManager->playerposition = celclient->GetMainPlayer()->Pos();
     }
 
     if (celclient)
@@ -1120,28 +1086,12 @@ inline bool psEngine::FrameLimit()
 
 void psEngine::MuteAllSounds(void)
 {
-    GetSoundManager()->ToggleAmbient(false);
-    GetSoundManager()->ToggleMusic(false);
-    GetSoundManager()->ToggleActions(false);
-    GetSoundManager()->ToggleGUI(false);
-    paws->ToggleSounds(false);
+    SoundManager->mainSndCtrl->SetToggle(false);
 }
 
 void psEngine::UnmuteAllSounds(void)
 {
-
-    LoadSoundSettings(false);
-
-    //If we are in the login/loading/credits/etc. screen we have to force the music to start again.
-    if(loadstate != LS_DONE)
-    {
-        const char* bgMusic = NULL;
-        bgMusic = GetSoundManager()->GetSongName();
-        if (bgMusic == NULL)
-            return;
-
-        GetSoundManager()->OverrideBGSong(bgMusic);
-    }
+    SoundManager->mainSndCtrl->SetToggle(true);
 }
 
 // ----------------------------------------------------------------------------
@@ -1200,6 +1150,13 @@ inline void psEngine::UpdatePerFrame()
                 actor->GetVitalMgr()->Predict(csGetTicks(),"Target");
         }
     }
+  
+  /* sound is updated EVERY FRAME, doesnt matter if 2D or 3D
+   * it will slow itself down to save cputime
+   * TODO add to CS loop
+   */
+  SoundManager->Update();
+  SndSysMgr->Update();
 }
 
 // ----------------------------------------------------------------------------
@@ -1328,11 +1285,6 @@ void psEngine::LoadGame()
         celclient->RequestServerWorld();
 
         loadtimeout = csGetTicks () + cfgmgr->GetInt("PlaneShift.Client.User.Persisttimeout", 60) * 1000;
-
-        if (GetSoundStatus())
-        {
-            soundmanager->StartMapSoundSystem();
-        }
 
         AddLoadingWindowMsg( "Requesting connection" );
         ForceRefresh();
@@ -1689,23 +1641,23 @@ bool psEngine::LoadSoundSettings(bool forceDef)
     // load and apply the settings
     optionNode = mainNode->GetNode("ambient");
     if (optionNode != NULL)
-        GetSoundManager()->ToggleAmbient(optionNode->GetAttributeValueAsBool("on",true));
+    	SoundManager->SetAmbientToggle(optionNode->GetAttributeValueAsBool("on",true));
 
     optionNode = mainNode->GetNode("actions");
     if (optionNode != NULL)
-        GetSoundManager()->ToggleActions(optionNode->GetAttributeValueAsBool("on",true));
+    	SoundManager->actionSndCtrl->SetToggle(optionNode->GetAttributeValueAsBool("on",true));
 
     optionNode = mainNode->GetNode("music");
     if (optionNode != NULL)
-        GetSoundManager()->ToggleMusic(optionNode->GetAttributeValueAsBool("on",true));
+    	SoundManager->SetMusicToggle(optionNode->GetAttributeValueAsBool("on",true));
 
     optionNode = mainNode->GetNode("gui");
     if (optionNode != NULL)
-        paws->ToggleSounds(optionNode->GetAttributeValueAsBool("on",true));
+    	SoundManager->guiSndCtrl->SetToggle(optionNode->GetAttributeValueAsBool("on",true));
 
     optionNode = mainNode->GetNode("voices");
     if (optionNode != NULL)
-        GetSoundManager()->ToggleVoices(optionNode->GetAttributeValueAsBool("on",true));
+    	SoundManager->SetVoiceToggle(optionNode->GetAttributeValueAsBool("on",true));
 
     optionNode = mainNode->GetNode("volume");
     if (optionNode != NULL)
@@ -1718,7 +1670,7 @@ bool psEngine::LoadSoundSettings(bool forceDef)
             volume = 100;
         }
 
-        GetSoundManager()->SetVolume(float(volume)/100);
+		SoundManager->mainSndCtrl->SetVolume((float) volume/100);
     }
 
     optionNode = mainNode->GetNode("musicvolume");
@@ -1732,7 +1684,7 @@ bool psEngine::LoadSoundSettings(bool forceDef)
             volume = 100;
         }
 
-        GetSoundManager()->SetMusicVolume(float(volume)/100);
+        SoundManager->musicSndCtrl->SetVolume((float) volume/100);
     }
 
     optionNode = mainNode->GetNode("ambientvolume");
@@ -1746,7 +1698,7 @@ bool psEngine::LoadSoundSettings(bool forceDef)
             volume = 100;
         }
 
-        GetSoundManager()->SetAmbientVolume(float(volume)/100);
+        SoundManager->ambientSndCtrl->SetVolume((float) volume/100);
     }
 
     optionNode = mainNode->GetNode("actionsvolume");
@@ -1760,7 +1712,7 @@ bool psEngine::LoadSoundSettings(bool forceDef)
             volume = 100;
         }
 
-        GetSoundManager()->SetActionsVolume(float(volume)/100);
+		SoundManager->actionSndCtrl->SetVolume((float) volume/100);        
     }
 
     optionNode = mainNode->GetNode("guivolume");
@@ -1774,7 +1726,7 @@ bool psEngine::LoadSoundSettings(bool forceDef)
             volume = 100;
         }
 
-        paws->SetVolume(float(volume)/100);
+        SoundManager->guiSndCtrl->SetVolume((float) volume/100);
     }
 
     optionNode = mainNode->GetNode("voicesvolume");
@@ -1788,7 +1740,7 @@ bool psEngine::LoadSoundSettings(bool forceDef)
             volume = 100;
         }
 
-        GetSoundManager()->SetVoicesVolume(float(volume)/100);
+		SoundManager->voiceSndCtrl->SetVolume((float) volume/100);
     }
 
     optionNode = mainNode->GetNode("muteonfocusloss");
@@ -1797,12 +1749,23 @@ bool psEngine::LoadSoundSettings(bool forceDef)
 
     optionNode = mainNode->GetNode("loopbgm");
     if (optionNode)
-        GetSoundManager()->ToggleLoop(optionNode->GetAttributeValueAsBool("on", false));
+        SoundManager->SetLoopBGMToggle(optionNode->GetAttributeValueAsBool("on", false));
 
     optionNode = mainNode->GetNode("combatmusic");
     if (optionNode)
-        GetSoundManager()->ToggleCombatMusic(optionNode->GetAttributeValueAsBool("on", true));
+        SoundManager->SetCombatToggle(optionNode->GetAttributeValueAsBool("on", true)); 
 
+    optionNode = mainNode->GetNode("combatmusic");
+    if (optionNode)
+        SoundManager->SetCombatToggle(optionNode->GetAttributeValueAsBool("on", true));
+
+    optionNode = mainNode->GetNode("chatsound");
+    if (optionNode)
+        SoundManager->SetCombatToggle(optionNode->GetAttributeValueAsBool("on", true));
+
+    optionNode = mainNode->GetNode("usecamerapos");
+    if (optionNode)
+        SoundManager->SetListenerOnCameraPos(optionNode->GetAttributeValueAsBool("on", true));
     return true;
 }
 

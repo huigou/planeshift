@@ -22,7 +22,6 @@
 #include <csutil/sysfunc.h>
 
 #include "pawssplashwindow.h"
-#include "iclient/isoundmngr.h"
 #include "paws/pawsmanager.h"
 
 #include "paws/pawsprogressbar.h"

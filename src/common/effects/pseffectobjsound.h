@@ -21,11 +21,8 @@
 #define PS_EFFECT_OBJ_SOUND_HEADER
 
 #include "pseffectobj.h"
-#include "iclient/isoundmngr.h"
+#include "sound/sound.h"
 
-struct iSoundManager;
-struct iSoundHandle;
-struct iSoundSource;
 class psEffect2DRenderer;
 
 class psEffectObjSound : public psEffectObj
@@ -55,14 +52,12 @@ private:
     float minDistSquared;
     float maxDistSquared;
 
+	csString effectID;
+
     float volumeMultiplier;
     bool loop;
     
-    csRef<iSoundManager>        soundmanager;
-    csRef<SOUND_DATA_TYPE>      sndData;
-    csRef<SOUND_STREAM_TYPE>    sndStream;
-    csRef<SOUND_SOURCE_TYPE>    sndSource;
-    csRef<SOUND_SOURCE3D_TYPE>  sndSource3d;
+    SoundHandle		*sndHandle;
 };
 
 #endif

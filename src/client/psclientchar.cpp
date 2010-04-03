@@ -48,8 +48,6 @@
 
 #include "engine/linmove.h"
 
-#include "iclient/isoundmngr.h"
-
 #include "paws/pawsmanager.h"
 #include "paws/pawstextbox.h"
 #include "paws/pawsobjectview.h"
@@ -67,6 +65,7 @@
 #include "pscelclient.h"
 #include "charapp.h"
 #include "pscamera.h"
+#include "pssound/pssoundmngr.h"
 #include "globals.h"
 
 //------------------------------------------------------------------------------
@@ -392,11 +391,9 @@ void psClientCharManager::HandleAction( MsgEntry* me )
 
 void psClientCharManager::HandlePlaySound( MsgEntry* me )
 {
-    csRef<iSoundManager> soundmanager = psengine->GetSoundManager();
-    if (soundmanager)
-    {
-        soundmanager->StartActionsSound( me->GetStr() );
-    }
+	SoundHandle *Handle;
+    SndSysMgr->Play2DSound(me->GetStr(), DONT_LOOP, 0, 0, VOLUME_NORM,
+                           psengine->GetSoundManager()->actionSndCtrl, Handle);
 }
 
 void psClientCharManager::HandleTargetUpdate( MsgEntry* me )

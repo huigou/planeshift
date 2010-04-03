@@ -5,7 +5,7 @@ Application worldeditor :
 ;
 CompileGroups worldeditor : tools ;
 ExternalLibs worldeditor : CRYSTAL ;
-LinkWith worldeditor : fparser paws psutil ;
+LinkWith worldeditor : fparser paws psutil sound ;
 
 if $(HAVE_STATIC_PLUGINS) = "yes"
 {

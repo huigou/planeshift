@@ -105,8 +105,7 @@ PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* 
 
     graphics2D = csQueryRegistry<iGraphics2D > ( objectReg );
     graphics3D = csQueryRegistry<iGraphics3D > ( objectReg );
-    soundloader =  csQueryRegistry<iSndSysLoader > ( objectReg);
-    soundrenderer =  csQueryRegistry<iSndSysRenderer > ( objectReg);
+   
     nameRegistry = csEventNameRegistry::GetRegistry (objectReg);
 
     // Initialize event shortcuts
@@ -224,9 +223,6 @@ PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* 
 
 PawsManager::~PawsManager()
 {
-    // Empty the sounds hash and remove our references to the sounds within
-    ReleaseAllSounds();
-
     delete mainWidget;
     delete textureManager;
     delete prefs;
@@ -1231,143 +1227,10 @@ void PawsManager::RegisterFactories()
 
 }
 
-bool PawsManager::RegisterSound(const char *name,csRef<iSndSysData> sounddata)
-{
-    PawsSoundHandle *pawssndhandle;
-    int name_hash=csHashCompute(name);
-
-    // Note that a sound loader, vfs instance and renderer are not required at this point.
-    // A renderer is required during playback.
-
-    // Name collision check
-    {
-        csHash<PawsSoundHandle *>::Iterator sounditerator = sounds.GetIterator(name_hash);
-        while (sounditerator.HasNext())
-        {
-            pawssndhandle = sounditerator.Next();
-            if (pawssndhandle->name.Compare(name))
-                return false;
-        }
-    }
-
-    // Create a paws handle to relate the name to the iSndSysHandle and add it to our paws managed list
-    pawssndhandle = new PawsSoundHandle(name,sounddata);
-    if (pawssndhandle)
-        sounds.Put(name_hash,pawssndhandle);
-
-    return true;
-}
-
-csRef<iSndSysData> PawsManager::LoadSound(const char *filename,const char *registeredname)
-{
-    PawsSoundHandle *pawssndhandle;
-
-
-    // If a registered name is not provided, the filename is used as the registered name
-    if (registeredname==NULL)
-        registeredname=filename;
-
-    // Filename must always be specified
-    if (filename==NULL)
-        return NULL;
-
-    // Search for the same sound already loaded
-    int name_hash=csHashCompute(registeredname);
-    {
-        csHash<PawsSoundHandle *>::Iterator sounditerator = sounds.GetIterator(name_hash);
-        while (sounditerator.HasNext())
-        {
-            pawssndhandle = sounditerator.Next();
-            if (pawssndhandle->name.Compare(registeredname))
-                return pawssndhandle->snddata;
-        }
-    }
-
-    // If there is no sound loader or vfs, sound loading cannot not be performed
-    // This is checked after the registered name check since RegisterSound could add sounds created
-    // by some other method.
-    if (!vfs.IsValid() || !soundloader.IsValid())
-        return NULL;
-
-    // Load the file data
-    csRef<iDataBuffer> soundbuf = vfs->ReadFile(filename);
-    if (!soundbuf)
-    {
-        Error2("Error while reading file '%s'", filename);
-        return NULL;
-    }
-
-    // Read it into a sound buffer
-    csRef<iSndSysData> sounddata =
-        soundloader->LoadSound (soundbuf);
-    if (!sounddata)
-    {
-        Error2("Cannot create sound data from file '%s'", filename);
-        return NULL;
-    }
-
-    // Create a paws handle to relate the name to the iSndData and add it to our paws managed list
-    pawssndhandle = new PawsSoundHandle(registeredname,sounddata);
-    if (pawssndhandle)
-        sounds.Put(name_hash,pawssndhandle);
-
-    // Return the iSndSysHandle
-    return csPtr<iSndSysData>( sounddata );
-}
-
 void PawsManager::ToggleSounds(bool value)
 {
     useSounds = value;
     // No need to stop sounds since PAWS generaly use short sounds
-}
-
-bool PawsManager::PlaySound(csRef<iSndSysData> sounddata)
-{
-    if(!useSounds)
-        return true;
-
-    // If there is no sound loader or renderer, sound loading and playing will not be performed
-    if (!sounddata.IsValid() || !soundrenderer.IsValid() )
-        return false;
-
-    // Create a stream for this sound
-    csRef<iSndSysStream> sndstream=soundrenderer->CreateStream(sounddata,CS_SND3D_DISABLE);
-    if (!sndstream.IsValid())
-      return false;
-
-    // This stream should unregister (and all sources) automatically when it's done playing
-    sndstream->SetAutoUnregister(true);
-
-    // Create a source just for this sound.
-    csRef<iSndSysSource> source=soundrenderer->CreateSource(sndstream);
-    if (!source.IsValid())
-    {
-      soundrenderer->RemoveStream(sndstream);
-      return false;
-    }
-
-      source->SetVolume(volume);
-    sndstream->Unpause();
-
-    // Although we lose the reference, the CS sound renderer holds a reference to the source until playback is complete
-    return true;
-}
-
-void PawsManager::ReleaseAllSounds()
-{
-    PawsSoundHandle *pawssndhandle;
-    {
-        // As we iterate through the hash, the pointers become invalid, it's important that
-        //  the hash not be touched between this point and when DeleteAll() is called
-        csHash<PawsSoundHandle *>::GlobalIterator sounditerator = sounds.GetIterator();
-        while (sounditerator.HasNext())
-        {
-            pawssndhandle = sounditerator.Next();
-            delete pawssndhandle;
-        }
-    }
-    // Now delete all the entries pointing to the now-invalid pointers
-    sounds.DeleteAll();
 }
 
 bool PawsManager::ApplyStyle(const char * name, iDocumentNode * target)

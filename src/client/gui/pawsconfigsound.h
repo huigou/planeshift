@@ -26,6 +26,7 @@
 
 // PAWS INCLUDES
 #include "paws/pawswidget.h"
+#include "paws/pawscombo.h"
 #include "pawsconfigwindow.h"
 #include "util/psxmlparser.h"
 
@@ -46,6 +47,7 @@ public:
     virtual bool PostSetup();
     virtual bool OnScroll(int,pawsScrollBar*);
     virtual bool OnButtonPressed(int, int, pawsWidget*);
+    virtual void OnListAction(pawsListBox* selected, int status);
     virtual void Show();
     virtual void Hide();
 
@@ -73,10 +75,13 @@ protected:
     pawsCheckBox* muteOnFocusLoss;
     pawsCheckBox* loopBGM;
     pawsCheckBox* combatMusic;
+    pawsCheckBox* chatSound;
+    
+    pawsComboBox* soundLocation;
 
     bool loaded;
 
-    bool oldambient,oldactions,oldmusic,oldgui,oldvoices;
+    bool oldambient,oldactions,oldmusic,oldgui,oldvoices,oldlisteneroncamerapos,oldchatsound;
     float oldvol,oldmusicvol,oldambientvol,oldactionsvol,oldguivol,oldvoicesvol;
 };
 

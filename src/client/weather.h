@@ -106,7 +106,7 @@ protected:
     csRef<iMeshFactoryWrapper>  mfw;
     csRef<iMaterialWrapper>     mat;
 
-    csRef<iSndSysSource>        weather_sound;  // looping background weather sound
+    //csRef<iSndSysSource>        weather_sound;  // looping background weather sound
 };
 
 class RainWeatherObject;

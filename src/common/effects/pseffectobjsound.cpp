@@ -42,26 +42,18 @@
 #include "util/pscssetup.h"
 #include "util/log.h"
 
-#include <iclient/isoundmngr.h>
+extern SoundSystemManager *SndSysMgr;
 
 psEffectObjSound::psEffectObjSound(iView *parentView, psEffect2DRenderer * renderer2d)
-    : psEffectObj(parentView, renderer2d),soundmanager(NULL)
+    : psEffectObj(parentView, renderer2d)
 {
+  sndHandle = NULL;
 }
 
 psEffectObjSound::~psEffectObjSound()
 {
-  if (soundmanager.IsValid() && soundmanager->GetSoundSystem())
-  {
-    if (sndSource.IsValid())
-    {
-         soundmanager->GetSoundSystem()->RemoveSource(sndSource);
-    }
-    if (sndStream.IsValid())
-    {
-        soundmanager->GetSoundSystem()->RemoveStream(sndStream);
-    }
-  }
+  if (sndHandle != NULL)
+    sndHandle->sndstream->Pause();
 }
 
 bool psEffectObjSound::Load(iDocumentNode *node, iLoaderContext* ldr_context)
@@ -125,62 +117,11 @@ bool psEffectObjSound::Load(iDocumentNode *node, iLoaderContext* ldr_context)
 bool psEffectObjSound::Render(const csVector3 &up)
 {
     static unsigned long nextUniqueID = 0;
-    csString effectID = "effect_sound_";
     effectID += nextUniqueID++;
 
-    if (soundmanager->PlayingActions())
-    {
-        if (!sndStream.IsValid())
-        {
-            sndStream = soundmanager->GetSoundSystem()->CreateStream(sndData, CS_SND3D_RELATIVE);
-            if (!sndStream.IsValid())
-            {
-                csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Could not create stream for sound: %s\n", soundName.GetData());
-                return false;
-            }
-        }
-  
-        if (!sndSource.IsValid())
-        {
-            if (!soundmanager->GetSoundSystem())
-            {
-                csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Could not create %s effect obj sound source. Sound system not found.\n", name.GetData());
-                return false;
-            }
-
-            sndSource = soundmanager->GetSoundSystem()->CreateSource(sndStream);
-            if (!sndSource.IsValid())
-            {
-                csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Could not create %s effect obj sound source.\n", name.GetData());
-                return false;
-            }
-            sndSource3d= scfQueryInterface<SOUND_SOURCE3D_TYPE> (sndSource);
-            if (!sndSource3d.IsValid())
-            {
-                csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Could not create %s effect obj sound 3D source.\n", name.GetData());
-                return false;
-            }
-        }
-
-        // Setup looping on the stream
-        if (loop)
-            sndStream->SetLoopState(CS_SNDSYS_STREAM_LOOP);
-        else
-            sndStream->SetLoopState(CS_SNDSYS_STREAM_DONTLOOP);
-
-        volumeMultiplier = soundmanager->GetActionsVolume();
-
-        sndSource->SetVolume(volumeMultiplier);
-        sndSource3d->SetPosition(csVector3(0,0,0));
-
-        sndSource3d->SetMinimumDistance(sqrt(minDistSquared));
-        sndSource3d->SetMaximumDistance(sqrt(maxDistSquared));
-
-        isAlive = false;
-
-        return true;
-    }
-    return false;
+    /* not much left eh? :P */
+	isAlive = false;
+	return true;
 }
 
 bool psEffectObjSound::AttachToAnchor(psEffectAnchor * newAnchor)
@@ -193,8 +134,6 @@ bool psEffectObjSound::AttachToAnchor(psEffectAnchor * newAnchor)
 
 bool psEffectObjSound::Update(csTicks elapsed)
 {
-    if (!sndSource) //If there was no sound why update?
-        return true;
     if (!anchor || !anchor->IsReady()) // wait for anchor to be ready
         return true;
 
@@ -209,8 +148,10 @@ bool psEffectObjSound::Update(csTicks elapsed)
     if (life >= birth && !isAlive)
     {
         isAlive = true;
-        sndStream->ResetPosition();
-        sndStream->Unpause();
+        SndSysMgr->Play3DSound (soundName, LOOP, 0, 0, VOLUME_NORM,
+                                SndSysMgr->effectSndCtrl, (0,0,0), (0,0,0),
+                                minDistSquared, maxDistSquared,
+                                0, CS_SND3D_RELATIVE, sndHandle);
     }
 
     csVector3 soundPos = anchorMesh->GetMovable()->GetPosition();
@@ -224,13 +165,11 @@ bool psEffectObjSound::Update(csTicks elapsed)
 
         // position
         soundPos += LERP_VEC_KEY(KA_POS);
-
-        // volume
-        sndSource->SetVolume(LERP_KEY(KA_SCALE) * volumeMultiplier);
     }
 
-    sndSource3d->SetPosition(view->GetCamera()->GetTransform().Other2This(soundPos));
-
+	if (sndHandle != NULL)
+        sndHandle->sndsource3d->SetPosition(view->GetCamera()->GetTransform().Other2This(soundPos));
+      
     if (killTime <= 0)
         return true;
 
@@ -254,37 +193,10 @@ psEffectObj *psEffectObjSound::Clone() const
 
     newObj->loop = loop;
 
-    newObj->soundmanager = soundmanager;
-    newObj->sndData = sndData;
-//    newObj->sndStream = sndStream;
-//    newObj->sndSource = sndSource;
-
     return newObj;
 }
 
 bool psEffectObjSound::PostSetup()
 {
-    soundmanager =  csQueryRegistry<iSoundManager> (psCSSetup::object_reg);
-    if ( soundmanager )
-    {
-        if ( !soundmanager->Setup() )
-            return false;
-    }
-    else
-    {
-        csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "No sound manager to load sound: %s\n", soundName.GetData());
-        return false;
-    }
-
-    if (!sndData.IsValid())
-    {
-      sndData = soundmanager->GetSoundResource(soundName);
-      if (!sndData.IsValid())
-      {
-        csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Could not load sound: %s\n", soundName.GetData());
-        return false;
-      }
-    }
-
     return true;
 }

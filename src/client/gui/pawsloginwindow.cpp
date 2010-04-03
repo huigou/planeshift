@@ -23,7 +23,6 @@
 #include <csutil/xmltiny.h>
 #include <csutil/csmd5.h>
 
-#include "iclient/isoundmngr.h"
 #include "pawsloginwindow.h"
 #include "paws/pawsmanager.h"
 #include "paws/pawstextbox.h"
@@ -467,11 +466,7 @@ void pawsLoginWindow::OnListAction( pawsListBox* selected, int status )
 void pawsLoginWindow::Show()
 {
     // Play some music  
-
-    if(psengine->GetSoundStatus())
-    {
-        psengine->GetSoundManager()->OverrideBGSong("mainmenu");
-    }
+    psengine->GetSoundManager()->Load("main", NULL);
     pawsWidget::Show();
 }
 

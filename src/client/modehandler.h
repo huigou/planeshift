@@ -107,7 +107,7 @@ struct WeatherPortal
 class ModeHandler : public psClientNetSubscriber
 {
 public:
-    ModeHandler(iSoundManager *sm,psCelClient *cc,MsgHandler* mh,iObjectRegistry* object_reg);
+    ModeHandler(psCelClient *cc,MsgHandler* mh,iObjectRegistry* object_reg);
     virtual ~ModeHandler();
     virtual void HandleMessage(MsgEntry* me);
 
@@ -152,7 +152,6 @@ protected:
     uint clockHour;
      
     iObjectRegistry*        object_reg;
-    csRef<iSoundManager>    soundmanager;
     csRef<psCelClient>      celclient;
     csRef<MsgHandler>       msghandler;
     csRef<iEngine>          engine;

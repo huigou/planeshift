@@ -27,7 +27,6 @@
 #include "util/log.h"
 
 // CLIENT INCLUDES
-#include "iclient/isoundmngr.h"
 #include "../globals.h"
 
 // PAWS INCLUDES
@@ -107,7 +106,15 @@ bool pawsConfigSound::PostSetup()
     if (!combatMusic)
         return false;
 
-    generalVol->SetMaxValue(100);
+    chatSound = (pawsCheckBox*) FindWidget("chatSound");
+    if (!chatSound)
+        return false;
+
+    soundLocation = (pawsComboBox*) FindWidget("soundLocation");
+    soundLocation->NewOption("Player");
+    soundLocation->NewOption("Camera");
+    
+    generalVol->SetMaxValue(200);
     generalVol->SetTickValue(10);
     generalVol->EnableValueLimit(true);
 
@@ -135,24 +142,32 @@ bool pawsConfigSound::PostSetup()
 }
 bool pawsConfigSound::LoadConfig()
 {
-    csRef<iSoundManager> pssnd = psengine->GetSoundManager(); // was iSoundManager*
+    generalVol->SetCurrentValue(psengine->GetSoundManager()->mainSndCtrl->GetVolume()*100,false);
+    musicVol->SetCurrentValue(psengine->GetSoundManager()->musicSndCtrl->GetVolume()*100,false);
+    ambientVol->SetCurrentValue(psengine->GetSoundManager()->ambientSndCtrl->GetVolume()*100,false);
+    guiVol->SetCurrentValue(psengine->GetSoundManager()->guiSndCtrl->GetVolume()*100,false);
+    voicesVol->SetCurrentValue(psengine->GetSoundManager()->voiceSndCtrl->GetVolume()*100,false);
+    actionsVol->SetCurrentValue(psengine->GetSoundManager()->actionSndCtrl->GetVolume()*100,false);
 
-    generalVol->SetCurrentValue(pssnd->GetVolume()*100,false);
-    musicVol->SetCurrentValue(pssnd->GetMusicVolume()*100,false);
-    ambientVol->SetCurrentValue(pssnd->GetAmbientVolume()*100,false);
-    guiVol->SetCurrentValue(PawsManager::GetSingleton().GetVolume()*100,false);
-    voicesVol->SetCurrentValue(pssnd->GetVoicesVolume()*100,false);
-    actionsVol->SetCurrentValue(pssnd->GetActionsVolume()*100,false);
-
-    ambient->SetState(pssnd->PlayingAmbient());
-    actions->SetState(pssnd->PlayingActions());
-    music->SetState(pssnd->PlayingMusic());
-    gui->SetState(PawsManager::GetSingleton().PlayingSounds());
-    voices->SetState(pssnd->PlayingVoices());
+    ambient->SetState(psengine->GetSoundManager()->ambientSndCtrl->GetToggle());
+    actions->SetState(psengine->GetSoundManager()->actionSndCtrl->GetToggle());
+    music->SetState(psengine->GetSoundManager()->musicSndCtrl->GetToggle());
+    gui->SetState(psengine->GetSoundManager()->guiSndCtrl->GetToggle());
+    voices->SetState(psengine->GetSoundManager()->voiceSndCtrl->GetToggle());
 
     muteOnFocusLoss->SetState(psengine->GetMuteSoundsOnFocusLoss());
-    loopBGM->SetState(pssnd->LoopBGM());
-    combatMusic->SetState(pssnd->PlayingCombatMusic());
+    loopBGM->SetState(psengine->GetSoundManager()->GetLoopBGMToggle());
+    combatMusic->SetState(psengine->GetSoundManager()->GetCombatToggle());
+    chatSound->SetState(psengine->GetSoundManager()->GetChatToggle());
+    
+    if (psengine->GetSoundManager()->GetListenerOnCameraPos() == true)
+    {
+        soundLocation->Select("Camera");
+    }
+    else
+    {
+        soundLocation->Select("Player");
+    }
 
     loaded= true;
     dirty = false;
@@ -191,6 +206,17 @@ bool pawsConfigSound::SaveConfig()
                      loopBGM->GetState() ? "yes" : "no");
     xml.AppendFmt("<combatmusic on=\"%s\" />\n",
                      combatMusic->GetState() ? "yes" : "no");
+    xml.AppendFmt("<chatsound on=\"%s\" />\n",
+                     chatSound->GetState() ? "yes" : "no");
+               
+    if (csStrCaseCmp(soundLocation->GetSelectedRowString(), "Camera") == 0)
+    {
+        xml.AppendFmt("<usecamerapos on=\"%s\" />\n", "yes");
+    }
+    else
+    {
+        xml.AppendFmt("<usecamerapos on=\"%s\" />\n", "no");
+    }
     xml += "</sound>\n";
 
     dirty = false;
@@ -213,123 +239,134 @@ bool pawsConfigSound::OnScroll(int scrollDir,pawsScrollBar* wdg)
         if(generalVol->GetCurrentValue() < 1)
             generalVol->SetCurrentValue(1,false);
 
-        psengine->GetSoundManager()->SetVolume(generalVol->GetCurrentValue()/100);
-        return true;
+        psengine->GetSoundManager()->mainSndCtrl->SetVolume(generalVol->GetCurrentValue()/100);
     }
     else if(wdg == musicVol && loaded)
     {
         if(musicVol->GetCurrentValue() < 1)
             musicVol->SetCurrentValue(1,false);
 
-        psengine->GetSoundManager()->SetMusicVolume(musicVol->GetCurrentValue()/100);
-        return true;
+        psengine->GetSoundManager()->musicSndCtrl->SetVolume(musicVol->GetCurrentValue()/100);
     }
     else if(wdg == ambientVol && loaded)
     {
         if(ambientVol->GetCurrentValue() < 1)
             ambientVol->SetCurrentValue(1,false);
 
-        psengine->GetSoundManager()->SetAmbientVolume(ambientVol->GetCurrentValue()/100);
-        return true;
+        psengine->GetSoundManager()->ambientSndCtrl->SetVolume(ambientVol->GetCurrentValue()/100);
     }
     else if(wdg == actionsVol && loaded)
     {
         if(actionsVol->GetCurrentValue() < 1)
             actionsVol->SetCurrentValue(1,false);
 
-        psengine->GetSoundManager()->SetActionsVolume(actionsVol->GetCurrentValue()/100);
-        return true;
+        psengine->GetSoundManager()->actionSndCtrl->SetVolume(actionsVol->GetCurrentValue()/100);
     }
     else if(wdg == guiVol && loaded)
     {
         if(guiVol->GetCurrentValue() < 1)
             guiVol->SetCurrentValue(1,false);
 
-        PawsManager::GetSingleton().SetVolume(guiVol->GetCurrentValue()/100);
-        psengine->GetSoundManager()->SetGUIVolume(guiVol->GetCurrentValue()/100);
-        return true;
+        psengine->GetSoundManager()->guiSndCtrl->SetVolume(guiVol->GetCurrentValue()/100);
     }
     else if(wdg == voicesVol && loaded)
     {
         if(voicesVol->GetCurrentValue() < 1)
             voicesVol->SetCurrentValue(1,false);
 
-        psengine->GetSoundManager()->SetVoicesVolume(voicesVol->GetCurrentValue()/100);
-        return true;
+        psengine->GetSoundManager()->voiceSndCtrl->SetVolume(voicesVol->GetCurrentValue()/100);
     }
     else
+    {
         return false;
+    }
+    
+    SaveConfig();
+    return true;
 }
 
 bool pawsConfigSound::OnButtonPressed(int button, int mod, pawsWidget* wdg)
 {
     dirty = true;
+
     if(wdg == ambient)
     {
-        psengine->GetSoundManager()->ToggleAmbient(ambient->GetState());
-        return true;
+        psengine->GetSoundManager()->SetAmbientToggle(ambient->GetState());
     }
     else if(wdg == actions)
     {
-        psengine->GetSoundManager()->ToggleActions(actions->GetState());
-        return true;
+        psengine->GetSoundManager()->actionSndCtrl->SetToggle(actions->GetState());
     }
     else if(wdg == music)
     {
-        psengine->GetSoundManager()->ToggleMusic(music->GetState());
-        return true;
+        psengine->GetSoundManager()->SetMusicToggle(music->GetState());
     }
     else if(wdg == gui)
     {
-        if(gui->GetState())
-        {
-            PawsManager::GetSingleton().ToggleSounds(true);
-            psengine->GetSoundManager()->ToggleGUI(true);
-        }
-        else
-        {
-            PawsManager::GetSingleton().ToggleSounds(false);
-            psengine->GetSoundManager()->ToggleGUI(false);
-        }
-        return true;
+        psengine->GetSoundManager()->guiSndCtrl->SetToggle(gui->GetState());
     }
     else if(wdg == voices)
     {
-        psengine->GetSoundManager()->ToggleVoices(voices->GetState());
-        return true;
+        psengine->GetSoundManager()->SetVoiceToggle(voices->GetState());
     }
     else if(wdg == loopBGM)
     {
-        psengine->GetSoundManager()->ToggleLoop(loopBGM->GetState());
-        return true;
+		psengine->GetSoundManager()->SetLoopBGMToggle(loopBGM->GetState());
     }
     else if(wdg == combatMusic)
     {
-        psengine->GetSoundManager()->ToggleCombatMusic(combatMusic->GetState());
-        return true;
+        psengine->GetSoundManager()->SetCombatToggle(combatMusic->GetState());
     }
     else if(wdg == muteOnFocusLoss)
     {
         psengine->SetMuteSoundsOnFocusLoss(muteOnFocusLoss->GetState());
-        return true;
     }
-    return false;
+    else if(wdg == chatSound)
+    {
+        psengine->GetSoundManager()->SetChatToggle(chatSound->GetState());
+    }
+    else
+    {
+        return false;
+    }
+
+    SaveConfig();    
+    return true;
 }
+
+void pawsConfigSound::OnListAction(pawsListBox* selected, int status)
+{
+    pawsComboBox* soundlocation = (pawsComboBox*)FindWidget("soundLocation");
+    csString _selected = soundlocation->GetSelectedRowString();
+   
+    if (_selected.Compare("Camera"))
+    {
+        psengine->GetSoundManager()->SetListenerOnCameraPos(true);
+    }
+    else
+    {
+        psengine->GetSoundManager()->SetListenerOnCameraPos(false);
+    }
+    SaveConfig();
+}
+
 
 void pawsConfigSound::Show()
 {
-    oldambient = psengine->GetSoundManager()->PlayingAmbient();
-    oldmusic = psengine->GetSoundManager()->PlayingMusic();
-    oldactions = psengine->GetSoundManager()->PlayingActions();
-    oldgui = PawsManager::GetSingleton().PlayingSounds();
-    oldvoices = psengine->GetSoundManager()->PlayingVoices();
+    oldambient = psengine->GetSoundManager()->ambientSndCtrl->GetToggle();
+    oldmusic = psengine->GetSoundManager()->musicSndCtrl->GetToggle();
+    oldactions = psengine->GetSoundManager()->actionSndCtrl->GetToggle();
+    oldgui = psengine->GetSoundManager()->guiSndCtrl->GetToggle();
+    oldvoices = psengine->GetSoundManager()->voiceSndCtrl->GetToggle();
+    oldchatsound = psengine->GetSoundManager()->GetChatToggle();
+    oldlisteneroncamerapos = psengine->GetSoundManager()->GetListenerOnCameraPos();
 
-    oldvol = psengine->GetSoundManager()->GetVolume();
-    oldmusicvol = psengine->GetSoundManager()->GetMusicVolume();
-    oldambientvol = psengine->GetSoundManager()->GetAmbientVolume();
-    oldactionsvol = psengine->GetSoundManager()->GetActionsVolume();
-    oldguivol = PawsManager::GetSingleton().GetVolume();
-    oldvoicesvol = psengine->GetSoundManager()->GetVoicesVolume();
+    oldvol = psengine->GetSoundManager()->mainSndCtrl->GetVolume();
+    oldmusicvol = psengine->GetSoundManager()->musicSndCtrl->GetVolume();
+    oldambientvol = psengine->GetSoundManager()->ambientSndCtrl->GetVolume();
+    oldactionsvol = psengine->GetSoundManager()->actionSndCtrl->GetVolume();
+    oldguivol = psengine->GetSoundManager()->guiSndCtrl->GetVolume();
+    oldvoicesvol = psengine->GetSoundManager()->voiceSndCtrl->GetVolume();
 
     pawsWidget::Show();
 }
@@ -338,20 +375,20 @@ void pawsConfigSound::Hide()
 {
     if(dirty)
     {
-        psengine->GetSoundManager()->ToggleAmbient(oldambient);
-        psengine->GetSoundManager()->ToggleActions(oldactions);
-        psengine->GetSoundManager()->ToggleMusic(oldmusic);
-        PawsManager::GetSingleton().ToggleSounds(oldgui);
-        psengine->GetSoundManager()->ToggleGUI(oldgui);
-        psengine->GetSoundManager()->ToggleVoices(oldvoices);
+        psengine->GetSoundManager()->SetAmbientToggle(oldambient);
+        psengine->GetSoundManager()->actionSndCtrl->SetToggle(oldactions);
+        psengine->GetSoundManager()->SetMusicToggle(oldmusic);
+        psengine->GetSoundManager()->guiSndCtrl->SetToggle(oldgui);
+        psengine->GetSoundManager()->SetVoiceToggle(oldvoices);
+        psengine->GetSoundManager()->SetChatToggle(oldchatsound);
+        psengine->GetSoundManager()->SetListenerOnCameraPos(oldlisteneroncamerapos);
 
-        psengine->GetSoundManager()->SetVolume(oldvol);
-        psengine->GetSoundManager()->SetMusicVolume(oldmusicvol);
-        psengine->GetSoundManager()->SetAmbientVolume(oldambientvol);
-        psengine->GetSoundManager()->SetActionsVolume(oldactionsvol);
-        PawsManager::GetSingleton().SetVolume(oldguivol);
-        psengine->GetSoundManager()->SetGUIVolume(oldguivol);
-        psengine->GetSoundManager()->SetVoicesVolume(oldvoicesvol);
+        psengine->GetSoundManager()->mainSndCtrl->SetVolume(oldvol);
+        psengine->GetSoundManager()->musicSndCtrl->SetVolume(oldmusicvol);
+        psengine->GetSoundManager()->ambientSndCtrl->SetVolume(oldambientvol);
+        psengine->GetSoundManager()->actionSndCtrl->SetVolume(oldactionsvol);
+        psengine->GetSoundManager()->guiSndCtrl->SetVolume(oldguivol);
+        psengine->GetSoundManager()->voiceSndCtrl->SetVolume(oldvoicesvol);
     }
 
     pawsWidget::Hide();

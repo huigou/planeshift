@@ -87,7 +87,7 @@ bool NpcGui::Initialise()
   guiWidget = new pawsNPCClientWindowFactory();
 
   // Load and assign a default button click sound for pawsbutton
-  paws->LoadSound("/planeshift/art/sounds/gui/next.wav","sound.standardButtonClick");
+  //paws->LoadSound("/planeshift/art/sounds/gui/next.wav","sound.standardButtonClick");
 
   // Load widgets
   if (!paws->LoadWidget("data/gui/npcclient.xml"))

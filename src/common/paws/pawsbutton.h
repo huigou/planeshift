@@ -52,7 +52,7 @@ public:
 	/* Specify the image to use for special flashing in chat window */
 	void SetOnSpecialImage(const csString & image);
 
-    void SetSound(const csString & sound);
+    void SetSound(const char *sound);
 
     virtual void Draw();
 
@@ -134,7 +134,7 @@ protected:
     FLASH_STATE flashtype;
 
 	/// Button can trigger sound effects with this
-    csRef<iSndSysData> sound_click;
+    csString sound_click;
 	int upTextOffsetX;
 	int upTextOffsetY;
 	int downTextOffsetX;

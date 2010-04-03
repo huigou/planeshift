@@ -54,7 +54,6 @@
 #include "engine/psworld.h"
 
 #include "iclient/ibgloader.h"
-#include "iclient/isoundmngr.h"
 
 #include "psclientdr.h"
 

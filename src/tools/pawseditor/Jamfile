@@ -5,4 +5,4 @@ Application pawseditor :
 ;
 CompileGroups pawseditor : tools ;
 ExternalLibs pawseditor : CRYSTAL CEL ;
-LinkWith pawseditor : paws psutil fparser ;
+LinkWith pawseditor : paws psutil sound fparser ;
