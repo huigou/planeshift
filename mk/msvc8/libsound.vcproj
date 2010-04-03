@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="libpssound"
-	ProjectGUID="{C0CD3069-8659-1151-26AC-40C98186358B}"
+	Name="libsound"
+	ProjectGUID="{1B4A7655-07C5-8C89-4BDB-97E82AD36BB0}"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
@@ -13,8 +13,8 @@
 	<Configurations>
             		<Configuration
 			Name="Release (with static libs)|Win32"
-			OutputDirectory="..\..\out\release8\build\libpssound\"
-			IntermediateDirectory="..\..\out\release8\build\libpssound\"
+			OutputDirectory="..\..\out\release8\build\libsound\"
+			IntermediateDirectory="..\..\out\release8\build\libsound\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -25,15 +25,15 @@
 				EnableFunctionLevelLinking="TRUE"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="FALSE"
-				ProgramDataBaseFileName="..\..\out\release8\build\libpssound\Win32\pssound.pdb"
+				ProgramDataBaseFileName="..\..\out\release8\build\libsound\Win32\sound.pdb"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
-				PrecompiledHeaderFile="..\..\out\release8\build\libpssound\libpssound.pch"
-				AssemblerListingLocation="..\..\out\release8\build\libpssound\"
-				ObjectFile="..\..\out\release8\build\libpssound\"
+				PrecompiledHeaderFile="..\..\out\release8\build\libsound\libsound.pch"
+				AssemblerListingLocation="..\..\out\release8\build\libsound\"
+				ObjectFile="..\..\out\release8\build\libsound\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -57,7 +57,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\release8\libs\libpssound.lib"
+				OutputFile="..\..\out\release8\libs\libsound.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -65,7 +65,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release8\build\libpssound\libpssound.tlb"/>
+				TypeLibraryName="..\..\out\release8\build\libsound\libsound.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\release8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release8\bin\&#x0D;&#x0A;"
@@ -77,7 +77,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -86,8 +86,8 @@
 		</Configuration>
       		<Configuration
 			Name="Release (with DLLs)|Win32"
-			OutputDirectory="..\..\out\release8\build\libpssound\"
-			IntermediateDirectory="..\..\out\release8\build\libpssound\"
+			OutputDirectory="..\..\out\release8\build\libsound\"
+			IntermediateDirectory="..\..\out\release8\build\libsound\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -98,15 +98,15 @@
 				EnableFunctionLevelLinking="TRUE"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="FALSE"
-				ProgramDataBaseFileName="..\..\out\release8\build\libpssound\Win32\pssound.pdb"
+				ProgramDataBaseFileName="..\..\out\release8\build\libsound\Win32\sound.pdb"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
-				PrecompiledHeaderFile="..\..\out\release8\build\libpssound\libpssound.pch"
-				AssemblerListingLocation="..\..\out\release8\build\libpssound\"
-				ObjectFile="..\..\out\release8\build\libpssound\"
+				PrecompiledHeaderFile="..\..\out\release8\build\libsound\libsound.pch"
+				AssemblerListingLocation="..\..\out\release8\build\libsound\"
+				ObjectFile="..\..\out\release8\build\libsound\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -130,7 +130,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\release8\libs\libpssound.lib"
+				OutputFile="..\..\out\release8\libs\libsound.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -138,7 +138,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release8\build\libpssound\libpssound.tlb"/>
+				TypeLibraryName="..\..\out\release8\build\libsound\libsound.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\release8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release8\bin\&#x0D;&#x0A;"
@@ -150,7 +150,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -159,8 +159,8 @@
 		</Configuration>
                 		<Configuration
 			Name="Debug (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\libpssound\"
-			IntermediateDirectory="..\..\out\debug8\build\libpssound\"
+			OutputDirectory="..\..\out\debug8\build\libsound\"
+			IntermediateDirectory="..\..\out\debug8\build\libsound\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -171,15 +171,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8\build\libpssound\Win32\pssound.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8\build\libsound\Win32\sound.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
-				PrecompiledHeaderFile="..\..\out\debug8\build\libpssound\libpssound.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\libpssound\"
-				ObjectFile="..\..\out\debug8\build\libpssound\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libsound\libsound.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libsound\"
+				ObjectFile="..\..\out\debug8\build\libsound\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -201,7 +201,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8\libs\libpssound_d.lib"
+				OutputFile="..\..\out\debug8\libs\libsound_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -209,7 +209,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\libpssound\libpssound.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libsound\libsound.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -221,7 +221,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -230,8 +230,8 @@
 		</Configuration>
       		<Configuration
 			Name="Debug (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\libpssound\"
-			IntermediateDirectory="..\..\out\debug8\build\libpssound\"
+			OutputDirectory="..\..\out\debug8\build\libsound\"
+			IntermediateDirectory="..\..\out\debug8\build\libsound\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -242,15 +242,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8\build\libpssound\Win32\pssound.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8\build\libsound\Win32\sound.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
-				PrecompiledHeaderFile="..\..\out\debug8\build\libpssound\libpssound.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\libpssound\"
-				ObjectFile="..\..\out\debug8\build\libpssound\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libsound\libsound.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libsound\"
+				ObjectFile="..\..\out\debug8\build\libsound\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -272,7 +272,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8\libs\libpssound_d.lib"
+				OutputFile="..\..\out\debug8\libs\libsound_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -280,7 +280,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\libpssound\libpssound.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libsound\libsound.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -292,7 +292,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -301,8 +301,8 @@
 		</Configuration>
                 		<Configuration
 			Name="MemoryTracker (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\libpssound\"
-			IntermediateDirectory="..\..\out\debug8\build\libpssound\"
+			OutputDirectory="..\..\out\debug8\build\libsound\"
+			IntermediateDirectory="..\..\out\debug8\build\libsound\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -313,15 +313,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8\build\libpssound\Win32\pssound.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8\build\libsound\Win32\sound.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;WIN32"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
-				PrecompiledHeaderFile="..\..\out\debug8\build\libpssound\libpssound.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\libpssound\"
-				ObjectFile="..\..\out\debug8\build\libpssound\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libsound\libsound.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libsound\"
+				ObjectFile="..\..\out\debug8\build\libsound\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -343,7 +343,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8\libs\libpssound_d.lib"
+				OutputFile="..\..\out\debug8\libs\libsound_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -351,7 +351,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\libpssound\libpssound.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libsound\libsound.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -363,7 +363,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -372,8 +372,8 @@
 		</Configuration>
       		<Configuration
 			Name="MemoryTracker (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\libpssound\"
-			IntermediateDirectory="..\..\out\debug8\build\libpssound\"
+			OutputDirectory="..\..\out\debug8\build\libsound\"
+			IntermediateDirectory="..\..\out\debug8\build\libsound\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -384,15 +384,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8\build\libpssound\Win32\pssound.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8\build\libsound\Win32\sound.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
-				PrecompiledHeaderFile="..\..\out\debug8\build\libpssound\libpssound.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\libpssound\"
-				ObjectFile="..\..\out\debug8\build\libpssound\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libsound\libsound.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libsound\"
+				ObjectFile="..\..\out\debug8\build\libsound\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -414,7 +414,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8\libs\libpssound_d.lib"
+				OutputFile="..\..\out\debug8\libs\libsound_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -422,7 +422,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\libpssound\libpssound.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libsound\libsound.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -434,7 +434,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -443,8 +443,8 @@
 		</Configuration>
                 		<Configuration
 			Name="RefTracker (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\libpssound\"
-			IntermediateDirectory="..\..\out\debug8\build\libpssound\"
+			OutputDirectory="..\..\out\debug8\build\libsound\"
+			IntermediateDirectory="..\..\out\debug8\build\libsound\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -455,15 +455,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8\build\libpssound\Win32\pssound.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8\build\libsound\Win32\sound.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;WIN32"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
-				PrecompiledHeaderFile="..\..\out\debug8\build\libpssound\libpssound.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\libpssound\"
-				ObjectFile="..\..\out\debug8\build\libpssound\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libsound\libsound.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libsound\"
+				ObjectFile="..\..\out\debug8\build\libsound\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -485,7 +485,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8\libs\libpssound_d.lib"
+				OutputFile="..\..\out\debug8\libs\libsound_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -493,7 +493,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\libpssound\libpssound.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libsound\libsound.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -505,7 +505,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -514,8 +514,8 @@
 		</Configuration>
       		<Configuration
 			Name="RefTracker (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\libpssound\"
-			IntermediateDirectory="..\..\out\debug8\build\libpssound\"
+			OutputDirectory="..\..\out\debug8\build\libsound\"
+			IntermediateDirectory="..\..\out\debug8\build\libsound\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -526,15 +526,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8\build\libpssound\Win32\pssound.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8\build\libsound\Win32\sound.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
-				PrecompiledHeaderFile="..\..\out\debug8\build\libpssound\libpssound.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\libpssound\"
-				ObjectFile="..\..\out\debug8\build\libpssound\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libsound\libsound.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libsound\"
+				ObjectFile="..\..\out\debug8\build\libsound\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -556,7 +556,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8\libs\libpssound_d.lib"
+				OutputFile="..\..\out\debug8\libs\libsound_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -564,7 +564,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\libpssound\libpssound.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libsound\libsound.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -576,7 +576,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -585,8 +585,8 @@
 		</Configuration>
                 		<Configuration
 			Name="ThreadChecker (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\libpssound\"
-			IntermediateDirectory="..\..\out\debug8\build\libpssound\"
+			OutputDirectory="..\..\out\debug8\build\libsound\"
+			IntermediateDirectory="..\..\out\debug8\build\libsound\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -597,15 +597,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8\build\libpssound\Win32\pssound.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8\build\libsound\Win32\sound.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;WIN32"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
-				PrecompiledHeaderFile="..\..\out\debug8\build\libpssound\libpssound.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\libpssound\"
-				ObjectFile="..\..\out\debug8\build\libpssound\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libsound\libsound.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libsound\"
+				ObjectFile="..\..\out\debug8\build\libsound\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -627,7 +627,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8\libs\libpssound_d.lib"
+				OutputFile="..\..\out\debug8\libs\libsound_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -635,7 +635,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\libpssound\libpssound.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libsound\libsound.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -647,7 +647,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -656,8 +656,8 @@
 		</Configuration>
       		<Configuration
 			Name="ThreadChecker (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\libpssound\"
-			IntermediateDirectory="..\..\out\debug8\build\libpssound\"
+			OutputDirectory="..\..\out\debug8\build\libsound\"
+			IntermediateDirectory="..\..\out\debug8\build\libsound\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -668,15 +668,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8\build\libpssound\Win32\pssound.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8\build\libsound\Win32\sound.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
-				PrecompiledHeaderFile="..\..\out\debug8\build\libpssound\libpssound.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\libpssound\"
-				ObjectFile="..\..\out\debug8\build\libpssound\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libsound\libsound.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libsound\"
+				ObjectFile="..\..\out\debug8\build\libsound\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -698,7 +698,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8\libs\libpssound_d.lib"
+				OutputFile="..\..\out\debug8\libs\libsound_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -706,7 +706,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\libpssound\libpssound.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libsound\libsound.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -718,7 +718,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -727,8 +727,8 @@
 		</Configuration>
                 		<Configuration
 			Name="DebugPSReleaseCSCEL (with static libs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\libpssound\"
-			IntermediateDirectory="..\..\out\debug8\build\libpssound\"
+			OutputDirectory="..\..\out\debug8\build\libsound\"
+			IntermediateDirectory="..\..\out\debug8\build\libsound\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -739,15 +739,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8\build\libpssound\Win32\pssound.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8\build\libsound\Win32\sound.pdb"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
-				PrecompiledHeaderFile="..\..\out\debug8\build\libpssound\libpssound.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\libpssound\"
-				ObjectFile="..\..\out\debug8\build\libpssound\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libsound\libsound.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libsound\"
+				ObjectFile="..\..\out\debug8\build\libsound\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -769,7 +769,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8\libs\libpssound_d.lib"
+				OutputFile="..\..\out\debug8\libs\libsound_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -777,7 +777,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\libpssound\libpssound.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libsound\libsound.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -789,7 +789,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -798,8 +798,8 @@
 		</Configuration>
       		<Configuration
 			Name="DebugPSReleaseCSCEL (with DLLs)|Win32"
-			OutputDirectory="..\..\out\debug8\build\libpssound\"
-			IntermediateDirectory="..\..\out\debug8\build\libpssound\"
+			OutputDirectory="..\..\out\debug8\build\libsound\"
+			IntermediateDirectory="..\..\out\debug8\build\libsound\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -810,15 +810,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8\build\libpssound\Win32\pssound.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8\build\libsound\Win32\sound.pdb"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
-				PrecompiledHeaderFile="..\..\out\debug8\build\libpssound\libpssound.pch"
-				AssemblerListingLocation="..\..\out\debug8\build\libpssound\"
-				ObjectFile="..\..\out\debug8\build\libpssound\"
+				PrecompiledHeaderFile="..\..\out\debug8\build\libsound\libsound.pch"
+				AssemblerListingLocation="..\..\out\debug8\build\libsound\"
+				ObjectFile="..\..\out\debug8\build\libsound\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -840,7 +840,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8\libs\libpssound_d.lib"
+				OutputFile="..\..\out\debug8\libs\libsound_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -848,7 +848,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8\build\libpssound\libpssound.tlb"/>
+				TypeLibraryName="..\..\out\debug8\build\libsound\libsound.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8\bin\&#x0D;&#x0A;"
@@ -860,7 +860,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -869,8 +869,8 @@
 		</Configuration>
                         		<Configuration
 			Name="Release (with static libs)|x64"
-			OutputDirectory="..\..\out\release8-x64\build\libpssound\"
-			IntermediateDirectory="..\..\out\release8-x64\build\libpssound\"
+			OutputDirectory="..\..\out\release8-x64\build\libsound\"
+			IntermediateDirectory="..\..\out\release8-x64\build\libsound\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -881,15 +881,15 @@
 				EnableFunctionLevelLinking="TRUE"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="FALSE"
-				ProgramDataBaseFileName="..\..\out\release8-x64\build\libpssound\x64\pssound.pdb"
+				ProgramDataBaseFileName="..\..\out\release8-x64\build\libsound\x64\sound.pdb"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
-				PrecompiledHeaderFile="..\..\out\release8-x64\build\libpssound\libpssound.pch"
-				AssemblerListingLocation="..\..\out\release8-x64\build\libpssound\"
-				ObjectFile="..\..\out\release8-x64\build\libpssound\"
+				PrecompiledHeaderFile="..\..\out\release8-x64\build\libsound\libsound.pch"
+				AssemblerListingLocation="..\..\out\release8-x64\build\libsound\"
+				ObjectFile="..\..\out\release8-x64\build\libsound\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -913,7 +913,7 @@
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\release8-x64\libs\libpssound.lib"
+				OutputFile="..\..\out\release8-x64\libs\libsound.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -921,7 +921,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release8-x64\build\libpssound\libpssound.tlb"/>
+				TypeLibraryName="..\..\out\release8-x64\build\libsound\libsound.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\release8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release8-x64\bin\&#x0D;&#x0A;"
@@ -933,7 +933,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -942,8 +942,8 @@
 		</Configuration>
       		<Configuration
 			Name="Release (with DLLs)|x64"
-			OutputDirectory="..\..\out\release8-x64\build\libpssound\"
-			IntermediateDirectory="..\..\out\release8-x64\build\libpssound\"
+			OutputDirectory="..\..\out\release8-x64\build\libsound\"
+			IntermediateDirectory="..\..\out\release8-x64\build\libsound\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -954,15 +954,15 @@
 				EnableFunctionLevelLinking="TRUE"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="FALSE"
-				ProgramDataBaseFileName="..\..\out\release8-x64\build\libpssound\x64\pssound.pdb"
+				ProgramDataBaseFileName="..\..\out\release8-x64\build\libsound\x64\sound.pdb"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
-				PrecompiledHeaderFile="..\..\out\release8-x64\build\libpssound\libpssound.pch"
-				AssemblerListingLocation="..\..\out\release8-x64\build\libpssound\"
-				ObjectFile="..\..\out\release8-x64\build\libpssound\"
+				PrecompiledHeaderFile="..\..\out\release8-x64\build\libsound\libsound.pch"
+				AssemblerListingLocation="..\..\out\release8-x64\build\libsound\"
+				ObjectFile="..\..\out\release8-x64\build\libsound\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -986,7 +986,7 @@
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\release8-x64\libs\libpssound.lib"
+				OutputFile="..\..\out\release8-x64\libs\libsound.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -994,7 +994,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\release8-x64\build\libpssound\libpssound.tlb"/>
+				TypeLibraryName="..\..\out\release8-x64\build\libsound\libsound.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\release8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\release8-x64\bin\&#x0D;&#x0A;"
@@ -1006,7 +1006,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1015,8 +1015,8 @@
 		</Configuration>
                 		<Configuration
 			Name="Debug (with static libs)|x64"
-			OutputDirectory="..\..\out\debug8-x64\build\libpssound\"
-			IntermediateDirectory="..\..\out\debug8-x64\build\libpssound\"
+			OutputDirectory="..\..\out\debug8-x64\build\libsound\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libsound\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -1027,15 +1027,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libpssound\x64\pssound.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libsound\x64\sound.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
-				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libpssound\libpssound.pch"
-				AssemblerListingLocation="..\..\out\debug8-x64\build\libpssound\"
-				ObjectFile="..\..\out\debug8-x64\build\libpssound\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libsound\libsound.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libsound\"
+				ObjectFile="..\..\out\debug8-x64\build\libsound\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1057,7 +1057,7 @@
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8-x64\libs\libpssound_d.lib"
+				OutputFile="..\..\out\debug8-x64\libs\libsound_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -1065,7 +1065,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8-x64\build\libpssound\libpssound.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libsound\libsound.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
@@ -1077,7 +1077,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1086,8 +1086,8 @@
 		</Configuration>
       		<Configuration
 			Name="Debug (with DLLs)|x64"
-			OutputDirectory="..\..\out\debug8-x64\build\libpssound\"
-			IntermediateDirectory="..\..\out\debug8-x64\build\libpssound\"
+			OutputDirectory="..\..\out\debug8-x64\build\libsound\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libsound\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -1098,15 +1098,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libpssound\x64\pssound.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libsound\x64\sound.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
-				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libpssound\libpssound.pch"
-				AssemblerListingLocation="..\..\out\debug8-x64\build\libpssound\"
-				ObjectFile="..\..\out\debug8-x64\build\libpssound\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libsound\libsound.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libsound\"
+				ObjectFile="..\..\out\debug8-x64\build\libsound\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1128,7 +1128,7 @@
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8-x64\libs\libpssound_d.lib"
+				OutputFile="..\..\out\debug8-x64\libs\libsound_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -1136,7 +1136,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8-x64\build\libpssound\libpssound.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libsound\libsound.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
@@ -1148,7 +1148,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1157,8 +1157,8 @@
 		</Configuration>
                 		<Configuration
 			Name="MemoryTracker (with static libs)|x64"
-			OutputDirectory="..\..\out\debug8-x64\build\libpssound\"
-			IntermediateDirectory="..\..\out\debug8-x64\build\libpssound\"
+			OutputDirectory="..\..\out\debug8-x64\build\libsound\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libsound\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -1169,15 +1169,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libpssound\x64\pssound.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libsound\x64\sound.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;WIN32"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
-				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libpssound\libpssound.pch"
-				AssemblerListingLocation="..\..\out\debug8-x64\build\libpssound\"
-				ObjectFile="..\..\out\debug8-x64\build\libpssound\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libsound\libsound.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libsound\"
+				ObjectFile="..\..\out\debug8-x64\build\libsound\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1199,7 +1199,7 @@
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8-x64\libs\libpssound_d.lib"
+				OutputFile="..\..\out\debug8-x64\libs\libsound_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -1207,7 +1207,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8-x64\build\libpssound\libpssound.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libsound\libsound.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
@@ -1219,7 +1219,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1228,8 +1228,8 @@
 		</Configuration>
       		<Configuration
 			Name="MemoryTracker (with DLLs)|x64"
-			OutputDirectory="..\..\out\debug8-x64\build\libpssound\"
-			IntermediateDirectory="..\..\out\debug8-x64\build\libpssound\"
+			OutputDirectory="..\..\out\debug8-x64\build\libsound\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libsound\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -1240,15 +1240,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libpssound\x64\pssound.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libsound\x64\sound.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
-				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libpssound\libpssound.pch"
-				AssemblerListingLocation="..\..\out\debug8-x64\build\libpssound\"
-				ObjectFile="..\..\out\debug8-x64\build\libpssound\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libsound\libsound.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libsound\"
+				ObjectFile="..\..\out\debug8-x64\build\libsound\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1270,7 +1270,7 @@
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8-x64\libs\libpssound_d.lib"
+				OutputFile="..\..\out\debug8-x64\libs\libsound_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -1278,7 +1278,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8-x64\build\libpssound\libpssound.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libsound\libsound.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
@@ -1290,7 +1290,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1299,8 +1299,8 @@
 		</Configuration>
                 		<Configuration
 			Name="RefTracker (with static libs)|x64"
-			OutputDirectory="..\..\out\debug8-x64\build\libpssound\"
-			IntermediateDirectory="..\..\out\debug8-x64\build\libpssound\"
+			OutputDirectory="..\..\out\debug8-x64\build\libsound\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libsound\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -1311,15 +1311,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libpssound\x64\pssound.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libsound\x64\sound.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;WIN32"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
-				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libpssound\libpssound.pch"
-				AssemblerListingLocation="..\..\out\debug8-x64\build\libpssound\"
-				ObjectFile="..\..\out\debug8-x64\build\libpssound\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libsound\libsound.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libsound\"
+				ObjectFile="..\..\out\debug8-x64\build\libsound\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1341,7 +1341,7 @@
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8-x64\libs\libpssound_d.lib"
+				OutputFile="..\..\out\debug8-x64\libs\libsound_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -1349,7 +1349,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8-x64\build\libpssound\libpssound.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libsound\libsound.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
@@ -1361,7 +1361,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1370,8 +1370,8 @@
 		</Configuration>
       		<Configuration
 			Name="RefTracker (with DLLs)|x64"
-			OutputDirectory="..\..\out\debug8-x64\build\libpssound\"
-			IntermediateDirectory="..\..\out\debug8-x64\build\libpssound\"
+			OutputDirectory="..\..\out\debug8-x64\build\libsound\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libsound\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -1382,15 +1382,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libpssound\x64\pssound.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libsound\x64\sound.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
-				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libpssound\libpssound.pch"
-				AssemblerListingLocation="..\..\out\debug8-x64\build\libpssound\"
-				ObjectFile="..\..\out\debug8-x64\build\libpssound\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libsound\libsound.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libsound\"
+				ObjectFile="..\..\out\debug8-x64\build\libsound\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1412,7 +1412,7 @@
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8-x64\libs\libpssound_d.lib"
+				OutputFile="..\..\out\debug8-x64\libs\libsound_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -1420,7 +1420,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8-x64\build\libpssound\libpssound.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libsound\libsound.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
@@ -1432,7 +1432,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1441,8 +1441,8 @@
 		</Configuration>
                 		<Configuration
 			Name="ThreadChecker (with static libs)|x64"
-			OutputDirectory="..\..\out\debug8-x64\build\libpssound\"
-			IntermediateDirectory="..\..\out\debug8-x64\build\libpssound\"
+			OutputDirectory="..\..\out\debug8-x64\build\libsound\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libsound\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -1453,15 +1453,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libpssound\x64\pssound.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libsound\x64\sound.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;WIN32"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
-				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libpssound\libpssound.pch"
-				AssemblerListingLocation="..\..\out\debug8-x64\build\libpssound\"
-				ObjectFile="..\..\out\debug8-x64\build\libpssound\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libsound\libsound.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libsound\"
+				ObjectFile="..\..\out\debug8-x64\build\libsound\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1483,7 +1483,7 @@
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8-x64\libs\libpssound_d.lib"
+				OutputFile="..\..\out\debug8-x64\libs\libsound_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -1491,7 +1491,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8-x64\build\libpssound\libpssound.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libsound\libsound.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
@@ -1503,7 +1503,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1512,8 +1512,8 @@
 		</Configuration>
       		<Configuration
 			Name="ThreadChecker (with DLLs)|x64"
-			OutputDirectory="..\..\out\debug8-x64\build\libpssound\"
-			IntermediateDirectory="..\..\out\debug8-x64\build\libpssound\"
+			OutputDirectory="..\..\out\debug8-x64\build\libsound\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libsound\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -1524,15 +1524,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libpssound\x64\pssound.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libsound\x64\sound.pdb"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
-				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libpssound\libpssound.pch"
-				AssemblerListingLocation="..\..\out\debug8-x64\build\libpssound\"
-				ObjectFile="..\..\out\debug8-x64\build\libpssound\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libsound\libsound.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libsound\"
+				ObjectFile="..\..\out\debug8-x64\build\libsound\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1554,7 +1554,7 @@
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8-x64\libs\libpssound_d.lib"
+				OutputFile="..\..\out\debug8-x64\libs\libsound_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -1562,7 +1562,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8-x64\build\libpssound\libpssound.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libsound\libsound.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
@@ -1574,7 +1574,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1583,8 +1583,8 @@
 		</Configuration>
                 		<Configuration
 			Name="DebugPSReleaseCSCEL (with static libs)|x64"
-			OutputDirectory="..\..\out\debug8-x64\build\libpssound\"
-			IntermediateDirectory="..\..\out\debug8-x64\build\libpssound\"
+			OutputDirectory="..\..\out\debug8-x64\build\libsound\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libsound\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -1595,15 +1595,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libpssound\x64\pssound.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libsound\x64\sound.pdb"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
-				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libpssound\libpssound.pch"
-				AssemblerListingLocation="..\..\out\debug8-x64\build\libpssound\"
-				ObjectFile="..\..\out\debug8-x64\build\libpssound\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libsound\libsound.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libsound\"
+				ObjectFile="..\..\out\debug8-x64\build\libsound\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1625,7 +1625,7 @@
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8-x64\libs\libpssound_d.lib"
+				OutputFile="..\..\out\debug8-x64\libs\libsound_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -1633,7 +1633,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8-x64\build\libpssound\libpssound.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libsound\libsound.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
@@ -1645,7 +1645,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1654,8 +1654,8 @@
 		</Configuration>
       		<Configuration
 			Name="DebugPSReleaseCSCEL (with DLLs)|x64"
-			OutputDirectory="..\..\out\debug8-x64\build\libpssound\"
-			IntermediateDirectory="..\..\out\debug8-x64\build\libpssound\"
+			OutputDirectory="..\..\out\debug8-x64\build\libsound\"
+			IntermediateDirectory="..\..\out\debug8-x64\build\libsound\"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
@@ -1666,15 +1666,15 @@
 				RuntimeTypeInfo="TRUE"
 				RuntimeLibrary="3"
 
-				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libpssound\x64\pssound.pdb"
+				ProgramDataBaseFileName="..\..\out\debug8-x64\build\libsound\x64\sound.pdb"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32;CS_BUILD_SHARED_LIBS"
 				OptimizeForProcessor="3"
 				OmitFramePointers="FALSE"
 				AdditionalOptions=" "
 				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
-				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libpssound\libpssound.pch"
-				AssemblerListingLocation="..\..\out\debug8-x64\build\libpssound\"
-				ObjectFile="..\..\out\debug8-x64\build\libpssound\"
+				PrecompiledHeaderFile="..\..\out\debug8-x64\build\libsound\libsound.pch"
+				AssemblerListingLocation="..\..\out\debug8-x64\build\libsound\"
+				ObjectFile="..\..\out\debug8-x64\build\libsound\"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				Detect64BitPortabilityProblems="false"
@@ -1696,7 +1696,7 @@
 				TargetMachine="17"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\out\debug8-x64\libs\libpssound_d.lib"
+				OutputFile="..\..\out\debug8-x64\libs\libsound_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -1704,7 +1704,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName="..\..\out\debug8-x64\build\libpssound\libpssound.tlb"/>
+				TypeLibraryName="..\..\out\debug8-x64\build\libsound\libsound.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="md ..\..\out\debug8-x64\bin 2&gt; nul&#x0D;&#x0A;copy /y &quot;$(TargetPath)&quot; ..\..\out\debug8-x64\bin\&#x0D;&#x0A;"
@@ -1716,7 +1716,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=8"
-				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1729,14 +1729,47 @@
 			Name="Source Files"
 			Filter="">
 			<File
-				RelativePath="..\..\src\common\pssound\pssoundmngr.cpp">
+				RelativePath="..\..\src\common\sound\control.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\common\sound\data.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\common\sound\handle.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\common\sound\manager.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\common\sound\queue.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\common\sound\system.cpp">
 			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="">
 			<File
-				RelativePath="..\..\src\common\pssound\pssoundmngr.h">
+				RelativePath="..\..\src\common\sound\control.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\sound\data.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\sound\handle.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\sound\manager.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\sound\queue.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\sound\sound.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\sound\system.h">
 			</File>
 		</Filter>
 	</Files>

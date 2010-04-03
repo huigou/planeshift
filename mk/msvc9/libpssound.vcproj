@@ -77,7 +77,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -150,7 +150,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -221,7 +221,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -292,7 +292,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -363,7 +363,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -434,7 +434,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -505,7 +505,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -576,7 +576,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -647,7 +647,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -718,7 +718,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -789,7 +789,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -860,7 +860,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -933,7 +933,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1006,7 +1006,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1077,7 +1077,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1148,7 +1148,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1219,7 +1219,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1290,7 +1290,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1361,7 +1361,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1432,7 +1432,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1503,7 +1503,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1574,7 +1574,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1645,7 +1645,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1716,7 +1716,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\client\sound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
+				AdditionalIncludeDirectories=".;..\..\src\common\pssound;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1729,14 +1729,14 @@
 			Name="Source Files"
 			Filter="">
 			<File
-				RelativePath="..\..\src\client\sound\pssoundmngr.cpp">
+				RelativePath="..\..\src\common\pssound\pssoundmngr.cpp">
 			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="">
 			<File
-				RelativePath="..\..\src\client\sound\pssoundmngr.h">
+				RelativePath="..\..\src\common\pssound\pssoundmngr.h">
 			</File>
 		</Filter>
 	</Files>
