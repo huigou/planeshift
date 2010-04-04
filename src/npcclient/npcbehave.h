@@ -55,45 +55,113 @@ class BehaviorSet;
 class Waypoint;
 class psResumeScriptEvent;
 
-/**
-* This is just a collection of behaviors for a particular
-* type of NPC.
-*/
+/** This is the set of Behaviors available for an NPC
+ *
+ * This is a collection of behaviors for a particular
+ * type of NPC. They represents the behaviors that
+ * this NPC is capable of.
+ *
+ */
 class BehaviorSet
 {
 protected:
-    // BinaryTree<Behavior> behaviors;
-    csPDelArray<Behavior> behaviors;
-    Behavior *active;
-    float max_need;
-    EventManager *eventmgr;
+    csPDelArray<Behavior>  behaviors; ///< The set of behavoirs for this NPCType.
+    Behavior*              active;    ///< Points to the current active behavior.
+        
+    EventManager*          eventmgr;  ///< Cached pointer to the event manger.
 
 public:
-    BehaviorSet(EventManager *eventmanager) { active=NULL; eventmgr = eventmanager; }
+    /** Constructor
+     */
+    BehaviorSet(EventManager *eventmanager);
 
-    /// Returns true if the behavior didn't already exist. Otherwise returns false and removes the existing duplicate behavior.
-    bool Add(Behavior *b);
-    Behavior *Find(Behavior *key);
-    
+    /** Add a behavior to the brain
+     *
+     * Add a new behavior to the set. If a behavior with the same name exists,
+     * than the new behavior will substitude the existing behavior.
+     * This to support the nested structure of the behavoir scripts.
+     *
+     * @param behavior The new behavior to be added to this BehaviorSet.
+     *
+     * @return Returns true if the behavior didn't already exist. Otherwise returns false and substitude the existing duplicate behavior.
+     */
+    bool Add(Behavior *behavior);
+
+    /** Find a behavior in the set.
+     *
+     *  Search the set for a behavior maching the given name.
+     */
     Behavior *Find(const char *name);
+
+    /** Do a deap copy
+     *
+     * Will do a deap copy of the BehaviorSet. The NPCType will contain a complete
+     * BehaviorSet for each type. When a new NPC is instantiated a deap copy of the
+     * set will be done before assigning it to the new NPC.
+     *
+     * @param other The source to be copied into this set.
+     */
     void DeepCopy(BehaviorSet& other);
+
+    /** Prepare the set after use
+     *
+     * Called when the npc actor is deleted. Should reset all session
+     * depended stats. So that a new instance of the actor for the
+     * npc can start with a fresh brain.
+     *
+     * @param npc The NPC that own this BehaviorSet.
+     */
     void ClearState(NPC *npc);
 
-    /// Advances the behaviors and returns the active one.
+    /** Advances the behaviors and returns the active one.
+     *
+     * Will calculate the need and select the active behavior.
+     *
+     * @param delta The numbers of ticks to advance this set.
+     * @param npc   The NPC that own this BehaviorSet.
+     *
+     * @return The current active behavior after advancing.
+     */
     Behavior* Advance(csTicks delta,NPC *npc);
+
+    /** Interrupt the current active behavior.
+     *
+     * If there is an active behavior in this set that
+     * behavior will be interrupted by calling this function.
+     *
+     * @param npc   The NPC that own this BehaviorSet.
+     */
     void Interrupt(NPC *npc);
-    void ResumeScript(NPC *npc,Behavior *which);
+
+    /** Resume the current active behavior.
+     *
+     * Resume the given behavior. This is witch is equal to
+     * the current active behavior and witch is
+     * applicable to the current npc state.
+     *
+     * @param npc   The NPC that own this BehaviorSet.
+     * @param witch The behavior to resume.
+     */
+    void ResumeScript(NPC *npc, Behavior *which);
+    
+    /** Return current active behavior
+     */
     Behavior *GetCurrentBehavior() { return active; }
+
+    /** Dump the behavior list for debug.
+     *
+     * @param npc   The NPC that own this BehaviorSet.
+     */
     void DumpBehaviorList(NPC *npc);
 };
 
 
-/**
-* A collection of behaviors and reactions will represent a type of
-* npc.  Each npc will be assigned one of these types.  This lets us
-* reuse the same script for many mobs at once--each one keeping its
-* own state information.
-*/
+/** A collection of behaviors and reactions will represent a type of npc.
+ *
+ * Each npc will be assigned one of these types.  This lets us
+ * reuse the same script for many mobs at once--each one keeping its
+ * own state information.
+ */
 class NPCType
 {
     enum VelSource {
@@ -104,11 +172,16 @@ class NPCType
     };
     
 protected:
-    csArray<Reaction*> reactions;
-    BehaviorSet behaviors;
-    csString name;
-    float    ang_vel,vel;
-    VelSource velSource;
+    csString           name;      ///< The name of this NPC type.
+    csArray<Reaction*> reactions; ///< The reactions available for this NPCType.
+    BehaviorSet        behaviors; ///< The set of behaviors available for this NPCType.
+    float              ang_vel;   ///< Default ang_vel for this NPCType.
+                                  ///< Will be used for all behaviors unless overriden
+                                  ///< by each behavior.
+    float              vel;       ///< Default vel for this NPCType.
+                                  ///< Will be used for all behaviors unless overriden
+                                  ///< by each behavior.
+    VelSource          velSource; ///< 
 
 public:
     NPCType(psNPCClient* npcclient, EventManager* eventmanager);
@@ -142,31 +215,39 @@ private:
 };
 
 
-/**
-* A Behavior is a general activity of an NPC.  Guarding,
-* smithing, talking to a player, fighting, fleeing, eating,
-* sleeping are all behaviors I expect to be scripted
-* for our npcs.
-*/
+/** A set of operations building a generic behavior for a NPC.
+ *
+ * A Behavior is a general activity of an NPC.  Guarding,
+ * smithing, talking to a player, fighting, fleeing, eating,
+ * sleeping are all behaviors. They consists of a set of
+ * ScriptOperations loaded from file.
+ *
+ */
 class Behavior
 {
 protected:
-    csArray<ScriptOperation*> sequence; /// Sequence of ScriptOperations.
-    size_t  current_step;               /// The ScriptOperation in the sequence
-                                        /// that is currently executed.
-    bool loop,is_active,is_applicable_when_dead;
-    float need_decay_rate;  // need lessens while performing behavior
-    float need_growth_rate; // need grows while not performing behavior
-    float completion_decay; // need lessens AFTER behavior script is run once
-                            // Use -1 to remove all need
-    float init_need;        // starting need, also used in ClearState resets
-    csString name;
-    bool  resume_after_interrupt; // Resume at active step after interrupt.
+    csString name;                      ///< The name of this behavior
+
+    csArray<ScriptOperation*> sequence; ///< Sequence of ScriptOperations.
+    size_t   current_step;              ///< The ScriptOperation in the sequence that is currently executed.
+    bool     loop;                      ///< True if this behavior should start over when completed all operations.
+    bool     is_active;
+    bool     is_applicable_when_dead;
+    float    need_decay_rate;           ///< need lessens while performing behavior
+    float    need_growth_rate;          ///< need grows while not performing behavior
+    float    completion_decay;          ///< need lessens AFTER behavior script is complete. Use -1 to remove all need
+    float    init_need;                 ///< starting need, also used in ClearState resets
+    bool     resume_after_interrupt;    ///< Resume at active step after interrupt.
         
-    float current_need;
-    float new_need;
-    csTicks last_check;
-    bool  interrupted;
+    float    current_need;              ///< The current need of this behavior after last advance
+    float    new_need;                  ///< The accumulated change to the need after last advance
+    
+    bool     interrupted;               ///< Set to true if this behavior is interruped by another in a BehaviorSet
+    
+    bool     minLimitValid;             ///< True if a minimum limit for the need for this bahavior has been set
+    float    minLimit;                  ///< The minimum value to limit the need if minLimitValid has been set true.
+    bool     maxLimitValid;             ///< True if a maximum limit for the need for this bahavior has been set
+    float    maxLimit;                  ///< The maximum value to limit the need if maxLimitValid has been set true.
     
 public:
     Behavior();
@@ -183,33 +264,48 @@ public:
     bool LoadScript(iDocumentNode *node,bool top_level=true);
 
     void  Advance(csTicks delta,NPC *npc,EventManager *eventmgr);
-    float CurrentNeed()
-    { return current_need; }
-    float NewNeed()
-    { return new_need; }
-    void  CommitAdvance()
-    {
-        if (new_need!=-999)
-        {
-            current_need = new_need;
-        }
-    }
-    void ApplyNeedDelta(float delta_desire)
-    {
-        if (new_need==-999)
-        {
-            new_need = current_need;
-        }
-        new_need += delta_desire;
-    }
-    void ApplyNeedAbsolute(float absolute_desire)
-    {
-        new_need = absolute_desire;
-    }
-    void SetActive(bool flag)
-    { is_active = flag; }
-    bool GetActive()
-    { return is_active; }
+    float CurrentNeed() { return current_need; }
+    float NewNeed() { return new_need; }
+
+    /** Update the current_need of the behavour after it has been advanced.
+     *
+     * If the new_need has been updating during advance make the new_need the
+     * current need of this behavior. The current_need will allways be the
+     * value held right after last advance of the behavior. During advance
+     * and between advance the new_need will be updated by the advance function
+     * and reactions based on matched perceptions.
+     *
+     */
+    void  CommitAdvance();
+
+    /** Update the new need of the behavior with a delta desire.
+     *
+     * The need is adjusted by the given delta value.
+     *
+     * @param delta_desire The delta in desire for this behavior
+     *
+     * \note Will limit the new_need if limits has been given for the
+     *       need of this behavior.
+     */
+    void ApplyNeedDelta(NPC *npc, float deltaDesire);
+
+    
+    /** Set the new need of the behavior to the given desire.
+     *
+     * The need is set to the given desire. Ignoring whatever
+     * value the new need of the behavoir might have had previous.
+     *
+     * @param absolute_desire The absolute desire to be used for this behavior
+     *
+     * \note Will limit the new_need if limits has been given for the
+     *       need of this behavior.
+     */
+    void ApplyNeedAbsolute(NPC *npc, float absoluteDesire);
+    
+    void SetActive(bool flag) { is_active = flag; }
+    
+    bool GetActive(){ return is_active; }
+    
     void SetCurrentStep(int step) { current_step = step; }
     size_t GetCurrentStep(){ return current_step; }
     void ResetNeed() { current_need = new_need = init_need; }

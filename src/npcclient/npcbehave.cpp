@@ -259,11 +259,16 @@ float NPCType::GetVelocity(NPC *npc)
 }
 
 //---------------------------------------------------------------------------
+BehaviorSet::BehaviorSet(EventManager *eventmanager)
+{
+    active=NULL;
+    eventmgr = eventmanager;
+}
 
 void BehaviorSet::ClearState(NPC *npc)
 {
-	// Ensure any existing script is ended correctly.
-	Interrupt(npc);
+    // Ensure any existing script is ended correctly.
+    Interrupt(npc);
     for (size_t i = 0; i<behaviors.GetSize(); i++)
     {
         behaviors[i]->ResetNeed();
@@ -273,17 +278,19 @@ void BehaviorSet::ClearState(NPC *npc)
     active = NULL;
 }
 
-bool BehaviorSet::Add(Behavior *b)
+bool BehaviorSet::Add(Behavior *behavior)
 {
+    // Search for dublicates
     for (size_t i=0; i<behaviors.GetSize(); i++)
     {
-        if (!strcmp(behaviors[i]->GetName(),b->GetName()))
+        if (!strcmp(behaviors[i]->GetName(),behavior->GetName()))
         {
-            behaviors[i] = b;  // substitute
+            behaviors[i] = behavior;  // substitute
             return false;
         }
     }
-    behaviors.Push(b);
+    // Insert as new behavior
+    behaviors.Push(behavior);
     return true;
 }
 
@@ -291,7 +298,7 @@ Behavior* BehaviorSet::Advance(csTicks delta,NPC *npc)
 {
     while (true)
     {
-        max_need = -999;
+        int max_need = -999;
         bool behaviours_changed = false;
 
         // Go through and update needs based on time
@@ -377,7 +384,7 @@ Behavior* BehaviorSet::Advance(csTicks delta,NPC *npc)
     return active;
 }
 
-void BehaviorSet::ResumeScript(NPC *npc,Behavior *which)
+void BehaviorSet::ResumeScript(NPC *npc, Behavior *which)
 {
     if (which == active && which->ApplicableToNPCState(npc))
     {
@@ -437,49 +444,64 @@ void BehaviorSet::DumpBehaviorList(NPC *npc)
 
 Behavior::Behavior()
 {
-    loop = false;
-    is_active = false;
-    need_decay_rate  = 0;
-    need_growth_rate = 0;
-    completion_decay = 0;
-    new_need=-999;
-    interrupted = false;
-    resume_after_interrupt = false;
-    current_step = 0;
-    init_need = 0;
+    name                    = "";
+    loop                    = false;
+    is_active               = false;
+    is_applicable_when_dead = false;
+    need_decay_rate         = 0;
+    need_growth_rate        = 0;
+    completion_decay        = 0;
+    init_need               = 0;
+    resume_after_interrupt  = false;
     current_need            = init_need;
+    new_need                = -999;
+    interrupted             = false;
+    current_step            = 0;
+    minLimitValid           = false;
+    minLimit                = 0.0;
+    maxLimitValid           = false;
+    maxLimit                = 0.0;
 }
 
 Behavior::Behavior(const char *n)
 {
-    loop = false;
-    is_active = false;
-    need_decay_rate  = 0;
-    need_growth_rate = 0;
-    completion_decay = 0;
-    new_need=-999;
-    interrupted = false;
-    resume_after_interrupt = false;
-    current_step = 0;
-    name = n;
-    init_need = 0;
+    name                    = n;
+    loop                    = false;
+    is_active               = false;
+    is_applicable_when_dead = false;
+    need_decay_rate         = 0;
+    need_growth_rate        = 0;
+    completion_decay        = 0;
+    init_need               = 0;
+    resume_after_interrupt  = false;
     current_need            = init_need;
+    new_need                =-999;
+    interrupted             = false;
+    current_step            = 0;
+    minLimitValid           = false;
+    minLimit                = 0.0;
+    maxLimitValid           = false;
+    maxLimit                = 0.0;
 }
 
 void Behavior::DeepCopy(Behavior& other)
 {
+    name                    = other.name;
     loop                    = other.loop;
     is_active               = other.is_active;
+    is_applicable_when_dead = other.is_applicable_when_dead;
     need_decay_rate         = other.need_decay_rate;  // need lessens while performing behavior
     need_growth_rate        = other.need_growth_rate; // need grows while not performing behavior
     completion_decay        = other.completion_decay;
-    new_need                = -999;
-    name                    = other.name;
     init_need               = other.init_need;
-    current_need            = other.current_need;
-    last_check              = other.last_check;
-    is_applicable_when_dead = other.is_applicable_when_dead;
     resume_after_interrupt  = other.resume_after_interrupt;
+    current_need            = other.current_need;
+    new_need                = -999;
+    interrupted             = false;
+    minLimitValid           = other.minLimitValid;
+    minLimit                = other.minLimit;
+    maxLimitValid           = other.maxLimitValid;
+    maxLimit                = other.maxLimit;
 
     for (size_t x=0; x<other.sequence.GetSize(); x++)
     {
@@ -488,7 +510,6 @@ void Behavior::DeepCopy(Behavior& other)
 
     // Instance local variables. No need to copy.
     current_step = 0;
-    interrupted             = false;
 }
 
 bool Behavior::Load(iDocumentNode *node)
@@ -508,6 +529,24 @@ bool Behavior::Load(iDocumentNode *node)
     init_need               = node->GetAttributeValueAsFloat("initial");
     is_applicable_when_dead = node->GetAttributeValueAsBool("when_dead");
     resume_after_interrupt  = node->GetAttributeValueAsBool("resume",false);
+    if (node->GetAttributeValue("min"))
+    {
+        minLimitValid = true;
+        minLimit = node->GetAttributeValueAsFloat("min");
+    } else
+    {
+        minLimitValid = false;
+    }
+    if (node->GetAttributeValue("max"))
+    {
+        maxLimitValid = true;
+        maxLimit = node->GetAttributeValueAsFloat("max");
+    } else
+    {
+        maxLimitValid = false;
+    }
+    
+
     current_need            = init_need;
 
     return LoadScript(node,true);
@@ -553,13 +592,13 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         {
             op = new DigOperation;
         }
-        else if ( strcmp( node->GetValue(), "eat" ) == 0 )
-        {
-            op = new EatOperation;
-        }
         else if ( strcmp( node->GetValue(), "drop" ) == 0 )
         {
             op = new DropOperation;
+        }
+        else if ( strcmp( node->GetValue(), "eat" ) == 0 )
+        {
+            op = new EatOperation;
         }
         else if ( strcmp( node->GetValue(), "equip" ) == 0 )
         {
@@ -587,21 +626,17 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         {
             op = new MemorizeOperation;
         }
-        else if ( strcmp( node->GetValue(), "share_memories" ) == 0 )
-        {
-            op = new ShareMemoriesOperation;
-        }
         else if ( strcmp( node->GetValue(), "move" ) == 0 )
         {
             op = new MoveOperation;
         }
-        else if ( strcmp( node->GetValue(), "moveto" ) == 0 )
-        {
-            op = new MoveToOperation;
-        }
         else if ( strcmp( node->GetValue(), "movepath" ) == 0 )
         {
             op = new MovePathOperation;
+        }
+        else if ( strcmp( node->GetValue(), "moveto" ) == 0 )
+        {
+            op = new MoveToOperation;
         }
         else if ( strcmp( node->GetValue(), "navigate" ) == 0 )
         {
@@ -630,6 +665,10 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         else if ( strcmp( node->GetValue(), "sequence" ) == 0 )
         {
             op = new SequenceOperation;
+        }
+        else if ( strcmp( node->GetValue(), "share_memories" ) == 0 )
+        {
+            op = new ShareMemoriesOperation;
         }
         else if ( strcmp( node->GetValue(), "talk" ) == 0 )
         {
@@ -692,8 +731,9 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
     return true; // success
 }
 
-void Behavior::Advance(csTicks delta,NPC *npc,EventManager *eventmgr)
+void Behavior::Advance(csTicks delta, NPC *npc, EventManager *eventmgr)
 {
+    // Initialize new_need if not updated before.
     if (new_need == -999)
     {
         new_need = current_need;
@@ -703,7 +743,9 @@ void Behavior::Advance(csTicks delta,NPC *npc,EventManager *eventmgr)
 
     if (is_active)
     {
-        new_need = new_need - (d * need_decay_rate);
+        // Apply delta to need, will check for limits as well
+        ApplyNeedDelta(npc, -d * need_decay_rate );
+
         if (current_step < sequence.GetSize())
         {
             npc->Printf(10,"%s - Advance active delta: %.3f Need: %.2f Decay Rate: %.2f",
@@ -717,11 +759,77 @@ void Behavior::Advance(csTicks delta,NPC *npc,EventManager *eventmgr)
     }
     else
     {
-        new_need = new_need + (d * need_growth_rate);
+        // Apply delta to need, will check for limits as well
+        ApplyNeedDelta(npc, d * need_growth_rate );
+
         npc->Printf(10,"%s - Advance none active delta: %.3f Need: %.2f Growth Rate: %.2f",
                     name.GetData(),d,new_need,need_growth_rate);
     }
 }
+
+
+void Behavior::CommitAdvance()
+{
+    // Only update the current_need if new_need has been initialized.
+    if (new_need!=-999)
+    {
+        current_need = new_need;
+    }
+}
+
+void Behavior::ApplyNeedDelta(NPC *npc, float deltaDesire)
+{
+    // Initialize new_need if not updated before.
+    if (new_need==-999)
+    {
+        new_need = current_need;
+    }
+
+    // Apply the delta to new_need
+    new_need += deltaDesire;
+
+    // Handle min desire limit
+    if (minLimitValid && (new_need < minLimit))
+    {
+        npc->Printf(5,"%s - ApplyNeedDelta limited new_need of %.3f to min value %.3f.",
+                    name.GetData(),new_need,minLimit);
+        
+        new_need = minLimit;
+    }
+    
+    // Handle max desire limit
+    if (maxLimitValid && (new_need > maxLimit))
+    {
+        npc->Printf(5,"%s - ApplyNeedDelta limited new_need of %.3f to max value %.3f.",
+                    name.GetData(),new_need,maxLimit);
+
+        new_need = maxLimit;
+    }
+}
+
+void Behavior::ApplyNeedAbsolute(NPC *npc, float absoluteDesire)
+{
+    new_need = absoluteDesire;
+
+    // Handle min desire limit
+    if (minLimitValid && (new_need < minLimit))
+    {
+        npc->Printf(5,"%s - ApplyNeedAbsolute limited new_need of %.3f to min value %.3f.",
+                    name.GetData(),new_need,minLimit);
+
+        new_need = minLimit;
+    }
+    
+    // Handle max desire limit
+    if (maxLimitValid && (new_need > maxLimit))
+    {
+        npc->Printf(5,"%s - ApplyNeedAbsolute limited new_need of %.3f to max value %.3f.",
+                    name.GetData(),new_need,maxLimit);
+
+        new_need = maxLimit;
+    }
+}
+
 
 bool Behavior::ApplicableToNPCState(NPC *npc)
 {
@@ -744,12 +852,6 @@ bool Behavior::StartScript(NPC *npc, EventManager *eventmgr)
         current_step = 0;
         return RunScript(npc,eventmgr,false);
     }
-}
-
-Behavior* BehaviorSet::Find(Behavior *key)
-{
-    size_t found = behaviors.Find(key);
-    return (found = SIZET_NOT_FOUND) ? NULL : behaviors[found];
 }
 
 bool Behavior::RunScript(NPC *npc, EventManager *eventmgr, bool interrupted)

@@ -425,6 +425,1057 @@ void ScriptOperation::SetAnimation(NPC * npc, const char*name)
 
 //---------------------------------------------------------------------------
 //         Following section contain specefix NPC operations.
+//         Ordered alphabeticaly
+//---------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------
+
+const char * ChaseOperation::typeStr[]={"nearest","owner","target"};
+
+bool ChaseOperation::Load(iDocumentNode *node)
+{
+    action = node->GetAttributeValue("anim");
+    csString typestr = node->GetAttributeValue("type");
+    if (typestr.CompareNoCase("nearest"))
+    {
+        type = NEAREST;
+    }
+    else if (typestr.CompareNoCase("boss") || typestr.CompareNoCase("owner"))
+    {
+        type = OWNER;
+    }
+    else if (typestr.CompareNoCase("target"))
+    {
+        type = TARGET;
+    }
+    else if (!typestr.IsEmpty())
+    {
+        Error2("Loading Chase Operation can't mach type of '%s'",typestr.GetDataSafe());
+        return false;
+    }
+    else
+    {
+        type = NEAREST;
+    }
+    
+
+    if (node->GetAttributeValue("range"))
+    {
+        searchRange = node->GetAttributeValueAsFloat("range");
+    }
+    else
+    {
+        searchRange = 2.0f;
+    }    
+
+    if (node->GetAttributeValue("chase_range"))
+    {
+        chaseRange = node->GetAttributeValueAsFloat("chase_range");
+    }
+    else
+    {
+        chaseRange = -1.0f; // Disable max chase range
+    }    
+
+    if ( node->GetAttributeValue("offset") )
+    {
+        offset = node->GetAttributeValueAsFloat("offset");
+    }
+    else
+    	offset = 0.5f;
+
+    LoadVelocity(node);
+    LoadCheckMoveOk(node);
+    ang_vel = node->GetAttributeValueAsFloat("ang_vel");
+
+    return true;
+}
+
+ScriptOperation *ChaseOperation::MakeCopy()
+{
+    ChaseOperation *op = new ChaseOperation;
+    op->action = action;
+    op->type   = type;
+    op->searchRange  = searchRange;
+    op->chaseRange  = chaseRange;
+    op->velSource = velSource;
+    op->vel    = vel;
+    op->ang_vel= ang_vel;
+    op->offset = offset;
+
+    return op;
+}
+
+bool ChaseOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+    float targetRot;
+    iSector* targetSector;
+    csVector3 targetPos;
+    
+    float myRot;
+    iSector* mySector;
+    csVector3 myPos;
+
+    csVector3 dest;
+    csString name;
+    gemNPCObject *entity = NULL;
+    target_id = EID(0);
+        
+    switch (type)
+    {
+    case NEAREST:
+        target_id = npc->GetNearestEntity(dest, name, searchRange);
+        npc->Printf(6, "Targeting nearest entity (%s) at (%1.2f,%1.2f,%1.2f) for chase ...",
+                    (const char *)name, dest.x, dest.y, dest.z);
+        if (target_id.IsValid())
+        {
+            entity = npcclient->FindEntityID(target_id);
+        }
+        break;
+    case OWNER:
+        {
+            
+            gemNPCObject * owner = npc->GetOwner();
+            if (owner)
+            {
+                entity = owner;
+            }
+            if (entity)
+            {
+                target_id = entity->GetEID();
+                psGameObject::GetPosition(entity, dest, targetRot, targetSector);
+                npc->Printf(6, "Targeting owner (%s) at (%1.2f,%1.2f,%1.2f) for chase ...",
+                            entity->GetName(),dest.x,dest.y,dest.z );
+
+            }
+        }
+        break;
+    case TARGET:
+        {
+            gemNPCObject * target = npc->GetTarget();
+            if (target)
+            {
+                entity = target;
+            }
+            if (entity)
+            {
+                target_id = entity->GetEID();
+                psGameObject::GetPosition(entity, dest, targetRot,targetSector);
+                npc->Printf(6, "Targeting current target (%s) at (%1.2f,%1.2f,%1.2f) for chase ...",
+                            entity->GetName(), dest.x,dest.y, dest.z );
+            }
+        }
+        break;
+    }
+
+    if (target_id.IsValid() && entity)
+    {
+        psGameObject::GetPosition(npc->GetActor(),myPos, myRot, mySector);
+    
+        psGameObject::GetPosition(entity, targetPos, targetRot, targetSector);
+
+        npc->Printf(5, "Chasing enemy <%s, %s> at %s", entity->GetName(), ShowID(entity->GetEID()),
+                    toString(targetPos,targetSector).GetDataSafe());
+
+        // We need to work in the target sector space
+        if (!npcclient->GetWorld()->WarpSpace(targetSector, mySector, targetPos))
+        {
+            npc->Printf("ChaseOperation: target's sector is not connected to ours!");
+            return true;  // This operation is complete
+        }
+        if ( Calc2DDistance( myPos, targetPos ) < offset )
+        {
+            return true;  // This operation is complete
+        }
+
+        // This prevents NPCs from wanting to occupy the same physical space as something else
+        csVector3 displacement = targetPos - myPos;
+        displacement.y = 0;
+        float factor = offset / displacement.Norm();
+        csVector3 destPos = myPos + (1 - factor) * displacement;
+        destPos.y = targetPos.y;
+
+        path.SetMaps(npcclient->GetMaps());
+        path.SetDest(destPos);
+        path.CalcLocalDest(myPos, mySector, localDest);
+
+
+        if ( GetAngularVelocity(npc) > 0 || GetVelocity(npc) > 0 )
+        {
+            StartMoveTo(npc, eventmgr, localDest, targetSector, GetVelocity(npc), action, false);
+            return false;
+        }
+        else
+        {
+            return true;  // This operation is complete
+        }
+    }
+    else
+    {
+        npc->Printf(5, "No one found to chase!");
+        return true;  // This operation is complete
+    }
+
+    return true; // This operation is complete
+}
+
+void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
+{
+
+    csVector3 myPos,myNewPos,targetPos;
+    float     myRot,dummyrot;
+    InstanceID       myInstance, targetInstance;
+    iSector * mySector, *myNewSector, *targetSector;
+    csVector3 forward;
+    
+    npc->GetLinMove()->GetLastPosition(myPos, myRot, mySector);
+    myInstance = npc->GetActor()->GetInstance();
+
+    // Now turn towards entity being chased again
+    csString name;
+    
+    if (type == NEAREST)
+    {
+        // Switch target if a new entity is withing search range.
+        EID newTargetEID = npc->GetNearestEntity(targetPos, name, searchRange);
+        if (newTargetEID.IsValid())
+        {
+            target_id = newTargetEID;
+        }
+    }
+ 
+    gemNPCActor *target_entity = NULL;
+    gemNPCActor * targetActor = dynamic_cast<gemNPCActor*>(npcclient->FindEntityID(target_id));
+    if (targetActor)
+    {
+        target_entity = targetActor;
+    }
+
+    if (!targetActor || !target_entity) // no entity close to us
+    {
+        npc->Printf(5, "ChaseOp has no target now!");
+        npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
+        return;
+    }
+    
+    if(name.IsEmpty())
+    {
+        name = target_entity->GetName();
+    }
+    
+    psGameObject::GetPosition(target_entity,targetPos,dummyrot,targetSector);
+    targetInstance = targetActor->GetInstance();
+
+    // We work in our sector's space
+    if (!npcclient->GetWorld()->WarpSpace(targetSector, mySector, targetPos))
+    {
+        npc->Printf("ChaseOperation: target's sector is not connected to ours!");
+        npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
+        return;
+    }
+
+    // This prevents NPCs from wanting to occupy the same physical space as something else
+    csVector3 displacement = targetPos - myPos;
+
+    displacement.y = 0;
+    float distance = displacement.Norm();
+    
+    if ( (chaseRange > 0 && distance > chaseRange) || (targetInstance != myInstance) )
+    {
+        npc->Printf(5, "Target out of chase range -> we are done..");
+        csString str;
+        str.Append(typeStr[type]);
+        str.Append(" out of chase");
+        Perception range(str);
+        npc->TriggerEvent(&range);
+        npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
+        return;
+    }
+    
+
+    float factor = offset / distance;
+    targetPos = myPos + (1 - factor) * displacement;
+    targetPos.y = myPos.y;
+
+    npc->Printf(10, "Still chasing %s at %s...",(const char *)name,toString(targetPos,targetSector).GetDataSafe());
+    
+    float angleToTarget = psGameObject::CalculateIncidentAngle(myPos, targetPos);
+    csVector3 pathDest = path.GetDest();
+    float angleToPath  = psGameObject::CalculateIncidentAngle(myPos, pathDest);
+
+        
+    // if the target diverged from the end of our path, we must calculate it again
+    if ( fabs( AngleDiff(angleToTarget, angleToPath) ) > EPSILON  )
+    {
+        npc->Printf(8, "turn to target..");
+        path.SetDest(targetPos);
+        path.CalcLocalDest(myPos, mySector, localDest);
+        StartMoveTo(npc,eventmgr,localDest, mySector, GetVelocity(npc), action, false);
+    }
+    
+
+    float close = GetVelocity(npc)*timedelta; // Add 10 % to the distance moved in one tick.
+    
+    if (Calc2DDistance(localDest, myPos) <= 0.5f)
+    {
+        npc->GetLinMove()->SetPosition(myPos,myRot,mySector);
+        npc->Printf(5,"Set position %g %g %g, sector %s\n", myPos.x, myPos.y, myPos.z, mySector->QueryObject()->GetName());
+        
+        if (Calc2DDistance(myPos,targetPos) <= 0.5f)
+        {
+            npc->Printf(5, "We are done..");
+            npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
+            return;
+        }
+        else
+        {
+            npc->Printf(6, "We are at localDest..");
+            path.SetDest(targetPos);
+            path.CalcLocalDest(myPos, mySector, localDest);
+            StartMoveTo(npc, eventmgr, localDest, mySector, GetVelocity(npc), action, false);
+        }
+    }
+    else
+    {
+        TurnTo(npc, localDest, mySector, forward);
+    }
+    // Limit time extrapolation so we arrive near the correct place.
+    if(Calc2DDistance(localDest, myPos) <= close)
+    	timedelta = Calc2DDistance(localDest, myPos) / GetVelocity(npc);
+
+    npc->Printf(8, "advance: pos=(%f.2,%f.2,%f.2) rot=%.2f %s localDest=(%f.2,%f.2,%f.2) dist=%f", 
+                myPos.x,myPos.y,myPos.z, myRot, mySector->QueryObject()->GetName(),
+                localDest.x,localDest.y,localDest.z,
+                Calc2DDistance(localDest, myPos));
+
+    {
+        ScopedTimer st(250, "chase extrapolate %.2f time for %s", timedelta, ShowID(npc->GetActor()->GetEID()));
+        npc->GetLinMove()->ExtrapolatePosition(timedelta);
+    }
+    bool on_ground;
+    float speed,ang_vel;
+    csVector3 bodyVel,worldVel;
+
+    npc->GetLinMove()->GetDRData(on_ground,speed,myNewPos,myRot,myNewSector,bodyVel,worldVel,ang_vel);
+
+    npc->Printf(8,"World position bodyVel=%s worldVel=%s",toString(bodyVel).GetDataSafe(),toString(worldVel).GetDataSafe());
+
+    CheckMovedOk(npc, eventmgr, myPos, mySector, myNewPos, myNewSector, timedelta);
+}
+
+void ChaseOperation::InterruptOperation(NPC *npc,EventManager *eventmgr)
+{
+    ScriptOperation::InterruptOperation(npc,eventmgr);
+    
+    StopMovement(npc);
+}
+
+bool ChaseOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
+{
+    StopMovement(npc);
+
+    completed = true;
+
+    return true;  // Script can keep going
+}
+
+//---------------------------------------------------------------------------
+
+bool CircleOperation::Load(iDocumentNode *node)
+{
+    radius = node->GetAttributeValueAsFloat("radius");
+    if (radius == 0)
+    {
+        Error1("No radius given for Circle operation");
+        return false;
+    }
+
+    LoadVelocity(node);
+    action = node->GetAttributeValue("anim");
+    
+    angle = node->GetAttributeValueAsFloat("angle")*PI/180;// Calculated if 0 and duration != 0, default 2PI
+    duration = node->GetAttributeValueAsFloat("duration"); // Calculated if 0
+    ang_vel = node->GetAttributeValueAsFloat("ang_vel");   // Calculated if 0
+    return true;
+}
+
+ScriptOperation *CircleOperation::MakeCopy()
+{
+    CircleOperation *op = new CircleOperation;
+    op->velSource = velSource;
+    op->vel    = vel;
+    op->action = action;
+    op->duration = duration;
+    op->ang_vel = ang_vel;
+    op->radius = radius;
+    op->angle = angle;
+
+    return op;
+}
+
+bool CircleOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+    // Calculate parameters not given
+    if (angle == 0)
+    {
+        if (duration != 0)
+        {
+            angle = duration*radius/GetVelocity(npc);
+        }
+        else
+        {
+            angle = 2*PI;
+        }
+    }
+    
+    
+    if (duration == 0)
+    {
+        duration = fabs(angle)*radius/GetVelocity(npc);
+    }
+    
+    if (ang_vel == 0)
+    {
+        ang_vel = GetVelocity(npc)/radius;
+    }
+
+    return MoveOperation::Run(npc, eventmgr, interrupted);
+}
+
+//---------------------------------------------------------------------------
+
+bool DebugOperation::Load(iDocumentNode *node)
+{
+    exclusive = node->GetAttributeValue("exclusive");
+    level = node->GetAttributeValueAsInt("level");
+    return true;
+}
+
+ScriptOperation *DebugOperation::MakeCopy()
+{
+    DebugOperation *op = new DebugOperation;
+    op->exclusive = exclusive;
+    op->level = level;
+    return op;
+}
+
+bool DebugOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+    if (exclusive.Length())
+    {
+        static bool debug_exclusive = false;
+        
+        if (level && debug_exclusive)
+        {
+            // Can't turn on when exclusive is set.
+            return true;
+        }
+        if (level)
+        {
+            debug_exclusive = true;
+        }
+        else
+        {
+            debug_exclusive = false;
+        }
+    }
+
+    
+    if (!level) // Print before when turning off
+    {
+        npc->Printf(1, "DebugOp Set debug %d",level);
+    }
+    
+    npc->SetDebugging(level);
+    
+    if (level) // Print after when turning on
+    {
+        npc->Printf(1, "DebugOp Set debug %d",level);            
+    }
+
+    return true; // We are done
+}
+
+//---------------------------------------------------------------------------
+
+bool DequipOperation::Load(iDocumentNode *node)
+{
+    slot   = node->GetAttributeValue("slot");
+
+    if (slot.IsEmpty())
+    {
+        Error1("No slot defined for Dequip operation");
+        return false;
+    }
+    
+    return true;
+}
+
+ScriptOperation *DequipOperation::MakeCopy()
+{
+    DequipOperation *op = new DequipOperation;
+    op->slot   = slot;
+    return op;
+}
+
+bool DequipOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+    npc->Printf(5, "   Who: %s Where: %s",
+                npc->GetName(), slot.GetData());
+
+    npcclient->GetNetworkMgr()->QueueDequipCommand(npc->GetActor(), slot );
+
+    return true;
+}
+
+//---------------------------------------------------------------------------
+
+bool DigOperation::Load(iDocumentNode *node)
+{
+    resource = node->GetAttributeValue("resource");
+    if (resource.IsEmpty())
+    {
+        Error1("No resource defined for Dig operation");
+        return false;
+    }
+    
+    return true;
+}
+
+ScriptOperation *DigOperation::MakeCopy()
+{
+    DigOperation *op = new DigOperation;
+
+    op->resource = resource;
+
+    return op;
+}
+
+bool DigOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+    if (resource == "tribe:wealth")
+    {
+        if (npc->GetTribe())
+        {
+            npcclient->GetNetworkMgr()->QueueDigCommand(npc->GetActor(), npc->GetTribe()->GetNeededResourceNick());
+        }
+    }
+    else
+    {
+        npcclient->GetNetworkMgr()->QueueDigCommand(npc->GetActor(), resource );
+    }
+    
+
+    return true;
+}
+
+//---------------------------------------------------------------------------
+
+bool DropOperation::Load(iDocumentNode *node)
+{
+    slot = node->GetAttributeValue("slot");
+    if (slot.IsEmpty())
+    {
+        Error1("Drop operation must have a slot defined");
+        return false;
+    }
+    
+    return true;
+}
+
+ScriptOperation *DropOperation::MakeCopy()
+{
+    DropOperation *op = new DropOperation;
+    op->slot = slot;
+    return op;
+}
+
+bool DropOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+    npcclient->GetNetworkMgr()->QueueDropCommand(npc->GetActor(), slot );
+
+    return true;
+}
+
+//---------------------------------------------------------------------------
+
+bool EatOperation::Load(iDocumentNode *node)
+{
+    resource = node->GetAttributeValue("resource");
+    if (resource.IsEmpty()) return false;
+    return true;
+}
+
+ScriptOperation *EatOperation::MakeCopy()
+{
+    EatOperation *op = new EatOperation;
+    op->resource = resource;
+    return op;
+}
+
+bool EatOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+    csString res = resource;
+    
+    if (resource == "tribe:wealth")
+    {
+        if (npc->GetTribe())
+        {
+            res = npc->GetTribe()->GetNeededResourceNick();
+        }
+    }
+
+    gemNPCActor *ent = npc->GetNearestDeadActor(1.0);
+    if (ent)
+    {
+        // Take a bite :)
+        if (npc->GetTribe())
+        {
+            npc->GetTribe()->AddResource(res,1);
+        }
+    }
+
+    return true;
+}
+
+//---------------------------------------------------------------------------
+
+bool EquipOperation::Load(iDocumentNode *node)
+{
+    item    = node->GetAttributeValue("item");
+    if (item.IsEmpty())
+    {
+        Error1("Equip operation needs an item");
+        return false;
+    }
+    slot    = node->GetAttributeValue("slot");
+    if (slot.IsEmpty())
+    {
+        Error1("Equip operation needs a slot");
+        return false;
+    }
+    count   = node->GetAttributeValueAsInt("count");
+    if (count <= 0) count = 1; // Allways equip at least one.
+    return true;
+}
+
+ScriptOperation *EquipOperation::MakeCopy()
+{
+    EquipOperation *op = new EquipOperation;
+    op->item   = item;
+    op->slot   = slot;
+    op->count  = count;
+    return op;
+}
+
+bool EquipOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+    npc->Printf(5, "   Who: %s What: %s Where: %s Count: %d",
+                npc->GetName(),item.GetData(), slot.GetData(), count);
+
+    npcclient->GetNetworkMgr()->QueueEquipCommand(npc->GetActor(), item, slot, count);
+
+    return true;
+}
+
+//---------------------------------------------------------------------------
+
+bool InvisibleOperation::Load(iDocumentNode *node)
+{
+    return true;
+}
+
+ScriptOperation *InvisibleOperation::MakeCopy()
+{
+    InvisibleOperation *op = new InvisibleOperation;
+    return op;
+}
+
+bool InvisibleOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+    npcclient->GetNetworkMgr()->QueueVisibilityCommand(npc->GetActor(), false);
+    return true;
+}
+
+//---------------------------------------------------------------------------
+
+bool LocateOperation::Load(iDocumentNode *node)
+{
+
+    object = node->GetAttributeValue("obj");
+    if (object.IsEmpty())
+    {
+        Error1("Locate operation need obj paramter");
+        return false;
+    }
+    
+    static_loc = node->GetAttributeValueAsBool("static",false);
+    if (node->GetAttribute("range"))
+    {
+        range  = node->GetAttributeValueAsFloat("range");
+    }
+    else
+    {
+        range = -1;
+    }
+    random = node->GetAttributeValueAsBool("random",false);
+    locate_invisible = node->GetAttributeValueAsBool("invisible",false);
+    locate_invincible = node->GetAttributeValueAsBool("invincible",false);
+
+    return true;
+}
+
+ScriptOperation *LocateOperation::MakeCopy()
+{
+    LocateOperation *op = new LocateOperation;
+    op->range  = range;
+    op->object = object;
+    op->static_loc = static_loc;
+    op->random = random;
+    op->locate_invisible = locate_invisible;
+    op->locate_invincible = locate_invincible;
+
+    return op;
+}
+
+
+Waypoint* LocateOperation::CalculateWaypoint(NPC *npc, csVector3 located_pos, iSector* located_sector, float located_range)
+{
+    Waypoint *end;
+    float end_range = 0.0;
+
+    end   = npcclient->FindNearestWaypoint(located_pos,located_sector,-1,&end_range);
+
+    if (end && (located_range == -1 || end_range >= located_range))
+    {
+        npc->Printf(5,"Located WP  : %30s at %s",end->GetName(),toString(end->loc.pos,end->loc.GetSector(npcclient->GetEngine())).GetDataSafe());
+        return end;
+    }
+
+    return NULL;
+}
+
+void ReplaceVariables(csString & object,NPC *npc)
+{
+    object.ReplaceAll("$name",npc->GetName());
+    if (npc->GetRaceInfo())
+    {
+        object.ReplaceAll("$race",npc->GetRaceInfo()->GetName());
+    }
+    if (npc->GetTribe())
+    {
+        object.ReplaceAll("$tribe",npc->GetTribe()->GetName());
+    }
+    if (npc->GetOwner())
+    {
+        object.ReplaceAll("$owner",npc->GetOwnerName());
+    }
+    if (npc->GetTarget())
+    {
+        object.ReplaceAll("$target",npc->GetTarget()->GetName());
+    }
+}
+
+
+bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+    // Reset old target
+    npc->SetTarget(NULL);
+
+    located_pos = csVector3(0.0f,0.0f,0.0f);
+    located_angle = 0.0f;
+    located_sector = NULL;
+    located_wp = NULL;
+
+    float start_rot;
+    iSector *start_sector;
+    csVector3 start_pos;
+    psGameObject::GetPosition(npc->GetActor(),start_pos,start_rot,start_sector);
+
+    ReplaceVariables(object,npc);
+
+    csArray<csString> split_obj = psSplit(object,':');
+
+    if (split_obj[0] == "perception")
+    {
+        npc->Printf(5,"LocateOp - Perception");
+
+        if (!npc->GetLastPerception())
+        {
+            return true;
+        }
+        if (!npc->GetLastPerception()->GetLocation(located_pos,located_sector))
+        {
+            return true;
+        }
+        located_angle = 0; // not used in perceptions
+    }
+    else if (split_obj[0] == "target")
+    {
+        npc->Printf(5,"LocateOp - Target");
+
+        gemNPCActor *ent;
+        // Since we don't have a current enemy targeted, find one!
+        if (range)
+        {
+            ent = npc->GetMostHated(range,locate_invisible,locate_invincible);
+        }
+        else
+        {
+            ent = npc->GetMostHated(10.0f,locate_invisible,locate_invincible);     // Default enemy range
+        }
+
+        if(ent)
+        {
+            npc->SetTarget(ent);
+        }
+        else
+        {
+            return true;
+        }
+
+        float rot;
+        iSector *sector;
+        csVector3 pos;
+        psGameObject::GetPosition(ent,pos,rot,sector);
+
+        located_pos = pos;
+        located_angle = 0;
+        located_sector = sector;
+    }
+    else if (split_obj[0] == "owner")
+    {
+        npc->Printf(5,"LocateOp - Owner");
+
+        gemNPCObject *owner;
+        // Since we don't have a current enemy targeted, find one!
+        owner = npc->GetOwner();
+
+        if(owner)
+        {
+            npc->SetTarget(owner);
+        }
+        else
+        {
+            return true;
+        }
+
+        float rot;
+        iSector *sector;
+        csVector3 pos;
+        psGameObject::GetPosition(owner,pos,rot,sector);
+
+        located_pos = pos;
+        located_angle = 0;
+        located_sector = sector;
+    }
+    else if (split_obj[0] == "self")
+    {
+        npc->Printf(5,"LocateOp - Self");
+
+        gemNPCActor *ent;
+
+        ent = npc->GetActor();
+
+        if(ent)
+        {
+            npc->SetTarget(ent);
+        }
+        else
+        {
+            return true;
+        }
+
+        float rot;
+        iSector *sector;
+        csVector3 pos;
+        psGameObject::GetPosition(ent,pos,rot,sector);
+
+        located_pos = pos;
+        located_angle = 0;
+        located_sector = sector;
+    }
+    else if (split_obj[0] == "tribe")
+    {
+        npc->Printf(5,"LocateOp - Tribe");
+
+        if (!npc->GetTribe())
+        {
+            return true;
+        }
+
+        if (split_obj[1] == "home")
+        {
+            float radius;
+            csVector3 pos;
+            npc->GetTribe()->GetHome(pos,radius,located_sector);
+            
+            AddRandomRange(pos,radius);
+            
+            located_pos = pos;
+            located_angle = 0;
+            
+        }
+        else if (split_obj[1] == "memory")
+        {
+            float located_range=0.0;
+            psTribe::Memory * memory;
+
+            if (random)
+            {
+                memory = npc->GetTribe()->FindRandomMemory(split_obj[2],start_pos,start_sector,range,&located_range);
+            }
+            else
+            {
+                memory = npc->GetTribe()->FindNearestMemory(split_obj[2],start_pos,start_sector,range,&located_range);
+            }
+            
+            if (!memory)
+            {
+                npc->Printf(5, "Couldn't locate any <%s> in npc script for <%s>.",
+                            (const char *)object,npc->GetName() );
+                return true;
+            }
+            located_pos = memory->pos;
+            located_sector = memory->sector;
+            
+            AddRandomRange(located_pos,memory->radius);
+        }
+        else if (split_obj[1] == "resource")
+        {
+            npc->GetTribe()->GetResource(npc,start_pos,start_sector,located_pos,located_sector,range,random);
+            located_angle = 0.0;
+        }
+
+        located_wp = CalculateWaypoint(npc,located_pos,located_sector,-1);
+    }
+    else if(split_obj[0] == "friend")
+    {
+        npc->Printf(5, "LocateOp - Friend");
+
+        gemNPCActor *ent = npc->GetNearestVisibleFriend(20);
+        if(ent)
+        {
+            npc->SetTarget(ent);
+        }
+        else
+        {
+            return true;
+        }
+
+        float rot;
+        iSector *sector;
+        csVector3 pos;
+        psGameObject::GetPosition(ent,pos,rot,sector);
+
+        located_pos = pos;
+        located_angle = 0;
+        located_sector = sector;
+    }
+    else if (split_obj[0] == "waypoint" )
+    {
+        npc->Printf(5, "LocateOp - Waypoint");
+
+        float located_range=0.0;
+
+        if (split_obj.GetSize() >= 2)
+        {
+            if (split_obj[1] == "group")
+            {
+                if (random)
+                {
+                    located_wp = npcclient->FindRandomWaypoint(split_obj[2],start_pos,start_sector,range,&located_range);
+                }
+                else
+                {
+                    located_wp = npcclient->FindNearestWaypoint(split_obj[2],start_pos,start_sector,range,&located_range);
+                }
+            } else if (split_obj[1] == "name")
+            {
+                located_wp = npcclient->FindWaypoint(split_obj[2]);
+                if (located_wp)
+                {
+                    located_range = npcclient->GetWorld()->Distance(start_pos,start_sector,located_wp->loc.pos,located_wp->GetSector(npcclient->GetEngine()));
+                }
+            }
+        }
+        else if (random)
+        {
+            located_wp = npcclient->FindRandomWaypoint(start_pos,start_sector,range,&located_range);
+        }
+        else
+        {
+            located_wp = npcclient->FindNearestWaypoint(start_pos,start_sector,range,&located_range);
+        }
+
+        if (!located_wp)
+        {
+            npc->Printf(5, "Couldn't locate any <%s> in npc script for <%s>.",
+                (const char *)object,npc->GetName() );
+            return true;
+        }
+        npc->Printf(5, "Located waypoint: %s at %s range %.2f",located_wp->GetName(),
+                    toString(located_wp->loc.pos,located_wp->loc.GetSector(npcclient->GetEngine())).GetData(),located_range);
+
+        located_pos = located_wp->loc.pos;
+        located_angle = located_wp->loc.rot_angle;
+        located_sector = located_wp->loc.GetSector(npcclient->GetEngine());
+
+        located_wp = CalculateWaypoint(npc,located_pos,located_sector,-1);
+    }
+    else if (!static_loc || !located)
+    {
+        npc->Printf(5, "LocateOp - Location");
+
+        float located_range=0.0;
+        Location * location;
+
+        if (split_obj.GetSize() >= 2)
+        {
+            location = npcclient->FindLocation(split_obj[0],split_obj[1]);
+        }
+        else if (random)
+        {
+            location = npcclient->FindRandomLocation(split_obj[0],start_pos,start_sector,range,&located_range);
+        }
+        else
+        {
+            location = npcclient->FindNearestLocation(split_obj[0],start_pos,start_sector,range,&located_range);
+        }
+
+        if (!location)
+        {
+            npc->Printf(5, "Couldn't locate any <%s> in npc script for <%s>.",
+                (const char *)object,npc->GetName() );
+            return true;
+        }
+        located_pos = location->pos;
+        located_angle = location->rot_angle;
+        located_sector = location->GetSector(npcclient->GetEngine());
+
+        AddRandomRange(located_pos,location->radius);
+        
+        if (static_loc)
+            located = true;  // if it is a static location, we only have to do this locate once, and save the answer
+
+        located_wp = CalculateWaypoint(npc,located_pos,located_sector,located_range);
+
+    }
+    else
+    {
+        npc->Printf(5, "remembered location from last time");
+    }
+
+    // Save on npc so other operations can refer to value
+    npc->SetActiveLocate(located_pos,located_sector,located_angle,located_wp);
+
+    npc->Printf(5, "LocateOp - Active location: pos %s rot %.2f wp %s",
+                toString(located_pos,located_sector).GetData(),located_angle,
+                (located_wp?located_wp->GetName():"(NULL)"));
+
+    return true;
+}
+
 //---------------------------------------------------------------------------
 
 bool MoveOperation::Load(iDocumentNode *node)
@@ -514,74 +1565,6 @@ void MoveOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
     CheckMovedOk(npc, eventmgr, oldPos, oldSector, newPos, newSector, timedelta);
 }
 
-//---------------------------------------------------------------------------
-
-bool CircleOperation::Load(iDocumentNode *node)
-{
-    radius = node->GetAttributeValueAsFloat("radius");
-    if (radius == 0)
-    {
-        Error1("No radius given for Circle operation");
-        return false;
-    }
-
-    LoadVelocity(node);
-    action = node->GetAttributeValue("anim");
-    
-    angle = node->GetAttributeValueAsFloat("angle")*PI/180;// Calculated if 0 and duration != 0, default 2PI
-    duration = node->GetAttributeValueAsFloat("duration"); // Calculated if 0
-    ang_vel = node->GetAttributeValueAsFloat("ang_vel");   // Calculated if 0
-    return true;
-}
-
-ScriptOperation *CircleOperation::MakeCopy()
-{
-    CircleOperation *op = new CircleOperation;
-    op->velSource = velSource;
-    op->vel    = vel;
-    op->action = action;
-    op->duration = duration;
-    op->ang_vel = ang_vel;
-    op->radius = radius;
-    op->angle = angle;
-
-    return op;
-}
-
-bool CircleOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
-{
-    // Calculate parameters not given
-    if (angle == 0)
-    {
-        if (duration != 0)
-        {
-            angle = duration*radius/GetVelocity(npc);
-        }
-        else
-        {
-            angle = 2*PI;
-        }
-    }
-    
-    
-    if (duration == 0)
-    {
-        if (angle != 0)
-        {
-            duration = fabs(angle)*radius/GetVelocity(npc);
-        } else
-        {
-            duration = 2*PI*radius/GetVelocity(npc);
-        }
-    }
-    
-    if (ang_vel == 0)
-    {
-        ang_vel = GetVelocity(npc)/radius;
-    }
-
-    return MoveOperation::Run(npc, eventmgr, interrupted);
-}
 
 //---------------------------------------------------------------------------
 
@@ -995,379 +1978,6 @@ bool RotateOperation::CompleteOperation(NPC *npc, EventManager *eventmgr)
     completed = true;
     
     return true;  // Script can keep going
-}
-
-//---------------------------------------------------------------------------
-
-bool LocateOperation::Load(iDocumentNode *node)
-{
-
-    object = node->GetAttributeValue("obj");
-    static_loc = node->GetAttributeValueAsBool("static",false);
-    if (node->GetAttribute("range"))
-    {
-        range  = node->GetAttributeValueAsFloat("range");
-    }
-    else
-    {
-        range = -1;
-    }
-    random = node->GetAttributeValueAsBool("random",false);
-    locate_invisible = node->GetAttributeValueAsBool("invisible",false);
-    locate_invincible = node->GetAttributeValueAsBool("invincible",false);
-
-    return true;
-}
-
-ScriptOperation *LocateOperation::MakeCopy()
-{
-    LocateOperation *op = new LocateOperation;
-    op->range  = range;
-    op->object = object;
-    op->static_loc = static_loc;
-    op->random = random;
-    op->locate_invisible = locate_invisible;
-    op->locate_invincible = locate_invincible;
-
-    return op;
-}
-
-
-Waypoint* LocateOperation::CalculateWaypoint(NPC *npc, csVector3 located_pos, iSector* located_sector, float located_range)
-{
-    Waypoint *end;
-    float end_range = 0.0;
-
-    end   = npcclient->FindNearestWaypoint(located_pos,located_sector,-1,&end_range);
-
-    if (end && (located_range == -1 || end_range >= located_range))
-    {
-        npc->Printf(5,"Located WP  : %30s at %s",end->GetName(),toString(end->loc.pos,end->loc.GetSector(npcclient->GetEngine())).GetDataSafe());
-        return end;
-    }
-
-    return NULL;
-}
-
-void ReplaceVariables(csString & object,NPC *npc)
-{
-    object.ReplaceAll("$name",npc->GetName());
-    if (npc->GetRaceInfo())
-    {
-        object.ReplaceAll("$race",npc->GetRaceInfo()->GetName());
-    }
-    if (npc->GetTribe())
-    {
-        object.ReplaceAll("$tribe",npc->GetTribe()->GetName());
-    }
-    if (npc->GetOwner())
-    {
-        object.ReplaceAll("$owner",npc->GetOwnerName());
-    }
-    if (npc->GetTarget())
-    {
-        object.ReplaceAll("$target",npc->GetTarget()->GetName());
-    }
-}
-
-
-bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
-{
-    // Reset old target
-    npc->SetTarget(NULL);
-
-    located_pos = csVector3(0.0f,0.0f,0.0f);
-    located_angle = 0.0f;
-    located_sector = NULL;
-    located_wp = NULL;
-
-    float start_rot;
-    iSector *start_sector;
-    csVector3 start_pos;
-    psGameObject::GetPosition(npc->GetActor(),start_pos,start_rot,start_sector);
-
-    ReplaceVariables(object,npc);
-
-    csArray<csString> split_obj = psSplit(object,':');
-
-    if (split_obj[0] == "perception")
-    {
-        npc->Printf(5,"LocateOp - Perception");
-
-        if (!npc->GetLastPerception())
-        {
-            return true;
-        }
-        if (!npc->GetLastPerception()->GetLocation(located_pos,located_sector))
-        {
-            return true;
-        }
-        located_angle = 0; // not used in perceptions
-    }
-    else if (split_obj[0] == "target")
-    {
-        npc->Printf(5,"LocateOp - Target");
-
-        gemNPCActor *ent;
-        // Since we don't have a current enemy targeted, find one!
-        if (range)
-        {
-            ent = npc->GetMostHated(range,locate_invisible,locate_invincible);
-        }
-        else
-        {
-            ent = npc->GetMostHated(10.0f,locate_invisible,locate_invincible);     // Default enemy range
-        }
-
-        if(ent)
-        {
-            npc->SetTarget(ent);
-        }
-        else
-        {
-            return true;
-        }
-
-        float rot;
-        iSector *sector;
-        csVector3 pos;
-        psGameObject::GetPosition(ent,pos,rot,sector);
-
-        located_pos = pos;
-        located_angle = 0;
-        located_sector = sector;
-    }
-    else if (split_obj[0] == "owner")
-    {
-        npc->Printf(5,"LocateOp - Owner");
-
-        gemNPCObject *owner;
-        // Since we don't have a current enemy targeted, find one!
-        owner = npc->GetOwner();
-
-        if(owner)
-        {
-            npc->SetTarget(owner);
-        }
-        else
-        {
-            return true;
-        }
-
-        float rot;
-        iSector *sector;
-        csVector3 pos;
-        psGameObject::GetPosition(owner,pos,rot,sector);
-
-        located_pos = pos;
-        located_angle = 0;
-        located_sector = sector;
-    }
-    else if (split_obj[0] == "self")
-    {
-        npc->Printf(5,"LocateOp - Self");
-
-        gemNPCActor *ent;
-
-        ent = npc->GetActor();
-
-        if(ent)
-        {
-            npc->SetTarget(ent);
-        }
-        else
-        {
-            return true;
-        }
-
-        float rot;
-        iSector *sector;
-        csVector3 pos;
-        psGameObject::GetPosition(ent,pos,rot,sector);
-
-        located_pos = pos;
-        located_angle = 0;
-        located_sector = sector;
-    }
-    else if (split_obj[0] == "tribe")
-    {
-        npc->Printf(5,"LocateOp - Tribe");
-
-        if (!npc->GetTribe())
-        {
-            return true;
-        }
-
-        if (split_obj[1] == "home")
-        {
-            float radius;
-            csVector3 pos;
-            npc->GetTribe()->GetHome(pos,radius,located_sector);
-            
-            AddRandomRange(pos,radius);
-            
-            located_pos = pos;
-            located_angle = 0;
-            
-        }
-        else if (split_obj[1] == "memory")
-        {
-            float located_range=0.0;
-            psTribe::Memory * memory;
-
-            if (random)
-            {
-                memory = npc->GetTribe()->FindRandomMemory(split_obj[2],start_pos,start_sector,range,&located_range);
-            }
-            else
-            {
-                memory = npc->GetTribe()->FindNearestMemory(split_obj[2],start_pos,start_sector,range,&located_range);
-            }
-            
-            if (!memory)
-            {
-                npc->Printf(5, "Couldn't locate any <%s> in npc script for <%s>.",
-                            (const char *)object,npc->GetName() );
-                return true;
-            }
-            located_pos = memory->pos;
-            located_sector = memory->sector;
-            
-            AddRandomRange(located_pos,memory->radius);
-        }
-        else if (split_obj[1] == "resource")
-        {
-            npc->GetTribe()->GetResource(npc,start_pos,start_sector,located_pos,located_sector,range,random);
-            located_angle = 0.0;
-        }
-
-        located_wp = CalculateWaypoint(npc,located_pos,located_sector,-1);
-    }
-    else if(split_obj[0] == "friend")
-    {
-        npc->Printf(5, "LocateOp - Friend");
-
-        gemNPCActor *ent = npc->GetNearestVisibleFriend(20);
-        if(ent)
-        {
-            npc->SetTarget(ent);
-        }
-        else
-        {
-            return true;
-        }
-
-        float rot;
-        iSector *sector;
-        csVector3 pos;
-        psGameObject::GetPosition(ent,pos,rot,sector);
-
-        located_pos = pos;
-        located_angle = 0;
-        located_sector = sector;
-    }
-    else if (split_obj[0] == "waypoint" )
-    {
-        npc->Printf(5, "LocateOp - Waypoint");
-
-        float located_range=0.0;
-
-        if (split_obj.GetSize() >= 2)
-        {
-            if (split_obj[1] == "group")
-            {
-                if (random)
-                {
-                    located_wp = npcclient->FindRandomWaypoint(split_obj[2],start_pos,start_sector,range,&located_range);
-                }
-                else
-                {
-                    located_wp = npcclient->FindNearestWaypoint(split_obj[2],start_pos,start_sector,range,&located_range);
-                }
-            } else if (split_obj[1] == "name")
-            {
-                located_wp = npcclient->FindWaypoint(split_obj[2]);
-                if (located_wp)
-                {
-                    located_range = npcclient->GetWorld()->Distance(start_pos,start_sector,located_wp->loc.pos,located_wp->GetSector(npcclient->GetEngine()));
-                }
-            }
-        }
-        else if (random)
-        {
-            located_wp = npcclient->FindRandomWaypoint(start_pos,start_sector,range,&located_range);
-        }
-        else
-        {
-            located_wp = npcclient->FindNearestWaypoint(start_pos,start_sector,range,&located_range);
-        }
-
-        if (!located_wp)
-        {
-            npc->Printf(5, "Couldn't locate any <%s> in npc script for <%s>.",
-                (const char *)object,npc->GetName() );
-            return true;
-        }
-        npc->Printf(5, "Located waypoint: %s at %s range %.2f",located_wp->GetName(),
-                    toString(located_wp->loc.pos,located_wp->loc.GetSector(npcclient->GetEngine())).GetData(),located_range);
-
-        located_pos = located_wp->loc.pos;
-        located_angle = located_wp->loc.rot_angle;
-        located_sector = located_wp->loc.GetSector(npcclient->GetEngine());
-
-        located_wp = CalculateWaypoint(npc,located_pos,located_sector,-1);
-    }
-    else if (!static_loc || !located)
-    {
-        npc->Printf(5, "LocateOp - Location");
-
-        float located_range=0.0;
-        Location * location;
-
-        if (split_obj.GetSize() >= 2)
-        {
-            location = npcclient->FindLocation(split_obj[0],split_obj[1]);
-        }
-        else if (random)
-        {
-            location = npcclient->FindRandomLocation(split_obj[0],start_pos,start_sector,range,&located_range);
-        }
-        else
-        {
-            location = npcclient->FindNearestLocation(split_obj[0],start_pos,start_sector,range,&located_range);
-        }
-
-        if (!location)
-        {
-            npc->Printf(5, "Couldn't locate any <%s> in npc script for <%s>.",
-                (const char *)object,npc->GetName() );
-            return true;
-        }
-        located_pos = location->pos;
-        located_angle = location->rot_angle;
-        located_sector = location->GetSector(npcclient->GetEngine());
-
-        AddRandomRange(located_pos,location->radius);
-        
-        if (static_loc)
-            located = true;  // if it is a static location, we only have to do this locate once, and save the answer
-
-        located_wp = CalculateWaypoint(npc,located_pos,located_sector,located_range);
-
-    }
-    else
-    {
-        npc->Printf(5, "remembered location from last time");
-    }
-
-    // Save on npc so other operations can refer to value
-    npc->SetActiveLocate(located_pos,located_sector,located_angle,located_wp);
-
-    npc->Printf(5, "LocateOp - Active location: pos %s rot %.2f wp %s",
-                toString(located_pos,located_sector).GetData(),located_angle,
-                (located_wp?located_wp->GetName():"(NULL)"));
-
-    return true;
 }
 
 //---------------------------------------------------------------------------
@@ -1916,351 +2526,6 @@ Waypoint* WanderOperation::WaypointListGetNext()
 
 //---------------------------------------------------------------------------
 
-const char * ChaseOperation::typeStr[]={"unkown","nearest","owner","target"};
-
-bool ChaseOperation::Load(iDocumentNode *node)
-{
-    action = node->GetAttributeValue("anim");
-    csString typestr = node->GetAttributeValue("type");
-    if (typestr == "nearest")
-    {
-        type = NEAREST;
-    }
-    else if (typestr == "boss" || typestr== "owner")
-    {
-        type = OWNER;
-    }
-    else if (typestr == "target")
-    {
-        type = TARGET;
-    }
-    else
-    {
-        type = UNKNOWN;
-    }
-
-    if (node->GetAttributeValue("range"))
-    {
-        searchRange = node->GetAttributeValueAsFloat("range");
-    }
-    else
-    {
-        searchRange = 2.0f;
-    }    
-
-    if (node->GetAttributeValue("chase_range"))
-    {
-        chaseRange = node->GetAttributeValueAsFloat("chase_range");
-    }
-    else
-    {
-        chaseRange = -1.0f; // Disable max chase range
-    }    
-
-    if ( node->GetAttributeValue("offset") )
-    {
-        offset = node->GetAttributeValueAsFloat("offset");
-    }
-    else
-    	offset = 0.5f;
-
-    LoadVelocity(node);
-    LoadCheckMoveOk(node);
-    ang_vel = node->GetAttributeValueAsFloat("ang_vel");
-
-    return true;
-}
-
-ScriptOperation *ChaseOperation::MakeCopy()
-{
-    ChaseOperation *op = new ChaseOperation;
-    op->action = action;
-    op->type   = type;
-    op->searchRange  = searchRange;
-    op->chaseRange  = chaseRange;
-    op->velSource = velSource;
-    op->vel    = vel;
-    op->ang_vel= ang_vel;
-    op->offset = offset;
-
-    return op;
-}
-
-bool ChaseOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
-{
-    float targetRot;
-    iSector* targetSector;
-    csVector3 targetPos;
-    
-    float myRot;
-    iSector* mySector;
-    csVector3 myPos;
-
-    csVector3 dest;
-    csString name;
-    gemNPCObject *entity = NULL;
-    target_id = EID(0);
-        
-    switch (type)
-    {
-    case NEAREST:
-        target_id = npc->GetNearestEntity(dest, name, searchRange);
-        npc->Printf(6, "Targeting nearest entity (%s) at (%1.2f,%1.2f,%1.2f) for chase ...",
-                    (const char *)name, dest.x, dest.y, dest.z);
-        if (target_id.IsValid())
-        {
-            entity = npcclient->FindEntityID(target_id);
-        }
-        break;
-    case OWNER:
-        {
-            
-            gemNPCObject * owner = npc->GetOwner();
-            if (owner)
-            {
-                entity = owner;
-            }
-            if (entity)
-            {
-                target_id = entity->GetEID();
-                psGameObject::GetPosition(entity, dest, targetRot, targetSector);
-                npc->Printf(6, "Targeting owner (%s) at (%1.2f,%1.2f,%1.2f) for chase ...",
-                            entity->GetName(),dest.x,dest.y,dest.z );
-
-            }
-        }
-        break;
-    case TARGET:
-        {
-            gemNPCObject * target = npc->GetTarget();
-            if (target)
-            {
-                entity = target;
-            }
-            if (entity)
-            {
-                target_id = entity->GetEID();
-                psGameObject::GetPosition(entity, dest, targetRot,targetSector);
-                npc->Printf(6, "Targeting current target (%s) at (%1.2f,%1.2f,%1.2f) for chase ...",
-                            entity->GetName(), dest.x,dest.y, dest.z );
-            }
-        }
-        break;
-    }
-
-    if (target_id.IsValid() && entity)
-    {
-        psGameObject::GetPosition(npc->GetActor(),myPos, myRot, mySector);
-    
-        psGameObject::GetPosition(entity, targetPos, targetRot, targetSector);
-
-        npc->Printf(5, "Chasing enemy <%s, %s> at %s", entity->GetName(), ShowID(entity->GetEID()),
-                    toString(targetPos,targetSector).GetDataSafe());
-
-        // We need to work in the target sector space
-        if (!npcclient->GetWorld()->WarpSpace(targetSector, mySector, targetPos))
-        {
-            npc->Printf("ChaseOperation: target's sector is not connected to ours!");
-            return true;  // This operation is complete
-        }
-        if ( Calc2DDistance( myPos, targetPos ) < offset )
-        {
-            return true;  // This operation is complete
-        }
-
-        // This prevents NPCs from wanting to occupy the same physical space as something else
-        csVector3 displacement = targetPos - myPos;
-        displacement.y = 0;
-        float factor = offset / displacement.Norm();
-        csVector3 destPos = myPos + (1 - factor) * displacement;
-        destPos.y = targetPos.y;
-
-        path.SetMaps(npcclient->GetMaps());
-        path.SetDest(destPos);
-        path.CalcLocalDest(myPos, mySector, localDest);
-
-
-        if ( GetAngularVelocity(npc) > 0 || GetVelocity(npc) > 0 )
-        {
-            StartMoveTo(npc, eventmgr, localDest, targetSector, GetVelocity(npc), action, false);
-            return false;
-        }
-        else
-        {
-            return true;  // This operation is complete
-        }
-    }
-    else
-    {
-        npc->Printf(5, "No one found to chase!");
-        return true;  // This operation is complete
-    }
-
-    return true; // This operation is complete
-}
-
-void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
-{
-
-    csVector3 myPos,myNewPos,targetPos;
-    float     myRot,dummyrot;
-    InstanceID       myInstance, targetInstance;
-    iSector * mySector, *myNewSector, *targetSector;
-    csVector3 forward;
-    
-    npc->GetLinMove()->GetLastPosition(myPos, myRot, mySector);
-    myInstance = npc->GetActor()->GetInstance();
-
-    // Now turn towards entity being chased again
-    csString name;
-    
-    if (type == NEAREST)
-    {
-        // Switch target if a new entity is withing search range.
-        EID newTargetEID = npc->GetNearestEntity(targetPos, name, searchRange);
-        if (newTargetEID.IsValid())
-        {
-            target_id = newTargetEID;
-        }
-    }
- 
-    gemNPCActor *target_entity = NULL;
-    gemNPCActor * targetActor = dynamic_cast<gemNPCActor*>(npcclient->FindEntityID(target_id));
-    if (targetActor)
-    {
-        target_entity = targetActor;
-    }
-
-    if (!targetActor || !target_entity) // no entity close to us
-    {
-        npc->Printf(5, "ChaseOp has no target now!");
-        npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
-        return;
-    }
-    
-    if(name.IsEmpty())
-    {
-        name = target_entity->GetName();
-    }
-    
-    psGameObject::GetPosition(target_entity,targetPos,dummyrot,targetSector);
-    targetInstance = targetActor->GetInstance();
-
-    // We work in our sector's space
-    if (!npcclient->GetWorld()->WarpSpace(targetSector, mySector, targetPos))
-    {
-        npc->Printf("ChaseOperation: target's sector is not connected to ours!");
-        npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
-        return;
-    }
-
-    // This prevents NPCs from wanting to occupy the same physical space as something else
-    csVector3 displacement = targetPos - myPos;
-
-    displacement.y = 0;
-    float distance = displacement.Norm();
-    
-    if ( (chaseRange > 0 && distance > chaseRange) || (targetInstance != myInstance) )
-    {
-        npc->Printf(5, "Target out of chase range -> we are done..");
-        csString str;
-        str.Append(typeStr[type]);
-        str.Append(" out of chase");
-        Perception range(str);
-        npc->TriggerEvent(&range);
-        npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
-        return;
-    }
-    
-
-    float factor = offset / distance;
-    targetPos = myPos + (1 - factor) * displacement;
-    targetPos.y = myPos.y;
-
-    npc->Printf(10, "Still chasing %s at %s...",(const char *)name,toString(targetPos,targetSector).GetDataSafe());
-    
-    float angleToTarget = psGameObject::CalculateIncidentAngle(myPos, targetPos);
-    csVector3 pathDest = path.GetDest();
-    float angleToPath  = psGameObject::CalculateIncidentAngle(myPos, pathDest);
-
-        
-    // if the target diverged from the end of our path, we must calculate it again
-    if ( fabs( AngleDiff(angleToTarget, angleToPath) ) > EPSILON  )
-    {
-        npc->Printf(8, "turn to target..");
-        path.SetDest(targetPos);
-        path.CalcLocalDest(myPos, mySector, localDest);
-        StartMoveTo(npc,eventmgr,localDest, mySector, GetVelocity(npc), action, false);
-    }
-    
-
-    float close = GetVelocity(npc)*timedelta; // Add 10 % to the distance moved in one tick.
-    
-    if (Calc2DDistance(localDest, myPos) <= 0.5f)
-    {
-        npc->GetLinMove()->SetPosition(myPos,myRot,mySector);
-        npc->Printf(5,"Set position %g %g %g, sector %s\n", myPos.x, myPos.y, myPos.z, mySector->QueryObject()->GetName());
-        
-        if (Calc2DDistance(myPos,targetPos) <= 0.5f)
-        {
-            npc->Printf(5, "We are done..");
-            npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
-            return;
-        }
-        else
-        {
-            npc->Printf(6, "We are at localDest..");
-            path.SetDest(targetPos);
-            path.CalcLocalDest(myPos, mySector, localDest);
-            StartMoveTo(npc, eventmgr, localDest, mySector, GetVelocity(npc), action, false);
-        }
-    }
-    else
-    {
-        TurnTo(npc, localDest, mySector, forward);
-    }
-    // Limit time extrapolation so we arrive near the correct place.
-    if(Calc2DDistance(localDest, myPos) <= close)
-    	timedelta = Calc2DDistance(localDest, myPos) / GetVelocity(npc);
-
-    npc->Printf(8, "advance: pos=(%f.2,%f.2,%f.2) rot=%.2f %s localDest=(%f.2,%f.2,%f.2) dist=%f", 
-                myPos.x,myPos.y,myPos.z, myRot, mySector->QueryObject()->GetName(),
-                localDest.x,localDest.y,localDest.z,
-                Calc2DDistance(localDest, myPos));
-
-    {
-        ScopedTimer st(250, "chase extrapolate %.2f time for %s", timedelta, ShowID(npc->GetActor()->GetEID()));
-        npc->GetLinMove()->ExtrapolatePosition(timedelta);
-    }
-    bool on_ground;
-    float speed,ang_vel;
-    csVector3 bodyVel,worldVel;
-
-    npc->GetLinMove()->GetDRData(on_ground,speed,myNewPos,myRot,myNewSector,bodyVel,worldVel,ang_vel);
-
-    npc->Printf(8,"World position bodyVel=%s worldVel=%s",toString(bodyVel).GetDataSafe(),toString(worldVel).GetDataSafe());
-
-    CheckMovedOk(npc, eventmgr, myPos, mySector, myNewPos, myNewSector, timedelta);
-}
-
-void ChaseOperation::InterruptOperation(NPC *npc,EventManager *eventmgr)
-{
-    ScriptOperation::InterruptOperation(npc,eventmgr);
-    
-    StopMovement(npc);
-}
-
-bool ChaseOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
-{
-    StopMovement(npc);
-
-    completed = true;
-
-    return true;  // Script can keep going
-}
-
-//---------------------------------------------------------------------------
-
 bool PickupOperation::Load(iDocumentNode *node)
 {
     object = node->GetAttributeValue("obj");
@@ -2299,61 +2564,6 @@ bool PickupOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     npc->Printf(5, "   Who: %s What: %s Count: %d",npc->GetName(),item->GetName(), count);
 
     npcclient->GetNetworkMgr()->QueuePickupCommand(npc->GetActor(), item, count);
-
-    return true;
-}
-
-//---------------------------------------------------------------------------
-
-bool EquipOperation::Load(iDocumentNode *node)
-{
-    item    = node->GetAttributeValue("item");
-    slot    = node->GetAttributeValue("slot");
-    count   = node->GetAttributeValueAsInt("count");
-    if (count <= 0) count = 1; // Allways equip at least one.
-    return true;
-}
-
-ScriptOperation *EquipOperation::MakeCopy()
-{
-    EquipOperation *op = new EquipOperation;
-    op->item   = item;
-    op->slot   = slot;
-    op->count  = count;
-    return op;
-}
-
-bool EquipOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
-{
-    npc->Printf(5, "   Who: %s What: %s Where: %s Count: %d",
-                npc->GetName(),item.GetData(), slot.GetData(), count);
-
-    npcclient->GetNetworkMgr()->QueueEquipCommand(npc->GetActor(), item, slot, count);
-
-    return true;
-}
-
-//---------------------------------------------------------------------------
-
-bool DequipOperation::Load(iDocumentNode *node)
-{
-    slot   = node->GetAttributeValue("slot");
-    return true;
-}
-
-ScriptOperation *DequipOperation::MakeCopy()
-{
-    DequipOperation *op = new DequipOperation;
-    op->slot   = slot;
-    return op;
-}
-
-bool DequipOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
-{
-    npc->Printf(5, "   Who: %s Where: %s",
-                npc->GetName(), slot.GetData());
-
-    npcclient->GetNetworkMgr()->QueueDequipCommand(npc->GetActor(), slot );
 
     return true;
 }
@@ -2463,25 +2673,6 @@ ScriptOperation *VisibleOperation::MakeCopy()
 bool VisibleOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     npcclient->GetNetworkMgr()->QueueVisibilityCommand(npc->GetActor(), true);
-    return true;
-}
-
-//---------------------------------------------------------------------------
-
-bool InvisibleOperation::Load(iDocumentNode *node)
-{
-    return true;
-}
-
-ScriptOperation *InvisibleOperation::MakeCopy()
-{
-    InvisibleOperation *op = new InvisibleOperation;
-    return op;
-}
-
-bool InvisibleOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
-{
-    npcclient->GetNetworkMgr()->QueueVisibilityCommand(npc->GetActor(), false);
     return true;
 }
 
@@ -2685,7 +2876,7 @@ void MeleeOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
             // may not find a target, and return to chase.  This -5 reduces
             // the need to fight as he can't find anyone and stops this infinite
             // loop.
-            npc->GetCurrentBehavior()->ApplyNeedDelta(-5);
+            npc->GetCurrentBehavior()->ApplyNeedDelta(npc, -5);
 
             Perception range("target out of range");
             npc->TriggerEvent(&range);
@@ -2697,7 +2888,7 @@ void MeleeOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
                 npc->DumpHateList();
             }
             npc->Printf(8, "No hated target in seek range (%2.2f)!", seek_range);
-            npc->GetCurrentBehavior()->ApplyNeedDelta(-5); // don't want to fight as badly
+            npc->GetCurrentBehavior()->ApplyNeedDelta(npc, -5); // don't want to fight as badly
         }
         return;
     }
@@ -2854,28 +3045,6 @@ void WaitOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
 
 //---------------------------------------------------------------------------
 
-bool DropOperation::Load(iDocumentNode *node)
-{
-    slot = node->GetAttributeValue("slot");
-    return true;
-}
-
-ScriptOperation *DropOperation::MakeCopy()
-{
-    DropOperation *op = new DropOperation;
-    op->slot = slot;
-    return op;
-}
-
-bool DropOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
-{
-    npcclient->GetNetworkMgr()->QueueDropCommand(npc->GetActor(), slot );
-
-    return true;
-}
-
-//---------------------------------------------------------------------------
-
 bool TransferOperation::Load(iDocumentNode *node)
 {
     item = node->GetAttributeValue("item");
@@ -2958,82 +3127,6 @@ bool TribeHomeOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     return true; // Nothing more to do for this op.
 }
 
-
-//---------------------------------------------------------------------------
-
-bool DigOperation::Load(iDocumentNode *node)
-{
-    resource = node->GetAttributeValue("resource");
-    if (resource.IsEmpty()) return false;
-    return true;
-}
-
-ScriptOperation *DigOperation::MakeCopy()
-{
-    DigOperation *op = new DigOperation;
-    op->resource = resource;
-    return op;
-}
-
-bool DigOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
-{
-    if (resource == "tribe:wealth")
-    {
-        if (npc->GetTribe())
-        {
-            npcclient->GetNetworkMgr()->QueueDigCommand(npc->GetActor(), npc->GetTribe()->GetNeededResourceNick());
-        }
-    }
-    else
-    {
-        npcclient->GetNetworkMgr()->QueueDigCommand(npc->GetActor(), resource );
-    }
-    
-
-    return true;
-}
-
-//---------------------------------------------------------------------------
-
-bool EatOperation::Load(iDocumentNode *node)
-{
-    resource = node->GetAttributeValue("resource");
-    if (resource.IsEmpty()) return false;
-    return true;
-}
-
-ScriptOperation *EatOperation::MakeCopy()
-{
-    EatOperation *op = new EatOperation;
-    op->resource = resource;
-    return op;
-}
-
-bool EatOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
-{
-    csString res = resource;
-    
-    if (resource == "tribe:wealth")
-    {
-        if (npc->GetTribe())
-        {
-            res = npc->GetTribe()->GetNeededResourceNick();
-        }
-    }
-
-    gemNPCActor *ent = npc->GetNearestDeadActor(1.0);
-    if (ent)
-    {
-        // Take a bite :)
-        if (npc->GetTribe())
-        {
-            npc->GetTribe()->AddResource(res,1);
-        }
-    }
-
-    return true;
-}
-
 //---------------------------------------------------------------------------
 
 bool RewardOperation::Load(iDocumentNode *node)
@@ -3083,60 +3176,6 @@ bool RewardOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     }
 
     return true;
-}
-
-//---------------------------------------------------------------------------
-
-bool DebugOperation::Load(iDocumentNode *node)
-{
-    exclusive = node->GetAttributeValue("exclusive");
-    level = node->GetAttributeValueAsInt("level");
-    return true;
-}
-
-ScriptOperation *DebugOperation::MakeCopy()
-{
-    DebugOperation *op = new DebugOperation;
-    op->exclusive = exclusive;
-    op->level = level;
-    return op;
-}
-
-bool DebugOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
-{
-    if (exclusive.Length())
-    {
-        static bool debug_exclusive = false;
-        
-        if (level && debug_exclusive)
-        {
-            // Can't turn on when exclusive is set.
-            return true;
-        }
-        if (level)
-        {
-            debug_exclusive = true;
-        }
-        else
-        {
-            debug_exclusive = false;
-        }
-    }
-
-    
-    if (!level) // Print before when turning off
-    {
-        npc->Printf(1, "DebugOp Set debug %d",level);
-    }
-    
-    npc->SetDebugging(level);
-    
-    if (level) // Print after when turning on
-    {
-        npc->Printf(1, "DebugOp Set debug %d",level);            
-    }
-
-    return true; // We are done
 }
 
 //---------------------------------------------------------------------------
