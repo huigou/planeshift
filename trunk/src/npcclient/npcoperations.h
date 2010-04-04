@@ -46,6 +46,7 @@ class EventManager;
 class NPC;
 class gemNPCObject;
 class gemNPCActor;
+class MoveOperation;
 
 /**
 * This is the base class for all operations in action scripts.
@@ -130,6 +131,50 @@ public:
     
 };
 
+//---------------------------------------------------------------------------
+//         Following section contain specefix NPC operations.
+//         Ordered alphabeticaly, with exception for when needed
+//         due to inheritance. MoveOperation is out of order compared
+//         to the implementation file.
+//---------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+
+/**
+* Chase updates periodically and turns, moving towards a certain
+* location.  This is normally used to chase a targeted player.
+*/
+class ChaseOperation : public ScriptOperation
+{
+protected:
+    csString  action;
+    int       type;
+    float     searchRange;
+    float     chaseRange;
+    float offset;
+    EID       target_id;
+    psAPath   path;
+    csVector3 localDest;
+    
+    enum
+    {
+        NEAREST,OWNER,TARGET
+    };
+    static const char * typeStr[];
+public:
+
+    ChaseOperation(): ScriptOperation("Chase") { target_id=(uint32_t)-1; type = NEAREST; searchRange=2.0; chaseRange=-1.0; ang_vel = 0; vel=0; };
+    virtual ~ChaseOperation() {};
+
+    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual void Advance(float timedelta,NPC *npc,EventManager *eventmgr);
+    virtual bool Load(iDocumentNode *node);
+    virtual ScriptOperation *MakeCopy();
+    virtual bool CompleteOperation(NPC *npc,EventManager *eventmgr);
+    virtual void InterruptOperation(NPC *npc,EventManager *eventmgr);
+};
+
+
 //-----------------------------------------------------------------------------
 
 /**
@@ -177,6 +222,189 @@ public:
     virtual ScriptOperation *MakeCopy();
 
     virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+};
+
+//-----------------------------------------------------------------------------
+
+/**
+* Debug will turn on and off debug for the npc. Used for debuging
+*/
+class DebugOperation : public ScriptOperation
+{
+protected:
+    int      level;
+    csString exclusive;
+
+public:
+
+    DebugOperation(): ScriptOperation("Debug") {};
+    virtual ~DebugOperation() {};
+    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual bool Load(iDocumentNode *node);
+    virtual ScriptOperation *MakeCopy();
+};
+
+//-----------------------------------------------------------------------------
+
+/**
+* Dequip will tell the npc to dequip a item
+*/
+class DequipOperation : public ScriptOperation
+{
+protected:
+    csString slot;
+    
+public:
+
+    DequipOperation(): ScriptOperation("Dequip") {};
+    virtual ~DequipOperation() {};
+    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual bool Load(iDocumentNode *node);
+    virtual ScriptOperation *MakeCopy();
+};
+
+//-----------------------------------------------------------------------------
+
+/** Dig will make the NPC dig for a resource.
+ *
+ *  This class is the implementation of the dig operations
+ *  used in behavior scripts for NPCS.
+ *
+ *  Examples:
+ *  <dig resource="tribe:wealth" />
+ *  <dig resource="Gold Ore" />
+ */
+class DigOperation : public ScriptOperation
+{
+protected:
+    csString resource; ///< The name of the resource to dig for.
+
+public:
+
+    DigOperation(): ScriptOperation("Dig") {};
+    virtual ~DigOperation() {};
+    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual bool Load(iDocumentNode *node);
+    virtual ScriptOperation *MakeCopy();
+};
+
+//-----------------------------------------------------------------------------
+
+/**
+* Drop will make the NPC drop whatever he is
+* holding.
+*/
+class DropOperation : public ScriptOperation
+{
+protected:
+    csString slot;
+
+public:
+
+    DropOperation(): ScriptOperation("Drop") {};
+    virtual ~DropOperation() {};
+    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual bool Load(iDocumentNode *node);
+    virtual ScriptOperation *MakeCopy();
+};
+
+//-----------------------------------------------------------------------------
+
+/**
+* Eat will take a bite of a nearby dead actor and add resource to tribe wealth.
+*
+* Examples:
+* <eat resource="tribe:wealth" />
+* <eat resource="Flesh" />
+*
+*/
+class EatOperation : public ScriptOperation
+{
+protected:
+    csString resource;
+
+public:
+
+    EatOperation(): ScriptOperation("Eat") {};
+    virtual ~EatOperation() {};
+    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual bool Load(iDocumentNode *node);
+    virtual ScriptOperation *MakeCopy();
+};
+
+//-----------------------------------------------------------------------------
+
+/**
+* Equip will tell the npc to equip a item
+*
+* Examples:
+* <equip item="Sword" slot="righthand" count="1" />
+*
+*/
+class EquipOperation : public ScriptOperation
+{
+protected:
+    csString item;
+    csString slot;
+    int      count; // Number of items to pick up from a stack
+    
+public:
+
+    EquipOperation(): ScriptOperation("Equip") {};
+    virtual ~EquipOperation() {};
+    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual bool Load(iDocumentNode *node);
+    virtual ScriptOperation *MakeCopy();
+};
+
+//-----------------------------------------------------------------------------
+
+/**
+* Invisible will make the npc invisible.
+*/
+class InvisibleOperation : public ScriptOperation
+{
+public:
+
+    InvisibleOperation(): ScriptOperation("Invisible") {};
+    virtual ~InvisibleOperation() {};
+    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual bool Load(iDocumentNode *node);
+    virtual ScriptOperation *MakeCopy();
+};
+
+//-----------------------------------------------------------------------------
+
+/**
+* Locate is a very powerful function which will find
+* the nearest object of the named tag, within a range.
+*/
+class LocateOperation : public ScriptOperation
+{
+protected:
+    float    range;
+    csString object;
+    bool     static_loc;
+    bool     located;
+    csVector3 located_pos;
+    float     located_angle;
+    iSector*  located_sector;
+    Waypoint* located_wp;
+    bool      random;
+    bool      locate_invisible;
+    bool      locate_invincible;
+
+public:
+
+    LocateOperation(): ScriptOperation("Locate") { range = 0; static_loc=true; located=false; }
+    virtual ~LocateOperation() { }
+
+    /// Use -1 for located_range if range scheck sould be skipped.
+    Waypoint* CalculateWaypoint(NPC *npc, csVector3 located_pos, iSector* located_sector, float located_range);
+
+    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual bool Load(iDocumentNode *node);
+    virtual ScriptOperation *MakeCopy();
 };
 
 //-----------------------------------------------------------------------------
@@ -282,40 +510,6 @@ public:
 //-----------------------------------------------------------------------------
 
 /**
-* Locate is a very powerful function which will find
-* the nearest object of the named tag, within a range.
-*/
-class LocateOperation : public ScriptOperation
-{
-protected:
-    float    range;
-    csString object;
-    bool     static_loc;
-    bool     located;
-    csVector3 located_pos;
-    float     located_angle;
-    iSector*  located_sector;
-    Waypoint* located_wp;
-    bool      random;
-    bool      locate_invisible;
-    bool      locate_invincible;
-
-public:
-
-    LocateOperation(): ScriptOperation("Locate") { range = 0; static_loc=true; located=false; }
-    virtual ~LocateOperation() { }
-
-    /// Use -1 for located_range if range scheck sould be skipped.
-    Waypoint* CalculateWaypoint(NPC *npc, csVector3 located_pos, iSector* located_sector, float located_range);
-
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
-    virtual bool Load(iDocumentNode *node);
-    virtual ScriptOperation *MakeCopy();
-};
-
-//-----------------------------------------------------------------------------
-
-/**
 * Navigate moves the NPC to the position and orientation
 * of the last located thing.  (See LocateOperation)
 */
@@ -337,41 +531,6 @@ public:
     virtual bool CompleteOperation(NPC *npc,EventManager *eventmgr);
 };
 
-//-----------------------------------------------------------------------------
-
-/**
-* Chase updates periodically and turns, moving towards a certain
-* location.  This is normally used to chase a targeted player.
-*/
-class ChaseOperation : public ScriptOperation
-{
-protected:
-    csString  action;
-    int       type;
-    float     searchRange;
-    float     chaseRange;
-    float offset;
-    EID       target_id;
-    psAPath   path;
-    csVector3 localDest;
-    
-    enum
-    {
-        UNKNOWN,NEAREST,OWNER,TARGET
-    };
-    static const char * typeStr[];
-public:
-
-    ChaseOperation(): ScriptOperation("Chase") { target_id=(uint32_t)-1; type = UNKNOWN; searchRange=2.0; chaseRange=-1.0; ang_vel = 0; vel=0; };
-    virtual ~ChaseOperation() {};
-
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
-    virtual void Advance(float timedelta,NPC *npc,EventManager *eventmgr);
-    virtual bool Load(iDocumentNode *node);
-    virtual ScriptOperation *MakeCopy();
-    virtual bool CompleteOperation(NPC *npc,EventManager *eventmgr);
-    virtual void InterruptOperation(NPC *npc,EventManager *eventmgr);
-};
 
 class Waypoint;
 
@@ -494,46 +653,6 @@ public:
 //-----------------------------------------------------------------------------
 
 /**
-* Equip will tell the npc to equip a item
-*/
-class EquipOperation : public ScriptOperation
-{
-protected:
-    csString item;
-    csString slot;
-    int      count; // Number of items to pick up from a stack
-    
-public:
-
-    EquipOperation(): ScriptOperation("Equip") {};
-    virtual ~EquipOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
-    virtual bool Load(iDocumentNode *node);
-    virtual ScriptOperation *MakeCopy();
-};
-
-//-----------------------------------------------------------------------------
-
-/**
-* Dequip will tell the npc to dequip a item
-*/
-class DequipOperation : public ScriptOperation
-{
-protected:
-    csString slot;
-    
-public:
-
-    DequipOperation(): ScriptOperation("Dequip") {};
-    virtual ~DequipOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
-    virtual bool Load(iDocumentNode *node);
-    virtual ScriptOperation *MakeCopy();
-};
-
-//-----------------------------------------------------------------------------
-
-/**
 * Talk will tell the npc to communicate to a nearby
 * entity.
 */
@@ -593,22 +712,6 @@ public:
 
     VisibleOperation(): ScriptOperation("Visible") {};
     virtual ~VisibleOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
-    virtual bool Load(iDocumentNode *node);
-    virtual ScriptOperation *MakeCopy();
-};
-
-//-----------------------------------------------------------------------------
-
-/**
-* Invisible will make the npc invisible.
-*/
-class InvisibleOperation : public ScriptOperation
-{
-public:
-
-    InvisibleOperation(): ScriptOperation("Invisible") {};
-    virtual ~InvisibleOperation() {};
     virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
@@ -758,26 +861,6 @@ public:
 //-----------------------------------------------------------------------------
 
 /**
-* Drop will make the NPC drop whatever he is
-* holding.
-*/
-class DropOperation : public ScriptOperation
-{
-protected:
-    csString slot;
-
-public:
-
-    DropOperation(): ScriptOperation("Drop") {};
-    virtual ~DropOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
-    virtual bool Load(iDocumentNode *node);
-    virtual ScriptOperation *MakeCopy();
-};
-
-//-----------------------------------------------------------------------------
-
-/**
 * Transfer will transfer a item from the NPC to a target. The
 * target might be a tribe.
 */
@@ -817,50 +900,6 @@ public:
 
 //-----------------------------------------------------------------------------
 
-/** Dig will make the NPC dig for a resource.
- *
- *  This class is the implementation of the dig operations
- *  used in behavior scripts for NPCS.
- *
- *  Examples:
- *  <dig resource="tribe:wealth" />
- *  <dig resource="Gold Ore" />
- */
-class DigOperation : public ScriptOperation
-{
-protected:
-    csString resource; ///< The name of the resource to dig for.
-
-public:
-
-    DigOperation(): ScriptOperation("Dig") {};
-    virtual ~DigOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
-    virtual bool Load(iDocumentNode *node);
-    virtual ScriptOperation *MakeCopy();
-};
-
-//-----------------------------------------------------------------------------
-
-/**
-* Eat will take a bite of a nearby dead actor and add resource to tribe wealth.
-*/
-class EatOperation : public ScriptOperation
-{
-protected:
-    csString resource;
-
-public:
-
-    EatOperation(): ScriptOperation("Eat") {};
-    virtual ~EatOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
-    virtual bool Load(iDocumentNode *node);
-    virtual ScriptOperation *MakeCopy();
-};
-
-//-----------------------------------------------------------------------------
-
 /** Implement the reward NPC script operation.
  *
  * Reward will add a given resource to the Tribe that the
@@ -885,25 +924,6 @@ public:
     virtual ScriptOperation *MakeCopy();
 };
 
-//-----------------------------------------------------------------------------
-
-/**
-* Debug will turn on and off debug for the npc. Used for debuging
-*/
-class DebugOperation : public ScriptOperation
-{
-protected:
-    int      level;
-    csString exclusive;
-
-public:
-
-    DebugOperation(): ScriptOperation("Debug") {};
-    virtual ~DebugOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
-    virtual bool Load(iDocumentNode *node);
-    virtual ScriptOperation *MakeCopy();
-};
 
 //-----------------------------------------------------------------------------
 

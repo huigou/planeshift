@@ -269,7 +269,7 @@ void NPC::Advance(csTicks when)
 {
     if (last_update && !disabled)
     {
-        brain->Advance(when-last_update,this);
+        brain->Advance(when-last_update, this);
     }
 
     last_update = when;
@@ -279,7 +279,7 @@ void NPC::ResumeScript(Behavior *which)
 {
     if (!disabled)
     {
-        brain->ResumeScript(this,which);
+        brain->ResumeScript(this, which);
     }
 }
 
@@ -288,7 +288,7 @@ void NPC::TriggerEvent(Perception *pcpt)
     if (!disabled)
     {
         Printf(15,"Got event %s",pcpt->ToString().GetData() );
-        brain->FirePerception(this,pcpt);
+        brain->FirePerception(this, pcpt);
     }
 }
 

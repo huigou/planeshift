@@ -1,5 +1,5 @@
 /*
-* npcbehave.cpp by Keith Fulton <keith@paqrat.com>
+* perceptions.cpp by Keith Fulton <keith@paqrat.com>
 *
 * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
 *
@@ -72,15 +72,6 @@ bool Reaction::Load(iDocumentNode *node,BehaviorSet& behaviors)
     {
         desireValue = node->GetAttributeValueAsFloat("delta");
         desireType = DESIRE_DELTA;
-
-        // Handle some deprecated styles, that will change the desired
-        // type. In next release remove this.
-        if (fabs(desireValue+1)<SMALL_EPSILON) // -1 in delta means "don't react"
-        {
-            desireType = DESIRE_NONE;
-            desireValue = 0.0;
-            Error1("DEPRECATED: Use of -1 delta for don't react. Set 0 delta.");
-        }
 
         if (fabs(desireValue)<SMALL_EPSILON)  // 0 means no change
         {
@@ -257,11 +248,11 @@ void Reaction::React(NPC *who, Perception *pcpt)
             break;
         case DESIRE_ABSOLUTE:
             who->Printf(10, "Setting %1.1f need to behavior %s", desireValue, affected[i]->GetName());
-            affected[i]->ApplyNeedAbsolute(desireValue);
+            affected[i]->ApplyNeedAbsolute(who, desireValue);
             break;
         case DESIRE_DELTA:
             who->Printf(10, "Adding %1.1f need to behavior %s", desireValue, affected[i]->GetName());
-            affected[i]->ApplyNeedDelta(desireValue);
+            affected[i]->ApplyNeedDelta(who, desireValue);
             break;
         case DESIRE_GUARANTIED:
             who->Printf(10, "Guarantied need to behavior %s", affected[i]->GetName());
@@ -273,8 +264,8 @@ void Reaction::React(NPC *who, Perception *pcpt)
             }
             if (who->GetCurrentBehavior() != affected[i])
             {
-				affected[i]->ApplyNeedAbsolute(highest + 25);
-				affected[i]->SetCompletionDecay(-1);
+                affected[i]->ApplyNeedAbsolute(who, highest + 25);
+                affected[i]->SetCompletionDecay(-1);
             }
             break;
         }
