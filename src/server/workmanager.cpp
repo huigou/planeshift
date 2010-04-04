@@ -729,7 +729,7 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
     psItem* tool = workerchar->Inventory().GetInventoryItem(PSCHARACTER_SLOT_RIGHTHAND);
     if (!tool || workEvent->nr->item_cat_id != tool->GetCategory()->id)
     {
-        tool = workerchar->Inventory().GetInventoryItem(PSCHARACTER_SLOT_LEFTTHAND);
+        tool = workerchar->Inventory().GetInventoryItem(PSCHARACTER_SLOT_LEFTHAND);
         if (!tool || workEvent->nr->item_cat_id != tool->GetCategory()->id)
         {
             if (workEvent->client)
