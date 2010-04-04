@@ -729,11 +729,14 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
     psItem* tool = workerchar->Inventory().GetInventoryItem(PSCHARACTER_SLOT_RIGHTHAND);
     if (!tool || workEvent->nr->item_cat_id != tool->GetCategory()->id)
     {
-        if (workEvent->client)
+        tool = workerchar->Inventory().GetInventoryItem(PSCHARACTER_SLOT_LEFTTHAND);
+        if (!tool || workEvent->nr->item_cat_id != tool->GetCategory()->id)
         {
-            psserver->SendSystemInfo(workEvent->worker->GetClientID(),"You were unsuccessful since you no longer have the tool.");
+            if (workEvent->client)
+            {
+                psserver->SendSystemInfo(workEvent->worker->GetClientID(),"You were unsuccessful since you no longer have the tool.");
+            }
         }
-
         workEvent->worker->SetMode(PSCHARACTER_MODE_PEACE); // Actor isn't working anymore
         return;
     }
