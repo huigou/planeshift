@@ -736,9 +736,10 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
             {
                 psserver->SendSystemInfo(workEvent->worker->GetClientID(),"You were unsuccessful since you no longer have the tool.");
             }
+        
+            workEvent->worker->SetMode(PSCHARACTER_MODE_PEACE); // Actor isn't working anymore
+            return;
         }
-        workEvent->worker->SetMode(PSCHARACTER_MODE_PEACE); // Actor isn't working anymore
-        return;
     }
 
     float roll = psserver->GetRandom();
