@@ -103,6 +103,7 @@ Init (const char *resname, bool loop, float volume_preset, int type,
   *
   * fading is done in ten steps per second
   * we calculate the number of steps and the volume for each step
+  * FIXME csticks
   *
   * fading parameters of the given handle are updated.
   * Fading is done by SndSysMgr::UpdateSound

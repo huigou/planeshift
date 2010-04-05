@@ -85,7 +85,10 @@ SoundSystemManager::~SoundSystemManager ()
  *
  * there should be 50ms betweens the updates
  * and MUST be 100ms for FadeSounds
- * i know that csTicks are not THAT accurate
+ * csTicks are not THAT accurate..
+ * and because of that its now a FIXME 
+ * i knew that we would run into this :/
+ * but i already have a plan.. :)   
  */
 
 void

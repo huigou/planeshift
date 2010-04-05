@@ -198,7 +198,6 @@ SoundData::DeleteSound (SoundFile* &sound)
     delete sound;
 }
 
-
 void
 SoundData::Update ()
 {
@@ -206,6 +205,7 @@ SoundData::Update ()
     csArray<SoundFile*> allsoundfiles;
     SoundFile          *sound;
 
+    // FIXME csticks
     now = csGetTicks();
     allsoundfiles = soundfiles.GetAll();
 

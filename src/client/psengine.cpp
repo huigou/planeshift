@@ -917,18 +917,6 @@ bool psEngine::Process3D(iEvent& ev)
     {
         LoadGame();
     }
-    // Update the sound system
-    else if (GetSoundStatus())
-    {
-    	SoundManager->UpdateListener( camera->GetView() );
-        SoundManager->playerposition = celclient->GetMainPlayer()->Pos();
-    }
-
-    if (celclient)
-        celclient->Update(HasLoadedMap());
-
-    if (effectManager)
-        effectManager->Update();
 
     if (drawScreen && loadstate == LS_DONE)
     {
@@ -1149,12 +1137,26 @@ inline void psEngine::UpdatePerFrame()
                 actor->GetVitalMgr()->Predict(csGetTicks(),"Target");
         }
     }
+
+    if (celclient)
+        celclient->Update(HasLoadedMap());
+
+    if (effectManager)
+        effectManager->Update();
   
-  /* sound is updated EVERY FRAME, doesnt matter if 2D or 3D
-   * it will slow itself down to save cputime
-   * TODO add to CS loop
-   */
-  SoundManager->Update();
+    // Update the sound system
+    if (GetSoundStatus()
+        && loadstate == LS_DONE)
+    {
+        SoundManager->UpdateListener( camera->GetView() );
+        SoundManager->playerposition = celclient->GetMainPlayer()->Pos();
+    }
+
+    /* sound is updated EVERY FRAME, doesnt matter if 2D or 3D
+     * it will slow itself down to save cputime
+     */
+
+    SoundManager->Update();
 }
 
 // ----------------------------------------------------------------------------
