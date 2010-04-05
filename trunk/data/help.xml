@@ -701,6 +701,8 @@ Creates a clone of the named NPC at your current location.</topic>
 /path adjust
 /path alias
 /path display|show
+/path flagclear
+/path flagset
 /path format
 /path hide
 /path help
@@ -727,6 +729,34 @@ Add or remove a alias to/from the nearest waypoint. The default is add if neithe
            <topic name="/path display|show">/path display|show [Points|Waypoints]
 
 Display all waypoints and points unless either points or waypoints is specefied. In that case only points or waypoints are displayed.</topic>
+           <topic name="/path flagclear">/path flagclear &lt;flag&gt; [&lt;radius&gt;]
+
+Clear flags on the nearest waypoint.
+
+Supported flags are:
+ALLOW_RETURN
+UNDERGROUND
+UNDERWATER
+PRIVATE
+PUBLIC
+CITY
+INDOOR
+
+Use radius to narrow or widen the search for the waypoint. Use /path info to view current set flags.</topic>
+           <topic name="/path flagset">/path flagset &lt;flag&gt; [&lt;radius&gt;]
+
+Set flags on the nearest waypoint.
+
+Supported flags are:
+ALLOW_RETURN
+UNDERGROUND
+UNDERWATER
+PRIVATE
+PUBLIC
+CITY
+INDOOR
+
+Use radius to narrow or widen the search for the waypoint. Use /path info to view current set flags.</topic>
            <topic name="/path format">/path format &lt;format&gt; [first]
 
 Set up the format to be used for waypoint name when creating new waypoints. Use /path format wp%03d 10 to create waypoints with name wp010, wp011,... First waypoint will be added when /path start is used in an location where there are no waypoint from before.</topic>
@@ -736,7 +766,7 @@ Display a short summary of commands or detailed syntax for a sub command if give
            <topic name="/path hide">/path hide [Points|Waypoints]
 
 Hide all points. If waypoints or points are specified only either points or waypoints are hidden.</topic>
-           <topic name="/path info">/path info
+           <topic name="/path info">/path info [&lt;radius&gt;]
 
 Show info about the nearest path or waypoint.</topic>
            <topic name="/path point">/path point
