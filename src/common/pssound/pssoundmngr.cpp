@@ -40,7 +40,6 @@ psSoundManager::psSoundManager (iObjectRegistry* objectReg)
     timeofday = 12;         ///< timeofday initial is 12am / 12:00
     
     SndSysMgr = new SoundSystemManager(objectReg);
-    rng = new csRandomGen(458898*csGetTicks());
 
     // load sector data
     LoadData (objectReg, sectordata);
@@ -62,7 +61,6 @@ psSoundManager::psSoundManager (iObjectRegistry* objectReg)
 psSoundManager::~psSoundManager ()
 {
     delete voicequeue;
-    delete rng;
     delete SndSysMgr;
     // Note: SndSysMgr should take care of SoundControls .. we can ignore them
     // TODO: free sectordata
@@ -110,9 +108,7 @@ Update ()
  * all we do is copy the address
  */
 
-void
-psSoundManager::
-TransferHandles (sctdata* &oldsector, sctdata* &newsector)
+void psSoundManager::TransferHandles (sctdata* &oldsector, sctdata* &newsector)
 {
     for (size_t j = 0; j< newsector->music.GetSize(); j++)
     {
@@ -164,9 +160,7 @@ TransferHandles (sctdata* &oldsector, sctdata* &newsector)
 
 
 
-void
-psSoundManager::
-ConvertFactoriesToEmitter (sctdata* &sector)
+void psSoundManager::ConvertFactoriesToEmitter (sctdata* &sector)
 {
     iSector                 *searchSector;
     iMeshFactoryWrapper     *factory;
@@ -210,7 +204,7 @@ ConvertFactoriesToEmitter (sctdata* &sector)
 
             if (mesh->GetFactory() == factory)
             {
-                if (rng->Get() <= sector->emitter[j]->factory_prob)
+                if (rng.Get() <= sector->emitter[j]->factory_prob)
                 {
                     emitter = new sct_emitter;
             
@@ -252,9 +246,7 @@ ConvertFactoriesToEmitter (sctdata* &sector)
  */
 
 
-void
-psSoundManager::
-Load ( const char* sector, csVector3 position )
+void psSoundManager::Load ( const char* sector, csVector3 position )
 {
     sctdata        *oldsector;
     
@@ -329,9 +321,7 @@ Load ( const char* sector, csVector3 position )
  * Update everything in the given sector
  */
 
-void
-psSoundManager::
-UpdateSector (sctdata* &sector)
+void psSoundManager::UpdateSector (sctdata* &sector)
 {
     csPrintf("UpdateSector\n");
     UpdateEmitter(sector);
@@ -340,9 +330,7 @@ UpdateSector (sctdata* &sector)
     UpdateEntity(sector);    
 }
 
-void
-psSoundManager::
-UpdateAmbient (sctdata* &sector)
+void psSoundManager::UpdateAmbient (sctdata* &sector)
 {
     sct_ambient *ambient;
 
@@ -405,9 +393,7 @@ UpdateAmbient (sctdata* &sector)
     }
 }
 
-void
-psSoundManager::
-UpdateMusic (sctdata* &sector)
+void psSoundManager::UpdateMusic (sctdata* &sector)
 {
     sct_music *music;
 
@@ -515,9 +501,7 @@ update on position change
 */
 
 
-void
-psSoundManager::
-UpdateEmitter (sctdata* &sector)
+void psSoundManager::UpdateEmitter (sctdata* &sector)
 {
     sct_emitter *emitter;
     csVector3 rangeVec;
@@ -590,9 +574,7 @@ UpdateEmitter (sctdata* &sector)
  *   update position
  */
 
-void
-psSoundManager::
-UpdateEntity (sctdata* &sector)
+void psSoundManager::UpdateEntity (sctdata* &sector)
 {
     sct_entity *entity;
     iMeshWrapper* mesh;
@@ -638,7 +620,7 @@ UpdateEntity (sctdata* &sector)
               
             if (range <= entity->maxrange
                 && csStrCaseCmp(entity->name, mesh->QueryObject()->GetName()) == 0
-                && rng->Get() <= entity->probability
+                && rng.Get() <= entity->probability
                 && (entity->timeofday <= timeofday
                 && entity->timeofdayrange >= timeofday))
             {      
@@ -665,9 +647,7 @@ UpdateEntity (sctdata* &sector)
  * updated every frame? ..
  */
 
-void
-psSoundManager::
-UpdateListener ( iView* view )
+void psSoundManager::UpdateListener ( iView* view )
 {
     /* TODO wrong way todo this */
     if (SndSysMgr->Initialised == false)
@@ -691,16 +671,14 @@ UpdateListener ( iView* view )
     SndSysMgr->UpdateListener (v, f, t);
 }
 
-void
-psSoundManager::PlayActionSound (const char *name)
+void psSoundManager::PlayActionSound (const char *name)
 {
     SoundHandle *Handle;
     SndSysMgr->Play2DSound(name, DONT_LOOP, 0, 0, VOLUME_NORM,
                            actionSndCtrl, Handle);   
 }
 
-void
-psSoundManager::PlayGUISound (const char *name)
+void psSoundManager::PlayGUISound (const char *name)
 {
     SoundHandle *Handle;
     SndSysMgr->Play2DSound(name, DONT_LOOP, 0, 0, VOLUME_NORM,
@@ -719,9 +697,7 @@ psSoundManager::PlayGUISound (const char *name)
  * still i consider replacing it with something more generic 
  */
 
-bool
-psSoundManager::
-LoadData (iObjectRegistry* objectReg, csArray<sctdata*> &sectordata)
+bool psSoundManager::LoadData (iObjectRegistry* objectReg, csArray<sctdata*> &sectordata)
 {
     csRef<iDataBuffer>        xpath;
     const char*                        dir;
@@ -779,9 +755,7 @@ LoadData (iObjectRegistry* objectReg, csArray<sctdata*> &sectordata)
     return true;
 }
 
-void
-psSoundManager::
-GetAmbientNodes (csArray<sct_ambient*> &ambient_sounds,
+void psSoundManager::GetAmbientNodes (csArray<sct_ambient*> &ambient_sounds,
                  csRef<iDocumentNodeIterator> Itr)
 {
     csRef<iDocumentNode>    Node;
@@ -819,9 +793,7 @@ GetAmbientNodes (csArray<sct_ambient*> &ambient_sounds,
 
 
 
-void
-psSoundManager::
-GetEmitterNodes(csArray<sct_emitter*> &emitter_sounds,
+void psSoundManager::GetEmitterNodes(csArray<sct_emitter*> &emitter_sounds,
                 csRef<iDocumentNodeIterator> Itr)
 {
     csRef<iDocumentNode>    Node;
@@ -862,9 +834,7 @@ GetEmitterNodes(csArray<sct_emitter*> &emitter_sounds,
     }
 }
 
-void
-psSoundManager::
-GetMusicNodes (csArray<sct_music*> &music_sounds, csRef<iDocumentNodeIterator> Itr)
+void psSoundManager::GetMusicNodes (csArray<sct_music*> &music_sounds, csRef<iDocumentNodeIterator> Itr)
 {
     csRef<iDocumentNode>    Node;
     sct_music              *music;
@@ -897,9 +867,7 @@ GetMusicNodes (csArray<sct_music*> &music_sounds, csRef<iDocumentNodeIterator> I
     }
 }
 
-void
-psSoundManager::
-GetEntityNodes (csArray<sct_entity*> &entity_sounds, csRef<iDocumentNodeIterator> Itr)
+void psSoundManager::GetEntityNodes (csArray<sct_entity*> &entity_sounds, csRef<iDocumentNodeIterator> Itr)
 {
     csRef<iDocumentNode>    Node;
     sct_entity             *entity;
@@ -937,9 +905,7 @@ GetEntityNodes (csArray<sct_entity*> &entity_sounds, csRef<iDocumentNodeIterator
  * Set functions which trigger updates
  */
 
-void
-psSoundManager::
-SetTimeOfDay (int newTimeofday)
+void psSoundManager::SetTimeOfDay (int newTimeofday)
 {
     csPrintf("settimeofday\n");
     timeofday = newTimeofday;
@@ -956,9 +922,7 @@ SetTimeOfDay (int newTimeofday)
  * update is only called if weather is changing
  */ 
 
-void
-psSoundManager::
-SetWeather (int newWeather)
+void psSoundManager::SetWeather (int newWeather)
 {
     if (weather != newWeather)
     {
@@ -968,39 +932,29 @@ SetWeather (int newWeather)
     }
 }
 
-void
-psSoundManager::
-SetLoopBGMToggle (bool toggle)
+void psSoundManager::SetLoopBGMToggle (bool toggle)
 {
     loopBGM = toggle;
     UpdateMusic(activesector);
 }
 
-bool
-psSoundManager::
-GetLoopBGMToggle ()
+bool psSoundManager::GetLoopBGMToggle ()
 {
     return loopBGM;
 }
 
-void
-psSoundManager::
-SetCombatToggle (bool toggle)
+void psSoundManager::SetCombatToggle (bool toggle)
 {
     combatMusic = toggle;
     UpdateMusic(activesector);
 }
 
-bool
-psSoundManager::
-GetCombatToggle ()
+bool psSoundManager::GetCombatToggle ()
 {
     return combatMusic;
 }
 
-void
-psSoundManager::
-SetCombatStance (int newCombatstance)
+void psSoundManager::SetCombatStance (int newCombatstance)
 {
     combat = newCombatstance;
     UpdateMusic(activesector);
@@ -1010,31 +964,23 @@ SetCombatStance (int newCombatstance)
  * FIXME Remove GetCombatStance when you fix the victory effect
  */
 
-int
-psSoundManager::
-GetCombatStance ()
+int psSoundManager::GetCombatStance ()
 {
     return combat;
 }
 
-void
-psSoundManager::
-SetMusicToggle (bool toggle)
+void psSoundManager::SetMusicToggle (bool toggle)
 {
     musicSndCtrl->SetToggle(toggle);
     UpdateMusic(activesector);
 }
 
-bool
-psSoundManager::
-GetMusicToggle ()
+bool psSoundManager::GetMusicToggle ()
 {
     return musicSndCtrl->GetToggle();
 }
 
-void
-psSoundManager::
-SetAmbientToggle (bool toggle)
+void psSoundManager::SetAmbientToggle (bool toggle)
 {
     ambientSndCtrl->SetToggle(toggle);
     UpdateAmbient(activesector);
@@ -1042,30 +988,22 @@ SetAmbientToggle (bool toggle)
     UpdateEmitter(activesector);
 }
 
-bool
-psSoundManager::
-GetAmbientToggle ()
+bool psSoundManager::GetAmbientToggle ()
 {
     return ambientSndCtrl->GetToggle();
 }
 
-void
-psSoundManager::
-SetChatToggle (bool toggle)
+void psSoundManager::SetChatToggle (bool toggle)
 {
     chatToggle = toggle;
 }
 
-bool
-psSoundManager::
-GetChatToggle ()
+bool psSoundManager::GetChatToggle ()
 {
     return chatToggle;
 }
 
-void
-psSoundManager::
-SetVoiceToggle (bool toggle)
+void psSoundManager::SetVoiceToggle (bool toggle)
 {
     voiceSndCtrl->SetToggle(toggle);
 
@@ -1076,23 +1014,17 @@ SetVoiceToggle (bool toggle)
 }
 
 
-bool
-psSoundManager::
-GetVoiceToggle ()
+bool psSoundManager::GetVoiceToggle ()
 {
     return voiceSndCtrl->GetToggle();
 }
 
-void
-psSoundManager::
-SetListenerOnCameraPos (bool toggle)
+void psSoundManager::SetListenerOnCameraPos (bool toggle)
 {
     listenerOnCamera = toggle;
 }
 
-bool
-psSoundManager::
-GetListenerOnCameraPos ()
+bool psSoundManager::GetListenerOnCameraPos ()
 {
     return listenerOnCamera;
 }
