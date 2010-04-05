@@ -87,6 +87,13 @@ NPC::NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world,
     this->networkmanager = networkmanager;
     this->world = world;
     this->cdsys = cdsys;
+
+    for (int i = 0; i < 10; i++)
+    {
+        debugLog.Push(csString(""));
+    }
+    nextDebugLogEntry = 0;
+    
 }
 
 NPC::~NPC()
@@ -132,6 +139,9 @@ void NPC::Dump()
     CPrintf(CON_CMDOUTPUT,"\n");
 
     DumpHateList();            
+    CPrintf(CON_CMDOUTPUT,"\n");
+
+    DumpDebugLog();
     CPrintf(CON_CMDOUTPUT,"\n");
 }
 
@@ -465,6 +475,18 @@ void NPC::DumpHateList()
     }
 }
 
+void NPC::DumpDebugLog()
+{
+    CPrintf(CON_CMDOUTPUT, "Debug log for %s (%s)\n", name.GetData(), ShowID(pid));
+    CPrintf(CON_CMDOUTPUT, "---------------------------------------------\n");
+    for (size_t i = 0; i < debugLog.GetSize(); i++)
+    {
+        CPrintf(CON_CMDOUTPUT,"%2d %s\n",i,debugLog[(nextDebugLogEntry+i)%debugLog.GetSize()].GetDataSafe());
+    }
+    
+}
+
+
 void NPC::ClearState()
 {
     Printf(5,"ClearState");
@@ -618,9 +640,6 @@ void NPC::Printf(const char *msg,...)
 
 void NPC::Printf(int debug, const char *msg,...)
 {
-    if (!IsDebugging(debug))
-        return;
-
     char str[1024];
     va_list args;
 
@@ -628,16 +647,27 @@ void NPC::Printf(int debug, const char *msg,...)
     vsprintf(str, msg, args);
     va_end(args);
 
+    // Add string to the internal log buffer
+    debugLog[nextDebugLogEntry] = str;
+    nextDebugLogEntry = (nextDebugLogEntry+1)%debugLog.GetSize();
+
+    if (!IsDebugging(debug))
+        return;
+
     CPrintf(CON_CMDOUTPUT, "%s (%s)> %s\n", GetName(), ShowID(pid), str);
 }
 
 void NPC::VPrintf(int debug, const char *msg, va_list args)
 {
-    if (!IsDebugging(debug))
-        return;
-
     char str[1024];
     vsprintf(str, msg, args);
+
+    // Add string to the internal log buffer
+    debugLog[nextDebugLogEntry] = str;
+    nextDebugLogEntry = (nextDebugLogEntry+1)%debugLog.GetSize();
+
+    if (!IsDebugging(debug))
+        return;
 
     CPrintf(CON_CMDOUTPUT, "%s (%s)> %s\n", GetName(), ShowID(pid), str);
 }

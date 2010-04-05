@@ -2980,9 +2980,18 @@ bool WanderOperation::FindNextWaypoint(NPC *npc)
                     next_wp = NULL;
                 }
 
-                npc->Printf(6, "Active waypoint: %s at %s",active_wp->GetName(),
-                            toString(active_wp->loc.pos,
-                                     active_wp->loc.GetSector(npcclient->GetEngine())).GetDataSafe());
+                if (active_wp)
+                {
+                    npc->Printf(6, "Active waypoint: %s at %s",active_wp->GetName(),
+                                toString(active_wp->loc.pos,
+                                         active_wp->loc.GetSector(npcclient->GetEngine())).GetDataSafe());
+                }
+                else
+                {
+                    npc->Printf(5, ">>>WanderOp At end of waypoint list.");
+                    return false;
+                }
+                
                 if (next_wp)
                 {
                     npc->Printf(6, "Next   waypoint: %s at %s",next_wp->GetName(),
