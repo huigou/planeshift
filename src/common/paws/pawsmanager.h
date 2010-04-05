@@ -40,7 +40,7 @@
 #include "psmousebinds.h"
 #include "pawsstyles.h"
 #include "sound/sound.h"
-#define INCLUDE_CLIPBOARD 1
+
 struct iObjectRegistry;
 struct iGraphics2D;
 struct iGraphics3D;
