@@ -137,7 +137,6 @@ class psSoundManager
     SoundControl    *effectSndCtrl;     /* soundcontrol for effects */
     SoundControl    *guiSndCtrl;        /* soundcontrol for gui */
     SoundControl    *mainSndCtrl;       /* soundcontrol of our soundmanager */
-    csRandomGen      rng;               /* random gen */
 
     psSoundManager(iObjectRegistry* objectReg);
     ~psSoundManager ();
@@ -198,6 +197,7 @@ class psSoundManager
     bool                        combatMusic;        /* toggle for combatmusic */
     bool                        listenerOnCamera;   /* toggle for listener switch between player and camera position */
     bool                        chatToggle;         /* toggle for chatsounds */
+    csRandomGen                 rng;                /* random gen */
 
 
     /* parses entities nodes out of a xml */
