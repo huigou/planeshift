@@ -137,7 +137,7 @@ class psSoundManager
     SoundControl    *effectSndCtrl;     /* soundcontrol for effects */
     SoundControl    *guiSndCtrl;        /* soundcontrol for gui */
     SoundControl    *mainSndCtrl;       /* soundcontrol of our soundmanager */
-    csRandomGen     rng;                /* random gen */
+    csRandomGen      rng;               /* random gen */
 
     psSoundManager(iObjectRegistry* objectReg);
     ~psSoundManager ();
