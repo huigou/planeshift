@@ -680,7 +680,6 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 if (cmd == psNPCCommandsMessage::PCPT_VERYSHORTRANGEPLAYER)
                     pcpt_name.Append("adjacent");
 
-        // @@@ Jorrit: cast to in ok below?
                 FactionPerception pcpt(pcpt_name, int (faction), player);
 
                 npcclient->TriggerEvent(npc, &pcpt);

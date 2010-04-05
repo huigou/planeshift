@@ -9,7 +9,7 @@
 DROP TABLE IF EXISTS `tribes`;
 CREATE TABLE `tribes` 
 (
-  id int(10) NOT NULL auto_increment,
+  id int(10) NOT NULL auto_increment COMMENT 'The ID of the tribe.',
   name varchar(30) NOT NULL default '',
   home_sector_id int(10) unsigned NOT NULL default '0',
   home_x float(10,2) DEFAULT '0.00' ,
@@ -21,7 +21,9 @@ CREATE TABLE `tribes`
   wealth_resource_nick varchar(30) NOT NULL default '',
   wealth_resource_area varchar(30) NOT NULL default '',
   wealth_gather_need varchar(30) NOT NULL default '' COMMENT 'The need used to gather resources',
-  wealth_resource_growth varchar(30) NOT NULL default '',
+  wealth_resource_growth float(10,2) NOT NULL default '0.00',
+  wealth_resource_growth_active float(10,2) NOT NULL default '0.00',
+  wealth_resource_growth_active_limit int(10) NOT NULL default '0',
   reproduction_cost int(10) signed DEFAULT '0',
   PRIMARY KEY  (`id`)
 );
@@ -30,5 +32,5 @@ CREATE TABLE `tribes`
 # Dumping data for table characters
 #
 
-INSERT INTO `tribes` VALUES (1,'Mineing tribe',3,-75,0,-180,5,15,'Gold Ore','gold','mine','Dig',1,60);
-INSERT INTO `tribes` VALUES (2,'Hunting tribe',3,-85,0,-220,5,5,'Flesh','flesh','hunting_ground','Hunt',1,60);
+INSERT INTO `tribes` VALUES (1,'Mineing tribe',3,-75,0,-180,5,15,'Gold Ore','gold','mine','Dig',1.00,0.0,0,60);
+INSERT INTO `tribes` VALUES (2,'Hunting tribe',3,-85,0,-220,5,5,'Flesh','flesh','hunting_ground','Hunt',1.00,0.50,100,60);

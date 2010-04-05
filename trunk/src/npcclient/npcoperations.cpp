@@ -1478,6 +1478,252 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 
 //---------------------------------------------------------------------------
 
+bool LoopBeginOperation::Load(iDocumentNode *node)
+{
+    iterations = node->GetAttributeValueAsInt("iterations");
+    return true;
+}
+
+ScriptOperation *LoopBeginOperation::MakeCopy()
+{
+    LoopBeginOperation *op = new LoopBeginOperation;
+    op->iterations = iterations;
+    return op;
+}
+
+bool LoopBeginOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+    return true;
+}
+
+//---------------------------------------------------------------------------
+
+bool LoopEndOperation::Load(iDocumentNode *node)
+{
+    return true;
+}
+
+ScriptOperation *LoopEndOperation::MakeCopy()
+{
+    LoopEndOperation *op = new LoopEndOperation(loopback_op,iterations);
+    return op;
+}
+
+bool LoopEndOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+    Behavior * behavior = npc->GetCurrentBehavior();
+
+    current++;
+
+    if (current < iterations)
+    {
+        behavior->SetCurrentStep(loopback_op-1);
+        npc->Printf(5, "LoopEnd - Loop %d of %d",current,iterations);
+        return true;
+    }
+
+    current = 0; // Make sure we will loop next time to
+
+    npc->Printf(5, "LoopEnd - Exit %d %d",current,iterations);
+    return true;
+}
+
+//---------------------------------------------------------------------------
+
+bool MeleeOperation::Load(iDocumentNode *node)
+{
+    seek_range   = node->GetAttributeValueAsFloat("seek_range");
+    if (node->GetAttributeValue("melee_range"))
+    {
+        melee_range  = node->GetAttributeValueAsFloat("melee_range");
+        // The server will check for the melee_range and that limit is set to 3.0
+        // so to prevent conflicts make sure the melee_range never is geater than 3.0.
+        if (melee_range > 3.0)
+        {
+            melee_range = 3.0;
+        }
+        // Will never hit with a melee range of 0 so require a pratical minum of 0.5.
+        if (melee_range < 0.5)
+        {
+            melee_range = 0.5;
+        }
+    }
+    else
+    {
+        // Using the maximum allwed melee range of the server
+        // if none has been given by this operatoin.
+        melee_range  = 3.0f;
+    }
+    
+    attack_invisible = node->GetAttributeValueAsBool("invisible",false);
+    attack_invincible= node->GetAttributeValueAsBool("invincible",false);
+    return true;
+}
+
+ScriptOperation *MeleeOperation::MakeCopy()
+{
+    MeleeOperation *op = new MeleeOperation;
+    op->seek_range  = seek_range;
+    op->melee_range = melee_range;
+    op->attack_invisible = attack_invisible;
+    op->attack_invincible = attack_invincible;
+    attacked_ent = NULL;
+    return op;
+}
+
+bool MeleeOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+    npc->Printf(5, "MeleeOperation starting with meele range %.2f seek range %.2f will attack:%s%s.",
+                melee_range, seek_range,(attack_invisible?" Invisible":" Visible"),
+                (attack_invincible?" Invincible":""));
+
+    attacked_ent = npc->GetMostHated(melee_range,attack_invisible,attack_invincible);
+    if (attacked_ent)
+    {
+        npc->Printf(5, "Melee starting to attack %s(%s)", attacked_ent->GetName(), ShowID(attacked_ent->GetEID()));
+
+        npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetActor(),attacked_ent);
+    }
+    else
+    {
+        // We know who attacked us, even if they aren't in range.
+        npc->SetTarget( npc->GetLastPerception()->GetTarget() );
+    }
+
+    return false; // This behavior isn't done yet
+}
+
+void MeleeOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
+{
+    // Check hate list to make sure we are still attacking the right person
+    gemNPCActor *ent = npc->GetMostHated(melee_range, attack_invisible, attack_invincible);
+    
+    if (!ent)
+    {
+        npc->Printf(8, "No Melee target in range (%2.2f), going to chase!", melee_range);
+
+        // No enemy to whack on in melee range, search far
+        ent = npc->GetMostHated(seek_range, attack_invisible, attack_invincible);
+
+        // The idea here is to save the next best target and chase
+        // him if out of range.
+        if (ent)
+        {
+            npc->SetTarget(ent);
+        
+            // If the chase doesn't work, it will return to fight, which still
+            // may not find a target, and return to chase.  This -5 reduces
+            // the need to fight as he can't find anyone and stops this infinite
+            // loop.
+            npc->GetCurrentBehavior()->ApplyNeedDelta(npc, -5);
+
+            Perception range("target out of range");
+            npc->TriggerEvent(&range);
+        }
+        else // no hated targets around
+        {
+            if(npc->IsDebugging(5))
+            {
+                npc->DumpHateList();
+            }
+            npc->Printf(8, "No hated target in seek range (%2.2f)!", seek_range);
+            npc->GetCurrentBehavior()->ApplyNeedDelta(npc, -5); // don't want to fight as badly
+        }
+        return;
+    }
+    if (ent != attacked_ent)
+    {
+        attacked_ent = ent;
+        if (attacked_ent)
+        {
+            npc->Printf(5, "Melee switching to attack %s(%s)", attacked_ent->GetName(), ShowID(attacked_ent->GetEID()));
+        }
+        else
+        {
+            npc->Printf(5, "Melee stop attack");
+        }
+        npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetActor(), ent);
+    }
+    
+    // Make sure our rotation is still correct
+    if(attacked_ent)
+    {
+    	float rot, npc_rot, new_npc_rot;
+		iSector *sector;
+		csVector3 pos;
+		
+		// Get current rot
+		psGameObject::GetPosition(npc->GetActor(),pos,npc_rot,sector);
+		
+		// Get target pos
+		psGameObject::GetPosition(attacked_ent,pos,rot,sector);
+
+		// Make sure we still face the target
+		csVector3 forward;
+			
+		TurnTo(npc, pos, sector, forward);
+		// Needed because TurnTo automatically starts moving.
+	    csVector3 velvector(0,0,  0 );
+	    npc->GetLinMove()->SetVelocity(velvector);
+	    npc->GetLinMove()->SetAngularVelocity( 0 );
+		// Check new rot
+		psGameObject::GetPosition(npc->GetActor(),pos,new_npc_rot,sector);
+		
+		// If different broadcast the new rot
+		if (npc_rot != new_npc_rot)
+			npcclient->GetNetworkMgr()->QueueDRData(npc);
+    }
+}
+
+void MeleeOperation::InterruptOperation(NPC *npc,EventManager *eventmgr)
+{
+    ScriptOperation::InterruptOperation(npc,eventmgr);
+}
+
+bool MeleeOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
+{
+    npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetActor(),NULL);
+
+    completed = true;
+
+    return true;
+}
+
+//---------------------------------------------------------------------------
+
+bool MemorizeOperation::Load(iDocumentNode *node)
+{
+    return true;
+}
+
+ScriptOperation *MemorizeOperation::MakeCopy()
+{
+    MemorizeOperation *op = new MemorizeOperation;
+    return op;
+}
+
+bool MemorizeOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+    Perception * percept = npc->GetLastPerception();
+    if (!percept)
+    {
+        npc->Printf(5, ">>> Memorize No Perception.");
+        return true; // Nothing more to do for this op.
+    }
+    
+    npc->Printf(5, ">>> Memorize '%s' '%s'.",percept->GetType(),percept->GetName());
+
+    psTribe * tribe = npc->GetTribe();
+    
+    if ( !tribe ) return true; // Nothing more to do for this op.
+
+    tribe->Memorize(npc, percept );
+
+    return true; // Nothing more to do for this op.
+}
+
+//---------------------------------------------------------------------------
+
 bool MoveOperation::Load(iDocumentNode *node)
 {
     LoadVelocity(node);
@@ -1565,6 +1811,143 @@ void MoveOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
     CheckMovedOk(npc, eventmgr, oldPos, oldSector, newPos, newSector, timedelta);
 }
 
+
+//---------------------------------------------------------------------------
+
+bool MovePathOperation::Load(iDocumentNode *node)
+{
+    pathname = node->GetAttributeValue("path");
+    if (pathname.IsEmpty())
+    {
+        Error1("MovePath operation must have a path");
+        return false;
+    }
+    
+    anim = node->GetAttributeValue("anim");
+    csString dirStr = node->GetAttributeValue("direction");
+    if (dirStr.CompareNoCase("REVERSE"))
+    {
+        direction = psPath::REVERSE;
+    }
+    else
+    {
+        direction = psPath::FORWARD;
+    }
+
+    // Internal variables set to defaults
+    path = NULL;
+    anchor = NULL;
+    return true;
+}
+
+ScriptOperation *MovePathOperation::MakeCopy()
+{
+    MovePathOperation *op = new MovePathOperation;
+    // Copy parameters
+    op->pathname  = pathname;
+    op->anim      = anim;
+    op->direction = direction;
+
+    // Internal variables set to defaults
+    op->path     = NULL;
+    op->anchor   = NULL;
+
+    return op;
+}
+
+bool MovePathOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+    if (!path)
+    {
+        path = npcclient->FindPath(pathname);
+    }
+
+    if (!path)
+    {
+        Error2("Could not find path '%s'",pathname.GetDataSafe());
+        return true;
+    }
+
+    anchor = path->CreatePathAnchor();
+
+    // Get Going at the right velocity
+    csVector3 velvector(0,0,  -GetVelocity(npc) );
+    npc->GetLinMove()->SetVelocity(velvector);
+    npc->GetLinMove()->SetAngularVelocity( 0 );
+
+    npcclient->GetNetworkMgr()->QueueDRData(npc);
+
+    return false;
+}
+
+void MovePathOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
+{
+    npc->GetLinMove()->ExtrapolatePosition(timedelta);
+
+    if (!anchor->Extrapolate(npcclient->GetWorld(),npcclient->GetEngine(),
+                             timedelta*GetVelocity(npc),
+                             direction, npc->GetMovable()))
+    {
+        // At end of path
+        npc->Printf(5, "We are done..");
+
+        // None linear movement so we have to queue DRData updates.
+        npcclient->GetNetworkMgr()->QueueDRData(npc);
+
+        npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
+
+        return;
+    }
+    
+    if (npc->IsDebugging())
+    {
+        csVector3 pos; float rot; iSector *sec;
+        psGameObject::GetPosition(npc->GetActor(),pos,rot,sec);
+
+        npc->Printf(8, "MovePath Loc is %s Rot: %1.2f Vel: %.2f Dist: %.2f Index: %d Fraction %.2f",
+                    toString(pos).GetDataSafe(),rot,GetVelocity(npc),anchor->GetDistance(),anchor->GetCurrentAtIndex(),anchor->GetCurrentAtFraction());
+        
+        csVector3 anchor_pos,anchor_up,anchor_forward;
+
+        anchor->GetInterpolatedPosition(anchor_pos);
+        anchor->GetInterpolatedUp(anchor_up);
+        anchor->GetInterpolatedForward(anchor_forward);
+        
+
+        npc->Printf(9, "Anchor pos: %s forward: %s up: %s",toString(anchor_pos).GetDataSafe(),
+                    toString(anchor_forward).GetDataSafe(),toString(anchor_up).GetDataSafe());
+        
+    }
+    
+
+    // None linear movement so we have to queue DRData updates.
+    npcclient->GetNetworkMgr()->QueueDRData(npc);
+}
+
+void MovePathOperation::InterruptOperation(NPC *npc,EventManager *eventmgr)
+{
+    ScriptOperation::InterruptOperation(npc,eventmgr);
+
+    StopMovement(npc);
+}
+
+bool MovePathOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
+{
+    // Set position to where it is supposed to go
+    npc->GetLinMove()->SetPosition(path->GetEndPos(direction),path->GetEndRot(direction),path->GetEndSector(npcclient->GetEngine(),direction));
+
+    if (anchor)
+    {
+        delete anchor;
+        anchor = NULL;
+    }
+
+    StopMovement(npc);
+
+    completed = true;
+
+    return true; // Script can keep going
+}
 
 //---------------------------------------------------------------------------
 
@@ -1682,6 +2065,253 @@ bool MoveToOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
     completed = true;
 
     return true;  // Script can keep going
+}
+
+//---------------------------------------------------------------------------
+
+bool NavigateOperation::Load(iDocumentNode *node)
+{
+    action = node->GetAttributeValue("anim");
+    return true;
+}
+
+ScriptOperation *NavigateOperation::MakeCopy()
+{
+    NavigateOperation *op = new NavigateOperation;
+    op->action = action;
+    op->velSource = velSource;
+    op->vel    = vel;
+
+    return op;
+}
+
+bool NavigateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+    csVector3 dest;
+    float rot=0;
+    iSector* sector;
+
+    npc->GetActiveLocate(dest,sector,rot);
+    npc->Printf(5, "Located %s at %1.2f m/sec.",toString(dest,sector).GetData(), GetVelocity(npc) );
+
+    StartMoveTo(npc,eventmgr,dest,sector,GetVelocity(npc),action);
+    return false;
+}
+
+void NavigateOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr) 
+{
+    npc->GetLinMove()->ExtrapolatePosition(timedelta);
+}
+
+void NavigateOperation::InterruptOperation(NPC *npc,EventManager *eventmgr)
+{
+    ScriptOperation::InterruptOperation(npc,eventmgr);
+
+    StopMovement(npc);
+}
+
+bool NavigateOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
+{
+    // Set position to where it is supposed to go
+    float rot=0;
+    iSector *sector;
+    csVector3 pos;
+    npc->GetActiveLocate(pos,sector,rot);
+    npc->GetLinMove()->SetPosition(pos,rot,sector);
+
+    // Stop the movement
+    StopMovement(npc);
+
+    completed = true;
+
+    return true;  // Script can keep going
+}
+
+//---------------------------------------------------------------------------
+
+bool PickupOperation::Load(iDocumentNode *node)
+{
+    object = node->GetAttributeValue("obj");
+    if (object.IsEmpty())
+    {
+        object = "perception";
+    }
+    slot   = node->GetAttributeValue("equip");
+    count   = node->GetAttributeValueAsInt("count");
+    if (count <= 0) count = 1; // Allways pick up at least one.
+    return true;
+}
+
+ScriptOperation *PickupOperation::MakeCopy()
+{
+    PickupOperation *op = new PickupOperation;
+    op->object = object;
+    op->slot   = slot;
+    op->count  = count;
+    return op;
+}
+
+bool PickupOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+    gemNPCObject *item = NULL;
+
+    if (object == "perception")
+    {
+        if (!npc->GetLastPerception())
+        {
+            npc->Printf(5,"Pickup operation. No perception for NPC");
+            return true;
+        }
+        
+        if (!(item = npc->GetLastPerception()->GetTarget()))
+        {
+            npc->Printf(5,"Pickup operation. No target in perception for NPC.");
+            return true;
+        }
+        
+        if (!item->IsPickable())
+        {
+            npc->Printf(1,"Pickup operation failed since object %s isn't pickable",
+                        item->GetName());
+            return true;
+        }
+        
+        
+    } else
+    {
+        // TODO: Insert code to find the nearest item
+        //       with name given by object.
+        return true;
+    }
+
+    npc->Printf(5, "   Who: %s What: %s Count: %d",npc->GetName(),item->GetName(), count);
+
+    npcclient->GetNetworkMgr()->QueuePickupCommand(npc->GetActor(), item, count);
+
+    return true;
+}
+
+//---------------------------------------------------------------------------
+
+bool ReproduceOperation::Load(iDocumentNode *node)
+{
+    return true;
+}
+
+ScriptOperation *ReproduceOperation::MakeCopy()
+{
+    ReproduceOperation *op = new ReproduceOperation;
+    return op;
+}
+
+bool ReproduceOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+    if(!npc->GetTarget())
+        return true;
+
+    NPC * friendNPC = npc->GetTarget()->GetNPC();
+    if(friendNPC)
+    {
+        npc->Printf(5, "Reproduce");
+        npcclient->GetNetworkMgr()->QueueSpawnCommand(friendNPC->GetActor(), npc->GetActor());
+    }
+
+    return true;
+}
+
+//---------------------------------------------------------------------------
+
+bool ResurrectOperation::Load(iDocumentNode *node)
+{
+    return true;
+}
+
+ScriptOperation *ResurrectOperation::MakeCopy()
+{
+    ResurrectOperation *op = new ResurrectOperation;
+    return op;
+}
+
+bool ResurrectOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+    psTribe * tribe = npc->GetTribe();
+    
+    if ( !tribe ) return true;
+
+    csVector3 where;
+    float     radius;
+    iSector*  sector;
+    float     rot = psGetRandom() * TWO_PI;
+
+    tribe->GetHome(where,radius,sector);
+
+    float x, z, xDist, zDist;
+	do {
+		// Pick random point in circumscribed rectangle.
+		x = psGetRandom() * (radius*2.0);
+		z = psGetRandom() * (radius*2.0);
+		xDist = radius - x;
+		zDist = radius - z;
+		// Keep looping until the point is inside a circle.
+	} while(xDist * xDist + zDist * zDist > radius * radius);
+	
+	where.x += x - radius;
+	where.z += z - radius;
+
+    npcclient->GetNetworkMgr()->QueueResurrectCommand(where, rot, sector->QueryObject()->GetName(), npc->GetPID());
+
+    return true;
+}
+
+//---------------------------------------------------------------------------
+
+bool RewardOperation::Load(iDocumentNode *node)
+{
+    // Load attributes
+    resource = node->GetAttributeValue("resource");
+    count = node->GetAttributeValueAsInt("count");
+
+    // Resource is mandatory for this operation
+    if (resource.IsEmpty())
+    {
+        return false;
+    }
+
+    // Default count to 1 if not pressent
+    if (csString(node->GetAttributeValue("count")).IsEmpty())
+    {
+        count = 1;
+    }
+    
+    return true;
+}
+
+ScriptOperation *RewardOperation::MakeCopy()
+{
+    RewardOperation *op = new RewardOperation;
+    op->resource = resource;
+    op->count = count;
+    return op;
+}
+
+bool RewardOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+    csString res = resource;
+    
+    if (resource == "tribe:wealth")
+    {
+        if (npc->GetTribe())
+        {
+            res = npc->GetTribe()->GetNeededResource();
+        }
+    }
+
+    if (npc->GetTribe())
+    {
+        npc->GetTribe()->AddResource(res,count);
+    }
+
+    return true;
 }
 
 //---------------------------------------------------------------------------
@@ -1982,62 +2612,267 @@ bool RotateOperation::CompleteOperation(NPC *npc, EventManager *eventmgr)
 
 //---------------------------------------------------------------------------
 
-bool NavigateOperation::Load(iDocumentNode *node)
+bool SequenceOperation::Load(iDocumentNode *node)
 {
+    name = node->GetAttributeValue("name");
+    if (name.IsEmpty())
+    {
+        Error1("Sequence operation must have a name attribute");
+        return false;
+    }
+    
+    csString cmdStr = node->GetAttributeValue("cmd");
+    
+    if (strcasecmp(cmdStr,"start") == 0)
+    {
+        cmd = START;
+    } else if (strcasecmp(cmdStr,"stop") == 0)
+    {
+        cmd = STOP;
+    } else if (strcasecmp(cmdStr,"loop") == 0)
+    {
+        cmd = LOOP;
+    } else
+    {
+        return false;
+    }
+        
+    count = node->GetAttributeValueAsInt("count");
+    if (count < 0)
+    {
+        count = 1;
+    }
+
+    return true;
+}
+
+ScriptOperation *SequenceOperation::MakeCopy()
+{
+    SequenceOperation *op = new SequenceOperation;
+    op->name = name;
+    op->cmd = cmd;
+    op->count = count;
+    return op;
+}
+
+bool SequenceOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+
+    npcclient->GetNetworkMgr()->QueueSequenceCommand(name, cmd, count );
+    return true;
+}
+
+//---------------------------------------------------------------------------
+
+bool ShareMemoriesOperation::Load(iDocumentNode *node)
+{
+    return true;
+}
+
+ScriptOperation *ShareMemoriesOperation::MakeCopy()
+{
+    ShareMemoriesOperation *op = new ShareMemoriesOperation;
+    return op;
+}
+
+bool ShareMemoriesOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+
+    npc->Printf("ShareMemories with tribe.");
+
+    psTribe * tribe = npc->GetTribe();
+    if ( !tribe ) return true; // Nothing more to do for this op.
+
+    tribe->ShareMemories( npc );
+
+    return true; // Nothing more to do for this op.
+}
+
+//---------------------------------------------------------------------------
+
+bool TalkOperation::Load(iDocumentNode *node)
+{
+    text = node->GetAttributeValue("text");
+    target = node->GetAttributeValueAsBool("target",true);
+    command = node->GetAttributeValue("command");
+
+    return true;
+}
+
+ScriptOperation *TalkOperation::MakeCopy()
+{
+    TalkOperation *op = new TalkOperation;
+    op->text = text;
+    op->target = target;
+    op->command = command;
+    return op;
+}
+
+bool TalkOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+
+    if(!target)
+    {
+        npcclient->GetNetworkMgr()->QueueTalkCommand(npc->GetActor(), npc->GetName() + text);
+        return true;
+    }
+    
+    if(!npc->GetTarget())
+        return true;
+
+    NPC* friendNPC = npc->GetTarget()->GetNPC();
+    if(friendNPC)
+    {
+        npcclient->GetNetworkMgr()->QueueTalkCommand(npc->GetActor(), npc->GetName() + text);
+        
+        Perception perception("friend:" + command);
+        friendNPC->TriggerEvent(&perception);
+    }
+    return true;
+}
+
+//---------------------------------------------------------------------------
+
+bool TransferOperation::Load(iDocumentNode *node)
+{
+    item = node->GetAttributeValue("item");
+    target = node->GetAttributeValue("target");
+    count = node->GetAttributeValueAsInt("count");
+    if (!count) count = -1; // All items
+
+    if (item.IsEmpty() || target.IsEmpty()) return false;
+
+    return true;
+}
+
+ScriptOperation *TransferOperation::MakeCopy()
+{
+    TransferOperation *op = new TransferOperation;
+    op->item = item;
+    op->target = target;
+    op->count = count;
+    return op;
+}
+
+bool TransferOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+    csString transferItem = item;
+
+    csArray<csString> splitItem = psSplit(transferItem,':');
+    if (splitItem[0] == "tribe")
+    {
+        if (!npc->GetTribe())
+        {
+            npc->Printf(5, "No tribe");
+            return true;
+        }
+        
+        if (splitItem[1] == "wealth")
+        {
+            transferItem = npc->GetTribe()->GetNeededResource();
+        }
+        else
+        {
+            Error2("Transfer operation for tribe with unknown sub type %s",splitItem[1].GetDataSafe())
+            return true;
+        }
+        
+    }
+    
+    npcclient->GetNetworkMgr()->QueueTransferCommand(npc->GetActor(), transferItem, count, target );
+
+    return true;
+}
+//---------------------------------------------------------------------------
+
+bool TribeHomeOperation::Load(iDocumentNode *node)
+{
+    return true;
+}
+
+ScriptOperation *TribeHomeOperation::MakeCopy()
+{
+    TribeHomeOperation *op = new TribeHomeOperation;
+    return op;
+}
+
+bool TribeHomeOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+    psTribe * tribe = npc->GetTribe();
+    
+    if ( !tribe ) return true; // Nothing more to do for this op.
+
+    csVector3 pos;
+    iSector*  sector;
+    float     rot;
+
+    npc->GetActiveLocate(pos,sector,rot);
+    
+    npc->Printf("Moves tribe home to: %s",toString(pos,sector).GetData());
+
+    tribe->SetHome(pos,sector);
+
+    return true; // Nothing more to do for this op.
+}
+
+//---------------------------------------------------------------------------
+
+bool VisibleOperation::Load(iDocumentNode *node)
+{
+    return true;
+}
+
+ScriptOperation *VisibleOperation::MakeCopy()
+{
+    VisibleOperation *op = new VisibleOperation;
+    return op;
+}
+
+bool VisibleOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+    npcclient->GetNetworkMgr()->QueueVisibilityCommand(npc->GetActor(), true);
+    return true;
+}
+
+//---------------------------------------------------------------------------
+
+bool WaitOperation::Load(iDocumentNode *node)
+{
+    duration = node->GetAttributeValueAsFloat("duration");
     action = node->GetAttributeValue("anim");
     return true;
 }
 
-ScriptOperation *NavigateOperation::MakeCopy()
+ScriptOperation *WaitOperation::MakeCopy()
 {
-    NavigateOperation *op = new NavigateOperation;
-    op->action = action;
-    op->velSource = velSource;
-    op->vel    = vel;
-
+    WaitOperation *op = new WaitOperation;
+    op->duration = duration;
+    op->action   = action;
     return op;
 }
 
-bool NavigateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+bool WaitOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
-    csVector3 dest;
-    float rot=0;
-    iSector* sector;
+    if (!interrupted)
+    {
+        remaining = duration;
+    }
 
-    npc->GetActiveLocate(dest,sector,rot);
-    npc->Printf(5, "Located %s at %1.2f m/sec.",toString(dest,sector).GetData(), GetVelocity(npc) );
+    // SetAction animation for the mesh, so it looks right
+    SetAnimation(npc, action);
 
-    StartMoveTo(npc,eventmgr,dest,sector,GetVelocity(npc),action);
+    //now persist
+    npcclient->GetNetworkMgr()->QueueDRData(npc);
+
     return false;
 }
 
-void NavigateOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr) 
+void WaitOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
 {
-    npc->GetLinMove()->ExtrapolatePosition(timedelta);
-}
-
-void NavigateOperation::InterruptOperation(NPC *npc,EventManager *eventmgr)
-{
-    ScriptOperation::InterruptOperation(npc,eventmgr);
-
-    StopMovement(npc);
-}
-
-bool NavigateOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
-{
-    // Set position to where it is supposed to go
-    float rot=0;
-    iSector *sector;
-    csVector3 pos;
-    npc->GetActiveLocate(pos,sector,rot);
-    npc->GetLinMove()->SetPosition(pos,rot,sector);
-
-    // Stop the movement
-    StopMovement(npc);
-
-    completed = true;
-
-    return true;  // Script can keep going
+    remaining -= timedelta;
+    if(remaining <= 0)
+    	npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
+    npc->Printf(10, "waiting... %.2f",remaining);
 }
 
 //---------------------------------------------------------------------------
@@ -2526,791 +3361,7 @@ Waypoint* WanderOperation::WaypointListGetNext()
 
 //---------------------------------------------------------------------------
 
-bool PickupOperation::Load(iDocumentNode *node)
-{
-    object = node->GetAttributeValue("obj");
-    slot   = node->GetAttributeValue("equip");
-    count   = node->GetAttributeValueAsInt("count");
-    if (count <= 0) count = 1; // Allways pick up at least one.
-    return true;
-}
-
-ScriptOperation *PickupOperation::MakeCopy()
-{
-    PickupOperation *op = new PickupOperation;
-    op->object = object;
-    op->slot   = slot;
-    op->count  = count;
-    return op;
-}
-
-bool PickupOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
-{
-    gemNPCObject *item = NULL;
-
-    if (object == "perception")
-    {
-        if (!npc->GetLastPerception())
-            return true;
-        if (!(item = npc->GetLastPerception()->GetTarget()))
-            return true;
-    } else
-    {
-        // TODO: Insert code to find the nearest item
-        //       with name given by object.
-        return true;
-    }
-
-    npc->Printf(5, "   Who: %s What: %s Count: %d",npc->GetName(),item->GetName(), count);
-
-    npcclient->GetNetworkMgr()->QueuePickupCommand(npc->GetActor(), item, count);
-
-    return true;
-}
-
-//---------------------------------------------------------------------------
-
-bool TalkOperation::Load(iDocumentNode *node)
-{
-    text = node->GetAttributeValue("text");
-    target = node->GetAttributeValueAsBool("target");
-    command = node->GetAttributeValue("command");
-
-    return true;
-}
-
-ScriptOperation *TalkOperation::MakeCopy()
-{
-    TalkOperation *op = new TalkOperation;
-    op->text = text;
-    op->target = target;
-    op->command = command;
-    return op;
-}
-
-bool TalkOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
-{
-
-    if(!target)
-    {
-        npcclient->GetNetworkMgr()->QueueTalkCommand(npc->GetActor(), npc->GetName() + text);
-        return true;
-    }
-    
-    if(!npc->GetTarget())
-        return true;
-
-    NPC* friendNPC = npc->GetTarget()->GetNPC();
-    if(friendNPC)
-    {
-        npcclient->GetNetworkMgr()->QueueTalkCommand(npc->GetActor(), npc->GetName() + text);
-        
-        Perception collision("friend:" + command);
-        friendNPC->TriggerEvent(&collision);
-    }
-    return true;
-}
-
-//---------------------------------------------------------------------------
-
-bool SequenceOperation::Load(iDocumentNode *node)
-{
-    name = node->GetAttributeValue("name");
-    csString cmdStr = node->GetAttributeValue("cmd");
-    
-    if (strcasecmp(cmdStr,"start") == 0)
-    {
-        cmd = START;
-    } else if (strcasecmp(cmdStr,"stop") == 0)
-    {
-        cmd = STOP;
-    } else if (strcasecmp(cmdStr,"loop") == 0)
-    {
-        cmd = LOOP;
-    } else
-    {
-        return false;
-    }
-        
-    count = node->GetAttributeValueAsInt("count");
-    if (count < 0)
-    {
-        count = 1;
-    }
-
-    return true;
-}
-
-ScriptOperation *SequenceOperation::MakeCopy()
-{
-    SequenceOperation *op = new SequenceOperation;
-    op->name = name;
-    op->cmd = cmd;
-    op->count = count;
-    return op;
-}
-
-bool SequenceOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
-{
-
-    npcclient->GetNetworkMgr()->QueueSequenceCommand(name, cmd, count );
-    return true;
-}
-
-//---------------------------------------------------------------------------
-
-bool VisibleOperation::Load(iDocumentNode *node)
-{
-    return true;
-}
-
-ScriptOperation *VisibleOperation::MakeCopy()
-{
-    VisibleOperation *op = new VisibleOperation;
-    return op;
-}
-
-bool VisibleOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
-{
-    npcclient->GetNetworkMgr()->QueueVisibilityCommand(npc->GetActor(), true);
-    return true;
-}
-
-//---------------------------------------------------------------------------
-
-bool ReproduceOperation::Load(iDocumentNode *node)
-{
-    return true;
-}
-
-ScriptOperation *ReproduceOperation::MakeCopy()
-{
-    ReproduceOperation *op = new ReproduceOperation;
-    return op;
-}
-
-bool ReproduceOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
-{
-    if(!npc->GetTarget())
-        return true;
-
-    NPC * friendNPC = npc->GetTarget()->GetNPC();
-    if(friendNPC)
-    {
-        npc->Printf(5, "Reproduce");
-        npcclient->GetNetworkMgr()->QueueSpawnCommand(friendNPC->GetActor(), npc->GetActor());
-    }
-
-    return true;
-}
-
-//---------------------------------------------------------------------------
-
-bool ResurrectOperation::Load(iDocumentNode *node)
-{
-    return true;
-}
-
-ScriptOperation *ResurrectOperation::MakeCopy()
-{
-    ResurrectOperation *op = new ResurrectOperation;
-    return op;
-}
-
-bool ResurrectOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
-{
-    psTribe * tribe = npc->GetTribe();
-    
-    if ( !tribe ) return true;
-
-    csVector3 where;
-    float     radius;
-    iSector*  sector;
-    float     rot = psGetRandom() * TWO_PI;
-
-    tribe->GetHome(where,radius,sector);
-
-    float x, z, xDist, zDist;
-	do {
-		// Pick random point in circumscribed rectangle.
-		x = psGetRandom() * (radius*2.0);
-		z = psGetRandom() * (radius*2.0);
-		xDist = radius - x;
-		zDist = radius - z;
-		// Keep looping until the point is inside a circle.
-	} while(xDist * xDist + zDist * zDist > radius * radius);
-	
-	where.x += x - radius;
-	where.z += z - radius;
-
-    npcclient->GetNetworkMgr()->QueueResurrectCommand(where, rot, sector->QueryObject()->GetName(), npc->GetPID());
-
-    return true;
-}
-
-//---------------------------------------------------------------------------
-
-bool MemorizeOperation::Load(iDocumentNode *node)
-{
-    return true;
-}
-
-ScriptOperation *MemorizeOperation::MakeCopy()
-{
-    MemorizeOperation *op = new MemorizeOperation;
-    return op;
-}
-
-bool MemorizeOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
-{
-    Perception * percept = npc->GetLastPerception();
-    if (!percept)
-    {
-        npc->Printf(5, ">>> Memorize No Perception.");
-        return true; // Nothing more to do for this op.
-    }
-    
-    npc->Printf(5, ">>> Memorize '%s' '%s'.",percept->GetType(),percept->GetName());
-
-    psTribe * tribe = npc->GetTribe();
-    
-    if ( !tribe ) return true; // Nothing more to do for this op.
-
-    tribe->Memorize(npc, percept );
-
-    return true; // Nothing more to do for this op.
-}
-
-//---------------------------------------------------------------------------
-
-bool ShareMemoriesOperation::Load(iDocumentNode *node)
-{
-    return true;
-}
-
-ScriptOperation *ShareMemoriesOperation::MakeCopy()
-{
-    ShareMemoriesOperation *op = new ShareMemoriesOperation;
-    return op;
-}
-
-bool ShareMemoriesOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
-{
-
-    npc->Printf("ShareMemories with tribe.");
-
-    psTribe * tribe = npc->GetTribe();
-    if ( !tribe ) return true; // Nothing more to do for this op.
-
-    tribe->ShareMemories( npc );
-
-    return true; // Nothing more to do for this op.
-}
-
-
-//---------------------------------------------------------------------------
-
-bool MeleeOperation::Load(iDocumentNode *node)
-{
-    seek_range   = node->GetAttributeValueAsFloat("seek_range");
-    melee_range  = node->GetAttributeValueAsFloat("melee_range");
-    attack_invisible = node->GetAttributeValueAsBool("invisible",false);
-    attack_invincible= node->GetAttributeValueAsBool("invincible",false);
-    // hardcoded in server atm to prevent npc/server conflicts
-    melee_range  = 3.0f;
-    return true;
-}
-
-ScriptOperation *MeleeOperation::MakeCopy()
-{
-    MeleeOperation *op = new MeleeOperation;
-    op->seek_range  = seek_range;
-    op->melee_range = melee_range;
-    op->attack_invisible = attack_invisible;
-    op->attack_invincible = attack_invincible;
-    attacked_ent = NULL;
-    return op;
-}
-
-bool MeleeOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
-{
-    npc->Printf(5, "MeleeOperation starting with meele range %.2f seek range %.2f will attack:%s%s.",
-                melee_range, seek_range,(attack_invisible?" Invisible":" Visible"),
-                (attack_invincible?" Invincible":""));
-
-    attacked_ent = npc->GetMostHated(melee_range,attack_invisible,attack_invincible);
-    if (attacked_ent)
-    {
-        npc->Printf(5, "Melee starting to attack %s(%s)", attacked_ent->GetName(), ShowID(attacked_ent->GetEID()));
-
-        npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetActor(),attacked_ent);
-    }
-    else
-    {
-        // We know who attacked us, even if they aren't in range.
-        npc->SetTarget( npc->GetLastPerception()->GetTarget() );
-    }
-
-    return false; // This behavior isn't done yet
-}
-
-void MeleeOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
-{
-    // Check hate list to make sure we are still attacking the right person
-    gemNPCActor *ent = npc->GetMostHated(melee_range, attack_invisible, attack_invincible);
-    
-    if (!ent)
-    {
-        npc->Printf(8, "No Melee target in range (%2.2f), going to chase!", melee_range);
-
-        // No enemy to whack on in melee range, search far
-        ent = npc->GetMostHated(seek_range, attack_invisible, attack_invincible);
-
-        // The idea here is to save the next best target and chase
-        // him if out of range.
-        if (ent)
-        {
-            npc->SetTarget(ent);
-        
-            // If the chase doesn't work, it will return to fight, which still
-            // may not find a target, and return to chase.  This -5 reduces
-            // the need to fight as he can't find anyone and stops this infinite
-            // loop.
-            npc->GetCurrentBehavior()->ApplyNeedDelta(npc, -5);
-
-            Perception range("target out of range");
-            npc->TriggerEvent(&range);
-        }
-        else // no hated targets around
-        {
-            if(npc->IsDebugging(5))
-            {
-                npc->DumpHateList();
-            }
-            npc->Printf(8, "No hated target in seek range (%2.2f)!", seek_range);
-            npc->GetCurrentBehavior()->ApplyNeedDelta(npc, -5); // don't want to fight as badly
-        }
-        return;
-    }
-    if (ent != attacked_ent)
-    {
-        attacked_ent = ent;
-        if (attacked_ent)
-        {
-            npc->Printf(5, "Melee switching to attack %s(%s)", attacked_ent->GetName(), ShowID(attacked_ent->GetEID()));
-        }
-        else
-        {
-            npc->Printf(5, "Melee stop attack");
-        }
-        npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetActor(), ent);
-    }
-    
-    // Make sure our rotation is still correct
-    if(attacked_ent)
-    {
-    	float rot, npc_rot, new_npc_rot;
-		iSector *sector;
-		csVector3 pos;
-		
-		// Get current rot
-		psGameObject::GetPosition(npc->GetActor(),pos,npc_rot,sector);
-		
-		// Get target pos
-		psGameObject::GetPosition(attacked_ent,pos,rot,sector);
-
-		// Make sure we still face the target
-		csVector3 forward;
-			
-		TurnTo(npc, pos, sector, forward);
-		// Needed because TurnTo automatically starts moving.
-	    csVector3 velvector(0,0,  0 );
-	    npc->GetLinMove()->SetVelocity(velvector);
-	    npc->GetLinMove()->SetAngularVelocity( 0 );
-		// Check new rot
-		psGameObject::GetPosition(npc->GetActor(),pos,new_npc_rot,sector);
-		
-		// If different broadcast the new rot
-		if (npc_rot != new_npc_rot)
-			npcclient->GetNetworkMgr()->QueueDRData(npc);
-    }
-}
-
-void MeleeOperation::InterruptOperation(NPC *npc,EventManager *eventmgr)
-{
-    ScriptOperation::InterruptOperation(npc,eventmgr);
-}
-
-bool MeleeOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
-{
-    npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetActor(),NULL);
-
-    completed = true;
-
-    return true;
-}
-
-//---------------------------------------------------------------------------
-
-bool BeginLoopOperation::Load(iDocumentNode *node)
-{
-    iterations = node->GetAttributeValueAsInt("iterations");
-    return true;
-}
-
-ScriptOperation *BeginLoopOperation::MakeCopy()
-{
-    BeginLoopOperation *op = new BeginLoopOperation;
-    op->iterations = iterations;
-    return op;
-}
-
-bool BeginLoopOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
-{
-    return true;
-}
-
-//---------------------------------------------------------------------------
-
-bool EndLoopOperation::Load(iDocumentNode *node)
-{
-    return true;
-}
-
-ScriptOperation *EndLoopOperation::MakeCopy()
-{
-    EndLoopOperation *op = new EndLoopOperation(loopback_op,iterations);
-    return op;
-}
-
-bool EndLoopOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
-{
-    Behavior * behavior = npc->GetCurrentBehavior();
-
-    current++;
-
-    if (current < iterations)
-    {
-        behavior->SetCurrentStep(loopback_op-1);
-        npc->Printf(5, "EndLoop - Loop %d of %d",current,iterations);
-        return true;
-    }
-
-    current = 0; // Make sure we will loop next time to
-
-    npc->Printf(5, "EndLoop - Exit %d %d",current,iterations);
-    return true;
-}
-
-//---------------------------------------------------------------------------
-
-bool WaitOperation::Load(iDocumentNode *node)
-{
-    duration = node->GetAttributeValueAsFloat("duration");
-    action = node->GetAttributeValue("anim");
-    return true;
-}
-
-ScriptOperation *WaitOperation::MakeCopy()
-{
-    WaitOperation *op = new WaitOperation;
-    op->duration = duration;
-    op->action   = action;
-    return op;
-}
-
-bool WaitOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
-{
-    if (!interrupted)
-    {
-        remaining = duration;
-    }
-
-    // SetAction animation for the mesh, so it looks right
-    SetAnimation(npc, action);
-
-    //now persist
-    npcclient->GetNetworkMgr()->QueueDRData(npc);
-
-    return false;
-}
-
-void WaitOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
-{
-    remaining -= timedelta;
-    if(remaining <= 0)
-    	npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
-    npc->Printf(10, "waiting... %.2f",remaining);
-}
-
-//---------------------------------------------------------------------------
-
-bool TransferOperation::Load(iDocumentNode *node)
-{
-    item = node->GetAttributeValue("item");
-    target = node->GetAttributeValue("target");
-    count = node->GetAttributeValueAsInt("count");
-    if (!count) count = -1; // All items
-
-    if (item.IsEmpty() || target.IsEmpty()) return false;
-
-    return true;
-}
-
-ScriptOperation *TransferOperation::MakeCopy()
-{
-    TransferOperation *op = new TransferOperation;
-    op->item = item;
-    op->target = target;
-    op->count = count;
-    return op;
-}
-
-bool TransferOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
-{
-    csString transferItem = item;
-
-    csArray<csString> splitItem = psSplit(transferItem,':');
-    if (splitItem[0] == "tribe")
-    {
-        if (!npc->GetTribe())
-        {
-            npc->Printf(5, "No tribe");
-            return true;
-        }
-        
-        if (splitItem[1] == "wealth")
-        {
-            transferItem = npc->GetTribe()->GetNeededResource();
-        }
-        else
-        {
-            Error2("Transfer operation for tribe with unknown sub type %s",splitItem[1].GetDataSafe())
-            return true;
-        }
-        
-    }
-    
-    npcclient->GetNetworkMgr()->QueueTransferCommand(npc->GetActor(), transferItem, count, target );
-
-    return true;
-}
-//---------------------------------------------------------------------------
-
-bool TribeHomeOperation::Load(iDocumentNode *node)
-{
-    return true;
-}
-
-ScriptOperation *TribeHomeOperation::MakeCopy()
-{
-    TribeHomeOperation *op = new TribeHomeOperation;
-    return op;
-}
-
-bool TribeHomeOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
-{
-    psTribe * tribe = npc->GetTribe();
-    
-    if ( !tribe ) return true; // Nothing more to do for this op.
-
-    csVector3 pos;
-    iSector*  sector;
-    float     rot;
-
-    npc->GetActiveLocate(pos,sector,rot);
-    
-    npc->Printf("Moves tribe home to: %s",toString(pos,sector).GetData());
-
-    tribe->SetHome(pos,sector);
-
-    return true; // Nothing more to do for this op.
-}
-
-//---------------------------------------------------------------------------
-
-bool RewardOperation::Load(iDocumentNode *node)
-{
-    // Load attributes
-    resource = node->GetAttributeValue("resource");
-    count = node->GetAttributeValueAsInt("count");
-
-    // Resource is mandatory for this operation
-    if (resource.IsEmpty())
-    {
-        return false;
-    }
-
-    // Default count to 1 if not pressent
-    if (csString(node->GetAttributeValue("count")).IsEmpty())
-    {
-        count = 1;
-    }
-    
-    return true;
-}
-
-ScriptOperation *RewardOperation::MakeCopy()
-{
-    RewardOperation *op = new RewardOperation;
-    op->resource = resource;
-    op->count = count;
-    return op;
-}
-
-bool RewardOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
-{
-    csString res = resource;
-    
-    if (resource == "tribe:wealth")
-    {
-        if (npc->GetTribe())
-        {
-            res = npc->GetTribe()->GetNeededResource();
-        }
-    }
-
-    if (npc->GetTribe())
-    {
-        npc->GetTribe()->AddResource(res,count);
-    }
-
-    return true;
-}
-
-//---------------------------------------------------------------------------
-
-bool MovePathOperation::Load(iDocumentNode *node)
-{
-    pathname = node->GetAttributeValue("path");
-    anim = node->GetAttributeValue("anim");
-    csString dirStr = node->GetAttributeValue("direction");
-    if (strcasecmp(dirStr.GetDataSafe(),"REVERSE")==0)
-    {
-        direction = psPath::REVERSE;
-    }
-    else
-    {
-        direction = psPath::FORWARD;
-    }
-
-    // Internal variables set to defaults
-    path = NULL;
-    anchor = NULL;
-    return true;
-}
-
-ScriptOperation *MovePathOperation::MakeCopy()
-{
-    MovePathOperation *op = new MovePathOperation;
-    // Copy parameters
-    op->pathname  = pathname;
-    op->anim      = anim;
-    op->direction = direction;
-
-    // Internal variables set to defaults
-    op->path     = NULL;
-    op->anchor   = NULL;
-
-    return op;
-}
-
-bool MovePathOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
-{
-    if (!path)
-    {
-        path = npcclient->FindPath(pathname);
-    }
-
-    if (!path)
-    {
-        Error2("Could not find path '%s'",pathname.GetDataSafe());
-        return true;
-    }
-
-    anchor = path->CreatePathAnchor();
-
-    // Get Going at the right velocity
-    csVector3 velvector(0,0,  -GetVelocity(npc) );
-    npc->GetLinMove()->SetVelocity(velvector);
-    npc->GetLinMove()->SetAngularVelocity( 0 );
-
-    npcclient->GetNetworkMgr()->QueueDRData(npc);
-
-    return false;
-}
-
-void MovePathOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
-{
-	npc->GetLinMove()->ExtrapolatePosition(timedelta);
-    if (!anchor->Extrapolate(npcclient->GetWorld(),npcclient->GetEngine(),
-                             timedelta*GetVelocity(npc),
-                             direction, npc->GetMovable()))
-    {
-        // At end of path
-        npc->Printf(5, "We are done..");
-
-        // None linear movement so we have to queue DRData updates.
-        npcclient->GetNetworkMgr()->QueueDRData(npc);
-
-        npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
-
-        return;
-    }
-    
-    if (npc->IsDebugging())
-    {
-        csVector3 pos; float rot; iSector *sec;
-        psGameObject::GetPosition(npc->GetActor(),pos,rot,sec);
-
-        npc->Printf(8, "MovePath Loc is %s Rot: %1.2f Vel: %.2f Dist: %.2f Index: %d Fraction %.2f",
-                    toString(pos).GetDataSafe(),rot,GetVelocity(npc),anchor->GetDistance(),anchor->GetCurrentAtIndex(),anchor->GetCurrentAtFraction());
-        
-        csVector3 anchor_pos,anchor_up,anchor_forward;
-
-        anchor->GetInterpolatedPosition(anchor_pos);
-        anchor->GetInterpolatedUp(anchor_up);
-        anchor->GetInterpolatedForward(anchor_forward);
-        
-
-        npc->Printf(9, "Anchor pos: %s forward: %s up: %s",toString(anchor_pos).GetDataSafe(),
-                    toString(anchor_forward).GetDataSafe(),toString(anchor_up).GetDataSafe());
-        
-    }
-    
-
-    // None linear movement so we have to queue DRData updates.
-    npcclient->GetNetworkMgr()->QueueDRData(npc);
-}
-
-void MovePathOperation::InterruptOperation(NPC *npc,EventManager *eventmgr)
-{
-    ScriptOperation::InterruptOperation(npc,eventmgr);
-
-    StopMovement(npc);
-}
-
-bool MovePathOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
-{
-    // Set position to where it is supposed to go
-    npc->GetLinMove()->SetPosition(path->GetEndPos(direction),path->GetEndRot(direction),path->GetEndSector(npcclient->GetEngine(),direction));
-
-    if (anchor)
-    {
-        delete anchor;
-        anchor = NULL;
-    }
-
-    StopMovement(npc);
-
-    completed = true;
-
-    return true; // Script can keep going
-}
-
-//---------------------------------------------------------------------------
-
-const char * WatchOperation::typeStr[]={"unkown","nearest","owner","target"};
+const char * WatchOperation::typeStr[]={"nearest","owner","target"};
 
 bool WatchOperation::Load(iDocumentNode *node)
 {
@@ -3333,12 +3384,13 @@ bool WatchOperation::Load(iDocumentNode *node)
     }
     else
     {
-        type = UNKNOWN;
+        Error2("Watch operation can't understand a type of %s",typestr.GetDataSafe());
+        return false;
     }
 
-    if (node->GetAttributeValue("range"))
+    if (node->GetAttributeValue("search_range"))
     {
-        range = node->GetAttributeValueAsFloat("range");
+        range = node->GetAttributeValueAsFloat("search_range");
     }
     else
     {

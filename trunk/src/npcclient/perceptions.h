@@ -58,26 +58,26 @@ class Reaction
 {
 protected:
     // members making up the "if statement"
-    csString  event_type;
+    csString  eventType;
     float     range;
-    int       faction_diff;
+    int       factionDiff;
     csString  oper;
-    bool      active_only;
-    bool      inactive_only;
-    bool      react_when_dead;
-    bool      react_when_invisible;
-    bool      react_when_invincible;
+    bool      activeOnly;
+    bool      inactiveOnly;
+    bool      reactWhenDead;
+    bool      reactWhenInvisible;
+    bool      reactWhenInvincible;
     csArray<bool> valuesValid;
     csArray<int> values;
     csArray<bool>randomsValid;
     csArray<int> randoms;
     csString  type;
-    csArray<csString> only_interrupt;
+    csArray<csString> onlyInterrupt;
 
     // members making up the "then statement"
     csArray<Behavior*> affected;
 
-    enum Desire_Type
+    enum DesireType
     {
         DESIRE_NONE,
         DESIRE_DELTA,
@@ -85,7 +85,7 @@ protected:
         DESIRE_GUARANTIED
     };
     
-    Desire_Type desireType; // Indicate the type of desire change this reaction has.
+    DesireType desireType;    // Indicate the type of desire change this reaction has.
     float desireValue;        // The value to use for the desire type.
     float weight;             // The weight to apply to deltas.
 
@@ -103,9 +103,9 @@ public:
     // for reaction against visibility and invincibility
     bool ShouldReact(gemNPCObject* entity, Perception *pcpt);
 
-    const char     *GetEventType()      { return event_type;   }
+    const char     *GetEventType()      { return eventType;   }
     float           GetRange()          { return range;        }
-    int             GetFactionDiff()    { return faction_diff; }
+    int             GetFactionDiff()    { return factionDiff; }
     bool            GetValueValid(int i);
     int             GetValue(int i);
     bool            GetRandomValid(int i);
@@ -173,6 +173,12 @@ public:
 
 //-----------------------------------------------------------------------------
 
+/** Given to the NPC upon ever tick of game minute.
+ *
+ * Perception to allow reaction based on time.
+ * Any combination of hours,minutes,years,months,days can be matched.
+ *
+ */
 class TimePerception : public Perception
 {
 protected:
@@ -193,12 +199,12 @@ public:
 class FactionPerception : public Perception
 {
 protected:
-    int faction_delta;
+    int factionDelta;
     csWeakRef<gemNPCActor> player;
 
 public:
     FactionPerception(const char *n,int d,gemNPCObject *p)
-    : Perception(n), faction_delta(d), player((gemNPCActor *)p)  {    }
+    : Perception(n), factionDelta(d), player((gemNPCActor *)p)  {    }
     virtual ~FactionPerception() {}
 
     virtual bool ShouldReact(Reaction *reaction,NPC *npc);

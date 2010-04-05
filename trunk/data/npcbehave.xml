@@ -335,6 +335,7 @@
       <locate obj="tribe:home"  static="no" />
       <wander anim="walk" />                    <!-- Navigate using waypoints -->
       <navigate anim="walk" />                  <!-- Local navigation -->
+      <share_memories />
     </behavior>
     <behavior name="Dig" completion_decay="100" growth="0" initial="0">
       <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->

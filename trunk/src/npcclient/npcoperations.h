@@ -47,6 +47,7 @@ class NPC;
 class gemNPCObject;
 class gemNPCActor;
 class MoveOperation;
+class Waypoint;
 
 /**
 * This is the base class for all operations in action scripts.
@@ -410,6 +411,98 @@ public:
 //-----------------------------------------------------------------------------
 
 /**
+* LoopBegin operation will only print LoopBegin for debug purpose.
+* Looping will be done by the LoopEndOperation.
+*/
+class LoopBeginOperation : public ScriptOperation
+{
+public:
+    int iterations;
+
+public:
+
+    LoopBeginOperation(): ScriptOperation("BeginLoop") { iterations=0; }
+    virtual ~LoopBeginOperation() { }
+
+    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual bool Load(iDocumentNode *node);
+    virtual ScriptOperation *MakeCopy();
+};
+
+//-----------------------------------------------------------------------------
+
+/**
+* LoopEnd operation will jump back to the beginning
+* of the loop.
+*/
+class LoopEndOperation : public ScriptOperation
+{
+protected:
+    int loopback_op;
+    int current;
+    int iterations;
+
+public:
+
+    LoopEndOperation(int which,int iterations): ScriptOperation("LoopEnd") { loopback_op = which; this->iterations = iterations; current = 0;}
+    virtual ~LoopEndOperation() { }
+    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual bool Load(iDocumentNode *node);
+    virtual ScriptOperation *MakeCopy();
+};
+
+//-----------------------------------------------------------------------------
+
+/**
+* Melee will tell the npc to attack the most hated
+* entity within range.
+*/
+class MeleeOperation : public ScriptOperation
+{
+protected:
+    float seek_range, melee_range;
+    gemNPCActor* attacked_ent;
+    bool  attack_invisible,attack_invincible;
+public:
+
+    MeleeOperation(): ScriptOperation("Melee") { attacked_ent=NULL; seek_range=0; melee_range=0; }
+    virtual ~MeleeOperation() {}
+
+    virtual bool Load(iDocumentNode *node);
+    virtual ScriptOperation *MakeCopy();
+
+    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual void Advance(float timedelta,NPC *npc,EventManager *eventmgr);
+    virtual void InterruptOperation(NPC *npc,EventManager *eventmgr);
+    virtual bool CompleteOperation(NPC *npc,EventManager *eventmgr);
+};
+
+//-----------------------------------------------------------------------------
+
+/**
+* Memorize will make the npc to setup a spawn point here
+*/
+class MemorizeOperation : public ScriptOperation
+{
+protected:
+
+public:
+
+    MemorizeOperation(): ScriptOperation("Memorize") {};
+    virtual ~MemorizeOperation() {};
+    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual bool Load(iDocumentNode *node);
+    virtual ScriptOperation *MakeCopy();
+};
+
+//-----------------------------------------------------------------------------
+
+// MoveOperation - Definition has been moved before the first user of this
+//                 class as a base class.
+
+//-----------------------------------------------------------------------------
+
+/**
 * MovePath specifies the name of a path and an animation action.
 */
 class MovePathOperation : public ScriptOperation
@@ -464,6 +557,114 @@ public:
 //-----------------------------------------------------------------------------
 
 /**
+* Navigate moves the NPC to the position and orientation
+* of the last located thing.  (See LocateOperation)
+*/
+class NavigateOperation : public ScriptOperation
+{
+protected:
+    csString action;
+
+public:
+
+    NavigateOperation(): ScriptOperation("Navigate") { vel=0; };
+    virtual ~NavigateOperation() {};
+
+    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual void Advance(float timedelta,NPC *npc,EventManager *eventmgr);
+    virtual void InterruptOperation(NPC *npc,EventManager *eventmgr);
+    virtual bool Load(iDocumentNode *node);
+    virtual ScriptOperation *MakeCopy();
+    virtual bool CompleteOperation(NPC *npc,EventManager *eventmgr);
+};
+
+//-----------------------------------------------------------------------------
+
+/**
+* Pickup will tell the npc to pickup a nearby
+* entity (or fake it).
+*/
+class PickupOperation : public ScriptOperation
+{
+protected:
+    csString object;
+    csString slot;
+    int      count; // Number of items to pick up from a stack
+    
+public:
+
+    PickupOperation(): ScriptOperation("Pickup") {};
+    virtual ~PickupOperation() {};
+    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual bool Load(iDocumentNode *node);
+    virtual ScriptOperation *MakeCopy();
+};
+
+//-----------------------------------------------------------------------------
+
+/**
+* Reproduce will make the npc to setup a spawn point here
+*/
+class ReproduceOperation : public ScriptOperation
+{
+protected:
+
+public:
+
+    ReproduceOperation(): ScriptOperation("Reproduce") {};
+    virtual ~ReproduceOperation() {};
+    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual bool Load(iDocumentNode *node);
+    virtual ScriptOperation *MakeCopy();
+};
+
+//-----------------------------------------------------------------------------
+
+/**
+* Resurrect will make the npc to setup a spawn point here
+*/
+class ResurrectOperation : public ScriptOperation
+{
+protected:
+
+public:
+
+    ResurrectOperation(): ScriptOperation("Resurrect") {};
+    virtual ~ResurrectOperation() {};
+    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual bool Load(iDocumentNode *node);
+    virtual ScriptOperation *MakeCopy();
+};
+
+//-----------------------------------------------------------------------------
+
+/** Implement the reward NPC script operation.
+ *
+ * Reward will add a given resource to the Tribe that the
+ * current NPC is a member of.
+ *
+ * Examples:
+ * <reward resource="Gold Ore" count="2" />
+ * <reward resource="tribe:wealth" />
+ */
+class RewardOperation : public ScriptOperation
+{
+protected:
+    csString resource; ///< The Resource to be rewarded to the tribe.
+    int count;         ///< The number of the resource to reward to the tribe.
+    
+public:
+
+    RewardOperation(): ScriptOperation("Reward") {};
+    virtual ~RewardOperation() {};
+    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual bool Load(iDocumentNode *node);
+    virtual ScriptOperation *MakeCopy();
+};
+
+//-----------------------------------------------------------------------------
+
+/**
 * Rotating requires storing or determining the angle to 
 * rotate to, and the animation action.
 */
@@ -510,29 +711,154 @@ public:
 //-----------------------------------------------------------------------------
 
 /**
-* Navigate moves the NPC to the position and orientation
-* of the last located thing.  (See LocateOperation)
+* Sequence will control a named sequence in the world.
 */
-class NavigateOperation : public ScriptOperation
+class SequenceOperation : public ScriptOperation
 {
 protected:
-    csString action;
+    enum // Sequence commands, should use same values as in the psSequenceMessage
+    {
+        UNKNOWN = 0,
+        START = 1,
+        STOP = 2,
+        LOOP = 3  
+    };
+    
+    csString name;
+    int      cmd;    // See enum above
+    int      count;  // Number of times to run the sequence
 
 public:
 
-    NavigateOperation(): ScriptOperation("Navigate") { vel=0; };
-    virtual ~NavigateOperation() {};
-
+    SequenceOperation(): ScriptOperation("Sequence") {};
+    virtual ~SequenceOperation() {};
     virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
-    virtual void Advance(float timedelta,NPC *npc,EventManager *eventmgr);
-    virtual void InterruptOperation(NPC *npc,EventManager *eventmgr);
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
-    virtual bool CompleteOperation(NPC *npc,EventManager *eventmgr);
 };
 
+//-----------------------------------------------------------------------------
 
-class Waypoint;
+/**
+* ShareMemories will make the npc share memoreis with tribe
+*/
+class ShareMemoriesOperation : public ScriptOperation
+{
+protected:
+
+public:
+
+    ShareMemoriesOperation(): ScriptOperation("ShareMemories") {};
+    virtual ~ShareMemoriesOperation() {};
+    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual bool Load(iDocumentNode *node);
+    virtual ScriptOperation *MakeCopy();
+};
+
+//-----------------------------------------------------------------------------
+
+/**
+* Talk will tell the npc to communicate to a nearby
+* entity.
+*/
+class TalkOperation : public ScriptOperation
+{
+protected:
+    csString text;
+    csString command;
+    bool target;
+
+public:
+
+    TalkOperation(): ScriptOperation("Talk") {};
+    virtual ~TalkOperation() {};
+    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual bool Load(iDocumentNode *node);
+    virtual ScriptOperation *MakeCopy();
+};
+
+//-----------------------------------------------------------------------------
+
+/**
+* Transfer will transfer a item from the NPC to a target. The
+* target might be a tribe.
+*/
+class TransferOperation : public ScriptOperation
+{
+protected:
+    csString item;
+    int count;
+    csString target;
+
+public:
+
+    TransferOperation(): ScriptOperation("Transfer") {};
+    virtual ~TransferOperation() {};
+    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual bool Load(iDocumentNode *node);
+    virtual ScriptOperation *MakeCopy();
+};
+
+//-----------------------------------------------------------------------------
+
+/**
+* TribeHome will make the npc to setup a spawn point here
+*/
+class TribeHomeOperation : public ScriptOperation
+{
+protected:
+
+public:
+
+    TribeHomeOperation(): ScriptOperation("Tribe_Home") {};
+    virtual ~TribeHomeOperation() {};
+    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual bool Load(iDocumentNode *node);
+    virtual ScriptOperation *MakeCopy();
+};
+
+//-----------------------------------------------------------------------------
+
+/**
+* Visible will make the npc visible.
+*/
+class VisibleOperation : public ScriptOperation
+{
+public:
+
+    VisibleOperation(): ScriptOperation("Visible") {};
+    virtual ~VisibleOperation() {};
+    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual bool Load(iDocumentNode *node);
+    virtual ScriptOperation *MakeCopy();
+};
+
+//-----------------------------------------------------------------------------
+
+/**
+* Wait will simply set the mesh animation to
+* something and sit there for the desired number
+* of seconds.
+*/
+class WaitOperation : public ScriptOperation
+{
+protected:
+    float duration;
+    csString action;
+
+    // Instance temp variables. These dosn't need to be copied.
+    float remaining;
+
+public:
+
+    WaitOperation(): ScriptOperation("Wait") { duration=0; }
+    virtual ~WaitOperation() { }
+
+    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual bool Load(iDocumentNode *node);
+    virtual void Advance(float timedelta,NPC *npc,EventManager *eventmgr);
+    virtual ScriptOperation *MakeCopy();
+};
 
 //-----------------------------------------------------------------------------
 
@@ -605,329 +931,6 @@ public:
 //-----------------------------------------------------------------------------
 
 /**
-* Melee will tell the npc to attack the most hated
-* entity within range.
-*/
-class MeleeOperation : public ScriptOperation
-{
-protected:
-    float seek_range, melee_range;
-    gemNPCActor* attacked_ent;
-    bool  attack_invisible,attack_invincible;
-public:
-
-    MeleeOperation(): ScriptOperation("Melee") { attacked_ent=NULL; seek_range=0; melee_range=0; }
-    virtual ~MeleeOperation() {}
-
-    virtual bool Load(iDocumentNode *node);
-    virtual ScriptOperation *MakeCopy();
-
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
-    virtual void Advance(float timedelta,NPC *npc,EventManager *eventmgr);
-    virtual void InterruptOperation(NPC *npc,EventManager *eventmgr);
-    virtual bool CompleteOperation(NPC *npc,EventManager *eventmgr);
-};
-
-//-----------------------------------------------------------------------------
-
-/**
-* Pickup will tell the npc to pickup a nearby
-* entity (or fake it).
-*/
-class PickupOperation : public ScriptOperation
-{
-protected:
-    csString object;
-    csString slot;
-    int      count; // Number of items to pick up from a stack
-    
-public:
-
-    PickupOperation(): ScriptOperation("Pickup") {};
-    virtual ~PickupOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
-    virtual bool Load(iDocumentNode *node);
-    virtual ScriptOperation *MakeCopy();
-};
-
-//-----------------------------------------------------------------------------
-
-/**
-* Talk will tell the npc to communicate to a nearby
-* entity.
-*/
-class TalkOperation : public ScriptOperation
-{
-protected:
-    csString text;
-    csString command;
-    bool target;
-
-public:
-
-    TalkOperation(): ScriptOperation("Talk") {};
-    virtual ~TalkOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
-    virtual bool Load(iDocumentNode *node);
-    virtual ScriptOperation *MakeCopy();
-};
-
-//-----------------------------------------------------------------------------
-
-/**
-* Sequence will control a named sequence in the world.
-*/
-class SequenceOperation : public ScriptOperation
-{
-protected:
-    enum // Sequence commands, should use same values as in the psSequenceMessage
-    {
-        UNKNOWN = 0,
-        START = 1,
-        STOP = 2,
-        LOOP = 3  
-    };
-    
-    csString name;
-    int      cmd;    // See enum above
-    int      count;  // Number of times to run the sequence
-
-public:
-
-    SequenceOperation(): ScriptOperation("Sequence") {};
-    virtual ~SequenceOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
-    virtual bool Load(iDocumentNode *node);
-    virtual ScriptOperation *MakeCopy();
-};
-
-//-----------------------------------------------------------------------------
-
-/**
-* Visible will make the npc visible.
-*/
-class VisibleOperation : public ScriptOperation
-{
-public:
-
-    VisibleOperation(): ScriptOperation("Visible") {};
-    virtual ~VisibleOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
-    virtual bool Load(iDocumentNode *node);
-    virtual ScriptOperation *MakeCopy();
-};
-
-//-----------------------------------------------------------------------------
-
-/**
-* Reproduce will make the npc to setup a spawn point here
-*/
-class ReproduceOperation : public ScriptOperation
-{
-protected:
-
-public:
-
-    ReproduceOperation(): ScriptOperation("Reproduce") {};
-    virtual ~ReproduceOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
-    virtual bool Load(iDocumentNode *node);
-    virtual ScriptOperation *MakeCopy();
-};
-
-//-----------------------------------------------------------------------------
-
-/**
-* Resurrect will make the npc to setup a spawn point here
-*/
-class ResurrectOperation : public ScriptOperation
-{
-protected:
-
-public:
-
-    ResurrectOperation(): ScriptOperation("Resurrect") {};
-    virtual ~ResurrectOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
-    virtual bool Load(iDocumentNode *node);
-    virtual ScriptOperation *MakeCopy();
-};
-
-//-----------------------------------------------------------------------------
-
-/**
-* Memorize will make the npc to setup a spawn point here
-*/
-class MemorizeOperation : public ScriptOperation
-{
-protected:
-
-public:
-
-    MemorizeOperation(): ScriptOperation("Memorize") {};
-    virtual ~MemorizeOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
-    virtual bool Load(iDocumentNode *node);
-    virtual ScriptOperation *MakeCopy();
-};
-//-----------------------------------------------------------------------------
-
-/**
-* ShareMemories will make the npc share memoreis with tribe
-*/
-class ShareMemoriesOperation : public ScriptOperation
-{
-protected:
-
-public:
-
-    ShareMemoriesOperation(): ScriptOperation("ShareMemories") {};
-    virtual ~ShareMemoriesOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
-    virtual bool Load(iDocumentNode *node);
-    virtual ScriptOperation *MakeCopy();
-};
-
-//-----------------------------------------------------------------------------
-
-/**
-* BeginLoop will only print BeginLoop for debug purpose.
-* Looping will be done by the EndLoopOperation.
-*/
-class BeginLoopOperation : public ScriptOperation
-{
-public:
-    int iterations;
-
-public:
-
-    BeginLoopOperation(): ScriptOperation("BeginLoop") { iterations=0; }
-    virtual ~BeginLoopOperation() { }
-
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
-    virtual bool Load(iDocumentNode *node);
-    virtual ScriptOperation *MakeCopy();
-};
-
-//-----------------------------------------------------------------------------
-
-/**
-* EndLoop will jump back to the beginning
-* of the loop.
-*/
-class EndLoopOperation : public ScriptOperation
-{
-protected:
-    int loopback_op;
-    int current;
-    int iterations;
-
-public:
-
-    EndLoopOperation(int which,int iterations): ScriptOperation("EndLoop") { loopback_op = which; this->iterations = iterations; current = 0;}
-    virtual ~EndLoopOperation() { }
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
-    virtual bool Load(iDocumentNode *node);
-    virtual ScriptOperation *MakeCopy();
-};
-
-//-----------------------------------------------------------------------------
-
-/**
-* Wait will simply set the mesh animation to
-* something and sit there for the desired number
-* of seconds.
-*/
-class WaitOperation : public ScriptOperation
-{
-protected:
-    float duration;
-    csString action;
-
-    // Instance temp variables. These dosn't need to be copied.
-    float remaining;
-
-public:
-
-    WaitOperation(): ScriptOperation("Wait") { duration=0; }
-    virtual ~WaitOperation() { }
-
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
-    virtual bool Load(iDocumentNode *node);
-    virtual void Advance(float timedelta,NPC *npc,EventManager *eventmgr);
-    virtual ScriptOperation *MakeCopy();
-};
-
-//-----------------------------------------------------------------------------
-
-/**
-* Transfer will transfer a item from the NPC to a target. The
-* target might be a tribe.
-*/
-class TransferOperation : public ScriptOperation
-{
-protected:
-    csString item;
-    int count;
-    csString target;
-
-public:
-
-    TransferOperation(): ScriptOperation("Transfer") {};
-    virtual ~TransferOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
-    virtual bool Load(iDocumentNode *node);
-    virtual ScriptOperation *MakeCopy();
-};
-
-//-----------------------------------------------------------------------------
-
-/**
-* TribeHome will make the npc to setup a spawn point here
-*/
-class TribeHomeOperation : public ScriptOperation
-{
-protected:
-
-public:
-
-    TribeHomeOperation(): ScriptOperation("Tribe_Home") {};
-    virtual ~TribeHomeOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
-    virtual bool Load(iDocumentNode *node);
-    virtual ScriptOperation *MakeCopy();
-};
-
-//-----------------------------------------------------------------------------
-
-/** Implement the reward NPC script operation.
- *
- * Reward will add a given resource to the Tribe that the
- * current NPC is a member of.
- *
- * Examples:
- * <reward resource="Gold Ore" count="2" />
- * <reward resource="tribe:wealth" />
- */
-class RewardOperation : public ScriptOperation
-{
-protected:
-    csString resource; ///< The Resource to be rewarded to the tribe.
-    int count;         ///< The number of the resource to reward to the tribe.
-    
-public:
-
-    RewardOperation(): ScriptOperation("Reward") {};
-    virtual ~RewardOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
-    virtual bool Load(iDocumentNode *node);
-    virtual ScriptOperation *MakeCopy();
-};
-
-
-//-----------------------------------------------------------------------------
-
-/**
 * Watch operation will tell if the targt goes out of range.
 */
 class WatchOperation : public ScriptOperation
@@ -942,7 +945,7 @@ protected:
 
     enum
     {
-        UNKNOWN,NEAREST,OWNER,TARGET
+        NEAREST,OWNER,TARGET
     };
     static const char * typeStr[];
     
@@ -962,5 +965,7 @@ public:
  private:
     bool OutOfRange(NPC *npc);
 };
+
+//-----------------------------------------------------------------------------
 
 #endif

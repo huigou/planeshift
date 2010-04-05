@@ -614,7 +614,7 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         }
         else if ( strcmp( node->GetValue(), "loop" ) == 0 )
         {
-            op = new BeginLoopOperation;
+            op = new LoopBeginOperation;
             beginLoopWhere = (int)sequence.GetSize(); // Where will sequence be pushed
             postLoadBeginLoop = true;
         }
@@ -716,14 +716,14 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         // Execute any outstanding post load operations.
         if (postLoadBeginLoop)
         {
-            BeginLoopOperation * blop = dynamic_cast<BeginLoopOperation*>(op);
+            LoopBeginOperation * blop = dynamic_cast<LoopBeginOperation*>(op);
             if (!LoadScript(node,false)) // recursively load within loop
             {
                 Error1("Could not load within Loop Operation. Error in XML");
                 return false;
             }
 
-            EndLoopOperation *op2 = new EndLoopOperation(beginLoopWhere,blop->iterations);
+            LoopEndOperation *op2 = new LoopEndOperation(beginLoopWhere,blop->iterations);
             sequence.Push(op2);
         }
     }
