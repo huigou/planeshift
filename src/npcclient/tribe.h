@@ -57,7 +57,7 @@ public:
         csString  name;
         csVector3 pos;
         iSector*  sector;
-        csString  sector_name; ///< Keep the sector name until sector is loaded
+        csString  sectorName;  ///< Keep the sector name until sector is loaded
         float     radius;
         NPC*      npc;         ///< Privat memory if NPC is set
 
@@ -98,7 +98,7 @@ public:
     bool AddMember(PID pid);
 
     /** Save or update an resource in database */
-    void SaveResource(Resource* resource, bool new_resource);
+    void SaveResource(Resource* resource, bool newResource);
 
     /** Attach a new member to the tribe if the NPC is a member */
     bool CheckAttach(NPC * npc);
@@ -130,7 +130,7 @@ public:
 
     int GetID() { return id; }
     const char* GetName() { return name.GetDataSafe(); }
-    size_t GetMemberIDCount() { return members_id.GetSize(); }
+    size_t GetMemberIDCount() { return membersId.GetSize(); }
     size_t GetMemberCount() { return members.GetSize(); }
     NPC * GetMember(size_t i) { return members[i]; }
     size_t GetResourceCount() { return resources.GetSize(); }
@@ -162,7 +162,7 @@ public:
     /**
      * Get a memorized location for resources
      */
-    bool GetResource(NPC* npc, csVector3 start_pos, iSector * start_sector,
+    bool GetResource(NPC* npc, csVector3 startPos, iSector * startSector,
                      csVector3& pos, iSector* &sector, float range, bool random);
 
     /**
@@ -179,6 +179,31 @@ public:
      * Get a area for the most needed resource for this tribe.
      */
     const char* GetNeededResourceAreaType();
+
+    /** Get wealth resource growth rate
+     *
+     * Get the rate that the wealth will grow when all members are dead.
+     *
+     * @return Return the wealth growth rate
+     */
+    float GetWealthResourceGrowth() const;
+
+    /** Get wealth resource growth rate active
+     *
+     * Get the rate that the wealth will grow when there are alive members.
+     *
+     * @return Return the wealth growth rate
+     */
+    float GetWealthResourceGrowthActive() const;
+
+    /** Get wealth resource growth active limit
+     *
+     * Get the limit that the wealth will be capped at when there are alive members.
+     *
+     * @return Return the wealth growth limit
+     */
+    int GetWealthResourceGrowthActiveLimit() const;
+    
     
     /**
      * Check if the tribe can grow by checking the tribes wealth
@@ -246,12 +271,12 @@ public:
     /**
      * Find nearest memory to a position.
      */
-    Memory* FindNearestMemory(const char* name,const csVector3& pos, const iSector* sector, float range = -1.0, float *found_range = NULL);
+    Memory* FindNearestMemory(const char* name,const csVector3& pos, const iSector* sector, float range = -1.0, float *foundRange = NULL);
 
     /**
      * Find a random memory within range to a position.
      */
-    Memory* FindRandomMemory(const char* name,const csVector3& pos, const iSector* sector, float range = -1.0, float *found_range = NULL);
+    Memory* FindRandomMemory(const char* name,const csVector3& pos, const iSector* sector, float range = -1.0, float *foundRange = NULL);
     
 protected:
 
@@ -260,26 +285,29 @@ protected:
     
     int                    id;
     csString               name;
-    csArray<PID>           members_id;
+    csArray<PID>           membersId;
     csArray<NPC*>          members;
-    csArray<NPC*>          dead_members;
+    csArray<NPC*>          deadMembers;
     csArray<Resource>      resources;
 
-    csVector3              home_pos;
-    float                  home_radius;
-    csString               home_sector_name;
-    iSector*               home_sector;
-    int                    max_size;
-    csString               wealth_resource_name;
-    csString               wealth_resource_nick;
-    csString               wealth_resource_area;
-    int	                   wealth_resource_growth;
-    int                    reproduction_cost;
-    csString               wealth_gather_need;
+    csVector3              homePos;
+    float                  homeRadius;
+    csString               homeSectorName;
+    iSector*               homeSector;
+    int                    maxSize;
+    csString               wealthResourceName;
+    csString               wealthResourceNick;
+    csString               wealthResourceArea;
+    float                  wealthResourceGrowth;
+    float                  wealthResourceGrowthActive;
+    int                    wealthResourceGrowthActiveLimit;
+    float                  accWealthGrowth; ///< Accumelated rest of wealth growth.
+    int                    reproductionCost;
+    csString               wealthGatherNeed;
     psTribeNeedSet        *needSet;
     csList<Memory*>        memories;
     
-    csTicks                last_growth;
+    csTicks                lastGrowth;
 };
 
 #endif

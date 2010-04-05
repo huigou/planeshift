@@ -1303,8 +1303,12 @@ void psNPCClient::ListTribes(const char * pattern)
                     tribes[i]->GetMemberIDCount(),
                     tribes[i]->GetMemberCount(),
                     pos.x,pos.y,pos.z,radius,(sector?sector->QueryObject()->GetName():"(null)"));
-            CPrintf(CON_CMDOUTPUT,"   ShouldGrow: %s  MaxSize          : %d\n",(tribes[i]->ShouldGrow()?"Yes":"No "),tribes[i]->GetMaxSize());
-            CPrintf(CON_CMDOUTPUT,"   CanGrow   : %s  Reproduction Cost: %d\n",(tribes[i]->CanGrow()?"Yes":"No "),tribes[i]->GetReproductionCost());
+            CPrintf(CON_CMDOUTPUT,"   ShouldGrow: %s  MaxSize          : %4d  Growth Active Rate: %5.2f Growth Active Limit: %d\n",
+                    (tribes[i]->ShouldGrow()?"Yes":"No "),tribes[i]->GetMaxSize(),
+                    tribes[i]->GetWealthResourceGrowthActive(),tribes[i]->GetWealthResourceGrowthActiveLimit());
+            CPrintf(CON_CMDOUTPUT,"   CanGrow   : %s  Reproduction Cost: %4d  Growth Rate       : %5.2f\n",
+                    (tribes[i]->CanGrow()?"Yes":"No "),tribes[i]->GetReproductionCost(),
+                    tribes[i]->GetWealthResourceGrowth());
             CPrintf(CON_CMDOUTPUT,"Members:\n");
             CPrintf(CON_CMDOUTPUT, "%-6s %-6s %-30s %-6s %-6s %-15s %-15s %-20s %-20s\n", 
                     "NPC ID", "EID", "Name", "Entity", "Status", "Brain","Behaviour","Owner","Tribe");
@@ -1523,7 +1527,7 @@ void psNPCClient::PerceptProximityLocations()
     	loc = iter.Next();
         for (size_t i = 0; i < loc->locs.GetSize(); i++)
         {
-            LocationPerception pcpt_sensed("location sensed",loc->name, loc->locs[i], engine);  
+            LocationPerception pcpt_sensed("location sensed", loc->name, loc->locs[i], engine);  
       
             TriggerEvent(NULL, &pcpt_sensed, loc->locs[i]->radius + LONG_RANGE_PERCEPTION, 
                          &loc->locs[i]->pos, loc->locs[i]->GetSector(engine)); // Broadcast

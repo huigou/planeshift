@@ -58,8 +58,8 @@ Reaction::Reaction()
     desireValue   = 0.0f;
     desireType    = DESIRE_GUARANTIED;
     range         = 0;
-    active_only   = false;
-    inactive_only = false;
+    activeOnly    = false;
+    inactiveOnly = false;
 }
 
 bool Reaction::Load(iDocumentNode *node,BehaviorSet& behaviors)
@@ -105,10 +105,10 @@ bool Reaction::Load(iDocumentNode *node,BehaviorSet& behaviors)
     }
 
     // Handle hooking up to the perception
-    event_type             = node->GetAttributeValue("event");
+    eventType              = node->GetAttributeValue("event");
     range                  = node->GetAttributeValueAsFloat("range");
     weight                 = node->GetAttributeValueAsFloat("weight");
-    faction_diff           = node->GetAttributeValueAsInt("faction_diff");
+    factionDiff            = node->GetAttributeValueAsInt("faction_diff");
     oper                   = node->GetAttributeValue("oper");
 
     // Decode the value field, It is in the form value="1,2,,4"
@@ -143,15 +143,15 @@ bool Reaction::Load(iDocumentNode *node,BehaviorSet& behaviors)
     }
 
     type                   = node->GetAttributeValue("type");
-    active_only            = node->GetAttributeValueAsBool("active_only");
-    inactive_only          = node->GetAttributeValueAsBool("inactive_only");
-    react_when_dead        = node->GetAttributeValueAsBool("when_dead",false);
-    react_when_invisible   = node->GetAttributeValueAsBool("when_invisible",false);
-    react_when_invincible  = node->GetAttributeValueAsBool("when_invincible",false);
+    activeOnly             = node->GetAttributeValueAsBool("active_only");
+    inactiveOnly           = node->GetAttributeValueAsBool("inactive_only");
+    reactWhenDead          = node->GetAttributeValueAsBool("when_dead",false);
+    reactWhenInvisible     = node->GetAttributeValueAsBool("when_invisible",false);
+    reactWhenInvincible    = node->GetAttributeValueAsBool("when_invincible",false);
     csString tmp           = node->GetAttributeValue("only_interrupt");
     if (tmp.Length())
     {
-        only_interrupt = psSplit(tmp,',');
+        onlyInterrupt = psSplit(tmp,',');
     }
 
     return true;
@@ -166,9 +166,9 @@ void Reaction::DeepCopy(Reaction& other,BehaviorSet& behaviors)
         Behavior * behavior = behaviors.Find(other.affected[i]->GetName());
         affected.Push(behavior);
     }
-    event_type             = other.event_type;
+    eventType              = other.eventType;
     range                  = other.range;
-    faction_diff           = other.faction_diff;
+    factionDiff            = other.factionDiff;
     oper                   = other.oper;
     weight                 = other.weight;
     values                 = other.values;
@@ -176,12 +176,12 @@ void Reaction::DeepCopy(Reaction& other,BehaviorSet& behaviors)
     randoms                = other.randoms;
     randomsValid           = other.randomsValid;
     type                   = other.type;
-    active_only            = other.active_only;
-    inactive_only          = other.inactive_only;
-    react_when_dead        = other.react_when_dead;
-    react_when_invisible   = other.react_when_invisible;
-    react_when_invincible  = other.react_when_invincible;
-    only_interrupt         = other.only_interrupt;
+    activeOnly             = other.activeOnly;
+    inactiveOnly           = other.inactiveOnly;
+    reactWhenDead          = other.reactWhenDead;
+    reactWhenInvisible     = other.reactWhenInvisible;
+    reactWhenInvincible    = other.reactWhenInvincible;
+    onlyInterrupt          = other.onlyInterrupt;
 
     // For now depend on that each npc do a deep copy to create its instance of the reaction
     for (uint ii=0; ii < values.GetSize(); ii++)
@@ -197,17 +197,17 @@ void Reaction::React(NPC *who, Perception *pcpt)
 {
     CS_ASSERT(who);
 
-    // If dead we should not react unless react_when_dead is set
-    if (!(who->IsAlive() || react_when_dead))
+    // If dead we should not react unless reactWhenDead is set
+    if (!(who->IsAlive() || reactWhenDead))
         return;
 
     // Check if this reaction is limited to only interrupt some given behaviors.
-    if (only_interrupt.GetSize())
+    if (onlyInterrupt.GetSize())
     {
         bool found = false;
-        for (size_t i = 0; i < only_interrupt.GetSize(); i++)
+        for (size_t i = 0; i < onlyInterrupt.GetSize(); i++)
         {
-            if (who->GetCurrentBehavior() && only_interrupt[i] == who->GetCurrentBehavior()->GetName())
+            if (who->GetCurrentBehavior() && onlyInterrupt[i] == who->GetCurrentBehavior()->GetName())
             {
                 found = true;
                 break;
@@ -229,14 +229,14 @@ void Reaction::React(NPC *who, Perception *pcpt)
     for (size_t i = 0; i < affected.GetSize(); i++)
     {
 
-        // When active_only flag is set we should do nothing
+        // When activeOnly flag is set we should do nothing
         // if the affected behaviour is inactive.
-        if (active_only && !affected[i]->GetActive() )
+        if (activeOnly && !affected[i]->GetActive() )
             break;
         
-        // When inactive_only flag is set we should do nothing
+        // When inactiveOnly flag is set we should do nothing
         // if the affected behaviour is active.
-        if (inactive_only && affected[i]->GetActive() )
+        if (inactiveOnly && affected[i]->GetActive() )
             break;
 
 
@@ -282,12 +282,12 @@ bool Reaction::ShouldReact(gemNPCObject* actor, Perception *pcpt)
 {
     if (!actor) return false;
 
-    if (!(actor->IsVisible() || react_when_invisible))
+    if (!(actor->IsVisible() || reactWhenInvisible))
     {
         return false;
     }
     
-    if (!(!actor->IsInvincible() || react_when_invincible))
+    if (!(!actor->IsInvincible() || reactWhenInvincible))
     {
         return false;
     }
@@ -404,8 +404,20 @@ bool FactionPerception::ShouldReact(Reaction *reaction,NPC *npc)
         
         if (reaction->GetOp() == '>' )
         {
-            npc->Printf(15, "Checking %d > %d.",faction_delta,reaction->GetFactionDiff() );
-            if (faction_delta > reaction->GetFactionDiff() )
+            npc->Printf(15, "Checking %d > %d.",factionDelta,reaction->GetFactionDiff() );
+            if (factionDelta > reaction->GetFactionDiff() )
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else if (reaction->GetOp() == '<' )
+        {
+            npc->Printf(15, "Checking %d < %d.",factionDelta,reaction->GetFactionDiff() );
+            if (factionDelta < reaction->GetFactionDiff() )
             {
                 return true;
             }
@@ -416,16 +428,10 @@ bool FactionPerception::ShouldReact(Reaction *reaction,NPC *npc)
         }
         else
         {
-            npc->Printf(15, "Checking %d < %d.",faction_delta,reaction->GetFactionDiff() );
-            if (faction_delta < reaction->GetFactionDiff() )
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            npc->Printf(15, "Skipping faction check.");            
+            return true;
         }
+        
     }
     return false;
 }
@@ -443,13 +449,13 @@ bool FactionPerception::GetLocation(csVector3& pos, iSector*& sector)
 
 Perception *FactionPerception::MakeCopy()
 {
-    FactionPerception *p = new FactionPerception(name,faction_delta,player);
+    FactionPerception *p = new FactionPerception(name,factionDelta,player);
     return p;
 }
 
 void FactionPerception::ExecutePerception(NPC *npc,float weight)
 {
-    npc->AddToHateList((gemNPCActor*)player,weight*-faction_delta);
+    npc->AddToHateList((gemNPCActor*)player,weight*-factionDelta);
 }
 
 //---------------------------------------------------------------------------------

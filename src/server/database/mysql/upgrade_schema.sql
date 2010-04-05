@@ -1443,6 +1443,13 @@ ALTER TABLE `tribes`
   ADD COLUMN wealth_gather_need varchar(30) NOT NULL default '' COMMENT 'The need used to gather resources' AFTER `wealth_resource_area`;
 UPDATE `tribes` SET `wealth_gather_need` WHERE `id`=1;
 
+#1244 - Anders Reggestad added active wealth growth to tribes.
+UPDATE `server_options` SET `option_value`='1246' WHERE `option_name`='db_version';
+ALTER TABLE `tribes`
+  ADD COLUMN `wealth_resource_growth_active` float(10,2) NOT NULL default '0.00' AFTER `wealth_resource_growth`,
+  ADD COLUMN `wealth_resource_growth_active_limit` int(10) NOT NULL default '0' AFTER `wealth_resource_growth_active`,
+  CHANGE COLUMN `wealth_resource_growth` `wealth_resource_growth` float(10,2) NOT NULL default '0.00';
+
 
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
