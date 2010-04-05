@@ -56,6 +56,10 @@ psSoundManager::psSoundManager (iObjectRegistry* objectReg)
     voicequeue = new SoundQueue(voiceSndCtrl, VOLUME_NORM);
     
     LastUpdateTime = csGetTicks();
+    
+    chatToggle = false;
+    
+    //TODO: NEED TO INITIALIZE ALL VARIABLES!
 }
 
 psSoundManager::~psSoundManager ()
