@@ -108,6 +108,18 @@ public:
     /// Set all flags based on the string.
     void SetFlags(const csString& flagStr);
 
+    /** Enable/Disable the listed flags
+     *
+     * Will search the flagstr input to find the flag
+     * to enable or disable.
+     *
+     * @param db      Need a pointer to the db to update flags
+     * @param flagstr The flag to modify.
+     * @param enable  Set to true to enable the flag.
+     * @return        True if flags where set.
+     */
+    bool SetFlag(iDataConnection * db, const csString &flagstr, bool enable);
+
     /// Data used in the dijkstra's algorithm to find waypoint path
     float distance; /// Hold current shortest distance to the start WP.
     Waypoint * pi;  /// Predecessor WP to track shortest way back to start.

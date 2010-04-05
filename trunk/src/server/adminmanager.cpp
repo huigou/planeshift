@@ -757,6 +757,32 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
                 help = true;
             }
         }
+        else if (subCmd == "flagset")
+        {
+            attribute = words[2];    // Flag
+            if (attribute.IsEmpty())
+            {
+                help = true;
+            }
+            radius = words.GetFloat(3);
+            if (radius == 0.0)
+            {
+                radius = defaultRadius;
+            }
+        }
+        else if (subCmd == "flagclear")
+        {
+            attribute = words[2];    // Flag
+            if (attribute.IsEmpty())
+            {
+                help = true;
+            }
+            radius = words.GetFloat(3);
+            if (radius == 0.0)
+            {
+                radius = defaultRadius;
+            }
+        }
         else if (subCmd == "format")
         {
             attribute = words[2];    // Format
@@ -2884,21 +2910,23 @@ void AdminManager::FindPath(csVector3 & pos, iSector * sector, float radius,
 
 void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data, Client *client)
 {
-    const char* usage         = "/path adjust|alias|display|format|help|hide|info|point|start|stop [options]";
-    const char* usage_alias   = "/path alias [*add|remove]<alias>";
-    const char* usage_adjust  = "/path adjust [<radius>]";
-    const char* usage_display = "/path display|show ['points'|'waypoints']";
-    const char* usage_format  = "/path format <format> [first]";
-    const char* usage_help    = "/path help [sub command]";
-    const char* usage_hide    = "/path hide ['points'|'waypoints']";
-    const char* usage_info    = "/path info";
-    const char* usage_point   = "/path point";
-    const char* usage_remove  = "/path remove [<radius>]";
-    const char* usage_rename  = "/path rename [<radius>] <name>";
-    const char* usage_select  = "/path select <radius>";
-    const char* usage_split   = "/path split <radius> [wp flags]";
-    const char* usage_start   = "/path start <radius> [wp flags] [path flags]";
-    const char* usage_stop    = "/path stop|end <radius> [wp flags]";
+    const char* usage           = "/path adjust|alias|display|format|help|hide|info|point|start|stop [options]";
+    const char* usage_alias     = "/path alias [*add|remove]<alias>";
+    const char* usage_adjust    = "/path adjust [<radius>]";
+    const char* usage_display   = "/path display|show ['points'|'waypoints']";
+    const char* usage_flagset   = "/path flagset <flag> [<radius>]";
+    const char* usage_flagclear = "/path flagclear <flag> [<radius>]";
+    const char* usage_format    = "/path format <format> [first]";
+    const char* usage_help      = "/path help [sub command]";
+    const char* usage_hide      = "/path hide ['points'|'waypoints']";
+    const char* usage_info      = "/path info [<radius>]";
+    const char* usage_point     = "/path point";
+    const char* usage_remove    = "/path remove [<radius>]";
+    const char* usage_rename    = "/path rename [<radius>] <name>";
+    const char* usage_select    = "/path select <radius>";
+    const char* usage_split     = "/path split <radius> [wp flags]";
+    const char* usage_start     = "/path start <radius> [wp flags] [path flags]";
+    const char* usage_stop      = "/path stop|end <radius> [wp flags]";
 
     // Some variables needed by most functions
     csVector3 myPos;
@@ -2917,9 +2945,9 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
             psserver->SendSystemInfo( me->clientnum,"Usage: %s",usage);
         } else if (data.subCmd.IsEmpty())
         {
-            psserver->SendSystemInfo( me->clientnum,"Help on /point\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n"
+            psserver->SendSystemInfo( me->clientnum,"Help on /path\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n"
                                       "%s\n%s\n%s\n%s\n%s",
-                                      usage_adjust,usage_alias,usage_display,usage_format,
+                                      usage_adjust,usage_alias,usage_display,usage_flagclear,usage_flagset,usage_format,
                                       usage_help,usage_hide,usage_info,usage_point,usage_remove,usage_rename,
                                       usage_select,usage_split,usage_start,usage_stop);
         }
@@ -2938,6 +2966,14 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         else if (data.subCmd == "format")
         {
             psserver->SendSystemInfo( me->clientnum,"Usage: %s",usage_format);
+        }
+        else if (data.subCmd == "flagset")
+        {
+            psserver->SendSystemInfo( me->clientnum,"Usage: %s",usage_flagset);
+        }
+        else if (data.subCmd == "flagclear")
+        {
+            psserver->SendSystemInfo( me->clientnum,"Usage: %s",usage_flagclear);
         }
         else if (data.subCmd == "help")
         {
@@ -3096,6 +3132,38 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
             wp->RemoveAlias(db, data.wp1);
             psserver->SendSystemInfo( me->clientnum, "Removed alias %s from waypoint %s(%d)",
                                       data.wp1.GetDataSafe(),wp->GetName(),wp->GetID());
+        }
+    }
+    else if (data.subCmd == "flagset" || data.subCmd == "flagclear")
+    {
+        float rangeWP,rangePoint;
+        int indexPoint;
+
+        Waypoint * wp = NULL;
+        psPath * pathPoint = NULL;
+
+        FindPath(myPos,mySector,data.radius,
+                 &wp,&rangeWP,
+                 NULL,NULL,NULL,NULL,
+                 &pathPoint,&rangePoint,&indexPoint);
+
+        if (!wp)
+        {
+            psserver->SendSystemInfo(me->clientnum, "No waypoint in range of %.2f.",data.radius);
+            return;
+        }
+
+        if (wp->SetFlag(db, data.attribute, data.subCmd == "flagset"))
+        {
+            psserver->SendSystemInfo(me->clientnum, "Flag %s updated for %s.",
+                                     data.attribute.GetDataSafe(),wp->GetName());
+            return;
+        }
+        else
+        {
+            psserver->SendSystemInfo(me->clientnum, "Failed to update flag %s for %s.",
+                                     data.attribute.GetDataSafe(),wp->GetName());
+            return;
         }
     }
     else if (data.subCmd == "format")
