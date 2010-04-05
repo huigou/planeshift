@@ -516,15 +516,33 @@ void psTribe::GetHome(csVector3& pos, float& radius, iSector* &sector)
     sector = homeSector;
 }
 
-void psTribe::SetHome(const csVector3& pos, iSector* sector)
+void psTribe::SetHome(const csVector3& pos, float radius, iSector* sector)
 { 
     homePos = pos; 
     homeSector = sector;
     homeSectorName = sector->QueryObject()->GetName();
+    homeRadius = radius;
     
     // Consider adding storrage of this new position to DB here
     // TODO: Store to DB.
 }
+
+bool psTribe::CheckWithinBoundsTribeHome(NPC* npc, const csVector3& pos, const iSector* sector)
+{
+    float dist = npcclient->GetWorld()->Distance(homePos, homeSector, pos, sector);
+
+    npc->Printf(5,"Range to tribe with radius %.2f is %.2f",homeRadius,dist);
+    
+
+    if (dist > homeRadius)
+    {
+        return false;
+    } else
+    {
+        return true;
+    }
+}
+
 
 bool psTribe::GetResource(NPC* npc, csVector3 startPos, iSector * startSector, csVector3& locatedPos, iSector* &locatedSector, float range, bool random)
 {
@@ -821,4 +839,13 @@ psTribe::Memory *psTribe::FindRandomMemory(const char *name, const csVector3& po
         return nearby[pick];
     }
     return NULL;
+}
+
+void psTribe::TriggerEvent(Perception *pcpt)
+{
+    for (size_t i=0; i < members.GetSize(); i++)
+    {
+        NPC *npc = members[i];
+        npc->TriggerEvent( pcpt );
+    }
 }

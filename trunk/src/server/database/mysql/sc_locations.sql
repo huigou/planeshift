@@ -56,16 +56,16 @@ INSERT INTO `sc_locations` VALUES (27, 8, -1, 'MoveMaster5B','-40.5', '0.0', '-1
 INSERT INTO `sc_locations` VALUES (28, 9, -1, 'MoveMaster5B','-40.0', '0.0', '-170.0', 0, 0.0,'', 3);
 INSERT INTO `sc_locations` VALUES (29, 8, -1, 'MoveMaster5C','4.5', '0.0', '-239.5', 0, 0.0,'', 3);
 INSERT INTO `sc_locations` VALUES (30, 9, -1, 'MoveMaster5C','-23.0', '0.0', '-125.0', 0, 0.0,'', 3);
-INSERT INTO `sc_locations` VALUES (30,10, -1, 'Tribe home 1','-90.0', '0.0', '-120.0', 1, 0.0,'', 3);
-INSERT INTO `sc_locations` VALUES (31,10, -1, 'Tribe home 2','-90.0', '0.0', '-180.0', 1, 0.0,'', 3);
-INSERT INTO `sc_locations` VALUES (32,10, -1, 'Tribe home 3','-90.0', '0.0', '-230.0', 1, 0.0,'', 3);
-INSERT INTO `sc_locations` VALUES (33,10, -1, 'Tribe home 4','-60.0', '0.0', '-180.0', 1, 0.0,'', 3);
-INSERT INTO `sc_locations` VALUES (34,10, -1, 'Tribe home 5','-60.0', '0.0', '-230.0', 1, 0.0,'', 3);
-INSERT INTO `sc_locations` VALUES (35,11, -1, 'Hunting ground 1','-40.0', '0.0', '-180.0', 10, 0.0,'', 3);
-INSERT INTO `sc_locations` VALUES (36,11, -1, 'Hunting ground 2','-40.0', '0.0', '-220.0', 10, 0.0,'', 3);
-INSERT INTO `sc_locations` VALUES (37,11, -1, 'Hunting ground 3','-20.0', '0.0', '-140.0', 10, 0.0,'', 3);
-INSERT INTO `sc_locations` VALUES (38,11, -1, 'Hunting ground 4','-20.0', '0.0', '-160.0', 10, 0.0,'', 3);
-INSERT INTO `sc_locations` VALUES (39,11, -1, 'Hunting ground 5','-20.0', '0.0', '-220.0', 10, 0.0,'', 3);
+INSERT INTO `sc_locations` VALUES (31,10, -1, 'Tribe home 1','-90.0', '0.0', '-250.0', 10, 0.0,'', 3);
+INSERT INTO `sc_locations` VALUES (32,10, -1, 'Tribe home 2','-90.0', '0.0', '-180.0', 10, 0.0,'', 3);
+INSERT INTO `sc_locations` VALUES (33,10, -1, 'Tribe home 3','-90.0', '0.0', '-230.0', 10, 0.0,'', 3);
+INSERT INTO `sc_locations` VALUES (34,10, -1, 'Tribe home 4','-60.0', '0.0', '-180.0', 10, 0.0,'', 3);
+INSERT INTO `sc_locations` VALUES (35,10, -1, 'Tribe home 5','-60.0', '0.0', '-230.0', 10, 0.0,'', 3);
+INSERT INTO `sc_locations` VALUES (36,11, -1, 'Hunting ground 1','-40.0', '0.0', '-180.0', 10, 0.0,'', 3);
+INSERT INTO `sc_locations` VALUES (37,11, -1, 'Hunting ground 2','-40.0', '0.0', '-220.0', 10, 0.0,'', 3);
+INSERT INTO `sc_locations` VALUES (38,11, -1, 'Hunting ground 3','-20.0', '0.0', '-140.0', 10, 0.0,'', 3);
+INSERT INTO `sc_locations` VALUES (39,11, -1, 'Hunting ground 4','-20.0', '0.0', '-160.0', 10, 0.0,'', 3);
+INSERT INTO `sc_locations` VALUES (40,11, -1, 'Hunting ground 5','-20.0', '0.0', '-220.0', 10, 0.0,'', 3);
 
 
 

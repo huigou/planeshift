@@ -61,7 +61,10 @@ ScriptOperation::ScriptOperation(const char* scriptName)
       resumeScriptEvent(NULL), name(scriptName), 
       interrupted_angle(0.0f),collision("collision"),
       outOfBounds("out of bounds"),inBounds("in bounds"),
-      consec_collisions(0), inside_rgn(true)
+      checkTribeHome(false),
+      consecCollisions(0),
+      insideRegion(true), // We assume that we start inside the region
+      insideTribeHome(true) // We assume that we start inside tribe home
 {
 }
 
@@ -124,9 +127,22 @@ bool ScriptOperation::LoadCheckMoveOk(iDocumentNode *node)
     {
         inBounds = node->GetAttributeValue("in_bounds");
     }
+    
+    if (node->GetAttribute("check_tribe_home"))
+    {
+        checkTribeHome = node->GetAttributeValueAsBool("check_tribe_home",false);
+    }
+    
     return true;
 }
 
+void ScriptOperation::CopyCheckMoveOk(ScriptOperation * source)
+{
+    collision = source->collision;
+    outOfBounds = source->outOfBounds;
+    inBounds = source->inBounds;
+    checkTribeHome = source->checkTribeHome;
+}
 
 
 void ScriptOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr) 
@@ -175,13 +191,13 @@ bool ScriptOperation::AtInterruptedAngle(NPC *npc)
     return AtInterruptedAngle(pos,sector,angle);
 }
 
-bool ScriptOperation::CheckMovedOk(NPC *npc, EventManager *eventmgr, csVector3 oldPos, iSector* oldSector, const csVector3 & newPos, iSector* newSector, float timedelta)
+bool ScriptOperation::CheckMoveOk(NPC *npc, EventManager *eventmgr, csVector3 oldPos, iSector* oldSector, const csVector3 & newPos, iSector* newSector, float timedelta)
 {
     npcMesh* pcmesh = npc->GetActor()->pcmesh;
 
     if (!npcclient->GetWorld()->WarpSpace(oldSector, newSector, oldPos))
     {
-        npc->Printf("CheckMovedOk: new and old sectors are not connected by a portal!");
+        npc->Printf("CheckMoveOk: new and old sectors are not connected by a portal!");
         return false;
     }
 
@@ -206,10 +222,10 @@ bool ScriptOperation::CheckMovedOk(NPC *npc, EventManager *eventmgr, csVector3 o
         if (diffx > EPSILON ||
             diffz > EPSILON)
         {
-            consec_collisions++;
+            consecCollisions++;
             npc->Printf(10,"Bang. %d consec collisions last with diffs (%1.2f,%1.2f)...",
-                        consec_collisions,diffx,diffz);
-            if (consec_collisions > 8)  // allow for hitting trees but not walls
+                        consecCollisions,diffx,diffz);
+            if (consecCollisions > 8)  // allow for hitting trees but not walls
             {
                 // after a couple seconds of sliding against something
                 // the npc should give up and react to the obstacle.
@@ -220,21 +236,23 @@ bool ScriptOperation::CheckMovedOk(NPC *npc, EventManager *eventmgr, csVector3 o
         }
         else
         {
-            consec_collisions = 0;
+            consecCollisions = 0;
         }
 
         LocationType *rgn = npc->GetRegion();
 
         if (rgn)
         {
+            npc->Printf(10, "Checking Region bounds");
+            
             // check for inside/outside region bounds
-            if (inside_rgn)
+            if (insideRegion)
             {
                 if (!rgn->CheckWithinBounds(npcclient->GetEngine(),newPos,newSector))
                 {
                     Perception outbounds(outOfBounds);
                     npc->TriggerEvent(&outbounds);
-                    inside_rgn = false;
+                    insideRegion = false;
                 }
             }
             else
@@ -243,10 +261,45 @@ bool ScriptOperation::CheckMovedOk(NPC *npc, EventManager *eventmgr, csVector3 o
                 {
                     Perception inbounds(inBounds);
                     npc->TriggerEvent(&inbounds);
-                    inside_rgn = true;
+                    insideRegion = true;
                 }
             }
         }
+        else
+        {
+            npc->Printf(10, "No region to check for bounds.");
+        }
+        
+
+        // If tribehome checking has been enabled and npc is in a tribe
+        if (checkTribeHome && npc->GetTribe())
+        {
+            npc->Printf(10, "Checking Tribe bounds");
+
+            if (insideTribeHome)
+            {
+                if (!npc->GetTribe()->CheckWithinBoundsTribeHome(npc,newPos,newSector))
+                {
+                    Perception outbounds(outOfBounds);
+                    npc->TriggerEvent(&outbounds);
+                    insideTribeHome = false;
+                }
+            }
+            else
+            {
+                if (npc->GetTribe()->CheckWithinBoundsTribeHome(npc,newPos,newSector))
+                {
+                    Perception inbounds(inBounds);
+                    npc->TriggerEvent(&inbounds);
+                    insideTribeHome = true;
+                }                
+            }
+        }
+        else
+        {
+            npc->Printf(10, "No tribe home to check for bounds.");
+        }
+        
     }
 
     return true;
@@ -502,6 +555,8 @@ ScriptOperation *ChaseOperation::MakeCopy()
     op->vel    = vel;
     op->ang_vel= ang_vel;
     op->offset = offset;
+
+    op->CopyCheckMoveOk(this);
 
     return op;
 }
@@ -760,7 +815,7 @@ void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
 
     npc->Printf(8,"World position bodyVel=%s worldVel=%s",toString(bodyVel).GetDataSafe(),toString(worldVel).GetDataSafe());
 
-    CheckMovedOk(npc, eventmgr, myPos, mySector, myNewPos, myNewSector, timedelta);
+    CheckMoveOk(npc, eventmgr, myPos, mySector, myNewPos, myNewSector, timedelta);
 }
 
 void ChaseOperation::InterruptOperation(NPC *npc,EventManager *eventmgr)
@@ -1186,6 +1241,7 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     located_angle = 0.0f;
     located_sector = NULL;
     located_wp = NULL;
+    located_radius = 0.0f;
 
     float start_rot;
     iSector *start_sector;
@@ -1314,6 +1370,7 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
             
             located_pos = pos;
             located_angle = 0;
+            located_radius = radius;
             
         }
         else if (split_obj[1] == "memory")
@@ -1338,6 +1395,7 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
             }
             located_pos = memory->pos;
             located_sector = memory->sector;
+            located_radius = memory->radius;
             
             AddRandomRange(located_pos,memory->radius);
         }
@@ -1452,6 +1510,7 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         located_pos = location->pos;
         located_angle = location->rot_angle;
         located_sector = location->GetSector(npcclient->GetEngine());
+        located_radius = location->radius;
 
         AddRandomRange(located_pos,location->radius);
         
@@ -1468,6 +1527,7 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 
     // Save on npc so other operations can refer to value
     npc->SetActiveLocate(located_pos,located_sector,located_angle,located_wp);
+    npc->SetActiveLocateRadius(located_radius);
 
     npc->Printf(5, "LocateOp - Active location: pos %s rot %.2f wp %s",
                 toString(located_pos,located_sector).GetData(),located_angle,
@@ -1727,6 +1787,8 @@ bool MemorizeOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 bool MoveOperation::Load(iDocumentNode *node)
 {
     LoadVelocity(node);
+    LoadCheckMoveOk(node);
+
     action = node->GetAttributeValue("anim");
     duration = node->GetAttributeValueAsFloat("duration");
     ang_vel = node->GetAttributeValueAsFloat("ang_vel");
@@ -1742,6 +1804,9 @@ ScriptOperation *MoveOperation::MakeCopy()
     op->duration = duration;
     op->ang_vel = ang_vel;
     op->angle   = angle;
+
+    op->CopyCheckMoveOk(this);
+    
     return op;
 }
 
@@ -1760,7 +1825,7 @@ bool MoveOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 
     // Note no "wake me up when over" event here.
     // Move just keeps moving the same direction until pre-empted by something else.
-    consec_collisions = 0;
+    consecCollisions = 0;
 
     if (!interrupted)
     {
@@ -1803,12 +1868,17 @@ void MoveOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
     iSector  *oldSector,*newSector;
 
     npc->GetLinMove()->GetLastPosition(oldPos, oldRot, oldSector);
+
+    npc->Printf(10,"Old position: %s",toString(oldPos,oldSector).GetDataSafe());
+
     npc->GetLinMove()->ExtrapolatePosition(timedelta);
     npc->GetLinMove()->GetLastPosition(newPos, newRot, newSector);
 
+    npc->Printf(10,"New position: %s",toString(newPos,newSector).GetDataSafe());
+
     psGameObject::SetPosition(npc->GetActor(), newPos, newSector);
 
-    CheckMovedOk(npc, eventmgr, oldPos, oldSector, newPos, newSector, timedelta);
+    CheckMoveOk(npc, eventmgr, oldPos, oldSector, newPos, newSector, timedelta);
 }
 
 
@@ -2329,6 +2399,13 @@ bool RotateOperation::Load(iDocumentNode *node)
         max_range = node->GetAttributeValueAsFloat("max")*TWO_PI/360.0f;
         return true;
     }
+    else if (type == "tribe_home")
+    {
+        op_type = ROT_TRIBE_HOME;
+        min_range = node->GetAttributeValueAsFloat("min")*TWO_PI/360.0f;
+        max_range = node->GetAttributeValueAsFloat("max")*TWO_PI/360.0f;
+        return true;
+    }
     else if (type == "random")
     {
         op_type = ROT_RANDOM;
@@ -2437,6 +2514,29 @@ bool RotateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 
         // Save target angle so we can jam that in on Rotate completion.
         angle_delta = target_angle - rot;
+    }
+    else if (op_type == ROT_TRIBE_HOME)
+    {
+        psTribe * tribe = npc->GetTribe();
+        
+        if (tribe)
+        {
+            csVector3 tribePos;
+            float tribeRadius;
+            iSector* tribeSector;
+
+            tribe->GetHome(tribePos,tribeRadius,tribeSector);
+            
+            target_angle = psGameObject::CalculateIncidentAngle(pos,tribePos);
+            target_angle += psGetRandom() * (max_range-min_range) + min_range;
+
+            angle_delta = target_angle-rot;
+        }
+        else
+        {
+            angle_delta = PI; // Just turn around if now tribe.
+        }
+        
     }
     else if (op_type == ROT_LOCATEDEST)
     {
@@ -2805,12 +2905,17 @@ bool TribeHomeOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     csVector3 pos;
     iSector*  sector;
     float     rot;
+    float     radius = 10.0;
 
     npc->GetActiveLocate(pos,sector,rot);
+    radius = npc->GetActiveLocateRadius();
     
     npc->Printf("Moves tribe home to: %s",toString(pos,sector).GetData());
 
-    tribe->SetHome(pos,sector);
+    tribe->SetHome(pos,radius,sector);
+
+    Perception move("tribe:home moved");
+    tribe->TriggerEvent(&move);
 
     return true; // Nothing more to do for this op.
 }

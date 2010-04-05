@@ -157,8 +157,17 @@ public:
     /**
      * Set home position for the tribe.
      */
-    void SetHome(const csVector3& pos, iSector* sector);
+    void SetHome(const csVector3& pos, float radius, iSector* sector);
 
+    /** Check if the position is within the bounds of the tribe home
+     *
+     * @param npc    The npc responsible for this checking
+     * @param pos    The position to check
+     * @param sector The sector to check
+     * @return True if position is within bounds of the tribe home
+     */
+    bool CheckWithinBoundsTribeHome(NPC* npc, const csVector3& pos, const iSector* sector);
+    
     /**
      * Get a memorized location for resources
      */
@@ -277,6 +286,12 @@ public:
      * Find a random memory within range to a position.
      */
     Memory* FindRandomMemory(const char* name,const csVector3& pos, const iSector* sector, float range = -1.0, float *foundRange = NULL);
+
+    /** Send a perception to all members of the tribe
+     *
+     * @param pcpt Perception to be sent.
+     */
+    void TriggerEvent(Perception *pcpt);
     
 protected:
 

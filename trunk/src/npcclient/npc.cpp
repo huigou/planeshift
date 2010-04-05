@@ -70,6 +70,7 @@ NPC::NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world,
     active_locate_sector=NULL;
     active_locate_angle=0.0;
     active_locate_wp = NULL;
+    active_locate_radius = 0.0;
     ang_vel=vel=999; 
     walkVelocity=runVelocity=0.0; // Will be cached
     region=NULL; 

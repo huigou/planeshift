@@ -78,13 +78,24 @@ protected:
     csVector3            interrupted_position;
     iSector             *interrupted_sector;
     float                interrupted_angle;
-    csString             collision;
-    csString             outOfBounds;
-    csString             inBounds;
+
+
+    /////////////////////////////////////////////////////////
+    // Start Check Move OK parameters
+
+    // Configuration paramters. Set by using LoadCheckMoveOk    
+    csString             collision;       ///< Perception names to use for collision detected by CheckMoveOk
+    csString             outOfBounds;     ///< Perception names to use for out of bounds detected by CheckMoveOk
+    csString             inBounds;        ///< Perception names to use for in bounds detected by CheckMoveOk
+    bool                 checkTribeHome;  ///< Set to true if the tribe home should be checked by CheckMoveOk
 
     // Instance temp variables. These dosn't need to be copied.
-    int                  consec_collisions; // Shared by move functions
-    bool                 inside_rgn; // Used by move functions to report change in bounds
+    int                  consecCollisions; ///< Shared by move functions. Used by CheckMoveOk to detect collisions
+    bool                 insideRegion;     ///< Used by move functions to report change in bounds for region check
+    bool                 insideTribeHome;  ///< Used by move functions to report change in bounds for tribe home check
+        
+    // End Check Move OK parameters
+    /////////////////////////////////////////////////////////
     
     void Resume(csTicks delay, NPC *npc, EventManager *eventmgr);
     void ResumeTrigger(psResumeScriptEvent * event);
@@ -112,7 +123,15 @@ public:
     virtual bool AtInterruptedAngle(const csVector3& pos, const iSector* sector, float angle);
     virtual bool AtInterruptedPosition(NPC *npc);
     virtual bool AtInterruptedAngle(NPC *npc);
-    virtual bool CheckMovedOk(NPC *npc, EventManager *eventmgr, csVector3 oldPos, iSector* oldSector, const csVector3 & newPos, iSector* newSector, float timedelta);
+    
+    /** Check if the move where ok.
+     *
+     * Check if a move operation has collided, walked out of bounds, or walked in bound. Will
+     * fire perceptions at these events with the names given by \se LoadCheckMoveOk
+     *
+     */
+    virtual bool CheckMoveOk(NPC *npc, EventManager *eventmgr, csVector3 oldPos, iSector* oldSector,
+                             const csVector3 & newPos, iSector* newSector, float timedelta);
 
     virtual bool CompleteOperation(NPC *npc,EventManager *eventmgr) { completed = true; return completed; }
     virtual bool Load(iDocumentNode *node)=0;
@@ -121,7 +140,19 @@ public:
     float GetVelocity(NPC *npc);
     float GetAngularVelocity(NPC *npc);
     bool LoadVelocity(iDocumentNode *node);
+    
+    /** Load attributes for the CheckMoveOk check
+     *
+     * @param node The node to load attributes from.
+     */
     bool LoadCheckMoveOk(iDocumentNode *node);
+
+    /** Copy CheckMoveOk paramters from the source script
+     *
+     * @param source The script to copy from.
+     *
+     */
+    void CopyCheckMoveOk(ScriptOperation * source);
     
     void AddRandomRange(csVector3& dest,float radius);
     void SetAnimation(NPC *npc, const char *name);
@@ -391,6 +422,8 @@ protected:
     float     located_angle;
     iSector*  located_sector;
     Waypoint* located_wp;
+    float     located_radius;
+
     bool      random;
     bool      locate_invisible;
     bool      locate_invincible;
@@ -679,7 +712,8 @@ protected:
         ROT_TARGET,       // Rotate to face target
         ROT_LOCATEDEST,   // Rotate to face located destination
         ROT_RANDOM,       // Rotate a random angle
-        ROT_REGION
+        ROT_REGION,       // Rotate to an angle within the region
+        ROT_TRIBE_HOME    // Rotate to an angle within tribe home
     };
     int       op_type;              // Type of rotation. See enum above.
     float     min_range, max_range; // Min,Max values for random and region rotation
