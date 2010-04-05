@@ -1294,10 +1294,8 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
         case CHAT_TELL:
             if (psengine->GetSoundManager()->GetChatToggle() == true)
             {
-                SoundHandle *tmphandle;
-                SndSysMgr->Play2DSound ("sound.standardButtonClick", DONT_LOOP,
-                                        0, 0, VOLUME_NORM, SndSysMgr->guiSndCtrl,
-                                        tmphandle);
+                 // Hardcoded Resource considered as FIXME
+                psengine->GetSoundManager()->PlayGUISound("sound.standardButtonClick");
             }                                        
         case CHAT_AWAY:
         case CHAT_ADVICE:

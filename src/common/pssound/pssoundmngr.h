@@ -139,8 +139,9 @@ class psSoundManager
     SoundControl    *mainSndCtrl;       /* soundcontrol of our soundmanager */
     csRandomGen     *rng;               /* random gen */
 
-    /* initialize */
-    void Initialize (iObjectRegistry* objectReg);
+    psSoundManager(iObjectRegistry* objectReg);
+    ~psSoundManager ();
+
     /* load sector data */
     bool LoadData (iObjectRegistry* objectReg, csArray<sctdata*> &sectordata);
     /* load a given sector, position can be NULL */
@@ -151,6 +152,12 @@ class psSoundManager
     /* update listener position */
     void UpdateListener ( iView* view );
     /* sets ingame time */
+
+    // simple PlaySound function to handle GUI and similar 'fire and forget' Sounds
+    void PlayActionSound (const char *name);
+    void PlayGUISound (const char *name);
+
+
     void SetTimeOfDay (int newTimeofday);
     /* sets weather */
     void SetWeather (int newWeather);
@@ -216,8 +223,6 @@ class psSoundManager
     void UpdateEntity (sctdata* &sector);
     /* update whole sector */
     void UpdateSector (sctdata * &sector);
-
-
 };
 
 #endif /*_PSSOUNDMNGR_H_*/

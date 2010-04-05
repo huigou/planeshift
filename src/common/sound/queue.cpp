@@ -21,12 +21,9 @@
  * 
  */
 
-#include <crystalspace.h>
-
 #include "sound.h"
-#include "queue.h"
 
-extern SoundSystemManager   *SndSysMgr;
+extern SoundSystemManager  *SndSysMgr;
 
 SoundQueueItem::SoundQueueItem ()
 {
@@ -44,6 +41,8 @@ SoundQueue::SoundQueue (SoundControl* &ctrl, float vol)
 
 SoundQueue::~SoundQueue ()
 {
+    // purge on deconstruction
+    Purge();
 }
 
 /*
@@ -54,9 +53,10 @@ SoundQueue::~SoundQueue ()
 void
 SoundQueue::AddItem (const char *filename)
 {
+    // NOTE: its a pointer because i need a new Instance of SoundQueueItem
     SoundQueueItem      *newItem;
     
-    newItem = new SoundQueueItem;
+    newItem              = new SoundQueueItem;
     newItem->filename    = csString(filename);   
 
     queue.Push(newItem);
@@ -78,7 +78,7 @@ SoundQueue::Work ()
 {
     SoundQueueItem  *item;
     
-    for (unsigned int i = 0; i < queue.GetSize(); i++)
+    for (size_t i = 0; i < queue.GetSize(); i++)
     {
         item = queue[i];
         
@@ -103,6 +103,7 @@ SoundQueue::Work ()
             /* item is paused. remove it and play the next one */
             item->handle->SetAutoRemove(true);
             queue.Delete(item);
+            delete item;
             i--;
         }
     }
@@ -116,7 +117,7 @@ SoundQueue::Work ()
 void
 SoundQueue::Purge ()
 {
-    for (unsigned int i = 0; i < queue.GetSize(); i++)
+    for (size_t i = 0; i < queue.GetSize(); i++)
     {
         if (queue[i]->handle != NULL)
         {
@@ -125,6 +126,7 @@ SoundQueue::Purge ()
         }
 
         queue.Delete(queue[i]);
+        delete (queue[i]);
         i--;
     }
 }

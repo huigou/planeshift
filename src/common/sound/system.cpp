@@ -21,13 +21,9 @@
  * 
  */
 
-#include <crystalspace.h>
-#include <iutil/objreg.h>
-#include <isndsys/ss_renderer.h>
 
+#include "sound.h"
 #include "util/log.h"
-#include "system.h"
-
 
 /*  
  * Get a renderer und returns false or true
@@ -46,8 +42,8 @@ Initialize (iObjectRegistry* objectReg)
     }
     
   listener = sndrenderer->GetListener();
-  /* TODO make configurable */
-  listener->SetRollOffFactor ((float) 1.0);
+  // TODO make configurable NOTE: dont use VOLUME_* defines here
+  listener->SetRollOffFactor (1.0f); 
   return true;
 }
 

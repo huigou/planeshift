@@ -210,8 +210,6 @@ HWND psEngine::hwnd = 0;
 MacCrashReport* macReporter = NULL;
 #endif
 
-SoundSystemManager *SndSysMgr;
-
 // ----------------------------------------------------------------------------
 
 CS_IMPLEMENT_APPLICATION
@@ -324,6 +322,9 @@ void psEngine::Cleanup()
     effectManager.Invalidate();
 
     delete options;
+    
+    // Soundmanager should be among the last items its used by gui/paws and effectmanager
+    delete SoundManager;
 }
 
 // ----------------------------------------------------------------------------
@@ -389,10 +390,7 @@ bool psEngine::Initialize (int level)
         csString soundPlugin;
 
         soundOn = true; // FIXMESOUND is this variable REALLY needed and if not how do we handle this in future? 
-        SndSysMgr = new SoundSystemManager;
-        SndSysMgr->Initialize ( object_reg );
-        SoundManager = new psSoundManager;
-        SoundManager->Initialize ( object_reg );
+        SoundManager = new psSoundManager (object_reg);
 
         LoadLogSettings();
 
@@ -1157,7 +1155,6 @@ inline void psEngine::UpdatePerFrame()
    * TODO add to CS loop
    */
   SoundManager->Update();
-  SndSysMgr->Update();
 }
 
 // ----------------------------------------------------------------------------

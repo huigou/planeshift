@@ -21,17 +21,10 @@
  * 
  */
 
-#include <crystalspace.h>
+#include "sound.h"
 
-#include "system.h"
-#include "data.h"
-#include "control.h"
-#include "handle.h"
-#include "manager.h"
-
-extern SoundSystem          *soundSystem;
-extern SoundData            *soundData;
-extern SoundSystemManager   *SndSysMgr;
+extern SoundSystem         *soundSystem;
+extern SoundData           *soundData;
 
 /*
  * A Soundhandle contains all informations we have about a sound
@@ -57,15 +50,16 @@ SoundHandle::~SoundHandle ()
      * sources get removed even if you dont do RemoveSource
      * but it will not dereference them! ..
      */ 
+    if (sndstream != NULL)
+    {
+        soundSystem->RemoveStream(sndstream);
+    }
+
     if (sndsource != NULL)
     {
         soundSystem->RemoveSource(sndsource);
     }
     
-    if (sndstream != NULL)
-    {
-        soundSystem->RemoveStream(sndstream);
-    }
 }
 
 /*

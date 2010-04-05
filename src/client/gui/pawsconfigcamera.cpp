@@ -271,7 +271,9 @@ bool pawsConfigCamera::OnButtonPressed( int mouseButton, int keyModifier, pawsWi
 
 float pawsConfigCamera::GetCameraSetting(const csString& settingName, int mode) const
 {
-    if(settingName == "Use NPC Chat Camera")
+    if (settingName == "Use Collision Detection")
+        return (psengine->GetPSCamera()->CheckCameraCD() ? 1 : -1);
+    else if(settingName == "Use NPC Chat Camera")
         return psengine->GetPSCamera()->GetUseNPCCam();
     else if (settingName == "Transition Threshold")
         return psengine->GetPSCamera()->GetTransitionThreshold();
@@ -314,7 +316,9 @@ float pawsConfigCamera::GetCameraSetting(const csString& settingName, int mode) 
 
 void pawsConfigCamera::SetCameraSetting(const csString& settingName, float value, int mode) const
 {
-    if(settingName == "Use NPC Chat Camera")
+    if (settingName == "Use Collision Detection")
+        psengine->GetPSCamera()->SetCameraCD(value > 0.0f);
+    else if(settingName == "Use NPC Chat Camera")
         psengine->GetPSCamera()->SetUseNPCCam(value > 0.0f);
     else if (settingName == "Transition Threshold")
         psengine->GetPSCamera()->SetTransitionThreshold(value);

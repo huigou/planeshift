@@ -75,6 +75,8 @@ void psLauncherGUI::Run()
     downloader = NULL;
     delete fileUtil;
     fileUtil = NULL;
+    delete SndSysMgr;
+    SndSysMgr = NULL;
 
     csInitializer::CloseApplication(object_reg);
 }
@@ -148,11 +150,7 @@ bool psLauncherGUI::InitApp()
 
 	// Initialise Sound
 	
-	SndSysMgr = new SoundSystemManager;
-    SndSysMgr->Initialize ( object_reg );
-    /* set GUI Volume to 1 */
-    SndSysMgr->guiSndCtrl->SetToggle(true);
-    SndSysMgr->guiSndCtrl->SetVolume((float) 1);
+	SndSysMgr = new SoundSystemManager(object_reg);
 
     mainWidget = new pawsMainWidget();
     paws->SetMainWidget(mainWidget);

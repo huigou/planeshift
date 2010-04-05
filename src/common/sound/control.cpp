@@ -22,15 +22,15 @@
  */
  
 
-#include "control.h"
+#include "sound.h"
  
 SoundControl::SoundControl ()
 {
-    isEnabled = true;
-    isMuted   = false;
-    volume    = (float) 1;
+    isEnabled = true;           ///< is this control enabled ? default is true
+    isMuted   = false;          ///< is this control muted? default is false
+    volume    = VOLUME_NORM;    ///< set volume to VOLUME_NORM which is 1.0f 
 
-    isDirty   = true;
+    isDirty   = true;           ///< unimplemented feature
 }
 
 SoundControl::~SoundControl ()
