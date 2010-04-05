@@ -133,6 +133,10 @@ EEditApp::~EEditApp()
     delete inputboxManager;
     
     delete controlManager;
+    
+    // delete of effectManager is missing? TODO
+    
+    delete SndSysMgr;
 }
 
 void EEditApp::SevereError(const char* msg)
@@ -240,15 +244,7 @@ bool EEditApp::Init()
     }
 
     // Set up sound
-    // i cant test this app :( i initialize GUI and ACTION Volume to default
-    SndSysMgr = new SoundSystemManager;
-    SndSysMgr->Initialize ( object_reg );
-    /* set GUI Volume to 1 */
-    SndSysMgr->guiSndCtrl->SetToggle(true);
-    SndSysMgr->guiSndCtrl->SetVolume((float) 1);
-    /* set ACTION(effect) Volume to 1 */
-    SndSysMgr->effectSndCtrl->SetToggle(true);
-    SndSysMgr->effectSndCtrl->SetVolume((float) 1);
+    SndSysMgr = new SoundSystemManager(object_reg);
     
     // paws initialization
     paws = new PawsManager(object_reg, "/this/art/eedit.zip", NULL, "/this/eedit.cfg");

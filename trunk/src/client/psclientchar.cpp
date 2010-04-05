@@ -58,6 +58,8 @@
 
 #include "effects/pseffectmanager.h"
 
+#include "pssound/pssoundmngr.h"
+
 //=============================================================================
 // Local Includes
 //=============================================================================
@@ -65,7 +67,6 @@
 #include "pscelclient.h"
 #include "charapp.h"
 #include "pscamera.h"
-#include "pssound/pssoundmngr.h"
 #include "globals.h"
 
 //------------------------------------------------------------------------------
@@ -391,9 +392,7 @@ void psClientCharManager::HandleAction( MsgEntry* me )
 
 void psClientCharManager::HandlePlaySound( MsgEntry* me )
 {
-	SoundHandle *Handle;
-    SndSysMgr->Play2DSound(me->GetStr(), DONT_LOOP, 0, 0, VOLUME_NORM,
-                           psengine->GetSoundManager()->actionSndCtrl, Handle);
+    psengine->GetSoundManager()->PlayActionSound(me->GetStr());
 }
 
 void psClientCharManager::HandleTargetUpdate( MsgEntry* me )

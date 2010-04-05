@@ -21,11 +21,31 @@
  * 
  */
 
-#include <crystalspace.h>
-#include <iutil/objreg.h>
-
+#include "sound.h"
 #include "util/log.h"
-#include "data.h"
+
+
+SoundFile::SoundFile (const char *newname, const char *newfilename)
+{
+    name      = csString(newname);
+    filename  = csString(newfilename);
+    loaded    = false;
+    snddata   = NULL;
+    lasttouch = csGetTicks();
+}
+
+SoundFile::SoundFile (SoundFile* const &copythat)
+{
+    name      = csString(copythat->name);
+    filename  = csString(copythat->filename);
+    loaded    = false;
+    snddata   = NULL;
+    lasttouch = csGetTicks();
+}
+
+SoundFile::~SoundFile ()
+{
+}
 
 /*
  * SndData is a set of functions to help us load and unload sounds
@@ -68,7 +88,7 @@ bool
 SoundData::
 LoadSoundFile (const char *name, csRef<iSndSysData> &snddata)
 {
-    sndfile                     *snd;
+    SoundFile                   *snd;
     csRef<iDataBuffer>          soundbuf; 
   
     if ((snd = GetSound(name)) != NULL)
@@ -87,18 +107,9 @@ LoadSoundFile (const char *name, csRef<iSndSysData> &snddata)
     }
     else
     {
-        /*
-         * give it a chance
-         * maybe this is a dynamic file
-         */
-        snd             = new sndfile;
-        snd->name       = csString(name);
-        snd->filename   = csString(name);
-        snd->loaded = false;
-        /*
-         * This sndfile wont be deleted!
-         * thats intended!
-         */
+        // maybe this is a dynamic file create a handle and push it into our array
+        snd = new SoundFile (name, name);
+        PutSound(snd); 
     }
 
     /* load the sounddata into a buffer */
@@ -117,39 +128,106 @@ LoadSoundFile (const char *name, csRef<iSndSysData> &snddata)
 
     snd->loaded = true;
     snd->snddata = snddata;
-  
     return true;
 }
 
 /*
- *  FIXME
- * it should unload sounds which are no longer needed
+ * This method unloads the given soundname
+ * it DOES it. It doesnt care if its still used or not!
  */
 
 void
 SoundData::
-UnloadSoundFile (const char *file)
+UnloadSoundFile (const char *name)
 {
+    SoundFile   *sound;
+    
+    if (sound = GetSound(name))
+    {
+        DeleteSound(sound); 
+    }
     return;
 }
 
 /*
- * Returns the reuqests sound if it exists
+ * Returns the requested sound if it exists in our library or cache
  * NULL if it doesnt
  */
 
-sndfile *
-SoundData::
-GetSound (const char *name)
+SoundFile *
+SoundData::GetSound (const char *name)
 {
-    sndfile *snd;
-
-    if (!(snd = soundfiles.Get(csHashCompute(name), NULL)))
+    SoundFile   *sound;
+    
+    sound = soundfiles.Get(csHashCompute(name), NULL);
+    
+    // sound is null when theres no cached SoundFile
+    if (sound == NULL)
     {
-        return NULL;
+        // we go search the library .. maybe it has it 
+        if (libsoundfiles.Contains(csHashCompute(name)))
+        {
+            // SoundFile is in our library, copy it
+            sound = new SoundFile(libsoundfiles.Get(csHashCompute(name), NULL));
+            PutSound(sound);
+        }
+        else
+        {
+            // no such SoundFile ;( return NULL
+            return NULL;
+        }
     }
-    return snd;
+
+    // update lasttouch to keep that SoundFile in memory
+    sound->lasttouch = csGetTicks(); 
+    return sound;
 }
+
+void
+SoundData::PutSound (SoundFile* &sound)
+{
+    // i know theres PutUnique but i have a bad feeling about overwriting 
+    soundfiles.Put(csHashCompute((const char*) sound->name), sound);    
+}
+
+void
+SoundData::DeleteSound (SoundFile* &sound)
+{
+    // it deletes all with THAT key (and those are unique)
+    soundfiles.DeleteAll (csHashCompute(sound->name));
+    delete sound;
+}
+
+
+void
+SoundData::Update ()
+{
+    csTicks             now;
+    csArray<SoundFile*> allsoundfiles;
+    SoundFile          *sound;
+    
+    now = csGetTicks();
+    allsoundfiles = soundfiles.GetAll();
+
+    for (size_t i = 0; i < allsoundfiles.GetSize(); i++)
+    {
+        sound = allsoundfiles[i];
+        
+        if ((sound->lasttouch + SOUNDFILE_CACHETIME) <= now
+            && sound->loaded == true
+            && sound->snddata->GetRefCount() == 1)
+        {
+            // UnloadSoundFile takes "names" as arguments and works on our hash
+            UnloadSoundFile(sound->name);
+        } 
+        else
+        {
+            sound->lasttouch = csGetTicks();
+        }
+    }
+}
+
+//----------- code below needs its own class --------------------//
 
 /*
  * loads soundlib.xml get all the names and filenames
@@ -173,9 +251,9 @@ LoadSoundLib (const char* filename, iObjectRegistry* objectReg)
     csRef<iDocumentNode>            topNode; /* topnode to work with */
     csRef<iDocumentNodeIterator>    iter; /* node iterator */
     csRef<iDocumentNode>            node;   /* yet another node .... */
-    sndfile                         *snd;   /* new soundfiles */
+    SoundFile                      *snd;        ///< soundfile
     
-    if ( !(xml = csQueryRegistry<iDocumentSystem> (objectReg)))
+    if (!(xml = csQueryRegistry<iDocumentSystem> (objectReg)))
       xml = csPtr<iDocumentSystem> (new csTinyDocumentSystem);
 
     buff = vfs->ReadFile(filename);
@@ -219,11 +297,10 @@ LoadSoundLib (const char* filename, iObjectRegistry* objectReg)
 
         if (strcmp(node->GetValue(), "Sound") == 0)
         {
-            snd = new sndfile;
-            snd->name = node->GetAttributeValue("name");
-            snd->filename = node->GetAttributeValue("file");
-            snd->loaded = false;
-            soundfiles.Put(csHashCompute((const char*) snd->name), snd);
+            snd = new SoundFile(node->GetAttributeValue("name"),
+                                node->GetAttributeValue("file"));
+
+            libsoundfiles.Put(csHashCompute((const char*) snd->name), snd);
        }
     }
     return true;

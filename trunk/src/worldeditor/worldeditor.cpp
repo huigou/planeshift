@@ -166,12 +166,7 @@ bool WorldEditor::Init()
     }
 
     // Set up sound
-    // i cant test this app :(
-    SndSysMgr = new SoundSystemManager;
-    SndSysMgr->Initialize ( objectReg );
-    /* set GUI Volume to 1 */
-    SndSysMgr->guiSndCtrl->SetToggle(true);
-    SndSysMgr->guiSndCtrl->SetVolume((float) 1);
+    SndSysMgr = new SoundSystemManager(objectReg);
 
     loader->SetLoadRange(1000);
     sceneManipulator = scfQueryInterface<iSceneManipulate>(loader);

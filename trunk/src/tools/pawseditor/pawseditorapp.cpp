@@ -165,13 +165,7 @@ bool PawsEditorApp::Init()
     }
 
     // init sound
-    // i cant test this app :(
-    SndSysMgr = new SoundSystemManager;
-    SndSysMgr->Initialize ( object_reg );
-    /* set GUI Volume to 1 */
-    SndSysMgr->guiSndCtrl->SetToggle(true);
-    SndSysMgr->guiSndCtrl->SetVolume((float) 1);
-
+    SndSysMgr = new SoundSystemManager (object_reg);
 
     // set the window caption
     iNativeWindow *nw = g3d->GetDriver2D()->GetNativeWindow();

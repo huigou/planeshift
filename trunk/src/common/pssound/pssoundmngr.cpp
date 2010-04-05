@@ -29,18 +29,23 @@
 #include "globals.h"
 
 /* FIXME NAMESPACE */
- 
-void
-psSoundManager::
-Initialize (iObjectRegistry* objectReg)
+// reminder: paws and effects need that thing (still)
+SoundSystemManager *SndSysMgr;
+
+psSoundManager::psSoundManager (iObjectRegistry* objectReg)
 {
-    activesector = NULL;
-    combat = 0;
-    weather = 1; 
-    timeofday = 12;
-    LoadData (objectReg, sectordata);
-    rng = new csRandomGen(458898*csGetTicks());
+    activesector = NULL;    ///< 
+    combat = 0;             ///< combat stance 0 peace 1 fighting 2 dead (TODO refactor me)
+    weather = 1;            ///< weather from weather.h 1 is sunshine
+    timeofday = 12;         ///< timeofday initial is 12am / 12:00
     
+    SndSysMgr = new SoundSystemManager(objectReg);
+    rng = new csRandomGen(458898*csGetTicks());
+
+    // load sector data
+    LoadData (objectReg, sectordata);
+
+    // request all needed soundcontrols
     mainSndCtrl = SndSysMgr->mainSndCtrl;
     ambientSndCtrl = SndSysMgr->GetSoundControl();
     musicSndCtrl = SndSysMgr->GetSoundControl();
@@ -48,11 +53,21 @@ Initialize (iObjectRegistry* objectReg)
     actionSndCtrl = SndSysMgr->effectSndCtrl;
     guiSndCtrl = SndSysMgr->guiSndCtrl;
     
+    // request a new queue for playing voicefiles
     voicequeue = new SoundQueue(voiceSndCtrl, VOLUME_NORM);
     
     LastUpdateTime = csGetTicks();
 }
 
+psSoundManager::~psSoundManager ()
+{
+    delete voicequeue;
+    delete rng;
+    delete SndSysMgr;
+    // Note: SndSysMgr should take care of SoundControls .. we can ignore them
+    // TODO: free sectordata
+}
+ 
 /*
  * Updates things that cant be triggered by
  * a event (yet). E.g. Check if theres a Voice to play (TODO: callback)
@@ -73,7 +88,7 @@ Update ()
 {
     SndTime = csGetTicks();
     
-    /* twenty times per second */
+    // twenty times per second
     if (activesector != NULL && LastUpdateTime + 50 <= SndTime)
     {
         voicequeue->Work();
@@ -82,6 +97,10 @@ Update ()
 
         LastUpdateTime = csGetTicks();
     }
+    
+    // dont forget to Update our SoundSystemManager
+    // remember that it has a own throttle
+    SndSysMgr->Update();
 }
 
 /*
@@ -95,7 +114,7 @@ void
 psSoundManager::
 TransferHandles (sctdata* &oldsector, sctdata* &newsector)
 {
-    for (unsigned int j = 0; j< newsector->music.GetSize(); j++)
+    for (size_t j = 0; j< newsector->music.GetSize(); j++)
     {
         if (oldsector->activemusic == NULL)
         {
@@ -118,7 +137,7 @@ TransferHandles (sctdata* &oldsector, sctdata* &newsector)
         }
     }
 
-    for (unsigned int j = 0; j< activesector->ambient.GetSize(); j++)
+    for (size_t j = 0; j< activesector->ambient.GetSize(); j++)
     {
         if (oldsector->activeambient == NULL)
         {
@@ -163,7 +182,7 @@ ConvertFactoriesToEmitter (sctdata* &sector)
      * positions are random but are only generated once
      */
                     
-    for (unsigned int j = 0; j< sector->emitter.GetSize(); j++)
+    for (size_t j = 0; j< sector->emitter.GetSize(); j++)
     {
         if (!sector->emitter[j]->factory)
         {
@@ -259,7 +278,7 @@ Load ( const char* sector, csVector3 position )
      * set the wanted sector to our active sector (if found) 
      */
 
-    for (unsigned int i = 0; i< sectordata.GetSize(); i++)
+    for (size_t i = 0; i< sectordata.GetSize(); i++)
     {
         if (strcmp(sector, sectordata[i]->name) != 0)
         {
@@ -342,7 +361,7 @@ UpdateAmbient (sctdata* &sector)
      * ALL ambient and music sounds start at minvol and are faded in
      */
          
-    for (unsigned int i = 0; i< sector->ambient.GetSize(); i++)
+    for (size_t i = 0; i< sector->ambient.GetSize(); i++)
     {
         ambient = sector->ambient[i];
         
@@ -409,7 +428,7 @@ UpdateMusic (sctdata* &sector)
         combat = 0;
     }
 
-    for (unsigned int i = 0; i< sector->music.GetSize(); i++)
+    for (size_t i = 0; i< sector->music.GetSize(); i++)
     {
         music = sector->music[i];
       
@@ -513,7 +532,7 @@ UpdateEmitter (sctdata* &sector)
      * start/stop all emitters in range
      */
 
-    for (unsigned int i = 0; i< sector->emitter.GetSize(); i++)
+    for (size_t i = 0; i< sector->emitter.GetSize(); i++)
     {
         emitter = sector->emitter[i];
         rangeVec = emitter->position - playerposition;
@@ -542,7 +561,7 @@ UpdateEmitter (sctdata* &sector)
                                     emitter->maxvol, ambientSndCtrl,
                                     emitter->position, emitter->direction,
                                     emitter->minrange, emitter->maxrange,
-                                    (float) 0, CS_SND3D_ABSOLUTE,
+                                    VOLUME_ZERO, CS_SND3D_ABSOLUTE,
                                     emitter->handle);
                                                                  
         }
@@ -588,7 +607,7 @@ UpdateEntity (sctdata* &sector)
         return;
     }
    
-    for (unsigned int i = 0; i < activesector->entity.GetSize(); i++)
+    for (size_t i = 0; i < activesector->entity.GetSize(); i++)
     {
         entity = activesector->entity[i];
                 
@@ -607,7 +626,7 @@ UpdateEntity (sctdata* &sector)
             continue;
         }
                 
-        for (unsigned int a = 0; a < entities.GetSize(); a++)
+        for (size_t a = 0; a < entities.GetSize(); a++)
         {
             if ((mesh = entities[a]->GetMesh()) == NULL)
             {
@@ -631,7 +650,7 @@ UpdateEntity (sctdata* &sector)
                                         entity->maxvol, ambientSndCtrl,
                                         entities[a]->GetPosition(), 0,
                                         entity->minrange, entity->maxrange,
-                                        (float) 0, CS_SND3D_ABSOLUTE,
+                                        VOLUME_ZERO, CS_SND3D_ABSOLUTE,
                                         entity->handle);
 
                 entity->when = (entity->delay_after*1000);
@@ -670,6 +689,22 @@ UpdateListener ( iView* view )
     }
    
     SndSysMgr->UpdateListener (v, f, t);
+}
+
+void
+psSoundManager::PlayActionSound (const char *name)
+{
+    SoundHandle *Handle;
+    SndSysMgr->Play2DSound(name, DONT_LOOP, 0, 0, VOLUME_NORM,
+                           actionSndCtrl, Handle);   
+}
+
+void
+psSoundManager::PlayGUISound (const char *name)
+{
+    SoundHandle *Handle;
+    SndSysMgr->Play2DSound(name, DONT_LOOP, 0, 0, VOLUME_NORM,
+                           guiSndCtrl, Handle);   
 }
 
 

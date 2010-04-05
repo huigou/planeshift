@@ -30,12 +30,11 @@ enum
     DONT_LOOP   = false
 };
 
-enum
-{
-    VOLUME_MIN  =   0,
-    VOLUME_NORM =   1,
-    VOLUME_MAX  =   2
-};
+
+#define VOLUME_ZERO 0.0f
+#define VOLUME_MIN  0.0f
+#define VOLUME_NORM 1.0f
+#define VOLUME_MAX  2.0f
 
 /*
  * TODO merge Play* functions
@@ -49,8 +48,8 @@ class SoundSystemManager
     SoundControl    *guiSndCtrl;                    /* sound control for paws / gui */
     SoundControl    *effectSndCtrl;                 /* sound control for effects / actions */
     
-    /* initialize */
-    void Initialize(iObjectRegistry* objectReg);     
+    SoundSystemManager (iObjectRegistry* objectReg);
+    ~SoundSystemManager ();
 
     /* update sound, do fading, remove sounds */
     void UpdateSound ();                            

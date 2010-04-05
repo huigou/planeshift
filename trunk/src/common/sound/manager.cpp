@@ -21,18 +21,11 @@
  * 
  */
 
-#include <crystalspace.h>
-
+#include "sound.h"
 #include "util/log.h"
 
-#include "control.h"
-#include "handle.h"
-#include "system.h"
-#include "data.h"
-#include "manager.h"
-
-SoundSystem *soundSystem;
-SoundData   *soundData;
+SoundSystem         *soundSystem;
+SoundData           *soundData;
 
 /*
  * Initialize the SoundSystem (SndSys) and the Datamanager (SndData)
@@ -41,27 +34,48 @@ SoundData   *soundData;
  * Set Initialized to true if successfull / to false if not
  */
 
-void
-SoundSystemManager::Initialize (iObjectRegistry* objectReg)
+SoundSystemManager::SoundSystemManager (iObjectRegistry* objectReg)
 {
+    // Initialised to false to make sure it is ..
+    Initialised = false;
+    
+    // Create a new SoundSystem and SoundData Instance  
     soundSystem = new SoundSystem;
     soundData = new SoundData;
+    
+    // SoundControls used by GUI and EFFECTS - FIXME (to be removed)
     mainSndCtrl = GetSoundControl();
     guiSndCtrl = GetSoundControl();
     effectSndCtrl = GetSoundControl();
-    
+
     if (soundSystem->Initialize (objectReg)
         && soundData->Initialize (objectReg))
     {
         //  soundLib = cfg->GetStr("PlaneShift.Sound.SoundLib", "/planeshift/art/soundlib.xml"); /* FIXME HARDCODED*/
+        // also FIXME what if soundlib.xml doesnt exist?
         soundData->LoadSoundLib ("/planeshift/art/soundlib.xml", objectReg);
         LastUpdateTime = csGetTicks();
         Initialised = true;
     }
-    else
+}
+
+SoundSystemManager::~SoundSystemManager ()
+{
+    Initialised = false;
+    // pause all sounds and call updatesound to remove them
+    for (size_t i = 0; i < soundHandles.GetSize (); i++)
     {
-        Initialised = false;
+        soundHandles[i]->sndstream->Pause();
+        soundHandles[i]->SetAutoRemove(true);
     }
+    
+    UpdateSound();
+    
+    // FIXME we must delete all SoundControls
+    
+    delete soundSystem;
+    delete soundData;
+    
 }
 
 /*
@@ -79,10 +93,12 @@ SoundSystemManager::Update ()
 {
     SndTime = csGetTicks();
 
-    /* call it all 100 Ticks  */
+    // call it all 100 Ticks
     if (LastUpdateTime + 100 <= SndTime && (Initialised == true))
     { 
         UpdateSound();
+        // make a update on sounddata to check if there are sounds to unload
+        soundData->Update();
     }
 }
 
@@ -200,7 +216,7 @@ SoundSystemManager::UpdateSound ()
     float vol;
     SoundHandle* tmp = NULL;
 
-    for (unsigned int i = 0; i < soundHandles.GetSize (); i++)
+    for (size_t i = 0; i < soundHandles.GetSize (); i++)
     {
         tmp = soundHandles.Get(i);
 
@@ -250,7 +266,7 @@ SoundSystemManager::UpdateSound ()
         {
             if (mainSndCtrl->GetToggle() == false)
             {
-                vol = (float) 0;
+                vol = VOLUME_ZERO;
             }
             else
             {
@@ -258,10 +274,10 @@ SoundSystemManager::UpdateSound ()
                        * mainSndCtrl->GetVolume());
             }
             
-            /* limit volume to 2.0f */
-            if (vol >= 2)
+            /* limit volume to 2.0f (VOLUME_MAX defined in manager.h) */
+            if (vol >= VOLUME_MAX)
             {
-                tmp->sndsource->SetVolume((float) 2);
+                tmp->sndsource->SetVolume(VOLUME_MAX);
             }
             else
             {
