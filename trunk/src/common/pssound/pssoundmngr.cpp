@@ -81,6 +81,8 @@ psSoundManager::~psSoundManager ()
  * but ten to twenty times per second is enough
  * not sure how often it would be called if
  * executed by engine
+ * 
+ * FIXME csticks
  *
  */
 
