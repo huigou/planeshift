@@ -172,6 +172,11 @@ public:
      */
     void DumpHateList();
 
+    /**
+     * Dump the debug log for npc
+     */
+    void DumpDebugLog();
+
     void ClearState();
 
     void ResumeScript(Behavior *which);
@@ -269,6 +274,9 @@ private:
     iCollideSystem* cdsys;
     
     friend class psNPCTick;
+
+    csArray<csString> debugLog;          ///< Local debug log of last n print statments for this NPC.
+    int               nextDebugLogEntry; ///< The next entry to use. 
 };
 
 // The event that makes the NPC brain go TICK.
