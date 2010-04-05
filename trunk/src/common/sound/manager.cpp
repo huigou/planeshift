@@ -3,14 +3,14 @@
  *
  * Copyright (C) 2001-2010 Atomic Blue (info@planeshift.it, http://www.planeshift.it)
  *
- * Credits : Saul Leite <leite@engineer.com> 
+ * Credits : Saul Leite <leite@engineer.com>
  *           Mathias 'AgY' Voeroes <agy@operswithoutlife.net>
  *           and all past and present planeshift coders
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation (version 2 of the License.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #include "sound.h"
@@ -30,7 +30,7 @@ SoundData           *soundData;
 /*
  * Initialize the SoundSystem (SndSys) and the Datamanager (SndData)
  * Load our soundlib.xml - FIXME HARDCODED
- * 
+ *
  * Set Initialized to true if successfull / to false if not
  */
 
@@ -38,11 +38,11 @@ SoundSystemManager::SoundSystemManager (iObjectRegistry* objectReg)
 {
     // Initialised to false to make sure it is ..
     Initialised = false;
-    
-    // Create a new SoundSystem and SoundData Instance  
+
+    // Create a new SoundSystem and SoundData Instance
     soundSystem = new SoundSystem;
     soundData = new SoundData;
-    
+
     // SoundControls used by GUI and EFFECTS - FIXME (to be removed)
     mainSndCtrl = GetSoundControl();
     guiSndCtrl = GetSoundControl();
@@ -68,14 +68,14 @@ SoundSystemManager::~SoundSystemManager ()
         soundHandles[i]->sndstream->Pause();
         soundHandles[i]->SetAutoRemove(true);
     }
-    
+
     UpdateSound();
-    
+
     // FIXME we must delete all SoundControls
-    
+
     delete soundSystem;
     delete soundData;
-    
+
 }
 
 /*
@@ -85,7 +85,7 @@ SoundSystemManager::~SoundSystemManager ()
  *
  * there should be 50ms betweens the updates
  * and MUST be 100ms for FadeSounds
- * i know that csTicks are not THAT accurate 
+ * i know that csTicks are not THAT accurate
  */
 
 void
@@ -95,7 +95,7 @@ SoundSystemManager::Update ()
 
     // call it all 100 Ticks
     if (LastUpdateTime + 100 <= SndTime && (Initialised == true))
-    { 
+    {
         UpdateSound();
         // make a update on sounddata to check if there are sounds to unload
         soundData->Update();
@@ -106,7 +106,7 @@ SoundSystemManager::Update ()
  * play a 2D sound
  * means: no 3D sound, no position etc needed
  * Note: You cant convert a 2D to a 3D sound
- * you need to supply a handle 
+ * you need to supply a handle
  */
 
 bool
@@ -115,35 +115,35 @@ Play2DSound (const char *name, bool loop, size_t loopstart, size_t loopend,
              float volume_preset, SoundControl* &sndCtrl, SoundHandle* &handle)
 {
     /* FIXME redundant code Play3DSound */
-    
+
     if (Initialised == false)
     {
         Error1("Sound not Initialised\n");
         return false;
     }
-  
+
     if (name == NULL)
     {
         Error1("Error: Play2DSound got NULL as soundname\n");
         return false;
     }
-    
+
     if (sndCtrl->GetToggle() == false) /* FIXME */
     {
         return false;
     }
-      
+
     handle = new SoundHandle;
-  
+
     if (!handle->Init(name, loop, volume_preset, CS_SND3D_DISABLE, sndCtrl))
     {
       delete handle;
       handle = NULL;
       return false;
     }
-  
+
     handle->sndstream->SetLoopBoundaries(loopstart, loopend);
-    handle->sndsource->SetVolume(( volume_preset * sndCtrl->GetVolume()));  
+    handle->sndsource->SetVolume(( volume_preset * sndCtrl->GetVolume()));
 
     handle->sndstream->Unpause();
     soundHandles.Push(handle);
@@ -154,14 +154,14 @@ Play2DSound (const char *name, bool loop, size_t loopstart, size_t loopend,
 /*
  * play a 3D sound
  * we need volume, position, direction, radiation, min- and maxrange.
- * 3dtype (absolute / relative 
+ * 3dtype (absolute / relative
  * and direction if radiation is not 0
  * you need to supply a handle
  */
 
 bool
 SoundSystemManager::
-Play3DSound (const char *name, bool loop, size_t loopstart, size_t loopend, 
+Play3DSound (const char *name, bool loop, size_t loopstart, size_t loopend,
              float volume_preset, SoundControl* &sndCtrl, csVector3 pos,
              csVector3 dir, float mindist, float maxdist, float rad,
              int type3d, SoundHandle* &handle)
@@ -172,7 +172,7 @@ Play3DSound (const char *name, bool loop, size_t loopstart, size_t loopend,
         Error1("Sound not Initialised\n");
         return false;
     }
-  
+
     if (name == NULL)
     {
         Error1("Error: Play2DSound got NULL as soundname\n");
@@ -183,7 +183,7 @@ Play3DSound (const char *name, bool loop, size_t loopstart, size_t loopend,
     {
         return false;
     }
-    
+
     handle = new SoundHandle;
 
     if (!handle->Init(name, loop, volume_preset, type3d, sndCtrl))
@@ -192,21 +192,21 @@ Play3DSound (const char *name, bool loop, size_t loopstart, size_t loopend,
       handle = NULL;
       return false;
     }
-    
+
     handle->sndstream->SetLoopBoundaries(loopstart, loopend);
     handle->sndsource->SetVolume((volume_preset * sndCtrl->GetVolume()));
 
     /* make it 3d */
     handle->ConvertTo3D (mindist, maxdist, pos, dir, rad);
     handle->sndstream->Unpause();
-    
+
     soundHandles.Push(handle);
     return true;
 }
 
 /*
  * reomves all idle sounds to save memory and sndsources
- * adjust volumes and fades music 
+ * adjust volumes and fades music
  * TODO Split into three parts and make it event based
  */
 
@@ -231,7 +231,7 @@ SoundSystemManager::UpdateSound ()
 
         /* fade in or out */
         /* fade >0 is number of steps up <0 is number of steps down, 0 is nothing */
-        
+
         if (tmp->fade > 0)
         {
             tmp->sndsource->SetVolume(tmp->sndsource->GetVolume()
@@ -245,10 +245,10 @@ SoundSystemManager::UpdateSound ()
              * if fade_stop is set do that (instead of the last step)
              * dont delete it here it would ruin the Array
              * our "garbage collector (UpdateSounds)" will pick it up
-             * 
+             *
              * also check the toggle just pause if its false
              */
- 
+
             if (tmp->fade == -1
                 && (tmp->fade_stop == true
                 || tmp->sndCtrl->GetToggle() == false))
@@ -273,7 +273,7 @@ SoundSystemManager::UpdateSound ()
                 vol = ((tmp->preset_volume * tmp->sndCtrl->GetVolume())
                        * mainSndCtrl->GetVolume());
             }
-            
+
             /* limit volume to 2.0f (VOLUME_MAX defined in manager.h) */
             if (vol >= VOLUME_MAX)
             {
@@ -290,7 +290,7 @@ SoundSystemManager::UpdateSound ()
 
 
 /*
- * Update Listener position 
+ * Update Listener position
  */
 
 void
@@ -304,11 +304,11 @@ SoundSystemManager::
 GetSoundControl ()
 {
     SoundControl *newControl;
-  
+
     newControl = new SoundControl;
     soundController.Push(newControl);
     newControl->id = soundController.GetSize();
-    
+
     return newControl;
 }
 

@@ -3,14 +3,14 @@
  *
  * Copyright (C) 2001-2010 Atomic Blue (info@planeshift.it, http://www.planeshift.it)
  *
- * Credits : Saul Leite <leite@engineer.com> 
+ * Credits : Saul Leite <leite@engineer.com>
  *           Mathias 'AgY' Voeroes <agy@operswithoutlife.net>
  *           and all past and present planeshift coders
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation (version 2 of the License.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #include "sound.h"
@@ -49,7 +49,7 @@ SoundFile::~SoundFile ()
 
 /*
  * SndData is a set of functions to help us load and unload sounds
- * simple interface 
+ * simple interface
  */
 
 /*
@@ -62,20 +62,20 @@ SoundData::
 Initialize(iObjectRegistry* objectReg)
 {
     sndloader = csQueryRegistry<iSndSysLoader> (objectReg);
-  
+
     if (!sndloader)
     {
         Error1("Failed to locate Sound loader!");
         return false;
     }
-   
+
 
     if (!(vfs = csQueryRegistry<iVFS> (objectReg)))
     {
         Error1("psSndSourceMngr: Could not initialize. Cannot find iVFS");
         return false;
     }
-    
+
     return true;
 }
 
@@ -83,14 +83,14 @@ Initialize(iObjectRegistry* objectReg)
  * Loads a soundfile into a given buffer
  * it checks if we have the resource and loads it if its not already loaded
  */
- 
+
 bool
 SoundData::
 LoadSoundFile (const char *name, csRef<iSndSysData> &snddata)
 {
     SoundFile                   *snd;
-    csRef<iDataBuffer>          soundbuf; 
-  
+    csRef<iDataBuffer>          soundbuf;
+
     if ((snd = GetSound(name)) != NULL)
     {
         /* Sound exists in "known or loaded state
@@ -109,7 +109,7 @@ LoadSoundFile (const char *name, csRef<iSndSysData> &snddata)
     {
         // maybe this is a dynamic file create a handle and push it into our array
         snd = new SoundFile (name, name);
-        PutSound(snd); 
+        PutSound(snd);
     }
 
     /* load the sounddata into a buffer */
@@ -118,7 +118,7 @@ LoadSoundFile (const char *name, csRef<iSndSysData> &snddata)
         Error2("Can't load file '%s'!", name); /* FIXME */
         return false;
     }
-    
+
     /* extract sound from data */
     if (!(snddata = sndloader->LoadSound (soundbuf)))
     {
@@ -141,10 +141,10 @@ SoundData::
 UnloadSoundFile (const char *name)
 {
     SoundFile   *sound;
-    
+
     if (sound = GetSound(name))
     {
-        DeleteSound(sound); 
+        DeleteSound(sound);
     }
     return;
 }
@@ -158,13 +158,13 @@ SoundFile *
 SoundData::GetSound (const char *name)
 {
     SoundFile   *sound;
-    
+
     sound = soundfiles.Get(csHashCompute(name), NULL);
-    
+
     // sound is null when theres no cached SoundFile
     if (sound == NULL)
     {
-        // we go search the library .. maybe it has it 
+        // we go search the library .. maybe it has it
         if (libsoundfiles.Contains(csHashCompute(name)))
         {
             // SoundFile is in our library, copy it
@@ -179,15 +179,15 @@ SoundData::GetSound (const char *name)
     }
 
     // update lasttouch to keep that SoundFile in memory
-    sound->lasttouch = csGetTicks(); 
+    sound->lasttouch = csGetTicks();
     return sound;
 }
 
 void
 SoundData::PutSound (SoundFile* &sound)
 {
-    // i know theres PutUnique but i have a bad feeling about overwriting 
-    soundfiles.Put(csHashCompute((const char*) sound->name), sound);    
+    // i know theres PutUnique but i have a bad feeling about overwriting
+    soundfiles.Put(csHashCompute((const char*) sound->name), sound);
 }
 
 void
@@ -205,21 +205,21 @@ SoundData::Update ()
     csTicks             now;
     csArray<SoundFile*> allsoundfiles;
     SoundFile          *sound;
-    
+
     now = csGetTicks();
     allsoundfiles = soundfiles.GetAll();
 
     for (size_t i = 0; i < allsoundfiles.GetSize(); i++)
     {
         sound = allsoundfiles[i];
-        
+
         if ((sound->lasttouch + SOUNDFILE_CACHETIME) <= now
             && sound->loaded == true
             && sound->snddata->GetRefCount() == 1)
         {
             // UnloadSoundFile takes "names" as arguments and works on our hash
             UnloadSoundFile(sound->name);
-        } 
+        }
         else
         {
             sound->lasttouch = csGetTicks();
@@ -232,11 +232,11 @@ SoundData::Update ()
 /*
  * loads soundlib.xml get all the names and filenames
  * store them in the hash "soundfiles"
- * 
+ *
  * i think we could load all the sounds right now but i fear that this
  * could eat a lot of memory
  * reload should be possible but im too lazy right now
- * 
+ *
  */
 
 bool
@@ -252,7 +252,7 @@ LoadSoundLib (const char* filename, iObjectRegistry* objectReg)
     csRef<iDocumentNodeIterator>    iter; /* node iterator */
     csRef<iDocumentNode>            node;   /* yet another node .... */
     SoundFile                      *snd;        ///< soundfile
-    
+
     if (!(xml = csQueryRegistry<iDocumentSystem> (objectReg)))
       xml = csPtr<iDocumentSystem> (new csTinyDocumentSystem);
 
@@ -271,21 +271,21 @@ LoadSoundLib (const char* filename, iObjectRegistry* objectReg)
         Error3("Parsing file %s gave error %s", filename, error);
         return false;
     }
-    
-    
+
+
     if( !(root = doc->GetRoot()))
     {
         Error1("No XML root in soundlib.xml");
         return false;
     }
 
-    
+
     if( !(topNode = root->GetNode("Sounds")))
     {
         Error1("No <sounds> tag in soundlib.xml");
         return false;
     }
-    
+
     iter = topNode->GetNodes();
 
     while (iter->HasNext())
