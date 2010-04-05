@@ -40,8 +40,7 @@ int main(int argc, char **argv)
 
     pslog::Initialize (object_reg);
     
-    SndSysMgr = new SoundSystemManager;
-    SndSysMgr->Initialize (object_reg);
+    SndSysMgr = new SoundSystemManager(object_reg);
 
     // Start the server
     npcclient = new psNPCClient;
