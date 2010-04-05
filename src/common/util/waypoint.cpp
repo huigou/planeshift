@@ -205,6 +205,45 @@ void Waypoint::SetFlags(const csString & flagstr)
     indoor       = isFlagSet(flagstr,"INDOOR");
 }
 
+bool Waypoint::SetFlag(iDataConnection * db, const csString &flagstr, bool enable)
+{
+    if (isFlagSet(flagstr,"ALLOW_RETURN"))
+    {
+        allow_return = enable;
+    } else if (isFlagSet(flagstr,"UNDERGROUND"))
+    {
+        underground = enable;
+    } else if (isFlagSet(flagstr,"UNDERWATER"))
+    {
+        underwater = enable;
+    } else if (isFlagSet(flagstr,"PRIVATE"))
+    {
+        priv = enable;
+    } else if (isFlagSet(flagstr,"PUBLIC"))
+    {
+        pub = enable;
+    } else if (isFlagSet(flagstr,"CITY"))
+    {
+        city = enable;
+    } else if (isFlagSet(flagstr,"INDOOR"))
+    {
+        indoor = enable;
+    } else
+    {
+        return false;
+    }
+
+    int result = db->CommandPump("UPDATE sc_waypoints SET flags='%s' WHERE id=%d",
+                                 GetFlags().GetDataSafe(), loc.id);
+    if (result != 1)
+    {
+        Error2("Sql failed: %s\n",db->GetLastError());
+        return false;
+    }
+    
+    return true;
+}
+
 csString Waypoint::GetFlags()
 {
     csString flagStr;
