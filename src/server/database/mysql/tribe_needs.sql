@@ -63,4 +63,7 @@ INSERT INTO `tribe_needs` VALUES (2,5,'REPRODUCE'    ,'Reproduce','tribe:reprodu
 #
 # Once in a while this tribe will relocate to a new place.
 INSERT INTO `tribe_needs` VALUES (2,6,'GENERIC'      ,'Move'     ,'tribe:move'     ,''        ,'0.00','0.05');
+#
+# The tribe home should be guarded
+INSERT INTO `tribe_needs` VALUES (2,7,'GENERIC'      ,'GuardHome','tribe:guard'    ,''        ,'0.00','0.30');
 

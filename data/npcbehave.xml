@@ -412,6 +412,19 @@
     <behavior name="do nothing" decay="0" growth="0" initial="10">
       <wait duration="10" anim="stand" />
     </behavior>
+
+    <!-- Behaviors related to guarding the tribe -->
+    <behavior name="GuardTurn" completion_decay="-1" growth="0" initial="0">
+      <wait duration="5" anim="stand" />
+      <rotate type="tribe_home" min="-45" max="45" anim="walk" ang_vel="10" />
+    </behavior>
+    <behavior name="GuardHome" decay="1" min="0" growth="0" initial="0">
+      <!-- Now start the guard movement -->      
+      <move vel="$WALK" anim="walk" check_tribe_home="true" out_of_bounds="out of home" />
+    </behavior>
+    <react event="out of home"       behavior="GuardTurn" />
+    <react event="tribe:guard"       behavior="GuardHome"  delta="100" />
+
     <behavior name="Explore" completion_decay="-1" growth="0" initial="0" resume="yes">
       <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
       <navigate anim="walk" />                  <!-- Local navigation -->
@@ -423,6 +436,7 @@
       <navigate anim="walk" />                  <!-- Local navigation -->
       <share_memories />
     </behavior>
+
     <behavior name="Hunt" completion_decay="-1" growth="0" initial="0">
       <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
       <navigate anim="walk" />                  <!-- Local navigation -->
@@ -439,6 +453,7 @@
       <navigate anim="walk" />      <!-- Local navigation -->
       <transfer item="tribe:wealth" target="tribe" />
     </behavior>
+
     <behavior name="MoveTribe" completion_decay="-1" growth="0" initial="0">
       <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
       <navigate anim="walk" />                  <!-- Local navigation -->
@@ -448,6 +463,15 @@
       <wait anim="stand" duration="30" />
       <tribe_home /> <!-- This command will move the tribe home to current location -->
     </behavior>
+
+    <behavior name="GoHome" completion_decay="-1" growth="0" initial="15">
+      <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
+      <navigate anim="walk" />                  <!-- Local navigation -->
+      <locate obj="tribe:tribe_home" />
+      <wander anim="walk" />        <!-- Navigate using waypoints -->
+      <navigate anim="walk" />      <!-- Local navigation -->
+    </behavior>
+
     <behavior name="Reproduce" completion_decay="-1" growth="0" initial="0">
       <!--  Should include a go home behaviour here first -->
       <wait duration="10" anim="sit" />
@@ -470,6 +494,7 @@
     <react event="tribe:resurrect"    behavior="Resurrect"     inactive_only="yes" when_dead="yes" />
     <react event="inventory:added"    behavior="Memorize"      type="Flesh"/>
     <react event="tribe:move"         behavior="MoveTribe"     delta="100" />
+    <react event="tribe:home moved"   behavior="GoHome"        only_interrupt="GuardHome,GuardTurn,do nothing,Reproduce" />
   </npctype>
 
 

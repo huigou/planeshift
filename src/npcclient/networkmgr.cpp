@@ -40,6 +40,7 @@
 #include "net/messages.h"
 #include "net/msghandler.h"
 #include "net/npcmessages.h"
+#include "engine/linmove.h"
 
 //=============================================================================
 // Local Space Includes
@@ -1284,7 +1285,24 @@ void NetworkManager::SendAllCommands(bool final)
         while ( it.HasNext() )
         {
             NPC * npc = it.Next();
-            QueueDRData(npc->GetActor(),npc->GetLinMove(),npc->GetDRCounter());
+            if (npc->GetActor())
+            {
+                if (npc->GetLinMove()->GetSector())
+                {
+                    QueueDRData(npc->GetActor(),npc->GetLinMove(),npc->GetDRCounter());
+                }
+                else
+                {
+                    CPrintf(CON_WARNING,"NPC %s is trying to send DR data with no sector\n",npc->GetName());
+                    npc->Disable(); // Disable the NPC.
+                }
+                
+            }
+            else
+            {
+                CPrintf(CON_WARNING,"NPC %s is trying to send DR data with no actor\n",npc->GetName());
+                npc->Disable(); // Disable the NPC.
+            }
         }
         cmd_dr_outbound.DeleteAll();
     }

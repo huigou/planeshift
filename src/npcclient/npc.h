@@ -96,6 +96,7 @@ protected:
     iSector*           active_locate_sector;
     float              active_locate_angle;
     Waypoint*          active_locate_wp;
+    float              active_locate_radius;
     float              ang_vel,vel;
     float              walkVelocity,runVelocity;
     LocationType      *region;
@@ -198,6 +199,17 @@ public:
     { pos=active_locate_pos; sector = active_locate_sector; rot=active_locate_angle; }
 
     void GetActiveLocate(Waypoint*& wp) { wp = active_locate_wp; }
+    /** Set the radius of the active locate operation
+     *
+     * @param radius  The radius of the last locate operation.
+     */
+    void SetActiveLocateRadius(float radius){active_locate_radius = radius; }
+
+    /** Get the radius of the last locate operatoins
+     *
+     * @return The radius of the last locate
+     */
+    float GetActiveLocateRadius() const { return active_locate_radius; }
     
     bool SwitchDebugging()
     {
