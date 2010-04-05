@@ -3,14 +3,14 @@
  *
  * Copyright (C) 2001-2010 Atomic Blue (info@planeshift.it, http://www.planeshift.it)
  *
- * Credits : Saul Leite <leite@engineer.com> 
+ * Credits : Saul Leite <leite@engineer.com>
  *           Mathias 'AgY' Voeroes <agy@operswithoutlife.net>
  *           and all past and present planeshift coders
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation (version 2 of the License.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #ifndef _PSSOUNDMNGR_H_
@@ -93,7 +93,7 @@ struct sct_entity
     int           delay_after;  /* number of seconds till played again */
     float         probability;  /* if a found entitie plays a sound */
     float         count;        /* number of entities of this type */
-    int           when;         /* last time this sound has been played */ 
+    int           when;         /* last time this sound has been played */
     bool          active;
     SoundHandle  *handle;
     int           timeofday;
@@ -109,7 +109,7 @@ struct sctdata
     csString                name;
     bool                    active;
     sct_ambient            *activeambient;
-    sct_music              *activemusic; 
+    sct_music              *activemusic;
     csArray<sct_ambient*>   ambient;
     csArray<sct_emitter*>   emitter;
     csArray<sct_music*>     music;
@@ -126,7 +126,7 @@ struct sctdata
 class psSoundManager
 {
     public:
-    
+
     sctdata         *activesector;      /* points to our active sector */
     csVector3        playerposition;    /* current playerposition */
     SoundQueue      *voicequeue;        /* a queue for voice playback */
@@ -165,7 +165,7 @@ class psSoundManager
     void SetCombatStance (int newCombatstance);
     /* get current combat stance */
     int GetCombatStance ();
-    
+
     /* toggles to enable or disable the thing they are named after */
     void SetMusicToggle (bool toggle);
     bool GetMusicToggle ();
@@ -183,9 +183,9 @@ class psSoundManager
     /* toggle to switch listener position between player and camera position */
     bool GetListenerOnCameraPos ();
     void SetListenerOnCameraPos (bool toggle);
-     
+
     private:
-    
+
     csRef<iVFS>                 vfs;                /* vfs were reading from */
     csArray<sctdata *>          sectordata;         /* array which contains all sector xmls - parsed */
     csTicks                     SndTime;            /* current csticks */
@@ -208,7 +208,7 @@ class psSoundManager
     void GetEmitterNodes (csArray<sct_emitter*> &emitter_sounds, csRef<iDocumentNodeIterator> Itr);
     /* parses ambient nodes out of a xml */
     void GetAmbientNodes (csArray<sct_ambient*> &ambient_sounds, csRef<iDocumentNodeIterator> Itr);
-    /* converts factory emitters to real emitters */     
+    /* converts factory emitters to real emitters */
     void ConvertFactoriesToEmitter (sctdata* &sector);
     /* transfers handle from a old to a new sector */
     void TransferHandles (sctdata* &oldsector, sctdata* &newsector);
@@ -217,7 +217,7 @@ class psSoundManager
     void UpdateAmbient (sctdata* &sector);
     /* update music playback */
     void UpdateMusic (sctdata* &sector);
-    /* update emitters */    
+    /* update emitters */
     void UpdateEmitter (sctdata* &sector);
     /* update entities */
     void UpdateEntity (sctdata* &sector);
