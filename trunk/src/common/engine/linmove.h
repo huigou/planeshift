@@ -234,7 +234,12 @@ public:
   virtual void ClearPortalDisplacement ();
 
 
-  void UseCD(bool cd);  
+  void UseCD(bool cd);
+
+  /** Procedure used to debug null Sector
+   */
+  void NullSector();
+  
 protected:
 
     // Move local entity

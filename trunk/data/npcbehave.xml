@@ -467,7 +467,7 @@
     <behavior name="GoHome" completion_decay="-1" growth="0" initial="15">
       <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
       <navigate anim="walk" />                  <!-- Local navigation -->
-      <locate obj="tribe:tribe_home" />
+      <locate obj="tribe:home" />
       <wander anim="walk" />        <!-- Navigate using waypoints -->
       <navigate anim="walk" />      <!-- Local navigation -->
     </behavior>
