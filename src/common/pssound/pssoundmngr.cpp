@@ -67,7 +67,9 @@ psSoundManager::~psSoundManager ()
     delete voicequeue;
     delete SndSysMgr;
     // Note: SndSysMgr should take care of SoundControls .. we can ignore them
-    // TODO: free sectordata
+    for(size_t i = 0; i < sectordata.GetSize(); i++)
+        delete sectordata[i];
+    sectordata.DeleteAll();
 }
 
 /*
@@ -86,9 +88,7 @@ psSoundManager::~psSoundManager ()
  *
  */
 
-void
-psSoundManager::
-Update ()
+void psSoundManager::Update ()
 {
     SndTime = csGetTicks();
 
