@@ -37,6 +37,7 @@
 
 #include <csutil/databuf.h>
 #include <csutil/plugmgr.h>
+#include <csutil/callstack.h>
 #include <iengine/movable.h>
 #include <iengine/mesh.h>
 #include <iengine/engine.h>
@@ -967,6 +968,12 @@ void psLinearMovement::SetFullPosition (const csVector3& pos, float yrot,
 {
   // Position
   csVector3 newpos;
+
+    if (!sector)
+    {
+        NullSector();
+    }
+
   
   newpos = pos;
   mesh->GetMovable ()->SetPosition ((iSector *)sector, newpos);
@@ -993,6 +1000,12 @@ void psLinearMovement::SetFullPosition (const char* center_name, float yrot,
 void psLinearMovement::SetPosition (const csVector3& pos, float yrot,
 	const iSector* sector)
 {
+    if (!sector)
+    {
+        NullSector();
+    }
+    
+
   // Position and Sector
   mesh->GetMovable ()->SetPosition ((iSector *)sector,pos);
 
@@ -1193,5 +1206,16 @@ void psLinearMovement::UseCD(bool cd)
     if ( colldet )
     {
         colldet->UseCD(cd);
+    }
+}
+
+void psLinearMovement::NullSector()
+{
+    printf("Setting position without sector\n");
+    csCallStack* stack = csCallStackHelper::CreateCallStack();
+    if (stack)
+    {
+        stack->Print();
+        stack->Free();
     }
 }
