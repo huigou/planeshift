@@ -33,11 +33,6 @@
 #include "util/psconst.h"
 #include "util/skillcache.h"
 
-// Jorrit: hack for mingw.
-#ifdef SendMessage
-#undef SendMessage
-#endif
-
 struct iSpriteCal3DState;
 struct iEngine;
 class psLinearMovement;

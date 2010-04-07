@@ -64,6 +64,12 @@ const unsigned int WINDOW_MAX_SIZE = 65536; // The size of the maximum reliable 
 #ifdef SendMessage
 #undef SendMessage
 #endif
+#ifdef SetJob
+#undef SetJob
+#endif
+#ifdef GetJob
+#undef GetJob
+#endif
 
 class MsgEntry;
 class NetPacketQueueRefCount;
