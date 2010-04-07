@@ -2284,7 +2284,7 @@ void NPCManager::SendPetSkillList(Client * client, bool forceOpen, PSSKILL focus
     int realID = -1;
     bool found = false;
 
-    for (int skillID = 0; skillID < cacheManager->GetSkillAmount(); skillID++)
+    for (unsigned int skillID = 0; skillID < cacheManager->GetSkillAmount(); skillID++)
     {
         psSkillInfo * info = cacheManager->GetSkillByID(skillID);
         if (!info)
@@ -2297,9 +2297,9 @@ void NPCManager::SendPetSkillList(Client * client, bool forceOpen, PSSKILL focus
 
         csString escpxml = EscpXML(info->name);
 
-            buff.AppendFmt("<SKILL NAME=\"%s\" R=\"%i\" Y=\"%i\" YC=\"%i\" Z=\"%i\" ZC=\"%i\" CAT=\"%d\"/>",
-                              escpxml.GetData(), charSkill.rank.Base(),
-                              charSkill.y, charSkill.yCost, charSkill.z, charSkill.zCost, info->category);
+        buff.AppendFmt("<SKILL NAME=\"%s\" R=\"%i\" Y=\"%i\" YC=\"%i\" Z=\"%i\" ZC=\"%i\" CAT=\"%d\"/>",
+                       escpxml.GetData(), charSkill.rank.Base(),
+                       charSkill.y, charSkill.yCost, charSkill.z, charSkill.zCost, info->category);
     }
     buff.Append("</L>");
 
