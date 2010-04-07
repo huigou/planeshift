@@ -991,7 +991,7 @@ void pawsCreationMain::Show()
 {
     // Play some music
     
-    psengine->GetSoundManager()->Load("charcreation", NULL);
+    psengine->GetSoundManager()->Load("charcreation", csVector3(0));
 
     pawsWidget::Show();
     UpdateCP();

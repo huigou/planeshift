@@ -835,7 +835,7 @@ bool psCharacter::LoadSkills(PID use_id)
     // Load skills
     Result skillResult(db->Select("SELECT * FROM character_skills WHERE character_id=%u", use_id.Unbox()));
 
-    for ( int z = 0; z < psserver->GetCacheManager()->GetSkillAmount(); z++ )
+    for ( size_t z = 0; z < psserver->GetCacheManager()->GetSkillAmount(); z++ )
     {
         skills.SetSkillInfo( (PSSKILL)z, psserver->GetCacheManager()->GetSkillByID((PSSKILL)z), false );
     }
@@ -3063,7 +3063,7 @@ double psCharacter::CalcFunction(const char * functionName, const double * param
         if(owner_id == params[0])
             return 0.0;
 
-        Client* owner = EntityManager::GetSingleton().GetClients()->FindPlayer(params[0]);
+        Client* owner = EntityManager::GetSingleton().GetClients()->FindPlayer((PID)params[0]);
         if(owner->GetTargetType(GetActor()) & TARGET_FOE)
         {
             return 1.0;
@@ -3713,7 +3713,7 @@ int SkillSet::AddSkillPractice(PSSKILL skill, unsigned int val)
 unsigned int SkillSet::GetBestSkillValue( bool withBuffer )
 {
     unsigned int max=0;
-    for (int i=0; i<psserver->GetCacheManager()->GetSkillAmount(); i++)
+    for (size_t i=0; i<psserver->GetCacheManager()->GetSkillAmount(); i++)
     {
         PSSKILL skill = skills[i].info->id;
         if(     skill == PSSKILL_AGI ||
@@ -3750,7 +3750,7 @@ unsigned int SkillSet::GetBestSkillSlot( bool withBuffer )
 
 void SkillSet::Calculate()
 {
-    for ( int z = 0; z < psserver->GetCacheManager()->GetSkillAmount(); z++ )
+    for ( size_t z = 0; z < psserver->GetCacheManager()->GetSkillAmount(); z++ )
     {
         skills[z].CalculateCosts(self);
     }
@@ -3758,7 +3758,7 @@ void SkillSet::Calculate()
 
 bool SkillSet::CanTrain( PSSKILL skill )
 {
-    if (skill<0 || skill>=psserver->GetCacheManager()->GetSkillAmount())
+    if (skill<0 || skill>=(PSSKILL)psserver->GetCacheManager()->GetSkillAmount())
         return false;
     else
     {
@@ -3769,7 +3769,7 @@ bool SkillSet::CanTrain( PSSKILL skill )
 void SkillSet::Train( PSSKILL skill, int yIncrease )
 {
 
-    if (skill<0 ||skill>=psserver->GetCacheManager()->GetSkillAmount())
+    if (skill<0 ||skill>=(PSSKILL)psserver->GetCacheManager()->GetSkillAmount())
         return;
     else
     {
@@ -3780,7 +3780,7 @@ void SkillSet::Train( PSSKILL skill, int yIncrease )
 
 void SkillSet::SetSkillInfo( PSSKILL which, psSkillInfo* info, bool recalculatestats )
 {
-    if (which<0 || which>=psserver->GetCacheManager()->GetSkillAmount())
+    if (which<0 || which>=(PSSKILL)psserver->GetCacheManager()->GetSkillAmount())
         return;
     else
     {
@@ -3794,7 +3794,7 @@ void SkillSet::SetSkillInfo( PSSKILL which, psSkillInfo* info, bool recalculates
 
 void SkillSet::SetSkillRank( PSSKILL which, unsigned int rank, bool recalculatestats )
 {
-    if (which < 0 || which >= psserver->GetCacheManager()->GetSkillAmount())
+    if (which < 0 || which >= (PSSKILL)psserver->GetCacheManager()->GetSkillAmount())
         return;
 
     bool isStat = (which >= PSSKILL_AGI && which <= PSSKILL_WILL);
@@ -3817,7 +3817,7 @@ void SkillSet::SetSkillRank( PSSKILL which, unsigned int rank, bool recalculates
 
 void SkillSet::SetSkillKnowledge( PSSKILL which, int y_value )
 {
-    if (which<0 || which>=psserver->GetCacheManager()->GetSkillAmount())
+    if (which<0 || which>=(PSSKILL)psserver->GetCacheManager()->GetSkillAmount())
         return;
     if (y_value < 0)
         y_value = 0;
@@ -3828,7 +3828,7 @@ void SkillSet::SetSkillKnowledge( PSSKILL which, int y_value )
 
 void SkillSet::SetSkillPractice(PSSKILL which,int z_value)
 {
-    if (which<0 || which>=psserver->GetCacheManager()->GetSkillAmount())
+    if (which<0 || which>=(PSSKILL)psserver->GetCacheManager()->GetSkillAmount())
         return;
     if (z_value < 0)
         z_value = 0;
@@ -3840,7 +3840,7 @@ void SkillSet::SetSkillPractice(PSSKILL which,int z_value)
 
 bool SkillSet::AddToSkillPractice(PSSKILL skill, unsigned int val, unsigned int& added )
 {
-    if (skill<0 || skill>=psserver->GetCacheManager()->GetSkillAmount())
+    if (skill<0 || skill>=(PSSKILL)psserver->GetCacheManager()->GetSkillAmount())
         return 0;
 
     bool rankup = false;
@@ -3852,7 +3852,7 @@ bool SkillSet::AddToSkillPractice(PSSKILL skill, unsigned int val, unsigned int&
 unsigned int SkillSet::GetSkillPractice(PSSKILL skill)
 {
 
-    if (skill<0 || skill>=psserver->GetCacheManager()->GetSkillAmount())
+    if (skill<0 || skill>=(PSSKILL)psserver->GetCacheManager()->GetSkillAmount())
         return 0;
     return skills[skill].z;
 }
@@ -3861,20 +3861,20 @@ unsigned int SkillSet::GetSkillPractice(PSSKILL skill)
 unsigned int SkillSet::GetSkillKnowledge(PSSKILL skill)
 {
 
-    if (skill<0 || skill>=psserver->GetCacheManager()->GetSkillAmount())
+    if (skill<0 || skill>=(PSSKILL)psserver->GetCacheManager()->GetSkillAmount())
         return 0;
     return skills[skill].y;
 }
 
 SkillRank & SkillSet::GetSkillRank(PSSKILL skill)
 {
-    CS_ASSERT(skill >= 0 && skill < psserver->GetCacheManager()->GetSkillAmount());
+    CS_ASSERT(skill >= 0 && skill < (PSSKILL)psserver->GetCacheManager()->GetSkillAmount());
     return skills[skill].rank;
 }
 
 Skill& SkillSet::Get(PSSKILL skill)
 {
-    CS_ASSERT(skill >= 0 && skill < psserver->GetCacheManager()->GetSkillAmount());
+    CS_ASSERT(skill >= 0 && skill < (PSSKILL)psserver->GetCacheManager()->GetSkillAmount());
     return skills[skill];
 }
 

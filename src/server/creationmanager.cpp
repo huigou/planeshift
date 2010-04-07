@@ -1020,7 +1020,7 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
     else
     {
         psCharVerificationMesg mesg( me->clientnum );
-        int z;
+        size_t z;
         for ( z = 0; z < PSITEMSTATS_STAT_COUNT; z++ )
         {
             int value = chardata->Stats()[(PSITEMSTATS_STAT) z].Current();

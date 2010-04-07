@@ -2032,7 +2032,7 @@ void WorkManager::StartTransformationEvent(int transType, INVENTORY_SLOT_NUMBER 
     else
     {
         // Used in the case of a transformation like item->npc.
-        delay = resultQuality/10;
+        delay = int(resultQuality/10);
     }
 
     // Let the server admin know
@@ -2474,7 +2474,7 @@ int WorkManager::CalculateEventDuration(psTradeTransformations* trans, int itemQ
     // ToDo: For now the point quantity is the duration
     // TODO: CONVERT TO MATHSCRIPT
     if(trans->GetItemQty() == 0 && trans->GetItemId() != 0 && trans->GetResultId() != 0)
-        return trans->GetTransPoints() +  trans->GetTransPoints() * (itemQty - 1) * 0.1;
+        return int(trans->GetTransPoints() +  trans->GetTransPoints() * (itemQty - 1) * 0.1);
     return trans->GetTransPoints();
 }
 

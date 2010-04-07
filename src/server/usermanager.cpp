@@ -470,7 +470,7 @@ void UserManager::SendCharacterDescription(Client * client, gemActor *actor, boo
         SkillSet & sks = charData->Skills();
         StatSet & sts = charData->Stats();
 
-        for (int skill = 0; skill < cacheManager->GetSkillAmount(); skill++)
+        for (size_t skill = 0; skill < cacheManager->GetSkillAmount(); skill++)
         {
             psSkillInfo *skinfo;
             skinfo = cacheManager->GetSkillByID((PSSKILL)skill);
@@ -536,7 +536,7 @@ void UserManager::SendCharacterDescription(Client * client, gemActor *actor, boo
             int theirBestMagical = 0;
             int myBestMagical = 0;
 
-            for(int i=0; i < cacheManager->GetSkillAmount(); ++i)
+            for(size_t i=0; i < cacheManager->GetSkillAmount(); ++i)
             {
                 int* theirBest = NULL;
                 int* myBest = NULL;
@@ -568,7 +568,7 @@ void UserManager::SendCharacterDescription(Client * client, gemActor *actor, boo
                 if(mySkill.rank.Current() < theirSkill.rank.Current())
                 {
                     // Reduce accuracy of skill check.
-                    mod = mySkill.rank.Current() + (theirSkill.rank.Current() - mySkill.rank.Current()) / 1.5;
+                    mod = int(mySkill.rank.Current() + (theirSkill.rank.Current() - mySkill.rank.Current()) / 1.5);
                 }
                 else
                 {
@@ -597,7 +597,7 @@ void UserManager::SendCharacterDescription(Client * client, gemActor *actor, boo
             // And also a comparative difference for each.
             int physicalDiff = theirPhysicalLevel - myPhysicalLevel;
             int magicalDiff = theirMagicalLevel - myMagicalLevel;
-            int overallLevelComparison = (float)(2 * maxLevel + physicalDiff + magicalDiff) / 3.5f;
+            int overallLevelComparison = int ((float)(2 * maxLevel + physicalDiff + magicalDiff) / 3.5f);
 
             // Character's magical strength assessment.
             static const char* const MagicalStrengthAssessPhrases[] =

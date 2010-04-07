@@ -325,7 +325,7 @@ Behavior* BehaviorSet::Advance(csTicks delta,NPC *npc)
                         behaviors[0] = b;  // now highest need is elem 0
                         behaviours_changed = true;
                     }
-                    max_need = b->NewNeed();
+                    max_need = int(b->NewNeed());
                 }
                 b->CommitAdvance();   // Update key to correct value
             }

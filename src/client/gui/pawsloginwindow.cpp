@@ -466,7 +466,7 @@ void pawsLoginWindow::OnListAction( pawsListBox* selected, int status )
 void pawsLoginWindow::Show()
 {
     // Play some music  
-    psengine->GetSoundManager()->Load("main", NULL);
+    psengine->GetSoundManager()->Load("main", csVector3(0));
     pawsWidget::Show();
 }
 

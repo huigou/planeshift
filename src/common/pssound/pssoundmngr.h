@@ -143,7 +143,7 @@ class psSoundManager
 
     /* load sector data */
     bool LoadData (iObjectRegistry* objectReg, csArray<sctdata*> &sectordata);
-    /* load a given sector, position can be NULL */
+    /* load a given sector */
     void Load ( const char* sector, csVector3 position );
     /* update pssoundmanager, updates all non event based things
      * has a build in throttle */

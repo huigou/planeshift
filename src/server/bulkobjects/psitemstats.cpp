@@ -413,10 +413,10 @@ psItemStats::psItemStats()
     decay_rate=0;
     flags=0x00000000;
 
-    mesh_name=NULL;
+    mesh_name.Clear();
     texture_name.Clear();
     texturepart_name.Clear();
-    image_name=NULL;
+    image_name.Clear();
 
     equipScript = NULL;
 

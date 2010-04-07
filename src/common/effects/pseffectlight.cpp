@@ -82,7 +82,7 @@ unsigned int psLight::AttachLight(const char* name, const csVector3& pos,
 
 bool psLight::Update()
 {
-    int advanceSteps = (vclock->GetCurrentTicks() - lastTime) / (1000.0f/stepsPerSecond);
+    int advanceSteps = int((vclock->GetCurrentTicks() - lastTime) / (1000.0f/stepsPerSecond));
 
     if(0 < advanceSteps)
     {

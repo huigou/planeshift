@@ -216,7 +216,7 @@ void pawsSkillWindow::HandleFactionMsg(MsgEntry* me)
             rowEntry.PushBack(fact->name);
             ratingStr.Format("%d", fact->rating);
             rowEntry.PushBack(ratingStr);
-            pawsListBoxRow* row = factionList->NewTextBoxRow(rowEntry);
+            factionList->NewTextBoxRow(rowEntry);
         }
     }
     else if (factRequest)   // ignore MSG_UPDATE if weve not had full list first
@@ -266,7 +266,7 @@ void pawsSkillWindow::HandleFactionMsg(MsgEntry* me)
                 rowEntry.PushBack(fact->name);
                 ratingStr.Format("%d", fact->rating);
                 rowEntry.PushBack(ratingStr);
-                pawsListBoxRow* row = factionList->NewTextBoxRow(rowEntry);
+                factionList->NewTextBoxRow(rowEntry);
             }
         }
     }
@@ -298,7 +298,7 @@ void pawsSkillWindow::HandleMessage( MsgEntry* me )
                     skillString = incoming.commandData;
                     skillCache.apply(&incoming.skillCache);
 
-                    bool flush = train != incoming.trainingWindow;
+                    //bool flush = train != incoming.trainingWindow;
                     train=incoming.trainingWindow;
 
                     int selectedRowIdx = -1;

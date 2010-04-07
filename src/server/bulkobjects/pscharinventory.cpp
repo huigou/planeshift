@@ -678,7 +678,7 @@ psItem * psCharacterInventory::AddStacked(psItem *& item, int & added)
         {
             float size = FindItemID(tocheck->GetContainerID())->GetContainerMaxSize() - GetContainedSize(FindItemID(tocheck->GetContainerID()));
             if(size/item->GetItemSize() < fits)
-                fits = size/item->GetItemSize();
+                fits = (size_t)(size/item->GetItemSize());
         }
         
         if (fits > max)
@@ -1262,7 +1262,7 @@ int psCharacterInventory::GetCurrentTotalSpace()
 {
     int total=0;
     for (size_t i=0; i<inventory.GetSize(); i++)
-        total += inventory[i].item->GetItemSize(); // * stackCount here?  KWF
+        total += (int)inventory[i].item->GetItemSize(); // * stackCount here?  KWF
 
     return total;
 }
