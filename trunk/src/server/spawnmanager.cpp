@@ -1276,7 +1276,7 @@ const csVector3 SpawnRange::PickPos()
     }
     else
     {
-    	Error2("Unknown spawn range %s!", (const char *)type);
+    	Error2("Unknown spawn range %c!", type);
     }
     return csVector3(0.0, 0.0, 0.0);
 }
