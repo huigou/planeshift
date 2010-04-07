@@ -127,36 +127,36 @@ class psSoundManager
 {
     public:
 
-    sctdata         *activesector;      /* points to our active sector */
-    csVector3        playerposition;    /* current playerposition */
-    SoundQueue      *voicequeue;        /* a queue for voice playback */
-    SoundControl    *ambientSndCtrl;    /* soundcontrol for ambient sounds */
-    SoundControl    *musicSndCtrl;      /* soundcontrol for music */
-    SoundControl    *voiceSndCtrl;      /* soundcontrol for voice */
-    SoundControl    *actionSndCtrl;     /* soundcontrol for action sounds */
-    SoundControl    *effectSndCtrl;     /* soundcontrol for effects */
-    SoundControl    *guiSndCtrl;        /* soundcontrol for gui */
-    SoundControl    *mainSndCtrl;       /* soundcontrol of our soundmanager */
+    sctdata         *activesector;      ///< points to our active sector
+    csVector3        playerposition;    ///< current playerposition
+    SoundQueue      *voicequeue;        ///< a queue for voice playback
+    SoundControl    *ambientSndCtrl;    ///< soundcontrol for ambient sounds
+    SoundControl    *musicSndCtrl;      ///< soundcontrol for music
+    SoundControl    *voiceSndCtrl;      ///< soundcontrol for voice
+    SoundControl    *actionSndCtrl;     ///< soundcontrol for action sounds
+    SoundControl    *effectSndCtrl;     ///< soundcontrol for effects
+    SoundControl    *guiSndCtrl;        ///< soundcontrol for gui
+    SoundControl    *mainSndCtrl;       ///< soundcontrol of our soundmanager
 
-    psSoundManager(iObjectRegistry* objectReg);
+    psSoundManager (iObjectRegistry* objectReg);
     ~psSoundManager ();
 
-    /* load sector data */
+    // load sector data
     bool LoadData (iObjectRegistry* objectReg, csArray<sctdata*> &sectordata);
-    /* load a given sector */
-    void Load ( const char* sector, csVector3 position );
-    /* update pssoundmanager, updates all non event based things
-     * has a build in throttle */
+    // load a given sector
+    void Load (const char* sector);
+    // update pssoundmanager, updates all non event based things
+    // has a build in throttle
     void Update ();
-    /* update listener position */
-    void UpdateListener ( iView* view );
-    /* sets ingame time */
+    // update listener position
+    void UpdateListener (iView* view);
+    
 
     // simple PlaySound function to handle GUI and similar 'fire and forget' Sounds
     void PlayActionSound (const char *name);
     void PlayGUISound (const char *name);
 
-
+    // sets ingame time
     void SetTimeOfDay (int newTimeofday);
     /* sets weather */
     void SetWeather (int newWeather);

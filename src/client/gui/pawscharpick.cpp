@@ -406,7 +406,7 @@ void pawsCharacterPickerWindow::Show()
         
     // Play some music
     
-    psengine->GetSoundManager()->Load("main", csVector3(0));
+    psengine->GetSoundManager()->Load("main");
     
     PawsManager::GetSingleton().SetCurrentFocusedWidget(this);
 

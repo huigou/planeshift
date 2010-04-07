@@ -213,8 +213,7 @@ Play3DSound (const char *name, bool loop, size_t loopstart, size_t loopend,
  * TODO Split into three parts and make it event based
  */
 
-void
-SoundSystemManager::UpdateSound ()
+void SoundSystemManager::UpdateSound ()
 {
     float vol;
     SoundHandle* tmp = NULL;
@@ -232,13 +231,14 @@ SoundSystemManager::UpdateSound ()
             continue;
         }
 
-        /* fade in or out */
-        /* fade >0 is number of steps up <0 is number of steps down, 0 is nothing */
-
+        // fade in or out
+        // fade >0 is number of steps up <0 is number of steps down, 0 is nothing
         if (tmp->fade > 0)
         {
             tmp->sndsource->SetVolume(tmp->sndsource->GetVolume()
-                                      + tmp->fade_volume);
+                                      + ((tmp->fade_volume
+                                          * tmp->sndCtrl->GetVolume())
+                                         * mainSndCtrl->GetVolume()));
             tmp->fade--;
         }
         else if (tmp->fade < 0)
@@ -261,7 +261,9 @@ SoundSystemManager::UpdateSound ()
             else
             {
                 tmp->sndsource->SetVolume(tmp->sndsource->GetVolume()
-                                          - tmp->fade_volume);
+                                          - ((tmp->fade_volume
+                                              * tmp->sndCtrl->GetVolume())
+                                             * mainSndCtrl->GetVolume()));
                 tmp->fade++;
             }
         }
@@ -277,7 +279,7 @@ SoundSystemManager::UpdateSound ()
                        * mainSndCtrl->GetVolume());
             }
 
-            /* limit volume to 2.0f (VOLUME_MAX defined in manager.h) */
+            // limit volume to 2.0f (VOLUME_MAX defined in manager.h)
             if (vol >= VOLUME_MAX)
             {
                 tmp->sndsource->SetVolume(VOLUME_MAX);
