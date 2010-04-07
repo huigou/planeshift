@@ -47,7 +47,7 @@ psQuest::psQuest()
 {
     id = 0;
     parent_quest = NULL;
-    image = NULL;
+    image.Clear();
     step_id = 0;
     player_lockout_time = 0;
     quest_lockout_time = 0;

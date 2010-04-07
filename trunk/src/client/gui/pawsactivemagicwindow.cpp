@@ -71,8 +71,7 @@ void pawsActiveMagicWindow::HandleMessage( MsgEntry* me )
         case psGUIActiveMagicMessage::Add:
         {
             rowEntry.PushBack(incoming.name);
-            pawsListBoxRow *row = list->NewTextBoxRow(rowEntry);
-
+            list->NewTextBoxRow(rowEntry);
             break;
         }
         case psGUIActiveMagicMessage::Remove:

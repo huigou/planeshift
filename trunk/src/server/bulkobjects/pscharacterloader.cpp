@@ -396,7 +396,7 @@ bool psCharacterLoader::NewCharacterData(AccountID accountid, psCharacter *chard
         return false;
     }
 
-    int i;
+    size_t i;
 
     // traits
     if (!ClearCharacterTraits(chardata->GetPID()))
@@ -637,7 +637,7 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
     bool playerORpet = chardata->GetCharType() == PSCHARACTER_TYPE_PLAYER ||
                        chardata->GetCharType() == PSCHARACTER_TYPE_PET;
 
-    int i;
+    size_t i;
     static iRecord* updatePlayer;
     static iRecord* updateNpc;
     if(playerORpet && updatePlayer == NULL)

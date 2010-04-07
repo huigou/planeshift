@@ -41,8 +41,8 @@
 psRaceInfo::psRaceInfo()
 {
     uid=0;
-    mesh_name=NULL;
-    base_texture_name=NULL;
+    mesh_name.Clear();
+    base_texture_name.Clear();
     size.Set(0.0f);
     memset(&attributes,0,sizeof(attributes));
     natural_armor_id=0;

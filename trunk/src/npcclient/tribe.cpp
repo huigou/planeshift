@@ -384,7 +384,7 @@ void psTribe::Advance(csTicks when,EventManager *eventmgr)
         // Now calculate the growth. Adding what part that wasn't added
         // the last time this code where run.
         accWealthGrowth += growth* ((when - lastGrowth)/1000.0);
-        int amount = floor(accWealthGrowth);
+        int amount = int(floor(accWealthGrowth));
         accWealthGrowth -= amount;
 
         AddResource(wealthResourceName, amount );

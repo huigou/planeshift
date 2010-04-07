@@ -116,14 +116,14 @@ void psClientVitals::HandleDRData(psStatDRMessage& msg, const char *labelname )
 
     if (msg.statsDirty & DIRTY_VITAL_EXPERIENCE)
     {
-        experiencePoints = msg.exp;
+        experiencePoints = (unsigned int)msg.exp;
         buff.Format("fExpPts:%s",labelname);
         PawsManager::GetSingleton().Publish(buff,(float)experiencePoints/200.0F);
     }
 
     if (msg.statsDirty & DIRTY_VITAL_PROGRESSION)
     {
-        progressionPoints = msg.prog;
+        progressionPoints = (unsigned int)msg.prog;
         buff.Format("fProgrPts:%s",labelname);
         PawsManager::GetSingleton().Publish(buff,progressionPoints);
     }

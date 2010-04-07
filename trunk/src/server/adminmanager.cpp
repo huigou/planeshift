@@ -3978,7 +3978,7 @@ void AdminManager::Slide(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& dat
                 yrot += slideAmount*PI/180.0; // Rotation units are degrees
                 break;
             case 'I':
-                instance += slideAmount;
+                instance += (InstanceID)slideAmount;
                 break;
             default:
                 psserver->SendSystemError(me->clientnum, "Invalid direction given (Use one of: U D L R F B T I)");
@@ -6761,7 +6761,7 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
             return;
         }
 
-        for (int i=0; i<psserver->GetCacheManager()->GetSkillAmount(); i++)
+        for (size_t i=0; i<psserver->GetCacheManager()->GetSkillAmount(); i++)
         {
             psSkillInfo * skill = psserver->GetCacheManager()->GetSkillByID(i);
             if (skill == NULL) continue;
@@ -6807,7 +6807,7 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
     }
     else if (data.skill == "copy")
     {
-        for (int i=0; i<psserver->GetCacheManager()->GetSkillAmount(); i++)
+        for (size_t i=0; i<psserver->GetCacheManager()->GetSkillAmount(); i++)
         {
             psSkillInfo * skill = psserver->GetCacheManager()->GetSkillByID(i);
             if (skill == NULL) continue;

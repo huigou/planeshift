@@ -1732,7 +1732,7 @@ public:
     {
         psCharacter* c = GetCharacter(env, aim);
         float exp = value->Evaluate(env);
-        c->AddExperiencePoints(exp);
+        c->AddExperiencePoints((unsigned int)exp);
     }
 };
 
