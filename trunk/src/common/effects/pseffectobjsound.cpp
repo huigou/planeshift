@@ -47,13 +47,13 @@ extern SoundSystemManager *SndSysMgr;
 psEffectObjSound::psEffectObjSound(iView *parentView, psEffect2DRenderer * renderer2d)
     : psEffectObj(parentView, renderer2d)
 {
-  sndHandle = NULL;
+    sndHandle = NULL;
 }
 
 psEffectObjSound::~psEffectObjSound()
 {
-  if (sndHandle != NULL)
-    sndHandle->sndstream->Pause();
+    if (sndHandle != NULL)
+        sndHandle->sndstream->Pause();
 }
 
 bool psEffectObjSound::Load(iDocumentNode *node, iLoaderContext* ldr_context)
@@ -119,14 +119,13 @@ bool psEffectObjSound::Render(const csVector3 &up)
     static unsigned long nextUniqueID = 0;
     effectID += nextUniqueID++;
 
-    /* not much left eh? :P */
-	isAlive = false;
-	return true;
+    isAlive = false;
+    return true;
 }
 
 bool psEffectObjSound::AttachToAnchor(psEffectAnchor * newAnchor)
 {
-    if ( newAnchor && newAnchor->GetMesh() )
+    if (newAnchor && newAnchor->GetMesh())
         anchorMesh = newAnchor->GetMesh();
     anchor = newAnchor;
     return true;
@@ -151,7 +150,7 @@ bool psEffectObjSound::Update(csTicks elapsed)
         SndSysMgr->Play3DSound (soundName, LOOP, 0, 0, VOLUME_NORM,
                                 SndSysMgr->effectSndCtrl, csVector3(0,0,0), csVector3(0,0,0),
                                 minDistSquared, maxDistSquared,
-                                0, CS_SND3D_RELATIVE, sndHandle);
+                                0, CS_SND3D_ABSOLUTE, sndHandle);
     }
 
     csVector3 soundPos = anchorMesh->GetMovable()->GetPosition();
@@ -167,8 +166,8 @@ bool psEffectObjSound::Update(csTicks elapsed)
         soundPos += LERP_VEC_KEY(KA_POS);
     }
 
-	if (sndHandle != NULL)
-        sndHandle->sndsource3d->SetPosition(view->GetCamera()->GetTransform().Other2This(soundPos));
+    if (sndHandle != NULL)
+        sndHandle->sndsource3d->SetPosition(soundPos);
       
     if (killTime <= 0)
         return true;

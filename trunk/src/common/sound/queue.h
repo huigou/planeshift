@@ -46,6 +46,7 @@ class SoundQueue
     SoundQueue (SoundControl* &ctrl, float vol);    /* constructor */
     ~SoundQueue ();                                 /* destructor */
     void AddItem (const char *filename);            /* add a item to the queue */
+    void DeleteItem (SoundQueueItem* &item);
     void Work ();                                   /* check if there is something todo */
     void Purge ();                                  /* stop and purge that queue */
 };

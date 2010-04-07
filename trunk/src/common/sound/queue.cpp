@@ -46,12 +46,11 @@ SoundQueue::~SoundQueue ()
 }
 
 /*
- * adds an item to the queue
+ * create a new item and add it to the queue
  * name must be a !unique! filename which exists in our vfs
  */
 
-void
-SoundQueue::AddItem (const char *filename)
+void SoundQueue::AddItem (const char *filename)
 {
     // NOTE: its a pointer because i need a new Instance of SoundQueueItem
     SoundQueueItem      *newItem;
@@ -60,6 +59,16 @@ SoundQueue::AddItem (const char *filename)
     newItem->filename    = csString(filename);
 
     queue.Push(newItem);
+}
+
+/*
+ * delete the item and delete it from the queue
+ */
+
+void SoundQueue::DeleteItem (SoundQueueItem* &item)
+{
+    queue.Delete(item);
+    delete item;
 }
 
 /*
@@ -73,8 +82,7 @@ SoundQueue::AddItem (const char *filename)
  * TODO
  */
 
-void
-SoundQueue::Work ()
+void SoundQueue::Work ()
 {
     SoundQueueItem  *item;
 
@@ -84,27 +92,34 @@ SoundQueue::Work ()
 
         if (item->handle == NULL)
         {
-            /* item will be played */
-            SndSysMgr->Play2DSound (item->filename, false, 0, 0,
-                                    volume, sndCtrl,
-                                    item->handle);
-            item->handle->SetAutoRemove(false);
+            // item will be played
+            if (SndSysMgr->Play2DSound (item->filename, false, 0, 0,
+                                        volume, sndCtrl,
+                                        item->handle))
+            {
+                item->handle->SetAutoRemove(false);
+            }
+            else
+            {
+                // Play2DSound returned false. An error occurred. Delete that item
+                DeleteItem(item);
+                break;
+            }
             return;
         }
         else if (item->handle->sndstream
                  ->GetPauseState () != CS_SNDSYS_STREAM_PAUSED)
         {
-            /* item is still playing */
+            // item is still playing
             return;
         }
         else if (item->handle->sndstream
                  ->GetPauseState () == CS_SNDSYS_STREAM_PAUSED)
         {
-            /* item is paused. remove it and play the next one */
+            // item is paused. remove it
             item->handle->SetAutoRemove(true);
-            queue.Delete(item);
-            delete item;
-            i--;
+            DeleteItem(item);
+            break;
         }
     }
 }
@@ -114,8 +129,7 @@ SoundQueue::Work ()
  * and purge the queue
  */
 
-void
-SoundQueue::Purge ()
+void SoundQueue::Purge ()
 {
     for (size_t i = 0; i < queue.GetSize(); i++)
     {
@@ -125,8 +139,7 @@ SoundQueue::Purge ()
             queue[i]->handle->sndstream->Pause();
         }
 
-        queue.Delete(queue[i]);
-        delete (queue[i]);
+        DeleteItem(queue[i]);
         i--;
     }
 }

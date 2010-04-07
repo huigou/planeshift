@@ -252,7 +252,7 @@ void psSoundManager::ConvertFactoriesToEmitter (sctdata* &sector)
  */
 
 
-void psSoundManager::Load ( const char* sector, csVector3 position )
+void psSoundManager::Load (const char* sector)
 {
     sctdata        *oldsector;
 
@@ -374,16 +374,24 @@ void psSoundManager::UpdateAmbient (sctdata* &sector)
 
             ambient->active = true;
 
-            SndSysMgr->Play2DSound (ambient->resource, LOOP,
-                                    ambient->loopstart, ambient->loopend,
-                                    ambient->minvol, ambientSndCtrl,
-                                    ambient->handle);
-
-            ambient->handle->Fade((ambient->maxvol - ambient->minvol),
-                                   ambient->fadedelay, FADE_UP);
-
-            ambient->handle->preset_volume = ambient->maxvol;
-            sector->activeambient = ambient;
+            if (SndSysMgr->Play2DSound (ambient->resource, LOOP,
+                                        ambient->loopstart, ambient->loopend,
+                                        ambient->minvol, ambientSndCtrl,
+                                        ambient->handle))
+            {
+    
+                ambient->handle->Fade((ambient->maxvol - ambient->minvol),
+                                       ambient->fadedelay, FADE_UP);
+    
+                ambient->handle->preset_volume = ambient->maxvol;
+                sector->activeambient = ambient;
+            }
+            else // error occured .. get rid of this ambient
+            {
+                sector->ambient.Delete(ambient);
+                delete ambient;
+                break;
+            }
 
         }
         else if (ambient->active == true)
@@ -462,16 +470,23 @@ void psSoundManager::UpdateMusic (sctdata* &sector)
             csPrintf("adding b %s\n", (const char *) music->resource);
             music->active = true;
 
-            SndSysMgr->Play2DSound (music->resource, loopBGM,
-                                    music->loopstart, music->loopend,
-                                    music->minvol, musicSndCtrl,
-                                    music->handle);
-
-            music->handle->Fade((music->maxvol - music->minvol),
-                                 music->fadedelay, FADE_UP);
-
-            music->handle->preset_volume = music->maxvol;
-            sector->activemusic = music;
+            if (SndSysMgr->Play2DSound (music->resource, loopBGM,
+                                        music->loopstart, music->loopend,
+                                        music->minvol, musicSndCtrl,
+                                        music->handle))
+            {
+                music->handle->Fade((music->maxvol - music->minvol),
+                                     music->fadedelay, FADE_UP);
+    
+                music->handle->preset_volume = music->maxvol;
+                sector->activemusic = music;
+            }
+            else // error occured .. get rid of this music
+            {
+                sector->music.Delete(music);
+                delete music;
+                break;
+            }
         }
         else if (music->active == true)
         {
@@ -547,12 +562,18 @@ void psSoundManager::UpdateEmitter (sctdata* &sector)
             csPrintf("adding e %s\n", (const char *) emitter->resource);
             emitter->active = true;
 
-            SndSysMgr->Play3DSound (emitter->resource, LOOP, 0, 0,
-                                    emitter->maxvol, ambientSndCtrl,
-                                    emitter->position, emitter->direction,
-                                    emitter->minrange, emitter->maxrange,
-                                    VOLUME_ZERO, CS_SND3D_ABSOLUTE,
-                                    emitter->handle);
+            if (!SndSysMgr->Play3DSound (emitter->resource, LOOP, 0, 0,
+                                         emitter->maxvol, ambientSndCtrl,
+                                         emitter->position, emitter->direction,
+                                         emitter->minrange, emitter->maxrange,
+                                         VOLUME_ZERO, CS_SND3D_ABSOLUTE,
+                                         emitter->handle))
+            {
+                // error occured .. emitter cant be played .. remove it
+                sector->emitter.Delete(emitter);
+                delete emitter;
+                break;
+            }
 
         }
         else if (emitter->active != false)
@@ -595,9 +616,9 @@ void psSoundManager::UpdateEntity (sctdata* &sector)
         return;
     }
 
-    for (size_t i = 0; i < activesector->entity.GetSize(); i++)
+    for (size_t i = 0; i < sector->entity.GetSize(); i++)
     {
-        entity = activesector->entity[i];
+        entity = sector->entity[i];
 
         if (entity->active == true)
         {
@@ -633,15 +654,19 @@ void psSoundManager::UpdateEntity (sctdata* &sector)
                 csPrintf("iobject name %s %f %f\n", mesh->QueryObject()->GetName(), range, entity->maxrange);
                 /* play sound */
                 entity->active = true;
-
-                SndSysMgr->Play3DSound (entity->resource, DONT_LOOP, 0, 0,
-                                        entity->maxvol, ambientSndCtrl,
-                                        entities[a]->GetPosition(), 0,
-                                        entity->minrange, entity->maxrange,
-                                        VOLUME_ZERO, CS_SND3D_ABSOLUTE,
-                                        entity->handle);
-
                 entity->when = (entity->delay_after*1000);
+                
+                if (!SndSysMgr->Play3DSound (entity->resource, DONT_LOOP, 0, 0,
+                                             entity->maxvol, ambientSndCtrl,
+                                             entities[a]->GetPosition(), 0,
+                                             entity->minrange, entity->maxrange,
+                                             VOLUME_ZERO, CS_SND3D_ABSOLUTE,
+                                             entity->handle))
+                {
+                    sector->entity.Delete(entity);
+                    delete entity;
+                    break;
+                }
             }
         }
     }

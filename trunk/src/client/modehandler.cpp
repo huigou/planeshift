@@ -739,8 +739,6 @@ void ModeHandler::UpdateWeatherSounds()
 
 void ModeHandler::SetSectorMusic(const char *sectorname)
 {
-    csVector3 pos = psengine->GetCelClient()->GetMainPlayer()->Pos();
-
     // Get the current sound for our main weather object
     WeatherSound sound;
 
@@ -754,7 +752,7 @@ void ModeHandler::SetSectorMusic(const char *sectorname)
     }
 
     csString sector(sectorname);
-    psengine->GetSoundManager()->Load (sector, pos);
+    psengine->GetSoundManager()->Load (sector);
     psengine->GetSoundManager()->SetWeather((int) sound);
     psengine->GetSoundManager()->SetTimeOfDay(clockHour);
 }
