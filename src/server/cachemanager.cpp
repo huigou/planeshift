@@ -567,6 +567,12 @@ bool CacheManager::PreloadSkills()
                 newskill->category = PSSKILLS_CATEGORY_JOBS;
             else if (type == "VARIOUS")
                 newskill->category = PSSKILLS_CATEGORY_VARIOUS;
+            else
+            {
+                Error3("Unknown category '%s' for skill id %u",type.GetDataSafe(),newskill->id);
+                return false;
+            }
+            
 
             skillinfo_IDHash.Put((int)newskill->id, newskill);
             skillinfo_NameHash.Put(csString(newskill->name).Upcase(), newskill);
