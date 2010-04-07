@@ -646,7 +646,7 @@ void psActionLocation::SetupEntrance(csRef<iDocumentNode> entranceNode)
     entrancePos.y = entranceNode->GetAttributeValueAsFloat( "Y" );
     entrancePos.z = entranceNode->GetAttributeValueAsFloat( "Z" );
     SetEntrancePosition(entrancePos);
-    SetEntranceInstance(entranceNode->GetAttributeValueAsFloat( "Instance" ));
+    SetEntranceInstance(entranceNode->GetAttributeValueAsInt( "Instance" ));
     SetEntranceRotation(entranceNode->GetAttributeValueAsFloat( "Rot" ));
     SetEntranceSector(entranceNode->GetAttributeValue( "Sector" ));
 }
@@ -671,7 +671,7 @@ void psActionLocation::SetupReturn(csRef<iDocumentNode> returnNode)
     returnPos.y = returnNode->GetAttributeValueAsFloat( "Y" );
     returnPos.z = returnNode->GetAttributeValueAsFloat( "Z" );
     SetReturnPosition(returnPos);
-    SetReturnInstance(returnNode->GetAttributeValueAsFloat( "Instance" ));
+    SetReturnInstance(returnNode->GetAttributeValueAsInt( "Instance" ));
     SetReturnRotation(returnNode->GetAttributeValueAsFloat( "Rot" ));
     SetReturnSector(returnNode->GetAttributeValue( "Sector" ));
 }
