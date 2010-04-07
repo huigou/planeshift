@@ -149,7 +149,7 @@ bool psEffectObjSound::Update(csTicks elapsed)
     {
         isAlive = true;
         SndSysMgr->Play3DSound (soundName, LOOP, 0, 0, VOLUME_NORM,
-                                SndSysMgr->effectSndCtrl, (0,0,0), (0,0,0),
+                                SndSysMgr->effectSndCtrl, csVector3(0,0,0), csVector3(0,0,0),
                                 minDistSquared, maxDistSquared,
                                 0, CS_SND3D_RELATIVE, sndHandle);
     }
