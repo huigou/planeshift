@@ -612,7 +612,7 @@ bool pawsListBox::SelectByIndex(int index, bool notify)
         return false;
 
     selected = -1;
-    if (rows.GetSize() <= index)
+    if (rows.GetSize() <= size_t(index))
         return false;
     // If no row assume no selection is wanted.
     if ( index == -1 )
@@ -1373,7 +1373,7 @@ void pawsListBoxRow::AddColumn( int column, ColumnDef* def )
 	// Adjust this column width by the percentage growth of this column on the screen compared to original spec in file
 	float w = this->screenFrame.Width();
 	w /= GetLogicalWidth(screenFrame.Width());
-	int myWidth = def[column].width * w;
+	int myWidth = int(def[column].width * w);
     widget->SetRelativeFrame( offset+borderW+widget->DefaultFrame().xmin, borderH+widget->DefaultFrame().ymin,
                               GetActualWidth(myWidth), GetActualHeight(def[column].height) );
 
