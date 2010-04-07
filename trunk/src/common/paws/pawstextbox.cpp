@@ -841,7 +841,7 @@ void pawsMessageTextBox::SplitMessage(const char* newText, int colour,
                 screenFrame.Width() - offSet);
 
         /// If it can fit the entire string then return.
-        if (canDrawLength == stringBuffer.Length())
+        if (size_t(canDrawLength) == stringBuffer.Length())
         {
             if (!msgLine)
             {
