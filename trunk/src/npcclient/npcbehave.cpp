@@ -202,12 +202,13 @@ void NPCType::FirePerception(NPC *npc, Perception *pcpt)
 
 void NPCType::DumpReactionList(NPC *npc)
 {
-    CPrintf(CON_CMDOUTPUT, "%-30s %-20s %-5s\n","Reaction","Type","Range");
+    CPrintf(CON_CMDOUTPUT, "%-30s %-20s %-5s %-10s\n","Reaction","Type","Range","Value");
     for (size_t i=0; i<reactions.GetSize(); i++)
     {
-        CPrintf(CON_CMDOUTPUT, "%-30s %-20s %5.1f\n",
+        CPrintf(CON_CMDOUTPUT, "%-30s %-20s %5.1f %-10s\n",
                 reactions[i]->GetEventType(),reactions[i]->GetType().GetDataSafe(),
-                reactions[i]->GetRange());
+                reactions[i]->GetRange(),
+                reactions[i]->GetValue().GetDataSafe());
     }
 }
 
@@ -337,7 +338,10 @@ void BehaviorSet::Advance(csTicks delta,NPC *npc)
         // use it only if need > 0
         if (new_behaviour->CurrentNeed()<=0 || !new_behaviour->ApplicableToNPCState(npc))
         {
-            npc->DumpBehaviorList();
+            if (npc->IsDebugging(3))
+            {
+                npc->DumpBehaviorList();
+            }
             npc->Printf(15,"NO Active or no applicable behavior." );
             return;
         }

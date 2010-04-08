@@ -109,6 +109,7 @@ public:
     bool            GetValueValid(int i);
     int             GetValue(int i);
     bool            GetRandomValid(int i);
+    csString        GetValue();
     int             GetRandom(int i);
     const csString& GetType()           { return type;         }
     char            GetOp()             { if (oper.Length()) return oper.GetAt(0); else return 0; }
