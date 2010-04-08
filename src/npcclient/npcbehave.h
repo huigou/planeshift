@@ -113,16 +113,15 @@ public:
      */
     void ClearState(NPC *npc);
 
-    /** Advances the behaviors and returns the active one.
+    /** Advances the behaviors
      *
      * Will calculate the need and select the active behavior.
      *
      * @param delta The numbers of ticks to advance this set.
      * @param npc   The NPC that own this BehaviorSet.
      *
-     * @return The current active behavior after advancing.
      */
-    Behavior* Advance(csTicks delta,NPC *npc);
+    void Advance(csTicks delta,NPC *npc);
 
     /** Interrupt the current active behavior.
      *
@@ -231,7 +230,7 @@ protected:
     csArray<ScriptOperation*> sequence; ///< Sequence of ScriptOperations.
     size_t   current_step;              ///< The ScriptOperation in the sequence that is currently executed.
     bool     loop;                      ///< True if this behavior should start over when completed all operations.
-    bool     is_active;
+    bool     isActive;                  ///< Set to true when this behavior is active
     bool     is_applicable_when_dead;
     float    need_decay_rate;           ///< need lessens while performing behavior
     float    need_growth_rate;          ///< need grows while not performing behavior
@@ -252,7 +251,7 @@ protected:
 public:
     Behavior();
     Behavior(const char *n);
-    Behavior(Behavior& other) { DeepCopy(other); }
+    Behavior(Behavior& other);
     
     virtual ~Behavior() { };
 
@@ -302,9 +301,15 @@ public:
      */
     void ApplyNeedAbsolute(NPC *npc, float absoluteDesire);
     
-    void SetActive(bool flag) { is_active = flag; }
-    
-    bool GetActive(){ return is_active; }
+    void SetIsActive(bool flag) { isActive = flag; }
+
+    /** Used to check if the behavior is active.
+     *
+     * An active behavior is an behavior that will
+     * be advanced and decay in need.
+     *
+     */
+    bool IsActive(){ return isActive; }
     
     void SetCurrentStep(int step) { current_step = step; }
     size_t GetCurrentStep(){ return current_step; }

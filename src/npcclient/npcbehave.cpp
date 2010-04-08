@@ -272,7 +272,7 @@ void BehaviorSet::ClearState(NPC *npc)
     for (size_t i = 0; i<behaviors.GetSize(); i++)
     {
         behaviors[i]->ResetNeed();
-        behaviors[i]->SetActive(false);
+        behaviors[i]->SetIsActive(false);
         behaviors[i]->ClearInterrupted();
     }
     active = NULL;
@@ -294,11 +294,11 @@ bool BehaviorSet::Add(Behavior *behavior)
     return true;
 }
 
-Behavior* BehaviorSet::Advance(csTicks delta,NPC *npc)
+void BehaviorSet::Advance(csTicks delta,NPC *npc)
 {
     while (true)
     {
-        int max_need = -999;
+        float max_need = -999.0;
         bool behaviours_changed = false;
 
         // Go through and update needs based on time
@@ -325,15 +325,10 @@ Behavior* BehaviorSet::Advance(csTicks delta,NPC *npc)
                         behaviors[0] = b;  // now highest need is elem 0
                         behaviours_changed = true;
                     }
-                    max_need = int(b->NewNeed());
+                    max_need = b->NewNeed();
                 }
                 b->CommitAdvance();   // Update key to correct value
             }
-        }
-        // Dump bahaviour list if changed
-        if (behaviours_changed && npc->IsDebugging(3))
-        {
-            npc->DumpBehaviorList();
         }
 
         // now that behaviours are correctly sorted, select the first one
@@ -342,8 +337,9 @@ Behavior* BehaviorSet::Advance(csTicks delta,NPC *npc)
         // use it only if need > 0
         if (new_behaviour->CurrentNeed()<=0 || !new_behaviour->ApplicableToNPCState(npc))
         {
-            npc->Printf(15,"NO Active applicable behavior." );
-            return active;
+            npc->DumpBehaviorList();
+            npc->Printf(15,"NO Active or no applicable behavior." );
+            return;
         }
 
         if (new_behaviour != active)
@@ -356,17 +352,31 @@ Behavior* BehaviorSet::Advance(csTicks delta,NPC *npc)
 
                 // Interrupt and stop current behaviour
                 active->InterruptScript(npc,eventmgr);
-                active->SetActive(false);
+                active->SetIsActive(false);
+            } else
+            {
+                npc->Printf(1,"Activating behavior '%s'",
+                            new_behaviour->GetName() );
             }
+            
 
             // Set the new active behaviour
             active = new_behaviour;
             // Activate the new behaviour
-            active->SetActive(true);
+            active->SetIsActive(true);
+
+            // Dump bahaviour list if changed
+            if (npc->IsDebugging(3))
+            {
+                npc->DumpBehaviorList();
+            }
+
+            // Run the new active behavior
             if (active->StartScript(npc,eventmgr))
             {
                 // This behavior is done so set it inactive
-                active->SetActive(false);
+                active->SetIsActive(false);
+                active = NULL;
             }
             else
             {
@@ -380,15 +390,20 @@ Behavior* BehaviorSet::Advance(csTicks delta,NPC *npc)
         }
     }
 
-    npc->Printf(15,"Active behavior is '%s'", active->GetName() );
-    return active;
+    npc->Printf(15,"Active behavior is '%s'", (active?active->GetName():"(null)") );
+    return;
 }
 
 void BehaviorSet::ResumeScript(NPC *npc, Behavior *which)
 {
     if (which == active && which->ApplicableToNPCState(npc))
     {
-        active->ResumeScript(npc,eventmgr);
+        if (active->ResumeScript(npc,eventmgr))
+        {
+            active->SetIsActive(false);
+            active = NULL;
+        }
+        
     }
 }
 
@@ -423,7 +438,7 @@ Behavior *BehaviorSet::Find(const char *name)
 
 void BehaviorSet::DumpBehaviorList(NPC *npc)
 {
-    CPrintf(CON_CMDOUTPUT, "Appl. %-30s %5s %5s\n","Behavior","Curr","New");
+    CPrintf(CON_CMDOUTPUT, "Appl. IA %-30s %5s %5s\n","Behavior","Curr","New");
 
     for (size_t i=0; i<behaviors.GetSize(); i++)
     {
@@ -433,8 +448,9 @@ void BehaviorSet::DumpBehaviorList(NPC *npc)
             applicable = 'Y';
         }
 
-        CPrintf(CON_CMDOUTPUT, "%c    %s%-30s %5.1f %5.1f\n",applicable,
+        CPrintf(CON_CMDOUTPUT, "%c     %s%s %-30s %5.1f %5.1f\n",applicable,
                 (behaviors[i]->IsInterrupted()?"*":" "),
+                (behaviors[i]->IsActive()?"+":" "),
                 behaviors[i]->GetName(),behaviors[i]->CurrentNeed(),
                 behaviors[i]->NewNeed());
     }
@@ -446,7 +462,7 @@ Behavior::Behavior()
 {
     name                    = "";
     loop                    = false;
-    is_active               = false;
+    isActive                = false;
     is_applicable_when_dead = false;
     need_decay_rate         = 0;
     need_growth_rate        = 0;
@@ -467,7 +483,7 @@ Behavior::Behavior(const char *n)
 {
     name                    = n;
     loop                    = false;
-    is_active               = false;
+    isActive                = false;
     is_applicable_when_dead = false;
     need_decay_rate         = 0;
     need_growth_rate        = 0;
@@ -484,11 +500,17 @@ Behavior::Behavior(const char *n)
     maxLimit                = 0.0;
 }
 
+Behavior::Behavior(Behavior& other)
+{
+    DeepCopy(other);
+}
+
+
 void Behavior::DeepCopy(Behavior& other)
 {
     name                    = other.name;
     loop                    = other.loop;
-    is_active               = other.is_active;
+    isActive                = other.isActive;
     is_applicable_when_dead = other.is_applicable_when_dead;
     need_decay_rate         = other.need_decay_rate;  // need lessens while performing behavior
     need_growth_rate        = other.need_growth_rate; // need grows while not performing behavior
@@ -741,7 +763,7 @@ void Behavior::Advance(csTicks delta, NPC *npc, EventManager *eventmgr)
 
     float d = .001 * delta;
 
-    if (is_active)
+    if (isActive)
     {
         // Apply delta to need, will check for limits as well
         ApplyNeedDelta(npc, -d * need_decay_rate );
@@ -849,7 +871,17 @@ bool Behavior::StartScript(NPC *npc, EventManager *eventmgr)
     }
     else
     {
+        // Start at the first step of the script.
         current_step = 0;
+
+        if (interrupted)
+        {
+            // We don't resume_after_interrupt, but the flag needs to be cleared
+            npc->Printf(3,"Restarting behavior %s after interrupt at step %d - %s.",
+                        name.GetData(), current_step, sequence[current_step]->GetName());
+            interrupted = false;
+        }
+
         return RunScript(npc,eventmgr,false);
     }
 }

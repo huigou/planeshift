@@ -2249,8 +2249,8 @@ bool NavigateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     npc->GetActiveLocate(dest,sector,rot);
     npc->Printf(5, "Located %s at %1.2f m/sec.",toString(dest,sector).GetData(), GetVelocity(npc) );
 
-    StartMoveTo(npc,eventmgr,dest,sector,GetVelocity(npc),action);
-    return false;
+    StartMoveTo(npc,eventmgr,dest,sector,GetVelocity(npc),action,true);
+    return false; // This behavior isn't done yet
 }
 
 void NavigateOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr) 

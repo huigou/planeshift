@@ -3424,10 +3424,12 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
                                      "Radius: %.2f\n"
                                      "Flags: %s\n"
                                      "Aliases: %s\n"
+                                     "Group: %s\n"
                                      "Links: %s",
                                      wp->GetName(),wp->GetID(),rangeWP,
                                      wp->loc.radius,wp->GetFlags().GetDataSafe(),
                                      wp->GetAliases().GetDataSafe(),
+                                     wp->GetGroup(),
                                      links.GetDataSafe());
         }
         if (point)

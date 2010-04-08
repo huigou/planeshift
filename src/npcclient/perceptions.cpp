@@ -231,12 +231,12 @@ void Reaction::React(NPC *who, Perception *pcpt)
 
         // When activeOnly flag is set we should do nothing
         // if the affected behaviour is inactive.
-        if (activeOnly && !affected[i]->GetActive() )
+        if (activeOnly && !affected[i]->IsActive() )
             break;
         
         // When inactiveOnly flag is set we should do nothing
         // if the affected behaviour is active.
-        if (inactiveOnly && affected[i]->GetActive() )
+        if (inactiveOnly && affected[i]->IsActive() )
             break;
 
 

@@ -792,6 +792,7 @@ void NPC::CheckPosition()
     GetLinMove()->AddVelocity(startVel);
     GetLinMove()->SetOnGround(false);
     csVector3 pos(pcmesh->GetMesh()->GetMovable()->GetPosition());
+    iSector* sector = pcmesh->GetMesh()->GetMovable()->GetSectors()->Get(0);
     // See what happens in the next 10 seconds
     int count = 100;
     while (count--)
@@ -801,8 +802,8 @@ void NPC::CheckPosition()
         // Bad starting position - npc is falling at high speed, server should automatically kill it
         if(vel.y < -50)
         {
-            CPrintf(CON_ERROR,"Got bad starting location %f %f %f, killing %s (%s/%s).\n",
-                    pos.x, pos.y, pos.z, name.GetData(), ShowID(pid), ShowID(GetActor()->GetEID()));
+            CPrintf(CON_ERROR,"Got bad starting location %s, killing %s (%s/%s).\n",
+                    toString(pos,sector).GetDataSafe(), name.GetData(), ShowID(pid), ShowID(GetActor()->GetEID()));
             Disable();
             break;
         }
