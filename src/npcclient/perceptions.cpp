@@ -334,6 +334,25 @@ bool Reaction::GetRandomValid(int i)
     return false;
 }
 
+csString Reaction::GetValue()
+{
+    csString result;
+    for (int i = 0; i < (int)valuesValid.GetSize(); i++)
+    {
+        if (i != 0)
+        {
+            result.Append(",");
+        }
+        
+        if (valuesValid[i])
+        {
+            result.AppendFmt("%d",values[i]);
+        }
+    }
+    return result;
+}
+
+
 
 /*----------------------------------------------------------------------------*/
 

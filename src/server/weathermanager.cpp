@@ -250,6 +250,12 @@ void WeatherManager::BroadcastGameTime()
     psserver->GetEventManager()->Broadcast(time.msg);
 }
 
+void WeatherManager::BroadcastGameTimeSuperclients()
+{
+    psWeatherMessage time(0,gameTimeMinute,gameTimeHour,gameTimeDay,gameTimeMonth,gameTimeYear);
+    time.Multicast(psserver->GetNPCManager()->GetSuperClients(),0,PROX_LIST_ANY_RANGE);
+}
+
 
 void WeatherManager::HandleWeatherEvent(psWeatherGameEvent *event)
 {
@@ -561,6 +567,12 @@ void WeatherManager::HandleWeatherEvent(psWeatherGameEvent *event)
                 SaveGameTime();
                 BroadcastGameTime();
             }
+            else
+            {
+                // Super clients should get the time every minute
+                BroadcastGameTimeSuperclients();
+            }
+            
             break;
         }
     default:

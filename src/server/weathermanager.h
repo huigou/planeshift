@@ -79,6 +79,7 @@ public:
     void HandleWeatherEvent(psWeatherGameEvent *event);
     void SendClientGameTime(int cnum);
     void BroadcastGameTime();
+    void BroadcastGameTimeSuperclients();
     void UpdateClient(uint32_t cnum);
     int GetGameTODMinute() {return gameTimeMinute;}
     int GetGameTODHour() {return gameTimeHour;}
