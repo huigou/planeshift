@@ -788,7 +788,7 @@ void Behavior::Advance(csTicks delta, NPC *npc, EventManager *eventmgr)
         // Apply delta to need, will check for limits as well
         ApplyNeedDelta(npc, d * need_growth_rate );
 
-        npc->Printf(10,"%s - Advance none active delta: %.3f Need: %.2f Growth Rate: %.2f",
+        npc->Printf(11,"%s - Advance none active delta: %.3f Need: %.2f Growth Rate: %.2f",
                     name.GetData(),d,new_need,need_growth_rate);
     }
 }
