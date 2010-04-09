@@ -330,16 +330,16 @@ int GEMSupervisor::CountManagedNPCs(AccountID superclientID)
 {
     csHash<gemObject*, EID>::GlobalIterator iter(entities_by_eid.GetIterator());
 
-    int count_players=0;
+    int count=0;
     while (iter.HasNext())
     {
         gemObject *obj = iter.Next();
         if (obj->GetSuperclientID() == superclientID)
         {
-            count_players++;
+            count++;
         }
     }
-    return count_players;
+    return count;
 }
 
 void GEMSupervisor::FillNPCList(MsgEntry *msg, AccountID superclientID)
@@ -379,7 +379,6 @@ void GEMSupervisor::StopAllNPCs(AccountID superclientID)
 
     csHash<gemObject*, EID>::GlobalIterator iter(entities_by_eid.GetIterator());
 
-    count_players=0;
     while (iter.HasNext())
     {
         gemObject *obj = iter.Next();
@@ -406,14 +405,12 @@ void GEMSupervisor::UpdateAllDR()
 {
     csHash<gemObject*, EID>::GlobalIterator iter(entities_by_eid.GetIterator());
 
-    count_players=0;
     while (iter.HasNext())
     {
         gemObject *obj = iter.Next();
         if (obj->GetPID().IsValid())
         {
             obj->UpdateDR();
-            count_players++;
         }
     }
 }
@@ -422,13 +419,14 @@ void GEMSupervisor::UpdateAllStats()
 {
     csHash<gemObject*, EID>::GlobalIterator iter(entities_by_eid.GetIterator());
 
-    count_players=0; // FIXME: This is zeroed out but not recounted?
     while (iter.HasNext())
     {
         gemObject *obj = iter.Next();
         gemActor *actor = dynamic_cast<gemActor *>(obj);
         if (actor)
+        {
             actor->UpdateStats();
+        }
     }
 }
 
@@ -451,15 +449,13 @@ void GEMSupervisor::GetAllEntityPos(csArray<psAllEntityPosMessage>& update)
 {
     csHash<gemObject*, EID>::GlobalIterator iter(entities_by_eid.GetIterator());
     
-    //this is used to do the various messages in an array to be sent after to the npcclient
-    for(int position = 0; position < count_players; position += ALLENTITYPOS_MAX_AMOUNT)
+    // Loop as long as we need to send more messages.
+    while (iter.HasNext())
     {
         psAllEntityPosMessage msg;
-        if(count_players < ALLENTITYPOS_MAX_AMOUNT) //if it's less than the max we just need one
-            msg.SetLength(count_players,0);  // Theoretical max of how many
-        else
-            msg.SetLength(ALLENTITYPOS_MAX_AMOUNT,0);
+        msg.SetLength(ALLENTITYPOS_MAX_AMOUNT,0); // Set a message length limit
 
+        // Fill the message
         int count_actual = 0;
         while (iter.HasNext())
         {
@@ -495,7 +491,9 @@ void GEMSupervisor::GetAllEntityPos(csArray<psAllEntityPosMessage>& update)
         }
         msg.msg->ClipToCurrentSize();  // Actual Data size
         msg.msg->Reset();
-        msg.msg->Add((int16_t)count_actual);  // Now correct the first value, which is the count of following entities
+        // Now correct the first value, which is the count of following entities
+        // SetLength has allready allocated the int16_t for this.
+        msg.msg->Add((int16_t)count_actual);  
         update.Push(msg);
     }
 }
@@ -2310,7 +2308,7 @@ void gemActor::Resurrect()
     {
         float x,y,z,yrot;
         optionEntry* deathentry = cacheManager->getOptionSafe("death","");
-        if(psChar->GetTotalOnlineTime() > deathentry->getOptionSafe("avoidtime", "0")->getValueAsInt())
+        if(psChar->GetTotalOnlineTime() > (unsigned int)(deathentry->getOptionSafe("avoidtime", "0")->getValueAsInt()))
         {
             csString sectorName = deathentry->getOptionSafe("sectorname", "DR01")->getValue();
             x = deathentry->getOptionSafe("sectorx", "-29.2")->getValueAsDouble();
@@ -3129,6 +3127,74 @@ void gemActor::SetGMDefaults()
 
     questtester = false;  // Always off by default
 }
+
+void gemActor::SetDefaults( bool player )
+{
+    if (player)
+    {
+        if (invincible)
+        {
+            SetInvincibility( false );
+        }
+        safefall = false;
+        nevertired = false;
+        infinitemana = false;
+        if (!GetVisibility())
+        {
+            SetVisibility( true );
+        }
+        if (GetViewAllObjects())
+        {
+            SetViewAllObjects( false );
+        }
+        if (!GetFiniteInventory())
+        {
+            SetFiniteInventory( true );
+        }
+        questtester = false;
+        instantcast = false;
+        givekillexp = true;
+        attackable = true;
+        GetClient()->SetBuddyListHide(false);
+    }
+    else
+    {
+        if ( cacheManager->GetCommandManager()->Validate(securityLevel, "default invincible") )
+        {
+            if (invincible)
+            {
+                SetInvincibility( true );
+            }
+            safefall = true;
+            nevertired = true;
+            infinitemana = true;
+        }
+        if ( cacheManager->GetCommandManager()->Validate(securityLevel, "default invisible") )
+        {
+            if (GetVisibility())
+            {
+                SetVisibility( false );
+            }
+            if (!GetViewAllObjects())
+            {
+                SetViewAllObjects( true );
+            }
+        }
+        if ( cacheManager->GetCommandManager()->Validate(securityLevel, "default infinite inventory") )
+        {
+            if (GetFiniteInventory())
+            {
+                SetFiniteInventory( false );
+            }
+        }
+        questtester = false;
+        instantcast = false;
+        givekillexp = false;
+        attackable = false;
+        GetClient()->SetBuddyListHide(true);
+    }
+}
+
 
 void gemActor::SetInstance(InstanceID worldInstance)
 {
