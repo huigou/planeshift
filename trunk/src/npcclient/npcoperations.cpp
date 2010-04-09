@@ -752,7 +752,7 @@ void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
     targetPos = myPos + (1 - factor) * displacement;
     targetPos.y = myPos.y;
 
-    npc->Printf(10, "Still chasing %s at %s...",(const char *)name,toString(targetPos,targetSector).GetDataSafe());
+    npc->Printf(10, "Still chasing %s at %s with range %.1f...",(const char *)name,toString(targetPos,targetSector).GetDataSafe(),distance);
     
     float angleToTarget = psGameObject::CalculateIncidentAngle(myPos, targetPos);
     csVector3 pathDest = path.GetDest();

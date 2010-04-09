@@ -267,8 +267,6 @@ protected:
     csHash<gemItem*, uint32> items_by_uid;   ///< A list of all the items stored by UID (psItem ID).
     csHash<gemActor*,  PID> actors_by_pid;   ///< A list of all the actors stored by PID (player/character ID).
 
-    int                 count_players;       ///< Total Number of players
-
     uint32              nextEID;             ///< The next ID available for an object.
 
     /// Stored here to save expensive csQueryRegistry calls
@@ -1111,6 +1109,17 @@ public:
     void CancelActiveSpellsForDeath();
     void CancelActiveSpellsWhichDamage();
     int FindAnimIndex(const char *name);
+
+
+    /** Set attributes back to default.
+     *
+     * GMs use this commands to set attributes back to the default
+     * for either a player or a GM.
+     *
+     * @param player Set to true for players. False for GMs.
+     */
+    void SetDefaults( bool player );
+    
 
     /** These flags are for GM/debug abilities */
     bool nevertired;        ///< infinite stamina

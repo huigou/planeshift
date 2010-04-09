@@ -813,7 +813,7 @@ Reloads the currently targeted item from the database.</topic>
 <topic name="/runscript">/runscript [script_name] [me/target/eid/pid/area/name]
 
 Runs a progression script on the target.</topic>
-        <topic name="/set">/set target attribute [on|off]
+        <topic name="/set">/set target gm|player|attribute [on|off]
 
 Many of these attribute are enabled by default for GMs.
 If you do not specify on or off the current mode will be toggled.
@@ -829,7 +829,9 @@ Available attributes are:
 - questtester (bypass quest lockouts and prerequisites).
 - instantcast (bypasses spell casting time)
 - givekillexp (awards experience when a GM is killed, as in an event)
-- buddyhide (hides you from player (not GM/Dev) buddy lists)</topic>
+- buddyhide (hides you from player (not GM/Dev) buddy lists)
+
+To set the default used for players do "/set me player". For the default for GMs do "/set me gm".</topic>
 <topic name="/setlabelcolor">/setlabelcolor [target] [npc|player|tester|gm|gm1|dead|alive|normal]
 
 Set the color of the label of target to the given value. The normal setting will again display the targets normal label color.</topic>  

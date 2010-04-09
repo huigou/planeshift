@@ -147,18 +147,19 @@
           <move vel="2" anim="walk" duration="1.0"/>
       </behavior>
       <behavior name="fight" decay="0" growth="0" initial="0">
-	  <locate obj="target"  range="50"/>
+	  <locate obj="target"  range="20"/>
           <rotate type="locatedest" anim="walk" ang_vel="120" />
-	  <melee seek_range="50" melee_range="3" />
+	  <melee seek_range="20" melee_range="3" />
       </behavior>
       <behavior name="chase" decay="1" completion_decay="100" growth="0" initial="0">
-          <chase type="target" anim="run" vel="5" />
+          <chase type="target" chase_range="20" anim="run" vel="5" />
       </behavior>
       <react event="collision"           behavior="turn" />
       <react event="out of bounds"       behavior="turn" />
       <react event="attack"              behavior="fight" />
       <react event="damage"              behavior="fight" delta="20" weight="1" />
       <react event="target out of range" behavior="chase" />
+      <react event="target out of chase" behavior="chase" absolute="0" only_interrupt="chase"/>
       <react event="death"               behavior="fight" delta="0" />
   </npctype>
 
@@ -167,12 +168,12 @@
 
       <behavior name="turn to face" completion_decay="-1" growth="0" initial="0">
 	  <locate obj="perception" />
-          <rotate type="locatedest" anim="walk" ang_vel="120" />
+          <rotate type="locatedest" anim="walk" ang_vel="60" />
       </behavior>
 
       <react event="player sensed"       behavior="turn to face" delta="100" inactive_only="yes" />
       <react event="player nearby"       behavior="fight" delta="100" inactive_only="yes" faction_diff="-200" oper=">"  />
-      <react event="player adjacent"       behavior="fight" delta="100" inactive_only="yes" faction_diff="-200" oper=">"  />
+      <react event="player adjacent"     behavior="fight" delta="100" inactive_only="yes" faction_diff="-200" oper=">"  />
 
   </npctype>
 

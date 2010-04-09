@@ -2146,7 +2146,8 @@ void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
 
     if (data.attribute == "list")
     {
-        psserver->SendSystemInfo(me->clientnum, "invincible = %s\n"
+        psserver->SendSystemInfo(me->clientnum, "Current settings for %s is:\n"
+                                                "invincible = %s\n"
                                                 "invisible = %s\n"
                                                 "viewall = %s\n"
                                                 "nevertired = %s\n"
@@ -2158,6 +2159,7 @@ void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
                                                 "givekillexp = %s\n"
                                                 "attackable = %s\n"
                                                 "buddyhide = %s",
+                                                actor->GetName(),
                                                 (actor->GetInvincibility())?"on":"off",
                                                 (!actor->GetVisibility())?"on":"off",
                                                 (actor->GetViewAllObjects())?"on":"off",
@@ -2172,6 +2174,20 @@ void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
                                                 (actor->GetClient()->GetBuddyListHide())?"on":"off");
         return;
     }
+    else if (data.attribute == "gm")
+    {
+        actor->SetDefaults( false );
+        psserver->SendSystemInfo(me->clientnum, "Set all flags to default for GM." );
+        SendGMAttribs(client);
+        return;
+    }
+    else if (data.attribute == "player")
+    {
+        actor->SetDefaults( true );
+        psserver->SendSystemInfo(me->clientnum, "Set all flags to default for Player." );
+        SendGMAttribs(client);
+        return;
+    }    
     else if (data.attribute == "invincible" || data.attribute == "invincibility")
     {
         if (toggle)
@@ -2326,7 +2342,7 @@ void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
     }
     else
     {
-        psserver->SendSystemInfo(me->clientnum, "Correct syntax is: \"/set [target] [attribute] [on|off]\"");
+        psserver->SendSystemInfo(me->clientnum, "Correct syntax is: \"/set [target] [list|gm|player|attribute] [on|off]\"");
         return;
     }
 

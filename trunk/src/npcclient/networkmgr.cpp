@@ -651,7 +651,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 if (!npc)
                     break;  // This perception is not our problem
 
-                npc->Printf("Range perception: NPC: %s, player: %s, faction: %.0f\n",
+                npc->Printf("Range perception: NPC: %s, player: %s, faction: %.0f",
                             ShowID(npcEID), ShowID(playerEID), faction);
 
                 gemNPCObject *npc_ent = (npc) ? npc->GetActor() : npcclient->FindEntityID(npcEID);
@@ -660,8 +660,6 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 if (!player || !npc_ent)
                     break;
 
-                npc->Printf("Got Player %s in Range of %s Perception, with faction %.0f\n",
-                            player->GetName(), npc_ent->GetName(), faction);
 
                 csString pcpt_name;
                 if ( npc->GetOwner() == player )
@@ -680,6 +678,9 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                     pcpt_name.Append("nearby");
                 if (cmd == psNPCCommandsMessage::PCPT_VERYSHORTRANGEPLAYER)
                     pcpt_name.Append("adjacent");
+
+                npc->Printf("Got Player %s in Range of %s with the %s Perception, with faction %d",
+                            player->GetName(), npc_ent->GetName(), pcpt_name.GetData(), int(faction));
 
                 FactionPerception pcpt(pcpt_name, int (faction), player);
 
