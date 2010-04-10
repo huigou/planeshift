@@ -89,7 +89,7 @@ NPCDialogDict::~NPCDialogDict()
 	csHash<NpcTriggerGroupEntry*, csString>::GlobalIterator triggergroupIter(trigger_groups.GetIterator());
 	while(triggergroupIter.HasNext())
 		delete triggergroupIter.Next();	
-	csRedBlackTree<NpcTrigger*>::Iterator triggerIter(triggers.GetIterator());
+	NpcTriggerTree::Iterator triggerIter(triggers.GetIterator());
 	while(triggerIter.HasNext())
 		delete triggerIter.Next();
 	csHash<NpcResponse*>::GlobalIterator responsesIter(responses.GetIterator());
@@ -923,7 +923,7 @@ void NPCDialogDict::Print(const char *area)
     if (area!=NULL && strlen(area))
     {
         CPrintf(CON_CMDOUTPUT ,"----------- Triggers/Responses of area %s----------\n",area);
-        csRedBlackTree<NpcTrigger*>::Iterator trig_iter(triggers.GetIterator());
+        NpcTriggerTree::Iterator trig_iter(triggers.GetIterator());
         NpcTrigger * trig;
         while(trig_iter.HasNext())
         {
@@ -951,7 +951,7 @@ void NPCDialogDict::Print(const char *area)
     }
 
     CPrintf(CON_CMDOUTPUT ,"----------- All Triggers ----------\n");
-    csRedBlackTree<NpcTrigger*>::Iterator trig_iter(triggers.GetIterator());
+    NpcTriggerTree::Iterator trig_iter(triggers.GetIterator());
     NpcTrigger * trig;
     while(trig_iter.HasNext())
     {
@@ -1142,22 +1142,15 @@ bool NpcTrigger::operator==(const NpcTrigger& other) const
             priorresponseID==other.priorresponseID);
 };
 
-bool NpcTrigger::operator<(const NpcTrigger& other) const
+bool NpcTrigger::operator<=(const NpcTrigger& other) const
 {
-    if (strcmp(area,other.area)<0)
-        return true;
     if (strcmp(area,other.area)>0)
         return false;
-
-    if (strcmp(trigger,other.trigger)<0)
-        return true;
     if (strcmp(trigger,other.trigger)>0)
         return false;
-
-    if (priorresponseID<other.priorresponseID)
-        return true;
-
-    return false;
+    if (priorresponseID>other.priorresponseID)
+        return false;
+    return true;
 };
 
 
