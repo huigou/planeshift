@@ -3922,8 +3922,10 @@ void WorkManager::LockpickComplete(psWorkGameEvent* workEvent)
     {
         // Check if the user has the right skills
         int rank = 0;
-        if (skill >= 0 && skill < cacheManager->GetSkillAmount())
+        if (skill >= 0 && skill < (PSSKILL)cacheManager->GetSkillAmount())
+        {
             rank = character->Skills().GetSkillRank(skill).Current();
+        }
 
         if (rank >= (int) workEvent->object->GetLockStrength())
         {

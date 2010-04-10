@@ -30,6 +30,7 @@
 #include "util/consoleout.h"
 #include "util/log.h"
 #include "util/psstring.h"
+#include "util/psutil.h"
 
 
 /*------------------------------------------------------------------*/
@@ -50,6 +51,28 @@ iSector* Location::GetSector(iEngine * engine)
     sector = engine->FindSector(sectorName.GetDataSafe());
     return sector;
 }
+
+const csBox2& Location::GetBoundingBox() const
+{
+    return boundingBox;
+}
+
+void Location::CalculateBoundingBox()
+{
+    if (IsCircle())
+    {
+        boundingBox.AddBoundingVertex(pos.x-radius,pos.z-radius);
+        boundingBox.AddBoundingVertex(pos.x+radius,pos.z+radius);
+    } else
+    {
+        for (size_t i=0; i< locs.GetSize(); i++)
+        {
+            boundingBox.AddBoundingVertex(locs[i]->pos.x,locs[i]->pos.z);
+        }
+    }
+}
+
+
 
 int Location::GetSectorID(iDataConnection *db,const char* name)
 {
@@ -308,6 +331,7 @@ bool LocationType::Load(iResultRow& row, iEngine * engine, iDataConnection *db)
         else
         {
             locs.Push(first);
+            first->CalculateBoundingBox();
         }
     }    
     
@@ -323,6 +347,17 @@ bool LocationType::CheckWithinBounds(iEngine * engine, const csVector3& p,const 
     
     return false;
 }
+
+bool LocationType::GetRandomPosition(iEngine * engine,csVector3& pos,iSector* &sector)
+{
+    for (size_t i = 0; i < locs.GetSize(); i++)
+    {
+        if (locs[i]->GetRandomPosition(engine,pos,sector)) return true;
+    }
+    
+    return false;
+}
+
 
 bool Location::CheckWithinBounds(iEngine * engine,const csVector3& p,const iSector* sector)
 {
@@ -363,5 +398,29 @@ bool Location::CheckWithinBounds(iEngine * engine,const csVector3& p,const iSect
 
     return (counter % 2 != 0);
 }
+
+bool Location::GetRandomPosition(iEngine * engine,csVector3& pos,iSector* &sector)
+{
+    csVector3 randomPos;
+    iSector*  randomSector;
+    
+    // TODO: Hack, for now just get the y value and sector from the first point.
+    randomPos.y = pos.y;
+    randomSector = GetSector(engine);
+
+    do 
+    {
+        randomPos.x = boundingBox.MinX() + psGetRandom()*(boundingBox.MaxX() - boundingBox.MinX());
+        randomPos.z = boundingBox.MinY() + psGetRandom()*(boundingBox.MaxY() - boundingBox.MinY());
+        
+    } while (!CheckWithinBounds(engine,randomPos,randomSector));
+
+    pos = randomPos;
+    sector = randomSector;
+
+    return true;
+}
+
+
 
 /*------------------------------------------------------------------*/

@@ -859,7 +859,6 @@ void UserManager::HandleEntranceMessage( MsgEntry* me, Client *client )
     csVector3 pos = action->GetEntrancePosition();
     float rot = action->GetEntranceRotation();
     csString sectorName = action->GetEntranceSector();
-    InstanceID targetInstance = action->GetEntranceInstance();
 
     // Check for different entrance types
     csString entranceType = action->GetEntranceType();
@@ -882,10 +881,10 @@ void UserManager::HandleEntranceMessage( MsgEntry* me, Client *client )
     //send player to defined instance
     else if (entranceType == "Instanced")
     {
-		InstanceID instance = action->GetEntranceInstance();
+        InstanceID instance = action->GetEntranceInstance();
         if (secure) psserver->SendSystemInfo(client->GetClientNum(),"Teleporting to sector %s Instance: %u", sectorName.GetData(), instance);
         actor->Teleport(sectorName, pos, rot, instance);
-	}
+    }
 
     // Send player back to starting point
     else if (entranceType == "ExitActionID")

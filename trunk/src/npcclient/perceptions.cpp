@@ -153,6 +153,11 @@ bool Reaction::Load(iDocumentNode *node,BehaviorSet& behaviors)
     {
         onlyInterrupt = psSplit(tmp,',');
     }
+    tmp                    = node->GetAttributeValue("do_not_interrupt");
+    if (tmp.Length())
+    {
+        doNotInterrupt = psSplit(tmp,',');
+    }
 
     return true;
 }
@@ -182,6 +187,7 @@ void Reaction::DeepCopy(Reaction& other,BehaviorSet& behaviors)
     reactWhenInvisible     = other.reactWhenInvisible;
     reactWhenInvincible    = other.reactWhenInvincible;
     onlyInterrupt          = other.onlyInterrupt;
+    doNotInterrupt         = other.doNotInterrupt;
 
     // For now depend on that each npc do a deep copy to create its instance of the reaction
     for (uint ii=0; ii < values.GetSize(); ii++)
@@ -200,6 +206,20 @@ void Reaction::React(NPC *who, Perception *pcpt)
     // If dead we should not react unless reactWhenDead is set
     if (!(who->IsAlive() || reactWhenDead))
         return;
+
+    if (doNotInterrupt.GetSize())
+    {
+        for (size_t i = 0; i < doNotInterrupt.GetSize(); i++)
+        {
+            if (who->GetCurrentBehavior() && doNotInterrupt[i] == who->GetCurrentBehavior()->GetName())
+            {
+                who->Printf(5,"Prevented from reacting to '%s' while '%s' is active",
+                            GetEventType(),who->GetCurrentBehavior()->GetName());
+                return;
+            }
+        }
+    }
+    
 
     // Check if this reaction is limited to only interrupt some given behaviors.
     if (onlyInterrupt.GetSize())

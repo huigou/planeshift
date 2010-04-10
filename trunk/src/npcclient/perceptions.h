@@ -57,6 +57,8 @@ class gemNPCItem;
 class Reaction
 {
 protected:
+    friend class NPCType;
+    
     // members making up the "if statement"
     csString  eventType;
     float     range;
@@ -73,6 +75,7 @@ protected:
     csArray<int> randoms;
     csString  type;
     csArray<csString> onlyInterrupt;
+    csArray<csString> doNotInterrupt;
 
     // members making up the "then statement"
     csArray<Behavior*> affected;

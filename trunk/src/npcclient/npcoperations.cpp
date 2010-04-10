@@ -62,9 +62,7 @@ ScriptOperation::ScriptOperation(const char* scriptName)
       interrupted_angle(0.0f),collision("collision"),
       outOfBounds("out of bounds"),inBounds("in bounds"),
       checkTribeHome(false),
-      consecCollisions(0),
-      insideRegion(true), // We assume that we start inside the region
-      insideTribeHome(true) // We assume that we start inside tribe home
+      consecCollisions(0)
 {
 }
 
@@ -246,13 +244,13 @@ bool ScriptOperation::CheckMoveOk(NPC *npc, EventManager *eventmgr, csVector3 ol
             npc->Printf(10, "Checking Region bounds");
             
             // check for inside/outside region bounds
-            if (insideRegion)
+            if (npc->IsInsideRegion())
             {
                 if (!rgn->CheckWithinBounds(npcclient->GetEngine(),newPos,newSector))
                 {
                     Perception outbounds(outOfBounds);
                     npc->TriggerEvent(&outbounds);
-                    insideRegion = false;
+                    npc->SetInsideRegion(false);
                 }
             }
             else
@@ -261,7 +259,7 @@ bool ScriptOperation::CheckMoveOk(NPC *npc, EventManager *eventmgr, csVector3 ol
                 {
                     Perception inbounds(inBounds);
                     npc->TriggerEvent(&inbounds);
-                    insideRegion = true;
+                    npc->SetInsideRegion(true);
                 }
             }
         }
@@ -276,13 +274,13 @@ bool ScriptOperation::CheckMoveOk(NPC *npc, EventManager *eventmgr, csVector3 ol
         {
             npc->Printf(10, "Checking Tribe bounds");
 
-            if (insideTribeHome)
+            if (npc->IsInsideTribeHome())
             {
                 if (!npc->GetTribe()->CheckWithinBoundsTribeHome(npc,newPos,newSector))
                 {
                     Perception outbounds(outOfBounds);
                     npc->TriggerEvent(&outbounds);
-                    insideTribeHome = false;
+                    npc->SetInsideTribeHome(false);
                 }
             }
             else
@@ -291,7 +289,7 @@ bool ScriptOperation::CheckMoveOk(NPC *npc, EventManager *eventmgr, csVector3 ol
                 {
                     Perception inbounds(inBounds);
                     npc->TriggerEvent(&inbounds);
-                    insideTribeHome = true;
+                    npc->SetInsideTribeHome(true);
                 }                
             }
         }
@@ -332,7 +330,7 @@ void ScriptOperation::StopResume()
 }
 
 
-void ScriptOperation::TurnTo(NPC *npc, csVector3& dest, iSector* destsect, csVector3& forward)
+void ScriptOperation::TurnTo(NPC *npc, csVector3& dest, iSector* destsect, csVector3& forward, float &angle)
 {
     npc->Printf(6,"TurnTo localDest=%s",toString(dest,destsect).GetData());
 
@@ -358,7 +356,7 @@ void ScriptOperation::TurnTo(NPC *npc, csVector3& dest, iSector* destsect, csVec
     
     forward.y = 0;
 
-    float angle = psGameObject::CalculateIncidentAngle(pos,dest);
+    angle = psGameObject::CalculateIncidentAngle(pos,dest);
     if (angle < 0) angle += TWO_PI;
 
     pcmesh->GetMesh()->GetMovable()->GetTransform().LookAt (-forward.Unit(), up.Unit());
@@ -389,11 +387,11 @@ void ScriptOperation::StopMovement(NPC *npc)
 }
 
 
-int ScriptOperation::StartMoveTo(NPC *npc,EventManager *eventmgr, csVector3& dest, iSector* sector, float vel,const char *action, bool autoresume)
+int ScriptOperation::StartMoveTo(NPC *npc,EventManager *eventmgr, csVector3& dest, iSector* sector, float vel, const char *action, bool autoresume, float &angle)
 {
     csVector3 forward;
     
-    TurnTo(npc, dest, sector, forward);
+    TurnTo(npc, dest, sector, forward, angle);
     
     // SetAction animation for the mesh also, so it looks right
     SetAnimation(npc, action);
@@ -570,6 +568,7 @@ bool ChaseOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     float myRot;
     iSector* mySector;
     csVector3 myPos;
+    float angle;
 
     csVector3 dest;
     csString name;
@@ -657,7 +656,7 @@ bool ChaseOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 
         if ( GetAngularVelocity(npc) > 0 || GetVelocity(npc) > 0 )
         {
-            StartMoveTo(npc, eventmgr, localDest, targetSector, GetVelocity(npc), action, false);
+            StartMoveTo(npc, eventmgr, localDest, targetSector, GetVelocity(npc), action, false, angle);
             return false;
         }
         else
@@ -682,6 +681,7 @@ void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
     InstanceID       myInstance, targetInstance;
     iSector * mySector, *myNewSector, *targetSector;
     csVector3 forward;
+    float angle;
     
     npc->GetLinMove()->GetLastPosition(myPos, myRot, mySector);
     myInstance = npc->GetActor()->GetInstance();
@@ -765,7 +765,7 @@ void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
         npc->Printf(8, "turn to target..");
         path.SetDest(targetPos);
         path.CalcLocalDest(myPos, mySector, localDest);
-        StartMoveTo(npc,eventmgr,localDest, mySector, GetVelocity(npc), action, false);
+        StartMoveTo(npc,eventmgr,localDest, mySector, GetVelocity(npc), action, false, angle);
     }
     
 
@@ -787,12 +787,12 @@ void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
             npc->Printf(6, "We are at localDest..");
             path.SetDest(targetPos);
             path.CalcLocalDest(myPos, mySector, localDest);
-            StartMoveTo(npc, eventmgr, localDest, mySector, GetVelocity(npc), action, false);
+            StartMoveTo(npc, eventmgr, localDest, mySector, GetVelocity(npc), action, false, angle);
         }
     }
     else
     {
-        TurnTo(npc, localDest, mySector, forward);
+        TurnTo(npc, localDest, mySector, forward, angle);
     }
     // Limit time extrapolation so we arrive near the correct place.
     if(Calc2DDistance(localDest, myPos) <= close)
@@ -1192,6 +1192,10 @@ bool LocateOperation::Load(iDocumentNode *node)
     {
         return true;
     }
+    else if (split_obj[0] == "region")
+    {
+        return true;
+    }
     else if (split_obj[0] == "self")
     {
         return true;
@@ -1398,6 +1402,7 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         }
         else
         {
+            npc->Printf("Failed to find owner");
             return true; // Nothing more to do for this op.
         }
 
@@ -1409,6 +1414,29 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         located_pos = pos;
         located_angle = 0;
         located_sector = sector;
+    }
+    else if (split_obj[0] == "region")
+    {
+        npc->Printf(5,"LocateOp - Region");
+        LocationType* region = npc->GetRegion();
+        if (!region)
+        {
+            npc->Printf("Failed to locate region");
+            return true; // Nothing more to do for this op.
+        }
+
+        iSector *sector;
+        csVector3 pos;
+
+        if (region->GetRandomPosition(npcclient->GetEngine(),pos,sector))
+        {
+            located_pos = pos;
+            located_angle = 0;
+            located_sector = sector;
+
+            // Find closest waypoint to the random location in the region
+            located_wp = CalculateWaypoint(npc,located_pos,located_sector,-1);
+        }
     }
     else if (split_obj[0] == "self")
     {
@@ -1793,30 +1821,32 @@ void MeleeOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
     // Make sure our rotation is still correct
     if(attacked_ent)
     {
-    	float rot, npc_rot, new_npc_rot;
-		iSector *sector;
-		csVector3 pos;
-		
-		// Get current rot
-		psGameObject::GetPosition(npc->GetActor(),pos,npc_rot,sector);
-		
-		// Get target pos
-		psGameObject::GetPosition(attacked_ent,pos,rot,sector);
-
-		// Make sure we still face the target
-		csVector3 forward;
-			
-		TurnTo(npc, pos, sector, forward);
-		// Needed because TurnTo automatically starts moving.
-	    csVector3 velvector(0,0,  0 );
-	    npc->GetLinMove()->SetVelocity(velvector);
-	    npc->GetLinMove()->SetAngularVelocity( 0 );
-		// Check new rot
-		psGameObject::GetPosition(npc->GetActor(),pos,new_npc_rot,sector);
-		
-		// If different broadcast the new rot
-		if (npc_rot != new_npc_rot)
-			npcclient->GetNetworkMgr()->QueueDRData(npc);
+    	float rot, npc_rot, new_npc_rot, angle;
+        iSector *sector;
+        csVector3 pos;
+        
+        // Get current rot
+        psGameObject::GetPosition(npc->GetActor(),pos,npc_rot,sector);
+	
+        // Get target pos
+        psGameObject::GetPosition(attacked_ent,pos,rot,sector);
+        
+        // Make sure we still face the target
+        csVector3 forward;
+	
+        TurnTo(npc, pos, sector, forward,angle);
+        // Needed because TurnTo automatically starts moving.
+        csVector3 velvector(0,0,  0 );
+        npc->GetLinMove()->SetVelocity(velvector);
+        npc->GetLinMove()->SetAngularVelocity( 0 );
+        // Check new rot
+        psGameObject::GetPosition(npc->GetActor(),pos,new_npc_rot,sector);
+	
+        // If different broadcast the new rot
+        if (npc_rot != new_npc_rot)
+        {
+            npcclient->GetNetworkMgr()->QueueDRData(npc);
+        }
     }
 }
 
@@ -1877,6 +1907,8 @@ bool MoveOperation::Load(iDocumentNode *node)
     action = node->GetAttributeValue("anim");
     duration = node->GetAttributeValueAsFloat("duration");
     ang_vel = node->GetAttributeValueAsFloat("ang_vel");
+    angle = node->GetAttributeValueAsFloat("angle");
+    
     return true;
 }
 
@@ -2145,7 +2177,7 @@ bool MoveToOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     
     // Using "true" teleports to dest location after proper time has 
     // elapsed and is therefore more tolerant of CD errors.
-    StartMoveTo(npc, eventmgr, localDest, sector,vel,action, true); 
+    StartMoveTo(npc, eventmgr, localDest, sector,vel,action, true,rot); 
     return false;
 }
 
@@ -2153,6 +2185,7 @@ void MoveToOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
 {
     csVector3 pos,pos2;
     float     rot;
+    float     angle;
     iSector * sector;
     csVector3 forward;
 
@@ -2164,7 +2197,7 @@ void MoveToOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
                 dest.x,dest.y,dest.z,
                 Calc2DDistance(localDest, pos));
     
-    TurnTo(npc, localDest, sector, forward);
+    TurnTo(npc, localDest, sector, forward,angle);
     
     //tolerance must be according to step size
     //we must ignore y
@@ -2184,7 +2217,7 @@ void MoveToOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
         {
             npc->Printf(8,"we are at localDest... WHAT DOES THIS MEAN?");
             path.CalcLocalDest(pos, sector, localDest);
-            StartMoveTo(npc,eventmgr,localDest, sector, vel,action, false);
+            StartMoveTo(npc,eventmgr,localDest, sector, vel,action, false, angle);
         }
     }
     else
@@ -2226,36 +2259,58 @@ bool MoveToOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
 
 bool NavigateOperation::Load(iDocumentNode *node)
 {
+    LoadVelocity(node);
+    LoadCheckMoveOk(node);
+
     action = node->GetAttributeValue("anim");
+    forceEndPosition = node->GetAttributeValueAsBool("force",false);
+    
     return true;
 }
 
 ScriptOperation *NavigateOperation::MakeCopy()
 {
     NavigateOperation *op = new NavigateOperation;
-    op->action = action;
-    op->velSource = velSource;
-    op->vel    = vel;
+    op->action           = action;
+    op->velSource        = velSource;
+    op->vel              = vel;
+    op->forceEndPosition = forceEndPosition;
+
+    op->CopyCheckMoveOk(this);
 
     return op;
 }
 
 bool NavigateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
-    csVector3 dest;
     float rot=0;
-    iSector* sector;
 
-    npc->GetActiveLocate(dest,sector,rot);
-    npc->Printf(5, "Located %s at %1.2f m/sec.",toString(dest,sector).GetData(), GetVelocity(npc) );
+    npc->GetActiveLocate(endPos,endSector,rot);
+    npc->Printf(5, "Located %s at %1.2f m/sec.",toString(endPos,endSector).GetData(), GetVelocity(npc) );
 
-    StartMoveTo(npc,eventmgr,dest,sector,GetVelocity(npc),action,true);
+    // Start the move and calculate the endAngle value
+    StartMoveTo(npc,eventmgr,endPos,endSector,GetVelocity(npc),action,true,endAngle);
+
     return false; // This behavior isn't done yet
 }
 
 void NavigateOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr) 
 {
+    csVector3 oldPos,newPos;
+    float     oldRot,newRot;
+    iSector  *oldSector,*newSector;
+
+    npc->GetLinMove()->GetLastPosition(oldPos, oldRot, oldSector);
+
     npc->GetLinMove()->ExtrapolatePosition(timedelta);
+
+    npc->GetLinMove()->GetLastPosition(newPos, newRot, newSector);
+
+    npc->Printf(10,"New position: %s",toString(newPos,newSector).GetDataSafe());
+
+    psGameObject::SetPosition(npc->GetActor(), newPos, newSector);
+
+    CheckMoveOk(npc, eventmgr, oldPos, oldSector, newPos, newSector, timedelta);
 }
 
 void NavigateOperation::InterruptOperation(NPC *npc,EventManager *eventmgr)
@@ -2267,12 +2322,11 @@ void NavigateOperation::InterruptOperation(NPC *npc,EventManager *eventmgr)
 
 bool NavigateOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
 {
-    // Set position to where it is supposed to go
-    float rot=0;
-    iSector *sector;
-    csVector3 pos;
-    npc->GetActiveLocate(pos,sector,rot);
-    npc->GetLinMove()->SetPosition(pos,rot,sector);
+    if (forceEndPosition)
+    {
+        // Set position to where it is supposed to go
+        npc->GetLinMove()->SetPosition(endPos,endAngle,endSector);
+    }
 
     // Stop the movement
     StopMovement(npc);
@@ -2280,6 +2334,35 @@ bool NavigateOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
     completed = true;
 
     return true;  // Script can keep going
+}
+
+//---------------------------------------------------------------------------
+
+bool PerceptOperation::Load(iDocumentNode *node)
+{
+    perception = node->GetAttributeValue("event");
+    if (perception.IsEmpty())
+    {
+        Error1("Percept operation need an event attribute");
+        return false;
+    }
+
+    return true;
+}
+
+ScriptOperation *PerceptOperation::MakeCopy()
+{
+    PerceptOperation *op = new PerceptOperation;
+    op->perception = perception;
+    return op;
+}
+
+bool PerceptOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+    Perception pcpt(perception);
+    npc->TriggerEvent(&pcpt);
+
+    return true;  // Nothing more to do for this op.
 }
 
 //---------------------------------------------------------------------------
@@ -2522,7 +2605,7 @@ bool RotateOperation::Load(iDocumentNode *node)
     }
     else
     {
-        Error1("Rotate Op type must be 'random', 'absolute', 'relative', "
+        Error1("Rotate Op type must be 'inregion', 'random', 'absolute', 'relative', "
                "'target' or 'locatedest' right now.");
     }
     return false;
@@ -2579,12 +2662,16 @@ bool RotateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
                     max_angle = rot_angle; 
             }
 
+            npc->Printf(5, "Region found in between %.2f and %.2f",min_angle*180.0f/PI,max_angle*180.0f/PI);
+
             if (max_angle-min_angle  > PI )
             {
                 float temp=max_angle;  
                 max_angle=min_angle+TWO_PI;  
                 min_angle=temp;
             }
+
+            npc->Printf(5, "Region found in between %.2f and %.2f",min_angle*180.0f/PI,max_angle*180.0f/PI);
 
             // Pick an angle in that range
             target_angle = SeekAngle(npc, psGetRandom() * (max_angle-min_angle) + min_angle);
@@ -3334,8 +3421,10 @@ bool WanderOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     if (interrupted && AtInterruptedPosition(npc))
     {
+        float angle;
+        
         // Restart current behavior
-        StartMoveTo(npc,eventmgr,dest,dest_sector,GetVelocity(npc),action);
+        StartMoveTo(npc,eventmgr,dest,dest_sector,GetVelocity(npc),action, true, angle);
 
         return false; // This behavior isn't done yet
     }

@@ -98,16 +98,20 @@ protected:
     Waypoint*          active_locate_wp;
     float              active_locate_radius;
     float              ang_vel,vel;
-    float              walkVelocity,runVelocity;
-    LocationType      *region;
-    csString           region_name;
-    Perception        *last_perception;
+    float              walkVelocity;
+    float              runVelocity;
+    csString           region_name;          ///< Region name as loaded from db
+    LocationType*      region;               ///< Cached pointer to the region
+    bool               insideRegion;         ///< State variable for inside outside region checks.
+    Perception*        last_perception;
     int                debugging;       /// The current debugging level for this npc
     bool               alive;
     EID                owner_id;
     EID                target_id;
-    psTribe           *tribe;
 
+    psTribe*           tribe;
+    bool               insideTribeHome;      ///< State variable for inside outside tribe home checks.
+        
     RaceInfo_t        *raceInfo;
 
     // Initial position checks
@@ -241,8 +245,19 @@ public:
     float GetWalkVelocity();
     float GetRunVelocity();
 
-    LocationType *GetRegion();
     csString& GetRegionName() { return region_name; }
+    LocationType *GetRegion();
+
+    /** Check the inside region state of the npc.
+     *
+     */
+    bool IsInsideRegion() { return insideRegion; }
+    
+    /** Set the inside region state
+     *
+     * Keep track of last perception for inbound our, outbound
+     */
+    void SetInsideRegion(bool inside) { insideRegion = inside; }
 
     EID GetNearestEntity(csVector3& dest, csString& name, float range);
 
@@ -267,9 +282,25 @@ public:
 
     /** Set a new tribe for this npc */
     void SetTribe(psTribe * new_tribe);
-    /** Get the tribe this npc belongs to. Null if not part of a tribe */
+    
+    /** Get the tribe this npc belongs to.
+     *
+     * @return Null if not part of a tribe
+     */
     psTribe * GetTribe();
 
+    /** Check the inside tribe home state of the npc.
+     *
+     */
+    bool IsInsideTribeHome() { return insideTribeHome; }
+    
+    /** Set the inside tribe home state
+     *
+     * Keep track of last perception for inbound our, outbound
+     */
+    void SetInsideTribeHome(bool inside) { insideTribeHome = inside; }
+
+    
     RaceInfo_t * GetRaceInfo();
     
 

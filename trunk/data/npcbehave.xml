@@ -107,73 +107,86 @@
  </npctype> 
 
  
-  <npctype name="Wanderer">
-      <behavior name="walk" decay="0" growth="0" initial="50">
-          <move vel="1" anim="walk" />
-      </behavior>
-      <behavior name="turn" completion_decay="-1" growth="0" initial="0">
-          <rotate type="random" min="90" max="270" anim="walk" ang_vel="30" />
-          <move vel="2" anim="walk" duration="1.0"/>
-      </behavior>
-      <behavior name="turnregion" completion_decay="-1" growth="0" initial="0">
-          <rotate type="inregion" min="90" max="270" anim="walk" ang_vel="30" />
-      </behavior>
-      <behavior name="fight" decay="0" growth="0" initial="0">
-	  <locate obj="target" />
-          <rotate type="locatedest" anim="walk" ang_vel="120" />
-	  <melee seek_range="50" melee_range="2" />
-      </behavior>
-      <behavior name="chase" decay="1" completion_decay="100" growth="0" initial="0">
-          <chase type="target" anim="walk" />
-      </behavior>
-      <!--behavior name="hunt">
-          <chase type="target" anim="walk" />
-	  <melee seek_range="50" melee_range="2" />
-      </behavior-->
-      <react event="collision"           behavior="turn"  delta="100" />
-      <react event="out of bounds"       behavior="turnregion"  delta="100" />
-      <react event="attack"              behavior="fight" delta="150" />
-      <react event="damage"              behavior="fight" delta="20" weight="1" />
-      <react event="target out of range" behavior="chase" />
-      <react event="death"               behavior="fight" delta="0" />
+  <!-- Basic movement to keep a NPC within the bounds of an region.
+       Will not influence, unless a region is defined and moving out of bounds. -->
+  <npctype name="InRegion" >
+
+    <behavior name="GoToRegion" completion_decay="-1" growth="0" initial="1000">
+      <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
+      <navigate anim="walk" />                  <!-- Local navigation -->
+      <locate obj="region" />
+      <wander anim="walk" />        <!-- Navigate using waypoints -->
+      <navigate anim="walk" />      <!-- Local navigation -->
+    </behavior>
+
+    <behavior name="Evade" completion_decay="-1" growth="0" initial="0">
+      <rotate type="random" min="90" max="270" anim="walk" />
+      <move vel="2" anim="walk" duration="1.0"/>
+    </behavior>
+
+    <behavior name="MoveBackInRegion" completion_decay="-1" growth="0" initial="0" >
+      <!-- Move back into the region -->
+      <rotate type="relative" value="180" />
+      <move anim="walk" /> 
+    </behavior>
+
+    <behavior name="TurnInRegion" completion_decay="-1" growth="0" initial="0">
+      <!-- Move back into the region -->
+      <rotate type="random" min="-80" max="80" anim="walk" />
+      <!-- Enable other scripts to hock into the back in region situation -->
+      <percept event="back in region" />
+    </behavior>
+
+    <react event="collision"           behavior="Evade" />
+    <react event="out of bounds"       behavior="MoveBackInRegion" do_not_interrupt="GoToRegion" />
+    <react event="in bounds"           behavior="MoveBackInRegion" absolute="0"/>
+    <!--react event="in bounds"           behavior="TurnInRegion" /-->
   </npctype>
 
-  <npctype name="Fighter">
-      <behavior name="do nothing" decay="0" growth="0" initial="50">
-	  <wait duration="1" anim="stand" />
-      </behavior>
-      <behavior name="turn" completion_decay="-1" growth="0" initial="0">
-          <rotate type="random" min="90" max="270" anim="walk" ang_vel="30" /> 
-          <move vel="2" anim="walk" duration="1.0"/>
-      </behavior>
-      <behavior name="fight" decay="0" growth="0" initial="0">
+  <!-- Basic fight behavior. Will chase the enemy if attacked -->
+  <npctype name="Fight" >
+      <behavior name="Fight" decay="0" growth="0" initial="0">
 	  <locate obj="target"  range="20"/>
           <rotate type="locatedest" anim="walk" ang_vel="120" />
 	  <melee seek_range="20" melee_range="3" />
       </behavior>
-      <behavior name="chase" decay="1" completion_decay="100" growth="0" initial="0">
+      <behavior name="Chase" decay="1" completion_decay="100" growth="0" initial="0">
           <chase type="target" chase_range="20" anim="run" vel="5" />
       </behavior>
-      <react event="collision"           behavior="turn" />
-      <react event="out of bounds"       behavior="turn" />
-      <react event="attack"              behavior="fight" />
-      <react event="damage"              behavior="fight" delta="20" weight="1" />
-      <react event="target out of range" behavior="chase" />
-      <react event="target out of chase" behavior="chase" absolute="0" only_interrupt="chase"/>
-      <react event="death"               behavior="fight" delta="0" />
+      <react event="attack"              behavior="Fight" />
+      <react event="damage"              behavior="Fight" delta="20" weight="1" />
+      <react event="target out of range" behavior="Chase" />
+      <react event="target out of chase" behavior="Chase" absolute="0" only_interrupt="chase"/>
+      <react event="death"               behavior="Fight" delta="0" />
+  </npctype>
+
+
+  <npctype name="Wanderer" parent="InRegion,Fight" >
+    <behavior name="Walk" decay="0" growth="0" initial="50">
+      <loop>
+        <locate obj="region" static="no" />                    <!-- Locate random point within region -->
+        <rotate type="locatedest" anim="walk" ang_vel="10" />  <!-- Rotate to fase last located destination -->
+        <navigate anim="walk" />                               <!-- Local navigation -->
+        <wait duration="5" anim="stand" />
+      </loop>
+    </behavior>
+  </npctype>
+
+  <npctype name="Fighter" parent="InRegion,Fight" >
+      <behavior name="do nothing" decay="0" growth="0" initial="50">
+	  <wait duration="1" anim="stand" />
+      </behavior>
   </npctype>
 
   <npctype name="On Sight Fighter" parent="Fighter">
-      <!-- Test use of parent to expand the parent behavior -->
-
-      <behavior name="turn to face" completion_decay="-1" growth="0" initial="0">
+      <behavior name="TurnToFace" completion_decay="-1" growth="0" initial="0">
 	  <locate obj="perception" />
           <rotate type="locatedest" anim="walk" ang_vel="60" />
       </behavior>
 
-      <react event="player sensed"       behavior="turn to face" delta="100" inactive_only="yes" />
-      <react event="player nearby"       behavior="fight" delta="100" inactive_only="yes" faction_diff="-200" oper=">"  />
-      <react event="player adjacent"     behavior="fight" delta="100" inactive_only="yes" faction_diff="-200" oper=">"  />
+      <react event="player sensed"       behavior="TurnToFace" delta="100" inactive_only="yes" />
+      <react event="player nearby"       behavior="Fight" delta="100" inactive_only="yes" faction_diff="-200" oper=">"  />
+      <react event="player adjacent"     behavior="Fight" delta="100" inactive_only="yes" faction_diff="-200" oper=">"  />
 
   </npctype>
 
@@ -421,7 +434,13 @@
     </behavior>
     <behavior name="GuardHome" decay="1" min="0" growth="0" initial="0">
       <!-- Now start the guard movement -->      
-      <move vel="$WALK" anim="walk" check_tribe_home="true" out_of_bounds="out of home" />
+      <!--move vel="$WALK" anim="walk" check_tribe_home="true" out_of_bounds="out of home" /-->
+      <loop>
+        <locate obj="tribe:home" static="no" />                 <!-- Locate random position within tribe home -->
+        <rotate type="locatedest" anim="walk" ang_vel="10" />   <!-- Rotate to face last destination located -->
+        <navigate anim="walk" />                                <!-- Local navigation -->
+        <wait duration="5" anim="stand" />
+      </loop>
     </behavior>
     <react event="out of home"       behavior="GuardTurn" />
     <react event="tribe:guard"       behavior="GuardHome"  delta="100" />
