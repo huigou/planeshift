@@ -1960,7 +1960,6 @@ nevertired(false), infinitemana(false), instantcast(false), safefall(false), giv
         return;
     }
 
-    player_mode = PSCHARACTER_MODE_PEACE;
     if (psChar->IsStatue())
         player_mode = PSCHARACTER_MODE_STATUE;
     combat_stance = CombatManager::GetStance(cachemanager,"None");
