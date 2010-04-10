@@ -375,6 +375,9 @@ public:
         iSector *sector;
         GetPosition(object,pos,yrot,sector);
     }
+    /**
+     * @return The angle in the range [-PI,PI]
+     */
     static float CalculateIncidentAngle(csVector3& pos, csVector3& dest);
     
     // Clamp the angle within 0 to 2*PI

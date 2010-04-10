@@ -91,8 +91,6 @@ protected:
 
     // Instance temp variables. These dosn't need to be copied.
     int                  consecCollisions; ///< Shared by move functions. Used by CheckMoveOk to detect collisions
-    bool                 insideRegion;     ///< Used by move functions to report change in bounds for region check
-    bool                 insideTribeHome;  ///< Used by move functions to report change in bounds for tribe home check
         
     // End Check Move OK parameters
     /////////////////////////////////////////////////////////
@@ -102,11 +100,12 @@ protected:
     void StopResume();
 
     /// This function is used by MoveTo AND Navigate operations
-    int StartMoveTo(NPC *npc,EventManager *eventmgr,csVector3& dest, iSector* sector, float vel,const char *action, bool autoresume=true);
+    int StartMoveTo(NPC *npc,EventManager *eventmgr,csVector3& dest, iSector* sector, float vel,const char *action, bool autoresume, float &angle);
+    
     /// This function is used by MoveTo AND Navigate operations
     int StartTurnTo(NPC *npc,EventManager *eventmgr,float turn_end_angle, float ang_vel,const char *action, bool autoresume=true);
 
-    void TurnTo(NPC *npc,csVector3& dest, iSector* destsect,csVector3& forward);
+    void TurnTo(NPC *npc,csVector3& dest, iSector* destsect,csVector3& forward, float &angle);
 
     /// Utility function used by many operation to stop movement of an NPC.
     static void StopMovement(NPC *npc);
@@ -216,8 +215,9 @@ class MoveOperation : public ScriptOperation
 {
 protected:
     csString  action;
-    csVector3 current_pos, last_checked_pos;
-    float duration, angle;
+    float     duration;
+
+    float     angle;
 
     // Instance temp variables. These dosn't need to be copied.
     float remaining;
@@ -597,7 +597,12 @@ class NavigateOperation : public ScriptOperation
 {
 protected:
     csString action;
+    bool     forceEndPosition;
 
+    float     endAngle;    ///< The angle of the target
+    iSector*  endSector;   ///< The sector of the target of the navigate
+    csVector3 endPos;      ///< The end position of the target of the navigate
+        
 public:
 
     NavigateOperation(): ScriptOperation("Navigate") { vel=0; };
@@ -609,6 +614,26 @@ public:
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
     virtual bool CompleteOperation(NPC *npc,EventManager *eventmgr);
+};
+
+//-----------------------------------------------------------------------------
+
+/** Send a custon perception from a behavior script
+ * 
+ * Will send the custom perception at the given time in the script.
+ */
+class PerceptOperation : public ScriptOperation
+{
+protected:
+    csString perception; ///< The perception name to send
+    
+public:
+
+    PerceptOperation(): ScriptOperation("Percept") {};
+    virtual ~PerceptOperation() {};
+    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual bool Load(iDocumentNode *node);
+    virtual ScriptOperation *MakeCopy();
 };
 
 //-----------------------------------------------------------------------------
@@ -723,7 +748,6 @@ protected:
                                     // input to absolute rotation
     float     angle_delta;          // Calculated angle that is needed to rotate to target_angle
     
-    float     ang_vel;              // Use npc default angle velocity if 0.
     csString  action;               // Animation to use in the rotation
 
 
@@ -935,7 +959,7 @@ protected:
     bool FindNextWaypoint(NPC *npc);
     
     /** Set up move from current position to next waypoint */
-    bool StartMoveToWaypoint(NPC *npc,EventManager *eventmgr);
+    bool StartMoveToWaypoint(NPC *npc, EventManager *eventmgr);
     
 public:
 

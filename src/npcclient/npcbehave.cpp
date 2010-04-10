@@ -89,18 +89,23 @@ void NPCType::DeepCopy(NPCType& other)
 
 bool NPCType::Load(iDocumentNode *node)
 {
-    const char *parent = node->GetAttributeValue("parent");
-    if (parent) // this npctype is a subclass of another npctype
+    csString parents = node->GetAttributeValue("parent");
+    if (!parents.IsEmpty()) // this npctype is a subclass of another npctype
     {
-        NPCType *superclass = npcclient->FindNPCType(parent);
-        if (superclass)
+        csArray<csString> parent = psSplit(parents,',');
+        for (size_t i = 0; i < parent.GetSize(); i++)
         {
-            DeepCopy(*superclass);  // This pulls everything from the parent into this one.
-        }
-        else
-        {
-            Error2("Specified parent npctype '%s' could not be found.",
-                parent);
+            NPCType *superclass = npcclient->FindNPCType(parent[i]);
+            if (superclass)
+            {
+                DeepCopy(*superclass);  // This pulls everything from the parent into this one.
+            }
+            else
+            {
+                Error2("Specified parent npctype '%s' could not be found.",
+                       parent[i].GetDataSafe());
+                return false;
+            }
         }
     }
 
@@ -168,17 +173,35 @@ bool NPCType::Load(iDocumentNode *node)
                 return false;
             }
             // check for duplicates and keeps the last one
-            // EXCEPT for time reactions!
-            if ( strcmp( r->GetEventType(), "time") != 0) {
-              for (size_t i=0; i<reactions.GetSize(); i++)
-              {
-                  if (!strcmp(reactions[i]->GetEventType(),r->GetEventType()))
-                  {
-                      delete reactions[i];
-                      reactions.DeleteIndex(i);
-                      break;
-                  }
-              }
+            for (size_t i=0; i<reactions.GetSize(); i++)
+            {
+                // Same event with same type
+                if (!strcmp(reactions[i]->GetEventType(),r->GetEventType())&&
+                    (reactions[i]->type == r->type)&&
+                    (reactions[i]->values == r->values))
+                {
+                    // Check if there is a mach in affected
+                    for (size_t k=0; k< r->affected.GetSize(); k++)
+                    {
+                        for (size_t j=0; j< reactions[i]->affected.GetSize(); j++)
+                        {
+                            if (!strcmp(r->affected[k]->GetName(),reactions[i]->affected[j]->GetName()))
+                            {
+                                // Should probably delete and cleare out here
+                                // to allow for overriding of event,affected pairs.
+                                // Though now give error, unntil needed.
+                                Error3("Reaction of type '%s' allready connected to '%s'",
+                                       r->GetEventType(),reactions[i]->affected[j]->GetName());
+                                return false;
+                                // delete reactions[i];
+                                //reactions.DeleteIndex(i);
+                                //break;
+                            }
+                            
+                        }
+                        
+                    }
+                }
             }
 
             reactions.Insert(0,r);  // reactions get inserted at beginning so subclass ones take precedence over superclass.
@@ -667,6 +690,10 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         else if ( strcmp( node->GetValue(), "navigate" ) == 0 )
         {
             op = new NavigateOperation;
+        }
+        else if ( strcmp( node->GetValue(), "percept" ) == 0 )
+        {
+            op = new PerceptOperation;
         }
         else if ( strcmp( node->GetValue(), "pickup" ) == 0 )
         {

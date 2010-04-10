@@ -21,6 +21,7 @@
 
 #include <csutil/csstring.h>
 #include <csgeom/vector3.h>
+#include <csgeom/box.h>
 #include <csutil/parray.h>
 #include <iengine/sector.h>
 #include <csutil/weakref.h>
@@ -32,6 +33,8 @@ struct iEngine;
 /**
  * A Location is a named place on the map, located
  * dynamically by NPCs as scripted.
+ *
+ * @note Location dosn't support multi sector locations yes.
  */
 class Location
 {
@@ -44,6 +47,7 @@ public:
     csArray<Location*>  locs; // A number of points for regions.
     int                 id_prev_loc_in_region;
     csString            sectorName;
+    csBox2              boundingBox;
 
     csWeakRef<iSector>  sector; // Cached sector
 
@@ -58,7 +62,35 @@ public:
     /// Return cached sector or find the sector and cache it from engine.
     iSector*            GetSector(iEngine * engine);
 
+    /** Return the bounding box for this location
+     *
+     * @return Bounding box of the location
+     */
+    const csBox2& GetBoundingBox() const;
+
+    /** Function to calculate the bounding box for a location.
+     *
+     * This function should be called after the location has been
+     * loaded or modified.
+     */
+    void CalculateBoundingBox();
+    
+
     bool CheckWithinBounds(iEngine * engine,const csVector3& pos,const iSector* sector);
+
+    /** Get a random position in the location
+     *
+     * Will return the position found. Do not relay on the
+     * state of the parameters if operation failes.
+     *
+     * @param engine Used to find the sector
+     * @param pos    The found position is returned here.
+     * @param sector The found sector is returned here.
+     *
+     * @return True if position is found.
+     */
+    bool GetRandomPosition(iEngine * engine,csVector3& pos,iSector* &sector);
+
     static int GetSectorID(iDataConnection *db,const char* name);
     const char* GetName() { return name.GetDataSafe(); }
 };
@@ -84,6 +116,20 @@ public:
     bool Load(iResultRow& row, iEngine *engine, iDataConnection *db); 
 
     bool CheckWithinBounds(iEngine * engine,const csVector3& pos,const iSector* sector);
+    
+    /** Get a random position in the location
+     *
+     * Will return the position found. Do not relay on the
+     * state of the parameters if operation failes.
+     *
+     * @param engine Used to find the sector
+     * @param pos    The found position is returned here.
+     * @param sector The found sector is returned here.
+     *
+     * @return True if position is found.
+     */
+    bool GetRandomPosition(iEngine * engine,csVector3& pos,iSector* &sector);
+
     const char* GetName() { return name.GetDataSafe(); }
 };
 

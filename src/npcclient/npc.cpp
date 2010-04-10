@@ -74,6 +74,8 @@ NPC::NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world,
     ang_vel=vel=999; 
     walkVelocity=runVelocity=0.0; // Will be cached
     region=NULL; 
+    insideRegion = true; // We assume that we start inside the region, if it exists
+    insideTribeHome = true; // We assume that we start inside tribe home.
     last_perception=NULL; 
     debugging=0; 
     alive=false; 
