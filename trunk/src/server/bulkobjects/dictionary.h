@@ -58,13 +58,22 @@ class MathScript;
 struct iDocumentNode;
 struct Faction;
 
+template<typename K, typename K2> class NpcTriggerOrdering : public CS::Container::RedBlackTreeOrderingPartial<NpcTrigger,NpcTrigger>
+{
+public:
+    NpcTriggerOrdering(NpcTrigger* const& a, NpcTrigger* const& b) : CS::Container::RedBlackTreeOrderingPartial<NpcTrigger,NpcTrigger>(*a,*b)
+    {
+    }
+};
+
 class NPCDialogDict : public csRefCount
 {
 protected:
+    typedef csRedBlackTree<NpcTrigger*, CS::Container::DefaultRedBlackTreeAllocator<NpcTrigger*>, NpcTriggerOrdering> NpcTriggerTree;
     csHash<NpcTerm*, csString>         phrases;
     csHash<NpcTriggerGroupEntry*, csString> trigger_groups;
     csHash<NpcTriggerGroupEntry*>      trigger_groups_by_id;
-    csRedBlackTree<NpcTrigger*>           triggers;
+    NpcTriggerTree                     triggers;
     csHash<NpcTrigger*>                 trigger_by_id;
     csHash<NpcResponse*>          responses;
     csHash<bool, csString>             disallowed_words;
@@ -232,16 +241,6 @@ public:
     }
 };
 
-template<>
-class csComparator<NpcTrigger* , NpcTrigger*>
-{
-public:
-    static int Compare(NpcTrigger* const &r1, NpcTrigger* const &r2)
-    {
-        return csComparator<NpcTrigger, NpcTrigger>::Compare(*r1, *r2);
-    }
-};
-
 class NpcTrigger
 {
 public:
@@ -265,7 +264,7 @@ public:
     bool operator==(const NpcTrigger& other) const;
 
     /// Compare two triggers. Used when searching for triggers.
-    bool operator<(const NpcTrigger& other) const;
+    bool operator<=(const NpcTrigger& other) const;
 };
 
 
