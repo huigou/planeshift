@@ -1186,6 +1186,14 @@ bool LocateOperation::Load(iDocumentNode *node)
     }
     else if (split_obj[0] == "target")
     {
+        if (range <= 0)
+        {
+            range = 10.0;
+        }
+        return true;
+    }
+    else if (split_obj[0] == "tribe_target")
+    {
         return true;
     }
     else if (split_obj[0] == "owner")
@@ -1359,16 +1367,39 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     {
         npc->Printf(5,"LocateOp - Target");
 
-        gemNPCActor *ent;
         // Since we don't have a current enemy targeted, find one!
-        if (range)
+        gemNPCActor* ent = npc->GetMostHated(range,locate_invisible,locate_invincible);
+
+        if(ent)
         {
-            ent = npc->GetMostHated(range,locate_invisible,locate_invincible);
+            npc->SetTarget(ent);
         }
         else
         {
-            ent = npc->GetMostHated(10.0f,locate_invisible,locate_invincible);     // Default enemy range
+            return true;  // Nothing more to do for this op.
         }
+
+        float rot;
+        iSector *sector;
+        csVector3 pos;
+        psGameObject::GetPosition(ent,pos,rot,sector);
+
+        located_pos = pos;
+        located_angle = 0;
+        located_sector = sector;
+    }
+    else if (split_obj[0] == "tribe_target")
+    {
+        npc->Printf(5,"LocateOp - Tribe Target");
+
+        if (!npc->GetTribe())
+        {
+            npc->Printf(5,"Not part of a tribe");
+            return true; //  Nothing more to do for this op.
+        }
+
+        // Since we don't have a current enemy targeted, find one!
+        gemNPCActor* ent = npc->GetTribe()->GetMostHated(npc, range, locate_invisible, locate_invincible);
 
         if(ent)
         {

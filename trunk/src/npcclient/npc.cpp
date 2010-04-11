@@ -343,14 +343,22 @@ void NPC::SetLastPerception(Perception *pcpt)
     last_perception = pcpt;
 }
 
-gemNPCActor *NPC::GetMostHated(float range, bool include_invisible, bool include_invincible)
+gemNPCActor* NPC::GetMostHated(float range, bool includeInvisible, bool includeInvincible, float* hate)
 {
     iSector *sector=NULL;
     csVector3 pos;
     float yrot;
-    psGameObject::GetPosition(GetActor(),pos,yrot,sector);
+    psGameObject::GetPosition(GetActor(),pos, yrot, sector);
 
-    gemNPCActor * hated = hatelist.GetMostHated(sector,pos,range,GetRegion(),include_invisible,include_invincible);
+    return GetMostHated(pos, sector, range, GetRegion(),
+                        includeInvisible, includeInvincible, hate);
+}
+
+
+gemNPCActor* NPC::GetMostHated( csVector3& pos, iSector *sector, float range, LocationType * region, bool includeInvisible, bool includeInvincible, float* hate)
+{
+    gemNPCActor* hated = hatelist.GetMostHated(pos, sector, range, region,
+                                               includeInvisible, includeInvincible, hate);
 
     if (hated)
     {
@@ -873,7 +881,7 @@ void HateList::AddHate(EID entity_id, float delta)
     }
 }
 
-gemNPCActor *HateList::GetMostHated(iSector *sector, csVector3& pos, float range, LocationType * region, bool include_invisible, bool include_invincible)
+gemNPCActor *HateList::GetMostHated(csVector3& pos, iSector *sector, float range, LocationType * region, bool includeInvisible, bool includeInvincible, float* hate)
 {
     gemNPCObject *most = NULL;
     float most_hate_amount=0;
@@ -889,8 +897,8 @@ gemNPCActor *HateList::GetMostHated(iSector *sector, csVector3& pos, float range
             if (!obj) continue;
 
             // Skipp if invisible or invincible
-            if (obj->IsInvisible() && !include_invisible) continue;
-            if (obj->IsInvincible() && !include_invincible) continue;
+            if (obj->IsInvisible() && !includeInvisible) continue;
+            if (obj->IsInvincible() && !includeInvincible) continue;
             
             if (!most || h->hate_amount > most_hate_amount)
             {
@@ -904,6 +912,10 @@ gemNPCActor *HateList::GetMostHated(iSector *sector, csVector3& pos, float range
                 most_hate_amount = h->hate_amount;
             }
         }
+    }
+    if (hate)
+    {
+        *hate = most_hate_amount;
     }
     return (gemNPCActor*)most;
 }

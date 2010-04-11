@@ -157,7 +157,7 @@
       <react event="damage"              behavior="Fight" delta="20" weight="1" />
       <react event="target out of range" behavior="Chase" />
       <react event="target out of chase" behavior="Chase" absolute="0" only_interrupt="chase"/>
-      <react event="death"               behavior="Fight" delta="0" />
+      <react event="death"               behavior="Fight" absolute="0" />
   </npctype>
 
 
