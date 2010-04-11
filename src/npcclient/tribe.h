@@ -35,13 +35,13 @@
 class iResultRow;
 class EventManager;
 class NPC;
-class psTribeNeedSet;
-class psTribeNeed;
+class TribeNeedSet;
+class TribeNeed;
 class Perception;
 
 #define TRIBE_UNLIMITED_SIZE   100
 
-class psTribe
+class Tribe
 {
 public:
     struct Resource
@@ -77,10 +77,10 @@ public:
     static const char *TribeNeedTypeName[];
 
     /** Construct a new tribe object */
-    psTribe();
+    Tribe();
 
     /** Destruct a tribe object */
-    virtual ~psTribe();
+    virtual ~Tribe();
 
     /** Load the tribe object */
     bool Load(iResultRow& row);
@@ -136,7 +136,7 @@ public:
     size_t GetResourceCount() { return resources.GetSize(); }
     const Resource& GetResource(size_t n) { return resources[n]; }
     csList<Memory*>::Iterator GetMemoryIterator() { csList<Memory*>::Iterator it(memories); return it; };
-    psTribeNeedSet* GetNeedSet() { return needSet; };
+    TribeNeedSet* GetNeedSet() { return needSet; };
 
     /**
      * Calculate the maximum number of members for the tribe.
@@ -289,14 +289,23 @@ public:
 
     /** Send a perception to all members of the tribe
      *
-     * @param pcpt Perception to be sent.
+     * This will send the perception to all the members of the tribe.
+     * If the maxRange has been set to something greater than 0.0
+     * a range check will be applied. Only members within the range
+     * from the base position and sector will be triggered.
+     *
+     * @param pcpt       Perception to be sent.
+     * @param maxRange   If greater then 0.0 then max range apply
+     * @param basePos    The base position for range checks.
+     * @param baseSector The base sector for range checks.
      */
-    void TriggerEvent(Perception *pcpt);
+    void TriggerEvent(Perception* pcpt, float maxRange=-1.0,
+                      csVector3* basePos=NULL, iSector* baseSector=NULL);
     
 protected:
 
     /** Calculate the tribes need from a NPC */
-    psTribeNeed* Brain(NPC * npc);
+    TribeNeed* Brain(NPC * npc);
     
     int                    id;
     csString               name;
@@ -319,7 +328,7 @@ protected:
     float                  accWealthGrowth; ///< Accumelated rest of wealth growth.
     int                    reproductionCost;
     csString               wealthGatherNeed;
-    psTribeNeedSet        *needSet;
+    TribeNeedSet*          needSet;
     csList<Memory*>        memories;
     
     csTicks                lastGrowth;

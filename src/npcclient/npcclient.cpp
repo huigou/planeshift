@@ -626,7 +626,7 @@ bool psNPCClient::LoadTribes()
     }
     for (int i=0; i<(int)rs.Count(); i++)
     {
-        psTribe *tribe = new psTribe;
+        Tribe *tribe = new Tribe;
         if (tribe->Load(rs[i]))
         {
             tribes.Push(tribe);
@@ -800,42 +800,15 @@ psPath *psNPCClient::FindPath(const Waypoint * wp1, const Waypoint * wp2, psPath
     return pathNetwork->FindPath(wp1,wp2,direction);
 }
 
-void psNPCClient::TriggerEvent(NPC *npc,Perception *pcpt,float max_range,
-                               csVector3 *base_pos, iSector *base_sector)
+void psNPCClient::TriggerEvent(Perception *pcpt, float maxRange,
+                               csVector3 *basePos, iSector *baseSector)
 {
-    if (npc)
+    for (size_t i=0; i<npcs.GetSize(); i++)
     {
-        npc->TriggerEvent(pcpt);
-    }
-    else
-    {
-        for (size_t i=0; i<npcs.GetSize(); i++)
-        {
-            if (npcs[i]==NULL)  // one of our npcs is not active right now
-                continue;
-
-            if (max_range <= 0.0)  // broadcast perceptions
-            {
-                npcs[i]->TriggerEvent(pcpt);
-            }
-            else
-            {
-                if (npcs[i]->GetActor() == NULL) // Need an entity to find position
-                    continue;
-
-                iSector *sector;
-                csVector3 pos;
-                float yrot;
-                psGameObject::GetPosition(npcs[i]->GetActor(),pos,yrot,sector);
-
-                float dist = world->Distance(pos,sector,*base_pos,base_sector);
-                
-                if (dist <= max_range)
-                {
-                    npcs[i]->TriggerEvent(pcpt);
-                }
-            }
-        }
+        if (npcs[i]==NULL)  // one of our npcs is not active right now
+            continue;
+        
+        npcs[i]->TriggerEvent(pcpt, maxRange, basePos, baseSector);
     }
 }
 
@@ -1339,10 +1312,10 @@ void psNPCClient::ListTribes(const char * pattern)
             { // Start print Memories scope
                 CPrintf(CON_CMDOUTPUT,"Memories:\n");
                 CPrintf(CON_CMDOUTPUT,"%7s %-20s Position                Radius  %-20s  %-20s\n","ID","Name","Sector","Private to NPC");
-                csList<psTribe::Memory*>::Iterator it = tribes[i]->GetMemoryIterator();
+                csList<Tribe::Memory*>::Iterator it = tribes[i]->GetMemoryIterator();
                 while (it.HasNext())
                 {
-                    psTribe::Memory* memory = it.Next();
+                    Tribe::Memory* memory = it.Next();
                     csString name;
                     if (memory->npc)
                     {
@@ -1361,10 +1334,10 @@ void psNPCClient::ListTribes(const char * pattern)
                 
                 CPrintf(CON_CMDOUTPUT,"Needs:\n");
                 CPrintf(CON_CMDOUTPUT,"%-20s %10s %-20s %6s %6s   %s\n","Need","Value","Perception","Start","Growth","Depend on");
-                psTribeNeedSet::NeedIterator it(tribes[i]->GetNeedSet()->GetIterator());
+                TribeNeedSet::NeedIterator it(tribes[i]->GetNeedSet()->GetIterator());
                 while (it.HasNext())
                 {
-                    psTribeNeed* need = it.Next();
+                    TribeNeed* need = it.Next();
                     CPrintf(CON_CMDOUTPUT,"%-20s %10.2f %-20s %6.2f %6.2f -> %s\n",
                             need->GetTypeAndName().GetDataSafe(),
                             need->current_need,
@@ -1502,15 +1475,15 @@ void psNPCClient::PerceptProximityItems()
                         if (dist <= PERSONAL_RANGE_PERCEPTION)
                         {
                             ItemPerception pcpt_nearby("item nearby", item);
-                            TriggerEvent(npcs[i],&pcpt_nearby);
+                            npcs[i]->TriggerEvent(&pcpt_nearby);
                             continue;
                         }
                         ItemPerception pcpt_adjacent("item adjacent", item);
-                        TriggerEvent(npcs[i],&pcpt_adjacent);
+                        npcs[i]->TriggerEvent(&pcpt_adjacent);
                         continue;
                     }
                     ItemPerception pcpt_sensed("item sensed", item);
-                    TriggerEvent(npcs[i],&pcpt_sensed);
+                    npcs[i]->TriggerEvent(&pcpt_sensed);
                     continue;
                 }
             }
@@ -1529,7 +1502,7 @@ void psNPCClient::PerceptProximityLocations()
         {
             LocationPerception pcpt_sensed("location sensed", loc->name, loc->locs[i], engine);  
       
-            TriggerEvent(NULL, &pcpt_sensed, loc->locs[i]->radius + LONG_RANGE_PERCEPTION, 
+            TriggerEvent(&pcpt_sensed, loc->locs[i]->radius + LONG_RANGE_PERCEPTION, 
                          &loc->locs[i]->pos, loc->locs[i]->GetSector(engine)); // Broadcast
         }
     }
@@ -1546,7 +1519,7 @@ void psNPCClient::UpdateTime(int minute, int hour, int day, int month, int year)
     gameTimeUpdated = csGetTicks();
 
     TimePerception pcpt(gameHour,gameMinute,gameYear,gameMonth,gameDay);
-    TriggerEvent(NULL, &pcpt); // Broadcast
+    TriggerEvent(&pcpt); // Broadcast
 
     Notify6(LOG_WEATHER,"The time is now %d:%02d %d-%d-%d.",
             gameHour,gameMinute,gameYear,gameMonth,gameDay);

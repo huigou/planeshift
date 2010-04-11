@@ -625,8 +625,17 @@ public:
 class PerceptOperation : public ScriptOperation
 {
 protected:
-    csString perception; ///< The perception name to send
+    enum TargetType {
+        SELF,
+        ALL,
+        TRIBE,
+        TARGET
+    };
     
+    csString   perception; ///< The perception name to send
+    TargetType target;     ///< Hold the target for the perception, default SELF
+    float      maxRange;   ///< Is there a max range for this, 0.0 is without limit
+        
 public:
 
     PerceptOperation(): ScriptOperation("Percept") {};

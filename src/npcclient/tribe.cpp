@@ -47,7 +47,7 @@
 
 extern iDataConnection *db;
 
-const char* psTribe::TribeNeedTypeName[] =
+const char* Tribe::TribeNeedTypeName[] =
 {
     "GENERIC",
     "RESOURCE_AREA",
@@ -55,18 +55,18 @@ const char* psTribe::TribeNeedTypeName[] =
     ""
 };
 
-psTribe::psTribe()
+Tribe::Tribe()
     :homeSector(0),accWealthGrowth(0.0)
 {
     InitializeNeedSet();
     lastGrowth = csGetTicks();
 }
 
-psTribe::~psTribe()
+Tribe::~Tribe()
 {
 }
 
-bool psTribe::Load(iResultRow& row)
+bool Tribe::Load(iResultRow& row)
 {
     id   = row.GetInt("id");
     name = row["name"];
@@ -88,7 +88,7 @@ bool psTribe::Load(iResultRow& row)
     return true;
 }
 
-bool psTribe::LoadNeed(iResultRow& row)
+bool Tribe::LoadNeed(iResultRow& row)
 {
     int      needId          = row.GetInt("need_id");
     csString needType        = row["type"];
@@ -98,12 +98,12 @@ bool psTribe::LoadNeed(iResultRow& row)
     float    needStartValue  = row.GetFloat("need_start_value");
     float    needGrowthValue = row.GetFloat("need_growth_value");
     
-    psTribeNeed *depend = needSet->Find( dependName );
-    psTribeNeed *need = NULL;
+    TribeNeed *depend = needSet->Find( dependName );
+    TribeNeed *need = NULL;
 
-    if (needType.CompareNoCase(psTribe::TribeNeedTypeName[GENERIC]))
+    if (needType.CompareNoCase(Tribe::TribeNeedTypeName[GENERIC]))
     {
-        need = new psTribeNeedGeneric(needName,perception,needStartValue,needGrowthValue);
+        need = new TribeNeedGeneric(needName,perception,needStartValue,needGrowthValue);
     } else
     {
         // The rest of the needs are depened on other needs.
@@ -116,12 +116,12 @@ bool psTribe::LoadNeed(iResultRow& row)
             return false;
         }
 
-        if (needType.CompareNoCase(psTribe::TribeNeedTypeName[RESOURCE_AREA]))
+        if (needType.CompareNoCase(Tribe::TribeNeedTypeName[RESOURCE_AREA]))
         {
-            need = new psTribeNeedResourceArea(needName,perception,needStartValue,needGrowthValue,depend);
-        } else if (needType.CompareNoCase(psTribe::TribeNeedTypeName[REPRODUCE]))
+            need = new TribeNeedResourceArea(needName,perception,needStartValue,needGrowthValue,depend);
+        } else if (needType.CompareNoCase(Tribe::TribeNeedTypeName[REPRODUCE]))
         {
-            need = new psTribeNeedReproduce(needName,perception,needStartValue,needGrowthValue,depend);
+            need = new TribeNeedReproduce(needName,perception,needStartValue,needGrowthValue,depend);
         } else
         {
             Error3("Could not mach need '%s' for tribe %d",needName.GetDataSafe(),id);
@@ -139,7 +139,7 @@ bool psTribe::LoadNeed(iResultRow& row)
 }
 
 
-bool psTribe::LoadMember(iResultRow& row)
+bool Tribe::LoadMember(iResultRow& row)
 {
     int memberId   = row.GetInt("member_id");
 
@@ -148,7 +148,7 @@ bool psTribe::LoadMember(iResultRow& row)
     return true;
 }
 
-bool psTribe::AddMember(PID pid)
+bool Tribe::AddMember(PID pid)
 {
     membersId.Push(pid.Unbox());
 
@@ -159,7 +159,7 @@ bool psTribe::AddMember(PID pid)
     return true;
 }
 
-bool psTribe::LoadMemory(iResultRow& row)
+bool Tribe::LoadMemory(iResultRow& row)
 {
     Memory * memory = new Memory;
     
@@ -190,7 +190,7 @@ int GetSectorID(iDataConnection *db,const char* name)
     return rs[0].GetInt("id");
 }
 
-void psTribe::SaveMemory(Memory * memory)
+void Tribe::SaveMemory(Memory * memory)
 {
     const char * fields[] = 
         {"tribe_id","name","loc_x","loc_y","loc_z","sector_id","radius"};
@@ -212,7 +212,7 @@ void psTribe::SaveMemory(Memory * memory)
     }
 }
 
-bool psTribe::LoadResource(iResultRow& row)
+bool Tribe::LoadResource(iResultRow& row)
 {
     Resource newRes;
     newRes.id  = row.GetInt("id");
@@ -223,7 +223,7 @@ bool psTribe::LoadResource(iResultRow& row)
     return true;
 }
 
-void psTribe::SaveResource(Resource* resource, bool newResource)
+void Tribe::SaveResource(Resource* resource, bool newResource)
 {
     const char * fields[] = 
         {"tribe_id","name","amount"};
@@ -259,7 +259,7 @@ void psTribe::SaveResource(Resource* resource, bool newResource)
 }
 
 
-bool psTribe::CheckAttach(NPC * npc)
+bool Tribe::CheckAttach(NPC * npc)
 {
     for (size_t i=0; i < membersId.GetSize(); i++)
     {
@@ -273,7 +273,7 @@ bool psTribe::CheckAttach(NPC * npc)
     return false;
 }
 
-bool psTribe::AttachMember(NPC * npc)
+bool Tribe::AttachMember(NPC * npc)
 {
     npc->SetTribe(this);
     for (size_t i=0; i < members.GetSize(); i++)
@@ -291,7 +291,7 @@ bool psTribe::AttachMember(NPC * npc)
 }
 
 
-bool psTribe::HandleDeath(NPC * npc)
+bool Tribe::HandleDeath(NPC * npc)
 {
     deadMembers.Push(npc);
 
@@ -301,7 +301,7 @@ bool psTribe::HandleDeath(NPC * npc)
     return false;
 }
 
-int psTribe::AliveCount() const
+int Tribe::AliveCount() const
 {
     int count = 0;
     for (size_t i=0; i < members.GetSize(); i++)
@@ -313,7 +313,7 @@ int psTribe::AliveCount() const
 }
 
 
-void psTribe::HandlePerception(NPC * npc, Perception *perception)
+void Tribe::HandlePerception(NPC * npc, Perception *perception)
 {
     csString name = perception->GetName();
     
@@ -328,7 +328,7 @@ void psTribe::HandlePerception(NPC * npc, Perception *perception)
     }
 }
 
-void psTribe::AddResource(csString resource, int amount)
+void Tribe::AddResource(csString resource, int amount)
 {
     for (size_t i=0; i < resources.GetSize(); i++)
     {
@@ -346,7 +346,7 @@ void psTribe::AddResource(csString resource, int amount)
     resources.Push(newRes);
 }
 
-int psTribe::CountResource(csString resource) const
+int Tribe::CountResource(csString resource) const
 {
     for (size_t i=0; i < resources.GetSize(); i++)
     {
@@ -359,7 +359,7 @@ int psTribe::CountResource(csString resource) const
 }
 
 
-void psTribe::Advance(csTicks when,EventManager *eventmgr)
+void Tribe::Advance(csTicks when,EventManager *eventmgr)
 {
     if ( when - lastGrowth > 1000)
     {
@@ -407,7 +407,7 @@ void psTribe::Advance(csTicks when,EventManager *eventmgr)
         {
             csString perc;
 
-            psTribeNeed *need = Brain(npc);
+            TribeNeed *need = Brain(npc);
             if (!need || need->GetPerception().IsEmpty())
             {
                 continue; // Do noting
@@ -430,29 +430,29 @@ void psTribe::Advance(csTicks when,EventManager *eventmgr)
             npc->Printf("Tribe brain perception '%s'",perc.GetDataSafe());
             
             Perception perception(perc);
-            npcclient->TriggerEvent(npc,&perception);
+            npc->TriggerEvent(&perception);
         }
     }
 }
 
-bool psTribe::ShouldGrow() const
+bool Tribe::ShouldGrow() const
 {
     return members.GetSize() < (size_t)GetMaxSize();
 }
 
-bool psTribe::CanGrow() const
+bool Tribe::CanGrow() const
 {
     return CountResource(wealthResourceName) >= reproductionCost;
 }
 
-void psTribe::InitializeNeedSet()
+void Tribe::InitializeNeedSet()
 {
    
-    needSet = new psTribeNeedSet(this);
+    needSet = new TribeNeedSet(this);
 
 }
 
-psTribeNeed* psTribe::Brain(NPC * npc)
+TribeNeed* Tribe::Brain(NPC * npc)
 {
     // Handle special case for dead npc's
     if (!npc->IsAlive())
@@ -478,7 +478,7 @@ psTribeNeed* psTribe::Brain(NPC * npc)
 
     needSet->UpdateNeed(npc);
     
-    psTribeNeed *nextNeed = needSet->CalculateNeed(npc);
+    TribeNeed *nextNeed = needSet->CalculateNeed(npc);
 
     // Check if the most needed need has some depenency that needs to be done first.
     nextNeed = nextNeed->GetNeed();
@@ -486,7 +486,7 @@ psTribeNeed* psTribe::Brain(NPC * npc)
     return nextNeed;
 }
 
-int psTribe::GetMaxSize() const
+int Tribe::GetMaxSize() const
 {
     int size = maxSize;
     
@@ -498,14 +498,14 @@ int psTribe::GetMaxSize() const
     return size; 
 }
 
-int psTribe::GetReproductionCost() const
+int Tribe::GetReproductionCost() const
 {
     return reproductionCost;
 }
 
 
 
-void psTribe::GetHome(csVector3& pos, float& radius, iSector* &sector)
+void Tribe::GetHome(csVector3& pos, float& radius, iSector* &sector)
 { 
     pos = homePos; 
     radius = homeRadius; 
@@ -516,7 +516,7 @@ void psTribe::GetHome(csVector3& pos, float& radius, iSector* &sector)
     sector = homeSector;
 }
 
-void psTribe::SetHome(const csVector3& pos, float radius, iSector* sector)
+void Tribe::SetHome(const csVector3& pos, float radius, iSector* sector)
 { 
     homePos = pos; 
     homeSector = sector;
@@ -527,7 +527,7 @@ void psTribe::SetHome(const csVector3& pos, float radius, iSector* sector)
     // TODO: Store to DB.
 }
 
-bool psTribe::CheckWithinBoundsTribeHome(NPC* npc, const csVector3& pos, const iSector* sector)
+bool Tribe::CheckWithinBoundsTribeHome(NPC* npc, const csVector3& pos, const iSector* sector)
 {
     float dist = npcclient->GetWorld()->Distance(homePos, homeSector, pos, sector);
 
@@ -544,10 +544,10 @@ bool psTribe::CheckWithinBoundsTribeHome(NPC* npc, const csVector3& pos, const i
 }
 
 
-bool psTribe::GetResource(NPC* npc, csVector3 startPos, iSector * startSector, csVector3& locatedPos, iSector* &locatedSector, float range, bool random)
+bool Tribe::GetResource(NPC* npc, csVector3 startPos, iSector * startSector, csVector3& locatedPos, iSector* &locatedSector, float range, bool random)
 {
     float locatedRange=0.0;
-    psTribe::Memory * memory = NULL;
+    Tribe::Memory * memory = NULL;
     
     if (psGetRandom(100) > 10) // 10% chance for go explor a new resource arae
     {
@@ -605,38 +605,38 @@ bool psTribe::GetResource(NPC* npc, csVector3 startPos, iSector * startSector, c
     return true;
 }
 
-const char* psTribe::GetNeededResource()
+const char* Tribe::GetNeededResource()
 {
     return wealthResourceName;
 }
 
-const char* psTribe::GetNeededResourceNick()
+const char* Tribe::GetNeededResourceNick()
 {
     return wealthResourceNick;
 }
 
-const char* psTribe::GetNeededResourceAreaType()
+const char* Tribe::GetNeededResourceAreaType()
 {
     return wealthResourceArea;
 }
 
-float psTribe::GetWealthResourceGrowth() const
+float Tribe::GetWealthResourceGrowth() const
 {
     return wealthResourceGrowth;
 }
 
-float psTribe::GetWealthResourceGrowthActive() const
+float Tribe::GetWealthResourceGrowthActive() const
 {
     return wealthResourceGrowthActive;
 }
 
-int psTribe::GetWealthResourceGrowthActiveLimit() const
+int Tribe::GetWealthResourceGrowthActiveLimit() const
 {
     return wealthResourceGrowthActiveLimit;
 }
 
 
-void psTribe::Memorize(NPC * npc, Perception * perception)
+void Tribe::Memorize(NPC * npc, Perception * perception)
 {
     // Retriv date from the perception
     csString  name = perception->GetType();
@@ -665,7 +665,7 @@ void psTribe::Memorize(NPC * npc, Perception * perception)
     AddMemory(name,pos,sector,radius,npc);
 }
 
-psTribe::Memory* psTribe::FindPrivMemory(csString name,const csVector3& pos, iSector* sector, float radius, NPC * npc)
+Tribe::Memory* Tribe::FindPrivMemory(csString name,const csVector3& pos, iSector* sector, float radius, NPC * npc)
 {
     csList<Memory*>::Iterator it(memories);
     while (it.HasNext())
@@ -683,7 +683,7 @@ psTribe::Memory* psTribe::FindPrivMemory(csString name,const csVector3& pos, iSe
     return NULL; // Found nothing
 }
 
-psTribe::Memory* psTribe::FindMemory(csString name,const csVector3& pos, iSector* sector, float radius)
+Tribe::Memory* Tribe::FindMemory(csString name,const csVector3& pos, iSector* sector, float radius)
 {
     csList<Memory*>::Iterator it(memories);
     while (it.HasNext())
@@ -701,7 +701,7 @@ psTribe::Memory* psTribe::FindMemory(csString name,const csVector3& pos, iSector
     return NULL; // Found nothing
 }
 
-psTribe::Memory* psTribe::FindMemory(csString name)
+Tribe::Memory* Tribe::FindMemory(csString name)
 {
     csList<Memory*>::Iterator it(memories);
     while (it.HasNext())
@@ -715,7 +715,7 @@ psTribe::Memory* psTribe::FindMemory(csString name)
     return NULL; // Found nothing
 }
 
-void psTribe::AddMemory(csString name,const csVector3& pos, iSector* sector, float radius, NPC * npc)
+void Tribe::AddMemory(csString name,const csVector3& pos, iSector* sector, float radius, NPC * npc)
 {
     Memory * memory = new Memory;
     memory->id     = -1;
@@ -727,7 +727,7 @@ void psTribe::AddMemory(csString name,const csVector3& pos, iSector* sector, flo
     memories.PushBack(memory);
 }
 
-void psTribe::ShareMemories(NPC * npc)
+void Tribe::ShareMemories(NPC * npc)
 {
     csList<Memory*>::Iterator it(memories);
     while (it.HasNext())
@@ -750,7 +750,7 @@ void psTribe::ShareMemories(NPC * npc)
     }    
 }
 
-iSector* psTribe::Memory::GetSector()
+iSector* Tribe::Memory::GetSector()
 {
     if (sector) return sector;
 
@@ -759,7 +759,7 @@ iSector* psTribe::Memory::GetSector()
 }
 
 
-void psTribe::ForgetMemories(NPC * npc)
+void Tribe::ForgetMemories(NPC * npc)
 {
     csList<Memory*>::Iterator it(memories);
     while (it.HasNext())
@@ -773,7 +773,7 @@ void psTribe::ForgetMemories(NPC * npc)
     }    
 }
 
-psTribe::Memory *psTribe::FindNearestMemory(const char *name, const csVector3& pos, const iSector* sector, float range, float *foundRange)
+Tribe::Memory *Tribe::FindNearestMemory(const char *name, const csVector3& pos, const iSector* sector, float range, float *foundRange)
 {
     Memory * nearest = NULL;
 
@@ -805,7 +805,7 @@ psTribe::Memory *psTribe::FindNearestMemory(const char *name, const csVector3& p
     return nearest;
 }
 
-psTribe::Memory *psTribe::FindRandomMemory(const char *name, const csVector3& pos, const iSector* sector, float range, float *foundRange)
+Tribe::Memory *Tribe::FindRandomMemory(const char *name, const csVector3& pos, const iSector* sector, float range, float *foundRange)
 {
     csArray<Memory*> nearby;
     csArray<float> dist;
@@ -841,11 +841,12 @@ psTribe::Memory *psTribe::FindRandomMemory(const char *name, const csVector3& po
     return NULL;
 }
 
-void psTribe::TriggerEvent(Perception *pcpt)
+void Tribe::TriggerEvent(Perception *pcpt, float maxRange,
+                         csVector3 *basePos, iSector *baseSector)
 {
     for (size_t i=0; i < members.GetSize(); i++)
     {
         NPC *npc = members[i];
-        npc->TriggerEvent( pcpt );
+        npc->TriggerEvent( pcpt, maxRange, basePos, baseSector );
     }
 }

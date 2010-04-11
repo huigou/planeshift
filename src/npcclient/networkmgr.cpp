@@ -490,7 +490,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 npc->Printf("Got Talk perception for from actor %s(%s), faction diff=%d.\n",
                             speaker_ent->GetName(), ShowID(speakerEID), faction);
 
-                npcclient->TriggerEvent(npc, &talk);
+                npc->TriggerEvent(&talk);
                 break;
             }
             case psNPCCommandsMessage::PCPT_ATTACK:
@@ -516,7 +516,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 npc->Printf("Got Attack perception for from actor %s(%s).",
                             attacker_ent->GetName(), ShowID(attackerEID));
 
-                npcclient->TriggerEvent(npc, &attack);
+                npc->TriggerEvent(&attack);
                 break;
             }
             case psNPCCommandsMessage::PCPT_GROUPATTACK:
@@ -562,7 +562,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 npc->Printf("Got Group Attack perception for recognising %i actors in the group.",
                             attacker_ents.GetSize());
 
-                npcclient->TriggerEvent(npc, &attack);
+                npc->TriggerEvent(&attack);
                 break;
             }
 
@@ -590,7 +590,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 npc->Printf("Got Damage perception for from actor %s(%s) for %1.1f HP.",
                             attacker_ent->GetName(), ShowID(attackerEID), dmg);
 
-                npcclient->TriggerEvent(npc, &damage);
+                npc->TriggerEvent(&damage);
                 break;
             }
             case psNPCCommandsMessage::PCPT_DEATH:
@@ -600,7 +600,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 if (!npc) // Not managed by us, or a player
                 {
                     DeathPerception pcpt(who);
-                    npcclient->TriggerEvent(NULL, &pcpt); // Broadcast
+                    npcclient->TriggerEvent(&pcpt); // Broadcast
                     break;
                 }
                 npc->Printf("Got Death message");
@@ -635,7 +635,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
 
                 SpellPerception pcpt("spell",caster_ent,target_ent,type,severity);
 
-                npcclient->TriggerEvent(NULL, &pcpt, 20, &pos, sector); // Broadcast
+                npcclient->TriggerEvent(&pcpt, 20, &pos, sector); // Broadcast
                 break;
             }
             case psNPCCommandsMessage::PCPT_ANYRANGEPLAYER:
@@ -684,7 +684,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
 
                 FactionPerception pcpt(pcpt_name, int (faction), player);
 
-                npcclient->TriggerEvent(npc, &pcpt);
+                npc->TriggerEvent(&pcpt);
                 break;
             }
             case psNPCCommandsMessage::PCPT_OWNER_CMD:
@@ -709,7 +709,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                                 (target)?target->GetName():"(none)");
                 }
 
-                if (!owner || !pet)
+                if (!npc | !owner || !pet)
                     break;
 
                 iSector *sector;
@@ -719,7 +719,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
 
                 OwnerCmdPerception pcpt( "OwnerCmdPerception", command, owner, pet, target );
 
-                npcclient->TriggerEvent(npc, &pcpt);
+                npc->TriggerEvent(&pcpt);
                 break;
             }
             case psNPCCommandsMessage::PCPT_OWNER_ACTION:
@@ -739,7 +739,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                                 (pet)?pet->GetName():"(unknown entity)");
                 }
 
-                if (!owner || !pet)
+                if (!npc || !owner || !pet)
                     break;
 
                 iSector *sector;
@@ -749,7 +749,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
 
                 OwnerActionPerception pcpt( "OwnerActionPerception", action, owner, pet );
 
-                npcclient->TriggerEvent(npc, &pcpt);
+                npc->TriggerEvent(&pcpt);
                 break;
             }
             case psNPCCommandsMessage::PCPT_INVENTORY:
@@ -789,7 +789,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
 
                 InventoryPerception pcpt( str, item_name, count, pos, sector, 5.0 );
 
-                npcclient->TriggerEvent(npc, &pcpt);
+                npc->TriggerEvent(&pcpt);
 
                 // Hack: To get inventory to tribe. Need some more general way of
                 //       delivery of perceptions to tribes....
@@ -830,7 +830,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
 
                 NPCCmdPerception pcpt( cmd, npc );
 
-                npcclient->TriggerEvent(NULL, &pcpt); // Broadcast
+                npcclient->TriggerEvent(&pcpt); // Broadcast
 
                 break;
             }
