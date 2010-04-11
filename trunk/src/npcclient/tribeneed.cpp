@@ -31,23 +31,23 @@
 
 // ---------------------------------------------------------------------------------
 
-psTribe * psTribeNeed::GetTribe() const 
+Tribe * TribeNeed::GetTribe() const 
 {
     return parentSet->GetTribe();
 }
 
-csString psTribeNeed::GetTypeAndName() const
+csString TribeNeed::GetTypeAndName() const
 {
     csString result;
     
-    result = needName + "(" + psTribe::TribeNeedTypeName[needType] +")";
+    result = needName + "(" + Tribe::TribeNeedTypeName[needType] +")";
     
     return result;
 }
 
 // ---------------------------------------------------------------------------------
 
-void psTribeNeedSet::UpdateNeed(NPC * npc)
+void TribeNeedSet::UpdateNeed(NPC * npc)
 {
     for (size_t i=0; i < needs.GetSize(); i++)
     {
@@ -55,7 +55,7 @@ void psTribeNeedSet::UpdateNeed(NPC * npc)
     }
 }
 
-psTribeNeed* psTribeNeedSet::CalculateNeed(NPC * npc)
+TribeNeed* TribeNeedSet::CalculateNeed(NPC * npc)
 {
     for (size_t i=0; i < needs.GetSize()-1; i++)
     {
@@ -63,7 +63,7 @@ psTribeNeed* psTribeNeedSet::CalculateNeed(NPC * npc)
         {
             if (needs[i]->GetNeedValue(npc) < needs[j]->GetNeedValue(npc))
             {
-                psTribeNeed *tmp = needs[i];
+                TribeNeed *tmp = needs[i];
                 needs[i] = needs[j];
                 needs[j] = tmp;
             }
@@ -82,23 +82,23 @@ psTribeNeed* psTribeNeedSet::CalculateNeed(NPC * npc)
     return needs[0];
 }
 
-void psTribeNeedSet::MaxNeed(const csString& needName)
+void TribeNeedSet::MaxNeed(const csString& needName)
 {
-    psTribeNeed * need = Find( needName );
+    TribeNeed * need = Find( needName );
     if (need)
     {
         need->current_need = 9999.0;
     }
 }
 
-void psTribeNeedSet::AddNeed(psTribeNeed * newNeed)
+void TribeNeedSet::AddNeed(TribeNeed * newNeed)
 {
     newNeed->SetParent(this);
     newNeed->ResetNeed();
     needs.Push(newNeed);
 }
 
-psTribeNeed* psTribeNeedSet::Find(const csString& needName) const
+TribeNeed* TribeNeedSet::Find(const csString& needName) const
 {
     for (size_t i=0; i < needs.GetSize(); i++)
     {

@@ -41,7 +41,7 @@ class NetworkManager;
 class  HateList;
 struct HateListEntry;
 class iResultRow;
-class psTribe;
+class Tribe;
 class Waypoint;
 class gemNPCObject;
 class gemNPCActor;
@@ -109,7 +109,7 @@ protected:
     EID                owner_id;
     EID                target_id;
 
-    psTribe*           tribe;
+    Tribe*             tribe;
     bool               insideTribeHome;      ///< State variable for inside outside tribe home checks.
         
     RaceInfo_t        *raceInfo;
@@ -186,7 +186,22 @@ public:
 
     void ResumeScript(Behavior *which);
 
-    void TriggerEvent(Perception *pcpt);
+    /** Send a perception to this NPC
+     *
+     * This will send the perception to this npc.
+     * If the maxRange has been set to something greater than 0.0
+     * a range check will be applied. Only if within the range
+     * from the base position and sector will this perception
+     * be triggered.
+     *
+     * @param pcpt       Perception to be sent.
+     * @param maxRange   If greater then 0.0 then max range apply
+     * @param basePos    The base position for range checks.
+     * @param baseSector The base sector for range checks.
+     */    
+    void TriggerEvent(Perception *pcpt, float maxRange=-1.0,
+                      csVector3* basePos=NULL, iSector* baseSector=NULL);
+    
     void SetLastPerception(Perception *pcpt);
     Perception *GetLastPerception() { return last_perception; }
 
@@ -281,13 +296,13 @@ public:
     void SetOwner(EID owner_EID);
 
     /** Set a new tribe for this npc */
-    void SetTribe(psTribe * new_tribe);
+    void SetTribe(Tribe * new_tribe);
     
     /** Get the tribe this npc belongs to.
      *
      * @return Null if not part of a tribe
      */
-    psTribe * GetTribe();
+    Tribe * GetTribe();
 
     /** Check the inside tribe home state of the npc.
      *

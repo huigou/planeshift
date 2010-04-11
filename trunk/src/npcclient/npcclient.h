@@ -57,7 +57,7 @@ class  Location;
 class  LocationType;
 class  Waypoint;
 class  psPFMaps;
-class  psTribe;
+class  Tribe;
 class  psPath;
 class  psPathNetwork;
 
@@ -257,13 +257,19 @@ public:
     { return connection; }
 
     /**
-     * Sends a perception to a specified NPC, or broadcasts to all npcs, or to all within a range of a position.
+     * Sends a perception to all npcs.
      *
-     * @param npc The npc to percept or NULL it all NPCs is to be percepted. If NPC is null max_range
-                  can be set to null to broadast to all or both
-     *            base_pos and base_sector has to be set to broadcast only to items within the given range.
+     * If macRange is greather than 0.0 only npcs within that range
+     * of the base position will be triggered.
+     *
+     * \sa NPC::TriggerEvent Tribe::TriggerEvent
+     *
+     * @param maxRange   If greater than 0.0 then max range apply
+     * @param basePos    The base position for range checks.
+     * @param baseSector The base sector for range checks.
      */
-    void TriggerEvent(NPC *npc, Perception *pcpt, float max_range=-1.0, csVector3 *base_pos=NULL, iSector *base_sector=NULL);
+    void TriggerEvent(Perception *pcpt, float maxRange=-1.0,
+                      csVector3 *basePos=NULL, iSector *baseSector=NULL);
 
     EventManager *GetEventMgr()
     { return eventmanager; }
@@ -483,7 +489,7 @@ protected:
     psPathNetwork             *pathNetwork;
     csArray<NPC*>              npcs;
     csArray<DeferredNPC>       npcsDeferred;
-    csArray<psTribe*>          tribes;
+    csArray<Tribe*>            tribes;
     csHash<gemNPCObject*, EID> all_gem_objects_by_eid;
     csHash<gemNPCObject*, PID> all_gem_objects_by_pid;
     csArray<gemNPCObject*>     all_gem_objects;

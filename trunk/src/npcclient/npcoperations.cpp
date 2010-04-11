@@ -1489,7 +1489,7 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         else if (split_obj[1] == "memory")
         {
             float located_range=0.0;
-            psTribe::Memory * memory;
+            Tribe::Memory * memory;
 
             if (random)
             {
@@ -1888,7 +1888,7 @@ bool MemorizeOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     
     npc->Printf(5, ">>> Memorize '%s' '%s'.",percept->GetType(),percept->GetName());
 
-    psTribe * tribe = npc->GetTribe();
+    Tribe * tribe = npc->GetTribe();
     
     if ( !tribe ) return true; // Nothing more to do for this op.
 
@@ -2346,6 +2346,33 @@ bool PerceptOperation::Load(iDocumentNode *node)
         Error1("Percept operation need an event attribute");
         return false;
     }
+    
+    maxRange = node->GetAttributeValueAsFloat("range");
+
+    csString targetStr = node->GetAttributeValue("target");
+    if (targetStr.IsEmpty() || targetStr.CompareNoCase("self"))
+    {
+        target = SELF;
+        maxRange = 0.0; // Turn off range limit on self.
+    }
+    else if (targetStr.CompareNoCase("all"))
+    {
+        target = ALL;
+    }
+    else if (targetStr.CompareNoCase("tribe"))
+    {
+        target = TRIBE;
+    }
+    else if (targetStr.CompareNoCase("target"))
+    {
+        target = TARGET;
+    }
+    else
+    {
+        Error2("Unkown target type of '%s' for perception operation",
+               targetStr.GetDataSafe());
+        return false;
+    }
 
     return true;
 }
@@ -2353,14 +2380,79 @@ bool PerceptOperation::Load(iDocumentNode *node)
 ScriptOperation *PerceptOperation::MakeCopy()
 {
     PerceptOperation *op = new PerceptOperation;
+
     op->perception = perception;
+    op->target     = target;
+    op->maxRange   = maxRange;
+
     return op;
 }
 
 bool PerceptOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     Perception pcpt(perception);
-    npc->TriggerEvent(&pcpt);
+
+    csVector3 basePos;
+    iSector*  baseSector = NULL;
+    float     baseYRot;
+
+    if (maxRange >= 0.0 && npc->GetActor())
+    {
+        // Only get position if range based perception.
+        psGameObject::GetPosition(npc->GetActor(), basePos, baseYRot, baseSector);
+    }
+    else
+    {
+        if (maxRange >= 0.0)
+        {
+            npc->Printf(1,"Perception not sent based on range since no known position");
+            return true; // Nothing more to do for this op.
+        }
+        
+    }
+    
+    if (target == SELF)
+    {
+        // No point checking range for self, so just send the event.
+        npc->TriggerEvent(&pcpt);
+    }
+    else if (target == TRIBE)
+    {
+        Tribe* tribe = npc->GetTribe();
+        if (!tribe)
+        {
+            npc->Printf("No tribe to percept");
+            return true; // Nothing more to do for this op.
+        }
+        
+        tribe->TriggerEvent(&pcpt, maxRange, &basePos, baseSector);
+    }
+    else if (target == ALL)
+    {
+        npcclient->TriggerEvent(&pcpt, maxRange, &basePos, baseSector);
+    }
+    else if (target == TARGET)
+    {
+        if (!npc->GetTarget())
+        {
+            npc->Printf(1,"Failed to percept since no target");
+            return true; // Nothing more to do for this op.
+        }
+        
+        NPC *targetNPC = npc->GetTarget()->GetNPC();
+        if (targetNPC)
+        {
+            targetNPC->TriggerEvent(&pcpt, maxRange, &basePos, baseSector);
+        }
+        else
+        {
+            npc->Printf(1,"Failed to percept since target isn't a NPC");
+        }
+    }
+    else
+    {
+        Error1("Unkown target type for PerceptionOperation");
+    }
 
     return true;  // Nothing more to do for this op.
 }
@@ -2472,7 +2564,7 @@ ScriptOperation *ResurrectOperation::MakeCopy()
 
 bool ResurrectOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
-    psTribe * tribe = npc->GetTribe();
+    Tribe * tribe = npc->GetTribe();
     
     if ( !tribe ) return true;  // Nothing more to do for this op.
 
@@ -2689,7 +2781,7 @@ bool RotateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     }
     else if (op_type == ROT_TRIBE_HOME)
     {
-        psTribe * tribe = npc->GetTribe();
+        Tribe * tribe = npc->GetTribe();
         
         if (tribe)
         {
@@ -2952,7 +3044,7 @@ bool ShareMemoriesOperation::Run(NPC *npc, EventManager *eventmgr, bool interrup
 
     npc->Printf("ShareMemories with tribe.");
 
-    psTribe * tribe = npc->GetTribe();
+    Tribe * tribe = npc->GetTribe();
     if ( !tribe ) return true; // Nothing more to do for this op.
 
     tribe->ShareMemories( npc );
@@ -3070,7 +3162,7 @@ ScriptOperation *TribeHomeOperation::MakeCopy()
 
 bool TribeHomeOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
-    psTribe * tribe = npc->GetTribe();
+    Tribe * tribe = npc->GetTribe();
     
     if ( !tribe ) return true; // Nothing more to do for this op.
 

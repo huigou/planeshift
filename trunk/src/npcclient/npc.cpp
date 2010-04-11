@@ -296,13 +296,44 @@ void NPC::ResumeScript(Behavior *which)
     }
 }
 
-void NPC::TriggerEvent(Perception *pcpt)
+void NPC::TriggerEvent(Perception *pcpt, float maxRange,
+                       csVector3 *basePos, iSector *baseSector)
 {
-    if (!disabled)
+    if (disabled)
     {
-        Printf(15,"Got event %s",pcpt->ToString().GetData() );
-        brain->FirePerception(this, pcpt);
+        Printf(15,"Disabled so rejecting perception #s"
+               ,pcpt->ToString().GetData() );
+        return;
     }
+
+    if (maxRange > 0.0)
+    {
+        // This is a range based perception
+        gemNPCActor* me = GetActor();
+        if (!me)
+        {
+            Printf(15,"Can't do a ranged based check without an actor");
+            return;
+        }
+
+        csVector3 pos;
+        iSector*  sector;
+        float     yrot;
+        psGameObject::GetPosition(me,pos,yrot,sector);
+
+        float distance = world->Distance(pos, sector, *basePos, baseSector);
+
+        if (distance > maxRange)
+        {
+            Printf(15,"The distance %.2f is outside range %.2f of perception %s",
+                   distance, maxRange, pcpt->ToString().GetData() );
+            return;
+        }
+    }
+    
+    
+    Printf(15,"Got event %s",pcpt->ToString().GetData() );
+    brain->FirePerception(this, pcpt);
 }
 
 void NPC::SetLastPerception(Perception *pcpt)
@@ -747,12 +778,12 @@ void NPC::SetOwner(EID owner_EID)
         owner_id = owner_EID;
 }
 
-void NPC::SetTribe(psTribe * new_tribe)
+void NPC::SetTribe(Tribe * new_tribe)
 {
     tribe = new_tribe;
 }
 
-psTribe * NPC::GetTribe()
+Tribe * NPC::GetTribe()
 {
     return tribe;
 }

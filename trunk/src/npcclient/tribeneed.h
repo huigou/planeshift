@@ -24,18 +24,18 @@
 //=============================================================================
 #include "tribe.h"
 
-class psTribeNeedSet;
-class psTribe;
+class TribeNeedSet;
+class Tribe;
 class NPC;
 
 /**
  * Represent the base class for all tribe need types.
  */
-class psTribeNeed 
+class TribeNeed 
 {
 public:
-    psTribeNeedSet         *parentSet;    ///< Point to the need set that this need is part of
-    psTribe::TribeNeedType  needType;     ///< Set by each need type to one of the tribe needs
+    TribeNeedSet*           parentSet;    ///< Point to the need set that this need is part of
+    Tribe::TribeNeedType    needType;     ///< Set by each need type to one of the tribe needs
     float                   current_need; ///< Represent current need. Will be used to sort each need.
     csString                needName;     ///< Name of need
 
@@ -43,25 +43,25 @@ public:
      * Construct a basic need with the given needType and needName for debuging.
      *
      */
-    psTribeNeed(psTribe::TribeNeedType needType, csString name, csString perception,
-                float needStartValue, float needGrowthValue)
+    TribeNeed(Tribe::TribeNeedType needType, csString name, csString perception,
+              float needStartValue, float needGrowthValue)
         :parentSet(NULL),needType(needType),current_need(0.0),needName(name), perception(perception),
          needStartValue(needStartValue), needGrowthValue(needGrowthValue)
     {
         ResetNeed();
     }
 
-    virtual ~psTribeNeed() {};
+    virtual ~TribeNeed() {};
 
     /**
      * @return The tribe this need is a part of
      */
-    psTribe * GetTribe() const;
+    Tribe * GetTribe() const;
 
     /**
      * Set the parent need. Called when a need is added to a set.
      */
-    void SetParent(psTribeNeedSet * parent)
+    void SetParent(TribeNeedSet * parent)
     {
         parentSet = parent;
     }
@@ -95,7 +95,7 @@ public:
      * To be overloded if a need is selected and that need depend on some
      * other need before it can be used.
      */
-    virtual psTribe::TribeNeedType GetNeedType()
+    virtual Tribe::TribeNeedType GetNeedType()
     {
         return needType;
     }
@@ -105,7 +105,7 @@ public:
      * To be overloded if a need is selected and that need depend on some
      * other need before it can be used.
      */
-    virtual psTribeNeed* GetNeed()
+    virtual TribeNeed* GetNeed()
     {
         return this;
     }
@@ -150,19 +150,19 @@ protected:
 /**
  * Hold a collection of needs and calculate the highest need for the tribe.
  */
-class psTribeNeedSet
+class TribeNeedSet
 {
 public:
 
     /**
      * Iterator type
      */
-    typedef csArray<psTribeNeed*>::Iterator NeedIterator;
+    typedef csArray<TribeNeed*>::Iterator NeedIterator;
     
     /**
      * Construct a need set for the given tribe.
      */
-    psTribeNeedSet(psTribe * tribe)
+    TribeNeedSet(Tribe * tribe)
         :tribe(tribe)
     {
     }
@@ -176,7 +176,7 @@ public:
     /**
      * Will sort each need and select the highest ranking need to be returned.
      */
-    psTribeNeed* CalculateNeed(NPC * npc);
+    TribeNeed* CalculateNeed(NPC * npc);
 
     /**
      * Set the named need to the most needed need.
@@ -186,17 +186,17 @@ public:
     /**
      * @return the tribe for the need set.
      */
-    psTribe * GetTribe() const { return tribe; };
+    Tribe * GetTribe() const { return tribe; };
 
     /**
      * Add a new need to the need set.
      */
-    void AddNeed(psTribeNeed * newNeed);
+    void AddNeed(TribeNeed * newNeed);
 
     /**
      * Find a Need by name
      */
-    psTribeNeed* Find(const csString& needName) const;
+    TribeNeed* Find(const csString& needName) const;
 
     /**
      * Return iterator for needs
@@ -204,23 +204,23 @@ public:
     NeedIterator GetIterator(){ return needs.GetIterator(); };
 
 private:
-    psTribe               *tribe;
-    csArray<psTribeNeed*>  needs;
+    Tribe*                 tribe;
+    csArray<TribeNeed*>    needs;
 };
 
 // ---------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------
 
-class psTribeNeedGeneric : public psTribeNeed
+class TribeNeedGeneric : public TribeNeed
 {
 public:
-    psTribeNeedGeneric(const csString& name, const csString& perception,
-                       float needStartValue, float needGrowthValue )
-        :psTribeNeed(psTribe::GENERIC, name, perception, needStartValue, needGrowthValue)
+    TribeNeedGeneric(const csString& name, const csString& perception,
+                     float needStartValue, float needGrowthValue )
+        :TribeNeed(Tribe::GENERIC, name, perception, needStartValue, needGrowthValue)
     {
     }
 
-    virtual ~psTribeNeedGeneric()
+    virtual ~TribeNeedGeneric()
     {
     }
 
@@ -235,19 +235,19 @@ private:
 
 // ---------------------------------------------------------------------------------
 
-class psTribeNeedResourceArea : public psTribeNeed
+class TribeNeedResourceArea : public TribeNeed
 {
 public:
     
-    psTribeNeedResourceArea(const csString& name, const csString& perception,
-                            float needStartValue, float needGrowthValue,
-                            psTribeNeed * explore)
-        :psTribeNeed(psTribe::RESOURCE_AREA,name,perception,needStartValue,needGrowthValue),
+    TribeNeedResourceArea(const csString& name, const csString& perception,
+                          float needStartValue, float needGrowthValue,
+                          TribeNeed * explore)
+        :TribeNeed(Tribe::RESOURCE_AREA,name,perception,needStartValue,needGrowthValue),
          explore(explore)
     {
     }
 
-    virtual ~psTribeNeedResourceArea()
+    virtual ~TribeNeedResourceArea()
     {
     }
 
@@ -263,7 +263,7 @@ public:
         }
     }
 
-    virtual psTribeNeed* GetNeed()
+    virtual TribeNeed* GetNeed()
     {
         if (GetTribe()->FindMemory(GetTribe()->GetNeededResourceAreaType()))
         {
@@ -275,7 +275,7 @@ public:
         }
     }
 private:
-    psTribeNeed * explore;
+    TribeNeed * explore;
 
 };
 
@@ -290,19 +290,19 @@ private:
  *  get_resource_need.
  */
 
-class psTribeNeedReproduce : public psTribeNeed
+class TribeNeedReproduce : public TribeNeed
 {
 public:
     
-    psTribeNeedReproduce(const csString& name, const csString& perception,
-                         float needStartValue, float needGrowthValue,
-                         psTribeNeed * get_resource_need)
-        :psTribeNeed(psTribe::REPRODUCE,name,perception,needStartValue,needGrowthValue),
+    TribeNeedReproduce(const csString& name, const csString& perception,
+                       float needStartValue, float needGrowthValue,
+                       TribeNeed * get_resource_need)
+        :TribeNeed(Tribe::REPRODUCE,name,perception,needStartValue,needGrowthValue),
          get_resource_need(get_resource_need)
     {
     }
 
-    virtual ~psTribeNeedReproduce()
+    virtual ~TribeNeedReproduce()
     {
     }
 
@@ -317,7 +317,7 @@ public:
         }
     }
 
-    virtual psTribeNeed* GetNeed()
+    virtual TribeNeed* GetNeed()
     {
         if (GetTribe()->CanGrow())
         {
@@ -330,7 +330,7 @@ public:
     }
 
  private:
-    psTribeNeed * get_resource_need;
+    TribeNeed * get_resource_need;
 };
 
 #endif
