@@ -850,3 +850,38 @@ void Tribe::TriggerEvent(Perception *pcpt, float maxRange,
         npc->TriggerEvent( pcpt, maxRange, basePos, baseSector );
     }
 }
+
+gemNPCActor* Tribe::GetMostHated(NPC* npc, float range, bool includeInvisible, bool includeInvincible, float* hate)
+{
+    float mostHatedHate = 0.0;
+    gemNPCActor* mostHated = NULL;
+    
+    csVector3  pos;
+    iSector*   sector;
+    float      yrot;
+    
+    psGameObject::GetPosition(npc->GetActor(), pos, yrot, sector );
+
+    for (size_t i=0; i < members.GetSize(); i++)
+    {
+        NPC *member = members[i];
+        float hateValue = 0;
+
+        gemNPCActor* hated = member->GetMostHated(pos, sector, range, NULL,
+                                                  includeInvisible, includeInvincible,
+                                                  &hateValue );
+        if (hateValue > mostHatedHate)
+        {
+            mostHatedHate = hateValue;
+            mostHated = hated;
+        }
+    }
+
+    if (hate)
+    {
+        *hate = mostHatedHate;
+    }
+
+    return mostHated;
+}
+

@@ -38,6 +38,7 @@ class NPC;
 class TribeNeedSet;
 class TribeNeed;
 class Perception;
+class gemNPCActor;
 
 #define TRIBE_UNLIMITED_SIZE   100
 
@@ -301,6 +302,21 @@ public:
      */
     void TriggerEvent(Perception* pcpt, float maxRange=-1.0,
                       csVector3* basePos=NULL, iSector* baseSector=NULL);
+
+    /** Find the most hated entity for tribe within range 
+     *
+     *  Check the hate list and retrive most hated entity within range
+     *  of the given NPC.
+     *
+     *  @param  npc               The senter of the search.
+     *  @param  range             The range to search for hated entities.
+     *  @param  includeInvisible  Include invisible entities in the search.
+     *  @param  includeInvincible Include invincible entities in the search.
+     *  @param  hate              If diffrent from NULL, set upon return to the hate of the hated.
+     *  @return The hated entity
+     */
+    gemNPCActor* GetMostHated(NPC* npc, float range, bool includeInvisible, bool includeInvincible, float* hate=NULL);
+    
     
 protected:
 
