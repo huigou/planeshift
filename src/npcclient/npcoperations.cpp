@@ -2482,7 +2482,7 @@ bool PerceptOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     }
     else
     {
-        Error1("Unkown target type for PerceptionOperation");
+        Error1("Unkown target type for Percept operation");
     }
 
     return true;  // Nothing more to do for this op.
@@ -2728,8 +2728,8 @@ bool RotateOperation::Load(iDocumentNode *node)
     }
     else
     {
-        Error1("Rotate Op type must be 'inregion', 'random', 'absolute', 'relative', "
-               "'target' or 'locatedest' right now.");
+        Error2("Rotate Op type '%s' must be 'inregion', 'random', 'absolute', 'relative', "
+               "'target', 'tribe_home' or 'locatedest' right now.",type.GetDataSafe());
     }
     return false;
 }
