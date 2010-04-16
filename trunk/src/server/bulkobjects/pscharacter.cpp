@@ -1542,7 +1542,7 @@ void psCharacter::CombatDrain(int slot)
     if (!script)
         return;
     psItem *weapon = inventory.GetEffectiveWeaponInSlot((INVENTORY_SLOT_NUMBER) slot);
-    if(weapon)//shouldn't happen
+    if(!weapon)//shouldn't happen
         return;
 
     MathEnvironment env;
