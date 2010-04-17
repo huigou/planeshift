@@ -620,6 +620,10 @@ void pawsSkillWindow::HandleSkillDescription( csString& description )
 void pawsSkillWindow::OnNumberEntered(const char *name,int param,int number)
 {
     csString commandData;
+
+    if(number == -1)
+        return;
+
     if (selectedSkill.IsEmpty())
     {
         PawsManager::GetSingleton().CreateWarningBox("You have to select a skill to buy.");
