@@ -100,10 +100,7 @@ void pawsShortcutWindow::CalcButtonSize()
     
     for (shortcutNum = 0; shortcutNum < NUM_SHORTCUTS; shortcutNum++)
     {
-        if (names[shortcutNum].GetData() != NULL)
-        {
-            GetFont()->GetDimensions( names[shortcutNum], width, height );
-        }            
+        GetFont()->GetDimensions( names[shortcutNum].GetDataSafe(), width, height );
         maxWidth   = MAX(width,  maxWidth);
         maxHeight  = MAX(height, maxHeight);
     }
@@ -513,12 +510,6 @@ void pawsShortcutWindow::LoadCommands(const char * fileName)
         names[number] = child->GetAttributeValue("name");
         cmds[number] = child->GetContentsValue();
     }
-    
-    // the 0th entry must exist to correctly make the matrix
-    if (names[0].IsEmpty())
-        names[0].Clear();
-    if (cmds[0].IsEmpty())
-        cmds[0].Clear();
 }
 
 void pawsShortcutWindow::SaveCommands(void)
