@@ -115,6 +115,7 @@ pawsListBox::~pawsListBox()
 
 void pawsListBox::Clear()
 {
+    selected = -1;
     for ( size_t x = 0; x < rows.GetSize(); x++ )
     {
         children.Delete( rows[x] );
@@ -353,7 +354,6 @@ pawsListBoxRow* pawsListBox::RemoveSelected()
     {
         pawsListBoxRow* zombie = rows[selected];
         Remove(zombie);
-        selected = -1;
         return zombie;
     }
 }
@@ -367,7 +367,7 @@ void pawsListBox::Remove( int id )
         {
             pawsListBoxRow* zombie = rows[x];
             Remove(zombie);
-	    delete zombie;
+            delete zombie;
             return;
         }
     }
@@ -378,9 +378,14 @@ void pawsListBox::Remove (pawsListBoxRow* rowToRemove)
 {
     if (rowToRemove)
     {
+        pawsListBoxRow* selectedRow = NULL;
+        if (selected != -1)
+            selectedRow = rows[selected];
+
         rows.Delete( rowToRemove );
         children.Delete( rowToRemove );
         totalRows--;
+        Select(selectedRow);
         CalculateDrawPositions();
     }
 }
@@ -1174,18 +1179,11 @@ void pawsListBox::SortRows()
     sort_ascOrder    = ascOrder;
     qsort(sortedRows, rows.GetSize(), sizeof (void*), sort_cmp);
 
-    for ( i=0; i < rows.GetSize(); i++)
-    {
-        rows[i] = sortedRows[i];
-        if(sortedRows[i] == selectedrow) //check if the current row is the one which was selected
-            selected = (int) i; //if so update our selected variable
-    }
-
     delete [] sortedRows;
 
     CheckSortingArrow(sortColNum, ascOrder); //check if the sorting arrow is there if not add it
 
-    Select(GetSelectedRow()); //allows select to handle the new position and update gfx correctly
+    Select(selectedrow); //allows select to handle the new position and update gfx correctly
 
     CalculateDrawPositions();
 }
