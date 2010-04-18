@@ -132,7 +132,7 @@ public:
    /**
     * Update the load range initially passed to the loader in Setup().
     */
-    void SetLoadRange(float r) { loadRange = r; }
+    void SetLoadRange(float r) { loadRange = r; UpdatePosition(lastPos, lastSector->name, true); }
 
    /**
     * Request to know whether the current world position stored by the loader is valid.
