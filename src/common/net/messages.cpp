@@ -4709,7 +4709,10 @@ psPersistWorld::psPersistWorld( uint32_t clientNum, csVector3 pos, const char* s
 
 psPersistWorld::psPersistWorld( MsgEntry* me )
 {
-    pos = csVector3(me->GetFloat(), me->GetFloat(), me->GetFloat());
+    float x = me->GetFloat();
+    float y = me->GetFloat();
+    float z = me->GetFloat();    
+    pos = csVector3(x,y,z);
     sector = me->GetStr();
 }
 
