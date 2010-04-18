@@ -183,8 +183,11 @@ void ZoneHandler::LoadZone(csVector3 pos, const char* sector)
     if (celclient->GetMainPlayer())
         oldsector = celclient->GetMainPlayer()->GetSector();
 
-    if (oldsector && newsector)
-        connected = celclient->GetWorld()->Connected(newsector, oldsector);
+    if (oldsector && newsector && celclient->GetWorld())
+    {
+        celclient->GetWorld()->BuildWarpCache(); // we need an up-to-date warp cache here
+        connected = celclient->GetWorld()->Connected(oldsector, newsector);
+    }
 
     ZoneLoadInfo* zone = FindZone(sectorToLoad);
     if (zone == NULL)
@@ -311,7 +314,6 @@ ZoneLoadInfo::ZoneLoadInfo(iDocumentNode *node)
     trans = node->GetAttributeValue("transitional");
     transitional = (trans=="yes");
     regions.AttachNew(new scfStringArray());
-    regions->Push("podium");
 
     csRef<iDocumentNodeIterator> regionIter = node->GetNodes("region");
     while (regionIter->HasNext())
