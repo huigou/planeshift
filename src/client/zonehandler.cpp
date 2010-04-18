@@ -185,7 +185,8 @@ void ZoneHandler::LoadZone(csVector3 pos, const char* sector)
 
     if (oldsector && newsector && celclient->GetWorld())
     {
-        celclient->GetWorld()->BuildWarpCache(); // we need an up-to-date warp cache here
+        //check this
+       // celclient->GetWorld()->BuildWarpCache(); // we need an up-to-date warp cache here
         connected = celclient->GetWorld()->Connected(oldsector, newsector);
     }
 
