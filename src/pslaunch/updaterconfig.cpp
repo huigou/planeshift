@@ -120,6 +120,38 @@ Config::Config()
     updaterVersionLatest = 0.0f;    
 }
 
+bool Config::LoadMirrors(csRef<iDocumentNode> node)
+{
+    // Get mirrors.
+    csRef<iDocumentNode> mirrorNode = node->GetNode("mirrors");
+    if (mirrorNode)
+    {
+        mirrors.Empty();
+        csRef<iDocumentNodeIterator> nodeItr = mirrorNode->GetNodes();
+        while(nodeItr->HasNext())
+        {
+            csRef<iDocumentNode> mNode = nodeItr->Next();
+
+            if (!strcmp(mNode->GetValue(),"mirror"))
+            {
+                csRef<Mirror> mirror;
+                mirror.AttachNew(new Mirror);
+                mirror->SetID(mNode->GetAttributeValueAsInt("id"));
+                mirror->SetName(mNode->GetAttributeValue("name"));
+                mirror->SetBaseURL(mNode->GetAttributeValue("url"));
+                mirror->SetIsRepair(mNode->GetAttributeValueAsBool("repair",false));
+                mirrors.Push(mirror);
+            }
+        }
+    }
+    else
+    {
+        printf("Unable to load mirrors!\n");
+        return false;
+    }
+    return (mirrors.GetSize() > 0);
+}
+
 bool Config::Initialize(csRef<iDocumentNode> node)
 {
     // Get activity state.
@@ -142,32 +174,7 @@ bool Config::Initialize(csRef<iDocumentNode> node)
         return false;
     }
 
-    // Get mirrors.
-    csRef<iDocumentNode> mirrorNode = node->GetNode("mirrors");
-    if (mirrorNode)
-    {
-        mirrors.Empty();
-        csRef<iDocumentNodeIterator> nodeItr = mirrorNode->GetNodes();
-        while(nodeItr->HasNext())
-        {
-            csRef<iDocumentNode> mNode = nodeItr->Next();
-
-            if (!strcmp(mNode->GetValue(),"mirror"))
-            {
-                csRef<Mirror> mirror;
-                mirror.AttachNew(new Mirror);
-                mirror->SetID(mNode->GetAttributeValueAsInt("id"));
-                mirror->SetName(mNode->GetAttributeValue("name"));
-                mirror->SetBaseURL(mNode->GetAttributeValue("url"));
-                mirrors.Push(mirror);
-            }
-        }
-    }
-    else
-    {
-        printf("Unable to load mirrors!\n");
-        return false;
-    }
+    LoadMirrors(node);
 
     // Get client versions.
     csRef<iDocumentNode> clientNode = node->GetNode("client");
@@ -198,6 +205,19 @@ bool Config::Initialize(csRef<iDocumentNode> node)
 
     // Successfully Loaded!
     return true;
+}
+
+//could be improved ... a lot
+csArray<Mirror> Config::GetRepairMirrors()
+{
+    csArray<Mirror> repairMirrors;
+    for(size_t x = 0; x < mirrors.GetSize(); x++)
+    {
+        Mirror curMirror = *mirrors.Get(x);
+        if(curMirror.IsRepair())
+            repairMirrors.Push(curMirror);
+    }
+    return repairMirrors;
 }
 
 Mirror* Config::GetMirror(uint x)

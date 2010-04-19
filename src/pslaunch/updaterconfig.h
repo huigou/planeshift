@@ -31,6 +31,9 @@
 #define CONFIG_FILENAME "/this/pslaunch.cfg"
 #define UPDATERINFO_FILENAME "/planeshift/userdata/updaterinfo.xml"
 #define UPDATERINFO_CURRENT_FILENAME "/this/updaterinfo.xml"
+#define SERVERS_FILENAME "/planeshift/userdata/servers.xml"
+#define SERVERS_CURRENT_FILENAME "/planeshift/userdata/servers.xml"
+#define FALLBACK_SERVER "http://testing.xordan.com/"
 
 class Mirror : public csRefCount
 {
@@ -46,6 +49,11 @@ public:
 
     /* Return mirror URL */
     const char* GetBaseURL() const { return baseURL; }
+    
+    /** Returns if the server is a server supporting repair. So that can be used for it.
+     *  @return TRUE if the server supports repair
+     */
+    bool IsRepair() const { return repair; }
 
     /* Set mirror URL */
     void SetBaseURL(csString url) { baseURL = url; }
@@ -53,6 +61,11 @@ public:
     void SetID(uint id) { this->id = id; }
     void SetName(const char* name) { this->name = name; }
     void SetBaseURL(const char* baseURL) { this->baseURL = baseURL; }
+    
+    /** Sets if the current server supports repair.
+     *  @param repair Set this as true if this is a server supporting repair.
+     */
+    void SetIsRepair(const bool repair) { this->repair = repair; }
 
 protected:
     /* Mirror ID */
@@ -63,6 +76,9 @@ protected:
 
     /* URL of the mirror (including update dir) */
     csString baseURL;
+    
+    ///Holds if this is a repair server
+    bool repair;
 };
 
 class ClientVersion : public csRefCount
@@ -111,11 +127,22 @@ public:
     Config();
 
     Mirror* GetMirror(uint mirrorNumber);
+    csArray<Mirror> GetRepairMirrors();
 
     /* Get mirrors. */
     csRefArray<Mirror>& GetMirrors() { return mirrors; }
     /* Get clientVersions list. */
     csRefArray<ClientVersion>& GetClientVersions() { return clientVersions; }
+
+    /** Loads mirrors from an xml formatted entry eg:
+     *  <mirrors>
+     *      <mirror id="1" name="Mirror1" url="http://www.mirror1.com/updaterdir" />
+     *      <mirror id="2" name="Mirror2" url="http://www.mirror2.com/updaterdir" />
+     *  </mirrors>
+     *  @param node The reference to the main node of an xml document containing the mirror list.
+     *  @return FALSE if the mirrors entry was not found or no mirrors were added during the parsing.
+     */
+    bool LoadMirrors(csRef<iDocumentNode> node);
 
     /* Init a xml config file. */
     bool Initialize(csRef<iDocumentNode> node);
