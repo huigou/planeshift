@@ -3,7 +3,7 @@
 <widget name="RenderToolbox" factory="EEditRenderToolbox" 
         visible="yes" savepositions="yes" movable="yes" resizable="no" resizetoscreen="no">
 	
-    <frame x="805" y="400" width="210" height="65" border="yes" justtitle="yes" />
+    <frame x="105" y="400" width="530" height="250" border="yes" justtitle="yes" />
     <title resource="TitleBar" text="Render Effect" align="left" />
     <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />   
     <bgimage resource="Back" alpha="75" />
@@ -36,6 +36,41 @@
         <buttondown resource="ButtonDown" />
         <label text="Stop"/>
     </widget>
+
+    <widget name="list" factory="pawsListBox">	
+        <frame x="5" y="40" width="220" height="205" border="no"/>
+        <bgimage resource="Shaded" alpha="100" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />   
+        <highlight resource="ListSelect" alpha="100" />
+        <columns height="20" headings="no">
+            <column width="50">            
+                <widget name="Type" factory="pawsTextBox">
+                </widget>
+            </column>                                               
+            <column width="170">            
+                <widget name="Name" factory="pawsTextBox">
+                </widget>
+            </column>                                               
+        </columns>
+    </widget>
+
+    <widget name="list2" factory="pawsListBox">	
+        <frame x="230" y="40" width="290" height="205" border="no"/>
+        <bgimage resource="Shaded" alpha="100" />
+        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />   
+        <highlight resource="ListSelect" alpha="100" />
+        <columns height="20" headings="no">
+            <column width="50">            
+                <widget name="Type" factory="pawsTextBox">
+                </widget>
+            </column>                                               
+            <column width="260">            
+                <widget name="Name" factory="pawsTextBox">
+                </widget>
+            </column>                                               
+        </columns>
+    </widget>
+
 </widget>
 
 </widget_description>

@@ -133,6 +133,12 @@ public:
      */
     psEffectAnchor * GetAnchor(size_t idx) const;
 
+    /** Finds an effect anchor of the given name
+     *   @param anchorName the name of the anchor to find
+     *   @return the anchor if it's found, 0 otherwise
+     */
+    psEffectAnchor * FindAnchor(const csString & anchorName) const;
+
     /** returns the number of effect objs in this effect.
      *   @return the effect obj count
      */
@@ -143,6 +149,12 @@ public:
      *   @return the effect obj at the given index
      */
     psEffectObj * GetObj(size_t idx) const;
+
+    /** Finds an effect obj of the given name
+     *   @param objName the name of the obj to find
+     *   @return the obj if it's found, 0 otherwise
+     */
+    psEffectObj * FindObj(const csString & objName) const;
 
     /** Gets the name of the effect.
      *   @return the name of the effect
@@ -169,13 +181,6 @@ public:
     void SetScaling(float scale, float aspect);
 
 private:
-
-    /** Finds an effect anchor of the given name
-     *   @param anchorName the name of the anchor to find
-     *   @return the anchor if it's found, 0 otherwise
-     */
-    psEffectAnchor * FindAnchor(const csString & anchorName) const;
-
     /** This makes the anchoring to an iMovable possible by being informed of every change to the iMovable
     */
     class psEffectMovableListener : public scfImplementation1<psEffectMovableListener,iMovableListener>

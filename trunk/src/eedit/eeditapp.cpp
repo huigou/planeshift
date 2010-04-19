@@ -76,6 +76,7 @@
 #include "eeditfpstoolbox.h"
 #include "eeditshortcutstoolbox.h"
 #include "eeditrequestcombo.h"
+#include "eeditrendertoolbox.h"
 
 #include "iclient/ibgloader.h"
 
@@ -477,6 +478,9 @@ bool EEditApp::RenderEffect(const csString &effectName)
         return false;
     }
     effectManager->Update(1);
+
+    ((EEditRenderToolbox *)toolboxManager->GetToolbox(EEditToolbox::T_RENDER))->LoadEffect(effectManager, effectName);
+
     return true;
 }
 
@@ -511,9 +515,12 @@ bool EEditApp::ReloadCurrentEffect()
     effectManager->LoadEffects(currEffectLoc, editWindow->GetView());
     ((EEditErrorToolbox *)toolboxManager->GetToolbox(EEditToolbox::T_ERROR))->SetLoadingEffects(false);
 
-
     effectLoaded = true;
-    ((EEditEditEffectToolbox *)toolboxManager->GetToolbox(EEditToolbox::T_EDIT_EFFECT))->LoadEffect(effectManager->FindEffect(currEffectName));
+    psEffect* eff = effectManager->FindEffect(currEffectName);
+    ((EEditEditEffectToolbox *)toolboxManager->GetToolbox(EEditToolbox::T_EDIT_EFFECT))->LoadEffect(eff);
+
+    ((EEditRenderToolbox *)toolboxManager->GetToolbox(EEditToolbox::T_RENDER))->LoadEffect(effectManager, currEffectName);
+
     return true;
 }
     

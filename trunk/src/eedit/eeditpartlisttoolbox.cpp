@@ -92,6 +92,7 @@ public:
 
 //---------------------------------------------------------------------------------------
 
+// @@@ Duplicated in eeditrendertoolbox.cpp, refactor to use some lib.
 static pawsListBoxRow* NewRow (size_t& a, pawsListBox* box, pawsTextBox** col1, pawsTextBox** col2 = 0, pawsTextBox** col3 = 0)
 {
     box->NewRow(a);

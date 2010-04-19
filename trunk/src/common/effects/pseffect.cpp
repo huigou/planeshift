@@ -670,6 +670,16 @@ bool psEffect::SetText(const char * text)
 }
 */
 
+psEffectObj * psEffect::FindObj(const csString & objName) const
+{
+    for (size_t a=0; a<effectObjs.GetSize(); ++a)
+    {
+        if (effectObjs[a]->GetName() == objName)
+            return effectObjs[a];
+    }
+    return 0;
+}
+
 psEffectAnchor * psEffect::FindAnchor(const csString & anchorName) const
 {
     for (size_t a=0; a<effectAnchors.GetSize(); ++a)
