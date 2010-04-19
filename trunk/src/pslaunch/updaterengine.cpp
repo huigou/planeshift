@@ -21,6 +21,7 @@
 #include <csutil/hash.h>
 #include <csutil/stringarray.h>
 #include <csutil/xmltiny.h>
+#include <csutil/randomgen.h>
 
 #include "updaterconfig.h"
 #include "updaterengine.h"
@@ -149,6 +150,22 @@ void UpdaterEngine::CheckForUpdates()
     {
         PrintOutput("Failed to Initialize mirror config current!\n");
         return;
+    }
+    
+    //load current mirrors (precedence to servers.xml this way)
+    //we don't fail for now here
+    csRef<iDocumentNode> serversRoot = GetRootNode(SERVERS_CURRENT_FILENAME);
+    bool success = true;    
+    if(!serversRoot.IsValid())
+    {
+        printf("Unable to get root node!\n");
+    }
+    else
+    {
+        if(!config->GetCurrentConfig()->LoadMirrors(serversRoot))
+        {
+            printf("Failed to Initialize mirror config current!\n");
+        }
     }
 
     // Initialise downloader.
@@ -281,12 +298,15 @@ void UpdaterEngine::CheckForUpdates()
 
 bool UpdaterEngine::CheckUpdater()
 {
-    // Download the latest updaterinfo. 
+    // Download the latest updaterinfo and servers.xml
     fileUtil->RemoveFile(UPDATERINFO_FILENAME, true);
     if(!downloader->DownloadFile("updaterinfo.xml", UPDATERINFO_FILENAME, false, true, 1, true))
     {
         return false;
     }
+    
+    fileUtil->RemoveFile(SERVERS_CURRENT_FILENAME, true);
+    downloader->DownloadFile("servers.xml", SERVERS_CURRENT_FILENAME, false, true, 1, true);
 
     // Load new config data.
     csRef<iDocumentNode> root = GetRootNode(UPDATERINFO_FILENAME);
@@ -313,6 +333,19 @@ bool UpdaterEngine::CheckUpdater()
     {
         PrintOutput("Failed to Initialize mirror config new!\n");
         return false;
+    }
+
+    csRef<iDocumentNode> serversRoot = GetRootNode(SERVERS_CURRENT_FILENAME);
+    if(!serversRoot.IsValid())
+    {
+        printf("Unable to get root node!\n");
+    }
+    else
+    {
+        if(!config->GetCurrentConfig()->LoadMirrors(serversRoot))
+        {
+            printf("Failed to Initialize mirror config current!\n");
+        }
     }
 
     // Check if we need to update the mirrors.
@@ -973,30 +1006,92 @@ void UpdaterEngine::CheckIntegrity(bool automatic)
         PrintOutput("Beginning integrity check!\n\n");
     }
 
-    // Load current config data.
-    csRef<iDocumentNode> confignode;
-    csRef<iDocumentNode> root = GetRootNode(UPDATERINFO_CURRENT_FILENAME);
-    bool success = true;
-    if(!root.IsValid())
+
+    //first try to load servers data.
+    csRef<iDocumentNode> serversRoot = GetRootNode(SERVERS_CURRENT_FILENAME);
+    bool success = true;    
+    if(!serversRoot.IsValid())
     {
         printf("Unable to get root node!\n");
         success = false;
     }
     else
     {
-      confignode = root->GetNode("config");
-      if (!confignode.IsValid())
-      {
-        printf("Couldn't find config node in configfile!\n");
-        success = false;
-      }
+        if(!config->GetCurrentConfig()->LoadMirrors(serversRoot))
+        {
+            printf("Failed to Initialize mirror config current!\n");
+            success = false;
+        }
     }
-
-    // Load updater config
-    if (!config->GetCurrentConfig()->Initialize(confignode))
+    
+    
+    if(!success) //try getting the master server list first
     {
-        printf("Failed to Initialize mirror config current!\n");
-        success = false;
+        // Check if we have write permissions.
+        if(!log.IsValid())
+        {
+            PrintOutput("Please run this program with administrator permissions to run the integrity check.\n");
+            return;
+        }
+        printf("Attempting to restore servers.xml!\n");
+        fileUtil->RemoveFile(SERVERS_CURRENT_FILENAME, true);
+        downloader = new Downloader(vfs);
+        downloader->SetProxy(config->GetProxy().host.GetData(), config->GetProxy().port);
+        if(!downloader->DownloadFile(FALLBACK_SERVER "servers.xml", SERVERS_CURRENT_FILENAME, true, true, 1, true))
+        {
+            PrintOutput("\nFailed to download servers info!\n");
+        }
+
+        delete downloader;
+        
+        //retry
+        serversRoot = GetRootNode(SERVERS_CURRENT_FILENAME);
+        success = true;    
+        if(!serversRoot.IsValid())
+        {
+            printf("Unable to get root node!\n");
+            success = false;
+        }
+        else
+        {
+            if(!config->GetCurrentConfig()->LoadMirrors(serversRoot))
+            {
+                printf("Failed to Initialize mirror config current!\n");
+                success = false;
+            }
+        }
+        
+        
+    }
+    
+    //fallback on old system
+    if(!success)
+    {
+        success = true;
+        // try to Load current config data.
+        csRef<iDocumentNode> confignode;
+        csRef<iDocumentNode> root = GetRootNode(UPDATERINFO_CURRENT_FILENAME);
+        if(!root.IsValid())
+        {
+            printf("Unable to get root node!\n");
+            success = false;
+        }
+        else
+        {
+          confignode = root->GetNode("config");
+          if (!confignode.IsValid())
+          {
+            printf("Couldn't find config node in configfile!\n");
+            success = false;
+          }
+        }
+
+        // Load updater config
+        if (!config->GetCurrentConfig()->Initialize(confignode))
+        {
+            printf("Failed to Initialize mirror config current!\n");
+            success = false;
+        }
     }
 
     if(!success)
@@ -1009,10 +1104,10 @@ void UpdaterEngine::CheckIntegrity(bool automatic)
         }
 
         printf("Attempting to restore updaterinfo.xml!\n");
-        fileUtil->RemoveFile("/this/updaterinfo.xml", true);
+        fileUtil->RemoveFile(UPDATERINFO_CURRENT_FILENAME, true);
         downloader = new Downloader(vfs);
         downloader->SetProxy(config->GetProxy().host.GetData(), config->GetProxy().port);
-        if(!downloader->DownloadFile("http://testing.xordan.com/updaterinfo.xml", UPDATERINFO_CURRENT_FILENAME, true, true, 1, true))
+        if(!downloader->DownloadFile(FALLBACK_SERVER "updaterinfo.xml", UPDATERINFO_CURRENT_FILENAME, true, true, 1, true))
         {
             PrintOutput("\nFailed to download updater info!\n");
             return;
@@ -1020,7 +1115,8 @@ void UpdaterEngine::CheckIntegrity(bool automatic)
 
         delete downloader;
 
-        root = GetRootNode(UPDATERINFO_CURRENT_FILENAME);
+        csRef<iDocumentNode> confignode;
+        csRef<iDocumentNode> root = GetRootNode(UPDATERINFO_CURRENT_FILENAME);
         if(!root)
         {
             printf("Unable to get root node!\n");
@@ -1058,12 +1154,14 @@ void UpdaterEngine::CheckIntegrity(bool automatic)
 
     delete downloader;
 
-    root = GetRootNode(UPDATERINFO_CURRENT_FILENAME);
+    csRef<iDocumentNode> confignode;
+    csRef<iDocumentNode> root = GetRootNode(UPDATERINFO_CURRENT_FILENAME);
     if(!root)
     {
         printf("Unable to get root node!\n");
     }
 
+    
     confignode = root->GetNode("config");
     if (!confignode)
     {
@@ -1086,7 +1184,17 @@ void UpdaterEngine::CheckIntegrity(bool automatic)
 
     // Get the zip with md5sums.
     fileUtil->RemoveFile("integrity.zip", true);
-    csString baseurl = config->GetCurrentConfig()->GetMirror(0)->GetBaseURL();
+    csString baseurl;
+    csArray<Mirror> mirrors = config->GetCurrentConfig()->GetRepairMirrors();
+    if(mirrors.GetSize() > 0)
+    {
+        csRandomGen random = csRandomGen();
+        baseurl = mirrors[random.Get((uint32)mirrors.GetSize())].GetBaseURL();
+    }
+    else //fallback to old style
+    {
+        baseurl = config->GetCurrentConfig()->GetMirror(0)->GetBaseURL();
+    }
     baseurl.Append("backup/");
     if(!downloader->DownloadFile(baseurl + "integrity.zip", "integrity.zip", true, true))
     {
