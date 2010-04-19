@@ -23,9 +23,45 @@
 
 #include "paws/pawsmanager.h"
 #include "paws/pawsbutton.h"
+#include "paws/pawstextbox.h"
+#include "paws/pawslistbox.h"
+
+#include "effects/pseffectanchor.h"
+#include "effects/pseffectobj.h"
+
+//---------------------------------------------------------------------------------------
+
+// @@@ Duplicated in eeditpartlisttoolbox.cpp, refactor to use some lib.
+static pawsListBoxRow* NewRow (size_t& a, pawsListBox* box, pawsTextBox** col1, pawsTextBox** col2 = 0, pawsTextBox** col3 = 0)
+{
+    box->NewRow(a);
+    pawsListBoxRow * row = box->GetRow(a);
+    if (!row) return 0;
+
+    *col1 = (pawsTextBox *)row->GetColumn(0);
+    if (!*col1) return 0;
+
+    if (col2)
+    {
+        *col2 = (pawsTextBox *)row->GetColumn(1);
+        if (!*col2) return 0;
+    }
+
+    if (col3)
+    {
+        *col3 = (pawsTextBox *)row->GetColumn(2);
+        if (!*col3) return 0;
+    }
+
+    ++a;
+    return row;
+}
+
+//---------------------------------------------------------------------------------------
 
 EEditRenderToolbox::EEditRenderToolbox() : scfImplementationType(this)
 {
+    effectManager = 0;
 }
 
 EEditRenderToolbox::~EEditRenderToolbox()
@@ -46,12 +82,94 @@ const char * EEditRenderToolbox::GetName() const
     return "Render";
 }
 
+psEffect* EEditRenderToolbox::GetCurrentEffect()
+{
+    if (!effectManager) return 0;
+    return effectManager->FindEffect(effectName);
+}
+
+void EEditRenderToolbox::LoadEffect(psEffectManager* mgr, const char* effectName)
+{
+    EEditRenderToolbox::effectManager = mgr;
+    EEditRenderToolbox::effectName = effectName;
+    psEffect* eff = GetCurrentEffect();
+    if (!eff) return;
+
+    list->Clear();
+    list->Select(0);
+    list2->Clear();
+    list2->Select(0);
+
+    size_t a = 0;
+    pawsTextBox* col1, * col2;
+
+    for (size_t i = 0 ; i < eff->GetAnchorCount() ; i++)
+    {
+        psEffectAnchor* anchor = eff->GetAnchor(i);
+	NewRow(a, list, &col1, &col2);
+	col1->SetText("Anchor");
+	col2->SetText(anchor->GetName());
+    }
+    for (size_t i = 0 ; i < eff->GetObjCount() ; i++)
+    {
+        psEffectObj* obj = eff->GetObj(i);
+	NewRow(a, list, &col1, &col2);
+	col1->SetText("Obj");
+	col2->SetText(obj->GetName());
+    }
+}
+
+void EEditRenderToolbox::FillAnchor(const char* anchorName)
+{
+    list2->Clear();
+    list2->Select(0);
+
+    psEffect* eff = GetCurrentEffect();
+    if (!eff) return;
+    psEffectAnchor* anchor = eff->FindAnchor(anchorName);
+    if (!anchor) return;
+    pawsTextBox* col1, * col2;
+
+    csString fmt;
+
+    size_t a = 0;
+    NewRow(a, list2, &col1, &col2);
+    col1->SetText("Dir");
+    col2->SetText(anchor->GetDirectionType());
+    NewRow(a, list2, &col1, &col2);
+    col1->SetText("ASize");
+    fmt.Format("%g", anchor->GetAnimGetSize());
+    col2->SetText(fmt);
+}
+
+void EEditRenderToolbox::FillObj(const char* objName)
+{
+}
+
+void EEditRenderToolbox::OnListAction(pawsListBox* selected, int status)
+{
+    if (selected == list)
+    {
+        size_t num = list->GetSelectedRowNum();
+	pawsListBoxRow * row = list->GetRow(num);
+	pawsTextBox* col1 = (pawsTextBox *)row->GetColumn(0);
+	pawsTextBox* col2 = (pawsTextBox *)row->GetColumn(1);
+	csString anchor = "Anchor";
+	if (anchor == col1->GetText())
+	    FillAnchor(col2->GetText());
+	else
+	    FillObj(col2->GetText());
+    }
+}
+
 bool EEditRenderToolbox::PostSetup()
 {
     renderButton = (pawsButton *) FindWidget("render");     CS_ASSERT(renderButton);
     loadButton   = (pawsButton *) FindWidget("load");       CS_ASSERT(loadButton);
     pauseButton  = (pawsButton *) FindWidget("pause");      CS_ASSERT(pauseButton);
     cancelButton = (pawsButton *) FindWidget("stop");       CS_ASSERT(cancelButton);
+    list         = (pawsListBox *) FindWidget("list");      CS_ASSERT(list);
+    list2        = (pawsListBox *) FindWidget("list2");     CS_ASSERT(list2);
     return true;
 }
 

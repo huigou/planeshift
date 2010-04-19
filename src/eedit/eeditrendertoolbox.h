@@ -22,6 +22,8 @@
 
 #include "eedittoolbox.h"
 #include "paws/pawswidget.h"
+#include "effects/pseffectmanager.h"
+#include "effects/pseffect.h"
 
 class pawsButton;
 
@@ -37,16 +39,27 @@ public:
     virtual void Update(unsigned int elapsed);
     virtual size_t GetType() const;
     virtual const char * GetName() const;
-    
+
     // inheritted from pawsWidget
     virtual bool PostSetup(); 
     virtual bool OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* widget);
+    virtual void OnListAction(pawsListBox* selected, int status);
+
+    psEffect* GetCurrentEffect();
+    void LoadEffect(psEffectManager* mgr, const char* effectName);
+    void FillAnchor(const char* anchorName);
+    void FillObj(const char* objName);
     
 private:
-    pawsButton * renderButton;
-    pawsButton * loadButton;
-    pawsButton * pauseButton;
-    pawsButton * cancelButton;
+    pawsButton   * renderButton;
+    pawsButton   * loadButton;
+    pawsButton   * pauseButton;
+    pawsButton   * cancelButton;
+    pawsListBox  * list;
+    pawsListBox  * list2;
+
+    psEffectManager* effectManager;
+    csString effectName;
 };
 
 CREATE_PAWS_FACTORY(EEditRenderToolbox);
