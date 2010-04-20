@@ -206,7 +206,7 @@ void BgLoader::UpdatePosition(const csVector3& pos, const char* sectorName, bool
     if(!force)
     {
         // Check if we've moved.
-        if(csVector3(lastPos - pos).Norm() < loadRange/10)
+        if(csVector3(lastPos - pos).Norm() < loadRange/10 && (!lastSector.IsValid() || lastSector->name == sectorName))
         {
             return;
         }
@@ -301,7 +301,8 @@ void BgLoader::FindConnectedSectors(csRefArray<Sector>& connectedSectors, Sector
 
     for(size_t i=0; i<sector->activePortals.GetSize(); i++)
     {
-        FindConnectedSectors(connectedSectors, sector->activePortals[i]->targetSector);
+        if(sector->activePortals[i]->mObject.IsValid()) // count not reachable sectors as disconnected
+            FindConnectedSectors(connectedSectors, sector->activePortals[i]->targetSector);
     }
 }
 
@@ -581,19 +582,9 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
                 csBox3 wwUnloadBox = unloadBox;
                 if(sector->activePortals[i]->warp)
                 {
-                    csVector3& transform = sector->activePortals[i]->transform;
-                    wwLoadBox.SetMin(0, wwLoadBox.MinX()-transform.x);
-                    wwLoadBox.SetMin(1, wwLoadBox.MinY()-transform.y);
-                    wwLoadBox.SetMin(2, wwLoadBox.MinZ()-transform.z);
-                    wwLoadBox.SetMax(0, wwLoadBox.MaxX()-transform.x);
-                    wwLoadBox.SetMax(1, wwLoadBox.MaxY()-transform.y);
-                    wwLoadBox.SetMax(2, wwLoadBox.MaxZ()-transform.z);
-                    wwUnloadBox.SetMin(0, wwUnloadBox.MinX()-transform.x);
-                    wwUnloadBox.SetMin(1, wwUnloadBox.MinY()-transform.y);
-                    wwUnloadBox.SetMin(2, wwUnloadBox.MinZ()-transform.z);
-                    wwUnloadBox.SetMax(0, wwUnloadBox.MaxX()-transform.x);
-                    wwUnloadBox.SetMax(1, wwUnloadBox.MaxY()-transform.y);
-                    wwUnloadBox.SetMax(2, wwUnloadBox.MaxZ()-transform.z);
+                    csTransform t(sector->activePortals[i]->matrix.GetInverse(), sector->activePortals[i]->transform);
+                    wwLoadBox = t.Other2This(wwLoadBox);
+                    wwUnloadBox = t.Other2This(wwUnloadBox);
                 }
 
                 LoadSector(wwLoadBox, wwUnloadBox, sector->activePortals[i]->targetSector, depth+1, false, loadMeshes);
@@ -709,20 +700,11 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
                 csBox3 wwUnloadBox = unloadBox;
                 if(sector->portals[i]->warp)
                 {
-                    csVector3& transform = sector->portals[i]->transform;
-                    wwLoadBox.SetMin(0, wwLoadBox.MinX()-transform.x);
-                    wwLoadBox.SetMin(1, wwLoadBox.MinY()-transform.y);
-                    wwLoadBox.SetMin(2, wwLoadBox.MinZ()-transform.z);
-                    wwLoadBox.SetMax(0, wwLoadBox.MaxX()-transform.x);
-                    wwLoadBox.SetMax(1, wwLoadBox.MaxY()-transform.y);
-                    wwLoadBox.SetMax(2, wwLoadBox.MaxZ()-transform.z);
-                    wwUnloadBox.SetMin(0, wwUnloadBox.MinX()-transform.x);
-                    wwUnloadBox.SetMin(1, wwUnloadBox.MinY()-transform.y);
-                    wwUnloadBox.SetMin(2, wwUnloadBox.MinZ()-transform.z);
-                    wwUnloadBox.SetMax(0, wwUnloadBox.MaxX()-transform.x);
-                    wwUnloadBox.SetMax(1, wwUnloadBox.MaxY()-transform.y);
-                    wwUnloadBox.SetMax(2, wwUnloadBox.MaxZ()-transform.z);
+                    csTransform t(sector->portals[i]->matrix.GetInverse(), sector->portals[i]->transform);
+                    wwLoadBox = t.Other2This(wwLoadBox);
+                    wwUnloadBox = t.Other2This(wwUnloadBox);
                 }
+
                 LoadSector(wwLoadBox, wwUnloadBox, sector->portals[i]->targetSector, depth+1, false, loadMeshes);
             }
 
@@ -761,20 +743,11 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
                 csBox3 wwUnloadBox = unloadBox;
                 if(sector->portals[i]->warp)
                 {
-                    csVector3& transform = sector->portals[i]->transform;
-                    wwLoadBox.SetMin(0, wwLoadBox.MinX()-transform.x);
-                    wwLoadBox.SetMin(1, wwLoadBox.MinY()-transform.y);
-                    wwLoadBox.SetMin(2, wwLoadBox.MinZ()-transform.z);
-                    wwLoadBox.SetMax(0, wwLoadBox.MaxX()-transform.x);
-                    wwLoadBox.SetMax(1, wwLoadBox.MaxY()-transform.y);
-                    wwLoadBox.SetMax(2, wwLoadBox.MaxZ()-transform.z);
-                    wwUnloadBox.SetMin(0, wwUnloadBox.MinX()-transform.x);
-                    wwUnloadBox.SetMin(1, wwUnloadBox.MinY()-transform.y);
-                    wwUnloadBox.SetMin(2, wwUnloadBox.MinZ()-transform.z);
-                    wwUnloadBox.SetMax(0, wwUnloadBox.MaxX()-transform.x);
-                    wwUnloadBox.SetMax(1, wwUnloadBox.MaxY()-transform.y);
-                    wwUnloadBox.SetMax(2, wwUnloadBox.MaxZ()-transform.z);
+                    csTransform t(sector->portals[i]->matrix.GetInverse(), sector->portals[i]->transform);
+                    wwLoadBox = t.Other2This(wwLoadBox);
+                    wwUnloadBox = t.Other2This(wwUnloadBox);
                 }
+
                 LoadSector(wwLoadBox, wwUnloadBox, sector->portals[i]->targetSector, depth+1, false, loadMeshes);
             }
 
