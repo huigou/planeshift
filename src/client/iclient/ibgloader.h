@@ -49,13 +49,19 @@ struct iBgLoader : public virtual iBase
 
  /**
   * Start loading a material into the engine. Returns 0 if the material is not yet loaded.
+  * @param name name of the material to load,
   * @param failed Pass a boolean to be able to manually handle a failed load.
+  * @param wait specify whether to wait for the texture to be loaded,
+  * @return pointer to the material,
   */
   virtual csPtr<iMaterialWrapper> LoadMaterial(const char* name, bool* failed = NULL, bool wait = false) = 0;
 
  /**
   * Start loading a mesh factory into the engine. Returns 0 if the factory is not yet loaded.
+  * @param name name of the factory to load,
   * @param failed Pass a boolean to be able to manually handle a failed load.
+  * @param wait specify whether to wait until the factory is full loaded,
+  * @return pointer to the factory,
   */
   virtual csPtr<iMeshFactoryWrapper> LoadFactory(const char* name, bool* failed = NULL, bool wait = false) = 0;
 
@@ -71,6 +77,7 @@ struct iBgLoader : public virtual iBase
  /**
   * Pass a data file to be cached. This method will parse your data and add it to it's
   * internal world representation. You may then request that these objects are loaded.
+  * @param path path to the file to be cached,
   * @param recursive Mark true if this is a recursive call (no vfs chdir needed).
   * If you don't know, set this to false.
   * This call will be dispatched to a thread, so it will return immediately.
@@ -117,12 +124,13 @@ struct iBgLoader : public virtual iBase
 
  /**
   * Update the load range initially passed to the loader in Setup().
+  * @param r range to set,
   */
   virtual void SetLoadRange(float r) = 0;
 
  /**
   * Request to know whether the current world position stored by the loader is valid.
-  * Returns false until the first call of UpdatePosition().
+  * @return false until the first call of UpdatePosition().
   */
   virtual bool HasValidPosition() const = 0;
 
@@ -131,28 +139,41 @@ struct iBgLoader : public virtual iBase
   * @param sector The sector that you are checking.
   * @param pos The world space position that you are checking.
   * @param colour Will contain the colour of the water that you are positioned in.
+  * @return false until you are located in a water body.
   */
   virtual bool InWaterArea(const char* sector, csVector3* pos, csColor4** colour) = 0;
 
  /**
-  * Returns an array of the available shaders for a given type.
+  * Get a list of shaders available for a given type.
   * @param usageType The type of shader you wish to have.
   * E.g. 'default_alpha' to get an array of all default world alpha shaders.
+  * @return pointer to an array holding the names of the requested shaders.
   */
   virtual csPtr<iStringArray> GetShaderName(const char* usageType) const = 0;
 
   /**
-   * Returns an array of start positions in the world.
+   * Request start positions in the world.
+   * @return pointer to an array holding all known starting positions.
    */
   virtual csRefArray<StartPosition>* GetStartPositions() = 0;
 
   /**
    * Load zones given by name.
+   * @param regions pointer to an array holding the region names
+   * @param loadMeshes specify whether or not to load meshes
+   * @param priority specify whether the regions shall be marked high priority.
+   * @see LoadPriorityZones
+   * @return true upon success, false otherwise
    */
   virtual bool LoadZones(iStringArray* regions, bool loadMeshes = true, bool priority = false) = 0;
 
   /**
-   * Load zones given by name.
+   * Load high priority zones given by name.
+   * Unlike normal zones those don't get unloaded
+   * unless a new set of high priority zones is given.
+   * @param regions pointer to an array holding the region names
+   * @return true upon success, false otherwise
+   * @see LoadZones
    */
   virtual bool LoadPriorityZones(iStringArray* regions) = 0;
 };
