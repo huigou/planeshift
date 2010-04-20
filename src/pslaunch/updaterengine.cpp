@@ -152,7 +152,7 @@ void UpdaterEngine::CheckForUpdates()
         return;
     }
     
-    //load current mirrors (precedence to servers.xml this way)
+    //load current mirrors (precedence to updateservers.xml this way)
     //we don't fail for now here
     csRef<iDocumentNode> serversRoot = GetRootNode(SERVERS_CURRENT_FILENAME);
     bool success = true;    
@@ -298,7 +298,7 @@ void UpdaterEngine::CheckForUpdates()
 
 bool UpdaterEngine::CheckUpdater()
 {
-    // Download the latest updaterinfo and servers.xml
+    // Download the latest updaterinfo and updateservers.xml
     fileUtil->RemoveFile(UPDATERINFO_FILENAME, true);
     if(!downloader->DownloadFile("updaterinfo.xml", UPDATERINFO_FILENAME, false, true, 1, true))
     {
@@ -306,7 +306,7 @@ bool UpdaterEngine::CheckUpdater()
     }
     
     fileUtil->RemoveFile(SERVERS_CURRENT_FILENAME, true);
-    downloader->DownloadFile("servers.xml", SERVERS_CURRENT_FILENAME, false, true, 1, true);
+    downloader->DownloadFile("updateservers.xml", SERVERS_CURRENT_FILENAME, false, true, 1, true);
 
     // Load new config data.
     csRef<iDocumentNode> root = GetRootNode(UPDATERINFO_FILENAME);
@@ -1033,11 +1033,11 @@ void UpdaterEngine::CheckIntegrity(bool automatic)
             PrintOutput("Please run this program with administrator permissions to run the integrity check.\n");
             return;
         }
-        printf("Attempting to restore servers.xml!\n");
+        printf("Attempting to restore updateservers.xml!\n");
         fileUtil->RemoveFile(SERVERS_CURRENT_FILENAME, true);
         downloader = new Downloader(vfs);
         downloader->SetProxy(config->GetProxy().host.GetData(), config->GetProxy().port);
-        if(!downloader->DownloadFile(FALLBACK_SERVER "servers.xml", SERVERS_CURRENT_FILENAME, true, true, 1, true))
+        if(!downloader->DownloadFile(FALLBACK_SERVER "updateservers.xml", SERVERS_CURRENT_FILENAME, true, true, 1, true))
         {
             PrintOutput("\nFailed to download servers info!\n");
         }

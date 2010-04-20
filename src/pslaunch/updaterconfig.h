@@ -31,9 +31,10 @@
 #define CONFIG_FILENAME "/this/pslaunch.cfg"
 #define UPDATERINFO_FILENAME "/planeshift/userdata/updaterinfo.xml"
 #define UPDATERINFO_CURRENT_FILENAME "/this/updaterinfo.xml"
-#define SERVERS_FILENAME "/planeshift/userdata/servers.xml"
-#define SERVERS_CURRENT_FILENAME "/planeshift/userdata/servers.xml"
-#define FALLBACK_SERVER "http://testing.xordan.com/"
+#define SERVERS_FILENAME "/planeshift/userdata/updateservers.xml"
+#define SERVERS_CURRENT_FILENAME "/planeshift/userdata/updateservers.xml"
+#define FALLBACK_SERVER "http://www.planeshift.it/"
+
 
 class Mirror : public csRefCount
 {
