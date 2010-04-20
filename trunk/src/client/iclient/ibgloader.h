@@ -149,7 +149,12 @@ struct iBgLoader : public virtual iBase
   /**
    * Load zones given by name.
    */
-  virtual bool LoadZones(iStringArray* regions, bool loadMeshes = true) = 0;
+  virtual bool LoadZones(iStringArray* regions, bool loadMeshes = true, bool priority = false) = 0;
+
+  /**
+   * Load zones given by name.
+   */
+  virtual bool LoadPriorityZones(iStringArray* regions) = 0;
 };
 
 #endif // __IBGLOADER_H__
