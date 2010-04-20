@@ -32,7 +32,7 @@
 #define UPDATERINFO_FILENAME "/planeshift/userdata/updaterinfo.xml"
 #define UPDATERINFO_CURRENT_FILENAME "/this/updaterinfo.xml"
 #define SERVERS_FILENAME "/planeshift/userdata/updateservers.xml"
-#define SERVERS_CURRENT_FILENAME "/planeshift/userdata/updateservers.xml"
+#define SERVERS_CURRENT_FILENAME "/this/updateservers.xml"
 #define FALLBACK_SERVER "http://www.planeshift.it/"
 
 

@@ -201,7 +201,7 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
         
         if(!URL)
         {
-    		UpdaterEngine::GetSingletonPtr()->PrintOutput("Using mirror %s\n", url.GetData());
+    		UpdaterEngine::GetSingletonPtr()->PrintOutput("Using mirror %s for %s\n", url.GetData(), file);
             url.Append(file);
         }
 
