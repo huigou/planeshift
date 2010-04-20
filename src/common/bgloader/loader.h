@@ -132,7 +132,7 @@ public:
    /**
     * Update the load range initially passed to the loader in Setup().
     */
-    void SetLoadRange(float r) { loadRange = r; UpdatePosition(lastPos, lastSector->name, true); }
+    void SetLoadRange(float r) { loadRange = r; if (lastSector.IsValid()) UpdatePosition(lastPos, lastSector->name, true); }
 
    /**
     * Request to know whether the current world position stored by the loader is valid.
@@ -151,7 +151,13 @@ public:
    /**
     * Load zones given by name.
     */
-    bool LoadZones(iStringArray* regions, bool loadMeshes = true);
+    bool LoadZones(iStringArray* regions, bool loadMeshes = true, bool priority = false);
+
+   /**
+    * Load high priority zones given by name.
+    * High priority zones are not unloaded by UpdatePosition or LoadZones.
+    */
+    bool LoadPriorityZones(iStringArray* regions);
 
    /**
     * Returns an array of the available shaders for a given type.
@@ -345,7 +351,7 @@ private:
     {
     public:
         Sector(const char* name) : name(name), init(false), isLoading(false), checked(false),
-          objectCount(0)
+          objectCount(0), priority(false)
         {
             ambient = csColor(0.0f);
         }
@@ -375,6 +381,7 @@ private:
         csRefArray<Light> lights;
         csRefArray<Sequence> sequences;
         csArray<WaterArea*> waterareas;
+        bool priority;
     };
 
     class MeshGen : public CS::Utility::FastRefCount<MeshObj>
@@ -610,8 +617,9 @@ private:
     public:
         bool loading;
         csRefArray<Sector> sectors;
+        bool priority;
 
-        Zone(const char* name) : loading(false)
+        Zone(const char* name) : loading(false), priority(false)
         {
             SetName(name);
         }

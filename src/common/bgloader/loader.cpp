@@ -283,7 +283,7 @@ void BgLoader::CleanDisconnectedSectors(Sector* sector)
     // Check for disconnected sectors.
     for(size_t i=0; i<sectors.GetSize(); i++)
     {
-        if(sectors[i]->object.IsValid() && connectedSectors.Find(sectors[i]) == csArrayItemNotFound)
+        if(sectors[i]->object.IsValid() && connectedSectors.Find(sectors[i]) == csArrayItemNotFound && !sectors[i]->priority)
         {
             CleanSector(sectors[i]);
         }
@@ -556,6 +556,7 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
                         Sector* sector, uint depth, bool force, bool loadMeshes, bool portalsOnly)
 {
     sector->isLoading = true;
+    force |= sector->priority;
 
     if(!sector->object.IsValid())
     {
@@ -1320,7 +1321,7 @@ bool BgLoader::InWaterArea(const char* sector, csVector3* pos, csColor4** colour
     return false;
 }
 
-bool BgLoader::LoadZones(iStringArray* regions, bool loadMeshes)
+bool BgLoader::LoadZones(iStringArray* regions, bool loadMeshes, bool priority)
 {
     // Firstly, get a list of all zones that should be loaded.
     csRefArray<Zone> newLoadedZones;
@@ -1329,6 +1330,7 @@ bool BgLoader::LoadZones(iStringArray* regions, bool loadMeshes)
         csRef<Zone> zone = zones.Get(zStringSet.Request(regions->Get(i)), csRef<Zone>());
         if(zone.IsValid())
         {
+            zone->priority = priority;
             newLoadedZones.Push(zone);
         }
         else
@@ -1337,20 +1339,24 @@ bool BgLoader::LoadZones(iStringArray* regions, bool loadMeshes)
         }
     }
 
-    // Next clean all sectors which shouldn't be loaded.
+    // Next clean all zones which shouldn't be loaded.
     for(size_t i=0; i<loadedZones.GetSize(); ++i)
     {
+        if (loadedZones[i]->priority)
+            continue;
+
         bool found = false;
         for(size_t j=0; j<newLoadedZones.GetSize(); ++j)
         {
             if(loadedZones[i] == newLoadedZones[j])
             {
                 found = true;
+                loadedZones[i]->priority |= priority;
                 break;
             }
         }
 
-        if(!found)
+        if(!found && loadedZones[i]->priority == priority) // only unload zones of same priority
         {
             for(size_t j=0; j<loadedZones[i]->sectors.GetSize(); ++j)
             {
@@ -1362,7 +1368,7 @@ bool BgLoader::LoadZones(iStringArray* regions, bool loadMeshes)
         }
     }
 
-    // Now load all sectors which should be loaded.
+    // Now load all zones which should be loaded.
     for(size_t i=0; i<newLoadedZones.GetSize(); ++i)
     {
         bool found = false;
@@ -1371,6 +1377,7 @@ bool BgLoader::LoadZones(iStringArray* regions, bool loadMeshes)
             if(newLoadedZones[i] == loadedZones[j])
             {
                 found = true;
+                loadedZones[j]->priority |= priority; // upgrade priority
                 break;
             }
         }
@@ -1381,6 +1388,7 @@ bool BgLoader::LoadZones(iStringArray* regions, bool loadMeshes)
             for(size_t j=0; j<newLoadedZones[i]->sectors.GetSize(); ++j)
             {
                 LoadSector(csBox3(), csBox3(), newLoadedZones[i]->sectors[j], (uint)-1, true, loadMeshes);
+                newLoadedZones[i]->sectors[j]->priority |= priority; // upgrade priority
             }
         }
         else
@@ -1388,6 +1396,7 @@ bool BgLoader::LoadZones(iStringArray* regions, bool loadMeshes)
             for(size_t j=0; j<newLoadedZones[i]->sectors.GetSize(); ++j)
             {
                 LoadSector(csBox3(), csBox3(), newLoadedZones[i]->sectors[j], (uint)-1, true, loadMeshes, true);
+                newLoadedZones[i]->sectors[j]->priority |= priority; // upgrade priority
             }
         }
     }
@@ -1415,6 +1424,11 @@ bool BgLoader::LoadZones(iStringArray* regions, bool loadMeshes)
     }
 
     return true;
+}
+
+bool BgLoader::LoadPriorityZones(iStringArray* regions)
+{
+    return LoadZones(regions, true, true);
 }
 }
 CS_PLUGIN_NAMESPACE_END(bgLoader)
