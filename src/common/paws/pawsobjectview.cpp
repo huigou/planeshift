@@ -105,21 +105,16 @@ bool pawsObjectView::LoadMap( const char* map, const char* sector )
 {
     csRef<iEngine> engine =  csQueryRegistry<iEngine > ( PawsManager::GetSingleton().GetObjectRegistry());
 
-    stage = engine->FindSector( sector );
-
-    if (!stage)
+    csRef<iStringArray> zone = csPtr<iStringArray>(new scfStringArray());
+    zone->Push(map);
+    if(!loader->LoadPriorityZones(zone))
     {
-        csRef<iStringArray> zone = csPtr<iStringArray>(new scfStringArray());
-        zone->Push(map);
-        if(!loader->LoadZones(zone))
-        {
-            Error2("Failed to load zone '%s'\n", map);
-        }
-
-        stage = engine->FindSector( sector );
-        if (!stage)
-             return false;
+        Error2("Failed to load priority zone '%s'\n", map);
     }
+
+    stage = engine->FindSector( sector );
+    if (!stage)
+         return false;
 
     static uint sectorCount = 0;
     meshSector = engine->CreateSector( csString(sector).AppendFmt("%u", sectorCount++));
