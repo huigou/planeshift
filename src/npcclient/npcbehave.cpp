@@ -190,8 +190,8 @@ bool NPCType::Load(iDocumentNode *node)
                                 // Should probably delete and cleare out here
                                 // to allow for overriding of event,affected pairs.
                                 // Though now give error, unntil needed.
-                                Error3("Reaction of type '%s' allready connected to '%s'",
-                                       r->GetEventType(),reactions[i]->affected[j]->GetName());
+                                Error4("Reaction of type '%s' allready connected to '%s' in '%s'",
+                                       r->GetEventType(),reactions[i]->affected[j]->GetName(), name.GetDataSafe());
                                 return false;
                                 // delete reactions[i];
                                 //reactions.DeleteIndex(i);
