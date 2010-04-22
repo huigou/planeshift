@@ -187,10 +187,10 @@ bool NPCType::Load(iDocumentNode *node)
                         {
                             if (!strcmp(r->affected[k]->GetName(),reactions[i]->affected[j]->GetName()))
                             {
-                                // Should probably delete and cleare out here
-                                // to allow for overriding of event,affected pairs.
-                                // Though now give error, unntil needed.
-                                Error4("Reaction of type '%s' allready connected to '%s' in '%s'",
+                                // Should probably delete and clear out here
+                                // to allow for overiding of event,affected pairs.
+                                // Though now give error, until needed.
+                                Error4("Reaction of type '%s' already connected to '%s' in '%s'",
                                        r->GetEventType(),reactions[i]->affected[j]->GetName(), name.GetDataSafe());
                                 return false;
                                 // delete reactions[i];
