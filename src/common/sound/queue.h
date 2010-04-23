@@ -24,31 +24,72 @@
 #ifndef _SOUND_QUEUE_H_
 #define _SOUND_QUEUE_H_
 
+/**
+ * Queue object for @see SoundQueue.
+ * These objects are used by @see SoundQueue and represent a single sound to be
+ * be be played.
+ */
+
 class SoundQueueItem
 {
     public:
-    csString        filename;
-    SoundHandle     *handle;
+    csString        filename;   ///< a filename of a file which may exist within our vfs */
+    SoundHandle     *handle;    ///< pointer to its SoundHandle - not guaranteed to be valid */
 
-    SoundQueueItem ();
+    /**
+     * Constructor
+     * @param file name of a file which may exist within our vfs
+     */
+    SoundQueueItem (const char *file);
+    /**
+     * Destructor
+     */
     ~SoundQueueItem ();
 };
 
 
+/**
+ * Used to put Sounds in a Queue and play them in the order they have been added.
+ */  
+
 class SoundQueue
 {
     private:
-    csArray<SoundQueueItem*>    queue;              /* the queue itself */
-    float                       volume;             /* main volume for this queue */
-    SoundControl               *sndCtrl;            /* soundcontrol this queue will use */
+    csArray<SoundQueueItem*>    queue;              ///< a array that contains all queued SoundQueueItem(s) */
+    float                       volume;             ///< volume for this queue */
+    SoundControl               *sndCtrl;            ///< SoundControl to control volume of this queue */
 
     public:
-    SoundQueue (SoundControl* &ctrl, float vol);    /* constructor */
-    ~SoundQueue ();                                 /* destructor */
-    void AddItem (const char *filename);            /* add a item to the queue */
+    /**
+     * Constructor
+     * @param ctrl a valid SoundControl
+     * @param vol volume as float
+     */
+    SoundQueue (SoundControl* &ctrl, float vol);
+    /**
+     * Destructor
+     */
+    ~SoundQueue ();
+    /**
+     * Used to create a new @see SoundQueueItem.
+     * Will create a new @see SoundQueueItem and adds it to the Queue
+     * @param filename a unique (not enforced) filename  
+     */
+    void AddItem (const char *filename);
+    /**
+     * Used to remove a @see SoundQueueItem from the Queue.
+     * Will remove that @see SoundQueueItem and deletes it from the Queue.
+     * @param item a valid SoundQueueItem
+     */  
     void DeleteItem (SoundQueueItem* &item);
-    void Work ();                                   /* check if there is something todo */
-    void Purge ();                                  /* stop and purge that queue */
+    /**
+     * Checks if there are queued items which can be played.
+     * Walks over @see queue and checks if there are items to play or to delete.
+     * Faulty Items will be removed.
+     */
+    void Work ();
+    /// Stops playback and purges all SoundQueueItem(s).
+    void Purge ();
 };
 
 #endif /*_SOUND_QUEUE_H_*/

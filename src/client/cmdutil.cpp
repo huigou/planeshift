@@ -68,6 +68,7 @@ psUtilityCommands::psUtilityCommands(ClientMsgHandler *mh,
     cmdsource->Subscribe("/ping",this);
     cmdsource->Subscribe("/screenshot",this);
     cmdsource->Subscribe("/fps",this);
+    cmdsource->Subscribe("/reload",this);
     cmdsource->Subscribe("/graphicbug",this);
     cmdsource->Subscribe("/repaintlabels",this);
     //cmdsource->Subscribe("/dumpmovements",this);
@@ -82,6 +83,7 @@ psUtilityCommands::~psUtilityCommands()
     cmdsource->Unsubscribe("/ping",this);
     cmdsource->Unsubscribe("/screenshot",this);
     cmdsource->Unsubscribe("/fps",this);
+    cmdsource->Unsubscribe("/reload",this);
     cmdsource->Unsubscribe("/graphicbug",this);
     cmdsource->Unsubscribe("/repaintlabels",this);
     //cmdsource->Unsubscribe("/dumpmovements",this);
@@ -192,6 +194,15 @@ const char *psUtilityCommands::HandleCommand(const char *cmd)
         static csString outputstring;
         HandleTestAnim(words, outputstring);
         return outputstring.GetData();
+    }
+    else if(words[0] == "/reload")
+    {
+        if (words[1] == "sound")
+        {
+            psengine->GetSoundManager()->Reload();
+            return "Soundmanager reloaded";
+        }
+        return "try /reload sound";
     }
 
     return "Unimplemented command received by psUtilityCommands.";

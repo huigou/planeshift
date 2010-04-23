@@ -40,10 +40,15 @@ SoundHandle::SoundHandle ()
     autoremove = true;
     sndsource = NULL;
     sndstream = NULL;
+    hasCallback = false;
 }
 
 SoundHandle::~SoundHandle ()
 {
+    if (hasCallback == true)
+    {
+        Callback();
+    }
     /*
      * i was running into a bug because i didnt do the isvalid / NULL
      * checks ..
@@ -72,12 +77,10 @@ SoundHandle::~SoundHandle ()
  * Thats done within the Play*D functions before the sounds are unpaused
  */
 
-bool
-SoundHandle::
-Init (const char *resname, bool loop, float volume_preset, int type,
-      SoundControl* &ctrl)
+bool SoundHandle::Init (const char *resname, bool loop, float volume_preset,
+                        int type, SoundControl* &ctrl)
 {
-    csRef<iSndSysData>  snddata;    /* LoadSoundFile fills this with data or returns false */
+    csRef<iSndSysData>  snddata; 
 
     if (!soundData->LoadSoundFile(resname, snddata))
     {
@@ -111,9 +114,7 @@ Init (const char *resname, bool loop, float volume_preset, int type,
   */
 
 
-void
-SoundHandle::
-Fade (float volume, int time, int direction)
+void SoundHandle::Fade (float volume, int time, int direction)
 {
     volume = volume*sndCtrl->GetVolume();
 
@@ -143,10 +144,8 @@ Fade (float volume, int time, int direction)
   * adds a 3D Source and a Directional 3D Source if theres a rad bigger 0
   */
 
-void
-SoundHandle::
-ConvertTo3D (float mindist, float maxdist, csVector3 pos, csVector3 dir,
-             float rad)
+void SoundHandle::ConvertTo3D (float mindist, float maxdist, csVector3 pos,
+                               csVector3 dir, float rad)
 {
     soundSystem->Create3dSource (sndsource, sndsource3d, mindist, maxdist,
                                  pos);
@@ -159,17 +158,32 @@ ConvertTo3D (float mindist, float maxdist, csVector3 pos, csVector3 dir,
     }
 }
 
-void
-SoundHandle::
-SetAutoRemove (bool toggle)
+void SoundHandle::SetAutoRemove (bool toggle)
 {
     autoremove = toggle;
 }
 
-bool
-SoundHandle::
-GetAutoRemove ()
+bool SoundHandle::GetAutoRemove ()
 {
     return autoremove;
 }
 
+void SoundHandle::SetCallback(void (*object), void (*function) (void *))
+{
+    callbackobject = object;
+    callbackfunction = function;
+    hasCallback = true; 
+}
+
+void SoundHandle::Callback ()
+{
+    if (hasCallback == true)
+    {
+        callbackfunction(callbackobject);
+    }
+}
+
+void SoundHandle::RemoveCallback()
+{
+    hasCallback = false;
+}

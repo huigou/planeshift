@@ -24,98 +24,7 @@
 #ifndef _PSSOUNDMNGR_H_
 #define _PSSOUNDMNGR_H_
 
-#include "sound/sound.h"
-
-/*
- * TODO merge those sct_ structs into one class
- */
-
-struct sct_music
-{
-    csString       resource;
-    int            type;
-    float          minvol;
-    float          maxvol;
-    int            fadedelay;
-    int            timeofday;
-    int            timeofdayrange;
-    int            weather;
-    size_t         loopstart;
-    size_t         loopend;
-    bool           active;
-    SoundHandle   *handle;
-};
-
-struct sct_emitter
-{
-    csString       resource;
-    float          minvol;
-    float          maxvol;
-    int            fadedelay;
-    float          minrange;
-    float          maxrange;
-    csString       mesh;
-    csString       factory;
-    float          factory_prob;
-    csVector3      position;
-    csVector3      direction;
-    bool           active;
-    int            timeofday;
-    int            timeofdayrange;
-    SoundHandle   *handle;
-};
-
-struct sct_ambient
-{
-    csString       resource;
-    float          minvol;
-    float          maxvol;
-    int            fadedelay;
-    int            timeofday;
-    int            timeofdayrange;
-    int            weather;
-    csString       trigger;
-    size_t         loopstart;
-    size_t         loopend;
-    bool           active;
-    SoundHandle   *handle;
-};
-
-struct sct_entity
-{
-    csString      name;
-    csString      resource;
-    float         minvol;
-    float         maxvol;
-    float         minrange;
-    float         maxrange;
-    int           delay_before; /* number of seconds till first time this sound is played */
-    int           delay_after;  /* number of seconds till played again */
-    float         probability;  /* if a found entitie plays a sound */
-    float         count;        /* number of entities of this type */
-    int           when;         /* last time this sound has been played */
-    bool          active;
-    SoundHandle  *handle;
-    int           timeofday;
-    int           timeofdayrange;
-};
-
-/*
- * TODO create a class
- */
-
-struct sctdata
-{
-    csString                name;
-    bool                    active;
-    sct_ambient            *activeambient;
-    sct_music              *activemusic;
-    csArray<sct_ambient*>   ambient;
-    csArray<sct_emitter*>   emitter;
-    csArray<sct_music*>     music;
-    csArray<sct_entity*>    entity;
-};
-
+#include "pssound.h"
 /*
  * Named it SoundManager but its more a Sectormanager
  * because Sectors is all we have atm
@@ -127,7 +36,7 @@ class psSoundManager
 {
     public:
 
-    sctdata         *activesector;      ///< points to our active sector
+    psSoundSector   *activesector;      ///< points to our active sector
     csVector3        playerposition;    ///< current playerposition
     SoundQueue      *voicequeue;        ///< a queue for voice playback
     SoundControl    *ambientSndCtrl;    ///< soundcontrol for ambient sounds
@@ -138,91 +47,166 @@ class psSoundManager
     SoundControl    *guiSndCtrl;        ///< soundcontrol for gui
     SoundControl    *mainSndCtrl;       ///< soundcontrol of our soundmanager
 
+    psToggle         loopBGM;           ///< loobBGM toggle
+    psToggle         combatMusic;       ///< toggle for combatmusic
+    psToggle         listenerOnCamera;  ///< toggle for listener switch between player and camera position
+    psToggle         chatToggle;        ///< toggle for chatsounds
+
+    /**
+     * Constructor initializes all needed objects.
+     * Loads Sector data and get everything started.
+     * Initializes @see SoundSystemManager various SoundControls
+     * a @SoundQueue for voice sounds and @SoundData also
+     * registers callbacks.
+     */
     psSoundManager (iObjectRegistry* objectReg);
+    /**
+     * Destructor destroys all objects within this SoundManager.
+     * All pointers to objects within this SoundManager are invalid
+     * after destruction. 
+     */
     ~psSoundManager ();
 
-    // load sector data
-    bool LoadData (iObjectRegistry* objectReg, csArray<sctdata*> &sectordata);
-    // load a given sector
+    /**
+     * Load a given sector
+     * @param sector sector by name
+     */
     void Load (const char* sector);
-    // update pssoundmanager, updates all non event based things
-    // has a build in throttle
+    
+    /**
+     * Reloads this Soundmanager
+     */
+    void Reload ();
+    
+    /**
+     * Unloads the current active sector
+     */
+    void Unload ();
+    /**
+     * Updates pssoundmanager.
+     * Updates all non event based things (Entitys and Emitter)
+     * also drives the SoundSystemManager loop
+     * has a build in throttle
+     */
     void Update ();
-    // update listener position
+    /**
+     * Updates Listener position.
+     * Uses either the player position (entity) or the camera posiont (iView)
+     * @param view iView of the camera.
+     */
     void UpdateListener (iView* view);
     
-
-    // simple PlaySound function to handle GUI and similar 'fire and forget' Sounds
+    /**
+     * Simple function to handle Action sounds.
+     * Those sounds are 'fire and forget' and cant be managed.
+     * uses @see SoundControl actionSndCtrl / effectSndCtrl
+     * @param name name of the sound resource
+     */
     void PlayActionSound (const char *name);
+    /**
+     * Simple function to handle GUI sounds.
+     * Those sounds are 'fire and forget' and cant be managed.
+     * uses @see SoundControl guiSndCtrl
+     * @param name name of the sound resource
+     */
     void PlayGUISound (const char *name);
 
-    // sets ingame time
+    /**
+     * Set Sound timeofday
+     */
     void SetTimeOfDay (int newTimeofday);
-    /* sets weather */
+    /**
+     * Set Sound weather
+     */
     void SetWeather (int newWeather);
 
-    /* sets current combat stance */
+    /**
+     * Set players position
+     */
+    void SetPosition (csVector3 playerpos);
+
+    /**
+     * Set Sound stance.
+     * Used to determine which music to play.
+     */
     void SetCombatStance (int newCombatstance);
-    /* get current combat stance */
+    /**
+     * Returns current stance
+     */
     int GetCombatStance ();
 
-    /* toggles to enable or disable the thing they are named after */
-    void SetMusicToggle (bool toggle);
-    bool GetMusicToggle ();
-    void SetAmbientToggle (bool toggle);
-    bool GetAmbientToggle ();
-    void SetCombatToggle (bool toggle);
-    bool GetCombatToggle ();
-    void SetLoopBGMToggle (bool toggle);
-    bool GetLoopBGMToggle ();
+    /**
+     * Set voice toggle.
+     * @param toggle true or false
+     */
     void SetVoiceToggle (bool toggle);
+    /**
+     * Get voice toggle state
+     * returns true or false
+     */
     bool GetVoiceToggle ();
-    void SetChatToggle (bool toggle);
-    bool GetChatToggle ();
-
-    /* toggle to switch listener position between player and camera position */
-    bool GetListenerOnCameraPos ();
-    void SetListenerOnCameraPos (bool toggle);
+    /**
+     * Callback function that makes a music update. 
+     */
+    static void UpdateMusicCallback(void* object);
+    /**
+     * Callback function that makes a ambient music update. 
+     */
+    static void UpdateAmbientCallback(void* object);
 
     private:
 
-    csRef<iVFS>                 vfs;                /* vfs were reading from */
-    csArray<sctdata *>          sectordata;         /* array which contains all sector xmls - parsed */
-    csTicks                     SndTime;            /* current csticks */
-    csTicks                     LastUpdateTime;     /* when the last update happend */
-    bool                        loopBGM;            /* loobBGM toggle */
-    int                         weather;            /* current weather state */
-    int                         combat;             /* current combat stance */
-    int                         timeofday;          /* time of the day */
-    bool                        combatMusic;        /* toggle for combatmusic */
-    bool                        listenerOnCamera;   /* toggle for listener switch between player and camera position */
-    bool                        chatToggle;         /* toggle for chatsounds */
-    csRandomGen                 rng;                /* random gen */
+    csArray<psSoundSector *>    sectordata;         ///< array which contains all sector xmls - parsed
+    csTicks                     SndTime;            ///< current csticks
+    csTicks                     LastUpdateTime;     ///< csticks when the last update happend
 
+    int                         weather;            ///< current weather state
+    int                         combat;             ///< current stance
 
-    /* parses entities nodes out of a xml */
-    void GetEntityNodes (csArray<sct_entity*> &entity_sounds, csRef<iDocumentNodeIterator> Itr);
-    /* parses music nodes out of a xml */
-    void GetMusicNodes (csArray<sct_music*> &music_sounds, csRef<iDocumentNodeIterator> Itr);
-    /* parses emitter nodes out of a xml */
-    void GetEmitterNodes (csArray<sct_emitter*> &emitter_sounds, csRef<iDocumentNodeIterator> Itr);
-    /* parses ambient nodes out of a xml */
-    void GetAmbientNodes (csArray<sct_ambient*> &ambient_sounds, csRef<iDocumentNodeIterator> Itr);
-    /* converts factory emitters to real emitters */
-    void ConvertFactoriesToEmitter (sctdata* &sector);
-    /* transfers handle from a old to a new sector */
-    void TransferHandles (sctdata* &oldsector, sctdata* &newsector);
+    csRandomGen                 rng;                ///< random generator
 
-    /* update ambient playback */
-    void UpdateAmbient (sctdata* &sector);
-    /* update music playback */
-    void UpdateMusic (sctdata* &sector);
-    /* update emitters */
-    void UpdateEmitter (sctdata* &sector);
-    /* update entities */
-    void UpdateEntity (sctdata* &sector);
-    /* update whole sector */
-    void UpdateSector (sctdata * &sector);
+    /**
+     * Converts factory emitters to real emitters
+     */
+    void ConvertFactoriesToEmitter (psSoundSector* &sector);
+    /**
+     * Transfers handle from a psSoundSector to a another psSoundSector
+     * Moves SoundHandle and takes care that everything remains valid.
+     * Good example on what is possible with all those interfaces.
+     * @param oldsector sector to move from
+     * @param newsector sector to move to
+     */
+    void TransferHandles (psSoundSector* &oldsector, psSoundSector* &newsector);
+
+    /**
+     * Find sector by name.
+     * @param name name of the sector youre searching
+     * @param sector your sector pointer
+     * @returns true or false
+     */
+
+    bool FindSector (const char *name, psSoundSector* &sector);
+
+    /**
+     * Update a whole sector
+     * @param sector Sector to update
+     */
+    void UpdateSector (psSoundSector * &sector);
+
+    /**
+     * Load all sectors
+     * Loads all sound sector xmls and creates psSoundSector objects
+     */
+    bool LoadSectors ();
+    /**
+     * Reload all sector xmls (DANGEROUS!)
+     */
+    void ReloadSectors ();
+    /**
+     * Unload all sector xmls (DANGEROUS!)
+     */
+    void UnloadSectors ();
+    
 };
 
 #endif /*_PSSOUNDMNGR_H_*/

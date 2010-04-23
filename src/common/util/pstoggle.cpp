@@ -1,5 +1,5 @@
 /*
- * control.cpp
+ * pstoggle.cpp
  *
  * Copyright (C) 2001-2010 Atomic Blue (info@planeshift.it, http://www.planeshift.it)
  *
@@ -21,90 +21,57 @@
  *
  */
 
+#include "pstoggle.h"
 
-#include "sound.h"
-
-SoundControl::SoundControl ()
+psToggle::psToggle()
 {
-    id        = -1;
-    isEnabled = true;
-    isMuted   = false;
-    volume    = VOLUME_NORM;
-
+    state = true;
     hasCallback = false;
 }
 
-SoundControl::~SoundControl ()
-{
+psToggle::~psToggle()
+{   
 }
 
-int SoundControl::GetID ()
+void psToggle::Activate()
 {
-    return id;
-}
-
-void SoundControl::ActivateToggle ()
-{
-    isEnabled = true;
+    state = true;
     Callback();
 }
 
-void SoundControl::DeactivateToggle ()
+void psToggle::Deactivate()
 {
-    isEnabled = false;
+    state = false;
     Callback();
 }
 
-void SoundControl::SetToggle (bool value)
+bool psToggle::GetToggle()
 {
-    isEnabled = value;
+    return state;
+}
+
+void psToggle::SetToggle(bool newstate)
+{
+    state = newstate;
     Callback();
 }
 
-bool SoundControl::GetToggle ()
-{
-    return isEnabled;
-}
-
-void SoundControl::Mute ()
-{
-    isMuted = true;
-    Callback();
-}
-
-void SoundControl::Unmute ()
-{
-    isMuted = false;
-}
-
-void SoundControl::SetVolume (float vol)
-{
-    volume = vol;
-    Callback();
-}
-
-float SoundControl::GetVolume ()
-{
-    return volume;
-}
-
-void SoundControl::SetCallback(void (*object), void (*function) (void *))
+void psToggle::SetCallback(void (*object), void (*function) (void *))
 {
     callbackobject = object;
     callbackfunction = function;
     hasCallback = true; 
 }
 
-void SoundControl::Callback ()
+void psToggle::RemoveCallback()
+{
+    hasCallback = false;
+}
+
+void psToggle::Callback()
 {
     if (hasCallback == true)
     {
         callbackfunction(callbackobject);
     }
 }
-
-void SoundControl::RemoveCallback()
-{
-    hasCallback = false;
-}
-

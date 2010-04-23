@@ -175,6 +175,9 @@ bool psWorld::Connected(const iSector* from, const iSector* to)
     if (i == -1)
         return false;
 
+    if (transarray.GetSize() == 0)
+        return true;
+       
     csReversibleTransform* transform = transarray[i].Get((iSector*)to);
     if (transform)
         return true;

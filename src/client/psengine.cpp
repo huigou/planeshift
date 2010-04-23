@@ -1148,8 +1148,8 @@ inline void psEngine::UpdatePerFrame()
     if (GetSoundStatus()
         && loadstate == LS_DONE)
     {
-        SoundManager->UpdateListener( camera->GetView() );
-        SoundManager->playerposition = celclient->GetMainPlayer()->Pos();
+        SoundManager->UpdateListener(camera->GetView());
+        SoundManager->SetPosition(celclient->GetMainPlayer()->Pos());
     }
 
     /* sound is updated EVERY FRAME, doesnt matter if 2D or 3D
@@ -1641,7 +1641,7 @@ bool psEngine::LoadSoundSettings(bool forceDef)
     // load and apply the settings
     optionNode = mainNode->GetNode("ambient");
     if (optionNode != NULL)
-    	SoundManager->SetAmbientToggle(optionNode->GetAttributeValueAsBool("on",true));
+    	SoundManager->ambientSndCtrl->SetToggle(optionNode->GetAttributeValueAsBool("on",true));
 
     optionNode = mainNode->GetNode("actions");
     if (optionNode != NULL)
@@ -1649,7 +1649,7 @@ bool psEngine::LoadSoundSettings(bool forceDef)
 
     optionNode = mainNode->GetNode("music");
     if (optionNode != NULL)
-    	SoundManager->SetMusicToggle(optionNode->GetAttributeValueAsBool("on",true));
+    	SoundManager->musicSndCtrl->SetToggle(optionNode->GetAttributeValueAsBool("on",true));
 
     optionNode = mainNode->GetNode("gui");
     if (optionNode != NULL)
@@ -1749,23 +1749,19 @@ bool psEngine::LoadSoundSettings(bool forceDef)
 
     optionNode = mainNode->GetNode("loopbgm");
     if (optionNode)
-        SoundManager->SetLoopBGMToggle(optionNode->GetAttributeValueAsBool("on", false));
+        SoundManager->loopBGM.SetToggle(optionNode->GetAttributeValueAsBool("on", false));
 
     optionNode = mainNode->GetNode("combatmusic");
     if (optionNode)
-        SoundManager->SetCombatToggle(optionNode->GetAttributeValueAsBool("on", true)); 
-
-    optionNode = mainNode->GetNode("combatmusic");
-    if (optionNode)
-        SoundManager->SetCombatToggle(optionNode->GetAttributeValueAsBool("on", true));
+        SoundManager->combatMusic.SetToggle(optionNode->GetAttributeValueAsBool("on", true)); 
 
     optionNode = mainNode->GetNode("chatsound");
     if (optionNode)
-        SoundManager->SetCombatToggle(optionNode->GetAttributeValueAsBool("on", true));
+        SoundManager->chatToggle.SetToggle(optionNode->GetAttributeValueAsBool("on", true));
 
     optionNode = mainNode->GetNode("usecamerapos");
     if (optionNode)
-        SoundManager->SetListenerOnCameraPos(optionNode->GetAttributeValueAsBool("on", true));
+        SoundManager->listenerOnCamera.SetToggle(optionNode->GetAttributeValueAsBool("on", true));
     return true;
 }
 

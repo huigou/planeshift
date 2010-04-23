@@ -25,9 +25,10 @@
 
 extern SoundSystemManager  *SndSysMgr;
 
-SoundQueueItem::SoundQueueItem ()
+SoundQueueItem::SoundQueueItem (const char *file)
 {
     handle      = NULL;
+    filename    = csString(file);
 }
 SoundQueueItem::~SoundQueueItem ()
 {
@@ -52,12 +53,9 @@ SoundQueue::~SoundQueue ()
 
 void SoundQueue::AddItem (const char *filename)
 {
-    // NOTE: its a pointer because i need a new Instance of SoundQueueItem
     SoundQueueItem      *newItem;
 
-    newItem              = new SoundQueueItem;
-    newItem->filename    = csString(filename);
-
+    newItem              = new SoundQueueItem(filename);
     queue.Push(newItem);
 }
 
