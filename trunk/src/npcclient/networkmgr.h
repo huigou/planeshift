@@ -27,6 +27,7 @@
 // Library Includes
 //=============================================================================
 #include "net/cmdbase.h"            // Subscriber class
+#include "net/npcmessages.h"
 #include "util/serverconsole.h"     // iCommandCatcher
 
 class MsgHandler;
@@ -98,7 +99,12 @@ public:
     void DequeueDRData(NPC * npc );
     void QueueAttackCommand(gemNPCActor *attacker, gemNPCActor *target);
     void QueueSpawnCommand(gemNPCActor *mother, gemNPCActor *father);
-    void QueueTalkCommand(gemNPCActor *speaker, const char* text);
+    /** Queue a talk command to the server
+     *
+     * The speaker will send a talk event say/action to target or nearby targets.
+     *
+     */
+    void QueueTalkCommand(gemNPCActor *speaker, gemNPCActor* target, psNPCCommandsMessage::PerceptionTalkType talkType, bool publicTalk, const char* text);
     void QueueVisibilityCommand(gemNPCActor *entity, bool status);
     void QueuePickupCommand(gemNPCActor *entity, gemNPCObject *item, int count);
     void QueueEquipCommand(gemNPCActor *entity, csString item, csString slot, int count);

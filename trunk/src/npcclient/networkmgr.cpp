@@ -1046,7 +1046,7 @@ void NetworkManager::QueueSpawnCommand(gemNPCActor *mother, gemNPCActor *father)
     cmd_count++;
 }
 
-void NetworkManager::QueueTalkCommand(gemNPCActor *speaker, const char* text)
+void NetworkManager::QueueTalkCommand(gemNPCActor *speaker, gemNPCActor* target, psNPCCommandsMessage::PerceptionTalkType talkType, bool publicTalk, const char* text)
 {
     if ( outbound->msg->current > ( outbound->msg->bytes->GetSize() - 100 ) )
     {
@@ -1054,10 +1054,20 @@ void NetworkManager::QueueTalkCommand(gemNPCActor *speaker, const char* text)
         SendAllCommands();
     }
 
-    outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_TALK);
-    outbound->msg->Add(speaker->GetEID().Unbox());
-    
+    outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_TALK );
+    outbound->msg->Add( speaker->GetEID().Unbox() );
+    if (target)
+    {
+        outbound->msg->Add( target->GetEID().Unbox() );
+    }
+    else
+    {
+        outbound->msg->Add( (uint32_t)0 );
+    }
+    outbound->msg->Add( (uint32_t) talkType );
+    outbound->msg->Add( publicTalk );
     outbound->msg->Add(text);
+
     if ( outbound->msg->overrun )
     {
         CS_ASSERT(!"NetworkManager::QueueTalkCommand put message in overrun state!\n");

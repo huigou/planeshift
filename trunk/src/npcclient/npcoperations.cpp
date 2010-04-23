@@ -1456,8 +1456,8 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
             return true; // Nothing more to do for this op.
         }
 
-        iSector *sector;
-        csVector3 pos;
+        iSector *sector = NULL;
+        csVector3 pos = csVector3(0.0f,0.0f,0.0f);
 
         if (region->GetRandomPosition(npcclient->GetEngine(),pos,sector))
         {
@@ -3087,9 +3087,28 @@ bool ShareMemoriesOperation::Run(NPC *npc, EventManager *eventmgr, bool interrup
 
 bool TalkOperation::Load(iDocumentNode *node)
 {
-    text = node->GetAttributeValue("text");
-    target = node->GetAttributeValueAsBool("target",true);
-    command = node->GetAttributeValue("command");
+    talkText = node->GetAttributeValue("text");
+    target   = node->GetAttributeValueAsBool("target",true);
+    command  = node->GetAttributeValue("command");
+    talkPublic = node->GetAttributeValueAsBool("public",true);
+    csString type = node->GetAttributeValue("type");
+    if (type.IsEmpty() || type.CompareNoCase("say"))
+    {
+        talkType = psNPCCommandsMessage::TALK_SAY;
+    } else if (type.CompareNoCase("me"))
+    {
+        talkType = psNPCCommandsMessage::TALK_ME;
+    } else if (type.CompareNoCase("my"))
+    {
+        talkType = psNPCCommandsMessage::TALK_MY;
+    } else if (type.CompareNoCase("narrate"))
+    {
+        talkType = psNPCCommandsMessage::TALK_NARRATE;
+    } else
+    {
+        Error2("Type of '%s' is unkown for talk",type.GetDataSafe());
+        return false;
+    }
 
     return true;
 }
@@ -3097,32 +3116,44 @@ bool TalkOperation::Load(iDocumentNode *node)
 ScriptOperation *TalkOperation::MakeCopy()
 {
     TalkOperation *op = new TalkOperation;
-    op->text = text;
-    op->target = target;
-    op->command = command;
+    op->talkText   = talkText;
+    op->talkType   = talkType;
+    op->talkPublic = talkPublic;
+    op->target     = target;
+    op->command    = command;
     return op;
 }
 
 bool TalkOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
+    gemNPCActor* talkTarget = NULL;
 
-    if(!target)
+    // Check if this talk is to a target
+    if (target)
     {
-        npcclient->GetNetworkMgr()->QueueTalkCommand(npc->GetActor(), npc->GetName() + text);
-        return true;  // Nothing more to do for this op.
-    }
-    
-    if(!npc->GetTarget())
-        return true;
-
-    NPC* friendNPC = npc->GetTarget()->GetNPC();
-    if(friendNPC)
-    {
-        npcclient->GetNetworkMgr()->QueueTalkCommand(npc->GetActor(), npc->GetName() + text);
+        talkTarget = dynamic_cast<gemNPCActor*>( npc->GetTarget() );
         
-        Perception perception("friend:" + command);
-        friendNPC->TriggerEvent(&perception);
+        if (!talkTarget)
+        {
+            npc->Printf(1,"No target for talk operation.");
+            return true;  // Nothing more to do for this op.
+        }
     }
+            
+    // Queue the talk to the server
+    npcclient->GetNetworkMgr()->QueueTalkCommand(npc->GetActor(), talkTarget,
+                                                 talkType, talkPublic, talkText);
+
+    if (talkTarget && !command.IsEmpty())
+    {
+        NPC* friendNPC = talkTarget->GetNPC(); // Check if we have a NPC for this
+        if(friendNPC)
+        {
+            Perception perception("friend:" + command);
+            friendNPC->TriggerEvent(&perception);
+        }
+    }
+
     return true;  // Nothing more to do for this op.
 }
 

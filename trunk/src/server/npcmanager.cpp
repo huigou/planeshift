@@ -836,9 +836,13 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
             }
             case psNPCCommandsMessage::CMD_TALK:
             {
-                EID speaker_id = EID(list.msg->GetUInt32());
+                EID speakerId = EID(list.msg->GetUInt32());
+                EID targetId = EID(list.msg->GetUInt32());
+                psNPCCommandsMessage::PerceptionTalkType talkType = (psNPCCommandsMessage::PerceptionTalkType)list.msg->GetUInt32();
+                bool publicTalk = list.msg->GetBool();
                 const char* text = list.msg->GetStr();
-                Debug3(LOG_SUPERCLIENT,me->clientnum,"-->Got talk cmd: %s for entity %s\n", text, ShowID(speaker_id));
+                
+                Debug3(LOG_SUPERCLIENT,me->clientnum,"-->Got talk cmd: %s for entity %s\n", text, ShowID(speakerId));
 
                 // Make sure we haven't run past the end of the buffer
                 if (list.msg->overrun)
@@ -846,9 +850,42 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     Debug2(LOG_SUPERCLIENT,me->clientnum,"Received incomplete CMD_TALK from NPC client %u.\n",me->clientnum);
                     break;
                 }
-                gemNPC *speaker = dynamic_cast<gemNPC *> (gemSupervisor->FindObject(speaker_id));
-                csTicks timeDelay=0;
-                speaker->Say(text,NULL,false,timeDelay);
+
+                gemNPC *speaker = dynamic_cast<gemNPC *> (gemSupervisor->FindObject(speakerId));
+                if (!speaker)
+                {
+                    Error1("Couldn't find speaker for CMD_TALK.");
+                    break;
+                }
+                
+                Client* who = NULL; // Who to talk/action to
+                gemActor *target = dynamic_cast<gemActor *> (gemSupervisor->FindObject(targetId));
+                if (target)
+                {
+                    who = target->GetClient();
+                }
+
+                csTicks timeDelay=0; // Not used for broadcast
+                
+                switch (talkType)
+                {
+                case psNPCCommandsMessage::TALK_SAY:
+                    speaker->Say(text, who, publicTalk, timeDelay);
+                    break;
+                case psNPCCommandsMessage::TALK_ME:
+                    speaker->ActionCommand(false, false, text, who, publicTalk, timeDelay);
+                    break;
+                case psNPCCommandsMessage::TALK_MY:
+                    speaker->ActionCommand(true, false, text, who, publicTalk, timeDelay);
+                    break;
+                case psNPCCommandsMessage::TALK_NARRATE:
+                    speaker->ActionCommand(false, true, text, who, publicTalk, timeDelay);
+                    break;
+                default:
+                    Error2("Unkown talk type %u received from NPC Client",talkType);
+                    break;
+                }
+                
                 break;
             }
             case psNPCCommandsMessage::CMD_VISIBILITY:
