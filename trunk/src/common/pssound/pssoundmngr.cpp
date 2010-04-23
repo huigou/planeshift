@@ -23,10 +23,13 @@
 
 #include <psconfig.h>
 #include <crystalspace.h>
-#include "util/psxmlparser.h"
+
+#include "sound/sound.h"
+#include "pssound.h"
 #include "pssoundmngr.h"
 #include "pscelclient.h"
 #include "globals.h"
+#include "util/psxmlparser.h"
 
 /* FIXME NAMESPACE */
 // reminder: paws and effects need that thing (still)
@@ -37,27 +40,34 @@ psSoundManager::psSoundManager (iObjectRegistry* objectReg)
     activesector = NULL;    ///<
     combat = 0;             ///< combat stance 0 peace 1 fighting 2 dead (TODO refactor me)
     weather = 1;            ///< weather from weather.h 1 is sunshine
-    timeofday = 12;         ///< timeofday initial is 12am / 12:00
 
     SndSysMgr = new SoundSystemManager(objectReg);
 
     // load sector data
-    LoadData (objectReg, sectordata);
+    LoadSectors ();
 
     // request all needed soundcontrols
     mainSndCtrl = SndSysMgr->mainSndCtrl;
+
     ambientSndCtrl = SndSysMgr->GetSoundControl();
+    ambientSndCtrl->SetCallback(this, &UpdateAmbientCallback);
+    
     musicSndCtrl = SndSysMgr->GetSoundControl();
+    musicSndCtrl->SetCallback(this, &UpdateMusicCallback);
+    
     voiceSndCtrl = SndSysMgr->GetSoundControl();
     actionSndCtrl = SndSysMgr->effectSndCtrl;
     guiSndCtrl = SndSysMgr->guiSndCtrl;
 
     // request a new queue for playing voicefiles
     voicequeue = new SoundQueue(voiceSndCtrl, VOLUME_NORM);
+    
+    loopBGM.SetCallback(this, &UpdateMusicCallback);
+    combatMusic.SetCallback(this, &UpdateMusicCallback);
+
+    
 
     LastUpdateTime = csGetTicks();
-
-    chatToggle = false;
 
     //TODO: NEED TO INITIALIZE ALL VARIABLES!
 }
@@ -66,10 +76,8 @@ psSoundManager::~psSoundManager ()
 {
     delete voicequeue;
     delete SndSysMgr;
+    UnloadSectors();
     // Note: SndSysMgr should take care of SoundControls .. we can ignore them
-    for(size_t i = 0; i < sectordata.GetSize(); i++)
-        delete sectordata[i];
-    sectordata.DeleteAll();
 }
 
 /*
@@ -96,8 +104,8 @@ void psSoundManager::Update ()
     if (activesector != NULL && LastUpdateTime + 50 <= SndTime)
     {
         voicequeue->Work();
-        UpdateEmitter(activesector);
-        UpdateEntity(activesector);
+        activesector->UpdateEmitter(ambientSndCtrl);
+        activesector->UpdateEntity(ambientSndCtrl);
 
         LastUpdateTime = csGetTicks();
     }
@@ -107,6 +115,38 @@ void psSoundManager::Update ()
     SndSysMgr->Update();
 }
 
+void psSoundManager::UpdateMusicCallback(void* object)
+{
+    psSoundManager *which = (psSoundManager *) object;
+    if (which->activesector != NULL)
+    {
+        which->activesector->UpdateMusic(which->loopBGM.GetToggle(), which->combat, which->musicSndCtrl);
+    }
+}
+
+void psSoundManager::UpdateAmbientCallback(void* object)
+{
+    psSoundManager *which = (psSoundManager *) object;
+    if (which->activesector != NULL)
+    {
+        which->activesector->UpdateAmbient(which->weather, which->ambientSndCtrl);
+    }
+}
+
+void psSoundManager::PlayActionSound (const char *name)
+{
+    SoundHandle *Handle;
+    SndSysMgr->Play2DSound(name, DONT_LOOP, 0, 0, VOLUME_NORM,
+                           actionSndCtrl, Handle);
+}
+
+void psSoundManager::PlayGUISound (const char *name)
+{
+    SoundHandle *Handle;
+    SndSysMgr->Play2DSound(name, DONT_LOOP, 0, 0, VOLUME_NORM,
+                           guiSndCtrl, Handle);
+}
+
 /*
  * Transfer ambient/music Handles from oldsector to newsector if needed
  * if loopBGM is false then the handle might be invalid
@@ -114,24 +154,24 @@ void psSoundManager::Update ()
  * all we do is copy the address
  */
 
-void psSoundManager::TransferHandles (sctdata* &oldsector, sctdata* &newsector)
+void psSoundManager::TransferHandles (psSoundSector* &oldsector,
+                                      psSoundSector* &newsector)
 {
-    for (size_t j = 0; j< newsector->music.GetSize(); j++)
+    for (size_t j = 0; j< newsector->musicarray.GetSize(); j++)
     {
         if (oldsector->activemusic == NULL)
         {
             break;
         }
 
-        if (csStrCaseCmp(newsector->music[j]->resource,
+        if (csStrCaseCmp(newsector->musicarray[j]->resource,
                          oldsector->activemusic->resource) == 0)
         {
-            csPrintf("About to steal a music handle\n");
             /* yay active resource with the same name - steal the handle*/
-            newsector->music[j]->handle = oldsector->activemusic->handle;
-            newsector->activemusic = newsector->music[j];
+            newsector->musicarray[j]->handle = oldsector->activemusic->handle;
+            newsector->activemusic = newsector->musicarray[j];
             /* set the sound to active */
-            newsector->music[j]->active = true;
+            newsector->musicarray[j]->active = true;
             /* set it to inactive to prevent damage on the handle */
             oldsector->activemusic->active = false;
             /* set it to NULL to avoid problems */
@@ -139,22 +179,21 @@ void psSoundManager::TransferHandles (sctdata* &oldsector, sctdata* &newsector)
         }
     }
 
-    for (size_t j = 0; j< activesector->ambient.GetSize(); j++)
+    for (size_t j = 0; j< activesector->ambientarray.GetSize(); j++)
     {
         if (oldsector->activeambient == NULL)
         {
             break;
         }
 
-        if (csStrCaseCmp(newsector->ambient[j]->resource,
+        if (csStrCaseCmp(newsector->ambientarray[j]->resource,
                          oldsector->activeambient->resource) == 0)
         {
-            csPrintf("About to steal a ambient handle\n");
             /* yay active resource with the same name - steal the handle*/
-            newsector->ambient[j]->handle = oldsector->activeambient->handle;
-            newsector->activeambient = newsector->ambient[j];
+            newsector->ambientarray[j]->handle = oldsector->activeambient->handle;
+            newsector->activeambient = newsector->ambientarray[j];
             /* set the sound to active */
-            newsector->ambient[j]->active = true;
+            newsector->ambientarray[j]->active = true;
             /* set it to inactive to prevent damage on the handle */
             oldsector->activeambient->active = false;
             /* set it to NULL to avoid problems */
@@ -166,14 +205,14 @@ void psSoundManager::TransferHandles (sctdata* &oldsector, sctdata* &newsector)
 
 
 
-void psSoundManager::ConvertFactoriesToEmitter (sctdata* &sector)
+void psSoundManager::ConvertFactoriesToEmitter (psSoundSector* &sector)
 {
     iSector                 *searchSector;
     iMeshFactoryWrapper     *factory;
     iMeshWrapper            *mesh;
     iMeshList               *meshes;
     iEngine                 *engine;
-    sct_emitter             *emitter;
+    psEmitter             *emitter;
 
     engine = psengine->GetEngine();
 
@@ -182,9 +221,9 @@ void psSoundManager::ConvertFactoriesToEmitter (sctdata* &sector)
      * positions are random but are only generated once
      */
 
-    for (size_t j = 0; j< sector->emitter.GetSize(); j++)
+    for (size_t j = 0; j< sector->emitterarray.GetSize(); j++)
     {
-        if (!sector->emitter[j]->factory)
+        if (!sector->emitterarray[j]->factory)
         {
             continue;
         }
@@ -196,9 +235,9 @@ void psSoundManager::ConvertFactoriesToEmitter (sctdata* &sector)
         }
 
         if (!(factory = engine->GetMeshFactories()
-                        ->FindByName(sector->emitter[j]->factory)))
+                        ->FindByName(sector->emitterarray[j]->factory)))
         {
-            Error2("Could not find factory name %s", (const char *) sector->emitter[j]->factory);
+            Error2("Could not find factory name %s", (const char *) sector->emitterarray[j]->factory);
             continue;
         }
 
@@ -210,24 +249,24 @@ void psSoundManager::ConvertFactoriesToEmitter (sctdata* &sector)
 
             if (mesh->GetFactory() == factory)
             {
-                if (rng.Get() <= sector->emitter[j]->factory_prob)
+                if (rng.Get() <= sector->emitterarray[j]->factory_prob)
                 {
-                    emitter = new sct_emitter;
+                    emitter = new psEmitter;
 
-                    emitter->resource = csString(sector->emitter[j]->resource);
-                    emitter->minvol   = sector->emitter[j]->minvol;
-                    emitter->maxvol   = sector->emitter[j]->maxvol;
-                    emitter->maxrange = sector->emitter[j]->maxrange;
+                    emitter->resource = csString(sector->emitterarray[j]->resource);
+                    emitter->minvol   = sector->emitterarray[j]->minvol;
+                    emitter->maxvol   = sector->emitterarray[j]->maxvol;
+                    emitter->maxrange = sector->emitterarray[j]->maxrange;
                     emitter->position = mesh->GetMovable()->GetPosition();
                     emitter->active   = false;
 
-                    sector->emitter.Push(emitter);
+                    sector->emitterarray.Push(emitter);
                 }
             }
         }
 
         /* delete the factory node */
-        sector->emitter.Delete(sector->emitter[j]);
+        sector->emitterarray.Delete(sector->emitterarray[j]);
         j--;
 
     }
@@ -254,7 +293,8 @@ void psSoundManager::ConvertFactoriesToEmitter (sctdata* &sector)
 
 void psSoundManager::Load (const char* sector)
 {
-    sctdata        *oldsector;
+    psSoundSector        *oldsector;
+    psSoundSector        *newsector;
 
     /* TODO wrong way todo this */
     if (SndSysMgr->Initialised == false)
@@ -276,13 +316,8 @@ void psSoundManager::Load (const char* sector)
      * set the wanted sector to our active sector (if found)
      */
 
-    for (size_t i = 0; i< sectordata.GetSize(); i++)
+    if (FindSector(sector, newsector) == true)
     {
-        if (strcmp(sector, sectordata[i]->name) != 0)
-        {
-            continue;
-        }
-
         /* FIXME - hack for #4268 */
         if (activesector != NULL)
         {
@@ -293,7 +328,7 @@ void psSoundManager::Load (const char* sector)
         }
 
         oldsector = activesector;
-        activesector = sectordata[i];
+        activesector = newsector;
         activesector->active = true;
 
         /* works only on loaded sectors! */
@@ -323,354 +358,52 @@ void psSoundManager::Load (const char* sector)
      }
 }
 
+void psSoundManager::Reload()
+{
+    csString currentsector = csString(activesector->name);
+    Unload();
+    ReloadSectors();
+    Load(currentsector);
+}
+
+void psSoundManager::Unload()
+{
+    activesector->active = false;
+    UpdateSector(activesector);
+    activesector = NULL;
+}
+
+bool psSoundManager::FindSector (const char *name, psSoundSector* &sector)
+{
+    for (size_t i = 0; i< sectordata.GetSize(); i++)
+    {
+        if (strcmp(name, sectordata[i]->name) != 0)
+        {
+            continue;
+        }
+        else
+        {
+            sector = sectordata[i];
+            return true;
+        }
+    }
+    
+    sector = NULL;
+    return false;
+}
+
 /*
  * Update everything in the given sector
  */
 
-void psSoundManager::UpdateSector (sctdata* &sector)
+void psSoundManager::UpdateSector (psSoundSector* &sector)
 {
-    csPrintf("UpdateSector\n");
-    UpdateEmitter(sector);
-    UpdateAmbient(sector);
-    UpdateMusic(sector);
-    UpdateEntity(sector);
+    sector->UpdateMusic(loopBGM.GetToggle(), combat, musicSndCtrl);
+    sector->UpdateAmbient(weather, ambientSndCtrl);
+    sector->UpdateEmitter(ambientSndCtrl);
+    sector->UpdateEntity(ambientSndCtrl);
 }
 
-void psSoundManager::UpdateAmbient (sctdata* &sector)
-{
-    sct_ambient *ambient;
-
-    if (sector == NULL)
-    {
-        return;
-    }
-
-    csPrintf("update ambient\n");
-
-    /*
-     *  Set Ambient Music and weather
-     *  i pretend that xml-files are always correct
-     *  there should be only ONE ambient playing
-     *
-     * ALL ambient and music sounds start at minvol and are faded in
-     */
-
-    for (size_t i = 0; i< sector->ambient.GetSize(); i++)
-    {
-        ambient = sector->ambient[i];
-
-        if (ambient->weather == weather
-            && sector->active == true
-            && GetAmbientToggle() == true
-            && (ambient->timeofday <= timeofday
-            && ambient->timeofdayrange >= timeofday))
-        {
-            if (ambient->active == true)
-            {
-                continue;
-            }
-
-            csPrintf("adding a %s\n",(const char *) ambient->resource);
-
-            ambient->active = true;
-
-            if (SndSysMgr->Play2DSound (ambient->resource, LOOP,
-                                        ambient->loopstart, ambient->loopend,
-                                        ambient->minvol, ambientSndCtrl,
-                                        ambient->handle))
-            {
-    
-                ambient->handle->Fade((ambient->maxvol - ambient->minvol),
-                                       ambient->fadedelay, FADE_UP);
-    
-                ambient->handle->preset_volume = ambient->maxvol;
-                sector->activeambient = ambient;
-            }
-            else // error occured .. get rid of this ambient
-            {
-                sector->ambient.Delete(ambient);
-                delete ambient;
-                break;
-            }
-
-        }
-        else if (ambient->active == true)
-        {
-            csPrintf("removing a %s\n",(const char *) ambient->resource);
-            ambient->active = false;
-            ambient->handle->Fade(ambient->maxvol, ambient->fadedelay, FADE_STOP);
-            if (sector->activeambient == ambient)
-            {
-                sector->activeambient = NULL;
-            }
-        }
-    }
-}
-
-void psSoundManager::UpdateMusic (sctdata* &sector)
-{
-    sct_music *music;
-
-    if (sector == NULL)
-    {
-        return;
-    }
-
-    csPrintf("update music\n");
-
-    /*
-     * set music based on combat mode
-     * set combatmode to 0 if toggle is off
-     */
-
-    if (GetCombatToggle() == false)
-    {
-        combat = 0;
-    }
-
-    for (size_t i = 0; i< sector->music.GetSize(); i++)
-    {
-        music = sector->music[i];
-
-              //csPrintf("%i %i %i\n", music->timeofday, music->timeofdayrange, timeofday);
-
-        if (music->type == combat
-            && sector->active == true
-            && GetMusicToggle() == true
-            && (music->timeofday <= timeofday
-            && music->timeofdayrange >= timeofday))
-        {
-            if (music->active == true)
-            {
-                /*
-                 * difficult logic. user doesnt want looping BGM
-                 * therefor we keep the handle and leave it active
-                 * so it wont be played again
-                 * music continues if he enables loopBGM
-                 */
-                if (loopBGM == false)
-                {
-                    /* set autoremove to false we want to keep the handle */
-                    music->handle->SetAutoRemove(false);
-                    music->handle->sndstream->SetLoopState(DONT_LOOP);
-                    continue;
-                }
-                else
-                {
-                    /* enable looping because the toggle is true */
-                    music->handle->sndstream->SetLoopState(LOOP);
-                    /* Unpause the stream because it might be paused */
-                    music->handle->sndstream->Unpause();
-                    /* set autoremove to true so it gets removed if someone pauses it */
-                    music->handle->SetAutoRemove(true);
-                    continue;
-                }
-            }
-
-            csPrintf("adding b %s\n", (const char *) music->resource);
-            music->active = true;
-
-            if (SndSysMgr->Play2DSound (music->resource, loopBGM,
-                                        music->loopstart, music->loopend,
-                                        music->minvol, musicSndCtrl,
-                                        music->handle))
-            {
-                music->handle->Fade((music->maxvol - music->minvol),
-                                     music->fadedelay, FADE_UP);
-    
-                music->handle->preset_volume = music->maxvol;
-                sector->activemusic = music;
-            }
-            else // error occured .. get rid of this music
-            {
-                sector->music.Delete(music);
-                delete music;
-                break;
-            }
-        }
-        else if (music->active == true)
-        {
-            csPrintf("removing b %s\n", (const char *) music->resource);
-
-            /*
-             * remove a handle which have been paused because of loopBGM
-             * that means user is going to hear the BGM again if he enters
-             * a new sector and the previous sector didnt play this one
-             * or reenables music, leaves combatmode, if timeofday changes
-             * very complex
-             */
-            if (loopBGM == false)
-            {
-                /*
-                 * handle is there but maybe paused or whatever
-                 * get rid of it
-                 */
-                music->handle->SetAutoRemove(true);
-            }
-            music->active = false;
-            music->handle->Fade(music->maxvol, music->fadedelay, FADE_STOP);
-            if (sector->activemusic == music)
-            {
-                sector->activemusic = NULL;
-            }
-        }
-    }
-}
-
-/*
-update on position change
-*/
-
-
-void psSoundManager::UpdateEmitter (sctdata* &sector)
-{
-    sct_emitter *emitter;
-    csVector3 rangeVec;
-    float range;
-
-    if (sector == NULL)
-    {
-        return;
-    }
-
-    /*
-     * start/stop all emitters in range
-     */
-
-    for (size_t i = 0; i< sector->emitter.GetSize(); i++)
-    {
-        emitter = sector->emitter[i];
-        rangeVec = emitter->position - playerposition;
-        range = rangeVec.Norm();
-
-        if (!range) /* if range is NAN */
-        {
-            break;
-        }
-
-        if (range <= emitter->maxrange
-            && sector->active == true
-            && GetAmbientToggle() == true
-            && (emitter->timeofday <= timeofday
-            && emitter->timeofdayrange >= timeofday))
-        {
-            if (emitter->active == true)
-            {
-                continue;
-            }
-
-            csPrintf("adding e %s\n", (const char *) emitter->resource);
-            emitter->active = true;
-
-            if (!SndSysMgr->Play3DSound (emitter->resource, LOOP, 0, 0,
-                                         emitter->maxvol, ambientSndCtrl,
-                                         emitter->position, emitter->direction,
-                                         emitter->minrange, emitter->maxrange,
-                                         VOLUME_ZERO, CS_SND3D_ABSOLUTE,
-                                         emitter->handle))
-            {
-                // error occured .. emitter cant be played .. remove it
-                sector->emitter.Delete(emitter);
-                delete emitter;
-                break;
-            }
-
-        }
-        else if (emitter->active != false)
-        {
-            csPrintf("removing e %s\n", (const char *) sector->emitter[i]->resource);
-            emitter->active = false;
-            emitter->handle->sndstream->Pause();
-        }
-    }
-}
-
-/*
- * this is the most powerfull part of the new soundmanager
- * it can add sounds to any kind of entity
- * e.g. items / actors (NPC/PC) and effects
- *
- * i hope it capable to replace PlayEffect / StopEffect
- *
- * tbh this function doesnt belong here
- * the whole logic whould be in pscelclient.cpp
- *
- * not implementet yet:
- *   get real labals e.g. "Tefusangling"
- *   take animation into account (IDLE, PEACE ...)
- *   update position
- */
-
-void psSoundManager::UpdateEntity (sctdata* &sector)
-{
-    sct_entity *entity;
-    iMeshWrapper* mesh;
-    csVector3 rangeVec;
-    float range;
-
-    const csPDelArray<GEMClientObject>& entities = psengine->GetCelClient()
-                                                   ->GetEntities();
-
-    if (sector == NULL)
-    {
-        return;
-    }
-
-    for (size_t i = 0; i < sector->entity.GetSize(); i++)
-    {
-        entity = sector->entity[i];
-
-        if (entity->active == true)
-        {
-            if (entity->when <= 0)
-            {
-                /* SndSysMgr will pick the dead sound up */
-                entity->active = false;
-            }
-            else
-            {
-                entity->when = (entity->when - 50);
-            }
-
-            continue;
-        }
-
-        for (size_t a = 0; a < entities.GetSize(); a++)
-        {
-            if ((mesh = entities[a]->GetMesh()) == NULL)
-            {
-                continue;
-            }
-
-            rangeVec = entities[a]->GetPosition() - playerposition;
-            range = rangeVec.Norm();
-
-            if (range <= entity->maxrange
-                && csStrCaseCmp(entity->name, mesh->QueryObject()->GetName()) == 0
-                && rng.Get() <= entity->probability
-                && (entity->timeofday <= timeofday
-                && entity->timeofdayrange >= timeofday))
-            {
-                csPrintf("iobject name %s %f %f\n", mesh->QueryObject()->GetName(), range, entity->maxrange);
-                /* play sound */
-                entity->active = true;
-                entity->when = (entity->delay_after*1000);
-                
-                if (!SndSysMgr->Play3DSound (entity->resource, DONT_LOOP, 0, 0,
-                                             entity->maxvol, ambientSndCtrl,
-                                             entities[a]->GetPosition(), 0,
-                                             entity->minrange, entity->maxrange,
-                                             VOLUME_ZERO, CS_SND3D_ABSOLUTE,
-                                             entity->handle))
-                {
-                    sector->entity.Delete(entity);
-                    delete entity;
-                    break;
-                }
-            }
-        }
-    }
-}
 
 /*
  * were always using camera height and rotation
@@ -680,64 +413,128 @@ void psSoundManager::UpdateEntity (sctdata* &sector)
 
 void psSoundManager::UpdateListener ( iView* view )
 {
+    csVector3 hearpoint;
+    csMatrix3 matrix;
+    csVector3 front;
+    csVector3 top;
+
     /* TODO wrong way todo this */
     if (SndSysMgr->Initialised == false)
     {
         return;
     }
 
-    // take position/direction from view->GetCamera ()
-    csVector3 v = view->GetPerspectiveCamera()->GetCamera()
-                      ->GetTransform().GetOrigin();
-    csMatrix3 m = view->GetPerspectiveCamera()->GetCamera()
-                      ->GetTransform().GetT2O();
-    csVector3 f = m.Col3();
-    csVector3 t = m.Col2();
-
-    if (listenerOnCamera == false)
+    if (listenerOnCamera.GetToggle() == false)
     {
-        v = playerposition;
+        hearpoint = playerposition;
+    }
+    else
+    {
+        // take position/direction from view->GetCamera ()
+        hearpoint = view->GetPerspectiveCamera()->GetCamera()
+                        ->GetTransform().GetOrigin();
     }
 
-    SndSysMgr->UpdateListener (v, f, t);
-}
+    matrix = view->GetPerspectiveCamera()->GetCamera()
+                  ->GetTransform().GetT2O();
+    front = matrix.Col3();
+    top   = matrix.Col2();
 
-void psSoundManager::PlayActionSound (const char *name)
-{
-    SoundHandle *Handle;
-    SndSysMgr->Play2DSound(name, DONT_LOOP, 0, 0, VOLUME_NORM,
-                           actionSndCtrl, Handle);
-}
-
-void psSoundManager::PlayGUISound (const char *name)
-{
-    SoundHandle *Handle;
-    SndSysMgr->Play2DSound(name, DONT_LOOP, 0, 0, VOLUME_NORM,
-                           guiSndCtrl, Handle);
+    SndSysMgr->UpdateListener (hearpoint, front, top);
 }
 
 
 /*
- * load a all sector xmls into an given array to make them usable
- * its only parsing the xml most of it is hardcoded
- *
- * Get*Node functions are utilized.
- * i dont like how this works but its only called once
- * and easy to understand and maintain
- *
- * still i consider replacing it with something more generic
+ * Set functions which trigger updates
  */
 
-bool psSoundManager::LoadData (iObjectRegistry* objectReg, csArray<sctdata*> &sectordata)
+void psSoundManager::SetTimeOfDay (int newTimeofday)
 {
-    csRef<iDataBuffer>        xpath;
-    const char*                        dir;
-    csRef<iStringArray> files;
-    sctdata                                *tmpsectordata;
+    activesector->timeofday = newTimeofday;
+    activesector->UpdateAmbient(weather, ambientSndCtrl);
+    activesector->UpdateMusic(loopBGM.GetToggle(), combat, musicSndCtrl);
+}
+
+void psSoundManager::SetPosition (csVector3 playerpos)
+{
+    playerposition = playerpos;
+    
+    if (activesector != NULL)
+    {
+        activesector->playerposition = playerpos;
+    }
+}
+
+/*
+ * Engine calls SetWeather every frame or so
+ * update is only called if weather is changing
+ */
+
+void psSoundManager::SetWeather (int newWeather)
+{
+    if (weather != newWeather)
+    {
+        weather = newWeather;
+        activesector->UpdateAmbient(weather, ambientSndCtrl);
+    }
+}
+
+void psSoundManager::SetCombatStance (int newCombatstance)
+{
+    if (combatMusic.GetToggle() == true)
+    {
+        combat = newCombatstance;
+    }
+    else
+    {
+        combat = 0; /* 0 is peace */
+    }
+
+    activesector->UpdateMusic(loopBGM.GetToggle(), combat, musicSndCtrl);
+}
+
+/*
+ * FIXME Remove GetCombatStance when you fix the victory effect
+ */
+
+int psSoundManager::GetCombatStance ()
+{
+    return combat;
+}
+
+void psSoundManager::SetVoiceToggle (bool toggle)
+{
+    voiceSndCtrl->SetToggle(toggle);
+
+    if (toggle == false)
+    {
+        voicequeue->Purge();
+    }
+}
+
+bool psSoundManager::GetVoiceToggle ()
+{
+    return voiceSndCtrl->GetToggle();
+}
+
+/*
+ * load a all sector xmls and make them usable
+ * will overwrite the target sector if it exists 
+ * its only parsing the xml most of it is hardcoded
+ *
+ */
+
+bool psSoundManager::LoadSectors ()
+{
+    csRef<iDataBuffer>      xpath;
+    const char*             dir;
+    csRef<iStringArray>     files;
+    psSoundSector          *tmpsector;
+    csRef<iVFS>             vfs;
 
     csRef<iDocumentNodeIterator> sectorIter;
-
-    if (!(vfs =  csQueryRegistry<iVFS> (objectReg)))
+    
+    if (!(vfs = csQueryRegistry<iVFS> (psengine->GetObjectRegistry())))
     {
         return false;
     }
@@ -753,32 +550,29 @@ bool psSoundManager::LoadData (iObjectRegistry* objectReg, csArray<sctdata*> &se
 
     for (size_t i=0; i < files->GetSize(); i++)
     {
-        csString name( files->Get(i) );
+        csString name(files->Get(i));
         csRef<iDocument> doc;
         csRef<iDocumentNode> root, mapNode;
 
-        if ((doc=ParseFile( objectReg, name ))
+        if ((doc=ParseFile(psengine->GetObjectRegistry(), name))
             && (root=doc->GetRoot())
             && (mapNode=root->GetNode("MAP_SOUNDS")))
         {
             sectorIter = mapNode->GetNodes("SECTOR");
 
-            while ( sectorIter->HasNext() )
+            while (sectorIter->HasNext())
             {
-                tmpsectordata = new sctdata;
-
                 csRef<iDocumentNode> sector = sectorIter->Next();
-                tmpsectordata->name = sector->GetAttributeValue("NAME");
 
-                GetAmbientNodes(tmpsectordata->ambient, sector->GetNodes("AMBIENT"));
-                GetEmitterNodes(tmpsectordata->emitter, sector->GetNodes("EMITTER"));
-                GetMusicNodes(tmpsectordata->music, sector->GetNodes("BACKGROUND"));
-                GetEntityNodes(tmpsectordata->entity, sector->GetNodes("ENTITY"));
-
-                tmpsectordata->activeambient = NULL;
-                tmpsectordata->activemusic = NULL;
-
-                sectordata.Push(tmpsectordata);
+                if (FindSector (sector->GetAttributeValue("NAME"), tmpsector) == true)
+                {
+                    tmpsector->Reload(sector);
+                }
+                else
+                {
+                    tmpsector = new psSoundSector(sector);
+                    sectordata.Push(tmpsector);
+                }
             }
         }
     }
@@ -786,276 +580,19 @@ bool psSoundManager::LoadData (iObjectRegistry* objectReg, csArray<sctdata*> &se
     return true;
 }
 
-void psSoundManager::GetAmbientNodes (csArray<sct_ambient*> &ambient_sounds,
-                 csRef<iDocumentNodeIterator> Itr)
+void psSoundManager::ReloadSectors ()
 {
-    csRef<iDocumentNode>    Node;
-    sct_ambient            *ambient;
+    UnloadSectors();
+    LoadSectors();
+}
 
-    while ( Itr->HasNext() )
+void psSoundManager::UnloadSectors ()
+{
+    for (size_t i = 0; i < sectordata.GetSize(); i++)
     {
-        Node = Itr->Next();
-
-        ambient = new sct_ambient;
-
-        ambient->resource       = Node->GetAttributeValue("RESOURCE");
-        ambient->minvol         = Node->GetAttributeValueAsFloat("MINVOL");
-        ambient->maxvol         = Node->GetAttributeValueAsFloat("MAXVOL");
-        ambient->fadedelay      = Node->GetAttributeValueAsInt("FADEDELAY");
-        ambient->timeofday      = Node->GetAttributeValueAsInt("TIME");
-        ambient->timeofdayrange = Node->GetAttributeValueAsInt("TIME_RANGE");
-        ambient->weather        = Node->GetAttributeValueAsInt("WEATHER");
-        ambient->trigger        = Node->GetAttributeValue("TRIGGER");
-        ambient->loopstart      = Node->GetAttributeValueAsInt("LOOPSTART");
-        ambient->loopend        = Node->GetAttributeValueAsInt("LOOPEND");
-        ambient->timeofday      = Node->GetAttributeValueAsInt("TIME");
-        ambient->timeofdayrange = Node->GetAttributeValueAsInt("TIME_RANGE");
-        ambient->active         = false;
-
-        if (ambient->timeofday == -1)
-        {
-            ambient->timeofday = 0;
-            ambient->timeofdayrange = 24;
-        }
-
-        ambient_sounds.Push(ambient);
+        delete sectordata[i];
     }
+
+    sectordata.DeleteAll();
 }
 
-
-
-void psSoundManager::GetEmitterNodes(csArray<sct_emitter*> &emitter_sounds,
-                csRef<iDocumentNodeIterator> Itr)
-{
-    csRef<iDocumentNode>    Node;
-    sct_emitter            *emitter;
-
-    while ( Itr->HasNext() )
-    {
-        Node = Itr->Next();
-
-        emitter = new sct_emitter;
-
-        emitter->resource       = Node->GetAttributeValue("RESOURCE");
-        emitter->minvol         = Node->GetAttributeValueAsFloat("MINVOL");
-        emitter->maxvol         = Node->GetAttributeValueAsFloat("MAXVOL");
-        emitter->maxrange       = Node->GetAttributeValueAsFloat("MAX_RANGE");
-        emitter->minrange       = Node->GetAttributeValueAsFloat("MIN_RANGE");
-        emitter->fadedelay      = Node->GetAttributeValueAsInt("FADEDELAY");
-        emitter->mesh           = Node->GetAttributeValue("MESH");
-        emitter->factory        = Node->GetAttributeValue("FACTORY");
-        emitter->factory_prob   = Node->GetAttributeValueAsFloat("FACTORY_PROBABILITY");
-        emitter->position       = csVector3 (Node->GetAttributeValueAsFloat("X"),
-                                             Node->GetAttributeValueAsFloat("Y"),
-                                             Node->GetAttributeValueAsFloat("Z") );
-        emitter->direction      = csVector3 (Node->GetAttributeValueAsFloat("2X"),
-                                             Node->GetAttributeValueAsFloat("2Y"),
-                                             Node->GetAttributeValueAsFloat("2Z") );
-        emitter->timeofday      = Node->GetAttributeValueAsInt("TIME");
-        emitter->timeofdayrange = Node->GetAttributeValueAsInt("TIME_RANGE");
-        emitter->active         = false;
-
-        if (emitter->timeofday == -1)
-        {
-            emitter->timeofday = 0;
-            emitter->timeofdayrange = 24;
-        }
-
-        emitter_sounds.Push(emitter);
-    }
-}
-
-void psSoundManager::GetMusicNodes (csArray<sct_music*> &music_sounds, csRef<iDocumentNodeIterator> Itr)
-{
-    csRef<iDocumentNode>    Node;
-    sct_music              *music;
-
-    while ( Itr->HasNext() )
-    {
-        Node = Itr->Next();
-
-        music = new sct_music;
-
-        music->resource         = Node->GetAttributeValue("RESOURCE");
-        music->type             = Node->GetAttributeValueAsInt("TYPE");
-        music->minvol           = Node->GetAttributeValueAsFloat("MINVOL");
-        music->maxvol           = Node->GetAttributeValueAsFloat("MAXVOL");
-        music->fadedelay        = Node->GetAttributeValueAsInt("FADEDELAY");
-        music->timeofday        = Node->GetAttributeValueAsInt("TIME");
-        music->timeofdayrange   = Node->GetAttributeValueAsInt("TIME_RANGE");
-        music->weather          = Node->GetAttributeValueAsInt("WEATHER");
-        music->loopstart        = Node->GetAttributeValueAsInt("LOOPSTART");
-        music->loopend          = Node->GetAttributeValueAsInt("LOOPEND");
-        music->active           = false;
-
-        if (music->timeofday == -1)
-        {
-            music->timeofday = 0;
-            music->timeofdayrange = 24;
-        }
-
-        music_sounds.Push(music);
-    }
-}
-
-void psSoundManager::GetEntityNodes (csArray<sct_entity*> &entity_sounds, csRef<iDocumentNodeIterator> Itr)
-{
-    csRef<iDocumentNode>    Node;
-    sct_entity             *entity;
-
-    while ( Itr->HasNext() )
-    {
-        Node = Itr->Next();
-
-        entity = new sct_entity;
-
-        entity->resource        = Node->GetAttributeValue("RESOURCE");
-        entity->name            = Node->GetAttributeValue("NAME");
-        entity->minvol          = Node->GetAttributeValueAsFloat("MINVOL");
-        entity->maxvol          = Node->GetAttributeValueAsFloat("MAXVOL");
-        entity->minrange        = Node->GetAttributeValueAsFloat("MIN_RANGE");
-        entity->maxrange        = Node->GetAttributeValueAsFloat("MAX_RANGE");
-        entity->delay_before    = Node->GetAttributeValueAsInt("DELAY_BEFORE");
-        entity->delay_after     = Node->GetAttributeValueAsInt("DELAY_AFTER");
-        entity->probability     = Node->GetAttributeValueAsFloat("PROBABILITY");
-        entity->timeofday       = Node->GetAttributeValueAsInt("TIME");
-        entity->timeofdayrange  = Node->GetAttributeValueAsInt("TIME_RANGE");
-        entity->active = false;
-
-        if (entity->timeofday == -1)
-        {
-            entity->timeofday = 0;
-            entity->timeofdayrange = 24;
-        }
-
-        entity_sounds.Push(entity);
-    }
-}
-
-/*
- * Set functions which trigger updates
- */
-
-void psSoundManager::SetTimeOfDay (int newTimeofday)
-{
-    csPrintf("settimeofday\n");
-    timeofday = newTimeofday;
-    UpdateAmbient(activesector);
-    UpdateMusic(activesector);
-}
-
-/*
- * Set/Get functions for toggles which trigger updates
- */
-
-/*
- * Engine calls SetWeather every frame or so
- * update is only called if weather is changing
- */
-
-void psSoundManager::SetWeather (int newWeather)
-{
-    if (weather != newWeather)
-    {
-        csPrintf("setweather\n");
-        weather = newWeather;
-        UpdateAmbient(activesector);
-    }
-}
-
-void psSoundManager::SetLoopBGMToggle (bool toggle)
-{
-    loopBGM = toggle;
-    UpdateMusic(activesector);
-}
-
-bool psSoundManager::GetLoopBGMToggle ()
-{
-    return loopBGM;
-}
-
-void psSoundManager::SetCombatToggle (bool toggle)
-{
-    combatMusic = toggle;
-    UpdateMusic(activesector);
-}
-
-bool psSoundManager::GetCombatToggle ()
-{
-    return combatMusic;
-}
-
-void psSoundManager::SetCombatStance (int newCombatstance)
-{
-    combat = newCombatstance;
-    UpdateMusic(activesector);
-}
-
-/*
- * FIXME Remove GetCombatStance when you fix the victory effect
- */
-
-int psSoundManager::GetCombatStance ()
-{
-    return combat;
-}
-
-void psSoundManager::SetMusicToggle (bool toggle)
-{
-    musicSndCtrl->SetToggle(toggle);
-    UpdateMusic(activesector);
-}
-
-bool psSoundManager::GetMusicToggle ()
-{
-    return musicSndCtrl->GetToggle();
-}
-
-void psSoundManager::SetAmbientToggle (bool toggle)
-{
-    ambientSndCtrl->SetToggle(toggle);
-    UpdateAmbient(activesector);
-    /* to be consistent (not really needed) */
-    UpdateEmitter(activesector);
-}
-
-bool psSoundManager::GetAmbientToggle ()
-{
-    return ambientSndCtrl->GetToggle();
-}
-
-void psSoundManager::SetChatToggle (bool toggle)
-{
-    chatToggle = toggle;
-}
-
-bool psSoundManager::GetChatToggle ()
-{
-    return chatToggle;
-}
-
-void psSoundManager::SetVoiceToggle (bool toggle)
-{
-    voiceSndCtrl->SetToggle(toggle);
-
-    if (toggle == false)
-    {
-        voicequeue->Purge();
-    }
-}
-
-
-bool psSoundManager::GetVoiceToggle ()
-{
-    return voiceSndCtrl->GetToggle();
-}
-
-void psSoundManager::SetListenerOnCameraPos (bool toggle)
-{
-    listenerOnCamera = toggle;
-}
-
-bool psSoundManager::GetListenerOnCameraPos ()
-{
-    return listenerOnCamera;
-}

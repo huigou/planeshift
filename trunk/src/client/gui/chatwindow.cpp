@@ -1292,7 +1292,7 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
         case CHAT_SERVER_TELL:
         case CHAT_TELLSELF:
         case CHAT_TELL:
-            if (psengine->GetSoundManager()->GetChatToggle() == true)
+            if (psengine->GetSoundManager()->chatToggle.GetToggle() == true)
             {
                  // Hardcoded Resource considered as FIXME
                 psengine->GetSoundManager()->PlayGUISound("sound.standardButtonClick");

@@ -156,11 +156,11 @@ bool pawsConfigSound::LoadConfig()
     voices->SetState(psengine->GetSoundManager()->voiceSndCtrl->GetToggle());
 
     muteOnFocusLoss->SetState(psengine->GetMuteSoundsOnFocusLoss());
-    loopBGM->SetState(psengine->GetSoundManager()->GetLoopBGMToggle());
-    combatMusic->SetState(psengine->GetSoundManager()->GetCombatToggle());
-    chatSound->SetState(psengine->GetSoundManager()->GetChatToggle());
+    loopBGM->SetState(psengine->GetSoundManager()->loopBGM.GetToggle());
+    combatMusic->SetState(psengine->GetSoundManager()->combatMusic.GetToggle());
+    chatSound->SetState(psengine->GetSoundManager()->chatToggle.GetToggle());
     
-    if (psengine->GetSoundManager()->GetListenerOnCameraPos() == true)
+    if (psengine->GetSoundManager()->listenerOnCamera.GetToggle() == true)
     {
         soundLocation->Select("Camera");
     }
@@ -291,7 +291,7 @@ bool pawsConfigSound::OnButtonPressed(int button, int mod, pawsWidget* wdg)
 
     if(wdg == ambient)
     {
-        psengine->GetSoundManager()->SetAmbientToggle(ambient->GetState());
+        psengine->GetSoundManager()->ambientSndCtrl->SetToggle(ambient->GetState());
     }
     else if(wdg == actions)
     {
@@ -299,7 +299,7 @@ bool pawsConfigSound::OnButtonPressed(int button, int mod, pawsWidget* wdg)
     }
     else if(wdg == music)
     {
-        psengine->GetSoundManager()->SetMusicToggle(music->GetState());
+        psengine->GetSoundManager()->musicSndCtrl->SetToggle(music->GetState());
     }
     else if(wdg == gui)
     {
@@ -311,11 +311,11 @@ bool pawsConfigSound::OnButtonPressed(int button, int mod, pawsWidget* wdg)
     }
     else if(wdg == loopBGM)
     {
-		psengine->GetSoundManager()->SetLoopBGMToggle(loopBGM->GetState());
+		psengine->GetSoundManager()->loopBGM.SetToggle(loopBGM->GetState());
     }
     else if(wdg == combatMusic)
     {
-        psengine->GetSoundManager()->SetCombatToggle(combatMusic->GetState());
+        psengine->GetSoundManager()->combatMusic.SetToggle(combatMusic->GetState());
     }
     else if(wdg == muteOnFocusLoss)
     {
@@ -323,7 +323,7 @@ bool pawsConfigSound::OnButtonPressed(int button, int mod, pawsWidget* wdg)
     }
     else if(wdg == chatSound)
     {
-        psengine->GetSoundManager()->SetChatToggle(chatSound->GetState());
+        psengine->GetSoundManager()->chatToggle.SetToggle(chatSound->GetState());
     }
     else
     {
@@ -341,11 +341,11 @@ void pawsConfigSound::OnListAction(pawsListBox* selected, int status)
    
     if (_selected.Compare("Camera"))
     {
-        psengine->GetSoundManager()->SetListenerOnCameraPos(true);
+        psengine->GetSoundManager()->listenerOnCamera.SetToggle(true);
     }
     else
     {
-        psengine->GetSoundManager()->SetListenerOnCameraPos(false);
+        psengine->GetSoundManager()->listenerOnCamera.SetToggle(false);
     }
     SaveConfig();
 }
@@ -358,8 +358,8 @@ void pawsConfigSound::Show()
     oldactions = psengine->GetSoundManager()->actionSndCtrl->GetToggle();
     oldgui = psengine->GetSoundManager()->guiSndCtrl->GetToggle();
     oldvoices = psengine->GetSoundManager()->voiceSndCtrl->GetToggle();
-    oldchatsound = psengine->GetSoundManager()->GetChatToggle();
-    oldlisteneroncamerapos = psengine->GetSoundManager()->GetListenerOnCameraPos();
+    oldchatsound = psengine->GetSoundManager()->chatToggle.GetToggle();
+    oldlisteneroncamerapos = psengine->GetSoundManager()->listenerOnCamera.GetToggle();
 
     oldvol = psengine->GetSoundManager()->mainSndCtrl->GetVolume();
     oldmusicvol = psengine->GetSoundManager()->musicSndCtrl->GetVolume();
@@ -375,13 +375,13 @@ void pawsConfigSound::Hide()
 {
     if(dirty)
     {
-        psengine->GetSoundManager()->SetAmbientToggle(oldambient);
+        psengine->GetSoundManager()->ambientSndCtrl->SetToggle(oldambient);
         psengine->GetSoundManager()->actionSndCtrl->SetToggle(oldactions);
-        psengine->GetSoundManager()->SetMusicToggle(oldmusic);
+        psengine->GetSoundManager()->musicSndCtrl->SetToggle(oldmusic);
         psengine->GetSoundManager()->guiSndCtrl->SetToggle(oldgui);
         psengine->GetSoundManager()->SetVoiceToggle(oldvoices);
-        psengine->GetSoundManager()->SetChatToggle(oldchatsound);
-        psengine->GetSoundManager()->SetListenerOnCameraPos(oldlisteneroncamerapos);
+        psengine->GetSoundManager()->chatToggle.SetToggle(oldchatsound);
+        psengine->GetSoundManager()->listenerOnCamera.SetToggle(oldlisteneroncamerapos);
 
         psengine->GetSoundManager()->mainSndCtrl->SetVolume(oldvol);
         psengine->GetSoundManager()->musicSndCtrl->SetVolume(oldmusicvol);

@@ -52,18 +52,34 @@ SoundFile::~SoundFile ()
  * simple interface
  */
 
+SoundData::SoundData ()
+{
+}
+
+SoundData::~SoundData ()
+{
+    csArray<SoundFile*> allsoundfiles;
+
+    allsoundfiles = soundfiles.GetAll();
+
+    for (size_t i = 0; i < allsoundfiles.GetSize(); i++)
+    {
+        delete allsoundfiles[i];
+    }
+    
+    soundfiles.DeleteAll();
+    
+    UnloadSoundLib();
+}
+
 /*
  * Initializes a loader and vfs
  * if one of both fails it will return false
  */
 
-bool
-SoundData::
-Initialize(iObjectRegistry* objectReg)
+bool SoundData::Initialize(iObjectRegistry* objectReg)
 {
-    sndloader = csQueryRegistry<iSndSysLoader> (objectReg);
-
-    if (!sndloader)
+    if (!(sndloader = csQueryRegistry<iSndSysLoader> (objectReg)))
     {
         Error1("Failed to locate Sound loader!");
         return false;
@@ -84,9 +100,7 @@ Initialize(iObjectRegistry* objectReg)
  * it checks if we have the resource and loads it if its not already loaded
  */
 
-bool
-SoundData::
-LoadSoundFile (const char *name, csRef<iSndSysData> &snddata)
+bool SoundData::LoadSoundFile (const char *name, csRef<iSndSysData> &snddata)
 {
     SoundFile                   *snd;
     csRef<iDataBuffer>          soundbuf;
@@ -136,9 +150,7 @@ LoadSoundFile (const char *name, csRef<iSndSysData> &snddata)
  * it DOES it. It doesnt care if its still used or not!
  */
 
-void
-SoundData::
-UnloadSoundFile (const char *name)
+void SoundData::UnloadSoundFile (const char *name)
 {
     SoundFile   *sound;
 
@@ -154,8 +166,7 @@ UnloadSoundFile (const char *name)
  * NULL if it doesnt
  */
 
-SoundFile *
-SoundData::GetSound (const char *name)
+SoundFile *SoundData::GetSound (const char *name)
 {
     SoundFile   *sound;
 
@@ -183,23 +194,20 @@ SoundData::GetSound (const char *name)
     return sound;
 }
 
-void
-SoundData::PutSound (SoundFile* &sound)
+void SoundData::PutSound (SoundFile* &sound)
 {
     // i know theres PutUnique but i have a bad feeling about overwriting
     soundfiles.Put(csHashCompute((const char*) sound->name), sound);
 }
 
-void
-SoundData::DeleteSound (SoundFile* &sound)
+void SoundData::DeleteSound (SoundFile* &sound)
 {
     // it deletes all with THAT key (and those are unique)
     soundfiles.DeleteAll (csHashCompute(sound->name));
     delete sound;
 }
 
-void
-SoundData::Update ()
+void SoundData::Update ()
 {
     csTicks             now;
     csArray<SoundFile*> allsoundfiles;
@@ -239,9 +247,7 @@ SoundData::Update ()
  *
  */
 
-bool
-SoundData::
-LoadSoundLib (const char* filename, iObjectRegistry* objectReg)
+bool SoundData::LoadSoundLib (const char* filename, iObjectRegistry* objectReg)
 {
     csRef<iDocumentSystem>          xml;    /* try get existing Document System or create one*/
     csRef<iDataBuffer>              buff;   /* buffer for reading the xml */
@@ -304,4 +310,18 @@ LoadSoundLib (const char* filename, iObjectRegistry* objectReg)
        }
     }
     return true;
+}
+
+void SoundData::UnloadSoundLib ()
+{
+    csArray<SoundFile*> allsoundfiles;
+
+    allsoundfiles = libsoundfiles.GetAll();
+
+    for (size_t i = 0; i < allsoundfiles.GetSize(); i++)
+    {
+        delete allsoundfiles[i];
+    }
+    
+    libsoundfiles.DeleteAll();
 }

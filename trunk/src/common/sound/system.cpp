@@ -29,13 +29,9 @@
  * Get a renderer und returns false or true
  */
 
-bool
-SoundSystem::
-Initialize (iObjectRegistry* objectReg)
+bool SoundSystem::Initialize (iObjectRegistry* objectReg)
 {
-  sndrenderer = csQueryRegistry<iSndSysRenderer> (objectReg);
-
-  if ( !sndrenderer )
+  if (!(sndrenderer = csQueryRegistry<iSndSysRenderer> (objectReg)))
     {
         Error1("Failed to locate Sound renderer!");
         return false;
@@ -60,10 +56,8 @@ Initialize (iObjectRegistry* objectReg)
  * returns false or true
  */
 
-bool
-SoundSystem::
-CreateStream (csRef<iSndSysData> &snddata, int loop, int type,
-              csRef<iSndSysStream> &sndstream)
+bool SoundSystem:: CreateStream (csRef<iSndSysData> &snddata, int loop,
+                                 int type, csRef<iSndSysStream> &sndstream)
 {
     if ( !(sndstream = sndrenderer->CreateStream (snddata, type)))
     {
@@ -89,9 +83,7 @@ CreateStream (csRef<iSndSysData> &snddata, int loop, int type,
  * Removes the given stream
  */
 
-void
-SoundSystem::
-RemoveStream(csRef<iSndSysStream> &sndstream)
+void SoundSystem::RemoveStream(csRef<iSndSysStream> &sndstream)
 {
     sndrenderer->RemoveStream(sndstream);
 }
@@ -102,10 +94,8 @@ RemoveStream(csRef<iSndSysStream> &sndstream)
  * volume is 1 by default - we set it to 0 - ALWAYS
  */
 
-bool
-SoundSystem::
-CreateSource (csRef<iSndSysStream> &sndstream,
-              csRef<iSndSysSource> &sndsource)
+bool SoundSystem::CreateSource (csRef<iSndSysStream> &sndstream,
+                                csRef<iSndSysSource> &sndsource)
 {
     sndsource = sndrenderer->CreateSource (sndstream);
     sndsource->SetVolume (0);
@@ -117,9 +107,7 @@ CreateSource (csRef<iSndSysStream> &sndstream,
  * this is important!
  */
 
-void
-SoundSystem::
-RemoveSource (csRef<iSndSysSource> &sndsource)
+void SoundSystem::RemoveSource (csRef<iSndSysSource> &sndsource)
 {
     sndrenderer->RemoveSource (sndsource);
 }
@@ -133,11 +121,9 @@ RemoveSource (csRef<iSndSysSource> &sndsource)
  * use RemoveSource to remove it
  */
 
-void
-SoundSystem::
-Create3dSource (csRef<iSndSysSource> &sndsource,
-                csRef<iSndSysSource3D> &sndsource3d,
-                float mindist, float maxdist, csVector3 pos)
+void SoundSystem::Create3dSource (csRef<iSndSysSource> &sndsource,
+                                  csRef<iSndSysSource3D> &sndsource3d,
+                                  float mindist, float maxdist, csVector3 pos)
 {
     sndsource3d = scfQueryInterface<iSndSysSource3D> (sndsource);
     sndsource3d->SetMinimumDistance(mindist);
@@ -153,11 +139,10 @@ Create3dSource (csRef<iSndSysSource> &sndsource,
  * use RemoveSource to remove it
  */
 
-void
-SoundSystem::
-CreateDirectional3dSource (csRef<iSndSysSource3D> &sndsource3d,
-                           csRef<iSndSysSource3DDirectionalSimple> &sndsourcedir,
-                           csVector3 direction, float rad)
+void SoundSystem::CreateDirectional3dSource
+                     (csRef<iSndSysSource3D> &sndsource3d,
+                      csRef<iSndSysSource3DDirectionalSimple> &sndsourcedir,
+                      csVector3 direction, float rad)
 {
     sndsourcedir->SetDirection(direction);
     sndsourcedir->SetDirectionalRadiation(rad);
@@ -170,9 +155,7 @@ CreateDirectional3dSource (csRef<iSndSysSource3D> &sndsource3d,
  * t is top
  */
 
-void
-SoundSystem::
-UpdateListener( csVector3 v, csVector3 f, csVector3 t )
+void SoundSystem::UpdateListener(csVector3 v, csVector3 f, csVector3 t)
 {
     listener->SetPosition(v);
     listener->SetDirection(f,t);

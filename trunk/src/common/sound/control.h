@@ -25,30 +25,102 @@
 #ifndef _SOUND_CONTROL_H_
 #define _SOUND_CONTROL_H_
 
+/**
+ * A Volume and Sound control class.
+ * With this class you can control the volume and the overall state
+ * of a unlimited number of SoundsHandles. The whole class is pretty straith forward and selfdescribing.
+ * It also provides a callback functionality which calls back whenever something changes.
+ * You can use it by using SetCallback, please make sure that you call RemoveCallback
+ * before removing whether this Callback is set to.
+ 
+ * Each SoundHandle must have one SoundControl associated. This is done during
+ * SoundHandle creation @see SystemSoundManager or @see SoundHandle::Init for details.
+ */
+
 class SoundControl
 {
     public:
-    bool    isEnabled;           /* is toggle enabled? */
-    float   volume;              /* volume as float */
-    bool    isMuted;             /* is it muted? */
-    bool    isDirty;             /* is this control dirty */
-    int     id;                  /* id of this control */
+    int     id;                         ///< id of this control
+    /**
+     * Sets internal callbackpointers.
+     * Those Callbacks are called whenever a control changes.
+     * E.g. someone changes Volume or pushes a Toggle
+     * @param object pointer to a instance
+     * @param function pointer to a static void function within that instance
+     */ 
+    void SetCallback(void (*object), void (*function) (void *));
+    /**
+     * Removes Callback
+     */
+    void RemoveCallback();
+    /**
+     * Constructor.
+     * Defaults are unmuted, enabled and volume is set to 1.0f.
+     */ 
+    SoundControl ();
+    /**
+     * Destructor
+     */
+    ~SoundControl ();
+    /**
+     * Returns current Volume as float.
+     */
+    float GetVolume ();
+    /**
+     * Sets volume to the given float.
+     * @param vol Volume as float
+     */
+    void SetVolume (float vol);
+    /**
+      * Unmute this.
+      */
+    void Unmute ();
+    /**
+     * Mute this
+     */
+    void Mute ();
 
-    SoundControl ();             /* constructor*/
-    ~SoundControl ();            /* destructor */
-    bool GetState ();            /* returns isDirty */
-    int GetID ();                /* returns id */
+    /**
+     * Get current Toggle state.
+     * Returns isEnabled 
+     */
+    bool GetToggle ();
+    /**
+     * Sets Toggle.
+     * @param value true or false
+     */           
+    void SetToggle (bool value);
+    /**
+     * deactivates Toggle.
+     * Sets isEnabled to false
+     */
+    void DeactivateToggle ();
+    /**
+     * activates Toggle.
+     * Sets isEnabled to true
+     */
+    void ActivateToggle (); 
 
-    float GetVolume ();          /* returns volume as float */
-    void SetVolume (float vol);  /* set volume param is volume as float */
+    private:
+    bool    isEnabled;                  ///< is it enabled? true or false
+    float   volume;                     ///< current volume as float
+    bool    isMuted;                    ///< is it muted? true or false
 
-    void Unmute ();              /* unmute this */
-    void Mute ();                /* mute this */
+    void (*callbackobject);             ///< pointer to a callback object (if set)
+    void (*callbackfunction) (void *);  ///< pointer to a callback function (if set)
+    bool hasCallback;                   ///< true if theres a Callback set, false if not
 
-    bool GetToggle ();           /* returns toggle state */
-    void SetToggle (bool value); /* set toggle (bool) */
-    void DeactivateToggle ();    /* set toggle to false */
-    void ActivateToggle ();      /* set toggle to true */
+    /**
+     * Will call the Callback if set.
+     * Checks @see hasCallback and call the Callback if true. 
+     */
+    void Callback ();
+
+    /**
+     * Returns this Volume ID.
+     * Not used atm
+     */
+    int GetID ();
 };
 
 #endif /*_SOUND_CONTROL_H_*/

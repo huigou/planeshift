@@ -72,6 +72,12 @@ SoundSystemManager::~SoundSystemManager ()
     UpdateSound();
 
     // FIXME we must delete all SoundControls
+    for (size_t i = 0; i < soundController.GetSize(); i++)
+    {
+        delete soundController[i];
+    }
+    
+    soundController.DeleteAll();
 
     delete soundSystem;
     delete soundData;
@@ -91,8 +97,7 @@ SoundSystemManager::~SoundSystemManager ()
  * but i already have a plan.. :)   
  */
 
-void
-SoundSystemManager::Update ()
+void SoundSystemManager::Update ()
 {
     SndTime = csGetTicks();
 
@@ -112,8 +117,7 @@ SoundSystemManager::Update ()
  * you need to supply a handle
  */
 
-bool
-SoundSystemManager::
+bool SoundSystemManager::
 Play2DSound (const char *name, bool loop, size_t loopstart, size_t loopend,
              float volume_preset, SoundControl* &sndCtrl, SoundHandle* &handle)
 {
@@ -162,14 +166,13 @@ Play2DSound (const char *name, bool loop, size_t loopstart, size_t loopend,
  * you need to supply a handle
  */
 
-bool
-SoundSystemManager::
+bool SoundSystemManager::
 Play3DSound (const char *name, bool loop, size_t loopstart, size_t loopend,
              float volume_preset, SoundControl* &sndCtrl, csVector3 pos,
              csVector3 dir, float mindist, float maxdist, float rad,
              int type3d, SoundHandle* &handle)
 {
-    /* FIXME redundant code Play2DSound */
+    // FIXME redundant code Play2DSound
     if (Initialised == false)
     {
         Error1("Sound not Initialised\n");
@@ -207,6 +210,12 @@ Play3DSound (const char *name, bool loop, size_t loopstart, size_t loopend,
     return true;
 }
 
+void SoundSystemManager::StopSound (SoundHandle *handle)
+{
+    soundHandles.Delete(handle);
+    delete handle;
+}
+
 /*
  * reomves all idle sounds to save memory and sndsources
  * adjust volumes and fades music
@@ -225,8 +234,7 @@ void SoundSystemManager::UpdateSound ()
         if (tmp->sndstream->GetPauseState () == CS_SNDSYS_STREAM_PAUSED
             && tmp->GetAutoRemove() == true)
         {
-            soundHandles.Delete(tmp);
-            delete tmp;
+            StopSound(tmp);
             i--;
             continue;
         }
@@ -252,11 +260,11 @@ void SoundSystemManager::UpdateSound ()
              * also check the toggle just pause if its false
              */
 
-            if (tmp->fade == -1
-                && (tmp->fade_stop == true
-                || tmp->sndCtrl->GetToggle() == false))
+            if ((tmp->fade == -1
+                && tmp->fade_stop == true)
+                || tmp->sndCtrl->GetToggle() == false)
             {
-                tmp->sndstream->Pause();
+                StopSound(tmp);
             }
             else
             {
@@ -298,15 +306,12 @@ void SoundSystemManager::UpdateSound ()
  * Update Listener position
  */
 
-void
-SoundSystemManager::UpdateListener (csVector3 v, csVector3 f, csVector3 t)
+void SoundSystemManager::UpdateListener (csVector3 v, csVector3 f, csVector3 t)
 {
     soundSystem->UpdateListener (v, f, t);
 }
 
-SoundControl*
-SoundSystemManager::
-GetSoundControl ()
+SoundControl* SoundSystemManager::GetSoundControl ()
 {
     SoundControl *newControl;
 
