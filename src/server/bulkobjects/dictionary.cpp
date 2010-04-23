@@ -1692,7 +1692,7 @@ bool ActionResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTi
     {
         csString response(*actWhat);
         who->GetNPCDialogPtr()->SubstituteKeywords(target->GetClient(),response);
-        who->ActionCommand(actionMy, actionNarrate, response.GetDataSafe(), target->GetClient()->GetClientNum(), IsPublic() && target->GetVisibility(), timeDelay );
+        who->ActionCommand(actionMy, actionNarrate, response.GetDataSafe(), target->GetClient(), IsPublic() && target->GetVisibility(), timeDelay );
     }
 
     return true;

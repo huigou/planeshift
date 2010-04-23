@@ -1020,7 +1020,6 @@ public:
     virtual void SendGroupStats();
 
     void SetAction(const char *anim,csTicks& timeDelay);
-    void ActionCommand(bool actionMy, bool actionNarrate, const char *actText,int destClientID, bool ActionPublic, csTicks& timeDelay);
 
     virtual void Broadcast(int clientnum, bool control);
     /**
@@ -1205,8 +1204,33 @@ public:
     const csArray<int>& GetLootableClients() const {return lootable_clients; }
     Client *GetRandomLootClient(int range);
 
-    /// Used to allow a NPC to communicate to its environment
-    void Say(const char *strsay,Client *who,bool saypublic,csTicks& timeDelay);
+    /** Used to allow a NPC to communicate by saying things to its environment.
+     *
+     * Use this to publish chat messages of type SAY for NPCs.
+     * They can either be of private to the client who or broadcasted.
+     *
+     * @param sayText       The text to send.
+     * @param who           Who to send to.
+     * @param sayPublic     True if it should be a public say, otherwise it will only be sent to the destination client given by who.
+     * @param timeDelay     Used to lay out a sequence of responses in time depended on the length of the sayText.
+     */
+    void Say(const char* sayText, Client* who, bool sayPublic, csTicks &timeDelay);
+    
+    /** Used to allow a NPC to communicate through action to its environment.
+     *
+     * Use this to publish chat messages of type ME,MY,NARRATE for NPCs.
+     * They can either be of private to the client who or broadcasted.
+     * Use one of the actionMy or actionNarrate to override the default type
+     * of ME.
+     *
+     * @param actionMy      If true a /my will be used
+     * @param actionNarrate If true a narrate will be used if not actionMy is set.
+     * @param actText       The text to send.
+     * @param who           Who to send to.
+     * @param actionPublic  True if it should be a public action, otherwise it will only be sent to the destination client given by who.
+     * @param timeDelay     Used to lay out a sequence of responses in time depended on the length of the actText.
+     */
+    void ActionCommand(bool actionMy, bool actionNarrate, const char* actText, Client* who, bool actionPublic, csTicks &timeDelay);
 
     void AddBadText(const char *playerSaid,const char *trigger);
     void GetBadText(size_t first,size_t last, csStringArray& saidArray, csStringArray& trigArray);

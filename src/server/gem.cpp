@@ -3807,36 +3807,6 @@ void gemActor::SetAction(const char *anim,csTicks& timeDelay)
     action.Multicast(GetMulticastClients(),-1,0);
 }
 
-void gemActor::ActionCommand(bool actionMy, bool actionNarrate, const char *actText,int destClientID, bool ActionPublic, csTicks& timeDelay)
-{
-    int chtype = CHAT_NPC_ME;
-
-    if (actionMy)
-        chtype = CHAT_NPC_MY;
-    else if (actionNarrate)
-        chtype = CHAT_NPC_NARRATE;
-        
-    if (destClientID && !ActionPublic)
-    {
-        Notify2(LOG_CHAT,"Private NPC action: %s\n", actText);
-
-        // first response gets 1 second delay to simulate NPC thinking
-        // subsequent ones add to the current time delay, and send delayed
-        if (timeDelay==0)
-            timeDelay = (csTicks)(1000);
-        psChatMessage msg(destClientID,eid,GetName(),0,actText,chtype,false);
-        psserver->GetEventManager()->SendMessageDelayed(msg.msg,timeDelay);
-
-        timeDelay += (csTicks)(1000 + 30*strlen(actText));
-    }
-    else
-    {
-        Notify2(LOG_CHAT,"Public NPC action: %s\n", actText)
-        psChatMessage msg(0,eid,GetName(),0,actText,chtype,false);
-        msg.Multicast(GetMulticastClients(), 0, CHAT_SAY_RANGE );
-    }
-}
-
 float gemActor::FallEnded(const csVector3& pos, iSector* sector)
 {
     isFalling = false;
@@ -4423,37 +4393,79 @@ Client *gemNPC::GetRandomLootClient(int range)
     return NULL;
 }
 
-void gemNPC::Say(const char *strsay,Client *who, bool saypublic,csTicks& timeDelay)
+void gemNPC::Say(const char* sayText, Client* who, bool sayPublic, csTicks &timeDelay)
 {
-    if (strsay)
+    int chtype = CHAT_NPC; // Default type is NPC.
+
+    if (!sayText)
     {
-        if (who && !saypublic) // specific client specified means use /tell not /say
-        {
-            Notify2(LOG_CHAT,"Private NPC Response: %s\n",strsay);
+        return; // Nothing to say so return
+    }
+    
+    if (who && !sayPublic) // specific client specified means use /tell not /say
+    {
+        Notify2(LOG_CHAT,"Private NPC Response: %s\n", sayText);
+        
+        // Some NPC responses are now in the form of private tells.
+        psChatMessage newMsg(who->GetClientNum(), eid, GetName(), 0, sayText, chtype, false);
+        
+        // first response gets 1 second delay to simulate NPC thinking
+        // subsequent ones add to the current time delay, and send delayed
+        if (timeDelay==0)
+            timeDelay = (csTicks)(1000);
+        psserver->GetEventManager()->SendMessageDelayed(newMsg.msg,timeDelay);
+        
+        timeDelay += (csTicks)(2000 + 50*strlen(sayText));
+    }
+    else
+    {
+        Notify2(LOG_CHAT,"Public NPC Response: %s\n", sayText);
+        // Some NPC responses are now in the form of public /says.
+        psChatMessage newMsg(0, eid, GetName(), 0, sayText, chtype, false);
+        newMsg.Multicast(GetMulticastClients(), 0, CHAT_SAY_RANGE );
+    }
+    
+    if (who)
+    {
+        // This perception allows the superclient to know about the dialog with a specific person.
+        psserver->GetNPCManager()->QueueTalkPerception(who->GetActor(), this);
+    }
+}
 
-            // Some NPC responses are now in the form of private tells.
-            psChatMessage newMsg(who->GetClientNum(), eid, GetName(), 0, strsay, CHAT_NPC, false);
+void gemNPC::ActionCommand(bool actionMy, bool actionNarrate, const char* actText, Client* who, bool actionPublic, csTicks &timeDelay)
+{
+    int chtype = CHAT_NPC_ME; // Default type is ME.
 
-            // first response gets 1 second delay to simulate NPC thinking
-            // subsequent ones add to the current time delay, and send delayed
-            if (timeDelay==0)
-                timeDelay = (csTicks)(1000);
-            psserver->GetEventManager()->SendMessageDelayed(newMsg.msg,timeDelay);
-            timeDelay += (csTicks)(2000 + 50*strlen(strsay));
-        }
-        else
-        {
-            Notify2(LOG_CHAT,"Public NPC Response: %s\n",strsay);
-            // Some NPC responses are now in the form of public /says.
-            psChatMessage newMsg(0, eid, GetName(), 0, strsay, CHAT_NPC, false);
-            newMsg.Multicast(GetMulticastClients(), 0, CHAT_SAY_RANGE );
-        }
+    if (actionMy)
+    {
+        chtype = CHAT_NPC_MY;
+    }
+    else if (actionNarrate)
+    {
+        chtype = CHAT_NPC_NARRATE;
+    }
+        
+    if (who && !actionPublic)
+    {
+        Notify2(LOG_CHAT,"Private NPC action: %s\n", actText);
 
-        if (who)
-        {
-            // This perception allows the superclient to know about the dialog with a specific person.
-            psserver->GetNPCManager()->QueueTalkPerception(who->GetActor(), this);
-        }
+        // Some NPC actions are now in the form of private actions.
+        psChatMessage msg(who->GetClientNum(), eid, GetName(), 0, actText, chtype, false);
+
+        // first response gets 1 second delay to simulate NPC thinking
+        // subsequent ones add to the current time delay, and send delayed
+        if (timeDelay==0)
+            timeDelay = (csTicks)(1000);
+        psserver->GetEventManager()->SendMessageDelayed(msg.msg,timeDelay);
+
+        timeDelay += (csTicks)(1000 + 30*strlen(actText));
+    }
+    else
+    {
+        Notify2(LOG_CHAT,"Public NPC action: %s\n", actText);
+        // Some NPC actions are now in the form of public /me, or /mys
+        psChatMessage msg(0, eid, GetName(), 0, actText, chtype, false);
+        msg.Multicast(GetMulticastClients(), 0, CHAT_SAY_RANGE );
     }
 }
 

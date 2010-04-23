@@ -270,7 +270,7 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
                     if (result == CURLE_COULDNT_CONNECT || result == CURLE_COULDNT_RESOLVE_HOST)
                         error.Format("Couldn't connect to mirror %s\n", url.GetData());
                     else
-                        error.Format("Error %d while downloading file: %s\n", curlerror, url.GetData());
+                        error.Format("Error %s while downloading file: %s\n", curlerror, url.GetData());
                 }
             }
             else

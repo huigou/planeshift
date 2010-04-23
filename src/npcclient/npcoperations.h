@@ -35,6 +35,7 @@ struct iSector;
 //=============================================================================
 #include "util/psconst.h"
 #include "util/pspath.h"
+#include "net/npcmessages.h"
 
 //=============================================================================
 // Project Includes
@@ -831,9 +832,13 @@ public:
 class TalkOperation : public ScriptOperation
 {
 protected:
-    csString text;
-    csString command;
-    bool target;
+    typedef psNPCCommandsMessage::PerceptionTalkType TalkType;
+    
+    csString talkText;   ///< The text to send to the clients
+    TalkType talkType;   ///< What kind of talk, default say
+    bool     talkPublic; ///< Should this be public or only to the target
+    bool     target;     ///< True if this is should go to the target of the NPC.
+    csString command;    ///< Command to percept to target if target is a NPC.
 
 public:
 

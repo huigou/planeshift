@@ -231,6 +231,14 @@ public:
         PCPT_SPAWNED
     };
 
+    enum PerceptionTalkType
+    {
+        TALK_SAY,
+        TALK_ME,
+        TALK_MY,
+        TALK_NARRATE
+    };
+
     /// Create psMessageBytes struct for outbound use
     psNPCCommandsMessage(uint32_t clientToken,int size);
 

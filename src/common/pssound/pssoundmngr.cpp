@@ -450,9 +450,12 @@ void psSoundManager::UpdateListener ( iView* view )
 
 void psSoundManager::SetTimeOfDay (int newTimeofday)
 {
-    activesector->timeofday = newTimeofday;
-    activesector->UpdateAmbient(weather, ambientSndCtrl);
-    activesector->UpdateMusic(loopBGM.GetToggle(), combat, musicSndCtrl);
+    if (activesector != NULL)
+    {
+        activesector->timeofday = newTimeofday;
+        activesector->UpdateAmbient(weather, ambientSndCtrl);
+        activesector->UpdateMusic(loopBGM.GetToggle(), combat, musicSndCtrl);
+    }
 }
 
 void psSoundManager::SetPosition (csVector3 playerpos)
