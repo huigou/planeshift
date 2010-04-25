@@ -492,8 +492,9 @@ void psSoundManager::SetCombatStance (int newCombatstance)
     {
         combat = 0; /* 0 is peace */
     }
-
-    activesector->UpdateMusic(loopBGM.GetToggle(), combat, musicSndCtrl);
+    
+    if(activesector)
+        activesector->UpdateMusic(loopBGM.GetToggle(), combat, musicSndCtrl);
 }
 
 /*
