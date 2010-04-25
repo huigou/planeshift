@@ -1729,14 +1729,41 @@
 			Name="Source Files"
 			Filter="">
 			<File
+				RelativePath="..\..\src\common\pssound\psemitter.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\common\pssound\psentity.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\common\pssound\psmusic.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\common\pssound\pssoundmngr.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\common\pssound\pssoundsector.cpp">
 			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="">
 			<File
+				RelativePath="..\..\src\common\pssound\psemitter.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\pssound\psentity.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\pssound\psmusic.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\pssound\pssound.h">
+			</File>
+			<File
 				RelativePath="..\..\src\common\pssound\pssoundmngr.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\pssound\pssoundsector.h">
 			</File>
 		</Filter>
 	</Files>

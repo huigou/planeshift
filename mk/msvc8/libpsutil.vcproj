@@ -1789,6 +1789,9 @@
 				RelativePath="..\..\src\common\util\psstring.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\common\util\pstoggle.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\common\util\psutil.cpp">
 			</File>
 			<File
@@ -1899,6 +1902,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\common\util\psstring.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\util\pstoggle.h">
 			</File>
 			<File
 				RelativePath="..\..\src\common\util\psutil.h">
