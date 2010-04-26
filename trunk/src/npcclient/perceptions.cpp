@@ -59,7 +59,7 @@ Reaction::Reaction()
     desireType    = DESIRE_GUARANTIED;
     range         = 0;
     activeOnly    = false;
-    inactiveOnly = false;
+    inactiveOnly  = false;
 }
 
 bool Reaction::Load(iDocumentNode *node,BehaviorSet& behaviors)
@@ -203,40 +203,7 @@ void Reaction::React(NPC *who, Perception *pcpt)
 {
     CS_ASSERT(who);
 
-    // If dead we should not react unless reactWhenDead is set
-    if (!(who->IsAlive() || reactWhenDead))
-        return;
-
-    if (doNotInterrupt.GetSize())
-    {
-        for (size_t i = 0; i < doNotInterrupt.GetSize(); i++)
-        {
-            if (who->GetCurrentBehavior() && doNotInterrupt[i] == who->GetCurrentBehavior()->GetName())
-            {
-                who->Printf(5,"Prevented from reacting to '%s' while '%s' is active",
-                            GetEventType(),who->GetCurrentBehavior()->GetName());
-                return;
-            }
-        }
-    }
-    
-
-    // Check if this reaction is limited to only interrupt some given behaviors.
-    if (onlyInterrupt.GetSize())
-    {
-        bool found = false;
-        for (size_t i = 0; i < onlyInterrupt.GetSize(); i++)
-        {
-            if (who->GetCurrentBehavior() && onlyInterrupt[i] == who->GetCurrentBehavior()->GetName())
-            {
-                found = true;
-                break;
-            }
-        }
-        if (!found) 
-            return;
-    }
-
+    // Check if the perception is a match for this reaction
     if (!pcpt->ShouldReact(this,who))
     {
         if (who->IsDebugging(12))
@@ -246,6 +213,38 @@ void Reaction::React(NPC *who, Perception *pcpt)
         return;
     }
 
+    // If dead we should not react unless reactWhenDead is set
+    if (!(who->IsAlive() || reactWhenDead))
+    {
+        who->Printf(5, "Only react to '%s' when alive", GetEventType());
+        return;
+    }
+
+    // Check if the active behavior should not be interrupted.
+    if (who->GetCurrentBehavior() && DoNotInterrupt(who->GetCurrentBehavior()))
+    {
+        who->Printf(5,"Prevented from reacting to '%s' while not interrupt behavior '%s' is active",
+                    GetEventType(),who->GetCurrentBehavior()->GetName());
+        return; 
+    } 
+
+    // Check if this reaction is limited to only interrupt some given behaviors.
+    if (who->GetCurrentBehavior() && OnlyInterrupt(who->GetCurrentBehavior()))
+    {
+        who->Printf(5,"Prevented from reacting to '%s' since behavior '%s' should not be interrupted",
+                    GetEventType(),who->GetCurrentBehavior()->GetName());
+        return; 
+    } 
+
+
+
+    // We should no react and triggerd all affected behaviors
+
+    // For debug get the time this reaction was triggered
+    GetTimeOfDay(lastTriggered);
+
+
+    // Adjust the needs for the triggerd behaviors
     for (size_t i = 0; i < affected.GetSize(); i++)
     {
 
@@ -291,11 +290,12 @@ void Reaction::React(NPC *who, Perception *pcpt)
         }
     }
     
-    
+    // Execute the perception
     pcpt->ExecutePerception(who,weight);
 
     Perception *p = pcpt->MakeCopy();
     who->SetLastPerception(p);
+
 }
 
 bool Reaction::ShouldReact(gemNPCObject* actor, Perception *pcpt)
@@ -312,6 +312,37 @@ bool Reaction::ShouldReact(gemNPCObject* actor, Perception *pcpt)
         return false;
     }
     return true;
+}
+
+bool Reaction::DoNotInterrupt(Behavior* behavior)
+{
+    if (doNotInterrupt.GetSize())
+    {
+        for (size_t i = 0; i < doNotInterrupt.GetSize(); i++)
+        {
+            if (doNotInterrupt[i].CompareNoCase(behavior->GetName()))
+            {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool Reaction::OnlyInterrupt(Behavior* behavior)
+{
+    if (onlyInterrupt.GetSize())
+    {
+        for (size_t i = 0; i < onlyInterrupt.GetSize(); i++)
+        {
+            if (onlyInterrupt[i].CompareNoCase(behavior->GetName()))
+            {
+                return false; // The behavior is legal to interrupt
+            }
+        }
+        return true; // The behavior isn't on the list of behaviors to interrupt
+    }
+    return false; // There are no limitation on who to interrupt
 }
 
 int Reaction::GetValue(int i)
@@ -369,6 +400,45 @@ csString Reaction::GetValue()
             result.AppendFmt("%d",values[i]);
         }
     }
+    return result;
+}
+
+csString Reaction::GetAffectedBehaviors()
+{
+    csString result;
+    for (size_t i = 0; i < affected.GetSize(); i++)
+    {
+        if (i != 0)
+        {
+            result.Append(", ");
+        }
+        result.Append(affected[i]->GetName());
+    }
+    if (!doNotInterrupt.IsEmpty())
+    {
+        result.Append(" No Int: ");
+        for (size_t i = 0; i < doNotInterrupt.GetSize(); i++)
+        {
+            if (i != 0)
+            {
+                result.Append(", ");
+            }
+            result.Append(doNotInterrupt[i].GetDataSafe());
+        }
+    }
+    if (!onlyInterrupt.IsEmpty())
+    {
+        result.Append(" Only Int: ");
+        for (size_t i = 0; i < onlyInterrupt.GetSize(); i++)
+        {
+            if (i != 0)
+            {
+                result.Append(", ");
+            }
+            result.Append(onlyInterrupt[i].GetDataSafe());
+        }
+    }
+
     return result;
 }
 

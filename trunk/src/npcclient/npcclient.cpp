@@ -1263,12 +1263,13 @@ void psNPCClient::ListTribes(const char * pattern)
     
     for (size_t i = 0; i < tribes.GetSize(); i++)
     {
-        CPrintf(CON_CMDOUTPUT, "\n%9s %-30s %-7s %-7s %7s %7s %7s %7s %-15s \n", "Tribe id", "Name", "MCount","NPCs","x","y","z","r","sector");
         if (!pattern || strstr(tribes[i]->GetName(),pattern))
         {
             csVector3 pos;
             iSector* sector;
             float radius;
+            CPrintf(CON_CMDOUTPUT, "\n%9s %-30s %-7s %-7s %7s %7s %7s %7s %-15s \n",
+                    "Tribe id", "Name", "MCount","NPCs","x","y","z","r","sector");
             tribes[i]->GetHome(pos,radius,sector);
             CPrintf(CON_CMDOUTPUT, "%9d %-30s %-7d %-7d %7.1f %7.1f %7.1f %7.1f %-15s\n" ,
                     tribes[i]->GetID(),

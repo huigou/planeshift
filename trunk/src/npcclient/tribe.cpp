@@ -642,8 +642,13 @@ void Tribe::Memorize(NPC * npc, Perception * perception)
     csString  name = perception->GetType();
     float     radius = perception->GetRadius();
     csVector3 pos;
-    iSector*  sector;
-    perception->GetLocation(pos,sector);
+    iSector*  sector = NULL;
+
+    if (!perception->GetLocation(pos,sector))
+    {
+        npc->Printf("Failed to memorize '%s' perception without valid position",name.GetDataSafe());
+        return;
+    }
         
     // Store the perception if not known from before
 
@@ -853,7 +858,7 @@ void Tribe::TriggerEvent(Perception *pcpt, float maxRange,
 
 gemNPCActor* Tribe::GetMostHated(NPC* npc, float range, bool includeInvisible, bool includeInvincible, float* hate)
 {
-    float mostHatedHate = 0.0;
+    float mostHatedAmount = 0.0;
     gemNPCActor* mostHated = NULL;
     
     csVector3  pos;
@@ -870,16 +875,16 @@ gemNPCActor* Tribe::GetMostHated(NPC* npc, float range, bool includeInvisible, b
         gemNPCActor* hated = member->GetMostHated(pos, sector, range, NULL,
                                                   includeInvisible, includeInvincible,
                                                   &hateValue );
-        if (hateValue > mostHatedHate)
+        if (!mostHated || hateValue > mostHatedAmount)
         {
-            mostHatedHate = hateValue;
+            mostHatedAmount = hateValue;
             mostHated = hated;
         }
     }
 
     if (hate)
     {
-        *hate = mostHatedHate;
+        *hate = mostHatedAmount;
     }
 
     return mostHated;

@@ -56,6 +56,7 @@
 #include "npcclient.h"
 #include "gem.h"
 #include "npcmesh.h"
+#include "tribe.h"
 
 extern iDataConnection *db;
 
@@ -474,6 +475,8 @@ void NPC::DumpState()
     CPrintf(CON_CMDOUTPUT, "Disabled:            %s\n",disabled?"True":"False");
     CPrintf(CON_CMDOUTPUT, "Checked:             %s\n",checked?"True":"False");
     CPrintf(CON_CMDOUTPUT, "Active locate:       %s\n",toString(active_locate_pos,active_locate_sector).GetDataSafe());
+    CPrintf(CON_CMDOUTPUT, "Active locate angle: %.2f\n",active_locate_angle);
+    CPrintf(CON_CMDOUTPUT, "Active locate radius:%.2f\n",active_locate_radius);
     CPrintf(CON_CMDOUTPUT, "Active locate WP:    %s\n",active_locate_wp?active_locate_wp->GetName():"");
     CPrintf(CON_CMDOUTPUT, "Ang vel:             %.2f\n",ang_vel);
     CPrintf(CON_CMDOUTPUT, "Vel:                 %.2f\n",vel);
@@ -481,7 +484,11 @@ void NPC::DumpState()
     CPrintf(CON_CMDOUTPUT, "Run velocity:        %.2f\n",runVelocity);
     CPrintf(CON_CMDOUTPUT, "Owner:               %s\n",GetOwnerName());
     CPrintf(CON_CMDOUTPUT, "Region:              %s\n",GetRegion()?GetRegion()->GetName():"(None)");
+    CPrintf(CON_CMDOUTPUT, "Inside region:       %s\n",insideRegion?"Yes":"No");
+    CPrintf(CON_CMDOUTPUT, "Tribe:               %s\n",GetTribe()?GetTribe()->GetName():"(None)");
+    CPrintf(CON_CMDOUTPUT, "Inside tribe home:   %s\n",insideTribeHome?"Yes":"No");
     CPrintf(CON_CMDOUTPUT, "Target:              %s\n",GetTarget()?GetTarget()->GetName():"");
+    CPrintf(CON_CMDOUTPUT, "Last perception:     %s\n",last_perception?last_perception->GetName():"(None)");
 }
 
 
@@ -883,8 +890,8 @@ void HateList::AddHate(EID entity_id, float delta)
 
 gemNPCActor *HateList::GetMostHated(csVector3& pos, iSector *sector, float range, LocationType * region, bool includeInvisible, bool includeInvincible, float* hate)
 {
-    gemNPCObject *most = NULL;
-    float most_hate_amount=0;
+    gemNPCObject *mostHated = NULL;
+    float mostHateAmount=0.0;
 
     csArray<gemNPCObject*> list = npcclient->FindNearbyEntities(sector,pos,range);
     for (size_t i=0; i<list.GetSize(); i++)
@@ -900,7 +907,7 @@ gemNPCActor *HateList::GetMostHated(csVector3& pos, iSector *sector, float range
             if (obj->IsInvisible() && !includeInvisible) continue;
             if (obj->IsInvincible() && !includeInvincible) continue;
             
-            if (!most || h->hate_amount > most_hate_amount)
+            if (!mostHated || h->hate_amount > mostHateAmount)
             {
                 // Don't include if a region is defined and not within region.
                 if (region && !region->CheckWithinBounds(engine,pos,sector)) 
@@ -908,16 +915,16 @@ gemNPCActor *HateList::GetMostHated(csVector3& pos, iSector *sector, float range
                     continue;
                 }
                 
-                most = list[i];
-                most_hate_amount = h->hate_amount;
+                mostHated = list[i];
+                mostHateAmount = h->hate_amount;
             }
         }
     }
     if (hate)
     {
-        *hate = most_hate_amount;
+        *hate = mostHateAmount;
     }
-    return (gemNPCActor*)most;
+    return (gemNPCActor*)mostHated;
 }
 
 bool HateList::Remove(EID entity_id)

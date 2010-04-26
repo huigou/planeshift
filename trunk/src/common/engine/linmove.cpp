@@ -56,6 +56,7 @@
 
 #include "linmove.h"
 #include "colldet.h"
+#include "util/strutil.h"
 
 
 // collision detection variables
@@ -473,6 +474,17 @@ int psLinearMovement::MoveV (float delta)
   csVector3 newpos (worldVel*delta + oldpos);
   csVector3 bufpos = newpos;
 
+  // @@@ Magodra: In some cases the newpos seams to be invalid. Not sure about
+  //              the reason, but the FollowSegment function will not work later
+  //              in this function. So check for that condidtion, give warning,
+  //              and halt the movement.
+  if (isnan(newpos.x) || isnan(newpos.y) || isnan(newpos.z))
+  {
+      printf("From old position %s ",toString(oldpos,movable->GetSectors()->Get(0)).GetDataSafe());
+      StackTrace("LinearMovement to a NAN position.");
+      return PS_MOVE_DONTMOVE;  // didn't move anywhere
+  }
+
   // Check for collisions and adjust position
   if (colldet)
   {
@@ -782,17 +794,17 @@ void psLinearMovement::GetCDDimensions (csVector3& body, csVector3& legs,
 bool psLinearMovement::InitCD (const csVector3& body, const csVector3& legs,
 	const csVector3& shift, iMeshWrapper* meshWrap)
 {
-  mesh = meshWrap;
+    mesh = meshWrap;
   
-  topSize = body;
-  bottomSize = legs;
-
-  if (bottomSize.x * bottomSize.y > (0.8f * 1.4f + 0.1f))
-    hugGround = true;
-
-  intervalSize.x = MIN(topSize.x, bottomSize.x);
-  intervalSize.y = MIN(topSize.y, bottomSize.y);
-  intervalSize.z = MIN(topSize.z, bottomSize.z);
+    topSize = body;
+    bottomSize = legs;
+    
+    if (bottomSize.x * bottomSize.y > (0.8f * 1.4f + 0.1f))
+        hugGround = true;
+    
+    intervalSize.x = MIN(topSize.x, bottomSize.x);
+    intervalSize.y = MIN(topSize.y, bottomSize.y);
+    intervalSize.z = MIN(topSize.z, bottomSize.z);
     
     float maxX = MAX(body.x, legs.x)+shift.x;
     float maxZ = MAX(body.z, legs.z)+shift.z;
@@ -815,15 +827,15 @@ bool psLinearMovement::InitCD (const csVector3& body, const csVector3& legs,
     boundingBox.Set(csVector3(-maxX / 2.0f, 0, -maxZ / 2.0f) + shift,
                     csVector3(maxX / 2.0f, bYtop, maxZ / 2.0f) + shift);
 
-  psLinearMovement::shift = shift;
-
-  cdsys = csQueryRegistry<iCollideSystem> (object_reg);
-
-  if (colldet)
-    delete colldet;
-
-  colldet = new psCollisionDetection(object_reg);
-  return colldet->Init (topSize, bottomSize, shift, mesh);
+    psLinearMovement::shift = shift;
+    
+    cdsys = csQueryRegistry<iCollideSystem> (object_reg);
+    
+    if (colldet)
+        delete colldet;
+    
+    colldet = new psCollisionDetection(object_reg);
+    return colldet->Init (topSize, bottomSize, shift, mesh);
 }
 
 bool psLinearMovement::IsOnGround () const
@@ -971,7 +983,7 @@ void psLinearMovement::SetFullPosition (const csVector3& pos, float yrot,
 
     if (!sector)
     {
-        NullSector();
+        StackTrace("Setting position without sector");
     }
 
   
@@ -1002,7 +1014,7 @@ void psLinearMovement::SetPosition (const csVector3& pos, float yrot,
 {
     if (!sector)
     {
-        NullSector();
+        StackTrace("Setting position without sector");
     }
     
 
@@ -1209,9 +1221,9 @@ void psLinearMovement::UseCD(bool cd)
     }
 }
 
-void psLinearMovement::NullSector()
+void psLinearMovement::StackTrace(const char* error)
 {
-    printf("Setting position without sector\n");
+    printf("%s\n",error);
     csCallStack* stack = csCallStackHelper::CreateCallStack();
     if (stack)
     {
