@@ -82,6 +82,8 @@ protected:
     bool FindObjectThatIWatch(gemObject *object);
 
     void TouchObjectThatWatchesMe(gemObject *object,float newrange);
+
+    
     void UpdatePublishDestRange(PublishDestination *pd, 
                                 gemObject *myself, 
                                 gemObject *object,

@@ -415,10 +415,10 @@ public:
 class LocateOperation : public ScriptOperation
 {
 protected:
-    float    range;
-    csString object;
-    bool     static_loc;
-    bool     located;
+    float     range;
+    csString  object;
+    bool      static_loc;
+    bool      located;
     csVector3 located_pos;
     float     located_angle;
     iSector*  located_sector;
@@ -429,6 +429,8 @@ protected:
     bool      locate_invisible;
     bool      locate_invincible;
 
+    csString  failurePerception; ///< The perception to fire when failing to find the object to locate
+    
 public:
 
     LocateOperation(): ScriptOperation("Locate") { range = 0; static_loc=true; located=false; }
@@ -440,6 +442,10 @@ public:
     virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
+private:
+    /** Send the failure perception if set
+     */
+    void Failure(NPC* npc);
 };
 
 //-----------------------------------------------------------------------------

@@ -311,6 +311,8 @@ void ProximityList::UpdatePublishDestRange(PublishDestination *pd, gemObject *my
     csArray<psNPCCommandsMessage::PerceptionType> pcpts;
 
     pd->dist = newrange;
+    // Check if there is a crossing of a perception range boarder
+    // Only check if moving towards each other
     if (newrange < pd->min_dist)
     {
         if (newrange < PERSONAL_RANGE_PERCEPTION &&
@@ -328,43 +330,45 @@ void ProximityList::UpdatePublishDestRange(PublishDestination *pd, gemObject *my
         {
             pcpts.Push(psNPCCommandsMessage::PCPT_LONGRANGEPLAYER);
         }
+    }
+    // Need to update this so that next time we know if moving towards or away from each other
+    pd->min_dist = newrange;
+    
+    // Anyone that is watching each other should get a perception once in a while.
+    // Check per-entity any distance.
+    csTicks now = csGetTicks();
+    csTicks timeout = destRangeTimer[objIdx];
+    if(timeout < now)
+    {
+        pcpts.Push(psNPCCommandsMessage::PCPT_ANYRANGEPLAYER);
+        destRangeTimer[objIdx] = now + newrange*50;
+    }
 
-        // Check per-entity any distance.
-        csTicks now = csGetTicks();
-        csTicks timeout = destRangeTimer[objIdx];
-        if(timeout < now)
+    for(size_t i=0; i<pcpts.GetSize(); ++i)
+    {
+        gemActor *actorself   = dynamic_cast<gemActor *>(myself);
+        gemActor *actorobject = dynamic_cast<gemActor *>(object);
+
+        if (actorself && actorobject)
         {
-            pcpts.Push(psNPCCommandsMessage::PCPT_ANYRANGEPLAYER);
-            destRangeTimer[objIdx] = now + newrange*50;
-        }
-
-        for(size_t i=0; i<pcpts.GetSize(); ++i)
-        {
-            gemActor *actorself   = dynamic_cast<gemActor *>(myself);
-            gemActor *actorobject = dynamic_cast<gemActor *>(object);
-
-            if (actorself && actorobject)
+            if ((!myself->GetClientID() && object->GetClientID() && actorself->IsAlive()) // I'm an NPC and He is a player watching me
+                || (!myself->GetClientID() && !object->GetClientID() && actorobject->IsAlive())) // I'm an npc and he is an npc
             {
-                if ((!myself->GetClientID() && object->GetClientID() && actorself->IsAlive()) // I'm an NPC and He is a player watching me
-                    || (!myself->GetClientID() && !object->GetClientID() && actorobject->IsAlive())) // I'm an npc and he is an npc
-                {
-                    float faction = actorself->GetRelativeFaction(actorobject);
-                    psserver->GetNPCManager()->QueueEnemyPerception(pcpts[i],
-                        actorself,
-                        actorobject,
-                        faction);
-                }
-                else if (myself->GetClientID() && !object->GetClientID() && actorobject->IsAlive()) // I'm a player and he is an npc
-                {
-                    float faction = actorobject->GetRelativeFaction(actorself);
-                    psserver->GetNPCManager()->QueueEnemyPerception(pcpts[i],
-                        actorobject,
-                        actorself,
-                        faction);
-                }
+                float faction = actorself->GetRelativeFaction(actorobject);
+                psserver->GetNPCManager()->QueueEnemyPerception(pcpts[i],
+                                                                actorself,
+                                                                actorobject,
+                                                                faction);
+            }
+            else if (myself->GetClientID() && !object->GetClientID() && actorobject->IsAlive()) // I'm a player and he is an npc
+            {
+                float faction = actorobject->GetRelativeFaction(actorself);
+                psserver->GetNPCManager()->QueueEnemyPerception(pcpts[i],
+                                                                actorobject,
+                                                                actorself,
+                                                                faction);
             }
         }
-        pd->min_dist = newrange;
     }
 }
 
@@ -499,10 +503,11 @@ void ProximityList::DebugDumpContents(csString& out)
     
     for (x = 0; x < objectsThatWatchMe.GetSize(); x++ )
     {
-        temp.AppendFmt( "\tClient %d (%s), range %1.2f\n",
+        temp.AppendFmt( "\tClient %d (%s), range %1.2f min_range %.2f\n",
                 objectsThatWatchMe[x].client,
                 ((gemObject*)(objectsThatWatchMe[x].object))->GetName(),
-                objectsThatWatchMe[x].dist);
+                        objectsThatWatchMe[x].dist,
+                        objectsThatWatchMe[x].min_dist);
     }
 
     if (clientnum)

@@ -236,9 +236,9 @@ public:
 
   void UseCD(bool cd);
 
-  /** Procedure used to debug null Sector
+  /** Procedure used to dump stack in error situations
    */
-  void NullSector();
+  void StackTrace(const char* error);
   
 protected:
 

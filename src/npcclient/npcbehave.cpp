@@ -225,13 +225,18 @@ void NPCType::FirePerception(NPC *npc, Perception *pcpt)
 
 void NPCType::DumpReactionList(NPC *npc)
 {
-    CPrintf(CON_CMDOUTPUT, "%-30s %-20s %-5s %-10s\n","Reaction","Type","Range","Value");
+    CPrintf(CON_CMDOUTPUT, "%-25s %-25s %-5s %-10s %-20s %s\n","Reaction","Type","Range","Value","Last","Affects");
     for (size_t i=0; i<reactions.GetSize(); i++)
     {
-        CPrintf(CON_CMDOUTPUT, "%-30s %-20s %5.1f %-10s\n",
+        
+
+
+        CPrintf(CON_CMDOUTPUT, "%-25s %-25s %5.1f %-10s %-20s %s\n",
                 reactions[i]->GetEventType(),reactions[i]->GetType().GetDataSafe(),
                 reactions[i]->GetRange(),
-                reactions[i]->GetValue().GetDataSafe());
+                reactions[i]->GetValue().GetDataSafe(),
+                reactions[i]->GetLastTriggerd().GetDataSafe(),
+                reactions[i]->GetAffectedBehaviors().GetDataSafe());
     }
 }
 

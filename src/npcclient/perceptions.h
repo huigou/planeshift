@@ -88,9 +88,11 @@ protected:
         DESIRE_GUARANTIED
     };
     
-    DesireType desireType;    // Indicate the type of desire change this reaction has.
-    float desireValue;        // The value to use for the desire type.
-    float weight;             // The weight to apply to deltas.
+    DesireType desireType;    ///< Indicate the type of desire change this reaction has.
+    float      desireValue;   ///< The value to use for the desire type.
+    float      weight;        ///< The weight to apply to deltas.
+
+    csString   lastTriggered; ///< Used for debug, show when this was last triggered
 
 public:
     Reaction();
@@ -102,10 +104,31 @@ public:
     bool Load(iDocumentNode *node,BehaviorSet& behaviors);
     void React(NPC *who,Perception *pcpt);
 
-    // Caled by perception related to entitis to check
-    // for reaction against visibility and invincibility
+    /** Check if the perception should react
+     *
+     * Caled by perception related to entitis to check
+     * for reaction against visibility and invincibility
+     */
     bool ShouldReact(gemNPCObject* entity, Perception *pcpt);
-
+    
+    /** Check if this is a behavior that shouldn't be interrupted
+     *
+     * @param behavior The behavior to check.
+     * @return True if this is a behavior that shouldn't be interrupted.
+     */
+    bool DoNotInterrupt(Behavior* behavior);
+    
+    /** Check if this is a behavior is on the only interrupt list if set.
+     *
+     * If there is a limitation on behaviors to interrupt for this
+     * reaction this function will return true if the behavior isn't on
+     * that list.
+     *
+     * @param behavior The behavior to check.
+     * @return True if this is a behavior that isn't allowed to interrupt.
+     */
+    bool OnlyInterrupt(Behavior* behavior);
+    
     const char     *GetEventType()      { return eventType;   }
     float           GetRange()          { return range;        }
     int             GetFactionDiff()    { return factionDiff; }
@@ -116,6 +139,9 @@ public:
     int             GetRandom(int i);
     const csString& GetType()           { return type;         }
     char            GetOp()             { if (oper.Length()) return oper.GetAt(0); else return 0; }
+    csString        GetAffectedBehaviors();
+    const csString& GetLastTriggerd()   { return lastTriggered; }
+    
 };
 
 //-----------------------------------------------------------------------------

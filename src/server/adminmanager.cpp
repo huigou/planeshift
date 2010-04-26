@@ -42,6 +42,7 @@
 #include "util/pspathnetwork.h"
 #include "util/waypoint.h"
 #include "util/pspath.h"
+#include "engine/psworld.h"
 
 #include "net/msghandler.h"
 
@@ -1831,8 +1832,24 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
         else // NPC
         {
             name = target->GetName();
+
+            float dist = 0.0;
+            {
+                csVector3 pos,myPos;
+                iSector* sector = 0;
+                iSector* mySector = 0;
+                float yRot, myYRot;
+
+                target->GetPosition(pos, yRot, sector);
+                client->GetActor()->GetPosition(myPos, myYRot, mySector);
+
+
+                dist = EntityManager::GetSingleton().GetWorld()->Distance(pos, sector, myPos, mySector);
+            }
+            
+
             psserver->SendSystemInfo(client->GetClientNum(),
-                "NPC: <%s, %s, %s> is at region %s, position (%1.2f, %1.2f, %1.2f) "
+                "NPC: <%s, %s, %s> is at region %s, position (%1.2f, %1.2f, %1.2f) at range %.2f "
                 "angle: %d in sector: %s, instance: %d, and has been active for %1.1f hours.",
                 name.GetData(),
                 ShowID(playerId),
@@ -1841,6 +1858,7 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
                 loc_x,
                 loc_y,
                 loc_z,
+                dist,
                 degrees,
                 sectorName.GetData(),
                 instance,

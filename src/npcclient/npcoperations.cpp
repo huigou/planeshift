@@ -1177,6 +1177,7 @@ bool LocateOperation::Load(iDocumentNode *node)
     locate_invisible = node->GetAttributeValueAsBool("invisible",false);
     locate_invincible = node->GetAttributeValueAsBool("invincible",false);
 
+    failurePerception = node->GetAttributeValue("failure");
 
     // Some more validation checks on obj.
     csArray<csString> split_obj = psSplit(object,':');   
@@ -1286,6 +1287,7 @@ ScriptOperation *LocateOperation::MakeCopy()
     op->random = random;
     op->locate_invisible = locate_invisible;
     op->locate_invincible = locate_invincible;
+    op->failurePerception = failurePerception;
 
     return op;
 }
@@ -1355,10 +1357,12 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 
         if (!npc->GetLastPerception())
         {
+            Failure(npc);
             return true;  // Nothing more to do for this op.
         }
         if (!npc->GetLastPerception()->GetLocation(located_pos,located_sector))
         {
+            Failure(npc);
             return true;  // Nothing more to do for this op.
         }
         located_angle = 0; // not used in perceptions
@@ -1376,6 +1380,7 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         }
         else
         {
+            Failure(npc);
             return true;  // Nothing more to do for this op.
         }
 
@@ -1395,6 +1400,7 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         if (!npc->GetTribe())
         {
             npc->Printf(5,"Not part of a tribe");
+            Failure(npc);
             return true; //  Nothing more to do for this op.
         }
 
@@ -1407,6 +1413,7 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         }
         else
         {
+            Failure(npc);
             return true;  // Nothing more to do for this op.
         }
 
@@ -1434,6 +1441,7 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         else
         {
             npc->Printf("Failed to find owner");
+            Failure(npc);
             return true; // Nothing more to do for this op.
         }
 
@@ -1453,6 +1461,7 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         if (!region)
         {
             npc->Printf("Failed to locate region");
+            Failure(npc);
             return true; // Nothing more to do for this op.
         }
 
@@ -1483,6 +1492,7 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         }
         else
         {
+            Failure(npc);
             return true; // Nothing more to do for this op.
         }
 
@@ -1501,6 +1511,7 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 
         if (!npc->GetTribe())
         {
+            Failure(npc);
             return true; // Nothing more to do for this op.
         }
 
@@ -1535,6 +1546,7 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
             {
                 npc->Printf(5, "Couldn't locate any <%s> in npc script for <%s>.",
                             (const char *)object,npc->GetName() );
+                Failure(npc);
                 return true; // Nothing more to do for this op.
             }
             located_pos = memory->pos;
@@ -1562,6 +1574,7 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         }
         else
         {
+            Failure(npc);
             return true; // Nothing more to do for this op.
         }
 
@@ -1614,6 +1627,7 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         {
             npc->Printf(5, "Couldn't locate any <%s> in npc script for <%s>.",
                 (const char *)object,npc->GetName() );
+            Failure(npc);
             return true; // Nothing more to do for this op.
         }
         npc->Printf(5, "Located waypoint: %s at %s range %.2f",located_wp->GetName(),
@@ -1649,6 +1663,7 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         {
             npc->Printf(5, "Couldn't locate any <%s> in npc script for <%s>.",
                 (const char *)object,npc->GetName() );
+            Failure(npc);
             return true; // Nothing more to do for this op.
         }
         located_pos = location->pos;
@@ -1679,6 +1694,17 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 
     return true; // Nothing more to do for this op.
 }
+
+void LocateOperation::Failure(NPC* npc)
+{
+    npc->Printf(5,"Failed to locate object");
+    if (!failurePerception.IsEmpty())
+    {
+        Perception failure(failurePerception);
+        npc->TriggerEvent(&failure);
+    }
+}
+
 
 //---------------------------------------------------------------------------
 
