@@ -1179,6 +1179,9 @@ void pawsListBox::SortRows()
     sort_ascOrder    = ascOrder;
     qsort(sortedRows, rows.GetSize(), sizeof (void*), sort_cmp);
 
+    for ( i=0; i < rows.GetSize(); i++)
+        rows[i] = sortedRows[i]; // save the sorting
+
     delete [] sortedRows;
 
     CheckSortingArrow(sortColNum, ascOrder); //check if the sorting arrow is there if not add it
