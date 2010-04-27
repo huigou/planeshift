@@ -180,23 +180,6 @@ bool ProximityList::EndMutualWatching(gemObject *fromobject)
     return true;
 }
 
-/*void ProximityList::UnsubscribeAllWatchers()
-{
-    int x = 0;
-    // Remove the target's entity/client from our list
-    x = 0;
-    while (x < objectsThatWatchMe.GetSize())
-    {
-        gemObject* object = (gemObject*)objectsThatWatchMe.Get(x)->object;
-        if (object != self)
-            // In this case objectsThatWatchMe[x] will be deleted and the next watcher will be placed to index 'x',
-            // so we don't increment x
-            object->GetProxList()->EndWatching(self);
-        else
-            x++;
-    }
-}*/
-
 bool ProximityList::StartWatching(gemObject * object, float range)
 {
     if (self->GetClientID() == 0 && !self->AlwaysWatching() && !object->AlwaysWatching())
@@ -478,8 +461,8 @@ float ProximityList::RangeTo( gemObject* object, bool ignoreY, bool ignoreInstan
     {
         if(entityManager->GetWorld()->WarpSpace(sector2, sector1, pos2))
         {
-        return ( sqrt(  (pos1.x - pos2.x)*(pos1.x - pos2.x)+
-                    (pos1.z - pos2.z)*(pos1.z - pos2.z)));
+            return ( sqrt(  (pos1.x - pos2.x)*(pos1.x - pos2.x)+
+                            (pos1.z - pos2.z)*(pos1.z - pos2.z)));
         }
         else
         {

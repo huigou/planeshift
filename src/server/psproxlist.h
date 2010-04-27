@@ -103,10 +103,6 @@ public:
     /** Deletes relation watcher --> watched between our object and given object */
     void EndWatching(gemObject * object);
 
-    /** Deletes all relations where our object plays role of "watched" object
-      * The only exception is the relation where our object watches itself */
-    //void UnsubscribeAllWatchers();
-
     /** Creates relation watcher --> watched in both directions between our object and given object */
     bool StartMutualWatching(int othercnum, gemObject *otherObject,float range);
 
