@@ -203,6 +203,7 @@ bool LocationType::Load(iDocumentNode *node)
             newloc->rot_angle  = node->GetAttributeValueAsFloat("angle");
             newloc->radius     = node->GetAttributeValueAsFloat("radius");
             newloc->sectorName = node->GetAttributeValue("sector");
+            newloc->type = this;
             locs.Push(newloc);
         }
     }
@@ -265,6 +266,7 @@ bool LocationType::Load(iResultRow& row, iEngine * engine, iDataConnection *db)
     {    
         Location *newloc = new Location;
         newloc->Load(rs[i],engine,db);
+        newloc->type = this;
         locs.Push(newloc);
     }
 
@@ -283,6 +285,7 @@ bool LocationType::Load(iResultRow& row, iEngine * engine, iDataConnection *db)
         Location *newloc = new Location;
         newloc->Load(rs2[i],engine,db);
 
+        newloc->type = this;
         tmpLocs.Push(newloc);
     }
     while (tmpLocs.GetSize())
@@ -290,6 +293,7 @@ bool LocationType::Load(iResultRow& row, iEngine * engine, iDataConnection *db)
         Location *curr, *first;
         curr = first = tmpLocs.Pop();
         bool   found;
+        first->type = this;
         first->locs.Push(first);
         do
         {
@@ -300,6 +304,7 @@ bool LocationType::Load(iResultRow& row, iEngine * engine, iDataConnection *db)
                 {
                     curr = tmpLocs[i];
                     tmpLocs.DeleteIndex(i);
+                    curr->type = this;
                     first->locs.Push(curr);
                     found = true;
                     break;
@@ -330,6 +335,7 @@ bool LocationType::Load(iResultRow& row, iEngine * engine, iDataConnection *db)
         }
         else
         {
+            first->type = this;
             locs.Push(first);
             first->CalculateBoundingBox();
         }

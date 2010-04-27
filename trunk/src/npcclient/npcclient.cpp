@@ -98,13 +98,15 @@ psNPCClient::psNPCClient () : serverconsole(NULL)
     network      = NULL;
     tick_counter = 0;
     current_long_range_perception_index = 0;
+    current_long_range_perception_loc_index = 0;
 }
 
 psNPCClient::~psNPCClient()
 {
-	csHash<LocationType*, csString>::GlobalIterator iter(loctypes.GetIterator());
-	while(iter.HasNext())
-		delete iter.Next();
+    csHash<LocationType*, csString>::GlobalIterator iter(loctypes.GetIterator());
+    while(iter.HasNext())
+        delete iter.Next();
+
     running = false;
     delete network;
     delete serverconsole;
@@ -610,6 +612,18 @@ bool psNPCClient::LoadLocations()
             return false;
         }
         
+    }
+
+    // Create a cache of all the locations.
+    csHash<LocationType*, csString>::GlobalIterator iter(loctypes.GetIterator());
+    LocationType *loc;
+    while(iter.HasNext())
+    {
+    	loc = iter.Next();
+        for (size_t i = 0; i < loc->locs.GetSize(); i++)
+        {
+            all_locations.Push(loc->locs[i]);
+        }
     }
 
     return true;
@@ -1419,54 +1433,51 @@ void psNPCClient::HandleDeath(NPC *who)
 
 void psNPCClient::PerceptProximityItems()
 {
-    int size = (int)all_gem_items.GetSize();
-
-    if (!size) return; // Nothing to do if no items
-
-
+    //
+    // Note: The follwing method could skeep checking a item for
+    // an iteraction. This because fast delete is used to remove  
+    // items from list and than a item on the end might be moved right
+    // into the space just checked.
+    //
     
-    for (size_t i=0; i<npcs.GetSize(); i++)
+    int size = (int)all_gem_items.GetSize();
+    if (!size) return; // Nothing to do if no items
+        
+    int check_count = 50; // We only check 50 items each time. This number has to be tuned
+    if (check_count > size)
     {
-        if (npcs[i]==NULL || npcs[i]->GetActor() == NULL) // Can't do anyting unless we have both
-            continue;
-        
-        iSector *npc_sector;
-        csVector3 npc_pos;
-        float yrot; // Used later for items as well
-        psGameObject::GetPosition(npcs[i]->GetActor(),npc_pos,yrot,npc_sector);
-        
-        //
-        // Note: The follwing method could skeep checking a item for
-        // an iteraction. This because fast delete is used to remove  
-        // items from list and than a item on the end might be moved right
-        // into the space just checked.
-        //
-        
-        int size = (int)all_gem_items.GetSize();
-        
-        int check_count = 50; // We only check 50 items each time. This number has to be tuned
-        if (check_count > size)
+        // If not more than check_count items don't check them more than once :)
+        check_count = size;
+    }
+    
+    while (check_count--)
+    {
+        current_long_range_perception_index++;
+        if (current_long_range_perception_index >= (int)all_gem_items.GetSize())
         {
-            // If not more than check_count items don't check them more than once :)
-            check_count = size;
+            current_long_range_perception_index = 0;
         }
         
-        while (check_count--)
+        gemNPCItem * item = all_gem_items[current_long_range_perception_index];
+        
+        iSector *item_sector;
+        csVector3 item_pos;
+        float yrot; // Used later for npcs as well
+        psGameObject::GetPosition(item,item_pos,yrot,item_sector);
+
+        if (item && item->IsPickable())
         {
-            current_long_range_perception_index++;
-            if (current_long_range_perception_index >= (int)all_gem_items.GetSize())
+
+            for (size_t i=0; i<npcs.GetSize(); i++)
             {
-                current_long_range_perception_index = 0;
-            }
-            
-            gemNPCItem * item = all_gem_items[current_long_range_perception_index];
-            
-            iSector *item_sector;
-            csVector3 item_pos;
-            psGameObject::GetPosition(item,item_pos,yrot,item_sector);
+                if (npcs[i]==NULL || npcs[i]->GetActor() == NULL) // Can't do anyting unless we have both
+                    continue;
+                
+                iSector *npc_sector;
+                csVector3 npc_pos;
+                psGameObject::GetPosition(npcs[i]->GetActor(),npc_pos,yrot,npc_sector);
+
                          
-            if (item && item->IsPickable())
-            {
                 float dist = world->Distance(npc_pos,npc_sector,item_pos,item_sector);
                 
                 if (dist <= LONG_RANGE_PERCEPTION)
@@ -1494,18 +1505,32 @@ void psNPCClient::PerceptProximityItems()
 
 void psNPCClient::PerceptProximityLocations()
 {
-    csHash<LocationType*, csString>::GlobalIterator iter(loctypes.GetIterator());
-    LocationType *loc;
-    while(iter.HasNext())
+
+    int size = (int)all_locations.GetSize();
+
+    if (!size) return; // Nothing to do if no items
+        
+    int check_count = 50; // We only check 50 items each time. This number has to be tuned
+    if (check_count > size)
     {
-    	loc = iter.Next();
-        for (size_t i = 0; i < loc->locs.GetSize(); i++)
+        // If not more than check_count items don't check them more than once :)
+        check_count = size;
+    }
+        
+    while (check_count--)
+    {
+        current_long_range_perception_loc_index++;
+        if (current_long_range_perception_loc_index >= size)
         {
-            LocationPerception pcpt_sensed("location sensed", loc->name, loc->locs[i], engine);  
-      
-            TriggerEvent(&pcpt_sensed, loc->locs[i]->radius + LONG_RANGE_PERCEPTION, 
-                         &loc->locs[i]->pos, loc->locs[i]->GetSector(engine)); // Broadcast
+            current_long_range_perception_loc_index = 0;
         }
+
+        Location* location = all_locations[current_long_range_perception_loc_index];
+        
+        LocationPerception pcpt_sensed("location sensed", location->type->name, location, engine);  
+      
+        TriggerEvent(&pcpt_sensed, location->radius + LONG_RANGE_PERCEPTION, 
+                     &location->pos, location->GetSector(engine)); // Broadcast
     }
 }
 

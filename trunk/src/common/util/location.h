@@ -29,6 +29,7 @@
 #include "util/psdatabase.h"
 
 struct iEngine;
+class LocationType;
 
 /**
  * A Location is a named place on the map, located
@@ -49,7 +50,8 @@ public:
     csString            sectorName;
     csBox2              boundingBox;
 
-    csWeakRef<iSector>  sector; // Cached sector
+    csWeakRef<iSector>  sector; ///< Cached sector
+    LocationType*       type;   ///< Points back to location type
 
     ~Location();
     

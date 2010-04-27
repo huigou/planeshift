@@ -494,6 +494,7 @@ protected:
     csHash<gemNPCObject*, PID> all_gem_objects_by_pid;
     csArray<gemNPCObject*>     all_gem_objects;
     csArray<gemNPCItem*>       all_gem_items;
+    csArray<Location*>         all_locations;
     csHash<RaceInfo_t,csString> raceInfos;
 
     csRef<iCollideSystem>      cdsys;
@@ -506,6 +507,8 @@ protected:
     unsigned int               tick_counter;
 
     int                        current_long_range_perception_index;
+
+    int                        current_long_range_perception_loc_index;
 
     // Game Time
     int     gameMinute;
