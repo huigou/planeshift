@@ -823,7 +823,7 @@ void psNPCClient::TriggerEvent(Perception *pcpt, float maxRange,
         if (npcs[i]==NULL)  // one of our npcs is not active right now
             continue;
 
-        npcs[i]->TriggerEvent(pcpt, maxRange, basePos, baseSector);
+        npcs[i]->TriggerEvent(pcpt, maxRange, basePos, baseSector, sameSector);
     }
 }
 
