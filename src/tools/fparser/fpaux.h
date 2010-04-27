@@ -1,5 +1,5 @@
 /***************************************************************************\
-|* Function Parser for C++ v4.0.5                                          *|
+|* Function Parser for C++ v4.1                                            *|
 |*-------------------------------------------------------------------------*|
 |* Copyright: Juha Nieminen, Joel Yliluoma                                 *|
 |*                                                                         *|
@@ -35,13 +35,11 @@ namespace FUNCTIONPARSERTYPES
     {
         enum { result = false };
     };
-#ifdef FP_SUPPORT_LONG_INT_TYPE
     template<>
     struct IsIntType<long>
     {
         enum { result = true };
     };
-#endif
 #ifdef FP_SUPPORT_GMP_INT_TYPE
     template<>
     struct IsIntType<GmpInt>
