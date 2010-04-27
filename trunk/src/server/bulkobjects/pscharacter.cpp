@@ -590,8 +590,8 @@ bool psCharacter::QuickLoad(iResultRow& row, bool noInventory)
 
 bool psCharacter::LoadRelationshipInfo(PID pid)
 {
-    Result has_a(db->Select("SELECT a.*, b.name AS 'buddy_name' FROM character_relationships a, characters b WHERE a.character_id = %u AND a.related_id = b.id", pid.Unbox()));
-    Result of_a(db->Select("SELECT a.*, b.name AS 'buddy_name' FROM character_relationships a, characters b WHERE a.related_id = %u AND a.character_id = b.id ", pid.Unbox()));
+    Result has_a(db->Select("SELECT a.*, b.name AS 'buddy_name' FROM character_relationships a, characters b WHERE a.character_id = %u AND a.related_id = b.id order by a.character_id", pid.Unbox()));
+    Result of_a(db->Select("SELECT a.*, b.name AS 'buddy_name' FROM character_relationships a, characters b WHERE a.related_id = %u AND a.character_id = b.id order by a.related_id", pid.Unbox()));
 
     if ( !LoadFamiliar( has_a, of_a ) )
     {

@@ -81,6 +81,7 @@
 #define INTERACT_INTRODUCE   2600
 #define INTERACT_MOUNT       2700
 #define INTERACT_UNMOUNT     2800
+#define INTERACT_STORAGE     2900
 
 //////////////////////////////////////////////////////////////////////
 
@@ -114,6 +115,7 @@ pawsInteractWindow::pawsInteractWindow()
     names.Push("ButtonIntroduce");
     names.Push("ButtonMount");
     names.Push("ButtonUnmount");
+    names.Push("ButtonStorage");
 
     types.Push(psGUIInteractMessage::EXAMINE);
     types.Push(psGUIInteractMessage::UNLOCK);
@@ -143,6 +145,7 @@ pawsInteractWindow::pawsInteractWindow()
     types.Push(psGUIInteractMessage::INTRODUCE);
     types.Push(psGUIInteractMessage::MOUNT);
     types.Push(psGUIInteractMessage::UNMOUNT);
+    types.Push(psGUIInteractMessage::STORAGE);
     openTick = 0;
 }
 
@@ -402,6 +405,12 @@ bool pawsInteractWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
         case INTERACT_UNMOUNT:
         {
             psengine->GetCmdHandler()->Execute("/unmount");
+            Hide();
+            return true;
+        }
+        case INTERACT_STORAGE:
+        {
+            psengine->GetCmdHandler()->Execute("/storage");
             Hide();
             return true;
         }
