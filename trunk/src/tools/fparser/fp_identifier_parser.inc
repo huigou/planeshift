@@ -1,3 +1,13 @@
+/* NOTE:
+  Do not include this file in your project. The fparser.cpp file #includes
+this file internally and thus you don't need to do anything (other than keep
+this file in the same directory as fparser.cpp).
+
+  Part of this file is generated code (by using the make_function_name_parser
+utility, found in the development version of this library). It's not intended
+to be modified by hand.
+*/
+
         unsigned nameLength = 0;
         const unsigned maximumNameLength = 0x80000000U-8;
         /*
@@ -125,172 +135,281 @@
         }
 
         /* This function generated with make_function_name_parser.cpp */
-        switch(nameLength)
-        {
-             case 2:
-    /* prefix  */if('i' == uptr[0]
-    && 'f' == uptr[1]) return Functions[cIf].enabled() ? (cIf<<16) | 0x80000002U : 2;
-    return 2;
-             case 3:
-    /* prefix  */switch(uptr[0]) {
-    case 'a':
-    /* prefix a */if('b' == uptr[1]
-    && 's' == uptr[2]) return Functions[cAbs].enabled() ? (cAbs<<16) | 0x80000003U : 3;
-    return 3;
-    case 'c':
-    /* prefix c */switch(uptr[1]) {
-    case 'o':
-    /* prefix co */switch(uptr[2]) {
-    case 's':
-    /* prefix cos */return Functions[cCos].enabled() ? (cCos<<16) | 0x80000003U : 3;
-    case 't':
-    /* prefix cot */return Functions[cCot].enabled() ? (cCot<<16) | 0x80000003U : 3;
-    default: return 3; }
-    case 's':
-    /* prefix cs */if('c' == uptr[2]) return Functions[cCsc].enabled() ? (cCsc<<16) | 0x80000003U : 3;
-    return 3;
-    default: return 3; }
-    case 'e':
-    /* prefix e */if('x' == uptr[1]
-    && 'p' == uptr[2]) return Functions[cExp].enabled() ? (cExp<<16) | 0x80000003U : 3;
-    return 3;
-    case 'i':
-    /* prefix i */if('n' == uptr[1]
-    && 't' == uptr[2]) return Functions[cInt].enabled() ? (cInt<<16) | 0x80000003U : 3;
-    return 3;
-    case 'l':
-    /* prefix l */if('o' == uptr[1]
-    && 'g' == uptr[2]) return Functions[cLog].enabled() ? (cLog<<16) | 0x80000003U : 3;
-    return 3;
-    case 'm':
-    /* prefix m */switch(uptr[1]) {
-    case 'a':
-    /* prefix ma */if('x' == uptr[2]) return Functions[cMax].enabled() ? (cMax<<16) | 0x80000003U : 3;
-    return 3;
-    case 'i':
-    /* prefix mi */if('n' == uptr[2]) return Functions[cMin].enabled() ? (cMin<<16) | 0x80000003U : 3;
-    return 3;
-    default: return 3; }
-    case 'p':
-    /* prefix p */if('o' == uptr[1]
-    && 'w' == uptr[2]) return Functions[cPow].enabled() ? (cPow<<16) | 0x80000003U : 3;
-    return 3;
-    case 's':
-    /* prefix s */switch(uptr[1]) {
-    case 'e':
-    /* prefix se */if('c' == uptr[2]) return Functions[cSec].enabled() ? (cSec<<16) | 0x80000003U : 3;
-    return 3;
-    case 'i':
-    /* prefix si */if('n' == uptr[2]) return Functions[cSin].enabled() ? (cSin<<16) | 0x80000003U : 3;
-    return 3;
-    default: return 3; }
-    case 't':
-    /* prefix t */if('a' == uptr[1]
-    && 'n' == uptr[2]) return Functions[cTan].enabled() ? (cTan<<16) | 0x80000003U : 3;
-    return 3;
-    default: return 3; }
-             case 4:
-    /* prefix  */switch(uptr[0]) {
-    case 'a':
-    /* prefix a */switch(uptr[1]) {
-    case 'c':
-    /* prefix ac */if('o' == uptr[2]
-    && 's' == uptr[3]) return Functions[cAcos].enabled() ? (cAcos<<16) | 0x80000004U : 4;
-    return 4;
-    case 's':
-    /* prefix as */if('i' == uptr[2]
-    && 'n' == uptr[3]) return Functions[cAsin].enabled() ? (cAsin<<16) | 0x80000004U : 4;
-    return 4;
-    case 't':
-    /* prefix at */if('a' == uptr[2]
-    && 'n' == uptr[3]) return Functions[cAtan].enabled() ? (cAtan<<16) | 0x80000004U : 4;
-    return 4;
-    default: return 4; }
-    case 'c':
-    /* prefix c */switch(uptr[1]) {
-    case 'b':
-    /* prefix cb */if('r' == uptr[2]
-    && 't' == uptr[3]) return Functions[cCbrt].enabled() ? (cCbrt<<16) | 0x80000004U : 4;
-    return 4;
-    case 'e':
-    /* prefix ce */if('i' == uptr[2]
-    && 'l' == uptr[3]) return Functions[cCeil].enabled() ? (cCeil<<16) | 0x80000004U : 4;
-    return 4;
-    case 'o':
-    /* prefix co */if('s' == uptr[2]
-    && 'h' == uptr[3]) return Functions[cCosh].enabled() ? (cCosh<<16) | 0x80000004U : 4;
-    return 4;
-    default: return 4; }
-    case 'e':
-    /* prefix e */switch(uptr[1]) {
-    case 'v':
-    /* prefix ev */if('a' == uptr[2]
-    && 'l' == uptr[3]) return Functions[cEval].enabled() ? (cEval<<16) | 0x80000004U : 4;
-    return 4;
-    case 'x':
-    /* prefix ex */if('p' == uptr[2]
-    && '2' == uptr[3]) return Functions[cExp2].enabled() ? (cExp2<<16) | 0x80000004U : 4;
-    return 4;
-    default: return 4; }
-    case 'l':
-    /* prefix l */{static const char tmp[3] = {'o','g','2'};
-    if(std::memcmp(uptr+1, tmp, 3) == 0) return Functions[cLog2].enabled() ? (cLog2<<16) | 0x80000004U : 4;
-    return 4; }
-    case 's':
-    /* prefix s */switch(uptr[1]) {
-    case 'i':
-    /* prefix si */if('n' == uptr[2]
-    && 'h' == uptr[3]) return Functions[cSinh].enabled() ? (cSinh<<16) | 0x80000004U : 4;
-    return 4;
-    case 'q':
-    /* prefix sq */if('r' == uptr[2]
-    && 't' == uptr[3]) return Functions[cSqrt].enabled() ? (cSqrt<<16) | 0x80000004U : 4;
-    return 4;
-    default: return 4; }
-    case 't':
-    /* prefix t */{static const char tmp[3] = {'a','n','h'};
-    if(std::memcmp(uptr+1, tmp, 3) == 0) return Functions[cTanh].enabled() ? (cTanh<<16) | 0x80000004U : 4;
-    return 4; }
-    default: return 4; }
-             case 5:
-    /* prefix  */switch(uptr[0]) {
-    case 'a':
-    /* prefix a */switch(uptr[1]) {
-    case 'c':
-    /* prefix ac */{static const char tmp[3] = {'o','s','h'};
-    if(std::memcmp(uptr+2, tmp, 3) == 0) return Functions[cAcosh].enabled() ? (cAcosh<<16) | 0x80000005U : 5;
-    return 5; }
-    case 's':
-    /* prefix as */{static const char tmp[3] = {'i','n','h'};
-    if(std::memcmp(uptr+2, tmp, 3) == 0) return Functions[cAsinh].enabled() ? (cAsinh<<16) | 0x80000005U : 5;
-    return 5; }
-    case 't':
-    /* prefix at */if('a' == uptr[2]) {
-    /* prefix ata */if('n' == uptr[3]) {
-    /* prefix atan */switch(uptr[4]) {
-    case '2':
-    /* prefix atan2 */return Functions[cAtan2].enabled() ? (cAtan2<<16) | 0x80000005U : 5;
-    case 'h':
-    /* prefix atanh */return Functions[cAtanh].enabled() ? (cAtanh<<16) | 0x80000005U : 5;
-    default: return 5; }
-    }return 5;}return 5;default: return 5; }
-    case 'f':
-    /* prefix f */{static const char tmp[4] = {'l','o','o','r'};
-    if(std::memcmp(uptr+1, tmp, 4) == 0) return Functions[cFloor].enabled() ? (cFloor<<16) | 0x80000005U : 5;
-    return 5; }
-    case 'h':
-    /* prefix h */{static const char tmp[4] = {'y','p','o','t'};
-    if(std::memcmp(uptr+1, tmp, 4) == 0) return Functions[cHypot].enabled() ? (cHypot<<16) | 0x80000005U : 5;
-    return 5; }
-    case 'l':
-    /* prefix l */{static const char tmp[4] = {'o','g','1','0'};
-    if(std::memcmp(uptr+1, tmp, 4) == 0) return Functions[cLog10].enabled() ? (cLog10<<16) | 0x80000005U : 5;
-    return 5; }
-    case 't':
-    /* prefix t */{static const char tmp[4] = {'r','u','n','c'};
-    if(std::memcmp(uptr+1, tmp, 4) == 0) return Functions[cTrunc].enabled() ? (cTrunc<<16) | 0x80000005U : 5;
-    return 5; }
-    default: return 5; }
-            default: break;
-        }
-        return nameLength;
+#define lN l7 lB
+#define lM l2 lB
+#define lL l3 lB
+#define lK if('i'l4
+#define lJ uptr
+#define lI l5 3]={
+#define lH 'n'l4
+#define lG l6 3;}lB
+#define lF return
+#define lE 0x80000003U:3;
+#define lD 0x80000005U:5;
+#define lC std::memcmp(lJ+
+#define lB case
+#define lA switch(
+#define l9 <<16)|
+#define l8 lC 1,tmp,
+#define l7 lD lF 5;}
+#define l6 default:lF
+#define l5 static const char tmp[
+#define l4 ==lJ[
+#define l3 lE lF 3;
+#define l2 0x80000004U:4;lF 4;
+#define l1 .enabled()?(
+#define l0 lF Functions[
+lA
+nameLength){lB
+2:lK
+0]&&'f'l4
+1])l0
+cIf]l1
+cIf
+l9
+0x80000002U:2;lF
+2;lB
+3:lA
+lJ[0]){lB'a':if('b'l4
+1]&&'s'l4
+2])l0
+cAbs]l1
+cAbs
+l9
+lL'c':lA
+lJ[1]){lB'o':lA
+lJ[2]){lB's':l0
+cCos]l1
+cCos
+l9
+lE
+lB't':l0
+cCot]l1
+cCot
+l9
+lE
+lG's':if('c'l4
+2])l0
+cCsc]l1
+cCsc
+l9
+l3
+lG'e':if('x'l4
+1]&&'p'l4
+2])l0
+cExp]l1
+cExp
+l9
+lL'i':if(lH
+1]&&'t'l4
+2])l0
+cInt]l1
+cInt
+l9
+lL'l':if('o'l4
+1]&&'g'l4
+2])l0
+cLog]l1
+cLog
+l9
+lL'm':lA
+lJ[1]){lB'a':if('x'l4
+2])l0
+cMax]l1
+cMax
+l9
+lL'i':if(lH
+2])l0
+cMin]l1
+cMin
+l9
+l3
+lG'p':if('o'l4
+1]&&'w'l4
+2])l0
+cPow]l1
+cPow
+l9
+lL's':lA
+lJ[1]){lB'e':if('c'l4
+2])l0
+cSec]l1
+cSec
+l9
+lL'i':if(lH
+2])l0
+cSin]l1
+cSin
+l9
+l3
+lG't':if('a'l4
+1]&&lH
+2])l0
+cTan]l1
+cTan
+l9
+l3
+lG
+4:lA
+lJ[0]){lB'a':lA
+lJ[1]){lB'c':if('o'l4
+2]&&'s'l4
+3])l0
+cAcos]l1
+cAcos
+l9
+lM's':lK
+2]&&lH
+3])l0
+cAsin]l1
+cAsin
+l9
+lM't':if('a'l4
+2]&&lH
+3])l0
+cAtan]l1
+cAtan
+l9
+l2
+l6
+4;}
+lB'c':lA
+lJ[1]){lB'b':if('r'l4
+2]&&'t'l4
+3])l0
+cCbrt]l1
+cCbrt
+l9
+lM'e':lK
+2]&&'l'l4
+3])l0
+cCeil]l1
+cCeil
+l9
+lM'o':if('s'l4
+2]&&'h'l4
+3])l0
+cCosh]l1
+cCosh
+l9
+l2
+l6
+4;}
+lB'e':lA
+lJ[1]){lB'v':if('a'l4
+2]&&'l'l4
+3])l0
+cEval]l1
+cEval
+l9
+lM'x':if('p'l4
+2]&&'2'l4
+3])l0
+cExp2]l1
+cExp2
+l9
+l2
+l6
+4;}
+lB'l':{lI'o','g','2'}
+;if(l8
+3)==0)l0
+cLog2]l1
+cLog2
+l9
+l2}
+lB's':lA
+lJ[1]){lB'i':if(lH
+2]&&'h'l4
+3])l0
+cSinh]l1
+cSinh
+l9
+lM'q':if('r'l4
+2]&&'t'l4
+3])l0
+cSqrt]l1
+cSqrt
+l9
+l2
+l6
+4;}
+lB't':{lI'a','n','h'}
+;if(l8
+3)==0)l0
+cTanh]l1
+cTanh
+l9
+l2}
+l6
+4;}
+lB
+5:lA
+lJ[0]){lB'a':lA
+lJ[1]){lB'c':{lI'o','s','h'}
+;if(lC
+2,tmp,3)==0)l0
+cAcosh]l1
+cAcosh
+l9
+lN's':{lI'i','n','h'}
+;if(lC
+2,tmp,3)==0)l0
+cAsinh]l1
+cAsinh
+l9
+lN't':if('a'l4
+2]){if(lH
+3]){lA
+lJ[4]){lB'2':l0
+cAtan2]l1
+cAtan2
+l9
+lD
+lB'h':l0
+cAtanh]l1
+cAtanh
+l9
+lD
+l6
+5;}
+}
+lF
+5;}
+lF
+5;l6
+5;}
+lB'f':{l5
+4]={'l','o','o','r'}
+;if(l8
+4)==0)l0
+cFloor]l1
+cFloor
+l9
+lN'h':{l5
+4]={'y','p','o','t'}
+;if(l8
+4)==0)l0
+cHypot]l1
+cHypot
+l9
+lN'l':{l5
+4]={'o','g','1','0'}
+;if(l8
+4)==0)l0
+cLog10]l1
+cLog10
+l9
+lN't':{l5
+4]={'r','u','n','c'}
+;if(l8
+4)==0)l0
+cTrunc]l1
+cTrunc
+l9
+l7
+l6
+5;}
+default:break;}
+lF
+nameLength;

@@ -1,5 +1,5 @@
 /***************************************************************************\
-|* Function Parser for C++ v4.0.5                                          *|
+|* Function Parser for C++ v4.1                                            *|
 |*-------------------------------------------------------------------------*|
 |* Copyright: Juha Nieminen, Joel Yliluoma                                 *|
 |*                                                                         *|
@@ -17,6 +17,7 @@
 #include <cctype>
 #include <cmath>
 #include <cassert>
+#include <limits>
 using namespace std;
 
 #include "fptypes.h"
@@ -37,7 +38,7 @@ using namespace FUNCTIONPARSERTYPES;
 #endif
 
 //=========================================================================
-// Name handling functions
+// Utility functions
 //=========================================================================
 namespace
 {
@@ -99,13 +100,17 @@ namespace
     unsigned readOpcodeForFloatType(const char* input)
     {
     /*
+     Assuming unsigned = 32 bits:
+        76543210 76543210 76543210 76543210
      Return value if built-in function:
-              16 lowest bits = function name length
-              15 next bits   = function opcode
-              1 bit (&0x80000000U) = indicates function
+        1PPPPPPP PPPPPPPP LLLLLLLL LLLLLLLL
+          P = function opcode      (15 bits)
+          L = function name length (16 bits)
      Return value if not built-in function:
-              31 lowest bits = function name length
-              other bits zero
+        0LLLLLLL LLLLLLLL LLLLLLLL LLLLLLLL
+          L = function name length (31 bits)
+     If unsigned has more than 32 bits, the other
+     higher order bits are to be assumed zero.
     */
 #include "fp_identifier_parser.inc"
         return 0;
@@ -234,6 +239,148 @@ namespace
 #ifdef FP_SUPPORT_GMP_INT_TYPE
     template<>
     inline int valueToInt(GmpInt value) { return int(value.toInt()); }
+#endif
+
+    template<typename Value_t>
+    inline Value_t fp_parseLiteral(const char* str, char** endptr)
+    {
+        return strtod(str, endptr);
+    }
+
+#ifdef FP_SUPPORT_FLOAT_TYPE
+    template<>
+    inline float fp_parseLiteral<float>(const char* str, char** endptr)
+    {
+        return strtof(str, endptr);
+    }
+#endif
+
+#ifdef FP_SUPPORT_LONG_DOUBLE_TYPE
+    template<>
+    inline long double fp_parseLiteral<long double>(const char* str,
+                                                    char** endptr)
+    {
+        return strtold(str, endptr);
+    }
+#endif
+
+#ifdef FP_SUPPORT_LONG_INT_TYPE
+    template<>
+    inline long fp_parseLiteral<long>(const char* str, char** endptr)
+    {
+        return strtol(str, endptr, 10);
+    }
+#endif
+
+    static inline int testxdigit(unsigned c)
+    {
+        if((c-'0') < 10u) return c&15; // 0..9
+        if(((c|0x20)-'a') < 6u) return 9+(c&15); // A..F or a..f
+        return -1; // Not a hex digit
+    }
+
+    template<typename elem_t, unsigned n_limbs, unsigned limb_bits>
+    static inline void AddXdigit(elem_t* buffer, unsigned nibble)
+    {
+        for(unsigned p=0; p<n_limbs; ++p)
+        {
+            unsigned carry = buffer[p] >> (elem_t)(limb_bits-4);
+            buffer[p] = (buffer[p] << 4) | nibble;
+            nibble = carry;
+        }
+    }
+
+    template<typename Value_t>
+    Value_t parseHexLiteral(const char* str, char** endptr)
+    {
+        const unsigned bits_per_char = 8;
+
+        const int MantissaBits =
+            std::numeric_limits<Value_t>::radix == 2
+            ? std::numeric_limits<Value_t>::digits
+            : (((sizeof(Value_t) * bits_per_char) &~ 3) - 4);
+
+        typedef unsigned long elem_t;
+        const int ExtraMantissaBits = 4 + ((MantissaBits+3)&~3); // Store one digit more for correct rounding
+        const unsigned limb_bits = sizeof(elem_t) * bits_per_char;
+        const unsigned n_limbs   = (ExtraMantissaBits + limb_bits-1) / limb_bits;
+        elem_t mantissa_buffer[n_limbs] = { 0 };
+
+        int n_mantissa_bits = 0; // Track the number of bits
+        int exponent = 0; // The exponent that will be used to multiply the mantissa
+        // Read integer portion
+        while(true)
+        {
+            int xdigit = testxdigit(*str);
+            if(xdigit < 0) break;
+            AddXdigit<elem_t,n_limbs,limb_bits> (mantissa_buffer, xdigit);
+            ++str;
+
+            n_mantissa_bits += 4;
+            if(n_mantissa_bits >= ExtraMantissaBits)
+            {
+                // Exhausted the precision. Parse the rest (until exponent)
+                // normally but ignore the actual digits.
+                for(; testxdigit(*str) >= 0; ++str)
+                    exponent += 4;
+                // Read but ignore decimals
+                if(*str == '.')
+                    for(++str; testxdigit(*str) >= 0; ++str)
+                        {}
+                goto read_exponent;
+            }
+        }
+        // Read decimals
+        if(*str == '.')
+            for(++str; ; )
+            {
+                int xdigit = testxdigit(*str);
+                if(xdigit < 0) break;
+                AddXdigit<elem_t,n_limbs,limb_bits> (mantissa_buffer, xdigit);
+                ++str;
+
+                exponent -= 4;
+                n_mantissa_bits += 4;
+                if(n_mantissa_bits >= ExtraMantissaBits)
+                {
+                    // Exhausted the precision. Skip the rest
+                    // of the decimals, until the exponent.
+                    while(testxdigit(*str) >= 0)
+                        ++str;
+                    break;
+                }
+            }
+
+        // Read exponent
+    read_exponent:
+        if(*str == 'p' || *str == 'P')
+        {
+            const char* str2 = str+1;
+            long p_exponent = strtol(str2, (char**) &str2, 10);
+            if(str2 != str+1 && p_exponent == (long)(int)p_exponent)
+            {
+                exponent += (int)p_exponent;
+                str = str2;
+            }
+        }
+
+        if(endptr) *endptr = (char*) str;
+
+        Value_t result = ldexp(Value_t(mantissa_buffer[0]), exponent);
+        for(unsigned p=1; p<n_limbs; ++p)
+        {
+            exponent += limb_bits;
+            result += ldexp(Value_t(mantissa_buffer[p]), exponent);
+        }
+        return result;
+    }
+
+#ifdef FP_SUPPORT_LONG_INT_TYPE
+    template<>
+    long parseHexLiteral<long>(const char* str, char** endptr)
+    {
+        return strtol(str, endptr, 16);
+    }
 #endif
 }
 
@@ -694,12 +841,13 @@ const char* FunctionParserBase<Value_t>::ErrorMsg() const
     return ParseErrorMessage[parseErrorType];
 }
 
-template<typename Value_t>
+/*template<typename Value_t>
 inline typename FunctionParserBase<Value_t>::ParseErrorType FunctionParserBase<Value_t>::GetParseErrorType() const
 { return parseErrorType; }
 
 template<typename Value_t>
 inline int FunctionParserBase<Value_t>::EvalError() const { return evalErrorType; }
+*/
 
 // Parse variables
 // ---------------
@@ -1167,7 +1315,7 @@ inline bool FunctionParserBase<Value_t>::TryCompilePowi(Value_t original_immed)
     return false;
 }
 
-//#include "fpoptimizer/fpoptimizer_opcodename.h"
+//#include "fpoptimizer/opcodename.h"
 // ^ needed only if FP_TRACE_BYTECODE_OPTIMIZATION() is used
 
 template<typename Value_t>
@@ -1197,6 +1345,69 @@ inline void FunctionParserBase<GmpInt>::AddFunctionOpcode(unsigned opcode)
 #define FP_FLOAT_VERSION 0
 #include "fp_opcode_add.inc"
 #undef FP_FLOAT_VERSION
+}
+#endif
+
+template<typename Value_t>
+inline const char*
+FunctionParserBase<Value_t>::CompileLiteral(const char* function)
+{
+    char* endptr;
+#if 0 /* Profile the hex literal parser */
+    if(function[0]=='0' && function[1]=='x')
+    {
+        // Parse hexadecimal literal if fp_parseLiteral didn't already
+        Value_t val = parseHexLiteral<Value_t>(function+2, &endptr);
+        if(endptr == function+2) return SetErrorType(SYNTAX_ERROR, function);
+        AddImmedOpcode(val);
+        incStackPtr();
+        SkipSpace(endptr);
+        return endptr;
+    }
+#endif
+    Value_t val = fp_parseLiteral<Value_t>(function, &endptr);
+
+    if(endptr == function+1 && function[0] == '0' && function[1] == 'x')
+    {
+        // Parse hexadecimal literal if fp_parseLiteral didn't already
+        val = parseHexLiteral<Value_t>(function+2, &endptr);
+        if(endptr == function+2) return SetErrorType(SYNTAX_ERROR, function);
+    }
+    else if(endptr == function) return SetErrorType(SYNTAX_ERROR, function);
+
+    AddImmedOpcode(val);
+    incStackPtr();
+    SkipSpace(endptr);
+    return endptr;
+}
+
+#ifdef FP_SUPPORT_MPFR_FLOAT_TYPE
+template<>
+inline const char*
+FunctionParserBase<MpfrFloat>::CompileLiteral(const char* function)
+{
+    char* endPtr;
+    const MpfrFloat val = MpfrFloat::parseString(function, &endPtr);
+    if(endPtr == function) return SetErrorType(SYNTAX_ERROR, function);
+    AddImmedOpcode(val);
+    incStackPtr();
+    SkipSpace(endPtr);
+    return endPtr;
+}
+#endif
+
+#ifdef FP_SUPPORT_GMP_INT_TYPE
+template<>
+inline const char*
+FunctionParserBase<GmpInt>::CompileLiteral(const char* function)
+{
+    char* endPtr;
+    const GmpInt val = GmpInt::parseString(function, &endPtr);
+    if(endPtr == function) return SetErrorType(SYNTAX_ERROR, function);
+    AddImmedOpcode(val);
+    incStackPtr();
+    SkipSpace(endPtr);
+    return endPtr;
 }
 #endif
 
@@ -1279,7 +1490,8 @@ const char* FunctionParserBase<Value_t>::CompileFunctionParams
             // If an error occurred, verify whether it was caused by ()
             ++function;
             SkipSpace(function);
-            if(*function == ')') return SetErrorType(ILL_PARAMS_AMOUNT, function);
+            if(*function == ')')
+                return SetErrorType(ILL_PARAMS_AMOUNT, function);
             // Not caused by (), use the error message given by CompileExpression()
             return 0;
         }
@@ -1435,7 +1647,8 @@ inline const char* FunctionParserBase<Value_t>::CompileFunction
 }
 
 template<typename Value_t>
-inline const char* FunctionParserBase<Value_t>::CompileParenthesis(const char* function)
+inline const char*
+FunctionParserBase<Value_t>::CompileParenthesis(const char* function)
 {
     ++function; // Skip '('
 
@@ -1449,18 +1662,6 @@ inline const char* FunctionParserBase<Value_t>::CompileParenthesis(const char* f
 
     SkipSpace(function);
     return function;
-}
-
-template<typename Value_t>
-inline const char* FunctionParserBase<Value_t>::CompileLiteral(const char* function)
-{
-    char* endPtr;
-    const double val = strtod(function, &endPtr);
-    if(endPtr == function) return SetErrorType(SYNTAX_ERROR, function);
-    AddImmedOpcode(val);
-    incStackPtr();
-    SkipSpace(endPtr);
-    return endPtr;
 }
 
 template<typename Value_t>
@@ -1530,47 +1731,7 @@ FunctionParserBase<Value_t>::CompilePow(const char* function)
     return function;
 }
 
-#ifdef FP_SUPPORT_FLOAT_TYPE
-template<>
-inline const char* FunctionParserBase<float>::CompileLiteral(const char* function)
-{
-    char* endPtr;
-    const float val = strtof(function, &endPtr);
-    if(endPtr == function) return SetErrorType(SYNTAX_ERROR, function);
-    AddImmedOpcode(val);
-    incStackPtr();
-    SkipSpace(endPtr);
-    return endPtr;
-}
-#endif
-
-#ifdef FP_SUPPORT_LONG_DOUBLE_TYPE
-template<>
-inline const char* FunctionParserBase<long double>::CompileLiteral(const char* function)
-{
-    char* endPtr;
-    const long double val = strtold(function, &endPtr);
-    if(endPtr == function) return SetErrorType(SYNTAX_ERROR, function);
-    AddImmedOpcode(val);
-    incStackPtr();
-    SkipSpace(endPtr);
-    return endPtr;
-}
-#endif
-
 #ifdef FP_SUPPORT_LONG_INT_TYPE
-template<>
-inline const char* FunctionParserBase<long>::CompileLiteral(const char* function)
-{
-    char* endPtr;
-    const long val = strtol(function, &endPtr, 10);
-    if(endPtr == function) return SetErrorType(SYNTAX_ERROR, function);
-    AddImmedOpcode(val);
-    incStackPtr();
-    SkipSpace(endPtr);
-    return endPtr;
-}
-
 template<>
 inline const char*
 FunctionParserBase<long>::CompilePow(const char* function)
@@ -1581,33 +1742,7 @@ FunctionParserBase<long>::CompilePow(const char* function)
 }
 #endif
 
-#ifdef FP_SUPPORT_MPFR_FLOAT_TYPE
-template<>
-inline const char* FunctionParserBase<MpfrFloat>::CompileLiteral(const char* function)
-{
-    char* endPtr;
-    const MpfrFloat val = MpfrFloat::parseString(function, &endPtr);
-    if(endPtr == function) return SetErrorType(SYNTAX_ERROR, function);
-    AddImmedOpcode(val);
-    incStackPtr();
-    SkipSpace(endPtr);
-    return endPtr;
-}
-#endif
-
 #ifdef FP_SUPPORT_GMP_INT_TYPE
-template<>
-inline const char* FunctionParserBase<GmpInt>::CompileLiteral(const char* function)
-{
-    char* endPtr;
-    const GmpInt val = GmpInt::parseString(function, &endPtr);
-    if(endPtr == function) return SetErrorType(SYNTAX_ERROR, function);
-    AddImmedOpcode(val);
-    incStackPtr();
-    SkipSpace(endPtr);
-    return endPtr;
-}
-
 template<>
 inline const char*
 FunctionParserBase<GmpInt>::CompilePow(const char* function)
@@ -1645,39 +1780,144 @@ template<typename Value_t>
 inline const char*
 FunctionParserBase<Value_t>::CompileMult(const char* function)
 {
-    unsigned op = 0;
+    function = CompileUnaryMinus(function);
+    if(!function) return 0;
+
+    Value_t pending_immed(1);
+    #define FP_FlushImmed(do_reset) \
+        if(pending_immed != Value_t(1)) \
+        { \
+            unsigned op = cMul; \
+            if(!IsIntType<Value_t>::result && data->ByteCode.back() == cInv) \
+            { \
+                /* (...) cInv 5 cMul -> (...) 5 cRDiv */ \
+                /*           ^               ^      | */ \
+                data->ByteCode.pop_back(); \
+                op = cRDiv; \
+            } \
+            AddImmedOpcode(pending_immed); \
+            incStackPtr(); \
+            AddFunctionOpcode(op); \
+            --StackPtr; \
+            if(do_reset) pending_immed = Value_t(1); \
+        }
     while(true)
     {
-        function = CompileUnaryMinus(function);
-        if(!function) return 0;
-
-        // add opcode
-        if(op)
+        char c = *function;
+        if(c == '%')
         {
-            AddFunctionOpcode(op);
-            if(op != cInv) --StackPtr;
+            FP_FlushImmed(true);
+            ++function;
+            SkipSpace(function);
+            function = CompileUnaryMinus(function);
+            if(!function) return 0;
+            AddFunctionOpcode(cMod);
+            --StackPtr;
+            continue;
         }
-        switch(*function)
+        if(c != '*' && c != '/') break;
+
+        bool safe_cumulation = (c == '*' || !IsIntType<Value_t>::result);
+        if(!safe_cumulation)
         {
-            case '*': op = cMul; break;
-            case '/': op = cDiv; break;
-            case '%': op = cMod; break;
-            default: return function;
+            FP_FlushImmed(true);
         }
 
         ++function;
         SkipSpace(function);
-
-        if(op != cMod &&
-           data->ByteCode.back() == cImmed &&
-           data->Immed.back() == Value_t(1))
+        if(data->ByteCode.back() == cImmed
+        && (safe_cumulation
+         || data->Immed.back() == Value_t(1)))
         {
-            op = (op == cDiv ? cInv : 0);
+            // 5 (...) cMul --> (...)      ||| 5 cMul
+            // 5 (...) cDiv --> (...) cInv ||| 5 cMul
+            //  ^          |              ^
+            pending_immed *= data->Immed.back();
             data->Immed.pop_back();
             data->ByteCode.pop_back();
             --StackPtr;
+            function = CompileUnaryMinus(function);
+            if(!function) return 0;
+            if(c == '/')
+                AddFunctionOpcode(cInv);
+            continue;
+        }
+        if(safe_cumulation
+        && data->ByteCode.back() == cMul
+        && data->ByteCode[data->ByteCode.size()-2] == cImmed)
+        {
+            // (:::) 5 cMul (...) cMul -> (:::) (...) cMul  ||| 5 cMul
+            // (:::) 5 cMul (...) cDiv -> (:::) (...) cDiv  ||| 5 cMul
+            //             ^                   ^
+            pending_immed *= data->Immed.back();
+            data->Immed.pop_back();
+            data->ByteCode.pop_back();
+            data->ByteCode.pop_back();
+        }
+        // cDiv is not tested here because the bytecode
+        // optimizer will convert this kind of cDivs into cMuls.
+        bool lhs_inverted = false;
+        if(!IsIntType<Value_t>::result && c == '*'
+        && data->ByteCode.back() == cInv)
+        {
+            // (:::) cInv (...) cMul -> (:::) (...) cRDiv
+            // (:::) cInv (...) cDiv -> (:::) (...) cMul cInv
+            //           ^                   ^            |
+            data->ByteCode.pop_back();
+            lhs_inverted = true;
+        }
+        function = CompileUnaryMinus(function);
+        if(!function) return 0;
+        if(safe_cumulation
+        && data->ByteCode.back() == cMul
+        && data->ByteCode[data->ByteCode.size()-2] == cImmed)
+        {
+            // (:::) (...) 5 cMul cMul -> (:::) (...) cMul  |||  5 Mul
+            // (:::) (...) 5 cMul cDiv -> (:::) (...) cDiv  ||| /5 Mul
+            //                   ^                        ^
+            if(c == '*')
+                pending_immed *= data->Immed.back();
+            else
+                pending_immed /= data->Immed.back();
+            data->Immed.pop_back();
+            data->ByteCode.pop_back();
+            data->ByteCode.pop_back();
+        }
+        else
+        if(safe_cumulation
+        && data->ByteCode.back() == cRDiv
+        && data->ByteCode[data->ByteCode.size()-2] == cImmed)
+        {
+            // (:::) (...) 5 cRDiv cMul -> (:::) (...) cDiv  |||  5 cMul
+            // (:::) (...) 5 cRDiv cDiv -> (:::) (...) cMul  ||| /5 cMul
+            //                    ^                   ^
+            if(c == '*')
+                { c = '/'; pending_immed *= data->Immed.back(); }
+            else
+                { c = '*'; pending_immed /= data->Immed.back(); }
+            data->Immed.pop_back();
+            data->ByteCode.pop_back();
+            data->ByteCode.pop_back();
+        }
+        if(!lhs_inverted) // if (/x/y) was changed to /(x*y), add missing cInv
+        {
+            AddFunctionOpcode(c == '*' ? cMul : cDiv);
+            --StackPtr;
+        }
+        else if(c == '*') // (/x)*y -> rdiv(x,y)
+        {
+            AddFunctionOpcode(cRDiv);
+            --StackPtr;
+        }
+        else // (/x)/y -> /(x*y)
+        {
+            AddFunctionOpcode(cMul);
+            --StackPtr;
+            AddFunctionOpcode(cInv);
         }
     }
+    FP_FlushImmed(false);
+    #undef FP_FlushImmed
     return function;
 }
 
@@ -1685,37 +1925,120 @@ template<typename Value_t>
 inline const char*
 FunctionParserBase<Value_t>::CompileAddition(const char* function)
 {
-    unsigned op=0;
+    function = CompileMult(function);
+    if(!function) return 0;
+
+    Value_t pending_immed(0);
+    #define FP_FlushImmed(do_reset) \
+        if(pending_immed != Value_t(0)) \
+        { \
+            unsigned op = cAdd; \
+            if(data->ByteCode.back() == cNeg) \
+            { \
+                /* (...) cNeg 5 cAdd -> (...) 5 cRSub */ \
+                /*           ^               ^      | */ \
+                data->ByteCode.pop_back(); \
+                op = cRSub; \
+            } \
+            AddImmedOpcode(pending_immed); \
+            incStackPtr(); \
+            AddFunctionOpcode(op); \
+            --StackPtr; \
+            if(do_reset) pending_immed = Value_t(0); \
+        }
     while(true)
     {
-        function = CompileMult(function);
-        if(!function) return 0;
-
-        // add opcode
-        if(op)
-        {
-            AddFunctionOpcode(op);
-            if(op != cNeg) --StackPtr;
-        }
-        switch(*function)
-        {
-            case '+': op = cAdd; break;
-            case '-': op = cSub; break;
-            default: return function;
-        }
-
+        char c = *function;
+        if(c != '+' && c != '-') break;
         ++function;
         SkipSpace(function);
-
-        if(data->ByteCode.back() == cImmed &&
-           data->Immed.back() == Value_t(0))
+        if(data->ByteCode.back() == cImmed)
         {
-            op = (op == cSub ? cNeg : 0);
+            // 5 (...) cAdd --> (...)      ||| 5 cAdd
+            // 5 (...) cSub --> (...) cNeg ||| 5 cAdd
+            //  ^          |              ^
+            pending_immed += data->Immed.back();
             data->Immed.pop_back();
             data->ByteCode.pop_back();
             --StackPtr;
+            function = CompileMult(function);
+            if(!function) return 0;
+            if(c == '-')
+                AddFunctionOpcode(cNeg);
+            continue;
+        }
+        if(data->ByteCode.back() == cAdd
+        && data->ByteCode[data->ByteCode.size()-2] == cImmed)
+        {
+            // (:::) 5 cAdd (...) cAdd -> (:::) (...) cAdd  ||| 5 cAdd
+            // (:::) 5 cAdd (...) cSub -> (:::) (...) cSub  ||| 5 cAdd
+            //             ^                   ^
+            pending_immed += data->Immed.back();
+            data->Immed.pop_back();
+            data->ByteCode.pop_back();
+            data->ByteCode.pop_back();
+        }
+        // cSub is not tested here because the bytecode
+        // optimizer will convert this kind of cSubs into cAdds.
+        bool lhs_negated = false;
+        if(data->ByteCode.back() == cNeg)
+        {
+            // (:::) cNeg (...) cAdd -> (:::) (...) cRSub
+            // (:::) cNeg (...) cSub -> (:::) (...) cAdd cNeg
+            //           ^                   ^            |
+            data->ByteCode.pop_back();
+            lhs_negated = true;
+        }
+        function = CompileMult(function);
+        if(!function) return 0;
+        if(data->ByteCode.back() == cAdd
+        && data->ByteCode[data->ByteCode.size()-2] == cImmed)
+        {
+            // (:::) (...) 5 cAdd cAdd -> (:::) (...) cAdd  |||  5 Add
+            // (:::) (...) 5 cAdd cSub -> (:::) (...) cSub  ||| -5 Add
+            //                   ^                        ^
+            if(c == '+')
+                pending_immed += data->Immed.back();
+            else
+                pending_immed -= data->Immed.back();
+            data->Immed.pop_back();
+            data->ByteCode.pop_back();
+            data->ByteCode.pop_back();
+        }
+        else
+        if(data->ByteCode.back() == cRSub
+        && data->ByteCode[data->ByteCode.size()-2] == cImmed)
+        {
+            // (:::) (...) 5 cRSub cAdd -> (:::) (...) cSub  |||  5 cAdd
+            // (:::) (...) 5 cRSub cSub -> (:::) (...) cAdd  ||| -5 cAdd
+            //                    ^                   ^
+            if(c == '+')
+                { c = '-'; pending_immed += data->Immed.back(); }
+            else
+                { c = '+'; pending_immed -= data->Immed.back(); }
+            data->Immed.pop_back();
+            data->ByteCode.pop_back();
+            data->ByteCode.pop_back();
+        }
+        if(!lhs_negated) // if (-x-y) was changed to -(x+y), add missing cNeg
+        {
+            AddFunctionOpcode(c == '+' ? cAdd : cSub);
+            --StackPtr;
+        }
+        else if(c == '+') // (-x)+y -> rsub(x,y)
+        {
+            AddFunctionOpcode(cRSub);
+            --StackPtr;
+        }
+        else // (-x)-y -> -(x+y)
+        {
+            AddFunctionOpcode(cAdd);
+            --StackPtr;
+            AddFunctionOpcode(cNeg);
         }
     }
+    FP_FlushImmed(false);
+    #undef FP_FlushImmed
     return function;
 }
 

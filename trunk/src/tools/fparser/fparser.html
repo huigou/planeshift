@@ -3,11 +3,11 @@
 <head>
  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
  <link href="style.css" rel="stylesheet" type="text/css" title="normal" media=screen>
- <title>Function Parser for C++ v4.0.5  : Documentation</title>
+ <title>Function Parser for C++ v4.1    : Documentation</title>
 </head>
 
 <body>
-<h1>Function Parser for C++ v4.0.5  </h1>
+<h1>Function Parser for C++ v4.1    </h1>
 
 <p>Authors: Juha Nieminen
 (<a href="http://iki.fi/warp/">http://iki.fi/warp/</a>),
@@ -46,9 +46,10 @@ Joel Yliluoma
      </ul>
  <li>Syntax
    <ul>
-      <li><a href="#identifiers">Identifier names</a>
-      <li><a href="#functionsyntax">The function string syntax</a>
-      <li><a href="#whitespace">Whitespace</a>
+     <li><a href="#literals">Numeric literals</a>
+     <li><a href="#identifiers">Identifier names</a>
+     <li><a href="#functionsyntax">The function string syntax</a>
+     <li><a href="#whitespace">Whitespace</a>
    </ul>
  <li>Miscellaneous
    <ul>
@@ -64,28 +65,15 @@ Joel Yliluoma
 <a name="whatsnew"></a>
 <h2>What's new</h2>
 
-<p>What's new in v4.0.5
+<p>What's new in v4.1
   <ul>
-    <li>Fixed bugs and deficiencies in the <code>MpfrFloat</code> class:
-      <ul>
-	<li>All existing values became NaN if the
-	  <code>MpfrFloat::setDefaultMantissaBits()</code> was called.
-	<li><code>MpfrFloat::const_e()</code> was incorrectly calculated.
-	<li>The value of <code>MpfrFloat::someEpsilon()</code> is more
-	  sensible now (more proportional to the precision of the mantissa).
-      </ul>
-  </ul>
-
-<p>What's new in v4.0.4
-  <ul>
-    <li>Some new optimization rules in both <code>Parse()</code> and
-      <code>Optimize()</code>.
-    <li>Fixed some optimizer bugs (among others, functions of the form
-      <code>"a()|b()|c()"</code>, where <code>a</code>, <code>b</code>
-      and <code>c</code> are user-defined functions, were wrongly optimized.)
-    <li>The utility programs in the development package are now separately
-      licensed under the GPL. (This doesn't affect the library itself, which
-      is still LGPL.)
+    <li>Official support for hexadecimal literals (for all the parser types).
+      Previously there was support only if the <code>strto...()</code> C
+      library functions happened to support them (which is a non-standard
+      extension of those functions). See documentation for details.</li>
+    <li>Significant amount of new optimizations performed by
+      <code>Parse()</code>.</li>
+    <li>Minor bugfixes.
   </ul>
 
 
@@ -123,27 +111,36 @@ standard-conforming C++ compiler.
 <h2>Usage</h2>
 
 <p>To use the <code>FunctionParser</code> class, you have to include
-<code>"fparser.hh"</code> in your source code files which use the
+<code>"fparser.h"</code> in your source code files which use the
 <code>FunctionParser</code> class.
 
 <p>If you are going to use the MPFR version of the library, you need to
-include <code>"fparser_mpfr.hh"</code>. If you are going to use the GMP
-version of the library, you need to include <code>"fparser_gmpint.hh"</code>.
+include <code>"fparser_mpfr.h"</code>. If you are going to use the GMP
+version of the library, you need to include <code>"fparser_gmpint.h"</code>.
 (Note that support for these special parser versions needs to be specified
 with preprocessor macros. See the <a href="#parsertypes">documentation
 below</a> for details.)
 
-<p>When compiling, you have to compile <code>fparser.cc</code> and
-<code>fpoptimizer.cc</code> and link them to the main program. In some
+<p>When compiling, you have to compile <code>fparser.cpp</code> and
+<code>fpoptimizer.cpp</code> and link them to the main program. In many
 developement environments it's enough to add those two files to your
 current project (usually header files don't have to be added to the
 project for the compilation to work).
 
 <p>If you are going to use the MPFR or the GMP versions of the library,
-you also need to include <code>mpfr/MpfrFloat.cc</code> or
-<code>mpfr/GmpInt.cc</code> files in your project, respectively.
+you also need to add <code>mpfr/MpfrFloat.cpp</code> or
+<code>mpfr/GmpInt.cpp</code> files to your project, respectively. Otherwise
+they should not be added to the project.
 
-<p>Simple usage example:
+<p>Note that part of the library source code is inside several
+<code>.inc</code> files (these files contain auto-generated C++ code),
+provided in the library package. These files are used by
+<code>fparser.cpp</code> and don't need to be added explicitly to the
+project in most IDEs (such as Visual Studio). Basically, you don't need
+to do anything with these files, other than keep them in the same directory
+as <code>fparser.cpp</code>.
+
+<p>Simple usage example of the library:
 
 <pre>
     FunctionParser fp;
@@ -161,7 +158,7 @@ you also need to include <code>mpfr/MpfrFloat.cc</code> or
 
 <p>All the classes other than the default one, <code>FunctionParser</code>,
   need to be enabled at compile time by defining a preprocessor macro
-  (specified below) either in the <code>fpconfig.hh</code> file or your
+  (specified below) either in the <code>fpconfig.h</code> file or your
   compiler settings. (The reason for this is that all the other parser types
   use either C99 standard libraries not yet available in the official C++
   standard or the third-party libraries GMP and MPFR. It also makes
@@ -223,13 +220,13 @@ you also need to include <code>mpfr/MpfrFloat.cc</code> or
     <p>The <code>FP_SUPPORT_MPFR_FLOAT_TYPE</code> preprocessor macro needs
       to be defined for this class to be enabled.
     <p>Note that to use this version of the parser,
-      <code>"fparser_mpfr.hh"</code> needs to be included.
+      <code>"fparser_mpfr.h"</code> needs to be included.
     <p><code>MpfrFloat</code> is an auxiliary class which uses the MPFR
       library for multiple-precision floating point numbers. The class
       behaves largely like a floating point type, and is declared in the
-      <code>mpfr/MpfrFloat.hh</code> file (see that file for info about
+      <code>mpfr/MpfrFloat.h</code> file (see that file for info about
       the public interface of the class).
-    <p>If this class is enabled, <code>mpfr/MpfrFloat.cc</code>
+    <p>If this class is enabled, <code>mpfr/MpfrFloat.cpp</code>
       needs to be compiled into the project, as well as the GMP and MPFR
       libraries. (With the gcc compiler this means using the linker options
       "<code>-lgmp -lmpfr</code>".)
@@ -241,13 +238,13 @@ you also need to include <code>mpfr/MpfrFloat.cc</code> or
     <p>The <code>FP_SUPPORT_GMP_INT_TYPE</code> preprocessor macro needs
       to be defined for this class to be enabled.
     <p>Note that to use this version of the parser,
-      <code>"fparser_gmpint.hh"</code> needs to be included.
+      <code>"fparser_gmpint.h"</code> needs to be included.
     <p><code>GmpInt</code> is an auxiliary class which uses the GMP
       library for arbitrary-precision integer numbers. The class
       behaves largely like an integer type, and is declared in the
-      <code>mpfr/GmpInt.hh</code> file (see that file for info about
+      <code>mpfr/GmpInt.h</code> file (see that file for info about
       the public interface of the class).
-    <p>If this class is enabled, <code>mpfr/GmpInt.cc</code>
+    <p>If this class is enabled, <code>mpfr/GmpInt.cpp</code>
       needs to be compiled into the project, as well as the GMP library.
     <p>This version of the class also uses a reduced version of the syntax,
       like the <code>long int</code> version.
@@ -276,7 +273,7 @@ you also need to include <code>mpfr/MpfrFloat.cc</code> or
 <a name="configuring"></a>
 <h3>Configuring the compilation</h3>
 
-<p>There is a set of precompiler options in the <code>fpconfig.hh</code> file
+<p>There is a set of precompiler options in the <code>fpconfig.h</code> file
 which can be used for setting certain features on or off. All of these options
 can also be specified from the outside, using precompiler settings (eg. the
 <code>-D</code> option in gcc), and thus it's not necessary to modify this
@@ -776,7 +773,7 @@ and checking <code>EvalError()</code>.
 
 <p>If the destination application is not going to use this method,
 the compiler constant <code>FP_SUPPORT_OPTIMIZER</code> can be undefined in
-<code>fpconfig.hh</code> to make the library smaller (<code>Optimize()</code>
+<code>fpconfig.h</code> to make the library smaller (<code>Optimize()</code>
 can still be called, but it will not do anything).
 
 <p>(If you are interested in seeing how this method optimizes the opcode,
@@ -1034,12 +1031,49 @@ the specified return values will be modified in case of error.
 <!-- -------------------------------------------------------------------- -->
 <h2>Syntax</h2>
 
+<a name="literals"></a>
+<h3>Numeric literals</h3>
+
+<p>A numeric literal is a fixed numerical value in the input function string
+  (either a floating point value or an integer value, depending on the parser
+  type).
+
+<p>An integer literal can consist solely of numerical digits (possibly with
+  a preceding unary minus). For example, "<code>12345</code>".
+
+<p>If the literal is preceded by the characters "<code>0x</code>", it
+  will be interpreted as a hexadecimal literal, where digits can also include
+  the letters from '<code>A</code>' to '<code>F</code>' (in either uppercase
+  or lowercase). For example, "<code>0x89ABC</code>" (which corresponds to the
+  value 563900).
+
+<p>A floating point literal (only supported by the floating point type parsers)
+  may additionally include a decimal point followed by the decimal part of the
+  value, such as for example "<code>12.34</code>", optionally followed by a
+  decimal exponent.
+
+<p>A decimal exponent consists of an '<code>E</code>' or '<code>e</code>',
+  followed by an optional plus or minus sign, followed by decimal digits, and
+  indicates multiplication by a power of 10. For example, "<code>1.2e5</code>"
+  (which is equivalent to the value 120000).
+
+<p>If a floating point literal is preceded by the characters "<code>0x</code>"
+  it will be interpreted in hexadecimal. A hexadecimal floating point
+  literal consists of a hexadecimal value, with an optional decimal point,
+  followed optionally by a binary exponent in base 10 (in other words, the
+  exponent is not in hexadecimal).
+
+<p>A binary exponent has the same format as a decimal exponent, except that
+  '<code>P</code>' or '<code>p</code>' is used. A binary exponent indicates
+  multiplication by a power of 2. For example, "<code>0xA.Bp10</code>"
+  (which is equivalent to the value 10944).
+
 <a name="identifiers"></a>
 <h3>Identifier names</h3>
 
-<p>An identifier is a function (internal or user-defined), variable,
-  constant or unit. New identifiers can be specified with the functions
-  described in the earlier subsections in this document.
+<p>An identifier is the name of a function (internal or user-defined),
+  variable, constant or unit. New identifiers can be specified with the
+  functions described in the earlier subsections in this document.
 
 <p>The name of an identifier can use any alphanumeric characters, the
   underscore character and any UTF8-encoded unicode character, excluding
@@ -1054,7 +1088,9 @@ the specified return values will be modified in case of error.
 <a name="functionsyntax"></a>
 <h3>The function string syntax</h3>
 
-<p>The function string understood by the class is very similar to the C-syntax.
+<p>The function string understood by the class is very similar (but not
+completely identical in all aspects) to mathematical expressions in the
+C/C++ languages.
 Arithmetic float expressions can be created from float literals, variables
 or functions using the following operators in this order of precedence:
 
@@ -1113,7 +1149,7 @@ differ in very least-significant digits should work correctly. For example,
 <code>"0.1+0.1+0.1+0.1+0.1+0.1+0.1+0.1+0.1+0.1 = 1"</code> should always
 return 1, and the same comparison done with "<code>&gt;</code>" or
 "<code>&lt;</code>" should always return 0. (The epsilon value can be
-configured in the <code>fpconfig.hh</code> file.)
+configured in the <code>fpconfig.h</code> file.)
 Without epsilon this comparison probably returns the wrong value.
 
 <p>The class supports these functions:
@@ -1269,7 +1305,7 @@ Without epsilon this comparison probably returns the wrong value.
 never reach that level but still take enormous amounts of time to evaluate.
 This can sometimes be undesirable because it is prone to exploitation,
 which is why <code>eval()</code> is disabled by default. It can be enabled
-in the <code>fpconfig.hh</code> file.
+in the <code>fpconfig.h</code> file.
 
 
 <!-- -------------------------------------------------------------------- -->

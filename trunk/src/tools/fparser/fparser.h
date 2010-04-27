@@ -1,5 +1,5 @@
 /***************************************************************************\
-|* Function Parser for C++ v4.0.5                                          *|
+|* Function Parser for C++ v4.1                                            *|
 |*-------------------------------------------------------------------------*|
 |* Copyright: Juha Nieminen, Joel Yliluoma                                 *|
 |*                                                                         *|
@@ -51,10 +51,10 @@ public:
     void setDelimiterChar(char);
 
     const char* ErrorMsg() const;
-    ParseErrorType GetParseErrorType() const;
+    inline ParseErrorType GetParseErrorType() const { return parseErrorType; }
 
     Value_t Eval(const Value_t* Vars);
-    int EvalError() const;
+    inline int EvalError() const { return evalErrorType; }
 
     bool AddConstant(const std::string& name, Value_t value);
     bool AddUnit(const std::string& name, Value_t value);
