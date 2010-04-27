@@ -1426,7 +1426,8 @@ public:
         INTRODUCE   = 0x0800000,
         CONSTRUCT   = 0x1000000,
         MOUNT       = 0x2000000,
-        UNMOUNT     = 0x4000000
+        UNMOUNT     = 0x4000000,
+        STORAGE     = 0x8000000
     };
 
 public:

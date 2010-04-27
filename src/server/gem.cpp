@@ -4304,6 +4304,9 @@ void gemNPC::SendBehaviorMessage(const csString & msg_id, gemObject *obj)
                 // Can we attack this NPC?
                 if (IsAlive() && clientC && clientC->IsAllowedToAttack(this,false))
                     options |= psGUIInteractMessage::ATTACK;
+                    
+                if(IsAlive() && psChar->IsStorage())
+                    options |= psGUIInteractMessage::STORAGE;
             }
 
             // Check if there is something to send

@@ -143,6 +143,10 @@
              <frame x="0" y="128" width="64" height="64" />
              <bgimage resource="ButtonUnmount" />
         </widget>
+        <widget name="ButtonStorage" factory="pawsButton" id="2900" tooltip="Storage">
+             <frame x="0" y="128" width="64" height="64" />
+             <bgimage resource="ButtonStorage" />
+        </widget>
         
     </widget>
     

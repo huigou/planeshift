@@ -1844,6 +1844,8 @@ csString psGUIInteractMessage::ToString(AccessPointers * /*access_ptrs*/)
         msgtext.Append(" MOUNT");
     if (options & psGUIInteractMessage::UNMOUNT)
         msgtext.Append(" UNMOUNT");
+    if (options & psGUIInteractMessage::STORAGE)
+        msgtext.Append(" STORAGE");
 
     return msgtext;
 }

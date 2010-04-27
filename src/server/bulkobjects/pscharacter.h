@@ -874,6 +874,11 @@ public:
 
     /** Check if the character is a banker */
     bool IsBanker() const { return banker; }
+    
+    /** Check if the character is a storage
+     *  @return TRUE if the character mantains a storage
+     */    
+    bool IsStorage() const { return IsBanker(); }
 
 private:
     int FindGlyphSlot(const csArray<glyphSlotInfo>& slots, psItemStats * glyphType, int purifyStatus);
