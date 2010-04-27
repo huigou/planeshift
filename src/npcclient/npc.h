@@ -211,9 +211,11 @@ public:
      * @param maxRange   If greater then 0.0 then max range apply
      * @param basePos    The base position for range checks.
      * @param baseSector The base sector for range checks.
+     * @param sameSector Only trigger if in same sector
      */    
     void TriggerEvent(Perception *pcpt, float maxRange=-1.0,
-                      csVector3* basePos=NULL, iSector* baseSector=NULL);
+                      csVector3* basePos=NULL, iSector* baseSector=NULL,
+                      bool sameSector=false);
     
     void SetLastPerception(Perception *pcpt);
     Perception *GetLastPerception() { return last_perception; }

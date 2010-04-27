@@ -298,7 +298,7 @@ void NPC::ResumeScript(Behavior *which)
 }
 
 void NPC::TriggerEvent(Perception *pcpt, float maxRange,
-                       csVector3 *basePos, iSector *baseSector)
+                       csVector3 *basePos, iSector *baseSector, bool sameSector)
 {
     if (disabled)
     {
@@ -321,6 +321,11 @@ void NPC::TriggerEvent(Perception *pcpt, float maxRange,
         iSector*  sector;
         float     yrot;
         psGameObject::GetPosition(me,pos,yrot,sector);
+
+        if (sameSector && sector != baseSector)
+        {
+            return;
+        }
 
         float distance = world->Distance(pos, sector, *basePos, baseSector);
 

@@ -815,13 +815,14 @@ psPath *psNPCClient::FindPath(const Waypoint * wp1, const Waypoint * wp2, psPath
 }
 
 void psNPCClient::TriggerEvent(Perception *pcpt, float maxRange,
-                               csVector3 *basePos, iSector *baseSector)
+                               csVector3 *basePos, iSector *baseSector,
+                               bool sameSector)
 {
     for (size_t i=0; i<npcs.GetSize(); i++)
     {
         if (npcs[i]==NULL)  // one of our npcs is not active right now
             continue;
-        
+
         npcs[i]->TriggerEvent(pcpt, maxRange, basePos, baseSector);
     }
 }
@@ -856,7 +857,7 @@ void psNPCClient::LoadCompleted()
     // Client is loaded.
 
     // This starts the NPC AI processing loop.
-	psNPCClientTick *tick = new psNPCClientTick(255,this);
+    psNPCClientTick *tick = new psNPCClientTick(255,this);
     tick->QueueEvent();
 
 }
@@ -1477,6 +1478,12 @@ void psNPCClient::PerceptProximityItems()
                 csVector3 npc_pos;
                 psGameObject::GetPosition(npcs[i]->GetActor(),npc_pos,yrot,npc_sector);
 
+                // Only percept for items in same sector, NPC will probably not see a item
+                // in other sectors.
+                if (npc_sector != item_sector)
+                {
+                    continue;
+                }
                          
                 float dist = world->Distance(npc_pos,npc_sector,item_pos,item_sector);
                 
@@ -1528,9 +1535,10 @@ void psNPCClient::PerceptProximityLocations()
         Location* location = all_locations[current_long_range_perception_loc_index];
         
         LocationPerception pcpt_sensed("location sensed", location->type->name, location, engine);  
-      
+
+        // Now trigger every NPC within the sector of the location.
         TriggerEvent(&pcpt_sensed, location->radius + LONG_RANGE_PERCEPTION, 
-                     &location->pos, location->GetSector(engine)); // Broadcast
+                     &location->pos, location->GetSector(engine),true); // Broadcast only in sector
     }
 }
 
