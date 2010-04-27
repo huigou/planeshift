@@ -475,7 +475,7 @@ void psSoundManager::SetPosition (csVector3 playerpos)
 
 void psSoundManager::SetWeather (int newWeather)
 {
-    if (weather != newWeather)
+    if (weather != newWeather && activesector)
     {
         weather = newWeather;
         activesector->UpdateAmbient(weather, ambientSndCtrl);
