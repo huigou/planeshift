@@ -319,8 +319,7 @@ void NPC::TriggerEvent(Perception *pcpt, float maxRange,
 
         csVector3 pos;
         iSector*  sector;
-        float     yrot;
-        psGameObject::GetPosition(me,pos,yrot,sector);
+        psGameObject::GetPosition(me, pos, sector);
 
         if (sameSector && sector != baseSector)
         {
@@ -353,8 +352,7 @@ gemNPCActor* NPC::GetMostHated(float range, bool includeInvisible, bool includeI
 {
     iSector *sector=NULL;
     csVector3 pos;
-    float yrot;
-    psGameObject::GetPosition(GetActor(),pos, yrot, sector);
+    psGameObject::GetPosition(GetActor(), pos, sector);
 
     return GetMostHated(pos, sector, range, GetRegion(),
                         includeInvisible, includeInvincible, hate);
@@ -517,14 +515,13 @@ void NPC::DumpHateList()
 {
     iSector *sector=NULL;
     csVector3 pos;
-    float yrot;
 
     CPrintf(CON_CMDOUTPUT, "Hate list for %s (%s)\n", name.GetData(), ShowID(pid));
     CPrintf(CON_CMDOUTPUT, "---------------------------------------------\n");
 
     if (GetActor())
     {
-        psGameObject::GetPosition(GetActor(),pos,yrot,sector);
+        psGameObject::GetPosition(GetActor(),pos,sector);
         hatelist.DumpHateList(pos,sector);
     }
 }
@@ -556,10 +553,10 @@ void NPC::ClearState()
 EID NPC::GetNearestEntity(csVector3& dest,csString& name,float range)
 {
     csVector3 loc;
-    iSector* sector;
-    float rot,min_range;
+    iSector*  sector;
+    float     min_range;
 
-    psGameObject::GetPosition(GetActor(),loc,rot,sector);
+    psGameObject::GetPosition(GetActor(),loc,sector);
 
     csArray<gemNPCObject*> nearlist = npcclient->FindNearbyEntities(sector,loc,range);
     if (nearlist.GetSize() > 0)
@@ -572,8 +569,7 @@ EID NPC::GetNearestEntity(csVector3& dest,csString& name,float range)
                 continue;
             csVector3 loc2;
             iSector *sector2;
-            float rot2;
-            psGameObject::GetPosition(ent,loc2,rot2,sector2);
+            psGameObject::GetPosition(ent, loc2, sector2);
 
             float dist = world->Distance(loc, sector, loc2, sector2);
             if (dist < min_range)
@@ -590,12 +586,12 @@ EID NPC::GetNearestEntity(csVector3& dest,csString& name,float range)
 
 gemNPCActor* NPC::GetNearestVisibleFriend(float range)
 {
-    csVector3 loc;
-    iSector* sector;
-    float rot,min_range;
-    gemNPCObject *friendEnt = NULL;
+    csVector3     loc;
+    iSector*      sector;
+    float         min_range;
+    gemNPCObject* friendEnt = NULL;
 
-    psGameObject::GetPosition(GetActor(),loc,rot,sector);
+    psGameObject::GetPosition(GetActor(), loc, sector);
 
     csArray<gemNPCObject*> nearlist = npcclient->FindNearbyEntities(sector,loc,range);
     if (nearlist.GetSize() > 0)
@@ -611,8 +607,7 @@ gemNPCActor* NPC::GetNearestVisibleFriend(float range)
 
             csVector3 loc2, isect;
             iSector *sector2;
-            float rot2;
-            psGameObject::GetPosition(ent,loc2,rot2,sector2);
+            psGameObject::GetPosition(ent, loc2, sector2);
 
             float dist = (loc2 - loc).Norm();
             if(min_range < dist)
@@ -637,12 +632,12 @@ gemNPCActor* NPC::GetNearestVisibleFriend(float range)
 
 gemNPCActor* NPC::GetNearestDeadActor(float range)
 {
-    csVector3 loc;
-    iSector* sector;
-    float rot,min_range;
-    gemNPCActor *nearEnt = NULL;
+    csVector3    loc;
+    iSector*     sector;
+    float        min_range;
+    gemNPCActor* nearEnt = NULL;
 
-    psGameObject::GetPosition(GetActor(),loc,rot,sector);
+    psGameObject::GetPosition(GetActor(), loc, sector);
 
     csArray<gemNPCObject*> nearlist = npcclient->FindNearbyEntities(sector,loc,range);
     if (nearlist.GetSize() > 0)
@@ -670,8 +665,7 @@ gemNPCActor* NPC::GetNearestDeadActor(float range)
 
             csVector3 loc2, isect;
             iSector *sector2;
-            float rot2;
-            psGameObject::GetPosition(ent,loc2,rot2,sector2);
+            psGameObject::GetPosition(ent, loc2, sector2);
 
             float dist = (loc2 - loc).Norm();
             if(min_range < dist)
@@ -964,12 +958,11 @@ void HateList::DumpHateList(const csVector3& myPos, iSector *mySector)
         csVector3 pos(9.9f,9.9f,9.9f);
         gemNPCObject* obj = npcclient->FindEntityID(h->entity_id);
         csString sectorName;
-        float yrot;
 
         if (obj)
         {
             iSector* sector;
-            psGameObject::GetPosition(obj,pos,yrot,sector);
+            psGameObject::GetPosition(obj,pos,sector);
             if(sector)
             {
                 sectorName = sector->QueryObject()->GetName();

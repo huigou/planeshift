@@ -1087,6 +1087,31 @@ void psGameObject::GetPosition(gemNPCObject* object, csVector3& pos, float& yrot
     }
 }
 
+void psGameObject::GetPosition(gemNPCObject* object, csVector3& pos,iSector*& sector)
+{
+    npcMesh * pcmesh = object->pcmesh;
+
+    // Position
+    if(!pcmesh->GetMesh())
+    {
+        CPrintf(CON_ERROR,"ERROR! NO MESH FOUND FOR OBJECT %s!\n",object->GetName());
+        return;
+    }
+
+    pos = pcmesh->GetMesh()->GetMovable()->GetPosition();
+
+    // Sector
+    if (pcmesh->GetMesh()->GetMovable()->GetSectors()->GetCount())
+    {
+        sector = pcmesh->GetMesh()->GetMovable()->GetSectors()->Get(0);
+    }
+    else
+    {
+        sector = NULL;
+    }
+}
+
+
 void psGameObject::SetPosition(gemNPCObject* object, csVector3& pos, iSector* sector)
 {
     npcMesh * pcmesh = object->pcmesh;

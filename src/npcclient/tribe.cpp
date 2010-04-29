@@ -863,9 +863,8 @@ gemNPCActor* Tribe::GetMostHated(NPC* npc, float range, bool includeInvisible, b
     
     csVector3  pos;
     iSector*   sector;
-    float      yrot;
     
-    psGameObject::GetPosition(npc->GetActor(), pos, yrot, sector );
+    psGameObject::GetPosition(npc->GetActor(), pos, sector );
 
     for (size_t i=0; i < members.GetSize(); i++)
     {

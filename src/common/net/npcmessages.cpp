@@ -320,6 +320,9 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
 
                 // Extract the data
                 EID speaker_id = EID(msg->GetUInt32());
+                EID targetId = EID(msg->GetUInt32());
+                psNPCCommandsMessage::PerceptionTalkType talkType = (psNPCCommandsMessage::PerceptionTalkType)msg->GetUInt32();
+                bool publicTalk = msg->GetBool();
                 const char* text = msg->GetStr();
 
                 // Make sure we haven't run past the end of the buffer
@@ -329,7 +332,8 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                     break;
                 }
 
-                msgtext.AppendFmt("Speaker: %u Text: %s ", speaker_id.Unbox(), text);
+                msgtext.AppendFmt("Speaker: %u Target: %u Type: %u Public: %s Text: %s ", 
+                                  speaker_id.Unbox(), targetId.Unbox(), talkType, publicTalk?"Yes":"No", text);
                 break;
             }
             case psNPCCommandsMessage::CMD_VISIBILITY:
