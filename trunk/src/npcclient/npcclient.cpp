@@ -1247,9 +1247,8 @@ void psNPCClient::ListAllEntities(const char * pattern, bool onlyCharacters)
     {
         gemNPCObject * obj = all_gem_objects[i];
         csVector3 pos;
-        float rot;
         iSector *sector;
-        psGameObject::GetPosition(obj,pos,rot,sector);
+        psGameObject::GetPosition(obj, pos, sector);
 
         if (!pattern || strstr(obj->GetName(),pattern) || atoi(pattern) == (int)obj->GetEID().Unbox())
         {
@@ -1463,11 +1462,21 @@ void psNPCClient::PerceptProximityItems()
         
         iSector *item_sector;
         csVector3 item_pos;
-        float yrot; // Used later for npcs as well
-        psGameObject::GetPosition(item,item_pos,yrot,item_sector);
+        psGameObject::GetPosition(item,item_pos,item_sector);
 
         if (item && item->IsPickable())
         {
+            // Use bounding boxes to check within perception range. This
+            // is faster than using the distance.
+            csBox3 bboxLong;
+            bboxLong.AddBoundingVertex(item_pos-csVector3(LONG_RANGE_PERCEPTION));
+            bboxLong.AddBoundingVertexSmart(item_pos+csVector3(LONG_RANGE_PERCEPTION));
+            csBox3 bboxShort;
+            bboxShort.AddBoundingVertex(item_pos-csVector3(SHORT_RANGE_PERCEPTION));
+            bboxShort.AddBoundingVertexSmart(item_pos+csVector3(SHORT_RANGE_PERCEPTION));
+            csBox3 bboxPersonal;
+            bboxPersonal.AddBoundingVertex(item_pos-csVector3(PERSONAL_RANGE_PERCEPTION));
+            bboxPersonal.AddBoundingVertexSmart(item_pos+csVector3(PERSONAL_RANGE_PERCEPTION));
 
             for (size_t i=0; i<npcs.GetSize(); i++)
             {
@@ -1476,7 +1485,7 @@ void psNPCClient::PerceptProximityItems()
                 
                 iSector *npc_sector;
                 csVector3 npc_pos;
-                psGameObject::GetPosition(npcs[i]->GetActor(),npc_pos,yrot,npc_sector);
+                psGameObject::GetPosition(npcs[i]->GetActor(), npc_pos, npc_sector);
 
                 // Only percept for items in same sector, NPC will probably not see a item
                 // in other sectors.
@@ -1484,14 +1493,12 @@ void psNPCClient::PerceptProximityItems()
                 {
                     continue;
                 }
-                         
-                float dist = world->Distance(npc_pos,npc_sector,item_pos,item_sector);
-                
-                if (dist <= LONG_RANGE_PERCEPTION)
+
+                if (npc_pos < bboxLong)
                 {
-                    if (dist <= SHORT_RANGE_PERCEPTION)
+                    if (npc_pos < bboxShort)
                     {
-                        if (dist <= PERSONAL_RANGE_PERCEPTION)
+                        if (npc_pos < bboxPersonal)
                         {
                             ItemPerception pcpt_nearby("item nearby", item);
                             npcs[i]->TriggerEvent(&pcpt_nearby);

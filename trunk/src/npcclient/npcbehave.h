@@ -366,7 +366,23 @@ public:
 class psGameObject
 {
 public:
+    /** Helper function to return position of a gemNPCObject
+     *
+     * @param object The object to thet the position of
+     * @param pos    Return the position of object
+     * @param yrot   Return the Y Rotation of the object
+     * @param sector Return the sector of object
+     */
     static void GetPosition(gemNPCObject* object, csVector3& pos, float& yrot,iSector*& sector);
+    
+    /** Helper function to return position of a gemNPCObject
+     *
+     * @param object The object to thet the position of
+     * @param pos    Return the position of object
+     * @param sector Return the sector of object
+     */
+    static void GetPosition(gemNPCObject* object, csVector3& pos, iSector*& sector);
+    
     static void SetPosition(gemNPCObject* objecty, csVector3& pos, iSector* = NULL);
     static void SetRotationAngle(gemNPCObject* object, float angle);
     static void GetRotationAngle(gemNPCObject* object, float& yrot)

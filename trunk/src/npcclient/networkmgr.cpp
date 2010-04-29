@@ -630,8 +630,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
 
                 iSector *sector;
                 csVector3 pos;
-                float yrot;
-                psGameObject::GetPosition((caster_ent)?caster_ent:target_ent,pos,yrot,sector);
+                psGameObject::GetPosition((caster_ent)?caster_ent:target_ent, pos, sector);
 
                 SpellPerception pcpt("spell",caster_ent,target_ent,type,severity);
 
@@ -712,11 +711,6 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 if (!npc | !owner || !pet)
                     break;
 
-                iSector *sector;
-                csVector3 pos;
-                float yrot;
-                psGameObject::GetPosition((owner)?owner:pet,pos,yrot,sector);
-
                 OwnerCmdPerception pcpt( "OwnerCmdPerception", command, owner, pet, target );
 
                 npc->TriggerEvent(&pcpt);
@@ -742,11 +736,6 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 if (!npc || !owner || !pet)
                     break;
 
-                iSector *sector;
-                csVector3 pos;
-                float yrot;
-                psGameObject::GetPosition((owner)?owner:pet,pos,yrot,sector);
-
                 OwnerActionPerception pcpt( "OwnerActionPerception", action, owner, pet );
 
                 npc->TriggerEvent(&pcpt);
@@ -771,8 +760,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 
                 iSector *sector;
                 csVector3 pos;
-                float yrot;
-                psGameObject::GetPosition(owner,pos,yrot,sector);
+                psGameObject::GetPosition(owner, pos, sector);
 
                 /* TODO: Create a inventory for each NPC.
                 if (inserted)
@@ -853,8 +841,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
 
                 iSector *sector;
                 csVector3 pos;
-                float yrot;
-                psGameObject::GetPosition(npc->GetActor(),pos,yrot,sector);
+                psGameObject::GetPosition(npc->GetActor(), pos, sector);
 
                 InventoryPerception pcpt( "transfer", item, count, pos, sector, 5.0 );
 
