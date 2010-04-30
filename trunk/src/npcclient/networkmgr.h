@@ -93,6 +93,13 @@ public:
     void Authenticate(csString& host,int port,csString& user,csString& pass);
     bool IsReady() { return ready; }
     void Disconnect();
+    
+    /** Checks if the npc command message could overrun if the neededSize is tried to be added.
+     *  Automatically sends the message in case it could overrun.
+     * 	@param neededSize The size of data we are going to attempt to add to the npc commands message.
+     */
+    void CheckCommandsOverrun(size_t neededSize);
+    
     void QueueDRData(gemNPCActor *entity,psLinearMovement *linmove,uint8_t counter);
     void QueueDRData(NPC * npc );
     /// Call to remove queued dr updates when entities are removed/deleted.

@@ -124,7 +124,6 @@ void NPC::Tick()
                     timeTaken, GetName(), ShowID(GetEID()));
             Dump();
         }
-        networkmanager->SendAllCommands(true); 
 	}
 	tick = new psNPCTick(NPC_BRAIN_TICK, this);
 	
@@ -681,6 +680,10 @@ gemNPCActor* NPC::GetNearestDeadActor(float range)
 void NPC::Printf(const char *msg,...)
 {
     va_list args;
+
+	if(!IsDebugging())
+		return;
+
     va_start(args, msg);
     VPrintf(5,msg,args);
     va_end(args);
@@ -690,6 +693,9 @@ void NPC::Printf(int debug, const char *msg,...)
 {
     char str[1024];
     va_list args;
+
+	if(!IsDebugging())
+		return;
 
     va_start(args, msg);
     vsprintf(str, msg, args);
@@ -708,6 +714,10 @@ void NPC::Printf(int debug, const char *msg,...)
 void NPC::VPrintf(int debug, const char *msg, va_list args)
 {
     char str[1024];
+   
+	if(!IsDebugging())
+		return; 
+
     vsprintf(str, msg, args);
 
     // Add string to the internal log buffer
