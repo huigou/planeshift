@@ -958,6 +958,11 @@ void NetworkManager::DequeueDRData(NPC * npc )
     cmd_dr_outbound.DeleteAll(npc->GetPID());
 }
 
+void NetworkManager::CheckCommandsOverrun(size_t neededSize)
+{
+	if (outbound->msg->current + neededSize > outbound->msg->bytes->GetSize())
+		SendAllCommands();
+}
 
 void NetworkManager::QueueDRData(gemNPCActor *entity, psLinearMovement *linmove, uint8_t counter)
 {
@@ -967,11 +972,7 @@ void NetworkManager::QueueDRData(gemNPCActor *entity, psLinearMovement *linmove,
                         //      DequeueDRData should be supposed to remove all queued data but the iterator
                         //      in SendAllCommands still "catches them"
 
-    if ( outbound->msg->current > ( outbound->msg->bytes->GetSize() - 100 ) )
-    {
-        CPrintf(CON_DEBUG, "Sent all commands [%d] due to possible Message overrun.\n", cmd_count );
-        SendAllCommands();
-    }
+    CheckCommandsOverrun(100);
    
     psDRMessage drmsg(0,entity->GetEID(),counter,0,msgstrings,linmove);
 
@@ -988,11 +989,7 @@ void NetworkManager::QueueDRData(gemNPCActor *entity, psLinearMovement *linmove,
 void NetworkManager::QueueAttackCommand(gemNPCActor *attacker, gemNPCActor *target)
 {
 
-    if ( outbound->msg->current > ( outbound->msg->bytes->GetSize() - 100 ) )
-    {
-        CPrintf(CON_DEBUG, "Sent all commands [%d] due to possible Message overrun.\n", cmd_count );
-        SendAllCommands();
-    }
+    CheckCommandsOverrun(100);
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_ATTACK);
     outbound->msg->Add(attacker->GetEID().Unbox());
@@ -1016,11 +1013,7 @@ void NetworkManager::QueueAttackCommand(gemNPCActor *attacker, gemNPCActor *targ
 
 void NetworkManager::QueueSpawnCommand(gemNPCActor *mother, gemNPCActor *father)
 {
-    if ( outbound->msg->current > ( outbound->msg->bytes->GetSize() - 100 ) )
-    {
-        CPrintf(CON_DEBUG, "Sent all commands [%d] due to possible Message overrun.\n", cmd_count );
-        SendAllCommands();
-    }
+    CheckCommandsOverrun(100);
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_SPAWN);
     outbound->msg->Add(mother->GetEID().Unbox());
@@ -1035,11 +1028,7 @@ void NetworkManager::QueueSpawnCommand(gemNPCActor *mother, gemNPCActor *father)
 
 void NetworkManager::QueueTalkCommand(gemNPCActor *speaker, gemNPCActor* target, psNPCCommandsMessage::PerceptionTalkType talkType, bool publicTalk, const char* text)
 {
-    if ( outbound->msg->current > ( outbound->msg->bytes->GetSize() - 100 ) )
-    {
-        CPrintf(CON_DEBUG, "Sent all commands [%d] due to possible Message overrun.\n", cmd_count );
-        SendAllCommands();
-    }
+    CheckCommandsOverrun(100);
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_TALK );
     outbound->msg->Add( speaker->GetEID().Unbox() );
@@ -1065,11 +1054,7 @@ void NetworkManager::QueueTalkCommand(gemNPCActor *speaker, gemNPCActor* target,
 
 void NetworkManager::QueueVisibilityCommand(gemNPCActor *entity, bool status)
 {
-    if ( outbound->msg->current > ( outbound->msg->bytes->GetSize() - 100 ) )
-    {
-        CPrintf(CON_DEBUG, "Sent all commands [%d] due to possible Message overrun.\n", cmd_count );
-        SendAllCommands();
-    }
+    CheckCommandsOverrun(100);
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_VISIBILITY);
     outbound->msg->Add(entity->GetEID().Unbox());
@@ -1085,11 +1070,7 @@ void NetworkManager::QueueVisibilityCommand(gemNPCActor *entity, bool status)
 
 void NetworkManager::QueuePickupCommand(gemNPCActor *entity, gemNPCObject *item, int count)
 {
-    if ( outbound->msg->current > ( outbound->msg->bytes->GetSize() - 100 ) )
-    {
-        CPrintf(CON_DEBUG, "Sent all commands [%d] due to possible Message overrun.\n", cmd_count );
-        SendAllCommands();
-    }
+    CheckCommandsOverrun(100);
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_PICKUP);
     outbound->msg->Add(entity->GetEID().Unbox());
@@ -1106,11 +1087,7 @@ void NetworkManager::QueuePickupCommand(gemNPCActor *entity, gemNPCObject *item,
 
 void NetworkManager::QueueEquipCommand(gemNPCActor *entity, csString item, csString slot, int count)
 {
-    if ( outbound->msg->current > ( outbound->msg->bytes->GetSize() - 100 ) )
-    {
-        CPrintf(CON_DEBUG, "Sent all commands [%d] due to possible Message overrun.\n", cmd_count );
-        SendAllCommands();
-    }
+    CheckCommandsOverrun(100);
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_EQUIP);
     outbound->msg->Add(entity->GetEID().Unbox());
@@ -1128,11 +1105,7 @@ void NetworkManager::QueueEquipCommand(gemNPCActor *entity, csString item, csStr
 
 void NetworkManager::QueueDequipCommand(gemNPCActor *entity, csString slot)
 {
-    if ( outbound->msg->current > ( outbound->msg->bytes->GetSize() - 100 ) )
-    {
-        CPrintf(CON_DEBUG, "Sent all commands [%d] due to possible Message overrun.\n", cmd_count );
-        SendAllCommands();
-    }
+    CheckCommandsOverrun(100);
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_DEQUIP);
     outbound->msg->Add(entity->GetEID().Unbox());
@@ -1148,11 +1121,7 @@ void NetworkManager::QueueDequipCommand(gemNPCActor *entity, csString slot)
 
 void NetworkManager::QueueDigCommand(gemNPCActor *entity, csString resource)
 {
-    if ( outbound->msg->current > ( outbound->msg->bytes->GetSize() - 100 ) )
-    {
-        CPrintf(CON_DEBUG, "Sent all commands [%d] due to possible Message overrun.\n", cmd_count );
-        SendAllCommands();
-    }
+    CheckCommandsOverrun(100);
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_DIG);
     outbound->msg->Add(entity->GetEID().Unbox());
@@ -1168,11 +1137,7 @@ void NetworkManager::QueueDigCommand(gemNPCActor *entity, csString resource)
 
 void NetworkManager::QueueTransferCommand(gemNPCActor *entity, csString item, int count, csString target)
 {
-    if ( outbound->msg->current > ( outbound->msg->bytes->GetSize() - 100 ) )
-    {
-        CPrintf(CON_DEBUG, "Sent all commands [%d] due to possible Message overrun.\n", cmd_count );
-        SendAllCommands();
-    }
+    CheckCommandsOverrun(100);
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_TRANSFER);
     outbound->msg->Add(entity->GetEID().Unbox());
@@ -1190,11 +1155,7 @@ void NetworkManager::QueueTransferCommand(gemNPCActor *entity, csString item, in
 
 void NetworkManager::QueueDropCommand(gemNPCActor *entity, csString slot)
 {
-    if ( outbound->msg->current > ( outbound->msg->bytes->GetSize() - 100 ) )
-    {
-        CPrintf(CON_DEBUG, "Sent all commands [%d] due to possible Message overrun.\n", cmd_count );
-        SendAllCommands();
-    }
+    CheckCommandsOverrun(100);
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_DROP);
     outbound->msg->Add(entity->GetEID().Unbox());
@@ -1211,11 +1172,7 @@ void NetworkManager::QueueDropCommand(gemNPCActor *entity, csString slot)
 
 void NetworkManager::QueueResurrectCommand(csVector3 where, float rot, csString sector, PID character_id)
 {
-    if ( outbound->msg->current > ( outbound->msg->bytes->GetSize() - 100 ) )
-    {
-        CPrintf(CON_DEBUG, "Sent all commands [%d] due to possible Message overrun.\n", cmd_count );
-        SendAllCommands();
-    }
+    CheckCommandsOverrun(100);
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_RESURRECT);
     outbound->msg->Add(character_id.Unbox());
@@ -1235,11 +1192,7 @@ void NetworkManager::QueueResurrectCommand(csVector3 where, float rot, csString 
 
 void NetworkManager::QueueSequenceCommand(csString name, int cmd, int count)
 {
-    if ( outbound->msg->current > ( outbound->msg->bytes->GetSize() - 100 ) )
-    {
-        CPrintf(CON_DEBUG, "Sent all commands [%d] due to possible Message overrun.\n", cmd_count );
-        SendAllCommands();
-    }
+    CheckCommandsOverrun(100);
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_SEQUENCE);
     outbound->msg->Add( name );
@@ -1256,11 +1209,7 @@ void NetworkManager::QueueSequenceCommand(csString name, int cmd, int count)
 
 void NetworkManager::QueueImperviousCommand(gemNPCActor * entity, bool impervious)
 {
-    if ( outbound->msg->current > ( outbound->msg->bytes->GetSize() - 100 ) )
-    {
-        CPrintf(CON_DEBUG, "Sent all commands [%d] due to possible Message overrun.\n", cmd_count );
-        SendAllCommands();
-    }
+    CheckCommandsOverrun(100);
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_IMPERVIOUS);
     outbound->msg->Add(entity->GetEID().Unbox());
