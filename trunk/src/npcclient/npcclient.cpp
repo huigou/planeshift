@@ -877,18 +877,9 @@ void psNPCClient::Tick()
     // Advance tribes
     for (size_t j=0; j<tribes.GetSize(); j++)
     {
-        csTicks start = csGetTicks();             // When did we start
+        ScopedTimer st(250, tribes[j]); // Calls ScopedTimerCallback on the tribe object
         
         tribes[j]->Advance(when,eventmanager);
-        
-        csTicks timeTaken = csGetTicks() - start; // How long did it take
-        
-        if (timeTaken > 250)                      // This took way to long time
-        {
-            CPrintf(CON_WARNING,"Used %u time to process tick for tribe: %s(ID: %u)\n",
-                    timeTaken,tribes[j]->GetName(),tribes[j]->GetID());
-            ListTribes(tribes[j]->GetName());
-        }
     }
     
     // Percept proximity items every 4th tick
@@ -910,7 +901,7 @@ void psNPCClient::Tick()
     }
  
 
-   // Send all queued npc commands to the server
+    // Send all queued npc commands to the server
     network->SendAllCommands(true); // Final
 }
 

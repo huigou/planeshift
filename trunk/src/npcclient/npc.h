@@ -29,6 +29,8 @@
 
 struct iMovable;
 
+#include "util/psutil.h"
+
 //=============================================================================
 // Local Includes
 //=============================================================================
@@ -93,7 +95,7 @@ private:
 /**
 * This object represents each NPC managed by this superclient.
 */
-class NPC
+class NPC : private ScopedTimerCB
 {
 protected:
     NPCType           *brain;
@@ -171,6 +173,12 @@ public:
     Behavior *GetCurrentBehavior() { return brain->GetCurrentBehavior(); }
     NPCType  *GetBrain() { return brain; }
 
+    /** Callback for debug scope timers
+     */
+    void ScopedTimerCallback(const ScopedTimer* timer);
+
+    /** 
+     */
     void Dump();
     
     /**

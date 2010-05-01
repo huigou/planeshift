@@ -110,25 +110,28 @@ NPC::~NPC()
 
 void NPC::Tick()
 {
-	// Ensure NPC only has one tick at a time.
-	CS_ASSERT(tick == NULL);
-	if(npcclient->IsReady())
-	{
-		csTicks when = csGetTicks();
-		Advance(when);  // Abstract event processing function
-        csTicks timeTaken = csGetTicks() - when; // How long did it take
+    // Ensure NPC only has one tick at a time.
+    CS_ASSERT(tick == NULL);
 
-        if (timeTaken > 200)                      // This took way to long time
-        {
-            CPrintf(CON_WARNING,"Used %u time to process tick for npc: %s(%s)\n",
-                    timeTaken, GetName(), ShowID(GetEID()));
-            Dump();
-        }
-	}
-	tick = new psNPCTick(NPC_BRAIN_TICK, this);
-	
-	tick->QueueEvent();
+    if(npcclient->IsReady())
+    {
+        ScopedTimer st(200, this); // Calls the ScopedTimerCallback on timeout
+
+        Advance(csGetTicks());  // Abstract event processing function
+    }
+
+    tick = new psNPCTick(NPC_BRAIN_TICK, this);
+    tick->QueueEvent();
 }
+
+
+void NPC::ScopedTimerCallback(const ScopedTimer* timer)
+{
+    CPrintf(CON_WARNING,"Used %u time to process tick for npc: %s(%s)\n",
+            timer->TimeUsed(), GetName(), ShowID(GetEID()));
+    Dump();
+}
+
 
 void NPC::Dump()
 {
