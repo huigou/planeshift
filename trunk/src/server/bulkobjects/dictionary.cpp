@@ -1144,9 +1144,9 @@ bool NpcTrigger::operator==(const NpcTrigger& other) const
 
 bool NpcTrigger::operator<=(const NpcTrigger& other) const
 {
-    if (strcmp(area,other.area)>0)
+    if (area > other.area)
         return false;
-    if (strcmp(trigger,other.trigger)>0)
+    if (trigger > other.trigger)
         return false;
     if (priorresponseID>other.priorresponseID)
         return false;
