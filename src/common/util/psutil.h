@@ -105,14 +105,62 @@ struct psPoint
     psPoint (int iX, int iY):x(iX), y(iY) { }
 };
 
+class ScopedTimer; // Forward declaration
 
+/** Callback function for ScopedTimers
+ *
+ *  Use this if special processing beside
+ *  giving a warning message should be
+ *  done when the scope use to long time.
+ *
+ */
+class ScopedTimerCB
+{
+public:
+    virtual void ScopedTimerCallback(const ScopedTimer* timer) = 0;
+};
+
+
+/** Check how long time it take to process a scope
+ *
+ *  Used to time processes in the server. Will print
+ *  or call a function if more then limit ticks is
+ *  used for a scope.
+ *
+ */
 class ScopedTimer
 {
-    csTicks start,limit;
-    csString comment;
- public:
+    csTicks         start;    ///< The time when started
+    csTicks         timeUsed; ///< Time used if failed
+    csTicks         limit;    ///< The limit of when to trigger
+    ScopedTimerCB*  callback; ///< Callback to call if set
+    csString        comment;  ///< The string to print
+         
+public:
+
+    /** Start the timer that will print a warning message
+     *
+     * @param limit  The maximum number of ticks anticipated for this scope
+     * @param format String format of the message to dump
+     */
     ScopedTimer(csTicks limit, const char * format, ... );
+
+    /** Start the timer that will call the callback
+     *
+     * @param limit    The maximum number of ticks anticipated for this scope
+     * @param callback The callback class
+     */
+    ScopedTimer(csTicks limit, ScopedTimerCB* callback );
+    
+    /** Check the limit and trigger warning if more time used than allowed.
+     *
+     */
     ~ScopedTimer();
+
+    /** To be used in Callbacks to get time used.
+     * @return Time in ticks
+     */
+    csTicks TimeUsed() const;
 };
 
 /** Returns a random number.

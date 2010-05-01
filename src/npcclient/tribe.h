@@ -31,6 +31,7 @@
 // Project Includes
 //=============================================================================
 #include <util/psconst.h>
+#include <util/psutil.h>
 
 class iResultRow;
 class EventManager;
@@ -42,7 +43,7 @@ class gemNPCActor;
 
 #define TRIBE_UNLIMITED_SIZE   100
 
-class Tribe
+class Tribe : public ScopedTimerCB
 {
 public:
     struct Resource
@@ -316,6 +317,10 @@ public:
      *  @return The hated entity
      */
     gemNPCActor* GetMostHated(NPC* npc, float range, bool includeInvisible, bool includeInvincible, float* hate=NULL);
+
+    /** Callback for debug of long time used in scopes.
+     */
+    virtual void ScopedTimerCallback(const ScopedTimer* timer);
     
     
 protected:

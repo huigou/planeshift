@@ -39,8 +39,8 @@ void GetTimeOfDay(csString& string)
 }                        
 
 
-ScopedTimer::ScopedTimer(csTicks limit, const char * format, ... ):
-    limit(limit)
+ScopedTimer::ScopedTimer(csTicks limit, const char * format, ... )
+    :start(csGetTicks()),timeUsed(0),limit(limit),callback(NULL)
 { 
     char str[1024];
     va_list args;
@@ -51,18 +51,35 @@ ScopedTimer::ScopedTimer(csTicks limit, const char * format, ... ):
     va_end(args);
 
     comment = str;
-
-    start = csGetTicks(); 
 }
+
+ScopedTimer::ScopedTimer(csTicks limit, ScopedTimerCB* callback )
+    :start(csGetTicks()),limit(limit),callback(callback)
+{
+}
+
 
 ScopedTimer::~ScopedTimer()
 {
-    csTicks delta = csGetTicks() - start;
-    if (delta > limit)
+    timeUsed = csGetTicks() - start;
+    if (timeUsed > limit)
     {
-        CPrintf(CON_DEBUG,"Took %d time to process %s\n",delta,comment.GetDataSafe());
+        if (callback)
+        {
+            callback->ScopedTimerCallback(this);
+        }
+        else
+        {
+            CPrintf(CON_DEBUG,"Took %d time to process %s\n",timeUsed,comment.GetDataSafe());
+        }
     }
 }
+
+csTicks ScopedTimer::TimeUsed() const
+{
+    return timeUsed;
+}
+
 
 csRandomGen psrandomGen;
 

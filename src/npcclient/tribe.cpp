@@ -889,3 +889,9 @@ gemNPCActor* Tribe::GetMostHated(NPC* npc, float range, bool includeInvisible, b
     return mostHated;
 }
 
+void Tribe::ScopedTimerCallback(const ScopedTimer* timer)
+{
+    CPrintf(CON_WARNING,"Used %u time to process tick for tribe: %s(ID: %u)\n",
+            timer->TimeUsed(),GetName(),GetID());
+    npcclient->ListTribes(GetName());
+}
