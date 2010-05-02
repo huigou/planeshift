@@ -1357,11 +1357,11 @@ psUserCmdMessage::psUserCmdMessage(MsgEntry *message)
     }
     if ( command == "/admin" )
     {
-		if(words.GetCount() > 1)
-			level = words.GetInt(1);
-		else
-			level = -1;
-	}
+        if(words.GetCount() > 1)
+            level = words.GetInt(1);
+        else
+            level = -1;
+    }
     if ( command == "/spawn" ||
          command == "/unstick" ||
          command == "/die" ||
@@ -1561,7 +1561,7 @@ psWorkCmdMessage::psWorkCmdMessage(MsgEntry *message)
         repairSlotName = words[1];
         return;
     }
-    
+
     //in case all the above fails conside this a message for handle production (natural resources)
     //this means this must be last. workmanager will check if the command is actually valid
     filter = words[1];
@@ -2288,7 +2288,7 @@ void psGUIInventoryMessage::AddItem( const char* name,
                                      float weight,
                                      float size,
                                      const char* icon,
-                                     int purifyStatus, 
+                                     int purifyStatus,
                                      csStringSet* msgstrings )
 {
     msg->Add(name);
@@ -4718,7 +4718,7 @@ psPersistWorld::psPersistWorld( MsgEntry* me )
 {
     float x = me->GetFloat();
     float y = me->GetFloat();
-    float z = me->GetFloat();    
+    float z = me->GetFloat();
     pos = csVector3(x,y,z);
     sector = me->GetStr();
 }
@@ -7593,7 +7593,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psCachedFileMessage,MSGTYPE_CACHEFILE);
 
 psCachedFileMessage::psCachedFileMessage( uint32_t client, uint8_t sequence, const char *pathname, iDataBuffer *contents)
 {
-    printf("::Building cached file message for '%s', sequence %d, size %zu.\n", 
+    printf("::Building cached file message for '%s', sequence %d, size %zu.\n",
            pathname, sequence, contents?contents->GetSize():0);
 
     // We send the hash along with it to save as the filename on the client
@@ -7642,7 +7642,7 @@ psDialogMenuMessage::psDialogMenuMessage( MsgEntry *me )
     xml = me->GetStr();
 }
 
-void psDialogMenuMessage::AddResponse(uint32_t id, const csString& menuText, 
+void psDialogMenuMessage::AddResponse(uint32_t id, const csString& menuText,
                                       const csString& triggerText, uint32_t flags)
 {
     psDialogMenuMessage::DialogResponse new_response;

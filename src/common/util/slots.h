@@ -1,5 +1,5 @@
 /*
- * 
+ *
  *
  * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
@@ -25,7 +25,7 @@
 
 /** Holds a list of the possible socket identifiers that items can be attached to.
  */
-enum INVENTORY_SLOT_NUMBER 
+enum INVENTORY_SLOT_NUMBER
 {
     PSCHARACTER_SLOT_STORAGE = -2,
     PSCHARACTER_SLOT_NONE = -1,
@@ -80,24 +80,24 @@ enum INVENTORY_SLOT_NUMBER
     PSCHARACTER_SLOT_BULK_END = 48 // not a valid number
 };
 
-/** A hash map class that stores a name->ID of sockets. This way we can easily 
+/** A hash map class that stores a name->ID of sockets. This way we can easily
   * work with numbers and then convert to string if we need to.  This is shared
-  * class across both the client and server since both may need this.  
+  * class across both the client and server since both may need this.
   */
 class SlotNameHash
 {
-public: 
+public:
     SlotNameHash();
     /// Get the enum ID from a string name.
     int GetID( const csString& name );
-    
+
     /// Get the name from an enum
     const char* GetName( int id );
 
     /// Get the secondary, non exact name
     const char* GetSecondaryName( int id );
     void AddSecondaryName(const char* primary, const char* secondary);
-    
+
 private:
 
     struct PrimaryToSecondary

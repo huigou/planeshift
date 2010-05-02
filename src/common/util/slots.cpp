@@ -1,5 +1,5 @@
 /*
- * 
+ *
  *
  * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
@@ -21,28 +21,28 @@
 #include "slots.h"
 
 SlotNameHash::SlotNameHash()
-{ 
+{
     // Construct the hash map with our name->enum ID.
     slotNames.Register ("righthand",     PSCHARACTER_SLOT_RIGHTHAND );
     slotNames.Register ("lefthand",      PSCHARACTER_SLOT_LEFTHAND );
     slotNames.Register ("bothhands",     PSCHARACTER_SLOT_BOTHHANDS );
-    slotNames.Register ("helm",          PSCHARACTER_SLOT_HELM ); 
+    slotNames.Register ("helm",          PSCHARACTER_SLOT_HELM );
     slotNames.Register ("rightfinger",   PSCHARACTER_SLOT_RIGHTFINGER );
     slotNames.Register ("leftfinger",    PSCHARACTER_SLOT_LEFTFINGER );
-    slotNames.Register ("neck",          PSCHARACTER_SLOT_NECK );    
-    slotNames.Register ("back",          PSCHARACTER_SLOT_BACK );    
-    slotNames.Register ("arms",          PSCHARACTER_SLOT_ARMS );    
-    slotNames.Register ("gloves",        PSCHARACTER_SLOT_GLOVES );    
-    slotNames.Register ("boots",         PSCHARACTER_SLOT_BOOTS );    
-    slotNames.Register ("legs",          PSCHARACTER_SLOT_LEGS );  
-    slotNames.Register ("belt",          PSCHARACTER_SLOT_BELT );      
-    slotNames.Register ("bracers",       PSCHARACTER_SLOT_BRACERS );      
-    slotNames.Register ("torso",         PSCHARACTER_SLOT_TORSO );    
-    slotNames.Register ("mind",          PSCHARACTER_SLOT_MIND );    
+    slotNames.Register ("neck",          PSCHARACTER_SLOT_NECK );
+    slotNames.Register ("back",          PSCHARACTER_SLOT_BACK );
+    slotNames.Register ("arms",          PSCHARACTER_SLOT_ARMS );
+    slotNames.Register ("gloves",        PSCHARACTER_SLOT_GLOVES );
+    slotNames.Register ("boots",         PSCHARACTER_SLOT_BOOTS );
+    slotNames.Register ("legs",          PSCHARACTER_SLOT_LEGS );
+    slotNames.Register ("belt",          PSCHARACTER_SLOT_BELT );
+    slotNames.Register ("bracers",       PSCHARACTER_SLOT_BRACERS );
+    slotNames.Register ("torso",         PSCHARACTER_SLOT_TORSO );
+    slotNames.Register ("mind",          PSCHARACTER_SLOT_MIND );
 
     AddSecondaryName("gloves",      "hands");
-    AddSecondaryName("boots",       "feet");  
-    AddSecondaryName("helm",        "head");  
+    AddSecondaryName("boots",       "feet");
+    AddSecondaryName("helm",        "head");
 }
 
 int SlotNameHash::GetID( const csString& name )
@@ -52,16 +52,16 @@ int SlotNameHash::GetID( const csString& name )
 }
 
 const char* SlotNameHash::GetName( int id )
-{    
+{
     return slotNames.Request( id );
 }
 
 const char* SlotNameHash::GetSecondaryName( int id )
-{    
+{
     const char* name = GetName(id);
     if(!name)
         return NULL;
-        
+
     for(size_t i = 0; i < secondaryNames.GetSize();i++)
     {
         PrimaryToSecondary* curr = secondaryNames.Get(i);

@@ -169,7 +169,7 @@ psCharacter::psCharacter() : inventory(this),
 
     banker = false;
     isStatue = false;
-    
+
     // Load the math scripts
     if (!staminaCalc)
     {
@@ -188,7 +188,7 @@ psCharacter::psCharacter() : inventory(this),
             Error1("Can't find math script StaminaRatioWalk! Character loading failed.");
         }
     }
-    
+
     if (!staminaRatioStill)
     {
         staminaRatioStill = psserver->GetMathScriptEngine()->FindScript("StaminaRatioStill");
@@ -197,7 +197,7 @@ psCharacter::psCharacter() : inventory(this),
             Error1("Can't find math script StaminaRatioStill! Character loading failed.");
         }
     }
-    
+
     if (!staminaRatioSit)
     {
         staminaRatioSit = psserver->GetMathScriptEngine()->FindScript("StaminaRatioSit");
@@ -206,7 +206,7 @@ psCharacter::psCharacter() : inventory(this),
             Error1("Can't find math script StaminaRatioSit! Character loading failed.");
         }
     }
-    
+
     if (!staminaRatioWork)
     {
         staminaRatioWork = psserver->GetMathScriptEngine()->FindScript("StaminaRatioWork");
@@ -416,7 +416,7 @@ bool psCharacter::Load(iResultRow& row)
     animal_affinity  = row[ "animal_affinity" ];
     //owner_id         = row.GetUInt32( "owner_id" );
     help_event_flags = row.GetUInt32("help_event_flags");
-    
+
     timeconnected        = row.GetUInt32("time_connected_sec");
     startTimeThisSession = csGetTicks();
 
@@ -791,7 +791,7 @@ void psCharacter::SetLastLoginTime(const char *last_login, bool save )
     }
 
     this->lastlogintime = timeStr;
-    
+
     if(guildinfo)
         guildinfo->UpdateLastLogin(this);
 
@@ -851,20 +851,20 @@ bool psCharacter::LoadSkills(PID use_id)
                 skills.SetSkillPractice(  skill, skillResult[i].GetInt("skill_Z") );
                 skills.SetSkillKnowledge( skill, skillResult[i].GetInt("skill_Y") );
                 skills.SetSkillRank(      skill, skillResult[i].GetInt("skill_Rank"),false );
-                
+
                 //check if the skill is a stat and set it in case (this overrides the present base ones if present
-				if(skill == PSSKILL_AGI)
-					attributes[PSITEMSTATS_STAT_AGILITY]     .SetBase(skillResult[i].GetInt("skill_Rank"));
-				else if(skill == PSSKILL_STR)
-					attributes[PSITEMSTATS_STAT_STRENGTH]    .SetBase(skillResult[i].GetInt("skill_Rank"));
-				else if(skill == PSSKILL_END)
-					attributes[PSITEMSTATS_STAT_ENDURANCE]   .SetBase(skillResult[i].GetInt("skill_Rank"));
-				else if(skill == PSSKILL_INT)
-					attributes[PSITEMSTATS_STAT_INTELLIGENCE].SetBase(skillResult[i].GetInt("skill_Rank"));
-				else if(skill == PSSKILL_WILL)
-					attributes[PSITEMSTATS_STAT_WILL]        .SetBase(skillResult[i].GetInt("skill_Rank"));
-				else if(skill == PSSKILL_CHA)
-					attributes[PSITEMSTATS_STAT_CHARISMA]    .SetBase(skillResult[i].GetInt("skill_Rank"));
+                if(skill == PSSKILL_AGI)
+                    attributes[PSITEMSTATS_STAT_AGILITY]     .SetBase(skillResult[i].GetInt("skill_Rank"));
+                else if(skill == PSSKILL_STR)
+                    attributes[PSITEMSTATS_STAT_STRENGTH]    .SetBase(skillResult[i].GetInt("skill_Rank"));
+                else if(skill == PSSKILL_END)
+                    attributes[PSITEMSTATS_STAT_ENDURANCE]   .SetBase(skillResult[i].GetInt("skill_Rank"));
+                else if(skill == PSSKILL_INT)
+                    attributes[PSITEMSTATS_STAT_INTELLIGENCE].SetBase(skillResult[i].GetInt("skill_Rank"));
+                else if(skill == PSSKILL_WILL)
+                    attributes[PSITEMSTATS_STAT_WILL]        .SetBase(skillResult[i].GetInt("skill_Rank"));
+                else if(skill == PSSKILL_CHA)
+                    attributes[PSITEMSTATS_STAT_CHARISMA]    .SetBase(skillResult[i].GetInt("skill_Rank"));
                 skills.Get(skill).dirtyFlag = false;
             }
         }
@@ -961,7 +961,7 @@ void psCharacter::SetRaceInfo(psRaceInfo *rinfo)
     attributes[PSITEMSTATS_STAT_INTELLIGENCE].SetBase(int(rinfo->GetBaseAttribute(PSITEMSTATS_STAT_INTELLIGENCE)));
     attributes[PSITEMSTATS_STAT_WILL]       . SetBase(int(rinfo->GetBaseAttribute(PSITEMSTATS_STAT_WILL)));
     attributes[PSITEMSTATS_STAT_CHARISMA]  .  SetBase(int(rinfo->GetBaseAttribute(PSITEMSTATS_STAT_CHARISMA)));
-    
+
     //as we are changing or obtaining for the first time a race set the inventory correctly for this.
     inventory.SetBasicArmor(raceinfo);
     inventory.SetBasicWeapon(raceinfo);
@@ -1099,18 +1099,18 @@ unsigned int psCharacter::CalculateAddExperience(PSSKILL skill, unsigned int pra
         env.Define("Modifier", modifier);
         expSkillCalc->Evaluate(&env);
         unsigned int experiencePoints = env.Lookup("Exp")->GetRoundValue();
-        
+
         if(GetActor()->GetClient()->GetSecurityLevel() >= GM_DEVELOPER)
         {
-                psserver->SendSystemInfo(GetActor()->GetClientID(), 
+                psserver->SendSystemInfo(GetActor()->GetClientID(),
                 "Giving %d experience and %d practicepoints to skill %d with modifier %f.\n"
                 "zcost for the skill is %d for this level and %d for the next level\n"
                 "ycost for the skill is %d for this level and %d for the next level\n",
-                experiencePoints, practicePoints, skill, modifier, 
+                experiencePoints, practicePoints, skill, modifier,
                 skills.Get(skill).zCost, skills.Get(skill).zCostNext,
-                skills.Get(skill).yCost, skills.Get(skill).yCostNext);       
+                skills.Get(skill).yCost, skills.Get(skill).yCostNext);
         }
-        
+
         AddExperiencePointsNotify(experiencePoints);
 
         if (psserver->GetCacheManager()->GetSkillByID((PSSKILL)skill)) //check if skill is valid
@@ -1256,9 +1256,9 @@ void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, float yrot, bo
     psMoney money;
 
     psDropEvent evt(pid,
-		    GetCharName(),
+            GetCharName(),
                     item->GetUID(),
-		    item->GetName(),
+            item->GetName(),
                     item->GetStackCount(),
                     (int)item->GetCurrentStats()->GetQuality(),
                     0);
@@ -1457,7 +1457,7 @@ void psCharacter::SetMoney( psItem *& itemdata )
     /// Check to see if the item is a money item and treat as a special case.
     if ( itemdata->GetBaseStats()->GetFlags() & PSITEMSTATS_FLAG_TRIA )
         money.AdjustTrias( itemdata->GetStackCount() );
-    
+
     if ( itemdata->GetBaseStats()->GetFlags() & PSITEMSTATS_FLAG_HEXA )
         money.AdjustHexas( itemdata->GetStackCount() );
 
@@ -1674,15 +1674,15 @@ void psCharacter::SetStaminaRegenerationWalk(bool physical,bool mental)
     env.Define("Actor", this);
     env.Define("BaseRegenPhysical", GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_PHYSICAL_WALK]);
     env.Define("BaseRegenMental",   GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_MENTAL_WALK]);
-    
+
     staminaRatioWalk->Evaluate(&env);
-    
+
     MathVar *ratePhy = env.Lookup("PStaminaRate");
     MathVar *rateMen = env.Lookup("MStaminaRate");
-    
+
     if(physical && ratePhy) GetPStaminaRate().SetBase(ratePhy->GetValue());
     if(mental   && rateMen) GetMStaminaRate().SetBase(rateMen->GetValue());
-    
+
     //if(physical) GetPStaminaRate().SetBase(GetMaxPStamina().Current()/100 * GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_PHYSICAL_WALK]);
     //if(mental)   GetMStaminaRate().SetBase(GetMaxMStamina().Current()/100 * GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_MENTAL_WALK]);
 }
@@ -1693,32 +1693,32 @@ void psCharacter::SetStaminaRegenerationSitting()
     env.Define("Actor", this);
     env.Define("BaseRegenPhysical", GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_PHYSICAL_STILL]);
     env.Define("BaseRegenMental",   GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_MENTAL_STILL]);
-    
+
     staminaRatioSit->Evaluate(&env);
-    
+
     MathVar *ratePhy = env.Lookup("PStaminaRate");
     MathVar *rateMen = env.Lookup("MStaminaRate");
-    
+
     if(ratePhy) GetPStaminaRate().SetBase(ratePhy->GetValue());
     if(rateMen) GetMStaminaRate().SetBase(rateMen->GetValue());
-    
+
     //GetPStaminaRate().SetBase(GetMaxPStamina().Current() * 0.015 * GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_PHYSICAL_STILL]);
     //GetMStaminaRate().SetBase(GetMaxMStamina().Current() * 0.015 * GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_MENTAL_STILL]);
 }
 
 void psCharacter::SetStaminaRegenerationStill(bool physical,bool mental)
 {
-    
+
     MathEnvironment env;
     env.Define("Actor", this);
     env.Define("BaseRegenPhysical", GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_PHYSICAL_STILL]);
     env.Define("BaseRegenMental",   GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_MENTAL_STILL]);
-    
+
     staminaRatioStill->Evaluate(&env);
-    
+
     MathVar *ratePhy = env.Lookup("PStaminaRate");
     MathVar *rateMen = env.Lookup("MStaminaRate");
-    
+
     if(physical && ratePhy) GetPStaminaRate().SetBase(ratePhy->GetValue());
     if(mental   && rateMen) GetMStaminaRate().SetBase(rateMen->GetValue());
 
@@ -1736,7 +1736,7 @@ void psCharacter::SetStaminaRegenerationWork(int skill)
     env.Define("Actor", this);
     env.Define("BaseRegenPhysical", GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_PHYSICAL_STILL]);
     env.Define("BaseRegenMental",   GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_MENTAL_STILL]);
-    
+
     // Need real formula for this. Shouldn't be hard coded anyway.
     // Stamina drain needs to be set depending on the complexity of the task.
     psSkillInfo* skillInfo = psserver->GetCacheManager()->GetSkillByID(skill);
@@ -1744,12 +1744,12 @@ void psCharacter::SetStaminaRegenerationWork(int skill)
     int factor = skillInfo? skillInfo->mental_factor : 100;
 
     env.Define("SkillMentalFactor",  factor);
-    
+
     staminaRatioWork->Evaluate(&env);
-    
+
     MathVar *ratePhy = env.Lookup("PStaminaRate");
     MathVar *rateMen = env.Lookup("MStaminaRate");
-    
+
     if(ratePhy) GetPStaminaRate().SetBase(ratePhy->GetValue());
     if(rateMen) GetMStaminaRate().SetBase(rateMen->GetValue());
 
@@ -1812,7 +1812,7 @@ void psCharacter::TagEquipmentObject(INVENTORY_SLOT_NUMBER slot,int eventId)
 
     if (!Weapon) //no need to continue
         return;
-    
+
     inventory.GetEquipmentObject(slot).eventId = eventId;
 
     //drain stamina on player attacks
@@ -1885,10 +1885,10 @@ float psCharacter::GetCounterBlockValueForWeaponInSlot(INVENTORY_SLOT_NUMBER slo
 
 bool psCharacter::ArmorUsesSkill(INVENTORY_SLOT_NUMBER slot, PSITEMSTATS_ARMORTYPE skill)
 {
-	if (inventory.GetInventoryItem(slot)==NULL)
-		return inventory.GetEquipmentObject(slot).default_if_empty->GetArmorType()==skill;
-	else
-		return inventory.GetInventoryItem(slot)->GetArmorType()==skill;
+    if (inventory.GetInventoryItem(slot)==NULL)
+        return inventory.GetEquipmentObject(slot).default_if_empty->GetArmorType()==skill;
+    else
+        return inventory.GetInventoryItem(slot)->GetArmorType()==skill;
 }
 
 void psCharacter::CalculateArmorForSlot(INVENTORY_SLOT_NUMBER slot, float& heavy_p, float& med_p, float& light_p) {

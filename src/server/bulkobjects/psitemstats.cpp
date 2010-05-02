@@ -468,7 +468,7 @@ bool psItemStats::ReadItemStats(iResultRow& row)
 
     // Load in the valid slots for the item.
     LoadSlots( row );
-    
+
     LoadMeshRemoval(row);
 
     ParseFlags( row );
@@ -608,52 +608,52 @@ void psItemStats::ParseFlags( iResultRow& row )
 
 void psItemStats::LoadMeshRemoval( iResultRow& row )
 {
-	// Slots effects for this item
+    // Slots effects for this item
     csStringArray entries;
     if(row["removed_mesh"]) //check if it's valid (aka the row is not NULL)
         entries.SplitString(row["removed_mesh"],  ";");
-        
+
     //now we split them in subentities to see the slot names
     for(size_t i = 0; i < entries.GetSize(); i++)
     {
-		int slotID = PSCHARACTER_SLOT_NONE;
-		csString removedMesh = "";
-		csString currentEntry = entries.Get(i); //get the current entry
-		//see if the slot name is declared
-		size_t slotNameEnd = currentEntry.Find(":");
-		//if it's not just copy over the removed mesh
-		if(slotNameEnd == (size_t) -1)
-		{
-			removedMesh = currentEntry.Trim();
-		}
-		else
-		{
-			//else slice the string in the slotname and removed mesh parts
-			slotID = psserver->GetCacheManager()->slotNameHash.GetID
-			                                 (currentEntry.Slice(0, slotNameEnd).Trim());
-			removedMesh = currentEntry.Slice(slotNameEnd+1).Trim();		
-		}
-		//store it in the hash containing these combinations
-		//NOTE: we use putunique as we want an unique entry in the hash.
-		meshRemovalInfo.PutUnique(slotID, removedMesh);
-	}
+        int slotID = PSCHARACTER_SLOT_NONE;
+        csString removedMesh = "";
+        csString currentEntry = entries.Get(i); //get the current entry
+        //see if the slot name is declared
+        size_t slotNameEnd = currentEntry.Find(":");
+        //if it's not just copy over the removed mesh
+        if(slotNameEnd == (size_t) -1)
+        {
+            removedMesh = currentEntry.Trim();
+        }
+        else
+        {
+            //else slice the string in the slotname and removed mesh parts
+            slotID = psserver->GetCacheManager()->slotNameHash.GetID
+                                             (currentEntry.Slice(0, slotNameEnd).Trim());
+            removedMesh = currentEntry.Slice(slotNameEnd+1).Trim();
+        }
+        //store it in the hash containing these combinations
+        //NOTE: we use putunique as we want an unique entry in the hash.
+        meshRemovalInfo.PutUnique(slotID, removedMesh);
+    }
 }
 
 csString psItemStats::GetSlotRemovedMesh(int slot)
 {
-	csString* result; //we are sure this will get initialized by getelempointer.
-	//try first the specified slot
-	result = meshRemovalInfo.GetElementPointer(slot);
-	if(!result)
-	{
-		//it wasn't found so fallback to the no slot entry
-		result = meshRemovalInfo.GetElementPointer((int)PSCHARACTER_SLOT_NONE);
-		if(!result) //still missing just return a blank text
-			return "";
-	}
-	//return what was found
-	return *result;
-	
+    csString* result; //we are sure this will get initialized by getelempointer.
+    //try first the specified slot
+    result = meshRemovalInfo.GetElementPointer(slot);
+    if(!result)
+    {
+        //it wasn't found so fallback to the no slot entry
+        result = meshRemovalInfo.GetElementPointer((int)PSCHARACTER_SLOT_NONE);
+        if(!result) //still missing just return a blank text
+            return "";
+    }
+    //return what was found
+    return *result;
+
 }
 
 void psItemStats::LoadSlots( iResultRow& row )
