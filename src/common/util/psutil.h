@@ -118,6 +118,7 @@ class ScopedTimerCB
 {
 public:
     virtual void ScopedTimerCallback(const ScopedTimer* timer) = 0;
+    virtual ~ScopedTimerCB() {}
 };
 
 
