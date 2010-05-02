@@ -2138,9 +2138,10 @@ void psCharacter::MakeEquipmentString( csString& equipment )
         csString part = EscpXML( item->GetPartName() );
         csString texture = EscpXML( item->GetTextureName() );
         csString partMesh = EscpXML( item->GetPartMeshName() );
+        csString removedMesh = EscpXML(item->GetSlotRemovedMesh(i));
 
-        equipment.AppendFmt("<equip slot=\"%s\" mesh=\"%s\" part=\"%s\" texture=\"%s\" partMesh=\"%s\"  />",
-                              slot.GetData(), mesh.GetData(), part.GetData(), texture.GetData(), partMesh.GetData() );
+        equipment.AppendFmt("<equip slot=\"%s\" mesh=\"%s\" part=\"%s\" texture=\"%s\" partMesh=\"%s\"  removedMesh=\"%s\" />",
+                              slot.GetData(), mesh.GetData(), part.GetData(), texture.GetData(), partMesh.GetData(), removedMesh.GetData() );
     }
 
     equipment.Append("</equiplist>");

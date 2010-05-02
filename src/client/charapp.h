@@ -106,6 +106,13 @@ public:
       */
     void ShowHair(bool flag=true);
 
+    /** Toggle the meshes on and off.
+      * @param slot The slot which which will apply/remove this restrain.
+      * @param meshList The list of meshes which will be applied/removed this restrain.
+      * @param show True if the slot is a restrain to showing the mesh. False if it's not anymore.
+      */
+    void ShowMeshes(csString& slot, csString& meshList, bool show=true);
+
     /** Set the skin tone.
       * @param part  The part of the model to change.
       * @param material The material to use on that part.
@@ -131,23 +138,25 @@ public:
     void ApplyRider(csRef<iMeshWrapper> mesh);
     
     /** Equip an item onto the model.
-      * @param slotname The socket we want to place the item.
-      * @param mesh     The name of the 3D mesh to attach in above socket.
-      * @param part     The part of the model we want to change ( ie Torso )
-      * @param subMesh  The submesh we want to use ( ie $P_Plate )
-      * @param texture  The texture to apply to that part.
+      * @param slotname    The socket we want to place the item.
+      * @param mesh        The name of the 3D mesh to attach in above socket.
+      * @param part        The part of the model we want to change ( ie Torso )
+      * @param subMesh     The submesh we want to use ( ie $P_Plate )
+      * @param texture     The texture to apply to that part.
+      * @param removedMesh The mesh to remove when this item is equipped
       */
-    void Equip(csString& slotname, csString& mesh, csString& part, csString& subMesh, csString& texture);
+    void Equip(csString& slotname, csString& mesh, csString& part, csString& subMesh, csString& texture, csString& removedMesh);
     
     
     /** Remove an item from the model.
-      * @param slotname The socket we want to remove the item.
-      * @param mesh     The name of the 3D mesh in above socket.
-      * @param part     The part of the model we want to change ( ie Torso )
-      * @param subMesh  The submesh we want to remove ( ie $P_Plate )
-      * @param texture  The texture to apply to that part.
+      * @param slotname    The socket we want to remove the item.
+      * @param mesh        The name of the 3D mesh in above socket.
+      * @param part        The part of the model we want to change ( ie Torso )
+      * @param subMesh     The submesh we want to remove ( ie $P_Plate )
+      * @param texture     The texture to apply to that part.
+      * @param removedMesh The mesh to remove when this item is equipped
       */
-    bool Dequip(csString& slotname, csString& mesh, csString& part, csString& subMesh, csString& texture);
+    bool Dequip(csString& slotname, csString& mesh, csString& part, csString& subMesh, csString& texture, csString& removedMesh);
     
     /** Copy a current appearance class.
       * @param clone The class to copy.
@@ -262,6 +271,8 @@ private:
     
     bool hairAttached;                                  ///< Flag if hair is on/off                        
     bool beardAttached;                                 ///< Flag if beard is on/off.
+    
+    csHashReversible<csString> removedMeshes;			///< Contains the mesh which have been removed from the model.
     
     bool eyeColorSet;                                   ///< Flag if eye colour set.
     bool hairColorSet;                                  ///< Flag if hair colour set.

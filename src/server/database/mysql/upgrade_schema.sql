@@ -1450,6 +1450,10 @@ ALTER TABLE `tribes`
   ADD COLUMN `wealth_resource_growth_active_limit` int(10) NOT NULL default '0' AFTER `wealth_resource_growth_active`,
   CHANGE COLUMN `wealth_resource_growth` `wealth_resource_growth` float(10,2) NOT NULL default '0.00';
 
+#1247 - Stefano Angeleri - Added a field to define which mesh are hidden by the items.
+UPDATE `server_options` SET `option_value`='1247' WHERE `option_name`='db_version';
+ALTER TABLE `item_stats` ADD COLUMN `removed_mesh` VARCHAR(200)  NOT NULL COMMENT 'Lists the mesh to be removed when this item is equipped. It\'s defined in this format slotname:mesh1,mesh2; slotname:mesh3; mesh4,mesh5. slotname is optional.' AFTER `cstr_part_mesh`;
+UPDATE item_stats set removed_mesh="helm:Hair" where valid_slots like "%HELM%" and name != "basecloths" and name not like "%Natural%" and name != "Rogue Armor";
 
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.

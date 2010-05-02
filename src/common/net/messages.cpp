@@ -2638,14 +2638,16 @@ psEquipmentMessage::psEquipmentMessage( uint32_t clientNum,
                                         csString& meshName,
                                         csString& part,
                                         csString& texture,
-                                        csString& partMesh)
+                                        csString& partMesh,
+                                        csString& removedMesh)
 {
     msg.AttachNew(new MsgEntry( sizeof(uint32_t)*2 +
                         sizeof(uint8_t) +
                         meshName.Length()+1 +
                         part.Length()+1 +
                         texture.Length()+1 +
-                        partMesh.Length()+1));
+                        partMesh.Length()+1 +
+                        removedMesh.Length()+1));
 
     msg->SetType(MSGTYPE_EQUIPMENT);
     msg->clientnum  = clientNum;
@@ -2657,6 +2659,7 @@ psEquipmentMessage::psEquipmentMessage( uint32_t clientNum,
     msg->Add( part );
     msg->Add( texture );
     msg->Add( partMesh );
+    msg->Add( removedMesh );
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
@@ -2667,13 +2670,14 @@ psEquipmentMessage::psEquipmentMessage( MsgEntry* message )
     if ( !message )
         return;
 
-    type   = message->GetUInt8();
-    player = message->GetUInt32();
-    slot   = message->GetUInt32();
-    mesh   = message->GetStr();
-    part   = message->GetStr();
-    texture = message->GetStr();
-    partMesh = message->GetStr();
+    type        = message->GetUInt8();
+    player      = message->GetUInt32();
+    slot        = message->GetUInt32();
+    mesh        = message->GetStr();
+    part        = message->GetStr();
+    texture     = message->GetStr();
+    partMesh    = message->GetStr();
+    removedMesh = message->GetStr();
 
     // Sets valid flag based on message overrun state
     valid=!(message->overrun);
@@ -2690,6 +2694,7 @@ csString psEquipmentMessage::ToString(AccessPointers * /*access_ptrs*/)
     msgtext.AppendFmt(" Part: '%s'",part.GetDataSafe());
     msgtext.AppendFmt(" Texture: '%s'",texture.GetDataSafe());
     msgtext.AppendFmt(" PartMesh: '%s'",partMesh.GetDataSafe());
+    msgtext.AppendFmt(" RemovedMesh: '%s'",removedMesh.GetDataSafe());
 
     return msgtext;
 }

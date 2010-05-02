@@ -438,7 +438,7 @@ void psClientCharManager::HandleEquipment(MsgEntry* me)
     if (equip.type == psEquipmentMessage::EQUIP)
     {
         // Update the actor
-        object->CharAppearance()->Equip(slotname,equip.mesh,equip.part,equip.partMesh,equip.texture);
+        object->CharAppearance()->Equip(slotname,equip.mesh,equip.part,equip.partMesh,equip.texture,equip.removedMesh);
 
         // Update any doll views registered for changes
         csArray<iPAWSSubscriber*> dolls = PawsManager::GetSingleton().ListSubscribers("sigActorUpdate");
@@ -461,7 +461,7 @@ void psClientCharManager::HandleEquipment(MsgEntry* me)
                 psCharAppearance* p = doll->GetCharApp();
                 p->Clone(object->CharAppearance());
                 p->SetMesh(dollObject);
-                p->Equip(slotname,equip.mesh,equip.part,equip.partMesh,equip.texture);
+                p->Equip(slotname,equip.mesh,equip.part,equip.partMesh,equip.texture,equip.removedMesh);
             }
         }
     }
@@ -490,11 +490,11 @@ void psClientCharManager::HandleEquipment(MsgEntry* me)
                 psCharAppearance* p = doll->GetCharApp();
                 p->SetMesh(dollObject);
                 p->Clone(object->CharAppearance());
-                p->Dequip(slotname,equip.mesh,equip.part,equip.partMesh,equip.texture);
+                p->Dequip(slotname,equip.mesh,equip.part,equip.partMesh,equip.texture,equip.removedMesh);
             }
         }
 
-        object->CharAppearance()->Dequip(slotname,equip.mesh,equip.part,equip.partMesh,equip.texture);
+        object->CharAppearance()->Dequip(slotname,equip.mesh,equip.part,equip.partMesh,equip.texture,equip.removedMesh);
     }
 }
 

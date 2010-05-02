@@ -1910,6 +1910,7 @@ public:
      * @param meshName The name of the mesh to attach to slot
      * @param part The name of the submesh that the equipment should go on.
      * @param texture The name of the new texture to go onto a part
+     * @param removedMesh Lists the mesh which should be removed when this item is equiped.
      *
      * If the type is DEEQUIP the meshName is ignored and sent as ""
      */
@@ -1920,7 +1921,8 @@ public:
                         csString& mesh,
                         csString& part,
                         csString& texture,
-                        csString& partMesh);
+                        csString& partMesh,
+                        csString& removedMesh);
 
 
     /// Crack this message off the network.
@@ -1944,6 +1946,7 @@ public:
     csString texture;
     csString partMesh; /* Set if the body part given by pattern given in part
                           should be replaced with this */
+    csString removedMesh; ///< Lists the mesh which should be removed when this item is equipped.
 };
 
 //--------------------------------------------------------------------------
