@@ -74,9 +74,9 @@ psSoundManager::psSoundManager (iObjectRegistry* objectReg)
 
 psSoundManager::~psSoundManager ()
 {
+    UnloadSectors();
     delete voicequeue;
     delete SndSysMgr;
-    UnloadSectors();
     // Note: SndSysMgr should take care of SoundControls .. we can ignore them
 }
 
@@ -169,6 +169,8 @@ void psSoundManager::TransferHandles (psSoundSector* &oldsector,
         {
             /* yay active resource with the same name - steal the handle*/
             newsector->musicarray[j]->handle = oldsector->activemusic->handle;
+            /* set handle to NULL */
+            oldsector->activemusic->handle = NULL;
             newsector->activemusic = newsector->musicarray[j];
             /* set the sound to active */
             newsector->musicarray[j]->active = true;
@@ -191,6 +193,8 @@ void psSoundManager::TransferHandles (psSoundSector* &oldsector,
         {
             /* yay active resource with the same name - steal the handle*/
             newsector->ambientarray[j]->handle = oldsector->activeambient->handle;
+            /* set handle to NULL */
+            oldsector->activeambient->handle = NULL;
             newsector->activeambient = newsector->ambientarray[j];
             /* set the sound to active */
             newsector->ambientarray[j]->active = true;
@@ -212,7 +216,8 @@ void psSoundManager::ConvertFactoriesToEmitter (psSoundSector* &sector)
     iMeshWrapper            *mesh;
     iMeshList               *meshes;
     iEngine                 *engine;
-    psEmitter             *emitter;
+    psEmitter               *emitter;
+    psEmitter               *factoryemitter;
 
     engine = psengine->GetEngine();
 
@@ -228,6 +233,8 @@ void psSoundManager::ConvertFactoriesToEmitter (psSoundSector* &sector)
             continue;
         }
 
+        factoryemitter = sector->emitterarray[j];
+                
         if (!(searchSector = engine->FindSector( sector->name, NULL )))
         {
             Error2("sector %s not found\n", (const char *) sector);
@@ -235,9 +242,9 @@ void psSoundManager::ConvertFactoriesToEmitter (psSoundSector* &sector)
         }
 
         if (!(factory = engine->GetMeshFactories()
-                        ->FindByName(sector->emitterarray[j]->factory)))
+                        ->FindByName(factoryemitter->factory)))
         {
-            Error2("Could not find factory name %s", (const char *) sector->emitterarray[j]->factory);
+            Error2("Could not find factory name %s", (const char *) factoryemitter->factory);
             continue;
         }
 
@@ -249,14 +256,14 @@ void psSoundManager::ConvertFactoriesToEmitter (psSoundSector* &sector)
 
             if (mesh->GetFactory() == factory)
             {
-                if (rng.Get() <= sector->emitterarray[j]->factory_prob)
+                if (rng.Get() <= factoryemitter->factory_prob)
                 {
                     emitter = new psEmitter;
 
-                    emitter->resource = csString(sector->emitterarray[j]->resource);
-                    emitter->minvol   = sector->emitterarray[j]->minvol;
-                    emitter->maxvol   = sector->emitterarray[j]->maxvol;
-                    emitter->maxrange = sector->emitterarray[j]->maxrange;
+                    emitter->resource = csString(factoryemitter->resource);
+                    emitter->minvol   = factoryemitter->minvol;
+                    emitter->maxvol   = factoryemitter->maxvol;
+                    emitter->maxrange = factoryemitter->maxrange;
                     emitter->position = mesh->GetMovable()->GetPosition();
                     emitter->active   = false;
 
@@ -264,11 +271,8 @@ void psSoundManager::ConvertFactoriesToEmitter (psSoundSector* &sector)
                 }
             }
         }
-
         /* delete the factory node */
-        sector->emitterarray.Delete(sector->emitterarray[j]);
-        j--;
-
+        sector->DeleteEmitter(factoryemitter);
     }
 }
 

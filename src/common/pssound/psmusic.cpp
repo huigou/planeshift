@@ -138,3 +138,4 @@ void psMusic::StopCallback(void* object)
     which->active = false;
     which->handle = NULL;
 }
+
