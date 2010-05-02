@@ -135,7 +135,8 @@ private:
     /// Load items that have effects attached to them into the effectItems array.
     void LoadEffectItems();
 
-    csRedBlackTreeMap<csString, csRef<InstanceObject> > instanceObjects;
+    csRedBlackTreeMap<csString, csRef<InstanceObject>,csFixedSizeAllocator<sizeof(CS::Container::RedBlackTreeNode<
+                      csRedBlackTreePayload<csString,csRef<InstanceObject> > >)>, CS::Container::RedBlackTreeOrderingStrictWeak > instanceObjects;
 
     csRef<iMeshFactoryWrapper> nullfact;
 
