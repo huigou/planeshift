@@ -58,10 +58,10 @@ class MathScript;
 struct iDocumentNode;
 struct Faction;
 
-template<typename K, typename K2> class NpcTriggerOrdering : public CS::Container::RedBlackTreeOrderingPartial<NpcTrigger,NpcTrigger>
+template<typename K, typename K2> class NpcTriggerOrdering : public CS::Container::RedBlackTreeOrderingTotal<NpcTrigger,NpcTrigger>
 {
 public:
-    NpcTriggerOrdering(NpcTrigger* const& a, NpcTrigger* const& b) : CS::Container::RedBlackTreeOrderingPartial<NpcTrigger,NpcTrigger>(*a,*b)
+    NpcTriggerOrdering(NpcTrigger* const& a, NpcTrigger* const& b) : CS::Container::RedBlackTreeOrderingTotal<NpcTrigger,NpcTrigger>(*a,*b)
     {
     }
 };
