@@ -110,6 +110,10 @@ class psMusic
      */
     void DontLoop ();
     /**
+     * Updates Handles Callback.
+     */
+    void UpdateHandleCallback();
+    /**
      * Callback function for Stop.
      * SoundHandles callback will point to this and inform us if it gets destroyed.
      * It sets active to false and Handle to NULL
