@@ -94,7 +94,7 @@ bool psMusic::Play (bool loopToggle, SoundControl* &ctrl)
     {
         active = true;
         handle->preset_volume = maxvol;
-        handle->SetCallback(this, &StopCallback);
+        UpdateHandleCallback();
         return true;
     }
     
@@ -130,6 +130,11 @@ void psMusic::Loop ()
 {
     handle->sndstream->SetLoopState(LOOP);
     handle->sndstream->Unpause();
+}
+
+void psMusic::UpdateHandleCallback()
+{
+    handle->SetCallback(this, &StopCallback);
 }
 
 void psMusic::StopCallback(void* object)

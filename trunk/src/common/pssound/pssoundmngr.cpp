@@ -178,6 +178,8 @@ void psSoundManager::TransferHandles (psSoundSector* &oldsector,
             oldsector->activemusic->active = false;
             /* set it to NULL to avoid problems */
             oldsector->activemusic = NULL;
+            /* update callback */
+            newsector->activemusic->UpdateHandleCallback();
         }
     }
 
@@ -201,7 +203,9 @@ void psSoundManager::TransferHandles (psSoundSector* &oldsector,
             /* set it to inactive to prevent damage on the handle */
             oldsector->activeambient->active = false;
             /* set it to NULL to avoid problems */
-            oldsector->activemusic = NULL;
+            oldsector->activeambient = NULL;
+            /* update callback */
+            newsector->activeambient->UpdateHandleCallback();
         }
     }
 }
