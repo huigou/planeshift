@@ -83,18 +83,18 @@ NPCDialogDict::NPCDialogDict()
 
 NPCDialogDict::~NPCDialogDict()
 {
-	csHash<NpcTerm*, csString>::GlobalIterator phraseIter(phrases.GetIterator());
-	while(phraseIter.HasNext())
-		delete phraseIter.Next();
-	csHash<NpcTriggerGroupEntry*, csString>::GlobalIterator triggergroupIter(trigger_groups.GetIterator());
-	while(triggergroupIter.HasNext())
-		delete triggergroupIter.Next();	
-	NpcTriggerTree::Iterator triggerIter(triggers.GetIterator());
-	while(triggerIter.HasNext())
-		delete triggerIter.Next();
-	csHash<NpcResponse*>::GlobalIterator responsesIter(responses.GetIterator());
-	while(responsesIter.HasNext())
-		delete responsesIter.Next();	
+    csHash<NpcTerm*, csString>::GlobalIterator phraseIter(phrases.GetIterator());
+    while(phraseIter.HasNext())
+        delete phraseIter.Next();
+    csHash<NpcTriggerGroupEntry*, csString>::GlobalIterator triggergroupIter(trigger_groups.GetIterator());
+    while(triggergroupIter.HasNext())
+        delete triggergroupIter.Next();
+    NpcTriggerTree::Iterator triggerIter(triggers.GetIterator());
+    while(triggerIter.HasNext())
+        delete triggerIter.Next();
+    csHash<NpcResponse*>::GlobalIterator responsesIter(responses.GetIterator());
+    while(responsesIter.HasNext())
+        delete responsesIter.Next();
     wnclose();
     dict = NULL;
 }
@@ -105,7 +105,7 @@ bool NPCDialogDict::Initialize(iDataConnection *db)
     if (wninit() != 0)
     {
         Error1("*****************************\nWordNet failed to initialize.\n"
-               "******************************\n");
+               "******************************");
     }
 
     if (LoadDisallowedWords(db))
@@ -121,19 +121,19 @@ bool NPCDialogDict::Initialize(iDataConnection *db)
                         return true;
                     }
                     else
-                        Error1("*********************************\nFailed to load Responses\n****************************\n");
+                        Error1("*********************************\nFailed to load Responses\n****************************");
                 }
                 else
-                    Error1("****************************\nFailed to load Triggers\n****************************\n");
+                    Error1("****************************\nFailed to load Triggers\n****************************");
             }
             else
-                Error1("****************************\nFailed to load Trigger Groups\n************************\n");
+                Error1("****************************\nFailed to load Trigger Groups\n************************");
         }
         else
-            Error1("****************************\nFailed to load Synonyms\n****************************\n");
+            Error1("****************************\nFailed to load Synonyms\n****************************");
     }
     else
-        Error1("****************************\nFailed to load Disallowed words\n****************************\n");
+        Error1("****************************\nFailed to load Disallowed words\n****************************");
     return false;
 }
 
@@ -280,13 +280,13 @@ int NPCDialogDict::AddTriggerGroupEntry(int id,const char *txt, int equivID)
     trigger_groups_by_id.Put(newtge->id,newtge);
 
     AddWords(newtge->text); // Make sure these trigger words are in known word list.
-    Debug2(LOG_STARTUP,0,"Loaded trigger group entry <%s>\n",newtge->text.GetData() );
+    Debug2(LOG_STARTUP,0,"Loaded trigger group entry <%s>",newtge->text.GetData() );
     return id;
 }
 
 bool NPCDialogDict::LoadTriggerGroups(iDataConnection *db)
 {
-    Debug1(LOG_STARTUP,0,"Loading Trigger Groups...\n");
+    Debug1(LOG_STARTUP,0,"Loading Trigger Groups...");
 
     // First add all the root entries so we find the parents later.
     Result result(db->Select("select id,"
@@ -329,17 +329,17 @@ bool NPCDialogDict::LoadTriggerGroups(iDataConnection *db)
 
 bool NPCDialogDict::FindKnowledgeArea(const csString& name)
 {
-	static csString fallback("not found");
+    static csString fallback("not found");
 
-	csString key(name);
-	key.Downcase(); // all KAs are supposed to be lowercase
-	csString temp = knowledgeAreas.Get(key,fallback);
-	return temp != fallback;
+    csString key(name);
+    key.Downcase(); // all KAs are supposed to be lowercase
+    csString temp = knowledgeAreas.Get(key,fallback);
+    return temp != fallback;
 }
 
 bool NPCDialogDict::LoadTriggers(iDataConnection *db)
 {
-    Debug1(LOG_STARTUP,0,"Loading Triggers...\n");
+    Debug1(LOG_STARTUP,0,"Loading Triggers...");
 
     Result result(db->Select("select * from npc_triggers") );
 
@@ -356,7 +356,7 @@ bool NPCDialogDict::LoadTriggers(iDataConnection *db)
 
         if (!newtrig->Load(result[i]))
         {
-            Error2("Could not load trigger %s!\n",result[i]["id"]);
+            Error2("Could not load trigger %s!",result[i]["id"]);
             delete newtrig;
             continue;
         }
@@ -365,7 +365,7 @@ bool NPCDialogDict::LoadTriggers(iDataConnection *db)
 
         if(newtrig->trigger.Length() == 0)
         {
-            Error3("Found bad trigger %d of trigger length 0 in triggers, area %s\n", newtrig->id, newtrig->area.GetDataSafe());
+            Error3("Found bad trigger %d of trigger length 0 in triggers, area %s", newtrig->id, newtrig->area.GetDataSafe());
             delete newtrig;
             continue;
         }
@@ -374,11 +374,11 @@ bool NPCDialogDict::LoadTriggers(iDataConnection *db)
 
         triggers.Insert(newtrig);
 
-		if (!FindKnowledgeArea(newtrig->area))
-		{
-			printf("--------Adding KA: %s\n",newtrig->area.GetDataSafe());
-			knowledgeAreas.PutUnique(newtrig->area,newtrig->area);
-		}
+        if (!FindKnowledgeArea(newtrig->area))
+        {
+            printf("--------Adding KA: %s\n",newtrig->area.GetDataSafe());
+            knowledgeAreas.PutUnique(newtrig->area,newtrig->area);
+        }
     }
     return true;
 }
@@ -407,13 +407,13 @@ bool NPCDialogDict::LoadResponses(iDataConnection *db)
         int trigger_id = result[i].GetInt("trigger_id");
         if (trigger_id == 0)
         {
-            Error1("Response with null trigger.\n");
+            Error1("Response with null trigger.");
             delete newresp;
             return false;
         }
         if (!AddTrigger(db,trigger_id,newresp->id))
         {
-            Error2("Failed to load trigger for resp: %d\n",newresp->id);
+            Error2("Failed to load trigger for resp: %d",newresp->id);
             return false;
         }
 
@@ -461,7 +461,7 @@ NpcResponse *NPCDialogDict::FindResponse(gemNPC * npc,
     trig = triggers.Find(&key, NULL);
 
     if (trig)
-    { 
+    {
         Debug3(LOG_NPC, client ? client->GetClientNum() : 0,"NPCDialogDict::FindResponse consider trig(%d): '%s'",
                 trig->id,trig->trigger.GetDataSafe());
     }
@@ -536,7 +536,7 @@ bool NPCDialogDict::AddTrigger( iDataConnection* db, int triggerID , int respons
 
     if (!result.IsValid() || result.Count()!=1)
     {
-        Error2("Invalid trigger id %d in npc_triggers table.\n",triggerID);
+        Error2("Invalid trigger id %d in npc_triggers table.",triggerID);
         return false;
     }
 
@@ -569,7 +569,7 @@ bool NPCDialogDict::AddTrigger( iDataConnection* db, int triggerID , int respons
         delete newtrig;
     }
     else
-    	triggers.Insert(newtrig);
+        triggers.Insert(newtrig);
 
     return true;
 }
@@ -581,7 +581,7 @@ void NPCDialogDict::AddResponse( iDataConnection* db, int databaseID )
 
     if (!result.IsValid() || result.Count() != 1)
     {
-        Error2("Invalid response id %d specified for npc_responses table.\n",databaseID);
+        Error2("Invalid response id %d specified for npc_responses table.",databaseID);
         return;
     }
 
@@ -608,7 +608,7 @@ NpcResponse *NPCDialogDict::AddResponse(const char *response_text,
                                         const char *npc_name,
                                         int &new_id,
                                         psQuest * quest,
-										const char *audio_path)
+                                        const char *audio_path)
 {
     NpcResponse *newresp = new NpcResponse;
 
@@ -707,7 +707,7 @@ NpcResponse *NPCDialogDict::AddResponse(const char *response_text,
     newresp->her  = pronoun_her;
     newresp->it   = pronoun_it;
     newresp->them = pronoun_them;
-	newresp->voiceAudioPath[0] = audio_path;
+    newresp->voiceAudioPath[0] = audio_path;
 
     newresp->type = NpcResponse::VALID_RESPONSE;
 
@@ -748,7 +748,7 @@ void NPCDialogDict::DeleteTriggerResponse(NpcTrigger * trigger, int responseId)
 {
     csHash<NpcResponse *>::Iterator iter(responses.GetIterator(responseId));
     while(iter.HasNext())
-    	delete iter.Next();
+        delete iter.Next();
     responses.DeleteAll(responseId);
 
     if(trigger)
@@ -814,11 +814,11 @@ NpcTrigger *NPCDialogDict::AddTrigger(const char *k_area,const char *mytrigger,i
         }
         triggers.Insert(newtrig);
 
-		if (!FindKnowledgeArea(newtrig->area))
-		{
-			printf("--------Adding KA: %s\n",newtrig->area.GetDataSafe());
-			knowledgeAreas.PutUnique(newtrig->area,newtrig->area);
-		}
+        if (!FindKnowledgeArea(newtrig->area))
+        {
+            printf("--------Adding KA: %s\n",newtrig->area.GetDataSafe());
+            knowledgeAreas.PutUnique(newtrig->area,newtrig->area);
+        }
 
 
         return newtrig;
@@ -827,21 +827,21 @@ NpcTrigger *NPCDialogDict::AddTrigger(const char *k_area,const char *mytrigger,i
 
 NpcDialogMenu *NPCDialogDict::FindMenu(const char *name)
 {
-	return initial_popup_menus.Get(csString(name),0);
+    return initial_popup_menus.Get(csString(name),0);
 }
 
 void NPCDialogDict::AddMenu(const char *name, NpcDialogMenu *menu)
 {
-	NpcDialogMenu *found = FindMenu(name);
-	if (found)  // merge with existing
-	{
+    NpcDialogMenu *found = FindMenu(name);
+    if (found)  // merge with existing
+    {
         found->Add(menu);
-		delete menu;  // delete here if we don't keep it above
-	}
-	else // add a new menu
-	{
-		initial_popup_menus.PutUnique(csString(name),menu);
-	}
+        delete menu;  // delete here if we don't keep it above
+    }
+    else // add a new menu
+    {
+        initial_popup_menus.PutUnique(csString(name),menu);
+    }
 }
 
 
@@ -927,7 +927,7 @@ void NPCDialogDict::Print(const char *area)
         NpcTrigger * trig;
         while(trig_iter.HasNext())
         {
-        	trig = trig_iter.Next();
+            trig = trig_iter.Next();
             // filter on given area
             if (area!=NULL && strcasecmp(trig->area.GetDataSafe(),area)!=0)
                 continue;
@@ -955,7 +955,7 @@ void NPCDialogDict::Print(const char *area)
     NpcTrigger * trig;
     while(trig_iter.HasNext())
     {
-    	trig = trig_iter.Next();
+        trig = trig_iter.Next();
         PrintTrigger(trig);
         for (size_t i = 0; i < trig->responseIDlist.GetSize(); i++)
         {
@@ -969,7 +969,7 @@ void NPCDialogDict::Print(const char *area)
     NpcResponse * resp;
     while(resp_iter.HasNext())
     {
-    	resp = resp_iter.Next();
+        resp = resp_iter.Next();
         PrintResponse(resp);
     }
 
@@ -980,7 +980,7 @@ void NPCDialogDict::Print(const char *area)
     NpcTerm* term;
     while(term_iter.HasNext())
     {
-    	term = term_iter.Next();
+        term = term_iter.Next();
         term->Print();
     }
 
@@ -1105,9 +1105,9 @@ bool NpcTrigger::HaveAvailableResponses(Client * client, gemNPC * npc, NPCDialog
                      (!resp->quest || (resp->quest->Active() && client->GetCharacterData()->CheckQuestAvailable(resp->quest,npc->GetPID()))))  //checks if the player can get the quest
                      /*overrides the above while mantaining quest consistency in case of questtester */
                    ||(client->GetCharacterData()->GetActor() && client->GetCharacterData()->GetActor()->questtester &&
-                     (!resp->quest || !resp->quest->GetParentQuest()))) 
+                     (!resp->quest || !resp->quest->GetParentQuest())))
                 {
-                    Debug2(LOG_QUESTS,client->GetClientNum(),"Pushing quest response: %d\n",resp->id);
+                    Debug2(LOG_QUESTS,client->GetClientNum(),"Pushing quest response: %d",resp->id);
                     // This is a available response that is connected to a available quest
                     haveAvail = true;
                     if (availableResponseList)
@@ -1116,7 +1116,7 @@ bool NpcTrigger::HaveAvailableResponses(Client * client, gemNPC * npc, NPCDialog
             }
             else
             {
-                Debug2(LOG_QUESTS, client ? client->GetClientNum() : 0,"Pushing non quest response: %d\n",resp->id);
+                Debug2(LOG_QUESTS, client ? client->GetClientNum() : 0,"Pushing non quest response: %d",resp->id);
                 // This is a available responses that isn't connected to a quest
                 haveAvail = true;
                 if (availableResponseList) availableResponseList->Push(resp->id);
@@ -1157,7 +1157,7 @@ bool NpcTrigger::operator<=(const NpcTrigger& other) const
 NpcResponse::NpcResponse()
 {
     quest = NULL;
-	menu = NULL;
+    menu = NULL;
     active_quest = -1;
 }
 
@@ -1427,9 +1427,9 @@ csTicks NpcResponse::ExecuteScript(gemActor *player, gemNPC* target)
     timeDelay = 0; // Say commands, etc. should be delayed by 2-3 seconds to simulate typing
 
     active_quest = -1;  // not used by default
-    
+
     int voiceNumber = -1; //default no voice ran yet.
-    
+
     for (size_t i=0; i<script.GetSize(); i++)
     {
         if (!script[i]->Run(target,player,this,timeDelay,voiceNumber))
@@ -1930,7 +1930,7 @@ bool AssignQuestResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner
                target->GetCharacterData()->GetCharName());
         return false;
     }
-	timeDelay += 1000;
+    timeDelay += 1000;
     psserver->questmanager->Assign(quest[owner->GetActiveQuest()],target->GetClient(),who,timeDelay);
     return true;
 }
@@ -2101,7 +2101,7 @@ bool GiveItemResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,cs
 
     if (!item)
     {
-        Error3("Couldn't give item %u to player %s!\n",itemstat->GetUID(), target->GetName());
+        Error3("Couldn't give item %u to player %s!",itemstat->GetUID(), target->GetName());
         return false;
     }
 
@@ -2112,15 +2112,15 @@ bool GiveItemResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,cs
     csString itemName = item->GetQuantityName();
 
     if (!character->Inventory().AddOrDrop(item))
-	{
-		psSystemMessage recv(target->GetClient()->GetClientNum(),MSG_ERROR,"You received %s, but dropped it because you can't carry any more.", itemName.GetData());
-		psserver->GetNetManager()->SendMessageDelayed(recv.msg, timeDelay);
-	}
-	else
-	{
-		psSystemMessage recv(target->GetClient()->GetClientNum(),MSG_INFO,"You have received %s.", itemName.GetData());
-		psserver->GetNetManager()->SendMessageDelayed(recv.msg, timeDelay);
-	}
+    {
+        psSystemMessage recv(target->GetClient()->GetClientNum(),MSG_ERROR,"You received %s, but dropped it because you can't carry any more.", itemName.GetData());
+        psserver->GetNetManager()->SendMessageDelayed(recv.msg, timeDelay);
+    }
+    else
+    {
+        psSystemMessage recv(target->GetClient()->GetClientNum(),MSG_INFO,"You have received %s.", itemName.GetData());
+        psserver->GetNetManager()->SendMessageDelayed(recv.msg, timeDelay);
+    }
     return true;
 }
 
@@ -2129,7 +2129,7 @@ bool FactionResponseOp::Load(iDocumentNode *node)
     faction = psserver->GetCacheManager()->GetFaction(node->GetAttributeValue("name"));
     if (!faction)
     {
-        Error2("Error: FactionOp faction(%s) not found\n",node->GetAttributeValue("name"));
+        Error2("Error: FactionOp faction(%s) not found",node->GetAttributeValue("name"));
         return false;
     }
     value = node->GetAttributeValueAsInt("value");
@@ -2445,53 +2445,53 @@ bool DoAdminCommandResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *ow
 
 NpcDialogMenu::NpcDialogMenu()
 {
-	counter = 0;
+    counter = 0;
 }
 
 void NpcDialogMenu::AddTrigger(const csString &menuText, const csString &trigger, psQuest *quest, psQuestPrereqOp *script)
 {
-	NpcDialogMenu::DialogTrigger new_trigger;
+    NpcDialogMenu::DialogTrigger new_trigger;
 
-	new_trigger.menuText     = menuText;
-	new_trigger.trigger      = trigger;
-	new_trigger.quest        = quest;
+    new_trigger.menuText     = menuText;
+    new_trigger.trigger      = trigger;
+    new_trigger.quest        = quest;
     new_trigger.prerequisite = script;
-	new_trigger.triggerID    = counter++;
+    new_trigger.triggerID    = counter++;
 
-	this->triggers.Push( new_trigger );
+    this->triggers.Push( new_trigger );
 }
 
 
 void NpcDialogMenu::Add(NpcDialogMenu *add)
 {
-	if (!add)
-		return;
+    if (!add)
+        return;
 
-	for (size_t i=0; i < add->triggers.GetSize(); i++)
-	{
-		//printf("Adding '%s' to menu.\n", add->triggers[i].menuText.GetData() );
-		AddTrigger(add->triggers[i].menuText, add->triggers[i].trigger, add->triggers[i].quest, add->triggers[i].prerequisite);
-	}
-	//printf("Added %lu triggers to menu.\n", (unsigned long) add->triggers.GetSize());
+    for (size_t i=0; i < add->triggers.GetSize(); i++)
+    {
+        //printf("Adding '%s' to menu.\n", add->triggers[i].menuText.GetData() );
+        AddTrigger(add->triggers[i].menuText, add->triggers[i].trigger, add->triggers[i].quest, add->triggers[i].prerequisite);
+    }
+    //printf("Added %lu triggers to menu.\n", (unsigned long) add->triggers.GetSize());
 }
 
 void NpcDialogMenu::ShowMenu(Client *client,csTicks delay, gemNPC *npc)
 {
-	if( client == NULL )
-		return;
+    if( client == NULL )
+        return;
 
-	psDialogMenuMessage menu;
+    psDialogMenuMessage menu;
 
     csString currentQuest;
-	int count = 0;
-    
+    int count = 0;
+
     bool IsTesting = client->GetCharacterData()->GetActor()->questtester;
     bool IsGm = client->IsGM();
 
-	for (size_t i=0; i < counter; i++ )
-	{
+    for (size_t i=0; i < counter; i++ )
+    {
         csString prereq;
-        
+
         if(triggers[i].quest && !triggers[i].quest->Active() && !IsTesting)
             continue;
 
@@ -2515,8 +2515,8 @@ void NpcDialogMenu::ShowMenu(Client *client,csTicks delay, gemNPC *npc)
                 continue;
             }
         }
-        
-        //check availability (as per lockout). Note as gm we show quest even if in lockout as > gm get 
+
+        //check availability (as per lockout). Note as gm we show quest even if in lockout as > gm get
         //an error message in system even if they can't get it because testermode is off
         if(triggers[i].quest && !IsGm && !IsTesting && !client->GetCharacterData()->CheckQuestAvailable(triggers[i].quest, npc->GetPID()))
             continue;
@@ -2529,28 +2529,28 @@ void NpcDialogMenu::ShowMenu(Client *client,csTicks delay, gemNPC *npc)
             temp += currentQuest;
             menu.AddResponse((uint32_t) i, temp, temptrig);
         }
-        
+
 
         csString menuText = triggers[i].menuText;
         npc->GetNPCDialogPtr()->SubstituteKeywords(client,menuText);
         //only add the trigger if it isn't a question
         csString trigger = (menuText.Find("?=") == SIZET_NOT_FOUND) ? triggers[i].trigger : "(question)";
-        
-		menu.AddResponse((uint32_t) i, 
-                          menuText,
-		                  trigger);
-        count++;
-	}
 
-	if (count)
-	{
-		menu.BuildMsg(client->GetClientNum());
-		psserver->GetNetManager()->SendMessageDelayed(menu.msg, delay);
-	}
-	else
-	{
-		psserver->SendSystemError(client->GetClientNum(), "This NPC has no quest information for you.");
-	}
+        menu.AddResponse((uint32_t) i,
+                          menuText,
+                          trigger);
+        count++;
+    }
+
+    if (count)
+    {
+        menu.BuildMsg(client->GetClientNum());
+        psserver->GetNetManager()->SendMessageDelayed(menu.msg, delay);
+    }
+    else
+    {
+        psserver->SendSystemError(client->GetClientNum(), "This NPC has no quest information for you.");
+    }
 }
 
 void NpcDialogMenu::SetPrerequisiteScript(psQuestPrereqOp *script)
@@ -2567,7 +2567,7 @@ void NpcDialogMenu::SetPrerequisiteScript(psQuestPrereqOp *script)
 
     // Each item must have its own prequisite script so they can be different when menus are merged
     // even though they appear to all be set the same here.
-	for (size_t i=0; i < counter; i++ )
+    for (size_t i=0; i < counter; i++ )
     {
         triggers[i].prerequisite = script;
     }
