@@ -298,11 +298,11 @@ void pawsSkillWindow::HandleMessage( MsgEntry* me )
                     skillString = incoming.commandData;
                     skillCache.apply(&incoming.skillCache);
 
-                    //bool flush = train != incoming.trainingWindow;
+                    bool flush = train != incoming.trainingWindow || incoming.openWindow;
                     train=incoming.trainingWindow;
 
                     int selectedRowIdx = -1;
-                    HandleSkillList(&skillCache, incoming.focusSkill, &selectedRowIdx, true);
+                    HandleSkillList(&skillCache, incoming.focusSkill, &selectedRowIdx, flush);
 
                     SelectSkill(selectedRowIdx, incoming.skillCat);
 
@@ -424,10 +424,8 @@ void pawsSkillWindow::HandleSkillList(psSkillCache *skills, int selectedNameId, 
     if (!flush && !skills->isModified())
         return;
 
-    if (skills->hasRemoved())
+    if (skills->hasRemoved() || unsortedSkills.IsEmpty())
         flush = true;
-
-    selectedSkill.Clear();
 
     if (flush)
     {
@@ -502,18 +500,13 @@ void pawsSkillWindow::HandleSkillList(psSkillCache *skills, int selectedNameId, 
     if (flush)
     {
         statsSkillList->SetSortedColumn(0);
-        statsSkillList->SortRows();
         combatSkillList->SetSortedColumn(0);
-        combatSkillList->SortRows();
         magicSkillList->SetSortedColumn(0);
-        magicSkillList->SortRows();
         jobsSkillList->SetSortedColumn(0);
-        jobsSkillList->SortRows();
         variousSkillList->SetSortedColumn(0);
-        variousSkillList->SortRows();
     }
 
-    if (!foundSelected)
+    if (flush && !foundSelected)
     {
         selectedSkill.Clear();
     }
@@ -917,7 +910,7 @@ void pawsSkillWindow::HandleSkillCategory(pawsListBox* tabNameSkillList,
         unsortedSkills[idx] = row;
     }
     
-    if (skillName == selectedSkill)
+    if (flush && skillName == selectedSkill)
     {
         statsSkillList->Select(row);
         foundSelected = true;
