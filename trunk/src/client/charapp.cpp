@@ -398,6 +398,94 @@ void psCharAppearance::ShowHair(bool show)
     }
 }
 
+void psCharAppearance::ShowMeshes(csString& slot, csString& meshList, bool show)
+{
+	if(meshList.IsEmpty() || slot.IsEmpty())
+		return;
+
+	//first split the meshlist
+	csStringArray meshes;
+	meshes.SplitString(meshList, ",");
+	for(size_t i = 0; i < meshes.GetSize(); i++)
+	{
+		csString meshName = meshes.Get(i);
+		uint meshkey = csHashCompute(meshName);
+		if (show) //in this case we are removing a restrain from hiding this mesh.
+		{
+			//get the list of items blocking this item
+			csArray<csString> removingItems = removedMeshes.GetAll(meshkey);
+			
+			//if the list is empty it means it's not blocked, shouldn't happen as how it works.
+			if(!removingItems.GetSize())
+				continue;
+				
+			//if the list is > 1 it means another item is locking this mesh from being shown 
+			//so we just remove this blocker
+			if(removingItems.GetSize() > 1)
+			{
+				removedMeshes.Delete(meshkey, slot);
+				continue;
+			}
+			
+			//in the other cases we restore the mesh.
+			removedMeshes.DeleteAll(meshkey);
+
+			if(state)
+			{
+				state->AttachCoreMesh(meshName);
+			}
+			else if(animeshObject && animeshFactory)
+			{
+				size_t idx = animeshFactory->FindSubMesh(meshName);
+				if(idx != (size_t)-1)
+				{
+					animeshObject->GetSubMesh(idx)->SetRendering(true);
+				}
+			}
+
+			//temporary hack for hair to be removed probably already superflous.
+			if(meshName == hairMesh)
+			{
+				if (hairColorSet)
+					HairColor(hairShader);
+
+				hairAttached = true;
+			}
+		}
+		else //in this case we are adding a restrain to hiding this mesh
+		{
+			//there is already something here?
+			csArray<csString> removingItems = removedMeshes.GetAll(meshkey);
+			
+			//add ourselves as a restrain.
+			removedMeshes.Put(meshkey, slot);
+			
+			//this mesh was already removed so just bail out.
+			//Note: this array is at the status of before adding ourselves
+			if(removingItems.GetSize() > 0)
+				continue;
+			
+			//This mesh wasn't already removed so let's remove it
+			if(state)
+			{
+				state->DetachCoreMesh(meshName);
+			}
+			else if(animeshObject && animeshFactory)
+			{
+				size_t idx = animeshFactory->FindSubMesh(meshName);
+				if(idx != (size_t)-1)
+				{
+					animeshObject->GetSubMesh(idx)->SetRendering(false);
+				}
+			}
+			
+			//temporary hack for hair to be removed probably already superflous.
+			if(meshName == hairMesh)
+				hairAttached = false;
+		}
+	}
+}
+
 void psCharAppearance::SetSkinTone(csString& part, csString& material)
 {
     if (!baseMesh || !part || !material)
@@ -504,6 +592,7 @@ void psCharAppearance::ApplyEquipment(const csString& equipment)
         csString part = equipNode->GetAttributeValue( "part" );
         csString partMesh = equipNode->GetAttributeValue("partMesh");
         csString texture = equipNode->GetAttributeValue( "texture" );
+        csString removedMesh = equipNode->GetAttributeValue("removedMesh");
 
         //If the mesh has a $H it means it's an helm so search for replacement
         mesh.ReplaceAll("$H",helmGroup);
@@ -514,7 +603,7 @@ void psCharAppearance::ApplyEquipment(const csString& equipment)
         //If the mesh has a $C it means it's a cloak so search for replacement
         mesh.ReplaceAll("$C", CloakGroup);
 
-        Equip(slot, mesh, part, partMesh, texture);
+        Equip(slot, mesh, part, partMesh, texture, removedMesh);
     }
 
     return;
@@ -525,7 +614,8 @@ void psCharAppearance::Equip( csString& slotname,
                               csString& mesh,
                               csString& part,
                               csString& subMesh,
-                              csString& texture
+                              csString& texture,
+                              csString& removedMesh
                              )
 {
 
@@ -536,14 +626,16 @@ void psCharAppearance::Equip( csString& slotname,
     if (slotname == "bracers")
     {
         for(unsigned int position = 0; position < bracersSlotCount; position++)
-            Equip(BracersSlots[position], mesh, part, subMesh, texture);
+            Equip(BracersSlots[position], mesh, part, subMesh, texture, removedMesh);
         return;
     }
 
-    if ( slotname == "helm" )
+    /*if ( slotname == "helm" )
     {
         ShowHair(false);
-    }
+    }*/
+    
+    ShowMeshes(slotname, removedMesh, false);
 
     // If it's a new mesh attach that mesh.
     if ( mesh.Length() )
@@ -577,7 +669,8 @@ bool psCharAppearance::Dequip(csString& slotname,
                               csString& mesh,
                               csString& part,
                               csString& subMesh,
-                              csString& texture)
+                              csString& texture,
+                              csString& removedMesh)
 {
     
     //look Equip() for more informations on this: bracers must be managed separately
@@ -585,14 +678,16 @@ bool psCharAppearance::Dequip(csString& slotname,
     if (slotname == "bracers")
     {
         for(unsigned int position = 0; position < bracersSlotCount; position++)
-            Dequip(BracersSlots[position], mesh, part, subMesh, texture);
+            Dequip(BracersSlots[position], mesh, part, subMesh, texture, removedMesh);
         return true;
     }
 
-    if ( slotname == "helm" )
+    /*if ( slotname == "helm" )
     {
          ShowHair(true);
-    }
+    }*/
+    
+    ShowMeshes(slotname, removedMesh, true);
 
     if ( mesh.Length() )
     {

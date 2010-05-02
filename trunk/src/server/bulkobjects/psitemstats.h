@@ -465,6 +465,13 @@ private:
 
     csString sound;
     csString weapon_type;
+    
+	csHash<csString,int> meshRemovalInfo;
+
+    /** Loads in the the slot based removal informations.
+      * @param row The database row to load information from.
+      */
+	void LoadMeshRemoval( iResultRow& row );
 
     /** Loads in the valid slots from the database for this particular item.
       * @param row The database row to load information from.
@@ -537,6 +544,12 @@ public:
     float GetVisibleDistance();
     PSITEMSTATS_SLOTLIST GetValidSlots();
     bool FitsInSlots(PSITEMSTATS_SLOTLIST slotmask);
+    
+    /** Gets the list of mesh to remove when this item is equipped in the specified slot.
+     *  @param slot The slot this item is being equipped into.
+     *  @return The list of meshes to remove when equipping this item.
+     */
+    csString GetSlotRemovedMesh(int slot);
     float GetDecayRate();
 
     int GetAttackAnimID(unsigned int skill_level);

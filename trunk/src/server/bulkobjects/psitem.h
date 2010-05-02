@@ -709,10 +709,18 @@ public:
     PSITEMSTATS_SLOTLIST GetValidSlots();
     bool FitsInSlots(PSITEMSTATS_SLOTLIST slotmask);
     bool FitsInSlot(INVENTORY_SLOT_NUMBER slot);
+    
+    /** Proxies the same function in psitemstats which gets the list of mesh to remove when this item is equipped
+     *  in the specified slot.
+     *  @param slot The slot this item is being equipped into.
+     *  @return The list of meshes to remove when equipping this item.
+     */
+    csString GetSlotRemovedMesh(int slot) { return GetBaseStats()->GetSlotRemovedMesh(slot); }
     float GetDecayResistance();
     psMoney GetPrice();
     psMoney GetSellPrice();    ///< Merchants want a percentage
     psItemCategory* GetCategory();
+    
 
     float GetVisibleDistance();
 

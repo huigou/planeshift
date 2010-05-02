@@ -1203,6 +1203,7 @@ void ServerCharManager::SendOutEquipmentMessages( gemActor* actor,
     csString mesh = item->GetMeshName();
     csString part = item->GetPartName();
     csString partMesh = item->GetPartMeshName();
+    csString removedMesh = item->GetSlotRemovedMesh((int)slot);
 
     // If we're doing a 'deequip', there is no texture.
     csString texture;
@@ -1219,7 +1220,7 @@ void ServerCharManager::SendOutEquipmentMessages( gemActor* actor,
     if (part.Length() && texture.Length()) 
         mesh.Clear();
 
-    psEquipmentMessage msg( 0, eid, equipped, slot, mesh, part, texture, partMesh );
+    psEquipmentMessage msg( 0, eid, equipped, slot, mesh, part, texture, partMesh, removedMesh );
     CS_ASSERT( msg.valid );
     
     psserver->GetEventManager()->Multicast( msg.msg,
