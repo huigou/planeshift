@@ -110,7 +110,7 @@ bool psEmitter::Play (SoundControl* &ctrl)
 void psEmitter::Stop ()
 {
     active = false;
-    
+
     if (handle != NULL)
     {
         SndSysMgr->StopSound(handle);
@@ -123,3 +123,4 @@ void psEmitter::StopCallback(void* object)
     which->active = false;
     which->handle = NULL;
 }
+
