@@ -1,6 +1,6 @@
 /*
  * charapp.cpp
- * 
+ *
  * Copyright (C) 2002-2009 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
@@ -297,7 +297,7 @@ void psCharAppearance::HairColor(csVector3& color)
         }
 
         if ( context_hair )
-        { 
+        {
             CS::ShaderVarStringID varName = stringSet->Request("color modulation");
             csShaderVariable* var = context_hair->GetVariableAdd(varName);
 
@@ -325,7 +325,7 @@ void psCharAppearance::EyeColor(csVector3& color)
 {
     eyeShader = color;
     iShaderVariableContext* context_eyes;
-    
+
 
     if(state)
     {
@@ -400,90 +400,90 @@ void psCharAppearance::ShowHair(bool show)
 
 void psCharAppearance::ShowMeshes(csString& slot, csString& meshList, bool show)
 {
-	if(meshList.IsEmpty() || slot.IsEmpty())
-		return;
+    if(meshList.IsEmpty() || slot.IsEmpty())
+        return;
 
-	//first split the meshlist
-	csStringArray meshes;
-	meshes.SplitString(meshList, ",");
-	for(size_t i = 0; i < meshes.GetSize(); i++)
-	{
-		csString meshName = meshes.Get(i);
-		uint meshkey = csHashCompute(meshName);
-		if (show) //in this case we are removing a restrain from hiding this mesh.
-		{
-			//get the list of items blocking this item
-			csArray<csString> removingItems = removedMeshes.GetAll(meshkey);
-			
-			//if the list is empty it means it's not blocked, shouldn't happen as how it works.
-			if(!removingItems.GetSize())
-				continue;
-				
-			//if the list is > 1 it means another item is locking this mesh from being shown 
-			//so we just remove this blocker
-			if(removingItems.GetSize() > 1)
-			{
-				removedMeshes.Delete(meshkey, slot);
-				continue;
-			}
-			
-			//in the other cases we restore the mesh.
-			removedMeshes.DeleteAll(meshkey);
+    //first split the meshlist
+    csStringArray meshes;
+    meshes.SplitString(meshList, ",");
+    for(size_t i = 0; i < meshes.GetSize(); i++)
+    {
+        csString meshName = meshes.Get(i);
+        uint meshkey = csHashCompute(meshName);
+        if (show) //in this case we are removing a restrain from hiding this mesh.
+        {
+            //get the list of items blocking this item
+            csArray<csString> removingItems = removedMeshes.GetAll(meshkey);
 
-			if(state)
-			{
-				state->AttachCoreMesh(meshName);
-			}
-			else if(animeshObject && animeshFactory)
-			{
-				size_t idx = animeshFactory->FindSubMesh(meshName);
-				if(idx != (size_t)-1)
-				{
-					animeshObject->GetSubMesh(idx)->SetRendering(true);
-				}
-			}
+            //if the list is empty it means it's not blocked, shouldn't happen as how it works.
+            if(!removingItems.GetSize())
+                continue;
 
-			//temporary hack for hair to be removed probably already superflous.
-			if(meshName == hairMesh)
-			{
-				if (hairColorSet)
-					HairColor(hairShader);
+            //if the list is > 1 it means another item is locking this mesh from being shown
+            //so we just remove this blocker
+            if(removingItems.GetSize() > 1)
+            {
+                removedMeshes.Delete(meshkey, slot);
+                continue;
+            }
 
-				hairAttached = true;
-			}
-		}
-		else //in this case we are adding a restrain to hiding this mesh
-		{
-			//there is already something here?
-			csArray<csString> removingItems = removedMeshes.GetAll(meshkey);
-			
-			//add ourselves as a restrain.
-			removedMeshes.Put(meshkey, slot);
-			
-			//this mesh was already removed so just bail out.
-			//Note: this array is at the status of before adding ourselves
-			if(removingItems.GetSize() > 0)
-				continue;
-			
-			//This mesh wasn't already removed so let's remove it
-			if(state)
-			{
-				state->DetachCoreMesh(meshName);
-			}
-			else if(animeshObject && animeshFactory)
-			{
-				size_t idx = animeshFactory->FindSubMesh(meshName);
-				if(idx != (size_t)-1)
-				{
-					animeshObject->GetSubMesh(idx)->SetRendering(false);
-				}
-			}
-			
-			//temporary hack for hair to be removed probably already superflous.
-			if(meshName == hairMesh)
-				hairAttached = false;
-		}
-	}
+            //in the other cases we restore the mesh.
+            removedMeshes.DeleteAll(meshkey);
+
+            if(state)
+            {
+                state->AttachCoreMesh(meshName);
+            }
+            else if(animeshObject && animeshFactory)
+            {
+                size_t idx = animeshFactory->FindSubMesh(meshName);
+                if(idx != (size_t)-1)
+                {
+                    animeshObject->GetSubMesh(idx)->SetRendering(true);
+                }
+            }
+
+            //temporary hack for hair to be removed probably already superflous.
+            if(meshName == hairMesh)
+            {
+                if (hairColorSet)
+                    HairColor(hairShader);
+
+                hairAttached = true;
+            }
+        }
+        else //in this case we are adding a restrain to hiding this mesh
+        {
+            //there is already something here?
+            csArray<csString> removingItems = removedMeshes.GetAll(meshkey);
+
+            //add ourselves as a restrain.
+            removedMeshes.Put(meshkey, slot);
+
+            //this mesh was already removed so just bail out.
+            //Note: this array is at the status of before adding ourselves
+            if(removingItems.GetSize() > 0)
+                continue;
+
+            //This mesh wasn't already removed so let's remove it
+            if(state)
+            {
+                state->DetachCoreMesh(meshName);
+            }
+            else if(animeshObject && animeshFactory)
+            {
+                size_t idx = animeshFactory->FindSubMesh(meshName);
+                if(idx != (size_t)-1)
+                {
+                    animeshObject->GetSubMesh(idx)->SetRendering(false);
+                }
+            }
+
+            //temporary hack for hair to be removed probably already superflous.
+            if(meshName == hairMesh)
+                hairAttached = false;
+        }
+    }
 }
 
 void psCharAppearance::SetSkinTone(csString& part, csString& material)
@@ -506,15 +506,15 @@ void psCharAppearance::SetSkinTone(csString& part, csString& material)
 void psCharAppearance::ApplyRider(csRef<iMeshWrapper> mesh)
 {
     csRef<iSpriteCal3DState> mountstate = scfQueryInterface<iSpriteCal3DState> (mesh->GetMeshObject());
-    
+
     csRef<iSpriteCal3DSocket> socket = mountstate->FindSocket( "back" );
-    
+
     if ( !socket )
     {
         Error1("Socket back not found.");
         return;
     }
-    
+
     baseMesh->GetFlags().Set(CS_ENTITY_NODECAL);
     const char* socketName = socket->GetName();
 
@@ -555,7 +555,7 @@ void psCharAppearance::ApplyEquipment(const csString& equipment)
         Error2("Error in XML: %s", error );
         return;
     }
-    
+
     csString BaseGroup = baseMesh->GetFactory()->QueryObject()->GetName();
 
     // Do the helm check.
@@ -563,13 +563,13 @@ void psCharAppearance::ApplyEquipment(const csString& equipment)
     csString helmGroup(helmNode->GetContentsValue());
     if ( helmGroup.Length() == 0 )
         helmGroup = BaseGroup;
-        
+
     // Do the bracer check.
     csRef<iDocumentNode> BracerNode = doc->GetRoot()->GetNode("equiplist")->GetNode("bracer");
     csString BracerGroup(BracerNode->GetContentsValue());
     if ( BracerGroup.Length() == 0 )
         BracerGroup = BaseGroup;
-        
+
     // Do the belt check.
     csRef<iDocumentNode> BeltNode = doc->GetRoot()->GetNode("equiplist")->GetNode("belt");
     csString BeltGroup(BeltNode->GetContentsValue());
@@ -622,7 +622,7 @@ void psCharAppearance::Equip( csString& slotname,
     //Bracers must be managed separately as we have two slots in cal3d but only one slot here
     //To resolve the problem we call recursively this same function with the "corrected" slot names
     //which are rightarm leftarm
-    
+
     if (slotname == "bracers")
     {
         for(unsigned int position = 0; position < bracersSlotCount; position++)
@@ -634,7 +634,7 @@ void psCharAppearance::Equip( csString& slotname,
     {
         ShowHair(false);
     }*/
-    
+
     ShowMeshes(slotname, removedMesh, false);
 
     // If it's a new mesh attach that mesh.
@@ -672,9 +672,9 @@ bool psCharAppearance::Dequip(csString& slotname,
                               csString& texture,
                               csString& removedMesh)
 {
-    
+
     //look Equip() for more informations on this: bracers must be managed separately
-    
+
     if (slotname == "bracers")
     {
         for(unsigned int position = 0; position < bracersSlotCount; position++)
@@ -686,7 +686,7 @@ bool psCharAppearance::Dequip(csString& slotname,
     {
          ShowHair(true);
     }*/
-    
+
     ShowMeshes(slotname, removedMesh, true);
 
     if ( mesh.Length() )
@@ -938,7 +938,7 @@ void psCharAppearance::ProcessAttach(csRef<iMeshWrapper> meshWrap, csRef<iSprite
     if(!socket.IsValid())
         return;
     CS_ASSERT(socket.IsValid());
-    
+
     meshWrap->GetFlags().Set(CS_ENTITY_NODECAL);
     const char* socketName = socket->GetName();
 

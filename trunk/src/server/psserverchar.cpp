@@ -80,15 +80,15 @@
 #include "events.h"
 
 ///This expresses in seconds how many days the char hasn't logon. 60 days, at the moment.
-#define MAX_DAYS_NO_LOGON 5184000 
+#define MAX_DAYS_NO_LOGON 5184000
 
 /// The number of characters per email account
-#define CHARACTERS_ALLOWED 4       
+#define CHARACTERS_ALLOWED 4
 
 ServerCharManager::ServerCharManager(CacheManager* cachemanager, GEMSupervisor* gemsupervisor)
 {
-	cacheManager = cachemanager;
-	gemSupervisor = gemsupervisor;
+    cacheManager = cachemanager;
+    gemSupervisor = gemsupervisor;
     slotManager = NULL;
 
     calc_item_merchant_price_buy = psserver->GetMathScriptEngine()->FindScript("Calc Item Merchant Price Buy");
@@ -183,7 +183,7 @@ void ServerCharManager::ViewItem(Client* client, int containerID, INVENTORY_SLOT
     // printf("Viewing item in Container %d, slot %d.\n", containerID, slotID);
 
     psItem* item = slotManager->FindItem(client, containerID, slotID);
-        
+
     if ( item )
         item->ViewItem(client, containerID, slotID);
     else
@@ -205,7 +205,7 @@ void ServerCharManager::ViewItem(Client* client, int containerID, INVENTORY_SLOT
                     "You are not in range to see %s.", gemAction->GetName());
                 return;
             }
-            
+
             // Check for container
             if ( action->IsContainer() )
             {
@@ -226,7 +226,7 @@ void ServerCharManager::ViewItem(Client* client, int containerID, INVENTORY_SLOT
                 }
                 item->SendActionContents(client, action);
             }
-       
+
             // Check for minigames or entrances
             else if (action->IsGameBoard() || action->IsEntrance())
             {
@@ -261,12 +261,12 @@ void ServerCharManager::HandleBookWrite(MsgEntry* me, Client* client)
          psItem* item = slotManager->FindItem(client, mesg.containerID, (INVENTORY_SLOT_NUMBER) mesg.slotID);
 
          //is it a writable book?  In our inventory? Are we the author?
-         if(item && item->GetBaseStats()->GetIsWriteable() && 
+         if(item && item->GetBaseStats()->GetIsWriteable() &&
             item->GetOwningCharacter() == client->GetCharacterData() &&
             item->GetBaseStats()->IsThisTheCreator(client->GetCharacterData()->GetPID()))
          {
               //We could maybe let the work manager know that we're busy writing something
-              //or track that this is the book we're working on, and only allow saves to a 
+              //or track that this is the book we're working on, and only allow saves to a
               //book that was opened for writing.  This would be a good thing.
               //Also check for other writing in progress
               csString theText(item->GetBookText());
@@ -276,13 +276,13 @@ void ServerCharManager::HandleBookWrite(MsgEntry* me, Client* client)
               // this only does set the creator for first write to book
               item->GetBaseStats()->SetCreator(client->GetCharacterData()->GetPID(), PSITEMSTATS_CREATOR_VALID);
             //  CPrintf(CON_DEBUG, "Sent: %s\n",resp.ToString(NULL).GetDataSafe());
-         } 
-         else 
+         }
+         else
          {
             //construct error message indicating that the item is not editable
             psserver->SendSystemError(client->GetClientNum(), "You cannot write on this item.");
          }
-    } 
+    }
     else if (mesg.messagetype == mesg.SAVE)
     {
        // CPrintf(CON_DEBUG, "Attempt to save book in slot id %d\n",mesg.slotID);
@@ -313,7 +313,7 @@ void ServerCharManager::HandleBookWrite(MsgEntry* me, Client* client)
             saveresp.SendMessage();
         }
         // clear current writing item
-        
+
     }
 }
 
@@ -321,20 +321,20 @@ void ServerCharManager::HandleBookWrite(MsgEntry* me, Client* client)
 void ServerCharManager::HandleFaction(MsgEntry* me,Client *client)
 {
     psCharacter *chardata=client->GetCharacterData();
-    if (chardata==NULL)	
-		return;
-	
-	psFactionMessage outMsg(me->clientnum, psFactionMessage::MSG_FULL_LIST);
+    if (chardata==NULL)
+        return;
 
-	csHash<FactionStanding*, int>::GlobalIterator iter(chardata->GetActor()->GetFactions()->GetStandings().GetIterator());
+    psFactionMessage outMsg(me->clientnum, psFactionMessage::MSG_FULL_LIST);
+
+    csHash<FactionStanding*, int>::GlobalIterator iter(chardata->GetActor()->GetFactions()->GetStandings().GetIterator());
     while(iter.HasNext())
     {
         FactionStanding* standing = iter.Next();
-		outMsg.AddFaction(standing->faction->name, standing->score);
+        outMsg.AddFaction(standing->faction->name, standing->score);
     }
 
-	outMsg.BuildMsg();
-	outMsg.SendMessage();
+    outMsg.BuildMsg();
+    outMsg.SendMessage();
 }
 
 
@@ -358,20 +358,20 @@ void ServerCharManager::HandleInventoryMessage(MsgEntry* me,Client *client)
 
             if(LogCSV::GetSingletonPtr())
                 LogCSV::GetSingleton().Write(CSV_STATUS, status);
-            
+
             // FIXME: Ugly hack here as a temporary workaround for client-side issue that causes the server
             // to be flooded with inventory requests. Remove after all clients have been updated
             // to stop flooding.
             csTicks currentTime = csGetTicks();
             // Send an inventory message maximum once per 250 ticks (0.25 seconds).
             if(!client->lastInventorySend || client->lastInventorySend + 250 < currentTime)
-            {    
-            	client->lastInventorySend = currentTime;
-            	SendInventory(fromClientNumber, (static_cast<psGUIInventoryMessage::commands>(incoming.command)==psGUIInventoryMessage::UPDATE_REQUEST));
+            {
+                client->lastInventorySend = currentTime;
+                SendInventory(fromClientNumber, (static_cast<psGUIInventoryMessage::commands>(incoming.command)==psGUIInventoryMessage::UPDATE_REQUEST));
             }
             else
             {
-            	status.Format("Ignored inventory request message from %u.", client->GetClientNum());
+                status.Format("Ignored inventory request message from %u.", client->GetClientNum());
                 if(LogCSV::GetSingletonPtr())
                     LogCSV::GetSingleton().Write(CSV_STATUS, status);
             }
@@ -383,13 +383,13 @@ void ServerCharManager::HandleInventoryMessage(MsgEntry* me,Client *client)
 bool ServerCharManager::SendInventory( int clientNum, bool sendUpdatesOnly)
 {
     psGUIInventoryMessage* outgoing;
-    
+
     Client* client = psserver->GetNetManager()->GetClient(clientNum);
     if (client==NULL)
         return false;
 
     bool exchanging = (client->GetExchangeID() != 0); // When exchanging, only send partial inv of what is not offered
- 
+
     int toClientNumber = clientNum;
 //    int itemCount, itemRemovedCount;
 //    unsigned int z;
@@ -397,11 +397,11 @@ bool ServerCharManager::SendInventory( int clientNum, bool sendUpdatesOnly)
     psCharacter *chardata=client->GetCharacterData();
     if (chardata==NULL)
         return false;
-    
+
     size_t msgsize = 0;
 
     Notify2(LOG_EXCHANGES,"Sending %zu items...\n", chardata->Inventory().GetInventoryIndexCount()-1);
-    
+
     // first count how big the buffer needs to be
     for (size_t i=1; i < chardata->Inventory().GetInventoryIndexCount(); i++)
     {
@@ -418,32 +418,32 @@ bool ServerCharManager::SendInventory( int clientNum, bool sendUpdatesOnly)
         Notify5(LOG_EXCHANGES, "  Inv item %s, slot %d, weight %1.1f, stack count %u\n",item->GetName(), slot, item->GetWeight(), item->GetStackCount() );
         msgsize += strlen(item->GetName()) + 1 + sizeof(uint32_t) * 5 + sizeof(float) * 2 + strlen(item->GetImageName()) + 1 + sizeof(uint8_t);
     }
-    
+
     psMoney m = chardata->Money();
     Exchange *exchange = exchanging ? psserver->exchangemanager->GetExchange(client->GetExchangeID()) : NULL;
     if (exchange)
         m += -exchange->GetOfferedMoney(client);
     msgsize += strlen(m.ToString()) + 1;
-    
+
     // actually create the message
     outgoing = new psGUIInventoryMessage(toClientNumber,
                                          psGUIInventoryMessage::LIST,
                                          (uint32_t)chardata->Inventory().GetInventoryIndexCount()-1,  // skip item 0
-										 (uint32_t)0, chardata->Inventory().MaxWeight(),
-										 chardata->Inventory().GetInventoryVersion(), msgsize);
-    
+                                         (uint32_t)0, chardata->Inventory().MaxWeight(),
+                                         chardata->Inventory().GetInventoryVersion(), msgsize);
+
     for (size_t i=1; i < chardata->Inventory().GetInventoryIndexCount(); i++)
     {
         psCharacterInventory::psCharacterInventoryItem *invitem = chardata->Inventory().GetIndexCharInventoryItem(i);
         psItem *item  = invitem->GetItem();
-        
+
         int slot  = item->GetLocInParent(true);
-        
+
         int invType = CONTAINER_INVENTORY_BULK;
-        
+
         if (slot < PSCHARACTER_SLOT_BULK1)  // equipped if < than first bulk
             invType = CONTAINER_INVENTORY_EQUIPMENT;
-        
+
         Notify5(LOG_EXCHANGES, "  Inv item %s, slot %d, weight %1.1f, stack count %u\n",item->GetName(), slot, item->GetWeight(), item->GetStackCount() );
         outgoing->AddItem(item->GetName(),
                           item->GetMeshName(),
@@ -458,7 +458,7 @@ bool ServerCharManager::SendInventory( int clientNum, bool sendUpdatesOnly)
                           cacheManager->GetMsgStrings());
     }
 
-    
+
     outgoing->AddMoney(m);
 
     if (outgoing->valid)
@@ -466,9 +466,9 @@ bool ServerCharManager::SendInventory( int clientNum, bool sendUpdatesOnly)
         outgoing->msg->ClipToCurrentSize();
         psserver->GetEventManager()->SendMessage(outgoing->msg);
 
-		// Increase the inventory version, since this version was sent.
-		chardata->Inventory().IncreaseInventoryVersion();
-		
+        // Increase the inventory version, since this version was sent.
+        chardata->Inventory().IncreaseInventoryVersion();
+
         // server now can believe the clients inventory cache is upto date
         //        inventoryCache->SetCacheStatus(psCache::VALID);
     }
@@ -492,14 +492,14 @@ bool ServerCharManager::UpdateItemViews( int clientNum )
 
     // If glyph window is up, update it
     psserver->GetSpellManager()->SendGlyphs(NULL,client);
-    
+
     if ( slotManager->worldContainer )
     {
-        psItem* item = slotManager->worldContainer->GetItem(); 
+        psItem* item = slotManager->worldContainer->GetItem();
         if (item) item->SendContainerContents(client, slotManager->containerEntityID);
         slotManager->worldContainer = NULL;
         slotManager->containerEntityID = 0;
-    } 
+    }
     return true;
 }
 
@@ -524,19 +524,19 @@ bool ServerCharManager::HasConnected( csString name )
 
     //Query to the db that calculates already the amount of seconds since the last login.
     Result result(db->Select("SELECT last_login, UNIX_TIMESTAMP() - UNIX_TIMESTAMP(last_login) as seconds_since_last_login FROM characters WHERE name = '%s'", name.GetData() ));
-    //There is no character with such a name. 
+    //There is no character with such a name.
     if (!result.IsValid() || result.Count() == 0)
     {
         return false;
     }
-    //We check when the char was last online.    
+    //We check when the char was last online.
     secondsLastLogin = result[0].GetInt(1);
 
     if ( secondsLastLogin > MAX_DAYS_NO_LOGON ) // More than 2 months since last login.
-    { 
+    {
         return false;
     }
-    
+
     //The char has connected recently.
     return true;
 }
@@ -879,21 +879,21 @@ void ServerCharManager::HandleMerchantBuy(psGUIMerchantMessage& msg, Client *cli
 
                     psBuyEvent evt(
                         character->GetPID(),
-			character->GetCharName(),
+            character->GetCharName(),
                         merchant->GetPID(),
-			merchant->GetCharName(),
+            merchant->GetCharName(),
                         newstack->GetUID(),
-			newstack->GetName(),
+            newstack->GetName(),
                         partcount,
                         (int)newstack->GetCurrentStats()->GetQuality(),
                         partcost.GetTotal()
                         );
                     buyevents.PushBack(evt);
                 }
-                
+
                 partcount = currentitem->GetStackCount();
             }
-            
+
             if (character->Inventory().Add(currentitem, false, stackable))
             {
                 newcount += partcount;
@@ -902,11 +902,11 @@ void ServerCharManager::HandleMerchantBuy(psGUIMerchantMessage& msg, Client *cli
 
                 psBuyEvent evt(
                     character->GetPID(),
-		    character->GetCharName(),
+            character->GetCharName(),
                     merchant->GetPID(),
-		    merchant->GetCharName(),
+            merchant->GetCharName(),
                     currentitem->GetUID(),
-		    currentitem->GetName(),
+            currentitem->GetName(),
                     partcount,
                     (int)currentitem->GetCurrentStats()->GetQuality(),
                     partcost.GetTotal()
@@ -1005,11 +1005,11 @@ void ServerCharManager::HandleMerchantSell(psGUIMerchantMessage& msg, Client *cl
 
         // Record
         psSellEvent evt(character->GetPID(),
-			character->GetCharName(),
+            character->GetCharName(),
                         merchant->GetPID(),
-			merchant->GetCharName(),
+            merchant->GetCharName(),
                         item->GetUID(),
-			item->GetName(),
+            item->GetName(),
                         count,
                         (int)item->GetCurrentStats()->GetQuality(),
                         cost.GetTotal() );
@@ -1183,12 +1183,12 @@ void ServerCharManager::SendOutPlaySoundMessage( int clientnum, const char* item
 
     sound += ".";
     sound += action;
-    
+
     Debug3(LOG_SOUND,clientnum,"Sending sound %s to client %d", sound.GetData(), clientnum);
 
     psPlaySoundMessage msg(clientnum, sound);
     psserver->GetEventManager()->SendMessage(msg.msg);
-    
+
 // TODO: Sounds should really be multicasted, so others can hear them
 //    psserver->GetEventManager()->Multicast(msg, fromClient->GetActor()->GetMulticastClients(), 0, range );
 }
@@ -1217,12 +1217,12 @@ void ServerCharManager::SendOutEquipmentMessages( gemActor* actor,
      *
      * We'll send the info the client needs, and it figures the rest out.
      */
-    if (part.Length() && texture.Length()) 
+    if (part.Length() && texture.Length())
         mesh.Clear();
 
     psEquipmentMessage msg( 0, eid, equipped, slot, mesh, part, texture, partMesh, removedMesh );
     CS_ASSERT( msg.valid );
-    
+
     psserver->GetEventManager()->Multicast( msg.msg,
                                             actor->GetMulticastClients(),
                                             0, // Multicast to all without exception
@@ -1350,7 +1350,7 @@ bool ServerCharManager::SendPlayerItems( Client *client, psItemCategory* categor
         if (items[z]->GetCrafterID() != 0)
         {
             itemName.Format("%s %s", items[z]->GetQualityString(),
-			             items[z]->GetName());
+                         items[z]->GetName());
         }
         else
         {
@@ -1362,7 +1362,7 @@ bool ServerCharManager::SendPlayerItems( Client *client, psItemCategory* categor
                     "NAME=\"%s\" "
                     "IMG=\"%s\" "
                     "PRICE=\"%i\" "
-                    "COUNT=\"%i\" " 
+                    "COUNT=\"%i\" "
                     "PURIFIED=\"%s\" />",
                     itemID.GetDataSafe(),
                     escpxml_name.GetData(),
@@ -1786,10 +1786,10 @@ void ServerCharManager::HandleStorageWithdraw(psGUIStorageMessage& msg, Client *
             {
                 newcount += partcount;
             }
-                
+
             partcount = currentitem->GetStackCount();
         }
-            
+
         if (character->Inventory().Add(currentitem, false, stackable))
         {
             newcount += partcount;
@@ -1815,7 +1815,7 @@ void ServerCharManager::HandleStorageWithdraw(psGUIStorageMessage& msg, Client *
         // Update client views
         SendPlayerMoney(client, true);
         SendStorageItems( client, character, currentitem->GetCategory() );
-        
+
         psserver->SendSystemOK( client->GetClientNum(), "You got %d %s from the storage.",
             newcount, itemName.GetData());
 

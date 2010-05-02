@@ -399,7 +399,7 @@ void psClientCharManager::HandleTargetUpdate( MsgEntry* me )
 {
     psGUITargetUpdateMessage targetMsg(me);
     if(targetMsg.targetID.IsValid()) //we have an eid
-    {    
+    {
         GEMClientObject* object = cel->FindObject( targetMsg.targetID );
         if ( object )
             SetTarget( object, "select", false);
@@ -423,7 +423,7 @@ void psClientCharManager::HandleEquipment(MsgEntry* me)
         Error2("Got equipment for actor %d, but couldn't find it!", playerID);
         return;
     }
-    
+
     Debug2(LOG_CELPERSIST,0,"Got equipment for actor %d", playerID);
 
 

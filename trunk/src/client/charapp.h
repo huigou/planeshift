@@ -1,6 +1,6 @@
 /*
  * charapp.h
- * 
+ *
  * Copyright (C) 2002-2009 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
@@ -49,9 +49,9 @@ struct iDocumentSystem;
 struct iStringSet;
 
 /** Holds a set of skin tone.
-    A skin tone can conisist of several different parts having different 
+    A skin tone can conisist of several different parts having different
     required materials on them.
-*/  
+*/
 struct SkinToneSet
 {
     csString part;                  ///< The part of the model to adjust.
@@ -73,24 +73,24 @@ public:
     /** Set the mesh that is the base model character.
       * @param mesh The mesh that will be the core model that we want to manage
       *             the appearance for.
-      */    
+      */
     void SetMesh(iMeshWrapper* mesh);
 
     /** Set the material we want to use for the face.
       * @param faceMaterial The material to use.
-      */     
+      */
     void FaceTexture(csString& faceMaterial);
-    
+
     /** Attach a hair sub mesh to the model.
       * @param submesh The name of the hair sub mesh to attach.
       */
     void HairMesh(csString& submesh);
-    
+
     /** Attach a beard sub mesh to the model.
       * @param submesh The name of the beard sub mesh to attach.
       */
     void BeardMesh(csString& submesh);
-    
+
     /** Set the colour of the hair.
       * @param shader the R,G,B value of the shader to use on the hair.
       */
@@ -100,7 +100,7 @@ public:
      * @param shader the R,G,B value of the shader to use on the eyes.
      */
     void EyeColor(csVector3 &shader);
-    
+
     /** Toggle the hair mesh on and off.
       * @param flag True if we want to show the hair. False if we want to hide it.
       */
@@ -116,19 +116,19 @@ public:
     /** Set the skin tone.
       * @param part  The part of the model to change.
       * @param material The material to use on that part.
-      */    
+      */
     void SetSkinTone(csString& part, csString& material);
 
     /** Apply a set of traits based on a XML string.
       * @param traits The XML formated string that has a list of the traits
       *               to apply.
-      */    
+      */
     void ApplyTraits(const csString& traits);
-    
+
     /** Apply a set of equipment based on a XML string.
       * @param traits The XML formated string that has a list of the equipment
       *               to apply.
-      */    
+      */
     void ApplyEquipment(const csString& equipment);
 
     /** Handle the visual aspect of mounting, by attaching the rider's mesh
@@ -136,7 +136,7 @@ public:
       * @param mesh The mount's mesh
       */
     void ApplyRider(csRef<iMeshWrapper> mesh);
-    
+
     /** Equip an item onto the model.
       * @param slotname    The socket we want to place the item.
       * @param mesh        The name of the 3D mesh to attach in above socket.
@@ -146,8 +146,8 @@ public:
       * @param removedMesh The mesh to remove when this item is equipped
       */
     void Equip(csString& slotname, csString& mesh, csString& part, csString& subMesh, csString& texture, csString& removedMesh);
-    
-    
+
+
     /** Remove an item from the model.
       * @param slotname    The socket we want to remove the item.
       * @param mesh        The name of the 3D mesh in above socket.
@@ -157,13 +157,13 @@ public:
       * @param removedMesh The mesh to remove when this item is equipped
       */
     bool Dequip(csString& slotname, csString& mesh, csString& part, csString& subMesh, csString& texture, csString& removedMesh);
-    
+
     /** Copy a current appearance class.
       * @param clone The class to copy.
       */
     void Clone(psCharAppearance* clone);
-    
-    
+
+
     /** Clears the equipment on a mesh. */
     void ClearEquipment(const char* slot = NULL);
 
@@ -178,7 +178,7 @@ public:
     * @return true if the material was changed.
     */
     bool ChangeMaterial(const char* part, const char* materialName);
-    
+
 private:
     /** Parse a string from it's parts into a proper string.
       * For example part Torso and str $P_Plate will give Torso_Plate.
@@ -196,15 +196,15 @@ private:
       * @return true if applied false if it could not be applied.
       */
     bool SetTrait(Trait * trait);
-    
-    /** Change a mesh on the model. 
+
+    /** Change a mesh on the model.
       * @param partPattern The part to change (ex Torso )
       * @param newPart The new mesh to place here ( exaple Plate_Torso ).
       *
       * @return true if mesh was changed.
       */
     bool ChangeMesh(const char* partPattern, const char* newPart);
-    
+
     /** Attach an object into a socket on the model.
       * @param socketName The name of the cal3d socket on the model to place the item in.
       * @param meshFactName The name of the mesh factory of the item to place here.
@@ -213,20 +213,20 @@ private:
       * @return true if item was successfully attached to the model.
       */
     bool Attach(const char* socketName, const char* meshFactName, const char* materialName = NULL);
-    
+
     /** Remove an item from a socket on the model.
       * @param socketName The name of the socket to remove the item from.
       *
       * @return True if the item was successfully removed from the socket.
       */
     bool Detach(const char* socketName, bool removeItem = true);
-    
+
     /** Set the default material back onto a particular part of the model.
       * @param part The part we want to set the default material back on.
-      */ 
+      */
     void DefaultMaterial(csString& part);
-    
-    /** Set the default mesh back onto a particular part.  
+
+    /** Set the default mesh back onto a particular part.
       * For example, plate armour is removed so need to place back the default torso
       * mesh.
       * @param part The part to replace the default mesh for.
@@ -236,7 +236,7 @@ private:
     void ProcessAttach(iMeshFactoryWrapper* factory, iMaterialWrapper* material, const char* meshFactName, csRef<iSpriteCal3DSocket> socket);
     void ProcessAttach(csRef<iMeshWrapper> meshWrap, csRef<iSpriteCal3DSocket> socket);
     void ProcessAttach(csRef<iMaterialWrapper> material, const char* materialName, const char* partName);
-               
+
     csRef<iMeshWrapper> baseMesh;                       ///< The mesh that is our base model.
 
     csRef<iSpriteCal3DFactoryState>  stateFactory;      ///< The Cal3D factory object
@@ -244,13 +244,13 @@ private:
 
     csRef<iAnimatedMeshFactory> animeshFactory; ///< The animesh object factory.
     csRef<iAnimatedMesh> animeshObject; ///< The animesh object.
-    
+
     csRef<iShaderVarStringSet>  stringSet;              ///< Used by shader variables.
     csRef<iStringSet> strings;                          ///< Used by shader types.
 
     /// Character shader.
     iShader* charShader;
-    
+
     /** @name Crystal space objects.
      */
     //@{
@@ -261,27 +261,27 @@ private:
     csRef<iDocumentSystem>      xmlparser;
     csRef<iShaderManager>       shman;
     //@}
-        
+
     csString eyeMesh;                                   ///< Default eye mesh.
     csString hairMesh;                                  ///< Default hair mesh.
     csString beardMesh;                                 ///< Beard mesh.
-    
+
     csVector3 eyeShader;                                ///< Default eye colour.
     csVector3 hairShader;                               ///< Default hair colour.
-    
-    bool hairAttached;                                  ///< Flag if hair is on/off                        
+
+    bool hairAttached;                                  ///< Flag if hair is on/off
     bool beardAttached;                                 ///< Flag if beard is on/off.
-    
-    csHashReversible<csString> removedMeshes;			///< Contains the mesh which have been removed from the model.
-    
+
+    csHash<csString> removedMeshes;                     ///< Contains the mesh which have been removed from the model.
+
     bool eyeColorSet;                                   ///< Flag if eye colour set.
     bool hairColorSet;                                  ///< Flag if hair colour set.
 
     bool sneak;                                         ///< Flag if we're in sneak mode.
-    
+
     csString faceMaterial;                              ///< Default face material.
-    csArray<SkinToneSet> skinToneSet;                   ///< Default skin colours. 
-    
+    csArray<SkinToneSet> skinToneSet;                   ///< Default skin colours.
+
     csArray<csString> usedSlots;                        ///< Slots that have been used.
     csHash<int, csString> effectids;                    ///< Array of effects that are in use.
     csHash<int, csString> lightids;                     ///< Array of lights that are in use.

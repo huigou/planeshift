@@ -417,7 +417,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
         return false;
 
     Debug1(LOG_STARTUP,0,"Started Event Manager Thread");
-    
+
     if ( !progression->Initialize())
     {
         Error1("Failed to start progression manager!");
@@ -428,7 +428,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
 
     // Init Bank Manager.
     bankmanager = new BankManager();
-    
+
     usermanager = new UserManager(GetConnections(), cachemanager, bankmanager, entitymanager);
     Debug1(LOG_STARTUP,0,"Started User Manager");
 
@@ -438,7 +438,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
         CPrintf(CON_ERROR, "Could not load emotes from emotes.xml");
         return false;
     }
-    
+
     // Set up wiring for entitymanager
     GEMSupervisor *gem = new GEMSupervisor(object_reg,database, entitymanager, cachemanager);
     psServerDR *psserverdr = new psServerDR(cachemanager, entitymanager);
@@ -1123,7 +1123,7 @@ public:
         psserver->GetEventManager()->Broadcast(newmsg.msg);
         CPrintf(CON_CMDOUTPUT, "%s\n", mytext.GetDataSafe());
         if(trigger_server_lock) //This is triggering the server lock
-        	entityManager->SetReady(false);
+            entityManager->SetReady(false);
         if(trigger_server_shutdown) //This is triggering the server shut down
             psserver->GetEventManager()->Stop();
     }
