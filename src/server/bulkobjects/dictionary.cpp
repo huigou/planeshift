@@ -1146,10 +1146,14 @@ bool NpcTrigger::operator<=(const NpcTrigger& other) const
 {
     if (area > other.area)
         return false;
-    if (trigger > other.trigger)
-        return false;
-    if (priorresponseID>other.priorresponseID)
-        return false;
+    if (area == other.area)
+    {
+        if (trigger > other.trigger)
+            return false;
+        if (trigger == other.trigger &&
+            priorresponseID > other.priorresponseID)
+            return false;
+    }
     return true;
 };
 
