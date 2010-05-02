@@ -478,7 +478,7 @@ int psLinearMovement::MoveV (float delta)
   //              the reason, but the FollowSegment function will not work later
   //              in this function. So check for that condidtion, give warning,
   //              and halt the movement.
-  if (isnan(newpos.x) || isnan(newpos.y) || isnan(newpos.z))
+  if (csNaN(newpos.x) || csNaN(newpos.y) || csNaN(newpos.z))
   {
       printf("From old position %s ",toString(oldpos,movable->GetSectors()->Get(0)).GetDataSafe());
       StackTrace("LinearMovement to a NAN position.");
