@@ -269,7 +269,6 @@ private:
     csVector3 eyeShader;                                ///< Default eye colour.
     csVector3 hairShader;                               ///< Default hair colour.
 
-    bool hairAttached;                                  ///< Flag if hair is on/off
     bool beardAttached;                                 ///< Flag if beard is on/off.
 
     csHash<csString> removedMeshes;                     ///< Contains the mesh which have been removed from the model.

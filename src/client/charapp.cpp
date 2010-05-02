@@ -67,7 +67,6 @@ psCharAppearance::psCharAppearance(iObjectRegistry* objectReg)
     beardMesh = "Beard";
 
     eyeColorSet = false;
-    hairAttached = true;
     hairColorSet = false;
     sneak = false;
 }
@@ -228,7 +227,6 @@ void psCharAppearance::HairMesh(csString& subMesh)
             }
 
             state->AttachCoreMesh(newPartParsed);
-            hairAttached = true;
             hairMesh = newPartParsed;
         }
     }
@@ -247,7 +245,6 @@ void psCharAppearance::HairMesh(csString& subMesh)
                 if (!strcmp(meshName, newPartParsed))
                 {
                     animeshObject->GetSubMesh(idx)->SetRendering(true);
-                    hairAttached = true;
                     beardMesh = newPartParsed;
                 }
             }
@@ -354,50 +351,6 @@ void psCharAppearance::EyeColor(csVector3& color)
     eyeColorSet = true;
 }
 
-void psCharAppearance::ShowHair(bool show)
-{
-    if (show)
-    {
-        if (hairAttached)
-            return;
-
-        if(state)
-        {
-            state->AttachCoreMesh(hairMesh);
-        }
-        else if(animeshObject && animeshFactory)
-        {
-            size_t idx = animeshFactory->FindSubMesh(hairMesh);
-            if(idx != (size_t)-1)
-            {
-                animeshObject->GetSubMesh(idx)->SetRendering(true);
-            }
-        }
-
-        if (hairColorSet)
-            HairColor(hairShader);
-
-        hairAttached = true;
-    }
-    else
-    {
-        if(state)
-        {
-            state->DetachCoreMesh(hairMesh);
-        }
-        else if(animeshObject && animeshFactory)
-        {
-            size_t idx = animeshFactory->FindSubMesh(hairMesh);
-            if(idx != (size_t)-1)
-            {
-                animeshObject->GetSubMesh(idx)->SetRendering(false);
-            }
-        }
-
-        hairAttached = false;
-    }
-}
-
 void psCharAppearance::ShowMeshes(csString& slot, csString& meshList, bool show)
 {
     if(meshList.IsEmpty() || slot.IsEmpty())
@@ -443,13 +396,11 @@ void psCharAppearance::ShowMeshes(csString& slot, csString& meshList, bool show)
                 }
             }
 
-            //temporary hack for hair to be removed probably already superflous.
+            //temporary hack for hair to be removed. Teorically all meshes should be passed through shader.
             if(meshName == hairMesh)
             {
                 if (hairColorSet)
                     HairColor(hairShader);
-
-                hairAttached = true;
             }
         }
         else //in this case we are adding a restrain to hiding this mesh
@@ -478,10 +429,6 @@ void psCharAppearance::ShowMeshes(csString& slot, csString& meshList, bool show)
                     animeshObject->GetSubMesh(idx)->SetRendering(false);
                 }
             }
-
-            //temporary hack for hair to be removed probably already superflous.
-            if(meshName == hairMesh)
-                hairAttached = false;
         }
     }
 }
@@ -1260,7 +1207,6 @@ void psCharAppearance::Clone(psCharAppearance* clone)
     this->faceMaterial  = clone->faceMaterial;
     this->skinToneSet   = clone->skinToneSet;
     this->eyeColorSet   = clone->eyeColorSet;
-    this->hairAttached  = clone->hairAttached;
     this->hairColorSet  = clone->hairColorSet;
     this->effectids     = clone->effectids;
 }
