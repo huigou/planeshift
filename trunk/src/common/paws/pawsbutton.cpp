@@ -125,6 +125,22 @@ bool pawsButton::Setup( iDocumentNode* node )
         upTextOffsetX = buttonUpImage->GetAttributeValueAsInt("textoffsetx");
         upTextOffsetY = buttonUpImage->GetAttributeValueAsInt("textoffsety");
     }
+    
+    // Get the down button image name.
+    csRef<iDocumentNode> buttonGreyDownImage = node->GetNode( "buttongraydown" );
+    if ( buttonGreyDownImage )
+    {
+        csString greyDownImageName = buttonGreyDownImage->GetAttributeValue("resource");
+        SetGreyUpImage(greyDownImageName);
+    }
+
+    // Get the up button image name.
+    csRef<iDocumentNode> buttonGreyUpImage = node->GetNode( "buttongrayup" );
+    if ( buttonGreyUpImage )
+    {
+        csString greyUpImageName = buttonGreyDownImage->GetAttributeValue("resource");
+        SetGreyUpImage(greyUpImageName);
+    }
 
     // Get the "on char name flash" button image name.
     csRef<iDocumentNode> buttonSpecialImage = node->GetNode( "buttonspecial" );
@@ -173,12 +189,12 @@ void pawsButton::SetUpImage(const csString & image)
     releasedImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(image);
 }
 
-void pawsButton::SetGreyUpImage(const char * greyUpImage)
+void pawsButton::SetGreyUpImage(const csString & greyUpImage)
 {
     this->greyUpImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(greyUpImage);
 }
 
-void pawsButton::SetGreyDownImage(const char * greyDownImage)
+void pawsButton::SetGreyDownImage(const csString & greyDownImage)
 {
     this->greyDownImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(greyDownImage);
 }

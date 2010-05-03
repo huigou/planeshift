@@ -46,8 +46,8 @@ public:
     
     void SetUpImage(const csString & image);
     void SetDownImage(const csString & image);
-	void SetGreyUpImage(const char * greyUpImage);
-	void SetGreyDownImage(const char * greyDownImage);
+	void SetGreyUpImage(const csString & greyUpImage);
+	void SetGreyDownImage(const csString & greyDownImage);
 
 	/* Specify the image to use for special flashing in chat window */
 	void SetOnSpecialImage(const csString & image);

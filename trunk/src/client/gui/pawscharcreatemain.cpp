@@ -54,9 +54,6 @@
 
 #define NAMEHELP_BUTTON 900
 
-#define FEMALE_ICON "mainfemale"
-#define NEUTRAL_ICON "mainneutral"
-
 //////////////////////////////////////////////////////////////////////////////
 
 // Copied from the server
@@ -72,18 +69,7 @@ pawsCreationMain::pawsCreationMain()
     createManager->SetGender( PSCHARACTER_GENDER_MALE ); 
     currentGender = PSCHARACTER_GENDER_MALE;
     lastGender = -1;
-    
-    femaleImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(FEMALE_ICON);
-    if (!femaleImage)
-    {
-        Warning1( LOG_PAWS, "Could not locate the female icon image. This image is not part of the GPL.");
-    }
-    neutralImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(NEUTRAL_ICON);
-    if (!neutralImage)
-    {
-        Warning1( LOG_PAWS, "Could not locate the neutral icon image. This image is not part of the GPL.");
-    }
-        
+            
     currentFaceChoice = 0; 
     activeHairStyle = 0;
     currentBeardStyleChoice = 0;
@@ -151,6 +137,11 @@ bool pawsCreationMain::PostSetup()
     nameTextBox  = dynamic_cast <pawsEditTextBox*> (FindWidget("charnametext"));
     if (nameTextBox == NULL)
         return false;
+        
+    maleButton = (pawsButton*)FindWidget("MaleButton");
+    maleButton->SetToggle(true);
+    femaleButton = (pawsButton*)FindWidget("FemaleButton");
+    femaleButton->SetToggle(true);    
 
     GrayRaceButtons();
     GrayStyleButtons();
@@ -771,14 +762,9 @@ bool pawsCreationMain::OnButtonPressed( int mouseButton, int keyModifier, pawsWi
             lastGender = currentGender;                
         }
 
-        pawsOkBox* Ok = (pawsOkBox*)PawsManager::GetSingleton().FindWidget("OkWindow");
-        Ok->SetText(  createManager->GetRaceDescription( widget->GetID() ) );
+        pawsMultiLineTextBox* racedesc = (pawsMultiLineTextBox*)PawsManager::GetSingleton().FindWidget("race_description");
+        racedesc->SetText(  createManager->GetRaceDescription( widget->GetID() ) );
 
-        Ok->MoveTo( (graphics2D->GetWidth() -  GetActualWidth(512) )/2,
-                    (GetActualHeight(600) - GetActualHeight(256)));
-
-        Ok->Show();  
-        PawsManager::GetSingleton().SetModalWidget(Ok);
         
         createManager->SetGender(currentGender);
         UpdateRace(widget->GetID());
@@ -826,9 +812,13 @@ bool pawsCreationMain::OnButtonPressed( int mouseButton, int keyModifier, pawsWi
     switch ( widget->GetID() )
     {
         case MALE_BUTTON:
+            maleButton->SetState(true);
+            femaleButton->SetState(false);
             SelectGender(PSCHARACTER_GENDER_MALE);
             return true;            
         case FEMALE_BUTTON:
+            maleButton->SetState(false);
+            femaleButton->SetState(true);
             SelectGender(PSCHARACTER_GENDER_FEMALE);
             return true;            
         case BACK_BUTTON:
@@ -962,7 +952,7 @@ bool pawsCreationMain::OnButtonPressed( int mouseButton, int keyModifier, pawsWi
     return false;
 }
 
-
+/*
 void pawsCreationMain::Draw()
 {
     pawsWidget::Draw();
@@ -978,7 +968,7 @@ void pawsCreationMain::Draw()
     {
         neutralImage->Draw(GetActualWidth(363),GetActualHeight(74), GetActualWidth(82),GetActualHeight(34));
     }
-}
+}*/
 
 bool pawsCreationMain::OnChange(pawsWidget *widget)
 { 
@@ -1029,6 +1019,23 @@ void pawsCreationMain::UpdateRace(int id)
     // Show the model for the selected race.
     view->Show();
     view->EnableMouseControl(true);
+    
+    //temporary hardcoding needs removal
+    maleButton->SetEnabled(id != 9);
+    femaleButton->SetEnabled(id != 9);
+    if(id==9)
+    {
+        maleButton->SetState(false);
+        femaleButton->SetState(false);
+    }
+    else
+    {
+        if(currentGender != PSCHARACTER_GENDER_FEMALE)
+            maleButton->SetState(true);
+        else
+            femaleButton->SetState(true);
+    }
+            
 
     CheckLoadStatus();
 }
