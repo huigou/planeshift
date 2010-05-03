@@ -33,4 +33,4 @@ CREATE TABLE `tribes`
 #
 
 INSERT INTO `tribes` VALUES (1,'Mineing tribe',3,-75,0,-180,5,15,'Gold Ore','gold','mine','Dig',1.00,0.0,0,60);
-INSERT INTO `tribes` VALUES (2,'Hunting tribe',3,-85,0,-220,5,5,'Flesh','flesh','hunting_ground','Hunt',1.00,0.50,100,60);
+INSERT INTO `tribes` VALUES (2,'Hunting tribe',3,-90,0,-230,5,5,'Flesh','flesh','hunting_ground','Hunt',1.00,0.50,100,60);

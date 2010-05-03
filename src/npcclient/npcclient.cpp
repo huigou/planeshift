@@ -65,7 +65,6 @@
 #include "npcbehave.h"
 #include "npc.h"
 #include "perceptions.h"
-#include "pathfind.h"
 #include "gem.h"
 #include "tribe.h"
 #include "tribeneed.h"

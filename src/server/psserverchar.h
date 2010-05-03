@@ -75,6 +75,10 @@ public:
     /// Update all views with items
     virtual bool UpdateItemViews( int clientNum );
 
+    /** Sends out sound messages to the client
+     *
+     * @todo Modify to be able to send to all the people around client
+     */
     void SendOutPlaySoundMessage( int clientnum, const char* itemsound, const char* action );
 
     /** Sends out equipment messages to all the people around client.

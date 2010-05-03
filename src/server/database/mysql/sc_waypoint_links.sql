@@ -71,5 +71,27 @@ INSERT INTO `sc_waypoint_links` VALUES (47, '', 'LINEAR' ,38, 39, '');
 INSERT INTO `sc_waypoint_links` VALUES (48, '', 'LINEAR' ,39, 40, '');
 INSERT INTO `sc_waypoint_links` VALUES (49, '', 'LINEAR' ,40, 41, '');
 INSERT INTO `sc_waypoint_links` VALUES (50, '', 'LINEAR' ,41, 13, '');
+INSERT INTO `sc_waypoint_links` VALUES (51,'','LINEAR',18,42,'');
+INSERT INTO `sc_waypoint_links` VALUES (52,'','LINEAR',42,43,'');
+INSERT INTO `sc_waypoint_links` VALUES (53,'','LINEAR',43,44,'');
+INSERT INTO `sc_waypoint_links` VALUES (54,'','LINEAR',44,45,'');
+INSERT INTO `sc_waypoint_links` VALUES (55,'','LINEAR',45,46,'');
+INSERT INTO `sc_waypoint_links` VALUES (56,'','LINEAR',46,47,'');
+INSERT INTO `sc_waypoint_links` VALUES (57,'','LINEAR',47,48,'');
+INSERT INTO `sc_waypoint_links` VALUES (58,'','LINEAR',48,49,'');
+INSERT INTO `sc_waypoint_links` VALUES (59,'','LINEAR',49,50,'');
+INSERT INTO `sc_waypoint_links` VALUES (60,'','LINEAR',50,51,'');
+INSERT INTO `sc_waypoint_links` VALUES (61,'','LINEAR',51,52,'');
+INSERT INTO `sc_waypoint_links` VALUES (62,'','LINEAR',52,53,'');
+INSERT INTO `sc_waypoint_links` VALUES (63,'','LINEAR',53,44,'');
+INSERT INTO `sc_waypoint_links` VALUES (64,'','LINEAR',44,54,'');
+INSERT INTO `sc_waypoint_links` VALUES (65,'','LINEAR',54,55,'');
+INSERT INTO `sc_waypoint_links` VALUES (66,'','LINEAR',55,56,'');
+INSERT INTO `sc_waypoint_links` VALUES (67,'','LINEAR',56,57,'');
+INSERT INTO `sc_waypoint_links` VALUES (68,'','LINEAR',57,58,'');
+INSERT INTO `sc_waypoint_links` VALUES (69,'','LINEAR',58,59,'');
+INSERT INTO `sc_waypoint_links` VALUES (70,'','LINEAR',59,60,'');
+INSERT INTO `sc_waypoint_links` VALUES (71,'','LINEAR',60,61,'');
+INSERT INTO `sc_waypoint_links` VALUES (72,'','LINEAR',61,43,'');
 
 
