@@ -2923,7 +2923,7 @@ void psItem::SendSketchDefinition(Client *client)
     xml += "</limits>";
 
     // Now send all this
-    psSketchMessage msg( client->GetClientNum(), GetUID(), 0, xml, GetBaseStats()->GetSketch(), GetBaseStats()->IsThisTheCreator(client->GetCharacterData()->GetPID()), GetStandardName() );
+    psSketchMessage msg( client->GetClientNum(), GetUID(), 0, xml, GetBaseStats()->GetSketch(), GetBaseStats()->IsThisTheCreator(client->GetCharacterData()->GetPID()), GetStandardName(), GetBaseStats()->GetCreativeBackgroundImg() );
     msg.SendMessage();
 }
 

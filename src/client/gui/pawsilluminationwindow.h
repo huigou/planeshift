@@ -241,6 +241,9 @@ protected:
     csString filenameSafe(const csString &original);
 
     csString sketchName;
+    
+    /// Background image.
+    csRef<iPawsImage> sketchBgImage;
 
 public:
     pawsSketchWindow();

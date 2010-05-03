@@ -334,6 +334,7 @@ private:
 
     psXMLString creativeDefinitionXML;
     csString content;
+    csString backgroundImg; ///< The name of the image which will be put as background of this creative.
 
     PID creatorID;
     PSITEMSTATS_CREATORSTATUS creatorIDStatus;
@@ -663,6 +664,11 @@ public:
     /// creator (i.e. author, artist, etc) of creative things
     void SetCreator(PID, PSITEMSTATS_CREATORSTATUS);
     bool IsThisTheCreator(PID);
+    
+    /** Returns the background image assigned to the creative item.
+     *  @return A csString containing the name of the background image assigned to the creative item.
+     */
+    const csString& GetCreativeBackgroundImg();
 
     /// Return true if this item was equipted with charges.
     bool HasCharges() const;
