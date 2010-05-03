@@ -4975,9 +4975,9 @@ public:
 class psSketchMessage : public psMessageCracker
 {
 public:
-    psSketchMessage( uint32_t client, uint32_t itemID, uint8_t flags, const char *limitxml,const char *sketch_def, bool rightToEditFlag, const char *sketch_name)
+    psSketchMessage( uint32_t client, uint32_t itemID, uint8_t flags, const char *limitxml,const char *sketch_def, bool rightToEditFlag, const char *sketch_name, const char *backgroundImg)
     {
-        msg.AttachNew(new MsgEntry( sizeof(uint32_t)+1+strlen(limitxml)+1+strlen(sketch_def)+1+sizeof(bool)+strlen(sketch_name)+1 ));
+        msg.AttachNew(new MsgEntry( sizeof(uint32_t)+1+strlen(limitxml)+1+strlen(sketch_def)+1+sizeof(bool)+strlen(sketch_name)+1+strlen(backgroundImg)+1 ));
 
         msg->SetType(MSGTYPE_VIEW_SKETCH);
         msg->clientnum = client;
@@ -4987,6 +4987,7 @@ public:
         msg->Add( sketch_def );
         msg->Add(rightToEditFlag);
         msg->Add(sketch_name);
+        msg->Add(backgroundImg);
     }
 
     psSketchMessage( MsgEntry* me )
@@ -4997,6 +4998,7 @@ public:
         Sketch = me->GetStr();
         rightToEdit = me->GetBool();
         name = me->GetStr();
+        backgroundImg = me->GetStr();
     }
 
     PSF_DECLARE_MSG_FACTORY();
@@ -5018,6 +5020,7 @@ public:
     csString limits;
     bool rightToEdit;
     csString name;
+    csString backgroundImg;
 };
 
 /**

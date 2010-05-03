@@ -178,6 +178,9 @@ void pawsSketchWindow::HandleMessage( MsgEntry* me )
 
     sketchName = msg.name;
     SetTitle(sketchName);
+    
+    //set the background image for the map
+    sketchBgImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(msg.backgroundImg);
 
     if (!blackBox)
         blackBox = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage("blackbox");
@@ -211,7 +214,7 @@ void pawsSketchWindow::Hide()
     {
         csString xml = toXML();
         // printf("Saving sketch as: %s\n",xml.GetDataSafe());
-        psSketchMessage sketch(0, currentItemID,0,"", xml, true, sketchName);
+        psSketchMessage sketch(0, currentItemID,0,"", xml, true, sketchName,"");
         sketch.SendMessage();
     }
     pawsWidget::Hide();
@@ -268,6 +271,10 @@ void pawsSketchWindow::Draw()
             }
         }
     }
+
+    //draw background
+    if(sketchBgImage)
+        sketchBgImage->Draw(screenFrame, 0);
 
     DrawSketch();
 }

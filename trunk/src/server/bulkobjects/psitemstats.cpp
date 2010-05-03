@@ -258,6 +258,10 @@ void psItemCreativeStats::ReadStats(iResultRow& row)
                     creatorIDStatus = PSITEMSTATS_CREATOR_VALID;   // valid
             }
         }
+        
+        //check for a background assigned to this.
+        creativeTag.GetTagParm("background", backgroundImg);
+
 
         if (creativeType != PSITEMSTATS_CREATIVETYPE_NONE)
         {
@@ -321,6 +325,11 @@ bool psItemCreativeStats::FormatCreativeContent(void)
     else if (creatorIDStatus != PSITEMSTATS_CREATOR_UNASSIGNED)
     {
         creativeDefinitionXML.AppendFmt(" creator=\"%u\"", creatorID.Unbox());
+    }
+    
+    if(backgroundImg.Length())
+    {
+        creativeDefinitionXML.AppendFmt(" background=\"%s\"", backgroundImg.GetData());
     }
 
     creativeDefinitionXML.AppendFmt("><content>%s</content></creative>", contentForXML.GetDataSafe());
@@ -1606,6 +1615,12 @@ bool psItemStats::IsThisTheCreator(PID characterID)
 
     return false;
 }
+
+const csString &psItemStats::GetCreativeBackgroundImg()
+{
+    return creativeStats.backgroundImg;
+}
+
 
 bool psItemStats::HasCharges() const
 {
