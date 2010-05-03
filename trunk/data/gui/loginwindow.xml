@@ -19,17 +19,17 @@
 
         <!-- Title -->
         <widget name="label_login" factory="pawsTextBox">
-			<frame x="200" y="35" width="400" height="35" />
+			<frame x="200" y="40" width="400" height="35" />
 	    	<font name="/planeshift/data/ttf/scurlock.ttf" r="255" g="255" b="255" shadow="yes" sr="0" sg="0" sb="0" size="24" resizetoscreen="yes" />
             <text string="Login"  horizAdjust="CENTRE" />
             <!-- <bgcolour r="255" g="127" b="40" /> -->
         </widget>
         
-         <!-- Message: intended for new players "New User? Register at http://laanx.fragnetics.com/register" -->
+         <!-- Message: intended for new players "New User? Register at http://www.planeshift.it/register.html" -->
         <widget name="message" factory="pawsMultiLineTextBox" visible="yes">
-            <frame x="100" y="70" width="600" height="25" border="no" />
-			<font name="/planeshift/data/ttf/LiberationSerif-Regular.ttf" r="255" g="255" b="255" size="12" resizetoscreen="yes" />
-            <text string="New User? Register at http://laanx.fragnetics.com/register [text coded in xml]" horizAdjust="CENTRE" vertAdjust="CENTRE" />
+            <frame x="200" y="115" width="600" height="25" border="no" />
+			<font name="/planeshift/data/ttf/LiberationSerif-Regular.ttf" r="255" g="255" b="255" size="10" resizetoscreen="yes" />
+            <text string="New User? Register at http://www.planeshift.it/register.html" horizAdjust="CENTRE" />
             <!-- <bgcolour r="255" g="127" b="40" /> -->
         </widget>
         
@@ -72,9 +72,8 @@
 			<widget name="option_password" factory="pawsCheckBox">
 				<frame x="145" y="90" width="450" height="30" />            
 				<font name="/planeshift/data/ttf/LiberationSerif-Regular.ttf" r="255" g="255" b="255" shadow="no" size="12" resizetoscreen="yes" />
-				<text string="Remember password [text coded in xml]" />
-          		<checkbox on="checkon" off="checkoff" size="14"/>
-				<!--<bgcolour r="120" g="120" b="255" />-->
+				<text string="Remember password" />
+          		<checkbox on="checkon" off="checkoff" size="30"/>
 			</widget>
 		</widget>
 		<!-- end accountInfo -->

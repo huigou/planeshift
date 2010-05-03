@@ -5,13 +5,13 @@
         <frame x="0" y="0" width="800" height="600" border="no" />
         <bgimage resource="login_background" />
 		<font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="15" />   
-                              
+
         <!-- Title -->
         <widget name="label_charcreate" factory="pawsTextBox">	
 			<frame x="200" y="40" width="400" height="35" />
 			<font name="/planeshift/data/ttf/scurlock.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="24" resizetoscreen="yes" />
             <text string="Create a New Character" horizAdjust="CENTRE" />    
-        </widget>       
+        </widget>
         
 		<!-- Instructions -->
 		<widget name="instructions" factory="pawsTextBox">
@@ -38,22 +38,24 @@
        <!-- Gender Selection -->
 
         <widget name="MaleButton" factory="pawsButton" id="100">
-            <frame x="666" y="140" width="35" height="40" border="no"/>
+            <frame x="60" y="120" width="35" height="45" border="no"/>
             <buttonup resource="maleOn"/>
 			<buttondown resource="maleOff"/>
+			<label text="M" y="8"/>	
         </widget>
         
         <widget name="FemaleButton" factory="pawsButton" id="200">
-            <frame x="706" y="140" width="35" height="40" border="no"/>
+            <frame x="50" y="170" width="35" height="45" border="no"/>
             <buttonup resource="femaleOn"/>
 			<buttondown resource="femaleOff"/>
+			<label text="F" y="3"/>
         </widget>
                  
         
         <!-- Race selection -->
         <widget name="RaceBox" factory="pawsRadioButtonGroup">
-            <frame x ="416" y="116" width="150" height="340" border="no" />
-	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="12" resizetoscreen="yes" />
+            <frame x ="410" y="116" width="150" height="340" border="no" />
+			<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="12" resizetoscreen="yes" />
             <radio on="radioon2" off="radiooff2" size="25"/>
             
             <widget name="race3" factory="pawsRadioButton" id="3">
@@ -117,16 +119,14 @@
             </widget>
             
         </widget>
-                
 
-                
         <!-- Name entry -->
         <widget name="charname" factory="pawsTextBox">
             <frame x="410" y="113" width="180" height="20"/>
 			<font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes"  size="17" resizetoscreen="yes" />  
             <text string="Character Name:" />
         </widget>
-        
+
         <widget name="charhelp" factory="pawsButton" id = "900" tooltip="Requirements">
             <frame x="89" y="20" width="70" height="70"/>
 			<font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="30" resizetoscreen="yes" />  
@@ -146,128 +146,116 @@
             <label text="Suggest Name" />
         </widget>
 
-		
+
         <!-- Face customization area -->
-        <widget name="Custom Choice Set 1 <" factory="pawsButton" >
-            <frame x="555" y="210" width="25" height="20"/>
-            <buttonup resource="arrowLeft"/>
-			<buttondown resource="arrowLeftDown"/>
-            <text string="" position="right"/>   
-        </widget>
-        
-        <widget name="Custom Choice Set 1 >" factory="pawsButton" >
-            <frame x="590" y="210" width="25" height="20"/>
-            <buttonup resource="arrowRight"/>
-	        <buttondown resource="arrowRightDown"/>
-            <text string="" position="right"/>   
-        </widget>
-        
-         <widget name="Face" factory="pawsTextBox">
-            <frame x="630" y="210" width="120" height="20"/>
-            <text string="Face" />
-        </widget>
-        <!-- END Face customization area -->
-        
-        
-        <!-- Hair Style customization area -->
-        <widget name="Custom Choice Set 2 <" factory="pawsButton" >
-            <frame x="555" y="235" width="25" height="20"/>
-            <buttonup resource="arrowLeft"/>
-			<buttondown resource="arrowLeftDown"/>
-        </widget>
-        
-        <widget name="Custom Choice Set 2 >" factory="pawsButton" >
-            <frame x="590" y="235" width="25" height="20"/>
-            <buttonup resource="arrowRight"/>
-	    <buttondown resource="arrowRightDown"/>
-        </widget>
-        
-         <widget name="HairStyles" factory="pawsTextBox">
-            <frame x="630" y="235" width="120" height="20"/>
-            <text string="Hair Style" />
-        </widget>
-        <!-- END Hairstyle customization area -->
-        
-        
-        <!-- Beard Style customization area -->
-        <widget name="Custom Choice Set 3 <" factory="pawsButton" >
-            <frame x="555" y="260" width="25" height="20"/>
-            <buttonup resource="arrowLeft"/>
-			<buttondown resource="arrowLeftDown"/>
-        </widget>
-        
-        <widget name="Custom Choice Set 3 >" factory="pawsButton" >
-            <frame x="590" y="260" width="25" height="20"/>
-            <buttonup resource="arrowRight"/>
-	    <buttondown resource="arrowRightDown"/>
-        </widget>
-        
-         <widget name="BeardStyles" factory="pawsTextBox">
-            <frame x="630" y="260" width="120" height="20" />
-            <text string="Beard Style" />
-        </widget>
-        <!-- END Beard customization area -->
+		<widget name="customization" factory="pawsWidget" >
+			<frame x="555" y="170" width="200" height="100"/>
+			<widget name="Custom Choice Set 1 <" factory="pawsButton" >
+				<frame x="0" y="0" width="25" height="20"/>
+				<buttonup resource="arrowLeft"/>
+				<buttondown resource="arrowLeftDown"/>
+				<text string="" position="right"/>   
+			</widget>
+			
+			<widget name="Custom Choice Set 1 >" factory="pawsButton" >
+				<frame x="35" y="0" width="25" height="20"/>
+				<buttonup resource="arrowRight"/>
+				<buttondown resource="arrowRightDown"/>
+				<text string="" position="right"/>   
+			</widget>
+			
+			 <widget name="Face" factory="pawsTextBox">
+				<frame x="75" y="0" width="120" height="20"/>
+				<text string="Face" />
+			</widget>
+			<!-- END Face customization area -->
+			
+			
+			<!-- Hair Style customization area -->
+			<widget name="Custom Choice Set 2 <" factory="pawsButton" >
+				<frame x="0" y="20" width="25" height="20"/>
+				<buttonup resource="arrowLeft"/>
+				<buttondown resource="arrowLeftDown"/>
+			</widget>
+			
+			<widget name="Custom Choice Set 2 >" factory="pawsButton" >
+				<frame x="35" y="20" width="25" height="20"/>
+				<buttonup resource="arrowRight"/>
+			<buttondown resource="arrowRightDown"/>
+			</widget>
+			
+			 <widget name="HairStyles" factory="pawsTextBox">
+				<frame x="75" y="20" width="120" height="20"/>
+				<text string="Hair Style" />
+			</widget>
 
-        <!-- Hair Colour customization area -->
-        <widget name="Custom Choice Set 4 <" factory="pawsButton" >
-            <frame x="555" y="285" width="25" height="20"/>
-            <buttonup resource="arrowLeft"/>
-			<buttondown resource="arrowLeftDown"/>
-        </widget>
+			<!-- END Hairstyle customization area -->
         
-        <widget name="Custom Choice Set 4 >" factory="pawsButton" >
-            <frame x="590" y="285" width="25" height="20"/>
-            <buttonup resource="arrowRight"/>
-	    <buttondown resource="arrowRightDown"/>
-        </widget>
         
-         <widget name="HairColours" factory="pawsTextBox">
-            <frame x="630" y="285" width="120" height="20" />
-            <text string="Hair Colour" />
-        </widget>
-        <!-- END Hair Colour customization area -->
-      
-        <!-- Skin Colour customization area -->
-        <widget name="Custom Choice Set 5 <" factory="pawsButton" >
-            <frame x="555" y="310" width="25" height="20"/>
-            <buttonup resource="arrowLeft"/>
-			<buttondown resource="arrowLeftDown"/>
-        </widget>
-        
-        <widget name="Custom Choice Set 5 >" factory="pawsButton" >
-            <frame x="590" y="310" width="25" height="20"/>
-            <buttonup resource="arrowRight"/>
-	    <buttondown resource="arrowRightDown"/>
-        </widget>
-        
-         <widget name="SkinColours" factory="pawsTextBox">
-            <frame x="630" y="310" width="120" height="20" />
-            <text string="Skin Colour" />
-        </widget>
-        <!-- END Skin Colour customization area -->
-                
-                
+			<!-- Beard Style customization area -->
+			<widget name="Custom Choice Set 3 <" factory="pawsButton" >
+				<frame x="0" y="40" width="25" height="20"/>
+				<buttonup resource="arrowLeft"/>
+				<buttondown resource="arrowLeftDown"/>
+			</widget>
+			
+			<widget name="Custom Choice Set 3 >" factory="pawsButton" >
+				<frame x="35" y="40" width="25" height="20"/>
+				<buttonup resource="arrowRight"/>
+			<buttondown resource="arrowRightDown"/>
+			</widget>
+			
+			 <widget name="BeardStyles" factory="pawsTextBox">
+				<frame x="75" y="40" width="120" height="20" />
+				<text string="Beard Style" />
+			</widget>
+			<!-- END Beard customization area -->
 
-        <!-- Navigation Buttons -->
-<!-- 
-        <widget name="BackButton" factory="pawsButton" id="1000">
-            <frame x="30" y="503" width="80" height="50" border="no" />
-	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes"  size="28" resizetoscreen="yes" />
-			<label text="Prev"/>
+			<!-- Hair Colour customization area -->
+			<widget name="Custom Choice Set 4 <" factory="pawsButton" >
+				<frame x="0" y="60" width="25" height="20"/>
+				<buttonup resource="arrowLeft"/>
+				<buttondown resource="arrowLeftDown"/>
+			</widget>
+			
+			<widget name="Custom Choice Set 4 >" factory="pawsButton" >
+				<frame x="35" y="60" width="25" height="20"/>
+				<buttonup resource="arrowRight"/>
+			<buttondown resource="arrowRightDown"/>
+			</widget>
+			
+			 <widget name="HairColours" factory="pawsTextBox">
+				<frame x="75" y="60" width="120" height="20" />
+				<text string="Hair Colour" />
+			</widget>
+			<!-- END Hair Colour customization area -->
+		  
+			<!-- Skin Colour customization area -->
+			<widget name="Custom Choice Set 5 <" factory="pawsButton" >
+				<frame x="0" y="80" width="25" height="20"/>
+				<buttonup resource="arrowLeft"/>
+				<buttondown resource="arrowLeftDown"/>
+			</widget>
+			
+			<widget name="Custom Choice Set 5 >" factory="pawsButton" >
+				<frame x="35" y="80" width="25" height="20"/>
+				<buttonup resource="arrowRight"/>
+			<buttondown resource="arrowRightDown"/>
+			</widget>
+			
+			 <widget name="SkinColours" factory="pawsTextBox">
+				<frame x="75" y="80" width="120" height="20" />
+				<text string="Skin Colour" />
+			</widget>
+			<!-- END Skin Colour customization area -->
+		</widget>
+
+		<!-- Description -->
+       <widget name="main_description" factory="pawsMultiLineTextBox">
+            <frame x="555" y="300" width="200" height="200" border="no" />
+            <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="12" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
+            <text string="The model of this race is available. and we want you to play it for ever!! The traits of this race are this and that, plus this and that. also you have some special abilities, like one and two. and more to come like three and four. " />
         </widget>
-        
-        <widget name="QuickButton" factory="pawsButton" id="2000">
-            <frame x="355" y="560" width="100" height="40" border="no" />
-	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="28" resizetoscreen="yes" />
-			<label text="Quick"/>
-        </widget>
-        
-        <widget name="NextButton" factory="pawsButton" id="3000">
-            <frame x="665" y="495" width="120" height="55" border="no" />
-	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="28" resizetoscreen="yes" />
-			<label text="Custom"/>
-        </widget>
- -->
 
         <!-- Navigation Buttons -->
         <widget name="navBar" factory="pawsWidget">
