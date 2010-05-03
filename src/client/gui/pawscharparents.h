@@ -56,9 +56,9 @@ private:
     /// Set to true once the data has been populated from the server. 
     bool dataLoaded;
 
-    /// parents' names widgets
+    /*/// parents' names widgets
     pawsEditTextBox* fatherNameTextBox;
-    pawsEditTextBox* motherNameTextBox;
+    pawsEditTextBox* motherNameTextBox;*/
    
     /// Quick access to this widget since it is can change often.
     pawsMultiLineTextBox* fatherJobDesc;
