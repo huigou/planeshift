@@ -113,6 +113,9 @@ public:
 
     /// Changes pos according to the warp portal between adjacent sectors from and to.
     bool WarpSpace(const iSector* from, const iSector* to, csVector3& pos);
+
+    /// Changes pos according to the warp portal between adjacent sectors from and to using a relative transformation
+    bool WarpSpaceRelative(const iSector* from, const iSector* to, csVector3& pos);
     
     /// Checks whether 2 sectors are connected via a warp portal.
     bool Connected(const iSector* from, const iSector* to);

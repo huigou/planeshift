@@ -419,6 +419,16 @@ bool NetworkManager::ReceiveMapList(MsgEntry *msg)
     while(loader->GetLoadingCount() != 0)
         loader->ContinueLoading(true);
 
+    // @@@ RlyDontKnow: Path Networks have to be loaded *after*
+    // all required maps are loaded. Else sector Transformations
+    // aren't known which will result in broken paths including
+    // warp portals.
+    if (!npcclient->LoadPathNetwork())
+    {
+        CPrintf(CON_ERROR, "Couldn't load the path network\n");
+        exit(1);
+    }
+
     return true;
 }
 

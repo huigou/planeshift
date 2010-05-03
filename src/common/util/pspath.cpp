@@ -687,13 +687,34 @@ bool psPathAnchor::Extrapolate(psWorld * world, iEngine *engine, float delta, ps
     GetInterpolatedUp (up);
     GetInterpolatedForward (look);
     
-    // Only set estimated position if in expected sector.
-    if (path->points[currentAtIndex]->GetSector(engine) == movable->GetSectors()->Get(0))
-        movable->GetTransform().SetOrigin(pos);
-    
+    // Check whether we should do anything and if transformations are needed apply them
+    iSector* sector = movable->GetSectors()->Get(0);
+    if (path->points[currentAtIndex]->GetSector(engine) == sector)
+    {
+        // do nothing
+    }
+    else if (path->points[currentAtIndex+1]->GetSector(engine) == sector)
+    {
+        if (!world->WarpSpace(path->points[currentAtIndex]->GetSector(engine), path->points[currentAtIndex+1]->GetSector(engine), pos) ||
+            !world->WarpSpaceRelative(path->points[currentAtIndex]->GetSector(engine), path->points[currentAtIndex+1]->GetSector(engine), look) ||
+            !world->WarpSpaceRelative(path->points[currentAtIndex]->GetSector(engine), path->points[currentAtIndex+1]->GetSector(engine), up))
+        {
+            Error1("transformation failed");
+            return true;
+        }
+    }
+    else
+    {
+        Error4("psPatchAnchor: expected sector %s or %s - got %s", path->points[currentAtIndex]->GetSector(engine)->QueryObject()->GetName(),
+            path->points[currentAtIndex+1]->GetSector(engine)->QueryObject()->GetName(), sector->QueryObject()->GetName());
+        return true;
+    }
+
+    // Set Position
+    movable->GetTransform().SetOrigin(pos);
+
     // Set rotation.
-    movable->GetTransform().LookAt(
-        	look.Unit (), up.Unit ());
+    movable->GetTransform().LookAt(look.Unit (), up.Unit ());
     movable->UpdateMove ();
 
     return true;

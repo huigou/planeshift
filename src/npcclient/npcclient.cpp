@@ -206,12 +206,6 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, cons
         CPrintf(CON_ERROR, "Couldn't load npcbehave.xml.\n");
         exit(1);
     }
-
-    if (!LoadPathNetwork())
-    {
-        CPrintf(CON_ERROR, "Couldn't load the path network\n");
-        exit(1);
-    }
     
     if (!LoadTribes())
     {

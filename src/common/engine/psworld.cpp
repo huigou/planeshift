@@ -166,6 +166,27 @@ bool psWorld::WarpSpace(const iSector* from, const iSector* to, csVector3& pos)
     return false; // Didn't find transformation, pos not ok.
 }
 
+bool psWorld::WarpSpaceRelative(const iSector* from, const iSector* to, csVector3& pos)
+{
+    if(from == to)
+        return true; // No need to transform, pos ok.
+
+    int i = engine->GetSectors()->Find((iSector*)from);
+    if (i == -1)
+    {
+        return false; // Didn't find transformation, pos not ok. 
+    }
+
+    csReversibleTransform* transform = transarray[i].Get((iSector*)to);
+    if(transform)
+    {
+        pos = transform->Other2ThisRelative(pos);
+        return true; // Position transformed, pos ok.
+    }
+
+    return false; // Didn't find transformation, pos not ok.
+}
+
 bool psWorld::Connected(const iSector* from, const iSector* to)
 {
     if (from == to)

@@ -453,10 +453,12 @@ protected:
 
     bool ReadNPCsFromDatabase();
 
+public:
+    // has to be public as the networkmanager has to call it
+    bool LoadPathNetwork();
 
 protected:
     bool LoadLocations();
-    bool LoadPathNetwork();
     
     /** Load Tribes from db */
     bool LoadTribes();
