@@ -142,7 +142,7 @@ public:
     HateList           hatelist;
     
     NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world, iEngine* engine, iCollideSystem* cdsys);
-    ~NPC();
+    virtual ~NPC();
 
     
     void Tick();
