@@ -4,7 +4,7 @@
       
     <frame x="0" y="0" width="460" height="240" border="no" />
 
-        <widget name="Message Box" factory="pawsMultiLineTextBox" style="Header Font">
+        <widget name="Message Box" factory="pawsMultiLineTextBox" style="Standard Font">
         <frame x="25" y="25" width="410" height="150" border="no" />
         </widget>
 
