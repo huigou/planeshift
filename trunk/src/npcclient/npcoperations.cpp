@@ -3643,12 +3643,7 @@ bool WanderOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 
 void WanderOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
 {
-    csVector3 pos;
-    float rot;
-    iSector* sector;
-
     npc->GetLinMove()->ExtrapolatePosition(timedelta);
-    npc->GetLinMove()->GetLastPosition(pos,rot,sector);
     
     if (!anchor->Extrapolate(npcclient->GetWorld(),npcclient->GetEngine(),
                              timedelta*GetVelocity(npc),
