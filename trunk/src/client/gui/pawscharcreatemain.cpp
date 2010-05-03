@@ -1030,7 +1030,7 @@ void pawsCreationMain::UpdateRace(int id)
     }
     else
     {
-        if(currentGender != PSCHARACTER_GENDER_FEMALE)
+        if(createManager->GetSelectedGender() != PSCHARACTER_GENDER_FEMALE)
             maleButton->SetState(true);
         else
             femaleButton->SetState(true);
