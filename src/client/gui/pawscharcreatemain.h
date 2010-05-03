@@ -60,7 +60,6 @@ public:
     bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );
     bool PostSetup();
 	bool OnChange(pawsWidget *widget);
-    void Draw();
     void Show();
     bool CheckLoadStatus();
 
@@ -130,9 +129,11 @@ private:
     
     /// Gender radio button group
     pawsRadioButtonGroup* gender;        
-    
-    csRef<iPawsImage> femaleImage;
-    csRef<iPawsImage> neutralImage;
+ 
+    ///button used for the male selection
+    pawsButton* maleButton; 
+    ///button used for the female selection
+    pawsButton* femaleButton;
 
     /// Paper doll view of model.
     pawsObjectView* view;   

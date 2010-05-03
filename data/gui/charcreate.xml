@@ -41,6 +41,8 @@
             <frame x="60" y="120" width="35" height="45" border="no"/>
             <buttonup resource="maleOn"/>
 			<buttondown resource="maleOff"/>
+            <buttongrayup resource="maleOn"/>
+            <buttongraydown resource="maleOn"/>
 			<label text="M" y="8"/>	
         </widget>
         
@@ -48,13 +50,15 @@
             <frame x="50" y="170" width="35" height="45" border="no"/>
             <buttonup resource="femaleOn"/>
 			<buttondown resource="femaleOff"/>
+            <buttongrayup resource="femaleOn"/>
+            <buttongraydown resource="femaleOn"/>
 			<label text="F" y="3"/>
         </widget>
                  
         
         <!-- Race selection -->
         <widget name="RaceBox" factory="pawsRadioButtonGroup">
-            <frame x ="410" y="116" width="150" height="340" border="no" />
+            <frame x ="410" y="167" width="150" height="340" border="no" />
 			<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="12" resizetoscreen="yes" />
             <radio on="radioon2" off="radiooff2" size="25"/>
             
@@ -251,7 +255,7 @@
 		</widget>
 
 		<!-- Description -->
-       <widget name="main_description" factory="pawsMultiLineTextBox">
+       <widget name="race_description" factory="pawsMultiLineTextBox">
             <frame x="555" y="300" width="200" height="200" border="no" />
             <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="12" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
             <text string="The model of this race is available. and we want you to play it for ever!! The traits of this race are this and that, plus this and that. also you have some special abilities, like one and two. and more to come like three and four. " />
