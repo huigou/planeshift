@@ -63,10 +63,10 @@ pawsCharParents::~pawsCharParents()
 
 bool pawsCharParents::PostSetup()
 {
-    motherNameTextBox = (pawsEditTextBox*)FindWidget("mname");
+    /*motherNameTextBox = (pawsEditTextBox*)FindWidget("mname");
     fatherNameTextBox = (pawsEditTextBox*)FindWidget("fname");
     if (!motherNameTextBox || !fatherNameTextBox)
-        return false;
+        return false;*/
 
     fatherJobDesc = (pawsMultiLineTextBox*)FindWidget( "fjobdesc" );    
     if ( !fatherJobDesc )
@@ -233,7 +233,7 @@ bool pawsCharParents::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
         case NEXT_BUTTON:
         {
             // Validate parents names
-            csString mName(motherNameTextBox->GetText());
+            /*csString mName(motherNameTextBox->GetText());
             csString fName(fatherNameTextBox->GetText());
 			
             csString mFirstName = mName.Slice(0, mName.FindFirst(' '));
@@ -280,7 +280,7 @@ bool pawsCharParents::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
 			fLastName = NormalizeCharacterName(fLastName);
             motherNameTextBox->SetText(mFirstName + " " + mLastName);
             fatherNameTextBox->SetText(fFirstName + " " + fLastName);
-
+            */
             // check other parental data
             if (lastFatherChoice == -1 || lastMotherChoice == -1 )
             {
@@ -385,7 +385,7 @@ void pawsCharParents::Randomize()
     pawsListBox* motherBox = (pawsListBox*)FindWidget("motherjobs");
     pawsListBox* religionBox = (pawsListBox*)FindWidget("Religions");
 
-    // randomize names
+    /*// randomize names
 	csString lastName = createManager->GetName().Slice(createManager->GetName().Find(" ")+1);
 	
     // make uppper case
@@ -420,7 +420,7 @@ void pawsCharParents::Randomize()
 	fullName.Format("%s %s", randomName.GetData(), lastName.GetData());
 	
     motherNameTextBox->SetText( fullName );
-
+    */
     //randomize jobs
     fatherBox->Select(fatherBox->GetRow(psengine->GetRandomGen().Get(fatherBox->GetRowCount())));
     motherBox->Select(motherBox->GetRow(psengine->GetRandomGen().Get(motherBox->GetRowCount())));
