@@ -207,7 +207,7 @@ public:
     /// Highlights the selected row
     bool Select( pawsListBoxRow* row, bool notify = true);
 
-    /// Highlightt the selected row (by index)
+    /// Highlights the selected row (by index)
     bool SelectByIndex(int index, bool notify = true);
 
     /// Creates the title row
