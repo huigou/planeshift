@@ -208,15 +208,9 @@ void pawsLifeEventWindow::OnListAction(  pawsListBox* widget, int status )
         row = widget->GetSelectedRow();
         if (!row )
             return;
-             
-        if ( widget->GetID() == AVAILABLE_BOX )
-        {
-            choiceDesc->SetText( createManager->GetLifeEventDescription( row->GetID() ) );            
-        }
-        else if ( widget->GetID() == SELECTED_BOX )
-        {
-            selectedDesc->SetText( createManager->GetLifeEventDescription( row->GetID() ) );            
-        }
+        
+        choiceDesc->SetText( createManager->GetLifeEventDescription( row->GetID() ) );            
+
     }                       
 }
 
