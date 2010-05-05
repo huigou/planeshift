@@ -36,6 +36,17 @@
 
 using namespace CS::Threading;
 
+enum // note that 0x02 (bit1) is also reserved for marking messages as multipacket
+{
+    PRIORITY_LOW  = 0x00,
+    PRIORITY_HIGH = 0x01,
+    PRIORITY_MASK = 0x01
+};
+
+// 8 bit should hopefully be enough
+typedef uint8_t msgtype;
+
+
 /*
  * csSyncRefCount is safe in most cases. A case where it isn't is when the
  * read to check for null is done just as something tries to inc (and the
@@ -80,16 +91,8 @@ public:
 };
 
 
+//-----------------------------------------------------------------------------
 
-enum // note that 0x02 (bit1) is also reserved for marking messages as multipacket
-{
-    PRIORITY_LOW  = 0x00,
-    PRIORITY_HIGH = 0x01,
-    PRIORITY_MASK = 0x01
-};
-
-// 8 bit should hopefully be enough
-typedef uint8_t msgtype;
 
 /**
  * this struct represents the data that is sent out through the network (all
@@ -116,6 +119,10 @@ struct psMessageBytes
  */
 const unsigned int MAX_MESSAGE_SIZE = 65535 - sizeof(psMessageBytes) - 1;  // Current max, -1 for safety
 
+
+//-----------------------------------------------------------------------------
+
+
 /**
  * The structure of 1 queue entry (pointer to a message)
  */
@@ -125,15 +132,17 @@ public:
     MsgEntry (size_t datasize = 0, uint8_t msgpriority=PRIORITY_HIGH, uint8_t sequence=0)
         : clientnum(0), priority((sequence << 2) | msgpriority), msgid(0), overrun(false)
     {
-		if (sequence && msgpriority==PRIORITY_LOW)
-		{
-			Error1("MsgEntry created with sequenced delivery but not guaranteed delivery.  This is not reliable and probably won't work.");
-		}
+        if (sequence && msgpriority==PRIORITY_LOW)
+        {
+            Error1("MsgEntry created with sequenced delivery but not guaranteed delivery.  This is not reliable and probably won't work.");
+        }
+
         if (datasize > MAX_MESSAGE_SIZE)
         {
             Debug3(LOG_NET,0,"Call to MsgEntry construction truncated data.  Requested size %u > max size %u.\n",(unsigned int)datasize,(unsigned int)MAX_MESSAGE_SIZE);
             datasize=MAX_MESSAGE_SIZE;
         }
+
         bytes = (psMessageBytes*) cs_malloc(sizeof(psMessageBytes) + datasize);
         CS_ASSERT(bytes != NULL);
 
@@ -840,10 +849,10 @@ public:
         return bytes->type;
     }
 
-	int GetSequenceNumber()
-	{
-		return priority >> 2;
-	}
+    int GetSequenceNumber()
+    {
+        return priority >> 2;
+    }
 
     /////////////////////////////////
     // Dummy functions required by GenericQueue
