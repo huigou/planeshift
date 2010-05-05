@@ -61,6 +61,7 @@ Help distclean : "Remove built targets and configuration" ;
 MsvcGenSubDir TOP mk msvc : common ;
 MsvcGenSubDir TOP mk msvc8 : 8 ;
 MsvcGenSubDir TOP mk msvc9 : 9 ;
+MsvcGenSubDir TOP mk msvc9 : 10 ;
 
 # Dir in which the msvcgen files are located.
 
