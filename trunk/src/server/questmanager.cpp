@@ -1104,7 +1104,16 @@ bool QuestManager::BuildMenu(const csString& block,const csStringArray& list, ps
         block.SubString(response,start,end-start);
         response.Trim();
 
-        menu->AddTrigger( response, list[ counter++ ], quest );
+        //We have to cut out all the triggers outside the first one so 
+        //the menu doesn't get "other versions" of text triggers
+        csString trigger = list[ counter++ ];
+        //search the first dot
+        size_t cutDotPos = trigger.FindFirst(".");
+        //we check if it was found to avoid creating too many csString
+        if(cutDotPos != (size_t) -1)
+            trigger.Truncate(cutDotPos); //cut the string at the dot, excluding it.
+
+        menu->AddTrigger( response, trigger, quest );
 
         start = end; // Start at next Menu: or exit loop
     }
