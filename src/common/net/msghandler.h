@@ -42,38 +42,43 @@ public:
     virtual void Call(MsgEntry *message, Client *client)       = 0; // call using function
 };
 
+
+//-----------------------------------------------------------------------------
+
+
 template <class Manager>
 class NetMessageCallback : public MsgtypeCallback
 {
- private:
-      void (Manager::*funcptr)(MsgEntry *message, Client *client);   // pointer to member function
-      Manager *thisPtr;                                              // pointer to object
+private:
+    void (Manager::*funcptr)(MsgEntry *message, Client *client);   // pointer to member function
+    Manager *thisPtr;                                              // pointer to object
 
-   public:
+public:
+    // constructor - takes pointer to an object and pointer to a member and stores
+    // them in two private variables
+    NetMessageCallback(Manager *myObject, void(Manager::*fpt)(MsgEntry *message, Client *client))
+    { 
+        thisPtr = myObject;
+        funcptr = fpt;
+    }
 
-      // constructor - takes pointer to an object and pointer to a member and stores
-      // them in two private variables
-      NetMessageCallback(Manager *myObject, void(Manager::*fpt)(MsgEntry *message, Client *client))
-      { 
-          thisPtr = myObject;
-          funcptr = fpt;
-      }
+    virtual ~NetMessageCallback() { };
 
-      virtual ~NetMessageCallback() { };
+    // override operator "()"
+    virtual void operator()(MsgEntry *message, Client *client)
+    {
+        (*thisPtr.*funcptr)(message,client);
+    }
 
-      // override operator "()"
-      virtual void operator()(MsgEntry *message, Client *client)
-      {
-          (*thisPtr.*funcptr)(message,client);
-      }
-
-      // override function "Call"
-      virtual void Call(MsgEntry *message, Client *client)
-      {
-          (*thisPtr.*funcptr)(message,client);
-      }
+    // override function "Call"
+    virtual void Call(MsgEntry *message, Client *client)
+    {
+        (*thisPtr.*funcptr)(message,client);
+    }
 };
 
+
+//-----------------------------------------------------------------------------
 
 
 /// This little struct tracks who is interested in what.
@@ -93,6 +98,9 @@ struct Subscription
 };
 
 
+//-----------------------------------------------------------------------------
+
+
 /**
  * This class holds the structure for guaranteed inbound ordering of certain message
  * types.  We need to track the next sequence number we're expecting (in a range
@@ -101,20 +109,25 @@ struct Subscription
  */
 struct OrderedMessageChannel
 {
-	int nextSequenceNumber;
-	csRefArray<MsgEntry> pendingMessages;
+    int nextSequenceNumber;
+    csRefArray<MsgEntry> pendingMessages;
 
-	OrderedMessageChannel() : nextSequenceNumber(0) { }
-	int GetCurrentSequenceNumber() { return nextSequenceNumber; }
+    OrderedMessageChannel() : nextSequenceNumber(0) { }
 
-	int IncrementSequenceNumber()
-	{
-		nextSequenceNumber++;
-		if (nextSequenceNumber > 63)  // must be clamped to 6 bit value
-			nextSequenceNumber = 1;    // can't use zero because that means unsequenced
-		return nextSequenceNumber;
-	}
+    int GetCurrentSequenceNumber() { return nextSequenceNumber; }
+
+    int IncrementSequenceNumber()
+    {
+        nextSequenceNumber++;
+        if (nextSequenceNumber > 63)  // must be clamped to 6 bit value
+            nextSequenceNumber = 1;    // can't use zero because that means unsequenced
+
+        return nextSequenceNumber;
+    }
 };
+
+
+//-----------------------------------------------------------------------------
 
 
 /**

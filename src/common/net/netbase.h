@@ -94,13 +94,16 @@ typedef GenericRefQueue <psNetPacketEntry> NetPacketQueue;
 
 struct PublishDestination
 {
-     int client;
-     void *object;
-     float dist;
-     float min_dist;
+    int client;
+    void *object;
+    float dist;
+    float min_dist;
 
-     PublishDestination(int client, void* object, float dist, float min_dist) : client(client), object(object), dist(dist), min_dist(min_dist) {}
+    PublishDestination(int client, void* object, float dist, float min_dist) : client(client), object(object), dist(dist), min_dist(min_dist) {}
 };
+
+
+//-----------------------------------------------------------------------------
 
 /**
  * This class acts as a base for client/server net classes. It tries to define
@@ -131,7 +134,6 @@ public:
     /**
      * Put a message into the outgoing queue
      */
-
     virtual bool SendMessage (MsgEntry* me);
     virtual bool SendMessage (MsgEntry* me,NetPacketQueueRefCount *queue);
 
@@ -215,6 +217,7 @@ public:
 
     /// Set the Engine
     void SetEngine(iEngine* engine) { this->engine = engine; }
+    
     /// Get the Engine
     iEngine* GetEngine() { return engine; }
 
@@ -289,7 +292,6 @@ protected:
      */
     bool FilterLogMessage(int type,char dir);
 
-protected:
     /* the following protected stuff is thought of being used in the inherited
      * network classes
      */
@@ -337,50 +339,51 @@ protected:
             }
             fprintf(f,"\n-----------------\n");
             fclose(f);
-            #endif
+        #endif
 
-            // Try and send the data, if we fail we wait for the status to change
+        // Try and send the data, if we fail we wait for the status to change
+        sentbytes=SOCK_SENDTO(mysocket, data, size, 0, (LPSOCKADDR) addr, sizeof (SOCKADDR_IN) );
+
+
+        /* Call select() to wait until precisely the time of the change, but have a timeout.
+         *  It's possible that the buffer will free between the sendto call and the select
+         *  leaving the select hanging forever if not for the timeout value.
+         */
+        while (retries++ < SENDTO_MAX_RETRIES && sentbytes==-1 && (errno==EAGAIN || errno==WSAEWOULDBLOCK))
+        {
+            printf("In while loop on EAGAIN... retry #%d.\n", retries);
+
+            // Clear the file descriptor set
+            FD_ZERO(&wfds);
+            // Set the socket's FD in this set
+            FD_SET(mysocket,&wfds);
+
+            // Zero out the timeout value to start
+            memset(&timeout,0,sizeof(struct timeval));
+            timeout.tv_sec=SENDTO_SELECT_TIMEOUT_SEC;
+            timeout.tv_usec=SENDTO_SELECT_TIMEOUT_USEC;
+
+            /* Wait for the descriptor to change.  Note that it's possible that the status
+             * has already cleared, so we'll try to send again after this anyway.
+             */
+            SOCK_SELECT(mysocket+1,NULL,&wfds,NULL,&timeout);
+
+            // Try and send again.
             sentbytes=SOCK_SENDTO(mysocket, data, size, 0, (LPSOCKADDR) addr, sizeof (SOCKADDR_IN) );
-
-
-            /* Call select() to wait until precisely the time of the change, but have a timeout.
-            *  It's possible that the buffer will free between the sendto call and the select
-            *  leaving the select hanging forever if not for the timeout value.
-            */
-            while (retries++ < SENDTO_MAX_RETRIES && sentbytes==-1 && (errno==EAGAIN || errno==WSAEWOULDBLOCK))
-            {
-				printf("In while loop on EAGAIN... retry #%d.\n", retries);
-
-                // Clear the file descriptor set
-                FD_ZERO(&wfds);
-                // Set the socket's FD in this set
-                FD_SET(mysocket,&wfds);
-
-                // Zero out the timeout value to start
-                memset(&timeout,0,sizeof(struct timeval));
-                timeout.tv_sec=SENDTO_SELECT_TIMEOUT_SEC;
-                timeout.tv_usec=SENDTO_SELECT_TIMEOUT_USEC;
-
-                /* Wait for the descriptor to change.  Note that it's possible that the status
-                * has already cleared, so we'll try to send again after this anyway.
-                */
-                SOCK_SELECT(mysocket+1,NULL,&wfds,NULL,&timeout);
-
-                // Try and send again.
-                sentbytes=SOCK_SENDTO(mysocket, data, size, 0, (LPSOCKADDR) addr, sizeof (SOCKADDR_IN) );
-            }
-
-            if (sentbytes>0)
-            {
-                totaltransferout += size;
-                totalcountout++;
-            }
-            else
-			{
-                Error2("NetBase::SendTo() gave up trying to send a packet with errno=%d.",errno);
-			}
-            return sentbytes;
         }
+
+        if (sentbytes>0)
+        {
+            totaltransferout += size;
+            totalcountout++;
+        }
+        else
+        {
+            Error2("NetBase::SendTo() gave up trying to send a packet with errno=%d.",errno);
+        }
+
+        return sentbytes;
+    }
 
     /**
      * small inliner for receiving packets... This just
@@ -445,7 +448,9 @@ protected:
      * in the client/server classes.
      */
     int GetIPByName (LPSOCKADDR_IN addr, const char *name);
+
     virtual Connection *GetConnByIP (LPSOCKADDR_IN addr) = 0;
+
     virtual Connection *GetConnByNum (uint32_t clientnum) = 0;
 
     /**
@@ -460,6 +465,7 @@ protected:
      * user
      */
     bool Init(bool autobind = true);
+
     void Close(bool force = true);
 
     /**
@@ -619,6 +625,10 @@ private:
     char* input_buffer;
 };
 
+
+//-----------------------------------------------------------------------------
+
+
 /** This class holds data for a connection */
 class NetBase::Connection
 {
@@ -674,6 +684,10 @@ public:
     // Remove from transmission window when an ack is received
     void RemoveFromWindow(uint32_t bytes) { if(bytes > window) abort(); window -= bytes;}
 };
+
+
+//-----------------------------------------------------------------------------
+
 
 class NetPacketQueueRefCount : public NetPacketQueue, public csSyncRefCount, public CS::Utility::WeakReferenced
 {

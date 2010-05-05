@@ -70,7 +70,6 @@ struct psNetPacket
     /** this can be used as a pointer to the data */
     char    data[0];
 
-    //------------------------------------------------------------------------
     
     size_t GetPacketSize() const
     {
@@ -90,10 +89,10 @@ struct psNetPacket
         return flags & PRIORITY_MASK;
     }
 
-	uint8_t GetSequence() const
-	{
-		return flags>>2; // upper 6 bits of flags should be sequence id
-	}
+    uint8_t GetSequence() const
+    {
+        return flags>>2; // upper 6 bits of flags should be sequence id
+    }
 
     void MarshallEndian() {
         // Pack up for transmission.  This endian-izes the packet.
@@ -138,6 +137,10 @@ struct psNetPacket
 };
 #pragma pack()
 
+
+//-----------------------------------------------------------------------------
+
+
 class PacketKey
 {
     uint32_t clientnum;
@@ -156,8 +159,17 @@ public:
     };
 };
 
-template<> class csHashComputer<PacketKey> :
-public csHashComputerStruct<PacketKey> {};
+
+//-----------------------------------------------------------------------------
+
+
+template<> class csHashComputer<PacketKey> : public csHashComputerStruct<PacketKey> 
+{
+};
+
+
+//-----------------------------------------------------------------------------
+
 
 class psNetPacketEntry : public csSyncRefCount
 {
@@ -235,6 +247,10 @@ public:
     bool GetPending()
     { return false; }
 };
+
+
+//-----------------------------------------------------------------------------
+
 
 template<>
 class csComparator<csRef<psNetPacketEntry> , csRef<psNetPacketEntry> >
