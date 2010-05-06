@@ -32,7 +32,7 @@ private:
     float                   shadowRange;
     bool                    shadowsEnabled;
 
-    bool WithinRange(GEMClientObject * object) const;
+    bool WithinRange(GEMClientObject * object, const csBox3 & bbox = csBox3()) const;
 public:
     psShadowManager();
     ~psShadowManager();

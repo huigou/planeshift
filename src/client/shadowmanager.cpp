@@ -38,7 +38,7 @@
 #define DEFAULT_FILE  "/planeshift/data/options/shadows_def.xml"
 #define USER_FILE     "/planeshift/userdata/options/shadows.xml"
 
-bool psShadowManager::WithinRange(GEMClientObject * object) const
+bool psShadowManager::WithinRange(GEMClientObject * object, const csBox3 & bbox) const
 {
     if (!object || !object->GetMesh().IsValid())
         return false;
@@ -46,14 +46,17 @@ bool psShadowManager::WithinRange(GEMClientObject * object) const
     if (shadowRange < 0)
         return true;
 
-    GEMClientObject * mainPlayer = psengine->GetCelClient()->GetMainPlayer();
-    if (!mainPlayer)
-        return true;
-    
-    csVector3 diff = object->GetMesh()->GetMovable()->GetPosition() - 
-                     mainPlayer->GetMesh()->GetMovable()->GetPosition();
-    
-    return (diff.SquaredNorm() <= shadowRange*shadowRange);
+    if (!bbox.Empty())
+        return bbox.Overlap(object->GetBBox());
+    else
+    {
+        GEMClientObject * mainPlayer = psengine->GetCelClient()->GetMainPlayer();
+        if (!mainPlayer)
+            return true;
+        csVector3 diff = object->GetMesh()->GetMovable()->GetPosition() -
+                         mainPlayer->GetMesh()->GetMovable()->GetPosition();
+        return (diff.SquaredNorm() <= shadowRange*shadowRange);
+    }
 }
 
 psShadowManager::psShadowManager()
@@ -182,7 +185,7 @@ void psShadowManager::RecreateAllShadows()
 {
     if (!shadowsEnabled)
         return;
-
+        
     const csPDelArray<GEMClientObject>& entities = psengine->GetCelClient()->GetEntities();
     size_t len = entities.GetSize();
     for (size_t a=0; a<len; ++a)
@@ -223,11 +226,20 @@ void psShadowManager::UpdateShadows()
     if (!shadowsEnabled)
         return;
 
+    GEMClientObject * mainPlayer = psengine->GetCelClient()->GetMainPlayer();
+    if (!mainPlayer)
+        return;
+
+    csBox3 bbox;
+    csVector3 pos(mainPlayer->GetMesh()->GetMovable()->GetPosition());
+    bbox.AddBoundingVertex(pos.x+shadowRange, pos.y+shadowRange, pos.z+shadowRange);
+    bbox.AddBoundingVertexSmart(pos.x-shadowRange, pos.y-shadowRange, pos.z-shadowRange);
+
     const csPDelArray<GEMClientObject>& entities = psengine->GetCelClient()->GetEntities();
     size_t len = entities.GetSize();
     for (size_t a=0; a<len; ++a)
     {
-        if (!WithinRange(entities[a]))
+        if (!WithinRange(entities[a], bbox))
         {
             RemoveShadow(entities[a]);
         }
