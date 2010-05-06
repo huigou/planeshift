@@ -22,7 +22,7 @@
  */
 
 
-#include "sound.h"
+#include "system.h"
 #include "util/log.h"
 
 /*

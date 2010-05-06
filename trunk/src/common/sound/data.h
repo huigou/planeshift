@@ -92,6 +92,13 @@
 // FIXME i should be an option ;)
 #define SOUNDFILE_CACHETIME     300000  ///<- number of milliseconds a file remains cached
 
+#include <cssysdef.h>
+#include <iutil/objreg.h>
+#include <csutil/csstring.h>
+#include <csutil/hash.h>
+#include <iutil/vfs.h>
+#include <isndsys/ss_data.h>
+#include <isndsys/ss_loader.h>
 
 /**
  * Class that contains the most important informations about a soundfile

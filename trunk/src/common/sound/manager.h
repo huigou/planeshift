@@ -24,6 +24,11 @@
 #ifndef _SOUND_MANAGER_H_
 #define _SOUND_MANAGER_H_
 
+#include <cssysdef.h>
+#include <iutil/objreg.h>
+#include "control.h"
+#include "handle.h"
+
 enum
 {
     LOOP        = true,

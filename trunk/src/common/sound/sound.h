@@ -29,8 +29,6 @@
 #ifndef _SOUND_SOUND_H_
 #define _SOUND_SOUND_H_
 
-#include <crystalspace.h>
-
 #include "control.h"
 #include "handle.h"
 #include "system.h"

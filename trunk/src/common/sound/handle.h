@@ -24,6 +24,11 @@
 #ifndef _SOUND_HANDLE_H_
 #define _SOUND_HANDLE_H_
 
+#include <isndsys.h>
+#include <csutil/csstring.h>
+
+#include "control.h"
+
 enum
 {
     FADE_DOWN   =   0,

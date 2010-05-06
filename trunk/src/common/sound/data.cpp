@@ -21,8 +21,9 @@
  *
  */
 
-#include "sound.h"
+#include "data.h"
 #include "util/log.h"
+#include <csutil/xmltiny.h>
 
 
 SoundFile::SoundFile (const char *newname, const char *newfilename)
@@ -154,7 +155,7 @@ void SoundData::UnloadSoundFile (const char *name)
 {
     SoundFile   *sound;
 
-    if (sound = GetSound(name))
+    if ((sound = GetSound(name)))
     {
         DeleteSound(sound);
     }

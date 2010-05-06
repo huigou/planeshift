@@ -21,7 +21,9 @@
  *
  */
 
-#include "sound.h"
+#include "manager.h"
+#include "system.h"
+#include "data.h"
 #include "util/log.h"
 
 SoundSystem         *soundSystem;
