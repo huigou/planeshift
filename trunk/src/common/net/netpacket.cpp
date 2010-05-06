@@ -35,6 +35,7 @@ psNetPacketEntry::psNetPacketEntry (psNetPacket* packet, uint32_t cnum,
     RTO = 0;
 }
 
+
 /** construct a new PacketEntry for a single or partial message */
 psNetPacketEntry::psNetPacketEntry (uint8_t pri, uint32_t cnum,
                     uint32_t id, uint32_t off,
@@ -56,6 +57,7 @@ psNetPacketEntry::psNetPacketEntry (uint8_t pri, uint32_t cnum,
         memcpy(packet->data, ((char *)msg) + off, sz);
 }
 
+
 psNetPacketEntry::psNetPacketEntry (uint8_t pri, uint32_t cnum,
     uint32_t id, uint32_t off, uint32_t totalsize, uint16_t sz,
     const char *bytes)
@@ -75,11 +77,13 @@ psNetPacketEntry::psNetPacketEntry (uint8_t pri, uint32_t cnum,
     memcpy(packet->data, bytes, sz);
 }
 
+
 psNetPacketEntry::~psNetPacketEntry()
 {
     if (packet)
         cs_free(packet);
 }
+
 
 bool psNetPacketEntry::Append(csRef<psNetPacketEntry> next)
 {
@@ -172,7 +176,8 @@ bool psNetPacketEntry::Append(csRef<psNetPacketEntry> next)
     timestamp = csGetTicks();
 
     return true;
-};
+}
+
 
 csRef<psNetPacketEntry> psNetPacketEntry::GetNextPacket(psNetPacket * &packetdata)
 {

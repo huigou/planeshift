@@ -54,6 +54,8 @@ int NetBase::socklibrefcount=0;
 // Percentage of packets to be simulated as lost. Set to between 0 and 1 to activate.
 const float TEST_PACKETLOSS = 0.0f;
 
+
+
 NetBase::NetBase(int outqueuesize)
 : senders(outqueuesize)
 {
@@ -101,6 +103,7 @@ NetBase::NetBase(int outqueuesize)
     lastSendReport = csGetTicks();
 }
 
+
 NetBase::~NetBase()
 {
     if (ready)
@@ -123,12 +126,14 @@ NetBase::~NetBase()
         cs_free(input_buffer);
 }
 
+
 /* add a Message Queue */
 bool NetBase::AddMsgQueue(MsgQueue *q, objID, objID)
 {
     inqueues.Push(q);
     return true;
 }
+
 
 void NetBase::RemoveMsgQueue(MsgQueue *q)
 {
@@ -146,9 +151,9 @@ void NetBase::ProcessNetwork (csTicks timeout)
         );
 }
 
+
 bool NetBase::CheckIn()
 {    
-
     // check for incoming packets
     SOCKADDR_IN addr;
     memset (&addr, 0, sizeof(SOCKADDR_IN));
@@ -245,16 +250,17 @@ bool NetBase::CheckIn()
     
     if(TEST_PACKETLOSS > 0.0 && randomgen->Get() < TEST_PACKETLOSS)
     {
-		psNetPacket* packet = pkt->packet;
-		int type = 0;
-	
-		if (packet->offset == 0) 
-		{
-			psMessageBytes* msg = (psMessageBytes*) packet->data;
-			type = msg->type;
-		}
-		Error3("Packet simulated lost. Type %s ID %d.\n", type == 0 ? "Fragment" : (const char *)  GetMsgTypeName(type), pkt->packet->pktid);
-		return true;
+        psNetPacket* packet = pkt->packet;
+        int type = 0;
+
+        if (packet->offset == 0) 
+        {
+            psMessageBytes* msg = (psMessageBytes*) packet->data;
+            type = msg->type;
+        }
+
+        Error3("Packet simulated lost. Type %s ID %d.\n", type == 0 ? "Fragment" : (const char *)  GetMsgTypeName(type), pkt->packet->pktid);
+        return true;
     }
 
     // ACK packets can get eaten by HandleAck
@@ -262,8 +268,9 @@ bool NetBase::CheckIn()
     {
         return true;
     }
-	// printf("Got packet with sequence %d.\n", pkt->packet->GetSequence());
 
+    // printf("Got packet with sequence %d.\n", pkt->packet->GetSequence());
+    //
     // Check for doubled packets and drop them
     if (pkt->packet->pktid != 0)
     {
@@ -296,6 +303,7 @@ bool NetBase::CheckIn()
     } while (packetdata);
     return true;
 }
+
 
 bool NetBase::Flush(MsgQueue * queue)
 {
@@ -347,35 +355,41 @@ bool NetBase::HandleAck(csRef<psNetPacketEntry> pkt, Connection* connection,
 
         if (ack) // if acked pkt is found, simply remove it.  We're done.
         {
-        	// Only update RTT estimate when packet has not been retransmitted
+            // Only update RTT estimate when packet has not been retransmitted
             if (!ack->retransmitted && connection)
             {
                 csTicks elapsed = csGetTicks() - ack->timestamp;
       
                 if (connection->estRTT > 0)
                 {
-                	int diff = (int) (elapsed - connection->estRTT);
-					connection->estRTT += (int) (0.125 * diff);
-					if(diff < 0)
-						diff = -diff;
-					connection->devRTT += (int) (0.125 * (diff - connection->devRTT));
+                    int diff = (int) (elapsed - connection->estRTT);
+                    connection->estRTT += (int) (0.125 * diff);
+                    if(diff < 0)
+                        diff = -diff;
+
+                    connection->devRTT += (int) (0.125 * (diff - connection->devRTT));
                 }
                 else
                 {
-                	// Initialise the RTT estimates
-                	connection->estRTT = elapsed;
-                	connection->devRTT = elapsed / 2;
+                    // Initialise the RTT estimates
+                    connection->estRTT = elapsed;
+                    connection->devRTT = elapsed / 2;
                 }
+
                 // Update the packet timeout
-				connection->RTO = (int) (connection->estRTT + 4 * connection->devRTT);
-				if (connection->RTO > PKTMAXRTO)
-					connection->RTO = PKTMAXRTO;
-				else if(connection->RTO < PKTMINRTO)
-					connection->RTO = PKTMINRTO;
-				netInfos.AddPingTicks(elapsed);
+                connection->RTO = (int) (connection->estRTT + 4 * connection->devRTT);
+                if (connection->RTO > PKTMAXRTO)
+                {
+                    connection->RTO = PKTMAXRTO;
+                }
+                else if(connection->RTO < PKTMINRTO)
+                {
+                    connection->RTO = PKTMINRTO;
+                }
+
+                netInfos.AddPingTicks(elapsed);
             }
             // printf ("Ping time: %i, average: %i\n", elapsed, netInfos.GetAveragePingTicks());
-
 
 
             if (!awaitingack.Delete(PacketKey(pkt->clientnum, pkt->packet->pktid), ack))
@@ -385,7 +399,9 @@ bool NetBase::HandleAck(csRef<psNetPacketEntry> pkt, Connection* connection,
 #endif
             }
             else if(connection)
-            	connection->RemoveFromWindow(ack->packet->GetPacketSize());
+            {
+                connection->RemoveFromWindow(ack->packet->GetPacketSize());
+            }
         }
         else // if not found, it is probably a resent ACK which is redundant so do nothing
         {
@@ -396,6 +412,7 @@ bool NetBase::HandleAck(csRef<psNetPacketEntry> pkt, Connection* connection,
 
         return true;   // eat the packet
     }
+
     if (pkt->packet->GetPriority() == PRIORITY_HIGH) // a HIGH_PRIORITY packet -> ack
     {
         
@@ -421,32 +438,37 @@ bool NetBase::HandleAck(csRef<psNetPacketEntry> pkt, Connection* connection,
     return false;
 }
 
+
 bool NetBase::CheckDoublePackets(Connection* connection, csRef<psNetPacketEntry> pkt)
 {
-    
     csArray<uint32_t> offsets = connection->packethistoryhash.GetAll(pkt->packet->pktid);
     if(!offsets.IsEmpty())
     {
-    	for(size_t i = 0; i < offsets.GetSize(); i++)
-    		if(offsets[i] == pkt->packet->offset)
-    			return true;
+        for(size_t i = 0; i < offsets.GetSize(); i++)
+        {
+            if(offsets[i] == pkt->packet->offset)
+            {
+                return true;
+            }
+        }
     }
 
-	// No duplicate packet found
-	connection->packethistoryhash.Put(pkt->packet->pktid, pkt->packet->offset);
-	
-	// Push new packet onto history
-	connection->packethistoryhash.Delete(connection->packethistoryid[connection->historypos], connection->packethistoryoffset[connection->historypos]);
-	connection->packethistoryid[connection->historypos] = pkt->packet->pktid;
-	connection->packethistoryoffset[connection->historypos] = pkt->packet->offset;
-	connection->historypos = (connection->historypos + 1) % MAXPACKETHISTORY;
+    // No duplicate packet found
+    connection->packethistoryhash.Put(pkt->packet->pktid, pkt->packet->offset);
+
+    // Push new packet onto history
+    connection->packethistoryhash.Delete(connection->packethistoryid[connection->historypos], connection->packethistoryoffset[connection->historypos]);
+    connection->packethistoryid[connection->historypos] = pkt->packet->pktid;
+    connection->packethistoryoffset[connection->historypos] = pkt->packet->offset;
+    connection->historypos = (connection->historypos + 1) % MAXPACKETHISTORY;
 
     return false;
 }
 
+
 void NetBase::CheckResendPkts()
 {
-	// NOTE: Globaliterators on csHash do not retrieve keys contiguously.
+    // NOTE: Globaliterators on csHash do not retrieve keys contiguously.
     csHash<csRef<psNetPacketEntry> , PacketKey>::GlobalIterator it(awaitingack.GetIterator());
     csRef<psNetPacketEntry> pkt;
     csArray<csRef<psNetPacketEntry> > pkts;
@@ -471,16 +493,18 @@ void NetBase::CheckResendPkts()
         Connection* connection = GetConnByNum(pkt->clientnum);
         if (connection)
         {
-        	if (resentConnections.Find(connection) == csArrayItemNotFound)
-        	    resentConnections.Push(connection);
-        	// This indicates a bug in the netcode.
-        	if (pkt->RTO == 0)
-        	{
-        		Error1("Unexpected 0 packet RTO.");
-				abort();
-        	}
-        	pkt->RTO *= 2;
-        	connection->resends++;
+            if (resentConnections.Find(connection) == csArrayItemNotFound)
+                resentConnections.Push(connection);
+
+            // This indicates a bug in the netcode.
+            if (pkt->RTO == 0)
+            {
+                Error1("Unexpected 0 packet RTO.");
+                abort();
+            }
+
+            pkt->RTO *= 2;
+            connection->resends++;
         }
         resentCount++;
         
@@ -500,7 +524,9 @@ void NetBase::CheckResendPkts()
 #endif
             }
             else if(connection)
-            	connection->RemoveFromWindow(pkt->packet->GetPacketSize());
+            {
+                connection->RemoveFromWindow(pkt->packet->GetPacketSize());
+            }
         }
     }
 
@@ -512,7 +538,7 @@ void NetBase::CheckResendPkts()
         csTicks timeTaken = csGetTicks() - currenttime;
         if(resentCount > 300 || resendIndex == 1 || timeTaken > 50)
         {
-        	unsigned int peakResend = 0;
+            unsigned int peakResend = 0;
             float resendAvg = 0.0f;
             // Calculate averages data here
             for(int i = 0; i < RESENDAVGCOUNT; i++)
@@ -545,50 +571,55 @@ bool NetBase::SendMergedPackets(NetPacketQueue *q)
     queueget = q->Peek(); // csRef required for q->Get()
     // If there's not at least one packet in the queue, we're done.
     if(!queueget)
-    	return false;
+        return false;
+
     Connection* connection = GetConnByNum(queueget->clientnum);
 //    if(connection) printf("Window size: %d\n", connection->window);
     
     // Always send something if queue is full, otherwise only send if window is not full.
     // This prevents some deadlock issues.
     if(connection && connection->IsWindowFull() && !q->IsFull())
-    	return false;
+        return false;
     
     queueget = q->Get();
     
     final = queueget;  // This was packet 0 in the pending queue
 
-	// Try to merge additional packets into a single send.
-	while ((queueget=q->Get()))  // This is now looping through packets 1-N
-	{
-//		if(connection) printf("Window size2: %d\n", connection->window);
-		candidate = queueget;
-		if (candidate->packet->GetSequence() != 0) // sequenced packet is following a non-sequenced packet
-		{
-			SendSinglePacket(candidate); // Go ahead and send the sequenced one, but keep building the merged one.
-			if(connection && connection->IsWindowFull())
-				break;
-			continue;
-		}
-		if(!final->Append(candidate))
-		{
-			// A failed append means that the packet can't fit or is a resent packet.
-			// Resent packets MUST NOT be merged because it circumvents clientside packet dup
-			// detection
-			SendSinglePacket(final);
-            
-			// Start the process again with the packet that wouldn't fit
-			final = candidate;
-		}
-		if(connection && connection->IsWindowFull())
-			break;
-	}
+    // Try to merge additional packets into a single send.
+    while ((queueget=q->Get()))  // This is now looping through packets 1-N
+    {
+//      if(connection) printf("Window size2: %d\n", connection->window);
+        candidate = queueget;
+        if (candidate->packet->GetSequence() != 0) // sequenced packet is following a non-sequenced packet
+        {
+            SendSinglePacket(candidate); // Go ahead and send the sequenced one, but keep building the merged one.
+            if(connection && connection->IsWindowFull())
+                break;
 
-	// There is always data in final here
+            continue;
+        }
+
+        if(!final->Append(candidate))
+        {
+            // A failed append means that the packet can't fit or is a resent packet.
+            // Resent packets MUST NOT be merged because it circumvents clientside packet dup
+            // detection
+            SendSinglePacket(final);
+            
+            // Start the process again with the packet that wouldn't fit
+            final = candidate;
+        }
+
+        if(connection && connection->IsWindowFull())
+            break;
+    }
+
+    // There is always data in final here
     SendSinglePacket(final);  // this deletes if necessary
 
     return true;
 }
+
 
 bool NetBase::SendSinglePacket(csRef<psNetPacketEntry> pkt)
 {
@@ -611,17 +642,18 @@ bool NetBase::SendSinglePacket(csRef<psNetPacketEntry> pkt)
         Connection* connection = GetConnByNum(pkt->clientnum);
         if(connection)
         {
-        	// Add to window
-        	connection->AddToWindow(pkt->packet->GetPacketSize());
-        	connection->sends++;
-        	// Set timeout for resending.
-        	pkt->RTO = connection->RTO;
-        	awaitingack.Put(PacketKey(pkt->clientnum, pkt->packet->pktid), pkt);
+            // Add to window
+            connection->AddToWindow(pkt->packet->GetPacketSize());
+            connection->sends++;
+            // Set timeout for resending.
+            pkt->RTO = connection->RTO;
+            awaitingack.Put(PacketKey(pkt->clientnum, pkt->packet->pktid), pkt);
         }
     }
 
     return true;
 }
+
 
 bool NetBase::SendFinalPacket(csRef<psNetPacketEntry> pkt)
 {
@@ -643,6 +675,7 @@ bool NetBase::SendFinalPacket(csRef<psNetPacketEntry> pkt)
     
 }
 
+
 bool NetBase::SendFinalPacket(csRef<psNetPacketEntry> pkt, LPSOCKADDR_IN addr)
 {
     // send packet...
@@ -651,7 +684,7 @@ bool NetBase::SendFinalPacket(csRef<psNetPacketEntry> pkt, LPSOCKADDR_IN addr)
         pkt->packet->pktid, pkt->clientnum, pkt->packet->pktsize, pkt->packet->flags);
 #endif
 
-	// printf("Sending packet sequence %d, length %d on the wire.\n", pkt->packet->GetSequence(),pkt->packet->GetPacketSize() );
+    // printf("Sending packet sequence %d, length %d on the wire.\n", pkt->packet->GetSequence(),pkt->packet->GetPacketSize() );
 
     uint16_t size = (uint16_t)pkt->packet->GetPacketSize();
     void *data = pkt->GetData();
@@ -669,6 +702,7 @@ bool NetBase::SendFinalPacket(csRef<psNetPacketEntry> pkt, LPSOCKADDR_IN addr)
     pkt->packet->UnmarshallEndian();
     return true;
 }
+
 
 bool NetBase::SendOut()
 {
@@ -697,11 +731,14 @@ bool NetBase::SendOut()
         }
         // If the window is full so there are still packets left, ensure we re-check the queue later.
         sentCount -= q->Count();
+        
         if(q->Count() > 0)
-        	readd.Push(q);
+            readd.Push(q);
     }
+
     for(size_t i = 0; i < readd.GetSize(); i++)
-    	senders.Add(readd[i]);
+        senders.Add(readd[i]);
+
     // Statistics updating
     csTicks timeTaken = csGetTicks() - begin;
     sendStats[avgIndex].senders = senderCount;
@@ -727,6 +764,7 @@ bool NetBase::SendOut()
             timeAvg += sendStats[i].time;
             peakTime = MAX(peakTime, sendStats[i].time);
         }
+
         sendAvg /= NETAVGCOUNT;
         messagesAvg /= NETAVGCOUNT;
         timeAvg /= NETAVGCOUNT;
@@ -736,10 +774,12 @@ bool NetBase::SendOut()
             status.Format("Sending network messages has taken %u time to process, for %u senders and %u messages.", timeTaken, senderCount, sentCount);
             CPrintf(CON_WARNING, "%s\n", (const char *) status.GetData());
         }
+
         status.AppendFmt("Network average statistics for last %u ticks: %g senders, %g messages/sender, %g time per iteration. Peak %u senders, %g messages/sender %u time", csGetTicks() - lastSendReport, sendAvg, messagesAvg, timeAvg, peakSenders, peakMessagesPerSender, peakTime);
         
         if(LogCSV::GetSingletonPtr())
             LogCSV::GetSingleton().Write(CSV_STATUS, status);
+
         lastSendReport = csGetTicks();
     }
     
@@ -787,12 +827,14 @@ bool NetBase::Init(bool autobind)
     return true;
 }
 
+
 bool NetBase::Bind (const char* str, int port)
 {
     int addr = inet_addr(str);
 
     return Bind(addr, port);
 }
+
 
 bool NetBase::Bind (int addr, int port)
 {
@@ -818,6 +860,7 @@ bool NetBase::Bind (int addr, int port)
     return true;
 }
 
+
 void NetBase::Close(bool force)
 {
     if (ready || force)
@@ -825,6 +868,7 @@ void NetBase::Close(bool force)
 
     ready = false;
 }
+
 
 int NetBase::GetIPByName(LPSOCKADDR_IN addr, const char *name)
 {
@@ -838,12 +882,14 @@ int NetBase::GetIPByName(LPSOCKADDR_IN addr, const char *name)
     return 0;
 }
 
+
 void NetBase::LogMessages(char dir,MsgEntry* me)
 {
     if (DoLogDebug(LOG_MESSAGES) && !FilterLogMessage(me->bytes->type,dir))
         Debug3(LOG_MESSAGES,0,"%c: %s\n",dir,
                GetDecodedMessage(me,msgstrings, msgstringshash,engine,logmsgfiltersetting.filterhex).GetData());
 }
+
 
 csString NetBase::LogMessageFilter(char *arg)
 {
@@ -855,25 +901,32 @@ csString NetBase::LogMessageFilter(char *arg)
     if (words[0] == "invert")
     {
         InvertLogMessageFilter();
-    } else if (words[0] == "filterhex")
+    } 
+    else if (words[0] == "filterhex")
     {
         bool filterhex = true;
-        if (words[1] == "no") filterhex = false;
+        if (words[1] == "no") 
+            filterhex = false;
         
         SetLogMessageFilterHex(filterhex);
-    } else if (words[0] == "show")
+    } 
+    else if (words[0] == "show")
     {
         LogMessageFilterDump();
-    } else if (words[0] == "clear")
+    } 
+    else if (words[0] == "clear")
     {
         LogMessageFilterClear();
-    } else if (words[0] == "receive")
+    } 
+    else if (words[0] == "receive")
     {
         ToggleReceiveMessageFilter();
-    } else if (words[0] == "send")
+    } 
+    else if (words[0] == "send")
     {
         ToggleSendMessageFilter();
-    } else
+    } 
+    else
     {
         bool add = true;
         int type = -1;
@@ -935,6 +988,7 @@ void NetBase::AddFilterLogMessage(int type)
     logmessagefilter.Push(type);
 }
 
+
 void NetBase::RemoveFilterLogMessage(int type)
 {
     size_t n;
@@ -945,10 +999,12 @@ void NetBase::RemoveFilterLogMessage(int type)
     }
 }
 
+
 void NetBase::LogMessageFilterClear()
 {
     logmessagefilter.DeleteAll();
 }
+
 
 bool NetBase::FilterLogMessage(int type, char dir)
 {
@@ -971,11 +1027,10 @@ bool NetBase::FilterLogMessage(int type, char dir)
     }
     if (logmsgfiltersetting.invert)
         result = !result;
-
-    
     
     return result;
 }
+
 
 void NetBase::LogMessageFilterDump()
 {
@@ -1004,6 +1059,7 @@ bool NetBase::SendMessage(MsgEntry* me)
     return SendMessage(me,NULL);
 }
 
+
 bool NetBase::SendMessage(MsgEntry* me,NetPacketQueueRefCount *queue)
 {
     profs->AddSentMsg(me);
@@ -1026,14 +1082,13 @@ bool NetBase::SendMessage(MsgEntry* me,NetPacketQueueRefCount *queue)
     {
         // The pktlen does not include the length of the headers, but the MAXPACKETSIZE does
         size_t pktlen = MIN(MAXPACKETSIZE-sizeof(struct psNetPacket), bytesleft);
-        char notify = '!';
-
+        
         csRef<psNetPacketEntry> pNewPkt;
         pNewPkt.AttachNew(new psNetPacketEntry(me->priority, me->clientnum, id, (uint16_t)offset,
           (uint16_t)me->bytes->GetTotalSize(), (uint16_t)pktlen, me->bytes));
 
-		//if (me->GetSequenceNumber())
-		//	printf("Just created packet with sequence number %d.\n", me->GetSequenceNumber());
+        //if (me->GetSequenceNumber())
+        //  printf("Just created packet with sequence number %d.\n", me->GetSequenceNumber());
 
         if (!queue->Add(pNewPkt))
         {
@@ -1055,6 +1110,7 @@ bool NetBase::SendMessage(MsgEntry* me,NetPacketQueueRefCount *queue)
 #ifndef CS_PLATFORM_WIN32
         // tell the network code there is a transmission waiting, this minimises lag time for sending network messages
         // DISABLED: This prevents multiple packets coalescing.
+        //char notify = '!';
         //if(pipe_fd[1] > 0)
            // write(pipe_fd[1], &notify, 1);
 #endif
@@ -1065,6 +1121,7 @@ bool NetBase::SendMessage(MsgEntry* me,NetPacketQueueRefCount *queue)
 
     return true;
 }
+
 
 void NetBase::CheckFragmentTimeouts(void)
 {
@@ -1159,7 +1216,7 @@ bool NetBase::BuildMessage(csRef<psNetPacketEntry> pkt, Connection* &connection,
             csRef<MsgEntry> me;
             me.AttachNew(new MsgEntry(msg));
             me->priority = packet->flags;
-			HandleCompletedMessage(me, connection, addr,pkt);
+            HandleCompletedMessage(me, connection, addr,pkt);
         }
         return false;
     }
@@ -1178,6 +1235,7 @@ bool NetBase::BuildMessage(csRef<psNetPacketEntry> pkt, Connection* &connection,
                             
     return true;
 }
+
 
 csPtr<MsgEntry> NetBase::CheckCompleteMessage(uint32_t client, uint32_t id)
 {
@@ -1218,8 +1276,8 @@ csPtr<MsgEntry> NetBase::CheckCompleteMessage(uint32_t client, uint32_t id)
     csRef<MsgEntry> me;
     me.AttachNew(new MsgEntry(totallength, pkt->packet->GetPriority(),pkt->packet->GetSequence()));    
     
-	// if (pkt->packet->GetSequence() != 0)
-	//	printf("Got packet sequence number %d.\n",pkt->packet->GetSequence());
+    // if (pkt->packet->GetSequence() != 0)
+    //  printf("Got packet sequence number %d.\n",pkt->packet->GetSequence());
 
     for (size_t i = 0; i < pkts.GetSize(); i++)
     {
@@ -1299,6 +1357,7 @@ csPtr<MsgEntry> NetBase::CheckCompleteMessage(uint32_t client, uint32_t id)
     return csPtr<MsgEntry> (me);
 }
 
+
 bool NetBase::QueueMessage(MsgEntry *me)
 {
     bool success = true;
@@ -1316,6 +1375,7 @@ bool NetBase::QueueMessage(MsgEntry *me)
     }
     return success;
 }
+
 
 void NetBase::HandleCompletedMessage(MsgEntry *me, Connection* &connection,
                                      LPSOCKADDR_IN addr,csRef<psNetPacketEntry> pkt)
@@ -1358,13 +1418,16 @@ void NetBase::HandleCompletedMessage(MsgEntry *me, Connection* &connection,
     QueueMessage(me);
 }
 
+
 uint32_t NetBase::GetRandomID()
 {
     CS::Threading::MutexScopedLock lock(mutex);
     return (unsigned) randomgen->Get(0x7fffffff) + 1;
 }
 
+
 // --------------------------------------------------------------------------
+
 
 NetBase::Connection::Connection(uint32_t num): sequence(1), packethistoryhash(MAXPACKETHISTORY)
 {
@@ -1390,6 +1453,7 @@ NetBase::Connection::Connection(uint32_t num): sequence(1), packethistoryhash(MA
     historypos = 0;
     buf = NULL;
 }
+
 
 NetBase::Connection::~Connection()
 {
