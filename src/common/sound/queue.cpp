@@ -21,7 +21,8 @@
  *
  */
 
-#include "sound.h"
+#include "queue.h"
+#include "manager.h"
 
 extern SoundSystemManager  *SndSysMgr;
 

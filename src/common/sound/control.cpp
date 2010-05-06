@@ -22,7 +22,8 @@
  */
 
 
-#include "sound.h"
+#include "control.h"
+#include "manager.h"
 
 SoundControl::SoundControl ()
 {

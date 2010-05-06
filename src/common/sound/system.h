@@ -24,6 +24,9 @@
 #ifndef _SOUND_SYSTEM_H_
 #define _SOUND_SYSTEM_H_
 
+#include <cssysdef.h>
+#include <iutil/objreg.h>
+#include <isndsys.h>
 
 /**
  * This is an Interface Class to the Crystalspace Soundrenderer.

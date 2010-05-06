@@ -21,7 +21,9 @@
  *
  */
 
-#include "sound.h"
+#include "handle.h"
+#include "system.h"
+#include "data.h"
 
 extern SoundSystem         *soundSystem;
 extern SoundData           *soundData;

@@ -24,6 +24,8 @@
 #ifndef _SOUND_QUEUE_H_
 #define _SOUND_QUEUE_H_
 
+#include "handle.h"
+
 /**
  * Queue object for @see SoundQueue.
  * These objects are used by @see SoundQueue and represent a single sound to be
