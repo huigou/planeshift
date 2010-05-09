@@ -141,14 +141,6 @@
             <!--<bgcolour r="255" g="127" b="40" />-->
         </widget>
     
-		<!-- Credits -->
-        <widget name="credits" factory="pawsButton" id="102" key="C">
-            <frame x="355" y="550" width="90" height="30" />
-	    	<font name="/planeshift/data/ttf/LiberationSerif-Regular.ttf" r="255" g="255" b="255" size="10"  resizetoscreen="yes" />
-            <label text="Credits" horizAdjust="CENTRE" vertAdjust="CENTRE" />
-        	<bgimage resource="buttonDefaultLong" />
-            <!--<bgcolour r="80" g="127" b="128" />-->
-        </widget>
 
         <!-- Navigation Buttons -->
         <widget name="navBar" factory="pawsWidget">
@@ -162,7 +154,16 @@
         		<bgimage resource="buttonDefault" />
 				<!-- <bgcolour r="80" g="127" b="128" /> -->
 			</widget>
-		   
+
+			<!-- Credits -->
+			<widget name="credits" factory="pawsButton" id="102" key="C">
+				<frame x="325" y="0" width="90" height="30" />
+				<font name="/planeshift/data/ttf/LiberationSerif-Regular.ttf" r="255" g="255" b="255" size="10"  resizetoscreen="yes" />
+				<label text="Credits" horizAdjust="CENTRE" vertAdjust="CENTRE" />
+				<bgimage resource="buttonDefaultLong" />
+				<!--<bgcolour r="80" g="127" b="128" />-->
+			</widget>
+
 			<widget name="login" factory="pawsButton" id="101" key="O">
 				<frame x="640" y="0" width="100" height="40" />
 				<label text="Login" />
