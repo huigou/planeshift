@@ -53,7 +53,7 @@
 		<SkillBonus name="Set Traps" rank="1" />
 		<Advantage name="Ambidexterity" />
 	</path>
-	<path name="Knight" info="Knights are warriors at the service of someone else, either the master of a guild, a vigesimal or even an octarch. The difference between a heavily armored man-at-arm and a knight is a knight's loyalty; it's as strong as crystal, and his master can safely rely on him because the oath of a knight will never be broken as long as he remains a knight." parents="Your dad owns the local merchant store and your mom is a housewife." life="Coming from a religious up bringing, you value honour and respect. Your word is all you have.">
+	<path name="Knight" info="Knights are warriors at the service of someone else, either the master of a guild, a vigesimi or even an octarch. The difference between a heavily armored man-at-arm and a knight is a knight's loyalty; it's as strong as crystal, and his master can safely rely on him because the oath of a knight will never be broken as long as he remains a knight." parents="Your dad owns the local merchant store and your mom is a housewife." life="Coming from a religious up bringing, you value honour and respect. Your word is all you have.">
 		<StatBonus name="Strength" value="0.40" />
 		<StatBonus name="Endurance" value="0.40" />
 		<StatBonus name="Agility" value="0.10" />
