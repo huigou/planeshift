@@ -41,7 +41,7 @@
 				<frame x="300" y="85" width="25" height="20" />
 				<bgimage resource="arrowRight" />
 			</widget>
-			<widget name="removebutton" factory="pawsButton" id="-100">
+			<widget name="removebutton" factory="pawsButton" id="-200">
 				<frame x="300" y="123" width="25" height="20" />
 				<bgimage resource="arrowLeft" />
 			</widget>
