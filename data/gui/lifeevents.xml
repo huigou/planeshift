@@ -38,10 +38,13 @@
             <available width="300" rowheight="24" />
             <selected width="420" rowheight="24" />
 			<widget name="addbutton" factory="pawsButton" id="-100">
-				<frame x="300" y="85" width="100" height="40" />
-				<bgimage resource="buttonDefault" />
+				<frame x="300" y="85" width="25" height="20" />
+				<bgimage resource="arrowRight" />
 			</widget>
-            <removebutton x="300" y="123" />
+			<widget name="removebutton" factory="pawsButton" id="-100">
+				<frame x="300" y="123" width="25" height="20" />
+				<bgimage resource="arrowLeft" />
+			</widget>
             <highlight resource="Highlight" />
 			<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="12" />
         </widget>
@@ -53,7 +56,7 @@
         </widget>
 
         <widget name="EventDesc" factory="pawsMultiLineTextBox">
-            <frame x="100" y="400" width="700" height="90" border="no" />
+            <frame x="100" y="400" width="600" height="90" border="no" />
             <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="12" />
             <text string="" />
         </widget>
