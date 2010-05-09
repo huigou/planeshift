@@ -257,8 +257,8 @@
 		<!-- Description -->
        <widget name="race_description" factory="pawsMultiLineTextBox">
             <frame x="555" y="300" width="200" height="200" border="no" />
-            <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="12" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
-            <text string="The model of this race is available. and we want you to play it for ever!! The traits of this race are this and that, plus this and that. also you have some special abilities, like one and two. and more to come like three and four. " />
+            <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="11" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
+            <text string="" />
         </widget>
 
         <!-- Navigation Buttons -->

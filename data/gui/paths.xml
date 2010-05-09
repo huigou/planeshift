@@ -39,12 +39,6 @@
 			<bgimage resource="buttonSmallLong" />
         </widget>
 
-		<widget name="RandomButton" factory="pawsButton" id="4000">
-			<frame x="336" y="548" width="130" height="40" />
-			<label text="Random" />
-			<bgimage resource="buttonBrown" />
-		</widget>
-
         <!-- Path symbol -->
         <widget name="PathSymbol" factory="pawsWidget">
             <frame x="75" y="190" width="130" height="120" />
@@ -132,7 +126,13 @@
 				<label text="Prev"/>
 				<bgimage resource="buttonDefault" />
 			</widget>
-			
+
+			<widget name="RandomButton" factory="pawsButton" id="4000">
+				<frame x="306" y="0" width="130" height="40" />
+				<label text="Random" />
+				<bgimage resource="buttonBrown" />
+			</widget>
+
 			<widget name="UploadButton" factory="pawsButton" id="5000">
 				<frame x="520" y="0" width="100" height="40" />
 				<label text="Upload" />
