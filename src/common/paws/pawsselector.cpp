@@ -89,51 +89,57 @@ bool pawsSelectorBox::Setup( iDocumentNode* node )
     // Create the addbutton 
     ///////////////////////////////////////////////////////////////////////          
     csRef<iDocumentNode> addNode = node->GetNode( "addbutton" ); 
-    add = new pawsButton;
-    AddChild( add );
+    if(addNode.IsValid())
+    {
+        add = new pawsButton;
+        AddChild( add );
 
-    // Puts the button at the edge of the text box widget
-    add->SetRelativeFrame( GetActualWidth(addNode->GetAttributeValueAsInt("x")),  GetActualHeight(addNode->GetAttributeValueAsInt("y")), 16,16 );
-    
-    //get some replacement resources for the addbutton up/down
-    csString upAddImageName = addNode->GetAttributeValue("buttonup");
-    csString downAddImageName = addNode->GetAttributeValue("buttondown");
-    if(upAddImageName.IsEmpty())
-        upAddImageName = "Right Arrow";
-    if(downAddImageName.IsEmpty())
-        downAddImageName = "Right Arrow";
+        // Puts the button at the edge of the text box widget
+        add->SetRelativeFrame( GetActualWidth(addNode->GetAttributeValueAsInt("x")),  GetActualHeight(addNode->GetAttributeValueAsInt("y")), 16,16 );
+        
+        //get some replacement resources for the addbutton up/down
+        csString upAddImageName = addNode->GetAttributeValue("buttonup");
+        csString downAddImageName = addNode->GetAttributeValue("buttondown");
+        if(upAddImageName.IsEmpty())
+            upAddImageName = "Right Arrow";
+        if(downAddImageName.IsEmpty())
+            downAddImageName = "Right Arrow";
 
-    add->SetUpImage(upAddImageName);
-    add->SetDownImage(downAddImageName);
+        add->SetUpImage(upAddImageName);
+        add->SetDownImage(downAddImageName);
 
-    add->SetID( SELECTOR_ADD_BUTTON );
-    
-    add->PostSetup();    
+        add->SetID( SELECTOR_ADD_BUTTON );
+        
+        add->PostSetup();
+    }
     
      ///////////////////////////////////////////////////////////////////////
     // Create the removebutton 
     ///////////////////////////////////////////////////////////////////////          
     csRef<iDocumentNode> removeNode = node->GetNode( "removebutton" ); 
-    remove = new pawsButton;
-    AddChild( remove );
+    if(removeNode.IsValid())
+    {
+        remove = new pawsButton;
+        AddChild( remove );
 
-    // Puts the button at the edge of the text box widget
-    remove->SetRelativeFrame( GetActualWidth(removeNode->GetAttributeValueAsInt("x")),  GetActualHeight(removeNode->GetAttributeValueAsInt("y")), 16,16 );
-    
-    //get some replacement resources for the removebutton up/down
-    csString upRemoveImageName = removeNode->GetAttributeValue("buttonup");
-    csString downRemoveImageName = removeNode->GetAttributeValue("buttondown");
-    if(upRemoveImageName.IsEmpty())
-        upRemoveImageName = "Left Arrow";
-    if(downRemoveImageName.IsEmpty())
-        downRemoveImageName = "Left Arrow";
+        // Puts the button at the edge of the text box widget
+        remove->SetRelativeFrame( GetActualWidth(removeNode->GetAttributeValueAsInt("x")),  GetActualHeight(removeNode->GetAttributeValueAsInt("y")), 16,16 );
+        
+        //get some replacement resources for the removebutton up/down
+        csString upRemoveImageName = removeNode->GetAttributeValue("buttonup");
+        csString downRemoveImageName = removeNode->GetAttributeValue("buttondown");
+        if(upRemoveImageName.IsEmpty())
+            upRemoveImageName = "Left Arrow";
+        if(downRemoveImageName.IsEmpty())
+            downRemoveImageName = "Left Arrow";
 
-    remove->SetUpImage(upRemoveImageName);
-    remove->SetDownImage(downRemoveImageName);
+        remove->SetUpImage(upRemoveImageName);
+        remove->SetDownImage(downRemoveImageName);
 
-    remove->SetID( SELECTOR_REMOVE_BUTTON );
-    
-    remove->PostSetup();    
+        remove->SetID( SELECTOR_REMOVE_BUTTON );
+        
+        remove->PostSetup();
+    }
                     
     return true;
 }
