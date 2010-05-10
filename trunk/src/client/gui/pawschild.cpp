@@ -107,7 +107,7 @@ bool pawsChildhoodWindow::OnButtonPressed( int mouseButton, int keyModifier, paw
         
         case NEXT_BUTTON:
         {
-            if (lastActivityChoice == 0 )
+            if (lastActivityChoice == 0 || lastEventChoice == 0 || lastHouseChoice == 0)
             {
                 psSystemMessage error(0,MSG_ERROR,"Please fill in your childhood");
                 error.FireEvent();
