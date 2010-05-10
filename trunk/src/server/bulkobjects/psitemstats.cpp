@@ -1094,7 +1094,7 @@ csString psItemStats::FlagsToText()
     if (flags & PSITEMSTATS_FLAG_IS_A_MELEE_WEAPON)
         TempString.Append("MELEEWEAPON ");
     if (flags & PSITEMSTATS_FLAG_IS_A_RANGED_WEAPON)
-        TempString.Append("RANGEDWEAPON ");
+        TempString.Append("RANGEWEAPON ");
     if (flags & PSITEMSTATS_FLAG_IS_A_SHIELD)
         TempString.Append("SHIELD ");
     if (flags & PSITEMSTATS_FLAG_IS_AMMO)
