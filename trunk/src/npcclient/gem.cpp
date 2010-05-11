@@ -185,7 +185,7 @@ gemNPCActor::gemNPCActor( psNPCClient* npcclient, psPersistActor& mesg)
     ownerEID = mesg.ownerEID;
     race = mesg.race;
 
-    SetVisible( ! (mesg.flags & psPersistActor::INVISIBLE)?  true : false );
+    SetInvisible( (mesg.flags & psPersistActor::INVISIBLE)?  true : false );
     SetInvincible( (mesg.flags & psPersistActor::INVINCIBLE) ?  true : false );
     SetInstance( mesg.instance );
 

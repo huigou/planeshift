@@ -299,7 +299,15 @@ public:
 
     /// Returns whether the object is alive.
     bool IsAlive() const { return is_alive; }
-    void SetAlive(bool flag);
+    
+    /** Set needed stats for alive or dead for object
+     *
+     * When dead the mana and HP rate are set to 0.
+     *
+     * @param flag  True if alive
+     * @param queue Set to false to prevent queuing to superclients
+     */
+    void SetAlive(bool flag, bool queue = true);
 
     uint32 GetClientID();
 

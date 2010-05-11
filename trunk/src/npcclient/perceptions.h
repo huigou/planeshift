@@ -96,20 +96,22 @@ protected:
 
 public:
     Reaction();
-    Reaction(Reaction& other,BehaviorSet& behaviors) 
+    Reaction(Reaction& other, BehaviorSet& behaviors) 
     { DeepCopy(other,behaviors); }
 
-    void DeepCopy(Reaction& other,BehaviorSet& behaviors);
+    void DeepCopy(Reaction& other, BehaviorSet& behaviors);
 
-    bool Load(iDocumentNode *node,BehaviorSet& behaviors);
-    void React(NPC *who,Perception *pcpt);
+    bool Load(iDocumentNode *node, BehaviorSet& behaviors);
+    void React(NPC *who, Perception *pcpt);
 
-    /** Check if the perception should react
+    /** Check if the player should react to this reaction
      *
      * Caled by perception related to entitis to check
      * for reaction against visibility and invincibility
+     *
+     * @entity The entity tho check for visibility and invincibility
      */
-    bool ShouldReact(gemNPCObject* entity, Perception *pcpt);
+    bool ShouldReact(gemNPCObject* entity);
     
     /** Check if this is a behavior that shouldn't be interrupted
      *

@@ -701,7 +701,7 @@ void gemObject::Broadcast(int clientnum, bool control )
     CPrintf(CON_DEBUG, "Base Object Broadcast!\n");
 }
 
-void gemObject::SetAlive(bool flag)
+void gemObject::SetAlive(bool flag, bool queue)
 {
     bool changed = is_alive != flag;
     
@@ -715,7 +715,7 @@ void gemObject::SetAlive(bool flag)
 
     gemActor * actor = GetActorPtr();
 
-    if (changed && actor )
+    if (queue && changed && actor )
     {
         psserver->GetNPCManager()->QueueFlagPerception( actor );
     }
@@ -1944,7 +1944,7 @@ nevertired(false), infinitemana(false), instantcast(false), safefall(false), giv
         return;
     }
 
-    SetAlive(true);
+    SetAlive(true, false); // Set alive but don't queue
 
     if (!InitLinMove(pos,rotangle,room))
     {
@@ -2666,7 +2666,8 @@ void gemActor::Send( int clientnum, bool control, bool to_superclients, psPersis
                          (to_superclients || allEntities) ? pid : 0, // playerID should not be distributed to clients
                          groupID,
                          0, // ownerEID
-                         flags, 0,
+                         flags, 
+                         0, // masterID
                          (to_superclients || allEntities)
                          );
 
