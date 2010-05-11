@@ -4869,7 +4869,15 @@ psPersistActor::psPersistActor( uint32_t clientNum,
     msg->Add( equipmentParts );
     msg->Add( serverMode );
     posPlayerID = (int) msg->current;
-    msg->Add(playerID.Unbox());
+    if (forNPClient)
+    {
+        // Only NPC client should have the playerID.
+        msg->Add(playerID.Unbox());
+    }
+    else
+    {
+        msg->Add( (uint32_t)0 );
+    }
     msg->Add( groupID );
     msg->Add(ownerEID.Unbox());
     posInstance = (int) msg->current;
@@ -4940,7 +4948,7 @@ psPersistActor::psPersistActor( MsgEntry* me, csStringSet* msgstrings, csStringH
     scale      = me->GetFloat();
     mountScale = me->GetFloat();
 
-    if(forNPClient)
+    if(forNPClient || playerID.IsValid())
         masterID = PID(me->GetUInt32());
     else
         masterID = 0;
@@ -4949,7 +4957,7 @@ psPersistActor::psPersistActor( MsgEntry* me, csStringSet* msgstrings, csStringH
         flags   = me->GetUInt32();
     else
         flags   = 0;
-        csString msgtext;
+    csString msgtext;
 }
 
 csString psPersistActor::ToString(AccessPointers * access_ptrs)
@@ -4983,6 +4991,7 @@ csString psPersistActor::ToString(AccessPointers * access_ptrs)
     if (flags & INVINCIBLE) msgtext.AppendFmt(" INVINCIBLE");
     if (flags & NPC) msgtext.AppendFmt(" NPC");
     if (flags & IS_ALIVE) msgtext.AppendFmt(" IS_ALIVE");
+    if (flags & NAMEKNOWN) msgtext.AppendFmt(" NAMEKNOWN");
 
     return msgtext;
 }

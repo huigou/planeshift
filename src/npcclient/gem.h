@@ -95,6 +95,7 @@ public:
     virtual bool IsVisible() { return visible; }
     virtual bool IsInvisible() { return !visible; }
     virtual void SetVisible(bool vis) { visible = vis; }
+    virtual void SetInvisible(bool invis) { SetVisible(!invis); }
 
     virtual bool IsInvincible() { return invincible; }
     virtual void SetInvincible(bool inv) { invincible = inv; }

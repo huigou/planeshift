@@ -298,11 +298,11 @@ void Reaction::React(NPC *who, Perception *pcpt)
 
 }
 
-bool Reaction::ShouldReact(gemNPCObject* actor, Perception *pcpt)
+bool Reaction::ShouldReact(gemNPCObject* actor )
 {
     if (!actor) return false;
 
-    if (!(actor->IsVisible() || reactWhenInvisible))
+    if (!(!actor->IsInvisible() || reactWhenInvisible))
     {
         return false;
     }
@@ -311,6 +311,7 @@ bool Reaction::ShouldReact(gemNPCObject* actor, Perception *pcpt)
     {
         return false;
     }
+
     return true;
 }
 
@@ -499,13 +500,13 @@ csString RangePerception::ToString()
 //---------------------------------------------------------------------------------
 
 
-bool FactionPerception::ShouldReact(Reaction *reaction,NPC *npc)
+bool FactionPerception::ShouldReact(Reaction *reaction, NPC *npc)
 {
     if (name == reaction->GetEventType())
     {
         if (player)
         {
-            if (!reaction->ShouldReact(player,this))
+            if (!reaction->ShouldReact(player))
             {
                 return false;
             }
@@ -590,7 +591,7 @@ Perception *ItemPerception::MakeCopy()
 //---------------------------------------------------------------------------------
 
 
-bool LocationPerception::ShouldReact(Reaction *reaction,NPC *npc)
+bool LocationPerception::ShouldReact(Reaction *reaction, NPC *npc)
 {
     if (name == reaction->GetEventType() && (reaction->GetType().IsEmpty() || type == reaction->GetType()))
     {
@@ -663,8 +664,8 @@ void DamagePerception::ExecutePerception(NPC *npc,float weight)
 //---------------------------------------------------------------------------------
 
 SpellPerception::SpellPerception(const char *name,
-                                 gemNPCObject *caster,gemNPCObject *target, 
-                                 const char *type,float severity)
+                                 gemNPCObject *caster, gemNPCObject *target, 
+                                 const char *type, float severity)
                                  : Perception(name)
 {
     this->caster = (gemNPCActor*) caster;
@@ -673,7 +674,7 @@ SpellPerception::SpellPerception(const char *name,
     this->type = type;
 }
 
-bool SpellPerception::ShouldReact(Reaction *reaction,NPC *npc)
+bool SpellPerception::ShouldReact(Reaction *reaction, NPC *npc)
 {
     csString event(type);
     event.Append(':');

@@ -1206,7 +1206,7 @@ void psNPCClient::ListAllEntities(const char * pattern, bool onlyCharacters)
         for (size_t i=0; i < all_gem_objects.GetSize(); i++)
         {
             gemNPCActor * actor = dynamic_cast<gemNPCActor *> (all_gem_objects[i]);
-            if(!actor)
+            if(!actor || actor->GetNPC())
                 continue;
 
             if (!pattern || strstr(actor->GetName(),pattern) || atoi(pattern) == (int)actor->GetEID().Unbox())

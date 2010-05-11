@@ -740,7 +740,7 @@ gemNPCObject *NPC::GetTarget()
     {
         // Check if visible
         gemNPCObject * obj = npcclient->FindEntityID(target_id);
-        if (obj && !obj->IsVisible()) return NULL;
+        if (obj && obj->IsInvisible()) return NULL;
 
         return obj;
     }

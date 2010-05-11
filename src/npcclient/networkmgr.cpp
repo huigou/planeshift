@@ -285,7 +285,7 @@ void NetworkManager::HandleActor(MsgEntry *me)
         CPrintf(CON_ERROR, "Already know about gemNPCActor: %s (%s), %s.\n", mesg.name.GetData(), obj->GetName(), ShowID(mesg.entityid));
 
         obj->Move(mesg.pos, mesg.yrot, mesg.sectorName, mesg.instance );
-        obj->SetVisible( (mesg.flags & psPersistActor::INVISIBLE) ? false : true );
+        obj->SetInvisible( (mesg.flags & psPersistActor::INVISIBLE) ? true : false );
         obj->SetInvincible( (mesg.flags & psPersistActor::INVINCIBLE) ? true : false );
         obj->SetAlive( (mesg.flags & psPersistActor::IS_ALIVE) ? true : false );
         
@@ -319,6 +319,8 @@ void NetworkManager::HandleActor(MsgEntry *me)
     }
     
     npcclient->Add( actor );
+
+    npcclient->ListAllEntities(NULL, true);
 }
 
 void NetworkManager::HandleItem( MsgEntry* me )
@@ -809,7 +811,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 if (!obj)
                     break;
 
-                obj->SetVisible(!(flags & psNPCCommandsMessage::INVISIBLE));
+                obj->SetInvisible((flags & psNPCCommandsMessage::INVISIBLE) ? true : false);
                 obj->SetInvincible((flags & psNPCCommandsMessage::INVINCIBLE) ? true : false);
                 obj->SetAlive((flags & psNPCCommandsMessage::IS_ALIVE));
 
