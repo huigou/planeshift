@@ -92,7 +92,7 @@
 
 		<!-- Server status -->
         <widget name="server_status" factory="pawsTextBox">
-            <frame x="330" y="545" width="400" height="30" border="no"/>
+            <frame x="330" y="545" width="200" height="30" border="no"/>
 	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="12" resizetoscreen="yes" />  
             <text string="Please wait for verification from server"/>
         </widget>
