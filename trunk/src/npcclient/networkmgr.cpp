@@ -319,8 +319,6 @@ void NetworkManager::HandleActor(MsgEntry *me)
     }
     
     npcclient->Add( actor );
-
-    npcclient->ListAllEntities(NULL, true);
 }
 
 void NetworkManager::HandleItem( MsgEntry* me )
