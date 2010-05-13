@@ -376,6 +376,12 @@ int com_showtime(char *)
 }
 
 
+int com_status(char *)
+{
+    CPrintf(CON_CMDOUTPUT,"Amount of loaded npcs: %d\n", npcclient->GetNpcListAmount());
+    return 0;
+}
+
 /** List of commands available at the console.
  *
  * Add new commands that should be avalble at the console here.
@@ -411,6 +417,7 @@ const COMMAND commands[] = {
     { "showtime",     false, com_showtime,     "Show the current game time"},
     { "tribelist",    false, com_tribelist,    "List all known tribes (tribelist [pattern])"},
     { "waypointlist", false, com_waypointlist, "List all known waypoints (waypointlist [pattern])"},
+    { "status",       false, com_status,       "Give some general statistics on the npcclient"},
     { 0, 0, 0, 0 }
 };
 
