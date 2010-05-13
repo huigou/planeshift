@@ -1124,9 +1124,7 @@ void psNPCClient::EnableDisableNPCs( const char* pattern, bool enable )
 
 void psNPCClient::ListAllNPCs(const char * pattern)
 {
-    CPrintf(CON_CMDOUTPUT, "%-7s %-5s %-30s %-6s %-6s %-20s %-20s %-4s %-3s %-8s\n", 
-            "NPC ID", "EID", "Name", "Entity", "Status", "Brain","Behaviour","Step","Dbg","Disabled");
-    if(strcmp(pattern, "summary"))
+    if(strcmp(pattern, "summary")==0)
     {
         int disabled = 0;
         int alive = 0;
@@ -1148,7 +1146,12 @@ void psNPCClient::ListAllNPCs(const char * pattern)
         }
         CPrintf(CON_CMDOUTPUT, "NPC summary for %d NPCs: %d disabled, %d alive, %d with entities, %d with current behaviour, %d with brain\n", 
                 npcs.GetSize(), disabled, alive, entity, behaviour, brain);
+
+        return; // No point continue since no npc should be named summary :)
     }
+
+    CPrintf(CON_CMDOUTPUT, "%-7s %-5s %-30s %-6s %-6s %-20s %-20s %-4s %-3s %-8s\n", 
+            "NPC ID", "EID", "Name", "Entity", "Status", "Brain","Behaviour","Step","Dbg","Disabled");
     for (size_t i = 0; i < npcs.GetSize(); i++)
     {
         if (!pattern || strstr(npcs[i]->GetName(),pattern))
