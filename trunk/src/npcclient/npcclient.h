@@ -323,6 +323,11 @@ public:
     void ListAllNPCs(const char *pattern);
 
     /**
+     * List the amount of npc currently loaded.
+     */
+    size_t GetNpcListAmount() { return npcs.GetSize(); }
+
+    /**
      * Find one npc and print its current state info.
      */
     bool DumpNPC(const char *pattern);
