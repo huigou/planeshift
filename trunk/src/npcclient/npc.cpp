@@ -105,7 +105,20 @@ NPC::~NPC()
     if (brain)
     {
         delete brain; 
+        brain = NULL;
     }
+
+    if (last_perception)
+    {
+        delete last_perception;
+        last_perception = NULL;
+    }
+
+    // Cleare some cached values 
+    region = NULL;
+    active_locate_sector = NULL;
+    active_locate_wp = NULL;
+    raceInfo = NULL;
 }
 
 void NPC::Tick()

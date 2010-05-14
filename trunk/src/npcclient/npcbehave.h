@@ -44,6 +44,7 @@ struct iSector;
 //=============================================================================
 #include "perceptions.h"
 #include "walkpoly.h"
+#include "npcoperations.h"
 
 class ScriptOperation;
 class Perception;
@@ -171,16 +172,16 @@ class NPCType
     };
     
 protected:
-    csString           name;      ///< The name of this NPC type.
-    csArray<Reaction*> reactions; ///< The reactions available for this NPCType.
-    BehaviorSet        behaviors; ///< The set of behaviors available for this NPCType.
-    float              ang_vel;   ///< Default ang_vel for this NPCType.
-                                  ///< Will be used for all behaviors unless overriden
-                                  ///< by each behavior.
-    float              vel;       ///< Default vel for this NPCType.
-                                  ///< Will be used for all behaviors unless overriden
-                                  ///< by each behavior.
-    VelSource          velSource; ///< 
+    csString              name;      ///< The name of this NPC type.
+    csPDelArray<Reaction> reactions; ///< The reactions available for this NPCType.
+    BehaviorSet           behaviors; ///< The set of behaviors available for this NPCType.
+    float                 ang_vel;   ///< Default ang_vel for this NPCType.
+                                     ///< Will be used for all behaviors unless overriden
+                                     ///< by each behavior.
+    float                 vel;       ///< Default vel for this NPCType.
+                                     ///< Will be used for all behaviors unless overriden
+                                     ///< by each behavior.
+    VelSource             velSource; ///< 
 
 public:
     NPCType(psNPCClient* npcclient, EventManager* eventmanager);
@@ -227,7 +228,7 @@ class Behavior
 protected:
     csString name;                      ///< The name of this behavior
 
-    csArray<ScriptOperation*> sequence; ///< Sequence of ScriptOperations.
+    csPDelArray<ScriptOperation> sequence; ///< Sequence of ScriptOperations.
     size_t   current_step;              ///< The ScriptOperation in the sequence that is currently executed.
     bool     loop;                      ///< True if this behavior should start over when completed all operations.
     bool     isActive;                  ///< Set to true when this behavior is active

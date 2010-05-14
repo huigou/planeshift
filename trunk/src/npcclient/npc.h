@@ -50,6 +50,7 @@ class gemNPCActor;
 struct RaceInfo_t;
 class LocationType;
 class psNPCTick;
+class psLinearMovement;
 
 #define NPC_BRAIN_TICK 200
 

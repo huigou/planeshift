@@ -91,6 +91,8 @@ public:
 psNPCClient::psNPCClient () : serverconsole(NULL)
 {
     world        = NULL;
+    PFMaps       = NULL;
+    pathNetwork  = NULL;
     eventmanager = NULL;
     running      = true;
     database     = NULL;
@@ -102,14 +104,35 @@ psNPCClient::psNPCClient () : serverconsole(NULL)
 
 psNPCClient::~psNPCClient()
 {
+    
+
+
+    csArray<NPC*>::Iterator npcIter(npcs.GetIterator());
+    while (npcIter.HasNext())
+        delete npcIter.Next();
+    npcs.Empty();
+
+
+    csHash<NPCType*, const char*>::GlobalIterator npcTypeIter(npctypes.GetIterator());
+    while (npcTypeIter.HasNext())
+        delete npcTypeIter.Next();
+    npctypes.Empty();
+
+
     csHash<LocationType*, csString>::GlobalIterator iter(loctypes.GetIterator());
     while(iter.HasNext())
         delete iter.Next();
+    loctypes.Empty();
 
     running = false;
     delete network;
     delete serverconsole;
     delete database;
+
+
+    delete pathNetwork;
+    delete PFMaps;
+    delete world;
 }
 
 bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, const char *_user, const char *_pass, int _port)
