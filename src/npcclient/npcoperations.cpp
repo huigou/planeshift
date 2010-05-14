@@ -3334,6 +3334,15 @@ void WaitOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
 
 //---------------------------------------------------------------------------
 
+WanderOperation::~WanderOperation()
+{
+    if (anchor)
+    {
+        delete anchor;
+        anchor = NULL;
+    }
+}
+
 void WanderOperation::CalculateTargetPos(csVector3& dest, iSector*&sector)
 {
     dest = active_wp->loc.pos;

@@ -101,6 +101,9 @@ NetworkManager::~NetworkManager()
         msghandler->Unsubscribe(this,MSGTYPE_NPC_COMMAND);
         msghandler->Unsubscribe(this,MSGTYPE_NPCRACELIST);
     }
+
+    delete outbound;
+    outbound = NULL;
 }
 
 void NetworkManager::Authenticate(csString& host,int port,csString& user,csString& pass)

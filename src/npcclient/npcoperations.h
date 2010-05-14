@@ -989,7 +989,7 @@ public:
           turn_queued=false;
           turn_angle_vel=0.0f; turn_end_angle=0.0f; path=NULL, anchor=NULL;
         };
-    virtual ~WanderOperation() {};
+    virtual ~WanderOperation();
 
     bool CalculateWaypointList(NPC *npc);
     virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);

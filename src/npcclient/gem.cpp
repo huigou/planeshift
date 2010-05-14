@@ -177,7 +177,7 @@ iMeshWrapper *gemNPCObject::GetMeshWrapper()
  
 
 gemNPCActor::gemNPCActor( psNPCClient* npcclient, psPersistActor& mesg) 
-    : gemNPCObject( npcclient, mesg.entityid ), npc(NULL)
+    : gemNPCObject( npcclient, mesg.entityid ), pcmove(NULL), npc(NULL)
 {
     name = mesg.name;
     type = mesg.type;
@@ -205,6 +205,11 @@ gemNPCActor::~gemNPCActor()
         npc->ClearState();
         npc->SetActor(NULL);
         npc = NULL;
+    }
+    if (pcmove)
+    {
+        delete pcmove;
+        pcmove = NULL;
     }
 }
 
