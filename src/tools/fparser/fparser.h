@@ -1,5 +1,5 @@
 /***************************************************************************\
-|* Function Parser for C++ v4.1                                            *|
+|* Function Parser for C++ v4.2                                            *|
 |*-------------------------------------------------------------------------*|
 |* Copyright: Juha Nieminen, Joel Yliluoma                                 *|
 |*                                                                         *|
@@ -24,7 +24,7 @@
 #pragma warning(disable : 4661)
 #endif
 
-namespace FPoptimizer_CodeTree { class CodeTree; }
+namespace FPoptimizer_CodeTree { template<typename Value_t> class CodeTree; }
 
 template<typename Value_t>
 class FunctionParserBase
@@ -111,7 +111,7 @@ private:
     ParseErrorType parseErrorType;
     int evalErrorType;
 
-    friend class FPoptimizer_CodeTree::CodeTree;
+    friend class FPoptimizer_CodeTree::CodeTree<Value_t>;
 
     struct Data;
     Data* data;
@@ -134,7 +134,7 @@ private:
     void AddFunctionOpcode(unsigned);
     void AddImmedOpcode(Value_t v);
     void incStackPtr();
-    void CompilePowi(int);
+    void CompilePowi(long);
     bool TryCompilePowi(Value_t);
 
     const char* CompileIf(const char*);

@@ -1,5 +1,5 @@
 /***************************************************************************\
-|* Function Parser for C++ v4.1                                            *|
+|* Function Parser for C++ v4.2                                            *|
 |*-------------------------------------------------------------------------*|
 |* Copyright: Juha Nieminen, Joel Yliluoma                                 *|
 |*                                                                         *|
@@ -38,65 +38,260 @@ using namespace FUNCTIONPARSERTYPES;
 #endif
 
 //=========================================================================
-// Utility functions
+// Opcode analysis functions
+//=========================================================================
+bool FUNCTIONPARSERTYPES::IsLogicalOpcode(unsigned op)
+{
+    switch(op)
+    {
+      case cAnd: case cAbsAnd:
+      case cOr:  case cAbsOr:
+      case cNot: case cAbsNot:
+      case cNotNot: case cAbsNotNot:
+      case cEqual: case cNEqual:
+      case cLess: case cLessOrEq:
+      case cGreater: case cGreaterOrEq:
+          return true;
+      default: break;
+    }
+    return false;
+}
+
+bool FUNCTIONPARSERTYPES::IsComparisonOpcode(unsigned op)
+{
+    switch(op)
+    {
+      case cEqual: case cNEqual:
+      case cLess: case cLessOrEq:
+      case cGreater: case cGreaterOrEq:
+          return true;
+      default: break;
+    }
+    return false;
+}
+
+unsigned FUNCTIONPARSERTYPES::OppositeComparisonOpcode(unsigned op)
+{
+    switch(op)
+    {
+      case cLess: return cGreater;
+      case cGreater: return cLess;
+      case cLessOrEq: return cGreaterOrEq;
+      case cGreaterOrEq: return cLessOrEq;
+    }
+    return op;
+}
+
+bool FUNCTIONPARSERTYPES::IsNeverNegativeValueOpcode(unsigned op)
+{
+    switch(op)
+    {
+      case cAnd: case cAbsAnd:
+      case cOr:  case cAbsOr:
+      case cNot: case cAbsNot:
+      case cNotNot: case cAbsNotNot:
+      case cEqual: case cNEqual:
+      case cLess: case cLessOrEq:
+      case cGreater: case cGreaterOrEq:
+      case cSqrt: case cRSqrt: case cSqr:
+      case cHypot:
+      case cAbs:
+      case cAcos: case cCosh:
+          return true;
+      default: break;
+    }
+    return false;
+}
+
+bool FUNCTIONPARSERTYPES::IsAlwaysIntegerOpcode(unsigned op)
+{
+    switch(op)
+    {
+      case cAnd: case cAbsAnd:
+      case cOr:  case cAbsOr:
+      case cNot: case cAbsNot:
+      case cNotNot: case cAbsNotNot:
+      case cEqual: case cNEqual:
+      case cLess: case cLessOrEq:
+      case cGreater: case cGreaterOrEq:
+      case cInt: case cFloor: case cCeil: case cTrunc:
+          return true;
+      default: break;
+    }
+    return false;
+}
+
+bool FUNCTIONPARSERTYPES::IsUnaryOpcode(unsigned op)
+{
+    switch(op)
+    {
+      case cInv: case cNeg:
+      case cNot: case cAbsNot:
+      case cNotNot: case cAbsNotNot:
+      case cSqr: case cRSqrt:
+      case cDeg: case cRad:
+          return true;
+    }
+    return (op < FUNC_AMOUNT && Functions[op].params == 1);
+}
+
+bool FUNCTIONPARSERTYPES::IsBinaryOpcode(unsigned op)
+{
+    switch(op)
+    {
+      case cAdd: case cSub: case cRSub:
+      case cMul: case cDiv: case cRDiv:
+      case cMod:
+      case cEqual: case cNEqual: case cLess:
+      case cLessOrEq: case cGreater: case cGreaterOrEq:
+      case cAnd: case cAbsAnd:
+      case cOr: case cAbsOr:
+          return true;
+    }
+    return (op < FUNC_AMOUNT && Functions[op].params == 2);
+}
+
+bool FUNCTIONPARSERTYPES::HasInvalidRangesOpcode(unsigned op)
+{
+#ifndef FP_NO_EVALUATION_CHECKS
+    // Returns true, if the given opcode has a range of
+    // input values that gives an error.
+    switch(op)
+    {
+      case cAcos: // allowed range: |x| <= 1
+      case cAsin: // allowed range: |x| <= 1
+      case cAcosh: // allowed range: x >= 1
+      case cAtanh: // allowed range: |x| < 1
+          //case cCot: // note: no range, just separate values
+          //case cCsc: // note: no range, just separate values
+      case cLog: // allowed range: x > 0
+      case cLog2: // allowed range: x > 0
+      case cLog10: // allowed range: x > 0
+#ifdef FP_SUPPORT_OPTIMIZER
+      case cLog2by: // allowed range: x > 0
+#endif
+          //case cPow: // note: no range, just separate values
+          //case cSec: // note: no range, just separate values
+      case cSqrt: // allowed range: x >= 0
+      case cRSqrt: // allowed range: x > 0
+          //case cDiv: // note: no range, just separate values
+          //case cRDiv: // note: no range, just separate values
+          //case cInv: // note: no range, just separate values
+          return true;
+    }
+#endif
+    return false;
+}
+
+//=========================================================================
+// Mathematical template functions
+//=========================================================================
+/* fp_pow() is a wrapper for std::pow()
+ * that produces an identical value for
+ * exp(1) ^ 2.0  (0x4000000000000000)
+ * as exp(2.0)   (0x4000000000000000)
+ * - std::pow() on x86_64
+ * produces 2.0  (0x3FFFFFFFFFFFFFFF) instead!
+ * See comments below for other special traits.
+ */
+namespace
+{
+    template<typename ValueT>
+    inline ValueT fp_pow_with_exp_log(const ValueT& x, const ValueT& y)
+    {
+        // Exponentiation using exp(log(x)*y).
+        // See http://en.wikipedia.org/wiki/Exponentiation#Real_powers
+        // Requirements: x > 0.
+        return fp_exp(fp_log(x) * y);
+    }
+
+    template<typename ValueT>
+    inline ValueT fp_powi(ValueT x, unsigned long y)
+    {
+        // Fast binary exponentiation algorithm
+        // See http://en.wikipedia.org/wiki/Exponentiation_by_squaring
+        // Requirements: y is non-negative integer.
+        ValueT result(1);
+        while(y != 0)
+        {
+            if(y & 1) { result *= x; y -= 1; }
+            else      { x *= x;      y /= 2; }
+        }
+        return result;
+    }
+}
+
+template<typename ValueT>
+ValueT FUNCTIONPARSERTYPES::fp_pow(const ValueT& x, const ValueT& y)
+{
+    if(x == ValueT(1)) return ValueT(1);
+    // y is now zero or positive
+    if(isLongInteger(y))
+    {
+        // Use fast binary exponentiation algorithm
+        if(y >= ValueT(0))
+            return fp_powi(x,              makeLongInteger(y));
+        else
+            return ValueT(1) / fp_powi(x, -makeLongInteger(y));
+    }
+    if(y >= ValueT(0))
+    {
+        // y is now positive. Calculate using exp(log(x)*y).
+        if(x > ValueT(0)) return fp_pow_with_exp_log(x, y);
+        if(x == ValueT(0)) return ValueT(0);
+        // At this point, y > 0.0 and x is known to be < 0.0,
+        // because positive and zero cases are already handled.
+        if(!isInteger(y*ValueT(16)))
+            return -fp_pow_with_exp_log(-x, y);
+        // ^This is not technically correct, but it allows
+        // functions such as cbrt(x^5), that is, x^(5/3),
+        // to be evaluated when x is negative.
+        // It is too complicated (and slow) to test whether y
+        // is a formed from a ratio of an integer to an odd integer.
+        // (And due to floating point inaccuracy, pointless too.)
+        // For example, x^1.30769230769... is
+        // actually x^(17/13), i.e. (x^17) ^ (1/13).
+        // (-5)^(17/13) gives us now -8.204227562330453.
+        // To see whether the result is right, we can test the given
+        // root: (-8.204227562330453)^13 gives us the value of (-5)^17,
+        // which proves that the expression was correct.
+        //
+        // The y*16 check prevents e.g. (-4)^(3/2) from being calculated,
+        // as it would confuse functioninfo when pow() returns no error
+        // but sqrt() does when the formula is converted into sqrt(x)*x.
+        //
+        // The errors in this approach are:
+        //     (-2)^sqrt(2) should produce NaN
+        //                  or actually sqrt(2)I + 2^sqrt(2),
+        //                  produces -(2^sqrt(2)) instead.
+        //                  (Impact: Neglible)
+        // Thus, at worst, we're changing a NaN (or complex)
+        // result into a negative real number result.
+    }
+    else
+    {
+        // y is negative. Utilize the x^y = 1/(x^-y) identity.
+        if(x > ValueT(0)) return fp_pow_with_exp_log(ValueT(1) / x, -y);
+        if(x < ValueT(0))
+        {
+            if(!isInteger(y*ValueT(-16)))
+                return -fp_pow_with_exp_log(ValueT(-1) / x, -y);
+            // ^ See comment above.
+        }
+        // Remaining case: 0.0 ^ negative number
+    }
+    // This is reached when:
+    //      x=0, and y<0
+    //      x<0, and y*16 is either positive or negative integer
+    // It is used for producing error values and as a safe fallback.
+    return fp_pow_base(x, y);
+}
+
+//=========================================================================
+// Elementary (atom) parsing functions
 //=========================================================================
 namespace
 {
-    template<typename Value_t>
-    bool addNewNameData(namePtrsType<Value_t>& namePtrs,
-                        std::pair<NamePtr, NameData<Value_t> >& newName,
-                        bool isVar)
-    {
-        typename namePtrsType<Value_t>::iterator nameIter =
-            namePtrs.lower_bound(newName.first);
-
-        if(nameIter != namePtrs.end() && newName.first == nameIter->first)
-        {
-            // redefining a var is not allowed.
-            if(isVar)
-                return false;
-
-            // redefining other tokens is allowed, if the type stays the same.
-            if(nameIter->second.type != newName.second.type)
-                return false;
-
-            // update the data
-            nameIter->second = newName.second;
-            return true;
-        }
-
-        if(!isVar)
-        {
-            // Allocate a copy of the name (pointer stored in the map key)
-            // However, for VARIABLEs, the pointer points to VariableString,
-            // which is managed separately. Thusly, only done when !IsVar.
-            char* namebuf = new char[newName.first.nameLength];
-            memcpy(namebuf, newName.first.name, newName.first.nameLength);
-            newName.first.name = namebuf;
-        }
-
-        namePtrs.insert(nameIter, newName);
-        return true;
-    }
-
-    template<typename Value_t>
-    std::string findName(const namePtrsType<Value_t>& nameMap,
-                         unsigned index,
-                         typename NameData<Value_t>::DataType type)
-    {
-        for(typename namePtrsType<Value_t>::const_iterator
-                iter = nameMap.begin();
-            iter != nameMap.end();
-            ++iter)
-        {
-            if(iter->second.type != type) continue;
-            if(iter->second.index == index)
-                return std::string(iter->first.name,
-                                   iter->first.name + iter->first.nameLength);
-        }
-        return "?";
-    }
-
     unsigned readOpcodeForFloatType(const char* input)
     {
     /*
@@ -141,107 +336,6 @@ namespace
     }
 
     template<typename Value_t>
-    inline const Value_t& GetDegreesToRadiansFactor()
-    {
-        static const Value_t factor = fp_const_pi<Value_t>() / Value_t(180);
-        return factor;
-    }
-
-    template<typename Value_t>
-    inline Value_t DegreesToRadians(Value_t degrees)
-    {
-        return degrees * GetDegreesToRadiansFactor<Value_t>();
-    }
-
-    template<typename Value_t>
-    inline const Value_t& GetRadiansToDegreesFactor()
-    {
-        static const Value_t factor = Value_t(180) / fp_const_pi<Value_t>();
-        return factor;
-    }
-
-    template<typename Value_t>
-    inline Value_t RadiansToDegrees(Value_t radians)
-    {
-        return radians * GetRadiansToDegreesFactor<Value_t>();
-    }
-
-    template<typename Value_t>
-    inline bool isEvenInteger(Value_t value)
-    {
-        const Value_t halfValue = value * Value_t(0.5);
-        return fp_equal(halfValue, fp_floor(halfValue));
-    }
-
-#ifdef FP_SUPPORT_LONG_INT_TYPE
-    template<>
-    inline bool isEvenInteger(long value)
-    {
-        return value%2 == 0;
-    }
-#endif
-
-#ifdef FP_SUPPORT_MPFR_FLOAT_TYPE
-    template<>
-    inline bool isEvenInteger(MpfrFloat value)
-    {
-        return value.isInteger() && value%2 == 0;
-    }
-#endif
-
-#ifdef FP_SUPPORT_GMP_INT_TYPE
-    template<>
-    inline bool isEvenInteger(GmpInt value)
-    {
-        return value%2 == 0;
-    }
-#endif
-
-    template<typename Value_t>
-    inline bool isOddInteger(Value_t value)
-    {
-        const Value_t halfValue = (value + Value_t(1)) * Value_t(0.5);
-        return fp_equal(halfValue, fp_floor(halfValue));
-    }
-
-#ifdef FP_SUPPORT_LONG_INT_TYPE
-    template<>
-    inline bool isOddInteger(long value)
-    {
-        return value%2 != 0;
-    }
-#endif
-
-#ifdef FP_SUPPORT_MPFR_FLOAT_TYPE
-    template<>
-    inline bool isOddInteger(MpfrFloat value)
-    {
-        return value.isInteger() && value%2 != 0;
-    }
-#endif
-
-#ifdef FP_SUPPORT_GMP_INT_TYPE
-    template<>
-    inline bool isOddInteger(GmpInt value)
-    {
-        return value%2 != 0;
-    }
-#endif
-
-    template<typename Value_t>
-    inline int valueToInt(Value_t value) { return int(value); }
-
-#ifdef FP_SUPPORT_MPFR_FLOAT_TYPE
-    template<>
-    inline int valueToInt(MpfrFloat value) { return int(value.toInt()); }
-#endif
-
-#ifdef FP_SUPPORT_GMP_INT_TYPE
-    template<>
-    inline int valueToInt(GmpInt value) { return int(value.toInt()); }
-#endif
-
-    template<typename Value_t>
     inline Value_t fp_parseLiteral(const char* str, char** endptr)
     {
         return strtod(str, endptr);
@@ -284,7 +378,7 @@ namespace
     {
         for(unsigned p=0; p<n_limbs; ++p)
         {
-            unsigned carry = buffer[p] >> (elem_t)(limb_bits-4);
+            unsigned carry = unsigned( buffer[p] >> (elem_t)(limb_bits-4) );
             buffer[p] = (buffer[p] << 4) | nibble;
             nibble = carry;
         }
@@ -382,6 +476,67 @@ namespace
         return strtol(str, endptr, 16);
     }
 #endif
+}
+
+//=========================================================================
+// Utility functions
+//=========================================================================
+namespace
+{
+    template<typename Value_t>
+    bool addNewNameData(namePtrsType<Value_t>& namePtrs,
+                        std::pair<NamePtr, NameData<Value_t> >& newName,
+                        bool isVar)
+    {
+        typename namePtrsType<Value_t>::iterator nameIter =
+            namePtrs.lower_bound(newName.first);
+
+        if(nameIter != namePtrs.end() && newName.first == nameIter->first)
+        {
+            // redefining a var is not allowed.
+            if(isVar)
+                return false;
+
+            // redefining other tokens is allowed, if the type stays the same.
+            if(nameIter->second.type != newName.second.type)
+                return false;
+
+            // update the data
+            nameIter->second = newName.second;
+            return true;
+        }
+
+        if(!isVar)
+        {
+            // Allocate a copy of the name (pointer stored in the map key)
+            // However, for VARIABLEs, the pointer points to VariableString,
+            // which is managed separately. Thusly, only done when !IsVar.
+            char* namebuf = new char[newName.first.nameLength];
+            memcpy(namebuf, newName.first.name, newName.first.nameLength);
+            newName.first.name = namebuf;
+        }
+
+        namePtrs.insert(nameIter, newName);
+        return true;
+    }
+
+    template<typename Value_t>
+    std::string findName(const namePtrsType<Value_t>& nameMap,
+                         unsigned index,
+                         typename NameData<Value_t>::DataType type)
+    {
+        for(typename namePtrsType<Value_t>::const_iterator
+                iter = nameMap.begin();
+            iter != nameMap.end();
+            ++iter)
+        {
+            if(iter->second.type != type) continue;
+            if(iter->second.index == index)
+                return std::string(iter->first.name,
+                                   iter->first.name + iter->first.nameLength);
+        }
+        return "?";
+    }
 }
 
 
@@ -1003,7 +1158,7 @@ namespace
         0,0,3,5,0,9,0,7, 3,11,0,3,0,5,3,0,/* 112 - 127 */
     };
 
-    inline int get_powi_factor(int abs_int_exponent)
+    inline int get_powi_factor(long abs_int_exponent)
     {
         if(abs_int_exponent >= int(sizeof(powi_factor_table))) return 0;
         return powi_factor_table[abs_int_exponent];
@@ -1037,10 +1192,10 @@ namespace
     }
 #endif
 
-    bool IsEligibleIntPowiExponent(int int_exponent)
+    bool IsEligibleIntPowiExponent(long int_exponent)
     {
         if(int_exponent == 0) return false;
-        int abs_int_exponent = int_exponent;
+        long abs_int_exponent = int_exponent;
     #if 0
         int cost = 0;
 
@@ -1063,149 +1218,6 @@ namespace
     #endif
     }
 
-    bool IsLogicalOpcode(unsigned op)
-    {
-        switch(op)
-        {
-          case cAnd: case cAbsAnd:
-          case cOr:  case cAbsOr:
-          case cNot: case cAbsNot:
-          case cNotNot: case cAbsNotNot:
-          case cEqual: case cNEqual:
-          case cLess: case cLessOrEq:
-          case cGreater: case cGreaterOrEq:
-              return true;
-          default: break;
-        }
-        return false;
-    }
-
-    bool IsComparisonOpcode(unsigned op)
-    {
-        switch(op)
-        {
-          case cEqual: case cNEqual:
-          case cLess: case cLessOrEq:
-          case cGreater: case cGreaterOrEq:
-              return true;
-          default: break;
-        }
-        return false;
-    }
-
-    unsigned OppositeComparisonOpcode(unsigned op)
-    {
-        switch(op)
-        {
-            case cLess: return cGreater;
-            case cGreater: return cLess;
-            case cLessOrEq: return cGreaterOrEq;
-            case cGreaterOrEq: return cLessOrEq;
-        }
-        return op;
-    }
-
-    bool IsNeverNegativeValueOpcode(unsigned op)
-    {
-        switch(op)
-        {
-          case cAnd: case cAbsAnd:
-          case cOr:  case cAbsOr:
-          case cNot: case cAbsNot:
-          case cNotNot: case cAbsNotNot:
-          case cEqual: case cNEqual:
-          case cLess: case cLessOrEq:
-          case cGreater: case cGreaterOrEq:
-          case cSqrt: case cRSqrt: case cSqr:
-          case cHypot:
-          case cAbs:
-          case cAcos: case cCosh:
-              return true;
-          default: break;
-        }
-        return false;
-    }
-
-    bool IsAlwaysIntegerOpcode(unsigned op)
-    {
-        switch(op)
-        {
-          case cAnd: case cAbsAnd:
-          case cOr:  case cAbsOr:
-          case cNot: case cAbsNot:
-          case cNotNot: case cAbsNotNot:
-          case cEqual: case cNEqual:
-          case cLess: case cLessOrEq:
-          case cGreater: case cGreaterOrEq:
-          case cInt: case cFloor: case cCeil: case cTrunc:
-              return true;
-          default: break;
-        }
-        return false;
-    }
-
-    bool IsUnaryOpcode(unsigned op)
-    {
-        switch(op)
-        {
-          case cInv: case cNeg:
-          case cNot: case cAbsNot:
-          case cNotNot: case cAbsNotNot:
-          case cSqr: case cRSqrt:
-          case cDeg: case cRad:
-            return true;
-        }
-        return (op < FUNC_AMOUNT && Functions[op].params == 1);
-    }
-
-    bool IsBinaryOpcode(unsigned op)
-    {
-        switch(op)
-        {
-          case cAdd: case cSub: case cRSub:
-          case cMul: case cDiv: case cRDiv:
-          case cMod:
-          case cEqual: case cNEqual: case cLess:
-          case cLessOrEq: case cGreater: case cGreaterOrEq:
-          case cAnd: case cAbsAnd:
-          case cOr: case cAbsOr:
-            return true;
-        }
-        return (op < FUNC_AMOUNT && Functions[op].params == 2);
-    }
-
-    bool HasInvalidRangesOpcode(unsigned op)
-    {
-#ifndef FP_NO_EVALUATION_CHECKS
-        // Returns true, if the given opcode has a range of
-        // input values that gives an error.
-        switch(op)
-        {
-            case cAcos: // allowed range: |x| <= 1
-            case cAsin: // allowed range: |x| <= 1
-            case cAcosh: // allowed range: x >= 1
-            case cAtanh: // allowed range: |x| < 1
-            //case cCot: // note: no range, just separate values
-            //case cCsc: // note: no range, just separate values
-            case cLog: // allowed range: x > 0
-            case cLog2: // allowed range: x > 0
-            case cLog10: // allowed range: x > 0
-        #ifdef FP_SUPPORT_OPTIMIZER
-            case cLog2by: // allowed range: x > 0
-        #endif
-            //case cPow: // note: no range, just separate values
-            //case cSec: // note: no range, just separate values
-            case cSqrt: // allowed range: x >= 0
-            case cRSqrt: // allowed range: x > 0
-            //case cDiv: // note: no range, just separate values
-            //case cRDiv: // note: no range, just separate values
-            //case cInv: // note: no range, just separate values
-                return true;
-        }
-#endif
-        return false;
-    }
-
 #ifdef FP_EPSILON
     const double EpsilonOrZero = FP_EPSILON;
 #else
@@ -1222,12 +1234,12 @@ inline void FunctionParserBase<Value_t>::AddImmedOpcode(Value_t value)
 }
 
 template<typename Value_t>
-inline void FunctionParserBase<Value_t>::CompilePowi(int abs_int_exponent)
+inline void FunctionParserBase<Value_t>::CompilePowi(long abs_int_exponent)
 {
     int num_muls=0;
     while(abs_int_exponent > 1)
     {
-        int factor = get_powi_factor(abs_int_exponent);
+        long factor = get_powi_factor(abs_int_exponent);
         if(factor)
         {
             CompilePowi(factor);
@@ -1238,6 +1250,8 @@ inline void FunctionParserBase<Value_t>::CompilePowi(int abs_int_exponent)
         {
             abs_int_exponent /= 2;
             data->ByteCode.push_back(cSqr);
+            // ^ Don't put AddFunctionOpcode here,
+            //   it would slow down a great deal.
         }
         else
         {
@@ -1260,11 +1274,10 @@ inline bool FunctionParserBase<Value_t>::TryCompilePowi(Value_t original_immed)
     Value_t changed_immed = original_immed;
     for(int sqrt_count=0; /**/; ++sqrt_count)
     {
-        int int_exponent = valueToInt(changed_immed);
-        if(changed_immed == Value_t(int_exponent) &&
-           IsEligibleIntPowiExponent(int_exponent))
+        long int_exponent = makeLongInteger(changed_immed);
+        if(isLongInteger(changed_immed) && IsEligibleIntPowiExponent(int_exponent))
         {
-            int abs_int_exponent = int_exponent;
+            long abs_int_exponent = int_exponent;
             if(abs_int_exponent < 0)
                 abs_int_exponent = -abs_int_exponent;
 
@@ -1285,6 +1298,13 @@ inline bool FunctionParserBase<Value_t>::TryCompilePowi(Value_t original_immed)
                 data->ByteCode.push_back(opcode);
                 --sqrt_count;
             }
+            if((abs_int_exponent & 1) == 0)
+            {
+                // This special rule fixes the optimization
+                // shortcoming of (-x)^2 with minimal overhead.
+                AddFunctionOpcode(cSqr);
+                abs_int_exponent >>= 1;
+            }
             CompilePowi(abs_int_exponent);
             if(int_exponent < 0) data->ByteCode.push_back(cInv);
             ++StackPtr; // Needed because cPow adding will assume this.
@@ -1298,7 +1318,7 @@ inline bool FunctionParserBase<Value_t>::TryCompilePowi(Value_t original_immed)
     // x^y can be safely converted into exp(y * log(x))
     // when y is _not_ integer, because we know that x >= 0.
     // Otherwise either expression will give a NaN.
-    if(/*!IsIntegerConst(original_immed) ||*/
+    if(/*!isInteger(original_immed) ||*/
        IsNeverNegativeValueOpcode(data->ByteCode[data->ByteCode.size()-2]))
     {
         data->Immed.pop_back();
@@ -2096,10 +2116,11 @@ FunctionParserBase<Value_t>::CompileAnd(const char* function)
         {
             if(data->ByteCode.back() == cNotNot) data->ByteCode.pop_back();
 
+          #if 0
             unsigned& param0last = data->ByteCode[param0end-1];
             unsigned& param1last = data->ByteCode.back();
-            if(IsNeverNegativeValueOpcode(param1last) &&
-               IsNeverNegativeValueOpcode(param0last))
+            if(IsNeverNegativeValueOpcode(param1last)
+            && IsNeverNegativeValueOpcode(param0last))
             {
                 /* Change !x & !y into !(x | y). Because y might
                  * contain an cIf, we replace the first cNot/cAbsNot
@@ -2117,6 +2138,7 @@ FunctionParserBase<Value_t>::CompileAnd(const char* function)
                     AddFunctionOpcode(cAbsAnd);
             }
             else
+          #endif
                 AddFunctionOpcode(cAnd);
             --StackPtr;
         }
@@ -2143,6 +2165,7 @@ FunctionParserBase<Value_t>::CompileExpression(const char* function)
         {
             if(data->ByteCode.back() == cNotNot) data->ByteCode.pop_back();
 
+          #if 0
             unsigned& param0last = data->ByteCode[param0end-1];
             unsigned& param1last = data->ByteCode.back();
             if(IsNeverNegativeValueOpcode(param1last)
@@ -2164,6 +2187,7 @@ FunctionParserBase<Value_t>::CompileExpression(const char* function)
                     AddFunctionOpcode(cAbsOr);
             }
             else
+          #endif
                 AddFunctionOpcode(cOr);
             --StackPtr;
         }
@@ -2376,8 +2400,8 @@ Value_t FunctionParserBase<Value_t>::Eval(const Value_t* Vars)
               // x:Negative ^ y:NonInteger is failure,
               // except when the reciprocal of y forms an integer
               /*if(Stack[SP-1] < Value_t(0) &&
-                 !IsIntegerConst(Stack[SP]) &&
-                 !IsIntegerConst(1.0 / Stack[SP]))
+                 !isInteger(Stack[SP]) &&
+                 !isInteger(1.0 / Stack[SP]))
               { evalErrorType=3; return Value_t(0); }*/
               // x:0 ^ y:negative is failure
               if(Stack[SP-1] == Value_t(0) &&
@@ -2543,13 +2567,13 @@ Value_t FunctionParserBase<Value_t>::Eval(const Value_t* Vars)
               Stack[SP-1] = fp_log2(Stack[SP-1]) * Stack[SP];
               --SP;
               break;
+#endif // FP_SUPPORT_OPTIMIZER
 
           case cSinCos:
               fp_sinCos(Stack[SP], Stack[SP+1], Stack[SP]);
               ++SP;
               break;
 
-#endif // FP_SUPPORT_OPTIMIZER
           case cAbsNot:
               Stack[SP] = fp_absNot(Stack[SP]); break;
           case cAbsNotNot:
@@ -2764,7 +2788,7 @@ namespace
         {
             if(ByteCode[IP] == opcodes.opcode_square)
             {
-                if(!IsIntegerConst(result)) break;
+                if(!isInteger(result)) break;
                 result *= Value_t(2);
                 ++IP;
                 continue;
@@ -2778,20 +2802,18 @@ namespace
             }
             if(ByteCode[IP] == opcodes.opcode_half)
             {
-                if(IsIntegerConst(result) && result > Value_t(0) &&
-                   (valueToInt(result)) % 2 == 0)
+                if(result > Value_t(0) && isEvenInteger(result))
                     break;
-                if(IsIntegerConst(result * Value_t(0.5))) break;
+                if(isInteger(result * Value_t(0.5))) break;
                 result *= Value_t(0.5);
                 ++IP;
                 continue;
             }
             if(ByteCode[IP] == opcodes.opcode_invhalf)
             {
-                if(IsIntegerConst(result) && result > Value_t(0) &&
-                   (valueToInt(result)) % 2 == 0)
+                if(result > Value_t(0) && isEvenInteger(result))
                     break;
-                if(IsIntegerConst(result * Value_t(-0.5))) break;
+                if(isInteger(result * Value_t(-0.5))) break;
                 result *= Value_t(-0.5);
                 ++IP;
                 continue;
@@ -3208,6 +3230,7 @@ void FunctionParserBase<Value_t>::PrintByteCode(std::ostream& dest,
                             produces = 0;
                             break;
                         }
+    #endif
                         case cSinCos:
                         {
                             if(showExpression)
@@ -3224,7 +3247,6 @@ void FunctionParserBase<Value_t>::PrintByteCode(std::ostream& dest,
                             produces = 0;
                             break;
                         }
-    #endif
                         case cAbsAnd: n = "abs_and"; break;
                         case cAbsOr:  n = "abs_or"; break;
                         case cAbsNot: n = "abs_not"; params = 1; break;
@@ -3356,6 +3378,7 @@ void FunctionParserBase<Value_t>::PrintByteCode(std::ostream& dest,
         else
             output << std::endl;
     }
+    dest << std::flush;
 }
 #endif
 

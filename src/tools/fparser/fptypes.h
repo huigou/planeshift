@@ -1,5 +1,5 @@
 /***************************************************************************\
-|* Function Parser for C++ v4.1                                            *|
+|* Function Parser for C++ v4.2                                            *|
 |*-------------------------------------------------------------------------*|
 |* Copyright: Juha Nieminen, Joel Yliluoma                                 *|
 |*                                                                         *|
@@ -61,8 +61,8 @@ namespace FUNCTIONPARSERTYPES
                    * above [x]. Used for disposing of temporaries.
                    */
         cLog2by, /* log2by(x,y) = log2(x) * y */
-        cSinCos, /* sin(x) followed by cos(x) (two values are pushed to stack) */
 #endif
+        cSinCos, /* sin(x) followed by cos(x) (two values are pushed to stack) */
         cAbsAnd,    /* As cAnd,       but assume both operands are absolute values */
         cAbsOr,     /* As cOr,        but assume both operands are absolute values */
         cAbsNot,    /* As cAbsNot,    but assume the operand is an absolute value */

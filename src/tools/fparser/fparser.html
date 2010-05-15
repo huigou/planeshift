@@ -3,11 +3,11 @@
 <head>
  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
  <link href="style.css" rel="stylesheet" type="text/css" title="normal" media=screen>
- <title>Function Parser for C++ v4.1    : Documentation</title>
+ <title>Function Parser for C++ v4.2    : Documentation</title>
 </head>
 
 <body>
-<h1>Function Parser for C++ v4.1    </h1>
+<h1>Function Parser for C++ v4.2    </h1>
 
 <p>Authors: Juha Nieminen
 (<a href="http://iki.fi/warp/">http://iki.fi/warp/</a>),
@@ -65,6 +65,17 @@ Joel Yliluoma
 <a name="whatsnew"></a>
 <h2>What's new</h2>
 
+<p>What's new in v4.2
+  <ul>
+    <li>The <code>Optimize()</code> method now works also with the
+      <code>float</code> and <code>long double</code> versions of the library.
+    </li>
+    <li>Some new optimizations added.</li>
+    <li>There was a call to the C99/C++0x function <code>isinf()</code> in the
+      optimizer which made it not compile with some compilers. This call has
+      been removed.</li>
+  </ul>
+
 <p>What's new in v4.1
   <ul>
     <li>Official support for hexadecimal literals (for all the parser types).
@@ -73,7 +84,7 @@ Joel Yliluoma
       extension of those functions). See documentation for details.</li>
     <li>Significant amount of new optimizations performed by
       <code>Parse()</code>.</li>
-    <li>Minor bugfixes.
+    <li>Minor bugfixes.</li>
   </ul>
 
 
@@ -170,9 +181,10 @@ as <code>fparser.cpp</code>.
   (rather than a compiler error) because those classes will not have been
   instantiated when the library was compiled.
 
-<p>Also note that currently the <code>Optimize()</code> method works only
-  for the <code>FunctionParser</code> (<code>double</code>) class. For the
-  other types it can be called but it does nothing.
+<p>Currently the <code>Optimize()</code> method works only for the
+  <code>FunctionParser</code>, <code>FunctionParser_f</code> and
+  <code>FunctionParser_ld</code> classes. For the other types it can be
+  called but it does nothing.
 
 <p>
 <dl>
