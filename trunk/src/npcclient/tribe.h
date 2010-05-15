@@ -33,6 +33,11 @@
 #include <util/psconst.h>
 #include <util/psutil.h>
 
+//=============================================================================
+// Local Includes
+//=============================================================================
+#include "tribeneed.h"
+
 class iResultRow;
 class EventManager;
 class NPC;
@@ -46,6 +51,9 @@ class gemNPCActor;
 class Tribe : public ScopedTimerCB
 {
 public:
+
+    typedef csHash<TribeNeedSet*,unsigned int>::ConstGlobalIterator ConstTribeNeedSetGlobalIterator;
+    
     struct Resource
     {
         int      id;           ///< Database id
@@ -66,18 +74,12 @@ public:
         iSector* GetSector();
     };
 
-    /**
-     * Represent each type of NPC Needs
-     */
-    enum TribeNeedType
+    struct MemberID
     {
-        GENERIC,
-        RESOURCE_AREA,
-        REPRODUCE
+        PID       pid;
+        uint32_t  tribeMemberType; ///< Used to select needSet by index.
     };
     
-    static const char *TribeNeedTypeName[];
-
     /** Construct a new tribe object */
     Tribe();
 
@@ -97,7 +99,7 @@ public:
     bool LoadResource(iResultRow& row);
     
     /** Adds a new member to the tribe, e.g. from reproduction */
-    bool AddMember(PID pid);
+    bool AddMember(PID pid, uint32_t tribeMemberType);
 
     /** Save or update an resource in database */
     void SaveResource(Resource* resource, bool newResource);
@@ -106,7 +108,7 @@ public:
     bool CheckAttach(NPC * npc);
 
     /** Attach a new member to the tribe */
-    bool AttachMember(NPC * npc);
+    bool AttachMember(NPC * npc, uint32_t tribeMemberType);
 
     /** Remove members that die */
     bool HandleDeath(NPC * npc);
@@ -138,7 +140,25 @@ public:
     size_t GetResourceCount() { return resources.GetSize(); }
     const Resource& GetResource(size_t n) { return resources[n]; }
     csList<Memory*>::Iterator GetMemoryIterator() { csList<Memory*>::Iterator it(memories); return it; };
-    TribeNeedSet* GetNeedSet() { return needSet; };
+
+    /** Get need set based on NPC.
+     *
+     * Each NPC can be of different member types with
+     * different need sets. This function find the
+     * need set for the given NPC.
+     *
+     * @param npc The NPC to find member type from.
+     * @return    Need set of the member type of the npc.
+     */
+    TribeNeedSet* GetNeedSet(NPC* npc);
+    
+    /** Get the need set for a member type
+     *
+     * @param memberType The type to return the need set for.
+     * @param create     Create a new NeedSet if needed.
+     * @return           The needset of the memberType given.
+     */
+    TribeNeedSet* GetNeedSet(unsigned int memberType, bool create = false);
 
     /**
      * Calculate the maximum number of members for the tribe.
@@ -226,11 +246,6 @@ public:
      * against max size.
      */
     bool ShouldGrow() const;
-
-    /**
-     * Initialize the need set for the tribe brain.
-     */
-    void InitializeNeedSet();
 
     /**
      * Memorize a perception. The perception will be marked as
@@ -321,38 +336,69 @@ public:
     /** Callback for debug of long time used in scopes.
      */
     virtual void ScopedTimerCallback(const ScopedTimer* timer);
+
+
+    /** Retrive death rate average value from tribe.
+     *
+     * @return The Exponential smoothed death rate.
+     */
+    float GetDeathRate() { return deathRate; }
     
+    /** Retrive resource rate average value from tribe.
+     *
+     * @return The Exponential smoothed resource rate.
+     */
+    float GetResourceRate() { return resourceRate; }
+    
+    /** Dump needs to console
+     */
+    void DumpNeeds() const;
     
 protected:
 
     /** Calculate the tribes need from a NPC */
     TribeNeed* Brain(NPC * npc);
-    
-    int                    id;
-    csString               name;
-    csArray<PID>           membersId;
-    csArray<NPC*>          members;
-    csArray<NPC*>          deadMembers;
-    csArray<Resource>      resources;
 
-    csVector3              homePos;
-    float                  homeRadius;
-    csString               homeSectorName;
-    iSector*               homeSector;
-    int                    maxSize;
-    csString               wealthResourceName;
-    csString               wealthResourceNick;
-    csString               wealthResourceArea;
-    float                  wealthResourceGrowth;
-    float                  wealthResourceGrowthActive;
-    int                    wealthResourceGrowthActiveLimit;
-    float                  accWealthGrowth; ///< Accumelated rest of wealth growth.
-    int                    reproductionCost;
-    csString               wealthGatherNeed;
-    TribeNeedSet*          needSet;
-    csList<Memory*>        memories;
+    /** Update the deathRate variable.
+     */
+    void UpdateDeathRate();
+
+    /** Update the resourceRate variable.
+     */
+    void UpdateResourceRate( int amount );
+
+    int                       id;
+    csString                  name;
+    csArray<MemberID>         membersId;
+    csArray<NPC*>             members;
+    csArray<NPC*>             deadMembers;
+    csArray<Resource>         resources;
+
+    csVector3                 homePos;
+    float                     homeRadius;
+    csString                  homeSectorName;
+    iSector*                  homeSector;
+    int                       maxSize;
+    csString                  wealthResourceName;
+    csString                  wealthResourceNick;
+    csString                  wealthResourceArea;
+    float                     wealthResourceGrowth;
+    float                     wealthResourceGrowthActive;
+    int                       wealthResourceGrowthActiveLimit;
+    float                     accWealthGrowth; ///< Accumelated rest of wealth growth.
+    int                       reproductionCost;
+    csString                  wealthGatherNeed;
+    csHash<TribeNeedSet*,unsigned int> needSet;
+    csList<Memory*>           memories;
     
-    csTicks                lastGrowth;
+    csTicks                   lastGrowth;
+
+
+    float                     deathRate;    ///< The average time in ticks between deaths
+    float                     resourceRate; ///< The average time in ticks between new resource is found
+    csTicks                   lastDeath;    ///< Time when a member was last killed
+    csTicks                   lastResource; ///< Time when a resource was last added.
+    
 };
 
 #endif

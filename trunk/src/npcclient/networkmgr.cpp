@@ -869,6 +869,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 PID spawned_pid = PID(msg->GetUInt32());
                 EID spawned_eid = EID(msg->GetUInt32());
                 EID spawner_eid = EID(msg->GetUInt32());
+                uint32_t tribeMemberType = msg->GetUInt32();
 
 
                 NPC *npc = npcclient->FindNPC(spawner_eid);
@@ -878,7 +879,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
 
                 npc->Printf("Got spawn Perception to %u from %u\n",
                             spawned_eid.Unbox(), spawner_eid.Unbox());
-                npc->GetTribe()->AddMember(spawned_pid);
+                npc->GetTribe()->AddMember(spawned_pid, tribeMemberType);
                 NPC *spawned_npc = npcclient->FindNPC(spawned_eid);
                 if(spawned_npc)
                 	npcclient->CheckAttachTribes(spawned_npc);
@@ -1024,13 +1025,14 @@ void NetworkManager::QueueAttackCommand(gemNPCActor *attacker, gemNPCActor *targ
     cmd_count++;
 }
 
-void NetworkManager::QueueSpawnCommand(gemNPCActor *mother, gemNPCActor *father)
+void NetworkManager::QueueSpawnCommand(gemNPCActor *mother, gemNPCActor *father, uint32_t tribeMemberType)
 {
     CheckCommandsOverrun(100);
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_SPAWN);
     outbound->msg->Add(mother->GetEID().Unbox());
     outbound->msg->Add(father->GetEID().Unbox());
+    outbound->msg->Add(tribeMemberType);
 
     if ( outbound->msg->overrun )
     {

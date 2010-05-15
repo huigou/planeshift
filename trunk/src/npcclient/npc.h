@@ -126,6 +126,7 @@ protected:
     EID                target_id;
 
     Tribe*             tribe;
+    uint32_t           tribeMemberType;      ///< What type/class is this NPC in the tribe. 
     bool               insideTribeHome;      ///< State variable for inside outside tribe home checks.
         
     RaceInfo_t        *raceInfo;
@@ -166,7 +167,7 @@ public:
     void SetActor(gemNPCActor * actor);
     gemNPCActor * GetActor() { return npcActor; }
     const char* GetName() {return name.GetDataSafe();}
-    void SetAlive(bool a) { alive = a; }
+    void SetAlive(bool a);
     bool IsAlive() const { return alive; }
     void Disable(bool disable = true);
     bool IsDisabled() { return disabled; }
@@ -353,6 +354,14 @@ public:
      * @return Null if not part of a tribe
      */
     Tribe * GetTribe();
+
+    /** Set the type/class for this npc in a tribe.
+     */
+    void SetTribeMemberType( uint32_t tribeMemberType );
+
+    /** Return the type/class for this NPC's tribe membership if any.
+     */
+    uint32_t GetTribeMemberType() const;
 
     /** Check the inside tribe home state of the npc.
      *

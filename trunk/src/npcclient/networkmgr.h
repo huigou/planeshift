@@ -105,7 +105,15 @@ public:
     /// Call to remove queued dr updates when entities are removed/deleted.
     void DequeueDRData(NPC * npc );
     void QueueAttackCommand(gemNPCActor *attacker, gemNPCActor *target);
-    void QueueSpawnCommand(gemNPCActor *mother, gemNPCActor *father);
+    
+    /** Send a spawn command to server
+     *
+     * @param mother          The mother of the spawn
+     * @param father          If the father is known point to the father, use mother if unknow.
+     * @param tribeMemberType If part of a tribe set to the need set index to be used for this new entity.
+     */
+    void QueueSpawnCommand(gemNPCActor *mother, gemNPCActor *father, uint32_t tribeMemberType);
+    
     /** Queue a talk command to the server
      *
      * The speaker will send a talk event say/action to target or nearby targets.

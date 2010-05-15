@@ -81,6 +81,7 @@ NPC::NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world,
     debugging=0; 
     alive=false; 
     tribe=NULL;
+    tribeMemberType = 0;
     raceInfo=NULL;
     checkedSector=NULL;
     checked = false;
@@ -293,6 +294,10 @@ void NPC::SetActor(gemNPCActor * actor)
     }
 }
 
+void NPC::SetAlive( bool a )
+{
+    alive = a;
+}
 
 void NPC::Advance(csTicks when)
 {
@@ -504,6 +509,7 @@ void NPC::DumpState()
     CPrintf(CON_CMDOUTPUT, "Region:              %s\n",GetRegion()?GetRegion()->GetName():"(None)");
     CPrintf(CON_CMDOUTPUT, "Inside region:       %s\n",insideRegion?"Yes":"No");
     CPrintf(CON_CMDOUTPUT, "Tribe:               %s\n",GetTribe()?GetTribe()->GetName():"(None)");
+    CPrintf(CON_CMDOUTPUT, "TribeMemberType:     %u\n",GetTribeMemberType());
     CPrintf(CON_CMDOUTPUT, "Inside tribe home:   %s\n",insideTribeHome?"Yes":"No");
     CPrintf(CON_CMDOUTPUT, "Target:              %s\n",GetTarget()?GetTarget()->GetName():"");
     CPrintf(CON_CMDOUTPUT, "Last perception:     %s\n",last_perception?last_perception->GetName():"(None)");
@@ -826,6 +832,16 @@ void NPC::SetTribe(Tribe * new_tribe)
 Tribe * NPC::GetTribe()
 {
     return tribe;
+}
+
+void  NPC::SetTribeMemberType( uint32_t tribeMemberType )
+{
+    this->tribeMemberType = tribeMemberType;
+}
+
+uint32_t  NPC::GetTribeMemberType() const
+{
+    return tribeMemberType;
 }
 
 RaceInfo_t* NPC::GetRaceInfo()

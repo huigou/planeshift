@@ -583,7 +583,7 @@ bool psNPCClient::ReadNPCsFromDatabase()
         NPC *npc = new NPC(this, network, world, engine, cdsys);
         if (npc->Load(rs[i],npctypes, eventmanager, 0))
         {
-        	npc->Tick();
+            npc->Tick();
             npcs.Push(npc);
 
             CheckAttachTribes(npc);
@@ -1292,28 +1292,32 @@ void psNPCClient::ListTribes(const char * pattern)
             csVector3 pos;
             iSector* sector;
             float radius;
-            CPrintf(CON_CMDOUTPUT, "\n%9s %-30s %-7s %-7s %7s %7s %7s %7s %-15s \n",
-                    "Tribe id", "Name", "MCount","NPCs","x","y","z","r","sector");
+            CPrintf(CON_CMDOUTPUT, "\n%9s %-30s %-7s %-7s\n",
+                    "Tribe id", "Name", "MCount","NPCs");
             tribes[i]->GetHome(pos,radius,sector);
-            CPrintf(CON_CMDOUTPUT, "%9d %-30s %-7d %-7d %7.1f %7.1f %7.1f %7.1f %-15s\n" ,
+            CPrintf(CON_CMDOUTPUT, "%9d %-30s %-7d %-7d\n" ,
                     tribes[i]->GetID(),
                     tribes[i]->GetName(),
                     tribes[i]->GetMemberIDCount(),
-                    tribes[i]->GetMemberCount(),
-                    pos.x,pos.y,pos.z,radius,(sector?sector->QueryObject()->GetName():"(null)"));
+                    tribes[i]->GetMemberCount());
+            CPrintf(CON_CMDOUTPUT,"Home position: %s Radius: %7.1f\n",toString(pos,sector).GetDataSafe(),radius);
             CPrintf(CON_CMDOUTPUT,"   ShouldGrow: %s  MaxSize          : %4d  Growth Active Rate: %5.2f Growth Active Limit: %d\n",
                     (tribes[i]->ShouldGrow()?"Yes":"No "),tribes[i]->GetMaxSize(),
                     tribes[i]->GetWealthResourceGrowthActive(),tribes[i]->GetWealthResourceGrowthActiveLimit());
             CPrintf(CON_CMDOUTPUT,"   CanGrow   : %s  Reproduction Cost: %4d  Growth Rate       : %5.2f\n",
                     (tribes[i]->CanGrow()?"Yes":"No "),tribes[i]->GetReproductionCost(),
                     tribes[i]->GetWealthResourceGrowth());
+            CPrintf(CON_CMDOUTPUT,"Resource rate         : %f ticks/resource\n",tribes[i]->GetResourceRate());
+            CPrintf(CON_CMDOUTPUT,"Death rate            : %f ticks/death\n",tribes[i]->GetDeathRate());
+            CPrintf(CON_CMDOUTPUT,"Needed resource       : '%s' Nick: '%s'\n",tribes[i]->GetNeededResource(),tribes[i]->GetNeededResourceNick());
+            
             CPrintf(CON_CMDOUTPUT,"Members:\n");
             CPrintf(CON_CMDOUTPUT, "%-6s %-6s %-30s %-6s %-6s %-15s %-15s %-20s %-20s\n", 
-                    "NPC ID", "EID", "Name", "Entity", "Status", "Brain","Behaviour","Owner","Tribe");
+                    "NPC ID", "EID", "Name", "Entity", "Status", "Brain","Behaviour","Owner","TribeMemberType");
             for (size_t j = 0; j < tribes[i]->GetMemberCount(); j++)
             {
                 NPC * npc = tribes[i]->GetMember(j);
-                CPrintf(CON_CMDOUTPUT, "%6u %6d %-30s %-6s %-6s %-15s %-15s %-20s %-20s\n" ,
+                CPrintf(CON_CMDOUTPUT, "%6u %6d %-30s %-6s %-6s %-15s %-15s %-20s %-20d\n" ,
                         npc->GetPID().Unbox(),
                         npc->GetActor() ? npc->GetActor()->GetEID().Unbox() : 0,
                         npc->GetName(),
@@ -1322,7 +1326,7 @@ void psNPCClient::ListTribes(const char * pattern)
                         (npc->GetBrain()?npc->GetBrain()->GetName():""),
                         (npc->GetCurrentBehavior()?npc->GetCurrentBehavior()->GetName():""),
                         npc->GetOwnerName(),
-                        (npc->GetTribe()?npc->GetTribe()->GetName():"")
+                        npc->GetTribeMemberType()
                         );
             }
             CPrintf(CON_CMDOUTPUT,"Resources:\n");
@@ -1355,23 +1359,8 @@ void psNPCClient::ListTribes(const char * pattern)
                 }
             } // End print Memeories scope
 
-            { // Start print Needs scope
-                
-                CPrintf(CON_CMDOUTPUT,"Needs:\n");
-                CPrintf(CON_CMDOUTPUT,"%-20s %10s %-20s %6s %6s   %s\n","Need","Value","Perception","Start","Growth","Depend on");
-                TribeNeedSet::NeedIterator it(tribes[i]->GetNeedSet()->GetIterator());
-                while (it.HasNext())
-                {
-                    TribeNeed* need = it.Next();
-                    CPrintf(CON_CMDOUTPUT,"%-20s %10.2f %-20s %6.2f %6.2f -> %s\n",
-                            need->GetTypeAndName().GetDataSafe(),
-                            need->current_need,
-                            need->GetPerception().GetDataSafe(),
-                            need->GetNeedStartValue(),
-                            need->GetNeedGrowthValue(),
-                            need->GetNeed()->GetTypeAndName().GetDataSafe());
-                }
-            } // End print Needs scope
+            CPrintf(CON_CMDOUTPUT,"Needs:\n");
+            tribes[i]->DumpNeeds();
         }
     }
 }

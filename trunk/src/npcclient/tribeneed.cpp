@@ -27,9 +27,18 @@
 // Local Includes
 //=============================================================================
 #include "tribeneed.h"
+#include "tribe.h"
 #include "npc.h"
 
 // ---------------------------------------------------------------------------------
+
+const char* TribeNeed::TribeNeedTypeName[] =
+{
+    "GENERIC",
+    "RESOURCE_AREA",
+    "REPRODUCE",
+    ""
+};
 
 Tribe * TribeNeed::GetTribe() const 
 {
@@ -40,7 +49,7 @@ csString TribeNeed::GetTypeAndName() const
 {
     csString result;
     
-    result = needName + "(" + Tribe::TribeNeedTypeName[needType] +")";
+    result = needName + "(" + TribeNeed::TribeNeedTypeName[needType] +")";
     
     return result;
 }
@@ -109,3 +118,61 @@ TribeNeed* TribeNeedSet::Find(const csString& needName) const
     }
     return NULL;
 }
+
+// ---------------------------------------------------------------------------------
+
+void TribeNeedGeneric::UpdateNeed(NPC * npc)
+{
+    current_need += needGrowthValue;
+}
+
+// ---------------------------------------------------------------------------------
+void TribeNeedResourceArea::UpdateNeed(NPC * npc)
+{
+    if (!GetTribe()->CanGrow())
+    {
+        current_need += 10*needGrowthValue; // Make sure tribe can grow at all time
+    }
+    else
+    {
+        current_need += needGrowthValue;
+    }
+}
+
+const TribeNeed* TribeNeedResourceArea::GetNeed() const
+{
+    if (GetTribe()->FindMemory(GetTribe()->GetNeededResourceAreaType()))
+    {
+        return this;
+    }
+    else
+    {
+        return explore->GetNeed();
+    }
+}
+
+// ---------------------------------------------------------------------------------
+void TribeNeedReproduce::UpdateNeed(NPC * npc)
+{
+    if (GetTribe()->ShouldGrow())
+    {
+        current_need += needGrowthValue;
+    } else
+    {
+        current_need = 0.0;
+    }
+}
+
+const TribeNeed* TribeNeedReproduce::GetNeed() const
+{
+    if (GetTribe()->CanGrow())
+    {
+        return this;
+    }
+    else
+    {
+        return getResourceNeed->GetNeed();
+    }
+}
+
+// ---------------------------------------------------------------------------------

@@ -1455,6 +1455,14 @@ UPDATE `server_options` SET `option_value`='1247' WHERE `option_name`='db_versio
 ALTER TABLE `item_stats` ADD COLUMN `removed_mesh` VARCHAR(200)  NOT NULL COMMENT 'Lists the mesh to be removed when this item is equipped. It\'s defined in this format slotname:mesh1,mesh2; slotname:mesh3; mesh4,mesh5. slotname is optional.' AFTER `cstr_part_mesh`;
 UPDATE item_stats set removed_mesh="helm:Hair" where valid_slots like "%HELM%" and name != "basecloths" and name not like "%Natural%" and name != "Rogue Armor";
 
+#1248 - Anders Reggestad added need set to tribe_needs
+UPDATE `server_options` SET `option_value`='1248' WHERE `option_name`='db_version';
+ALTER TABLE `tribe_needs`
+  ADD COLUMN `need_set` int(10) NOT NULL default '0' AFTER `tribe_id`;
+ALTER TABLE `tribe_members`
+  ADD COLUMN `member_type` int(10) NOT NULL default '0' AFTER `member_id`;
+
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to

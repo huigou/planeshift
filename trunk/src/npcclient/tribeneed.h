@@ -20,9 +20,13 @@
 #define __TRIBENEED_H__
 
 //=============================================================================
+// Crystal Space Includes
+//=============================================================================
+#include <csutil/parray.h>
+
+//=============================================================================
 // Local Includes
 //=============================================================================
-#include "tribe.h"
 
 class TribeNeedSet;
 class Tribe;
@@ -34,8 +38,20 @@ class NPC;
 class TribeNeed 
 {
 public:
+    /**
+     * Represent each type of NPC Needs
+     */
+    enum TribeNeedType
+    {
+        GENERIC,
+        RESOURCE_AREA,
+        REPRODUCE
+    };
+
+    static const char *TribeNeedTypeName[];    
+    
     TribeNeedSet*           parentSet;    ///< Point to the need set that this need is part of
-    Tribe::TribeNeedType    needType;     ///< Set by each need type to one of the tribe needs
+    TribeNeedType           needType;     ///< Set by each need type to one of the tribe needs
     float                   current_need; ///< Represent current need. Will be used to sort each need.
     csString                needName;     ///< Name of need
 
@@ -43,7 +59,7 @@ public:
      * Construct a basic need with the given needType and needName for debuging.
      *
      */
-    TribeNeed(Tribe::TribeNeedType needType, csString name, csString perception,
+    TribeNeed(TribeNeedType needType, csString name, csString perception,
               float needStartValue, float needGrowthValue)
         :parentSet(NULL),needType(needType),current_need(0.0),needName(name), perception(perception),
          needStartValue(needStartValue), needGrowthValue(needGrowthValue)
@@ -95,7 +111,7 @@ public:
      * To be overloded if a need is selected and that need depend on some
      * other need before it can be used.
      */
-    virtual Tribe::TribeNeedType GetNeedType()
+    virtual TribeNeedType GetNeedType()
     {
         return needType;
     }
@@ -105,7 +121,7 @@ public:
      * To be overloded if a need is selected and that need depend on some
      * other need before it can be used.
      */
-    virtual TribeNeed* GetNeed()
+    virtual const TribeNeed* GetNeed() const
     {
         return this;
     }
@@ -157,13 +173,20 @@ public:
     /**
      * Iterator type
      */
-    typedef csArray<TribeNeed*>::Iterator NeedIterator;
+    typedef csPDelArray<TribeNeed>::Iterator NeedIterator;
+    typedef csPDelArray<TribeNeed>::ConstIterator ConstNeedIterator;
     
     /**
      * Construct a need set for the given tribe.
      */
     TribeNeedSet(Tribe * tribe)
         :tribe(tribe)
+    {
+    }
+
+    /** Destructor
+     */
+    virtual ~TribeNeedSet()
     {
     }
 
@@ -203,9 +226,14 @@ public:
      */
     NeedIterator GetIterator(){ return needs.GetIterator(); };
 
+    /**
+     * Return const iterator for needs
+     */
+    ConstNeedIterator GetIterator() const{ return needs.GetIterator(); };
+
 private:
-    Tribe*                 tribe;
-    csArray<TribeNeed*>    needs;
+    Tribe*                    tribe;
+    csPDelArray<TribeNeed>    needs;
 };
 
 // ---------------------------------------------------------------------------------
@@ -216,7 +244,7 @@ class TribeNeedGeneric : public TribeNeed
 public:
     TribeNeedGeneric(const csString& name, const csString& perception,
                      float needStartValue, float needGrowthValue )
-        :TribeNeed(Tribe::GENERIC, name, perception, needStartValue, needGrowthValue)
+        :TribeNeed(GENERIC, name, perception, needStartValue, needGrowthValue)
     {
     }
 
@@ -224,11 +252,7 @@ public:
     {
     }
 
-    virtual void UpdateNeed(NPC * npc)
-    {
-        current_need += needGrowthValue;
-    }
-    
+    virtual void UpdateNeed(NPC * npc);
 private:
 
 };
@@ -242,7 +266,7 @@ public:
     TribeNeedResourceArea(const csString& name, const csString& perception,
                           float needStartValue, float needGrowthValue,
                           TribeNeed * explore)
-        :TribeNeed(Tribe::RESOURCE_AREA,name,perception,needStartValue,needGrowthValue),
+        :TribeNeed(RESOURCE_AREA,name,perception,needStartValue,needGrowthValue),
          explore(explore)
     {
     }
@@ -251,29 +275,9 @@ public:
     {
     }
 
-    virtual void UpdateNeed(NPC * npc)
-    {
-        if (!GetTribe()->CanGrow())
-        {
-            current_need += 10*needGrowthValue; // Make sure tribe can grow at all time
-        }
-        else
-        {
-            current_need += needGrowthValue;
-        }
-    }
+    virtual void UpdateNeed(NPC * npc);
 
-    virtual TribeNeed* GetNeed()
-    {
-        if (GetTribe()->FindMemory(GetTribe()->GetNeededResourceAreaType()))
-        {
-            return this;
-        }
-        else
-        {
-            return explore->GetNeed();
-        }
-    }
+    virtual const TribeNeed* GetNeed() const;
 private:
     TribeNeed * explore;
 
@@ -296,9 +300,9 @@ public:
     
     TribeNeedReproduce(const csString& name, const csString& perception,
                        float needStartValue, float needGrowthValue,
-                       TribeNeed * get_resource_need)
-        :TribeNeed(Tribe::REPRODUCE,name,perception,needStartValue,needGrowthValue),
-         get_resource_need(get_resource_need)
+                       TribeNeed * getResourceNeed)
+        :TribeNeed(REPRODUCE,name,perception,needStartValue,needGrowthValue),
+         getResourceNeed(getResourceNeed)
     {
     }
 
@@ -306,31 +310,12 @@ public:
     {
     }
 
-    virtual void UpdateNeed(NPC * npc)
-    {
-        if (GetTribe()->ShouldGrow())
-        {
-            current_need += needGrowthValue;
-        } else
-        {
-            current_need = 0.0;
-        }
-    }
+    virtual void UpdateNeed(NPC * npc);
 
-    virtual TribeNeed* GetNeed()
-    {
-        if (GetTribe()->CanGrow())
-        {
-            return this;
-        }
-        else
-        {
-            return get_resource_need->GetNeed();
-        }
-    }
+    virtual const TribeNeed* GetNeed() const;
 
  private:
-    TribeNeed * get_resource_need;
+    TribeNeed * getResourceNeed;
 };
 
 #endif
