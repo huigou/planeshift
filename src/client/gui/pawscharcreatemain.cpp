@@ -244,7 +244,7 @@ void pawsCreationMain::ChangeHairColour( int newHair )
         
         csVector3 at(0, race->zoomLocations[PSTRAIT_LOCATION_FACE].y, 0); 
         view->UnlockCamera();
-        view->LockCamera(race->zoomLocations[PSTRAIT_LOCATION_FACE], at, true);                                  
+        view->LockCamera(race->zoomLocations[PSTRAIT_LOCATION_FACE], at, true, true);                                  
         
         charApp->HairColor(trait->shader);
         
@@ -266,7 +266,7 @@ void pawsCreationMain::SetHairStyle( int newStyle )
         charApp->HairMesh(trait->mesh);
         csVector3 at(0, race->zoomLocations[PSTRAIT_LOCATION_FACE].y, 0);
         view->UnlockCamera();
-        view->LockCamera(race->zoomLocations[PSTRAIT_LOCATION_FACE], at, true);                                         
+        view->LockCamera(race->zoomLocations[PSTRAIT_LOCATION_FACE], at, true, true);                                         
         hairStyleLabel->SetText( trait->name );                       
     }
     else
@@ -289,7 +289,7 @@ void pawsCreationMain::ChangeBeardStyle( int newStyle )
         charApp->BeardMesh(trait->mesh);
         csVector3 at(0, race->zoomLocations[PSTRAIT_LOCATION_FACE].y, 0); 
         view->UnlockCamera();
-        view->LockCamera(race->zoomLocations[PSTRAIT_LOCATION_FACE], at, true);                                         
+        view->LockCamera(race->zoomLocations[PSTRAIT_LOCATION_FACE], at, true, true);                                         
         beardStyleLabel->SetText( trait->name );                       
     }
     else
@@ -364,7 +364,7 @@ void pawsCreationMain::ChangeFace( int newFace )
         csVector3 at(0, race->zoomLocations[PSTRAIT_LOCATION_FACE].y, 0);
         Trait* trait = race->location[PSTRAIT_LOCATION_FACE][currentGender][newFace];
         view->UnlockCamera();
-        view->LockCamera(race->zoomLocations[PSTRAIT_LOCATION_FACE], at, true);
+        view->LockCamera(race->zoomLocations[PSTRAIT_LOCATION_FACE], at, true, true);
                       
         charApp->FaceTexture(trait->material);
         

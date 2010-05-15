@@ -105,7 +105,7 @@ public:
     void SetCameraPosModifier(csVector3& mod) { cameraMod = mod; }
     csVector3& GetCameraPosModifier() { return cameraMod; }
 
-    void LockCamera(csVector3 where, csVector3 at, bool mouseDownUnlock = false );
+    void LockCamera(csVector3 where, csVector3 at, bool mouseDownUnlock = false, bool mouseDownRotate = false );
     void UnlockCamera();
     void DrawRotate();
     void DrawNoRotate();
@@ -120,7 +120,8 @@ public:
 private:
     bool cameraLocked;
     bool doRotate;
-    bool mouseDownUnlock;   ///< Checks to see if a mouse down will break camera lock.
+    bool mouseDownUnlock;   ///< Checks to see if a right mouse down will break camera lock.
+    bool mouseDownRotate;   ///< Checks to see if a left mouse will make the model rotate
     csVector3 cameraPosition;
     csVector3 lookingAt;
     
