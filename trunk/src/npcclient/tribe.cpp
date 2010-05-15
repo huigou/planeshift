@@ -118,6 +118,12 @@ bool Tribe::LoadNeed(iResultRow& row)
         } else if (needType.CompareNoCase(TribeNeed::TribeNeedTypeName[TribeNeed::REPRODUCE]))
         {
             need = new TribeNeedReproduce(needName,perception,needStartValue,needGrowthValue,depend);
+        } else if (needType.CompareNoCase(TribeNeed::TribeNeedTypeName[TribeNeed::RESOURCE_RATE]))
+        {
+            need = new TribeNeedResourceRate(needName,perception,needStartValue,needGrowthValue,depend);
+        } else if (needType.CompareNoCase(TribeNeed::TribeNeedTypeName[TribeNeed::DEATH_RATE]))
+        {
+            need = new TribeNeedDeathRate(needName,perception,needStartValue,needGrowthValue,depend);
         } else
         {
             Error3("Could not mach need '%s' for tribe %d",needName.GetDataSafe(),id);

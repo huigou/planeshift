@@ -45,7 +45,9 @@ public:
     {
         GENERIC,
         RESOURCE_AREA,
-        REPRODUCE
+        REPRODUCE,
+        RESOURCE_RATE,
+        DEATH_RATE
     };
 
     static const char *TribeNeedTypeName[];    
@@ -283,7 +285,6 @@ private:
 
 };
 
-
 // ---------------------------------------------------------------------------------
 
 
@@ -317,5 +318,83 @@ public:
  private:
     TribeNeed * getResourceNeed;
 };
+
+// ---------------------------------------------------------------------------------
+
+/** TribeNeedResourceRate respond to the resource rate of the tribe.
+ *
+ *  Will start to grow need when the resource rate limit is reached.
+ */
+class TribeNeedResourceRate : public TribeNeed
+{
+public:
+    
+    TribeNeedResourceRate(const csString& name, const csString& perception,
+                          float needStartValue, float needGrowthValue,
+                          TribeNeed * dependendNeed)
+        :TribeNeed(RESOURCE_RATE,name,perception,needStartValue,needGrowthValue),
+         dependendNeed(dependendNeed)
+    {
+        // No dependedNeed so make the GetNeed function return this need.
+        if (dependendNeed == NULL)
+        {
+            dependendNeed = this;
+        }
+
+        limit = 120*1000; //TODO: Configure this limit, for now expect 1 resource every 2nd minute.
+    }
+
+    virtual ~TribeNeedResourceRate()
+    {
+    }
+
+    virtual void UpdateNeed(NPC * npc);
+
+    virtual const TribeNeed* GetNeed() const;
+    
+private:
+    TribeNeed* dependendNeed;
+    float      limit;
+};
+
+// ---------------------------------------------------------------------------------
+
+/** TribeNeedDeathRate respond to the death rate of the tribe.
+ *
+ *  Will start to grow need when the death rate limit is reached.
+ */
+class TribeNeedDeathRate : public TribeNeed
+{
+public:
+    
+    TribeNeedDeathRate(const csString& name, const csString& perception,
+                       float needStartValue, float needGrowthValue,
+                       TribeNeed * dependendNeed)
+        :TribeNeed(DEATH_RATE,name,perception,needStartValue,needGrowthValue),
+         dependendNeed(dependendNeed)
+    {
+        // No dependedNeed so make the GetNeed function return this need.
+        if (dependendNeed == NULL)
+        {
+            dependendNeed = this;
+        }
+
+        limit = 120*1000; //TODO: Configure this limit, for now expect no more than 1 death every 2nd minute.
+    }
+
+    virtual ~TribeNeedDeathRate()
+    {
+    }
+
+    virtual void UpdateNeed(NPC * npc);
+
+    virtual const TribeNeed* GetNeed() const;
+    
+private:
+    TribeNeed* dependendNeed;
+    float      limit;
+};
+
+// ---------------------------------------------------------------------------------
 
 #endif
