@@ -37,6 +37,8 @@ const char* TribeNeed::TribeNeedTypeName[] =
     "GENERIC",
     "RESOURCE_AREA",
     "REPRODUCE",
+    "RESOURCE_RATE",
+    "DEATH_RATE"
     ""
 };
 
@@ -173,6 +175,44 @@ const TribeNeed* TribeNeedReproduce::GetNeed() const
     {
         return getResourceNeed->GetNeed();
     }
+}
+
+// ---------------------------------------------------------------------------------
+void TribeNeedResourceRate::UpdateNeed(NPC * npc)
+{
+    // ResourceRate will be 0.0 until one some resources are found. So check that
+    // we have a valid mesurement before comparing to limit.
+    if (GetTribe()->GetResourceRate() > 0.0 && GetTribe()->GetResourceRate() < limit)
+    {
+        current_need += needGrowthValue;
+    } else
+    {
+        current_need = 0.0;
+    }
+}
+
+const TribeNeed* TribeNeedResourceRate::GetNeed() const
+{
+    return dependendNeed;
+}
+
+// ---------------------------------------------------------------------------------
+void TribeNeedDeathRate::UpdateNeed(NPC * npc)
+{
+    // DeathRate will be 0.0 until one tribe member is killed. So check that
+    // we have a valid mesurement before comparing to limit.
+    if (GetTribe()->GetDeathRate() > 0.0 && GetTribe()->GetDeathRate() < limit)
+    {
+        current_need += needGrowthValue;
+    } else
+    {
+        current_need = 0.0;
+    }
+}
+
+const TribeNeed* TribeNeedDeathRate::GetNeed() const
+{
+    return dependendNeed;
 }
 
 // ---------------------------------------------------------------------------------
