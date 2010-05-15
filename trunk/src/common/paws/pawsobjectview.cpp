@@ -53,6 +53,7 @@ pawsObjectView::pawsObjectView()
     mouseControlled = false;
     doRotate = true;
     mouseDownUnlock = false;
+    mouseDownRotate = false;
 
     // Don't render via child tree.
     parentDraw = false;
@@ -233,12 +234,13 @@ void pawsObjectView::Draw()
         DrawNoRotate();        
 }
 
-void pawsObjectView::LockCamera( csVector3 where, csVector3 at, bool mouseBreak )
+void pawsObjectView::LockCamera( csVector3 where, csVector3 at, bool mouseBreak, bool mouseRotate )
 {
     cameraLocked = true;
     oldPosition = cameraPosition;
     oldLookAt = lookingAt; 
     mouseDownUnlock = mouseBreak;
+    mouseDownRotate = mouseRotate;
     
     doRotate = false;
     cameraPosition = where;
@@ -444,7 +446,14 @@ bool pawsObjectView::OnMouseDown(int button,int mod, int x, int y)
     if(!mouseControlled)
         return false;
 
-    if(mouseDownUnlock)
+    if(mouseDownUnlock && button == csmbRight)
+    {
+        UnlockCamera();
+        mouseDownUnlock = false;
+        return true;
+    }
+
+    if(mouseDownRotate)
         doRotate = true;
         
     spinMouse = true;
