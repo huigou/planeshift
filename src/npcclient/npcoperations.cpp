@@ -2600,7 +2600,7 @@ bool ReproduceOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     if(friendNPC)
     {
         npc->Printf(5, "Reproduce");
-        npcclient->GetNetworkMgr()->QueueSpawnCommand(friendNPC->GetActor(), npc->GetActor());
+        npcclient->GetNetworkMgr()->QueueSpawnCommand(friendNPC->GetActor(), npc->GetActor(), 0);
     }
 
     return true;  // Nothing more to do for this op.

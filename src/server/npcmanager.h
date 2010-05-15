@@ -118,7 +118,7 @@ public:
     void QueueTransferPerception(gemActor *owner, psItem * itemdata, csString target);
     
     /// Let the superclient know the npc was spawned successfully.
-    void QueueSpawnedPerception(gemNPC *spawned, gemNPC *spawner);
+    void QueueSpawnedPerception(gemNPC *spawned, gemNPC *spawner, uint32_t tribeMemberType );
 
     /// Send all queued commands and perceptions to active superclients and reset the queues.
     void SendAllCommands(bool createNewTick = true);

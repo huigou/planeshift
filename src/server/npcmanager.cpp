@@ -811,8 +811,9 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
             }
             case psNPCCommandsMessage::CMD_SPAWN:
             {
-                EID spawner_id = EID(list.msg->GetUInt32());
-                EID spawned_id = EID(list.msg->GetUInt32());
+                EID spawner_id = EID(list.msg->GetUInt32()); // Mother
+                EID spawned_id = EID(list.msg->GetUInt32()); // Father
+                uint32_t tribeMemberType = list.msg->GetUInt32();
                 Debug3(LOG_SUPERCLIENT, spawner_id.Unbox(), "-->Got spawn cmd for entity %s to %s\n", ShowID(spawner_id), ShowID(spawned_id));
 
                 // Make sure we haven't run past the end of the buffer
@@ -826,7 +827,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                 if (spawner)
                 {
                     gemNPC *spawned = entityManager->CloneNPC(spawner->GetCharacterData());
-                    QueueSpawnedPerception(spawned, spawner);
+                    QueueSpawnedPerception(spawned, spawner, tribeMemberType);
                 }
                 else
                 {
@@ -2069,13 +2070,14 @@ void NPCManager::QueueTransferPerception(gemActor *owner, psItem * itemdata, csS
            target.GetDataSafe() );
 }
 
-void NPCManager::QueueSpawnedPerception(gemNPC *spawned, gemNPC *spawner)
+void NPCManager::QueueSpawnedPerception(gemNPC *spawned, gemNPC *spawner, uint32_t tribeMemberType)
 {
     CheckSendPerceptionQueue(sizeof(int8_t)+sizeof(uint32_t)*3);
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::PCPT_SPAWNED);
     outbound->msg->Add(spawned->GetCharacterData()->GetPID().Unbox());
     outbound->msg->Add(spawned->GetEID().Unbox());
     outbound->msg->Add(spawner->GetEID().Unbox());
+    outbound->msg->Add(tribeMemberType);
     cmd_count++;
     Debug3(LOG_NPC, spawner->GetEID().Unbox(), "Added spawn perception: %s from %s.\n", ShowID(spawned->GetEID()), ShowID(spawner->GetEID()) );
 }

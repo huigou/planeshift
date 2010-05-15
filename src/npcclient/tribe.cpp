@@ -47,19 +47,12 @@
 
 extern iDataConnection *db;
 
-const char* Tribe::TribeNeedTypeName[] =
-{
-    "GENERIC",
-    "RESOURCE_AREA",
-    "REPRODUCE",
-    ""
-};
-
 Tribe::Tribe()
-    :homeSector(0),accWealthGrowth(0.0)
+    :homeSector(0),accWealthGrowth(0.0),deathRate(0.0),resourceRate(0.0)
 {
-    InitializeNeedSet();
     lastGrowth = csGetTicks();
+    lastDeath = csGetTicks();
+    lastResource = csGetTicks();
 }
 
 Tribe::~Tribe()
@@ -90,18 +83,21 @@ bool Tribe::Load(iResultRow& row)
 
 bool Tribe::LoadNeed(iResultRow& row)
 {
-    int      needId          = row.GetInt("need_id");
-    csString needType        = row["type"];
-    csString needName        = row["name"];
-    csString perception      = row["perception"];
-    csString dependName      = row["depend"];
-    float    needStartValue  = row.GetFloat("need_start_value");
-    float    needGrowthValue = row.GetFloat("need_growth_value");
+    unsigned int needSetIndex    = row.GetInt("need_set");
+    int          needId          = row.GetInt("need_id");
+    csString     needType        = row["type"];
+    csString     needName        = row["name"];
+    csString     perception      = row["perception"];
+    csString     dependName      = row["depend"];
+    float        needStartValue  = row.GetFloat("need_start_value");
+    float        needGrowthValue = row.GetFloat("need_growth_value");
+
+    TribeNeedSet* needSet = GetNeedSet(needSetIndex, true);
     
     TribeNeed *depend = needSet->Find( dependName );
     TribeNeed *need = NULL;
 
-    if (needType.CompareNoCase(Tribe::TribeNeedTypeName[GENERIC]))
+    if (needType.CompareNoCase(TribeNeed::TribeNeedTypeName[TribeNeed::GENERIC]))
     {
         need = new TribeNeedGeneric(needName,perception,needStartValue,needGrowthValue);
     } else
@@ -116,10 +112,10 @@ bool Tribe::LoadNeed(iResultRow& row)
             return false;
         }
 
-        if (needType.CompareNoCase(Tribe::TribeNeedTypeName[RESOURCE_AREA]))
+        if (needType.CompareNoCase(TribeNeed::TribeNeedTypeName[TribeNeed::RESOURCE_AREA]))
         {
             need = new TribeNeedResourceArea(needName,perception,needStartValue,needGrowthValue,depend);
-        } else if (needType.CompareNoCase(Tribe::TribeNeedTypeName[REPRODUCE]))
+        } else if (needType.CompareNoCase(TribeNeed::TribeNeedTypeName[TribeNeed::REPRODUCE]))
         {
             need = new TribeNeedReproduce(needName,perception,needStartValue,needGrowthValue,depend);
         } else
@@ -141,20 +137,26 @@ bool Tribe::LoadNeed(iResultRow& row)
 
 bool Tribe::LoadMember(iResultRow& row)
 {
-    int memberId   = row.GetInt("member_id");
+    MemberID mID;
+    mID.pid               = row.GetInt("member_id");
+    mID.tribeMemberType   = row.GetInt("member_type");
 
-    membersId.Push(memberId);
+    membersId.Push(mID);
     
     return true;
 }
 
-bool Tribe::AddMember(PID pid)
+bool Tribe::AddMember(PID pid, uint32_t tribeMemberType)
 {
-    membersId.Push(pid.Unbox());
+    MemberID mID;
+    mID.pid = pid;
+    mID.tribeMemberType = tribeMemberType;
+
+    membersId.Push(mID);
 
     // Add to members list in db
-    db->Command("INSERT INTO tribe_members (tribe_id,member_id) "
-                "VALUES (%u,%u)", GetID(), pid.Unbox());
+    db->Command("INSERT INTO tribe_members (tribe_id,member_id,member_type) "
+                "VALUES (%u,%u,%u)", GetID(), pid.Unbox(),tribeMemberType);
 
     return true;
 }
@@ -263,9 +265,9 @@ bool Tribe::CheckAttach(NPC * npc)
 {
     for (size_t i=0; i < membersId.GetSize(); i++)
     {
-        if (npc->GetPID() == membersId[i])
+        if (npc->GetPID() == membersId[i].pid)
         {
-            AttachMember(npc);
+            AttachMember(npc, membersId[i].tribeMemberType);
             return true;
         }
     }
@@ -273,9 +275,10 @@ bool Tribe::CheckAttach(NPC * npc)
     return false;
 }
 
-bool Tribe::AttachMember(NPC * npc)
+bool Tribe::AttachMember(NPC * npc, uint32_t tribeMemberType)
 {
     npc->SetTribe(this);
+    npc->SetTribeMemberType( tribeMemberType );
     for (size_t i=0; i < members.GetSize(); i++)
     {
         if (npc->GetPID() == members[i]->GetPID())
@@ -298,6 +301,7 @@ bool Tribe::HandleDeath(NPC * npc)
     // Make sure memories that isn't stored in the tribe is forgotten.
     ForgetMemories(npc);
 
+    UpdateDeathRate();
     return false;
 }
 
@@ -336,6 +340,12 @@ void Tribe::AddResource(csString resource, int amount)
         {
             resources[i].amount += amount;
             SaveResource(&resources[i],false); // Update resource
+
+            if (resource == GetNeededResource() && amount > 0)
+            {
+                UpdateResourceRate( amount );
+            }
+            
             return;
         }
     }
@@ -344,6 +354,11 @@ void Tribe::AddResource(csString resource, int amount)
     newRes.amount = amount;
     SaveResource(&newRes,true); // New resource
     resources.Push(newRes);
+
+    if (resource == GetNeededResource() && amount > 0)
+    {
+        UpdateResourceRate( amount );
+    }
 }
 
 int Tribe::CountResource(csString resource) const
@@ -415,11 +430,11 @@ void Tribe::Advance(csTicks when,EventManager *eventmgr)
             
             switch (need->GetNeedType())
             {
-            case GENERIC:
-            case RESOURCE_AREA:
+            case TribeNeed::GENERIC:
+            case TribeNeed::RESOURCE_AREA:
                 perc = need->GetPerception();
                 break;
-            case REPRODUCE:
+            case TribeNeed::REPRODUCE:
                 AddResource(wealthResourceName,-reproductionCost);
                 perc = need->GetPerception();
                 break;
@@ -445,15 +460,38 @@ bool Tribe::CanGrow() const
     return CountResource(wealthResourceName) >= reproductionCost;
 }
 
-void Tribe::InitializeNeedSet()
+void Tribe::DumpNeeds() const
 {
-   
-    needSet = new TribeNeedSet(this);
 
+    ConstTribeNeedSetGlobalIterator iter(needSet.GetIterator());
+    while (iter.HasNext())
+    {
+        unsigned int memberType;
+        const TribeNeedSet* tns = iter.Next(memberType);
+        CPrintf(CON_CMDOUTPUT,"%-25s(%3d) %10s %-20s %6s %6s   %s\n",
+                "Need for TribeMemberType",memberType,"Value","Perception","Start","Growth","Depend on");
+
+        TribeNeedSet::ConstNeedIterator it(tns->GetIterator());
+        while (it.HasNext())
+        {
+            const TribeNeed* need = it.Next();
+            CPrintf(CON_CMDOUTPUT,"%-30s %10.2f %-20s %6.2f %6.2f -> %s\n",
+                    need->GetTypeAndName().GetDataSafe(),
+                    need->current_need,
+                    need->GetPerception().GetDataSafe(),
+                    need->GetNeedStartValue(),
+                    need->GetNeedGrowthValue(),
+                    need->GetNeed()->GetTypeAndName().GetDataSafe());
+        }
+    }
 }
+
 
 TribeNeed* Tribe::Brain(NPC * npc)
 {
+    TribeNeedSet* needSet = GetNeedSet(npc); // Get the need set for this npc's
+                                             // member type
+    
     // Handle special case for dead npc's
     if (!npc->IsAlive())
     {
@@ -478,13 +516,64 @@ TribeNeed* Tribe::Brain(NPC * npc)
 
     needSet->UpdateNeed(npc);
     
-    TribeNeed *nextNeed = needSet->CalculateNeed(npc);
+    TribeNeed *nextNeed = GetNeedSet(npc)->CalculateNeed(npc);
 
     // Check if the most needed need has some depenency that needs to be done first.
-    nextNeed = nextNeed->GetNeed();
+    nextNeed = const_cast<TribeNeed*>(nextNeed->GetNeed());
 
     return nextNeed;
 }
+
+void Tribe::UpdateDeathRate()
+{
+    csTicks now = csGetTicks();
+
+    int delta = now - lastDeath; // TODO: Fix rollover situation
+
+    float rate = delta;
+
+    float N = 0.9;
+
+    deathRate = (1.0-N)*rate + N*deathRate;
+    lastDeath = now;
+}
+
+void Tribe::UpdateResourceRate(int amount)
+{
+    csTicks now = csGetTicks();
+
+    int delta = now - lastResource; // TODO: Fix rollover situation
+
+    float rate = delta/amount;
+
+    float N = 0.9;
+
+    resourceRate = (1.0-N)*rate + N*resourceRate;
+    lastResource = now;
+}
+
+
+TribeNeedSet* Tribe::GetNeedSet(NPC* npc)
+{
+    return GetNeedSet(npc->GetTribeMemberType(), false);
+}
+
+
+TribeNeedSet* Tribe::GetNeedSet(unsigned int memberType, bool create)
+{
+    TribeNeedSet *tns = needSet.Get(memberType, NULL);
+    
+
+    if (tns == NULL && create)
+    {
+        tns = needSet.Put(memberType, new TribeNeedSet(this));
+    }
+    
+
+    return tns;
+}
+
+
 
 int Tribe::GetMaxSize() const
 {
@@ -607,17 +696,17 @@ bool Tribe::GetResource(NPC* npc, csVector3 startPos, iSector * startSector, csV
 
 const char* Tribe::GetNeededResource()
 {
-    return wealthResourceName;
+    return wealthResourceName.GetDataSafe();
 }
 
 const char* Tribe::GetNeededResourceNick()
 {
-    return wealthResourceNick;
+    return wealthResourceNick.GetDataSafe();
 }
 
 const char* Tribe::GetNeededResourceAreaType()
 {
-    return wealthResourceArea;
+    return wealthResourceArea.GetDataSafe();
 }
 
 float Tribe::GetWealthResourceGrowth() const
