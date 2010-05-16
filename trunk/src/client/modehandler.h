@@ -207,8 +207,9 @@ protected:
     // Controls the weather.
     void ProcessLighting(psWeatherMessage::NetWeatherInfo& info);
     void ProcessDownfall(psWeatherMessage::NetWeatherInfo& info);
+    public:
     void ProcessFog(psWeatherMessage::NetWeatherInfo& info);
-
+protected:
     bool CreateWeather(WeatherInfo* ri, csTicks delta);
 
     void StartFollowWeather();
@@ -233,7 +234,7 @@ protected:
 private:
     pawsChatWindow* chatWindow; ///< Used to get the current chat filtering.
  
-    csString MungeName(GEMClientActor* obj);
+    csString MungeName(GEMClientActor* obj, bool startOfPhrase = false);
     
     void SetCombatAnim( GEMClientActor* atObject, csStringID anim );
     
