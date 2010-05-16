@@ -455,6 +455,7 @@ bool psEngine::Initialize (int level)
         event_focuslost = csevFocusLost(object_reg);
         event_mouse = csevMouseEvent (object_reg);
         event_keyboard = csevKeyboardEvent (object_reg);
+        event_joystick = csevJoystickEvent (object_reg);
         event_quit = csevQuit(object_reg);
 #if defined(CS_PLATFORM_UNIX) && defined(INCLUDE_CLIPBOARD)
         event_selectionnotify = csevSelectionNotify(object_reg);
@@ -472,6 +473,7 @@ bool psEngine::Initialize (int level)
               event_focuslost,
               event_mouse,
               event_keyboard,
+              event_joystick,
               event_quit,
 #if defined(CS_PLATFORM_UNIX) && defined(INCLUDE_CLIPBOARD)
               event_selectionnotify,
