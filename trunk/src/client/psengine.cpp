@@ -1533,10 +1533,8 @@ csString psEngine::GetChatWindowWidget()
         if (oNode)
         {	
             chatWidget = oNode->GetAttributeValue("value");
-            printf("%s\n", chatWidget.GetData());
             if(!chatWidget.Length()) //if none are defined put a default one
-            {
-                chatWidget = "chat.xml";                    printf("a\n"); }
+                chatWidget = "chat.xml";
         }
     }
     return chatWidget;    
