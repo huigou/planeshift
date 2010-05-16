@@ -491,6 +491,7 @@ private:
     csEventID event_focuslost;
     csEventID event_mouse;
     csEventID event_keyboard;
+    csEventID event_joystick;
     csEventID event_quit;
     
 #if defined(CS_PLATFORM_UNIX) && defined(INCLUDE_CLIPBOARD)
