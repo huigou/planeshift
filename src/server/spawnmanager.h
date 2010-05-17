@@ -126,6 +126,7 @@ protected:
     float    fixedspawnrot;
     csString fixedspawnsector;
     InstanceID fixedinstance;
+    float minSpawnSpacingDistance; ///< What should the free space be around before spawn position is accepted.
 
     /// Spawn ranges for the current rule
     csHash<SpawnRange*> ranges;
@@ -151,6 +152,7 @@ public:
                     const char *sector,
                     LootEntrySet *loot_id,
                     int dead_time,
+                    float minSpacing,
                     InstanceID instance);
 
     int  GetID() { return id; };
@@ -162,8 +164,11 @@ public:
     /// Determine if substitute player should be spawned.  Returns either original or substitute.
     PID CheckSubstitution(PID originalplayer);
 
-    /// Pick a spot for the entity to respawn
-    void DetermineSpawnLoc(psCharacter *ch, csVector3& pos, float& angle, csString& sectorname, InstanceID& instance);
+    /** Pick a spot for the entity to respawn
+     *
+     * @return True if this is a random area rule, or false if it is a fixed position.
+     */
+    bool DetermineSpawnLoc(psCharacter *ch, csVector3& pos, float& angle, csString& sectorname, InstanceID& instance);
 
     /// Add a spawn range to current rule
     void AddRange(SpawnRange *range);
@@ -172,6 +177,9 @@ public:
     LootEntrySet *GetLootRules() { return loot; }
 
     int GetDeadRemainTime() { return dead_remain_time; }
+
+    int GetMinSpawnSpacingDistance() { return minSpawnSpacingDistance; }
+    
 };
 
 class psItemStats;

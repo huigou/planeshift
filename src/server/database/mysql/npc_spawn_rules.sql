@@ -33,6 +33,7 @@ CREATE TABLE `npc_spawn_rules` (
   `fixed_spawn_instance` int(10) unsigned NOT NULL default '0',
   `loot_category_id` int(10) unsigned NOT NULL default '0',
   `dead_remain_time` int(10) unsigned NOT NULL default '0',
+  `min_spawn_spacing_dist` float(10,2) default '0.0',
   `name` varchar(40) default NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1000 DEFAULT CHARSET=latin1;
@@ -42,11 +43,11 @@ CREATE TABLE `npc_spawn_rules` (
 --
 
 /*!40000 ALTER TABLE `npc_spawn_rules` DISABLE KEYS */;
-INSERT INTO npc_spawn_rules VALUES (1,10000,20000,0.0000,0,0.00,0.00,0.00,0.0000,'startlocation',0,0,30000,'Respawn at Orig Location');
-INSERT INTO npc_spawn_rules VALUES (100,4000,7000,0.0000,0,0.00,0.00,0.00,0.0000,'',0,0,2000,'Circle between trees');
-INSERT INTO npc_spawn_rules VALUES (101,3000,6000,0.0000,0,0.00,0.00,0.00,0.0000,'',0,0,3000,'Area between tree, box, and wall');
-INSERT INTO npc_spawn_rules VALUES (102,2000,5000,0.0000,0,0.00,0.00,0.00,0.0000,'',0,0,4000,'Line between tree and end of box');
-INSERT INTO npc_spawn_rules VALUES (103,2000,4000,0.0000,0,0.00,0.00,0.00,0.0000,'',0,0,2000,'Combination of all areas');
+INSERT INTO npc_spawn_rules VALUES (1,10000,20000,0.0000,0,0.00,0.00,0.00,0.0000,'startlocation',0,0,30000,'0.00','Respawn at Orig Location');
+INSERT INTO npc_spawn_rules VALUES (100,4000,7000,0.0000,0,0.00,0.00,0.00,0.0000,'',0,0,2000,'2.00','Circle between trees');
+INSERT INTO npc_spawn_rules VALUES (101,3000,6000,0.0000,0,0.00,0.00,0.00,0.0000,'',0,0,3000,'3.00','Area between tree, box, and wall');
+INSERT INTO npc_spawn_rules VALUES (102,2000,5000,0.0000,0,0.00,0.00,0.00,0.0000,'',0,0,4000,'3.00','Line between tree and end of box');
+INSERT INTO npc_spawn_rules VALUES (103,2000,4000,0.0000,0,0.00,0.00,0.00,0.0000,'',0,0,2000,'5.00','Combination of all areas');
 /*!40000 ALTER TABLE `npc_spawn_rules` ENABLE KEYS */;
 
 
