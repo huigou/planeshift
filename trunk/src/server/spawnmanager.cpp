@@ -30,6 +30,7 @@
 #include <iutil/document.h>
 #include <csutil/xmltiny.h>
 #include <iutil/object.h>
+#include <iengine/engine.h>
 
 //=============================================================================
 // Project Includes
@@ -52,6 +53,7 @@
 #include "util/psxmlparser.h"
 #include "util/serverconsole.h"
 #include "util/slots.h"
+#include "util/strutil.h"
 
 //=============================================================================
 // Local Includes
@@ -530,7 +532,7 @@ void SpawnManager::PreloadDatabase()
                  "       substitute_spawn_odds,substitute_player,"
                  "       fixed_spawn_x,fixed_spawn_y,fixed_spawn_z,"
                  "       fixed_spawn_rot,fixed_spawn_sector,loot_category_id,"
-                 "       dead_remain_time,fixed_spawn_instance"
+                 "       dead_remain_time,fixed_spawn_instance,min_spawn_spacing_dist"
                  "  from npc_spawn_rules"));
     if (!result.IsValid() )
     {
@@ -557,6 +559,7 @@ void SpawnManager::PreloadDatabase()
                             result[i]["fixed_spawn_sector"],
                             loot_set,
                             result[i].GetInt("dead_remain_time"),
+                            result[i].GetFloat("min_spawn_spacing_dist"),
                             result[i].GetUInt32("fixed_spawn_instance"));
 
         LoadSpawnRanges(newrule);
@@ -838,13 +841,30 @@ void SpawnManager::Respawn(PID playerID, SpawnRule* spawnRule)
 
     csVector3 pos;
     float angle;
-    csString sector;
+    csString sectorName;
     InstanceID instance;
 
-    spawnRule->DetermineSpawnLoc(chardata, pos, angle, sector, instance);
-    //TODO: Check if this position is a random position and if so check if it is free (No entity in that position).
+    int count = 4; // For random positions we try 4 times before going with the result.
 
-    Respawn(chardata, instance, pos, angle, sector);
+    // DetermineSpawnLoc will return true if it is a random picked position so for fixed we will fall true
+    // on the first try.
+    while (spawnRule->DetermineSpawnLoc(chardata, pos, angle, sectorName, instance) && spawnRule->GetMinSpawnSpacingDistance() > 0.0 && count-- > 0)
+    {
+        iSector *sector = psserver->entitymanager->GetEngine()->GetSectors()->FindByName(sectorName);
+
+        csArray<gemObject*> nearlist = psserver->entitymanager->GetGEM()->FindNearbyEntities(sector, pos, spawnRule->GetMinSpawnSpacingDistance(), false);
+        if (nearlist.IsEmpty())
+        {
+            break; // Nothing in the neare list so spawn position is ok.
+        }
+        Debug5(LOG_SPAWN,0,"Spawn position %s in %s is occuplied by %d entities. %s",
+               toString(pos).GetDataSafe(),sectorName.GetDataSafe(),
+               nearlist.GetSize(),count>0?" Will Retry":"Last try");
+        
+    }
+    
+    Debug1(LOG_SPAWN,0,"Position accepted");
+    Respawn(chardata, instance, pos, angle, sectorName);
 }
 
 
@@ -1072,6 +1092,7 @@ void SpawnRule::Initialize(int idval,
                            const char *sector,
                            LootEntrySet *loot_id,
                            int dead_time,
+                           float minSpacing,
                            InstanceID instance)
 {
     id = idval;
@@ -1087,6 +1108,7 @@ void SpawnRule::Initialize(int idval,
     loot = loot_id;
     dead_remain_time = dead_time;
     fixedinstance = instance;
+    minSpawnSpacingDistance = minSpacing;
 }
 
 
@@ -1108,7 +1130,7 @@ PID SpawnRule::CheckSubstitution(PID originalplayer)
         return originalplayer;
 }
 
-void SpawnRule::DetermineSpawnLoc(psCharacter *ch, csVector3& pos, float& angle, csString& sectorname, InstanceID& instance)
+bool SpawnRule::DetermineSpawnLoc(psCharacter *ch, csVector3& pos, float& angle, csString& sectorname, InstanceID& instance)
 {
     // ignore fixed point if there are ranges in this rule
 
@@ -1163,6 +1185,8 @@ void SpawnRule::DetermineSpawnLoc(psCharacter *ch, csVector3& pos, float& angle,
         // randomly choose an angle in [0, 2*PI]
         angle = randomgen->Get() * TWO_PI;
         instance = fixedinstance;
+        
+        return true; // This is a random position pick
     }
     else if (ch && fixedspawnsector == "startlocation")
     {
@@ -1170,6 +1194,7 @@ void SpawnRule::DetermineSpawnLoc(psCharacter *ch, csVector3& pos, float& angle,
         angle = ch->spawn_loc.loc_yrot;
         sectorname = ch->spawn_loc.loc_sector->name;
         instance = ch->spawn_loc.worldInstance;
+        return false; // This is a static position fix.
     }
     else
     {
@@ -1180,6 +1205,7 @@ void SpawnRule::DetermineSpawnLoc(psCharacter *ch, csVector3& pos, float& angle,
         angle = fixedspawnrot;
         sectorname = fixedspawnsector;
         instance = fixedinstance;
+        return false; // This is a static position fix.
     }
 }
 
