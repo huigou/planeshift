@@ -100,7 +100,7 @@ public:
                        psQuestionMessage::generalConfirm)
     {
         cacheManager = cachemanager;
-    	gemSupervisor = gemsupervisor;
+        gemSupervisor = gemsupervisor;
 
 
         item = loot;
@@ -164,11 +164,11 @@ public:
 
         psLootEvent evt(
                        looteeID,
-		       looteename,
+                       looteename,
                        getter->GetCharacterData()->GetPID(),
-		       lootername,
+                       lootername,
                        item->GetUID(),
-		       item->GetName(),
+                       item->GetName(),
                        item->GetStackCount(),
                        (int)item->GetCurrentStats()->GetQuality(),
                        0
@@ -213,7 +213,7 @@ SpawnManager::~SpawnManager()
     
     csHash<SpawnRule*>::GlobalIterator ruleIt(rules.GetIterator());
     while(ruleIt.HasNext())
-    	delete ruleIt.Next();
+        delete ruleIt.Next();
 
     delete lootRandomizer;
 
@@ -429,8 +429,8 @@ void SpawnManager::LoadHuntLocations(psSectorInfo *sectorinfo)
         int interval = result[i].GetInt("interval");
         int max_rnd = result[i].GetInt("max_random");
         int id      = result[i].GetInt("id");
-		int amount = result[i].GetInt("amount");
-		float range = result[i].GetFloat("range");
+        int amount = result[i].GetInt("amount");
+        float range = result[i].GetFloat("range");
         csString name = result[i]["name"];
         
         // Schdule the item spawn
@@ -441,8 +441,8 @@ void SpawnManager::LoadHuntLocations(psSectorInfo *sectorinfo)
             Error2("hunt_location failed to load, wrong sector: %s\n", sector.GetData() );
             continue;
         }
-		
-		iSector *iSec = entityManager->FindSector(sector.GetData());
+        
+        iSector *iSec = entityManager->FindSector(sector.GetData());
         if(!iSec)
         {
             Error2("Sector '%s' failed to be found when loading hunt location.", sector.GetData());
@@ -452,36 +452,36 @@ void SpawnManager::LoadHuntLocations(psSectorInfo *sectorinfo)
         csArray<gemObject*> nearlist;
         size_t handledSpawnsCount = 0;
  
-		// Look for nearby items to prevent rescheduling of existing items
-		nearlist = gem->FindNearbyEntities(iSec, pos, range);
-		size_t nearbyItemsCount = nearlist.GetSize();
-					
-		for (size_t i = 0; i < nearbyItemsCount; ++i)
-		{
-			psItem *item = nearlist[i]->GetItem();
-			if (item)
-			{
-				if (name == item->GetName()) // Correct item?
-				{
-					psScheduledItem* schedule = new psScheduledItem(id,itemid,pos,spawnsector,0,interval,max_rnd,range);
-					item->SetScheduledItem(schedule);
-					++handledSpawnsCount;
-				}
-			}
-			
-			if ((int) handledSpawnsCount == amount) // All schedules accounted for
-				break;
-		}
-				
-		for (int i = 0; i < (amount - (int) handledSpawnsCount); ++i) //Make desired amount of items that are not already existing
-		{
-	        // This object won't get destroyed in a while (until something stops it or psItem is destroyed without moving)
-	        psScheduledItem* item = new psScheduledItem(id,itemid,pos,spawnsector,0,interval,max_rnd,range);
-	        
-	        // Queue it 
-	        psItemSpawnEvent *newevent = new psItemSpawnEvent(item);
-	        psserver->GetEventManager()->Push(newevent);
-		}
+        // Look for nearby items to prevent rescheduling of existing items
+        nearlist = gem->FindNearbyEntities(iSec, pos, range);
+        size_t nearbyItemsCount = nearlist.GetSize();
+                    
+        for (size_t i = 0; i < nearbyItemsCount; ++i)
+        {
+            psItem *item = nearlist[i]->GetItem();
+            if (item)
+            {
+                if (name == item->GetName()) // Correct item?
+                {
+                    psScheduledItem* schedule = new psScheduledItem(id,itemid,pos,spawnsector,0,interval,max_rnd,range);
+                    item->SetScheduledItem(schedule);
+                    ++handledSpawnsCount;
+                }
+            }
+            
+            if ((int) handledSpawnsCount == amount) // All schedules accounted for
+                break;
+        }
+                
+        for (int i = 0; i < (amount - (int) handledSpawnsCount); ++i) //Make desired amount of items that are not already existing
+        {
+            // This object won't get destroyed in a while (until something stops it or psItem is destroyed without moving)
+            psScheduledItem* item = new psScheduledItem(id,itemid,pos,spawnsector,0,interval,max_rnd,range);
+            
+            // Queue it 
+            psItemSpawnEvent *newevent = new psItemSpawnEvent(item);
+            psserver->GetEventManager()->Push(newevent);
+        }
     }
 }
 
@@ -958,8 +958,8 @@ void SpawnManager::HandleLootItem(MsgEntry *me,Client *client)
 
         // Item will be held in the prompt until answered.
 
-		PendingLootPrompt *p = new PendingLootPrompt(client, randfriendclient, item, chr, request, cacheManager, gem);
-		psserver->questionmanager->SendQuestion(p);
+        PendingLootPrompt *p = new PendingLootPrompt(client, randfriendclient, item, chr, request, cacheManager, gem);
+        psserver->questionmanager->SendQuestion(p);
 
         type.Append(" Pending");
     }
@@ -1011,11 +1011,11 @@ void SpawnManager::HandleLootItem(MsgEntry *me,Client *client)
 
     psLootEvent evt(
                    chr->GetPID(),
-		   chr->GetCharName(),
+           chr->GetCharName(),
                    looterclient->GetCharacterData()->GetPID(),
-		   looterclient->GetCharacterData()->GetCharName(),
+           looterclient->GetCharacterData()->GetCharName(),
                    item->GetUID(),
-		   item->GetName(),
+           item->GetName(),
                    item->GetStackCount(),
                    (int)item->GetCurrentStats()->GetQuality(),
                    0
@@ -1064,9 +1064,9 @@ SpawnRule::SpawnRule()
 }
 SpawnRule::~SpawnRule()
 {
-	csHash<SpawnRange*>::GlobalIterator rangeIt(ranges.GetIterator());
+    csHash<SpawnRange*>::GlobalIterator rangeIt(ranges.GetIterator());
     while(rangeIt.HasNext())
-    	delete rangeIt.Next();
+        delete rangeIt.Next();
 }
 
 void SpawnRule::Initialize(int idval,
@@ -1134,8 +1134,8 @@ void SpawnRule::DetermineSpawnLoc(psCharacter *ch, csVector3& pos, float& angle,
         SpawnRange* range;
         while(rangeit.HasNext())
         {
-        	range = rangeit.Next();
-        	totalarea += range->GetArea();
+            range = rangeit.Next();
+            totalarea += range->GetArea();
         }
         // aimed area level
         float aimed = randomgen->Get() * totalarea;
@@ -1144,7 +1144,7 @@ void SpawnRule::DetermineSpawnLoc(psCharacter *ch, csVector3& pos, float& angle,
         csHash<SpawnRange*>::GlobalIterator rangeit2(ranges.GetIterator());
         while(rangeit2.HasNext())
         {
-        	range = rangeit2.Next();
+            range = rangeit2.Next();
             cumul += range->GetArea();
             if (cumul >= aimed)
             {
@@ -1218,7 +1218,9 @@ void SpawnRange::Initialize(int idval,
     radius = radiusval;
     
     if (type == 'A')
-    	area = dx * dz;
+    {
+        area = dx * dz;
+    }
     else if (type=='L')
     {
         area = (rx2-rx1)*(rx2-rx1) + (ry2-ry1)*(ry2-ry1) + (rz2-rz1)*(rz2-rz1);
@@ -1226,30 +1228,32 @@ void SpawnRange::Initialize(int idval,
     }
     else if (type == 'C')
     {
-    	area = radius * radius * PI;
+        area = radius * radius * PI;
     }
 }
 
 csVector3 SpawnRange::PickWithRadius(csVector3 pos, float radius)
-{    	
-	if(radius == 0.0f)
-		return pos;
-	float x;
-    	float z;
-    	
-    	float xDist;
-    	float zDist;
-    	
-	do {
-		// Pick random point in circumscribed rectangle.
-		x = randomgen->Get() * (radius*2.0);
-		z = randomgen->Get() * (radius*2.0);
-		xDist = radius - x;
-		zDist = radius - z;
-		// Keep looping until the point is inside a circle.
-	} while(xDist * xDist + zDist * zDist > radius * radius);
-    	
-    	return csVector3(pos.x - radius + x, pos.y, pos.z - radius + z);
+{        
+    if(radius == 0.0f)
+    {
+        return pos;
+    }
+    float x;
+    float z;
+        
+    float xDist;
+    float zDist;
+        
+    do {
+        // Pick random point in circumscribed rectangle.
+        x = randomgen->Get() * (radius*2.0);
+        z = randomgen->Get() * (radius*2.0);
+        xDist = radius - x;
+        zDist = radius - z;
+        // Keep looping until the point is inside a circle.
+    } while(xDist * xDist + zDist * zDist > radius * radius);
+        
+    return csVector3(pos.x - radius + x, pos.y, pos.z - radius + z);
 }
 
 const csVector3 SpawnRange::PickPos()
@@ -1268,15 +1272,15 @@ const csVector3 SpawnRange::PickPos()
                          y1 + d * (y2 - y1),
                          z1 + d * (z2 - z1));
 
-	return PickWithRadius(pos, radius);
+        return PickWithRadius(pos, radius);
     }
     else if (type == 'C') // type 'C' means spawn within a circle centered at the first set of co-ordinates
     {
-	return PickWithRadius(csVector3(x1, y1, z1), radius);
+        return PickWithRadius(csVector3(x1, y1, z1), radius);
     }
     else
     {
-    	Error2("Unknown spawn range %c!", type);
+        Error2("Unknown spawn range %c!", type);
     }
     return csVector3(0.0, 0.0, 0.0);
 }
@@ -1312,7 +1316,7 @@ void psRespawnGameEvent::Trigger()
 
 
 psDespawnGameEvent::psDespawnGameEvent(SpawnManager *mgr,
-									   GEMSupervisor *gemsupervisor,
+                                       GEMSupervisor *gemsupervisor,
                                        int delayticks,
                                        gemObject *obj)
     : psGameEvent(0,delayticks,"psDespawnGameEvent")
@@ -1617,7 +1621,7 @@ psItemStats* LootRandomizer::RandomizeItem( psItemStats* itemstats, float maxcos
     {
         modifierType = selectedModifierTypes.Pop();
         int newModifier, probability;
-	int max_probability = 0;
+    int max_probability = 0;
         LootModifier *lootModifier = NULL;
         csArray<LootModifier *> *modifierList = NULL;
 
