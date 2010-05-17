@@ -1462,6 +1462,10 @@ ALTER TABLE `tribe_needs`
 ALTER TABLE `tribe_members`
   ADD COLUMN `member_type` int(10) NOT NULL default '0' AFTER `member_id`;
 
+#1249 - Anders Reggestad added arguments to tribe_needs
+UPDATE `server_options` SET `option_value`='1249' WHERE `option_name`='db_version';
+ALTER TABLE `tribe_needs`
+  ADD COLUMN `arguments` varchar(30) NOT NULL default '' AFTER `need_growth_value`;
 
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.

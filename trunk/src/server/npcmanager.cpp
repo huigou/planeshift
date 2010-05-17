@@ -1214,7 +1214,14 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     break;
                 }
 
-                psserver->GetSpawnManager()->Respawn(INSTANCE_ALL,where,rot,sector,playerID);
+                psCharacter *chardata=psServer::CharacterLoader.LoadCharacterData(playerID, false);
+                if (chardata==NULL)
+                {
+                    Error2("Character %s to be respawned does not have character data to be loaded!\n", ShowID(playerID));
+                    break;
+                }
+
+                psserver->GetSpawnManager()->Respawn(chardata, INSTANCE_ALL, where, rot, sector);
 
                 break;
             }

@@ -42,10 +42,11 @@ CREATE TABLE `npc_spawn_rules` (
 --
 
 /*!40000 ALTER TABLE `npc_spawn_rules` DISABLE KEYS */;
-INSERT INTO `npc_spawn_rules` (`id`,`min_spawn_time`,`max_spawn_time`,`substitute_spawn_odds`,`substitute_player`,`fixed_spawn_x`,`fixed_spawn_y`,`fixed_spawn_z`,`fixed_spawn_rot`,`fixed_spawn_sector`,`fixed_spawn_instance`,`loot_category_id`,`dead_remain_time`,`name`) VALUES 
- (1,10000,20000,0.0000,0,0.00,0.00,0.00,0.0000,'startlocation',0,0,30000,'Respawn at Orig Location'),
- (100,10000,20000,0.0000,0,10.00,0.00,-110.00,0.0000,'NPCroom',0,0,30000,'Anywhere in npcroom forest-quick'),
- (999,25000,60000,0.0000,0,-4.50,-1.10,-4.00,4.5500,'hydlaa_plaza',0,0,0,'Test Hydlaa Plaza');
+INSERT INTO npc_spawn_rules VALUES (1,10000,20000,0.0000,0,0.00,0.00,0.00,0.0000,'startlocation',0,0,30000,'Respawn at Orig Location');
+INSERT INTO npc_spawn_rules VALUES (100,4000,7000,0.0000,0,0.00,0.00,0.00,0.0000,'',0,0,2000,'Circle between trees');
+INSERT INTO npc_spawn_rules VALUES (101,3000,6000,0.0000,0,0.00,0.00,0.00,0.0000,'',0,0,3000,'Area between tree, box, and wall');
+INSERT INTO npc_spawn_rules VALUES (102,2000,5000,0.0000,0,0.00,0.00,0.00,0.0000,'',0,0,4000,'Line between tree and end of box');
+INSERT INTO npc_spawn_rules VALUES (103,2000,4000,0.0000,0,0.00,0.00,0.00,0.0000,'',0,0,2000,'Combination of all areas');
 /*!40000 ALTER TABLE `npc_spawn_rules` ENABLE KEYS */;
 
 
