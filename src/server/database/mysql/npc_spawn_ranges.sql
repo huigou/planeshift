@@ -28,6 +28,9 @@ CREATE TABLE npc_spawn_ranges (
 # Dumping data for table 'npc_spawn_ranges'
 #
 
-INSERT INTO npc_spawn_ranges VALUES("1","999","-20.00","0.00","-160.00","0.00","0.00","-180.00", "0.00", "3","A");
-INSERT INTO npc_spawn_ranges VALUES("2","100","-20.00","0.00","-160.00","0.00","0.00","-180.00", "0.00", "3","L");
-INSERT INTO npc_spawn_ranges VALUES("3","100","-20.00","0.00","-160.00","0.00","0.00","0.00", "5.00", "3","C");
+INSERT INTO npc_spawn_ranges VALUES("1","100","-65.00","0.00","-415.00","0.00","0.00","0.00", "7.00", "3","C");
+INSERT INTO npc_spawn_ranges VALUES("2","101","-36.00","0.00","-446.00","-55.00","0.00","-417.00", "0.00", "3","A");
+INSERT INTO npc_spawn_ranges VALUES("3","102","-64.00","0.00","-401.00","-42.00","0.00","-379.00", "3.00", "3","L");
+INSERT INTO npc_spawn_ranges VALUES("4","103","-65.00","0.00","-415.00","0.00","0.00","0.00", "7.00", "3","C");
+INSERT INTO npc_spawn_ranges VALUES("5","103","-36.00","0.00","-446.00","-55.00","0.00","-417.00", "0.00", "3","A");
+INSERT INTO npc_spawn_ranges VALUES("6","103","-64.00","0.00","-401.00","-42.00","0.00","-379.00", "3.00", "3","L");

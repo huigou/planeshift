@@ -331,17 +331,15 @@ public:
     
     TribeNeedResourceRate(const csString& name, const csString& perception,
                           float needStartValue, float needGrowthValue,
-                          TribeNeed * dependendNeed)
+                          TribeNeed * dependendNeed,float limit)
         :TribeNeed(RESOURCE_RATE,name,perception,needStartValue,needGrowthValue),
-         dependendNeed(dependendNeed)
+         dependendNeed(dependendNeed),limit(limit)
     {
         // No dependedNeed so make the GetNeed function return this need.
         if (dependendNeed == NULL)
         {
             dependendNeed = this;
         }
-
-        limit = 120*1000; //TODO: Configure this limit, for now expect 1 resource every 2nd minute.
     }
 
     virtual ~TribeNeedResourceRate()
@@ -369,17 +367,15 @@ public:
     
     TribeNeedDeathRate(const csString& name, const csString& perception,
                        float needStartValue, float needGrowthValue,
-                       TribeNeed * dependendNeed)
+                       TribeNeed * dependendNeed, float limit)
         :TribeNeed(DEATH_RATE,name,perception,needStartValue,needGrowthValue),
-         dependendNeed(dependendNeed)
+         dependendNeed(dependendNeed), limit(limit)
     {
         // No dependedNeed so make the GetNeed function return this need.
         if (dependendNeed == NULL)
         {
             dependendNeed = this;
         }
-
-        limit = 120*1000; //TODO: Configure this limit, for now expect no more than 1 death every 2nd minute.
     }
 
     virtual ~TribeNeedDeathRate()

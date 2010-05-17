@@ -359,10 +359,15 @@ public:
     void HandleMessage(MsgEntry *me,Client *client) { };
 
     /**
-     * This function is called periodically by the server and will respawn
-     * NPCs as appropriate.
+     * Respawn a NPC given by playerID and find the position
+     * from the spawnRule.
      */
-    void Respawn(InstanceID instance, csVector3& where, float rot, csString& sector, PID playerID);
+    void Respawn(PID playerID, SpawnRule* spawnRule );
+
+    /**
+     * Respawn a NPC in the given position.
+     */
+    void Respawn(psCharacter* chardata, InstanceID instance, csVector3& where, float rot, csString& sector);
     
     /// Adds all items to the world.
     /** Called at the server startup to add all the items to the game. 
@@ -393,22 +398,17 @@ public:
 class psRespawnGameEvent : public psGameEvent
 {
 protected:
-    SpawnManager *spawnmanager;
-    int ticks;
-    csVector3 where;
-    float     rot;
-    csString  sector;
-    PID       playerID;
-    InstanceID instance;
+    SpawnManager* spawnmanager;
+    PID           playerID;    ///< The PID of the entity to respawn
+    SpawnRule*    spawnRule;   ///< The rule to use for determine where
 
 public:
-    psRespawnGameEvent(SpawnManager *mgr,
-               int delayticks,
-               csVector3& pos,
-               float angle,
-               csString& sector,
-               PID newplayer,
-               InstanceID newinstance);
+    /** Event to respawn given PID in a position to be found by the spawnRule.
+     */
+    psRespawnGameEvent(SpawnManager* mgr,
+                       int delayticks,
+                       PID playerID,
+                       SpawnRule* spawnRule);
 
     virtual void Trigger();  // Abstract event processing function
 };
