@@ -60,7 +60,7 @@ PendingInvite::PendingInvite(
                   const char *inviter_rejection,
                   const char *invitee_rejection,
                   psQuestionMessage::questionType_t invType)
-                    : PendingQuestion(invitee->GetClientNum(), question, invType)
+                    : PendingQuestion(invitee->GetClientNum(), question_str, invType)
 {
     // Disable incoming invitations while dueling (invites could be used to distract and cheat)
     if (invitee->GetDuelClientCount() && invType != psQuestionMessage::duelConfirm)
