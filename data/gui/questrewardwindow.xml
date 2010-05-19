@@ -6,7 +6,7 @@
     <title resource="Scaling Title Bar" text="Quest" align="left" close_button="yes"/>
     
     <widget name="selectreward" factory="pawsTextBox" style="Header Font">
-        <frame x="62" y="4" width="160" height="20" />
+        <frame x="62" y="4" width="180" height="20" />
         <text string="Select a reward:" />
     </widget>
         
@@ -42,13 +42,13 @@
     </widget>
 
 
-    <widget name="View Button" factory="pawsButton" toggle="no" id="1000" shadows="yes" >
-        <frame x="22" y="233" width="70" height="16" border="no" />
+    <widget name="View Button" factory="pawsButton" toggle="no" id="1000" shadows="yes" style="Standard Button">
+        <frame x="35" y="245" width="120" height="20" border="no" />
         <label text="View" />
     </widget>
 
-    <widget name="GetReward" factory="pawsButton" toggle="no" id="1001" shadows="yes" >
-        <frame x="125" y="233" width="70" height="16" border="no" />
+    <widget name="GetReward" factory="pawsButton" toggle="no" id="1001" shadows="yes" style="Standard Button">
+        <frame x="155" y="245" width="120" height="20" border="no" />
         <label text="Get Reward" />
     </widget>
 
