@@ -2655,12 +2655,17 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
         return;
     }
 
-    //Client* superclient = clients->FindAccount( subject->GetSuperclientID() );
-    //if(superclient && subject->GetSuperclientID()!=0)
-    //{
-    //    psserver->SendSystemError(client->GetClientNum(), "This entity %s is controlled by superclient %s and can't be teleported.", subject->GetName(), ShowID(subject->GetSuperclientID()));
-    //    return;
-    //}
+    Client* superclient = clients->FindAccount( subject->GetSuperclientID() );
+    if(superclient && subject->GetSuperclientID()!=0)
+    {
+        gemNPC* npc = dynamic_cast<gemNPC*>(subject);
+        if (npc)
+        {
+            psserver->SendSystemInfo(client->GetClientNum(), "%s is controlled by superclient %s and might not be teleported.", 
+                                     subject->GetName(), ShowID(subject->GetSuperclientID()));
+            psserver->GetNPCManager()->QueueTeleportPerception(npc,targetPoint,yRot,targetSector,targetInstance);
+        }
+    }
 
     if ( !MoveObject(client,subject,targetPoint,yRot,targetSector,targetInstance) )
         return;

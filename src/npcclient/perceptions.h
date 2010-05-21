@@ -292,6 +292,30 @@ private:
     iEngine* engine;
 };
 
+/**
+ * Percept a position.
+ */
+class PositionPerception : public Perception
+{
+protected:
+    InstanceID instance;
+    iSector* sector;
+    csVector3 pos;
+    float yrot;
+
+    float radius;
+
+public:
+    PositionPerception(const char *n, const char*type,InstanceID& instance, iSector* sector, csVector3& pos, float yrot, float radius)
+        : Perception(n,type), instance(instance), sector(sector), pos(pos), yrot(yrot), radius(radius)  {}
+    virtual ~PositionPerception() {}
+
+    virtual bool ShouldReact(Reaction *reaction, NPC *npc);
+    virtual Perception *MakeCopy();
+    virtual bool GetLocation(csVector3& pos, iSector*& sector);
+    virtual float GetRadius() const;
+};
+
 //-----------------------------------------------------------------------------
 
 /**

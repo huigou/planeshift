@@ -1199,13 +1199,11 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                 csVector3 where;
                 PID playerID = PID(list.msg->GetUInt32());
                 float rot = list.msg->GetFloat();
-                where.x = list.msg->GetFloat();
-                where.y = list.msg->GetFloat();
-                where.z = list.msg->GetFloat();
-                csString sector = list.msg->GetStr();
+                where = list.msg->GetVector();
+                iSector* sector = list.msg->GetSector(psserver->GetCacheManager()->GetMsgStrings(), 0, psserver->entitymanager->GetEngine());
 
-                Debug7(LOG_SUPERCLIENT, playerID.Unbox(), "-->Got resurrect cmd: %s Rot: %.2f Where: (%.2f,%.2f,%.2f) Sector: %s\n",
-                       ShowID(playerID), rot, where.x, where.y, where.z, sector.GetDataSafe());
+                Debug4(LOG_SUPERCLIENT, playerID.Unbox(), "-->Got resurrect cmd: %s Rot: %.2f Where: %s\n",
+                       ShowID(playerID), rot, toString(where, sector).GetDataSafe());
 
                 // Make sure we haven't run past the end of the buffer
                 if (list.msg->overrun)
@@ -2079,7 +2077,7 @@ void NPCManager::QueueTransferPerception(gemActor *owner, psItem * itemdata, csS
 
 void NPCManager::QueueSpawnedPerception(gemNPC *spawned, gemNPC *spawner, uint32_t tribeMemberType)
 {
-    CheckSendPerceptionQueue(sizeof(int8_t)+sizeof(uint32_t)*3);
+    CheckSendPerceptionQueue(sizeof(int8_t)+sizeof(uint32_t)*4);
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::PCPT_SPAWNED);
     outbound->msg->Add(spawned->GetCharacterData()->GetPID().Unbox());
     outbound->msg->Add(spawned->GetEID().Unbox());
@@ -2088,6 +2086,21 @@ void NPCManager::QueueSpawnedPerception(gemNPC *spawned, gemNPC *spawner, uint32
     cmd_count++;
     Debug3(LOG_NPC, spawner->GetEID().Unbox(), "Added spawn perception: %s from %s.\n", ShowID(spawned->GetEID()), ShowID(spawner->GetEID()) );
 }
+
+void NPCManager::QueueTeleportPerception(gemNPC* npc, csVector3& pos, float yrot, iSector* sector, InstanceID instance)
+{
+    CheckSendPerceptionQueue(sizeof(int8_t)+sizeof(uint32_t)*3+sizeof(float)*4+strlen(sector->QueryObject()->GetName()));
+    outbound->msg->Add( (int8_t) psNPCCommandsMessage::PCPT_TELEPORT);
+    outbound->msg->Add(npc->GetEID().Unbox());
+    outbound->msg->Add(pos);
+    outbound->msg->Add(yrot);
+    outbound->msg->Add(sector, psserver->GetCacheManager()->GetMsgStrings());
+    outbound->msg->Add(instance);
+    cmd_count++;
+    Debug3(LOG_NPC, npc->GetEID().Unbox(), "Added teleport perception for %s to %s.\n", ShowID(npc->GetEID()), toString(pos,sector).GetDataSafe() );    
+}
+
+
 
 void NPCManager::SendAllCommands(bool createNewTick)
 {

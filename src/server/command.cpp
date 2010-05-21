@@ -1714,17 +1714,18 @@ int com_charlist(char *)
     csHash<gemObject*, EID>::GlobalIterator i(gems.GetIterator());
     gemObject* obj;
 
-    CPrintf(CON_CMDOUTPUT ,"%-9s %-5s %-9s %-10s %-20s\n","PID","EID","CNUM","Type","Name");
+    CPrintf(CON_CMDOUTPUT ,"%-9s %-5s %-9s  %-9s %-10s %-20s\n","PID","EID","CNUM","SCNUM","Type","Name");
     while ( i.HasNext() )
     {
         obj = i.Next();
         gemActor* actor = dynamic_cast<gemActor*>(obj);
         if (actor)
         {
-            CPrintf(CON_CMDOUTPUT ,"%9u %5u %9u %-10s %-20s\n",
+            CPrintf(CON_CMDOUTPUT ,"%9u %5u %9u %9u %-10s %-20s\n",
                     actor->GetCharacterData()->GetPID().Unbox(),
                     actor->GetEID().Unbox(),
                     actor->GetClientID(),
+                    actor->GetSuperclientID().Unbox(),
                     actor->GetObjectType(),
                     actor->GetName());
         }

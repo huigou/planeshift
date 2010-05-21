@@ -41,6 +41,7 @@
 #include "net/msghandler.h"
 #include "net/npcmessages.h"
 #include "engine/linmove.h"
+#include "util/strutil.h"
 
 //=============================================================================
 // Local Space Includes
@@ -465,7 +466,7 @@ void NetworkManager::HandlePositionUpdates(MsgEntry *msg)
         InstanceID instance;
         bool forced;
 
-        EID id = updates.Get(pos, sector, instance, forced, 0, npcclient->GetNetworkMgr()->GetMsgStrings(), engine);
+        EID id = updates.Get(pos, sector, instance, forced, 0, GetMsgStrings(), engine);
         npcclient->SetEntityPos(id, pos, sector, instance, forced);
     }
 }
@@ -885,6 +886,25 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 	npcclient->CheckAttachTribes(spawned_npc);
                 break;
             }
+            case psNPCCommandsMessage::PCPT_TELEPORT:
+            {
+                EID npc_eid = EID(msg->GetUInt32());
+                csVector3 pos = msg->GetVector();
+                float yrot = msg->GetFloat();
+                iSector* sector = msg->GetSector( 0, GetMsgStrings(), engine );
+                InstanceID instance = msg->GetUInt32();
+
+                NPC *npc = npcclient->FindNPC(npc_eid);
+
+                if (!npc)
+                    break;
+
+                npc->Printf("Got teleport perception to %s\n",toString(pos,sector).GetDataSafe());
+
+                PositionPerception pcpt("teleported",NULL,instance,sector,pos,yrot,0.0);
+                npc->TriggerEvent(&pcpt);
+                break;
+            }
            
             default:
             {
@@ -1185,17 +1205,15 @@ void NetworkManager::QueueDropCommand(gemNPCActor *entity, csString slot)
 }
 
 
-void NetworkManager::QueueResurrectCommand(csVector3 where, float rot, csString sector, PID character_id)
+void NetworkManager::QueueResurrectCommand(csVector3 where, float rot, iSector* sector, PID character_id)
 {
     CheckCommandsOverrun(100);
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_RESURRECT);
     outbound->msg->Add(character_id.Unbox());
     outbound->msg->Add( (float)rot );
-    outbound->msg->Add( (float)where.x );
-    outbound->msg->Add( (float)where.y );
-    outbound->msg->Add( (float)where.z );
-    outbound->msg->Add( sector );
+    outbound->msg->Add( where );
+    outbound->msg->Add( sector, 0, GetMsgStrings() );
 
     if ( outbound->msg->overrun )
     {

@@ -858,6 +858,24 @@ public:
 //-----------------------------------------------------------------------------
 
 /**
+* Teleport will teleport the NPC to the target position.
+*/
+class TeleportOperation : public ScriptOperation
+{
+protected:
+
+public:
+
+    TeleportOperation(): ScriptOperation("Teleport") {};
+    virtual ~TeleportOperation() {};
+    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual bool Load(iDocumentNode *node);
+    virtual ScriptOperation *MakeCopy();
+};
+
+//-----------------------------------------------------------------------------
+
+/**
 * Transfer will transfer a item from the NPC to a target. The
 * target might be a tribe.
 */
