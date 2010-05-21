@@ -2633,19 +2633,19 @@ bool ResurrectOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     tribe->GetHome(where,radius,sector);
 
     float x, z, xDist, zDist;
-	do {
-		// Pick random point in circumscribed rectangle.
-		x = psGetRandom() * (radius*2.0);
-		z = psGetRandom() * (radius*2.0);
-		xDist = radius - x;
-		zDist = radius - z;
-		// Keep looping until the point is inside a circle.
-	} while(xDist * xDist + zDist * zDist > radius * radius);
-	
-	where.x += x - radius;
-	where.z += z - radius;
+    do {
+        // Pick random point in circumscribed rectangle.
+        x = psGetRandom() * (radius*2.0);
+        z = psGetRandom() * (radius*2.0);
+        xDist = radius - x;
+        zDist = radius - z;
+        // Keep looping until the point is inside a circle.
+    } while(xDist * xDist + zDist * zDist > radius * radius);
+    
+    where.x += x - radius;
+    where.z += z - radius;
 
-    npcclient->GetNetworkMgr()->QueueResurrectCommand(where, rot, sector->QueryObject()->GetName(), npc->GetPID());
+    npcclient->GetNetworkMgr()->QueueResurrectCommand(where, rot, sector, npc->GetPID());
 
     return true;  // Nothing more to do for this op.
 }
@@ -3179,6 +3179,41 @@ bool TalkOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
             friendNPC->TriggerEvent(&perception);
         }
     }
+
+    return true;  // Nothing more to do for this op.
+}
+
+//---------------------------------------------------------------------------
+
+bool TeleportOperation::Load(iDocumentNode *node)
+{
+    return true;
+}
+
+ScriptOperation *TeleportOperation::MakeCopy()
+{
+    TeleportOperation *op = new TeleportOperation;
+    return op;
+}
+
+bool TeleportOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+    gemNPCActor* actor = npc->GetActor();
+    
+    if (!actor)
+    {
+        npc->Printf(1,"No actor for telport operation.");
+        return true;  // Nothing more to do for this op.
+    }
+    
+    csVector3 pos;
+    iSector*  sector;
+    float     rot;
+
+    npc->GetActiveLocate(pos,sector,rot);
+    npc->Printf(5, "Teleport to %s",toString(pos,sector).GetDataSafe());
+
+    psGameObject::SetPosition(npc->GetActor(), pos, sector);
 
     return true;  // Nothing more to do for this op.
 }

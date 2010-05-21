@@ -842,6 +842,7 @@ void SpawnManager::Respawn(PID playerID, SpawnRule* spawnRule)
     csVector3 pos;
     float angle;
     csString sectorName;
+    iSector *sector = NULL;
     InstanceID instance;
 
     int count = 4; // For random positions we try 4 times before going with the result.
@@ -850,27 +851,27 @@ void SpawnManager::Respawn(PID playerID, SpawnRule* spawnRule)
     // on the first try.
     while (spawnRule->DetermineSpawnLoc(chardata, pos, angle, sectorName, instance) && spawnRule->GetMinSpawnSpacingDistance() > 0.0 && count-- > 0)
     {
-        iSector *sector = psserver->entitymanager->GetEngine()->GetSectors()->FindByName(sectorName);
+        sector = psserver->entitymanager->GetEngine()->GetSectors()->FindByName(sectorName);
 
         csArray<gemObject*> nearlist = psserver->entitymanager->GetGEM()->FindNearbyEntities(sector, pos, spawnRule->GetMinSpawnSpacingDistance(), false);
         if (nearlist.IsEmpty())
         {
             break; // Nothing in the neare list so spawn position is ok.
         }
-        Debug5(LOG_SPAWN,0,"Spawn position %s in %s is occuplied by %d entities. %s",
-               toString(pos).GetDataSafe(),sectorName.GetDataSafe(),
+        Debug4(LOG_SPAWN,0,"Spawn position %s is occuplied by %d entities. %s",
+               toString(pos,sector).GetDataSafe(),
                nearlist.GetSize(),count>0?" Will Retry":"Last try");
         
     }
     
     Debug1(LOG_SPAWN,0,"Position accepted");
-    Respawn(chardata, instance, pos, angle, sectorName);
+    Respawn(chardata, instance, pos, angle, sector);
 }
 
 
-void SpawnManager::Respawn(psCharacter* chardata, InstanceID instance, csVector3& where, float rot, csString& sector)
+void SpawnManager::Respawn(psCharacter* chardata, InstanceID instance, csVector3& where, float rot, iSector* sector)
 {
-    psSectorInfo* spawnsector = cacheManager->GetSectorInfoByName(sector);
+    psSectorInfo* spawnsector = cacheManager->GetSectorInfoByName(sector->QueryObject()->GetName());
     if (spawnsector==NULL)
     {
         Error2("Spawn message indicated unresolvable sector '%s'\n",(const char*)sector);

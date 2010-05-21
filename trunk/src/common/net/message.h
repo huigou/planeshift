@@ -27,7 +27,12 @@
 #include <csutil/threading/atomicops.h>
 #include <csutil/refcount.h>
 #include <csutil/csendian.h>
+#include <csutil/strhashr.h>
+#include <csutil/strset.h>
 #include <csgeom/vector3.h>
+#include <iengine/sector.h>
+#include <iengine/engine.h>
+#include <csutil/csobject.h>
 
 #include "util/log.h"
 #include "net/packing.h"
@@ -549,6 +554,26 @@ public:
         current += 3*sizeof(uint32);
     }
 
+    void Add(iSector* sector, csStringSet* msgstrings, csStringHashReversible* msgstringshash = NULL)
+    {
+        const char* sectorName = sector->QueryObject ()->GetName ();
+        csStringID sectorNameStrId = csInvalidStringID;
+        if (msgstrings)
+        {
+            sectorNameStrId = msgstrings->Request(sectorName);
+        } else if (msgstringshash)
+        {
+            sectorNameStrId = msgstringshash->Request(sectorName);
+        }
+        
+        Add( (uint32_t) sectorNameStrId );
+        
+        if (sectorNameStrId == csInvalidStringID)
+        {
+            Add(sectorName);
+        }
+    }
+
 
     /// Add a processed buffer of some kind; should only be used by files and the like.
     // NOTE THIS IS NOT ENDIAN-CONVERTED:  YOUR DATA MUST ALREADY BE ENDIAN SAFE.
@@ -808,6 +833,36 @@ public:
         return v;
     }
 
+    iSector* GetSector(csStringSet* msgstrings, csStringHashReversible* msgstringshash, iEngine *engine)
+    {
+        csString sectorName;
+        csStringID sectorNameStrId;
+        sectorNameStrId = GetUInt32();
+        if (sectorNameStrId != csStringID(uint32_t(csInvalidStringID)))
+        {
+            if(msgstrings)
+            {
+                sectorName = msgstrings->Request(sectorNameStrId);
+            }
+            else if(msgstringshash)
+            {
+                sectorName = msgstringshash->Request(sectorNameStrId);
+            }
+        }
+        else
+        {
+            sectorName = GetStr();
+        }
+        
+        if(!sectorName.IsEmpty())
+        {
+            return engine->GetSectors ()->FindByName (sectorName);
+        }
+
+        return NULL;
+    }
+    
+    
     // Get a pre-converted data buffer with recorded length from the current psMessageBytes buffer.
     void * GetBufferPointerUnsafe(uint32_t& length)
     {

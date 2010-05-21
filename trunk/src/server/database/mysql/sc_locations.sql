@@ -66,6 +66,7 @@ INSERT INTO `sc_locations` VALUES (37,11, -1, 'Hunting ground 2','-40.0', '0.0',
 INSERT INTO `sc_locations` VALUES (38,11, -1, 'Hunting ground 3','-20.0', '0.0', '-140.0', 10, 0.0,'', 3);
 INSERT INTO `sc_locations` VALUES (39,11, -1, 'Hunting ground 4','-20.0', '0.0', '-160.0', 10, 0.0,'', 3);
 INSERT INTO `sc_locations` VALUES (40,11, -1, 'Hunting ground 5','-20.0', '0.0', '-220.0', 10, 0.0,'', 3);
+INSERT INTO `sc_locations` VALUES (41, 8, -1, 'Smith','-53.54', '0.01', '-155.11', 0, 0.5,'', 3);
 
 
 

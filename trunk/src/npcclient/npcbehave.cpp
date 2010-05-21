@@ -732,6 +732,10 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         {
             op = new TalkOperation;
         }
+        else if ( strcmp( node->GetValue(), "teleport" ) == 0 )
+        {
+            op = new TeleportOperation;
+        }
         else if ( strcmp( node->GetValue(), "transfer" ) == 0 )
         {
             op = new TransferOperation;

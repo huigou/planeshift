@@ -1,110 +1,124 @@
 <npctypes>
 
- <npctype name="smith" vel="2"> 
-      <behavior name="do nothing" decay="0" growth="0" initial="10">
-	  <wait duration="1" anim="stand" />
-      </behavior>
- <behavior name="go_climbing1" initial="0" completion_decay="20" loop="no"> 
-  <moveto x="-53.6003" y="0.0" z="-155.041" anim="walk" />
-  <moveto x="-8.89576" y="0.0" z="-162.498" anim="walk" />
-  <moveto x="18.4303" y="21.9941" z="-163.082" anim="walk" />
-  <moveto x="-9.01569" y="0.0" z="-159.477" anim="walk" />
-  <moveto x="-19.7409" y="0.0" z="-153.539" anim="walk" />
-  <moveto x="-42.8985" y="0.0" z="-146.811" anim="walk" />
-  <moveto x="-53.6242" y="0.0" z="-155.023" anim="walk" />
-  <wait duration="60" anim="stand" />
-  <moveto x="-53.6242" y="0.0" z="-155.023" anim="walk" />
-  <moveto x="-42.8985" y="0.0" z="-146.811" anim="walk" />
-  <moveto x="-19.7409" y="0.0" z="-153.539" anim="walk" />
-  <moveto x="-9.01569" y="0.0" z="-159.477" anim="walk" />
-  <moveto x="18.4303" y="21.9941" z="-163.082" anim="walk" />
-  <moveto x="-8.89576" y="0.0" z="-162.498" anim="walk" />
-  <moveto x="-53.6003" y="0.0" z="-155.041" anim="walk" />
- </behavior> 
- <behavior name="go_obstacles1" initial="0" completion_decay="20" loop="no"> 
-  <moveto x="-53.5112" y="0.0" z="-155.135" anim="walk" />
-  <moveto x="-44.2481" y="0.0" z="-153.507" anim="walk" />
-  <moveto x="-27.3333" y="0.0" z="-163.914" anim="walk" />
-  <moveto x="-32.8587" y="0.0" z="-199.55" anim="walk" />
-  <moveto x="-45.5557" y="0.0" z="-213.535" anim="walk" />
-  <moveto x="-45.5928" y="0.0" z="-225.046" anim="walk" />
-  <moveto x="-42.5066" y="0.0" z="-247.016" anim="walk" />
-  <moveto x="-35.3197" y="0.0" z="-246.967" anim="walk" />
-  <moveto x="-35.1166" y="0.0" z="-237.451" anim="walk" />
-  <moveto x="-26.9788" y="0.0" z="-237.333" anim="walk" />
-  <moveto x="-26.5143" y="0.0" z="-248.163" anim="walk" />
-  <moveto x="-19.3833" y="0.0" z="-247.596" anim="walk" />
-  <moveto x="-19.4912" y="0.0" z="-236.566" anim="walk" />
-  <moveto x="-10.7207" y="0.0" z="-236.432" anim="walk" />
-  <moveto x="-11.0175" y="0.0" z="-249.279" anim="walk" />
-  <moveto x="-4.43381" y="0.0" z="-248.536" anim="walk" />
-  <moveto x="-4.49285" y="0.0" z="-236.315" anim="walk" />
-  <moveto x="1.82961" y="0.0" z="-235.959" anim="walk" />
-  <moveto x="1.64485" y="0.0" z="-249.233" anim="walk" />
-  <moveto x="8.12992" y="0.0" z="-249.23" anim="walk" />
-  <moveto x="8.19972" y="0.0" z="-230.12" anim="walk" />
-  <moveto x="-24.0757" y="0.0" z="-222.12" anim="walk" />
-  <moveto x="-24.8802" y="0.0" z="-205.212" anim="walk" />
-  <moveto x="-42.7254" y="0.0" z="-166.754" anim="walk" />
-  <moveto x="-46.2027" y="0.0" z="-152.995" anim="walk" />
-  <moveto x="-53.5608" y="0.0" z="-155.176" anim="walk" />
-  <wait duration="30" anim="stand" />
-  <moveto x="-53.5608" y="0.0" z="-155.176" anim="walk" />
-  <moveto x="-46.2027" y="0.0" z="-152.995" anim="walk" />
-  <moveto x="-42.7254" y="0.0" z="-166.754" anim="walk" />
-  <moveto x="-24.8802" y="0.0" z="-205.212" anim="walk" />
-  <moveto x="-24.0757" y="0.0" z="-222.12" anim="walk" />
-  <moveto x="8.19972" y="0.0" z="-230.12" anim="walk" />
-  <moveto x="8.12992" y="0.0" z="-249.23" anim="walk" />
-  <moveto x="1.64485" y="0.0" z="-249.233" anim="walk" />
-  <moveto x="1.82961" y="0.0" z="-235.959" anim="walk" />
-  <moveto x="-4.49285" y="0.0" z="-236.315" anim="walk" />
-  <moveto x="-4.43381" y="0.0" z="-248.536" anim="walk" />
-  <moveto x="-11.0175" y="0.0" z="-249.279" anim="walk" />
-  <moveto x="-10.7207" y="0.0" z="-236.432" anim="walk" />
-  <moveto x="-19.4912" y="0.0" z="-236.566" anim="walk" />
-  <moveto x="-19.3833" y="0.0" z="-247.596" anim="walk" />
-  <moveto x="-26.5143" y="0.0" z="-248.163" anim="walk" />
-  <moveto x="-26.9788" y="0.0" z="-237.333" anim="walk" />
-  <moveto x="-35.1166" y="0.0" z="-237.451" anim="walk" />
-  <moveto x="-35.3197" y="0.0" z="-246.967" anim="walk" />
-  <moveto x="-42.5066" y="0.0" z="-247.016" anim="walk" />
-  <moveto x="-45.5928" y="0.0" z="-225.046" anim="walk" />
-  <moveto x="-45.5557" y="0.0" z="-213.535" anim="walk" />
-  <moveto x="-32.8587" y="0.0" z="-199.55" anim="walk" />
-  <moveto x="-27.3333" y="0.0" z="-163.914" anim="walk" />
-  <moveto x="-44.2481" y="0.0" z="-153.507" anim="walk" />
-  <moveto x="-53.5112" y="0.0" z="-155.135" anim="walk" />
- </behavior> 
- <behavior name="go_other_sector1" initial="0" completion_decay="20" loop="no"> 
-  <moveto x="-53.546" y="0.0" z="-155.243" anim="walk" />
-  <moveto x="-42.1452" y="0.0" z="-140.879" anim="walk" />
-  <moveto x="-55.2024" y="0.0" z="-126.302" anim="walk" />
-  <moveto x="-57.6445" y="0.0" z="-113.753" anim="walk" />
-  <wait duration="30" anim="stand" />
-  <moveto x="-57.6445" y="0.0" z="-113.753" anim="walk" />
-  <moveto x="-55.2024" y="0.0" z="-126.302" anim="walk" />
-  <moveto x="-42.1452" y="0.0" z="-140.879" anim="walk" />
-  <moveto x="-53.546" y="0.0" z="-155.243" anim="walk" />
- </behavior> 
- <behavior name="go_sleep1" initial="0" completion_decay="20" loop="no"> 
-  <moveto x="-53.6185" y="0.0" z="-155.243" anim="walk" />
-  <moveto x="-51.4396" y="0.0" z="-149.481" anim="walk" />
-  <moveto x="-54.8432" y="0.0" z="-146.474" anim="walk" />
-  <moveto x="-55.6514" y="0.0" z="-147.652" anim="walk" />
-  <invisible/>
-  <wait duration="30" anim="stand" />
-  <visible/>
-  <moveto x="-55.6514" y="0.0" z="-147.652" anim="walk" />
-  <moveto x="-54.8432" y="0.0" z="-146.474" anim="walk" />
-  <moveto x="-51.4396" y="0.0" z="-149.481" anim="walk" />
-  <moveto x="-53.6185" y="0.0" z="-155.243" anim="walk" />
- </behavior> 
- <react event="time" value="8,0,,,"  behavior="go_other_sector1" delta="20" /> 
- <react event="time" value="10,0,,,"  behavior="go_sleep1" delta="20" /> 
- <react event="time" value="12,0,,,"  behavior="go_obstacles1" delta="20" /> 
- <react event="time" value="14,0,,,"  behavior="go_climbing1" delta="20" /> 
- </npctype> 
+  <npctype name="GoHomeOnTeleport">
+    <behavior name="Teleported" completion_decay="-1" growth="0" initial="0">
+      <locate obj="perception" />
+      <teleport />                              <!-- Teleport to located position --> 
+      <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
+      <navigate anim="walk" />                  <!-- Local navigation -->
+      <locate obj="home:$name" />
+      <wander anim="walk" />                    <!-- Navigate using waypoints -->
+      <navigate anim="walk" />                  <!-- Local navigation -->
+    </behavior>
+    <react event="teleported" behavior="Teleported" />
+  </npctype>
+
+
+  <npctype name="smith" vel="2" parent="GoHomeOnTeleport" > 
+    <behavior name="do nothing" decay="0" growth="0" initial="10">
+      <wait duration="1" anim="stand" />
+    </behavior>
+    <behavior name="go_climbing1" initial="0" completion_decay="20" loop="no"> 
+      <moveto x="-53.6003" y="0.0" z="-155.041" anim="walk" />
+      <moveto x="-8.89576" y="0.0" z="-162.498" anim="walk" />
+      <moveto x="18.4303" y="21.9941" z="-163.082" anim="walk" />
+      <moveto x="-9.01569" y="0.0" z="-159.477" anim="walk" />
+      <moveto x="-19.7409" y="0.0" z="-153.539" anim="walk" />
+      <moveto x="-42.8985" y="0.0" z="-146.811" anim="walk" />
+      <moveto x="-53.6242" y="0.0" z="-155.023" anim="walk" />
+      <wait duration="60" anim="stand" />
+      <moveto x="-53.6242" y="0.0" z="-155.023" anim="walk" />
+      <moveto x="-42.8985" y="0.0" z="-146.811" anim="walk" />
+      <moveto x="-19.7409" y="0.0" z="-153.539" anim="walk" />
+      <moveto x="-9.01569" y="0.0" z="-159.477" anim="walk" />
+      <moveto x="18.4303" y="21.9941" z="-163.082" anim="walk" />
+      <moveto x="-8.89576" y="0.0" z="-162.498" anim="walk" />
+      <moveto x="-53.6003" y="0.0" z="-155.041" anim="walk" />
+    </behavior> 
+    <behavior name="go_obstacles1" initial="0" completion_decay="20" loop="no"> 
+      <moveto x="-53.5112" y="0.0" z="-155.135" anim="walk" />
+      <moveto x="-44.2481" y="0.0" z="-153.507" anim="walk" />
+      <moveto x="-27.3333" y="0.0" z="-163.914" anim="walk" />
+      <moveto x="-32.8587" y="0.0" z="-199.55" anim="walk" />
+      <moveto x="-45.5557" y="0.0" z="-213.535" anim="walk" />
+      <moveto x="-45.5928" y="0.0" z="-225.046" anim="walk" />
+      <moveto x="-42.5066" y="0.0" z="-247.016" anim="walk" />
+      <moveto x="-35.3197" y="0.0" z="-246.967" anim="walk" />
+      <moveto x="-35.1166" y="0.0" z="-237.451" anim="walk" />
+      <moveto x="-26.9788" y="0.0" z="-237.333" anim="walk" />
+      <moveto x="-26.5143" y="0.0" z="-248.163" anim="walk" />
+      <moveto x="-19.3833" y="0.0" z="-247.596" anim="walk" />
+      <moveto x="-19.4912" y="0.0" z="-236.566" anim="walk" />
+      <moveto x="-10.7207" y="0.0" z="-236.432" anim="walk" />
+      <moveto x="-11.0175" y="0.0" z="-249.279" anim="walk" />
+      <moveto x="-4.43381" y="0.0" z="-248.536" anim="walk" />
+      <moveto x="-4.49285" y="0.0" z="-236.315" anim="walk" />
+      <moveto x="1.82961" y="0.0" z="-235.959" anim="walk" />
+      <moveto x="1.64485" y="0.0" z="-249.233" anim="walk" />
+      <moveto x="8.12992" y="0.0" z="-249.23" anim="walk" />
+      <moveto x="8.19972" y="0.0" z="-230.12" anim="walk" />
+      <moveto x="-24.0757" y="0.0" z="-222.12" anim="walk" />
+      <moveto x="-24.8802" y="0.0" z="-205.212" anim="walk" />
+      <moveto x="-42.7254" y="0.0" z="-166.754" anim="walk" />
+      <moveto x="-46.2027" y="0.0" z="-152.995" anim="walk" />
+      <moveto x="-53.5608" y="0.0" z="-155.176" anim="walk" />
+      <wait duration="30" anim="stand" />
+      <moveto x="-53.5608" y="0.0" z="-155.176" anim="walk" />
+      <moveto x="-46.2027" y="0.0" z="-152.995" anim="walk" />
+      <moveto x="-42.7254" y="0.0" z="-166.754" anim="walk" />
+      <moveto x="-24.8802" y="0.0" z="-205.212" anim="walk" />
+      <moveto x="-24.0757" y="0.0" z="-222.12" anim="walk" />
+      <moveto x="8.19972" y="0.0" z="-230.12" anim="walk" />
+      <moveto x="8.12992" y="0.0" z="-249.23" anim="walk" />
+      <moveto x="1.64485" y="0.0" z="-249.233" anim="walk" />
+      <moveto x="1.82961" y="0.0" z="-235.959" anim="walk" />
+      <moveto x="-4.49285" y="0.0" z="-236.315" anim="walk" />
+      <moveto x="-4.43381" y="0.0" z="-248.536" anim="walk" />
+      <moveto x="-11.0175" y="0.0" z="-249.279" anim="walk" />
+      <moveto x="-10.7207" y="0.0" z="-236.432" anim="walk" />
+      <moveto x="-19.4912" y="0.0" z="-236.566" anim="walk" />
+      <moveto x="-19.3833" y="0.0" z="-247.596" anim="walk" />
+      <moveto x="-26.5143" y="0.0" z="-248.163" anim="walk" />
+      <moveto x="-26.9788" y="0.0" z="-237.333" anim="walk" />
+      <moveto x="-35.1166" y="0.0" z="-237.451" anim="walk" />
+      <moveto x="-35.3197" y="0.0" z="-246.967" anim="walk" />
+      <moveto x="-42.5066" y="0.0" z="-247.016" anim="walk" />
+      <moveto x="-45.5928" y="0.0" z="-225.046" anim="walk" />
+      <moveto x="-45.5557" y="0.0" z="-213.535" anim="walk" />
+      <moveto x="-32.8587" y="0.0" z="-199.55" anim="walk" />
+      <moveto x="-27.3333" y="0.0" z="-163.914" anim="walk" />
+      <moveto x="-44.2481" y="0.0" z="-153.507" anim="walk" />
+      <moveto x="-53.5112" y="0.0" z="-155.135" anim="walk" />
+    </behavior> 
+    <behavior name="go_other_sector1" initial="0" completion_decay="20" loop="no"> 
+      <moveto x="-53.546" y="0.0" z="-155.243" anim="walk" />
+      <moveto x="-42.1452" y="0.0" z="-140.879" anim="walk" />
+      <moveto x="-55.2024" y="0.0" z="-126.302" anim="walk" />
+      <moveto x="-57.6445" y="0.0" z="-113.753" anim="walk" />
+      <wait duration="30" anim="stand" />
+      <moveto x="-57.6445" y="0.0" z="-113.753" anim="walk" />
+      <moveto x="-55.2024" y="0.0" z="-126.302" anim="walk" />
+      <moveto x="-42.1452" y="0.0" z="-140.879" anim="walk" />
+      <moveto x="-53.546" y="0.0" z="-155.243" anim="walk" />
+    </behavior> 
+    <behavior name="go_sleep1" initial="0" completion_decay="20" loop="no"> 
+      <moveto x="-53.6185" y="0.0" z="-155.243" anim="walk" />
+      <moveto x="-51.4396" y="0.0" z="-149.481" anim="walk" />
+      <moveto x="-54.8432" y="0.0" z="-146.474" anim="walk" />
+      <moveto x="-55.6514" y="0.0" z="-147.652" anim="walk" />
+    <invisible/>
+    <wait duration="30" anim="stand" />
+    <visible/>
+      <moveto x="-55.6514" y="0.0" z="-147.652" anim="walk" />
+      <moveto x="-54.8432" y="0.0" z="-146.474" anim="walk" />
+      <moveto x="-51.4396" y="0.0" z="-149.481" anim="walk" />
+      <moveto x="-53.6185" y="0.0" z="-155.243" anim="walk" />
+    </behavior> 
+    <react event="time" value="8,0,,,"  behavior="go_other_sector1" delta="20" /> 
+    <react event="time" value="10,0,,,"  behavior="go_sleep1" delta="20" /> 
+    <react event="time" value="12,0,,,"  behavior="go_obstacles1" delta="20" /> 
+    <react event="time" value="14,0,,,"  behavior="go_climbing1" delta="20" /> 
+  </npctype> 
 
  
   <!-- Basic movement to keep a NPC within the bounds of an region.

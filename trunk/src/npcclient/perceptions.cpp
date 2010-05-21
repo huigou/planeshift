@@ -624,6 +624,36 @@ float LocationPerception::GetRadius() const
 
 //---------------------------------------------------------------------------------
 
+
+bool PositionPerception::ShouldReact(Reaction *reaction, NPC *npc)
+{
+    if (name == reaction->GetEventType() && (reaction->GetType().IsEmpty() || type == reaction->GetType()))
+    {
+        return true;
+    }
+    return false;
+}
+
+bool PositionPerception::GetLocation(csVector3& pos, iSector*& sector)
+{
+    pos = this->pos;
+    sector = this->sector;
+    return true;
+}
+
+Perception *PositionPerception::MakeCopy()
+{
+    PositionPerception *p = new PositionPerception(name,type,instance,sector,pos,yrot,radius);
+    return p;
+}
+
+float PositionPerception::GetRadius() const
+{
+    return radius; 
+}
+
+//---------------------------------------------------------------------------------
+
 Perception *AttackPerception::MakeCopy()
 {
     AttackPerception *p = new AttackPerception(name,attacker);

@@ -228,7 +228,8 @@ public:
         PCPT_FLAG,
         PCPT_NPCCMD,
         PCPT_TRANSFER,
-        PCPT_SPAWNED
+        PCPT_SPAWNED,
+        PCPT_TELEPORT
     };
 
     enum PerceptionTalkType

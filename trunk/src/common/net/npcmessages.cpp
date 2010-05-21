@@ -484,10 +484,8 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
 
                 EID character_id = EID(msg->GetUInt32());
                 float rot = msg->GetFloat();
-                where.x = msg->GetFloat();
-                where.y = msg->GetFloat();
-                where.z = msg->GetFloat();
-                csString sector = msg->GetStr();
+                where = msg->GetVector();
+                iSector* sector = msg->GetSector(access_ptrs->msgstrings, 0, access_ptrs->engine);
 
                 // Make sure we haven't run past the end of the buffer
                 if (msg->overrun)
@@ -496,8 +494,8 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                     break;
                 }
 
-                msgtext.AppendFmt("ID: %u Rot: %.2f Where: (%.2f,%.2f,%.2f) Sector: %s ",
-                                  character_id.Unbox(),rot,where.x,where.y,where.z,sector.GetDataSafe());
+                msgtext.AppendFmt("Char: %s Rot: %.2f Where: %s ",
+                                  ShowID(character_id),rot,toString(where,sector).GetDataSafe());
                 break;
             }
 
@@ -728,6 +726,20 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 msgtext.AppendFmt("PID: %u EID: %u EID: %u TribeMemberType: %u", spawned_pid.Unbox(), spawned_eid.Unbox(), spawner_eid.Unbox(),tribeMemberType);
                 break;
             }
+            case psNPCCommandsMessage::PCPT_TELEPORT:
+            {
+                msgtext.Append("PCPT_TELEPORT: ");
+                
+                // Extract the data
+                EID npc_eid = EID(msg->GetUInt32());
+                csVector3 pos = msg->GetVector();
+                float yrot = msg->GetFloat();
+                iSector* sector = msg->GetSector( access_ptrs->msgstrings, 0, access_ptrs->engine );
+                InstanceID instance = msg->GetUInt32();
+                
+                msgtext.AppendFmt("NPC: %s Pos: %s Rot: %f Inst: %d",ShowID(npc_eid),toString(pos,sector).GetDataSafe(),yrot,instance);
+                break;
+            }
 
 
         }
@@ -765,19 +777,8 @@ void psAllEntityPosMessage::SetLength(int elems, int client)
 void psAllEntityPosMessage::Add(EID id, csVector3& pos, iSector*& sector, InstanceID instance, csStringSet* msgstrings, bool forced)
 {
     msg->Add(id.Unbox());
-    msg->Add(pos.x);
-    msg->Add(pos.y);
-    msg->Add(pos.z);
-
-    const char* sectorName = sector->QueryObject ()->GetName ();
-    csStringID sectorNameStrId = msgstrings ? msgstrings->Request(sectorName) : csInvalidStringID;
-
-    msg->Add( (uint32_t) sectorNameStrId );
-
-    if (sectorNameStrId == csInvalidStringID)
-    {
-        msg->Add(sectorName);
-    }
+    msg->Add(pos);
+    msg->Add(sector, msgstrings);
     msg->Add( (int32_t)instance );
     msg->Add(forced);
 }
@@ -786,32 +787,8 @@ EID psAllEntityPosMessage::Get(csVector3& pos, iSector*& sector, InstanceID& ins
                                csStringHashReversible* msgstringshash, iEngine *engine)
 {
     EID eid(msg->GetUInt32());
-    pos.x = msg->GetFloat();
-    pos.y = msg->GetFloat();
-    pos.z = msg->GetFloat();
-
-    csString sectorName;
-    csStringID sectorNameStrId;
-    sectorNameStrId = msg->GetUInt32();
-    if (sectorNameStrId != csStringID(uint32_t(csInvalidStringID)))
-    {
-        if(msgstrings)
-            sectorName = msgstrings->Request(sectorNameStrId);
-        else if(msgstringshash)
-            sectorName = msgstringshash->Request(sectorNameStrId);
-    }
-    else
-    {
-        sectorName = msg->GetStr();
-    }
-    if(!sectorName.IsEmpty())
-    {
-        sector = engine->GetSectors ()->FindByName (sectorName);
-    }
-    else
-    {
-        sector = NULL;
-    }
+    pos = msg->GetVector();
+    sector = msg->GetSector(msgstrings, msgstringshash, engine);
     instance = msg->GetUInt32();
     forced = msg->GetBool();
     return eid;
@@ -831,7 +808,7 @@ csString psAllEntityPosMessage::ToString(AccessPointers * access_ptrs)
         
         EID eid = Get(pos, sector, instance, forced, access_ptrs->msgstrings, 0, access_ptrs->engine);
 
-        msgtext.AppendFmt(" ID: %u Pos: %s Inst: %d", eid.Unbox(), toString(pos,sector).GetDataSafe(), instance);
+        msgtext.AppendFmt(" ID: %s Pos: %s Inst: %d", ShowID(eid), toString(pos,sector).GetDataSafe(), instance);
     }
 
     return msgtext;
