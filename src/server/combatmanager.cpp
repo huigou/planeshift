@@ -466,8 +466,8 @@ int CombatManager::CalculateAttack(psCombatGameEvent *event, psItem* subWeapon)
     env.Define("AttackWeaponSecondary", subWeapon);
     // FIXME: The original code defined and redefined TargetAttackWeapon, which can't be right.
     //        Maybe this was supposed to be DefenseWeaponSecondary.  Probably not.  This needs cleaning.
-    env.Define("TargetAttackWeapon",    event->GetTargetData()->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot()));
-    env.Define("TargetAttackWeapon",    event->GetTargetData()->Inventory().GetEffectiveWeaponInSlot(otherHand));
+    env.Define("TargetAttackWeapon",    event->GetTargetData()->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot(), true));
+    env.Define("TargetAttackWeaponSecondary",    event->GetTargetData()->Inventory().GetEffectiveWeaponInSlot(otherHand,true));
     env.Define("AttackLocationItem",    event->GetTargetData()->Inventory().GetEffectiveArmorInSlot(event->AttackLocation));
 
     calc_damage->Evaluate(&env);
@@ -507,7 +507,7 @@ void CombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_result
     target_data=event->GetTargetData();
 
     psItem *weapon         = attacker_data->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot());
-    psItem *blockingWeapon = target_data->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot());
+    psItem *blockingWeapon = target_data->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot(),true);
     psItem *struckArmor    = target_data->Inventory().GetEffectiveArmorInSlot(event->AttackLocation);
 
     // if no armor, then ArmorVsWeapon = 1
@@ -626,6 +626,11 @@ void CombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_result
                 // Successful blocked by target, train skill.
                 Debug1(LOG_COMBAT, gemAttacker->GetClientID(), "Training Armour Skills On Block\n");
                 gemTarget->GetCharacterData()->PracticeArmorSkills(1, event->AttackLocation);
+                if(blockingWeapon && blockingWeapon->GetIsShield())
+                {
+                    Debug1(LOG_COMBAT, gemAttacker->GetClientID(), "Training Shield Skills On Block\n");
+                    gemAttacker->GetCharacterData()->PracticeWeaponSkills(blockingWeapon,1);
+                }                    
             }
 
             if (weapon)

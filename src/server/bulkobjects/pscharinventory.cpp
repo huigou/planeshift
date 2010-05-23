@@ -1204,7 +1204,7 @@ bool psCharacterInventory::IsItemAutoAttack(INVENTORY_SLOT_NUMBER slot)
 }
 
 
-psItem *psCharacterInventory::GetEffectiveWeaponInSlot(INVENTORY_SLOT_NUMBER slot)
+psItem *psCharacterInventory::GetEffectiveWeaponInSlot(INVENTORY_SLOT_NUMBER slot, bool includeShield)
 {
     // Slot out of range
     if (slot<0 || slot>=PSCHARACTER_SLOT_BULK1)
@@ -1214,7 +1214,7 @@ psItem *psCharacterInventory::GetEffectiveWeaponInSlot(INVENTORY_SLOT_NUMBER slo
     if (equipment[slot].itemIndexEquipped!=0)
     {
         psItem *item = inventory[equipment[slot].itemIndexEquipped].item;
-        if (item->GetIsMeleeWeapon() || item->GetIsRangeWeapon())
+        if (item->GetIsMeleeWeapon() || item->GetIsRangeWeapon() || (includeShield && item->GetIsShield()))
         {
             return item;
         }
