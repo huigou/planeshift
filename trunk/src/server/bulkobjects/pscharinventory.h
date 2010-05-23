@@ -326,9 +326,11 @@ public:
     /** Checks the equipment slot to see if it is a weapon.
       * An item is considered a weapon if: IsMeleeWeapon() || GetIsRangeWeapon()
       * @param slot The equipment slot to check weapon status.
+      * @param includeShield Tell if a shield can be returned as a weapon, useful when calculating 
+      *                      the shield blocking like a weapon.
       * @return a pointer to the item if it is a weapon. If no weapon found will use default fists. 
       */
-    psItem *GetEffectiveWeaponInSlot(INVENTORY_SLOT_NUMBER slot);
+    psItem *GetEffectiveWeaponInSlot(INVENTORY_SLOT_NUMBER slot, bool includeShield = false);
     
     /** Gets the item in the slot.
       * @param slot The equipment slot to checks.
