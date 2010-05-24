@@ -1277,7 +1277,7 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
             }
         }
         csString msg;
-        msg.Format("Channel %s has been added with hotkey /%d", joinedMsg.channel.GetData(), hotkeyChannel);
+        msg.Format("Channel %s has been added. Use /%d", joinedMsg.channel.GetData(), hotkeyChannel);
         ChatOutput(msg, settings.channelColor, CHAT_CHANNEL, true, false, hotkeyChannel);
 
         return;
