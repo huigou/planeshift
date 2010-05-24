@@ -1,4 +1,4 @@
-﻿<Author text="Kyeldon, Danielfre, Peko" />
+<Author text="Kyeldon, Danielfre, Peko" />
 <StringTable>
  <item orig="750" trans="750" />
  <item orig="System text color" trans="" />
@@ -121,7 +121,7 @@
  <item orig="Father Name:" trans="Faderns namn:" />
  <item orig="Rank" trans="Rang" />
  <item orig="Spawn item" trans="" />
- <item orig="o&clock" trans="o&klocka" />
+ <item orig="o&amp;clock" trans="o&amp;klocka" />
  <item orig="Own combat stance changes" trans="" />
  <item orig="Experience" trans="Erfarenhet" />
  <item orig="Upload!" trans="Ladda upp!" />
