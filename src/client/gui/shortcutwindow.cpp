@@ -722,7 +722,19 @@ bool pawsShortcutWindow::OnFingering(csString string, psControl::Device device, 
     {
         const psControl* other = psengine->GetCharControl()->GetMappedTrigger(device,button,mods);
         CS_ASSERT(other);
-        fingWnd->SetCollisionInfo(other->name);
+
+        csString name = GetDisplayName(other->name);
+        if (name.IsEmpty())     //then not cleaned up properly from deleting a shortcut
+        {
+            name = other->name; //use its numeric name
+        }
+        else
+        {
+            name.AppendFmt(" (%s)", other->name.GetDataSafe());
+        }
+
+        fingWnd->SetCollisionInfo(name);
+
         return false;
     }
 }
