@@ -1,4 +1,4 @@
-<Author text="Kyeldon, Danielfre, Peko" />
+﻿<Author text="Kyeldon, Danielfre, Peko" />
 <StringTable>
  <item orig="750" trans="750" />
  <item orig="System text color" trans="" />
@@ -282,7 +282,7 @@
  <item orig="Account Password:" trans="Kontolösenord" />
  <item orig="Items" trans="Föremål" />
  <item orig="Factions" trans="Faktion" />
- <item orig="Weight:" trans=""Vikt />
+ <item orig="Weight:" trans="Vikt:" />
  <item orig="Petition submitted:" trans="" />
  <item orig="Men Stam." trans="" />
  <item orig="Requesting World" trans="" />
