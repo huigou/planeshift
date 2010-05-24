@@ -62,6 +62,7 @@
 #define SETKEY_BUTTON        1102
 #define CLEAR_BUTTON         1103
 
+#define SHORTCUT_BUTTON_OFFSET  2000
 pawsShortcutWindow::pawsShortcutWindow()
 {
     vfs =  csQueryRegistry<iVFS > ( PawsManager::GetSingleton().GetObjectRegistry());
@@ -210,7 +211,7 @@ void pawsShortcutWindow::UpdateMatrix()
             {
                 button->Show();
                 button->SetText(names[shortcutNum]);
-                button->SetID(2000 + (int)shortcutNum);
+                button->SetID(SHORTCUT_BUTTON_OFFSET + (int)shortcutNum);
             }
             else
             {
@@ -315,8 +316,19 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
         {
             if (!labelBox->GetText() || *(labelBox->GetText()) == '\0')
             {
-                labelBox->Clear();
-                textBox->Clear();
+                if (textBox->GetText() && *(textBox->GetText()) != '\0')
+                {
+                    //no name but a command was specified.  
+                    psSystemMessage msg(0,MSG_ERROR,PawsManager::GetSingleton().Translate("Please specify a name when creating a shortcut."));
+                    msg.FireEvent();
+                    return true;
+                }
+                else //shortcut is empty and will be removed. Also remove possible key binding.
+                {
+                    csString editedCmd;
+                    editedCmd.Format("Shortcut %d",edit+1);
+                    psengine->GetCharControl()->RemapTrigger(editedCmd,psControl::NONE,0,0);
+                }
             }
             // Otherwise save the label and command as it is
             names[edit] = labelBox->GetText();
@@ -381,11 +393,11 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
 
     // Execute clicked on button
     if ( mouseButton == csmbLeft && !(keyModifier & CSMASK_CTRL))
-        ExecuteCommand( widget->GetID() - 2000, false );
+        ExecuteCommand( widget->GetID() - SHORTCUT_BUTTON_OFFSET, false );
     // Configure the button that was clicked on
     else if ( mouseButton == csmbRight || (mouseButton == csmbLeft && (keyModifier & CSMASK_CTRL)) )
     {
-        edit = widget->GetID() - 2000;
+        edit = widget->GetID() - SHORTCUT_BUTTON_OFFSET;
         if ( edit < 0 || edit >= NUM_SHORTCUTS )
             return false;
 
