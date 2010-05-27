@@ -1200,10 +1200,10 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                 PID playerID = PID(list.msg->GetUInt32());
                 float rot = list.msg->GetFloat();
                 where = list.msg->GetVector();
-                iSector* sector = list.msg->GetSector(psserver->GetCacheManager()->GetMsgStrings(), 0, psserver->entitymanager->GetEngine());
+                csString sector = list.msg->GetStr();
 
-                Debug4(LOG_SUPERCLIENT, playerID.Unbox(), "-->Got resurrect cmd: %s Rot: %.2f Where: %s\n",
-                       ShowID(playerID), rot, toString(where, sector).GetDataSafe());
+                Debug5(LOG_SUPERCLIENT, playerID.Unbox(), "-->Got resurrect cmd: %s Rot: %.2f Where: %s Sector: %s\n",
+                       ShowID(playerID), rot, where.Description().GetDataSafe(), sector.GetDataSafe());
 
                 // Make sure we haven't run past the end of the buffer
                 if (list.msg->overrun)

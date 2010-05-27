@@ -375,7 +375,7 @@ public:
     /**
      * Respawn a NPC in the given position.
      */
-    void Respawn(psCharacter* chardata, InstanceID instance, csVector3& where, float rot, iSector* sector);
+    void Respawn(psCharacter* chardata, InstanceID instance, csVector3& where, float rot, csString& sector);
     
     /// Adds all items to the world.
     /** Called at the server startup to add all the items to the game. 
