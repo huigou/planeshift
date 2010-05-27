@@ -842,7 +842,7 @@ void SpawnManager::Respawn(PID playerID, SpawnRule* spawnRule)
     csVector3 pos;
     float angle;
     csString sectorName;
-    iSector *sector = NULL;
+    iSector* sector = NULL;
     InstanceID instance;
 
     int count = 4; // For random positions we try 4 times before going with the result.
@@ -864,14 +864,16 @@ void SpawnManager::Respawn(PID playerID, SpawnRule* spawnRule)
         
     }
     
+    CS_ASSERT(sector);
+    
     Debug1(LOG_SPAWN,0,"Position accepted");
-    Respawn(chardata, instance, pos, angle, sector);
+    Respawn(chardata, instance, pos, angle, sectorName);
 }
 
 
-void SpawnManager::Respawn(psCharacter* chardata, InstanceID instance, csVector3& where, float rot, iSector* sector)
+void SpawnManager::Respawn(psCharacter* chardata, InstanceID instance, csVector3& where, float rot, csString& sector)
 {
-    psSectorInfo* spawnsector = cacheManager->GetSectorInfoByName(sector->QueryObject()->GetName());
+    psSectorInfo* spawnsector = cacheManager->GetSectorInfoByName(sector);
     if (spawnsector==NULL)
     {
         Error2("Spawn message indicated unresolvable sector '%s'\n",(const char*)sector);
