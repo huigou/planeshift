@@ -1204,13 +1204,13 @@ void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, float yrot, bo
         // User-specified position...check if it's close enough to the character.
 
         csVector3 delta;
-        delta = location.loc - suggestedPos;
+        delta = suggestedPos - location.loc;
         float dist = delta.Norm();
 
-        // Future: Could make it drop in the direction specified, if not at the
-        //         exact location...
         if (dist > 2 && actor->GetClient()->GetSecurityLevel() < GM_DEVELOPER) // max drop distance is 15m
-            suggestedPos = 0;
+        {
+            suggestedPos = location.loc + delta.Unit() * 2;
+        }
     }
 
     if (suggestedPos == 0 && !inplace)
