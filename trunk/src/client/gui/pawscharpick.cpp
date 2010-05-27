@@ -510,11 +510,9 @@ bool pawsCharacterPickerWindow::CheckLoadStatus()
 {
     if(!loaded)
     {
-        csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(models[selectedCharacter].factName);
-        if (factory.IsValid())
+        if (view->View(models[selectedCharacter].factName))
         {
             psengine->UnregisterDelayedLoader(this);
-            view->View(factory);
 
             iMeshWrapper * mesh = view->GetObject();        
             if (!mesh)
@@ -522,7 +520,6 @@ bool pawsCharacterPickerWindow::CheckLoadStatus()
                 PawsManager::GetSingleton().CreateWarningBox("Couldn't find mesh! Please run the updater");
                 return true;
             }
-            charApp->ClearEquipment();
             charApp->SetMesh(mesh);
 
             csRef<iSpriteCal3DState> spstate = scfQueryInterface<iSpriteCal3DState> (mesh->GetMeshObject());

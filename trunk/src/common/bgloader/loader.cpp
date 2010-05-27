@@ -40,6 +40,12 @@
 #include "util/psconst.h"
 #include "loader.h"
 
+#ifdef CS_DEBUG
+#define LOADER_DEBUG_MESSAGE(...) csPrintf(__VA_ARGS__)
+#else
+#define LOADER_DEBUG_MESSAGE(...)
+#endif
+
 CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
 {
 SCF_IMPLEMENT_FACTORY(BgLoader)
@@ -53,6 +59,79 @@ BgLoader::BgLoader(iBase *p)
 
 BgLoader::~BgLoader()
 {
+#ifdef CS_DEBUG
+    csRef<iStringArray> zone = csPtr<iStringArray>(new scfStringArray());
+    LoadPriorityZones(zone);
+    CleanDisconnectedSectors(NULL);
+    size_t leakCount;
+
+    leakCount = 0;
+    for(csRefArray<Sector>::Iterator it = sectors.GetIterator(); it.HasNext();)
+    {
+        Sector* t = it.Next();
+        if(t->object.IsValid())
+        {
+            LOADER_DEBUG_MESSAGE("detected leaking instance of sector %s\n", t->name.GetDataSafe());
+            leakCount += t->object->GetRefCount();
+            while(t->object.IsValid()) CleanSector(t);
+        }
+    }
+    LOADER_DEBUG_MESSAGE("detected %u leaking sectors\n", leakCount);
+
+    leakCount = 0;
+    for(csHash<csRef<MeshObj>, csStringID>::GlobalIterator it = meshes.GetIterator(); it.HasNext();)
+    {
+        MeshObj* t = it.Next();
+        if(t->object.IsValid())
+        {
+            LOADER_DEBUG_MESSAGE("detected leaking instance of meshobj %s\n", t->name.GetDataSafe());
+            leakCount += t->object->GetRefCount();
+            while(t->object.IsValid()) CleanMesh(t);
+        }
+    }
+    LOADER_DEBUG_MESSAGE("detected %u leaking meshes\n", leakCount);
+
+    leakCount = 0;
+    for(csHash<csRef<MeshFact>, csStringID>::GlobalIterator it = meshfacts.GetIterator(); it.HasNext();)
+    {
+        MeshFact* t = it.Next();
+        if(t->useCount != 0)
+        {
+            LOADER_DEBUG_MESSAGE("detected %u leaking instances of factory %s\n", t->useCount, t->name.GetDataSafe());
+            leakCount += t->useCount;
+            while(t->useCount) CleanMeshFact(t);
+        }
+    }
+    LOADER_DEBUG_MESSAGE("detected %u leaking factories\n", leakCount);
+
+    leakCount = 0;
+    for(csHash<csRef<Material>, csStringID>::GlobalIterator it = materials.GetIterator(); it.HasNext();)
+    {
+        Material* t = it.Next();
+        if(t->useCount != 0)
+        {
+            LOADER_DEBUG_MESSAGE("detected %u leaking instances of material %s\n", t->useCount, t->name.GetDataSafe());
+            leakCount += t->useCount;
+            while(t->useCount) CleanMaterial(t);
+        }
+    }
+    LOADER_DEBUG_MESSAGE("detected %u leaking materials\n", leakCount);
+
+    leakCount = 0;
+    for(csHash<csRef<Texture>, csStringID>::GlobalIterator it = textures.GetIterator(); it.HasNext();)
+    {
+        Texture* t = it.Next();
+        if(t->useCount != 0)
+        {
+            LOADER_DEBUG_MESSAGE("detected %u leaking instances of texture %s\n", t->useCount, t->name.GetDataSafe());
+            leakCount += t->useCount;
+            while(t->useCount) CleanTexture(t);
+        }
+    }
+    LOADER_DEBUG_MESSAGE("detected %u leaking textures\n", leakCount);
+
+    fflush(stdout);
+#endif
 }
 
 bool BgLoader::Initialize(iObjectRegistry* object_reg)
@@ -146,13 +225,6 @@ void BgLoader::ContinueLoading(bool waiting)
     {
         // True if at least one mesh finished load.
         bool finished = false;
-
-        // Delete from delete queue (fairly expensive, so limited per update).
-        if(!deleteQueue.IsEmpty())
-        {
-            CleanMesh(deleteQueue[0]);
-            deleteQueue.DeleteIndexFast(0);
-        }
 
         // Check if we need to reset i
         if (i == loadingMeshes.GetSize())
@@ -292,7 +364,7 @@ void BgLoader::CleanDisconnectedSectors(Sector* sector)
 
 void BgLoader::FindConnectedSectors(csRefArray<Sector>& connectedSectors, Sector* sector)
 {
-    if(connectedSectors.Find(sector) != csArrayItemNotFound)
+    if(connectedSectors.Find(sector) != csArrayItemNotFound || sector == NULL)
     {
         return;
     }
@@ -309,207 +381,207 @@ void BgLoader::FindConnectedSectors(csRefArray<Sector>& connectedSectors, Sector
 void BgLoader::CleanSector(Sector* sector)
 {
     if(!sector->object.IsValid())
+    {
         return;
-
-    for(size_t i=0; i<sector->meshes.GetSize(); i++)
-    {
-        if(sector->meshes[i]->object.IsValid())
-        {
-            sector->meshes[i]->object->GetMovable()->ClearSectors();
-            sector->meshes[i]->object->GetMovable()->UpdateMove();
-            engine->GetMeshes()->Remove(sector->meshes[i]->object);
-            sector->meshes[i]->object.Invalidate();
-            CleanMesh(sector->meshes[i]);
-            --(sector->objectCount);
-        }
     }
 
-    for(size_t i=0; i<sector->meshgen.GetSize(); i++)
+    bool failed = false;
+    for(;sector->objectCount > 0; ContinueLoading(true))
     {
-        CleanMeshGen(sector->meshgen[i]);
-        --(sector->objectCount);
-    }
-
-    for(size_t i=0; i<sector->portals.GetSize(); i++)
-    {
-        if(sector->portals[i]->mObject.IsValid())
+        for(size_t i=0; i<sector->lights.GetSize(); i++)
         {
-            engine->GetMeshes()->Remove(sector->portals[i]->mObject);
-            sector->portals[i]->pObject = NULL;
-            sector->portals[i]->mObject.Invalidate();
-            sector->activePortals.Delete(sector->portals[i]);
-            --(sector->objectCount);
-        }
-    }
-
-    for(size_t i=0; i<sector->lights.GetSize(); i++)
-    {
-        if(sector->lights[i]->object.IsValid())
-        {
-            engine->RemoveLight(sector->lights[i]->object);
-            sector->lights[i]->object.Invalidate();
-            --(sector->objectCount);
-        }
-
-        for(size_t j=0; j<sector->lights[i]->sequences.GetSize(); ++j)
-        {
-            if(sector->lights[i]->sequences[j]->status.IsValid())
+            // finish partially loaded light
+            if(!sector->lights[i]->loaded && sector->lights[i]->object.IsValid())
             {
-                for(size_t k=0; k<sector->lights[i]->sequences[j]->triggers.GetSize(); ++k)
+                if(LoadLight(sector->lights[i], true))
                 {
-                    if(sector->lights[i]->sequences[j]->triggers[k]->status.IsValid())
-                    {
-                        csRef<iSequenceTrigger> st = scfQueryInterface<iSequenceTrigger>(sector->lights[i]->sequences[j]->triggers[k]->status->GetResultRefPtr());
-                        engseq->RemoveTrigger(st);
-                        sector->lights[i]->sequences[j]->triggers[k]->status.Invalidate();
-                    }
+                    ++(sector->objectCount);
                 }
+            }
 
-                csRef<iSequenceWrapper> sw = scfQueryInterface<iSequenceWrapper>(sector->lights[i]->sequences[j]->status->GetResultRefPtr());
-                engseq->RemoveSequence(sw);
-                sector->lights[i]->sequences[j]->status.Invalidate();
+            if(sector->lights[i]->loaded)
+            {
+                sector->object->GetLights()->Remove(sector->lights[i]->object);
+                CleanLight(sector->lights[i]);
+                --(sector->objectCount);
             }
         }
-    }
 
-    // Unload all 'always loaded' meshes before destroying sector.
-    if(sector->objectCount != 0)
-    {
+        // Remove sequences.
+        for(size_t i=0; i<sector->sequences.GetSize(); ++i)
+        {
+            // finish partially loaded sequence
+            if(!sector->sequences[i]->loaded && sector->sequences[i]->status.IsValid())
+            {
+                LoadSequence(sector->sequences[i], true);
+            }
+
+            if(sector->sequences[i]->loaded)
+            {
+                CleanSequence(sector->sequences[i]);
+            }
+        }
+
+        for(size_t i=0; i<sector->meshgen.GetSize(); i++)
+        {
+            if(sector->meshgen[i]->status.IsValid())
+            {
+                CleanMeshGen(sector->meshgen[i]);
+                --(sector->objectCount);
+            }
+        }
+
+        for(size_t i=0; i<sector->meshes.GetSize(); i++)
+        {
+            if(sector->meshes[i]->object.IsValid())
+            {
+                CleanMesh(sector->meshes[i]);
+                --(sector->objectCount);
+            }
+        }
+
+        for(size_t i=0; i<sector->portals.GetSize(); i++)
+        {
+            if(sector->portals[i]->mObject.IsValid())
+            {
+                CleanPortal(sector->portals[i]);
+                sector->activePortals.Delete(sector->portals[i]);
+                --(sector->objectCount);
+            }
+        }
+
         for(size_t i=0; i<sector->alwaysLoaded.GetSize(); i++)
         {
-            sector->alwaysLoaded[i]->object->GetMovable()->ClearSectors();
-            sector->alwaysLoaded[i]->object->GetMovable()->UpdateMove();
-            engine->GetMeshes()->Remove(sector->alwaysLoaded[i]->object);
-            sector->alwaysLoaded[i]->object.Invalidate();
-            CleanMesh(sector->alwaysLoaded[i]);
-            --(sector->objectCount);
+            if(sector->alwaysLoaded[i]->object.IsValid())
+            {
+                CleanMesh(sector->alwaysLoaded[i]);
+                --(sector->objectCount);
+            }
         }
-    }
 
-    // Remove sequences.
-    for(size_t i=0; i<sector->sequences.GetSize(); ++i)
-    {
-        if(sector->sequences[i]->status.IsValid())
-        {
-            csRef<iSequenceWrapper> sw = scfQueryInterface<iSequenceWrapper>(sector->sequences[i]->status->GetResultRefPtr());
-            engseq->RemoveSequence(sw);
-            sector->sequences[i]->status.Invalidate();
-        }
-    }
-
-    if(sector->objectCount != 0)
-    {
-        csString msg;
-        msg.Format("Error cleaning sector. Sector still has %zu objects!", sector->objectCount);
-        CS_ASSERT_MSG(msg.GetData(), false);
+        CS_ASSERT(sector->objectCount >= 0);
     }
     CS_ASSERT_MSG("Error cleaning sector. Sector is invalid!", sector->object.IsValid());
 
     // Remove the sector from the engine.
     sector->checked = false;
-    sector->object->QueryObject()->SetObjectParent(0);
-    engine->GetSectors()->Remove(sector->object);
+    csWeakRef<iSector> w(sector->object);
+    engine->RemoveObject(w);
     sector->object.Invalidate();
+    if(w.IsValid())
+    {
+        LOADER_DEBUG_MESSAGE("detected leaking sector %u %s\n", w->GetRefCount(), sector->name.GetDataSafe());
+    }
 }
 
 void BgLoader::CleanMesh(MeshObj* mesh)
 {
+    csWeakRef<iMeshWrapper> m(mesh->object);
+    if(m.IsValid())
+    {
+        engine->RemoveObject(m);
+        mesh->object.Invalidate();
+    }
+    else
+    {
+        LOADER_DEBUG_MESSAGE("double free of mesh object %s\n", mesh->name.GetDataSafe());
+        return;
+    }
+    CS_ASSERT(!mesh->loading);
+
     for(size_t i=0; i<mesh->sequences.GetSize(); ++i)
     {
-        if(mesh->sequences[i]->status.IsValid())
-        {
-            for(size_t j=0; j<mesh->sequences[i]->triggers.GetSize(); ++j)
-            {
-                if(mesh->sequences[i]->triggers[j]->status.IsValid())
-                {
-                    csRef<iSequenceTrigger> st = scfQueryInterface<iSequenceTrigger>(mesh->sequences[i]->triggers[j]->status->GetResultRefPtr());
-                    engseq->RemoveTrigger(st);
-                    mesh->sequences[i]->triggers[j]->status.Invalidate();
-                }
-            }
-
-            csRef<iSequenceWrapper> sw = scfQueryInterface<iSequenceWrapper>(mesh->sequences[i]->status->GetResultRefPtr());
-            engseq->RemoveSequence(sw);
-            mesh->sequences[i]->status.Invalidate();
-        }
+        CleanSequence(mesh->sequences[i]);
     }
 
     for(size_t i=0; i<mesh->meshfacts.GetSize(); ++i)
     {
         CleanMeshFact(mesh->meshfacts[i]);
-    }
-
-    for(size_t i=0; i<mesh->mftchecked.GetSize(); ++i)
-    {
         mesh->mftchecked[i] = false;
     }
 
     for(size_t i=0; i<mesh->materials.GetSize(); ++i)
     {
         CleanMaterial(mesh->materials[i]);
-    }
-
-    for(size_t i=0; i<mesh->matchecked.GetSize(); ++i)
-    {
         mesh->matchecked[i] = false;
     }
 
     for(size_t i=0; i<mesh->textures.GetSize(); ++i)
     {
         CleanTexture(mesh->textures[i]);
+        mesh->texchecked[i] = false;
     }
 
-    for(size_t i=0; i<mesh->texchecked.GetSize(); ++i)
+    if(m.IsValid())
     {
-        mesh->texchecked[i] = false;
+        LOADER_DEBUG_MESSAGE("detected leaking mesh %u %s\n", m->GetRefCount(), mesh->name.GetDataSafe());
     }
 }
 
 void BgLoader::CleanMeshGen(MeshGen* meshgen)
 {
+  if(!meshgen->status.IsValid())
+  {
+      LOADER_DEBUG_MESSAGE("double-free of meshgen %s\n", meshgen->name.GetDataSafe());
+      return;
+  }
+
   meshgen->sector->object->RemoveMeshGenerator(meshgen->name);
   meshgen->status.Invalidate();
 
   for(size_t i=0; i<meshgen->meshfacts.GetSize(); ++i)
   {
       CleanMeshFact(meshgen->meshfacts[i]);
-  }
-
-  for(size_t i=0; i<meshgen->mftchecked.GetSize(); ++i)
-  {
       meshgen->mftchecked[i] = false;
   }
 
   for(size_t i=0; i<meshgen->materials.GetSize(); ++i)
   {
       CleanMaterial(meshgen->materials[i]);
-  }
-
-  for(size_t i=0; i<meshgen->matchecked.GetSize(); ++i)
-  {
       meshgen->matchecked[i] = false;
   }
+
+  CleanMesh(meshgen->object);
+}
+
+void BgLoader::CleanPortal(Portal* portal)
+{
+    if(!portal->mObject.IsValid())
+    {
+        LOADER_DEBUG_MESSAGE("double-free of portal %s\n", portal->name.GetDataSafe());
+    }
+
+    csWeakRef<iMeshWrapper> w(portal->mObject);
+    engine->RemoveObject(w);
+    portal->pObject = NULL;
+    portal->mObject.Invalidate();
+    if(w.IsValid())
+    {
+        LOADER_DEBUG_MESSAGE("detected leaking portal %u %s\n", w->GetRefCount(), portal->name.GetDataSafe());
+    }
 }
 
 void BgLoader::CleanMeshFact(MeshFact* meshfact)
 {
+  if(!meshfact->useCount)
+  {
+      LOADER_DEBUG_MESSAGE("double-free of factory %s\n", meshfact->name.GetDataSafe());
+      return;
+  }
+
   if(--meshfact->useCount == 0)
   {
-      csWeakRef<iMeshFactoryWrapper> mf = scfQueryInterface<iMeshFactoryWrapper>(meshfact->status->GetResultRefPtr());
-      if(mf->GetRefCount() == 2)
+      csWeakRef<iMeshFactoryWrapper> mfc(meshfact->object);
+      engine->RemoveObject(mfc);
+      meshfact->object.Invalidate();
+      if(mfc.IsValid())
       {
-          engine->GetMeshFactories()->Remove(mf);
+          LOADER_DEBUG_MESSAGE("detected leaking factory: %u %s\n", mfc->GetRefCount(), meshfact->name.GetDataSafe());
       }
-
-      meshfact->status.Invalidate();
 
       for(size_t i=0; i<meshfact->materials.GetSize(); ++i)
       {
           CleanMaterial(meshfact->materials[i]);
-      }
-
-      for(size_t i=0; i<meshfact->checked.GetSize(); ++i)
-      {
           meshfact->checked[i] = false;
       }
   }
@@ -517,22 +589,25 @@ void BgLoader::CleanMeshFact(MeshFact* meshfact)
 
 void BgLoader::CleanMaterial(Material* material)
 {
+  if(!material->useCount)
+  {
+      LOADER_DEBUG_MESSAGE("double-free of material %s\n", material->name.GetDataSafe());
+      return;
+  }
+
   if(--material->useCount == 0)
   {
-      if(material->mat->GetRefCount() == 2)
-      {
-          engine->GetMaterialList()->Remove(material->mat);
-      }
-
+      engine->RemoveObject(material->mat);
+      csWeakRef<iMaterialWrapper> m(material->mat);
       material->mat.Invalidate();
+      if(m.IsValid())
+      {
+          LOADER_DEBUG_MESSAGE("detected leaking material: %u %s\n", m->GetRefCount(), material->name.GetDataSafe());
+      }
 
       for(size_t i=0; i<material->textures.GetSize(); ++i)
       {
           CleanTexture(material->textures[i]);
-      }
-
-      for(size_t i=0; i<material->checked.GetSize(); ++i)
-      {
           material->checked[i] = false;
       }
   }
@@ -540,16 +615,94 @@ void BgLoader::CleanMaterial(Material* material)
 
 void BgLoader::CleanTexture(Texture* texture)
 {
+    if(!texture->useCount)
+    {
+        LOADER_DEBUG_MESSAGE("double-free of texture %s\n", texture->name.GetDataSafe());
+        return;
+    }
+
     if(--texture->useCount == 0)
     {
-        csWeakRef<iTextureWrapper> t = scfQueryInterface<iTextureWrapper>(texture->status->GetResultRefPtr());
-        if(t->GetRefCount() == 2)
-        {
-            engine->GetTextureList()->Remove(t);
-        }
-
+        csRef<iTextureWrapper> t = scfQueryInterface<iTextureWrapper>(texture->status->GetResultRefPtr());
+        csWeakRef<iTextureWrapper> tc(t);
+        engine->RemoveObject(t);
+        t.Invalidate();
         texture->status.Invalidate();
+        if(tc.IsValid())
+        {
+            LOADER_DEBUG_MESSAGE("detected leaking texture: %u %s\n", tc->GetRefCount(), texture->name.GetDataSafe());
+        }
     }
+}
+
+void BgLoader::CleanLight(Light* light)
+{
+    if(!light->object.IsValid())
+    {
+        LOADER_DEBUG_MESSAGE("double-free of light %s\n", light->name.GetDataSafe());
+        return;
+    }
+
+    for(size_t i=0; i<light->sequences.GetSize(); ++i)
+    {
+        CleanSequence(light->sequences[i]);
+    }
+
+    csWeakRef<iLight> w(light->object);
+    engine->RemoveObject(w);
+    light->object.Invalidate();
+    if(w.IsValid())
+    {
+        LOADER_DEBUG_MESSAGE("detected leaking light %u %s\n", w->GetRefCount(), light->name.GetDataSafe());
+    }
+
+    light->loaded = false;
+}
+
+void BgLoader::CleanSequence(Sequence* sequence)
+{
+    if(!sequence->loaded)
+    {
+        LOADER_DEBUG_MESSAGE("double-free of sequence %s\n", sequence->name.GetDataSafe());
+        return;
+    }
+
+    for(size_t i=0; i<sequence->triggers.GetSize(); ++i)
+    {
+        Trigger* trigger = sequence->triggers[i];
+        if(!trigger->loaded)
+        {
+            continue;
+        }
+        else if(trigger->status.IsValid())
+        {
+            csRef<iSequenceTrigger> st;
+            // @@@ would be nice to know why the result can be null
+            if(trigger->status->GetResultRefPtr().IsValid())
+            {
+                st = scfQueryInterface<iSequenceTrigger>(trigger->status->GetResultRefPtr());
+                //engseq->RemoveTrigger(st);
+                engine->RemoveObject(st);
+            }
+            trigger->status.Invalidate();
+            if(st.IsValid() && st->GetRefCount() > 1)
+            {
+                LOADER_DEBUG_MESSAGE("detected leaking trigger %u %s\n", st->GetRefCount() - 1, trigger->name.GetDataSafe());
+            }
+        }
+        trigger->loaded = false;
+    }
+
+    csRef<iSequenceWrapper> sw = scfQueryInterface<iSequenceWrapper>(sequence->status->GetResultRefPtr());
+    //engseq->RemoveSequence(sw);
+    engine->RemoveObject(sw);
+    sequence->status.Invalidate();
+    if(sw->GetRefCount() > 1)
+    {
+        LOADER_DEBUG_MESSAGE("detected leaking sequence %u %s\n", sw->GetRefCount() - 1, sequence->name.GetDataSafe());
+    }
+
+    sequence->loaded = false;
 }
 
 void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
@@ -620,11 +773,7 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
                 }
                 else if(!force && sector->meshes[i]->OutOfRange(unloadBox))
                 {
-                    sector->meshes[i]->object->GetMovable()->ClearSectors();
-                    sector->meshes[i]->object->GetMovable()->UpdateMove();
-                    engine->GetMeshes()->Remove(sector->meshes[i]->object);
-                    sector->meshes[i]->object.Invalidate();
-                    deleteQueue.Push(sector->meshes[i]);
+                    CleanMesh(sector->meshes[i]);
                     --(sector->objectCount);
                 }
             }
@@ -672,15 +821,6 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
 
             if(force)
             {
-                if(sector->portals[i]->mObject)
-                {
-                    engine->GetMeshes()->Remove(sector->portals[i]->mObject);
-                    sector->portals[i]->pObject = NULL;
-                    sector->portals[i]->mObject.Invalidate();
-                    sector->activePortals.Delete(sector->portals[i]);
-                    --(sector->objectCount);
-                }
-
                 if(!sector->portals[i]->targetSector->object.IsValid())
                 {
                     {
@@ -709,32 +849,11 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
                 LoadSector(wwLoadBox, wwUnloadBox, sector->portals[i]->targetSector, depth+1, false, loadMeshes);
             }
 
-            sector->portals[i]->mObject = engine->CreatePortal(sector->portals[i]->name, sector->object,
-                csVector3(0), sector->portals[i]->targetSector->object, sector->portals[i]->poly.GetVertices(),
-                (int)sector->portals[i]->poly.GetVertexCount(), sector->portals[i]->pObject);
-
-            if(sector->portals[i]->warp)
+            if(!sector->portals[i]->mObject.IsValid() && LoadPortal(sector->portals[i], sector))
             {
-                sector->portals[i]->pObject->SetWarp(sector->portals[i]->matrix, sector->portals[i]->wv, sector->portals[i]->ww);
+                sector->activePortals.Push(sector->portals[i]);
+                ++(sector->objectCount);
             }
-
-            if(sector->portals[i]->pfloat)
-            {
-                sector->portals[i]->pObject->GetFlags().SetBool(CS_PORTAL_FLOAT, true);
-            }
-
-            if(sector->portals[i]->clip)
-            {
-                sector->portals[i]->pObject->GetFlags().SetBool(CS_PORTAL_CLIPDEST, true);
-            }
-
-            if(sector->portals[i]->zfill)
-            {
-                sector->portals[i]->pObject->GetFlags().SetBool(CS_PORTAL_ZFILL, true);
-            }
-
-            sector->activePortals.Push(sector->portals[i]);
-            ++(sector->objectCount);
         }
         else if(!force && sector->portals[i]->OutOfRange(unloadBox))
         {
@@ -752,9 +871,7 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
                 LoadSector(wwLoadBox, wwUnloadBox, sector->portals[i]->targetSector, depth+1, false, loadMeshes);
             }
 
-            engine->GetMeshes()->Remove(sector->portals[i]->mObject);
-            sector->portals[i]->pObject = NULL;
-            sector->portals[i]->mObject.Invalidate();
+            CleanPortal(sector->portals[i]);
             sector->activePortals.Delete(sector->portals[i]);
             --(sector->objectCount);
         }
@@ -767,50 +884,18 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
         {
             if(sector->lights[i]->InRange(loadBox, force))
             {
-                sector->lights[i]->object = engine->CreateLight(sector->lights[i]->name, sector->lights[i]->pos,
-                    sector->lights[i]->radius, sector->lights[i]->colour, sector->lights[i]->dynamic);
-                sector->lights[i]->object->SetAttenuationMode(sector->lights[i]->attenuation);
-                sector->lights[i]->object->SetType(sector->lights[i]->type);
-                sector->object->GetLights()->Add(sector->lights[i]->object);
-                ++sector->objectCount;
-
-                // Load all light sequences.
-                for(size_t j=0; j<sector->lights[i]->sequences.GetSize(); ++j)
+                if(LoadLight(sector->lights[i]))
                 {
-                    sector->lights[i]->sequences[j]->status = tloader->LoadNodeWait(vfs->GetCwd(),
-                        sector->lights[i]->sequences[j]->data);
-                    for(size_t k=0; k<sector->lights[i]->sequences[j]->triggers.GetSize(); ++k)
-                    {
-                        sector->lights[i]->sequences[j]->triggers[k]->status = tloader->LoadNode(vfs->GetCwd(),
-                            sector->lights[i]->sequences[j]->triggers[k]->data);
-                    }
+                    sector->lights[i]->object->GetMovable()->SetSector(sector->object);
+                    sector->object->GetLights()->Add(sector->lights[i]->object);
+                    ++(sector->objectCount);
                 }
             }
             else if(!force && sector->lights[i]->OutOfRange(unloadBox))
             {
-                engine->RemoveLight(sector->lights[i]->object);
-                sector->lights[i]->object.Invalidate();
-                --sector->objectCount;
-
-                for(size_t j=0; j<sector->lights[i]->sequences.GetSize(); ++j)
-                {
-                    if(sector->lights[i]->sequences[j]->status.IsValid())
-                    {
-                        for(size_t k=0; k<sector->lights[i]->sequences[j]->triggers.GetSize(); ++k)
-                        {
-                            if(sector->lights[i]->sequences[j]->triggers[k]->status.IsValid())
-                            {
-                                csRef<iSequenceTrigger> st = scfQueryInterface<iSequenceTrigger>(sector->lights[i]->sequences[j]->triggers[k]->status->GetResultRefPtr());
-                                engseq->RemoveTrigger(st);
-                                sector->lights[i]->sequences[j]->triggers[k]->status.Invalidate();
-                            }
-                        }
-
-                        csRef<iSequenceWrapper> sw = scfQueryInterface<iSequenceWrapper>(sector->lights[i]->sequences[j]->status->GetResultRefPtr());
-                        engseq->RemoveSequence(sw);
-                        sector->lights[i]->sequences[j]->status.Invalidate();
-                    }
-                }
+                sector->object->GetLights()->Remove(sector->lights[i]->object);
+                CleanLight(sector->lights[i]);
+                --(sector->objectCount);
             }
         }
 
@@ -819,10 +904,9 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
             // Load all sector sequences.
             for(size_t i=0; i<sector->sequences.GetSize(); i++)
             {
-                if(!sector->sequences[i]->status.IsValid())
+                if(!sector->sequences[i]->loaded)
                 {
-                    sector->sequences[i]->status = tloader->LoadNode(vfs->GetCwd(),
-                        sector->sequences[i]->data);
+                    LoadSequence(sector->sequences[i]);
                 }
             }
         }
@@ -830,32 +914,7 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
         // Check whether this sector is empty and should be unloaded.
         if(sector->objectCount == sector->alwaysLoaded.GetSize() && sector->object.IsValid())
         {
-            // Unload all 'always loaded' meshes before destroying sector.
-            for(size_t i=0; i<sector->alwaysLoaded.GetSize(); i++)
-            {
-                sector->alwaysLoaded[i]->object->GetMovable()->ClearSectors();
-                sector->alwaysLoaded[i]->object->GetMovable()->UpdateMove();
-                engine->GetMeshes()->Remove(sector->alwaysLoaded[i]->object);
-                sector->alwaysLoaded[i]->object.Invalidate();
-                deleteQueue.Push(sector->meshes[i]);
-                --(sector->objectCount);
-            }
-
-            // Remove sequences.
-            for(size_t i=0; i<sector->sequences.GetSize(); i++)
-            {
-                if(sector->sequences[i]->status.IsValid())
-                {
-                    csRef<iSequenceWrapper> sw = scfQueryInterface<iSequenceWrapper>(sector->sequences[i]->status->GetResultRefPtr());
-                    engseq->RemoveSequence(sw);
-                    sector->sequences[i]->status.Invalidate();
-                }
-            }
-
-            // Remove the sector from the engine.
-            sector->object->QueryObject()->SetObjectParent(0);
-            engine->GetSectors()->Remove(sector->object);
-            sector->object.Invalidate();
+            CleanSector(sector);
         }
     }
 
@@ -922,16 +981,16 @@ bool BgLoader::LoadMeshGen(MeshGen* meshgen)
     if(!ready || !LoadMesh(meshgen->object))
       return false;
 
-    if(ready && !meshgen->status)
+    if(ready && !meshgen->status.IsValid())
     {
         meshgen->status = tloader->LoadNode(vfs->GetCwd(), meshgen->data, 0, meshgen->sector->object);
         return false;
     }
 
-    if(meshgen->status && meshgen->status->IsFinished())
+    if(meshgen->status.IsValid() && meshgen->status->IsFinished())
     {
-      meshgen->loading = false;
-      return true;
+        meshgen->loading = false;
+        return true;
     }
 
     return false;
@@ -940,7 +999,9 @@ bool BgLoader::LoadMeshGen(MeshGen* meshgen)
 bool BgLoader::LoadMesh(MeshObj* mesh)
 {
     if(mesh->object.IsValid())
+    {
       return true;
+    }
 
     bool ready = true;
     for(size_t i=0; i<mesh->meshfacts.GetSize(); i++)
@@ -989,70 +1050,48 @@ bool BgLoader::LoadMesh(MeshObj* mesh)
     {
         for(size_t i=0; i<mesh->sequences.GetSize(); ++i)
         {
-            if(mesh->sequences[i]->loaded)
-                continue;
-
-            if(!mesh->sequences[i]->status)
+            if(!mesh->sequences[i]->loaded)
             {
-                mesh->sequences[i]->status = tloader->LoadNode(mesh->path, mesh->sequences[i]->data);
-                ready = false;
-            }
-            else
-            {
-                if(ready && mesh->sequences[i]->status->IsFinished())
-                {
-                    if(!mesh->sequences[i]->status->WasSuccessful())
-                    {
-                        csString msg;
-                        msg.Format("Sequence '%s' in mesh '%s' failed to load.\n", mesh->sequences[i]->name.GetData(), mesh->name.GetData());
-                        CS_ASSERT_MSG(msg.GetData(), false);
-                    }
-                    
-                    mesh->sequences[i]->loaded = true;
-                }
-                else
-                    ready = false;
-            }
-        }
-    }
-
-    // Load triggers
-    if(ready)
-    {
-        for(size_t i=0; i<mesh->sequences.GetSize(); ++i)
-        {
-            for(size_t j=0; j<mesh->sequences[i]->triggers.GetSize(); ++j)
-            {
-                if(mesh->sequences[i]->triggers[j]->loaded)
-                	continue;
-
-                if(!mesh->sequences[i]->triggers[j]->status)
-                {
-                    mesh->sequences[i]->triggers[j]->status = tloader->LoadNode(mesh->path, mesh->sequences[i]->triggers[j]->data);
-                    ready = false;
-                }
-                else
-                {
-                    if(ready && mesh->sequences[i]->triggers[j]->status->IsFinished())
-                    {
-                        if(!mesh->sequences[i]->triggers[j]->status->WasSuccessful())
-                        {
-                            csString msg;
-                            msg.Format("Trigger '%s' in mesh '%s' failed to load.\n",
-                                mesh->sequences[i]->triggers[j]->name.GetData(), mesh->name.GetData());
-                            CS_ASSERT_MSG(msg.GetData(), false);
-                        }
-
-                        mesh->sequences[i]->triggers[j]->loaded = true;
-                    }
-                    else
-                        ready = false;
-                }
+                ready &= LoadSequence(mesh->sequences[i]);
             }
         }
     }
 
     return ready;
+}
+
+bool BgLoader::LoadPortal(Portal* portal, Sector* sector)
+{
+    if(portal->mObject.IsValid())
+    {
+        return true;
+    }
+
+    portal->mObject = engine->CreatePortal(portal->name, sector->object, csVector3(0),
+                portal->targetSector->object, portal->poly.GetVertices(),
+                (int)portal->poly.GetVertexCount(), portal->pObject);
+
+    if(portal->warp)
+    {
+        portal->pObject->SetWarp(portal->matrix, portal->wv, portal->ww);
+    }
+
+    if(portal->pfloat)
+    {
+        portal->pObject->GetFlags().SetBool(CS_PORTAL_FLOAT, true);
+    }
+
+    if(portal->clip)
+    {
+        portal->pObject->GetFlags().SetBool(CS_PORTAL_CLIPDEST, true);
+    }
+
+    if(portal->zfill)
+    {
+        portal->pObject->GetFlags().SetBool(CS_PORTAL_ZFILL, true);
+    }
+
+    return true;
 }
 
 bool BgLoader::LoadMeshFact(MeshFact* meshfact, bool wait)
@@ -1073,7 +1112,7 @@ bool BgLoader::LoadMeshFact(MeshFact* meshfact, bool wait)
         }
     }
 
-    if(ready && !meshfact->status)
+    if(ready && !meshfact->status.IsValid())
     {
         if(meshfact->data)
         {
@@ -1100,10 +1139,16 @@ bool BgLoader::LoadMeshFact(MeshFact* meshfact, bool wait)
             }
         }
     }
+    else if(ready && wait)
+    {
+        meshfact->status->Wait();
+    }
 
     if(meshfact->status && meshfact->status->IsFinished())
     {
         ++meshfact->useCount;
+        meshfact->object = scfQueryInterfaceSafe<iMeshFactoryWrapper>(meshfact->status->GetResultRefPtr());
+        meshfact->status.Invalidate();
         return true;
     }
 
@@ -1195,6 +1240,10 @@ bool BgLoader::LoadTexture(Texture* texture, bool wait)
             return false;
         }
     }
+    else if(wait)
+    {
+        texture->status->Wait();
+    }
 
     if(texture->status->IsFinished())
     {
@@ -1203,6 +1252,115 @@ bool BgLoader::LoadTexture(Texture* texture, bool wait)
     }
 
     return false;
+}
+
+bool BgLoader::LoadLight(Light* light, bool wait)
+{
+    if(light->loaded)
+    {
+        return true;
+    }
+
+    if(!light->object.IsValid())
+    {
+        light->object = engine->CreateLight(light->name, light->pos, light->radius, light->colour, light->dynamic);
+        light->object->SetAttenuationMode(light->attenuation);
+        light->object->SetType(light->type);
+    }
+
+    // Load all light sequences.
+    bool ready = true;
+    for(size_t i=0; i<light->sequences.GetSize(); ++i)
+    {
+        if(!light->sequences[i]->loaded)
+            ready &= LoadSequence(light->sequences[i], wait);
+    }
+
+    light->loaded = ready;
+    return ready;
+}
+
+bool BgLoader::LoadSequence(Sequence* sequence, bool wait)
+{
+    if(sequence->loaded)
+    {
+        return true;
+    }
+
+    if(!sequence->status.IsValid())
+    {
+        if(wait)
+        {
+            sequence->status = tloader->LoadNodeWait(vfs->GetCwd(), sequence->data);
+        }
+        else
+        {
+            sequence->status = tloader->LoadNode(vfs->GetCwd(), sequence->data);
+        }
+    }
+
+    if(!sequence->status->IsFinished())
+    {
+        if(wait)
+        {
+            sequence->status->Wait();
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    if(!sequence->status->WasSuccessful())
+    {
+        LOADER_DEBUG_MESSAGE("sequence %s failed to load\n", sequence->name.GetDataSafe());
+        sequence->loaded = true;
+        sequence->status.Invalidate();
+        return true;
+    }
+
+    bool ready = true;
+    for(size_t i=0; i<sequence->triggers.GetSize(); ++i)
+    {
+        Trigger* trigger = sequence->triggers[i];
+        if(trigger->loaded)
+        {
+            continue;
+        }
+
+        if(!trigger->status.IsValid())
+        {
+            if(wait)
+            {
+                trigger->status = tloader->LoadNodeWait(vfs->GetCwd(), trigger->data);
+            }
+            else
+            {
+                trigger->status = tloader->LoadNode(vfs->GetCwd(), trigger->data);
+            }
+        }
+        else if(!trigger->status->IsFinished() && wait)
+        {
+            trigger->status->Wait();
+        }
+        else
+        {
+            ready = false;
+            continue;
+        }
+
+        if(!trigger->status->WasSuccessful())
+        {
+            LOADER_DEBUG_MESSAGE("trigger %s failed to load\n", sequence->name.GetDataSafe());
+            trigger->status.Invalidate();
+        }
+
+        trigger->loaded = true;
+    }
+
+    sequence->loaded = ready;
+
+    return ready;
 }
 
 csPtr<iMeshFactoryWrapper> BgLoader::LoadFactory(const char* name, bool* failed, bool wait)
@@ -1225,26 +1383,39 @@ csPtr<iMeshFactoryWrapper> BgLoader::LoadFactory(const char* name, bool* failed,
 
     if(LoadMeshFact(meshfact, wait))
     {
+        csRef<iMeshFactoryWrapper> mfw(meshfact->object);
         if(!failed)
         {
             // Check success.
             csString msg;
             msg.Format("Failed to load factory '%s' path: %s filename: %s", name, (const char*) meshfact->path, (const char*) meshfact->filename);
-            CS_ASSERT_MSG(msg.GetData(), meshfact->status->WasSuccessful());
+            CS_ASSERT_MSG(msg.GetData(), mfw.IsValid());
         }
-        else if(!meshfact->status->WasSuccessful())
+        else if(!mfw.IsValid())
         {
             *failed = true;
             return csPtr<iMeshFactoryWrapper>(0);
         }
 
-        return scfQueryInterfaceSafe<iMeshFactoryWrapper>(meshfact->status->GetResultRefPtr());
+        return csPtr<iMeshFactoryWrapper>(mfw);
     }
 
     return csPtr<iMeshFactoryWrapper>(0);
 }
 
-void BgLoader::CloneFactory(const char* name, const char* newName, bool load, bool* failed)
+bool BgLoader::FreeFactory(const char* name)
+{
+    csRef<MeshFact> meshfact = meshfacts.Get(mfStringSet.Request(name), csRef<MeshFact>());
+    if(!meshfact.IsValid())
+    {
+        return false;
+    }
+
+    CleanMeshFact(meshfact);
+    return true;
+}
+
+void BgLoader::CloneFactory(const char* name, const char* newName, bool* failed)
 {
     // Find meshfact to clone.
     csRef<MeshFact> meshfact = meshfacts.Get(mfStringSet.Request(name), csRef<MeshFact>());
@@ -1263,18 +1434,43 @@ void BgLoader::CloneFactory(const char* name, const char* newName, bool load, bo
         }
     }
 
-    // Create a clone.
-    csRef<MeshFact> newMeshFact = meshfact->Clone(newName);
-    meshfacts.Put(mfStringSet.Request(newName), newMeshFact);
-
-    // Optionally begin loading.
-    if(load)
+    // check whether newName already exists
+    csRef<MeshFact> newMeshFact = meshfacts.Get(mfStringSet.Request(newName), csRef<MeshFact>());
+    if(newMeshFact.IsValid())
     {
-        LoadMeshFact(newMeshFact);
+        if(!failed)
+        {
+            // validation
+            csString msg;
+            msg.Format("Cloning factory '%s' to '%s' that already exists and doesn't match.", name, newName);
+            CS_ASSERT_MSG(msg.GetData(), *meshfact == *newMeshFact);
+        }
+        else if(!(*newMeshFact == *meshfact))
+        {
+            *failed = true;
+            return;
+        }
+    }
+
+    // Create a clone.
+    if(!newMeshFact.IsValid())
+    {
+        newMeshFact = meshfact->Clone(newName);
+        meshfacts.Put(mfStringSet.Request(newName), newMeshFact);
     }
 }
 
-csPtr<iMaterialWrapper> BgLoader::LoadMaterial(const char* name, bool* failed, bool wait)
+bool BgLoader::FreeMaterial(const char* name)
+{
+    csRef<Material> material = materials.Get(mStringSet.Request(name), csRef<Material>());
+    if(!material.IsValid())
+        return false;
+
+    CleanMaterial(material);
+    return true;
+}
+
+iMaterialWrapper* BgLoader::LoadMaterial(const char* name, bool* failed, bool wait)
 {
     csRef<Material> material = materials.Get(mStringSet.Request(name), csRef<Material>());
     {
@@ -1288,16 +1484,16 @@ csPtr<iMaterialWrapper> BgLoader::LoadMaterial(const char* name, bool* failed, b
         else if(!material.IsValid())
         {
           *failed = true;
-          return csPtr<iMaterialWrapper>(0);
+          return 0;
         }
     }
 
     if(LoadMaterial(material, wait))
     {
-        return csPtr<iMaterialWrapper>(material->mat);
+        return material->mat;
     }
 
-    return csPtr<iMaterialWrapper>(0);
+    return 0;
 }
 
 bool BgLoader::InWaterArea(const char* sector, csVector3* pos, csColor4** colour)
@@ -1342,9 +1538,6 @@ bool BgLoader::LoadZones(iStringArray* regions, bool loadMeshes, bool priority)
     // Next clean all zones which shouldn't be loaded.
     for(size_t i=0; i<loadedZones.GetSize(); ++i)
     {
-        if (loadedZones[i]->priority)
-            continue;
-
         bool found = false;
         for(size_t j=0; j<newLoadedZones.GetSize(); ++j)
         {
@@ -1408,16 +1601,16 @@ bool BgLoader::LoadZones(iStringArray* regions, bool loadMeshes, bool priority)
         {
             for(size_t k=0; k<loadedZones[i]->sectors[j]->activePortals.GetSize(); ++k)
             {
-                if(!loadedZones[i]->sectors[j]->activePortals[k]->targetSector->checked)
+                Portal* portal = loadedZones[i]->sectors[j]->activePortals[k];
+                if(!portal->targetSector->checked)
                 {
-                    CleanSector(loadedZones[i]->sectors[j]->activePortals[k]->targetSector);
-                    
-                    // TODO: improve this, it's a bit hacky.
-                    engine->GetMeshes()->Remove(loadedZones[i]->sectors[j]->activePortals[k]->mObject);
-                    loadedZones[i]->sectors[j]->activePortals[k]->pObject = NULL;
-                    loadedZones[i]->sectors[j]->activePortals[k]->mObject.Invalidate();
-                    loadedZones[i]->sectors[j]->activePortals.Delete(loadedZones[i]->sectors[j]->activePortals[k]);
-                    --(loadedZones[i]->sectors[j]->objectCount);
+                    CleanSector(portal->targetSector);
+                    if(portal->mObject.IsValid())
+                    {
+                        CleanPortal(portal);
+                        loadedZones[i]->sectors[j]->activePortals.Delete(portal);
+                        --(loadedZones[i]->sectors[j]->objectCount);
+                    }
                 }
             }
         }

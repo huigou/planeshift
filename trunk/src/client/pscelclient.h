@@ -92,6 +92,8 @@ struct InstanceObject : public CS::Utility::FastRefCount<InstanceObject>
     csRef<iMeshWrapper> pcmesh;
     csBox3 bbox;
     csWeakRefArray<iSector> sectors;
+    csRef<iMeshFactoryWrapper> nullFactory;
+    ~InstanceObject();
 };
 
 /**
@@ -138,7 +140,8 @@ private:
     csRedBlackTreeMap<csString, csRef<InstanceObject>,csFixedSizeAllocator<sizeof(CS::Container::RedBlackTreeNode<
                       csRedBlackTreePayload<csString,csRef<InstanceObject> > >)>, CS::Container::RedBlackTreeOrderingStrictWeak > instanceObjects;
 
-    csRef<iMeshFactoryWrapper> nullfact;
+    csRedBlackTreeMap<csString, csRef<iMeshFactoryWrapper>,csFixedSizeAllocator<sizeof(CS::Container::RedBlackTreeNode<
+                      csRedBlackTreePayload<csString,csRef<iMeshFactoryWrapper> > >)>, CS::Container::RedBlackTreeOrderingStrictWeak > nullFactories;
 
 public:
 
@@ -254,6 +257,15 @@ public:
      * Add an instance object to the tree.
      */
     void AddInstanceObject(const char* name, csRef<InstanceObject> object);
+
+    /**
+     * Remove an instance object to the tree.
+     */
+    void RemoveInstanceObject(const char* name);
+
+    csPtr<iMeshFactoryWrapper> FindNullFactory(const char* name) const;
+    void AddNullFactory(const char* name, csRef<iMeshFactoryWrapper> object);
+    void RemoveNullFactory(const char* name);
     
     /** Substituites in a string the group identifiers like $H $B etc depending on the race of the player.
      * 
@@ -495,7 +507,7 @@ public:
 
     psCharAppearance* CharAppearance() { return charApp; }
 
-    psLinearMovement linmove;
+    psLinearMovement* linmove;
 
     /// The Vital of the player with regards to his health/mana/fatigue/etc.
     psClientVitals *vitalManager;
@@ -559,6 +571,10 @@ public:
     virtual void Update();
 
 protected:
+    // needed during delayed loading
+    csRef<iMeshFactoryWrapper> factory;
+    csRef<iMeshFactoryWrapper> mountFactory;
+
     psCharAppearance* charApp;
 
     unsigned int chatBubbleID;
@@ -628,6 +644,7 @@ private:
     };
 
     PostLoadData* post_load;
+    csRef<iMeshFactoryWrapper> factory; // only used during loading
 };
 
 /** An action location on the client. */

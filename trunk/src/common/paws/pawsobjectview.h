@@ -59,10 +59,8 @@ public:
     
     /** View a mesh. 
      * @param factName The name of the factory to use.
-     * @param fileName The name of the file of the mesh file if the factory 
-                       is not found.
      */
-    void View( const char* factName, const char* fileName );
+    bool View( const char* factName);
     
     /** Creates the room ( world ) for the mesh to be placed.
      */
@@ -159,6 +157,8 @@ private:
     float camRotate;
     
     unsigned int ID;
+    
+    csString meshFactory;
 };
 CREATE_PAWS_FACTORY( pawsObjectView );
 

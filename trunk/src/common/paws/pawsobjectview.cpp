@@ -65,7 +65,17 @@ pawsObjectView::~pawsObjectView()
 {
     PawsManager::GetSingleton().RemoveObjectView(this);
 
+    // free mesh
     Clear();
+
+    // free map ressources
+    csRef<iEngine> engine =  csQueryRegistry<iEngine > ( PawsManager::GetSingleton().GetObjectRegistry());
+    engine->RemoveObject(view);
+    view.Invalidate();
+    engine->RemoveObject(meshView);
+    meshView.Invalidate();
+    engine->RemoveObject(meshSector);
+    meshSector.Invalidate();
 }
 
 bool pawsObjectView::Setup(iDocumentNode* node )
@@ -157,30 +167,30 @@ bool pawsObjectView::ContinueLoad()
     return false;
 }
 
-void pawsObjectView::View( const char* factName, const char* fileName )
+bool pawsObjectView::View( const char* factName)
 {
     csRef<iMeshFactoryWrapper> meshfact = 0;
-    meshfact = engine->GetMeshFactories()->FindByName (factName);
+    bool failed = false;
+    meshfact = loader->LoadFactory (factName, &failed, true);
 
-    if ( !meshfact )
+    if ( !meshfact.IsValid() )
     {
-        csRef<iLoader> loader = csQueryRegistry<iLoader> (PawsManager::GetSingleton().GetObjectRegistry());
-        meshfact = loader->LoadMeshObjectFactory (fileName);
-    }
-
-    if ( !meshfact )
-    {
-        Error2("Failed to load mesh factory from file %s", fileName);
-        return;
+        if(failed)
+            Error2("failed to load factory %s", factName);
+        CS_ASSERT(!failed);
+        return false;
     }
 
     View(meshfact);
+    meshFactory = factName;
+    return true;
 }
 
 void pawsObjectView::View( iMeshFactoryWrapper* wrapper )
 {
     Clear();
 
+    CS_ASSERT(wrapper);
     if(wrapper)
     {
         mesh = engine->CreateMeshWrapper (wrapper, "PaperDoll", meshSector, csVector3(0,0,0) );
@@ -189,6 +199,7 @@ void pawsObjectView::View( iMeshFactoryWrapper* wrapper )
 
 void pawsObjectView::View( iMeshWrapper* wrapper )
 {
+    CS_ASSERT(wrapper);
     if(wrapper)
     {
         View(wrapper->GetFactory());
@@ -502,9 +513,16 @@ bool pawsObjectView::OnMouseExit()
 
 void pawsObjectView::Clear()
 {
-    iMeshWrapper* mesh = meshSector->GetMeshes()->FindByName("PaperDoll");
-    if(mesh)
+    // notify the loader that we don't need the factory, anymore
+    if (mesh.IsValid())
     {
-      meshSector->GetMeshes()->Remove(mesh);
+        engine->RemoveObject(mesh);
+        mesh.Invalidate();
+    }
+
+    if (!meshFactory.IsEmpty())
+    {
+        loader->FreeFactory(meshFactory);
+        meshFactory.Empty();
     }
 }

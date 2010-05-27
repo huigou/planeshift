@@ -72,7 +72,7 @@ pawsPetStatWindow::pawsPetStatWindow()
 
 pawsPetStatWindow::~pawsPetStatWindow()
 {
-   delete charApp; 
+   delete charApp;
 }
 
 bool pawsPetStatWindow::PostSetup()
@@ -577,15 +577,14 @@ bool pawsPetStatWindow::SetupDoll()
     if (!widget || !actor)
         return false;
 
-    csRef<iMeshWrapper> mesh = actor->GetMesh();
-    if (!mesh) 
-    {
-        return false;
-    }        
-
     // Set the doll view
-    widget->View( mesh );
-    
+    while(!widget->View(actor->GetFactName()))
+    {
+        continue;
+    }
+
+    CS_ASSERT(widget->GetObject()->GetMeshObject());
+
     // Register this doll for updates
     widget->SetID(actor->GetEID().Unbox());
 
@@ -602,5 +601,5 @@ bool pawsPetStatWindow::SetupDoll()
 
     widget->EnableMouseControl(true);
 
-    return (true);
+    return true;
 }

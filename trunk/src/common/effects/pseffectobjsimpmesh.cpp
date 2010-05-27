@@ -102,7 +102,11 @@ bool psEffectObjSimpMesh::Render(const csVector3 &up)
 //    csRef<iMeshObject> newObj = templateMesh->GetMeshObject()->Clone();
 //    if (!newObj)
 //        newObj = templateMesh->GetMeshObject();
-    
+
+    if(mesh.IsValid())
+    {
+        engine->RemoveObject(mesh);
+    }
     mesh = engine->CreateMeshWrapper(templateMesh->GetMeshObject(), effectID);
 
     // mesh has been loaded before hand

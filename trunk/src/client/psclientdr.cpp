@@ -47,6 +47,7 @@
 #include "psnetmanager.h"
 #include "globals.h"
 #include "psclientchar.h"
+#include "zonehandler.h"
 
 ////////////////////////////////////////////////////////////////////////////
 //  PAWS INCLUDES
@@ -147,6 +148,12 @@ void psClientDR::CheckSectorCrossing(GEMClientActor *actor)
 {
     csString curr = actor->GetSector()->QueryObject()->GetName();
 
+    if (last_sector.IsEmpty())
+    {
+        last_sector = curr;
+        return;
+    }
+
     if (curr != last_sector)
     {
         // crossed sector boundary since last update
@@ -238,10 +245,7 @@ void psClientDR::HandleForcePosition(MsgEntry *me)
 {
     psForcePositionMessage msg(me, 0, msgstrings, psengine->GetEngine());
 
-    // Check if we crossed a sector boundary - if so, the player may have been
-    // moved to an unloaded map.  We must tell ZoneHandler to 1) load the
-    // necessary maps and 2) set the player's position.
-    if (last_sector != msg.sectorName)
+    if(last_sector != msg.sectorName)
     {
         psNewSectorMessage cross(last_sector, msg.sectorName, msg.pos);
         msghandler->Publish(cross.msg);
@@ -249,12 +253,7 @@ void psClientDR::HandleForcePosition(MsgEntry *me)
     }
     else
     {
-        CS_ASSERT(msg.sector);
-
-        if(!celclient->IsReady())
-            return;
-
-        celclient->GetMainPlayer()->SetPosition(msg.pos, msg.yrot, msg.sector);
+        psengine->GetZoneHandler()->LoadZone(msg.pos, msg.sectorName, true);
     }
 }
 

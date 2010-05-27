@@ -169,26 +169,14 @@ void ZoneHandler::HandleMessage(MsgEntry* me)
     LoadZone(msg.pos, msg.newSector);
 }
 
-void ZoneHandler::LoadZone(csVector3 pos, const char* sector)
+void ZoneHandler::LoadZone(csVector3 pos, const char* sector, bool force)
 {
-    if(loading || !strcmp(sector, LOADING_SECTOR) || sectorToLoad == sector)
+    if((loading || !strcmp(sector, LOADING_SECTOR)) && !force)
         return;
-
     newPos = pos;
+    csString sectorBackup = sectorToLoad; // cache old sector
     sectorToLoad = sector;
-    
     bool connected = false;
-    iSector * newsector = psengine->GetEngine()->FindSector(sector);
-    iSector * oldsector = NULL;
-    if (celclient->GetMainPlayer())
-        oldsector = celclient->GetMainPlayer()->GetSector();
-
-    if (oldsector && newsector && celclient->GetWorld())
-    {
-        //check this
-       // celclient->GetWorld()->BuildWarpCache(); // we need an up-to-date warp cache here
-        connected = celclient->GetWorld()->Connected(oldsector, newsector);
-    }
 
     ZoneLoadInfo* zone = FindZone(sectorToLoad);
     if (zone == NULL)
@@ -200,23 +188,39 @@ void ZoneHandler::LoadZone(csVector3 pos, const char* sector)
     // Move player to the loading sector.
     MovePlayerTo(csVector3(0.0f), LOADING_SECTOR);
 
-    // Load the world.
-    if(psengine->BackgroundWorldLoading())
+    // load target location
+    if(!psengine->BackgroundWorldLoading())
     {
-        psengine->GetLoader()->UpdatePosition(pos, sectorToLoad, true);
-    }
-    else
-    {
+        // Load the world.
         if(!psengine->GetLoader()->LoadZones(zone->regions))
         {
             Error2("Unable to load zone '%s'\n", zone->inSector.GetData());
             return;
         }
     }
+    else
+    {
+        // perform extra checks whether blocked loading is necessary
+        if(sectorToLoad != sectorBackup)
+        {
+            Error3("moving from %s to %s", sectorBackup.GetData(), sectorToLoad.GetData());
+            iSector * newsector = psengine->GetEngine()->FindSector(sectorToLoad.GetDataSafe());
+            iSector * oldsector = psengine->GetEngine()->FindSector(sectorBackup.GetDataSafe());
+
+            if (oldsector && newsector && celclient->GetWorld())
+            {
+                celclient->GetWorld()->BuildWarpCache(); // we need an up-to-date warp cache here
+                connected = celclient->GetWorld()->Connected(oldsector, newsector);
+            }
+
+            connected &= (psengine->GetLoader()->GetLoadingCount() == 0); // make sure we aren't loading too slowly
+        }
+
+        psengine->GetLoader()->UpdatePosition(pos, sectorToLoad, true);
+    }
 
     // Set load screen if required.
-    if(FindLoadWindow() && (psengine->GetLoader()->GetLoadingCount() != 0 || !psengine->HasLoadedMap()) &&
-      (!psengine->BackgroundWorldLoading() || !psengine->HasLoadedMap() || !connected))
+    if(FindLoadWindow() && psengine->GetLoader()->GetLoadingCount() != 0 && (!psengine->HasLoadedMap() || !connected))
     {
         loading = true;
 
@@ -239,11 +243,9 @@ void ZoneHandler::LoadZone(csVector3 pos, const char* sector)
 
         psengine->ForceRefresh();
     }
-    else
-    {
-        // Else we can immediately move to the new sector.
-        MovePlayerTo(newPos, sectorToLoad);
-    }
+
+    // move player to the new sector
+    MovePlayerTo(newPos, sectorToLoad);
 }
 
 void ZoneHandler::MovePlayerTo(const csVector3 & newPos, const csString & newSector)
@@ -281,9 +283,6 @@ void ZoneHandler::OnDrawingFinished()
             loading = false;
             loadProgressBar->Completed();
             psengine->SetLoadedMap(true);
-
-            // Move the actor to the new sector.
-            MovePlayerTo(newPos, sectorToLoad);
 
             // Move all entities which belong in these new sectors to them.
             psengine->GetCelClient()->OnMapsLoaded();

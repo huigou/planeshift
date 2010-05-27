@@ -46,6 +46,20 @@ psEffectObjMesh::psEffectObjMesh(iView * parentView, psEffect2DRenderer * render
 
 psEffectObjMesh::~psEffectObjMesh()
 {
+    csRef<iBgLoader> loader = csQueryRegistry<iBgLoader>(psCSSetup::object_reg);
+
+    // the mesh needs to be removed - else the loader's leak detection fails
+    if(mesh.IsValid())
+    {
+        engine->RemoveObject(mesh);
+        mesh.Invalidate();
+    }
+
+    if(meshFact.IsValid())
+    {
+        meshFact.Invalidate();
+        loader->FreeFactory(factName);
+    }
 }
 
 bool psEffectObjMesh::Load(iDocumentNode *node, iLoaderContext * ldr_context)
@@ -89,6 +103,10 @@ bool psEffectObjMesh::Render(const csVector3 &up)
     effectID += nextUniqueID++;
 
     // create a mesh wrapper from the factory we just created
+    if(mesh.IsValid())
+    {
+        engine->RemoveObject(mesh);
+    }
     mesh = engine->CreateMeshWrapper(meshFact, effectID.GetData());
 
     // do the up vector
@@ -111,7 +129,7 @@ bool psEffectObjMesh::Render(const csVector3 &up)
     if (!materialName.IsEmpty())
     {
         csRef<iMaterialWrapper> mat = effectsCollection->FindMaterial(materialName);
-        if (mat != 0)
+        if (mat.IsValid())
         {
             mesh->GetMeshObject()->SetMaterialWrapper(mat);
         }

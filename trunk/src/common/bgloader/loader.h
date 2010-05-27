@@ -65,13 +65,25 @@ public:
     * Start loading a material into the engine. Returns 0 if the material is not yet loaded.
     * @param failed Pass a boolean to be able to manually handle a failed load.
     */
-    csPtr<iMaterialWrapper> LoadMaterial(const char* name, bool* failed = NULL, bool wait = false);
+    iMaterialWrapper* LoadMaterial(const char* name, bool* failed = NULL, bool wait = false);
 
    /**
     * Start loading a mesh factory into the engine. Returns 0 if the factory is not yet loaded.
     * @param failed Pass a boolean to be able to manually handle a failed load.
     */
     csPtr<iMeshFactoryWrapper> LoadFactory(const char* name, bool* failed = NULL, bool wait = false);
+
+   /**
+    * Free your instance of a material.
+    * @return true upon success, false otherwise.
+    */
+    bool FreeMaterial(const char* name);
+
+   /**
+    * Free your instance of a factory.
+    * @return true upon success, false otherwise.
+    */
+    bool FreeFactory(const char* name);
 
     /**
     * Clone a mesh factory.
@@ -80,7 +92,7 @@ public:
     * @param load Begin loading the cloned mesh factory.
     * @param failed Pass a boolean to be able to manually handle a failed clone.
     */
-    void CloneFactory(const char* name, const char* newName, bool load = false, bool* failed = NULL);
+    void CloneFactory(const char* name, const char* newName, bool* failed = NULL);
 
    /**
     * Pass a data file to be cached. This method will parse your data and add it to it's
@@ -122,7 +134,7 @@ public:
    /**
     * Returns the number of objects currently loading.
     */
-    size_t GetLoadingCount() { return loadingMeshes.GetSize()*2 + finalisableMeshes.GetSize() + deleteQueue.GetSize(); }
+    size_t GetLoadingCount() { return loadingMeshes.GetSize()*2 + finalisableMeshes.GetSize(); }
 
    /**
     * Returns a pointer to the object registry.
@@ -328,17 +340,28 @@ private:
 
             meshfact->filename = filename;
             meshfact->materials = materials;
-            meshfact->checked = checked;
+            meshfact->checked.SetSize(checked.GetSize(), false);
             meshfact->bboxvs = bboxvs;
             meshfact->submeshes = submeshes;
 
             return csPtr<MeshFact>(meshfact);
         }
 
+        bool operator==(const MeshFact& other)
+        {
+            if (filename != other.filename)
+                return false;
+            if ((iDocumentNode*)data != (iDocumentNode*)other.data)
+                return false;
+
+            return true;
+        }
+
         csString name;
         csString filename;
         csString path;
         uint useCount;
+        csRef<iMeshFactoryWrapper> object;
         csRef<iThreadReturn> status;
         csRef<iDocumentNode> data;
         csRefArray<Material> materials;
@@ -370,7 +393,7 @@ private:
         bool checked;
         csString culler;
         csColor ambient;
-        size_t objectCount;
+        int objectCount;
         csRef<iSector> object;
         csWeakRef<Zone> parent;
         csRefArray<MeshGen> meshgen;
@@ -490,13 +513,13 @@ private:
     class Light : public CS::Utility::FastRefCount<Light>
     {
     public:
-        Light(const char* name) : name(name)
+        Light(const char* name) : name(name), loaded(false)
         {
         }
 
         inline bool InRange(const csBox3& curBBox, bool force)
         {
-            return !object.IsValid() && (force || curBBox.Overlap(bbox));
+            return !loaded && (force || curBBox.Overlap(bbox));
         }
 
         inline bool OutOfRange(const csBox3& curBBox)
@@ -514,6 +537,7 @@ private:
         csLightType type;
         csBox3 bbox;
         csRefArray<Sequence> sequences;
+        bool loaded;
     };
 
     class Trigger : public CS::Utility::FastRefCount<Trigger>
@@ -554,11 +578,14 @@ private:
     void CleanDisconnectedSectors(Sector* sector);
     void FindConnectedSectors(csRefArray<Sector>& connectedSectors, Sector* sector);
     void CleanSector(Sector* sector);
+    void CleanPortal(Portal* sequence);
     void CleanMesh(MeshObj* mesh);
     void CleanMeshGen(MeshGen* meshgen);
     void CleanMeshFact(MeshFact* meshfact);
     void CleanMaterial(Material* material);
     void CleanTexture(Texture* texture);
+    void CleanLight(Light* light);
+    void CleanSequence(Sequence* sequence);
 
     /* Internal loading methods. */
     void LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
@@ -566,9 +593,12 @@ private:
     void FinishMeshLoad(MeshObj* mesh);
     bool LoadMeshGen(MeshGen* meshgen);
     bool LoadMesh(MeshObj* mesh);
+    bool LoadPortal(Portal* portal, Sector* sector);
     bool LoadMeshFact(MeshFact* meshfact, bool wait = false);
     bool LoadMaterial(Material* material, bool wait = false);
     bool LoadTexture(Texture* texture, bool wait = false);
+    bool LoadLight(Light* light, bool wait = false);
+    bool LoadSequence(Sequence* sequence, bool wait = false);
 
     // Pointers to other needed plugins.
     iObjectRegistry* object_reg;
@@ -640,7 +670,6 @@ private:
     csRefArray<MeshGen> loadingMeshGen;
     csRefArray<MeshObj> loadingMeshes;
     csRefArray<MeshObj> finalisableMeshes;
-    csRefArray<MeshObj> deleteQueue;
 
     // Locks on the resource hashes.
     CS::Threading::ReadWriteMutex tLock;
@@ -660,6 +689,8 @@ private:
 
     // For world manipulation.
     csRef<iMeshWrapper> selectedMesh;
+    csString selectedFactory;
+    csString selectedMaterial;
     csVector2 previousPosition;
     csMatrix3 origRotation;
     bool resetHitbeam;

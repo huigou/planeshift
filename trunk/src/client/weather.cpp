@@ -85,7 +85,6 @@ void WeatherObject::Destroy()
         // Remove
         psengine->GetEngine()->RemoveObject(mesh);
         // CHECK_FINAL_DECREF_CONFIRM(mesh,"WeatherObject iMeshWrapper");
-        mesh.Invalidate();
     }
 }
 
@@ -232,7 +231,7 @@ bool RainWeatherObject::CreateMesh()
         mat->GetMaterial()->SetShader(shadertype, shader);
         shadertype = strings->Request("diffuse");
         mat->GetMaterial()->SetShader(shadertype, shader);
-        mfw = psengine->GetEngine ()->CreateMeshFactory ("crystalspace.mesh.object.particles", "rain");
+        mfw = psengine->GetEngine ()->CreateMeshFactory ("crystalspace.mesh.object.particles", "rain", false);
         if (!mfw)
         {
           Bug1("Could not create rain factory.");
@@ -244,6 +243,11 @@ bool RainWeatherObject::CreateMesh()
     iSector* sector = psengine->GetEngine()->FindSector(parent->sector);
         
     // Create the mesh
+    if (mesh.IsValid())
+    {
+        psengine->GetEngine()->RemoveObject(mesh);
+    }
+
     mesh = psengine->GetEngine ()->CreateMeshWrapper(mfw, "rain", sector,
                                                     csVector3 (0, 0, 0));
 
@@ -399,7 +403,7 @@ bool SnowWeatherObject::CreateMesh()
         mat->GetMaterial()->SetShader(shadertype, shader);
         shadertype = strings->Request("diffuse");
         mat->GetMaterial()->SetShader(shadertype, shader);
-        mfw = psengine->GetEngine ()->CreateMeshFactory ("crystalspace.mesh.object.particles", "snow");
+        mfw = psengine->GetEngine ()->CreateMeshFactory ("crystalspace.mesh.object.particles", "snow", false);
         if (!mfw)
         {
             Bug1("Could not create snow factory.");
@@ -410,8 +414,12 @@ bool SnowWeatherObject::CreateMesh()
     // Get the sector
     iSector* sector = psengine->GetEngine()->FindSector(parent->sector);
 
-        
     // Create the mesh
+    if (mesh.IsValid())
+    {
+        psengine->GetEngine()->RemoveObject(mesh);
+    }
+
     mesh = psengine->GetEngine ()->CreateMeshWrapper(mfw, "snow", sector,
                                                     csVector3 (0, 0, 0));
 

@@ -46,13 +46,9 @@ psLight::psLight(iObjectRegistry* object_reg)
 
 psLight::~psLight()
 {
-    if(podium.IsValid())
-    {
-        // Remove from the podium sector.
-        podium->GetLights()->Remove(light);
-    }
-
     light->QuerySceneNode()->SetParent(0);
+    light->GetMovable()->UpdateMove();
+    engine->RemoveObject(light);
 }
 
 unsigned int psLight::AttachLight(const char* name, const csVector3& pos,
@@ -66,14 +62,7 @@ unsigned int psLight::AttachLight(const char* name, const csVector3& pos,
 
     // Attach to mesh.
     light->QuerySceneNode()->SetParent(mw->QuerySceneNode());
-
-    csString sname(mw->GetMovable()->GetSectors()->Get(0)->QueryObject()->GetName());
-    if(sname.Find("room") == 0)
-    {
-        // Add to the podium sector.
-        podium = engine->GetSectors()->FindByName("room");
-        if(podium.IsValid()) podium->GetLights()->Add(light);
-    }
+    mw->GetMovable()->UpdateMove();
 
     lastTime = vclock->GetCurrentTicks();
 
