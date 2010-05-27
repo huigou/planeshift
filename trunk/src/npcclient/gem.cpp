@@ -66,6 +66,11 @@ gemNPCObject::gemNPCObject(psNPCClient* npcclient, EID id)
 gemNPCObject::~gemNPCObject()
 {
     delete pcmesh;
+    if(!factory.IsEmpty())
+    {
+        csRef<iBgLoader> loader = csQueryRegistry<iBgLoader> (npcclient->GetObjectReg());
+        loader->FreeFactory(factory);
+    }
 }
 
 void gemNPCObject::Move(const csVector3& pos, float rotangle,  const char* room, InstanceID instance)
@@ -140,6 +145,11 @@ bool gemNPCObject::InitMesh(    const char *factname,
         if(meshFact.IsValid())
         {
             mesh = meshFact->CreateMeshWrapper();
+            if(!factory.IsEmpty())
+            {
+                loader->FreeFactory(factory);
+                factory = factname;
+            }
         }
         else
         {
