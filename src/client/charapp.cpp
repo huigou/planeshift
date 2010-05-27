@@ -48,6 +48,8 @@
 #include "psclientchar.h"
 #include "globals.h"
 
+#include <csutil/callstack.h>
+
 static const unsigned int meshCount = 9;
 static const char* meshNames[meshCount] = { "Head", "Torso", "Hand", "Legs", "Foot", "Arm", "Eyes", "Hair", "Beard" };
 static const unsigned int bracersSlotCount = 2;
@@ -71,14 +73,66 @@ psCharAppearance::psCharAppearance(iObjectRegistry* objectReg)
     sneak = false;
 }
 
+void psCharAppearance::Free()
+{
+    while(!delayedAttach.IsEmpty())
+    {
+        // free ressources allocated by delayed loading
+        // that won't be used
+        Attachment & attach = delayedAttach.Front();
+        if(attach.materialPtr.IsValid())
+        {
+            attach.materialPtr.Invalidate();
+            psengine->GetLoader()->FreeMaterial(attach.materialName);
+        }
+
+        if(attach.factoryPtr.IsValid())
+        {
+            attach.factoryPtr.Invalidate();
+            psengine->GetLoader()->FreeFactory(attach.factName);
+        }
+
+        delayedAttach.PopFront();
+    }
+
+    ClearEquipment();
+    csHash<csString,csString>::GlobalIterator it = materials.GetIterator();
+    csString part;
+    while(it.HasNext())
+    {
+        // reset all materials
+        it.Next(part);
+        DefaultMaterial(part);
+    }
+
+    state.Invalidate();
+    stateFactory.Invalidate();
+    animeshObject.Invalidate();
+    animeshFactory.Invalidate();
+    baseMesh.Invalidate();
+
+    it.Reset();
+    while(it.HasNext())
+    {
+        // reset all materials
+        csString& value = it.Next();
+        psengine->GetLoader()->FreeMaterial(value);
+    }
+    materials.DeleteAll();
+}
+
 psCharAppearance::~psCharAppearance()
 {
-    ClearEquipment();
-    psengine->UnregisterDelayedLoader(this);
+    Free();
 }
 
 void psCharAppearance::SetMesh(iMeshWrapper* mesh)
 {
+    if(baseMesh == mesh)
+        return;
+
+    Free();
+
     state = scfQueryInterface<iSpriteCal3DState>(mesh->GetMeshObject());
     stateFactory = scfQueryInterface<iSpriteCal3DFactoryState>(mesh->GetMeshObject()->GetFactory());
 
@@ -265,8 +319,8 @@ void psCharAppearance::HairColor(csVector3& color)
     else
     {
         hairShader = color;
-        iShaderVariableContext* context_hair;
-        iShaderVariableContext* context_beard;
+        csRef<iShaderVariableContext> context_hair;
+        csRef<iShaderVariableContext> context_beard;
 
         if(state)
         {
@@ -293,7 +347,7 @@ void psCharAppearance::HairColor(csVector3& color)
             }
         }
 
-        if ( context_hair )
+        if ( context_hair.IsValid() )
         {
             CS::ShaderVarStringID varName = stringSet->Request("color modulation");
             csShaderVariable* var = context_hair->GetVariableAdd(varName);
@@ -304,7 +358,7 @@ void psCharAppearance::HairColor(csVector3& color)
             }
         }
 
-        if ( context_beard )
+        if ( context_beard.IsValid() )
         {
             CS::ShaderVarStringID varName = stringSet->Request("color modulation");
             csShaderVariable* var = context_beard->GetVariableAdd(varName);
@@ -659,7 +713,6 @@ bool psCharAppearance::Dequip(csString& slotname,
         {
             DefaultMaterial(part);
         }
-        DefaultMaterial(part);
     }
 
     ClearEquipment(slotname);
@@ -738,6 +791,7 @@ bool psCharAppearance::ChangeMaterial(const char* part, const char* materialName
             Attachment attach(false);
             attach.materialName = materialNameParsed;
             attach.partName = part;
+            attach.materialPtr = material;
             if(delayedAttach.IsEmpty())
             {
                 psengine->RegisterDelayedLoader(this);
@@ -747,7 +801,7 @@ bool psCharAppearance::ChangeMaterial(const char* part, const char* materialName
             return true;
         }
 
-        ProcessAttach(material, materialName, part);
+        ProcessAttach(material, materialNameParsed, part);
         return true;
     }
 
@@ -821,7 +875,7 @@ bool psCharAppearance::Attach(const char* socketName, const char* meshFactName, 
     CS_ASSERT(state.IsValid());
 
     csRef<iSpriteCal3DSocket> socket = state->FindSocket( socketName );
-    if ( !socket )
+    if ( !socket.IsValid() )
     {
         Notify2(LOG_CHARACTER, "Socket %s not found.", socketName);
         return false;
@@ -845,13 +899,18 @@ bool psCharAppearance::Attach(const char* socketName, const char* meshFactName, 
             return false;
         }
     }
+    
+    Detach(socketName); // detach anything previously attached (free ressources)
 
     if(!factory.IsValid() || (materialName != NULL && !material.IsValid()))
     {
         Attachment attach(true);
         attach.factName = meshFactName;
+        attach.factoryPtr = factory;
         attach.materialName = materialName;
-        attach.socket = socket;
+        attach.materialPtr = material;
+        // using socket name as the mesh may change while loading the factory/materials
+        attach.socket = socketName;
         if(delayedAttach.IsEmpty())
         {
             psengine->RegisterDelayedLoader(this);
@@ -861,6 +920,15 @@ bool psCharAppearance::Attach(const char* socketName, const char* meshFactName, 
     else
     {
         ProcessAttach(factory, material, meshFactName, socket);
+        if(materialName != NULL)
+        {
+            csString & mat = materials.GetOrCreate(socketName);
+            if(!mat.IsEmpty()) // free previously allocated loader ressource
+            {
+                psengine->GetLoader()->FreeMaterial(materialName);
+            }
+            mat = materialName;
+        }
     }
 
     return true;
@@ -915,17 +983,62 @@ void psCharAppearance::ProcessAttach(csRef<iMeshWrapper> meshWrap, csRef<iSprite
 
 void psCharAppearance::ProcessAttach(csRef<iMaterialWrapper> material, const char* materialName, const char* partName)
 {
-    if (!state->SetMaterial(partName, material))
+    if (state->SetMaterial(partName, material))
     {
+        csString & mat = materials.GetOrCreate(partName);
+        if (!mat.IsEmpty())
+        {
+            // free loader ressources
+            psengine->GetLoader()->FreeMaterial(mat);
+        }
+        mat = materialName;
+    }
+    else
+    {
+        // Try mirroring
         csString left, right;
         left.Format("Left %s", partName);
         right.Format("Right %s", partName);
 
-        // Try mirroring
-        if(!state->SetMaterial(left, material) || !state->SetMaterial(right, material))
+        size_t success = 0;
+        if (state->SetMaterial(left, material))
         {
-             Error3("Failed to set material \"%s\" on part \"%s\"", materialName, partName);
-             return;
+            ++success;
+            csString & mat = materials.GetOrCreate(left);
+            if (!mat.IsEmpty())
+            {
+                // free loader ressources
+                psengine->GetLoader()->FreeMaterial(mat);
+            }
+            mat = materialName;
+        }
+
+        if (state->SetMaterial(right, material))
+        {
+            ++success;
+            csString & mat = materials.GetOrCreate(right);
+            if (!mat.IsEmpty())
+            {
+                // free loader ressources
+                psengine->GetLoader()->FreeMaterial(mat);
+            }
+            mat = materialName;
+        }
+
+        if (success < 2)
+        {
+            Error3("Failed to set material \"%s\" on part \"%s\"", materialName, partName);
+        }
+
+        if (success < 1)
+        {
+            // free loader ressources
+            psengine->GetLoader()->FreeMaterial(materialName);
+        }
+        else if (success > 1)
+        {
+            // we use it twice, but only got 1 reference, therefore we get another one
+            psengine->GetLoader()->LoadMaterial(materialName);
         }
     }
 }
@@ -934,33 +1047,67 @@ bool psCharAppearance::CheckLoadStatus()
 {
     if(!delayedAttach.IsEmpty())
     {
-        Attachment attach = delayedAttach.Front();
+        Attachment & attach = delayedAttach.Front();
 
         if(attach.factory)
         {
-            csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(attach.factName);
+            csRef<iMeshFactoryWrapper> & factory = attach.factoryPtr;
+            if(!factory.IsValid())
+            {
+                factory = psengine->GetLoader()->LoadFactory(attach.factName);
+            }
 
             if(factory.IsValid())
             {
+                csRef<iSpriteCal3DSocket> socket = state->FindSocket( attach.socket );
+                if (!socket.IsValid())
+                {
+                    Notify2(LOG_CHARACTER, "Socket %s not found.", attach.socket.GetDataSafe());
+                    
+                    // free allocated factory
+                    factory.Invalidate();
+                    psengine->GetLoader()->FreeFactory(attach.factName);
+                    delayedAttach.PopFront();
+                    return true;
+                }
+
                 if(!attach.materialName.IsEmpty())
                 {
-                    csRef<iMaterialWrapper> material = psengine->GetLoader()->LoadMaterial(attach.materialName);
+                    csRef<iMaterialWrapper> & material = attach.materialPtr;
+
+                    if(!material.IsValid())
+                    {
+                        material = psengine->GetLoader()->LoadMaterial(attach.materialName);
+                    }
+
                     if(material.IsValid())
                     {
-                        ProcessAttach(factory, material, attach.factName, attach.socket);
+                        ProcessAttach(factory, material, attach.factName, socket);
+                        csString & mat = materials.GetOrCreate(attach.socket);
+                        if(!mat.IsEmpty()) // free previously allocated loader ressource
+                        {
+                            psengine->GetLoader()->FreeMaterial(attach.materialName);
+                        }
+                        mat = attach.materialName;
                         delayedAttach.PopFront();
                     }
                 }
                 else
                 {
-                    ProcessAttach(factory, NULL, attach.factName, attach.socket);
+                    ProcessAttach(factory, NULL, attach.factName, socket);
                     delayedAttach.PopFront();
                 }
             }
         }
         else
         {
-            csRef<iMaterialWrapper> material = psengine->GetLoader()->LoadMaterial(attach.materialName);
+            csRef<iMaterialWrapper> & material = attach.materialPtr;
+
+            if(!material.IsValid())
+            {
+                material = psengine->GetLoader()->LoadMaterial(attach.materialName);
+            }
+
             if(material.IsValid())
             {
                 ProcessAttach(material, attach.materialName, attach.partName);
@@ -1170,7 +1317,6 @@ bool psCharAppearance::Detach(const char* socketName, bool removeItem )
     }
     CS_ASSERT(state.IsValid());
 
-
     csRef<iSpriteCal3DSocket> socket = state->FindSocket( socketName );
     if ( !socket )
     {
@@ -1187,8 +1333,35 @@ bool psCharAppearance::Detach(const char* socketName, bool removeItem )
     {
         meshWrap->QuerySceneNode()->SetParent (0);
         socket->SetMeshWrapper( NULL );
+
+        csString material = materials.Get(socketName, "");
+        csString factory;
+
+        iMeshFactoryWrapper* fact = meshWrap->GetFactory();
+
+        // check whether we have a factory to free
+        if(fact)
+        {
+            factory = fact->QueryObject()->GetName();
+        }
+
         if(removeItem)
+        {
             engine->RemoveObject( meshWrap );
+        }
+        meshWrap.Invalidate();
+
+        // free loader ressources
+        if(factory)
+        {
+            psengine->GetLoader()->FreeFactory(factory);
+        }
+
+        if(!material.IsEmpty())
+        {
+            psengine->GetLoader()->FreeMaterial(material);
+            materials.DeleteAll(socketName);
+        }
     }
 
     usedSlots.Delete(socketName);

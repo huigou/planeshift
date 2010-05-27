@@ -97,7 +97,6 @@ protected:
 
     csArray<sectorTransformation> transarray;
 
-    void BuildWarpCache();
 public:
     psWorld();
     ~psWorld();
@@ -132,6 +131,7 @@ public:
     static float Matrix2YRot(const csMatrix3& mat);
 
     void DumpWarpCache();
+    void BuildWarpCache();
 };
 
 

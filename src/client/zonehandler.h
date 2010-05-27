@@ -84,7 +84,7 @@ public:
 
     void HandleMessage(MsgEntry* me);
 
-    void LoadZone(csVector3 pos, const char* sector);
+    void LoadZone(csVector3 pos, const char* sector, bool force = false);
 
     /** Call this after drawing on screen finished.
         It checks if player just crossed boundary between sectors and loads/unloads needed maps */

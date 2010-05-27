@@ -60,8 +60,12 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
             return 0;
 
         // Load meshfactory.
-        LoadMeshFact(meshfact, true);
-        csRef<iMeshFactoryWrapper> factory = scfQueryInterface<iMeshFactoryWrapper>(meshfact->status->GetResultRefPtr());
+        if(!LoadMeshFact(meshfact, true))
+        {
+            return 0;
+        }
+        selectedFactory = factName;
+        csRef<iMeshFactoryWrapper> factory = meshfact->object;
 
         // Update stored position.
         previousPosition = pos;
@@ -83,7 +87,15 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
             csRef<Material> material = materials.Get(mStringSet.Request(matName), csRef<Material>());
             if(material.IsValid())
             {
-                LoadMaterial(material, true);
+                if(!LoadMaterial(material, true))
+                {
+                    engine->RemoveObject(selectedMesh);
+                    selectedMesh.Invalidate();
+                    FreeFactory(selectedFactory);
+                    selectedFactory.Empty();
+                    return 0;
+                }
+                selectedMaterial = matName;
                 selectedMesh->GetMeshObject()->SetMaterialWrapper(material->mat);
             }
         }
@@ -159,6 +171,18 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
         {
             selectedMesh->GetMovable()->SetSector(0);
             selectedMesh.Invalidate();
+        }
+
+        if(!selectedMaterial.IsEmpty())
+        {
+            FreeMaterial(selectedMaterial);
+            selectedMaterial.Empty();
+        }
+
+        if(!selectedFactory.IsEmpty())
+        {
+            FreeFactory(selectedFactory);
+            selectedFactory.Empty();
         }
     }
 }

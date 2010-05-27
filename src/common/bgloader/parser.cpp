@@ -797,7 +797,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                         }
 
                         // alwaysloaded ignores range checks. If the sector is loaded then so is this mesh.
-                        if(node2->GetAttributeValueAsBool("alwaysloaded"))
+                        if(node2->GetAttributeValueAsBool("alwaysloaded") || m->bbox.Empty() || m->bbox.IsNaN())
                         {
                             s->alwaysLoaded.Push(m);
                         }

@@ -40,7 +40,6 @@
 #include <imesh/objmodel.h>
 #include <imesh/spritecal3d.h>
 #include <imesh/nullmesh.h>
-#include <imesh/nullmesh.h>
 #include <ivideo/material.h>
 #include <csgeom/math3d.h>
 
@@ -956,7 +955,7 @@ void psCelClient::AttachObject( iObject* object, GEMClientObject* clientObject)
 void psCelClient::UnattachObject( iObject* object, GEMClientObject* clientObject)
 {
     csRef<psGemMeshAttach> attacher (CS::GetChildObject<psGemMeshAttach>(object));
-    if (attacher)
+    if (attacher.IsValid())
     {
         if ( attacher->GetObject () == clientObject )
         {
@@ -971,7 +970,7 @@ GEMClientObject* psCelClient::FindAttachedObject(iObject* object)
     GEMClientObject* found = 0;
 
     csRef<psGemMeshAttach> attacher (CS::GetChildObject<psGemMeshAttach>(object));
-    if (attacher)
+    if (attacher.IsValid())
     {
         found = attacher->GetObject();
     }
@@ -1013,6 +1012,11 @@ csPtr<InstanceObject> psCelClient::FindInstanceObject(const char* name) const
 void psCelClient::AddInstanceObject(const char* name, csRef<InstanceObject> object)
 {
     instanceObjects.Put(name, object);
+}
+
+void psCelClient::RemoveInstanceObject(const char* name)
+{
+    instanceObjects.Delete(name);
 }
 
 void psCelClient::replaceRacialGroup(csString &string)
@@ -1063,7 +1067,7 @@ GEMClientObject::GEMClientObject(psCelClient* cel, EID id) : eid(id)
 
 GEMClientObject::~GEMClientObject()
 {
-    if(pcmesh)
+    if(pcmesh.IsValid())
     {
         cel->GetShadowManager()->RemoveShadow(this);
         cel->UnattachObject(pcmesh->QueryObject(), this);
@@ -1286,7 +1290,7 @@ float GEMClientObject::RangeTo(GEMClientObject * obj, bool ignoreY)
 }
 
 GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
-               : GEMClientObject( cel, mesg.entityid ), linmove(psengine->GetObjectRegistry()), post_load(new PostLoadData)
+               : GEMClientObject( cel, mesg.entityid ), linmove(new psLinearMovement(psengine->GetObjectRegistry())), post_load(new PostLoadData)
 {
     chatBubbleID = 0;
     name = mesg.name;
@@ -1346,7 +1350,7 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
     // loaded, but since the mesh stores position, etc., it's important to
     // have something in the meantime so we can work with the object without crashing.
     csRef<iMeshFactoryWrapper> nullmesh = psengine->GetEngine()->FindMeshFactory("nullmesh");
-    if (!nullmesh)
+    if (!nullmesh.IsValid())
     {
         nullmesh = psengine->GetEngine()->CreateMeshFactory("crystalspace.mesh.object.null", "nullmesh");
         csRef<iNullFactoryState> nullstate = scfQueryInterface<iNullFactoryState> (nullmesh->GetMeshObjectFactory());
@@ -1361,11 +1365,11 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
     pcmesh = nullmesh->CreateMeshWrapper();
     pcmesh->QueryObject()->SetName(name);
 
-    linmove.InitCD(mesg.top, mesg.bottom, mesg.offset, pcmesh);
-    linmove.SetDeltaLimit(0.2f);
+    linmove->InitCD(mesg.top, mesg.bottom, mesg.offset, pcmesh);
+    linmove->SetDeltaLimit(0.2f);
 
     if (mesg.sector != NULL && !psengine->GetZoneHandler()->IsLoading())
-        linmove.SetDRData(mesg.on_ground, 1.0f, mesg.pos, mesg.yrot, mesg.sector, mesg.vel, mesg.worldVel, mesg.ang_vel);
+        linmove->SetDRData(mesg.on_ground, 1.0f, mesg.pos, mesg.yrot, mesg.sector, mesg.vel, mesg.worldVel, mesg.ang_vel);
     else
         cel->HandleUnresolvedPos(this, mesg.pos, mesg.yrot, mesg.sectorName);
 
@@ -1374,9 +1378,10 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
     if(scale > 0.0f)
     {
         bool failed = false;
-        csString newFactName = factName+race;
+        csString newFactName = factName;
+        newFactName.AppendFmt("%f", scale);
 
-        psengine->GetLoader()->CloneFactory(factName, newFactName, true, &failed);
+        psengine->GetLoader()->CloneFactory(factName, newFactName, &failed);
 
         if(failed)
         {
@@ -1395,7 +1400,7 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
         csString newFactName = mountFactname;
         newFactName.AppendFmt("%f", mountScale);
 
-        psengine->GetLoader()->CloneFactory(mountFactname, newFactName, true, &failed);
+        psengine->GetLoader()->CloneFactory(mountFactname, newFactName, &failed);
 
         if(failed)
         {
@@ -1408,7 +1413,6 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
         }
     }
 
-
     LoadMesh();
 
     DRcounter = 0;  // mesg.counter cannot be trusted as it may have changed while the object was gone
@@ -1420,19 +1424,43 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
 GEMClientActor::~GEMClientActor()
 {
     delete vitalManager;
+    delete linmove;
+    cal3dstate.Invalidate();
+    if(pcmesh.IsValid())
+    {
+        cel->GetShadowManager()->RemoveShadow(this);
+        cel->UnattachObject(pcmesh->QueryObject(), this);
+        psengine->GetEngine()->RemoveObject(pcmesh);
+        pcmesh.Invalidate();
+    }
+    
     delete charApp;
+
+    if(factory.IsValid())
+    {
+        factory.Invalidate();
+        if (!factName.IsEmpty() && factName != "nullmesh")
+            psengine->GetLoader()->FreeFactory(factName);
+    }
+
+    if(mountFactory.IsValid())
+    {
+        mountFactory.Invalidate();
+        if (!mountFactname.IsEmpty() && mountFactname != "null")
+            psengine->GetLoader()->FreeFactory(mountFactname);
+    }
 }
 
 void GEMClientActor::SwitchToRealMesh(iMeshWrapper* mesh)
 {
     // Clean up old mesh.
-    pcmesh->GetMovable()->ClearSectors();
+    psengine->GetEngine()->RemoveObject(pcmesh);
 
     // Switch to real mesh.
     pcmesh = mesh;
 
     // Init CD.
-    linmove.InitCD(post_load->top, post_load->bottom, post_load->offset, pcmesh);
+    linmove->InitCD(post_load->top, post_load->bottom, post_load->offset, pcmesh);
 
     // Set position and other data.
     SetPosition(post_load->pos, post_load->yrot, post_load->sector);
@@ -1496,17 +1524,17 @@ int GEMClientActor::GetAnimIndex (csStringHashReversible* msgstrings, csStringID
 
 void GEMClientActor::Update()
 {
-    linmove.TickEveryFrame();
+    linmove->TickEveryFrame();
 }
 
 void GEMClientActor::GetLastPosition (csVector3& pos, float& yrot, iSector*& sector)
 {
-    linmove.GetLastPosition(pos,yrot,sector);
+    linmove->GetLastPosition(pos,yrot,sector);
 }
 
 const csVector3 GEMClientActor::GetVelocity () const
 {
-    return linmove.GetVelocity();
+    return linmove->GetVelocity();
 }
 
 csVector3 GEMClientActor::Pos() const
@@ -1514,7 +1542,7 @@ csVector3 GEMClientActor::Pos() const
     csVector3 pos;
     float yrot;
     iSector* sector;
-    linmove.GetLastPosition(pos, yrot, sector);
+    linmove->GetLastPosition(pos, yrot, sector);
     return pos;
 }
 
@@ -1523,7 +1551,7 @@ csVector3 GEMClientActor::Rot() const
     csVector3 pos;
     float yrot;
     iSector* sector;
-    linmove.GetLastPosition(pos, yrot, sector);
+    linmove->GetLastPosition(pos, yrot, sector);
     return yrot;
 }
 
@@ -1532,20 +1560,20 @@ iSector *GEMClientActor::GetSector() const
     csVector3 pos;
     float yrot;
     iSector* sector;
-    linmove.GetLastPosition(pos,yrot, sector);
+    linmove->GetLastPosition(pos,yrot, sector);
     return sector;
 }
 
 bool GEMClientActor::NeedDRUpdate(unsigned char& priority)
 {
-    csVector3 vel = linmove.GetVelocity();
-    csVector3 angularVelocity = linmove.GetAngularVelocity();
+    csVector3 vel = linmove->GetVelocity();
+    csVector3 angularVelocity = linmove->GetAngularVelocity();
 
     // Never send DR messages until client is "ready"
     if (!cel->GetMainPlayer())
         return false;
 
-    if (linmove.IsPath() && !path_sent)
+    if (linmove->IsPath() && !path_sent)
     {
         priority = PRIORITY_HIGH;
         return true;
@@ -1613,7 +1641,7 @@ void GEMClientActor::SendDRUpdate(unsigned char priority, csStringHashReversible
     csVector3 pos, vel, worldVel;
     iSector* sector;
 
-    linmove.GetDRData(on_ground, speed, pos, yrot, sector, vel, worldVel, ang_vel);
+    linmove->GetDRData(on_ground, speed, pos, yrot, sector, vel, worldVel, ang_vel);
 
     ZoneHandler* zonehandler = cel->GetZoneHandler();
     if (zonehandler && zonehandler->IsLoading())
@@ -1653,7 +1681,7 @@ void GEMClientActor::SetDRData(psDRMessage& drmsg)
             float cur_yrot;
             csVector3 cur_pos;
             iSector *cur_sector;
-            linmove.GetLastPosition(cur_pos,cur_yrot,cur_sector);
+            linmove->GetLastPosition(cur_pos,cur_yrot,cur_sector);
 
             // If we're loading and this is a sector change, set unresolved.
             // We don't want to move to a new sector which may be loading.
@@ -1667,12 +1695,12 @@ void GEMClientActor::SetDRData(psDRMessage& drmsg)
                 if (drmsg.sector != cur_sector || (drmsg.vel < 0.1f) || (csSquaredDist::PointPoint(cur_pos,drmsg.pos) > 25.0f))
                 {
                     // Do hard DR when it would make you slide
-                    linmove.SetDRData(drmsg.on_ground,1.0f,drmsg.pos,drmsg.yrot,drmsg.sector,drmsg.vel,drmsg.worldVel,drmsg.ang_vel);
+                    linmove->SetDRData(drmsg.on_ground,1.0f,drmsg.pos,drmsg.yrot,drmsg.sector,drmsg.vel,drmsg.worldVel,drmsg.ang_vel);
                 }
                 else
                 {
                     // Do soft DR when moving
-                    linmove.SetSoftDRData(drmsg.on_ground,1.0f,drmsg.pos,drmsg.yrot,drmsg.sector,drmsg.vel,drmsg.worldVel,drmsg.ang_vel);
+                    linmove->SetSoftDRData(drmsg.on_ground,1.0f,drmsg.pos,drmsg.yrot,drmsg.sector,drmsg.vel,drmsg.worldVel,drmsg.ang_vel);
                 }
 
                 DRcounter = drmsg.counter;
@@ -1701,16 +1729,16 @@ void GEMClientActor::StopMoving(bool worldVel)
 {
     // stop this actor from moving
     csVector3 zeros(0.0f, 0.0f, 0.0f);
-    linmove.SetVelocity(zeros);
-    linmove.SetAngularVelocity(zeros);
+    linmove->SetVelocity(zeros);
+    linmove->SetAngularVelocity(zeros);
     if (worldVel)
-        linmove.ClearWorldVelocity();
+        linmove->ClearWorldVelocity();
 
 }
 
 void GEMClientActor::SetPosition(const csVector3 & pos, float rot, iSector * sector)
 {
-    linmove.SetPosition(pos, rot, sector);
+    linmove->SetPosition(pos, rot, sector);
 }
 
 void GEMClientActor::InitCharData(const char* traits, const char* equipment)
@@ -1724,7 +1752,7 @@ void GEMClientActor::InitCharData(const char* traits, const char* equipment)
 
 psLinearMovement& GEMClientActor::Movement()
 {
-    return linmove;
+    return *linmove;
 }
 
 bool GEMClientActor::IsGroupedWith(GEMClientActor* actor)
@@ -1850,8 +1878,8 @@ void GEMClientActor::SetMode(uint8_t mode, bool newactor)
         case psModeMessage::DEAD:
             cal3dstate->ClearAllAnims();
             cal3dstate->SetAnimAction("death",0.0f,1.0f);
-            linmove.SetVelocity(0);
-            linmove.SetAngularVelocity(0);
+            linmove->SetVelocity(0);
+            linmove->SetAngularVelocity(0);
             if (newactor) // If we're creating a new actor that's already dead, we shouldn't show the animation...
                 cal3dstate->SetAnimationTime(9999);  // the very end of the death animation ;)
             break;
@@ -1867,8 +1895,8 @@ void GEMClientActor::SetMode(uint8_t mode, bool newactor)
         case psModeMessage::STATUE: //used to make statue like character which don't move
             cal3dstate->ClearAllAnims();
             cal3dstate->SetAnimAction("statue",0.0f,1.0f);
-            linmove.SetVelocity(0);
-            linmove.SetAngularVelocity(0);
+            linmove->SetVelocity(0);
+            linmove->SetAngularVelocity(0);
             cal3dstate->SetAnimationTime(9999);  // the very end of the animation
             break;
 
@@ -1939,18 +1967,49 @@ const char* GEMClientActor::GetName(bool trueName)
 bool GEMClientActor::CheckLoadStatus()
 {
     bool failed = false;
-    csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(factName, &failed);
+    if (psengine->GetZoneHandler()->IsLoading() || !post_load->sector)
+    {
+        post_load->sector = psengine->GetEngine()->GetSectors()->FindByName(post_load->sector_name);
+        return true;
+    }
+
+    if(!factory.IsValid())
+        factory = psengine->GetLoader()->LoadFactory(factName, &failed);
+
     if(!factory.IsValid())
     {
         if(failed)
         {
             printf("Failed to load factory: '%s'\n", factName.GetData());
             psengine->UnregisterDelayedLoader(this);
+            delete post_load;
+            post_load = NULL;
             return false;
         }
         return true;
     }
 
+    if (!mountFactname.IsEmpty() && !mountFactname.Compare("null") && !mountFactory.IsValid())
+    {
+        mountFactory = psengine->GetLoader()->LoadFactory(mountFactname, &failed);
+        if(!mountFactory.IsValid())
+        {
+            if(failed)
+            {
+                Error2("Couldn't find the mesh factory: '%s' for mount.", mountFactname.GetData());
+                psengine->UnregisterDelayedLoader(this);
+                delete post_load;
+                post_load = NULL;
+                
+                // free allocate factory
+                factory.Invalidate();
+                psengine->GetLoader()->FreeFactory(factName);
+                return false;
+            }
+            return true;
+        }
+    }
+    
     csRef<iMeshWrapper> mesh = factory->CreateMeshWrapper();
     charApp->SetMesh(mesh);
 
@@ -1959,26 +2018,8 @@ bool GEMClientActor::CheckLoadStatus()
         charApp->ChangeMaterial(partName, matName);
     }
 
-    if (psengine->GetZoneHandler()->IsLoading() || !post_load->sector)
-    {
-        post_load->sector = psengine->GetEngine()->GetSectors()->FindByName(post_load->sector_name);
-        return true;
-    }
-
     if (!mountFactname.IsEmpty() && !mountFactname.Compare("null"))
     {
-        csRef<iMeshFactoryWrapper> mountFactory = psengine->GetLoader()->LoadFactory(mountFactname, &failed);
-        if(!mountFactory.IsValid())
-        {
-            if(failed)
-            {
-                Error2("Couldn't find the mesh factory: '%s' for mount.", mountFactname.GetData());
-                psengine->UnregisterDelayedLoader(this);
-                return false;
-            }
-            return true;
-        }
-
         csRef<iMeshWrapper> mountMesh = mountFactory->CreateMeshWrapper();
         SwitchToRealMesh(mountMesh);
         charApp->ApplyRider(pcmesh);
@@ -2030,31 +2071,57 @@ GEMClientItem::GEMClientItem( psCelClient* cel, psPersistItem& mesg )
 
 GEMClientItem::~GEMClientItem()
 {
-    if(instance)
+    if(solid)
+    {
+        delete solid;
+    }
+
+    if(instance.IsValid())
     {
         // Remove instance.
         instance->pcmesh->RemoveInstance(position);
+        if(instance->GetRefCount() == 2)
+        {
+            instance.Invalidate();
+            cel->RemoveInstanceObject(factName+matName);
+        }
+    }
+    else
+    {
+        if(factory.IsValid())
+        {
+            factory.Invalidate();
+            psengine->GetLoader()->FreeFactory(factName);
+        }
     }
 
-    delete solid;
+    if(!matName.IsEmpty())
+    {
+        psengine->GetLoader()->FreeMaterial(matName);
+    }
 }
 
 bool GEMClientItem::CheckLoadStatus()
 {
-    csRef<iMeshFactoryWrapper> factory;
-
     // Check if an instance of the mesh already exists.
     instance = cel->FindInstanceObject(factName+matName);
     if(!instance.IsValid())
     {
         bool failed = false;
-        factory = psengine->GetLoader()->LoadFactory(factName, &failed);
+        if(!factory.IsValid())
+        {
+            factory = psengine->GetLoader()->LoadFactory(factName, &failed);
+        }
+
         if(!factory.IsValid())
         {
             if(failed)
             {
                 Error2("Unable to load item with factory %s!\n", factName.GetData());
                 psengine->UnregisterDelayedLoader(this);
+                delete post_load;
+                post_load = NULL;
+                return false;
             }
 
             return true;
@@ -2070,6 +2137,14 @@ bool GEMClientItem::CheckLoadStatus()
                 {
                     Error2("Unable to load item with material %s!\n", matName.GetData());
                     psengine->UnregisterDelayedLoader(this);
+                    delete post_load;
+                    post_load = NULL;
+                    matName.Empty();
+                    
+                    // free allocated factory
+                    factory.Invalidate();
+                    psengine->GetLoader()->FreeFactory(factName);
+                    return false;
                 }
 
                 return true;
@@ -2177,6 +2252,12 @@ bool GEMClientItem::CheckLoadStatus()
         factory->GetMeshObjectFactory()->GetObjectModel()->SetObjectBoundingBox(csBox3(-CS_BOUNDINGBOX_MAXVALUE,
             -CS_BOUNDINGBOX_MAXVALUE, -CS_BOUNDINGBOX_MAXVALUE, CS_BOUNDINGBOX_MAXVALUE, CS_BOUNDINGBOX_MAXVALUE,
             CS_BOUNDINGBOX_MAXVALUE));
+
+        // create nullmesh factory
+        instance->nullFactory = psengine->GetEngine()->CreateMeshFactory("crystalspace.mesh.object.null", factName + "_nullmesh", false);
+        csRef<iNullFactoryState> nullstate = scfQueryInterface<iNullFactoryState> (instance->nullFactory->GetMeshObjectFactory());
+        nullstate->SetBoundingBox(instance->bbox);
+        nullstate->SetCollisionMeshData(factory->GetMeshObjectFactory()->GetObjectModel());
     }
 
     csVector3 Pos = csVector3(0.0f);
@@ -2184,12 +2265,7 @@ bool GEMClientItem::CheckLoadStatus()
     position = instance->pcmesh->AddInstance(Pos, Rot);
 
     // Init nullmesh factory.
-    factory = psengine->GetEngine()->CreateMeshFactory("crystalspace.mesh.object.null", factName + "_nullmesh");
-    csRef<iNullFactoryState> nullstate = scfQueryInterface<iNullFactoryState> (factory->GetMeshObjectFactory());
-    nullstate->SetBoundingBox(instance->bbox);
-    nullstate->SetCollisionMeshData(instance->pcmesh->GetFactory()->GetMeshObjectFactory()->GetObjectModel());
-
-    pcmesh = factory->CreateMeshWrapper();
+    pcmesh = instance->nullFactory->CreateMeshWrapper();
     pcmesh->GetFlags().Set(CS_ENTITY_NODECAL);
     csRef<iNullMeshState> nullmeshstate = scfQueryInterface<iNullMeshState> (pcmesh->GetMeshObject());
     nullmeshstate->SetHitBeamMeshObject(instance->pcmesh->GetMeshObject());
@@ -2202,6 +2278,10 @@ bool GEMClientItem::CheckLoadStatus()
 
     // Handle item effect if there is one.
     cel->HandleItemEffect(factName, pcmesh);
+
+    // release the no longer needed factory reference here
+    // required to prevent a double-free
+    factory.Invalidate();
 
     return true;
 }
@@ -2254,4 +2334,28 @@ GEMClientActionLocation::GEMClientActionLocation( psCelClient* cel, psPersistAct
     state->SetRadius(1.0);
 
     Move( csVector3(0,0,0), 0.0f, mesg.sector);
+}
+
+InstanceObject::~InstanceObject()
+{
+    if (pcmesh.IsValid())
+    {
+        csString factory;
+
+        iMeshFactoryWrapper* fact = pcmesh->GetFactory();
+
+        // tell the loader we don't need this factory anymore
+        if(fact)
+        {
+            // reset factory bbox so it won't be wrong on next instance creation
+            fact->GetMeshObjectFactory()->GetObjectModel()->SetObjectBoundingBox(bbox);
+            factory = fact->QueryObject()->GetName();
+        }
+
+        psengine->GetEngine()->RemoveObject(pcmesh);
+        pcmesh.Invalidate();
+
+        if(!factory.IsEmpty())
+            psengine->GetLoader()->FreeFactory(factory);
+    }
 }

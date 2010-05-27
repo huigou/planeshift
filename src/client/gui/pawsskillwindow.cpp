@@ -158,14 +158,13 @@ bool pawsSkillWindow::SetupDoll()
         return true; // doll not wanted, not an error
     }
 
-    csRef<iMeshWrapper> mesh = actor->GetMesh();
-    if (!mesh)
+    // Set the doll view
+    while(!widget->View(actor->GetFactName()))
     {
-        return false; // doll wanted, but mesh not found -> error
+        continue;
     }
 
-    // Set the doll view
-    widget->View( mesh );
+    CS_ASSERT(widget->GetObject()->GetMeshObject());
 
     // Set the charApp.
     widget->SetCharApp(charApp);

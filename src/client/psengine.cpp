@@ -501,7 +501,7 @@ bool psEngine::Initialize (int level)
     }
     else if (level == 1)
     {
-        backgroundWorldLoading = false; // Hardcoded disable due to major issues. psengine->GetConfig()->GetBool("PlaneShift.Loading.BackgroundWorldLoading");
+        backgroundWorldLoading = /*false; // Hardcoded disable due to major issues.*/ psengine->GetConfig()->GetBool("PlaneShift.Loading.BackgroundWorldLoading");
         loader = csQueryRegistry<iBgLoader>(object_reg);
         scenemanipulator = scfQueryInterface<iSceneManipulate>(loader);
 
@@ -960,6 +960,15 @@ bool psEngine::Process2D(iEvent& ev)
 	    fpsDisplay.Format("%.2f", getFPS());
 	    g2d->Write(font, 5, 5, g2d->FindRGB(255, 255, 255), -1, fpsDisplay);
 	}
+	
+	// show loader count
+	if (loader && backgroundWorldLoading)
+	{
+	    csString loaderDisplay;
+    	loaderDisplay.Format("%lu", loader->GetLoadingCount());
+	    g2d->Write(font, 50, 5, g2d->FindRGB(255, 255, 255), -1, loaderDisplay);
+	}
+	
         paws->Draw();
     }
 

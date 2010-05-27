@@ -211,17 +211,16 @@ bool pawsInventoryWindow::SetupDoll()
     if (widget)
     {
         GEMClientActor* actor = psengine->GetCelClient()->GetMainPlayer();
-        if (!widget || !actor)
+        if (!actor)
             return false;
-
-        csRef<iMeshWrapper> mesh = actor->GetMesh();
-        if (!mesh)
-        {
-            return false;
-        }
 
         // Set the doll view
-        widget->View( mesh );
+        while(!widget->View(actor->GetFactName()))
+        {
+            continue;
+        }
+
+        CS_ASSERT(widget->GetObject()->GetMeshObject());
 
         // Set the charApp.
         widget->SetCharApp(charApp);

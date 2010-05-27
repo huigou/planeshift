@@ -233,6 +233,11 @@ private:
       */
     void DefaultMesh(const char* part);
 
+    /** Free ressources allocated via the loader.
+     *  Note that this frees the base mesh as well.
+     */
+    void Free();
+
     void ProcessAttach(iMeshFactoryWrapper* factory, iMaterialWrapper* material, const char* meshFactName, csRef<iSpriteCal3DSocket> socket);
     void ProcessAttach(csRef<iMeshWrapper> meshWrap, csRef<iSpriteCal3DSocket> socket);
     void ProcessAttach(csRef<iMaterialWrapper> material, const char* materialName, const char* partName);
@@ -272,6 +277,7 @@ private:
     bool beardAttached;                                 ///< Flag if beard is on/off.
 
     csHash<csString> removedMeshes;                     ///< Contains the mesh which have been removed from the model.
+    csHash<csString, csString> materials;               ///< Contains the custom materials for the slots
 
     bool eyeColorSet;                                   ///< Flag if eye colour set.
     bool hairColorSet;                                  ///< Flag if hair colour set.
@@ -290,11 +296,13 @@ private:
     {
         bool factory;
 
-        csRef<iSpriteCal3DSocket> socket;
+        csString socket;
         csString partName;
 
         csString factName;
+        csRef<iMeshFactoryWrapper> factoryPtr;
         csString materialName;
+        csRef<iMaterialWrapper> materialPtr;
 
         Attachment(bool factory) : factory(factory)
         {
