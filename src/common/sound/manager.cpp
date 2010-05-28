@@ -127,7 +127,7 @@ Play2DSound (const char *name, bool loop, size_t loopstart, size_t loopend,
 
     if (Initialised == false)
     {
-        Error1("Sound not Initialised\n");
+        Debug1(LOG_SOUND,0,"Sound not Initialised\n");
         return false;
     }
 
@@ -177,7 +177,7 @@ Play3DSound (const char *name, bool loop, size_t loopstart, size_t loopend,
     // FIXME redundant code Play2DSound
     if (Initialised == false)
     {
-        Error1("Sound not Initialised\n");
+        Debug1(LOG_SOUND,0,"Sound not Initialised\n");
         return false;
     }
 
