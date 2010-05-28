@@ -970,7 +970,6 @@ void psCharAppearance::ProcessAttach(csRef<iMeshWrapper> meshWrap, const char* s
         }
     }
 
-    meshWrap->QuerySceneNode()->SetParent( baseMesh->QuerySceneNode ());
     csReversibleTransform transform(csZRotMatrix3(rot_z)*csYRotMatrix3(rot_y)*csXRotMatrix3(rot_x), csVector3(trans_x,trans_y,trans_z));
 
     if (state.IsValid())
@@ -978,6 +977,7 @@ void psCharAppearance::ProcessAttach(csRef<iMeshWrapper> meshWrap, const char* s
         csRef<iSpriteCal3DSocket> cal3DSocket = state->FindSocket(socket);
         if (cal3DSocket.IsValid())
         {
+            meshWrap->QuerySceneNode()->SetParent( baseMesh->QuerySceneNode ());
             cal3DSocket->SetMeshWrapper(meshWrap);
             cal3DSocket->SetTransform(transform);
         }
@@ -987,6 +987,7 @@ void psCharAppearance::ProcessAttach(csRef<iMeshWrapper> meshWrap, const char* s
         size_t idx = animeshFactory->FindSocket(socket);
         if (idx != (size_t)-1)
         {
+            meshWrap->QuerySceneNode()->SetParent( baseMesh->QuerySceneNode ());
             csRef<iAnimatedMeshSocket> animeshSocket = animeshObject->GetSocket(idx);
             animeshSocket->SetSceneNode(meshWrap->QuerySceneNode());
             animeshSocket->SetTransform(transform);
