@@ -37,7 +37,6 @@
 #include <iengine/portalcontainer.h>
 #include <csutil/xmltiny.h>
 #include <imesh/object.h>
-#include <imesh/spritecal3d.h>
 #include <cstool/collider.h>
 #include <ivaria/collider.h>
 #include <csqsqrt.h>
@@ -1541,7 +1540,6 @@ csVector3 psCamera::CalcCollisionPos(const csVector3& pseudoTarget, const csVect
                 hasCollision = true;
                 return isect + (modifiedTarget-isect)*0.1f;
             }
-//                csRef<iSpriteCal3DState> spstate =  scfQueryInterface<iSpriteCal3DState> (mesh->GetMeshObject());
             break;
     }
     actor->GetMesh()->GetFlags().Reset(CS_ENTITY_NOHITBEAM);

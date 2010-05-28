@@ -238,9 +238,10 @@ private:
      */
     void Free();
 
-    void ProcessAttach(iMeshFactoryWrapper* factory, iMaterialWrapper* material, const char* meshFactName, csRef<iSpriteCal3DSocket> socket);
-    void ProcessAttach(csRef<iMeshWrapper> meshWrap, csRef<iSpriteCal3DSocket> socket);
+    void ProcessAttach(iMeshFactoryWrapper* factory, iMaterialWrapper* material, const char* meshFactName, const char* socket);
+    void ProcessAttach(csRef<iMeshWrapper> meshWrap, const char* socket);
     void ProcessAttach(csRef<iMaterialWrapper> material, const char* materialName, const char* partName);
+    bool ProcessMaterial(csRef<iMaterialWrapper> material, const char* materialName, const char* partName);
 
     csRef<iMeshWrapper> baseMesh;                       ///< The mesh that is our base model.
 
