@@ -506,22 +506,8 @@ void psCharAppearance::SetSkinTone(csString& part, csString& material)
 
 void psCharAppearance::ApplyRider(csRef<iMeshWrapper> mesh)
 {
-    csRef<iSpriteCal3DState> mountstate = scfQueryInterface<iSpriteCal3DState> (mesh->GetMeshObject());
-
-    csRef<iSpriteCal3DSocket> socket = mountstate->FindSocket( "back" );
-
-    if ( !socket )
-    {
-        Error1("Socket back not found.");
-        return;
-    }
-
     baseMesh->GetFlags().Set(CS_ENTITY_NODECAL);
-    const char* socketName = socket->GetName();
-
-    // Given a socket name of "righthand", we're looking for a key in the form of "socket_righthand"
-    csString keyName = "socket_";
-    keyName += socketName;
+    csString keyName = "socket_back";
 
     // Variables for transform to be specified
     float trans_x = 0, trans_y = 0.0, trans_z = 0, rot_x = -PI/2, rot_y = 0, rot_z = 0;
@@ -536,9 +522,32 @@ void psCharAppearance::ApplyRider(csRef<iMeshWrapper> mesh)
         }
     }
 
-    baseMesh->QuerySceneNode()->SetParent( mesh->QuerySceneNode ());
-    socket->SetMeshWrapper( baseMesh );
-    socket->SetTransform( csTransform(csZRotMatrix3(rot_z)*csYRotMatrix3(rot_y)*csXRotMatrix3(rot_x), csVector3(trans_x,trans_y,trans_z)) );
+    baseMesh->QuerySceneNode()->SetParent(mesh->QuerySceneNode());
+
+    csRef<iSpriteCal3DState> mountState = scfQueryInterface<iSpriteCal3DState> (mesh->GetMeshObject());
+    csRef<iAnimatedMesh> mountObject = scfQueryInterface<iAnimatedMesh> (mesh->GetMeshObject());
+    csRef<iAnimatedMeshFactory> mountFactory = scfQueryInterface<iAnimatedMeshFactory>(mesh->GetMeshObject()->GetFactory());
+
+    csReversibleTransform transform(csZRotMatrix3(rot_z)*csYRotMatrix3(rot_y)*csXRotMatrix3(rot_x), csVector3(trans_x,trans_y,trans_z));
+    if (mountState.IsValid())
+    {
+        csRef<iSpriteCal3DSocket> socket = mountState->FindSocket("back");
+        if (socket.IsValid())
+        {
+            socket->SetMeshWrapper(baseMesh);
+            socket->SetTransform(transform);
+        }
+    }
+    else if (mountObject.IsValid() && mountFactory.IsValid())
+    {
+        size_t idx = mountFactory->FindSocket("back");
+        if (idx != (size_t)-1)
+        {
+            csRef<iAnimatedMeshSocket> socket = mountObject->GetSocket(idx);
+            socket->SetSceneNode(baseMesh->QuerySceneNode());
+            socket->SetTransform(transform);
+        }
+    }
 }
 
 void psCharAppearance::ApplyEquipment(const csString& equipment)
@@ -868,16 +877,8 @@ bool psCharAppearance::ChangeMesh(const char* partPattern, const char* newPart)
 
 bool psCharAppearance::Attach(const char* socketName, const char* meshFactName, const char* materialName)
 {
-    if (!socketName || !meshFactName || !state.IsValid())
+    if (!socketName || !meshFactName || !(state.IsValid() && !animeshObject.IsValid()))
     {
-        return false;
-    }
-    CS_ASSERT(state.IsValid());
-
-    csRef<iSpriteCal3DSocket> socket = state->FindSocket( socketName );
-    if ( !socket.IsValid() )
-    {
-        Notify2(LOG_CHARACTER, "Socket %s not found.", socketName);
         return false;
     }
 
@@ -919,7 +920,7 @@ bool psCharAppearance::Attach(const char* socketName, const char* meshFactName, 
     }
     else
     {
-        ProcessAttach(factory, material, meshFactName, socket);
+        ProcessAttach(factory, material, meshFactName, socketName);
         if(materialName != NULL)
         {
             csString & mat = materials.GetOrCreate(socketName);
@@ -934,7 +935,7 @@ bool psCharAppearance::Attach(const char* socketName, const char* meshFactName, 
     return true;
 }
 
-void psCharAppearance::ProcessAttach(iMeshFactoryWrapper* factory, iMaterialWrapper* material, const char* meshFactName, csRef<iSpriteCal3DSocket> socket)
+void psCharAppearance::ProcessAttach(iMeshFactoryWrapper* factory, iMaterialWrapper* material, const char* meshFactName, const char* socket)
 {
      csRef<iMeshWrapper> meshWrap = engine->CreateMeshWrapper( factory, meshFactName );
 
@@ -945,21 +946,16 @@ void psCharAppearance::ProcessAttach(iMeshFactoryWrapper* factory, iMaterialWrap
 
     ProcessAttach(meshWrap, socket);
 
-    psengine->GetCelClient()->HandleItemEffect(factory->QueryObject()->GetName(), socket->GetMeshWrapper(), false, socket->GetName(), &effectids, &lightids);
+    psengine->GetCelClient()->HandleItemEffect(factory->QueryObject()->GetName(), meshWrap, false, socket, &effectids, &lightids);
 }
 
-void psCharAppearance::ProcessAttach(csRef<iMeshWrapper> meshWrap, csRef<iSpriteCal3DSocket> socket)
+void psCharAppearance::ProcessAttach(csRef<iMeshWrapper> meshWrap, const char* socket)
 {
-    if(!socket.IsValid())
-        return;
-    CS_ASSERT(socket.IsValid());
-
     meshWrap->GetFlags().Set(CS_ENTITY_NODECAL);
-    const char* socketName = socket->GetName();
 
     // Given a socket name of "righthand", we're looking for a key in the form of "socket_righthand"
     csString keyName = "socket_";
-    keyName += socketName;
+    keyName += socket;
 
     // Variables for transform to be specified
     float trans_x = 0, trans_y = 0.0, trans_z = 0, rot_x = -PI/2, rot_y = 0, rot_z = 0;
@@ -975,15 +971,54 @@ void psCharAppearance::ProcessAttach(csRef<iMeshWrapper> meshWrap, csRef<iSprite
     }
 
     meshWrap->QuerySceneNode()->SetParent( baseMesh->QuerySceneNode ());
-    socket->SetMeshWrapper( meshWrap );
-    socket->SetTransform( csTransform(csZRotMatrix3(rot_z)*csYRotMatrix3(rot_y)*csXRotMatrix3(rot_x), csVector3(trans_x,trans_y,trans_z)) );
+    csReversibleTransform transform(csZRotMatrix3(rot_z)*csYRotMatrix3(rot_y)*csXRotMatrix3(rot_x), csVector3(trans_x,trans_y,trans_z));
 
-    usedSlots.PushSmart(socketName);
+    if (state.IsValid())
+    {
+        csRef<iSpriteCal3DSocket> cal3DSocket = state->FindSocket(socket);
+        if (cal3DSocket.IsValid())
+        {
+            cal3DSocket->SetMeshWrapper(meshWrap);
+            cal3DSocket->SetTransform(transform);
+        }
+    }
+    else if (animeshObject.IsValid() && animeshFactory.IsValid())
+    {
+        size_t idx = animeshFactory->FindSocket(socket);
+        if (idx != (size_t)-1)
+        {
+            csRef<iAnimatedMeshSocket> animeshSocket = animeshObject->GetSocket(idx);
+            animeshSocket->SetSceneNode(meshWrap->QuerySceneNode());
+            animeshSocket->SetTransform(transform);
+        }
+    }
+
+    usedSlots.PushSmart(socket);
+}
+
+bool psCharAppearance::ProcessMaterial(csRef<iMaterialWrapper> material, const char* materialName, const char* partName)
+{
+    bool success = false;
+    if (state.IsValid())
+    {
+        success = state->SetMaterial(partName, material);
+    }
+    else if (animeshObject.IsValid() && animeshFactory.IsValid())
+    {
+        size_t idx = animeshFactory->FindSubMesh(partName);
+        if (idx != (size_t)-1)
+        {
+            animeshObject->GetSubMesh(idx)->SetMaterial(material);
+            success = true;
+        }
+    }
+
+    return success;
 }
 
 void psCharAppearance::ProcessAttach(csRef<iMaterialWrapper> material, const char* materialName, const char* partName)
 {
-    if (state->SetMaterial(partName, material))
+    if (ProcessMaterial(material, materialName, partName))
     {
         csString & mat = materials.GetOrCreate(partName);
         if (!mat.IsEmpty())
@@ -1001,7 +1036,8 @@ void psCharAppearance::ProcessAttach(csRef<iMaterialWrapper> material, const cha
         right.Format("Right %s", partName);
 
         size_t success = 0;
-        if (state->SetMaterial(left, material))
+
+        if (ProcessMaterial(material, materialName, partName))
         {
             ++success;
             csString & mat = materials.GetOrCreate(left);
@@ -1013,7 +1049,7 @@ void psCharAppearance::ProcessAttach(csRef<iMaterialWrapper> material, const cha
             mat = materialName;
         }
 
-        if (state->SetMaterial(right, material))
+        if (ProcessMaterial(material, materialName, partName))
         {
             ++success;
             csString & mat = materials.GetOrCreate(right);
@@ -1059,18 +1095,6 @@ bool psCharAppearance::CheckLoadStatus()
 
             if(factory.IsValid())
             {
-                csRef<iSpriteCal3DSocket> socket = state->FindSocket( attach.socket );
-                if (!socket.IsValid())
-                {
-                    Notify2(LOG_CHARACTER, "Socket %s not found.", attach.socket.GetDataSafe());
-                    
-                    // free allocated factory
-                    factory.Invalidate();
-                    psengine->GetLoader()->FreeFactory(attach.factName);
-                    delayedAttach.PopFront();
-                    return true;
-                }
-
                 if(!attach.materialName.IsEmpty())
                 {
                     csRef<iMaterialWrapper> & material = attach.materialPtr;
@@ -1082,7 +1106,7 @@ bool psCharAppearance::CheckLoadStatus()
 
                     if(material.IsValid())
                     {
-                        ProcessAttach(factory, material, attach.factName, socket);
+                        ProcessAttach(factory, material, attach.factName, attach.socket);
                         csString & mat = materials.GetOrCreate(attach.socket);
                         if(!mat.IsEmpty()) // free previously allocated loader ressource
                         {
@@ -1094,7 +1118,7 @@ bool psCharAppearance::CheckLoadStatus()
                 }
                 else
                 {
-                    ProcessAttach(factory, NULL, attach.factName, socket);
+                    ProcessAttach(factory, NULL, attach.factName, attach.socket);
                     delayedAttach.PopFront();
                 }
             }
@@ -1266,9 +1290,16 @@ void psCharAppearance::DefaultMaterial(csString& part)
     }
 
     // Set stateFactory defaults if no skinToneSet found.
-    if ( !skinToneSetFound && stateFactory.IsValid() )
+    if (!skinToneSetFound)
     {
-        ChangeMaterial(part, stateFactory->GetDefaultMaterial(part));
+        if(stateFactory.IsValid())
+        {
+            ChangeMaterial(part, stateFactory->GetDefaultMaterial(part));
+        }
+        else if(animeshFactory.IsValid())
+        {
+            ChangeMaterial(part, 0);
+        }
     }
 }
 
@@ -1311,28 +1342,47 @@ void psCharAppearance::ClearEquipment(const char* slot)
 
 bool psCharAppearance::Detach(const char* socketName, bool removeItem )
 {
-    if (!socketName || !state.IsValid())
+    if (!socketName || usedSlots.Find(socketName) == csArrayItemNotFound || (!state.IsValid() && !animeshObject.IsValid()))
     {
         return false;
     }
-    CS_ASSERT(state.IsValid());
 
-    csRef<iSpriteCal3DSocket> socket = state->FindSocket( socketName );
-    if ( !socket )
+    csRef<iMeshWrapper> meshWrap;
+    if (state.IsValid())
     {
-        Notify2(LOG_CHARACTER, "Socket %s not found.", socketName );
-        return false;
+        csRef<iSpriteCal3DSocket> socket = state->FindSocket(socketName);
+        if (socket.IsValid())
+        {
+            meshWrap = socket->GetMeshWrapper();
+            socket->SetMeshWrapper(0);
+        }
+        else
+        {
+            Notify2(LOG_CHARACTER, "Socket %s not found.", socketName);
+        }
+    }
+    else if (animeshObject.IsValid() && animeshFactory.IsValid())
+    {
+        size_t idx = animeshFactory->FindSocket(socketName);
+        if(idx != (size_t)-1)
+        {
+            csRef<iAnimatedMeshSocket> socket = animeshObject->GetSocket(idx);
+            meshWrap = socket->GetSceneNode()->QueryMesh();
+            socket->SetSceneNode(0);
+        }
+        else
+        {
+            Notify2(LOG_CHARACTER, "Socket %s not found.", socketName);
+        }
     }
 
-    csRef<iMeshWrapper> meshWrap = socket->GetMeshWrapper();
-    if ( !meshWrap )
+    if (!meshWrap)
     {
         Notify2(LOG_CHARACTER, "No mesh in socket: %s.", socketName );
     }
     else
     {
         meshWrap->QuerySceneNode()->SetParent (0);
-        socket->SetMeshWrapper( NULL );
 
         csString material = materials.Get(socketName, "");
         csString factory;
@@ -1347,7 +1397,7 @@ bool psCharAppearance::Detach(const char* socketName, bool removeItem )
 
         if(removeItem)
         {
-            engine->RemoveObject( meshWrap );
+            engine->RemoveObject(meshWrap);
         }
         meshWrap.Invalidate();
 
@@ -1403,7 +1453,20 @@ void psCharAppearance::SetSneak(bool sneaking)
         CS::ShaderVarStringID varName = stringSet->Request("alpha factor");
         for(uint i=0; i<meshCount; i++)
         {
-            iShaderVariableContext* context = state->GetCoreMeshShaderVarContext(meshNames[i]);
+            iShaderVariableContext* context = NULL;
+            if(state.IsValid())
+            {
+                context = state->GetCoreMeshShaderVarContext(meshNames[i]);
+            }
+            else if(animeshObject.IsValid() && animeshFactory.IsValid())
+            {
+                size_t idx = animeshFactory->FindSubMesh(meshNames[i]);
+                if(idx != (size_t)-1)
+                {
+                    context = animeshObject->GetSubMesh(idx)->GetShaderVariableContext(0);
+                }
+            }
+
             if(context)
             {
                 csShaderVariable* var = context->GetVariableAdd(varName);
@@ -1424,7 +1487,24 @@ void psCharAppearance::SetSneak(bool sneaking)
         // Apply to equipped meshes too.
         for(size_t i=0; i < usedSlots.GetSize(); ++i)
         {
-            csRef<iMeshWrapper> meshWrap = state->FindSocket(usedSlots[i])->GetMeshWrapper();
+            csRef<iMeshWrapper> meshWrap;
+            if(state.IsValid())
+            {
+                meshWrap = state->FindSocket(usedSlots[i])->GetMeshWrapper();
+            }
+            else if(animeshObject.IsValid() && animeshFactory.IsValid())
+            {
+                size_t idx = animeshFactory->FindSocket(usedSlots[i]);
+                if(idx != (size_t)-1)
+                {
+                    iSceneNode* node = animeshObject->GetSocket(idx)->GetSceneNode();
+                    if(node)
+                    {
+                        meshWrap = node->QueryMesh();
+                    }
+                }
+            }
+
             csShaderVariable* var = meshWrap->GetSVContext()->GetVariableAdd(varName);
 
             if(sneaking)
