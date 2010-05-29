@@ -1491,7 +1491,9 @@ void psCharAppearance::SetSneak(bool sneaking)
             csRef<iMeshWrapper> meshWrap;
             if(state.IsValid())
             {
-                meshWrap = state->FindSocket(usedSlots[i])->GetMeshWrapper();
+                iSpriteSocket *socket = state->FindSocket(usedSlots[i]);
+                if(socket)
+                    meshWrap = socket->GetMeshWrapper();
             }
             else if(animeshObject.IsValid() && animeshFactory.IsValid())
             {
@@ -1506,17 +1508,20 @@ void psCharAppearance::SetSneak(bool sneaking)
                 }
             }
 
-            csShaderVariable* var = meshWrap->GetSVContext()->GetVariableAdd(varName);
+            if(meshWrap.IsValid())
+            {
+                csShaderVariable* var = meshWrap->GetSVContext()->GetVariableAdd(varName);
 
-            if(sneaking)
-            {
-                meshWrap->SetRenderPriority(engine->GetRenderPriority("alpha"));
-                var->SetValue(0.5f);
-            }
-            else
-            {
-                meshWrap->SetRenderPriority(engine->GetRenderPriority("object"));
-                var->SetValue(1.0f);
+                if(sneaking)
+                {
+                    meshWrap->SetRenderPriority(engine->GetRenderPriority("alpha"));
+                    var->SetValue(0.5f);
+                }
+                else
+                {
+                    meshWrap->SetRenderPriority(engine->GetRenderPriority("object"));
+                    var->SetValue(1.0f);
+                }
             }
         }
     }
