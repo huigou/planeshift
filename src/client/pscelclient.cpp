@@ -690,14 +690,18 @@ void psCelClient::Update(bool loaded)
             // Update loader.
             psengine->GetLoader()->UpdatePosition(local_player->Pos(), sectorName, false);
         }
-/*
+
+const char* sectorName = local_player->GetSector()->QueryObject()->GetName();
         // Check if we're inside a water area.
         csColor4* waterColour = 0;
-        if(psengine->GetLoader()->InWaterArea(sectorName, &psengine->GetPSCamera()->GetPosition(), &waterColour))
+        csVector3 pos = psengine->GetPSCamera()->GetPosition();
+        /*if(psengine->GetLoader()->InWaterArea(sectorName, &pos, &waterColour))
         {
             psWeatherMessage::NetWeatherInfo fog;
-            fog.fogType = CS_FOG_MODE_EXP;
-            fog.fogColour = *waterColour;
+            //fog.fogType = CS_FOG_MODE_EXP;
+            fog.r = (*waterColour)[0];
+            fog.g = (*waterColour)[1];
+            fog.b = (*waterColour)[2];
             fog.has_downfall = false;
             fog.has_fog = true;
             fog.has_lightning = false;
@@ -2135,7 +2139,7 @@ bool GEMClientItem::CheckLoadStatus()
             {
                 if(failed)
                 {
-                    Error2("Unable to load item with material %s!\n", matName.GetData());
+                    Error3("Unable to load item with material %s (factory %s)!\n", matName.GetData(), factName.GetData());
                     psengine->UnregisterDelayedLoader(this);
                     delete post_load;
                     post_load = NULL;
