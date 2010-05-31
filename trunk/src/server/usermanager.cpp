@@ -2087,6 +2087,12 @@ void UserManager::HandleMount(psUserCmdMessage& msg, Client *client)
         psserver->SendSystemError(client->GetClientNum(), "You cannot mount while carrying too much.");
         return;
     }
+    
+    if(client->GetActor()->IsFalling())
+    {
+        psserver->SendSystemError(client->GetClientNum(), "You cannot mount while falling.");
+        return;
+    }
 
     gemObject* mount;
     
@@ -2185,6 +2191,12 @@ void UserManager::Mount(gemActor *rider, gemActor *mount)
 void UserManager::HandleUnmount(psUserCmdMessage& msg, Client *client)
 {
     //client->GetActor()->SetAllowedToMove(true);
+    
+    if(client->GetActor()->IsFalling())
+    {
+        psserver->SendSystemError(client->GetClientNum(), "You cannot unmount while falling.");
+        return;
+    }
 
     if (!client->GetActor()->GetMount())
     {
