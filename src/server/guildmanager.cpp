@@ -1474,7 +1474,7 @@ void GuildManager::HandleJoinGuild(PendingGuildInvite *invite)
 
     Client * inviterClient = clients->Find(invite->inviterClientNum);
     EID inviterEID;
-    if (inviteeClient != NULL)
+    if (inviterClient != NULL)
         inviterEID = inviterClient->GetActor()->GetEID();
 
     psGuildInfo * guild = psserver->GetCacheManager()->FindGuild(invite->guildID);
