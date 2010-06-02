@@ -112,6 +112,12 @@ public:
       * @param show True if the slot is a restrain to showing the mesh. False if it's not anymore.
       */
     void ShowMeshes(csString& slot, csString& meshList, bool show=true);
+    
+    /** Checks if the mesh is hidden and in that case removes it.
+      * Useful when we are adding a new mesh to check if it should really show.
+      * @param meshName The name of the mesh to check for restrains.
+      */
+    void UpdateMeshShowStatus(csString& meshName);
 
     /** Set the skin tone.
       * @param part  The part of the model to change.

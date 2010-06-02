@@ -416,11 +416,11 @@ void psCharAppearance::ShowMeshes(csString& slot, csString& meshList, bool show)
     for(size_t i = 0; i < meshes.GetSize(); i++)
     {
         csString meshName = meshes.Get(i);
-        uint meshkey = csHashCompute(meshName);
+        uint meshKey = csHashCompute(meshName);
         if (show) //in this case we are removing a restrain from hiding this mesh.
         {
             //get the list of items blocking this item
-            csArray<csString> removingItems = removedMeshes.GetAll(meshkey);
+            csArray<csString> removingItems = removedMeshes.GetAll(meshKey);
 
             //if the list is empty it means it's not blocked, shouldn't happen as how it works.
             if(!removingItems.GetSize())
@@ -430,12 +430,12 @@ void psCharAppearance::ShowMeshes(csString& slot, csString& meshList, bool show)
             //so we just remove this blocker
             if(removingItems.GetSize() > 1)
             {
-                removedMeshes.Delete(meshkey, slot);
+                removedMeshes.Delete(meshKey, slot);
                 continue;
             }
 
             //in the other cases we restore the mesh.
-            removedMeshes.DeleteAll(meshkey);
+            removedMeshes.DeleteAll(meshKey);
 
             if(state)
             {
@@ -460,10 +460,10 @@ void psCharAppearance::ShowMeshes(csString& slot, csString& meshList, bool show)
         else //in this case we are adding a restrain to hiding this mesh
         {
             //there is already something here?
-            csArray<csString> removingItems = removedMeshes.GetAll(meshkey);
+            csArray<csString> removingItems = removedMeshes.GetAll(meshKey);
 
             //add ourselves as a restrain.
-            removedMeshes.Put(meshkey, slot);
+            removedMeshes.Put(meshKey, slot);
 
             //this mesh was already removed so just bail out.
             //Note: this array is at the status of before adding ourselves
@@ -482,6 +482,31 @@ void psCharAppearance::ShowMeshes(csString& slot, csString& meshList, bool show)
                 {
                     animeshObject->GetSubMesh(idx)->SetRendering(false);
                 }
+            }
+        }
+    }
+}
+
+void psCharAppearance::UpdateMeshShowStatus(csString& meshName)
+{
+    printf("removing %s...\n", meshName.GetData());
+    uint meshKey = csHashCompute(meshName);
+    
+    //check if the requested mesh was already removed
+    if(removedMeshes.Contains(meshKey))
+    {
+        printf("removing!\n");
+        //in the case it is remove it. Useful when a mesh is substituited to update it's status correctly.
+        if(state)
+        {
+            state->DetachCoreMesh(meshName);
+        }
+        else if(animeshObject && animeshFactory)
+        {
+            size_t idx = animeshFactory->FindSubMesh(meshName);
+            if(idx != (size_t)-1)
+            {
+                animeshObject->GetSubMesh(idx)->SetRendering(false);
             }
         }
     }
@@ -781,6 +806,10 @@ void psCharAppearance::DefaultMesh(const char* part)
             }
         }
     }
+
+    csString oldPart = defaultPart;
+    UpdateMeshShowStatus(oldPart);
+
 }
 
 
@@ -870,6 +899,8 @@ bool psCharAppearance::ChangeMesh(const char* partPattern, const char* newPart)
             }
         }
     }
+
+    UpdateMeshShowStatus(newPartParsed);
 
     return true;
 }
