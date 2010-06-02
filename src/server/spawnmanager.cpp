@@ -1260,7 +1260,7 @@ void SpawnRange::Initialize(int idval,
         if(radius > 0.5)
             area = length*radius*2 + radius * radius * PI;  // Area of length and round area at end.
         else
-            area = lenght;
+            area = length;
     }
     else if (type == 'C')
     {
