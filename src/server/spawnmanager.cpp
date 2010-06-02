@@ -1257,7 +1257,7 @@ void SpawnRange::Initialize(int idval,
     else if (type=='L')
     {
         float length = sqrt((rx2-rx1)*(rx2-rx1) + (ry2-ry1)*(ry2-ry1) + (rz2-rz1)*(rz2-rz1));
-        if(length > 0.5)
+        if(radius > 0.5)
             area = length*radius*2 + radius * radius * PI;  // Area of length and round area at end.
         else
             area = lenght;
