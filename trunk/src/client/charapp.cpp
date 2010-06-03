@@ -489,13 +489,11 @@ void psCharAppearance::ShowMeshes(csString& slot, csString& meshList, bool show)
 
 void psCharAppearance::UpdateMeshShowStatus(csString& meshName)
 {
-    printf("removing %s...\n", meshName.GetData());
     uint meshKey = csHashCompute(meshName);
     
     //check if the requested mesh was already removed
     if(removedMeshes.Contains(meshKey))
     {
-        printf("removing!\n");
         //in the case it is remove it. Useful when a mesh is substituited to update it's status correctly.
         if(state)
         {
