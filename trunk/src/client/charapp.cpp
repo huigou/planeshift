@@ -734,7 +734,7 @@ bool psCharAppearance::Dequip(csString& slotname,
 
     if ( subMesh.Length() )
     {
-        DefaultMesh(part);
+        DefaultMesh(part, subMesh);
     }
 
     if ( part.Length() )
@@ -755,7 +755,7 @@ bool psCharAppearance::Dequip(csString& slotname,
 }
 
 
-void psCharAppearance::DefaultMesh(const char* part)
+void psCharAppearance::DefaultMesh(const char* part, const char *subMesh)
 {
     const char * defaultPart = NULL;
 
@@ -765,7 +765,7 @@ void psCharAppearance::DefaultMesh(const char* part)
         for (int idx=0; idx < stateFactory->GetMeshCount(); idx++)
         {
             const char * meshName = stateFactory->GetMeshName( idx );
-            if (strstr(meshName, part))
+            if (strstr(meshName, part) || (subMesh != NULL && strstr(meshName,subMesh)))
             {
                 state->DetachCoreMesh( meshName );
                 if (stateFactory->IsMeshDefault(idx))

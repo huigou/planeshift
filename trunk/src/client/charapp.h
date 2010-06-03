@@ -236,8 +236,9 @@ private:
       * For example, plate armour is removed so need to place back the default torso
       * mesh.
       * @param part The part to replace the default mesh for.
+      * @param subMesh The mesh to remove even if not starting his name with the partname
       */
-    void DefaultMesh(const char* part);
+    void DefaultMesh(const char* part, const char *subMesh = NULL);
 
     /** Free ressources allocated via the loader.
      *  Note that this frees the base mesh as well.
