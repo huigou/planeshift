@@ -2530,6 +2530,17 @@ bool gemActor::CanBeAttackedBy(gemActor* attacker, gemActor*& lastAttacker) cons
     return true;
 }
 
+bool gemActor::HasBeenAttackedBy(gemActor* attacker)
+{
+    for (int i = (int)GetDamageHistoryCount(); i>0; i--)
+    {
+        const AttackerHistory* hit = GetDamageHistory(i-1);
+        //check if we have found our attacker in the history
+        if(attacker == hit->Attacker())
+            return true;        
+    }    
+}
+
 
 void gemActor::UpdateStats()
 {
