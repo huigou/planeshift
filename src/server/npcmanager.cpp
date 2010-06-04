@@ -1912,17 +1912,16 @@ void NPCManager::QueueAttackPerception(gemActor *attacker,gemNPC *target)
                 attacker->GetName(),
                 target->GetName() );
     }
-    else // lone gunman
-    {
-        CheckSendPerceptionQueue(sizeof(int8_t)+sizeof(uint32_t)*2);
-        outbound->msg->Add( (int8_t) psNPCCommandsMessage::PCPT_ATTACK);
-        outbound->msg->Add(target->GetEID().Unbox());
-        outbound->msg->Add(attacker->GetEID().Unbox());
-        cmd_count++;
-        Debug3(LOG_NPC, attacker->GetEID().Unbox(), "Added perception: %s is attacking %s.\n",
-                attacker->GetName(),
-                target->GetName() );
-    }
+    
+    // lone gunman
+    CheckSendPerceptionQueue(sizeof(int8_t)+sizeof(uint32_t)*2);
+    outbound->msg->Add( (int8_t) psNPCCommandsMessage::PCPT_ATTACK);
+    outbound->msg->Add(target->GetEID().Unbox());
+    outbound->msg->Add(attacker->GetEID().Unbox());
+    cmd_count++;
+    Debug3(LOG_NPC, attacker->GetEID().Unbox(), "Added perception: %s is attacking %s.\n",
+           attacker->GetName(),
+           target->GetName() );
 }
 
 /**

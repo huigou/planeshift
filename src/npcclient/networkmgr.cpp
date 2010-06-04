@@ -572,7 +572,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                     break;
                 }
 
-                GroupAttackPerception attack("attack",attacker_ents,bestSkillSlots);
+                GroupAttackPerception attack("groupattack",attacker_ents,bestSkillSlots);
                 npc->Printf("Got Group Attack perception for recognising %i actors in the group.",
                             attacker_ents.GetSize());
 
