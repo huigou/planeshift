@@ -744,14 +744,14 @@ void SpawnManager::KillNPC(gemObject *obj, gemActor* killer)
         {
             for (size_t i=0; i<grp->GetMemberCount(); i++)
             {
-                if (grp->GetMember(i)->RangeTo(obj) < RANGE_TO_RECV_LOOT)
+                if (obj->HasBeenAttackedBy(grp->GetMember(i)) && grp->GetMember(i)->RangeTo(obj) < RANGE_TO_RECV_LOOT)
                 {
                     Debug3(LOG_LOOT, 0,"Adding %s as able to loot %s.",grp->GetMember(i)->GetName(),obj->GetName() );
                     obj->AddLootableClient(grp->GetMember(i)->GetClientID() );
                 }
                 else
                 {
-                    Debug3(LOG_LOOT, 0,"Not adding %s as able to loot %s, because out of range.",grp->GetMember(i)->GetName(),obj->GetName() );
+                    Debug3(LOG_LOOT, 0,"Not adding %s as able to loot %s, because out of range or because he didn't attack the entity.",grp->GetMember(i)->GetName(),obj->GetName() );
                 }
             }
         }

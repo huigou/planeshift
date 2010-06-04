@@ -1015,6 +1015,15 @@ public:
     void AddAttackerHistory(gemActor* attacker, float hpRate, csTicks duration); // DoT version
     void RemoveAttackerHistory(gemActor * attacker);
     bool CanBeAttackedBy(gemActor* attacker, gemActor*& lastAttacker) const;
+
+    /** Checks the attacker history to see if the attacker has actually attacked the entity.
+     *  Used to exclude from loot those who didn't actually partecipate in the attack even if
+     *  they are grouped.
+     *  @param attacker A pointer to the actor we are checking if it has attacked.
+     *  @return TRUE if the actor has attacked the entity.
+     */
+    bool HasBeenAttackedBy(gemActor* attacker);
+
     void Kill(gemActor *attacker) { DoDamage(attacker, psChar->GetHP() ); }
     void Defeat();
     void Resurrect();
