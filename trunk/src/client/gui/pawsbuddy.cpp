@@ -231,7 +231,7 @@ void pawsBuddyWindow::OnStringEntered(const char *name,int param,const char *val
         // Is the new buddy name unique?
         if (!IsUniqueAlias(value))
         {
-            psSystemMessage err(0, MSG_ERROR, " '%s' %s", 
+            psSystemMessage err(0, MSG_ERROR, "%s '%s' %s", 
                                 PawsManager::GetSingleton().Translate("Buddy with the name").GetData(),value,
                                 PawsManager::GetSingleton().Translate("already exists.").GetData());
             err.FireEvent();
