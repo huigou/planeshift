@@ -650,7 +650,7 @@ void SpawnManager::RepopulateItems(psSectorInfo *sectorinfo)
     Debug2(LOG_SPAWN,0,"Spawned %d items.\n",spawned);
 }
 
-void SpawnManager::KillNPC(gemObject *obj, gemActor* killer)
+void SpawnManager::KillNPC(gemActor *obj, gemActor* killer)
 {
     int killer_cnum = 0;
 
@@ -744,7 +744,7 @@ void SpawnManager::KillNPC(gemObject *obj, gemActor* killer)
         {
             for (size_t i=0; i<grp->GetMemberCount(); i++)
             {
-                if (obj->HasBeenAttackedBy(grp->GetMember(i)) && grp->GetMember(i)->RangeTo(obj) < RANGE_TO_RECV_LOOT)
+                if (grp->GetMember(i)->RangeTo(obj) < RANGE_TO_RECV_LOOT)
                 {
                     Debug3(LOG_LOOT, 0,"Adding %s as able to loot %s.",grp->GetMember(i)->GetName(),obj->GetName() );
                     obj->AddLootableClient(grp->GetMember(i)->GetClientID() );
@@ -898,13 +898,19 @@ void SpawnManager::HandleLootItem(MsgEntry *me,Client *client)
     psLootItemMessage msg(me);
 
     // Possible hack here?  We are trusting the client to send the right msg.entity?
-    gemObject *obj = gem->FindObject(msg.entity);
-    if (!obj)
+    gemObject *object = gem->FindObject(msg.entity);
+    if (!object)
     {
         Error3("LootItem Message from %s specified an erroneous entity id: %s.\n", client->GetName(), ShowID(msg.entity));
         return;
     }
 
+    gemActor *obj = object->GetActorPtr();
+    if (!obj)
+    {
+        Error3("LootItem Message from %s specified a non-actor entity id: %s.\n", client->GetName(), ShowID(msg.entity));
+        return;
+    }
     psCharacter *chr = obj->GetCharacterData();
     if (!chr)
     {
@@ -963,7 +969,7 @@ void SpawnManager::HandleLootItem(MsgEntry *me,Client *client)
     }
 
     // Ask group member before take
-    if (msg.lootaction == msg.LOOT_SELF && group.IsValid() && client != randfriendclient)
+    if (msg.lootaction == msg.LOOT_SELF && group.IsValid() && client != randfriendclient && obj->HasBeenAttackedBy(randfriendclient->GetActor()))
     {
         psserver->SendSystemInfo(client->GetClientNum(),
                                  "Asking roll winner %s if you may take the %s...",
