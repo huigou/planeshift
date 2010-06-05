@@ -960,15 +960,7 @@ bool psEngine::Process2D(iEvent& ev)
 	    fpsDisplay.Format("%.2f", getFPS());
 	    g2d->Write(font, 5, 5, g2d->FindRGB(255, 255, 255), -1, fpsDisplay);
 	}
-	
-	// show loader count
-	if (loader && backgroundWorldLoading)
-	{
-	    csString loaderDisplay;
-    	loaderDisplay.Format("%lu", loader->GetLoadingCount());
-	    g2d->Write(font, 50, 5, g2d->FindRGB(255, 255, 255), -1, loaderDisplay);
-	}
-	
+
         paws->Draw();
     }
 
