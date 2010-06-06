@@ -59,7 +59,8 @@ BgLoader::BgLoader(iBase *p)
 
 BgLoader::~BgLoader()
 {
-#ifdef CS_DEBUG
+// hard disabled for now as it causes issues
+/*#ifdef CS_DEBUG
     csRef<iStringArray> zone = csPtr<iStringArray>(new scfStringArray());
     LoadPriorityZones(zone);
     CleanDisconnectedSectors(NULL);
@@ -131,7 +132,7 @@ BgLoader::~BgLoader()
     LOADER_DEBUG_MESSAGE("detected %u leaking textures\n", leakCount);
 
     fflush(stdout);
-#endif
+#endif*/
 }
 
 bool BgLoader::Initialize(iObjectRegistry* object_reg)

@@ -293,7 +293,7 @@ private:
         }
     };
 
-    class Texture : public CS::Utility::FastRefCount<Texture>
+    class Texture : public CS::Utility::AtomicRefCount
     {
     public:
         Texture(const char* name, const char* path, iDocumentNode* data)
@@ -308,7 +308,7 @@ private:
         csRef<iDocumentNode> data;
     };
 
-    class Material : public CS::Utility::FastRefCount<Material>
+    class Material : public CS::Utility::AtomicRefCount
     {
     public:
         Material(const char* name = "")
@@ -325,7 +325,7 @@ private:
         csArray<bool> checked;
     };
 
-    class MeshFact : public CS::Utility::FastRefCount<MeshFact>
+    class MeshFact : public CS::Utility::AtomicRefCount
     {
     public:
         MeshFact(const char* name, const char* path, iDocumentNode* data) : name(name),
@@ -370,7 +370,7 @@ private:
         csStringArray submeshes;
     };
 
-    class Sector : public CS::Utility::FastRefCount<Sector>
+    class Sector : public CS::Utility::AtomicRefCount
     {
     public:
         Sector(const char* name) : name(name), init(false), isLoading(false), checked(false),
@@ -407,7 +407,7 @@ private:
         bool priority;
     };
 
-    class MeshGen : public CS::Utility::FastRefCount<MeshObj>
+    class MeshGen : public CS::Utility::AtomicRefCount
     {
     public:
         MeshGen(const char* name, iDocumentNode* data) : name(name), data(data),
@@ -438,7 +438,7 @@ private:
         Sector* sector;
     };
 
-    class MeshObj : public CS::Utility::FastRefCount<MeshObj>
+    class MeshObj : public CS::Utility::AtomicRefCount
     {
     public:
         MeshObj(const char* name, const char* path, iDocumentNode* data) : name(name), path(path), data(data),
@@ -474,7 +474,7 @@ private:
         csRefArray<Sequence> sequences;
     };
 
-    class Portal : public CS::Utility::FastRefCount<Portal>
+    class Portal : public CS::Utility::AtomicRefCount
     {
     public:
         Portal(const char* name) : name(name), wv(0), ww_given(false), ww(0),
@@ -510,7 +510,7 @@ private:
         csRef<iMeshWrapper> mObject;
     };
 
-    class Light : public CS::Utility::FastRefCount<Light>
+    class Light : public CS::Utility::AtomicRefCount
     {
     public:
         Light(const char* name) : name(name), loaded(false)
@@ -540,7 +540,7 @@ private:
         bool loaded;
     };
 
-    class Trigger : public CS::Utility::FastRefCount<Trigger>
+    class Trigger : public CS::Utility::AtomicRefCount
     {
     public:
         Trigger(const char* name, iDocumentNode* data) : name(name), loaded(false),
@@ -554,7 +554,7 @@ private:
         csRef<iThreadReturn> status;
     };
 
-    class Sequence : public CS::Utility::FastRefCount<Sequence>
+    class Sequence : public CS::Utility::AtomicRefCount
     {
     public:
         Sequence(const char* name, iDocumentNode* data) : name(name), loaded(false),
