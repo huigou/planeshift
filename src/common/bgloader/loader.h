@@ -597,7 +597,7 @@ private:
     bool LoadMeshFact(MeshFact* meshfact, bool wait = false);
     bool LoadMaterial(Material* material, bool wait = false);
     bool LoadTexture(Texture* texture, bool wait = false);
-    bool LoadLight(Light* light, bool wait = false);
+    bool LoadLight(Light* light, Sector* sector, bool wait = false);
     bool LoadSequence(Sequence* sequence, bool wait = false);
 
     // Pointers to other needed plugins.
