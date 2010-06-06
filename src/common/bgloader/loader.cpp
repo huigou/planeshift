@@ -393,7 +393,7 @@ void BgLoader::CleanSector(Sector* sector)
             // finish partially loaded light
             if(!sector->lights[i]->loaded && sector->lights[i]->object.IsValid())
             {
-                if(LoadLight(sector->lights[i], true))
+                if(LoadLight(sector->lights[i], sector, true))
                 {
                     ++(sector->objectCount);
                 }
@@ -884,10 +884,8 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
         {
             if(sector->lights[i]->InRange(loadBox, force))
             {
-                if(LoadLight(sector->lights[i]))
+                if(LoadLight(sector->lights[i], sector))
                 {
-                    sector->lights[i]->object->GetMovable()->SetSector(sector->object);
-                    sector->object->GetLights()->Add(sector->lights[i]->object);
                     ++(sector->objectCount);
                 }
             }
@@ -1254,7 +1252,7 @@ bool BgLoader::LoadTexture(Texture* texture, bool wait)
     return false;
 }
 
-bool BgLoader::LoadLight(Light* light, bool wait)
+bool BgLoader::LoadLight(Light* light, Sector* sector, bool wait)
 {
     if(light->loaded)
     {
@@ -1266,6 +1264,8 @@ bool BgLoader::LoadLight(Light* light, bool wait)
         light->object = engine->CreateLight(light->name, light->pos, light->radius, light->colour, light->dynamic);
         light->object->SetAttenuationMode(light->attenuation);
         light->object->SetType(light->type);
+	light->object->GetMovable()->SetSector(sector->object);
+	sector->object->GetLights()->Add(light->object);
     }
 
     // Load all light sequences.
