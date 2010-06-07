@@ -291,6 +291,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX86</TargetMachine>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
       <OutputFile>..\..\out\release10\libs\libfparser.lib</OutputFile>
@@ -337,6 +338,7 @@ copy /y "$(TargetPath)" ..\..\out\release10\bin\
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX86</TargetMachine>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
       <OutputFile>..\..\out\release10\libs\libfparser.lib</OutputFile>
@@ -379,6 +381,7 @@ copy /y "$(TargetPath)" ..\..\out\release10\bin\
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX86</TargetMachine>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
       <OutputFile>..\..\out\debug10\libs\libfparser_d.lib</OutputFile>
@@ -421,6 +424,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX86</TargetMachine>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
       <OutputFile>..\..\out\debug10\libs\libfparser_d.lib</OutputFile>
@@ -463,6 +467,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX86</TargetMachine>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
       <OutputFile>..\..\out\debug10\libs\libfparser_d.lib</OutputFile>
@@ -505,6 +510,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX86</TargetMachine>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
       <OutputFile>..\..\out\debug10\libs\libfparser_d.lib</OutputFile>
@@ -547,6 +553,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX86</TargetMachine>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
       <OutputFile>..\..\out\debug10\libs\libfparser_d.lib</OutputFile>
@@ -589,6 +596,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX86</TargetMachine>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
       <OutputFile>..\..\out\debug10\libs\libfparser_d.lib</OutputFile>
@@ -631,6 +639,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX86</TargetMachine>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
       <OutputFile>..\..\out\debug10\libs\libfparser_d.lib</OutputFile>
@@ -673,6 +682,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX86</TargetMachine>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
       <OutputFile>..\..\out\debug10\libs\libfparser_d.lib</OutputFile>
@@ -715,6 +725,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX86</TargetMachine>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
       <OutputFile>..\..\out\debug10\libs\libfparser_d.lib</OutputFile>
@@ -757,6 +768,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX86</TargetMachine>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
       <OutputFile>..\..\out\debug10\libs\libfparser_d.lib</OutputFile>
@@ -803,6 +815,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX64</TargetMachine>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
       <OutputFile>..\..\out\release10-x64\libs\libfparser.lib</OutputFile>
@@ -849,6 +862,7 @@ copy /y "$(TargetPath)" ..\..\out\release10-x64\bin\
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX64</TargetMachine>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
       <OutputFile>..\..\out\release10-x64\libs\libfparser.lib</OutputFile>
@@ -891,6 +905,7 @@ copy /y "$(TargetPath)" ..\..\out\release10-x64\bin\
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX64</TargetMachine>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
       <OutputFile>..\..\out\debug10-x64\libs\libfparser_d.lib</OutputFile>
@@ -933,6 +948,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX64</TargetMachine>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
       <OutputFile>..\..\out\debug10-x64\libs\libfparser_d.lib</OutputFile>
@@ -975,6 +991,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX64</TargetMachine>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
       <OutputFile>..\..\out\debug10-x64\libs\libfparser_d.lib</OutputFile>
@@ -1017,6 +1034,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX64</TargetMachine>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
       <OutputFile>..\..\out\debug10-x64\libs\libfparser_d.lib</OutputFile>
@@ -1059,6 +1077,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX64</TargetMachine>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
       <OutputFile>..\..\out\debug10-x64\libs\libfparser_d.lib</OutputFile>
@@ -1101,6 +1120,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX64</TargetMachine>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
       <OutputFile>..\..\out\debug10-x64\libs\libfparser_d.lib</OutputFile>
@@ -1143,6 +1163,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX64</TargetMachine>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
       <OutputFile>..\..\out\debug10-x64\libs\libfparser_d.lib</OutputFile>
@@ -1185,6 +1206,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX64</TargetMachine>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
       <OutputFile>..\..\out\debug10-x64\libs\libfparser_d.lib</OutputFile>
@@ -1227,6 +1249,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX64</TargetMachine>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
       <OutputFile>..\..\out\debug10-x64\libs\libfparser_d.lib</OutputFile>
@@ -1269,6 +1292,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX64</TargetMachine>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
       <OutputFile>..\..\out\debug10-x64\libs\libfparser_d.lib</OutputFile>
