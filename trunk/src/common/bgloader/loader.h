@@ -502,12 +502,48 @@ private:
         bool clip;
         bool zfill;
         bool warp;
+	bool autoresolve;
         csPoly3D poly;
         csBox3 bbox;
 
         csRef<Sector> targetSector;
         iPortal* pObject;
         csRef<iMeshWrapper> mObject;
+
+        class MissingSectorCallback : public scfImplementation1<MissingSectorCallback, iPortalCallback>
+        {
+        private:
+            csRef<Sector> targetSector;
+            bool autoresolve;
+
+        public:
+            MissingSectorCallback(Sector* target, bool resolve) : scfImplementationType(this),targetSector(target),autoresolve(resolve)
+            {
+            }
+
+            virtual ~MissingSectorCallback()
+            {
+            }
+
+            virtual bool Traverse(iPortal* p, iBase* /*context*/)
+            {
+                if(targetSector->object.IsValid())
+                {
+                    p->SetSector(targetSector->object);
+                }
+                else
+                {
+                    return false;
+                }
+
+                if(!autoresolve)
+                {
+                    p->RemoveMissingSectorCallback(this);
+                }
+
+                return true;
+            }
+        };
     };
 
     class Light : public CS::Utility::AtomicRefCount

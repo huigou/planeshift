@@ -942,6 +942,11 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                                 p->zfill = true;
                             }
 
+                            if(node2->GetNode("autoresolve"))
+                            {
+                                p->autoresolve = true;
+                            }
+
                             csRef<iDocumentNodeIterator> nodeItr3 = node2->GetNodes("v");
                             while(nodeItr3->HasNext())
                             {

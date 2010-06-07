@@ -1066,9 +1066,16 @@ bool BgLoader::LoadPortal(Portal* portal, Sector* sector)
         return true;
     }
 
+    iSector* target = portal->targetSector->object;
+
+    if(portal->autoresolve)
+    {
+        target = 0;
+    }
+
     portal->mObject = engine->CreatePortal(portal->name, sector->object, csVector3(0),
-                portal->targetSector->object, portal->poly.GetVertices(),
-                (int)portal->poly.GetVertexCount(), portal->pObject);
+                 target, portal->poly.GetVertices(), (int)portal->poly.GetVertexCount(),
+                 portal->pObject);
 
     if(portal->warp)
     {
@@ -1088,6 +1095,13 @@ bool BgLoader::LoadPortal(Portal* portal, Sector* sector)
     if(portal->zfill)
     {
         portal->pObject->GetFlags().SetBool(CS_PORTAL_ZFILL, true);
+    }
+
+    if(!target)
+    {
+        csRef<Portal::MissingSectorCallback> cb;
+        cb.AttachNew(new Portal::MissingSectorCallback(portal->targetSector, portal->autoresolve));
+        portal->pObject->SetMissingSectorCallback(cb);
     }
 
     return true;
