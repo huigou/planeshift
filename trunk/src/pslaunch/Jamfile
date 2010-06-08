@@ -18,7 +18,7 @@ Application pslaunch_static : [ Wildcard *.cpp *.h ] ;
 CFlags pslaunch_static : [ FDefines CS_STATIC_LINKED CURL_STATICLIB ] ;
 LFlags pslaunch_static : -lcrystalspace_staticplugins-$(CRYSTAL.VERSION) ;
 MsvcDefine pslaunch_static : CS_STATIC_LINKED CURL_STATICLIB ;
-LinkWith pslaunch_static : xdelta3 paws psutil fparser ;
+LinkWith pslaunch_static : xdelta3 paws psutil fparser sound ;
 
 STATIC.PLUGINLIST = 
   csfont
