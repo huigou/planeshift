@@ -1,5 +1,4 @@
 <?php
-// Quest dumper from db to txt files
 
 $ip = "127.0.0.1";
 $code = "abcd";
@@ -22,6 +21,10 @@ if($_GET["function"] == "add_user")
 else if($_GET["function"] = "edit_pass")
 {
 		mysql_query("UPDATE accounts set password=\"".$_GET["pass"]."\" where username=\"".$_GET["user"]."\"") or die("fatal error: couldn't insert stuff: " . mysql_error() . "\n");
+}
+else
+{
+	echo "unimplemented function!";
 }
 
 ?>
