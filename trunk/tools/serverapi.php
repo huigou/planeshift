@@ -16,6 +16,14 @@ if($_SERVER["REMOTE_ADDR"] != $ip || $_GET["code"] != $code)
 	exit();
 }
 
-mysql_query("INSERT into accounts (username,password,last_login_ip,security_level,status) VALUES\n(\"".$_GET["user"]."\",\"".$_GET["pass"]."\",\"127.0.0.1\", 0, \"A\")") or die("fatal error: couldn't insert stuff: " . mysql_error() . "\n");
+if($_GET["function"] == "add_user")
+{
+	mysql_query("INSERT into accounts (username,password,last_login_ip,security_level,status) VALUES\n(\"".$_GET["user"]."\",\"".$_GET["pass"]."\",\"127.0.0.1\", 0, \"A\")") or die("fatal error: couldn't insert stuff: " . mysql_error() . "\n");
+
+}
+else if($_GET["function"] = "edit_pass")
+{
+		mysql_query("UPDATE accounts set password=\"".$_GET["pass"]."\" where username=\"".$_GET["user"]."\"") or die("fatal error: couldn't insert stuff: " . mysql_error() . "\n");
+}
 
 ?>
