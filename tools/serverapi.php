@@ -8,8 +8,6 @@ $code = "abcd";
 $db = mysql_connect("localhost", "planeshift", "planeshift") or die ("Unable to connect!"); // host, user, pass
 mysql_select_db("planeshift", $db) or die("Could not select database");
 
-echo $_GET["pass"];
-echo $_GET["user"];
 if($_SERVER["REMOTE_ADDR"] != $ip || $_GET["code"] != $code)
 {
 	echo "Access DENIED!";
