@@ -386,7 +386,6 @@ void BgLoader::CleanSector(Sector* sector)
         return;
     }
 
-    bool failed = false;
     for(;sector->objectCount > 0; ContinueLoading(true))
     {
         for(size_t i=0; i<sector->lights.GetSize(); i++)
