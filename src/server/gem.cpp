@@ -2539,6 +2539,7 @@ bool gemActor::HasBeenAttackedBy(gemActor* attacker)
         if(attacker == hit->Attacker())
             return true;        
     }    
+    return false;
 }
 
 
