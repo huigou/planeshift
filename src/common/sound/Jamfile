@@ -6,4 +6,4 @@ Library sound
 ;
 
 LinkWith paws : psutil ;
-ExternalLibs sound : CRYSTAL CEL ;
+ExternalLibs sound : CRYSTAL ;
