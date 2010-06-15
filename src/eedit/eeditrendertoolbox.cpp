@@ -136,14 +136,120 @@ void EEditRenderToolbox::FillAnchor(const char* anchorName)
     NewRow(a, list2, &col1, &col2);
     col1->SetText("Dir");
     col2->SetText(anchor->GetDirectionType());
-    NewRow(a, list2, &col1, &col2);
-    col1->SetText("ASize");
-    fmt.Format("%g", anchor->GetAnimGetSize());
-    col2->SetText(fmt);
+    //NewRow(a, list2, &col1, &col2);
+    //col1->SetText("ASize");
+    //fmt.Format("%g", anchor->GetAnimGetSize());
+    //col2->SetText(fmt);
+
+    size_t kfcount = anchor->GetKeyFrameCount ();
+    for (size_t i = 0 ; i < kfcount ; i++)
+    {
+        psEffectAnchorKeyFrame* kf = anchor->GetKeyFrame (i);
+        NewRow(a, list2, &col1, &col2);
+	fmt.Format("KF%d", i);
+        col1->SetText(fmt);
+	fmt = "";
+	bool px, py, pz, ttx, tty, ttz;
+	px = kf->IsActionSet (psEffectAnchorKeyFrame::KA_POS_X);
+	py = kf->IsActionSet (psEffectAnchorKeyFrame::KA_POS_Y);
+	pz = kf->IsActionSet (psEffectAnchorKeyFrame::KA_POS_Z);
+	ttx = kf->IsActionSet (psEffectAnchorKeyFrame::KA_TOTARGET_X);
+	tty = kf->IsActionSet (psEffectAnchorKeyFrame::KA_TOTARGET_Y);
+	ttz = kf->IsActionSet (psEffectAnchorKeyFrame::KA_TOTARGET_Z);
+	if (px || py || pz)
+	{
+	    fmt = "pos(";
+	    if (px) fmt += "X"; else fmt += "_";
+	    if (py) fmt += "Y"; else fmt += "_";
+	    if (pz) fmt += "Z"; else fmt += "_";
+	    fmt += ")";
+	}
+	if (ttx || tty || ttz)
+	{
+	    if (px || py || pz) fmt += ' ';
+	    fmt = "tgt(";
+	    if (ttx) fmt += "X"; else fmt += "_";
+	    if (tty) fmt += "Y"; else fmt += "_";
+	    if (ttz) fmt += "Z"; else fmt += "_";
+	    fmt += ")";
+	}
+        col2->SetText(fmt);
+    }
 }
 
 void EEditRenderToolbox::FillObj(const char* objName)
 {
+    list2->Clear();
+    list2->Select(0);
+
+    psEffect* eff = GetCurrentEffect();
+    if (!eff) return;
+    psEffectObj* obj = eff->FindObj(objName);
+    if (!obj) return;
+    pawsTextBox* col1, * col2;
+
+    csString fmt;
+    size_t a = 0;
+
+    NewRow(a, list2, &col1, &col2);
+    col1->SetText("Birth");
+    fmt.Format("%g", obj->GetBirth ());
+    col2->SetText(fmt);
+
+    NewRow(a, list2, &col1, &col2);
+    col1->SetText("Death");
+    fmt.Format("%d", obj->GetKillTime ());
+    col2->SetText(fmt);
+
+    NewRow(a, list2, &col1, &col2);
+    col1->SetText("Attach");
+    col2->SetText(obj->GetAnchorName ().GetData ());
+
+    NewRow(a, list2, &col1, &col2);
+    col1->SetText("Attach");
+    csString priority = engine->GetRenderPriorityName (obj->GetRenderPriority ());
+    col2->SetText(priority.GetData ());
+
+    csZBufMode zmode = obj->GetZBufMode ();
+    NewRow(a, list2, &col1, &col2);
+    col1->SetText("ZBufMode");
+    if (zmode == CS_ZBUF_NONE) col2->SetText("znone");
+    else if (zmode == CS_ZBUF_FILL) col2->SetText("zfill");
+    else if (zmode == CS_ZBUF_USE) col2->SetText("zuse");
+    else if (zmode == CS_ZBUF_TEST) col2->SetText("ztest");
+    else col2->SetText("?");
+
+    unsigned int mixmode = obj->GetMixMode ();
+    NewRow(a, list2, &col1, &col2);
+    col1->SetText("MixMode");
+    if (mixmode == CS_FX_COPY) col2->SetText ("copy");
+    else if (mixmode == CS_FX_MULTIPLY) col2->SetText ("multiply");
+    else if (mixmode == CS_FX_MULTIPLY2) col2->SetText ("multiply2");
+    else if (mixmode == CS_FX_ALPHA) col2->SetText ("alpha");
+    else if (mixmode == CS_FX_TRANSPARENT) col2->SetText ("transparent");
+    else if (mixmode == CS_FX_DESTALPHAADD) col2->SetText ("destalphaadd");
+    else if (mixmode == CS_FX_SRCALPHAADD) col2->SetText ("srcalphaadd");
+    else if (mixmode == CS_FX_PREMULTALPHA) col2->SetText ("premultalpha");
+    else if (mixmode == CS_FX_ADD) col2->SetText ("add");
+    else col2->SetText ("?");
+
+    NewRow(a, list2, &col1, &col2);
+    col1->SetText("Dir");
+    int dir = obj->GetDirection ();
+    if (dir == psEffectObj::DT_TARGET) col2->SetText ("target");
+    else if (dir == psEffectObj::DT_ORIGIN) col2->SetText ("origin");
+    else if (dir == psEffectObj::DT_TO_TARGET) col2->SetText ("totarget");
+    else if (dir == psEffectObj::DT_CAMERA) col2->SetText ("camera");
+    else if (dir == psEffectObj::DT_BILLBOARD) col2->SetText ("billboard");
+    else col2->SetText ("none");
+
+    // Keyframes...
+    size_t kfcount = obj->GetKeyFrameCount ();
+    for (size_t i = 0 ; i < kfcount ; i++)
+    {
+        psEffectObjKeyFrame* kf = obj->GetKeyFrame (i);
+	// @@@ TODO
+    }
 }
 
 void EEditRenderToolbox::OnListAction(pawsListBox* selected, int status)
