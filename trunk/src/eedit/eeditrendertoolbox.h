@@ -24,6 +24,7 @@
 #include "paws/pawswidget.h"
 #include "effects/pseffectmanager.h"
 #include "effects/pseffect.h"
+#include "iengine/engine.h"
 
 class pawsButton;
 
@@ -49,7 +50,8 @@ public:
     void LoadEffect(psEffectManager* mgr, const char* effectName);
     void FillAnchor(const char* anchorName);
     void FillObj(const char* objName);
-    
+    void SetEngine(iEngine* e) { engine = e; }
+
 private:
     pawsButton   * renderButton;
     pawsButton   * loadButton;
@@ -59,6 +61,7 @@ private:
     pawsListBox  * list2;
 
     psEffectManager* effectManager;
+    csRef<iEngine> engine;
     csString effectName;
 };
 

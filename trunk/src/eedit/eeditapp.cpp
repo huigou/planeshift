@@ -303,6 +303,8 @@ bool EEditApp::Init()
     RefreshEffectList();
     ((EEditParticleListToolbox *)toolboxManager->GetToolbox(EEditToolbox::T_PARTICLES))->FillList(engine);
 
+    ((EEditRenderToolbox *)toolboxManager->GetToolbox(EEditToolbox::T_RENDER))->SetEngine(engine);
+
     controlManager = new eControlManager(object_reg);
     if (!controlManager->LoadKeyMap(KEY_DEFS_FILENAME))
     {

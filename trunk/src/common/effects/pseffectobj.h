@@ -237,6 +237,11 @@ public:
             matBase = newTargetTransf;
     }
 
+    /** Get the direction.
+     *  @return direction.
+     */
+    int GetDirection () const { return dir; }
+
     /** Sets the name of the anchor that this effect obj is attached to.
      *   @param anchor the new name of the anchor that this obj is attached to
      */
@@ -246,6 +251,26 @@ public:
      *   @return The name of the anchor that this effect obj is attached to.
      */
     const csString & GetAnchorName() const { return anchorName; }
+
+    /** Get the priority for rendering the mesh.
+     *  @return the CS engine priority.
+     */
+    long GetRenderPriority() const { return priority; }
+
+    /** Get the zbuf mode for rendering the mesh.
+     *  @return the CS zbuf mode.
+     */
+    csZBufMode GetZBufMode() const { return zFunc; }
+
+    /** Get the mixmode for rendering the mesh.
+     *  @return the CS mixmode.
+     */
+    unsigned int GetMixMode () const { return mixmode; }
+
+    /** Get the birth.
+     *  @return the birth value
+     */
+    float GetBirth() const { return birth; }
    
     /** Accessor function to get the animation length of this effect obj.
      *   @return the animation length of this effect obj
