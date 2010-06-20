@@ -203,7 +203,6 @@ void ZoneHandler::LoadZone(csVector3 pos, const char* sector, bool force)
         // perform extra checks whether blocked loading is necessary
         if(sectorToLoad != sectorBackup)
         {
-            Error3("moving from %s to %s", sectorBackup.GetData(), sectorToLoad.GetData());
             iSector * newsector = psengine->GetEngine()->FindSector(sectorToLoad.GetDataSafe());
             iSector * oldsector = psengine->GetEngine()->FindSector(sectorBackup.GetDataSafe());
 
@@ -222,6 +221,12 @@ void ZoneHandler::LoadZone(csVector3 pos, const char* sector, bool force)
     // Set load screen if required.
     if(FindLoadWindow() && psengine->GetLoader()->GetLoadingCount() != 0 && (!psengine->HasLoadedMap() || !connected))
     {
+        // make sure we won't move around during maploads
+        if(celclient->GetMainPlayer())
+        {
+            celclient->GetMainPlayer()->StopMoving(true);
+        }
+
         loading = true;
 
         if(psengine->HasLoadedMap())
