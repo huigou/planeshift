@@ -417,12 +417,12 @@ private:
 
         inline bool InRange(const csBox3& curBBox, bool force)
         {
-            return !status.IsValid() && (force || curBBox.Overlap(bbox));
+            return !status.IsValid() && (force || curBBox.Overlap(bbox)) && !loading;
         }
 
         inline bool OutOfRange(const csBox3& curBBox)
         {
-            return status.IsValid() && !curBBox.Overlap(bbox);
+            return status.IsValid() && !curBBox.Overlap(bbox) && !loading;
         }
 
         csString name;
@@ -448,12 +448,12 @@ private:
 
         inline bool InRange(const csBox3& curBBox, bool force)
         {
-            return !object.IsValid() && (force || curBBox.Overlap(bbox));
+            return !object.IsValid() && (force || curBBox.Overlap(bbox)) && !loading;
         }
 
         inline bool OutOfRange(const csBox3& curBBox)
         {
-            return object.IsValid() && !curBBox.Overlap(bbox);
+            return object.IsValid() && !curBBox.Overlap(bbox) && !loading;
         }
 
         csString name;
@@ -477,8 +477,8 @@ private:
     class Portal : public CS::Utility::AtomicRefCount
     {
     public:
-        Portal(const char* name) : name(name), wv(0), ww_given(false), ww(0),
-            transform(0), pfloat(false), clip(false), zfill(false), warp(false)
+        Portal(const char* name) : name(name), wv(0), ww_given(false),
+            ww(0), pfloat(false), clip(false), zfill(false), warp(false)
         {
         }
 
@@ -497,7 +497,7 @@ private:
         csVector3 wv;
         bool ww_given;
         csVector3 ww;
-        csVector3 transform;
+        csReversibleTransform transform;
         bool pfloat;
         bool clip;
         bool zfill;
@@ -673,6 +673,9 @@ private:
 
     // The last valid position.
     csVector3 lastPos;
+
+    // The last offset used for mesh loading
+    size_t loadingOffset;
 
     // Shader store.
     csHash<csString, csStringID> shadersByUsageType;
