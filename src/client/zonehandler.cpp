@@ -221,12 +221,6 @@ void ZoneHandler::LoadZone(csVector3 pos, const char* sector, bool force)
     // Set load screen if required.
     if(FindLoadWindow() && psengine->GetLoader()->GetLoadingCount() != 0 && (!psengine->HasLoadedMap() || !connected))
     {
-        // make sure we won't move around during maploads
-        if(celclient->GetMainPlayer())
-        {
-            celclient->GetMainPlayer()->StopMoving(true);
-        }
-
         loading = true;
 
         if(psengine->HasLoadedMap())
@@ -248,9 +242,11 @@ void ZoneHandler::LoadZone(csVector3 pos, const char* sector, bool force)
 
         psengine->ForceRefresh();
     }
-
-    // move player to the new sector
-    MovePlayerTo(newPos, sectorToLoad);
+    else
+    {
+        // move player to new pos
+        MovePlayerTo(newPos, sectorToLoad);
+    }
 }
 
 void ZoneHandler::MovePlayerTo(const csVector3 & newPos, const csString & newSector)
@@ -282,6 +278,9 @@ void ZoneHandler::OnDrawingFinished()
     {
         if(psengine->GetLoader()->GetLoadingCount() == 0)
         {
+            // move player to new pos
+            MovePlayerTo(newPos, sectorToLoad);
+
             if(psengine->HasLoadedMap())
                 loadWindow->Hide();
 
