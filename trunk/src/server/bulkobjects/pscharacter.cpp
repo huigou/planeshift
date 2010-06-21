@@ -1546,7 +1546,7 @@ void psCharacter::CombatDrain(int slot)
         return;
 
     MathEnvironment env;
-    env.Define("Actor", this);
+    env.Define("Actor", GetActor());
     env.Define("Weapon", weapon);
 
     script->Evaluate(&env);
