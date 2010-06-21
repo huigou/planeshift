@@ -1552,7 +1552,9 @@ void AdminManager::HandleLoadQuest(psAdminCmdMessage& msg, AdminCmdData& data, C
 {
     uint32 questID = (uint32)-1;
 
-    Result result(db->Select("select * from quests where name='%s'", data.text.GetData()));
+    csString questName;
+    db->Escape(questName, data.text.GetData());
+    Result result(db->Select("select * from quests where name='%s'", questName.GetData()));
     if (!result.IsValid() || result.Count() == 0)
     {
         psserver->SendSystemError(client->GetClientNum(), "Quest <%s> not found", data.text.GetData());
