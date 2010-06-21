@@ -690,11 +690,11 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                                     {
                                         if(position->GetNode("matrix"))
                                         {
-                                            m->bbox.AddBoundingVertex(rot*csVector3(pos+meshfact->bboxvs[v]));
+                                            m->bbox.AddBoundingVertex(pos + rot * meshfact->bboxvs[v]);
                                         }
                                         else
                                         {
-                                            m->bbox.AddBoundingVertex(pos+meshfact->bboxvs[v]);
+                                            m->bbox.AddBoundingVertex(pos + meshfact->bboxvs[v]);
                                         }
                                     }
                                 }
@@ -768,7 +768,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                             nodeItr3 = node2->GetNode("cells")->GetNodes("cell");
                             while(nodeItr3->HasNext())
                             {
-                                node2 = nodeItr3->Next();
+                                csRef<iDocumentNode> node2 = nodeItr3->Next();
                                 if(node2->GetNode("renderproperties"))
                                 {
                                     csRef<iDocumentNodeIterator> nodeItr4 = node2->GetNode("renderproperties")->GetNodes("shadervar");
@@ -805,6 +805,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                         {
                             s->meshes.Push(m);
                         }
+
                         CS::Threading::ScopedWriteLock lock(meshLock);
                         meshes.Put(meshStringSet.Request(m->name), m);
                     }
@@ -974,7 +975,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                             {
                                 p->ww = p->wv;
                             }
-                            p->transform = p->ww - p->matrix * p->wv;
+                            p->transform = csReversibleTransform(p->matrix.GetInverse(), p->ww - p->matrix * p->wv);
                             s->portals.Push(p);
                         }
                     }

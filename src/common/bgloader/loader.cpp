@@ -52,7 +52,7 @@ SCF_IMPLEMENT_FACTORY(BgLoader)
 
 BgLoader::BgLoader(iBase *p)
   : scfImplementationType (this, p), parsedShaders(false),
-  loadRange(200), enabledGfxFeatures(0),
+  loadRange(500), enabledGfxFeatures(0), loadingOffset(0),
   validPosition(false), resetHitbeam(true)
 {
 }
@@ -220,7 +220,6 @@ csPtr<iStringArray> BgLoader::GetShaderName(const char* usageType) const
 void BgLoader::ContinueLoading(bool waiting)
 {  
     // Limit even while waiting - we want some frames.
-    size_t i = 0;
     size_t count = 0;
     while(count < 10)
     {
@@ -228,17 +227,21 @@ void BgLoader::ContinueLoading(bool waiting)
         bool finished = false;
 
         // Check if we need to reset i
-        if (i == loadingMeshes.GetSize())
-            i = 0;
+        if(loadingOffset >= loadingMeshes.GetSize())
+            loadingOffset = 0;
 
         // Check already loading meshes.
-        for(; i<(loadingMeshes.GetSize() < 20 ? loadingMeshes.GetSize() : 20); ++i)
+        size_t endOffset = loadingOffset + 20;
+        if(endOffset > loadingMeshes.GetSize())
+            endOffset = loadingMeshes.GetSize();
+
+        for(; loadingOffset < endOffset; ++loadingOffset)
         {
-            if(LoadMesh(loadingMeshes[i]))
+            if(LoadMesh(loadingMeshes[loadingOffset]))
             {
                 finished = true;
-                finalisableMeshes.Push(loadingMeshes[i]);
-                loadingMeshes.DeleteIndex(i);
+                finalisableMeshes.Push(loadingMeshes[loadingOffset]);
+                loadingMeshes.DeleteIndex(loadingOffset);
             }
         }
 
@@ -386,81 +389,85 @@ void BgLoader::CleanSector(Sector* sector)
         return;
     }
 
-    for(;sector->objectCount > 0; ContinueLoading(true))
+    for(size_t i=0; i<sector->lights.GetSize(); i++)
     {
-        for(size_t i=0; i<sector->lights.GetSize(); i++)
+        // finish partially loaded light
+        if(!sector->lights[i]->loaded && sector->lights[i]->object.IsValid())
         {
-            // finish partially loaded light
-            if(!sector->lights[i]->loaded && sector->lights[i]->object.IsValid())
+            if(LoadLight(sector->lights[i], sector, true))
             {
-                if(LoadLight(sector->lights[i], sector, true))
-                {
-                    ++(sector->objectCount);
-                }
-            }
-
-            if(sector->lights[i]->loaded)
-            {
-                sector->object->GetLights()->Remove(sector->lights[i]->object);
-                CleanLight(sector->lights[i]);
-                --(sector->objectCount);
+                ++(sector->objectCount);
             }
         }
 
-        // Remove sequences.
-        for(size_t i=0; i<sector->sequences.GetSize(); ++i)
+        if(sector->lights[i]->loaded)
         {
-            // finish partially loaded sequence
-            if(!sector->sequences[i]->loaded && sector->sequences[i]->status.IsValid())
-            {
-                LoadSequence(sector->sequences[i], true);
-            }
-
-            if(sector->sequences[i]->loaded)
-            {
-                CleanSequence(sector->sequences[i]);
-            }
+            sector->object->GetLights()->Remove(sector->lights[i]->object);
+            CleanLight(sector->lights[i]);
+            --(sector->objectCount);
         }
-
-        for(size_t i=0; i<sector->meshgen.GetSize(); i++)
-        {
-            if(sector->meshgen[i]->status.IsValid())
-            {
-                CleanMeshGen(sector->meshgen[i]);
-                --(sector->objectCount);
-            }
-        }
-
-        for(size_t i=0; i<sector->meshes.GetSize(); i++)
-        {
-            if(sector->meshes[i]->object.IsValid())
-            {
-                CleanMesh(sector->meshes[i]);
-                --(sector->objectCount);
-            }
-        }
-
-        for(size_t i=0; i<sector->portals.GetSize(); i++)
-        {
-            if(sector->portals[i]->mObject.IsValid())
-            {
-                CleanPortal(sector->portals[i]);
-                sector->activePortals.Delete(sector->portals[i]);
-                --(sector->objectCount);
-            }
-        }
-
-        for(size_t i=0; i<sector->alwaysLoaded.GetSize(); i++)
-        {
-            if(sector->alwaysLoaded[i]->object.IsValid())
-            {
-                CleanMesh(sector->alwaysLoaded[i]);
-                --(sector->objectCount);
-            }
-        }
-
-        CS_ASSERT(sector->objectCount >= 0);
     }
+
+    // Remove sequences.
+    for(size_t i=0; i<sector->sequences.GetSize(); ++i)
+    {
+        // finish partially loaded sequence
+        if(!sector->sequences[i]->loaded && sector->sequences[i]->status.IsValid())
+        {
+            LoadSequence(sector->sequences[i], true);
+        }
+
+        if(sector->sequences[i]->loaded)
+        {
+            CleanSequence(sector->sequences[i]);
+        }
+    }
+
+    for(size_t i=0; i<sector->meshgen.GetSize(); i++)
+    {
+        if(sector->meshgen[i]->status.IsValid())
+        {
+            CleanMeshGen(sector->meshgen[i]);
+            --(sector->objectCount);
+        }
+    }
+
+    for(size_t i=0; i<sector->meshes.GetSize(); i++)
+    {
+        if(sector->meshes[i]->object.IsValid())
+        {
+            CleanMesh(sector->meshes[i]);
+            --(sector->objectCount);
+        }
+    }
+
+    for(size_t i=0; i<sector->portals.GetSize(); i++)
+    {
+        if(sector->portals[i]->mObject.IsValid())
+        {
+            CleanPortal(sector->portals[i]);
+            sector->activePortals.Delete(sector->portals[i]);
+            --(sector->objectCount);
+        }
+    }
+
+    for(size_t i=0; i<sector->alwaysLoaded.GetSize(); i++)
+    {
+        if(sector->alwaysLoaded[i]->object.IsValid())
+        {
+            CleanMesh(sector->alwaysLoaded[i]);
+            --(sector->objectCount);
+        }
+    }
+
+    if(sector->objectCount > 0)
+    {
+        // could not unload all items, some may still be loading
+        // note that this shall never occur with blocked loading,
+        // because in that case this would mean there's a memleak
+        return;
+    }
+
     CS_ASSERT_MSG("Error cleaning sector. Sector is invalid!", sector->object.IsValid());
 
     // Remove the sector from the engine.
@@ -736,9 +743,8 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
                 csBox3 wwUnloadBox = unloadBox;
                 if(sector->activePortals[i]->warp)
                 {
-                    csTransform t(sector->activePortals[i]->matrix.GetInverse(), sector->activePortals[i]->transform);
-                    wwLoadBox = t.Other2This(wwLoadBox);
-                    wwUnloadBox = t.Other2This(wwUnloadBox);
+                    wwLoadBox *= sector->activePortals[i]->transform;
+                    wwUnloadBox *= sector->activePortals[i]->transform;
                 }
 
                 LoadSector(wwLoadBox, wwUnloadBox, sector->activePortals[i]->targetSector, depth+1, false, loadMeshes);
@@ -841,9 +847,8 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
                 csBox3 wwUnloadBox = unloadBox;
                 if(sector->portals[i]->warp)
                 {
-                    csTransform t(sector->portals[i]->matrix.GetInverse(), sector->portals[i]->transform);
-                    wwLoadBox = t.Other2This(wwLoadBox);
-                    wwUnloadBox = t.Other2This(wwUnloadBox);
+                    wwLoadBox *= sector->portals[i]->transform;
+                    wwUnloadBox *= sector->portals[i]->transform;
                 }
 
                 LoadSector(wwLoadBox, wwUnloadBox, sector->portals[i]->targetSector, depth+1, false, loadMeshes);
@@ -863,9 +868,8 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
                 csBox3 wwUnloadBox = unloadBox;
                 if(sector->portals[i]->warp)
                 {
-                    csTransform t(sector->portals[i]->matrix.GetInverse(), sector->portals[i]->transform);
-                    wwLoadBox = t.Other2This(wwLoadBox);
-                    wwUnloadBox = t.Other2This(wwUnloadBox);
+                    wwLoadBox *= sector->portals[i]->transform;
+                    wwUnloadBox *= sector->portals[i]->transform;
                 }
 
                 LoadSector(wwLoadBox, wwUnloadBox, sector->portals[i]->targetSector, depth+1, false, loadMeshes);
@@ -922,6 +926,15 @@ void BgLoader::LoadSector(const csBox3& loadBox, const csBox3& unloadBox,
 
 void BgLoader::FinishMeshLoad(MeshObj* mesh)
 {
+    if(!mesh->status.IsValid())
+    {
+        if(!mesh->object.IsValid())
+        {
+            printf("Mesh '%s' failed to load. (no data found)\n", mesh->name.GetData());
+        }
+        return;
+    }
+
     if(!mesh->status->WasSuccessful())
     {
         printf("Mesh '%s' failed to load.\n", mesh->name.GetData());
@@ -979,6 +992,8 @@ bool BgLoader::LoadMeshGen(MeshGen* meshgen)
     if(!ready || !LoadMesh(meshgen->object))
       return false;
 
+    FinishMeshLoad(meshgen->object);
+
     if(ready && !meshgen->status.IsValid())
     {
         meshgen->status = tloader->LoadNode(vfs->GetCwd(), meshgen->data, 0, meshgen->sector->object);
@@ -1035,11 +1050,14 @@ bool BgLoader::LoadMesh(MeshObj* mesh)
         }
     }
 
+    if(ready && !mesh->status)
+    {
+        mesh->status = tloader->LoadNode(mesh->path, mesh->data);
+        ready = false;
+    }
+
     if(ready)
     {
-        if(!mesh->status)
-            mesh->status = tloader->LoadNode(mesh->path, mesh->data);
-
         ready = mesh->status->IsFinished();
     }
 
