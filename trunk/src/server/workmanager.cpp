@@ -570,7 +570,7 @@ void WorkManager::HandleProduction(Client *client, size_t type,const char *rewar
     client->GetActor()->SetProductionStartPos(pos);
 
     // Queue up game event for success
-    psWorkGameEvent *ev = new psWorkGameEvent(this,client->GetActor(),time_req*1000,PRODUCTION,pos,nr,client);
+    psWorkGameEvent *ev = new psWorkGameEvent(this,client->GetActor(),time_req*1000,PRODUCTION,pos,&resources,client);
     psserver->GetEventManager()->Push(ev);  // wake me up when digging is done
 
     client->GetActor()->SetTradeWork(ev);
@@ -649,7 +649,7 @@ void WorkManager::HandleProduction(gemActor *actor,const char *restype,const cha
     actor->SetProductionStartPos(pos);
 
     // Queue up game event for success
-    psWorkGameEvent *ev = new psWorkGameEvent(this,actor,time_req*1000,PRODUCTION,pos,nr,NULL);
+    psWorkGameEvent *ev = new psWorkGameEvent(this,actor,time_req*1000,PRODUCTION,pos,&resources,NULL);
     psserver->GetEventManager()->Push(ev);  // wake me up when digging is done
 
     actor->SetTradeWork(ev);
@@ -732,10 +732,10 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
 
     psCharacter *workerchar = workEvent->worker->GetCharacterData();
     psItem* tool = workerchar->Inventory().GetInventoryItem(PSCHARACTER_SLOT_RIGHTHAND);
-    if (!tool || workEvent->nr->item_cat_id != tool->GetCategory()->id)
+    if (!tool || workEvent->nrr.Get(0).resource->item_cat_id != tool->GetCategory()->id)
     {
         tool = workerchar->Inventory().GetInventoryItem(PSCHARACTER_SLOT_LEFTHAND);
-        if (!tool || workEvent->nr->item_cat_id != tool->GetCategory()->id)
+        if (!tool || workEvent->nrr.Get(0).resource->item_cat_id != tool->GetCategory()->id)
         {
             if (workEvent->client)
             {
@@ -750,32 +750,31 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
     float roll = psserver->GetRandom();
 
     // Get player skill value
-    float cur_skill = workerchar->Skills().GetSkillRank((PSSKILL)workEvent->nr->skill->id).Current();
+    float cur_skill = workerchar->Skills().GetSkillRank((PSSKILL)workEvent->nrr.Get(0).resource->skill->id).Current();
 
     // If skill=0, check if it has at least theoretical training in that skill
     if (cur_skill==0) {
-        bool fullTrainingReceived = !workerchar->Skills().Get((PSSKILL)workEvent->nr->skill->id).CanTrain();
+        bool fullTrainingReceived = !workerchar->Skills().Get((PSSKILL)workEvent->nrr.Get(0).resource->skill->id).CanTrain();
         if (fullTrainingReceived)
             cur_skill = 0.7F; // consider the skill somewhat usable
     }
 
     // Calculate complexity factor for skill
-    float f1 = cur_skill / workEvent->nr->skill_level;
+    float f1 = cur_skill / workEvent->nrr.Get(0).resource->skill_level;
     if (f1 > 1.0) f1 = 1.0; // Clamp value 0..1
 
     // Calculate factor for tool quality
-    float f2 = tool->GetItemQuality() / workEvent->nr->item_quality;
+    float f2 = tool->GetItemQuality() / workEvent->nrr.Get(0).resource->item_quality;
     if (f2 > 1.0) f2 = 1.0; // Clamp value 0..1
 
     // Calculate factor for distance from center of resource
-    csVector3 diff = workEvent->nr->loc - workEvent->position;
-    float dist = diff.Norm();
-    float f3 = 1 - (dist / workEvent->nr->radius);
+    float dist = workEvent->nrr.Get(0).dist;
+    float f3 = 1 - (dist / workEvent->nrr.Get(0).resource->radius);
     if (f3 < 0.0) f3 = 0.0f; // Clamp value 0..1
 
     MathEnvironment env;
     env.Define("Distance",    f3);                         // Distance from mine to the actual mining
-    env.Define("Probability", workEvent->nr->probability); // Probability of successful mining
+    env.Define("Probability", workEvent->nrr.Get(0).resource->probability); // Probability of successful mining
     env.Define("Quality",     f2);                         // Quality of mining equipment
     env.Define("Skill",       f1);                         // Mining skill
     calc_mining_chance->Evaluate(&env);
@@ -783,7 +782,7 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
     float total = varTotal->GetValue();
 
     csString debug;
-    debug.AppendFmt( "Probability:     %1.3f\n",workEvent->nr->probability);
+    debug.AppendFmt( "Probability:     %1.3f\n",workEvent->nrr.Get(0).resource->probability);
     debug.AppendFmt( "Skill Factor:    %1.3f\n",f1);
     debug.AppendFmt( "Quality Factor:  %1.3f\n",f2);
     debug.AppendFmt( "Distance Factor: %1.3f\n",f3);
@@ -801,17 +800,17 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
 
     if (roll < total)  // successful!
     {
-        psItemStats *newitem = cacheManager->GetBasicItemStatsByID(workEvent->nr->reward);
+        psItemStats *newitem = cacheManager->GetBasicItemStatsByID(workEvent->nrr.Get(0).resource->reward);
         if (!newitem)
         {
-            Bug2("Natural Resource reward item #%d not found!\n",workEvent->nr->reward);
+            Bug2("Natural Resource reward item #%d not found!\n",workEvent->nrr.Get(0).resource->reward);
         }
         else
         {
             psItem *item = newitem->InstantiateBasicItem();
             if (!item)
             {
-                Bug2("Failed instantizing reward item #%d!\n",workEvent->nr->reward);
+                Bug2("Failed instantizing reward item #%d!\n",workEvent->nrr.Get(0).resource->reward);
                 return;
             }
 
@@ -885,7 +884,7 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
         MathEnvironment env;
         env.Define("Success", roll < total);
         env.Define("Worker", workEvent->client->GetCharacterData());
-        env.Define("Probability", workEvent->nr->probability); // Probability of successful mining
+        env.Define("Probability", workEvent->nrr.Get(0).resource->probability); // Probability of successful mining
         calc_mining_exp->Evaluate(&env);
         practicePoints   = env.Lookup("ResultPractice")->GetRoundValue();
         modifier = env.Lookup("ResultModifier")->GetValue();
@@ -899,7 +898,7 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
         // assign practice and experience
         if(practicePoints != 0)
         {
-            workEvent->client->GetCharacterData()->CalculateAddExperience((PSSKILL)workEvent->nr->skill->id, practicePoints, modifier);
+            workEvent->client->GetCharacterData()->CalculateAddExperience((PSSKILL)workEvent->nrr.Get(0).resource->skill->id, practicePoints, modifier);
         }
         else
         {
@@ -3960,14 +3959,15 @@ psWorkGameEvent::psWorkGameEvent(WorkManager* mgr,
                                  int delayticks,
                                  int cat,
                                  csVector3& pos,
-                                 NaturalResource *natres,
+                                 csArray<NearNaturalResource> *natres,
                                  Client *c,
                                  psItem* object,
                                  float repairAmt)
                                  : psGameEvent(0,delayticks,"psWorkGameEvent"), effectID(0)
 {
     workmanager = mgr;
-    nr          = natres;
+    if(natres)
+        nrr.Merge(*natres);
     client      = c;
     position    = pos;
     category    = cat;
