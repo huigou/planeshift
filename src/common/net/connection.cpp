@@ -249,7 +249,6 @@ void psNetConnection::CheckLinkDead (csTicks currenttime)
             
             csSleep(1000);
 
-            // If no packets received ever, then use -1 to indicate cannot connect            
             csString disconnectTextMsg;
             if(server->pcknumin)
             {
@@ -262,6 +261,7 @@ void psNetConnection::CheckLinkDead (csTicks currenttime)
                                          "Please check http://%s/ or forums for more info.", server->nameAddr.GetData());
             }
 
+            // If no packets received ever, then use -1 to indicate cannot connect 
             psDisconnectMessage msgb(0,server->pcknumin?0:-1, disconnectTextMsg.GetData());
             HandleCompletedMessage(msgb.msg, server, &server->addr,NULL);
         }
