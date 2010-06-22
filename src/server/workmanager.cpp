@@ -528,9 +528,7 @@ void WorkManager::HandleProduction(Client *client, size_t type,const char *rewar
 
     csArray<NearNaturalResource> resources = FindNearestResource(sector,pos,type,(reward == NULL || !strcmp(reward,""))? NULL : reward);
 
-    
-    NaturalResource *nr = resources.GetSize() ? resources.Get(0).resource : NULL;
-    if (!nr)
+    if(resources.IsEmpty())
     {
         psserver->SendSystemInfo(client->GetClientNum(),"You don't see a good place to %s.",resourcesActions.Get(type));
         return;
@@ -538,25 +536,57 @@ void WorkManager::HandleProduction(Client *client, size_t type,const char *rewar
 
     // Validate the skill
     // If skill == 0 and can still be trained it's not possible to execute this operation
-    if (client->GetCharacterData()->Skills().GetSkillRank((PSSKILL)nr->skill->id).Current() == 0 &&
-        client->GetCharacterData()->Skills().Get((PSSKILL)nr->skill->id).CanTrain())
+    // check all the resources to check if one validates, else the resource is removed from the array.
+    // if the array ends up empty it means we don't have a resource to attempt because of our skills.
+    for(int i = 0; i < resources.GetSize(); i++)
     {
-        psserver->SendSystemInfo(client->GetClientNum(),"You don't have the skill to %s for %s.",resourcesActions.Get(type),reward);
+        NaturalResource *nr = resources.Get(i).resource;
+        if (client->GetCharacterData()->Skills().GetSkillRank((PSSKILL)nr->skill->id).Current() == 0 &&
+            client->GetCharacterData()->Skills().Get((PSSKILL)nr->skill->id).CanTrain())
+        {
+            //we can't attempt this resource so we remove it from our array of possibilities
+            resources.DeleteIndex(i);
+            //reduce the iterator position as we are removing an item.
+            i--;
+        }
+    }
+
+    //if we ended up with an empty array it means we don't have the skill to do any of these
+    if(resources.IsEmpty())
+    {
+        psserver->SendSystemInfo(client->GetClientNum(),"You don't have the skill to %s any resource here.",resourcesActions.Get(type));
         return;
     }
 
     // Validate category of equipped item
-    psItem *item = owner->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_RIGHTHAND);
-    if (!item || nr->item_cat_id != item->GetCategory()->id)
+    // checks all the resources to see if one validates, else the resource is removed from the array.
+    // if the array ends up empty it means we don't have a resource to attempt because of our tools.
+    for(int i = 0; i < resources.GetSize(); i++)
     {
-        //try the left hand
-        item = owner->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_LEFTHAND);
+        NaturalResource *nr = resources.Get(i).resource;
+        psItem *item = owner->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_RIGHTHAND);
         if (!item || nr->item_cat_id != item->GetCategory()->id)
         {
-            psserver->SendSystemError(client->GetClientNum(),"You don't have a good tool to %s with, equipped in your hands.",resourcesActions.Get(type));
-            return;
+            //try the left hand
+            item = owner->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_LEFTHAND);
+            if (!item || nr->item_cat_id != item->GetCategory()->id)
+            {
+                //we can't attempt this resource so we remove it from our array of possibilities
+                resources.DeleteIndex(i);
+                //reduce the iterator position as we are removing an item.
+                i--;
+            }
         }
     }
+    
+    //if we ended up with an empty array it means we don't have the tool to do any of these
+    if(resources.IsEmpty())
+    {
+        psserver->SendSystemError(client->GetClientNum(),"You don't have a good tool to %s with, equipped in your hands.",resourcesActions.Get(type));
+        return;
+    }
+    
+    NaturalResource *nr = resources.IsEmpty() ? NULL : resources.Get(0).resource;
 
     // Calculate time required
     int time_req = nr->anim_duration_seconds;
@@ -580,6 +610,7 @@ void WorkManager::HandleProduction(Client *client, size_t type,const char *rewar
 
 // Function used by super client
 // TODO generalize the npcclient for now it has no way to specify a specific type it can only dig
+// TODO merge somehow in the previous one. This is a ton of duplicated code.
 void WorkManager::HandleProduction(gemActor *actor,const char *restype,const char *reward)
 {
     int mode = actor->GetMode();
@@ -608,33 +639,66 @@ void WorkManager::HandleProduction(gemActor *actor,const char *restype,const cha
     
     csArray<NearNaturalResource> resources = FindNearestResource(sector,pos,type,reward);
 
-    NaturalResource *nr = resources.GetSize() ? resources.Get(0).resource : NULL;
-    if (!nr)
+    if(resources.IsEmpty())
     {
-        // psserver->SendSystemInfo(client->GetClientNum(),"You don't see a good place to %s.",type);
-        Warning4(LOG_SUPERCLIENT,"%s doesn't see a good place to %s for %s.",actor->GetName(),resourcesActions.Get(type),reward);
+        Warning3(LOG_SUPERCLIENT,"%s doesn't see a good place to %s.",actor->GetName(),resourcesActions.Get(type));
         return;
     }
 
     // Validate the skill
     // If skill == 0 and can still be trained it's not possible to execute this operation
-    if (actor->GetCharacterData()->Skills().GetSkillRank((PSSKILL)nr->skill->id).Current() == 0 &&
-        actor->GetCharacterData()->Skills().Get((PSSKILL)nr->skill->id).CanTrain())
+    // check all the resources to check if one validates, else the resource is removed from the array.
+    // if the array ends up empty it means we don't have a resource to attempt because of our skills.
+    for(int i = 0; i < resources.GetSize(); i++)
     {
-        //psserver->SendSystemInfo(client->GetClientNum(),"You don't have the skill to %s for %s.",type,reward);
-        Warning6(LOG_SUPERCLIENT,"%s(%s) don't have the skill(%d) to %s for %s.",
-                 actor->GetName(), ShowID(actor->GetEID()), nr->skill->id, resourcesActions.Get(type), reward);
+        NaturalResource *nr = resources.Get(i).resource;
+        if (actor->GetCharacterData()->Skills().GetSkillRank((PSSKILL)nr->skill->id).Current() == 0 &&
+            actor->GetCharacterData()->Skills().Get((PSSKILL)nr->skill->id).CanTrain())
+        {
+            //we can't attempt this resource so we remove it from our array of possibilities
+            resources.DeleteIndex(i);
+            //reduce the iterator position as we are removing an item.
+            i--;
+        }
+    }
+
+    //if we ended up with an empty array it means we don't have the skill to do any of these
+    if(resources.IsEmpty())
+    {
+        Warning5(LOG_SUPERCLIENT,"%s(%s) don't have the skill to %s any resource here.",
+                 actor->GetName(), ShowID(actor->GetEID()), resourcesActions.Get(type), reward);
         return;
     }
 
     // Validate category of equipped item
-    psItem *item = actor->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_RIGHTHAND);
-    if (!item || nr->item_cat_id != item->GetCategory()->id)
+    // checks all the resources to see if one validates, else the resource is removed from the array.
+    // if the array ends up empty it means we don't have a resource to attempt because of our tools.
+    for(int i = 0; i < resources.GetSize(); i++)
     {
-        // psserver->SendSystemError(client->GetClientNum(),"You don't have a good tool to %s with, equipped in your right hand.",type);
-        Warning3(LOG_SUPERCLIENT,"%s don't have a good tool to %s with, equipped in right hand.",actor->GetName(),resourcesActions.Get(type));
+        NaturalResource *nr = resources.Get(i).resource;
+        psItem *item = actor->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_RIGHTHAND);
+        if (!item || nr->item_cat_id != item->GetCategory()->id)
+        {
+            //try the left hand
+            item = actor->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_LEFTHAND);
+            if (!item || nr->item_cat_id != item->GetCategory()->id)
+            {
+                //we can't attempt this resource so we remove it from our array of possibilities
+                resources.DeleteIndex(i);
+                //reduce the iterator position as we are removing an item.
+                i--;
+            }
+        }
+    }
+    
+    //if we ended up with an empty array it means we don't have the tool to do any of these
+    if(resources.IsEmpty())
+    {
+        Warning3(LOG_SUPERCLIENT,"%s don't have a good tool to %s with, equipped in your hand.",actor->GetName(),resourcesActions.Get(type));
         return;
     }
+    
+    NaturalResource *nr = resources.IsEmpty() ? NULL : resources.Get(0).resource;
 
     // Calculate time required
     int time_req = nr->anim_duration_seconds;
@@ -698,7 +762,7 @@ csArray<NearNaturalResource> WorkManager::FindNearestResource(iSector *sector, c
         }
     }
 
-    if (!nearResources.GetSize())
+    if (nearResources.IsEmpty())
         Debug2(LOG_TRADE,0, "No resource found for %s\n", reward ? reward : "any resource");
 
     nearResources.Sort();
