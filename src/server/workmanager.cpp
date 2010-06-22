@@ -528,7 +528,8 @@ void WorkManager::HandleProduction(Client *client, size_t type,const char *rewar
 
     csArray<NearNaturalResource> resources = FindNearestResource(sector,pos,type,(reward == NULL || !strcmp(reward,""))? NULL : reward);
 
-    NaturalResource *nr = resources.Get(0).resource;
+    
+    NaturalResource *nr = resources.GetSize() ? resources.Get(0).resource : NULL;
     if (!nr)
     {
         psserver->SendSystemInfo(client->GetClientNum(),"You don't see a good place to %s.",resourcesActions.Get(type));
@@ -607,7 +608,7 @@ void WorkManager::HandleProduction(gemActor *actor,const char *restype,const cha
     
     csArray<NearNaturalResource> resources = FindNearestResource(sector,pos,type,reward);
 
-    NaturalResource *nr = resources.Get(0).resource;
+    NaturalResource *nr = resources.GetSize() ? resources.Get(0).resource : NULL;
     if (!nr)
     {
         // psserver->SendSystemInfo(client->GetClientNum(),"You don't see a good place to %s.",type);
@@ -672,6 +673,7 @@ bool WorkManager::SameProductionPosition(gemActor *actor,
 csArray<NearNaturalResource> WorkManager::FindNearestResource(iSector *sector, csVector3& pos, const size_t action,const char *reward)
 {
     csArray<NearNaturalResource> nearResources;
+
     psSectorInfo *playersector= cacheManager->GetSectorInfoByName(sector->QueryObject()->GetName());
     int sectorid = playersector->uid;
 
@@ -687,7 +689,7 @@ csArray<NearNaturalResource> WorkManager::FindNearestResource(iSector *sector, c
             {
                 csVector3 diff = curr->loc - pos;
                 float dist = diff.Norm();
-                // Update nr if dist is less than radius and closer than previus nr or nr isn't found yet
+                // Add the resource if dist is less than radius
                 if (dist < curr->visible_radius)
                 {
                     nearResources.Push(NearNaturalResource(curr,dist));
