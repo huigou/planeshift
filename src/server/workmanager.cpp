@@ -510,13 +510,6 @@ void WorkManager::HandleProduction(Client *client, size_t type,const char *rewar
         return;
     }
 
-    // Make sure they specified a resource type
-    if (reward == NULL || !strcmp(reward,""))
-    {
-        psserver->SendSystemError(client->GetClientNum(),"Please specify which resource you want to %s for. (/%s <some resource>)",resourcesActions.Get(type),resourcesActions.Get(type));
-        return;
-    }
-
     csVector3 pos;
 
     // Make sure they are not in the same loc as the last dig.
@@ -533,7 +526,9 @@ void WorkManager::HandleProduction(Client *client, size_t type,const char *rewar
 
     client->GetActor()->GetPosition(pos, sector);
 
-    NaturalResource *nr = FindNearestResource(reward,sector,pos,type);
+    csArray<NearNaturalResource> resources = FindNearestResource(sector,pos,type,(reward == NULL || !strcmp(reward,""))? NULL : reward);
+
+    NaturalResource *nr = resources.Get(0).resource;
     if (!nr)
     {
         psserver->SendSystemInfo(client->GetClientNum(),"You don't see a good place to %s.",resourcesActions.Get(type));
@@ -609,8 +604,10 @@ void WorkManager::HandleProduction(gemActor *actor,const char *restype,const cha
     iSector *sector;
 
     actor->GetPosition(pos, sector);
+    
+    csArray<NearNaturalResource> resources = FindNearestResource(sector,pos,type,reward);
 
-    NaturalResource *nr = FindNearestResource(reward,sector,pos,type);
+    NaturalResource *nr = resources.Get(0).resource;
     if (!nr)
     {
         // psserver->SendSystemInfo(client->GetClientNum(),"You don't see a good place to %s.",type);
@@ -672,14 +669,13 @@ bool WorkManager::SameProductionPosition(gemActor *actor,
     return ((startPos - pos).SquaredNorm() < 1);
 }
 
-NaturalResource *WorkManager::FindNearestResource(const char *reward,iSector *sector, csVector3& pos, const size_t action)
+csArray<NearNaturalResource> WorkManager::FindNearestResource(iSector *sector, csVector3& pos, const size_t action,const char *reward)
 {
-    NaturalResource *nr=NULL;
-
+    csArray<NearNaturalResource> nearResources;
     psSectorInfo *playersector= cacheManager->GetSectorInfoByName(sector->QueryObject()->GetName());
     int sectorid = playersector->uid;
 
-    Debug2(LOG_TRADE,0, "Finding nearest resource for %s\n", reward);
+    Debug2(LOG_TRADE,0, "Finding nearest resource for %s\n", reward ? reward : "any resource");
 
     float mindist = 100000;
     for (size_t i=0; i<resources.GetSize(); i++)
@@ -687,24 +683,31 @@ NaturalResource *WorkManager::FindNearestResource(const char *reward,iSector *se
         NaturalResource *curr=resources[i];
         if (curr->sector==sectorid)
         {
-            if (reward && curr->action == action && curr->reward_nickname.CompareNoCase( reward ))
+            if (curr->action == action && (!reward || curr->reward_nickname.CompareNoCase(reward)))
             {
                 csVector3 diff = curr->loc - pos;
                 float dist = diff.Norm();
                 // Update nr if dist is less than radius and closer than previus nr or nr isn't found yet
-                if (dist < curr->visible_radius && (dist < mindist || nr == NULL))
+                if (dist < curr->visible_radius)
                 {
-                    mindist = dist;
-                    nr = curr;
+                    nearResources.Push(NearNaturalResource(curr,dist));
                 }
             }
         }
     }
 
-    if (nr == NULL)
-        Debug2(LOG_TRADE,0, "No resource found for %s\n", reward);
+    if (!nearResources.GetSize())
+        Debug2(LOG_TRADE,0, "No resource found for %s\n", reward ? reward : "any resource");
 
-    return nr;
+    nearResources.Sort();
+    
+    for(int i= 0; i < nearResources.GetSize(); i++)
+    {
+        NearNaturalResource & res = nearResources.Get(i);
+        printf("found res %d(%s): dist %f, probability %f, level %d\n", i, res.resource->reward_nickname.GetData(), res.dist, res.resource->probability, res.resource->skill_level);
+    }
+
+    return nearResources;
 }
 
 void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
