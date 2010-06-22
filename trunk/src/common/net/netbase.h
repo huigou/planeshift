@@ -639,6 +639,8 @@ public:
     void *buf;
     /** The INet Adress of the client */
     SOCKADDR_IN addr;
+    /** The adress if provided, usually in clients, else an empty csstring */
+    csString nameAddr;
     /** The Number of the last incoming packet */
     int pcknumin;
     /** The Number of the last outgoing packet */
@@ -677,11 +679,11 @@ public:
 
     uint32_t GetNextPacketID() {return sequence++;}
     
-    // Check if the reliable transmission window is full
+    /// Check if the reliable transmission window is full
     bool IsWindowFull() {return window > WINDOW_MAX_SIZE; }
-    // Add to window when reliable data is in transit
+    /// Add to window when reliable data is in transit
     void AddToWindow(uint32_t bytes) {window += bytes; }
-    // Remove from transmission window when an ack is received
+    /// Remove from transmission window when an ack is received
     void RemoveFromWindow(uint32_t bytes) { if(bytes > window) abort(); window -= bytes;}
 };
 
