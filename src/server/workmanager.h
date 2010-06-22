@@ -562,7 +562,7 @@ public:
                     int delayticks,
                     int cat,
                     csVector3& pos,
-                    NaturalResource *natres=NULL,
+                    csArray<NearNaturalResource> *natres=NULL,
                     Client *c=NULL,
                     psItem* object=NULL,
                     float repairAmount=0.0F);
@@ -617,7 +617,7 @@ public:
 
     WorkManager* workmanager;
     csWeakRef<gemActor> worker;
-    NaturalResource* nr;
+    csArray<NearNaturalResource> nrr;
     Client* client;
     gemObject* gemTarget;
     int category;
