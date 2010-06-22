@@ -126,9 +126,9 @@ class NearNaturalResource
     NaturalResource *resource;
     bool operator<(const NearNaturalResource &oth) const
     {
-        if(oth.resource->probability > resource->probability)
-            return true;
         if(oth.dist > dist)
+            return true;
+        if(oth.resource->probability > resource->probability)
             return true;
         if(oth.resource->skill_level > resource->skill_level)
             return true;
