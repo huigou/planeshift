@@ -115,6 +115,27 @@ struct NaturalResource
              
 };
 
+
+/** This class keeps the hit of natural resources found for the player and allows ordering of them in an array
+ */
+class NearNaturalResource
+{
+    public:
+    NearNaturalResource(NaturalResource *res, float distance) : resource(res), dist(distance) {}
+    float dist;
+    NaturalResource *resource;
+    bool operator<(const NearNaturalResource &oth) const
+    {
+        if(oth.resource->probability > resource->probability)
+            return true;
+        if(oth.dist > dist)
+            return true;
+        if(oth.resource->skill_level > resource->skill_level)
+            return true;
+        return false;
+    }
+};
+
 //-----------------------------------------------------------------------------
 
 struct constraint
@@ -499,12 +520,12 @@ protected:
     bool SameProductionPosition(gemActor *actor, const csVector3& startPos);
 
     /** Find the nearest resource to the player of the requested type.
-      * @param reward The name of the natural resource we are looking for.
       * @param sector A pointer to the iSector the player is currently in.
       * @param pos A csVector3 with the position of the player in the current sector.
       * @param action The position in the resourcesActions array of the requested production type.
+      * @param reward The name of the natural resource we are looking for.
       */
-    NaturalResource *FindNearestResource(const char *reward,iSector *sector, csVector3& pos, const size_t action);
+    csArray<NearNaturalResource> FindNearestResource(iSector *sector, csVector3& pos, const size_t action, const char *reward = NULL);
 
 private:
 
