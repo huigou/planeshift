@@ -90,6 +90,7 @@ bool psNetConnection::Connect(const char *servaddr, int port)
     server = new Connection;
     server->addr.sin_family = AF_INET;
     server->addr.sin_port   = htons(port);
+    server->nameAddr = servaddr;
     err = GetIPByName (&server->addr, servaddr);
     if (err)
     {
@@ -247,14 +248,21 @@ void psNetConnection::CheckLinkDead (csTicks currenttime)
             HandleCompletedMessage(quit.msg, server, &server->addr,NULL);
             
             csSleep(1000);
-            
-            // If no packets received ever, then use -1 to indicate cannot connect
-            psDisconnectMessage msgb(0,server->pcknumin?0:-1,
-                                     server->pcknumin?
-                                     "Server is not responding, try again in 5 minutes. "
-                                     "Check http://laanx.fragnetics.com/ for status.":
-                                     "The server is not running or is not reachable.  "
-                                     "Please check http://laanx.fragnetics.com/ or forums for more info.");
+
+            // If no packets received ever, then use -1 to indicate cannot connect            
+            csString disconnectTextMsg;
+            if(server->pcknumin)
+            {
+                disconnectTextMsg.Format("Server is not responding, try again in 5 minutes. "
+                                         "Check http://%s/ page for status.", server->nameAddr.GetData());
+            }
+            else
+            {
+                disconnectTextMsg.Format("The server is not running or is not reachable.  "
+                                         "Please check http://%s/ or forums for more info.", server->nameAddr.GetData());
+            }
+
+            psDisconnectMessage msgb(0,server->pcknumin?0:-1, disconnectTextMsg.GetData());
             HandleCompletedMessage(msgb.msg, server, &server->addr,NULL);
         }
     }
