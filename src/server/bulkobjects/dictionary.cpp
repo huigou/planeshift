@@ -1394,9 +1394,9 @@ bool NpcResponse::ParseResponseScript(const char *xmlstr,bool insertBeginning)
         }
         if (insertBeginning)
             script.Insert(where++,op);
-        else
+        else{
             script.Push(op);
-
+}
         // Execute any outstanding post load operations.
         if (postLoadAssignQuest)
         {
@@ -2041,7 +2041,7 @@ csString CompleteQuestResponseOp::GetResponseScript()
 
 bool CompleteQuestResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber)
 {
-    if (!psserver->questmanager->Complete(quest,target->GetClient()))
+    if (!psserver->questmanager->Complete(quest,target->GetClient(), timeDelay))
     {
         who->GetNPCDialogPtr()->SubstituteKeywords(target->GetClient(),error_msg);
         who->Say(error_msg,target->GetClient(),false,timeDelay);

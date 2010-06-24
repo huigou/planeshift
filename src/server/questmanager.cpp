@@ -416,8 +416,8 @@ bool QuestManager::HandleScriptCommand(csString& block,
 
             // Find params if any
             csArray<csString> param;
-            size_t start = script.FindStr("(");
-            size_t end   = script.FindStr(")");
+            size_t start = script.FindStr("<<");
+            size_t end   = script.FindStr(">>");
             if (start != SIZET_NOT_FOUND && end != SIZET_NOT_FOUND &&
                 start == 0 && end > start)
             {
@@ -1403,7 +1403,7 @@ void QuestManager::Assign(psQuest *quest, Client *who,gemNPC *assigner,csTicks t
 }
 
 
-bool QuestManager::Complete(psQuest *quest, Client *who)
+bool QuestManager::Complete(psQuest *quest, Client *who, csTicks timeDelay)
 {
     Debug3(LOG_QUESTS, who->GetAccountID().Unbox(), "Completing quest '%s' for character %s.", quest->GetName(), who->GetName());
 
@@ -1415,8 +1415,12 @@ bool QuestManager::Complete(psQuest *quest, Client *who)
 
     if (ret)
     {
-        psserver->SendSystemOK(who->GetClientNum(),"Quest Completed!");
-        psserver->SendSystemInfo(who->GetClientNum(),"You have completed the %s quest!", quest->GetName() );
+        
+        psSystemMessage okmsg(who->GetClientNum() ,MSG_OK,   "Quest Completed!");
+        psSystemMessage newmsg(who->GetClientNum(),MSG_INFO, "You have completed the %s quest!",quest->GetName() );
+
+        psserver->GetNetManager()->SendMessageDelayed(okmsg.msg,timeDelay);
+        psserver->GetNetManager()->SendMessageDelayed(newmsg.msg,timeDelay);
         // TOFIX: we should clean all substeps of this quest from the character_quests db table.
 
     }
