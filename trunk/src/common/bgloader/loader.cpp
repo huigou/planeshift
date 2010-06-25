@@ -242,6 +242,8 @@ void BgLoader::ContinueLoading(bool waiting)
                 finished = true;
                 finalisableMeshes.Push(loadingMeshes[loadingOffset]);
                 loadingMeshes.DeleteIndex(loadingOffset);
+                --loadingOffset;
+                --endOffset;
             }
         }
 
