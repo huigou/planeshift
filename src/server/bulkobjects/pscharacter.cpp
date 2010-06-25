@@ -1198,33 +1198,32 @@ void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, float yrot, bo
         return;
     }
 
-    // Handle position...
-    if (suggestedPos != 0)
+    // Handle position
+    if (inplace)
     {
-        // User-specified position...check if it's close enough to the character.
-
-        csVector3 delta;
-        delta = suggestedPos - location.loc;
-        float dist = delta.Norm();
-
-        if (dist > 2 && actor->GetClient()->GetSecurityLevel() < GM_DEVELOPER) // max drop distance is 15m
-        {
-            suggestedPos = location.loc + delta.Unit() * 2;
-        }
-    }
-
-    if (suggestedPos == 0 && !inplace)
-    {
-        // No position specified or it was invalid.
-        suggestedPos.x = location.loc.x - (DROP_DISTANCE * sinf(location.loc_yrot));
-        suggestedPos.y = location.loc.y;
-        suggestedPos.z = location.loc.z - (DROP_DISTANCE * cosf(location.loc_yrot));
-    }
-    else if (inplace)
-    {
+        // drop at the character's position.
         suggestedPos.x = location.loc.x;
         suggestedPos.y = location.loc.y;
         suggestedPos.z = location.loc.z;
+    }
+    else if (suggestedPos != 0)
+    {
+        // User-specified position: check if it's close enough to the character.
+        csVector3 delta;
+        delta = suggestedPos - location.loc;
+
+        if (delta.Norm() > MAX_DROP_DISTANCE && actor->GetClient()->GetSecurityLevel() < GM_DEVELOPER)
+        {
+            // Not close enough, cap it to the maximum range in the specified direction.
+            suggestedPos = location.loc + delta.Unit() * MAX_DROP_DISTANCE;
+        }
+    }
+    else
+    {
+        // No position specified.
+        suggestedPos.x = location.loc.x - (DROP_DISTANCE * sinf(location.loc_yrot));
+        suggestedPos.y = location.loc.y;
+        suggestedPos.z = location.loc.z - (DROP_DISTANCE * cosf(location.loc_yrot));
     }
 
     // Play the drop item sound for this item
