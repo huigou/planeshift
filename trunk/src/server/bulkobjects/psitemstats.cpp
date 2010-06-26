@@ -152,6 +152,14 @@ void psItemWeaponStats::ReadStats( iResultRow& row )
     targeted_block_value = row.GetFloat("weapon_block_targeted");
     untargeted_block_value = row.GetFloat("weapon_block_untargeted");
     counter_block_value = row.GetFloat("weapon_counterblock");
+    
+    attribute_bonuses[0].bonus_max = row.GetFloat("item_bonus_1_max");
+    attribute_bonuses[1].bonus_max = row.GetFloat("item_bonus_2_max");
+    attribute_bonuses[2].bonus_max = row.GetFloat("item_bonus_3_max");
+    
+    attribute_bonuses[0].attribute_id = psserver->GetCacheManager()->ConvertAttributeString(row["item_bonus_1_attr"]);
+    attribute_bonuses[1].attribute_id = psserver->GetCacheManager()->ConvertAttributeString(row["item_bonus_2_attr"]);
+    attribute_bonuses[2].attribute_id = psserver->GetCacheManager()->ConvertAttributeString(row["item_bonus_3_attr"]);
 }
 
 PSSKILL psItemWeaponStats::Skill(PSITEMSTATS_WEAPONSKILL_INDEX index)
