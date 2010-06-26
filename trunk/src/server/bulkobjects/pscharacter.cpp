@@ -1348,7 +1348,9 @@ void psCharacter::CalculateEquipmentModifiers()
             // Check for attr bonuses
             for (int i = 0; i < PSITEMSTATS_STAT_BONUS_COUNT; i++)
             {
-                modifiers[currentitem->GetWeaponAttributeBonusType(i)].Buff(MODIFIER_FAKE_ACTIVESPELL, (int) currentitem->GetWeaponAttributeBonusMax(i));
+                int attributeNum = currentitem->GetWeaponAttributeBonusType(i);
+                if(attributeNum != -1)
+                    modifiers[currentitem->GetWeaponAttributeBonusType(i)].Buff(MODIFIER_FAKE_ACTIVESPELL, (int) currentitem->GetWeaponAttributeBonusMax(i));
             }
             hasChanged = true;
             itemlist.Delete(it);
