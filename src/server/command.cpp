@@ -2218,8 +2218,8 @@ int com_kill(char* player)
 int com_killnpc(char* input)
 {
     EID eid = atoi(input);
-    gemActor* object = (gemActor*)psserver->entitymanager->GetGEM()->FindObject(eid);
-    if (!object)
+    gemActor* object = dynamic_cast<gemActor*>(psserver->entitymanager->GetGEM()->FindObject(eid));
+    if (!object) 
     {
         CPrintf(CON_CMDOUTPUT, "NPC with %s not found!\n", ShowID(eid));
         return 0;
