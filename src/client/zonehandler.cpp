@@ -242,11 +242,10 @@ void ZoneHandler::LoadZone(csVector3 pos, const char* sector, bool force)
 
         psengine->ForceRefresh();
     }
-    else
-    {
-        // move player to new pos
-        MovePlayerTo(newPos, sectorToLoad);
-    }
+
+    // do move the player in *any* case to make sure we won't end up looping to death
+    // move player to new pos
+    MovePlayerTo(newPos, sectorToLoad);
 }
 
 void ZoneHandler::MovePlayerTo(const csVector3 & newPos, const csString & newSector)
