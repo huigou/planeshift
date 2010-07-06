@@ -1,0 +1,82 @@
+<!--
+  Copyright (C) 2010 Jelle Hellemans
+  Copyright (C) 2010 Matthieu Kraus
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Library General Public
+  License as published by the Free Software Foundation; either
+  version 2 of the License, or (at your option) any later version.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  Library General Public License for more details.
+
+  You should have received a copy of the GNU Library General Public
+  License along with this library; if not, write to the Free
+  Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+-->
+<snippet>
+  <technique priority="100">
+    <combiner name="cg" plugin="crystalspace.graphics3d.shader.combiner.glcg" />
+    
+    <input name="diffuse" type="rgba" />
+    <input name="normal" type="normal_world" />
+    <input file="/shader-snippets/texCoord.inp"	/>
+    
+    <input name="snowDensity" type="float" default="complex">
+      <block location="shadervars">
+         <shadervar name="snow density" type="float">0.0</shadervar>
+      </block>
+
+      <block location="cg:variablemap">
+        <variablemap variable="snow density" destination="fragmentIn.snowDensity" />
+      </block>
+    
+      <block location="cg:fragmentIn">
+       <uniform type="float" name="snowDensity" />
+      </block>
+    
+      <block location="cg:fragmentMain">
+        snowDensity = fragmentIn.snowDensity;
+      </block>
+    </input>
+    
+    <input name="texSnow1" type="tex2d" default="complex">
+        <block location="pass">
+  	       <texture name="tex snow 1" destination="fragmentIn.texSnow1" fallback="standardtex white" />
+        </block>
+        
+        <block location="cg:fragmentIn">
+  	       <uniform type="tex2d" name="texSnow1" />
+        </block>
+        
+        <block location="cg:fragmentMain">
+  	       texSnow1 = fragmentIn.texSnow1;
+        </block>
+    </input>
+     
+    <block location="cg:fragmentMain">
+      <?if vars."snow density" ?>
+        float4 snowColor = tex2D (texSnow1, texCoord/2);
+        float3 normals = normalize(normal);
+
+        float2 snow = float2(clamp(normals.y, 0.0f, 1.0f));
+
+        //Limit the coverage of thick snow.
+        snow.y = step(0.4f, snow.y) * 0.3f;
+
+        //the place for the snow coverage.
+        float snowplace  = clamp(dot(snow, float2(2.0f)), 0.0f, 1.0f);
+
+        result = lerp(diffuse, snowColor, snowplace*snowDensity);
+      <?else?>
+        result = diffuse;
+      <?endif?>
+    </block>
+    
+    <output name="result" type="rgba" >
+        <attribute name="perfragment" type="bool" />
+    </output>
+  </technique>
+</snippet>

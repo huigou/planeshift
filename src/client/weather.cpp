@@ -221,16 +221,18 @@ bool RainWeatherObject::CreateMesh()
         csRef<iShaderManager> shman = csQueryRegistry<iShaderManager>(psengine->GetObjectRegistry());
         csRef<iStringSet> strings = csQueryRegistryTagInterface<iStringSet>(
             psengine->GetObjectRegistry(), "crystalspace.shared.stringset");
-        csStringID shadertype = strings->Request("base");
-        csRef<iStringArray> shaderName = psengine->GetLoader()->GetShaderName("particles");
+        csRef<iStringArray> shaderName = psengine->GetLoader()->GetShaderName("particles_soft-alpha");
         csRef<iShader> shader = shman->GetShader(shaderName->Get(0));
 
         // Create new rain
         iTextureWrapper* t = psengine->GetEngine()->CreateTexture("raindrop", "/this/art/effects/raindrop.dds", 0, 0);
         mat = psengine->GetEngine()->CreateMaterial("raindrop", t);
+        csStringID shadertype = strings->Request("diffuse");
         mat->GetMaterial()->SetShader(shadertype, shader);
-        shadertype = strings->Request("diffuse");
+        shadertype = strings->Request("ambient");
         mat->GetMaterial()->SetShader(shadertype, shader);
+        shadertype = strings->Request("depthwrite");
+        mat->GetMaterial()->SetShader(shadertype, 0);
         mfw = psengine->GetEngine ()->CreateMeshFactory ("crystalspace.mesh.object.particles", "rain", false);
         if (!mfw)
         {
@@ -333,9 +335,28 @@ void RainWeatherObject::Update(csTicks delta)
 /***************************************************** Snow object ****/
 
 SnowWeatherObject::SnowWeatherObject(WeatherInfo* parent)  : WeatherObject(parent)
-{}
+{
+    csRef<iShaderManager> shman = csQueryRegistry<iShaderManager>(psengine->GetObjectRegistry());
+    csRef<iShaderVarStringSet> strings = csQueryRegistryTagInterface<iShaderVarStringSet> (
+            psengine->GetObjectRegistry(), "crystalspace.shader.variablenameset");
+
+    // set density variable
+    CS::ShaderVarStringID snowDensity = strings->Request("snow density");
+    snowDensitySV = shman->GetVariableAdd(snowDensity);
+    snowDensitySV->SetValue(0.75f);
+
+    // set texture variable
+    /*csRef<iTextureWrapper> tex = psengine->GetEngine()->CreateTexture("snowdiffuse", "/this/art/effects/snow.png", 0, 0);
+    csRef<iTextureHandle> texHandle = tex->GetTextureHandle();
+    CS::ShaderVarStringID snowTex = strings->Request ("tex snow 1");
+    csShaderVariable* snowTexSV = shman->GetVariableAdd(snowTex);
+    snowTexSV->SetValue(texHandle);*/
+}
 SnowWeatherObject::~SnowWeatherObject()
-{}
+{
+    csRef<iShaderManager> shman = csQueryRegistry<iShaderManager>(psengine->GetObjectRegistry());
+    shman->RemoveVariable(snowDensitySV);
+}
 
 WeatherSound SnowWeatherObject::GetWeatherSoundForced()
 {
@@ -393,16 +414,18 @@ bool SnowWeatherObject::CreateMesh()
         csRef<iShaderManager> shman = csQueryRegistry<iShaderManager>(psengine->GetObjectRegistry());
         csRef<iStringSet> strings = csQueryRegistryTagInterface<iStringSet>(
             psengine->GetObjectRegistry(), "crystalspace.shared.stringset");
-        csStringID shadertype = strings->Request("base");
-        csRef<iStringArray> shaderName = psengine->GetLoader()->GetShaderName("particles");
+        csRef<iStringArray> shaderName = psengine->GetLoader()->GetShaderName("particles_soft-alpha");
         csRef<iShader> shader = shman->GetShader(shaderName->Get(0));
 
         // Create new snow
         iTextureWrapper* t = psengine->GetEngine()->CreateTexture("snowflake", "/this/art/effects/snow.dds", 0, 0);
         mat = psengine->GetEngine()->CreateMaterial("snowflake", t);
+        csStringID shadertype = strings->Request("diffuse");
         mat->GetMaterial()->SetShader(shadertype, shader);
-        shadertype = strings->Request("diffuse");
+        shadertype = strings->Request("ambient");
         mat->GetMaterial()->SetShader(shadertype, shader);
+        shadertype = strings->Request("depthwrite");
+        mat->GetMaterial()->SetShader(shadertype, 0);
         mfw = psengine->GetEngine ()->CreateMeshFactory ("crystalspace.mesh.object.particles", "snow", false);
         if (!mfw)
         {
@@ -503,6 +526,8 @@ void SnowWeatherObject::Update(csTicks delta)
     //    Notify2(LOG_WEATHER,"Updating snow object, Setting drops: %d",parent->downfall_params.value);
     
     SetDrops(parent->downfall_params.value);
+
+    // interpolate snow depth
 }
 
 

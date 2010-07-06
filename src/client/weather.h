@@ -166,6 +166,9 @@ public:
     // Calculations
     static float GetDensity(int drops);
     csBox3 CreateDefaultBBox();
+
+private:
+    csRef<csShaderVariable> snowDensitySV;
 };
 
 //-----------------------------------------------------------------------------
