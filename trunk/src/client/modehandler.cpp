@@ -286,6 +286,7 @@ void ModeHandler::RemoveDownfallObject(WeatherObject* weatherobject)
 {
     if (downfall == weatherobject)
     {
+        delete downfall;
         downfall = NULL;
     }
 }
