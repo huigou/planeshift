@@ -954,12 +954,12 @@ bool psEngine::Process2D(iEvent& ev)
         g3d->BeginDraw(CSDRAW_2DGRAPHICS);
         if (effectManager)
             effectManager->Render2D(g3d, g2d);
-	if (showFPS)
-	{
-	    csString fpsDisplay;
-	    fpsDisplay.Format("%.2f", getFPS());
-	    g2d->Write(font, 5, 5, g2d->FindRGB(255, 255, 255), -1, fpsDisplay);
-	}
+        if (showFPS)
+        {
+            csString fpsDisplay;
+            fpsDisplay.Format("%.2f", getFPS());
+            g2d->Write(font, 5, 5, g2d->FindRGB(255, 255, 255), -1, fpsDisplay);
+        }
 
         paws->Draw();
     }
