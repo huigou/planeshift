@@ -517,6 +517,7 @@ void SnowWeatherObject::SetDrops(int drops)
     {
         boxemit->SetEmissionRate (drops / 2.5f);
     }
+    snowDensitySV->SetValue((float)drops/WEATHER_MAX_SNOW_FALKES);
 }
 
 
