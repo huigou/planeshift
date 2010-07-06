@@ -1482,8 +1482,11 @@ bool ModeHandler::CreateWeather(WeatherInfo* ri, csTicks delta)
     {
         downfall->StopFollow();
         downfall->Destroy();
-        delete downfall;
-        downfall = NULL;
+        if(downfall)
+        {
+            delete downfall;
+            downfall = NULL;
+        }
         Notify2( LOG_WEATHER, "Downfall removed from sector '%s'",
                  sector->QueryObject()->GetName());
     }
@@ -1492,7 +1495,11 @@ bool ModeHandler::CreateWeather(WeatherInfo* ri, csTicks delta)
     {
         downfall->StopFollow();
         downfall->Destroy();
-        delete downfall;
+        if(downfall)
+        {
+            delete downfall;
+        }
+
         downfall = CreateDownfallWeatherObject(ri);
         if (downfall->CreateMesh())
         {
