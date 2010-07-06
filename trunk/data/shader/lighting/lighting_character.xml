@@ -19,7 +19,7 @@
 -->
 <shader compiler="shaderweaver" name="lighting_character" lights="3">
   <alias name="ambient" file="/shader-snippets/lighting/ambient-simple.xml" />
-  <alias name="apply_alpha" file="/shader-snippets/surface/alpha-nochange.xml" />
+  <alias name="apply_alpha" file="/shader-snippets/surface/alpha-mult.xml" />
   <alias name="lighting" file="/shader-snippets/lighting/lighting-ppl.xml" />
   <alias name="surface" file="/shader-snippets/surface/surface-overlay.xml" />
   <alias name="specular" file="/shader-snippets/surface/specular-default.xml" />
