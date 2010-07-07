@@ -275,3 +275,21 @@ float psWorld::Matrix2YRot(const csMatrix3& mat)
 
     return result;
 }
+
+csVector3 psWorld::Matrix2Rot(const csMatrix3& mat)
+{
+    csVector3 rot(0);
+    
+    // obtain Y rotation
+    csVector3 vec(0,0,1);
+    vec = mat * vec;
+    rot.y = atan2(vec.x, vec.z);
+    
+    // obtain Z rotation
+    vec = csVector3(1,0,0);
+    vec = csYRotMatrix3(-rot.y) * mat * vec; // reverse the Y rotation here, so we get just the Z one
+    rot.z = atan2(vec.y, vec.x);
+
+    return rot;
+}
+

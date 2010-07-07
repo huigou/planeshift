@@ -129,6 +129,9 @@ public:
     void GetPosition(iMeshWrapper *entity, csVector3& pos, float* yrot, iSector*& sector);
 
     static float Matrix2YRot(const csMatrix3& mat);
+    
+    /// obtain the rotation about the axes - expensive (note that there's not X rotation, yet)
+    static csVector3 Matrix2Rot(const csMatrix3& mat);
 
     void DumpWarpCache();
     void BuildWarpCache();
