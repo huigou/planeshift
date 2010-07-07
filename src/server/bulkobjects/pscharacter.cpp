@@ -1187,7 +1187,7 @@ int psCharacter::GetMaxAllowedRealm( PSSKILL skill )
     return maxRealm->GetRoundValue();
 }
 
-void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, float yrot, bool guarded, bool transient, bool inplace)
+void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, const csVector3& rot, bool guarded, bool transient, bool inplace)
 {
     if (!item)
         return;
@@ -1244,7 +1244,7 @@ void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, float yrot, bo
     gemObject* obj = EntityManager::GetSingleton().MoveItemToWorld(item,
                              location.worldInstance, location.loc_sector,
                              suggestedPos.x, suggestedPos.y, suggestedPos.z,
-                             yrot, this, transient);
+                             rot.x, rot.y, rot.z, this, transient);
 
     if (obj)
     {

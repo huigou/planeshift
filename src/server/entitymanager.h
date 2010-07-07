@@ -120,7 +120,9 @@ public:
                              float         loc_x,
                              float         loc_y,
                              float         loc_z,
+                             float         loc_xrot,
                              float         loc_yrot,
+                             float         loc_zrot,
                              psCharacter*  owner,
                              bool          transient);
 

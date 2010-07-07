@@ -40,7 +40,7 @@ class csStringHashReversible;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x00B9
+#define PS_NETVERSION   0x00BA
 // Remember to bump the version in pscssetup.h, as well.
 
 
@@ -1568,6 +1568,7 @@ public:
         csString sector;
         int downfall_drops; // 0 = no downfall
         int downfall_fade;
+        int downfall_density;
         int fog_density;    // 0 = no fog
         int fog_fade;
         int r,g,b;          // For fog
@@ -3668,11 +3669,11 @@ public:
                        int toSlotID,
                        int stackCount,
                        csVector3 *pt3d=NULL,
-                       float *yrot=NULL,
+                       csVector3 *rot=NULL,
                        bool guarded=true,
                        bool inplace=true)
     {
-        msg.AttachNew(new MsgEntry( sizeof( int32_t ) * 5 + 3 * sizeof(float) + sizeof(float) + 2 * sizeof(bool) ));
+        msg.AttachNew(new MsgEntry( sizeof( int32_t ) * 5 + 3 * sizeof(float) + 3 * sizeof(float) + 2 * sizeof(bool) ));
 
         msg->SetType(MSGTYPE_SLOT_MOVEMENT);
         msg->clientnum  = 0;
@@ -3689,11 +3690,14 @@ public:
             csVector3 v = 0;
             msg->Add(v);  // Add dummy zeroes if not specified.
         }
-        if (yrot != NULL)
-          msg->Add( (float) *yrot );
+        if (rot != NULL)
+        {
+            msg->Add( *rot );
+        }
         else
         {
-            msg->Add( (float) 0); // Add 0 rotation if not specified.
+            csVector3 v = 0;
+            msg->Add(v); // Add 0 rotation if not specified.
         }
         msg->Add( guarded );
         msg->Add( inplace );
@@ -3707,7 +3711,7 @@ public:
         toSlot        = me->GetInt32();
         stackCount    = me->GetInt32();
         posWorld      = me->GetVector();
-        yrot          = me->GetFloat();
+        rot           = me->GetVector();
         guarded       = me->GetBool();
         inplace       = me->GetBool();
     }
@@ -3728,7 +3732,7 @@ public:
     int toSlot;
     int stackCount;
     csVector3 posWorld;
-    float yrot;
+    csVector3 rot;
     bool guarded;
     bool inplace;
 };

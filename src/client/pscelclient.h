@@ -75,10 +75,10 @@ public:
     GEMClientObject * entity;  ///< our object ..
 
     csVector3 pos;             ///< .. and its position that could not be set
-    float rot;
+    csVector3 rot;
     csString sector;
 
-    UnresolvedPos(GEMClientObject * entity, const csVector3 & pos, float rot, const csString & sector)
+    UnresolvedPos(GEMClientObject * entity, const csVector3 & pos, const csVector3 & rot, const csString & sector)
     {
         this->entity  = entity;
         this->pos     = pos;
@@ -196,7 +196,7 @@ public:
       * It adds this position to list of unresolved positions which we will attempt to resolve later
       * and moves the entity to special sector that keeps these unfortunate entities.
       */
-    void HandleUnresolvedPos(GEMClientObject * entity, const csVector3 & pos, float rot, const csString & sector);
+    void HandleUnresolvedPos(GEMClientObject * entity, const csVector3 & pos, const csVector3& rot, const csString & sector);
 
     void PruneEntities();
 
@@ -342,17 +342,17 @@ public:
      * @param rotangle the y axis rotation of the mesh
      * @param room the sector in which the mesh is moved to
      */
-    void Move(const csVector3& pos,float rotangle, const char* room);
+    void Move(const csVector3& pos, const csVector3& rotangle, const char* room);
 
     /** Set the rotation of mesh 
      * @param xRot the variable used to set the x rotation of the item
      * @param yRot the variable used to set the x rotation of the item
      * @param zRot the variable used to set the z rotation of the item
      */
-	void Rotate(float xRot, float yRot, float zRot);
+    void Rotate(float xRot, float yRot, float zRot);
 
     /** Set position of entity */
-    virtual void SetPosition(const csVector3& pos, float rot, iSector* sector);
+    virtual void SetPosition(const csVector3& pos, const csVector3& rot, iSector* sector);
 
     /** Get position of entity */
     virtual csVector3 GetPosition();

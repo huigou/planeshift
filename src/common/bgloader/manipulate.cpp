@@ -159,9 +159,11 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
         if(selectedMesh.IsValid())
         {
             float d = 6 * PI * ((float)previousPosition.x - pos.x) / g2d->GetWidth();
-            csYRotMatrix3 rotation(d);
-
-            selectedMesh->GetMovable()->GetTransform().SetO2T(origRotation*rotation);
+            csYRotMatrix3 rotationY(d);
+            d = 6 * PI * ((float)previousPosition.y - pos.y) / g2d->GetHeight();
+            csZRotMatrix3 rotationZ(d);
+            csReversibleTransform rotTrans(rotationY*rotationZ, rotBase+origTrans);
+            selectedMesh->GetMovable()->SetTransform(csTransform(csMatrix3(), -rotBase)*rotTrans);
         }
     }
 
@@ -183,6 +185,22 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
         {
             FreeFactory(selectedFactory);
             selectedFactory.Empty();
+        }
+    }
+
+    void BgLoader::GetPosition(csVector3 & pos, csVector3 & rot, const csVector2& screenPos)
+    {
+        if(selectedMesh.IsValid())
+        {
+           rot.x = 0;
+           rot.y = 6 * PI * ((float)previousPosition.x - screenPos.x) / g2d->GetWidth();
+           rot.z = 6 * PI * ((float)previousPosition.y - screenPos.y) / g2d->GetHeight();
+           pos = origTrans;
+        }
+        else
+        {
+           rot = 0;
+           pos = 0;
         }
     }
 }

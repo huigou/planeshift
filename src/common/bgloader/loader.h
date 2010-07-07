@@ -33,6 +33,7 @@
 #include <iengine/sector.h>
 #include <iengine/texture.h>
 #include <iengine/movable.h>
+#include <imesh/objmodel.h>
 #include <imap/loader.h>
 #include <iutil/objreg.h>
 #include <iutil/vfs.h>
@@ -225,9 +226,16 @@ public:
         previousPosition = pos;
         if(selectedMesh)
         {
-            origRotation = selectedMesh->GetMovable()->GetTransform().GetO2T();
+            origTrans = selectedMesh->GetMovable()->GetTransform().GetO2TTranslation();
+
+            // make it rotate around the center
+            csBox3 bbox = selectedMesh->GetFactory()->GetMeshObjectFactory()->
+                            GetObjectModel()->GetObjectBoundingBox();
+            rotBase = bbox.GetCenter() - bbox.Min();
         }
     }
+
+    void GetPosition(csVector3 & pos, csVector3 & rot, const csVector2& screenPos);
 
    /**
     * Returns an array of start positions in the world.
@@ -731,7 +739,8 @@ private:
     csString selectedFactory;
     csString selectedMaterial;
     csVector2 previousPosition;
-    csMatrix3 origRotation;
+    csVector3 origTrans;
+    csVector3 rotBase;
     bool resetHitbeam;
 };
 }
