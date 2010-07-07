@@ -123,7 +123,7 @@ bool pawsImageDrawable::PreparePixmap()
 pawsImageDrawable::pawsImageDrawable(csRef<iDocumentNode> node)
                  : scfImplementationType (this)
 {
-    debugImageErrors = true;
+    debugImageErrors = false;
     defaultTransparentColourBlue  = -1;
     defaultTransparentColourGreen = -1;
     defaultTransparentColourRed   = -1;
@@ -174,7 +174,7 @@ pawsImageDrawable::pawsImageDrawable(csRef<iDocumentNode> node)
 pawsImageDrawable::pawsImageDrawable(const char * file, const char * resource, bool tiled, const csRect & textureRect, int alpha, int transR, int transG, int transB)
                  : scfImplementationType (this)
 {
-    debugImageErrors = true;
+    debugImageErrors = false;
 
     imageFileLocation = file;
     resourceName = resource;
@@ -190,7 +190,7 @@ pawsImageDrawable::pawsImageDrawable(const char * file, const char * resource, b
 pawsImageDrawable::pawsImageDrawable(const char * file, const char * resource)
                  : scfImplementationType (this)
 {
-    debugImageErrors = true;
+    debugImageErrors = false;
 
     imageFileLocation = file;
     resourceName = file;
