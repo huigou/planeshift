@@ -362,7 +362,20 @@ double MathScriptEngine::CustomCompoundFunc(const double * parms)
 {
     size_t funcIndex = (size_t)parms[0];
     iScriptableVar * v = (iScriptableVar *)(intptr_t)parms[1];
-    return v->CalcFunction(customCompoundFunctions.Request(funcIndex), &parms[2]);
+    csString funcName(customCompoundFunctions.Request(funcIndex));
+
+    if (funcName == "IsValid")
+    {
+        return (v != NULL);
+    }
+    else if (funcName == "GetProperty")
+    {
+        return (v ? v->GetProperty(GetString(parms[2])) : 0);
+    }
+    else
+    {
+        return (v ? v->CalcFunction(funcName.GetData(), &parms[2]) : 0);
+    }
 }
 
 csString MathScriptEngine::GetString(double id)
@@ -578,7 +591,7 @@ bool MathExpression::Parse(const char *exp)
     for (size_t i = 0; i < tokens.GetSize(); i++)
         expression.Append(tokens[i]);
 
-    //printf("Final expression: %s\n", expression.GetData());
+    //printf("Final expression: %s %s\n", expression.GetData(), fpVars.GetDataSafe());
 
     size_t ret = fp.Parse(expression.GetData(), fpVars.GetDataSafe());
     if (ret != (size_t) -1)
