@@ -423,6 +423,9 @@ void pawsSkillWindow::HandleSkillList(psSkillCache *skills, int selectedNameId, 
     if (!flush && !skills->isModified())
         return;
 
+    if (selectedNameId == -1 && !selectedSkill.IsEmpty())
+        selectedNameId = psengine->FindCommonStringId(selectedSkill);
+
     if (skills->hasRemoved() || unsortedSkills.IsEmpty())
         flush = true;
 
