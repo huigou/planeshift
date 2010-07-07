@@ -100,6 +100,15 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
             }
         }
 
+        // save original translation
+        origTrans = selectedMesh->GetMovable()->GetTransform().GetO2TTranslation();
+        origRot = 0;
+
+        // make it rotate around the center
+        csBox3 bbox = selectedMesh->GetFactory()->GetMeshObjectFactory()->
+                        GetObjectModel()->GetObjectBoundingBox();
+        rotBase = bbox.GetCenter() - bbox.Min();
+
         return selectedMesh;
     }
 
@@ -132,12 +141,11 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
     {
         if(selectedMesh.IsValid())
         {
+            csVector3 diff = 0;
             if(vertical)
             {
                 float d = 5 * float(previousPosition.y - pos.y) / g2d->GetWidth();
-                csVector3 position = selectedMesh->GetMovable()->GetPosition();
-                selectedMesh->GetMovable()->SetPosition(position + csVector3(0.0f, d, 0.0f));
-                previousPosition = pos;
+                diff = csVector3(0.0f, d, 0.0f);
             }
             else
             {
@@ -145,9 +153,16 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                 csScreenTargetResult result = csEngineTools::FindScreenTarget(pos, 1000, camera);
                 if(result.mesh)
                 {
-                    selectedMesh->GetMovable()->SetPosition(result.isect);
-                    return true;
+                    diff = result.isect - origTrans;
                 }
+            }
+
+            previousPosition = pos;
+            if(diff != 0)
+            {
+                origTrans += diff;
+                selectedMesh->GetMovable()->GetTransform().Translate(diff);
+                return true;
             }
         }
 
@@ -158,12 +173,13 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
     {
         if(selectedMesh.IsValid())
         {
-            float d = 6 * PI * ((float)previousPosition.x - pos.x) / g2d->GetWidth();
-            csYRotMatrix3 rotationY(d);
-            d = 6 * PI * ((float)previousPosition.y - pos.y) / g2d->GetHeight();
-            csZRotMatrix3 rotationZ(d);
+            origRot.y += 6 * PI * ((float)previousPosition.x - pos.x) / g2d->GetWidth();
+            csYRotMatrix3 rotationY(origRot.y);
+            origRot.z += 6 * PI * ((float)previousPosition.y - pos.y) / g2d->GetHeight();
+            csZRotMatrix3 rotationZ(origRot.z);
             csReversibleTransform rotTrans(rotationY*rotationZ, rotBase+origTrans);
             selectedMesh->GetMovable()->SetTransform(csTransform(csMatrix3(), -rotBase)*rotTrans);
+            previousPosition = pos;
         }
     }
 
@@ -192,9 +208,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
     {
         if(selectedMesh.IsValid())
         {
-           rot.x = 0;
-           rot.y = 6 * PI * ((float)previousPosition.x - screenPos.x) / g2d->GetWidth();
-           rot.z = 6 * PI * ((float)previousPosition.y - screenPos.y) / g2d->GetHeight();
+           rot = origRot;
            pos = origTrans;
         }
         else
