@@ -24,7 +24,7 @@ class csVector2;
 
 struct iSceneManipulate : public virtual iBase
 {
-    SCF_INTERFACE(iSceneManipulate, 1, 1, 0);
+    SCF_INTERFACE(iSceneManipulate, 1, 1, 1);
 
    /**
     * Creates a new instance of the given factory at the given screen space coordinates.
