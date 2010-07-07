@@ -839,13 +839,13 @@ void psCelClient::OnRegionsDeleted(csArray<iCollection*>& regions)
                 // All the sectors the mesh is in are going to be unloaded
                 Warning1(LOG_ANY,"Moving entity to temporary sector");
                 // put the mesh to the sector that server uses for keeping meshes located in unload maps
-                HandleUnresolvedPos(entities[entNum], entities[entNum]->GetPosition(), 0.0f, sectorToBeDeleted->QueryObject ()->GetName ());
+                HandleUnresolvedPos(entities[entNum], entities[entNum]->GetPosition(), csVector3(0), sectorToBeDeleted->QueryObject ()->GetName ());
             }
         }
     }
 }
 
-void psCelClient::HandleUnresolvedPos(GEMClientObject * entity, const csVector3 & pos, float rot, const csString & sector)
+void psCelClient::HandleUnresolvedPos(GEMClientObject * entity, const csVector3 & pos, const csVector3& rot, const csString & sector)
 {
     //Error3("Handling unresolved %s at %s", entity->GetName(),sector.GetData());
     csList<UnresolvedPos*>::Iterator posIter = FindUnresolvedPos(entity);
@@ -1084,7 +1084,7 @@ int GEMClientObject::GetMasqueradeType(void)
     return type;
 }
 
-void GEMClientObject::SetPosition(const csVector3 & pos, float rot, iSector * sector)
+void GEMClientObject::SetPosition(const csVector3 & pos, const csVector3& rot, iSector * sector)
 {
     if(pcmesh.IsValid())
     {
@@ -1131,43 +1131,53 @@ void GEMClientObject::SetPosition(const csVector3 & pos, float rot, iSector * se
         pcmesh->GetMovable ()->SetPosition (pos);
 
         // Rotation
-        csMatrix3 matrix = (csMatrix3) csYRotMatrix3 (rot);
-        pcmesh->GetMovable()->GetTransform().SetO2T (matrix);
-
-        pcmesh->GetMovable ()->UpdateMove ();
-
-        if(instance.IsValid())
-        {
-            // Set instancing transform.
-            position->SetValue(pcmesh->GetMovable()->GetTransform());
-        }
+        Rotate(rot.x, rot.y, rot.z);
+        
+        // Rotate updates the movable and instance transform for us
+        // therefore it's left out here
     }
 }
 
 void GEMClientObject::Rotate(float xRot, float yRot, float zRot)
 {
     // calculate the rotation matrix from the axis rotation
-    csMatrix3 xmatrix = (csMatrix3) csXRotMatrix3 (xRot);
+    // we don't support x rotation right now
+    // csMatrix3 xmatrix = csXRotMatrix3(xRot);
+    csMatrix3 ymatrix = csYRotMatrix3(yRot);
+    csMatrix3 zmatrix = csZRotMatrix3(zRot);
 
-    csMatrix3 ymatrix = (csMatrix3) csYRotMatrix3 (yRot);
+    // obtain the point to use as base for the rotation
+    csBox3 bbox = GetBBox();
+    csVector3 rotBase = bbox.GetCenter() - bbox.Min();
+    
+    // obtain orignal translation
+    csVector3 origTrans = pcmesh->GetMovable()->GetTransform().GetO2TTranslation();
 
-    csMatrix3 zmatrix = (csMatrix3) csZRotMatrix3 (zRot);
+    // create the final transformation
+    // move to center
+    csReversibleTransform trans(csMatrix3(),-rotBase);
+    // apply rotation, revert move to center and move to final position
+    trans = trans * csReversibleTransform(ymatrix*zmatrix,rotBase+origTrans);
 
-    // multiply the matrices for the three axis together, then we apply it to the mesh
-    pcmesh->GetMovable ()->GetTransform().SetO2T (xmatrix*ymatrix*zmatrix);
+    // set new transformation
+    pcmesh->GetMovable()->SetTransform(trans);
 
-    pcmesh->GetMovable ()->UpdateMove ();
+    pcmesh->GetMovable()->UpdateMove();
 
     // Set instancing transform.
     if(instance.IsValid())
     {
-        position->SetValue(pcmesh->GetMovable ()->GetTransform());
+        position->SetValue(trans);
     }
 }
 
 csVector3 GEMClientObject::GetPosition()
 {
-    return pcmesh->GetMovable ()->GetFullPosition();
+    csVector3 pos = pcmesh->GetMovable()->GetFullPosition();
+    // we have to substract the rotation base here as we add it to make rotated items show properly
+    csBox3 bbox = GetBBox();
+    csVector3 rotBase = bbox.GetCenter() - bbox.Min();
+    return pos - rotBase;
 }
 
 float GEMClientObject::GetRotation()
@@ -1212,7 +1222,7 @@ void GEMClientObject::Update()
 {
 }
 
-void GEMClientObject::Move(const csVector3& pos, float rotangle, const char* room)
+void GEMClientObject::Move(const csVector3& pos, const csVector3& rotangle, const char* room)
 {
     // If we're moving to a new sector, wait until we're finished loading.
     // If we're moving to the same sector, continue.
@@ -1375,7 +1385,9 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
     if (mesg.sector != NULL && !psengine->GetZoneHandler()->IsLoading())
         linmove->SetDRData(mesg.on_ground, 1.0f, mesg.pos, mesg.yrot, mesg.sector, mesg.vel, mesg.worldVel, mesg.ang_vel);
     else
-        cel->HandleUnresolvedPos(this, mesg.pos, mesg.yrot, mesg.sectorName);
+    {
+        cel->HandleUnresolvedPos(this, mesg.pos, csVector3(0, mesg.yrot, 0), mesg.sectorName);
+    }
 
     // Check whether we need to use a clone of our meshfact.
     // This is needed when we have to scale.
@@ -1691,7 +1703,7 @@ void GEMClientActor::SetDRData(psDRMessage& drmsg)
             // We don't want to move to a new sector which may be loading.
             if (drmsg.sector != cur_sector && psengine->GetZoneHandler()->IsLoading())
             {
-                cel->HandleUnresolvedPos(this, drmsg.pos, drmsg.yrot, drmsg.sectorName);
+                cel->HandleUnresolvedPos(this, drmsg.pos, csVector3(0,drmsg.yrot,0), drmsg.sectorName);
             }
             else
             {
@@ -1719,7 +1731,7 @@ void GEMClientActor::SetDRData(psDRMessage& drmsg)
     }
     else
     {
-        cel->HandleUnresolvedPos(this, drmsg.pos, drmsg.yrot, drmsg.sectorName);
+        cel->HandleUnresolvedPos(this, drmsg.pos, csVector3(0,drmsg.yrot,0), drmsg.sectorName);
     }
 
     // Update character mode and idle animation
@@ -2298,9 +2310,8 @@ bool GEMClientItem::CheckLoadStatus()
 
 void GEMClientItem::PostLoad()
 {
-    Move(post_load->pos, post_load->yRot, post_load->sector);
-
-    Rotate(post_load->xRot, post_load->yRot, post_load->zRot);
+    csVector3 rot(post_load->xRot, post_load->yRot, post_load->zRot);
+    Move(post_load->pos, rot, post_load->sector);
 
     if (flags & psPersistItem::COLLIDE)
     {
@@ -2343,7 +2354,7 @@ GEMClientActionLocation::GEMClientActionLocation( psCelClient* cel, psPersistAct
     }
     state->SetRadius(1.0);
 
-    Move( csVector3(0,0,0), 0.0f, mesg.sector);
+    Move( csVector3(0,0,0), csVector3(0,0,0), mesg.sector);
 }
 
 InstanceObject::~InstanceObject()

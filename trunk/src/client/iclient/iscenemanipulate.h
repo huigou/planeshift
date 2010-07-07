@@ -69,6 +69,11 @@ struct iSceneManipulate : public virtual iBase
     * will be based on the difference between these and the given rotation coordinates.
     */
     virtual void SaveCoordinates(const csVector2& pos) = 0;
+
+   /**
+    * retrieve the final position and rotation.
+    */
+    virtual void GetPosition(csVector3& pos, csVector3& rot, const csVector2& screenPos) = 0;
 };
 
 #endif // __ISCENEMANIPULATE_H__

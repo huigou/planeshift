@@ -787,11 +787,14 @@ gemItem *EntityManager::MoveItemToWorld(psItem       *chrItem,
                                           float         loc_x,
                                           float         loc_y,
                                           float         loc_z,
+                                          float         loc_xrot,
                                           float         loc_yrot,
+                                          float         loc_zrot,
                                           psCharacter  *owner,
                                           bool          transient)
 {
     chrItem->SetLocationInWorld(instance,sectorinfo,loc_x,loc_y,loc_z,loc_yrot);
+    chrItem->SetXZRotationInWorld(loc_xrot, loc_zrot);
     chrItem->UpdateInventoryStatus(NULL,0,PSCHARACTER_SLOT_NONE);
 
     gemItem *obj = CreateItem(chrItem,true);

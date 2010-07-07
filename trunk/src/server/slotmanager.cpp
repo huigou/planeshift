@@ -276,7 +276,7 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
         {
             itemProposed->SetGuardingCharacterID(0);
             worldContainer->RemoveFromContainer(itemProposed,fromClient);
-            chr->DropItem(itemProposed, msg.posWorld, msg.yrot);
+            chr->DropItem(itemProposed, msg.posWorld, msg.rot);
             break;
         }
 
@@ -364,7 +364,7 @@ void SlotManager::MoveFromMoney(psSlotMovementMsg& msg, Client *fromClient)
                 // Remove the money from inventory, and put in world.
                 money.Set(-money.Get(3), -money.Get(2), -money.Get(1), -money.Get(0));
                 chr->AdjustMoney(money, false);
-                chr->DropItem(item, msg.posWorld, msg.yrot, msg.guarded, true, msg.inplace);
+                chr->DropItem(item, msg.posWorld, msg.rot, msg.guarded, true, msg.inplace);
             }
             else
                 Error3("Could not create money item from slot %d, count %d!", msg.fromSlot, msg.stackCount);
@@ -541,7 +541,7 @@ void SlotManager::MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient)
             if (!srcItem->IsInUse())
             {
                 psItem* newItem = chr->Inventory().RemoveItem(NULL, (INVENTORY_SLOT_NUMBER) srcSlot, msg.stackCount);
-                chr->DropItem(newItem, msg.posWorld, msg.yrot);
+                chr->DropItem(newItem, msg.posWorld, msg.rot);
             }
             else
             {

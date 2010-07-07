@@ -236,15 +236,16 @@ void psSlotManager::UpdateItem()
 
 void psSlotManager::DropItem()
 {
-    // Get final rotation.
+    // get final position and rotation
     psPoint p = PawsManager::GetSingleton().GetMouse()->GetPosition();
-    float yrot = 6 * PI * ((float)basePoint.x - p.x) / psengine->GetG2D()->GetWidth();
+    csVector3 pos;
+    csVector3 rot;
+    psengine->GetSceneManipulator()->GetPosition(pos, rot, csVector2(p.x, p.y));
 
     // Send drop message.
-    csVector3 pos = outline->GetMovable()->GetPosition();
     psSlotMovementMsg msg( draggingSlot.containerID, draggingSlot.slotID,
       CONTAINER_WORLD, 0, draggingSlot.stackCount, &pos,
-      &yrot);
+      &rot);
     msg.SendMessage();
 
     // Remove outline mesh.
