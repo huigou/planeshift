@@ -91,6 +91,7 @@ private:
     EntityManager* entityManager;
 
     MathScript *calc_damage; ///< This is the particular calculation for damage.
+    MathScript *calc_decay; ///< This is the particular calculation for decay.
     /// if the player is too tired, stop fighting. We stop if we don't have enough stamina to make an attack with the current stance.
     MathScript* staminacombat;
 

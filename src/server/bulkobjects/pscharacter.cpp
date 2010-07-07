@@ -2966,6 +2966,10 @@ double psCharacter::GetProperty(const char *ptr)
     {
         return location.loc.z;
     }
+    else if (!strcasecmp(ptr,"loc_yrot"))
+    {
+        return location.loc_yrot;
+    }
     else if (!strcasecmp(ptr,"sector"))
     {
         return location.loc_sector->uid;
@@ -3001,19 +3005,20 @@ double psCharacter::CalcFunction(const char * functionName, const double * param
 
         double v1 = skills.GetSkillRank(skill1).Current();
 
-        if (skill2!=PSSKILL_NONE) {
+        double count = (double)(1+(skill2!=PSSKILL_NONE)+(skill3!=PSSKILL_NONE));
+        v1 /= count;
+
+        if (skill2!=PSSKILL_NONE)
+        {
             double v2 = skills.GetSkillRank(skill2).Current();
-            v1 = (v1+v2)/2;
+            v1 += v2/count;
         }
 
-        if (skill3!=PSSKILL_NONE) {
+        if (skill3!=PSSKILL_NONE)
+        {
             double v3 = skills.GetSkillRank(skill3).Current();
-            v1 = (v1+v3)/2;
+            v1 += v3/count;
         }
-
-        // always give a small % of combat skill, or players will never be able to get the first exp
-        if (v1==0)
-            v1 = 0.7;
 
         return v1;
     }
@@ -3023,10 +3028,6 @@ double psCharacter::CalcFunction(const char * functionName, const double * param
         PSSKILL skill = psserver->GetCacheManager()->ConvertSkillString(skillName);
         double value = skills.GetSkillRank(skill).Current();
 
-        // always give a small % of melee (unharmed) skill
-        if (skill == PSSKILL_MARTIALARTS && value == 0)
-            value = 0.2;
-
         return value;
     }
     else if (!strcasecmp(functionName, "GetSkillValue"))
@@ -3035,11 +3036,20 @@ double psCharacter::CalcFunction(const char * functionName, const double * param
 
         double value = skills.GetSkillRank(skill).Current();
 
-        // always give a small % of melee (unharmed) skill
-        if (skill==PSSKILL_MARTIALARTS && value==0)
-            value = 0.2;
-
         return value;
+    }
+    else if (!strcasecmp(functionName, "PracticeSkillID"))
+    {
+        PSSKILL skill = (PSSKILL)(int)params[0];
+
+        return skills.AddSkillPractice(skill, params[1]);
+    }
+    else if (!strcasecmp(functionName, "PracticeSkill"))
+    {
+        const char *skillName = MathScriptEngine::GetString(params[0]);
+        PSSKILL skill = psserver->GetCacheManager()->ConvertSkillString(skillName);
+
+        return skills.AddSkillPractice(skill, params[1]);
     }
     else if (!strcasecmp(functionName, "HasExploredArea"))
     {
@@ -3072,6 +3082,40 @@ double psCharacter::CalcFunction(const char * functionName, const double * param
         }
 
         return 0.0;
+    }
+    else if (!strcasecmp(functionName, "GetItem"))
+    {
+        INVENTORY_SLOT_NUMBER slot = (INVENTORY_SLOT_NUMBER)(int)params[0];
+        psItem *item = NULL;
+        if (inventory.GetInventoryItem(slot))
+        {
+            item = inventory.GetInventoryItem(slot);
+        }
+        else
+        {
+            item = inventory.GetEquipmentObject(slot).default_if_empty;
+        }
+
+        return (double)(intptr_t)item;;
+    }
+    else if (!strcasecmp(functionName, "GetArmorSkill"))
+    {
+        PSSKILL skill;
+        switch((PSITEMSTATS_ARMORTYPE)(int)params[0])
+        {
+            case PSITEMSTATS_ARMORTYPE_LIGHT:
+                skill = PSSKILL_LIGHTARMOR;
+                break;
+            case PSITEMSTATS_ARMORTYPE_MEDIUM:
+                skill = PSSKILL_MEDIUMARMOR;
+                break;
+            case PSITEMSTATS_ARMORTYPE_HEAVY:
+                skill = PSSKILL_HEAVYARMOR;
+                break;
+            default:
+                return 0;
+        }
+        return (double)skills.GetSkillRank(skill).Current();
     }
 
     CPrintf(CON_ERROR, "psItem::CalcFunction(%s) failed\n", functionName);

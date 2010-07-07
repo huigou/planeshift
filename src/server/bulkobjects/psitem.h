@@ -146,9 +146,6 @@ struct psItemCategory;
 class psScheduledItem;
 class psWorkGameEvent;
 
-#define  ITEM_DECAY_FACTOR_PARRY   0.75F  // If the target parries the blow, how much is his weapon damaged by blocking the attacker
-#define  ITEM_DECAY_FACTOR_BLOCKED 1.25F   // If the target parries the blow, how much is the attacker's weapon damaged by getting blocked
-
 /** This class embodies item instances in the game.
 * Every item that can be picked up, dropped, traded, equipped, bought or sold is a psitem.
 *
