@@ -2056,8 +2056,7 @@ double gemActor::CalcFunction(const char *f, const double *params)
     {
         const char *factionName = MathScriptEngine::GetString(params[0]);
         Faction *faction = cacheManager->GetFactionByName(factionName);
-        CS_ASSERT(faction);
-        return (double) factions->GetFaction(faction);
+        return (double) (faction ? factions->GetFaction(faction) : 0);
     }
     CS_ASSERT(psChar);
     return psChar->CalcFunction(f, params);

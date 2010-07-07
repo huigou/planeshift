@@ -145,10 +145,15 @@ CombatManager::CombatManager(CacheManager* cachemanager, EntityManager* entityma
     cacheManager = cachemanager;
     entityManager = entitymanager;
   
-    calc_damage   = psserver->GetMathScriptEngine()->FindScript("Calculate Damage");
+    calc_damage  = psserver->GetMathScriptEngine()->FindScript("Calculate Damage");
+    calc_decay   = psserver->GetMathScriptEngine()->FindScript("Calculate Decay");
     if ( !calc_damage )
     {
         Error1("Calculate Damage Script could not be found.  Check the math_scripts DB table.");
+    }
+    else if ( !calc_decay )
+    {
+        Error1("Calculate Decay Script could not be found.  Check the math_scripts DB table.");
     }
     else
     {
@@ -459,16 +464,39 @@ int CombatManager::CalculateAttack(psCombatGameEvent *event, psItem* subWeapon)
     INVENTORY_SLOT_NUMBER otherHand = event->GetWeaponSlot() == PSCHARACTER_SLOT_LEFTHAND ? PSCHARACTER_SLOT_RIGHTHAND : PSCHARACTER_SLOT_LEFTHAND;
     event->AttackLocation = (INVENTORY_SLOT_NUMBER) targetLocations[randomgen->Get((int) targetLocations.GetSize())];
 
+    gemObject *attacker = event->GetAttacker();
+    gemObject *target = event->GetTarget();
+
+    // calculate difference between target and attacker location - to be used for angle validation
+    csVector3 diff(0); // initialize to some big value that shows an error
+    
+    {
+        csVector3 attackPos, targetPos;
+        iSector *attackSector, *targetSector;
+
+        attacker->GetPosition(attackPos, attackSector);
+        target->GetPosition(targetPos, targetSector);
+
+        if((attacker->GetInstance() != target->GetInstance()) ||
+            !(entityManager->GetWorld()->WarpSpace(targetSector, attackSector, targetPos)))
+        {
+            return ATTACK_OUTOFRANGE;
+        }
+
+        diff = targetPos - attackPos;
+    }
+
     MathEnvironment env;
-    env.Define("Attacker",              event->GetAttacker());
-    env.Define("Target",                event->GetTarget());
+    env.Define("Attacker",              attacker);
+    env.Define("Target",                target);
     env.Define("AttackWeapon",          event->GetAttackerData()->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot()));
     env.Define("AttackWeaponSecondary", subWeapon);
-    // FIXME: The original code defined and redefined TargetAttackWeapon, which can't be right.
-    //        Maybe this was supposed to be DefenseWeaponSecondary.  Probably not.  This needs cleaning.
-    env.Define("TargetAttackWeapon",    event->GetTargetData()->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot(), true));
-    env.Define("TargetAttackWeaponSecondary",    event->GetTargetData()->Inventory().GetEffectiveWeaponInSlot(otherHand,true));
+    env.Define("TargetWeapon",          event->GetTargetData()->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot(), true));
+    env.Define("TargetWeaponSecondary", event->GetTargetData()->Inventory().GetEffectiveWeaponInSlot(otherHand,true));
     env.Define("AttackLocationItem",    event->GetTargetData()->Inventory().GetEffectiveArmorInSlot(event->AttackLocation));
+    env.Define("DiffX",                 diff.x ? diff.x : 0.00001F); // force minimal value
+    env.Define("DiffY",                 diff.y ? diff.y : 0.00001F); // force minimal value
+    env.Define("DiffZ",                 diff.z ? diff.z : 0.00001F); // force minimal value
 
     calc_damage->Evaluate(&env);
 
@@ -478,15 +506,23 @@ int CombatManager::CalculateAttack(psCombatGameEvent *event, psItem* subWeapon)
         env.DumpAllVars();
     }
 
-    MathVar *IAH      = env.Lookup("IAH");         // IAH = If Attack Hit
-    MathVar *AHR      = env.Lookup("AHR");         // AHR = Attack Hit Roll
-    MathVar *blocked  = env.Lookup("Blocked");     // Blocked = Blocked by weapon
+    MathVar *badrange = env.Lookup("BadRange");    // BadRange = Target is too far away
+    MathVar *badangle = env.Lookup("BadAngle");    // BadAngle = Attacker doesn't aim at enemy
+    MathVar *missed   = env.Lookup("Missed");      // Missed   = Attack missed the enemy
+    MathVar *dodged   = env.Lookup("Dodged");      // Dodged   = Attack dodged  by enemy
+    MathVar *blocked  = env.Lookup("Blocked");     // Blocked  = Attack blocked by enemy
     MathVar *damage   = env.Lookup("FinalDamage"); // Actual damage done, if any
-    // QOH ("Quality of Hit") is also an output variable, supposedly, but isn't used by the code...
-    if (IAH->GetValue() < 0.0)
+
+    if (badrange->GetValue() < 0.0)
+        return ATTACK_OUTOFRANGE;
+
+    if (badangle->GetValue() < 0.0)
+        return ATTACK_BADANGLE;
+
+    if (missed->GetValue() < 0.0)
         return ATTACK_MISSED;
 
-    if (AHR->GetValue() < 0.0)
+    if (dodged->GetValue() < 0.0)
         return ATTACK_DODGED;
 
     if (blocked->GetValue() < 0.0)
@@ -514,9 +550,24 @@ void CombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_result
     float ArmorVsWeapon = 1;
     if (struckArmor)
       ArmorVsWeapon = weapon->GetArmorVSWeaponResistance(struckArmor->GetBaseStats());
+
     // clamp values due to bad data
     ArmorVsWeapon = ArmorVsWeapon > 1.0F ? 1.0F : ArmorVsWeapon;
     ArmorVsWeapon = ArmorVsWeapon < 0.0F ? 0.0F : ArmorVsWeapon;
+
+    MathEnvironment env;
+    env.Define("Weapon", weapon);                             // weapon that was used to attack
+    env.Define("BlockingWeapon", blockingWeapon);             // weapon that blocked the attack
+    env.Define("Armor", struckArmor);                         // armor hit
+    env.Define("ArmorVsWeapon", ArmorVsWeapon);               // armor vs weapon effectiveness
+    env.Define("Damage", event->FinalDamage);                 // actual damage dealt
+    env.Define("Blocked", (attack_result == ATTACK_BLOCKED)); // identifies whether this attack was blocked
+
+    calc_decay->Evaluate(&env);
+
+    MathVar *weaponDecay = env.Lookup("WeaponDecay");
+    MathVar *blockDecay  = env.Lookup("BlockingDecay");
+    MathVar *armorDecay  = env.Lookup("ArmorDecay");
 
     gemActor *gemAttacker = dynamic_cast<gemActor*> ((gemObject *) event->attacker);
     gemActor *gemTarget   = dynamic_cast<gemActor*> ((gemObject *) event->target);
@@ -576,12 +627,13 @@ void CombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_result
 
             if (weapon)
             {
-                weapon->AddDecay(1.0F - ArmorVsWeapon);
+                weapon->AddDecay(weaponDecay->GetValue());
             }
             if (struckArmor)
             {
-                struckArmor->AddDecay(ArmorVsWeapon);
+                struckArmor->AddDecay(armorDecay->GetValue());
             }
+
             NotifyTarget(gemAttacker,gemTarget);
 
             break;
@@ -635,12 +687,13 @@ void CombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_result
 
             if (weapon)
             {
-                weapon->AddDecay(ITEM_DECAY_FACTOR_BLOCKED);  
+                weapon->AddDecay(weaponDecay->GetValue());
             }
             if (blockingWeapon)
             {
-                blockingWeapon->AddDecay(ITEM_DECAY_FACTOR_PARRY);
+                blockingWeapon->AddDecay(blockDecay->GetValue());
             }
+
             NotifyTarget(gemAttacker,gemTarget);
 
             break;
@@ -827,80 +880,65 @@ void CombatManager::HandleCombatEvent(psCombatGameEvent *event)
 
     if (!skipThisRound)
     {
-        // If the target is out of range, skip this attack round, send a warning
-        if ( !ValidDistance(gemAttacker, gemTarget, weapon) )
-        {
-            // Attacker is a npc so does not realise it's attack is cancelled
-            attack_result=ATTACK_OUTOFRANGE;
+        // If we didn't attack last time target might have forgotten about us by now
+        // so we should remind him.
+        if(event->PreviousAttackResult == ATTACK_OUTOFRANGE ||
+           event->PreviousAttackResult == ATTACK_BADANGLE)
+            NotifyTarget(gemAttacker,gemTarget);
 
-        }
-        // If attacker is not pointing at target, skip this attack round, send a warning
-        else if ( !ValidCombatAngle(gemAttacker, gemTarget, weapon) )
+        if (weapon->GetIsRangeWeapon() && weapon->GetUsesAmmo())
         {
-            // Attacker is a npc so does not realise it's attack is cancelled
-            attack_result=ATTACK_BADANGLE;
+            INVENTORY_SLOT_NUMBER otherHand = event->GetWeaponSlot() == PSCHARACTER_SLOT_RIGHTHAND ?
+                                                                        PSCHARACTER_SLOT_LEFTHAND:
+                                                                        PSCHARACTER_SLOT_RIGHTHAND;
 
+            attack_result = ATTACK_NOTCALCULATED;
+
+            psItem* otherItem = attacker_data->Inventory().GetInventoryItem(otherHand);
+            if (otherItem == NULL)
+            {
+                attack_result = ATTACK_OUTOFAMMO;
+            }
+            else if (otherItem->GetIsContainer()) // Is it a quiver?
+            {
+                // Pick the first ammo we can shoot from the container
+                // And set it as the active ammo
+                bool bFound = false;
+                for (size_t i=1; i<attacker_data->Inventory().GetInventoryIndexCount() && !bFound; i++)
+                {
+                    psItem* currItem = attacker_data->Inventory().GetInventoryIndexItem(i);
+                    if (currItem && 
+                        currItem->GetContainerID() == otherItem->GetUID() &&
+                        weapon->GetAmmoTypeID().In(currItem->GetBaseStats()->GetUID()))
+                    {
+                        otherItem = currItem;
+                        bFound = true;
+                    }
+                }
+                if (!bFound)
+                    attack_result = ATTACK_OUTOFAMMO;
+            }
+            else if (!weapon->GetAmmoTypeID().In(otherItem->GetBaseStats()->GetUID()))
+            {
+                attack_result = ATTACK_OUTOFAMMO;
+            }
+
+            if (attack_result != ATTACK_OUTOFAMMO)
+            {
+                psItem* usedAmmo = attacker_data->Inventory().RemoveItemID(otherItem->GetUID(), 1);
+                if (usedAmmo)
+                {
+                    attack_result=CalculateAttack(event, usedAmmo);
+                    usedAmmo->Destroy();
+                    psserver->GetCharManager()->UpdateItemViews(attacker_client->GetClientNum());
+                }
+                else
+                    attack_result=CalculateAttack(event);
+            }
         }
         else
         {
-            // If we didn't attack last time target might have forgotten about us by now
-            // so we should remind him.
-            if(event->PreviousAttackResult == ATTACK_OUTOFRANGE ||
-               event->PreviousAttackResult == ATTACK_BADANGLE)
-                NotifyTarget(gemAttacker,gemTarget);
-
-            if (weapon->GetIsRangeWeapon() && weapon->GetUsesAmmo())
-            {
-                INVENTORY_SLOT_NUMBER otherHand = event->GetWeaponSlot() == PSCHARACTER_SLOT_RIGHTHAND ?
-                                                                            PSCHARACTER_SLOT_LEFTHAND:
-                                                                            PSCHARACTER_SLOT_RIGHTHAND;
-
-                attack_result = ATTACK_NOTCALCULATED;
-
-                psItem* otherItem = attacker_data->Inventory().GetInventoryItem(otherHand);
-                if (otherItem == NULL)
-                {
-                    attack_result = ATTACK_OUTOFAMMO;
-                }
-                else if (otherItem->GetIsContainer()) // Is it a quiver?
-                {
-                    // Pick the first ammo we can shoot from the container
-                    // And set it as the active ammo
-                    bool bFound = false;
-                    for (size_t i=1; i<attacker_data->Inventory().GetInventoryIndexCount() && !bFound; i++)
-                    {
-                        psItem* currItem = attacker_data->Inventory().GetInventoryIndexItem(i);
-                        if (currItem && 
-                            currItem->GetContainerID() == otherItem->GetUID() &&
-                            weapon->GetAmmoTypeID().In(currItem->GetBaseStats()->GetUID()))
-                        {
-                            otherItem = currItem;
-                            bFound = true;
-                        }
-                    }
-                    if (!bFound)
-                        attack_result = ATTACK_OUTOFAMMO;
-                }
-                else if (!weapon->GetAmmoTypeID().In(otherItem->GetBaseStats()->GetUID()))
-                {
-                    attack_result = ATTACK_OUTOFAMMO;
-                }
-
-                if (attack_result != ATTACK_OUTOFAMMO)
-                {
-                    psItem* usedAmmo = attacker_data->Inventory().RemoveItemID(otherItem->GetUID(), 1);
-                    if (usedAmmo)
-                    {
-                        attack_result=CalculateAttack(event, usedAmmo);
-                        usedAmmo->Destroy();
-                        psserver->GetCharManager()->UpdateItemViews(attacker_client->GetClientNum());
-                    }
-                    else
-                        attack_result=CalculateAttack(event);
-                }
-            }
-            else
-                attack_result=CalculateAttack(event);
+            attack_result=CalculateAttack(event);
         }
 
         event->AttackResult=attack_result;
@@ -926,10 +964,9 @@ void CombatManager::HandleCombatEvent(psCombatGameEvent *event)
 
 void CombatManager::DebugOutput(psCombatGameEvent *event, const MathEnvironment & env)
 {
-    MathVar *IAH      = env.Lookup("IAH");         // IAH = If Attack Hit
-    MathVar *AHR      = env.Lookup("AHR");         // AHR = Attack Hit Roll
-    MathVar *QOH      = env.Lookup("QOH");         // QOH = Quality of Hit
-    MathVar *blocked  = env.Lookup("Blocked");     // Blocked = Blocked by weapon
+    MathVar *missed   = env.Lookup("Missed");      // Missed  = Attack missed the enemy
+    MathVar *dodged   = env.Lookup("Dodged");      // Dodged  = Attack dodged  by enemy
+    MathVar *blocked  = env.Lookup("Blocked");     // Blocked = Attack blocked by enemy
     MathVar *damage   = env.Lookup("FinalDamage"); // Actual damage done, if any
 
     psItem* item = event->GetAttackerData()->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot() );
@@ -939,65 +976,9 @@ void CombatManager::DebugOutput(psCombatGameEvent *event, const MathEnvironment 
     debug.AppendFmt( "%s attacks %s with slot %d , weapon %s, quality %1.2f, basedmg %1.2f/%1.2f/%1.2f\n",
       event->attacker->GetName(),event->target->GetName(), event->GetWeaponSlot(),item->GetName(),item->GetItemQuality(),
       item->GetDamage(PSITEMSTATS_DAMAGETYPE_SLASH),item->GetDamage(PSITEMSTATS_DAMAGETYPE_BLUNT),item->GetDamage(PSITEMSTATS_DAMAGETYPE_PIERCE));
-    debug.AppendFmt( "IAH: %1.6f AHR: %1.6f Blocked: %1.6f", IAH->GetValue(), AHR->GetValue(), blocked->GetValue());
-    debug.AppendFmt( "QOH: %1.6f Damage: %1.1f\n", QOH->GetValue(), damage->GetValue());
+    debug.AppendFmt( "Missed: %1.6f Dodged: %1.6f Blocked: %1.6f", missed->GetValue(), dodged->GetValue(), blocked->GetValue());
+    debug.AppendFmt( "Damage: %1.1f\n", damage->GetValue());
     Debug2(LOG_COMBAT, event->attacker->GetClientID(), "%s", debug.GetData());
-}
-
-
-
-
-
-bool CombatManager::ValidDistance(gemObject *attacker,gemObject *target,psItem *Weapon)
-{
-    if (Weapon==NULL)
-        return false;
-
-    if(!attacker->GetNPCPtr())
-    {
-        return attacker->IsNear(target,Weapon->GetRange()+(Weapon->GetRange()*0.1));
-    }
-    else
-    {
-        return attacker->IsNear(target,Weapon->GetRange()+(Weapon->GetRange()*0.1)+1); 
-    }
-}
-
-bool CombatManager::ValidCombatAngle(gemObject *attacker,gemObject *target,psItem *Weapon)
-{
-    csVector3 attackPos, targetPos;
-    iSector *attackSector, *targetSector;
-
-    if (attacker->GetNPCPtr())
-        return true;  // We don't check this for npc's because they are too stupid
-
-    attacker->GetPosition(attackPos, attackSector);
-    target->GetPosition(targetPos, targetSector);
-
-    if(!(entityManager->GetWorld()->WarpSpace(targetSector, attackSector, targetPos)))
-    {
-        return false;
-    }
-
-    csVector3 diff = targetPos - attackPos;
-    if (!diff.x)
-        diff.x = 0.00001F; // div/0 protect
-
-    float angle = atan2(-diff.x,-diff.z);  // Incident angle to npc
-    float attackFacing = attacker->GetAngle();
-    angle = attackFacing - angle;  // Where is user facing vs. incident angle?
-    if (angle > PI)
-        angle -= TWO_PI;
-    else if (angle < -PI)
-        angle += TWO_PI;
-
-    float dist = diff.SquaredNorm();
-
-    // Use a slightly tighter angle if the player is farther away
-    if (dist > 1.5)
-        return ( fabs(angle) < PI * .30);
-    else
-        return ( fabs(angle) < PI * .40);
 }
 
 void CombatManager::HandleDeathEvent(MsgEntry *me,Client *client)

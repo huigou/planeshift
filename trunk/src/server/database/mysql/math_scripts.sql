@@ -25,13 +25,30 @@ INSERT INTO math_scripts VALUES( "Calculate Damage",
         DefenseRoll = rnd(1);
 
         WeaponSkill = Attacker:getAverageSkillValue(AttackWeapon:Skill1,AttackWeapon:Skill2,AttackWeapon:Skill3);
-        TargetWeaponSkill = Target:getAverageSkillValue(TargetAttackWeapon:Skill1,TargetAttackWeapon:Skill2,TargetAttackWeapon:Skill3);
+        TargetWeaponSkill = Target:getAverageSkillValue(TargetWeapon:Skill1,TargetWeapon:Skill2,TargetWeapon:Skill3);
 
-        IAH = min(AttackRoll-.25,0.1);
-        exit = if(0>IAH,1,0);
-        AHR = min(AttackRoll-.5,.01);
+        PI = 3.14159265358979323846;
+        Dist = DiffX*DiffX + DiffY*DiffY + DiffZ*DiffZ;
+        NDiffX = -DiffX;
+        NDiffZ = -DiffZ;
+
+        Angle = atan2(NDiffX,NDiffZ);
+        AngleAtt = Angle;
+        Angle = Attacker:loc_yrot - Angle;
+        Angle = Angle % (2*PI);
+        Angle = if(Angle > PI, Angle-2*PI, Angle);
+        BadAngle = PI * if(Dist>1.5, 0.3, 0.4) - abs(Angle);
+        exit = if(0>BadAngle,1,0);
+
+        BadRange = pow(AttackWeapon:Range * 1.1 + 1,2) - Dist;
+        exit = if(0>BadRange,1,0);
+
+        Missed = min(AttackRoll-.25,0.1);
+        exit = if(0>Missed,1,0);
+        Dodged = min(AttackRoll-.5,.01);
+        exit = if(0>Dodged,1,0);
         Blocked = AttackRoll - DefenseRoll;
-        QOH = Blocked;
+        exit = if(0>Blocked,1,0);
 
         RequiredInputVars = Target:AttackerTargeted+Attacker:getSkillValue(AttackWeapon:Skill1)+AttackLocationItem:Hardness;
 
@@ -55,8 +72,14 @@ INSERT INTO math_scripts VALUES( "Calculate Damage",
                if(TargetStance=4, (TargetAttackValue*0.3),
                0))));
 
-
         FinalDamage = 10*(AVStance-TargetDV);
+");
+
+INSERT INTO math_scripts VALUES( "Calculate Decay",
+"
+    WeaponDecay = if(Blocked, 1.25, 1 - ArmorVsWeapon);
+    BlockingDecay = if(Blocked, 0.75, 0);
+    ArmorDecay = if(Blocked, 0, ArmorVsWeapon);
 ");
 
 INSERT INTO math_scripts VALUES( "Lockpicking Time", "Time = ((LockQuality / 10) * 3)*1000;");

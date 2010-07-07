@@ -875,12 +875,12 @@ float psItem::AddDecay(float severityFactor)
     if (!this)
         return 0;
 
-    item_quality -= base_stats->GetDecayRate() * severityFactor * (1.0F-decay_resistance);
+    item_quality -= severityFactor;
     if (item_quality < 1)
     {
         item_quality = 1;
     }
-    Debug4(LOG_USER,0,"Item %s quality decayed by %1.2f to %1.2f.\n", GetName(), base_stats->GetDecayRate()*severityFactor*(1.0F-decay_resistance), item_quality);
+    Debug4(LOG_USER,0,"Item %s quality decayed by %1.2f to %1.2f.\n", GetName(), severityFactor, item_quality);
     return item_quality;
 }
 
@@ -1949,6 +1949,14 @@ double psItem::GetProperty(const char *ptr)
     {
         return GetHardness();
     }
+    else if (!strcasecmp(ptr,"DecayRate"))
+    {
+        return base_stats->GetDecayRate();
+    }
+    else if (!strcasecmp(ptr,"DecayResistance"))
+    {
+        return decay_resistance;
+    }
     else if (!strcasecmp(ptr,"Penetration"))
     {
         return GetPenetration();
@@ -2029,6 +2037,18 @@ double psItem::GetProperty(const char *ptr)
     else if (!strcasecmp(ptr,"Range"))
     {
         return (double)GetRange();
+    }
+    else if (!strcasecmp(ptr,"Slot"))
+    {
+        return (double)GetLocInParent();
+    }
+    else if (!strcasecmp(ptr,"Owner"))
+    {
+        return (double)(intptr_t)owning_character;
+    }
+    else if (!strcasecmp(ptr,"ArmorType"))
+    {
+        return (double)GetArmorType();
     }
     else
     {
