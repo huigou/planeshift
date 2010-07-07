@@ -1173,11 +1173,7 @@ void GEMClientObject::Rotate(float xRot, float yRot, float zRot)
 
 csVector3 GEMClientObject::GetPosition()
 {
-    csVector3 pos = pcmesh->GetMovable()->GetFullPosition();
-    // we have to substract the rotation base here as we add it to make rotated items show properly
-    csBox3 bbox = GetBBox();
-    csVector3 rotBase = bbox.GetCenter() - bbox.Min();
-    return pos - rotBase;
+    return pcmesh->GetMovable()->GetFullPosition();
 }
 
 float GEMClientObject::GetRotation()
