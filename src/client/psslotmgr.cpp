@@ -43,6 +43,7 @@ psSlotManager::psSlotManager()
     // Initialize event shortcuts
     MouseMove = csevMouseMove (psengine->GetEventNameRegistry(), 0);
     MouseDown = csevMouseDown (psengine->GetEventNameRegistry(), 0);
+    MouseUp = csevMouseUp (psengine->GetEventNameRegistry(), 0);
 }
 
 psSlotManager::~psSlotManager()
@@ -53,6 +54,7 @@ bool psSlotManager::HandleEvent( iEvent& ev )
 {
     if(isDragging)
     {
+        uint button = csMouseEventHelper::GetButton(&ev);
         if(ev.Name == MouseMove)
         {
             if(isPlacing)
@@ -63,45 +65,41 @@ bool psSlotManager::HandleEvent( iEvent& ev )
         }
         else if(ev.Name == MouseDown)
         {
-          uint button = csMouseEventHelper::GetButton(&ev);
-          
-          if(button == 0) // Left
-          {
-              if(isPlacing)
-              {
-                  // Drop the item at the current position.
-                  if(isRotating)
-                  {
-                      DropItem();
-                      return true;
-                  }
-
-                  // Else begin rotate...
-                  isRotating = true;
-                  basePoint = PawsManager::GetSingleton().GetMouse()->GetPosition();
-                  psengine->GetSceneManipulator()->SaveCoordinates(csVector2(basePoint.x, basePoint.y));
-                  return false;
-              }
-
-              // Else place...
-              PlaceItem();
-          }
-          else
-          {
-              CancelDrag();
-
-              // Show the inventory window, remove outline mesh etc. if we're placing.
-              if(isPlacing)
-              {
-                  PawsManager::GetSingleton().GetMainWidget()->FindWidget("InventoryWindow")->Show();
-
-                  // Remove outline mesh.
-                  psengine->GetSceneManipulator()->RemoveSelected();
-
-                  isPlacing = false;
-                  isRotating = false;
-              }
-          }
+            if(button == 0) // Left
+            {
+                if(isPlacing)
+                {
+                    // Drop the item at the current position.
+                    DropItem();
+                    return true;
+                }
+                else
+                {
+                    PlaceItem();
+                }
+            }
+            else if(button == 1) // right
+            {
+                if(!isRotating)
+                {
+                    isRotating = true;
+                    return false;
+                }
+            }
+            else
+            {
+                CancelDrag();
+            }
+        }
+        else if(ev.Name == MouseUp)
+        {
+            if(button == 1) // right
+            {
+                if(isRotating)
+                {
+                    isRotating = false;
+                }
+            }
         }
     }
 
@@ -115,8 +113,13 @@ void psSlotManager::CancelDrag()
     if(isPlacing)
     {
         psengine->GetSceneManipulator()->RemoveSelected();
+        if(hadInventory)
+        {
+            PawsManager::GetSingleton().GetMainWidget()->FindWidget("InventoryWindow")->Show();
+        }
         isPlacing = false;
         isRotating = false;
+        hadInventory = false;
     }
 
     pawsSlot* dragging = (pawsSlot*)PawsManager::GetSingleton().GetDragDropWidget();
@@ -206,7 +209,9 @@ void psSlotManager::PlaceItem()
     if(outline)
     {
         // Hide the inventory so we can see where we're dropping.
-        PawsManager::GetSingleton().GetMainWidget()->FindWidget("InventoryWindow")->Hide();
+        pawsWidget* inventory = PawsManager::GetSingleton().GetMainWidget()->FindWidget("InventoryWindow");
+        hadInventory = inventory->IsVisible();
+        inventory->Hide();
 
         // Get rid of icon.
         PawsManager::GetSingleton().SetDragDropWidget( NULL );
@@ -252,12 +257,16 @@ void psSlotManager::DropItem()
     psengine->GetSceneManipulator()->RemoveSelected();
 
     // Show inventory window again.
-    PawsManager::GetSingleton().GetMainWidget()->FindWidget("InventoryWindow")->Show();
+    if(hadInventory)
+    {
+        PawsManager::GetSingleton().GetMainWidget()->FindWidget("InventoryWindow")->Show();
+    }
 
     // Reset flags.
     isDragging = false;
     isPlacing = false;
     isRotating = false;
+    hadInventory = false;
 }
  
 void psSlotManager::Handle( pawsSlot* slot, bool grabOne, bool grabAll )
@@ -310,8 +319,13 @@ void psSlotManager::Handle( pawsSlot* slot, bool grabOne, bool grabAll )
         if(isPlacing)
         {
             psengine->GetSceneManipulator()->RemoveSelected();
+            if(hadInventory)
+            {
+                PawsManager::GetSingleton().GetMainWidget()->FindWidget("InventoryWindow")->Show();
+            }
             isPlacing = false;
             isRotating = false;
+            hadInventory = false;
         }
     }    
 }

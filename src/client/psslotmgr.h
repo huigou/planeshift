@@ -48,6 +48,7 @@ private:
     bool isDragging;
     bool isPlacing;
     bool isRotating;
+    bool hadInventory;
 
     psPoint basePoint;
 
@@ -58,6 +59,9 @@ private:
 
     /// Shortcut for event mouse down
     csEventID MouseDown;
+
+    /// Shortcut for event mouse up
+    csEventID MouseUp;
 
     void PlaceItem();
     void UpdateItem();

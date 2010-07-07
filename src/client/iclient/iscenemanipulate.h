@@ -24,7 +24,7 @@ class csVector2;
 
 struct iSceneManipulate : public virtual iBase
 {
-    SCF_INTERFACE(iSceneManipulate, 1, 1, 1);
+    SCF_INTERFACE(iSceneManipulate, 2, 0, 0);
 
    /**
     * Creates a new instance of the given factory at the given screen space coordinates.
@@ -62,13 +62,6 @@ struct iSceneManipulate : public virtual iBase
     * Removes the currently selected mesh from the scene.
     */
     virtual void RemoveSelected() = 0;
-
-   /**
-    * Saves the passed coordinates for use as a position reference.
-    * E.g. Do this after a translate and before a rotate,then the rotation
-    * will be based on the difference between these and the given rotation coordinates.
-    */
-    virtual void SaveCoordinates(const csVector2& pos) = 0;
 
    /**
     * retrieve the final position and rotation.

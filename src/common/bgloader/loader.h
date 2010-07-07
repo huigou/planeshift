@@ -216,25 +216,6 @@ public:
     */
     void RemoveSelected();
 
-   /**
-    * Saves the passed coordinates for use as a position reference.
-    * E.g. Do this after a translate and before a rotate,then the rotation
-    * will be based on the difference between these and the given rotation coordinates.
-    */
-    void SaveCoordinates(const csVector2& pos)
-    {
-        previousPosition = pos;
-        if(selectedMesh)
-        {
-            origTrans = selectedMesh->GetMovable()->GetTransform().GetO2TTranslation();
-
-            // make it rotate around the center
-            csBox3 bbox = selectedMesh->GetFactory()->GetMeshObjectFactory()->
-                            GetObjectModel()->GetObjectBoundingBox();
-            rotBase = bbox.GetCenter() - bbox.Min();
-        }
-    }
-
     void GetPosition(csVector3 & pos, csVector3 & rot, const csVector2& screenPos);
 
    /**
@@ -741,6 +722,7 @@ private:
     csVector2 previousPosition;
     csVector3 origTrans;
     csVector3 rotBase;
+    csVector3 origRot;
     bool resetHitbeam;
 };
 }
