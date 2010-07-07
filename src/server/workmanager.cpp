@@ -229,7 +229,7 @@ void WorkManager::HandleWorkCommand(MsgEntry* me,Client *client)
     {
         size_t result = resourcesActions.FindCaseInsensitive(msg.command);
         if(result != csArrayItemNotFound)
-            HandleProduction(client,result,msg.filter);
+            HandleProduction(client->GetActor(),result,msg.filter,client);
         else
             psserver->SendSystemError(me->clientnum,"Invalid work command.");
     }
@@ -487,34 +487,49 @@ void WorkManager::HandleRepairEvent(psWorkGameEvent* workEvent)
 // Production
 //-----------------------------------------------------------------------------
 
-void WorkManager::HandleProduction(Client *client, size_t type,const char *reward)
+void WorkManager::HandleProduction(gemActor* actor, size_t type,const char *reward, Client *client)
 {
-    if ( !LoadLocalVars(client) )
+    if ( client && !LoadLocalVars(client) )
     {
         return;
     }
 
-    int mode = client->GetActor()->GetMode();
+    int mode = actor->GetMode();
 
     // Make sure client isn't already busy digging, etc.
     if ( mode != PSCHARACTER_MODE_PEACE )
     {
-        psserver->SendSystemError(client->GetClientNum(),"You cannot %s because you are already busy.",resourcesActions.Get(type));
+        if ( client )
+        {
+            psserver->SendSystemError(client->GetClientNum(),"You cannot %s because you are already busy.",resourcesActions.Get(type));
+        }
+        else
+        {
+            Warning3(LOG_SUPERCLIENT,"%s cannot %s because you are already busy.",actor->GetName(),resourcesActions.Get(type));
+        }
         return;
     }
 
     // check stamina
-    if ( !CheckStamina( client->GetCharacterData() ) )
+    if ( !CheckStamina( actor->GetCharacterData() ) )
     {
-        psserver->SendSystemError(client->GetClientNum(),"You cannot %s because you are too tired.",resourcesActions.Get(type));
+        if ( client )
+        {
+            psserver->SendSystemError(client->GetClientNum(),"You cannot %s because you are too tired.",resourcesActions.Get(type));
+        }
+        else
+        {
+            Warning3(LOG_SUPERCLIENT,"%s cannot %s because you are too tired.",actor->GetName(),resourcesActions.Get(type));
+        }
         return;
     }
 
     csVector3 pos;
 
     // Make sure they are not in the same loc as the last dig.
-    client->GetActor()->GetLastProductionPos(pos);
-    if (SameProductionPosition(client->GetActor(), pos))
+    // skip this check for NPCs
+    actor->GetLastProductionPos(pos);
+    if (!client && SameProductionPosition(actor, pos))
     {
         psserver->SendSystemError(client->GetClientNum(),
                                   "You cannot %s in the same place twice in a"
@@ -524,124 +539,20 @@ void WorkManager::HandleProduction(Client *client, size_t type,const char *rewar
 
     iSector *sector;
 
-    client->GetActor()->GetPosition(pos, sector);
+    actor->GetPosition(pos, sector);
 
     csArray<NearNaturalResource> resources = FindNearestResource(sector,pos,type,(reward == NULL || !strcmp(reward,""))? NULL : reward);
 
     if(resources.IsEmpty())
     {
-        psserver->SendSystemInfo(client->GetClientNum(),"You don't see a good place to %s.",resourcesActions.Get(type));
-        return;
-    }
-
-    // Validate the skill
-    // If skill == 0 and can still be trained it's not possible to execute this operation
-    // check all the resources to check if one validates, else the resource is removed from the array.
-    // if the array ends up empty it means we don't have a resource to attempt because of our skills.
-    for(int i = 0; i < resources.GetSize(); i++)
-    {
-        NaturalResource *nr = resources.Get(i).resource;
-        if (client->GetCharacterData()->Skills().GetSkillRank((PSSKILL)nr->skill->id).Current() == 0 &&
-            client->GetCharacterData()->Skills().Get((PSSKILL)nr->skill->id).CanTrain())
+        if(client)
         {
-            //we can't attempt this resource so we remove it from our array of possibilities
-            resources.DeleteIndex(i);
-            //reduce the iterator position as we are removing an item.
-            i--;
+            psserver->SendSystemInfo(client->GetClientNum(),"You don't see a good place to %s.",resourcesActions.Get(type));
         }
-    }
-
-    //if we ended up with an empty array it means we don't have the skill to do any of these
-    if(resources.IsEmpty())
-    {
-        psserver->SendSystemInfo(client->GetClientNum(),"You don't have the skill to %s any resource here.",resourcesActions.Get(type));
-        return;
-    }
-
-    // Validate category of equipped item
-    // checks all the resources to see if one validates, else the resource is removed from the array.
-    // if the array ends up empty it means we don't have a resource to attempt because of our tools.
-    for(int i = 0; i < resources.GetSize(); i++)
-    {
-        NaturalResource *nr = resources.Get(i).resource;
-        psItem *item = owner->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_RIGHTHAND);
-        if (!item || nr->item_cat_id != item->GetCategory()->id)
+        else
         {
-            //try the left hand
-            item = owner->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_LEFTHAND);
-            if (!item || nr->item_cat_id != item->GetCategory()->id)
-            {
-                //we can't attempt this resource so we remove it from our array of possibilities
-                resources.DeleteIndex(i);
-                //reduce the iterator position as we are removing an item.
-                i--;
-            }
+            Warning3(LOG_SUPERCLIENT,"%s doesn't see a good place to %s.",actor->GetName(),resourcesActions.Get(type));
         }
-    }
-    
-    //if we ended up with an empty array it means we don't have the tool to do any of these
-    if(resources.IsEmpty())
-    {
-        psserver->SendSystemError(client->GetClientNum(),"You don't have a good tool to %s with, equipped in your hands.",resourcesActions.Get(type));
-        return;
-    }
-    
-    NaturalResource *nr = resources.IsEmpty() ? NULL : resources.Get(0).resource;
-
-    // Calculate time required
-    int time_req = nr->anim_duration_seconds;
-
-    // Send anim and confirmation message to client and nearby people
-    psOverrideActionMessage msg(client->GetClientNum(),client->GetActor()->GetEID(),nr->anim,nr->anim_duration_seconds);
-    psserver->GetEventManager()->Multicast(msg.msg, client->GetActor()->GetMulticastClients(),0,PROX_LIST_ANY_RANGE);
-    client->GetActor()->SetMode(PSCHARACTER_MODE_WORK);
-
-    client->GetCharacterData()->SetStaminaRegenerationWork(nr->skill->id);
-    client->GetActor()->SetProductionStartPos(pos);
-
-    // Queue up game event for success
-    psWorkGameEvent *ev = new psWorkGameEvent(this,client->GetActor(),time_req*1000,PRODUCTION,pos,&resources,client);
-    psserver->GetEventManager()->Push(ev);  // wake me up when digging is done
-
-    client->GetActor()->SetTradeWork(ev);
-
-    psserver->SendSystemInfo(client->GetClientNum(),"You start to %s.",resourcesActions.Get(type));
-}
-
-// Function used by super client
-// TODO generalize the npcclient for now it has no way to specify a specific type it can only dig
-// TODO merge somehow in the previous one. This is a ton of duplicated code.
-void WorkManager::HandleProduction(gemActor *actor,const char *restype,const char *reward)
-{
-    int mode = actor->GetMode();
-    size_t type = resourcesActions.FindCaseInsensitive(restype);
-    // Make sure client isn't already busy digging, etc.
-    if ( mode != PSCHARACTER_MODE_PEACE )
-    {
-        // psserver->SendSystemError(client->GetClientNum(),"You cannot %s because you are already busy.",type);
-        Warning3(LOG_SUPERCLIENT,"%s cannot %s because you are already busy.",actor->GetName(),resourcesActions.Get(type));
-        return;
-    }
-
-    // check stamina
-    if ( !CheckStamina( actor->GetCharacterData() ) )
-    {
-        // psserver->SendSystemError(client->GetClientNum(),"You cannot %s because you are too tired.",type);
-        Warning3(LOG_SUPERCLIENT,"%s cannot %s because you are too tired.",actor->GetName(),resourcesActions.Get(type));
-        return;
-    }
-
-
-    csVector3 pos;
-    iSector *sector;
-
-    actor->GetPosition(pos, sector);
-    
-    csArray<NearNaturalResource> resources = FindNearestResource(sector,pos,type,reward);
-
-    if(resources.IsEmpty())
-    {
-        Warning3(LOG_SUPERCLIENT,"%s doesn't see a good place to %s.",actor->GetName(),resourcesActions.Get(type));
         return;
     }
 
@@ -665,8 +576,14 @@ void WorkManager::HandleProduction(gemActor *actor,const char *restype,const cha
     //if we ended up with an empty array it means we don't have the skill to do any of these
     if(resources.IsEmpty())
     {
-        Warning5(LOG_SUPERCLIENT,"%s(%s) don't have the skill to %s any resource here.",
-                 actor->GetName(), ShowID(actor->GetEID()), resourcesActions.Get(type), reward);
+        if(client)
+        {
+            psserver->SendSystemInfo(client->GetClientNum(),"You don't have the skill to %s any resource here.",resourcesActions.Get(type));
+        }
+        else
+        {
+            Warning3(LOG_SUPERCLIENT,"%s doesn't see a good place to %s.",actor->GetName(),resourcesActions.Get(type));
+        }
         return;
     }
 
@@ -694,7 +611,14 @@ void WorkManager::HandleProduction(gemActor *actor,const char *restype,const cha
     //if we ended up with an empty array it means we don't have the tool to do any of these
     if(resources.IsEmpty())
     {
-        Warning3(LOG_SUPERCLIENT,"%s don't have a good tool to %s with, equipped in your hand.",actor->GetName(),resourcesActions.Get(type));
+        if(client)
+        {
+            psserver->SendSystemError(client->GetClientNum(),"You don't have a good tool to %s with, equipped in your hands.",resourcesActions.Get(type));
+        }
+        else
+        {
+            Warning3(LOG_SUPERCLIENT,"%s don't have a good tool to %s with, equipped in your hand.",actor->GetName(),resourcesActions.Get(type));
+        }
         return;
     }
     
@@ -704,22 +628,36 @@ void WorkManager::HandleProduction(gemActor *actor,const char *restype,const cha
     int time_req = nr->anim_duration_seconds;
 
     // Send anim and confirmation message to client and nearby people
-    psOverrideActionMessage msg(0,actor->GetEID(),nr->anim,nr->anim_duration_seconds);
+    psOverrideActionMessage msg(client->GetClientNum(),client->GetActor()->GetEID(),nr->anim,nr->anim_duration_seconds);
     psserver->GetEventManager()->Multicast(msg.msg, actor->GetMulticastClients(),0,PROX_LIST_ANY_RANGE);
-
     actor->SetMode(PSCHARACTER_MODE_WORK);
 
     actor->GetCharacterData()->SetStaminaRegenerationWork(nr->skill->id);
     actor->SetProductionStartPos(pos);
 
     // Queue up game event for success
-    psWorkGameEvent *ev = new psWorkGameEvent(this,actor,time_req*1000,PRODUCTION,pos,&resources,NULL);
+    psWorkGameEvent *ev = new psWorkGameEvent(this,actor,time_req*1000,PRODUCTION,pos,&resources,client);
     psserver->GetEventManager()->Push(ev);  // wake me up when digging is done
 
     actor->SetTradeWork(ev);
 
-    //psserver->SendSystemInfo(client->GetClientNum(),"You start to %s.",type);
-    Debug4(LOG_SUPERCLIENT,0,"%s start to %s for %s",actor->GetName(),resourcesActions.Get(type),reward);
+    if(client)
+    {
+        psserver->SendSystemInfo(client->GetClientNum(),"You start to %s.",resourcesActions.Get(type));
+    }
+    else
+    {
+        Debug4(LOG_SUPERCLIENT,0,"%s start to %s for %s",actor->GetName(),resourcesActions.Get(type),reward);
+    }
+}
+
+// Function used by super client
+// TODO generalize the npcclient for now it has no way to specify a specific type it can only dig
+// TODO remove this little bogus function somehow
+void WorkManager::HandleProduction(gemActor *actor,const char *restype,const char *reward)
+{
+    size_t type = resourcesActions.FindCaseInsensitive(restype);
+    HandleProduction(actor, type, reward);
 }
 
 

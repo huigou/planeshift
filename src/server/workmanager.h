@@ -515,7 +515,7 @@ protected:
       * @param type The position in the resourcesActions array of the requested production type.
       * @param reward The name of the natural resource we are looking for.
       */
-    void HandleProduction(Client *client,size_t type,const char *reward);
+    void HandleProduction(gemActor *actor, size_t type,const char *reward, Client *client = NULL);
 
     bool SameProductionPosition(gemActor *actor, const csVector3& startPos);
 
