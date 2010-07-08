@@ -40,7 +40,7 @@ class csStringHashReversible;
 
 // This holds the version number of the network code, remember to increase
 // this each time you do an update which breaks compatibility
-#define PS_NETVERSION   0x00BA
+#define PS_NETVERSION   0x00B9
 // Remember to bump the version in pscssetup.h, as well.
 
 
@@ -3692,15 +3692,24 @@ public:
         }
         if (rot != NULL)
         {
-            msg->Add( *rot );
+            msg->Add( rot->y );
         }
         else
         {
-            csVector3 v = 0;
-            msg->Add(v); // Add 0 rotation if not specified.
+            msg->Add(0.f); // Add 0 rotation if not specified.
         }
         msg->Add( guarded );
         msg->Add( inplace );
+        if (rot != NULL)
+        {
+            msg->Add( rot->x );
+            msg->Add( rot->z );
+        }
+        else
+        {
+            msg->Add( 0.f );
+            msg->Add( 0.f );
+        }
     }
 
     psSlotMovementMsg( MsgEntry* me )
@@ -3711,9 +3720,11 @@ public:
         toSlot        = me->GetInt32();
         stackCount    = me->GetInt32();
         posWorld      = me->GetVector();
-        rot           = me->GetVector();
+        rot.y         = me->GetFloat();
         guarded       = me->GetBool();
         inplace       = me->GetBool();
+        rot.x         = me->GetFloat();
+        rot.z         = me->GetFloat();
     }
 
     PSF_DECLARE_MSG_FACTORY();
