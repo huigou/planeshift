@@ -416,15 +416,11 @@ void WorldEditor::HandleMeshManipulation(iEvent &ev)
             }
         case 'y':
             {
-                psPoint p = PawsManager::GetSingleton().GetMouse()->GetPosition();
-                sceneManipulator->SaveCoordinates(csVector2(p.x, p.y));
                 editMode = TranslateY;
                 break;
             }
         case 'r':
             {
-                psPoint p = PawsManager::GetSingleton().GetMouse()->GetPosition();
-                sceneManipulator->SaveCoordinates(csVector2(p.x, p.y));
                 editMode = Rotate;
                 break;
             }
