@@ -26,6 +26,7 @@
 #include <csutil/hash.h>
 #include <csutil/threading/rwmutex.h>
 #include <csutil/threadmanager.h>
+#include <csutil/refcount.h>
 
 #include <iengine/engine.h>
 #include <iengine/material.h>
@@ -395,6 +396,7 @@ private:
         csRefArray<Light> lights;
         csRefArray<Sequence> sequences;
         csArray<WaterArea*> waterareas;
+        CS::Threading::ReadWriteMutex lock; // used during precaching
         bool priority;
     };
 
@@ -455,6 +457,7 @@ private:
         csBox3 bbox;
         csRef<iThreadReturn> status;
         csRef<iMeshWrapper> object;
+        csArray<ShaderVar> shadervars;
         csRefArray<Texture> textures;
         csArray<bool> texchecked;
         csRefArray<Material> materials;
@@ -600,6 +603,7 @@ private:
 
     /* Shader parsing */
     void ParseShaders();
+    ShaderVar* ParseShaderVar(const csString& name, const csString& type, const csString& value, csRef<Texture>& tex, bool doChecks = true);
 
     /* Internal unloading methods. */
     void CleanDisconnectedSectors(Sector* sector);
