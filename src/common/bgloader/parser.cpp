@@ -277,22 +277,24 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                         while(nodeItr2->HasNext())
                         {
                             node = nodeItr2->Next();
+                            
+                            csString type(node->GetAttributeValue("type"));
+                            csString name(node->GetAttributeValue("name"));
 
                             // Parse the different types. Currently texture, vector2 and vector3 are supported.
-                            if(csString("texture").Compare(node->GetAttributeValue("type")))
+                            if(type == "texture")
                             {
                                 // Ignore some shader variables if the functionality they bring is not enabled.
                                 if(enabledGfxFeatures & (useHighShaders | useMediumShaders | useLowShaders | useLowestShaders))
                                 {
-                                    if(!strcmp(node->GetAttributeValue("name"), "tex height") ||
-                                        !strcmp(node->GetAttributeValue("name"), "tex ambient occlusion"))
+                                    if(name == "tex height" || name == "tex ambient occlusion")
                                     {
                                         continue;
                                     }
 
                                     if(enabledGfxFeatures & (useMediumShaders | useLowShaders | useLowestShaders))
                                     {
-                                        if(!strcmp(node->GetAttributeValue("name"), "tex specular"))
+                                        if(name == "tex specular")
                                         {
                                             continue;
                                         }
@@ -300,15 +302,14 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
 
                                     if(enabledGfxFeatures & (useLowShaders | useLowestShaders))
                                     {
-                                        if(!strcmp(node->GetAttributeValue("name"), "tex normal") ||
-                                            !strcmp(node->GetAttributeValue("name"), "tex normal compressed"))
+                                        if(name == "tex normal" || name == "tex normal compressed")
                                         {
                                             continue;
                                         }
                                     }
                                 }
 
-                                ShaderVar sv(node->GetAttributeValue("name"), csShaderVariable::TEXTURE);
+                                ShaderVar sv(name.GetData(), csShaderVariable::TEXTURE);
                                 sv.value = node->GetContentsValue();
                                 m->shadervars.Push(sv);
                                 csRef<Texture> texture;
@@ -325,17 +326,36 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                                 m->textures.Push(texture);
                                 m->checked.Push(false);
                             }
-                            else if(csString("vector2").Compare(node->GetAttributeValue("type")))
+                            else if(type == "float")
                             {
-                                ShaderVar sv(node->GetAttributeValue("name"), csShaderVariable::VECTOR2);
+                                ShaderVar sv(name.GetData(), csShaderVariable::FLOAT);
+                                csScanStr (node->GetContentsValue(), "%f", &sv.vec1);
+                                m->shadervars.Push(sv);
+                            }
+                            else if(type == "vector2")
+                            {
+                                ShaderVar sv(name.GetData(), csShaderVariable::VECTOR2);
                                 csScanStr (node->GetContentsValue(), "%f,%f", &sv.vec2.x, &sv.vec2.y);
                                 m->shadervars.Push(sv);
                             }
-                            else if(csString("vector3").Compare(node->GetAttributeValue("type")))
+                            else if(type == "vector3")
                             {
-                                ShaderVar sv(node->GetAttributeValue("name"), csShaderVariable::VECTOR3);
+                                ShaderVar sv(name.GetData(), csShaderVariable::VECTOR3);
                                 csScanStr (node->GetContentsValue(), "%f,%f,%f", &sv.vec3.x, &sv.vec3.y, &sv.vec3.z);
                                 m->shadervars.Push(sv);
+                            }
+                            else if(type == "vector4")
+                            {
+                                ShaderVar sv(name.GetData(), csShaderVariable::VECTOR4);
+                                csScanStr (node->GetContentsValue(), "%f,%f,%f,%f", &sv.vec4.x, &sv.vec4.y, &sv.vec4.z, &sv.vec4.w);
+                                m->shadervars.Push(sv);
+                            }
+                            else
+                            {
+                                // unknown type
+                                csString msg;
+                                msg.Format("Unknown variable type in shadervar %s: %s", node->GetAttributeValue("name"), node->GetAttributeValue("type"));
+                                CS_ASSERT_MSG(msg.GetData(), false);
                             }
                             node = node->GetParent();
                         }
@@ -1127,7 +1147,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
             // Wait for plugin and shader loads to finish.
             tman->Wait(rets);
         }
-
+        
         return true;
     }
 }
