@@ -92,6 +92,76 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
         parsedShaders = true;
     }
 
+    BgLoader::ShaderVar* BgLoader::ParseShaderVar(const csString& name, const csString& type, const csString& value, csRef<Texture>& tex, bool doChecks)
+    {
+        tex.Invalidate();
+        ShaderVar* sv = 0;
+        // Parse the different types. Currently texture, vector2 and vector3 are supported.
+        if(type == "texture")
+        {
+            // Ignore some shader variables if the functionality they bring is not enabled.
+            if(doChecks && enabledGfxFeatures & (useHighShaders | useMediumShaders | useLowShaders | useLowestShaders))
+            {
+                if(name == "tex height" || name == "tex ambient occlusion")
+                {
+                    return 0;
+                }
+
+                if(enabledGfxFeatures & (useMediumShaders | useLowShaders | useLowestShaders))
+                {
+                    if(name == "tex specular")
+                    {
+                        return 0;
+                    }
+
+                    if(enabledGfxFeatures & (useLowShaders | useLowestShaders))
+                    {
+                        if(name == "tex normal" || name == "tex normal compressed")
+                        {
+                            return 0;
+                        }
+                    }
+                }
+            }
+
+            sv = new ShaderVar(name.GetData(), csShaderVariable::TEXTURE);
+            sv->value = value;
+
+            {
+                CS::Threading::ScopedReadLock lock(tLock);
+                tex = textures.Get(tStringSet.Request(value.GetData()), csRef<Texture>());
+            }
+        }
+        else if(type == "float")
+        {
+            sv = new ShaderVar(name.GetData(), csShaderVariable::FLOAT);
+            csScanStr (value.GetData(), "%f", &sv->vec1);
+        }
+        else if(type == "vector2")
+        {
+            sv = new ShaderVar(name.GetData(), csShaderVariable::VECTOR2);
+            csScanStr (value.GetData(), "%f,%f", &sv->vec2.x, &sv->vec2.y);
+        }
+        else if(type == "vector3")
+        {
+            sv = new ShaderVar(name.GetData(), csShaderVariable::VECTOR3);
+            csScanStr (value.GetData(), "%f,%f,%f", &sv->vec3.x, &sv->vec3.y, &sv->vec3.z);
+        }
+        else if(type == "vector4")
+        {
+            sv = new ShaderVar(name.GetData(), csShaderVariable::VECTOR4);
+            csScanStr (value.GetData(), "%f,%f,%f,%f", &sv->vec4.x, &sv->vec4.y, &sv->vec4.z, &sv->vec4.w);
+        }
+        else
+        {
+            // unknown type
+            csString msg;
+            msg.Format("Unknown variable type in shadervar %s: %s", name.GetData(), type.GetData());
+            CS_ASSERT_MSG(msg.GetData(), false);
+        }
+        return sv;
+    }
+
     THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive)
     {
         // Make sure shaders are parsed at this point.
@@ -280,83 +350,34 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                             
                             csString type(node->GetAttributeValue("type"));
                             csString name(node->GetAttributeValue("name"));
-
-                            // Parse the different types. Currently texture, vector2 and vector3 are supported.
-                            if(type == "texture")
+                            csString value(node->GetContentsValue());
+                            csRef<Texture> tex;
+                            ShaderVar* sv = ParseShaderVar(name, type, value, tex);
+                            if(!sv)
                             {
-                                // Ignore some shader variables if the functionality they bring is not enabled.
-                                if(enabledGfxFeatures & (useHighShaders | useMediumShaders | useLowShaders | useLowestShaders))
-                                {
-                                    if(name == "tex height" || name == "tex ambient occlusion")
-                                    {
-                                        continue;
-                                    }
-
-                                    if(enabledGfxFeatures & (useMediumShaders | useLowShaders | useLowestShaders))
-                                    {
-                                        if(name == "tex specular")
-                                        {
-                                            continue;
-                                        }
-                                    }
-
-                                    if(enabledGfxFeatures & (useLowShaders | useLowestShaders))
-                                    {
-                                        if(name == "tex normal" || name == "tex normal compressed")
-                                        {
-                                            continue;
-                                        }
-                                    }
-                                }
-
-                                ShaderVar sv(name.GetData(), csShaderVariable::TEXTURE);
-                                sv.value = node->GetContentsValue();
-                                m->shadervars.Push(sv);
-                                csRef<Texture> texture;
-                                {
-                                    CS::Threading::ScopedReadLock lock(tLock);
-                                    texture = textures.Get(tStringSet.Request(node->GetContentsValue()), csRef<Texture>());
-
-                                    // Validation.
-                                    csString msg;
-                                    msg.Format("Invalid texture reference '%s' in shadervar in material '%s'.",
-                                        node->GetContentsValue(), m->name.GetData());
-                                    CS_ASSERT_MSG(msg.GetData(), texture.IsValid());
-                                }
-                                m->textures.Push(texture);
-                                m->checked.Push(false);
+                                csString msg;
+                                msg.Format("failed to parse shadervar '%s' in material '%s'!", name.GetData(), m->name.GetData());
+                                CS_ASSERT_MSG(msg.GetData(), false);
+                                continue;
                             }
-                            else if(type == "float")
+                            else if(sv->type == csShaderVariable::TEXTURE && !tex.IsValid())
                             {
-                                ShaderVar sv(name.GetData(), csShaderVariable::FLOAT);
-                                csScanStr (node->GetContentsValue(), "%f", &sv.vec1);
-                                m->shadervars.Push(sv);
-                            }
-                            else if(type == "vector2")
-                            {
-                                ShaderVar sv(name.GetData(), csShaderVariable::VECTOR2);
-                                csScanStr (node->GetContentsValue(), "%f,%f", &sv.vec2.x, &sv.vec2.y);
-                                m->shadervars.Push(sv);
-                            }
-                            else if(type == "vector3")
-                            {
-                                ShaderVar sv(name.GetData(), csShaderVariable::VECTOR3);
-                                csScanStr (node->GetContentsValue(), "%f,%f,%f", &sv.vec3.x, &sv.vec3.y, &sv.vec3.z);
-                                m->shadervars.Push(sv);
-                            }
-                            else if(type == "vector4")
-                            {
-                                ShaderVar sv(name.GetData(), csShaderVariable::VECTOR4);
-                                csScanStr (node->GetContentsValue(), "%f,%f,%f,%f", &sv.vec4.x, &sv.vec4.y, &sv.vec4.z, &sv.vec4.w);
-                                m->shadervars.Push(sv);
+                                csString msg;
+                                msg.Format("Invalid texture reference '%s' in shadervar '%s' in materials '%s'!",
+                                    value.GetData(), name.GetData(), m->name.GetData());
+                                CS_ASSERT_MSG(msg.GetData(), false);
                             }
                             else
                             {
-                                // unknown type
-                                csString msg;
-                                msg.Format("Unknown variable type in shadervar %s: %s", node->GetAttributeValue("name"), node->GetAttributeValue("type"));
-                                CS_ASSERT_MSG(msg.GetData(), false);
+                                m->shadervars.Push(*sv);
+                                if(sv->type == csShaderVariable::TEXTURE)
+                                {
+                                    m->textures.Push(tex);
+                                    m->checked.Push(false);
+                                }
                             }
+                            delete sv;
+
                             node = node->GetParent();
                         }
                     }
@@ -587,7 +608,10 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                             {
                                 csRef<iDocumentNode> area = nodeItr3->Next();
                                 WaterArea* wa = new WaterArea();
-                                s->waterareas.Push(wa);
+                                {
+                                    CS::Threading::ScopedWriteLock lock(s->lock);
+                                    s->waterareas.Push(wa);
+                                }
 
                                 csRef<iDocumentNode> colour = area->GetNode("colour");
                                 if(colour.IsValid())
@@ -674,6 +698,14 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
 
                                     m->textures.Push(texture);
                                     m->texchecked.Push(false);
+                                }
+                                else
+                                {
+                                    // unknown type
+                                    csString msg;
+                                    msg.Format("unsupported variable type in shadervar '%s' in meshobj '%s' submesh in sector '%s': %s",
+                                        node3->GetAttributeValue("name"), m->name.GetData(), s->name.GetData(), node3->GetAttributeValue("type"));
+                                    CS_ASSERT_MSG(msg.GetData(), false);
                                 }
                             }
                         }
@@ -795,22 +827,38 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                                     while(nodeItr4->HasNext())
                                     {
                                         csRef<iDocumentNode> node3 = nodeItr4->Next();
-                                        if(csString("texture").Compare(node3->GetAttributeValue("type")))
+                                        csString name = node3->GetAttributeValue("name");
+                                        csString type = node3->GetAttributeValue("type");
+                                        csString value = node3->GetContentsValue();
+                                        csRef<Texture> tex;
+
+                                        ShaderVar* sv = ParseShaderVar(name, type, value, tex, false);
+                                        if(!sv)
                                         {
-                                            csRef<Texture> texture;
-                                            {
-                                                CS::Threading::ScopedReadLock lock(tLock);
-                                                texture = textures.Get(tStringSet.Request(node3->GetContentsValue()), csRef<Texture>());
-
-                                                // Validation.
-                                                csString msg;
-                                                msg.Format("Invalid texture reference '%s' in terrain renderproperties shadervar", node3->GetContentsValue());
-                                                CS_ASSERT_MSG(msg.GetData(), texture.IsValid());
-                                            }
-
-                                            m->textures.Push(texture);
-                                            m->texchecked.Push(false);
+                                            csString msg;
+                                            msg.Format("failed to parse renderproperty shadervar '%s' for meshobj '%s'",
+                                                name.GetData(), m->name.GetData());
+                                            CS_ASSERT_MSG(msg.GetData(), false);
+                                            continue;
                                         }
+                                        else if(sv->type == csShaderVariable::TEXTURE && !tex.IsValid())
+                                        {
+                                            csString msg;
+                                            msg.Format("Invalid texture reference '%s' in terrain renderproperty shadervar for meshobj '%s'",
+                                                value.GetData(), m->name.GetData());
+                                            CS_ASSERT_MSG(msg.GetData(), false);
+                                        }
+                                        else
+                                        {
+                                            // we don't add the variable here because CS' loader does it for us on loading
+                                            m->shadervars.Push(*sv);
+                                            if(sv->type == csShaderVariable::TEXTURE)
+                                            {
+                                                m->textures.Push(tex);
+                                                m->texchecked.Push(false);
+                                            }
+                                        }
+                                        delete sv;
                                     }
                                 }
                             }
@@ -819,10 +867,12 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                         // alwaysloaded ignores range checks. If the sector is loaded then so is this mesh.
                         if(node2->GetAttributeValueAsBool("alwaysloaded") || m->bbox.Empty() || m->bbox.IsNaN())
                         {
+                            CS::Threading::ScopedWriteLock lock(s->lock);
                             s->alwaysLoaded.Push(m);
                         }
                         else
                         {
+                            CS::Threading::ScopedWriteLock lock(s->lock);
                             s->meshes.Push(m);
                         }
 
@@ -840,7 +890,10 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
 
                         // Always load trimesh... for now. TODO: Calculate bbox.
                         // Push to sector.
-                        s->alwaysLoaded.Push(m);
+                        {
+                            CS::Threading::ScopedWriteLock lock(s->lock);
+                            s->alwaysLoaded.Push(m);
+                        }
                         CS::Threading::ScopedWriteLock lock(meshLock);
                         meshes.Put(meshStringSet.Request(m->name), m);
                     }
@@ -855,7 +908,10 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                             csRef<MeshGen> mgen = csPtr<MeshGen>(new MeshGen(meshgen->GetAttributeValue("name"), meshgen));
 
                             mgen->sector = s;
-                            s->meshgen.Push(mgen);
+                            {
+                                CS::Threading::ScopedWriteLock lock(s->lock);
+                                s->meshgen.Push(mgen);
+                            }
 
                             meshgen = meshgen->GetNode("samplebox");
                             {
@@ -996,7 +1052,10 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                                 p->ww = p->wv;
                             }
                             p->transform = csReversibleTransform(p->matrix.GetInverse(), p->ww - p->matrix * p->wv);
-                            s->portals.Push(p);
+                            {
+                                CS::Threading::ScopedWriteLock lock(s->lock);
+                                s->portals.Push(p);
+                            }
                         }
                     }
 
@@ -1060,7 +1119,10 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                         l->bbox.AddBoundingVertex(l->pos.x - l->radius, l->pos.y - l->radius, l->pos.z - l->radius);
                         l->bbox.AddBoundingVertex(l->pos.x + l->radius, l->pos.y + l->radius, l->pos.z + l->radius);
 
-                        s->lights.Push(l);
+                        {
+                            CS::Threading::ScopedWriteLock lock(s->lock);
+                            s->lights.Push(l);
+                        }
                         node = node->GetParent();
                     }
                 }

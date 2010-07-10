@@ -52,8 +52,8 @@ SCF_IMPLEMENT_FACTORY(BgLoader)
 
 BgLoader::BgLoader(iBase *p)
   : scfImplementationType (this, p), parsedShaders(false),
-  loadRange(500), enabledGfxFeatures(0), loadingOffset(0),
-  validPosition(false), resetHitbeam(true)
+  loadRange(500), enabledGfxFeatures(0), validPosition(false),
+  loadingOffset(0), resetHitbeam(true)
 {
 }
 
@@ -963,6 +963,42 @@ void BgLoader::FinishMeshLoad(MeshObj* mesh)
     vfs->PushDir(mesh->path);
     engine->PrecacheMesh(mesh->object);
     vfs->PopDir();
+
+    // set shader vars
+    for(size_t i=0; i<mesh->shadervars.GetSize(); i++)
+    {
+        csShaderVariable* var = mesh->object->GetSVContext()->GetVariableAdd(svstrings->Request(mesh->shadervars[i].name));
+        var->SetType(mesh->shadervars[i].type);
+
+        if(mesh->shadervars[i].type == csShaderVariable::TEXTURE)
+        {
+            for(size_t j=0; j<mesh->textures.GetSize(); j++)
+            {
+                if(mesh->textures[j]->name.Compare(mesh->shadervars[i].value))
+                {
+                    csRef<iTextureWrapper> tex = scfQueryInterface<iTextureWrapper>(mesh->textures[j]->status->GetResultRefPtr());
+                    var->SetValue(tex);
+                    break;
+                }
+            }
+        }
+        else if(mesh->shadervars[i].type == csShaderVariable::FLOAT)
+        {
+            var->SetValue(mesh->shadervars[i].vec1);
+        }
+        else if(mesh->shadervars[i].type == csShaderVariable::VECTOR2)
+        {
+            var->SetValue(mesh->shadervars[i].vec2);
+        }
+        else if(mesh->shadervars[i].type == csShaderVariable::VECTOR3)
+        {
+            var->SetValue(mesh->shadervars[i].vec3);
+        }
+        else if(mesh->shadervars[i].type == csShaderVariable::VECTOR4)
+        {
+            var->SetValue(mesh->shadervars[i].vec4);
+        }
+    }
 
     mesh->loading = false;
 }
