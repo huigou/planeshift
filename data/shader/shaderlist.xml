@@ -23,6 +23,10 @@
     <file>/shader/lighting/lighting_default_instance_binalpha.xml</file>
     <type>instance_alpha</type>
   </shader>
+  <shader name="z_only_instanced">
+    <file>/shader/early_z/z_only_instanced.xml</file>
+    <type>instance_early_z</type>
+  </shader>
   <shader name="lighting_character">
     <file>/shader/lighting/lighting_character.xml</file>
     <type>character</type>
