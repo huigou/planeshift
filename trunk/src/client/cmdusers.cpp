@@ -962,23 +962,23 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     	}
     }
     else if(words[0] == "/leave")
-	{
-		if(words.GetCount() < 2)
-		{
-			return "Please specify a channel hotkey number to leave.";
-		}
-		else
-		{
-			pawsChatWindow* ChatWindow = (pawsChatWindow*) PawsManager::GetSingleton().FindWidget("ChatWindow");
-			int hotkeyChannel = words.GetInt(1);
-			if(hotkeyChannel < 1 || hotkeyChannel > 10)
-			{
-				return "Please specify a channel hotkey number to leave.";
-			}
-			if(!ChatWindow->LeaveChannel(hotkeyChannel))
-				return "You have not joined that channel.";
-		}
-	}
+    {
+        if(words.GetCount() < 2)
+        {
+            return "Please specify a channel hotkey number to leave.";
+        }
+        else
+        {
+            pawsChatWindow* ChatWindow = (pawsChatWindow*) PawsManager::GetSingleton().FindWidget("ChatWindow");
+            int hotkeyChannel = words.GetInt(1);
+            if(hotkeyChannel < 1 || hotkeyChannel > 10)
+            {
+                return "Please specify a channel hotkey number to leave.";
+            }
+            if(!ChatWindow->LeaveChannel(hotkeyChannel))
+                return "You have not joined that channel.";
+        }
+    }
     else
     {
         psUserCmdMessage cmdmsg(cmd);
