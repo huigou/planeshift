@@ -1235,6 +1235,10 @@ bool BgLoader::LoadMaterial(Material* material, bool wait)
                     }
                 }
             }
+            else if(material->shadervars[i].type == csShaderVariable::FLOAT)
+            {
+                var->SetValue(material->shadervars[i].vec1);
+            }
             else if(material->shadervars[i].type == csShaderVariable::VECTOR2)
             {
                 var->SetValue(material->shadervars[i].vec2);
@@ -1242,6 +1246,10 @@ bool BgLoader::LoadMaterial(Material* material, bool wait)
             else if(material->shadervars[i].type == csShaderVariable::VECTOR3)
             {
                 var->SetValue(material->shadervars[i].vec3);
+            }
+            else if(material->shadervars[i].type == csShaderVariable::VECTOR4)
+            {
+                var->SetValue(material->shadervars[i].vec4);
             }
         }
 

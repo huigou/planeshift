@@ -273,8 +273,10 @@ private:
         csString name;
         csShaderVariable::VariableType type;
         csString value;
+        float vec1;
         csVector2 vec2;
         csVector3 vec3;
+        csVector4 vec4;
 
         ShaderVar(const char* name, csShaderVariable::VariableType type)
             : name(name), type(type), vec2(0.0f)
