@@ -2084,6 +2084,10 @@ GEMClientItem::GEMClientItem( psCelClient* cel, psPersistItem& mesg )
     post_load->sector = mesg.sector;
     flags = mesg.flags;
 
+    shman = csQueryRegistry<iShaderManager>(psengine->GetObjectRegistry());
+    strings = csQueryRegistryTagInterface<iStringSet>(
+        psengine->GetObjectRegistry(), "crystalspace.shared.stringset");
+
     LoadMesh();
 }
 
@@ -2117,6 +2121,74 @@ GEMClientItem::~GEMClientItem()
     {
         psengine->GetLoader()->FreeMaterial(matName);
     }
+}
+
+csPtr<iMaterialWrapper> GEMClientItem::CloneMaterial(iMaterialWrapper* mw)
+{
+    if(!mw)
+    {
+        return csPtr<iMaterialWrapper>(0);
+    }
+
+    iMaterial* material = mw->GetMaterial();
+
+    if(!material)
+    {
+        return csPtr<iMaterialWrapper>(0);
+    }
+
+    // Get the base shader.
+    csStringID shadertype = strings->Request("base");
+    iShader* shader = material->GetShader(shadertype);
+
+    // Find an instance shader matching this type.
+    csRef<iStringArray> shaders = psengine->GetLoader()->GetShaderName("default");
+    csRef<iStringArray> shadersa = psengine->GetLoader()->GetShaderName("default_alpha");
+    if(!shader || shaders->Contains(shader->QueryObject()->GetName()) != csArrayItemNotFound)
+    {
+        csRef<iStringArray> shaderName = psengine->GetLoader()->GetShaderName("instance");
+        shader = shman->GetShader(shaderName->Get(0));
+    }
+    else if(shadersa->Contains(shader->QueryObject()->GetName()) != csArrayItemNotFound)
+    {
+        csRef<iStringArray> shaderName = psengine->GetLoader()->GetShaderName("instance_alpha");
+        shader = shman->GetShader(shaderName->Get(0));
+    }
+    else
+    {
+        Error3("Unhandled shader %s for mesh %s!\n", shader->QueryObject()->GetName(), factName.GetData());
+    }
+    
+
+    // Construct a new material using the selected shaders.
+    csRef<iTextureWrapper> tex = psengine->GetEngine()->GetTextureList()->CreateTexture(material->GetTexture());
+    csRef<iMaterial> mat = psengine->GetEngine()->CreateBaseMaterial(tex);
+
+    // Set the base shader on this material.
+    mat->SetShader(shadertype, shader);
+
+    // Set the diffuse shader on this material.
+    shadertype = strings->Request("diffuse");
+    mat->SetShader(shadertype, shader);
+
+    // Set the early_z shader on this material.
+    iShader* shaderz;
+    {
+        csRef<iStringArray> shaderName = psengine->GetLoader()->GetShaderName("instance_early_z");
+        shaderz = shman->GetShader(shaderName->Get(0));
+    }
+    shadertype = strings->Request("early_z");
+    mat->SetShader(shadertype, shaderz);
+
+    // Copy all shadervars over.
+    for(size_t j=0; j<material->GetShaderVariables().GetSize(); ++j)
+    {
+        mat->AddVariable(material->GetShaderVariables().Get(j));
+    }
+
+    // Create a new wrapper for this material.
+    csRef<iMaterialWrapper> matwrap = psengine->GetEngine()->GetMaterialList()->CreateMaterial(mat, factName + "_instancemat");
+    return csPtr<iMaterialWrapper>(matwrap);
 }
 
 bool GEMClientItem::CheckLoadStatus()
@@ -2178,14 +2250,11 @@ bool GEMClientItem::CheckLoadStatus()
 
         if(material.IsValid())
         {
-            instance->pcmesh->GetMeshObject()->SetMaterialWrapper(material);
+            csRef<iMaterialWrapper> mat = CloneMaterial(material);
+            instance->pcmesh->GetMeshObject()->SetMaterialWrapper(mat);
         }
 
         // Set appropriate shader.
-        csRef<iShaderManager> shman = csQueryRegistry<iShaderManager>(psengine->GetObjectRegistry());
-        csRef<iStringSet> strings = csQueryRegistryTagInterface<iStringSet>(
-            psengine->GetObjectRegistry(), "crystalspace.shared.stringset");
-
         csRef<iGeneralFactoryState> gFact = scfQueryInterface<iGeneralFactoryState>(factory->GetMeshObjectFactory());
         csRef<iGeneralMeshState> gState = scfQueryInterface<iGeneralMeshState>(instance->pcmesh->GetMeshObject());
 
@@ -2200,61 +2269,22 @@ bool GEMClientItem::CheckLoadStatus()
             }
 
             // Get the current material for this submesh.
-            iMaterial* material;
+            iMaterialWrapper* material;
             if(gSubmesh != NULL)
             {
-                material = gSubmesh->GetMaterial()->GetMaterial();
+                material = gSubmesh->GetMaterial();
             }
             else if(instance->pcmesh->GetMeshObject()->GetMaterialWrapper() != NULL)
             {
-                material = instance->pcmesh->GetMeshObject()->GetMaterialWrapper()->GetMaterial();
+                material = instance->pcmesh->GetMeshObject()->GetMaterialWrapper();
             }
             else
             {
-                material = factory->GetMeshObjectFactory()->GetMaterialWrapper()->GetMaterial();
-            }
-
-            // Get the base shader.
-            csStringID shadertype = strings->Request("base");
-            iShader* shader = material->GetShader(shadertype);
-
-            // Find an instance shader matching this type.
-            csRef<iStringArray> shaders = psengine->GetLoader()->GetShaderName("default");
-            csRef<iStringArray> shadersa = psengine->GetLoader()->GetShaderName("default_alpha");
-            if(!shader || shaders->Contains(shader->QueryObject()->GetName()) != csArrayItemNotFound)
-            {
-                csRef<iStringArray> shaderName = psengine->GetLoader()->GetShaderName("instance");
-                shader = shman->GetShader(shaderName->Get(0));
-            }
-            else if(shadersa->Contains(shader->QueryObject()->GetName()) != csArrayItemNotFound)
-            {
-                csRef<iStringArray> shaderName = psengine->GetLoader()->GetShaderName("instance_alpha");
-                shader = shman->GetShader(shaderName->Get(0));
-            }
-            else
-            {
-                Error3("Unhandled shader %s for mesh %s!\n", shader->QueryObject()->GetName(), factName.GetData());
-            }
-
-            // Construct a new material using the selected shaders.
-            csRef<iTextureWrapper> tex = psengine->GetEngine()->GetTextureList()->CreateTexture(material->GetTexture());
-            csRef<iMaterial> mat = psengine->GetEngine()->CreateBaseMaterial(tex);
-
-            // Set the base shader on this material.
-            mat->SetShader(shadertype, shader);
-
-            // Set the diffuse shader on this material.
-            shadertype = strings->Request("diffuse");
-            mat->SetShader(shadertype, shader);
-
-            // Copy all shadervars over.
-            for(size_t j=0; j<material->GetShaderVariables().GetSize(); ++j)
-            {
-                mat->AddVariable(material->GetShaderVariables().Get(j));
+                material = factory->GetMeshObjectFactory()->GetMaterialWrapper();
             }
 
             // Create a new wrapper for this material and set it on the mesh.
-            csRef<iMaterialWrapper> matwrap = psengine->GetEngine()->GetMaterialList()->CreateMaterial(mat, factName + "_instancemat");
+            csRef<iMaterialWrapper> matwrap = CloneMaterial(material);
             if(gSubmesh)
             {
                 gSubmesh->SetMaterial(matwrap);

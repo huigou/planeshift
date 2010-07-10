@@ -629,6 +629,8 @@ public:
 
 protected:
     virtual void PostLoad();
+    /// create a new material based on existing using instancing shaders.
+    csPtr<iMaterialWrapper> CloneMaterial(iMaterialWrapper* material);
 
     psSolid* solid;
 
@@ -645,6 +647,8 @@ private:
 
     PostLoadData* post_load;
     csRef<iMeshFactoryWrapper> factory; // only used during loading
+    csRef<iShaderManager> shman;
+    csRef<iStringSet> strings;
 };
 
 /** An action location on the client. */
