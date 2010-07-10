@@ -1,5 +1,6 @@
 /*
  * PaladinJr.cpp - Author: Andrew Dai
+ * CoAuthor: Matthieu Kraus
  *
  * Copyright (C) 2002 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
  *
@@ -43,7 +44,30 @@
 void PaladinJr::Initialize(EntityManager* celbase, CacheManager* cachemanager)
 {
     iConfigManager* configmanager = psserver->GetConfig();
-    enabled = configmanager->GetBool("PlaneShift.Paladin.Enabled");
+    enforcing = configmanager->GetBool("PlaneShift.Paladin.Enforcing");
+    warnCount = configmanager->GetInt("PlaneShift.Paladin.Cheat.WarningCount", 5);
+    maxCount = configmanager->GetInt("PlaneShift.Paladin.Cheat.MaximumCount", 10);
+
+    checks = NOVIOLATION;
+    if(configmanager->GetBool("PlaneShift.Paladin.Check.Speed"))
+    {
+        checks |= SPEEDVIOLATION;
+    }
+    if(configmanager->GetBool("PlaneShift.Paladin.Check.Distance"))
+    {
+        checks |= DISTVIOLATION;
+    }
+    if(configmanager->GetBool("PlaneShift.Paladin.Check.Warp"))
+    {
+        checks |= WARPVIOLATION;
+    }
+    if(configmanager->GetBool("PlaneShift.Paladin.Check.CD"))
+    {
+        checks |= CDVIOLATION;
+    }
+
+    // if we have a check enabled - enable paladin
+    enabled = (checks != NOVIOLATION);
 
     const csPDelArray<psCharMode>& modes = cachemanager->GetCharModes();
     const csPDelArray<psMovement>& moves = cachemanager->GetMovements();
@@ -174,7 +198,7 @@ bool PaladinJr::ValidateMovement(Client* client, gemActor* actor, psDRMessage& c
 
 bool PaladinJr::CheckCollDetection(Client* client, gemActor* actor)
 {
-    if (!enabled || !checkClient || client->GetSecurityLevel())
+    if (!enabled || !checkClient || !(checks & CDVIOLATION) || client->GetSecurityLevel())
         return true;
 
     csVector3 pos;
@@ -223,7 +247,7 @@ bool PaladinJr::SpeedCheck(Client* client, gemActor* actor, psDRMessage& currUpd
     float yrot;
     iSector* sector;
     psWorld * world = entitymanager->GetWorld();
-    bool warpViolation = false;
+    int violation = NOVIOLATION;
 
     actor->pcmove->GetLastClientPosition (oldpos, yrot, sector);
     
@@ -231,64 +255,98 @@ bool PaladinJr::SpeedCheck(Client* client, gemActor* actor, psDRMessage& currUpd
     if (!sector)
         return true;
 
-    if (sector != currUpdate.sector && !world->WarpSpace(sector, currUpdate.sector, oldpos))
-        warpViolation = true;
-
-    float dist = sqrtf ( (currUpdate.pos.x - oldpos.x)*(currUpdate.pos.x - oldpos.x) +
-                        (currUpdate.pos.z - oldpos.z)*(currUpdate.pos.z - oldpos.z) );
-
-
-    csTicks timedelta = actor->pcmove->ClientTimeDiff();
-
-    // We use the last reported vel, not the new vel, to calculate how far he should have gone since the last DR update
+    // define cheating variables
+    float dist;
+    float reported_distance;
+    float max_noncheat_distance;
+    float lag_distance;
+    csTicks timedelta;
     csVector3 vel;
-    vel = actor->pcmove->GetVelocity();
-    float reported_distance = sqrtf(vel.x * vel.x + vel.z * vel.z)*timedelta/1000;
 
-    Debug4(LOG_CHEAT, client->GetClientNum(),"Player went %1.3fm in %u ticks when %1.3fm was allowed.\n",dist, timedelta, reported_distance);
-
-    float max_noncheat_distance = maxSpeed*timedelta/1000;
-    float lag_distance          = maxSpeed*client->accumulatedLag/1000;
-
-    
-    if (fabs(currUpdate.vel.x) <= maxVelocity.x && 
-              currUpdate.vel.y <= maxVelocity.y && 
-        fabs(currUpdate.vel.z) <= maxVelocity.z && 
-              dist<max_noncheat_distance + lag_distance
-              && !warpViolation)
+    // check for warpviolation
+    if (sector != currUpdate.sector && !world->WarpSpace(sector, currUpdate.sector, oldpos))
     {
-        if (dist==0) // trivial case
+        if (checks & WARPVIOLATION)
         {
-            NetBase::Connection * connection = client->GetConnection();
-            client->accumulatedLag = connection->estRTT + connection->devRTT; // reset the allowed lag when the player becomes stationary again
+            violation = WARPVIOLATION;
+        }
+        else
+        {
+            // we don't do warp checking and crossed a sector
+            // skip this round
             return true;
         }
-
-        if (fabs(dist-reported_distance) < dist * 0.05F) // negligible error just due to lag jitter
-        {
-            Debug1(LOG_CHEAT, client->GetClientNum(),"Ignoring lag jitter.");
-            return true;
-        }
-
-        if (dist > 0.0F && dist < reported_distance)
-        {
-            // Calculate the "unused movement time" here and add it to the
-            // accumulated lag.
-            client->accumulatedLag += (csTicks)((reported_distance-dist) * 1000.0f/maxSpeed);
-            if (client->accumulatedLag > MAX_ACCUMULATED_LAG)
-                client->accumulatedLag = MAX_ACCUMULATED_LAG;
-        }
-        else if (dist > 0.0F)
-        {   
-            // Subtract from the accumulated lag.
-            if(client->accumulatedLag > (csTicks)((dist-reported_distance) * 1000.0f/maxSpeed))
-               client->accumulatedLag-= (csTicks)((dist-reported_distance) * 1000.0f/maxSpeed);
-        }
-       
-        Debug2(LOG_CHEAT, client->GetClientNum(),"Accumulated lag: %u\n",client->accumulatedLag);
     }
-    else
+
+    if (checks & SPEEDVIOLATION)
     {
+        // we don't use the absolute value of the vertical
+        // speed in order to let falls go through
+        if (fabs(currUpdate.vel.x) <= maxVelocity.x &&
+                 currUpdate.vel.y  <= maxVelocity.y &&
+            fabs(currUpdate.vel.z) <= maxVelocity.z)
+        {
+            violation |= SPEEDVIOLATION;
+        }
+    }
+
+    // distance check is skipped on warp violation as it would be wrong
+    if (checks & DISTVIOLATION && !(violation & WARPVIOLATION))
+    {
+        dist = (currUpdate.pos-oldpos).Norm();
+        timedelta = actor->pcmove->ClientTimeDiff();
+
+        // We use the last reported vel, not the new vel, to calculate how far he should have gone since the last DR update
+        vel = actor->pcmove->GetVelocity();
+        vel.y = 0; // ignore vertical velocity
+        reported_distance = vel.Norm()*timedelta/1000;
+
+        Debug4(LOG_CHEAT, client->GetClientNum(),"Player went %1.3fm in %u ticks when %1.3fm was allowed.\n",dist, timedelta, reported_distance);
+
+        max_noncheat_distance = maxSpeed*timedelta/1000;
+        lag_distance          = maxSpeed*client->accumulatedLag/1000;
+
+        if (dist < max_noncheat_distance + lag_distance)
+        {
+            if(dist == 0)
+            {
+                // player is stationary - reset accumulated lag
+                NetBase::Connection * connection = client->GetConnection();
+                client->accumulatedLag = connection->estRTT + connection->devRTT;
+            }
+            else if(fabs(dist-reported_distance) < dist/20)
+            {
+                // ignore jitter caused differences
+                Debug1(LOG_CHEAT, client->GetClientNum(),"Ignoring lag jitter.");
+            }
+            else
+            {
+                // adjust accumulated lag
+                float lag = (reported_distance - dist) * 1000.f/maxSpeed + client->accumulatedLag;
+
+                // cap to meaningful values
+                lag = lag < 0 ? 0 : lag > MAX_ACCUMULATED_LAG ? MAX_ACCUMULATED_LAG : lag;
+
+                client->accumulatedLag = (csTicks)lag;
+
+                Debug2(LOG_CHEAT, client->GetClientNum(),"Accumulated lag: %u\n",client->accumulatedLag);
+            }
+        }
+        else
+        {
+            violation |= DISTVIOLATION;
+        }
+    }
+
+    if (violation != NOVIOLATION)
+    {
+        if (client->GetCheatMask(MOVE_CHEAT))
+        {
+            //printf("Server has pre-authorized this apparent speed violation.\n");
+            client->SetCheatMask(MOVE_CHEAT, false);  // now clear the Get Out of Jail Free card
+            return true;  // not cheating
+        }
+
         Debug6(LOG_CHEAT, client->GetClientNum(),"Went %1.2f in %u ticks when %1.2f was expected plus %1.2f allowed lag distance (%1.2f)\n", dist, timedelta, max_noncheat_distance, lag_distance, max_noncheat_distance+lag_distance);
         //printf("Z Vel is %1.2f\n", currUpdate.vel.z);
         //printf("MaxSpeed is %1.2f\n", maxSpeed);
@@ -300,22 +358,30 @@ bool PaladinJr::SpeedCheck(Client* client, gemActor* actor, psDRMessage& currUpd
         csString sectorName(sector->QueryObject()->GetName());
 
         // Player has probably been warped
-        if (warpViolation)
+        if (violation & WARPVIOLATION)
         {
             sectorName.Append(" to ");
             sectorName.Append(currUpdate.sectorName);
             type = "Warp Violation";
         }
-        else if (dist<max_noncheat_distance + lag_distance)
-            type = "Speed Violation (Hack confirmed)";
-        else
-            type = "Distance Violation";
 
-        if (client->GetCheatMask(MOVE_CHEAT))
+        if (violation & SPEEDVIOLATION)
         {
-            printf("Server has pre-authorized this apparent speed violation.\n");
-            client->SetCheatMask(MOVE_CHEAT, false);  // now clear the Get Out of Jail Free card
-            return true;  // not cheating
+            if(!type.IsEmpty())
+                type += "|";
+            type += "Speed Violation (Hack confirmed)";
+        }
+
+        if (violation & DISTVIOLATION)
+        {
+            if(!type.IsEmpty())
+                type += "|";
+            type += "Distance Violation";
+        }
+
+        if (enforcing)
+        {
+            actor->ForcePositionUpdate();
         }
         
         actor->pcmove->GetAngularVelocity(angVel);
@@ -331,18 +397,23 @@ bool PaladinJr::SpeedCheck(Client* client, gemActor* actor, psDRMessage& currUpd
             client->GetName (),dist,timedelta,client->accumulatedLag);
 
         client->CountDetectedCheat();
-        printf("Client has %d detected cheats now.\n", client->GetDetectedCheatCount());
-        if (client->GetDetectedCheatCount() % 5 == 0)
+        //printf("Client has %d detected cheats now.\n", client->GetDetectedCheatCount());
+        if (client->GetDetectedCheatCount() % warnCount == 0)
         {
             psserver->SendSystemError(client->GetClientNum(),"You have been flagged as using speed hacks.  You will be disconnected if you continue.");
         }
-        if (client->GetDetectedCheatCount() > 10)
+        if (client->GetDetectedCheatCount() >= maxCount)
         {
-            printf("Disconnecting a cheating client.\n");
+            //printf("Disconnecting a cheating client.\n");
             psserver->RemovePlayer(client->GetClientNum(),"Paladin has kicked you from the server for cheating.");
-            return false;  // DON'T USE THIS CLIENT PTR ANYMORE!
+            return false;
         }
+
+        return !enforcing;
     }
-    return true;
+    else
+    {
+        return true;
+    }
 }
 

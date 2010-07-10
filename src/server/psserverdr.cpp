@@ -213,7 +213,8 @@ void psServerDR::HandleDeadReckoning(MsgEntry* me,Client *client)
         return;
     }
 
-    if (!paladin->ValidateMovement(client, actor, drmsg)) // client ptr has been deleted if this is false
+    if (!paladin->ValidateMovement(client, actor, drmsg))
+        // client has been disconnected or message was rejected
         return;
 
     // Go ahead and update the server version
