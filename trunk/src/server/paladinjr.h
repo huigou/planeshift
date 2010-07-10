@@ -55,8 +55,21 @@ public:
 
 private:
 
+    enum // possible cheat checks as bitmask
+    {
+        NOVIOLATION    = 0x0,
+        WARPVIOLATION  = 0x1,
+        SPEEDVIOLATION = 0x2,
+        DISTVIOLATION  = 0x4,
+        CDVIOLATION    = 0x8
+    };
+
     bool enabled;
+    bool enforcing;
+    int checks; ///< checks to perform
     unsigned int watchTime;
+    unsigned int warnCount; ///< warn each x detects
+    unsigned int maxCount; ///< kick after x detects
 
     bool SpeedCheck(Client* client, gemActor* actor, psDRMessage& currUpdate);
 
