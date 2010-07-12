@@ -1804,25 +1804,27 @@ void GuildManager::GetMemberPermissions(psGuildCmdMessage& msg,Client *client)
         csString permissionText = "Player " + msg.player + " has these permissions: ";
         if(target->HasRights(RIGHTS_VIEW_CHAT))
             permissionText.Append("view_chat ");
-        if(target->HasRights(RIGHTS_VIEW_CHAT))
+        if(target->HasRights(RIGHTS_CHAT))
             permissionText.Append("chat ");
-        if(target->HasRights(RIGHTS_VIEW_CHAT))
+        if(target->HasRights(RIGHTS_INVITE))
             permissionText.Append("invite ");
-        if(target->HasRights(RIGHTS_VIEW_CHAT))
+        if(target->HasRights(RIGHTS_REMOVE))
             permissionText.Append("remove ");
-        if(target->HasRights(RIGHTS_VIEW_CHAT))
+        if(target->HasRights(RIGHTS_PROMOTE))
             permissionText.Append("promote ");
-        if(target->HasRights(RIGHTS_VIEW_CHAT))
+        if(target->HasRights(RIGHTS_EDIT_LEVEL))
             permissionText.Append("edit_level ");
-        if(target->HasRights(RIGHTS_VIEW_CHAT))
+        if(target->HasRights(RIGHTS_EDIT_POINTS))
             permissionText.Append("edit_points ");
-        if(target->HasRights(RIGHTS_VIEW_CHAT))
+        if(target->HasRights(RIGHTS_EDIT_GUILD))
             permissionText.Append("edit_public ");
-        if(target->HasRights(RIGHTS_VIEW_CHAT))
+        if(target->HasRights(RIGHTS_EDIT_PRIVATE))
+            permissionText.Append("edit_private ");
+        if(target->HasRights(RIGHTS_VIEW_CHAT_ALLIANCE))
             permissionText.Append("alliance_view_chat ");
-        if(target->HasRights(RIGHTS_VIEW_CHAT))
+        if(target->HasRights(RIGHTS_CHAT_ALLIANCE))
             permissionText.Append("alliance_chat ");
-        if(target->HasRights(RIGHTS_VIEW_CHAT))
+        if(target->HasRights(RIGHTS_USE_BANK))
             permissionText.Append("guild_bank ");
 
         psserver->SendSystemInfo(clientnum,permissionText.Trim().GetDataSafe());
