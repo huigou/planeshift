@@ -100,14 +100,16 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
             }
         }
 
+        const csReversibleTransform& trans = selectedMesh->GetMovable()->GetTransform();
+
         // save original translation
-        origTrans = selectedMesh->GetMovable()->GetTransform().GetO2TTranslation();
+        origTrans = trans.GetO2TTranslation();
         origRot = 0;
 
         // make it rotate around the center
         csBox3 bbox = selectedMesh->GetFactory()->GetMeshObjectFactory()->
                         GetObjectModel()->GetObjectBoundingBox();
-        rotBase = bbox.GetCenter() - bbox.Min();
+        rotBase = (bbox.GetCenter() / trans) - trans.GetOrigin();
 
         return selectedMesh;
     }
@@ -174,11 +176,15 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
         if(selectedMesh.IsValid())
         {
             origRot.y += 6 * PI * ((float)previousPosition.x - pos.x) / g2d->GetWidth();
-            csYRotMatrix3 rotationY(origRot.y);
             origRot.z += 6 * PI * ((float)previousPosition.y - pos.y) / g2d->GetHeight();
+
+            csYRotMatrix3 rotationY(origRot.y);
             csZRotMatrix3 rotationZ(origRot.z);
-            csReversibleTransform rotTrans(rotationY*rotationZ, rotBase+origTrans);
-            selectedMesh->GetMovable()->SetTransform(csTransform(csMatrix3(), -rotBase)*rotTrans);
+
+            csReversibleTransform oldTrans(rotationY, rotBase);
+            csReversibleTransform rotTrans(rotationZ, -rotBase+origTrans);
+
+            selectedMesh->GetMovable()->SetTransform(oldTrans*rotTrans);
             previousPosition = pos;
         }
     }
