@@ -1817,6 +1817,8 @@ void GuildManager::GetMemberPermissions(psGuildCmdMessage& msg,Client *client)
         if(target->HasRights(RIGHTS_EDIT_POINTS))
             permissionText.Append("edit_points ");
         if(target->HasRights(RIGHTS_EDIT_GUILD))
+            permissionText.Append("edit_guild ");
+        if(target->HasRights(RIGHTS_EDIT_PUBLIC))
             permissionText.Append("edit_public ");
         if(target->HasRights(RIGHTS_EDIT_PRIVATE))
             permissionText.Append("edit_private ");
