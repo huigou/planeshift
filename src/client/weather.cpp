@@ -221,12 +221,15 @@ bool RainWeatherObject::CreateMesh()
         csRef<iShaderManager> shman = csQueryRegistry<iShaderManager>(psengine->GetObjectRegistry());
         csRef<iStringSet> strings = csQueryRegistryTagInterface<iStringSet>(
             psengine->GetObjectRegistry(), "crystalspace.shared.stringset");
-        csRef<iStringArray> shaderName = psengine->GetLoader()->GetShaderName("particles_soft-alpha");
+        csRef<iStringArray> shaderName = psengine->GetLoader()->GetShaderName("particles");
         csRef<iShader> shader = shman->GetShader(shaderName->Get(0));
+        csRef<iLoader> loader = csQueryRegistry<iLoader> (psengine->GetObjectRegistry());
 
         // Create new rain
-        iTextureWrapper* t = psengine->GetEngine()->CreateTexture("raindrop", "/this/art/effects/raindrop.dds", 0, 0);
-        mat = psengine->GetEngine()->CreateMaterial("raindrop", t);
+        const char* rainTex = psengine->GetConfig()->GetStr("PlaneShift.Effects.Rain.Texture", "/this/art/effects/raindrop.dds");
+        loader->LoadTexture("raindrop", rainTex);
+        mat = psengine->GetEngine()->GetMaterialList()->FindByName("raindrop");
+
         csStringID shadertype = strings->Request("diffuse");
         mat->GetMaterial()->SetShader(shadertype, shader);
         shadertype = strings->Request("ambient");
@@ -236,8 +239,8 @@ bool RainWeatherObject::CreateMesh()
         mfw = psengine->GetEngine ()->CreateMeshFactory ("crystalspace.mesh.object.particles", "rain", false);
         if (!mfw)
         {
-          Bug1("Could not create rain factory.");
-          return false;
+            Bug1("Could not create rain factory.");
+            return false;
         }
     }
 
@@ -279,7 +282,10 @@ bool RainWeatherObject::CreateMesh()
 
     csRef<iParticleSystem> partstate =
   	scfQueryInterface<iParticleSystem> (mesh->GetMeshObject ());
-    partstate->SetParticleSize (csVector2 (0.3f/50.0f, 0.3f));
+
+    float rainSize = psengine->GetConfig()->GetFloat("PlaneShift.Effects.Rain.Size", 0.1f);
+    float rainRatio = psengine->GetConfig()->GetFloat("PlaneShift.Effects.Rain.Ratio", 50.f);
+    partstate->SetParticleSize (csVector2 (rainSize/rainRatio, rainSize));
     partstate->SetParticleRenderOrientation (CS_PARTICLE_ORIENT_COMMON);
     partstate->SetCommonDirection (csVector3 (0, 1, 0));
     partstate->AddEmitter (boxemit);
@@ -414,18 +420,22 @@ bool SnowWeatherObject::CreateMesh()
         csRef<iShaderManager> shman = csQueryRegistry<iShaderManager>(psengine->GetObjectRegistry());
         csRef<iStringSet> strings = csQueryRegistryTagInterface<iStringSet>(
             psengine->GetObjectRegistry(), "crystalspace.shared.stringset");
-        csRef<iStringArray> shaderName = psengine->GetLoader()->GetShaderName("particles_soft-alpha");
+        csRef<iStringArray> shaderName = psengine->GetLoader()->GetShaderName("particles");
         csRef<iShader> shader = shman->GetShader(shaderName->Get(0));
+        csRef<iLoader> loader = csQueryRegistry<iLoader> (psengine->GetObjectRegistry());
 
         // Create new snow
-        iTextureWrapper* t = psengine->GetEngine()->CreateTexture("snowflake", "/this/art/effects/snow.dds", 0, 0);
-        mat = psengine->GetEngine()->CreateMaterial("snowflake", t);
+        const char* snowTex = psengine->GetConfig()->GetStr("PlaneShift.Effects.Snow.Texture", "/this/art/effects/snowflakes.dds");
+        loader->LoadTexture("snowflake", snowTex);
+        mat = psengine->GetEngine()->GetMaterialList()->FindByName("snowflake");
+
         csStringID shadertype = strings->Request("diffuse");
         mat->GetMaterial()->SetShader(shadertype, shader);
         shadertype = strings->Request("ambient");
         mat->GetMaterial()->SetShader(shadertype, shader);
         shadertype = strings->Request("depthwrite");
         mat->GetMaterial()->SetShader(shadertype, 0);
+
         mfw = psengine->GetEngine ()->CreateMeshFactory ("crystalspace.mesh.object.particles", "snow", false);
         if (!mfw)
         {
@@ -476,7 +486,10 @@ bool SnowWeatherObject::CreateMesh()
 
     csRef<iParticleSystem> partstate =
   	scfQueryInterface<iParticleSystem> (mesh->GetMeshObject ());
-    partstate->SetParticleSize (csVector2 (0.07f, 0.07f));
+
+    float snowSize = psengine->GetConfig()->GetFloat("PlaneShift.Effects.Snow.Size", 0.07f);
+    float snowRatio = psengine->GetConfig()->GetFloat("PlaneShift.Effects.Snow.Ratio", 1.f);
+    partstate->SetParticleSize (csVector2 (snowSize/snowRatio, snowSize));
     partstate->AddEmitter (boxemit);
     partstate->AddEffector (lincol);
     partstate->AddEffector (force);
@@ -517,7 +530,7 @@ void SnowWeatherObject::SetDrops(int drops)
     {
         boxemit->SetEmissionRate (drops / 2.5f);
     }
-    snowDensitySV->SetValue((float)drops/WEATHER_MAX_SNOW_FALKES);
+    snowDensitySV->SetValue(GetDensity(drops));
 }
 
 
@@ -527,8 +540,6 @@ void SnowWeatherObject::Update(csTicks delta)
     //    Notify2(LOG_WEATHER,"Updating snow object, Setting drops: %d",parent->downfall_params.value);
     
     SetDrops(parent->downfall_params.value);
-
-    // interpolate snow depth
 }
 
 
