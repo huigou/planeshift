@@ -1146,18 +1146,20 @@ void GEMClientObject::Rotate(float xRot, float yRot, float zRot)
     csMatrix3 ymatrix = csYRotMatrix3(yRot);
     csMatrix3 zmatrix = csZRotMatrix3(zRot);
 
+    // obtain current transform
+    const csReversibleTransform& movTrans = pcmesh->GetMovable()->GetTransform();
+
     // obtain the point to use as base for the rotation
-    csBox3 bbox = GetBBox();
-    csVector3 rotBase = bbox.GetCenter() - bbox.Min();
-    
+    csVector3 rotBase = (GetBBox().GetCenter() / movTrans) - movTrans.GetOrigin();
+
     // obtain orignal translation
-    csVector3 origTrans = pcmesh->GetMovable()->GetTransform().GetO2TTranslation();
+    csVector3 origTrans = movTrans.GetO2TTranslation();
 
     // create the final transformation
     // move to center
-    csReversibleTransform trans(csMatrix3(),-rotBase);
+    csReversibleTransform trans(ymatrix,-rotBase);
     // apply rotation, revert move to center and move to final position
-    trans = trans * csReversibleTransform(ymatrix*zmatrix,rotBase+origTrans);
+    trans = trans * csReversibleTransform(zmatrix,rotBase+origTrans);
 
     // set new transformation
     pcmesh->GetMovable()->SetTransform(trans);
@@ -2172,7 +2174,7 @@ csPtr<iMaterialWrapper> GEMClientItem::CloneMaterial(iMaterialWrapper* mw)
     mat->SetShader(shadertype, shader);
 
     // Set the early_z shader on this material.
-    iShader* shaderz;
+    iShader* shaderz = NULL;
     {
         csRef<iStringArray> shaderName = psengine->GetLoader()->GetShaderName("instance_early_z");
         shaderz = shman->GetShader(shaderName->Get(0));
