@@ -2179,7 +2179,7 @@ csPtr<iMaterialWrapper> GEMClientItem::CloneMaterial(iMaterialWrapper* mw)
         csRef<iStringArray> shaderName = psengine->GetLoader()->GetShaderName("instance_early_z");
         shaderz = shman->GetShader(shaderName->Get(0));
     }
-    shadertype = strings->Request("early_z");
+    shadertype = strings->Request("depthwrite");
     mat->SetShader(shadertype, shaderz);
 
     // Copy all shadervars over.
