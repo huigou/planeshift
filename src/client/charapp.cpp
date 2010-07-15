@@ -105,6 +105,11 @@ void psCharAppearance::Free()
         DefaultMaterial(part);
     }
 
+    while(CheckLoadStatus())
+    {
+        continue; // wait for material resets to finish
+    }
+
     state.Invalidate();
     stateFactory.Invalidate();
     animeshObject.Invalidate();
@@ -119,6 +124,17 @@ void psCharAppearance::Free()
         psengine->GetLoader()->FreeMaterial(value);
     }
     materials.DeleteAll();
+    removedMeshes.DeleteAll();
+
+    // reset traits
+    skinToneSet.DeleteAll();
+    faceMaterial.Clear();
+    eyeMesh.Clear();
+    eyeColorSet = false;
+    hairMesh.Clear();
+    hairColorSet = false;
+    beardMesh.Clear();
+    beardAttached = false;
 }
 
 psCharAppearance::~psCharAppearance()
@@ -1365,7 +1381,10 @@ void psCharAppearance::ClearEquipment(const char* slot)
     csArray<csString> deleteList = usedSlots;
     for ( size_t z = 0; z < deleteList.GetSize(); z++ )
     {
-        Detach(deleteList[z]);
+        if(!Detach(deleteList[z]))
+        {
+            Error2("failed to detach slot %s", deleteList[z].GetData());
+        }
     }
 }
 
