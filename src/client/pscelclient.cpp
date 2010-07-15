@@ -2209,7 +2209,7 @@ bool GEMClientItem::CheckLoadStatus()
         {
             if(failed)
             {
-                Error2("Unable to load item with factory %s!\n", factName.GetData());
+                Error3("Unable to load item %s with factory %s!\n", name.GetData(), factName.GetData());
                 psengine->UnregisterDelayedLoader(this);
                 delete post_load;
                 post_load = NULL;
@@ -2227,7 +2227,7 @@ bool GEMClientItem::CheckLoadStatus()
             {
                 if(failed)
                 {
-                    Error3("Unable to load item with material %s (factory %s)!\n", matName.GetData(), factName.GetData());
+                    Error4("Unable to load item %s with material %s (factory %s)!\n", name.GetData(), matName.GetData(), factName.GetData());
                     psengine->UnregisterDelayedLoader(this);
                     delete post_load;
                     post_load = NULL;
