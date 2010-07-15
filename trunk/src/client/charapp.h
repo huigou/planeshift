@@ -261,9 +261,6 @@ private:
     csRef<iShaderVarStringSet>  stringSet;              ///< Used by shader variables.
     csRef<iStringSet> strings;                          ///< Used by shader types.
 
-    /// Character shader.
-    iShader* charShader;
-
     /** @name Crystal space objects.
      */
     //@{
