@@ -355,9 +355,11 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                             ShaderVar* sv = ParseShaderVar(name, type, value, tex);
                             if(!sv)
                             {
-                                csString msg;
+                                // no result probably means it wasn't validated for the shaders we use
+                                // if it was a parse error, the function already throws an error
+                                /*csString msg;
                                 msg.Format("failed to parse shadervar '%s' in material '%s'!", name.GetData(), m->name.GetData());
-                                CS_ASSERT_MSG(msg.GetData(), false);
+                                CS_ASSERT_MSG(msg.GetData(), false);*/
                                 continue;
                             }
                             else if(sv->type == csShaderVariable::TEXTURE && !tex.IsValid())
@@ -835,10 +837,12 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                                         ShaderVar* sv = ParseShaderVar(name, type, value, tex, false);
                                         if(!sv)
                                         {
-                                            csString msg;
+                                            // no result probably means it wasn't validated for the shaders we use
+                                            // if it was a parse error, the function already throws an error
+                                            /*csString msg;
                                             msg.Format("failed to parse renderproperty shadervar '%s' for meshobj '%s'",
                                                 name.GetData(), m->name.GetData());
-                                            CS_ASSERT_MSG(msg.GetData(), false);
+                                            CS_ASSERT_MSG(msg.GetData(), false);*/
                                             continue;
                                         }
                                         else if(sv->type == csShaderVariable::TEXTURE && !tex.IsValid())
