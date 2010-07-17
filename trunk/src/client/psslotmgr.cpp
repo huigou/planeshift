@@ -18,21 +18,24 @@
  *
  */
 
-
 #include <psconfig.h>
-
-#include <iengine/mesh.h>
-#include <iengine/movable.h>
-#include <csutil/event.h>
-
-#include "gui/pawsslot.h"
-#include "paws/pawsmainwidget.h"
-
-#include "iclient/iscenemanipulate.h"
-#include "pscelclient.h"
 #include "psslotmgr.h"
+
+
+//=============================================================================
+// PlaneShift Includes
+//=============================================================================
+#include "iclient/iscenemanipulate.h"
+#include "paws/pawsmainwidget.h"
+#include "gui/pawsslot.h"
 #include "pscamera.h"
 #include "globals.h"
+
+
+//=============================================================================
+// Classes
+//=============================================================================
+
 
 psSlotManager::psSlotManager()
 {
@@ -46,9 +49,11 @@ psSlotManager::psSlotManager()
     MouseUp = csevMouseUp (psengine->GetEventNameRegistry(), 0);
 }
 
+
 psSlotManager::~psSlotManager()
 {
 }
+
 
 bool psSlotManager::HandleEvent( iEvent& ev )
 {
@@ -106,6 +111,7 @@ bool psSlotManager::HandleEvent( iEvent& ev )
     return false;
 }
 
+
 void psSlotManager::CancelDrag()
 {
     isDragging = false;
@@ -139,6 +145,7 @@ void psSlotManager::CancelDrag()
     draggingSlot.slot->PlaceItem(res, draggingSlot.meshFactName, draggingSlot.materialName, oldStack);
     PawsManager::GetSingleton().SetDragDropWidget( NULL );
 }
+
 
 void psSlotManager::OnNumberEntered(const char *name,int param,int count)
 {
@@ -186,6 +193,7 @@ void psSlotManager::OnNumberEntered(const char *name,int param,int count)
     PawsManager::GetSingleton().SetDragDropWidget( widget );
 }
 
+
 void psSlotManager::SetDragDetails( pawsSlot* slot, int count ) 
 { 
     draggingSlot.containerID    = slot->ContainerID();
@@ -195,6 +203,7 @@ void psSlotManager::SetDragDetails( pawsSlot* slot, int count )
     draggingSlot.meshFactName   = slot->GetMeshFactName();
     draggingSlot.materialName   = slot->GetMaterialName();
 }
+
 
 void psSlotManager::PlaceItem()
 {
@@ -221,6 +230,7 @@ void psSlotManager::PlaceItem()
     }
 }
 
+
 void psSlotManager::UpdateItem()
 {
     // Get new position.
@@ -238,6 +248,7 @@ void psSlotManager::UpdateItem()
             psengine->GetPSCamera()->GetICamera()->GetCamera(), csVector2(p.x, p.y));
     }
 }
+
 
 void psSlotManager::DropItem()
 {
@@ -268,7 +279,8 @@ void psSlotManager::DropItem()
     isRotating = false;
     hadInventory = false;
 }
- 
+
+
 void psSlotManager::Handle( pawsSlot* slot, bool grabOne, bool grabAll )
 {
     //printf("In psSlotManager::Handle()\n");
@@ -329,4 +341,3 @@ void psSlotManager::Handle( pawsSlot* slot, bool grabOne, bool grabAll )
         }
     }    
 }
-
