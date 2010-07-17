@@ -20,24 +20,35 @@
 #ifndef PAWS_SHORTCUT_WINDOW
 #define PAWS_SHORTCUT_WINDOW 
 
-// PS INCLUDES
-#include "paws/pawswidget.h"
-#include "paws/pawsbutton.h"
-#include "net/cmdbase.h"
+//=============================================================================
+// Library Includes
+//=============================================================================
 #include "gui/pawscontrolwindow.h"
 #include "gui/pawsconfigkeys.h"
-#include "chatwindow.h"
 
-#include "pscharcontrol.h"
-
+//=============================================================================
+// Forward Declarations
+//=============================================================================
+class pawsChatWindow;
 class pawsMessageTextBox;
 class pawsEditTextBox;
 class pawsMultilineEditTextBox;
 class pawsTextBox;
 class pawsScrollBar;
 
+//=============================================================================
+// Defines
+//=============================================================================
 #define NUM_SHORTCUTS    200
 
+
+//=============================================================================
+// Classes 
+//=============================================================================
+
+/**
+ * 
+ */
 class pawsShortcutWindow : public pawsControlledWindow, public pawsFingeringReceiver
 {
 public:
