@@ -4,8 +4,17 @@
 
 #include "paws/pawswidget.h"
 
+//=============================================================================
+// Forward Declarations
+//=============================================================================
 class psSlotManager;
 class pawsTextBox;
+
+
+//=============================================================================
+// Classes
+//=============================================================================
+
 
 class pawsSlot : public pawsWidget
 {
@@ -61,7 +70,7 @@ public:
      
     void OnUpdateData(const char *dataname,PAWSData& value);
 
-	void ScalePurifyStatus();
+    void ScalePurifyStatus();
        
 protected:
     psSlotManager*   mgr;

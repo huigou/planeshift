@@ -19,12 +19,20 @@
 
 #include <psconfig.h>
 
+//=============================================================================
+// PlaneShift Includes
+//=============================================================================
 #include "pawsslot.h"
 #include "psslotmgr.h"
 #include "globals.h"
 #include "pscelclient.h"
 #include "paws/pawstextbox.h"
 #include "net/clientmsghandler.h"
+
+
+//=============================================================================
+// Classes
+//=============================================================================
 
 pawsSlot::pawsSlot()
 {
@@ -63,6 +71,7 @@ pawsSlot::~pawsSlot()
 {
 }
 
+
 bool pawsSlot::Setup( iDocumentNode* node )
 {
     csRef<iDocumentNode> ident = node->GetNode( "ident" );
@@ -76,6 +85,7 @@ bool pawsSlot::Setup( iDocumentNode* node )
            
     return true;        
 }
+
 
 bool pawsSlot::OnMouseDown( int button, int modifiers, int x, int y )
 {
@@ -124,11 +134,13 @@ bool pawsSlot::OnMouseDown( int button, int modifiers, int x, int y )
     }
 }
 
+
 void pawsSlot::SetToolTip( const char* text )
 {
     pawsWidget::SetToolTip( text );
     stackCountLabel->SetToolTip( text );
 }
+
 
 void pawsSlot::StackCount( int newCount )
 {
@@ -146,6 +158,7 @@ void pawsSlot::StackCount( int newCount )
         stackCountLabel->SetText(countText);
     }
 }
+
 
 void pawsSlot::PlaceItem( const char* imageName, const char* meshFactName, const char* matName, int count )
 {
@@ -204,6 +217,7 @@ void pawsSlot::Draw()
     graphics2D->SetClipRect( 0,0, graphics2D->GetWidth(), graphics2D->GetHeight());
 }    
 
+
 void pawsSlot::Clear()
 {
     //printf("In pawsSlot::Clear()\n");
@@ -217,6 +231,7 @@ void pawsSlot::Clear()
     image = NULL;
 }    
 
+
 const char *pawsSlot::ImageName()
 {
     if (image)
@@ -224,10 +239,12 @@ const char *pawsSlot::ImageName()
     return NULL;
 }
 
+
 int pawsSlot::GetPurifyStatus()
 {
     return purifyStatus;
 }
+
 
 void pawsSlot::SetPurifyStatus(int status)
 {
@@ -245,9 +262,10 @@ void pawsSlot::SetPurifyStatus(int status)
         case 2:
             purifySign->ShowBehind();
             purifySign->SetBackground("GlyphSlotPurified");
-			break;
+            break;
     }
 }
+
 
 void pawsSlot::DrawStackCount(bool value)
 {
@@ -258,6 +276,7 @@ void pawsSlot::DrawStackCount(bool value)
     else
         stackCountLabel->Hide();
 }
+
 
 bool pawsSlot::SelfPopulate( iDocumentNode *node)
 {
@@ -270,6 +289,7 @@ bool pawsSlot::SelfPopulate( iDocumentNode *node)
     
     return true;
 }
+
 
 void pawsSlot::OnUpdateData(const char *dataname,PAWSData& value)
 {
@@ -319,12 +339,12 @@ void pawsSlot::OnUpdateData(const char *dataname,PAWSData& value)
 
 }
 
+
 void pawsSlot::ScalePurifyStatus()
 {
-	csRect rect = this->ClipRect();
-	int width = rect.Width()- GetActualWidth(11);
-	int height = rect.Height() - GetActualHeight(11);
-	purifySign->SetRelativeFrameSize(width, height);
-
+    csRect rect = this->ClipRect();
+    int width = rect.Width()- GetActualWidth(11);
+    int height = rect.Height() - GetActualHeight(11);
+    purifySign->SetRelativeFrameSize(width, height);
 }
 
