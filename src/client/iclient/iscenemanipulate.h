@@ -21,6 +21,7 @@
 #define __ISCENEMANIPULATE_H__
 
 class csVector2;
+class iCamera;
 
 struct iSceneManipulate : public virtual iBase
 {

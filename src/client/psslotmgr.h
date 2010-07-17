@@ -25,51 +25,20 @@
 
 #include "paws/pawsnumberpromptwindow.h"
 
+//=============================================================================
+// Forward Declarations
+//=============================================================================
 class pawsSlot;
 class MsgHandler;
 struct iMeshWrapper;
 
-//------------------------------------------------------------------------------
+//=============================================================================
+// Classes
+//=============================================================================
+
 
 class psSlotManager : public iOnNumberEnteredAction
 {
-private:
-    struct DraggingSlot
-    {       
-        int containerID;
-        int slotID;
-        int stackCount;
-        pawsSlot* slot;
-        csString meshFactName;
-        csString materialName;
-        int parentID;
-    } draggingSlot;
-  
-    bool isDragging;
-    bool isPlacing;
-    bool isRotating;
-    bool hadInventory;
-
-    psPoint basePoint;
-
-    csArray<pawsSlot*> slotsInUse;
-
-    /// Shortcut for event mouse move
-    csEventID MouseMove;
-
-    /// Shortcut for event mouse down
-    csEventID MouseDown;
-
-    /// Shortcut for event mouse up
-    csEventID MouseUp;
-
-    void PlaceItem();
-    void UpdateItem();
-    void DropItem();
-
-    csString draggedMesh;
-    iMeshWrapper* outline;
-
 public:
     psSlotManager();
     virtual ~psSlotManager();
@@ -90,8 +59,44 @@ public:
     void CancelDrag();
     
     void OnNumberEntered(const char *name,int param,int value);
+
+
+private:
+    struct DraggingSlot
+    {       
+        int containerID;
+        int slotID;
+        int stackCount;
+        pawsSlot* slot;
+        csString meshFactName;
+        csString materialName;
+        int parentID;
+    } draggingSlot;
+ 
+    void PlaceItem();
+    void UpdateItem();
+    void DropItem();
+
+ 
+    bool isDragging;
+    bool isPlacing;
+    bool isRotating;
+    bool hadInventory;
+
+    psPoint basePoint;
+
+    csArray<pawsSlot*> slotsInUse;
+
+    /// Shortcut for event mouse move
+    csEventID MouseMove;
+
+    /// Shortcut for event mouse down
+    csEventID MouseDown;
+
+    /// Shortcut for event mouse up
+    csEventID MouseUp;
+
+    csString draggedMesh;
+    iMeshWrapper* outline;
 };
-
-
 #endif
-
