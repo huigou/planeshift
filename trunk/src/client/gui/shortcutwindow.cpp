@@ -20,35 +20,17 @@
 #include "globals.h"
 
 //=============================================================================
-// Crystal Space Includes
-//=============================================================================
-#include <csutil/xmltiny.h>
-#include <csutil/inputdef.h>
-#include <iutil/evdefs.h>
-#include <ivideo/fontserv.h>
-
-//=============================================================================
-// Library Includes
-//=============================================================================
-#include "paws/pawswidget.h"
-#include "paws/pawsborder.h"
-#include "paws/pawsmanager.h"
-#include "paws/pawsprefmanager.h"
-#include "paws/pawstextbox.h"
-#include "paws/pawscrollbar.h"
-
-#include "net/cmdhandler.h"
-
-#include "gui/pawsconfigkeys.h"
-#include "gui/pawscontrolwindow.h"
-
-//=============================================================================
 // Application Includes
 //=============================================================================
 #include "shortcutwindow.h"
+#include "chatwindow.h"
 #include "pscelclient.h"
 #include "psclientchar.h"
 
+
+//=============================================================================
+// Defines
+//=============================================================================
 #define COMMAND_FILE         "/planeshift/userdata/options/shortcutcommands.xml"
 #define DEFAULT_COMMAND_FILE "/planeshift/data/options/shortcutcommands_def.xml"
 
@@ -63,6 +45,12 @@
 #define CLEAR_BUTTON         1103
 
 #define SHORTCUT_BUTTON_OFFSET  2000
+
+
+//=============================================================================
+// Classes
+//=============================================================================
+
 pawsShortcutWindow::pawsShortcutWindow()
 {
     vfs =  csQueryRegistry<iVFS > ( PawsManager::GetSingleton().GetObjectRegistry());
@@ -86,10 +74,12 @@ pawsShortcutWindow::pawsShortcutWindow()
     labelBox = NULL;
 }
 
+
 pawsShortcutWindow::~pawsShortcutWindow()
 {
     SaveCommands();
 }
+
 
 void pawsShortcutWindow::CalcButtonSize()
 {
@@ -110,10 +100,12 @@ void pawsShortcutWindow::CalcButtonSize()
     buttonHeight  = maxHeight + 2*BUTTON_PADDING + 2;
 }
 
+
 size_t pawsShortcutWindow::CalcTotalRowsNeeded(size_t matrixWidth)
 {
     return (int)ceil(NUM_SHORTCUTS / (float)matrixWidth);
 }
+
 
 void pawsShortcutWindow::CalcMatrixSize(size_t & matrixWidth, size_t & matrixHeight)
 {
@@ -124,6 +116,7 @@ void pawsShortcutWindow::CalcMatrixSize(size_t & matrixWidth, size_t & matrixHei
     matrixWidth   = MAX(matrixWidth,  1);
     matrixHeight  = MIN(MAX(matrixHeight, 1), CalcTotalRowsNeeded(matrixWidth));
 }
+
 
 void pawsShortcutWindow::RebuildMatrix()
 {
@@ -168,6 +161,7 @@ void pawsShortcutWindow::RebuildMatrix()
     }        
 }
 
+
 void  pawsShortcutWindow::LayoutMatrix()
 {
     pawsButton * button;
@@ -184,6 +178,7 @@ void  pawsShortcutWindow::LayoutMatrix()
         }
     }
 }
+
 
 void pawsShortcutWindow::UpdateMatrix()
 {
@@ -221,6 +216,7 @@ void pawsShortcutWindow::UpdateMatrix()
     }        
 }
 
+
 bool pawsShortcutWindow::Setup(iDocumentNode *node)
 {
     if (node->GetAttribute("buttonimage"))
@@ -229,6 +225,7 @@ bool pawsShortcutWindow::Setup(iDocumentNode *node)
         buttonBackgroundImage = "Scaling Button";
     return true;
 }
+
 
 bool pawsShortcutWindow::PostSetup()
 {
@@ -250,6 +247,7 @@ bool pawsShortcutWindow::PostSetup()
     return true;
 }
 
+
 void pawsShortcutWindow::OnResize()
 {
     size_t newMatrixWidth, newMatrixHeight;
@@ -267,6 +265,7 @@ void pawsShortcutWindow::OnResize()
         RebuildMatrix();
     }                    
 }
+
 
 bool pawsShortcutWindow::OnMouseDown( int button, int modifiers, int x, int y )
 {
@@ -286,6 +285,7 @@ bool pawsShortcutWindow::OnMouseDown( int button, int modifiers, int x, int y )
     }
 }
 
+
 // bool pawsShortcutWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
 bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, pawsWidget* widget )
 {
@@ -304,8 +304,6 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
 
     // These should not be NULL
     CS_ASSERT(subWidget); CS_ASSERT(labelBox); CS_ASSERT(textBox); CS_ASSERT(shortcutText);
-
-
 
     BringToTop(this);
 
@@ -430,6 +428,7 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
     return true;
 }
 
+
 csString pawsShortcutWindow::GetTriggerText(int shortcutNum)
 {
     psCharController* manager = psengine->GetCharControl();
@@ -446,11 +445,13 @@ csString pawsShortcutWindow::GetTriggerText(int shortcutNum)
     return ctrl->ToString();
 }
 
+
 bool pawsShortcutWindow::OnScroll( int direction, pawsScrollBar* widget )
 {    
     UpdateMatrix();
     return true;
 }
+
 
 void pawsShortcutWindow::SetWindowSizeToFitMatrix()
 {
@@ -468,6 +469,7 @@ void pawsShortcutWindow::SetWindowSizeToFitMatrix()
     SetSize(width, height);
 }
 
+
 void pawsShortcutWindow::StopResize()
 {
     SetWindowSizeToFitMatrix();
@@ -479,6 +481,7 @@ void pawsShortcutWindow::LoadDefaultCommands()
     LoadCommands(DEFAULT_COMMAND_FILE);
     UpdateMatrix();
 }
+
 
 void pawsShortcutWindow::LoadCommands(const char * fileName)
 {
@@ -523,6 +526,7 @@ void pawsShortcutWindow::LoadCommands(const char * fileName)
         cmds[number] = child->GetContentsValue();
     }
 }
+
 
 void pawsShortcutWindow::SaveCommands(void)
 {
@@ -670,6 +674,7 @@ void pawsShortcutWindow::ExecuteCommand(int shortcutNum, bool local)
     }
 }
 
+
 const csString& pawsShortcutWindow::GetCommandName(int shortcutNum, bool local)
 {
     if (local)
@@ -691,6 +696,7 @@ const csString& pawsShortcutWindow::GetCommandName(int shortcutNum, bool local)
     
     return names[shortcutNum];
 }
+
 
 bool pawsShortcutWindow::OnFingering(csString string, psControl::Device device, uint button, uint32 mods)
 {
