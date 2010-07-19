@@ -32,6 +32,9 @@ INSERT INTO math_scripts VALUES( "Calculate Damage",
         NDiffX = -DiffX;
         NDiffZ = -DiffZ;
 
+        BadRange = pow(AttackWeapon:Range * 1.1 + 1,2) - Dist;
+        exit = if(0>BadRange,1,0);
+
         Angle = atan2(NDiffX,NDiffZ);
         AngleAtt = Angle;
         Angle = Attacker:loc_yrot - Angle;
@@ -39,9 +42,6 @@ INSERT INTO math_scripts VALUES( "Calculate Damage",
         Angle = if(Angle > PI, Angle-2*PI, Angle);
         BadAngle = PI * if(Dist>1.5, 0.3, 0.4) - abs(Angle);
         exit = if(0>BadAngle,1,0);
-
-        BadRange = pow(AttackWeapon:Range * 1.1 + 1,2) - Dist;
-        exit = if(0>BadRange,1,0);
 
         Missed = min(AttackRoll-.25,0.1);
         exit = if(0>Missed,1,0);
