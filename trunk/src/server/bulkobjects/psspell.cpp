@@ -425,44 +425,53 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
     }
     else // AOE (Area of Effect)
     {
-        csVector3 pos;
+        csVector3 attackerPos;
+        csVector3 targetPos;
         float yrot; // in radians
         iSector *sector;
 
-        target->GetPosition(pos, yrot, sector);
+        target->GetPosition(targetPos, yrot, sector);
+        caster->GetPosition(attackerPos, yrot, sector);
+        
+        // directional vector for a line from attacker to original target
+        csVector3 attackerToTarget;
+        attackerToTarget = targetPos - attackerPos;
 
-        if (angle <= 0 || angle > 360)
+        if (angle <= SMALL_EPSILON || angle > 360)
             angle = 360;
 
-        angle = (angle/2)*(PI/180); // convert degrees to radians, half on each side of the casters yrot
+        angle = (angle/2)*(PI/180); // convert degrees to radians
+        // divided by two so it's equally on both sides
         //CPrintf(CON_DEBUG, "Spell has an effect arc of %1.2f radians to either side of LOS.\n", angle);
 
-        csArray<gemObject*> nearby = psserver->entitymanager->GetGEM()->FindNearbyEntities(sector, pos, radius);
+        csArray<gemObject*> nearby = psserver->entitymanager->GetGEM()->FindNearbyEntities(sector, targetPos, radius);
         for (size_t i = 0; i < nearby.GetSize(); i++)
         {
             if (!(targetTypes & caster->GetClient()->GetTargetType(nearby[i])))
                 continue;
 
-            if (angle < 2*PI)
+            if (angle < PI)
             {
-                csVector3 targetPos;
-                iSector *targetSector;
-                nearby[i]->GetPosition(targetPos, targetSector);
+                csVector3 attackerToAffected;
+                nearby[i]->GetPosition(attackerToAffected, sector);
 
-                csVector3 TP; // Target - Player pos.
-                csVector3 ATP; // Affected Target - Player pos.
-                target->GetPosition(TP, sector);
-                TP = TP - pos;
-                ATP = targetPos - pos;
+                // obtain a directional line for the vector from attacker to affacted target
+                // note that this line does not originate at the original target because the
+                // cone that shall include the hittable area shall originate at the attacker
+                attackerToAffected -= attackerPos;
 
-                // Angle between the target fired at, and this potential "in the way" target.
-                float cosATAngle = TP*ATP / (TP.Norm()*ATP.Norm());
-                if (cosATAngle > 1 || csNaN(cosATAngle))
+                // Angle between the line original target->attacker and original target->affected target
+                float cosATAngle = attackerToAffected*attackerToTarget
+                                  /(attackerToAffected.Norm()*attackerToTarget.Norm());
+
+                // cap the value to meaningful ones to account for rounding issues
+                if (cosATAngle > 1.0f || csNaN(cosATAngle))
                     cosATAngle = 1.0f;
-                if (cosATAngle < -1)
+                if (cosATAngle < -1.0f)
                     cosATAngle = -1.0f;
 
-                if (acosf(cosATAngle) >= angle)
+                // use the absolute value of the angle here to account for both sides equally - see above
+                if (fabs(acosf(cosATAngle) >= angle))
                     continue;
             }
 
