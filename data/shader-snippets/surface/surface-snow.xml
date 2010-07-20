@@ -25,10 +25,6 @@
     <input file="/shader-snippets/texCoord.inp"	/>
     
     <input name="snowDensity" type="float" default="complex">
-      <block location="shadervars">
-         <shadervar name="snow density" type="float" />
-      </block>
-
       <block location="cg:variablemap">
         <variablemap variable="snow density" destination="fragmentIn.snowDensity" />
       </block>
