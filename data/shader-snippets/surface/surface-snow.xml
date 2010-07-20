@@ -26,7 +26,7 @@
     
     <input name="snowDensity" type="float" default="complex">
       <block location="shadervars">
-         <shadervar name="snow density" type="float">0.0</shadervar>
+         <shadervar name="snow density" type="float" />
       </block>
 
       <block location="cg:variablemap">
