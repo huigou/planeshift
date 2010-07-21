@@ -889,6 +889,9 @@ public:
     void SetCharges(int charges);
     int GetCharges() const;
     int GetMaxCharges() const;
+    
+    ///returns the special command assigned to this item
+    csString GetItemCommand() { return GetBaseStats()->GetItemCommand(); }
 
     /** Called when an item is completely destroyed from the persistant world
      *

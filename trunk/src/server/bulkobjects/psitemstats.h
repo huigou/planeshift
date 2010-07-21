@@ -466,6 +466,8 @@ private:
 
     csString sound;
     csString weapon_type;
+    
+    csString itemCommand; ///< contains if the item has a special command where it's used.
 
     csHash<csString,int> meshRemovalInfo;
 
@@ -675,6 +677,9 @@ public:
     bool IsRechargeable() const;
     void SetMaxCharges(int charges);
     int GetMaxCharges() const;
+    
+    ///returns the special command assigned to this item
+    csString GetItemCommand() { return itemCommand; }
 
 public:
 

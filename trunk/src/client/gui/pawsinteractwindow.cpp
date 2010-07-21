@@ -82,6 +82,7 @@
 #define INTERACT_MOUNT       2700
 #define INTERACT_UNMOUNT     2800
 #define INTERACT_STORAGE     2900
+#define INTERACT_GENERIC     3000
 
 //////////////////////////////////////////////////////////////////////
 
@@ -116,6 +117,7 @@ pawsInteractWindow::pawsInteractWindow()
     names.Push("ButtonMount");
     names.Push("ButtonUnmount");
     names.Push("ButtonStorage");
+    names.Push("ButtonGeneric");
 
     types.Push(psGUIInteractMessage::EXAMINE);
     types.Push(psGUIInteractMessage::UNLOCK);
@@ -146,6 +148,7 @@ pawsInteractWindow::pawsInteractWindow()
     types.Push(psGUIInteractMessage::MOUNT);
     types.Push(psGUIInteractMessage::UNMOUNT);
     types.Push(psGUIInteractMessage::STORAGE);
+    types.Push(psGUIInteractMessage::GENERIC);
     openTick = 0;
 }
 
@@ -201,6 +204,7 @@ void pawsInteractWindow::HandleMessage( MsgEntry* me )
 
     // Set the current ticks so we know when to close ourselves
     openTick = psengine->GetVirtualClock()->GetCurrentTicks();
+    genericCommand = guimsg.genericCommand;
 }
 
 bool pawsInteractWindow::OnMouseDown(int button, int modifiers,int x,int y)
@@ -411,6 +415,12 @@ bool pawsInteractWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
         case INTERACT_STORAGE:
         {
             psengine->GetCmdHandler()->Execute("/storage");
+            Hide();
+            return true;
+        }
+        case INTERACT_GENERIC:
+        {
+            psengine->GetCmdHandler()->Execute(genericCommand);
             Hide();
             return true;
         }

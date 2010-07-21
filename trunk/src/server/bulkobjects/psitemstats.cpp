@@ -594,6 +594,8 @@ bool psItemStats::ReadItemStats(iResultRow& row)
     }
 
     weaponRange = row.GetFloat("weapon_range");
+    
+    itemCommand = row["assigned_command"];
 
     return true;
 }
