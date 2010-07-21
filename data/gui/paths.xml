@@ -53,12 +53,12 @@
 		-->
 		
         <widget name="label_description" factory="pawsMultiLineTextBox">
-            <frame x="216" y="190" width="500" height="100" border="no" />
+            <frame x="216" y="190" width="500" height="100" border="no"/>
 			<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="10" resizetoscreen="yes" />  
             <text string="Please select a path" />
         </widget>
 
-        <widget name="label_parents_header" factory="pawsTextBox">
+        <widget name="label_parents_header" factory="pawsTextBox" visible="no">
             <frame x="216" y="290" width="100" height="17" border="no" />
 	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="14"  resizetoscreen="yes" />  
             <text string="Parents" />
@@ -68,7 +68,7 @@
 	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="10"  resizetoscreen="yes" />  
         </widget>
 		
-        <widget name="label_life_header" factory="pawsTextBox">
+        <widget name="label_life_header" factory="pawsTextBox" visible="no">
             <frame x="216" y="340" width="100" height="17" border="no" />
 	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="14" resizetoscreen="yes" />  
             <text string="Life" />
@@ -78,7 +78,7 @@
 	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="10" resizetoscreen="yes" />  
         </widget>
 		
-        <widget name="label_stat_header" factory="pawsTextBox">
+        <widget name="label_stat_header" factory="pawsTextBox" visible="no">
             <frame x="198" y="404" width="40" height="16" border="no" />
 	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="14" resizetoscreen="yes" />  
             <text string="Stat" />
@@ -87,7 +87,7 @@
             <frame x="198" y="429" width="110" height="110" border="no" />
 	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="10" resizetoscreen="yes" />  
         </widget>
-        <widget name="values_stat_header" factory="pawsTextBox">
+        <widget name="values_stat_header" factory="pawsTextBox" visible="no">
             <frame x="298" y="404" width="40" height="16" border="no" />
 	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="14"  resizetoscreen="yes" />          
             <text string="Path" />
@@ -96,7 +96,7 @@
             <frame x="308" y="429" width="50" height="110" border="no" />
 	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="10" resizetoscreen="yes" />  
         </widget>
-        <widget name="label_skill_header" factory="pawsTextBox">
+        <widget name="label_skill_header" factory="pawsTextBox" visible="no">
             <frame x="455" y="404" width="40" height="16" border="no" />
 	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="14" resizetoscreen="yes" />  
             <text string="Skill" />
@@ -105,8 +105,8 @@
             <frame x="455" y="429" width="130" height="110" border="no" />
 	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="10" resizetoscreen="yes" />      
         </widget>
-        <widget name="values_skill_header" factory="pawsTextBox">
-            <frame x="555" y="404" width="40" height="16" border="no" />
+        <widget name="values_skill_header" factory="pawsTextBox" visible="no" >
+            <frame x="555" y="404" width="40" height="16" border="no"/>
 	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="14" resizetoscreen="yes" />  
             <text string="Rank" />
         </widget>
