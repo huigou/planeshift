@@ -88,7 +88,7 @@ const constraint constraints[] =
     // Example: TIME(12) is noon.
     {WorkManager::constraintTime, "TIME", "You can not do this work at this time of the day!"},
 
-    // People in area. 2654 stefano   20   0  360m 334m 4808 R   50  8.7   0:05.67 cc1plus            
+    // People in area.
 
     // Parameter: n,r; where n is number of people and r is the range.
     // Example: FRIENDS(6,4) is six people within 4.
@@ -874,7 +874,7 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
                 }
                 
                 //as we found an ore we set we were successfull and exit from the loop (so we don't give the player
-                //more than one ore at a time)
+                //more than one ore at a time
                 successfullProduction = true;
                 break;
             }
