@@ -110,13 +110,6 @@
 	
 		</widget>
 		<!-- end characterSelect -->
-		
-    <!-- Back Button -->
-    <widget name="back" factory="pawsButton" id="200" key="B">
-        <frame x="80" y="290" width="120" height="50" border="no"/>
-	<font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="22" resizetoscreen="yes" />
-        <label text="Back"/>
-    </widget>
 
         <!-- Navigation Buttons -->
         <widget name="navBar" factory="pawsWidget">
@@ -135,6 +128,7 @@
  -->
 			</widget>
 		   
+           <!-- Back Button -->
 			<widget name="back" factory="pawsButton" id="200" key="B">
 				<frame x="110" y="0" width="100" height="40" />
 				<label text="Log Out" />
