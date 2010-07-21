@@ -858,7 +858,7 @@ void SpawnManager::Respawn(PID playerID, SpawnRule* spawnRule)
         {
             break; // Nothing in the neare list so spawn position is ok.
         }
-        Debug4(LOG_SPAWN,0,"Spawn position %s is occuplied by %d entities. %s",
+        Debug4(LOG_SPAWN,0,"Spawn position %s is occuplied by %zu entities. %s",
                toString(pos,sector).GetDataSafe(),
                nearlist.GetSize(),count>0?" Will Retry":"Last try");
         
