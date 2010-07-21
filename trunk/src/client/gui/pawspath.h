@@ -38,6 +38,10 @@ private:
     pawsCreationMain* charCreateMain;
     void SetPath(int i);
     void ClearPath(void);
+    /** Sets the label headers visibility in this window.
+     *  @param visible TRUE if you wish to show the label headers.
+     */
+    void LabelHeaderVisibility(bool visible);
 };
 
 CREATE_PAWS_FACTORY( pawsPathWindow ); 

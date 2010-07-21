@@ -57,6 +57,7 @@ bool pawsPathWindow::PostSetup()
         i++;
     }
     chosenPath = NO_CHOSEN_PATH;
+    LabelHeaderVisibility(false);
     return true;
 }
 
@@ -184,7 +185,65 @@ void pawsPathWindow::SetPath(int i)
         if (!symbol->IsVisible())
             symbol->Show();
     }
+    
+    LabelHeaderVisibility(true);
+}
 
+void pawsPathWindow::LabelHeaderVisibility(bool visible)
+{
+    {
+        pawsWidget * label = FindWidget("label_parents_header");
+        if (label)
+        {
+            if(visible) label->Show();
+            else        label->Hide();
+        }
+    }
+    
+    {
+        pawsWidget * label = FindWidget("label_life_header");
+        if (label)
+        {
+            if(visible) label->Show();
+            else        label->Hide();
+        }
+    }
+
+    {
+        pawsWidget * label = FindWidget("label_stat_header");
+        if (label)
+        {
+            if(visible) label->Show();
+            else        label->Hide();
+        }
+    }
+    
+    {
+        pawsWidget * label = FindWidget("values_stat_header");
+        if (label)
+        {
+            if(visible) label->Show();
+            else        label->Hide();
+        }
+    }
+
+    {
+        pawsWidget * label = FindWidget("label_skill_header");
+        if (label)
+        {
+            if(visible) label->Show();
+            else        label->Hide();
+        }
+    }
+    
+    {
+        pawsWidget * label = FindWidget("values_skill_header");
+        if (label)
+        {
+            if(visible) label->Show();
+            else        label->Hide();
+        }
+    }
 }
 
 void pawsPathWindow::ClearPath(void)
@@ -210,5 +269,6 @@ void pawsPathWindow::ClearPath(void)
 
     pawsWidget * symbol = FindWidget("PathSymbol");
     symbol->Hide();
+    LabelHeaderVisibility(false);
 }
 
