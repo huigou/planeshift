@@ -1764,14 +1764,15 @@ csString psUserActionMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psGUIInteractMessage,MSGTYPE_GUIINTERACT);
 
-psGUIInteractMessage::psGUIInteractMessage (uint32_t client, uint32_t options)
+psGUIInteractMessage::psGUIInteractMessage (uint32_t client, uint32_t options, csString command)
 {
-    msg.AttachNew(new MsgEntry(sizeof(uint32_t)));
+    msg.AttachNew(new MsgEntry(sizeof(uint32_t) + command.Length() + 1));
 
     msg->SetType(MSGTYPE_GUIINTERACT);
     msg->clientnum      = client;
 
     msg->Add(options);
+    msg->Add(command);
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
@@ -1784,6 +1785,7 @@ psGUIInteractMessage::psGUIInteractMessage( MsgEntry *message )
         return;
 
     options = message->GetUInt32();
+    genericCommand = message->GetStr();
 
     // Sets valid flag based on message overrun state
     valid=!(message->overrun);
@@ -1846,6 +1848,8 @@ csString psGUIInteractMessage::ToString(AccessPointers * /*access_ptrs*/)
         msgtext.Append(" UNMOUNT");
     if (options & psGUIInteractMessage::STORAGE)
         msgtext.Append(" STORAGE");
+    if (options & psGUIInteractMessage::GENERIC)
+        msgtext.Append(" GENERIC");
 
     return msgtext;
 }
@@ -4593,13 +4597,13 @@ PSF_IMPLEMENT_MSG_FACTORY3(psForcePositionMessage, MSGTYPE_FORCE_POSITION);
 
 psForcePositionMessage::psForcePositionMessage(uint32_t client, uint8_t sequenceNumber,
                          const csVector3 & pos, float yRot, iSector *sector,
-                         csStringSet *msgstrings)
+                         csStringSet *msgstrings, uint32_t time, csString loadBackground)
 {
     CS_ASSERT(sector);
     csString sectorName = sector->QueryObject()->GetName();
     csStringID sectorNameStrId = msgstrings ? msgstrings->Request(sectorName) : csInvalidStringID;
 
-    msg.AttachNew(new MsgEntry(sizeof(float)*4 + sizeof(uint8_t) + sizeof(uint32_t) + (sectorNameStrId == csInvalidStringID ? sectorName.Length() + 1 : 0), PRIORITY_HIGH, sequenceNumber));
+    msg.AttachNew(new MsgEntry(sizeof(float)*4 + sizeof(uint8_t) + sizeof(uint32_t) + (sectorNameStrId == csInvalidStringID ? sectorName.Length() + 1 : 0) + sizeof(uint32_t) + loadBackground.Length() + 1 , PRIORITY_HIGH, sequenceNumber));
 
     msg->SetType(MSGTYPE_FORCE_POSITION);
     msg->clientnum = client;
@@ -4610,6 +4614,9 @@ psForcePositionMessage::psForcePositionMessage(uint32_t client, uint8_t sequence
     msg->Add((uint32_t) sectorNameStrId);
     if (sectorNameStrId == csInvalidStringID)
         msg->Add(sectorName);
+    
+    msg->Add(time);
+    msg->Add(loadBackground);
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
@@ -4626,6 +4633,9 @@ psForcePositionMessage::psForcePositionMessage(MsgEntry *me, csStringSet *msgstr
     else if(msgstringshash)
         sectorName = sectorNameStrId != csInvalidStringID ? msgstringshash->Request(sectorNameStrId) : me->GetStr();
     sector = !sectorName.IsEmpty() ? engine->GetSectors()->FindByName(sectorName) : NULL;
+    
+    loadTime = me->GetUInt32();
+    backgroundname = me->GetStr();
 
     valid = !(me->overrun);
 }

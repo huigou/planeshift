@@ -1382,7 +1382,7 @@ public:
 class psGUIInteractMessage : public psMessageCracker
 {
 public:
-    psGUIInteractMessage(uint32_t clientnum, uint32_t options);
+    psGUIInteractMessage(uint32_t clientnum, uint32_t options, csString command = "");
     psGUIInteractMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
@@ -1427,12 +1427,14 @@ public:
         CONSTRUCT   = 0x1000000,
         MOUNT       = 0x2000000,
         UNMOUNT     = 0x4000000,
-        STORAGE     = 0x8000000
+        STORAGE     = 0x8000000,
+        GENERIC     = 0x10000000
     };
 
 public:
     /// Holds the options that the window should display.
     uint32_t options;
+    csString genericCommand;
 };
 
 //--------------------------------------------------------------------------
@@ -3025,15 +3027,17 @@ public:
 class psForcePositionMessage : public psMessageCracker
 {
 public:
-    csVector3 pos;       ///< Position vector
-    float yrot;          ///< Rotation around Y-axis in radians
-    iSector *sector;     ///< Ptr to sector for mesh
-    csString sectorName; ///< Name of the sector
+    csVector3 pos;           ///< Position vector
+    float yrot;              ///< Rotation around Y-axis in radians
+    iSector *sector;         ///< Ptr to sector for mesh
+    csString sectorName;     ///< Name of the sector
+    csString backgroundname; ///< Name of the background to use instead of the normal one in delay.
+    uint32_t loadTime;       ///< time to wait even if there is no need to load
 
     psForcePositionMessage() { }
     psForcePositionMessage(uint32_t client, uint8_t sequence,
                            const csVector3& pos, float yRot, iSector *sector,
-                           csStringSet *msgstrings);
+                           csStringSet *msgstrings, uint32_t time = 0, csString loadBackground = "");
     psForcePositionMessage(MsgEntry *me, csStringSet *msgstrings, csStringHashReversible* msgstringshash, iEngine *engine);
 
     PSF_DECLARE_MSG_FACTORY();

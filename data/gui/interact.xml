@@ -148,6 +148,11 @@
              <bgimage resource="ButtonStorage" />
         </widget>
         
+        <widget name="ButtonGeneric" factory="pawsButton" id="3000" tooltip="Use Equipped tool">
+            <frame x="0" y="64" width="64" height="64" />
+            <bgimage resource="ButtonPush" />
+        </widget>
+        
     </widget>
     
 </widget_description>

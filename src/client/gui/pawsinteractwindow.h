@@ -51,6 +51,8 @@ private:
     csArray<int> types;
 
     int openTick;
+    
+    csString genericCommand;
 
     pawsChatWindow* chatWindow;
 };
