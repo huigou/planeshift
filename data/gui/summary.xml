@@ -115,6 +115,14 @@
 			</widget>
 		</widget>
         <!-- End of Navigation Buttons -->
+        
+        <widget name="ModelView" factory="pawsObjectView">
+			<frame x="600" y="98" width="200" height="330" border="no" />
+			<mask resource="charborder"/>
+			<map file="podium" sector="room"/>
+            <distance value="3.0"/>
+		  <cameramod x="-0.025" y="1.0" z="0.0"/>
+		</widget>
 
     </widget>
 </widget_description>

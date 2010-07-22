@@ -351,6 +351,14 @@ public:
     int GetLifeCost( int id );
     
     void SetCustomization( int face, int hairStyle, int beardStyle, int hairColour, int skinColour );
+    /** Gets the costumizations done and set with SetCostumization.
+     *  @param face Gives the trait uid of the face costumization done or zero if none.
+     *  @param hairStyle Gives the trait uid of the hair style costumization done or zero if none.
+     *  @param beardStyle Gives the trait uid of the beard style costumization done or zero if none.
+     *  @param hairColour Gives the trait uid of the hair colour costumization done or zero if none.
+     *  @param skinColour Gives the trait uid of the skin colour costumization done or zero if none.
+     */    
+    void GetCustomization( int& face, int& hairStyle, int& beardStyle, int& hairColour, int& skinColour);
     
     void GenerateName(int type,csString &namebuffer,int max_low,int max_high)
     { nameGenerator->GenerateName( type, namebuffer, max_low, max_high ); }

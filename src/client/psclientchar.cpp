@@ -1277,6 +1277,15 @@ void psCreationManager::SetCustomization( int face, int hairStyle, int beardStyl
     selectedSkinColour = skinColour;
 }
 
+void psCreationManager::GetCustomization( int& face, int& hairStyle, int& beardStyle, int& hairColour, int& skinColour )
+{
+    face = selectedFace;
+    hairStyle = selectedHairStyle;
+    beardStyle = selectedBeardStyle;
+    hairColour = selectedHairColour;
+    skinColour = selectedSkinColour;
+}
+
 RaceDefinition* psCreationManager::GetRace( const char* name )
 {
     for ( size_t i = 0; i < raceDescriptions.GetSize(); i++ )
