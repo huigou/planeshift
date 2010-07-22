@@ -26,16 +26,26 @@
 #include "paws/pawstextbox.h"
 #include "paws/pawslistbox.h"
 #include "paws/pawsyesnobox.h"
+#include "iclient/ibgloader.h"
+#include "paws/pawsobjectview.h"
+#include "charapp.h"
 
 #define BACK_BUTTON   6000
 #define UPLOAD_BUTTON 5000
 #define UPLOAD_VERIFY true
+
+struct RaceDefinition;
 
 pawsSummaryWindow::pawsSummaryWindow()
 {
     createManager = psengine->GetCharManager()->GetCreation();
     redoVerification = false;
     requestSent = false;
+    loaded = true;
+    
+    charApp = new psCharAppearance(psengine->GetObjectRegistry());
+
+    psengine->RegisterDelayedLoader(this);
 }
 
 pawsSummaryWindow::~pawsSummaryWindow()
@@ -52,6 +62,9 @@ bool pawsSummaryWindow::PostSetup()
     
     serverStatus  = (pawsTextBox*)FindWidget("server_status");
     if ( serverStatus == NULL ) return false;
+    
+    view = (pawsObjectView*)FindWidget("ModelView");
+    if ( view == NULL ) return false;
     
     return true;
 }
@@ -125,8 +138,65 @@ void pawsSummaryWindow::Update()
         tempString.Format("%s\n", createManager->FindLifeEvent(lifeIter.Next())->name.GetData());
         lifeString.Append(tempString);
     }
-    lifeText->SetText(lifeString);
+    lifeText->SetText(lifeString);    
 }
+
+bool pawsSummaryWindow::CheckLoadStatus()
+{
+    csString factName = createManager->GetModelName(createManager->GetSelectedRace(),createManager->GetSelectedGender());
+    if(!loaded)
+    {
+        csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(factName);
+        if(factory.IsValid())
+        {
+            view->View(factory);
+
+            iMeshWrapper* mesh = view->GetObject();
+            charApp->SetMesh(mesh);
+            if (!mesh)
+            {
+                PawsManager::GetSingleton().CreateWarningBox(PawsManager::GetSingleton().Translate(
+                                                             "Couldn't find mesh! Please run the updater"));
+                return true;
+            }
+
+            csRef<iSpriteCal3DState> spstate =  scfQueryInterface<iSpriteCal3DState> (mesh->GetMeshObject());
+            if (spstate)
+            {
+                // Setup cal3d to select random 0 velocity anims
+                spstate->SetVelocity(0.0,&psengine->GetRandomGen());
+            }
+
+            //set the traits
+            int face, hairStyle, beardStyle, hairColour, skinColour;
+            createManager->GetCustomization(face, hairStyle, beardStyle, hairColour, skinColour);
+            if(hairColour)
+                charApp->HairColor(createManager->GetTrait(hairColour)->shader);
+            if(hairStyle)
+                charApp->HairMesh(createManager->GetTrait(hairStyle)->mesh);
+            if(beardStyle)
+                charApp->BeardMesh(createManager->GetTrait(beardStyle)->mesh);
+            if(face)
+                charApp->FaceTexture(createManager->GetTrait(face)->material);
+            
+            if(skinColour)
+            {
+                Trait * trait = createManager->GetTrait(skinColour);
+                while ( trait )
+                {
+                    charApp->SetSkinTone(trait->mesh, trait->material);
+                    trait = trait->next_trait;
+                }
+            }
+            view->UnlockCamera();
+
+            loaded = true;
+        }
+    }
+
+    return false;
+}
+
 
 void pawsSummaryWindow::Show()
 {
@@ -188,6 +258,9 @@ void pawsSummaryWindow::SetVerify( csArray<psCharVerificationMesg::Attribute> st
     }
      
     serverStatus->SetText(PawsManager::GetSingleton().Translate("Verification complete"));     
+    //load the model
+    loaded = false;
+    CheckLoadStatus();
 }
 
 bool pawsSummaryWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )

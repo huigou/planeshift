@@ -21,10 +21,13 @@
  
 #include "paws/pawswidget.h"
 #include "paws/pawstextbox.h"
+#include "psengine.h"
 
 class psCreationManager;
+class pawsObjectView;
+class psCharAppearance;
  
-class pawsSummaryWindow : public pawsWidget
+class pawsSummaryWindow : public pawsWidget, public DelayedLoader
 {
 public:
     pawsSummaryWindow();
@@ -37,19 +40,32 @@ public:
     void Show();
     void SetVerify( csArray<psCharVerificationMesg::Attribute> stats,
                     csArray<psCharVerificationMesg::Attribute> skill );
+       
+    ///loads the mesh in the char view
+    bool CheckLoadStatus();
+
 private:  
     psCreationManager* createManager;
-    // Toggles if the information on display is dirty.   
+    /// Toggles if the information on display is dirty.   
     bool redoVerification;
     
-    // Toggles if we've already send a request for character information.
+    /// Toggles if we've already send a request for character information.
     bool requestSent;
     
-    // List of stat values that the new character will have.
+    /// List of stat values that the new character will have.
     pawsListBox*  statsList;
     
-    // List of skill values that the new character will have.
+    /// List of skill values that the new character will have.
     pawsListBox*  skillsList;
+    
+    ///retains if the mesh has been loaded
+    bool loaded;
+    
+    /// Paper doll view of model.
+    pawsObjectView* view;
+    
+    /// Character apparence data
+    psCharAppearance* charApp;
     
     
     pawsTextBox* serverStatus;
