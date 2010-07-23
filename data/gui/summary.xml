@@ -13,51 +13,53 @@
             <text string="" horizAdjust="CENTRE" />
         </widget>
 
+		<!-- Title : Birth -->
         <widget name="label_birth" factory="pawsTextBox">
-            <frame x="150" y="120" width="156" height="25" border="no"/>
+            <frame x="100" y="140" width="156" height="25" border="no"/>
 	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="18" resizetoscreen="yes" />
             <text string="Birth"/>
         </widget>
         <widget name="text_birth" factory="pawsMultiLineTextBox">
-            <frame x="150" y="145" width="200" height="156" border="no"/>
+            <frame x="100" y="165" width="200" height="156" border="no"/>
 	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="10" resizetoscreen="yes" />
         </widget>
 
+		<!-- Title : Life -->
         <widget name="label_life" factory="pawsTextBox">
-            <frame x="440" y="120" width="156" height="25" border="no"/>
+            <frame x="480" y="140" width="156" height="25" border="no"/>
 	    <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="18" resizetoscreen="yes" />
             <text string="Life"/>
         </widget>
         <widget name="text_life" factory="pawsMultiLineTextBox">
-            <frame x="440" y="145" width="200" height="156" border="no"/>
+            <frame x="480" y="165" width="200" height="156" border="no"/>
 	    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="10" resizetoscreen="yes" />
         </widget>
         
         <!-- Header labels -->
         <widget name="label_stat_header" factory="pawsTextBox">
-            <frame x="150" y="340" width="100" height="25" border="no" />
+            <frame x="150" y="350" width="100" height="25" border="no" />
 			<font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="18" resizetoscreen="yes" />  
             <text string="Stat" />
         </widget>
         <widget name="values_stat_header" factory="pawsTextBox">
-            <frame x="297" y="340" width="100" height="25" border="no" />
+            <frame x="297" y="350" width="100" height="25" border="no" />
 			<font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="18" resizetoscreen="yes" />
             <text string="Rank" />
         </widget>            
         <widget name="label_skill_header" factory="pawsTextBox">
-            <frame x="440" y="340" width="100" height="25" border="no" />
+            <frame x="440" y="350" width="100" height="25" border="no" />
 			<font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="18" resizetoscreen="yes" />  
             <text string="Skill" />
         </widget>
         <widget name="values_skill_header" factory="pawsTextBox">
-            <frame x="554" y="340" width="100" height="25" border="no" />
+            <frame x="554" y="350" width="100" height="25" border="no" />
 			<font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="18" resizetoscreen="yes" />  
             <text string="Rank" />
         </widget>
         
 		<!-- List Boxes -->
         <widget name="stat_list" factory="pawsListBox"  >        
-            <frame x="150" y="368" width="200" height="120" margin="5" border="no" />
+            <frame x="150" y="378" width="200" height="120" margin="5" border="no" />
 			<font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="12" />
             <columns height="18" headings="no">
                 <column width="150" >
@@ -74,7 +76,7 @@
         </widget>
                 
         <widget name="skill_list" factory="pawsListBox"  >        
-            <frame x="440" y="368" width="200" height="100" margin="5" border="no" />
+            <frame x="440" y="378" width="200" height="100" margin="5" border="no" />
 			<font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="12" resizetoscreen="yes" />
             <columns height="18" headings="no">
                 <column width="150" >
@@ -117,10 +119,10 @@
         <!-- End of Navigation Buttons -->
         
         <widget name="ModelView" factory="pawsObjectView">
-			<frame x="600" y="98" width="200" height="330" border="no" />
-			<mask resource="charborder"/>
+			<frame x="300" y="106" width="150" height="247" border="no" />
+			<mask resource="charborder2"/>
 			<map file="podium" sector="room"/>
-            <distance value="3.0"/>
+            <distance value="5.0"/>
 		  <cameramod x="-0.025" y="1.0" z="0.0"/>
 		</widget>
 
