@@ -77,9 +77,9 @@ INSERT INTO math_scripts VALUES( "Calculate Damage",
 
 INSERT INTO math_scripts VALUES( "Calculate Decay",
 "
-    WeaponDecay = if(Blocked, 1.25, 1 - ArmorVsWeapon);
-    BlockingDecay = if(Blocked, 0.75, 0);
-    ArmorDecay = if(Blocked, 0, ArmorVsWeapon);
+    WeaponDecay = if(Blocked, 1.25, 1 - ArmorVsWeapon) * Weapon:DecayRate * (1 - Weapon:DecayResistance);
+    BlockingDecay = if(Blocked, 0.75, 0) * BlockingWeapon:DecayRate * (1 - BlockingWeapon:DecayResistance);
+    ArmorDecay = if(Blocked, 0, ArmorVsWeapon) * Armor:DecayRate * (1 - Armor:DecayResistance);
 ");
 
 INSERT INTO math_scripts VALUES( "Lockpicking Time", "Time = ((LockQuality / 10) * 3)*1000;");
