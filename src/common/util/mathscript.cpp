@@ -509,12 +509,13 @@ bool MathExpression::Parse(const char *exp)
                 return false;
             }
 
-            // The previous variable must be an object.
-            requiredObjs.Add(tokens[i-1]);
-
             // Is it a method call?
             if (i+2 < tokens.GetSize() && tokens[i+2] == "(")
             {
+                // method calls don't require the variable to be an object at the beginning, they may become one
+                // runtime via properties/other function calls, therefore this check is skipped
+                // the user shall ensure that a variable he calls a function on is an object
+
                 // Methods start as Target:WeaponAt(Slot) and turn into customCompoundFuncN(X,Target,Slot)
                 // where N-2 is the number of parameters and X is the index in a global lookup table.
                 int paramCount = 2; // customCompoundFunc takes two args as boilerplate.
@@ -544,6 +545,9 @@ bool MathExpression::Parse(const char *exp)
             }
             else
             {
+                // The previous variable must be an object.
+                requiredObjs.Add(tokens[i-1]);
+
                 // Found a property reference, i.e. Actor:HP
                 tokens[i] = "_"; // fparser can't deal with ':', so change it to '_'.
                 propertyRefs.Add(csString().Format("%s:%s", tokens[i-1].GetData(), tokens[i+1].GetData()));
