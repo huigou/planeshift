@@ -514,7 +514,14 @@ bool MathExpression::Parse(const char *exp)
             {
                 // method calls don't require the variable to be an object at the beginning, they may become one
                 // runtime via properties/other function calls, therefore this check is skipped
-                // the user shall ensure that a variable he calls a function on is an object
+                // the user shall ensure that a variable he calls a function on is an object at the point
+                // of calling the function
+                if(!requiredVars.Contains(tokens[i-1]))
+                {
+                    // as the variable didn't occur prior to calling a function on it, it has
+                    // to be an object at the beginning
+                    requiredObjs.Add(tokens[i-1]);
+                }
 
                 // Methods start as Target:WeaponAt(Slot) and turn into customCompoundFuncN(X,Target,Slot)
                 // where N-2 is the number of parameters and X is the index in a global lookup table.
