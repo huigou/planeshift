@@ -6,4 +6,4 @@ Library paws
 ;
 
 LinkWith paws : psutil ;
-ExternalLibs paws : CRYSTAL CEL ;
+ExternalLibs paws : CRYSTAL ;

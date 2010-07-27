@@ -5,4 +5,4 @@ Library effects
 	: noinstall
 ;
 
-ExternalLibs effects : CRYSTAL CEL ;
+ExternalLibs effects : CRYSTAL ;

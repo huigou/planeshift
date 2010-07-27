@@ -5,7 +5,7 @@ Library psutil
 	#: [ Wildcard *.cpp *.h ]
 	: noinstall
 ;
-ExternalLibs psutil : CRYSTAL CEL MYSQLCLIENT ;
+ExternalLibs psutil : CRYSTAL MYSQLCLIENT ;
 LinkWith psutil : fparser ;
 
 if $(GTEST.AVAILABLE) = "yes"
