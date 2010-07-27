@@ -4,5 +4,5 @@ Application pawseditor :
 	[ Wildcard *.cpp *.h ]
 ;
 CompileGroups pawseditor : tools ;
-ExternalLibs pawseditor : CRYSTAL CEL ;
+ExternalLibs pawseditor : CRYSTAL ;
 LinkWith pawseditor : paws psutil sound fparser ;

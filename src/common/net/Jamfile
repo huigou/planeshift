@@ -5,4 +5,4 @@ Library psnet
 	: noinstall
 ;
 
-ExternalLibs psnet : CRYSTAL CEL ;
+ExternalLibs psnet : CRYSTAL ;
