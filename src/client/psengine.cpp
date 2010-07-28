@@ -920,14 +920,15 @@ bool psEngine::Process3D(iEvent& ev)
         LoadGame();
     }
 
-    if (drawScreen && loadstate == LS_DONE)
+    if (drawScreen)
     {
         // FPS limits
         drawFrame = FrameLimit();
 
         if(drawFrame)
         {
-            if(camera)
+            paws->Draw3D();
+            if(camera && loadstate == LS_DONE)
             {
               g3d->BeginDraw(CSDRAW_3DGRAPHICS);
               camera->Draw();
@@ -954,14 +955,13 @@ bool psEngine::Process2D(iEvent& ev)
         g3d->BeginDraw(CSDRAW_2DGRAPHICS);
         if (effectManager)
             effectManager->Render2D(g3d, g2d);
+        paws->Draw();
         if (showFPS)
         {
             csString fpsDisplay;
             fpsDisplay.Format("%.2f", getFPS());
             g2d->Write(font, 5, 5, g2d->FindRGB(255, 255, 255), -1, fpsDisplay);
         }
-
-        paws->Draw();
     }
 
     return true;
@@ -1064,12 +1064,11 @@ inline bool psEngine::FrameLimit()
 	timeFPS = 0;
 	countFPS = 0;
     }
+    elapsed = csGetTicks();
 
     // Here we sacrifice drawing AND loading time
     if(elapsedTime < sleeptime)
         csSleep(sleeptime - elapsedTime);
-
-    elapsed = csGetTicks();
 
     return true;
 }

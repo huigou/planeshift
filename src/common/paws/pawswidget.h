@@ -571,6 +571,7 @@ public:
      * If the drawing area defined is empty it returns.
      */
     virtual void Draw();
+    virtual void Draw3D(iGraphics3D*) {}
 
     /** Draws the background with a color or an image.
      * @remark Uses focus status to apply appropriate fading. 

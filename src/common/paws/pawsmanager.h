@@ -94,6 +94,10 @@ public:
      */
     void Draw();
 
+    /** Draw 3D parts of the widgets
+     */
+    void Draw3D();
+
     /// Returns the 2D renderer.
     iGraphics2D* GetGraphics2D() { return graphics2D; }
 
