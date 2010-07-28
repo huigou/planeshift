@@ -768,13 +768,6 @@ void PawsManager::Draw()
         graphics3D->BeginDraw(CSDRAW_2DGRAPHICS);
         graphics3D->DrawPixmap(guiTexture, 0, 0, graphics3D->GetWidth(), graphics3D->GetHeight(),
             0, 0, graphics3D->GetWidth(), graphics3D->GetHeight());
-
-        // Draw all pawsobjectview next.
-        for(size_t i=0; i<objectViews.GetSize(); ++i)
-        {
-            if(objectViews[i]->IsVisible())
-                objectViews[i]->Draw();
-        }
     }
 
     // Now everything else.
@@ -792,6 +785,20 @@ void PawsManager::Draw()
         mouse->Draw();
     else
         dragDropWidget->Draw();
+}
+
+void PawsManager::Draw3D()
+{
+    if(objectViews.IsEmpty())
+        return; // can't render object views
+
+    for(size_t i=0; i<objectViews.GetSize(); ++i)
+    {
+        if(objectViews[i]->IsVisible())
+        {
+            objectViews[i]->Draw3D(graphics3D);
+        }
+    }
 }
 
 void PawsManager::RegisterWidgetFactory( pawsWidgetFactory* fact )

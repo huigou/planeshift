@@ -27,6 +27,7 @@
 #include <iutil/objreg.h>
 #include <imap/loader.h>
 #include <iutil/vfs.h>
+#include "iengine/rendermanager.h"
 #include <iengine/texture.h>
 #include <csutil/cscolor.h>
 #include "pawsobjectview.h"
@@ -46,6 +47,7 @@ pawsObjectView::pawsObjectView()
     rotateRadians = orgRadians = 0;
     camRotate = 0.0f;
     objectPos = csVector3(0,0,0); // Center of podium
+    lookingAt = csVector3(0,0,0);
     cameraMod = csVector3(0,0,0);
     charApp = NULL;
 
@@ -55,21 +57,26 @@ pawsObjectView::pawsObjectView()
     mouseDownUnlock = false;
     mouseDownRotate = false;
 
-    // Don't render via child tree.
-    parentDraw = false;
+    needsDraw = true;
 
     PawsManager::GetSingleton().AddObjectView(this);
 }   
 
 pawsObjectView::~pawsObjectView()
 {
+    if(target.IsValid())
+    {
+        // unregister tex from render targets
+        csRef<iRenderManagerTargets> rmTargets = scfQueryInterface<iRenderManagerTargets>(engine->GetRenderManager());
+        rmTargets->UnregisterRenderTarget(target);
+    }
+
     PawsManager::GetSingleton().RemoveObjectView(this);
 
     // free mesh
     Clear();
 
     // free map ressources
-    csRef<iEngine> engine =  csQueryRegistry<iEngine > ( PawsManager::GetSingleton().GetObjectRegistry());
     engine->RemoveObject(view);
     view.Invalidate();
     engine->RemoveObject(meshView);
@@ -86,8 +93,7 @@ bool pawsObjectView::Setup(iDocumentNode* node )
     else
         distance = 4;
 
-    if (!resizeToScreen)
-        distance *= float(graphics2D->GetWidth())/800.0f;
+    origDistance = distance;
 
     csRef<iDocumentNode> cameraModNode = node->GetNode( "cameramod" );
     if ( cameraModNode )
@@ -110,12 +116,57 @@ bool pawsObjectView::Setup(iDocumentNode* node )
         Error1("pawsObjectView map failed to load because the mapNode doesn't exist!\n");
         return false;
     }
+    
+}
+
+void pawsObjectView::OnResize()
+{
+    if(target.IsValid())
+    {
+        // unregister old tex from render targets
+        csRef<iRenderManagerTargets> rmTargets = scfQueryInterface<iRenderManagerTargets>(engine->GetRenderManager());
+        rmTargets->UnregisterRenderTarget(target);
+    }
+
+    pawsWidget::OnResize();
+    csRef<iTextureManager> texman = PawsManager::GetSingleton().GetGraphics3D()->GetTextureManager();
+    target = texman->CreateTexture(screenFrame.Width(), screenFrame.Height(), csimg2D, "rgba8",
+             CS_TEXTURE_2D | CS_TEXTURE_NOMIPMAPS | CS_TEXTURE_SCALE_UP | CS_TEXTURE_NPOTS);
+    if(target.IsValid())
+    {
+        target->SetAlphaType (csAlphaMode::alphaBinary);
+    }
+    else
+    {
+        Error1("pawsObjectView couldn't create render target!");
+    }
+
+    /*if (!resizeToScreen)
+        distance = origDistance * float(screenFrame.Width() * graphics2D->GetWidth())/800.0f;*/
+
+    // update the views
+    int w = screenFrame.Width();
+    int h = screenFrame.Height();
+
+    // update the stage view
+    view->SetWidth(w);
+    view->SetHeight(h);
+    view->SetRectangle(0, 0, w, h, false);
+    view->GetCamera()->SetViewportSize(w, h);
+    view->GetPerspectiveCamera()->SetFOV((float)(h)/w, 1);
+
+    // update the doll view
+    meshView->SetWidth(w);
+    meshView->SetHeight(h);
+    meshView->SetRectangle(0, 0, w, h, false);
+    meshView->GetCamera()->SetViewportSize(w, h);
+    meshView->GetPerspectiveCamera()->SetFOV((float)(h)/w, 1);
+
+    needsDraw = true;
 }
 
 bool pawsObjectView::LoadMap( const char* map, const char* sector )
 {
-    csRef<iEngine> engine =  csQueryRegistry<iEngine > ( PawsManager::GetSingleton().GetObjectRegistry());
-
     csRef<iStringArray> zone = csPtr<iStringArray>(new scfStringArray());
     zone->Push(map);
     if(!loader->LoadPriorityZones(zone))
@@ -139,18 +190,15 @@ bool pawsObjectView::LoadMap( const char* map, const char* sector )
     }
     meshSector->PrecacheDraw();
 
-    meshView = csPtr<iView> (new csView( engine, PawsManager::GetSingleton().GetGraphics3D() ));
+    meshView = csPtr<iView>(new csView(engine, PawsManager::GetSingleton().GetGraphics3D()));
+    meshView->SetAutoResize(false);
     meshView->GetCamera()->SetSector(meshSector);
     meshView->GetCamera()->GetTransform().SetOrigin(csVector3(0, 1, -distance));
 
-    meshView->SetRectangle(screenFrame.xmin, screenFrame.ymin,
-        screenFrame.Width(),screenFrame.Height());
-
-    view = csPtr<iView> (new csView( engine, PawsManager::GetSingleton().GetGraphics3D() ));
+    view = csPtr<iView>(new csView(engine, PawsManager::GetSingleton().GetGraphics3D()));
+    view->SetAutoResize(false);
     view->GetCamera()->SetSector(stage);
     view->GetCamera()->GetTransform().SetOrigin(csVector3(0, 1, -distance));
-
-    view->SetRectangle(screenFrame.xmin, screenFrame.ymin, screenFrame.Width(), screenFrame.Height());
 
     return true;
 }
@@ -237,12 +285,42 @@ void pawsObjectView::RotateTemp(int speed,float radians)
     }
 }
 
-void pawsObjectView::Draw()
+void pawsObjectView::Draw3D(iGraphics3D* graphics3D)
 {
-    if ( doRotate )
+    if(!target.IsValid() || !view || !meshView /*|| !needsDraw*/)
+    {
+        return;
+    }
+
+    // update the camera
+    if(doRotate)
         DrawRotate();
     else
-        DrawNoRotate();        
+        DrawNoRotate();
+
+    // draw it
+    csRef<iRenderManagerTargets> rmTargets = scfQueryInterface<iRenderManagerTargets>(engine->GetRenderManager());
+    rmTargets->RegisterRenderTarget(target, view, 0, iRenderManagerTargets::updateOnce | iRenderManagerTargets::clearScreen);
+    rmTargets->MarkAsUsed(target);
+    engine->GetRenderManager()->RenderView(view);
+    rmTargets->RegisterRenderTarget(target, meshView, 0, iRenderManagerTargets::updateOnce);
+    rmTargets->MarkAsUsed(target);
+    engine->GetRenderManager()->RenderView(meshView);
+
+    //needsDraw = doRotate && !cameraLocked;
+}
+
+void pawsObjectView::Draw()
+{
+    graphics2D->SetClipRect( 0,0, graphics2D->GetWidth(), graphics2D->GetHeight());
+    if(target.IsValid())
+    {
+        iGraphics3D* graphics3D = PawsManager::GetSingleton().GetGraphics3D();
+        graphics3D->DrawPixmap(target,
+            screenFrame.xmin, screenFrame.ymin, screenFrame.Width(), screenFrame.Height(),
+            0, 0, screenFrame.Width(), screenFrame.Height());
+    }
+    pawsWidget::Draw();
 }
 
 void pawsObjectView::LockCamera( csVector3 where, csVector3 at, bool mouseBreak, bool mouseRotate )
@@ -272,57 +350,11 @@ void pawsObjectView::UnlockCamera()
 
 void pawsObjectView::DrawNoRotate()
 {
-    if(screenFrame.xmin > graphics2D->GetWidth() || screenFrame.ymin > graphics2D->GetHeight() ||
-       screenFrame.xmax < 0 || screenFrame.ymax < 0)
-    {
-       return;
-    }
-
-    graphics2D->SetClipRect(0, 0, graphics2D->GetWidth(), graphics2D->GetHeight());
-    if(!PawsManager::GetSingleton().GetGraphics3D()->BeginDraw(CSDRAW_3DGRAPHICS))
-    {
-        return;
-    }
-
-    if(!view)
-    {
-        return;
-    }
-
-    iGraphics3D* og3d = view->GetContext();
-
-    view->SetContext(PawsManager::GetSingleton().GetGraphics3D());
-
-    view->SetRectangle(screenFrame.xmin,
-                       PawsManager::GetSingleton().GetGraphics3D()->GetHeight() - screenFrame.ymax ,
-                       screenFrame.Width(), screenFrame.Height());
-
-    view->GetPerspectiveCamera()->SetPerspectiveCenter((float)(screenFrame.xmin+(screenFrame.Width() >> 1))/graphics2D->GetWidth(),
-                                                       1-(float)(screenFrame.ymin+(screenFrame.Height() >> 1))/graphics2D->GetHeight());
-       
     view->GetCamera()->GetTransform().SetOrigin(cameraPosition);
     view->GetCamera()->GetTransform().LookAt(lookingAt-cameraPosition, csVector3(0, 1, 0));
 
-    view->Draw();
-
-    og3d = meshView->GetContext();
-
-    meshView->SetContext(PawsManager::GetSingleton().GetGraphics3D());
-
-    meshView->SetRectangle(screenFrame.xmin,
-        PawsManager::GetSingleton().GetGraphics3D()->GetHeight() - screenFrame.ymax ,
-        screenFrame.Width(), screenFrame.Height());
-    meshView->GetPerspectiveCamera()->SetPerspectiveCenter((float)(screenFrame.xmin+(screenFrame.Width() >> 1))/graphics2D->GetWidth(),
-        1-(float)(screenFrame.ymin+(screenFrame.Height() >> 1))/graphics2D->GetHeight());
-
     meshView->GetCamera()->GetTransform().SetOrigin(cameraPosition);
     meshView->GetCamera()->GetTransform().LookAt(lookingAt-cameraPosition, csVector3(0, 1, 0));
-    meshView->Draw();
-
-    PawsManager::GetSingleton().GetGraphics3D()->BeginDraw( CSDRAW_2DGRAPHICS );
-
-    view->SetContext( og3d );
-    pawsWidget::Draw();
 }
 
 
@@ -373,31 +405,6 @@ void pawsObjectView::DrawRotate()
         }
     }
 
-    if ( screenFrame.xmin > graphics2D->GetWidth() ||
-         screenFrame.ymin > graphics2D->GetHeight() ||
-         screenFrame.xmax < 0 ||
-         screenFrame.ymax < 0 )
-         return;
-
-    graphics2D->SetClipRect( 0,0, graphics2D->GetWidth(), graphics2D->GetHeight());
-    if ( !PawsManager::GetSingleton().GetGraphics3D()->BeginDraw(CSDRAW_3DGRAPHICS) )
-        return;
-
-    if ( !view )
-        return;
-
-    iGraphics3D* og3d = view->GetContext();
-
-    view->SetContext(PawsManager::GetSingleton().GetGraphics3D());
-
-    view->SetRectangle( screenFrame.xmin,
-                       PawsManager::GetSingleton().GetGraphics3D()->GetHeight() - screenFrame.ymax ,
-                       screenFrame.Width(),
-                       screenFrame.Height() );
-
-    view->GetPerspectiveCamera()->SetPerspectiveCenter((float)(screenFrame.xmin+(screenFrame.Width() >> 1))/graphics2D->GetWidth(),
-                                                       1-(float)(screenFrame.ymin+(screenFrame.Height() >> 1))/graphics2D->GetHeight());
-
     csVector3 camera;
     if(cameraLocked)
     {
@@ -409,6 +416,9 @@ void pawsObjectView::DrawRotate()
 
         view->GetCamera()->GetTransform().SetOrigin(camera);
         view->GetCamera()->GetTransform().LookAt(lookingAt - camera, csVector3(0, 1, 0));
+
+        meshView->GetCamera()->GetTransform().SetOrigin(camera);
+        meshView->GetCamera()->GetTransform().LookAt(lookingAt - camera, csVector3(0, 1, 0));
     }
     else
     {
@@ -418,38 +428,10 @@ void pawsObjectView::DrawRotate()
 
         view->GetCamera()->GetTransform().SetOrigin(camera);
         view->GetCamera()->GetTransform().LookAt(objectPos - camera + cameraMod, csVector3(0, 1, 0));
-    }
 
-    view->Draw();
-
-    og3d = meshView->GetContext();
-
-    meshView->SetContext(PawsManager::GetSingleton().GetGraphics3D());
-
-    meshView->SetRectangle(screenFrame.xmin,
-        PawsManager::GetSingleton().GetGraphics3D()->GetHeight() - screenFrame.ymax ,
-        screenFrame.Width(), screenFrame.Height());
-
-    meshView->GetPerspectiveCamera()->SetPerspectiveCenter((float)(screenFrame.xmin+(screenFrame.Width() >> 1))/graphics2D->GetWidth(),
-        1-(float)(screenFrame.ymin+(screenFrame.Height() >> 1))/graphics2D->GetHeight());
-
-    if(cameraLocked)
-    {
-        meshView->GetCamera()->GetTransform().SetOrigin(camera);
-        meshView->GetCamera()->GetTransform().LookAt(lookingAt - camera, csVector3(0, 1, 0));
-    }
-    else
-    {
         meshView->GetCamera()->GetTransform().SetOrigin(camera);
         meshView->GetCamera()->GetTransform().LookAt(objectPos - camera + cameraMod, csVector3(0, 1, 0));
     }
-
-    meshView->Draw();
-
-    PawsManager::GetSingleton().GetGraphics3D()->BeginDraw( CSDRAW_2DGRAPHICS );
-
-    view->SetContext( og3d );
-    pawsWidget::Draw();
 }
 
 bool pawsObjectView::OnMouseDown(int button,int mod, int x, int y)

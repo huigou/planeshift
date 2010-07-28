@@ -88,6 +88,9 @@ public:
     void Clear();
     
     void Draw();
+    void Draw3D(iGraphics3D*);
+
+    void OnResize();
 
     iMeshWrapper* GetObject() { return mesh; }
                                                 
@@ -105,8 +108,6 @@ public:
 
     void LockCamera(csVector3 where, csVector3 at, bool mouseDownUnlock = false, bool mouseDownRotate = false );
     void UnlockCamera();
-    void DrawRotate();
-    void DrawNoRotate();
 
     /// Assign this view an ID
     void SetID(unsigned int id) { ID = id; }
@@ -116,6 +117,10 @@ public:
     psCharAppearance* GetCharApp() { return charApp; }
 
 private:
+    void DrawRotate();
+    void DrawNoRotate();
+
+    bool needsDraw;
     bool cameraLocked;
     bool doRotate;
     bool mouseDownUnlock;   ///< Checks to see if a right mouse down will break camera lock.
@@ -142,6 +147,7 @@ private:
     csRef<iMeshWrapper> mesh;
     csRef<iSector> meshSector;
     csRef<iView>   meshView;
+    csRef<iTextureHandle> target;
     psCharAppearance* charApp;
 
     csVector3 objectPos;
@@ -151,6 +157,7 @@ private:
     void RotateTemp(int speed,float radians); // Used to for example stop the rotate but not write the def values
 
     float distance;
+    float origDistance;
     
     int rotateTime;
     float rotateRadians;
