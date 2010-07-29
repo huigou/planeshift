@@ -48,6 +48,8 @@ struct iRegion;
 struct iDocumentSystem;
 struct iStringSet;
 
+using namespace CS::Mesh;
+
 /** Holds a set of skin tone.
     A skin tone can conisist of several different parts having different
     required materials on them.
