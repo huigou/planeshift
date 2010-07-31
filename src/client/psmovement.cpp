@@ -609,57 +609,57 @@ void psMovementManager::MouseLookCanAct(bool v){
 
 void psMovementManager::MouseLook(bool v)
 {
-	if (!ready || !actor)
-		return;
+    if (!ready || !actor)
+        return;
 
     if(mouseLookCanAct || !v)
     {
-	mouseLook = v;
-	psCamera* camera = psengine->GetPSCamera();
-	if( camera->RotateCameraWithPlayer() )
-	{
-		if ( !locked )
-		{
-			if ( !mouseLook )
-			{
-				csVector3 vec(0,0,0);
-				actor->Movement().SetAngularVelocity(vec);
-			}
-		}
-	}
-}
+        mouseLook = v;
+        psCamera* camera = psengine->GetPSCamera();
+        if( camera->RotateCameraWithPlayer() )
+        {
+            if ( !locked )
+            {
+                if ( !mouseLook )
+                {
+                    csVector3 vec(0,0,0);
+                    actor->Movement().SetAngularVelocity(vec);
+                }
+            }
+        }
+    }
     mouseLookCanAct = false;
 }
 
 void psMovementManager::UpdateMouseLook()
 {
-	if (!ready || !actor)
-		return;
+    if (!ready || !actor)
+        return;
 
-	psCamera* camera = psengine->GetPSCamera();
+    psCamera* camera = psengine->GetPSCamera();
 
-	if ( !mouseLook  )
-	{
-		if ( lastDeltaX == 0 && lastDeltaY == 0 )
-		{
-			return;
-		}
-		else
-		{ // mouseLook turned off. Reset.
-			lastDeltaX = 0;
-			lastDeltaY = 0;
-			if ( camera->RotateCameraWithPlayer() )
-			{
-				csVector3 vec(0,0,0);
-				actor->Movement().SetAngularVelocity(vec);
-			}
-			return;
-		}
-	}
+    if ( !mouseLook  )
+    {
+        if ( lastDeltaX == 0 && lastDeltaY == 0 )
+        {
+            return;
+        }
+        else
+        { // mouseLook turned off. Reset.
+            lastDeltaX = 0;
+            lastDeltaY = 0;
+            if ( camera->RotateCameraWithPlayer() )
+            {
+                csVector3 vec(0,0,0);
+                actor->Movement().SetAngularVelocity(vec);
+            }
+            return;
+        }
+    }
 
     iGraphics2D* g2d = psengine->GetG2D();
 
-    if(activeMoves & kbdRotate)
+    if(activeMoves & kbdRotate && camera->RotateCameraWithPlayer())
     {
         lastDeltaX = 0;
         lastDeltaY = 0;
@@ -709,7 +709,7 @@ void psMovementManager::MouseLook(iEvent& ev)
     float deltaX = float(mouseX - centerX);
     float deltaY = float(mouseY - centerY);
 
-    if (activeMoves & kbdRotate)
+    if (activeMoves & kbdRotate && camera->RotateCameraWithPlayer())
     {
         lastDeltaX = 0;
         lastDeltaY = 0;
@@ -717,13 +717,13 @@ void psMovementManager::MouseLook(iEvent& ev)
         return;
     }
 
-	if ( deltaX == 0 && deltaY == 0)
-	{// No actual event but caused by reseting the mouse position
-		return;
-	}
-	// remember the current values.
-	lastDeltaX = deltaX;
-	lastDeltaY = deltaY;
+    if ( deltaX == 0 && deltaY == 0)
+    {// No actual event but caused by reseting the mouse position
+        return;
+    }
+    // remember the current values.
+    lastDeltaX = deltaX;
+    lastDeltaY = deltaY;
 
     // Recenter mouse so we don't lose focus
     g2d->SetMousePosition(centerX, centerY);
