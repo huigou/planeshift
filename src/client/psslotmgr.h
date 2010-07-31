@@ -87,15 +87,12 @@ private:
 
     csArray<pawsSlot*> slotsInUse;
 
-    /// Shortcut for event mouse move
-    csEventID MouseMove;
-
-    /// Shortcut for event mouse down
-    csEventID MouseDown;
-
-    /// Shortcut for event mouse up
-    csEventID MouseUp;
-
+    csEventID MouseMove; ///< Shortcut for event mouse move
+    csEventID MouseDown; ///< Shortcut for event mouse down
+    csEventID MouseUp;   ///< Shortcut for event mouse up
+    csEventID KeyDown;   ///< Shortcut for event key down
+    csEventID KeyUp;     ///< Shortcut for event key up
+    
     csString draggedMesh;
     iMeshWrapper* outline;
 };

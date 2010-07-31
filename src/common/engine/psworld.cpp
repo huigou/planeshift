@@ -280,16 +280,23 @@ csVector3 psWorld::Matrix2Rot(const csMatrix3& mat)
 {
     csVector3 rot(0);
     
-    // obtain Y rotation
-    csVector3 vec(0,0,1);
+    // obtain yaw
+    csVector3 vec(0,1,0);
     vec = mat * vec;
-    rot.y = atan2(vec.x, vec.z);
-    
-    // obtain Z rotation
-    vec = csVector3(1,0,0);
-    vec = csYRotMatrix3(-rot.y) * mat * vec; // reverse the Y rotation here, so we get just the Z one
-    rot.z = atan2(vec.y, vec.x);
+    rot.z = acos(vec.y);
 
+    // obtain roll
+    rot.y = atan2(vec.z/sin(rot.z), -vec.x/sin(rot.z));
+    
+    // obtain pitch
+    vec = mat * csVector3(0,0,1);
+    vec = csZRotMatrix3(-rot.z) * csYRotMatrix3(-rot.y) * vec; // reverse roll and yaw here to ease our job
+    rot.x = atan2(vec.x, vec.z);
+
+    // force results in [0;2*PI] range
+    rot.x = rot.x < 0 ? rot.x + TWO_PI : rot.x;
+    rot.y = rot.y < 0 ? rot.y + TWO_PI : rot.y;
+    rot.z = rot.z < 0 ? rot.z + TWO_PI : rot.z;
     return rot;
 }
 

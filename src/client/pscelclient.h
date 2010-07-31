@@ -357,7 +357,11 @@ public:
     /** Get position of entity */
     virtual csVector3 GetPosition();
 
-    /** Get rotation of entity */
+    /**
+     * Get rotation of entity as returned by psWorld::Matrix2YRot
+     * @return rotation about y axis
+     * @see psWorld::Matrix2Yrot
+     */
     virtual float GetRotation();
 
     /** Get sector of entity */

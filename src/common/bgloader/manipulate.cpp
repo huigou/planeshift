@@ -175,18 +175,30 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
     {
         if(selectedMesh.IsValid())
         {
-            origRot.y += 6 * PI * ((float)previousPosition.x - pos.x) / g2d->GetWidth();
-            origRot.z += 6 * PI * ((float)previousPosition.y - pos.y) / g2d->GetHeight();
+            float factor_h = 6 * PI * ((float)previousPosition.x - pos.x) / g2d->GetHeight();
+            float factor_v = 6 * PI * ((float)previousPosition.y - pos.y) / g2d->GetHeight();
+            origRot += factor_h*currRot_h + factor_v*currRot_v;
 
-            csYRotMatrix3 rotationY(origRot.y);
-            csZRotMatrix3 rotationZ(origRot.z);
+            csYRotMatrix3 pitch(origRot.x);
+            csYRotMatrix3 roll(origRot.y);
+            csZRotMatrix3 yaw(origRot.z);
 
-            csReversibleTransform oldTrans(rotationY, rotBase);
-            csReversibleTransform rotTrans(rotationZ, -rotBase+origTrans);
+            csReversibleTransform trans(roll*yaw, rotBase);
+            trans *= csReversibleTransform(pitch, -rotBase+origTrans);
 
-            selectedMesh->GetMovable()->SetTransform(oldTrans*rotTrans);
+            selectedMesh->GetMovable()->SetTransform(trans);
             previousPosition = pos;
         }
+    }
+
+    void BgLoader::SetRotation(int flags_h, int flags_v)
+    {
+        currRot_h.x = (flags_h & PS_MANIPULATE_PITCH) ? 1 : 0;
+        currRot_h.y = (flags_h & PS_MANIPULATE_ROLL ) ? 1 : 0;
+        currRot_h.z = (flags_h & PS_MANIPULATE_YAW  ) ? 1 : 0;
+        currRot_v.x = (flags_v & PS_MANIPULATE_PITCH) ? 1 : 0;
+        currRot_v.y = (flags_v & PS_MANIPULATE_ROLL ) ? 1 : 0;
+        currRot_v.z = (flags_v & PS_MANIPULATE_YAW  ) ? 1 : 0;
     }
 
     void BgLoader::RemoveSelected()

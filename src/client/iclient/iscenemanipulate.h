@@ -23,9 +23,17 @@
 class csVector2;
 class iCamera;
 
+enum PS_MANIPULATE // rotation type
+{
+    PS_MANIPULATE_NONE  = 0,
+    PS_MANIPULATE_PITCH = 1,
+    PS_MANIPULATE_YAW   = 2,
+    PS_MANIPULATE_ROLL  = 4
+};
+
 struct iSceneManipulate : public virtual iBase
 {
-    SCF_INTERFACE(iSceneManipulate, 2, 0, 0);
+    SCF_INTERFACE(iSceneManipulate, 2, 1, 0);
 
    /**
     * Creates a new instance of the given factory at the given screen space coordinates.
@@ -60,6 +68,14 @@ struct iSceneManipulate : public virtual iBase
     virtual void RotateSelected(const csVector2& pos) = 0;
 
    /**
+    * Set the axes to rotate around with RotateSelected.
+    * @param horizontal_flags bitflag with axes rotated via horizontal movement.
+    * @param vertical_flags bitflag with axes rotated via horizontal movement.
+    * @see PS_MANIPULATE
+    */
+    virtual void SetRotation(int horizontal_flags, int vertical_flags) = 0;
+
+   /**
     * Removes the currently selected mesh from the scene.
     */
     virtual void RemoveSelected() = 0;
@@ -68,6 +84,11 @@ struct iSceneManipulate : public virtual iBase
     * retrieve the final position and rotation.
     */
     virtual void GetPosition(csVector3& pos, csVector3& rot, const csVector2& screenPos) = 0;
+
+   /**
+    * Sets the previous position (e.g. in case you warped the mouse)
+    */
+    virtual void SetPosition(const csVector2& pos) = 0;
 };
 
 #endif // __ISCENEMANIPULATE_H__
