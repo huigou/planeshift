@@ -131,6 +131,8 @@ ModeHandler::ModeHandler(psCelClient *cc,
     lightningreset->SetName("lightning reset");
     lightningreset->SetColor(csColor(0.0f));
     engine->GetVariableList()->Add(lightningreset);
+
+    processWeather = psengine->GetConfig()->GetBool("PlaneShift.Weather.Enabled", true);
 }
 
 ModeHandler::~ModeHandler()
@@ -316,7 +318,8 @@ void ModeHandler::HandleMessage(MsgEntry* me)
             return;
 
         case MSGTYPE_WEATHER:
-            HandleWeatherMessage(me);
+            if(processWeather)
+                HandleWeatherMessage(me);
             return;
 
         case MSGTYPE_NEWSECTOR:

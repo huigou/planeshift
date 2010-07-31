@@ -183,6 +183,7 @@ protected:
     WeatherObject*              downfall; // Weather object following the player around
     WeatherObject*              fog;      // Weather object that is always in effect
     csPDelArray<WeatherPortal>  portals;  // Weather for portals out of the sector.
+    bool processWeather; // determine whether to show weather effects or not
 
     void HandleModeMessage(MsgEntry* me);
     void HandleWeatherMessage(MsgEntry* me);
