@@ -75,7 +75,7 @@ private:
  
     void PlaceItem();
     void UpdateItem();
-    void DropItem();
+    void DropItem(bool guard);
 
  
     bool isDragging;

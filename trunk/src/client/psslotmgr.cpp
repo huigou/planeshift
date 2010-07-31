@@ -77,7 +77,7 @@ bool psSlotManager::HandleEvent( iEvent& ev )
                 if(isPlacing)
                 {
                     // Drop the item at the current position.
-                    DropItem();
+                    DropItem(csMouseEventHelper::GetModifiers(&ev) & CSMASK_SHIFT);
                     return true;
                 }
                 else
@@ -271,7 +271,7 @@ void psSlotManager::UpdateItem()
 }
 
 
-void psSlotManager::DropItem()
+void psSlotManager::DropItem(bool guard)
 {
     // get final position and rotation
     psPoint p = PawsManager::GetSingleton().GetMouse()->GetPosition();
@@ -282,7 +282,7 @@ void psSlotManager::DropItem()
     // Send drop message.
     psSlotMovementMsg msg( draggingSlot.containerID, draggingSlot.slotID,
       CONTAINER_WORLD, 0, draggingSlot.stackCount, &pos,
-      &rot);
+      &rot, guard);
     msg.SendMessage();
 
     // Remove outline mesh.
