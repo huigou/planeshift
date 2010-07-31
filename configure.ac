@@ -502,6 +502,21 @@ CS_EMIT_BUILD_PROPERTY([REF_TRACKER],
 AS_IF([test $enable_ref_tracker = yes],
     [CS_HEADER_PROPERTY([CS_REF_TRACKER])])	
 
+#------------------------------------------------------------------------------
+# Determine if crash reporter should be enabled.
+#------------------------------------------------------------------------------
+AC_MSG_CHECKING([whether to use crash reporter])
+AC_ARG_ENABLE([reporter],
+    [AC_HELP_STRING([--enable-reporter],
+	[enable the crash reporter which uploads dumps on crash
+	(default NO)])],
+    [], [enable_reporter=no])
+AC_MSG_RESULT([$enable_reporter])
+CS_EMIT_BUILD_PROPERTY([REPORTER],
+    [$enable_reporter])
+AS_IF([test $enable_reporter = yes],
+    [CS_HEADER_PROPERTY([USE_BREAKPAD])])
+
 #----------------------------------------------------------------------------
 # Package configuration switches
 #----------------------------------------------------------------------------

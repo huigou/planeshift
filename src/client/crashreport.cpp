@@ -21,8 +21,8 @@
 #include <psconfig.h>
 
 // Mac uses a different breakpad library. Disabled in Debug.
-#if !defined(CS_DEBUG) && !defined(CS_PLATFORM_MACOSX)
-#define USE_BREAKPAD
+#if defined(CS_DEBUG) || defined(CS_PLATFORM_MACOSX)
+#undef USE_BREAKPAD
 #endif
 
 #ifdef USE_BREAKPAD
