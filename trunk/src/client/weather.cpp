@@ -355,7 +355,7 @@ SnowWeatherObject::SnowWeatherObject(WeatherInfo* parent)  : WeatherObject(paren
     csString snowNoise = psengine->GetConfig()->GetStr("PlaneShift.Effects.Snow.Noise", "");
     if(!snowNoise.IsEmpty())
     {
-        csRef<iTextureWrapper> tex = psengine->GetEngine()->CreateTexture("snowdiffuse", "/this/art/effects/snow.png", 0, 0);
+        csRef<iTextureWrapper> tex = psengine->GetEngine()->CreateTexture("snowdiffuse", snowNoise.GetData(), 0, 0);
         csRef<iTextureHandle> texHandle = tex->GetTextureHandle();
         CS::ShaderVarStringID snowTex = strings->Request ("tex snow 1");
         csShaderVariable* snowTexSV = shman->GetVariableAdd(snowTex);
