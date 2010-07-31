@@ -1140,11 +1140,10 @@ void GEMClientObject::SetPosition(const csVector3 & pos, const csVector3& rot, i
 
 void GEMClientObject::Rotate(float xRot, float yRot, float zRot)
 {
-    // calculate the rotation matrix from the axis rotation
-    // we don't support x rotation right now
-    // csMatrix3 xmatrix = csXRotMatrix3(xRot);
-    csMatrix3 ymatrix = csYRotMatrix3(yRot);
-    csMatrix3 zmatrix = csZRotMatrix3(zRot);
+    // calculate the rotation matrix from the pitch-roll-yaw angles
+    csYRotMatrix3 pitch(xRot);
+    csYRotMatrix3 roll(yRot);
+    csZRotMatrix3 yaw(zRot);
 
     // obtain current transform
     const csReversibleTransform& movTrans = pcmesh->GetMovable()->GetTransform();
@@ -1156,14 +1155,13 @@ void GEMClientObject::Rotate(float xRot, float yRot, float zRot)
     csVector3 origTrans = movTrans.GetO2TTranslation();
 
     // create the final transformation
-    // move to center
-    csReversibleTransform trans(ymatrix,-rotBase);
-    // apply rotation, revert move to center and move to final position
-    trans = trans * csReversibleTransform(zmatrix,rotBase+origTrans);
+    // move to center - apply roll and yaw
+    csReversibleTransform trans(roll*yaw,-rotBase);
+    // apply pitch, revert move to center and move to final position
+    trans = trans * csReversibleTransform(pitch,rotBase+origTrans);
 
     // set new transformation
     pcmesh->GetMovable()->SetTransform(trans);
-
     pcmesh->GetMovable()->UpdateMove();
 
     // Set instancing transform.

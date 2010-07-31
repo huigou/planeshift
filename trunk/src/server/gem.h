@@ -344,6 +344,11 @@ public:
     const csVector3 & GetPosition();
     void GetPosition(csVector3& pos, float& yrot,iSector*& sector);
     void GetPosition(csVector3& pos, iSector*& sector);
+    /**
+     * Get rotation of entity as returned by psWorld::Matrix2YRot
+     * @return rotation about y axis
+     * @see psWorld::Matrix2Yrot
+     */
     float GetAngle();
     iSector* GetSector();
     const char *GetSectorName() { return GetSector() ? GetSector()->QueryObject()->GetName() : "(null)"; }

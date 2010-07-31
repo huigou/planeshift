@@ -213,6 +213,19 @@ public:
     void RotateSelected(const csVector2& pos);
 
    /**
+    * Set the axes to rotate around with RotateSelected.
+    * @param flags_h bitflag with axes for horizontal mouse movement
+    * @param flags_v bitflag with axes for vertical mouse movement
+    * @see PS_MANIPULATE
+    */
+    void SetRotation(int flags_h, int flags_v);
+
+   /**
+    * Sets the previous position (e.g. in case you warped the mouse)
+    */
+    void SetPosition(const csVector2& pos) { previousPosition = pos; };
+
+   /**
     * Removes the currently selected mesh from the scene.
     */
     void RemoveSelected();
@@ -729,6 +742,8 @@ private:
     csVector3 origTrans;
     csVector3 rotBase;
     csVector3 origRot;
+    csVector3 currRot_h;
+    csVector3 currRot_v;
     bool resetHitbeam;
 };
 }

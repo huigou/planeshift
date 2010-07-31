@@ -47,6 +47,8 @@ psSlotManager::psSlotManager()
     MouseMove = csevMouseMove (psengine->GetEventNameRegistry(), 0);
     MouseDown = csevMouseDown (psengine->GetEventNameRegistry(), 0);
     MouseUp = csevMouseUp (psengine->GetEventNameRegistry(), 0);
+    KeyDown = csevKeyboardDown (psengine->GetEventNameRegistry());
+    KeyUp = csevKeyboardUp (psengine->GetEventNameRegistry());
 }
 
 
@@ -59,7 +61,7 @@ bool psSlotManager::HandleEvent( iEvent& ev )
 {
     if(isDragging)
     {
-        uint button = csMouseEventHelper::GetButton(&ev);
+        int button = csMouseEventHelper::GetButton(&ev);
         if(ev.Name == MouseMove)
         {
             if(isPlacing)
@@ -87,8 +89,17 @@ bool psSlotManager::HandleEvent( iEvent& ev )
             {
                 if(!isRotating)
                 {
+                    basePoint = PawsManager::GetSingleton().GetMouse()->GetPosition();
                     isRotating = true;
-                    return false;
+                    if(csMouseEventHelper::GetModifiers(&ev) & CSMASK_SHIFT)
+                    {
+                        psengine->GetSceneManipulator()->SetRotation(PS_MANIPULATE_PITCH,PS_MANIPULATE_YAW);
+                    }
+                    else
+                    {
+                        psengine->GetSceneManipulator()->SetRotation(PS_MANIPULATE_ROLL,PS_MANIPULATE_NONE);
+                    }
+                    return true;
                 }
             }
             else
@@ -102,10 +113,20 @@ bool psSlotManager::HandleEvent( iEvent& ev )
             {
                 if(isRotating)
                 {
+                    //PawsManager::GetSingleton().GetMouse()->SetPosition(basePoint.x, basePoint.y);
+                    psengine->GetG2D()->SetMousePosition(basePoint.x, basePoint.y);
+                    psengine->GetSceneManipulator()->SetPosition(csVector2(basePoint.x, basePoint.y));
                     isRotating = false;
+                    return true;
                 }
             }
         }
+        /*else if(ev.Name == KeyDown)
+        {
+        }
+        else if(ev.Name == KeyUp)
+        {
+        }*/
     }
 
     return false;

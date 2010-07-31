@@ -128,9 +128,20 @@ public:
     /// Return an enties position
     void GetPosition(iMeshWrapper *entity, csVector3& pos, float* yrot, iSector*& sector);
 
+    /**
+     * obtain final rotation about y axis of an object.
+     * @return angle about y axis in the range [0;2*PI)
+     * @note the returned angle is the *final* one - it may be a result of several rotations.
+     * @see Matrix2Rot
+     */
     static float Matrix2YRot(const csMatrix3& mat);
     
-    /// obtain the rotation about the axes - expensive (note that there's not X rotation, yet)
+    /**
+     * obtain the rotation about the axes - expensive.
+     * @return returns (pitch, roll, yaw) vector
+     * @remark note that the y component is *not* necessarily equal to the value Matrix2YRot would yield.
+     * @note all result values are in [0;2*PI) range
+     */
     static csVector3 Matrix2Rot(const csMatrix3& mat);
 
     void DumpWarpCache();
