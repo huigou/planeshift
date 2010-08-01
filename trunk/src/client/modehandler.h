@@ -206,10 +206,10 @@ protected:
 
     /* WEATHER FUNCTIONS */
     // Controls the weather.
-    void ProcessLighting(psWeatherMessage::NetWeatherInfo& info);
-    void ProcessDownfall(psWeatherMessage::NetWeatherInfo& info);
+    void ProcessLighting(const psWeatherMessage::NetWeatherInfo& info);
+    void ProcessDownfall(const psWeatherMessage::NetWeatherInfo& info);
     public:
-    void ProcessFog(psWeatherMessage::NetWeatherInfo& info);
+    void ProcessFog(const psWeatherMessage::NetWeatherInfo& info);
 protected:
     bool CreateWeather(WeatherInfo* ri, csTicks delta);
 
