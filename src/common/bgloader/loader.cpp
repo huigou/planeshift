@@ -53,7 +53,7 @@ SCF_IMPLEMENT_FACTORY(BgLoader)
 BgLoader::BgLoader(iBase *p)
   : scfImplementationType (this, p), parsedShaders(false),
   loadRange(500), enabledGfxFeatures(0), validPosition(false),
-  loadingOffset(0), resetHitbeam(true)
+  loadingOffset(0), resetHitbeam(true), currRot_h(0), currRot_v(0)
 {
 }
 
