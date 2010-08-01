@@ -26,6 +26,7 @@
 //=============================================================================
 #include <csutil/csstring.h>
 #include <csgeom/vector3.h>
+#include "util/scriptvar.h"
 
 //=============================================================================
 // Project Includes
@@ -44,7 +45,7 @@
 *
 *
 */
-class psSectorInfo
+class psSectorInfo : public iScriptableVar
 {
 public:
     psSectorInfo();
@@ -56,6 +57,11 @@ public:
     unsigned int GetRandomRainFadeIn();
     unsigned int GetRandomRainFadeOut();
     unsigned int GetRandomLightningGap();
+
+    /// This is used by the math scripting engine to get various values.
+    double GetProperty(const char *ptr);
+    double CalcFunction(const char * functionName, const double * params);
+    const char *ToString() { return name.GetDataSafe(); }
 
     bool GetIsColliding() { return is_colliding; }
     bool GetIsNonTransient() { return is_non_transient; }

@@ -2972,7 +2972,7 @@ double psCharacter::GetProperty(const char *ptr)
     }
     else if (!strcasecmp(ptr,"sector"))
     {
-        return location.loc_sector->uid;
+        return (double)(intptr_t)(location.loc_sector);
     }
     else if (!strcasecmp(ptr,"owner"))
     {
