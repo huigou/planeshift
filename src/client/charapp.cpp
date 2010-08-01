@@ -64,6 +64,7 @@ psCharAppearance::psCharAppearance(iObjectRegistry* objectReg)
     txtmgr = g3d->GetTextureManager();
     xmlparser =  csQueryRegistry<iDocumentSystem> (objectReg);
 
+    //NOTE: THESE MUST BE VALID AT ALL TIMES!
     eyeMesh = "Eyes";
     hairMesh = "Hair";
     beardMesh = "Beard";
@@ -268,14 +269,7 @@ void psCharAppearance::BeardMesh(csString& subMesh)
 
 void psCharAppearance::HairMesh(csString& subMesh)
 {
-    hairMesh = subMesh;
-
-    if ( hairMesh.Length() == 0 )
-    {
-        hairMesh = "Hair";
-    }
-
-    csString newPartParsed = ParseStrings("Hair", hairMesh);
+    csString newPartParsed = subMesh.Length() ? ParseStrings("Hair", subMesh) : hairMesh;
 
     if(state && stateFactory)
     {
@@ -327,64 +321,57 @@ void psCharAppearance::HairMesh(csString& subMesh)
 
 void psCharAppearance::HairColor(csVector3& color)
 {
-    if ( hairMesh.Length() == 0 )
+    hairShader = color;
+    csRef<iShaderVariableContext> context_hair;
+    csRef<iShaderVariableContext> context_beard;
+
+    if(state)
     {
-        return;
+        context_hair = state->GetCoreMeshShaderVarContext(hairMesh);
+        context_beard = state->GetCoreMeshShaderVarContext(beardMesh);
     }
-    else
+    else if(animeshObject && animeshFactory)
     {
-        hairShader = color;
-        csRef<iShaderVariableContext> context_hair;
-        csRef<iShaderVariableContext> context_beard;
-
-        if(state)
+        for ( size_t idx=0; idx < animeshFactory->GetSubMeshCount(); idx++)
         {
-            context_hair = state->GetCoreMeshShaderVarContext(hairMesh);
-            context_beard = state->GetCoreMeshShaderVarContext(beardMesh);
-        }
-        else if(animeshObject && animeshFactory)
-        {
-            for ( size_t idx=0; idx < animeshFactory->GetSubMeshCount(); idx++)
+            const char* meshName = animeshFactory->GetSubMesh(idx)->GetName();
+            if(meshName)
             {
-                const char* meshName = animeshFactory->GetSubMesh(idx)->GetName();
-                if(meshName)
+                if (!strcmp(meshName, hairMesh))
                 {
-                    if (!strcmp(meshName, hairMesh))
-                    {
-                        context_hair = animeshObject->GetSubMesh(idx)->GetShaderVariableContext(0);
-                    }
+                    context_hair = animeshObject->GetSubMesh(idx)->GetShaderVariableContext(0);
+                }
 
-                    if (!strcmp(meshName, beardMesh))
-                    {
-                        context_beard = animeshObject->GetSubMesh(idx)->GetShaderVariableContext(0);
-                    }
+                if (!strcmp(meshName, beardMesh))
+                {
+                    context_beard = animeshObject->GetSubMesh(idx)->GetShaderVariableContext(0);
                 }
             }
         }
-
-        if ( context_hair.IsValid() )
-        {
-            CS::ShaderVarStringID varName = stringSet->Request("color modulation");
-            csShaderVariable* var = context_hair->GetVariableAdd(varName);
-
-            if ( var )
-            {
-                var->SetValue(hairShader);
-            }
-        }
-
-        if ( context_beard.IsValid() )
-        {
-            CS::ShaderVarStringID varName = stringSet->Request("color modulation");
-            csShaderVariable* var = context_beard->GetVariableAdd(varName);
-
-            if ( var )
-            {
-                var->SetValue(hairShader);
-            }
-        }
-        hairColorSet = true;
     }
+
+    if ( context_hair.IsValid() )
+    {
+        CS::ShaderVarStringID varName = stringSet->Request("color modulation");
+        csShaderVariable* var = context_hair->GetVariableAdd(varName);
+
+        if ( var )
+        {
+            var->SetValue(hairShader);
+        }
+    }
+
+    if ( context_beard.IsValid() )
+    {
+        CS::ShaderVarStringID varName = stringSet->Request("color modulation");
+        csShaderVariable* var = context_beard->GetVariableAdd(varName);
+
+        if ( var )
+        {
+            var->SetValue(hairShader);
+        }
+    }
+    hairColorSet = true;
 }
 
 void psCharAppearance::EyeColor(csVector3& color)
@@ -426,9 +413,9 @@ void psCharAppearance::ShowMeshes(csString& slot, csString& meshList, bool show)
         return;
 
     //allows substituiters for replaceable meshes.
-    meshList.ReplaceAll("$H", hairMesh.Length() ? hairMesh : "Hair");
-    meshList.ReplaceAll("$E", eyeMesh.Length() ? eyeMesh : "Eyes");
-    meshList.ReplaceAll("$B", beardMesh.Length() ? beardMesh : "Beard");
+    meshList.ReplaceAll("$H", hairMesh);
+    meshList.ReplaceAll("$E", eyeMesh);
+    meshList.ReplaceAll("$B", beardMesh);
 
     //first split the meshlist
     csStringArray meshes;
