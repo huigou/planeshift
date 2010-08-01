@@ -89,7 +89,6 @@ const constraint constraints[] =
     {WorkManager::constraintTime, "TIME", "You can not do this work at this time of the day!"},
 
     // People in area.
-
     // Parameter: n,r; where n is number of people and r is the range.
     // Example: FRIENDS(6,4) is six people within 4.
     {WorkManager::constraintFriends, "FRIENDS", "You need more people for this work!"},
