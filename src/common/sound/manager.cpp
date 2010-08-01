@@ -22,13 +22,11 @@
  */
 
 #include "manager.h"
+#include "handle.h"
+#include "control.h"
 #include "system.h"
 #include "data.h"
 #include "util/log.h"
-
-// todo: remove singletons
-SoundSystem         *soundSystem;
-SoundData           *soundData;
 
 /*
  * Initialize the SoundSystem (SndSys) and the Datamanager (SndData)
@@ -148,7 +146,7 @@ Play2DSound (const char *name, bool loop, size_t loopstart, size_t loopend,
         return false;
     }
 
-    handle = new SoundHandle;
+    handle = new SoundHandle(this);
 
     if (!handle->Init(name, loop, volume_preset, CS_SND3D_DISABLE, sndCtrl))
     {
@@ -198,7 +196,7 @@ Play3DSound (const char *name, bool loop, size_t loopstart, size_t loopend,
         return false;
     }
 
-    handle = new SoundHandle;
+    handle = new SoundHandle(this);
 
     if (!handle->Init(name, loop, volume_preset, type3d, sndCtrl))
     {
@@ -273,6 +271,8 @@ void SoundSystemManager::UpdateSound ()
                 || tmp->sndCtrl->GetToggle() == false)
             {
                 StopSound(tmp);
+                i--;
+                continue;
             }
             else
             {

@@ -22,6 +22,7 @@
  */
 
 #include "queue.h"
+#include "handle.h"
 #include "manager.h"
 
 extern SoundSystemManager  *SndSysMgr;
