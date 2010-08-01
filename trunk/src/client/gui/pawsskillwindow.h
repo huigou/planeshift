@@ -146,8 +146,9 @@ protected:
 
     struct FactionRating
     {
-        csString name;
-        int      rating;
+        csString        name;
+        int             rating;
+        pawsListBoxRow* row;
     };
 
     csPDelArray<FactionRating>   factions;      ///< The factions by name
