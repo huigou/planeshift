@@ -27,7 +27,8 @@
 #include <isndsys.h>
 #include <csutil/csstring.h>
 
-#include "control.h"
+struct SoundControl;
+struct SoundSystemManager;
 
 enum
 {
@@ -53,7 +54,7 @@ class SoundHandle
     csRef<iSndSysSource3D>                  sndsource3d;    ///< sndsource if 3D
     csRef<iSndSysSource3DDirectionalSimple> sndsourcedir;   ///< additional source if 3D and directional
 
-    SoundHandle ();                                         ///< constructor 
+    SoundHandle (SoundSystemManager*);                      ///< constructor 
     ~SoundHandle ();                                        ///< destructor
     /**
      * Does fading calculation for this Handle
@@ -113,6 +114,7 @@ class SoundHandle
     void RemoveCallback();    
 
     private:
+    SoundSystemManager* manager;
     bool hasCallback;                  ///< true of theres a callback set, false of not
     void (*callbackobject);            ///< pointer to the callback object
     void (*callbackfunction) (void *); ///< pointer to the callback function

@@ -22,11 +22,10 @@
  */
 
 #include "handle.h"
+#include "manager.h"
 #include "system.h"
 #include "data.h"
-
-extern SoundSystem         *soundSystem;
-extern SoundData           *soundData;
+#include "control.h"
 
 /*
  * A Soundhandle contains all informations we have about a sound
@@ -35,7 +34,7 @@ extern SoundData           *soundData;
  * volumes, fading parameters
  */
 
-SoundHandle::SoundHandle ()
+SoundHandle::SoundHandle (SoundSystemManager* manager)
 {
     fade = 0;
     fade_stop = false;
@@ -43,6 +42,7 @@ SoundHandle::SoundHandle ()
     sndsource = NULL;
     sndstream = NULL;
     hasCallback = false;
+    this->manager = manager;
 }
 
 SoundHandle::~SoundHandle ()
@@ -59,12 +59,12 @@ SoundHandle::~SoundHandle ()
      */
     if (sndstream != NULL)
     {
-        soundSystem->RemoveStream(sndstream);
+        manager->GetSoundSystem()->RemoveStream(sndstream);
     }
 
     if (sndsource != NULL)
     {
-        soundSystem->RemoveSource(sndsource);
+        manager->GetSoundSystem()->RemoveSource(sndsource);
     }
 
 }
@@ -84,18 +84,18 @@ bool SoundHandle::Init (const char *resname, bool loop, float volume_preset,
 {
     csRef<iSndSysData>  snddata; 
 
-    if (!soundData->LoadSoundFile(resname, snddata))
+    if (!manager->GetSoundData()->LoadSoundFile(resname, snddata))
     {
         return false;
     }
 
-    if (!soundSystem->CreateStream(snddata, loop, type, sndstream))
+    if (!manager->GetSoundSystem()->CreateStream(snddata, loop, type, sndstream))
     {
-        soundData->UnloadSoundFile(resname);
+        manager->GetSoundData()->UnloadSoundFile(resname);
         return false;
     }
 
-    soundSystem->CreateSource(sndstream, sndsource);
+    manager->GetSoundSystem()->CreateSource(sndstream, sndsource);
     preset_volume = volume_preset;
     sndCtrl = ctrl;
     name = csString(resname);
@@ -149,13 +149,13 @@ void SoundHandle::Fade (float volume, int time, int direction)
 void SoundHandle::ConvertTo3D (float mindist, float maxdist, csVector3 pos,
                                csVector3 dir, float rad)
 {
-    soundSystem->Create3dSource (sndsource, sndsource3d, mindist, maxdist,
+    manager->GetSoundSystem()->Create3dSource (sndsource, sndsource3d, mindist, maxdist,
                                  pos);
 
     /* create a directional source if rad > 0 */
     if (rad > 0)
     {
-        soundSystem->CreateDirectional3dSource (sndsource3d, sndsourcedir,
+        manager->GetSoundSystem()->CreateDirectional3dSource (sndsource3d, sndsourcedir,
                                                 dir, rad);
     }
 }

@@ -24,7 +24,11 @@
 #ifndef _SOUND_QUEUE_H_
 #define _SOUND_QUEUE_H_
 
-#include "handle.h"
+#include <csutil/csstring.h>
+#include <csutil/array.h>
+
+struct SoundHandle;
+struct SoundControl;
 
 /**
  * Queue object for @see SoundQueue.

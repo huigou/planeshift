@@ -26,8 +26,13 @@
 
 #include <cssysdef.h>
 #include <iutil/objreg.h>
-#include "control.h"
-#include "handle.h"
+#include <csgeom/vector3.h>
+#include <csutil/array.h>
+
+struct SoundSystem;
+struct SoundData;
+struct SoundHandle;
+struct SoundControl;
 
 enum
 {
@@ -147,7 +152,12 @@ class SoundSystemManager
      */
     SoundControl* GetSoundControl ();
 
+    SoundSystem* GetSoundSystem() { return soundSystem; }
+    SoundData* GetSoundData() { return soundData; }
+
     private:
+    SoundSystem         *soundSystem;
+    SoundData           *soundData;
     csArray<SoundControl *> soundController;    ///< array which contains  all SoundControls
 
     csArray<SoundHandle *>  soundHandles;       ///< array which contains all SoundHandles
