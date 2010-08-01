@@ -948,7 +948,29 @@ bool pawsMessageTextBox::OnMouseDown( int button, int modifiers, int x, int y )
 
     return pawsWidget::OnMouseDown( button, modifiers, x ,y);
 }
-    
+
+bool pawsMessageTextBox::OnKeyDown(utf32_char keyCode, utf32_char key, int modifiers )
+{
+    //this function handles if the user uses the page up or down buttons on this text box
+    //and scroll of exactly the size of lines which is shown in the textbox
+    if(keyCode == CSKEY_PGUP || keyCode == CSKEY_PGDN)
+    {
+        //check onresize for the math of this. TODO: assembly in an unique function.
+        int borderOffSize = 4;
+        if (border)
+            borderOffSize = 8;
+        int scrollAmt = ((screenFrame.Height()-borderOffSize-((screenFrame.Height()-borderOffSize) % lineHeight)) / lineHeight);
+        if (scrollBar)
+        {
+            if(keyCode == CSKEY_PGUP) //go up
+                scrollBar->SetCurrentValue(scrollBar->GetCurrentValue() - scrollAmt);
+            else //go down
+                scrollBar->SetCurrentValue(scrollBar->GetCurrentValue() + scrollAmt);
+        return true;
+        }
+    }
+    return pawsWidget::OnKeyDown(keyCode, key, modifiers);
+}
 
 
 //---------------------------------------------------------------------------------

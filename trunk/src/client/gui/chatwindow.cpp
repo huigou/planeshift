@@ -1819,6 +1819,20 @@ bool pawsChatWindow::OnKeyDown(utf32_char keyCode, utf32_char key, int modifiers
 
             break;
         }
+ 
+        //these two cases work with the text widget to move a page up/down
+        case CSKEY_PGUP:
+        case CSKEY_PGDN:
+        {
+            if(tabs)
+            {
+                csString chatType = tabs->GetActiveTab()->GetName();
+                pawsWidget* text = dynamic_cast<pawsMessageTextBox*>(FindWidget(chatType));
+                if(text)
+                    return text->OnKeyDown(keyCode,key,modifiers);
+            }
+            break;
+        }
 
         default:
         {
