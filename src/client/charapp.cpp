@@ -417,9 +417,14 @@ void psCharAppearance::ShowMeshes(csString& slot, csString& meshList, bool show)
     meshList.ReplaceAll("$E", eyeMesh);
     meshList.ReplaceAll("$B", beardMesh);
 
+    //check if we have still meshes to work on
+    if(!meshList.Length())
+        return;
+
     //first split the meshlist
     csStringArray meshes;
     meshes.SplitString(meshList, ",");
+
     for(size_t i = 0; i < meshes.GetSize(); i++)
     {
         csString meshName = meshes.Get(i);
