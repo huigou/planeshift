@@ -301,7 +301,9 @@ void pawsStorageWindow::HandleCategories( const char* data )
         pawsListBoxRow* row = categoryBox->NewRow();
         row->SetName( category->GetAttributeValue("NAME") );
         SetColumnText(row, 0, category->GetAttributeValue("NAME") );
-    } 
+    }
+
+    categoryBox->SortRows();
 }
 
 void pawsStorageWindow::HandleItems( const char* data )
@@ -352,7 +354,9 @@ void pawsStorageWindow::HandleItems( const char* data )
         pawsWidget* widget = row->GetColumn(1);
         if (widget != NULL)
             widget->SetBackground( item->GetAttributeValue("IMG") );
-    } 
+    }
+    itemsBox->SetSortingFunc(5, textBoxSortFunc);
+    itemsBox->SetSortedColumn(5);
     if (itemsBox->GetRowCount() <= (size_t)selectedItem)
         selectedItem=itemsBox->GetRowCount()-1;
     itemsBox->SelectByIndex(selectedItem);
