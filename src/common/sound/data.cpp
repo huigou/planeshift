@@ -153,12 +153,15 @@ bool SoundData::LoadSoundFile (const char *name, csRef<iSndSysData> &snddata)
 
 void SoundData::UnloadSoundFile (const char *name)
 {
-    SoundFile   *sound;
-
-    if ((sound = GetSound(name)))
+    // do *not* use GetSound here as it potentially creates
+    // a new sound, why would we want to create a new one
+    // upon deletion?
+    SoundFile* sound = soundfiles.Get(csHashCompute(name), NULL);
+    if(sound)
     {
         DeleteSound(sound);
     }
+
     return;
 }
 
@@ -203,8 +206,10 @@ void SoundData::PutSound (SoundFile* &sound)
 
 void SoundData::DeleteSound (SoundFile* &sound)
 {
-    // it deletes all with THAT key (and those are unique)
-    soundfiles.DeleteAll (csHashCompute(sound->name));
+    // do *not* delete all, but only the *specific* one as we don't check
+    // for an existing key upon putting by maybe deleting a duplicate
+    // deleting all here may result in a memory leak
+    soundfiles.Delete(csHashCompute((const char*)sound->name), sound);
     delete sound;
 }
 
@@ -326,3 +331,4 @@ void SoundData::UnloadSoundLib ()
     
     libsoundfiles.DeleteAll();
 }
+
