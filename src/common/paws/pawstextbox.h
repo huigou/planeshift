@@ -206,6 +206,8 @@ public:
 
     virtual void OnUpdateData(const char *dataname,PAWSData& data);
     
+    bool OnKeyDown( utf32_char code, utf32_char key, int modifiers );
+    
 
 protected:
     /// Renders an entire message and returns the total lines it took.
