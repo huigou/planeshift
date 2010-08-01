@@ -333,35 +333,41 @@
           <text string="Enable Grass:" position="left"/>
         </widget>
 
+        <widget name="EnableWeather" factory="pawsCheckBox" id="13114">
+          <frame x="0" y="183" width="130" height="15"/>
+          <checkbox on="radioon" off="radiooff" size="17"/>
+          <text string="Enable Weather:" position="left"/>
+        </widget>
+
         <widget name="VBO" factory="pawsCheckBox" id="13115">
-          <frame x="0" y="183" width="280" height="15"/>
+          <frame x="0" y="203" width="280" height="15"/>
           <checkbox on="radioon" off="radiooff" size="17"/>
           <text string="Enable VBO (may cause crashes with ATI cards):" position="left"/>
         </widget>
 
         <widget name="LoaderCache" factory="pawsCheckBox" id="13116">
-          <frame x="0" y="203" width="130" height="15"/>
+          <frame x="0" y="223" width="130" height="15"/>
           <checkbox on="radioon" off="radiooff" size="17"/>
           <text string="Loader Cache:" position="left"/>
         </widget>
 
         <widget name="BackgroundLoadingText" factory="pawsTextBox" id="13117">
-          <frame x="0" y="223" width="210" height="20"/>
+          <frame x="0" y="243" width="210" height="20"/>
           <text string="Background Loading:"/>
         </widget>
 
         <widget name="BackgroundLoading" factory="pawsComboBox" id="13118" alwaysontop="true">
-          <frame x="120" y="220" width="70" height="20" border="no"/>
+          <frame x="120" y="240" width="70" height="20" border="no"/>
           <listbox rows="3" height="25" useScrollBar="false" />
         </widget>
 
         <widget name="ParticlesText" factory="pawsTextBox" id="13119">
-          <frame x="0" y="243" width="210" height="20"/>
+          <frame x="0" y="263" width="210" height="20"/>
           <text string="Particles:"/>
         </widget>
 
         <widget name="Particles" factory="pawsComboBox" id="131120" alwaysontop="true">
-          <frame x="120" y="240" width="70" height="20" border="no"/>
+          <frame x="120" y="260" width="70" height="20" border="no"/>
           <listbox rows="2" height="25" useScrollBar="false" />
         </widget>
       </widget>
