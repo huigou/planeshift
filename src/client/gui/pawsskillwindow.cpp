@@ -215,7 +215,7 @@ void pawsSkillWindow::HandleFactionMsg(MsgEntry* me)
             rowEntry.PushBack(fact->name);
             ratingStr.Format("%d", fact->rating);
             rowEntry.PushBack(ratingStr);
-            factionList->NewTextBoxRow(rowEntry);
+            fact->row = factionList->NewTextBoxRow(rowEntry);
         }
     }
     else if (factRequest)   // ignore MSG_UPDATE if weve not had full list first
@@ -241,7 +241,7 @@ void pawsSkillWindow::HandleFactionMsg(MsgEntry* me)
             // If it was found above then we can just update it.
             if (found)
             {
-                pawsListBoxRow* row = factionList->GetRow(idx);
+                pawsListBoxRow* row = factions[idx]->row;
                 if (row)
                 {
                     pawsTextBox* rank = dynamic_cast <pawsTextBox*> (row->GetColumn(1));
@@ -265,7 +265,7 @@ void pawsSkillWindow::HandleFactionMsg(MsgEntry* me)
                 rowEntry.PushBack(fact->name);
                 ratingStr.Format("%d", fact->rating);
                 rowEntry.PushBack(ratingStr);
-                factionList->NewTextBoxRow(rowEntry);
+                fact->row = factionList->NewTextBoxRow(rowEntry);
             }
         }
     }
