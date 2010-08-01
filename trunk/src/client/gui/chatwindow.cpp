@@ -2186,13 +2186,14 @@ void pawsChatWindow::BadWordsFilter(csString& s)
                 break;
 
             // Check for whole word boundaries.  First confirm beginning of word
-            if (badwordPos>0 && isalpha(lowercase[badwordPos-1]))
+            if (badwordPos>0 && !isspace(lowercase[badwordPos-1]) && !iscntrl(lowercase[badwordPos-1]))
             {
                 pos++;
                 continue;
             }
             // now verify end of word
-            if (badwordPos+badWord.Length() < lowercase.Length() && isalpha(lowercase[badwordPos+badWord.Length()]))
+            if (badwordPos+badWord.Length() < lowercase.Length() && !isspace(lowercase[badwordPos+badWord.Length()])
+                && !iscntrl(lowercase[badwordPos+badWord.Length()]))
             {
                 pos++;
                 continue;
