@@ -379,7 +379,6 @@ void psCharAppearance::EyeColor(csVector3& color)
     eyeShader = color;
     iShaderVariableContext* context_eyes;
 
-
     if(state)
     {
         context_eyes = state->GetCoreMeshShaderVarContext(eyeMesh);
@@ -503,7 +502,7 @@ void psCharAppearance::ShowMeshes(csString& slot, csString& meshList, bool show)
 void psCharAppearance::UpdateMeshShowStatus(csString& meshName)
 {
     uint meshKey = csHashCompute(meshName);
-    
+
     //check if the requested mesh was already removed
     if(removedMeshes.Contains(meshKey))
     {
@@ -942,7 +941,7 @@ bool psCharAppearance::Attach(const char* socketName, const char* meshFactName, 
             return false;
         }
     }
-    
+
     Detach(socketName); // detach anything previously attached (free ressources)
 
     if(!factory.IsValid() || (materialName != NULL && !material.IsValid()))
