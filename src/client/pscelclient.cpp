@@ -178,6 +178,8 @@ bool psCelClient::Initialize(iObjectRegistry* object_reg,
 
     unresSector = psengine->GetEngine()->CreateSector("SectorWhereWeKeepEntitiesResidingInUnloadedMaps");
 
+    instantiateItems = psengine->GetConfig()->GetBool("PlaneShift.Items.Instantiate", true);
+
     LoadEffectItems();
 
     return true;
@@ -2107,6 +2109,12 @@ GEMClientItem::~GEMClientItem()
             instance.Invalidate();
             cel->RemoveInstanceObject(factName+matName);
         }
+        else
+        {
+            // clear material here to make sure it won't be freed
+            // as the instance is still alive
+            matName.Empty();
+        }
     }
     else
     {
@@ -2243,81 +2251,105 @@ bool GEMClientItem::CheckLoadStatus()
         }
 
         // Create the mesh.
-        instance = csPtr<InstanceObject>(new InstanceObject());
-        instance->pcmesh = factory->CreateMeshWrapper();
-        instance->pcmesh->GetFlags().Set(CS_ENTITY_NODECAL | CS_ENTITY_NOHITBEAM);
-        psengine->GetEngine()->PrecacheMesh(instance->pcmesh);
-        cel->AddInstanceObject(factName+matName, instance);
-
-        if(material.IsValid())
+        if(cel->InstanceItems())
         {
-            csRef<iMaterialWrapper> mat = CloneMaterial(material);
-            instance->pcmesh->GetMeshObject()->SetMaterialWrapper(mat);
+            instance = csPtr<InstanceObject>(new InstanceObject());
+            instance->pcmesh = factory->CreateMeshWrapper();
+            instance->pcmesh->GetFlags().Set(CS_ENTITY_NODECAL | CS_ENTITY_NOHITBEAM);
+            psengine->GetEngine()->PrecacheMesh(instance->pcmesh);
+            cel->AddInstanceObject(factName+matName, instance);
+
+            if(material.IsValid())
+            {
+                csRef<iMaterialWrapper> mat = CloneMaterial(material);
+                instance->pcmesh->GetMeshObject()->SetMaterialWrapper(mat);
+            }
         }
-
-        // Set appropriate shader.
-        csRef<iGeneralFactoryState> gFact = scfQueryInterface<iGeneralFactoryState>(factory->GetMeshObjectFactory());
-        csRef<iGeneralMeshState> gState = scfQueryInterface<iGeneralMeshState>(instance->pcmesh->GetMeshObject());
-
-        for(size_t i=0; (!gFact.IsValid() && i == 0) || (gFact.IsValid() && i<gFact->GetSubMeshCount()); ++i)
+        else
         {
-            // Check if this is a genmesh
-            iGeneralMeshSubMesh* gSubmesh = NULL;
-            if(gFact.IsValid())
-            {
-                gSubmesh = gFact->GetSubMesh(i);
-                gSubmesh = gState->FindSubMesh(gSubmesh->GetName());
-            }
+            pcmesh = factory->CreateMeshWrapper();
+            pcmesh->GetFlags().Set(CS_ENTITY_NODECAL);
+            psengine->GetEngine()->PrecacheMesh(pcmesh);
 
-            // Get the current material for this submesh.
-            iMaterialWrapper* material;
-            if(gSubmesh != NULL)
+            if(material.IsValid())
             {
-                material = gSubmesh->GetMaterial();
-            }
-            else if(instance->pcmesh->GetMeshObject()->GetMaterialWrapper() != NULL)
-            {
-                material = instance->pcmesh->GetMeshObject()->GetMaterialWrapper();
-            }
-            else
-            {
-                material = factory->GetMeshObjectFactory()->GetMaterialWrapper();
-            }
-
-            // Create a new wrapper for this material and set it on the mesh.
-            csRef<iMaterialWrapper> matwrap = CloneMaterial(material);
-            if(gSubmesh)
-            {
-                gSubmesh->SetMaterial(matwrap);
-            }
-            else
-            {
-                instance->pcmesh->GetMeshObject()->SetMaterialWrapper(matwrap);
+                pcmesh->GetMeshObject()->SetMaterialWrapper(material);
             }
         }
 
-        // Set biggest bbox so that instances aren't wrongly culled.
-        instance->bbox = factory->GetMeshObjectFactory()->GetObjectModel()->GetObjectBoundingBox();
-        factory->GetMeshObjectFactory()->GetObjectModel()->SetObjectBoundingBox(csBox3(-CS_BOUNDINGBOX_MAXVALUE,
-            -CS_BOUNDINGBOX_MAXVALUE, -CS_BOUNDINGBOX_MAXVALUE, CS_BOUNDINGBOX_MAXVALUE, CS_BOUNDINGBOX_MAXVALUE,
-            CS_BOUNDINGBOX_MAXVALUE));
+        if(cel->InstanceItems())
+        {
+            // Set appropriate shader.
+            csRef<iGeneralFactoryState> gFact = scfQueryInterface<iGeneralFactoryState>(factory->GetMeshObjectFactory());
+            csRef<iGeneralMeshState> gState = scfQueryInterface<iGeneralMeshState>(instance->pcmesh->GetMeshObject());
 
-        // create nullmesh factory
-        instance->nullFactory = psengine->GetEngine()->CreateMeshFactory("crystalspace.mesh.object.null", factName + "_nullmesh", false);
-        csRef<iNullFactoryState> nullstate = scfQueryInterface<iNullFactoryState> (instance->nullFactory->GetMeshObjectFactory());
-        nullstate->SetBoundingBox(instance->bbox);
-        nullstate->SetCollisionMeshData(factory->GetMeshObjectFactory()->GetObjectModel());
+            for(size_t i=0; (!gFact.IsValid() && i == 0) || (gFact.IsValid() && i<gFact->GetSubMeshCount()); ++i)
+            {
+                // Check if this is a genmesh
+                iGeneralMeshSubMesh* gSubmesh = NULL;
+                if(gFact.IsValid())
+                {
+                    gSubmesh = gFact->GetSubMesh(i);
+                    gSubmesh = gState->FindSubMesh(gSubmesh->GetName());
+                }
+
+                // Get the current material for this submesh.
+                iMaterialWrapper* material;
+                if(gSubmesh != NULL)
+                {
+                    material = gSubmesh->GetMaterial();
+                }
+                else if(instance->pcmesh->GetMeshObject()->GetMaterialWrapper() != NULL)
+                {
+                    material = instance->pcmesh->GetMeshObject()->GetMaterialWrapper();
+                }
+                else
+                {
+                    material = factory->GetMeshObjectFactory()->GetMaterialWrapper();
+                }
+
+                // Create a new wrapper for this material and set it on the mesh.
+                csRef<iMaterialWrapper> matwrap = CloneMaterial(material);
+                if(gSubmesh)
+                {
+                    gSubmesh->SetMaterial(matwrap);
+                }
+                else
+                {
+                    instance->pcmesh->GetMeshObject()->SetMaterialWrapper(matwrap);
+                }
+            }
+
+            // Set biggest bbox so that instances aren't wrongly culled.
+            instance->bbox = factory->GetMeshObjectFactory()->GetObjectModel()->GetObjectBoundingBox();
+            factory->GetMeshObjectFactory()->GetObjectModel()->SetObjectBoundingBox(csBox3(-CS_BOUNDINGBOX_MAXVALUE,
+                -CS_BOUNDINGBOX_MAXVALUE, -CS_BOUNDINGBOX_MAXVALUE, CS_BOUNDINGBOX_MAXVALUE, CS_BOUNDINGBOX_MAXVALUE,
+                CS_BOUNDINGBOX_MAXVALUE));
+
+            // create nullmesh factory
+            instance->nullFactory = psengine->GetEngine()->CreateMeshFactory("crystalspace.mesh.object.null", factName + "_nullmesh", false);
+            csRef<iNullFactoryState> nullstate = scfQueryInterface<iNullFactoryState> (instance->nullFactory->GetMeshObjectFactory());
+            nullstate->SetBoundingBox(instance->bbox);
+            nullstate->SetCollisionMeshData(factory->GetMeshObjectFactory()->GetObjectModel());
+        }
     }
 
-    csVector3 Pos = csVector3(0.0f);
-    csMatrix3 Rot = csMatrix3();
-    position = instance->pcmesh->AddInstance(Pos, Rot);
+    if(cel->InstanceItems())
+    {
+        csVector3 Pos = csVector3(0.0f);
+        csMatrix3 Rot = csMatrix3();
+        position = instance->pcmesh->AddInstance(Pos, Rot);
 
-    // Init nullmesh factory.
-    pcmesh = instance->nullFactory->CreateMeshWrapper();
-    pcmesh->GetFlags().Set(CS_ENTITY_NODECAL);
-    csRef<iNullMeshState> nullmeshstate = scfQueryInterface<iNullMeshState> (pcmesh->GetMeshObject());
-    nullmeshstate->SetHitBeamMeshObject(instance->pcmesh->GetMeshObject());
+        // Init nullmesh factory.
+        pcmesh = instance->nullFactory->CreateMeshWrapper();
+        pcmesh->GetFlags().Set(CS_ENTITY_NODECAL);
+        csRef<iNullMeshState> nullmeshstate = scfQueryInterface<iNullMeshState> (pcmesh->GetMeshObject());
+        nullmeshstate->SetHitBeamMeshObject(instance->pcmesh->GetMeshObject());
+        
+        // release the no longer needed factory reference here
+        // required to prevent a double-free
+        factory.Invalidate();
+    }
 
     cel->AttachObject(pcmesh->QueryObject(), this);
 
@@ -2327,10 +2359,6 @@ bool GEMClientItem::CheckLoadStatus()
 
     // Handle item effect if there is one.
     cel->HandleItemEffect(factName, pcmesh);
-
-    // release the no longer needed factory reference here
-    // required to prevent a double-free
-    factory.Invalidate();
 
     return true;
 }
