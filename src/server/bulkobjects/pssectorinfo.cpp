@@ -92,5 +92,23 @@ unsigned int psSectorInfo::GetRandomLightningGap()
     return psserver->GetRandom(lightning_max_gap - lightning_min_gap) + lightning_min_gap;
 }
 
+double psSectorInfo::GetProperty(const char *ptr)
+{
+    csString prop(ptr);
+    if(prop == "interior")
+    {
+        return (double)!rain_enabled;
+    }
+    else if(prop == "uid")
+    {
+        return (double)uid;
+    }
 
+    return 0;
+}
+
+double psSectorInfo::CalcFunction(const char * functionName, const double * params)
+{
+    return 0;
+}
 
