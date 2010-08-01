@@ -32,6 +32,7 @@
 // Local Includes
 //=============================================================================
 #include "pssectorinfo.h"
+#include "util/mathscript.h"
 
 psSectorInfo::psSectorInfo()
 {
@@ -109,6 +110,12 @@ double psSectorInfo::GetProperty(const char *ptr)
 
 double psSectorInfo::CalcFunction(const char * functionName, const double * params)
 {
+    csString function(functionName);
+    if(function == "IsSector")
+    {
+        const char *sector = MathScriptEngine::GetString(params[0]);
+        return (double)(name == sector);
+    }
     return 0;
 }
 
