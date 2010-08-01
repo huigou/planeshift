@@ -125,7 +125,7 @@ ModeHandler::ModeHandler(psCelClient *cc,
     sound_queued = false;
 
     last_weather_update = csGetTicks();
-    weather_update_time = 100;
+    weather_update_time = 200;
 
     lightningreset = engine->GetVariableList()->New();
     lightningreset->SetName("lightning reset");
@@ -899,7 +899,7 @@ float ModeHandler::GetDensity(WeatherInfo* wi)
 }
 
 
-void ModeHandler::ProcessLighting(psWeatherMessage::NetWeatherInfo& info)
+void ModeHandler::ProcessLighting(const psWeatherMessage::NetWeatherInfo& info)
 {
     Debug2( LOG_WEATHER, 0, "Lightning in sector %s",info.sector.GetData());
     // Get the sequence manager
@@ -946,7 +946,7 @@ void ModeHandler::ProcessLighting(psWeatherMessage::NetWeatherInfo& info)
     }
 }
 
-void ModeHandler::ProcessFog(psWeatherMessage::NetWeatherInfo& info)
+void ModeHandler::ProcessFog(const psWeatherMessage::NetWeatherInfo& info)
 {
     WeatherInfo * wi = GetWeatherInfo(info.sector);
 
@@ -965,15 +965,16 @@ void ModeHandler::ProcessFog(psWeatherMessage::NetWeatherInfo& info)
         wi->g = info.g;
         wi->b = info.b;
 
+        wi->fog_params.fade_value = info.fog_density < 10 ? 10 : info.fog_density;
         if(info.fog_fade)
         {
             wi->fog_params.fade_time  = info.fog_fade;
-            wi->fog_params.fade_value = info.fog_density;
+            wi->fog_params.value = 5; // start with some small value
         }
         else
         {
             wi->fog_params.fade_time = 0;
-            wi->fog_params.value = wi->fog_params.fade_value = info.fog_density;
+            wi->fog_params.value = wi->fog_params.fade_value;
         }
     }
     else
@@ -1000,7 +1001,7 @@ void ModeHandler::ProcessFog(psWeatherMessage::NetWeatherInfo& info)
     }
 }
 
-void ModeHandler::ProcessDownfall(psWeatherMessage::NetWeatherInfo& info)
+void ModeHandler::ProcessDownfall(const psWeatherMessage::NetWeatherInfo& info)
 {
     //    iSector* current = psengine->GetCelClient()->GetMainPlayer()->GetSector();
     WeatherInfo *ri = GetWeatherInfo(info.sector);
@@ -1017,15 +1018,16 @@ void ModeHandler::ProcessDownfall(psWeatherMessage::NetWeatherInfo& info)
 
         ri->downfall_condition  = (info.downfall_is_snow?WEATHER_SNOW:WEATHER_RAIN);
 
+        ri->downfall_params.fade_value = info.downfall_drops < 10 ? 10 : info.downfall_drops;
         if (info.downfall_fade)
         {
             ri->downfall_params.fade_time  = info.downfall_fade;
-            ri->downfall_params.fade_value = info.downfall_drops;
+            ri->downfall_params.value = 5;
         }
         else
         {
             ri->downfall_params.fade_time  = 0;
-            ri->downfall_params.value = ri->downfall_params.fade_value = info.downfall_drops;
+            ri->downfall_params.value = ri->downfall_params.fade_value;
         }
     }
     else
