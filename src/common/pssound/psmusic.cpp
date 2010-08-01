@@ -87,6 +87,7 @@ void psMusic::FadeDownAndStop ()
 
 bool psMusic::Play (bool loopToggle, SoundControl* &ctrl)
 {
+    Stop(); // stop any previous sound
     if (SndSysMgr->Play2DSound (resource, loopToggle,
                                 loopstart, loopend,
                                 minvol, ctrl,

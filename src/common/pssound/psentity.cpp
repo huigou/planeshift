@@ -64,6 +64,11 @@ bool psEntity::CheckTimeOfDay (int time)
 
 bool psEntity::Play (SoundControl* &ctrl, csVector3 entityposition)
 {
+    if (handle != NULL)
+    {
+        handle->RemoveCallback(); // stop previous play
+    }
+
     if (SndSysMgr->Play3DSound (resource, DONT_LOOP, 0, 0,
                                 maxvol, ctrl,
                                 entityposition, 0,

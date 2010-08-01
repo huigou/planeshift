@@ -92,6 +92,7 @@ bool psEmitter::CheckTimeOfDay (int time)
 
 bool psEmitter::Play (SoundControl* &ctrl)
 {
+    Stop(); // stop any previous play
     if (SndSysMgr->Play3DSound (resource, LOOP, 0, 0,
                                 maxvol, ctrl,
                                 position, direction,
