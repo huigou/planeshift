@@ -417,10 +417,6 @@ void psCharAppearance::ShowMeshes(csString& slot, csString& meshList, bool show)
     meshList.ReplaceAll("$E", eyeMesh);
     meshList.ReplaceAll("$B", beardMesh);
 
-    //check if we have still meshes to work on
-    if(!meshList.Length())
-        return;
-
     //first split the meshlist
     csStringArray meshes;
     meshes.SplitString(meshList, ",");
@@ -428,6 +424,11 @@ void psCharAppearance::ShowMeshes(csString& slot, csString& meshList, bool show)
     for(size_t i = 0; i < meshes.GetSize(); i++)
     {
         csString meshName = meshes.Get(i);
+
+        //if the meshname is empty skip to the next.
+        if(meshName.IsEmpty())
+            continue;
+
         uint meshKey = csHashCompute(meshName);
         if (show) //in this case we are removing a restrain from hiding this mesh.
         {
