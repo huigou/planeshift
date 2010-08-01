@@ -41,12 +41,7 @@ SoundSystemManager::SoundSystemManager (iObjectRegistry* objectReg)
     Initialised = false;
 
     // Create a new SoundSystem and SoundData Instance
-    if(soundSystem)
-        delete soundSystem;
     soundSystem = new SoundSystem;
-
-    if(soundData)
-        delete soundData;
     soundData = new SoundData;
 
     // SoundControls used by GUI and EFFECTS - FIXME (to be removed)
