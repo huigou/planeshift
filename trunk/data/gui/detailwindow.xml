@@ -1,9 +1,9 @@
 <widget_description>
 
-    <widget name="DetailWindow" factory="pawsDetailWindow" 
+    <widget name="DetailWindow" factory="pawsDetailWindow"
             visible="no" savepositions="yes" movable="yes" configurable="yes" savepositions="yes" resizable="no" style="New Standard GUI" >
         <frame x="0" y="200" width="320" height="400" border="yes" />
-	<title resource="Scaling Title Bar" text="Details" align="left" close_button="yes"/>
+    <title resource="Scaling Title Bar" text="Details" align="left" close_button="yes"/>
 
         <widget name="ShowDescr" factory="pawsButton" style="Standard Tab" id="999" >
             <frame x="14" y="58" width="49" height="25"/>
@@ -31,7 +31,7 @@
                 <attach point="ATTACH_LEFT" />
             </attachpoints>
         </widget>
-              
+
         <widget name="ShowStats" factory="pawsButton" style="Standard Tab" id="1000" >
             <frame x="14" y="82" width="49" height="25"/>
             <label text="Stats" />
@@ -91,17 +91,17 @@
             <frame x="20" y="10" width="280" height="40" border="no" />
         </widget>
 
-		<widget name="EditDesc" factory="pawsButton" id="100" tooltip="Modify Description" >
-			<frame x="270" y="53" width="32" height="32" />
-			<bgimage resource="Scribe" />
-		</widget>
+        <widget name="EditDesc" factory="pawsButton" id="100" tooltip="Modify Description" >
+            <frame x="270" y="53" width="32" height="32" />
+            <bgimage resource="Scribe" />
+        </widget>
 
-        
+
         <!-- Description -->
         <widget name="Description" factory="pawsMultiLineTextBox">
             <frame x="20" y="115" width="280" height="265" border="no" />
-        </widget>  
-        
+        </widget>
+
     </widget>
 
 </widget_description>
