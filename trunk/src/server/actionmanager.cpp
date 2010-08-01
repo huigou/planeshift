@@ -195,19 +195,36 @@ void ActionManager::HandleQueryMessage( csString xml, Client *client )
             handled = HandleProximityQuery( topNode, client );
         }            
 
-        // evk: Sending to clients with security level 30+ only.
-        if ( !handled && client->GetSecurityLevel() >= GM_DEVELOPER )
+        if ( !handled )
         {
-            // Set target for later use
-            client->SetMesh(meshName);
-            psserver->SendSystemError(client->GetClientNum(),"You have targeted %s.",meshName.GetData());
-
-            // Send unhandled message to client
-            psMapActionMessage msg(  client->GetClientNum(), psMapActionMessage::NOT_HANDLED, xml );
-            if ( msg.valid ) 
+            // evk: Sending to clients with security level 30+ only.
+            if(client->GetSecurityLevel() >= GM_DEVELOPER )
             {
-                msg.SendMessage();
-            }                
+                // Set target for later use
+                client->SetMesh(meshName);
+                psserver->SendSystemError(client->GetClientNum(),"You have targeted %s.",meshName.GetData());
+
+                // Send unhandled message to client
+                psMapActionMessage msg(  client->GetClientNum(), psMapActionMessage::NOT_HANDLED, xml );
+                if ( msg.valid ) 
+                {
+                    msg.SendMessage();
+                }                
+            }
+            //send actions possible based on items on hand (probably not the best place)
+            else if(client->GetCharacterData())
+            {
+                //should be done with a for checking the entire equipped inventory for now for the use we need we just
+                //check the two hands as a start.
+                psItem *item = client->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_RIGHTHAND);
+                if(!item || !item->GetItemCommand().Length())
+                    item = client->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_LEFTHAND);
+                if(item && item->GetItemCommand().Length())
+                {
+                    psGUIInteractMessage interactMsg( client->GetClientNum(), psGUIInteractMessage::GENERIC, item->GetItemCommand());
+                    interactMsg.SendMessage();
+                }
+            }
         }
     }
     else
