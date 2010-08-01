@@ -315,7 +315,7 @@ void psCharAppearance::HairMesh(csString& subMesh)
                 if (!strcmp(meshName, newPartParsed))
                 {
                     animeshObject->GetSubMesh(idx)->SetRendering(true);
-                    beardMesh = newPartParsed;
+                    hairMesh = newPartParsed;
                 }
             }
         }
