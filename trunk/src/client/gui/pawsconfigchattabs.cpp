@@ -58,6 +58,8 @@ bool pawsConfigChatTabs::PostSetup()
         return false;
     if ((iguild = FindCheckbox("iguild")) == NULL)
         return false;
+    if ((ialliance = FindCheckbox("ialliance")) == NULL)
+        return false;
     if ((igroup = FindCheckbox("igroup")) == NULL)
         return false;
     if ((iauction = FindCheckbox("iauction")) == NULL)
@@ -82,6 +84,7 @@ bool pawsConfigChatTabs::LoadConfig()
 	inpc->SetState(false);
 	itells->SetState(false);
 	iguild->SetState(false);
+    ialliance->SetState(false);
 	igroup->SetState(false);
 	iauction->SetState(false);
 	isys->SetState(false);
@@ -101,6 +104,8 @@ bool pawsConfigChatTabs::LoadConfig()
     		itells->SetState(true);
     	if(allMainBindings[i] == "CHAT_GUILD")
     		iguild->SetState(true);
+    	if(allMainBindings[i] == "CHAT_ALLIANCE")
+    		ialliance->SetState(true);
     	if(allMainBindings[i] == "CHAT_GROUP")
     		igroup->SetState(true);
     	if(allMainBindings[i] == "CHAT_AUCTION")
@@ -183,6 +188,10 @@ bool pawsConfigChatTabs::SaveConfig()
     if(iguild->GetState())
 	{
 		settings.bindings.Put("subMainText", "CHAT_GUILD");
+	}
+    if(iguild->GetState())
+	{
+		settings.bindings.Put("subMainText", "CHAT_ALLIANCE");
 	}
     if(igroup->GetState())
 	{
