@@ -60,13 +60,13 @@ typedef uint32 InstanceID;
 #define RANGE_TO_SEE_ACTOR_LABELS 14
 #define RANGE_TO_SEE_ITEM_LABELS 7
 #define RANGE_TO_SELECT 5
-#define RANGE_TO_LOOT 3
+#define RANGE_TO_LOOT 4
 #define RANGE_TO_RECV_LOOT 100
-#define RANGE_TO_USE 2
+#define RANGE_TO_USE 4
 #define RANGE_TO_STACK 0.5  ///< Range to stack like items when dropping/creating in the world
 #define DROP_DISTANCE 0.55   ///< Distance in front of player to drop items (just more then RANGE_TO_STACK)
 #define MAX_DROP_DISTANCE 5 ///< Maximum distance at which a player may drop an item
-#define RANGE_TO_GUARD 5.1 ///< Range in which you can guard an item - should be slightly bigger than drop range
+#define RANGE_TO_GUARD 6 ///< Range in which you can guard an item - should be slightly bigger than drop range
 
 #define LONG_RANGE_PERCEPTION  30
 #define SHORT_RANGE_PERCEPTION 10
@@ -78,7 +78,7 @@ typedef uint32 InstanceID;
  */
 //@{
 #define GUILD_FEE 20000
-#define GUILD_MIN_MEMBERS 5
+#define GUILD_MIN_MEMBERS 1
 #define GUILD_KICK_GRACE 5 ///< minutes
 
 #define MAX_GUILD_LEVEL    9
