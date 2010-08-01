@@ -26,6 +26,7 @@
 #include "data.h"
 #include "util/log.h"
 
+// todo: remove singletons
 SoundSystem         *soundSystem;
 SoundData           *soundData;
 
@@ -42,7 +43,12 @@ SoundSystemManager::SoundSystemManager (iObjectRegistry* objectReg)
     Initialised = false;
 
     // Create a new SoundSystem and SoundData Instance
+    if(soundSystem)
+        delete soundSystem;
     soundSystem = new SoundSystem;
+
+    if(soundData)
+        delete soundData;
     soundData = new SoundData;
 
     // SoundControls used by GUI and EFFECTS - FIXME (to be removed)

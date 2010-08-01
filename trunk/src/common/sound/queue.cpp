@@ -67,7 +67,8 @@ void SoundQueue::AddItem (const char *filename)
 void SoundQueue::DeleteItem (SoundQueueItem* &item)
 {
     queue.Delete(item);
-    delete item;
+    if(item)
+        delete item;
 }
 
 /*
@@ -130,15 +131,15 @@ void SoundQueue::Work ()
 
 void SoundQueue::Purge ()
 {
-    for (size_t i = 0; i < queue.GetSize(); i++)
+    while(!queue.IsEmpty())
     {
-        if (queue[i]->handle != NULL)
+        SoundQueueItem* item = queue.Pop();
+        if (item->handle != NULL)
         {
-            queue[i]->handle->SetAutoRemove(true);
-            queue[i]->handle->sndstream->Pause();
+            item->handle->SetAutoRemove(true);
+            item->handle->sndstream->Pause();
         }
 
-        DeleteItem(queue[i]);
-        i--;
+        delete item;
     }
 }
