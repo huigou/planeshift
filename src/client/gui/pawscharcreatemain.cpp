@@ -1,6 +1,6 @@
 /* * pawscharcreatemain.cpp - author: Andrew Craig
  *
- * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -61,24 +61,24 @@ bool FilterName(const char* name);
 
 //////////////////////////////////////////////////////////////////////////////
 pawsCreationMain::pawsCreationMain()
-{      
+{
     createManager = psengine->GetCharManager()->GetCreation();
-    
-    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_CHAR_CREATE_CP); 
+
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_CHAR_CREATE_CP);
     psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_CHAR_CREATE_NAME);
-    createManager->SetGender( PSCHARACTER_GENDER_MALE ); 
+    createManager->SetGender( PSCHARACTER_GENDER_MALE );
     currentGender = PSCHARACTER_GENDER_MALE;
     lastGender = -1;
-            
-    currentFaceChoice = 0; 
+
+    currentFaceChoice = 0;
     activeHairStyle = 0;
     currentBeardStyleChoice = 0;
     activeHairColour = 0;
     currentSkinColour = 0;
     race = 0;
-    
+
     nameWarning = 0;
-    
+
     charApp = new psCharAppearance(psengine->GetObjectRegistry());
     loaded = true;
 
@@ -88,26 +88,26 @@ pawsCreationMain::pawsCreationMain()
 
 void pawsCreationMain::Reset()
 {
-    createManager->SetGender( PSCHARACTER_GENDER_MALE ); 
+    createManager->SetGender( PSCHARACTER_GENDER_MALE );
     currentGender = PSCHARACTER_GENDER_MALE;
-    
-    currentFaceChoice = 0; 
+
+    currentFaceChoice = 0;
     activeHairStyle = 0;
     currentBeardStyleChoice = 0;
     activeHairColour = 0;
     currentSkinColour = 0;
     race = 0;
-    
+
     view->Clear();
-    
-    pawsRadioButtonGroup* raceBox = (pawsRadioButtonGroup*)FindWidget("RaceBox");        
+
+    pawsRadioButtonGroup* raceBox = (pawsRadioButtonGroup*)FindWidget("RaceBox");
     raceBox->TurnAllOff();
-    
+
     pawsEditTextBox* name = (pawsEditTextBox*)FindWidget("charnametext");
     name->SetText("");
-    nameWarning = 0;                           
-          
-    ResetAllWindows();        
+    nameWarning = 0;
+
+    ResetAllWindows();
 }
 
 
@@ -119,29 +119,29 @@ pawsCreationMain::~pawsCreationMain()
 bool pawsCreationMain::PostSetup()
 {
     cpPoints = (pawsTextBox*)FindWidget("cppoints");
-    
+
     if ( !(cpPoints) )
-    {        
+    {
         return false;
     }
-    
-         
+
+
     view = (pawsObjectView*)FindWidget("ModelView");
 
-    faceLabel = (pawsTextBox*)FindWidget( "Face" );                
-    hairStyleLabel = (pawsTextBox*)FindWidget( "HairStyles" );                
-    beardStyleLabel = (pawsTextBox*)FindWidget( "BeardStyles" );                
-    hairColourLabel = (pawsTextBox*)FindWidget( "HairColours" );                
-    skinColourLabel = (pawsTextBox*)FindWidget( "SkinColours" );     
+    faceLabel = (pawsTextBox*)FindWidget( "Face" );
+    hairStyleLabel = (pawsTextBox*)FindWidget( "HairStyles" );
+    beardStyleLabel = (pawsTextBox*)FindWidget( "BeardStyles" );
+    hairColourLabel = (pawsTextBox*)FindWidget( "HairColours" );
+    skinColourLabel = (pawsTextBox*)FindWidget( "SkinColours" );
 
     nameTextBox  = dynamic_cast <pawsEditTextBox*> (FindWidget("charnametext"));
     if (nameTextBox == NULL)
         return false;
-        
+
     maleButton = (pawsButton*)FindWidget("MaleButton");
     maleButton->SetToggle(true);
     femaleButton = (pawsButton*)FindWidget("FemaleButton");
-    femaleButton->SetToggle(true);    
+    femaleButton->SetToggle(true);
 
     GrayRaceButtons();
     GrayStyleButtons();
@@ -152,20 +152,20 @@ bool pawsCreationMain::PostSetup()
 }
 
 void pawsCreationMain::ResetAllWindows()
-{  
+{
     const char *names[] =
     {
         "CharBirth", "birth.xml",
         "Childhood", "childhood.xml",
         "LifeEvents","lifeevents.xml",
-        "Parents","parents.xml", 
-        /*"Paths","paths.xml",*/ 
+        "Parents","parents.xml",
+        /*"Paths","paths.xml",*/
         NULL
     };
-    
+
     pawsWidget * wnd;
     pawsMainWidget * mainWidget = PawsManager::GetSingleton().GetMainWidget();
-    
+
     for (int nameNum = 0; names[nameNum] != NULL; nameNum += 2)
     {
         wnd = PawsManager::GetSingleton().FindWidget(names[nameNum]);
@@ -185,22 +185,22 @@ void pawsCreationMain::HandleMessage( MsgEntry* me )
     switch ( me->GetType() )
     {
         case MSGTYPE_CHAR_CREATE_CP:
-        {  
+        {
             int race = me->GetInt32();
 
             createManager->SetCurrentCP( createManager->GetRaceCP( race ) );
-            
+
             UpdateCP();
             return;
         }
-        
+
         case MSGTYPE_CHAR_CREATE_NAME:
         {
             psNameCheckMessage msg;
             msg.FromServer(me);
             if (!msg.accepted)
             {
-                PawsManager::GetSingleton().CreateWarningBox( msg.reason ); 
+                PawsManager::GetSingleton().CreateWarningBox( msg.reason );
             }
             else
             {
@@ -218,7 +218,7 @@ void pawsCreationMain::HandleMessage( MsgEntry* me )
 }
 
 void pawsCreationMain::ChangeSkinColour( int currentChoice )
-{    
+{
     if ( race->location[PSTRAIT_LOCATION_SKIN_TONE][currentGender].GetSize() == 0 )
     {
         skinColourLabel->SetText(PawsManager::GetSingleton().Translate("Skin Colour"));
@@ -226,30 +226,30 @@ void pawsCreationMain::ChangeSkinColour( int currentChoice )
     }
 
     Trait * trait = race->location[PSTRAIT_LOCATION_SKIN_TONE][currentGender][currentChoice];
-    
+
     while ( trait )
     {
         charApp->SetSkinTone(trait->mesh, trait->material);
         trait = trait->next_trait;
     }
-    
-    skinColourLabel->SetText( race->location[PSTRAIT_LOCATION_SKIN_TONE][currentGender][currentChoice]->name );                       
+
+    skinColourLabel->SetText( race->location[PSTRAIT_LOCATION_SKIN_TONE][currentGender][currentChoice]->name );
 }
 
 void pawsCreationMain::ChangeHairColour( int newHair )
 {
     if ( newHair <(int) race->location[PSTRAIT_LOCATION_HAIR_COLOR][currentGender].GetSize() )
     {
-        Trait* trait = race->location[PSTRAIT_LOCATION_HAIR_COLOR][currentGender][newHair]; 
-        
-        csVector3 at(0, race->zoomLocations[PSTRAIT_LOCATION_FACE].y, 0); 
+        Trait* trait = race->location[PSTRAIT_LOCATION_HAIR_COLOR][currentGender][newHair];
+
+        csVector3 at(0, race->zoomLocations[PSTRAIT_LOCATION_FACE].y, 0);
         view->UnlockCamera();
-        view->LockCamera(race->zoomLocations[PSTRAIT_LOCATION_FACE], at, true, true);                                  
-        
+        view->LockCamera(race->zoomLocations[PSTRAIT_LOCATION_FACE], at, true, true);
+
         charApp->HairColor(trait->shader);
-        
-        hairColourLabel->SetText( trait->name );                               
-        
+
+        hairColourLabel->SetText( trait->name );
+
         activeHairColour = newHair;
     }
     else
@@ -259,38 +259,38 @@ void pawsCreationMain::ChangeHairColour( int newHair )
 
 
 void pawsCreationMain::SetHairStyle( int newStyle )
-{    
+{
     if ( newStyle < (int)race->location[PSTRAIT_LOCATION_HAIR_STYLE][currentGender].GetSize() )
     {
         Trait* trait = race->location[PSTRAIT_LOCATION_HAIR_STYLE][currentGender][newStyle];
         charApp->HairMesh(trait->mesh);
         csVector3 at(0, race->zoomLocations[PSTRAIT_LOCATION_FACE].y, 0);
         view->UnlockCamera();
-        view->LockCamera(race->zoomLocations[PSTRAIT_LOCATION_FACE], at, true, true);                                         
-        hairStyleLabel->SetText( trait->name );                       
+        view->LockCamera(race->zoomLocations[PSTRAIT_LOCATION_FACE], at, true, true);
+        hairStyleLabel->SetText( trait->name );
     }
     else
         hairStyleLabel->SetText(PawsManager::GetSingleton().Translate("Hair Style"));
 }
 
 void pawsCreationMain::ChangeHairStyle( int newChoice, int oldChoice )
-{        
+{
 //    RemoveHairStyle( oldChoice );
-    SetHairStyle( newChoice );    
+    SetHairStyle( newChoice );
 }
 
 
 
 void pawsCreationMain::ChangeBeardStyle( int newStyle )
-{   
+{
     if ( newStyle < (int)race->location[PSTRAIT_LOCATION_BEARD_STYLE][currentGender].GetSize() )
     {
         Trait* trait = race->location[PSTRAIT_LOCATION_BEARD_STYLE][currentGender][newStyle];
         charApp->BeardMesh(trait->mesh);
-        csVector3 at(0, race->zoomLocations[PSTRAIT_LOCATION_FACE].y, 0); 
+        csVector3 at(0, race->zoomLocations[PSTRAIT_LOCATION_FACE].y, 0);
         view->UnlockCamera();
-        view->LockCamera(race->zoomLocations[PSTRAIT_LOCATION_FACE], at, true, true);                                         
-        beardStyleLabel->SetText( trait->name );                       
+        view->LockCamera(race->zoomLocations[PSTRAIT_LOCATION_FACE], at, true, true);
+        beardStyleLabel->SetText( trait->name );
     }
     else
         beardStyleLabel->SetText(PawsManager::GetSingleton().Translate("Beard Style"));
@@ -301,58 +301,58 @@ void pawsCreationMain::ChangeBeardStyle( int newStyle )
         beardStyleLabel->SetText(PawsManager::GetSingleton().Translate("Beard Style"));
         return;
     }
-                  
+
 //    iMeshWrapper * mesh = view->GetObject();
 
 //    psengine->SetTrait(mesh,race->location[PSTRAIT_LOCATION_BEARD_STYLE][currentGender][currentChoice]);
-//    beardStyleLabel->SetText( race->location[PSTRAIT_LOCATION_BEARD_STYLE][currentGender][currentChoice]->name );                       
+//    beardStyleLabel->SetText( race->location[PSTRAIT_LOCATION_BEARD_STYLE][currentGender][currentChoice]->name );
 
 /* TODO: Move this code to psengine SetTrait
     if ( race->beardStyles[currentGender].GetSize() == 0 )
         return;
-        
+
     iMeshWrapper * mesh = view->GetObject();
     csRef<iSpriteCal3DState> spstate =  scfQueryInterface<iSpriteCal3DState> (mesh->GetMeshObject());
-        
+
     if ( lastAddedBeardStyle != -1 )
     {
-        spstate->DetachCoreMesh( race->beardStyles[currentGender][lastAddedBeardStyle]->mesh ) ;         
-    }        
-    
+        spstate->DetachCoreMesh( race->beardStyles[currentGender][lastAddedBeardStyle]->mesh ) ;
+    }
+
     // If the choice is no mesh then make sure there is no new mesh added.
     if ( race->beardStyles[currentGender][currentChoice]->mesh.GetSize() == 0 )
     {
         lastAddedBeardStyle = -1;
-        beardStyleLabel->SetText( race->beardStyles[currentGender][currentChoice]->name );            
+        beardStyleLabel->SetText( race->beardStyles[currentGender][currentChoice]->name );
         return;
     }
     else
-    {        
+    {
         // Check to see if a mesh was given:
         bool attach = spstate->AttachCoreMesh( race->beardStyles[currentGender][currentChoice]->mesh );
-        
+
         if ( currentHairColour != -1 )
         {
-            // Use the 1. hair colour for the beard 
+            // Use the 1. hair colour for the beard
             iMaterialWrapper* material = psengine->LoadMaterial( race->hairColours[currentGender][currentHairColour]->materials[0]->material,
-                                                       race->hairColours[currentGender][currentHairColour]->materials[0]->texture  );               
+                                                       race->hairColours[currentGender][currentHairColour]->materials[0]->texture  );
 
-            // If the material was found then all is ok                                                       
-            if (material)                                                                   
+            // If the material was found then all is ok
+            if (material)
             {
-                spstate->SetMaterial( race->beardStyles[currentGender][currentChoice]->mesh, material );                            
+                spstate->SetMaterial( race->beardStyles[currentGender][currentChoice]->mesh, material );
             }
             else // Remove the mesh since there is no valid material for it.
             {
-                Warning2( LOG_NEWCHAR, "Material Not Loaded ( No Texture: %s )", race->hairColours[currentGender][currentHairColour]->materials[0]->texture.GetData() );      
-                spstate->DetachCoreMesh( race->beardStyles[currentGender][currentChoice]->mesh ) ;                                 
+                Warning2( LOG_NEWCHAR, "Material Not Loaded ( No Texture: %s )", race->hairColours[currentGender][currentHairColour]->materials[0]->texture.GetData() );
+                spstate->DetachCoreMesh( race->beardStyles[currentGender][currentChoice]->mesh ) ;
             }
         }
-    }        
-    
-    
-    lastAddedBeardStyle = currentChoice;                          
-    beardStyleLabel->SetText( race->beardStyles[currentGender][currentChoice]->name );    
+    }
+
+
+    lastAddedBeardStyle = currentChoice;
+    beardStyleLabel->SetText( race->beardStyles[currentGender][currentChoice]->name );
 */
 }
 
@@ -365,10 +365,10 @@ void pawsCreationMain::ChangeFace( int newFace )
         Trait* trait = race->location[PSTRAIT_LOCATION_FACE][currentGender][newFace];
         view->UnlockCamera();
         view->LockCamera(race->zoomLocations[PSTRAIT_LOCATION_FACE], at, true, true);
-                      
+
         charApp->FaceTexture(trait->material);
-        
-        faceLabel->SetText( trait->name );                                       
+
+        faceLabel->SetText( trait->name );
     }
     else
         faceLabel->SetText(PawsManager::GetSingleton().Translate("Face"));
@@ -392,7 +392,7 @@ void pawsCreationMain::GrayRaceButtons( )
 }
 
 void pawsCreationMain::GrayStyleButtons( )
-{    
+{
     bool faceEnable = true;
     if ( race != 0 && race->location[PSTRAIT_LOCATION_FACE][currentGender].GetSize())
     {
@@ -432,7 +432,7 @@ void pawsCreationMain::GrayStyleButtons( )
 void pawsCreationMain::SelectGender(int newGender)
 {
     currentGender = newGender;
-    
+
     GrayRaceButtons();
     GrayStyleButtons();
 
@@ -446,12 +446,12 @@ void pawsCreationMain::SelectGender(int newGender)
         race++;
         if (race > 11)
         {
-            race = 0; 
+            race = 0;
             pawsRadioButtonGroup* raceBox = (pawsRadioButtonGroup*)FindWidget("RaceBox");
             raceBox->TurnAllOff();
             return;
-        } 
-             
+        }
+
     }
 
     if (race != createManager->GetSelectedRace())
@@ -473,253 +473,253 @@ bool pawsCreationMain::OnButtonPressed( int mouseButton, int keyModifier, pawsWi
 {
      ////////////////////////////////////////////////////////////////////
      // Previous face.
-     ////////////////////////////////////////////////////////////////////        
+     ////////////////////////////////////////////////////////////////////
     if ( strcmp( widget->GetName(), "Custom Choice Set 1 <") == 0 )
     {
         if ( race )
-        {                                        
+        {
             if ( race->location[PSTRAIT_LOCATION_FACE][currentGender].GetSize() == 0 )
                 return true;
-                
+
             currentFaceChoice--;
-            
+
             if ( currentFaceChoice < 0 )
             {
                 currentFaceChoice =  (int)race->location[PSTRAIT_LOCATION_FACE][currentGender].GetSize()-1;
-            }    
-                               
-         
-            ChangeFace( currentFaceChoice );                
-        }                                                                       
-        return true;        
+            }
+
+
+            ChangeFace( currentFaceChoice );
+        }
+        return true;
     }
-    
+
      ////////////////////////////////////////////////////////////////////
      // Next Set of faces.
-     ////////////////////////////////////////////////////////////////////            
+     ////////////////////////////////////////////////////////////////////
     if ( strcmp( widget->GetName(), "Custom Choice Set 1 >") == 0 )
     {
         if ( race )
-        {                        
+        {
             if ( race->location[PSTRAIT_LOCATION_FACE][currentGender].GetSize() == 0 )
             {
                 return true;
             }
-            
+
             currentFaceChoice++;
-            
+
             if ( currentFaceChoice == (int)race->location[PSTRAIT_LOCATION_FACE][currentGender].GetSize() )
             {
                 currentFaceChoice = 0;
             }
 
-            ChangeFace( currentFaceChoice );                                            
-        }                
-        
-        return true;        
+            ChangeFace( currentFaceChoice );
+        }
+
+        return true;
     }
-    
+
     ////////////////////////////////////////////////////////////////////
     // Next Set of hair Styles.
-    ////////////////////////////////////////////////////////////////////        
+    ////////////////////////////////////////////////////////////////////
     if ( strcmp( widget->GetName(), "Custom Choice Set 2 >") == 0 )
     {
         if ( race )
-        {                        
+        {
             if ( race->location[PSTRAIT_LOCATION_HAIR_STYLE][currentGender].GetSize() == 0 )
             {
                 return true;
             }
-            
-            int old = activeHairStyle;                            
+
+            int old = activeHairStyle;
             activeHairStyle++;
-            
+
             if ( activeHairStyle == (int)race->location[PSTRAIT_LOCATION_HAIR_STYLE][currentGender].GetSize() )
             {
                 activeHairStyle = 0;
             }
-                              
-            ChangeHairStyle( activeHairStyle, old );  
+
+            ChangeHairStyle( activeHairStyle, old );
         }
-        
-        return true;                        
+
+        return true;
     }
-    
+
     ////////////////////////////////////////////////////////////////////
     // Previous Set of Hair Styles.
-    ////////////////////////////////////////////////////////////////////        
+    ////////////////////////////////////////////////////////////////////
     if ( strcmp( widget->GetName(), "Custom Choice Set 2 <") == 0 )
     {
         if ( race )
-        {                        
+        {
             if ( race->location[PSTRAIT_LOCATION_HAIR_STYLE][currentGender].GetSize() == 0 )
             {
                 return true;
             }
-            
-            int old = activeHairStyle;                
+
+            int old = activeHairStyle;
             activeHairStyle--;
-            
+
             if ( activeHairStyle < 0 )
             {
                 activeHairStyle = (int)race->location[PSTRAIT_LOCATION_HAIR_STYLE][currentGender].GetSize()-1;
             }
-                                
-            ChangeHairStyle( activeHairStyle, old );  
+
+            ChangeHairStyle( activeHairStyle, old );
         }
-        
-        return true;                        
+
+        return true;
     }
-    
-    
+
+
     ////////////////////////////////////////////////////////////////////
     // Next Beard Style.
-    ////////////////////////////////////////////////////////////////////        
+    ////////////////////////////////////////////////////////////////////
     if ( strcmp( widget->GetName(), "Custom Choice Set 3 >") == 0 )
     {
         if ( race )
-        {                        
+        {
             if ( race->location[PSTRAIT_LOCATION_BEARD_STYLE][currentGender].GetSize() == 0 )
             {
                 return true;
             }
-            
+
             currentBeardStyleChoice++;
-            
+
             if ( currentBeardStyleChoice == (int)race->location[PSTRAIT_LOCATION_BEARD_STYLE][currentGender].GetSize() )
             {
                 currentBeardStyleChoice = 0;
             }
-            
-                              
-            ChangeBeardStyle( currentBeardStyleChoice );  
+
+
+            ChangeBeardStyle( currentBeardStyleChoice );
         }
-        
-        return true;                        
+
+        return true;
     }
-    
+
     ////////////////////////////////////////////////////////////////////
     // Previous Set of Beard Styles.
-    ////////////////////////////////////////////////////////////////////        
+    ////////////////////////////////////////////////////////////////////
     if ( strcmp( widget->GetName(), "Custom Choice Set 3 <") == 0 )
     {
         if ( race )
-        {                        
+        {
             if ( race->location[PSTRAIT_LOCATION_BEARD_STYLE][currentGender].GetSize() == 0 )
             {
                 return true;
             }
-            
+
             currentBeardStyleChoice--;
-            
+
             if ( currentBeardStyleChoice < 0 )
             {
                 currentBeardStyleChoice = (int)race->location[PSTRAIT_LOCATION_BEARD_STYLE][currentGender].GetSize()-1;
             }
-                                
-            ChangeBeardStyle( currentBeardStyleChoice );  
+
+            ChangeBeardStyle( currentBeardStyleChoice );
         }
-        
-        return true;                        
+
+        return true;
     }
-    
-    
-    
+
+
+
     ////////////////////////////////////////////////////////////////////
     // Next Hair Colours.
-    ////////////////////////////////////////////////////////////////////        
+    ////////////////////////////////////////////////////////////////////
     if ( strcmp( widget->GetName(), "Custom Choice Set 4 >") == 0 )
     {
         if ( race )
-        {                        
+        {
             if ( race->location[PSTRAIT_LOCATION_HAIR_COLOR][currentGender].GetSize() == 0 )
             {
                 return true;
             }
-            
+
             activeHairColour++;
-            
+
             if ( activeHairColour >= (int)race->location[PSTRAIT_LOCATION_HAIR_COLOR][currentGender].GetSize() )
             {
                 activeHairColour = 0;
             }
-                              
-            ChangeHairColour( activeHairColour );  
+
+            ChangeHairColour( activeHairColour );
         }
-        
-        return true;                        
+
+        return true;
     }
-    
+
     ////////////////////////////////////////////////////////////////////
     // Previous Set of HairColours
-    ////////////////////////////////////////////////////////////////////        
+    ////////////////////////////////////////////////////////////////////
     if ( strcmp( widget->GetName(), "Custom Choice Set 4 <") == 0 )
     {
         if ( race )
         {
             if ( race->location[PSTRAIT_LOCATION_HAIR_COLOR][currentGender].GetSize() == 0 )
                 return true;
-            
+
             activeHairColour--;
-            
+
             if ( activeHairColour < 0 )
                 activeHairColour = (int)race->location[PSTRAIT_LOCATION_HAIR_COLOR][currentGender].GetSize()-1;
-                                
-            ChangeHairColour( activeHairColour );  
+
+            ChangeHairColour( activeHairColour );
         }
-        
-        return true;                        
+
+        return true;
     }
 
     ////////////////////////////////////////////////////////////////////
     // Skin Colours.
-    ////////////////////////////////////////////////////////////////////        
+    ////////////////////////////////////////////////////////////////////
     if ( strcmp( widget->GetName(), "Custom Choice Set 5 >") == 0 )
     {
         if ( race )
         {
             if ( race->location[PSTRAIT_LOCATION_SKIN_TONE][currentGender].GetSize() == 0 )
                 return true;
-            
+
             currentSkinColour++;
-            
+
             if ( currentSkinColour == (int)race->location[PSTRAIT_LOCATION_SKIN_TONE][currentGender].GetSize() )
-                currentSkinColour = 0;                        
-                              
-            ChangeSkinColour( currentSkinColour );  
+                currentSkinColour = 0;
+
+            ChangeSkinColour( currentSkinColour );
         }
-        
-        return true;                        
+
+        return true;
     }
-    
+
     ////////////////////////////////////////////////////////////////////
     // Previous Set of Skin Colours
-    ////////////////////////////////////////////////////////////////////        
+    ////////////////////////////////////////////////////////////////////
     if ( strcmp( widget->GetName(), "Custom Choice Set 5 <") == 0 )
     {
         if ( race )
-        {                        
+        {
             if ( race->location[PSTRAIT_LOCATION_SKIN_TONE][currentGender].GetSize() == 0 )
                 return true;
-            
+
             currentSkinColour--;
-            
+
             if ( currentSkinColour < 0 )
                 currentSkinColour = (int)race->location[PSTRAIT_LOCATION_SKIN_TONE][currentGender].GetSize()-1;
-                                
-            ChangeSkinColour( currentSkinColour );  
+
+            ChangeSkinColour( currentSkinColour );
         }
-        
-        return true;                        
+
+        return true;
     }
-        
-    
-    
+
+
+
     /////////////////////////////////////////////////////
     // RACE SELECTION BUTTONS
-    /////////////////////////////////////////////////////    
+    /////////////////////////////////////////////////////
     if ( widget->GetID() >= 0 && widget->GetID() <= 11 )
-    {   
+    {
         if (
             !createManager->IsAvailable(widget->GetID(),1) &&
             !createManager->IsAvailable(widget->GetID(),2)
@@ -728,29 +728,29 @@ bool pawsCreationMain::OnButtonPressed( int mouseButton, int keyModifier, pawsWi
             PawsManager::GetSingleton().CreateWarningBox(PawsManager::GetSingleton().Translate(
                                                          "This race isn't implemented yet, sorry"));
             pawsRadioButtonGroup* raceBox = (pawsRadioButtonGroup*)FindWidget("RaceBox");
-            
+
             if ( lastRaceID != -1 )
             {
                 csString raceActive;
                 raceActive.Format("race%d", lastRaceID );
                 if ( raceBox )
                     raceBox->SetActive( raceActive );
-            }                 
+            }
             else
             {
                 if ( raceBox )
                     raceBox->TurnAllOff();
-            }                
-                                       
+            }
+
             return true;
         }
 
         if (lastRaceID == -1)
         {
-            SelectGender(lastGender);                            
+            SelectGender(lastGender);
             currentGender = lastGender;
         }
-        
+
         // If current gender isn't available, try every possible
         if (!createManager->IsAvailable(widget->GetID(),currentGender))
         {
@@ -758,37 +758,37 @@ bool pawsCreationMain::OnButtonPressed( int mouseButton, int keyModifier, pawsWi
                 SelectGender(PSCHARACTER_GENDER_FEMALE);
             else if (createManager->IsAvailable(widget->GetID(),PSCHARACTER_GENDER_MALE))
                 SelectGender(PSCHARACTER_GENDER_MALE);
-                
-            lastGender = currentGender;                
+
+            lastGender = currentGender;
         }
 
         pawsMultiLineTextBox* racedesc = (pawsMultiLineTextBox*)PawsManager::GetSingleton().FindWidget("race_description");
         racedesc->SetText(  createManager->GetRaceDescription( widget->GetID() ) );
 
-        
+
         createManager->SetGender(currentGender);
         UpdateRace(widget->GetID());
         ResetAllWindows();
         return true;
     }
-    
-    
-    
+
+
+
     if ( strcmp( widget->GetName(), "randomName" ) == 0 )
     {
         csString randomName;
         csString lastName;
-        
+
         if ( currentGender == PSCHARACTER_GENDER_FEMALE )
-        {                
+        {
             createManager->GenerateName(NAMEGENERATOR_FEMALE_FIRST_NAME, randomName,5,5);
-        }   
+        }
         else
         {
-           createManager->GenerateName(NAMEGENERATOR_MALE_FIRST_NAME, randomName,4,7);        
-        }  
-        
-        createManager->GenerateName(NAMEGENERATOR_FAMILY_NAME, lastName,4,7);        
+           createManager->GenerateName(NAMEGENERATOR_MALE_FIRST_NAME, randomName,4,7);
+        }
+
+        createManager->GenerateName(NAMEGENERATOR_FAMILY_NAME, lastName,4,7);
 
         csString upper( randomName );
         upper.Upcase();
@@ -805,22 +805,22 @@ bool pawsCreationMain::OnButtonPressed( int mouseButton, int keyModifier, pawsWi
         name->SetCursorPosition(0);
         nameWarning = 1; // no need to warn them
     }
-    
-    /////////////////////////////////////////////////////    
+
+    /////////////////////////////////////////////////////
     // END OF RACE BUTTONS
-    /////////////////////////////////////////////////////            
+    /////////////////////////////////////////////////////
     switch ( widget->GetID() )
     {
         case MALE_BUTTON:
             maleButton->SetState(true);
             femaleButton->SetState(false);
             SelectGender(PSCHARACTER_GENDER_MALE);
-            return true;            
+            return true;
         case FEMALE_BUTTON:
             maleButton->SetState(false);
             femaleButton->SetState(true);
             SelectGender(PSCHARACTER_GENDER_FEMALE);
-            return true;            
+            return true;
         case BACK_BUTTON:
         {
             Hide();
@@ -850,7 +850,7 @@ bool pawsCreationMain::OnButtonPressed( int mouseButton, int keyModifier, pawsWi
                 error.FireEvent();
                 return true;
             }
-        
+
             pawsEditTextBox* name = (pawsEditTextBox*)FindWidget("charnametext");
 
             // Check to see a name was entered.
@@ -921,66 +921,48 @@ bool pawsCreationMain::OnButtonPressed( int mouseButton, int keyModifier, pawsWi
                 policy += "be changed by authorized people in-game.  ";
                 policy += "The game forums can be found at:  http://www.hydlaa.com/smf/";
                 PawsManager::GetSingleton().CreateWarningBox(PawsManager::GetSingleton().Translate(policy));
-            
+
                 nameWarning = 1;
-                return true;                
+                return true;
             }
 
             // Set our choices in the creation manager
             createManager->SetCustomization( race->location[PSTRAIT_LOCATION_FACE][currentGender].GetSize()?race->location[PSTRAIT_LOCATION_FACE][currentGender][currentFaceChoice]->uid:0,
                                              race->location[PSTRAIT_LOCATION_HAIR_STYLE][currentGender].GetSize()?race->location[PSTRAIT_LOCATION_HAIR_STYLE][currentGender][activeHairStyle]->uid:0,
                                              race->location[PSTRAIT_LOCATION_BEARD_STYLE][currentGender].GetSize()?race->location[PSTRAIT_LOCATION_BEARD_STYLE][currentGender][currentBeardStyleChoice]->uid:0,
-                                             race->location[PSTRAIT_LOCATION_HAIR_COLOR][currentGender].GetSize()?race->location[PSTRAIT_LOCATION_HAIR_COLOR][currentGender][activeHairColour]->uid:0, 
+                                             race->location[PSTRAIT_LOCATION_HAIR_COLOR][currentGender].GetSize()?race->location[PSTRAIT_LOCATION_HAIR_COLOR][currentGender][activeHairColour]->uid:0,
                                              race->location[PSTRAIT_LOCATION_SKIN_TONE][currentGender].GetSize()?race->location[PSTRAIT_LOCATION_SKIN_TONE][currentGender][currentSkinColour]->uid:0 );
 
-            
+
             if ( widget->GetID() == NEXT_BUTTON )
             {
-                createManager->GetChildhoodData();                   
-                newWindow = "CharBirth";    
+                createManager->GetChildhoodData();
+                newWindow = "CharBirth";
             }
             else
             {
-                newWindow = "Paths";               
-            }                
+                newWindow = "Paths";
+            }
 
             psNameCheckMessage msg(name->GetText());
             msg.SendMessage();
         }
-    }    
-    
+    }
+
     return false;
 }
 
-/*
-void pawsCreationMain::Draw()
-{
-    pawsWidget::Draw();
-    
-    
-    graphics2D->SetClipRect( 0,0, graphics2D->GetWidth(), graphics2D->GetHeight());         
-    
-    if ( currentGender == PSCHARACTER_GENDER_FEMALE && createManager->GetSelectedRace() != 9)
-    {   
-        femaleImage->Draw(GetActualWidth(363),GetActualHeight(74), GetActualWidth(82),GetActualHeight(34));        
-    }
-    if ( createManager->GetSelectedRace() == 9)
-    {
-        neutralImage->Draw(GetActualWidth(363),GetActualHeight(74), GetActualWidth(82),GetActualHeight(34));
-    }
-}*/
-
 bool pawsCreationMain::OnChange(pawsWidget *widget)
-{ 
-	// If we click on the name box (and we change it), then we might get the name policy warning again
-	if (widget == nameTextBox) 
-	    nameWarning=0;
-	return true;	
+{
+    // If we click on the name box (and we change it), then we might get the name policy warning again
+    if (widget == nameTextBox)
+        nameWarning=0;
+    return true;
 }
 void pawsCreationMain::Show()
 {
     // Play some music
-    
+
     psengine->GetSoundManager()->Load("charcreation");
 
     pawsWidget::Show();
@@ -991,7 +973,7 @@ void pawsCreationMain::UpdateRace(int id)
 {
     loaded = false;
     int raceCP = createManager->GetRaceCP( id );
-    lastRaceID = id;                
+    lastRaceID = id;
 
     if ( raceCP != REQUESTING_CP && createManager->GetSelectedRace() != id )
     {
@@ -999,27 +981,27 @@ void pawsCreationMain::UpdateRace(int id)
         createManager->SetCurrentCP( raceCP );
         UpdateCP();
     }
-                
-    createManager->SetRace( id );       
-    race = createManager->GetRace(id);       
-        
-    currentGender = createManager->GetSelectedGender();            
-            
-    if ( lastGender != -1 )        
-    {            
-        currentGender = lastGender;                 
-    }            
-                
-    createManager->SetGender( currentGender );                
+
+    createManager->SetRace( id );
+    race = createManager->GetRace(id);
+
+    currentGender = createManager->GetSelectedGender();
+
+    if ( lastGender != -1 )
+    {
+        currentGender = lastGender;
+    }
+
+    createManager->SetGender( currentGender );
     lastGender = -1;
-        
+
     // Store the factory name for the selected model.
     factName = createManager->GetModelName( id, currentGender );
-                       
+
     // Show the model for the selected race.
     view->Show();
     view->EnableMouseControl(true);
-    
+
     //temporary hardcoding needs removal
     maleButton->SetEnabled(id != 9);
     femaleButton->SetEnabled(id != 9);
@@ -1035,7 +1017,7 @@ void pawsCreationMain::UpdateRace(int id)
         else
             femaleButton->SetState(true);
     }
-            
+
 
     CheckLoadStatus();
 }
@@ -1065,15 +1047,15 @@ bool pawsCreationMain::CheckLoadStatus()
                 spstate->SetVelocity(0.0,&psengine->GetRandomGen());
             }
 
-            currentFaceChoice = 0; 
+            currentFaceChoice = 0;
             activeHairStyle = 0;
             currentBeardStyleChoice = 0;
             activeHairColour = 0;
             currentSkinColour = 0;
 
-            ChangeFace(0);    
-            ChangeHairColour(0);    
-            SetHairStyle( activeHairStyle );    
+            ChangeFace(0);
+            ChangeHairColour(0);
+            SetHairStyle( activeHairStyle );
             ChangeSkinColour( currentSkinColour );
             ChangeBeardStyle( currentBeardStyleChoice );
 
@@ -1152,7 +1134,7 @@ bool CheckNameForRepeatingLetters(csString name)
             letter = name[i];
         }
     }
-    
+
     // No more than 2 of one letter in a row
     return true;
 }
