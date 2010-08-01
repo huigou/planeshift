@@ -607,6 +607,16 @@ void pawsLauncherWindow::LoadSettings()
         enableGrass->SetState(configPSC.GetBool("PlaneShift.Graphics.EnableGrass"));
     }
 
+    pawsCheckBox* enableWeather = (pawsCheckBox*)FindWidget("EnableWeather");
+    if(configUser->KeyExists("PlaneShift.Effects.Weather.Enabled"))
+    {
+        enableWeather->SetState(configUser->GetBool("PlaneShift.Effects.Weather.Enabled"));
+    }
+    else
+    {
+        enableWeather->SetState(configPSC.GetBool("PlaneShift.Effects.Weather.Enabled"));
+    }
+
     pawsCheckBox* VBO = (pawsCheckBox*)FindWidget("VBO");
     if(configUser->KeyExists("Video.OpenGL.UseExtension.GL_ARB_vertex_buffer_object"))
     {
@@ -817,6 +827,7 @@ void pawsLauncherWindow::SaveSettings()
             configUser->SetBool("PlaneShift.Graphics.EnableGrass", false);
             configUser->SetBool("Video.OpenGL.UseExtension.GL_ARB_vertex_buffer_object", true);
             configUser->SetStr("PlaneShift.Graphics.Particles", "Medium");
+            configUser->SetBool("PlaneShift.Effects.Weather.Enabled", false);
             break;
         }
     case LOWEST:
@@ -829,6 +840,7 @@ void pawsLauncherWindow::SaveSettings()
             configUser->SetBool("PlaneShift.Graphics.EnableGrass", false);
             configUser->SetBool("Video.OpenGL.UseExtension.GL_ARB_vertex_buffer_object", true);
             configUser->SetStr("PlaneShift.Graphics.Particles", "Medium");
+            configUser->SetBool("PlaneShift.Effects.Weather.Enabled", false);
             break;
         }
     case CUSTOM:
@@ -871,6 +883,9 @@ void pawsLauncherWindow::SaveSettings()
 
             pawsCheckBox* enableGrass = (pawsCheckBox*)FindWidget("EnableGrass");
             configUser->SetBool("PlaneShift.Graphics.EnableGrass", enableGrass->GetState());
+
+            pawsCheckBox* enableWeather = (pawsCheckBox*)FindWidget("EnableWeather");
+            configUser->SetBool("PlaneShift.Effects.Weather.Enabled", enableWeather->GetState());
 
             pawsCheckBox* VBO = (pawsCheckBox*)FindWidget("VBO");
             configUser->SetBool("Video.OpenGL.UseExtension.GL_ARB_vertex_buffer_object", VBO->GetState());
