@@ -129,12 +129,12 @@ void psCharAppearance::Free()
     // reset traits
     skinToneSet.DeleteAll();
     faceMaterial.Clear();
-    eyeMesh.Clear();
     eyeColorSet = false;
-    hairMesh.Clear();
     hairColorSet = false;
-    beardMesh.Clear();
     beardAttached = false;
+    eyeMesh = "Eyes";
+    hairMesh = "Hair";
+    beardMesh = "Beard";
 }
 
 psCharAppearance::~psCharAppearance()
