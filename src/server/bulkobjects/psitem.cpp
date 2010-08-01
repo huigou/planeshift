@@ -2696,6 +2696,20 @@ bool psItem::SendItemDescription( Client *client)
         default:
             break;
         }
+        armor_type += "\n\nArmor:";
+        float dmgSlash, dmgBlunt, dmgPierce;
+        dmgSlash = GetDamage(PSITEMSTATS_DAMAGETYPE_SLASH);
+        dmgBlunt = GetDamage(PSITEMSTATS_DAMAGETYPE_BLUNT);
+        dmgPierce = GetDamage(PSITEMSTATS_DAMAGETYPE_PIERCE);
+
+        // Only worth printing if their value is not zero
+        if ( dmgSlash )
+            armor_type += csString().Format( "\n Slash: %.2f", dmgSlash );
+        if ( dmgBlunt )
+            armor_type += csString().Format( "\n Blunt: %.2f", dmgBlunt );
+        if ( dmgPierce )
+            armor_type += csString().Format( "\n Pierce: %.2f", dmgPierce );
+
         itemInfo += armor_type;
     }
 
