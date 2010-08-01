@@ -200,7 +200,6 @@ bool pawsListBox::Setup( iDocumentNode* node )
         CreateTitleRow();
 
     SetSortedColumn(node->GetAttributeValueAsInt("sortBy"));
-    SetSortingFunc(sortColNum, &textBoxSortFunc);
     csString selectableAttr = node->GetAttributeValue("selectable");
     selectable = selectableAttr != "0";
 
@@ -1042,7 +1041,7 @@ void pawsListBox::SetSortedColumn(int colNum)
         return;
 
     if (columnDef[colNum].sortFunc == NULL)
-        return;
+        columnDef[colNum].sortFunc = textBoxSortFunc;
 
     if (sortColNum != -1)
         DeleteSortingArrow(sortColNum);
