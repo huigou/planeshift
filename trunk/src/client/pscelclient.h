@@ -107,6 +107,7 @@ private:
     csHash<GEMClientObject*, EID> entities_hash;
     csRefArray<MsgEntry> newActorQueue;
     csRefArray<MsgEntry> newItemQueue;
+    bool instantiateItems;
 
     // Keep seperate for speedups
     csArray<GEMClientActionLocation*> actions;
@@ -272,6 +273,8 @@ public:
      *  @param string The string where do to the replacements
      */ 
     void replaceRacialGroup(csString &string);
+
+    bool InstanceItems() { return instantiateItems; }
 
 protected:
     /** Finds given entity in list of unresolved entities */
