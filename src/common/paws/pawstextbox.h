@@ -55,36 +55,36 @@ public:
     bool SelfPopulate( iDocumentNode *node);
 
     void Draw();
-    
+
     void SetText( const char* text );
     void FormatText( const char *fmt, ... );
     const char* GetText() { return text; }
     void SetVertical(bool vertical);
-    
+
     void Adjust (pawsHorizAdjust horiz, pawsVertAdjust vert);
     void HorizAdjust (pawsHorizAdjust horiz);
     void VertAdjust (pawsVertAdjust horiz);
 
     // Sets size of the widget to fit the text that it displays:
     void SetSizeByText(int padX,int padY);
-    
+
     // Normal text boxes should not be focused.
     virtual bool OnGainFocus( bool notifyParent = true ) {return false;}
 
-    int GetBorderStyle() { return BORDER_SUNKEN; }    
+    int GetBorderStyle() { return BORDER_SUNKEN; }
 
     void Grayed(bool g) { grayed = g; }
 
     virtual int GetFontColour();
 
     virtual void OnUpdateData(const char *dataname,PAWSData& data);
-    
+
     // Utility function to calculate number of code points in a substring
     static int CountCodePoints(const char* text, int start = 0, int len = -1);
-    
+
     // Utility function to rewind a UTF-8 string by a certain number of codepoints
     static int RewindCodePoints(const char* text, int start, int count);
-    
+
     // Utility function to skip a UTF-8 string by a certain number of codepoints
     static int SkipCodePoints(const char* text, int start, int count);
 
@@ -99,7 +99,7 @@ protected:
      * Calculates size of text
      */
     void CalcTextSize(int & width, int & height);
-    
+
     /**
      * Fills 'letterSizes' array. Can be called only when vertical==true
      */
@@ -112,14 +112,14 @@ protected:
     int colour;
 
     bool grayed;
-    
+
     pawsHorizAdjust horizAdjust;
     pawsVertAdjust  vertAdjust;
-    
+
     bool vertical;
-    
+
     int textX, textY;        // Position of text inside the widget (depends on adjustment)
-    
+
     //These members are used only when vertical==true:
     int textWidth;           // Width of vertical column of letters (i.e. MAX(letter_width))
     psPoint *letterSizes;    // Size of each letter.
@@ -140,15 +140,15 @@ CREATE_PAWS_FACTORY( pawsTextBox );
 class pawsMessageTextBox : public pawsWidget
 {
 public:
-	struct MessageSegment
-	{
-		int x;
-		csString text;
-		int colour;
-		int size;
-		
-		MessageSegment() : x(0), text(""), colour(0), size(0) { }
-	};
+    struct MessageSegment
+    {
+        int x;
+        csString text;
+        int colour;
+        int size;
+
+        MessageSegment() : x(0), text(""), colour(0), size(0) { }
+    };
     struct MessageLine
     {
         csString text;
@@ -165,7 +165,7 @@ public:
     };
 
     pawsMessageTextBox( );
-    virtual ~pawsMessageTextBox();    
+    virtual ~pawsMessageTextBox();
     virtual bool Setup( iDocumentNode* node );
     virtual bool Setup( void );
     virtual bool PostSetup();
@@ -178,9 +178,9 @@ public:
     bool SelfPopulate( iDocumentNode *node);
 
     virtual void Draw();
-    
+
     /** Add a new message to this box.
-     * @param data The new message to add. 
+     * @param data The new message to add.
      * @param colour The colour this message should be. -1 means use the default
      *               colour that is available.
      */
@@ -190,10 +190,10 @@ public:
     void ReplaceLastMessage( const char* data );
 
     virtual void OnResize();
-    virtual void Resize(); 
+    virtual void Resize();
     virtual bool OnScroll( int direction, pawsScrollBar* widget );
     virtual bool OnMouseDown( int button, int modifiers, int x, int y );
-    
+
     void Clear();
 
     int GetBorderStyle() { return BORDER_SUNKEN; }
@@ -205,30 +205,30 @@ public:
     void FullScroll();
 
     virtual void OnUpdateData(const char *dataname,PAWSData& data);
-    
+
     bool OnKeyDown( utf32_char code, utf32_char key, int modifiers );
-    
+
 
 protected:
     /// Renders an entire message and returns the total lines it took.
     int RenderMessage( const char* data, int lineStart, int colour );
 
-    /// List of messages this box has. 
+    /// List of messages this box has.
     csPDelArray<MessageLine> messages;
-    
+
     //void AdjustMessages();
-    
+
     void SplitMessage( const char* newText, int colour, int size, MessageLine*& msgLine, int& startPosition );
 
     /// Calculates value of the lineHeight attribute
     void CalcLineHeight();
-    
+
     /**
      * checks for a child of type pawsScrollBar.
      * @return pawsScrollBar* pointer to child or NULL
      */
     pawsScrollBar * GetScrollBar();
-    
+
     csPDelArray<MessageLine> adjusted;
 
     int lineHeight;
@@ -238,7 +238,7 @@ protected:
 
     pawsScrollBar* scrollBar;
     int scrollBarWidth;
-    
+
 private:
     static const int INITOFFSET = 20;
     void WriteMessageLine(MessageLine*& msgLine, csString text, int colour);
@@ -263,7 +263,7 @@ public:
     bool Setup( iDocumentNode* node );
 
     bool OnKeyDown( utf32_char code, utf32_char key, int modifiers );
-    
+
     const char* GetText() { return text.GetDataSafe(); }
 
     void SetMultiline(bool multi);
@@ -274,21 +274,21 @@ public:
      */
     void SetText( const char* text, bool publish = true );
     virtual void OnUpdateData(const char *dataname,PAWSData& data);
-    
+
     // Sets size of the widget to fit the text that it displays:
     void SetSizeByText();
 
     void Clear();
 
     virtual bool OnMouseDown( int button, int modifiers, int x, int y );
-    
+
     /** Called as a callback to a request for clipboard content if avaliabe.
      *
      * \note Only implemented for unix
      */
     virtual bool OnClipboard( const csString& content );
 
-    int GetBorderStyle() { return BORDER_SUNKEN; }    
+    int GetBorderStyle() { return BORDER_SUNKEN; }
 
     /**
      * This function allows a widget to fill in its own contents from an xml node
@@ -302,7 +302,7 @@ public:
      */
     unsigned int GetTopLine() { return topLine; }
     void SetTopLine(unsigned int newTopLine) { topLine = newTopLine; }
-    
+
     void SetCursorPosition(size_t pos) { cursorPosition = pos; }
 
     virtual const bool GetFocusOverridesControls() const { return true; }
@@ -312,7 +312,7 @@ protected:
     bool password;
     csRef<iVirtualClock> clock;
 
-    /// Position of first character that we display 
+    /// Position of first character that we display
     int start;
 
     /// The position of the cursor blink (in code units not points)
@@ -350,7 +350,7 @@ CREATE_PAWS_FACTORY( pawsEditTextBox );
 #define MULTILINE_TEXTBOX_MOUSE_SCROLL_AMOUNT 3
 class pawsMultiLineTextBox : public pawsWidget
 {
-public:    
+public:
     pawsMultiLineTextBox();
     virtual ~pawsMultiLineTextBox();
 
@@ -358,17 +358,17 @@ public:
     bool PostSetup();
 
     void Draw();
-      
+
     void SetText( const char* text );
     const char* GetText(){return text;}
     void Resize();
     bool OnScroll( int direction, pawsScrollBar* widget );
     virtual bool OnMouseDown( int button, int modifiers, int x, int y );
-    
+
     // Normal text boxes should not be focused.
     virtual bool OnGainFocus( bool notifyParent = true ) {return false;}
     virtual void OnUpdateData(const char *dataname,PAWSData& data);
-    
+
 protected:
 
     void OrganizeText( const char* text );
@@ -383,7 +383,7 @@ protected:
     csString text;
     /// The text, broken into separate lines by OrganizeText()
     csArray<csString> lines;
-    
+
     //where our scrollbar at?
     size_t startLine;
     //Number of lines that we can fit in the box
@@ -410,9 +410,9 @@ public:
         size_t breakLine; //Stores real text position of where break occurs.
         int lineExtra; //Stores 1 if line ends with a \n, or 0 if it does not.
     };
-    
+
     bool Setup( iDocumentNode* node );
-    
+
     virtual void Draw();
     void DrawWidgetText(const char *text, size_t x, size_t y, int style, int fg);
 
@@ -431,12 +431,12 @@ public:
     virtual void OnUpdateData(const char *dataname,PAWSData& data);
     virtual bool OnKeyDown( utf32_char code, utf32_char key, int modifiers );
     virtual void CalcMouseClick( int x, int y, size_t &cursorLine, size_t &cursorChar);
-    
+
     virtual const bool GetFocusOverridesControls() const { return true; }
 
     void PushLineInfo( size_t lineLength, size_t lineBreak, int lineExtra);
 
-    int GetBorderStyle() { return BORDER_SUNKEN; }    
+    int GetBorderStyle() { return BORDER_SUNKEN; }
     void LayoutText();
 
     /**
@@ -467,9 +467,9 @@ protected:
 
     csRef<iVirtualClock> clock;
 
-    // The position of the cursor blink 
+    // The position of the cursor blink
     size_t cursorPosition;
-    
+
     // The position of the cursor in an array (Used by draw method).
     size_t cursorLine;
     size_t cursorLoc;
@@ -488,10 +488,10 @@ protected:
     // Width of the vertical scroll bar
     int vScrollBarWidth;
     size_t canDrawLines;
-    
+
     size_t topLine;
     pawsScrollBar* vScrollBar;
-        
+
     void ReflowText();
     bool usingScrollBar;
 
@@ -543,5 +543,5 @@ private:
 
 CREATE_PAWS_FACTORY( pawsFadingTextBox );
 
-#endif 
+#endif
 

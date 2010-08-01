@@ -78,44 +78,44 @@ bool pawsConfigChatTabs::LoadConfig()
     chatWindow->LoadChatSettings();
 
     ChatSettings settings = chatWindow->GetSettings();
-    
+
     isysbase->SetState(false);
     ichat->SetState(false);
-	inpc->SetState(false);
-	itells->SetState(false);
-	iguild->SetState(false);
+    inpc->SetState(false);
+    itells->SetState(false);
+    iguild->SetState(false);
     ialliance->SetState(false);
-	igroup->SetState(false);
-	iauction->SetState(false);
-	isys->SetState(false);
-	ihelp->SetState(false);
+    igroup->SetState(false);
+    iauction->SetState(false);
+    isys->SetState(false);
+    ihelp->SetState(false);
     basicchat->SetState(settings.chatWidget == "chat_basic.xml");
 
     csArray<csString> allMainBindings = settings.bindings.GetAll("subMainText");
     for(size_t i = 0; i < allMainBindings.GetSize(); i++)
     {
-    	if(allMainBindings[i] == "CHAT_SYSTEM_BASE")
-    		isysbase->SetState(true);
-       	if(allMainBindings[i] == "CHAT_CHANNEL1")
-    		ichat->SetState(true);
-    	if(allMainBindings[i] == "CHAT_NPC")
-    		inpc->SetState(true);
-    	if(allMainBindings[i] == "CHAT_TELL")
-    		itells->SetState(true);
-    	if(allMainBindings[i] == "CHAT_GUILD")
-    		iguild->SetState(true);
-    	if(allMainBindings[i] == "CHAT_ALLIANCE")
-    		ialliance->SetState(true);
-    	if(allMainBindings[i] == "CHAT_GROUP")
-    		igroup->SetState(true);
-    	if(allMainBindings[i] == "CHAT_AUCTION")
-    		iauction->SetState(true);
-		if(allMainBindings[i] == "CHAT_SYSTEM")
-			isys->SetState(true);
-		if(allMainBindings[i] == "CHAT_ADVICE")
-			ihelp->SetState(true);
+        if(allMainBindings[i] == "CHAT_SYSTEM_BASE")
+            isysbase->SetState(true);
+        if(allMainBindings[i] == "CHAT_CHANNEL1")
+            ichat->SetState(true);
+        if(allMainBindings[i] == "CHAT_NPC")
+            inpc->SetState(true);
+        if(allMainBindings[i] == "CHAT_TELL")
+            itells->SetState(true);
+        if(allMainBindings[i] == "CHAT_GUILD")
+            iguild->SetState(true);
+        if(allMainBindings[i] == "CHAT_ALLIANCE")
+            ialliance->SetState(true);
+        if(allMainBindings[i] == "CHAT_GROUP")
+            igroup->SetState(true);
+        if(allMainBindings[i] == "CHAT_AUCTION")
+            iauction->SetState(true);
+        if(allMainBindings[i] == "CHAT_SYSTEM")
+            isys->SetState(true);
+        if(allMainBindings[i] == "CHAT_ADVICE")
+            ihelp->SetState(true);
     }
-	
+
     // Check boxes doesn't send OnChange :(
     dirty = true;
 
@@ -125,7 +125,7 @@ bool pawsConfigChatTabs::LoadConfig()
 bool pawsConfigChatTabs::SaveConfig()
 {
     ChatSettings& settings = chatWindow->GetSettings();
-    
+
     settings.bindings.Delete("subMainText", "CHAT_SYSTEM_BASE");
     settings.bindings.Delete("subMainText", "CHAT_CHANNEL1");
     settings.bindings.Delete("subMainText", "CHAT_CHANNEL2");
@@ -138,26 +138,26 @@ bool pawsConfigChatTabs::SaveConfig()
     settings.bindings.Delete("subMainText", "CHAT_CHANNEL9");
     settings.bindings.Delete("subMainText", "CHAT_CHANNEL10");
     settings.bindings.Delete("subMainText", "CHAT_NPC");
-	settings.bindings.Delete("subMainText", "CHAT_NPC_ME");
-	settings.bindings.Delete("subMainText", "CHAT_NPC_MY");
-	settings.bindings.Delete("subMainText", "CHAT_NPC_NARRATE");
-	settings.bindings.Delete("subMainText", "CHAT_NPCINTERNAL");
-	settings.bindings.Delete("subMainText", "CHAT_TELL");
-	settings.bindings.Delete("subMainText", "CHAT_TELLSELF");
-	settings.bindings.Delete("subMainText", "CHAT_GUILD");
-	settings.bindings.Delete("subMainText", "CHAT_GROUP");
-	settings.bindings.Delete("subMainText", "CHAT_AUCTION");
-	settings.bindings.Delete("subMainText", "CHAT_SYSTEM");
-	settings.bindings.Delete("subMainText", "CHAT_ADVICE");
+    settings.bindings.Delete("subMainText", "CHAT_NPC_ME");
+    settings.bindings.Delete("subMainText", "CHAT_NPC_MY");
+    settings.bindings.Delete("subMainText", "CHAT_NPC_NARRATE");
+    settings.bindings.Delete("subMainText", "CHAT_NPCINTERNAL");
+    settings.bindings.Delete("subMainText", "CHAT_TELL");
+    settings.bindings.Delete("subMainText", "CHAT_TELLSELF");
+    settings.bindings.Delete("subMainText", "CHAT_GUILD");
+    settings.bindings.Delete("subMainText", "CHAT_GROUP");
+    settings.bindings.Delete("subMainText", "CHAT_AUCTION");
+    settings.bindings.Delete("subMainText", "CHAT_SYSTEM");
+    settings.bindings.Delete("subMainText", "CHAT_ADVICE");
     settings.bindings.Delete("subMainText", "CHAT_COMBAT");
     settings.bindings.Delete("subMainText", "CHAT_SERVER_TELL");
     settings.bindings.Delete("subMainText", "CHAT_ADVISOR");
     settings.bindings.Delete("subMainText", "CHAT_ADVICE_LIST");
     settings.bindings.Delete("subMainText", "CHAT_REPORT");
-    
+
     if(isysbase->GetState())
     {
-    	settings.bindings.Put("subMainText", "CHAT_SYSTEM_BASE");
+        settings.bindings.Put("subMainText", "CHAT_SYSTEM_BASE");
     }
     if(ichat->GetState())
     {
@@ -173,54 +173,54 @@ bool pawsConfigChatTabs::SaveConfig()
         settings.bindings.Put("subMainText", "CHAT_CHANNEL10");
     }
     if(inpc->GetState())
-	{
-		settings.bindings.Put("subMainText", "CHAT_NPC");
-		settings.bindings.Put("subMainText", "CHAT_NPC_ME");
-		settings.bindings.Put("subMainText", "CHAT_NPC_MY");
-		settings.bindings.Put("subMainText", "CHAT_NPC_NARRATE");
-		settings.bindings.Put("subMainText", "CHAT_NPCINTERNAL");
-	}
+    {
+        settings.bindings.Put("subMainText", "CHAT_NPC");
+        settings.bindings.Put("subMainText", "CHAT_NPC_ME");
+        settings.bindings.Put("subMainText", "CHAT_NPC_MY");
+        settings.bindings.Put("subMainText", "CHAT_NPC_NARRATE");
+        settings.bindings.Put("subMainText", "CHAT_NPCINTERNAL");
+    }
     if(itells->GetState())
-	{
-		settings.bindings.Put("subMainText", "CHAT_TELL");
-		settings.bindings.Put("subMainText", "CHAT_TELLSELF");
-	}
+    {
+        settings.bindings.Put("subMainText", "CHAT_TELL");
+        settings.bindings.Put("subMainText", "CHAT_TELLSELF");
+    }
     if(iguild->GetState())
-	{
-		settings.bindings.Put("subMainText", "CHAT_GUILD");
-	}
+    {
+        settings.bindings.Put("subMainText", "CHAT_GUILD");
+    }
     if(iguild->GetState())
-	{
-		settings.bindings.Put("subMainText", "CHAT_ALLIANCE");
-	}
+    {
+        settings.bindings.Put("subMainText", "CHAT_ALLIANCE");
+    }
     if(igroup->GetState())
-	{
-		settings.bindings.Put("subMainText", "CHAT_GROUP");
-	}
+    {
+        settings.bindings.Put("subMainText", "CHAT_GROUP");
+    }
     if(iauction->GetState())
-	{
-		settings.bindings.Put("subMainText", "CHAT_AUCTION");
-	}
+    {
+        settings.bindings.Put("subMainText", "CHAT_AUCTION");
+    }
     if(isys->GetState())
-	{
-		settings.bindings.Put("subMainText", "CHAT_SYSTEM");
-		settings.bindings.Put("subMainText", "CHAT_SERVER_TELL");
-		settings.bindings.Put("subMainText", "CHAT_REPORT");
-		settings.bindings.Put("subMainText", "CHAT_COMBAT");
-	}
+    {
+        settings.bindings.Put("subMainText", "CHAT_SYSTEM");
+        settings.bindings.Put("subMainText", "CHAT_SERVER_TELL");
+        settings.bindings.Put("subMainText", "CHAT_REPORT");
+        settings.bindings.Put("subMainText", "CHAT_COMBAT");
+    }
     if(ihelp->GetState())
-	{
-		settings.bindings.Put("subMainText", "CHAT_ADVICE");
-		settings.bindings.Put("subMainText", "CHAT_ADVISOR");
-		settings.bindings.Put("subMainText", "CHAT_ADVICE_LIST");
-	}
+    {
+        settings.bindings.Put("subMainText", "CHAT_ADVICE");
+        settings.bindings.Put("subMainText", "CHAT_ADVISOR");
+        settings.bindings.Put("subMainText", "CHAT_ADVICE_LIST");
+    }
 
     //could be made more generic (scan the dir?)
     settings.chatWidget = basicchat->GetState() ? "chat_basic.xml" : "chat.xml";
 
     // Save to file
     chatWindow->SaveChatSettings();
-    
+
     // Apply settings
     chatWindow->LoadChatSettings();
 

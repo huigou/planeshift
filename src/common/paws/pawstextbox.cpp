@@ -46,7 +46,7 @@ pawsTextBox::pawsTextBox() : textX(0), textY(0)
 {
     horizAdjust = horizLEFT;
     vertAdjust  = vertCENTRE;
-    
+
     vertical = false;
     grayed = false;
     letterSizes = NULL;
@@ -59,49 +59,49 @@ pawsTextBox::~pawsTextBox()
 }
 
 bool pawsTextBox::Setup( iDocumentNode* node )
-{    
+{
     csRef<iDocumentAttribute> vertAttribute = node->GetAttribute("vertical");
     if ( vertAttribute )
         SetVertical(strcmp(vertAttribute->GetValue(), "yes") == 0);
 
-    csRef<iDocumentNode> textNode = node->GetNode( "text" );        
-    
+    csRef<iDocumentNode> textNode = node->GetNode( "text" );
+
     if ( textNode )
     {
         csRef<iDocumentAttribute> fontAdjustAttribute;
         fontAdjustAttribute = textNode->GetAttribute("horizAdjust");
         if ( fontAdjustAttribute )
         {
-            csString fontAdjust = fontAdjustAttribute->GetValue();            
+            csString fontAdjust = fontAdjustAttribute->GetValue();
             if (fontAdjust == "CENTRE")
                 HorizAdjust(horizCENTRE);
             else if (fontAdjust == "RIGHT")
                 HorizAdjust(horizRIGHT);
             else
                 HorizAdjust(horizLEFT);
-        }            
+        }
 
         fontAdjustAttribute = textNode->GetAttribute("vertAdjust");
         if ( fontAdjustAttribute )
         {
-            csString fontAdjust = fontAdjustAttribute->GetValue();            
+            csString fontAdjust = fontAdjustAttribute->GetValue();
             if (fontAdjust == "CENTRE")
                 VertAdjust(vertCENTRE);
             else if (fontAdjust == "BOTTOM")
                 VertAdjust(vertBOTTOM);
             else
                 VertAdjust(vertTOP);
-        } 
-		else
-			VertAdjust(vertCENTRE);  // default is centered vertically unless specified otherwise
-        
+        }
+        else
+            VertAdjust(vertCENTRE);  // default is centered vertically unless specified otherwise
+
         csRef<iDocumentAttribute> textAttribute = textNode->GetAttribute("string");
         if ( textAttribute )
         {
             SetText(PawsManager::GetSingleton().Translate(textAttribute->GetValue()));
         }
     }
-        
+
     return true;
 }
 
@@ -109,8 +109,8 @@ void pawsTextBox::CalcTextPos()
 {
     int width, height;
 
-	if (!screenFrame.Height())
-		SetSizeByText(0,0);
+    if (!screenFrame.Height())
+        SetSizeByText(0,0);
 
     if (horizAdjust==horizRIGHT  ||  horizAdjust==horizCENTRE  ||  vertAdjust==vertBOTTOM  ||  vertAdjust==vertCENTRE)
         CalcTextSize(width, height);
@@ -146,17 +146,17 @@ void pawsTextBox::CalcLetterSizes()
 {
     char letterStr[2];
     unsigned int i;
-    
+
     assert(vertical);
-    
+
     if (letterSizes != NULL)
         delete [] letterSizes;
-    
+
     letterSizes = new psPoint [text.Length()];
     textWidth = 0;
     letterStr[1] = '\0'; // Make sure the string is terminated
                          // pos 0 will be filled in later.
-    
+
     for (i=0; i < text.Length(); i++)
     {
         letterStr[0] = text.GetAt(i);
@@ -170,7 +170,7 @@ void pawsTextBox::CalcLetterSizes()
 void pawsTextBox::SetVertical(bool vertical)
 {
     this->vertical = vertical;
-    
+
     if (vertical)
         CalcLetterSizes();
     else if (letterSizes != NULL)
@@ -205,7 +205,7 @@ void pawsTextBox::CalcTextSize(int& width, int& height)
     if (vertical)
     {
         unsigned int i;
-        
+
         width = 0;
         height = 0;
 
@@ -220,7 +220,7 @@ void pawsTextBox::CalcTextSize(int& width, int& height)
         GetFont()->GetDimensions( (const char*)text, width, height );
         //width+=5;
         //height+=5;
-    }        
+    }
     else
     {
         GetFont()->GetDimensions("Sample", width, height);  // Example text with full height caps and descenders
@@ -234,11 +234,11 @@ bool pawsTextBox::SelfPopulate( iDocumentNode *node)
         SetText (node->GetAttributeValue("text"));
         return true;
     }
-	else if (node->GetContentsValue())
-	{
-		SetText (node->GetContentsValue());
-		return true;
-	}
+    else if (node->GetContentsValue())
+    {
+        SetText (node->GetContentsValue());
+        return true;
+    }
     else
         return false;
 }
@@ -251,9 +251,9 @@ void pawsTextBox::FormatText( const char *fmt, ... )
     va_start(args, fmt);
     cs_vsnprintf(text,sizeof(text),fmt,args);
     va_end(args);
-    
+
     SetText( (const char*)text );
-}    
+}
 
 
 void pawsTextBox::SetText( const char* newText )
@@ -272,7 +272,7 @@ void pawsTextBox::SetText( const char* newText )
 void pawsTextBox::SetSizeByText(int padX, int padY)
 {
     int width, height;
- 
+
     // These padding parameters used to be hardcoded to 5,5 in all cases inside CalcTextSize.
     CalcTextSize(width, height);
     SetRelativeFrameSize(width+padX, height+padY);
@@ -295,13 +295,13 @@ void pawsTextBox::Draw()
     {
         char letterStr[2];
         int letterY;
-        
+
         letterStr[1] = 0;
         letterY = textY;
         for (unsigned int i = 0; i < text.Length(); i++)
         {
             letterStr[0] = text.GetAt(i);
-            DrawWidgetText( letterStr , 
+            DrawWidgetText( letterStr ,
                             screenFrame.xmin + margin + textX + (textWidth-letterSizes[i].x)/2,
                             screenFrame.ymin + margin + letterY );
 
@@ -310,9 +310,9 @@ void pawsTextBox::Draw()
     }
     else
     {
-		DrawWidgetText( (const char*)text, 
-						screenFrame.xmin + margin + textX,
-						screenFrame.ymin + margin + textY );   
+        DrawWidgetText( (const char*)text,
+                        screenFrame.xmin + margin + textX,
+                        screenFrame.ymin + margin + textY );
     }
 }
 
@@ -332,40 +332,40 @@ void pawsTextBox::OnUpdateData(const char *dataname,PAWSData& value)
 
 int pawsTextBox::CountCodePoints(const char* text, int start, int len)
 {
-	int codePoints = 0;
-	const char* str = text;
-	if(len == -1)
-		len = strlen(text) - start;
-	text += start;
-	while(str < text + len)
-	{
-		str += csUnicodeTransform::UTF8Skip((const utf8_char*) str, text + len - str);
-		codePoints++;
-	}
-	return codePoints;
+    int codePoints = 0;
+    const char* str = text;
+    if(len == -1)
+        len = strlen(text) - start;
+    text += start;
+    while(str < text + len)
+    {
+        str += csUnicodeTransform::UTF8Skip((const utf8_char*) str, text + len - str);
+        codePoints++;
+    }
+    return codePoints;
 }
 
 int pawsTextBox::RewindCodePoints(const char* text, int start, int count)
 {
-	const char* str = text + start;
-	while(count > 0 && str > text)
-	{
-		str -= csUnicodeTransform::UTF8Rewind((const utf8_char*) str, str - text);
-		count--;
-	}
-	return str - text;
+    const char* str = text + start;
+    while(count > 0 && str > text)
+    {
+        str -= csUnicodeTransform::UTF8Rewind((const utf8_char*) str, str - text);
+        count--;
+    }
+    return str - text;
 }
 
 int pawsTextBox::SkipCodePoints(const char* text, int start, int count)
 {
-	const char* str = text + start;
-	int len = strlen(text);
-	while(count > 0 && str < text + len)
-	{
-		str += csUnicodeTransform::UTF8Skip((const utf8_char*)str, text + len - str);
-		count--;
-	}
-	return str - text + start;
+    const char* str = text + start;
+    int len = strlen(text);
+    while(count > 0 && str < text + len)
+    {
+        str += csUnicodeTransform::UTF8Skip((const utf8_char*)str, text + len - str);
+        count--;
+    }
+    return str - text + start;
 }
 
 //----------------------------------------------------------------------------------------
@@ -409,7 +409,7 @@ pawsScrollBar * pawsMessageTextBox::GetScrollBar()
         if (child)
             return child;
     }
-    
+
     return NULL;
 }
 
@@ -444,12 +444,12 @@ bool pawsMessageTextBox::PostSetup()
         scrollBar->SetParent( this );
         scrollBar->PostSetup();
         AddChild( scrollBar );
-        
+
         scrollBar->SetTickValue( 1.0 );
         scrollBar->SetMaxValue(0.0);
     }
 
-    scrollBar->SetRelativeFrame( defaultFrame.Width() - scrollBarWidth, 6, scrollBarWidth, defaultFrame.Height() - 12 ); 
+    scrollBar->SetRelativeFrame( defaultFrame.Width() - scrollBarWidth, 6, scrollBarWidth, defaultFrame.Height() - 12 );
     int attach = ATTACH_TOP | ATTACH_BOTTOM | ATTACH_RIGHT;
     scrollBar->SetAttachFlags( attach );
 
@@ -464,22 +464,22 @@ void pawsMessageTextBox::Resize()
 
     CalcLineHeight();
 
-    adjusted.Empty();    
+    adjusted.Empty();
 
-    for ( size_t x = 0; x < messages.GetSize(); x++ )    
-    {        
+    for ( size_t x = 0; x < messages.GetSize(); x++ )
+    {
         MessageLine* dummy = NULL;
         int dummyX = -1;
-    	if(messages[x]->segments.IsEmpty())
-    		SplitMessage( messages[x]->text, messages[x]->colour, messages[x]->size, dummy, dummyX ); 
-    	else
-    	{
-    		MessageLine* msgLine = NULL;
-    		int offsetX = 0;
-    		for(size_t i = 0; i < messages[x]->segments.GetSize(); i++)
-    			SplitMessage( messages[x]->segments[i].text, messages[x]->segments[i].colour, messages[x]->segments[i].size, msgLine, offsetX);
-    	}
-    } 
+        if(messages[x]->segments.IsEmpty())
+            SplitMessage( messages[x]->text, messages[x]->colour, messages[x]->size, dummy, dummyX );
+        else
+        {
+            MessageLine* msgLine = NULL;
+            int offsetX = 0;
+            for(size_t i = 0; i < messages[x]->segments.GetSize(); i++)
+                SplitMessage( messages[x]->segments[i].text, messages[x]->segments[i].colour, messages[x]->segments[i].size, msgLine, offsetX);
+        }
+    }
 }
 
 void pawsMessageTextBox::OnResize()
@@ -494,7 +494,7 @@ void pawsMessageTextBox::OnResize()
     else
         maxLines = 0;
 
-    // Re adjust the top line value 
+    // Re adjust the top line value
     topLine = (int)adjusted.GetSize() - (int)maxLines;
     if ( topLine < 0 )
         topLine = 0;
@@ -522,7 +522,7 @@ void pawsMessageTextBox::Draw()
     ClipToParent(false);
 
     int yPos = 0;
-    
+
     if ( topLine < 0 )
         topLine = 0;
 
@@ -530,45 +530,45 @@ void pawsMessageTextBox::Draw()
     {
         if ( x < adjusted.GetSize() )
         {
-        	if(adjusted[x]->segments.IsEmpty())
-        	{
-				// Draw shadow
-				graphics2D->Write(  GetFont(),
-									screenFrame.xmin + 1,
-									screenFrame.ymin + yPos*lineHeight + 1,
-									0,
-									-1,
-									(const char*)adjusted[x]->text );
-				// Draw actual text
-				graphics2D->Write(  GetFont(),
-									screenFrame.xmin,
-									screenFrame.ymin + yPos*lineHeight,
-									adjusted[x]->colour,
-									-1,
-									(const char*)adjusted[x]->text );
-        	}
-        	else
-        	{
-        		for(size_t i = 0; i < adjusted[x]->segments.GetSize(); i++)
-        		{
-					// Draw shadow
-					graphics2D->Write(  GetFont(),
-										screenFrame.xmin + adjusted[x]->segments[i].x + 1,
-										screenFrame.ymin + yPos*lineHeight + 1,
-										0,
-										-1,
-										(const char*)adjusted[x]->segments[i].text );
-					// Draw actual text
-					graphics2D->Write(  GetFont(),
-										screenFrame.xmin + adjusted[x]->segments[i].x,
-										screenFrame.ymin + yPos*lineHeight,
-										adjusted[x]->segments[i].colour,
-										-1,
-										(const char*)adjusted[x]->segments[i].text );
-        		}
-        	}
-           
-            yPos++;                                                                            
+            if(adjusted[x]->segments.IsEmpty())
+            {
+                // Draw shadow
+                graphics2D->Write(  GetFont(),
+                                    screenFrame.xmin + 1,
+                                    screenFrame.ymin + yPos*lineHeight + 1,
+                                    0,
+                                    -1,
+                                    (const char*)adjusted[x]->text );
+                // Draw actual text
+                graphics2D->Write(  GetFont(),
+                                    screenFrame.xmin,
+                                    screenFrame.ymin + yPos*lineHeight,
+                                    adjusted[x]->colour,
+                                    -1,
+                                    (const char*)adjusted[x]->text );
+            }
+            else
+            {
+                for(size_t i = 0; i < adjusted[x]->segments.GetSize(); i++)
+                {
+                    // Draw shadow
+                    graphics2D->Write(  GetFont(),
+                                        screenFrame.xmin + adjusted[x]->segments[i].x + 1,
+                                        screenFrame.ymin + yPos*lineHeight + 1,
+                                        0,
+                                        -1,
+                                        (const char*)adjusted[x]->segments[i].text );
+                    // Draw actual text
+                    graphics2D->Write(  GetFont(),
+                                        screenFrame.xmin + adjusted[x]->segments[i].x,
+                                        screenFrame.ymin + yPos*lineHeight,
+                                        adjusted[x]->segments[i].colour,
+                                        -1,
+                                        (const char*)adjusted[x]->segments[i].text );
+                }
+            }
+
+            yPos++;
         }
     }
 }
@@ -588,8 +588,8 @@ bool pawsMessageTextBox::SelfPopulate( iDocumentNode *node)
 
 void pawsMessageTextBox::AddMessage( const char* data, int msgColour )
 {
-	// Notify parent of activity
-	OnChange(this);
+    // Notify parent of activity
+    OnChange(this);
     // Extract \n out of the data and print a newline for each.
     csString message = data;
     csArray<csString> cutMessages;
@@ -607,7 +607,7 @@ void pawsMessageTextBox::AddMessage( const char* data, int msgColour )
         {
             message.Truncate(last);
         }
-            
+
         last = message.FindLast("\n");
         if(last == (size_t)-1)
         {
@@ -618,7 +618,7 @@ void pawsMessageTextBox::AddMessage( const char* data, int msgColour )
         if(last == 0)
         {
             cutMessages.Push(message.Slice(1, pos));
-            break;   
+            break;
         }
 
         if(last == message.Length()-1)
@@ -641,12 +641,12 @@ void pawsMessageTextBox::AddMessage( const char* data, int msgColour )
         int oldTopLine = topLine;
 
         if ( topLine == (int)scrollBar->GetMaxValue() )
-            onBottom = true;                        
+            onBottom = true;
         if ( (size_t)scrollBar->GetMaxValue() < maxLines )
-            onBottom = true;    
+            onBottom = true;
 
         if ( topLine < 0 )
-            topLine = 0;                 
+            topLine = 0;
 
         // Add it to the main message buffer.
         MessageLine * msg = new MessageLine;
@@ -659,11 +659,11 @@ void pawsMessageTextBox::AddMessage( const char* data, int msgColour )
         {
             colour = GetFontColour();
         }
-        
-    	size_t textStart = 0;
-    	size_t textEnd = messageText.Length();
-    	int x = 0;
-    	MessageLine* msgLine = NULL;
+
+        size_t textStart = 0;
+        size_t textEnd = messageText.Length();
+        int x = 0;
+        MessageLine* msgLine = NULL;
         msg->size = 0;
         msg->colour = msgColour;
         msg->text = messageText;
@@ -671,53 +671,53 @@ void pawsMessageTextBox::AddMessage( const char* data, int msgColour )
         // Empty line is a special case here
         if(messageText.Length() == 0)
         {
-        	SplitMessage(messageText, colour, size, msgLine, x);
+            SplitMessage(messageText, colour, size, msgLine, x);
         }
 
-    	while(textStart < messageText.Length())
-    	{
-			size_t pos = messageText.FindFirst(ESCAPECODE, textStart);
-			if(pos == (size_t) - 1)
-				textEnd = messageText.Length();
-			else
-				textEnd = pos;
-			
-			if(textStart == 0 && pos == (size_t) - 1)
-			{
-				int dummyX = -1;
-				SplitMessage( messageText, colour, size, msgLine, dummyX);
-				break;
-			}
-			else if(textEnd > textStart)
-			{
-				csString subText = messageText.Slice(textStart, textEnd - textStart);
-				SplitMessage( subText, colour, size, msgLine, x);   
-				
-				MessageSegment newSegment;
-				newSegment.text = subText;
-				newSegment.colour = colour;
-				newSegment.size = size;
-				msg->segments.Push(newSegment);
-			}
-			textStart = textEnd;
-			
-			if(pos != (size_t)-1 && pos + LENGTHCODE <= messageText.Length())
-			{
-				int r, g, b;
-				if (!psColours::ParseColour(messageText.GetData() + pos, r, g, b, size))
-				{
-					// Not a colour code so skip
-					textStart++;
-					continue;
-				}
-				if(r == 0 && g == 0 && b == 0)
-					colour = msgColour;
-				else
-					colour = graphics2D->FindRGB(r, g, b);
-				messageText.DeleteAt(pos, LENGTHCODE);
-			}
-    	}  
-        messages.Push(msg);  
+        while(textStart < messageText.Length())
+        {
+            size_t pos = messageText.FindFirst(ESCAPECODE, textStart);
+            if(pos == (size_t) - 1)
+                textEnd = messageText.Length();
+            else
+                textEnd = pos;
+
+            if(textStart == 0 && pos == (size_t) - 1)
+            {
+                int dummyX = -1;
+                SplitMessage( messageText, colour, size, msgLine, dummyX);
+                break;
+            }
+            else if(textEnd > textStart)
+            {
+                csString subText = messageText.Slice(textStart, textEnd - textStart);
+                SplitMessage( subText, colour, size, msgLine, x);
+
+                MessageSegment newSegment;
+                newSegment.text = subText;
+                newSegment.colour = colour;
+                newSegment.size = size;
+                msg->segments.Push(newSegment);
+            }
+            textStart = textEnd;
+
+            if(pos != (size_t)-1 && pos + LENGTHCODE <= messageText.Length())
+            {
+                int r, g, b;
+                if (!psColours::ParseColour(messageText.GetData() + pos, r, g, b, size))
+                {
+                    // Not a colour code so skip
+                    textStart++;
+                    continue;
+                }
+                if(r == 0 && g == 0 && b == 0)
+                    colour = msgColour;
+                else
+                    colour = graphics2D->FindRGB(r, g, b);
+                messageText.DeleteAt(pos, LENGTHCODE);
+            }
+        }
+        messages.Push(msg);
         if (scrollBar)
         {
             if ( adjusted.GetSize() > maxLines )
@@ -729,12 +729,12 @@ void pawsMessageTextBox::AddMessage( const char* data, int msgColour )
 
         scrollBar->SetMaxValue( maxLines > adjusted.GetSize() ? 0 : (float)(adjusted.GetSize()-maxLines) );
 
-        topLine = (int)adjusted.GetSize() - (int)maxLines;      
+        topLine = (int)adjusted.GetSize() - (int)maxLines;
         if ( topLine < 0 )
-            topLine = 0;                 
+            topLine = 0;
 
 
-        if ( !onBottom )            
+        if ( !onBottom )
         {
             topLine = oldTopLine;
             scrollBar->SetCurrentValue( float(topLine) );
@@ -769,8 +769,8 @@ void pawsMessageTextBox::AppendLastMessage(const char* data)
 
 void pawsMessageTextBox::ReplaceLastMessage(const char* rawMessage)
 {
-	csString data(rawMessage);
-	data.ReplaceAll("\r", "");
+    csString data(rawMessage);
+    data.ReplaceAll("\r", "");
     if(messages.IsEmpty())
     {
       AddMessage(data);
@@ -797,9 +797,9 @@ void pawsMessageTextBox::OnUpdateData(const char *dataname,PAWSData& value)
         Clear();
 
     if(value.type == PAWS_DATA_INT_STR)
-    	AddMessage(value.GetStr(), value.GetInt());
+        AddMessage(value.GetStr(), value.GetInt());
     else
-    	AddMessage( value.GetStr() );
+        AddMessage( value.GetStr() );
 }
 
 void pawsMessageTextBox::ResetScroll()
@@ -856,9 +856,9 @@ void pawsMessageTextBox::SplitMessage(const char* newText, int colour,
         }
         else
         {
-            csString processedString = FindStringThatFits(stringBuffer, canDrawLength);            
+            csString processedString = FindStringThatFits(stringBuffer, canDrawLength);
             stringBuffer.DeleteAt(0, processedString.Length());
-            
+
             if (!msgLine)
             {
                 WriteMessageLine(msgLine,processedString,colour);
@@ -926,8 +926,8 @@ csString pawsMessageTextBox::FindStringThatFits(csString stringBuffer, int canDr
 }
 
 bool pawsMessageTextBox::OnScroll( int direction, pawsScrollBar* widget )
-{   
-    topLine = (int)widget->GetCurrentValue();       
+{
+    topLine = (int)widget->GetCurrentValue();
     return true;
 }
 
@@ -996,9 +996,9 @@ pawsEditTextBox::~pawsEditTextBox()
 void pawsEditTextBox::SetSizeByText()
 {
     int width, height;
-    
+
     if (GetFont()!=NULL && text.GetData()!=NULL )
-    {       
+    {
         GetFont()->GetDimensions( text.GetData(), width, height );
         SetSize(width+margin*2, height+margin*2);
     }
@@ -1011,7 +1011,7 @@ void pawsEditTextBox::SetPassword( bool pass )
 
 bool pawsEditTextBox::Setup( iDocumentNode* node )
 {
-    csRef<iDocumentNode> textNode = node->GetNode( "text" );        
+    csRef<iDocumentNode> textNode = node->GetNode( "text" );
     if (textNode)
     {
         csRef<iDocumentAttribute> stringAttribute = textNode->GetAttribute("string");
@@ -1024,7 +1024,7 @@ bool pawsEditTextBox::Setup( iDocumentNode* node )
     int dummy;
     GetFont()->GetMaxSize( dummy, lineHeight );
     lineHeight -=2;
-            
+
     return true;
 }
 
@@ -1045,7 +1045,7 @@ void pawsEditTextBox::SetText( const char* newText, bool publish )
         PawsManager::GetSingleton().Publish(subscribedVar, newText);
 
     text.Replace( newText );
-    
+
     if (newText)
         cursorPosition = strlen( newText );
     else
@@ -1065,17 +1065,17 @@ void pawsEditTextBox::Draw()
         blink = !blink;
         blinkTicks = clock->GetCurrentTicks();
     }
-    
+
     pawsWidget::Draw();
 
     ClipToParent(false);
 
     if (cursorPosition>text.Length())
         cursorPosition=text.Length();
-  
+
     if(start>(int)text.Length())
-        start=0;               
-        
+        start=0;
+
     if ( text.Length() > 0 )
     {
         // Get the number of characters to draw
@@ -1137,7 +1137,7 @@ void pawsEditTextBox::Draw()
 
 
 bool pawsEditTextBox::OnKeyDown( utf32_char code, utf32_char key, int modifiers )
-{   
+{
     bool changed = false;
     blink = true;
 
@@ -1149,42 +1149,42 @@ bool pawsEditTextBox::OnKeyDown( utf32_char code, utf32_char key, int modifiers 
             break;
         if ( cursorPosition != (size_t)-1 )
         {
-            if ( pawsTextBox::CountCodePoints(text, 0, cursorPosition) - pawsTextBox::CountCodePoints(text, 0, start) < 5 ) 
+            if ( pawsTextBox::CountCodePoints(text, 0, cursorPosition) - pawsTextBox::CountCodePoints(text, 0, start) < 5 )
                 start = (int)pawsTextBox::RewindCodePoints(text, cursorPosition, 5);
 
-            if ( start < 0 ) 
+            if ( start < 0 )
                 start = 0;
 
             if ( text.Length() > 1 )
             {
                 text.DeleteAt(cursorPosition, csUnicodeTransform::UTF8Skip((const utf8_char*)text.GetData() + cursorPosition, text.Length() - cursorPosition));
-            } 
+            }
             else
             {
                 text.Clear();
             }
         } //endif cursor position > 0
-        changed = true; 
-        break;        
+        changed = true;
+        break;
     }
-    
-    
+
+
     case CSKEY_BACKSPACE:
         if (cursorPosition > text.Length())
             cursorPosition = text.Length();
         if ( cursorPosition > 0 )
         {
-        	cursorPosition -= csUnicodeTransform::UTF8Rewind((const utf8_char*)text.GetData() + cursorPosition, cursorPosition);
-            if ( pawsTextBox::CountCodePoints(text, 0, cursorPosition) - pawsTextBox::CountCodePoints(text, 0, start) < 5 ) 
+            cursorPosition -= csUnicodeTransform::UTF8Rewind((const utf8_char*)text.GetData() + cursorPosition, cursorPosition);
+            if ( pawsTextBox::CountCodePoints(text, 0, cursorPosition) - pawsTextBox::CountCodePoints(text, 0, start) < 5 )
                 start = (int)pawsTextBox::RewindCodePoints(text, cursorPosition, 5);
 
-            if ( start < 0 ) 
+            if ( start < 0 )
                 start = 0;
 
             if ( text.Length() > 1 )
             {
                 text.DeleteAt(cursorPosition, csUnicodeTransform::UTF8Skip((const utf8_char*)text.GetData() + cursorPosition, text.Length() - cursorPosition));
-            } 
+            }
             else
             {
                 text.Clear();
@@ -1199,7 +1199,7 @@ bool pawsEditTextBox::OnKeyDown( utf32_char code, utf32_char key, int modifiers 
             cursorPosition = text.Length();
         if ( cursorPosition > 0 )
             cursorPosition -= csUnicodeTransform::UTF8Rewind((const utf8_char*)text.GetData() + cursorPosition, cursorPosition);
-        if ( pawsTextBox::CountCodePoints(text, 0, cursorPosition) - pawsTextBox::CountCodePoints(text, 0, start) < 5 ) 
+        if ( pawsTextBox::CountCodePoints(text, 0, cursorPosition) - pawsTextBox::CountCodePoints(text, 0, start) < 5 )
             start = (int)pawsTextBox::RewindCodePoints(text, cursorPosition, 5);
         if ( start < 0 )
             start = 0;
@@ -1210,7 +1210,7 @@ bool pawsEditTextBox::OnKeyDown( utf32_char code, utf32_char key, int modifiers 
             cursorPosition = text.Length();
         if ( cursorPosition < text.Length() )
         {
-        	cursorPosition += csUnicodeTransform::UTF8Skip((const utf8_char*)text.GetData() + cursorPosition, text.Length() - cursorPosition);
+            cursorPosition += csUnicodeTransform::UTF8Skip((const utf8_char*)text.GetData() + cursorPosition, text.Length() - cursorPosition);
         }
         break;
     case CSKEY_END:
@@ -1223,34 +1223,34 @@ bool pawsEditTextBox::OnKeyDown( utf32_char code, utf32_char key, int modifiers 
     default:
         if ( CSKEY_IS_SPECIAL(key))
             break;
-        
+
         // Ignore ASCII control characters
         if (key < 128 && !isprint(key))
-        	break;
-        
+            break;
+
         utf8_char utf8Char[5];
-        
+
         int charLen = csUnicodeTransform::UTF32to8 (utf8Char, 5, &key, 1);
         if ( cursorPosition >= text.Length() )
         {
-        	text.Append( (char *)utf8Char );
+            text.Append( (char *)utf8Char );
         }
         else
         {
-        	text.Insert( cursorPosition, (char *)utf8Char );
+            text.Insert( cursorPosition, (char *)utf8Char );
         }
         cursorPosition += charLen - 1;
 
         changed = true;
     }
-    
+
     if (changed)
     {
         if (subscribedVar)
         {
             PawsManager::GetSingleton().Publish(subscribedVar, text);
         }
-        
+
         parent->OnChange(this);
     }
 
@@ -1271,7 +1271,7 @@ void pawsEditTextBox::Clear()
 bool pawsEditTextBox::OnMouseDown( int button, int modifiers, int x, int y )
 {
     x -= (screenFrame.xmin+margin+4); // Adjust x to be relative to the text box
-    int textWidth; 
+    int textWidth;
     int boxWidth = (screenFrame.xmax + margin) - (screenFrame.xmin + margin);
     int dummy;
 
@@ -1306,9 +1306,9 @@ bool pawsEditTextBox::OnMouseDown( int button, int modifiers, int x, int y )
             int xlast;
             int xlast2=0;
             int charLen = 0;
-            
+
             csString sub;
-            
+
             for (unsigned int i=start;i<text.Length();i += charLen)
             {
                 charLen = csUnicodeTransform::UTF8Skip((const utf8_char*)text.GetData() + i, text.Length() - i);
@@ -1324,7 +1324,7 @@ bool pawsEditTextBox::OnMouseDown( int button, int modifiers, int x, int y )
             }
         }
     }
-    
+
 
 #if defined(CS_PLATFORM_UNIX) && defined(INCLUDE_CLIPBOARD)
     if (button == csmbMiddle)
@@ -1360,7 +1360,7 @@ bool pawsEditTextBox::OnClipboard( const csString& content )
     {
         PawsManager::GetSingleton().Publish(subscribedVar, text);
     }
-    
+
     parent->OnChange(this);
 
     return true;
@@ -1394,12 +1394,12 @@ pawsScrollBar * pawsMultiLineTextBox::GetScrollBar()
         if (child)
             return child;
     }
-    
+
     return NULL;
 }
 
 bool pawsMultiLineTextBox::Setup( iDocumentNode* node )
-{    
+{
     csRef<iDocumentNode> textNode = node->GetNode( "text" );
     if ( textNode )
     {
@@ -1424,11 +1424,11 @@ bool pawsMultiLineTextBox::PostSetup()
         scrollBar->SetTickValue( 1.0 );
         scrollBar->PostSetup();
     }
-    
-    scrollBar->SetRelativeFrame( defaultFrame.Width() - 40, 6, 24, defaultFrame.Height() - 12 ); 
+
+    scrollBar->SetRelativeFrame( defaultFrame.Width() - 40, 6, 24, defaultFrame.Height() - 12 );
     scrollBar->SetAttachFlags(ATTACH_TOP | ATTACH_BOTTOM | ATTACH_RIGHT);
     pawsWidget::Resize();
-    
+
     scrollBar->Show();
     scrollBar->SetMaxValue(lines.GetSize() - canDrawLines );
     scrollBar->SetCurrentValue(0);
@@ -1443,7 +1443,7 @@ void pawsMultiLineTextBox::Resize()
 }
 
 void pawsMultiLineTextBox::OrganizeText( const char* newText )
-{       
+{
     csString text(newText);
 
     // Check if we end with \n
@@ -1456,7 +1456,7 @@ void pawsMultiLineTextBox::OrganizeText( const char* newText )
         }
 
     }
-    
+
     startLine = 0;
 
     GetFont()->GetMaxSize( maxWidth, maxHeight );
@@ -1472,13 +1472,13 @@ void pawsMultiLineTextBox::OrganizeText( const char* newText )
         dummy[0] = 0;
 
     int offSet = margin*2;
-    if ( usingScrollBar ) 
+    if ( usingScrollBar )
         offSet += 36;
 
 
     while ( dummy )
     {
-        /// See how many characters can be drawn on a single line.                
+        /// See how many characters can be drawn on a single line.
         int canDrawLength =  GetFont()->GetLength( dummy, screenFrame.Width()-offSet );
 
         // Check for linebreaks
@@ -1506,7 +1506,7 @@ void pawsMultiLineTextBox::OrganizeText( const char* newText )
                     {
                         OrganizeText(temp2.GetData());
                     }
-                }  
+                }
                 else
                     break;
             }
@@ -1522,7 +1522,7 @@ void pawsMultiLineTextBox::OrganizeText( const char* newText )
         // We have to push in a new line to the lines bit.
         else
         {
-            // Find out the nearest white space to break the line. 
+            // Find out the nearest white space to break the line.
             int index = canDrawLength;
 
             while ( index > 0 && dummy[index] != ' ' )
@@ -1537,34 +1537,34 @@ void pawsMultiLineTextBox::OrganizeText( const char* newText )
 
             csString test;
             test.Append( dummy, index+1 );
-            dummy+=index+1;        
-            lines.Push( test );            
+            dummy+=index+1;
+            lines.Push( test );
         }
     }
 
-    delete [] head;    
+    delete [] head;
 }
 
 
 void pawsMultiLineTextBox::SetText( const char* newText )
 {
     lines.Empty();
-    
-    psString str(newText);      
+
+    psString str(newText);
     size_t pos = str.FindSubString("\r");
     while(pos != (size_t)-1)
-    {            
+    {
         str = str.Slice(0,pos) + "\n" + str.Slice(pos+2,str.Length()-pos-2);
-        pos = str.FindSubString("\r");            
+        pos = str.FindSubString("\r");
     }
-            
-    
+
+
     usingScrollBar = false;
     if ( scrollBar ) scrollBar->Hide();
-    
-    
+
+
     OrganizeText( str.GetData() );
-                
+
     if ( canDrawLines >= lines.GetSize() )
     {
         canDrawLines = lines.GetSize();
@@ -1577,17 +1577,17 @@ void pawsMultiLineTextBox::SetText( const char* newText )
     else
     {
         usingScrollBar = true;
-        lines.Empty();    
-        OrganizeText( str.GetData() );        
+        lines.Empty();
+        OrganizeText( str.GetData() );
         if ( scrollBar )
         {
             scrollBar->Show();
             scrollBar->SetMaxValue(lines.GetSize() - canDrawLines );
             scrollBar->SetCurrentValue(0);
         }
-    }    
-    startLine = 0;    
-    text.Replace( str.GetData() );    
+    }
+    startLine = 0;
+    text.Replace( str.GetData() );
 }
 
 void pawsMultiLineTextBox::OnUpdateData(const char *dataname,PAWSData& value)
@@ -1601,10 +1601,10 @@ void pawsMultiLineTextBox::Draw()
 {
     pawsWidget::Draw();
     pawsWidget::ClipToParent(false);
-    
+
     int drawX = screenFrame.xmin+margin;
     int drawY = screenFrame.ymin+margin;
-    
+
     if (!maxHeight && GetFont())
         GetFont()->GetMaxSize( maxWidth, maxHeight );
 
@@ -1625,7 +1625,7 @@ void pawsMultiLineTextBox::Draw()
 
 bool pawsMultiLineTextBox::OnScroll( int direction, pawsScrollBar* widget )
 {
-    startLine = (int)widget->GetCurrentValue();       
+    startLine = (int)widget->GetCurrentValue();
     return true;
 }
 
@@ -1664,7 +1664,7 @@ void pawsFadingTextBox::SetText(const char* newtext, iFont* font1,iFont* font2, 
     first.SetAt(0,text.GetAt(0));
     first.SetAt(1,0);
     text = text.Slice(1,text.Length() -1);
-    
+
     // Add the other stuff
     firstFont = font1;
     font = font2;

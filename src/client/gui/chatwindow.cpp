@@ -1296,7 +1296,7 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
             {
                  // Hardcoded Resource considered as FIXME
                 psengine->GetSoundManager()->PlayGUISound("sound.standardButtonClick");
-            }                                        
+            }
         case CHAT_AWAY:
         case CHAT_ADVICE:
         case CHAT_ADVICE_LIST:
@@ -1339,7 +1339,7 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
 
     // Do not highlight if name is in middle of word.
     if(charNamePos != (size_t) -1 && (charNamePos == 0 || isspace(noCaseText[charNamePos - 1]) || ispunct(noCaseText[charNamePos - 1]))
-	&& (charEndNamePos == noCaseText.Length() || isspace(noCaseText[charEndNamePos]) || ispunct(noCaseText[charEndNamePos])))
+    && (charEndNamePos == noCaseText.Length() || isspace(noCaseText[charEndNamePos]) || ispunct(noCaseText[charEndNamePos])))
     {
         msg.sText.Insert(charNamePos, REDCODE);
         msg.sText.Insert(charEndNamePos + LENGTHCODE, DEFAULTCODE);
@@ -1819,7 +1819,7 @@ bool pawsChatWindow::OnKeyDown(utf32_char keyCode, utf32_char key, int modifiers
 
             break;
         }
- 
+
         //these two cases work with the text widget to move a page up/down
         case CSKEY_PGUP:
         case CSKEY_PGDN:
@@ -1913,7 +1913,7 @@ void pawsChatWindow::SendChatLine(csString& textToSend)
         }
 
         currLine.Free(); // Set to NULL
-        
+
         PawsManager::GetSingleton().SetCurrentFocusedWidget( inputText );
         BringToTop( inputText );
     }

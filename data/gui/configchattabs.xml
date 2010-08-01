@@ -2,19 +2,19 @@
     <widget name="ConfigChatTabs" factory="pawsConfigChatTabs"
             visible="no" savepositions="no" movable="no"
             resizable="no" style="New Standard GUI" >
-	    <frame x="225" y="10" width="400" height="300" border="no" />
-	<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="10" scalefont="no" />
+        <frame x="225" y="10" width="400" height="300" border="no" />
+    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="10" scalefont="no" />
     <!-- Labels -->
     <widget name="lblMainIncludes" factory="pawsTextBox">
         <frame x="20" y="10" width="120" height="20" />
         <text string="Main tab" />
     </widget>
-		<!-- Other chat channels included on the Main tab -->
+        <!-- Other chat channels included on the Main tab -->
     <widget name="isysbase" factory="pawsCheckBox">
         <frame x="20" y="60" width="120" height="20" />
         <text string="System Base" />
     </widget>
-	<widget name="ichat" factory="pawsCheckBox">
+    <widget name="ichat" factory="pawsCheckBox">
         <frame x="20" y="80" width="120" height="20" />
         <text string="Chat" />
     </widget>
@@ -56,5 +56,5 @@
         <text string="Use basic chat window (need reload)" />
     </widget>
 
-	</widget>
+    </widget>
 </widget_description>
