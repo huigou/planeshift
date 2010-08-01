@@ -320,7 +320,6 @@ void psCharAppearance::HairMesh(csString& subMesh)
             }
         }
     }
-
     if ( hairColorSet )
         HairColor(hairShader);
 }
@@ -425,6 +424,11 @@ void psCharAppearance::ShowMeshes(csString& slot, csString& meshList, bool show)
 {
     if(meshList.IsEmpty() || slot.IsEmpty())
         return;
+
+    //allows substituiters for replaceable meshes.
+    meshList.ReplaceAll("$H", hairMesh.Length() ? hairMesh : "Hair");
+    meshList.ReplaceAll("$E", eyeMesh.Length() ? eyeMesh : "Eyes");
+    meshList.ReplaceAll("$B", beardMesh.Length() ? beardMesh : "Beard");
 
     //first split the meshlist
     csStringArray meshes;
