@@ -1,7 +1,7 @@
 <widget_description>
 
     <widget name="DetailWindow" factory="pawsDetailWindow" 
-            visible="no" savepositions="yes" movable="yes" configurable="yes" resizable="no" style="New Standard GUI" >
+            visible="no" savepositions="yes" movable="yes" configurable="yes" savepositions="yes" resizable="no" style="New Standard GUI" >
         <frame x="0" y="200" width="320" height="400" border="yes" />
 	<title resource="Scaling Title Bar" text="Details" align="left" close_button="yes"/>
 

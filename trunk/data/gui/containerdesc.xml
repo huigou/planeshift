@@ -1,6 +1,6 @@
 <widget_description>
 
-    <widget name="ContainerDescWindow" factory="pawsContainerDescWindow" visible="no" movable="yes" style="New Standard GUI">
+    <widget name="ContainerDescWindow" factory="pawsContainerDescWindow" visible="no" movable="yes" savepositions="yes" style="New Standard GUI">
         <frame x="100" y="100" width="300" height="365" border="yes"/>
         <title resource="Scaling Title Bar" text="Container" align="left" close_button="yes"/>        
 
