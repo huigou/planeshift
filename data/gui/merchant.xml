@@ -62,7 +62,7 @@
     </widget>
 
 
-    <widget name="Items" factory="pawsListBox" id="11">
+    <widget name="Items" factory="pawsListBox" id="11" sortBy="5">
         <frame x="220" y="45" width="330" height="340" border="no" />
         <columns height="32">
             <column width="30" >            
