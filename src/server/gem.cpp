@@ -2371,6 +2371,34 @@ void gemActor::InvokeDefenseScripts(gemActor *attacker, psItem *weapon)
     }
 }
 
+void gemActor::InvokeNearlyDeadScripts(gemActor *attacker, psItem *weapon)
+{
+    MathEnvironment env;
+    env.Define("Attacker", attacker);
+    env.Define("Defender", this);
+    env.Define("Weapon",   weapon);
+
+    for (size_t i = 0; i < onNearlyDeadScripts.GetSize(); i++)
+    {
+        onNearlyDeadScripts[i]->Run(&env);
+    }
+}
+
+void gemActor::InvokeMovementScripts()
+{
+    csVector3 pos = GetMeshWrapper()->GetMovable()->GetPosition();
+    MathEnvironment env;
+    env.Define("Actor", this);
+    env.Define("LocX", pos.x);
+    env.Define("LocY", pos.y);
+    env.Define("LocZ", pos.z);
+
+    for (size_t i = 0; i < onMovementScripts.GetSize(); i++)
+    {
+        onMovementScripts[i]->Run(&env);
+    }
+}
+
 void gemActor::DoDamage(gemActor* attacker, float damage)
 {
     // Handle trivial "already dead" case
@@ -3446,6 +3474,8 @@ bool gemActor::SetDRData(psDRMessage& drmsg)
             }
         }
     }
+
+    InvokeMovementScripts();
     return true;
 }
 
@@ -3824,26 +3854,43 @@ void gemActor::FallBegan(const csVector3& pos, iSector* sector)
     this->fallStartTime = csGetTicks();
 }
 
-void gemActor::AttachAttackScript(ProgressionScript *script)
+void gemActor::AttachScript(ProgressionScript *script, int type)
 {
     CS_ASSERT(script);
-    onAttackScripts.Push(script);
+    switch(type)
+    {
+        case ATTACK:
+            onAttackScripts.Push(script);
+            break;
+        case DEFENSE:
+            onDefenseScripts.Push(script);
+            break;
+        case NEARLYDEAD:
+            onNearlyDeadScripts.Push(script);
+            break;
+        case MOVE:
+            onMovementScripts.Push(script);
+            break;
+    };
 }
 
-void gemActor::DetachAttackScript(ProgressionScript *script)
+void gemActor::DetachScript(ProgressionScript *script, int type)
 {
-    onAttackScripts.Delete(script);
-}
-
-void gemActor::AttachDefenseScript(ProgressionScript *script)
-{
-    CS_ASSERT(script);
-    onDefenseScripts.Push(script);
-}
-
-void gemActor::DetachDefenseScript(ProgressionScript *script)
-{
-    onDefenseScripts.Delete(script);
+    switch(type)
+    {
+        case ATTACK:
+            onAttackScripts.Delete(script);
+            break;
+        case DEFENSE:
+            onDefenseScripts.Delete(script);
+            break;
+        case NEARLYDEAD:
+            onNearlyDeadScripts.Delete(script);
+            break;
+        case MOVE:
+            onMovementScripts.Delete(script);
+            break;
+    };
 }
 
 void gemActor::AddActiveSpell(ActiveSpell *asp)

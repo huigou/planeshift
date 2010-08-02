@@ -820,7 +820,7 @@ protected:
     bool viewAllObjects;      ///< can view invisible objects?
 
     csPDelArray<AttackerHistory> dmgHistory;
-    csPDelArray<ProgressionScript> onAttackScripts, onDefenseScripts;
+    csPDelArray<ProgressionScript> onAttackScripts, onDefenseScripts, onNearlyDeadScripts, onMovementScripts;
 
     csArray<ActiveSpell*> activeSpells;
 
@@ -1114,12 +1114,12 @@ public:
     size_t GetDamageHistoryCount() const { return dmgHistory.GetSize(); }
     void ClearDamageHistory() { dmgHistory.Empty(); }
 
-    void AttachAttackScript(ProgressionScript *script);
-    void DetachAttackScript(ProgressionScript *script);
-    void AttachDefenseScript(ProgressionScript *script);
-    void DetachDefenseScript(ProgressionScript *script);
+    void AttachScript(ProgressionScript *script, int type);
+    void DetachScript(ProgressionScript *script, int type);
     void InvokeAttackScripts(gemActor *defender, psItem *weapon);
     void InvokeDefenseScripts(gemActor *attacker, psItem *weapon);
+    void InvokeNearlyDeadScripts(gemActor *defender, psItem *weapon);
+    void InvokeMovementScripts();
 
     void AddActiveSpell(ActiveSpell *asp);
     bool RemoveActiveSpell(ActiveSpell *asp);

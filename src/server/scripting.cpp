@@ -605,17 +605,7 @@ public:
         if (!actor.IsValid())
             return;
 
-        switch (type) {
-            case ATTACK:
-                actor->DetachAttackScript(script);
-                break;
-            case DEFENSE:
-                actor->DetachDefenseScript(script);
-                break;
-            case NEARLYDEAD:
-                // TODO.
-                break;
-        };
+        actor->DetachScript(script, type);
     }
 protected:
     csWeakRef<gemActor> actor;
@@ -640,6 +630,8 @@ public:
             type = DEFENSE;
         else if (typ == "nearlydead")
             type = NEARLYDEAD;
+        else if (typ == "move")
+            type = MOVE;
         else
         {
             Error2("Invalid type in <on type=\"%s\">.", typ.GetData());
@@ -661,17 +653,7 @@ public:
         CS_ASSERT_MSG("<on> body failed to load", body);
 
         // Register the triggering event
-        switch (type) {
-            case ATTACK:
-                target->AttachAttackScript(body);
-                break;
-            case DEFENSE:
-                target->AttachDefenseScript(body);
-                break;
-            case NEARLYDEAD:
-                // TODO.
-                break;
-        };
+        target->AttachScript(body, type);
         OnCancel* cancel = new OnCancel(target, type, body);
         csString xml = GetNodeXML(self); // this doesn't give <hp/> style attributes...should fix
                                          // or find another way to do it, nobody else uses this

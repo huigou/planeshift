@@ -600,10 +600,18 @@ void CombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_result
                 gemTarget->DoDamage(gemAttacker,event->FinalDamage);
                 
                 if (gemAttacker)
+                {
                     gemAttacker->InvokeAttackScripts(gemTarget, weapon);
+                }
 
                 if (gemTarget)
+                {
                     gemTarget->InvokeDefenseScripts(gemAttacker, weapon);
+                    if(isNearlyDead)
+                    {
+                        gemTarget->InvokeNearlyDeadScripts(gemAttacker, weapon);
+                    }
+                }
 
                 if (gemTarget->GetClientID() == 0 && !gemTarget->GetCharacterData()->IsPet())
                 {

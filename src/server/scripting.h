@@ -43,6 +43,7 @@ enum SCRIPT_TRIGGER
 {
     ATTACK,
     DEFENSE,
+    MOVE,
     NEARLYDEAD
 };
 
