@@ -491,7 +491,7 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
                     cosATAngle = -1.0f;
 
                 // use the absolute value of the angle here to account for both sides equally - see above
-                if (fabs(acosf(cosATAngle) >= angle))
+                if (fabs(acosf(cosATAngle)) >= angle)
                     continue;
             }
 
