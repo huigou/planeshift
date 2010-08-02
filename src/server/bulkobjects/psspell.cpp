@@ -399,7 +399,7 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
 
     psSpellCost cost = ManaCost(caster->GetCharacterData(), kFactor);
 
-    if (chanceOfSuccess < 100.f && roll < chanceOfSuccess)
+    if (chanceOfSuccess < 100.f && roll > chanceOfSuccess)
     {
         // Spell casting failed
         psserver->SendSystemInfo(caster->GetClientID(), "You failed to cast the spell %s." , name.GetData());
