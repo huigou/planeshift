@@ -90,13 +90,13 @@ INSERT INTO math_scripts VALUES( "Calculate Fall Damage",
         Damage = if(FallHeight>1,pow(FallHeight, 1.8) * 0.8, 0);
 ");
 
-INSERT INTO math_scripts VALUES( "CalculateManaCost", "ManaCost = Realm*4*(1+(KFactor*KFactor/10000));");
+INSERT INTO math_scripts VALUES( "CalculateManaCost", "ManaCost = Realm*4*(1+(KFactor*KFactor/10000)); StaminaCost = ManaCost;");
 
 INSERT INTO math_scripts VALUES( "CalculateChanceOfCastSuccess", "ChanceOfSuccess = (50-KFactor) + WaySkill/20 + (RelatedStat)/20;");
 
 INSERT INTO math_scripts VALUES( "CalculateChanceOfResearchSuccess", "ChanceOfSuccess = WaySkill/10 + ( 10 / Spell:Realm ) * 7;");
 
-INSERT INTO math_scripts VALUES( "CalculatePowerLevel", "PowerLevel = 1.0 + (WaySkill/10)*(1+(1+(200-WaySkill)/100)*(KFactor*KFactor/10000));");
+INSERT INTO math_scripts VALUES( "CalculatePowerLevel", "MentalStatBonus = (RelatedStat-40)/5.4; PowerLevel = 1.0 + (WaySkill/10)*(1+(1+(200-WaySkill)/100)*(KFactor*KFactor/10000)) + (MentalStatBonus/10);");
 
 INSERT INTO math_scripts VALUES( "SpellPractice", "PracticePoints = floor(10/(1 + MaxRealm - Realm))");
 

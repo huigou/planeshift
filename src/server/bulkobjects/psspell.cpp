@@ -174,13 +174,22 @@ float psSpell::PowerLevel(psCharacter *caster, float kFactor) const
     return power->GetValue();
 }
 
-float psSpell::ManaCost(psCharacter *caster, float kFactor) const
+psSpellCost psSpell::ManaCost(psCharacter *caster, float kFactor) const
 {
     static MathScript *script = NULL;
     if (!script)
     {
         script = psserver->GetMathScriptEngine()->FindScript("CalculateManaCost");
         CS_ASSERT(script);
+    }
+
+    psSpellCost cost;
+
+    if (caster->GetActor()->infinitemana)
+    {
+        cost.mana = 0;
+        cost.stamina = 0;
+        return cost;
     }
 
     MathEnvironment env;
@@ -191,8 +200,12 @@ float psSpell::ManaCost(psCharacter *caster, float kFactor) const
     script->Evaluate(&env);
 
     MathVar *manaCost = env.Lookup("ManaCost");
+    MathVar *staminaCost = env.Lookup("StaminaCost");
     CS_ASSERT(manaCost);
-    return manaCost->GetValue();
+    CS_ASSERT(staminaCost);
+    cost.mana = manaCost->GetValue();
+    cost.stamina = staminaCost->GetValue();
+    return cost;
 }
 
 float psSpell::ChanceOfCastSuccess(psCharacter *caster, float kFactor) const
@@ -272,20 +285,17 @@ bool psSpell::CanCast(Client *client, float kFactor, csString & reason)
     }
 
     // Check for sufficient Mana
-    if (!caster->infinitemana)
+    psSpellCost cost = ManaCost(casterChar, kFactor);
+    if (casterChar->GetMana() < cost.mana)
     {
-        float manaCost = ManaCost(casterChar, kFactor);
-        if (casterChar->GetMana() < manaCost)
-        {
-            reason.Format("You don't have the mana to cast %s.", name.GetData());
-            return false;
-        }
+        reason.Format("You don't have the mana to cast %s.", name.GetData());
+        return false;
+    }
 
-        if (casterChar->GetStamina(false) < manaCost)
-        {
-            reason.Format("You are too tired to cast %s.", name.GetData());
-            return false;
-        }
+    if (casterChar->GetStamina(false) < cost.stamina)
+    {
+        reason.Format("You are too tired to cast %s.", name.GetData());
+        return false;
     }
 
     // Skip testing some conditions for developers and game masters
@@ -384,23 +394,33 @@ void psSpell::Cast(Client *client, float kFactor) const
 void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFactor, float power) const
 {
     const float chanceOfSuccess = ChanceOfCastSuccess(caster->GetCharacterData(), kFactor);
-    Notify4(LOG_SPELLS, "%s casting %s with a chance of success = %.2f\n", caster->GetName(), name.GetData(), chanceOfSuccess);
+    float roll = psserver->GetRandom() * 100.f;
+    Notify5(LOG_SPELLS, "%s casting %s with a chance of success = %.2f and roll = %.2f\n", caster->GetName(), name.GetData(), chanceOfSuccess, roll);
 
-    if (psserver->GetRandom() * 100.0 > chanceOfSuccess)
+    psSpellCost cost = ManaCost(caster->GetCharacterData(), kFactor);
+
+    if (chanceOfSuccess < 100.f && roll < chanceOfSuccess)
     {
         // Spell casting failed
         psserver->SendSystemInfo(caster->GetClientID(), "You failed to cast the spell %s." , name.GetData());
 
-        psEffectMessage fx(0, "spell_failure", csVector3(0,0,0), caster->GetEID(), target->GetEID(), 0, 0);
-        fx.Multicast(caster->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE);
+        ProgressionScript* failure = psserver->GetProgressionManager()->FindScript("SpellFailure");
+        MathEnvironment env;
+        env.Define("Caster",        caster);
+        env.Define("Power",         power);
+        env.Define("ManaCost",      cost.mana);
+        env.Define("StaminaCost",   cost.stamina);
+        env.Define("SuccessChance", chanceOfSuccess);
+        env.Define("Roll",          roll);
 
-        // Only drain 10% of mana.
-        caster->DrainMana(-(ManaCost(caster->GetCharacterData(), kFactor)/10), false);
+        failure->Run(&env);
         return;
     }
 
     // Drain full mana amount.
-    caster->DrainMana(-ManaCost(caster->GetCharacterData(), kFactor), false);
+    caster->GetCharacterData()->AdjustMana(-cost.mana);
+    caster->GetCharacterData()->AdjustStamina(-cost.stamina, false);
+    caster->SendGroupStats();
 
     // Look for targets
     MathEnvironment env;

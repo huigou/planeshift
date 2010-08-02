@@ -972,7 +972,6 @@ public:
     void UpdateStats();
     void ProcessStamina();
     void ProcessStamina(const csVector3& velocity, bool force=false);
-    virtual float DrainMana(float adjust, bool absolute);
 
     void Teleport(const char *sec, const csVector3 & pos, float yrot, InstanceID instance);
     void Teleport(iSector *sector, const csVector3 & pos, float yrot, InstanceID instance);

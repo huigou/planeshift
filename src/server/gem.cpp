@@ -2553,29 +2553,6 @@ void gemActor::UpdateStats()
     }
 }
 
-float gemActor::DrainMana(float adjust,bool absolute)
-{
-    // GM flag
-    if (infinitemana)
-        return GetCharacterData()->GetMana();
-
-    float finalMana = 0;
-    if(absolute)
-    {
-        GetCharacterData()->SetMana(adjust);
-        finalMana = GetCharacterData()->GetMana();
-    }
-    else
-    {
-        //mental stamina is only adjusted, never set
-        GetCharacterData()->AdjustStamina(adjust, false);
-        GetCharacterData()->AdjustMana(adjust);
-        finalMana = psChar->GetMana();
-    }
-    SendGroupStats();
-    return finalMana;
-}
-
 void gemActor::HandleDeath()
 {
     // Cancel the appropriate ActiveSpells
