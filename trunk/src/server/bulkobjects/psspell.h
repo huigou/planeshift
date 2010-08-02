@@ -53,6 +53,11 @@ struct psWay
     csString         name;
 };
 
+struct psSpellCost
+{
+    float mana;
+    float stamina;
+};
 
 typedef csArray <psItemStats*> glyphList_t;
 
@@ -73,7 +78,7 @@ class psSpell : public iScriptableVar
     const csString& GetName() const { return name; }
     const csString& GetImage() const { return image; }
     const csString& GetDescription() const { return description; }
-    float ManaCost(psCharacter *caster, float kFactor) const;
+    psSpellCost ManaCost(psCharacter *caster, float kFactor) const;
     float PowerLevel(psCharacter *caster, float kFactor) const;
     float ChanceOfCastSuccess(psCharacter *caster, float kFactor) const;
     float ChanceOfResearchSuccess(psCharacter *researcher);
