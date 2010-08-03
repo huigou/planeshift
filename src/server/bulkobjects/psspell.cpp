@@ -407,10 +407,10 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
         ProgressionScript* failure = psserver->GetProgressionManager()->FindScript("SpellFailure");
         MathEnvironment env;
         env.Define("Caster",        caster);
+        env.Define("KFactor",       cost.mana);
         env.Define("Power",         power);
-        env.Define("ManaCost",      cost.mana);
-        env.Define("StaminaCost",   cost.stamina);
-        env.Define("SuccessChance", chanceOfSuccess);
+        // this const cast is safe as scripts cannot change the spell via the scripting interface
+        env.Define("Spell",         const_cast<psSpell*>(this));
         env.Define("Roll",          roll);
 
         failure->Run(&env);
@@ -578,7 +578,26 @@ double psSpell::GetProperty(const char *ptr)
 
 double psSpell::CalcFunction(const char * functionName, const double * params)
 {
-    Error2("psSpell::CalcFunction(%s) failed", functionName);
+    csString function(functionName);
+    if(function == "ManaCost")
+    {
+        iScriptableVar* obj = MathScriptEngine::GetPointer(params[0]);
+        gemActor* caster = dynamic_cast<gemActor*>(obj);
+        return ManaCost(caster->GetCharacterData(), params[1]).mana;
+    }
+    else if(function == "StaminaCost")
+    {
+        iScriptableVar* obj = MathScriptEngine::GetPointer(params[0]);
+        gemActor* caster = dynamic_cast<gemActor*>(obj);
+        return ManaCost(caster->GetCharacterData(), params[1]).stamina;
+    }
+    else if(function == "SuccessChance")
+    {
+        iScriptableVar* obj = MathScriptEngine::GetPointer(params[0]);
+        gemActor* caster = dynamic_cast<gemActor*>(obj);
+        return ChanceOfCastSuccess(caster->GetCharacterData(), params[1]);
+    }
+
     return 0;
 }
 
