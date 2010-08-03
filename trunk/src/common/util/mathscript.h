@@ -46,7 +46,6 @@ class MathVar
 {
 protected:
     double value;
-    iScriptableVar *obj;
 
     typedef void (*MathScriptVarCallback)(void * arg);
     MathScriptVarCallback changedVarCallback;
@@ -59,7 +58,6 @@ public:
     {
         type  = VARTYPE_VALUE;
         value = 0;
-        obj   = NULL;
         changedVarCallback = NULL;
         changedVarCallbackArg = NULL;
     }
@@ -79,43 +77,17 @@ public:
 
     double GetValue()
     {
-        if (type == VARTYPE_OBJ)
-            return (double)(intptr_t)obj;
-
         return value;
     }
 
-    void SetValue(double v)
-    {
-        if (type == VARTYPE_OBJ)
-        {
-            // Scary non-portible madness!
-            void **ptr = reinterpret_cast<void**>(&v);
-            obj = *reinterpret_cast<iScriptableVar**>(ptr);
-        }
-        else
-            value = v;
-
-        if (changedVarCallback)
-            changedVarCallback(changedVarCallbackArg);
-    }
-
-    void SetObject(iScriptableVar *p)
-    {
-        type = VARTYPE_OBJ;
-        obj  = p;
-    }
-
-    iScriptableVar *GetObject()
-    {
-        return (type == VARTYPE_OBJ) ? obj : NULL;
-    }
+    void SetValue(double v);
+    void SetObject(iScriptableVar *p);
+    iScriptableVar *GetObject();
 
     void Copy(MathVar *v)
     {
         type = v->type;
         value = v->value;
-        obj = v->obj;
     }
 
     csString ToString() const;
@@ -236,6 +208,8 @@ public:
     static double Power(const double *parms);
     static double CustomCompoundFunc(const double * parms);
     static csString GetString(double id);
+    static iScriptableVar* GetPointer(double p);
+    static double GetValue(iScriptableVar* p);
 };
 
 #endif
