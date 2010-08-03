@@ -122,8 +122,8 @@ class NearNaturalResource
 {
     public:
     NearNaturalResource(NaturalResource *res, float distance) : resource(res), dist(distance) {}
-    float dist;
     NaturalResource *resource;
+    float dist;
     bool operator<(const NearNaturalResource &oth) const
     {
         if(oth.dist > dist)
