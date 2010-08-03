@@ -166,14 +166,15 @@ bool psEffectObjSpire::Update(csTicks elapsed)
     if (keyFrames->GetSize() > 0)
     {
         // COLOUR
-        csVector3 lerpColour = LERP_VEC_KEY(KA_COLOUR);
-        float lerpAlpha = LERP_KEY(KA_ALPHA);
+        float lerpfactor = LERP_FACTOR;
+        csVector3 lerpColour = LERP_VEC_KEY(KA_COLOUR,lerpfactor);
+        float lerpAlpha = LERP_KEY(KA_ALPHA,lerpfactor);
         for (int a=0; a<vertCount; ++a)
             colour[a].Set(lerpColour.x, lerpColour.y, lerpColour.z, lerpAlpha);
 
-        topScale = LERP_KEY(KA_TOPSCALE);
-        height = LERP_KEY(KA_HEIGHT);
-        padding = LERP_KEY(KA_PADDING);
+        topScale = LERP_KEY(KA_TOPSCALE,lerpfactor);
+        height = LERP_KEY(KA_HEIGHT,lerpfactor);
+        padding = LERP_KEY(KA_PADDING,lerpfactor);
     }
     CalculateData(shape, segments, vert, texel, topScale, height, padding);
 

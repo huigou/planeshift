@@ -39,35 +39,27 @@
 #include "util/pscssetup.h"
 
 // keep track of the interpolation types for each key frame
-const int lerpTypes[psEffectObjKeyFrame::KA_COUNT] = { 
+const int lerpTypes[psEffectObjKeyFrame::KA_VEC_COUNT] = { 
                             psEffectObjKeyFrame::IT_NONE,  /* BLANK */
                             psEffectObjKeyFrame::IT_LERP,  /* SCALE */
                             psEffectObjKeyFrame::IT_LERP,  /* TOP SCALE */
-                            psEffectObjKeyFrame::IT_LERP,  /* POS_X */
-                            psEffectObjKeyFrame::IT_LERP,  /* POS_Y */
-                            psEffectObjKeyFrame::IT_LERP,  /* POS_Z */
-                            psEffectObjKeyFrame::IT_LERP,  /* ROT_X */
-                            psEffectObjKeyFrame::IT_LERP,  /* ROT_Y */
-                            psEffectObjKeyFrame::IT_LERP,  /* ROT_Z */
-                            psEffectObjKeyFrame::IT_LERP,  /* SPIN_X */
-                            psEffectObjKeyFrame::IT_LERP,  /* SPIN_Y */
-                            psEffectObjKeyFrame::IT_LERP,  /* SPIN_Z */
                             psEffectObjKeyFrame::IT_FLOOR, /* CELL */
-                            psEffectObjKeyFrame::IT_LERP,  /* COLOUR_R */
-                            psEffectObjKeyFrame::IT_LERP,  /* COLOUR_G */
-                            psEffectObjKeyFrame::IT_LERP,  /* COLOUR_B */
                             psEffectObjKeyFrame::IT_LERP,  /* ALPHA */
                             psEffectObjKeyFrame::IT_LERP,  /* HEIGHT */
                             psEffectObjKeyFrame::IT_LERP,  /* PADDING */
                             psEffectObjKeyFrame::IT_FLOOR, /* ANIMATE */
+                            psEffectObjKeyFrame::IT_LERP,  /* POS */
+                            psEffectObjKeyFrame::IT_LERP,  /* ROT */
+                            psEffectObjKeyFrame::IT_LERP,  /* SPIN */
+                            psEffectObjKeyFrame::IT_LERP  /* COLOUR */
     };
 
-psEffectObjKeyFrame::psEffectObjKeyFrame() : specAction(KA_COUNT)
+psEffectObjKeyFrame::psEffectObjKeyFrame() : specAction(KA_VEC_COUNT)
 {
     specAction.Clear();
 }
 
-psEffectObjKeyFrame::psEffectObjKeyFrame(iDocumentNode *node, const psEffectObjKeyFrame *prevKeyFrame) : specAction(KA_COUNT)
+psEffectObjKeyFrame::psEffectObjKeyFrame(iDocumentNode *node, const psEffectObjKeyFrame *prevKeyFrame) : specAction(KA_VEC_COUNT)
 {
     specAction.Clear();
     
@@ -89,23 +81,15 @@ psEffectObjKeyFrame::psEffectObjKeyFrame(iDocumentNode *node, const psEffectObjK
     // set default values, if these are wrong then they'll be replaced on the second (lerp) pass
     actions[KA_SCALE] = 1.0f;
     actions[KA_TOPSCALE] = 1.0f;
-    actions[KA_POS_X] = 0;
-    actions[KA_POS_Y] = 0;
-    actions[KA_POS_Z] = 0;
-    actions[KA_ROT_X] = 0.0f;
-    actions[KA_ROT_Y] = 0.0f;
-    actions[KA_ROT_Z] = 0.0f;
-    actions[KA_SPIN_X] = 0;
-    actions[KA_SPIN_Y] = 0;
-    actions[KA_SPIN_Z] = 0;
     actions[KA_CELL] = 0;
-    actions[KA_COLOUR_R] = 1;
-    actions[KA_COLOUR_G] = 1;
-    actions[KA_COLOUR_B] = 1;
     actions[KA_ALPHA] = 1.0f;
     actions[KA_HEIGHT] = 1.0f;
     actions[KA_PADDING] = 0.1f;
     actions[KA_ANIMATE] = 1;
+    vecActions[KA_POS - KA_COUNT] = 0;
+    vecActions[KA_ROT - KA_COUNT] = 0.0f;
+    vecActions[KA_SPIN - KA_COUNT] = 0;
+    vecActions[KA_COLOUR - KA_COUNT] = 1;
 
     while (xmlbinds->HasNext())
     {
@@ -134,66 +118,65 @@ psEffectObjKeyFrame::psEffectObjKeyFrame(iDocumentNode *node, const psEffectObjK
         }
         else if (action == "position")
         {
+            specAction.SetBit(KA_POS);
+            csVector3 & vec = vecActions[KA_POS - KA_COUNT];
             attr = keyNode->GetAttribute("x");
             if (attr)
             {
-                specAction.SetBit(KA_POS_X);
-                actions[KA_POS_X] = attr->GetValueAsFloat();
+                vec.x = attr->GetValueAsFloat();
             }
             attr = keyNode->GetAttribute("y");
             if (attr)
             {
-                specAction.SetBit(KA_POS_Y);
-                actions[KA_POS_Y] = attr->GetValueAsFloat();
+                vec.y = attr->GetValueAsFloat();
             }
             attr = keyNode->GetAttribute("z");
             if (attr)
             {
-                specAction.SetBit(KA_POS_Z);
-                actions[KA_POS_Z] = attr->GetValueAsFloat();
+                vec.z = attr->GetValueAsFloat();
             }
         }
         else if (action == "rotate")
         {
+            specAction.SetBit(KA_ROT);
+            csVector3 & vec = vecActions[KA_ROT - KA_COUNT];
             attr = keyNode->GetAttribute("x");
             if (attr)
             {
-                specAction.SetBit(KA_ROT_X);
-                actions[KA_ROT_X] = attr->GetValueAsFloat() * PI / 180.0f;
+                vec.x = attr->GetValueAsFloat();
             }
             attr = keyNode->GetAttribute("y");
             if (attr)
             {
-                specAction.SetBit(KA_ROT_Y);
-                actions[KA_ROT_Y] = attr->GetValueAsFloat() * PI / 180.0f;
+                vec.y = attr->GetValueAsFloat();
             }
             attr = keyNode->GetAttribute("z");
             if (attr)
             {
-                specAction.SetBit(KA_ROT_Z);
-                actions[KA_ROT_Z] = attr->GetValueAsFloat() * PI / 180.0f;
+                vec.z = attr->GetValueAsFloat();
             }
+            vec *= PI/180.f;
         }
         else if (action == "spin")
         {
+            specAction.SetBit(KA_SPIN);
+            csVector3 & vec = vecActions[KA_SPIN - KA_COUNT];
             attr = keyNode->GetAttribute("x");
             if (attr)
             {
-                specAction.SetBit(KA_SPIN_X);
-                actions[KA_SPIN_X] = attr->GetValueAsFloat() * PI / 180.0f;
+                vec.x = attr->GetValueAsFloat();
             }
             attr = keyNode->GetAttribute("y");
             if (attr)
             {
-                specAction.SetBit(KA_SPIN_Y);
-                actions[KA_SPIN_Y] = attr->GetValueAsFloat() * PI / 180.0f;
+                vec.y = attr->GetValueAsFloat();
             }
             attr = keyNode->GetAttribute("z");
             if (attr)
             {
-                specAction.SetBit(KA_SPIN_Z);
-                actions[KA_SPIN_Z] = attr->GetValueAsFloat() * PI / 180.0f;
+                vec.z = attr->GetValueAsFloat();
             }
+            vec *= PI/180.f;
         }
         else if (action == "cell")
         {
@@ -202,24 +185,25 @@ psEffectObjKeyFrame::psEffectObjKeyFrame(iDocumentNode *node, const psEffectObjK
         }
         else if (action == "colour")
         {
+            specAction.SetBit(KA_COLOUR);
+            csVector3 & vec = vecActions[KA_COLOUR - KA_COUNT];
             attr = keyNode->GetAttribute("r");
             if (attr)
             {
-                specAction.SetBit(KA_COLOUR_R);
-                actions[KA_COLOUR_R] = attr->GetValueAsFloat() / 255.0f;
+                vec.x = attr->GetValueAsFloat();
             }
             attr = keyNode->GetAttribute("g");
             if (attr)
             {
-                specAction.SetBit(KA_COLOUR_G);
-                actions[KA_COLOUR_G] = attr->GetValueAsFloat() / 255.0f;
+                vec.y = attr->GetValueAsFloat();
             }
             attr = keyNode->GetAttribute("b");
             if (attr)
             {
-                specAction.SetBit(KA_COLOUR_B);
-                actions[KA_COLOUR_B] = attr->GetValueAsFloat() / 255.0f;
+                vec.z = attr->GetValueAsFloat();
             }
+            vec /= 255.0f;
+
             attr = keyNode->GetAttribute("a");
             if (attr)
             {
@@ -452,37 +436,43 @@ bool psEffectObj::Update(csTicks elapsed)
         return true;
 
     const static csMatrix3 UP_FIX(1,0,0,   0,0,1,  0,1,0);
-        
-    life += (float)elapsed;
+    const static csMatrix3 billboardFix = csXRotMatrix3(-3.14f/2.0f);
+
+    iMovable* anchorMovable = anchorMesh->GetMovable();
+    iMovable* meshMovable = mesh->GetMovable();
+
+    csVector3 anchorPosition = anchorMovable->GetFullPosition();
+
+    life += elapsed;
     if (life > animLength && killTime <= 0)
     {
-        life = fmod(life,animLength);
+        life %= animLength;
         if (!life)
+        {
             life += animLength;
+        }
     }
 
-    if (life >= birth && !isAlive)
-    {
-        isAlive = true;
-//        if (anchorMesh)
-//            anchorMesh->GetChildren()->Add(mesh);
-    }
+    isAlive |= (life >= birth);
 
     if (isAlive && anchorMesh && anchor->IsReady())
     {
-        mesh->GetMovable()->SetSector(anchorMesh->GetMovable()->GetSectors()->Get(0));
-        mesh->GetMovable()->SetPosition(anchorMesh->GetMovable()->GetFullPosition());
+        meshMovable->SetSector(anchorMovable->GetSectors()->Get(0));
+        meshMovable->SetPosition(anchorPosition);
         if (dir == DT_NONE)
-            matBase = anchorMesh->GetMovable()->GetFullTransform().GetT2O();
+        {
+            matBase = anchorMovable->GetFullTransform().GetT2O();
+        }
     }
 
-	const static csMatrix3 billboardFix = csXRotMatrix3(-3.14f/2.0f);
+    csMatrix3 matTransform;
     if (keyFrames->GetSize() == 0)
     {
         if (dir == DT_CAMERA)
         {
+            // note that this is *very* expensive
             csVector3 camDir = -view->GetCamera()->GetTransform().GetO2TTranslation() 
-                             + anchorMesh->GetMovable()->GetFullPosition();
+                             + anchorPosition;
             csReversibleTransform rt;
             rt.LookAt(camDir, csVector3(0.f,1.f,0.f));
             matBase = rt.GetT2O() * UP_FIX;
@@ -491,45 +481,41 @@ bool psEffectObj::Update(csTicks elapsed)
         {
             matBase = view->GetCamera()->GetTransform().GetT2O() * billboardFix;
         }
-		if (scale != 1.0f)
-			mesh->GetMovable()->SetTransform(matBase * (1.0f / scale));
-		else
-			mesh->GetMovable()->SetTransform(matBase);
-		baseScale = scale;
 
-        mesh->GetMovable()->UpdateMove();
+        baseScale = scale;
+        matTransform = matBase / baseScale;
     }
     else
     {
         currKeyFrame = FindKeyFrameByTime(life);
-        nextKeyFrame = currKeyFrame + 1;
-        if (nextKeyFrame >= keyFrames->GetSize())
-            nextKeyFrame = 0;
-       
-        // grab and lerp values
-        
-        csVector3 lerpRot = LERP_VEC_KEY(KA_ROT);
-        csVector3 lerpSpin = LERP_VEC_KEY(KA_SPIN);
-        csVector3 objOffset = LERP_VEC_KEY(KA_POS);
-        
-        // calculate rotation from lerped values
+        nextKeyFrame = (currKeyFrame + 1) % keyFrames->GetSize();
+
+        // grab and lerp values - expensive
+        float lerpfactor = LERP_FACTOR;
+        csVector3 lerpRot = LERP_VEC_KEY(KA_ROT,lerpfactor);
+        csVector3 lerpSpin = LERP_VEC_KEY(KA_SPIN,lerpfactor);
+        csVector3 objOffset = LERP_VEC_KEY(KA_POS,lerpfactor);
+
+        // calculate rotation from lerped values - expensive
         csMatrix3 matRot = csZRotMatrix3(lerpRot.z) * csYRotMatrix3(lerpRot.y) * csXRotMatrix3(lerpRot.x);
         if (dir != DT_CAMERA && dir != DT_BILLBOARD)
-            matRot = matRot * matBase;
+        {
+            matRot *= matBase;
+        }
 
         // calculate new position
         csVector3 newPos = matRot * csVector3(-objOffset.x, objOffset.y, -objOffset.z);
-        
-        csMatrix3 matTransform;
+
         if (dir == DT_CAMERA)
         {
+            // note that this is *very* expensive - again
             csVector3 camDir = -view->GetCamera()->GetTransform().GetO2TTranslation() 
-                             + anchorMesh->GetMovable()->GetFullPosition() + newPos;
+                             + anchorPosition + newPos;
             csReversibleTransform rt;
             rt.LookAt(camDir, csVector3(sinf(lerpSpin.y),cosf(lerpSpin.y),0.f));
             matBase = rt.GetT2O() * UP_FIX;
-            
             newPos = rt.GetT2O() * newPos;
+
             // rotate and spin should have no effect on the transform when we want it to face the camera
             matTransform = matBase;
         }
@@ -545,25 +531,24 @@ bool psEffectObj::Update(csTicks elapsed)
         }
 
         // SCALE
-        baseScale = (LERP_KEY(KA_SCALE) * scale);
-        matTransform *= (1.0f / baseScale);
-
-        // set new transform
-        mesh->GetMovable()->SetTransform(matTransform);
+        baseScale = LERP_KEY(KA_SCALE,lerpfactor) * scale;
+        matTransform /= baseScale;
     
-        // set new position
-        mesh->GetMovable()->SetPosition(anchorMesh->GetMovable()->GetFullPosition() + newPos);
-        mesh->GetMovable()->UpdateMove();
+        // adjust position
+        meshMovable->SetPosition(anchorPosition+newPos);
     }
-    
-    if (killTime <= 0)
-        return true; // this effect obj will last forever until some divine intervention
 
-    // age the effect obj
-    killTime -= (int)elapsed;
-    if (killTime <= 0)
-        return false;
-    
+    // set new transform
+    meshMovable->SetTransform(matTransform);
+    meshMovable->UpdateMove();
+
+    if (killTime > 0)
+    {
+        killTime -= elapsed;
+        if (killTime <= 0)
+            return false;
+    }
+
     return true;
 }
 
@@ -619,10 +604,10 @@ bool psEffectObj::AttachToAnchor(psEffectAnchor * newAnchor)
 
 size_t psEffectObj::FindKeyFrameByTime(float time) const
 {
-    for ( size_t a = keyFrames->GetSize(); a-- > 0; )
+    for ( size_t a = keyFrames->GetSize(); a > 0; --a)
     {
-        if (keyFrames->Get(a)->time < time)
-            return a;
+        if (keyFrames->Get(a-1)->time < time)
+            return (a-1);
     }
     return 0;
 }
@@ -645,38 +630,62 @@ void psEffectObj::FillInLerps()
     // this code is crap, but doing it this way allows everything else to be decently nice, clean, and efficient
     size_t a,b,nextIndex;
 
-    for (size_t k=0; k<psEffectObjKeyFrame::KA_COUNT; ++k)
+    for (size_t k=0; k<psEffectObjKeyFrame::KA_VEC_COUNT; ++k)
     {
         a = 0;
+        size_t i = k - psEffectObjKeyFrame::KA_COUNT;
         while (FindNextKeyFrameWithAction(a+1, k, nextIndex))
         {
+            psEffectObjKeyFrame* keyA = keyFrames->Get(a);
+            psEffectObjKeyFrame* keyNext = keyFrames->Get(nextIndex);
             for (b=a+1; b<nextIndex; ++b)
             {
+                psEffectObjKeyFrame* keyB = keyFrames->Get(b);
                 switch(lerpTypes[k])
                 {
                     case psEffectObjKeyFrame::IT_FLOOR:
-                        keyFrames->Get(b)->actions[k] = keyFrames->Get(a)->actions[k];
+                    {
+                        if(k < psEffectObjKeyFrame::KA_COUNT)
+                            keyB->actions[k] = keyA->actions[k];
+                        else
+                            keyB->vecActions[i] = keyA->vecActions[i];
                         break;
+                    }
                     case psEffectObjKeyFrame::IT_CEILING:
-                        keyFrames->Get(b)->actions[k] = keyFrames->Get(nextIndex)->actions[k];
+                    {
+                        if(k < psEffectObjKeyFrame::KA_COUNT)
+                            keyB->actions[k] = keyNext->actions[k];
+                        else
+                            keyB->vecActions[i] = keyNext->vecActions[i];
                         break;
+                    }
                     case psEffectObjKeyFrame::IT_LERP:
-                        float lerpVal = lerp(keyFrames->Get(a)->actions[k], keyFrames->Get(nextIndex)->actions[k], 
-                                             keyFrames->Get(a)->time,
-                                             keyFrames->Get(nextIndex)->time,
-                                             keyFrames->Get(b)->time);
-                        keyFrames->Get(b)->actions[k] = lerpVal;
+                    {
+                        float lerpFact = lerpFactor(keyA->time, keyNext->time, keyB->time);
+
+                        if(k < psEffectObjKeyFrame::KA_COUNT)
+                            keyB->actions[k] = lerp(keyA->actions[k], keyNext->actions[k], lerpFact);
+                        else
+                            keyB->vecActions[i] = lerpVec(keyA->vecActions[i], keyNext->vecActions[i], lerpFact);
                         break;
+                    }
                 }
             }
             a = nextIndex;
         }
         
         // no matter what the interpolation type (as long as we have one), just clamp the end
-        if (lerpTypes[k] != psEffectObjKeyFrame::IT_NONE)
+        if (lerpTypes[k] != psEffectObjKeyFrame::IT_NONE && a < keyFrames->GetSize())
         {
+            psEffectObjKeyFrame* keyA = keyFrames->Get(a);
             for (b = a + 1; b < keyFrames->GetSize(); ++b)
-                keyFrames->Get(b)->actions[k] = keyFrames->Get(a)->actions[k];
+            {
+                psEffectObjKeyFrame* keyB = keyFrames->Get(b);
+                if(k < psEffectObjKeyFrame::KA_COUNT)
+                    keyB->actions[k] = keyA->actions[k];
+                else
+                    keyB->vecActions[i] = keyA->vecActions[i];
+            }
         }
     }
 }

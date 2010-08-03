@@ -150,7 +150,7 @@ csRef<iThreadReturn> psEffectManager::LoadEffects(const csString & fileName, iVi
 
     csRef<iThreadedLoader> loader = csQueryRegistry<iThreadedLoader> (psCSSetup::object_reg);
     csRef<iVFS> vfs = csQueryRegistry<iVFS> (psCSSetup::object_reg);
-    return csPtr<iThreadReturn>(loader->LoadLibraryFile(vfs->GetCwd(), fileName, effectsCollection));
+    return csPtr<iThreadReturn>(loader->LoadLibraryFile(vfs->GetCwd(), fileName, effectsCollection, 0, 0, KEEP_ALL, true));
 #endif
 }
 

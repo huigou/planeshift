@@ -194,7 +194,7 @@ bool psEffectObjDecal::Update(csTicks elapsed)
 
     float heightScale = 1.0f;
     if (keyFrames->GetSize() > 0)
-      heightScale = LERP_KEY(KA_HEIGHT);
+      heightScale = LERP_KEY(KA_HEIGHT,LERP_FACTOR);
 
     const csReversibleTransform t = mesh->GetMovable()->GetFullTransform();
     const csVector3 newPos = t.GetOrigin();

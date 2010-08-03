@@ -53,8 +53,8 @@ public:
     psEffectObjKeyFrame(iDocumentNode *node, const psEffectObjKeyFrame *prevKeyFrame);
     ~psEffectObjKeyFrame();
 
-    /// this is the time of the keyframe animation (in seconds)
-    float time;
+    /// this is the time of the keyframe animation (in milliseconds)
+    csTicks time;
 
     enum INTERP_TYPE
     {
@@ -70,19 +70,7 @@ public:
     {
         KA_SCALE = 1,
         KA_TOPSCALE,
-        KA_POS_X,
-        KA_POS_Y,
-        KA_POS_Z,
-        KA_ROT_X,
-        KA_ROT_Y,
-        KA_ROT_Z,
-        KA_SPIN_X,
-        KA_SPIN_Y,
-        KA_SPIN_Z,
         KA_CELL,
-        KA_COLOUR_R, KA_COLOUR_X = KA_COLOUR_R,
-        KA_COLOUR_G, KA_COLOUR_Y = KA_COLOUR_G,
-        KA_COLOUR_B, KA_COLOUR_Z = KA_COLOUR_B,
         KA_ALPHA,
         KA_HEIGHT,
         KA_PADDING,
@@ -91,7 +79,18 @@ public:
         KA_COUNT
     };
 
+    enum KEY_VEC_ACTION
+    {
+        KA_POS = KA_COUNT,
+        KA_ROT,
+        KA_SPIN,
+        KA_COLOUR,
+
+        KA_VEC_COUNT
+    };
+
     float actions[KA_COUNT];
+    csVector3 vecActions[KA_VEC_COUNT - KA_COUNT];
 
     /// keep track of which actions were specified for which 
     csBitArray specAction;
@@ -339,8 +338,8 @@ protected:
     csString materialName;
 
     int killTime;
-    float life;
-    float animLength;
+    csTicks life;
+    csTicks animLength;
     
     // the effect anchor that this obj is attached to
     csString anchorName;
@@ -356,7 +355,7 @@ protected:
     csRef<iMeshFactoryWrapper> meshFact;
     csRef<iMeshWrapper> mesh;
     
-    float birth;
+    csTicks birth;
     bool isAlive;
     float baseScale;
 
@@ -387,42 +386,56 @@ protected:
     float scale;
     float aspect;
 
-    inline float lerp(float f1, float f2, float t1, float t2, float t)
+    inline float lerp(float f1, float f2, float factor)
     {
-        if (t2 == t1)
+        if (factor == 0.f)
+        {
             return f1;
-        
-        return f1 + (f2-f1)*(t-t1)/(t2-t1);
+        }
+        else
+        {
+            return f1 + (f2-f1)*factor;
+        }
     }
     
-    inline csVector3 lerpVec(const csVector3 &v1, const csVector3 &v2, float t1, float t2, float t)
+    inline csVector3 lerpVec(const csVector3 &v1, const csVector3 &v2, float factor)
     {
-        if (t2 == t1)
+        if (factor == 0.f)
+        {
             return v1;
-        
-        return v1 + (v2-v1)*(t-t1)/(t2-t1);
+        }
+        else
+        {
+            return v1 + (v2-v1)*factor;
+        }
+    }
+
+    inline float lerpFactor(csTicks t1, csTicks t2, csTicks t)
+    {
+        if(t2 == t1)
+        {
+            return 0.f;
+        }
+        else
+        {
+            return ((float)(t-t1)/(float)(t2-t1));
+        }
     }
 };
 
-#define LERP_KEY(action) \
+#define LERP_KEY(action,factor) \
     lerp(keyFrames->Get(currKeyFrame)->actions[psEffectObjKeyFrame::action], \
          keyFrames->Get(nextKeyFrame)->actions[psEffectObjKeyFrame::action], \
-         keyFrames->Get(currKeyFrame)->time, \
-         keyFrames->Get(nextKeyFrame)->time, \
-         life)
+         factor)
 
-#define LERP_VEC_KEY(action) \
-    lerpVec( \
-        csVector3(keyFrames->Get(currKeyFrame)->actions[psEffectObjKeyFrame::action##_X], \
-                  keyFrames->Get(currKeyFrame)->actions[psEffectObjKeyFrame::action##_Y], \
-                  keyFrames->Get(currKeyFrame)->actions[psEffectObjKeyFrame::action##_Z]), \
-        csVector3(keyFrames->Get(nextKeyFrame)->actions[psEffectObjKeyFrame::action##_X], \
-                  keyFrames->Get(nextKeyFrame)->actions[psEffectObjKeyFrame::action##_Y], \
-                  keyFrames->Get(nextKeyFrame)->actions[psEffectObjKeyFrame::action##_Z]), \
-        keyFrames->Get(currKeyFrame)->time, \
-        keyFrames->Get(nextKeyFrame)->time, \
-        life)
+#define LERP_VEC_KEY(action,factor) \
+    lerpVec(keyFrames->Get(currKeyFrame)->vecActions[psEffectObjKeyFrame::action - psEffectObjKeyFrame::KA_COUNT], \
+            keyFrames->Get(nextKeyFrame)->vecActions[psEffectObjKeyFrame::action - psEffectObjKeyFrame::KA_COUNT], \
+            factor)
 
-
+#define LERP_FACTOR \
+    lerpFactor(keyFrames->Get(currKeyFrame)->time, \
+               keyFrames->Get(nextKeyFrame)->time, \
+               life)
 
 #endif

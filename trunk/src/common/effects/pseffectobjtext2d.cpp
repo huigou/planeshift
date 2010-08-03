@@ -150,30 +150,30 @@ bool psEffectObjText2D::SetText(const csArray<psEffectTextElement> & elements)
 	        break;
         }
 
-		if (elem->scale)
-		{
-			// if it's scaled and has an offset, then the offset should scale both sides, otherwise it's just a translation
-			if (elem->align == EA_TOP || elem->align == EA_BOTTOM || elem->align == EA_CENTER)
-				destRect.xmin -= elem->offsetx;
-			else
-				destRect.xmin += elem->offsetx;
-			destRect.xmax += elem->offsetx;
+        if (elem->scale)
+        {
+            // if it's scaled and has an offset, then the offset should scale both sides, otherwise it's just a translation
+            if (elem->align == EA_TOP || elem->align == EA_BOTTOM || elem->align == EA_CENTER)
+                destRect.xmin -= elem->offsetx;
+            else
+                destRect.xmin += elem->offsetx;
+            destRect.xmax += elem->offsetx;
 
-			if (elem->align == EA_LEFT || elem->align == EA_RIGHT || elem->align == EA_CENTER)
-				destRect.ymin -= elem->offsety;
-			else
-				destRect.ymin += elem->offsety;
-			destRect.ymax += elem->offsety;
-		}
-		else
-		{
-			destRect.xmin += elem->offsetx;
-			destRect.xmax += elem->offsetx;
-			destRect.ymin += elem->offsety;
-			destRect.ymax += elem->offsety;
-		}
+            if (elem->align == EA_LEFT || elem->align == EA_RIGHT || elem->align == EA_CENTER)
+                destRect.ymin -= elem->offsety;
+            else
+                destRect.ymin += elem->offsety;
+            destRect.ymax += elem->offsety;
+        }
+        else
+        {
+            destRect.xmin += elem->offsetx;
+            destRect.xmax += elem->offsetx;
+            destRect.ymin += elem->offsety;
+            destRect.ymax += elem->offsety;
+        }
     
-		csRect tr(elem->umin, elem->vmin, elem->umax, elem->vmax);
+        csRect tr(elem->umin, elem->vmin, elem->umax, elem->vmax);
         elems.Push(renderer2d->Add2DElement(new psEffect2DImgElement(zorder++, backgroundMat->GetMaterial()->GetTexture(), tr, destRect, 0, elem->tile)));
     }
     
@@ -381,36 +381,35 @@ bool psEffectObjText2D::AttachToAnchor(psEffectAnchor * newAnchor)
 bool psEffectObjText2D::Update(csTicks elapsed)
 {
     size_t a, len;
-	int lerpAlpha = 255;
+    int lerpAlpha = 255;
 
     if (!anchor || !anchor->IsReady()) // wait for anchor to be ready
         return true;
 
-    life += (float)elapsed;
+    life += elapsed;
     if (life > animLength && killTime <= 0)
     {
-        life = fmod(life,animLength);
+        life %= animLength;
         if (!life)
             life += animLength;
     }
 
-    if (life >= birth && !isAlive)
-        isAlive = true;
+    life |= (life >= birth);
 
     // calculate 2D position of text
     csVector3 p = anchorMesh->GetMovable()->GetPosition();
     if (keyFrames->GetSize() > 0)
     {
         currKeyFrame = FindKeyFrameByTime(life);
-        nextKeyFrame = currKeyFrame + 1;
-        if (nextKeyFrame >= keyFrames->GetSize())
-            nextKeyFrame = 0;
+        nextKeyFrame = (currKeyFrame + 1) % keyFrames->GetSize();
+
+        float lerpfactor = LERP_FACTOR;
 
         // position
-        p += LERP_VEC_KEY(KA_POS);
+        p += LERP_VEC_KEY(KA_POS,lerpfactor);
 
-		// calculate alpha
-		lerpAlpha = (int) (LERP_KEY(KA_ALPHA) * 255);
+        // calculate alpha
+        lerpAlpha = (int) (LERP_KEY(KA_ALPHA,lerpfactor) * 255);
     }
 
     // transform 3D to camera
@@ -436,13 +435,13 @@ bool psEffectObjText2D::Update(csTicks elapsed)
     {
         elems[a]->originx = (int)sp.x;
         elems[a]->originy = (int)sp.y + yAlign;
-		elems[a]->SetAlpha(lerpAlpha);
+        elems[a]->SetAlpha(lerpAlpha);
     }
 
     if (killTime <= 0)
         return true;
 
-    killTime -= (int)elapsed;
+    killTime -= elapsed;
     if (killTime <= 0)
         return false;
 
@@ -516,7 +515,7 @@ void psEffectObjText2D::DrawTextElement(const psEffectTextElement & element)
     int y = element.y - maxHeight / 2;
     const char * text = element.text;
 
-	psEffect2DTextElement * textElem = new psEffect2DTextElement(zorder++, font, text, x, y, element.colour, -1, element.hasOutline ? element.outlineColour : -1, element.hasShadow ? element.shadowColour : -1, 0);
+    psEffect2DTextElement * textElem = new psEffect2DTextElement(zorder++, font, text, x, y, element.colour, -1, element.hasOutline ? element.outlineColour : -1, element.hasShadow ? element.shadowColour : -1, 0);
     elems.Push(renderer2d->Add2DElement(textElem));
 }
 
