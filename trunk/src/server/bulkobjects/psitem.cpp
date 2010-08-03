@@ -2044,7 +2044,7 @@ double psItem::GetProperty(const char *ptr)
     }
     else if (!strcasecmp(ptr,"Owner"))
     {
-        return (double)(intptr_t)owning_character;
+        return MathScriptEngine::GetValue(owning_character);
     }
     else if (!strcasecmp(ptr,"ArmorType"))
     {
@@ -2062,7 +2062,7 @@ double psItem::CalcFunction(const char * functionName, const double * params)
     if (!strcasecmp(functionName, "GetArmorVSWeaponResistance"))
     {
         psItem *weapon = this;
-        psItem *armor  = (psItem *)(intptr_t)params[0];
+        psItem *armor  = dynamic_cast<psItem*>(MathScriptEngine::GetPointer(params[0]));
 
         // if no armor return 1
         if (!armor)
