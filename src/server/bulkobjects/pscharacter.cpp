@@ -2972,7 +2972,7 @@ double psCharacter::GetProperty(const char *ptr)
     }
     else if (!strcasecmp(ptr,"sector"))
     {
-        return (double)(intptr_t)(location.loc_sector);
+        return MathScriptEngine::GetValue(location.loc_sector);
     }
     else if (!strcasecmp(ptr,"owner"))
     {
@@ -3096,7 +3096,7 @@ double psCharacter::CalcFunction(const char * functionName, const double * param
             item = inventory.GetEquipmentObject(slot).default_if_empty;
         }
 
-        return (double)(intptr_t)item;;
+        return MathScriptEngine::GetValue(item);;
     }
     else if (!strcasecmp(functionName, "GetArmorSkill"))
     {
