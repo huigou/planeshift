@@ -153,11 +153,12 @@ bool psEffectObjStar::Update(csTicks elapsed)
     if (keyFrames->GetSize() > 0)
     {
         // COLOUR
-        lerpColour = LERP_VEC_KEY(KA_COLOUR);
-        lerpAlpha = LERP_KEY(KA_ALPHA);
+        float lerpfactor = LERP_FACTOR;
+        lerpColour = LERP_VEC_KEY(KA_COLOUR,lerpfactor);
+        lerpAlpha = LERP_KEY(KA_ALPHA,lerpfactor);
 
-        topScale = LERP_KEY(KA_TOPSCALE);
-        height = LERP_KEY(KA_HEIGHT);
+        topScale = LERP_KEY(KA_TOPSCALE,lerpfactor);
+        height = LERP_KEY(KA_HEIGHT,lerpfactor);
     }
 
     for (int b=0; b<segments; ++b)

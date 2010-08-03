@@ -136,15 +136,22 @@ bool psEffectObjSound::Update(csTicks elapsed)
     if (!anchor || !anchor->IsReady()) // wait for anchor to be ready
         return true;
 
-    life += (float)elapsed;
+    life += elapsed;
     if (life > animLength && killTime <= 0)
     {
-        life = fmod(life,animLength);
+        life %= animLength;
         if (!life)
             life += animLength;
     }
 
-    if (life >= birth && !isAlive)
+    if (killTime > 0)
+    {
+        killTime -= elapsed;
+        if (killTime <= 0)
+            return false;
+    }
+
+    if (!isAlive && life >= birth)
     {
         isAlive = true;
         SndSysMgr->Play3DSound (soundName, LOOP, 0, 0, VOLUME_NORM,
@@ -158,23 +165,14 @@ bool psEffectObjSound::Update(csTicks elapsed)
     if (keyFrames->GetSize() > 0)
     {
         currKeyFrame = FindKeyFrameByTime(life);
-        nextKeyFrame = currKeyFrame + 1;
-        if (nextKeyFrame >= keyFrames->GetSize())
-            nextKeyFrame = 0;
+        nextKeyFrame = (currKeyFrame + 1) % keyFrames->GetSize();
 
         // position
-        soundPos += LERP_VEC_KEY(KA_POS);
+        soundPos += LERP_VEC_KEY(KA_POS,LERP_FACTOR);
     }
 
     if (sndHandle != NULL)
         sndHandle->sndsource3d->SetPosition(soundPos);
-      
-    if (killTime <= 0)
-        return true;
-
-    killTime -= (int)elapsed;
-    if (killTime <= 0)
-        return false;
 
     return true;
 }

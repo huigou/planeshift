@@ -173,18 +173,15 @@ bool psEffectObjTrail::Update(csTicks elapsed)
     if (!anchor || !anchor->IsReady()) // wait for anchor to be ready
         return true;
 
-    life += (float)elapsed;
+    life += elapsed;
     if (life > animLength && killTime <= 0)
     {
-        life = fmod(life,animLength);
+        life %= animLength;
         if (!life)
             life += animLength;
     }
 
-    if (life >= birth && !isAlive)
-    {
-        isAlive = true;
-    }
+    isAlive |= (life >= birth);
 
     if (!setMesh && isAlive)
     {
@@ -203,7 +200,7 @@ bool psEffectObjTrail::Update(csTicks elapsed)
     if (killTime > 0)
     {
         // age the effect obj
-        killTime -= (int)elapsed;
+        killTime -= elapsed;
         if (killTime <= 0)
             return false;
     }
@@ -223,12 +220,13 @@ bool psEffectObjTrail::Update(csTicks elapsed)
             nextKeyFrame = 0;
        
         // grab and lerp values
-        rot = LERP_VEC_KEY(KA_ROT);
-        spin = LERP_VEC_KEY(KA_SPIN);
-        newColour = LERP_VEC_KEY(KA_COLOUR);
-        alpha = LERP_KEY(KA_ALPHA);
-        posOffset = LERP_VEC_KEY(KA_POS);
-        height = LERP_KEY(KA_HEIGHT);
+        float lerpfactor = LERP_FACTOR;
+        rot = LERP_VEC_KEY(KA_ROT,lerpfactor);
+        spin = LERP_VEC_KEY(KA_SPIN,lerpfactor);
+        newColour = LERP_VEC_KEY(KA_COLOUR,lerpfactor);
+        alpha = LERP_KEY(KA_ALPHA,lerpfactor);
+        posOffset = LERP_VEC_KEY(KA_POS,lerpfactor);
+        height = LERP_KEY(KA_HEIGHT,lerpfactor);
     }
 
     matBase *= csZRotMatrix3(rot.z) * csYRotMatrix3(rot.y) * csXRotMatrix3(rot.x);

@@ -150,7 +150,8 @@ bool psEffectObjQuad::Update(csTicks elapsed)
     if (keyFrames->GetSize() > 0)
     {
         // COLOUR
-        csVector3 lerpColour = LERP_VEC_KEY(KA_COLOUR);
+        float lerpfactor = LERP_FACTOR;
+        csVector3 lerpColour = LERP_VEC_KEY(KA_COLOUR,lerpfactor);
         //float lerpAlpha = LERP_KEY(KA_ALPHA);
         CS::ShaderVarStringID varName = stringSet->Request("color modulation");
         csShaderVariable* var = mat->GetMaterial()->GetVariableAdd(varName);
@@ -160,7 +161,7 @@ bool psEffectObjQuad::Update(csTicks elapsed)
         }
 
         // HEIGHT
-        halfHeightScale *= LERP_KEY(KA_HEIGHT);
+        halfHeightScale *= LERP_KEY(KA_HEIGHT,lerpfactor);
     }    
     
     halfHeightScale *= quadAspect * aspect;

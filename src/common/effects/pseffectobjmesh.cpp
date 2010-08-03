@@ -167,13 +167,14 @@ bool psEffectObjMesh::Update(csTicks elapsed)
         return true;
     
     // COLOUR
-    csVector3 lerpColour = LERP_VEC_KEY(KA_COLOUR);
+    float lerpfactor = LERP_FACTOR;
+    csVector3 lerpColour = LERP_VEC_KEY(KA_COLOUR,lerpfactor);
     mesh->GetMeshObject()->SetColor(csColor(lerpColour.x, lerpColour.y, lerpColour.z));
-        
+
     // ALPHA
     if (mixmode == CS_FX_ALPHA)
     {
-        float lerpAlpha = LERP_KEY(KA_ALPHA);
+        float lerpAlpha = LERP_KEY(KA_ALPHA,lerpfactor);
         sprState->SetMixMode(CS_FX_SETALPHA(lerpAlpha));
     }
 
