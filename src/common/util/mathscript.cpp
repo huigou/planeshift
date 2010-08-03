@@ -53,7 +53,7 @@ double round(double value)
 csString MathVar::ToString() const
 {
     if (type == VARTYPE_OBJ)
-        return obj->ToString();
+        return MathScriptEngine::GetPointer(value)->ToString();
     if (type == VARTYPE_STR)
         return MathScriptEngine::GetString(value);
 
@@ -74,10 +74,29 @@ csString MathVar::Dump() const
             str = MathScriptEngine::GetString(value);
             break;
         case VARTYPE_OBJ:
-            str.Format("%p", obj);
+            str.Format("%p", MathScriptEngine::GetPointer(value));
             break;
     }
     return str;
+}
+
+void MathVar::SetValue(double v)
+{
+    value = v;
+
+    if (changedVarCallback)
+        changedVarCallback(changedVarCallbackArg);
+}
+
+void MathVar::SetObject(iScriptableVar *p)
+{
+    type = VARTYPE_OBJ;
+    value = MathScriptEngine::GetValue(p);
+}
+
+iScriptableVar* MathVar::GetObject()
+{
+    return MathScriptEngine::GetPointer(value);
 }
 
 //----------------------------------------------------------------------------
@@ -361,7 +380,9 @@ double MathScriptEngine::Warn(const double *args)
 double MathScriptEngine::CustomCompoundFunc(const double * parms)
 {
     size_t funcIndex = (size_t)parms[0];
-    iScriptableVar * v = (iScriptableVar *)(intptr_t)parms[1];
+
+    iScriptableVar* v = GetPointer(parms[1]);
+
     csString funcName(customCompoundFunctions.Request(funcIndex));
 
     if (funcName == "IsValid")
@@ -382,6 +403,24 @@ csString MathScriptEngine::GetString(double id)
 {
     const char *str = stringLiterals.Request(unsigned(id));
     return str ? str : "";
+}
+
+iScriptableVar* MathScriptEngine::GetPointer(double p)
+{
+    // Scary non-portible madness!
+    // obtains the object pointer contained in the double
+    iScriptableVar* obj = NULL;
+    memcpy(&obj, &p, sizeof(iScriptableVar*));
+    return obj;
+}
+
+double MathScriptEngine::GetValue(iScriptableVar* p)
+{
+    // Scary non-portible madness!
+    // stores the object pointer in the double
+    double r;
+    memcpy(&r, &p, sizeof(iScriptableVar*));
+    return r;
 }
 
 //----------------------------------------------------------------------------
