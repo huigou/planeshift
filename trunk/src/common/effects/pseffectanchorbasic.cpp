@@ -77,13 +77,13 @@ bool psEffectAnchorBasic::Create(const csVector3 & offset, iMeshWrapper * posAtt
     this->rotateWithMesh = rotateWithMesh;
 
     mesh = engine->CreateMeshWrapper("crystalspace.mesh.object.null", anchorID);
-	csRef<iNullMeshState> state =  scfQueryInterface<iNullMeshState> (mesh->GetMeshObject());
+        csRef<iNullMeshState> state =  scfQueryInterface<iNullMeshState> (mesh->GetMeshObject());
     if (!state)
     {
 		Error1("No NullMeshState.");
         return false;
     }
-	state->SetRadius(1.0);
+    state->SetRadius(1.0);
 
     isReady = true;
 
