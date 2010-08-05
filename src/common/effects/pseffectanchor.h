@@ -34,6 +34,7 @@ struct iEngine;
 struct iView;
 struct iMeshFactoryWrapper;
 struct iSector;
+struct iSectorList;
 
 /**
  * Stores data for a specific effect anchor keyframe
