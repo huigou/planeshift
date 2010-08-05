@@ -55,9 +55,6 @@ private:
     uint stepsPerSecond;
     uint stepsPerCycle;
     uint dimStrength;
-
-    // For podium doll lights.
-    csWeakRef<iSector> podium;
 };
 
 #endif
