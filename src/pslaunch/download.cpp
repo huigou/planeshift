@@ -232,36 +232,36 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
 
         for(uint i=0; i<=retries; i++)
         {
-        FILE* file;
-	// Download to temp file
-        file = fopen (destpath + ".download", "wb");
+            FILE* file;
+            // Download to temp file
+            file = fopen (destpath + ".download", "wb");
 
-        if (!file)
-        {
-    		UpdaterEngine::GetSingletonPtr()->PrintOutput("Couldn't write to file! (%s.download)\n", destpath.GetData());
-            return false;
-        }
+            if (!file)
+            {
+                UpdaterEngine::GetSingletonPtr()->PrintOutput("Couldn't write to file! (%s.download)\n", destpath.GetData());
+                return false;
+            }
 
-	progressData data;
-        curl_easy_setopt(curl, CURLOPT_URL, url.GetData());
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);
-        curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, &ProgressCallback);
-        curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, &data);
-        curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0);
-        curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1);
+            progressData data;
+            curl_easy_setopt(curl, CURLOPT_URL, url.GetData());
+            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+            curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);
+            curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, &ProgressCallback);
+            curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, &data);
+            curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0);
+            curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1);
 
-        CURLcode result = curl_easy_perform(curl);
+            CURLcode result = curl_easy_perform(curl);
 
-	// Check if progress bar was shown.
-	if(data.lastSize != 0)
-	{
-		UpdaterEngine::GetSingletonPtr()->PrintOutput("\n\n");
-		data.lastSize = 0;
-	}
-        fclose (file);
+            // Check if progress bar was shown.
+            if(data.lastSize != 0)
+            {
+                UpdaterEngine::GetSingletonPtr()->PrintOutput("\n\n");
+                data.lastSize = 0;
+            }
+            fclose (file);
 
-        curl_easy_getinfo (curl, CURLINFO_HTTP_CODE, &curlhttpcode);
+            curl_easy_getinfo (curl, CURLINFO_HTTP_CODE, &curlhttpcode);
 
             if (result != CURLE_OK)
             {
@@ -277,7 +277,7 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
             {
                 break;
             }
-	}
+        }
 
         // Tell the user that we failed
         if(curlhttpcode != 200 || !error.IsEmpty())
@@ -305,14 +305,15 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
             delete mirror;
             mirror = NULL;
         }
-	// Rename completed download back to real name
-	remove(destpath);
-	if(rename(destpath + ".download", destpath) != 0)
-	{
-		UpdaterEngine::GetSingletonPtr()->PrintOutput("Error renaming file %s.download to %s.\n", (const char*) destpath, (const char*) destpath);
-		remove(destpath + ".download");
-		break;
-	}
+
+        // Rename completed download back to real name
+        remove(destpath);
+        if(rename(destpath + ".download", destpath) != 0)
+        {
+            UpdaterEngine::GetSingletonPtr()->PrintOutput("Error renaming file %s.download to %s.\n", (const char*) destpath, (const char*) destpath);
+            remove(destpath + ".download");
+            break;
+        }
         return true;
     }
 
