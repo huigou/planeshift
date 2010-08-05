@@ -39,8 +39,9 @@ struct iView;
 struct iMeshFactoryWrapper;
 struct iSector;
 struct iCollection;
-class psEffect2DRenderer;
+struct iLoaderContext;
 
+class psEffect2DRenderer;
 class psEffectAnchor;
 
 /**
@@ -312,7 +313,7 @@ protected:
      *   @param time the time to lookup
      *   @return the index of the keyFrame at the specified time
      */
-    size_t FindKeyFrameByTime(float time) const;
+    size_t FindKeyFrameByTime(csTicks time) const;
 
     /** finds the next key frame where the specific action is specified
      *   @param startFrame the first frame to start looking

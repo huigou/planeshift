@@ -602,8 +602,9 @@ bool psEffectObj::AttachToAnchor(psEffectAnchor * newAnchor)
     return false;
 }
 
-size_t psEffectObj::FindKeyFrameByTime(float time) const
+size_t psEffectObj::FindKeyFrameByTime(csTicks time) const
 {
+    time %= animLength;
     for ( size_t a = keyFrames->GetSize(); a > 0; --a)
     {
         if (keyFrames->Get(a-1)->time < time)
