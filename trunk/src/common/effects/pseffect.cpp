@@ -47,6 +47,7 @@
 #include "pseffectobjdecal.h"
 #include "pseffectobjtext2d.h"
 #include "pseffectobjlabel.h"
+#include "pseffectobjlight.h"
 
 #include "util/log.h"
 #include "util/pscssetup.h"
@@ -194,6 +195,10 @@ bool psEffect::Load(iDocumentNode * node, iView * parentView, psEffect2DRenderer
         else if (type == "text2d")
         {
             obj = new psEffectObjText2D(parentView, renderer2d);
+        }
+        else if (type == "light")
+        {
+            obj = new psEffectObjLight(parentView, renderer2d);
         }
             
         if (obj)
@@ -592,6 +597,29 @@ bool psEffect::Update(csTicks elapsed)
     }
     
     return (effectObjs.GetSize() != 0);
+}
+
+void psEffect::SetKillTime(const int newKillTime)
+{
+    for(size_t a = 0; a < effectObjs.GetSize(); ++a)
+    {
+        if(effectObjs[a]->GetKillTime() <= 0)
+        {
+            effectObjs[a]->SetKillTime(newKillTime);
+            Error2("set duration for effect object to %u", newKillTime);
+        }
+    }
+}
+
+int psEffect::GetKillTime() const
+{
+    int killTime = 0;
+    for(size_t a = 0; a < effectObjs.GetSize(); ++a)
+    {
+        int time = effectObjs[a]->GetKillTime();
+        killTime = csMax(killTime, time);
+    }
+    return killTime;
 }
 
 psEffect * psEffect::Clone() const

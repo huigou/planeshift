@@ -117,6 +117,15 @@ public:
      */
     unsigned int GetUniqueID() const;
 
+    /* sets the time after which this effect will be killed
+     * @param newKillTime new time in ms
+     * @note the actual kill time may still vary due to fixed times in effects
+     */
+    void SetKillTime(const int newKillTime);
+
+    /// returns the time after which this effect will be killed
+    int GetKillTime() const;
+
     /** returns the animation length of the effect.
      *   @return the animation length (max anim length of effect objs)
      */
