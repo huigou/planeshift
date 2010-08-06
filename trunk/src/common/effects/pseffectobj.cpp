@@ -265,6 +265,7 @@ psEffectObj::psEffectObj(iView *parentView, psEffect2DRenderer * renderer2d)
     view = parentView;
 
     killTime = -1;
+    animScaling = 1;
     isAlive = true;
     birth = 0;
     
@@ -604,6 +605,7 @@ bool psEffectObj::AttachToAnchor(psEffectAnchor * newAnchor)
 
 size_t psEffectObj::FindKeyFrameByTime(csTicks time) const
 {
+    time *= animScaling;
     time %= animLength;
     for ( size_t a = keyFrames->GetSize(); a > 0; --a)
     {
