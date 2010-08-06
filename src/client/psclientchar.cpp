@@ -569,7 +569,6 @@ void psClientCharManager::HandleEffect( MsgEntry* me )
                 {
                     psEffect* eff = psengine->GetEffectManager()->FindEffect(effectID);
                     eff->SetKillTime(effect.duration);
-                    Error3("set duration to %u for effect %s", effect.duration, effect.name.GetDataSafe());
                 }
             }
         }
