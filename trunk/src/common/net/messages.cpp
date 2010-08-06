@@ -3281,28 +3281,6 @@ psEffectMessage::psEffectMessage(uint32_t clientNum, const csString &effectName,
     valid = !(msg->overrun);
 }
 
-psEffectMessage::psEffectMessage(uint32_t clientNum, const csString &effectName,
-                                 const csVector3 &effectOffset, EID anchorID,
-                                 EID targetID, csString &effectText, uint32_t uid)
-{
-    msg.AttachNew(new MsgEntry(effectName.Length() + sizeof(csVector3)
-                + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(effectText) + sizeof(uint32_t) + 1));
-
-    msg->SetType(MSGTYPE_EFFECT);
-    msg->clientnum = clientNum;
-
-    msg->Add(effectName);
-    msg->Add(effectOffset.x);
-    msg->Add(effectOffset.y);
-    msg->Add(effectOffset.z);
-    msg->Add(anchorID.Unbox());
-    msg->Add(targetID.Unbox());
-    msg->Add(effectText);
-    msg->Add(uid);
-
-    valid = !(msg->overrun);
-}
-
 psEffectMessage::psEffectMessage(MsgEntry* message)
 {
     if (!message)
