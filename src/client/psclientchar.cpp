@@ -57,6 +57,7 @@
 #include "gui/pawsinfowindow.h"
 
 #include "effects/pseffectmanager.h"
+#include "effects/pseffect.h"
 
 #include "pssound/pssoundmngr.h"
 
@@ -564,6 +565,12 @@ void psClientCharManager::HandleEffect( MsgEntry* me )
             if ( effect.uid != 0 )
             {
                 effectMapper.PutUnique( effect.uid, effectID );
+                if(effect.duration)
+                {
+                    psEffect* eff = psengine->GetEffectManager()->FindEffect(effectID);
+                    eff->SetKillTime(effect.duration);
+                    Error3("set duration to %u for effect %s", effect.duration, effect.name.GetDataSafe());
+                }
             }
         }
     }
