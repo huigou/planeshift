@@ -27,6 +27,7 @@
 #include <csutil/ref.h>
 #include <csutil/refarr.h>
 #include <csutil/refcount.h>
+#include <csutil/weakreferenced.h>
 
 //=============================================================================
 // Project Includes
@@ -123,7 +124,7 @@ public:
 
 /** Holds data for a guild.
  */
-class psGuildInfo : public csRefCount
+class psGuildInfo : public csRefCount, public CS::Utility::WeakReferenced
 {
 public:
     int id;                     ///< UID of the guild.

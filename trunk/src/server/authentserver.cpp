@@ -28,7 +28,6 @@
 // Project Includes
 //=============================================================================
 #include "bulkobjects/psaccountinfo.h"
-#include "bulkobjects/psguildinfo.h"
 #include "bulkobjects/pscharacterlist.h"
 #include "bulkobjects/pscharacterloader.h"
 #include "bulkobjects/pscharacter.h"
@@ -506,7 +505,7 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
 void AuthenticationServer::HandleDisconnect(MsgEntry* me,Client *client)
 {
     psDisconnectMessage mesg(me);
-
+printf("here\n");
     // Check if this client is allowed to disconnect or if the
     // zombie state should be set
     if(!client->AllowDisconnect())

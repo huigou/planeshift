@@ -46,7 +46,6 @@
 #include "bulkobjects/psraceinfo.h"
 #include "bulkobjects/pstrade.h"
 #include "bulkobjects/pssectorinfo.h"
-#include "bulkobjects/psguildinfo.h"
 
 //=============================================================================
 // Local Includes

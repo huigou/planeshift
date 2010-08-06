@@ -837,7 +837,7 @@ void CombatManager::HandleCombatEvent(psCombatGameEvent *event)
     {
         // Input the stamina data
         MathEnvironment env;
-        env.Define("Actor",  gemAttacker);
+        env.Define("Actor",  event->GetAttacker());
         env.Define("Weapon", weapon);
         staminacombat->Evaluate(&env);
         MathVar *PhyDrain = env.Lookup("PhyDrain");

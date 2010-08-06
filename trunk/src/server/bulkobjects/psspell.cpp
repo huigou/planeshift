@@ -46,7 +46,6 @@
 // Local Includes
 //=============================================================================
 #include "psglyph.h"
-#include "psguildinfo.h"
 
 #define SPELL_TOUCH_RANGE   3.0
 
