@@ -606,7 +606,6 @@ void psEffect::SetKillTime(const int newKillTime)
         if(effectObjs[a]->GetKillTime() <= 0)
         {
             effectObjs[a]->SetKillTime(newKillTime);
-            Error2("set duration for effect object to %u", newKillTime);
         }
     }
 }
