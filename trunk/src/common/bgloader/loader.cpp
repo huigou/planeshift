@@ -53,7 +53,7 @@ SCF_IMPLEMENT_FACTORY(BgLoader)
 BgLoader::BgLoader(iBase *p)
   : scfImplementationType (this, p), parsedShaders(false),
   loadRange(500), enabledGfxFeatures(0), validPosition(false),
-  loadingOffset(0), resetHitbeam(true), currRot_h(0), currRot_v(0)
+  loadingOffset(0), currRot_h(0), currRot_v(0), resetHitbeam(true)
 {
 }
 
@@ -687,7 +687,7 @@ void BgLoader::CleanSequence(Sequence* sequence)
         {
             csRef<iSequenceTrigger> st;
             // @@@ would be nice to know why the result can be null
-            if(trigger->status->GetResultRefPtr().IsValid())
+            if(trigger->status->IsFinished() && trigger->status->GetResultRefPtr().IsValid())
             {
                 st = scfQueryInterface<iSequenceTrigger>(trigger->status->GetResultRefPtr());
                 //engseq->RemoveTrigger(st);
@@ -703,9 +703,8 @@ void BgLoader::CleanSequence(Sequence* sequence)
     }
 
     csRef<iSequenceWrapper> sw = scfQueryInterface<iSequenceWrapper>(sequence->status->GetResultRefPtr());
-    //engseq->RemoveSequence(sw);
-    engine->RemoveObject(sw);
     sequence->status.Invalidate();
+    engine->RemoveObject(sw);
     if(sw->GetRefCount() > 1)
     {
         LOADER_DEBUG_MESSAGE("detected leaking sequence %u %s\n", sw->GetRefCount() - 1, sequence->name.GetDataSafe());
