@@ -49,13 +49,14 @@
 #include "psinventorycachesvr.h"
 #include "psitemstats.h"
 #include "servervitals.h"
+#include "psguildinfo.h"
+
 
 class psServerVitals;
 class MsgEntry;
 class psItemStats;
 class psItem;
 class psQuest;
-class psGuildInfo;
 
 struct Result;
 struct Faction;
@@ -478,7 +479,7 @@ protected:
     psMoney money;                                          ///< Current cash set on player.
     psMoney bankMoney;                                      ///< Money stored in the players bank account.
 
-    psGuildInfo*              guildinfo;
+    csWeakRef<psGuildInfo>    guildinfo;
     csArray<psSpell*>         spellList;
     csArray<QuestAssignment*> assigned_quests;
     StatSet                   attributes, modifiers;
@@ -577,7 +578,7 @@ public:
     /// Set the active guild for the character.
     void SetGuild(psGuildInfo *g) { guildinfo = g; }
     /// Return the active guild, if any for this character.
-    psGuildInfo  *GetGuild() { return guildinfo; }
+    csWeakRef<psGuildInfo> GetGuild() { return guildinfo; }
     /// Return the guild level for this character, if any.
     psGuildLevel *GetGuildLevel();
     /// Return the guild membership for this character, if any.
