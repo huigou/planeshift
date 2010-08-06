@@ -601,11 +601,16 @@ bool psEffect::Update(csTicks elapsed)
 
 void psEffect::SetKillTime(const int newKillTime)
 {
+    int oldKillTime = GetKillTime();
     for(size_t a = 0; a < effectObjs.GetSize(); ++a)
     {
         if(effectObjs[a]->GetKillTime() <= 0)
         {
             effectObjs[a]->SetKillTime(newKillTime);
+        }
+        else
+        {
+            effectObjs[a]->SetAnimationScaling((float)oldKillTime/newKillTime);
         }
     }
 }

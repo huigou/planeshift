@@ -277,6 +277,12 @@ public:
      */
     float GetAnimLength() const { return animLength; }
 
+    void SetAnimationScaling(float s)
+    {
+        killTime *= animScaling/s;
+        animScaling = s;
+    }
+
     /** Gets the name of this effect obj.
      *   @return the name of this effect obj.
      */
@@ -341,6 +347,7 @@ protected:
     int killTime;
     csTicks life;
     csTicks animLength;
+    float animScaling;
     
     // the effect anchor that this obj is attached to
     csString anchorName;
@@ -437,6 +444,6 @@ protected:
 #define LERP_FACTOR \
     lerpFactor(keyFrames->Get(currKeyFrame)->time, \
                keyFrames->Get(nextKeyFrame)->time, \
-               life)
+               life*animScaling)
 
 #endif
