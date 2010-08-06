@@ -279,8 +279,11 @@ public:
 
     void SetAnimationScaling(float s)
     {
-        killTime *= animScaling/s;
-        animScaling = s;
+        if (autoScale)
+        {
+            killTime *= animScaling/s;
+            animScaling = s;
+        }
     }
 
     /** Gets the name of this effect obj.
@@ -348,6 +351,7 @@ protected:
     csTicks life;
     csTicks animLength;
     float animScaling;
+    bool autoScale;
     
     // the effect anchor that this obj is attached to
     csString anchorName;

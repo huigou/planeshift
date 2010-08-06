@@ -266,6 +266,7 @@ psEffectObj::psEffectObj(iView *parentView, psEffect2DRenderer * renderer2d)
 
     killTime = -1;
     animScaling = 1;
+    autoScale = true;
     isAlive = true;
     birth = 0;
     
@@ -315,13 +316,14 @@ bool psEffectObj::Load(iDocumentNode *node, iLoaderContext* ldr_context)
     if (dataNode)
     {
         killTime = dataNode->GetContentsValueAsInt();
+        autoScale = dataNode->GetAttributeValueAsBool("autoscale", true);
     }
     else
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Effect obj %s is missing a <death> tag.  If you want an infinite effect use <death>none</death>\n", name.GetData());
         return false; // effect is invalid without a death tag
     }
-    
+
     // anchor
     dataNode = node->GetNode("attach");
     if (dataNode)
@@ -571,6 +573,8 @@ void psEffectObj::CloneBase(psEffectObj *newObj) const
     newObj->dir = dir;
     newObj->priority = priority;
     newObj->mixmode = mixmode;
+    newObj->autoScale = autoScale;
+    newObj->animScaling = animScaling;
 
     // the group of keyFrames remains static (don't clone)
     newObj->keyFrames = keyFrames;
