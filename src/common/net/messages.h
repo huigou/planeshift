@@ -2377,19 +2377,6 @@ public:
                     const csVector3 &effectOffset, EID anchorID,
                     EID targetID, uint32_t duration, uint32_t uid);
 
-    /**  @brief Constructs a new message that will tell the client to render a text effect - not just a normal effect
-     *   @param clientNum the client to send the effect message to
-     *   @param effectName the name of the effect to render
-     *   @param effectOffset the offset position from the anchor point
-     *   @param anchorID the ID of the entity to anchor the effect to (0 for absolute anchor)
-     *   @param targetID the ID of the entity that will be the target of the effect (0 for a target the same as the anchor)
-     *   @param effectText (this was documented incorrectly)
-     *   @param uid Optional ID that server can use to stop a particular Effect.
-     */
-    psEffectMessage(uint32_t clientNum, const csString &effectName,
-                    const csVector3 &effectOffset, EID anchorID,
-                    EID targetID, csString &effectText, uint32_t uid);
-
     /**  @brief Translates a generic message to a psEffectMessage
      *   @param message the generic message to translate
      */
@@ -2411,7 +2398,6 @@ public:
     EID       targetID;
     uint32_t  duration;
     uint32_t  uid;
-    csString effectText;
 };
 
 //--------------------------------------------------------------------------
