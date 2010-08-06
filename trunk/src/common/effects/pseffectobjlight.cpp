@@ -42,7 +42,6 @@ psEffectObjLight::~psEffectObjLight()
         if(anchorMesh)
             anchorMesh->GetMovable()->UpdateMove();
     }
-    csPrintf("destroyed effect light\n\n");
 }
 
 bool psEffectObjLight::Load(iDocumentNode* node, iLoaderContext* ldr_context)
@@ -149,10 +148,6 @@ bool psEffectObjLight::Render(const csVector3 &up)
     {
         csPrintf("failed to create effect light\n");
         return false;
-    }
-    else
-    {
-        csPrintf("created effect light\n\n");
     }
 
     light->SetAttenuationMode(mode);
