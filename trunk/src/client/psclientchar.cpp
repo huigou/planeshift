@@ -561,15 +561,18 @@ void psClientCharManager::HandleEffect( MsgEntry* me )
             {
                 Error2("Failed to render effect %s",effect.name.GetDataSafe());
             }
-
-            if ( effect.uid != 0 )
+            else
             {
-                effectMapper.PutUnique( effect.uid, effectID );
                 if(effect.duration)
                 {
                     psEffect* eff = psengine->GetEffectManager()->FindEffect(effectID);
                     eff->SetKillTime(effect.duration);
                 }
+            }
+
+            if ( effect.uid != 0 )
+            {
+                effectMapper.PutUnique( effect.uid, effectID );
             }
         }
     }
