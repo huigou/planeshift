@@ -39,7 +39,6 @@
 #include "weathermanager.h"
 #include "cachemanager.h"
 #include "psraceinfo.h"
-#include "psguildinfo.h"
 #include "pstrait.h"
 #include "client.h"
 

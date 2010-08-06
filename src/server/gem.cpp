@@ -51,7 +51,6 @@
 #include "bulkobjects/pssectorinfo.h"
 #include "bulkobjects/psnpcdialog.h"
 #include "bulkobjects/pscharacter.h"
-#include "bulkobjects/psguildinfo.h"
 #include "bulkobjects/psquest.h"
 
 #include "rpgrules/factions.h"
@@ -2019,7 +2018,7 @@ gemActor::~gemActor()
 double gemActor::GetProperty(const char *prop)
 {
     csString property(prop);
-
+printf("get %s\n", prop);
     if (property == "CombatStance")
     {
         // Backwards compatibility.

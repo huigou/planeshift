@@ -397,7 +397,7 @@ public:
     //@{
     virtual PID GetPID() { return 0; }
     virtual int GetGuildID() { return 0; }
-    virtual psGuildInfo* GetGuild() { return 0; }
+    virtual csWeakRef<psGuildInfo> GetGuild() { return 0; }
     virtual bool UpdateDR() { return false; }
     virtual void BroadcastTargetStatDR(ClientConnectionSet *clients) { }
     virtual void SendTargetStatDR(Client *client) { }
@@ -1007,7 +1007,7 @@ public:
     const char* GetFirstName() { return psChar->GetCharName(); }
 
     const char *GetGuildName();
-    psGuildInfo *GetGuild() { return psChar->GetGuild(); }
+    csWeakRef<psGuildInfo> GetGuild() { return psChar->GetGuild(); }
     psGuildLevel *GetGuildLevel() { return psChar->GetGuildLevel(); }
     /** Gets the psguildmember structure refereed to this actor, if in a guild
      *  @return psGuildMember: A pointer to the psGuildMember structure of this actor

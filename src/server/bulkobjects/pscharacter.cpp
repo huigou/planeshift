@@ -66,7 +66,6 @@
 #include "psquest.h"
 #include "dictionary.h"
 #include "psraceinfo.h"
-#include "psguildinfo.h"
 #include "psmerchantinfo.h"
 #include "pstrainerinfo.h"
 #include "servervitals.h"
@@ -74,7 +73,6 @@
 #include "pstrait.h"
 #include "adminmanager.h"
 #include "scripting.h"
-
 
 // The sizes and scripts need balancing.  For now, maxSize is disabled.
 #define ENABLE_MAX_CAPACITY 0

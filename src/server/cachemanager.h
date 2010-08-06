@@ -288,8 +288,8 @@ public:
     /** @name Guilds
     */
     //@{
-    psGuildInfo *FindGuild(unsigned int id);
-    psGuildInfo *FindGuild(const csString & name);
+    csWeakRef<psGuildInfo> FindGuild(unsigned int id);
+    csWeakRef<psGuildInfo> FindGuild(const csString & name);
     bool CreateGuild(const char *guildname, Client *client);
     void RemoveGuild(psGuildInfo *which);
     //@}
@@ -618,7 +618,7 @@ protected:
     csHash<psItemStats *,uint32> itemStats_IDHash;
     csHash<psItemStats *,csString> itemStats_NameHash;
     csPDelArray<csPDelArray<psItemAnimation > > item_anim_list;
-    csHash<psGuildInfo*> guildinfo_by_id;
+    csHash<csRef<psGuildInfo> > guildinfo_by_id;
     csHash<psGuildAlliance*> alliance_by_id;
     csHash<psQuest *> quests_by_id;
     csHash<psTradePatterns *,uint32> tradePatterns_IDHash;

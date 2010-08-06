@@ -162,9 +162,9 @@ public:
   * Returns guild of 'client'.
   * If he is not in a guild, NULL is returned and text message "You are not in a guild." is sent to the client
   */
-psGuildInfo * GetClientGuild(Client * client)
+csWeakRef<psGuildInfo> GetClientGuild(Client * client)
 {
-    psGuildInfo * guild = client->GetActor()->GetGuild();
+    csWeakRef<psGuildInfo> guild = client->GetActor()->GetGuild();
     if (!guild)
     {
         psSystemMessage newmsg(client->GetClientNum(),MSG_ERROR,"You are not in a guild.");

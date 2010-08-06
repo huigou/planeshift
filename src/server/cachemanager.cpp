@@ -343,7 +343,7 @@ void CacheManager::UnloadAll()
     }
 
     {
-        csHash<psGuildInfo *>::GlobalIterator it (guildinfo_by_id.GetIterator ());
+        csHash<csRef<psGuildInfo> >::GlobalIterator it (guildinfo_by_id.GetIterator ());
         while (it.HasNext ())
         {
             psGuildInfo* guildinfo = it.Next ();
@@ -2995,7 +2995,7 @@ unsigned int CacheManager::NewAccountInfo(psAccountInfo *ainfo)
     return id;
 }
 
-psGuildInfo *CacheManager::FindGuild(unsigned int id)
+csWeakRef<psGuildInfo> CacheManager::FindGuild(unsigned int id)
 {
     psGuildInfo *g = guildinfo_by_id.Get(id, 0);
     if (g)
@@ -3014,7 +3014,7 @@ psGuildInfo *CacheManager::FindGuild(unsigned int id)
     return NULL;
 }
 
-psGuildInfo * CacheManager::FindGuild(const csString & name)
+csWeakRef<psGuildInfo> CacheManager::FindGuild(const csString & name)
 {
     unsigned int id;
     csString escape;

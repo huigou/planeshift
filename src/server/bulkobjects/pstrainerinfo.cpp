@@ -36,7 +36,6 @@
 // Local Includes
 //=============================================================================
 #include "pstrainerinfo.h"
-#include "psguildinfo.h"
 
 /**
  * A character is defined to be a trainer if there are
