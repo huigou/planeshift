@@ -145,7 +145,7 @@ void ServerCharManager::UpdateSketch(MsgEntry* me, Client *client)
         if (item)
         {
             // check title is still unique
-            /*csString currentTitle = item->GetStandardName();
+            csString currentTitle = item->GetStandardName();
             if (sketchMsg.name.Length() > 0)
             {
                 uint32 existingItemID = cacheManager->BasicItemStatsByNameExist(sketchMsg.name);
@@ -158,23 +158,16 @@ void ServerCharManager::UpdateSketch(MsgEntry* me, Client *client)
                     currentTitle = sketchMsg.name;
                     item->GetBaseStats()->SetName(sketchMsg.name);
                 }
-            }*/
-            csString currentTitle = item->GetName();
-            if(sketchMsg.name.Length() > 0 && sketchMsg.name != currentTitle)
-            {
-                currentTitle = sketchMsg.name;
-                item->SetName(sketchMsg.name);
             }
 
             // TODO: Probably need to validate the xml here somehow
             // for first sketcher, sets authorship.
-            item->SetCreator(client->GetCharacterData()->GetPID(), PSITEMSTATS_CREATOR_VALID);
+            item->GetBaseStats()->SetCreator(client->GetCharacterData()->GetPID(), PSITEMSTATS_CREATOR_VALID);
             if (item->SetSketch(csString(sketchMsg.Sketch)))
             {
                 printf("Updated sketch for item %u to: %s\n", sketchMsg.ItemID, sketchMsg.Sketch.GetDataSafe());
                 psserver->SendSystemInfo(me->clientnum, "Your drawing has been updated.");
                 item->GetBaseStats()->Save();
-                item->Save(false);
             }
         }
         else
@@ -267,20 +260,20 @@ void ServerCharManager::HandleBookWrite(MsgEntry* me, Client* client)
          psItem* item = slotManager->FindItem(client, mesg.containerID, (INVENTORY_SLOT_NUMBER) mesg.slotID);
 
          //is it a writable book?  In our inventory? Are we the author?
-         if(item && item->GetIsWriteable() &&
+         if(item && item->GetBaseStats()->GetIsWriteable() &&
             item->GetOwningCharacter() == client->GetCharacterData() &&
-            item->IsThisTheCreator(client->GetCharacterData()->GetPID()))
+            item->GetBaseStats()->IsThisTheCreator(client->GetCharacterData()->GetPID()))
          {
               //We could maybe let the work manager know that we're busy writing something
               //or track that this is the book we're working on, and only allow saves to a
               //book that was opened for writing.  This would be a good thing.
               //Also check for other writing in progress
               csString theText(item->GetBookText());
-              csString theTitle(item->GetName());
+              csString theTitle(item->GetStandardName());
               psWriteBookMessage resp(client->GetClientNum(), theTitle, theText, true,  (INVENTORY_SLOT_NUMBER)mesg.slotID, mesg.containerID);
               resp.SendMessage();
               // this only does set the creator for first write to book
-              item->SetCreator(client->GetCharacterData()->GetPID(), PSITEMSTATS_CREATOR_VALID);
+              item->GetBaseStats()->SetCreator(client->GetCharacterData()->GetPID(), PSITEMSTATS_CREATOR_VALID);
             //  CPrintf(CON_DEBUG, "Sent: %s\n",resp.ToString(NULL).GetDataSafe());
          }
          else
@@ -294,11 +287,11 @@ void ServerCharManager::HandleBookWrite(MsgEntry* me, Client* client)
        // CPrintf(CON_DEBUG, "Attempt to save book in slot id %d\n",mesg.slotID);
         //something like:
         psItem* item = slotManager->FindItem(client, mesg.containerID, (INVENTORY_SLOT_NUMBER) mesg.slotID);
-        if(item && item->GetIsWriteable())
+        if(item && item->GetBaseStats()->GetIsWriteable())
         {
             // check title is still unique
-            csString currentTitle = item->GetName();
-            /*if (mesg.title.Length() > 0)
+            csString currentTitle = item->GetStandardName();
+            if (mesg.title.Length() > 0)
             {
                 uint32 existingItemID = cacheManager->BasicItemStatsByNameExist(mesg.title);
                 if (existingItemID != 0 && existingItemID != item->GetBaseStats()->GetUID())
@@ -311,18 +304,12 @@ void ServerCharManager::HandleBookWrite(MsgEntry* me, Client* client)
                     item->GetBaseStats()->SetName(mesg.title);
                     item->GetBaseStats()->SaveName();
                 }
-            }*/
-            if(mesg.title.Length() > 0 && mesg.title != currentTitle)
-            {
-                currentTitle = mesg.title;
-                item->SetName(mesg.title);
             }
 
             // or psItem* item = (find the player)->GetCurrentWritingItem();
             bool saveOK = item->SetBookText(mesg.content);
             psWriteBookMessage saveresp(client->GetClientNum(), currentTitle, saveOK);
             saveresp.SendMessage();
-            item->Save(false);
         }
         // clear current writing item
 
