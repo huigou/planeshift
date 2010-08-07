@@ -854,7 +854,6 @@ void UpdaterEngine::GeneralUpdate()
             vfs->Mount("/zip", realZipPath->GetData());
 
             // Parse deleted files xml, make a list.
-            csArray<csString> deletedList;
             csRef<iDocumentNode> deletedrootnode = GetRootNode("/zip/deletedfiles.xml");
             if(deletedrootnode)
             {
@@ -863,20 +862,12 @@ void UpdaterEngine::GeneralUpdate()
                 while(nodeItr->HasNext())
                 {
                     csRef<iDocumentNode> node = nodeItr->Next();
-                    deletedList.PushSmart(node->GetAttributeValue("name"));
+                    csString file = node->GetAttributeValue("name");
+                    fileUtil->RemoveFile("/this/" + file);
                 }
             }
 
-            // Remove all those files from our real dir.
-            for(uint i=0; i<deletedList.GetSize(); i++)
-            {
-                fileUtil->RemoveFile("/this/" + deletedList.Get(i));
-            }
-
             // Parse new files xml, make a list.
-            csArray<csString> newList;
-            csArray<csString> newListPlatform;
-            csArray<bool> newListExec;
             csRef<iDocumentNode> newrootnode = GetRootNode("/zip/newfiles.xml");
             if(newrootnode)
             {
@@ -885,16 +876,10 @@ void UpdaterEngine::GeneralUpdate()
                 while(nodeItr->HasNext())
                 {
                     csRef<iDocumentNode> node = nodeItr->Next();
-                    newList.PushSmart(node->GetAttributeValue("name"));
-                    newListPlatform.Push(node->GetAttributeValue("platform"));
-                    newListExec.Push(node->GetAttributeValueAsBool("exec"));
+                    csString name = node->GetAttributeValue("name");
+                    bool exec = node->GetAttributeValueAsBool("exec");
+                    fileUtil->CopyFile("/zip/" + name, "/this/" + name, true, exec);
                 }
-            }
-
-            // Copy all those files to our real dir.
-            for(uint i=0; i<newList.GetSize(); i++)
-            {
-                fileUtil->CopyFile("/zip/" + newList.Get(i), "/this/" + newList.Get(i), true, newListExec.Get(i));
             }
 
             // Parse changed files xml, binary patch each file.
@@ -920,10 +905,16 @@ void UpdaterEngine::GeneralUpdate()
                         csString md5sum = md5.HexString();
 
                         csString fileMD5 = next->GetAttributeValue("md5sum");
+                        csString oldMD5 = next->GetAttributeValue("oldmd5sum");
 
                         // If it's up to date then skip this file.
                         if(md5sum.Compare(fileMD5))
                         {
+                            continue;
+                        }
+                        else if(!md5sum.Compare(oldMD5))
+                        {
+                            PrintOutput("Skipping file %s because it has been modified - you may want to repair.\n", newFilePath.GetData());
                             continue;
                         }
                     }
@@ -953,7 +944,9 @@ void UpdaterEngine::GeneralUpdate()
                     PrintOutput("Patching file %s: ", newFilePath.GetData());
                     if(!PatchFile(oldFP->GetData(), diffFP->GetData(), newFP->GetData()))
                     {
-                        PrintOutput("Failed!\n");
+                        PrintOutput("Failed - reverting!\n");
+                        fileUtil->RemoveFile("/this/" + newFilePath);
+                        fileUtil->CopyFile("/this/" + oldFilePath, "/this/" + newFilePath, true, false);
 
                         if(!repairAfterUpdate && config->RepairFailed())
                         {
@@ -983,16 +976,18 @@ void UpdaterEngine::GeneralUpdate()
 
                             if(!md5sum.Compare(fileMD5))
                             {
-                                PrintOutput("\nmd5sum of file %s does not match correct md5sum! Reverting file!\n", newFilePath.GetData());
+                                PrintOutput("\nMD5 of file %s does not match correct md5sum! Reverting file!\n", newFilePath.GetData());
                                 fileUtil->RemoveFile("/this/" + newFilePath);
                                 fileUtil->CopyFile("/this/" + oldFilePath, "/this/" + newFilePath, true, false);
                             }
                             else
+                            {
                                 PrintOutput("Success!\n");
+                            }
                         }
-                        fileUtil->RemoveFile("/this/" + oldFilePath);
                     }
                     // Clean up temp files.
+                    fileUtil->RemoveFile("/this/" + oldFilePath);
                     fileUtil->RemoveFile("/this/" + diff, false);
 
                     // Set permissions.
@@ -1093,11 +1088,10 @@ void UpdaterEngine::CheckIntegrity(bool automatic)
             if(!config->GetCurrentConfig()->LoadMirrors(serversRoot))
             {
                 printf("Failed to Initialize mirror config current!\n");
+                printf("Restoring updateservers.xml failed!\n");
                 success = false;
             }
         }
-        
-        
     }
     
     //fallback on old system
@@ -1278,6 +1272,7 @@ void UpdaterEngine::CheckMD5s(iDocumentNode* md5sums, csString& baseurl, bool ac
     PrintOutput("Using mirror %s\n\n", baseurl.GetData());
     csRefArray<iDocumentNode> failed;
     csArray<bool> updateinside;
+    bool selfUpdateNeeded = false;
 #ifdef CS_PLATFORM_UNIX
     csHash<bool, csRef<iDocumentNode> > failedExec;
 #endif
@@ -1315,11 +1310,18 @@ void UpdaterEngine::CheckMD5s(iDocumentNode* md5sums, csString& baseurl, bool ac
         csString md5s = md5.HexString();
 
         if((platform.Compare(config->GetCurrentConfig()->GetPlatform()) ||
-            platform.Compare("cfg") || platform.Compare("all")) && !md5s.Compare(md5sum) &&
-            path != (appName + ".exe"))
+            platform.Compare("cfg") || platform.Compare("all")) && !md5s.Compare(md5sum))
         {
-            failed.Push(node);
-            updateinside.Push(config->RepairingInZip() && node->GetAttributeValueAsBool("checkonly"));
+            if(path.StartsWith(appName, true))
+            {
+                // schedule a SelfUpdate at the end
+                selfUpdateNeeded = true;
+            }
+            else
+            {
+                failed.Push(node);
+                updateinside.Push(config->RepairingInZip() && node->GetAttributeValueAsBool("checkonly"));
+            }
         }
     }
 
@@ -1453,6 +1455,11 @@ void UpdaterEngine::CheckMD5s(iDocumentNode* md5sums, csString& baseurl, bool ac
             }
             fileUtil->RemoveFile("/this/updaterinfo.xml.bak", true);
             PrintOutput("\nDone!\n");
+
+            if(selfUpdateNeeded)
+            {
+                SelfUpdate(false);
+            }
         }
     }
 }
@@ -1496,3 +1503,4 @@ bool UpdaterEngine::SwitchMirror()
     fileUtil->RemoveFile(xmlBakPath, true);
     return true;
 }
+
