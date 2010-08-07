@@ -266,7 +266,7 @@ psEffectObj::psEffectObj(iView *parentView, psEffect2DRenderer * renderer2d)
 
     killTime = -1;
     animScaling = 1;
-    autoScale = true;
+    autoScale = SCALING_NONE;
     isAlive = true;
     birth = 0;
     
@@ -316,12 +316,25 @@ bool psEffectObj::Load(iDocumentNode *node, iLoaderContext* ldr_context)
     if (dataNode)
     {
         killTime = dataNode->GetContentsValueAsInt();
-        autoScale = dataNode->GetAttributeValueAsBool("autoscale", true);
     }
     else
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Effect obj %s is missing a <death> tag.  If you want an infinite effect use <death>none</death>\n", name.GetData());
         return false; // effect is invalid without a death tag
+    }
+
+    // time scaling
+    dataNode = node->GetNode("scale");
+    if (dataNode)
+    {
+        if(dataNode->GetAttributeValueAsBool("death"))
+            autoScale |= SCALING_DEATH;
+        if(dataNode->GetAttributeValueAsBool("birth"))
+            autoScale |= SCALING_BIRTH;
+        if(dataNode->GetAttributeValueAsBool("frames"))
+            autoScale |= SCALING_FRAMES;
+        else if(dataNode->GetAttributeValueAsBool("loop"))
+            autoScale |= SCALING_LOOP;
     }
 
     // anchor
@@ -421,6 +434,18 @@ bool psEffectObj::Load(iDocumentNode *node, iLoaderContext* ldr_context)
     return true;
 }
 
+void psEffectObj::SetAnimationScaling(float s)
+{
+    if (autoScale & SCALING_DEATH)
+        killTime *= s;
+
+    if (autoScale & SCALING_BIRTH)
+        birth *= s;
+
+    animScaling = s;
+}
+
+
 bool psEffectObj::Render(const csVector3 &up)
 {
     return false;
@@ -458,7 +483,7 @@ bool psEffectObj::Update(csTicks elapsed)
 
     isAlive |= (life >= birth);
 
-    if (isAlive && anchorMesh && anchor->IsReady())
+    if (isAlive)
     {
         meshMovable->SetSector(anchorMovable->GetSectors()->Get(0));
         meshMovable->SetPosition(anchorPosition);
@@ -609,8 +634,15 @@ bool psEffectObj::AttachToAnchor(psEffectAnchor * newAnchor)
 
 size_t psEffectObj::FindKeyFrameByTime(csTicks time) const
 {
-    time *= animScaling;
-    time %= animLength;
+    if (autoScale & SCALING_FRAMES)
+    {
+        time /= animScaling;
+    }
+    else if (autoScale & SCALING_LOOP)
+    {
+        time %= animLength;
+    }
+
     for ( size_t a = keyFrames->GetSize(); a > 0; --a)
     {
         if (keyFrames->Get(a-1)->time < time)
