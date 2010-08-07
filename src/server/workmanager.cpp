@@ -529,7 +529,7 @@ void WorkManager::HandleProduction(gemActor* actor, size_t type,const char *rewa
     // Make sure they are not in the same loc as the last dig.
     // skip this check for NPCs
     actor->GetLastProductionPos(pos);
-    if (!client && SameProductionPosition(actor, pos))
+    if (client && SameProductionPosition(actor, pos))
     {
         psserver->SendSystemError(client->GetClientNum(),
                                   "You cannot %s in the same place twice in a"
