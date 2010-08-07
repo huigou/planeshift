@@ -277,14 +277,7 @@ public:
      */
     float GetAnimLength() const { return animLength; }
 
-    void SetAnimationScaling(float s)
-    {
-        if (autoScale)
-        {
-            killTime *= animScaling/s;
-            animScaling = s;
-        }
-    }
+    void SetAnimationScaling(float s);
 
     /** Gets the name of this effect obj.
      *   @return the name of this effect obj.
@@ -317,6 +310,15 @@ public:
     };
 
 protected:
+
+    enum SCALING_TYPE
+    {
+        SCALING_NONE   = 0,
+        SCALING_BIRTH  = 1,
+        SCALING_DEATH  = 2,
+        SCALING_FRAMES = 4,
+        SCALING_LOOP   = 8
+    };
 
     /** finds the index of the keyFrame at the specified time
      *   @param time the time to lookup
@@ -351,7 +353,7 @@ protected:
     csTicks life;
     csTicks animLength;
     float animScaling;
-    bool autoScale;
+    int autoScale;
     
     // the effect anchor that this obj is attached to
     csString anchorName;
@@ -430,6 +432,15 @@ protected:
         }
         else
         {
+            if (autoScale & SCALING_FRAMES)
+            {
+                t /= animScaling;
+            }
+            else if (autoScale & SCALING_LOOP)
+            {
+                t %= animLength;
+            }
+
             return ((float)(t-t1)/(float)(t2-t1));
         }
     }
@@ -448,6 +459,6 @@ protected:
 #define LERP_FACTOR \
     lerpFactor(keyFrames->Get(currKeyFrame)->time, \
                keyFrames->Get(nextKeyFrame)->time, \
-               life*animScaling)
+               life)
 
 #endif
