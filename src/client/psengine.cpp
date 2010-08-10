@@ -1028,20 +1028,10 @@ inline bool psEngine::FrameLimit()
     // If we're loading then do special handling.
     if(zonehandler.IsValid() && zonehandler->IsLoading())
     {
-        // Do 30 frame updates a second at most.
-        if(elapsedTime < 33)
-        {
-            // If we're not due to update then sleep.
-            csSleep(33 - elapsedTime);
-        }
-
-        // Now it's time to draw another frame.
-        elapsed = csGetTicks();
-        return true;
+        sleeptime = 1000/30;
     }
-
     // Define sleeptimes
-    if(!camera)
+    else if(!camera)
     {
         // Get the window
         static pawsWidget* credits = NULL;
@@ -1049,14 +1039,16 @@ inline bool psEngine::FrameLimit()
             credits = paws->FindWidget("CreditsWindow", false);
 
         if(credits && credits->IsVisible())
-            sleeptime = 10;
+            sleeptime = 1000/60;
         else
-            sleeptime = 30;
+            sleeptime = 1000/30;
     }
     else
+    {
         sleeptime = frameLimit;
+    }
 
-    timeFPS += elapsedTime;
+    timeFPS += sleeptime;
     countFPS++;
     if(timeFPS > 500)
     {
@@ -1064,11 +1056,11 @@ inline bool psEngine::FrameLimit()
 	timeFPS = 0;
 	countFPS = 0;
     }
-    elapsed = csGetTicks();
 
     // Here we sacrifice drawing AND loading time
     if(elapsedTime < sleeptime)
         csSleep(sleeptime - elapsedTime);
+    elapsed = csGetTicks();
 
     return true;
 }
