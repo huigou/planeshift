@@ -1762,6 +1762,9 @@
 				RelativePath="..\..\src\common\effects\pseffectobjlabel.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\common\effects\pseffectobjlight.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\common\effects\pseffectobjmesh.cpp">
 			</File>
 			<File
@@ -1827,6 +1830,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\common\effects\pseffectobjlabel.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\effects\pseffectobjlight.h">
 			</File>
 			<File
 				RelativePath="..\..\src\common\effects\pseffectobjmesh.h">

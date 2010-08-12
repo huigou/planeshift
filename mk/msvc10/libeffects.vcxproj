@@ -1321,6 +1321,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClCompile Include="..\..\src\common\effects\pseffectobj.cpp" />
     <ClCompile Include="..\..\src\common\effects\pseffectobjdecal.cpp" />
     <ClCompile Include="..\..\src\common\effects\pseffectobjlabel.cpp" />
+    <ClCompile Include="..\..\src\common\effects\pseffectobjlight.cpp" />
     <ClCompile Include="..\..\src\common\effects\pseffectobjmesh.cpp" />
     <ClCompile Include="..\..\src\common\effects\pseffectobjparticles.cpp" />
     <ClCompile Include="..\..\src\common\effects\pseffectobjquad.cpp" />
@@ -1344,6 +1345,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClInclude Include="..\..\src\common\effects\pseffectobj.h" />
     <ClInclude Include="..\..\src\common\effects\pseffectobjdecal.h" />
     <ClInclude Include="..\..\src\common\effects\pseffectobjlabel.h" />
+    <ClInclude Include="..\..\src\common\effects\pseffectobjlight.h" />
     <ClInclude Include="..\..\src\common\effects\pseffectobjmesh.h" />
     <ClInclude Include="..\..\src\common\effects\pseffectobjparticles.h" />
     <ClInclude Include="..\..\src\common\effects\pseffectobjquad.h" />
