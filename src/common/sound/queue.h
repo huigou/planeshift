@@ -27,8 +27,8 @@
 #include <csutil/csstring.h>
 #include <csutil/array.h>
 
-struct SoundHandle;
-struct SoundControl;
+class SoundHandle;
+class SoundControl;
 
 /**
  * Queue object for @see SoundQueue.

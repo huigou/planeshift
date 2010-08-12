@@ -27,8 +27,8 @@
 #include <isndsys.h>
 #include <csutil/csstring.h>
 
-struct SoundControl;
-struct SoundSystemManager;
+class SoundControl;
+class SoundSystemManager;
 
 enum
 {

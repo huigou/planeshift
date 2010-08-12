@@ -29,10 +29,10 @@
 #include <csgeom/vector3.h>
 #include <csutil/array.h>
 
-struct SoundSystem;
-struct SoundData;
-struct SoundHandle;
-struct SoundControl;
+class SoundSystem;
+class SoundData;
+class SoundHandle;
+class SoundControl;
 
 enum
 {
