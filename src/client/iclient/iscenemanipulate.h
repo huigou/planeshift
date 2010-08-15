@@ -21,7 +21,7 @@
 #define __ISCENEMANIPULATE_H__
 
 class csVector2;
-class iCamera;
+struct iCamera;
 
 enum PS_MANIPULATE // rotation type
 {
