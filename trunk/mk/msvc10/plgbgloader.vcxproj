@@ -317,7 +317,7 @@
       <DelayLoadDLLs>;%(DelayLoadDLLs)</DelayLoadDLLs>
       <ImportLibrary>..\..\out\release10\build\plgbgloader\Win32\plgbgloader.lib</ImportLibrary>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>delayimp.lib;libcrystalspace.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>delayimp.lib;libcrystalspace.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\release10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX86</TargetMachine>
@@ -367,7 +367,7 @@ copy /y "$(TargetPath)" ..\..\out\release10\bin\
       <DelayLoadDLLs>;%(DelayLoadDLLs)</DelayLoadDLLs>
       <ImportLibrary>..\..\out\release10\build\plgbgloader\Win32\plgbgloader.lib</ImportLibrary>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>delayimp.lib;libcrystalspace.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>delayimp.lib;libcrystalspace.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\release10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX86</TargetMachine>
@@ -413,7 +413,7 @@ copy /y "$(TargetPath)" ..\..\out\release10\bin\
       <DelayLoadDLLs>;%(DelayLoadDLLs)</DelayLoadDLLs>
       <ImportLibrary>..\..\out\debug10\build\plgbgloader\Win32\plgbgloader.lib</ImportLibrary>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>delayimp.lib;libcrystalspace_d.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>delayimp.lib;libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX86</TargetMachine>
@@ -459,7 +459,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <DelayLoadDLLs>;%(DelayLoadDLLs)</DelayLoadDLLs>
       <ImportLibrary>..\..\out\debug10\build\plgbgloader\Win32\plgbgloader.lib</ImportLibrary>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>delayimp.lib;libcrystalspace_d.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>delayimp.lib;libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX86</TargetMachine>
@@ -505,7 +505,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <DelayLoadDLLs>;%(DelayLoadDLLs)</DelayLoadDLLs>
       <ImportLibrary>..\..\out\debug10\build\plgbgloader\Win32\plgbgloader.lib</ImportLibrary>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>delayimp.lib;libcrystalspace_d.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>delayimp.lib;libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX86</TargetMachine>
@@ -551,7 +551,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <DelayLoadDLLs>;%(DelayLoadDLLs)</DelayLoadDLLs>
       <ImportLibrary>..\..\out\debug10\build\plgbgloader\Win32\plgbgloader.lib</ImportLibrary>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>delayimp.lib;libcrystalspace_d.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>delayimp.lib;libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX86</TargetMachine>
@@ -597,7 +597,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <DelayLoadDLLs>;%(DelayLoadDLLs)</DelayLoadDLLs>
       <ImportLibrary>..\..\out\debug10\build\plgbgloader\Win32\plgbgloader.lib</ImportLibrary>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>delayimp.lib;libcrystalspace_d.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>delayimp.lib;libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX86</TargetMachine>
@@ -643,7 +643,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <DelayLoadDLLs>;%(DelayLoadDLLs)</DelayLoadDLLs>
       <ImportLibrary>..\..\out\debug10\build\plgbgloader\Win32\plgbgloader.lib</ImportLibrary>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>delayimp.lib;libcrystalspace_d.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>delayimp.lib;libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX86</TargetMachine>
@@ -689,7 +689,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <DelayLoadDLLs>;%(DelayLoadDLLs)</DelayLoadDLLs>
       <ImportLibrary>..\..\out\debug10\build\plgbgloader\Win32\plgbgloader.lib</ImportLibrary>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>delayimp.lib;libcrystalspace_d.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>delayimp.lib;libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX86</TargetMachine>
@@ -735,7 +735,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <DelayLoadDLLs>;%(DelayLoadDLLs)</DelayLoadDLLs>
       <ImportLibrary>..\..\out\debug10\build\plgbgloader\Win32\plgbgloader.lib</ImportLibrary>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>delayimp.lib;libcrystalspace_d.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>delayimp.lib;libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX86</TargetMachine>
@@ -781,7 +781,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <DelayLoadDLLs>;%(DelayLoadDLLs)</DelayLoadDLLs>
       <ImportLibrary>..\..\out\debug10\build\plgbgloader\Win32\plgbgloader.lib</ImportLibrary>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>delayimp.lib;libcrystalspace.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>delayimp.lib;libcrystalspace.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\release10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX86</TargetMachine>
@@ -827,7 +827,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <DelayLoadDLLs>;%(DelayLoadDLLs)</DelayLoadDLLs>
       <ImportLibrary>..\..\out\debug10\build\plgbgloader\Win32\plgbgloader.lib</ImportLibrary>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>delayimp.lib;libcrystalspace.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>delayimp.lib;libcrystalspace.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\release10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX86</TargetMachine>
@@ -877,7 +877,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <DelayLoadDLLs>;%(DelayLoadDLLs)</DelayLoadDLLs>
       <ImportLibrary>..\..\out\release10-x64\build\plgbgloader\x64\plgbgloader.lib</ImportLibrary>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>delayimp.lib;libcrystalspace.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>delayimp.lib;libcrystalspace.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\release10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX64</TargetMachine>
@@ -927,7 +927,7 @@ copy /y "$(TargetPath)" ..\..\out\release10-x64\bin\
       <DelayLoadDLLs>;%(DelayLoadDLLs)</DelayLoadDLLs>
       <ImportLibrary>..\..\out\release10-x64\build\plgbgloader\x64\plgbgloader.lib</ImportLibrary>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>delayimp.lib;libcrystalspace.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>delayimp.lib;libcrystalspace.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\release10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX64</TargetMachine>
@@ -973,7 +973,7 @@ copy /y "$(TargetPath)" ..\..\out\release10-x64\bin\
       <DelayLoadDLLs>;%(DelayLoadDLLs)</DelayLoadDLLs>
       <ImportLibrary>..\..\out\debug10-x64\build\plgbgloader\x64\plgbgloader.lib</ImportLibrary>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>delayimp.lib;libcrystalspace_d.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>delayimp.lib;libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX64</TargetMachine>
@@ -1019,7 +1019,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <DelayLoadDLLs>;%(DelayLoadDLLs)</DelayLoadDLLs>
       <ImportLibrary>..\..\out\debug10-x64\build\plgbgloader\x64\plgbgloader.lib</ImportLibrary>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>delayimp.lib;libcrystalspace_d.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>delayimp.lib;libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX64</TargetMachine>
@@ -1065,7 +1065,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <DelayLoadDLLs>;%(DelayLoadDLLs)</DelayLoadDLLs>
       <ImportLibrary>..\..\out\debug10-x64\build\plgbgloader\x64\plgbgloader.lib</ImportLibrary>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>delayimp.lib;libcrystalspace_d.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>delayimp.lib;libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX64</TargetMachine>
@@ -1111,7 +1111,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <DelayLoadDLLs>;%(DelayLoadDLLs)</DelayLoadDLLs>
       <ImportLibrary>..\..\out\debug10-x64\build\plgbgloader\x64\plgbgloader.lib</ImportLibrary>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>delayimp.lib;libcrystalspace_d.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>delayimp.lib;libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX64</TargetMachine>
@@ -1157,7 +1157,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <DelayLoadDLLs>;%(DelayLoadDLLs)</DelayLoadDLLs>
       <ImportLibrary>..\..\out\debug10-x64\build\plgbgloader\x64\plgbgloader.lib</ImportLibrary>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>delayimp.lib;libcrystalspace_d.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>delayimp.lib;libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX64</TargetMachine>
@@ -1203,7 +1203,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <DelayLoadDLLs>;%(DelayLoadDLLs)</DelayLoadDLLs>
       <ImportLibrary>..\..\out\debug10-x64\build\plgbgloader\x64\plgbgloader.lib</ImportLibrary>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>delayimp.lib;libcrystalspace_d.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>delayimp.lib;libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX64</TargetMachine>
@@ -1249,7 +1249,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <DelayLoadDLLs>;%(DelayLoadDLLs)</DelayLoadDLLs>
       <ImportLibrary>..\..\out\debug10-x64\build\plgbgloader\x64\plgbgloader.lib</ImportLibrary>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>delayimp.lib;libcrystalspace_d.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>delayimp.lib;libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX64</TargetMachine>
@@ -1295,7 +1295,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <DelayLoadDLLs>;%(DelayLoadDLLs)</DelayLoadDLLs>
       <ImportLibrary>..\..\out\debug10-x64\build\plgbgloader\x64\plgbgloader.lib</ImportLibrary>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>delayimp.lib;libcrystalspace_d.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>delayimp.lib;libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX64</TargetMachine>
@@ -1341,7 +1341,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <DelayLoadDLLs>;%(DelayLoadDLLs)</DelayLoadDLLs>
       <ImportLibrary>..\..\out\debug10-x64\build\plgbgloader\x64\plgbgloader.lib</ImportLibrary>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>delayimp.lib;libcrystalspace.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>delayimp.lib;libcrystalspace.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\release10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX64</TargetMachine>
@@ -1387,7 +1387,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <DelayLoadDLLs>;%(DelayLoadDLLs)</DelayLoadDLLs>
       <ImportLibrary>..\..\out\debug10-x64\build\plgbgloader\x64\plgbgloader.lib</ImportLibrary>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>delayimp.lib;libcrystalspace.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>delayimp.lib;libcrystalspace.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\release10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX64</TargetMachine>

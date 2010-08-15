@@ -304,7 +304,7 @@
       <ProgramDatabaseFile>..\..\out\release10\build\appccheck_static\Win32\ccheck_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <AdditionalOptions>libcrystalspace_staticplugins.lib libcrystalspace.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>libcrystalspace.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcrystalspace.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\release10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX86</TargetMachine>
@@ -353,7 +353,7 @@ copy /y "$(TargetPath)" ..\..\out\release10\bin\
       <ProgramDatabaseFile>..\..\out\release10\build\appccheck_static\Win32\ccheck_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <AdditionalOptions>libcrystalspace_staticplugins.lib libcrystalspace.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>libcrystalspace.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcrystalspace.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\release10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX86</TargetMachine>
@@ -398,7 +398,7 @@ copy /y "$(TargetPath)" ..\..\out\release10\bin\
       <ProgramDatabaseFile>..\..\out\debug10\build\appccheck_static\Win32\ccheck_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>libcrystalspace_d.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX86</TargetMachine>
@@ -443,7 +443,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <ProgramDatabaseFile>..\..\out\debug10\build\appccheck_static\Win32\ccheck_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>libcrystalspace_d.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX86</TargetMachine>
@@ -488,7 +488,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <ProgramDatabaseFile>..\..\out\debug10\build\appccheck_static\Win32\ccheck_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>libcrystalspace_d.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX86</TargetMachine>
@@ -533,7 +533,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <ProgramDatabaseFile>..\..\out\debug10\build\appccheck_static\Win32\ccheck_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>libcrystalspace_d.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX86</TargetMachine>
@@ -578,7 +578,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <ProgramDatabaseFile>..\..\out\debug10\build\appccheck_static\Win32\ccheck_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>libcrystalspace_d.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX86</TargetMachine>
@@ -623,7 +623,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <ProgramDatabaseFile>..\..\out\debug10\build\appccheck_static\Win32\ccheck_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>libcrystalspace_d.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX86</TargetMachine>
@@ -668,7 +668,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <ProgramDatabaseFile>..\..\out\debug10\build\appccheck_static\Win32\ccheck_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>libcrystalspace_d.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX86</TargetMachine>
@@ -713,7 +713,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <ProgramDatabaseFile>..\..\out\debug10\build\appccheck_static\Win32\ccheck_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>libcrystalspace_d.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX86</TargetMachine>
@@ -758,7 +758,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <ProgramDatabaseFile>..\..\out\debug10\build\appccheck_static\Win32\ccheck_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>libcrystalspace.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcrystalspace.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\release10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX86</TargetMachine>
@@ -803,7 +803,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <ProgramDatabaseFile>..\..\out\debug10\build\appccheck_static\Win32\ccheck_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>libcrystalspace.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcrystalspace.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\release10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX86</TargetMachine>
@@ -852,7 +852,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <ProgramDatabaseFile>..\..\out\release10-x64\build\appccheck_static\x64\ccheck_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <AdditionalOptions>libcrystalspace_staticplugins.lib libcrystalspace.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>libcrystalspace.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcrystalspace.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\release10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX64</TargetMachine>
@@ -901,7 +901,7 @@ copy /y "$(TargetPath)" ..\..\out\release10-x64\bin\
       <ProgramDatabaseFile>..\..\out\release10-x64\build\appccheck_static\x64\ccheck_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <AdditionalOptions>libcrystalspace_staticplugins.lib libcrystalspace.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>libcrystalspace.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcrystalspace.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\release10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX64</TargetMachine>
@@ -946,7 +946,7 @@ copy /y "$(TargetPath)" ..\..\out\release10-x64\bin\
       <ProgramDatabaseFile>..\..\out\debug10-x64\build\appccheck_static\x64\ccheck_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>libcrystalspace_d.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX64</TargetMachine>
@@ -991,7 +991,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <ProgramDatabaseFile>..\..\out\debug10-x64\build\appccheck_static\x64\ccheck_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>libcrystalspace_d.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX64</TargetMachine>
@@ -1036,7 +1036,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <ProgramDatabaseFile>..\..\out\debug10-x64\build\appccheck_static\x64\ccheck_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>libcrystalspace_d.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX64</TargetMachine>
@@ -1081,7 +1081,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <ProgramDatabaseFile>..\..\out\debug10-x64\build\appccheck_static\x64\ccheck_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>libcrystalspace_d.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX64</TargetMachine>
@@ -1126,7 +1126,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <ProgramDatabaseFile>..\..\out\debug10-x64\build\appccheck_static\x64\ccheck_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>libcrystalspace_d.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX64</TargetMachine>
@@ -1171,7 +1171,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <ProgramDatabaseFile>..\..\out\debug10-x64\build\appccheck_static\x64\ccheck_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>libcrystalspace_d.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX64</TargetMachine>
@@ -1216,7 +1216,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <ProgramDatabaseFile>..\..\out\debug10-x64\build\appccheck_static\x64\ccheck_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>libcrystalspace_d.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX64</TargetMachine>
@@ -1261,7 +1261,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <ProgramDatabaseFile>..\..\out\debug10-x64\build\appccheck_static\x64\ccheck_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>libcrystalspace_d.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX64</TargetMachine>
@@ -1306,7 +1306,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <ProgramDatabaseFile>..\..\out\debug10-x64\build\appccheck_static\x64\ccheck_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>libcrystalspace.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcrystalspace.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\release10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX64</TargetMachine>
@@ -1351,7 +1351,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <ProgramDatabaseFile>..\..\out\debug10-x64\build\appccheck_static\x64\ccheck_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>libcrystalspace.lib ws2_32.lib zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcrystalspace.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\release10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <TargetMachine>MachineX64</TargetMachine>
