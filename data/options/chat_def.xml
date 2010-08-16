@@ -11,7 +11,7 @@
         <chatWidget value="chat_basic.xml" />
     </chatoptions>
     <bindings>
-	<listener name="subMainText">
+    <listener name="subMainText">
             <chat_message type="CHAT_PET_ACTION" />
             <chat_message type="CHAT_SAY" />
             <chat_message type="CHAT_SHOUT" />
@@ -23,7 +23,7 @@
             <chat_message type="CHAT_SERVER_TELL" />
             <chat_message type="CHAT_COMBAT" />
         </listener>
-	<listener name="subSystemText">
+    <listener name="subSystemText">
             <chat_message type="CHAT_SYSTEM" />
             <chat_message type="CHAT_SERVER_INFO" />
             <chat_message type="CHAT_REPORT" />
@@ -31,30 +31,30 @@
             <chat_message type="CHAT_COMBAT" />
             <chat_message type="CHAT_SYSTEM_BASE" />
         </listener>
-	<listener name="subNPCText">
+    <listener name="subNPCText">
             <chat_message type="CHAT_NPC_ME" />
             <chat_message type="CHAT_NPC_MY" />
             <chat_message type="CHAT_NPC_NARRATE" />
             <chat_message type="CHAT_NPC" />
             <chat_message type="CHAT_NPCINTERNAL" />
         </listener>
-	<listener name="subTellText">
+    <listener name="subTellText">
             <chat_message type="CHAT_TELL" />
             <chat_message type="CHAT_TELLSELF" />
         </listener>
-	<listener name="subGuildText">
+    <listener name="subGuildText">
             <chat_message type="CHAT_GUILD" />
         </listener>
-	<listener name="subAllianceText">
+    <listener name="subAllianceText">
             <chat_message type="CHAT_ALLIANCE" />
         </listener>
-	<listener name="subGroupText">
+    <listener name="subGroupText">
             <chat_message type="CHAT_GROUP" />
         </listener>
-	<listener name="subAuctionsText">
+    <listener name="subAuctionsText">
             <chat_message type="CHAT_AUCTION" />
         </listener>
-	<listener name="subChannelsText">
+    <listener name="subChannelsText">
             <chat_message type="CHAT_CHANNEL1" />
             <chat_message type="CHAT_CHANNEL2" />
             <chat_message type="CHAT_CHANNEL3" />
@@ -66,7 +66,7 @@
             <chat_message type="CHAT_CHANNEL9" />
             <chat_message type="CHAT_CHANNEL10" />
         </listener>
-	<listener name="subHelpText">
+    <listener name="subHelpText">
             <chat_message type="CHAT_ADVISOR" />
             <chat_message type="CHAT_ADVICE" />
             <chat_message type="CHAT_ADVICE_LIST" />
@@ -92,7 +92,7 @@
         <system value="yes" />
         <help value="yes" />
     </flashingoptions>
-	<flashingoncharoptions>
+    <flashingoncharoptions>
         <main value="yes" />
         <npc value="yes" />
         <tell value="yes" />
@@ -103,7 +103,7 @@
         <help value="yes" />
     </flashingoncharoptions>
 
-		<chatcolors>
+        <chatcolors>
         <systemtext     r="0"   g="255" b="0" />
         <admintext      r="255" g="0"   b="0" />
         <playernametext r="157" g="187" b="255" />
@@ -128,7 +128,7 @@
             h4x0r;hacker
             <!-- or you can use this xml syntax -->
 
-		<!-- general leetspeak replacements --> 			
+        <!-- general leetspeak replacements -->
         <replace bad="brb" good="I will return shortly"/>
         <replace bad="cu" good="see you later"/>
         <replace bad="cya" good="see you later"/>
@@ -211,7 +211,7 @@
         <replace bad="yw" good="you're welcome"/>
         <replace bad="zomg" good="by the gods"/>
 
-		<!-- replacements for naughtier leetspeak and words with dual meanings --> 	
+        <!-- replacements for naughtier leetspeak and words with dual meanings -->
         <replace bad="anal" good="tense"/>
         <replace bad="@$$" good="addlepated kormi"/>
         <replace bad="ass" good="addlepated kormi"/>
