@@ -403,8 +403,11 @@ private:
      */
     csString item_description;
 
-    // The ActiveSpell* of the equip script, for cancelling on unequip.
+    /// The ActiveSpell* of the equip script, for cancelling on unequip.
     ActiveSpell *equipActiveSpell;
+    
+    /// A structure which holds the creative data about this item.
+    psItemCreativeStats creativeStats;
 
 public:
     /** Loads data from a database row into the current psItem.
@@ -662,6 +665,19 @@ public:
     bool GetIsStackable() const;
     bool GetIsEquipStackable() const;
     PSITEMSTATS_CREATIVETYPE GetCreative();
+    /// Write creative stuff such as lit text (eg book) or map data.
+    bool SetCreation (PSITEMSTATS_CREATIVETYPE, const csString&, csString);
+    /** Gets the creator of this creative and the creator setting status.
+     *  @param creatorStatus The status of the creator setting in this creative
+     *  @return PID The PID of the player who created this creative or 0 if not set or invalid.
+     */
+    PID GetCreator (PSITEMSTATS_CREATORSTATUS & creatorStatus);
+    /// sets the creator (i.e. author, artist, etc) of creative things
+    void SetCreator(PID, PSITEMSTATS_CREATORSTATUS);
+    /** Checks if the creator of the book is the one passed as argument.
+     *  @param PID the pid of the character we are checking creator status.
+     */
+    bool IsThisTheCreator(PID);
     bool GetBuyPersonalise();
     const char *GetName() const;
     const char *GetDescription() const;
@@ -878,7 +894,7 @@ public:
     float GetArmorVSWeaponResistance(psItemStats* armor);
 
     /// Gets the book text, should only be used if this is a book.
-    csString GetBookText() { return GetBaseStats()->GetLiteratureText(); }
+    csString GetBookText() { return GetLiteratureText(); }
     /// Sets the book text, should only be used if this is a book.
     bool SetBookText(const csString& newText);
     /// Sets sketch data
@@ -924,6 +940,24 @@ public:
     void *operator new(size_t);
     ///  The delete operator is overriden to call PoolAllocator template functions
     void operator delete(void *);
+    
+    /** Checks the writeable flag in the item_stats and tell if this is the case.
+     *  @return TRUE if the item is writeable.
+     */
+    bool GetIsWriteable();
+    /** Checks the readable flag in the item_stats and tell if this is the case.
+     *  @return TRUE if the item is readable.
+     */
+    bool GetIsReadable();
+    
+    /// return creative contents of sketches.
+    const csString& GetSketch(void) { return creativeStats.creativeType == PSITEMSTATS_CREATIVETYPE_NONE ? GetBaseStats()->GetSketch() : creativeStats.content; }
+    /// return creative contents of books.
+    const csString& GetLiteratureText(void) { return creativeStats.creativeType == PSITEMSTATS_CREATIVETYPE_NONE ? GetBaseStats()->GetSketch() : creativeStats.content; }
+    /// return the background image used in this creative.
+    const csString& GetCreativeBackgroundImg() { return creativeStats.creativeType == PSITEMSTATS_CREATIVETYPE_NONE ? GetBaseStats()->GetCreativeBackgroundImg() : creativeStats.backgroundImg; }
+    
+    void PrepareCreativeItemInstance();
 
 private:
     /// Static reference to the pool for all psItem objects

@@ -309,14 +309,42 @@ private:
 class psItemCreativeStats
 {
 public:
-    friend class psItemStats;
 
+    //Both psitemstats and psitem make use of this structure. So they need to access
+    //all it's elements
+    friend class psItemStats;
+    friend class psItem;
+    
+    ///constructor
     psItemCreativeStats();
+    ///destructor
     ~psItemCreativeStats();
+    
+    /** Checks if the passed PID is the creator of this creative.
+     *  @param characterID The PID of the player we are checking if it's the creator.
+     *  @return TRUE if the passed PID corresponds to the creator of this creative item.
+     */
+    bool IsThisTheCreator(PID characterID);
+    /** Sets the player passed as the creator of this creative, in case someone doesn't own creation status
+     *  already, in that case it will be ignored.
+     *  @param characterID The PID of the character who will be the creator of this creative defintion.
+     *  @param creatorStatus A status from PSITEMSTATS_CREATORSTATUS to which setting the creative.
+     */
+    void SetCreator (PID characterID, PSITEMSTATS_CREATORSTATUS creatorStatus);
+    /** Gets the creator and the status of the creator of this creative
+     *  @param creatorStatus A reference to a PSITEMSTATS_CREATORSTATUS which will be filled with
+     *                       the informations about the status of the creator.
+     *  @return PID The pid of the character who created this creative in case it's valid, else will
+     *              return 0 as PID.
+     */
+    PID GetCreator (PSITEMSTATS_CREATORSTATUS& creatorStatus);
 
 private:
-    /** Read the Creative data from the database. */
+    /** Read the Creative data from the database. 
+     *  @param row The database row as loaded from the database: must have at least a creative_definition column.*/
     void ReadStats( iResultRow& row);
+    /** Read the Creative data from the internal creativeDefinitionXML, populating all the fields from it. */
+    void ReadStats();
 
     /** general write creative content */
     bool SetCreativeContent(PSITEMSTATS_CREATIVETYPE, const csString&, uint32);
@@ -329,6 +357,14 @@ private:
 
     /** Update the description of the item */
     csString UpdateDescription(PSITEMSTATS_CREATIVETYPE, csString, csString);
+    
+    /** Used to set if this creativedefinition has to operate on item_instances in place of item_stats when
+     *  saving data on the database. Pass TRUE if you wish that this creative definition saves data in the
+     *  instances in place of the stats.
+     *  @param value TRUE to make this creative definition operate on item_instances, otherwise it will operate
+     *               on item_stats.
+     */
+    void setInstanceBased(bool value) { instanceBased = value; }
 
     PSITEMSTATS_CREATIVETYPE creativeType;
 
@@ -338,6 +374,11 @@ private:
 
     PID creatorID;
     PSITEMSTATS_CREATORSTATUS creatorIDStatus;
+    /** Indicates that when we save on the database we have to operate on item_instances, in place
+     *  of item_stats.
+     */
+    bool instanceBased;
+                                
 };
 
 //-----------------------------------------------------------------------------
@@ -566,6 +607,10 @@ public:
     bool GetUnique();
     void SetRandom();
     bool GetRandom();
+    /** Used to get the creative definition so psitem can make it's own copy of it.
+     *  @return psXMLString The creative definition xml data of this item.
+     */
+    psXMLString getCreativeXML() { return creativeStats.creativeDefinitionXML; }
     void SetName(const char *v);
     void SaveName(void);
 

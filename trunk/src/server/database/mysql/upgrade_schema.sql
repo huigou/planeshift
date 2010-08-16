@@ -1476,6 +1476,10 @@ ALTER TABLE `npc_spawn_rules`
 ALTER TABLE `item_stats` ADD COLUMN `assigned_command` VARCHAR(40)  NOT NULL DEFAULT '' COMMENT 'Used to determine if the item could be used with a specific command. Will be used to show it in the context menu when the item is equipped.' AFTER `weapon_range`;
 UPDATE `server_options` SET `option_value`='1251' WHERE `option_name`='db_version';
 
+#1252 - Stefano Angeleri - moved books to item instances
+ALTER TABLE `item_instances` ADD COLUMN `creative_definition` TEXT  DEFAULT NULL COMMENT 'This is used for books/sketch.' AFTER `item_description`;
+UPDATE `server_options` SET `option_value`='1252' WHERE `option_name`='db_version';
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to

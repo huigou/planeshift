@@ -219,6 +219,7 @@ psItemCreativeStats::psItemCreativeStats()
 
     creatorIDStatus = PSITEMSTATS_CREATOR_UNASSIGNED;     // creator not yet been assigned
     creatorID = 0;
+    instanceBased = false;
 
     content.Empty();
 }
@@ -229,12 +230,17 @@ psItemCreativeStats::~psItemCreativeStats()
 
 void psItemCreativeStats::ReadStats(iResultRow& row)
 {
+    creativeDefinitionXML = row["creative_definition"];
+    ReadStats();
+}
+
+void psItemCreativeStats::ReadStats()
+{
     psXMLString contentXML;
     psXMLTag creativeTag;
     csString creativeTypeStr, creatorStr;
 
     // find type of creative thing from <creative type="...">
-    creativeDefinitionXML = row["creative_definition"];
     int tagPos = creativeDefinitionXML.FindTag("creative");
     size_t len = creativeDefinitionXML.GetTag(0, creativeTag);
     if (tagPos >=0 && len > 0)
@@ -291,7 +297,46 @@ void psItemCreativeStats::ReadStats(iResultRow& row)
     }
 
     content.Empty();
-    Error2("XML error in CREATIVE item %lu", row.GetUInt32("id"));
+    Error1("XML error in CREATIVE item");
+}
+
+void psItemCreativeStats::SetCreator (PID characterID, PSITEMSTATS_CREATORSTATUS creatorStatus)
+{
+    // if creator already set (i.e. valid or public) it cant be changed so return straightaway.
+    if (creatorIDStatus == PSITEMSTATS_CREATOR_PUBLIC || creatorIDStatus == PSITEMSTATS_CREATOR_VALID)
+    {
+        return;
+    }
+
+    creatorIDStatus = creatorStatus;
+    if (creatorStatus == PSITEMSTATS_CREATOR_VALID)
+    {
+        creatorID = characterID;
+    }
+    else
+    {
+        creatorID = PID(0);
+    }
+
+    FormatCreativeContent();   // result is n/a to setting creator.
+}
+
+
+bool psItemCreativeStats::IsThisTheCreator(PID characterID)
+{    
+    // if characterID is creator of this item, or no creator assigned (then anyone can edit)
+    // of if the item is 'public' then any can edit it.
+    return ((creatorIDStatus == PSITEMSTATS_CREATOR_VALID && creatorID == characterID) ||
+        creatorIDStatus == PSITEMSTATS_CREATOR_PUBLIC ||
+        creatorIDStatus == PSITEMSTATS_CREATOR_UNASSIGNED);
+}
+
+PID psItemCreativeStats::GetCreator (PSITEMSTATS_CREATORSTATUS& creatorStatus)
+{
+    creatorStatus = creatorIDStatus;
+    if (creatorIDStatus == PSITEMSTATS_CREATOR_VALID)
+        return creatorID;
+    return PID(0);
 }
 
 bool psItemCreativeStats::SetCreativeContent(PSITEMSTATS_CREATIVETYPE updatedCreativeType, const csString& updatedCreative, uint32 uid)
@@ -358,7 +403,7 @@ void psItemCreativeStats::SaveCreation(uint32 uid)
     litID.Format("%u", uid);
     values.Push(this->creativeDefinitionXML);
 
-    if ( !db->GenericUpdateWithID("item_stats", "id", litID, fieldnames, values) )
+    if ( !db->GenericUpdateWithID(instanceBased? "item_instances" : "item_stats", "id", litID, fieldnames, values) )
     {
         Error2("Failed to save text for item %u!", uid );
     }
@@ -1068,18 +1113,13 @@ float psItemStats::GetRange() const
 
 PID psItemStats::GetCreator (PSITEMSTATS_CREATORSTATUS& creatorStatus)
 {
-    creatorStatus = creativeStats.creatorIDStatus;
-    if (creativeStats.creatorIDStatus == PSITEMSTATS_CREATOR_VALID)
-        return creativeStats.creatorID;
-    return PID(0);
+    return creativeStats.GetCreator(creatorStatus);
 }
 
 bool psItemStats::GetIsGlyph()
 {
     return (flags & PSITEMSTATS_FLAG_IS_GLYPH) ? true : false;
 }
-
-
 
 uint32 psItemStats::GetUID()
 {
@@ -1593,37 +1633,12 @@ bool psItemStats::SetCreation (PSITEMSTATS_CREATIVETYPE creativeType, const csSt
 
 void psItemStats::SetCreator (PID characterID, PSITEMSTATS_CREATORSTATUS creatorStatus)
 {
-    // if creator already set (i.e. valid or public) it cant be changed so return straightaway.
-    if (creativeStats.creatorIDStatus == PSITEMSTATS_CREATOR_PUBLIC ||
-        creativeStats.creatorIDStatus == PSITEMSTATS_CREATOR_VALID)
-    {
-        return;
-    }
-
-    creativeStats.creatorIDStatus = creatorStatus;
-    if (creatorStatus == PSITEMSTATS_CREATOR_VALID)
-    {
-        creativeStats.creatorID = characterID;
-    }
-    else
-    {
-        creativeStats.creatorID = PID(0);
-    }
-
-    creativeStats.FormatCreativeContent();   // result is n/a to setting creator.
+    creativeStats.SetCreator(characterID,creatorStatus);
 }
 
 bool psItemStats::IsThisTheCreator(PID characterID)
 {
-    // if characterID is creator of this item, or no creator assigned (then anyone can edit)
-    // of if the item is 'public' then any can edit it.
-    if ((creativeStats.creatorIDStatus == PSITEMSTATS_CREATOR_VALID &&
-         creativeStats.creatorID == characterID) ||
-        creativeStats.creatorIDStatus == PSITEMSTATS_CREATOR_PUBLIC ||
-        creativeStats.creatorIDStatus == PSITEMSTATS_CREATOR_UNASSIGNED)
-        return true;
-
-    return false;
+    return creativeStats.IsThisTheCreator(characterID);
 }
 
 const csString &psItemStats::GetCreativeBackgroundImg()
