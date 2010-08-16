@@ -253,13 +253,13 @@ public:
 
     void HandleMessage( MsgEntry* message );
 
-    // inherited from iOnStringEnteredAction
+    /// inherited from iOnStringEnteredAction
     void OnStringEntered(const char *name,int param,const char *value);
 
-    // inherited from iOnColorEnteredAction
+    /// inherited from iOnColorEnteredAction
     void OnColorEntered(const char *name,int param,int color);
 
-    // inherited from iScriptableVar from pawsWidget
+    /// inherited from iScriptableVar from pawsWidget
     double CalcFunction(const char * functionName, const double * params);
 
 

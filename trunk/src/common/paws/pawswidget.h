@@ -559,22 +559,27 @@ public:
      * @param node The xml data for the widget.
      * @return bool TRUE if no children, FALSE if there are problems with a 
      * node.
-     * @remark User should overload this function to populate different types 
+     * @remarks User should overload this function to populate different types 
      * of widgets. Call this base class function to populate children.
      * This is NOT the same as Setup(), which is defining height, width,
      * styles, etc.  This is data.
      */
     virtual bool SelfPopulate( iDocumentNode *node );
 
+    /// Does the first part of the drawing. It draws the background of the window.
+    void DrawWindow();
+    /// Does the second part of the drawing drawing the background of the window.
+    void DrawForeground();
+
     /** Draws the widget and all of it's children.
-     * @remark Uses clipping rect of it's parent to define drawing area. 
+     * @remarks Uses clipping rect of it's parent to define drawing area. 
      * If the drawing area defined is empty it returns.
      */
     virtual void Draw();
     virtual void Draw3D(iGraphics3D*) {}
 
     /** Draws the background with a color or an image.
-     * @remark Uses focus status to apply appropriate fading. 
+     * @remarks Uses focus status to apply appropriate fading. 
      */
     virtual void DrawBackground();
 
@@ -733,6 +738,13 @@ public:
      * GetFocusOverridesControls() as returning true
      */
     virtual bool OnKeyDown( utf32_char keyCode, utf32_char keyChar, int modifiers );
+    
+    /** Process joypadDown messages.
+     * @param key The key pressed.
+     * @param modifiers Used to modify behavior.
+     * @return bool TRUE for success FALSE if no action.
+     */
+    virtual bool OnJoypadDown( int key, int modifiers );
 
     /** Process Clipboard content, as a response to RequestClipboardContent
      * @param content The content of the clipboard

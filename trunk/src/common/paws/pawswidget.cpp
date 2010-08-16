@@ -805,7 +805,6 @@ bool pawsWidget::Load( iDocumentNode* node )
 bool pawsWidget::LoadChildren( iDocumentNode* node )
 {
     pawsWidget* widget;
-
     // Get an iterator over all the child widgets
     csRef<iDocumentNodeIterator> childIter = node->GetNodes();
 
@@ -1167,7 +1166,7 @@ void pawsWidget::DrawMask()
     }
 }
 
-void pawsWidget::Draw()
+void pawsWidget::DrawWindow()
 {
     // Setup our clipping rect so we know where we can draw
     ClipToParent(true);
@@ -1175,9 +1174,12 @@ void pawsWidget::Draw()
     // If we can't draw anywhere, then don't try.  Our children can't be drawn either.
     if (clipRect.IsEmpty())
         return;
-
+        
     DrawBackground();
+}
 
+void pawsWidget::DrawForeground()
+{
     ClipToParent(false);
     DrawChildren();
     DrawMask();
@@ -1186,6 +1188,11 @@ void pawsWidget::Draw()
         titleBar->Draw();
 }
 
+void pawsWidget::Draw()
+{
+    DrawWindow();
+    DrawForeground();
+}
 
 void pawsWidget::DrawWidgetText(const char *text, int x, int y, int style)
 {
@@ -1662,6 +1669,18 @@ bool pawsWidget::OnDoubleClick( int button, int modifiers, int x, int y )
     if ( parent )
     {
         return parent->OnDoubleClick( button, modifiers, x, y );
+    }
+    else
+    {
+        return false;
+    }
+}
+
+bool pawsWidget::OnJoypadDown( int button, int modifiers )
+{
+    if ( parent )
+    {
+        return parent->OnJoypadDown( button, modifiers);
     }
     else
     {

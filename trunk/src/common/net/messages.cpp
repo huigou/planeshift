@@ -5746,9 +5746,9 @@ csString psViewItemUpdate::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psReadBookTextMessage,MSGTYPE_READ_BOOK);
 
-psReadBookTextMessage::psReadBookTextMessage(uint32_t clientNum, csString& itemName, csString& bookText, bool canWrite, int slotID, int containerID)
+psReadBookTextMessage::psReadBookTextMessage(uint32_t clientNum, csString& itemName, csString& bookText, bool canWrite, int slotID, int containerID, csString backgroundImg)
 {
-    msg.AttachNew(new MsgEntry(itemName.Length()+1 + bookText.Length()+1+1+2*sizeof(uint32_t)));
+    msg.AttachNew(new MsgEntry(itemName.Length()+1 + bookText.Length()+1+1+2*sizeof(uint32_t)+backgroundImg.Length()+1));
     msg->SetType(MSGTYPE_READ_BOOK);
     msg->clientnum = clientNum;
     msg->Add(itemName);
@@ -5756,6 +5756,8 @@ psReadBookTextMessage::psReadBookTextMessage(uint32_t clientNum, csString& itemN
     msg->Add((uint8_t) canWrite);
     msg->Add(slotID);
     msg->Add(containerID);
+    msg->Add(backgroundImg);
+
 }
 
 psReadBookTextMessage::psReadBookTextMessage(MsgEntry* me )
@@ -5765,6 +5767,7 @@ psReadBookTextMessage::psReadBookTextMessage(MsgEntry* me )
     canWrite = me->GetUInt8() ? true : false;
     slotID = me->GetUInt32();
     containerID = me->GetUInt32();
+    backgroundImg = me->GetStr();
 }
 
 csString psReadBookTextMessage::ToString(AccessPointers * /*access_ptrs*/)

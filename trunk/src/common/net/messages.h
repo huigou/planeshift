@@ -4178,7 +4178,7 @@ public:
 class psReadBookTextMessage : public psMessageCracker
 {
 public:
-   psReadBookTextMessage(uint32_t clientNum, csString& itemName, csString& bookText, bool canWrite, int slotID, int containerID);
+   psReadBookTextMessage(uint32_t clientNum, csString& itemName, csString& bookText, bool canWrite, int slotID, int containerID, csString backgroundImg);
 
     /** Crack out the details from the message.
       * This will look at the packet and figure out if it is a single item or a container.
@@ -4198,11 +4198,13 @@ public:
 
     csString name;
     csString text;
-    //whether or not to display the 'edit' button
+    ///whether or not to display the 'edit' button
     bool canWrite;
-    //to identify which item this is later
+    ///to identify which item this is later
     int slotID;
     int containerID;
+    ///The image which will be shown as a background of this book.
+    csString backgroundImg;
 };
 
 //--------------------------------------------------------------------------
