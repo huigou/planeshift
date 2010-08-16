@@ -183,6 +183,9 @@ psItem::psItem() : transformationEvent(NULL), gItem(NULL), pendingsave(false), l
     lockpickSkill = PSSKILL_NONE;
     schedule = NULL;
     equipActiveSpell = NULL;
+    
+    //sets the creative stats in order to work on the instance and not the stats
+    creativeStats.setInstanceBased(true);
 }
 
 psItem::~psItem()
@@ -461,8 +464,26 @@ bool psItem::Load(iResultRow& row)
 
     item_name = row["item_name"];
     item_description = row["item_description"];
-
+    
+    if(row["creative_definition"] && current_stats->GetCreative() != PSITEMSTATS_CREATIVETYPE_NONE)
+    {
+        creativeStats.ReadStats(row);
+    }
+    
+    
     return true;
+}
+
+void psItem::PrepareCreativeItemInstance()
+{
+    //takes the original creativestats xml from the item stats and places it in the instance based
+    //creative stat
+    creativeStats.creativeDefinitionXML = current_stats->getCreativeXML();
+    //loads the xml definition we've just prepared
+    creativeStats.ReadStats();
+    //saves the data in the instance.
+    creativeStats.SaveCreation(uid);
+    
 }
 
 void psItem::Save(bool children)
@@ -502,6 +523,58 @@ void psItem::Save(bool children)
 #if SAVE_DEBUG
     else if (loaded) printf("%s::Save() for '%s' skipped\n", typeid(*(GetSafeReference()->item)).name(), GetName() );
 #endif
+}
+
+bool psItem::GetIsWriteable()
+{
+    return current_stats->GetIsWriteable();
+}
+
+bool psItem::GetIsReadable()
+{
+    return current_stats->GetIsReadable();
+}
+
+
+bool psItem::IsThisTheCreator(PID characterID)
+{
+    if(creativeStats.creativeType == PSITEMSTATS_CREATIVETYPE_NONE)
+        return current_stats->IsThisTheCreator(characterID);
+    
+    return creativeStats.IsThisTheCreator(characterID);
+}
+
+PID psItem::GetCreator (PSITEMSTATS_CREATORSTATUS& creatorStatus)
+{
+    if(creativeStats.creativeType == PSITEMSTATS_CREATIVETYPE_NONE)
+        return current_stats->GetCreator(creatorStatus);
+    return creativeStats.GetCreator(creatorStatus);
+}
+
+void psItem::SetCreator (PID characterID, PSITEMSTATS_CREATORSTATUS creatorStatus)
+{
+    if(creativeStats.creativeType == PSITEMSTATS_CREATIVETYPE_NONE)
+        return current_stats->SetCreator(characterID, creatorStatus);
+
+    creativeStats.SetCreator(characterID, creatorStatus);
+}
+
+bool psItem::SetCreation (PSITEMSTATS_CREATIVETYPE creativeType, const csString& newCreation, csString creatorName)
+{
+    csString newDescription;
+ 
+     if(creativeStats.creativeType == PSITEMSTATS_CREATIVETYPE_NONE)
+        return current_stats->SetCreation(creativeType, newCreation, creatorName);
+    
+    if (creativeStats.SetCreativeContent(creativeType, newCreation, uid))
+    {
+        newDescription = creativeStats.UpdateDescription(creativeType, GetName(), creatorName);
+        SetDescription(newDescription.GetDataSafe());
+        Save(false);
+        return true;
+    }
+
+    return false;
 }
 
 void psItem::Commit(bool children)
@@ -2494,16 +2567,14 @@ void psItem::SetGemObject(gemItem *object)
 
 bool psItem::SetBookText(const csString& newText)
 {
-    return GetBaseStats()->SetCreation(PSITEMSTATS_CREATIVETYPE_LITERATURE,
-                                       newText,
-                                       owning_character ? owning_character->GetCharFullName():"Unknown");
+    return SetCreation(PSITEMSTATS_CREATIVETYPE_LITERATURE, newText,
+                       owning_character ? owning_character->GetCharFullName():"Unknown");
 }
 
 bool psItem::SetSketch(const csString& newSketchData)
 {
-    return GetBaseStats()->SetCreation(PSITEMSTATS_CREATIVETYPE_SKETCH,
-                                       newSketchData,
-                                       owning_character ? owning_character->GetCharFullName():"Unknown");
+    return SetCreation(PSITEMSTATS_CREATIVETYPE_SKETCH, newSketchData, 
+                       owning_character ? owning_character->GetCharFullName():"Unknown");
 }
 
 void psItem::FillContainerMsg(Client* client, psViewItemDescription& outgoing)
@@ -2880,7 +2951,7 @@ void psItem::GetTransInfoString(psCharacter* character, uint32 designID, csStrin
 
 bool psItem::SendBookText(Client *client, int containerID, int slotID)
 {
-    csString name = GetStandardName();
+    csString name = GetName();
     csString text;
     csString lockedText("This item is locked\n");
     if(GetIsLocked())
@@ -2891,12 +2962,12 @@ bool psItem::SendBookText(Client *client, int containerID, int slotID)
     //and send the appropriate information if so
 
     //is it a writable book?  In our inventory? Are we the author?
-    bool shouldWrite = (GetBaseStats()->GetIsWriteable() &&
+    bool shouldWrite = (GetIsWriteable() &&
         GetOwningCharacter() == client->GetCharacterData() &&
-        GetBaseStats()->IsThisTheCreator(client->GetCharacterData()->GetPID()));
+        IsThisTheCreator(client->GetCharacterData()->GetPID()));
 
   //  CPrintf(CON_DEBUG,"Sent text for book %u %u\n",slotID, containerID);
-    psReadBookTextMessage outgoing(client->GetClientNum(), name, text, shouldWrite, slotID, containerID);
+    psReadBookTextMessage outgoing(client->GetClientNum(), name, text, shouldWrite, slotID, containerID,GetCreativeBackgroundImg());
 
     if (outgoing.valid)
     {
@@ -2938,9 +3009,9 @@ void psItem::SendSketchDefinition(Client *client)
     xml.AppendFmt("<count>%d</count>",primCount);  // This limits how many things you can add on the client.
 
     // writeable sketch? in inventory? author?
-    bool sketchReadOnly = !(GetBaseStats()->GetIsWriteable() &&
+    bool sketchReadOnly = !(GetIsWriteable() &&
           GetOwningCharacter() == client->GetCharacterData() &&
-          GetBaseStats()->IsThisTheCreator(client->GetCharacterData()->GetPID()));
+          IsThisTheCreator(client->GetCharacterData()->GetPID()));
     if (sketchReadOnly)
         xml.Append("<rdonly/>");
 
@@ -2957,7 +3028,7 @@ void psItem::SendSketchDefinition(Client *client)
     xml += "</limits>";
 
     // Now send all this
-    psSketchMessage msg( client->GetClientNum(), GetUID(), 0, xml, GetBaseStats()->GetSketch(), GetBaseStats()->IsThisTheCreator(client->GetCharacterData()->GetPID()), GetStandardName(), GetBaseStats()->GetCreativeBackgroundImg() );
+    psSketchMessage msg( client->GetClientNum(), GetUID(), 0, xml, GetSketch(), IsThisTheCreator(client->GetCharacterData()->GetPID()), GetName(), GetCreativeBackgroundImg() );
     msg.SendMessage();
 }
 
@@ -2984,14 +3055,14 @@ void psItem::ViewItem(Client* client, int containerID,
     //e.g. "This book is bound in a leathery Pterosaur hide and branded with the insignia of the Sunshine Squadron"
     //NOTE that this logic is sensitive to ordering; Books currently have a nonzero "sketch" length since that's where they
     //store their content.
-    else if (GetBaseStats()->GetIsReadable() && (client->GetCharacterData()
+    else if (GetIsReadable() && (client->GetCharacterData()
             == owningCharacter || !owningCharacter))
     {
         //We pass through container, slot & parent IDs so that we can pass them back and forth when writing books.
         SendBookText(client, containerID, slotID);
     }
-    else if (GetBaseStats()->GetCreative() == PSITEMSTATS_CREATIVETYPE_SKETCH
-            && GetBaseStats()->GetSketch().Length() > 0
+    else if (GetCreative() == PSITEMSTATS_CREATIVETYPE_SKETCH
+            && GetSketch().Length() > 0
             && (client->GetCharacterData() == owningCharacter
                     || !owningCharacter)) // Sketch
     {

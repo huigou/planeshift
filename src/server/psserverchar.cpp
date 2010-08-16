@@ -144,30 +144,22 @@ void ServerCharManager::UpdateSketch(MsgEntry* me, Client *client)
         psItem *item   = client->GetCharacterData()->Inventory().FindItemID(sketchMsg.ItemID);
         if (item)
         {
-            // check title is still unique
-            csString currentTitle = item->GetStandardName();
-            if (sketchMsg.name.Length() > 0)
+            csString currentTitle = item->GetName();
+            if(sketchMsg.name.Length() > 0 && sketchMsg.name != currentTitle)
             {
-                uint32 existingItemID = cacheManager->BasicItemStatsByNameExist(sketchMsg.name);
-                if (existingItemID != 0 && existingItemID != item->GetBaseStats()->GetUID())
-                {
-                    psserver->SendSystemError(me->clientnum, "The title is not unique");
-                }
-                else if (sketchMsg.name != currentTitle)
-                {
-                    currentTitle = sketchMsg.name;
-                    item->GetBaseStats()->SetName(sketchMsg.name);
-                }
+                currentTitle = sketchMsg.name;
+                item->SetName(sketchMsg.name);
             }
 
             // TODO: Probably need to validate the xml here somehow
             // for first sketcher, sets authorship.
-            item->GetBaseStats()->SetCreator(client->GetCharacterData()->GetPID(), PSITEMSTATS_CREATOR_VALID);
+            item->SetCreator(client->GetCharacterData()->GetPID(), PSITEMSTATS_CREATOR_VALID);
             if (item->SetSketch(csString(sketchMsg.Sketch)))
             {
                 printf("Updated sketch for item %u to: %s\n", sketchMsg.ItemID, sketchMsg.Sketch.GetDataSafe());
                 psserver->SendSystemInfo(me->clientnum, "Your drawing has been updated.");
                 item->GetBaseStats()->Save();
+                item->Save(false);
             }
         }
         else
@@ -260,20 +252,20 @@ void ServerCharManager::HandleBookWrite(MsgEntry* me, Client* client)
          psItem* item = slotManager->FindItem(client, mesg.containerID, (INVENTORY_SLOT_NUMBER) mesg.slotID);
 
          //is it a writable book?  In our inventory? Are we the author?
-         if(item && item->GetBaseStats()->GetIsWriteable() &&
+         if(item && item->GetIsWriteable() &&
             item->GetOwningCharacter() == client->GetCharacterData() &&
-            item->GetBaseStats()->IsThisTheCreator(client->GetCharacterData()->GetPID()))
+            item->IsThisTheCreator(client->GetCharacterData()->GetPID()))
          {
               //We could maybe let the work manager know that we're busy writing something
               //or track that this is the book we're working on, and only allow saves to a
               //book that was opened for writing.  This would be a good thing.
               //Also check for other writing in progress
               csString theText(item->GetBookText());
-              csString theTitle(item->GetStandardName());
+              csString theTitle(item->GetName());
               psWriteBookMessage resp(client->GetClientNum(), theTitle, theText, true,  (INVENTORY_SLOT_NUMBER)mesg.slotID, mesg.containerID);
               resp.SendMessage();
               // this only does set the creator for first write to book
-              item->GetBaseStats()->SetCreator(client->GetCharacterData()->GetPID(), PSITEMSTATS_CREATOR_VALID);
+              item->SetCreator(client->GetCharacterData()->GetPID(), PSITEMSTATS_CREATOR_VALID);
             //  CPrintf(CON_DEBUG, "Sent: %s\n",resp.ToString(NULL).GetDataSafe());
          }
          else
@@ -287,29 +279,20 @@ void ServerCharManager::HandleBookWrite(MsgEntry* me, Client* client)
        // CPrintf(CON_DEBUG, "Attempt to save book in slot id %d\n",mesg.slotID);
         //something like:
         psItem* item = slotManager->FindItem(client, mesg.containerID, (INVENTORY_SLOT_NUMBER) mesg.slotID);
-        if(item && item->GetBaseStats()->GetIsWriteable())
+        if(item && item->GetIsWriteable())
         {
-            // check title is still unique
-            csString currentTitle = item->GetStandardName();
-            if (mesg.title.Length() > 0)
+            csString currentTitle = item->GetName();
+            if(mesg.title.Length() > 0 && mesg.title != currentTitle)
             {
-                uint32 existingItemID = cacheManager->BasicItemStatsByNameExist(mesg.title);
-                if (existingItemID != 0 && existingItemID != item->GetBaseStats()->GetUID())
-                {
-                    psserver->SendSystemError(me->clientnum, "The title is not unique");
-                }
-                else if (mesg.title != currentTitle)
-                {
-                    currentTitle = mesg.title;
-                    item->GetBaseStats()->SetName(mesg.title);
-                    item->GetBaseStats()->SaveName();
-                }
+                currentTitle = mesg.title;
+                item->SetName(mesg.title);
             }
 
             // or psItem* item = (find the player)->GetCurrentWritingItem();
             bool saveOK = item->SetBookText(mesg.content);
             psWriteBookMessage saveresp(client->GetClientNum(), currentTitle, saveOK);
             saveresp.SendMessage();
+            item->Save(false);
         }
         // clear current writing item
 
@@ -770,55 +753,36 @@ void ServerCharManager::HandleMerchantBuy(psGUIMerchantMessage& msg, Client *cli
 
         csList<psItem *> newitem;
         bool error = false;
-        // if item is to be personalised, then duplicate the item_stats and personalise
+        // if item is to be personalised, then duplicate the base it on the item_stats and personalise
         // by given it a unique name for the purchaser.
         if (item->GetBuyPersonalise())
         {
             for (int i = 0; i < count; i++)
             {
-                // copy 'item' item_stats to create unique item...
-                // personalised name is "<item> of <purchaser>"
-                // If "<item> of <purchaser>" already exists, add " (<number>)" (being the row count+1 of item_stats)
-                // if item is 'public', then name is "<item> (<number>)"
                 psItem * newpersonaliseditem;
                 PSITEMSTATS_CREATORSTATUS creatorStatus;
-                item->GetBaseStats()->GetCreator(creatorStatus);
+                item->GetCreator(creatorStatus);
                 csString itemName(item->GetName());
                 if (creatorStatus != PSITEMSTATS_CREATOR_PUBLIC)
                     itemName.AppendFmt(" of %s", client->GetName());
 
                 csString personalisedName(itemName);
 
-                for(int i = 1; cacheManager->BasicItemStatsByNameExist(personalisedName) > 0; i++)
-                {
-                    personalisedName = itemName;
-                    personalisedName.AppendFmt(" (%zu)", cacheManager->ItemStatsSize()+i);
-                }
-
-                psItemStats * newCreation = cacheManager->CopyItemStats(item->GetBaseStats()->GetUID(),
-                                                                                  personalisedName);
-
-                if (!newCreation)
-                {
-                    error = true;
-                    break;
-                }
-
-                newCreation->SetUnique();
-
-                newCreation->Save();
-
                 // instantiate it
-                newpersonaliseditem = newCreation->InstantiateBasicItem();
+                newpersonaliseditem = item->GetBaseStats()->InstantiateBasicItem();
 
                 if (!newpersonaliseditem)
                 {
                     error = true;
                     break;
                 }
-
+                newpersonaliseditem->SetName(personalisedName);
+                //copies the template creative data from the item stats in the item instances for use
+                //by the player
+                newpersonaliseditem->PrepareCreativeItemInstance();
                 newpersonaliseditem->SetLoaded();
                 newitem.PushBack(newpersonaliseditem);
+                
             }
         }
         else // normal purchase
