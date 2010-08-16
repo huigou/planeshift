@@ -51,6 +51,11 @@ private:
 	
 	csString filenameSafe(const csString &original);
 	bool isBadChar(char c);
+    
+    /// Background image.
+    csRef<iPawsImage> bookBgImage;
+    virtual void Draw();
+    
 };
 
 CREATE_PAWS_FACTORY( pawsBookReadingWindow );

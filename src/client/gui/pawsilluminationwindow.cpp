@@ -223,7 +223,13 @@ void pawsSketchWindow::Hide()
 
 void pawsSketchWindow::Draw()
 {
-    pawsWidget::Draw();
+    pawsWidget::DrawWindow();
+
+    //draw background
+    if(sketchBgImage)
+        sketchBgImage->Draw(screenFrame, 0);
+        
+    pawsWidget::DrawForeground();
 
     // The close button X overrides the clip region so we have to set it back here
     ClipToParent(false);
@@ -271,10 +277,6 @@ void pawsSketchWindow::Draw()
             }
         }
     }
-
-    //draw background
-    if(sketchBgImage)
-        sketchBgImage->Draw(screenFrame, 0);
 
     DrawSketch();
 }

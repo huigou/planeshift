@@ -99,6 +99,8 @@ void pawsBookReadingWindow::HandleMessage( MsgEntry* me )
                 descriptionCraft->Hide();
             }
             description->Show();
+            //set the background image for the book
+            bookBgImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(mesg.backgroundImg);
             break;
         }
         case MSGTYPE_CRAFT_INFO:
@@ -176,6 +178,17 @@ bool pawsBookReadingWindow::isBadChar(char c)
 		return false;
 	else
 		return true;
+}
+
+void pawsBookReadingWindow::Draw()
+{
+    pawsWidget::DrawWindow();
+
+    //draw background
+    if(bookBgImage)
+        bookBgImage->Draw(screenFrame, 0);
+        
+    pawsWidget::DrawForeground();
 }
 
 csString pawsBookReadingWindow::filenameSafe(const csString &original)
