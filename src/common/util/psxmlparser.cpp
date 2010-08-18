@@ -143,7 +143,7 @@ size_t psXMLString::GetTag( int start, psXMLTag& tag )
     int end = FindSubString(tmp, start);
 
     if ( end == -1 )
-        tag.SetAt(0,0);
+        tag.Empty();
     else
         GetSubString(tag, start, end+1);
 
