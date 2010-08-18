@@ -40,7 +40,7 @@
 #include "util/psconst.h"
 #include "loader.h"
 
-//#ifndef CS_DEBUG
+//#ifdef CS_DEBUG
 #undef  CS_ASSERT_MSG
 #define CS_ASSERT_MSG(msg, x) if(!x) printf("ART ERROR: %s\n", msg);
 //#endif
@@ -304,9 +304,16 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                     {
                         node = nodeItr->Next();
                         csRef<Material> m = csPtr<Material>(new Material(node->GetAttributeValue("name")));
+                        if(m.IsValid())
                         {
                             CS::Threading::ScopedWriteLock lock(mLock);
                             materials.Put(mStringSet.Request(m->name), m);
+                        }
+                        else
+                        {
+                            csString msg;
+                            msg.Format("Failed to create material '%s'", node->GetAttributeValue("name"));
+                            CS_ASSERT_MSG(msg.GetData(), false);
                         }
 
                         // Parse the texture for a material. Construct a shader variable for it.
@@ -327,8 +334,12 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                                 msg.Format("Invalid texture reference '%s' in material '%s'", node->GetContentsValue(), node->GetParent()->GetAttributeValue("name"));
                                 CS_ASSERT_MSG(msg.GetData(), texture.IsValid());
                             }
-                            m->textures.Push(texture);
-                            m->checked.Push(false);
+
+                            if(texture.IsValid())
+                            {
+                                m->textures.Push(texture);
+                                m->checked.Push(false);
+                            }
 
                             node = node->GetParent();
                         }
@@ -372,7 +383,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                             else
                             {
                                 m->shadervars.Push(*sv);
-                                if(sv->type == csShaderVariable::TEXTURE)
+                                if(sv->type == csShaderVariable::TEXTURE && tex.IsValid())
                                 {
                                     m->textures.Push(tex);
                                     m->checked.Push(false);
@@ -456,8 +467,11 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                             CS_ASSERT_MSG(msg.GetData(), material.IsValid());
                         }
 
-                        mf->materials.Push(material);
-                        mf->checked.Push(false);
+                        if(material.IsValid())
+                        {
+                            mf->materials.Push(material);
+                            mf->checked.Push(false);
+                        }
                     }
 
                     csRef<iDocumentNodeIterator> nodeItr3 = node->GetNode("params")->GetNodes("submesh");
@@ -477,9 +491,12 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                                 CS_ASSERT_MSG(msg.GetData(), material.IsValid());
                             }
 
-                            mf->materials.Push(material);
-                            mf->checked.Push(false);
-                            mf->submeshes.Push(node2->GetAttributeValue("name"));
+                            if(material.IsValid())
+                            {
+                                mf->materials.Push(material);
+                                mf->checked.Push(false);
+                                mf->submeshes.Push(node2->GetAttributeValue("name"));
+                            }
                         }
                     }
 
@@ -498,8 +515,12 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                                 node2->GetAttributeValue("material"), node->GetAttributeValue("name"), node2->GetAttributeValue("name"));
                             CS_ASSERT_MSG(msg.GetData(), material.IsValid());
                         }
-                        mf->materials.Push(material);
-                        mf->checked.Push(false);
+
+                        if(material.IsValid())
+                        {
+                            mf->materials.Push(material);
+                            mf->checked.Push(false);
+                        }
                     }
 
                     // Parse terrain cells for materials.
@@ -518,8 +539,11 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                                 CS_ASSERT_MSG(msg.GetData(), material.IsValid());
                             }
 
-                            mf->materials.Push(material);
-                            mf->checked.Push(false);
+                            if(material.IsValid())
+                            {
+                                mf->materials.Push(material);
+                                mf->checked.Push(false);
+                            }
                         }
                         node = node->GetParent()->GetParent();
 
@@ -545,8 +569,11 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                                         CS_ASSERT_MSG(msg.GetData(), material.IsValid());
                                     }
 
-                                    mf->materials.Push(material);
-                                    mf->checked.Push(false);
+                                    if(material.IsValid())
+                                    {
+                                        mf->materials.Push(material);
+                                        mf->checked.Push(false);
+                                    }
                                 }
                             }
                         }
@@ -677,8 +704,11 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                                     CS_ASSERT_MSG(msg.GetData(), material.IsValid());
                                 }
 
-                                m->materials.Push(material);
-                                m->matchecked.Push(false);
+                                if(material.IsValid())
+                                {
+                                    m->materials.Push(material);
+                                    m->matchecked.Push(false);
+                                }
                             }
 
                             csRef<iDocumentNodeIterator> nodeItr4 = node3->GetNodes("shadervar");
@@ -698,8 +728,11 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                                         CS_ASSERT_MSG(msg.GetData(), texture.IsValid());
                                     }
 
-                                    m->textures.Push(texture);
-                                    m->texchecked.Push(false);
+                                    if(texture.IsValid())
+                                    {
+                                        m->textures.Push(texture);
+                                        m->texchecked.Push(false);
+                                    }
                                 }
                                 else
                                 {
@@ -789,8 +822,12 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                                 CS_ASSERT_MSG(msg.GetData(), material.IsValid());
                             }
 
-                            m->materials.Push(material);
-                            m->matchecked.Push(false);
+                            if(material.IsValid())
+                            {
+                                m->materials.Push(material);
+                                m->matchecked.Push(false);
+                            }
+
                             node2 = node2->GetParent();
                         }
 
@@ -812,8 +849,11 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                                     CS_ASSERT_MSG(msg.GetData(), material.IsValid());
                                 }
 
-                                m->materials.Push(material);
-                                m->matchecked.Push(false);
+                                if(material.IsValid())
+                                {
+                                    m->materials.Push(material);
+                                    m->matchecked.Push(false);
+                                }
                             }
                         }
 
@@ -856,7 +896,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                                         {
                                             // we don't add the variable here because CS' loader does it for us on loading
                                             m->shadervars.Push(*sv);
-                                            if(sv->type == csShaderVariable::TEXTURE)
+                                            if(sv->type == csShaderVariable::TEXTURE && tex.IsValid())
                                             {
                                                 m->textures.Push(tex);
                                                 m->texchecked.Push(false);
@@ -970,8 +1010,11 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                                         CS_ASSERT_MSG(msg.GetData(), material.IsValid());
                                     }
 
-                                    mgen->materials.Push(material);
-                                    mgen->matchecked.Push(false);
+                                    if(material.IsValid())
+                                    {
+                                        mgen->materials.Push(material);
+                                        mgen->matchecked.Push(false);
+                                    }
                                 }
                             }
                         }
