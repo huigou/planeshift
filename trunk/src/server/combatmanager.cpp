@@ -477,7 +477,8 @@ int CombatManager::CalculateAttack(psCombatGameEvent *event, psItem* subWeapon)
         attacker->GetPosition(attackPos, attackSector);
         target->GetPosition(targetPos, targetSector);
 
-        if((attacker->GetInstance() != target->GetInstance()) ||
+        if((attacker->GetInstance() != target->GetInstance() &&
+            attacker->GetInstance() != -1 && target->GetInstance() != -1) ||
             !(entityManager->GetWorld()->WarpSpace(targetSector, attackSector, targetPos)))
         {
             return ATTACK_OUTOFRANGE;
