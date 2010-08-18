@@ -465,7 +465,9 @@ bool psItem::Load(iResultRow& row)
     item_name = row["item_name"];
     item_description = row["item_description"];
     
-    if(row["creative_definition"] && current_stats->GetCreative() != PSITEMSTATS_CREATIVETYPE_NONE)
+    //the check for empty string is done as last as it's actually a save case for a db bug (empty
+    //creative definitions should be null)
+    if(row["creative_definition"] && current_stats->GetCreative() != PSITEMSTATS_CREATIVETYPE_NONE && *row["creative_definition"])
     {
         creativeStats.ReadStats(row);
     }
