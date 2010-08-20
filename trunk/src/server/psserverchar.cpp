@@ -149,6 +149,9 @@ void ServerCharManager::UpdateSketch(MsgEntry* me, Client *client)
             {
                 currentTitle = sketchMsg.name;
                 item->SetName(sketchMsg.name);
+                //update the inventory. fixes PS#4406. TODO: we really need a way to send only one item update
+                //to clients inventory
+                SendInventory(client->GetClientNum(),true);
             }
 
             // TODO: Probably need to validate the xml here somehow
@@ -286,6 +289,9 @@ void ServerCharManager::HandleBookWrite(MsgEntry* me, Client* client)
             {
                 currentTitle = mesg.title;
                 item->SetName(mesg.title);
+                //update the inventory. fixes PS#4406. TODO: we really need a way to send only one item update
+                //to clients inventory
+                SendInventory(client->GetClientNum(),true);
             }
 
             // or psItem* item = (find the player)->GetCurrentWritingItem();
