@@ -482,10 +482,7 @@ void psItem::PrepareCreativeItemInstance()
     //creative stat
     creativeStats.creativeDefinitionXML = current_stats->getCreativeXML();
     //loads the xml definition we've just prepared
-    creativeStats.ReadStats();
-    //saves the data in the instance.
-    creativeStats.SaveCreation(uid);
-    
+    creativeStats.ReadStats();    
 }
 
 void psItem::Save(bool children)
@@ -799,6 +796,10 @@ void psItem::Commit(bool children)
         {
             item_quality_original = item_quality;
             SetUID(db->GetLastInsertID());
+            //saves the creative data in the instance if any as we need an uid for it to work and we have it
+            //only now
+            if(creativeStats.creativeType != PSITEMSTATS_CREATIVETYPE_NONE)
+                creativeStats.SaveCreation(uid);
         }
         else
             Error2("Failed to insert item instance!\nError: %s", db->GetLastError());
