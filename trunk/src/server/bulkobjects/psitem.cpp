@@ -1514,6 +1514,9 @@ void psItem::Copy(psItem * target)
     //unique name & description are the same
     target->item_name = item_name;
     target->item_description = item_description;
+    
+    //copy the creative stats to the new item
+    target->creativeStats = creativeStats;
 
     target->SetGuardingCharacterID(GetGuardingCharacterID());
 
