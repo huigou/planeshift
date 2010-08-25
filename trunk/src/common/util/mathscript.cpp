@@ -189,6 +189,7 @@ MathStatement* MathStatement::Create(const csString & line, const char *name)
         return NULL;
 
     MathStatement *stmt = new MathStatement;
+    stmt->name = name;
     csString & assignee = stmt->assignee;
     line.SubString(assignee, 0, assignAt);
     assignee.Trim();
@@ -199,6 +200,7 @@ MathStatement* MathStatement::Create(const csString & line, const char *name)
         if (!isalnum(assignee[i]) && assignee[i] != '_')
             validAssignee = false;
     }
+
     if (!validAssignee && assignee != "exit") // exit is special
     {
         Error3("Parse error in MathStatement >%s: %s<: Invalid assignee.", name, line.GetData());
@@ -208,8 +210,7 @@ MathStatement* MathStatement::Create(const csString & line, const char *name)
 
     csString expression;
     line.SubString(expression, assignAt+1);
-    stmt->expression = MathExpression::Create(expression, name);
-    if (!stmt->expression)
+    if (!stmt->Parse(expression))
     {
         delete stmt;
         return NULL;
@@ -221,26 +222,20 @@ MathStatement* MathStatement::Create(const csString & line, const char *name)
     if (expression.GetAt(0) == '\'' || expression.GetAt(0) == '"')
         stmt->assigneeType = VARTYPE_STR;
 
+    stmt->opcode |= MATH_ASSIGN;
     return stmt;
 }
 
-MathStatement::~MathStatement()
+double MathStatement::Evaluate(MathEnvironment *env)
 {
-    if (expression)
-    {
-        delete expression;
-        expression = NULL;
-    }
-}
-
-void MathStatement::Evaluate(MathEnvironment *env)
-{
-    env->Define(assignee, expression->Evaluate(env));
+    double result = MathExpression::Evaluate(env);
+    env->Define(assignee, result);
     if (assigneeType != VARTYPE_VALUE)
     {
         MathVar *var = env->Lookup(assignee);
         var->type = assigneeType;
     }
+    return result;
 }
 
 //----------------------------------------------------------------------------
@@ -251,17 +246,16 @@ MathScript* MathScript::Create(const char *name, const csString & script)
 
     size_t start = 0;
     size_t semicolonAt = 0;
+    size_t blockStart = 0;
+    size_t blockEnd = 0;
 
     while (start < script.Length())
     {
-        if(script.Slice(start).Trim().StartsWith("\r") || script.Slice(start).Trim().StartsWith("\n")) //skips new lines
-        {
-            semicolonAt = script.FindFirst("\r\n", start);
-            start = semicolonAt+1;
-            continue;
-        }
+        csString trimmedScript = script.Slice(start).Trim();
 
-        if(script.Slice(start).Trim().StartsWith("//")) //manages full line comments like this
+        // skip empty lines and full line comments
+        if(trimmedScript.StartsWith("\r") || trimmedScript.StartsWith("\n")
+                                          || trimmedScript.StartsWith("//"))
         {
             semicolonAt = script.FindFirst("\r\n", start);
             if(semicolonAt == SIZET_NOT_FOUND)
@@ -275,13 +269,126 @@ MathScript* MathScript::Create(const char *name, const csString & script)
         if (semicolonAt == SIZET_NOT_FOUND)
             semicolonAt = script.Length();
 
+        // parse code blocks
+        blockStart = script.FindFirst('{', start);
+        if (blockStart != SIZET_NOT_FOUND && blockStart < semicolonAt)
+        {
+            blockStart++; // skip { from now on
+
+            // check whether it's a conditional one
+            csString line = script.Slice(start, blockStart - start);
+            line.Trim();
+            size_t opcode = MATH_NONE;
+            if(line.StartsWith("if"))
+            {
+                opcode = MATH_IF;
+            }
+            else if(line.StartsWith("else"))
+            {
+                // validate we have a matching if
+                size_t lineCount = s->scriptLines.GetSize();
+                if (lineCount < 2 || s->scriptLines.Get(lineCount - 2)->GetOpcode() != MATH_IF)
+                {
+                    Error2("Failed to create MathScript >%s<. Found else without prior if.", name);
+                }
+                opcode = MATH_ELSE;
+            }
+            else if(line.StartsWith("while"))
+            {
+                opcode = MATH_WHILE;
+            }
+            else if(line.StartsWith("do"))
+            {
+                opcode = MATH_DO;
+            }
+
+            MathExpression *st = NULL;
+            if (opcode & MATH_EXP)
+            {
+                // find expression
+                size_t expStart = line.FindFirst("(");
+                size_t expEnd = line.FindLast(")");
+                if (expStart == SIZET_NOT_FOUND || expEnd == SIZET_NOT_FOUND || expStart > expEnd)
+                {
+                    Error2("Failed to create MathScript >%s<. Could not find expression in block.", name);
+                    delete s;
+                    return NULL;
+                }
+                expStart++; // skip (
+
+                csString exp = line.Slice(expStart, expEnd - expStart);
+                exp.Collapse();
+                if (!exp.IsEmpty())
+                {
+                    if (exp.FindFirst("=") != SIZET_NOT_FOUND)
+                    {
+                        opcode |= MATH_ASSIGN;
+                        st = MathStatement::Create(exp, s->name);
+                    }
+                    else
+                    {
+                        st = MathExpression::Create(exp, s->name);
+                    }
+                }
+            }
+            else
+            {
+                st = new EmptyMathStatement;
+            }
+
+            if (opcode != MATH_NONE)
+            {
+                if (!st)
+                {
+                    Error2("Failed to create MathScript >%s<. Could not validate expression in block.", name);
+                    delete s;
+                    return NULL;
+                }
+                st->SetOpcode(opcode);
+                s->scriptLines.Push(st);
+            }
+
+            size_t nextBlockStart = script.FindFirst('{', blockStart);
+            blockEnd = script.FindFirst('}', blockStart);
+
+            // find the real end of the block (take care of nested blocks)
+            while (nextBlockStart != SIZET_NOT_FOUND && nextBlockStart < blockEnd)
+            {
+                // skip {
+                nextBlockStart++;
+
+                // find the next block end
+                blockEnd = script.FindFirst('}', nextBlockStart);
+
+                // no matching end found
+                if (blockEnd == SIZET_NOT_FOUND)
+                {
+                    Error2("Failed to create MathScript >%s<. Could not find matching close tag for code block.", name);
+                    delete s;
+                    return NULL;
+                }
+
+                nextBlockStart = script.FindFirst('{', nextBlockStart);
+            }
+
+            st = MathScript::Create(name, script.Slice(blockStart, blockEnd - blockStart));
+            if (!st)
+            {
+                delete s;
+                return NULL;
+            }
+            s->scriptLines.Push(st);
+            start = blockEnd+1;
+            continue;
+        }
+
         if (semicolonAt - start > 0)
         {
             csString line = script.Slice(start, semicolonAt - start);
             line.Collapse();
             if (!line.IsEmpty())
             {
-                MathStatement *st = MathStatement::Create(line, s->name);
+                MathExpression *st = MathStatement::Create(line, s->name);
                 if (!st)
                 {
                     delete s;
@@ -301,7 +408,7 @@ MathScript::~MathScript()
         delete scriptLines.Pop();
 }
 
-void MathScript::Evaluate(MathEnvironment *env)
+double MathScript::Evaluate(MathEnvironment *env)
 {
     MathVar *exitsignal = env->Lookup("exit");
     if (exitsignal)
@@ -309,13 +416,76 @@ void MathScript::Evaluate(MathEnvironment *env)
 
     for (size_t i = 0; i < scriptLines.GetSize(); i++)
     {
-        scriptLines[i]->Evaluate(env);
+        MathExpression* s = scriptLines[i];
+        size_t op = s->GetOpcode();
+
+        // handle "do { }" and "while { }"
+        if (op & MATH_LOOP)
+        {
+            MathExpression* l = scriptLines[i+1];
+            while (!(op & MATH_EXP) || s->Evaluate(env))
+            {
+                // code blocks(MathScript) shall return a value < 0 to
+                // signal an error/break
+                if (l->Evaluate(env) < 0)
+                {
+                    break;
+                }
+
+                if (exitsignal && exitsignal->GetValue() != 0.0)
+                {
+                    // exit the script
+                    return 0;
+                }
+            }
+            i++; // skip next statement as it's already handled
+        }
+        // handle "return x;"
+        else if (op & MATH_BREAK)
+        {
+            return s->Evaluate(env);
+        }
+        // handle "if { } [ else { } ]"
+        else if (op == MATH_IF)
+        {
+            size_t nextOp = MATH_NONE;
+            if (i + 3 < scriptLines.GetSize())
+            {
+                nextOp = scriptLines[i+2]->GetOpcode();
+            }
+
+            if (s->Evaluate(env))
+            {
+                scriptLines[i+1]->Evaluate(env);
+            }
+            else if (nextOp == MATH_ELSE)
+            {
+                scriptLines[i+3]->Evaluate(env);
+            }
+
+            if (nextOp == MATH_ELSE)
+            {
+                i += 3; // skip next 3 statements as we already handled them
+            }
+            else
+            {
+                i++; // skip next statement as we already handled it
+            }
+        }
+        // handle regular expressions, e.g. assignments
+        else if (op & MATH_EXP)
+        {
+            s->Evaluate(env);
+        }
+
         if (exitsignal && exitsignal->GetValue() != 0.0)
         {
             // printf("Terminating mathscript at line %d of %d.\n",i, scriptLines.GetSize());
             break;
         }
     }
+
+    return 0;
 }
 
 //----------------------------------------------------------------------------
@@ -425,7 +595,7 @@ double MathScriptEngine::GetValue(iScriptableVar* p)
 
 //----------------------------------------------------------------------------
 
-MathExpression::MathExpression()
+MathExpression::MathExpression() : opcode(MATH_EXP)
 {
     fp.AddFunction("rnd", MathScriptEngine::RandomGen, 1);
     fp.AddFunction("pow", MathScriptEngine::Power, 2);
@@ -528,6 +698,18 @@ bool MathExpression::Parse(const char *exp)
     // Push the last token, too
     if (start != SIZET_NOT_FOUND)
         tokens.Push(exp+start);
+
+    // return statements are treated specially
+    if (tokens[0] == "return")
+    {
+        tokens.DeleteIndex(0);
+        opcode |= MATH_BREAK;
+        if (tokens.IsEmpty())
+        {
+            // return -1 per default
+            tokens.Push("-1");
+        }
+    }
 
     //for (size_t i = 0; i < tokens.GetSize(); i++)
     //    printf("Token[%d] = %s\n", int(i), tokens[i].GetDataSafe());

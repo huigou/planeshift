@@ -117,9 +117,30 @@ protected:
 
 class MathExpression
 {
+protected:
+    enum
+    {
+        MATH_NONE   =   0, // NOP
+        MATH_COND   =   1, // is a conditional
+        MATH_EXP    =   2, // has expression
+        MATH_LOOP   =   4, // is a loop
+        MATH_ASSIGN =   8, // is an assignment
+        MATH_BREAK  =  16, // flow control break
+
+        // aliases
+        MATH_WHILE = MATH_COND | MATH_EXP | MATH_LOOP,
+        MATH_IF    = MATH_COND | MATH_EXP,
+        MATH_ELSE  = MATH_COND,
+        MATH_DO    = MATH_EXP | MATH_LOOP
+    };
+    size_t opcode;
+
 public:
     static MathExpression* Create(const char *expression, const char *name = "");
     double Evaluate(const MathEnvironment *env);
+    virtual double Evaluate(MathEnvironment *env) { return Evaluate(const_cast<const MathEnvironment*>(env)); }
+    size_t GetOpcode() { return opcode; }
+    void SetOpcode(size_t newOpcode) { opcode = newOpcode; }
 
 protected:
     MathExpression();
@@ -143,20 +164,28 @@ protected:
  * shared across Lines, which means the next Line can use
  * that Var as an input.
  */
-class MathStatement
+class MathStatement : public MathExpression
 {
 public:
-    ~MathStatement();
-
     static MathStatement* Create(const csString & expression, const char *name);
-    void Evaluate(MathEnvironment *env);
+    double Evaluate(MathEnvironment *env);
 
 protected:
-    MathStatement() : assigneeType(VARTYPE_VALUE), expression(NULL) { }
+    MathStatement() : assigneeType(VARTYPE_VALUE) { }
 
     csString assignee;
     MathType assigneeType; // we can't know, but at least detect Var = 'Hi' as STR.
-    MathExpression *expression;
+};
+
+/**
+ * This holds an empty statement that shall not be executed
+ * but is used for control flow statements, e.g. else or do
+ */
+class EmptyMathStatement : public MathExpression
+{
+public:
+    EmptyMathStatement() { opcode = MATH_NONE; }
+    double Evaluate(MathEnvironment *env) { return 0; }
 };
 
 
@@ -167,7 +196,7 @@ protected:
  *  it parses, it makes a hashmap of all the variables
  *  for quick access.
  */
-class MathScript
+class MathScript : private MathExpression
 {
 public:
     static MathScript* Create(const char *name, const csString & script);
@@ -175,12 +204,12 @@ public:
 
     const csString & Name() { return name; }
 
-    void Evaluate(MathEnvironment *env);
+    double Evaluate(MathEnvironment *env);
 
 protected:
     MathScript(const char *name) : name(name) { }
     csString name;
-    csArray<MathStatement*> scriptLines;
+    csArray<MathExpression*> scriptLines;
 };
 
 /**
