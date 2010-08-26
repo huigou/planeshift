@@ -683,8 +683,11 @@ bool psEngine::Initialize (int level)
             return false;
         }
 
-        if ( ! paws->LoadWidget("charpick.xml") )
+        if (!paws->LoadWidget("charpick.xml"))
+        {
+            FatalError("Failed to load character picker!");
             return false;
+        }
 
         meshes.Invalidate();
         maps.Invalidate();
