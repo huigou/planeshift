@@ -22,6 +22,7 @@
 #include <csutil/sysfunc.h>
 
 #include "pawssplashwindow.h"
+#include "pawsquitinfobox.h"
 #include "paws/pawsmanager.h"
 
 #include "paws/pawsprogressbar.h"
@@ -29,7 +30,7 @@
 
 pawsSplashWindow::pawsSplashWindow()
 {
-    level = 0;
+    level = 1;
 }
 
 pawsSplashWindow::~pawsSplashWindow()
@@ -46,11 +47,9 @@ void pawsSplashWindow::Draw()
 {
     pawsWidget::Draw();
 
-    if(level == 0)
-    {
-        ++level;
-        return;
-    }
+    pawsQuitInfoBox* quitinfo = (pawsQuitInfoBox*)(PawsManager::GetSingleton().FindWidget("QuitInfoWindow"));
+    if(quitinfo && quitinfo->IsVisible())
+        return; // a fatal error occured, don't load any further
 
     if(psengine->Initialize(level))
         ++level;
