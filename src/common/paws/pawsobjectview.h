@@ -20,6 +20,7 @@
 #ifndef PAWS_OBJECT_VIEW_HEADER
 #define PAWS_OBJECT_VIEW_HEADER
 
+#include <iengine/rendermanager.h>
 #include <iengine/camera.h>
 #include <iengine/engine.h>
 #include <iengine/light.h>
@@ -144,6 +145,7 @@ private:
     csRef<iSector> stage;
     csRef<iView>   view;
     csRef<iEngine> engine;
+    csRef<iRenderManagerTargets> rmTargets;
     csRef<iMeshWrapper> mesh;
     csRef<iSector> meshSector;
     csRef<iView>   meshView;

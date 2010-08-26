@@ -27,7 +27,6 @@
 #include <iutil/objreg.h>
 #include <imap/loader.h>
 #include <iutil/vfs.h>
-#include "iengine/rendermanager.h"
 #include <iengine/texture.h>
 #include <csutil/cscolor.h>
 #include "pawsobjectview.h"
@@ -58,12 +57,16 @@ pawsObjectView::pawsObjectView()
     mouseDownRotate = false;
 
     needsDraw = true;
-
-    PawsManager::GetSingleton().AddObjectView(this);
 }   
 
 pawsObjectView::~pawsObjectView()
 {
+    if(!rmTargets.IsValid())
+    {
+        // we failed to load, so there's nothing to deallocate
+        return;
+    }
+
     if(target.IsValid())
     {
         // unregister tex from render targets
@@ -87,6 +90,15 @@ pawsObjectView::~pawsObjectView()
 
 bool pawsObjectView::Setup(iDocumentNode* node )
 {
+    rmTargets = scfQueryInterface<iRenderManagerTargets>(engine->GetRenderManager());
+    if ( !rmTargets.IsValid())
+    {
+        Error1("pawsObjectView: RenderManager doesn't support targets! object views will be disabled");
+        return false;
+    }
+
+    PawsManager::GetSingleton().AddObjectView(this);
+
     csRef<iDocumentNode> distanceNode = node->GetNode( "distance" );
     if ( distanceNode )
         distance = distanceNode->GetAttributeValueAsFloat("value");
