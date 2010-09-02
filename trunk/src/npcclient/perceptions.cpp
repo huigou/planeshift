@@ -550,8 +550,7 @@ bool FactionPerception::GetLocation(csVector3& pos, iSector*& sector)
 {
     if (player)
     {
-        float rot;
-        psGameObject::GetPosition(player,pos,rot,sector);
+        psGameObject::GetPosition(player,pos,sector);
         return true;
     }
     return false;
@@ -575,8 +574,7 @@ bool ItemPerception::GetLocation(csVector3& pos, iSector*& sector)
 {
     if (item)
     {
-        float rot;
-        psGameObject::GetPosition(item,pos,rot,sector);
+        psGameObject::GetPosition(item,pos,sector);
         return true;
     }
     return false;
