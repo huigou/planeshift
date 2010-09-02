@@ -1009,8 +1009,6 @@ void HateList::DumpHateList(const csVector3& myPos, iSector *mySector)
             {
                 sectorName = sector->QueryObject()->GetName();
             }
-
-            pos = obj->pcmesh->GetMesh()->GetMovable()->GetPosition();
             CPrintf(CON_CMDOUTPUT, "%6d %5.1f %40s %5.1f",
                     h->entity_id.Unbox(), h->hate_amount, toString(pos, sector).GetDataSafe(),
                     world->Distance(pos,sector,myPos,mySector));
