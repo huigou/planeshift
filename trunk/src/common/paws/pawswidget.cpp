@@ -1166,16 +1166,17 @@ void pawsWidget::DrawMask()
     }
 }
 
-void pawsWidget::DrawWindow()
+bool pawsWidget::DrawWindow()
 {
     // Setup our clipping rect so we know where we can draw
     ClipToParent(true);
 
     // If we can't draw anywhere, then don't try.  Our children can't be drawn either.
     if (clipRect.IsEmpty())
-        return;
+        return false;
         
     DrawBackground();
+    return true;
 }
 
 void pawsWidget::DrawForeground()
@@ -1190,8 +1191,8 @@ void pawsWidget::DrawForeground()
 
 void pawsWidget::Draw()
 {
-    DrawWindow();
-    DrawForeground();
+    if(DrawWindow())
+        DrawForeground();
 }
 
 void pawsWidget::DrawWidgetText(const char *text, int x, int y, int style)
