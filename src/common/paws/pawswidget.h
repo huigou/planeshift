@@ -566,8 +566,10 @@ public:
      */
     virtual bool SelfPopulate( iDocumentNode *node );
 
-    /// Does the first part of the drawing. It draws the background of the window.
-    void DrawWindow();
+    /** Does the first part of the drawing. It draws the background of the window.
+     *  @return TRUE if the widget can be drawn.
+     */
+    bool DrawWindow();
     /// Does the second part of the drawing drawing the background of the window.
     void DrawForeground();
 
