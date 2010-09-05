@@ -1073,17 +1073,19 @@ void psGameObject::GetPosition(gemNPCObject* object, csVector3& pos, float& yrot
         CPrintf(CON_ERROR,"ERROR! NO MESH FOUND FOR OBJECT %s!\n",object->GetName());
         return;
     }
+    
+    iMovable* npcMovable = pcmesh->GetMesh()->GetMovable();
 
-    pos = pcmesh->GetMesh()->GetMovable()->GetPosition();
+    pos = npcMovable->GetPosition();
 
     // rotation
-    csMatrix3 transf = pcmesh->GetMesh()->GetMovable()->GetTransform().GetT2O();
+    csMatrix3 transf = npcMovable->GetTransform().GetT2O();
     yrot = psWorld::Matrix2YRot(transf);
 
     // Sector
-    if (pcmesh->GetMesh()->GetMovable()->GetSectors()->GetCount())
+    if (npcMovable->GetSectors()->GetCount())
     {
-        sector = pcmesh->GetMesh()->GetMovable()->GetSectors()->Get(0);
+        sector = npcMovable->GetSectors()->Get(0);
     }
     else
     {
@@ -1102,12 +1104,14 @@ void psGameObject::GetPosition(gemNPCObject* object, csVector3& pos,iSector*& se
         return;
     }
 
-    pos = pcmesh->GetMesh()->GetMovable()->GetPosition();
+    iMovable* npcMovable = pcmesh->GetMesh()->GetMovable();
+
+    pos = npcMovable->GetPosition();
 
     // Sector
-    if (pcmesh->GetMesh()->GetMovable()->GetSectors()->GetCount())
+    if (npcMovable->GetSectors()->GetCount())
     {
-        sector = pcmesh->GetMesh()->GetMovable()->GetSectors()->Get(0);
+        sector = npcMovable->GetSectors()->Get(0);
     }
     else
     {
