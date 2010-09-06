@@ -224,7 +224,8 @@ bool psCelClient::IsReady()
 void psCelClient::HandleWorld( MsgEntry* me )
 {
     psPersistWorld mesg(me);
-    zonehandler->LoadZone(mesg.pos, mesg.sector);
+    psNewSectorMessage cross("", mesg.sector, mesg.pos);
+    msghandler->Publish(cross.msg);
 
     gameWorld = new psWorld();
     gameWorld->Initialize(object_reg);
