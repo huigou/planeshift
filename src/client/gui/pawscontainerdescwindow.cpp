@@ -110,7 +110,7 @@ void pawsContainerDescWindow::HandleUpdateItem( MsgEntry* me )
         data.Format("%s %d %d %s %s %s", mesg.icon.GetData(), mesg.stackCount, 0, mesg.meshName.GetData(), mesg.materialName.GetData(), mesg.name.GetData());
     }
 
-    printf("Got item update for %s: %s\n", sigData.GetDataSafe(), data.GetDataSafe() );
+    Debug3(LOG_CHARACTER, 0, "Got item update for %s: %s\n", sigData.GetDataSafe(), data.GetDataSafe() );
 
     // FIXME: psViewItemMessages should probably send out purification status
 
