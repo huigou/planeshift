@@ -419,10 +419,10 @@ bool QuestManager::HandleScriptCommand(csString& block,
             size_t start = script.FindStr("<<");
             size_t end   = script.FindStr(">>");
             if (start != SIZET_NOT_FOUND && end != SIZET_NOT_FOUND &&
-                start == 0 && end > start)
+                start != 0 && end > start)
             {
-                csString params = script.Slice(start+1,end-start-1).Trim();
-                script.DeleteAt(start,end-start+1).Trim();
+                csString params = script.Slice(start+2,end-start-2).Trim();
+                script.DeleteAt(start,end-start+2).Trim();
                 size_t next;
                 do
                 {
