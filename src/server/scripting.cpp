@@ -2059,7 +2059,10 @@ public:
 
     virtual ~ItemOp()
     {
-        delete count;
+        if (count)
+        {
+            delete count;
+        }
     }
 
     bool Load(iDocumentNode* node)
@@ -2075,7 +2078,7 @@ public:
         }
         placeOnGround = location == "ground";
 
-        return !name.IsEmpty() && Imperative1::Load(node);
+        return !name.IsEmpty() && count && Imperative1::Load(node);
     }
 
     void Run(const MathEnvironment* env)
