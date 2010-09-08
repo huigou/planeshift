@@ -2052,13 +2052,20 @@ protected:
 class ItemOp : public Imperative1
 {
 public:
-	ItemOp(CacheManager* cachemanager) {cacheManager = cachemanager; }
-    virtual ~ItemOp() { }
+    ItemOp(CacheManager* cachemanager)
+    {
+        cacheManager = cachemanager;
+    }
+
+    virtual ~ItemOp()
+    {
+        delete count;
+    }
 
     bool Load(iDocumentNode* node)
     {
         name = node->GetAttributeValue("name");
-        stackCount = node->GetAttributeValueAsInt("count");
+        count = MathExpression::Create(node->GetAttributeValue("count"));
 
         csString location = node->GetAttributeValue("location");
         if (!location.IsEmpty() && location != "inventory" && location != "ground")
@@ -2068,16 +2075,21 @@ public:
         }
         placeOnGround = location == "ground";
 
-        return !name.IsEmpty() && stackCount > 0 && Imperative1::Load(node);
+        return !name.IsEmpty() && Imperative1::Load(node);
     }
 
     void Run(const MathEnvironment* env)
     {
         psCharacter* c = GetCharacter(env, aim);
+        int stackCount = count->Evaluate(env);
+        if (stackCount <= 0)
+        {
+            return;
+        }
 
         if (placeOnGround)
         {
-            psItem* iteminstance = CreateItem(true);
+            psItem* iteminstance = CreateItem(true, stackCount);
             if (!iteminstance)
                 return;
 
@@ -2103,7 +2115,7 @@ public:
         }
         else
         {
-            psItem* iteminstance = CreateItem(false);
+            psItem* iteminstance = CreateItem(false, stackCount);
             if (!iteminstance)
                 return;
 
@@ -2111,7 +2123,7 @@ public:
         }
     }
 
-    psItem* CreateItem(bool transient)
+    psItem* CreateItem(bool transient, int stackCount)
     {
         // Get the ItemStats based on the name provided.
         psItemStats* itemstats = cacheManager->GetBasicItemStatsByName(name.GetData());
@@ -2140,7 +2152,7 @@ public:
 
 protected:
     csString name;
-    int stackCount;
+    MathExpression* count;
     bool placeOnGround;
     CacheManager* cacheManager;
 };
