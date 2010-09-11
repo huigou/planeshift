@@ -1,5 +1,5 @@
 /***************************************************************************\
-|* Function Parser for C++ v4.2                                            *|
+|* Function Parser for C++ v4.3                                            *|
 |*-------------------------------------------------------------------------*|
 |* Copyright: Juha Nieminen, Joel Yliluoma                                 *|
 |*                                                                         *|
@@ -20,7 +20,7 @@
 #include <cstring>
 
 #ifdef ONCE_FPARSER_H_
-# include <map>
+#include <map>
 #endif
 
 namespace FUNCTIONPARSERTYPES
@@ -55,12 +55,11 @@ namespace FUNCTIONPARSERTYPES
         cFCall, cPCall,
 
 #ifdef FP_SUPPORT_OPTIMIZER
-        cFetch, /* Same as Dup, except with absolute index
-                 * (next value is index) */
         cPopNMov, /* cPopNMov(x,y) moves [y] to [x] and deletes anything
                    * above [x]. Used for disposing of temporaries.
                    */
         cLog2by, /* log2by(x,y) = log2(x) * y */
+        cNop,    /* Used by fpoptimizer internally; should not occur in bytecode */
 #endif
         cSinCos, /* sin(x) followed by cos(x) (two values are pushed to stack) */
         cAbsAnd,    /* As cAnd,       but assume both operands are absolute values */
@@ -70,13 +69,14 @@ namespace FUNCTIONPARSERTYPES
         cAbsIf,     /* As cAbsIf,     but assume the 1st operand is an absolute value */
 
         cDup,   /* Duplicates the last value in the stack: Push [Stacktop] */
+        cFetch, /* Same as Dup, except with absolute index
+                 * (next value is index) */
         cInv,   /* Inverts the last value in the stack (x = 1/x) */
         cSqr,   /* squares the last operand in the stack, no push/pop */
         cRDiv,  /* reverse division (not x/y, but y/x) */
         cRSub,  /* reverse subtraction (not x-y, but y-x) */
         cRSqrt, /* inverse square-root (1/sqrt(x)) */
 
-        cNop,
         VarBegin
     };
 
@@ -91,7 +91,7 @@ namespace FUNCTIONPARSERTYPES
             OkForInt = 0x08
         };
 
-#ifdef FUNCTIONPARSER_SUPPORT_DEBUG_OUTPUT
+#ifdef FUNCTIONPARSER_SUPPORT_DEBUGGING
         const char name[8];
 #else
         struct name { } name;
@@ -109,7 +109,7 @@ namespace FUNCTIONPARSERTYPES
 #else
 # define FP_EVAL_FUNCTION_ENABLED 0
 #endif
-#ifdef FUNCTIONPARSER_SUPPORT_DEBUG_OUTPUT
+#ifdef FUNCTIONPARSER_SUPPORT_DEBUGGING
 # define FP_FNAME(n) n
 #else
 # define FP_FNAME(n) {}
@@ -216,11 +216,9 @@ namespace FUNCTIONPARSERTYPES
     };
 
     template<typename Value_t>
-    class namePtrsType: public
-    std::map<
-        FUNCTIONPARSERTYPES::NamePtr,
-        FUNCTIONPARSERTYPES::NameData<Value_t>
-    >
+    class NamePtrsMap: public
+    std::map<FUNCTIONPARSERTYPES::NamePtr,
+             FUNCTIONPARSERTYPES::NameData<Value_t> >
     {
     };
 
@@ -234,33 +232,43 @@ namespace FUNCTIONPARSERTYPES
 template<typename Value_t>
 struct FunctionParserBase<Value_t>::Data
 {
-    unsigned referenceCounter;
+    unsigned mReferenceCounter;
 
-    unsigned numVariables;
-    std::string variablesString;
-    FUNCTIONPARSERTYPES::namePtrsType<Value_t> namePtrs;
+    unsigned mVariablesAmount;
+    std::string mVariablesString;
+    FUNCTIONPARSERTYPES::NamePtrsMap<Value_t> mNamePtrs;
+
+    struct InlineVariable
+    {
+        FUNCTIONPARSERTYPES::NamePtr mName;
+        unsigned mFetchIndex;
+    };
+
+    typedef std::vector<InlineVariable> InlineVarNamesContainer;
+    InlineVarNamesContainer mInlineVarNames;
 
     struct FuncPtrData
     {
         union
         {
-            FunctionPtr funcPtr;
-            FunctionParserBase<Value_t>* parserPtr;
+            FunctionPtr mFuncPtr;
+            FunctionParserBase<Value_t>* mParserPtr;
         };
-        unsigned params;
+        unsigned mParams;
     };
 
-    std::vector<FuncPtrData> FuncPtrs;
-    std::vector<FuncPtrData> FuncParsers;
+    std::vector<FuncPtrData> mFuncPtrs;
+    std::vector<FuncPtrData> mFuncParsers;
 
-    std::vector<unsigned> ByteCode;
-    std::vector<Value_t> Immed;
-#ifndef FP_USE_THREAD_SAFE_EVAL
-    std::vector<Value_t> Stack;
-    // Note: When Stack exists,
-    //       Stack.size() and StackSize are mutually redundant.
+    std::vector<unsigned> mByteCode;
+    std::vector<Value_t> mImmed;
+#if !defined(FP_USE_THREAD_SAFE_EVAL) && \
+    !defined(FP_USE_THREAD_SAFE_EVAL_WITH_ALLOCA)
+    std::vector<Value_t> mStack;
+    // Note: When mStack exists,
+    //       mStack.size() and mStackSize are mutually redundant.
 #endif
-    unsigned StackSize;
+    unsigned mStackSize;
 
     Data();
     Data(const Data&);

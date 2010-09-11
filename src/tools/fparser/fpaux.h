@@ -1,5 +1,5 @@
 /***************************************************************************\
-|* Function Parser for C++ v4.2                                            *|
+|* Function Parser for C++ v4.3                                            *|
 |*-------------------------------------------------------------------------*|
 |* Copyright: Juha Nieminen, Joel Yliluoma                                 *|
 |*                                                                         *|
@@ -219,14 +219,6 @@ namespace FUNCTIONPARSERTYPES
     inline Value_t fp_epsilon() { return 0.0; }
 #endif
 
-#ifdef FP_EPSILON
-    inline bool FloatEqual(double a, double b)
-    { return fabs(a - b) <= fp_epsilon<double>(); }
-#else
-    inline bool FloatEqual(double a, double b)
-    { return a == b; }
-#endif // FP_EPSILON
-
   #ifdef _GNU_SOURCE
     template<>
     inline void fp_sinCos<double>(double& sin, double& cos, const double& a)
@@ -299,14 +291,6 @@ namespace FUNCTIONPARSERTYPES
     inline float fp_epsilon<float>() { return 0.0F; }
 #endif
 
-#ifdef FP_EPSILON
-    inline bool FloatEqual(float a, float b)
-    { return fabsf(a - b) <= fp_epsilon<float>(); }
-#else
-    inline bool FloatEqual(float a, float b)
-    { return a == b; }
-#endif // FP_EPSILON
-
 #endif // FP_SUPPORT_FLOAT_TYPE
   #ifdef _GNU_SOURCE
     template<>
@@ -377,14 +361,6 @@ namespace FUNCTIONPARSERTYPES
 #endif // FP_SUPPORT_LOG2
 
     inline long double fp_exp2(long double x) { return fp_pow(2.0L, x); }
-
-#ifdef FP_EPSILON
-    inline bool FloatEqual(long double a, long double b)
-    { return fabsl(a - b) <= fp_epsilon<double>(); }
-#else
-    inline bool FloatEqual(long double a, long double b)
-    { return a == b; }
-#endif // FP_EPSILON
 
 #endif // FP_SUPPORT_LONG_DOUBLE_TYPE
 
@@ -768,56 +744,53 @@ namespace FUNCTIONPARSERTYPES
 
 
 #ifndef FP_DISABLE_DOUBLE_TYPE
-#define FUNCTIONPARSER_INSTANTIATE_DOUBLE \
-    template class FunctionParserBase<double>;
+# define FUNCTIONPARSER_INSTANTIATE_D(g) g(double)
 #else
-#define FUNCTIONPARSER_INSTANTIATE_DOUBLE
+# define FUNCTIONPARSER_INSTANTIATE_D(g)
 #endif
 
 #ifdef FP_SUPPORT_FLOAT_TYPE
-#define FUNCTIONPARSER_INSTANTIATE_FLOAT \
-    template class FunctionParserBase<float>;
+# define FUNCTIONPARSER_INSTANTIATE_F(g) g(float)
 #else
-#define FUNCTIONPARSER_INSTANTIATE_FLOAT
+# define FUNCTIONPARSER_INSTANTIATE_F(g)
 #endif
 
 #ifdef FP_SUPPORT_LONG_DOUBLE_TYPE
-#define FUNCTIONPARSER_INSTANTIATE_LONG_DOUBLE \
-    template class FunctionParserBase<long double>;
+# define FUNCTIONPARSER_INSTANTIATE_LD(g) g(long double)
 #else
-#define FUNCTIONPARSER_INSTANTIATE_LONG_DOUBLE
+# define FUNCTIONPARSER_INSTANTIATE_LD(g)
 #endif
 
 #ifdef FP_SUPPORT_LONG_INT_TYPE
-#define FUNCTIONPARSER_INSTANTIATE_LONG_INT \
-    template class FunctionParserBase<long>;
+# define FUNCTIONPARSER_INSTANTIATE_LI(g) g(long)
 #else
-#define FUNCTIONPARSER_INSTANTIATE_LONG_INT
+# define FUNCTIONPARSER_INSTANTIATE_LI(g)
 #endif
 
 #ifdef FP_SUPPORT_MPFR_FLOAT_TYPE
-#define FUNCTIONPARSER_INSTANTIATE_MPFR_FLOAT \
-    template class FunctionParserBase<MpfrFloat>;
+# define FUNCTIONPARSER_INSTANTIATE_MF(g) g(MpfrFloat)
 #else
-#define FUNCTIONPARSER_INSTANTIATE_MPFR_FLOAT
+# define FUNCTIONPARSER_INSTANTIATE_MF(g)
 #endif
 
 #ifdef FP_SUPPORT_GMP_INT_TYPE
-#define FUNCTIONPARSER_INSTANTIATE_GMP_INT \
-    template class FunctionParserBase<GmpInt>;
+# define FUNCTIONPARSER_INSTANTIATE_GI(g) g(GmpInt)
 #else
-#define FUNCTIONPARSER_INSTANTIATE_GMP_INT
+# define FUNCTIONPARSER_INSTANTIATE_GI(g)
 #endif
 
 /* Add 'FUNCTIONPARSER_INSTANTIATE_TYPES' at the end of all .cpp files
    containing FunctionParserBase implementations.
  */
+#define FUNCTIONPARSER_INSTANTIATE_BASE(type) \
+    template class FunctionParserBase<type>;
+
 #define FUNCTIONPARSER_INSTANTIATE_TYPES \
-    FUNCTIONPARSER_INSTANTIATE_DOUBLE \
-    FUNCTIONPARSER_INSTANTIATE_FLOAT \
-    FUNCTIONPARSER_INSTANTIATE_LONG_DOUBLE \
-    FUNCTIONPARSER_INSTANTIATE_LONG_INT \
-    FUNCTIONPARSER_INSTANTIATE_MPFR_FLOAT \
-    FUNCTIONPARSER_INSTANTIATE_GMP_INT
+    FUNCTIONPARSER_INSTANTIATE_D(FUNCTIONPARSER_INSTANTIATE_BASE) \
+    FUNCTIONPARSER_INSTANTIATE_F(FUNCTIONPARSER_INSTANTIATE_BASE) \
+    FUNCTIONPARSER_INSTANTIATE_LD(FUNCTIONPARSER_INSTANTIATE_BASE) \
+    FUNCTIONPARSER_INSTANTIATE_LI(FUNCTIONPARSER_INSTANTIATE_BASE) \
+    FUNCTIONPARSER_INSTANTIATE_MF(FUNCTIONPARSER_INSTANTIATE_BASE) \
+    FUNCTIONPARSER_INSTANTIATE_GI(FUNCTIONPARSER_INSTANTIATE_BASE)
 
 #endif // ONCE_FPARSER_AUX_H_

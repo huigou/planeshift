@@ -1,5 +1,5 @@
 /***************************************************************************\
-|* Function Parser for C++ v4.2                                            *|
+|* Function Parser for C++ v4.3                                            *|
 |*-------------------------------------------------------------------------*|
 |* Copyright: Juha Nieminen                                                *|
 |*                                                                         *|
@@ -130,13 +130,3 @@
  (Consult the documentation for details.)
  */
 //#define FP_NO_EVALUATION_CHECKS
-
-
-
-// Temporary settings while double is the only supported type by the optimizer
-#ifdef FP_DISABLE_DOUBLE_TYPE
-#ifndef FP_NO_SUPPORT_OPTIMIZER
-#define FP_NO_SUPPORT_OPTIMIZER
-#endif
-#undef FP_SUPPORT_OPTIMIZER
-#endif
