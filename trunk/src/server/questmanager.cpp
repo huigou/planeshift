@@ -335,19 +335,7 @@ bool QuestManager::HandleScriptCommand(csString& block,
         else if (!strncasecmp(block,"Complete",8))
         {
             csString questname = block.Slice(8,block.Length()-1).Trim();
-            if(!cacheManager->GetQuestByName(questname)) 
-            {
-                csString tmpQuestName;
-                //create the autocompleted questname
-                tmpQuestName.Format("%s %s", mainQuest->GetName(), questname.GetData());
-                //check if the autocompleted name exists to avoid funny errors
-                //when doing typo
-                if(cacheManager->GetQuestByName(tmpQuestName))
-                {
-                    Debug2( LOG_QUESTS, 0, "Autocompleting quest name for complete: %s\n", questname.GetData());
-                    questname = tmpQuestName;
-                }
-            }
+            AutocompleteQuestName(questname, mainQuest);
             op.Format("<complete quest_id=\"%s\"/>",questname.GetData());
         }
         else if (!strncasecmp(block,"Give",4))
@@ -502,26 +490,31 @@ bool QuestManager::HandleScriptCommand(csString& block,
     return true;
 }
 
+void QuestManager::AutocompleteQuestName(csString& questname, psQuest *mainQuest)
+{
+    //attempt to consider it as a step of this quest if not found.
+    if(!cacheManager->GetQuestByName(questname)) 
+    {
+        csString tmpQuestName;
+        //create the autocompleted questname
+        tmpQuestName.Format("%s %s", mainQuest->GetName(), questname.GetData());
+        //check if the autocompleted name exists to avoid funny errors
+        //when doing typo
+        if(cacheManager->GetQuestByName(tmpQuestName))
+        {
+            Debug3( LOG_QUESTS, 0, "Autocompleting quest name from %s to %s\n", questname.GetData(), tmpQuestName.GetData());
+            questname = tmpQuestName;
+        }
+    }
+}
+
 csString QuestManager::ParseRequireCommand(csString& block, bool& result, psQuest *mainQuest)
 {
     csString command; //stores the formatted prerequisite of this block
     if (!strncasecmp(block,"completion of",13)) // require completion of quest <step #>
     {
         csString questname = block.Slice(13,block.Length()-1).Trim();
-        //attempt to consider it as a step of this quest if not found.
-        if(!cacheManager->GetQuestByName(questname)) 
-        {
-            csString tmpQuestName;
-            //create the autocompleted questname
-            tmpQuestName.Format("%s %s", mainQuest->GetName(), questname.GetData());
-            //check if the autocompleted name exists to avoid funny errors
-            //when doing typo
-            if(cacheManager->GetQuestByName(tmpQuestName))
-            {
-                Debug2( LOG_QUESTS, 0, "Autocompleting quest name for require completion: %s\n", questname.GetData());
-                questname = tmpQuestName;
-            }
-        }
+        AutocompleteQuestName(questname, mainQuest);
         command.Format("<completed quest=\"%s\"/>", questname.GetData());
     }
     else if (!strncasecmp(block,"time of day",11)) // require time of day starthh-endhh
