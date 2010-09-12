@@ -119,17 +119,19 @@ protected:
      *        by HandleRequireCommand
      *  @param block A csString which is the block to be parsed stripped of "require" and the leading no, if any.
      *  @param result A bool which will store if it was possible to parse the passed string
+     *  @param mainQuest A pointer to the main quest, used for quest name autocompletion
      *  @return A csString which has the xml result of the parsing
      */
-    csString ParseRequireCommand(csString& block, bool& result);
+    csString ParseRequireCommand(csString& block, bool& result, psQuest *mainQuest);
 
     /** Parses a require command.
      *  @note this function handles no and not and calls parseRequireCommand for the inner parsing
      *  @param block A csString which is the block to be parsed stripped of "require".
      *  @param response_requireop A csString where to append the response prerequisites.
+     *  @param mainQuest A pointer to the main quest, used for quest name autocompletion
      *  @return A boolean indicating if the operation was successfull.
      */
-    bool HandleRequireCommand(csString& block, csString& response_requireop);
+    bool HandleRequireCommand(csString& block, csString& response_requireop, psQuest *mainQuest);
 
     void HandleQuestInfo(MsgEntry *pMsg,Client *client);
     void HandleQuestReward(MsgEntry *pMsg,Client *client);

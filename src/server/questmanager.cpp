@@ -335,6 +335,12 @@ bool QuestManager::HandleScriptCommand(csString& block,
         else if (!strncasecmp(block,"Complete",8))
         {
             csString questname = block.Slice(8,block.Length()-1).Trim();
+            //attempt to consider it as a step of this quest if not found.
+            if(!cacheManager->GetQuestByName(questname)) 
+            {
+                Debug2( LOG_QUESTS, 0, "Autocompleting quest name for complete: %s\n", questname.GetData());
+                questname.Insert(0, mainQuest->GetName());
+            }
             op.Format("<complete quest_id=\"%s\"/>",questname.GetData());
         }
         else if (!strncasecmp(block,"Give",4))
@@ -403,7 +409,7 @@ bool QuestManager::HandleScriptCommand(csString& block,
         {
             //we remove the leading require and let another function do the parsing of this
             csString requireBlock = block.Slice(7).Trim();
-            if(!HandleRequireCommand(requireBlock,response_requireop))
+            if(!HandleRequireCommand(requireBlock, response_requireop, mainQuest))
             {
                 //we got a false from handlerequirecommand: it means it wasn't able to parse the require command.
                 Error2("Unknown require command '%s' !",block.GetData());
@@ -489,12 +495,18 @@ bool QuestManager::HandleScriptCommand(csString& block,
     return true;
 }
 
-csString QuestManager::ParseRequireCommand(csString& block, bool& result)
+csString QuestManager::ParseRequireCommand(csString& block, bool& result, psQuest *mainQuest)
 {
     csString command; //stores the formatted prerequisite of this block
     if (!strncasecmp(block,"completion of",13)) // require completion of quest <step #>
     {
         csString questname = block.Slice(13,block.Length()-1).Trim();
+        //attempt to consider it as a step of this quest if not found.
+        if(!cacheManager->GetQuestByName(questname)) 
+        {
+            Debug2( LOG_QUESTS, 0, "Autocompleting quest name for require completion: %s\n", questname.GetData());
+            questname.Insert(0, mainQuest->GetName());
+        }
         command.Format("<completed quest=\"%s\"/>", questname.GetData());
     }
     else if (!strncasecmp(block,"time of day",11)) // require time of day starthh-endhh
@@ -586,7 +598,7 @@ csString QuestManager::ParseRequireCommand(csString& block, bool& result)
     return command;
 }
 
-bool QuestManager::HandleRequireCommand(csString& block, csString& response_requireop)
+bool QuestManager::HandleRequireCommand(csString& block, csString& response_requireop, psQuest *mainQuest)
 {
 	csStringArray blockList;
 	blockList.SplitString(block, "|");
@@ -606,19 +618,19 @@ bool QuestManager::HandleRequireCommand(csString& block, csString& response_requ
 			//we remove the leading not and parse as if there was no not
 			//then we put the result inside two <not></not>
 			csString innerBlock = currentBlock.Slice(3, currentBlock.Length()-1).Trim();
-			commandList.AppendFmt("<not>%s</not>", ParseRequireCommand(innerBlock, result).GetData());
+			commandList.AppendFmt("<not>%s</not>", ParseRequireCommand(innerBlock, result, mainQuest).GetData());
 		}
 		else if(!strncasecmp(currentBlock, "no", 2))
 		{
 			//we remove the leading no and parse as if there was no no
 			//then we put the result inside two <not></not>
 			csString innerBlock = currentBlock.Slice(2, currentBlock.Length()-1).Trim();
-			commandList.AppendFmt("<not>%s</not>", ParseRequireCommand(innerBlock, result).GetData());
+			commandList.AppendFmt("<not>%s</not>", ParseRequireCommand(innerBlock, result, mainQuest).GetData());
 		}
 		else
 		{
 			//this has no not or no then we just pass the string as it is.
-			commandList.Append(ParseRequireCommand(currentBlock, result));
+			commandList.Append(ParseRequireCommand(currentBlock, result, mainQuest));
 		}
 	}
 	
