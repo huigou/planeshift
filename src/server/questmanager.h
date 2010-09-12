@@ -133,6 +133,14 @@ protected:
      */
     bool HandleRequireCommand(csString& block, csString& response_requireop, psQuest *mainQuest);
 
+    /** Checks if the quest name is existant, if it isn't it attemps to complete it
+     *  with the name of the passed quest but only if the autocompleted version is found.
+     *  @param questname Name of the quest we have to check for. Output is written directly
+     *                   in the passed variable.
+     *  @param mainQuest The quest where this questname was found to check for in quest completion.
+     */
+    void AutocompleteQuestName(csString& questname, psQuest *mainQuest);
+
     void HandleQuestInfo(MsgEntry *pMsg,Client *client);
     void HandleQuestReward(MsgEntry *pMsg,Client *client);
 
