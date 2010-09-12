@@ -335,11 +335,18 @@ bool QuestManager::HandleScriptCommand(csString& block,
         else if (!strncasecmp(block,"Complete",8))
         {
             csString questname = block.Slice(8,block.Length()-1).Trim();
-            //attempt to consider it as a step of this quest if not found.
             if(!cacheManager->GetQuestByName(questname)) 
             {
-                Debug2( LOG_QUESTS, 0, "Autocompleting quest name for complete: %s\n", questname.GetData());
-                questname.Insert(0, mainQuest->GetName());
+                csString tmpQuestName;
+                //create the autocompleted questname
+                tmpQuestName.Format("%s %s", mainQuest->GetName(), questname.GetData());
+                //check if the autocompleted name exists to avoid funny errors
+                //when doing typo
+                if(cacheManager->GetQuestByName(tmpQuestName))
+                {
+                    Debug2( LOG_QUESTS, 0, "Autocompleting quest name for complete: %s\n", questname.GetData());
+                    questname = tmpQuestName;
+                }
             }
             op.Format("<complete quest_id=\"%s\"/>",questname.GetData());
         }
@@ -504,8 +511,16 @@ csString QuestManager::ParseRequireCommand(csString& block, bool& result, psQues
         //attempt to consider it as a step of this quest if not found.
         if(!cacheManager->GetQuestByName(questname)) 
         {
-            Debug2( LOG_QUESTS, 0, "Autocompleting quest name for require completion: %s\n", questname.GetData());
-            questname.Insert(0, mainQuest->GetName());
+            csString tmpQuestName;
+            //create the autocompleted questname
+            tmpQuestName.Format("%s %s", mainQuest->GetName(), questname.GetData());
+            //check if the autocompleted name exists to avoid funny errors
+            //when doing typo
+            if(cacheManager->GetQuestByName(tmpQuestName))
+            {
+                Debug2( LOG_QUESTS, 0, "Autocompleting quest name for require completion: %s\n", questname.GetData());
+                questname = tmpQuestName;
+            }
         }
         command.Format("<completed quest=\"%s\"/>", questname.GetData());
     }
