@@ -933,10 +933,11 @@ void SpawnManager::HandleLootItem(MsgEntry *me,Client *client)
     }
 
     psItemStats *itemstat = cacheManager->GetBasicItemStatsByID(msg.lootitem);
-    size_t index = chr->Inventory().FindItemStatIndex(itemstat);
+    //size_t index = chr->Inventory().FindItemStatIndex(itemstat);
     psItem *item = NULL;
-    if (index != SIZET_NOT_FOUND)
-        item = chr->Inventory().RemoveItemIndex(index, 1);
+    // don't take items from NPC's inventory for now
+    //if (index != SIZET_NOT_FOUND)
+    //    item = chr->Inventory().RemoveItemIndex(index, 1);
     if (item == NULL && itemstat != NULL)
     {
         item = itemstat->InstantiateBasicItem();
