@@ -670,19 +670,6 @@ void SpawnManager::KillNPC(gemActor *obj, gemActor* killer)
 
     obj->SetAlive(false);
 
-    /**
-     * The goal is to have NPC drop exactly what they have in their
-     * inventory and nothing more. So the loot has be generated when
-     * the NPC is created. With the EXCEPTION of invulnerable NPCs
-     * that have a predefined equipment, not generated. Today that's
-     * not implemented, so we will just create loot when the NPC dies.
-     * For this reason we temporarly remove the line below. When
-     * loot will be generated at NPC creation, we should add again
-     * the line below.
-    // add all the character's inventory to the loot
-    obj->GetCharacterData()->AddInventoryToLoot();
-     */
-
     // Create his loot
     SpawnRule *respawn = NULL;
     int spawnruleid = obj->GetCharacterData()->NPC_GetSpawnRuleID();
@@ -933,11 +920,7 @@ void SpawnManager::HandleLootItem(MsgEntry *me,Client *client)
     }
 
     psItemStats *itemstat = cacheManager->GetBasicItemStatsByID(msg.lootitem);
-    //size_t index = chr->Inventory().FindItemStatIndex(itemstat);
     psItem *item = NULL;
-    // don't take items from NPC's inventory for now
-    //if (index != SIZET_NOT_FOUND)
-    //    item = chr->Inventory().RemoveItemIndex(index, 1);
     if (item == NULL && itemstat != NULL)
     {
         item = itemstat->InstantiateBasicItem();

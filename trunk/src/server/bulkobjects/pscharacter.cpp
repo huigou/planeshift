@@ -1382,10 +1382,6 @@ void psCharacter::AddLootItem(psItemStats *item)
 
 size_t psCharacter::GetLootItems(psLootMessage& msg, EID entity, int cnum)
 {
-    // adds inventory to loot. TEMPORARLY REMOVED. see KillNPC()
-    //if ( loot_pending.GetSize() == 0 )
-    //    AddInventoryToLoot();
-
     if (loot_pending.GetSize() )
     {
         csString loot;

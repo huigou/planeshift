@@ -738,7 +738,6 @@ public:
     int  GetLootCategory() const { return loot_category_id; }
     bool RemoveLootItem(int id);
 
-    void AddInventoryToLoot();
     void AddLootItem(psItemStats *item);
     void AddLootMoney(int money) { loot_money += money; }
     size_t GetLootItems(psLootMessage& msg, EID entity, int cnum);
