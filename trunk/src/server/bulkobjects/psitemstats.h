@@ -467,11 +467,14 @@ private:
 
     /// Tracks if this item can be consumed, can be potions/scrolls/etc
     bool isConsumable;
+    
+    /// Declares if the item can be spawned
+    bool spawnable;
 
-    // Animation eye candy things
+    /// Animation eye candy things
     csPDelArray<psItemAnimation> *anim_list;
 
-    // These temporary fields point to strings used for the mesh, texture, part and image names respectively
+    /// These temporary fields point to strings used for the mesh, texture, part and image names respectively
     csString mesh_name;
 
     /// Stores a texture change
