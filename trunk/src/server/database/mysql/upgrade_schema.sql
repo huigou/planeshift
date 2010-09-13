@@ -1480,6 +1480,10 @@ UPDATE `server_options` SET `option_value`='1251' WHERE `option_name`='db_versio
 ALTER TABLE `item_instances` ADD COLUMN `creative_definition` TEXT  DEFAULT NULL COMMENT 'This is used for books/sketch.' AFTER `item_description`;
 UPDATE `server_options` SET `option_value`='1252' WHERE `option_name`='db_version';
 
+#1253 - Stefano Angeleri - Added spawnable field
+ALTER TABLE `item_stats` ADD COLUMN `spawnable` CHAR(1)  NOT NULL DEFAULT 'Y' COMMENT 'Sets if the item should be spawnable from in game' AFTER `assigned_command`;
+UPDATE `server_options` SET `option_value`='1253' WHERE `option_name`='db_version';
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to

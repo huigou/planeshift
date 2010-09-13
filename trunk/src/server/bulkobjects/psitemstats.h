@@ -552,6 +552,10 @@ public:
     bool GetIsConsumable();
     bool GetIsReadable();
     bool GetIsWriteable();
+    /** Gets if the item should be allowed to be spawned.
+     *  @return BOOL saying if the item can be spawned from the item command.
+     */
+    bool IsSpawnable();    
     PSITEMSTATS_CREATIVETYPE GetCreative();
     bool GetBuyPersonalise();
     float GetRange() const;

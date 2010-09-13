@@ -483,6 +483,8 @@ psItemStats::psItemStats()
     equipScript = NULL;
 
     visible_distance = DEF_PROX_DIST;
+    
+    spawnable = true;
 }
 
 psItemStats::~psItemStats()
@@ -641,6 +643,8 @@ bool psItemStats::ReadItemStats(iResultRow& row)
     weaponRange = row.GetFloat("weapon_range");
     
     itemCommand = row["assigned_command"];
+    
+    spawnable = (*row["spawnable"] == 'Y');
 
     return true;
 }
@@ -1266,6 +1270,11 @@ float psItemStats::GetWeight()
 float psItemStats::GetSize()
 {
     return size;
+}
+
+bool psItemStats::IsSpawnable()
+{
+    return spawnable;
 }
 
 
