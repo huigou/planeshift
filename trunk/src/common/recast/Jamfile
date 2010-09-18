@@ -1,0 +1,10 @@
+SubDir TOP src common recast ;
+
+Plugin recast :
+  [ Wildcard *.cpp *.h ]
+  [ Wildcard recastnavigation : *.cpp *.h ] ;
+IncludeDir recastnavigation : recast ;
+ExternalLibs recast : CRYSTAL ; 
+CompileGroups recast : client server ;
+
+StaticPluginLibrary planeshift_staticplugins ;
