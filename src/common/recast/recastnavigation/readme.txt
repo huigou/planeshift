@@ -1,0 +1,44 @@
+Files from Recast&Detour:
+-ChunkyTriMesh.cpp
+-ChunkyTriMesh.h
+-DebugDraw.cpp
+-DebugDraw.h
+-DetourAlloc.cpp
+-DetourAlloc.h
+-DetourCommon.cpp
+-DetourCommon.h
+-DetourDebugDraw.cpp
+-DetourDebugDraw.h
+-DetourNavMesh.cpp
+-DetourNavMesh.h
+-DetourNavMeshBuilder.cpp
+-DetourNavMeshBuilder.h
+-DetourNode.cpp
+-DetourNode.h
+-InputGeom.cpp
+-InputGeom.h
+-MeshLoaderObj.cpp
+-MeshLoaderObj.h
+-Recast.cpp
+-Recast.h
+-RecastAlloc.cpp
+-RecastAlloc.h
+-RecastArea.cpp
+-RecastContour.cpp
+-RecastDebugDraw.cpp
+-RecastDebugDraw.h
+-RecastDump.cpp
+-RecastDump.h
+-RecastFilter.cpp
+-RecastLog.cpp
+-RecastLog.h
+-RecastMesh.cpp
+-RecastMeshDetail.cpp
+-RecastRasterization.cpp
+-RecastRegion.cpp
+-RecastTimer.cpp
+-RecastTimer.h
+
+Files from Recast&Detour modified by Leonardo:
+(you can find the differences by looking for the // CHANGE annotation)
+-DetourDebugDraw.cpp
