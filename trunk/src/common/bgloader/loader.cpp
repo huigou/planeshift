@@ -141,8 +141,8 @@ bool BgLoader::Initialize(iObjectRegistry* object_reg)
 
     engine = csQueryRegistry<iEngine> (object_reg);
     engseq = csQueryRegistry<iEngineSequenceManager> (object_reg);
-    g2d = csQueryRegistry<iGraphics2D> (object_reg);
-    tloader = csQueryRegistry<iThreadedLoader> (object_reg);
+    g2d = csQueryRegistryOrLoad<iGraphics2D> (object_reg, "crystalspace.graphics2d.null");
+    tloader = csQueryRegistryOrLoad<iThreadedLoader> (object_reg, "crystalspace.level.loader");
     tman = csQueryRegistry<iThreadManager> (object_reg);
     vfs = csQueryRegistry<iVFS> (object_reg);
     svstrings = csQueryRegistryTagInterface<iShaderVarStringSet>(object_reg, "crystalspace.shader.variablenameset");
@@ -151,7 +151,7 @@ bool BgLoader::Initialize(iObjectRegistry* object_reg)
 
     syntaxService = csQueryRegistryOrLoad<iSyntaxService>(object_reg, "crystalspace.syntax.loader.service.text");
 
-    csRef<iGraphics3D> g3d = csQueryRegistry<iGraphics3D>(object_reg);
+    csRef<iGraphics3D> g3d = csQueryRegistryOrLoad<iGraphics3D>(object_reg, "crystalspace.graphics3d.null");
     txtmgr = g3d->GetTextureManager();
 
     engine->SetClearZBuf(true);
@@ -1597,18 +1597,25 @@ bool BgLoader::InWaterArea(const char* sector, csVector3* pos, csColor4** colour
 bool BgLoader::LoadZones(iStringArray* regions, bool loadMeshes, bool priority)
 {
     // Firstly, get a list of all zones that should be loaded.
-    csRefArray<Zone> newLoadedZones;
-    for(size_t i=0; i<regions->GetSize(); ++i)
+    csArray<csRef<Zone> > newLoadedZones;
+    if(!regions)
     {
-        csRef<Zone> zone = zones.Get(zStringSet.Request(regions->Get(i)), csRef<Zone>());
-        if(zone.IsValid())
+        newLoadedZones = zones.GetAll();
+    }
+    else
+    {
+        for(size_t i=0; i<regions->GetSize(); ++i)
         {
-            zone->priority = priority;
-            newLoadedZones.Push(zone);
-        }
-        else
-        {
-            return false;
+            csRef<Zone> zone = zones.Get(zStringSet.Request(regions->Get(i)), csRef<Zone>());
+            if(zone.IsValid())
+            {
+                zone->priority = priority;
+                newLoadedZones.Push(zone);
+            }
+            else
+            {
+                 return false;
+            }
         }
     }
 

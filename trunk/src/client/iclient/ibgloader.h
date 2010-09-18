@@ -45,7 +45,7 @@ struct StartPosition : public csRefCount
  */
 struct iBgLoader : public virtual iBase
 {
-  SCF_INTERFACE(iBgLoader, 1, 6, 0);
+  SCF_INTERFACE(iBgLoader, 1, 6, 1);
 
  /**
   * Start loading a material into the engine. Returns 0 if the material is not yet loaded.
@@ -177,13 +177,13 @@ struct iBgLoader : public virtual iBase
 
  /**
   * Load zones given by name.
-  * @param regions pointer to an array holding the region names.
+  * @param regions pointer to an array holding the region names. if NULL, all regions are loaded.
   * @param loadMeshes specify whether or not to load meshes.
   * @param priority specify whether the regions shall be marked high priority.
   * @see LoadPriorityZones.
   * @return true upon success, false otherwise.
   */
-  virtual bool LoadZones(iStringArray* regions, bool loadMeshes = true, bool priority = false) = 0;
+  virtual bool LoadZones(iStringArray* regions = 0, bool loadMeshes = true, bool priority = false) = 0;
 
  /**
   * Load high priority zones given by name.
