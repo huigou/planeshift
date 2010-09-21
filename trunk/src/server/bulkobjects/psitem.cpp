@@ -2024,6 +2024,14 @@ double psItem::GetProperty(const char *ptr)
     {
         return GetCounterBlockValue();
     }
+    else if (!strcasecmp(ptr,"UntargetedBlockValue"))
+    {
+        return GetUntargetedBlockValue();
+    }
+    else if (!strcasecmp(ptr,"TargetedBlockValue"))
+    {
+        return GetTargetedBlockValue();
+    }
     else if (!strcasecmp(ptr,"Hardness"))
     {
         return GetHardness();
