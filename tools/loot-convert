@@ -11,7 +11,6 @@ function cmp($a, $b)
     else return  (strlen($a[1]) > strlen($b[1]) ? -1 : 1);
 }
 
-
 //special conversion rules. They will be added to the main ones.
 //$specialItems = Array( Array(515,"Short Sword"), Array(4,"Broad Sword"));
 $specialItems = Array();
@@ -19,6 +18,7 @@ $specialItems = Array();
 // Change your database settings here:
 $db = mysql_connect("127.0.0.1", "planeshift", "planeshift") or die ("Unable to connect!"); // host, user, pass
 mysql_select_db("planeshift", $db) or die("Could not select database");
+goto end;
 
 //get a list of all the modifiers in the database
 $lootmodifiers = mysql_query("SELECT id, modifier_type, name from loot_modifiers") or die("fatal error: couldn't select stuff: " . mysql_error() . "\n");
@@ -58,7 +58,7 @@ while ($row = mysql_fetch_array($lootmodifiers))
         printf("%s\n",$query);
     }
 }
-
+end:
 //now we have to set the items to their original version.
 //get a list of all basic items in the database
 $items = array();
@@ -70,7 +70,7 @@ while ($row = mysql_fetch_array($basicItems))
 }
 
     //adds the special cases items
-    array_merge($items, $specialItems);
+    $items = array_merge($items, $specialItems);
 
     print_r($items);
     //order the list of items from the one with the longest name to the shortest.
