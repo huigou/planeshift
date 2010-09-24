@@ -1116,7 +1116,7 @@ void GEMClientObject::SetPosition(const csVector3 & pos, const csVector3& rot, i
             }
             else
             {
-                if (instance->pcmesh->GetMovable()->GetSectors()->Find(sector) == csArrayItemNotFound)
+                if (instance->pcmesh->GetMovable()->GetSectors()->Find(sector) == (int)csArrayItemNotFound)
                 {
                     instance->pcmesh->GetMovable()->GetSectors()->Add(sector);
                 }
