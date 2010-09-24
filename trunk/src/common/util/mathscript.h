@@ -44,8 +44,14 @@ enum MathType
 
 class MathVar
 {
+public:
+    union Value
+    {
+        double value;
+        iScriptableVar* object;
+    };
 protected:
-    double value;
+    Value value;
 
     typedef void (*MathScriptVarCallback)(void * arg);
     MathScriptVarCallback changedVarCallback;
@@ -57,7 +63,7 @@ public:
     MathVar()
     {
         type  = VARTYPE_VALUE;
-        value = 0;
+        value.value = 0;
         changedVarCallback = NULL;
         changedVarCallbackArg = NULL;
     }
@@ -77,12 +83,16 @@ public:
 
     double GetValue()
     {
-        return value;
+        return value.value;
     }
 
     void SetValue(double v);
     void SetObject(iScriptableVar *p);
-    iScriptableVar *GetObject();
+
+    iScriptableVar *GetObject()
+    {
+        return value.object;
+    }
 
     void Copy(MathVar *v)
     {
