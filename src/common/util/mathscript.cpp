@@ -30,8 +30,6 @@
 #endif
 #include <new>
 
-#include <ctype.h>
-
 #include "util/log.h"
 #include <csutil/randomgen.h>
 #include <csutil/xmltiny.h>
@@ -53,13 +51,13 @@ double round(double value)
 csString MathVar::ToString() const
 {
     if (type == VARTYPE_OBJ)
-        return MathScriptEngine::GetPointer(value)->ToString();
+        return value.object->ToString();
     if (type == VARTYPE_STR)
-        return MathScriptEngine::GetString(value);
+        return MathScriptEngine::GetString(value.value);
 
-    if (fabs(int(value) - value) < EPSILON) // avoid .00 for whole numbers
-        return csString().Format("%.0f", value);
-    return csString().Format("%.2f", value);
+    if (fabs(int(value.value) - value.value) < EPSILON) // avoid .00 for whole numbers
+        return csString().Format("%.0f", value.value);
+    return csString().Format("%.2f", value.value);
 }
 
 csString MathVar::Dump() const
@@ -68,13 +66,13 @@ csString MathVar::Dump() const
     switch (type)
     {
         case VARTYPE_VALUE:
-            str.Format("%1.4f", value);
+            str.Format("%1.4f", value.value);
             break;
         case VARTYPE_STR:
-            str = MathScriptEngine::GetString(value);
+            str = MathScriptEngine::GetString(value.value);
             break;
         case VARTYPE_OBJ:
-            str.Format("%p", MathScriptEngine::GetPointer(value));
+            str.Format("%p", value.object);
             break;
     }
     return str;
@@ -82,7 +80,7 @@ csString MathVar::Dump() const
 
 void MathVar::SetValue(double v)
 {
-    value = v;
+    value.value = v;
 
     if (changedVarCallback)
         changedVarCallback(changedVarCallbackArg);
@@ -91,12 +89,7 @@ void MathVar::SetValue(double v)
 void MathVar::SetObject(iScriptableVar *p)
 {
     type = VARTYPE_OBJ;
-    value = MathScriptEngine::GetValue(p);
-}
-
-iScriptableVar* MathVar::GetObject()
-{
-    return MathScriptEngine::GetPointer(value);
+    value.object = p;
 }
 
 //----------------------------------------------------------------------------
@@ -577,20 +570,16 @@ csString MathScriptEngine::GetString(double id)
 
 iScriptableVar* MathScriptEngine::GetPointer(double p)
 {
-    // Scary non-portible madness!
-    // obtains the object pointer contained in the double
-    iScriptableVar* obj = NULL;
-    memcpy(&obj, &p, sizeof(iScriptableVar*));
-    return obj;
+    MathVar::Value value;
+    value.value = p;
+    return value.object;
 }
 
 double MathScriptEngine::GetValue(iScriptableVar* p)
 {
-    // Scary non-portible madness!
-    // stores the object pointer in the double
-    double r;
-    memcpy(&r, &p, sizeof(iScriptableVar*));
-    return r;
+    MathVar::Value value;
+    value.object = p;
+    return value.value;
 }
 
 //----------------------------------------------------------------------------
