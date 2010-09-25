@@ -510,7 +510,7 @@ protected:
     unsigned int characterType;
 
     /// Array of items waiting to be looted.
-    csArray<psItem *> loot_pending;
+    csArray<psItem*> loot_pending;
     /// Last response of an NPC to this character (not saved)
     int  lastResponse;
     /// Amount of money ready to be looted
@@ -736,8 +736,17 @@ public:
 
     void SetLootCategory(int id) { loot_category_id = id; }
     int  GetLootCategory() const { return loot_category_id; }
+    /** Removes an item from the loot loaded on the character due to it's defeat.
+     *  It searches for an item with the base stats item having the passed id and returns it
+     *  if it was found, removing it from the list of the lootable items.
+     *  @param id The base item stats id of the item.
+     *  @return The psItem whch corresponds to the base stats item searched for.
+     */
     psItem* RemoveLootItem(int id);
 
+    /** Adds the supplied psItem to the list of lootable items from this character.
+     *  @param psItem A pointer to the item being lootable from this character.
+     */
     void AddLootItem(psItem *item);
     void AddLootMoney(int money) { loot_money += money; }
     size_t GetLootItems(psLootMessage& msg, EID entity, int cnum);
