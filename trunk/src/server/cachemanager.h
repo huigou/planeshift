@@ -559,7 +559,9 @@ protected:
     void PreloadCommandGroups();
     
     
-    ///Loads the loot modifiers from the loot modifiers table
+    /**Loads the loot modifiers from the loot modifiers table
+     * @return TRUE if there were no issues during loading, else FALSE.
+     */
     bool PreloadLootModifiers();
     
     /// Cache in the crafting messages.        
@@ -657,7 +659,7 @@ protected:
     psCommandManager* commandManager;
     optionEntry rootOptionEntry;
     
-    LootRandomizer *lootRandomizer;
+    LootRandomizer *lootRandomizer; ///< A pointer to the lootrandomizer mantained by the cachemanager.
     
 };
 

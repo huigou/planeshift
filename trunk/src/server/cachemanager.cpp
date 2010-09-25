@@ -453,7 +453,7 @@ bool CacheManager::PreloadLootModifiers()
         entry->mesh = result[i][ "mesh" ];
         entry->not_usable_with = result[i][ "not_usable_with" ];
 
-        lootRandomizer->AddLootModifier( entry );
+        lootRandomizer->AddLootModifier(entry);
     }
     
     Notify2( LOG_STARTUP, "%lu loot modifiers Loaded", result.Count() );
