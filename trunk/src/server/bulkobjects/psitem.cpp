@@ -19,7 +19,6 @@
 
 #include <psconfig.h>
 #include <limits>
-#include <math.h>
 
 //=============================================================================
 // Crystal Space Includes
@@ -70,7 +69,9 @@
 #if SAVE_TRACER
 #include <csutil/callstack.h>
 #endif
-//#define csNaN(x) (*(int*)&x == 0x7FC00000)
+
+//temporary hack as csNaN,isnan etc seems to not be behaving correctly.
+#define csNaN(x) (*(int*)&x == 0x7FC00000)
 /**
  * This class handles auto-removal of transient objects
  * (objects placed in the world by players, basically).
@@ -231,6 +232,8 @@ psItem::~psItem()
     if (gItem)
         gItem->UnregisterCallback(this);
     gItem = NULL;
+    
+    //remove the itemModifiers class as it's no more needed
     delete itemModifiers;
 }
 
@@ -485,8 +488,9 @@ bool psItem::Load(iResultRow& row)
     AddLootModifier(row.GetUInt32("suffix"),1);
     AddLootModifier(row.GetUInt32("adjective"),2);
     
+    //then apply them.
     psserver->GetCacheManager()->ApplyItemModifiers(current_stats, itemModifiers, modifierIds);
-    printf("%s\n", itemModifiers->name.GetData());
+
     return true;
 }
 
@@ -821,6 +825,8 @@ void psItem::Commit(bool children)
 
     targetQuery->AddField("charges",GetCharges());
     
+    
+    //saves the modifiers applied to this item. for now 3 due to how the schema is done.
     targetQuery->AddField("prefix",modifierIds.Get(0));
     targetQuery->AddField("suffix",modifierIds.Get(1));
     targetQuery->AddField("adjective",modifierIds.Get(2));
@@ -1557,6 +1563,7 @@ void psItem::Copy(psItem * target)
     //copy the creative stats to the new item
     target->creativeStats = creativeStats;
     
+    //copy the modifier ids to the new item
     target->modifierIds = modifierIds;
     
     target->SetGuardingCharacterID(GetGuardingCharacterID());
@@ -1570,6 +1577,7 @@ void psItem::Copy(psItem * target)
     }
     target->SetOwningCharacter( owning_character);
     
+    //generate the overlay cache of the modifiers in the new item.
     target->UpdateModifiers();
 
 }
@@ -1722,10 +1730,15 @@ bool psItem::GetBuyPersonalise()
 
 const char *psItem::GetName() const
 {
+    //first check if this item was explictly given a special name
     if (!item_name.IsEmpty())
         return item_name;
+        
+    //then check if the item modifier overlay gives a name to this item.
     if(itemModifiers->active && !itemModifiers->name.IsEmpty())
         return itemModifiers->name;
+        
+    //fallback to the standard item name
     return current_stats->GetName();
 }
 
@@ -1990,6 +2003,7 @@ unsigned int psItem::GetTexturePartIndex()
 
 const char *psItem::GetMeshName()
 {
+    //do we have an overlay?
     if(itemModifiers->active && !itemModifiers->mesh.IsEmpty())
         return itemModifiers->mesh;
     return current_stats->GetMeshName();
@@ -2449,11 +2463,14 @@ bool psItem::CheckRequirements( psCharacter* charData, csString& resp )
                 if(requirements[y].name == itemModifiers->reqs[i].name)
                 {
                     found = true;
+                    //if the current requirement is lower than the new one set that one.
                     if(requirements[y].min_value < itemModifiers->reqs[i].min_value)
                         requirements[y].min_value = itemModifiers->reqs[i].min_value;
                     break;
                 }
             }
+            
+            //if not found we add it to the list of requirement
             if(!found)
                 requirements.Push(itemModifiers->reqs[i]);
         }
@@ -3280,6 +3297,7 @@ RandomizedOverlay::RandomizedOverlay()
 { 
     active = false;
     equip_script = NULL;
+    //set those variables to nan to indicate they aren't active.
     damageStats[0] = damageStats[1] = damageStats[2] = latency = weight = std::numeric_limits<float>::signaling_NaN(); 
     
    //  latency   = std::numeric_limits<float>::signaling_NaN();
