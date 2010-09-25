@@ -314,12 +314,12 @@ public:
     //all it's elements
     friend class psItemStats;
     friend class psItem;
-    
+
     ///constructor
     psItemCreativeStats();
     ///destructor
     ~psItemCreativeStats();
-    
+
     /** Checks if the passed PID is the creator of this creative.
      *  @param characterID The PID of the player we are checking if it's the creator.
      *  @return TRUE if the passed PID corresponds to the creator of this creative item.
@@ -340,7 +340,7 @@ public:
     PID GetCreator (PSITEMSTATS_CREATORSTATUS& creatorStatus);
 
 private:
-    /** Read the Creative data from the database. 
+    /** Read the Creative data from the database.
      *  @param row The database row as loaded from the database: must have at least a creative_definition column.*/
     void ReadStats( iResultRow& row);
     /** Read the Creative data from the internal creativeDefinitionXML, populating all the fields from it. */
@@ -357,7 +357,7 @@ private:
 
     /** Update the description of the item */
     csString UpdateDescription(PSITEMSTATS_CREATIVETYPE, csString, csString);
-    
+
     /** Used to set if this creativedefinition has to operate on item_instances in place of item_stats when
      *  saving data on the database. Pass TRUE if you wish that this creative definition saves data in the
      *  instances in place of the stats.
@@ -378,7 +378,7 @@ private:
      *  of item_stats.
      */
     bool instanceBased;
-                                
+
 };
 
 //-----------------------------------------------------------------------------
@@ -467,7 +467,7 @@ private:
 
     /// Tracks if this item can be consumed, can be potions/scrolls/etc
     bool isConsumable;
-    
+
     /// Declares if the item can be spawned
     bool spawnable;
 
@@ -510,7 +510,7 @@ private:
 
     csString sound;
     csString weapon_type;
-    
+
     csString itemCommand; ///< contains if the item has a special command where it's used.
 
     csHash<csString,int> meshRemovalInfo;
@@ -558,7 +558,7 @@ public:
     /** Gets if the item should be allowed to be spawned.
      *  @return BOOL saying if the item can be spawned from the item command.
      */
-    bool IsSpawnable();    
+    bool IsSpawnable();
     PSITEMSTATS_CREATIVETYPE GetCreative();
     bool GetBuyPersonalise();
     float GetRange() const;
@@ -718,7 +718,7 @@ public:
     /// creator (i.e. author, artist, etc) of creative things
     void SetCreator(PID, PSITEMSTATS_CREATORSTATUS);
     bool IsThisTheCreator(PID);
-    
+
     /** Returns the background image assigned to the creative item.
      *  @return A csString containing the name of the background image assigned to the creative item.
      */
@@ -729,7 +729,7 @@ public:
     bool IsRechargeable() const;
     void SetMaxCharges(int charges);
     int GetMaxCharges() const;
-    
+
     ///returns the special command assigned to this item
     csString GetItemCommand() { return itemCommand; }
 

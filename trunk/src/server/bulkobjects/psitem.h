@@ -432,13 +432,13 @@ private:
 
     /// The ActiveSpell* of the equip script, for cancelling on unequip.
     ActiveSpell *equipActiveSpell;
-    
+
     /// A structure which holds the creative data about this item.
     psItemCreativeStats creativeStats;
-    
+
     ///stores the modifications to apply to this item. This is a cache used to increase performance.
     RandomizedOverlay *itemModifiers;
-    
+
     ///stores the ids of the modifications to apply to this item. Used for save and copy.
     csArray<uint32_t> modifierIds;
 
@@ -718,7 +718,7 @@ public:
     void SetDescription(const char* newDescription);
     const char *GetStandardName();
     const char *GetStandardDescription();
-    
+
     /** Allows to add a modification to the item.
      *  @todo For now the system, even if adapted to allow an unspecified amount of modifications now, in the LOAD
      *        and Save it supports only 3: a prefix, a suffix and an adjective. Should make the schema allow
@@ -731,7 +731,7 @@ public:
 
     ///  Recalculates the modifications for this item
     void UpdateModifiers();
-    
+
     float GetRange() const { return current_stats->GetRange(); }
     csSet<unsigned int> GetAmmoTypeID() const { return current_stats->GetAmmoTypeID(); }
 
@@ -952,7 +952,7 @@ public:
     void SetCharges(int charges);
     int GetCharges() const;
     int GetMaxCharges() const;
-    
+
     ///returns the special command assigned to this item
     csString GetItemCommand() { return GetBaseStats()->GetItemCommand(); }
 
@@ -987,7 +987,7 @@ public:
     void *operator new(size_t);
     ///  The delete operator is overriden to call PoolAllocator template functions
     void operator delete(void *);
-    
+
     /** Checks the writeable flag in the item_stats and tell if this is the case.
      *  @return TRUE if the item is writeable.
      */
@@ -996,14 +996,14 @@ public:
      *  @return TRUE if the item is readable.
      */
     bool GetIsReadable();
-    
+
     /// return creative contents of sketches.
     const csString& GetSketch(void) { return creativeStats.creativeType == PSITEMSTATS_CREATIVETYPE_NONE ? GetBaseStats()->GetSketch() : creativeStats.content; }
     /// return creative contents of books.
     const csString& GetLiteratureText(void) { return creativeStats.creativeType == PSITEMSTATS_CREATIVETYPE_NONE ? GetBaseStats()->GetSketch() : creativeStats.content; }
     /// return the background image used in this creative.
     const csString& GetCreativeBackgroundImg() { return creativeStats.creativeType == PSITEMSTATS_CREATIVETYPE_NONE ? GetBaseStats()->GetCreativeBackgroundImg() : creativeStats.backgroundImg; }
-    
+
     void PrepareCreativeItemInstance();
 
 private:

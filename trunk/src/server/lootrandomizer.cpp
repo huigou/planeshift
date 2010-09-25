@@ -113,7 +113,7 @@ void LootRandomizer::AddLootModifier(LootModifier *entry)
     if (entry->modifier_type.CompareNoCase("prefix"))
     {
         prefixes.Push( entry );
-        if (entry->probability > prefix_max) 
+        if (entry->probability > prefix_max)
         {
             prefix_max = entry->probability;
         }
@@ -134,7 +134,7 @@ void LootRandomizer::AddLootModifier(LootModifier *entry)
             adjective_max = entry->probability;
         }
     }
-    
+
     //put the lootmodifier in an hash for a faster access when we just need to look it up by id.
     LootModifiersById.Put(entry->id, entry);
 }
@@ -169,7 +169,7 @@ psItem* LootRandomizer::RandomizeItem( psItem* item, float maxcost, bool lootTes
     }
 
     // If there are no additional modifiers return original stats
-    if ( numModifiers == 0 ) 
+    if ( numModifiers == 0 )
         return item;
 
     if ( numModifiers != 3 )
@@ -197,7 +197,7 @@ psItem* LootRandomizer::RandomizeItem( psItem* item, float maxcost, bool lootTes
 
         if (modifierType.CompareNoCase("prefix"))
         {
-            modifierList = &prefixes; 
+            modifierList = &prefixes;
             max_probability=(int)prefix_max;
             modifierTypePos = 0;
         }
@@ -371,11 +371,11 @@ bool LootRandomizer::SetAttribute(const csString & op, const csString & attrName
 void LootRandomizer::ApplyModifier(psItemStats* baseItem, RandomizedOverlay* overlay, csArray<uint32_t>& modifierIds)
 {
     LootModifier mod;
-    
+
     //set up default mod data
     mod.cost_modifier = 1;
     mod.name = baseItem->GetName();
-    
+
     //creates the full lootmodifier from the ids being applied.
     //0 should be left empty in the database as it acts as NO HIT.
     for(int i = 0; i < modifierIds.GetSize(); i++)
@@ -394,12 +394,12 @@ void LootRandomizer::ApplyModifier(psItemStats* baseItem, RandomizedOverlay* ove
     //all is done no modifiers where found. so we just get out
     if(overlay->active == false)
         return;
-        
+
     overlay->name = mod.name;
     overlay->price = psMoney(baseItem->GetPrice().GetTrias() * mod.cost_modifier);
     if ( mod.mesh.Length() > 0 )
         overlay->mesh = mod.mesh;
-    
+
     // Apply effect
     csString xmlItemMod;
 
@@ -478,7 +478,7 @@ void LootRandomizer::ApplyModifier(psItemStats* baseItem, RandomizedOverlay* ove
     while ( nodeList->HasNext() )
     {
         node = nodeList->Next();
-        //Determine the STAT        
+        //Determine the STAT
         ItemRequirement req;
         req.name = node->GetAttribute("name")->GetValue();
         req.min_value = node->GetAttribute("value")->GetValueAsFloat();

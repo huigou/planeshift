@@ -128,7 +128,7 @@ public:
             Error2("Item held in PendingLootPrompt with id %u has been lost",id);
             return;
         }
-        
+
         gemActor* looter = gemSupervisor->FindPlayerEntity(looterID);
         gemActor* roller = gemSupervisor->FindPlayerEntity(rollerID);
 
@@ -178,7 +178,7 @@ public:
                        );
         evt.FireEvent();
     }
-    
+
     void HandleTimeout() { HandleAnswer("yes"); }
 private:
     CacheManager *cacheManager;
@@ -214,7 +214,7 @@ SpawnManager::~SpawnManager()
         LootEntrySet* loot = it.Next ();
         delete loot;
     }
-    
+
     csHash<SpawnRule*>::GlobalIterator ruleIt(rules.GetIterator());
     while(ruleIt.HasNext())
         delete ruleIt.Next();
@@ -285,7 +285,7 @@ bool SpawnManager::LoadWaypointsAsSpawnRanges()
 
     iDocumentNode *topNode = root->GetNode("waypoints");
     csRef<iDocumentNodeIterator> iter = topNode->GetNodes();
-    
+
     while ( iter->HasNext() )
     {
         csRef<iDocumentNode> node = iter->Next();
@@ -354,7 +354,7 @@ bool SpawnManager::LoadWaypointsAsSpawnRanges()
                                 }
                                 else
                                 {
-                                    bool one_way = node->GetAttributeValueAsBool("oneway");                            
+                                    bool one_way = node->GetAttributeValueAsBool("oneway");
                                     wp->links.Push(wlink);
                                     if (!one_way)
                                         wlink->links.Push(wp);  // bi-directional link is implied
@@ -373,17 +373,17 @@ bool SpawnManager::LoadWaypointsAsSpawnRanges()
 void SpawnManager::LoadHuntLocations(psSectorInfo *sectorinfo)
 {
     csString query;
-    
+
     if ( sectorinfo )
     {
-        query.Format("SELECT h.*,i.name FROM hunt_locations h JOIN item_stats i ON i.id = h.itemid WHERE sector='%s'", 
+        query.Format("SELECT h.*,i.name FROM hunt_locations h JOIN item_stats i ON i.id = h.itemid WHERE sector='%s'",
             sectorinfo->name.GetData());
     }
     else
         query = "SELECT h.*,i.name FROM hunt_locations h JOIN item_stats i ON i.id = h.itemid";
-                
+
     Result result(db->Select(query));
-    
+
     if (!result.IsValid() )
     {
         Error2("Could not load hunt_locations due to database error: %s\n", db->GetLastError());
@@ -402,7 +402,7 @@ void SpawnManager::LoadHuntLocations(psSectorInfo *sectorinfo)
         int amount = result[i].GetInt("amount");
         float range = result[i].GetFloat("range");
         csString name = result[i]["name"];
-        
+
         // Schdule the item spawn
         psSectorInfo *spawnsector=cacheManager->GetSectorInfoByName(sector);
 
@@ -411,21 +411,21 @@ void SpawnManager::LoadHuntLocations(psSectorInfo *sectorinfo)
             Error2("hunt_location failed to load, wrong sector: %s\n", sector.GetData() );
             continue;
         }
-        
+
         iSector *iSec = entityManager->FindSector(sector.GetData());
         if(!iSec)
         {
             Error2("Sector '%s' failed to be found when loading hunt location.", sector.GetData());
             continue;
         }
-        
+
         csArray<gemObject*> nearlist;
         size_t handledSpawnsCount = 0;
- 
+
         // Look for nearby items to prevent rescheduling of existing items
         nearlist = gem->FindNearbyEntities(iSec, pos, range);
         size_t nearbyItemsCount = nearlist.GetSize();
-                    
+
         for (size_t i = 0; i < nearbyItemsCount; ++i)
         {
             psItem *item = nearlist[i]->GetItem();
@@ -438,17 +438,17 @@ void SpawnManager::LoadHuntLocations(psSectorInfo *sectorinfo)
                     ++handledSpawnsCount;
                 }
             }
-            
+
             if ((int) handledSpawnsCount == amount) // All schedules accounted for
                 break;
         }
-                
+
         for (int i = 0; i < (amount - (int) handledSpawnsCount); ++i) //Make desired amount of items that are not already existing
         {
             // This object won't get destroyed in a while (until something stops it or psItem is destroyed without moving)
             psScheduledItem* item = new psScheduledItem(id,itemid,pos,spawnsector,0,interval,max_rnd,range);
-            
-            // Queue it 
+
+            // Queue it
             psItemSpawnEvent *newevent = new psItemSpawnEvent(item);
             psserver->GetEventManager()->Push(newevent);
         }
@@ -605,8 +605,8 @@ void SpawnManager::RepopulateItems(psSectorInfo *sectorinfo)
             }
             else
             {
-                Error3("Container with id %d not found, specified in item %d.", 
-                       item->GetContainerID(), 
+                Error3("Container with id %d not found, specified in item %d.",
+                       item->GetContainerID(),
                        item->GetUID() );
                 delete item;
             }
@@ -682,7 +682,7 @@ void SpawnManager::KillNPC(gemActor *obj, gemActor* killer)
                 if (!grp)
                 {
                     // Not part of group so add the owner
-                    Debug3(LOG_LOOT, killer_cnum, "Adding owner %d as able to loot %s.", 
+                    Debug3(LOG_LOOT, killer_cnum, "Adding owner %d as able to loot %s.",
                            owner->GetClientID(), obj->GetName() );
                     obj->AddLootableClient(owner->GetClientID());
                 }
@@ -692,7 +692,7 @@ void SpawnManager::KillNPC(gemActor *obj, gemActor* killer)
                 }
             }
         }
-        
+
         if (grp)
         {
             for (size_t i=0; i<grp->GetMemberCount(); i++)
@@ -814,11 +814,11 @@ void SpawnManager::Respawn(PID playerID, SpawnRule* spawnRule)
         Debug4(LOG_SPAWN,0,"Spawn position %s is occuplied by %zu entities. %s",
                toString(pos,sector).GetDataSafe(),
                nearlist.GetSize(),count>0?" Will Retry":"Last try");
-        
+
     }
-    
+
     CS_ASSERT(sector);
-    
+
     Debug1(LOG_SPAWN,0,"Position accepted");
     Respawn(chardata, instance, pos, angle, sectorName);
 }
@@ -871,7 +871,7 @@ void SpawnManager::HandleLootItem(MsgEntry *me,Client *client)
         return;
     }
 
-    // Check the range to the lootable object. 
+    // Check the range to the lootable object.
     if (client->GetActor()->RangeTo(obj) > RANGE_TO_LOOT )
     {
         psserver->SendSystemError(client->GetClientNum(), "Too far away to loot %s.", obj->GetName() );
@@ -944,13 +944,13 @@ void SpawnManager::HandleLootItem(MsgEntry *me,Client *client)
 
         // Attempt to give to looter
         bool dropped = looterclient->GetActor()->GetCharacterData()->Inventory().AddOrDrop(item);
-        
+
         if (!dropped)
         {
             lootmsg.Append(", but can't hold anymore");
             type.Append(" (dropped)");
         }
-            
+
         // Send out the loot message
         psSystemMessage loot(me->clientnum, MSG_LOOT, lootmsg.GetData() );
         looterclient->GetActor()->SendGroupMessage(loot.msg);
@@ -996,7 +996,7 @@ void SpawnManager::HandleDeathEvent(MsgEntry *me,Client *notused)
 {
     Debug1(LOG_SPAWN,0, "Spawn Manager handling Death Event\n");
     psDeathEvent death(me);
-    
+
     death.deadActor->GetCharacterData()->KilledBy(death.killer ? death.killer->GetCharacterData() : NULL);
     if(death.killer)
         death.killer->GetCharacterData()->Kills(death.deadActor->GetCharacterData());
@@ -1134,12 +1134,12 @@ bool SpawnRule::DetermineSpawnLoc(psCharacter *ch, csVector3& pos, float& angle,
         {
             Error1("Failed to find spawn position");
         }
-        
+
 
         // randomly choose an angle in [0, 2*PI]
         angle = randomgen->Get() * TWO_PI;
         instance = fixedinstance;
-        
+
         return true; // This is a random position pick
     }
     else if (ch && fixedspawnsector == "startlocation")
@@ -1199,7 +1199,7 @@ void SpawnRange::Initialize(int idval,
     float dx = x1 == x2 ? RANGE_FICTITIOUS_WIDTH : x2 - x1;
     float dz = z1 == z2 ? RANGE_FICTITIOUS_WIDTH : z2 - z1;
     radius = radiusval;
-    
+
     if (type == 'A')
     {
         // Just ignore if one of the deltas are negative. PickPos works anyway.
@@ -1221,17 +1221,17 @@ void SpawnRange::Initialize(int idval,
 }
 
 csVector3 SpawnRange::PickWithRadius(csVector3 pos, float radius)
-{        
+{
     if(radius == 0.0f)
     {
         return pos;
     }
     float x;
     float z;
-        
+
     float xDist;
     float zDist;
-        
+
     do {
         // Pick random point in circumscribed rectangle.
         x = randomgen->Get() * (radius*2.0);
@@ -1240,7 +1240,7 @@ csVector3 SpawnRange::PickWithRadius(csVector3 pos, float radius)
         zDist = radius - z;
         // Keep looping until the point is inside a circle.
     } while(xDist * xDist + zDist * zDist > radius * radius);
-        
+
     return csVector3(pos.x - radius + x, pos.y, pos.z - radius + z);
 }
 
@@ -1409,7 +1409,7 @@ void LootEntrySet::CreateMultipleLoot(psCharacter *chr, size_t numModifiers)
                         "Randomized item (%d modifiers) : \'%s\', %s\n"
                         "  Quality : %.2f  Weight : %.2f  Size : %d  Price : %d\n",
                         numModifiers,
-                        loot_item->GetName(), 
+                        loot_item->GetName(),
                         loot_item->GetDescription(),
                         loot_item->GetItemQuality(),
                         loot_item->GetWeight(),

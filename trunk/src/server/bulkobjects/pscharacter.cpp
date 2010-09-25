@@ -1441,7 +1441,7 @@ void psCharacter::ClearLoot()
     //delete the instanced items
     for(size_t i = 0; i < loot_pending.GetSize(); i++)
         delete loot_pending.Get(i);
-    
+
     //delete the pointers to the instanced items we have just deleted
     loot_pending.DeleteAll();
     loot_money = 0;

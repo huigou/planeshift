@@ -114,7 +114,7 @@ struct psMovement
 
 /**
  * This class allows CacheManager to yield a list of qualifying
- * values given a player's score at something.  The score could 
+ * values given a player's score at something.  The score could
  * be a skill value, a stat value or a mathscript result which
  * combines multiple values.  For example, with sketches, an
  * array of these is used to yield a list of icons the player
@@ -175,7 +175,7 @@ class optionEntry
     bool getValueAsVector(csVector3 &vector);
     /** Sets an option in the option tree.
      *  @note for now there is no support for db saving so this is only temporary.
-     *  @note If the value was never set the return will be an empty csString 
+     *  @note If the value was never set the return will be an empty csString
      *        (internal string not initialized see crystal space documentation)
      *  @param path A path relative to this optionEntry. It's the full path only when
      *              using the "root" optionEntry.
@@ -217,7 +217,7 @@ class CacheManager
 public:
     CacheManager();
     ~CacheManager();
-    
+
     /** @name Sector Info Table cache
     */
     //@{
@@ -225,9 +225,9 @@ public:
     psSectorInfo *GetSectorInfoByID(unsigned int id);
     csHash<psSectorInfo *>::GlobalIterator GetSectorIterator();
     //@}
-    
+
     psCommandManager* GetCommandManager() { return commandManager; }
-    
+
     /** @name Traits
      */
     //@{
@@ -247,14 +247,14 @@ public:
     psRaceInfo *GetRaceInfoByNameGender(unsigned int id, PSCHARACTER_GENDER gender);
     psRaceInfo *GetRaceInfoByMeshName(const csString & meshname);
     //@}
-    
+
     /** @name Skills
      */
     //@{
     psSkillInfo *GetSkillByID(unsigned int id);
     size_t GetSkillAmount();
     psSkillInfo *GetSkillByName(const char *name);
-    
+
     ///Get all skills belonging to a specific category
     void GetSkillsListbyCategory(csArray <psSkillInfo*>& listskill,int category );
     //@}
@@ -309,10 +309,10 @@ public:
     psQuest *GetQuestByID(unsigned int id);
     psQuest *GetQuestByName(const char *name);
     psQuest *AddDynamicQuest(const char *name, psQuest *parentQuest, int step);
-    
+
     /// Unloads a quest and its scripts
     bool UnloadQuest(int id);
-    
+
     /// Loads a quest and its scripts
     bool LoadQuest(int id);
     csHash<psQuest *>::GlobalIterator GetQuestIterator();
@@ -368,7 +368,7 @@ public:
     // Item categories
     psItemCategory *GetItemCategoryByID(unsigned int id);
     psItemCategory *GetItemCategoryByName(const csString & name);
-    
+
     /** Gets an item category by its position in the array. Useful to iterate it.
      *  @param pos The position in the array from where to extract the category.
      *  @return A pointer to the category in the position.
@@ -391,7 +391,7 @@ public:
     Faction * GetFaction(int id);
     Faction * GetFactionByName(const char *name);
     csHash<Faction*, int> &GetFactionHash() { return factions_by_id; }
-    
+
     // Progression Scripts
     ProgressionScript *GetProgressionScript(const char *name);
 
@@ -406,7 +406,7 @@ public:
     //@{
     /// Get set of transformations for that pattern
     csPDelArray<CombinationConstruction>* FindCombinationsList(uint32 patternid);
-    
+
     /// Get transformation array for pattern and target item
     csPDelArray<psTradeTransformations>* FindTransformationsList(uint32 patternid, uint32 targetid);
     bool PreloadUniqueTradeTransformations();
@@ -427,15 +427,15 @@ public:
     //@{
     /// Get item basic stats by hashed table
     psItemStats *GetBasicItemStatsByName(csString name);
-    
+
     /// Get item basic stats by hashed table
     psItemStats *GetBasicItemStatsByID(uint32 id);
     psItemStats *CopyItemStats(uint32 id, csString newName);
-    
+
     /// return id of item if 'name' exists already
     uint32 BasicItemStatsByNameExist(csString name);
     size_t ItemStatsSize(void) { return itemStats_IDHash.GetSize(); }
-    
+
     /// If an item changes name (eg book title) keep cache up to date
     void CacheNameChange(csString oldName, csString newName);
 
@@ -448,11 +448,11 @@ public:
     void RemoveItemStats (psItemStats *&itemStats);
 
     PSITEMSTATS_STAT ConvertAttributeString(const char *attributestring);
-    
+
     /// Converts the stat enum to a string.
     const char* Attribute2String( PSITEMSTATS_STAT s );
     //@}
-    
+
     PSSKILL               ConvertSkillString(const char *skillstring);
     PSSKILL               ConvertSkill(int skill_id);
     PSCHARACTER_GENDER    ConvertGenderString(const char *genderstring);
@@ -483,7 +483,7 @@ public:
     const psMovement* GetMovement(size_t id) const { return movements[id]; }
     uint8_t GetCharModeID(const char* name);
     uint8_t GetMovementID(const char* name);
-    
+
     /// Used to track effect IDs
     uint32_t NextEffectUID() { return ++effectID; }
 
@@ -492,38 +492,38 @@ public:
 
     /// List of stances.
     csArray<Stance> stances;
-    
+
     /// Map of locations.
     csArray<csString> stanceID;
 
     void AddItemStatsToHashTable(psItemStats* newitem);
-    
+
     /** Wrapper for the getOption method of the root optionEntry stored in cachemanager.
      *  @param A path to the requested option starting from the root optionEntry
      *  @return An optionEntry in the requested position. NULL if the path was not found.
      *  @see optionEntry
      */
     optionEntry* getOption(const csString path) { return rootOptionEntry.getOption(path); }
-    
+
     /** Wrapper for the getOptionSafe method of the root optionEntry stored in cachemanager.
      *  @param A path to the requested option starting from the root optionEntry
      *  @return An optionEntry in the requested position. NULL if the path was invalid.
      *  @see optionEntry
      */
     optionEntry* getOptionSafe(const csString path, const csString value) { return rootOptionEntry.getOptionSafe(path,value); }
-    
+
     /** Returns a pointer to the loot randomizer which is hosted within the cache manager.
      *  @return A pointer to the lootrandomizer.
      */
     LootRandomizer* getLootRandomizer() { return lootRandomizer; }
-    
+
     /** Applies on a randomized overlay structure, starting with the base item stats passed, the modifier ids
      *  passed. This is an accessor to the lootrandomizer own function
      *  @param baseItem The basic item stats of the item we are creating an overlay for.
      *  @param overlay The overlay which we will fill with the modifiers data.
      *  @param modifierIds An array of ids referencing loot_modifiers rules.
      */
-    void ApplyItemModifiers(psItemStats* baseItem, RandomizedOverlay* overlay, csArray<uint32_t>& modifierIds) 
+    void ApplyItemModifiers(psItemStats* baseItem, RandomizedOverlay* overlay, csArray<uint32_t>& modifierIds)
          { lootRandomizer->ApplyModifier(baseItem, overlay, modifierIds); }
 
 protected:
@@ -557,14 +557,14 @@ protected:
     bool PreloadMovement();
     bool PreloadStances();
     void PreloadCommandGroups();
-    
-    
+
+
     /**Loads the loot modifiers from the loot modifiers table
      * @return TRUE if there were no issues during loading, else FALSE.
      */
     bool PreloadLootModifiers();
-    
-    /// Cache in the crafting messages.        
+
+    /// Cache in the crafting messages.
     bool PreloadCraftMessages();
 
     /** Caches in the crafting transforms.
@@ -576,14 +576,14 @@ protected:
     /** Caches in the crafting combinations..
       * @param tradePattern  The current pattern message we want to construct.
       * @param patternID    The pattern ID of the pattern we are cacheing.
-      */    
-    void CacheCraftCombos( psMsgCraftingInfo* tradePattern, int patternID, int group );    
-    
+      */
+    void CacheCraftCombos( psMsgCraftingInfo* tradePattern, int patternID, int group );
+
     PSTRAIT_LOCATION ConvertTraitLocationString(const char *locationstring);
 
     class psCacheExpireEvent; // forward decl for next decl
 
-    struct CachedObject 
+    struct CachedObject
     {
         csString name;
         iCachedObject *object;
@@ -607,8 +607,8 @@ protected:
         virtual void Trigger();  ///< Abstract event processing function
     };
 
-    /** This cache is intended to keep database-loaded objects 
-     *  in memory for a time after we are done with them to 
+    /** This cache is intended to keep database-loaded objects
+     *  in memory for a time after we are done with them to
      *  avoid reloading in case they are reused soon.
      */
     csHash<CachedObject *, csString> generic_object_cache;
@@ -658,9 +658,9 @@ protected:
     csPDelArray<psCharacterLimitation> limits;  ///< All the limitations based on scores for characters.
     psCommandManager* commandManager;
     optionEntry rootOptionEntry;
-    
+
     LootRandomizer *lootRandomizer; ///< A pointer to the lootrandomizer mantained by the cachemanager.
-    
+
 };
 
 
