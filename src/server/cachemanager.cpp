@@ -433,8 +433,7 @@ bool CacheManager::PreloadLootModifiers()
     Result result( db->Select( "SELECT * FROM loot_modifiers ORDER BY modifier_type, probability" ) );
     if ( !result.IsValid() )
     {
-        Error2( "Could not load loot modifiers due to database error: %s\n",
-               db->GetLastError() );
+        Error2( "Could not load loot modifiers due to database error: %s\n", db->GetLastError() );
         return false;
     }
 
