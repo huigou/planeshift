@@ -147,9 +147,9 @@ AdminManager::AdminManager()
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<AdminManager>(this,&AdminManager::HandlePetitionMessage),MSGTYPE_PETITION_REQUEST,REQUIRE_READY_CLIENT);
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<AdminManager>(this,&AdminManager::HandleGMGuiMessage)   ,MSGTYPE_GMGUI,REQUIRE_READY_CLIENT);
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<AdminManager>(this,&AdminManager::SendSpawnItems)       ,MSGTYPE_GMSPAWNITEMS,REQUIRE_READY_CLIENT);
-	psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<AdminManager>(this,&AdminManager::SpawnItemInv)         ,MSGTYPE_GMSPAWNITEM,REQUIRE_READY_CLIENT);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<AdminManager>(this,&AdminManager::SpawnItemInv)         ,MSGTYPE_GMSPAWNITEM,REQUIRE_READY_CLIENT);
 
-	
+
     // this makes sure that the player dictionary exists on start up.
     npcdlg = new psNPCDialog(NULL);
     npcdlg->Initialize( db );
@@ -180,7 +180,7 @@ bool AdminManager::IsReseting(const csString& command)
     return command.Slice(command.FindFirst(' ')+1,8) == "me reset";
 }
 
-//TODO: To be expanded to make the implementation better than how it is now 
+//TODO: To be expanded to make the implementation better than how it is now
 //      when an NPC issues an admin command
 void AdminManager::HandleNpcCommand(MsgEntry *pMsg, Client *client)
 {
@@ -1122,7 +1122,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         value = words.GetInt(3);
         return true;
     }
-    else if (command == "/serverquit") 
+    else if (command == "/serverquit")
     {
         if(words.GetCount() > 1)
         {
@@ -1135,11 +1135,11 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
         }
         return true;
     }
-	else if (command == "/rndmsgtest")
-	{
-		text = words[1];
-		return true;
-	}
+    else if (command == "/rndmsgtest")
+    {
+        text = words[1];
+        return true;
+    }
     return false;
 }
 
@@ -1275,10 +1275,10 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, Client *client)
     {
         KillNPC(me, msg, data, targetobject, client);
     }
-	else if (data.command == "/rndmsgtest")
-	{
-		RandomMessageTest(client,data.text == "ordered");
-	}
+    else if (data.command == "/rndmsgtest")
+    {
+        RandomMessageTest(client,data.text == "ordered");
+    }
     else if (data.command == "/item")
     {
         if (data.item.Length())  // If arg, make simple
@@ -1687,7 +1687,7 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
         instance = target->GetInstance();
 
         sectorName = (sector) ? sector->QueryObject()->GetName() : "(null)";
-        
+
         regionName = (sector) ? sector->QueryObject()->GetObjectParent()->GetName() : "(null)";
     }
 
@@ -1848,7 +1848,7 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData& da
 
                 dist = EntityManager::GetSingleton().GetWorld()->Distance(pos, sector, myPos, mySector);
             }
-            
+
 
             psserver->SendSystemInfo(client->GetClientNum(),
                 "NPC: <%s, %s, %s> is at region %s, position (%1.2f, %1.2f, %1.2f) at range %.2f "
@@ -2146,7 +2146,7 @@ void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
         actor = target;
     else
         actor = client->GetActor();
-        
+
     if(actor != client->GetActor() && !psserver->CheckAccess(client, "setattrib others"))
     {
         psserver->SendSystemInfo(me->clientnum, "You are not allowed to use this command on others");
@@ -2207,7 +2207,7 @@ void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
         psserver->SendSystemInfo(me->clientnum, "Set all flags to default for Player." );
         SendGMAttribs(client);
         return;
-    }    
+    }
     else if (data.attribute == "invincible" || data.attribute == "invincibility")
     {
         if (toggle)
@@ -2663,7 +2663,7 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
         gemNPC* npc = dynamic_cast<gemNPC*>(subject);
         if (npc)
         {
-            psserver->SendSystemInfo(client->GetClientNum(), "%s is controlled by superclient %s and might not be teleported.", 
+            psserver->SendSystemInfo(client->GetClientNum(), "%s is controlled by superclient %s and might not be teleported.",
                                      subject->GetName(), ShowID(subject->GetSuperclientID()));
             psserver->GetNPCManager()->QueueTeleportPerception(npc,targetPoint,yRot,targetSector,targetInstance);
         }
@@ -4755,14 +4755,14 @@ void AdminManager::Admin(int clientnum, Client *client, int requestedLevel)
 
     // for now consider all levels > 30 as level 30.
     if (type>30) type=30;
-    
+
     if(type > 0 && requestedLevel >= 0)
-		type = requestedLevel;
+        type = requestedLevel;
 
     psserver->GetCacheManager()->GetCommandManager()->BuildXML( type, commandList, requestedLevel == -1 );
-	//NOTE: with only a check for requestedLevel == -1 players can actually make this function add the nonsubscrition flag
-	//      but as it brings no real benefits to the player there is no need to check for it. They will just get the commands
-	//      of their level and they won't be subscripted in their client
+    //NOTE: with only a check for requestedLevel == -1 players can actually make this function add the nonsubscrition flag
+    //      but as it brings no real benefits to the player there is no need to check for it. They will just get the commands
+    //      of their level and they won't be subscripted in their client
 
     psAdminCmdMessage admin(commandList.GetDataSafe(), clientnum);
     admin.SendMessage();
@@ -4973,9 +4973,9 @@ bool AdminManager::GetPetitionsArray(csArray<psPetitionInfo> &petitions, Client 
     // Try and grab the result set from the database
     // NOTE: As there are differences between the normal use and the gm use we manage them here
     //       the result set will be different depending on this
-    iResultSet *rs = GetPetitions(IsGMrequest ? PETITION_GM : client->GetPID(), 
+    iResultSet *rs = GetPetitions(IsGMrequest ? PETITION_GM : client->GetPID(),
                                   IsGMrequest ? client->GetPID() : PETITION_GM);
-            
+
     if(rs)
     {
         psPetitionInfo info;
@@ -5705,7 +5705,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         actorId = target->GetActor()->GetEID();
 
     }
-    else if (type == PSCHARACTER_TYPE_NPC || type == PSCHARACTER_TYPE_PET || 
+    else if (type == PSCHARACTER_TYPE_NPC || type == PSCHARACTER_TYPE_PET ||
              type == PSCHARACTER_TYPE_MOUNT || type == PSCHARACTER_TYPE_MOUNTPET)
     {
         gemNPC *npc = psserver->entitymanager->GetGEM()->FindNPCEntity(pid);
@@ -5742,11 +5742,11 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
                              );
 
     // Update
-    if ((online || type == PSCHARACTER_TYPE_NPC || type == PSCHARACTER_TYPE_PET 
+    if ((online || type == PSCHARACTER_TYPE_NPC || type == PSCHARACTER_TYPE_PET
                 || type == PSCHARACTER_TYPE_MOUNT || type == PSCHARACTER_TYPE_MOUNTPET) && targetobject->GetActorPtr())
     {
         psUpdateObjectNameMessage newNameMsg(0, actorId, fullName);
-        
+
         csArray<PublishDestination>& clients = targetobject->GetActorPtr()->GetMulticastClients();
         newNameMsg.Multicast(clients, 0, PROX_LIST_ANY_RANGE );
     }
@@ -5866,7 +5866,7 @@ void AdminManager::BanClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData&
     const time_t twodays = (2 * 24 * 60 * 60);
 
     time_t secs = (data.mins * 60) + (data.hours * 60 * 60) + (data.days * 24 * 60 * 60);
-    
+
     if (secs == 0)
       secs = twodays; // Two day ban by default
 
@@ -6024,7 +6024,7 @@ void AdminManager::UnbanClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDat
     const time_t twodays = (2 * 24 * 60 * 60);
     time_t end = result[0].GetUInt32("end");
     time_t start = result[0].GetUInt32("start");
-    
+
     if ((end - start > twodays) && !psserver->CheckAccess(gm, "long bans")) // Longer than 2 days, must have special permission to unban
     {
         psserver->SendSystemResult(me->clientnum, "You can only unban players with less than a two day ban.");
@@ -6308,15 +6308,15 @@ void AdminManager::SpawnItemInv( MsgEntry* me, psGMSpawnItem& msg, Client *clien
         psserver->SendSystemError(me->clientnum, "Cannot spawn personalised item!");
         return;
     }
-    
+
     if(!stats->IsSpawnable())
     {
         psserver->SendSystemError(me->clientnum, "This item cannot be spawned!");
         return;
     }
-    
+
     psItem* item = stats->InstantiateBasicItem();
-    
+
     // randomize if requested
     if (msg.random)
     {
@@ -6331,7 +6331,7 @@ void AdminManager::SpawnItemInv( MsgEntry* me, psGMSpawnItem& msg, Client *clien
     item->SetIsCD(msg.collidable);
     item->SetIsUnpickable(msg.Unpickable);
     item->SetIsTransient(msg.Transient);
-    
+
     //These are setting only flags. When modify gets valid permission update also here accordly
     if(psserver->GetCacheManager()->GetCommandManager()->Validate(client->GetSecurityLevel(), "/modify"))
     {
@@ -6568,12 +6568,12 @@ void AdminManager::TransferItem(MsgEntry* me, psAdminCmdMessage& msg,
                     item->GetStackCount(), data.value);
             return;
         }
-        
+
         bool wasEquipped = item->IsEquipped();
-        
+
         //we need to get this before the items are stacked in the destination inventory
         int StackCount = item->GetStackCount();
-        
+
         // Now here we handle the target machine
         InventoryTransaction trgtTran(&targetchar->Inventory());
 
@@ -6793,7 +6793,7 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& 
         psserver->SendSystemError(me->clientnum, "No character data!");
         return;
     }
-    
+
     if(pchar->IsNPC())
     {
         psserver->SendSystemError(me->clientnum, "You can't use this command on npcs!");
@@ -6939,10 +6939,10 @@ void AdminManager::AwardSkillToTarget(int gmClientnum, Client* target, csSring s
     psCharacter* charData = player->GetCharacterData();
     unsigned int value = abs(data.value);
     unsigned int max = MAX(MAX_SKILL, MAX_STAT);
-    
+
     if(skillName == "all")
     {
-        
+
     }
     else
     {
@@ -6966,7 +6966,7 @@ void AdminManager::AwardSkillToTarget(int gmClientnum, Client* target, csSring s
         // Send updated skill list to client
     if(target->GetClient())
         psserver->GetProgressionManager()->SendSkillList(target->GetClient(), false);
-    
+
 
 }*/
 
@@ -7636,7 +7636,7 @@ void AdminManager::Morph(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& dat
                         Error2("Model dir %s lacks a valid cal3d file!", name.GetData() );
                 }
             }*/
-            
+
             //construct a list coming from the race info list, will probably kill duplicates coming
             //from races with same mesh name but different texture for now
             //but till we have an idea on how to allow the user to select them let's leave like this to
@@ -8052,7 +8052,7 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
                 {
                     psserver->SendSystemError(me->clientnum,"Unable to complete quest of offline player %s!", name.GetData());
                 }
-                
+
             }
             else
             {
@@ -8089,7 +8089,7 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
         }
         else //the player is offline so we have to hit the database
         {
-            
+
             if (db->CommandPump("DELETE FROM character_quests WHERE player_id=%u AND quest_id=%u",pid.Unbox(), quest->GetID()))
             {
                 psserver->SendSystemInfo(me->clientnum, "Quest %s discarded for %s!", data.text.GetData(), name.GetData());
@@ -8575,20 +8575,20 @@ void AdminManager::HandleServerQuit(MsgEntry* me, psAdminCmdMessage& msg, AdminC
 
 void AdminManager::RandomMessageTest(Client *client,bool sequential)
 {
-	csArray<int> values;
-	for (int i=0; i<10; i++)
-	{
-		int value = psserver->GetRandom(10) + 1; // range from 1-10, not 0-9
-		if (values.Find(value) != SIZET_NOT_FOUND) // already used
-			i--;  // try again
-		else
-			values.Push(value);
-	}
+    csArray<int> values;
+    for (int i=0; i<10; i++)
+    {
+        int value = psserver->GetRandom(10) + 1; // range from 1-10, not 0-9
+        if (values.Find(value) != SIZET_NOT_FOUND) // already used
+            i--;  // try again
+        else
+            values.Push(value);
+    }
 
-	for (int i=0; i<10; i++)
-	{
-		psOrderedMessage seq(client->GetClientNum(), values[i], sequential ? values[i] : 0);  // 0 means not sequenced so values should show up randomly
-		// seq.SendMessage();
-		psserver->GetNetManager()->SendMessageDelayed(seq.msg,i*1000);  // send out 1 per second
-	}
+    for (int i=0; i<10; i++)
+    {
+        psOrderedMessage seq(client->GetClientNum(), values[i], sequential ? values[i] : 0);  // 0 means not sequenced so values should show up randomly
+        // seq.SendMessage();
+        psserver->GetNetManager()->SendMessageDelayed(seq.msg,i*1000);  // send out 1 per second
+    }
 }

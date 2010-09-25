@@ -152,11 +152,11 @@ void psItemWeaponStats::ReadStats( iResultRow& row )
     targeted_block_value = row.GetFloat("weapon_block_targeted");
     untargeted_block_value = row.GetFloat("weapon_block_untargeted");
     counter_block_value = row.GetFloat("weapon_counterblock");
-    
+
     attribute_bonuses[0].bonus_max = row.GetFloat("item_bonus_1_max");
     attribute_bonuses[1].bonus_max = row.GetFloat("item_bonus_2_max");
     attribute_bonuses[2].bonus_max = row.GetFloat("item_bonus_3_max");
-    
+
     attribute_bonuses[0].attribute_id = psserver->GetCacheManager()->ConvertAttributeString(row["item_bonus_1_attr"]);
     attribute_bonuses[1].attribute_id = psserver->GetCacheManager()->ConvertAttributeString(row["item_bonus_2_attr"]);
     attribute_bonuses[2].attribute_id = psserver->GetCacheManager()->ConvertAttributeString(row["item_bonus_3_attr"]);
@@ -272,7 +272,7 @@ void psItemCreativeStats::ReadStats()
                     creatorIDStatus = PSITEMSTATS_CREATOR_VALID;   // valid
             }
         }
-        
+
         //check for a background assigned to this.
         creativeTag.GetTagParm("background", backgroundImg);
 
@@ -323,7 +323,7 @@ void psItemCreativeStats::SetCreator (PID characterID, PSITEMSTATS_CREATORSTATUS
 
 
 bool psItemCreativeStats::IsThisTheCreator(PID characterID)
-{    
+{
     // if characterID is creator of this item, or no creator assigned (then anyone can edit)
     // of if the item is 'public' then any can edit it.
     return ((creatorIDStatus == PSITEMSTATS_CREATOR_VALID && creatorID == characterID) ||
@@ -379,7 +379,7 @@ bool psItemCreativeStats::FormatCreativeContent(void)
     {
         creativeDefinitionXML.AppendFmt(" creator=\"%u\"", creatorID.Unbox());
     }
-    
+
     if(backgroundImg.Length())
     {
         creativeDefinitionXML.AppendFmt(" background=\"%s\"", backgroundImg.GetData());
@@ -483,7 +483,7 @@ psItemStats::psItemStats()
     equipScript = NULL;
 
     visible_distance = DEF_PROX_DIST;
-    
+
     spawnable = true;
 }
 
@@ -641,9 +641,9 @@ bool psItemStats::ReadItemStats(iResultRow& row)
     }
 
     weaponRange = row.GetFloat("weapon_range");
-    
+
     itemCommand = row["assigned_command"];
-    
+
     spawnable = (*row["spawnable"] == 'Y');
 
     return true;

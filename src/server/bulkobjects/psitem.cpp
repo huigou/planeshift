@@ -187,7 +187,7 @@ psItem::psItem() : transformationEvent(NULL), gItem(NULL), pendingsave(false), l
     lockpickSkill = PSSKILL_NONE;
     schedule = NULL;
     equipActiveSpell = NULL;
-    
+
     //sets the creative stats in order to work on the instance and not the stats
     creativeStats.setInstanceBased(true);
     //create an overlay for modifications
@@ -232,7 +232,7 @@ psItem::~psItem()
     if (gItem)
         gItem->UnregisterCallback(this);
     gItem = NULL;
-    
+
     //remove the itemModifiers class as it's no more needed
     delete itemModifiers;
 }
@@ -475,19 +475,19 @@ bool psItem::Load(iResultRow& row)
 
     item_name = row["item_name"];
     item_description = row["item_description"];
-    
+
     //the check for empty string is done as last as it's actually a save case for a db bug (empty
     //creative definitions should be null)
     if(row["creative_definition"] && current_stats->GetCreative() != PSITEMSTATS_CREATIVETYPE_NONE && *row["creative_definition"])
     {
         creativeStats.ReadStats(row);
     }
-    
+
     //load the modifiers of this item
     AddLootModifier(row.GetUInt32("prefix"),0);
     AddLootModifier(row.GetUInt32("suffix"),1);
     AddLootModifier(row.GetUInt32("adjective"),2);
-    
+
     //then apply them.
     psserver->GetCacheManager()->ApplyItemModifiers(current_stats, itemModifiers, modifierIds);
 
@@ -520,7 +520,7 @@ void psItem::PrepareCreativeItemInstance()
     //creative stat
     creativeStats.creativeDefinitionXML = current_stats->getCreativeXML();
     //loads the xml definition we've just prepared
-    creativeStats.ReadStats();    
+    creativeStats.ReadStats();
 }
 
 void psItem::Save(bool children)
@@ -577,7 +577,7 @@ bool psItem::IsThisTheCreator(PID characterID)
 {
     if(creativeStats.creativeType == PSITEMSTATS_CREATIVETYPE_NONE)
         return current_stats->IsThisTheCreator(characterID);
-    
+
     return creativeStats.IsThisTheCreator(characterID);
 }
 
@@ -599,10 +599,10 @@ void psItem::SetCreator (PID characterID, PSITEMSTATS_CREATORSTATUS creatorStatu
 bool psItem::SetCreation (PSITEMSTATS_CREATIVETYPE creativeType, const csString& newCreation, csString creatorName)
 {
     csString newDescription;
- 
+
      if(creativeStats.creativeType == PSITEMSTATS_CREATIVETYPE_NONE)
         return current_stats->SetCreation(creativeType, newCreation, creatorName);
-    
+
     if (creativeStats.SetCreativeContent(creativeType, newCreation, uid))
     {
         newDescription = creativeStats.UpdateDescription(creativeType, GetName(), creatorName);
@@ -824,8 +824,8 @@ void psItem::Commit(bool children)
     targetQuery->AddField("item_description", item_description);
 
     targetQuery->AddField("charges",GetCharges());
-    
-    
+
+
     //saves the modifiers applied to this item. for now 3 due to how the schema is done.
     targetQuery->AddField("prefix",modifierIds.Get(0));
     targetQuery->AddField("suffix",modifierIds.Get(1));
@@ -1559,13 +1559,13 @@ void psItem::Copy(psItem * target)
     //unique name & description are the same
     target->item_name = item_name;
     target->item_description = item_description;
-    
+
     //copy the creative stats to the new item
     target->creativeStats = creativeStats;
-    
+
     //copy the modifier ids to the new item
     target->modifierIds = modifierIds;
-    
+
     target->SetGuardingCharacterID(GetGuardingCharacterID());
 
     // Current stats are rebuilt;
@@ -1576,7 +1576,7 @@ void psItem::Copy(psItem * target)
             target->AddModifier(modifiers[i]);
     }
     target->SetOwningCharacter( owning_character);
-    
+
     //generate the overlay cache of the modifiers in the new item.
     target->UpdateModifiers();
 
@@ -1733,11 +1733,11 @@ const char *psItem::GetName() const
     //first check if this item was explictly given a special name
     if (!item_name.IsEmpty())
         return item_name;
-        
+
     //then check if the item modifier overlay gives a name to this item.
     if(itemModifiers->active && !itemModifiers->name.IsEmpty())
         return itemModifiers->name;
-        
+
     //fallback to the standard item name
     return current_stats->GetName();
 }
@@ -2469,17 +2469,17 @@ bool psItem::CheckRequirements( psCharacter* charData, csString& resp )
                     break;
                 }
             }
-            
+
             //if not found we add it to the list of requirement
             if(!found)
                 requirements.Push(itemModifiers->reqs[i]);
         }
     }
-    
+
     float val = 0;
     csString needed = "You need to have ";
     bool first= true;
-    
+
         for (int z = 0; z < requirements.GetSize(); z++)
         {
             PSITEMSTATS_STAT stat = psserver->GetCacheManager()->ConvertAttributeString(requirements[z].name);
@@ -2744,7 +2744,7 @@ bool psItem::SetBookText(const csString& newText)
 
 bool psItem::SetSketch(const csString& newSketchData)
 {
-    return SetCreation(PSITEMSTATS_CREATIVETYPE_SKETCH, newSketchData, 
+    return SetCreation(PSITEMSTATS_CREATIVETYPE_SKETCH, newSketchData,
                        owning_character ? owning_character->GetCharFullName():"Unknown");
 }
 
@@ -3293,26 +3293,26 @@ bool psItem::SendActionContents(Client *client, psActionLocation *action)
     return true;
 }
 
-RandomizedOverlay::RandomizedOverlay() 
-{ 
+RandomizedOverlay::RandomizedOverlay()
+{
     active = false;
     equip_script = NULL;
     //set those variables to nan to indicate they aren't active.
-    damageStats[0] = damageStats[1] = damageStats[2] = latency = weight = std::numeric_limits<float>::signaling_NaN(); 
-    
+    damageStats[0] = damageStats[1] = damageStats[2] = latency = weight = std::numeric_limits<float>::signaling_NaN();
+
    //  latency   = std::numeric_limits<float>::signaling_NaN();
-     
-     
+
+
   //  printf("nan? %d %d %d %f %X\n", nanso,csNaN(latency), isnan(latency), latency, *(int*)&latency);
    // damageStats[0] = damageStats[1] = damageStats[2] = latency = weight = std::numeric_limits<float>::signaling_NaN();
-   // latency = sqrt(-1);  
+   // latency = sqrt(-1);
    // printf("nan? %d %d %d %d %f %X\n", true, csNaN(latency), isnan(latency), std::isnan(latency),latency,*(int*)&latency);
 
 }
 
-RandomizedOverlay::~RandomizedOverlay() 
-{ 
-    delete equip_script; 
+RandomizedOverlay::~RandomizedOverlay()
+{
+    delete equip_script;
 }
 
 

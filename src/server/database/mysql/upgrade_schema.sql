@@ -1471,7 +1471,7 @@ ALTER TABLE `tribe_needs`
 UPDATE `server_options` SET `option_value`='1250' WHERE `option_name`='db_version';
 ALTER TABLE `npc_spawn_rules`
   ADD COLUMN `min_spawn_spacing_dist` float(10,2) default '0.0' AFTER `dead_remain_time`;
-  
+
 #1251 - Stefano Angeleri - Added possibility to define a command associated to an item to be shown in the context menu
 ALTER TABLE `item_stats` ADD COLUMN `assigned_command` VARCHAR(40)  NOT NULL DEFAULT '' COMMENT 'Used to determine if the item could be used with a specific command. Will be used to show it in the context menu when the item is equipped.' AFTER `weapon_range`;
 UPDATE `server_options` SET `option_value`='1251' WHERE `option_name`='db_version';

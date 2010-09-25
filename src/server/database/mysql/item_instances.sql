@@ -117,7 +117,7 @@ INSERT INTO `item_instances` VALUES (172,8,0,0,35,1,0,0,0,0,0,0,0,0,0,0,0,50,-1,
 INSERT INTO `item_instances` VALUES (185,8,0,0,35,1,8,0,0,0,0,0,0,0,0,0,0,50,-1,232,0,'',0,-1,'','','',NULL,'0',0,0,0);
 INSERT INTO `item_instances` VALUES (186,8,0,0,35,1,8,0,0,0,0,0,0,0,0,0,0,50,-1,233,0,'',0,-1,'','','',NULL,'0',0,0,0);
 
-# acraig items 
+# acraig items
 INSERT INTO `item_instances` VALUES (50,3,0,0,16,1,5,0,0,0,0,0,0,0,0,0,0,50,-1,71,0,'',0,-1,'','','',NULL,'0',0,0,0);
 INSERT INTO `item_instances` VALUES (51,3,0,0,17,1,5,0,0,0,0,0,0,0,0,0,0,50,-1,69,0,'',0,-1,'','','',NULL,'0',0,0,0);
 

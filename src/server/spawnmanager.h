@@ -1,7 +1,7 @@
 /*
  * spawnmanager.h by Keith Fulton <keith@paqrat.com>
  *
- * Copyright (C) 2002 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2002 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -94,7 +94,7 @@ public:
 };
 
 class LootEntrySet;
- 
+
 /**
  * This class is used to store respawn rules for NPCs. They are loaded
  * from the database at startup and used only in RAM thereafter.
@@ -102,7 +102,7 @@ class LootEntrySet;
 class SpawnRule
 {
 protected:
-    
+
     csRandomGen* randomgen;
 
     /// Unique Id used for ident and tree sorting
@@ -131,7 +131,7 @@ protected:
 
     /// Spawn ranges for the current rule
     csHash<SpawnRange*> ranges;
-    
+
     /// Rules for generating loot when this npc is killed.
     LootEntrySet *loot;
 
@@ -180,7 +180,7 @@ public:
     int GetDeadRemainTime() { return dead_remain_time; }
 
     int GetMinSpawnSpacingDistance() { return minSpawnSpacingDistance; }
-    
+
 };
 
 class psItemStats;
@@ -221,8 +221,8 @@ public:
     /// This adds another item to the entries array
     void AddLootEntry( LootEntry *entry );
 
-    /** This calculates the loot for the character, given the 
-     *  current set of loot entries, and adds them to the 
+    /** This calculates the loot for the character, given the
+     *  current set of loot entries, and adds them to the
      *  character as lootable inventory.
      */
     void CreateLoot( psCharacter *chr, size_t numModifiers = 0 );
@@ -314,9 +314,9 @@ public:
      * Respawn a NPC in the given position.
      */
     void Respawn(psCharacter* chardata, InstanceID instance, csVector3& where, float rot, csString& sector);
-    
+
     /// Adds all items to the world.
-    /** Called at the server startup to add all the items to the game. 
+    /** Called at the server startup to add all the items to the game.
      * @param sectorinfo The sector to respawn the items into. If NULL it will
      *                   respawn all items in all sectors.
      */
@@ -374,7 +374,7 @@ protected:
 
 public:
     psDespawnGameEvent(SpawnManager *mgr,
-					   GEMSupervisor *gemSupervisor,
+                       GEMSupervisor *gemSupervisor,
                        int delayticks,
                        gemObject *obj);
 
@@ -386,8 +386,8 @@ class psItemSpawnEvent : public psGameEvent
 public:
     psItemSpawnEvent (psScheduledItem* item);
     virtual ~psItemSpawnEvent();
-    
-    void Trigger();  // Abstract event processing function    
+
+    void Trigger();  // Abstract event processing function
 
 protected:
     psScheduledItem* schedule;

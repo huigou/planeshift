@@ -138,7 +138,7 @@ CacheManager::CacheManager()
     effectID = 0;
 
     commandManager = NULL;
-    
+
     lootRandomizer = new LootRandomizer(this);
 
     // Init common string data.
@@ -281,7 +281,7 @@ void CacheManager::UnloadAll()
             while (it2.HasNext ())
             {
                 psTradeProcesses* newProc = it2.Next ();
-                delete newProc; 
+                delete newProc;
             }
             delete newArray;
         }
@@ -373,7 +373,7 @@ void CacheManager::UnloadAll()
         while (it.HasNext ())
             delete it.Next ();
     }
-    
+
     {
         csHash<CachedObject *, csString>::GlobalIterator it(generic_object_cache.GetIterator ());
         while (it.HasNext ())
@@ -385,7 +385,7 @@ void CacheManager::UnloadAll()
             delete newCachedObject;
         }
     }
-    
+
     {
         csHash<Faction*, int>::GlobalIterator it(factions_by_id.GetIterator ());
         while (it.HasNext())
@@ -396,9 +396,9 @@ void CacheManager::UnloadAll()
             delete newFaction;
         }
     }
-    
+
     delete lootRandomizer;
-    // ToDo: unload everything else    
+    // ToDo: unload everything else
 }
 
 void CacheManager::RemoveInstance( psItem * & item )
@@ -455,7 +455,7 @@ bool CacheManager::PreloadLootModifiers()
 
         lootRandomizer->AddLootModifier(entry);
     }
-    
+
     Notify2( LOG_STARTUP, "%lu loot modifiers Loaded", result.Count() );
     return true;
 }
@@ -470,7 +470,7 @@ bool CacheManager::PreloadOptions()
         Error1("Could not cache database table. Check >server_options<");
         return false;
     }
-    
+
     //check all rows and add the options to the tree
     for (currentrow = 0; currentrow < result.Count(); currentrow++)
         rootOptionEntry.setOption(result[currentrow]["option_name"], result[currentrow]["option_value"]);
@@ -497,11 +497,11 @@ bool optionEntry::setOption(const csString path, const csString value)
     optionEntry *optEntry = subOptions.GetElementPointer(splittedOptName.Get(0));
     if(!optEntry)
         return false;
-    
+
     //if this isn't the last entry in the path create another sub node
     if(splittedOptName.GetSize() > 1)
         return optEntry->setOption(path.Slice(csString(splittedOptName.Get(0)).Length()+1), value);
-    
+
     //if this is the last entry in the path just assign the value directly and we are done
     optEntry->setValue(value);
     return true;
@@ -521,12 +521,12 @@ optionEntry *optionEntry::getOption(const csString path)
     //get the actual option entry
     optionEntry *optEntry = subOptions.GetElementPointer(splittedOptName.Get(0));
     if(!optEntry)
-        return NULL;        
+        return NULL;
 
     //is this the last entry?
     if(splittedOptName.GetSize() > 1)//if not then call the "subfolder"
         return optEntry->getOption(path.Slice(csString(splittedOptName.Get(0)).Length()+1));
-    
+
     return optEntry;
 }
 
@@ -545,7 +545,7 @@ optionEntry *optionEntry::getOptionSafe(const csString path, csString fallback)
 
 csVector3 optionEntry::getValueAsVector()
 {
-    //split the array each , 
+    //split the array each ,
     csStringArray cordArray;
     cordArray.SplitString(getValue(),",");
     //if there are enough string to do 3 cordinates parse them and stuff them in a csVector3
@@ -558,14 +558,14 @@ csVector3 optionEntry::getValueAsVector()
 
 bool optionEntry::getValueAsVector(csVector3 &vector)
 {
-    //split the array each , 
+    //split the array each ,
     csStringArray cordArray;
     cordArray.SplitString(getValue(),",");
     //if there are enough string to do 3 cordinates parse them and stuff them in a csVector3
     //else return false.
     if(cordArray.GetSize() < 3)
         return false;
-        
+
     vector = csVector3(atof(cordArray.Get(0)), atof(cordArray.Get(1)), atof(cordArray.Get(2)));
     return true;
 }
@@ -612,12 +612,12 @@ bool CacheManager::PreloadSkills()
                 Error3("Unknown category '%s' for skill id %u",type.GetDataSafe(),newskill->id);
                 return false;
             }
-            
+
 
             skillinfo_IDHash.Put((int)newskill->id, newskill);
             skillinfo_NameHash.Put(csString(newskill->name).Upcase(), newskill);
             skillinfo_CategoryHash.Put((int)newskill->category, newskill);
-            
+
             msg_strings.Request(newskill->name);
         }
     }
@@ -710,16 +710,16 @@ bool CacheManager::PreloadSectors()
 
         newsector->is_colliding = (result[currentrow].GetInt("collide_objects") != 0);
         newsector->is_non_transient = (result[currentrow].GetInt("non_transient_objects") != 0);
-        
+
         newsector->is_teleporting = (*result[currentrow]["TeleportingSectorEnable"] != 'N');
         newsector->has_penalty = (*result[currentrow]["TeleportingPenaltyEnable"] != 'N');
-        
+
         newsector->deathRestoreMana = (*result[currentrow]["DeathRestoreMana"] != 'N');
         newsector->deathRestoreHP = (*result[currentrow]["DeathRestoreHP"] != 'N');
-        
+
         newsector->teleportingSector = result[currentrow]["TeleportingSector"];
         newsector->deathSector = result[currentrow]["DeathSector"];
-        
+
         csStringArray teleportingcordarray;
         teleportingcordarray.SplitString(result[currentrow]["TeleportingCords"],",");
         if(teleportingcordarray.GetSize() > 3)
@@ -729,7 +729,7 @@ bool CacheManager::PreloadSectors()
                                                     atof(teleportingcordarray.Get(2)));
             newsector->teleportingRot = atof(teleportingcordarray.Get(3));
         }
-                                                    
+
         csStringArray deathcordarray;
         deathcordarray.SplitString(result[currentrow]["DeathCords"],",");
         if(deathcordarray.GetSize() > 3)
@@ -739,9 +739,9 @@ bool CacheManager::PreloadSectors()
                                                     atof(deathcordarray.Get(2)));
             newsector->deathRot = atof(deathcordarray.Get(3));
         }
-        
-        
-        
+
+
+
         newsector->say_range = result[currentrow].GetFloat("say_range");
 
         newsector->god_name = result[currentrow]["god_name"];
@@ -1363,7 +1363,7 @@ bool CacheManager::PreloadCraftMessages()
         if (combArray)
         {
             newComboArray = new csArray<CraftComboInfo*>;
-            
+
             // Get the skills array from the transformations
             for (size_t i=0; i<combArray->GetSize(); i++)
             {
@@ -1374,12 +1374,12 @@ bool CacheManager::PreloadCraftMessages()
                     Error3("Can not find any transformation data for pattern %d and result %u ",currentID, resultID);
                     continue;
                 }
-                
+
                 // Get the combination craft info string
                 CraftComboInfo* combInfo = new CraftComboInfo;
                 combInfo->skillArray = new csArray<CraftSkills*>;
                 combInfo->craftCombDescription = CreateComboCraftDescription(combArray->Get(i));
-                
+
                 for (size_t j=0; j<transArray->GetSize(); j++)
                 {
                     psTradeTransformations* trans = transArray->Get(j);
@@ -1412,7 +1412,7 @@ bool CacheManager::PreloadCraftMessages()
         // Preload the combination craft string for current group pattern
         csPDelArray<CombinationConstruction>* combGroupArray = FindCombinationsList(currentGroupID);
         if (combGroupArray)
-        {            
+        {
             // Get the skills array from the transformations
             for (size_t i=0; i<combGroupArray->GetSize(); i++)
             {
@@ -1423,12 +1423,12 @@ bool CacheManager::PreloadCraftMessages()
                     Error3("Can not find any transformation data for group pattern %d and result %u ",currentGroupID, resultID);
                     continue;
                 }
-                
+
                 // Get the combination craft info string
                 CraftComboInfo* combInfo = new CraftComboInfo;
                 combInfo->skillArray = new csArray<CraftSkills*>;
                 combInfo->craftCombDescription = CreateComboCraftDescription(combGroupArray->Get(i));
-                
+
                 for (size_t j=0; j<transArray->GetSize(); j++)
                 {
                     psTradeTransformations* trans = transArray->Get(j);
@@ -1593,13 +1593,13 @@ csString CacheManager::CreateTransCraftDescription(psTradeTransformations* tran,
         desc.Format("%s %d %ss into ", proc->GetName().GetData(), tran->GetItemQty(), itemStats->GetName());
     else
         desc.Format("%s %s into ", proc->GetName().GetData(), itemStats->GetName());
-    
+
     csString secondHalf;
     if (tran->GetResultQty() > 1)
         secondHalf.Format("%d %ss using %s", tran->GetResultQty(), resultStats->GetName(), workStats->GetName());
     else
         secondHalf.Format("%s using %s", resultStats->GetName(), workStats->GetName());
-    
+
     desc.Append(secondHalf);
 
     // Get tool name if one exists

@@ -1,7 +1,7 @@
 /*
  * lootrandomizer.h by Stefano Angeleri
  *
- * Copyright (C) 2010 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2010 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -67,7 +67,7 @@ public:
 
     /// This adds another item to the entries array
     void AddLootModifier( LootModifier *entry );
-    
+
     /** Gets a loot modifier from it's id.
      *  @param id The id of the item we are searching for.
      *  @return A pointer to the loot modifier which is referenced by the id we were searching for.
