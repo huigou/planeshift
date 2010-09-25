@@ -138,6 +138,8 @@ CacheManager::CacheManager()
     effectID = 0;
 
     commandManager = NULL;
+    
+    lootRandomizer = new LootRandomizer(this);
 
     // Init common string data.
     compressed_msg_strings = 0;
@@ -202,6 +204,8 @@ bool CacheManager::PreloadAll(EntityManager* entitymanager)
     if (!PreloadStances())
         return false;
     if (!PreloadOptions())
+        return false;
+    if (!PreloadLootModifiers())
         return false;
 
     PreloadCommandGroups();
@@ -392,6 +396,8 @@ void CacheManager::UnloadAll()
             delete newFaction;
         }
     }
+    
+    delete lootRandomizer;
     // ToDo: unload everything else    
 }
 
@@ -418,6 +424,41 @@ void CacheManager::RemoveItemStats (psItemStats *&itemStats)
         delete itemStats;
         itemStats = NULL;
     }
+}
+
+bool CacheManager::PreloadLootModifiers()
+{
+
+    // Order by's are a little slower but it guarentees order
+    Result result( db->Select( "SELECT * FROM loot_modifiers ORDER BY modifier_type, probability" ) );
+    if ( !result.IsValid() )
+    {
+        Error2( "Could not load loot modifiers due to database error: %s\n",
+               db->GetLastError() );
+        return false;
+    }
+
+    for ( unsigned int i = 0; i < result.Count(); i++ )
+    {
+        LootModifier *entry = new LootModifier;
+
+        entry->id = result[i].GetInt("id");
+        entry->modifier_type = result[i][ "modifier_type" ];
+        entry->name = result[i][ "name" ];
+        entry->effect = result[i][ "effect" ];
+        entry->equip_script = result[i]["equip_script"];
+        entry->effect = result[i][ "effect" ];
+        entry->probability = result[i].GetFloat( "probability" );
+        entry->stat_req_modifier = result[i][ "stat_req_modifier" ];
+        entry->cost_modifier = result[i].GetFloat( "cost_modifier" );
+        entry->mesh = result[i][ "mesh" ];
+        entry->not_usable_with = result[i][ "not_usable_with" ];
+
+        lootRandomizer->AddLootModifier( entry );
+    }
+    
+    Notify2( LOG_STARTUP, "%lu loot modifiers Loaded", result.Count() );
+    return true;
 }
 
 bool CacheManager::PreloadOptions()

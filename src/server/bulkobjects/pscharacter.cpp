@@ -1370,7 +1370,7 @@ void psCharacter::CalculateEquipmentModifiers()
     lock_me = false;
 }
 
-void psCharacter::AddLootItem(psItemStats *item)
+void psCharacter::AddLootItem(psItem *item)
 {
     if (!item)
     {
@@ -1399,7 +1399,7 @@ size_t psCharacter::GetLootItems(psLootMessage& msg, EID entity, int cnum)
             item.Format("<li><image icon=\"%s\" count=\"1\" /><desc text=\"%s\" /><id text=\"%u\" /></li>",
                   escpxml_imagename.GetData(),
                   escpxml_name.GetData(),
-                  loot_pending[i]->GetUID());
+                  loot_pending[i]->GetBaseStats()->GetUID()); //use the basic item id to reference this.
             loot.Append(item);
         }
         loot.Append("</loot>");
@@ -1409,7 +1409,7 @@ size_t psCharacter::GetLootItems(psLootMessage& msg, EID entity, int cnum)
     return loot_pending.GetSize();
 }
 
-bool psCharacter::RemoveLootItem(int id)
+psItem* psCharacter::RemoveLootItem(int id)
 {
     size_t x;
     for (x=0; x<loot_pending.GetSize(); x++)
@@ -1420,13 +1420,14 @@ bool psCharacter::RemoveLootItem(int id)
           continue;
         }
 
-        if (loot_pending[x]->GetUID() == (uint32) id)
+        if (loot_pending[x]->GetBaseStats()->GetUID() == (uint32) id)
         {
+            psItem* item = loot_pending[x];
             loot_pending.DeleteIndex(x);
-            return true;
+            return item;
         }
     }
-    return false;
+    return NULL;
 }
 int psCharacter::GetLootMoney()
 {
@@ -1437,6 +1438,11 @@ int psCharacter::GetLootMoney()
 
 void psCharacter::ClearLoot()
 {
+    //delete the instanced items
+    for(size_t i = 0; i < loot_pending.GetSize(); i++)
+        delete loot_pending.Get(i);
+    
+    //delete the pointers to the instanced items we have just deleted
     loot_pending.DeleteAll();
     loot_money = 0;
 }

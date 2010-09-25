@@ -692,10 +692,10 @@ public:
     /// Sets a new equip script and saves it to the DB.  Mostly for the loot generator.
     bool SetEquipScript(const csString & script);
 
-    /** Checks to see if the character meets the requirements to equip an item
-      * with these stats.
-      */
-    bool CheckRequirements( psCharacter* charData, csString& resp );
+    /** Gets the list of requirements of this item, used by psitem to check them over a player
+     *  @return A pointer to the start of the array of itemRequirement (they are 3 elements)
+     */
+    ItemRequirement *GetRequirements();
     bool SetRequirement(const csString & statName, float statValue);
 
     /**

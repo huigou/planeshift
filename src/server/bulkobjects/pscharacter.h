@@ -510,7 +510,7 @@ protected:
     unsigned int characterType;
 
     /// Array of items waiting to be looted.
-    csArray<psItemStats *> loot_pending;
+    csArray<psItem *> loot_pending;
     /// Last response of an NPC to this character (not saved)
     int  lastResponse;
     /// Amount of money ready to be looted
@@ -736,9 +736,9 @@ public:
 
     void SetLootCategory(int id) { loot_category_id = id; }
     int  GetLootCategory() const { return loot_category_id; }
-    bool RemoveLootItem(int id);
+    psItem* RemoveLootItem(int id);
 
-    void AddLootItem(psItemStats *item);
+    void AddLootItem(psItem *item);
     void AddLootMoney(int money) { loot_money += money; }
     size_t GetLootItems(psLootMessage& msg, EID entity, int cnum);
 

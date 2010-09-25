@@ -29,6 +29,7 @@ class psSectorInfo;
 #include <csutil/hash.h>
 #include "util/gameevent.h"
 #include "msgmanager.h"
+#include "lootrandomizer.h"
 
 
 /**
@@ -184,7 +185,7 @@ public:
 
 class psItemStats;
 class psCharacter;
-class LootRandomizer;
+
 /**
  * This class holds one loot possibility for a killed npc.
  * The npc_spawn_rule has a ptr to an array of these.
@@ -233,64 +234,6 @@ public:
 };
 
 /**
- * This class holds one loot modifier
- * The lootRandomizer contions arrays of these
- */
-struct LootModifier
-{
-    csString modifier_type;
-    csString name;
-    csString effect;
-    csString equip_script;
-    float    probability;
-    csString stat_req_modifier;
-    float    cost_modifier;
-    csString mesh;
-    csString not_usable_with;
-};
-
-class MathScript;
-/**
- * This class stores an array of LootModifiers and randomizes
- * loot stats.
- */
-class LootRandomizer
-{
-protected:
-    csArray<LootModifier*> prefixes;
-    csArray<LootModifier*> suffixes;
-    csArray<LootModifier*> adjectives;
-
-    // precalculated max values for probability. min is always 0
-    float prefix_max;
-    float adjective_max;
-    float suffix_max;
-
-public:
-    LootRandomizer(CacheManager* cachemanager);
-    ~LootRandomizer();
-
-    /// This adds another item to the entries array
-    void AddLootModifier( LootModifier *entry );
-
-    /// This randomizes the current loot item stats and returns the new item stats
-    psItemStats* RandomizeItem( psItemStats* itemstats,
-                                float cost,
-                                bool lootTesting = false,
-                                size_t numModifiers = 0 );
-
-    float CalcModifierCostCap(psCharacter *chr);
-
-protected:
-    MathScript* modifierCostCalc;
-    CacheManager* cacheManager;
-
-private:
-    void AddModifier( LootModifier *oper1, LootModifier *oper2 );
-    void ApplyModifier(psItemStats *loot, LootModifier *mod);
-};
-
-/**
  *  This class is periodically called by the engine to ensure that
  *  monsters (and other NPCs) are respawned appropriately.
  */
@@ -335,11 +278,6 @@ public:
      */
     LoadWaypointsAsSpawnRanges(iDocumentNode *topNode);
 #endif
-
-    /**
-     * Load all loot mosifiers into the manager for use in spawn rules.
-     */
-    void PreloadLootModifiers();
 
     /**
      * Load all ranges for a rule.

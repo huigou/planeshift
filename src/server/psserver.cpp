@@ -92,7 +92,7 @@
 #include "workmanager.h"
 
 // Remember to bump this in server_options.sql and add to upgrade_schema.sql!
-#define DATABASE_VERSION_STR "1253"
+#define DATABASE_VERSION_STR "1254"
 
 
 psCharacterLoader psServer::CharacterLoader;
@@ -335,6 +335,9 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
 
     Debug1(LOG_STARTUP,0,"Loader cache filled");
 
+    // MathScript Engine
+    mathscriptengine = new MathScriptEngine();
+
     cachemanager = new CacheManager();
 
     //Loads the standard motd message from db
@@ -347,10 +350,6 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     {
         motd.Clear();
     }
-
-
-    // MathScript Engine
-    mathscriptengine = new MathScriptEngine();
 
     entitymanager = new EntityManager;
 
