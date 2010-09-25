@@ -512,8 +512,19 @@ public:
      */
     optionEntry* getOptionSafe(const csString path, const csString value) { return rootOptionEntry.getOptionSafe(path,value); }
     
+    /** Returns a pointer to the loot randomizer which is hosted within the cache manager.
+     *  @return A pointer to the lootrandomizer.
+     */
     LootRandomizer* getLootRandomizer() { return lootRandomizer; }
-    void ApplyItemModifiers(psItemStats* baseItem, RandomizedOverlay* overlay, csArray<uint32_t>& modifierIds) { lootRandomizer->ApplyModifier(baseItem, overlay, modifierIds); }
+    
+    /** Applies on a randomized overlay structure, starting with the base item stats passed, the modifier ids
+     *  passed. This is an accessor to the lootrandomizer own function
+     *  @param baseItem The basic item stats of the item we are creating an overlay for.
+     *  @param overlay The overlay which we will fill with the modifiers data.
+     *  @param modifierIds An array of ids referencing loot_modifiers rules.
+     */
+    void ApplyItemModifiers(psItemStats* baseItem, RandomizedOverlay* overlay, csArray<uint32_t>& modifierIds) 
+         { lootRandomizer->ApplyModifier(baseItem, overlay, modifierIds); }
 
 protected:
     uint32_t effectID;
