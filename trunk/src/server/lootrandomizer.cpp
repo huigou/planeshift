@@ -134,6 +134,9 @@ void LootRandomizer::AddLootModifier(LootModifier *entry)
             adjective_max = entry->probability;
         }
     }
+    
+    //put the lootmodifier in an hash for a faster access when we just need to look it up by id.
+    LootModifiersById.Put(entry->id, entry);
 }
 
 psItem* LootRandomizer::RandomizeItem( psItem* item, float maxcost, bool lootTesting, size_t numModifiers )
@@ -276,115 +279,7 @@ void LootRandomizer::AddModifier( LootModifier *oper1, LootModifier *oper2 )
     // equip script
     oper1->equip_script.Append(oper2->equip_script);
 }
-/*
-void LootRandomizer::ApplyModifier( psItemStats* loot, LootModifier* mod)
-{
 
-    loot->SetName( mod->name );
-    loot->SetPrice( (int)( loot->GetPrice().GetTrias() * mod->cost_modifier ) );
-    if ( mod->mesh.Length() > 0 )
-        loot->SetMeshName( mod->mesh );    
-
-    // Apply effect
-    csString xmlItemMod;
-
-    xmlItemMod.Append( "<ModiferEffects>" );
-    xmlItemMod.Append( mod->effect );
-    xmlItemMod.Append( "</ModiferEffects>" );
-
-    // Read the ModiferEffects XML into a doc
-    csRef<iDocument> xmlDoc = ParseString( xmlItemMod );
-    if(!xmlDoc)
-    {
-        Error1("Parse error in Loot Randomizer");
-        return;
-    }
-    csRef<iDocumentNode> root    = xmlDoc->GetRoot();
-    if(!root)
-    {
-        Error1("No XML root in Loot Randomizer");
-        return;
-    }
-    csRef<iDocumentNode> topNode = root->GetNode("ModiferEffects");//Are we sure it is "Modifer"?
-    if(!topNode)
-    {
-        Error1("No <ModiferEffects> in Loot Randomizer");
-        return;
-    }
-
-    csRef<iDocumentNodeIterator> nodeList = topNode->GetNodes("ModiferEffect");
-
-  // For Each ModiferEffect
-    csRef<iDocumentNode> node;
-    while ( nodeList->HasNext() )
-    {
-        node = nodeList->Next();
-        //    Determine the Effect
-        csString EffectOp = node->GetAttribute("operation")->GetValue();
-        csString EffectName = node->GetAttribute("name")->GetValue();
-        float EffectValue = node->GetAttribute("value")->GetValueAsFloat();
-        //        Add to the Attributes
-        if (!loot->SetAttribute(EffectOp, EffectName, EffectValue))
-        {
-            // display error and continue
-            Error2("Unable to set attribute %s on new loot item.",EffectName.GetData());
-        }
-        //    Loop
-        node = nodeList->Next();
-    }
-
-    // Apply stat_req_modifier
-    csString xmlStatReq;
-
-    xmlStatReq.Append( "<StatReqs>" );
-    xmlStatReq.Append( mod->stat_req_modifier );
-    xmlStatReq.Append( "</StatReqs>" );
-
-    // Read the Stat_Req XML into a doc
-    xmlDoc = ParseString( xmlStatReq );
-    if(!xmlDoc)
-    {
-        Error1("Parse error in Loot Randomizer");
-        return;
-    }
-    root    = xmlDoc->GetRoot();
-    if(!root)
-    {
-        Error1("No XML root in Loot Randomizer");
-        return;
-    }
-    topNode = root->GetNode("StatReqs");
-    if(!topNode)
-    {
-        Error1("No <statreqs> in Loot Randomizer");
-        return;
-    }
-
-    nodeList = topNode->GetNodes("StatReq");
-    // For Each Stat_Req
-    while ( nodeList->HasNext() )
-    {
-        node = nodeList->Next();
-        //        Determine the STAT
-        csString StatName = node->GetAttribute("name")->GetValue();
-        float StatValue = node->GetAttribute("value")->GetValueAsFloat();
-        //        Add to the Requirements
-        if (!loot->SetRequirement(StatName, StatValue))
-        {
-            // Too Many Requirements, display error and continue
-            Error2("Unable to set requirement %s on new loot item.",StatName.GetData());
-        }
-    }
-
-    // Apply equip script
-    if (!mod->equip_script.IsEmpty())
-    {
-        csString scriptXML;
-        scriptXML.Format("<apply aim=\"Actor\" name=\"%s\" type=\"buff\">%s</apply>", mod->name.GetData(), mod->equip_script.GetData());
-        loot->SetEquipScript(scriptXML);
-    }
-}
-*/
 bool LootRandomizer::SetAttribute(const csString & op, const csString & attrName, float modifier, RandomizedOverlay* overlay)
 {
     float* value[3] = { NULL, NULL, NULL };
@@ -534,23 +429,21 @@ void LootRandomizer::ApplyModifier(psItemStats* baseItem, RandomizedOverlay* ove
 
     csRef<iDocumentNodeIterator> nodeList = topNode->GetNodes("ModiferEffect");
 
-  // For Each ModiferEffect
+    // For Each ModiferEffect
     csRef<iDocumentNode> node;
     while ( nodeList->HasNext() )
     {
         node = nodeList->Next();
-        //    Determine the Effect
+        //Determine the Effect
         csString EffectOp = node->GetAttribute("operation")->GetValue();
         csString EffectName = node->GetAttribute("name")->GetValue();
         float EffectValue = node->GetAttribute("value")->GetValueAsFloat();
-        //        Add to the Attributes
+        //Add to the Attributes
         if (!SetAttribute(EffectOp, EffectName, EffectValue,overlay))
         {
             // display error and continue
             Error2("Unable to set attribute %s on new loot item.",EffectName.GetData());
         }
-        //    Loop
-        node = nodeList->Next();
     }
 
     // Apply stat_req_modifier
@@ -604,16 +497,7 @@ void LootRandomizer::ApplyModifier(psItemStats* baseItem, RandomizedOverlay* ove
 
 LootModifier *LootRandomizer::GetModifier(uint32_t id)
 {
-    for(int i = 0; i < prefixes.GetSize(); i++)
-        if(prefixes.Get(i)->id == id)
-            return prefixes.Get(i);
-    for(int i = 0; i < suffixes.GetSize(); i++)
-        if(suffixes.Get(i)->id == id)
-            return suffixes.Get(i);
-    for(int i = 0; i < adjectives.GetSize(); i++)
-        if(adjectives.Get(i)->id == id)
-            return adjectives.Get(i);
-    return NULL;
+    return LootModifiersById.Get(id, NULL);
 }
 
 float LootRandomizer::CalcModifierCostCap(psCharacter *chr)
