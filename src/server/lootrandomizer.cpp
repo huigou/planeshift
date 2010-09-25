@@ -24,55 +24,24 @@
 //=============================================================================
 #include <csutil/randomgen.h>
 #include <csutil/csstring.h>
-#include <iengine/mesh.h>
-#include <iengine/movable.h>
-#include <iengine/sector.h>
 #include <iutil/document.h>
 #include <csutil/xmltiny.h>
-#include <iutil/object.h>
-#include <iengine/engine.h>
 
 //=============================================================================
 // Project Includes
 //=============================================================================
-#include "bulkobjects/pscharacter.h"
-#include "bulkobjects/pscharacterloader.h"
 #include "bulkobjects/psitem.h"
 #include "bulkobjects/psitemstats.h"
-#include "bulkobjects/psraceinfo.h"
-#include "bulkobjects/pssectorinfo.h"
 
-#include "net/msghandler.h"
-
-#include "rpgrules/vitals.h"
-
-#include "util/eventmanager.h"
 #include "util/mathscript.h"
 #include "util/psconst.h"
-#include "util/psdatabase.h"
-#include "util/psxmlparser.h"
 #include "util/serverconsole.h"
-#include "util/slots.h"
-#include "util/strutil.h"
 
 //=============================================================================
 // Local Includes
 //=============================================================================
-#define SPAWNDEBUG
-#include "spawnmanager.h"
 #include "cachemanager.h"
-#include "client.h"
-#include "clients.h"
-#include "entitymanager.h"
-#include "events.h"
-#include "gem.h"
-#include "invitemanager.h"
-#include "netmanager.h"
-#include "playergroup.h"
-#include "progressionmanager.h"
 #include "psserver.h"
-#include "psserverchar.h"
-#include "serverstatus.h"
 #include "globals.h"
 #include "lootrandomizer.h"
 #include "scripting.h"
