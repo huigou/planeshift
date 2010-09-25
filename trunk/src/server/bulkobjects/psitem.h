@@ -47,6 +47,8 @@
 #include "psitemstats.h"
 #include "deleteobjcallback.h"
 #include "psactionlocationinfo.h"
+#include "lootrandomizer.h"
+
 
 class Client;
 class gemActor;
@@ -146,6 +148,31 @@ struct psItemCategory;
 class psScheduledItem;
 class psWorkGameEvent;
 
+/**Stores the randomized stats from the loot randomizer, it could be used to apply any global special effect
+ * which is able to change various properties of the item: cost, mesh, name...
+ * This makes up a 3 levels modification of a single item in order of priority:
+ * The first level is the specific instance modifications: like name or descriptions
+ * The second level is the specific instance modifications coming from the loot modifiers table
+ * (probably should change the names when they will be used also to do changes to crafted items)
+ * The third level is the generic item stats.
+ * The active boolean variables is mostly an optimization to avoid checking if the overlay has data inside.
+ */
+class RandomizedOverlay
+{
+    public:
+    RandomizedOverlay(); ///< Constructor.
+    ~RandomizedOverlay(); ///< Destructor.
+    bool active; ///< notifies if this overlay is active and should be applied.
+    csString name; ///< The name which should be replaced for this randomized item.
+    float weight; ///< weigth of the item changed by the loot modifier rules.
+    float latency; ///< latency of the weapon changed by the loot modifiers rules.
+    float damageStats[PSITEMSTATS_DAMAGETYPE_COUNT]; ///< damage/protection stats changed by the loot modifiers rules.
+    ApplicativeScript *equip_script; ///< equip script for this item overriding the main one from loot modifiers rules.
+    psMoney price; ///< price calculated from the loot modifiers rules which overlays the basic one.
+    csArray<ItemRequirement> reqs; ///array of all the stat prerequisites needed to equip this item.
+    csString mesh; ///< overriden mesh of this item from the basic one.
+};
+
 /** This class embodies item instances in the game.
 * Every item that can be picked up, dropped, traded, equipped, bought or sold is a psitem.
 *
@@ -224,7 +251,7 @@ public:
     /// Handles deleted gem objects.
     virtual void DeleteObjectCallback(iDeleteNotificationObject * object);
 
-    //inform clients on view updates
+    ///inform clients on view updates
     void UpdateView(Client *fromClient, EID eid, bool clear);
 
     bool SendItemDescription( Client *client);
@@ -408,6 +435,12 @@ private:
     
     /// A structure which holds the creative data about this item.
     psItemCreativeStats creativeStats;
+    
+    ///stores the modifications to apply to this item. This is a cache used to increase performance.
+    RandomizedOverlay *itemModifiers;
+    
+    ///stores the ids of the modifications to apply to this item. Used for save and copy.
+    csArray<uint32_t> modifierIds;
 
 public:
     /** Loads data from a database row into the current psItem.
@@ -685,6 +718,20 @@ public:
     void SetDescription(const char* newDescription);
     const char *GetStandardName();
     const char *GetStandardDescription();
+    
+    /** Allows to add a modification to the item.
+     *  @todo For now the system, even if adapted to allow an unspecified amount of modifications now, in the LOAD
+     *        and Save it supports only 3: a prefix, a suffix and an adjective. Should make the schema allow
+     *        to receive an unspecified amount of modifiers too. so the pos variable should be removed when that
+     *        will be implemented.
+     *  @param id The id of the modification to apply to this item.
+     *  @param pos The position in the array where to put this modifications (note it overwrites what's there)
+     */
+    void AddLootModifier(uint32_t id, int pos = -1);
+
+    ///  Recalculates the modifications for this item
+    void UpdateModifiers();
+    
     float GetRange() const { return current_stats->GetRange(); }
     csSet<unsigned int> GetAmmoTypeID() const { return current_stats->GetAmmoTypeID(); }
 

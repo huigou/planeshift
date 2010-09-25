@@ -18,6 +18,9 @@
  */
 
 #include <psconfig.h>
+#include <limits>
+#include <math.h>
+
 //=============================================================================
 // Crystal Space Includes
 //=============================================================================
@@ -67,7 +70,7 @@
 #if SAVE_TRACER
 #include <csutil/callstack.h>
 #endif
-
+//#define csNaN(x) (*(int*)&x == 0x7FC00000)
 /**
  * This class handles auto-removal of transient objects
  * (objects placed in the world by players, basically).
@@ -186,6 +189,10 @@ psItem::psItem() : transformationEvent(NULL), gItem(NULL), pendingsave(false), l
     
     //sets the creative stats in order to work on the instance and not the stats
     creativeStats.setInstanceBased(true);
+    //create an overlay for modifications
+    itemModifiers = new RandomizedOverlay;
+    //fill the array of modifications ids with zero (used for save and copy till a new better schema is in place)
+    AddLootModifier(0); AddLootModifier(0); AddLootModifier(0);
 }
 
 psItem::~psItem()
@@ -224,6 +231,7 @@ psItem::~psItem()
     if (gItem)
         gItem->UnregisterCallback(this);
     gItem = NULL;
+    delete itemModifiers;
 }
 
 void psItem::UpdateItemQuality(uint32 id, float qual)
@@ -472,8 +480,34 @@ bool psItem::Load(iResultRow& row)
         creativeStats.ReadStats(row);
     }
     
+    //load the modifiers of this item
+    AddLootModifier(row.GetUInt32("prefix"),0);
+    AddLootModifier(row.GetUInt32("suffix"),1);
+    AddLootModifier(row.GetUInt32("adjective"),2);
     
+    psserver->GetCacheManager()->ApplyItemModifiers(current_stats, itemModifiers, modifierIds);
+    printf("%s\n", itemModifiers->name.GetData());
     return true;
+}
+
+void psItem::UpdateModifiers()
+{
+    //remove the old modifier cache
+    delete itemModifiers;
+    //make a new clean cache
+    itemModifiers = new RandomizedOverlay;
+    //recalculate the modifiers
+    psserver->GetCacheManager()->ApplyItemModifiers(current_stats, itemModifiers, modifierIds);
+}
+
+void psItem::AddLootModifier(uint32_t id, int pos)
+{
+    if(pos < 0) //if pos is negative or unspecified place it to the end of the array, this should become the right way.
+        modifierIds.Push(id);
+    else //If pos is specified put the item in the specified position (note: it overwrites)
+    {
+        modifierIds[pos] = id;
+    }
 }
 
 void psItem::PrepareCreativeItemInstance()
@@ -594,13 +628,13 @@ void psItem::Commit(bool children)
     if (GetUID()==0)
     {
         if(insertQuery == NULL)
-            insertQuery = db->NewInsertPreparedStatement("item_instances", 26, __FILE__, __LINE__); // 26 fields
+            insertQuery = db->NewInsertPreparedStatement("item_instances", 29, __FILE__, __LINE__); // 26 fields
         targetQuery = insertQuery;
     }
     else
     {
         if(updateQuery == NULL)
-            updateQuery = db->NewUpdatePreparedStatement("item_instances", "id", 27, __FILE__, __LINE__); // 26 fields + 1 id field
+            updateQuery = db->NewUpdatePreparedStatement("item_instances", "id", 30, __FILE__, __LINE__); // 26 fields + 1 id field
         targetQuery = updateQuery;
     }
 
@@ -786,6 +820,10 @@ void psItem::Commit(bool children)
     targetQuery->AddField("item_description", item_description);
 
     targetQuery->AddField("charges",GetCharges());
+    
+    targetQuery->AddField("prefix",modifierIds.Get(0));
+    targetQuery->AddField("suffix",modifierIds.Get(1));
+    targetQuery->AddField("adjective",modifierIds.Get(2));
 
     if (GetUID()==0)
     {
@@ -1317,7 +1355,8 @@ void psItem::RunEquipScript(gemActor *actor)
         return;
     }
 
-    ApplicativeScript *script = base_stats->GetEquipScript();
+    ApplicativeScript *script = (itemModifiers->active && itemModifiers->equip_script) ?
+                                 itemModifiers->equip_script : base_stats->GetEquipScript();
     if (!script)
         return;
 
@@ -1517,7 +1556,9 @@ void psItem::Copy(psItem * target)
     
     //copy the creative stats to the new item
     target->creativeStats = creativeStats;
-
+    
+    target->modifierIds = modifierIds;
+    
     target->SetGuardingCharacterID(GetGuardingCharacterID());
 
     // Current stats are rebuilt;
@@ -1528,6 +1569,8 @@ void psItem::Copy(psItem * target)
             target->AddModifier(modifiers[i]);
     }
     target->SetOwningCharacter( owning_character);
+    
+    target->UpdateModifiers();
 
 }
 
@@ -1681,6 +1724,8 @@ const char *psItem::GetName() const
 {
     if (!item_name.IsEmpty())
         return item_name;
+    if(itemModifiers->active && !itemModifiers->name.IsEmpty())
+        return itemModifiers->name;
     return current_stats->GetName();
 }
 
@@ -1723,12 +1768,18 @@ PSSKILL psItem::GetWeaponSkill(PSITEMSTATS_WEAPONSKILL_INDEX index)
 
 float psItem::GetLatency()
 {
+    //we have a modification overlay?
+    if(itemModifiers->active && !csNaN(itemModifiers->latency))
+        return itemModifiers->latency;
     return current_stats->Weapon().Latency();
 }
 
 
 float psItem::GetDamage(PSITEMSTATS_DAMAGETYPE dmgtype)
 {
+    //we have a modification overlay?
+    if(itemModifiers->active && !csNaN(itemModifiers->damageStats[dmgtype]))
+        return itemModifiers->damageStats[dmgtype];
     return current_stats->Weapon().Damage(dmgtype);
 }
 
@@ -1770,6 +1821,9 @@ float psItem::GetDamageProtection(PSITEMSTATS_DAMAGETYPE dmgtype)
     if (!natArm || current_stats->Armor().Protection(dmgtype) > natArm->Armor().Protection(dmgtype))
     {
         useNat = false;
+        //we have a modification overlay?
+        if(itemModifiers->active && !csNaN(itemModifiers->damageStats[dmgtype]))
+            return itemModifiers->damageStats[dmgtype];
         return current_stats->Armor().Protection(dmgtype);
     }
     useNat = true;
@@ -1803,6 +1857,9 @@ float psItem::GetWeaponAttributeBonusMax(int index)
 
 float psItem::GetWeight()
 {
+    //we have a modification overlay?
+    if(itemModifiers->active && !csNaN(itemModifiers->weight))
+        return (itemModifiers->weight * GetStackCount());
     return (current_stats->GetWeight() * GetStackCount());
 }
 
@@ -1853,7 +1910,7 @@ psMoney psItem::GetPrice()
     }
 
     MathEnvironment env;
-    env.Define("Price", current_stats->GetPrice().GetTotal());
+    env.Define("Price", itemModifiers->active ? itemModifiers->price.GetTotal() : current_stats->GetPrice().GetTotal());
     env.Define("Quality", GetItemQuality());
     env.Define("MaxQuality", GetMaxItemQuality());
     env.Define("BaseQuality", current_stats->GetQuality());
@@ -1933,6 +1990,8 @@ unsigned int psItem::GetTexturePartIndex()
 
 const char *psItem::GetMeshName()
 {
+    if(itemModifiers->active && !itemModifiers->mesh.IsEmpty())
+        return itemModifiers->mesh;
     return current_stats->GetMeshName();
 }
 
@@ -2366,7 +2425,88 @@ void psItem::SetIsTransient(bool v)
 
 bool psItem::CheckRequirements( psCharacter* charData, csString& resp )
 {
-    return base_stats->CheckRequirements( charData, resp );
+    //keeps the requirement list for use later.
+    csArray<ItemRequirement> requirements;
+    //get the basic requirements we will have to check both. note this is an array of 3 elements.
+    ItemRequirement *baseReqs = base_stats->GetRequirements();
+    //first copy in the array the requirements coming from the base stats as is.
+    for(int i = 0; i < 3; i++)
+    {
+        if(!baseReqs[i].name.IsEmpty())
+            requirements.Push(baseReqs[i]);
+    }
+
+    //check if the requirements in the modded stat, if presents, are higher.
+    //maybe this should be optimized?
+    if(itemModifiers->active)
+    {
+        for(int i = 0; i < itemModifiers->reqs.GetSize(); i++)
+        {
+            bool found = false;
+            for(int y = 0; y < requirements.GetSize(); y++)
+            {
+                //if the name of the requirement is the same and it's higher substituite the previous one.
+                if(requirements[y].name == itemModifiers->reqs[i].name)
+                {
+                    found = true;
+                    if(requirements[y].min_value < itemModifiers->reqs[i].min_value)
+                        requirements[y].min_value = itemModifiers->reqs[i].min_value;
+                    break;
+                }
+            }
+            if(!found)
+                requirements.Push(itemModifiers->reqs[i]);
+        }
+    }
+    
+    float val = 0;
+    csString needed = "You need to have ";
+    bool first= true;
+    
+        for (int z = 0; z < requirements.GetSize(); z++)
+        {
+            PSITEMSTATS_STAT stat = psserver->GetCacheManager()->ConvertAttributeString(requirements[z].name);
+            if ( stat != PSITEMSTATS_STAT_NONE )
+            {
+                // Stat buffs may be negative; don't use those here
+                CharStat & cs = charData->Stats()[stat];
+                val = MAX(cs.Base(), cs.Current());
+
+                // TODO: This should just use the buff always when a move from equipment to bulk can't fail
+            }
+            else
+            {
+                PSSKILL skill = psserver->GetCacheManager()->ConvertSkillString(requirements[z].name);
+                if ( skill != PSSKILL_NONE )
+                {
+                    val = charData->Skills().GetSkillRank(skill).Current();
+                }
+            }
+
+            if ( val < requirements[z].min_value )
+            {
+                if(!first)
+                    needed +=" and ";
+                else
+                    first = false;
+
+                if(requirements[z].min_value - val > 40)
+                    needed += "a lot ";
+
+                needed += "more in ";
+                needed += requirements[z].name;
+            }
+        }
+
+    if(first) // No needed things
+    {
+        resp = "None";
+        return true;
+    }
+
+    needed.Append(" to equip this item");
+    resp = needed;
+    return false;
 }
 
 void psItem::ScheduleRespawn()
@@ -2743,7 +2883,7 @@ bool psItem::SendItemDescription( Client *client)
     {
         csString speed, damage;
         // Weapon Speed
-        speed.Format( "\n\nAttack delay: %.2f", current_stats->Weapon().Latency() );
+        speed.Format( "\n\nAttack delay: %.2f", GetLatency() );
 
         // Weapon Damage Type
         damage = "\n\nDamage:";
@@ -3135,3 +3275,26 @@ bool psItem::SendActionContents(Client *client, psActionLocation *action)
     outgoing.SendMessage();
     return true;
 }
+
+RandomizedOverlay::RandomizedOverlay() 
+{ 
+    active = false;
+    equip_script = NULL;
+    damageStats[0] = damageStats[1] = damageStats[2] = latency = weight = std::numeric_limits<float>::signaling_NaN(); 
+    
+   //  latency   = std::numeric_limits<float>::signaling_NaN();
+     
+     
+  //  printf("nan? %d %d %d %f %X\n", nanso,csNaN(latency), isnan(latency), latency, *(int*)&latency);
+   // damageStats[0] = damageStats[1] = damageStats[2] = latency = weight = std::numeric_limits<float>::signaling_NaN();
+   // latency = sqrt(-1);  
+   // printf("nan? %d %d %d %d %f %X\n", true, csNaN(latency), isnan(latency), std::isnan(latency),latency,*(int*)&latency);
+
+}
+
+RandomizedOverlay::~RandomizedOverlay() 
+{ 
+    delete equip_script; 
+}
+
+

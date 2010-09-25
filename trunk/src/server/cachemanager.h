@@ -59,6 +59,7 @@ class psCommandManager;
 class psSpell;
 class psItemStats;
 class psItem;
+class RandomizedOverlay;
 
 struct CraftTransInfo;
 struct CombinationConstruction;
@@ -510,6 +511,9 @@ public:
      *  @see optionEntry
      */
     optionEntry* getOptionSafe(const csString path, const csString value) { return rootOptionEntry.getOptionSafe(path,value); }
+    
+    LootRandomizer* getLootRandomizer() { return lootRandomizer; }
+    void ApplyItemModifiers(psItemStats* baseItem, RandomizedOverlay* overlay, csArray<uint32_t>& modifierIds) { lootRandomizer->ApplyModifier(baseItem, overlay, modifierIds); }
 
 protected:
     uint32_t effectID;
@@ -542,6 +546,10 @@ protected:
     bool PreloadMovement();
     bool PreloadStances();
     void PreloadCommandGroups();
+    
+    
+    ///Loads the loot modifiers from the loot modifiers table
+    bool PreloadLootModifiers();
     
     /// Cache in the crafting messages.        
     bool PreloadCraftMessages();
@@ -637,6 +645,8 @@ protected:
     csPDelArray<psCharacterLimitation> limits;  ///< All the limitations based on scores for characters.
     psCommandManager* commandManager;
     optionEntry rootOptionEntry;
+    
+    LootRandomizer *lootRandomizer;
     
 };
 

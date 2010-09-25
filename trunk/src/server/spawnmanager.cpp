@@ -74,6 +74,7 @@
 #include "psserverchar.h"
 #include "serverstatus.h"
 #include "globals.h"
+#include "lootrandomizer.h"
 
 
 /** A structure to hold the clients that are pending a group loot question.
@@ -193,7 +194,7 @@ SpawnManager::SpawnManager(psDatabase *db, CacheManager *cachemanager, EntityMan
     entityManager = entitymanager;
     gem = gemsupervisor;
 
-    lootRandomizer = new LootRandomizer(cachemanager);
+    lootRandomizer = cachemanager->getLootRandomizer();
 
     PreloadDatabase();
 
@@ -216,9 +217,6 @@ SpawnManager::~SpawnManager()
     csHash<SpawnRule*>::GlobalIterator ruleIt(rules.GetIterator());
     while(ruleIt.HasNext())
         delete ruleIt.Next();
-
-    delete lootRandomizer;
-
 }
 
 void SpawnManager::PreloadLootRules()
@@ -371,37 +369,6 @@ bool SpawnManager::LoadWaypointsAsSpawnRanges()
 }
 #endif
 
-void SpawnManager::PreloadLootModifiers()
-{
-
-    // Order by's are a little slower but it guarentees order
-    Result result( db->Select( "SELECT * FROM loot_modifiers ORDER BY modifier_type, probability" ) );
-    if ( !result.IsValid() )
-    {
-        Error2( "Could not load loot modifiers due to database error: %s\n",
-               db->GetLastError() );
-        return;
-    }
-
-    for ( unsigned int i = 0; i < result.Count(); i++ )
-    {
-        LootModifier *entry = new LootModifier;
-
-        entry->modifier_type = result[i][ "modifier_type" ];
-        entry->name = result[i][ "name" ];
-        entry->effect = result[i][ "effect" ];
-        entry->equip_script = result[i]["equip_script"];
-        entry->effect = result[i][ "effect" ];
-        entry->probability = result[i].GetFloat( "probability" );
-        entry->stat_req_modifier = result[i][ "stat_req_modifier" ];
-        entry->cost_modifier = result[i].GetFloat( "cost_modifier" );
-        entry->mesh = result[i][ "mesh" ];
-        entry->not_usable_with = result[i][ "not_usable_with" ];
-
-        lootRandomizer->AddLootModifier( entry );
-    }
-}
-
 void SpawnManager::LoadHuntLocations(psSectorInfo *sectorinfo)
 {
     csString query;
@@ -525,8 +492,6 @@ void SpawnManager::LoadSpawnRanges(SpawnRule *rule)
 void SpawnManager::PreloadDatabase()
 {
     PreloadLootRules();
-
-    PreloadLootModifiers();
 
     Result result(db->Select("select id,min_spawn_time,max_spawn_time,"
                  "       substitute_spawn_odds,substitute_player,"
@@ -912,20 +877,15 @@ void SpawnManager::HandleLootItem(MsgEntry *me,Client *client)
         return;
     }
 
-    if (!chr->RemoveLootItem(msg.lootitem))
+    psItem *item = chr->RemoveLootItem(msg.lootitem);
+    if (!item)
     {
         // Take this out because it is just the result of duplicate loot commands due to lag
         //Warning3(LOG_COMBAT,"LootItem Message from %s specified bad item id of %d.\n",client->GetName(), msg.lootitem);
         return;
     }
 
-    psItemStats *itemstat = cacheManager->GetBasicItemStatsByID(msg.lootitem);
-    psItem *item = NULL;
-    if (item == NULL && itemstat != NULL)
-    {
-        item = itemstat->InstantiateBasicItem();
-        item->SetLoaded();
-    }
+    item->SetLoaded();
 
     csRef<PlayerGroup> group = client->GetActor()->GetGroup();
     Client *randfriendclient = NULL;
@@ -1402,9 +1362,8 @@ void LootEntrySet::CreateSingleLoot(psCharacter *chr)
         {
             if(entries[i]->item) // We don't always have a item.
             {
-                psItemStats *loot_item = entries[i]->item;
-                Debug2(LOG_LOOT, 0,"Adding %s to the dead mob's loot.\n",entries[i]->item->GetName() );
-                
+                psItem* loot_item = entries[i]->item->InstantiateBasicItem();
+                Debug2(LOG_LOOT, 0,"Adding %s to the dead mob's loot.\n",loot_item->GetName() );
                 if ( entries[i]->randomize ) loot_item = lootRandomizer->RandomizeItem( loot_item, maxcost );
                 chr->AddLootItem(loot_item);
             }
@@ -1433,7 +1392,7 @@ void LootEntrySet::CreateMultipleLoot(psCharacter *chr, size_t numModifiers)
       {
         if(entries[i]->item) // We don't always have a item.
         {
-            psItemStats *loot_item = entries[i]->item;
+            psItem* loot_item = entries[i]->item->InstantiateBasicItem();
             if ( entries[i]->randomize )
                 loot_item = lootRandomizer->RandomizeItem( loot_item,
                                                            maxcost,
@@ -1451,9 +1410,9 @@ void LootEntrySet::CreateMultipleLoot(psCharacter *chr, size_t numModifiers)
                         numModifiers,
                         loot_item->GetName(), 
                         loot_item->GetDescription(),
-                        loot_item->GetQuality(),
+                        loot_item->GetItemQuality(),
                         loot_item->GetWeight(),
-                        loot_item->GetSize(),
+                        loot_item->GetItemSize(),
                         loot_item->GetPrice().GetTrias());
                 if (loot_item->GetIsArmor())
                 {
@@ -1461,11 +1420,11 @@ void LootEntrySet::CreateMultipleLoot(psCharacter *chr, size_t numModifiers)
                             "Armour stats:\n"
                             "  Class : %c  Hardness : %.2f\n"
                             "  Protection Slash : %.2f  Blunt : %.2f  Pierce : %.2f\n",
-                            loot_item->Armor().Class(),
-                            loot_item->Armor().Hardness(),
-                            loot_item->Armor().Protection(PSITEMSTATS_DAMAGETYPE_SLASH),
-                            loot_item->Armor().Protection(PSITEMSTATS_DAMAGETYPE_BLUNT),
-                            loot_item->Armor().Protection(PSITEMSTATS_DAMAGETYPE_PIERCE));
+                            loot_item->GetBaseStats()->Armor().Class(),
+                            loot_item->GetHardness(),
+                            loot_item->GetDamage(PSITEMSTATS_DAMAGETYPE_SLASH),
+                            loot_item->GetDamage(PSITEMSTATS_DAMAGETYPE_BLUNT),
+                            loot_item->GetDamage(PSITEMSTATS_DAMAGETYPE_PIERCE));
                 }
                 else if (loot_item->GetIsMeleeWeapon() || loot_item->GetIsRangeWeapon())
                 {
@@ -1474,14 +1433,14 @@ void LootEntrySet::CreateMultipleLoot(psCharacter *chr, size_t numModifiers)
                             "  Latency : %.2f  Penetration : %.2f\n"
                             "  Damage Slash : %.2f  Blunt : %.2f  Pierce : %.2f\n"
                             "  BlockValue Untargeted : %.2f  Targeted : %.2f  Counter : %.2f\n",
-                            loot_item->Weapon().Latency(),
-                            loot_item->Weapon().Penetration(),
-                            loot_item->Weapon().Damage(PSITEMSTATS_DAMAGETYPE_SLASH),
-                            loot_item->Weapon().Damage(PSITEMSTATS_DAMAGETYPE_BLUNT),
-                            loot_item->Weapon().Damage(PSITEMSTATS_DAMAGETYPE_PIERCE),
-                            loot_item->Weapon().UntargetedBlockValue(),
-                            loot_item->Weapon().TargetedBlockValue(),
-                            loot_item->Weapon().CounterBlockValue());
+                            loot_item->GetLatency(),
+                            loot_item->GetPenetration(),
+                            loot_item->GetDamage(PSITEMSTATS_DAMAGETYPE_SLASH),
+                            loot_item->GetDamage(PSITEMSTATS_DAMAGETYPE_BLUNT),
+                            loot_item->GetDamage(PSITEMSTATS_DAMAGETYPE_PIERCE),
+                            loot_item->GetUntargetedBlockValue(),
+                            loot_item->GetTargetedBlockValue(),
+                            loot_item->GetCounterBlockValue());
                 }
                 /*CPrintf(CON_CMDOUTPUT,
                     "Equip script: %s\n Un-equip script: %s\n",loot_item->GetProgressionEventEquip().GetData(),
@@ -1522,360 +1481,6 @@ void psItemSpawnEvent::Trigger()
     }
 }
 
-LootRandomizer::LootRandomizer(CacheManager* cachemanager)
-{
-    prefix_max = 0;
-    adjective_max = 0;
-    suffix_max = 0;
-    cacheManager = cachemanager;
 
-    // Find any math scripts that are needed
-    modifierCostCalc = psserver->GetMathScriptEngine()->FindScript("LootModifierCostCap");
-}
-
-LootRandomizer::~LootRandomizer()
-{
-    LootModifier *e;
-    while (prefixes.GetSize())
-    {
-        e = prefixes.Pop();
-        delete e;
-    }
-    while (suffixes.GetSize())
-    {
-        e = suffixes.Pop();
-        delete e;
-    }
-    while (adjectives.GetSize())
-    {
-        e = adjectives.Pop();
-        delete e;
-    }
-}
-
-void LootRandomizer::AddLootModifier(LootModifier *entry)
-{
-    if (entry->modifier_type.CompareNoCase("prefix"))
-    {
-        prefixes.Push( entry );
-        if (entry->probability > prefix_max) 
-        {
-            prefix_max = entry->probability;
-        }
-    }
-    else if (entry->modifier_type.CompareNoCase("suffix"))
-    {
-        suffixes.Push( entry );
-        if (entry->probability > suffix_max)
-        {
-            suffix_max = entry->probability;
-        }
-    }
-    else if (entry->modifier_type.CompareNoCase("adjective"))
-    {
-        adjectives.Push( entry );
-        if (entry->probability > adjective_max)
-        {
-            adjective_max = entry->probability;
-        }
-    }
-}
-
-psItemStats* LootRandomizer::RandomizeItem( psItemStats* itemstats, float maxcost, bool lootTesting, size_t numModifiers )
-{
-    uint32_t rand;
-    psItemStats *newStats;
-    csString modifierType;
-    csArray< csString > selectedModifierTypes;
-    LootModifier totalMods;
-    float totalCost = itemstats->GetPrice().GetTrias();
-
-    // Set up ModifierTypes
-    // The Order of the modifiers is significant. It determines the priority of the modifiers, currently this is
-    // Suffixes, Prefixes, Adjectives : So we add them in reverse order so the highest priority is applied last
-    selectedModifierTypes.Push( "suffix" );
-    selectedModifierTypes.Push( "prefix" );
-    selectedModifierTypes.Push( "adjective" );
-
-    // Get Defaults from Stats
-    totalMods.cost_modifier = 1;
-    totalMods.name = itemstats->GetName();
-
-    // Determine Probability of number of modifiers ( 0-3 )
-    if (!lootTesting)
-    {
-        rand = psserver->rng->Get( 100 ); // Range of 0 - 99
-        if ( rand < 1 ) // 1% chance
-            numModifiers = 3;
-        else if ( rand < 8 ) // 7% chance
-            numModifiers = 2;
-        else if ( rand < 30 ) // 22% chance
-            numModifiers = 1;
-        else // 70% chance
-            numModifiers = 0;
-    }
-
-    // If there are no additional modifiers return original stats
-    if ( numModifiers == 0 ) 
-        return itemstats;
-
-    if ( numModifiers != 3 )
-    {
-        while ( selectedModifierTypes.GetSize() != numModifiers )
-        {
-            rand = psserver->rng->Get( 99 );
-            if ( rand < 60 )
-                selectedModifierTypes.Delete( "suffix" ); // higher chance to be removed
-            else if ( rand < 85 )
-                selectedModifierTypes.Delete( "prefix" );
-            else
-                selectedModifierTypes.Delete( "adjective" ); // lower chance to be removed
-        }
-    }
-
-  // for each modifiertype roll a dice to see which modifier we get
-    while ( selectedModifierTypes.GetSize() != 0 )
-    {
-        modifierType = selectedModifierTypes.Pop();
-        int newModifier, probability;
-    int max_probability = 0;
-        LootModifier *lootModifier = NULL;
-        csArray<LootModifier *> *modifierList = NULL;
-
-        if (modifierType.CompareNoCase("prefix"))
-        {
-            modifierList = &prefixes; 
-            max_probability=(int)prefix_max;
-        }
-        else if (modifierType.CompareNoCase("suffix"))
-        {
-            modifierList = &suffixes;
-            max_probability=(int)suffix_max;
-        }
-        else if (modifierType.CompareNoCase("adjective"))
-        {
-            modifierList = &adjectives;
-            max_probability=(int)adjective_max;
-        }
-
-        // Get min probability <= probability <= max probability in modifiers list
-        //probability = psserver->rng->Get( (int)((*modifierList)[ modifierList->Length() - 1 ]->probability - (int) (*modifierList)[0]->probability ) + 1) + (int) (*modifierList)[0]->probability;
-        probability = psserver->rng->Get( max_probability );
-        for ( newModifier = (int)modifierList->GetSize() - 1; newModifier >= 0 ; newModifier-- )
-        {
-            float item_prob = ((*modifierList)[newModifier]->probability);
-            if ( probability >=  item_prob)
-            {
-                if ( maxcost >= totalCost * (*modifierList)[newModifier]->cost_modifier ||
-                    lootTesting )
-                {
-                    lootModifier = (*modifierList)[ newModifier ];
-                    totalCost = totalCost * (*modifierList)[newModifier]->cost_modifier;
-                    break;
-                }
-            }
-        }
-
-        // if just testing loot randomizing, then dont want equip/dequip events
-        //if (lootTesting && lootModifier)
-        //{
-        //    lootModifier->prg_evt_equip.Empty();
-        //}
-
-        if(lootModifier) AddModifier( &totalMods, lootModifier );
-    }
-
-    // Check if item already present
-    newStats = cacheManager->GetBasicItemStatsByName( totalMods.name.GetData() );
-    if ( !newStats ) // If it doesn't exist
-    {
-        // This will copy the current ItemsStats row in the DB and create a new one for us.
-        // TODO: rewrite loot handling to not generate a bazillion item_stats entries
-        newStats = cacheManager->CopyItemStats(itemstats->GetUID(), totalMods.name);
-        if ( !newStats )
-        {
-            return itemstats;
-        }
-
-        // Apply All Changes
-        ApplyModifier(newStats, &totalMods);
-
-        // Set the 'R' stat type
-        newStats->SetRandom();
-        // Save Changes and return
-        newStats->Save();
-    }
-    return newStats;
-}
-
-void LootRandomizer::AddModifier( LootModifier *oper1, LootModifier *oper2 )
-{
-    csString newName;
-    // Change Name
-    if (oper2->modifier_type.CompareNoCase("prefix"))
-    {
-        newName.Append( oper2->name );
-        newName.Append( " " );
-        newName.Append( oper1->name );
-    }
-    else if (oper2->modifier_type.CompareNoCase("suffix"))
-    {
-        newName.Append( oper1->name );
-        newName.Append( " " );
-        newName.Append( oper2->name );
-    }
-    else if (oper2->modifier_type.CompareNoCase("adjective"))
-    {
-        newName.Append( oper2->name );
-        newName.Append( " " );
-        newName.Append( oper1->name );
-    }
-    oper1->name = newName;
-
-    // Adjust Price
-    oper1->cost_modifier *= oper2->cost_modifier;
-    oper1->effect.Append( oper2->effect );
-    oper1->mesh = oper2->mesh;
-    oper1->stat_req_modifier.Append( oper2->stat_req_modifier );
-
-    // equip script
-    oper1->equip_script.Append(oper2->equip_script);
-}
-
-void LootRandomizer::ApplyModifier( psItemStats* loot, LootModifier* mod)
-{
-
-    loot->SetName( mod->name );
-    loot->SetPrice( (int)( loot->GetPrice().GetTrias() * mod->cost_modifier ) );
-    if ( mod->mesh.Length() > 0 )
-        loot->SetMeshName( mod->mesh );    
-
-    // Apply effect
-    csString xmlItemMod;
-
-    xmlItemMod.Append( "<ModiferEffects>" );
-    xmlItemMod.Append( mod->effect );
-    xmlItemMod.Append( "</ModiferEffects>" );
-
-    // Read the ModiferEffects XML into a doc
-    csRef<iDocument> xmlDoc = ParseString( xmlItemMod );
-    if(!xmlDoc)
-    {
-        Error1("Parse error in Loot Randomizer");
-        return;
-    }
-    csRef<iDocumentNode> root    = xmlDoc->GetRoot();
-    if(!root)
-    {
-        Error1("No XML root in Loot Randomizer");
-        return;
-    }
-    csRef<iDocumentNode> topNode = root->GetNode("ModiferEffects");//Are we sure it is "Modifer"?
-    if(!topNode)
-    {
-        Error1("No <ModiferEffects> in Loot Randomizer");
-        return;
-    }
-
-    csRef<iDocumentNodeIterator> nodeList = topNode->GetNodes("ModiferEffect");
-
-  // For Each ModiferEffect
-    csRef<iDocumentNode> node;
-    while ( nodeList->HasNext() )
-    {
-        node = nodeList->Next();
-        //    Determine the Effect
-        csString EffectOp = node->GetAttribute("operation")->GetValue();
-        csString EffectName = node->GetAttribute("name")->GetValue();
-        float EffectValue = node->GetAttribute("value")->GetValueAsFloat();
-        //        Add to the Attributes
-        if (!loot->SetAttribute(EffectOp, EffectName, EffectValue))
-        {
-            // display error and continue
-            Error2("Unable to set attribute %s on new loot item.",EffectName.GetData());
-        }
-        //    Loop
-        node = nodeList->Next();
-    }
-
-    // Apply stat_req_modifier
-    csString xmlStatReq;
-
-    xmlStatReq.Append( "<StatReqs>" );
-    xmlStatReq.Append( mod->stat_req_modifier );
-    xmlStatReq.Append( "</StatReqs>" );
-
-    // Read the Stat_Req XML into a doc
-    xmlDoc = ParseString( xmlStatReq );
-    if(!xmlDoc)
-    {
-        Error1("Parse error in Loot Randomizer");
-        return;
-    }
-    root    = xmlDoc->GetRoot();
-    if(!root)
-    {
-        Error1("No XML root in Loot Randomizer");
-        return;
-    }
-    topNode = root->GetNode("StatReqs");
-    if(!topNode)
-    {
-        Error1("No <statreqs> in Loot Randomizer");
-        return;
-    }
-
-    nodeList = topNode->GetNodes("StatReq");
-    // For Each Stat_Req
-    while ( nodeList->HasNext() )
-    {
-        node = nodeList->Next();
-        //        Determine the STAT
-        csString StatName = node->GetAttribute("name")->GetValue();
-        float StatValue = node->GetAttribute("value")->GetValueAsFloat();
-        //        Add to the Requirements
-        if (!loot->SetRequirement(StatName, StatValue))
-        {
-            // Too Many Requirements, display error and continue
-            Error2("Unable to set requirement %s on new loot item.",StatName.GetData());
-        }
-        //    Loop
-        node = nodeList->Next();
-    }
-
-    // Apply equip script
-    if (!mod->equip_script.IsEmpty())
-    {
-        csString scriptXML;
-        scriptXML.Format("<apply aim=\"Actor\" name=\"%s\" type=\"buff\">%s</apply>", mod->name.GetData(), mod->equip_script.GetData());
-        loot->SetEquipScript(scriptXML);
-    }
-}
-
-float LootRandomizer::CalcModifierCostCap(psCharacter *chr)
-{
-    // Use LootCostCap script to calculate loot modifier cost cap
-    if( !modifierCostCalc )
-    {
-        CPrintf(CON_ERROR,"Couldn't load loot cost cap script!");
-        return 1000.0;
-    }
-
-    // Use the mob's attributes to calculate modifier cost cap
-    MathEnvironment env;
-    env.Define("Str",     chr->Stats()[PSITEMSTATS_STAT_STRENGTH].Current());
-    env.Define("End",     chr->Stats()[PSITEMSTATS_STAT_ENDURANCE].Current());
-    env.Define("Agi",     chr->Stats()[PSITEMSTATS_STAT_AGILITY].Current());
-    env.Define("Int",     chr->Stats()[PSITEMSTATS_STAT_INTELLIGENCE].Current());
-    env.Define("Will",    chr->Stats()[PSITEMSTATS_STAT_WILL].Current());
-    env.Define("Cha",     chr->Stats()[PSITEMSTATS_STAT_CHARISMA].Current());
-    env.Define("MaxHP",   chr->GetMaxHP().Current());
-    env.Define("MaxMana", chr->GetMaxMana().Current());
-
-    modifierCostCalc->Evaluate(&env);
-    MathVar *modcap = env.Lookup("ModCap");
-    Debug2(LOG_LOOT,0,"DEBUG: Calculated cost cap %f\n", modcap->GetValue());
-    return modcap->GetValue();
-}
 
 

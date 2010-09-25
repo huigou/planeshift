@@ -1433,56 +1433,9 @@ bool psItemStats::SetEquipScript(const csString & equipXML)
     return true;
 }
 
-bool psItemStats::CheckRequirements( psCharacter* charData, csString& resp )
+ItemRequirement *psItemStats::GetRequirements()
 {
-    float val = 0;
-    csString needed = "You need to have ";
-    bool first= true;
-
-    for ( int z = 0; z < 3; z++ )
-    {
-        PSITEMSTATS_STAT stat = psserver->GetCacheManager()->ConvertAttributeString(reqs[z].name);
-        if ( stat != PSITEMSTATS_STAT_NONE )
-        {
-            // Stat buffs may be negative; don't use those here
-            CharStat & cs = charData->Stats()[stat];
-            val = MAX(cs.Base(), cs.Current());
-
-            // TODO: This should just use the buff always when a move from equipment to bulk can't fail
-        }
-        else
-        {
-            PSSKILL skill = psserver->GetCacheManager()->ConvertSkillString(reqs[z].name);
-            if ( skill != PSSKILL_NONE )
-            {
-                val = charData->Skills().GetSkillRank(skill).Current();
-            }
-        }
-
-        if ( val < reqs[z].min_value )
-        {
-            if(!first)
-                needed +=" and ";
-            else
-                first = false;
-
-            if(reqs[z].min_value - val > 40)
-                needed += "a lot ";
-
-            needed += "more in ";
-            needed += reqs[z].name;
-        }
-    }
-
-    if(first) // No needed things
-    {
-        resp = "None";
-        return true;
-    }
-
-    needed.Append(" to equip this item");
-    resp = needed;
-    return false;
+    return reqs;
 }
 
 bool psItemStats::SetRequirement(const csString & statName, float statValue)

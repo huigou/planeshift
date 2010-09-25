@@ -6315,14 +6315,14 @@ void AdminManager::SpawnItemInv( MsgEntry* me, psGMSpawnItem& msg, Client *clien
         return;
     }
     
+    psItem* item = stats->InstantiateBasicItem();
     
     // randomize if requested
     if (msg.random)
     {
         LootRandomizer* lootRandomizer = psserver->GetSpawnManager()->GetLootRandomizer();
-        stats = lootRandomizer->RandomizeItem( stats, msg.quality );
+        item = lootRandomizer->RandomizeItem(item, msg.quality );
     }
-    psItem* item = stats->InstantiateBasicItem();
 
     item->SetStackCount(msg.count);
     item->SetIsLockable(msg.lockable);

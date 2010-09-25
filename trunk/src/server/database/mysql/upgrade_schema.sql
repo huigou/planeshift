@@ -1484,6 +1484,14 @@ UPDATE `server_options` SET `option_value`='1252' WHERE `option_name`='db_versio
 ALTER TABLE `item_stats` ADD COLUMN `spawnable` CHAR(1)  NOT NULL DEFAULT 'Y' COMMENT 'Sets if the item should be spawnable from in game' AFTER `assigned_command`;
 UPDATE `server_options` SET `option_value`='1253' WHERE `option_name`='db_version';
 
+#1254 - Stefano Angeleri - assign to the instance modifiers of loot in place of stats
+ALTER TABLE `item_instances` ADD COLUMN `prefix` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Determines the prefix to be used from the loot modifiers table' AFTER `charges`,
+ ADD COLUMN `suffix` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Determines the suffix to be used from the loot modifiers table' AFTER `prefix`,
+ ADD COLUMN `adjective` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Determines the adjective to be used from the loot modifiers table' AFTER `suffix`;
+ UPDATE `server_options` SET `option_value`='1254' WHERE `option_name`='db_version';
+
+
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to
