@@ -194,6 +194,7 @@ SpawnManager::SpawnManager(psDatabase *db, CacheManager *cachemanager, EntityMan
     entityManager = entitymanager;
     gem = gemsupervisor;
 
+    //get a reference to the loot randomizer as we use it when making random loot items
     lootRandomizer = cachemanager->getLootRandomizer();
 
     PreloadDatabase();
