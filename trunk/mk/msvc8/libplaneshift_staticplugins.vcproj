@@ -1732,6 +1732,9 @@
 				RelativePath="..\..\mk\msvc\libbgloader_staticreg.cpp">
 			</File>
 			<File
+				RelativePath="..\..\mk\msvc\librecast_staticreg.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\common\bgloader\loader.cpp">
 			</File>
 			<File
@@ -1740,10 +1743,658 @@
 			<File
 				RelativePath="..\..\src\common\bgloader\parser.cpp">
 			</File>
+			<File
+				RelativePath="..\..\src\common\recast\CelHPF.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\CelNavMesh.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\ChunkyTriMesh.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\DebugDraw.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\DetourAlloc.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\DetourCommon.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\DetourDebugDraw.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\DetourNavMesh.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\DetourNavMeshBuilder.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\DetourNode.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\InputGeom.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\MeshLoaderObj.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\Recast.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\RecastAlloc.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\RecastArea.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\RecastContour.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\RecastDebugDraw.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\RecastDump.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\RecastFilter.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\RecastLog.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\RecastMesh.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\RecastMeshDetail.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\RecastRasterization.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\RecastRegion.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\RecastTimer.cpp">
+			</File>
+			<File
+				RelativePath="..\..\mk\msvc\libbgloader_staticreg.cpp">
+                                  				    					<FileConfiguration
+						Name="Release (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release8\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release8-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Release (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release8\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release8-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="Debug (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Debug (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="MemoryTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="RefTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="RefTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="ThreadChecker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\mk_msvc_libbgloader_staticreg.cpp.obj"/>
+					</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\common\bgloader\loader.cpp">
+                                  				    					<FileConfiguration
+						Name="Release (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release8\build\libplaneshift_staticplugins\src_common_bgloader_loader.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release8-x64\build\libplaneshift_staticplugins\src_common_bgloader_loader.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Release (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release8\build\libplaneshift_staticplugins\src_common_bgloader_loader.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release8-x64\build\libplaneshift_staticplugins\src_common_bgloader_loader.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="Debug (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\src_common_bgloader_loader.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_common_bgloader_loader.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Debug (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\src_common_bgloader_loader.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_common_bgloader_loader.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="MemoryTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\src_common_bgloader_loader.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_common_bgloader_loader.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\src_common_bgloader_loader.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_common_bgloader_loader.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="RefTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\src_common_bgloader_loader.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_common_bgloader_loader.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="RefTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\src_common_bgloader_loader.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_common_bgloader_loader.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="ThreadChecker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\src_common_bgloader_loader.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_common_bgloader_loader.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\src_common_bgloader_loader.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_common_bgloader_loader.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\src_common_bgloader_loader.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_common_bgloader_loader.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\src_common_bgloader_loader.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_common_bgloader_loader.cpp.obj"/>
+					</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\common\bgloader\manipulate.cpp">
+                                  				    					<FileConfiguration
+						Name="Release (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release8\build\libplaneshift_staticplugins\src_common_bgloader_manipulate.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release8-x64\build\libplaneshift_staticplugins\src_common_bgloader_manipulate.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Release (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release8\build\libplaneshift_staticplugins\src_common_bgloader_manipulate.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release8-x64\build\libplaneshift_staticplugins\src_common_bgloader_manipulate.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="Debug (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\src_common_bgloader_manipulate.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_common_bgloader_manipulate.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Debug (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\src_common_bgloader_manipulate.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_common_bgloader_manipulate.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="MemoryTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\src_common_bgloader_manipulate.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_common_bgloader_manipulate.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\src_common_bgloader_manipulate.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_common_bgloader_manipulate.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="RefTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\src_common_bgloader_manipulate.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_common_bgloader_manipulate.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="RefTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\src_common_bgloader_manipulate.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_common_bgloader_manipulate.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="ThreadChecker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\src_common_bgloader_manipulate.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_common_bgloader_manipulate.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\src_common_bgloader_manipulate.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_common_bgloader_manipulate.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\src_common_bgloader_manipulate.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_common_bgloader_manipulate.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\src_common_bgloader_manipulate.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_common_bgloader_manipulate.cpp.obj"/>
+					</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\common\bgloader\parser.cpp">
+                                  				    					<FileConfiguration
+						Name="Release (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release8\build\libplaneshift_staticplugins\src_common_bgloader_parser.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release8-x64\build\libplaneshift_staticplugins\src_common_bgloader_parser.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Release (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release8\build\libplaneshift_staticplugins\src_common_bgloader_parser.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release8-x64\build\libplaneshift_staticplugins\src_common_bgloader_parser.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="Debug (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\src_common_bgloader_parser.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_common_bgloader_parser.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Debug (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\src_common_bgloader_parser.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_common_bgloader_parser.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="MemoryTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\src_common_bgloader_parser.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_common_bgloader_parser.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\src_common_bgloader_parser.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_common_bgloader_parser.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="RefTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\src_common_bgloader_parser.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_common_bgloader_parser.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="RefTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\src_common_bgloader_parser.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_common_bgloader_parser.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="ThreadChecker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\src_common_bgloader_parser.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_common_bgloader_parser.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\src_common_bgloader_parser.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_common_bgloader_parser.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\src_common_bgloader_parser.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_common_bgloader_parser.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8\build\libplaneshift_staticplugins\src_common_bgloader_parser.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug8-x64\build\libplaneshift_staticplugins\src_common_bgloader_parser.cpp.obj"/>
+					</FileConfiguration>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="">
+			<File
+				RelativePath="..\..\src\common\bgloader\loader.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\CelHPF.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\CelNavMesh.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\ChunkyTriMesh.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\DebugDraw.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\DetourAlloc.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\DetourCommon.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\DetourDebugDraw.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\DetourNavMesh.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\DetourNavMeshBuilder.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\DetourNode.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\InputGeom.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\MeshLoaderObj.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\Recast.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\RecastAlloc.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\RecastDebugDraw.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\RecastDump.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\RecastLog.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\RecastTimer.h">
+			</File>
 			<File
 				RelativePath="..\..\src\common\bgloader\loader.h">
 			</File>

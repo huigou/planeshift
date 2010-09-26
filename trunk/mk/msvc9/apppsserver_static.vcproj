@@ -1886,6 +1886,9 @@
 				RelativePath="..\..\src\server\invitemanager.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\server\lootrandomizer.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\server\main.cpp">
 			</File>
 			<File
@@ -2041,6 +2044,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\server\invitemanager.h">
+			</File>
+			<File
+				RelativePath="..\..\src\server\lootrandomizer.h">
 			</File>
 			<File
 				RelativePath="..\..\src\server\marriagemanager.h">

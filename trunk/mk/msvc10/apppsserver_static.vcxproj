@@ -1399,6 +1399,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClCompile Include="..\..\src\server\guildmanager.cpp" />
     <ClCompile Include="..\..\src\server\introductionmanager.cpp" />
     <ClCompile Include="..\..\src\server\invitemanager.cpp" />
+    <ClCompile Include="..\..\src\server\lootrandomizer.cpp" />
     <ClCompile Include="..\..\src\server\main.cpp" />
     <ClCompile Include="..\..\src\server\marriagemanager.cpp" />
     <ClCompile Include="..\..\src\server\minigamemanager.cpp" />
@@ -1452,6 +1453,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClInclude Include="..\..\src\server\icachedobject.h" />
     <ClInclude Include="..\..\src\server\introductionmanager.h" />
     <ClInclude Include="..\..\src\server\invitemanager.h" />
+    <ClInclude Include="..\..\src\server\lootrandomizer.h" />
     <ClInclude Include="..\..\src\server\marriagemanager.h" />
     <ClInclude Include="..\..\src\server\minigamemanager.h" />
     <ClInclude Include="..\..\src\server\msgmanager.h" />

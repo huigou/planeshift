@@ -1310,8 +1310,6 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\tools\fparser\example.cpp" />
-    <ClCompile Include="..\..\src\tools\fparser\example2.cpp" />
     <ClCompile Include="..\..\src\tools\fparser\fparser.cpp" />
     <ClCompile Include="..\..\src\tools\fparser\fpoptimizer.cpp" />
   </ItemGroup>

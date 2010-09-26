@@ -1341,6 +1341,9 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClCompile Include="..\..\src\common\util\waypoint.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\common\util\celgraph.h" />
+    <ClInclude Include="..\..\src\common\util\celhpf.h" />
+    <ClInclude Include="..\..\src\common\util\celnavmesh.h" />
     <ClInclude Include="..\..\src\common\util\command.h" />
     <ClInclude Include="..\..\src\common\util\consoleout.h" />
     <ClInclude Include="..\..\src\common\util\dbprofile.h" />
