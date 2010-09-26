@@ -1820,6 +1820,15 @@
 			Name="Header Files"
 			Filter="">
 			<File
+				RelativePath="..\..\src\common\util\celgraph.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\util\celhpf.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\util\celnavmesh.h">
+			</File>
+			<File
 				RelativePath="..\..\src\common\util\command.h">
 			</File>
 			<File
