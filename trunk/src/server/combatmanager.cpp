@@ -609,13 +609,6 @@ void CombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_result
                         gemTarget->InvokeNearlyDeadScripts(gemAttacker, weapon);
                     }
                 }
-
-                if (gemTarget->GetClientID() == 0 && !gemTarget->GetCharacterData()->IsPet())
-                {
-                    // Successful attack of NPC, train skill.
-                    Debug1(LOG_COMBAT, gemAttacker->GetClientID(), "Training Weapon Skills On Attack\n");
-                    gemAttacker->GetCharacterData()->PracticeWeaponSkills(weapon,1);
-                }
             }
             
             // If the target wasn't in combat, it is now...
@@ -655,13 +648,6 @@ void CombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_result
                 (unsigned int)-1); // no defense anims yet
 
             ev.Multicast(gemTarget->GetMulticastClients(),0,MAX_COMBAT_EVENT_RANGE);
-
-            if (gemAttacker->GetClientID() == 0 && !gemAttacker->GetCharacterData()->IsPet())
-            {
-                // Successful dodged by target, train skill.
-                Debug1(LOG_COMBAT, gemAttacker->GetClientID(), "Training Armour Skills On Dodge\n");
-                gemTarget->GetCharacterData()->PracticeArmorSkills(1, event->AttackLocation);
-            }
             NotifyTarget(gemAttacker,gemTarget);
             break;
         }
@@ -677,18 +663,6 @@ void CombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_result
                 (unsigned int)-1); // no defense anims yet
 
             ev.Multicast(gemTarget->GetMulticastClients(),0,MAX_COMBAT_EVENT_RANGE);
-
-            if (gemAttacker->GetClientID() == 0 && !gemAttacker->GetCharacterData()->IsPet())
-            {
-                // Successful blocked by target, train skill.
-                Debug1(LOG_COMBAT, gemAttacker->GetClientID(), "Training Armour Skills On Block\n");
-                gemTarget->GetCharacterData()->PracticeArmorSkills(1, event->AttackLocation);
-                if(blockingWeapon && blockingWeapon->GetIsShield())
-                {
-                    Debug1(LOG_COMBAT, gemAttacker->GetClientID(), "Training Shield Skills On Block\n");
-                    gemAttacker->GetCharacterData()->PracticeWeaponSkills(blockingWeapon,1);
-                }                    
-            }
 
             if (weapon)
             {
@@ -743,12 +717,13 @@ void CombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_result
             break;
         }
         case ATTACK_OUTOFAMMO:
-            {
-                psserver->SendSystemError(event->AttackerCID, "You are out of ammo!");
+        {
+            psserver->SendSystemError(event->AttackerCID, "You are out of ammo!");
 
-                if (event->attacker && event->attacker.IsValid())
-                    StopAttack(dynamic_cast<gemActor*>((gemObject *) event->attacker));  // if you run out of ammo, you exit attack mode
-            }
+            if (event->attacker && event->attacker.IsValid())
+                StopAttack(dynamic_cast<gemActor*>((gemObject *) event->attacker));  // if you run out of ammo, you exit attack mode
+            break;
+        }
     }
 }
 

@@ -45,10 +45,33 @@ INSERT INTO math_scripts VALUES( "Calculate Damage",
 
         Missed = min(AttackRoll-.25,0.1);
         exit = if(0>Missed,1,0);
+
         Dodged = min(AttackRoll-.5,.01);
-        exit = if(0>Dodged,1,0);
+        if(Dodged)
+        {
+          Target:PracticeSkillID(AttackLocationItem:Skill1,1);
+          Target:PracticeSkillID(AttackLocationItem:Skill2,1);
+          Target:PracticeSkillID(AttackLocationItem:Skill3,1);
+
+          exit = 1;
+        }
+
         Blocked = AttackRoll - DefenseRoll;
-        exit = if(0>Blocked,1,0);
+        if(Blocked)
+        {
+          if(TargetWeapon:IsShield())
+          {
+            Target:PracticeSkillID(TargetWeapon:Skill1,1);
+            Target:PracticeSkillID(TargetWeapon:Skill2,1);
+            Target:PracticeSkillID(TargetWeapon:Skill3,1);
+          }
+
+          Target:PracticeSkillID(AttackLocationItem:Skill1,1);
+          Target:PracticeSkillID(AttackLocationItem:Skill2,1);
+          Target:PracticeSkillID(AttackLocationItem:Skill3,1);
+
+          exit = 1;
+        }
 
         RequiredInputVars = Target:AttackerTargeted+Attacker:getSkillValue(AttackWeapon:Skill1)+AttackLocationItem:Hardness;
 
@@ -73,6 +96,9 @@ INSERT INTO math_scripts VALUES( "Calculate Damage",
                0))));
 
         FinalDamage = 10*(AVStance-TargetDV);
+        Attacker:PracticeSkillID(AttackWeapon:Skill1);
+        Attacker:PracticeSkillID(AttackWeapon:Skill2);
+        Attacker:PracticeSkillID(AttackWeapon:Skill3);
 ");
 
 INSERT INTO math_scripts VALUES( "Calculate Decay",
