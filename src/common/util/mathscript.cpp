@@ -266,8 +266,6 @@ MathScript* MathScript::Create(const char *name, const csString & script)
         blockStart = script.FindFirst('{', start);
         if (blockStart != SIZET_NOT_FOUND && blockStart < semicolonAt)
         {
-            blockStart++; // skip { from now on
-
             // check whether it's a conditional one
             csString line = script.Slice(start, blockStart - start);
             line.Trim();
@@ -341,8 +339,16 @@ MathScript* MathScript::Create(const char *name, const csString & script)
                 s->scriptLines.Push(st);
             }
 
+            blockStart++; // skip opening { from now on
+
             size_t nextBlockStart = script.FindFirst('{', blockStart);
             blockEnd = script.FindFirst('}', blockStart);
+            if (blockEnd == SIZET_NOT_FOUND)
+            {
+                Error2("Failed to create MathScript >%s<. Could not find matching close tag for code block", name);
+                delete s;
+                return NULL;
+            }
 
             // find the real end of the block (take care of nested blocks)
             while (nextBlockStart != SIZET_NOT_FOUND && nextBlockStart < blockEnd)
@@ -351,7 +357,7 @@ MathScript* MathScript::Create(const char *name, const csString & script)
                 nextBlockStart++;
 
                 // find the next block end
-                blockEnd = script.FindFirst('}', nextBlockStart);
+                blockEnd = script.FindFirst('}', blockEnd+1);
 
                 // no matching end found
                 if (blockEnd == SIZET_NOT_FOUND)
@@ -367,6 +373,8 @@ MathScript* MathScript::Create(const char *name, const csString & script)
             st = MathScript::Create(name, script.Slice(blockStart, blockEnd - blockStart));
             if (!st)
             {
+                Error3("Failed to create MathScript >%s<. "
+                       "Failed to create sub-script for code block at %d",name,blockStart);
                 delete s;
                 return NULL;
             }
@@ -381,9 +389,19 @@ MathScript* MathScript::Create(const char *name, const csString & script)
             line.Collapse();
             if (!line.IsEmpty())
             {
-                MathExpression *st = MathStatement::Create(line, s->name);
+                MathExpression *st = NULL;
+                if(line.FindFirst("=") != SIZET_NOT_FOUND)
+                {
+                    st = MathStatement::Create(line, s->name);
+                }
+                else
+                {
+                    st = MathExpression::Create(line, s->name);
+                }
+
                 if (!st)
                 {
+                    Error3("Failed to create MathScript >%s<. Failed to parse Statement: >%s<", name, line.GetData());
                     delete s;
                     return NULL;
                 }
