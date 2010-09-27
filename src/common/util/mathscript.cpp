@@ -374,7 +374,7 @@ MathScript* MathScript::Create(const char *name, const csString & script)
             if (!st)
             {
                 Error3("Failed to create MathScript >%s<. "
-                       "Failed to create sub-script for code block at %d",name,blockStart);
+                       "Failed to create sub-script for code block at %zu",name,blockStart);
                 delete s;
                 return NULL;
             }
