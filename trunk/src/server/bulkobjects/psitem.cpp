@@ -2210,6 +2210,26 @@ double psItem::GetProperty(const char *ptr)
     {
         return (double)GetArmorType();
     }
+    else if (!strcasecmp(ptr,"IsMeleeWeapon"))
+    {
+        return (double)GetIsMeleeWeapon();
+    }
+    else if (!strcasecmp(ptr,"IsRangeWeapon"))
+    {
+        return (double)GetIsRangeWeapon();
+    }
+    else if (!strcasecmp(ptr,"IsAmmo"))
+    {
+        return (double)GetIsAmmo();
+    }
+    else if (!strcasecmp(ptr,"IsArmor"))
+    {
+        return (double)GetIsArmor();
+    }
+    else if (!strcasecmp(ptr,"IsShield"))
+    {
+        return (double)GetIsShield();
+    }
     else
     {
         CPrintf(CON_ERROR, "psItem::GetProperty(%s) failed\n",ptr);
