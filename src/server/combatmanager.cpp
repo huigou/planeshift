@@ -514,19 +514,15 @@ int CombatManager::CalculateAttack(psCombatGameEvent *event, psItem* subWeapon)
     MathVar *blocked  = env.Lookup("Blocked");     // Blocked  = Attack blocked by enemy
     MathVar *damage   = env.Lookup("FinalDamage"); // Actual damage done, if any
 
-    if (badrange->GetValue() < 0.0)
+    if (badrange && badrange->GetValue() < 0.0)
         return ATTACK_OUTOFRANGE;
-
-    if (badangle->GetValue() < 0.0)
+    else if (badangle && badangle->GetValue() < 0.0)
         return ATTACK_BADANGLE;
-
-    if (missed->GetValue() < 0.0)
+    else if (missed && missed->GetValue() < 0.0)
         return ATTACK_MISSED;
-
-    if (dodged->GetValue() < 0.0)
+    else if (dodged && dodged->GetValue() < 0.0)
         return ATTACK_DODGED;
-
-    if (blocked->GetValue() < 0.0)
+    else if (blocked && blocked->GetValue() < 0.0)
        return ATTACK_BLOCKED;
 
     event->FinalDamage = damage->GetValue();
