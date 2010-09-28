@@ -462,6 +462,10 @@ void LootRandomizer::ApplyModifier(psItemStats* baseItem, RandomizedOverlay* ove
         scriptXML.Format("<apply aim=\"Actor\" name=\"%s\" type=\"buff\">%s</apply>", mod.name.GetData(), mod.equip_script.GetData());
         overlay->equip_script = ApplicativeScript::Create(psserver->entitymanager, psserver->GetCacheManager(), scriptXML);
     }
+    
+    //clamp speed at 1.5s to keep consistency with item_stats
+    if(overlay->latency < 1.5F)
+        overlay->latency = 1.5F;
 }
 
 LootModifier *LootRandomizer::GetModifier(uint32_t id)
