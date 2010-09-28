@@ -2978,6 +2978,14 @@ double psCharacter::GetProperty(const char *ptr)
     {
         return (double) owner_id.Unbox();
     }
+    else if (!strcasecmp(ptr,"IsNPC"))
+    {
+        return (double)IsNPC();
+    }
+    else if (!strcasecmp(ptr,"IsPet"))
+    {
+        return (double)IsPet();
+    }
 
     Error2("Requested psCharacter property not found '%s'", ptr);
     return 0;
