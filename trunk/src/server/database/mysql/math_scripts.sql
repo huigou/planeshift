@@ -49,9 +49,12 @@ INSERT INTO math_scripts VALUES( "Calculate Damage",
         Dodged = min(AttackRoll-.5,.01);
         if(Dodged)
         {
-          Target:PracticeSkillID(AttackLocationItem:Skill1,1);
-          Target:PracticeSkillID(AttackLocationItem:Skill2,1);
-          Target:PracticeSkillID(AttackLocationItem:Skill3,1);
+          if(Attacker:IsNPC)
+          {
+            Target:PracticeSkillID(AttackLocationItem:Skill1,1);
+            Target:PracticeSkillID(AttackLocationItem:Skill2,1);
+            Target:PracticeSkillID(AttackLocationItem:Skill3,1);
+          }
 
           exit = 1;
         }
@@ -59,16 +62,19 @@ INSERT INTO math_scripts VALUES( "Calculate Damage",
         Blocked = AttackRoll - DefenseRoll;
         if(Blocked)
         {
-          if(TargetWeapon:IsShield())
+          if(Attacker:IsNPC)
           {
-            Target:PracticeSkillID(TargetWeapon:Skill1,1);
-            Target:PracticeSkillID(TargetWeapon:Skill2,1);
-            Target:PracticeSkillID(TargetWeapon:Skill3,1);
-          }
+            if(TargetWeapon:IsShield())
+            {
+              Target:PracticeSkillID(TargetWeapon:Skill1,1);
+              Target:PracticeSkillID(TargetWeapon:Skill2,1);
+              Target:PracticeSkillID(TargetWeapon:Skill3,1);
+            }
 
-          Target:PracticeSkillID(AttackLocationItem:Skill1,1);
-          Target:PracticeSkillID(AttackLocationItem:Skill2,1);
-          Target:PracticeSkillID(AttackLocationItem:Skill3,1);
+            Target:PracticeSkillID(AttackLocationItem:Skill1,1);
+            Target:PracticeSkillID(AttackLocationItem:Skill2,1);
+            Target:PracticeSkillID(AttackLocationItem:Skill3,1);
+          }
 
           exit = 1;
         }
@@ -96,9 +102,12 @@ INSERT INTO math_scripts VALUES( "Calculate Damage",
                0))));
 
         FinalDamage = 10*(AVStance-TargetDV);
-        Attacker:PracticeSkillID(AttackWeapon:Skill1);
-        Attacker:PracticeSkillID(AttackWeapon:Skill2);
-        Attacker:PracticeSkillID(AttackWeapon:Skill3);
+        if(Target:IsNPC)
+        {
+          Attacker:PracticeSkillID(AttackWeapon:Skill1);
+          Attacker:PracticeSkillID(AttackWeapon:Skill2);
+          Attacker:PracticeSkillID(AttackWeapon:Skill3);
+        }
 ");
 
 INSERT INTO math_scripts VALUES( "Calculate Decay",
