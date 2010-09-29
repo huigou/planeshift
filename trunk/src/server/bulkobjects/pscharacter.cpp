@@ -3746,6 +3746,11 @@ int SkillSet::AddSkillPractice(PSSKILL skill, unsigned int val)
         Debug5(LOG_SKILLXP,self->GetActor()->GetClientID(),"Adding %d points to skill %s to character %s (%d)\n",val,skillInfo->name.GetData(),
             self->GetCharFullName(),
             self->GetActor()->GetClientID());
+        if(added > 0)
+        {
+            psZPointsGainedEvent event(self->GetActor(), skillInfo->name, added, rankUp);
+            event.FireEvent();
+        }
     }
     else
     {
@@ -3753,12 +3758,6 @@ int SkillSet::AddSkillPractice(PSSKILL skill, unsigned int val)
             (int)skill,
             self->GetCharFullName(),
             self->GetActor()->GetClientID());
-    }
-
-    if ( added > 0 )
-    {
-        psZPointsGainedEvent evt( self->GetActor(), skillInfo->name, added, rankUp );
-        evt.FireEvent();
     }
 
     return added;
