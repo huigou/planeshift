@@ -86,6 +86,7 @@ void NavGen::Run()
     float height = config->GetFloat("NavGen.AgentHeight", 2.f);
     float width  = config->GetFloat("NavGen.AgentWidth", 0.5f);
     float slope  = config->GetFloat("NavGen.Slope", 45.f);
+    int tileSize = config->GetInt("NavGen.TileSize", 64);
 
     csRef<iEventQueue> queue = csQueryRegistry<iEventQueue>(object_reg);
     csRef<iVirtualClock> vc = csQueryRegistry<iVirtualClock>(object_reg);
@@ -208,6 +209,8 @@ void NavGen::Run()
         csRef<iCelNavMeshParams> parameters;
         parameters.AttachNew(builder->GetNavMeshParams()->Clone());
         parameters->SetSuggestedValues(height, width, slope);
+        parameters->SetTileSize(tileSize);
+        builder->SetNavMeshParams(parameters);
 
         // get list of loaded sectors
         csList<iSector*> sectors;
