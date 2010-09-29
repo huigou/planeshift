@@ -423,7 +423,15 @@ double MathScript::Evaluate(MathEnvironment *env)
 {
     MathVar *exitsignal = env->Lookup("exit");
     if (exitsignal)
+    {
         exitsignal->SetValue(0); // clear exit condition before running
+    }
+    else
+    {
+        // create exit signal if it doesn't exist
+        env->Define("exit",0.f);
+        exitsignal = env->Lookup("exit");
+    }
 
     for (size_t i = 0; i < scriptLines.GetSize(); i++)
     {
