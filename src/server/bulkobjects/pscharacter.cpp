@@ -3895,7 +3895,10 @@ void SkillSet::SetSkillPractice(PSSKILL which,int z_value)
 bool SkillSet::AddToSkillPractice(PSSKILL skill, unsigned int val, unsigned int& added )
 {
     if (skill<0 || skill>=(PSSKILL)psserver->GetCacheManager()->GetSkillAmount())
+    {
+        added = 0;
         return 0;
+    }
 
     bool rankup = false;
     rankup = skills[skill].Practice( val, added, self );
