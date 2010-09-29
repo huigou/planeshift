@@ -71,7 +71,8 @@
 #endif
 
 //temporary hack as csNaN,isnan etc seems to not be behaving correctly.
-#define csNaN(x) (*(int*)&x == 0x7FC00000)
+#define csNaN(x) ((*(int*)&x & 0x7FC00000) == 0x7FC00000)
+
 /**
  * This class handles auto-removal of transient objects
  * (objects placed in the world by players, basically).
@@ -3318,16 +3319,17 @@ RandomizedOverlay::RandomizedOverlay()
     active = false;
     equip_script = NULL;
     //set those variables to nan to indicate they aren't active.
+    damageStats[0] = damageStats[1] = damageStats[2] = latency = weight = std::numeric_limits<float>::quiet_NaN();
+   // printf("nan? %d %d %f %X\n", csNaN(latency), isnan(latency), latency, *(int*)&latency);
+
+    /* latency   = std::numeric_limits<float>::signaling_NaN();
+
+
+    printf("nan? %d %d %d %f %X\n", csNaN(latency), isnan(latency), latency, *(int*)&latency);
     damageStats[0] = damageStats[1] = damageStats[2] = latency = weight = std::numeric_limits<float>::signaling_NaN();
-
-   //  latency   = std::numeric_limits<float>::signaling_NaN();
-
-
-  //  printf("nan? %d %d %d %f %X\n", nanso,csNaN(latency), isnan(latency), latency, *(int*)&latency);
-   // damageStats[0] = damageStats[1] = damageStats[2] = latency = weight = std::numeric_limits<float>::signaling_NaN();
-   // latency = sqrt(-1);
-   // printf("nan? %d %d %d %d %f %X\n", true, csNaN(latency), isnan(latency), std::isnan(latency),latency,*(int*)&latency);
-
+    latency = sqrt(-1);
+    printf("nan? %d %d %d %d %f %X\n", true, csNaN(latency), isnan(latency), std::isnan(latency),latency,*(int*)&latency);
+*/
 }
 
 RandomizedOverlay::~RandomizedOverlay()
