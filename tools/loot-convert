@@ -18,7 +18,6 @@ $specialItems = Array();
 // Change your database settings here:
 $db = mysql_connect("127.0.0.1", "planeshift", "planeshift") or die ("Unable to connect!"); // host, user, pass
 mysql_select_db("planeshift", $db) or die("Could not select database");
-goto end;
 
 //get a list of all the modifiers in the database
 $lootmodifiers = mysql_query("SELECT id, modifier_type, name from loot_modifiers") or die("fatal error: couldn't select stuff: " . mysql_error() . "\n");
@@ -58,7 +57,7 @@ while ($row = mysql_fetch_array($lootmodifiers))
         printf("%s\n",$query);
     }
 }
-end:
+
 //now we have to set the items to their original version.
 //get a list of all basic items in the database
 $items = array();
