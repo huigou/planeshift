@@ -46,6 +46,9 @@
 #include "lootrandomizer.h"
 #include "scripting.h"
 
+//temporary hack as csNaN,isnan etc seems to not be behaving correctly.
+#define csNaN(x) ((*(int*)&x & 0x7FC00000) == 0x7FC00000)
+
 LootRandomizer::LootRandomizer(CacheManager* cachemanager)
 {
     prefix_max = 0;
@@ -249,7 +252,7 @@ void LootRandomizer::AddModifier( LootModifier *oper1, LootModifier *oper2 )
     oper1->equip_script.Append(oper2->equip_script);
 }
 
-bool LootRandomizer::SetAttribute(const csString & op, const csString & attrName, float modifier, RandomizedOverlay* overlay)
+bool LootRandomizer::SetAttribute(const csString & op, const csString & attrName, float modifier, RandomizedOverlay* overlay, psItemStats* baseItem)
 {
     float* value[3] = { NULL, NULL, NULL };
     // Attribute Names:
@@ -271,28 +274,35 @@ bool LootRandomizer::SetAttribute(const csString & op, const csString & attrName
     AttributeName.Downcase();
     if ( AttributeName.Compare( "item.weight" ) )
     {
+        overlay->weight = baseItem->GetWeight();
         value[0] = &overlay->weight;
     }
     else if ( AttributeName.Compare( "item.speed" ) )
     {
+        overlay->latency = baseItem->Weapon().Latency();
         value[0] = &overlay->latency;
     }
     else if ( AttributeName.Compare( "item.damage" ) )
     {
+        for(int i = 0; i < 3; i++)
+            overlay->damageStats[i] = baseItem->Weapon().Damage((PSITEMSTATS_DAMAGETYPE)i);
         value[0] = &overlay->damageStats[PSITEMSTATS_DAMAGETYPE_SLASH];
         value[1] = &overlay->damageStats[PSITEMSTATS_DAMAGETYPE_BLUNT];
         value[2] = &overlay->damageStats[PSITEMSTATS_DAMAGETYPE_PIERCE];
     }
     else if ( AttributeName.Compare( "item.damage.slash" ) )
     {
+        overlay->damageStats[PSITEMSTATS_DAMAGETYPE_SLASH] = baseItem->Weapon().Damage(PSITEMSTATS_DAMAGETYPE_SLASH);
         value[0] = &overlay->damageStats[PSITEMSTATS_DAMAGETYPE_SLASH];
     }
     else if ( AttributeName.Compare( "item.damage.pierce" ) )
     {
+        overlay->damageStats[PSITEMSTATS_DAMAGETYPE_PIERCE] = baseItem->Weapon().Damage(PSITEMSTATS_DAMAGETYPE_PIERCE);
         value[0] = &overlay->damageStats[PSITEMSTATS_DAMAGETYPE_PIERCE];
     }
     else if ( AttributeName.Compare( "item.damage.blunt" ) )
     {
+        overlay->damageStats[PSITEMSTATS_DAMAGETYPE_BLUNT] = baseItem->Weapon().Damage(PSITEMSTATS_DAMAGETYPE_BLUNT);
         value[0] = &overlay->damageStats[PSITEMSTATS_DAMAGETYPE_BLUNT];
     }
     else if ( AttributeName.Compare( "item.protection" ) )
@@ -300,17 +310,22 @@ bool LootRandomizer::SetAttribute(const csString & op, const csString & attrName
         value[0] = &overlay->damageStats[PSITEMSTATS_DAMAGETYPE_SLASH];
         value[1] = &overlay->damageStats[PSITEMSTATS_DAMAGETYPE_BLUNT];
         value[2] = &overlay->damageStats[PSITEMSTATS_DAMAGETYPE_PIERCE];
+        for(int i = 0; i < 3; i++)
+            overlay->damageStats[i] = baseItem->Armor().Protection((PSITEMSTATS_DAMAGETYPE)i);
     }
     else if ( AttributeName.Compare( "item.protection.slash" ) )
     {
+        overlay->damageStats[PSITEMSTATS_DAMAGETYPE_SLASH] = baseItem->Armor().Protection(PSITEMSTATS_DAMAGETYPE_SLASH);
         value[0] = &overlay->damageStats[PSITEMSTATS_DAMAGETYPE_SLASH];
     }
     else if ( AttributeName.Compare( "item.protection.pierce" ) )
     {
+        overlay->damageStats[PSITEMSTATS_DAMAGETYPE_PIERCE] = baseItem->Armor().Protection(PSITEMSTATS_DAMAGETYPE_PIERCE);
         value[0] = &overlay->damageStats[PSITEMSTATS_DAMAGETYPE_PIERCE];
     }
     else if ( AttributeName.Compare( "item.protection.blunt" ) )
     {
+        overlay->damageStats[PSITEMSTATS_DAMAGETYPE_BLUNT] = baseItem->Armor().Protection(PSITEMSTATS_DAMAGETYPE_BLUNT);
         value[0] = &overlay->damageStats[PSITEMSTATS_DAMAGETYPE_BLUNT];
     }
 
@@ -408,7 +423,7 @@ void LootRandomizer::ApplyModifier(psItemStats* baseItem, RandomizedOverlay* ove
         csString EffectName = node->GetAttribute("name")->GetValue();
         float EffectValue = node->GetAttribute("value")->GetValueAsFloat();
         //Add to the Attributes
-        if (!SetAttribute(EffectOp, EffectName, EffectValue,overlay))
+        if (!SetAttribute(EffectOp, EffectName, EffectValue, overlay, baseItem))
         {
             // display error and continue
             Error2("Unable to set attribute %s on new loot item.",EffectName.GetData());
@@ -464,7 +479,7 @@ void LootRandomizer::ApplyModifier(psItemStats* baseItem, RandomizedOverlay* ove
     }
     
     //clamp speed at 1.5s to keep consistency with item_stats
-    if(overlay->latency < 1.5F)
+    if(!csNaN(overlay->latency) && overlay->latency < 1.5F)
         overlay->latency = 1.5F;
 }
 
