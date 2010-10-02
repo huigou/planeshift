@@ -65,6 +65,10 @@
             </widget>
 
             <widget factory="pawsSimpleTreeNode" label="Interface">
+                 <widget factory="pawsSimpleTreeNode" label="Pop-ups">
+                    <attr name="SectionName" value="popup"/>
+                    <attr name="factory" value="pawsConfigPopup"/>
+                </widget> 
                 <widget factory="pawsSimpleTreeNode" label="Chat">
                     <attr name="SectionName" value="chat"/>
                     <attr name="factory" value="pawsConfigChat"/>

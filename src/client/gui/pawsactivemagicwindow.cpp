@@ -31,6 +31,8 @@
 #include "pawsactivemagicwindow.h"
 #include "paws/pawslistbox.h"
 #include "paws/pawsmanager.h"
+#include "paws/pawscheckbox.h"
+#include "pawsconfigpopup.h"
 
 #define BUFF_CATEGORY_PREFIX    "+"
 #define DEBUFF_CATEGORY_PREFIX  "-"
@@ -43,11 +45,18 @@ bool pawsActiveMagicWindow::PostSetup()
 {
     pawsWidget::PostSetup();
 
+    configPopup = 0;
+
     buffCategories        = (pawsListBox*)FindWidget("BuffCategories");
     if (!buffCategories)
         return false;
     debuffCategories      = (pawsListBox*)FindWidget("DebuffCategories");
     if (!debuffCategories)
+        return false;
+    showWindow              = (pawsCheckBox*)FindWidget("ShowActiveMagicWindow");
+    if(!showWindow)
+        return false;
+    if(!LoadSetting())
         return false;
 
     if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_ACTIVEMAGIC))
@@ -59,10 +68,15 @@ bool pawsActiveMagicWindow::PostSetup()
 
 void pawsActiveMagicWindow::HandleMessage( MsgEntry* me )
 {
+    if(!configPopup)
+        configPopup = (pawsConfigPopup*)PawsManager::GetSingleton().FindWidget("ConfigPopup");
+
     psGUIActiveMagicMessage incoming(me);
     csList<csString> rowEntry;
 
-    if (!IsVisible() && psengine->loadstate == psEngine::LS_DONE)
+    show = showWindow->GetState() ? false : true;
+
+    if (!IsVisible() && psengine->loadstate == psEngine::LS_DONE && show)
         Show();
 
     pawsListBox *list = incoming.type == BUFF ? buffCategories : debuffCategories;
@@ -96,6 +110,86 @@ void pawsActiveMagicWindow::HandleMessage( MsgEntry* me )
 void pawsActiveMagicWindow::Close()
 {
     Hide();
+    if (showWindow->GetState() == show) 
+    {
+        SaveSetting();
+        if (configPopup)
+        {
+            configPopup->showActiveMagicConfig->SetState(!showWindow->GetState());
+        }
+    }
 }
 
+bool pawsActiveMagicWindow::LoadSetting()
+{    
+    csRef<iDocument> doc;
+    csRef<iDocumentNode> root,activeMagicNode, activeMagicOptionsNode;
+    csString option;
 
+    doc = ParseFile(psengine->GetObjectRegistry(), CONFIG_ACTIVEMAGIC_FILE_NAME);
+    if (doc == NULL)
+    {
+        doc = ParseFile(psengine->GetObjectRegistry(), CONFIG_ACTIVEMAGIC_FILE_NAME_DEF);    
+        if (doc == NULL)
+        {
+            Error2("Failed to parse file %s", CONFIG_ACTIVEMAGIC_FILE_NAME_DEF);
+            return false;
+        }    
+    }
+   
+    root = doc->GetRoot();
+    if (root == NULL)
+    {
+        Error2("activemagic_def.xml or activemagic.xml has no XML root", "");
+        return false;
+    }
+    
+    activeMagicNode = root->GetNode("activemagic");
+    if (activeMagicNode == NULL)
+    {
+        Error2("activemagic_def.xml or activemagic.xml has no <activemagic> tag", "");
+        return false;
+    }
+
+    // Load options for Active Magic Window
+    activeMagicOptionsNode = activeMagicNode->GetNode("activemagicoptions");
+    if (activeMagicOptionsNode != NULL)
+    {
+        csRef<iDocumentNodeIterator> oNodes = activeMagicOptionsNode->GetNodes();
+        while(oNodes->HasNext())
+        {
+            csRef<iDocumentNode> option = oNodes->Next();
+            csString nodeName (option->GetValue());
+
+            if (nodeName == "showWindow")
+                showWindow->SetState(!option->GetAttributeValueAsBool("value"));
+        }
+    }
+
+    return true;
+}
+
+void pawsActiveMagicWindow::SaveSetting()
+{
+    csRef<iFile> file;
+    file = psengine->GetVFS()->Open(CONFIG_ACTIVEMAGIC_FILE_NAME,VFS_FILE_WRITE);
+
+    csRef<iDocumentSystem> docsys = csPtr<iDocumentSystem> (new csTinyDocumentSystem ());
+
+    csRef<iDocument> doc = docsys->CreateDocument();        
+    csRef<iDocumentNode> root,defaultRoot, activeMagicNode, activeMagicOptionsNode, showWindowNode;
+
+    root = doc->CreateRoot();
+
+    activeMagicNode = root->CreateNodeBefore(CS_NODE_ELEMENT, 0);
+    activeMagicNode->SetValue("activemagic");
+
+    activeMagicOptionsNode = activeMagicNode->CreateNodeBefore(CS_NODE_ELEMENT, 0);
+    activeMagicOptionsNode->SetValue("activemagicoptions");
+
+    showWindowNode = activeMagicOptionsNode->CreateNodeBefore(CS_NODE_ELEMENT, 0);
+    showWindowNode->SetValue("showWindow");
+    showWindowNode->SetAttributeAsInt("value", showWindow->GetState() ? 0 : 1);
+
+    doc->Write(file);
+}

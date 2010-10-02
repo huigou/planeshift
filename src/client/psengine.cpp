@@ -121,6 +121,7 @@ if (!myref)                                                  \
 #include "gui/pawsconfigkeys.h"
 #include "gui/pawsconfigcamera.h"
 #include "gui/pawsconfigdetails.h"
+#include "gui/pawsconfigpopup.h" 
 #include "gui/pawsconfigpvp.h"
 #include "gui/pawsconfigchat.h"
 #include "gui/pawsconfigchattabs.h"
@@ -745,6 +746,7 @@ void psEngine::DeclareExtraFactories()
     RegisterFactory (pawsStorageWindowFactory);
     RegisterFactory (pawsConfigWindowFactory);
     RegisterFactory (pawsConfigKeysFactory);
+    RegisterFactory (pawsConfigPopupFactory); 
     RegisterFactory (pawsConfigPvPFactory);
     RegisterFactory (pawsFingeringWindowFactory);
     RegisterFactory (pawsConfigDetailsFactory);

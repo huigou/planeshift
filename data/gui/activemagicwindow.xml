@@ -3,7 +3,7 @@
 <widget name="ActiveMagicWindow" factory="pawsActiveMagicWindow" 
         visible="yes" savepositions="yes" movable="yes" resizable="no" configurable="yes" style="New Standard GUI">
         
-    <frame x="10" y="200" width="340" height="150" border="yes" />
+    <frame x="10" y="200" width="340" height="200" border="yes" />
     <title resource="Scaling Title Bar" text="Active Magic" align="left" close_button="yes" />
 	
     <widget name="lblBuffCategories" factory="pawsTextBox">
@@ -37,7 +37,12 @@
             </column>     
         </columns>                                          
     </widget>
-
+    
+      <widget name="ShowActiveMagicWindow" factory="pawsCheckBox" >
+        <frame x="10" y="175" width="150" height="20" border="no" />
+        <text string="Don't show this window again" />
+    </widget>
+    
 </widget>
 
 </widget_description>
