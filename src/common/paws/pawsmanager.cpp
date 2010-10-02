@@ -277,33 +277,49 @@ void PawsManager::ResizingWidget( pawsWidget* widget, int flags )
 
 bool PawsManager::HandleEvent( iEvent &event )
 {
-    if (event.Name == MouseMove)
+	csRef<iEventNameRegistry> namereg = csEventNameRegistry::GetRegistry (
+        GetObjectRegistry ());
+    if (CS_IS_KEYBOARD_EVENT (namereg, event))
     {
-        return HandleMouseMove (event);
+        if (event.Name == KeyboardDown || event.Name == KeyboardUp)
+        {
+            return HandleKeyDown( event );
+        }
     }
-    
-    if (event.Name == MouseDown)
+    else if (CS_IS_MOUSE_EVENT (namereg, event))
     {
-      return HandleMouseDown (event);
-    }
+        csMouseEventType type = csMouseEventHelper::GetEventType (&event);
+        csMouseEventData data;
+        csMouseEventHelper::GetEventData (&event, data);
+        //csKeyModifiers key_modifiers;
+        //csKeyEventHelper::GetModifiers (&event, key_modifiers);
+        uint32 modifiers = csMouseEventHelper::GetModifiers (&event);
 
-    if (event.Name == MouseDoubleClick)
-    {
-      return HandleDoubleClick (event);
-    }
-
-    if (event.Name == MouseUp)
-    {
-      return HandleMouseUp (event);
-    }
-
-    if (event.Name == KeyboardDown || event.Name == KeyboardUp)
-    {
-      return HandleKeyDown( event );
-    }
+        if (type == csMouseEventTypeMove)
+        {
+            return HandleMouseMove (data);
+        }
+        else if (type == csMouseEventTypeUp)
+        {
+            return HandleMouseUp (data);
+        }
+        else if (type == csMouseEventTypeDown)
+        {
+            return HandleMouseDown (data);
+        }
+        /*
+        else if (type == csMouseEventTypeClick)
+        {
+        }
+        */
+        else if (type == csMouseEventTypeDoubleClick)
+        {
+            return HandleDoubleClick (data);
+        }
+    }    
 
 #if defined(CS_PLATFORM_UNIX) && defined(INCLUDE_CLIPBOARD)
-    if (event.Name == SelectionNotifyEvent)
+    if (ev.Name == SelectionNotifyEvent)
     {
       return HandleSelectionNotify (event);
     }
@@ -313,14 +329,11 @@ bool PawsManager::HandleEvent( iEvent &event )
 }
 
 
-bool PawsManager::HandleDoubleClick( iEvent& ev )
+bool PawsManager::HandleDoubleClick( csMouseEventData &data )
 {
     pawsWidget* widget = NULL;
-    psPoint event = MouseLocation(ev);
-    uint button = csMouseEventHelper::GetButton(&ev);
-    uint32 modifiers = csMouseEventHelper::GetModifiers(&ev);
-
-    widget = mainWidget->WidgetAt( event.x, event.y );
+    
+    widget = mainWidget->WidgetAt( data.x, data.y );
 
     if ( widget != NULL )
     {
@@ -332,7 +345,7 @@ bool PawsManager::HandleDoubleClick( iEvent& ev )
             pawsWidget* check = modalWidget->FindWidget( widget->GetName(), false );
             if ( check != widget )
             {
-                widget = modalWidget->WidgetAt( event.x, event.y );
+                widget = modalWidget->WidgetAt( data.x, data.y );
             }
         }
         if ( widget != NULL )
@@ -344,7 +357,7 @@ bool PawsManager::HandleDoubleClick( iEvent& ev )
             {
                 widget->GetParent()->BringToTop( widget );
             }
-            returnResult = widget->OnDoubleClick( button, modifiers, event.x, event.y );
+            returnResult = widget->OnDoubleClick( data.Button, data.Modifiers, data.x, data.y );
 
             return returnResult;
         }
@@ -550,15 +563,11 @@ bool PawsManager::HandleSelectionNotify( iEvent &ev )
 }
 #endif
 
-bool PawsManager::HandleMouseDown( iEvent &ev )
+bool PawsManager::HandleMouseDown( csMouseEventData &data )
 {
     pawsWidget* widget = 0;
-    psPoint event = MouseLocation(ev);
 
-    uint button = csMouseEventHelper::GetButton(&ev);
-    uint32 modifiers = csMouseEventHelper::GetModifiers(&ev);
-
-    widget = mainWidget->WidgetAt(event.x, event.y);
+    widget = mainWidget->WidgetAt(data.x, data.y);
 
     if ( widget != NULL )
     {
@@ -572,7 +581,7 @@ bool PawsManager::HandleMouseDown( iEvent &ev )
             pawsWidget* check = modalWidget->FindWidget( widget->GetName(), false );
             if ( check != widget )
             {
-                widget = modalWidget->WidgetAt(event.x, event.y);
+                widget = modalWidget->WidgetAt(data.x, data.y);
             }
         }
 
@@ -591,10 +600,10 @@ bool PawsManager::HandleMouseDown( iEvent &ev )
 
             widget->RunScriptEvent(PW_SCRIPT_EVENT_MOUSEDOWN);
 
-            bool returnResult = widget->OnMouseDown( button,
-                                                     modifiers,
-                                                     event.x,
-                                                     event.y );
+            bool returnResult = widget->OnMouseDown( data.Button,
+                                                     data.Modifiers,
+                                                     data.x,
+                                                     data.y );
             return returnResult;
         }
 
@@ -604,13 +613,8 @@ bool PawsManager::HandleMouseDown( iEvent &ev )
     return false;
 }
 
-bool PawsManager::HandleMouseUp( iEvent &ev )
+bool PawsManager::HandleMouseUp( csMouseEventData &data )
 {
-    psPoint event = MouseLocation(ev);
-
-    uint button = csMouseEventHelper::GetButton(&ev);
-    uint32 modifiers = csMouseEventHelper::GetModifiers(&ev);
-
     // Check to see if we are moving a widget.
     if ( movingWidget )
     {
@@ -627,13 +631,13 @@ bool PawsManager::HandleMouseUp( iEvent &ev )
 
     if ( currentFocusedWidget )
     {
-        return currentFocusedWidget->OnMouseUp( button,
-                                                modifiers,
-                                                event.x,
-                                                event.y );
+        return currentFocusedWidget->OnMouseUp( data.Button,
+                                                data.Modifiers,
+                                                data.x,
+                                                data.y );
     }
 
-    pawsWidget* widget = mainWidget->WidgetAt(event.x, event.y );
+    pawsWidget* widget = mainWidget->WidgetAt(data.x, data.y );
 
     SetCurrentFocusedWidget ( widget );
 
@@ -644,15 +648,16 @@ bool PawsManager::HandleMouseUp( iEvent &ev )
             widget->GetParent()->BringToTop( widget );
         }
 
-        return widget->OnMouseUp( button,
-                                  modifiers,
-                                  event.x,
-                                  event.y );
+        return widget->OnMouseUp( data.Button,
+                                  data.Modifiers,
+                                  data.x,
+                                  data.y );
     }
 
     return false;
 }
 
+/*
 psPoint PawsManager::MouseLocation( iEvent &ev )
 {
     csMouseEventData event;
@@ -676,14 +681,13 @@ psPoint PawsManager::MouseLocation( iEvent &ev )
     point.y = event.axes[1];
     return point;
 }
+*/
 
 
 
-bool PawsManager::HandleMouseMove( iEvent &ev )
+bool PawsManager::HandleMouseMove( csMouseEventData &data )
 {
-    psPoint event = MouseLocation(ev);
-
-    mouse->SetPosition( event.x, event.y );
+    mouse->SetPosition( data.x, data.y );
     PositionDragDropWidget();
 
     timeOver = csGetTicks();
@@ -702,7 +706,7 @@ bool PawsManager::HandleMouseMove( iEvent &ev )
 
     if (modalWidget == NULL)
     {
-        pawsWidget* widget = mainWidget->WidgetAt(event.x, event.y);
+        pawsWidget* widget = mainWidget->WidgetAt(data.x, data.y);
 
         if ( widget )
         {
