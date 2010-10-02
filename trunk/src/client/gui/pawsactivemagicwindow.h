@@ -25,10 +25,16 @@ class pawsTextBox;
 class pawsListBox;
 class pawsMessageTextBox;
 class pawsProgressBar;
+class pawsCheckBox;
+class pawsConfigPopup;
 
 #include "net/cmdbase.h"
 #include "net/subscriber.h"
 #include "gui/pawscontrolwindow.h"
+
+#define CONFIG_ACTIVEMAGIC_FILE_NAME       "/planeshift/userdata/options/activemagic.xml"
+#define CONFIG_ACTIVEMAGIC_FILE_NAME_DEF   "/planeshift/data/options/activemagic_def.xml"
+
 /** This handles all the details about how the spell cancel works.
  */
 class pawsActiveMagicWindow : public pawsWidget, public psClientNetSubscriber
@@ -43,9 +49,31 @@ public:
 
     virtual void Close();
 
+    bool LoadSetting(); 
+    /**
+    *Loads the configuration file
+    *@return true if no errors and false if errors
+    */
+    void SaveSetting();///Saves the configuration file
+    
+    pawsCheckBox*    showWindow;
+    /**
+    *Check-box which gives the user a opportunity to show or 
+    *not to show the Active Magic Window
+    */
 private:
-    pawsListBox*    buffCategories;
-    pawsListBox*    debuffCategories;
+    /**Listboxes used to show active magics*/
+    pawsListBox*     buffCategories;
+    pawsListBox*     debuffCategories;
+ 
+    
+    pawsConfigPopup* configPopup; ///This is used to point to a instance of ConfigPopup
+                                 
+    
+    bool             show;/**
+                          If true, show active magic window
+                          if false, don't show this window
+                          */
 };
 
 CREATE_PAWS_FACTORY( pawsActiveMagicWindow );
