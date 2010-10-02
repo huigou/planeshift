@@ -416,20 +416,20 @@ protected:
      *  Determines if a widget is moving or being resized. If there is no modal
      *  widget it operates on the topmost widget at the event coordinates.
      *
-     *  @param event iEvent to process.
+     *  @param data csMouseEventData containing the mouse event data.
      *  @return TRUE if it moves, resizes or fades in a widget.
      */
-    bool HandleMouseMove( iEvent& event );
+    bool HandleMouseMove( csMouseEventData &data );
 
      /** @brief Process mouse down events.
       *
       *  Determines the widget at event coordinates.
       *  Calls OnMouseDown() on the currentFocusedWidget or widget at the event
       *  coordinates.
-      *  @param event iEvent to process.
+      *  @param data csMouseEventData containing the mouse event data.
       *  @return TRUE if event stops moving or resizing.
       */
-    bool HandleMouseDown( iEvent& event );
+    bool HandleMouseDown( csMouseEventData &data );
 
 
     /** @brief Process mouse double click events.
@@ -437,10 +437,10 @@ protected:
       * Calls OnDoubleClick on the currentFocusedWidget or widget at the event
       * coordinates.
       *
-      * @param event iEvent to process.
+      * @param data csMouseEventData containing the mouse event data.
       * @return Results of OnDoubleClick or FALSE.
       */
-    bool HandleDoubleClick( iEvent& event );
+    bool HandleDoubleClick( csMouseEventData &data );
 
      /** @brief Process mouse up events.
       *
@@ -448,10 +448,10 @@ protected:
       *  Calls OnMouseUp on the currentFocusedWidget or widget at the event
       *  coordinates.
       *
-      *  @param event iEvent to process.
+      *  @param data csMouseEventData containing the mouse event data.
       *  @return Results of OnMouseUp or FALSE.
       */
-    bool HandleMouseUp( iEvent& event );
+    bool HandleMouseUp( csMouseEventData &data );
 
     /** @brief Process key down events.
      *
