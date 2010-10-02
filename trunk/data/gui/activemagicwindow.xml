@@ -3,11 +3,11 @@
 <widget name="ActiveMagicWindow" factory="pawsActiveMagicWindow" 
         visible="yes" savepositions="yes" movable="yes" resizable="no" configurable="yes" style="New Standard GUI">
         
-    <frame x="10" y="200" width="340" height="200" border="yes" />
+    <frame x="10" y="200" width="330" height="165" border="yes" />
     <title resource="Scaling Title Bar" text="Active Magic" align="left" close_button="yes" />
 	
     <widget name="lblBuffCategories" factory="pawsTextBox">
-        <frame x="10" y="5" width="145" height="20" border="no" />
+        <frame x="10" y="0" width="145" height="20" border="no" />
         <font name="/planeshift/data/ttf/cupandtalon.ttf" r="64" g="250" b="64" size="11" shadow="true" />
         <text string="Buffs" horizAdjust="CENTRE" />    
     </widget>
@@ -23,7 +23,7 @@
     </widget>
 
     <widget name="lblDebuffCategories" factory="pawsTextBox">
-        <frame x="175" y="5" width="145" height="20" border="no" />
+        <frame x="175" y="0" width="145" height="20" border="no" />
         <font name="/planeshift/data/ttf/cupandtalon.ttf" r="250" g="64" b="64" size="11" shadow="true" />
         <text string="Debuffs" horizAdjust="CENTRE" />    
     </widget>
@@ -39,7 +39,7 @@
     </widget>
     
       <widget name="ShowActiveMagicWindow" factory="pawsCheckBox" >
-        <frame x="10" y="175" width="160" height="20" border="no" />
+        <frame x="0" y="140" width="185" height="20" border="no" />
         <text string="Don't show this window again" />
     </widget>
     
