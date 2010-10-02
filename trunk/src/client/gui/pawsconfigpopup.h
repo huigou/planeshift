@@ -1,7 +1,7 @@
 /*
  * pawsconfigpopup.h
  *
- * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
+ * Copyright (C) 2010 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -39,24 +39,22 @@ class pawsActiveMagicWindow;
 class pawsConfigPopup : public pawsConfigSectionWindow
 {
 public:
-    pawsConfigPopup(void);
+    pawsConfigPopup(void); ///< Constructor
 
-    //from pawsWidget:
-    virtual bool PostSetup();
+    virtual bool PostSetup(); ///< @see pawsWidget
     
-    // from pawsConfigSectionWindow:
-    virtual bool Initialize();
-    virtual bool LoadConfig();
-    virtual bool SaveConfig();
-    virtual void SetDefault();
-    
-    pawsCheckBox* showActiveMagicConfig; 
-    /**
-    Check-box which gives the user a opportunity to show or 
-     not to show the Active Magic Window
-    */
+    virtual bool Initialize(); ///< @see pawsWidget
+    virtual bool LoadConfig(); ///< @see pawsWidget
+    virtual bool SaveConfig(); ///< @see pawsWidget
+    virtual void SetDefault(); ///< @see pawsWidget
+
+    /** Check-box which gives the user a opportunity to show or
+     *  not to show the Active Magic Window
+     */
+    pawsCheckBox* showActiveMagicConfig;
+
 protected:
-    pawsActiveMagicWindow* magicWindow; ///This is used to point to a instance of magic window
+    pawsActiveMagicWindow* magicWindow; ///< This is used to point to a instance of magic window
 };
 
 CREATE_PAWS_FACTORY(pawsConfigPopup);

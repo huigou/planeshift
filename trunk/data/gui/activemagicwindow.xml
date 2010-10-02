@@ -39,7 +39,7 @@
     </widget>
     
       <widget name="ShowActiveMagicWindow" factory="pawsCheckBox" >
-        <frame x="10" y="175" width="150" height="20" border="no" />
+        <frame x="10" y="175" width="160" height="20" border="no" />
         <text string="Don't show this window again" />
     </widget>
     

@@ -129,6 +129,7 @@ bool pawsActiveMagicWindow::LoadSetting()
     doc = ParseFile(psengine->GetObjectRegistry(), CONFIG_ACTIVEMAGIC_FILE_NAME);
     if (doc == NULL)
     {
+        //load the default configuration file in case the user one fails (missing or damaged)
         doc = ParseFile(psengine->GetObjectRegistry(), CONFIG_ACTIVEMAGIC_FILE_NAME_DEF);    
         if (doc == NULL)
         {

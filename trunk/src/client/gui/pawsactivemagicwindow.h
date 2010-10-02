@@ -48,32 +48,32 @@ public:
     void HandleMessage( MsgEntry* me );
 
     virtual void Close();
-
-    bool LoadSetting(); 
-    /**
-    *Loads the configuration file
-    *@return true if no errors and false if errors
-    */
-    void SaveSetting();///Saves the configuration file
     
-    pawsCheckBox*    showWindow;
-    /**
-    *Check-box which gives the user a opportunity to show or 
-    *not to show the Active Magic Window
+    /** Loads the configuration file
+    *   @return true if no errors and false if errors
     */
+    bool LoadSetting(); 
+
+    ///Saves the configuration file
+    void SaveSetting();
+
+    /**
+      * Check-box which gives the user a opportunity to show or 
+      * not to show the Active Magic Window
+      */
+    pawsCheckBox*    showWindow;
 private:
-    /**Listboxes used to show active magics*/
-    pawsListBox*     buffCategories;
-    pawsListBox*     debuffCategories;
+
+    pawsListBox*     buffCategories;   ///< Listbox used to show active buff magic
+    pawsListBox*     debuffCategories; ///< Listbox used to show active debuff magic
  
     
-    pawsConfigPopup* configPopup; ///This is used to point to a instance of ConfigPopup
+    pawsConfigPopup* configPopup;  ///<This is used to point to a instance of ConfigPopup
                                  
-    
-    bool             show;/**
-                          If true, show active magic window
-                          if false, don't show this window
-                          */
+    /** If true, show active magic window
+     *  if false, don't show this window
+     */
+    bool show;
 };
 
 CREATE_PAWS_FACTORY( pawsActiveMagicWindow );
