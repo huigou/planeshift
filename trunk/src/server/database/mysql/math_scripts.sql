@@ -104,9 +104,9 @@ INSERT INTO math_scripts VALUES( "Calculate Damage",
         FinalDamage = 10*(AVStance-TargetDV);
         if(Target:IsNPC)
         {
-          Attacker:PracticeSkillID(AttackWeapon:Skill1);
-          Attacker:PracticeSkillID(AttackWeapon:Skill2);
-          Attacker:PracticeSkillID(AttackWeapon:Skill3);
+          Attacker:PracticeSkillID(AttackWeapon:Skill1,1);
+          Attacker:PracticeSkillID(AttackWeapon:Skill2,1);
+          Attacker:PracticeSkillID(AttackWeapon:Skill3,1);
         }
 ");
 
