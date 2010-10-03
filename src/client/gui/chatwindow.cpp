@@ -2078,12 +2078,6 @@ void pawsChatWindow::TabCompleteName(const char *cmdstr)
     if (!isalpha(*cmd))
         cmd++;
 
-    // Make sure we have our auto-complete list
-    if (!autoCompleteNames.GetSize() )
-    {
-        return;
-    }
-
     psString partial(cmd);
     if (partial.Length () == 0)
         return;
@@ -2092,9 +2086,11 @@ void pawsChatWindow::TabCompleteName(const char *cmdstr)
     psString list, last;
     size_t max_common = 50; // big number gets pulled in
     int matches = 0;
-    for(int i = 0; i < autoCompleteLists.GetSize(); i++)
+
+    csArray<csArray<csString> *>::Iterator outerIter = autoCompleteLists.GetIterator();
+    while(outerIter.HasNext())
     {
-        csArray<csString>::Iterator iter = autoCompleteLists.Get(i)->GetIterator();
+        csArray<csString>::Iterator iter = outerIter.Next()->GetIterator();
         while (iter.HasNext())
         {
             psString found = iter.Next();
