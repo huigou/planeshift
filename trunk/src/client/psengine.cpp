@@ -126,9 +126,11 @@ if (!myref)                                                  \
 #include "gui/pawsconfigpvp.h"
 #include "gui/pawsconfigchat.h"
 #include "gui/pawsconfigchattabs.h"
+#include "gui/pawsconfigchattabcompletion.h"
 #include "gui/pawsconfigsound.h"
 #include "gui/pawsconfigentitylabels.h"
 #include "gui/pawsconfigentityinter.h"
+#include "gui/pawsconfigautoexec.h"
 #include "gui/inventorywindow.h"
 #include "gui/pawsitemdescriptionwindow.h"
 #include "gui/pawscontainerdescwindow.h"
@@ -763,6 +765,7 @@ void psEngine::DeclareExtraFactories()
     RegisterFactory (pawsConfigSoundFactory);
     RegisterFactory (pawsConfigEntityLabelsFactory);
     RegisterFactory (pawsConfigEntityInteractionFactory);
+    RegisterFactory (pawsConfigAutoexecFactory);
     RegisterFactory (pawsPetitionWindowFactory);
     RegisterFactory (pawsPetitionGMWindowFactory);
     RegisterFactory (pawsShortcutWindowFactory);
@@ -800,6 +803,7 @@ void psEngine::DeclareExtraFactories()
     RegisterFactory (pawsSmallInventoryWindowFactory);
     RegisterFactory (pawsConfigChatFilterFactory);
     RegisterFactory (pawsConfigChatTabsFactory);
+    RegisterFactory (pawsConfigChatTabCompletionFactory);
     RegisterFactory (pawsGMActionWindowFactory);
     RegisterFactory (pawsCraftWindowFactory);
     RegisterFactory (pawsPetStatWindowFactory);
