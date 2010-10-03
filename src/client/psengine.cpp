@@ -82,6 +82,7 @@ if (!myref)                                                  \
 #include "zonehandler.h"
 #include "clientvitals.h"
 #include "guihandler.h"
+#include "autoexec.h"
 
 #include "pscal3dcallback.h"
 
@@ -238,6 +239,7 @@ psEngine::psEngine (iObjectRegistry *objectreg, psCSSetup *CSSetup)
     mainWidget = NULL;
     inventoryCache = NULL;
     loader = NULL;
+    autoexec = NULL;
 
     loadtimeout = 10;  // Default load timeout
 
@@ -294,6 +296,7 @@ void psEngine::Cleanup()
     delete charController;
     delete camera;
     delete chatBubbles;
+    delete autoexec;
 
     if (queue)
     {
@@ -600,6 +603,10 @@ bool psEngine::Initialize (int level)
                 lasterror = "Couldn't init Character Manager.";
                 return false;
             }
+        }
+        if (!autoexec)
+        {
+            autoexec = new Autoexec();
         }
     }
     else if(level == 2)
@@ -1449,6 +1456,12 @@ void psEngine::LoadGame()
         if (!mouseBinds)
         {
             mouseBinds = GetMouseBinds();
+        }
+
+        // run autoexec commands for this char
+        if (autoexec->GetEnabled())
+        {
+          autoexec->execute();
         }
 
         // Set the focus to the main widget

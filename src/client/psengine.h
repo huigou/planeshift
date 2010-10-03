@@ -70,6 +70,7 @@ class psCSSetup;
 class psMouseBinds;
 class psInventoryCache;
 class PawsManager;
+class Autoexec;
 
 // Networking classes
 class ClientMsgHandler;
@@ -199,6 +200,7 @@ public:
     psNetManager*          GetNetManager()     { return netmanager; }
     psCSSetup*             GetCSSetup()        { return CS_Setup; }
     ZoneHandler*           GetZoneHandler()    { return zonehandler; }
+    Autoexec*              GetAutoexec()       { return autoexec; }
     psSoundManager*        GetSoundManager()   { return SoundManager; }
 
     /// Access the player's petitioner target
@@ -414,6 +416,7 @@ private:
     psCSSetup*                CS_Setup;
     csRef<iBgLoader>          loader;
     csRef<iSceneManipulate>   scenemanipulator;
+    Autoexec*                 autoexec;
 
     /* status, misc. vars */
     bool gameLoaded; ///< determines if the game is loaded or not
