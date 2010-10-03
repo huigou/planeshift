@@ -46,7 +46,7 @@ class Autoexec
     /** Sets if the autoexec is enabled and will trigger.
      *  @param en Set this true if you want to activate the autoexec functionality.
      */
-    void SetEnabled(const bool en) {enabled = en;}; 
+    void SetEnabled(const bool en) {enabled = en;};
     void SaveCommands();                            ///< Save all the autoexec data to file.
     void LoadDefault();                           ///< Overrides the current autoexec data with default
     /** Gets commands of one character name.

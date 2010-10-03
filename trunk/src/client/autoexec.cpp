@@ -83,14 +83,14 @@ void Autoexec::execute()
 }
 
 csString Autoexec::getCommands(csString name)
-{    
+{
     for (size_t i = 0; i < cmds.GetSize(); i++)
     {
        if (cmds[i].name == name)
-       {           
-           return cmds[i].cmd;     
+       {
+           return cmds[i].cmd;
        }
-    }    
+    }
     return "";
 }
 
