@@ -92,14 +92,14 @@ struct ChatSettings
     bool logChannel[CHAT_NLOG];
     bool enableBadWordsFilterIncoming, enableBadWordsFilterOutgoing;
     bool echoScreenInSystem;
-    bool mainBrackets; //If it's true brackets like [guild] [tell] will be put in main tab.
-    bool yourColorMix; //If it's true the yourColor will be mixed with the Color of the destination 
-                       //Example: if you send a tell the color of your text will be (yourColor+tellColor)/2
+    bool mainBrackets; ///< If it's true brackets like [guild] [tell] will be put in main tab.
+    bool yourColorMix; ///< If it's true the yourColor will be mixed with the Color of the destination 
+                       ///Example: if you send a tell the color of your text will be (yourColor+tellColor)/2
     csString chatWidget; ///< contains the widget to load, default being chat.xml. It's used during engine init and for changing settings.
     csArray<csString> badWords;
     csArray<csString> goodWords;
     csArray<csString> completionItems; ///< List of items for autocompletion from xml file
-    // chat type to subscription name binding
+    /// chat type to subscription name binding
     csHash<csString, csString> bindings;
     csArray<csString> subNames;
     int selectTabStyle;
@@ -220,6 +220,8 @@ protected:
 
     /// list of names to auto-complete
     csArray<csString> autoCompleteNames;
+    ///Contains pointers to all the autocompletion lists (excluding command lists)
+    csArray<csArray<csString> *> autoCompleteLists;
 
     /// list of last commands
     csRedBlackTree<psString> commandList;
@@ -254,9 +256,6 @@ protected:
 
     /// Replay recent message history on load
     void ReplayMessages();
-
-    /// Add miscellaneous words to the tab completion
-    void ConfigTabCompletion();
     
     /// Subscribed channel name to server channel ID reversible mapping
     csHashReversible<uint32_t, csString> channelIDs;

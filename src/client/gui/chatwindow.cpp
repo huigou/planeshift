@@ -164,6 +164,10 @@ pawsChatWindow::~pawsChatWindow()
     delete chatHistory;
     for (int i = 0; i < CHAT_NLOG; i++)
         logFile[i].Invalidate();
+
+    //set the autocompletion arraylist
+    autoCompleteLists.Push(&autoCompleteNames);
+    autoCompleteLists.Push(&settings.completionItems);
 }
 
 bool pawsChatWindow::PostSetup()
@@ -192,7 +196,7 @@ bool pawsChatWindow::PostSetup()
         return false;
     }
     ReplayMessages();
-    ConfigTabCompletion();
+
     if(settings.joindefaultchannel)
         JoinChannel("gossip");
     PawsManager::GetSingleton().Publish(CHAT_TYPES[CHAT_ADVISOR], "This channel is the HELP channel. "
@@ -852,14 +856,6 @@ void pawsChatWindow::ReplayMessages()
     PawsManager::GetSingleton().Publish(CHAT_TYPES[CHAT_SAY], PawsManager::GetSingleton().Translate("Replaying previous chat..."), settings.systemColor );
     while(!line.IsEmpty())
         PawsManager::GetSingleton().Publish(CHAT_TYPES[CHAT_SAY], line.Pop(), settings.chatColor );
-}
-
-void pawsChatWindow::ConfigTabCompletion()                                                                       
-{                                                                                                                
-    for (size_t i = 0; i < settings.completionItems.GetSize(); i++)
-    {
-        AddAutoCompleteName(settings.completionItems[i]);
-    }
 }
 
 void pawsChatWindow::LogMessage(enum E_CHAT_LOG channel, const char* message, int type)
@@ -2096,29 +2092,31 @@ void pawsChatWindow::TabCompleteName(const char *cmdstr)
     psString list, last;
     size_t max_common = 50; // big number gets pulled in
     int matches = 0;
-    csArray<csString>::Iterator iter = autoCompleteNames.GetIterator();
-    while (iter.HasNext())
+    for(int i = 0; i < autoCompleteLists.GetSize(); i++)
     {
-        psString found = iter.Next();
-        if(found.StartsWith(partial, true))
+        csArray<csString>::Iterator iter = autoCompleteLists.Get(i)->GetIterator();
+        while (iter.HasNext())
         {
-            list.Append(" ");
-            list.Append(found);
-            if (!last)
-                last = found;
-
-            matches++;
-
-            size_t common = found.FindCommonLength(last);
-
-            if (common < max_common)
+            psString found = iter.Next();
+            if(found.StartsWith(partial, true))
             {
-                max_common = common;
-                last = found;
+                list.Append(" ");
+                list.Append(found);
+                if (!last)
+                    last = found;
+
+                matches++;
+
+                size_t common = found.FindCommonLength(last);
+
+                if (common < max_common)
+                {
+                    max_common = common;
+                    last = found;
+                }
             }
         }
     }
-
     if (matches > 1)
     {
         list.Insert(0,PawsManager::GetSingleton().Translate("Ambiguous name:"));
