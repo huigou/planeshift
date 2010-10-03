@@ -84,7 +84,15 @@
                 <widget factory="pawsSimpleTreeNode" label="Chat - Bubbles">
                     <attr name="SectionName" value="chatbubbles"/>
                     <attr name="factory" value="pawsConfigChatBubbles"/>
-                </widget> 
+                </widget>
+               <widget factory="pawsSimpleTreeNode" label="Chat - TabCompletion">
+                    <attr name="SectionName" value="tabcompletion"/>
+                    <attr name="factory" value="pawsConfigChatTabCompletion"/>
+                </widget>
+               <widget factory="pawsSimpleTreeNode" label="Autoexec">
+                    <attr name="SectionName" value="autoexec"/>
+                    <attr name="factory" value="pawsConfigAutoexec"/>
+                </widget>
             </widget>
             
         </widget>

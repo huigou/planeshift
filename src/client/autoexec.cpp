@@ -82,6 +82,18 @@ void Autoexec::execute()
     }
 }
 
+csString Autoexec::getCommands(csString name)
+{    
+    for (size_t i = 0; i < cmds.GetSize(); i++)
+    {
+       if (cmds[i].name == name)
+       {           
+           return cmds[i].cmd;     
+       }
+    }    
+    return "";
+}
+
 void Autoexec::LoadCommands(const char * fileName)
 {
     csRef<iVFS> vfs =  csQueryRegistry<iVFS > ( PawsManager::GetSingleton().GetObjectRegistry());
@@ -172,6 +184,12 @@ void Autoexec::SaveCommands()
     csRef<iVFS> vfs =  csQueryRegistry<iVFS > ( PawsManager::GetSingleton().GetObjectRegistry());
     doc->Write(vfs, AUTOEXEC_FILE);
 }
+
+void Autoexec::LoadDefault()
+{
+    LoadCommands(DEFAULT_AUTOEXEC_FILE);
+}
+
 
 void Autoexec::addCommand(csString name, csString cmd)
 {
