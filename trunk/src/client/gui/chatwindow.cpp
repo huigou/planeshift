@@ -192,6 +192,7 @@ bool pawsChatWindow::PostSetup()
         return false;
     }
     ReplayMessages();
+    ConfigTabCompletion();
     if(settings.joindefaultchannel)
         JoinChannel("gossip");
     PawsManager::GetSingleton().Publish(CHAT_TYPES[CHAT_ADVISOR], "This channel is the HELP channel. "
@@ -207,7 +208,7 @@ void pawsChatWindow::LoadChatSettings()
 
     // XML parsing time!
     csRef<iDocument> doc, defaultDoc;
-    csRef<iDocumentNode> root,defaultRoot, defaultChatNode, chatNode, colorNode, optionNode, bindingsNode, filtersNode, msgFiltersNode,
+    csRef<iDocumentNode> root,defaultRoot, defaultChatNode, chatNode, colorNode, optionNode, bindingsNode, filtersNode, tabCompletionNode, msgFiltersNode,
                          mainTabNode, flashingNode, flashingOnCharNode;
     csString option;
 
@@ -423,7 +424,24 @@ void pawsChatWindow::LoadChatSettings()
         return;
     }
 
-
+    //adds the items for configured autocompletion in their own array.
+    tabCompletionNode = chatNode->GetNode("tabcompletion");                                                      
+    if(!tabCompletionNode)                                                                                       
+        tabCompletionNode = defaultChatNode->GetNode("tabcompletion");                                           
+    if (tabCompletionNode != NULL)                                                                               
+    {                                                                                                            
+        csRef<iDocumentNodeIterator> oNodes = tabCompletionNode->GetNodes();                                       
+        while(oNodes->HasNext())                                                                                   
+        {                                                                                                          
+            csRef<iDocumentNode> option = oNodes->Next();                                                            
+            if (option->GetType() == CS_NODE_ELEMENT && csString(option->GetValue()) == "completionitem")            
+            {                                                                                                        
+                csString completionItem = option->GetAttributeValue("value");                                          
+                if (settings.completionItems.Find(completionItem) == csArrayItemNotFound)                              
+                    settings.completionItems.Push(completionItem);                                                       
+            }                                                                                                        
+        }                                                                                                          
+    }
 
     // Load message filters
     msgFiltersNode = chatNode->GetNode("msgfilters");
@@ -836,6 +854,14 @@ void pawsChatWindow::ReplayMessages()
         PawsManager::GetSingleton().Publish(CHAT_TYPES[CHAT_SAY], line.Pop(), settings.chatColor );
 }
 
+void pawsChatWindow::ConfigTabCompletion()                                                                       
+{                                                                                                                
+    for (size_t i = 0; i < settings.completionItems.GetSize(); i++)
+    {
+        AddAutoCompleteName(settings.completionItems[i]);
+    }
+}
+
 void pawsChatWindow::LogMessage(enum E_CHAT_LOG channel, const char* message, int type)
 {
     if (settings.logChannel[channel])
@@ -924,7 +950,7 @@ void pawsChatWindow::SaveChatSettings()
 
     csRef<iDocument> doc = docsys->CreateDocument();
     csRef<iDocumentNode> root,chatNode, colorNode, optionNode,looseNode,filtersNode,
-                         badWordsNode,badWordsTextNode,cNode, logNode, selectTabStyleNode,
+                         badWordsNode, badWordsTextNode, tabCompletionNode, completionItemNode, cNode, logNode, selectTabStyleNode,
                          echoScreenInSystemNode, mainBracketsNode, yourColorMixNode, joindefaultchannelNode,
                          defaultlastchatNode, chatWidgetNode, mainTabNode, flashingNode, flashingOnCharNode, node;
 
@@ -1014,6 +1040,15 @@ void pawsChatWindow::SaveChatSettings()
         {
             badWordsTextNode->SetAttribute("good",settings.goodWords[z]);
         }
+    }
+
+    tabCompletionNode = chatNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
+    tabCompletionNode->SetValue("tabcompletion");
+    for (size_t i = 0; i < settings.completionItems.GetSize(); i++)
+    {
+        completionItemNode = tabCompletionNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
+        completionItemNode->SetValue("completionitem");
+        completionItemNode->SetAttribute("value", settings.completionItems[i]);
     }
 
     // Now for the colors

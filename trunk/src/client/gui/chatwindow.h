@@ -98,6 +98,7 @@ struct ChatSettings
     csString chatWidget; ///< contains the widget to load, default being chat.xml. It's used during engine init and for changing settings.
     csArray<csString> badWords;
     csArray<csString> goodWords;
+    csArray<csString> completionItems; ///< List of items for autocompletion from xml file
     // chat type to subscription name binding
     csHash<csString, csString> bindings;
     csArray<csString> subNames;
@@ -251,12 +252,15 @@ protected:
 
     void CreateSettingNode(iDocumentNode* mNode,int color,const char* name);
 
-    // Replay recent message history on load
+    /// Replay recent message history on load
     void ReplayMessages();
+
+    /// Add miscellaneous words to the tab completion
+    void ConfigTabCompletion();
     
-    // Subscribed channel name to server channel ID reversible mapping
+    /// Subscribed channel name to server channel ID reversible mapping
     csHashReversible<uint32_t, csString> channelIDs;
-    // Hotkeys for server channel IDs
+    /// Hotkeys for server channel IDs
     csArray<uint16_t> channels;
 };
 
