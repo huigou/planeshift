@@ -153,6 +153,10 @@ pawsChatWindow::pawsChatWindow()
         logFile[i] = NULL;
 
     channels.SetSize(10, 0);
+
+    //set the autocompletion arraylist
+    autoCompleteLists.Push(&autoCompleteNames);
+    autoCompleteLists.Push(&settings.completionItems);
 }
 
 pawsChatWindow::~pawsChatWindow()
@@ -164,10 +168,6 @@ pawsChatWindow::~pawsChatWindow()
     delete chatHistory;
     for (int i = 0; i < CHAT_NLOG; i++)
         logFile[i].Invalidate();
-
-    //set the autocompletion arraylist
-    autoCompleteLists.Push(&autoCompleteNames);
-    autoCompleteLists.Push(&settings.completionItems);
 }
 
 bool pawsChatWindow::PostSetup()
