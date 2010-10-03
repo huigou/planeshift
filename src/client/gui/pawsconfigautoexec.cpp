@@ -39,7 +39,7 @@ pawsConfigAutoexec::pawsConfigAutoexec()
 bool pawsConfigAutoexec::PostSetup()
 {
     // setup the widget. Needed in the xml file are a Checkbox (to enable and disable autoexec)
-    // and two multiline edit boxes for the general and character commands    
+    // and two multiline edit boxes for the general and character commands
     autoexec = psengine->GetAutoexec();
     if(!autoexec)
     {
@@ -62,9 +62,9 @@ bool pawsConfigAutoexec::PostSetup()
            Error1("Could not locate CharCommandBox widget!");
            return false;
     }
-           
-    drawFrame();    
-    
+
+    drawFrame();
+
     return true;
 }
 
@@ -76,22 +76,22 @@ void pawsConfigAutoexec::drawFrame()
 }
 
 bool pawsConfigAutoexec::Initialize()
-{    
+{
     if ( ! LoadFromFile("configautoexec.xml"))
     {
         return false;
-    }        
+    }
     return true;
 }
 
 bool pawsConfigAutoexec::LoadConfig()
-{    
-    // get the values from the current value of the Autoexec class    
+{
+    // get the values from the current value of the Autoexec class
     enabled->SetState(autoexec->GetEnabled());
-    // "" as name serves for the commands for all chars    
+    // "" as name serves for the commands for all chars
     generalCommandBox->SetText(autoexec->getCommands(""));
     charCommandBox->SetText(autoexec->getCommands(psengine->GetMainPlayerName()));
-    dirty = false;    
+    dirty = false;
     return true;
 }
 
@@ -116,7 +116,7 @@ bool pawsConfigAutoexec::SaveConfig()
 void pawsConfigAutoexec::SetDefault()
 {
     // make the Autoexec class to load the default values
-    autoexec->LoadDefault();       
+    autoexec->LoadDefault();
     // and write them to the user configuration files
     autoexec->SaveCommands();
     // and then reload everything in this config tab

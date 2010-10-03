@@ -2,19 +2,19 @@
 <widget_description>
 
 <pawsConfigWindow name="ConfigWindow"
-        visible="no" savepositions="yes" movable="yes" 
+        visible="no" savepositions="yes" movable="yes"
         resizable="no"
         configurable="yes" style="New Standard GUI">
-        
+
     <frame x="10" y="100" width="680" height="346" border="yes" />
-    <title resource="Scaling Title Bar" text="Options" align="left" close_button="yes"/>    
-    
+    <title resource="Scaling Title Bar" text="Options" align="left" close_button="yes"/>
+
     <pawsSimpleTree name="ConfigTree" >
 
         <frame x="10" y="8" width="200" height="305" border="no" />
-        
+
         <widget factory="pawsSimpleTreeNode">
-	    <frame x="225" y="0" width="400" height="305" border="yes" />
+        <frame x="225" y="0" width="400" height="305" border="yes" />
 
             <widget factory="pawsSimpleTreeNode" label="Controls">
                 <widget factory="pawsSimpleTreeNode" label="Keys">
@@ -34,7 +34,7 @@
             <widget factory="pawsSimpleTreeNode" label="Graphics">
                 <widget factory="pawsSimpleTreeNode" label="Camera">
                     <attr name="SectionName" value="camera"/>
-                    <attr name="factory" value="pawsConfigCamera"/>        
+                    <attr name="factory" value="pawsConfigCamera"/>
                 </widget>
                 <widget factory="pawsSimpleTreeNode" label="Details">
                     <attr name="SectionName" value="details"/>
@@ -49,7 +49,7 @@
                     <attr name="factory" value="pawsConfigShadows"/>
                 </widget>
             </widget>
-    
+
             <widget factory="pawsSimpleTreeNode" label="Sound">
                 <widget factory="pawsSimpleTreeNode" label="General">
                     <attr name="SectionName" value="configsound"/>
@@ -68,11 +68,11 @@
                  <widget factory="pawsSimpleTreeNode" label="Pop-ups">
                     <attr name="SectionName" value="popup"/>
                     <attr name="factory" value="pawsConfigPopup"/>
-                </widget> 
+                </widget>
                 <widget factory="pawsSimpleTreeNode" label="Chat">
                     <attr name="SectionName" value="chat"/>
                     <attr name="factory" value="pawsConfigChat"/>
-                </widget>       
+                </widget>
                 <widget factory="pawsSimpleTreeNode" label="Chat - Filters">
                     <attr name="SectionName" value="chatfilter"/>
                     <attr name="factory" value="pawsConfigChatFilter"/>
@@ -94,7 +94,7 @@
                     <attr name="factory" value="pawsConfigAutoexec"/>
                 </widget>
             </widget>
-            
+
         </widget>
 
     </pawsSimpleTree>
@@ -113,7 +113,7 @@
         <frame x="10" y="320" width="80" height="20" border="no"/>
         <label text="Save"/>
     </pawsButton>
-    
+
     <pawsButton name="ResetButton" id="-20" toggle="no" style="Standard Button">
         <frame x="100" y="320" width="80" height="20" border="no"/>
         <label text="Reset"/>
