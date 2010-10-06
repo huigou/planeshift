@@ -1451,9 +1451,6 @@ void psEngine::LoadGame()
         psClientStatusMessage statusmsg(true);
         statusmsg.SendMessage();
 
-        // Display a tip.
-        GetCmdHandler()->Execute("/tip");
-
         // load the mouse options if not loaded already. The GetMouseBinds
         // function will load them if they are requested before this code
         // is executed.
