@@ -36,6 +36,7 @@ struct LootModifier
     csString stat_req_modifier; ///< The additional requirements to stats when this modifier is used.
     float    cost_modifier;     ///< The cost of this modifier @see CalcModifierCostCap
     csString mesh;              ///< The mesh this modifier will use for the random item generated.
+    csString icon;              ///< The icon this modifier will use for the random item generated.
     csString not_usable_with;   ///< Defines which modifiers this isn't usable with.
 };
 

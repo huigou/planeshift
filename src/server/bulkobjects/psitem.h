@@ -162,15 +162,16 @@ class RandomizedOverlay
     public:
     RandomizedOverlay(); ///< Constructor.
     ~RandomizedOverlay(); ///< Destructor.
-    bool active; ///< notifies if this overlay is active and should be applied.
+    bool active; ///< Notifies if this overlay is active and should be applied.
     csString name; ///< The name which should be replaced for this randomized item.
-    float weight; ///< weigth of the item changed by the loot modifier rules.
-    float latency; ///< latency of the weapon changed by the loot modifiers rules.
-    float damageStats[PSITEMSTATS_DAMAGETYPE_COUNT]; ///< damage/protection stats changed by the loot modifiers rules.
-    ApplicativeScript *equip_script; ///< equip script for this item overriding the main one from loot modifiers rules.
-    psMoney price; ///< price calculated from the loot modifiers rules which overlays the basic one.
-    csArray<ItemRequirement> reqs; ///array of all the stat prerequisites needed to equip this item.
-    csString mesh; ///< overriden mesh of this item from the basic one.
+    float weight; ///< Weigth of the item changed by the loot modifier rules.
+    float latency; ///< Latency of the weapon changed by the loot modifiers rules.
+    float damageStats[PSITEMSTATS_DAMAGETYPE_COUNT]; ///< Damage/protection stats changed by the loot modifiers rules.
+    ApplicativeScript *equip_script; ///< Equip script for this item overriding the main one from loot modifiers rules.
+    psMoney price; ///< Price calculated from the loot modifiers rules which overlays the basic one.
+    csArray<ItemRequirement> reqs; ///< Array of all the stat prerequisites needed to equip this item.
+    csString mesh; ///< Overriden mesh of this item from the basic one.
+    csString icon; ///< Overriden icon of this item from the basic one.
 };
 
 /** This class embodies item instances in the game.

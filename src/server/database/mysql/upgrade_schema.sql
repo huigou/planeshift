@@ -1490,6 +1490,12 @@ ALTER TABLE `item_instances` ADD COLUMN `prefix` INTEGER UNSIGNED NOT NULL DEFAU
  ADD COLUMN `adjective` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Determines the adjective to be used from the loot modifiers table' AFTER `suffix`;
  UPDATE `server_options` SET `option_value`='1254' WHERE `option_name`='db_version';
 
+#1255 - Stefano Angeleri - added icon replacement support in loot modifiers.
+ ALTER TABLE `loot_modifiers` MODIFY COLUMN `mesh` VARCHAR(255)  CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL COMMENT 'Defines a mesh to be placed as replacement in case this modifier is selected. (priority rule: adjective, suffix, prefix)',
+ ADD COLUMN `icon` VARCHAR(255)  DEFAULT NULL COMMENT 'Defines an icon to be placed as replacement in case this modifier is selected. (priority rule: adjective, suffix, prefix)' AFTER `mesh`;
+ UPDATE `server_options` SET `option_value`='1255' WHERE `option_name`='db_version';
+
+
 
 
 # Insert your upgrade before this line. Remember when you set a new db_version
