@@ -451,6 +451,7 @@ bool CacheManager::PreloadLootModifiers()
         entry->stat_req_modifier = result[i][ "stat_req_modifier" ];
         entry->cost_modifier = result[i].GetFloat( "cost_modifier" );
         entry->mesh = result[i][ "mesh" ];
+        entry->icon = result[i][ "icon" ];
         entry->not_usable_with = result[i][ "not_usable_with" ];
 
         lootRandomizer->AddLootModifier(entry);

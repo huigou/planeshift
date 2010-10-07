@@ -246,6 +246,7 @@ void LootRandomizer::AddModifier( LootModifier *oper1, LootModifier *oper2 )
     oper1->cost_modifier *= oper2->cost_modifier;
     oper1->effect.Append( oper2->effect );
     oper1->mesh = oper2->mesh;
+    oper1->icon = oper2->icon;
     oper1->stat_req_modifier.Append( oper2->stat_req_modifier );
 
     // equip script
@@ -383,6 +384,8 @@ void LootRandomizer::ApplyModifier(psItemStats* baseItem, RandomizedOverlay* ove
     overlay->price = psMoney(baseItem->GetPrice().GetTrias() * mod.cost_modifier);
     if ( mod.mesh.Length() > 0 )
         overlay->mesh = mod.mesh;
+    if ( mod.icon.Length() > 0 )
+        overlay->icon = mod.icon;
 
     // Apply effect
     csString xmlItemMod;
