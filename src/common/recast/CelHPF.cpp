@@ -1273,7 +1273,7 @@ bool celHNavStructBuilder::ParseGraph (iDocumentNode* node, iCelGraph* graph, cs
   return true;
 }
 
-iCelHNavStruct* celHNavStructBuilder::LoadHNavStruct (iVFS* vfs, const char* file)
+iCelHNavStruct* celHNavStructBuilder::LoadHNavStruct (iVFS* vfs, const char* directory)
 {
   csRef<iDocumentSystem> docsys = csLoadPluginCheck<iDocumentSystem>(objectRegistry, "crystalspace.documentsystem.tinyxml");
   if (!docsys)
@@ -1282,15 +1282,8 @@ iCelHNavStruct* celHNavStructBuilder::LoadHNavStruct (iVFS* vfs, const char* fil
   }
 
   // Mount file
-  const char* workingDir = vfs->GetCwd();
-  csString workingDirBkp(workingDir);
-  csRef<iDataBuffer> wdBuffer = vfs->GetRealPath(workingDir);
-  csString realPath(wdBuffer->GetData());
-  realPath += file;
-  csString virtualPath(workingDir);
-  virtualPath += file;
-  vfs->Mount(virtualPath.GetDataSafe(), realPath.GetDataSafe());
-  vfs->ChDir(virtualPath.GetDataSafe());
+  csString workingDir(vfs->GetCwd());
+  vfs->ChDir(directory);
 
   // Read XML file
   csRef<iDocument> doc = docsys->CreateDocument();
@@ -1325,7 +1318,7 @@ iCelHNavStruct* celHNavStructBuilder::LoadHNavStruct (iVFS* vfs, const char* fil
   navStruct->SetHighLevelGraph(graph);
 
   this->navStruct = navStruct;
-  vfs->ChDir(workingDirBkp.GetDataSafe());
+  vfs->ChDir(workingDir.GetDataSafe());
 
   return navStruct;
 }

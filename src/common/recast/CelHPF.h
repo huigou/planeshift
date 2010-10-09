@@ -152,7 +152,7 @@ public:
   // API
   virtual bool SetSectors (csList<iSector*> sectorList);
   virtual iCelHNavStruct* BuildHNavStruct ();
-  virtual iCelHNavStruct* LoadHNavStruct (iVFS* vfs, const char* file);
+  virtual iCelHNavStruct* LoadHNavStruct (iVFS* vfs, const char* directory);
   virtual const iCelNavMeshParams* GetNavMeshParams () const;
   virtual void SetNavMeshParams (const iCelNavMeshParams* parameters);
 };
