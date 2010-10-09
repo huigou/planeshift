@@ -185,10 +185,10 @@ struct iCelHNavStructBuilder : public virtual iBase
    * Load a hierarchical navigation structure from a file.
    * \param vfs Pointer to the virtual file system. The file will be loaded from the current directory 
    *            of this file system.
-   * \param file File name.
+   * \param directory Directory name (vfs path).
    * \return Pointer to the navigation mesh, or 0 if something went wrong.
    */
-  virtual iCelHNavStruct* LoadHNavStruct (iVFS* vfs, const char* file) = 0;
+  virtual iCelHNavStruct* LoadHNavStruct (iVFS* vfs, const char* directory) = 0;
 
   /**
    * Get an object representation of the navigation mesh parameters.
