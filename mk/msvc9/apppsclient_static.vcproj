@@ -1820,6 +1820,9 @@
 				RelativePath="..\..\src\client\authentclient.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\client\autoexec.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\client\charapp.cpp">
 			</File>
 			<File
@@ -1915,6 +1918,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\client\authentclient.h">
+			</File>
+			<File
+				RelativePath="..\..\src\client\autoexec.h">
 			</File>
 			<File
 				RelativePath="..\..\src\client\charapp.h">

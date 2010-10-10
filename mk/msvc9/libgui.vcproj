@@ -1768,6 +1768,9 @@
 				RelativePath="..\..\src\client\gui\pawschild.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\client\gui\pawsconfigautoexec.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\client\gui\pawsconfigcamera.cpp">
 			</File>
 			<File
@@ -1778,6 +1781,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawsconfigchatfilter.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\client\gui\pawsconfigchattabcompletion.cpp">
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawsconfigchattabs.cpp">
@@ -1796,6 +1802,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawsconfigmouse.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\client\gui\pawsconfigpopup.cpp">
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawsconfigpvp.cpp">
@@ -1991,6 +2000,9 @@
 				RelativePath="..\..\src\client\gui\pawschild.h">
 			</File>
 			<File
+				RelativePath="..\..\src\client\gui\pawsconfigautoexec.h">
+			</File>
+			<File
 				RelativePath="..\..\src\client\gui\pawsconfigcamera.h">
 			</File>
 			<File
@@ -2001,6 +2013,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawsconfigchatfilter.h">
+			</File>
+			<File
+				RelativePath="..\..\src\client\gui\pawsconfigchattabcompletion.h">
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawsconfigchattabs.h">
@@ -2019,6 +2034,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawsconfigmouse.h">
+			</File>
+			<File
+				RelativePath="..\..\src\client\gui\pawsconfigpopup.h">
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawsconfigpvp.h">
