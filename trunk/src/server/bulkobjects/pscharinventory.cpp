@@ -113,29 +113,42 @@ psCharacterInventory::~psCharacterInventory()
 
 void psCharacterInventory::SetBasicArmor(psRaceInfo *race)
 {
-	// Load basecloths. Default item equipped in clothing/armour slots.
-    psItemStats *basecloth;
+    // Load basecloths. Default item equipped in clothing/armour slots.
+    psItemStats *basecloth = NULL;
     if(race && race->GetNaturalArmorID() != 0)
-		basecloth = psserver->GetCacheManager()->GetBasicItemStatsByID(owner->GetRaceInfo()->GetNaturalArmorID());
-	else
-		basecloth = psserver->GetCacheManager()->GetBasicItemStatsByName("basecloths");
-		
-	//delete the basecloth if it was already loaded.
-	if(equipment[PSCHARACTER_SLOT_ARMS].default_if_empty)
-		delete equipment[PSCHARACTER_SLOT_ARMS].default_if_empty;
-    
+    {
+        basecloth = psserver->GetCacheManager()->GetBasicItemStatsByID(race->GetNaturalArmorID());
+        if(!basecloth)
+        {
+            Error3("Natural Armor ID %u for race %s is invalid", race->GetNaturalArmorID(),
+                                                                 race->GetRace());
+        }
+    }
+
+    if(!basecloth)
+    {
+        basecloth = psserver->GetCacheManager()->GetBasicItemStatsByName("basecloths");
+        if(!basecloth)
+        {
+            Error1("Failed to find standard Natural Armor \"basecloths\"");
+        }
+    }
+
+    //delete the basecloth if it was already loaded.
+    if(equipment[PSCHARACTER_SLOT_ARMS].default_if_empty)
+        delete equipment[PSCHARACTER_SLOT_ARMS].default_if_empty;
+   
     //make a new one
     psItem* basecloths = basecloth->InstantiateBasicItem();
     basecloths->SetOwningCharacter(owner);
 
-	//assign it
+    //assign it
     equipment[PSCHARACTER_SLOT_ARMS].default_if_empty = basecloths;
     equipment[PSCHARACTER_SLOT_BOOTS].default_if_empty = basecloths;
     equipment[PSCHARACTER_SLOT_GLOVES].default_if_empty = basecloths;
     equipment[PSCHARACTER_SLOT_HELM].default_if_empty = basecloths;
     equipment[PSCHARACTER_SLOT_TORSO].default_if_empty = basecloths;
-    equipment[PSCHARACTER_SLOT_LEGS].default_if_empty = basecloths;
-	
+    equipment[PSCHARACTER_SLOT_LEGS].default_if_empty = basecloths;	
 }
 
 void psCharacterInventory::SetBasicWeapon(psRaceInfo *race)
