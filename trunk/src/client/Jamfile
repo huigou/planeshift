@@ -81,6 +81,8 @@ STATIC.PLUGINLIST =
   reporter
   rm_shadow_pssm
   rm_unshadowed
+  rm_rlcompat
+  rm_deferred
   sequence
   shadermgr
   shaderweaver
