@@ -36,7 +36,6 @@
 #include <util/celnavmesh.h>
 #include <util/celhpf.h>
 #include "CelNavMesh.h"
-#include "Recast.h"
 
 CS_PLUGIN_NAMESPACE_BEGIN(celNavMesh)
 {

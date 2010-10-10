@@ -44,13 +44,13 @@
 #include <iutil/objreg.h>
 #include <iutil/vfs.h>
 #include <util/celnavmesh.h>
-#include "ChunkyTriMesh.h"
-#include "DebugDraw.h"
-#include "DetourCommon.h"
-#include "DetourDebugDraw.h"
-#include "DetourNavMesh.h"
-#include "DetourNavMeshBuilder.h"
-#include "Recast.h"
+#include "recastnavigation/ChunkyTriMesh.h"
+#include "recastnavigation/DebugDraw.h"
+#include "recastnavigation/DetourCommon.h"
+#include "recastnavigation/DetourDebugDraw.h"
+#include "recastnavigation/DetourNavMesh.h"
+#include "recastnavigation/DetourNavMeshBuilder.h"
+#include "recastnavigation/Recast.h"
 
 CS_PLUGIN_NAMESPACE_BEGIN(celNavMesh)
 {
