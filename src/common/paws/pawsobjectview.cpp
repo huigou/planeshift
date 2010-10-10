@@ -94,7 +94,7 @@ bool pawsObjectView::Setup(iDocumentNode* node )
     if ( !rmTargets.IsValid())
     {
         Error1("pawsObjectView: RenderManager doesn't support targets! object views will be disabled");
-        return false;
+        return true;
     }
 
     PawsManager::GetSingleton().AddObjectView(this);
@@ -133,7 +133,7 @@ bool pawsObjectView::Setup(iDocumentNode* node )
 
 void pawsObjectView::OnResize()
 {
-    if(target.IsValid())
+    if(target.IsValid() && rmTargets.IsValid())
     {
         // unregister old tex from render targets
         csRef<iRenderManagerTargets> rmTargets = scfQueryInterface<iRenderManagerTargets>(engine->GetRenderManager());
@@ -161,18 +161,24 @@ void pawsObjectView::OnResize()
     int h = screenFrame.Height();
 
     // update the stage view
-    view->SetWidth(w);
-    view->SetHeight(h);
-    view->SetRectangle(0, 0, w, h, false);
-    view->GetCamera()->SetViewportSize(w, h);
-    view->GetPerspectiveCamera()->SetFOV((float)(h)/w, 1);
+    if(view)
+    {
+        view->SetWidth(w);
+        view->SetHeight(h);
+        view->SetRectangle(0, 0, w, h, false);
+        view->GetCamera()->SetViewportSize(w, h);
+        view->GetPerspectiveCamera()->SetFOV((float)(h)/w, 1);
+    }
 
     // update the doll view
-    meshView->SetWidth(w);
-    meshView->SetHeight(h);
-    meshView->SetRectangle(0, 0, w, h, false);
-    meshView->GetCamera()->SetViewportSize(w, h);
-    meshView->GetPerspectiveCamera()->SetFOV((float)(h)/w, 1);
+    if(meshView)
+    {
+        meshView->SetWidth(w);
+        meshView->SetHeight(h);
+        meshView->SetRectangle(0, 0, w, h, false);
+        meshView->GetCamera()->SetViewportSize(w, h);
+        meshView->GetPerspectiveCamera()->SetFOV((float)(h)/w, 1);
+    }
 
     needsDraw = true;
 }
