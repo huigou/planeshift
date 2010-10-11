@@ -1064,19 +1064,21 @@ inline bool psEngine::FrameLimit()
         sleeptime = frameLimit;
     }
 
-    timeFPS += sleeptime;
-    countFPS++;
-    if(timeFPS > 500)
-    {
-   	currFPS = 1000.0 * countFPS / timeFPS;
-	timeFPS = 0;
-	countFPS = 0;
-    }
-
     // Here we sacrifice drawing AND loading time
     if(elapsedTime < sleeptime)
         csSleep(sleeptime - elapsedTime);
+
+    timeFPS -= elapsed;
     elapsed = csGetTicks();
+
+    timeFPS += elapsed;
+    countFPS++;
+    if(timeFPS > 500)
+    {
+        currFPS = 1000.0 * countFPS / timeFPS;
+        timeFPS = 0;
+        countFPS = 0;
+    }
 
     return true;
 }
