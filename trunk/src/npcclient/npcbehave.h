@@ -395,7 +395,7 @@ public:
     /**
      * @return The angle in the range [-PI,PI]
      */
-    static float CalculateIncidentAngle(csVector3& pos, csVector3& dest);
+    static float CalculateIncidentAngle(const csVector3& pos, const csVector3& dest);
     
     // Clamp the angle within 0 to 2*PI
     static void ClampRadians(float &target_angle);
