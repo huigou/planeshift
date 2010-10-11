@@ -2384,6 +2384,15 @@ bool psCharacter::CompleteQuest(psQuest *quest)
     return false;
 }
 
+bool psCharacter::DiscardQuest(psQuest *quest, bool force)
+{
+    QuestAssignment *questassignment = IsQuestAssigned(quest->GetID());
+    if (!questassignment)
+        return false;
+    DiscardQuest(questassignment, force);
+    return true;
+}
+
 void psCharacter::DiscardQuest(QuestAssignment *q, bool force)
 {
     CS_ASSERT( q );  // Must not be NULL

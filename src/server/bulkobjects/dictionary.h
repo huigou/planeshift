@@ -610,6 +610,24 @@ public:
     virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
 };
 
+/**
+ * This script operation makes an npc uncomplete a quest for a player,
+ * as part of his response to a player event.
+ */
+class UncompleteQuestResponseOp : public ResponseOperation
+{
+protected:
+    psQuest *quest;
+    csString error_msg;
+
+public:
+    UncompleteQuestResponseOp() { name="uncomplete"; quest=NULL; }
+    virtual ~UncompleteQuestResponseOp() {};
+    virtual bool Load(iDocumentNode *node);
+    virtual csString GetResponseScript();    
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
+};
+
 class psItemStats;
 
 /**
