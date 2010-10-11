@@ -95,6 +95,8 @@ LinkStaticPlugins psnpcclient_static :
 LinkStaticPlugins psnpcclient_static :
   bgloader
   dbmysql
+  recast
+  celgraph
 ;
 
 ExternalLibs psnpcclient_static : CRYSTAL ;
