@@ -60,6 +60,7 @@ class  psPFMaps;
 class  Tribe;
 class  psPath;
 class  psPathNetwork;
+struct iCelHNavStruct;
 
 struct RaceInfo_t
 {
@@ -403,6 +404,8 @@ public:
     
     psPFMaps * GetMaps() { return PFMaps; }
 
+    iCelHNavStruct * GetNavStruct() { return navStruct; }
+
     psWorld * GetWorld() { return world; }
 
     iEngine * GetEngine() { return engine; }
@@ -496,6 +499,7 @@ protected:
     csHash<NPCType*, const char*> npctypes;
     csHash<LocationType*, csString> loctypes;
     psPathNetwork             *pathNetwork;
+    csRef<iCelHNavStruct>       navStruct;
     csArray<NPC*>              npcs;
     csArray<DeferredNPC>       npcsDeferred;
     csArray<Tribe*>            tribes;
