@@ -1338,6 +1338,10 @@ bool NpcResponse::ParseResponseScript(const char *xmlstr,bool insertBeginning)
         {
             op = new CompleteQuestResponseOp;
         }
+        else if ( strcmp( node->GetValue(), "uncomplete" ) == 0 )
+        {
+            op = new UncompleteQuestResponseOp;
+        }
         else if ( strcmp( node->GetValue(), "give" ) == 0 )
         {
             op = new GiveItemResponseOp;
@@ -2012,6 +2016,43 @@ csString CheckQuestTimeoutOp::GetResponseScript()
 {
     psString resp = GetName();
     return resp;
+}
+
+bool UncompleteQuestResponseOp::Load(iDocumentNode *node)
+{
+    quest = psserver->GetCacheManager()->GetQuestByName( node->GetAttributeValue("quest_id") );
+    if (!quest)
+    {
+        Error2("Quest '%s' was not found in Uncomplete Quest script op!",node->GetAttributeValue("quest_id") );
+        return false;
+    }
+    error_msg = node->GetAttributeValue("error_msg");
+    if (error_msg=="(null)") error_msg="";
+
+    return true;
+}
+
+csString UncompleteQuestResponseOp::GetResponseScript()
+{
+    psString resp = GetName();
+    resp.AppendFmt(" quest_id=\"%s\"", quest->GetName());
+    if (!error_msg.IsEmpty())
+    {
+        resp.AppendFmt(" error_msg=\"%s\"",error_msg.GetDataSafe());
+    }
+    return resp;
+}
+
+bool UncompleteQuestResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber)
+{
+    if (!psserver->questmanager->Uncomplete(quest,target->GetClient(), timeDelay))
+    {
+        who->GetNPCDialogPtr()->SubstituteKeywords(target->GetClient(),error_msg);
+        who->Say(error_msg,target->GetClient(),false,timeDelay);
+        return false;
+    }
+    else
+        return true;
 }
 
 bool CompleteQuestResponseOp::Load(iDocumentNode *node)

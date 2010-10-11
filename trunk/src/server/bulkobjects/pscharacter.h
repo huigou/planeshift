@@ -761,6 +761,7 @@ public:
     QuestAssignment *AssignQuest(psQuest *quest, PID assigner_id);
     bool CompleteQuest(psQuest *quest);
     void DiscardQuest(QuestAssignment *q, bool force = false);
+    bool DiscardQuest(psQuest *quest, bool force = false);
     bool SetAssignedQuestLastResponse(psQuest *quest, int response, gemObject *npc);
     size_t GetNumAssignedQuests() { return assigned_quests.GetSize(); }
     int GetAssignedQuestLastResponse(size_t i);

@@ -338,6 +338,12 @@ bool QuestManager::HandleScriptCommand(csString& block,
             AutocompleteQuestName(questname, mainQuest);
             op.Format("<complete quest_id=\"%s\"/>",questname.GetData());
         }
+        else if (!strncasecmp(block,"Uncomplete",8))
+        {
+            csString questname = block.Slice(8,block.Length()-1).Trim();
+            AutocompleteQuestName(questname, mainQuest);
+            op.Format("<uncomplete quest_id=\"%s\"/>",questname.GetData());
+        }
         else if (!strncasecmp(block,"Give",4))
         {
             WordArray words(block);
@@ -1438,6 +1444,34 @@ bool QuestManager::Complete(psQuest *quest, Client *who, csTicks timeDelay)
         
         psSystemMessage okmsg(who->GetClientNum() ,MSG_OK,   "Quest Completed!");
         psSystemMessage newmsg(who->GetClientNum(),MSG_INFO, "You have completed the %s quest!",quest->GetName() );
+
+        psserver->GetNetManager()->SendMessageDelayed(okmsg.msg,timeDelay);
+        psserver->GetNetManager()->SendMessageDelayed(newmsg.msg,timeDelay);
+        // TOFIX: we should clean all substeps of this quest from the character_quests db table.
+
+    }
+    else
+    {
+        Error3("Cannot complete quest %s for player %s ",quest->GetName(), who->GetName());
+    }
+    return true;
+}
+
+bool QuestManager::Uncomplete(psQuest *quest, Client *who, csTicks timeDelay)
+{
+    Debug3(LOG_QUESTS, who->GetAccountID().Unbox(), "Uncompleting quest '%s' for character %s.", quest->GetName(), who->GetName());
+
+    bool ret = who->GetActor()->GetCharacterData()->DiscardQuest(quest, true);
+
+    // if it's a substep don't send additional info
+    if (quest->GetParentQuest())
+        return true;
+
+    if (ret)
+    {
+        
+        psSystemMessage okmsg(who->GetClientNum() ,MSG_OK,   "Quest Lost!");
+        psSystemMessage newmsg(who->GetClientNum(),MSG_INFO, "You have lost the %s quest!",quest->GetName() );
 
         psserver->GetNetManager()->SendMessageDelayed(okmsg.msg,timeDelay);
         psserver->GetNetManager()->SendMessageDelayed(newmsg.msg,timeDelay);
