@@ -1659,6 +1659,43 @@ protected:
 //----------------------------------------------------------------------------
 
 /**
+ * FactionOp - imperative factions.
+ *
+ * <faction aim="Actor" name="Klyros" value="5"/> (adds 5 to actor's Klyros faction.)
+ *
+ * This is permanent; see FactionAOp for the temporary buffed kind. (not implemented)
+ */
+class FactionOp : public Imperative3
+{
+public:
+    FactionOp(CacheManager* cachemanager) : Imperative3() { this->cachemanager = cachemanager; }
+    virtual ~FactionOp() { }
+
+    bool Load(iDocumentNode* node)
+    {
+        faction = cachemanager->GetFaction(node->GetAttributeValue("name"));
+        if (!faction)
+        {
+            Error2("Found <faction aim=\"...\" name=\"%s\">, but no such faction exists.", node->GetAttributeValue("name"));
+            return false;
+        }
+        return Imperative3::Load(node);
+    }
+
+    void Run(const MathEnvironment* env)
+    {
+        psCharacter* c = GetCharacter(env, aim);
+        int val = (int) value->Evaluate(env);
+        c->UpdateFaction(faction, val);
+    }
+protected:
+    Faction *faction;
+    CacheManager* cachemanager;
+};
+
+//----------------------------------------------------------------------------
+
+/**
  * SkillOp - imperative skills.
  *
  * <skill aim="Actor" name="Sword" value="5"/> (adds 5 to actor's sword skill.)
@@ -2328,7 +2365,7 @@ ProgressionScript* ProgressionScript::Create(EntityManager* entitymanager, Cache
         }
         else if (elem == "faction")
         {
-            printf("TODO: implement imperative factions\n");
+            op = new FactionOp(cachemanager);
             continue;
         }
         else if (elem == "animal-affinity")
