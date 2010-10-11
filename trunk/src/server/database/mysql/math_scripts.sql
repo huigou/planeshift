@@ -47,7 +47,7 @@ INSERT INTO math_scripts VALUES( "Calculate Damage",
         exit = if(0>Missed,1,0);
 
         Dodged = min(AttackRoll-.5,.01);
-        if(Dodged)
+        if(Dodged < 0)
         {
           if(Attacker:IsNPC)
           {
@@ -60,7 +60,7 @@ INSERT INTO math_scripts VALUES( "Calculate Damage",
         }
 
         Blocked = AttackRoll - DefenseRoll;
-        if(Blocked)
+        if(Blocked < 0)
         {
           if(Attacker:IsNPC)
           {
