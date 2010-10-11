@@ -50,6 +50,7 @@
 #include "util/strutil.h"
 #include "util/psutil.h"
 #include "util/pspathnetwork.h"
+#include "util/celhpf.h"
 
 #include "net/connection.h"
 #include "net/clientmsghandler.h"
@@ -599,8 +600,12 @@ bool psNPCClient::ReadNPCsFromDatabase()
 
 bool psNPCClient::LoadPathNetwork()
 {
+    csRef<iCelHNavStructBuilder> builder = csQueryRegistry<iCelHNavStructBuilder>(objreg);
+    csString navmesh = configmanager->GetStr("PlaneShift.NPCClient.NavMesh","/planeshift/navmesh");
+    navStruct = builder->LoadHNavStruct(vfs, navmesh);
+
     pathNetwork = new psPathNetwork();
-    return pathNetwork->Load(engine,db,world);
+    return pathNetwork->Load(engine,db,world) && navStruct.IsValid();
 }
 
 bool psNPCClient::LoadLocations()
