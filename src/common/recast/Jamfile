@@ -5,6 +5,6 @@ Plugin recast :
   [ Wildcard recastnavigation : *.cpp *.h ] ;
 IncludeDir recastnavigation : recast ;
 ExternalLibs recast : CRYSTAL ; 
-CompileGroups recast : client server psnpcclient ;
+CompileGroups recast : psclient psnpcclient ;
 
 StaticPluginLibrary planeshift_staticplugins ;
