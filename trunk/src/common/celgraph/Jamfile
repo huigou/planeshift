@@ -4,4 +4,6 @@ Plugin celgraph
        : celgraph.cpp celgraph.h
 ;
 ExternalLibs celgraph : CRYSTAL ;
-CompileGroups celgraph : server psnpcclient ;
+CompileGroups celgraph : client server psnpcclient ;
+
+StaticPluginLibrary planeshift_staticplugins ;
