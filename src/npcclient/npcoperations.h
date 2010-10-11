@@ -35,6 +35,7 @@ struct iSector;
 //=============================================================================
 #include "util/psconst.h"
 #include "util/pspath.h"
+#include "util/celhpf.h"
 #include "net/npcmessages.h"
 
 //=============================================================================
@@ -101,12 +102,12 @@ protected:
     void StopResume();
 
     /// This function is used by MoveTo AND Navigate operations
-    int StartMoveTo(NPC *npc,EventManager *eventmgr,csVector3& dest, iSector* sector, float vel,const char *action, bool autoresume, float &angle);
+    int StartMoveTo(NPC *npc,EventManager *eventmgr, const csVector3& dest, iSector* sector, float vel,const char *action, bool autoresume, float &angle);
     
     /// This function is used by MoveTo AND Navigate operations
     int StartTurnTo(NPC *npc,EventManager *eventmgr,float turn_end_angle, float ang_vel,const char *action, bool autoresume=true);
 
-    void TurnTo(NPC *npc,csVector3& dest, iSector* destsect,csVector3& forward, float &angle);
+    void TurnTo(NPC *npc,const csVector3& dest, iSector* destsect, csVector3& forward, float &angle);
 
     /// Utility function used by many operation to stop movement of an NPC.
     static void StopMovement(NPC *npc);
@@ -179,14 +180,14 @@ public:
 class ChaseOperation : public ScriptOperation
 {
 protected:
-    csString  action;
-    int       type;
-    float     searchRange;
-    float     chaseRange;
-    float offset;
-    EID       target_id;
-    psAPath   path;
-    csVector3 localDest;
+    csString         action;
+    int              type;
+    float            searchRange;
+    float            chaseRange;
+    float            offset;
+    EID              target_id;
+    csRef<iCelHPath> path;
+    csVector3        localDest;
     
     enum
     {

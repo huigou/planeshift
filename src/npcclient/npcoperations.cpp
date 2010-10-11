@@ -26,6 +26,7 @@
 #include <iengine/movable.h>
 #include <cstool/collider.h>
 #include <iengine/mesh.h>
+#include <ivaria/mapnode.h>
 
 //=============================================================================
 // Project Space Includes
@@ -330,7 +331,7 @@ void ScriptOperation::StopResume()
 }
 
 
-void ScriptOperation::TurnTo(NPC *npc, csVector3& dest, iSector* destsect, csVector3& forward, float &angle)
+void ScriptOperation::TurnTo(NPC *npc, const csVector3& dest, iSector* destsect, csVector3& forward, float &angle)
 {
     npc->Printf(6,"TurnTo localDest=%s",toString(dest,destsect).GetData());
 
@@ -387,7 +388,7 @@ void ScriptOperation::StopMovement(NPC *npc)
 }
 
 
-int ScriptOperation::StartMoveTo(NPC *npc,EventManager *eventmgr, csVector3& dest, iSector* sector, float vel, const char *action, bool autoresume, float &angle)
+int ScriptOperation::StartMoveTo(NPC *npc,EventManager *eventmgr, const csVector3& dest, iSector* sector, float vel, const char *action, bool autoresume, float &angle)
 {
     csVector3 forward;
     
@@ -625,38 +626,35 @@ bool ChaseOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     if (target_id.IsValid() && entity)
     {
         psGameObject::GetPosition(npc->GetActor(),myPos, myRot, mySector);
-    
         psGameObject::GetPosition(entity, targetPos, targetRot, targetSector);
 
         npc->Printf(5, "Chasing enemy <%s, %s> at %s", entity->GetName(), ShowID(entity->GetEID()),
                     toString(targetPos,targetSector).GetDataSafe());
 
-        // We need to work in the target sector space
-        if (!npcclient->GetWorld()->WarpSpace(targetSector, mySector, targetPos))
-        {
-            npc->Printf("ChaseOperation: target's sector is not connected to ours!");
-            return true;  // This operation is complete
-        }
-        if ( Calc2DDistance( myPos, targetPos ) < offset )
-        {
-            return true;  // This operation is complete
-        }
-
         // This prevents NPCs from wanting to occupy the same physical space as something else
-        csVector3 displacement = targetPos - myPos;
-        displacement.y = 0;
-        float factor = offset / displacement.Norm();
-        csVector3 destPos = myPos + (1 - factor) * displacement;
-        destPos.y = targetPos.y;
-
-        path.SetMaps(npcclient->GetMaps());
-        path.SetDest(destPos);
-        path.CalcLocalDest(myPos, mySector, localDest);
-
-
-        if ( GetAngularVelocity(npc) > 0 || GetVelocity(npc) > 0 )
+        if(mySector == targetSector)
         {
-            StartMoveTo(npc, eventmgr, localDest, targetSector, GetVelocity(npc), action, false, angle);
+            csVector3 displacement = targetPos - myPos;
+            displacement.y = 0;
+            float dist = displacement.Norm();
+            if(dist - offset < SMALL_EPSILON)
+            {
+                // we reached the target
+                return true;
+            }
+            targetPos -= offset*displacement.Unit();
+        }
+
+        path = npcclient->GetNavStruct()->ShortestPath(myPos,mySector,targetPos,targetSector);
+        if(!path || !path->HasNext())
+        {
+            // failed to find a path between us and the target
+            return true;
+        }
+        else if ( GetAngularVelocity(npc) > 0 || GetVelocity(npc) > 0 )
+        {
+            iMapNode* dest = path->Next();
+            StartMoveTo(npc, eventmgr, dest->GetPosition(), dest->GetSector(), GetVelocity(npc), action, false, angle);
             return false;
         }
         else
@@ -676,10 +674,10 @@ bool ChaseOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
 {
 
-    csVector3 myPos,myNewPos,targetPos;
+    csVector3 myPos,targetPos;
     float     myRot,dummyrot;
     InstanceID       myInstance, targetInstance;
-    iSector * mySector, *myNewSector, *targetSector;
+    iSector * mySector, *targetSector;
     csVector3 forward;
     float angle;
     
@@ -700,7 +698,7 @@ void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
     }
  
     gemNPCActor *target_entity = NULL;
-    gemNPCActor * targetActor = dynamic_cast<gemNPCActor*>(npcclient->FindEntityID(target_id));
+    gemNPCActor *targetActor = dynamic_cast<gemNPCActor*>(npcclient->FindEntityID(target_id));
     if (targetActor)
     {
         target_entity = targetActor;
@@ -721,21 +719,22 @@ void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
     psGameObject::GetPosition(target_entity,targetPos,dummyrot,targetSector);
     targetInstance = targetActor->GetInstance();
 
-    // We work in our sector's space
-    if (!npcclient->GetWorld()->WarpSpace(targetSector, mySector, targetPos))
+    csVector3 displacement;
     {
-        npc->Printf("ChaseOperation: target's sector is not connected to ours!");
-        npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
-        return;
+        csVector3 dest(targetPos);
+        // This prevents NPCs from wanting to occupy the same physical space as something else
+        if(mySector != targetSector && !npcclient->GetWorld()->WarpSpace(targetSector,mySector,dest) && chaseRange > 0)
+        {
+            npc->Printf(5, "ChaseOperation: target's sector is not connected to ours!");
+            npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior());
+            return;
+        }
+        displacement = dest - myPos;
     }
-
-    // This prevents NPCs from wanting to occupy the same physical space as something else
-    csVector3 displacement = targetPos - myPos;
-
     displacement.y = 0;
     float distance = displacement.Norm();
-    
-    if ( (chaseRange > 0 && distance > chaseRange) || (targetInstance != myInstance) )
+
+    if((chaseRange > 0 && distance > chaseRange) || (targetInstance != myInstance))
     {
         npc->Printf(5, "Target out of chase range -> we are done..");
         csString str;
@@ -746,76 +745,100 @@ void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
         npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
         return;
     }
-    
-
-    float factor = offset / distance;
-    targetPos = myPos + (1 - factor) * displacement;
-    targetPos.y = myPos.y;
 
     npc->Printf(10, "Still chasing %s at %s with range %.1f...",(const char *)name,toString(targetPos,targetSector).GetDataSafe(),distance);
-    
-    float angleToTarget = psGameObject::CalculateIncidentAngle(myPos, targetPos);
-    csVector3 pathDest = path.GetDest();
-    float angleToPath  = psGameObject::CalculateIncidentAngle(myPos, pathDest);
 
-        
-    // if the target diverged from the end of our path, we must calculate it again
-    if ( fabs( AngleDiff(angleToTarget, angleToPath) ) > EPSILON  )
     {
-        npc->Printf(8, "turn to target..");
-        path.SetDest(targetPos);
-        path.CalcLocalDest(myPos, mySector, localDest);
-        StartMoveTo(npc,eventmgr,localDest, mySector, GetVelocity(npc), action, false, angle);
-    }
-    
+        targetPos -= offset*displacement.Unit();
 
-    float close = GetVelocity(npc)*timedelta; // Add 10 % to the distance moved in one tick.
-    
-    if (Calc2DDistance(localDest, myPos) <= 0.5f)
+        float angleToTarget = psGameObject::CalculateIncidentAngle(myPos, targetPos);
+        iMapNode* pathDest = path->GetLast();
+        float angleToPath  = psGameObject::CalculateIncidentAngle(myPos, pathDest->GetPosition());
+
+        // if the target diverged from the end of our path, we must calculate it again
+        if(Calc2DDistance(pathDest->GetPosition(), targetPos) > offset + EPSILON)
+        {
+            npc->Printf(8, "target diverged, recalculate path..");
+            path = npcclient->GetNavStruct()->ShortestPath(myPos,mySector,targetPos,targetSector);
+            if(!path || !path->HasNext())
+            {
+                npc->Printf(5, "Failed to calculate new path between %s and %s", toString(myPos,mySector).GetData(), toString(targetPos,targetSector).GetData());
+                npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior());
+                return;
+            }
+            iMapNode* dest = path->Next();
+            StartMoveTo(npc,eventmgr,dest->GetPosition(), dest->GetSector(), GetVelocity(npc), action, false, angle);
+        }
+    }
+
+    iMapNode* dest = path->Current();
+
+    if(dest->GetSector() != mySector)
+    {
+        csVector3 destination(dest->GetPosition());
+        if(!npcclient->GetWorld()->WarpSpace(dest->GetSector(), mySector, destination))
+        {
+            npc->Printf(5, "Local destination and current position aren't connected.");
+            npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior());
+            return;
+        }
+        distance = Calc2DDistance(destination, myPos);
+    }
+    else
+    {
+        distance = Calc2DDistance(dest->GetPosition(), myPos);
+    }
+
+    if (distance <= 0.5f)
     {
         npc->GetLinMove()->SetPosition(myPos,myRot,mySector);
         npc->Printf(5,"Set position %g %g %g, sector %s\n", myPos.x, myPos.y, myPos.z, mySector->QueryObject()->GetName());
         
-        if (Calc2DDistance(myPos,targetPos) <= 0.5f)
+        if (!path->HasNext())
         {
             npc->Printf(5, "We are done..");
-            npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
+            npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior());
             return;
         }
         else
         {
             npc->Printf(6, "We are at localDest..");
-            path.SetDest(targetPos);
-            path.CalcLocalDest(myPos, mySector, localDest);
-            StartMoveTo(npc, eventmgr, localDest, mySector, GetVelocity(npc), action, false, angle);
+            dest = path->Next();
+            StartMoveTo(npc, eventmgr, dest->GetPosition(), dest->GetSector(), GetVelocity(npc), action, false, angle);
         }
     }
     else
     {
-        TurnTo(npc, localDest, mySector, forward, angle);
+        TurnTo(npc, dest->GetPosition(), dest->GetSector(), forward, angle);
     }
-    // Limit time extrapolation so we arrive near the correct place.
-    if(Calc2DDistance(localDest, myPos) <= close)
-    	timedelta = Calc2DDistance(localDest, myPos) / GetVelocity(npc);
 
-    npc->Printf(8, "advance: pos=(%f.2,%f.2,%f.2) rot=%.2f %s localDest=(%f.2,%f.2,%f.2) dist=%f", 
+    // Limit time extrapolation so we arrive near the correct place.
+    float close = GetVelocity(npc)*timedelta;
+    float dist  = Calc2DDistance(dest->GetPosition(), myPos);
+    if(dist <= close)
+    	timedelta = dist / GetVelocity(npc);
+
+    npc->Printf(8, "advance: pos=(%f.2,%f.2,%f.2) rot=%.2f %s localDest=%s dist=%f", 
                 myPos.x,myPos.y,myPos.z, myRot, mySector->QueryObject()->GetName(),
-                localDest.x,localDest.y,localDest.z,
-                Calc2DDistance(localDest, myPos));
+                dest->GetPosition().Description().GetData(),dist);
 
     {
         ScopedTimer st(250, "chase extrapolate %.2f time for %s", timedelta, ShowID(npc->GetActor()->GetEID()));
         npc->GetLinMove()->ExtrapolatePosition(timedelta);
     }
-    bool on_ground;
-    float speed,ang_vel;
-    csVector3 bodyVel,worldVel;
 
-    npc->GetLinMove()->GetDRData(on_ground,speed,myNewPos,myRot,myNewSector,bodyVel,worldVel,ang_vel);
+    {
+        bool on_ground;
+        float speed,ang_vel;
+        csVector3 bodyVel,worldVel,myNewPos;
+        iSector* myNewSector;
 
-    npc->Printf(8,"World position bodyVel=%s worldVel=%s",toString(bodyVel).GetDataSafe(),toString(worldVel).GetDataSafe());
+        npc->GetLinMove()->GetDRData(on_ground,speed,myNewPos,myRot,myNewSector,bodyVel,worldVel,ang_vel);
+        npc->Printf(8,"World position bodyVel=%s worldVel=%s",
+                       toString(bodyVel).GetDataSafe(),toString(worldVel).GetDataSafe());
 
-    CheckMoveOk(npc, eventmgr, myPos, mySector, myNewPos, myNewSector, timedelta);
+        CheckMoveOk(npc, eventmgr, myPos, mySector, myNewPos, myNewSector, timedelta);
+    }
 }
 
 void ChaseOperation::InterruptOperation(NPC *npc,EventManager *eventmgr)
