@@ -1134,7 +1134,7 @@ void psGameObject::SetRotationAngle(gemNPCObject* object, float angle)
     pcmesh->GetMesh()->GetMovable()->GetTransform().SetO2T (matrix);
 }
 
-float psGameObject::CalculateIncidentAngle(csVector3& pos, csVector3& dest)
+float psGameObject::CalculateIncidentAngle(const csVector3& pos, const csVector3& dest)
 {
     csVector3 diff = dest-pos;  // Get vector from player to desired position
 
