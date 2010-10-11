@@ -128,6 +128,13 @@ iMapNode* celHPath::NextInternal ()
       csRef<iCelNavMeshPath> path = navMesh->ShortestPath(from->GetPosition(), goal->GetPosition());
       currentllPosition++;
       llPaths[currentllPosition] = path;
+      // naively walk towards the goal if we don't have a path
+      // this should only happen at warp portals
+      if(!path->HasNext())
+      {
+        currentNode = goal;
+        return goal;
+      }
     }
     else
     {
@@ -427,7 +434,7 @@ bool celHNavStruct::BuildHighLevelGraph()
               }
             }
           }
-          
+
           // Add the portal bounding box's center as a node in the current sector to the graph
           csVector3 center(((boundingMin[0] + boundingMax[0]) / 2), boundingMin[1],
               ((boundingMin[2] + boundingMax[2]) / 2));
@@ -446,7 +453,7 @@ bool celHNavStruct::BuildHighLevelGraph()
           if (flags.Check(CS_PORTAL_WARP))
           {
             csReversibleTransform warp = portal->GetWarp();
-            center2 = warp.This2Other(center);
+            center2 = warp.Other2This(center);
           }
           csRef<iMapNode> mapNode2;
           mapNode2.AttachNew(new csMapNode("hlg"));
@@ -485,6 +492,7 @@ bool celHNavStruct::BuildHighLevelGraph()
     for (int i = 0; i < size - 1; i++)
     {
       csRef<iCelNode> node1 = sectorNodes[i];
+      size_t count = 0;
       for (int j = i + 1; j < size; j++)
       {
         csRef<iCelNode> node2 = sectorNodes[j];
@@ -499,12 +507,17 @@ bool celHNavStruct::BuildHighLevelGraph()
               ABS(last[1] - node2->GetPosition()[1]) <= box[1] &&
               ABS(last[2] - node2->GetPosition()[2]) <= box[2]) 
           {
+            count++;
             float length = path->Length();
             hlGraph->AddEdge(node1, node2, true, length);
             hlGraph->AddEdge(node2, node1, true, length);
           }
         }
-      }        
+      }
+      if(!count)
+      {
+          csPrintf("found unconnected high-level node at %s in %s\n", node1->GetPosition().Description().GetData(), sector->QueryObject()->GetName());
+      }
     }
   }
 
@@ -563,8 +576,6 @@ iCelHPath* celHNavStruct::ShortestPath (iMapNode* from, iMapNode* goal)
   csList<csRef<iCelNode> > tmpEdgesOrigins; // Only for edges from some node to goal node
   csList<size_t> tmpEdgesIndices;
   size_t size = hlGraph->GetNodeCount();
-  csVector3 first;
-  csVector3 last;
   for (size_t i = 0; i < size; i++)
   {
     if (i != fromNodeIdx && i != goalNodeIdx)
@@ -573,6 +584,8 @@ iCelHPath* celHNavStruct::ShortestPath (iMapNode* from, iMapNode* goal)
       csRef<iMapNode> mapNode = node->GetMapNode();
       csRef<iSector> sector = mapNode->GetSector();
       // From node
+      if(!sector)
+          continue;
       if (sector->QueryObject()->GetID() == fromSector->QueryObject()->GetID())
       {
         csRef<iCelNavMeshPath> tmpPath = fromNavMesh->ShortestPath(from->GetPosition(), mapNode->GetPosition());
@@ -593,7 +606,7 @@ iCelHPath* celHNavStruct::ShortestPath (iMapNode* from, iMapNode* goal)
       // Goal node
       if (sector->QueryObject()->GetID() == goalSector->QueryObject()->GetID())
       {
-        csRef<iCelNavMeshPath> tmpPath = goalNavMesh->ShortestPath(mapNode->GetPosition(), goal->GetPosition());
+        csRef<iCelNavMeshPath> tmpPath = goalNavMesh->ShortestPath(mapNode->GetPosition(), goalNode->GetPosition());
         if (tmpPath->GetNodeCount() > 0)
         {
           csVector3 last;
@@ -1187,12 +1200,6 @@ bool celHNavStructBuilder::ParseMeshes (iDocumentNode* node, csHash<csRef<iSecto
   {
     return false;
   }
-  csList<csRef<iSector> > sectorList;
-  size_t size = engine->GetSectors()->GetCount();
-  for (size_t i = 0; i < size; i++)
-  {
-    sectorList.PushBack(engine->GetSectors()->Get(i));    
-  }
 
   csRef<iDocumentNodeIterator> it = node->GetNodes("navmesh");
   while (it->HasNext())
@@ -1202,15 +1209,18 @@ bool celHNavStructBuilder::ParseMeshes (iDocumentNode* node, csHash<csRef<iSecto
     // Get sector
     const char* sectorName = navMeshNode->GetAttributeValue("sector");
     csString sectorNameString(sectorName);
-    csList<csRef<iSector> >::Iterator sectorIt(sectorList);
-    csRef<iSector> sector;
-    while (sectorIt.HasNext())
+    if(!sectors.In(sectorName))
     {
-      sector = sectorIt.Next();
-      if (sectorNameString == sector->QueryObject()->GetName())
+      iSector* sector = engine->FindSector(sectorName);
+      if(sector)
       {
-        sectors.Put(sectorName, sector);
-        break;
+          sectors.Put(sectorName, sector);
+      }
+      else
+      {
+          csString msg;
+          msg.Format("invalid sector %s in navmesh\n", sectorName);
+          CS_ASSERT_MSG(false, msg.GetData());
       }
     }
 
@@ -1241,6 +1251,12 @@ bool celHNavStructBuilder::ParseGraph (iDocumentNode* node, iCelGraph* graph, cs
     // Get sector
     const char* sectorName = graphNode->GetAttributeValue("sector");
     csRef<iSector> sector = sectors.Get(sectorName, 0);
+    if(!sector.IsValid())
+    {
+        csString msg;
+        msg.Format("invalid sector %s in navmesh graph node\n", sectorName);
+        CS_ASSERT_MSG(false, msg.GetData());
+    }
 
     // Get position
     csVector3 position;
@@ -1309,12 +1325,18 @@ iCelHNavStruct* celHNavStructBuilder::LoadHNavStruct (iVFS* vfs, const char* dir
   // Read navigation meshes
   csRef<iDocumentNode> meshesNode = mainNode->GetNode("navmeshes");
   csHash<csRef<iSector>, const char*> sectors;
-  ParseMeshes(meshesNode, sectors, navStruct, vfs, params);
+  if(!ParseMeshes(meshesNode, sectors, navStruct, vfs, params))
+  {
+      return false;
+  }
 
   // Read high level graph
   csRef<iDocumentNode> graphNode = mainNode->GetNode("highlevelgraph");
   csRef<iCelGraph> graph = scfCreateInstance<iCelGraph>("cel.celgraph");
-  ParseGraph(graphNode, graph, sectors);
+  if(!ParseGraph(graphNode, graph, sectors))
+  {
+      return false;
+  }
   navStruct->SetHighLevelGraph(graph);
 
   this->navStruct = navStruct;
