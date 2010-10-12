@@ -16,4 +16,6 @@ struct _static_use { _static_use (); };
 _static_use::_static_use () {}
 SCF_USE_STATIC_PLUGIN(bgloader)
 SCF_USE_STATIC_PLUGIN(dbmysql)
+SCF_USE_STATIC_PLUGIN(recast)
+SCF_USE_STATIC_PLUGIN(celgraph)
 
