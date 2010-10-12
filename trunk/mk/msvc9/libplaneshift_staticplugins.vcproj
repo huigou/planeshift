@@ -1732,6 +1732,9 @@
 				RelativePath="..\..\mk\msvc\libbgloader_staticreg.cpp">
 			</File>
 			<File
+				RelativePath="..\..\mk\msvc\libcelgraph_staticreg.cpp">
+			</File>
+			<File
 				RelativePath="..\..\mk\msvc\librecast_staticreg.cpp">
 			</File>
 			<File
@@ -1742,6 +1745,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\common\bgloader\parser.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\common\celgraph\celgraph.cpp">
 			</File>
 			<File
 				RelativePath="..\..\src\common\recast\CelHPF.cpp">
@@ -1948,6 +1954,135 @@
 					</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\mk\msvc\librecast_staticreg.cpp">
+                                  				    					<FileConfiguration
+						Name="Release (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\mk_msvc_librecast_staticreg.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\mk_msvc_librecast_staticreg.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Release (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\mk_msvc_librecast_staticreg.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\mk_msvc_librecast_staticreg.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="Debug (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\mk_msvc_librecast_staticreg.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\mk_msvc_librecast_staticreg.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Debug (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\mk_msvc_librecast_staticreg.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\mk_msvc_librecast_staticreg.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="MemoryTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\mk_msvc_librecast_staticreg.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\mk_msvc_librecast_staticreg.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\mk_msvc_librecast_staticreg.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\mk_msvc_librecast_staticreg.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="RefTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\mk_msvc_librecast_staticreg.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\mk_msvc_librecast_staticreg.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="RefTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\mk_msvc_librecast_staticreg.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\mk_msvc_librecast_staticreg.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="ThreadChecker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\mk_msvc_librecast_staticreg.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\mk_msvc_librecast_staticreg.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\mk_msvc_librecast_staticreg.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\mk_msvc_librecast_staticreg.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\mk_msvc_librecast_staticreg.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\mk_msvc_librecast_staticreg.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\mk_msvc_librecast_staticreg.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\mk_msvc_librecast_staticreg.cpp.obj"/>
+					</FileConfiguration>
+			</File>
+			<File
 				RelativePath="..\..\src\common\bgloader\loader.cpp">
                                   				    					<FileConfiguration
 						Name="Release (with static libs)|Win32">
@@ -2334,12 +2469,3240 @@
 							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_bgloader_parser.cpp.obj"/>
 					</FileConfiguration>
 			</File>
+			<File
+				RelativePath="..\..\src\common\recast\CelHPF.cpp">
+                                  				    					<FileConfiguration
+						Name="Release (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_CelHPF.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_CelHPF.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Release (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_CelHPF.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_CelHPF.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="Debug (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_CelHPF.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_CelHPF.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Debug (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_CelHPF.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_CelHPF.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="MemoryTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_CelHPF.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_CelHPF.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_CelHPF.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_CelHPF.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="RefTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_CelHPF.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_CelHPF.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="RefTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_CelHPF.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_CelHPF.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="ThreadChecker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_CelHPF.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_CelHPF.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_CelHPF.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_CelHPF.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_CelHPF.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_CelHPF.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_CelHPF.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_CelHPF.cpp.obj"/>
+					</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\CelNavMesh.cpp">
+                                  				    					<FileConfiguration
+						Name="Release (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_CelNavMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_CelNavMesh.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Release (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_CelNavMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_CelNavMesh.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="Debug (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_CelNavMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_CelNavMesh.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Debug (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_CelNavMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_CelNavMesh.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="MemoryTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_CelNavMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_CelNavMesh.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_CelNavMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_CelNavMesh.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="RefTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_CelNavMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_CelNavMesh.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="RefTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_CelNavMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_CelNavMesh.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="ThreadChecker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_CelNavMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_CelNavMesh.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_CelNavMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_CelNavMesh.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_CelNavMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_CelNavMesh.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_CelNavMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_CelNavMesh.cpp.obj"/>
+					</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\ChunkyTriMesh.cpp">
+                                  				    					<FileConfiguration
+						Name="Release (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_ChunkyTriMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_ChunkyTriMesh.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Release (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_ChunkyTriMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_ChunkyTriMesh.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="Debug (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_ChunkyTriMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_ChunkyTriMesh.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Debug (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_ChunkyTriMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_ChunkyTriMesh.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="MemoryTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_ChunkyTriMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_ChunkyTriMesh.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_ChunkyTriMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_ChunkyTriMesh.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="RefTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_ChunkyTriMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_ChunkyTriMesh.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="RefTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_ChunkyTriMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_ChunkyTriMesh.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="ThreadChecker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_ChunkyTriMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_ChunkyTriMesh.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_ChunkyTriMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_ChunkyTriMesh.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_ChunkyTriMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_ChunkyTriMesh.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_ChunkyTriMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_ChunkyTriMesh.cpp.obj"/>
+					</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\DebugDraw.cpp">
+                                  				    					<FileConfiguration
+						Name="Release (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DebugDraw.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DebugDraw.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Release (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DebugDraw.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DebugDraw.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="Debug (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DebugDraw.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DebugDraw.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Debug (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DebugDraw.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DebugDraw.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="MemoryTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DebugDraw.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DebugDraw.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DebugDraw.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DebugDraw.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="RefTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DebugDraw.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DebugDraw.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="RefTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DebugDraw.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DebugDraw.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="ThreadChecker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DebugDraw.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DebugDraw.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DebugDraw.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DebugDraw.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DebugDraw.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DebugDraw.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DebugDraw.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DebugDraw.cpp.obj"/>
+					</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\DetourAlloc.cpp">
+                                  				    					<FileConfiguration
+						Name="Release (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourAlloc.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourAlloc.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Release (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourAlloc.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourAlloc.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="Debug (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourAlloc.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourAlloc.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Debug (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourAlloc.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourAlloc.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="MemoryTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourAlloc.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourAlloc.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourAlloc.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourAlloc.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="RefTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourAlloc.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourAlloc.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="RefTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourAlloc.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourAlloc.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="ThreadChecker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourAlloc.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourAlloc.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourAlloc.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourAlloc.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourAlloc.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourAlloc.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourAlloc.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourAlloc.cpp.obj"/>
+					</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\DetourCommon.cpp">
+                                  				    					<FileConfiguration
+						Name="Release (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourCommon.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourCommon.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Release (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourCommon.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourCommon.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="Debug (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourCommon.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourCommon.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Debug (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourCommon.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourCommon.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="MemoryTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourCommon.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourCommon.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourCommon.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourCommon.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="RefTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourCommon.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourCommon.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="RefTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourCommon.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourCommon.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="ThreadChecker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourCommon.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourCommon.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourCommon.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourCommon.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourCommon.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourCommon.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourCommon.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourCommon.cpp.obj"/>
+					</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\DetourDebugDraw.cpp">
+                                  				    					<FileConfiguration
+						Name="Release (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourDebugDraw.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourDebugDraw.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Release (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourDebugDraw.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourDebugDraw.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="Debug (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourDebugDraw.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourDebugDraw.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Debug (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourDebugDraw.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourDebugDraw.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="MemoryTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourDebugDraw.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourDebugDraw.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourDebugDraw.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourDebugDraw.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="RefTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourDebugDraw.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourDebugDraw.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="RefTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourDebugDraw.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourDebugDraw.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="ThreadChecker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourDebugDraw.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourDebugDraw.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourDebugDraw.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourDebugDraw.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourDebugDraw.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourDebugDraw.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourDebugDraw.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourDebugDraw.cpp.obj"/>
+					</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\DetourNavMesh.cpp">
+                                  				    					<FileConfiguration
+						Name="Release (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMesh.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Release (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMesh.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="Debug (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMesh.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Debug (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMesh.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="MemoryTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMesh.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMesh.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="RefTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMesh.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="RefTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMesh.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="ThreadChecker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMesh.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMesh.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMesh.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMesh.cpp.obj"/>
+					</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\DetourNavMeshBuilder.cpp">
+                                  				    					<FileConfiguration
+						Name="Release (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMeshBuilder.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMeshBuilder.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Release (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMeshBuilder.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMeshBuilder.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="Debug (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMeshBuilder.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMeshBuilder.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Debug (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMeshBuilder.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMeshBuilder.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="MemoryTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMeshBuilder.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMeshBuilder.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMeshBuilder.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMeshBuilder.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="RefTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMeshBuilder.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMeshBuilder.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="RefTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMeshBuilder.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMeshBuilder.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="ThreadChecker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMeshBuilder.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMeshBuilder.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMeshBuilder.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMeshBuilder.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMeshBuilder.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMeshBuilder.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMeshBuilder.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNavMeshBuilder.cpp.obj"/>
+					</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\DetourNode.cpp">
+                                  				    					<FileConfiguration
+						Name="Release (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNode.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNode.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Release (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNode.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNode.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="Debug (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNode.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNode.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Debug (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNode.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNode.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="MemoryTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNode.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNode.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNode.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNode.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="RefTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNode.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNode.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="RefTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNode.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNode.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="ThreadChecker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNode.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNode.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNode.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNode.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNode.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNode.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNode.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_DetourNode.cpp.obj"/>
+					</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\InputGeom.cpp">
+                                  				    					<FileConfiguration
+						Name="Release (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_InputGeom.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_InputGeom.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Release (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_InputGeom.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_InputGeom.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="Debug (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_InputGeom.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_InputGeom.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Debug (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_InputGeom.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_InputGeom.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="MemoryTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_InputGeom.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_InputGeom.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_InputGeom.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_InputGeom.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="RefTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_InputGeom.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_InputGeom.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="RefTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_InputGeom.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_InputGeom.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="ThreadChecker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_InputGeom.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_InputGeom.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_InputGeom.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_InputGeom.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_InputGeom.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_InputGeom.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_InputGeom.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_InputGeom.cpp.obj"/>
+					</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\MeshLoaderObj.cpp">
+                                  				    					<FileConfiguration
+						Name="Release (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_MeshLoaderObj.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_MeshLoaderObj.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Release (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_MeshLoaderObj.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_MeshLoaderObj.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="Debug (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_MeshLoaderObj.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_MeshLoaderObj.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Debug (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_MeshLoaderObj.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_MeshLoaderObj.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="MemoryTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_MeshLoaderObj.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_MeshLoaderObj.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_MeshLoaderObj.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_MeshLoaderObj.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="RefTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_MeshLoaderObj.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_MeshLoaderObj.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="RefTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_MeshLoaderObj.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_MeshLoaderObj.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="ThreadChecker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_MeshLoaderObj.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_MeshLoaderObj.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_MeshLoaderObj.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_MeshLoaderObj.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_MeshLoaderObj.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_MeshLoaderObj.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_MeshLoaderObj.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_MeshLoaderObj.cpp.obj"/>
+					</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\Recast.cpp">
+                                  				    					<FileConfiguration
+						Name="Release (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_Recast.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_Recast.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Release (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_Recast.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_Recast.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="Debug (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_Recast.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_Recast.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Debug (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_Recast.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_Recast.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="MemoryTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_Recast.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_Recast.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_Recast.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_Recast.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="RefTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_Recast.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_Recast.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="RefTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_Recast.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_Recast.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="ThreadChecker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_Recast.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_Recast.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_Recast.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_Recast.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_Recast.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_Recast.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_Recast.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_Recast.cpp.obj"/>
+					</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\RecastAlloc.cpp">
+                                  				    					<FileConfiguration
+						Name="Release (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastAlloc.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastAlloc.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Release (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastAlloc.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastAlloc.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="Debug (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastAlloc.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastAlloc.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Debug (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastAlloc.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastAlloc.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="MemoryTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastAlloc.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastAlloc.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastAlloc.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastAlloc.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="RefTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastAlloc.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastAlloc.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="RefTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastAlloc.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastAlloc.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="ThreadChecker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastAlloc.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastAlloc.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastAlloc.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastAlloc.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastAlloc.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastAlloc.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastAlloc.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastAlloc.cpp.obj"/>
+					</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\RecastArea.cpp">
+                                  				    					<FileConfiguration
+						Name="Release (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastArea.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastArea.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Release (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastArea.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastArea.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="Debug (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastArea.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastArea.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Debug (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastArea.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastArea.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="MemoryTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastArea.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastArea.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastArea.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastArea.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="RefTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastArea.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastArea.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="RefTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastArea.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastArea.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="ThreadChecker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastArea.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastArea.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastArea.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastArea.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastArea.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastArea.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastArea.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastArea.cpp.obj"/>
+					</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\RecastContour.cpp">
+                                  				    					<FileConfiguration
+						Name="Release (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastContour.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastContour.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Release (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastContour.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastContour.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="Debug (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastContour.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastContour.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Debug (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastContour.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastContour.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="MemoryTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastContour.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastContour.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastContour.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastContour.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="RefTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastContour.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastContour.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="RefTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastContour.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastContour.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="ThreadChecker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastContour.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastContour.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastContour.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastContour.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastContour.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastContour.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastContour.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastContour.cpp.obj"/>
+					</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\RecastDebugDraw.cpp">
+                                  				    					<FileConfiguration
+						Name="Release (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDebugDraw.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDebugDraw.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Release (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDebugDraw.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDebugDraw.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="Debug (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDebugDraw.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDebugDraw.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Debug (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDebugDraw.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDebugDraw.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="MemoryTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDebugDraw.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDebugDraw.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDebugDraw.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDebugDraw.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="RefTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDebugDraw.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDebugDraw.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="RefTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDebugDraw.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDebugDraw.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="ThreadChecker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDebugDraw.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDebugDraw.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDebugDraw.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDebugDraw.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDebugDraw.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDebugDraw.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDebugDraw.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDebugDraw.cpp.obj"/>
+					</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\RecastDump.cpp">
+                                  				    					<FileConfiguration
+						Name="Release (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDump.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDump.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Release (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDump.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDump.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="Debug (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDump.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDump.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Debug (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDump.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDump.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="MemoryTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDump.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDump.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDump.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDump.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="RefTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDump.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDump.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="RefTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDump.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDump.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="ThreadChecker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDump.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDump.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDump.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDump.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDump.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDump.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDump.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastDump.cpp.obj"/>
+					</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\RecastFilter.cpp">
+                                  				    					<FileConfiguration
+						Name="Release (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastFilter.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastFilter.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Release (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastFilter.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastFilter.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="Debug (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastFilter.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastFilter.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Debug (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastFilter.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastFilter.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="MemoryTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastFilter.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastFilter.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastFilter.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastFilter.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="RefTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastFilter.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastFilter.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="RefTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastFilter.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastFilter.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="ThreadChecker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastFilter.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastFilter.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastFilter.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastFilter.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastFilter.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastFilter.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastFilter.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastFilter.cpp.obj"/>
+					</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\RecastLog.cpp">
+                                  				    					<FileConfiguration
+						Name="Release (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastLog.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastLog.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Release (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastLog.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastLog.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="Debug (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastLog.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastLog.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Debug (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastLog.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastLog.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="MemoryTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastLog.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastLog.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastLog.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastLog.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="RefTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastLog.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastLog.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="RefTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastLog.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastLog.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="ThreadChecker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastLog.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastLog.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastLog.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastLog.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastLog.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastLog.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastLog.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastLog.cpp.obj"/>
+					</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\RecastMesh.cpp">
+                                  				    					<FileConfiguration
+						Name="Release (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMesh.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Release (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMesh.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="Debug (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMesh.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Debug (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMesh.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="MemoryTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMesh.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMesh.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="RefTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMesh.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="RefTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMesh.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="ThreadChecker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMesh.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMesh.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMesh.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMesh.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMesh.cpp.obj"/>
+					</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\RecastMeshDetail.cpp">
+                                  				    					<FileConfiguration
+						Name="Release (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMeshDetail.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMeshDetail.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Release (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMeshDetail.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMeshDetail.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="Debug (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMeshDetail.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMeshDetail.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Debug (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMeshDetail.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMeshDetail.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="MemoryTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMeshDetail.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMeshDetail.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMeshDetail.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMeshDetail.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="RefTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMeshDetail.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMeshDetail.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="RefTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMeshDetail.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMeshDetail.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="ThreadChecker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMeshDetail.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMeshDetail.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMeshDetail.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMeshDetail.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMeshDetail.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMeshDetail.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMeshDetail.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastMeshDetail.cpp.obj"/>
+					</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\RecastRasterization.cpp">
+                                  				    					<FileConfiguration
+						Name="Release (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRasterization.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRasterization.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Release (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRasterization.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRasterization.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="Debug (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRasterization.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRasterization.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Debug (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRasterization.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRasterization.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="MemoryTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRasterization.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRasterization.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRasterization.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRasterization.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="RefTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRasterization.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRasterization.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="RefTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRasterization.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRasterization.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="ThreadChecker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRasterization.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRasterization.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRasterization.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRasterization.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRasterization.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRasterization.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRasterization.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRasterization.cpp.obj"/>
+					</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\RecastRegion.cpp">
+                                  				    					<FileConfiguration
+						Name="Release (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRegion.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRegion.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Release (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRegion.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRegion.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="Debug (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRegion.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRegion.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Debug (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRegion.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRegion.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="MemoryTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRegion.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRegion.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRegion.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRegion.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="RefTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRegion.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRegion.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="RefTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRegion.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRegion.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="ThreadChecker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRegion.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRegion.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRegion.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRegion.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRegion.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRegion.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRegion.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastRegion.cpp.obj"/>
+					</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\RecastTimer.cpp">
+                                  				    					<FileConfiguration
+						Name="Release (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastTimer.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastTimer.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Release (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastTimer.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Release (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\release9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastTimer.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="Debug (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastTimer.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastTimer.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="Debug (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastTimer.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="Debug (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastTimer.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="MemoryTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastTimer.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastTimer.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastTimer.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="MemoryTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastTimer.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="RefTracker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastTimer.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastTimer.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="RefTracker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastTimer.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="RefTracker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastTimer.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="ThreadChecker (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastTimer.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastTimer.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastTimer.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="ThreadChecker (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastTimer.cpp.obj"/>
+					</FileConfiguration>
+                                  				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastTimer.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with static libs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastTimer.cpp.obj"/>
+					</FileConfiguration>				    					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastTimer.cpp.obj"/>
+					</FileConfiguration>					<FileConfiguration
+						Name="DebugPSReleaseCSCEL (with DLLs)|x64">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="..\..\out\debug9-x64\build\libplaneshift_staticplugins\src_common_recast_recastnavigation_RecastTimer.cpp.obj"/>
+					</FileConfiguration>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="">
 			<File
 				RelativePath="..\..\src\common\bgloader\loader.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\celgraph\celgraph.h">
 			</File>
 			<File
 				RelativePath="..\..\src\common\recast\CelHPF.h">
@@ -2397,6 +5760,60 @@
 			</File>
 			<File
 				RelativePath="..\..\src\common\bgloader\loader.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\CelHPF.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\CelNavMesh.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\ChunkyTriMesh.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\DebugDraw.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\DetourAlloc.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\DetourCommon.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\DetourDebugDraw.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\DetourNavMesh.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\DetourNavMeshBuilder.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\DetourNode.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\InputGeom.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\MeshLoaderObj.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\Recast.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\RecastAlloc.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\RecastDebugDraw.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\RecastDump.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\RecastLog.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\recast\recastnavigation\RecastTimer.h">
 			</File>
 		</Filter>
 	</Files>
