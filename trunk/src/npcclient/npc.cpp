@@ -463,12 +463,16 @@ void NPC::Disable( bool disable)
     // Stop the movement
     
     // Set Vel to zero again
-    GetLinMove()->SetVelocity( csVector3(0,0,0) );
-    GetLinMove()->SetAngularVelocity( 0 );
+    if(GetActor())
+    {
+        GetLinMove()->SetVelocity( csVector3(0,0,0) );
+        GetLinMove()->SetAngularVelocity( 0 );
+    
 
-    //now persist
-    networkmanager->QueueDRData(this);
-    networkmanager->QueueImperviousCommand(GetActor(),true);
+        //now persist
+        networkmanager->QueueDRData(this);
+        networkmanager->QueueImperviousCommand(GetActor(),true);
+    }
 }
 
 void NPC::DumpState()
