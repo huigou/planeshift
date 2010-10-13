@@ -755,9 +755,6 @@ void psNPCClient::AttachNPC( gemNPCActor* actor, uint8_t DRcounter, EID ownerEID
     npc = FindNPCByPID( actor->GetPID() );
     if ( !npc )
     {
-        CPrintf(CON_NOTIFY,"NPC %s(%s) was not found in scripted npcs for this npcclient.\n",
-                actor->GetName(), ShowID(actor->GetPID()));
-
         npc = ReadSingleNPC(actor->GetPID()); //try reloading the tables if we didn't find it
         if(!npc) //still not found. we do a last check
         {
@@ -765,7 +762,8 @@ void psNPCClient::AttachNPC( gemNPCActor* actor, uint8_t DRcounter, EID ownerEID
                 npc = ReadMasteredNPC(actor->GetPID(), masterID); //loads the master npc data and assign it to this
             if(!npc) //last chance if false good bye
             {
-                Error2("Error loading char_id %s.", ShowID(actor->GetPID()));
+                Error3("NPC %s(%s) was not found in scripted npcs for this npcclient.\n",
+                actor->GetName(), ShowID(actor->GetPID()));
                 return;
             }
         }
