@@ -1280,6 +1280,7 @@ void NetworkManager::SendAllCommands(bool final)
             }
             else
             {
+                //TODO: probably here the npc should be destroyed?
                 CPrintf(CON_WARNING,"NPC %s is trying to send DR data with no actor\n",npc->GetName());
                 npc->Disable(); // Disable the NPC.
             }
