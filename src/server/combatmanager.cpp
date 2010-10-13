@@ -501,7 +501,7 @@ int CombatManager::CalculateAttack(psCombatGameEvent *event, psItem* subWeapon)
 
     calc_damage->Evaluate(&env);
 
-	if (DoLogDebug2(LOG_COMBAT, event->GetAttackerData()->GetPID().Unbox()))
+    if (DoLogDebug2(LOG_COMBAT, event->GetAttackerData()->GetPID().Unbox()))
     {
         CPrintf(CON_DEBUG, "Variables for Calculate Damage:\n");
         env.DumpAllVars();
@@ -534,37 +534,41 @@ int CombatManager::CalculateAttack(psCombatGameEvent *event, psItem* subWeapon)
 
 void CombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_result)
 {
-    psCharacter *attacker_data,*target_data;
+    psCharacter *attacker_data = event->GetAttackerData();
+    psCharacter *target_data=event->GetTargetData();
 
-    attacker_data=event->GetAttackerData();
-    target_data=event->GetTargetData();
+    MathVar *weaponDecay = NULL;
+    MathVar *blockDecay = NULL;
+    MathVar *armorDecay = NULL;
 
     psItem *weapon         = attacker_data->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot());
     psItem *blockingWeapon = target_data->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot(),true);
     psItem *struckArmor    = target_data->Inventory().GetEffectiveArmorInSlot(event->AttackLocation);
 
-    // if no armor, then ArmorVsWeapon = 1
-    float ArmorVsWeapon = 1;
-    if (struckArmor)
-      ArmorVsWeapon = weapon->GetArmorVSWeaponResistance(struckArmor->GetBaseStats());
+    // there may only be a decay if you actually hit your target by some means
+    if(attack_result == ATTACK_DAMAGE || attack_result == ATTACK_BLOCKED)
+    {
+        // we are guaranteed some armor is present - real one, race one or base one
+        CS_ASSERT(struckArmor);
+        float ArmorVsWeapon = weapon->GetArmorVSWeaponResistance(struckArmor->GetBaseStats());
 
-    // clamp values due to bad data
-    ArmorVsWeapon = ArmorVsWeapon > 1.0F ? 1.0F : ArmorVsWeapon;
-    ArmorVsWeapon = ArmorVsWeapon < 0.0F ? 0.0F : ArmorVsWeapon;
+        // clamp value between 0 and 1
+        ArmorVsWeapon = ArmorVsWeapon > 1.0F ? 1.0F : ArmorVsWeapon < 0.0F ? 0.0F : ArmorVsWeapon;
 
-    MathEnvironment env;
-    env.Define("Weapon", weapon);                             // weapon that was used to attack
-    env.Define("BlockingWeapon", blockingWeapon);             // weapon that blocked the attack
-    env.Define("Armor", struckArmor);                         // armor hit
-    env.Define("ArmorVsWeapon", ArmorVsWeapon);               // armor vs weapon effectiveness
-    env.Define("Damage", event->FinalDamage);                 // actual damage dealt
-    env.Define("Blocked", (attack_result == ATTACK_BLOCKED)); // identifies whether this attack was blocked
+        MathEnvironment env;
+        env.Define("Weapon", weapon);                             // weapon that was used to attack
+        env.Define("BlockingWeapon", blockingWeapon);             // weapon that blocked the attack
+        env.Define("Armor", struckArmor);                         // armor hit
+        env.Define("ArmorVsWeapon", ArmorVsWeapon);               // armor vs weapon effectiveness
+        env.Define("Damage", event->FinalDamage);                 // actual damage dealt
+        env.Define("Blocked", (attack_result == ATTACK_BLOCKED)); // identifies whether this attack was blocked
 
-    calc_decay->Evaluate(&env);
+        calc_decay->Evaluate(&env);
 
-    MathVar *weaponDecay = env.Lookup("WeaponDecay");
-    MathVar *blockDecay  = env.Lookup("BlockingDecay");
-    MathVar *armorDecay  = env.Lookup("ArmorDecay");
+        weaponDecay = env.Lookup("WeaponDecay");
+        blockDecay  = env.Lookup("BlockingDecay");
+        armorDecay  = env.Lookup("ArmorDecay");
+    }
 
     gemActor *gemAttacker = dynamic_cast<gemActor*> ((gemObject *) event->attacker);
     gemActor *gemTarget   = dynamic_cast<gemActor*> ((gemObject *) event->target);
@@ -610,7 +614,7 @@ void CombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_result
                     }
                 }
             }
-            
+
             // If the target wasn't in combat, it is now...
             // Note that other modes shouldn't be interrupted automatically
             if (gemTarget->GetMode() == PSCHARACTER_MODE_PEACE || gemTarget->GetMode() == PSCHARACTER_MODE_WORK)
