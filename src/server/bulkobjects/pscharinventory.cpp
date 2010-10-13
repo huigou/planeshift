@@ -78,8 +78,8 @@ psCharacterInventory::psCharacterInventory(psCharacter *ownr)
 
     owner = ownr;
 
-	//as a beginning we set a basic armor. we will return to this later when raceinfo is available.
-	SetBasicArmor();
+    //as a beginning we set a basic armor. we will return to this later when raceinfo is available.
+    SetBasicArmor();
 	
     doRestrictions = false;
     loaded         = false;
