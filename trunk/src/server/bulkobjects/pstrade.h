@@ -124,7 +124,7 @@ private:
  * This class holds the master list of all trade processes possible in the game.
  * This class is read only since it is cached and shared by multiple users.
  */
-class psTradeProcesses
+class psTradeProcesses : public iScriptableVar
 {
  public:
     psTradeProcesses();
@@ -152,6 +152,22 @@ class psTradeProcesses
     int GetSecondaryPracticePts() const { return secPracticePts; }
     int GetSecondaryQualFactor() const { return secQualFactor; }
     csString& GetRenderEffect() { return renderEffect; }
+
+    /** Returns the name of the current process.
+     *  @note Needed for iScriptableVar. 
+     *  @return the name of the process.
+     */
+    const char* ToString();
+
+    ///Needed for iScriptableVar. Does nothing right now just returns 0 for anything passed.
+    double CalcFunction(const char * functionName, const double * params);
+
+    /** Returns the requested variable stored in this process.
+     *  @note Needed for iScriptableVar.
+     *  @param ptr A pointer to a char array stating the requested variable.
+     *  @return A double with the value of the requested variable.
+     */
+    double GetProperty(const char *ptr);
     
  protected:
     uint32 processId;

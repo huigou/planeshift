@@ -128,7 +128,7 @@ psTradeProcesses::psTradeProcesses()
     equipmentId     = 0;    
     constraints    .Clear();
     garbageId       = 0;
-    garbageQty       = 0;
+    garbageQty      = 0;
     priSkillId      = 0;
     minPriSkill     = 0;
     maxPriSkill     = 0;
@@ -142,10 +142,67 @@ psTradeProcesses::psTradeProcesses()
     renderEffect.Clear();
 }
 
-
 psTradeProcesses::~psTradeProcesses()
 {
 }
+
+const char* psTradeProcesses::ToString()
+{
+    return name.GetData();
+}
+
+double psTradeProcesses::CalcFunction(const char * functionName, const double * params)
+{
+    return 0;
+}
+
+double psTradeProcesses::GetProperty(const char *ptr)
+{
+    if (!strcasecmp(ptr,"PrimarySkillId"))
+    {
+        return GetPrimarySkillId();
+    }
+    if (!strcasecmp(ptr,"MaxPrimarySkill"))
+    {
+        return GetMaxPrimarySkill();
+    }
+    if (!strcasecmp(ptr,"MinPrimarySkill"))
+    {
+        return GetMinPrimarySkill();
+    }
+    if (!strcasecmp(ptr,"PrimarySkillQualityFactor"))
+    {
+        return GetPrimaryQualFactor();
+    }
+    if (!strcasecmp(ptr,"PrimarySkillPracticePoints"))
+    {
+        return GetPrimaryPracticePts();
+    }
+    if (!strcasecmp(ptr,"SecondarySkillId"))
+    {
+        return GetSecondarySkillId();
+    }
+    if (!strcasecmp(ptr,"MaxSecondarySkill"))
+    {
+        return GetMaxSecondarySkill();
+    }
+    if (!strcasecmp(ptr,"MinSecondarySkill"))
+    {
+        return GetMinSecondarySkill();
+    }
+    if (!strcasecmp(ptr,"SecondarySkillQualityFactor"))
+    {
+        return GetSecondaryQualFactor();
+    }
+    if (!strcasecmp(ptr,"SecondarySkillPracticePoints"))
+    {
+        return GetSecondaryPracticePts();
+    }
+
+    Error2("Requested psTradeProcesses property not found '%s'", ptr);
+    return 0;
+}
+
 
 bool psTradeProcesses::Load(iResultRow& row)
 {
