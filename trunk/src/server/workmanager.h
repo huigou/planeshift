@@ -306,6 +306,8 @@ protected:
     MathScript *calc_mining_exp;                  ///< This is the calculation for the experience to assign to player for mining.
     MathScript *calc_transform_exp;               ///< This is the calculation for the experience to assign to player for trasformations.
     MathScript *calc_lockpick_time;               ///< This is the calculation for how long it takes to pick a lock.
+    MathScript *calc_transform_apply_skill;       ///< This is the calculation for the quality resulting from the item.
+
 
     void HandleLockPick(MsgEntry* me,Client *client);
     void HandleWorkCommand(MsgEntry* me,Client *client);
@@ -483,7 +485,7 @@ protected:
     bool CheckStamina(psCharacter * owner) const;
 
     void Initialize();
-    bool ApplySkills(float factor, psItem* transItem, bool amountModifier);
+    bool ApplySkills(float factor, psItem* transItem, gemActor *worker, bool amountModifier, float &currentQuality, psTradeProcesses* process);
 
     /**
       * This function handles commands like "/repair" using
