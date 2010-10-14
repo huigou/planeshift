@@ -128,15 +128,17 @@ WorkManager::WorkManager(CacheManager* cachemanager, EntityManager* entitymanage
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<WorkManager>(this,&WorkManager::HandleWorkCommand),MSGTYPE_WORKCMD,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<WorkManager>(this,&WorkManager::HandleLockPick),MSGTYPE_LOCKPICK,REQUIRE_READY_CLIENT|REQUIRE_ALIVE|REQUIRE_TARGET);
 
-    calc_repair_rank    = psserver->GetMathScriptEngine()->FindScript("Calculate Repair Rank");
-    calc_repair_time    = psserver->GetMathScriptEngine()->FindScript("Calculate Repair Time");
-    calc_repair_result  = psserver->GetMathScriptEngine()->FindScript("Calculate Repair Result");
-    calc_repair_quality = psserver->GetMathScriptEngine()->FindScript("Calculate Repair Quality");
-    calc_repair_exp     = psserver->GetMathScriptEngine()->FindScript("Calculate Repair Experience");
-    calc_mining_chance  = psserver->GetMathScriptEngine()->FindScript("Calculate Mining Odds");
-    calc_mining_exp     = psserver->GetMathScriptEngine()->FindScript("Calculate Mining Experience");
-    calc_transform_exp  = psserver->GetMathScriptEngine()->FindScript("Calculate Trasformation Experience");
-    calc_lockpick_time  = psserver->GetMathScriptEngine()->FindScript("Lockpicking Time");
+    calc_repair_rank            = psserver->GetMathScriptEngine()->FindScript("Calculate Repair Rank");
+    calc_repair_time            = psserver->GetMathScriptEngine()->FindScript("Calculate Repair Time");
+    calc_repair_result          = psserver->GetMathScriptEngine()->FindScript("Calculate Repair Result");
+    calc_repair_quality         = psserver->GetMathScriptEngine()->FindScript("Calculate Repair Quality");
+    calc_repair_exp             = psserver->GetMathScriptEngine()->FindScript("Calculate Repair Experience");
+    calc_mining_chance          = psserver->GetMathScriptEngine()->FindScript("Calculate Mining Odds");
+    calc_mining_exp             = psserver->GetMathScriptEngine()->FindScript("Calculate Mining Experience");
+    calc_transform_exp          = psserver->GetMathScriptEngine()->FindScript("Calculate Trasformation Experience");
+    calc_lockpick_time          = psserver->GetMathScriptEngine()->FindScript("Lockpicking Time");
+    calc_transform_apply_skill  = psserver->GetMathScriptEngine()->FindScript("Calculate Transformation Apply Skill");
+
 
     CS_ASSERT_MSG("Could not load mathscript 'Calculate Repair Rank'", calc_repair_rank);
     CS_ASSERT_MSG("Could not load mathscript 'Calculate Repair Time'", calc_repair_time);
@@ -147,6 +149,9 @@ WorkManager::WorkManager(CacheManager* cachemanager, EntityManager* entitymanage
     CS_ASSERT_MSG("Could not load mathscript 'Calculate Mining Experience'", calc_mining_exp);
     CS_ASSERT_MSG("Could not load mathscript 'Calculate Trasformation Experience'", calc_transform_exp);
     CS_ASSERT_MSG("Could not load mathscript 'Lockpicking Time'", calc_lockpick_time);
+    //optional for now
+    //CS_ASSERT_MSG("Could not load mathscript 'Calculate Transformation Apply Skill'", calc_transform_apply_skill);
+
 
     Initialize();
 };
@@ -3304,7 +3309,7 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
     float startQuality = transItem->GetItemQuality();
     if ( process )
     {
-        if ( result > 0 && !ApplySkills(workEvent->GetKFactor(), workEvent->GetTranformationItem(), itemQty == 0) && process->GetGarbageId() != 0 )
+        if ( result > 0 && !ApplySkills(workEvent->GetKFactor(), workEvent->GetTranformationItem(), owner, itemQty == 0, currentQuality, process) && process->GetGarbageId() != 0 )
         {
             result = process->GetGarbageId();
             resultQty = process->GetGarbageQty();
@@ -3524,8 +3529,21 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
 }
 
 // Apply skills if any to quality and practice points
-bool WorkManager::ApplySkills(float factor, psItem* transItem, bool amountModifier)
+bool WorkManager::ApplySkills(float factor, psItem* transItem, gemActor *worker, bool amountModifier, float &currentQuality, psTradeProcesses* process)
 {
+    if(calc_transform_apply_skill)
+    {
+        MathEnvironment env;
+        env.Define("Quality", currentQuality);
+        env.Define("Factor", factor);
+        env.Define("Object", transItem);
+        env.Define("Worker", worker);
+        env.Define("Process", process);
+        calc_transform_apply_skill->Evaluate(&env);
+        currentQuality = env.Lookup("Quality")->GetValue();
+        return (currentQuality == 0);
+    }
+    
     // just return for processless transforms
     if (!process)
     {
