@@ -194,7 +194,9 @@ void psAuthenticationClient::HandlePreAuth( MsgEntry* me )
     //TODO: convert this to use csstrings
     // Get os and graphics card info
     iGraphics2D *graphics2D = PawsManager::GetSingleton().GetGraphics3D()->GetDriver2D();
-    psAuthenticationMessage request(0,username.GetData(), hexstring.GetData(), CS_PLATFORM_NAME "-" CS_PROCESSOR_NAME "-" CS_COMPILER_NAME, graphics2D->GetHWRenderer(), graphics2D->GetHWGLVersion() );
+    csString HWRender =  graphics2D->GetHWRenderer();
+    csString HWGLVersion =  graphics2D->GetHWGLVersion();
+    psAuthenticationMessage request(0,username.GetData(), hexstring.GetData(), CS_PLATFORM_NAME "-" CS_PROCESSOR_NAME "-" CS_COMPILER_NAME, HWRender.GetDataSafe(), HWGLVersion.GetDataSafe() );
     
     request.SendMessage();                
 }
