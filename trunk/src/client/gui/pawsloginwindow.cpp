@@ -42,11 +42,13 @@
 #define SERVER_LIST_FILE     "/planeshift/data/servers.xml"
 #define ASTERISKS            "********"
 
-#define CNF_REMEMBER_SERVER   "PlaneShift.Connection.RememberServer"
-#define CNF_REMEMBER_PASS     "PlaneShift.Connection.RememberPass"
-#define CNF_USER              "PlaneShift.Connection.%s.User"
-#define CNF_PASSWORD          "PlaneShift.Connection.%s.Password"
-#define CNF_AUTOLOGIN_SERVER  "PlaneShift.Connection.AutologinServer"
+#define CNF_REMEMBER_SERVER       "PlaneShift.Connection.RememberServer"
+#define CNF_REMEMBER_PASS         "PlaneShift.Connection.RememberPass"
+#define CNF_USER                  "PlaneShift.Connection.%s.User"
+#define CNF_PASSWORD              "PlaneShift.Connection.%s.Password"
+#define CNF_AUTOLOGIN_SERVER      "PlaneShift.Connection.AutologinServer.Id"
+#define CNF_AUTOLOGIN_SERVER_NAME "PlaneShift.Connection.AutologinServer.Name"
+
 
 pawsLoginWindow::pawsLoginWindow()
 {
@@ -140,6 +142,16 @@ bool pawsLoginWindow::PostSetup()
         msg.FireEvent();
         //handles auto login in case the option is set.
         int autoLoginServer = cfg->GetInt(CNF_AUTOLOGIN_SERVER, -2);
+        csString autoLoginServerName = cfg->GetStr(CNF_AUTOLOGIN_SERVER_NAME, "");
+        //search for the server name specified if it has some text in it. Not supporting unnamed servers.
+        if(autoLoginServerName.Length())
+        {
+            for(int i = 0; i < servers.GetSize(); i++)
+            {
+                if(autoLoginServerName == servers[i]->GetName())
+                    autoLoginServer = i; //named autologin has precedence over id autologin
+            }
+        }
         //only autologin if it's a valid value
         if(autoLoginServer == -1) //autologin to the last used server
         {
