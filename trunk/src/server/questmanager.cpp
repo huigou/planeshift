@@ -1229,7 +1229,7 @@ bool QuestManager::AddTrigger(csString& current_npc,const char *trigger,int prio
         // First check for no dialog at all on this npc, and create it if needed
         if (!npc->GetNPCDialogPtr())
         {
-            npc->SetupDialog(npc->GetPID(), true);  // force init even though potentially no KA's in database
+            npc->SetupDialog(npc->GetPID(), npc->GetCharacterData()->GetMasterNPCID(), true);  // force init even though potentially no KA's in database
         }
         //npc->GetNPCDialogPtr()->AddKnowledgeArea(current_npc);
     }

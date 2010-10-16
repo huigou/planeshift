@@ -4076,18 +4076,26 @@ void gemNPC::SetPosition(const csVector3& pos,float angle, iSector* sector)
     UpdateProxList(true);
 }
 
-void gemNPC::SetupDialog(PID npcID, bool force)
+void gemNPC::SetupDialog(PID npcID, PID masterNpcID, bool force)
 {
     if (!force)
         force = dict->FindKnowledgeArea(name);  // present in Quest Script but not in the queried table
 
-    if (force || db->SelectSingleNumber("SELECT count(*) FROM npc_knowledge_areas WHERE player_id=%d", npcID.Unbox()) > 0)
+    if (force || db->SelectSingleNumber("SELECT count(*) FROM npc_knowledge_areas WHERE player_id=%d", npcID.Unbox()) > 0
+              || (masterNpcID != 0 && npcID != masterNpcID && db->SelectSingleNumber("SELECT count(*) FROM npc_knowledge_areas WHERE player_id=%d", masterNpcID.Unbox()) > 0))
     {
         npcdialog = new psNPCDialog(this);
-        if (!npcdialog->Initialize(db,npcID))
+        if (npcdialog->Initialize(db,npcID))
+        {
+            //we load the inherited KA after because this makes them essentially of **lower priority** as the array
+            //in psnpcdialog, even if it supports ordering, is never ordered, and relies on mysql ordering.
+            if(masterNpcID != 0 && npcID != masterNpcID)
+                npcdialog->LoadKnowledgeAreas(masterNpcID);
+        }
+        else
         {
             Error2("Failed to initialize NPC dialog for %s\n", ShowID(npcID));
-        }
+        } 
         if (force)
         {
             csString newArea(name);
