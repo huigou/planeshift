@@ -67,7 +67,7 @@ class pawsChatHistory;
 class pawsTabWindow;
 //struct iSoundManager;
 
-// Struct for returning and setting settings
+/// Struct for returning and setting settings
 struct ChatSettings
 {
     /// Player Color.
@@ -103,8 +103,8 @@ struct ChatSettings
     csHash<csString, csString> bindings;
     csArray<csString> subNames;
     int selectTabStyle;
-    int vicinityFilters; // Flags int
-    int meFilters; // Flags int
+    int vicinityFilters; ///< Flags int
+    int meFilters; ///< Flags int
 };
 
 
