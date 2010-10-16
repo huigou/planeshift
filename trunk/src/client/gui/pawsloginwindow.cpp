@@ -46,6 +46,7 @@
 #define CNF_REMEMBER_PASS     "PlaneShift.Connection.RememberPass"
 #define CNF_USER              "PlaneShift.Connection.%s.User"
 #define CNF_PASSWORD          "PlaneShift.Connection.%s.Password"
+#define CNF_AUTOLOGIN_SERVER  "PlaneShift.Connection.AutologinServer"
 
 pawsLoginWindow::pawsLoginWindow()
 {
@@ -137,6 +138,14 @@ bool pawsLoginWindow::PostSetup()
     {
         psSystemMessage msg(0,MSG_OK,PawsManager::GetSingleton().Translate("Welcome to PlaneShift!"));
         msg.FireEvent();
+        //handles auto login in case the option is set.
+        int autoLoginServer = cfg->GetInt(CNF_AUTOLOGIN_SERVER, -1);
+        //only autologin if it's a valid value
+        if(autoLoginServer >= 0 && (int)servers.GetSize() > autoLoginServer )
+        {
+            listBox->Select( listBox->GetRow(autoLoginServer), true );
+            ConnectToServer(true); //connect to the server without updating the gui.
+        }
         first = false;
     }
     else
@@ -302,25 +311,26 @@ bool pawsLoginWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
 }
 
 
-void pawsLoginWindow::ConnectToServer()
+void pawsLoginWindow::ConnectToServer(bool automatic)
 {
-    
     csRef<iConfigManager> cfg =  csQueryRegistry<iConfigManager> (PawsManager::GetSingleton().GetObjectRegistry());
 
     // Set the time out to connect to server
     timeout = csGetTicks() + cfg->GetInt("PlaneShift.Client.User.Connecttimeout", 60) * 1000;
-    
-    connectingLabel->SetText(PawsManager::GetSingleton().Translate("Connecting to server... Please wait"));
 
-    // to make sure the "Connecting" label is visible:    
-    PawsManager::GetSingleton().GetGraphics3D()->BeginDraw (CSDRAW_2DGRAPHICS);
-    PawsManager::GetSingleton().Draw (); 
-    PawsManager::GetSingleton().GetGraphics3D()->FinishDraw ();
-    PawsManager::GetSingleton().GetGraphics2D()->Print (0);
-    
-      
+    if(!automatic)
+    {
+        connectingLabel->SetText(PawsManager::GetSingleton().Translate("Connecting to server... Please wait"));
+
+        // to make sure the "Connecting" label is visible:    
+        PawsManager::GetSingleton().GetGraphics3D()->BeginDraw (CSDRAW_2DGRAPHICS);
+        PawsManager::GetSingleton().Draw (); 
+        PawsManager::GetSingleton().GetGraphics3D()->FinishDraw ();
+        PawsManager::GetSingleton().GetGraphics2D()->Print (0);
+    }
+          
     if ( !psengine->GetNetManager()->Connect( serverIP, serverPort ) )
-    {    
+    {
         psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate("Cannot connect to server!"));
         error.FireEvent();
 

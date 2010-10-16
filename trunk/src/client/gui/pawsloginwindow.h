@@ -54,7 +54,7 @@ private:
     bool LoadServerList();
     void SaveLoginInformation();
     
-    void ConnectToServer();
+    void ConnectToServer(bool automatic = false);
 
     csString serverIP;
     int serverPort;

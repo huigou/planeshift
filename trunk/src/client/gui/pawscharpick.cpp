@@ -55,6 +55,9 @@
 #define YES_DELETE_CHARACTER    300
 #define NO_DELETE_CHARACTER     302
 
+#define CNF_AUTOPICK_CHAR  "PlaneShift.Connection.AutoPickChar"
+
+
 pawsCharacterPickerWindow::pawsCharacterPickerWindow()
 {
     charactersFound = 0;
@@ -104,6 +107,10 @@ void pawsCharacterPickerWindow::HandleMessage( MsgEntry* me )
             if(charactersFound != 0)
                 return;
 
+            //get a requested autoconnect charname
+            csRef<iConfigManager> cfg =  csQueryRegistry<iConfigManager> (PawsManager::GetSingleton().GetObjectRegistry());
+            csString requestedAutoPickName = cfg->GetStr(CNF_AUTOPICK_CHAR, "");
+            
             psAuthApprovedMessage msg(me);            
 
             for (int i=0; i < msg.msgNumOfChars; i++)
@@ -128,6 +135,15 @@ void pawsCharacterPickerWindow::HandleMessage( MsgEntry* me )
                 models[charactersFound].traits = traits;
                 models[charactersFound].equipment = equipment;                                   
                 charactersFound++;
+
+                //if this is the name we have requested for autologin
+                //choose it immediately
+                if(!connecting && name == requestedAutoPickName)
+                {
+                    connecting = true;
+                    psCharacterPickerMessage msg(name);
+                    msg.SendMessage();
+                }
                                         
                 SelectCharacter(0,FindWidget("SelectCharacter0"));            
             }
