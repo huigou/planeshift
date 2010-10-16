@@ -272,8 +272,6 @@ gemNPC* EntityManager::CreateFamiliar (gemActor *owner, PID masterPID)
     owner->GetClient()->SetFamiliar( npc );
     owner->GetCharacterData()->SetFamiliarID( familiarID );
 
-    db->Command("INSERT INTO npc_knowledge_areas(player_id, area, priority) VALUES (%d, 'Pet %s 1', '1')", familiarID.Unbox(), npc->GetCharacterData()->GetRaceInfo()->name.GetData());
-
     psServer::CharacterLoader.SaveCharacterData( npc->GetCharacterData(), npc, false );
 
     psserver->npcmanager->ControlNPC( npc );
@@ -747,7 +745,7 @@ EID EntityManager::CreateNPC(psCharacter *chardata, InstanceID instance, csVecto
     actor->SetSuperclientID( chardata->GetAccount() );
     
     // Add NPC Dialog plugin if any knowledge areas are defined in db for him.
-    actor->SetupDialog(chardata->GetPID(), true);
+    actor->SetupDialog(chardata->GetPID(), chardata->GetMasterNPCID(), true);
 
     // Setup prox list and send to anyone who needs him
     if ( updateProxList )

@@ -1213,7 +1213,7 @@ public:
     virtual AccountID GetSuperclientID()        { return superClientID; }
     virtual void SetSuperclientID(AccountID id) { superClientID = id; }
 
-    void SetupDialog(PID npcID,bool force=false);
+    void SetupDialog(PID npcID, PID masterNpcID, bool force=false);
     void ReactToPlayerApproach(psNPCCommandsMessage::PerceptionType type,gemActor *player);
 
     virtual void ApplyStaminaCalculations(const csVector3& velocity, float times) { } // NPCs usually have 0 stamina.
