@@ -378,6 +378,9 @@ void pawsLoginWindow::ConnectToServer(bool automatic)
         psengine->GetNetManager()->Authenticate( login->GetText(), storedPasswd );
     }
 
+    //allow the server name to be known from the charpicker to autochose the last server chosen.
+    static_cast<pawsCharacterPickerWindow*>(PawsManager::GetSingleton().FindWidget("CharPickerWindow"))->StoreServerName(servers[listBox->GetSelectedRowNum()]->GetName().GetData());
+
     SaveLoginInformation();
     connecting = true;
 }

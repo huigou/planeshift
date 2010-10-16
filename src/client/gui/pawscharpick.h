@@ -42,12 +42,13 @@ public:
     void SelectCharacter(int character, pawsWidget* widget);
     void SelectCharacter(int character);   
 
-    // This is used ONLY by psClientDR to let the user join if we got the MsgStrings we need
+    /// This is used ONLY by psClientDR to let the user join if we got the MsgStrings we need
     void ReceivedStrings();
     
     void Draw();
     
     void StoreHashedPassword(csString passwordHash) {passHash = passwordHash;}
+    void StoreServerName(csString servName) {serverName = servName;}
 
     bool CheckLoadStatus();
 private:
@@ -74,6 +75,7 @@ private:
     Model models[MAX_CHARS];
 
     csString passHash;
+    csString serverName;
     psCharAppearance* charApp;
     bool loaded;
 };

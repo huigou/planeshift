@@ -55,7 +55,9 @@
 #define YES_DELETE_CHARACTER    300
 #define NO_DELETE_CHARACTER     302
 
-#define CNF_AUTOPICK_CHAR  "PlaneShift.Connection.AutoPickChar"
+#define CNF_AUTOPICK_CHAR_NAME "PlaneShift.Connection.AutoPickChar.Name"
+#define CNF_AUTOPICK_CHAR      "PlaneShift.Connection.AutoPickChar.Id"
+#define CNF_LAST_CHAR          "PlaneShift.Connection.%s.LastChar"
 
 
 pawsCharacterPickerWindow::pawsCharacterPickerWindow()
@@ -109,7 +111,13 @@ void pawsCharacterPickerWindow::HandleMessage( MsgEntry* me )
 
             //get a requested autoconnect charname
             csRef<iConfigManager> cfg =  csQueryRegistry<iConfigManager> (PawsManager::GetSingleton().GetObjectRegistry());
-            csString requestedAutoPickName = cfg->GetStr(CNF_AUTOPICK_CHAR, "");
+            //gets the autopick choice
+            csString requestedAutoPickName = cfg->GetStr(CNF_AUTOPICK_CHAR_NAME, "");
+            int requestedAutoPickId = cfg->GetInt(CNF_AUTOPICK_CHAR, -2);
+            //gets the last used name to select it
+            csString cnf_name;
+            cnf_name.Format(CNF_LAST_CHAR,serverName.GetData());
+            csString lastCharName = cfg->GetStr(cnf_name,"");
             
             psAuthApprovedMessage msg(me);            
 
@@ -138,14 +146,20 @@ void pawsCharacterPickerWindow::HandleMessage( MsgEntry* me )
 
                 //if this is the name we have requested for autologin
                 //choose it immediately
-                if(!connecting && name == requestedAutoPickName)
+                if(!connecting && ( requestedAutoPickId == i ||
+                                    (requestedAutoPickId == -1 && name == lastCharName) ||
+                                    name == requestedAutoPickName))
                 {
                     connecting = true;
                     psCharacterPickerMessage msg(name);
                     msg.SendMessage();
                 }
-                                        
-                SelectCharacter(0,FindWidget("SelectCharacter0"));            
+
+                //only select 0 the first time in case we don't have an hit with the last selected char
+                if(lastCharName == name)
+                    SelectCharacter(i, button);
+                else if(i==0)
+                    SelectCharacter(0,FindWidget("SelectCharacter0"));            
             }
 
             // If we have all the chars we have then turn on the rest of the 
@@ -321,6 +335,12 @@ bool pawsCharacterPickerWindow::OnButtonPressed( int mouseButton, int keyModifer
                                 
                 psCharacterPickerMessage msg(charname);
                 msg.SendMessage();
+
+                //save the selected charname to the configuration file
+                csString cnf_name;
+                cnf_name.Format(CNF_LAST_CHAR,serverName.GetData());
+                csRef<iConfigManager> cfg =  csQueryRegistry<iConfigManager> (PawsManager::GetSingleton().GetObjectRegistry());
+                cfg->SetStr(cnf_name, charname);
             }
             
             return true;
