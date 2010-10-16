@@ -139,9 +139,14 @@ bool pawsLoginWindow::PostSetup()
         psSystemMessage msg(0,MSG_OK,PawsManager::GetSingleton().Translate("Welcome to PlaneShift!"));
         msg.FireEvent();
         //handles auto login in case the option is set.
-        int autoLoginServer = cfg->GetInt(CNF_AUTOLOGIN_SERVER, -1);
+        int autoLoginServer = cfg->GetInt(CNF_AUTOLOGIN_SERVER, -2);
         //only autologin if it's a valid value
-        if(autoLoginServer >= 0 && (int)servers.GetSize() > autoLoginServer )
+        if(autoLoginServer == -1) //autologin to the last used server
+        {
+            ConnectToServer(true); //connect to the server without updating the gui.
+        }
+        //autologin to the specified server
+        else if(autoLoginServer >= 0 && (int)servers.GetSize() > autoLoginServer )
         {
             listBox->Select( listBox->GetRow(autoLoginServer), true );
             ConnectToServer(true); //connect to the server without updating the gui.
