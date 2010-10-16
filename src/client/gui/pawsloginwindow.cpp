@@ -149,7 +149,10 @@ bool pawsLoginWindow::PostSetup()
             for(int i = 0; i < servers.GetSize(); i++)
             {
                 if(autoLoginServerName == servers[i]->GetName())
+                {
                     autoLoginServer = i; //named autologin has precedence over id autologin
+                    break;
+                }
             }
         }
         //only autologin if it's a valid value
