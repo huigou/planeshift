@@ -155,11 +155,9 @@ void pawsCharacterPickerWindow::HandleMessage( MsgEntry* me )
                     msg.SendMessage();
                 }
 
-                //only select 0 the first time in case we don't have an hit with the last selected char
+                //save the character id we have found
                 if(lastCharName == name)
-                    SelectCharacter(i, button);
-                else if(i==0)
-                    SelectCharacter(0,FindWidget("SelectCharacter0"));            
+                    selectedCharacter = i;
             }
 
             // If we have all the chars we have then turn on the rest of the 
@@ -601,6 +599,9 @@ void pawsCharacterPickerWindow::ReceivedStrings()
 
     if(charactersFound > 0 && charactersFound == psengine->GetNumChars())
     {
-        SelectCharacter(0);
+        if(selectedCharacter != -1)
+            SelectCharacter(selectedCharacter);
+        else
+            SelectCharacter(0);
     }
 }
