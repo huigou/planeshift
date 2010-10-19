@@ -101,7 +101,7 @@ protected:
 private:
     void AddModifier( LootModifier *oper1, LootModifier *oper2 );
     /** sets an attribute to the item overlay. utility function used when parsing the loot modifiers xml
-     *  @param op The operation to do with the attributes. (+/-/*)
+     *  @param op The operation to do with the attributes. (+, -, *)
      *  @param attrName The name of the attribute we are changing.
      *  @param modifier The amount to change of the attribute (right operand, left operand is the basic attribute)
      *  @param overlay The randomization overlay where we are applying these attributes.
