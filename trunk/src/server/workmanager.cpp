@@ -127,6 +127,7 @@ WorkManager::WorkManager(CacheManager* cachemanager, EntityManager* entitymanage
 
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<WorkManager>(this,&WorkManager::HandleWorkCommand),MSGTYPE_WORKCMD,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
     psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<WorkManager>(this,&WorkManager::HandleLockPick),MSGTYPE_LOCKPICK,REQUIRE_READY_CLIENT|REQUIRE_ALIVE|REQUIRE_TARGET);
+    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<WorkManager>(this,&WorkManager::StopUseWork),MSGTYPE_CRAFT_CANCEL,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
 
     calc_repair_rank            = psserver->GetMathScriptEngine()->FindScript("Calculate Repair Rank");
     calc_repair_time            = psserver->GetMathScriptEngine()->FindScript("Calculate Repair Time");
@@ -163,6 +164,7 @@ WorkManager::~WorkManager()
     {
         psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_WORKCMD);
         psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_LOCKPICK);
+        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_CRAFT_CANCEL);
     }
 }
 
@@ -1050,7 +1052,7 @@ void WorkManager::StopWork(Client* client, psItem* item)
         }
         else
         {
-            StopUseWork(client);
+            StopUseWork(0, client);
         }
     }
 }
@@ -1072,7 +1074,7 @@ void WorkManager::HandleUse(Client *client)
     }
     else
     {
-        StopUseWork(client);
+        StopUseWork(0, client);
     }
 }
 
@@ -1151,6 +1153,9 @@ void WorkManager::StartUseWork(Client* client)
                 StartTransformationEvent(
                     TRANSFORMTYPE_CONTAINER, PSCHARACTER_SLOT_NONE, count, itemArray[0]->GetItemQuality(), itemArray[0]);
                 psserver->SendSystemOK(clientNum,"You start work on %d %s.", itemArray[0]->GetStackCount(), itemArray[0]->GetName());
+                psCraftCancelMessage msg;
+                msg.SetCraftTime(CalculateEventDuration(trans, count), clientNum);
+                msg.SendMessage();
                 return;
             }
             else
@@ -1184,6 +1189,9 @@ void WorkManager::StartUseWork(Client* client)
                 StartTransformationEvent(
                     TRANSFORMTYPE_SLOT, PSCHARACTER_SLOT_RIGHTHAND, handCount, rhand->GetItemQuality(), rhand);
                 psserver->SendSystemOK(clientNum,"You start work on %d %s.", rhand->GetStackCount(), rhand->GetName());
+                psCraftCancelMessage msg;
+                msg.SetCraftTime(CalculateEventDuration(trans, handCount), clientNum);
+                msg.SendMessage();
                 return;
             }
             else if (rhandMatch != TRANSFORM_UNKNOWN_ITEM)
@@ -1210,6 +1218,9 @@ void WorkManager::StartUseWork(Client* client)
                 StartTransformationEvent(
                     TRANSFORMTYPE_SLOT, PSCHARACTER_SLOT_LEFTHAND, handCount, lhand->GetItemQuality(), lhand);
                 psserver->SendSystemOK(clientNum,"You start work on %d %s.", lhand->GetStackCount(), lhand->GetName());
+                psCraftCancelMessage msg;
+                msg.SetCraftTime(CalculateEventDuration(trans, handCount), clientNum);
+                msg.SendMessage();
                 return;
             }
             else if (lhandMatch != TRANSFORM_UNKNOWN_ITEM)
@@ -1226,7 +1237,7 @@ void WorkManager::StartUseWork(Client* client)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Stop doing use work
-void WorkManager::StopUseWork(Client* client)
+void WorkManager::StopUseWork(MsgEntry* me,Client *client)
 {
     // Check for any targeted item or container in hand
     if ( !ValidateTarget(client))
@@ -1235,10 +1246,10 @@ void WorkManager::StopUseWork(Client* client)
     }
 
     // Kill the work event if it exists
-    if( worker->GetMode() == PSCHARACTER_MODE_WORK )
+    if( client->GetActor()->GetMode() == PSCHARACTER_MODE_WORK )
     {
-        worker->SetMode(PSCHARACTER_MODE_PEACE);
-        psserver->SendSystemOK(clientNum,"You stop working.");
+        client->GetActor()->SetMode(PSCHARACTER_MODE_PEACE);
+        psserver->SendSystemOK(client->GetClientNum(),"You stop working.");
     }
 }
 
@@ -2065,6 +2076,9 @@ void WorkManager::StartTransformationEvent(int transType, INVENTORY_SLOT_NUMBER 
 
     // Let the server admin know
     if (secure) psserver->SendSystemInfo(clientNum,"Scheduled to finish work on %s in %1.1f seconds.\n", item->GetName(), (float)delay);
+
+    // Let the client know when the transformation is ready
+    owner->SetMode(PSCHARACTER_MODE_WORK, delay);
 
     // Make sure we have an item
     if (!item)

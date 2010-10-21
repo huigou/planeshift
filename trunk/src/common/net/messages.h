@@ -256,7 +256,10 @@ enum MSG_TYPES
     MSGTYPE_DIALOG_MENU,
     MSGTYPE_SIMPLE_STRING,
     MSGTYPE_ORDEREDTEST,
-    MSGTYPE_GENERICCMD
+    MSGTYPE_GENERICCMD,
+
+    //Extra value made to new clients
+    MSGTYPE_CRAFT_CANCEL
 };
 
 class psMessageCracker;
@@ -2116,7 +2119,6 @@ public:
     csString commandData;
 };
 
-//--------------------------------------------------------------------------
 class psSpellCancelMessage : public psMessageCracker
 {
 public:
@@ -2137,6 +2139,42 @@ public:
      * @return Return a human readable string for the message.
      */
     virtual csString ToString(AccessPointers * access_ptrs);
+};
+
+//--------------------------------------------------------------------------
+/** Spell Cancel Message
+* This message is used to send a cancel message, and to
+* send the time left before the item is crafted 
+*/
+class psCraftCancelMessage : public psMessageCracker
+{
+public:
+    psCraftCancelMessage()
+    {
+        msg.AttachNew(new MsgEntry());
+        msg->SetType(MSGTYPE_CRAFT_CANCEL);
+        msg->clientnum = 0;
+    }
+    psCraftCancelMessage( MsgEntry * message )
+    {
+        craftTime = message->GetInt32();
+    }
+    
+    PSF_DECLARE_MSG_FACTORY();
+    
+    /**
+    This makes a message from the craft time and the client who are crafting
+    */
+    void SetCraftTime(int craftTime, uint32_t client);
+    /**
+     * @brief Converts the message into human readable string.
+     *
+     * @param access_ptrs A struct to a number of access pointers.
+     * @return Return a human readable string for the message.
+     */
+    virtual csString ToString(AccessPointers * access_ptrs);
+
+    int craftTime;///<The time when the crafting shall be ready
 };
 
 //--------------------------------------------------------------------------
