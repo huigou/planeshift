@@ -131,6 +131,7 @@ if (!myref)                                                  \
 #include "gui/pawsconfigentitylabels.h"
 #include "gui/pawsconfigentityinter.h"
 #include "gui/pawsconfigautoexec.h"
+#include "gui/pawscraftcancelwindow.h"
 #include "gui/inventorywindow.h"
 #include "gui/pawsitemdescriptionwindow.h"
 #include "gui/pawscontainerdescwindow.h"
@@ -816,6 +817,7 @@ void psEngine::DeclareExtraFactories()
     RegisterFactory (pawsConfigChatBubblesFactory);
     RegisterFactory (pawsConfigShadowsFactory);
     RegisterFactory (pawsNpcDialogWindowFactory);
+    RegisterFactory (pawsCraftCancelWindowFactory);
 }
 
 //-----------------------------------------------------------------------------
@@ -1404,6 +1406,7 @@ void psEngine::LoadGame()
         LoadPawsWidget( "GameBoard",               "gameboard.xml");
         LoadPawsWidget( "Writing window",          "bookwriting.xml");
         LoadPawsWidget( "NPC dialog window",       "dialog.xml");
+        LoadPawsWidget( "Craft status window",     "craftcancelwindow.xml" );
 
         LoadCustomPawsWidgets("/data/gui/customwidgetslist.xml");
 
@@ -1429,6 +1432,7 @@ void psEngine::LoadGame()
         HideWindow("GmGUI");
         HideWindow("PetStatWindow");
         HideWindow("WritingWindow");
+        HideWindow("CraftCancelWindow");
 
         paws->GetMouse()->ChangeImage("Skins Normal Mouse Pointer");
 

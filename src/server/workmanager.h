@@ -326,7 +326,7 @@ protected:
       *
       * @param client  The client that issues the /use command
       */
-    void StopUseWork(Client *client);
+    void StopUseWork(MsgEntry* me,Client *client);
 
     /** Checks to see if the item can be used for working.
       *

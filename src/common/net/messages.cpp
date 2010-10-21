@@ -1314,6 +1314,8 @@ csString psGroupCmdMessage::ToString(AccessPointers * /*access_ptrs*/)
     return msgtext;
 }
 
+
+
 // ---------------------------------------------------------------------------
 
 PSF_IMPLEMENT_MSG_FACTORY(psUserCmdMessage,MSGTYPE_USERCMD);
@@ -2891,6 +2893,27 @@ csString psGUIGroupMessage::ToString(AccessPointers * /*access_ptrs*/)
 #ifdef FULL_DEBUG_DUMP
     msgtext.AppendFmt(" Data: '%s'", commandData.GetDataSafe());
 #endif
+
+    return msgtext;
+}
+
+//----------------------------------------------------------------------------
+PSF_IMPLEMENT_MSG_FACTORY(psCraftCancelMessage,MSGTYPE_CRAFT_CANCEL);
+
+void psCraftCancelMessage::SetCraftTime(int craftTime, uint32_t client)
+{
+    this->craftTime = craftTime;
+    msg.AttachNew(new MsgEntry(sizeof(int)));
+    msg->SetType(MSGTYPE_CRAFT_CANCEL);
+    msg->clientnum = client;
+    msg->Add(craftTime);
+}
+
+csString psCraftCancelMessage::ToString(AccessPointers * /*access_ptrs*/)
+{
+    csString msgtext;
+
+    msgtext.AppendFmt("Craft cancel");
 
     return msgtext;
 }
