@@ -1127,8 +1127,8 @@ bool ServerCharManager::VerifyTrade( Client * client, psCharacter * character, p
                 character->GetCharName(), trade, itemName);
         return false;
     }
-    // Check range
-    if (character->GetActor()->RangeTo((*merchant)->GetActor()) > RANGE_TO_SELECT)
+    // Check range and actor validity
+    if (!((*storage)->GetActor()) || character->GetActor()->RangeTo((*merchant)->GetActor()) > RANGE_TO_SELECT)
     {
         psserver->SendSystemInfo(client->GetClientNum(),"Merchant is out of range.");
         CPrintf(CON_DEBUG, "Player %s failed to %s item %s. Out of range!\n",
@@ -1458,8 +1458,8 @@ bool ServerCharManager::VerifyStorage( Client * client, psCharacter * character,
                 character->GetCharName(), trade, itemName);
         return false;
     }
-    // Check range
-    if (character->GetActor()->RangeTo((*storage)->GetActor()) > RANGE_TO_SELECT)
+    // Check range and actor validity
+    if (!((*storage)->GetActor()) || character->GetActor()->RangeTo((*storage)->GetActor()) > RANGE_TO_SELECT)
     {
         psserver->SendSystemInfo(client->GetClientNum(),"Storage owner is out of range.");
         CPrintf(CON_DEBUG, "Player %s failed to %s item %s. Out of range!\n",
