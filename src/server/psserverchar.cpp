@@ -1128,7 +1128,7 @@ bool ServerCharManager::VerifyTrade( Client * client, psCharacter * character, p
         return false;
     }
     // Check range and actor validity
-    if (!((*storage)->GetActor()) || character->GetActor()->RangeTo((*merchant)->GetActor()) > RANGE_TO_SELECT)
+    if (!((*merchant)->GetActor()) || character->GetActor()->RangeTo((*merchant)->GetActor()) > RANGE_TO_SELECT)
     {
         psserver->SendSystemInfo(client->GetClientNum(),"Merchant is out of range.");
         CPrintf(CON_DEBUG, "Player %s failed to %s item %s. Out of range!\n",
