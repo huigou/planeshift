@@ -821,7 +821,7 @@ void pawsChatWindow::ReplayMessages(unsigned int reqLines)
                         logFileName[CHAT_LOG_ALL]);
     filename.ReplaceAll(" ", "_");
 
-    char buf[100*reqLines+1];
+    char *buf = new char[100*reqLines+1];
 
     // Open file and seek to 100*line bytes from the end, unlikely to need anything earlier than that.
     csRef<iFile> file = psengine->GetVFS()->Open(filename, VFS_FILE_READ);
@@ -835,7 +835,10 @@ void pawsChatWindow::ReplayMessages(unsigned int reqLines)
 
     // At least 5 chars
     if(readLength < 5)
+    {
+        delete buf;
         return;
+    }
 
     buf[readLength] = '\0';
 
@@ -863,6 +866,7 @@ void pawsChatWindow::ReplayMessages(unsigned int reqLines)
     PawsManager::GetSingleton().Publish(CHAT_TYPES[CHAT_SAY], PawsManager::GetSingleton().Translate("Replaying previous chat..."), settings.systemColor );
     while(!line.IsEmpty())
         PawsManager::GetSingleton().Publish(CHAT_TYPES[CHAT_SAY], line.Pop(), settings.chatColor );
+    delete buf;
 }
 
 void pawsChatWindow::LogMessage(enum E_CHAT_LOG channel, const char* message, int type)
