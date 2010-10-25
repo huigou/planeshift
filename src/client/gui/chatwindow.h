@@ -255,7 +255,7 @@ protected:
     void CreateSettingNode(iDocumentNode* mNode,int color,const char* name);
 
     /// Replay recent message history on load
-    void ReplayMessages();
+    void ReplayMessages(unsigned int reqLines);
     
     /// Subscribed channel name to server channel ID reversible mapping
     csHashReversible<uint32_t, csString> channelIDs;

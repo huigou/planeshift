@@ -195,7 +195,6 @@ bool pawsChatWindow::PostSetup()
         Error1("ChatWindow failed because IgnoredList window was not found.");
         return false;
     }
-    ReplayMessages();
 
     if(settings.joindefaultchannel)
         JoinChannel("gossip");
@@ -529,6 +528,14 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
     }
     else
     {
+
+        if (words[0] == "/replay" )
+        {
+            words.GetTail(1, text);
+            DetermineChatTabAndSelect(CHAT_SAY);
+            ReplayMessages(strtoul(text.GetDataSafe(), NULL, 0));
+        }
+        
         if (words.GetCount() == 1)
         {
             error = PawsManager::GetSingleton().Translate("You must enter the text");
@@ -806,7 +813,7 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
     return NULL;
 }
 
-void pawsChatWindow::ReplayMessages()
+void pawsChatWindow::ReplayMessages(unsigned int reqLines)
 {
     csString filename;
     filename.Format("/planeshift/userdata/logs/%s_%s",
@@ -814,17 +821,17 @@ void pawsChatWindow::ReplayMessages()
                         logFileName[CHAT_LOG_ALL]);
     filename.ReplaceAll(" ", "_");
 
-    char buf[1001];
+    char buf[100*reqLines+1];
 
     // Open file and seek to 1000 bytes from the end, unlikely to need anything earlier than that.
     csRef<iFile> file = psengine->GetVFS()->Open(filename, VFS_FILE_READ);
     if(!file.IsValid())
         return;
     size_t seekPos = 0;
-    if(file->GetSize() > 1000)
-        seekPos = file->GetSize() - 1000;
+    if(file->GetSize() > 100*reqLines)
+        seekPos = file->GetSize() - 100*reqLines;
     file->SetPos(seekPos);
-    size_t readLength = file->Read(buf, 1000);
+    size_t readLength = file->Read(buf, 100*reqLines);
 
     // At least 5 chars
     if(readLength < 5)
@@ -837,7 +844,7 @@ void pawsChatWindow::ReplayMessages()
     char* currentPos;
     csArray<const char*> line;
 
-    for(currentPos = buf + readLength - 2; currentPos != buf && lines != 10; currentPos--)
+    for(currentPos = buf + readLength - 2; currentPos != buf && lines != reqLines; currentPos--)
     {
         if(*currentPos == '\n')
         {
@@ -1687,6 +1694,9 @@ void pawsChatWindow::SubscribeCommands()
     cmdsource->Subscribe("/mypet",this);
     cmdsource->Subscribe("/auction",this);
     cmdsource->Subscribe("/report",this);
+
+    cmdsource->Subscribe("/replay",this);
+
 
     // channel shortcuts
     cmdsource->Subscribe("/1", this);
