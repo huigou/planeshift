@@ -30,7 +30,6 @@
 #include <csutil/hashr.h>
 
 #include "net/cmdbase.h"
-//#include "util/psstring.h"
 #include "util/stringarray.h"
 
 // PAWS INCLUDES
@@ -145,18 +144,18 @@ public:
 
     void PerformAction( const char* action );
 
-    //Clear history
+    ///Clear history
     void Clear();
 
     void AutoReply(void);
 
-    //Sets the away message
+    ///Sets the away message
     void SetAway(const char* text);
 
     virtual void OnLostFocus();
     virtual void Show();
 
-    csString GetBracket(int type); ///generates a bracket like [tell] starting from the msgtype
+    csString GetBracket(int type); ///< Generates a bracket like [tell] starting from the msgtype
 
     /// Function that handles output of various tabbed windows.
     void ChatOutput(const char* data, int colour = -1, int type = CHAT_SYSTEM, bool flashEnabled = true, bool hasCharName = false, int hotkeyChannel = 0);
@@ -180,10 +179,10 @@ public:
     /// mixes two colours and returns their mixed colour
     int mixColours(int colour1, int colour2);
     
-    // Leaves the channel and removes the hotkey association
+    /// Leaves the channel and removes the hotkey association
     bool LeaveChannel(int hotkeyChannel);
     
-    // Joins the channel and adds the hotkey when the server accepts the join.
+    /// Joins the channel and adds the hotkey when the server accepts the join.
     void JoinChannel(csString name);
     
 protected:
