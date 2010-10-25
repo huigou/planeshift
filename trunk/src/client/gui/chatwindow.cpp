@@ -826,7 +826,10 @@ void pawsChatWindow::ReplayMessages(unsigned int reqLines)
     // Open file and seek to 100*line bytes from the end, unlikely to need anything earlier than that.
     csRef<iFile> file = psengine->GetVFS()->Open(filename, VFS_FILE_READ);
     if(!file.IsValid())
+    {
+        delete buf;
         return;
+    }
     size_t seekPos = 0;
     if(file->GetSize() > 100*reqLines)
         seekPos = file->GetSize() - 100*reqLines;
