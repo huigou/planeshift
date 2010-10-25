@@ -254,7 +254,9 @@ protected:
 
     void CreateSettingNode(iDocumentNode* mNode,int color,const char* name);
 
-    /// Replay recent message history on load
+    /** Replay recent message history on load.
+     *  @param reqLines The amount of lines to load from the log starting from the bottom.
+     */
     void ReplayMessages(unsigned int reqLines);
     
     /// Subscribed channel name to server channel ID reversible mapping
