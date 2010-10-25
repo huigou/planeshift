@@ -823,7 +823,7 @@ void pawsChatWindow::ReplayMessages(unsigned int reqLines)
 
     char buf[100*reqLines+1];
 
-    // Open file and seek to 1000 bytes from the end, unlikely to need anything earlier than that.
+    // Open file and seek to 100*line bytes from the end, unlikely to need anything earlier than that.
     csRef<iFile> file = psengine->GetVFS()->Open(filename, VFS_FILE_READ);
     if(!file.IsValid())
         return;
@@ -839,7 +839,7 @@ void pawsChatWindow::ReplayMessages(unsigned int reqLines)
 
     buf[readLength] = '\0';
 
-    // Find the last 10 lines
+    // Find the last lines
     int lines = 0;
     char* currentPos;
     csArray<const char*> line;
