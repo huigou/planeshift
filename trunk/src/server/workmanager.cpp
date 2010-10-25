@@ -2077,10 +2077,6 @@ void WorkManager::StartTransformationEvent(int transType, INVENTORY_SLOT_NUMBER 
     // Let the server admin know
     if (secure) psserver->SendSystemInfo(clientNum,"Scheduled to finish work on %s in %1.1f seconds.\n", item->GetName(), (float)delay);
 
-    // Let the client know when the transformation is ready
-    //owner->SetMode(PSCHARACTER_MODE_WORK, delay);
-    //^ this needs investigation
-
     // Make sure we have an item
     if (!item)
     {
