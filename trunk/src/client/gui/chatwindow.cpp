@@ -821,19 +821,17 @@ void pawsChatWindow::ReplayMessages(unsigned int reqLines)
                         logFileName[CHAT_LOG_ALL]);
     filename.ReplaceAll(" ", "_");
 
-    char *buf = new char[100*reqLines+1];
-
     // Open file and seek to 100*line bytes from the end, unlikely to need anything earlier than that.
     csRef<iFile> file = psengine->GetVFS()->Open(filename, VFS_FILE_READ);
     if(!file.IsValid())
     {
-        delete buf;
         return;
     }
     size_t seekPos = 0;
     if(file->GetSize() > 100*reqLines)
         seekPos = file->GetSize() - 100*reqLines;
     file->SetPos(seekPos);
+    char *buf = new char[100*reqLines+1];
     size_t readLength = file->Read(buf, 100*reqLines);
 
     // At least 5 chars
