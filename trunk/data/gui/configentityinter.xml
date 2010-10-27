@@ -66,6 +66,16 @@
         <frame x="150" y="190" width="200" height="25" border="no" />
     </widget>
 
+     <widget name="imperviousNPCs_label" factory="pawsTextBox">
+        <text string="" horizAdjust="LEFT" />
+        <frame x="20" y="220" width="100" height="25" border="no" />
+    </widget>
+
+    <widget name="imperviousNPCs" factory="pawsComboBox">
+        <listbox rows="1" height="20" text="Day" alpha="100"/>
+        <frame x="150" y="220" width="200" height="25" border="no" />
+    </widget>
+
 </widget>
 
 </widget_description>
