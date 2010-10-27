@@ -4233,7 +4233,13 @@ csString gemNPC::GetDefaultBehavior(const csString & dfltBehaviors)
     if (psChar->IsMerchant())
         behNum = 2;
     else if (IsAlive() && GetCharacterData()->impervious_to_attack && GetNPCDialogPtr() != NULL)
-        return csString("talk");
+    {
+        behNum = 6;
+        //temporary code to support old clients. when netbumping move this to a more appropriate number.
+        //and remove the two lines under this
+        if(::GetDefaultBehavior(dfltBehaviors, behNum) == "")
+            return csString("talk");
+    }
     else if (IsAlive())
         behNum = 3;
     else

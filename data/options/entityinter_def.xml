@@ -4,4 +4,5 @@
 	<merchants value='0'/>
 	<aliveNPCs value='3'/>
 	<deadNPCs value='0'/>
+    <imperviousNpcs value='2' />
 </EntityInteraction>
