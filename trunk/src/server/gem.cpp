@@ -4232,7 +4232,7 @@ csString gemNPC::GetDefaultBehavior(const csString & dfltBehaviors)
     int behNum;
     if (psChar->IsMerchant())
         behNum = 2;
-    else if (GetNPCDialogPtr() != NULL)
+    else if (IsAlive() && GetCharacterData()->impervious_to_attack && GetNPCDialogPtr() != NULL)
         return csString("talk");
     else if (IsAlive())
         behNum = 3;
