@@ -540,6 +540,7 @@ void CombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_result
     MathVar *weaponDecay = NULL;
     MathVar *blockDecay = NULL;
     MathVar *armorDecay = NULL;
+    MathEnvironment env;
 
     psItem *weapon         = attacker_data->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot());
     psItem *blockingWeapon = target_data->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot(),true);
@@ -555,7 +556,6 @@ void CombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_result
         // clamp value between 0 and 1
         ArmorVsWeapon = ArmorVsWeapon > 1.0F ? 1.0F : ArmorVsWeapon < 0.0F ? 0.0F : ArmorVsWeapon;
 
-        MathEnvironment env;
         env.Define("Weapon", weapon);                             // weapon that was used to attack
         env.Define("BlockingWeapon", blockingWeapon);             // weapon that blocked the attack
         env.Define("Armor", struckArmor);                         // armor hit
