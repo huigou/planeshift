@@ -2027,6 +2027,9 @@ const char *psItem::GetPartMeshName()
 
 const char *psItem::GetImageName()
 {
+    //do we have an overlay?
+    if(itemModifiers->active && !itemModifiers->icon.IsEmpty())
+        return itemModifiers->icon;
     return current_stats->GetImageName();
 }
 
