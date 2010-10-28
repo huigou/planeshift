@@ -534,6 +534,7 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
             words.GetTail(1, text);
             DetermineChatTabAndSelect(CHAT_SAY);
             ReplayMessages(strtoul(text.GetDataSafe(), NULL, 0));
+            return NULL;
         }
         
         if (words.GetCount() == 1)
