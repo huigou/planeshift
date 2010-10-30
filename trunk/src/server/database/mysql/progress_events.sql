@@ -26,8 +26,8 @@ INSERT INTO progression_events VALUES("give_exp",'<script><exp aim="Target" valu
 INSERT INTO progression_events VALUES("SpellFailure",
     '<script>
        <fx target="Caster" name="spell_failure"/>
-       <mstamina aim="Caster" value="-StaminaCost*0.1"/>
-       <mana aim="Caster" value="-ManaCost*0.1"/>
+       <mstamina aim="Caster" value="-Spell:StaminaCost*0.1"/>
+       <mana aim="Caster" value="-Spell:ManaCost*0.1"/>
     </script>');
 INSERT INTO progression_events VALUES("cast Life Infusion",
     '<script>
