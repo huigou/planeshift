@@ -83,10 +83,13 @@ void NavGen::Run()
     if(output.IsEmpty())
         output = config->GetStr("output", basePath+"navmesh");
 
-    float height = config->GetFloat("NavGen.AgentHeight", 2.f);
-    float width  = config->GetFloat("NavGen.AgentWidth", 0.5f);
-    float slope  = config->GetFloat("NavGen.Slope", 45.f);
+    float height = config->GetFloat("NavGen.Agent.Height", 2.f);
+    float width  = config->GetFloat("NavGen.Agent.Width", 0.5f);
+    float slope  = config->GetFloat("NavGen.Agent.Slope", 45.f);
+    float step   = config->GetFloat("NavGen.Agent.MaxStepSize", 0.5f);
     int tileSize = config->GetInt("NavGen.TileSize", 64);
+    float cellSize = config->GetFloat("NavGen.CellSize", width/2);
+    float borderSize = config->GetFloat("NavGen.BorderSize", width+1);
 
     csRef<iEventQueue> queue = csQueryRegistry<iEventQueue>(object_reg);
     csRef<iVirtualClock> vc = csQueryRegistry<iVirtualClock>(object_reg);
@@ -209,7 +212,10 @@ void NavGen::Run()
         csRef<iCelNavMeshParams> parameters;
         parameters.AttachNew(builder->GetNavMeshParams()->Clone());
         parameters->SetSuggestedValues(height, width, slope);
+        parameters->SetAgentMaxClimb(step);
         parameters->SetTileSize(tileSize);
+        parameters->SetCellSize(cellSize);
+        parameters->SetBorderSize(borderSize);
         builder->SetNavMeshParams(parameters);
 
         // get list of loaded sectors
