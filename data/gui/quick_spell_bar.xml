@@ -1,0 +1,22 @@
+<widget_description>
+<widget name="HotBar" factory="pawsBartenderWindow" visible="yes" savepositions="yes" movable="yes" resizable="no" configurable="yes" style="New Standard GUI">
+    <frame x="200" y="100" width="650" height="50" border="yes" />        
+    <widget name="TestBartenderSlot_1" factory="pawsSlot">
+        <bartender_slot>1</bartender_slot>
+        <frame x="0" y="0" width="48" height="48" />
+    </widget>
+<widget name="TestBartenderSlot_2" factory="pawsSlot">
+        <bartender_slot>1</bartender_slot>
+        <frame x="50" y="0" width="48" height="48" />
+    </widget>
+<widget name="TestBartenderSlot_3" factory="pawsSlot">
+        <bartender_slot>1</bartender_slot>
+        <frame x="100" y="0" width="48" height="48" />
+    </widget>
+<widget name="TestBartenderSlot_4" factory="pawsSlot">
+        <bartender_slot>1</bartender_slot>
+        <frame x="150" y="0" width="48" height="48" />
+    </widget>
+
+</widget>
+</widget_description>
