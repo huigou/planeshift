@@ -33,6 +33,7 @@
 #include "paws/pawstextbox.h"
 #include "paws/pawslistbox.h"
 #include "paws/pawsmanager.h"
+#include "gui/pawsslot.h"
 #include "gui/pawscontrolwindow.h"
 
 
@@ -57,7 +58,8 @@ bool pawsSpellBookWindow::PostSetup()
 
     spellList        = (pawsListBox*)FindWidget("SpellList");
     spellDescription = (pawsMessageTextBox*)FindWidget("Description");
-    spellImage       = (pawsWidget*)FindWidget("SpellImage");
+    spellImage       = (pawsSlot*)FindWidget("SpellImage");
+    spellImage->DrawStackCount(false);
 
     spellList->SetSortingFunc(0, textBoxSortFunc);
     spellList->SetSortingFunc(5, textBoxSortFunc);
@@ -97,7 +99,7 @@ bool pawsSpellBookWindow::OnButtonPressed( int mouseButton, int keyModifier, paw
         ShowActiveMagic();
         return true;
     }
-    return false;
+    return true;
 }
 
 
@@ -192,6 +194,9 @@ void pawsSpellBookWindow::OnListAction( pawsListBox* widget, int status )
         selectedSpell.Replace( spellName->GetText() );
         spellDescription->AddMessage(descriptions_Hash.Get(spellName->GetText(), "Unknown"));
         spellDescription->ResetScroll();
-        spellImage->SetBackground(images_Hash.Get(spellName->GetText(), ""));
+        //spellImage->SetBackground(images_Hash.Get(spellName->GetText(), ""));
+        spellImage->PlaceItem(images_Hash.Get(spellName->GetText(),""), "", "", 1);
+        csString action = "/cast " + csString(spellName->GetText());
+        spellImage->SetBartenderAction(action);
     }
 }

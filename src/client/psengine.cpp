@@ -192,6 +192,8 @@ if (!myref)                                                  \
 #include "gui/pawsconfigchatbubbles.h"
 #include "gui/pawsconfigshadows.h"
 #include "gui/pawsnpcdialog.h"
+#include "gui/bartender.h"
+
 
 // Needed for debugging
 csString psEngine::hwRenderer = "";
@@ -817,6 +819,7 @@ void psEngine::DeclareExtraFactories()
     RegisterFactory (pawsConfigChatBubblesFactory);
     RegisterFactory (pawsConfigShadowsFactory);
     RegisterFactory (pawsNpcDialogWindowFactory);
+    RegisterFactory (pawsBartenderWindowFactory);
     RegisterFactory (pawsCraftCancelWindowFactory);
 }
 
@@ -1406,6 +1409,7 @@ void psEngine::LoadGame()
         LoadPawsWidget( "GameBoard",               "gameboard.xml");
         LoadPawsWidget( "Writing window",          "bookwriting.xml");
         LoadPawsWidget( "NPC dialog window",       "dialog.xml");
+        LoadPawsWidget( "QuickSpellBar",            "quick_spell_bar.xml");
         LoadPawsWidget( "Craft status window",     "craftcancelwindow.xml" );
 
         LoadCustomPawsWidgets("/data/gui/customwidgetslist.xml");

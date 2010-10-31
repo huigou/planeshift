@@ -61,7 +61,8 @@ enum Slot_Containers
     CONTAINER_RECEIVING_MONEY = -7,
 
     CONTAINER_WORLD = -8,
-    CONTAINER_GEM_OBJECT = -9
+    CONTAINER_GEM_OBJECT = -9,
+    CONTAINER_SPELL_BOOK = -10
 };
 
 struct iSector;

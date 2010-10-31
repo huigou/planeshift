@@ -605,8 +605,6 @@ protected:
     csEventID SelectionNotifyEvent;
     
 #endif
-    
-
 };
 
 /// Stores the relationship between iSndSysData * and sound filename.
