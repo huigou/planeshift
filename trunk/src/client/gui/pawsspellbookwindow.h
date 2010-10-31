@@ -25,6 +25,7 @@
 class pawsTextBox;
 class pawsListBox;
 class pawsMessageTextBox;
+class pawsSlot;
 
 #include "net/cmdbase.h"
 #include "gui/pawscontrolwindow.h"
@@ -58,7 +59,7 @@ private:
 
     pawsListBox*        spellList;
     pawsMessageTextBox* spellDescription;
-    pawsWidget*         spellImage;
+    pawsSlot*           spellImage;
 
     csString selectedSpell;
     

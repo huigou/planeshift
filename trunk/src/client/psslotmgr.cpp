@@ -217,6 +217,7 @@ void psSlotManager::OnNumberEntered(const char *name,int param,int count)
 
 void psSlotManager::SetDragDetails( pawsSlot* slot, int count ) 
 { 
+    printf("SetDragDetails: \n");
     draggingSlot.containerID    = slot->ContainerID();
     draggingSlot.slotID         = slot->ID();
     draggingSlot.stackCount     = count;
@@ -340,25 +341,51 @@ void psSlotManager::Handle( pawsSlot* slot, bool grabOne, bool grabAll )
     }
     else
     {
+        printf("Dropping Slot Here\n");
+        printf("Target Slot Information: \n");
+        printf("Bartender Slot: %d\n", slot->IsBartender());
         //printf("Sending slot movement message\n");
-        psSlotMovementMsg msg( draggingSlot.containerID, draggingSlot.slotID,
+        if ( slot->IsBartender() )
+        {
+            CancelDrag(); 
+            slot->PlaceItem( draggingSlot.slot->ImageName(), "", "", draggingSlot.stackCount);
+        }
+        else
+        {
+            printf("Slot->ID: %d\n", slot->ID() );
+            printf("Container: %d\n", slot->ContainerID() );
+            printf("DraggingSlot.ID %d\n", draggingSlot.slotID);
+
+            if ( draggingSlot.containerID == CONTAINER_SPELL_BOOK )
+            {
+                // Stop dragging the spell around
+                CancelDrag();
+
+                // Set the image to this slot. 
+                slot->PlaceItem( draggingSlot.slot->ImageName(), "", "", draggingSlot.stackCount);
+            }
+            else
+            {
+                psSlotMovementMsg msg( draggingSlot.containerID, draggingSlot.slotID,
                                slot->ContainerID(), slot->ID(),
                                draggingSlot.stackCount );
-        msg.SendMessage();
+                msg.SendMessage();
 
-        // Reset widgets/objects/status.
-        PawsManager::GetSingleton().SetDragDropWidget( NULL );
-        isDragging = false;
-        if(isPlacing)
-        {
-            psengine->GetSceneManipulator()->RemoveSelected();
-            if(hadInventory)
-            {
-                PawsManager::GetSingleton().GetMainWidget()->FindWidget("InventoryWindow")->Show();
+                // Reset widgets/objects/status.
+                PawsManager::GetSingleton().SetDragDropWidget( NULL );
+                isDragging = false;
+                if(isPlacing)
+                {
+                    psengine->GetSceneManipulator()->RemoveSelected();
+                    if(hadInventory)
+                    {
+                        PawsManager::GetSingleton().GetMainWidget()->FindWidget("InventoryWindow")->Show();
+                    }
+                    isPlacing = false;
+                    isRotating = false;
+                    hadInventory = false;
+                }
             }
-            isPlacing = false;
-            isRotating = false;
-            hadInventory = false;
         }
-    }    
+    }       
 }

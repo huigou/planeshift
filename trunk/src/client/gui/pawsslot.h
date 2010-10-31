@@ -71,7 +71,11 @@ public:
     void OnUpdateData(const char *dataname,PAWSData& value);
 
     void ScalePurifyStatus();
-       
+      
+    bool IsBartender() { return isBartender; } 
+
+    void SetBartenderAction(csString& act) { action = act; }
+    csString &GetBartenderAction() { return action; }
 protected:
     psSlotManager*   mgr;
     csString         meshfactName;
@@ -91,6 +95,9 @@ protected:
     pawsTextBox* stackCountLabel;
     bool handleMouseClicks;
     bool emptyOnZeroCount;      // should the slot clear itself when the stackcount hits 0 ?
+
+    bool isBartender;       /// Flag on if this a special bartender slot. 
+    csString action;        /// This is the action to do if this a bartender button.
 };
 
 CREATE_PAWS_FACTORY( pawsSlot );
