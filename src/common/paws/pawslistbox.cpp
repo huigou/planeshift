@@ -835,13 +835,13 @@ bool pawsListBox::OnMouseDown(int button, int modifiers, int x, int y )
     if (button == csmbHWheelLeft)
     {
         if (horzscrollBar)
-            horzscrollBar->SetCurrentValue(scrollBar->GetCurrentValue() - LISTBOX_MOUSE_SCROLL_AMOUNT);
+            horzscrollBar->SetCurrentValue(horzscrollBar->GetCurrentValue() - LISTBOX_MOUSE_SCROLL_AMOUNT);
         return true;
     }
     else if (button == csmbHWheelRight)
     {
         if (horzscrollBar)
-            horzscrollBar->SetCurrentValue(scrollBar->GetCurrentValue() + LISTBOX_MOUSE_SCROLL_AMOUNT);
+            horzscrollBar->SetCurrentValue(horzscrollBar->GetCurrentValue() + LISTBOX_MOUSE_SCROLL_AMOUNT);
         return true;
     }
     else if (!selectable)
