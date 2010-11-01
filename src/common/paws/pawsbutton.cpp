@@ -342,7 +342,7 @@ bool pawsButton::OnMouseDown( int button, int modifiers, int x, int y )
     {
         return true;
     }
-    else if ( button == csmbWheelUp || button == csmbWheelDown )
+    else if ( button == csmbWheelUp || button == csmbWheelDown || button == csmbHWheelLeft || button == csmbHWheelRight)
     {
         if ( parent )
         {

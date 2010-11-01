@@ -1160,7 +1160,7 @@ bool pawsTree::OnMouseDown(int button, int modifiers, int x, int y)
             vertScrollBar->SetCurrentValue(vertScrollBar->GetCurrentValue() + TREE_MOUSE_SCROLL_AMOUNT);
         return true;
     }
-    if (button == csmbHWheelLeft)
+    else if (button == csmbHWheelLeft)
     {
         if (horizScrollBar)
             horizScrollBar->SetCurrentValue(horizScrollBar->GetCurrentValue() - TREE_MOUSE_SCROLL_AMOUNT);
