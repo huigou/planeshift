@@ -43,6 +43,8 @@
 #define  MIDDLECLICK_STR  "MiddleClick"
 #define  SCROLLUP_STR     "ScrollUp"
 #define  SCROLLDOWN_STR   "ScrollDown"
+#define  SCROLLLEFT_STR     "ScrollLeft"
+#define  SCROLLRIGHT_STR   "ScrollRight"
 #define  EXTRA1_STR       "Extra1"
 #define  EXTRA2_STR       "Extra2"
 #define  NONE_STR         "None"
@@ -63,15 +65,17 @@ csString psMouseBinds::MouseButtonToString(uint button, uint32 modifiers)
 
     switch (button)
     {
-        case csmbLeft:      str += LEFTCLICK_STR;   break;
-        case csmbRight:     str += RIGHTCLICK_STR;  break;
-        case csmbMiddle:    str += MIDDLECLICK_STR; break;
-        case csmbWheelUp:   str += SCROLLUP_STR;    break;
-        case csmbWheelDown: str += SCROLLDOWN_STR;  break;
-        case csmbExtra1:    str += EXTRA1_STR;      break;
-        case csmbExtra2:    str += EXTRA2_STR;      break;
+        case csmbLeft:       str += LEFTCLICK_STR;   break;
+        case csmbRight:      str += RIGHTCLICK_STR;  break;
+        case csmbMiddle:     str += MIDDLECLICK_STR; break;
+        case csmbWheelUp:    str += SCROLLUP_STR;    break;
+        case csmbWheelDown:  str += SCROLLDOWN_STR;  break;
+        case csmbHWheelLeft: str += SCROLLLEFT_STR;  break;
+        case csmbHWheelRight:str += SCROLLRIGHT_STR; break;
+        case csmbExtra1:     str += EXTRA1_STR;      break;
+        case csmbExtra2:     str += EXTRA2_STR;      break;
         case csmbNone:
-        default:            str = NONE_STR;         break;
+        default:             str = NONE_STR;         break;
     }
 
     return str;
@@ -111,6 +115,10 @@ bool psMouseBinds::StringToMouseButton(const csString &str, uint &button, uint32
         button = csmbWheelUp;
     else if (btn == SCROLLDOWN_STR)
         button = csmbWheelDown;
+    else if (btn == SCROLLLEFT_STR)
+        button = csmbHWheelLeft;
+    else if (btn == SCROLLRIGHT_STR)
+        button = csmbHWheelRight;
     else if (btn == EXTRA1_STR)
         button = csmbExtra1;
     else if (btn == EXTRA2_STR)
