@@ -96,7 +96,7 @@ bool pawsSlot::Setup( iDocumentNode* node )
 
 bool pawsSlot::OnMouseDown( int button, int modifiers, int x, int y )
 {
-    if ( button == csmbWheelUp || button == csmbWheelDown )
+    if ( button == csmbWheelUp || button == csmbWheelDown || button == csmbHWheelLeft || button == csmbHWheelRight)
     {
         return parent->OnMouseDown( button, modifiers, x, y);
     }

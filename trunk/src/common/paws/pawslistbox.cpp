@@ -53,7 +53,7 @@ public:
 
     bool OnMouseDown( int button, int modifiers, int x, int y )
     {
-        if (button == csmbWheelUp || button == csmbWheelDown)
+        if (button == csmbWheelUp || button == csmbWheelDown || button == csmbHWheelLeft || button == csmbHWheelRight)
             return listBox->OnMouseDown( button, modifiers, x, y );
         else if (listBox->GetSortedColumn() == colNum)
             listBox->SetSortOrder( ! listBox->GetSortOrder() );
@@ -832,7 +832,7 @@ bool pawsListBox::OnMouseDown(int button, int modifiers, int x, int y )
             scrollBar->SetCurrentValue(scrollBar->GetCurrentValue() + LISTBOX_MOUSE_SCROLL_AMOUNT);
         return true;
     }
-    if (button == csmbHWheelLeft)
+    else if (button == csmbHWheelLeft)
     {
         if (horzscrollBar)
             horzscrollBar->SetCurrentValue(horzscrollBar->GetCurrentValue() - LISTBOX_MOUSE_SCROLL_AMOUNT);
@@ -1320,7 +1320,7 @@ bool pawsListBoxRow::OnMouseDown( int button, int modifiers, int x, int y )
     pawsListBox* parentBox = (pawsListBox*)parent;
 
     // mouse wheel
-    if (button == csmbWheelUp || button == csmbWheelDown || !parentBox->IsSelectable())
+    if (button == csmbWheelUp || button == csmbWheelDown || button == csmbHWheelLeft || button == csmbHWheelRight || !parentBox->IsSelectable())
     {
         return parentBox->OnMouseDown(button, modifiers, x, y);
     }
@@ -1335,7 +1335,7 @@ bool pawsListBoxRow::OnDoubleClick(int button, int modifiers, int x, int y)
 
     pawsListBox * parentBox = (pawsListBox *)parent;
 
-    if (button != csmbWheelUp && button != csmbWheelDown)
+    if (button != csmbWheelUp && button != csmbWheelDown && button != csmbHWheelLeft && button != csmbHWheelRight)
     {
         parentBox->SendOnListAction(LISTBOX_SELECTED);
     }
