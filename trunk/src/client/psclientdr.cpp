@@ -247,7 +247,7 @@ void psClientDR::HandleForcePosition(MsgEntry *me)
 
     if(last_sector != msg.sectorName)
     {
-        psNewSectorMessage cross(last_sector, msg.sectorName, msg.pos);
+		psNewSectorMessage cross(last_sector, msg.sectorName, msg.pos, msg.loadTime, msg.backgroundname);
         msghandler->Publish(cross.msg);
         Error3("Sector crossed from %s to %s after forced position update.\n", last_sector.GetData(), msg.sectorName.GetData());
     }

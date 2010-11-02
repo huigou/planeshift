@@ -973,9 +973,9 @@ public:
     void ProcessStamina();
     void ProcessStamina(const csVector3& velocity, bool force=false);
 
-    void Teleport(const char *sec, const csVector3 & pos, float yrot, InstanceID instance);
-    void Teleport(iSector *sector, const csVector3 & pos, float yrot, InstanceID instance);
-    void Teleport(iSector *sector, const csVector3 & pos, float yrot);
+    void Teleport(const char *sec, const csVector3 & pos, float yrot, InstanceID instance, int32_t loadDelay = 0, csString background = "");
+    void Teleport(iSector *sector, const csVector3 & pos, float yrot, InstanceID instance, int32_t loadDelay = 0, csString background = "");
+    void Teleport(iSector *sector, const csVector3 & pos, float yrot, int32_t loadDelay = 0, csString background = "");
 
     void SetPosition(const csVector3& pos,float angle, iSector* sector);
     void SetInstance(InstanceID worldInstance);
@@ -984,7 +984,7 @@ public:
 
     bool SetDRData(psDRMessage& drmsg);
     void MulticastDRUpdate();
-    virtual void ForcePositionUpdate();
+    virtual void ForcePositionUpdate(int32_t loadDelay = 0, csString background = "");
 
     using gemObject::RegisterCallback;
     using gemObject::UnregisterCallback;

@@ -3217,7 +3217,7 @@ void gemActor::SetInstance(InstanceID worldInstance)
     this->worldInstance = worldInstance;
 }
 
-void gemActor::Teleport(const char *sectorName, const csVector3 & pos, float yrot, InstanceID instance)
+void gemActor::Teleport(const char *sectorName, const csVector3 & pos, float yrot, InstanceID instance, int32_t loadDelay, csString background)
 {
     csRef<iEngine> engine = csQueryRegistry<iEngine>(psserver->GetObjectReg());
     iSector *sector = engine->GetSectors()->FindByName(sectorName);
@@ -3226,16 +3226,16 @@ void gemActor::Teleport(const char *sectorName, const csVector3 & pos, float yro
         Bug2("Sector %s is not found!", sectorName);
         return;
     }
-    Teleport(sector, pos, yrot, instance);
+    Teleport(sector, pos, yrot, instance, loadDelay, background);
 }
 
-void gemActor::Teleport(iSector *sector, const csVector3 & pos, float yrot, InstanceID instance)
+void gemActor::Teleport(iSector *sector, const csVector3 & pos, float yrot, InstanceID instance, int32_t loadDelay, csString background)
 {
     SetInstance(instance);
-    Teleport(sector, pos, yrot);
+    Teleport(sector, pos, yrot, loadDelay, background);
 }
 
-void gemActor::Teleport(iSector *sector, const csVector3 & pos, float yrot)
+void gemActor::Teleport(iSector *sector, const csVector3 & pos, float yrot, int32_t loadDelay, csString background)
 {
     StopMoving();
     SetPosition(pos, yrot, sector);
@@ -3245,7 +3245,7 @@ void gemActor::Teleport(iSector *sector, const csVector3 & pos, float yrot)
 
     UpdateProxList();
     MulticastDRUpdate();
-    ForcePositionUpdate();
+    ForcePositionUpdate(loadDelay, background);
     BroadcastTargetStatDR(entityManager->GetClients()); //we need to update the stats too
 }
 
@@ -3542,13 +3542,13 @@ void gemActor::MulticastDRUpdate()
     drmsg.Multicast(GetMulticastClients(),0,PROX_LIST_ANY_RANGE);
 }
 
-void gemActor::ForcePositionUpdate()
+void gemActor::ForcePositionUpdate(int32_t loadDelay, csString background)
 {
     uint32_t clientnum = GetClientID();
     forcedSector = GetSector();
 
     psForcePositionMessage msg(clientnum, ++forceDRcounter, GetPosition(), GetAngle(), GetSector(),
-                               cacheManager->GetMsgStrings());
+                               cacheManager->GetMsgStrings(), loadDelay, background);
     msg.SendMessage();
 }
 
