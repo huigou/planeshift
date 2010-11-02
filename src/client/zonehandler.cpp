@@ -85,6 +85,10 @@ ZoneHandler::ZoneHandler(MsgHandler* mh,iObjectRegistry* obj_reg, psCelClient *c
 
     loadWindow = NULL;
     loadProgressBar = NULL;
+	
+	forcedBackgroundImg.Empty();
+	forcedLoadingEndTime = 0;
+	forcedLoadingScreen = false;
 }
 
 ZoneHandler::~ZoneHandler()
@@ -166,6 +170,9 @@ void ZoneHandler::HandleMessage(MsgEntry* me)
 
     Notify3(LOG_LOAD, "Crossed from sector %s to sector %s.", msg.oldSector.GetData(), msg.newSector.GetData());
 
+	if(msg.loadDelay != 0)
+		ForceLoadScreen(msg.background, msg.loadDelay);
+
     LoadZone(msg.pos, msg.newSector);
 }
 
@@ -219,7 +226,7 @@ void ZoneHandler::LoadZone(csVector3 pos, const char* sector, bool force)
     }
 
     // Set load screen if required.
-    if(FindLoadWindow() && psengine->GetLoader()->GetLoadingCount() != 0 && (!psengine->HasLoadedMap() || !connected))
+	if((FindLoadWindow() && psengine->GetLoader()->GetLoadingCount() != 0 && (!psengine->HasLoadedMap() || !connected)) || (FindLoadWindow() && forcedLoadingScreen))
     {
         loading = true;
 
@@ -230,6 +237,13 @@ void ZoneHandler::LoadZone(csVector3 pos, const char* sector, bool force)
         loadWindow->SetAlwaysOnTop(true);
         loadWindow->Show();
 
+		//If a background is defined in script
+		if(!forcedBackgroundImg.IsEmpty())
+		{
+			Debug2(LOG_LOAD, 0, "Setting background from script %s", forcedBackgroundImg.GetData());
+			loadWindow->SetBackground(forcedBackgroundImg);
+		}
+		else
         // If the area has its own loading image, use it
         if (zone->loadImage)
         {
@@ -274,31 +288,39 @@ void ZoneHandler::MovePlayerTo(const csVector3 & newPos, const csString & newSec
 void ZoneHandler::OnDrawingFinished()
 {
     if (loading)
-    {
-        if(psengine->GetLoader()->GetLoadingCount() == 0)
+    {		
+		if(psengine->GetLoader()->GetLoadingCount() == 0)
         {
-            // move player to new pos
-            MovePlayerTo(newPos, sectorToLoad);
+			if(csGetTicks() >= forcedLoadingEndTime)
+			{
+				// move player to new pos
+				MovePlayerTo(newPos, sectorToLoad);
 
-            if(psengine->HasLoadedMap())
-                loadWindow->Hide();
+				if(psengine->HasLoadedMap())
+					loadWindow->Hide();
 
-            loading = false;
-            loadProgressBar->Completed();
-            psengine->SetLoadedMap(true);
+				loading = false;
+				loadProgressBar->Completed();
+				psengine->SetLoadedMap(true);
 
-            // Move all entities which belong in these new sectors to them.
-            psengine->GetCelClient()->OnMapsLoaded();
+				// Move all entities which belong in these new sectors to them.
+				psengine->GetCelClient()->OnMapsLoaded();
 
-            // Reset camera clip distance.
-            psCamera* cam = psengine->GetPSCamera();
-            if(cam && !cam->GetDistanceCfg().adaptive)
-                cam->UseFixedDistanceClipping(cam->GetFixedDistClip());
-            psengine->GetPSCamera()->ResetCameraPositioning();
+				// Reset camera clip distance.
+				psCamera* cam = psengine->GetPSCamera();
+				if(cam && !cam->GetDistanceCfg().adaptive)
+					cam->UseFixedDistanceClipping(cam->GetFixedDistClip());
+				psengine->GetPSCamera()->ResetCameraPositioning();
 
-            // Update the lighting.
-            psengine->GetModeHandler()->FinishLightFade();
-            psengine->GetModeHandler()->DoneLoading(sectorToLoad);
+				// Update the lighting.
+				psengine->GetModeHandler()->FinishLightFade();
+				psengine->GetModeHandler()->DoneLoading(sectorToLoad);
+
+				//Update delay data
+				forcedBackgroundImg.Empty();
+				forcedLoadingEndTime = 0;
+				forcedLoadingScreen = false;
+			}
         }
         else
         {
@@ -325,4 +347,11 @@ ZoneLoadInfo::ZoneLoadInfo(iDocumentNode *node)
         csRef<iDocumentNode> regionNode = regionIter->Next();
         regions->Push(regionNode->GetAttributeValue("map"));
     }    
+}
+
+void ZoneHandler::ForceLoadScreen(csString backgroundImage, uint32_t lenght)
+{
+	forcedBackgroundImg = backgroundImage;
+	forcedLoadingEndTime = csGetTicks()+(lenght * 1000);
+	forcedLoadingScreen = true;
 }

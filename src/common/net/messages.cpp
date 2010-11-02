@@ -2377,7 +2377,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psNewSectorMessage,MSGTYPE_NEWSECTOR);
 
 // Leaving this one marshalled the old way.  This message is NEVER sent on
 // the network.
-psNewSectorMessage::psNewSectorMessage(const csString & oldSector, const csString & newSector, csVector3 pos)
+psNewSectorMessage::psNewSectorMessage(const csString & oldSector, const csString & newSector, csVector3 pos, int32_t loadDelay, csString background)
 {
     msg.AttachNew(new MsgEntry( 1024 ));
 
@@ -2389,6 +2389,8 @@ psNewSectorMessage::psNewSectorMessage(const csString & oldSector, const csStrin
     msg->Add(pos.x);
     msg->Add(pos.y);
     msg->Add(pos.z);
+	msg->Add(loadDelay);
+	msg->Add(background);
 
     // Since this message is never sent, we don't adjust the valid flag
 }
@@ -2404,6 +2406,8 @@ psNewSectorMessage::psNewSectorMessage( MsgEntry *message )
     pos.x = message->GetFloat();
     pos.y = message->GetFloat();
     pos.z = message->GetFloat();
+	loadDelay = message->GetInt32();	
+	background = message->GetStr();
 
     // Since this message is never sent, we don't adjust the valid flag
 }

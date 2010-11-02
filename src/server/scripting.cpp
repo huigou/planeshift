@@ -1475,6 +1475,17 @@ public:
             Error1("<teleport> specified with neither a location or map attribute.");
             return false;
         }
+
+		if(node->GetAttribute("delay"))
+		{
+			loadDelay = node->GetAttributeValueAsInt("delay");
+		}
+
+		if(node->GetAttribute("background"))
+		{
+			background = node->GetAttributeValue("background");
+		}
+
         return true;
     }
 
@@ -1514,9 +1525,9 @@ public:
             }
 
             if (type & INSTANCE)
-                actor->Teleport(sector, destPos, 0.0, instance);
+                actor->Teleport(sector, destPos, 0.0, instance, loadDelay, background);
             else
-                actor->Teleport(sector, destPos, 0.0);
+                actor->Teleport(sector, destPos, 0.0, loadDelay, background);
         }
     }
 
@@ -1526,6 +1537,8 @@ protected:
     csString destination;
     csVector3 pos;
     InstanceID instance;
+	int32_t loadDelay; //<The delay the loading screen shall have, in seconds; YOU DON'T HAVE TO DEFINE IT
+	csString background;//<The background of the loading screen; YOU DON'T HAVE TO DEFINE IT
     
     EntityManager* entityManager;
 };

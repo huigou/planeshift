@@ -94,6 +94,8 @@ public:
     void MovePlayerTo(const csVector3 & newPos, const csString & newSector);
 
     bool IsLoading() const { return loading; }
+
+	void ForceLoadScreen(csString backgroundImage, uint32_t lenght);
    
 protected:
     csHash<ZoneLoadInfo *, const char*> zonelist;
@@ -109,6 +111,10 @@ protected:
     bool haveNewPos;
     int rgnsLoaded;
     bool initialRefreshScreen;
+
+	csString forcedBackgroundImg; ///<String which holds the background of the loading screen
+	csTicks forcedLoadingEndTime;///<Holds how long the loading shall be delayed
+	bool forcedLoadingScreen;///<A bool which force the loading screen if true
     
     pawsLoadWindow* loadWindow;
     pawsProgressBar* loadProgressBar;

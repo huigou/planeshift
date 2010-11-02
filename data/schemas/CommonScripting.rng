@@ -20,6 +20,7 @@
   <define name="ImperativeMode">
     <zeroOrMore>
       <choice>
+      
         <!-- let-blocks -->
         <element name="let">
           <attribute name="vars"/>
@@ -182,7 +183,24 @@
           </optional>
         </element>
         <element name="mana">     <ref name="imperative2"/> </element>
-        <element name="pstamina"> <ref name="imperative2"/> </element>
+        <element name="pstamina"><define name="teleport">
+    <choice>
+      <attribute name="location"/>
+      <group>
+        <attribute name="sector"/>
+        <optional>
+          <attribute name="x"/>
+          <attribute name="y"/>
+          <attribute name="z"/>
+        </optional>
+        <optional>
+          <attribute name="instance"/>
+        </optional>
+      </group>
+         <attribute name="delay"/>
+         <attribute name="background"/>
+    </choice>
+  </define> <ref name="imperative2"/> </element>
         <element name="mstamina"> <ref name="imperative2"/> </element>
 
         <!-- stats -->
@@ -196,7 +214,12 @@
         <!-- other -->
         <element name="exp"> <ref name="imperative2"/> </element>
 
-        <element name="skill"> <ref name="imperative3"/> </element>
+        <element name="skill"><define name="boolean">
+    <choice>
+      <value>true</value>
+      <value>false</value>
+    </choice>
+  </define> <ref name="imperative3"/> </element>
         <element name="faction"> <ref name="imperative3"/> </element>
         <element name="animal-affinity"> <ref name="imperative3"/> </element>
 
@@ -341,6 +364,8 @@
           <attribute name="instance"/>
         </optional>
       </group>
+         <attribute name="delay"/>
+         <attribute name="background"/>
     </choice>
   </define>
 
@@ -357,12 +382,7 @@
     <attribute name="enable"> <ref name="boolean"/> </attribute>
   </define>
 
-  <define name="boolean">
-    <choice>
-      <value>true</value>
-      <value>false</value>
-    </choice>
-  </define>
+  
 
   <define name="msgtype">
     <optional>

@@ -1738,7 +1738,7 @@ public:
 class psNewSectorMessage : public psMessageCracker
 {
 public:
-    psNewSectorMessage(const csString & oldSector, const csString & newSector, csVector3 pos);
+    psNewSectorMessage(const csString & oldSector, const csString & newSector, csVector3 pos, int32_t loadDelay = 0, csString background = "");
     psNewSectorMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
@@ -1755,6 +1755,9 @@ public:
     /// Holds the options that the window should display.
     csString oldSector, newSector;
     csVector3 pos;
+	///Custom delay and background controlled by script
+	csString background;
+	int32_t loadDelay;
 };
 
 //---------------------------------------------------------------------------
