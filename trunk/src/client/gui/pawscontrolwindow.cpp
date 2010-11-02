@@ -347,7 +347,7 @@ bool pawsControlWindow::HandleWindowName(csString widgetStr)
     else if(widgetStr == "managepetitions")
         widget = "PetitionGMWindow";
     else if(widgetStr == "quickspell")
-        widget = "QuickSpellBar";
+        widget = "HotBar";
     else if(widgetStr == "quit")
     {
         HandleQuit();
@@ -359,7 +359,7 @@ bool pawsControlWindow::HandleWindowName(csString widgetStr)
         return true;
     }
     if(widget)
-        HandleWindow(widget);
+        return HandleWindow(widget);
     else return false;
     return true;
 }
