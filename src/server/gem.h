@@ -1083,8 +1083,12 @@ public:
 
     void StopMoving(bool worldVel = false);
 
-    /// Moves player to his spawn position
-    bool MoveToSpawnPos();
+    /** Moves player to his spawn position
+     *  @param delay The time to wait in the load screen even if the new position was already loaded.
+     *  @param background The background to use when the load screen is shown or if it's forced.
+     *  @return TRUE in case of success. FALSE if the character lacks a spawn position.
+     */
+    bool MoveToSpawnPos(int32_t delay = 0, csString background = "");
     /** Gets the player spawn position according to his race.
      * 
      *  @todo Implement the support for player specific spawn pos, not only race specific.

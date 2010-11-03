@@ -1497,7 +1497,7 @@ public:
         if (type == NAMED)
         {
             // we only handle "spawn" for now...
-            actor->MoveToSpawnPos();
+            actor->MoveToSpawnPos(loadDelay, background);
         }
         else
         {
@@ -1537,8 +1537,8 @@ protected:
     csString destination;
     csVector3 pos;
     InstanceID instance;
-	int32_t loadDelay; //<The delay the loading screen shall have, in seconds; YOU DON'T HAVE TO DEFINE IT
-	csString background;//<The background of the loading screen; YOU DON'T HAVE TO DEFINE IT
+	int32_t loadDelay;   ///<The delay the loading screen shall have, in seconds; YOU DON'T HAVE TO DEFINE IT
+	csString background; ///<The background of the loading screen; YOU DON'T HAVE TO DEFINE IT
     
     EntityManager* entityManager;
 };

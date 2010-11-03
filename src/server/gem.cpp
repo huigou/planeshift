@@ -2067,7 +2067,7 @@ Client* gemActor::GetClient() const
     return clientRef.IsValid() ? clientRef : NULL ;
 }
 
-bool gemActor::MoveToSpawnPos()
+bool gemActor::MoveToSpawnPos(int32_t delay, csString background)
 {
     csVector3 startingPos;
     float startingYrot;
@@ -2078,7 +2078,7 @@ bool gemActor::MoveToSpawnPos()
         return false;
 
     pcmove->SetOnGround(false);
-    Teleport(startingSector, startingPos, startingYrot, DEFAULT_INSTANCE);
+    Teleport(startingSector, startingPos, startingYrot, DEFAULT_INSTANCE, delay, background);
     
     psGenericEvent evt(GetClientID(), psGenericEvent::SPAWN_MOVE);
     evt.FireEvent();

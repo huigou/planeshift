@@ -88,7 +88,6 @@ ZoneHandler::ZoneHandler(MsgHandler* mh,iObjectRegistry* obj_reg, psCelClient *c
 	
 	forcedBackgroundImg.Empty();
 	forcedLoadingEndTime = 0;
-	forcedLoadingScreen = false;
 }
 
 ZoneHandler::~ZoneHandler()
@@ -226,7 +225,7 @@ void ZoneHandler::LoadZone(csVector3 pos, const char* sector, bool force)
     }
 
     // Set load screen if required.
-	if((FindLoadWindow() && psengine->GetLoader()->GetLoadingCount() != 0 && (!psengine->HasLoadedMap() || !connected)) || (FindLoadWindow() && forcedLoadingScreen))
+    if((FindLoadWindow() && psengine->GetLoader()->GetLoadingCount() != 0 && (!psengine->HasLoadedMap() || !connected)) || (FindLoadWindow() && forcedLoadingEndTime != 0))
     {
         loading = true;
 
@@ -319,7 +318,6 @@ void ZoneHandler::OnDrawingFinished()
 				//Update delay data
 				forcedBackgroundImg.Empty();
 				forcedLoadingEndTime = 0;
-				forcedLoadingScreen = false;
 			}
         }
         else
@@ -353,5 +351,4 @@ void ZoneHandler::ForceLoadScreen(csString backgroundImage, uint32_t lenght)
 {
 	forcedBackgroundImg = backgroundImage;
 	forcedLoadingEndTime = csGetTicks()+(lenght * 1000);
-	forcedLoadingScreen = true;
 }
