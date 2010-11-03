@@ -94,8 +94,6 @@ public:
     void MovePlayerTo(const csVector3 & newPos, const csString & newSector);
 
     bool IsLoading() const { return loading; }
-
-	void ForceLoadScreen(csString backgroundImage, uint32_t lenght);
    
 protected:
     csHash<ZoneLoadInfo *, const char*> zonelist;
@@ -114,7 +112,6 @@ protected:
 
 	csString forcedBackgroundImg; ///<String which holds the background of the loading screen
 	csTicks forcedLoadingEndTime;///<Holds how long the loading shall be delayed
-	bool forcedLoadingScreen;///<A bool which force the loading screen if true
     
     pawsLoadWindow* loadWindow;
     pawsProgressBar* loadProgressBar;
@@ -126,6 +123,13 @@ protected:
 
     /** Tells "world" to (un)load flagged maps, then hides LoadingWindow */
     bool ExecuteFlaggedRegions(const csString & sector);
+private:
+    /** Forces the load screen to show up and/or stay for the defined amount of time.
+     *  It also allows to change the bacground of the load screen.
+     *  @param backgroundImage The image to put in the load screen.
+     *  @param lenght the minimum lenght the load screen will show up
+     */
+	void ForceLoadScreen(csString backgroundImage, uint32_t lenght);
 };
 
 
