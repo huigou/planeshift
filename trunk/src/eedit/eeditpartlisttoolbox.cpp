@@ -1691,7 +1691,7 @@ void EEditParticleListToolbox::RefreshEditList()
 	if (lc)
 	{
 	    csString desc;
-	    desc.Format ("LinCol(%d)", lc->GetColorCount());
+	    desc.Format ("LinCol(%zu)", lc->GetColorCount());
             col2->SetText(desc);
 	    found = true;
 	}
