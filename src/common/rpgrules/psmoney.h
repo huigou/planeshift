@@ -124,7 +124,7 @@ public:
     psMoney operator * (const int mult) const;
     
     void Adjust( int type, int value );
-    int Get( int type );
+    int Get( int type ) const;
 
 	bool EnsureTrias(int minValue);
 	bool EnsureHexas(int minValue);

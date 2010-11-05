@@ -19,6 +19,8 @@
  *
  */
 
+#include <cssysdef.h>
+#include <csgeom/math.h>
 #include <psconfig.h>
 
 #include "psmoney.h"
@@ -100,63 +102,49 @@ csString psMoney::ToUserString() const
     if(!trias && !hexas && !octas && !circles)
         return csString("0 Trias");
 
-    csString c,o,h,t;
+    csString strs[4];
+    int found = 0;
 
-    if (circles)
-        c.Format("%d Circles",circles);
-    if (octas)
-        o.Format("%d Octas",octas);
-    if (hexas)
-        h.Format("%d Hexas",hexas);
-    if (trias)
-        t.Format("%d Trias",trias);
-
-    csString temp;
-    if (c.Length())
-        temp.Append(c);
-
-    if (temp.Length() && o.Length() && !h.Length() && !t.Length())
+    if(circles)
     {
+      strs[0] = circles;
+      strs[0].Append(" Circles");
+      found = 1;
+    }
+    if(octas)
+    {
+      strs[found] = octas;
+      strs[found].Append(" Octas");
+      found++;
+    }
+    if(hexas)
+    {
+      strs[found] = hexas;
+      strs[found].Append(" Hexas");
+      found++;
+    }
+    if(trias)
+    {
+      strs[found] = trias;
+      strs[found].Append(" Trias");
+      found++;
+    }
+
+    csString temp((size_t)found * 11);
+    temp = strs[0];
+    if(found > 1)                 // Only add "and" if there's at least two entries
+    {
+        const int fMinus1 = found - 1;
+        int i = 1;
+        for(; i < fMinus1; i++)   // Loop either one or two times to add in commas
+        {
+            temp.Append(", ");
+            temp.Append(strs[i]);
+        }
         temp.Append(" and ");
-        temp.Append(o);
-        return temp;
+        temp.Append(strs[i]);
     }
-    if (temp.Length() && o.Length())
-    {
-        temp.Append(", ");
-        temp.Append(o);
-    }
-    else if (o.Length())
-        temp = o;
-
-    if (temp.Length() && h.Length() && !t.Length())
-    {
-        temp.Append(" and ");
-        temp.Append(h);
-        return temp;
-    }
-    if (temp.Length() && h.Length())
-    {
-        temp.Append(", ");
-        temp.Append(h);
-    }
-    else if (h.Length())
-        temp = h;
-    
-    if (temp.Length() && t.Length())
-    {
-        temp.Append(" and ");
-        temp.Append(t);
-        return temp;
-    }
-    else if (t.Length())
-    {
-        return t;
-    }
-    else
-    {
-        return temp;
-    }
+    return temp;
 }
 
 void psMoney::Adjust( int type, int value )
@@ -277,7 +265,7 @@ bool psMoney::EnsureCircles(int minValue)
 	return true;
 }
 
-int psMoney::Get( int type )
+int psMoney::Get( int type ) const
 {
     switch( type )
     {
@@ -326,16 +314,14 @@ psMoney psMoney::operator - (const psMoney& other) const
 {
     psMoney left,taken;
     left = *this;
-    
+
     int type = MONEY_TRIAS;
-    while (taken.GetTotal() < other.GetTotal() && type <= MONEY_CIRCLES)
+    while(taken.GetTotal() < other.GetTotal() && type <= MONEY_CIRCLES)
     {
-        while (left.Get(type) && taken.GetTotal() < other.GetTotal())
-        {
-            taken.Adjust(type,1);
-            left.Adjust(type,-1);
-        }
-        type++;
+      const int amount = csMin( left.Get(type), other.GetTotal() - taken.GetTotal() );
+      taken.Adjust(type, amount);
+      left.Adjust(type, -amount);
+      type++;
     }
     
     // Now we might have taken a little to much so calculate and give
