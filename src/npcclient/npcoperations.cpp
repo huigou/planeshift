@@ -649,6 +649,7 @@ bool ChaseOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         if(!path || !path->HasNext())
         {
             // failed to find a path between us and the target
+            npc->Printf(5, "Failed to find a path to the enemy!");
             return true;
         }
         else if ( GetAngularVelocity(npc) > 0 || GetVelocity(npc) > 0 )
@@ -719,20 +720,7 @@ void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
     psGameObject::GetPosition(target_entity,targetPos,dummyrot,targetSector);
     targetInstance = targetActor->GetInstance();
 
-    csVector3 displacement;
-    {
-        csVector3 dest(targetPos);
-        // This prevents NPCs from wanting to occupy the same physical space as something else
-        if(mySector != targetSector && !npcclient->GetWorld()->WarpSpace(targetSector,mySector,dest) && chaseRange > 0)
-        {
-            npc->Printf(5, "ChaseOperation: target's sector is not connected to ours!");
-            npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior());
-            return;
-        }
-        displacement = dest - myPos;
-    }
-    displacement.y = 0;
-    float distance = displacement.Norm();
+    float distance = path->GetDistance();
 
     if((chaseRange > 0 && distance > chaseRange) || (targetInstance != myInstance))
     {
@@ -749,11 +737,8 @@ void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
     npc->Printf(10, "Still chasing %s at %s with range %.1f...",(const char *)name,toString(targetPos,targetSector).GetDataSafe(),distance);
 
     {
-        targetPos -= offset*displacement.Unit();
-
-        float angleToTarget = psGameObject::CalculateIncidentAngle(myPos, targetPos);
         iMapNode* pathDest = path->GetLast();
-        float angleToPath  = psGameObject::CalculateIncidentAngle(myPos, pathDest->GetPosition());
+        targetPos -= offset*(targetPos - pathDest->GetPosition()).Unit();
 
         // if the target diverged from the end of our path, we must calculate it again
         if(Calc2DDistance(pathDest->GetPosition(), targetPos) > offset + EPSILON)
@@ -791,8 +776,13 @@ void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
 
     if (distance <= 0.5f)
     {
-        npc->GetLinMove()->SetPosition(myPos,myRot,mySector);
-        npc->Printf(5,"Set position %g %g %g, sector %s\n", myPos.x, myPos.y, myPos.z, mySector->QueryObject()->GetName());
+        // @@RlyDontKnow: disabled the forceful setting of the position as the path points
+        // aren't guaranteed to be valid (they may be slightly below the geometry)
+        // so the set would cause NPCs falling off the world - a "stuck" one is better
+        // as it can free itself
+        // do NOT re-enable this without triple checking all possible destinations are valid
+        //npc->GetLinMove()->SetPosition(myPos,myRot,mySector);
+        //npc->Printf(5,"Set position %g %g %g, sector %s\n", myPos.x, myPos.y, myPos.z, mySector->QueryObject()->GetName());
         
         if (!path->HasNext())
         {
