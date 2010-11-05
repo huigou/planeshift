@@ -845,7 +845,7 @@ void pawsChatWindow::ReplayMessages(unsigned int reqLines)
     buf[readLength] = '\0';
 
     // Find the last lines
-    int lines = 0;
+    unsigned int lines = 0;
     char* currentPos;
     csArray<const char*> line;
 

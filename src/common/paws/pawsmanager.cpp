@@ -293,7 +293,7 @@ bool PawsManager::HandleEvent( iEvent &event )
         csMouseEventHelper::GetEventData (&event, data);
         //csKeyModifiers key_modifiers;
         //csKeyEventHelper::GetModifiers (&event, key_modifiers);
-        uint32 modifiers = csMouseEventHelper::GetModifiers (&event);
+        //uint32 modifiers = csMouseEventHelper::GetModifiers (&event);
 
         if (type == csMouseEventTypeMove)
         {

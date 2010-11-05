@@ -694,10 +694,10 @@ void psCelClient::Update(bool loaded)
             psengine->GetLoader()->UpdatePosition(local_player->Pos(), sectorName, false);
         }
 
-const char* sectorName = local_player->GetSector()->QueryObject()->GetName();
+        //const char* sectorName = local_player->GetSector()->QueryObject()->GetName();
         // Check if we're inside a water area.
-        csColor4* waterColour = 0;
-        csVector3 pos = psengine->GetPSCamera()->GetPosition();
+        //csColor4* waterColour = 0;
+        //csVector3 pos = psengine->GetPSCamera()->GetPosition();
         /*if(psengine->GetLoader()->InWaterArea(sectorName, &pos, &waterColour))
         {
             psWeatherMessage::NetWeatherInfo fog;
