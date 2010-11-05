@@ -146,7 +146,7 @@ bool pawsLoginWindow::PostSetup()
         //search for the server name specified if it has some text in it. Not supporting unnamed servers.
         if(autoLoginServerName.Length())
         {
-            for(int i = 0; i < servers.GetSize(); i++)
+            for(size_t i = 0; i < servers.GetSize(); i++)
             {
                 if(autoLoginServerName == servers[i]->GetName())
                 {
