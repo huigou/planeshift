@@ -130,7 +130,7 @@ void pawsContainerDescWindow::HandleViewItem( MsgEntry* me )
         pic->Hide();
 
     bool newContainer = false;
-    if (containerID != mesg.containerID)
+    if(containerID != mesg.containerID)
         newContainer = true;
 
     containerID = mesg.containerID;
