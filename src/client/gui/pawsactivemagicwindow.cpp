@@ -141,14 +141,14 @@ bool pawsActiveMagicWindow::LoadSetting()
     root = doc->GetRoot();
     if (root == NULL)
     {
-        Error2("activemagic_def.xml or activemagic.xml has no XML root", "");
+        Error1("activemagic_def.xml or activemagic.xml has no XML root");
         return false;
     }
     
     activeMagicNode = root->GetNode("activemagic");
     if (activeMagicNode == NULL)
     {
-        Error2("activemagic_def.xml or activemagic.xml has no <activemagic> tag", "");
+        Error1("activemagic_def.xml or activemagic.xml has no <activemagic> tag");
         return false;
     }
 
