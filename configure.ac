@@ -368,6 +368,16 @@ CS_CHECK_LIB_WITH([mysqlclient],
 		[CS_EMIT_BUILD_RESULT([cs_cv_libmysqlclient], [LIBMYSQLCLIENT])], [], [], [], [], [])
 
 #----------------------------------------------------------------------------
+# Check for Sqlite3
+#----------------------------------------------------------------------------
+
+CS_CHECK_LIB_WITH([sqlite3],
+	[AC_LANG_PROGRAM([[#include <sqlite3.h>]],
+		[sqlite3 **db; sqlite3_open("",db);])], [/usr /usr/include/|/usr/lib /usr/local/ /usr/include/|/usr/lib/ /usr/local/include/|/usr/local/lib/ /usr/lib /usr/local/], [],
+		[CS_EMIT_BUILD_RESULT([cs_cv_libsqlite3], [LIBSQLITE3])], [], [], [], [], [])
+
+
+#----------------------------------------------------------------------------
 # Check for Curl
 #----------------------------------------------------------------------------
 
