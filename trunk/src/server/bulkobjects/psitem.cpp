@@ -2478,10 +2478,10 @@ bool psItem::CheckRequirements( psCharacter* charData, csString& resp )
     //maybe this should be optimized?
     if(itemModifiers->active)
     {
-        for(int i = 0; i < itemModifiers->reqs.GetSize(); i++)
+        for(size_t i = 0; i < itemModifiers->reqs.GetSize(); i++)
         {
             bool found = false;
-            for(int y = 0; y < requirements.GetSize(); y++)
+            for(size_t y = 0; y < requirements.GetSize(); y++)
             {
                 //if the name of the requirement is the same and it's higher substituite the previous one.
                 if(requirements[y].name == itemModifiers->reqs[i].name)
@@ -2504,7 +2504,7 @@ bool psItem::CheckRequirements( psCharacter* charData, csString& resp )
     csString needed = "You need to have ";
     bool first= true;
 
-        for (int z = 0; z < requirements.GetSize(); z++)
+        for (size_t z = 0; z < requirements.GetSize(); z++)
         {
             PSITEMSTATS_STAT stat = psserver->GetCacheManager()->ConvertAttributeString(requirements[z].name);
             if ( stat != PSITEMSTATS_STAT_NONE )
