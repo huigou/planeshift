@@ -146,34 +146,34 @@ void EEditRenderToolbox::FillAnchor(const char* anchorName)
     {
         psEffectAnchorKeyFrame* kf = anchor->GetKeyFrame (i);
         NewRow(a, list2, &col1, &col2);
-	fmt.Format("KF%d", i);
+        fmt.Format("KF%zu", i);
         col1->SetText(fmt);
-	fmt = "";
-	bool px, py, pz, ttx, tty, ttz;
-	px = kf->IsActionSet (psEffectAnchorKeyFrame::KA_POS_X);
-	py = kf->IsActionSet (psEffectAnchorKeyFrame::KA_POS_Y);
-	pz = kf->IsActionSet (psEffectAnchorKeyFrame::KA_POS_Z);
-	ttx = kf->IsActionSet (psEffectAnchorKeyFrame::KA_TOTARGET_X);
-	tty = kf->IsActionSet (psEffectAnchorKeyFrame::KA_TOTARGET_Y);
-	ttz = kf->IsActionSet (psEffectAnchorKeyFrame::KA_TOTARGET_Z);
-	if (px || py || pz)
-	{
-	    fmt = "pos(";
-	    if (px) fmt += "X"; else fmt += "_";
-	    if (py) fmt += "Y"; else fmt += "_";
-	    if (pz) fmt += "Z"; else fmt += "_";
-	    fmt += ")";
-	}
-	if (ttx || tty || ttz)
-	{
-	    if (px || py || pz) fmt += ' ';
-	    fmt = "tgt(";
-	    if (ttx) fmt += "X"; else fmt += "_";
-	    if (tty) fmt += "Y"; else fmt += "_";
-	    if (ttz) fmt += "Z"; else fmt += "_";
-	    fmt += ")";
-	}
-        col2->SetText(fmt);
+        fmt = "";
+        bool px, py, pz, ttx, tty, ttz;
+        px = kf->IsActionSet (psEffectAnchorKeyFrame::KA_POS_X);
+        py = kf->IsActionSet (psEffectAnchorKeyFrame::KA_POS_Y);
+        pz = kf->IsActionSet (psEffectAnchorKeyFrame::KA_POS_Z);
+        ttx = kf->IsActionSet (psEffectAnchorKeyFrame::KA_TOTARGET_X);
+        tty = kf->IsActionSet (psEffectAnchorKeyFrame::KA_TOTARGET_Y);
+        ttz = kf->IsActionSet (psEffectAnchorKeyFrame::KA_TOTARGET_Z);
+        if (px || py || pz)
+        {
+            fmt = "pos(";
+            if (px) fmt += "X"; else fmt += "_";
+            if (py) fmt += "Y"; else fmt += "_";
+            if (pz) fmt += "Z"; else fmt += "_";
+            fmt += ")";
+        }
+        if (ttx || tty || ttz)
+        {
+            if (px || py || pz) fmt += ' ';
+            fmt = "tgt(";
+            if (ttx) fmt += "X"; else fmt += "_";
+            if (tty) fmt += "Y"; else fmt += "_";
+            if (ttz) fmt += "Z"; else fmt += "_";
+            fmt += ")";
+        }
+            col2->SetText(fmt);
     }
 }
 
@@ -244,12 +244,12 @@ void EEditRenderToolbox::FillObj(const char* objName)
     else col2->SetText ("none");
 
     // Keyframes...
-    size_t kfcount = obj->GetKeyFrameCount ();
+    /*size_t kfcount = obj->GetKeyFrameCount ();
     for (size_t i = 0 ; i < kfcount ; i++)
     {
         psEffectObjKeyFrame* kf = obj->GetKeyFrame (i);
 	// @@@ TODO
-    }
+    }*/
 }
 
 void EEditRenderToolbox::OnListAction(pawsListBox* selected, int status)
