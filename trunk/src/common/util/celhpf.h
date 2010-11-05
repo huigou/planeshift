@@ -70,6 +70,9 @@ struct iCelHPath : public virtual iBase
 
   /// Restart path.  
   virtual void Restart () = 0;
+
+  /// Distance to goal.
+  virtual float GetDistance () const = 0;
   
   /**
    * Render path.
