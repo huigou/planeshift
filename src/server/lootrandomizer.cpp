@@ -363,7 +363,7 @@ void LootRandomizer::ApplyModifier(psItemStats* baseItem, RandomizedOverlay* ove
 
     //creates the full lootmodifier from the ids being applied.
     //0 should be left empty in the database as it acts as NO HIT.
-    for(int i = 0; i < modifierIds.GetSize(); i++)
+    for(size_t i = 0; i < modifierIds.GetSize(); i++)
     {
         uint32_t modID = modifierIds.Get(i);
         if(modID) //0 means nothing to do, no need to search for the void.
