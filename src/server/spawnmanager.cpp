@@ -582,6 +582,7 @@ void SpawnManager::RepopulateItems(psSectorInfo *sectorinfo)
             {
                 // printf("Created item %d: %s\n", item->GetUID(), item->GetName() );
                 // item->Save(false);
+                item->SetLoaded();
                 spawned++;
             }
             else
@@ -602,6 +603,7 @@ void SpawnManager::RepopulateItems(psSectorInfo *sectorinfo)
                     Error2("Cannot add item into container slot %i.\n",item->GetLocInParent());
                     delete item;
                 }
+                item->SetLoaded();
             }
             else
             {

@@ -2728,7 +2728,7 @@ bool CacheManager::LoadWorldItems(psSectorInfo *sector, csArray<psItem*> & items
         Error3("Error loading world items.\nQuery: %s\nError: %s",db->GetLastQuery(), db->GetLastError() );
         return false;
     }
-
+printf("here\n");
     for (unsigned long i = 0; i < result.Count(); i++)
     {
         psItem *item;
@@ -2760,11 +2760,11 @@ bool CacheManager::LoadWorldItems(psSectorInfo *sector, csArray<psItem*> & items
 
         items.Push(item);
     }
-
+/*
     for (size_t i=0; i < items.GetSize(); i++)
     {
         items[i]->SetLoaded();
-    }
+    }*/
     return true;
 }
 
