@@ -567,7 +567,7 @@ void WorkManager::HandleProduction(gemActor* actor, size_t type,const char *rewa
     // If skill == 0 and can still be trained it's not possible to execute this operation
     // check all the resources to check if one validates, else the resource is removed from the array.
     // if the array ends up empty it means we don't have a resource to attempt because of our skills.
-    for(int i = 0; i < resources.GetSize(); i++)
+    for(size_t i = 0; i < resources.GetSize(); i++)
     {
         NaturalResource *nr = resources.Get(i).resource;
         if (actor->GetCharacterData()->Skills().GetSkillRank((PSSKILL)nr->skill->id).Current() == 0 &&
@@ -597,7 +597,7 @@ void WorkManager::HandleProduction(gemActor* actor, size_t type,const char *rewa
     // Validate category of equipped item
     // checks all the resources to see if one validates, else the resource is removed from the array.
     // if the array ends up empty it means we don't have a resource to attempt because of our tools.
-    for(int i = 0; i < resources.GetSize(); i++)
+    for(size_t i = 0; i < resources.GetSize(); i++)
     {
         NaturalResource *nr = resources.Get(i).resource;
         psItem *item = actor->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_RIGHTHAND);
@@ -689,8 +689,7 @@ csArray<NearNaturalResource> WorkManager::FindNearestResource(iSector *sector, c
 
     Debug2(LOG_TRADE,0, "Finding nearest resource for %s\n", reward ? reward : "any resource");
 
-    float mindist = 100000;
-    for (size_t i=0; i<resources.GetSize(); i++)
+    for (size_t i = 0; i < resources.GetSize(); i++)
     {
         NaturalResource *curr=resources[i];
         if (curr->sector==sectorid)
