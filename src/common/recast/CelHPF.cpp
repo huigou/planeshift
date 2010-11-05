@@ -43,6 +43,29 @@ void celHPath::Initialize(iCelPath* highLevelPath)
 {
   hlPath = highLevelPath;
 
+  // calculate path length
+  {
+    length = 0;
+    advanced = 0;
+
+    iMapNode* src = hlPath->GetFirst();
+    iMapNode* dst = hlPath->Next();
+    do
+    {
+      // cross-sector connections are coincident
+      if(src->GetSector() == dst->GetSector())
+      {
+        length += (dst->GetPosition()-src->GetPosition()).Norm();
+      }
+      src = hlPath->Next();
+      dst = hlPath->Next();
+    }
+    while(hlPath->HasNext());
+
+    // restart path for traversal
+    hlPath->Restart();
+  }
+
   // Get first and last node of the high level graph
   firstNode = hlPath->GetFirst();
   lastNode = hlPath->GetLast();
@@ -114,6 +137,7 @@ iMapNode* celHPath::NextInternal ()
   
   if (!llPaths[currentllPosition]->HasNext())
   {
+    advanced += llPaths[currentllPosition]->Length();
     if (currentllPosition + 1 >= llPaths.GetSize())
     {
       return 0;
@@ -172,6 +196,7 @@ iMapNode* celHPath::PreviousInternal ()
 
   if (changellPath)
   {
+    advanced += llPaths[currentllPosition]->Length();
     if (currentllPosition <= 0)
     {
       return 0;
@@ -290,6 +315,14 @@ void celHPath::Restart ()
 
     currentNode = firstNode;
   }
+
+  // reset travelled distance
+  advanced = 0;
+}
+
+float celHPath::GetDistance () const
+{
+  return length-advanced;
 }
 
 csList<csSimpleRenderMesh>* celHPath::GetDebugMeshes ()

@@ -56,6 +56,8 @@ private:
   csRef<iMapNode> firstNode; // Optimization for celHPath::GetFirst
   csRef<iMapNode> lastNode; // Optimization for celHPath::GetLast
   bool reverse;
+  float length;
+  float advanced;
 
   virtual bool HasNextInternal () const;
   virtual bool HasPreviousInternal () const;
@@ -78,6 +80,7 @@ public:
   virtual iMapNode* GetLast ();
   virtual void Invert ();
   virtual void Restart ();
+  virtual float GetDistance () const;
   virtual csList<csSimpleRenderMesh>* GetDebugMeshes ();
 };
 
