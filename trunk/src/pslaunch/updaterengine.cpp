@@ -155,7 +155,6 @@ void UpdaterEngine::CheckForUpdates()
     //load current mirrors (precedence to updateservers.xml this way)
     //we don't fail for now here
     csRef<iDocumentNode> serversRoot = GetRootNode(SERVERS_CURRENT_FILENAME);
-    bool success = true;    
     if(!serversRoot.IsValid())
     {
         printf("Unable to get root node!\n");
