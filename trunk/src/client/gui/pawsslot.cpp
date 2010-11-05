@@ -172,7 +172,7 @@ void pawsSlot::StackCount( int newCount )
 void pawsSlot::PlaceItem( const char* imageName, const char* meshFactName, const char* matName, int count )
 {
 
-    printf( "Placing Image: %s\n", imageName);
+    //printf( "Placing Image: %s\n", imageName);
     meshfactName = meshFactName;
     materialName = matName;
     
