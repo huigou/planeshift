@@ -978,6 +978,7 @@ pawsEditTextBox::pawsEditTextBox()
     blink = true;
     cursorPosition = 0;
     password = 0;
+    maxLen = 0;
 
     clock =  csQueryRegistry<iVirtualClock > ( PawsManager::GetSingleton().GetObjectRegistry());
 
@@ -1041,13 +1042,15 @@ bool pawsEditTextBox::SelfPopulate( iDocumentNode *node)
 
 void pawsEditTextBox::SetText( const char* newText, bool publish )
 {
-    if (publish && subscribedVar)
+    if(publish && subscribedVar)
         PawsManager::GetSingleton().Publish(subscribedVar, newText);
 
-    text.Replace( newText );
+    text.Replace(newText);
+    if(maxLen)
+        text.Truncate(maxLen);
 
-    if (newText)
-        cursorPosition = strlen( newText );
+    if(newText)
+        cursorPosition = strlen(newText);
     else
         cursorPosition = 0;
 }
@@ -1227,11 +1230,13 @@ bool pawsEditTextBox::OnKeyDown( utf32_char code, utf32_char key, int modifiers 
         // Ignore ASCII control characters
         if (key < 128 && !isprint(key))
             break;
+        if(maxLen && text.Length()==maxLen)
+            break;
 
         utf8_char utf8Char[5];
 
         int charLen = csUnicodeTransform::UTF32to8 (utf8Char, 5, &key, 1);
-        if ( cursorPosition >= text.Length() )
+        if(cursorPosition >= text.Length())
         {
             text.Append( (char *)utf8Char );
         }
@@ -1244,13 +1249,14 @@ bool pawsEditTextBox::OnKeyDown( utf32_char code, utf32_char key, int modifiers 
         changed = true;
     }
 
-    if (changed)
+    if(changed)
     {
+        if(maxLen)
+            text.Truncate(maxLen);
         if (subscribedVar)
         {
             PawsManager::GetSingleton().Publish(subscribedVar, text);
         }
-
         parent->OnChange(this);
     }
 
@@ -1354,6 +1360,8 @@ bool pawsEditTextBox::OnClipboard( const csString& content )
     {
         text.Insert( cursorPosition, content );
     }
+    if(maxLen)
+        text.Truncate( maxLen );
     cursorPosition += content.Length();
 
     if (subscribedVar)
@@ -1366,7 +1374,12 @@ bool pawsEditTextBox::OnClipboard( const csString& content )
     return true;
 }
 
-
+void pawsEditTextBox::SetMaxLength( unsigned int maxlen )
+{
+    maxLen = maxlen;
+    if(maxLen)
+        text.Truncate(maxlen);
+}
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

@@ -40,39 +40,112 @@ public:
      * many fields.
      */
     virtual void OnStringEntered(const char *name, int param,const char *value) = 0;
+
+    /** Basic deconstructor */
     virtual ~iOnStringEnteredAction() {};
 };
 
 /** 
- * pawsStringPromptWindow is window that lets the user enter string.
+ * pawsStringPromptWindow is a window that lets the user enter a string
  */
 class pawsStringPromptWindow : public pawsPromptWindow
 {
 public:
+    /** Basic constructor */
     pawsStringPromptWindow();
-    
-    //from pawsWidget:
-    bool OnButtonReleased( int mouseButton, int keyModifier, pawsWidget* widget );
-    virtual bool OnKeyDown( utf32_char keyCode, utf32_char keyChar, int modifiers );
-    
-    static pawsStringPromptWindow * Create( 
-        const csString & label, 
-        const csString & string, bool multiline, int width, int height, 
-        iOnStringEnteredAction * action,const char *name,int param = 0, 
-        bool modal = false );
+
+    /**
+     * Called when a button is released inside the window
+     * Only relevant if widget is okButton or cancelButton
+     * @param mouseButton The mouse button that was released
+     * @param keyModifier Any modifiers that were present at release time
+     * @param widget The widget which had focus when the button was released
+     * @return True if widget == okButton or cancelButton, false otherwise
+     */
+    bool OnButtonReleased(int mouseButton, int keyModifier, pawsWidget* widget);
+
+    /**
+     * Called when a key is pressed
+     * If the enter key is pressed, the window is accepted and the action is called
+     * @param keyCode Key code for the key pressed
+     * @param keyChar Char code for the key pressed
+     * @param modifiers Any modifiers that were present at press time
+     * @return True if key is Enter, False otherwise
+     */
+    virtual bool OnKeyDown(utf32_char keyCode, utf32_char keyChar, int modifiers);
+
+    /**
+     * Called when a child widget changes
+     * If the widget is the inputWidget and the max length is being tracked, then the max length is updated
+     * @param widget The widget that changes
+     * @return False
+     */
+    virtual bool OnChange(pawsWidget * widget);
+
+    /**
+     * Entry point to pawsStringPromptWindow
+     * Call to create a window
+     * @param label Copied to Initialize
+     * @param string Copied to Initialize
+     * @param multiline Copied to Initialize
+     * @param width Copied to Initialize
+     * @param height Copied to Initialize
+     * @param action Copied to Initialize
+     * @param name Copied to Initialize
+     * @param param Copied to Initialize
+     * @param modal Whether the widget should be modal
+     * @param maxlen Copied to Initialize
+     * @return The widget that is created
+     */
+    static pawsStringPromptWindow * Create(
+        const csString & label,
+        const csString & string, bool multiline, int width, int height,
+        iOnStringEnteredAction * action,const char *name,int param = 0,
+        bool modal = false, int maxlen = 0);
 
 protected:
-    void Initialize(const csString & label, const csString & string, bool multiline, int width, int height, iOnStringEnteredAction *action, const char *name, int param=0);
-    
-    /** Executes action with 'text' as parameter and destroys window */
+    /**
+     * Initializes the window and sets up all of the appropriate widgets
+     * @param label Label to use as a title
+     * @param string Default string in the string prompt
+     * @param multiline Whether the input supports multi-line
+     * @param width Width of the window to show
+     * @param height Height of the window to show
+     * @param action The action to call when the prompt window is closed successfully
+     * @param name The name of the string that is being prompted - passed to the action
+     * @param param An optional parameter (not visible to user) - passed to the action
+     * @param maxlen The maximum length of the string that is accepted
+     */
+    void Initialize(const csString & label, const csString & string, bool multiline, int width, 
+                    int height, iOnStringEnteredAction *action, const char *name, int param = 0, int maxlen = 0);
+
+    /**
+     * Executes action and destroys window.
+     * Sends text, the prestored param and this widget's name to the action.
+     * @param text The text to send to the action
+     */
     void CloseWindow(const csString & text);
-    
-    /** Executes action with text entered by user as parameter and destroys window */
+
+    /**
+     * Executes action with text entered by user as parameter and destroys window
+     */
     void CloseWindow();
-    
+
+    /**
+     * Whether the prompt is multi-line or single
+     */
     bool multiLine;
+    /**
+     * The action to call when this window is successfully destroyed
+     */
     iOnStringEnteredAction * action;
+    /**
+     * The name of the window; is sent to the action when OK is pressed
+     */
     csString name;
+    /**
+     * The optional parameter for the window; is sent to the action when OK is pressed
+     */
     int param;
 };
 

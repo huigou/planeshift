@@ -37,15 +37,18 @@ pawsStringPromptWindow::pawsStringPromptWindow()
     action = NULL;
 }
 
-void pawsStringPromptWindow::Initialize(const csString & label, const csString & string, bool multiline, int width, int height, iOnStringEnteredAction *action, const char *name,int param)
+void pawsStringPromptWindow::Initialize(const csString & label, const csString & string, bool multiline, int width, int height,
+                                        iOnStringEnteredAction *action, const char *name, int param, int maxlen)
 {
     multiLine = multiline;
-    if (multiLine)
+    if(multiLine)
     {
         inputWidget = new pawsMultilineEditTextBox();
         pawsMultilineEditTextBox *editBox = dynamic_cast<pawsMultilineEditTextBox*> (inputWidget);
         editBox->SetRelativeFrameSize(width, height);
         editBox->SetText(string);
+        if(maxlen)
+            editBox->SetMaxLength(maxlen);
     }
     else
     {
@@ -53,9 +56,19 @@ void pawsStringPromptWindow::Initialize(const csString & label, const csString &
         pawsEditTextBox *editBox = dynamic_cast<pawsEditTextBox*> (inputWidget);
         editBox->SetRelativeFrameSize(width, height);
         editBox->SetText(string);
+        if(maxlen)
+            editBox->SetMaxLength(maxlen);
     }
 
     AddChild(inputWidget);
+
+    if(maxlen)
+    {
+        helperWidget = new pawsTextBox();
+        AddChild(helperWidget);
+        OnChange(inputWidget);
+    }
+
     inputWidget->SetName("stringPromptEntry");
 
     SetLabel(label);
@@ -70,17 +83,17 @@ void pawsStringPromptWindow::Initialize(const csString & label, const csString &
     this->param  = param;
 }
 
-bool pawsStringPromptWindow::OnButtonReleased( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsStringPromptWindow::OnButtonReleased(int mouseButton, int keyModifier, pawsWidget* widget)
 {
-    if (action==NULL)
+    if(action == NULL)
         return false;
 
-    if (widget == okButton)
+    if(widget == okButton)
     {
         CloseWindow();
         return true;
     }
-    else if (widget == cancelButton)
+    else if(widget == cancelButton)
     {
         CloseWindow((const char*)NULL);
         return true;
@@ -90,9 +103,9 @@ bool pawsStringPromptWindow::OnButtonReleased( int mouseButton, int keyModifier,
 
 void pawsStringPromptWindow::CloseWindow()
 {
-    if (inputWidget != NULL)
+    if(inputWidget != NULL)
     {
-        if (multiLine)
+        if(multiLine)
             CloseWindow(dynamic_cast<pawsMultilineEditTextBox*> (inputWidget)->GetText());
         else
             CloseWindow(dynamic_cast<pawsEditTextBox*> (inputWidget)->GetText());
@@ -101,14 +114,14 @@ void pawsStringPromptWindow::CloseWindow()
 
 void pawsStringPromptWindow::CloseWindow(const csString & text)
 {
-    action->OnStringEntered(name,param,text);
+    action->OnStringEntered(name, param, text);
     action = NULL;
     parent->DeleteChild(this);       // destructs itself 
 }
 
-bool pawsStringPromptWindow::OnKeyDown( utf32_char code, utf32_char key, int modifiers )
+bool pawsStringPromptWindow::OnKeyDown(utf32_char code, utf32_char key, int modifiers)
 {
-    if ( key==CSKEY_ENTER )
+    if(key == CSKEY_ENTER)
     {
         CloseWindow();
         return true;
@@ -116,30 +129,40 @@ bool pawsStringPromptWindow::OnKeyDown( utf32_char code, utf32_char key, int mod
     return false;
 }
 
-
+bool pawsStringPromptWindow::OnChange( pawsWidget * widget )
+{
+    if(inputWidget == widget && inputWidget != NULL && helperWidget != NULL)
+    {
+        const unsigned int rChar = multiLine ?
+            dynamic_cast<pawsMultilineEditTextBox*> (inputWidget)->GetRemainingChars() :
+            dynamic_cast<pawsEditTextBox*> (inputWidget)->GetRemainingChars();
+        dynamic_cast<pawsTextBox*> (helperWidget)->SetText(csString().Format("%u characters remaining", rChar));
+    }
+    return false;
+}
 
 pawsStringPromptWindow * pawsStringPromptWindow::Create(
-            const csString & label, const csString & string, 
-            bool multiline, int width, int height, 
-            iOnStringEnteredAction * action, const char *name,int param, 
-            bool modal )
+            const csString & label, const csString & string,
+            bool multiline, int width, int height,
+            iOnStringEnteredAction * action, const char *name, int param,
+            bool modal, int maxlen)
 {
     pawsStringPromptWindow * w = new pawsStringPromptWindow();
     PawsManager::GetSingleton().GetMainWidget()->AddChild(w);
     w->PostSetup();
-    
-    if ( modal )
+
+    if(modal)
         PawsManager::GetSingleton().SetModalWidget(w);
     else
     {
         PawsManager::GetSingleton().SetCurrentFocusedWidget(w);
         w->BringToTop(w);
     }
-    
-    w->Initialize(label, string, multiline, width, height, action, name,param);
-    w->MoveTo( (PawsManager::GetSingleton().GetGraphics2D()->GetWidth() - w->GetActualWidth(width) ) / 2,
-                       (PawsManager::GetSingleton().GetGraphics2D()->GetHeight() - w->GetActualHeight(height))/2 );
+
+    w->Initialize(label, string, multiline, width, height, action, name, param, maxlen);
+    w->MoveTo((PawsManager::GetSingleton().GetGraphics2D()->GetWidth() - w->GetActualWidth(width) ) / 2,
+                       (PawsManager::GetSingleton().GetGraphics2D()->GetHeight() - w->GetActualHeight(height)) / 2 );
     w->SetMovable(true);
-   
+
     return w;
 }

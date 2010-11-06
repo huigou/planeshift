@@ -93,30 +93,30 @@
 // Other levels have 401, 402, 403, ....
 #define LEVEL_NAME_BUTTON  400
 
-int textBoxSortFunc_Level(pawsWidget * widgetA, pawsWidget * widgetB)
+int textBoxSortFunc_Level( pawsWidget * widgetA, pawsWidget * widgetB )
 {
     pawsTextBox * textBoxA;
     pawsTextBox * textBoxB;
 
 
-    textBoxA = dynamic_cast <pawsTextBox*> (widgetA);
-    textBoxB = dynamic_cast <pawsTextBox*> (widgetB);
-    assert(textBoxA && textBoxB);
+    textBoxA = dynamic_cast <pawsTextBox*> ( widgetA );
+    textBoxB = dynamic_cast <pawsTextBox*> ( widgetB );
+    assert( textBoxA && textBoxB );
     const char* textA = textBoxA->GetText();
-    if (textA == NULL)
+    if(textA == NULL)
         textA = "";
     const char* textB = textBoxB->GetText();
-    if (textB == NULL)
+    if(textB == NULL)
         textB = "";
 
-    pawsGuildWindow* window = (pawsGuildWindow*)PawsManager::GetSingleton().FindWidget("GuildWindow");
+    pawsGuildWindow* window = (pawsGuildWindow*)PawsManager::GetSingleton().FindWidget( "GuildWindow" );
     CS_ASSERT( window );
     size_t levelA = window->GetLevel( textA );
     size_t levelB = window->GetLevel( textB );
 
-    if ( levelA < levelB )
+    if( levelA < levelB )
         return -1;
-    else if ( levelA == levelB )
+    else if( levelA == levelB )
         return 0;
     else
         return 1;
@@ -843,7 +843,7 @@ bool pawsGuildWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
             member = FindSelectedMemberInfo();
             if (member != NULL)
                 pawsStringPromptWindow::Create("Public notes", member->public_notes,
-                                               true, 400, 300, this, "PublicNotes", member->char_id);
+                                               true, 400, 300, this, "PublicNotes", member->char_id, false, 255); // 255 length from MySQL characters.guild_public_notes
             retVal = true;
             break;
         }
@@ -852,7 +852,7 @@ bool pawsGuildWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
             member = FindSelectedMemberInfo();
             if (member != NULL)
                 pawsStringPromptWindow::Create("Private notes", member->private_notes,
-                                               true, 400, 300, this, "PrivateNotes",member->char_id);
+                                               true, 400, 300, this, "PrivateNotes",member->char_id, false, 255); // 255 length from MySQL characters.guild_private_notes
             retVal = true;
             break;
         }

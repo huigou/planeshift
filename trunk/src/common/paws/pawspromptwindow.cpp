@@ -40,6 +40,7 @@ pawsPromptWindow::pawsPromptWindow()
     okButton       = NULL;
     cancelButton   = NULL;
     inputWidget    = NULL;
+    helperWidget   = NULL;
     spacing        = DEFAULT_SPACING;
 }
 
@@ -47,10 +48,10 @@ bool pawsPromptWindow::PostSetup()
 {
     SetBackground("Scaling Widget Background");
     UseBorder("line");
-    
+
     label = new pawsTextBox();
     AddChild(label);
-    
+
     okButton = new pawsButton();
     AddChild(okButton);
     okButton->SetUpImage("Scaling Button Up");
@@ -58,7 +59,7 @@ bool pawsPromptWindow::PostSetup()
     okButton->SetRelativeFrameSize(80, 25);
     okButton->SetText(PawsManager::GetSingleton().Translate("OK"));
     okButton->SetSound("gui.ok");
-    
+
     cancelButton = new pawsButton();
     AddChild(cancelButton);
     cancelButton->SetUpImage("Scaling Button Up");
@@ -85,32 +86,42 @@ void pawsPromptWindow::SetSpacing(int spacing)
 
 void pawsPromptWindow::LayoutWindow()
 {
-    int windowWidth, windowHeight;
-    
+    int windowWidth, windowHeight, buttony;
+
     assert(label && okButton && cancelButton && inputWidget);
-    
+
     windowWidth = MAX(
-                        2*spacing + label->DefaultFrame().Width(),
+                        2 * spacing + label->DefaultFrame().Width(),
                         MAX(
-                             4*spacing + inputWidget->DefaultFrame().Width(),
-                             3*spacing + okButton->DefaultFrame().Width() + cancelButton->DefaultFrame().Width()
+                             4 * spacing + inputWidget->DefaultFrame().Width(),
+                             3 * spacing + okButton->DefaultFrame().Width() + cancelButton->DefaultFrame().Width()
                            )
                      );
-    windowHeight = 4*spacing + label->DefaultFrame().Height() + inputWidget->DefaultFrame().Height() 
-                             + okButton->DefaultFrame().Height();
+    windowHeight = 4 * spacing + label->DefaultFrame().Height() + inputWidget->DefaultFrame().Height() 
+                               + okButton->DefaultFrame().Height();
+    if(helperWidget != NULL)
+        windowHeight += spacing + helperWidget->DefaultFrame().Height();
     SetRelativeFrameSize(windowWidth, windowHeight);
 
-    label->SetRelativeFramePos((windowWidth-label->DefaultFrame().Width()) / 2,
-                               spacing);
+    label->SetRelativeFramePos((windowWidth-label->DefaultFrame().Width()) / 2, spacing);
 
     inputWidget->SetRelativeFramePos((windowWidth-inputWidget->DefaultFrame().Width()) / 2,
                                      label->DefaultFrame().ymax + spacing);
 
+    if(helperWidget != NULL)
+    {
+        helperWidget->SetRelativeFramePos((windowWidth-inputWidget->DefaultFrame().Width()) / 2,
+                                          inputWidget->DefaultFrame().ymax + spacing);
+        buttony = helperWidget->DefaultFrame().ymax + spacing;
+    }
+    else
+        buttony = inputWidget->DefaultFrame().ymax + spacing;
+
     okButton->SetRelativeFramePos((windowWidth-okButton->DefaultFrame().Width()-cancelButton->DefaultFrame().Width()-spacing) / 2,
-                                  inputWidget->DefaultFrame().ymax + spacing);
+                                  buttony);
 
     cancelButton->SetRelativeFramePos(okButton->DefaultFrame().xmax + spacing,
-                                      okButton->DefaultFrame().ymin);
+                                      buttony);
 
     SetAppropriatePos();
 }
@@ -120,10 +131,10 @@ void pawsPromptWindow::SetAppropriatePos()
     psPoint mouse;
     int x, y;
     int width, height;
-    
-    width   =  screenFrame.Width();
-    height  =  screenFrame.Height();
-    
+
+    width = screenFrame.Width();
+    height = screenFrame.Height();
+
     mouse = PawsManager::GetSingleton().GetMouse()->GetPosition();
     x = mouse.x - width  / 2;
     y = mouse.y - height / 2;
