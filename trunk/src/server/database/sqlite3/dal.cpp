@@ -99,13 +99,9 @@ const char *psMysqlConnection::GetLastError()
 // Sets *to to the escaped value
 void psMysqlConnection::Escape(csString& to, const char *from)
 {
-    size_t len = strlen(from);
-    //char* buff = new char[len*2+1];
-
-    //mysql_escape_string(buff, from, (unsigned long)len);
-    //to = buff;
-    //delete[] buff;
+    char *buff = sqlite3_mprintf("%q", from);
     to = from;
+    sqlite3_free(buff);
 }
 
 unsigned long psMysqlConnection::CommandPump(const char *sql,...)
@@ -601,12 +597,12 @@ void dbRecord::AddField(const char* fname, unsigned short usValue)
 
 void dbRecord::AddField(const char* fname, const char* sValue)
 {
-    /*csString escape;
-    db->Escape(escape, sValue);*/
+    char *buff = sqlite3_mprintf("%q", sValue);
     AddToStatement(fname);
-    temp[index].sValue = sValue;
+    temp[index].sValue = buff;
     temp[index].type = SQL_TYPE_STRING;
     index++;
+    sqlite3_free(buff);
 }
 
 void dbRecord::AddFieldNull(const char* fname)
