@@ -166,7 +166,7 @@ public:
 
     iResultRow& operator[](unsigned long whichrow);
 
-    unsigned long Count(void) { /*printf("i was called %d %d %p\n", rows, fields, rs);*/ return rows; };
+    unsigned long Count(void) { return rows; };
 };
 
 class dbRecord : public iRecord

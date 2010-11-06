@@ -200,7 +200,7 @@ iResultSet *psMysqlConnection::Select(const char *sql, ...)
     int rows = 0;
     int columns = 0;
     char **result;
-    //printf("%s\n", querystr.GetData());
+
     if(!sqlite3_get_table(conn, querystr.GetData(), &result, &rows, &columns, NULL))
     {
         if(timer.Stop() > 1000)
@@ -334,8 +334,6 @@ bool psMysqlConnection::GenericUpdateWithID(const char *table,const char *idfiel
     command.Append(escape);
     command.Append("'");
 
-    //printf("%s\n",command.GetData());
-
     if (CommandPump("%s", command.GetDataSafe())==QUERY_FAILED)
     {
         return false;
@@ -381,8 +379,6 @@ bool psMysqlConnection::GenericUpdateWithID(const char *table,const char *idfiel
     Escape( escape, id );
     command.Append(escape);
     command.Append("'");
-
-    //printf("%s\n",command.GetData());
 
     if (CommandPump("%s", command.GetDataSafe())==QUERY_FAILED)
     {
@@ -631,26 +627,24 @@ bool dbRecord::Execute(uint32 uid)
     psStopWatch timer;
     timer.Start();
 
-    //CS_ASSERT(count == mysql_stmt_param_count(stmt));
-
-    //if(mysql_stmt_bind_param(stmt, bind) != 0)
-    //    return false;
+    CS_ASSERT(count == sqlite3_bind_parameter_count(stmt));
+    CS_ASSERT(count != index);
 
     for(int i = 0; i < index; i++)
     {
-        switch(temp[index].type)
+        switch(temp[i].type)
         {
             case SQL_TYPE_FLOAT:
-                sqlite3_bind_double(stmt,index+1,temp[index].fValue);
+                sqlite3_bind_double(stmt,i+1,temp[i].fValue);
                 break;
             case SQL_TYPE_INT:
-                sqlite3_bind_int(stmt, index+1,temp[index].iValue);
+                sqlite3_bind_int(stmt, i+1,temp[i].iValue);
                 break;
             case SQL_TYPE_STRING:
-                sqlite3_bind_text(stmt, index+1,temp[index].sValue,-1,SQLITE_STATIC);
+                sqlite3_bind_text(stmt, i+1,temp[i].sValue,-1,SQLITE_STATIC);
                 break;
             case SQL_TYPE_NULL:
-                sqlite3_bind_null(stmt,index+1);
+                sqlite3_bind_null(stmt,i+1);
                 break;
         }
 
@@ -679,6 +673,7 @@ bool dbInsert::Prepare()
             statement.Append(", ");
         statement.Append(command[i]);
     }
+
     statement.Append(") VALUES (");
     for (unsigned int i=0;i<count;i++)
     {
@@ -716,19 +711,19 @@ bool dbUpdate::Prepare()
     return prepared;
 }
 
-
+//NOT IMPLEMENTED
 #ifdef USE_DELAY_QUERY
 
 DelayedQueryManager::DelayedQueryManager(const char *host, unsigned int port, const char *database,
                               const char *user, const char *pwd)
 {
-    start=end=0;
+    /*start=end=0;
     m_Close = false;
     m_host = csString(host);
     m_port = port;
     m_db = csString(database);
     m_user = csString(user);
-    m_pwd = csString(pwd);
+    m_pwd = csString(pwd);*/
 }
 
 void DelayedQueryManager::Stop()
