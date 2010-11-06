@@ -100,7 +100,7 @@ const char *psMysqlConnection::GetLastError()
 void psMysqlConnection::Escape(csString& to, const char *from)
 {
     char *buff = sqlite3_mprintf("%q", from);
-    to = from;
+    to = buff;
     sqlite3_free(buff);
 }
 
