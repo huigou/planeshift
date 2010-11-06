@@ -57,7 +57,7 @@ CREATE TABLE `item_stats` (
   `cstr_gfx_texture` varchar(200) NOT NULL DEFAULT '',
   `cstr_part` varchar(200) NOT NULL DEFAULT '',
   `cstr_part_mesh` varchar(200) NOT NULL DEFAULT '',
-  `removed_mesh` varchar(200) NOT NULL COMMENT 'Lists the mesh to be removed when this item is equipped. It''s defined in this format slotname:mesh1,mesh2; slotname:mesh3; mesh4,mesh5. slotname is optional.',
+  `removed_mesh` varchar(200) NOT NULL DEFAULT '' COMMENT 'Lists the mesh to be removed when this item is equipped. It''s defined in this format slotname:mesh1,mesh2; slotname:mesh3; mesh4,mesh5. slotname is optional.',
   `armorvsweapon_type` varchar(20) DEFAULT NULL,
   `category_id` int(8) unsigned DEFAULT '0',
   `base_sale_price` float(10,2) DEFAULT '0.00',
