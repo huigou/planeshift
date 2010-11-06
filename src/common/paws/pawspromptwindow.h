@@ -28,21 +28,33 @@ class pawsButton;
 class pawsTextBox;
 
 /** 
- * pawsPromptWindow is common base for windows that let the user enter one piece of information.
- * It has label telling th euser what is expected, OK and Cancel buttons and *some* widget
+ * pawsPromptWindow is the common base for windows that let the user enter one piece of information.
+ * It has a label telling the user what is expected, OK and Cancel buttons and *some* widget
  * that is used to enter the information. Different widgets are used for different kinds of input.
  */
 
 class pawsPromptWindow : public pawsWidget
 {
 public:
+    /** Basic constructor */
     pawsPromptWindow();
-    
-    //from pawsWidget:
+
+    /**
+     * Executed after the widget is setup
+     * @return true
+     */
     virtual bool PostSetup();
-    
+
+    /**
+     * Sets the label/title for the widget
+     * @param label The new value for the label/title
+     */
     void SetLabel(const csString & label);
-    
+
+    /**
+     * Sets the spacing in between the widgets
+     * @param spacing The new amount of spacing in between each widget
+     */
     void SetSpacing(int spacing);
 
 protected:
@@ -52,9 +64,17 @@ protected:
     /** Sets positions of widgets and size of whole window */
     virtual void LayoutWindow();
 
+    /** The label that is used as a title for the window */
     pawsTextBox * label;
-    pawsButton * okButton, * cancelButton;
+    /** The button that is used to accept the input for the window */
+    pawsButton * okButton;
+    /** The button that is used to cancel the input for the window */
+    pawsButton * cancelButton;
+    /** A generic widget that simply helps describe or facilitate the inputWidget, does not have to be defined */
+    pawsWidget * helperWidget;
+    /** The primary widget for gathering input from the user */
     pawsWidget * inputWidget;
+    /** The spacing in between each of the widgets */
     int spacing;
 };
 

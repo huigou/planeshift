@@ -56,17 +56,18 @@ pawsMultilineEditTextBox::pawsMultilineEditTextBox()
     blink = true;
     cursorPosition = 0;
     cursorLine = 0;
-    topLine=0;
+    topLine = 0;
+    maxLen = 0;
     vScrollBar = NULL;
     vScrollBarWidth = VSCROLLBAR_WIDTH;
-    
-    clock =  csQueryRegistry<iVirtualClock > ( PawsManager::GetSingleton().GetObjectRegistry());
+
+    clock = csQueryRegistry<iVirtualClock > (PawsManager::GetSingleton().GetObjectRegistry());
 
     blinkTicks = clock->GetCurrentTicks();
 
     // Find the line height;
     int dummy;
-    GetFont()->GetMaxSize( dummy, lineHeight );
+    GetFont()->GetMaxSize(dummy, lineHeight);
     OnResize();
 }
 
@@ -76,20 +77,20 @@ pawsMultilineEditTextBox::~pawsMultilineEditTextBox()
 }
 
 
-bool pawsMultilineEditTextBox::OnKeyDown( utf32_char code, utf32_char key, int modifiers )
-{   
+bool pawsMultilineEditTextBox::OnKeyDown(utf32_char code, utf32_char key, int modifiers)
+{
     bool changed = false;
     size_t position = 0;
     bool repositionCursor = false;
 
     blink = true;
 
-    switch ( key )
+    switch(key)
     {
     case CSKEY_DEL:
     {
-        position =  GetCursorPosition(cursorLine,cursorLoc);
-        if (text.Length() >0 && position < text.Length())
+        position = GetCursorPosition(cursorLine, cursorLoc);
+        if(text.Length() > 0 && position < text.Length())
         {
             text.DeleteAt(position, csUnicodeTransform::UTF8Skip((const utf8_char*)text.GetData() + position, text.Length() - position));
             changed = true;
@@ -98,8 +99,8 @@ bool pawsMultilineEditTextBox::OnKeyDown( utf32_char code, utf32_char key, int m
     }
     case CSKEY_BACKSPACE:
     {
-         position = GetCursorPosition(cursorLine, cursorLoc);
-        if (text.Length() > 0 && position >0 )//&& position <=text.Length())
+        position = GetCursorPosition(cursorLine, cursorLoc);
+        if(text.Length() > 0 && position > 0)//&& position <=text.Length())
         {
             position--;        
             text.DeleteAt(position, csUnicodeTransform::UTF8Skip((const utf8_char*)text.GetData() + position, text.Length() - position));
@@ -109,34 +110,36 @@ bool pawsMultilineEditTextBox::OnKeyDown( utf32_char code, utf32_char key, int m
         break;
     }
     case CSKEY_LEFT:
-    	position = GetCursorPosition(cursorLine,cursorLoc);
-        if ( cursorLoc > 0 )
+        position = GetCursorPosition(cursorLine, cursorLoc);
+        if(cursorLoc > 0)
             cursorLoc -= csUnicodeTransform::UTF8Rewind((const utf8_char*)text.GetData() + position, position);
-        else if (cursorLine > 0)
+        else if(cursorLine > 0)
         {
             cursorLine--;
-            cursorLoc = lineInfo[cursorLine]->lineLength -1 ;
+            cursorLoc = lineInfo[cursorLine]->lineLength - 1;
             break;
         }
         break;
     case CSKEY_RIGHT:
-    	position = GetCursorPosition(cursorLine,cursorLoc);
-        if ( cursorLoc < lineInfo[cursorLine]->lineLength-lineInfo[cursorLine]->lineExtra )
+        position = GetCursorPosition(cursorLine, cursorLoc);
+        if(cursorLoc < lineInfo[cursorLine]->lineLength-lineInfo[cursorLine]->lineExtra)
         {
-        	cursorLoc += csUnicodeTransform::UTF8Skip((const utf8_char*)text.GetData() + position, text.Length() - position);
+            cursorLoc += csUnicodeTransform::UTF8Skip((const utf8_char*)text.GetData() + position, text.Length() - position);
         }
-        else if (cursorLine<lineInfo.GetSize()-1)
+        else if(cursorLine < lineInfo.GetSize()-1)
         {
             cursorLine++;
-            cursorLoc=0;
-        } else if (cursorLine == lineInfo.GetSize()-1 && cursorLoc == lineInfo[cursorLine]->lineLength-1) {
+            cursorLoc = 0;
+        }
+        else if(cursorLine == lineInfo.GetSize() - 1 && cursorLoc == lineInfo[cursorLine]->lineLength - 1)
+        {
           //the case for the very last line, we allow to go to after the last character
-           cursorLoc++; 
+           cursorLoc++;
         }
         break;
     case CSKEY_UP:
     {
-        if (cursorLine>0)
+        if(cursorLine > 0)
             cursorLine--;
         if(cursorLoc > lineInfo[cursorLine]->lineLength - lineInfo[cursorLine]->lineExtra)
             cursorLoc = lineInfo[cursorLine]->lineLength - lineInfo[cursorLine]->lineExtra;
@@ -144,7 +147,7 @@ bool pawsMultilineEditTextBox::OnKeyDown( utf32_char code, utf32_char key, int m
     }
     case CSKEY_DOWN:
     {
-        if (cursorLine < lineInfo.GetSize()-1)
+        if(cursorLine < lineInfo.GetSize() - 1)
             cursorLine++;
         if(cursorLoc > lineInfo[cursorLine]->lineLength - lineInfo[cursorLine]->lineExtra)
             cursorLoc = lineInfo[cursorLine]->lineLength - lineInfo[cursorLine]->lineExtra;
@@ -161,60 +164,64 @@ bool pawsMultilineEditTextBox::OnKeyDown( utf32_char code, utf32_char key, int m
         break;
     }
     default:
-        if ( CSKEY_IS_SPECIAL(key))
+        if(CSKEY_IS_SPECIAL(key))
             break;
-        
+
         // Ignore ASCII control characters
-        if (key < 128 && !isprint(key) && key != CSKEY_ENTER)
-        	break;
+        if(key < 128 && !isprint(key) && key != CSKEY_ENTER)
+            break;
+        if(maxLen && text.Length() == maxLen)
+            break;
 
         //Lookup the position.
-        position =  GetCursorPosition(cursorLine,cursorLoc);
-        if (key == CSKEY_ENTER)
+        position = GetCursorPosition(cursorLine, cursorLoc);
+        if(key == CSKEY_ENTER)
         {
             //our text flow algorithm will then break this into two lines.
-            text.Insert( position, '\n');
+            text.Insert(position, '\n');
             cursorLine++;
             cursorLoc = 0;
         }
         else
         {
-        	utf8_char utf8Char[5];
-            
-            int charLen = csUnicodeTransform::UTF32to8 (utf8Char, 5, &key, 1);
-            text.Insert( position, (char *)utf8Char);
+            utf8_char utf8Char[5];
+
+            int charLen = csUnicodeTransform::UTF32to8(utf8Char, 5, &key, 1);
+            text.Insert(position, (char *)utf8Char);
+            if(maxLen)
+                text.Truncate(maxLen);
             repositionCursor = true;
             position += charLen - 1;
         }
-        
+
         changed = true;
     }
 
-    if (changed)
+    if(changed)
     {
         //Re-flow the text
         LayoutText();
-        
-        if (repositionCursor)
-           GetCursorLocation(position,cursorLine,cursorLoc);
+
+        if(repositionCursor)
+           GetCursorLocation(position, cursorLine, cursorLoc);
  
-        if (subscribedVar)
+        if(subscribedVar)
             PawsManager::GetSingleton().Publish(subscribedVar, text);
         parent->OnChange(this);
     }
 
-    if (cursorLine >= topLine+canDrawLines)
-        topLine = cursorLine - canDrawLines+1; 
-    else if (cursorLine < topLine)
+    if(cursorLine >= topLine + canDrawLines)
+        topLine = cursorLine - canDrawLines + 1;
+    else if(cursorLine < topLine)
         topLine = cursorLine;
     SetupScrollBar();
 
-    if ( !CSKEY_IS_SPECIAL(key) && (key > 128 || isprint(key)  ))       
+    if(!CSKEY_IS_SPECIAL(key) && (key > 128 || isprint(key)))
         return true;
-    
-    if (code != CSKEY_ENTER)
-    {        
-        pawsWidget::OnKeyDown( code, key, modifiers );
+
+    if(code != CSKEY_ENTER)
+    {
+        pawsWidget::OnKeyDown(code, key, modifiers);
     }
 
     return true;
@@ -229,14 +236,13 @@ void pawsMultilineEditTextBox::OnResize()
 
 void pawsMultilineEditTextBox::UpdateScrollBar()
 {
-    if(!vScrollBar) return;
-    
+    if(!vScrollBar)
+        return;
+
     float barMaxValue; //holds the maximum value of the scrollbar
     float barPosition; //holds the current position of the scrollbar
-    
 
-
-    if (lineInfo.GetSize() <= canDrawLines) //can all the lines stay on screen?
+    if(lineInfo.GetSize() <= canDrawLines) //can all the lines stay on screen?
     {
         vScrollBar->Hide(); //... yes they can then hide the scrollbar and...
         barMaxValue = 0; //set the scrollbar max value and position to zero as we have nothing to scroll
@@ -247,8 +253,8 @@ void pawsMultilineEditTextBox::UpdateScrollBar()
         vScrollBar->Show();//... show the scrollbar and...
         barMaxValue = (int)lineInfo.GetSize() - canDrawLines; //... set it's max values and position
         barPosition = (float)topLine;
-    }  
-    
+    }
+
     //set new values to the scrollbar
     vScrollBar->SetMaxValue(barMaxValue);
     vScrollBar->SetCurrentValue(barPosition);
@@ -256,61 +262,61 @@ void pawsMultilineEditTextBox::UpdateScrollBar()
 
 void pawsMultilineEditTextBox::SetupScrollBar()
 {
-    if (!vScrollBar)
+    if(!vScrollBar)
     {
         vScrollBar = new pawsScrollBar;
-        vScrollBar->SetParent( this );
-        vScrollBar->SetRelativeFrame( screenFrame.Width() - vScrollBarWidth,
-                                      0, vScrollBarWidth, screenFrame.Height() - 12 );
+        vScrollBar->SetParent(this);
+        vScrollBar->SetRelativeFrame(screenFrame.Width() - vScrollBarWidth,
+                                     0, vScrollBarWidth, screenFrame.Height() - 12);
         vScrollBar->SetAttachFlags(ATTACH_TOP | ATTACH_BOTTOM | ATTACH_RIGHT);
         vScrollBar->PostSetup();
-        vScrollBar->SetTickValue( 1.0 );
-        AddChild( vScrollBar ); 
+        vScrollBar->SetTickValue(1.0);
+        AddChild(vScrollBar); 
     }
 
     UpdateScrollBar();
 }
 
-bool pawsMultilineEditTextBox::OnMouseDown( int button, int modifiers, int x, int y )
+bool pawsMultilineEditTextBox::OnMouseDown(int button, int modifiers, int x, int y)
 {
-    if (button == csmbLeft)
-    { 
+    if(button == csmbLeft)
+    {
         return true;
     }
-    else if (button == csmbWheelUp)
+    else if(button == csmbWheelUp)
     {
-        if (vScrollBar)
+        if(vScrollBar)
             vScrollBar->SetCurrentValue(vScrollBar->GetCurrentValue() - EDIT_TEXTBOX_MOUSE_SCROLL_AMOUNT);
         return true;
     }
-    else if (button == csmbWheelDown)
+    else if(button == csmbWheelDown)
     {
-        if (vScrollBar)
+        if(vScrollBar)
             vScrollBar->SetCurrentValue(vScrollBar->GetCurrentValue() + EDIT_TEXTBOX_MOUSE_SCROLL_AMOUNT);
         return true;
     } 
-    return pawsWidget::OnMouseDown( button, modifiers, x ,y);
+    return pawsWidget::OnMouseDown(button, modifiers, x ,y);
 }
 
-bool pawsMultilineEditTextBox::OnMouseUp( int button, int modifiers, int x, int y )
+bool pawsMultilineEditTextBox::OnMouseUp(int button, int modifiers, int x, int y)
 {
-    if (button == csmbLeft)
+    if(button == csmbLeft)
     {
-        size_t EndLine = 0;
-        size_t EndChar = 0;
-        CalcMouseClick(x,y,EndLine, EndChar);
-        
+        size_t endLine = 0;
+        size_t endChar = 0;
+        CalcMouseClick(x, y, endLine, endChar);
+
         //Set the cursor location.
-        cursorLine = (unsigned int) EndLine;
-        cursorLoc = EndChar;
+        cursorLine = (unsigned int) endLine;
+        cursorLoc = endChar;
         cursorPosition = GetCursorPosition();
 
         return true;
     } 
-    return pawsWidget::OnMouseUp( button, modifiers, x ,y);
+    return pawsWidget::OnMouseUp(button, modifiers, x ,y);
 }
 
-void pawsMultilineEditTextBox::CalcMouseClick( int x, int y, size_t &cursorLine, size_t &cursorChar)
+void pawsMultilineEditTextBox::CalcMouseClick(int x, int y, size_t &cursorLine, size_t &cursorChar)
 {
     // Adjust x to be relative to the text box
     x -= screenFrame.xmin; 
@@ -319,20 +325,20 @@ void pawsMultilineEditTextBox::CalcMouseClick( int x, int y, size_t &cursorLine,
     blink = true;
 
     // Find the line the mouse is on and move the cursor there
-    cursorLine=(y-screenFrame.ymin)/lineHeight+topLine;
-    
+    cursorLine = (y - screenFrame.ymin) / lineHeight + topLine;
+
     //Determine if the click was after the text area
-    if (cursorLine >= lineInfo.GetSize() && lineInfo.GetSize() >0)
+    if(cursorLine >= lineInfo.GetSize() && lineInfo.GetSize() > 0)
     {
-        cursorLine = (unsigned int) lineInfo.GetSize()-1;
+        cursorLine = (unsigned int) lineInfo.GetSize() - 1;
         //*after* the last letter of last line
-        cursorChar = lineInfo[(int)lineInfo.GetSize()-1]->lineLength;
+        cursorChar = lineInfo[(int)lineInfo.GetSize() - 1]->lineLength;
         return;
     }
     // Determine if the click was before text area
-    if (x<=0 || lineInfo[cursorLine]->lineLength <=0)
+    if(x <= 0 || lineInfo[cursorLine]->lineLength <= 0)
     {
-        cursorChar=0;
+        cursorChar = 0;
         return;
     }
  
@@ -340,11 +346,11 @@ void pawsMultilineEditTextBox::CalcMouseClick( int x, int y, size_t &cursorLine,
     int width = 0;
     int height = 0;
     csString line = GetLine(cursorLine);
-    GetFont()->GetDimensions(line,width,height);
+    GetFont()->GetDimensions(line, width, height);
     //Determine if the click was at the end of a line...
-     if ((x>=width)) 
+    if(x >= width) 
     {
-        if (line.GetAt(lineInfo[cursorLine]->lineLength-1) == '\n') 
+        if(line.GetAt(lineInfo[cursorLine]->lineLength - 1) == '\n') 
         {
             //if it was, make sure to ignore the newline character.
             cursorChar = lineInfo[cursorLine]->lineLength-1;
@@ -352,17 +358,17 @@ void pawsMultilineEditTextBox::CalcMouseClick( int x, int y, size_t &cursorLine,
         }
     }
     //should position cursor before clicked letter
-    cursorChar = GetFont()->GetLength(GetLine(cursorLine),x);
+    cursorChar = GetFont()->GetLength(GetLine(cursorLine), x);
 }
 
 
 void pawsMultilineEditTextBox::OnUpdateData(const char *dataname,PAWSData& value)
 {
     // This is called automatically whenever subscribed data is published.
-    SetText( value.GetStr(), false );
+    SetText(value.GetStr(), false);
 }
 
-bool pawsMultilineEditTextBox::OnScroll( int direction, pawsScrollBar* widget )
+bool pawsMultilineEditTextBox::OnScroll(int direction, pawsScrollBar* widget)
 {    
     topLine = (int)widget->GetCurrentValue();
     return true;
@@ -379,7 +385,7 @@ void pawsMultilineEditTextBox::PushLineInfo(size_t lineLength, size_t lineBreak,
 void pawsMultilineEditTextBox::LayoutText()
 {
     csRef<iFont> font = GetFont();
-    int screenWidth = screenFrame.Width()-vScrollBarWidth;
+    int screenWidth = screenFrame.Width() - vScrollBarWidth;
     int width = 0;
     int height = 0;
     csString tempString;
@@ -392,55 +398,55 @@ void pawsMultilineEditTextBox::LayoutText()
     while(srcPos < text.Length())
     {
         //try to grab a word.
-        size_t a = text.FindFirst(" \t\n",srcPos);
+        size_t a = text.FindFirst(" \t\n", srcPos);
         //if a is '-1', the char wasn't found so we grab to end of the line, 
         //else we grab up to and including the found character
-        if (a == (size_t)-1)
-            word = text.Slice(srcPos,text.Length()-srcPos);
+        if(a == (size_t)-1)
+            word = text.Slice(srcPos,text.Length() - srcPos);
         else 
-            word = text.Slice(srcPos, a-srcPos+1);
+            word = text.Slice(srcPos, a - srcPos + 1);
 
-        //Gets dimensions of current word.    
-        font->GetDimensions(word,width,height);
-        
+        //Gets dimensions of current word.
+        font->GetDimensions(word, width, height);
+
         //if it'll fit..
-        if(width+tailWidth <= screenWidth)
+        if(width + tailWidth <= screenWidth)
         {
             //then attach it
             tempString.Append(word);
-            font->GetDimensions(tempString,tailWidth,height);
+            font->GetDimensions(tempString, tailWidth, height);
             srcPos += word.Length();
         } 
-        else if(width > screenWidth) 
+        else if(width > screenWidth)
         {
-            //Wordwrap 
+            //Wordwrap
             totalCount += tempString.Length();
-            PushLineInfo(tempString.Length(),totalCount,1);
+            PushLineInfo(tempString.Length(), totalCount, 1);
             tempString = word;
-            font->GetDimensions(tempString,tailWidth,height);
+            font->GetDimensions(tempString, tailWidth, height);
             srcPos += word.Length();
         }
-        else if (tempString.FindFirst(" ") != (size_t)-1)
+        else if(tempString.FindFirst(" ") != (size_t)-1)
         {
             //If wordwrap->linebreak on same line, 
             // push linebreak to next line
             totalCount += tempString.Length();
-            PushLineInfo(tempString.Length(),totalCount,1);
+            PushLineInfo(tempString.Length(), totalCount, 1);
             tempString.Clear();
             word = "a"; //set position holder (never actually drawn)
-            font->GetDimensions(tempString,tailWidth,height);
+            font->GetDimensions(tempString, tailWidth, height);
             //Note: srcPos is not set.
         }
-        else 
-        {   
+        else
+        {
             //breakline - the case where we have a single 
             //unbroken word wider than our page
 
-            int maxChars = font->GetLength(word,screenWidth); 
-            word = word.Slice(0,maxChars);    //Get string for the line
-            totalCount += word.Length();     //Get absolute char position in text for line break
-            PushLineInfo(word.Length(),totalCount,0);//Push the line information to the stack
-            srcPos += word.Length();//Set srcPosition for this loop
+            int maxChars = font->GetLength(word, screenWidth); 
+            word = word.Slice(0, maxChars);             //Get string for the line
+            totalCount += word.Length();                //Get absolute char position in text for line break
+            PushLineInfo(word.Length(), totalCount, 0); //Push the line information to the stack
+            srcPos += word.Length();                    //Set srcPosition for this loop
             //Note: Tempstring is not set here.    
             font->GetDimensions(tempString,tailWidth,height);
         }
@@ -457,7 +463,7 @@ void pawsMultilineEditTextBox::LayoutText()
 
     //Make sure to add the last line if it exists.
     totalCount += tempString.Length();
-    PushLineInfo(tempString.Length(),totalCount,0);
+    PushLineInfo(tempString.Length(), totalCount, 0);
 }
 
 //our draw is based on static, wrapped widget
@@ -465,7 +471,7 @@ void pawsMultilineEditTextBox::Draw()
 {
     yPos = 0;
 
-    if ( clock->GetCurrentTicks() - blinkTicks > BLINK_TICKS )
+    if(clock->GetCurrentTicks() - blinkTicks > BLINK_TICKS)
     {
         blink = !blink;
         blinkTicks = clock->GetCurrentTicks();
@@ -473,31 +479,31 @@ void pawsMultilineEditTextBox::Draw()
 
     pawsWidget::Draw();
     pawsWidget::ClipToParent(false);
-    
-    for (size_t line = topLine; line <= (topLine+canDrawLines); line++ )
+
+    for(size_t line = topLine; line <= (topLine + canDrawLines); line++)
     {
-        if ( line >= lineInfo.GetSize())
+        if(line >= lineInfo.GetSize())
             break;
         //chomp newline characters
-        if (lineInfo[line]->lineLength >0) 
+        if(lineInfo[line]->lineLength > 0)
         {
-            tmp = GetLine(line).Slice(0,lineInfo[line]->lineLength - lineInfo[line]->lineExtra);
-            DrawWidgetText(tmp,(int) screenFrame.xmin, (int) (screenFrame.ymin+yPos*lineHeight),-1,GetFontColour());
+            tmp = GetLine(line).Slice(0, lineInfo[line]->lineLength - lineInfo[line]->lineExtra);
+            DrawWidgetText(tmp, (int)screenFrame.xmin, (int)(screenFrame.ymin + yPos * lineHeight), -1, GetFontColour());
             yPos++;
         }
      }
 
-    if (blink && hasFocus) // Draw the cursor
+    if(blink && hasFocus) // Draw the cursor
     {
         int width, height;
-        GetFont()->GetDimensions( GetLine(cursorLine).Slice(0,cursorLoc).GetDataSafe(), width, height );
-        size_t realHeight=lineHeight*(cursorLine-topLine);
+        GetFont()->GetDimensions(GetLine(cursorLine).Slice(0, cursorLoc).GetDataSafe(), width, height);
+        size_t realHeight = lineHeight * (cursorLine - topLine);
 
-        graphics2D->DrawLine( (float)(screenFrame.xmin + width + 1),
+        graphics2D->DrawLine((float)(screenFrame.xmin + width + 1),
             (float)(screenFrame.ymin + realHeight),
             (float)(screenFrame.xmin + width + 1),
             (float)(screenFrame.ymin + realHeight + lineHeight), 
-            GetFontColour() );
+            GetFontColour());
     }
 
 }
@@ -505,37 +511,37 @@ void pawsMultilineEditTextBox::Draw()
 void pawsMultilineEditTextBox::DrawWidgetText(const char *text, size_t x, size_t y, int style, int fg)
 {
     csRef<iFont> font = GetFont();
-    if (style==-1)
+    if(style == -1)
         style = GetFontStyle();
 
-    if (fg == -1)
+    if(fg == -1)
         fg = GetFontColour();
 
-    if (parent && !parent->GetBackground().IsEmpty() && parent->isFadeEnabled() && parent->GetMaxAlpha() != parent->GetMinAlpha())
+    if(parent && !parent->GetBackground().IsEmpty() && parent->isFadeEnabled() && parent->GetMaxAlpha() != parent->GetMinAlpha())
     {
-        int a = (int) (255 - (parent->GetMinAlpha() + (parent->GetMaxAlpha()-parent->GetMinAlpha()) * parent->GetFadeVal() * 0.010));
+        int a = (int)(255 - (parent->GetMinAlpha() + (parent->GetMaxAlpha() - parent->GetMinAlpha()) * parent->GetFadeVal() * 0.010));
         int r, g, b;
 
-        if (style & FONT_STYLE_DROPSHADOW)
+        if(style & FONT_STYLE_DROPSHADOW)
         {
             graphics2D->GetRGB(GetFontShadowColour(), r, g, b);
-            graphics2D->Write( font, (int) x+2, (int) y+2, graphics2D->FindRGB(r, g, b, a), -1, text );
+            graphics2D->Write(font, (int) x + 2, (int) y + 2, graphics2D->FindRGB(r, g, b, a), -1, text);
         }
         graphics2D->GetRGB(GetFontColour(), r, g, b);
-        graphics2D->Write( font, (int) x, (int) y, graphics2D->FindRGB(r, g, b, a), -1, text);
+        graphics2D->Write(font, (int) x, (int) y, graphics2D->FindRGB(r, g, b, a), -1, text);
     }
     else
     {
-        if (style & FONT_STYLE_DROPSHADOW)
-            graphics2D->Write( font, (int) x+2, (int) y+2, GetFontShadowColour(), -1, text );
+        if(style & FONT_STYLE_DROPSHADOW)
+            graphics2D->Write(font, (int) x+2, (int) y+2, GetFontShadowColour(), -1, text);
 
-        graphics2D->Write( font, (int) x, (int) y, fg, -1, text);    
+        graphics2D->Write(font, (int) x, (int) y, fg, -1, text);
     }
 }
 
-bool pawsMultilineEditTextBox::SelfPopulate( iDocumentNode *node)
+bool pawsMultilineEditTextBox::SelfPopulate(iDocumentNode *node)
 {
-    if (node->GetAttributeValue("text"))
+    if(node->GetAttributeValue("text"))
     {
         SetText(node->GetAttributeValue("text"));
         return true;
@@ -544,34 +550,33 @@ bool pawsMultilineEditTextBox::SelfPopulate( iDocumentNode *node)
         return false;
 }
 
-bool pawsMultilineEditTextBox::Setup( iDocumentNode* node )
-{   
-    csRef<iDocumentNode> settingNode = node->GetNode( "pawsScrollBar" );
-    if( settingNode )
+bool pawsMultilineEditTextBox::Setup(iDocumentNode* node)
+{
+    csRef<iDocumentNode> settingNode = node->GetNode("pawsScrollBar");
+    if(settingNode)
     {
-        csRef<iDocumentAttribute> widthAttribute = settingNode->GetAttribute( "width" );
-        if( widthAttribute ){
+        csRef<iDocumentAttribute> widthAttribute = settingNode->GetAttribute("width");
+        if(widthAttribute)
             vScrollBarWidth = widthAttribute->GetValueAsInt();
-        }
     }
 
-    settingNode = node->GetNode( "text" );        
+    settingNode = node->GetNode("text");
 
-    if ( settingNode )
-    {        
-        csRef<iDocumentAttribute> textAttribute = settingNode->GetAttribute( "string" );
-        if ( textAttribute )
-        {            
-            SetText( textAttribute->GetValue() );
+    if(settingNode)
+    {
+        csRef<iDocumentAttribute> textAttribute = settingNode->GetAttribute("string");
+        if(textAttribute)
+        {
+            SetText(textAttribute->GetValue());
         }
     } else SetText("");
 
     return true;
 }
 
-void pawsMultilineEditTextBox::SetText( const char* newText, bool publish )
+void pawsMultilineEditTextBox::SetText(const char* newText, bool publish)
 {
-    if (publish && subscribedVar)
+    if(publish && subscribedVar)
         PawsManager::GetSingleton().Publish(subscribedVar, newText);
 
     cursorPosition = 0;
@@ -580,10 +585,12 @@ void pawsMultilineEditTextBox::SetText( const char* newText, bool publish )
 
     text = newText;
 
+    if(maxLen)
+        text.Truncate(maxLen);
     LayoutText();
 
     SetupScrollBar();
-    
+
     cursorLoc = lineInfo[cursorLine]->lineLength - lineInfo[cursorLine]->lineExtra;
 }
 
@@ -598,7 +605,7 @@ void pawsMultilineEditTextBox::GetLinePos(size_t lineNumber, size_t &start, size
 {
     start = 0;
     end = 0;
-    for(size_t i = 0; i < lineNumber;i++)
+    for(size_t i = 0; i < lineNumber; i++)
     {
         size_t imp = lineInfo[i]->lineLength;
         start += imp;
@@ -615,10 +622,10 @@ void pawsMultilineEditTextBox::GetLineRelative(size_t pos, size_t &start, size_t
 {
     size_t count = 0;
 
-    for (size_t i = 0; i < lineInfo.GetSize();i++)
+    for(size_t i = 0; i < lineInfo.GetSize();i++)
     {
-        count = lineInfo[i]->breakLine- lineInfo[i]->lineExtra;
-        if (pos <= count)
+        count = lineInfo[i]->breakLine - lineInfo[i]->lineExtra;
+        if(pos <= count)
         {
             start = lineInfo[i]->breakLine - lineInfo[i]->lineLength;
             end = lineInfo[i]->breakLine;
@@ -632,13 +639,13 @@ int pawsMultilineEditTextBox::GetLineWidth(int lineNumber)
     int width = 0;
     int height = 0;
     csString line = GetLine(cursorLine);
-    GetFont()->GetDimensions(line,width,height);
+    GetFont()->GetDimensions(line, width, height);
     return width;
 }
 
 bool pawsMultilineEditTextBox::EndsWithNewLine(int lineNumber)
 {
-    return GetLine(cursorLine).GetAt(lineInfo[lineNumber]->lineLength-1) == '\n' ? true : false;
+    return GetLine(cursorLine).GetAt(lineInfo[lineNumber]->lineLength - 1) == '\n' ? true : false;
 }
 
 //Get specified line in text
@@ -665,7 +672,7 @@ size_t pawsMultilineEditTextBox::GetCursorPosition()
 
 size_t pawsMultilineEditTextBox::GetCursorPosition(size_t destLine, size_t destCursor)
 {
-    if (destLine >0)
+    if(destLine >0)
         return lineInfo[destLine-1]->breakLine+destCursor;
     else
         return destCursor;
@@ -679,11 +686,11 @@ void pawsMultilineEditTextBox::GetCursorLocation(size_t pos, size_t &destLine, s
     destCursor = 0;
 
     GetLineRelative(pos, start, end);
-    for (size_t i = 0; i < lineInfo.GetSize(); i++)
+    for(size_t i = 0; i < lineInfo.GetSize(); i++)
     {
        //Adjustment for wordwrap so final character is not exceeded by the cursor
-       if ((pos > (lineInfo[i]->breakLine - lineInfo[i]->lineExtra)) && (i+1<lineInfo.GetSize()))
-       {    
+       if((pos > (lineInfo[i]->breakLine - lineInfo[i]->lineExtra)) && (i + 1 < lineInfo.GetSize()))
+       {
           destLine++;
        }
        else 
@@ -694,3 +701,10 @@ void pawsMultilineEditTextBox::GetCursorLocation(size_t pos, size_t &destLine, s
     }
 }
 
+
+void pawsMultilineEditTextBox::SetMaxLength(unsigned int maxlen)
+{
+    maxLen = maxlen;
+    if(maxLen)
+        text.Truncate(maxlen);
+}

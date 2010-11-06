@@ -29,26 +29,35 @@ struct iVirtualClock;
 #include <csutil/parray.h>
 #include <ivideo/fontserv.h>
 
-/** A basic text box widget.
+/**
+ * A basic text box widget. Useful for simply displaying text.
  */
 class pawsTextBox : public pawsWidget
 {
 public:
+    /**
+     * Various positions to center the text on vertically
+     */
     enum pawsVertAdjust
     {
-        vertTOP,
-        vertBOTTOM,
-        vertCENTRE
+        vertTOP,    /** Adjusted to top */
+        vertBOTTOM, /** Adjusted to bottom */
+        vertCENTRE  /** Adjusted to centre */
     };
 
+    /**
+     * Various positions to center the text on horizontally
+     */
     enum pawsHorizAdjust
     {
-        horizLEFT,
-        horizRIGHT,
-        horizCENTRE
+        horizLEFT,  /** Adjusted to left */
+        horizRIGHT, /** Adjusted to right */
+        horizCENTRE /** Adjusted to centre */
     };
 
+    /** Basic constructor */
     pawsTextBox();
+    /** Basic deconstructor */
     virtual ~pawsTextBox();
 
     bool Setup ( iDocumentNode* node );
@@ -307,6 +316,26 @@ public:
 
     virtual const bool GetFocusOverridesControls() const { return true; }
 
+    /**
+     * Sets the max length for the text box
+     * @param maxlen The value to set for the max length
+     */
+    void SetMaxLength(unsigned int maxlen);
+    /** 
+     * Returns the max length for the text box
+     * @return maxLen
+     */
+    inline unsigned int GetMaxLength() const { return maxLen; }
+    /** 
+     * Gets the remaining characters that can be input
+     * @return Remaining characters or UINT_MAX if no max length specified
+     */
+    inline unsigned int GetRemainingChars() const
+    {
+        if(maxLen)
+            return (unsigned int)(maxLen - text.Length());
+        return UINT_MAX;
+    }
 protected:
 
     bool password;
@@ -337,6 +366,8 @@ protected:
     size_t usedLines;
 
     unsigned int topLine;
+    /// The maximum length the text is allowed to be
+    unsigned int maxLen;
 
     pawsScrollBar* vScrollBar;
 };
@@ -463,6 +494,26 @@ public:
     void GetCursorLocation(size_t pos, size_t &destLine, size_t &destCursor);
     const char GetAt(size_t destLine, size_t destCursor);
 
+    /**
+     * Sets the max length for the text box
+     * @param maxlen The value to set for the max length
+     */
+    void SetMaxLength(unsigned int maxlen);
+    /** 
+     * Returns the max length for the text box
+     * @return maxLen
+     */
+    inline unsigned int GetMaxLength() const { return maxLen; }
+    /** 
+     * Gets the remaining characters that can be input
+     * @return Remaining characters or UINT_MAX if no max length specified
+     */
+    inline unsigned int GetRemainingChars() const
+    {
+        if(maxLen)
+            return (unsigned int)(maxLen - text.Length());
+        return UINT_MAX;
+    }
 protected:
 
     csRef<iVirtualClock> clock;
@@ -500,6 +551,9 @@ protected:
 
     int yPos;
     csString tmp;
+
+    /// The maximum length the text is allowed to be
+    unsigned int maxLen;
 };
 
 CREATE_PAWS_FACTORY( pawsMultilineEditTextBox );
