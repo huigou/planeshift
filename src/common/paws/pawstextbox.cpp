@@ -227,7 +227,7 @@ void pawsTextBox::CalcTextSize(int& width, int& height)
     }
 }
 
-bool pawsTextBox::SelfPopulate( iDocumentNode *node)
+bool pawsTextBox::SelfPopulate( iDocumentNode *node )
 {
     if (node->GetAttributeValue("text"))
     {
