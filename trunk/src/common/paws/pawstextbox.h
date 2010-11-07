@@ -40,9 +40,9 @@ public:
      */
     enum pawsVertAdjust
     {
-        vertTOP,    /** Adjusted to top */
-        vertBOTTOM, /** Adjusted to bottom */
-        vertCENTRE  /** Adjusted to centre */
+        vertTOP,    ///< Adjusted to top
+        vertBOTTOM, ///< Adjusted to bottom
+        vertCENTRE  ///< Adjusted to centre
     };
 
     /**
@@ -50,9 +50,9 @@ public:
      */
     enum pawsHorizAdjust
     {
-        horizLEFT,  /** Adjusted to left */
-        horizRIGHT, /** Adjusted to right */
-        horizCENTRE /** Adjusted to centre */
+        horizLEFT,  ///< Adjusted to left
+        horizRIGHT, ///< Adjusted to right
+        horizCENTRE ///< Adjusted to centre
     };
 
     /** Basic constructor */
@@ -60,41 +60,134 @@ public:
     /** Basic deconstructor */
     virtual ~pawsTextBox();
 
+    /**
+     * Sets up the text box from a document node<br>
+     * Possible attributes in the node:<ul>
+     *   <li>vertical - yes/no</li>
+     *   <li>text</li><ul>
+     *     <li>horizAdjust - CENTRE/RIGHT/LEFT</li>
+     *     <li>vertAdjust - CENTRE/BOTTOM/TOP</li>
+     *     <li>string - text</li></ul></ul>
+     *
+     * @param node The node to pull the attributes from
+     * @return True
+     */
     bool Setup ( iDocumentNode* node );
-    bool SelfPopulate( iDocumentNode *node);
+    /**
+     * Sets the text from the node using either the text attribute or the node's content
+     * @param node The node to pull the text from
+     * @return True if data is pulled, false if the node is empty
+     */
+    bool SelfPopulate( iDocumentNode *node );
 
+    /// Draws the text box
     void Draw();
 
+    /**
+     * Sets the text to display
+     * @param text The string
+     */
     void SetText( const char* text );
+
+    /**
+     * Sets the text to display using formatting
+     * @param fmt The format to use to format the string to display
+     */
     void FormatText( const char *fmt, ... );
-    const char* GetText() { return text; }
+
+    /**
+     * Gets the text that is displayed by this text box
+     * @return \ref text
+     */
+    const char* GetText() const { return text; }
+
+    /**
+     * Sets if this text box should be rendered vertically (top to bottom)
+     * @param vertical Whether it should be rendered vertically
+     */
     void SetVertical(bool vertical);
 
-    void Adjust (pawsHorizAdjust horiz, pawsVertAdjust vert);
-    void HorizAdjust (pawsHorizAdjust horiz);
-    void VertAdjust (pawsVertAdjust horiz);
+    /**
+     * Alters how the text box is laid out in its container
+     * @param horiz Sets the horizontal alignment for the text
+     * @param vert Sets the vertical alignment for the text
+     */
+    void Adjust( pawsHorizAdjust horiz, pawsVertAdjust vert );
+    /**
+     * Alters how the text box is laid out horizontally in its container
+     * @param horiz Sets the horizontal alignment for the text
+     */
+    void HorizAdjust( pawsHorizAdjust horiz );
+    /**
+     * Alters how the text box is laid out vertically in its container
+     * @param vert Sets the vertical alignment for the text
+     */
+    void VertAdjust( pawsVertAdjust vert );
 
-    // Sets size of the widget to fit the text that it displays:
+    /**
+     * Sets the size of the widget to fit the text that it displays
+     * @param padX Horizontal padding
+     * @param padY Vertical padding
+     */
     void SetSizeByText(int padX,int padY);
 
-    // Normal text boxes should not be focused.
-    virtual bool OnGainFocus( bool notifyParent = true ) {return false;}
+    /**
+     * Normal text boxes should not be focused.  Does nothing
+     * @return false
+     */
+    virtual bool OnGainFocus( bool ) const {return false;}
 
-    int GetBorderStyle() { return BORDER_SUNKEN; }
+    /**
+     * Gets the border style for the text box
+     * @return Always \ref BORDER_SUNKEN
+     */
+    inline int GetBorderStyle() const { return BORDER_SUNKEN; }
 
-    void Grayed(bool g) { grayed = g; }
+    /**
+     * Sets if the text box is having its text grayed
+     * @param g Overwrites \ref grayed
+     */
+    inline void Grayed( bool g ) { grayed = g; }
 
+    /**
+     * Gets the font color based on the set colour and if \ref grayed is set
+     * @return Gray if grayed is true, colour otherwise
+     */
     virtual int GetFontColour();
 
+    /**
+     * Called whenever subscribed data gets updated
+     * Sets the text to either the data's string value or a properly formatted float representation
+     * @param dataname Unused
+     * @param data The data to update the text with
+     */
     virtual void OnUpdateData(const char *dataname,PAWSData& data);
 
-    // Utility function to calculate number of code points in a substring
+    /**
+     * Utility function to calculate number of code points in a substring
+     * @param text Text to calculate on
+     * @param start Index to start on
+     * @param len Length to perform calculation on or -1 for start to end
+     * @return Number of code points
+     */
     static int CountCodePoints(const char* text, int start = 0, int len = -1);
 
-    // Utility function to rewind a UTF-8 string by a certain number of codepoints
+    /**
+     * Utility function to rewind a UTF-8 string by a certain number of codepoints
+     * @param text Text to calculate on
+     * @param start Index to begin rewinding at
+     * @param count Number of code points to rewind by
+     * @return Resulting index
+     */
     static int RewindCodePoints(const char* text, int start, int count);
 
-    // Utility function to skip a UTF-8 string by a certain number of codepoints
+    /**
+     * Utility function to skip a UTF-8 string by a certain number of codepoints
+     * @param text Text to calculate on
+     * @param start Index to begin rewinding at
+     * @param count Number of code points to rewind by
+     * @return Resulting index
+     */
     static int SkipCodePoints(const char* text, int start, int count);
 
 protected:
@@ -106,6 +199,8 @@ protected:
 
     /**
      * Calculates size of text
+     * @param width Target to store width of text into
+     * @param height Target to store height of text into
      */
     void CalcTextSize(int & width, int & height);
 
@@ -117,21 +212,32 @@ protected:
     /// The text for this box.
     csString text;
 
-    /// The colour of text.
+    /// The colour of the text.
     int colour;
 
+    /// Whether the text is currently being grayed out
     bool grayed;
 
+    /// The current horizontal alignment for the text box
     pawsHorizAdjust horizAdjust;
+
+    /// The current vertical alignment for the text box
     pawsVertAdjust  vertAdjust;
 
+    /// Whether the text box is rendering vertically (up-down rather than left-right)
     bool vertical;
 
-    int textX, textY;        // Position of text inside the widget (depends on adjustment)
+    /// X-Position of text inside the widget (relative to adjustment)
+    int textX;
 
-    //These members are used only when vertical==true:
-    int textWidth;           // Width of vertical column of letters (i.e. MAX(letter_width))
-    psPoint *letterSizes;    // Size of each letter.
+    /// X-Position of text inside the widget (relative to adjustment)
+    int textY;
+
+    /// Width of vertical column of letters (only used when \ref vertical is true)
+    int textWidth;
+
+    /// Array containing the size of each letter in text (only used when \ref vertical is true)
+    psPoint *letterSizes;
 };
 
 //--------------------------------------------------------------------------
@@ -321,12 +427,12 @@ public:
      * @param maxlen The value to set for the max length
      */
     void SetMaxLength(unsigned int maxlen);
-    /** 
+    /**
      * Returns the max length for the text box
      * @return maxLen
      */
     inline unsigned int GetMaxLength() const { return maxLen; }
-    /** 
+    /**
      * Gets the remaining characters that can be input
      * @return Remaining characters or UINT_MAX if no max length specified
      */
@@ -499,12 +605,12 @@ public:
      * @param maxlen The value to set for the max length
      */
     void SetMaxLength(unsigned int maxlen);
-    /** 
+    /**
      * Returns the max length for the text box
      * @return maxLen
      */
     inline unsigned int GetMaxLength() const { return maxLen; }
-    /** 
+    /**
      * Gets the remaining characters that can be input
      * @return Remaining characters or UINT_MAX if no max length specified
      */
