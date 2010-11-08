@@ -273,7 +273,7 @@ bool psCharacterInventory::Load(PID use_id)
         doRestrictions = false;
     }
 
-    Result items(db->Select("SELECT * FROM item_instances WHERE char_id_owner=%u AND location_in_parent!=-1", use_id.Unbox()));
+    Result items(db->Select("SELECT * FROM item_instances WHERE char_id_owner=%u AND location_in_parent != -1", use_id.Unbox()));
     if ( items.IsValid() )
     {
         for (size_t x = 0; x < items.Count(); x++ )
