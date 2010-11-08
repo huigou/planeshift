@@ -5280,7 +5280,7 @@ iResultSet *AdminManager::GetPetitions(PID playerID, PID gmID)
     if (playerID == PETITION_GM)
     {
             rs = db->Select("SELECT pet.id,pet.petition,pet.status,pet.created_date,gm.name as gmname,pl.name,pet.escalation_level FROM petitions pet "
-                    "LEFT JOIN characters gm ON pet.assigned_gm=gm.id, characters pl WHERE pet.player!=%d AND (pet.status=\"Open\" OR pet.status=\"In Progress\") "
+                    "LEFT JOIN characters gm ON pet.assigned_gm=gm.id, characters pl WHERE pet.player!=%d AND (pet.status='Open' OR pet.status='In Progress') "
                     "AND pet.player=pl.id "
                     "ORDER BY pet.status ASC,pet.escalation_level DESC,pet.created_date ASC", gmID.Unbox());
     }
@@ -5290,7 +5290,7 @@ iResultSet *AdminManager::GetPetitions(PID playerID, PID gmID)
                     "FROM petitions pet LEFT JOIN characters pl "
                     "ON pet.assigned_gm=pl.id "
                     "WHERE pet.player=%d "
-                    "AND pet.status!=\"Cancelled\" "
+                    "AND pet.status!='Cancelled' "
                     "ORDER BY pet.status ASC,pet.escalation_level DESC", playerID.Unbox());
     }
 
@@ -5401,7 +5401,7 @@ bool AdminManager::DeassignPetition(PID gmID, int gmLevel, int petitionID)
 
 bool AdminManager::AssignPetition(PID gmID, int petitionID)
 {
-    int result = db->CommandPump("UPDATE petitions SET assigned_gm=%d,status=\"In Progress\" WHERE id=%d AND assigned_gm=-1", gmID.Unbox(), petitionID);
+    int result = db->CommandPump("UPDATE petitions SET assigned_gm=%d,status='In Progress' WHERE id=%d AND assigned_gm=-1", gmID.Unbox(), petitionID);
 
     // If this failed if means that there is a serious error, or another GM was already assigned
     if (!result || result <= -1)
@@ -6224,7 +6224,7 @@ void AdminManager::SendSpawnItems (MsgEntry* me, Client *client)
     {
         unsigned id = result[i].GetUInt32(0);
         psItemStats* item = psserver->GetCacheManager()->GetBasicItemStatsByID(id);
-        if(item && !item->IsMoney() && item->IsSpawnable())
+        if(item && !item->IsMoney())
         {
             csString name(item->GetName());
             csString mesh(item->GetMeshName());
@@ -6309,11 +6309,11 @@ void AdminManager::SpawnItemInv( MsgEntry* me, psGMSpawnItem& msg, Client *clien
         return;
     }
 
-    if(!stats->IsSpawnable())
+    /*if(!stats->IsSpawnable())
     {
         psserver->SendSystemError(me->clientnum, "This item cannot be spawned!");
         return;
-    }
+    }*/
 
     psItem* item = stats->InstantiateBasicItem();
 
