@@ -378,6 +378,15 @@ CS_CHECK_LIB_WITH([sqlite3],
 
 
 #----------------------------------------------------------------------------
+# Check for PostgreSQL
+#----------------------------------------------------------------------------
+
+CS_CHECK_LIB_WITH([pqxx],
+	[AC_LANG_PROGRAM([[#include <pqxx/connection.hxx>]],
+		[new pqxx::connect_direct("");])], [/usr /usr/include/pqxx|/usr/lib /usr/local/ /usr/include/pqxx|/usr/lib/ /usr/local/include/pqxx|/usr/local/lib/ /usr/lib /usr/local/], [C++],
+		[CS_EMIT_BUILD_RESULT([cs_cv_libpqxx], [LIBPQXX])], [], [], [], [], [libpqxx])
+
+#----------------------------------------------------------------------------
 # Check for Curl
 #----------------------------------------------------------------------------
 
