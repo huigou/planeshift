@@ -71,6 +71,10 @@ psCSSetup::psCSSetup(int _argc, char** _argv,
 
 psCSSetup::~psCSSetup()
 {
+    csRef<iStringArray> mounts = vfs->GetMounts();
+    const size_t count = mounts->GetSize();
+    for(size_t i = 0; i < count; i++)
+        vfs->Unmount( mounts->Get(i), NULL );
 }
 
 bool psCSSetup::AddWindowInformations(const char *Info)

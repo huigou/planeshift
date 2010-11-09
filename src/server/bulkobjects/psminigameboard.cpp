@@ -104,6 +104,13 @@ psMiniGameBoardDef::~psMiniGameBoardDef()
         delete[] layout;
     if (pieces)
         delete[] pieces;
+    while(!endgames.IsEmpty())
+    {
+        Endgame_Spec* spec = endgames.Pop();
+        while(!spec->endgameTiles.IsEmpty())
+            delete spec->endgameTiles.Pop();
+        delete spec;
+    }
 }
 
 void psMiniGameBoardDef::PackLayoutString(const char *layoutStr, uint8_t *packedLayout)
@@ -323,6 +330,8 @@ bool psMiniGameBoardDef::DetermineEndgameSpecs(csString endgameXMLstr, csString 
                                             }
                                             else
                                             {
+                                                while(!endgame->endgameTiles.IsEmpty())
+                                                    delete endgame->endgameTiles.Pop();
                                                 delete endgame;
                                                 delete egTileSpec;
                                                 Error2("Error in EndGame XML for \"%s\" minigame: Tile setting misunderstood.",

@@ -108,6 +108,10 @@ MiniGameManager::~MiniGameManager()
 {
     psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_MINIGAME_STARTSTOP);
     psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_MINIGAME_UPDATE);
+
+    csHash<psMiniGameBoardDef *, csString>::GlobalIterator iter(gameBoardDef.GetIterator());
+    while(iter.HasNext())
+        delete iter.Next();
 }
 
 bool MiniGameManager::Initialise(void)

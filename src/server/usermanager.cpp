@@ -204,6 +204,7 @@ UserManager::~UserManager()
         psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_CHARDESCUPDATE);
         psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_TARGET_EVENT);
         psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_ENTRANCE);
+        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_CONNECT_EVENT);
     }
     
     csHash<EMOTE *, csString>::GlobalIterator it(emoteHash.GetIterator ());

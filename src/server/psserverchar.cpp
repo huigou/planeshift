@@ -100,6 +100,7 @@ ServerCharManager::~ServerCharManager()
     {
         psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_GUIINVENTORY);
         psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_GUIMERCHANT);
+        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_GUISTORAGE);
         psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_VIEW_ITEM);
         psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_VIEW_SKETCH);
         psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_WRITE_BOOK);

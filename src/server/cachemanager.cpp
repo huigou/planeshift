@@ -329,6 +329,7 @@ void CacheManager::UnloadAll()
                     CraftSkills* newCraftSkill = it3.Next ();
                     delete newCraftSkill;
                 }
+                delete newCombo->skillArray;
                 delete newCombo;
             }
             delete newComboArray;
