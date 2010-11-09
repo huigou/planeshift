@@ -397,6 +397,8 @@ void WorldEditor::HandleMeshManipulation(iEvent &ev)
                 sceneManipulator->RotateSelected(csVector2(p.x, p.y));
                 break;
             }
+        default:
+            break;
         }
     }
     else if(ev.Name == KeyDown)
