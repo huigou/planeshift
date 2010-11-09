@@ -399,7 +399,7 @@ void CacheManager::UnloadAll()
 
     {
         csHash<psSkillInfo*, int>::GlobalIterator it(skillinfo_IDHash.GetIterator());
-        while(it.hasNext())
+        while(it.HasNext())
             delete it.Next();
         skillinfo_IDHash.DeleteAll();
         skillinfo_NameHash.DeleteAll();
