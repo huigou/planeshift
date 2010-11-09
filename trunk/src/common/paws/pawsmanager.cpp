@@ -471,6 +471,9 @@ bool PawsManager::HandleKeyDown( iEvent& event )
         utf32_char cooked = csKeyEventHelper::GetCookedCode(&event);
         uint32 modifiers = csKeyEventHelper::GetModifiersBits(&event);
 
+        //we don't handle capslock/numlock/scorr block (see PS#4806)
+        modifiers = modifiers &~ ((1 << csKeyModifierTypeCapsLock) | (1 << csKeyModifierTypeNumLock) | (1 << csKeyModifierTypeScrollLock));
+       
         bool result = currentFocusedWidget->OnKeyDown( raw,
                                                        cooked,
                                                        modifiers );
@@ -600,8 +603,13 @@ bool PawsManager::HandleMouseDown( csMouseEventData &data )
 
             widget->RunScriptEvent(PW_SCRIPT_EVENT_MOUSEDOWN);
 
+            uint32 modifiers = data.Modifiers;
+            
+            //we don't handle capslock/numlock/scorr block (see PS#4806)
+            modifiers = modifiers &~ ((1 << csKeyModifierTypeCapsLock) | (1 << csKeyModifierTypeNumLock) | (1 << csKeyModifierTypeScrollLock));
+            
             bool returnResult = widget->OnMouseDown( data.Button,
-                                                     data.Modifiers,
+                                                     modifiers,
                                                      data.x,
                                                      data.y );
             return returnResult;
