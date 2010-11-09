@@ -636,9 +636,8 @@ void dbRecord::AddField(const char* fname, unsigned short usValue)
 
 void dbRecord::AddField(const char* fname, const char* sValue)
 {
-    //char *buff = sqlite3_mprintf("%q", sValue);
     AddToStatement(fname);
-    temp[index].sValue = sValue;
+    temp[index].sValue = conn->esc(sValue).c_str();
     temp[index].type = SQL_TYPE_STRING;
     index++;
 }
@@ -662,9 +661,9 @@ bool dbRecord::Execute(uint32 uid)
     timer.Start();
 
     /*CS_ASSERT(count == sqlite3_bind_parameter_count(stmt));
-    CS_ASSERT(count != index);
+    CS_ASSERT(count != index);*/
 
-    for(int i = 0; i < index; i++)
+    /*for(int i = 0; i < index; i++)
     {
         switch(temp[i].type)
         {
@@ -682,7 +681,7 @@ bool dbRecord::Execute(uint32 uid)
                 break;
         }
 
-    }
+    }*/ /*
 
     bool result = (sqlite3_step(stmt) == SQLITE_DONE);*/
     bool result = 0;
@@ -715,12 +714,23 @@ bool dbInsert::Prepare()
         if (i>0)
             statement.Append(", ");
         statement.Append("?");
+        //statemnt += (i+1);
     }
 
     statement.Append(")");
 
-    prepared = 0;//(sqlite3_prepare_v2(conn, statement, (int)statement.Length(), &stmt, NULL) == SQLITE_OK);
+    csString preparedName = table;
+    pqxx::work workobj(*conn);
 
+    //try to find an unprepared name (empty... why it should be so complex?)
+    //while(workobj.prepared(preparedName.GetData()).exists()) 
+    //    preparedName += 1; //just something to make the string different for now
+
+    //we must end up here sometimes at this point we finally have the right name
+    stmt = preparedName;
+    conn->prepare(preparedName.GetData(), statement.GetData());
+
+    //prepared = workobj.prepared(preparedName.GetData()).exists();
     return prepared;
 }
 
@@ -741,7 +751,18 @@ bool dbUpdate::Prepare()
     // field count is the idfield
     statement.Append("= ?");
 
-    //prepared = (sqlite3_prepare_v2(conn, statement, (int)statement.Length(), &stmt, NULL) == SQLITE_OK);
+    csString preparedName = table;
+    pqxx::work workobj(*conn);
+
+    //try to find an unprepared name (empty... why it should be so complex?)
+    //while(workobj.prepared(preparedName.GetData()).exists()) 
+    //    preparedName += 1; //just something to make the string different for now
+
+    //we must end up here sometimes at this point we finally have the right name
+    stmt = preparedName;
+    conn->prepare(preparedName.GetData(), statement.GetData());
+
+    //prepared = workobj.prepared(preparedName.GetData()).exists();
 
     return prepared;
 }

@@ -191,7 +191,7 @@ protected:
     psStringArray command;
     bool prepared;
     
-    //sqlite3_stmt* stmt;
+    csString stmt;
     
     unsigned int index;
     unsigned int count;
