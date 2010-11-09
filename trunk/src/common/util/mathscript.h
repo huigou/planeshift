@@ -146,6 +146,7 @@ protected:
     size_t opcode;
 
 public:
+    virtual ~MathExpression() {} /// Empty destructor
     static MathExpression* Create(const char *expression, const char *name = "");
     double Evaluate(const MathEnvironment *env);
     virtual double Evaluate(MathEnvironment *env) { return Evaluate(const_cast<const MathEnvironment*>(env)); }

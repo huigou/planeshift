@@ -397,6 +397,15 @@ void CacheManager::UnloadAll()
         }
     }
 
+    {
+        csHash<psSkillInfo*, int>::GlobalIterator it(skillinfo_IDHash.GetIterator());
+        while(it.hasNext())
+            delete it.Next();
+        skillinfo_IDHash.DeleteAll();
+        skillinfo_NameHash.DeleteAll();
+        skillinfo_CategoryHash.DeleteAll();
+    }
+
     delete lootRandomizer;
     // ToDo: unload everything else
 }
@@ -611,6 +620,7 @@ bool CacheManager::PreloadSkills()
             else
             {
                 Error3("Unknown category '%s' for skill id %u",type.GetDataSafe(),newskill->id);
+                delete newskill;
                 return false;
             }
 
@@ -2728,7 +2738,6 @@ bool CacheManager::LoadWorldItems(psSectorInfo *sector, csArray<psItem*> & items
         Error3("Error loading world items.\nQuery: %s\nError: %s",db->GetLastQuery(), db->GetLastError() );
         return false;
     }
-
     for (unsigned long i = 0; i < result.Count(); i++)
     {
         psItem *item;
