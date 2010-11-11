@@ -1310,6 +1310,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\client\gui\bartender.cpp" />
     <ClCompile Include="..\..\src\client\gui\chatwindow.cpp" />
     <ClCompile Include="..\..\src\client\gui\inventorywindow.cpp" />
     <ClCompile Include="..\..\src\client\gui\pawsactionlocationwindow.cpp" />
@@ -1389,6 +1390,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClCompile Include="..\..\src\client\gui\shortcutwindow.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\client\gui\bartender.h" />
     <ClInclude Include="..\..\src\client\gui\chatwindow.h" />
     <ClInclude Include="..\..\src\client\gui\inventorywindow.h" />
     <ClInclude Include="..\..\src\client\gui\pawsactionlocationwindow.h" />

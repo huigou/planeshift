@@ -1729,6 +1729,9 @@
 			Name="Source Files"
 			Filter="">
 			<File
+				RelativePath="..\..\src\client\gui\bartender.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\client\gui\chatwindow.cpp">
 			</File>
 			<File
@@ -1963,6 +1966,9 @@
 		<Filter
 			Name="Header Files"
 			Filter="">
+			<File
+				RelativePath="..\..\src\client\gui\bartender.h">
+			</File>
 			<File
 				RelativePath="..\..\src\client\gui\chatwindow.h">
 			</File>
