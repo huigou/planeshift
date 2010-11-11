@@ -31,7 +31,8 @@
 #endif
 
 // SCF definitions
-
+CS_PLUGIN_NAMESPACE_BEGIN(dbsqlite3)
+{
 SCF_IMPLEMENT_FACTORY(psMysqlConnection)
 
 /**
@@ -784,4 +785,4 @@ void DelayedQueryManager::Push(csString query)
     datacondition.NotifyOne();*/
 }
 #endif
-
+}CS_PLUGIN_NAMESPACE_END(dbsqlite3)
