@@ -27,6 +27,8 @@
 
 // SCF definitions
 
+CS_PLUGIN_NAMESPACE_BEGIN(dbmysql)
+{
 SCF_IMPLEMENT_FACTORY(psMysqlConnection)
 
 /**
@@ -807,4 +809,5 @@ void DelayedQueryManager::Push(csString query)
     datacondition.NotifyOne();
 }
 #endif
-
+}
+CS_PLUGIN_NAMESPACE_END(dbmysql)
