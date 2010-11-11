@@ -33,7 +33,9 @@
 
 // SCF definitions
 
-SCF_IMPLEMENT_FACTORY(psMysqlConnection)
+CS_PLUGIN_NAMESPACE_BEGIN(dbpostgresql)
+{
+    SCF_IMPLEMENT_FACTORY(psMysqlConnection)
 
 /**
  * Actual class which does all the work now.
@@ -851,4 +853,6 @@ void DelayedQueryManager::Push(csString query)
     datacondition.NotifyOne();*/
 }
 #endif
+}
+CS_PLUGIN_NAMESPACE_END(dbpostgresql)
 

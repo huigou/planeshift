@@ -27,6 +27,8 @@ using namespace CS::Threading;
 
 struct iObjectRegistry;
 
+CS_PLUGIN_NAMESPACE_BEGIN(dbpostgresql)
+{
 #ifdef USE_DELAY_QUERY
 #define THREADED_BUFFER_SIZE 300
 class DelayedQueryManager : public CS::Threading::Runnable
@@ -294,6 +296,9 @@ public:
     virtual bool Prepare();
 
 };
+
+
+}
+CS_PLUGIN_NAMESPACE_END(dbpostgresql)
     
 #endif
-
