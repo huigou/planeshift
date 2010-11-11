@@ -31,7 +31,7 @@
 #include <csutil/cscolor.h>
 #include "pawsobjectview.h"
 #include "pawsmanager.h"
-#include "iclient/ibgloader.h"
+#include <ibgloader.h>
 #include "util/log.h"
 #include "util/psconst.h"
 

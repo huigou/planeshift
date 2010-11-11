@@ -22,7 +22,7 @@
 
 #include "util/log.h"
 #include "globals.h"
-#include "iclient/ibgloader.h"
+#include <ibgloader.h>
 
 #include "charapp.h"
 #include "pawscharpick.h"

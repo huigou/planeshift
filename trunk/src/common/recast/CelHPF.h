@@ -32,9 +32,9 @@
 #include <iutil/document.h>
 #include <iutil/objreg.h>
 #include <ivaria/mapnode.h>
-#include <util/celgraph.h>
-#include <util/celnavmesh.h>
-#include <util/celhpf.h>
+#include <celgraph.h>
+#include <celnavmesh.h>
+#include <celhpf.h>
 #include "CelNavMesh.h"
 
 CS_PLUGIN_NAMESPACE_BEGIN(celNavMesh)

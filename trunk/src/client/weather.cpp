@@ -39,7 +39,7 @@
 #include <iutil/stringarray.h>
 #include <ivideo/material.h>
 
-#include "iclient/ibgloader.h"
+#include <ibgloader.h>
 #include "pscelclient.h"
 #include "globals.h"
 #include "weather.h"

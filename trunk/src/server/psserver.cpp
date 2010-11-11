@@ -34,7 +34,7 @@
 //=============================================================================
 // Library Include
 //=============================================================================
-#include "iclient/ibgloader.h"
+#include <ibgloader.h>
 #include "util/serverconsole.h"
 #include "util/mathscript.h"
 #include "util/psdatabase.h"

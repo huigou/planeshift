@@ -35,7 +35,7 @@
 #include "util/poolallocator.h"
 #include "util/psconst.h"
 
-#include "../iserver/idal.h"
+#include <idal.h>
 
 //=============================================================================
 // Local Includes

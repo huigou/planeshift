@@ -25,7 +25,7 @@
 //=============================================================================
 // PlaneShift Includes
 //=============================================================================
-#include "iclient/iscenemanipulate.h"
+#include <iscenemanipulate.h>
 #include "paws/pawsmainwidget.h"
 #include "gui/pawsslot.h"
 #include "pscamera.h"

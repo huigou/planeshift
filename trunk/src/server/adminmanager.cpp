@@ -33,7 +33,7 @@
 //=============================================================================
 // Library Includes
 //=============================================================================
-#include "iclient/ibgloader.h"
+#include <ibgloader.h>
 #include "util/psdatabase.h"
 #include "util/log.h"
 #include "util/serverconsole.h"

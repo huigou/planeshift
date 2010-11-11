@@ -22,8 +22,8 @@
 #include <iutil/vfs.h>
 #include <iutil/cfgmgr.h>
 #include <iengine/engine.h>
-#include <iclient/ibgloader.h>
-#include <util/celhpf.h>
+#include <ibgloader.h>
+#include <celhpf.h>
 
 class NavGen
 {

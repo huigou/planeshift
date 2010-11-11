@@ -63,7 +63,7 @@
 //=============================================================================
 // Local Includes
 //=============================================================================
-#include "iserver/idal.h"
+#include <idal.h>
 #include "client.h"
 #include "clients.h"
 #include "psproxlist.h"

@@ -34,7 +34,7 @@
 #include "util/gameevent.h"
 #include "util/slots.h"
 
-#include "../iserver/idal.h"
+#include <idal.h>
 
 #include "util/poolallocator.h"
 

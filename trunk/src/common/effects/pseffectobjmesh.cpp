@@ -30,7 +30,7 @@
 #include <csutil/cscolor.h>
 #include <csutil/flags.h>
 
-#include "iclient/ibgloader.h"
+#include <ibgloader.h>
 
 #include "effects/pseffectobjmesh.h"
 #include "effects/pseffectanchor.h"

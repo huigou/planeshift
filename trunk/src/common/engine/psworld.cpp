@@ -34,7 +34,7 @@
 //=============================================================================
 // Project Includes
 //=============================================================================
-#include "iclient/ibgloader.h"
+#include <ibgloader.h>
 #include "util/consoleout.h"
 #include "util/log.h"
 #include "util/strutil.h"

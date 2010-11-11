@@ -43,7 +43,7 @@
 #include <iutil/document.h>
 #include <iutil/objreg.h>
 #include <iutil/vfs.h>
-#include <util/celnavmesh.h>
+#include <celnavmesh.h>
 #include "recastnavigation/ChunkyTriMesh.h"
 #include "recastnavigation/DebugDraw.h"
 #include "recastnavigation/DetourCommon.h"

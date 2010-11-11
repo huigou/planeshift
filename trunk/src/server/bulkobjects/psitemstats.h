@@ -35,7 +35,7 @@
 
 #include "rpgrules/psmoney.h"
 
-#include "../iserver/idal.h"
+#include <idal.h>
 
 //=============================================================================
 // Local Includes

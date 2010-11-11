@@ -30,7 +30,7 @@
 //=============================================================================
 // Project Library Includes
 //=============================================================================
-#include "iclient/ibgloader.h"
+#include <ibgloader.h>
 #include "util/consoleout.h"
 #include "util/psxmlparser.h"
 

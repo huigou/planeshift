@@ -25,7 +25,7 @@
 
 #include "globals.h"
 #include "psserver.h"
-#include "iserver/idal.h"
+#include <idal.h>
 
 #include "util/serverconsole.h"
 #include "util/log.h"

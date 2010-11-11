@@ -49,7 +49,7 @@
 #include "util/log.h"
 #include "util/psdatabase.h"
 
-#include "../iserver/idal.h"
+#include <idal.h>
 
 #include "../psserver.h"
 #include "../weathermanager.h"

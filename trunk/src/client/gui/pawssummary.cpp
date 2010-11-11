@@ -26,7 +26,7 @@
 #include "paws/pawstextbox.h"
 #include "paws/pawslistbox.h"
 #include "paws/pawsyesnobox.h"
-#include "iclient/ibgloader.h"
+#include <ibgloader.h>
 #include "paws/pawsobjectview.h"
 #include "charapp.h"
 

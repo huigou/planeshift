@@ -47,7 +47,7 @@
 #include "entitymanager.h"
 #include "progressionmanager.h"
 #include "cachemanager.h"
-#include "iserver/idal.h"
+#include <idal.h>
 #include "tutorialmanager.h"
 #include "util/mathscript.h"
 #include "scripting.h"

@@ -32,7 +32,7 @@
 #include "ivaria/conin.h"
 #include "ivaria/conout.h"
 
-#include "util/celgraph.h"
+#include <celgraph.h>
 
 #include <stdio.h>
 #include <string.h>

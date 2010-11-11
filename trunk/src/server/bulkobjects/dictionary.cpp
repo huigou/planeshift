@@ -54,7 +54,7 @@
 #include "../chatmanager.h"
 #include "psraceinfo.h"
 
-#include "../iserver/idal.h"
+#include <idal.h>
 extern "C" {
 #include "../tools/wordnet/wn.h"
 }
