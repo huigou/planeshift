@@ -10,10 +10,9 @@
 
 
 #include <csutil/scf.h>
+#include <csutil/scf_implementation.h>
 #include <csutil/csstring.h>
 #include "util/stringarray.h"
-
-SCF_VERSION (iDataConnection, 0, 0, 1);
 
 #define QUERY_FAILED 0xFFFFFFFF
 
@@ -27,6 +26,7 @@ class LogCSV;
 struct iDataConnection : public virtual iBase
 {
 public:
+    SCF_INTERFACE(iDataConnection, 0, 0, 1);
 
     /// Returns whether this object is actually connected to the database.
     virtual int IsValid(void)=0;
