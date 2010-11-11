@@ -22,7 +22,7 @@
 
 #include <csutil/scf.h>
 #include <csutil/list.h>
-#include <util/celnavmesh.h>
+#include <celnavmesh.h>
 
 class csBox3;
 class csOBB;
