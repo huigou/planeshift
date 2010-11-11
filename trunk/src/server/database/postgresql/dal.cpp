@@ -74,8 +74,6 @@ bool psMysqlConnection::Initialize(const char *host, unsigned int port, const ch
         dbConnectString += port;
     }
 
-    printf("connecting to %s\n", dbConnectString.GetData());
-    
     conn = PQconnectdb(dbConnectString);
     if(!conn || (PQstatus(conn) == CONNECTION_BAD))
         return false;
@@ -93,7 +91,7 @@ bool psMysqlConnection::Initialize(const char *host, unsigned int port, const ch
 
 bool psMysqlConnection::Close()
 {
-    //waits for sqlite to complete and close.
+    //waits for postgresql to complete and close.
     if(conn)
     {
         PQfinish(conn);
@@ -231,7 +229,7 @@ iResultSet *psMysqlConnection::Select(const char *sql, ...)
     lastquery = querystr;
 
     timer.Start();
-printf("%s\n", querystr.GetData());
+
     PGresult *res = PQexec(conn, querystr.GetData());
     
     if(res  && PQresultStatus(res) != PGRES_FATAL_ERROR)
@@ -506,8 +504,8 @@ int psResultRow::Fetch(int row)
 
 const char *psResultRow::operator[](int whichfield)
 {
-    if (whichfield >= 0 && whichfield < max){ printf("%s\n", PQgetvalue(rs, rowNum, whichfield));
-        return PQgetvalue(rs, rowNum, whichfield);}
+    if (whichfield >= 0 && whichfield < max)
+        return PQgetvalue(rs, rowNum, whichfield);
     else
         return "";
 }
