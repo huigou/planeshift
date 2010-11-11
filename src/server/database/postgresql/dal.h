@@ -17,7 +17,7 @@
 
 #include "net/netbase.h"  // Make sure that winsock is included.
 
-#include <pqxx/pqxx>
+#include <libpq-fe.h>
 
 #include <csutil/csstring.h>
 #include "util/stringarray.h"
@@ -39,7 +39,7 @@ public:
     void Push(csString query);
     void Stop();
 private:
-    pqxx::connection* m_conn;
+    //pqxx::connection* m_conn;
     csString arr[THREADED_BUFFER_SIZE];
     size_t start, end;
     CS::Threading::Mutex mutex;
@@ -58,8 +58,7 @@ private:
 class psMysqlConnection : public scfImplementation2<psMysqlConnection, iComponent, iDataConnection>
 {
 protected:
-    pqxx::connection* conn; //Points to mydb after a successfull connection to the db
-    csString lastError;
+    PGconn* conn; //Points to mydb after a successfull connection to the db
     uint64 lastRow;
     csString lastquery;
     iObjectRegistry *objectReg;
@@ -119,7 +118,7 @@ class psResultRow : public iResultRow
 {
 protected:
     int rowNum;
-    pqxx::result *rs;
+    PGresult *rs;
     int max;
 
 public:
@@ -156,12 +155,12 @@ public:
 class psResultSet : public iResultSet
 {
 protected:
-    pqxx::result rs;
+    PGresult *rs;
     unsigned long rows, fields, current;
     psResultRow  row;
 
 public:
-    psResultSet(pqxx::result res);
+    psResultSet(PGresult *res);
     virtual ~psResultSet();
 
     void Release(void) { delete this; };
@@ -186,7 +185,7 @@ protected:
     const char* table;
     const char* idfield;
     
-    pqxx::connection* conn;
+    PGconn *conn;
     
     psStringArray command;
     bool prepared;
@@ -208,7 +207,7 @@ protected:
     virtual void SetID(uint32 uid) = 0;
     
 public:
-    dbRecord(pqxx::connection* db, const char* Table, const char* Idfield, unsigned int count, LogCSV* logcsv, const char* file, unsigned int line)
+    dbRecord(PGconn* db, const char* Table, const char* Idfield, unsigned int count, LogCSV* logcsv, const char* file, unsigned int line)
     {
         conn = db;
         table = Table;
@@ -267,7 +266,7 @@ class dbInsert : public dbRecord
     virtual void SetID(uint32 uid)  {  };
     
 public:
-    dbInsert(pqxx::connection* db, const char* Table, unsigned int count, LogCSV* logcsv, const char* file, unsigned int line)
+    dbInsert(PGconn* db, const char* Table, unsigned int count, LogCSV* logcsv, const char* file, unsigned int line)
     : dbRecord(db, Table, "", count, logcsv, file, line) { }
     
     virtual bool Prepare();
@@ -288,7 +287,7 @@ class dbUpdate : public dbRecord
         index++;
     }
 public:
-    dbUpdate(pqxx::connection* db, const char* Table, const char* Idfield, unsigned int count, LogCSV* logcsv, const char* file, unsigned int line)
+    dbUpdate(PGconn* db, const char* Table, const char* Idfield, unsigned int count, LogCSV* logcsv, const char* file, unsigned int line)
     : dbRecord(db, Table, Idfield, count, logcsv, file, line) { }
     virtual bool Prepare();
 

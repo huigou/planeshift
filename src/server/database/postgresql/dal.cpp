@@ -73,15 +73,9 @@ bool psMysqlConnection::Initialize(const char *host, unsigned int port, const ch
 
     printf("connecting to %s\n", dbConnectString.GetData());
     
-    try
-    {
-        conn = new pqxx::connection(dbConnectString);
-    }
-    catch (const std::exception &e)
-    {
-        lastError = e.what();
+    conn = PQconnectdb(dbConnectString);
+    if(!conn || (PQstatus(conn) == CONNECTION_BAD))
         return false;
-    }
 
 #ifdef USE_DELAY_QUERY
     dqm.AttachNew(new DelayedQueryManager(host, port, database, user, pwd));
@@ -98,8 +92,7 @@ bool psMysqlConnection::Close()
     //waits for sqlite to complete and close.
     if(conn)
     {
-        //conn->disconnect();
-        delete conn;
+        PQfinish(conn);
         conn = NULL;
     }
 }
@@ -107,21 +100,26 @@ bool psMysqlConnection::Close()
 
 int psMysqlConnection::IsValid()
 {
-    return (conn && conn->is_open()) ? 1 : 0;
+    return (conn) ? 1 : 0;
 }
 
 const char *psMysqlConnection::GetLastError()
 {
-    return lastError;
+    return PQerrorMessage(conn);
 }
 
 // Sets *to to the escaped value
 void psMysqlConnection::Escape(csString& to, const char *from)
 {
+    size_t len = strlen(from);
+    char* buff = new char[len*2+1];
+
     if(conn)
-        to = conn->esc(from).c_str();
+        PQescapeStringConn(conn, buff, from, len, NULL);
     else
-        to = from;
+        PQescapeString(buff, from, len);
+    to = buff;
+    delete[] buff;
 }
 
 unsigned long psMysqlConnection::CommandPump(const char *sql,...)
@@ -150,11 +148,11 @@ unsigned long psMysqlConnection::CommandPump(const char *sql,...)
 
 
     timer.Start();
-    pqxx::work workObj(*conn);
-    try
+
+    PGresult *res = PQexec(conn, querystr.GetData());
+    
+    if(res && PQresultStatus(res) != PGRES_NONFATAL_ERROR && PQresultStatus(res) != PGRES_FATAL_ERROR)
     {
-        pqxx::result res = workObj.exec(querystr.GetData());
-        workObj.commit();
         if(timer.Stop() > 1000)
         {
             csString status;
@@ -166,12 +164,13 @@ unsigned long psMysqlConnection::CommandPump(const char *sql,...)
         //status.Format("%s, %d", querystr.GetData(), timer.Stop());
         //logcsv->Write(CSV_SQL, status);
         profs.AddSQLTime(querystr, timer.Stop());
-        lastRow = res.inserted_oid();
-        return (unsigned long) res.affected_rows();
+        lastRow = PQoidValue(res);
+        const char *const RowsStr = PQcmdTuples(res);
+        return (unsigned long) (RowsStr[0] ? atoi(RowsStr) : 0);
     }
-    catch (const std::exception &e)
+    else
     {
-        lastError = e.what();
+        PQclear(res);
         return QUERY_FAILED;
     }
 
@@ -191,11 +190,10 @@ unsigned long psMysqlConnection::Command(const char *sql,...)
     lastquery = querystr;
 
     timer.Start();
-    try
+    PGresult *res = PQexec(conn, querystr.GetData());
+    
+    if(res && PQresultStatus(res) != PGRES_NONFATAL_ERROR && PQresultStatus(res) != PGRES_FATAL_ERROR)
     {
-        pqxx::work workObj(*conn);
-        pqxx::result res = workObj.exec(querystr.GetData());
-        workObj.commit();
         if(timer.Stop() > 1000)
         {
             csString status;
@@ -204,12 +202,13 @@ unsigned long psMysqlConnection::Command(const char *sql,...)
                 logcsv->Write(CSV_STATUS, status);
         }
         profs.AddSQLTime(querystr, timer.Stop());
-        lastRow = res.inserted_oid();
-        return (unsigned long) res.affected_rows();
+        lastRow = PQoidValue(res);
+        const char *const RowsStr = PQcmdTuples(res);
+        return (unsigned long) (RowsStr[0] ? atoi(RowsStr) : 0);
     }
-    catch (const std::exception &e)
+    else
     {
-        lastError = e.what();
+        PQclear(res);
         return QUERY_FAILED;
     }
 }
@@ -228,11 +227,10 @@ iResultSet *psMysqlConnection::Select(const char *sql, ...)
 
     timer.Start();
 printf("%s\n", querystr.GetData());
-    try
+    PGresult *res = PQexec(conn, querystr.GetData());
+    
+    if(res && PQresultStatus(res) != PGRES_NONFATAL_ERROR && PQresultStatus(res) != PGRES_FATAL_ERROR)
     {
-        pqxx::work workObj(*conn);
-        pqxx::result res = workObj.exec(querystr.GetData());
-        workObj.commit();
         if(timer.Stop() > 1000)
         {
             csString status;
@@ -244,9 +242,9 @@ printf("%s\n", querystr.GetData());
         iResultSet *rs = new psResultSet(res);
         return rs;
     }
-    catch (const std::exception &e)
+    else
     {
-        lastError = e.what();
+        PQclear(res);
         return NULL;
     }
 }
@@ -265,11 +263,10 @@ int psMysqlConnection::SelectSingleNumber(const char *sql, ...)
 
     timer.Start();
 
-    try
+    PGresult *res = PQexec(conn, querystr.GetData());
+    
+    if(res && PQresultStatus(res) != PGRES_NONFATAL_ERROR && PQresultStatus(res) != PGRES_FATAL_ERROR)
     {
-        pqxx::work workObj(*conn);
-        pqxx::result res = workObj.exec(querystr.GetData());
-        workObj.commit();
         if(timer.Stop() > 1000)
         {
             csString status;
@@ -292,9 +289,9 @@ int psMysqlConnection::SelectSingleNumber(const char *sql, ...)
             delete rs;  // return err code below
         }
     }
-    catch (const std::exception &e)
+    else
     {
-        lastError = e.what();
+        PQclear(res);
         return QUERY_FAILED;
     }
 }
@@ -458,13 +455,13 @@ iRecord* psMysqlConnection::NewInsertPreparedStatement(const char* table, unsign
     return new dbInsert(conn, table, count, logcsv, file, line);
 }
 
-psResultSet::psResultSet(pqxx::result res)
+psResultSet::psResultSet(PGresult *res)
 {
     rs = res;
-    rows    = rs.size();
-    fields  = rs.columns();
+    rows    = PQntuples(res);
+    fields  = PQnfields(res);
     row.SetMaxFields(fields);
-    row.SetResultSet(&rs);
+    row.SetResultSet(rs);
 
     current = (unsigned long) -1;
 
@@ -472,8 +469,7 @@ psResultSet::psResultSet(pqxx::result res)
 
 psResultSet::~psResultSet()
 {
-    //looks like pqxx::result works like a smart pointer according to documentation
-    //so we just let it autodestruct all.
+    PQclear(rs);
 }
 
 iResultRow& psResultSet::operator[](unsigned long whichrow)
@@ -495,7 +491,7 @@ iResultRow& psResultSet::operator[](unsigned long whichrow)
 
 void psResultRow::SetResultSet(void * resultsettoken)
 {
-    rs = (pqxx::result*)resultsettoken;
+    rs = (PGresult*)resultsettoken;
 }
 
 int psResultRow::Fetch(int row)
@@ -505,8 +501,8 @@ int psResultRow::Fetch(int row)
 
 const char *psResultRow::operator[](int whichfield)
 {
-    if (whichfield >= 0 && whichfield < max)
-        return (*rs)[rowNum][whichfield].c_str();
+    if (whichfield >= 0 && whichfield < max){ printf("%s\n", PQgetvalue(rs, rowNum, whichfield));
+        return PQgetvalue(rs, rowNum, whichfield);}
     else
         return "";
 }
@@ -516,17 +512,19 @@ const char *psResultRow::operator[](const char *fieldname)
   CS_ASSERT(fieldname);
   CS_ASSERT(max); // trying to access when no fields returned in row! probably empty resultset.
   
-  //looks like this is bugged in pqxx library. trips after some columns.
-  //return (*rs)[rowNum][fieldname].c_str();
-
   for (int i=0; i < max; i++)
   {
-    if (!strcasecmp((*rs)[rowNum][i].name(),fieldname))
+    if (!strcasecmp(PQfname(rs,i),fieldname))
     {
-        //printf("%s\n",(*rs)[rowNum][i].c_str());
-      return (*rs)[rowNum][i].c_str();
+      return PQgetvalue(rs, rowNum, i);
     }
   }
+
+  //looks like this is bugged in pq library. trips in things like numColumns.
+  /*int column = PQfnumber(rs, fieldname);
+  printf("%s\n", PQgetvalue(rs, rowNum, column));
+  if(column != -1)
+    return PQgetvalue(rs, rowNum, column);*/
 
   CPrintf(CON_BUG, "Could not find field %s!. Exiting.\n",fieldname);
   CS_ASSERT(false);
@@ -637,7 +635,7 @@ void dbRecord::AddField(const char* fname, unsigned short usValue)
 void dbRecord::AddField(const char* fname, const char* sValue)
 {
     AddToStatement(fname);
-    temp[index].sValue = conn->esc(sValue).c_str();
+    temp[index].sValue = sValue; //conn->esc(sValue).c_str();
     temp[index].type = SQL_TYPE_STRING;
     index++;
 }
@@ -720,7 +718,7 @@ bool dbInsert::Prepare()
     statement.Append(")");
 
     csString preparedName = table;
-    pqxx::work workobj(*conn);
+    //pqxx::work workobj(*conn);
 
     //try to find an unprepared name (empty... why it should be so complex?)
     //while(workobj.prepared(preparedName.GetData()).exists()) 
@@ -728,7 +726,7 @@ bool dbInsert::Prepare()
 
     //we must end up here sometimes at this point we finally have the right name
     stmt = preparedName;
-    conn->prepare(preparedName.GetData(), statement.GetData());
+    //conn->prepare(preparedName.GetData(), statement.GetData());
 
     //prepared = workobj.prepared(preparedName.GetData()).exists();
     return prepared;
@@ -752,7 +750,7 @@ bool dbUpdate::Prepare()
     statement.Append("= ?");
 
     csString preparedName = table;
-    pqxx::work workobj(*conn);
+    //pqxx::work workobj(*conn);
 
     //try to find an unprepared name (empty... why it should be so complex?)
     //while(workobj.prepared(preparedName.GetData()).exists()) 
@@ -760,7 +758,7 @@ bool dbUpdate::Prepare()
 
     //we must end up here sometimes at this point we finally have the right name
     stmt = preparedName;
-    conn->prepare(preparedName.GetData(), statement.GetData());
+    //conn->prepare(preparedName.GetData(), statement.GetData());
 
     //prepared = workobj.prepared(preparedName.GetData()).exists();
 
