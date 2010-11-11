@@ -7,7 +7,7 @@
 #ifndef __DAL_H__
 #define __DAL_H__
 
-#include "iserver/idal.h"
+#include <idal.h>
 
 #include <csutil/scf.h>
 #include <csutil/scf_implementation.h>

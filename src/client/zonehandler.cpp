@@ -53,7 +53,7 @@
 
 #include "engine/psworld.h"
 
-#include "iclient/ibgloader.h"
+#include <ibgloader.h>
 
 #include "psclientdr.h"
 

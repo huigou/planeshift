@@ -40,7 +40,7 @@
 //=============================================================================
 // Project Includes
 //=============================================================================
-#include "iclient/ibgloader.h"
+#include <ibgloader.h>
 #include "util/serverconsole.h"
 #include "util/psdatabase.h"
 #include "util/eventmanager.h"
@@ -50,7 +50,7 @@
 #include "util/strutil.h"
 #include "util/psutil.h"
 #include "util/pspathnetwork.h"
-#include "util/celhpf.h"
+#include <celhpf.h>
 
 #include "net/connection.h"
 #include "net/clientmsghandler.h"

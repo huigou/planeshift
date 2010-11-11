@@ -22,7 +22,7 @@
 #include <csutil/array.h>
 #include <csutil/list.h>
 
-#include "iserver/idal.h"
+#include <idal.h>
 
 #include "util/pspath.h"
 

@@ -31,7 +31,7 @@
 //=============================================================================
 // Project Space Includes
 //=============================================================================
-#include "iclient/ibgloader.h"
+#include <ibgloader.h>
 #include "util/log.h"
 #include "util/serverconsole.h"
 #include "util/eventmanager.h"

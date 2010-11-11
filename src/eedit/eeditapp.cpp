@@ -78,7 +78,7 @@
 #include "eeditrequestcombo.h"
 #include "eeditrendertoolbox.h"
 
-#include "iclient/ibgloader.h"
+#include <ibgloader.h>
 
 const char * EEditApp::CONFIG_FILENAME = "/this/eedit.cfg";
 const char * EEditApp::APP_NAME        = "planeshift.eedit.application";

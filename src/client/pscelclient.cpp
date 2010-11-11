@@ -75,7 +75,7 @@
 //=============================================================================
 // Application Includes
 //=============================================================================
-#include "iclient/ibgloader.h"
+#include <ibgloader.h>
 #include "pscelclient.h"
 #include "charapp.h"
 #include "clientvitals.h"

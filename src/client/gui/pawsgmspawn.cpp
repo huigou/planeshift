@@ -25,7 +25,7 @@
 #include "net/messages.h"
 
 #include "globals.h"
-#include "iclient/ibgloader.h"
+#include <ibgloader.h>
 #include "paws/pawslistbox.h"
 #include "paws/pawsyesnobox.h"
 #include "paws/pawsobjectview.h"

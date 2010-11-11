@@ -24,7 +24,7 @@
 #define __GLOBALS_H__
 
 #include "psserver.h"
-#include "iserver/idal.h"
+#include <idal.h>
 
 class NPCDialogDict;
 

@@ -104,8 +104,8 @@ if (!myref)                                                  \
 #include "entitylabels.h"
 #include "chatbubbles.h"
 #include "questionclient.h"
-#include "iclient/ibgloader.h"
-#include "iclient/iscenemanipulate.h"
+#include <ibgloader.h>
+#include <iscenemanipulate.h>
 
 /////////////////////////////////////////////////////////////////////////////
 //  PAWS Includes

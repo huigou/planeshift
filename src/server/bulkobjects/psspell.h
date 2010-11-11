@@ -28,7 +28,7 @@
 //=============================================================================
 // Project Includes
 //=============================================================================
-#include "iserver/idal.h"
+#include <idal.h>
 #include "util/scriptvar.h"
 #include "util/gameevent.h"
 

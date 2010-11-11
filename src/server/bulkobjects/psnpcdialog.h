@@ -35,7 +35,7 @@
 #include "util/psconst.h"
 #include "util/psstring.h"
 
-#include "../iserver/idal.h"
+#include <idal.h>
 
 
 //=============================================================================

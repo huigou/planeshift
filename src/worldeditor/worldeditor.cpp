@@ -35,8 +35,8 @@
 #include <ivideo/graph2d.h>
 #include <ivideo/natwin.h>
 
-#include "iclient/ibgloader.h"
-#include "iclient/iscenemanipulate.h"
+#include <ibgloader.h>
+#include <iscenemanipulate.h>
 #include "paws/pawsmanager.h"
 #include "paws/pawsmainwidget.h"
 #include "util/log.h"

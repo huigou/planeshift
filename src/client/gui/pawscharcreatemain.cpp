@@ -24,7 +24,7 @@
 
 #include "globals.h"
 #include "charapp.h"
-#include "iclient/ibgloader.h"
+#include <ibgloader.h>
 #include "net/messages.h"
 #include "net/clientmsghandler.h"
 #include "net/charmessages.h"

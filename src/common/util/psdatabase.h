@@ -23,7 +23,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../../server/iserver/idal.h"      // Database Abstraction Layer Interface
+#include <idal.h>      // Database Abstraction Layer Interface
 
 struct iObjectRegistry;
 class psAdminResponseList;

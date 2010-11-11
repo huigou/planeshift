@@ -39,8 +39,8 @@
 #include <iutil/objreg.h>
 #include <iutil/vfs.h>
 
-#include <iclient/ibgloader.h>
-#include <iclient/iscenemanipulate.h>
+#include <ibgloader.h>
+#include <iscenemanipulate.h>
 
 struct iCollideSystem;
 struct iEngineSequenceManager;

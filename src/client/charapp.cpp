@@ -33,7 +33,7 @@
 //=============================================================================
 // Project Includes
 //=============================================================================
-#include "iclient/ibgloader.h"
+#include <ibgloader.h>
 #include "util/log.h"
 #include "util/psstring.h"
 #include "effects/pseffect.h"

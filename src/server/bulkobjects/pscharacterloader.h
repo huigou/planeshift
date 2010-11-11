@@ -32,7 +32,7 @@
 //=============================================================================
 #include "util/gameevent.h"
 
-#include "../iserver/idal.h"      // Database Abstraction Layer Interface
+#include <idal.h>      // Database Abstraction Layer Interface
 
 #include "../gem.h"
 
