@@ -1,11 +1,11 @@
 SubDir TOP src server database postgresql ;
 
-if $(LIBPQXX.AVAILABLE) = "yes"
+if $(LIBPQ.AVAILABLE) = "yes"
 {
 Plugin dbpostgresql :
 	[ Wildcard *.cpp *.h ]
 ;
-ExternalLibs dbpostgresql : CRYSTAL LIBPQXX ;
+ExternalLibs dbpostgresql : CRYSTAL LIBPQ ;
 LinkWith dbpostgresql : psutil ;
 CompileGroups dbpostgresql : psserver psnpcclient ;
 

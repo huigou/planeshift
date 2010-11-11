@@ -376,15 +376,14 @@ CS_CHECK_LIB_WITH([sqlite3],
 		[sqlite3 **db; sqlite3_open("",db);])], [/usr /usr/include/|/usr/lib /usr/local/ /usr/include/|/usr/lib/ /usr/local/include/|/usr/local/lib/ /usr/lib /usr/local/], [],
 		[CS_EMIT_BUILD_RESULT([cs_cv_libsqlite3], [LIBSQLITE3])], [], [], [], [], [])
 
-
 #----------------------------------------------------------------------------
 # Check for PostgreSQL
 #----------------------------------------------------------------------------
 
-CS_CHECK_LIB_WITH([pqxx],
-	[AC_LANG_PROGRAM([[#include <pqxx/connection.hxx>]],
-		[new pqxx::connect_direct("");])], [/usr /usr/include/pqxx|/usr/lib /usr/local/ /usr/include/pqxx|/usr/lib/ /usr/local/include/pqxx|/usr/local/lib/ /usr/lib /usr/local/], [C++],
-		[CS_EMIT_BUILD_RESULT([cs_cv_libpqxx], [LIBPQXX])], [], [], [], [], [libpqxx])
+CS_CHECK_LIB_WITH([pq],
+	[AC_LANG_PROGRAM([[#include <libpq_fe.h>]],
+		[PQconnectdb("");])], [/usr /usr/include/postgresql|/usr/lib /usr/local/ /usr/include/postgresql|/usr/lib/ /usr/local/include/postgresql|/usr/local/lib/ /usr/lib /usr/local/], [],
+		[CS_EMIT_BUILD_RESULT([cs_cv_libpq], [LIBPQ])], [], [], [], [], [])
 
 #----------------------------------------------------------------------------
 # Check for Curl

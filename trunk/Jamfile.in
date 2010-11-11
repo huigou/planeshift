@@ -151,17 +151,17 @@ MsvcGenConfig LIBSQLITE3.INCDIRS ;
 MsvcGenConfig LIBSQLITE3.LIBDIRS ;
 MsvcGenConfig LIBSQLITE3.LIBDIRS.DEBUG ;
 
-# POSTGRESQL(LIBPQXX)
+# POSTGRESQL(LIBPQ)
 
-MsvcGenConfig LIBPQXX.AVAILABLE : no ;
-MsvcGenConfig LIBPQXX.DEFINES ;
-MsvcGenConfig LIBPQXX.CFLAGS ;
-MsvcGenConfig LIBPQXX.LFLAGS ;
-MsvcGenConfig LIBPQXX.LIBS : "pqxx.lib" ;
-MsvcGenConfig LIBPQXX.LIBS.DEBUG : "pqxx.lib" ;
-MsvcGenConfig LIBPQXX.INCDIRS ;
-MsvcGenConfig LIBPQXX.LIBDIRS ;
-MsvcGenConfig LIBPQXX.LIBDIRS.DEBUG ;
+MsvcGenConfig LIBPQ.AVAILABLE : no ;
+MsvcGenConfig LIBPQ.DEFINES ;
+MsvcGenConfig LIBPQ.CFLAGS ;
+MsvcGenConfig LIBPQ.LFLAGS ;
+MsvcGenConfig LIBPQ.LIBS : "pq.lib" ;
+MsvcGenConfig LIBPQ.LIBS.DEBUG : "pq.lib" ;
+MsvcGenConfig LIBPQ.INCDIRS ;
+MsvcGenConfig LIBPQ.LIBDIRS ;
+MsvcGenConfig LIBPQ.LIBDIRS.DEBUG ;
 
 # CURL
 
