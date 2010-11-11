@@ -53,10 +53,11 @@ enum Fade_Direction
 
 
 struct iView;
-SCF_VERSION(iSoundManager, 0, 0, 1);
 
 struct iSoundManager : public virtual iBase
 {
+    SCF_INTERFACE(iSoundManager, 0, 0, 1);
+
     enum
     {
     NO_LOOP = 0,
