@@ -61,6 +61,7 @@ protected:
     PGconn* conn; //Points to mydb after a successfull connection to the db
     uint64 lastRow;
     csString lastquery;
+    int stmtNum;
     iObjectRegistry *objectReg;
     psDBProfiles profs;
     csString profileDump;
@@ -186,6 +187,7 @@ protected:
     const char* idfield;
     
     PGconn *conn;
+    int *stmtNum;
     
     psStringArray command;
     bool prepared;
@@ -207,7 +209,7 @@ protected:
     virtual void SetID(uint32 uid) = 0;
     
 public:
-    dbRecord(PGconn* db, const char* Table, const char* Idfield, unsigned int count, LogCSV* logcsv, const char* file, unsigned int line)
+    dbRecord(PGconn* db, int *StmtNum, const char* Table, const char* Idfield, unsigned int count, LogCSV* logcsv, const char* file, unsigned int line)
     {
         conn = db;
         table = Table;
@@ -218,7 +220,7 @@ public:
         this->logcsv = logcsv;
         this->file = file;
         this->line = line;
-        
+        stmtNum = StmtNum;
         //stmt = NULL;
         prepared = false;
     }
@@ -266,8 +268,8 @@ class dbInsert : public dbRecord
     virtual void SetID(uint32 uid)  {  };
     
 public:
-    dbInsert(PGconn* db, const char* Table, unsigned int count, LogCSV* logcsv, const char* file, unsigned int line)
-    : dbRecord(db, Table, "", count, logcsv, file, line) { }
+    dbInsert(PGconn* db, int *StmtNum, const char* Table, unsigned int count, LogCSV* logcsv, const char* file, unsigned int line)
+    : dbRecord(db, StmtNum, Table, "", count, logcsv, file, line) { }
     
     virtual bool Prepare();
 };
@@ -277,7 +279,7 @@ class dbUpdate : public dbRecord
     virtual void AddToStatement(const char* fname)
     {
         if(!prepared)
-            command.FormatPush("%s = ?", fname);
+            command.FormatPush("%s = $", fname);
     }
     
     virtual void SetID(uint32 uid) 
@@ -287,8 +289,8 @@ class dbUpdate : public dbRecord
         index++;
     }
 public:
-    dbUpdate(PGconn* db, const char* Table, const char* Idfield, unsigned int count, LogCSV* logcsv, const char* file, unsigned int line)
-    : dbRecord(db, Table, Idfield, count, logcsv, file, line) { }
+    dbUpdate(PGconn* db, int *StmtNum, const char* Table, const char* Idfield, unsigned int count, LogCSV* logcsv, const char* file, unsigned int line)
+    : dbRecord(db, StmtNum, Table, Idfield, count, logcsv, file, line) { }
     virtual bool Prepare();
 
 };

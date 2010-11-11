@@ -42,6 +42,7 @@ SCF_IMPLEMENT_FACTORY(psMysqlConnection)
 psMysqlConnection::psMysqlConnection(iBase *iParent) : scfImplementationType(this, iParent)
 {
     conn = NULL;
+    stmtNum = 0;
 }
 
 psMysqlConnection::~psMysqlConnection()
@@ -77,6 +78,7 @@ bool psMysqlConnection::Initialize(const char *host, unsigned int port, const ch
     if(!conn || (PQstatus(conn) == CONNECTION_BAD))
         return false;
 
+    stmtNum = 0;
 #ifdef USE_DELAY_QUERY
     dqm.AttachNew(new DelayedQueryManager(host, port, database, user, pwd));
     dqmThread.AttachNew(new Thread(dqm));
@@ -94,6 +96,7 @@ bool psMysqlConnection::Close()
     {
         PQfinish(conn);
         conn = NULL;
+        stmtNum = 0;
     }
 }
 
@@ -151,7 +154,7 @@ unsigned long psMysqlConnection::CommandPump(const char *sql,...)
 
     PGresult *res = PQexec(conn, querystr.GetData());
     
-    if(res && PQresultStatus(res) != PGRES_NONFATAL_ERROR && PQresultStatus(res) != PGRES_FATAL_ERROR)
+    if(res && PQresultStatus(res) != PGRES_FATAL_ERROR)
     {
         if(timer.Stop() > 1000)
         {
@@ -192,7 +195,7 @@ unsigned long psMysqlConnection::Command(const char *sql,...)
     timer.Start();
     PGresult *res = PQexec(conn, querystr.GetData());
     
-    if(res && PQresultStatus(res) != PGRES_NONFATAL_ERROR && PQresultStatus(res) != PGRES_FATAL_ERROR)
+    if(res && PQresultStatus(res) != PGRES_FATAL_ERROR)
     {
         if(timer.Stop() > 1000)
         {
@@ -229,7 +232,7 @@ iResultSet *psMysqlConnection::Select(const char *sql, ...)
 printf("%s\n", querystr.GetData());
     PGresult *res = PQexec(conn, querystr.GetData());
     
-    if(res && PQresultStatus(res) != PGRES_NONFATAL_ERROR && PQresultStatus(res) != PGRES_FATAL_ERROR)
+    if(res  && PQresultStatus(res) != PGRES_FATAL_ERROR)
     {
         if(timer.Stop() > 1000)
         {
@@ -265,7 +268,7 @@ int psMysqlConnection::SelectSingleNumber(const char *sql, ...)
 
     PGresult *res = PQexec(conn, querystr.GetData());
     
-    if(res && PQresultStatus(res) != PGRES_NONFATAL_ERROR && PQresultStatus(res) != PGRES_FATAL_ERROR)
+    if(res  && PQresultStatus(res) != PGRES_FATAL_ERROR)
     {
         if(timer.Stop() > 1000)
         {
@@ -447,12 +450,12 @@ void psMysqlConnection::ResetProfile()
 
 iRecord* psMysqlConnection::NewUpdatePreparedStatement(const char* table, const char* idfield, unsigned int count, const char* file, unsigned int line)
 {
-    return new dbUpdate(conn, table, idfield, count, logcsv, file, line);
+    return new dbUpdate(conn, &stmtNum, table, idfield, count, logcsv, file, line);
 }
 
 iRecord* psMysqlConnection::NewInsertPreparedStatement(const char* table, unsigned int count, const char* file, unsigned int line)
 {
-    return new dbInsert(conn, table, count, logcsv, file, line);
+    return new dbInsert(conn, &stmtNum, table, count, logcsv, file, line);
 }
 
 psResultSet::psResultSet(PGresult *res)
@@ -658,31 +661,33 @@ bool dbRecord::Execute(uint32 uid)
     psStopWatch timer;
     timer.Start();
 
-    /*CS_ASSERT(count == sqlite3_bind_parameter_count(stmt));
-    CS_ASSERT(count != index);*/
+    CS_ASSERT(count != index);
 
-    /*for(int i = 0; i < index; i++)
+    csStringArray paramStrings;
+    const char *paramValues[index];
+    for(int i = 0; i < index; i++)
     {
+        csString value;
         switch(temp[i].type)
         {
             case SQL_TYPE_FLOAT:
-                sqlite3_bind_double(stmt,i+1,temp[i].fValue);
+                value.Format("%f", temp[i].fValue);
                 break;
             case SQL_TYPE_INT:
-                sqlite3_bind_int(stmt, i+1,temp[i].iValue);
+                value.Format("%i", temp[i].iValue);
                 break;
             case SQL_TYPE_STRING:
-                sqlite3_bind_text(stmt, i+1,temp[i].sValue,-1,SQLITE_STATIC);
+                value = temp[i].sValue;
                 break;
             case SQL_TYPE_NULL:
-                sqlite3_bind_null(stmt,i+1);
                 break;
         }
+        paramStrings.Push(value);
+        paramValues[i] = paramStrings.Get(i);
+    }
 
-    }*/ /*
-
-    bool result = (sqlite3_step(stmt) == SQLITE_DONE);*/
-    bool result = 0;
+    PGresult *res = PQexecPrepared(conn, stmt.GetData(), index, paramValues, NULL, NULL,0);
+    bool result = (res && PQresultStatus(res) != PGRES_FATAL_ERROR);
     if(result && timer.Stop() > 1000)
     {
         csString status;
@@ -711,24 +716,25 @@ bool dbInsert::Prepare()
     {
         if (i>0)
             statement.Append(", ");
-        statement.Append("?");
-        //statemnt += (i+1);
+        statement.Append("$");
+        statement += (i+1);
     }
 
     statement.Append(")");
 
-    csString preparedName = table;
-    //pqxx::work workobj(*conn);
+    csString preparedName = "";
+    preparedName += *stmtNum;
 
-    //try to find an unprepared name (empty... why it should be so complex?)
-    //while(workobj.prepared(preparedName.GetData()).exists()) 
-    //    preparedName += 1; //just something to make the string different for now
+    PGresult *res = PQprepare(conn, preparedName.GetData(), statement.GetData(), 0,0);
 
-    //we must end up here sometimes at this point we finally have the right name
-    stmt = preparedName;
-    //conn->prepare(preparedName.GetData(), statement.GetData());
+    prepared = (res && PQresultStatus(res) != PGRES_FATAL_ERROR);
+    
+    if(prepared)
+    {
+        stmt = preparedName;
+        (*stmtNum)++;
+    }
 
-    //prepared = workobj.prepared(preparedName.GetData()).exists();
     return prepared;
 }
 
@@ -738,29 +744,32 @@ bool dbUpdate::Prepare()
 
     // count - 1 fields to update
     statement.Format("UPDATE %s SET ", table);
-    for (unsigned int i=0;i<(count-1);i++)
+    unsigned int i;
+    for (i=0;i<(count-1);i++)
     {
         if (i>0)
             statement.Append(",");
         statement.Append(command[i]);
+        statement += (i+1);
     }
     statement.Append(" where ");
     statement.Append(idfield);
     // field count is the idfield
-    statement.Append("= ?");
+    statement.Append(" = $");
+    statement += (i+1);
 
-    csString preparedName = table;
-    //pqxx::work workobj(*conn);
+    csString preparedName = "";
+    preparedName += *stmtNum;
 
-    //try to find an unprepared name (empty... why it should be so complex?)
-    //while(workobj.prepared(preparedName.GetData()).exists()) 
-    //    preparedName += 1; //just something to make the string different for now
+    PGresult *res = PQprepare(conn, preparedName.GetData(), statement.GetData(), 0,0);
 
-    //we must end up here sometimes at this point we finally have the right name
-    stmt = preparedName;
-    //conn->prepare(preparedName.GetData(), statement.GetData());
-
-    //prepared = workobj.prepared(preparedName.GetData()).exists();
+    prepared = (res && PQresultStatus(res) != PGRES_FATAL_ERROR);
+    
+    if(prepared)
+    {
+        stmt = preparedName;
+        (*stmtNum)++;
+    }
 
     return prepared;
 }
