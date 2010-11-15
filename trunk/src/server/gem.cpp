@@ -3133,6 +3133,10 @@ void gemActor::SetGMDefaults()
     if ( cacheManager->GetCommandManager()->Validate(securityLevel, "default invisible") )
     {
         visible = false;
+    }
+
+    if(cacheManager->GetCommandManager()->Validate(securityLevel, "default viewall"))
+    {
         viewAllObjects = true;
     }
 
