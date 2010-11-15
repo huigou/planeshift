@@ -679,48 +679,82 @@ void psItemStats::LoadMeshRemoval( iResultRow& row )
     // Slots effects for this item
     csStringArray entries;
     if(row["removed_mesh"]) //check if it's valid (aka the row is not NULL)
-        entries.SplitString(row["removed_mesh"],  ";");
+        entries.SplitString(row["removed_mesh"],  "|");
 
-    //now we split them in subentities to see the slot names
+    //split by base meshname of the char
     for(size_t i = 0; i < entries.GetSize(); i++)
     {
-        int slotID = PSCHARACTER_SLOT_NONE;
-        csString removedMesh = "";
-        csString currentEntry = entries.Get(i); //get the current entry
-        //see if the slot name is declared
-        size_t slotNameEnd = currentEntry.Find(":");
-        //if it's not just copy over the removed mesh
-        if(slotNameEnd == (size_t) -1)
+        csString meshEntry = entries.Get(i);
+        csString meshName = ""; //empty string compares to default.
+        csStringArray slots;
+        csHash<csString,int> meshRemoval;
+
+        //check if the character meshname is specified (eg: klyrosm>....)
+        size_t meshNameEnd = meshEntry.Find(">");
+
+        //if it's specified take the meshname for use in the has after the
+        //for loop just under this and pass only the second part of the string
+        //to that for loop.
+        if(meshNameEnd != (size_t) -1)
         {
-            removedMesh = currentEntry.Trim();
+            meshName = meshEntry.Slice(0, meshNameEnd).Trim();
+            meshEntry = meshEntry.Slice(meshNameEnd+1).Trim();
         }
         else
+            meshEntry.Trim();
+
+        //now we split them in subentities to see the slot names
+        slots.SplitString(meshEntry, ";");
+        for(size_t i = 0; i < slots.GetSize(); i++)
         {
-            //else slice the string in the slotname and removed mesh parts
-            slotID = psserver->GetCacheManager()->slotNameHash.GetID
-                                             (currentEntry.Slice(0, slotNameEnd).Trim());
-            removedMesh = currentEntry.Slice(slotNameEnd+1).Trim();
-        }
-        //store it in the hash containing these combinations
-        //NOTE: we use putunique as we want an unique entry in the hash.
-        meshRemovalInfo.PutUnique(slotID, removedMesh);
+            int slotID = PSCHARACTER_SLOT_NONE;
+            csString removedMesh;
+            csString currentEntry = slots.Get(i); //get the current entry
+            //see if the slot name is declared
+            size_t slotNameEnd = currentEntry.Find(":");
+            //if it's not just copy over the removed mesh
+            if(slotNameEnd == (size_t) -1)
+            {
+                removedMesh = currentEntry.Trim();
+            }
+            else
+            {
+                //else slice the string in the slotname and removed mesh parts
+                slotID = psserver->GetCacheManager()->slotNameHash.GetID
+                                                 (currentEntry.Slice(0, slotNameEnd).Trim());
+                removedMesh = currentEntry.Slice(slotNameEnd+1).Trim();
+            }
+            //store it in the hash containing these combinations
+            //NOTE: we use putunique as we want an unique entry in the hash.
+            meshRemoval.PutUnique(slotID, removedMesh);
+        }   
+        meshRemovalInfo.PutUnique(csHashCompute(meshName), meshRemoval);
     }
 }
 
-csString psItemStats::GetSlotRemovedMesh(int slot)
+csString psItemStats::GetSlotRemovedMesh(int slot, csString meshName)
 {
-    csString* result; //we are sure this will get initialized by getelempointer.
-    //try first the specified slot
-    result = meshRemovalInfo.GetElementPointer(slot);
+    //first search for a valid character mesh
+    csHash<csString,int>* result = meshRemovalInfo.GetElementPointer(csHashCompute(meshName));
     if(!result)
     {
+        //if the character mesh wasn't found try searching the generic entries.
+        result = meshRemovalInfo.GetElementPointer(csHashCompute(""));
+        if(!result) //still missing return a blank text
+            return "";
+    }
+    
+    //try first the specified slot
+    csString *meshes = result->GetElementPointer(slot);
+    if(!meshes)
+    {
         //it wasn't found so fallback to the no slot entry
-        result = meshRemovalInfo.GetElementPointer((int)PSCHARACTER_SLOT_NONE);
-        if(!result) //still missing just return a blank text
+        meshes = result->GetElementPointer((int)PSCHARACTER_SLOT_NONE);
+        if(!meshes) //still missing just return a blank text
             return "";
     }
     //return what was found
-    return *result;
+    return *meshes;
 
 }
 

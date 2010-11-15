@@ -774,9 +774,10 @@ public:
     /** Proxies the same function in psitemstats which gets the list of mesh to remove when this item is equipped
      *  in the specified slot.
      *  @param slot The slot this item is being equipped into.
+     *  @param meshName The meshName we are sarching for the slot to remove for it.
      *  @return The list of meshes to remove when equipping this item.
      */
-    csString GetSlotRemovedMesh(int slot) { return GetBaseStats()->GetSlotRemovedMesh(slot); }
+    csString GetSlotRemovedMesh(int slot, csString meshName = "") { return GetBaseStats()->GetSlotRemovedMesh(slot, meshName); }
     float GetDecayResistance();
     psMoney GetPrice();
     psMoney GetSellPrice();    ///< Merchants want a percentage

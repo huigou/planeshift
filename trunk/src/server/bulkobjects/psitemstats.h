@@ -513,7 +513,7 @@ private:
 
     csString itemCommand; ///< contains if the item has a special command where it's used.
 
-    csHash<csString,int> meshRemovalInfo;
+    csHash<csHash<csString,int> > meshRemovalInfo;
 
     /** Loads in the the slot based removal informations.
       * @param row The database row to load information from.
@@ -597,10 +597,12 @@ public:
     bool FitsInSlots(PSITEMSTATS_SLOTLIST slotmask);
 
     /** Gets the list of mesh to remove when this item is equipped in the specified slot.
+     *  If the race specified is not found the race -1 (aka no race specific) will be searched too.
      *  @param slot The slot this item is being equipped into.
+     *  @param meshName The meshName we are sarching for the slot to remove for it.
      *  @return The list of meshes to remove when equipping this item.
      */
-    csString GetSlotRemovedMesh(int slot);
+    csString GetSlotRemovedMesh(int slot, csString meshName = "");
     float GetDecayRate();
 
     int GetAttackAnimID(unsigned int skill_level);

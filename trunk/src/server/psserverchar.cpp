@@ -1173,7 +1173,7 @@ void ServerCharManager::SendOutEquipmentMessages( gemActor* actor,
     csString mesh = item->GetMeshName();
     csString part = item->GetPartName();
     csString partMesh = item->GetPartMeshName();
-    csString removedMesh = item->GetSlotRemovedMesh((int)slot);
+    csString removedMesh = item->GetSlotRemovedMesh((int)slot, actor->GetMesh());
 
     // If we're doing a 'deequip', there is no texture.
     csString texture;
