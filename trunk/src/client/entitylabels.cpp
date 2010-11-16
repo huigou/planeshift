@@ -212,7 +212,8 @@ void psEntityLabels::SetObjectText(GEMClientObject* object)
 
         switch ( type )    
         {
-            case 0: // player
+            default:
+            case 0: // player or unknown group
                 colour = entityColors[ENTITY_PLAYER];
                 break;
 
@@ -223,8 +224,7 @@ void psEntityLabels::SetObjectText(GEMClientObject* object)
                 colour = entityColors[ENTITY_DEAD];
                 break;
 
-            default:
-            case 10: // Tester or unknown group
+            case 10: // Tester
                 colour = entityColors[ENTITY_TESTER];
                 break;
             case 21: // GM1
