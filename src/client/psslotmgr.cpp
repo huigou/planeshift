@@ -349,6 +349,7 @@ void psSlotManager::Handle( pawsSlot* slot, bool grabOne, bool grabAll )
         {
             CancelDrag(); 
             slot->PlaceItem( draggingSlot.slot->ImageName(), "", "", draggingSlot.stackCount);
+            slot->SetBartenderAction( draggingSlot.slot->GetBartenderAction() );
         }
         else
         {

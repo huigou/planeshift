@@ -18,6 +18,8 @@
  */
 
 #include <psconfig.h>
+#include <iostream>
+using namespace std;
 
 //=============================================================================
 // PlaneShift Includes
@@ -28,6 +30,7 @@
 #include "pscelclient.h"
 #include "paws/pawstextbox.h"
 #include "net/clientmsghandler.h"
+#include "net/cmdhandler.h"
 
 
 //=============================================================================
@@ -103,7 +106,16 @@ bool pawsSlot::OnMouseDown( int button, int modifiers, int x, int y )
 
     if ( !psengine->GetCelClient()->GetMainPlayer()->IsAlive() )
         return true;
-
+  
+   
+    printf("Is Bartender Slot: %d, Empty %d\n", isBartender ,empty);
+    if ( isBartender && empty == false)
+    {
+        printf("This is a bartender button with action: %s\n", action.GetData());
+        psengine->GetCmdHandler()->Execute(action.GetData());
+        return true;
+    }
+     
     if ( !empty && psengine->GetMouseBinds()->CheckBind("ContextMenu",button,modifiers) )
     {
         psViewItemDescription out(containerID, slotID);
