@@ -718,8 +718,6 @@ void SpawnManager::KillNPC(gemActor *obj, gemActor* killer)
 
     }
 
-    obj->GetCharacterData()->ResetStats();
-
     // Set timer for when NPC will disappear
     csTicks delay = (respawn)?respawn->GetDeadRemainTime():5000;
     psDespawnGameEvent *newevent = new psDespawnGameEvent(this, gem, delay,obj);
@@ -838,6 +836,9 @@ void SpawnManager::Respawn(psCharacter* chardata, InstanceID instance, csVector3
     chardata->SetLocationInWorld(instance, spawnsector, where.x, where.y, where.z, rot);
     chardata->GetHPRate().SetBase(HP_REGEN_RATE);
     chardata->GetManaRate().SetBase(MANA_REGEN_RATE);
+
+    //Restore the vitals of this npc before respawning
+    chardata->ResetStats();
 
     // Here we restore status of items to max quality as this is going to be a *newly born* npc
     chardata->Inventory().RestoreAllInventoryQuality();
