@@ -868,7 +868,7 @@ bool psGuildAlliance::Load(int id)
 
     // Load name and leader of alliance
     
-    Result result(db->Select("select name, leading_guild from alliances where id=%d", id))
+    Result result(db->Select("select name, leading_guild from alliances where id=%d", id));
     if (!result.IsValid())
     {
         lastError = db->GetLastError();
@@ -881,8 +881,8 @@ bool psGuildAlliance::Load(int id)
         return false;
     }
 
-    name = (result)[0]["name"];
-    leaderID = (result)[0].GetInt("leading_guild");
+    name = result[0]["name"];
+    leaderID = result[0].GetInt("leading_guild");
 
     leader = psserver->GetCacheManager()->FindGuild(leaderID);
     if (leader == NULL)
@@ -894,16 +894,16 @@ bool psGuildAlliance::Load(int id)
 
     // Load members of alliance
 
-    Result resultMembers(db->Select("select id from guilds where alliance=%d order by name", id))
+    Result resultMembers(db->Select("select id from guilds where alliance=%d order by name", id));
     if (!resultMembers.IsValid())
     {
         lastError = db->GetLastError();
         return false;
     }
 
-    for (memberNum=0; memberNum < result->Count(); memberNum++)
+    for (memberNum=0; memberNum < resultMembers.Count(); memberNum++)
     {
-        member = psserver->GetCacheManager()->FindGuild(  (resultMembers)[memberNum].GetInt("id")  );
+        member = psserver->GetCacheManager()->FindGuild(resultMembers[memberNum].GetInt("id"));
         if (member == NULL)
         {
             lastError = "Member of alliance loaded from DB couln't be found in cachemanager";
