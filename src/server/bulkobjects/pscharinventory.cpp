@@ -113,9 +113,6 @@ psCharacterInventory::~psCharacterInventory()
     //delete the default items if they have been created
     if(equipment[PSCHARACTER_SLOT_ARMS].default_if_empty)
         delete equipment[PSCHARACTER_SLOT_ARMS].default_if_empty;
-
-    if(equipment[PSCHARACTER_SLOT_LEFTHAND].default_if_empty)
-        delete equipment[PSCHARACTER_SLOT_LEFTHAND].default_if_empty;
 }
 
 void psCharacterInventory::SetBasicArmor(psRaceInfo *race)
