@@ -860,7 +860,6 @@ bool psGuildAlliance::RemoveMember(psGuildInfo * member)
 
 bool psGuildAlliance::Load(int id)
 {
-    iResultSet * result;
     psGuildInfo * member;
     int leaderID;
     unsigned int memberNum;
@@ -868,23 +867,22 @@ bool psGuildAlliance::Load(int id)
     this->id = id;
 
     // Load name and leader of alliance
-
-    result = db->Select("select name, leading_guild from alliances where id=%d", id);
-    if (result == NULL)
+    
+    Result result(db->Select("select name, leading_guild from alliances where id=%d", id))
+    if (!result.IsValid())
     {
         lastError = db->GetLastError();
         return false;
     }
 
-    if (result->Count() == 0)
+    if (result.Count() == 0)
     {
         lastError = "Alliance not found in database";
         return false;
     }
 
-    name = (*result)[0]["name"];
-    leaderID = (*result)[0].GetInt("leading_guild");
-    result->Release();
+    name = (result)[0]["name"];
+    leaderID = (result)[0].GetInt("leading_guild");
 
     leader = psserver->GetCacheManager()->FindGuild(leaderID);
     if (leader == NULL)
@@ -896,8 +894,8 @@ bool psGuildAlliance::Load(int id)
 
     // Load members of alliance
 
-    result = db->Select("select id from guilds where alliance=%d order by name", id);
-    if (result == NULL)
+    Result resultMembers(db->Select("select id from guilds where alliance=%d order by name", id))
+    if (!resultMembers.IsValid())
     {
         lastError = db->GetLastError();
         return false;
@@ -905,7 +903,7 @@ bool psGuildAlliance::Load(int id)
 
     for (memberNum=0; memberNum < result->Count(); memberNum++)
     {
-        member = psserver->GetCacheManager()->FindGuild(  (*result)[memberNum].GetInt("id")  );
+        member = psserver->GetCacheManager()->FindGuild(  (resultMembers)[memberNum].GetInt("id")  );
         if (member == NULL)
         {
             lastError = "Member of alliance loaded from DB couln't be found in cachemanager";
@@ -913,9 +911,6 @@ bool psGuildAlliance::Load(int id)
         }
         members.Push(member);
     }
-
-    result->Release();
-
     return true;
 }
 
