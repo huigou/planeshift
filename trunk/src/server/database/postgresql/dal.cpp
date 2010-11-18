@@ -1,5 +1,6 @@
 /*
  * dal.cpp by Stefano Angeleri
+ * Database Abstraction Layer (postgresql)
  *
  * Copyright (C) 2010 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
