@@ -269,7 +269,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(dbpostgresql)
 
         PGresult *res = PQexec(conn, querystr.GetData());
         
-        if(res  && PQresultStatus(res) != PGRES_FATAL_ERROR)
+        if(res && PQresultStatus(res) != PGRES_FATAL_ERROR)
         {
             if(timer.Stop() > 1000)
             {
@@ -291,13 +291,13 @@ CS_PLUGIN_NAMESPACE_BEGIN(dbpostgresql)
             else
             {
                 delete rs;  // return err code below
+                res = NULL;
             }
         }
-        else
-        {
+
+        if(res)
             PQclear(res);
-            return QUERY_FAILED;
-        }
+        return QUERY_FAILED;
     }
 
     uint64 psMysqlConnection::GetLastInsertID()
@@ -667,7 +667,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(dbpostgresql)
 
         csStringArray paramStrings;
         const char *paramValues[index];
-        for(int i = 0; i < index; i++)
+        for(unsigned int i = 0; i < index; i++)
         {
             csString value;
             switch(temp[i].type)
