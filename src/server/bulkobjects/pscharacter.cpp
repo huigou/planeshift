@@ -2826,172 +2826,173 @@ bool psCharacter::HasExploredArea(PID explored)
 
 double psCharacter::GetProperty(const char *ptr)
 {
-    if (!strcasecmp(ptr,"AttackerTargeted"))
+    csString property(ptr);
+    if (property == "AttackerTargeted")
     {
         return true;
         // return (attacker_targeted) ? 1 : 0;
     }
-    else if (!strcasecmp(ptr,"TotalTargetedBlockValue"))
+    else if (property == "TotalTargetedBlockValue")
     {
         return GetTotalTargetedBlockValue();
     }
-    else if (!strcasecmp(ptr,"TotalUntargetedBlockValue"))
+    else if (property == "TotalUntargetedBlockValue")
     {
         return GetTotalUntargetedBlockValue();
     }
-    else if (!strcasecmp(ptr,"DodgeValue"))
+    else if (property == "DodgeValue")
     {
         return GetDodgeValue();
     }
-    else if (!strcasecmp(ptr,"KillExp"))
+    else if (property == "KillExp")
     {
         return kill_exp;
     }
-    else if (!strcasecmp(ptr,"getAttackValueModifier"))
+    else if (property == "GetAttackValueModifier")
     {
         return attackModifier.Value();
     }
-    else if (!strcasecmp(ptr,"getDefenseValueModifier"))
+    else if (property == "GetDefenseValueModifier")
     {
         return defenseModifier.Value();
     }
-    else if (!strcasecmp(ptr,"HP"))
+    else if (property == "HP")
     {
         return GetHP();
     }
-    else if (!strcasecmp(ptr,"MaxHP"))
+    else if (property == "MaxHP")
     {
         return GetMaxHP().Current();
     }
-    else if (!strcasecmp(ptr,"BaseHP"))
+    else if (property == "BaseHP")
     {
         return GetMaxHP().Base();
     }
-    else if (!strcasecmp(ptr,"Mana"))
+    else if (property == "Mana")
     {
         return GetMana();
     }
-    else if (!strcasecmp(ptr,"MaxMana"))
+    else if (property == "MaxMana")
     {
         return GetMaxMana().Current();
     }
-    else if (!strcasecmp(ptr,"BaseMana"))
+    else if (property == "BaseMana")
     {
         return GetMaxMana().Base();
     }
-    else if (!strcasecmp(ptr,"PStamina"))
+    else if (property == "PStamina")
     {
         return GetStamina(true);
     }
-    else if (!strcasecmp(ptr,"MStamina"))
+    else if (property == "MStamina")
     {
         return GetStamina(false);
     }
-    else if (!strcasecmp(ptr,"MaxPStamina"))
+    else if (property == "MaxPStamina")
     {
         return GetMaxPStamina().Current();
     }
-    else if (!strcasecmp(ptr,"MaxMStamina"))
+    else if (property == "MaxMStamina")
     {
         return GetMaxMStamina().Current();
     }
-    else if (!strcasecmp(ptr,"BasePStamina"))
+    else if (property == "BasePStamina")
     {
         return GetMaxPStamina().Base();
     }
-    else if (!strcasecmp(ptr,"BaseMStamina"))
+    else if (property == "BaseMStamina")
     {
         return GetMaxMStamina().Base();
     }
-    else if (!strcasecmp(ptr,"Strength"))
+    else if (property == "Strength")
     {
         return attributes[PSITEMSTATS_STAT_STRENGTH].Current();
     }
-    else if (!strcasecmp(ptr,"Agility"))
+    else if (property == "Agility")
     {
         return attributes[PSITEMSTATS_STAT_AGILITY].Current();
     }
-    else if (!strcasecmp(ptr,"Endurance"))
+    else if (property == "Endurance")
     {
         return attributes[PSITEMSTATS_STAT_ENDURANCE].Current();
     }
-    else if (!strcasecmp(ptr,"Intelligence"))
+    else if (property == "Intelligence")
     {
         return attributes[PSITEMSTATS_STAT_INTELLIGENCE].Current();
     }
-    else if (!strcasecmp(ptr,"Will"))
+    else if (property == "Will")
     {
         return attributes[PSITEMSTATS_STAT_WILL].Current();
     }
-    else if (!strcasecmp(ptr,"Charisma"))
+    else if (property == "Charisma")
     {
         return attributes[PSITEMSTATS_STAT_CHARISMA].Current();
     }
-    else if (!strcasecmp(ptr,"BaseStrength"))
+    else if (property == "BaseStrength")
     {
         return attributes[PSITEMSTATS_STAT_STRENGTH].Base();
     }
-    else if (!strcasecmp(ptr,"BaseAgility"))
+    else if (property == "BaseAgility")
     {
         return attributes[PSITEMSTATS_STAT_AGILITY].Base();
     }
-    else if (!strcasecmp(ptr,"BaseEndurance"))
+    else if (property == "BaseEndurance")
     {
         return attributes[PSITEMSTATS_STAT_ENDURANCE].Base();
     }
-    else if (!strcasecmp(ptr,"BaseIntelligence"))
+    else if (property == "BaseIntelligence")
     {
         return attributes[PSITEMSTATS_STAT_INTELLIGENCE].Base();
     }
-    else if (!strcasecmp(ptr,"BaseWill"))
+    else if (property == "BaseWill")
     {
         return attributes[PSITEMSTATS_STAT_WILL].Base();
     }
-    else if (!strcasecmp(ptr,"BaseCharisma"))
+    else if (property == "BaseCharisma")
     {
         return attributes[PSITEMSTATS_STAT_CHARISMA].Base();
     }
-    else if (!strcasecmp(ptr,"AllArmorStrMalus"))
+    else if (property == "AllArmorStrMalus")
     {
         return modifiers[PSITEMSTATS_STAT_STRENGTH].Current();
     }
-    else if (!strcasecmp(ptr,"AllArmorAgiMalus"))
+    else if (property == "AllArmorAgiMalus")
     {
         return modifiers[PSITEMSTATS_STAT_AGILITY].Current();
     }
-    else if (!strcasecmp(ptr,"PID"))
+    else if (property == "PID")
     {
         return (double) pid.Unbox();
     }
-    else if (!strcasecmp(ptr,"loc_x"))
+    else if (property == "loc_x")
     {
         return location.loc.x;
     }
-    else if (!strcasecmp(ptr,"loc_y"))
+    else if (property == "loc_y")
     {
         return location.loc.y;
     }
-    else if (!strcasecmp(ptr,"loc_z"))
+    else if (property == "loc_z")
     {
         return location.loc.z;
     }
-    else if (!strcasecmp(ptr,"loc_yrot"))
+    else if (property == "loc_yrot")
     {
         return location.loc_yrot;
     }
-    else if (!strcasecmp(ptr,"sector"))
+    else if (property == "sector")
     {
         return MathScriptEngine::GetValue(location.loc_sector);
     }
-    else if (!strcasecmp(ptr,"owner"))
+    else if (property == "owner")
     {
         return (double) owner_id.Unbox();
     }
-    else if (!strcasecmp(ptr,"IsNPC"))
+    else if (property == "IsNPC")
     {
         return (double)IsNPC();
     }
-    else if (!strcasecmp(ptr,"IsPet"))
+    else if (property == "IsPet")
     {
         return (double)IsPet();
     }
