@@ -852,4 +852,3 @@ CS_PLUGIN_NAMESPACE_BEGIN(dbpostgresql)
     #endif
 }
 CS_PLUGIN_NAMESPACE_END(dbpostgresql)
-
