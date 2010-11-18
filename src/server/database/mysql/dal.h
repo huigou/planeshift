@@ -307,6 +307,5 @@ CS_PLUGIN_NAMESPACE_BEGIN(dbmysql)
     };
 }
 CS_PLUGIN_NAMESPACE_END(dbmysql)
-
 #endif
 
