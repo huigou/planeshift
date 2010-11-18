@@ -250,6 +250,7 @@ public:
     static csString GetString(double id);
     static iScriptableVar* GetPointer(double p);
     static double GetValue(iScriptableVar* p);
+    static csString FormatMessage(const double formatStringID, size_t arg_count, const double* parms);
 };
 
 #endif

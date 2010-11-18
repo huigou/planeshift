@@ -2057,6 +2057,46 @@ double gemActor::CalcFunction(const char *f, const double *params)
         Faction *faction = cacheManager->GetFactionByName(factionName);
         return (double) (faction ? factions->GetFaction(faction) : 0);
     }
+    else if (func.StartsWith("SendSystem"))
+    {
+        uint32 clientID = GetClientID();
+        if(!clientID)
+        {
+            return 0;
+        }
+
+        // MathScript specific string formatting
+        size_t argc = static_cast<size_t>(params[1]);
+        const double* args = argc ? &params[2] : NULL;
+        csString string = MathScriptEngine::FormatMessage(params[0],argc,args);
+
+        if (func == "SendSystemInfo")
+        {
+            psserver->SendSystemInfo(clientID,string);
+        }
+        else if (func == "SendSystemBaseInfo")
+        {
+            psserver->SendSystemInfo(clientID,string);
+        }
+        else if (func == "SendSystemResult")
+        {
+            psserver->SendSystemResult(clientID,string);
+        }
+        else if (func == "SendSystemOK")
+        {
+            psserver->SendSystemOK(clientID,string);
+        }
+        else if (func == "SendSystemError")
+        {
+            psserver->SendSystemError(clientID,string);
+        }
+        else
+        {
+            return -1;
+        }
+
+        return 1;
+    }
     CS_ASSERT(psChar);
     return psChar->CalcFunction(f, params);
 }

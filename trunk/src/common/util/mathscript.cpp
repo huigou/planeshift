@@ -608,6 +608,30 @@ double MathScriptEngine::GetValue(iScriptableVar* p)
     return value.value;
 }
 
+csString MathScriptEngine::FormatMessage(const double formatStringID, size_t arg_count, const double* parms)
+{
+    csString format = GetString(formatStringID);
+    if(format.IsEmpty() || arg_count == 0)
+    {
+        return format;
+    }
+
+    // cap argument count to max (10)
+    arg_count = arg_count > 10 ? 10 : arg_count;
+
+    // @@@RlyDontKnow:
+    // we always pass the maximum amount of arguments
+    // because we can't build va_list dynamically in a sane way
+    // and a switch on argc seems unnecessary
+    double args[10];
+    memcpy(args,parms,sizeof(double)*arg_count);
+
+    format.Format(format.GetData(),args[0],args[1],args[2],args[3],args[4],
+                                   args[5],args[6],args[7],args[8],args[9]);
+
+    return format;
+}
+
 //----------------------------------------------------------------------------
 
 MathExpression::MathExpression() : opcode(MATH_EXP)
