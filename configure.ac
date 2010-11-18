@@ -381,7 +381,7 @@ CS_CHECK_LIB_WITH([sqlite3],
 #----------------------------------------------------------------------------
 
 CS_CHECK_LIB_WITH([pq],
-	[AC_LANG_PROGRAM([[#include <libpq_fe.h>]],
+	[AC_LANG_PROGRAM([[#include <postgres.h>]],
 		[PQconnectdb("");])], [/usr /usr/include/postgresql|/usr/lib /usr/local/ /usr/include/postgresql|/usr/lib/ /usr/local/include/postgresql|/usr/local/lib/ /usr/lib /usr/local/], [],
 		[CS_EMIT_BUILD_RESULT([cs_cv_libpq], [LIBPQ])], [], [], [], [], [])
 
