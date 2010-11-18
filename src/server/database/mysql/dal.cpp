@@ -1,5 +1,6 @@
 /*
- * dbprofile.cpp by Keith Fulton
+ * dal.cpp by Keith Fulton
+ * Database abstraction layer (mysql)
  *
  * Copyright (C) 2002 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
