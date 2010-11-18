@@ -158,43 +158,44 @@ double psTradeProcesses::CalcFunction(const char * functionName, const double * 
 
 double psTradeProcesses::GetProperty(const char *ptr)
 {
-    if (!strcasecmp(ptr,"PrimarySkillId"))
+    csString property(ptr);
+    if (property == "PrimarySkillId")
     {
         return GetPrimarySkillId();
     }
-    if (!strcasecmp(ptr,"MaxPrimarySkill"))
+    else if (property == "MaxPrimarySkill")
     {
         return GetMaxPrimarySkill();
     }
-    if (!strcasecmp(ptr,"MinPrimarySkill"))
+    else if (property == "MinPrimarySkill")
     {
         return GetMinPrimarySkill();
     }
-    if (!strcasecmp(ptr,"PrimarySkillQualityFactor"))
+    else if (property == "PrimarySkillQualityFactor")
     {
         return GetPrimaryQualFactor();
     }
-    if (!strcasecmp(ptr,"PrimarySkillPracticePoints"))
+    else if (property == "PrimarySkillPracticePoints")
     {
         return GetPrimaryPracticePts();
     }
-    if (!strcasecmp(ptr,"SecondarySkillId"))
+    else if (property == "SecondarySkillId")
     {
         return GetSecondarySkillId();
     }
-    if (!strcasecmp(ptr,"MaxSecondarySkill"))
+    else if (property == "MaxSecondarySkill")
     {
         return GetMaxSecondarySkill();
     }
-    if (!strcasecmp(ptr,"MinSecondarySkill"))
+    else if (property == "MinSecondarySkill")
     {
         return GetMinSecondarySkill();
     }
-    if (!strcasecmp(ptr,"SecondarySkillQualityFactor"))
+    else if (property == "SecondarySkillQualityFactor")
     {
         return GetSecondaryQualFactor();
     }
-    if (!strcasecmp(ptr,"SecondarySkillPracticePoints"))
+    else if (property == "SecondarySkillPracticePoints")
     {
         return GetSecondaryPracticePts();
     }

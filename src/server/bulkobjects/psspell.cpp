@@ -563,11 +563,12 @@ bool psSpell::AffectTarget(gemActor* caster, gemObject* origTarget, gemObject* t
 ///
 double psSpell::GetProperty(const char *ptr)
 {
-    if (!strcasecmp(ptr,"Realm"))
+    csString property(ptr);
+    if (property == "Realm")
     {
         return realm;
     }
-    else if (!strcasecmp(ptr,"Way"))
+    else if (property == "Way")
     {
         return way->id;
     }

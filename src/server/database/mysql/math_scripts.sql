@@ -24,18 +24,16 @@ INSERT INTO math_scripts VALUES( "Calculate Damage",
 	AttackRoll = rnd(1);
         DefenseRoll = rnd(1);
 
-        WeaponSkill = Attacker:getAverageSkillValue(AttackWeapon:Skill1,AttackWeapon:Skill2,AttackWeapon:Skill3);
-        TargetWeaponSkill = Target:getAverageSkillValue(TargetWeapon:Skill1,TargetWeapon:Skill2,TargetWeapon:Skill3);
+        WeaponSkill = Attacker:GetAverageSkillValue(AttackWeapon:Skill1,AttackWeapon:Skill2,AttackWeapon:Skill3);
+        TargetWeaponSkill = Target:GetAverageSkillValue(TargetWeapon:Skill1,TargetWeapon:Skill2,TargetWeapon:Skill3);
 
         PI = 3.14159265358979323846;
         Dist = DiffX*DiffX + DiffY*DiffY + DiffZ*DiffZ;
-        NDiffX = -DiffX;
-        NDiffZ = -DiffZ;
 
         BadRange = pow(AttackWeapon:Range * 1.1 + 1,2) - Dist;
         exit = if(0>BadRange,1,0);
 
-        Angle = atan2(NDiffX,NDiffZ);
+        Angle = atan2(-DiffX,-DiffZ);
         AngleAtt = Angle;
         Angle = Attacker:loc_yrot - Angle;
         Angle = Angle % (2*PI);
@@ -79,7 +77,7 @@ INSERT INTO math_scripts VALUES( "Calculate Damage",
           exit = 1;
         }
 
-        RequiredInputVars = Target:AttackerTargeted+Attacker:getSkillValue(AttackWeapon:Skill1)+AttackLocationItem:Hardness;
+        RequiredInputVars = Target:AttackerTargeted+Attacker:GetSkillValue(AttackWeapon:Skill1)+AttackLocationItem:Hardness;
 
         AttackerStance = Attacker:CombatStance;
         TargetStance = Target:CombatStance;
@@ -141,7 +139,7 @@ INSERT INTO math_scripts VALUES( "CalculatePowerLevel", "MentalStatBonus = (Rela
 
 INSERT INTO math_scripts VALUES( "SpellPractice", "PracticePoints = floor(10/(1 + MaxRealm - Realm))");
 
-INSERT INTO math_scripts VALUES( "CalculateMaxCarryWeight", "MaxCarry =  ( Actor:getStatValue(0) );");
+INSERT INTO math_scripts VALUES( "CalculateMaxCarryWeight", "MaxCarry =  ( Actor:GetStatValue(0) );");
 
 INSERT INTO math_scripts VALUES( "CalculateMaxCarryAmount", "MaxAmount =  750;");
 
@@ -206,14 +204,14 @@ INSERT INTO math_scripts VALUES( "Calculate Repair Rank","Result = if(Object:Sal
 INSERT INTO math_scripts VALUES( "Calculate Repair Time",
 "
         Result = Object:SalePrice/100;
-        Factor = Worker:getSkillValue(Object:RequiredRepairSkill) / (Object:SalePrice/20);
+        Factor = Worker:GetSkillValue(Object:RequiredRepairSkill) / (Object:SalePrice/20);
         Result = Result / Factor;
         Result = if(Result < 20, 20, Result);
 ");
 
 INSERT INTO math_scripts VALUES( "Calculate Repair Result",
 "
-        Factor = Worker:getSkillValue(Object:RequiredRepairSkill) / (Object:SalePrice/20);
+        Factor = Worker:GetSkillValue(Object:RequiredRepairSkill) / (Object:SalePrice/20);
         Result = ((Object:SalePrice/25) * Factor) * (rnd(1)+0.5);
 ");
 
@@ -271,9 +269,9 @@ INSERT INTO math_scripts VALUES( "Calc Bank Fee", "BankFee = 5.25 - (AccountLeve
 
 INSERT INTO math_scripts VALUES( "Calculate Mining Odds", "Total = Distance * Probability * Quality * Skill + 0.1");
 
-INSERT INTO math_scripts VALUES( "Calc Item Merchant Price Buy", "Result = ItemPrice - CharData:getSkillValue(47)/10;");
+INSERT INTO math_scripts VALUES( "Calc Item Merchant Price Buy", "Result = ItemPrice - CharData:GetSkillValue(47)/10;");
 
-INSERT INTO math_scripts VALUES( "Calc Item Merchant Price Sell", "Result = ItemPrice + CharData:getSkillValue(47)/10;");
+INSERT INTO math_scripts VALUES( "Calc Item Merchant Price Sell", "Result = ItemPrice + CharData:GetSkillValue(47)/10;");
 
 INSERT INTO math_scripts VALUES( "Calculate Dynamic Experience", "Exp = 0;");
 
