@@ -293,7 +293,6 @@ CS_PLUGIN_NAMESPACE_BEGIN(dbsqlite3)
         virtual bool Prepare();
 
     };
-
 } CS_PLUGIN_NAMESPACE_END(dbsqlite3)   
 #endif
 
