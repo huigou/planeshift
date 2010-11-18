@@ -951,7 +951,6 @@ bool psEngine::Process3D(iEvent& ev)
             paws->Draw3D();
             if(camera && loadstate == LS_DONE)
             {
-              g3d->BeginDraw(CSDRAW_3DGRAPHICS);
               camera->Draw();
               return true;
             }
