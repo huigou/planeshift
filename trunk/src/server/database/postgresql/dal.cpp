@@ -99,6 +99,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(dbpostgresql)
             conn = NULL;
             stmtNum = 0;
         }
+        return true;
     }
 
 
@@ -500,6 +501,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(dbpostgresql)
     int psResultRow::Fetch(int row)
     {
         rowNum = row;
+        return 0;
     }
 
     const char *psResultRow::operator[](int whichfield)
