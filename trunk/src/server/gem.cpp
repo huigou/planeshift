@@ -709,7 +709,6 @@ void gemObject::SetAlive(bool flag, bool queue)
     {
         GetCharacterData()->GetHPRate().SetBase(0);  // This keeps dead guys from regen'ing HP
         GetCharacterData()->GetManaRate().SetBase(0);  // This keeps dead guys from regen'ing Mana
-        GetCharacterData()->SetHitPoints(0); // hp is always zero when dead
         BroadcastTargetStatDR( psserver->GetNetManager()->GetConnections() );
     }
 
