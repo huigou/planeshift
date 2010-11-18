@@ -2070,167 +2070,160 @@ int psItem::GetMaxCharges() const
 
 double psItem::GetProperty(const char *ptr)
 {
-    if (!strcasecmp(ptr,"Skill1"))
+    csString property(ptr);
+    if (property == "Skill1")
     {
         return GetWeaponSkill((PSITEMSTATS_WEAPONSKILL_INDEX)0);
     }
-    else if (!strcasecmp(ptr,"Skill2"))
+    else if (property == "Skill2")
     {
         return GetWeaponSkill((PSITEMSTATS_WEAPONSKILL_INDEX)1);
     }
-    else if (!strcasecmp(ptr,"Skill3"))
+    else if (property == "Skill3")
     {
         return GetWeaponSkill((PSITEMSTATS_WEAPONSKILL_INDEX)2);
     }
-    else if (!strcasecmp(ptr,"Quality"))
+    else if (property == "Quality")
     {
         return GetItemQuality();
     }
-    else if (!strcasecmp(ptr,"ArmQuality"))
+    else if (property == "ArmQuality")
     {
         // For natural armour quality
         if(useNat)
             return psserver->GetCacheManager()->GetBasicItemStatsByID(owning_character->raceinfo->natural_armor_id)->GetQuality();
         return GetItemQuality();
     }
-    else if (!strcasecmp(ptr,"MaxQuality"))
+    else if (property == "MaxQuality")
     {
         return GetMaxItemQuality();
     }
-    else if (!strcasecmp(ptr,"WeaponCBV"))
+    else if (property == "WeaponCBV")
     {
         return GetCounterBlockValue();
     }
-    else if (!strcasecmp(ptr,"UntargetedBlockValue"))
+    else if (property == "UntargetedBlockValue")
     {
         return GetUntargetedBlockValue();
     }
-    else if (!strcasecmp(ptr,"TargetedBlockValue"))
+    else if (property == "TargetedBlockValue")
     {
         return GetTargetedBlockValue();
     }
-    else if (!strcasecmp(ptr,"Hardness"))
+    else if (property == "Hardness")
     {
         return GetHardness();
     }
-    else if (!strcasecmp(ptr,"DecayRate"))
+    else if (property == "DecayRate")
     {
         return base_stats->GetDecayRate();
     }
-    else if (!strcasecmp(ptr,"DecayResistance"))
+    else if (property == "DecayResistance")
     {
         return decay_resistance;
     }
-    else if (!strcasecmp(ptr,"Penetration"))
+    else if (property == "Penetration")
     {
         return GetPenetration();
     }
-    else if (!strcasecmp(ptr,"DamageSlash"))
+    else if (property == "DamageSlash")
     {
         return GetDamage(PSITEMSTATS_DAMAGETYPE_SLASH);
     }
-    else if (!strcasecmp(ptr,"ProtectSlash"))
+    else if (property == "ProtectSlash")
     {
         return GetDamageProtection(PSITEMSTATS_DAMAGETYPE_SLASH);
     }
-    else if (!strcasecmp(ptr,"ExtraDamagePctSlash"))
+    else if (property.StartsWith("ExtraDamagePct"))
     {
         return 0; // in the future, this should be read from weapon/armor XML
     }
-    else if (!strcasecmp(ptr,"DamageBlunt"))
+    else if (property == "DamageBlunt")
     {
         return GetDamage(PSITEMSTATS_DAMAGETYPE_BLUNT);
     }
-    else if (!strcasecmp(ptr,"ProtectBlunt"))
+    else if (property == "ProtectBlunt")
     {
         return GetDamageProtection(PSITEMSTATS_DAMAGETYPE_BLUNT);
     }
-    else if (!strcasecmp(ptr,"ExtraDamagePctBlunt"))
-    {
-        return 0; // in the future, this should be read from weapon/armor XML
-    }
-    else if (!strcasecmp(ptr,"DamagePierce"))
+    else if (property == "DamagePierce")
     {
         return GetDamage(PSITEMSTATS_DAMAGETYPE_PIERCE);
     }
-    else if (!strcasecmp(ptr,"ProtectPierce"))
+    else if (property == "ProtectPierce")
     {
         return GetDamageProtection(PSITEMSTATS_DAMAGETYPE_PIERCE);
     }
-    else if (!strcasecmp(ptr,"ExtraDamagePctPierce"))
-    {
-        return 0; // in the future, this should be read from weapon/armor XML
-    }
-    else if (!strcasecmp(ptr,"StrMalus"))
+    else if (property == "StrMalus")
     {
         return GetWeaponAttributeBonus(PSITEMSTATS_STAT_STRENGTH);
     }
-    else if (!strcasecmp(ptr,"AgiMalus"))
+    else if (property == "AgiMalus")
     {
         return GetWeaponAttributeBonus(PSITEMSTATS_STAT_AGILITY);
     }
-    else if (!strcasecmp(ptr,"Weight"))
+    else if (property == "Weight")
     {
         return GetWeight();
     }
-    else if (!strcasecmp(ptr,"MentalFactor"))
+    else if (property == "MentalFactor")
     {
         int temp = GetWeaponSkill((PSITEMSTATS_WEAPONSKILL_INDEX)0);
         return ( (double)psserver->GetCacheManager()->GetSkillByID((temp<0)?0:temp)->mental_factor / 100.0 );
     }
-    else if (!strcasecmp(ptr,"RequiredRepairSkill"))
+    else if (property == "RequiredRepairSkill")
     {
         return base_stats->GetCategory()->repairSkillId;
     }
-    else if (!strcasecmp(ptr,"RepairDifficultyPct"))
+    else if (property == "RepairDifficultyPct")
     {
         return base_stats->GetCategory()->repairDifficultyPct;
     }
-    else if (!strcasecmp(ptr,"SalePrice"))
+    else if (property == "SalePrice")
     {
         return base_stats->GetPrice().GetTotal();
     }
-    else if (!strcasecmp(ptr,"Charges"))
+    else if (property == "Charges")
     {
         return (double)GetCharges();
     }
-    else if (!strcasecmp(ptr,"MaxCharges"))
+    else if (property == "MaxCharges")
     {
         return (double)GetMaxCharges();
     }
-    else if (!strcasecmp(ptr,"Range"))
+    else if (property == "Range")
     {
         return (double)GetRange();
     }
-    else if (!strcasecmp(ptr,"Slot"))
+    else if (property == "Slot")
     {
         return (double)GetLocInParent();
     }
-    else if (!strcasecmp(ptr,"Owner"))
+    else if (property == "Owner")
     {
         return MathScriptEngine::GetValue(owning_character);
     }
-    else if (!strcasecmp(ptr,"ArmorType"))
+    else if (property == "ArmorType")
     {
         return (double)GetArmorType();
     }
-    else if (!strcasecmp(ptr,"IsMeleeWeapon"))
+    else if (property == "IsMeleeWeapon")
     {
         return (double)GetIsMeleeWeapon();
     }
-    else if (!strcasecmp(ptr,"IsRangeWeapon"))
+    else if (property == "IsRangeWeapon")
     {
         return (double)GetIsRangeWeapon();
     }
-    else if (!strcasecmp(ptr,"IsAmmo"))
+    else if (property == "IsAmmo")
     {
         return (double)GetIsAmmo();
     }
-    else if (!strcasecmp(ptr,"IsArmor"))
+    else if (property == "IsArmor")
     {
         return (double)GetIsArmor();
     }
-    else if (!strcasecmp(ptr,"IsShield"))
+    else if (property == "IsShield")
     {
         return (double)GetIsShield();
     }
@@ -2243,7 +2236,8 @@ double psItem::GetProperty(const char *ptr)
 
 double psItem::CalcFunction(const char * functionName, const double * params)
 {
-    if (!strcasecmp(functionName, "GetArmorVSWeaponResistance"))
+    csString function(functionName);
+    if (function == "GetArmorVSWeaponResistance")
     {
         psItem *weapon = this;
         psItem *armor  = dynamic_cast<psItem*>(MathScriptEngine::GetPointer(params[0]));

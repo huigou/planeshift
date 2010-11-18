@@ -3002,19 +3002,20 @@ double psCharacter::GetProperty(const char *ptr)
 
 double psCharacter::CalcFunction(const char * functionName, const double * params)
 {
-    if (!strcasecmp(functionName, "HasCompletedQuest"))
+    csString function(functionName);
+    if (function == "HasCompletedQuest")
     {
         const char *questName = MathScriptEngine::GetString(params[0]);
         psQuest *quest = psserver->GetCacheManager()->GetQuestByName(questName);
         return (double) CheckQuestCompleted(quest);
     }
-    else if (!strcasecmp(functionName, "GetStatValue"))
+    else if (function == "GetStatValue")
     {
         PSITEMSTATS_STAT stat = (PSITEMSTATS_STAT)(int)params[0];
 
         return (double) attributes[stat].Current();
     }
-    else if (!strcasecmp(functionName, "GetAverageSkillValue"))
+    else if (function == "GetAverageSkillValue")
     {
         PSSKILL skill1 = (PSSKILL)(int)params[0];
         PSSKILL skill2 = (PSSKILL)(int)params[1];
@@ -3039,7 +3040,7 @@ double psCharacter::CalcFunction(const char * functionName, const double * param
 
         return v1;
     }
-    else if (!strcasecmp(functionName, "SkillRank"))
+    else if (function == "SkillRank")
     {
         const char *skillName = MathScriptEngine::GetString(params[0]);
         PSSKILL skill = psserver->GetCacheManager()->ConvertSkillString(skillName);
@@ -3047,7 +3048,7 @@ double psCharacter::CalcFunction(const char * functionName, const double * param
 
         return value;
     }
-    else if (!strcasecmp(functionName, "GetSkillValue"))
+    else if (function == "GetSkillValue")
     {
         PSSKILL skill = (PSSKILL)(int)params[0];
 
@@ -3055,20 +3056,20 @@ double psCharacter::CalcFunction(const char * functionName, const double * param
 
         return value;
     }
-    else if (!strcasecmp(functionName, "PracticeSkillID"))
+    else if (function == "PracticeSkillID")
     {
         PSSKILL skill = (PSSKILL)(int)params[0];
 
         return skills.AddSkillPractice(skill, params[1]);
     }
-    else if (!strcasecmp(functionName, "PracticeSkill"))
+    else if (function == "PracticeSkill")
     {
         const char *skillName = MathScriptEngine::GetString(params[0]);
         PSSKILL skill = psserver->GetCacheManager()->ConvertSkillString(skillName);
 
         return skills.AddSkillPractice(skill, params[1]);
     }
-    else if (!strcasecmp(functionName, "HasExploredArea"))
+    else if (function == "HasExploredArea")
     {
         if(!HasExploredArea(params[0]))
         {
@@ -3078,7 +3079,7 @@ double psCharacter::CalcFunction(const char * functionName, const double * param
 
         return 1;
     }
-    else if (!strcasecmp(functionName, "IsWithin"))
+    else if (function == "IsWithin")
     {
         if(location.loc_sector->uid != params[4])
             return 0.0;
@@ -3086,7 +3087,7 @@ double psCharacter::CalcFunction(const char * functionName, const double * param
         csVector3 other(params[1], params[2], params[3]);
         return (csVector3(other - location.loc).Norm() <= params[0]) ? 1.0 : 0.0;
     }
-    else if (!strcasecmp(functionName, "IsEnemy"))
+    else if (function == "IsEnemy")
     {
         // Check for self.
         if(owner_id == params[0])
@@ -3100,7 +3101,7 @@ double psCharacter::CalcFunction(const char * functionName, const double * param
 
         return 0.0;
     }
-    else if (!strcasecmp(functionName, "GetItem"))
+    else if (function == "GetItem")
     {
         INVENTORY_SLOT_NUMBER slot = (INVENTORY_SLOT_NUMBER)(int)params[0];
         psItem *item = NULL;
@@ -3115,7 +3116,7 @@ double psCharacter::CalcFunction(const char * functionName, const double * param
 
         return MathScriptEngine::GetValue(item);;
     }
-    else if (!strcasecmp(functionName, "GetArmorSkill"))
+    else if (function == "GetArmorSkill")
     {
         PSSKILL skill;
         switch((PSITEMSTATS_ARMORTYPE)(int)params[0])
