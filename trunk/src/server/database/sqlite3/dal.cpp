@@ -84,6 +84,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(dbsqlite3)
             while(sqlite3_close(conn) != SQLITE_OK);
             conn = NULL;
         }
+        return true;
     }
 
 
@@ -465,6 +466,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(dbsqlite3)
     int psResultRow::Fetch(int row)
     {
         rowNum = row;
+        return 0;
     }
 
     const char *psResultRow::operator[](int whichfield)
@@ -479,8 +481,6 @@ CS_PLUGIN_NAMESPACE_BEGIN(dbsqlite3)
     {
         CS_ASSERT(fieldname);
         CS_ASSERT(max); // trying to access when no fields returned in row! probably empty resultset.
-
-        int i;
 
         for (int i=0; i <= max; i++)
         {
@@ -627,7 +627,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(dbsqlite3)
         CS_ASSERT(count == sqlite3_bind_parameter_count(stmt));
         CS_ASSERT(count != index);
 
-        for(int i = 0; i < index; i++)
+        for(unsigned int i = 0; i < index; i++)
         {
             switch(temp[i].type)
             {
