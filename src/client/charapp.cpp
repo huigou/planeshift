@@ -50,9 +50,6 @@
 
 #include <csutil/callstack.h>
 
-/*static const unsigned int meshCount = 9;
-static const char* meshNames[meshCount] = { "Head", "Torso", "Hand", "Legs", "Foot", "Arm", "Eyes", "Hair", "Beard" };
-*/
 static const unsigned int bracersSlotCount = 2;
 static csString BracersSlots[bracersSlotCount] = { "rightarm", "leftarm" };
 
