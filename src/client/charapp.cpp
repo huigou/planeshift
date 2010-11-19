@@ -1512,11 +1512,7 @@ void psCharAppearance::SetSneak(bool sneaking)
             }
             else if(animeshObject.IsValid() && animeshFactory.IsValid())
             {
-                /*size_t idx = animeshFactory->FindSubMesh(animeshFactory->GetSubMesh(i)->GetName());
-                if(idx != (size_t)-1)
-                {*/
-                    context = animeshObject->GetSubMesh(idx)->GetShaderVariableContext(0);
-                //}
+                context = animeshObject->GetSubMesh(idx)->GetShaderVariableContext(0);
             }
 
             if(context)
