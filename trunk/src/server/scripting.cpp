@@ -1689,7 +1689,7 @@ public:
         faction = cachemanager->GetFaction(node->GetAttributeValue("name"));
         if (!faction)
         {
-            Error2("Found <faction aim=\"...\" name=\"%s\">, but no such faction exists.", node->GetAttributeValue("name"));
+            Error2("Found <faction aim=\"...\" name=\"%s\">, but no such faction exists.",  node->GetAttributeValue("name"));
             return false;
         }
         return Imperative3::Load(node);
@@ -2379,7 +2379,6 @@ ProgressionScript* ProgressionScript::Create(EntityManager* entitymanager, Cache
         else if (elem == "faction")
         {
             op = new FactionOp(cachemanager);
-            continue;
         }
         else if (elem == "animal-affinity")
         {
