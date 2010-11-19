@@ -1687,22 +1687,39 @@ public:
     bool Load(iDocumentNode* node)
     {
         faction = cachemanager->GetFaction(node->GetAttributeValue("name"));
-        if (!faction)
+        if(!faction) //if the faction is valid we just use it else we will use the named variable during run.
         {
-            Error2("Found <faction aim=\"...\" name=\"%s\">, but no such faction exists.",  node->GetAttributeValue("name"));
-            return false;
+            factionExp = MathExpression::Create(node->GetAttributeValue("name"));
         }
         return Imperative3::Load(node);
     }
 
     void Run(const MathEnvironment* env)
     {
+        Faction *currentFaction = faction;
         psCharacter* c = GetCharacter(env, aim);
         int val = (int) value->Evaluate(env);
-        c->UpdateFaction(faction, val);
+        //we didn't find a valid faction name during load: it means it's a variable.
+        if (!currentFaction)
+        {
+            //evaluate the variable so we can get it's value
+            csString factionName = MathScriptEngine::GetString(factionExp->Evaluate(env));
+            currentFaction = cachemanager->GetFaction(factionName.GetData());
+            if(!currentFaction) //we still didn't find a valid faction abort.
+            {
+                Error2("Faction Imperative Op Run with %s but no such faction exists.",  factionName.GetData());
+                return;
+            }
+        }
+        c->UpdateFaction(currentFaction, val);
     }
 protected:
+    ///Used to store the faction in case it's found during Load(). It's null in case it wasn't found.
     Faction *faction;
+    /** Used to store the faction name math expression in case the faction couldn't be found.
+     *  It's uninitialized in case it's not used as the code shouldn't use it in that case.
+     */
+    MathExpression* factionExp;
     CacheManager* cachemanager;
 };
 
