@@ -50,8 +50,9 @@
 
 #include <csutil/callstack.h>
 
-static const unsigned int meshCount = 9;
+/*static const unsigned int meshCount = 9;
 static const char* meshNames[meshCount] = { "Head", "Torso", "Hand", "Legs", "Foot", "Arm", "Eyes", "Hair", "Beard" };
+*/
 static const unsigned int bracersSlotCount = 2;
 static csString BracersSlots[bracersSlotCount] = { "rightarm", "leftarm" };
 
@@ -1484,6 +1485,12 @@ void psCharAppearance::SetSneak(bool sneaking)
     if(sneak != sneaking)
     {
         sneak = sneaking;
+        int meshAmt = 0;
+    
+        if(state && stateFactory)
+            meshAmt = stateFactory->GetMeshCount();
+        else if(animeshObject && animeshFactory)
+            meshAmt = animeshFactory->GetSubMeshCount();
 
         // Apply to base/core mesh.
         if(sneaking)
@@ -1496,20 +1503,20 @@ void psCharAppearance::SetSneak(bool sneaking)
         }
 
         CS::ShaderVarStringID varName = stringSet->Request("alpha factor");
-        for(uint i=0; i<meshCount; i++)
+        for(uint idx = 0; idx < meshAmt; idx++)
         {
             iShaderVariableContext* context = NULL;
             if(state.IsValid())
             {
-                context = state->GetCoreMeshShaderVarContext(meshNames[i]);
+                context = state->GetCoreMeshShaderVarContext(stateFactory->GetMeshName(idx));
             }
             else if(animeshObject.IsValid() && animeshFactory.IsValid())
             {
-                size_t idx = animeshFactory->FindSubMesh(meshNames[i]);
+                /*size_t idx = animeshFactory->FindSubMesh(animeshFactory->GetSubMesh(i)->GetName());
                 if(idx != (size_t)-1)
-                {
+                {*/
                     context = animeshObject->GetSubMesh(idx)->GetShaderVariableContext(0);
-                }
+                //}
             }
 
             if(context)
