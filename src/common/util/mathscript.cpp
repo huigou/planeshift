@@ -626,10 +626,11 @@ csString MathScriptEngine::FormatMessage(const double formatStringID, size_t arg
     double args[10];
     memcpy(args,parms,sizeof(double)*arg_count);
 
-    format.Format(format.GetData(),args[0],args[1],args[2],args[3],args[4],
+    csString result;
+    result.Format(format.GetData(),args[0],args[1],args[2],args[3],args[4],
                                    args[5],args[6],args[7],args[8],args[9]);
 
-    return format;
+    return result;
 }
 
 //----------------------------------------------------------------------------
