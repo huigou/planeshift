@@ -323,7 +323,13 @@ void ZoneHandler::OnDrawingFinished()
         else
         {
             psengine->GetLoader()->ContinueLoading(true);
-            loadProgressBar->SetCurrentValue(loadProgressBar->GetTotalValue() - psengine->GetLoader()->GetLoadingCount());
+            float timeProgress = 1.0f;
+            if(forcedLoadingEndTime)
+                timeProgress = (float)(forcedLoadingEndTime-csGetTicks())/forcedLoadingEndTime;
+
+            float max = loadProgressBar->GetTotalValue();
+            float progress = csMin((float)(max-psengine->GetLoader()->GetLoadingCount())/max,timeProgress);
+            loadProgressBar->SetCurrentValue(progress*max);
         }
     }
 }
