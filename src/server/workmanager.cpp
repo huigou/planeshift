@@ -3549,6 +3549,7 @@ bool WorkManager::ApplySkills(float factor, psItem* transItem, gemActor *worker,
         env.Define("Object", transItem);
         env.Define("Worker", worker);
         env.Define("Process", process);
+        env.Define("Secure", secure);
         calc_transform_apply_skill->Evaluate(&env);
         currentQuality = env.Lookup("Quality")->GetValue();
         return (currentQuality == 0);
