@@ -236,13 +236,13 @@ void ZoneHandler::LoadZone(csVector3 pos, const char* sector, bool force)
         loadWindow->SetAlwaysOnTop(true);
         loadWindow->Show();
 
-		//If a background is defined in script
-		if(!forcedBackgroundImg.IsEmpty())
-		{
-			Debug2(LOG_LOAD, 0, "Setting background from script %s", forcedBackgroundImg.GetData());
-			loadWindow->SetBackground(forcedBackgroundImg);
-		}
-		else
+        //If a background is defined in script
+        if(!forcedBackgroundImg.IsEmpty())
+        {
+            Debug2(LOG_LOAD, 0, "Setting background from script %s", forcedBackgroundImg.GetData());
+            loadWindow->SetBackground(forcedBackgroundImg);
+        }
+        else
         // If the area has its own loading image, use it
         if (zone->loadImage)
         {
