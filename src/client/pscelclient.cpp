@@ -2147,48 +2147,54 @@ csPtr<iMaterialWrapper> GEMClientItem::CloneMaterial(iMaterialWrapper* mw)
     }
 
     // Get the base shader.
-    csStringID shadertype = strings->Request("base");
-    iShader* shader = material->GetShader(shadertype);
+    csStringID baseType = strings->Request("base");
+    iShader* shader = material->GetShader(baseType);
+
+    // Get the depth shader.
+    csStringID depthType = strings->Request("depthwrite");
+    iShader* shaderz = material->GetShader(depthType);
+
+    // Get the diffuse shader type.
+    csStringID diffuseType = strings->Request("diffuse");
 
     // Find an instance shader matching this type.
-    csRef<iStringArray> shaders = psengine->GetLoader()->GetShaderName("default");
-    csRef<iStringArray> shadersa = psengine->GetLoader()->GetShaderName("default_alpha");
+    iBgLoader* loader = psengine->GetLoader();
+    csRef<iStringArray> shaders = loader->GetShaderName("default");
+    csRef<iStringArray> shadersa = loader->GetShaderName("default_alpha");
     if(!shader || shaders->Contains(shader->QueryObject()->GetName()) != csArrayItemNotFound)
     {
-        csRef<iStringArray> shaderName = psengine->GetLoader()->GetShaderName("instance");
+        csRef<iStringArray> shaderName = loader->GetShaderName("instance");
         shader = shman->GetShader(shaderName->Get(0));
+
+        // set instanced depthwrite shader for non-alpha objects.
+        shaderName = loader->GetShaderName("instance_early_z");
+        shaderz = shman->GetShader(shaderName->Get(0));
     }
     else if(shadersa->Contains(shader->QueryObject()->GetName()) != csArrayItemNotFound)
     {
-        csRef<iStringArray> shaderName = psengine->GetLoader()->GetShaderName("instance_alpha");
+        csRef<iStringArray> shaderName = loader->GetShaderName("instance_alpha");
         shader = shman->GetShader(shaderName->Get(0));
+
+        // alpha objects don't use the depthwrite pass for now.
+        shaderz = shman->GetShader("*null");
     }
     else
     {
         Error3("Unhandled shader %s for mesh %s!\n", shader->QueryObject()->GetName(), factName.GetData());
     }
-    
 
     // Construct a new material using the selected shaders.
     csRef<iTextureWrapper> tex = psengine->GetEngine()->GetTextureList()->CreateTexture(material->GetTexture());
     csRef<iMaterial> mat = psengine->GetEngine()->CreateBaseMaterial(tex);
 
     // Set the base shader on this material.
-    mat->SetShader(shadertype, shader);
+    mat->SetShader(baseType, shader);
 
     // Set the diffuse shader on this material.
-    shadertype = strings->Request("diffuse");
-    mat->SetShader(shadertype, shader);
+    mat->SetShader(diffuseType, shader);
 
     // Set the early_z shader on this material.
-    iShader* shaderz = NULL;
-    {
-        csRef<iStringArray> shaderName = psengine->GetLoader()->GetShaderName("instance_early_z");
-        //shaderz = shman->GetShader("*null");
-        shaderz = shman->GetShader(shaderName->Get(0));
-    }
-    shadertype = strings->Request("depthwrite");
-    mat->SetShader(shadertype, shaderz);
+    mat->SetShader(depthType, shaderz);
 
     // Copy all shadervars over.
     for(size_t j=0; j<material->GetShaderVariables().GetSize(); ++j)
