@@ -2262,7 +2262,7 @@ bool GEMClientItem::CheckLoadStatus()
         {
             instance = csPtr<InstanceObject>(new InstanceObject());
             instance->pcmesh = factory->CreateMeshWrapper();
-            instance->pcmesh->GetFlags().Set(CS_ENTITY_NODECAL | CS_ENTITY_NOHITBEAM | CS_ENTITY_ALWAYSVISIBLE);
+            instance->pcmesh->GetFlags().Set(CS_ENTITY_NODECAL | CS_ENTITY_NOHITBEAM);
             psengine->GetEngine()->PrecacheMesh(instance->pcmesh);
             cel->AddInstanceObject(factName+matName, instance);
 
@@ -2329,6 +2329,9 @@ bool GEMClientItem::CheckLoadStatus()
 
             // Set biggest bbox so that instances aren't wrongly culled.
             instance->bbox = factory->GetMeshObjectFactory()->GetObjectModel()->GetObjectBoundingBox();
+            factory->GetMeshObjectFactory()->GetObjectModel()->SetObjectBoundingBox(csBox3(-CS_BOUNDINGBOX_MAXVALUE,
+                -CS_BOUNDINGBOX_MAXVALUE, -CS_BOUNDINGBOX_MAXVALUE, CS_BOUNDINGBOX_MAXVALUE, CS_BOUNDINGBOX_MAXVALUE,
+                CS_BOUNDINGBOX_MAXVALUE));
 
             // create nullmesh factory
             instance->nullFactory = psengine->GetEngine()->CreateMeshFactory("crystalspace.mesh.object.null", factName + "_nullmesh", false);
