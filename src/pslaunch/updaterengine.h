@@ -34,7 +34,7 @@
 #include "util/singleton.h"
 
 /* To be incremented every time we want to make an update. */
-#define UPDATER_VERSION 2.7
+#define UPDATER_VERSION 2.8
 
 struct iConfigManager;
 struct iVFS;
