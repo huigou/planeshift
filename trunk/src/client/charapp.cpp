@@ -1493,13 +1493,15 @@ void psCharAppearance::SetSneak(bool sneaking)
         if(sneaking)
         {
             baseMesh->SetRenderPriority(engine->GetRenderPriority("alpha"));
+            baseMesh->SetZBufMode(CS_ZBUF_TEST);
         }
         else
         {
             baseMesh->SetRenderPriority(engine->GetRenderPriority("object"));
+            baseMesh->SetZBufMode(CS_ZBUF_USE);
         }
 
-        CS::ShaderVarStringID varName = stringSet->Request("alpha factor");
+        CS::ShaderVarStringID varName = stringSet->Request("ps alpha factor");
         for(uint idx = 0; idx < meshAmt; idx++)
         {
             iShaderVariableContext* context = NULL;
@@ -1559,11 +1561,13 @@ void psCharAppearance::SetSneak(bool sneaking)
                 if(sneaking)
                 {
                     meshWrap->SetRenderPriority(engine->GetRenderPriority("alpha"));
+                    meshWrap->SetZBufMode(CS_ZBUF_TEST);
                     var->SetValue(0.5f);
                 }
                 else
                 {
                     meshWrap->SetRenderPriority(engine->GetRenderPriority("object"));
+                    meshWrap->SetZBufMode(CS_ZBUF_USE);
                     var->SetValue(1.0f);
                 }
             }

@@ -70,8 +70,8 @@
 	  what output is linked to what input is done automatically. -->
     <connection from="normalmap" to="snow" />
     <connection from="position" to="surface" />
-    <connection from="surface" to="snow" />
-    <connection from="snow" to="apply_mixmode_alpha" />
+    <connection from="surface" to="apply_mixmode_alpha" />
+    <connection from="apply_mixmode_alpha" to="snow" />
 
     <connection from="position" to="parallax" />
     <connection from="position" to="lighting" />
@@ -83,8 +83,8 @@
     <connection from="normalmap" to="ambient" />
     <connection from="normalmap" to="lighting" />
     <connection from="normalmap" to="staticspecular" />
-    <connection from="apply_mixmode_alpha" to="specular" />
-    <connection from="apply_mixmode_alpha" to="apply_alpha" />
+    <connection from="snow" to="specular" />
+    <connection from="snow" to="apply_alpha" />
     <connection from="apply_alpha" to="apply_lighting">
       <explicit from="outputColor" to="surfaceDiffuse" />
     </connection>
