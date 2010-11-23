@@ -124,7 +124,7 @@ class AppliedOp
 public:
     virtual ~AppliedOp() { }
     virtual bool Load(iDocumentNode* node) = 0;
-    virtual void Run(const MathEnvironment* env, gemActor* target, ActiveSpell* asp) = 0;
+    virtual void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp) = 0;
 };
 
 /// A base class with a "value" attribute backed by a MathExpression.
@@ -179,7 +179,7 @@ public:
         return Applied1::Load(node);
     }
 
-    void Run(const MathEnvironment* env, gemActor* target, ActiveSpell* asp)
+    void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
         VitalBuffable* buffable = NULL;
         if (vital == "mana-rate")
@@ -230,7 +230,7 @@ public:
         return Applied1::Load(node);
     }
 
-    void Run(const MathEnvironment* env, gemActor* target, ActiveSpell* asp)
+    void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
         float val = value->Evaluate(env);
 
@@ -281,7 +281,7 @@ public:
         return Applied1::Load(node);
     }
 
-    void Run(const MathEnvironment* env, gemActor* target, ActiveSpell* asp)
+    void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
         int val = (int) value->Evaluate(env);
         CharStat& buffable = target->GetCharacterData()->Stats()[stat];
@@ -316,7 +316,7 @@ public:
         return Applied1::Load(node);
     }
 
-    void Run(const MathEnvironment* env, gemActor* target, ActiveSpell* asp)
+    void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
         int val = (int) value->Evaluate(env);
         SkillRank& buffable = target->GetCharacterData()->GetSkillRank(skill);
@@ -345,7 +345,7 @@ public:
         return Applied1::Load(node);
     }
 
-    void Run(const MathEnvironment* env, gemActor* target, ActiveSpell* asp)
+    void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
         Multiplier* mod = NULL;
         if (type == "atk")
@@ -378,7 +378,7 @@ public:
         return !value.IsEmpty();
     }
 
-    void Run(const MathEnvironment* env, gemActor* target, ActiveSpell* asp)
+    void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
         target->GetOverridableMesh().Override(asp, value);
         asp->Add(target->GetOverridableMesh(), "<mesh value=\"%s\"/>", value.GetData());
@@ -397,7 +397,7 @@ public:
 
     bool Load(iDocumentNode* node) { return true; }
 
-    void Run(const MathEnvironment* env, gemActor* target, ActiveSpell* asp)
+    void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
         Buffable<int>& b = target->GetCharacterData()->GetCanSummonFamiliar();
         b.Buff(asp, 1);
@@ -440,7 +440,7 @@ public:
         return true;
     }
 
-    void Run(const MathEnvironment* env, gemActor* target, ActiveSpell* asp)
+    void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
         if (target && target->GetClientID())
         {
@@ -536,7 +536,7 @@ public:
         return !name.IsEmpty();
     }
 
-    void Run(const MathEnvironment* env, gemActor* target, ActiveSpell* asp)
+    void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
         gemObject* anchor = NULL;
         // Convert from the source to an offset.
@@ -642,7 +642,7 @@ public:
         return true;
     }
 
-    void Run(const MathEnvironment* env, gemActor* target, ActiveSpell* asp)
+    void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
         // Substitute any @{...} expressions.
         if (!Quasiquote(self, env))
@@ -882,7 +882,7 @@ ApplicativeScript* ApplicativeScript::Create(EntityManager* entitymanager, Cache
     return script;
 }
 
-ActiveSpell* ApplicativeScript::Apply(const MathEnvironment* env, bool registerCancelEvent)
+ActiveSpell* ApplicativeScript::Apply(MathEnvironment* env, bool registerCancelEvent)
 {
     // TODO: Handle non-actor targets...
     gemActor* target = GetActor(env, aim);
@@ -919,7 +919,7 @@ public:
     virtual ~ImperativeOp() { }
 
     virtual bool Load(iDocumentNode* node) = 0;
-    virtual void Run(const MathEnvironment* env) = 0;
+    virtual void Run(MathEnvironment* env) = 0;
 };
 
 //----------------------------------------------------------------------------
@@ -949,7 +949,7 @@ public:
         return aps != NULL;
     }
 
-    virtual void Run(const MathEnvironment* env)
+    virtual void Run(MathEnvironment* env)
     {
         aps->Apply(env, true);
     }
@@ -993,7 +993,7 @@ public:
         return buff && debuff;
     }
 
-    virtual void Run(const MathEnvironment* env)
+    virtual void Run(MathEnvironment* env)
     {
         ActiveSpell* buffAsp   =   buff->Apply(env, true);  // only bother with one cancel event;
         ActiveSpell* debuffAsp = debuff->Apply(env, false); // the link ensures both will get cancelled
@@ -1041,7 +1041,7 @@ public:
         return (bindings && body);
     }
 
-    virtual void Run(const MathEnvironment* outer)
+    virtual void Run(MathEnvironment* outer)
     {
         MathEnvironment inner(outer);
         bindings->Evaluate(&inner);
@@ -1105,7 +1105,7 @@ public:
         return (condition && thenBranch && (elseBranch || !elseNode));
     }
 
-    virtual void Run(const MathEnvironment* env)
+    virtual void Run(MathEnvironment* env)
     {
         if (condition->Evaluate(env) != 0.0)
             thenBranch->Run(env);
@@ -1141,7 +1141,7 @@ public:
         return true;
     }
 
-    virtual void Run(const MathEnvironment* env)
+    virtual void Run(MathEnvironment* env)
     {
         gemActor* actor = GetActor(env, aim);
 
@@ -1240,7 +1240,7 @@ public:
         return true;
     }
 
-    virtual void Run(const MathEnvironment* env)
+    virtual void Run(MathEnvironment* env)
     {
         gemActor* actor = GetActor(env, aim);
         CS_ASSERT(actor);
@@ -1316,7 +1316,7 @@ public:
         return !name.IsEmpty() && !targetVar.IsEmpty();
     }
 
-    virtual void Run(const MathEnvironment* env)
+    virtual void Run(MathEnvironment* env)
     {
         gemObject* target = GetObject(env, targetVar);
         gemObject* source = target;
@@ -1423,7 +1423,7 @@ public:
     DestroyOp(EntityManager* entitymanager) : Imperative1() {this->entitymanager = entitymanager; }
     virtual ~DestroyOp() { }
 
-    void Run(const MathEnvironment* env)
+    void Run(MathEnvironment* env)
     {
         gemObject* obj = GetObject(env, aim);
         psserver->GetEventManager()->Push(new psEntityEvent(entitymanager, psEntityEvent::DESTROY, obj));
@@ -1489,7 +1489,7 @@ public:
         return true;
     }
 
-    void Run(const MathEnvironment* env)
+    void Run(MathEnvironment* env)
     {
         gemActor* actor = GetActor(env, aim);
         CS_ASSERT(actor);
@@ -1562,7 +1562,7 @@ public:
         return Imperative2::Load(node);
     }
 
-    void Run(const MathEnvironment* env)
+    void Run(MathEnvironment* env)
     {
         psCharacter* c = GetCharacter(env, aim);
         float val = value->Evaluate(env);
@@ -1601,7 +1601,7 @@ public:
         return Imperative2::Load(node);
     }
 
-    void Run(const MathEnvironment* env)
+    void Run(MathEnvironment* env)
     {
         gemActor* target = GetActor(env, aim);
         gemActor* atk = GetActor(env, attacker); // may be NULL
@@ -1657,7 +1657,7 @@ public:
         return Imperative2::Load(node);
     }
 
-    void Run(const MathEnvironment* env)
+    void Run(MathEnvironment* env)
     {
         psCharacter* c = GetCharacter(env, aim);
         int val = (int) value->Evaluate(env);
@@ -1694,7 +1694,7 @@ public:
         return Imperative3::Load(node);
     }
 
-    void Run(const MathEnvironment* env)
+    void Run(MathEnvironment* env)
     {
         Faction *currentFaction = faction;
         psCharacter* c = GetCharacter(env, aim);
@@ -1750,7 +1750,7 @@ public:
         return Imperative3::Load(node);
     }
 
-    void Run(const MathEnvironment* env)
+    void Run(MathEnvironment* env)
     {
         psCharacter* c = GetCharacter(env, aim);
         int val = (int) value->Evaluate(env);
@@ -1777,7 +1777,7 @@ public:
     virtual ~ExpOp() { }
 
     // AllocateKillDamage blah.
-    void Run(const MathEnvironment* env)
+    void Run(MathEnvironment* env)
     {
         psCharacter* c = GetCharacter(env, aim);
         float exp = value->Evaluate(env);
@@ -1811,7 +1811,7 @@ public:
         return true;
     }
 
-    void Run(const MathEnvironment* env)
+    void Run(MathEnvironment* env)
     {
         psCharacter* chr = GetCharacter(env, aim);
 
@@ -1905,7 +1905,7 @@ public:
         return Imperative1::Load(node);
     }
 
-    void Run(const MathEnvironment* env)
+    void Run(MathEnvironment* env)
     {
         // Get character data
         psCharacter* c = GetCharacter(env, aim);
@@ -2033,7 +2033,7 @@ public:
         return Imperative1::Load(node);
     }
 
-    void Run(const MathEnvironment* env)
+    void Run(MathEnvironment* env)
     {
         // Get character data
         psCharacter* c = GetCharacter(env, aim);
@@ -2148,7 +2148,7 @@ public:
         return !name.IsEmpty() && count && Imperative1::Load(node);
     }
 
-    void Run(const MathEnvironment* env)
+    void Run(MathEnvironment* env)
     {
         psCharacter* c = GetCharacter(env, aim);
         int stackCount = count->Evaluate(env);
@@ -2251,7 +2251,7 @@ public:
         return Imperative1::Load(node);
     }        
 
-    void Run(const MathEnvironment* env)
+    void Run(MathEnvironment* env)
     {
         gemActor* actor = GetActor(env, aim);
         if (!actor->GetClientID())
@@ -2436,7 +2436,7 @@ ProgressionScript* ProgressionScript::Create(EntityManager* entitymanager, Cache
     return script;
 }
 
-void ProgressionScript::Run(const MathEnvironment* env)
+void ProgressionScript::Run(MathEnvironment* env)
 {
     csArray<ImperativeOp*>::Iterator it = ops.GetIterator();
     while (it.HasNext())

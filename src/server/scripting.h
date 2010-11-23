@@ -72,7 +72,7 @@ public:
     static ProgressionScript* Create(EntityManager* entitymanager,CacheManager* cachemanager, const char* name, iDocumentNode* top);
 
     const csString& Name() { return name; }
-    void Run(const MathEnvironment* env);
+    void Run(MathEnvironment* env);
 
 protected:
     ProgressionScript(const char* name) : name(name) { }
@@ -90,7 +90,7 @@ public:
     static ApplicativeScript* Create(EntityManager* entitymanager, CacheManager* cachemanager, iDocumentNode* top);
     static ApplicativeScript* Create(EntityManager* entitymanager, CacheManager* cachemanager, iDocumentNode* top, SPELL_TYPE type, const char* name, const char* duration);
 
-    ActiveSpell* Apply(const MathEnvironment* env, bool registerCancelEvent = true);
+    ActiveSpell* Apply(MathEnvironment* env, bool registerCancelEvent = true);
 protected:
     ApplicativeScript();
 
