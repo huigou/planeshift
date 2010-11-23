@@ -150,6 +150,6 @@ MAKE_ID_TYPE(AccountID);   ///< Account IDs
 /** Container IDs are either EIDs (if > 100) or inventory slot IDs.
   * This is quite ugly; we don't try to add proper typing.
   */
-typedef uint32_t ContainerID;
+typedef int32_t ContainerID;
 
 #endif
