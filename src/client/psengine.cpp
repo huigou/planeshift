@@ -917,7 +917,6 @@ bool psEngine::ProcessLogic(iEvent& ev)
     return false;
 }
 
-static bool drawFrame;
 bool psEngine::Process3D(iEvent& ev)
 {
     lastEvent = &ev;
@@ -944,22 +943,19 @@ bool psEngine::Process3D(iEvent& ev)
     if (drawScreen)
     {
         // FPS limits
-        drawFrame = FrameLimit();
+        FrameLimit();
 
-        if(drawFrame)
+        paws->Draw3D();
+        if(camera && loadstate == LS_DONE)
         {
-            paws->Draw3D();
-            if(camera && loadstate == LS_DONE)
-            {
-              camera->Draw();
-              return true;
-            }
+            camera->Draw();
+            return true;
         }
     }
     else
     {
         // Sleep for a bit but don't draw anything if minimized or world not loaded.
-        drawFrame = FrameLimit();
+        FrameLimit();
         return true;
     }
 
@@ -970,7 +966,7 @@ bool psEngine::Process2D(iEvent& ev)
 {
     lastEvent = &ev;
 
-    if (drawScreen && drawFrame)
+    if (drawScreen)
     {
         g3d->BeginDraw(CSDRAW_2DGRAPHICS);
         if (effectManager)
@@ -991,7 +987,7 @@ bool psEngine::ProcessFrame(iEvent& ev)
 {
     lastEvent = &ev;
 
-    if(drawScreen && drawFrame)
+    if(drawScreen)
         FinishFrame();
 
     // We need to call this after drawing was finished so
@@ -1037,13 +1033,12 @@ const csHandlerID * psEngine::LogicEventHandler::GenericSucc(csRef<iEventHandler
 
 // ----------------------------------------------------------------------------
 
-inline bool psEngine::FrameLimit()
+inline void psEngine::FrameLimit()
 {
     csTicks sleeptime;
-    csTicks elapsedTime;
 
     // Find the time taken since we left this function
-    elapsedTime = csGetTicks() - elapsed;
+    csTicks elapsedTime = csGetTicks() - elapsed;
 
     // If we're loading then do special handling.
     if(zonehandler.IsValid() && zonehandler->IsLoading())
@@ -1083,8 +1078,6 @@ inline bool psEngine::FrameLimit()
         timeFPS = 0;
         countFPS = 0;
     }
-
-    return true;
 }
 
 void psEngine::MuteAllSounds(void)

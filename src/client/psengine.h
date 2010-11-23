@@ -376,7 +376,7 @@ private:
     void HideWindow(const csString & widgetName);
 
     /// Limits the frame rate either by returning false or sleeping
-    bool FrameLimit();
+    void FrameLimit();
 
     /* plugins we're using... */
     csRef<iObjectRegistry>    object_reg;     ///< The Object Registry
