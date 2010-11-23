@@ -2824,7 +2824,7 @@ bool psCharacter::HasExploredArea(PID explored)
     return false;
 }
 
-double psCharacter::GetProperty(const char *ptr)
+double psCharacter::GetProperty(MathEnvironment* env, const char* ptr)
 {
     csString property(ptr);
     if (property == "AttackerTargeted")
@@ -2982,7 +2982,7 @@ double psCharacter::GetProperty(const char *ptr)
     }
     else if (property == "sector")
     {
-        return MathScriptEngine::GetValue(location.loc_sector);
+        return env->GetValue(location.loc_sector);
     }
     else if (property == "owner")
     {
@@ -3001,12 +3001,12 @@ double psCharacter::GetProperty(const char *ptr)
     return 0;
 }
 
-double psCharacter::CalcFunction(const char * functionName, const double * params)
+double psCharacter::CalcFunction(MathEnvironment* env, const char* functionName, const double* params)
 {
     csString function(functionName);
     if (function == "HasCompletedQuest")
     {
-        const char *questName = MathScriptEngine::GetString(params[0]);
+        const char *questName = env->GetString(params[0]);
         psQuest *quest = psserver->GetCacheManager()->GetQuestByName(questName);
         return (double) CheckQuestCompleted(quest);
     }
@@ -3043,7 +3043,7 @@ double psCharacter::CalcFunction(const char * functionName, const double * param
     }
     else if (function == "SkillRank")
     {
-        const char *skillName = MathScriptEngine::GetString(params[0]);
+        const char *skillName = env->GetString(params[0]);
         PSSKILL skill = psserver->GetCacheManager()->ConvertSkillString(skillName);
         double value = skills.GetSkillRank(skill).Current();
 
@@ -3065,7 +3065,7 @@ double psCharacter::CalcFunction(const char * functionName, const double * param
     }
     else if (function == "PracticeSkill")
     {
-        const char *skillName = MathScriptEngine::GetString(params[0]);
+        const char *skillName = env->GetString(params[0]);
         PSSKILL skill = psserver->GetCacheManager()->ConvertSkillString(skillName);
 
         return skills.AddSkillPractice(skill, params[1]);
@@ -3115,7 +3115,7 @@ double psCharacter::CalcFunction(const char * functionName, const double * param
             item = inventory.GetEquipmentObject(slot).default_if_empty;
         }
 
-        return MathScriptEngine::GetValue(item);;
+        return env->GetValue(item);;
     }
     else if (function == "GetArmorSkill")
     {

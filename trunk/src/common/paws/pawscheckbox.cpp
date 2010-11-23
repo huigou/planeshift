@@ -201,18 +201,13 @@ void pawsCheckBox::OnUpdateData(const char *dataname,PAWSData& value)
     }
 }
 
-double pawsCheckBox::GetProperty(const char * ptr)
+double pawsCheckBox::GetProperty(MathEnvironment* env, const char * ptr)
 {
 	if (!strcasecmp(ptr, "checked"))
 		return checkBox->GetState() ? 1.0 : 0.0;
 	else if (!strcasecmp(ptr, "greyed"))
 		return checkBox->IsEnabled() ? 1.0 : 0.0;
-	return pawsWidget::GetProperty(ptr);
-}
-
-double pawsCheckBox::CalcFunction(const char * functionName, const double * params)
-{
-	return pawsWidget::CalcFunction(functionName, params);
+	return pawsWidget::GetProperty(env, ptr);
 }
 
 void pawsCheckBox::SetProperty(const char * ptr, double value)

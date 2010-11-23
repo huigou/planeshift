@@ -1,7 +1,7 @@
 /*
  * mathscript.cpp by Keith Fulton <keith@planeshift.it>
  *
- * Copyright (C) 2004 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
+ * Copyright (C) 2010s Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -50,46 +50,81 @@ double round(double value)
 
 csString MathVar::ToString() const
 {
-    if (type == VARTYPE_OBJ)
-        return value.object->ToString();
-    if (type == VARTYPE_STR)
-        return MathScriptEngine::GetString(value.value);
-
-    if (fabs(int(value.value) - value.value) < EPSILON) // avoid .00 for whole numbers
-        return csString().Format("%.0f", value.value);
-    return csString().Format("%.2f", value.value);
+    switch (Type())
+    {
+        case VARTYPE_OBJ:
+            return GetObject()->ToString();
+        case VARTYPE_STR:
+            return GetString();
+        default:
+            if (fabs(floor(value) - value) < EPSILON) // avoid .00 for whole numbers
+                return csString().Format("%.0f", value);
+            return csString().Format("%.2f", value);
+    }
 }
 
 csString MathVar::Dump() const
 {
-    csString str;
-    switch (type)
+    switch (Type())
     {
-        case VARTYPE_VALUE:
-            str.Format("%1.4f", value.value);
-            break;
         case VARTYPE_STR:
-            str = MathScriptEngine::GetString(value.value);
-            break;
+            return GetString();
         case VARTYPE_OBJ:
-            str.Format("%p", value.object);
-            break;
+            return csString().Format("%p", GetObject());
+        default:
+            return csString().Format("%1.4f", value);
     }
-    return str;
 }
+
+MathType MathVar::Type() const
+{
+    // initialize conversion
+    MathScriptEngine::IDConverter ID;
+
+    // assign our masked value
+    ID.value = value;
+    ID.ID.mask &= 0xFFF0;
+
+    // check the mask
+    if (ID.ID.mask == 0xFFF0)
+    {
+        // matched the string mask
+        return VARTYPE_STR;
+    }
+    else if (ID.ID.mask == 0x7FF0)
+    {
+        // matched the object mask
+        return VARTYPE_OBJ;
+    }
+    else
+    {
+        return VARTYPE_VALUE;
+    }
+}
+
 
 void MathVar::SetValue(double v)
 {
-    value.value = v;
+    value = v;
 
     if (changedVarCallback)
         changedVarCallback(changedVarCallbackArg);
 }
 
-void MathVar::SetObject(iScriptableVar *p)
+void MathVar::SetObject(iScriptableVar* p)
 {
-    type = VARTYPE_OBJ;
-    value.object = p;
+    value = parent->GetValue(p);
+
+    if (changedVarCallback)
+        changedVarCallback(changedVarCallbackArg);
+}
+
+void MathVar::SetString(const char* p)
+{
+    value = parent->GetValue(p);
+
+    if (changedVarCallback)
+        changedVarCallback(changedVarCallbackArg);
 }
 
 //----------------------------------------------------------------------------
@@ -112,32 +147,15 @@ MathVar* MathEnvironment::Lookup(const char *name) const
     return var;
 }
 
-void MathEnvironment::Define(const char *name, double value)
+MathVar* MathEnvironment::GetVar(const char* name)
 {
-    MathVar *var = variables.Get(name, NULL);
-    if (var)
+    MathVar *var = Lookup(name);
+    if (!var)
     {
-        var->SetValue(value);
-        return;
+        var = new MathVar(this);
+        variables.Put(name,var);
     }
-
-    var = new MathVar;
-    var->SetValue(value);
-    variables.Put(name, var);
-}
-
-void MathEnvironment::Define(const char *name, iScriptableVar *obj)
-{
-    MathVar *var = variables.Get(name, NULL);
-    if (var)
-    {
-        var->SetObject(obj);
-        return;
-    }
-
-    var = new MathVar;
-    var->SetObject(obj);
-    variables.Put(name, var);
+    return var;
 }
 
 void MathEnvironment::DumpAllVars() const
@@ -171,6 +189,135 @@ void MathEnvironment::InterpolateString(csString & str) const
         str.DeleteAt(pos, end-pos+1);
         str.Insert(pos, var->ToString());
     }
+}
+
+void MathEnvironment::Define(const char *name, double value)
+{
+    MathVar* var = GetVar(name);
+    var->SetValue(value);
+}
+
+void MathEnvironment::Define(const char *name, iScriptableVar* obj)
+{
+    MathVar* var = GetVar(name);
+    var->SetObject(obj);
+}
+
+void MathEnvironment::Define(const char *name, const char* str)
+{
+    MathVar* var = GetVar(name);
+    var->SetString(str);
+}
+
+csString MathEnvironment::GetString(double value) const
+{
+    // initialize converter
+    MathScriptEngine::IDConverter ID;
+
+    // assign value
+    ID.value = value;
+    ID.ID.mask &= 0xFFF0;
+    
+    // check whether the ID mask matches the string one
+    if(ID.ID.mask != 0xFFF0)
+    {
+        return "";
+    }
+    else
+    {
+        // obtain the string associated witht he ID and
+        // return it - first checking in global lookup table
+        const char* str = MathScriptEngine::Request(ID.ID.value);
+        if(!str)
+        {
+            str = stringLiterals.Request(ID.ID.value);
+        }
+        return str ? str : "";
+    }
+    return "";
+}
+
+double MathEnvironment::GetValue(const char* p)
+{
+    // initialize id converter
+    MathScriptEngine::IDConverter ID;
+
+    // set the object mask
+    ID.ID.value = 0xFFF0;
+
+    // initialize the part we won't use
+    ID.ID.ignored = 0;
+
+    // check whether the string is present in the
+    // global lookup table
+    if(MathScriptEngine::HasString(p))
+    {
+        // obtain an ID from the global lookup table
+        ID.ID.value = MathScriptEngine::RequestID(p);
+    }
+    else
+    {
+        // obtain an ID from the local lookup table
+        ID.ID.value = stringLiterals.Request(p);
+    }
+
+    // return masked value
+    return ID.value;
+}
+
+iScriptableVar* MathEnvironment::GetPointer(double value) const
+{
+    // initialize converter
+    MathScriptEngine::IDConverter ID;
+
+    // assign value
+    ID.value = value;
+    ID.ID.mask &= 0xFFF0;
+    
+    // check whether the ID mask matches the object one
+    if(ID.ID.mask != 0x7FF0)
+    {
+        Error5("requested pointer for value %04X%04X%08X[%f] which is not a pointer", ID.ID.mask, ID.ID.ignored, ID.ID.value, ID.value);
+        return NULL;
+    }
+    else
+    {
+        // obtain the object associated witht he ID and
+        // return it
+        return scriptableVariables.Get(ID.ID.value,NULL);
+    }
+}
+
+double MathEnvironment::GetValue(iScriptableVar* p)
+{
+    // initialize id converter
+    MathScriptEngine::IDConverter ID;
+
+    // set the object mask
+    ID.ID.mask = 0x7FF0;
+
+    // initialize the part we won't use
+    ID.ID.ignored = 0;
+
+    // obtain an ID and set it as value
+    if(scriptableRegistry.Contains(p))
+    {
+        // already present, retrieve ID
+        ID.ID.value = scriptableRegistry.Get(p,(uint32)-1);
+    }
+    else
+    {
+        // not yet part of the lookup table
+        // assign a new ID
+        ID.ID.value = ++UID;
+
+        // add to the lookup table
+        scriptableVariables.Put(ID.ID.value,p);
+        scriptableRegistry.Put(p,ID.ID.value);
+    }
+
+    // return masked value
+    return ID.value;
 }
 
 //----------------------------------------------------------------------------
@@ -209,12 +356,6 @@ MathStatement* MathStatement::Create(const csString & line, const char *name)
         return NULL;
     }
 
-    // Lame hack - mark   Var = "String";  as a string type, for proper display.
-    // In general, we can't know, since with fparser everything is a double.
-    expression.LTrim();
-    if (expression.GetAt(0) == '\'' || expression.GetAt(0) == '"')
-        stmt->assigneeType = VARTYPE_STR;
-
     stmt->opcode |= MATH_ASSIGN;
     return stmt;
 }
@@ -223,11 +364,6 @@ double MathStatement::Evaluate(MathEnvironment *env)
 {
     double result = MathExpression::Evaluate(env);
     env->Define(assignee, result);
-    if (assigneeType != VARTYPE_VALUE)
-    {
-        MathVar *var = env->Lookup(assignee);
-        var->type = assigneeType;
-    }
     return result;
 }
 
@@ -235,7 +371,7 @@ double MathStatement::Evaluate(MathEnvironment *env)
 
 MathScript* MathScript::Create(const char *name, const csString & script)
 {
-    MathScript *s = new MathScript(name);
+    MathScript* s = new MathScript(name);
 
     size_t start = 0;
     size_t semicolonAt = 0;
@@ -555,62 +691,40 @@ double MathScriptEngine::RandomGen(const double *limit)
 }
 
 
-double MathScriptEngine::Power(const double *parms)
-{
-    return pow(parms[0],parms[1]);
-}
-
-double MathScriptEngine::Warn(const double *args)
-{
-    Warning2(LOG_SCRIPT, "%s", GetString(args[0]).GetData());
-    return args[1];
-}
-
 double MathScriptEngine::CustomCompoundFunc(const double * parms)
 {
     size_t funcIndex = (size_t)parms[0];
-
-    iScriptableVar* v = GetPointer(parms[1]);
-
     csString funcName(customCompoundFunctions.Request(funcIndex));
+
+    MathEnvironment* env = *reinterpret_cast<MathEnvironment**>(
+                            const_cast<double*>(&parms[1]));
+
+    iScriptableVar* v = env->GetPointer(parms[2]);
+
+    if(!v || !env)
+    {
+        Error5("custom compound function %s called with invalid scriptable variable %p(%f) and env %p", funcName.GetData(), v, parms[2], env);
+    }
 
     if (funcName == "IsValid")
     {
+        // check validity of the object
         return (v != NULL);
     }
     else if (funcName == "GetProperty")
     {
-        return (v ? v->GetProperty(GetString(parms[2])) : 0);
+        // retrieve a property of an anonymous object
+        return (v ? v->GetProperty(env, env->GetString(parms[3])) : 0);
     }
     else
     {
-        return (v ? v->CalcFunction(funcName.GetData(), &parms[2]) : 0);
+        // calculate a function on the object
+        return (v ? v->CalcFunction(env, funcName.GetData(), &parms[3]) : 0);
     }
 }
 
-csString MathScriptEngine::GetString(double id)
+csString MathScriptEngine::FormatMessage(const csString& format, size_t arg_count, const double* parms)
 {
-    const char *str = stringLiterals.Request(unsigned(id));
-    return str ? str : "";
-}
-
-iScriptableVar* MathScriptEngine::GetPointer(double p)
-{
-    MathVar::Value value;
-    value.value = p;
-    return value.object;
-}
-
-double MathScriptEngine::GetValue(iScriptableVar* p)
-{
-    MathVar::Value value;
-    value.object = p;
-    return value.value;
-}
-
-csString MathScriptEngine::FormatMessage(const double formatStringID, size_t arg_count, const double* parms)
-{
-    csString format = GetString(formatStringID);
     if(format.IsEmpty() || arg_count == 0)
     {
         return format;
@@ -635,12 +749,13 @@ csString MathScriptEngine::FormatMessage(const double formatStringID, size_t arg
 
 //----------------------------------------------------------------------------
 
-MathExpression::MathExpression() : opcode(MATH_EXP)
+MathExpression::MathExpression() : opcode(MATH_EXP),UID(0)
 {
     fp.AddFunction("rnd", MathScriptEngine::RandomGen, 1);
-    fp.AddFunction("pow", MathScriptEngine::Power, 2);
-    fp.AddFunction("warn", MathScriptEngine::Warn, 2);
-    for (int n = 2; n < 12; n++)
+
+    // first 3 arguments are reserved for function index, scriptable object
+    // and MathEnvironment
+    for (int n = 3; n < 13; n++)
     {
         csString funcName("customCompoundFunc");
         funcName.Append(n);
@@ -660,16 +775,6 @@ MathExpression* MathExpression::Create(const char *expression, const char *name)
     }
 
     return exp;
-}
-
-void MathExpression::AddToFPVarList(const csSet<csString> & set, csString & fpVars)
-{
-    csSet<csString>::GlobalIterator it(set.GetIterator());
-    while (it.HasNext())
-    {
-        fpVars.Append(it.Next());
-        fpVars.Append(',');
-    }
 }
 
 bool MathExpression::Parse(const char *exp)
@@ -761,32 +866,33 @@ bool MathExpression::Parse(const char *exp)
         {
             if (i+1 == tokens.GetSize() || !isalpha(tokens[i+1].GetAt(0)))
             {
-                Error4("Parse error in MathExpression >%s: %s<: Expected property or method after ':' operator; found >%s<.", name, exp, tokens[i+1].GetData());
+                Error4("Parse error in MathExpression >%s: '%s'<: Expected property or method after ':' operator; found >%s<.", name, exp, tokens[i+1].GetData());
                 return false;
             }
             if (!isupper(tokens[i-1].GetAt(0)))
             {
-                Error4("Parse error in MathExpression >%s: %s<: ':' Expected variable before ':' operator; found >%s<.", name, exp, tokens[i-1].GetData());
+                Error4("Parse error in MathExpression >%s: '%s'<: ':' Expected variable before ':' operator; found >%s<.", name, exp, tokens[i-1].GetData());
                 return false;
             }
 
             // Is it a method call?
             if (i+2 < tokens.GetSize() && tokens[i+2] == "(")
             {
-                // method calls don't require the variable to be an object at the beginning, they may become one
-                // runtime via properties/other function calls, therefore this check is skipped
-                // the user shall ensure that a variable he calls a function on is an object at the point
-                // of calling the function
+                // variables may not be objects in the same expressions
                 if(!requiredVars.Contains(tokens[i-1]))
                 {
-                    // as the variable didn't occur prior to calling a function on it, it has
-                    // to be an object at the beginning
-                    requiredObjs.Add(tokens[i-1]);
+                    Error4("Parse error in MathExpression >%s: '%s'<: ':' Expected object before ':' operator; found >%s<.", name, exp, tokens[i-1].GetData());
+                    return false;
                 }
 
-                // Methods start as Target:WeaponAt(Slot) and turn into customCompoundFuncN(X,Target,Slot)
-                // where N-2 is the number of parameters and X is the index in a global lookup table.
-                int paramCount = 2; // customCompoundFunc takes two args as boilerplate.
+                // unknown object, add it to the list
+                requiredObjs.Add(tokens[i-1]);
+
+                // Methods start as Target:WeaponAt(Slot) and turn into customCompoundFuncN(X,Env,Target,Slot)
+                // where N-3 is the number of parameters and X is the index in a global lookup table and
+                // Env is the environment the expression is executed in.
+                // customCompoundFunc takes three args as boilerplate.
+                int paramCount = 3;
 
                 // Count the number of params via the number of commas.  First one doesn't come with a comma.
                 if (i+3 < tokens.GetSize() && tokens[i+3] != ")")
@@ -806,8 +912,8 @@ bool MathExpression::Parse(const char *exp)
                 tokens[i-1] = "customCompoundFunc";
                 tokens[ i ].Format("%d", paramCount);
                 tokens[i+1] = "(";
-                tokens[i+2].Format("%u,%s", CS::StringIDValue(MathScriptEngine::customCompoundFunctions.Request(method)), object.GetData());
-                if (paramCount > 2)
+                tokens[i+2].Format("%u,environment,%s", MathScriptEngine::GetCompoundFunction(method), object.GetData());
+                if (paramCount > 3)
                     tokens[i+2].Append(',');
                 i += 2; // skip method name & paren - we just dealt with them.
             }
@@ -818,7 +924,8 @@ bool MathExpression::Parse(const char *exp)
 
                 // Found a property reference, i.e. Actor:HP
                 tokens[i] = "_"; // fparser can't deal with ':', so change it to '_'.
-                propertyRefs.Add(csString().Format("%s:%s", tokens[i-1].GetData(), tokens[i+1].GetData()));
+                PropertyRef ref = {tokens[i-1],tokens[i+1]};
+                propertyRefs.Add(ref);
                 i++; // skip next token - we already dealt with the property.
             }
         }
@@ -829,106 +936,142 @@ bool MathExpression::Parse(const char *exp)
             {
                 // remove quote (scanner already omitted the closing quote)
                 tokens[i].DeleteAt(0);
-                CS::StringIDValue id = MathScriptEngine::stringLiterals.Request(tokens[i]);
-                tokens[i].Format("%u", id);
-            }
 
-            // Jot down any variable names (tokens starting with [A-Z])
-            if (isupper(tokens[i].GetAt(0)))
-                requiredVars.Add(tokens[i]);
+                // build placeholder token
+                csString placeholder("string");
+                placeholder.Append(++UID);
+
+                // add the placeholder token as constant so we can have an exact value
+                // (i.e. different NaNs/Infs)
+                fp.AddConstant(placeholder.GetData(), MathScriptEngine::Request(tokens[i]));
+
+                // put the placeholder as token to parse
+                tokens[i] = placeholder;
+            }
+            else
+            {
+                // Jot down any variable names (tokens starting with [A-Z])
+                if (isupper(tokens[i].GetAt(0)))
+                    requiredVars.Add(tokens[i]);
+            }
         }
     }
 
+    // make sure environment will be resolved upon execution
+    requiredVars.Add("environment");
+
     // Parse the formula.
     csString fpVars;
-    csSet<csString>::GlobalIterator it(requiredVars.GetIterator());
-    while (it.HasNext())
     {
-        fpVars.Append(it.Next());
-        fpVars.Append(',');
+        // add all required variables
+        csSet<csString>::GlobalIterator it(requiredVars.GetIterator());
+        while (it.HasNext())
+        {
+            fpVars.Append(it.Next());
+            fpVars.Append(',');
+        }
     }
-    it = propertyRefs.GetIterator();
-    while (it.HasNext())
+
     {
-        csString ref = it.Next();
-        ref.ReplaceAll(":", "_");
-        fpVars.Append(ref);
-        fpVars.Append(',');
+        // add all property references as variables
+        csSet<PropertyRef>::GlobalIterator it = propertyRefs.GetIterator();
+        while (it.HasNext())
+        {
+            const PropertyRef& ref = it.Next();
+            csString var;
+            var.Format("%s_%s", ref.object.GetData(), ref.property.GetData());
+            fpVars.Append(var);
+            fpVars.Append(',');
+        }
     }
-    if (!fpVars.IsEmpty())
-        fpVars.Truncate(fpVars.Length() - 1); // remove the last training ','
+
+    if(!fpVars.IsEmpty())
+    {
+        fpVars.Truncate(fpVars.Length() - 1); // remove the trailing ',' 
+    }
 
     // Rebuild the expression now that method calls & properties are transformed
     csString expression;
     for (size_t i = 0; i < tokens.GetSize(); i++)
         expression.Append(tokens[i]);
 
-    //printf("Final expression: %s %s\n", expression.GetData(), fpVars.GetDataSafe());
+    Debug3(LOG_SCRIPT, 0, "Final expression: '%s' (%s)\n", expression.GetData(), fpVars.GetDataSafe());
 
     size_t ret = fp.Parse(expression.GetData(), fpVars.GetDataSafe());
     if (ret != (size_t) -1)
     {
-        Error5("Parse error in MathExpression >%s: %s< at column %zu: %s", name, expression.GetData(), ret, fp.ErrorMsg());
+        Error5("Parse error in MathExpression >%s: '%s'< at column %zu: %s", name, expression.GetData(), ret, fp.ErrorMsg());
         return false;
     }
 
     fp.Optimize();
     return true;
-
 }
 
-double MathExpression::Evaluate(const MathEnvironment *env)
+double MathExpression::Evaluate(MathEnvironment *env)
 {
     double *values = new double [requiredVars.GetSize() + propertyRefs.GetSize()];
     size_t i = 0;
 
+    // retrieve the values of all required variables
     csSet<csString>::GlobalIterator it(requiredVars.GetIterator());
     while (it.HasNext())
     {
         const csString & varName = it.Next();
         MathVar *var = env->Lookup(varName);
-        if (!var)
+
+        if (!var) // invalid variable
         {
-            Error3("Error in >%s<: Required variable >%s< not supplied in environment.", name, varName.GetData());
-            CS_ASSERT(false);
+            csString msg;
+            msg.Format("Error in >%s<: Required variable >%s< not supplied in environment.", name, varName.GetData());
+            CS_ASSERT_MSG(msg.GetData(),false);
+            Error1(msg.GetData());
             return 0.0;
         }
         values[i++] = var->GetValue();
     }
 
+    // retrieve the objects requried to retrieve
+    // calculated values or properties
     it = requiredObjs.GetIterator();
     while (it.HasNext())
     {
         const csString & objName = it.Next();
         MathVar *var = env->Lookup(objName);
+
         CS_ASSERT(var); // checked as part of requiredVars
-        if (var->Type() != VARTYPE_OBJ)
+
+        if (var->Type() != VARTYPE_OBJ) // invalid type
         {
-            Error3("Error in >%s<: Type inference requires >%s< to be an iScriptableVar, but it isn't.", name, objName.GetData());
-            CS_ASSERT(false);
+            csString msg;
+            msg.Format("Error in >%s<: Type inference requires >%s< to be an iScriptableVar, but it isn't.", name, objName.GetData());
+            CS_ASSERT_MSG(msg.GetData(),false);
+            Error1(msg.GetData());
             return 0.0;
         }
-        if (!var->GetObject())
+        else if (!var->GetObject()) // invalid object
         {
-            Error3("Error in >%s<: Given a NULL iScriptableVar* for >%s<.", name, objName.GetData());
-            CS_ASSERT(false);
+            csString msg;
+            msg.Format("Error in >%s<: Given a NULL iScriptableVar* for >%s<.", name, objName.GetData());
+            CS_ASSERT_MSG(msg.GetData(),false);
+            Error1(msg.GetData());
             return 0.0;
         }
     }
 
-    it = propertyRefs.GetIterator();
-    while (it.HasNext())
+    // retrieve the required properties
+    csSet<PropertyRef>::GlobalIterator propIt(propertyRefs.GetIterator());
+    while (propIt.HasNext())
     {
-        const csString & ref = it.Next();
-        size_t colonAt = ref.FindFirst(':');
-        csString objname = ref.Slice(0, colonAt);
-        csString prop    = ref.Slice(colonAt + 1);
+        const PropertyRef& ref = propIt.Next();
 
-        MathVar *var = env->Lookup(objname);
+        MathVar *var = env->Lookup(ref.object);
         CS_ASSERT(var); // checked as part of requiredVars
+
         iScriptableVar *obj = var->GetObject();
         CS_ASSERT(obj); // checked as part of requiredObjs
-        values[i++] = obj->GetProperty(prop);
+
+        values[i++] = obj->GetProperty(env,ref.property.GetData());
     }
 
     double ret = fp.Eval(values);

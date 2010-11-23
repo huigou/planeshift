@@ -315,7 +315,7 @@ void pawsSketchWindow::DrawColorWidgetText(const char *text, int x, int y, int c
     graphics2D->Write( font, x, y, color, -1, text);
 }
 
-double pawsSketchWindow::CalcFunction(const char * functionName, const double * params)
+double pawsSketchWindow::CalcFunction(MathEnvironment* env, const char* functionName, const double* params)
 {
     if (!strcasecmp(functionName,"ClickTextTool"))
     {
@@ -379,7 +379,7 @@ double pawsSketchWindow::CalcFunction(const char * functionName, const double * 
     }
 
     // else call parent version to inherit other functions
-    return pawsWidget::CalcFunction(functionName,params);
+    return pawsWidget::CalcFunction(env, functionName,params);
 }
 
 bool pawsSketchWindow::OnKeyDown( utf32_char keyCode, utf32_char key, int modifiers )

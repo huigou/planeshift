@@ -1407,8 +1407,8 @@ public:
     void RunScriptEvent(PAWS_WIDGET_SCRIPT_EVENTS event);
 
     const char* ToString() { return name.GetDataSafe(); }
-    virtual double GetProperty(const char * ptr);
-    virtual double CalcFunction(const char * functionName, const double * params);
+    virtual double GetProperty(MathEnvironment* env, const char* ptr);
+    virtual double CalcFunction(MathEnvironment* env, const char* functionName, const double* params);
     virtual void SetProperty(const char * ptr, double value);
 
     csArray<csString> publishList;

@@ -561,7 +561,7 @@ bool psSpell::AffectTarget(gemActor* caster, gemObject* origTarget, gemObject* t
 ///
 /// iScriptableVar Interface Implementation
 ///
-double psSpell::GetProperty(const char *ptr)
+double psSpell::GetProperty(MathEnvironment* env, const char* ptr)
 {
     csString property(ptr);
     if (property == "Realm")
@@ -576,24 +576,24 @@ double psSpell::GetProperty(const char *ptr)
     return 0;
 }
 
-double psSpell::CalcFunction(const char * functionName, const double * params)
+double psSpell::CalcFunction(MathEnvironment* env, const char* functionName, const double* params)
 {
     csString function(functionName);
     if(function == "ManaCost")
     {
-        iScriptableVar* obj = MathScriptEngine::GetPointer(params[0]);
+        iScriptableVar* obj = env->GetPointer(params[0]);
         gemActor* caster = dynamic_cast<gemActor*>(obj);
         return ManaCost(caster->GetCharacterData(), params[1]).mana;
     }
     else if(function == "StaminaCost")
     {
-        iScriptableVar* obj = MathScriptEngine::GetPointer(params[0]);
+        iScriptableVar* obj = env->GetPointer(params[0]);
         gemActor* caster = dynamic_cast<gemActor*>(obj);
         return ManaCost(caster->GetCharacterData(), params[1]).stamina;
     }
     else if(function == "SuccessChance")
     {
-        iScriptableVar* obj = MathScriptEngine::GetPointer(params[0]);
+        iScriptableVar* obj = env->GetPointer(params[0]);
         gemActor* caster = dynamic_cast<gemActor*>(obj);
         return ChanceOfCastSuccess(caster->GetCharacterData(), params[1]);
     }

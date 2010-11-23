@@ -288,8 +288,8 @@ public:
     EID GetEID() { return eid; }
 
     /// iScriptableVar implementation
-    virtual double GetProperty(const char *ptr);
-    virtual double CalcFunction(const char *functionName, const double *params);
+    virtual double GetProperty(MathEnvironment* env, const char* ptr);
+    virtual double CalcFunction(MathEnvironment* env, const char* functionName, const double* params);
     virtual const char* ToString() { return name.GetData(); }
 
     /// Called when a client disconnects
@@ -520,8 +520,8 @@ public:
 
 
     /// iScriptableVar implementation
-    virtual double GetProperty(const char *ptr);
-    virtual double CalcFunction(const char *functionName, const double *params);
+    virtual double GetProperty(MathEnvironment* env, const char* ptr);
+    virtual double CalcFunction(MathEnvironment* env, const char* functionName, const double* params);
 
     virtual float GetBaseAdvertiseRange();
 
@@ -865,9 +865,10 @@ public:
 
     virtual PID GetPID() { return pid; }
 
-    /// iScriptableVar implementation
-    virtual double GetProperty(const char *ptr);
-    virtual double CalcFunction(const char *functionName, const double *params);
+    /// iScriptableVar::GetProperty implementation
+    virtual double GetProperty(MathEnvironment* env, const char *ptr);
+    /// iScriptableVar::CalcFunction implementation
+    virtual double CalcFunction(MathEnvironment* env, const char* functionName, const double* params);
 
     bool SetupCharData();
 

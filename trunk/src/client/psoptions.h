@@ -68,8 +68,8 @@ public:
     void NewSubscription(const char *name);
 
     // inherited from iScriptableVar
-    double GetProperty(const char *ptr);
-    double CalcFunction(const char * functionName, const double * params);
+    double GetProperty(MathEnvironment* env, const char* ptr);
+    double CalcFunction(MathEnvironment* env, const char* functionName, const double* params);
     const char * ToString() { return "options"; }
 
     /**

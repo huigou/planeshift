@@ -160,14 +160,14 @@ class psTradeProcesses : public iScriptableVar
     const char* ToString();
 
     ///Needed for iScriptableVar. Does nothing right now just returns 0 for anything passed.
-    double CalcFunction(const char * functionName, const double * params);
+    double CalcFunction(MathEnvironment* env, const char* functionName, const double* params);
 
     /** Returns the requested variable stored in this process.
      *  @note Needed for iScriptableVar.
      *  @param ptr A pointer to a char array stating the requested variable.
      *  @return A double with the value of the requested variable.
      */
-    double GetProperty(const char *ptr);
+    double GetProperty(MathEnvironment* env, const char* ptr);
     
  protected:
     uint32 processId;

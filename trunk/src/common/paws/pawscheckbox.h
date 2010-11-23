@@ -138,7 +138,7 @@ public:
     *
     * @param *ptr The name of the property to get.
     */
-    virtual double GetProperty(const char * ptr);
+    virtual double GetProperty(MathEnvironment* env, const char* ptr);
 
    /**
     * @fn virtual void SetProperty(const char * ptr, double value)
@@ -148,15 +148,6 @@ public:
     * @param value The new value of the property to be set.
     */
     virtual void SetProperty(const char * ptr, double value);
-
-   /**
-    * @fn virtual double CalcFunction(const char * functionName, const double * params);
-    * @brief This function is not yet documented.
-    *
-    * @param *functionName TODO.
-    * @param *params TODO.
-    */
-    virtual double CalcFunction(const char * functionName, const double * params);
 
     /** @@@ Hack: please someone tell me how to do this better? */
     pawsButton* GetButton() { return checkBox; }

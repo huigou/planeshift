@@ -19,12 +19,13 @@
 #ifndef __MATHSCRIPTVAR_H__
 #define __MATHSCRIPTVAR_H__
 
+class MathEnvironment;
 
 class iScriptableVar
 {
 public:
-    virtual double GetProperty(const char *ptr)=0;
-    virtual double CalcFunction(const char * functionName, const double * params) = 0;
+    virtual double GetProperty(MathEnvironment*, const char *ptr)=0;
+    virtual double CalcFunction(MathEnvironment*, const char * functionName, const double * params) = 0;
     virtual const char* ToString() = 0;
     virtual ~iScriptableVar() {};
 };

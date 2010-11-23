@@ -879,8 +879,8 @@ public:
     const char *GetSound();
 
     /// This is used by the math scripting engine to get various values.
-    double GetProperty(const char *ptr);
-    double CalcFunction(const char * functionName, const double * params);
+    double GetProperty(MathEnvironment* env, const char* ptr);
+    double CalcFunction(MathEnvironment* env, const char* functionName, const double* params);
     const char *ToString() { return item_name.GetDataSafe(); }
 
     bool GetIsLocked() { return ((flags & PSITEM_FLAG_LOCKED)? true : false); }
