@@ -1689,7 +1689,7 @@ public:
         faction = cachemanager->GetFaction(node->GetAttributeValue("name"));
         if(!faction) //if the faction is valid we just use it else we will use the named variable during run.
         {
-            factionExp = MathExpression::Create(node->GetAttributeValue("name"));
+            variableName = node->GetAttributeValue("name");
         }
         return Imperative3::Load(node);
     }
@@ -1703,7 +1703,13 @@ public:
         if (!currentFaction)
         {
             //evaluate the variable so we can get it's value
-            csString factionName = MathScriptEngine::GetString(factionExp->Evaluate(env));
+            MathVar* factionVar = env->Lookup(variableName);
+            if(!factionVar)
+            {
+                Error2("Faction Imperative Op Run with invalid faction name variable: %s", variableName.GetData());
+            }
+            
+            csString factionName = factionVar->GetString();
             currentFaction = cachemanager->GetFaction(factionName.GetData());
             if(!currentFaction) //we still didn't find a valid faction abort.
             {
@@ -1714,12 +1720,13 @@ public:
         c->UpdateFaction(currentFaction, val);
     }
 protected:
+
     ///Used to store the faction in case it's found during Load(). It's null in case it wasn't found.
     Faction *faction;
     /** Used to store the faction name math expression in case the faction couldn't be found.
      *  It's uninitialized in case it's not used as the code shouldn't use it in that case.
      */
-    MathExpression* factionExp;
+    csString variableName;
     CacheManager* cachemanager;
 };
 

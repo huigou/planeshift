@@ -151,12 +151,12 @@ const char* psTradeProcesses::ToString()
     return name.GetData();
 }
 
-double psTradeProcesses::CalcFunction(const char * functionName, const double * params)
+double psTradeProcesses::CalcFunction(MathEnvironment* env, const char* functionName, const double* params)
 {
     return 0;
 }
 
-double psTradeProcesses::GetProperty(const char *ptr)
+double psTradeProcesses::GetProperty(MathEnvironment* env, const char* ptr)
 {
     csString property(ptr);
     if (property == "PrimarySkillId")

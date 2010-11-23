@@ -669,7 +669,7 @@ void gemObject::SetName(const char *n)
     name = n;
 }
 
-double gemObject::GetProperty(const char *prop)
+double gemObject::GetProperty(MathEnvironment* env, const char* prop)
 {
     //csString property(prop);
     //if (prop == "mesh")
@@ -679,7 +679,7 @@ double gemObject::GetProperty(const char *prop)
     return 0.0;
 }
 
-double gemObject::CalcFunction(const char *f, const double *params)
+double gemObject::CalcFunction(MathEnvironment* env, const char* f, const double* params)
 {
     CS_ASSERT(false);
     return 0.0;
@@ -1210,16 +1210,16 @@ gemItem::gemItem(GEMSupervisor* gemsupervisor, CacheManager* cachemanager, Entit
     cel->AddItemEntity(this);
 }
 
-double gemItem::GetProperty(const char *prop)
+double gemItem::GetProperty(MathEnvironment* env, const char* prop)
 {
     CS_ASSERT(itemdata);
-    return itemdata->GetProperty(prop);
+    return itemdata->GetProperty(env, prop);
 }
 
-double gemItem::CalcFunction(const char *f, const double *params)
+double gemItem::CalcFunction(MathEnvironment* env, const char* f, const double* params)
 {
     CS_ASSERT(itemdata);
-    return itemdata->CalcFunction(f, params);
+    return itemdata->CalcFunction(env, f, params);
 }
 
 
@@ -2015,7 +2015,7 @@ gemActor::~gemActor()
     delete pcmove;
 }
 
-double gemActor::GetProperty(const char *prop)
+double gemActor::GetProperty(MathEnvironment* env, const char* prop)
 {
     csString property(prop);
 
@@ -2034,15 +2034,15 @@ double gemActor::GetProperty(const char *prop)
     }
 
     CS_ASSERT(psChar);
-    return psChar->GetProperty(prop);
+    return psChar->GetProperty(env, prop);
 }
 
-double gemActor::CalcFunction(const char *f, const double *params)
+double gemActor::CalcFunction(MathEnvironment* env, const char* f, const double* params)
 {
     csString func(f);
     if (func == "ActiveSpellCount")
     {
-        return ActiveSpellCount(MathScriptEngine::GetString(params[0]));
+        return ActiveSpellCount(env->GetString(params[0]));
     }
     else if (func == "RangeTo")
     {
@@ -2053,7 +2053,7 @@ double gemActor::CalcFunction(const char *f, const double *params)
     }
     else if (func == "Faction")
     {
-        const char *factionName = MathScriptEngine::GetString(params[0]);
+        const char *factionName = env->GetString(params[0]);
         Faction *faction = cacheManager->GetFactionByName(factionName);
         return (double) (faction ? factions->GetFaction(faction) : 0);
     }
@@ -2068,7 +2068,9 @@ double gemActor::CalcFunction(const char *f, const double *params)
         // MathScript specific string formatting
         size_t argc = static_cast<size_t>(params[1]);
         const double* args = argc ? &params[2] : NULL;
-        csString string = MathScriptEngine::FormatMessage(params[0],argc,args);
+        csString format = env->GetString(params[0]);
+        Error2("got format string '%s'", format.GetData());
+        csString string = MathScriptEngine::FormatMessage(format,argc,args);
 
         if (func == "SendSystemInfo")
         {
@@ -2098,7 +2100,7 @@ double gemActor::CalcFunction(const char *f, const double *params)
         return 1;
     }
     CS_ASSERT(psChar);
-    return psChar->CalcFunction(f, params);
+    return psChar->CalcFunction(env, f, params);
 }
 
 Client* gemActor::GetClient() const

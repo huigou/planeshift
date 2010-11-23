@@ -2812,7 +2812,7 @@ void pawsWidget::RunScriptEvent(PAWS_WIDGET_SCRIPT_EVENTS event)
         script->Execute();
 }
 
-double pawsWidget::GetProperty(const char * ptr)
+double pawsWidget::GetProperty(MathEnvironment* env, const char* ptr)
 {
     if (!strcasecmp(ptr, "visible"))
         return visible ? 1.0 : 0.0;
@@ -2821,7 +2821,7 @@ double pawsWidget::GetProperty(const char * ptr)
     return 0.0;
 }
 
-double pawsWidget::CalcFunction(const char * functionName, const double * params)
+double pawsWidget::CalcFunction(MathEnvironment* env, const char* functionName, const double* params)
 {
     if (!strcasecmp(functionName, "closeparent"))
     {

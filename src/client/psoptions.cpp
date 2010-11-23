@@ -78,7 +78,7 @@ void psOptions::NewSubscription(const char *name)
 {
 }
 
-double psOptions::GetProperty(const char *ptr)
+double psOptions::GetProperty(MathEnvironment* env, const char* ptr)
 {
     if (configFile->KeyExists(ptr))
         return (double)configFile->GetFloat(ptr);
@@ -87,7 +87,7 @@ double psOptions::GetProperty(const char *ptr)
     return 0.0;
 }
 
-double psOptions::CalcFunction(const char * functionName, const double * params)
+double psOptions::CalcFunction(MathEnvironment* env, const char* functionName, const double* params)
 {
     if (!strcasecmp(functionName, "Save"))
     {

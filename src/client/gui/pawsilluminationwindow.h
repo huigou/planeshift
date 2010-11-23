@@ -260,7 +260,7 @@ public:
     void OnColorEntered(const char *name,int param,int color);
 
     /// inherited from iScriptableVar from pawsWidget
-    double CalcFunction(const char * functionName, const double * params);
+    double CalcFunction(MathEnvironment* env, const char* functionName, const double* params);
 
 
     virtual bool OnMouseDown( int button, int modifiers, int x, int y );

@@ -55,7 +55,7 @@ void pawsScriptStatement::Execute()
 {
     for (size_t i = 0; i < scriptResults.GetSize(); ++i)
     {
-        scriptResults[i].var->SetValue(scriptResults[i].widget->GetProperty(scriptResults[i].property));
+        scriptResults[i].var->SetValue(scriptResults[i].widget->GetProperty(&env,scriptResults[i].property));
         scriptResults[i].var->SetChangedCallback(pawsScriptStatement::ChangedResultsVarCallback, (void*) &scriptResults[i]);
     }
     script->Evaluate(&env);

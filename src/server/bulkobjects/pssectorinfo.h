@@ -59,8 +59,9 @@ public:
     unsigned int GetRandomLightningGap();
 
     /// This is used by the math scripting engine to get various values.
-    double GetProperty(const char *ptr);
-    double CalcFunction(const char * functionName, const double * params);
+    double GetProperty(MathEnvironment* env, const char* ptr);
+    /// This is used by the math scripting engine to get calculated values.
+    double CalcFunction(MathEnvironment* env, const char* functionName, const double* params);
     const char *ToString() { return name.GetDataSafe(); }
 
     bool GetIsColliding() { return is_colliding; }

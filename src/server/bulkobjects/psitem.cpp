@@ -2068,7 +2068,7 @@ int psItem::GetMaxCharges() const
     return base_stats->GetMaxCharges();
 }
 
-double psItem::GetProperty(const char *ptr)
+double psItem::GetProperty(MathEnvironment* env, const char *ptr)
 {
     csString property(ptr);
     if (property == "Skill1")
@@ -2201,7 +2201,7 @@ double psItem::GetProperty(const char *ptr)
     }
     else if (property == "Owner")
     {
-        return MathScriptEngine::GetValue(owning_character);
+        return env->GetValue(owning_character);
     }
     else if (property == "ArmorType")
     {
@@ -2234,13 +2234,13 @@ double psItem::GetProperty(const char *ptr)
     }
 }
 
-double psItem::CalcFunction(const char * functionName, const double * params)
+double psItem::CalcFunction(MathEnvironment* env, const char * functionName, const double * params)
 {
     csString function(functionName);
     if (function == "GetArmorVSWeaponResistance")
     {
         psItem *weapon = this;
-        psItem *armor  = dynamic_cast<psItem*>(MathScriptEngine::GetPointer(params[0]));
+        psItem *armor  = dynamic_cast<psItem*>(env->GetPointer(params[0]));
 
         // if no armor return 1
         if (!armor)

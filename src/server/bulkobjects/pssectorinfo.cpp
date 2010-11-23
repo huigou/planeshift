@@ -93,7 +93,7 @@ unsigned int psSectorInfo::GetRandomLightningGap()
     return psserver->GetRandom(lightning_max_gap - lightning_min_gap) + lightning_min_gap;
 }
 
-double psSectorInfo::GetProperty(const char *ptr)
+double psSectorInfo::GetProperty(MathEnvironment* env, const char* ptr)
 {
     csString prop(ptr);
     if(prop == "interior")
@@ -108,12 +108,12 @@ double psSectorInfo::GetProperty(const char *ptr)
     return 0;
 }
 
-double psSectorInfo::CalcFunction(const char * functionName, const double * params)
+double psSectorInfo::CalcFunction(MathEnvironment* env, const char* functionName, const double* params)
 {
     csString function(functionName);
     if(function == "IsSector")
     {
-        const char *sector = MathScriptEngine::GetString(params[0]);
+        const char *sector = env->GetString(params[0]);
         return (double)(name == sector);
     }
     return 0;

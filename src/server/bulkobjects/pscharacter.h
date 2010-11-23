@@ -1088,8 +1088,8 @@ public:
     void SetLifeDescription(const char* newValue);
 
     /// This is used by the math scripting engine to get various values.
-    double GetProperty(const char *ptr);
-    double CalcFunction(const char * functionName, const double * params);
+    double GetProperty(MathEnvironment* env, const char* ptr);
+    double CalcFunction(MathEnvironment* env, const char* functionName, const double* params);
     const char* ToString() { return fullname.GetData(); }
 
     /// The exp to be handed out when this actor dies

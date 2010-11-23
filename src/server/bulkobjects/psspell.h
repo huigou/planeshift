@@ -113,8 +113,8 @@ class psSpell : public iScriptableVar
 
     /// iScriptableVar Implementation
     /// This is used by the math scripting engine to get various values.
-    double GetProperty(const char *ptr);
-    double CalcFunction(const char * functionName, const double * params);
+    double GetProperty(MathEnvironment* env, const char* ptr);
+    double CalcFunction(MathEnvironment* env, const char* functionName, const double* params);
     const char* ToString() { return name.GetDataSafe(); }
 
 protected:
