@@ -357,7 +357,7 @@ public:
 
     /// Give a warning to the client silently. Capped at 10000.
     void CountDetectedCheat() {if (detectedCheatCount < 10000) detectedCheatCount++; }
-    int GetDetectedCheatCount() { return detectedCheatCount;}
+    unsigned int GetDetectedCheatCount() { return detectedCheatCount;}
     /// Set the next move as not a cheat, or clear it.
     void SetCheatMask(CheatFlags mask,bool flag);
     bool GetCheatMask(CheatFlags mask) { return (cheatMask & mask) != 0;  }
@@ -454,7 +454,7 @@ private:
     bool isFrozen;  ///< Whether the client is frozen or not.
 
     /// Potential number of exploits automatically detected.
-    int detectedCheatCount;
+    unsigned int detectedCheatCount;
 
     /// This flag set to true after a teleport, to keep Paladin from reporting a cheat
     int cheatMask;

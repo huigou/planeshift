@@ -1253,7 +1253,7 @@ bool celHNavStructBuilder::ParseMeshes (iDocumentNode* node, csHash<csRef<iSecto
       {
           csString msg;
           msg.Format("invalid sector %s in navmesh\n", sectorName);
-          CS_ASSERT_MSG(false, msg.GetData());
+          CS_ASSERT_MSG(msg.GetData(),false);
       }
     }
 
@@ -1288,7 +1288,7 @@ bool celHNavStructBuilder::ParseGraph (iDocumentNode* node, iCelGraph* graph, cs
     {
         csString msg;
         msg.Format("invalid sector %s in navmesh graph node\n", sectorName);
-        CS_ASSERT_MSG(false, msg.GetData());
+        CS_ASSERT_MSG(msg.GetData(),false);
     }
 
     // Get position

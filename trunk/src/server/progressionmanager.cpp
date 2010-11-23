@@ -379,7 +379,7 @@ void ProgressionManager::HandleSkill(MsgEntry *me, Client * client)
             }
 
             csString skillName = topNode->GetAttributeValue("NAME");
-            uint skillAmount = topNode->GetAttributeValueAsInt("AMOUNT");
+            int skillAmount = topNode->GetAttributeValueAsInt("AMOUNT");
 
             psSkillInfo * info = cacheManager->GetSkillByName(skillName);
             Debug2(LOG_SKILLXP, client->GetClientNum(),"    Looking for: %s\n", (const char*)skillName);
@@ -422,7 +422,7 @@ void ProgressionManager::HandleSkill(MsgEntry *me, Client * client)
             Debug2(LOG_SKILLXP, client->GetClientNum(),"    PP available: %u\n", character->GetProgressionPoints() );
 
             // Test for progression points
-            if (character->GetProgressionPoints() < skillAmount)
+            if ((int)character->GetProgressionPoints() < skillAmount)
             {
                 psserver->SendSystemInfo(client->GetClientNum(),
                                          "You don't have enough progression points!");
@@ -497,7 +497,7 @@ void ProgressionManager::SendSkillList(Client * client, bool forceOpen, PSSKILL 
     }
 
 
-    for (int skillID = 0; skillID < cacheManager->GetSkillAmount(); skillID++)
+    for (unsigned int skillID = 0; skillID < cacheManager->GetSkillAmount(); skillID++)
     {
         psSkillInfo * info = cacheManager->GetSkillByID(skillID);
         if (!info)
