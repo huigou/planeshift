@@ -1482,7 +1482,7 @@ void psCharAppearance::SetSneak(bool sneaking)
     if(sneak != sneaking)
     {
         sneak = sneaking;
-        int meshAmt = 0;
+        unsigned int meshAmt = 0;
     
         if(state && stateFactory)
             meshAmt = stateFactory->GetMeshCount();
@@ -1502,7 +1502,7 @@ void psCharAppearance::SetSneak(bool sneaking)
         }
 
         CS::ShaderVarStringID varName = stringSet->Request("ps alpha factor");
-        for(uint idx = 0; idx < meshAmt; idx++)
+        for(unsigned int idx = 0; idx < meshAmt; idx++)
         {
             iShaderVariableContext* context = NULL;
             if(state.IsValid())

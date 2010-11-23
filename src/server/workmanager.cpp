@@ -712,7 +712,7 @@ csArray<NearNaturalResource> WorkManager::FindNearestResource(iSector *sector, c
 
     nearResources.Sort();
     
-    for(int i= 0; i < nearResources.GetSize(); i++)
+    for(unsigned int i= 0; i < nearResources.GetSize(); i++)
     {
         NearNaturalResource & res = nearResources.Get(i);
         Debug6(LOG_TRADE,0, "found res %d(%s): dist %f, probability %f, level %d\n", i, res.resource->reward_nickname.GetData(), res.dist, res.resource->probability, res.resource->skill_level);

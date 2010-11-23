@@ -625,7 +625,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(dbsqlite3)
         psStopWatch timer;
         timer.Start();
 
-        CS_ASSERT(count == sqlite3_bind_parameter_count(stmt));
+        CS_ASSERT(count == (unsigned int)sqlite3_bind_parameter_count(stmt));
         CS_ASSERT(count != index);
 
         for(unsigned int i = 0; i < index; i++)

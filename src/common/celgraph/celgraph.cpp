@@ -436,7 +436,6 @@ bool celGraph::ShortestPath (iCelNode* from, iCelNode* goal, iCelPath* path)
     }
 
     // Get edges
-    const char* name = current->GetMapNode()->GetSector()->QueryObject()->GetName();
     csRefArray<iCelEdge> edges = current->GetEdges();
     size_t size = edges.GetSize();
     for (size_t i = 0; i < size; i++)
