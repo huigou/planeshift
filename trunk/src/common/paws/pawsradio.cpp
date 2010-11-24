@@ -272,22 +272,22 @@ bool pawsRadioButtonGroup::SetActive( const char* widgetName )
     for ( x=0; x<children.GetSize(); x++ )
     {
         csString factory = csString(children[x]->GetType());
-        if ( factory == "pawsRadioButton" )
+        if(factory == "pawsRadioButton")
+        {
             radButton = (pawsRadioButton*)children[x];
-        if (strcmp(children[x]->GetName(), widgetName))
-        {
-            radButton->SetState(false);
-            continue;
-        }
-        else
-        {
-            okFlag = true;
-            radButton->SetState(true);
+            if (strcmp(children[x]->GetName(), widgetName))
+            {
+                radButton->SetState(false);
+                continue;
+            }
+            else
+            {
+                okFlag = true;
+                radButton->SetState(true);
+            }
         }
     }
-    if (!okFlag)
-        return false;
-    return true;
+    return okFlag;
 }
 
 void pawsRadioButtonGroup::TurnAllOff()
