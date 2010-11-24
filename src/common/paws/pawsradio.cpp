@@ -278,7 +278,6 @@ bool pawsRadioButtonGroup::SetActive( const char* widgetName )
             if (strcmp(children[x]->GetName(), widgetName))
             {
                 radButton->SetState(false);
-                continue;
             }
             else
             {
