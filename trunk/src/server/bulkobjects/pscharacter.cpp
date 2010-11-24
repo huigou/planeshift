@@ -3137,7 +3137,7 @@ double psCharacter::CalcFunction(MathEnvironment* env, const char* functionName,
         return (double)skills.GetSkillRank(skill).Current();
     }
 
-    CPrintf(CON_ERROR, "psItem::CalcFunction(%s) failed\n", functionName);
+    CPrintf(CON_ERROR, "psCharacter::CalcFunction(%s) failed\n", functionName);
     return 0;
 }
 
