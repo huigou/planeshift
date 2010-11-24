@@ -162,28 +162,24 @@ bool BgLoader::Initialize(iObjectRegistry* object_reg)
     cache = config->GetBool("PlaneShift.Loading.Cache", true);
 
     // Check the level of shader use.
-    csString shader("Highest");
-    if(shader.CompareNoCase(config->GetStr("PlaneShift.Graphics.Shaders")))
+    csString shader(config->GetStr("PlaneShift.Graphics.Shaders"));
+    if(shader.CompareNoCase("Highest")))
     {
       enabledGfxFeatures |= useHighestShaders;
     }
-    shader = "High";
-    if(shader.CompareNoCase(config->GetStr("PlaneShift.Graphics.Shaders")))
+    else if(shader.CompareNoCase("High"))
     {
       enabledGfxFeatures |= useHighShaders;
     }
-    shader = "Medium";
-    if(shader.CompareNoCase(config->GetStr("PlaneShift.Graphics.Shaders")))
+    else if(shader.CompareNoCase("Medium"))
     {
       enabledGfxFeatures |= useMediumShaders;
     }
-    shader = "Low";
-    if(shader.CompareNoCase(config->GetStr("PlaneShift.Graphics.Shaders")))
+    else if(shader.CompareNoCase("Low"))
     {
       enabledGfxFeatures |= useLowShaders;
     }
-    shader = "Lowest";
-    if(shader.CompareNoCase(config->GetStr("PlaneShift.Graphics.Shaders")))
+    else if(shader.CompareNoCase("Lowest"))
     {
       enabledGfxFeatures |= useLowestShaders;
     }
