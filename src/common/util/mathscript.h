@@ -56,9 +56,15 @@ public:
         double value; // masked float value
         struct
         {
+#ifdef CS_LITTLE_ENDIAN
             CS_ALIGNED_MEMBER(uint32 value,1); // value of the ID
             CS_ALIGNED_MEMBER(uint16 ignored,1); // ignored part
             CS_ALIGNED_MEMBER(uint16 mask,1); // mask used to identify strings/objects
+#else
+            CS_ALIGNED_MEMBER(uint16 mask,1); // mask used to identify strings/objects
+            CS_ALIGNED_MEMBER(uint16 ignored,1) // ignored part
+            CS_ALIGNED_MEMBER(uint32 value,1); // value of the ID
+#endif
         } ID;
     };
 
