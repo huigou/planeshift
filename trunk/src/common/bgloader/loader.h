@@ -398,7 +398,7 @@ private:
         bool checked;
         csString culler;
         csColor ambient;
-        int objectCount;
+        size_t objectCount;
         csRef<iSector> object;
         csWeakRef<Zone> parent;
         csRefArray<MeshGen> meshgen;
