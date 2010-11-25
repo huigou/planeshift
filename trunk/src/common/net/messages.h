@@ -3212,7 +3212,7 @@ public:
         INVINCIBLE      = 1 << 1, ///< Used to inform super client.
         NPC             = 1 << 2, ///< Set for NPCs
         NAMEKNOWN       = 1 << 3, ///< Used to tell the client if he knows this actor
-        IS_ALIVE        = 1 << 4, ///< Used to tell the clients that this actor is alive
+        IS_ALIVE        = 1 << 4  ///< Used to tell the clients that this actor is alive
     };
 
     psPersistActor( uint32_t clientnum,
