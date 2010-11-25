@@ -66,6 +66,7 @@ public:
             CS_ALIGNED_MEMBER(uint32 value,1); // value of the ID
 #endif
         } ID;
+        uintptr_t p; // packed pointer
     };
 
     MathScriptEngine();
@@ -182,16 +183,18 @@ public:
         // always define the environment as variable
         // as that's required to pass the environment to scriptable
         // objects in custom compound functions
-        MathEnvironment* env = this;
-        Define("environment", *reinterpret_cast<double*>(&env));
+        MathScriptEngine::IDConverter converter;
+        converter.p = (uintptr_t)this;
+        Define("environment", converter.value);
     }
     MathEnvironment(const MathEnvironment *parent) : UID(0),parent(parent)
     {
         // always define the environment as variable
         // as that's required to pass the environment to scriptable
         // objects in custom compound functions
-        MathEnvironment* env = this;
-        Define("environment", *reinterpret_cast<double*>(&env));
+        MathScriptEngine::IDConverter converter;
+        converter.p = (uintptr_t)this;
+        Define("environment", converter.value);
     }
     ~MathEnvironment();
 
