@@ -1854,9 +1854,9 @@ void GEMClientActor::SetAnimationVelocity(const csVector3& velocity)
     if(cal3dvel == 0.0)
     	cal3dvel = velocity.y;
     cal3dstate->SetVelocity(-cal3dvel, &psengine->GetRandomGen());
-
     if((velocity.x != 0 || velocity.z != 0) && velocity.Norm() < 2)
     {
+
         charApp->SetSneak(true);
     }
     else
@@ -2150,6 +2150,10 @@ csPtr<iMaterialWrapper> GEMClientItem::CloneMaterial(iMaterialWrapper* mw)
     csStringID baseType = strings->Request("base");
     iShader* shader = material->GetShader(baseType);
 
+    // Get the depthtest shader.
+    csStringID depthTestType = strings->Request("depthtest");
+    iShader* shadert = material->GetShader(depthTestType);
+
     // Get the depth shader.
     csStringID depthType = strings->Request("depthwrite");
     iShader* shaderz = material->GetShader(depthType);
@@ -2177,6 +2181,8 @@ csPtr<iMaterialWrapper> GEMClientItem::CloneMaterial(iMaterialWrapper* mw)
 
         // alpha objects don't use the depthwrite pass for now.
         shaderz = shman->GetShader("*null");
+        // instanced alpha objects need to use z_only_instanced for depthtest
+        shadert = shman->GetShader("z_only_instanced");
     }
     else
     {
@@ -2192,6 +2198,9 @@ csPtr<iMaterialWrapper> GEMClientItem::CloneMaterial(iMaterialWrapper* mw)
 
     // Set the diffuse shader on this material.
     mat->SetShader(diffuseType, shader);
+
+    // Set the depthtest shader on this material
+    mat->SetShader(depthTestType, shadert);
 
     // Set the early_z shader on this material.
     mat->SetShader(depthType, shaderz);
