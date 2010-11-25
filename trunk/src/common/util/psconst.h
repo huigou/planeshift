@@ -99,7 +99,7 @@ typedef uint32 InstanceID;
 enum SPELL_TYPE
 {
     BUFF,
-    DEBUFF,
+    DEBUFF
 };
 
 /** Make unique integer types for various types of IDs.  This allows the
@@ -134,7 +134,7 @@ public:                                                                  \
     {                                                                    \
         return key.Unbox();                                              \
     }                                                                    \
-};
+}
 // Note: The < operator allows us to use these as keys for sets and trees.
 //       The csHashComputer allows us to use them as keys in csHash.
 
