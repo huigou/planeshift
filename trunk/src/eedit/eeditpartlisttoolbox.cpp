@@ -1892,7 +1892,7 @@ void EEditParticleListToolbox::UpdateParticleValue()
     if (updatingParticleValue) return;
     int num = parmList->GetSelectedRowNum();
     if (num == -1) return;
-    if (num >= parameterRows.GetSize())
+    if (num >= (int)parameterRows.GetSize())
 	return;
 
     updatingParticleValue++;
