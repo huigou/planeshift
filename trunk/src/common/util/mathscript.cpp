@@ -749,7 +749,7 @@ csString MathScriptEngine::FormatMessage(const csString& format, size_t arg_coun
 
 //----------------------------------------------------------------------------
 
-MathExpression::MathExpression() : opcode(MATH_EXP),UID(0)
+MathExpression::MathExpression() : opcode(MATH_EXP)
 {
     fp.AddFunction("rnd", MathScriptEngine::RandomGen, 1);
 
@@ -859,6 +859,11 @@ bool MathExpression::Parse(const char *exp)
     //for (size_t i = 0; i < tokens.GetSize(); i++)
     //    printf("Token[%d] = %s\n", int(i), tokens[i].GetDataSafe());
 
+    // used to assign UIDs to string literals and to disable optimizations
+    // if string literals are used to prevent them from being optimized out
+    // due to their NaN value
+    size_t stringCount = 0;
+
     // PARSER: (kind of)
     for (size_t i = 0; i < tokens.GetSize(); i++)
     {
@@ -939,7 +944,7 @@ bool MathExpression::Parse(const char *exp)
 
                 // build placeholder token
                 csString placeholder("string");
-                placeholder.Append(++UID);
+                placeholder.Append(++stringCount);
 
                 // add the placeholder token as constant so we can have an exact value
                 // (i.e. different NaNs/Infs)
@@ -1004,7 +1009,8 @@ bool MathExpression::Parse(const char *exp)
         return false;
     }
 
-    fp.Optimize();
+    if(!stringCount)
+        fp.Optimize();
     return true;
 }
 
