@@ -57,10 +57,14 @@
                 </widget>
             </widget>
 
-            <widget factory="pawsSimpleTreeNode" label="PvP">
-                <widget factory="pawsSimpleTreeNode" label="Confirmation">
+            <widget factory="pawsSimpleTreeNode" label="Confirmations">
+                <widget factory="pawsSimpleTreeNode" label="PvP">
                     <attr name="SectionName" value="configpvp"/>
                     <attr name="factory" value="pawsConfigPvP"/>
+                </widget>
+                <widget factory="pawsSimpleTreeNode" label="Marriage">
+                    <attr name="SectionName" value="configmarriage"/>
+                    <attr name="factory" value="pawsConfigMarriage"/>
                 </widget>
             </widget>
 

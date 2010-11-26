@@ -3556,11 +3556,17 @@ public:
 class psQuestionMessage : public psMessageCracker
 {
 public:
+    /**
+     * Various questions that are posed to the user.
+     * If a specific type is not below, use the generic
+     * generalConfirm type.
+     */
     enum questionType_t
     {
-        generalConfirm,
-        secretGuildNotify,
-        duelConfirm
+        generalConfirm,    /**< A general question that may concern anything. */
+        secretGuildNotify, /**< Used to hide members of secret guilds.  Always denied on client side */
+        duelConfirm,       /**< Asks the user if they would like to duel. */
+        marriageConfirm    /**< Asks the user if they would like to be married. */
     };
 
     uint32_t questionID;

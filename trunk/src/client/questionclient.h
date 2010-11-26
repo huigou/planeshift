@@ -63,10 +63,39 @@ public:
     
 protected:
     
-    /** Handlers of different question types: */
-    void HandleConfirm(uint32_t questionID, const csString & question);
-    void HandleDuel(uint32_t questionID, const csString & question);
-    void HandleSecretGuildNotify(uint32_t questionID, const csString & question);
+    /**
+     * Default handler for a confirm message. Creates a new \ref psQuestion
+     * which displays a yes/no dialog and adds it to \ref questions so that 
+     * the user may reply to the question as they wish.
+     * @param questionID ID of the question
+     * @param question Text to be shown in the yes/no dialog
+     */
+    void HandleConfirm(uint32_t questionID, const csString &question);
+    /**
+     * Handles duel questions questions according to user settings.
+     * If the user has chosen to ignore duels the question will silently
+     * be replied "no" to. If the user has chosen to accept all duels the
+     * question will silently be replied "yes" to. Otherwise the dialog
+     * will appear normally.
+     * @param questionID ID of the question
+     * @param question Text to be shown in the dialog if it is used.
+     */
+    void HandleDuel(uint32_t questionID, const csString &question);
+    /**
+     * Silently handles secret guild notifications. This message is always replied
+     * no to but the user sees it anyway because of emulation requirements.
+     * @param questionID ID of the question
+     * @param question Text that would be shown if this dialog was shown.
+     */
+    void HandleSecretGuildNotify(uint32_t questionID, const csString &question);
+    /**
+     * Handles marriage questions according to user settings.
+     * If the user has chosen to ignore marriage proposals the question will
+     * silently be replied "no" to. Otherwise the dialog will appear normally.
+     * @param questionID ID of the question
+     * @param question Text to be shown in the dialog if it is used.
+     */
+    void HandleMarriage(uint32_t questionID, const csString &question);
     
     MsgHandler* messageHandler;
     

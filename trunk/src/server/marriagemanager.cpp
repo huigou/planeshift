@@ -60,7 +60,7 @@ public:
         "You have accepted the marriage proposal.",
         "%s has rejected your marriage proposal.",
         "You have rejected %s's marriage proposal.",
-        psQuestionMessage::generalConfirm )
+        psQuestionMessage::marriageConfirm )
     {
     }
 
