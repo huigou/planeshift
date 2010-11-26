@@ -238,12 +238,39 @@ public:
 
     bool toggleFPS() { showFPS = !showFPS; return showFPS; }
 
-    /// Sets the duel confirmation type
-    void SetDuelConfirm(int confirmType);
-    /// Loads the duel confirmation type
-    bool LoadDuelConfirm();
-    /// Gets the duel confirmation type
-    int GetDuelConfirm() { return confirmation; }
+    /**
+     * Sets the duel confirm type and updates the confirmation settings XML.
+     * @brief Sets duel confirm type
+     * @param confirmType Updates \ref duelConfirmation with this value
+     */
+    inline void SetDuelConfirm(int confirmType) { duelConfirmation = confirmType; WriteConfirmationSettings(); }
+    /**
+     * @brief Simply returns the duel confirmation setting
+     * @return \ref duelConfirmation
+     */
+    inline int GetDuelConfirm() const { return duelConfirmation; }
+    /**
+     * Sets if marriage proposals should be ignored and updates the confirmation settings XML.
+     * @brief Sets if marriage proposals should be ignored
+     * @param ignore Updates \ref marriageProposal with this value
+     */
+    inline void SetMarriageProposal(bool ignore) { marriageProposal = ignore; WriteConfirmationSettings(); }
+    /**
+     * @brief Simply returns if marriage proposals should be read or automatically ignored
+     * @return \ref marriageProposal
+     */
+    inline bool GetMarriageProposal() const { return marriageProposal; }
+    /**
+     * Confirmation settings for marriage proposals and duels are written to /planeshift/userdata/options/confirmation.xml
+     * @brief Writes confirmation settings for duels and marriages
+     */
+    void WriteConfirmationSettings();
+    /**
+     * Confirmation settings for marriage proposals and duels are read from /planeshift/userdata/options/confirmation.xml
+     * @brief Loads confimration settings for duels and marriages
+     * @return True on success, False otherwise
+     */
+    bool LoadConfirmationSettings();
 
     /** Loads and applies the sound settings
     * @param True if you want to load the default settings
@@ -451,8 +478,14 @@ private:
 
     iEvent* lastEvent;
 
-    /// Confirmation type on duels
-    int confirmation;
+    /**
+     * @brief How duel requests should be handled<br/>
+     * 0: Never accept duels and silently reply with "no"<br/>
+     * 1: Prompt user for duel acceptance <i>(default)</i><br/>
+     * 2: Always accept duels and silenty reply with "yes"
+     */
+    int duelConfirmation;
+    bool marriageProposal; ///< How marriage proposals should be handled.<br>True: Prompt user<br>False: Silently ignore
 
     bool loadedMap;
     bool loadError; ///< If something happend during loading, it will show

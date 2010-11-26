@@ -122,6 +122,7 @@ if (!myref)                                                  \
 #include "gui/pawsconfigkeys.h"
 #include "gui/pawsconfigcamera.h"
 #include "gui/pawsconfigdetails.h"
+#include "gui/pawsconfigmarriage.h"
 #include "gui/pawsconfigpopup.h" 
 #include "gui/pawsconfigpvp.h"
 #include "gui/pawsconfigchat.h"
@@ -256,7 +257,8 @@ psEngine::psEngine (iObjectRegistry *objectreg, psCSSetup *CSSetup)
 
     KFactor = 0.0f;
     targetPetitioner = "None";
-    confirmation = 1;  // Def
+    duelConfirmation = 1;  // Def
+    marriageProposal = 1;  // Def
 
     loggedIn = false;
     numOfChars = 0;
@@ -418,7 +420,6 @@ bool psEngine::Initialize (int level)
             skinPath += ".zip";
         }
 
-
         // Create the PAWS window manager
         csString skinPathBase = cfgmgr->GetStr("PlaneShift.GUI.Skin.Base","/planeshift/art/skins/base/client_base.zip");
         paws = new PawsManager(object_reg, skinPath, skinPathBase, "/planeshift/userdata/planeshift.cfg");
@@ -452,8 +453,8 @@ bool psEngine::Initialize (int level)
 
         LoadPawsWidget("Yes / No dialog","yesno.xml" );
 
-        //Load confirmation information for duels
-        if (!LoadDuelConfirm())
+        //Load confirmation information for duels and marriages
+        if (!LoadConfirmationSettings())
             return false;
 
         // Register our event handlers.
@@ -760,6 +761,7 @@ void psEngine::DeclareExtraFactories()
     RegisterFactory (pawsConfigKeysFactory);
     RegisterFactory (pawsConfigPopupFactory); 
     RegisterFactory (pawsConfigPvPFactory);
+    RegisterFactory (pawsConfigMarriageFactory);
     RegisterFactory (pawsFingeringWindowFactory);
     RegisterFactory (pawsConfigDetailsFactory);
     RegisterFactory (pawsConfigMouseFactory);
@@ -1565,54 +1567,60 @@ void psEngine::UpdateLights()
     modehandler->UpdateLights();
 }
 
-void psEngine::SetDuelConfirm(int confirmType)
+void psEngine::WriteConfirmationSettings()
 {
-    confirmation = confirmType;
-
     csString xml;
-    xml = "<PvP>\n";
-    xml += "    <Confirmation value=\"";
-    xml.Append(confirmation);
+    xml = "<Confirmation>\n";
+    xml += "    <PvP value=\"";
+    xml.Append(duelConfirmation);
     xml += "\"/>\n";
-    xml += "</PvP>\n";
+    xml += "    <Marriage value=\"";
+    xml.Append(marriageProposal);
+    xml += "\"/>\n";
+    xml += "</Confirmation>\n";
 
-    vfs->WriteFile("/planeshift/userdata/options/pvp.xml", xml.GetData(), xml.Length());
+    vfs->WriteFile("/planeshift/userdata/options/confirmation.xml", xml.GetData(), xml.Length());
 }
 
-bool psEngine::LoadDuelConfirm()
+bool psEngine::LoadConfirmationSettings()
 {
     csRef<iDocument> doc;
     csRef<iDocumentNode> root, mainNode, optionNode;
 
-    csString fileName = "/planeshift/userdata/options/pvp.xml";
-    if (!psengine->GetVFS()->Exists(fileName))
+    csString fileName = "/planeshift/userdata/options/confirmation.xml";
+    if(!psengine->GetVFS()->Exists(fileName))
     {
-        fileName = "/planeshift/data/options/pvp_def.xml";
+        fileName = "/planeshift/data/options/confirmation_def.xml";
     }
 
     doc = ParseFile(object_reg, fileName);
-    if (doc == NULL)
+    if(doc == NULL)
     {
         Error2("Failed to parse file %s", fileName.GetData());
         return false;
     }
     root = doc->GetRoot();
-    if (root == NULL)
+    if(root == NULL)
     {
-        Error1("pvp.xml has no XML root");
+        Error1("confirmation.xml has no XML root");
         return false;
     }
-    mainNode = root->GetNode("PvP");
-    if (mainNode == NULL)
+    mainNode = root->GetNode("Confirmation");
+    if(mainNode == NULL)
     {
-        Error1("pvp.xml has no <PvP> tag");
+        Error1("confirmation.xml has no <Confirmation> tag");
         return false;
     }
 
-    optionNode = mainNode->GetNode("Confirmation");
-    if (optionNode != NULL)
+    optionNode = mainNode->GetNode("PvP");
+    if(optionNode != NULL)
     {
-        confirmation = optionNode->GetAttributeValueAsInt("value");
+        duelConfirmation = optionNode->GetAttributeValueAsInt("value");
+    }
+    optionNode = mainNode->GetNode("Marriage");
+    if(optionNode != NULL)
+    {
+        marriageProposal = optionNode->GetAttributeValueAsInt("value") != 0;
     }
 
     return true;

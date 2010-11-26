@@ -154,11 +154,13 @@ void psQuestionClient::HandleMessage(MsgEntry *msg)
             switch (question.type)
             {
                 case psQuestionMessage::generalConfirm: 
-                        HandleConfirm(question.questionID, question.question); break;
+                    HandleConfirm(question.questionID, question.question); break;
                 case psQuestionMessage::duelConfirm: 
-                        HandleDuel(question.questionID, question.question); break;
+                    HandleDuel(question.questionID, question.question); break;
                 case psQuestionMessage::secretGuildNotify:
-                        HandleSecretGuildNotify(question.questionID, question.question); break;
+                    HandleSecretGuildNotify(question.questionID, question.question); break;
+                case psQuestionMessage::marriageConfirm:
+                    HandleMarriage(question.questionID, question.question); break;
                 default: Error2("Received Question of unknown type: %i",question.type);
             }
             break;            
@@ -203,6 +205,14 @@ void psQuestionClient::HandleDuel(uint32_t questionID, const csString & question
             HandleConfirm(questionID, question);
             break;
     }
+}
+
+void psQuestionClient::HandleMarriage(uint32_t questionID, const csString & question)
+{
+    if(psengine->GetMarriageProposal())
+        HandleConfirm(questionID, question);
+    else
+        SendResponseToQuestion(questionID, "no");
 }
 
 void psQuestionClient::SendResponseToQuestion(uint32_t questionID, const csString & answer)
