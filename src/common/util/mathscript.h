@@ -345,7 +345,6 @@ protected:
     csSet<csString> requiredObjs; ///< a subset of requiredVars which are known to be objects; for type checking
     csSet<PropertyRef> propertyRefs; ///< properties that have to be resolved prior to evaluation
     FunctionParser fp;
-    uint UID;
 
     const char *name; // used for debugging
 
