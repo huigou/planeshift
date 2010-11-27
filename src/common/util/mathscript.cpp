@@ -227,14 +227,14 @@ csString MathEnvironment::GetString(double value) const
     {
         // obtain the string associated witht he ID and
         // return it - first checking in global lookup table
-        const char* str = MathScriptEngine::Request(ID.ID.value);
+        const char* str = stringLiterals.Request(ID.ID.value);
         if(parent && !str)
         {
             str = parent->GetString(value);
         }
         if(!str)
         {
-            str = stringLiterals.Request(ID.ID.value);
+            str = MathScriptEngine::Request(ID.ID.value);
         }
         return str ? str : "";
     }
