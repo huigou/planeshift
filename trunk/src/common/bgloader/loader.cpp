@@ -154,8 +154,6 @@ bool BgLoader::Initialize(iObjectRegistry* object_reg)
     csRef<iGraphics3D> g3d = csQueryRegistryOrLoad<iGraphics3D>(object_reg, "crystalspace.graphics3d.null");
     txtmgr = g3d->GetTextureManager();
 
-    engine->SetClearZBuf(true);
-
     csRef<iConfigManager> config = csQueryRegistry<iConfigManager> (object_reg);
     
     // Check whether we're caching files for performance.    
