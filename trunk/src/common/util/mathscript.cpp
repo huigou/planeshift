@@ -696,8 +696,10 @@ double MathScriptEngine::CustomCompoundFunc(const double * parms)
     size_t funcIndex = (size_t)parms[0];
     csString funcName(customCompoundFunctions.Request(funcIndex));
 
-    MathEnvironment* env = *reinterpret_cast<MathEnvironment**>(
-                            const_cast<double*>(&parms[1]));
+    MathScriptEngine::IDConverter converter;
+    converter.value = parms[1];
+
+    MathEnvironment* env = (MathEnvironment*)converter.p;
 
     iScriptableVar* v = env->GetPointer(parms[2]);
 
