@@ -487,7 +487,7 @@ bool PawsEditorApp::HandleEvent(iEvent &ev)
 
         if (drawScreen)
         {
-            g3d->BeginDraw(engine->GetBeginDrawFlags() | CSDRAW_2DGRAPHICS);
+            g3d->BeginDraw(CSDRAW_2DGRAPHICS);
             paws->Draw();
         }
         else

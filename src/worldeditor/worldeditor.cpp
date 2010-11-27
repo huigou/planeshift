@@ -270,7 +270,7 @@ bool WorldEditor::HandleEvent (iEvent &ev)
             HandleMovement();
         }
 
-        g3d->BeginDraw(engine->GetBeginDrawFlags() | CSDRAW_3DGRAPHICS);
+        g3d->BeginDraw(CSDRAW_3DGRAPHICS);
         view->Draw();
         g3d->FinishDraw();
         g3d->Print(0);

@@ -794,7 +794,7 @@ bool psCamera::Draw()
     EnsureActorVisibility();
 
     // tell CS to render the scene
-    if (!psengine->GetG3D()->BeginDraw( psengine->GetEngine()->GetBeginDrawFlags() | CSDRAW_3DGRAPHICS))
+    if (!psengine->GetG3D()->BeginDraw(CSDRAW_3DGRAPHICS))
         return false;
 
     // assume the normal camera movement is good, and move the camera
