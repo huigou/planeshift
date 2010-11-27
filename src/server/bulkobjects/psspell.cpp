@@ -406,7 +406,7 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
         ProgressionScript* failure = psserver->GetProgressionManager()->FindScript("SpellFailure");
         MathEnvironment env;
         env.Define("Caster",        caster);
-        env.Define("KFactor",       cost.mana);
+        env.Define("KFactor",       kFactor);
         env.Define("Power",         power);
         // this const cast is safe as scripts cannot change the spell via the scripting interface
         env.Define("Spell",         const_cast<psSpell*>(this));
