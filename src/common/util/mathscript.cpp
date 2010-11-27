@@ -289,7 +289,7 @@ iScriptableVar* MathEnvironment::GetPointer(double value) const
         // obtain the object associated witht he ID and
         // return it
         iScriptableVar* object = scriptableVariables.Get(ID.ID.value,NULL);
-        if(!object)
+        if(parent && !object)
         {
             object = parent->GetPointer(value);
         }
