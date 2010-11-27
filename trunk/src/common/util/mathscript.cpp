@@ -209,6 +209,18 @@ void MathEnvironment::Define(const char *name, const char* str)
     var->SetString(str);
 }
 
+bool MathEnvironment::HasString(const char* p) const
+{
+    bool result = false;
+    if(parent)
+    {
+        result = parent->HasString(p);
+    }
+
+    result |= stringLiterals.Contains(p);
+    return result;
+}
+
 csString MathEnvironment::GetString(double value) const
 {
     // initialize converter
@@ -259,6 +271,12 @@ double MathEnvironment::GetValue(const char* p)
         // obtain an ID from the global lookup table
         ID.ID.value = MathScriptEngine::RequestID(p);
     }
+    else if(parent && parent->HasString(p))
+    {
+        // const cast is safe here as we verified it won't change
+        // the parents environment but is a mere lookup
+        ID.ID.value = const_cast<MathEnvironment*>(parent)->GetValue(p);
+    }
     else
     {
         // obtain an ID from the local lookup table
@@ -267,6 +285,17 @@ double MathEnvironment::GetValue(const char* p)
 
     // return masked value
     return ID.value;
+}
+
+bool MathEnvironment::HasObject(iScriptableVar* p) const
+{
+    bool result = false;
+    if(parent && parent->HasObject(p))
+    {
+        result = true;
+    }
+    result |= scriptableRegistry.Contains(p);
+    return result;
 }
 
 iScriptableVar* MathEnvironment::GetPointer(double value) const
@@ -314,15 +343,28 @@ double MathEnvironment::GetValue(iScriptableVar* p)
         // already present, retrieve ID
         ID.ID.value = scriptableRegistry.Get(p,(uint32)-1);
     }
+    else if(parent && parent->HasObject(p))
+    {
+        // this const-cast is safe as we verified it won't change the parent
+        ID.ID.value = const_cast<MathEnvironment*>(parent)->GetValue(p);
+    }
     else
     {
         // not yet part of the lookup table
         // assign a new ID
-        ID.ID.value = ++UID;
+        if(parent)
+        {
+            ID.ID.value = ++UID;
+        }
+        else
+        {
+            // this const_cast is bad and should be removed
+            ID.ID.value = ++(const_cast<MathEnvironment*>(parent)->UID);
 
-        // add to the lookup table
-        scriptableVariables.Put(ID.ID.value,p);
-        scriptableRegistry.Put(p,ID.ID.value);
+            // add to the lookup table
+            scriptableVariables.Put(ID.ID.value,p);
+            scriptableRegistry.Put(p,ID.ID.value);
+        }
     }
 
     // return masked value
