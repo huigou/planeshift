@@ -207,6 +207,12 @@ public:
     /// define a string variable in the environment
     void Define(const char *name, const char* str);
 
+    /// test whether we have an ID for a string.
+    bool HasString(const char* p) const;
+
+    /// test whether we have an ID for an object.
+    bool HasObject(iScriptableVar* p) const;
+
     /// retrieve a string literal based on it's id.
     csString GetString(double id) const;
 
