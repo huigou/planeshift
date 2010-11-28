@@ -354,17 +354,18 @@ double MathEnvironment::GetValue(iScriptableVar* p)
         // assign a new ID
         if(parent)
         {
-            ID.ID.value = ++UID;
+            // this const_cast is bad and should be removed
+            ID.ID.value = ++(const_cast<MathEnvironment*>(parent)->UID);
         }
         else
         {
-            // this const_cast is bad and should be removed
-            ID.ID.value = ++(const_cast<MathEnvironment*>(parent)->UID);
-
-            // add to the lookup table
-            scriptableVariables.Put(ID.ID.value,p);
-            scriptableRegistry.Put(p,ID.ID.value);
+            ID.ID.value = ++UID;
         }
+
+        // add to the lookup table
+        scriptableVariables.Put(ID.ID.value,p);
+        scriptableRegistry.Put(p,ID.ID.value);
+        
     }
 
     // return masked value
