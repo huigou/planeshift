@@ -350,7 +350,7 @@ protected:
     csSet<csString> requiredVars; ///< variables required to execute this expression
     csSet<csString> requiredObjs; ///< a subset of requiredVars which are known to be objects; for type checking
     csSet<PropertyRef> propertyRefs; ///< properties that have to be resolved prior to evaluation
-    FunctionParser fp;
+    mutable FunctionParser fp;
 
     const char *name; // used for debugging
 
@@ -358,7 +358,7 @@ public:
     virtual ~MathExpression() {} /// Empty destructor
     static MathExpression* Create(const char *expression, const char *name = "");
     
-    virtual double Evaluate(MathEnvironment *env);
+    virtual double Evaluate(MathEnvironment *env) const;
 
     size_t GetOpcode() const
     {
@@ -388,7 +388,7 @@ protected:
 
 public:
     static MathStatement* Create(const csString & expression, const char *name);
-    double Evaluate(MathEnvironment *env);
+    double Evaluate(MathEnvironment *env) const;
 };
 
 /**
@@ -403,7 +403,7 @@ public:
         opcode = MATH_NONE;
     }
 
-    double Evaluate(MathEnvironment *env)
+    double Evaluate(MathEnvironment *env) const
     {
         return 0;
     }
@@ -433,7 +433,7 @@ public:
         return name;
     }
 
-    double Evaluate(MathEnvironment *env);
+    double Evaluate(MathEnvironment *env) const;
 };
 
 #endif
