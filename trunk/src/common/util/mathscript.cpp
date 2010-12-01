@@ -409,7 +409,7 @@ MathStatement* MathStatement::Create(const csString & line, const char *name)
     return stmt;
 }
 
-double MathStatement::Evaluate(MathEnvironment *env)
+double MathStatement::Evaluate(MathEnvironment *env) const
 {
     double result = MathExpression::Evaluate(env);
     env->Define(assignee, result);
@@ -604,7 +604,7 @@ MathScript::~MathScript()
         delete scriptLines.Pop();
 }
 
-double MathScript::Evaluate(MathEnvironment *env)
+double MathScript::Evaluate(MathEnvironment *env) const
 {
     MathVar *exitsignal = env->Lookup("exit");
     if (exitsignal)
@@ -1065,7 +1065,7 @@ bool MathExpression::Parse(const char *exp)
     return true;
 }
 
-double MathExpression::Evaluate(MathEnvironment *env)
+double MathExpression::Evaluate(MathEnvironment *env) const
 {
     double *values = new double [requiredVars.GetSize() + propertyRefs.GetSize()];
     size_t i = 0;
