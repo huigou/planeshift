@@ -165,7 +165,7 @@ private:
     MathVar* GetVar(const char* name);
 
     /// variable used to assign object IDs
-    uint32 UID;
+    uint32* UID;
     /// environment specific lookup table for scriptable objects
     csHash<iScriptableVar*,uint32> scriptableVariables;
     /// envrionment specific reverse-lookup table for scriptable objects
@@ -178,7 +178,7 @@ private:
     csHash<MathVar*, csString> variables;
 
 public:
-    MathEnvironment() : UID(0),parent(NULL)
+    MathEnvironment() : UID(new uint32),parent(NULL)
     {
         // always define the environment as variable
         // as that's required to pass the environment to scriptable
@@ -187,7 +187,7 @@ public:
         converter.p = (uintptr_t)this;
         Define("environment", converter.value);
     }
-    MathEnvironment(const MathEnvironment *parent) : UID(0),parent(parent)
+    MathEnvironment(const MathEnvironment *parent) : UID(parent->UID),parent(parent)
     {
         // always define the environment as variable
         // as that's required to pass the environment to scriptable
