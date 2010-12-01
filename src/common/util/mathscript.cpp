@@ -136,6 +136,11 @@ MathEnvironment::~MathEnvironment()
     {
         delete it.Next();
     }
+
+    if(!parent)
+    {
+        delete UID;
+    }
 }
 
 MathVar* MathEnvironment::Lookup(const char *name) const
@@ -352,15 +357,7 @@ double MathEnvironment::GetValue(iScriptableVar* p)
     {
         // not yet part of the lookup table
         // assign a new ID
-        if(parent)
-        {
-            // this const_cast is bad and should be removed
-            ID.ID.value = ++(const_cast<MathEnvironment*>(parent)->UID);
-        }
-        else
-        {
-            ID.ID.value = ++UID;
-        }
+        ID.ID.value = ++(*UID);
 
         // add to the lookup table
         scriptableVariables.Put(ID.ID.value,p);
