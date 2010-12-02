@@ -56,6 +56,7 @@
 #include "netmanager.h"
 #include "invitemanager.h"
 #include "globals.h"
+#include "psserverchar.h"
 
 
 class PendingGuildInvite : public PendingInvite
@@ -1164,6 +1165,12 @@ void GuildManager::CreateGuild(psGuildCmdMessage& msg,Client *client)
         psserver->SendSystemError(clientnum,"Guild name contains invaild characters (A-Z,a-z and space is allowed).");
         return;
     }
+    
+    if(psserver->GetCharManager()->IsBanned(msg.guildname))
+    {
+        psserver->SendSystemError(clientnum, "The name %s is banned", msg.guildname.GetData());
+        return;
+    }
 
     psCharacter *chardata=client->GetCharacterData();
     if (chardata==NULL)
@@ -1376,6 +1383,12 @@ void GuildManager::ChangeGuildName(psGuildCmdMessage& msg,Client *client)
     if(psserver->GetCacheManager()->FindGuild(msg.guildname))
     {
         psserver->SendSystemError(clientnum,"A guild already exists with that name");
+        return;
+    }
+
+    if(psserver->GetCharManager()->IsBanned(msg.guildname))
+    {
+        psserver->SendSystemError(clientnum, "The name %s is banned.", msg.guildname.GetData());
         return;
     }
 
