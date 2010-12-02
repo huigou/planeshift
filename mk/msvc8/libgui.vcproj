@@ -1804,6 +1804,9 @@
 				RelativePath="..\..\src\client\gui\pawsconfigkeys.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\client\gui\pawsconfigmarriage.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\client\gui\pawsconfigmouse.cpp">
 			</File>
 			<File
@@ -2040,6 +2043,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawsconfigkeys.h">
+			</File>
+			<File
+				RelativePath="..\..\src\client\gui\pawsconfigmarriage.h">
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawsconfigmouse.h">
