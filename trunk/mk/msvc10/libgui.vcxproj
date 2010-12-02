@@ -1335,6 +1335,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClCompile Include="..\..\src\client\gui\pawsconfigentityinter.cpp" />
     <ClCompile Include="..\..\src\client\gui\pawsconfigentitylabels.cpp" />
     <ClCompile Include="..\..\src\client\gui\pawsconfigkeys.cpp" />
+    <ClCompile Include="..\..\src\client\gui\pawsconfigmarriage.cpp" />
     <ClCompile Include="..\..\src\client\gui\pawsconfigmouse.cpp" />
     <ClCompile Include="..\..\src\client\gui\pawsconfigpopup.cpp" />
     <ClCompile Include="..\..\src\client\gui\pawsconfigpvp.cpp" />
@@ -1415,6 +1416,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClInclude Include="..\..\src\client\gui\pawsconfigentityinter.h" />
     <ClInclude Include="..\..\src\client\gui\pawsconfigentitylabels.h" />
     <ClInclude Include="..\..\src\client\gui\pawsconfigkeys.h" />
+    <ClInclude Include="..\..\src\client\gui\pawsconfigmarriage.h" />
     <ClInclude Include="..\..\src\client\gui\pawsconfigmouse.h" />
     <ClInclude Include="..\..\src\client\gui\pawsconfigpopup.h" />
     <ClInclude Include="..\..\src\client\gui\pawsconfigpvp.h" />
