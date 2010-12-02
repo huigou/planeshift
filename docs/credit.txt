@@ -59,6 +59,7 @@ John "Hoki" Langham-Service, for quest writing, testing, tutorial rewrites, and 
 
 Angela "Oomi" Miller, for "menuizing" quests, NPC voicing, and work on re-establishing the PR department
 
+Richard "utm" Bessert, for editing of quests and some stories
 
 &2D Art
 
@@ -91,6 +92,7 @@ Trond "Trymm" Varslot, improvement to characters animations, velnishi and kikiri
 
 Kieve "Kieve" Svetnikov for documentation, process improvement and multiple modelling projects
 
+Joel "Xoel" McLeay, for the modeling of Dsar Kore.
 
 &Game Masters
 
