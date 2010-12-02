@@ -911,7 +911,7 @@ void UpdaterEngine::GeneralUpdate()
                         {
                             continue;
                         }
-                        else if(!md5sum.Compare(oldMD5))
+                        else if(!oldMD5.IsEmpty() && !md5sum.Compare(oldMD5))
                         {
                             PrintOutput("Skipping file %s because it has been modified - you may want to repair.\n", newFilePath.GetData());
                             continue;
