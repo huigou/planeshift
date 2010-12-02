@@ -49,12 +49,12 @@
 *******************************************************************************/
 
 
-psGuildInfo::psGuildInfo()
+psGuildInfo::psGuildInfo() : lastNameChange(0)
 {
 }
 
 psGuildInfo::psGuildInfo(csString name, PID founder)
-:id(0),name(name),founder(founder),karma_points(0),secret(false),alliance(0)
+:id(0),name(name),founder(founder),karma_points(0),secret(false),lastNameChange(0),alliance(0)
 {
 }
 
@@ -671,7 +671,19 @@ bool psGuildInfo::SetMemberNotes(psGuildMember * member, const csString & notes,
         return true;
 }
 
+unsigned int psGuildInfo::MinutesUntilUserChangeName() const
+{
+    if(lastNameChange == 0)
+        return 0;
 
+    csTicks nameChangeAllowed = lastNameChange + GUILD_NAME_CHANGE_LIMIT;
+    csTicks currentTime = csGetTicks();
+    if(nameChangeAllowed < currentTime)
+        return 0;
+    // Since all of the computations are done in ticks, we now convert the ticks
+    // into actual minutes
+    return (nameChangeAllowed - currentTime) / 60000;
+}
 
 bool psGuildInfo::SetName(csString guildName)
 {
@@ -679,6 +691,7 @@ bool psGuildInfo::SetName(csString guildName)
         return true;
 
     name = guildName;
+    lastNameChange = csGetTicks();
 
     csString escGuildName;
     db->Escape( escGuildName, guildName );

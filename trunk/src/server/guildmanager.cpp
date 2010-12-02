@@ -1391,6 +1391,15 @@ void GuildManager::ChangeGuildName(psGuildCmdMessage& msg,Client *client)
         psserver->SendSystemError(clientnum, "The name %s is banned.", msg.guildname.GetData());
         return;
     }
+    
+    // Check to make sure the guild name hasn't been changed too recently
+    unsigned int minutesRemaining = guild->MinutesUntilUserChangeName();
+    if(minutesRemaining)
+    {
+        psserver->SendSystemError(clientnum, "Guild name has already changed in the past %i minutes. %u minutes remaining.",
+                                  GUILD_NAME_CHANGE_LIMIT / 60000, minutesRemaining);
+        return;
+    }
 
     if (guild->SetName(msg.guildname))
     {

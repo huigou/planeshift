@@ -81,6 +81,7 @@ typedef uint32 InstanceID;
 #define GUILD_MIN_MEMBERS 1
 #define GUILD_KICK_GRACE 5 ///< minutes
 
+#define GUILD_NAME_CHANGE_LIMIT 24 * 60 * 60000 ///< Minimum number of ticks between name change of guild
 #define MAX_GUILD_LEVEL    9
 #define DEFAULT_MAX_GUILD_POINTS 100
 #define MAX_GUILD_POINTS_LIMIT 99999

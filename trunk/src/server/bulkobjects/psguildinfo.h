@@ -141,6 +141,7 @@ protected:
 private:
     psMoney bankMoney;          ///< Money stored in the guild bank account.
     int max_guild_points;       ///< Maximum guild points obtainable in the guild.
+    csTicks lastNameChange;     ///< Last time the name of this guild was changed <i>Default: 0</i>
 
 public:
     int alliance;
@@ -190,6 +191,16 @@ public:
     psMoney& GetBankMoney() { return bankMoney; }
     void SaveBankMoney();
 
+    /** @brief Gets how long before a user change their name
+     *
+     * Used to ensure a user can actually change their guild name. If a user
+     * has changed their name too recently this will return the number of minutes
+     * until the user can change their name, otherwise this will return 0.
+     * Uses \ref lastNameChange and \ref GUILD_NAME_CHANGE_LIMIT.
+     *
+     * @return 0 if the user can change their name, minutes until they can otherwise
+     */
+    unsigned int MinutesUntilUserChangeName() const;
     csString& GetName(){ return name; }
 
     /** Allows to change max amount of guild points for this guild which can be set
@@ -208,6 +219,14 @@ public:
     bool SetMemberPoints(psGuildMember * member, int points);
     bool SetMemberNotes(psGuildMember * member, const csString & notes, bool isPublic);
 
+    /** @brief Sets the name for the guild
+     *
+     * Updates the cached copy as well as the DB. Udates \ref lastNameChange
+     * to the current time (in minutes)
+     *
+     * @param guildName The desired new name
+     * @return false if the DB failed to update, true otherwise
+     */
     bool SetName(csString guildName);
     bool SetWebPage(const csString & web_page);
     bool SetSecret(bool secret);
