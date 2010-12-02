@@ -547,7 +547,6 @@ const char *psUserCommands::HandleCommand(const char *cmd)
 
     else if (words[0] == "/clear")
     {
-        printf("Clearing  history\n");
         pawsChatWindow* ChatWindow = (pawsChatWindow*) PawsManager::GetSingleton().FindWidget("ChatWindow");
         ChatWindow->Clear();
     }
