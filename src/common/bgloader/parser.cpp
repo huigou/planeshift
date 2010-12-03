@@ -52,8 +52,6 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
         if(!parseShaders || parsedShaders)
             return;
 
-        csPrintf("parsing shaders now\n");
-
         csRef<iConfigManager> config = csQueryRegistry<iConfigManager> (object_reg);
 
         // Parse basic set of shaders.
