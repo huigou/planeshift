@@ -14,8 +14,11 @@ ExternalLibs psclient : CRYSTAL CAL3D BREAKPAD ;
 CompileGroups psclient : client ;
 COMMONLIBS = gui psnet psengine psrpgrules psutil paws pssound sound effects fparser ;
 LinkWith psclient : gui psnet psengine psrpgrules psutil paws sound effects fparser ;
-if $(TARGET.OS) = "MACOS_X" { COMMONLIBS += crashreport ; }
-if $(TARGET.OS) != "MACOS_X" { COMMONLIBS += breakpad ; }
+if $(REPORTER)
+{
+  if $(TARGET.OS) = "MACOS_X" { COMMONLIBS += crashreport ; }
+  if $(TARGET.OS) != "MACOS_X" { COMMONLIBS += breakpad ; }
+}
 LinkWith psclient : $(COMMONLIBS) ;
 Win32Resource psclient : [ ConcatDirs $(SUBDIR) crashdialog.rc ] ;
 
