@@ -17,7 +17,7 @@
 
 #ifdef __unix__
 #ifndef __MACH__
-#include <malloc.h>
+#include <stdlib.h>
 #endif
 #endif
 
