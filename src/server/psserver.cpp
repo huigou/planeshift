@@ -300,7 +300,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     csString db_version;
     if ( ! GetServerOption("db_version", db_version) )
     {
-        CPrintf (CON_ERROR, "Couldn't determine database version.  Error was %s.", db->GetLastError() );
+        CPrintf (CON_ERROR, "Couldn't determine database version.  Error was %s.\n", db->GetLastError() );
         db = NULL;
         return false;
     }
