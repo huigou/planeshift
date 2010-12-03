@@ -29,6 +29,7 @@
 #include <csutil/leakguard.h>
 #include <iutil/virtclk.h>
 #include <imesh/object.h>
+#include <ivideo/rendermesh.h>
 #include <csgeom/matrix3.h>
 #include <csgeom/vector3.h>
 
@@ -255,7 +256,7 @@ public:
     /** Get the priority for rendering the mesh.
      *  @return the CS engine priority.
      */
-    long GetRenderPriority() const { return priority; }
+    CS::Graphics::RenderPriority GetRenderPriority() const { return priority; }
 
     /** Get the zbuf mode for rendering the mesh.
      *  @return the CS zbuf mode.
@@ -376,7 +377,7 @@ protected:
     psEffect2DRenderer * renderer2d;
 
     csZBufMode zFunc;
-    long priority;
+    CS::Graphics::RenderPriority priority;
     unsigned int mixmode;
 
     // direction
