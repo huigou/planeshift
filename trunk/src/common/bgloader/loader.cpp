@@ -157,7 +157,10 @@ bool BgLoader::Initialize(iObjectRegistry* object_reg)
     csRef<iConfigManager> config = csQueryRegistry<iConfigManager> (object_reg);
     
     // Check whether we're caching files for performance.    
-    cache = config->GetBool("PlaneShift.Loading.Cache", true);
+    cache = config->GetBool("PlaneShift.Loading.Cache", false);
+
+    // Check whether we want to parse shaders
+    parseShaders = config->GetBool("PlaneShift.Loading.ParseShaders",true);
 
     // Check the level of shader use.
     csString shader(config->GetStr("PlaneShift.Graphics.Shaders"));

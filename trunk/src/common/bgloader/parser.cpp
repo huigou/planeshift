@@ -49,8 +49,10 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
 {
     void BgLoader::ParseShaders()
     {
-        if(parsedShaders)
+        if(!parseShaders || parsedShaders)
             return;
+
+        csPrintf("parsing shaders now\n");
 
         csRef<iConfigManager> config = csQueryRegistry<iConfigManager> (object_reg);
 
@@ -271,7 +273,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                             }
                         }
 
-                        if(loadShader)
+                        if(loadShader && parseShaders)
                         {
                             // Dispatch shader load to a thread.
                             rets.Push(tloader->LoadShader(vfs->GetCwd(), node->GetContentsValue()));
