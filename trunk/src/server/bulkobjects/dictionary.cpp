@@ -1445,7 +1445,7 @@ csTicks NpcResponse::ExecuteScript(gemActor *player, gemNPC* target)
             csString resp = script[i]->GetResponseScript();
             Error3("Error running script in %s operation for client %s.",
                 resp.GetData(), player->GetClient() ? player->GetClient()->GetName() : "NPC");
-            return (csTicks)SIZET_NOT_FOUND;
+            return (csTicks)-1;
         }
         else if(voiceNumber >= 0) //if it's >= 0. we have to run a voice, else -1 and -2 means we have nothing to do
         {
