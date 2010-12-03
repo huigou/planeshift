@@ -530,8 +530,8 @@ AC_ARG_ENABLE([reporter],
 	(default NO)])],
     [], [enable_reporter=no])
 AC_MSG_RESULT([$enable_reporter])
-CS_EMIT_BUILD_PROPERTY([REPORTER],
-    [$enable_reporter])
+AS_IF([test $enable_reporter = yes],
+  [CS_EMIT_BUILD_PROPERTY([REPORTER], [yes])])
 AS_IF([test $enable_reporter = yes],
     [CS_HEADER_PROPERTY([USE_BREAKPAD])])
 
