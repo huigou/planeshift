@@ -70,18 +70,15 @@ void pawsLoadWindow::HandleMessage(MsgEntry *me)
         pawsMultiLineTextBox* motdBox = (pawsMultiLineTextBox*)FindWidget( "motd" );
         pawsMultiLineTextBox* guildmotdBox = (pawsMultiLineTextBox*)FindWidget( "guildmotd" );
 
-        //Format the guild motd and motd
-        csString motdMsg;
+        //Format the guild motd
         csString guildmotdMsg;
-
-        motdMsg.Format("Server MOTD: %s",tipmsg.motd.GetData());
 
         if (!tipmsg.guildmotd.IsEmpty())
             guildmotdMsg.Format("%s's MOTD: %s",tipmsg.guild.GetData(),tipmsg.guildmotd.GetData());
 
         //Set the text
         tipBox->SetText(tipmsg.tip.GetData());
-        motdBox->SetText(motdMsg.GetData());
+        motdBox->SetText(tipmsg.motd.GetData());
         guildmotdBox->SetText(guildmotdMsg.GetData());
 
     }
