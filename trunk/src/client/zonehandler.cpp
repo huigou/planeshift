@@ -86,8 +86,8 @@ ZoneHandler::ZoneHandler(MsgHandler* mh,iObjectRegistry* obj_reg, psCelClient *c
     loadWindow = NULL;
     loadProgressBar = NULL;
 	
-	forcedBackgroundImg.Empty();
-	forcedLoadingEndTime = 0;
+    forcedBackgroundImg.Empty();
+    forcedLoadingEndTime = 0;
 }
 
 ZoneHandler::~ZoneHandler()
@@ -225,7 +225,8 @@ void ZoneHandler::LoadZone(csVector3 pos, const char* sector, bool force)
     }
 
     // Set load screen if required.
-    if((FindLoadWindow() && psengine->GetLoader()->GetLoadingCount() != 0 && (!psengine->HasLoadedMap() || !connected)) || (FindLoadWindow() && forcedLoadingEndTime != 0))
+    loadCount = psengine->GetLoader()->GetLoadingCount();
+    if (FindLoadWindow() && (loadCount != 0 || !psengine->HasLoadedMap() || !connected || forcedLoadingEndTime != 0))
     {
         loading = true;
 
@@ -250,7 +251,7 @@ void ZoneHandler::LoadZone(csVector3 pos, const char* sector, bool force)
             loadWindow->SetBackground(zone->loadImage.GetData());
         }
 
-        loadProgressBar->SetTotalValue(psengine->GetLoader()->GetLoadingCount());
+        loadProgressBar->SetTotalValue(1.0f);
         loadProgressBar->SetCurrentValue(0.0f);
 
         psengine->ForceRefresh();
@@ -288,48 +289,48 @@ void ZoneHandler::OnDrawingFinished()
 {
     if (loading)
     {		
-		if(psengine->GetLoader()->GetLoadingCount() == 0)
+        if(psengine->GetLoader()->GetLoadingCount() == 0 && csGetTicks() >= forcedLoadingEndTime)
         {
-			if(csGetTicks() >= forcedLoadingEndTime)
-			{
-				// move player to new pos
-				MovePlayerTo(newPos, sectorToLoad);
+            // move player to new pos
+            MovePlayerTo(newPos, sectorToLoad);
 
-				if(psengine->HasLoadedMap())
-					loadWindow->Hide();
+            if(psengine->HasLoadedMap())
+                loadWindow->Hide();
 
-				loading = false;
-				loadProgressBar->Completed();
-				psengine->SetLoadedMap(true);
+            loading = false;
+            loadProgressBar->Completed();
+            psengine->SetLoadedMap(true);
 
-				// Move all entities which belong in these new sectors to them.
-				psengine->GetCelClient()->OnMapsLoaded();
+            // Move all entities which belong in these new sectors to them.
+            psengine->GetCelClient()->OnMapsLoaded();
 
-				// Reset camera clip distance.
-				psCamera* cam = psengine->GetPSCamera();
-				if(cam && !cam->GetDistanceCfg().adaptive)
-					cam->UseFixedDistanceClipping(cam->GetFixedDistClip());
-				psengine->GetPSCamera()->ResetCameraPositioning();
+            // Reset camera clip distance.
+            psCamera* cam = psengine->GetPSCamera();
+            if(cam && !cam->GetDistanceCfg().adaptive)
+                cam->UseFixedDistanceClipping(cam->GetFixedDistClip());
+            psengine->GetPSCamera()->ResetCameraPositioning();
 
-				// Update the lighting.
-				psengine->GetModeHandler()->FinishLightFade();
-				psengine->GetModeHandler()->DoneLoading(sectorToLoad);
+            // Update the lighting.
+            psengine->GetModeHandler()->FinishLightFade();
+            psengine->GetModeHandler()->DoneLoading(sectorToLoad);
 
-				//Update delay data
-				forcedBackgroundImg.Empty();
-				forcedLoadingEndTime = 0;
-			}
+            //Update delay data
+            forcedBackgroundImg.Empty();
+            forcedLoadingEndTime = 0;
         }
         else
         {
-            psengine->GetLoader()->ContinueLoading(true);
             float timeProgress = 1.0f;
             if(forcedLoadingEndTime)
-                timeProgress = (float)(forcedLoadingEndTime-csGetTicks())/forcedLoadingEndTime;
+                timeProgress = (float)(csGetTicks() - forcedLoadingStartTime)/(forcedLoadingEndTime-forcedLoadingStartTime);
 
-            float max = loadProgressBar->GetTotalValue();
-            float progress = csMin((float)(max-psengine->GetLoader()->GetLoadingCount())/max,timeProgress);
-            loadProgressBar->SetCurrentValue(progress*max);
+            float loadProgress = 1.0f;
+            if(loadCount)
+            {
+                loadProgress = (float)(loadCount-psengine->GetLoader()->GetLoadingCount())/loadCount;
+                psengine->GetLoader()->ContinueLoading(true);
+            }
+            loadProgressBar->SetCurrentValue(csMin(loadProgress,timeProgress));
         }
     }
 }
@@ -356,5 +357,6 @@ ZoneLoadInfo::ZoneLoadInfo(iDocumentNode *node)
 void ZoneHandler::ForceLoadScreen(csString backgroundImage, uint32_t lenght)
 {
 	forcedBackgroundImg = backgroundImage;
-	forcedLoadingEndTime = csGetTicks()+(lenght * 1000);
+	forcedLoadingStartTime = csGetTicks();
+	forcedLoadingEndTime = forcedLoadingStartTime+(lenght * 1000);
 }

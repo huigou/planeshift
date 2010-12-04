@@ -110,8 +110,9 @@ protected:
     int rgnsLoaded;
     bool initialRefreshScreen;
 
-	csString forcedBackgroundImg; ///<String which holds the background of the loading screen
-	csTicks forcedLoadingEndTime;///<Holds how long the loading shall be delayed
+    csString forcedBackgroundImg; ///<String which holds the background of the loading screen
+    csTicks forcedLoadingEndTime;///<Holds how long the loading shall be delayed
+    csTicks forcedLoadingStartTime;///<Holds how long the loading shall be delayed
     
     pawsLoadWindow* loadWindow;
     pawsProgressBar* loadProgressBar;
@@ -120,6 +121,7 @@ protected:
     bool LoadZoneInfo();
     ZoneLoadInfo * FindZone(const char* sector);
     bool loading;
+    size_t loadCount;
 
     /** Tells "world" to (un)load flagged maps, then hides LoadingWindow */
     bool ExecuteFlaggedRegions(const csString & sector);
