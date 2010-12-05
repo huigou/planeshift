@@ -226,7 +226,7 @@ void ZoneHandler::LoadZone(csVector3 pos, const char* sector, bool force)
 
     // Set load screen if required.
     loadCount = psengine->GetLoader()->GetLoadingCount();
-    if (FindLoadWindow() && (loadCount != 0 || !psengine->HasLoadedMap() || !connected || forcedLoadingEndTime != 0))
+    if (FindLoadWindow() && (loadCount != 0 || (!psengine->HasLoadedMap() && !connected) || forcedLoadingEndTime != 0))
     {
         loading = true;
 
