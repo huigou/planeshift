@@ -89,7 +89,7 @@ void NavGen::Run()
     float step   = config->GetFloat("NavGen.Agent.MaxStepSize", 0.5f);
     int tileSize = config->GetInt("NavGen.TileSize", 64);
     float cellSize = config->GetFloat("NavGen.CellSize", width/2);
-    float borderSize = config->GetFloat("NavGen.BorderSize", width+1);
+    int borderSize = csMin(config->GetInt("NavGen.BorderSize", width+1),1);
 
     csRef<iEventQueue> queue = csQueryRegistry<iEventQueue>(object_reg);
     csRef<iVirtualClock> vc = csQueryRegistry<iVirtualClock>(object_reg);
@@ -127,7 +127,7 @@ void NavGen::Run()
             returns.Push(loader->PrecacheData(meshFiles->Get(i), false));
         }
 
-        csPrintf("finishing mesh cache");
+        csPrintf("finishing mesh cache\n");
         while(!returns.IsEmpty())
         {
             for(size_t i = 0; i < returns.GetSize(); i++)
@@ -195,13 +195,13 @@ void NavGen::Run()
         size_t loadCount = loader->GetLoadingCount();
         while(loader->GetLoadingCount())
         {
-            loader->ContinueLoading(false);
+            loader->ContinueLoading(true);
 
             // print progress
 
             vc->Advance();
             queue->Process();
-            csSleep(5);
+            csSleep(100);
         }
     }
 
@@ -248,8 +248,19 @@ void NavGen::Run()
         }
     }
 
-    vc->Advance();
-    queue->Process();
+    loader.Invalidate();
+    builder.Invalidate();
+    config.Invalidate();
+    vfs.Invalidate();
+
+    csRef<iThreadReturn> ret = engine->DeleteAll();
+
+    while(!ret->IsFinished())
+    {
+        vc->Advance();
+        queue->Process();
+        csSleep(100);
+    }
 }
 
 int main(int argc, char** argv)
