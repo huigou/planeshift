@@ -1127,6 +1127,7 @@ bool BgLoader::LoadPortal(Portal* portal, Sector* sector)
     portal->mObject = engine->CreatePortal(portal->name, sector->object, csVector3(0),
                  target, portal->poly.GetVertices(), (int)portal->poly.GetVertexCount(),
                  portal->pObject);
+    portal->pObject->SetName(portal->name);
 
     if(portal->warp)
     {
