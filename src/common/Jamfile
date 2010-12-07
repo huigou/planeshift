@@ -11,3 +11,5 @@ SubInclude TOP src common sound ;
 SubInclude TOP src common pssound ;
 SubInclude TOP src common recast ;
 SubInclude TOP src common celgraph ;
+StaticPluginLibrary planeshift_staticplugins ;
+
