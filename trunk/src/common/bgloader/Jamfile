@@ -8,5 +8,3 @@ Plugin bgloader
 
 ExternalLibs bgloader : CRYSTAL ;
 CompileGroups bgloader : psclient psserver psnpcclient ;
-
-StaticPluginLibrary planeshift_staticplugins ;

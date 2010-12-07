@@ -6,5 +6,3 @@ Plugin recast :
 IncludeDir recastnavigation : recast ;
 ExternalLibs recast : CRYSTAL ; 
 CompileGroups recast : psclient psnpcclient ;
-
-StaticPluginLibrary planeshift_staticplugins ;

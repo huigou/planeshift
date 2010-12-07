@@ -5,5 +5,3 @@ Plugin celgraph
 ;
 ExternalLibs celgraph : CRYSTAL ;
 CompileGroups celgraph : psclient psnpcclient ;
-
-StaticPluginLibrary planeshift_staticplugins ;
