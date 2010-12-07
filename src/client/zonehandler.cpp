@@ -182,7 +182,7 @@ void ZoneHandler::LoadZone(csVector3 pos, const char* sector, bool force)
     newPos = pos;
     csString sectorBackup = sectorToLoad; // cache old sector
     sectorToLoad = sector;
-    bool connected = false;
+    bool connected = true;
 
     ZoneLoadInfo* zone = FindZone(sectorToLoad);
     if (zone == NULL)
@@ -217,8 +217,10 @@ void ZoneHandler::LoadZone(csVector3 pos, const char* sector, bool force)
                 celclient->GetWorld()->BuildWarpCache(); // we need an up-to-date warp cache here
                 connected = celclient->GetWorld()->Connected(oldsector, newsector);
             }
-
-            connected &= (psengine->GetLoader()->GetLoadingCount() == 0); // make sure we aren't loading too slowly
+            else
+            {
+                connected = false;
+            }
         }
 
         psengine->GetLoader()->UpdatePosition(pos, sectorToLoad, true);
@@ -226,7 +228,7 @@ void ZoneHandler::LoadZone(csVector3 pos, const char* sector, bool force)
 
     // Set load screen if required.
     loadCount = psengine->GetLoader()->GetLoadingCount();
-    if (FindLoadWindow() && (loadCount != 0 || (!psengine->HasLoadedMap() && !connected) || forcedLoadingEndTime != 0))
+    if (FindLoadWindow() && (loadCount != 0 || !psengine->HasLoadedMap() || !connected || forcedLoadingEndTime != 0))
     {
         loading = true;
 
