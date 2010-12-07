@@ -77,7 +77,14 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
 
                         csRef<iDocumentNode> file = node->GetNode("file");
                         shaders.Push(file->GetContentsValue());
-                        rets.Push(tloader->LoadShader(vfs->GetCwd(), file->GetContentsValue()));
+                        if(blockShaderLoad)
+                        {
+                            rets.Push(tloader->LoadShaderWait(vfs->GetCwd(), file->GetContentsValue()));
+                        }
+                        else
+                        {
+                            rets.Push(tloader->LoadShader(vfs->GetCwd(), file->GetContentsValue()));
+                        }
 
                         shadersByUsageType.Put(strings->Request(node->GetNode("type")->GetContentsValue()),
                             node->GetAttributeValue("name"));
@@ -274,7 +281,14 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                         if(loadShader && parseShaders)
                         {
                             // Dispatch shader load to a thread.
-                            rets.Push(tloader->LoadShader(vfs->GetCwd(), node->GetContentsValue()));
+                            if(blockShaderLoad)
+                            {
+                                rets.Push(tloader->LoadShader(vfs->GetCwd(), node->GetContentsValue()));
+                            }
+                            else
+                            {
+                                rets.Push(tloader->LoadShaderWait(vfs->GetCwd(), node->GetContentsValue()));
+                            }
                         }
                     }
                 }

@@ -664,6 +664,9 @@ private:
     // Whether we want to parse shaders.
     bool parseShaders;
 
+    // Whether to load shaders blocking or not.
+    bool blockShaderLoad;
+
     // Our load range ^_^
     float loadRange;
 

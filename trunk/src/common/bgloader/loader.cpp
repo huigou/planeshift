@@ -162,6 +162,9 @@ bool BgLoader::Initialize(iObjectRegistry* object_reg)
     // Check whether we want to parse shaders
     parseShaders = config->GetBool("PlaneShift.Loading.ParseShaders",true);
 
+    // Check whether we want to load shaders threaded.
+    blockShaderLoad = !config->GetBool("PlaneShift.Loading.ThreadedShaders",false);
+
     // Check the level of shader use.
     csString shader(config->GetStr("PlaneShift.Graphics.Shaders"));
     if(shader.CompareNoCase("Highest"))
