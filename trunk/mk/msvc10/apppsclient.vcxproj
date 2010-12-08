@@ -1477,6 +1477,9 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ProjectReference Include="libpssound.vcxproj">
       <Project>{C0CD3069-8659-1151-26AC-40C98186358B}</Project>
     </ProjectReference>
+    <ProjectReference Include="libbreakpad.vcxproj">
+      <Project>{7BD0DB32-E0AD-E520-81A6-F53D07433A63}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
