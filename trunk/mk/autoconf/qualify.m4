@@ -40,7 +40,9 @@ AC_DEFUN([CS_SYMBOL_QUALIFIER],
 	    [AS_IF([test "$$2" = no],
 		[CS_BUILD_IFELSE(
 		    [AC_LANG_PROGRAM(
-			[m4_default([$4],[void f()]) cs_symbol_qualifier;],
+			[m4_default([$4],[void* f()]) cs_symbol_qualifier;],
 			[])],
-		    [], [$5], [$2='cs_symbol_qualifier'], [$2='no'])])])])
+		    [CS_CREATE_TUPLE([$_CS_WARNING_CACHE_VAR([],
+			[$5], [enable_errors])])],
+		    [$5], [$2='cs_symbol_qualifier'], [$2='no'])])])])
     AS_IF([test $$2 != no], [$6], [$7])])

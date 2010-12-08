@@ -47,6 +47,18 @@ AC_DEFUN([CS_CHECK_COMMON_TOOLS_LINK],
 
     CS_CHECK_TOOLS([OBJCOPY], [objcopy])
     CS_EMIT_BUILD_PROPERTY([CMD.OBJCOPY], [$OBJCOPY], [], [], [$1])
+    AS_IF([test -n "$OBJCOPY"],
+	[AC_CACHE_CHECK([whether $OBJCOPY supports --long-section-names],
+            [cs_cv_objcopy_supports_long_section_names],
+	    [cs_cv_objcopy_supports_long_section_names=no
+	    AS_IF([AC_TRY_COMMAND(
+		    [$OBJCOPY --help 2>/dev/null | grep -e "--long-section-names" >/dev/null 2>&1])],
+		    [cs_cv_objcopy_supports_long_section_names=yes])
+	    ])
+        AS_IF([test "$cs_cv_objcopy_supports_long_section_names" != "no"],
+	    [CS_EMIT_BUILD_PROPERTY([CMD.OBJCOPY.LONG_SECTION_NAMES_ENABLE],
+	        [--long-section-names=enable], [], [], [$1])])
+	])
     
     CS_CHECK_LIBTOOL
     CS_EMIT_BUILD_PROPERTY([LIBTOOL], [$LIBTOOL], [], [], [$1])
@@ -145,12 +157,35 @@ AC_DEFUN([CS_CHECK_COMMON_TOOLS_ICONS],
     # icotool: for creating Win32 ICO files
     CS_CHECK_PROGS([ICOTOOL], [icotool])
     CS_EMIT_BUILD_PROPERTY([CMD.ICOTOOL], [$ICOTOOL], [], [], [$1])
+    AS_IF([test -n "$ICOTOOL"],
+	[AC_CACHE_CHECK([whether icotool supports --raw], [cs_cv_icotool_supports_raw],
+	    [cs_cv_icotool_supports_raw=no
+	    AS_IF([AC_TRY_COMMAND(
+		    [$ICOTOOL 2>/dev/null | grep -e "--raw" >/dev/null 2>&1])],
+		    [cs_cv_icotool_supports_raw=yes])
+	    ])
+	CS_EMIT_BUILD_PROPERTY([ICOTOOL.SUPPORTS_RAW],
+	    [$cs_cv_icotool_supports_raw], [], [], [$1])
+	])
 
     # convert: for various image manipulations from both the svg conversion and
     #  ICO creation.
     CS_CHECK_PROGS([CONVERT], [convert])
-    CS_EMIT_BUILD_PROPERTY([CMD.CONVERT], [$CONVERT], [], [], [$1])])
+    CS_EMIT_BUILD_PROPERTY([CMD.CONVERT], [$CONVERT], [], [], [$1])
 
+    # pngcrush: if available, run over the PNGs created for icons.
+    #  (This is not so much about the size as about stripping "creation" and
+    #  "modification" time comments convert seems to put into PNGs.)
+    CS_CHECK_PROGS([PNGCRUSH], [pngcrush])
+    CS_EMIT_BUILD_PROPERTY([CMD.PNGCRUSH], [$PNGCRUSH], [], [], [$1])
+    
+    # Tools needed to generate OS/X icons.
+    CS_CHECK_PROGS([MAKEICNS], [makeicns])
+    CS_EMIT_BUILD_PROPERTY([CMD.MAKEICNS], [$MAKEICNS], [], [], [$1])
+    # png2icns is available for POSIX platforms and not just OS/X.
+    CS_CHECK_PROGS([PNG2ICNS], [png2icns])
+    CS_EMIT_BUILD_PROPERTY([CMD.PNG2ICNS], [$PNG2ICNS], [], [], [$1])
+    ])
 
 #------------------------------------------------------------------------------
 # CS_CHECK_COMMON_LIBS([EMITTER])
