@@ -20,7 +20,6 @@ if $(HAVE_STATIC_PLUGINS) = "yes"
   ;
 
   CFlags eedit_static : [ FDefines CS_STATIC_LINKED ] ;
-  LFlags eedit_static : -lcrystalspace_staticplugins-$(CRYSTAL.VERSION) ;
   CompileGroups eedit_static : tools ;
   ExternalLibs eedit_static : CRYSTAL CAL3D ;
   MsvcDefine eedit_static : CS_STATIC_LINKED ;
