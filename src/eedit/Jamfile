@@ -12,9 +12,13 @@ if $(HAVE_STATIC_PLUGINS) = "yes"
 {
   SubVariant static ;
 
+  ApplicationIcon win32 : eedit_static : [ ConcatDirs $(TOP) support icons icon1.ico ] ;
+  ApplicationIcon macosx : eedit_static : [ ConcatDirs $(TOP) support icons icon1.icns ] ;
+
   Application eedit_static :
       [ Wildcard *.cpp *.h ]
   ;
+
   CFlags eedit_static : [ FDefines CS_STATIC_LINKED ] $(CAL3D.CFLAGS) ;
   LFlags eedit_static : -lcrystalspace_staticplugins-$(CRYSTAL.VERSION) -lcal3d ;
   CompileGroups eedit_static : tools ;
