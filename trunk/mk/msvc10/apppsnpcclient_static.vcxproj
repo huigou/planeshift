@@ -284,7 +284,7 @@
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <ProgramDataBaseFileName>..\..\out\release10\build\apppsnpcclient_static\Win32\psnpcclient_static.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_USE_STATIC_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/D CS_HAVE_CAL3D  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>..\..\out\release10\build\apppsnpcclient_static\apppsnpcclient_static.pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>..\..\out\release10\build\apppsnpcclient_static\</AssemblerListingLocation>
@@ -303,7 +303,7 @@
       <OutputFile>..\..\psnpcclient_static.exe</OutputFile>
       <ProgramDatabaseFile>..\..\out\release10\build\apppsnpcclient_static\Win32\psnpcclient_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libpng.lib freetype2.lib libcrystalspace_opengl.lib cg.lib cgGL.lib opengl32.lib cal3d-vc10.lib libcrystalspace_staticplugins.lib libcrystalspace.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace.lib;ws2_32.lib;zlib.lib;libmysql.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\release10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -333,7 +333,7 @@ copy /y "$(TargetPath)" ..\..\out\release10\bin\
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <ProgramDataBaseFileName>..\..\out\release10\build\apppsnpcclient_static\Win32\psnpcclient_static.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_USE_SHARED_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/D CS_HAVE_CAL3D  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>..\..\out\release10\build\apppsnpcclient_static\apppsnpcclient_static.pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>..\..\out\release10\build\apppsnpcclient_static\</AssemblerListingLocation>
@@ -352,7 +352,7 @@ copy /y "$(TargetPath)" ..\..\out\release10\bin\
       <OutputFile>..\..\psnpcclient_static.exe</OutputFile>
       <ProgramDatabaseFile>..\..\out\release10\build\apppsnpcclient_static\Win32\psnpcclient_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libpng.lib freetype2.lib libcrystalspace_opengl.lib cg.lib cgGL.lib opengl32.lib cal3d-vc10.lib libcrystalspace_staticplugins.lib libcrystalspace.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace.lib;ws2_32.lib;zlib.lib;libmysql.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\release10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -380,7 +380,7 @@ copy /y "$(TargetPath)" ..\..\out\release10\bin\
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>      <ProgramDataBaseFileName>..\..\out\debug10\build\apppsnpcclient_static\Win32\psnpcclient_static.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_USE_STATIC_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/D CS_HAVE_CAL3D  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>..\..\out\debug10\build\apppsnpcclient_static\apppsnpcclient_static.pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>..\..\out\debug10\build\apppsnpcclient_static\</AssemblerListingLocation>
@@ -397,7 +397,7 @@ copy /y "$(TargetPath)" ..\..\out\release10\bin\
       <OutputFile>..\..\psnpcclient_static.exe</OutputFile>
       <ProgramDatabaseFile>..\..\out\debug10\build\apppsnpcclient_static\Win32\psnpcclient_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc10_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;libmysql.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -425,7 +425,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>      <ProgramDataBaseFileName>..\..\out\debug10\build\apppsnpcclient_static\Win32\psnpcclient_static.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_USE_SHARED_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/D CS_HAVE_CAL3D  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>..\..\out\debug10\build\apppsnpcclient_static\apppsnpcclient_static.pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>..\..\out\debug10\build\apppsnpcclient_static\</AssemblerListingLocation>
@@ -442,7 +442,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <OutputFile>..\..\psnpcclient_static.exe</OutputFile>
       <ProgramDatabaseFile>..\..\out\debug10\build\apppsnpcclient_static\Win32\psnpcclient_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc10_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;libmysql.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -470,7 +470,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>      <ProgramDataBaseFileName>..\..\out\debug10\build\apppsnpcclient_static\Win32\psnpcclient_static.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_USE_STATIC_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/D CS_HAVE_CAL3D  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>..\..\out\debug10\build\apppsnpcclient_static\apppsnpcclient_static.pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>..\..\out\debug10\build\apppsnpcclient_static\</AssemblerListingLocation>
@@ -487,7 +487,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <OutputFile>..\..\psnpcclient_static.exe</OutputFile>
       <ProgramDatabaseFile>..\..\out\debug10\build\apppsnpcclient_static\Win32\psnpcclient_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc10_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;libmysql.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -515,7 +515,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>      <ProgramDataBaseFileName>..\..\out\debug10\build\apppsnpcclient_static\Win32\psnpcclient_static.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_USE_SHARED_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/D CS_HAVE_CAL3D  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>..\..\out\debug10\build\apppsnpcclient_static\apppsnpcclient_static.pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>..\..\out\debug10\build\apppsnpcclient_static\</AssemblerListingLocation>
@@ -532,7 +532,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <OutputFile>..\..\psnpcclient_static.exe</OutputFile>
       <ProgramDatabaseFile>..\..\out\debug10\build\apppsnpcclient_static\Win32\psnpcclient_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc10_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;libmysql.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -560,7 +560,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>      <ProgramDataBaseFileName>..\..\out\debug10\build\apppsnpcclient_static\Win32\psnpcclient_static.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_USE_STATIC_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/D CS_HAVE_CAL3D  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>..\..\out\debug10\build\apppsnpcclient_static\apppsnpcclient_static.pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>..\..\out\debug10\build\apppsnpcclient_static\</AssemblerListingLocation>
@@ -577,7 +577,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <OutputFile>..\..\psnpcclient_static.exe</OutputFile>
       <ProgramDatabaseFile>..\..\out\debug10\build\apppsnpcclient_static\Win32\psnpcclient_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc10_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;libmysql.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -605,7 +605,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>      <ProgramDataBaseFileName>..\..\out\debug10\build\apppsnpcclient_static\Win32\psnpcclient_static.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_USE_SHARED_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/D CS_HAVE_CAL3D  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>..\..\out\debug10\build\apppsnpcclient_static\apppsnpcclient_static.pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>..\..\out\debug10\build\apppsnpcclient_static\</AssemblerListingLocation>
@@ -622,7 +622,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <OutputFile>..\..\psnpcclient_static.exe</OutputFile>
       <ProgramDatabaseFile>..\..\out\debug10\build\apppsnpcclient_static\Win32\psnpcclient_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc10_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;libmysql.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -650,7 +650,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>      <ProgramDataBaseFileName>..\..\out\debug10\build\apppsnpcclient_static\Win32\psnpcclient_static.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_USE_STATIC_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/D CS_HAVE_CAL3D  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>..\..\out\debug10\build\apppsnpcclient_static\apppsnpcclient_static.pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>..\..\out\debug10\build\apppsnpcclient_static\</AssemblerListingLocation>
@@ -667,7 +667,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <OutputFile>..\..\psnpcclient_static.exe</OutputFile>
       <ProgramDatabaseFile>..\..\out\debug10\build\apppsnpcclient_static\Win32\psnpcclient_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc10_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;libmysql.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -695,7 +695,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>      <ProgramDataBaseFileName>..\..\out\debug10\build\apppsnpcclient_static\Win32\psnpcclient_static.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_USE_SHARED_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/D CS_HAVE_CAL3D  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>..\..\out\debug10\build\apppsnpcclient_static\apppsnpcclient_static.pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>..\..\out\debug10\build\apppsnpcclient_static\</AssemblerListingLocation>
@@ -712,7 +712,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <OutputFile>..\..\psnpcclient_static.exe</OutputFile>
       <ProgramDatabaseFile>..\..\out\debug10\build\apppsnpcclient_static\Win32\psnpcclient_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc10_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;libmysql.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -740,7 +740,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>      <ProgramDataBaseFileName>..\..\out\debug10\build\apppsnpcclient_static\Win32\psnpcclient_static.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_USE_STATIC_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/D CS_HAVE_CAL3D  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>..\..\out\debug10\build\apppsnpcclient_static\apppsnpcclient_static.pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>..\..\out\debug10\build\apppsnpcclient_static\</AssemblerListingLocation>
@@ -757,7 +757,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <OutputFile>..\..\psnpcclient_static.exe</OutputFile>
       <ProgramDatabaseFile>..\..\out\debug10\build\apppsnpcclient_static\Win32\psnpcclient_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc10_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace.lib;ws2_32.lib;zlib.lib;libmysql.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\release10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -785,7 +785,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>      <ProgramDataBaseFileName>..\..\out\debug10\build\apppsnpcclient_static\Win32\psnpcclient_static.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_USE_SHARED_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/D CS_HAVE_CAL3D  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>..\..\out\debug10\build\apppsnpcclient_static\apppsnpcclient_static.pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>..\..\out\debug10\build\apppsnpcclient_static\</AssemblerListingLocation>
@@ -802,7 +802,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <OutputFile>..\..\psnpcclient_static.exe</OutputFile>
       <ProgramDatabaseFile>..\..\out\debug10\build\apppsnpcclient_static\Win32\psnpcclient_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc10_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace.lib;ws2_32.lib;zlib.lib;libmysql.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\release10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -832,7 +832,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <ProgramDataBaseFileName>..\..\out\release10-x64\build\apppsnpcclient_static\x64\psnpcclient_static.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_USE_STATIC_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/D CS_HAVE_CAL3D  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>..\..\out\release10-x64\build\apppsnpcclient_static\apppsnpcclient_static.pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>..\..\out\release10-x64\build\apppsnpcclient_static\</AssemblerListingLocation>
@@ -851,7 +851,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <OutputFile>..\..\psnpcclient_static.exe</OutputFile>
       <ProgramDatabaseFile>..\..\out\release10-x64\build\apppsnpcclient_static\x64\psnpcclient_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libpng.lib freetype2.lib libcrystalspace_opengl.lib cg.lib cgGL.lib opengl32.lib cal3d-vc10.lib libcrystalspace_staticplugins.lib libcrystalspace.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace.lib;ws2_32.lib;zlib.lib;libmysql.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\release10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -881,7 +881,7 @@ copy /y "$(TargetPath)" ..\..\out\release10-x64\bin\
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <ProgramDataBaseFileName>..\..\out\release10-x64\build\apppsnpcclient_static\x64\psnpcclient_static.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_USE_SHARED_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/D CS_HAVE_CAL3D  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>..\..\out\release10-x64\build\apppsnpcclient_static\apppsnpcclient_static.pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>..\..\out\release10-x64\build\apppsnpcclient_static\</AssemblerListingLocation>
@@ -900,7 +900,7 @@ copy /y "$(TargetPath)" ..\..\out\release10-x64\bin\
       <OutputFile>..\..\psnpcclient_static.exe</OutputFile>
       <ProgramDatabaseFile>..\..\out\release10-x64\build\apppsnpcclient_static\x64\psnpcclient_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libpng.lib freetype2.lib libcrystalspace_opengl.lib cg.lib cgGL.lib opengl32.lib cal3d-vc10.lib libcrystalspace_staticplugins.lib libcrystalspace.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace.lib;ws2_32.lib;zlib.lib;libmysql.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\release10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -928,7 +928,7 @@ copy /y "$(TargetPath)" ..\..\out\release10-x64\bin\
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\apppsnpcclient_static\x64\psnpcclient_static.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_USE_STATIC_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/D CS_HAVE_CAL3D  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>..\..\out\debug10-x64\build\apppsnpcclient_static\apppsnpcclient_static.pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>..\..\out\debug10-x64\build\apppsnpcclient_static\</AssemblerListingLocation>
@@ -945,7 +945,7 @@ copy /y "$(TargetPath)" ..\..\out\release10-x64\bin\
       <OutputFile>..\..\psnpcclient_static.exe</OutputFile>
       <ProgramDatabaseFile>..\..\out\debug10-x64\build\apppsnpcclient_static\x64\psnpcclient_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc10_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;libmysql.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -973,7 +973,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\apppsnpcclient_static\x64\psnpcclient_static.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_USE_SHARED_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/D CS_HAVE_CAL3D  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>..\..\out\debug10-x64\build\apppsnpcclient_static\apppsnpcclient_static.pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>..\..\out\debug10-x64\build\apppsnpcclient_static\</AssemblerListingLocation>
@@ -990,7 +990,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <OutputFile>..\..\psnpcclient_static.exe</OutputFile>
       <ProgramDatabaseFile>..\..\out\debug10-x64\build\apppsnpcclient_static\x64\psnpcclient_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc10_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;libmysql.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -1018,7 +1018,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\apppsnpcclient_static\x64\psnpcclient_static.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_USE_STATIC_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/D CS_HAVE_CAL3D  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>..\..\out\debug10-x64\build\apppsnpcclient_static\apppsnpcclient_static.pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>..\..\out\debug10-x64\build\apppsnpcclient_static\</AssemblerListingLocation>
@@ -1035,7 +1035,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <OutputFile>..\..\psnpcclient_static.exe</OutputFile>
       <ProgramDatabaseFile>..\..\out\debug10-x64\build\apppsnpcclient_static\x64\psnpcclient_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc10_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;libmysql.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -1063,7 +1063,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\apppsnpcclient_static\x64\psnpcclient_static.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_USE_SHARED_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/D CS_HAVE_CAL3D  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>..\..\out\debug10-x64\build\apppsnpcclient_static\apppsnpcclient_static.pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>..\..\out\debug10-x64\build\apppsnpcclient_static\</AssemblerListingLocation>
@@ -1080,7 +1080,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <OutputFile>..\..\psnpcclient_static.exe</OutputFile>
       <ProgramDatabaseFile>..\..\out\debug10-x64\build\apppsnpcclient_static\x64\psnpcclient_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc10_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;libmysql.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -1108,7 +1108,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\apppsnpcclient_static\x64\psnpcclient_static.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_USE_STATIC_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/D CS_HAVE_CAL3D  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>..\..\out\debug10-x64\build\apppsnpcclient_static\apppsnpcclient_static.pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>..\..\out\debug10-x64\build\apppsnpcclient_static\</AssemblerListingLocation>
@@ -1125,7 +1125,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <OutputFile>..\..\psnpcclient_static.exe</OutputFile>
       <ProgramDatabaseFile>..\..\out\debug10-x64\build\apppsnpcclient_static\x64\psnpcclient_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc10_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;libmysql.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -1153,7 +1153,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\apppsnpcclient_static\x64\psnpcclient_static.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_USE_SHARED_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/D CS_HAVE_CAL3D  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>..\..\out\debug10-x64\build\apppsnpcclient_static\apppsnpcclient_static.pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>..\..\out\debug10-x64\build\apppsnpcclient_static\</AssemblerListingLocation>
@@ -1170,7 +1170,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <OutputFile>..\..\psnpcclient_static.exe</OutputFile>
       <ProgramDatabaseFile>..\..\out\debug10-x64\build\apppsnpcclient_static\x64\psnpcclient_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc10_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;libmysql.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -1198,7 +1198,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\apppsnpcclient_static\x64\psnpcclient_static.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_USE_STATIC_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/D CS_HAVE_CAL3D  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>..\..\out\debug10-x64\build\apppsnpcclient_static\apppsnpcclient_static.pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>..\..\out\debug10-x64\build\apppsnpcclient_static\</AssemblerListingLocation>
@@ -1215,7 +1215,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <OutputFile>..\..\psnpcclient_static.exe</OutputFile>
       <ProgramDatabaseFile>..\..\out\debug10-x64\build\apppsnpcclient_static\x64\psnpcclient_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc10_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;libmysql.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -1243,7 +1243,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\apppsnpcclient_static\x64\psnpcclient_static.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_USE_SHARED_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/D CS_HAVE_CAL3D  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>..\..\out\debug10-x64\build\apppsnpcclient_static\apppsnpcclient_static.pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>..\..\out\debug10-x64\build\apppsnpcclient_static\</AssemblerListingLocation>
@@ -1260,7 +1260,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <OutputFile>..\..\psnpcclient_static.exe</OutputFile>
       <ProgramDatabaseFile>..\..\out\debug10-x64\build\apppsnpcclient_static\x64\psnpcclient_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc10_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;libmysql.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -1288,7 +1288,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\apppsnpcclient_static\x64\psnpcclient_static.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_USE_STATIC_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/D CS_HAVE_CAL3D  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>..\..\out\debug10-x64\build\apppsnpcclient_static\apppsnpcclient_static.pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>..\..\out\debug10-x64\build\apppsnpcclient_static\</AssemblerListingLocation>
@@ -1305,7 +1305,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <OutputFile>..\..\psnpcclient_static.exe</OutputFile>
       <ProgramDatabaseFile>..\..\out\debug10-x64\build\apppsnpcclient_static\x64\psnpcclient_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc10_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace.lib;ws2_32.lib;zlib.lib;libmysql.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\release10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -1333,7 +1333,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\apppsnpcclient_static\x64\psnpcclient_static.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_CONSOLE;CS_STATIC_LINKED;WIN32;CS_USE_SHARED_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/D CS_HAVE_CAL3D  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>..\..\out\debug10-x64\build\apppsnpcclient_static\apppsnpcclient_static.pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>..\..\out\debug10-x64\build\apppsnpcclient_static\</AssemblerListingLocation>
@@ -1350,7 +1350,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <OutputFile>..\..\psnpcclient_static.exe</OutputFile>
       <ProgramDatabaseFile>..\..\out\debug10-x64\build\apppsnpcclient_static\x64\psnpcclient_static.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libpng.lib freetype2.lib libcrystalspace_opengl_d.lib cg.lib cgGL.lib opengl32.lib cal3d-vc10_d.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace.lib;ws2_32.lib;zlib.lib;libmysql.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\release10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>

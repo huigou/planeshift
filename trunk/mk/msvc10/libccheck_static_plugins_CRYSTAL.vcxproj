@@ -287,7 +287,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;LIBCMT;LIBCMTD;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libcrystalspace_staticplugins.lib libcrystalspace.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -337,7 +337,7 @@ copy /y "$(TargetPath)" ..\..\out\release10\bin\
       <OutputFile>..\..\ccheck_static_plugins_CRYSTAL-0.5-vc10.dll</OutputFile>
       <ImportLibrary>..\..\out\release10\libs\libccheck_static_plugins_CRYSTAL.lib</ImportLibrary>
       <ProgramDatabaseFile>..\..\out\release10\build\libccheck_static_plugins_CRYSTAL\Win32\ccheck_static_plugins_CRYSTAL-0.5-vc10.pdb</ProgramDatabaseFile>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libcrystalspace_staticplugins.lib libcrystalspace.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -379,7 +379,7 @@ copy /y "$(TargetPath)" ..\..\out\release10\bin\
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;LIBCMT;LIBCMTD;MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -425,7 +425,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <OutputFile>..\..\ccheck_static_plugins_CRYSTAL-0.5-vc10_d.dll</OutputFile>
       <ImportLibrary>..\..\out\debug10\libs\libccheck_static_plugins_CRYSTAL_d.lib</ImportLibrary>
       <ProgramDatabaseFile>..\..\out\debug10\build\libccheck_static_plugins_CRYSTAL\Win32\ccheck_static_plugins_CRYSTAL-0.5-vc10_d.pdb</ProgramDatabaseFile>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -467,7 +467,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;LIBCMT;LIBCMTD;MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -513,7 +513,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <OutputFile>..\..\ccheck_static_plugins_CRYSTAL-0.5-vc10_d.dll</OutputFile>
       <ImportLibrary>..\..\out\debug10\libs\libccheck_static_plugins_CRYSTAL_d.lib</ImportLibrary>
       <ProgramDatabaseFile>..\..\out\debug10\build\libccheck_static_plugins_CRYSTAL\Win32\ccheck_static_plugins_CRYSTAL-0.5-vc10_d.pdb</ProgramDatabaseFile>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -555,7 +555,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;LIBCMT;LIBCMTD;MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -601,7 +601,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <OutputFile>..\..\ccheck_static_plugins_CRYSTAL-0.5-vc10_d.dll</OutputFile>
       <ImportLibrary>..\..\out\debug10\libs\libccheck_static_plugins_CRYSTAL_d.lib</ImportLibrary>
       <ProgramDatabaseFile>..\..\out\debug10\build\libccheck_static_plugins_CRYSTAL\Win32\ccheck_static_plugins_CRYSTAL-0.5-vc10_d.pdb</ProgramDatabaseFile>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -643,7 +643,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;LIBCMT;LIBCMTD;MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -689,7 +689,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <OutputFile>..\..\ccheck_static_plugins_CRYSTAL-0.5-vc10_d.dll</OutputFile>
       <ImportLibrary>..\..\out\debug10\libs\libccheck_static_plugins_CRYSTAL_d.lib</ImportLibrary>
       <ProgramDatabaseFile>..\..\out\debug10\build\libccheck_static_plugins_CRYSTAL\Win32\ccheck_static_plugins_CRYSTAL-0.5-vc10_d.pdb</ProgramDatabaseFile>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -731,7 +731,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;LIBCMT;LIBCMTD;MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -777,7 +777,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <OutputFile>..\..\ccheck_static_plugins_CRYSTAL-0.5-vc10_d.dll</OutputFile>
       <ImportLibrary>..\..\out\debug10\libs\libccheck_static_plugins_CRYSTAL_d.lib</ImportLibrary>
       <ProgramDatabaseFile>..\..\out\debug10\build\libccheck_static_plugins_CRYSTAL\Win32\ccheck_static_plugins_CRYSTAL-0.5-vc10_d.pdb</ProgramDatabaseFile>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -823,7 +823,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;LIBCMT;LIBCMTD;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libcrystalspace_staticplugins.lib libcrystalspace.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -873,7 +873,7 @@ copy /y "$(TargetPath)" ..\..\out\release10-x64\bin\
       <OutputFile>..\..\ccheck_static_plugins_CRYSTAL-0.5-vc10-x64.dll</OutputFile>
       <ImportLibrary>..\..\out\release10-x64\libs\libccheck_static_plugins_CRYSTAL.lib</ImportLibrary>
       <ProgramDatabaseFile>..\..\out\release10-x64\build\libccheck_static_plugins_CRYSTAL\x64\ccheck_static_plugins_CRYSTAL-0.5-vc10-x64.pdb</ProgramDatabaseFile>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libcrystalspace_staticplugins.lib libcrystalspace.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -915,7 +915,7 @@ copy /y "$(TargetPath)" ..\..\out\release10-x64\bin\
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;LIBCMT;LIBCMTD;MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -961,7 +961,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <OutputFile>..\..\ccheck_static_plugins_CRYSTAL-0.5-vc10-x64_d.dll</OutputFile>
       <ImportLibrary>..\..\out\debug10-x64\libs\libccheck_static_plugins_CRYSTAL_d.lib</ImportLibrary>
       <ProgramDatabaseFile>..\..\out\debug10-x64\build\libccheck_static_plugins_CRYSTAL\x64\ccheck_static_plugins_CRYSTAL-0.5-vc10-x64_d.pdb</ProgramDatabaseFile>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -1003,7 +1003,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;LIBCMT;LIBCMTD;MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -1049,7 +1049,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <OutputFile>..\..\ccheck_static_plugins_CRYSTAL-0.5-vc10-x64_d.dll</OutputFile>
       <ImportLibrary>..\..\out\debug10-x64\libs\libccheck_static_plugins_CRYSTAL_d.lib</ImportLibrary>
       <ProgramDatabaseFile>..\..\out\debug10-x64\build\libccheck_static_plugins_CRYSTAL\x64\ccheck_static_plugins_CRYSTAL-0.5-vc10-x64_d.pdb</ProgramDatabaseFile>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -1091,7 +1091,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;LIBCMT;LIBCMTD;MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -1137,7 +1137,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <OutputFile>..\..\ccheck_static_plugins_CRYSTAL-0.5-vc10-x64_d.dll</OutputFile>
       <ImportLibrary>..\..\out\debug10-x64\libs\libccheck_static_plugins_CRYSTAL_d.lib</ImportLibrary>
       <ProgramDatabaseFile>..\..\out\debug10-x64\build\libccheck_static_plugins_CRYSTAL\x64\ccheck_static_plugins_CRYSTAL-0.5-vc10-x64_d.pdb</ProgramDatabaseFile>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -1179,7 +1179,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;LIBCMT;LIBCMTD;MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -1225,7 +1225,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <OutputFile>..\..\ccheck_static_plugins_CRYSTAL-0.5-vc10-x64_d.dll</OutputFile>
       <ImportLibrary>..\..\out\debug10-x64\libs\libccheck_static_plugins_CRYSTAL_d.lib</ImportLibrary>
       <ProgramDatabaseFile>..\..\out\debug10-x64\build\libccheck_static_plugins_CRYSTAL\x64\ccheck_static_plugins_CRYSTAL-0.5-vc10-x64_d.pdb</ProgramDatabaseFile>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -1267,7 +1267,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;LIBCMT;LIBCMTD;MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -1313,7 +1313,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <OutputFile>..\..\ccheck_static_plugins_CRYSTAL-0.5-vc10-x64_d.dll</OutputFile>
       <ImportLibrary>..\..\out\debug10-x64\libs\libccheck_static_plugins_CRYSTAL_d.lib</ImportLibrary>
       <ProgramDatabaseFile>..\..\out\debug10-x64\build\libccheck_static_plugins_CRYSTAL\x64\ccheck_static_plugins_CRYSTAL-0.5-vc10-x64_d.pdb</ProgramDatabaseFile>
-      <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
