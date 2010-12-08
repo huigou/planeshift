@@ -21,6 +21,7 @@ IncludeDir src tools wordnet ;
 IncludeDir src tools breakpad ;
 IncludeDir src tools breakpad third_party linux include ;
 IncludeDir $(BUILDTOP) : : literal transient ;
+IncludeDir $(BUILDTOP)/include : : literal transient ;
 
 
 # Delete the following dir and subdirs on running 'jam clean'.
