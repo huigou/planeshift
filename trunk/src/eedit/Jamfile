@@ -19,10 +19,10 @@ if $(HAVE_STATIC_PLUGINS) = "yes"
       [ Wildcard *.cpp *.h ]
   ;
 
-  CFlags eedit_static : [ FDefines CS_STATIC_LINKED ] $(CAL3D.CFLAGS) ;
-  LFlags eedit_static : -lcrystalspace_staticplugins-$(CRYSTAL.VERSION) -lcal3d ;
+  CFlags eedit_static : [ FDefines CS_STATIC_LINKED ] ;
+  LFlags eedit_static : -lcrystalspace_staticplugins-$(CRYSTAL.VERSION) ;
   CompileGroups eedit_static : tools ;
-  ExternalLibs eedit_static : CRYSTAL ;
+  ExternalLibs eedit_static : CRYSTAL CAL3D ;
   MsvcDefine eedit_static : CS_STATIC_LINKED ;
   LinkWith eedit_static : sound paws psutil effects fparser ;
 
