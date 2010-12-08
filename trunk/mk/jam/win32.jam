@@ -447,14 +447,13 @@ rule SystemInstallApplication
   local suffix = $(4) ;
   if "$(suffix)"
   {
-    local target_suffixed = $(<)-$(suffix) ;
+    local target_suffixed = "$(<:B)-$(suffix)$(<:S)" ;
     local installed =
       [ DoInstallFile $(<) : $(bindir) $(2) : $(target_suffixed) : $(INSTALL_PROGRAM) ] ;
     Depends install_bin : $(installed) ;
-    NotFile $(target_suffixed) ;
     local linktarget = $(<:D=$(bindir)) ;
     Depends install_bin : [ 
-      InstallSymLink $(linktarget) : $(target_suffixed) ] ;
+      InstallSymLink $(linktarget) : $(installed) ] ;
   }
   else
   {
@@ -615,12 +614,16 @@ actions WriteDefHeader
   echo "EXPORTS" > $(<)
 }
 
+# Take an extracted .drectve section and generate .def file entries of it
+# - Convertes spaces to newlines
+# - Filters out any option other than '-export' ones
+# - Filter the symbol name, handle ',data' decoration
 actions piecemeal together DrectveToDef
 {
   for d in $(>)
   do
     sed -e "s/ /\\
-/g" $d | sed -e "s/-export:\(.*\)/\1/g" | sed -e "s/,data/ DATA/g" >> $(<)
+/g" $d | grep "-export" | sed -e "s/-export:\(.*\)/\1/g" | sed -e "s/,data/ DATA/g" >> $(<)
   done
 }
 
