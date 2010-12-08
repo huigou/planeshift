@@ -1482,6 +1482,9 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ProjectReference Include="libfparser.vcxproj">
       <Project>{56CFA369-1F2F-7609-9E86-069C1B5F5651}</Project>
     </ProjectReference>
+    <ProjectReference Include="libbreakpad.vcxproj">
+      <Project>{7BD0DB32-E0AD-E520-81A6-F53D07433A63}</Project>
+    </ProjectReference>
     <ProjectReference Include="libpsclient_static_plugins_CRYSTAL.vcxproj">
       <Project>{DF4973C1-0D2D-8028-32E7-B93470BF4E4C}</Project>
     </ProjectReference>
