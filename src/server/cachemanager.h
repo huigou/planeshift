@@ -526,6 +526,14 @@ public:
     void ApplyItemModifiers(psItemStats* baseItem, RandomizedOverlay* overlay, csArray<uint32_t>& modifierIds)
          { lootRandomizer->ApplyModifier(baseItem, overlay, modifierIds); }
 
+    /** Randomizes the passed item.
+     *  @param item The item which we are going to randomize.
+     *  @param maxCost The maximum cost allowed to the randomized item
+     *  @param numModifiers The maximum amount of modifiers to apply.
+     */
+    void RandomizeItem(psItem* item, float maxCost, size_t numModifiers)
+         { lootRandomizer->RandomizeItem( item, maxCost, false, numModifiers); }
+
 protected:
     uint32_t effectID;
     char CacheNameBuffer[15];

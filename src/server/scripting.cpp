@@ -2152,6 +2152,11 @@ public:
         }
         placeOnGround = location == "ground";
 
+        //loads data about the randomization status of the item.
+        randomize = node->GetAttributeValueAsBool("randomize");
+        randomCost = node->GetAttributeValueAsInt("randomcost");
+        randomLevel = node->GetAttributeValueAsInt("randomlevel");
+
         return !name.IsEmpty() && count && Imperative1::Load(node);
     }
 
@@ -2222,6 +2227,12 @@ public:
         {
             item->SetStackCount(stackCount);
         }
+
+        
+        //if we have to randomize the item we do it now.
+        if(randomize)
+            cacheManager->RandomizeItem(item, randomCost, randomLevel);
+
         item->SetLoaded();  // Item is fully created
 
         return item;
@@ -2229,6 +2240,9 @@ public:
 
 protected:
     csString name;
+    bool randomize;  ///< If true it will randomize the item upon creation.
+    int randomCost;  ///< The maximum allowed cost for the item.
+    int randomLevel; ///< The amount of modifiers allowed
     MathExpression* count;
     bool placeOnGround;
     CacheManager* cacheManager;
