@@ -67,6 +67,12 @@ public:
                         int g = 0,
                         int b = 0);
 
+
+    /** @brief Starts automatic weather in a sector
+     *  Allocates new events for snow, rain and fog
+     * @param si The sector in which we start the automatic weather
+     * @param type The weather type we will start. The default 0 does it for all.
+     */
     void StartWeather(psSectorInfo *si, unsigned int type = 0);
 
     /** @brief Stops automatic weather in a sector
@@ -74,6 +80,7 @@ public:
      * in the sector into the ignored array,
      * removing them from the events array
      * @param si The sector in which we stop the automatic weather
+     * @param type The weather type we will stop. The default 0 does it for all.
      */
     void StopWeather(psSectorInfo *si, unsigned int type = 0);
     void HandleWeatherEvent(psWeatherGameEvent *event);
