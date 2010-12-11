@@ -112,32 +112,52 @@ void WeatherManager::SetGameTime(int hour,int minute)
     BroadcastGameTime();
 }
 
-bool WeatherManager::StartWeather(psSectorInfo *si)
+void WeatherManager::StartWeather(psSectorInfo *si, unsigned int type)
 {
     // Is rain/snow enabled for this sector
-    if (si->rain_enabled && si->rain_min_drops > 0 && si->rain_min_gap > 0)
+    if((type == 0 || type == psWeatherMessage::RAIN) && si->GetWeatherEnabled((unsigned int)psWeatherMessage::RAIN))
     {
-        // Queue event to start rain/snow
-        QueueNextEvent(si->GetRandomRainGap(),
+        // Queue event to start rain
+        QueueNextEvent(si->GetRandomWeatherGap((unsigned int)psWeatherMessage::RAIN),
                        psWeatherMessage::RAIN,
-                       si->GetRandomRainDrops(),
+                       si->GetRandomWeatherDensity((unsigned int)psWeatherMessage::RAIN),
                        0, // Duration is calculated when stop event is created
                        0, // Fade is calculated when sending weather event
                        si->name,
                        si);
-        return true;
     }
-    return false;
+    if((type == 0 || type == psWeatherMessage::SNOW) && si->GetWeatherEnabled((unsigned int)psWeatherMessage::SNOW))
+    {
+        // Queue event to start snow
+        QueueNextEvent(si->GetRandomWeatherGap((unsigned int)psWeatherMessage::SNOW),
+                       psWeatherMessage::SNOW,
+                       si->GetRandomWeatherDensity((unsigned int)psWeatherMessage::SNOW),
+                       0, // Duration is calculated when stop event is created
+                       0, // Fade is calculated when sending weather event
+                       si->name,
+                       si);
+    }
+    if((type == 0 || type == psWeatherMessage::FOG) && si->GetWeatherEnabled((unsigned int)psWeatherMessage::FOG))
+    {
+        // Queue event to start snow
+        QueueNextEvent(si->GetRandomWeatherGap((unsigned int)psWeatherMessage::FOG),
+                       psWeatherMessage::SNOW,
+                       si->GetRandomWeatherDensity((unsigned int)psWeatherMessage::FOG),
+                       0, // Duration is calculated when stop event is created
+                       si->GetRandomWeatherFadeIn((unsigned int)psWeatherMessage::FOG),
+                       si->name,
+                       si);
+    }
 }
 
-void WeatherManager::StopWeather(psSectorInfo *si)
+void WeatherManager::StopWeather(psSectorInfo *si, unsigned int type)
 {
     CS::Threading::MutexScopedLock lock (eventsMutex);
     psWeatherGameEvent* evt = NULL;
     for (size_t i = 0; i < events.GetSize(); i++)
     {
         evt = events[i];
-        if (evt->si == si && (evt->type == psWeatherMessage::RAIN || evt->type == psWeatherMessage::SNOW))
+        if (evt->si == si && (evt->type == type || (type == 0 && (evt->type == psWeatherMessage::RAIN || evt->type == psWeatherMessage::SNOW))))
         {
             ignored.Push(evt); // Ignore when the eventmanager handles the event
             events.DeleteIndex(i);
@@ -177,7 +197,7 @@ void WeatherManager::UpdateClient(uint32_t cnum)
             info.downfall_fade = 0; // Don't fade in
         }
         
-        if( sector->fog_density > 0)
+        if(sector->fog_density > 0)
         {
             info.has_fog = true;
             info.fog_density = sector->fog_density;
@@ -345,12 +365,12 @@ void WeatherManager::HandleWeatherEvent(psWeatherGameEvent *event)
             {
                 if (event->value)
                 {
-                    info.downfall_fade = event->si->GetRandomRainFadeIn();
+                    info.downfall_fade = event->si->GetRandomWeatherFadeIn((unsigned int)event->type);
                     info.fog_fade = info.downfall_fade;
                 }
                 else
                 {
-                    info.downfall_fade = event->si->GetRandomRainFadeOut();
+                    info.downfall_fade = event->si->GetRandomWeatherFadeOut((unsigned int)event->type);
                     info.fog_fade = info.downfall_fade;
                 }
             }
@@ -400,11 +420,11 @@ void WeatherManager::HandleWeatherEvent(psWeatherGameEvent *event)
                 else
                     event->si->is_snowing = true;
 
-                if (event->si->lightning_min_gap && event->value > 2000 && 
-                    event->si->is_raining && event->si->rain_enabled)
+                if (event->si->GetWeatherEnabled((unsigned int) psWeatherMessage::LIGHTNING) &&
+                    event->value > 2000 && event->si->is_raining)
                 {
                     // Queue lightning during rain storm here first
-                    QueueNextEvent(event->si->GetRandomLightningGap(),
+                    QueueNextEvent(event->si->GetRandomWeatherGap((unsigned int) psWeatherMessage::LIGHTNING),
                                    psWeatherMessage::LIGHTNING,
                                    0,
                                    0,
@@ -416,22 +436,25 @@ void WeatherManager::HandleWeatherEvent(psWeatherGameEvent *event)
 
                 // Queue event to stop rain/snow
                 int duration;
-                if (event->duration)
+                if(event->duration != -1)
                 {
-                    duration = event->duration;
+                    if (event->duration)
+                    {
+                        duration = event->duration;
+                    }
+                    else
+                    {
+                        duration = event->si->GetRandomWeatherDuration((unsigned int) event->type);
+                    }
+                    
+                    QueueNextEvent(duration,
+                                   event->type,
+                                   0,
+                                   0,
+                                   event->fade,
+                                   event->si->name,
+                                   event->si);
                 }
-                else
-                {
-                    duration = event->si->GetRandomRainDuration();
-                }
-                
-                QueueNextEvent(duration,
-                               event->type,
-                               0,
-                               0,
-                               event->fade,
-                               event->si->name,
-                               event->si);
 
             }
             else // Stop rain/snow.
@@ -489,6 +512,38 @@ void WeatherManager::HandleWeatherEvent(psWeatherGameEvent *event)
                 Bug1("Could not create valid psWeatherMessage (fog) for broadcast.\n");
             }
 
+            if (event->value)  // Queue event to turn off fog.
+            {
+
+                // Queue event to stop rain/snow
+                int duration;
+                if(event->duration != -1)
+                {
+                    if (event->duration)
+                    {
+                        duration = event->duration;
+                    }
+                    else
+                    {
+                        duration = event->si->GetRandomWeatherDuration((unsigned int) event->type);
+                    }
+                    
+                    QueueNextEvent(duration,
+                                   event->type,
+                                   0,
+                                   0,
+                                   event->si->GetRandomWeatherFadeOut((unsigned int)psWeatherMessage::FOG),
+                                   event->si->name,
+                                   event->si);
+                }
+
+            }
+            else // Stop fog.
+            {
+                // Queue event to turn on again later if enabled
+                StartWeather(event->si, psWeatherMessage::FOG);
+            }
+
             break;
         }
     case psWeatherMessage::LIGHTNING:
@@ -517,10 +572,10 @@ void WeatherManager::HandleWeatherEvent(psWeatherGameEvent *event)
                     Bug1("Could not create valid psWeatherMessage (lightning) for broadcast.\n");
                 }
 
-                if (event->si->rain_enabled &&
-                    event->si->lightning_max_gap != 0)
+                if (event->si->is_raining &&
+                    event->si->GetWeatherEnabled((unsigned int) psWeatherMessage::LIGHTNING))
                 {
-                    QueueNextEvent(event->si->GetRandomLightningGap(),
+                    QueueNextEvent(event->si->GetRandomWeatherGap((unsigned int) psWeatherMessage::LIGHTNING),
                                    psWeatherMessage::LIGHTNING,
                                    0,
                                    0,

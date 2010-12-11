@@ -32,6 +32,8 @@
 // Project Includes
 //=============================================================================
 
+#include "net/messages.h"
+
 //=============================================================================
 // Local Includes
 //=============================================================================
@@ -50,13 +52,6 @@ class psSectorInfo : public iScriptableVar
 public:
     psSectorInfo();
     ~psSectorInfo();
-
-    unsigned int GetRandomRainGap();
-    unsigned int GetRandomRainDuration();
-    unsigned int GetRandomRainDrops();
-    unsigned int GetRandomRainFadeIn();
-    unsigned int GetRandomRainFadeOut();
-    unsigned int GetRandomLightningGap();
 
     /// This is used by the math scripting engine to get various values.
     double GetProperty(MathEnvironment* env, const char* ptr);
@@ -119,15 +114,77 @@ public:
     
     unsigned int uid;
     csString  name;
-    bool rain_enabled; // Will run automatic weather when true
-    unsigned int rain_min_gap,rain_max_gap;
-    unsigned int rain_min_duration,rain_max_duration;
-    unsigned int rain_min_drops,rain_max_drops;
-    unsigned int lightning_min_gap,lightning_max_gap;
-    unsigned int rain_min_fade_in,rain_max_fade_in;
-    unsigned int rain_min_fade_out,rain_max_fade_out;
-    unsigned int current_rain_drops; // Drops
+
+
+    ///Structure used to store informations for various weather types in this sector.
+    struct weatherTypeData
+    {
+        bool enabled;  ///< Will run automatic weather when true
+        unsigned int min_gap; ///< The minimum gap between two of these weather events.
+        unsigned int max_gap; ///< The maximum gap between two of these weather events.
+        unsigned int min_duration; ///< The minimum duration of the weather events.
+        unsigned int max_duration;  ///< The maximum duration of the weather events.
+        unsigned int min_density; ///< The minimum density of the weather event. (drops, flakes...).
+        unsigned int max_density;///< The maximum density of the weather event. (drops, flakes...).
+        unsigned int min_fade_in; ///< The minimum time to fade in.
+        unsigned int max_fade_in; ///< The maximum time to fade in.
+        unsigned int min_fade_out; ///< The minimum time to fade out.
+        unsigned int max_fade_out; ///< The maximum time to fade out.
+    };
+
+    ///An hash containing all the various possible weather data.
+    csHash<weatherTypeData, unsigned int> weatherData;
+
+    /** Sets the enabled status of a weather event type for this sector.
+     *  @param id The id of the event @see psWeatherMessage
+     *  @param newStatus The new status to assign to the weather event type (false for disabled)
+     */
+    void SetWeatherEnabled(unsigned int id, bool newStatus);
     
+    /** Gets the enabled status of a weather event type for this sector.
+     *  @param id The id of the event @see psWeatherMessage
+     *  @return A Boolean saying if the weather type is enabled and activable (has valid data.)
+     */
+    bool GetWeatherEnabled(unsigned int id);
+
+    /** Gets a random value between the max and min Gap for this weather type.
+     *  @param id The id of the event @see psWeatherMessage
+     *  @return An unsigned int with a random gap time.
+     */
+    unsigned int GetRandomWeatherGap(unsigned int id);
+
+    /** Gets a random value between the max and min Duration for this weather type.
+     *  @param id The id of the event @see psWeatherMessage
+     *  @return An unsigned int with a random duration time.
+     */
+    unsigned int GetRandomWeatherDuration(unsigned int id);
+
+    /** Gets a random value between the max and min density for this weather type.
+     *  @param id The id of the event @see psWeatherMessage
+     *  @return An unsigned int with a random density time.
+     */
+    unsigned int GetRandomWeatherDensity(unsigned int id);
+
+    /** Gets a random value between the max and min Fade In for this weather type.
+     *  @param id The id of the event @see psWeatherMessage
+     *  @return An unsigned int with a random Fade In time.
+     */
+    unsigned int GetRandomWeatherFadeIn(unsigned int id);
+
+    /** Gets a random value between the max and min Fade Out for this weather type.
+     *  @param id The id of the event @see psWeatherMessage
+     *  @return An unsigned int with a random Fade Out time.
+     */
+    unsigned int GetRandomWeatherFadeOut(unsigned int id);
+
+    /** Adds informations about a weather type defined by id.
+     *  @param newWeatherData A weatherTypeData struct containing the informations about a weather type.
+     *  @param id The id of the weather type we are adding.
+     */
+    void AddWeatherTypeData(weatherTypeData newWeatherData, unsigned int id);
+    
+    unsigned int current_rain_drops; ///< Drops
+
     bool is_raining;
     bool is_snowing;
     bool is_colliding;

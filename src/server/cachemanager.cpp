@@ -694,31 +694,99 @@ bool CacheManager::PreloadSectors()
 
         newsector->uid  = result[currentrow].GetInt("id");
         newsector->name = result[currentrow]["name"];
-        newsector->rain_enabled = strcmp(result[currentrow]["rain_enabled"],"Y")==0;
 
-        newsector->rain_min_gap = result[currentrow].GetInt("rain_min_gap");
-        newsector->rain_max_gap = result[currentrow].GetInt("rain_max_gap");
-        CS_ASSERT(newsector->rain_min_gap <= newsector->rain_max_gap);
+        //this thing is awful :|
+        {
+            psSectorInfo::weatherTypeData data;
+            data.enabled = strcmp(result[currentrow]["rain_enabled"],"Y")==0;
 
-        newsector->rain_min_duration = result[currentrow].GetInt("rain_min_duration");
-        newsector->rain_max_duration = result[currentrow].GetInt("rain_max_duration");
-        CS_ASSERT(newsector->rain_min_duration <= newsector->rain_max_duration);
+            data.min_gap = result[currentrow].GetInt("rain_min_gap");
+            data.max_gap = result[currentrow].GetInt("rain_max_gap");
+            CS_ASSERT(data.min_gap <= data.max_gap);
 
-        newsector->rain_min_drops = result[currentrow].GetInt("rain_min_drops");
-        newsector->rain_max_drops = result[currentrow].GetInt("rain_max_drops");
-        CS_ASSERT(newsector->rain_min_drops <= newsector->rain_max_drops);
+            data.min_duration = result[currentrow].GetInt("rain_min_duration");
+            data.max_duration = result[currentrow].GetInt("rain_max_duration");
+            CS_ASSERT(data.min_duration <= data.max_duration);
 
-        newsector->lightning_min_gap = result[currentrow].GetInt("lightning_min_gap");
-        newsector->lightning_max_gap = result[currentrow].GetInt("lightning_max_gap");
-        CS_ASSERT(newsector->lightning_min_gap <= newsector->lightning_max_gap);
+            data.min_density = result[currentrow].GetInt("rain_min_drops");
+            data.max_density = result[currentrow].GetInt("rain_max_drops");
+            CS_ASSERT(data.min_density <= data.max_density);
 
-        newsector->rain_min_fade_in = result[currentrow].GetInt("rain_min_fade_in");
-        newsector->rain_max_fade_in = result[currentrow].GetInt("rain_max_fade_in");
-        CS_ASSERT(newsector->rain_min_fade_in <= newsector->rain_max_fade_in);
+            data.min_fade_in = result[currentrow].GetInt("rain_min_fade_in");
+            data.max_fade_in = result[currentrow].GetInt("rain_max_fade_in");
+            CS_ASSERT(data.min_fade_in <= data.max_fade_in);
 
-        newsector->rain_min_fade_out = result[currentrow].GetInt("rain_min_fade_out");
-        newsector->rain_max_fade_out = result[currentrow].GetInt("rain_max_fade_out");
-        CS_ASSERT(newsector->rain_min_fade_out <= newsector->rain_max_fade_out);
+            data.min_fade_out = result[currentrow].GetInt("rain_min_fade_out");
+            data.max_fade_out = result[currentrow].GetInt("rain_max_fade_out");
+            CS_ASSERT(data.min_fade_out <= data.max_fade_out);
+
+            newsector->AddWeatherTypeData(data, (unsigned int) psWeatherMessage::RAIN);
+
+        }
+
+        {
+            psSectorInfo::weatherTypeData data;
+            data.enabled = strcmp(result[currentrow]["snow_enabled"],"Y")==0;
+
+            data.min_gap = result[currentrow].GetInt("snow_min_gap");
+            data.max_gap = result[currentrow].GetInt("snow_max_gap");
+            CS_ASSERT(data.min_gap <= data.max_gap);
+
+            data.min_duration = result[currentrow].GetInt("snow_min_duration");
+            data.max_duration = result[currentrow].GetInt("snow_max_duration");
+            CS_ASSERT(data.min_duration <= data.max_duration);
+
+            data.min_density = result[currentrow].GetInt("snow_min_flakes");
+            data.max_density = result[currentrow].GetInt("snow_max_flakes");
+            CS_ASSERT(data.min_density <= data.max_density);
+
+            data.min_fade_in = result[currentrow].GetInt("snow_min_fade_in");
+            data.max_fade_in = result[currentrow].GetInt("snow_max_fade_in");
+            CS_ASSERT(data.min_fade_in <= data.max_fade_in);
+
+            data.min_fade_out = result[currentrow].GetInt("snow_min_fade_out");
+            data.max_fade_out = result[currentrow].GetInt("snow_max_fade_out");
+            CS_ASSERT(data.min_fade_out <= data.max_fade_out);
+
+            newsector->AddWeatherTypeData(data, (unsigned int) psWeatherMessage::SNOW);
+        }
+
+        {
+            psSectorInfo::weatherTypeData data;
+            data.enabled = strcmp(result[currentrow]["fog_enabled"],"Y")==0;
+
+            data.min_gap = result[currentrow].GetInt("fog_min_gap");
+            data.max_gap = result[currentrow].GetInt("fog_max_gap");
+            CS_ASSERT(data.min_gap <= data.max_gap);
+
+            data.min_duration = result[currentrow].GetInt("fog_min_duration");
+            data.max_duration = result[currentrow].GetInt("fog_max_duration");
+            CS_ASSERT(data.min_duration <= data.max_duration);
+
+            data.min_density = result[currentrow].GetInt("fog_min_density");
+            data.max_density = result[currentrow].GetInt("fog_max_density");
+            CS_ASSERT(data.min_density <= data.max_density);
+
+            data.min_fade_in = result[currentrow].GetInt("fog_min_fade_in");
+            data.max_fade_in = result[currentrow].GetInt("fog_max_fade_in");
+            CS_ASSERT(data.min_fade_in <= data.max_fade_in);
+
+            data.min_fade_out = result[currentrow].GetInt("fog_min_fade_out");
+            data.max_fade_out = result[currentrow].GetInt("fog_max_fade_out");
+            CS_ASSERT(data.min_fade_out <= data.max_fade_out);
+
+            newsector->AddWeatherTypeData(data, (unsigned int) psWeatherMessage::FOG);
+        }
+
+        {
+            psSectorInfo::weatherTypeData data;
+            data.enabled = true;
+            data.min_gap = result[currentrow].GetInt("lightning_min_gap");
+            data.max_gap = result[currentrow].GetInt("lightning_max_gap");
+            CS_ASSERT(data.min_gap <= data.max_gap);
+            newsector->AddWeatherTypeData(data, (unsigned int) psWeatherMessage::LIGHTNING);
+
+        }
 
         newsector->is_colliding = (result[currentrow].GetInt("collide_objects") != 0);
         newsector->is_non_transient = (result[currentrow].GetInt("non_transient_objects") != 0);

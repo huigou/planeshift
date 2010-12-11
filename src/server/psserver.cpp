@@ -92,7 +92,7 @@
 #include "workmanager.h"
 
 // Remember to bump this in server_options.sql and add to upgrade_schema.sql!
-#define DATABASE_VERSION_STR "1255"
+#define DATABASE_VERSION_STR "1256"
 
 
 psCharacterLoader psServer::CharacterLoader;
@@ -319,7 +319,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
 
     csRef<iBgLoader> loader = csQueryRegistry<iBgLoader>(object_reg);
     loader->PrecacheDataWait("/planeshift/materials/materials.cslib", false);
-
+printf("a\n");
     csRef<iStringArray> meshes = vfs->FindFiles("/planeshift/meshes/");
     for(size_t j=0; j<meshes->GetSize(); ++j)
     {
@@ -327,7 +327,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     }
 
     csRef<iStringArray> maps = vfs->FindFiles("/planeshift/world/");
-
+printf("b\n");
     for(size_t j=0; j<maps->GetSize(); ++j)
     {
         loader->PrecacheDataWait(maps->Get(j), false);
@@ -661,6 +661,7 @@ void psServer::UnmutePlayer (uint32_t clientnum,const char *reason)
 
 bool psServer::LoadMap(char* mapname)
 {
+    printf("%p\n", mapname);
     if (entitymanager->LoadMap(mapname))
     {
         MapLoaded=true;
