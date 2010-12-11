@@ -67,7 +67,7 @@ public:
                         int g = 0,
                         int b = 0);
 
-    bool StartWeather(psSectorInfo *si);
+    void StartWeather(psSectorInfo *si, unsigned int type = 0);
 
     /** @brief Stops automatic weather in a sector
      *  Puts all events from the automatic weather (rain and snow for now)
@@ -75,7 +75,7 @@ public:
      * removing them from the events array
      * @param si The sector in which we stop the automatic weather
      */
-    void StopWeather(psSectorInfo *si);
+    void StopWeather(psSectorInfo *si, unsigned int type = 0);
     void HandleWeatherEvent(psWeatherGameEvent *event);
     void SendClientGameTime(int cnum);
     void BroadcastGameTime();

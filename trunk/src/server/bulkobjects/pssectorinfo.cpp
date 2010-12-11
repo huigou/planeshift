@@ -37,7 +37,6 @@
 psSectorInfo::psSectorInfo()
 {
     uid = 0;
-    rain_enabled = false;
     is_raining = false;
     is_snowing = false;
     current_rain_drops = 0;
@@ -63,44 +62,66 @@ psSectorInfo::~psSectorInfo()
 {
 }
 
-unsigned int psSectorInfo::GetRandomRainGap()
+void psSectorInfo::SetWeatherEnabled(unsigned int id, bool newStatus)
 {
-    return psserver->GetRandom(rain_max_gap-rain_min_gap) + rain_min_gap;
+    weatherTypeData *data = weatherData.GetElementPointer(id);
+    data->enabled = newStatus;
 }
 
-unsigned int psSectorInfo::GetRandomRainDuration()
+bool psSectorInfo::GetWeatherEnabled(unsigned int id)
 {
-    return psserver->GetRandom(rain_max_duration-rain_min_duration) + rain_min_duration;
+    weatherTypeData *data = weatherData.GetElementPointer(id);
+    return (data->enabled && data->min_density > 0 && data->min_gap > 0);
 }
 
-unsigned int psSectorInfo::GetRandomRainDrops()
+unsigned int psSectorInfo::GetRandomWeatherGap(unsigned int id)
 {
-    return psserver->GetRandom(rain_max_drops-rain_min_drops) + rain_min_drops;
+    //it can't be null at least for now
+    weatherTypeData *data = weatherData.GetElementPointer(id);
+    return psserver->GetRandom(data->max_gap-data->min_gap) + data->min_gap;
 }
 
-unsigned int psSectorInfo::GetRandomRainFadeIn()
+unsigned int psSectorInfo::GetRandomWeatherDuration(unsigned int id)
 {
-    return psserver->GetRandom(rain_max_fade_in-rain_min_fade_in) + rain_min_fade_in;
+    //it can't be null at least for now
+    weatherTypeData *data = weatherData.GetElementPointer(id);
+    return psserver->GetRandom(data->max_duration-data->min_duration) + data->min_duration;
 }
 
-unsigned int psSectorInfo::GetRandomRainFadeOut()
+unsigned int psSectorInfo::GetRandomWeatherDensity(unsigned int id)
 {
-    return psserver->GetRandom(rain_max_fade_out-rain_min_fade_out) + rain_min_fade_out;
+    //it can't be null at least for now
+    weatherTypeData *data = weatherData.GetElementPointer(id);
+    return psserver->GetRandom(data->max_density-data->min_density) + data->min_density;
 }
 
-unsigned int psSectorInfo::GetRandomLightningGap()
+unsigned int psSectorInfo::GetRandomWeatherFadeIn(unsigned int id)
 {
-    return psserver->GetRandom(lightning_max_gap - lightning_min_gap) + lightning_min_gap;
+    //it can't be null at least for now
+    weatherTypeData *data = weatherData.GetElementPointer(id);
+    return psserver->GetRandom(data->max_fade_in-data->min_fade_in) + data->min_fade_in;
+}
+
+unsigned int psSectorInfo::GetRandomWeatherFadeOut(unsigned int id)
+{
+    //it can't be null at least for now
+    weatherTypeData *data = weatherData.GetElementPointer(id);
+    return psserver->GetRandom(data->max_fade_out-data->min_fade_out) + data->min_fade_out;
+}
+
+void psSectorInfo::AddWeatherTypeData(weatherTypeData newWeatherData, unsigned int id)
+{
+    weatherData.PutUnique(id, newWeatherData);
 }
 
 double psSectorInfo::GetProperty(MathEnvironment* env, const char* ptr)
 {
     csString prop(ptr);
-    if(prop == "interior")
+    /*if(prop == "interior")
     {
         return (double)!rain_enabled;
     }
-    else if(prop == "uid")
+    else */if(prop == "uid")
     {
         return (double)uid;
     }

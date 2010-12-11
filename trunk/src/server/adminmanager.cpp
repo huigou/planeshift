@@ -509,7 +509,7 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
     }
     else if (command == "/weather")
     {
-        if(words.GetCount() == 3)
+        if(words.GetCount() == 4)
         {
             sector = words[1];
 
@@ -520,6 +520,22 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
             else if (words[2] == "off")
             {
                 interval = -2; // Code used by admin manager to turn off automatic weather
+            }
+            else
+            {
+                sector.Clear();
+            }
+            if(words[3] == "rain")
+            {
+                value = psWeatherMessage::RAIN;
+            }
+            else if(words[3] == "fog")
+            {
+                value = psWeatherMessage::FOG;
+            }
+            else if(words[3] == "snow")
+            {
+                value = psWeatherMessage::SNOW;
             }
             else
             {
@@ -594,13 +610,14 @@ bool AdminManager::AdminCmdData::DecodeAdminCmdMessage(MsgEntry *pMsg, psAdminCm
                 return true;
             }
         }
-        if ( words.GetCount() == 7 )
+        if ( words.GetCount() == 8 )
         {
             density = words.GetInt(2);
             x = (float)words.GetInt(3);
             y = (float)words.GetInt(4);
             z = (float)words.GetInt(5);
-            fade = words.GetInt(6);
+            interval = words.GetInt(6);
+            fade = words.GetInt(7);
         }
         else
         {
@@ -6224,7 +6241,7 @@ void AdminManager::SendSpawnItems (MsgEntry* me, Client *client)
     {
         unsigned id = result[i].GetUInt32(0);
         psItemStats* item = psserver->GetCacheManager()->GetBasicItemStatsByID(id);
-        if(item && !item->IsMoney() && item->IsSpawnable())
+        if(item && !item->IsMoney())
         {
             csString name(item->GetName());
             csString mesh(item->GetMeshName());
@@ -6309,11 +6326,11 @@ void AdminManager::SpawnItemInv( MsgEntry* me, psGMSpawnItem& msg, Client *clien
         return;
     }
 
-    if(!stats->IsSpawnable())
+    /*if(!stats->IsSpawnable())
     {
         psserver->SendSystemError(me->clientnum, "This item cannot be spawned!");
         return;
-    }
+    }*/
 
     psItem* item = stats->InstantiateBasicItem();
 
@@ -7206,12 +7223,6 @@ void AdminManager::Thunder(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& d
         return;
     }
 
-    if (sectorinfo->lightning_max_gap == 0)
-    {
-        psserver->SendSystemError(me->clientnum, "Lightning not defined for this sector!");
-        return;
-    }
-
     if (!sectorinfo->is_raining)
     {
         psserver->SendSystemError(me->clientnum, "You cannot create a lightning "
@@ -7231,7 +7242,7 @@ void AdminManager::Fog(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data,
 {
     if( !data.sector.Length() )
     {
-        psserver->SendSystemError(me->clientnum, "Syntax: /fog sector [density [[r g b] fade]|stop]");
+        psserver->SendSystemError(me->clientnum, "Syntax: /fog sector [density [[r g b] lenght fade]|stop]");
         return;
     }
 
@@ -7260,7 +7271,7 @@ void AdminManager::Fog(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& data,
     {
         // Set fog
         psserver->GetWeatherManager()->QueueNextEvent(0, psWeatherMessage::FOG,
-                                                      data.density, 0, data.fade,
+                                                      data.density, data.interval, data.fade,
                                                       sectorinfo->name, sectorinfo,0,
                                                       (int)data.x,(int)data.y,(int)data.z); //rgb
     }
@@ -7271,7 +7282,7 @@ void AdminManager::Weather(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& d
 {
     if(data.sector.Length() == 0)
     {
-        psserver->SendSystemError(me->clientnum, "Syntax: /weather sector [on|off]");
+        psserver->SendSystemError(me->clientnum, "Syntax: /weather sector [on|off] [type]");
         return;
     }
 
@@ -7283,30 +7294,38 @@ void AdminManager::Weather(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData& d
         return;
     }
 
-    // Start automatic weather - only rain supported for now.
+    // Start automatic weather.
     if (data.interval == -1)
     {
-        if (!sectorinfo->rain_enabled)
+        if(!sectorinfo->GetWeatherEnabled(data.value))
         {
-            sectorinfo->rain_enabled = true;
-            psserver->GetWeatherManager()->StartWeather(sectorinfo);
-            psserver->SendSystemInfo(me->clientnum,"Automatic weather started in sector %s",
-                                     data.sector.GetDataSafe());
+            sectorinfo->SetWeatherEnabled(data.value, true);
+            if(sectorinfo->GetWeatherEnabled(data.value))
+            {
+                psserver->GetWeatherManager()->StartWeather(sectorinfo, data.value);
+                psserver->SendSystemInfo(me->clientnum,"Automatic weather started in sector %s",
+                                        data.sector.GetDataSafe());
+            }
+            else
+            {
+                psserver->SendSystemInfo(me->clientnum,"Automatic weather cannot be started in sector %s because data is missing",
+                                        data.sector.GetDataSafe());
+            }
         }
         else
         {
             psserver->SendSystemInfo(me->clientnum,"The weather is already automatic in sector %s",
-                                     data.sector.GetDataSafe());
+                                        data.sector.GetDataSafe());
         }
 
     }
     // Stop automatic weather
     else if (data.interval == -2)
     {
-        if (sectorinfo->rain_enabled)
+        if(sectorinfo->GetWeatherEnabled(data.value))
         {
-            sectorinfo->rain_enabled = false;
-            psserver->GetWeatherManager()->StopWeather(sectorinfo);
+            sectorinfo->SetWeatherEnabled(data.value, false);
+            psserver->GetWeatherManager()->StopWeather(sectorinfo, data.value);
             psserver->SendSystemInfo(me->clientnum,"Automatic weather stopped in sector %s",
                                  data.sector.GetDataSafe());
         }

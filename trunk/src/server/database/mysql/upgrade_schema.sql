@@ -1495,6 +1495,50 @@ ALTER TABLE `item_instances` ADD COLUMN `prefix` INTEGER UNSIGNED NOT NULL DEFAU
  ADD COLUMN `icon` VARCHAR(255)  DEFAULT NULL COMMENT 'Defines an icon to be placed as replacement in case this modifier is selected. (priority rule: adjective, suffix, prefix)' AFTER `mesh`;
  UPDATE `server_options` SET `option_value`='1255' WHERE `option_name`='db_version';
 
+#1256 - Stefano Angeleri - Added support for automatic fog and snow events.
+ALTER TABLE `planeshift`.`sectors` MODIFY COLUMN `name` VARCHAR(30)  CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL COMMENT 'The name of the sector (as defined in map files)',
+ MODIFY COLUMN `rain_enabled` CHAR(1)  CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT 'N' COMMENT 'Sets if automatic rain should trigger. Put Y to enable it, N to disable it.',
+ MODIFY COLUMN `rain_min_gap` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Sets the minimum time between two automatically triggered rain events.',
+ MODIFY COLUMN `rain_max_gap` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Sets the maximum time between two automatically triggered rain events.',
+ MODIFY COLUMN `rain_min_duration` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Sets the minimum duration of an automatically triggered rain event.',
+ MODIFY COLUMN `rain_max_duration` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Sets the maximum duration of an automatically triggered snow event.',
+ MODIFY COLUMN `rain_min_drops` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Sets the minimum amount of drops in an automatically triggered rain events.',
+ MODIFY COLUMN `rain_max_drops` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Sets the maximum amount of drops in an automatically triggered rain events.',
+ MODIFY COLUMN `rain_min_fade_in` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Sets the minimum time the automatically triggered rain event will take to reach the drops amount.',
+ MODIFY COLUMN `rain_max_fade_in` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Sets the maximum time the automatically triggered rain event will take to reach the drops amount.',
+ MODIFY COLUMN `rain_min_fade_out` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Sets the minimum time the automatically triggered event will take to disappear at its end.',
+ MODIFY COLUMN `rain_max_fade_out` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Sets the maximum time the automatically triggered event will take to disappear at its end.',
+ MODIFY COLUMN `lightning_min_gap` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Sets the minimum time between two automatic lightnings during a rain event.',
+ MODIFY COLUMN `lightning_max_gap` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Sets the maximum time between two automatic lightnings during a rain event.',
+ MODIFY COLUMN `collide_objects` TINYINT(1)  NOT NULL DEFAULT 0 COMMENT 'Determines if the items dropped in this sector should have collision detection always enabled.',
+ MODIFY COLUMN `non_transient_objects` TINYINT(4)  NOT NULL DEFAULT 0 COMMENT 'Determines if the items dropped in this sector should be transient.',
+ MODIFY COLUMN `god_name` VARCHAR(45)  CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT 'Laanx' COMMENT 'Sets a name of an entity associated to the sector as overseer.',
+ ADD COLUMN `snow_enabled` CHAR(1)  NOT NULL DEFAULT 'N' COMMENT 'Sets if automatic snow should trigger. Put Y to enable it, N to disable it.' AFTER `rain_enabled`,
+ ADD COLUMN `fog_enabled` CHAR(1)  NOT NULL DEFAULT 'N' COMMENT 'Sets if automatic fog should trigger. Put Y to enable it, N to disable it.' AFTER `snow_enabled`,
+ ADD COLUMN `snow_min_gap` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Sets the minimum time between two automatically triggered snow events.' AFTER `lightning_max_gap`,
+ ADD COLUMN `snow_max_gap` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Sets the maximum time between two automatically triggered snow events.' AFTER `snow_min_gap`,
+ ADD COLUMN `snow_min_duration` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Sets the minimum duration of an automatically triggered snow event.' AFTER `snow_max_gap`,
+ ADD COLUMN `snow_max_duration` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Sets the maximum duration of an automatically triggered snow event.' AFTER `snow_min_duration`,
+ ADD COLUMN `snow_min_flakes` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Sets the minimum amount of flakes in an automatically triggered snow event.' AFTER `snow_max_duration`,
+ ADD COLUMN `snow_max_flakes` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Sets the maximum amount of flakes in an automatically triggered snow event.' AFTER `snow_min_flakes`,
+ ADD COLUMN `snow_min_fade_in` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Sets the minimum time the automatically triggered snow event will take to reach the flakes amount.' AFTER `snow_max_flakes`,
+ ADD COLUMN `snow_max_fade_in` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Sets the maximum time the automatically triggered snow event will take to reach the flakes amount.' AFTER `snow_min_fade_in`,
+ ADD COLUMN `snow_min_fade_out` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Sets the minimum time the automatically triggered snow event will take to disappear at its end.' AFTER `snow_max_fade_in`,
+ ADD COLUMN `snow_max_fade_out` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Sets the maximum time that the automatically triggered snow event will take to disappear at its end.' AFTER `snow_min_fade_out`,
+ ADD COLUMN `fog_min_gap` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Sets the minimum time between two automatically triggered fog events.' AFTER `snow_max_fade_out`,
+ ADD COLUMN `fog_max_gap` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Sets the maximum time between two automatically triggered fog events.' AFTER `fog_min_gap`,
+ ADD COLUMN `fog_min_duration` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Sets the minimum duration of an automatically triggered fog event.' AFTER `fog_max_gap`,
+ ADD COLUMN `fog_max_duration` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Sets the maximum duration of an automatically triggered fog event.' AFTER `fog_min_duration`,
+ ADD COLUMN `fog_min_density` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Sets the minimum density of the fog in an automatically triggered fog event.' AFTER `fog_max_duration`,
+ ADD COLUMN `fog_max_density` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Sets the maximum density of the fog in an automatically triggered fog event.' AFTER `fog_min_density`,
+ ADD COLUMN `fog_min_fade_in` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Sets the minimum time that the automatically triggered fog event will take to reach its density.' AFTER `fog_max_density`,
+ ADD COLUMN `fog_max_fade_in` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Sets the maximum time that the automatically triggered fog event will take to reach its density.' AFTER `fog_min_fade_in`,
+ ADD COLUMN `fog_min_fade_out` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Sets the minimum time that the automatically triggered fog event will take to disappear at its end.' AFTER `fog_max_fade_in`,
+ ADD COLUMN `fog_max_fade_out` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Sets the maximum time that the automatically triggered fog event will take to disappear at its end.' AFTER `fog_min_fade_out`
+, COMMENT = 'Stores data about sectors available in game.';
+ UPDATE `server_options` SET `option_value`='1256' WHERE `option_name`='db_version';
+
+
 
 
 
