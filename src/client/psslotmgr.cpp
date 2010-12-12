@@ -77,7 +77,7 @@ bool psSlotManager::HandleEvent( iEvent& ev )
                 if(isPlacing)
                 {
                     // Drop the item at the current position.
-                    DropItem(csMouseEventHelper::GetModifiers(&ev) & CSMASK_SHIFT);
+                    DropItem(!(csMouseEventHelper::GetModifiers(&ev) & CSMASK_SHIFT));
                     return true;
                 }
                 else
