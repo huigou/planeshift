@@ -241,13 +241,6 @@ public:
     }
 
 private:
-    class MeshGen;
-    class MeshObj;
-    class Portal;
-    class Light;
-    class Sequence;
-    class Zone;
-
     // The various gfx feature options we have.
     enum gfxFeatures
     {
@@ -264,6 +257,10 @@ private:
     /********************************************************
      * Data structures representing components of the world.
      *******************************************************/
+
+    // forward declarations
+    class Sector;
+    class Zone;
 
     struct WaterArea
     {
@@ -330,6 +327,67 @@ private:
         csArray<bool> checked;
     };
 
+    class Trigger : public CS::Utility::AtomicRefCount
+    {
+    public:
+        Trigger(const char* name, iDocumentNode* data) : name(name), loaded(false),
+            data(data)
+        {
+        }
+
+        csString name;
+        bool loaded;
+        csRef<iDocumentNode> data;
+        csRef<iThreadReturn> status;
+    };
+
+    class Sequence : public CS::Utility::AtomicRefCount
+    {
+    public:
+        Sequence(const char* name, iDocumentNode* data) : name(name), loaded(false),
+            data(data)
+        {
+        }
+
+        csString name;
+        bool loaded;
+        csRef<iDocumentNode> data;
+        csRefArray<Trigger> triggers;
+        csRefArray<Sequence> sequences;
+        csRef<iThreadReturn> status;
+    };
+
+    class Light : public CS::Utility::AtomicRefCount
+    {
+    public:
+        Light(const char* name) : name(name), loaded(false)
+        {
+        }
+
+        inline bool InRange(const csBox3& curBBox, bool force)
+        {
+            return !loaded && (force || curBBox.Overlap(bbox));
+        }
+
+        inline bool OutOfRange(const csBox3& curBBox)
+        {
+            return object.IsValid() && !curBBox.Overlap(bbox);
+        }
+
+        csRef<iLight> object;
+        csString name;
+        csVector3 pos;
+        float radius;
+        csColor colour;
+        csLightDynamicType dynamic;
+        csLightAttenuationMode attenuation;
+        csLightType type;
+        csBox3 bbox;
+        csRefArray<Sequence> sequences;
+        csRefArray<Trigger> triggers;
+        bool loaded;
+    };
+
     class MeshFact : public CS::Utility::AtomicRefCount
     {
     public:
@@ -375,75 +433,6 @@ private:
         csStringArray submeshes;
     };
 
-    class Sector : public CS::Utility::AtomicRefCount
-    {
-    public:
-        Sector(const char* name) : name(name), init(false), isLoading(false), checked(false),
-          objectCount(0), priority(false)
-        {
-            ambient = csColor(0.0f);
-        }
-
-        ~Sector()
-        {
-            while(!waterareas.IsEmpty())
-            {
-                delete waterareas.Pop();
-            }
-        }
-
-        csString name;
-        bool init;
-        bool isLoading;
-        bool checked;
-        csString culler;
-        csColor ambient;
-        size_t objectCount;
-        csRef<iSector> object;
-        csWeakRef<Zone> parent;
-        csRefArray<MeshGen> meshgen;
-        csRefArray<MeshObj> alwaysLoaded;
-        csRefArray<MeshObj> meshes;
-        csRefArray<Portal> portals;
-        csRefArray<Portal> activePortals;
-        csRefArray<Light> lights;
-        csRefArray<Sequence> sequences;
-        csArray<WaterArea*> waterareas;
-        CS::Threading::ReadWriteMutex lock; // used during precaching
-        bool priority;
-    };
-
-    class MeshGen : public CS::Utility::AtomicRefCount
-    {
-    public:
-        MeshGen(const char* name, iDocumentNode* data) : name(name), data(data),
-            loading(false)
-        {
-        }
-
-        inline bool InRange(const csBox3& curBBox, bool force)
-        {
-            return !status.IsValid() && (force || curBBox.Overlap(bbox)) && !loading;
-        }
-
-        inline bool OutOfRange(const csBox3& curBBox)
-        {
-            return status.IsValid() && !curBBox.Overlap(bbox) && !loading;
-        }
-
-        csString name;
-        csRef<iDocumentNode> data;
-        bool loading;
-        csBox3 bbox;
-        csRef<iThreadReturn> status;
-        csRef<MeshObj> object;
-        csRefArray<Material> materials;
-        csArray<bool> matchecked;
-        csRefArray<MeshFact> meshfacts;
-        csArray<bool> mftchecked;
-        Sector* sector;
-    };
-
     class MeshObj : public CS::Utility::AtomicRefCount
     {
     public:
@@ -479,6 +468,38 @@ private:
         csArray<bool> mftchecked;
         Sector* sector;
         csRefArray<Sequence> sequences;
+        csRefArray<Trigger> triggers;
+    };
+
+    class MeshGen : public CS::Utility::AtomicRefCount
+    {
+    public:
+        MeshGen(const char* name, iDocumentNode* data) : name(name), data(data),
+            loading(false)
+        {
+        }
+
+        inline bool InRange(const csBox3& curBBox, bool force)
+        {
+            return !status.IsValid() && (force || curBBox.Overlap(bbox)) && !loading;
+        }
+
+        inline bool OutOfRange(const csBox3& curBBox)
+        {
+            return status.IsValid() && !curBBox.Overlap(bbox) && !loading;
+        }
+
+        csString name;
+        csRef<iDocumentNode> data;
+        bool loading;
+        csBox3 bbox;
+        csRef<iThreadReturn> status;
+        csRef<MeshObj> object;
+        csRefArray<Material> materials;
+        csArray<bool> matchecked;
+        csRefArray<MeshFact> meshfacts;
+        csArray<bool> mftchecked;
+        Sector* sector;
     };
 
     class Portal : public CS::Utility::AtomicRefCount
@@ -553,70 +574,88 @@ private:
         };
     };
 
-    class Light : public CS::Utility::AtomicRefCount
+    class Sector : public CS::Utility::AtomicRefCount
     {
     public:
-        Light(const char* name) : name(name), loaded(false)
+        Sector(const char* name) : name(name), init(false), isLoading(false), checked(false),
+          objectCount(0), priority(false)
+        {
+            ambient = csColor(0.0f);
+        }
+
+        ~Sector()
         {
         }
 
-        inline bool InRange(const csBox3& curBBox, bool force)
-        {
-            return !loaded && (force || curBBox.Overlap(bbox));
-        }
-
-        inline bool OutOfRange(const csBox3& curBBox)
-        {
-            return object.IsValid() && !curBBox.Overlap(bbox);
-        }
-
-        csRef<iLight> object;
         csString name;
-        csVector3 pos;
-        float radius;
-        csColor colour;
-        csLightDynamicType dynamic;
-        csLightAttenuationMode attenuation;
-        csLightType type;
-        csBox3 bbox;
+        bool init;
+        bool isLoading;
+        bool checked;
+        csString culler;
+        csColor ambient;
+        size_t objectCount;
+        csRef<iSector> object;
+        csWeakRef<Zone> parent;
+        csRefArray<MeshGen> meshgen;
+        csRefArray<MeshObj> alwaysLoaded;
+        csRefArray<MeshObj> meshes;
+        csRefArray<Portal> portals;
+        csRefArray<Portal> activePortals;
+        csRefArray<Light> lights;
         csRefArray<Sequence> sequences;
-        bool loaded;
-    };
-
-    class Trigger : public CS::Utility::AtomicRefCount
-    {
-    public:
-        Trigger(const char* name, iDocumentNode* data) : name(name), loaded(false),
-            data(data)
-        {
-        }
-
-        csString name;
-        bool loaded;
-        csRef<iDocumentNode> data;
-        csRef<iThreadReturn> status;
-    };
-
-    class Sequence : public CS::Utility::AtomicRefCount
-    {
-    public:
-        Sequence(const char* name, iDocumentNode* data) : name(name), loaded(false),
-            data(data)
-        {
-        }
-
-        csString name;
-        bool loaded;
-        csRef<iDocumentNode> data;
         csRefArray<Trigger> triggers;
-        csRef<iThreadReturn> status;
+        csArray<WaterArea> waterareas;
+        CS::Threading::ReadWriteMutex lock; // used during precaching
+        bool priority;
+    };
+
+    struct ParserData
+    {
+        csRefArray<iThreadReturn> rets;
+        csRef<Zone> zone;
+        csRef<Sector> currentSector;
+        csHash<csRef<Light>, csStringID> lights;
+        csHash<csRef<Sequence>, csStringID> sequences;
+        csHash<csRef<Trigger>, csStringID> triggers;
+        csString vfsPath;
+        csString path;
+        bool realRoot;
+        bool parsedMeshFact;
     };
 
     /***********************************************************************/
 
-    /* Shader parsing */
+    /* Parsing Methods */
+    // parser tokens
+    csStringHash xmltokens;
+#define CS_TOKEN_ITEM_FILE "src/common/bgloader/parser.tok"
+#define CS_TOKEN_LIST_TOKEN_PREFIX PARSERTOKEN_
+#include "cstool/tokenlist.h"
+#undef CS_TOKEN_ITEM_FILE
+#undef CS_TOKEN_LIST_TOKEN_PREFIX
+
+    
+    /* general methods */
+    void ParseMaterials(iDocumentNode* materials);
+    void ParseMaterialReference(const char* material, csRefArray<Material>& materials, csArray<bool>& checked, const char* parent, const char* type);
+    void ParseSector(iDocumentNode* sector, ParserData& data);
+    void ParsePortal(iDocumentNode* portal, ParserData& data);
+
+    /* shader methods */
     void ParseShaders();
     ShaderVar* ParseShaderVar(const csString& name, const csString& type, const csString& value, csRef<Texture>& tex, bool doChecks = true);
+    //void LoadShader(iDocumentNode* shader);
+
+    /* mesh methods */
+    void ParseMeshFact(iDocumentNode* meshfact, ParserData& data);
+    void ParseMeshObj(iDocumentNode* mesh, ParserData& data);
+    void ParseTriMesh(iDocumentNode* mesh, ParserData& data);
+    void ParseMeshGen(iDocumentNode* mesh, ParserData& data);
+
+    /* light/sequence/trigger methods */
+    void ParseLight(iDocumentNode* light, ParserData& data);
+    void ParseSequences(iDocumentNode* sequences, ParserData& data);
+    void ParseTriggers(iDocumentNode* triggers, ParserData& data);
 
     /* Internal unloading methods. */
     void CleanDisconnectedSectors(Sector* sector);
