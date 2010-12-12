@@ -549,7 +549,7 @@ public:
             csVector3 targetPos;
             anchor->GetPosition(sourcePos, sector);
             target->GetPosition(targetPos, sector);
-            offset = targetPos - sourcePos;
+            offset = sourcePos - targetPos;
         }
 
         // Get a unique identifier we can use to later cancel/stop this effect.
