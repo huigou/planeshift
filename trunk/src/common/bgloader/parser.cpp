@@ -42,7 +42,7 @@
 
 //#ifdef CS_DEBUG
 #undef  CS_ASSERT_MSG
-#define CS_ASSERT_MSG(msg, x) if(!x) printf("ART ERROR: %s\n", msg);
+#define CS_ASSERT_MSG(msg, x) if(!x) printf("ART ERROR: %s\n", msg)
 //#endif
 
 CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
@@ -83,6 +83,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                         }
                         else
                         {
+                            // Dispatch shader load to a thread.
                             rets.Push(tloader->LoadShader(vfs->GetCwd(), file->GetContentsValue()));
                         }
 
@@ -169,1109 +170,842 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
         return sv;
     }
 
+    void BgLoader::ParseMaterials(iDocumentNode* materialsNode)
+    {
+        csRef<iDocumentNodeIterator> it = materialsNode->GetNodes("material");
+        while(it->HasNext())
+        {
+            csRef<iDocumentNode> materialNode = it->Next();
+            csRef<Material> m = csPtr<Material>(new Material(materialNode->GetAttributeValue("name")));
+            if(m.IsValid())
+            {
+                CS::Threading::ScopedWriteLock lock(mLock);
+                materials.Put(mStringSet.Request(m->name), m);
+            }
+            else
+            {
+                csString msg;
+                msg.Format("Failed to create material '%s'", materialNode->GetAttributeValue("name"));
+                CS_ASSERT_MSG(msg.GetData(), false);
+                continue;
+            }
+
+            // Parse the texture for a material. Construct a shader variable for it.
+            csRef<iDocumentNodeIterator> nodeIt = materialNode->GetNodes();
+            while(nodeIt->HasNext())
+            {
+                csRef<iDocumentNode> node(nodeIt->Next());
+                csStringID id = xmltokens.Request(node->GetValue());
+                switch(id)
+                {
+                    case PARSERTOKEN_TEXTURE:
+                    case PARSERTOKEN_SHADERVAR:
+                    {
+                        csString varName;
+                        csString varType;
+                        csString varValue(node->GetContentsValue());
+                        csRef<Texture> texture;
+
+                        if(id == PARSERTOKEN_TEXTURE)
+                        {
+                            varName = "tex diffuse";
+                            varType = "texture";
+                        }
+                        else
+                        {
+                            varName = node->GetAttributeValue("name");
+                            varType = node->GetAttributeValue("type");
+                        }
+
+                        ShaderVar* sv = ParseShaderVar(varName, varType, varValue, texture, id != PARSERTOKEN_TEXTURE);
+                        if(!sv)
+                        {
+                            // no result probably means it wasn't validated for the shaders we use
+                            // if it was a parse error, the function already throws an error
+                            csString msg;
+                            msg.Format("failed to parse shadervar '%s' in material '%s'!", varName.GetData(), m->name.GetData());
+                            CS_ASSERT_MSG(msg.GetData(), false);
+                            continue;
+                        }
+                        else if(sv->type == csShaderVariable::TEXTURE && !texture.IsValid())
+                        {
+                            csString msg;
+                            msg.Format("Invalid texture reference '%s' in shadervar '%s' in material '%s'!",
+                                        varValue.GetData(), varName.GetData(), m->name.GetData());
+                            CS_ASSERT_MSG(msg.GetData(), false);
+                        }
+                        else
+                        {
+                            m->shadervars.Push(*sv);
+                            if(sv->type == csShaderVariable::TEXTURE && texture.IsValid())
+                            {
+                                m->textures.Push(texture);
+                                m->checked.Push(false);
+                            }
+                        }
+                        delete sv;
+                    }
+                    break;
+
+                    case PARSERTOKEN_SHADER:
+                    {
+                        m->shaders.Push(Shader(node->GetAttributeValue("type"), node->GetContentsValue()));
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    void BgLoader::ParseMaterialReference(const char* name, csRefArray<Material>& materialArray, csArray<bool>& checked, const char* parent, const char* type)
+    {
+        csRef<Material> material;
+        {
+            CS::Threading::ScopedReadLock lock(mLock);
+            material = materials.Get(mStringSet.Request(name), csRef<Material>());
+        }
+
+        if(material.IsValid())
+        {
+            materialArray.Push(material);
+            checked.Push(false);
+        }
+        else
+        {
+            // Validation.
+            csString msg;
+            msg.Format("Invalid material reference '%s' in %s", name, type);
+            if(parent)
+            {
+                msg.AppendFmt(" '%s'", parent);
+            }
+            CS_ASSERT_MSG(msg.GetData(), false);
+        }
+    }
+
+    void BgLoader::ParsePortal(iDocumentNode* portalNode, ParserData& parserData)
+    {
+        csRef<iDocumentNodeIterator> portalsIt(portalNode->GetNodes("portal"));
+        while(portalsIt->HasNext())
+        {
+            csRef<iDocumentNode> portalNode(portalsIt->Next());
+            csRef<Portal> p = csPtr<Portal>(new Portal(portalNode->GetAttributeValue("name")));
+
+            csRef<iDocumentNodeIterator> nodeIt(portalNode->GetNodes());
+            while(nodeIt->HasNext())
+            {
+                csRef<iDocumentNode> node(nodeIt->Next());
+                csStringID id = xmltokens.Request(node->GetValue());
+                switch(id)
+                {
+                    case PARSERTOKEN_MATRIX:
+                    {
+                        p->warp = true;
+                        syntaxService->ParseMatrix(node, p->matrix);
+                    }
+                    break;
+
+                    case PARSERTOKEN_WV:
+                    {
+                        p->warp = true;
+                        syntaxService->ParseVector(node, p->wv);
+                    }
+                    break;
+
+                    case PARSERTOKEN_WW:
+                    {
+                        p->warp = true;
+                        p->ww_given = true;
+                        syntaxService->ParseVector(node, p->ww);
+                    }
+                    break;
+
+                    case PARSERTOKEN_FLOAT:
+                    {
+                        p->pfloat = true;
+                    }
+                    break;
+
+                    case PARSERTOKEN_CLIP:
+                    {
+                        p->clip = true;
+                    }
+                    break;
+
+                    case PARSERTOKEN_ZFILL:
+                    {
+                        p->zfill = true;
+                    }
+                    break;
+
+                    case PARSERTOKEN_AUTORESOLVE:
+                    {
+                        p->autoresolve = true;
+                    }
+                    break;
+
+                    case PARSERTOKEN_SECTOR:
+                    {
+                        csString targetSector = node->GetContentsValue();
+                        {
+                            CS::Threading::ScopedReadLock lock(sLock);
+                            p->targetSector = sectorHash.Get(sStringSet.Request(targetSector), csRef<Sector>());
+                        }
+
+                        if(!p->targetSector.IsValid())
+                        {
+                            p->targetSector = csPtr<Sector>(new Sector(targetSector));
+                            CS::Threading::ScopedWriteLock lock(sLock);
+                            sectors.Push(p->targetSector);
+                            sectorHash.Put(sStringSet.Request(targetSector), p->targetSector);
+                        }
+                    }
+                    break;
+
+                    case PARSERTOKEN_V:
+                    {
+                        csVector3 vertex;
+                        syntaxService->ParseVector(node, vertex);
+                        p->poly.AddVertex(vertex);
+                        p->bbox.AddBoundingVertex(vertex);
+                    }
+                    break;
+                }
+            }
+
+            if(!p->ww_given)
+            {
+                p->ww = p->wv;
+            }
+
+            p->transform = csReversibleTransform(p->matrix.GetInverse(), p->ww - p->matrix * p->wv);
+            {
+                CS::Threading::ScopedWriteLock lock(parserData.currentSector->lock);
+                parserData.currentSector->portals.Push(p);
+            }
+        }
+    }
+
+    void BgLoader::ParseLight(iDocumentNode* lightNode, ParserData& parserData)
+    {
+        csRef<Light> l = csPtr<Light>(new Light(lightNode->GetAttributeValue("name")));
+        {
+            CS::Threading::ScopedWriteLock lock(sLock);
+            parserData.lights.Put(sStringSet.Request(l->name), l);
+        }
+
+        // set default values
+        l->attenuation = CS_ATTN_LINEAR;
+        l->dynamic = CS_LIGHT_DYNAMICTYPE_STATIC;
+        l->type = CS_LIGHT_POINTLIGHT;
+
+        csRef<iDocumentNodeIterator> nodeIt(lightNode->GetNodes());
+        while(nodeIt->HasNext())
+        {
+            csRef<iDocumentNode> node(nodeIt->Next());
+            csStringID id = xmltokens.Request(node->GetValue());
+            switch(id)
+            {
+                case PARSERTOKEN_ATTENUATION:
+                {
+                    csStringID type = xmltokens.Request(node->GetContentsValue());
+                    switch(type)
+                    {
+                        case PARSERTOKEN_NONE:
+                        {
+                            l->attenuation = CS_ATTN_NONE;
+                        }
+                        break;
+
+                        case PARSERTOKEN_LINEAR:
+                        {
+                            l->attenuation = CS_ATTN_LINEAR;
+                        }
+                        break;
+
+                        case PARSERTOKEN_INVERSE:
+                        {
+                            l->attenuation = CS_ATTN_INVERSE;
+                        }
+                        break;
+
+                        case PARSERTOKEN_REALISTIC:
+                        {
+                            l->attenuation = CS_ATTN_REALISTIC;
+                        }
+                        break;
+
+                        case PARSERTOKEN_CLQ:
+                        {
+                            l->attenuation = CS_ATTN_CLQ;
+                        }
+                        break;
+                    }
+                }
+                break;
+
+                case PARSERTOKEN_DYNAMIC:
+                {
+                    l->dynamic = CS_LIGHT_DYNAMICTYPE_PSEUDO;
+                }
+                break;
+
+                case PARSERTOKEN_CENTER:
+                {
+                    syntaxService->ParseVector(node, l->pos);
+                    l->bbox.SetCenter(l->pos);
+                }
+                break;
+                
+                case PARSERTOKEN_RADIUS:
+                {
+                    csVector3 size(node->GetContentsValueAsFloat());
+                    l->bbox.SetSize(size);
+                }
+                break;
+
+                case PARSERTOKEN_COLOR:
+                {
+                    syntaxService->ParseColor(node, l->colour);
+                }
+                break;
+            }
+        }
+
+        {
+            CS::Threading::ScopedWriteLock lock(parserData.currentSector->lock);
+            parserData.currentSector->lights.Push(l);
+        }
+    }
+
+    void BgLoader::ParseSector(iDocumentNode* sectorNode, ParserData& parserData)
+    {
+        csRef<Sector> s;
+        csString sectorName = sectorNode->GetAttributeValue("name");
+        {
+            CS::Threading::ScopedReadLock lock(sLock);
+            s = sectorHash.Get(sStringSet.Request(sectorName), csRef<Sector>());
+        }
+
+        // This sector may have already been created (referenced by a portal somewhere else).
+        if(!s.IsValid())
+        {
+            // But if not then create its representation.
+            s = csPtr<Sector>(new Sector(sectorName));
+            CS::Threading::ScopedWriteLock lock(sLock);
+            sectors.Push(s);
+            sectorHash.Put(sStringSet.Request(sectorName), s);
+        }
+
+        if(parserData.zone.IsValid())
+        {
+            s->parent = parserData.zone;
+            parserData.zone->sectors.Push(s);
+        }
+
+        // let the other parser functions know about us
+        parserData.currentSector = s;
+
+        // set this sector as initialized
+        s->init = true;
+
+        csRef<iDocumentNodeIterator> it(sectorNode->GetNodes());
+        while(it->HasNext())
+        {
+            csRef<iDocumentNode> node(it->Next());
+            csStringID id = xmltokens.Request(node->GetValue());
+            switch(id)
+            {
+                case PARSERTOKEN_CULLERP:
+                {
+                    s->culler = node->GetContentsValue();
+                }
+                break;
+
+                case PARSERTOKEN_AMBIENT:
+                {
+                    s->ambient = csColor(node->GetAttributeValueAsFloat("red"),
+                                         node->GetAttributeValueAsFloat("green"),
+                                         node->GetAttributeValueAsFloat("blue"));
+                }
+                break;
+
+                case PARSERTOKEN_KEY:
+                {
+                    if(csString("water").Compare(node->GetAttributeValue("name")))
+                    {
+                        csRef<iDocumentNodeIterator> areasIt(node->GetNodes("area"));
+                        while(areasIt->HasNext())
+                        {
+                            csRef<iDocumentNode> areaNode(areasIt->Next());
+                            WaterArea area;
+                            csRef<iDocumentNode> colourNode = areaNode->GetNode("colour");
+                            if(colourNode.IsValid())
+                            {
+                                syntaxService->ParseColor(colourNode, area.colour);
+                            }
+                            else
+                            {
+                                area.colour = csColor4(0.0f, 0.17f, 0.49f, 0.6f);
+                            }
+
+                            csRef<iDocumentNodeIterator> vs = areaNode->GetNodes("v");
+                            while(vs->HasNext())
+                            {
+                                csRef<iDocumentNode> v(vs->Next());
+                                csVector3 vector;
+                                syntaxService->ParseVector(v, vector);
+                                area.bbox.AddBoundingVertex(vector);
+                            }
+
+                            {
+                                CS::Threading::ScopedWriteLock lock(parserData.currentSector->lock);
+                                parserData.currentSector->waterareas.Push(area);
+                            }
+                        }
+                    }
+                }
+                break;
+
+                case PARSERTOKEN_PORTALS:
+                {
+                    ParsePortal(node, parserData);
+                }
+                break;
+
+                case PARSERTOKEN_LIGHT:
+                {
+                    ParseLight(node, parserData);
+                }
+                break;
+
+                case PARSERTOKEN_MESHOBJ:
+                {
+                    ParseMeshObj(node, parserData);
+                }
+                break;
+
+                case PARSERTOKEN_TRIMESH:
+                {
+                    ParseTriMesh(node, parserData);
+                }
+                break;
+
+                case PARSERTOKEN_MESHGEN:
+                {
+                    ParseMeshGen(node, parserData);
+                }
+                break;
+            }
+        }
+    }
+
+    void BgLoader::ParseSequences(iDocumentNode* sequencesNode, ParserData& parserData)
+    {
+        // do a 2 pass parsing of sequences
+        // first create all sequences.
+        csRef<iDocumentNodeIterator> sequenceIt(sequencesNode->GetNodes("sequence"));
+        while(sequenceIt->HasNext())
+        {
+            csRef<iDocumentNode> sequenceNode(sequenceIt->Next());
+            csRef<Sequence> seq = csPtr<Sequence>(new Sequence(sequenceNode->GetAttributeValue("name"), sequenceNode));
+            {
+                CS::Threading::ScopedWriteLock lock(sLock);
+                parserData.sequences.Put(sStringSet.Request(seq->name), seq);
+            }
+            CS_ASSERT_MSG("Created invalid sequence!", seq.IsValid());
+        }
+
+        // now actually parse them.
+        sequenceIt = sequencesNode->GetNodes("sequence");
+        while(sequenceIt->HasNext())
+        {
+            csRef<iDocumentNode> sequenceNode(sequenceIt->Next());
+            csRef<Sequence> seq;
+            {
+                CS::Threading::ScopedWriteLock lock(sLock);
+                seq = parserData.sequences.Get(sStringSet.Request(sequenceNode->GetAttributeValue("name")), csRef<Sequence>());
+            }
+            CS_ASSERT_MSG("Created invalid sequence!", seq.IsValid());
+
+            bool loaded = false;
+            csRef<iDocumentNodeIterator> nodeIt(sequenceNode->GetNodes());
+            while(nodeIt->HasNext())
+            {
+                csRef<iDocumentNode> node(nodeIt->Next());
+                csStringID id = xmltokens.Request(node->GetValue());
+                bool parsed = true;
+                switch(id)
+                {
+                    // sequence types operating on a sector.
+                    case PARSERTOKEN_SETAMBIENT:
+                    case PARSERTOKEN_FADEAMBIENT:
+                    case PARSERTOKEN_SETFOG:
+                    case PARSERTOKEN_FADEFOG:
+                    {
+                        CS::Threading::ScopedWriteLock lock(sLock);
+                        csRef<Sector> s = sectorHash.Get(sStringSet.Request(node->GetAttributeValue("sector")), csRef<Sector>());
+                        s->sequences.Push(seq);
+                    }
+                    break;
+
+                    // sequence types operating on a mesh.
+                    case PARSERTOKEN_SETCOLOR:
+                    case PARSERTOKEN_FADECOLOR:
+                    case PARSERTOKEN_MATERIAL:
+                    case PARSERTOKEN_ROTATE:
+                    case PARSERTOKEN_MOVE:
+                    {
+                        CS::Threading::ScopedWriteLock lock(meshLock);
+                        csRef<MeshObj> m = meshes.Get(meshStringSet.Request(node->GetAttributeValue("mesh")), csRef<MeshObj>());
+                        m->sequences.Push(seq);
+                    }
+                    break;
+
+                    // sequence types operating on a light.
+                    case PARSERTOKEN_ROTATELIGHT:
+                    case PARSERTOKEN_MOVELIGHT:
+                    case PARSERTOKEN_FADELIGHT:
+                    case PARSERTOKEN_SETLIGHT:
+                    {
+                        CS::Threading::ScopedWriteLock lock(sLock);
+                        csRef<Light> l = parserData.lights.Get(sStringSet.Request(node->GetAttributeValue("light")), csRef<Light>());
+                        l->sequences.Push(seq);
+                    }
+                    break;
+
+                    // sequence types operating on a sequence.
+                    case PARSERTOKEN_RUN:
+                    {
+                        CS::Threading::ScopedWriteLock lock(sLock);
+                        csRef<Sequence> dep = parserData.sequences.Get(sStringSet.Request(node->GetAttributeValue("sequence")), csRef<Sequence>());
+                        dep->sequences.Push(seq);
+                    }
+                    break;
+
+                    // sequence types operating on a trigger.
+                    case PARSERTOKEN_ENABLE:
+                    case PARSERTOKEN_DISABLE:
+                    case PARSERTOKEN_CHECK:
+                    case PARSERTOKEN_TEST:
+                    {
+                        CS::Threading::ScopedWriteLock lock(sLock);
+                        csRef<Trigger> t = parserData.triggers.Get(sStringSet.Request(node->GetAttributeValue("trigger")), csRef<Trigger>());
+                        if(!t.IsValid())
+                        {
+                            // trigger doesn't exist, yet - create it
+                            t = csPtr<Trigger>(new Trigger(node->GetAttributeValue("trigger"), 0));
+                            csString msg;
+                            msg.Format("created trigger %s that is referenced by a sequence, but didn't exist, yet!",
+                                        t->name.GetData());
+                            CS_ASSERT_MSG(msg.GetData(), false);
+
+                            parserData.triggers.Put(sStringSet.Request(t->name), t);
+                        }
+                        seq->triggers.Push(t);
+                    }
+                    break;
+
+                    // miscallenous sequence types.
+                    case PARSERTOKEN_DELAY:
+                    case PARSERTOKEN_SETVAR:
+                    default:
+                    {
+                        parsed = false;
+                    }
+                    break;
+                }
+                loaded |= parsed;
+            }
+
+            CS_ASSERT_MSG("Unknown sequence type!", loaded);
+        }
+    }
+
+    void BgLoader::ParseTriggers(iDocumentNode* triggers, ParserData& parserData)
+    {
+        csRef<iDocumentNodeIterator> triggerIt(triggers->GetNodes("trigger"));
+        while(triggerIt->HasNext())
+        {
+            csRef<iDocumentNode> triggerNode(triggerIt->Next());
+            csRef<Trigger> trigger;
+            {
+                const char* triggerName = triggerNode->GetAttributeValue("name");
+                CS::Threading::ScopedWriteLock lock(sLock);
+                trigger = parserData.triggers.Get(sStringSet.Request(triggerName), csRef<Trigger>());
+                if(!trigger.IsValid())
+                {
+                    trigger = csPtr<Trigger>(new Trigger(triggerName, triggerNode));
+                    parserData.triggers.Put(sStringSet.Request(triggerName), trigger);
+                }
+                else
+                {
+                    trigger->data = triggerNode;
+                }
+            }
+            bool loaded = false;
+
+            csRef<iDocumentNodeIterator> nodeIt(triggerNode->GetNodes());
+            while(nodeIt->HasNext())
+            {
+                csRef<iDocumentNode> node(nodeIt->Next());
+                csStringID id = xmltokens.Request(node->GetValue());
+                bool parsed = true;
+                switch(id)
+                {
+                    // triggers fired by a sector.
+                    case PARSERTOKEN_SECTORVIS:
+                    {
+                        CS::Threading::ScopedWriteLock lock(sLock);
+                        csRef<Sector> s = sectorHash.Get(sStringSet.Request(node->GetAttributeValue("sector")), csRef<Sector>());
+                        s->triggers.Push(trigger);
+                    }
+                    break;
+
+                    // triggers fired by a mesh.
+                    case PARSERTOKEN_ONCLICK:
+                    {
+                        CS::Threading::ScopedWriteLock lock(meshLock);
+                        csRef<MeshObj> m = meshes.Get(meshStringSet.Request(node->GetAttributeValue("mesh")), csRef<MeshObj>());
+                        m->triggers.Push(trigger);
+                    }
+                    break;
+
+                    // triggers fired by a light.
+                    case PARSERTOKEN_LIGHTVALUE:
+                    {
+                        CS::Threading::ScopedWriteLock lock(sLock);
+                        csRef<Light> l = parserData.lights.Get(sStringSet.Request(node->GetAttributeValue("light")), csRef<Light>());
+                        l->triggers.Push(trigger);
+                    }
+                    break;
+
+                    // triggers fired by a sequence.
+                    case PARSERTOKEN_FIRE:
+                    {
+                        CS::Threading::ScopedWriteLock lock(sLock);
+                        csRef<Sequence> seq = parserData.sequences.Get(sStringSet.Request(node->GetAttributeValue("sequence")), csRef<Sequence>());
+                        seq->triggers.Push(trigger);
+                    }
+                    break;
+
+                    // triggers fired by a miscallenous operation.
+                    case PARSERTOKEN_MANUAL:
+                    default:
+                    {
+                        parsed = false;
+                    }
+                    break;
+                }
+
+                loaded |= parsed;
+            }
+
+            CS_ASSERT_MSG("Unknown trigger type!", loaded);
+        }
+    }
+
     THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive)
     {
         // Make sure shaders are parsed at this point.
         ParseShaders();
 
+        ParserData data;
+        data.path = path;
+
         // Don't parse folders.
-        csString vfsPath(path);
-        if(vfsPath.GetAt(vfsPath.Length()-1) == '/')
+        data.vfsPath = path;
+        if(data.vfsPath.GetAt(data.vfsPath.Length()-1) == '/')
             return false;
 
-        if(vfs->Exists(vfsPath))
+        if(vfs->Exists(data.vfsPath))
         {
-            // For the plugin and shader loads.
-            csRefArray<iThreadReturn> rets;
-
-            // Zone for this file.
-            csRef<Zone> zone;
-
-            // Lights and sequences in this file (for sequences and triggers).
-            csHash<Light*, csStringID> lights;
-            csHash<Sequence*, csStringID> sequences;
-
             // Restores any directory changes.
             csVfsDirectoryChanger dirchange(vfs);
 
-            // XML doc structures.
-            csRef<iDocumentSystem> docsys = csQueryRegistry<iDocumentSystem>(object_reg);
-            csRef<iDocument> doc = docsys->CreateDocument();
-            csRef<iDataBuffer> data = vfs->ReadFile(path);
-            if(!data.IsValid())
-                return false;
-
-            doc->Parse(data, true);
-
-            // Check that it's an xml file.
-            if(!doc->GetRoot())
-                return false;
-
-            if(!recursive)
+            csRef<iDocumentNode> root;
             {
-                dirchange.ChangeTo(vfsPath.Truncate(vfsPath.FindLast('/')+1));
-            }
-            else
-            {
-                vfsPath = vfs->GetCwd();
-            }
+                // XML doc structures.
+                csRef<iDocumentSystem> docsys = csQueryRegistry<iDocumentSystem>(object_reg);
+                csRef<iDocument> doc = docsys->CreateDocument();
+                csRef<iDataBuffer> buffer = vfs->ReadFile(data.path);
+                if(!buffer.IsValid())
+                    return false;
 
-            // Begin document parsing.
-            bool realRoot = false;
-            csRef<iDocumentNode> root = doc->GetRoot()->GetNode("world");
-            if(!root.IsValid())
-            {
-                root = doc->GetRoot()->GetNode("library");
-                if(!root)
+                doc->Parse(buffer, true);
+
+                // Check that it's an xml file.
+                if(!doc->GetRoot())
+                    return false;
+
+                if(!recursive)
                 {
-                    realRoot = true;
-                    root = doc->GetRoot();
+                    dirchange.ChangeTo(data.vfsPath.Truncate(data.vfsPath.FindLast('/')+1));
                 }
-            }
-            else
-            {
-                csString zonen(path);
-                zonen = zonen.Slice(zonen.FindLast('/')+1);
-                zone = csPtr<Zone>(new Zone(zonen));
-                CS::Threading::ScopedWriteLock lock(zLock);
-                zones.Put(zStringSet.Request(zonen.GetData()), zone);
+                else
+                {
+                    data.vfsPath = vfs->GetCwd();
+                }
+
+                // Begin document parsing.
+                data.realRoot = false;
+                root = doc->GetRoot()->GetNode("world");
+                if(!root.IsValid())
+                {
+                    root = doc->GetRoot()->GetNode("library");
+                    if(!root)
+                    {
+                        data.realRoot = true;
+                        root = doc->GetRoot();
+                    }
+                }
+                else
+                {
+                    csString zonen(path);
+                    zonen = zonen.Slice(zonen.FindLast('/')+1);
+                    data.zone = csPtr<Zone>(new Zone(zonen));
+
+                    CS::Threading::ScopedWriteLock lock(zLock);
+                    zones.Put(zStringSet.Request(zonen.GetData()), data.zone);
+                }
             }
 
             if(root.IsValid())
             {
-                csRef<iDocumentNode> node;
-                csRef<iDocumentNodeIterator> nodeItr;
-
-                // Parse referenced libraries.
-                nodeItr = root->GetNodes("library");
-                while(nodeItr->HasNext())
+                csRef<iDocumentNodeIterator> nodeIt(root->GetNodes());
+                while(nodeIt->HasNext())
                 {
-                    node = nodeItr->Next();
-                    PrecacheDataTC(ret, false, node->GetContentsValue(), true);
-                }
-
-                // Parse needed plugins.
-                node = root->GetNode("plugins");
-                if(node.IsValid())
-                {
-                    rets.Push(tloader->LoadNode(vfs->GetCwd(), node));
-                }
-
-                // Parse referenced shaders.
-                node = root->GetNode("shaders");
-                if(node.IsValid())
-                {
-                    nodeItr = node->GetNodes("shader");
-                    while(nodeItr->HasNext())
+                    csRef<iDocumentNode> node(nodeIt->Next());
+                    csStringID id = xmltokens.Request(node->GetValue());
+                    switch(id)
                     {
-                        bool loadShader = false;
-                        node = nodeItr->Next();
-                        node = node->GetNode("file");
-
+                        // Parse referenced libraries.
+                        case PARSERTOKEN_LIBRARY:
                         {
-                            // Keep track of shaders that have already been parsed.
-                            CS::Threading::ScopedWriteLock lock(sLock);
-                            if(shaders.Contains(node->GetContentsValue()) == csArrayItemNotFound)
-                            {
-                                shaders.Push(node->GetContentsValue());
-                                loadShader = true;
-                            }
+                            csString target(node->GetContentsValue());
+                            PrecacheDataTC(ret, false, target, target.FindFirst('/') == SIZET_NOT_FOUND);
                         }
+                        break;
 
-                        if(loadShader && parseShaders)
+                        // Parse needed plugins.
+                        case PARSERTOKEN_PLUGINS:
                         {
-                            // Dispatch shader load to a thread.
-                            if(blockShaderLoad)
-                            {
-                                rets.Push(tloader->LoadShader(vfs->GetCwd(), node->GetContentsValue()));
-                            }
-                            else
-                            {
-                                rets.Push(tloader->LoadShaderWait(vfs->GetCwd(), node->GetContentsValue()));
-                            }
+                            data.rets.Push(tloader->LoadNode(vfs->GetCwd(), node));
                         }
-                    }
-                }
+                        break;
 
-                // Parse all referenced textures.
-                node = root->GetNode("textures");
-                if(node.IsValid())
-                {
-                    nodeItr = node->GetNodes("texture");
-                    while(nodeItr->HasNext())
-                    {
-                        node = nodeItr->Next();
-                        csRef<Texture> t = csPtr<Texture>(new Texture(node->GetAttributeValue("name"), vfsPath, node));
+                        // Parse referenced shaders.
+                        case PARSERTOKEN_SHADERS:
                         {
-                            CS::Threading::ScopedWriteLock lock(tLock);
-                            textures.Put(tStringSet.Request(t->name), t);
-                        }
-                    }
-                }
-
-                // Parse all referenced materials.
-                node = root->GetNode("materials");
-                if(node.IsValid())
-                {
-                    nodeItr = node->GetNodes("material");
-                    while(nodeItr->HasNext())
-                    {
-                        node = nodeItr->Next();
-                        csRef<Material> m = csPtr<Material>(new Material(node->GetAttributeValue("name")));
-                        if(m.IsValid())
-                        {
-                            CS::Threading::ScopedWriteLock lock(mLock);
-                            materials.Put(mStringSet.Request(m->name), m);
-                        }
-                        else
-                        {
-                            csString msg;
-                            msg.Format("Failed to create material '%s'", node->GetAttributeValue("name"));
-                            CS_ASSERT_MSG(msg.GetData(), false);
-                        }
-
-                        // Parse the texture for a material. Construct a shader variable for it.
-                        if(node->GetNode("texture"))
-                        {
-                            node = node->GetNode("texture");
-                            ShaderVar sv("tex diffuse", csShaderVariable::TEXTURE);
-                            sv.value = node->GetContentsValue();
-                            m->shadervars.Push(sv);
-
-                            csRef<Texture> texture;
+                            csRef<iDocumentNodeIterator> shaderIt(node->GetNodes("shader"));
+                            while(shaderIt->HasNext())
                             {
-                                CS::Threading::ScopedReadLock lock(tLock);
-                                texture = textures.Get(tStringSet.Request(node->GetContentsValue()), csRef<Texture>());
+                                csRef<iDocumentNode> shader(shaderIt->Next());
 
-                                // Validation.
-                                csString msg;
-                                msg.Format("Invalid texture reference '%s' in material '%s'", node->GetContentsValue(), node->GetParent()->GetAttributeValue("name"));
-                                CS_ASSERT_MSG(msg.GetData(), texture.IsValid());
-                            }
-
-                            if(texture.IsValid())
-                            {
-                                m->textures.Push(texture);
-                                m->checked.Push(false);
-                            }
-
-                            node = node->GetParent();
-                        }
-
-                        // Parse the shaders attached to this material.
-                        csRef<iDocumentNodeIterator> nodeItr2 = node->GetNodes("shader");
-                        while(nodeItr2->HasNext())
-                        {
-                            node = nodeItr2->Next();
-                            m->shaders.Push(Shader(node->GetAttributeValue("type"), node->GetContentsValue()));
-                            node = node->GetParent();
-                        }
-
-                        // Parse the shader variables attached to this material.
-                        nodeItr2 = node->GetNodes("shadervar");
-                        while(nodeItr2->HasNext())
-                        {
-                            node = nodeItr2->Next();
-                            
-                            csString type(node->GetAttributeValue("type"));
-                            csString name(node->GetAttributeValue("name"));
-                            csString value(node->GetContentsValue());
-                            csRef<Texture> tex;
-                            ShaderVar* sv = ParseShaderVar(name, type, value, tex);
-                            if(!sv)
-                            {
-                                // no result probably means it wasn't validated for the shaders we use
-                                // if it was a parse error, the function already throws an error
-                                /*csString msg;
-                                msg.Format("failed to parse shadervar '%s' in material '%s'!", name.GetData(), m->name.GetData());
-                                CS_ASSERT_MSG(msg.GetData(), false);*/
-                                continue;
-                            }
-                            else if(sv->type == csShaderVariable::TEXTURE && !tex.IsValid())
-                            {
-                                csString msg;
-                                msg.Format("Invalid texture reference '%s' in shadervar '%s' in materials '%s'!",
-                                    value.GetData(), name.GetData(), m->name.GetData());
-                                CS_ASSERT_MSG(msg.GetData(), false);
-                            }
-                            else
-                            {
-                                m->shadervars.Push(*sv);
-                                if(sv->type == csShaderVariable::TEXTURE && tex.IsValid())
+                                csRef<iDocumentNode> fileNode(shader->GetNode("file"));
+                                if(fileNode.IsValid())
                                 {
-                                    m->textures.Push(tex);
-                                    m->checked.Push(false);
-                                }
-                            }
-                            delete sv;
-
-                            node = node->GetParent();
-                        }
-                    }
-                }
-
-                // Parse all mesh factories.
-                bool once = false;
-                nodeItr = root->GetNodes("meshfact");
-                while(nodeItr->HasNext())
-                {
-                    node = nodeItr->Next();
-                    csRef<MeshFact> mf = csPtr<MeshFact>(new MeshFact(node->GetAttributeValue("name"), vfsPath, node));
-
-                    if(!cache)
-                    {
-                        if(realRoot && !once && !nodeItr->HasNext())
-                        {
-                            // Load this file when needed to save memory.
-                            mf->data.Invalidate();
-                            mf->filename = csString(path).Slice(csString(path).FindLast('/')+1);
-                        }
-
-                        // Mark that we've already loaded a meshfact in this file.
-                        once = true;
-                    }
-
-                    // Read bbox data.
-                    csRef<iDocumentNode> cell = node->GetNode("params")->GetNode("cells");
-                    if(cell.IsValid())
-                    {
-                        cell = cell->GetNode("celldefault");
-                        if(cell.IsValid())
-                        {
-                            cell = cell->GetNode("size");
-                            mf->bboxvs.Push(csVector3(-1*cell->GetAttributeValueAsInt("x")/2,
-                                0, -1*cell->GetAttributeValueAsInt("z")/2));
-                            mf->bboxvs.Push(csVector3(cell->GetAttributeValueAsInt("x")/2,
-                                cell->GetAttributeValueAsInt("y"),
-                                cell->GetAttributeValueAsInt("z")/2));
-                        }
-                    }
-                    else
-                    {
-                        csRef<iDocumentNodeIterator> keys = node->GetNodes("key");
-                        while(keys->HasNext())
-                        {
-                            csRef<iDocumentNode> bboxdata = keys->Next();
-                            if(csString("bbox").Compare(bboxdata->GetAttributeValue("name")))
-                            {
-                                csRef<iDocumentNodeIterator> vs = bboxdata->GetNodes("v");
-                                while(vs->HasNext())
-                                {
-                                    bboxdata = vs->Next();
-                                    csVector3 vtex;
-                                    syntaxService->ParseVector(bboxdata, vtex);
-                                    mf->bboxvs.Push(vtex);
-                                }
-                                break;
-                            }
-                        }
-                    }
-
-                    // Parse mesh params to get the materials that we depend on.
-                    if(node->GetNode("params")->GetNode("material"))
-                    {
-                        csRef<Material> material;
-                        {
-                            CS::Threading::ScopedReadLock lock(mLock);
-                            material = materials.Get(mStringSet.Request(node->GetNode("params")->GetNode("material")->GetContentsValue()), csRef<Material>());
-
-                            // Validation.
-                            csString msg;
-                            msg.Format("Invalid material reference '%s' in meshfact '%s'", node->GetNode("params")->GetNode("material")->GetContentsValue(), node->GetAttributeValue("name"));
-                            CS_ASSERT_MSG(msg.GetData(), material.IsValid());
-                        }
-
-                        if(material.IsValid())
-                        {
-                            mf->materials.Push(material);
-                            mf->checked.Push(false);
-                        }
-                    }
-
-                    csRef<iDocumentNodeIterator> nodeItr3 = node->GetNode("params")->GetNodes("submesh");
-                    while(nodeItr3->HasNext())
-                    {
-                        csRef<iDocumentNode> node2 = nodeItr3->Next();
-                        if(node2->GetNode("material"))
-                        {
-                            csRef<Material> material;
-                            {
-                                CS::Threading::ScopedReadLock lock(mLock);
-                                material = materials.Get(mStringSet.Request(node2->GetNode("material")->GetContentsValue()), csRef<Material>());
-
-                                // Validation.
-                                csString msg;
-                                msg.Format("Invalid material reference '%s' in meshfact '%s'", node2->GetNode("material")->GetContentsValue(), node->GetAttributeValue("name"));
-                                CS_ASSERT_MSG(msg.GetData(), material.IsValid());
-                            }
-
-                            if(material.IsValid())
-                            {
-                                mf->materials.Push(material);
-                                mf->checked.Push(false);
-                                mf->submeshes.Push(node2->GetAttributeValue("name"));
-                            }
-                        }
-                    }
-
-                    nodeItr3 = node->GetNode("params")->GetNodes("mesh");
-                    while(nodeItr3->HasNext())
-                    {
-                        csRef<iDocumentNode> node2 = nodeItr3->Next();
-                        csRef<Material> material;
-                        {
-                            CS::Threading::ScopedReadLock lock(mLock);
-                            material = materials.Get(mStringSet.Request(node2->GetAttributeValue("material")), csRef<Material>());
-
-                            // Validation.
-                            csString msg;
-                            msg.Format("Invalid material reference '%s' in cal3d meshfact '%s' mesh '%s'",
-                                node2->GetAttributeValue("material"), node->GetAttributeValue("name"), node2->GetAttributeValue("name"));
-                            CS_ASSERT_MSG(msg.GetData(), material.IsValid());
-                        }
-
-                        if(material.IsValid())
-                        {
-                            mf->materials.Push(material);
-                            mf->checked.Push(false);
-                        }
-                    }
-
-                    // Parse terrain cells for materials.
-                    if(node->GetNode("params")->GetNode("cells"))
-                    {
-                        node = node->GetNode("params")->GetNode("cells")->GetNode("celldefault")->GetNode("basematerial");
-                        {
-                            csRef<Material> material;
-                            {    
-                                CS::Threading::ScopedReadLock lock(mLock);
-                                material = materials.Get(mStringSet.Request(node->GetContentsValue()), csRef<Material>());
-
-                                // Validation.
-                                csString msg;
-                                msg.Format("Invalid basematerial reference '%s' in terrain mesh", node->GetContentsValue());
-                                CS_ASSERT_MSG(msg.GetData(), material.IsValid());
-                            }
-
-                            if(material.IsValid())
-                            {
-                                mf->materials.Push(material);
-                                mf->checked.Push(false);
-                            }
-                        }
-                        node = node->GetParent()->GetParent();
-
-                        nodeItr3 = node->GetNodes("cell");
-                        while(nodeItr3->HasNext())
-                        {
-                            node = nodeItr3->Next();
-                            node = node->GetNode("feederproperties");
-                            if(node)
-                            {
-                                csRef<iDocumentNodeIterator> nodeItr4 = node->GetNodes("alphamap");
-                                while(nodeItr4->HasNext())
-                                {
-                                    csRef<iDocumentNode> node2 = nodeItr4->Next();
-                                    csRef<Material> material;
+                                    bool loadShader = false;
+                                    const char* fileName = fileNode->GetContentsValue();
                                     {
-                                        CS::Threading::ScopedReadLock lock(mLock);
-                                        material = materials.Get(mStringSet.Request(node2->GetAttributeValue("material")), csRef<Material>());
-
-                                        // Validation.
-                                        csString msg;
-                                        msg.Format("Invalid alphamap reference '%s' in terrain mesh", node2->GetAttributeValue("material"));
-                                        CS_ASSERT_MSG(msg.GetData(), material.IsValid());
-                                    }
-
-                                    if(material.IsValid())
-                                    {
-                                        mf->materials.Push(material);
-                                        mf->checked.Push(false);
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    CS::Threading::ScopedWriteLock lock(mfLock);
-                    meshfacts.Put(mfStringSet.Request(mf->name), mf);
-                }
-
-                // Parse all sectors.
-                nodeItr = root->GetNodes("sector");
-                while(nodeItr->HasNext())
-                {
-                    node = nodeItr->Next();
-
-                    csRef<Sector> s;
-                    csString sectorName = node->GetAttributeValue("name");
-                    {
-                        CS::Threading::ScopedReadLock lock(sLock);
-                        s = sectorHash.Get(sStringSet.Request(sectorName), csRef<Sector>());
-                    }
-
-                    // This sector may have already been created (referenced by a portal somewhere else).
-                    if(!s.IsValid())
-                    {
-                        // But if not then create its representation.
-                        s = csPtr<Sector>(new Sector(sectorName));
-                        CS::Threading::ScopedWriteLock lock(sLock);
-                        sectors.Push(s);
-                        sectorHash.Put(sStringSet.Request(sectorName), s);
-                    }
-
-                    if(zone.IsValid())
-                    {
-                        s->parent = zone;
-                        zone->sectors.Push(s);
-                    }
-
-                    // Get culler properties.
-                    s->init = true;
-                    s->culler = node->GetNode("cullerp")->GetContentsValue();
-
-                    // Get ambient lighting.
-                    if(node->GetNode("ambient"))
-                    {
-                        node = node->GetNode("ambient");
-                        s->ambient = csColor(node->GetAttributeValueAsFloat("red"),
-                            node->GetAttributeValueAsFloat("green"), node->GetAttributeValueAsFloat("blue"));
-                        node = node->GetParent();
-                    }
-
-                    // Get water bodies in this sector.
-                    csRef<iDocumentNodeIterator> nodeItr2 = node->GetNodes("key");
-                    while(nodeItr2->HasNext())
-                    {
-                        csRef<iDocumentNode> node2 = nodeItr2->Next();
-                        if(csString("water").Compare(node2->GetAttributeValue("name")))
-                        {
-                            csRef<iDocumentNodeIterator> nodeItr3 = node2->GetNodes("area");
-                            while(nodeItr3->HasNext())
-                            {
-                                csRef<iDocumentNode> area = nodeItr3->Next();
-                                WaterArea* wa = new WaterArea();
-                                {
-                                    CS::Threading::ScopedWriteLock lock(s->lock);
-                                    s->waterareas.Push(wa);
-                                }
-
-                                csRef<iDocumentNode> colour = area->GetNode("colour");
-                                if(colour.IsValid())
-                                {
-                                    syntaxService->ParseColor(colour, wa->colour);
-                                }
-                                else
-                                {
-                                    // Default.
-                                    wa->colour = csColor4(0.0f, 0.17f, 0.49f, 0.6f);
-                                }
-
-                                csRef<iDocumentNodeIterator> vs = area->GetNodes("v");
-                                while(vs->HasNext())
-                                {
-                                    csRef<iDocumentNode> v = vs->Next();
-                                    csVector3 vector;
-                                    syntaxService->ParseVector(v, vector);
-                                    wa->bbox.AddBoundingVertex(vector);
-                                }
-                            }
-                        }
-                    }
-
-                    // Get all mesh instances in this sector.
-                    nodeItr2 = node->GetNodes("meshobj");
-                    while(nodeItr2->HasNext())
-                    {
-                        csRef<iDocumentNode> node2 = nodeItr2->Next();
-                        csRef<MeshObj> m = csPtr<MeshObj>(new MeshObj(node2->GetAttributeValue("name"), vfsPath, node2));
-                        m->sector = s;
-
-                        // Get the position data for later.
-                        csRef<iDocumentNode> position = node2->GetNode("move");
-
-                        // Check for a params file and switch to use it to continue parsing.
-                        if(node2->GetNode("paramsfile"))
-                        {
-                            csRef<iDocument> pdoc = docsys->CreateDocument();
-                            csRef<iDataBuffer> pdata = vfs->ReadFile(node2->GetNode("paramsfile")->GetContentsValue());
-                            CS_ASSERT_MSG("Invalid params file.\n", pdata.IsValid());
-                            pdoc->Parse(pdata, true);
-                            node2 = pdoc->GetRoot();
-                        }
-
-                        // Parse all materials and shader variables this mesh depends on.
-                        csRef<iDocumentNodeIterator> nodeItr3 = node2->GetNode("params")->GetNodes("submesh");
-                        while(nodeItr3->HasNext())
-                        {
-                            csRef<iDocumentNode> node3 = nodeItr3->Next();
-                            if(node3->GetNode("material"))
-                            {
-                                csRef<Material> material;
-                                {
-                                    CS::Threading::ScopedReadLock lock(mLock);
-                                    material = materials.Get(mStringSet.Request(node3->GetNode("material")->GetContentsValue()), csRef<Material>());
-
-                                    // Validation.
-                                    csString msg;
-                                    msg.Format("Invalid material reference '%s' in meshobj '%s' submesh in sector '%s'", node3->GetNode("material")->GetContentsValue(), m->name.GetData(), s->name.GetData());
-                                    CS_ASSERT_MSG(msg.GetData(), material.IsValid());
-                                }
-
-                                if(material.IsValid())
-                                {
-                                    m->materials.Push(material);
-                                    m->matchecked.Push(false);
-                                }
-                            }
-
-                            csRef<iDocumentNodeIterator> nodeItr4 = node3->GetNodes("shadervar");
-                            while(nodeItr4->HasNext())
-                            {
-                                node3 = nodeItr4->Next();
-                                if(csString("texture").Compare(node3->GetAttributeValue("type")))
-                                {
-                                    csRef<Texture> texture;
-                                    {
-                                        CS::Threading::ScopedReadLock lock(tLock);
-                                        texture = textures.Get(tStringSet.Request(node3->GetContentsValue()), csRef<Texture>());
-
-                                        // Validation.
-                                        csString msg;
-                                        msg.Format("Invalid texture reference '%s' in meshobj shadervar", node3->GetContentsValue());
-                                        CS_ASSERT_MSG(msg.GetData(), texture.IsValid());
-                                    }
-
-                                    if(texture.IsValid())
-                                    {
-                                        m->textures.Push(texture);
-                                        m->texchecked.Push(false);
-                                    }
-                                }
-                                else
-                                {
-                                    // unknown type
-                                    csString msg;
-                                    msg.Format("unsupported variable type in shadervar '%s' in meshobj '%s' submesh in sector '%s': %s",
-                                        node3->GetAttributeValue("name"), m->name.GetData(), s->name.GetData(), node3->GetAttributeValue("type"));
-                                    CS_ASSERT_MSG(msg.GetData(), false);
-                                }
-                            }
-                        }
-
-                        node2 = node2->GetNode("params")->GetNode("factory");
-                        {
-                            csRef<MeshFact> meshfact;
-                            {
-                                CS::Threading::ScopedReadLock lock(mfLock);
-                                meshfact = meshfacts.Get(mfStringSet.Request(node2->GetContentsValue()), csRef<MeshFact>());
-
-                                // Validation.
-                                csString msg;
-                                msg.Format("Invalid factory reference '%s' in meshobj '%s' in sector '%s'", node2->GetContentsValue(),
-                                    node2->GetParent()->GetParent()->GetAttributeValue("name"), s->name.GetData());
-                                CS_ASSERT_MSG(msg.GetData(), meshfact.IsValid());
-                            }
-
-                            if(meshfact.IsValid())
-                            {
-                                // Calc bbox data.
-                                if(position.IsValid())
-                                {
-                                    csVector3 pos;
-                                    syntaxService->ParseVector(position->GetNode("v"), pos);
-
-                                    csMatrix3 rot;
-                                    if(position->GetNode("matrix"))
-                                    {
-                                        syntaxService->ParseMatrix(position->GetNode("matrix"), rot);
-                                    }
-
-                                    for(size_t v=0; v<meshfact->bboxvs.GetSize(); ++v)
-                                    {
-                                        if(position->GetNode("matrix"))
+                                        // Keep track of shaders that have already been parsed.
+                                        CS::Threading::ScopedWriteLock lock(sLock);
+                                        if(shaders.Contains(fileName) == csArrayItemNotFound)
                                         {
-                                            m->bbox.AddBoundingVertex(pos + rot * meshfact->bboxvs[v]);
+                                            shaders.Push(fileName);
+                                            loadShader = true;
+                                        }
+                                    }
+
+                                    if(loadShader && parseShaders)
+                                    {
+                                        // Dispatch shader load to a thread.
+                                        csRef<iThreadReturn> shaderRet = tloader->LoadShader(vfs->GetCwd(), fileName);
+                                        if(blockShaderLoad)
+                                        {
+                                            shaderRet->Wait();
                                         }
                                         else
                                         {
-                                            m->bbox.AddBoundingVertex(pos + meshfact->bboxvs[v]);
+                                            data.rets.Push(shaderRet);
                                         }
                                     }
                                 }
+                            }
+                        }
+                        break;
 
-                                m->meshfacts.Push(meshfact);
-                                m->mftchecked.Push(false);
-
-                                // Validation.
-                                nodeItr3 = node2->GetParent()->GetNodes("submesh");
-                                while(nodeItr3->HasNext())
+                        // Parse all referenced textures.
+                        case PARSERTOKEN_TEXTURES:
+                        {
+                            csRef<iDocumentNodeIterator> textureIt(node->GetNodes("texture"));
+                            while(textureIt->HasNext())
+                            {
+                                csRef<iDocumentNode> textureNode(textureIt->Next());
+                                csRef<Texture> t = csPtr<Texture>(new Texture(textureNode->GetAttributeValue("name"), data.vfsPath, textureNode));
                                 {
-                                    csRef<iDocumentNode> submesh = nodeItr3->Next();
-                                    if(meshfact->submeshes.Find(submesh->GetAttributeValue("name")) == csArrayItemNotFound)
-                                    {
-                                        csString msg;
-                                        msg.Format("Invalid submesh reference '%s' in meshobj '%s' in sector '%s'", submesh->GetAttributeValue("name"),
-                                            m->name.GetData(), s->name.GetData());
-                                        CS_ASSERT_MSG(msg.GetData(), false);
-                                    }
+                                    CS::Threading::ScopedWriteLock lock(tLock);
+                                    textures.Put(tStringSet.Request(t->name), t);
                                 }
                             }
                         }
-                        node2 = node2->GetParent();
+                        break;
 
-                        // Continue material parsing.
-                        if(node2->GetNode("material"))
+                        // Parse all referenced materials.
+                        case PARSERTOKEN_MATERIALS:
                         {
-                            node2 = node2->GetNode("material");
-
-                            csRef<Material> material;
-                            {
-                                CS::Threading::ScopedReadLock lock(mLock);
-                                material = materials.Get(mStringSet.Request(node2->GetContentsValue()), csRef<Material>());
-
-                                // Validation.
-                                csString msg;
-                                msg.Format("Invalid material reference '%s' in terrain '%s' object in sector '%s'", node2->GetContentsValue(), m->name.GetData(), s->name.GetData());
-                                CS_ASSERT_MSG(msg.GetData(), material.IsValid());
-                            }
-
-                            if(material.IsValid())
-                            {
-                                m->materials.Push(material);
-                                m->matchecked.Push(false);
-                            }
-
-                            node2 = node2->GetParent();
+                            ParseMaterials(node);
                         }
+                        break;
 
-                        // materialpalette for terrain.
-                        if(node2->GetNode("materialpalette"))
+                        // Parse mesh factory.
+                        case PARSERTOKEN_MESHFACT:
                         {
-                            nodeItr3 = node2->GetNode("materialpalette")->GetNodes("material");
-                            while(nodeItr3->HasNext())
-                            {
-                                csRef<iDocumentNode> node3 = nodeItr3->Next();
-                                csRef<Material> material;
-                                {
-                                    CS::Threading::ScopedReadLock lock(mLock);
-                                    material = materials.Get(mStringSet.Request(node3->GetContentsValue()), csRef<Material>());
-
-                                    // Validation.
-                                    csString msg;
-                                    msg.Format("Invalid material reference '%s' in terrain materialpalette", node3->GetContentsValue());
-                                    CS_ASSERT_MSG(msg.GetData(), material.IsValid());
-                                }
-
-                                if(material.IsValid())
-                                {
-                                    m->materials.Push(material);
-                                    m->matchecked.Push(false);
-                                }
-                            }
+                            ParseMeshFact(node, data);
                         }
+                        break;
 
-                        if(node2->GetNode("cells"))
+                        // Parse sector.
+                        case PARSERTOKEN_SECTOR:
                         {
-                            nodeItr3 = node2->GetNode("cells")->GetNodes("cell");
-                            while(nodeItr3->HasNext())
-                            {
-                                csRef<iDocumentNode> node2 = nodeItr3->Next();
-                                if(node2->GetNode("renderproperties"))
-                                {
-                                    csRef<iDocumentNodeIterator> nodeItr4 = node2->GetNode("renderproperties")->GetNodes("shadervar");
-                                    while(nodeItr4->HasNext())
-                                    {
-                                        csRef<iDocumentNode> node3 = nodeItr4->Next();
-                                        csString name = node3->GetAttributeValue("name");
-                                        csString type = node3->GetAttributeValue("type");
-                                        csString value = node3->GetContentsValue();
-                                        csRef<Texture> tex;
-
-                                        ShaderVar* sv = ParseShaderVar(name, type, value, tex, false);
-                                        if(!sv)
-                                        {
-                                            // no result probably means it wasn't validated for the shaders we use
-                                            // if it was a parse error, the function already throws an error
-                                            /*csString msg;
-                                            msg.Format("failed to parse renderproperty shadervar '%s' for meshobj '%s'",
-                                                name.GetData(), m->name.GetData());
-                                            CS_ASSERT_MSG(msg.GetData(), false);*/
-                                            continue;
-                                        }
-                                        else if(sv->type == csShaderVariable::TEXTURE && !tex.IsValid())
-                                        {
-                                            csString msg;
-                                            msg.Format("Invalid texture reference '%s' in terrain renderproperty shadervar for meshobj '%s'",
-                                                value.GetData(), m->name.GetData());
-                                            CS_ASSERT_MSG(msg.GetData(), false);
-                                        }
-                                        else
-                                        {
-                                            // we don't add the variable here because CS' loader does it for us on loading
-                                            m->shadervars.Push(*sv);
-                                            if(sv->type == csShaderVariable::TEXTURE && tex.IsValid())
-                                            {
-                                                m->textures.Push(tex);
-                                                m->texchecked.Push(false);
-                                            }
-                                        }
-                                        delete sv;
-                                    }
-                                }
-                            }
+                            ParseSector(node, data);
                         }
+                        break;
 
-                        // alwaysloaded ignores range checks. If the sector is loaded then so is this mesh.
-                        if(node2->GetAttributeValueAsBool("alwaysloaded") || m->bbox.Empty() || m->bbox.IsNaN())
+                        // Parse start position.
+                        case PARSERTOKEN_START:
                         {
-                            CS::Threading::ScopedWriteLock lock(s->lock);
-                            s->alwaysLoaded.Push(m);
+                            csRef<StartPosition> startPos = csPtr<StartPosition>(new StartPosition());
+                            csString zonen(path);
+                            zonen = zonen.Slice(zonen.FindLast('/')+1);
+                            startPos->zone = zonen;
+                            startPos->sector = node->GetNode("sector")->GetContentsValue();
+                            syntaxService->ParseVector(node->GetNode("position"), startPos->position);
+                            startPositions.Push(startPos);
                         }
-                        else
+                        break;
+
+                        case PARSERTOKEN_SEQUENCES:
                         {
-                            CS::Threading::ScopedWriteLock lock(s->lock);
-                            s->meshes.Push(m);
+                            ParseSequences(node, data);
                         }
+                        break;
 
-                        CS::Threading::ScopedWriteLock lock(meshLock);
-                        meshes.Put(meshStringSet.Request(m->name), m);
-                    }
-
-                    // Get all trimeshes in this sector.
-                    nodeItr2 = node->GetNodes("trimesh");
-                    while(nodeItr2->HasNext())
-                    {
-                        csRef<iDocumentNode> node2 = nodeItr2->Next();
-                        csRef<MeshObj> m = csPtr<MeshObj>(new MeshObj(node2->GetAttributeValue("name"), vfsPath, node2));
-                        m->sector = s;
-
-                        // Always load trimesh... for now. TODO: Calculate bbox.
-                        // Push to sector.
+                        case PARSERTOKEN_TRIGGERS:
                         {
-                            CS::Threading::ScopedWriteLock lock(s->lock);
-                            s->alwaysLoaded.Push(m);
+                            ParseTriggers(node, data);
                         }
-                        CS::Threading::ScopedWriteLock lock(meshLock);
-                        meshes.Put(meshStringSet.Request(m->name), m);
-                    }
-
-                    // Parse mesh generators (for foliage, rocks etc.)
-                    if(enabledGfxFeatures & useMeshGen)
-                    {
-                        nodeItr2 = node->GetNodes("meshgen");
-                        while(nodeItr2->HasNext())
-                        {
-                            csRef<iDocumentNode> meshgen = nodeItr2->Next();
-                            csRef<MeshGen> mgen = csPtr<MeshGen>(new MeshGen(meshgen->GetAttributeValue("name"), meshgen));
-
-                            mgen->sector = s;
-                            {
-                                CS::Threading::ScopedWriteLock lock(s->lock);
-                                s->meshgen.Push(mgen);
-                            }
-
-                            meshgen = meshgen->GetNode("samplebox");
-                            {
-                                csVector3 min;
-                                csVector3 max;
-
-                                syntaxService->ParseVector(meshgen->GetNode("min"), min);
-                                syntaxService->ParseVector(meshgen->GetNode("max"), max);
-                                mgen->bbox.AddBoundingVertex(min);
-                                mgen->bbox.AddBoundingVertex(max);
-                            }
-                            meshgen = meshgen->GetParent();
-
-                            {
-                                CS::Threading::ScopedReadLock lock(meshLock);
-                                csStringID mID = meshStringSet.Request(meshgen->GetNode("meshobj")->GetContentsValue());
-                                mgen->object = meshes.Get(mID, csRef<MeshObj>());
-                            }
-
-                            csRef<iDocumentNodeIterator> geometries = meshgen->GetNodes("geometry");
-                            while(geometries->HasNext())
-                            {
-                                csRef<iDocumentNode> geometry = geometries->Next();
-
-                                csRef<MeshFact> meshfact;
-                                {
-                                    csString name(geometry->GetNode("factory")->GetAttributeValue("name"));
-                                    CS::Threading::ScopedReadLock lock(mfLock);
-                                    meshfact = meshfacts.Get(mfStringSet.Request(name), csRef<MeshFact>());
-
-                                    // Validation.
-                                    csString msg;
-                                    msg.Format("Invalid meshfact reference '%s' in meshgen '%s'", name.GetData(), mgen->name.GetData());
-                                    CS_ASSERT_MSG(msg.GetData(), meshfact.IsValid());
-                                }
-
-                                mgen->meshfacts.Push(meshfact);   
-                                mgen->mftchecked.Push(false);
-
-                                csRef<iDocumentNodeIterator> matfactors = geometry->GetNodes("materialfactor");
-                                while(matfactors->HasNext())
-                                {
-                                    csRef<Material> material;
-                                    {
-                                        csString name(matfactors->Next()->GetAttributeValue("material"));
-                                        CS::Threading::ScopedReadLock lock(mLock);
-                                        material = materials.Get(mStringSet.Request(name), csRef<Material>());
-
-                                        // Validation.
-                                        csString msg;
-                                        msg.Format("Invalid material reference '%s' in meshgen '%s'", name.GetData(), mgen->name.GetData());
-                                        CS_ASSERT_MSG(msg.GetData(), material.IsValid());
-                                    }
-
-                                    if(material.IsValid())
-                                    {
-                                        mgen->materials.Push(material);
-                                        mgen->matchecked.Push(false);
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    // Parse all portals.
-                    nodeItr2 = node->GetNodes("portals");
-                    while(nodeItr2->HasNext())
-                    {
-                        csRef<iDocumentNodeIterator> nodeItr3 = nodeItr2->Next()->GetNodes("portal");
-                        while(nodeItr3->HasNext())
-                        {
-                            csRef<iDocumentNode> node2 = nodeItr3->Next();
-                            csRef<Portal> p = csPtr<Portal>(new Portal(node2->GetAttributeValue("name")));
-
-                            // Warping
-                            if(node2->GetNode("matrix"))
-                            {
-                                p->warp = true;
-                                syntaxService->ParseMatrix(node2->GetNode("matrix"), p->matrix);
-                            }
-
-                            if(node2->GetNode("wv"))
-                            {
-                                p->warp = true;
-                                syntaxService->ParseVector(node2->GetNode("wv"), p->wv);
-                            }
-
-                            if(node2->GetNode("ww"))
-                            {
-                                p->warp = true;
-                                p->ww_given = true;
-                                syntaxService->ParseVector(node2->GetNode("ww"), p->ww);
-                            }
-
-                            // Other options.
-                            if(node2->GetNode("float"))
-                            {
-                                p->pfloat = true;
-                            }
-
-                            if(node2->GetNode("clip"))
-                            {
-                                p->clip = true;
-                            }
-
-                            if(node2->GetNode("zfill"))
-                            {
-                                p->zfill = true;
-                            }
-
-                            if(node2->GetNode("autoresolve"))
-                            {
-                                p->autoresolve = true;
-                            }
-
-                            csRef<iDocumentNodeIterator> nodeItr3 = node2->GetNodes("v");
-                            while(nodeItr3->HasNext())
-                            {
-                                csVector3 vec;
-                                syntaxService->ParseVector(nodeItr3->Next(), vec);
-                                p->poly.AddVertex(vec);
-                                p->bbox.AddBoundingVertex(vec);
-                            }
-
-                            csString targetSector = node2->GetNode("sector")->GetContentsValue();
-                            {
-                                CS::Threading::ScopedReadLock lock(sLock);
-                                p->targetSector = sectorHash.Get(sStringSet.Request(targetSector), csRef<Sector>());
-                            }
-
-                            if(!p->targetSector.IsValid())
-                            {
-                                p->targetSector = csPtr<Sector>(new Sector(targetSector));
-                                CS::Threading::ScopedWriteLock lock(sLock);
-                                sectors.Push(p->targetSector);
-                                sectorHash.Put(sStringSet.Request(targetSector), p->targetSector);
-                            }
-
-                            if(!p->ww_given)
-                            {
-                                p->ww = p->wv;
-                            }
-                            p->transform = csReversibleTransform(p->matrix.GetInverse(), p->ww - p->matrix * p->wv);
-                            {
-                                CS::Threading::ScopedWriteLock lock(s->lock);
-                                s->portals.Push(p);
-                            }
-                        }
-                    }
-
-                    // Parse all sector lights.
-                    nodeItr2 = node->GetNodes("light");
-                    while(nodeItr2->HasNext())
-                    {
-                        node = nodeItr2->Next();
-                        csRef<Light> l = csPtr<Light>(new Light(node->GetAttributeValue("name")));
-                        {
-                            CS::Threading::ScopedWriteLock lock(sLock);
-                            lights.Put(sStringSet.Request(l->name), l);
-                        }
-
-                        if(node->GetNode("attenuation"))
-                        {
-                            node = node->GetNode("attenuation");
-                            if(csString("none").Compare(node->GetContentsValue()))
-                            {
-                                l->attenuation = CS_ATTN_NONE;
-                            }
-                            else if(csString("linear").Compare(node->GetContentsValue()))
-                            {
-                                l->attenuation = CS_ATTN_LINEAR;
-                            }
-                            else if(csString("inverse").Compare(node->GetContentsValue()))
-                            {
-                                l->attenuation = CS_ATTN_INVERSE;
-                            }
-                            else if(csString("realistic").Compare(node->GetContentsValue()))
-                            {
-                                l->attenuation = CS_ATTN_REALISTIC;
-                            }
-                            else if(csString("clq").Compare(node->GetContentsValue()))
-                            {
-                                l->attenuation = CS_ATTN_CLQ;
-                            }
-
-                            node = node->GetParent();
-                        }
-                        else
-                        {
-                            l->attenuation = CS_ATTN_LINEAR;
-                        }
-
-                        if(node->GetNode("dynamic"))
-                        {
-                            l->dynamic = CS_LIGHT_DYNAMICTYPE_PSEUDO;
-                        }
-                        else
-                        {
-                            l->dynamic = CS_LIGHT_DYNAMICTYPE_STATIC;
-                        }
-
-                        l->type = CS_LIGHT_POINTLIGHT;
-
-                        syntaxService->ParseVector(node->GetNode("center"), l->pos);
-                        l->radius = node->GetNode("radius")->GetContentsValueAsFloat();
-                        syntaxService->ParseColor(node->GetNode("color"), l->colour);
-
-                        l->bbox.AddBoundingVertex(l->pos.x - l->radius, l->pos.y - l->radius, l->pos.z - l->radius);
-                        l->bbox.AddBoundingVertex(l->pos.x + l->radius, l->pos.y + l->radius, l->pos.z + l->radius);
-
-                        {
-                            CS::Threading::ScopedWriteLock lock(s->lock);
-                            s->lights.Push(l);
-                        }
-                        node = node->GetParent();
-                    }
-                }
-
-                // Parse the start position.
-                node = root->GetNode("start");
-                if(node.IsValid())
-                {
-                    csRef<StartPosition> startPos = csPtr<StartPosition>(new StartPosition());
-                    csString zonen(path);
-                    zonen = zonen.Slice(zonen.FindLast('/')+1);
-                    startPos->zone = zonen;
-                    startPos->sector = node->GetNode("sector")->GetContentsValue();
-                    syntaxService->ParseVector(node->GetNode("position"), startPos->position);
-                    startPositions.Push(startPos);
-                }
-
-                node = root->GetNode("sequences");
-                if(node.IsValid())
-                {
-                    nodeItr = node->GetNodes("sequence");
-                    while(nodeItr->HasNext())
-                    {
-                        node = nodeItr->Next();
-                        csRef<Sequence> seq = csPtr<Sequence>(new Sequence(node->GetAttributeValue("name"), node));
-                        {
-                            CS::Threading::ScopedWriteLock lock(sLock);
-                            sequences.Put(sStringSet.Request(seq->name), seq);
-                        }
-
-                        bool loaded = false;
-                        csRef<iDocumentNodeIterator> nodes = node->GetNodes("setambient");
-                        if(nodes->HasNext())
-                        {
-                            csRef<iDocumentNode> type = nodes->Next();
-                            CS::Threading::ScopedWriteLock lock(sLock);
-                            csRef<Sector> sec = sectorHash.Get(sStringSet.Request(type->GetAttributeValue("sector")), csRef<Sector>());
-                            sec->sequences.Push(seq);
-                            loaded = true;
-                        }
-
-                        nodes = node->GetNodes("fadelight");
-                        if(nodes->HasNext())
-                        {
-                            csRef<iDocumentNode> type = nodes->Next();
-                            CS::Threading::ScopedWriteLock lock(sLock);
-                            csRef<Light> l = lights.Get(sStringSet.Request(type->GetAttributeValue("light")), csRef<Light>());
-                            l->sequences.Push(seq);
-                            loaded = true;
-                        }
-
-                        nodes = node->GetNodes("rotate");
-                        if(nodes->HasNext())
-                        {
-                            csRef<iDocumentNode> type = nodes->Next();
-                            CS::Threading::ScopedWriteLock lock(meshLock);
-                            csRef<MeshObj> l = meshes.Get(meshStringSet.Request(type->GetAttributeValue("mesh")), csRef<MeshObj>());
-                            l->sequences.Push(seq);
-                            loaded = true;
-                        }
-
-                        CS_ASSERT_MSG("Unknown sequence type!", loaded);
-                    }
-                }
-
-                node = root->GetNode("triggers");
-                if(node.IsValid())
-                {
-                    nodeItr = node->GetNodes("trigger");
-                    while(nodeItr->HasNext())
-                    {
-                        node = nodeItr->Next();
-                        const char* seqname = node->GetNode("fire")->GetAttributeValue("sequence");
-                        CS::Threading::ScopedWriteLock lock(sLock);
-                        csRef<Sequence> sequence = sequences.Get(sStringSet.Request(seqname), csRef<Sequence>());
-                        CS_ASSERT_MSG("Unknown sequence in trigger!", sequence.IsValid());
-
-                        csRef<Trigger> trigger = csPtr<Trigger>(new Trigger(node->GetAttributeValue("name"), node));
-                        sequence->triggers.Push(trigger);
+                        break;
                     }
                 }
             }
 
             // Wait for plugin and shader loads to finish.
-            tman->Wait(rets);
+            tman->Wait(data.rets);
         }
         
         return true;
     }
 }
 CS_PLUGIN_NAMESPACE_END(bgLoader)
+

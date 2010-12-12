@@ -200,6 +200,9 @@ bool BgLoader::Initialize(iObjectRegistry* object_reg)
       enabledGfxFeatures |= useMeshGen;
     }
 
+    // initialize token list required by the parser
+    InitTokenTable(xmltokens);
+
     return true;
 }
 
@@ -1585,9 +1588,9 @@ bool BgLoader::InWaterArea(const char* sector, csVector3* pos, csColor4** colour
 
     for(size_t i=0; i<s->waterareas.GetSize(); ++i)
     {
-        if(s->waterareas[i]->bbox.In(*pos))
+        if(s->waterareas[i].bbox.In(*pos))
         {
-            *colour = &s->waterareas[i]->colour;
+            *colour = &s->waterareas[i].colour;
             return true;
         }
     }
