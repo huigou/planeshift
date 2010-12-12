@@ -96,6 +96,11 @@ class SoundQueue
     void Work ();
     /// Stops playback and purges all SoundQueueItem(s).
     void Purge ();
+
+    /** Returns elements still in the queue to be played
+     *  @return The amount of elements still to be played which are in the queue.
+     */
+    size_t GetSize(); 
 };
 
 #endif /*_SOUND_QUEUE_H_*/
