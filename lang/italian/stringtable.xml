@@ -20,9 +20,9 @@
   <item orig="server" trans="Server" />
   <item orig="CHILDHOOD" trans="INFANZIA" />
   <item orig="You advise %s with this suggestion: %s" trans="" />
+  <item orig="Command(s) for all characters:" trans="" />
   <item orig="Unpickable" trans="" />
   <item orig="LIFE EVENTS" trans="EVENTI VITA" />
-  <item orig="Command(s) for all characters:" trans="" />
   <item orig="SL" trans="" />
   <item orig="Guild info" trans="" />
   <item orig="Buy" trans="Compra" />
@@ -156,9 +156,9 @@
   <item orig="Mother Name:" trans="Nome Madre:" />
   <item orig="The server isn&apos;t available!" trans="Il server non è disponibile!" />
   <item orig="Privil." trans="" />
+  <item orig="Autoexec" trans="" />
   <item orig="NPC_my Alignment" trans="Allineamento NPC_my" />
   <item orig="Skin Colour" trans="Colore Pelle" />
-  <item orig="Autoexec" trans="" />
   <item orig="Master:" trans="" />
   <item orig="View Stats" trans="" />
   <item orig="NPC_me text colour" trans="Colore testo NPC_me" />
@@ -170,6 +170,7 @@
   <item orig="Requesting connection" trans="Richiesta connessione" />
   <item orig="Guild Alignment" trans="Allineamento Gilda" />
   <item orig="Prv notes" trans="" />
+  <item orig="Marriage" trans="" />
   <item orig="Reload Cache" trans="Ricarica Cache" />
   <item orig="Amount available to deposit" trans="Quantitativo depositabile" />
   <item orig="Auction text colour" trans="" />
@@ -194,9 +195,9 @@
   <item orig="NPC_narrate shadow colour" trans="" />
   <item orig="I am leaving" trans="Sto andando via" />
   <item orig="alliance outline colour" trans="" />
+  <item orig="Command(s) only for this character:" trans="" />
   <item orig="Circles available to deposit." trans="" />
   <item orig="Train" trans="" />
-  <item orig="Command(s) only for this character:" trans="" />
   <item orig="Exchange items" trans="" />
   <item orig="List:" trans="Lista:" />
   <item orig="LOGIN" trans="" />
@@ -508,6 +509,7 @@ chiamato " />
   <item orig="Please choose a religion" trans="" />
   <item orig="%s advises %s with this suggestion: %s" trans="" />
   <item orig="Don&apos;t show this window again." trans="" />
+  <item orig="Not a purified glyph" trans="" />
   <item orig="Own attacks that are dodged" trans="Propri attacchi che vengono scansati" />
   <item orig="Done" trans="Conferma" />
   <item orig="Birth" trans="Nascita" />
@@ -536,6 +538,7 @@ chiamato " />
   <item orig="All. Chat" trans="" />
   <item orig="NPC Owned" trans="" />
   <item orig="View item" trans="" />
+  <item orig="Confirmations" trans="" />
   <item orig="Unmute Player" trans="" />
   <item orig="Online only" trans="Solo online" />
   <item orig="Pub notes" trans="Note publ" />
@@ -715,6 +718,7 @@ Per disabilitare questa funzione cancella tutto in questa finestra usando il bot
   <item orig="Petition Text:" trans="Testo Petizione:" />
   <item orig="Me outline colour" trans="" />
   <item orig="Join default chan" trans="" />
+  <item orig="Confirmation upon marriage proposal:" trans="" />
   <item orig="Invincible" trans="Invincibile" />
   <item orig="You&apos;re offering" trans="Stai offrendo" />
   <item orig="Jobs Skills List:" trans="" />
@@ -858,6 +862,7 @@ Per disabilitare questa funzione cancella tutto in questa finestra usando il bot
   <item orig="Random" trans="Casuale" />
   <item orig="Job:" trans="" />
   <item orig="Requirements" trans="" />
+  <item orig="You have been deassigned from the selected petition." trans="" />
   <item orig="Ok" trans="" />
   <item orig="Sell" trans="Vendi" />
   <item orig="Way" trans="Via" />
