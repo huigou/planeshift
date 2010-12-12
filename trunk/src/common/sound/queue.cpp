@@ -144,3 +144,12 @@ void SoundQueue::Purge ()
         delete item;
     }
 }
+
+/*
+ * Returns elements still in the queue to be played
+ */
+
+size_t SoundQueue::GetSize()
+{
+    return queue.GetSize();
+}
