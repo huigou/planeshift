@@ -137,6 +137,25 @@ csPtr<iPawsImage> pawsTextureManager::GetPawsImage(const char * name)
     return csPtr<iPawsImage>(elementList.Get(name, 0));
 }
 
+csPtr<iPawsImage> pawsTextureManager::GetOrAddPawsImage(const char * name)
+{
+    csRef<iPawsImage> image = elementList.Get(name, 0);
+    if(!image.IsValid()) //if the image wasn't found
+    {
+        //try adding and reloading. This works only with full paths so you should still use
+        //imagelist.xml for faster performance.
+        if(AddImage(name)) //if this is a success we can now load it.
+        {
+            image = csPtr<iPawsImage>(elementList.Get(name, 0));
+            Warning2(LOG_PAWS, "ART ERROR: PawsTextureManager loaded the image %s which was missing from the imagelist.xml and was loaded on demand. Add the image there!", name);
+        }
+        else //if it wasn't a success warn the user.
+            Warning2(LOG_PAWS, "ART ERROR: PawsTextureManager wasn't able to load the requested image: %s", name);
+    }
+    return csPtr<iPawsImage>(image); //we return regardless the caller must be able to handle null, which is failure.
+}
+
+
 void pawsTextureManager::AddPawsImage(iPawsImage * element)
 {
     // printf("Adding pawsImage called %s\n", element->GetName() );
