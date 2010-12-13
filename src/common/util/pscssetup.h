@@ -24,7 +24,7 @@
 #define CSSETUP_HEADER
 
 #ifndef PS_VERSION
-#define PS_VERSION "0.5.5"
+#define PS_VERSION "0.5.6"
 #endif
 
 #ifndef APPNAME
