@@ -77,7 +77,7 @@ public:
 
     int GetDefaultAlpha() const;
 
-    bool IsLoaded() const;
+    bool IsLoaded() const;  
     iImage * GetImage();
     int GetTransparentRed() const;
     int GetTransparentGreen() const;
