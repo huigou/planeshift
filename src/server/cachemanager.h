@@ -534,6 +534,11 @@ public:
     void RandomizeItem(psItem* item, float maxCost, size_t numModifiers)
          { lootRandomizer->RandomizeItem( item, maxCost, false, numModifiers); }
 
+    /** Reloads the server_options.
+     *  @return FALSE if the reload failed
+     */
+    bool ReloadOptions() { return PreloadOptions(); }
+
 protected:
     uint32_t effectID;
     char CacheNameBuffer[15];
