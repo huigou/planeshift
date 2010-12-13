@@ -41,7 +41,10 @@
 bool pawsImageDrawable::PreparePixmap()
 {
     if (imageFileLocation.Length() == 0) // tileable background
+    {
+        isLoaded = true;
         return true;
+    }
 
     // Check if already loaded first.
     csRef<iEngine> engine = csQueryRegistry<iEngine>(PawsManager::GetSingleton().GetObjectRegistry());
@@ -117,6 +120,8 @@ bool pawsImageDrawable::PreparePixmap()
         textureRectangle.ymax = height;        
     }
 
+    //if we reach this point we are sure the image was loaded correctly. (note this doesn't mean image was assigned)
+    isLoaded = true;
     return true;     
 }
 
@@ -127,6 +132,7 @@ pawsImageDrawable::pawsImageDrawable(csRef<iDocumentNode> node)
     defaultTransparentColourBlue  = -1;
     defaultTransparentColourGreen = -1;
     defaultTransparentColourRed   = -1;
+    isLoaded = false;
 
     defaultAlphaValue = 0;
 
@@ -184,6 +190,7 @@ pawsImageDrawable::pawsImageDrawable(const char * file, const char * resource, b
     defaultTransparentColourRed   = transR;
     defaultTransparentColourGreen = transG;
     defaultTransparentColourBlue  = transB;
+    isLoaded = false;
     PreparePixmap();
 }
 
@@ -199,6 +206,7 @@ pawsImageDrawable::pawsImageDrawable(const char * file, const char * resource)
     defaultTransparentColourRed   = -1;
     defaultTransparentColourGreen = -1;
     defaultTransparentColourBlue  = -1;
+    isLoaded = false;
     PreparePixmap();
 }
 
@@ -280,6 +288,12 @@ int pawsImageDrawable::GetDefaultAlpha() const
     return defaultAlphaValue;
 }
 
+bool pawsImageDrawable::IsLoaded() const
+{
+    return isLoaded;
+}
+
+//TODO: this piece of code looks dead. It's not called within the class and it's missing from the interface.
 iImage * pawsImageDrawable::GetImage()
 {
     if (image)
@@ -305,6 +319,7 @@ iImage * pawsImageDrawable::GetImage()
     }
 
     image->SetName(imageFileLocation);
+    isLoaded = true;
     return image;
 }
 

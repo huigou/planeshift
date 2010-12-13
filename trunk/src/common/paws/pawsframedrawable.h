@@ -90,6 +90,8 @@ public:
     int GetWidth() const;
     int GetHeight() const;
 
+    bool IsLoaded() const { return true; }
+
     void ExpandClipRect(csRect &clipRect);
 
     int GetDefaultAlpha() const;

@@ -996,6 +996,7 @@ void pawsWidget::SetBackground( const char* image )
         csString parentName("None");
         if ( parent )
             parentName = parent->GetName();
+        return;
     }
 
     alpha = bgImage->GetDefaultAlpha();

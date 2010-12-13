@@ -119,11 +119,12 @@ bool pawsTextureManager::AddImage(const char* resource)
 {
     iPawsImage *element = NULL;
     element = new pawsImageDrawable(resource, resource);
-    if(element)
+    if(element->IsLoaded()) //if all went ok this will be true.
     {
         AddPawsImage(element);
         return true;
     }
+    delete element; //it failed loading so we discard it.
     return false;
 }
 
