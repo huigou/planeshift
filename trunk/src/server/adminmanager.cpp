@@ -8420,7 +8420,7 @@ void AdminManager::HandleReload(psAdminCmdMessage& msg, AdminCmdData& data, Clie
         else
             psserver->SendSystemOK(client->GetClientNum(), "Successfully modified item id %d", data.value);
     }
-    if (data.subCmd == "serveroptions")
+    else if (data.subCmd == "serveroptions")
     {
         if(psserver->GetCacheManager()->ReloadOptions())
             psserver->SendSystemOK(client->GetClientNum(), "Reloading server options.");
