@@ -192,7 +192,7 @@ void pawsSlot::PlaceItem( const char* imageName, const char* meshFactName, const
     
     empty = false;
 
-    image = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(imageName);
+    image = PawsManager::GetSingleton().GetTextureManager()->GetOrAddPawsImage(imageName);
 
     if (drawStackCount)
         stackCountLabel->ShowBehind();
