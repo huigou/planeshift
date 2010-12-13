@@ -141,7 +141,7 @@ void WeatherManager::StartWeather(psSectorInfo *si, unsigned int type)
     {
         // Queue event to start snow
         QueueNextEvent(si->GetRandomWeatherGap((unsigned int)psWeatherMessage::FOG),
-                       psWeatherMessage::SNOW,
+                       psWeatherMessage::FOG,
                        si->GetRandomWeatherDensity((unsigned int)psWeatherMessage::FOG),
                        0, // Duration is calculated when stop event is created
                        si->GetRandomWeatherFadeIn((unsigned int)psWeatherMessage::FOG),
