@@ -301,7 +301,7 @@ void WeatherManager::HandleWeatherEvent(psWeatherGameEvent *event)
         {
             event->si->current_rain_drops = event->value;
 
-            Notify3(LOG_WEATHER,"New %s in sector '%s': %d",event->type == psWeatherMessage::SNOW ? "snow" : "rain",  event->si->name.GetData(),event->value);
+            Notify4(LOG_WEATHER,"New %s in sector '%s': %d",event->type == psWeatherMessage::SNOW ? "snow" : "rain",  event->si->name.GetData(),event->value);
 
             psWeatherMessage::NetWeatherInfo info;
 
