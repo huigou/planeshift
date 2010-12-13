@@ -47,6 +47,7 @@ private:
 
     bool     tiled;
     bool     debugImageErrors;
+    bool     isLoaded;
 
     /**
     * The actual image.
@@ -76,6 +77,7 @@ public:
 
     int GetDefaultAlpha() const;
 
+    bool IsLoaded() const;
     iImage * GetImage();
     int GetTransparentRed() const;
     int GetTransparentGreen() const;

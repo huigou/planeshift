@@ -51,6 +51,7 @@ struct iPawsImage : public virtual iBase
     virtual void ExpandClipRect(csRect &clipRect) = 0;
 
     virtual int GetDefaultAlpha() const = 0;
+    virtual bool IsLoaded() const = 0;
 };
 
 class pawsTextureManager  
