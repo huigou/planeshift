@@ -8406,7 +8406,7 @@ void AdminManager::HandleReload(psAdminCmdMessage& msg, AdminCmdData& data, Clie
 
         if (!itemStats->ReadItemStats((*rs)[0]))
         {
-            psserver->SendSystemError(client->GetClientNum(), "Couldn't load new item stats", data.value);
+            psserver->SendSystemError(client->GetClientNum(), "Couldn't load new item stats %d", data.value);
             if (bCreatingNew)
                 delete itemStats;
             return;
@@ -8415,10 +8415,18 @@ void AdminManager::HandleReload(psAdminCmdMessage& msg, AdminCmdData& data, Clie
         if (bCreatingNew)
         {
             psserver->GetCacheManager()->AddItemStatsToHashTable(itemStats);
-            psserver->SendSystemOK(client->GetClientNum(), "Successfully created new item", data.value);
+            psserver->SendSystemOK(client->GetClientNum(), "Successfully created new item id %d", data.value);
         }
         else
-            psserver->SendSystemOK(client->GetClientNum(), "Successfully modified item", data.value);
+            psserver->SendSystemOK(client->GetClientNum(), "Successfully modified item id %d", data.value);
+    }
+    if (data.subCmd == "serveroptions")
+    {
+        if(psserver->GetCacheManager()->ReloadOptions())
+            psserver->SendSystemOK(client->GetClientNum(), "Reloading server options.");
+        else
+            psserver->SendSystemError(client->GetClientNum(), "Failed to reload server options.");
+
     }
 }
 
