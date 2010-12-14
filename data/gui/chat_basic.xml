@@ -10,8 +10,8 @@
          <widget name="InputText" factory="pawsEditTextBox">
             <frame x="50" y="125" width="445" height="25" border="no" />
         <attachpoints>
-                <attach point="PROPORTIONAL_RIGHT" />
-                <attach point="PROPORTIONAL_BOTTOM" />
+                <attach point="ATTACH_RIGHT" />
+                <attach point="ATTACH_BOTTOM" />
                 <attach point="ATTACH_LEFT" />
             </attachpoints>
         </widget>
@@ -83,9 +83,9 @@
                 <frame x="55" y="0" width="435" height="125" border="no" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
-                    <attach point="PROPORTIONAL_TOP" />
+                    <attach point="ATTACH_TOP" />
                     <attach point="ATTACH_LEFT" />
-                    <attach point="PROPORTIONAL_BOTTOM" />
+                    <attach point="ATTACH_BOTTOM" />
                 </attachpoints>
                 <pawsScrollBar width="15" maxValue="1.0" />
         <subscriptions overwrite = "false">
@@ -96,9 +96,9 @@
                 <frame x="55" y="0" width="435" height="125" border="no" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
-                    <attach point="PROPORTIONAL_TOP" />
+                    <attach point="ATTACH_TOP" />
                     <attach point="ATTACH_LEFT" />
-                    <attach point="PROPORTIONAL_BOTTOM" />
+                    <attach point="ATTACH_BOTTOM" />
                 </attachpoints>
         <subscriptions overwrite = "false">
             <subscribe data="subSystemText" />
@@ -109,9 +109,9 @@
                 <frame x="55" y="0" width="435" height="125" border="no" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
-                    <attach point="PROPORTIONAL_TOP" />
+                    <attach point="ATTACH_TOP" />
                     <attach point="ATTACH_LEFT" />
-                    <attach point="PROPORTIONAL_BOTTOM" />
+                    <attach point="ATTACH_BOTTOM" />
                 </attachpoints>
         <subscriptions overwrite = "false">
             <subscribe data="subNPCText" />
@@ -122,9 +122,9 @@
                 <frame x="55" y="0" width="435" height="125" border="no" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
-                    <attach point="PROPORTIONAL_TOP" />
+                    <attach point="ATTACH_TOP" />
                     <attach point="ATTACH_LEFT" />
-                    <attach point="PROPORTIONAL_BOTTOM" />
+                    <attach point="ATTACH_BOTTOM" />
                 </attachpoints>
         <subscriptions overwrite = "false">
             <subscribe data="subTellText" />
@@ -135,9 +135,9 @@
                 <frame x="55" y="0" width="435" height="125" border="no" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
-                    <attach point="PROPORTIONAL_TOP" />
+                    <attach point="ATTACH_TOP" />
                     <attach point="ATTACH_LEFT" />
-                    <attach point="PROPORTIONAL_BOTTOM" />
+                    <attach point="ATTACH_BOTTOM" />
                 </attachpoints>
         <subscriptions overwrite = "false">
             <subscribe data="subGuildText" />
@@ -148,9 +148,9 @@
                 <frame x="55" y="0" width="435" height="125" border="no" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
-                    <attach point="PROPORTIONAL_TOP" />
+                    <attach point="ATTACH_TOP" />
                     <attach point="ATTACH_LEFT" />
-                    <attach point="PROPORTIONAL_BOTTOM" />
+                    <attach point="ATTACH_BOTTOM" />
                 </attachpoints>
         <subscriptions overwrite = "false">
             <subscribe data="subAllianceText" />
@@ -161,9 +161,9 @@
                 <frame x="55" y="0" width="435" height="125" border="no" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
-                    <attach point="PROPORTIONAL_TOP" />
+                    <attach point="ATTACH_TOP" />
                     <attach point="ATTACH_LEFT" />
-                    <attach point="PROPORTIONAL_BOTTOM" />
+                    <attach point="ATTACH_BOTTOM" />
                 </attachpoints>
         <subscriptions overwrite = "false">
             <subscribe data="subGroupText" />
@@ -174,9 +174,9 @@
                 <frame x="55" y="0" width="435" height="125" border="no" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
-                    <attach point="PROPORTIONAL_TOP" />
+                    <attach point="ATTACH_TOP" />
                     <attach point="ATTACH_LEFT" />
-                    <attach point="PROPORTIONAL_BOTTOM" />
+                    <attach point="ATTACH_BOTTOM" />
                 </attachpoints>
         <subscriptions overwrite = "false">
             <subscribe data="subAuctionsText" />
@@ -188,9 +188,9 @@
                 <frame x="55" y="0" width="435" height="125" border="no" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
-                    <attach point="PROPORTIONAL_TOP" />
+                    <attach point="ATTACH_TOP" />
                     <attach point="ATTACH_LEFT" />
-                    <attach point="PROPORTIONAL_BOTTOM" />
+                    <attach point="ATTACH_BOTTOM" />
                 </attachpoints>
         <subscriptions overwrite = "false">
                 <subscribe data="subChannelsText"/>
@@ -202,9 +202,9 @@
                 <frame x="55" y="0" width="435" height="125" border="no" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
-                    <attach point="PROPORTIONAL_TOP" />
+                    <attach point="ATTACH_TOP" />
                     <attach point="ATTACH_LEFT" />
-                    <attach point="PROPORTIONAL_BOTTOM" />
+                    <attach point="ATTACH_BOTTOM" />
                 </attachpoints>
         <subscriptions overwrite = "false">
             <subscribe data="subHelpText" />
