@@ -1,9 +1,9 @@
 <widget_description>
 
 <widget name="ActiveMagicWindow" factory="pawsActiveMagicWindow" 
-        visible="yes" savepositions="yes" movable="yes" resizable="no" configurable="yes" style="New Standard GUI">
+        visible="no" savepositions="yes" movable="yes" resizable="no" configurable="yes" style="New Standard GUI">
         
-    <frame x="10" y="200" width="330" height="165" border="yes" />
+    <frame x="600" y="200" width="330" height="165" border="yes" />
     <title resource="Scaling Title Bar" text="Active Magic" align="left" close_button="yes" />
 	
     <widget name="lblBuffCategories" factory="pawsTextBox">
