@@ -157,7 +157,7 @@ void WeatherManager::StopWeather(psSectorInfo *si, unsigned int type)
     for (size_t i = 0; i < events.GetSize(); i++)
     {
         evt = events[i];
-        if (evt->si == si && (evt->type == type || (type == 0 && (evt->type == psWeatherMessage::RAIN || evt->type == psWeatherMessage::SNOW))))
+        if (evt->si == si && ((unsigned int)evt->type == type || (type == 0 && (evt->type == psWeatherMessage::RAIN || evt->type == psWeatherMessage::SNOW))))
         {
             ignored.Push(evt); // Ignore when the eventmanager handles the event
             events.DeleteIndex(i);
