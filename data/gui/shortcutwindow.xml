@@ -13,7 +13,12 @@
 			     direction="vertical"
 			     tick="1" 
                        minValue="0" >
-	        <frame x="260" y="3" width="20" height="45" />
+	        <frame x="80" y="3" width="20" height="190" />
+            <attachpoints>
+		    <attach point="ATTACH_RIGHT" />
+		    <attach point="ATTACH_TOP" />
+            <attach point="ATTACH_BOTTOM" />
+            </attachpoints>
         </pawsScrollBar>
     </widget>
 
