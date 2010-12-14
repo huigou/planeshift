@@ -2,10 +2,10 @@
 
     <widget name="ShortcutWindow" factory="pawsShortcutWindow" style="New Standard GUI" 
             buttonimage="Scaling Button" 
-            visible="yes" configurable="yes"
+            visible="no" configurable="yes"
             savepositions="yes" movable="yes" resizable="yes" keepaspect="no" >
 	    
-        <frame x="526" y="545" width="280" height="55" border="no" />
+        <frame x="10" y="500" width="100" height="200" border="no" />
         <minframe width="105" height="32" />
 	  
 	  <pawsScrollBar name="scrollbar" 
