@@ -189,11 +189,11 @@ void psSoundSector::UpdateMusic (bool loopToggle, int type,
             {
                 music->FadeUp();
                 activemusic = music;
+                break;
             }
             else // error occured .. get rid of this music
             {
                 DeleteMusic(music);
-                break;
             }
         }
         else if (music->active == true)
