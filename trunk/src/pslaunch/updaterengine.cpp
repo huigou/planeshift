@@ -713,16 +713,14 @@ bool UpdaterEngine::SelfUpdate(int selfUpdating)
                 printf("system(%s) failed!\n", cmd.GetData());
             }
 
-#if defined(CS_PLATFORM_MACOSX)
-
             // Create a new process of the updater and exit.
             csString path = appName;
-            if(fork() == 0)
-                execl(path.AppendFmt(".app/Contents/MacOS/%s_static", appName.GetData()), path.AppendFmt(".app/Contents/MacOS/%s_static", appName.GetData()), "selfUpdateSecond", NULL);
-#else
-            if(fork() == 0)
-                execl(appName, appName, "selfUpdateSecond", NULL);
+#if defined(CS_PLATFORM_MAXOSX)
+            path.AppendFmt(".app/Contents/MacOS/%s_static", appName.GetData());
 #endif
+            if(fork() == 0)
+                execl(path, path, "selfUpdateSecond", NULL);
+
             GetConfig()->SetSelfUpdating(true);
             return true;
         }
