@@ -97,11 +97,9 @@
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* skinBase,
-                         const char* pawsConfigFile) : render2texture(false)
+PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* skinBase) : render2texture(false)
 {
     objectReg = object;
-    pawsConfig = pawsConfigFile;
 
     graphics2D = csQueryRegistry<iGraphics2D > ( objectReg );
     graphics3D = csQueryRegistry<iGraphics3D > ( objectReg );

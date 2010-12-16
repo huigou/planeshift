@@ -78,7 +78,7 @@ pawsControlWindow::~pawsControlWindow()
     visible = true; // Force visibility on next load
     if (hidden) Toggle(); // Unhide so we get the right sizes saved
 
-    csRef<iConfigFile> file = psengine->GetConfig()->LookupDomain(PawsManager::GetSingleton().GetConfigFile());
+    csRef<iConfigManager> file = psengine->GetConfig();
     file->SetInt("PlaneShift.GUI.ControlWindow.CurrentStyle", style);
     file->Save();
 }
@@ -113,7 +113,7 @@ bool pawsControlWindow::PostSetup()
     icon->IsOver = false;
     buttons.Push(icon);
 
-    csRef<iConfigFile> file = psengine->GetConfig()->LookupDomain(PawsManager::GetSingleton().GetConfigFile());
+    csRef<iConfigManager> file = psengine->GetConfig();
     int loadStyle = file->GetInt("PlaneShift.GUI.ControlWindow.CurrentStyle", 1);
     for (int i=0; i < loadStyle; i++)
         NextStyle(); // Switch to saved style

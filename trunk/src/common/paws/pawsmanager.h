@@ -77,8 +77,7 @@ class PawsManager : public Singleton<PawsManager>
 {
 public:
 
-    PawsManager(iObjectRegistry* objectReg, const char* skin, const char* skinBase = NULL,
-                const char* pawsConfigFile = "/planeshift/userdata/planeshift.cfg");
+    PawsManager(iObjectRegistry* objectReg, const char* skin, const char* skinBase = NULL);
 
     virtual ~PawsManager();
 
@@ -298,9 +297,6 @@ public:
 
     /*                          Sound Functions
     ------------------------------------------------------------------------*/
-
-    /// Returns the pawsConfig data.
-    const char * GetConfigFile() { return pawsConfig.GetData(); }
 
     /// Turns sound on and off by setting useSounds.
     void ToggleSounds(bool value);
@@ -562,9 +558,6 @@ protected:
      *  @return NULL on failure.
      */
     csRef<iDocumentNode> ParseWidgetFile( const char* widgetFile );
-
-    /// The config file to store stuff like window positions.
-    csString pawsConfig;
 
     /// This is the internal var for sounds.
     bool useSounds;
