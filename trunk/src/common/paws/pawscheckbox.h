@@ -1,5 +1,5 @@
 /**
- * @file pawscheckbox.h
+ * pawscheckbox.h
  *
  * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
