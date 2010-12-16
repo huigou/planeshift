@@ -69,25 +69,17 @@
 
 #define LOADING_SECTOR "SectorWhereWeKeepEntitiesResidingInUnloadedMaps"
 
-ZoneHandler::ZoneHandler(MsgHandler* mh,iObjectRegistry* obj_reg, psCelClient *cc)
+ZoneHandler::ZoneHandler(MsgHandler* mh, psCelClient *cc) :
+                        msghandler(mh),
+                        celclient(cc),
+                        loading(false),
+                        forcedLoadingEndTime(0),
+                        loadWindow(0),
+                        loadProgressBar(0)
 {
-    msghandler     = mh;
-    object_reg     = obj_reg;
-    loading        = false;
-    celclient      = cc;
-    haveNewPos     = false;
-
     msghandler->Subscribe(this,MSGTYPE_NEWSECTOR);
 
     valid = LoadZoneInfo();
-    needsToLoadMaps = false;
-    initialRefreshScreen = true;
-
-    loadWindow = NULL;
-    loadProgressBar = NULL;
-	
-    forcedBackgroundImg.Empty();
-    forcedLoadingEndTime = 0;
 }
 
 ZoneHandler::~ZoneHandler()
@@ -106,25 +98,25 @@ ZoneHandler::~ZoneHandler()
 
 bool ZoneHandler::FindLoadWindow()
 {
-    if (loadProgressBar != NULL)
+    if(loadProgressBar != NULL)
         return true;  // Already found
 
     loadWindow = static_cast <pawsLoadWindow*> (PawsManager::GetSingleton().FindWidget("LoadWindow"));
-    if (loadWindow == NULL)
+    if(loadWindow == NULL)
         return false;
 
     loadProgressBar = static_cast <pawsProgressBar*> (loadWindow->FindWidget("Progress"));
-    if (loadProgressBar == NULL)
+    if(loadProgressBar == NULL)
         return false;
 
     return true;
 }
 
-ZoneLoadInfo * ZoneHandler::FindZone(const char* sector)
+ZoneLoadInfo* ZoneHandler::FindZone(const char* sector) const
 {
     ZoneLoadInfo* zone = zonelist.Get(sector, NULL);
 
-    if (zone == NULL)
+    if(zone == NULL)
         Error2("Error: Could not find zone info for sector %s!\n",sector);
 
     return zone;
@@ -132,19 +124,19 @@ ZoneLoadInfo * ZoneHandler::FindZone(const char* sector)
 
 bool ZoneHandler::LoadZoneInfo()
 {
-    iVFS* vfs = psengine->GetVFS ();
-    if (!vfs)
+    iVFS* vfs = psengine->GetVFS();
+    if(!vfs)
         return false;
         
-    iDocumentSystem* xml = psengine->GetXMLParser ();
+    iDocumentSystem* xml = psengine->GetXMLParser();
     csRef<iDocument> doc = xml->CreateDocument();
 
     csRef<iFile> file = vfs->Open("/planeshift/data/zoneinfo.xml", VFS_FILE_READ);
-    if (!file)
+    if(!file)
         return false;
 
     const char* error = doc->Parse(file);
-    if (error)
+    if(error)
     {
         Error2("Error Loading Zone Data: %s\n", error);
         return false;
@@ -152,7 +144,7 @@ bool ZoneHandler::LoadZoneInfo()
 
     csRef<iDocumentNodeIterator> zoneIter = doc->GetRoot()->GetNode("zonelist")->GetNodes("zone");
 
-    while (zoneIter->HasNext())
+    while(zoneIter->HasNext())
     {
         csRef<iDocumentNode> zoneNode = zoneIter->Next();
         ZoneLoadInfo *zone = new ZoneLoadInfo(zoneNode);
@@ -169,8 +161,8 @@ void ZoneHandler::HandleMessage(MsgEntry* me)
 
     Notify3(LOG_LOAD, "Crossed from sector %s to sector %s.", msg.oldSector.GetData(), msg.newSector.GetData());
 
-	if(msg.loadDelay != 0)
-		ForceLoadScreen(msg.background, msg.loadDelay);
+    if(msg.loadDelay != 0)
+        ForceLoadScreen(msg.background, msg.loadDelay);
 
     LoadZone(msg.pos, msg.newSector);
 }
@@ -339,12 +331,8 @@ void ZoneHandler::OnDrawingFinished()
 
 ZoneLoadInfo::ZoneLoadInfo(iDocumentNode *node)
 {
-    csString trans;
-
     inSector = node->GetAttributeValue("sector");
     loadImage = node->GetAttributeValue("loadimage");
-    trans = node->GetAttributeValue("transitional");
-    transitional = (trans=="yes");
     regions.AttachNew(new scfStringArray());
 
     csRef<iDocumentNodeIterator> regionIter = node->GetNodes("region");
@@ -356,9 +344,9 @@ ZoneLoadInfo::ZoneLoadInfo(iDocumentNode *node)
     }    
 }
 
-void ZoneHandler::ForceLoadScreen(csString backgroundImage, uint32_t lenght)
+void ZoneHandler::ForceLoadScreen(csString backgroundImage, uint32_t length)
 {
-	forcedBackgroundImg = backgroundImage;
-	forcedLoadingStartTime = csGetTicks();
-	forcedLoadingEndTime = forcedLoadingStartTime+(lenght * 1000);
+    forcedBackgroundImg = backgroundImage;
+    forcedLoadingStartTime = csGetTicks();
+    forcedLoadingEndTime = forcedLoadingStartTime + (length * 1000);
 }

@@ -422,7 +422,7 @@ bool psEngine::Initialize (int level)
 
         // Create the PAWS window manager
         csString skinPathBase = cfgmgr->GetStr("PlaneShift.GUI.Skin.Base","/planeshift/art/skins/base/client_base.zip");
-        paws = new PawsManager(object_reg, skinPath, skinPathBase, "/planeshift/userdata/planeshift.cfg");
+        paws = new PawsManager(object_reg, skinPath, skinPathBase);
 
         options = new psOptions("/planeshift/userdata/options.cfg", vfs);
 
@@ -574,10 +574,16 @@ bool psEngine::Initialize (int level)
         slotManager = new psSlotManager();
         modehandler = csPtr<ModeHandler> (new ModeHandler (celclient,netmanager->GetMsgHandler(),object_reg));
         actionhandler = csPtr<ActionHandler> ( new ActionHandler ( netmanager->GetMsgHandler(), object_reg ) );
-        zonehandler = csPtr<ZoneHandler> (new ZoneHandler(netmanager->GetMsgHandler(),object_reg,celclient));
+        zonehandler = csPtr<ZoneHandler> (new ZoneHandler(netmanager->GetMsgHandler(), celclient));
         questionclient = new psQuestionClient(GetMsgHandler(), object_reg);
 
-        if (!celclient->Initialize(object_reg, GetMsgHandler(), zonehandler))
+        if(!zonehandler->IsValid())
+        {
+            lasterror = "Couldn't init Zone Handler.";
+            Error2("FATAL ERROR: %s", lasterror.GetData());
+            PS_PAUSEEXIT(1);
+        }
+        if(!celclient->Initialize(object_reg, GetMsgHandler()))
         {
             lasterror = "Couldn't init Cel Manager.";
             Error2("FATAL ERROR: %s",lasterror.GetData());

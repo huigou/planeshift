@@ -98,7 +98,6 @@ psCelClient::psCelClient()
     requeststatus = 0;
 
     clientdr        = NULL;
-    zonehandler     = NULL;
     gameWorld       = NULL;
     entityLabels    = NULL;
     shadowManager   = NULL;
@@ -138,9 +137,7 @@ psCelClient::~psCelClient()
 
 
 
-bool psCelClient::Initialize(iObjectRegistry* object_reg,
-        MsgHandler* newmsghandler,
-        ZoneHandler *zonehndlr)
+bool psCelClient::Initialize(iObjectRegistry* object_reg, MsgHandler* newmsghandler)
 {
     this->object_reg = object_reg;
     entityLabels = new psEntityLabels();
@@ -153,8 +150,6 @@ bool psCelClient::Initialize(iObjectRegistry* object_reg,
     {
         return false;
     }
-
-    zonehandler = zonehndlr;
 
     msghandler = newmsghandler;
     msghandler->Subscribe( this, MSGTYPE_CELPERSIST);
@@ -1658,7 +1653,7 @@ void GEMClientActor::SendDRUpdate(unsigned char priority, csStringHashReversible
 
     linmove->GetDRData(on_ground, speed, pos, yrot, sector, vel, worldVel, ang_vel);
 
-    ZoneHandler* zonehandler = cel->GetZoneHandler();
+    ZoneHandler* zonehandler = psengine->GetZoneHandler();
     if (zonehandler && zonehandler->IsLoading())
     {
         // disable movement to stop stamina drain while map is loading
@@ -2150,7 +2145,11 @@ csPtr<iMaterialWrapper> GEMClientItem::CloneMaterial(iMaterialWrapper* mw)
     csStringID baseType = strings->Request("base");
     iShader* shader = material->GetShader(baseType);
 
-    // Get the depth shader.
+    // Get the depthtest shader.
+    csStringID depthTestType = strings->Request("oc_depthtest");
+    iShader* shadert = material->GetShader(depthTestType);
+
+    // Get the depth shader. TODO: change to oc_depthwrite
     csStringID depthType = strings->Request("depthwrite");
     iShader* shaderz = material->GetShader(depthType);
 
@@ -2177,6 +2176,8 @@ csPtr<iMaterialWrapper> GEMClientItem::CloneMaterial(iMaterialWrapper* mw)
 
         // alpha objects don't use the depthwrite pass for now.
         shaderz = shman->GetShader("*null");
+        // instanced alpha objects need to use z_only_instanced for depthtest
+        shadert = shman->GetShader("z_only_instanced");
     }
     else
     {
@@ -2192,6 +2193,9 @@ csPtr<iMaterialWrapper> GEMClientItem::CloneMaterial(iMaterialWrapper* mw)
 
     // Set the diffuse shader on this material.
     mat->SetShader(diffuseType, shader);
+
+    // Set the depthtest shader on this material
+    mat->SetShader(depthTestType, shadert);
 
     // Set the early_z shader on this material.
     mat->SetShader(depthType, shaderz);
