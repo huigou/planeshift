@@ -49,7 +49,6 @@ struct iSpriteCal3DState;
 struct iMeshObject;
 
 class MsgHandler;
-class ZoneHandler;
 class psClientDR;
 class psNetPersist;
 class psClientVitals;
@@ -149,8 +148,7 @@ public:
     psCelClient();
     virtual ~psCelClient();
 
-    bool Initialize (iObjectRegistry* object_reg, MsgHandler* msghandler,
-                     ZoneHandler *zonehndlr);
+    bool Initialize (iObjectRegistry* object_reg, MsgHandler* msghandler);
 
     void RequestServerWorld();
     bool IsReady();
@@ -176,8 +174,6 @@ public:
     psShadowManager * GetShadowManager() { return shadowManager; }
 
     GEMClientActor* GetMainPlayer() { return local_player; }
-
-    ZoneHandler* GetZoneHandler() { return zonehandler; }
 
     /** Check if the item has an effect attached to it and process it if so. */
     void HandleItemEffect( const char* factName, csRef<iMeshWrapper> mw, bool onGround = true, const char* slot = 0,
@@ -284,7 +280,6 @@ protected:
     csRef<iVFS>         vfs;
     csRef<MsgHandler>   msghandler;
     psClientDR* clientdr;
-    ZoneHandler *zonehandler;
 
     psEntityLabels * entityLabels;
     psShadowManager * shadowManager;

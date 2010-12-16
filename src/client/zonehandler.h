@@ -40,7 +40,8 @@ class psCelClient;
 class pawsLoadWindow;
 class pawsProgressBar;
 
-/**
+/** @brief Information for loading a specific zone
+ *
  * The ZoneHandler keeps a tree of these structures, loaded
  * from an XML file, which specifies which regions are to
  * be loaded when in that particular sector.  Every sector
@@ -52,18 +53,41 @@ class pawsProgressBar;
 class ZoneLoadInfo
 {
 public:
-    csString inSector;
-    csString    loadImage;
-    bool        transitional;
-    
-    csRef<iStringArray> regions;
+    csString    inSector;     ///< Which sector this zone applies to
+    csString    loadImage;    ///< Optional loading screen image
+    csRef<iStringArray> regions; ///< Regions to load on sector load
 
+    /** @brief Basic constructor built from a XML node
+     *
+     * Builds the zone load information from the XML node. Attributes are mapped
+     * from "sector" to \ref inSector and "loadimage" to \ref loadImage.
+     * Each child node named "region" gets attribute "map" added to \ref regions
+     *
+     * @param node The XML node to extract the information out of
+     */
     ZoneLoadInfo(iDocumentNode *node);
 
+    /** @brief Basic comparison for equality
+     *
+     * Compares one ZoneLoadInfo to another using \ref inSector as the comparison
+     * field.
+     *
+     * @param other The ZoneLoadInfo to compare to
+     * @return True if \ref inSector == other.inSector, false otherwise
+     */
     bool operator==(ZoneLoadInfo& other) const
     {
         return inSector == other.inSector;
     }
+
+    /** @brief Basic comparison for less than
+     *
+     * Compares one ZoneLoadInfo to another using \ref inSector as the comparison
+     * field.
+     *
+     * @param other The ZoneLoadInfo to compare to
+     * @return True if the character comparison of \ref inSector to other.inSector is < 0
+     */
     bool operator<(ZoneLoadInfo& other) const
     {
         return (strcmp(inSector,other.inSector)<0);
@@ -71,68 +95,131 @@ public:
 };
 
 
-/**
- *  This class listens for crossing sector boundaries
- *  and makes sure that we have all the right stuff
- *  loaded in each zone.
+/** @brief Ensures all regions that need to be loaded are
+ *
+ * Listens for crossing sector boundaries and makes sure that we have all the
+ * right stuff loaded in each zone.
  */
 class ZoneHandler : public psClientNetSubscriber
 {
 public:
-    ZoneHandler(MsgHandler* mh,iObjectRegistry* object_reg, psCelClient *cc);
+    /** @brief Basic constructor
+     * 
+     * Sets initial values and calls \ref LoadZoneInfo(). Sets \ref valid to
+     * true if everything checked out good
+     *
+     * @param mh The message handler to subscribe messages to
+     * @param cc Used to get player information out of
+     */
+    ZoneHandler(MsgHandler* mh, psCelClient *cc);
+    
+    /** @brief Basic deconstructor
+     */
     virtual ~ZoneHandler();
 
+    /** @brief Handles messages from the server
+     *
+     * Handles \ref psNewSectorMessage by loading the target zone and will call
+     * \ref ForceLoadScreen if there is no load delay
+     *
+     * @param me The message to create the \ref psNewSectorMessage out of
+     */
     void HandleMessage(MsgEntry* me);
 
+    /** @brief Loads a zone and places the user into it
+     *
+     * After the zone is found (from the sector parameter), the player is moved to
+     * a temporary off screen location. While there the loading screen is
+     * displayed and the zone is loaded. After the zone has finished loading,
+     * the player is moved to the target position.
+     *
+     * @param pos The target position in the new zone
+     * @param sector The name of the target zone
+     * @param force Whether to force the loading of the target zone
+     */
     void LoadZone(csVector3 pos, const char* sector, bool force = false);
 
-    /** Call this after drawing on screen finished.
-        It checks if player just crossed boundary between sectors and loads/unloads needed maps */
+    /** @brief Called after drawing on screen has finished.
+     *
+     * Checks if player just crossed boundary between sectors and loads/unloads
+     * needed maps
+     */
     void OnDrawingFinished();
 
-    /** Moves player to given location */
+    /** @brief Moves player to given location
+     *
+     * @param newPos Target position to move to
+     * @param newSector Target sector to move to
+     */
     void MovePlayerTo(const csVector3 & newPos, const csString & newSector);
 
-    bool IsLoading() const { return loading; }
+    /** @brief Returns if this is loading a zone
+     *
+     * @return \ref loading
+     */
+    inline bool IsLoading() const { return loading; }
+    
+    /** @brief Returns whether the zone handler is valid
+     *
+     * @return \ref valid
+     */
+    inline bool IsValid() const { return valid; }
    
 protected:
-    csHash<ZoneLoadInfo *, const char*> zonelist;
-    csArray<csString>       alllist;
-    iObjectRegistry*        object_reg;
-    csRef<MsgHandler>        msghandler;
-    psCelClient             *celclient;
+    csHash<ZoneLoadInfo *, const char*> zonelist;   ///< Mapping of names of zones to their load info
+    csRef<MsgHandler>                   msghandler; ///< Message Handler to subscribe to
+    psCelClient                        *celclient;  ///< Pointer to cel client instance
 
-    bool valid;
-    bool needsToLoadMaps;
-    csString sectorToLoad;
-    csVector3 newPos;
-    bool haveNewPos;
-    int rgnsLoaded;
-    bool initialRefreshScreen;
-
+    bool valid; ///< Whether the loading was successful
+    csString sectorToLoad; ///< The sector that needs to be loaded
+    csVector3 newPos; ///< The target location the player will move to after loading
+    bool loading; ///< Whether a new zone is currently being loaded
     csString forcedBackgroundImg; ///<String which holds the background of the loading screen
     csTicks forcedLoadingEndTime;///<Holds how long the loading shall be delayed
     csTicks forcedLoadingStartTime;///<Holds how long the loading shall be delayed
+    size_t loadCount; ///< The number of items that are being loaded
     
-    pawsLoadWindow* loadWindow;
-    pawsProgressBar* loadProgressBar;
+    pawsLoadWindow* loadWindow; ///< A load window that can be shown to users while loading
+    pawsProgressBar* loadProgressBar; ///< Used for showing users load progress
+    
+    /** @brief Finds the loading window
+     *
+     * Checks if there is a loading window. If there is not a loading window
+     * or the loading window does not have a progress bar, false is returned.
+     *
+     * @return True if a valid window was found, false otherwise.
+     */
     bool FindLoadWindow();
 
-    bool LoadZoneInfo();
-    ZoneLoadInfo * FindZone(const char* sector);
-    bool loading;
-    size_t loadCount;
-
-    /** Tells "world" to (un)load flagged maps, then hides LoadingWindow */
-    bool ExecuteFlaggedRegions(const csString & sector);
-private:
-    /** Forces the load screen to show up and/or stay for the defined amount of time.
-     *  It also allows to change the bacground of the load screen.
-     *  @param backgroundImage The image to put in the load screen.
-     *  @param lenght the minimum lenght the load screen will show up
+    /** @brief Extracts zone information out of a XML
+     *
+     * Checks "/planeshift/data/zoneinfo.xml" for a valid XML. Each element
+     * named "zone" under "zonelist" has a \ref ZoneLoadInfo created out of it.
+     * All \ref ZoneLoadInfo are then added to zonelist based on their sector
+     *
+     * @return False if the file failed to load, true otherwise
      */
-	void ForceLoadScreen(csString backgroundImage, uint32_t lenght);
-};
+    bool LoadZoneInfo();
+    
+    /** @brief Finds load info for a specific sector
+     *
+     * Searches \ref zonelist for the key specified in sector. If it is not
+     * found null is returned and an error is printed
+     *
+     * @param sector The sector to look for
+     * @return The load info for the sector or null
+     */
+    ZoneLoadInfo * FindZone(const char* sector) const;
 
+private:
+    /** @brief Forces load screen to show.
+     * 
+     * Can also have the load screen stay for a defined amount of time.
+     * Also allows to change the background of the load screen.
+     * @param backgroundImage The image to put in the load screen.
+     * @param length the minimum length the load screen will show up
+     */
+    void ForceLoadScreen(csString backgroundImage, uint32_t length);
+};
 
 #endif
