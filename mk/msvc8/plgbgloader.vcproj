@@ -1840,6 +1840,9 @@
 			<File
 				RelativePath="..\..\src\common\bgloader\parser.cpp">
 			</File>
+			<File
+				RelativePath="..\..\src\common\bgloader\parser_mesh.cpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
