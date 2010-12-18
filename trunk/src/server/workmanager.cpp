@@ -245,18 +245,16 @@ void WorkManager::HandleWorkCommand(MsgEntry* me,Client *client)
 void WorkManager::HandleLockPick(MsgEntry* me,Client *client)
 {
     gemObject* target = client->GetTargetObject();
-    bool IsActionLocation = false;
 
     // Check if target is action item
     gemActionLocation* gemAction = dynamic_cast<gemActionLocation*>(target);
     if(gemAction) 
     {
         target = gemAction->GetAction()->GetRealItem();
-        IsActionLocation = true;
     }
 
     // Check target gem and range ignoring Y co-ordinate
-    if (!target || client->GetActor()->RangeTo(IsActionLocation ? target : client->GetTargetObject(), true, IsActionLocation) > RANGE_TO_USE)
+    if (!target || client->GetActor()->RangeTo(client->GetTargetObject(), true, true) > RANGE_TO_USE)
     {
         psserver->SendSystemInfo(client->GetClientNum(),"You need to be closer to the lock to try this.");
         return;
