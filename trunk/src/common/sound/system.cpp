@@ -31,7 +31,7 @@
 
 bool SoundSystem::Initialize (iObjectRegistry* objectReg)
 {
-    sndrenderer = csQueryRegistry<iSndSysRenderer> (objectReg)
+    sndrenderer = csQueryRegistry<iSndSysRenderer> (objectReg);
     if(!sndrenderer.IsValid())
     {
         Error1("Failed to locate Sound renderer!");
