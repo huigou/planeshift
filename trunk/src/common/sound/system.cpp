@@ -31,16 +31,23 @@
 
 bool SoundSystem::Initialize (iObjectRegistry* objectReg)
 {
-  if (!(sndrenderer = csQueryRegistry<iSndSysRenderer> (objectReg)))
+    sndrenderer = csQueryRegistry<iSndSysRenderer> (objectReg)
+    if(!sndrenderer.IsValid())
     {
         Error1("Failed to locate Sound renderer!");
         return false;
     }
 
-  listener = sndrenderer->GetListener();
-  // TODO make configurable NOTE: dont use VOLUME_* defines here
-  listener->SetRollOffFactor (1.0f);
-  return true;
+    listener = sndrenderer->GetListener();
+    if(!listener.IsValid())
+    {
+        Error1("Failed to get a sound global listener!");
+        return false;
+    }
+    
+    // TODO make configurable NOTE: dont use VOLUME_* defines here
+    listener->SetRollOffFactor (1.0f);
+    return true;
 }
 
 /*
