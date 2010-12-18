@@ -359,9 +359,11 @@ bool pawsControlWindow::HandleWindowName(csString widgetStr)
         return true;
     }
     if(widget)
-        return HandleWindow(widget);
+    {
+        HandleWindow(widget);
+        return true;
+    }
     else return false;
-    return true;
 }
 
 void pawsControlWindow::HandleQuit()
