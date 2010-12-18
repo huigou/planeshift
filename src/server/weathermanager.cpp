@@ -146,7 +146,7 @@ void WeatherManager::StartWeather(psSectorInfo *si, unsigned int type)
                        0, // Duration is calculated when stop event is created
                        si->GetRandomWeatherFadeIn((unsigned int)psWeatherMessage::FOG),
                        si->name,
-                       si);
+                       si, 200, 200, 200);
     }
 }
 
@@ -491,6 +491,8 @@ void WeatherManager::HandleWeatherEvent(psWeatherGameEvent *event)
             info.b                = event->cb;
             info.downfall_drops   = 0;
             info.downfall_fade    = 0;
+
+            Notify3(LOG_WEATHER,"New Fog in sector '%s': %d",  event->si->name.GetData(), event->value);
 
             // Save the fade in so we can reverse it when fading out.
             if(event->fade)
