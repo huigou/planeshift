@@ -387,7 +387,11 @@ void pawsLauncherWindow::LoadSettings()
     }
     setting.AppendFmt("x%s", height.GetData());
 
-    resolution->Select(setting);
+    if(!resolution->Select(setting))
+    {
+        resolution->NewOption(setting);
+        resolution->Select(setting);
+    }
 
     // Full screen
     pawsCheckBox* fullscreen = (pawsCheckBox*)FindWidget("Fullscreen");
