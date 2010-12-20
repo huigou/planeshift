@@ -146,7 +146,7 @@ void WeatherManager::StartWeather(psSectorInfo *si, unsigned int type)
                        0, // Duration is calculated when stop event is created
                        si->GetRandomWeatherFadeIn((unsigned int)psWeatherMessage::FOG),
                        si->name,
-                       si, 200, 200, 200);
+                       si, 0, 200, 200, 200);
     }
 }
 
