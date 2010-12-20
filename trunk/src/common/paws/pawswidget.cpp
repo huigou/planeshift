@@ -893,7 +893,7 @@ bool pawsWidget::LoadChildren( iDocumentNode* node )
 void pawsWidget::ShowBehind()
 {
     visible = true;
-    if ( border ) border->ShowBehind();
+    if ( border ) border->Show();
 
     //this mystic code makes nonsense.
     //if a widget is focused why it should be shown, likewise why it should be brought to top?
