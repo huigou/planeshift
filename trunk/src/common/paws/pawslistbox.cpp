@@ -738,7 +738,7 @@ void pawsListBox::SetScrollBarMaxValue()
     else
     {
         horzscrollBar->ShowBehind();
-        horzscrollBar->SetMaxValue(longest - GetActualWidth(rowWidth));
+        horzscrollBar->SetMaxValue(longest - GetActualWidth(rowWidth) + scrollbar->IsVisible() ? scrollbarWidth : 0);
     }
 }
 
