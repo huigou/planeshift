@@ -97,10 +97,10 @@ bool pawsInfoWindow::PostSetup()
     kFactorPct = (pawsTextBox*)FindWidget( "KFactor Pct" );
     if ( !kFactor || !kFactorPct )
         return false;
+    kFactor->EnableValueLimit(true);
     kFactor->SetMaxValue(100.0);
     kFactor->SetCurrentValue(0.0);
     kFactor->SetTickValue(10.0);
-    kFactor->EnableValueLimit(true);
 
     // without this the buttons are not displayed at start
     SetStanceHighlight(0);
