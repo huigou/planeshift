@@ -893,16 +893,18 @@ bool pawsWidget::LoadChildren( iDocumentNode* node )
 void pawsWidget::ShowBehind()
 {
     visible = true;
-    if ( border ) border->Show();
+    if ( border ) border->ShowBehind();
 
-    pawsWidget * focused = PawsManager::GetSingleton().GetCurrentFocusedWidget();
+    //this mystic code makes nonsense.
+    //if a widget is focused why it should be shown, likewise why it should be brought to top?
+   /* pawsWidget * focused = PawsManager::GetSingleton().GetCurrentFocusedWidget();
     if ( focused )
     {
         if(focused->IsVisible())
             BringToTop(focused);
         else
             focused->Show();
-    }
+    }*/
 }
 
 void pawsWidget::Show()
