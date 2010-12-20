@@ -77,7 +77,7 @@ void pawsActiveMagicWindow::HandleMessage( MsgEntry* me )
     show = showWindow->GetState() ? false : true;
 
     if (!IsVisible() && psengine->loadstate == psEngine::LS_DONE && show)
-        Show();
+        ShowBehind();
 
     pawsListBox *list = incoming.type == BUFF ? buffCategories : debuffCategories;
     switch ( incoming.command )
