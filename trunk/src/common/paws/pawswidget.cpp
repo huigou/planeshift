@@ -2295,8 +2295,7 @@ void pawsWidget::Resize()
     }
 
     OnResize();
-
-    for ( size_t x = children.GetSize(); x-- > 0; )
+    for(size_t x = 0; x < children.GetSize(); x++)
     {
         children[x]->Resize();
     }
