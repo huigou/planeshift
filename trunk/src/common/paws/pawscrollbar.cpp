@@ -402,13 +402,13 @@ void pawsScrollBar::SetThumbLayout()
 
 bool pawsScrollBar::OnMouseDown( int button, int modifiers, int x, int y )
 {
-    if (button == csmbWheelUp)
+    if (button == csmbWheelUp || button == csmbHWheelLeft)
     {
         ScrollUp();
         // Always return true, we don't want the scroll to go to the parent widget(s)
         return true;
     }
-    else if(button == csmbWheelDown)
+    else if(button == csmbWheelDown || button == csmbHWheelRight)
     {
         ScrollDown();
         return true;
