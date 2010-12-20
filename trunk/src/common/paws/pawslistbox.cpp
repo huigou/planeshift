@@ -737,7 +737,7 @@ void pawsListBox::SetScrollBarMaxValue()
     }
     else
     {
-        horzscrollBar->Show();
+        horzscrollBar->ShowBehind();
         horzscrollBar->SetMaxValue(longest - GetActualWidth(rowWidth) + scrollbarWidth);
     }
 }
@@ -780,7 +780,7 @@ void pawsListBox::CalculateDrawPositions()
             positionY+=margin;
             positionX+=margin;
 
-            rows[row]->Show();
+            rows[row]->ShowBehind();
             rows[row]->SetRelativeFramePos( positionX, positionY );
             row++;
         }
@@ -795,7 +795,7 @@ void pawsListBox::CalculateDrawPositions()
     if (scrollBar)
     {
         if (rows.GetSize() > numberOfRows)
-            scrollBar->Show();
+            scrollBar->ShowBehind();
         else
             scrollBar->Hide();
     }
