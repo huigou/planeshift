@@ -1594,7 +1594,7 @@ void pawsMultiLineTextBox::SetText( const char* newText )
         OrganizeText( str.GetData() );
         if ( scrollBar )
         {
-            scrollBar->Show();
+            scrollBar->ShowBehind();
             scrollBar->SetMaxValue(lines.GetSize() - canDrawLines );
             scrollBar->SetCurrentValue(0);
         }
