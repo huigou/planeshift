@@ -59,7 +59,7 @@ public:
     void HandleMessage( MsgEntry* me );
     bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );
     bool PostSetup();
-	bool OnChange(pawsWidget *widget);
+    bool OnChange(pawsWidget *widget);
     void Show();
     bool CheckLoadStatus();
 
@@ -158,7 +158,8 @@ private:
     /// Variable to check make sure they were warned, if they did not use a random name
     bool nameWarning;
     ///The current name selected by the player.
-	pawsEditTextBox* nameTextBox;
+    pawsEditTextBox* lastnameTextBox;
+    pawsEditTextBox* firstnameTextBox;
     
     psCharAppearance* charApp;
 

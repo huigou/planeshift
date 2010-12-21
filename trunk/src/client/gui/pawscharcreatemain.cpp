@@ -103,8 +103,10 @@ void pawsCreationMain::Reset()
     pawsRadioButtonGroup* raceBox = (pawsRadioButtonGroup*)FindWidget("RaceBox");
     raceBox->TurnAllOff();
 
-    pawsEditTextBox* name = (pawsEditTextBox*)FindWidget("charnametext");
-    name->SetText("");
+    pawsEditTextBox* firstname = (pawsEditTextBox*)FindWidget("charfirstnametext");
+    firstname->SetText("");
+    pawsEditTextBox* lastname = (pawsEditTextBox*)FindWidget("charlastnametext");
+    lastname->SetText("");
     nameWarning = 0;
 
     ResetAllWindows();
@@ -134,8 +136,12 @@ bool pawsCreationMain::PostSetup()
     hairColourLabel = (pawsTextBox*)FindWidget( "HairColours" );
     skinColourLabel = (pawsTextBox*)FindWidget( "SkinColours" );
 
-    nameTextBox  = dynamic_cast <pawsEditTextBox*> (FindWidget("charnametext"));
-    if (nameTextBox == NULL)
+    lastnameTextBox  = dynamic_cast <pawsEditTextBox*> (FindWidget("charlastnametext"));
+    if (lastnameTextBox == NULL)
+        return false;
+
+    firstnameTextBox = dynamic_cast <pawsEditTextBox*> (FindWidget("charfirstnametext"));
+    if (firstnameTextBox == NULL)
         return false;
 
     maleButton = (pawsButton*)FindWidget("MaleButton");
@@ -207,9 +213,15 @@ void pawsCreationMain::HandleMessage( MsgEntry* me )
                 if ( newWindow.Length() > 0 )
                 {
                     Hide();
-                    pawsEditTextBox* name = (pawsEditTextBox*)FindWidget("charnametext");
-                    if ( name )
-                        createManager->SetName( name->GetText() );
+                    pawsEditTextBox* lastname = (pawsEditTextBox*)FindWidget("charlastnametext");
+                    pawsEditTextBox* firstname = (pawsEditTextBox*)FindWidget("charfirstnametext");
+                    if (firstname && lastname)
+                    {
+                        csString csfirstname = firstname->GetText();
+                        csString cslastname = lastname->GetText();
+                                 
+                        createManager->SetName( csfirstname + " " + cslastname);
+		    }
                     PawsManager::GetSingleton().FindWidget(newWindow)->Show();
                 }
             }
@@ -776,33 +788,34 @@ bool pawsCreationMain::OnButtonPressed( int mouseButton, int keyModifier, pawsWi
 
     if ( strcmp( widget->GetName(), "randomName" ) == 0 )
     {
-        csString randomName;
+        csString firstName;
         csString lastName;
 
         if ( currentGender == PSCHARACTER_GENDER_FEMALE )
         {
-            createManager->GenerateName(NAMEGENERATOR_FEMALE_FIRST_NAME, randomName,5,5);
+            createManager->GenerateName(NAMEGENERATOR_FEMALE_FIRST_NAME, firstName,5,5);
         }
         else
         {
-           createManager->GenerateName(NAMEGENERATOR_MALE_FIRST_NAME, randomName,4,7);
+           createManager->GenerateName(NAMEGENERATOR_MALE_FIRST_NAME, firstName,4,7);
         }
 
         createManager->GenerateName(NAMEGENERATOR_FAMILY_NAME, lastName,4,7);
 
-        csString upper( randomName );
+        csString upper( firstName );
         upper.Upcase();
-        randomName.SetAt(0, upper.GetAt(0) );
+        firstName.SetAt(0, upper.GetAt(0) );
 
         upper = lastName;
         upper.Upcase();
         lastName.SetAt(0, upper.GetAt(0) );
 
-        randomName += " " + lastName;
-
-        pawsEditTextBox* name = (pawsEditTextBox*)FindWidget("charnametext");
-        name->SetText( randomName );
-        name->SetCursorPosition(0);
+        pawsEditTextBox* lastname = (pawsEditTextBox*)FindWidget("charlastnametext");
+        pawsEditTextBox* firstname = (pawsEditTextBox*)FindWidget("charfirstnametext");
+	       
+	firstname->SetText(firstName);
+	lastname->SetText(lastName);
+        firstname->SetCursorPosition(0);
         nameWarning = 1; // no need to warn them
     }
 
@@ -851,17 +864,28 @@ bool pawsCreationMain::OnButtonPressed( int mouseButton, int keyModifier, pawsWi
                 return true;
             }
 
-            pawsEditTextBox* name = (pawsEditTextBox*)FindWidget("charnametext");
+            pawsEditTextBox* lastname = (pawsEditTextBox*)FindWidget("charlastnametext");
+            pawsEditTextBox* firstname = (pawsEditTextBox*)FindWidget("charfirstnametext");
+
+	    csString csfirstname = firstname->GetText();
+            csString cslastname = lastname->GetText();
 
             // Check to see a name was entered.
-            if ( name->GetText() == 0 )
+            if ( csfirstname.Length() == 0 )
             {
-                psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate("Please enter a full name"));
+                psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate("Please enter a first name"));
                 error.FireEvent();
                 return true;
             }
 
-            csString selectedName(name->GetText());
+            if ( cslastname.Length() == 0 )
+            {
+                psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate("Please enter a last name"));
+                error.FireEvent();
+                return true;
+            }
+
+            csString selectedName(csfirstname + " " + cslastname);
 
             if ( !CheckNameForRepeatingLetters(selectedName) )
             {
@@ -869,46 +893,28 @@ bool pawsCreationMain::OnButtonPressed( int mouseButton, int keyModifier, pawsWi
                                       "No more than 2 letters in a row allowed"));
                 error.FireEvent();
                 return true;
-            }
-
-            csString lastname,firstname;
-
-            firstname = selectedName.Slice(0,selectedName.FindFirst(' '));
-            if (selectedName.FindFirst(' ') != SIZET_NOT_FOUND)
-                lastname = selectedName.Slice(selectedName.FindFirst(' ') +1,selectedName.Length());
-            else
-            {
-                psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate(
-                                      "Please enter a full name"));
-                error.FireEvent();
-                return true;
-            }
+            }	    
 
             // Check the firstname
-            if ( firstname.Length() < 3 || !FilterName(firstname) )
+            if ( csfirstname.Length() < 3 || !FilterName(firstname->GetText()) )
             {
                 psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate(
-                                      "First name is invalid"));
+                                      "First name must contain more than two letters"));
                 error.FireEvent();
                 return true;
             }
 
             // Check the lastname
-            if ( lastname.Length() < 3 || !FilterName(lastname) )
+            if ( cslastname.Length() < 3 || !FilterName(lastname->GetText()) )
             {
                 psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate(
-                                      "Last name is invalid"));
+                                      "Last name must contain more than two letters"));
                 error.FireEvent();
                 return true;
             }
 
-            firstname = NormalizeCharacterName(firstname);
-            lastname = NormalizeCharacterName(lastname);
-
-            if (lastname.Length())
-                name->SetText(firstname + " " + lastname);
-            else
-                name->SetText(firstname);
+            firstname->SetText(NormalizeCharacterName(csfirstname));
+            lastname->SetText(NormalizeCharacterName(cslastname));
 
             // Check to see if they entered their own name.
             if (nameWarning == 0)
@@ -944,7 +950,7 @@ bool pawsCreationMain::OnButtonPressed( int mouseButton, int keyModifier, pawsWi
                 newWindow = "Paths";
             }
 
-            psNameCheckMessage msg(name->GetText());
+            psNameCheckMessage msg(csfirstname + " " + cslastname);
             msg.SendMessage();
         }
     }
@@ -955,7 +961,7 @@ bool pawsCreationMain::OnButtonPressed( int mouseButton, int keyModifier, pawsWi
 bool pawsCreationMain::OnChange(pawsWidget *widget)
 {
     // If we click on the name box (and we change it), then we might get the name policy warning again
-    if (widget == nameTextBox)
+    if (widget == lastnameTextBox || widget == firstnameTextBox)
         nameWarning=0;
     return true;
 }
