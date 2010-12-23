@@ -932,7 +932,7 @@ bool psCharAppearance::Attach(const char* socketName, const char* meshFactName, 
     csRef<iMaterialWrapper> material;
     if(materialName != NULL)
     {
-        psengine->GetLoader()->LoadMaterial(materialName, &failed);
+        material = psengine->GetLoader()->LoadMaterial(materialName, &failed);
         if(failed)
         {
             Notify2(LOG_CHARACTER, "Material %s not found.", materialName);
