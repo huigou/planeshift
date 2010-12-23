@@ -173,7 +173,7 @@ bool PawsEditorApp::Init()
         nw->SetTitle(WINDOW_CAPTION);
 
     // paws initialization
-    paws = new pePawsManager(object_reg, "/this/art/pawseditor.zip", "/this/pawseditor.cfg");
+    paws = new pePawsManager(object_reg, "/this/art/pawseditor.zip");
     if (!paws)
     {
         SevereError("Could not initialize PAWS!");
