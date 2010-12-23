@@ -319,7 +319,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
 
     csRef<iBgLoader> loader = csQueryRegistry<iBgLoader>(object_reg);
     loader->PrecacheDataWait("/planeshift/materials/materials.cslib", false);
-printf("a\n");
+
     csRef<iStringArray> meshes = vfs->FindFiles("/planeshift/meshes/");
     for(size_t j=0; j<meshes->GetSize(); ++j)
     {
@@ -327,7 +327,7 @@ printf("a\n");
     }
 
     csRef<iStringArray> maps = vfs->FindFiles("/planeshift/world/");
-printf("b\n");
+
     for(size_t j=0; j<maps->GetSize(); ++j)
     {
         loader->PrecacheDataWait(maps->Get(j), false);
