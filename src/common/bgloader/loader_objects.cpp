@@ -278,11 +278,6 @@ bool BgLoader::MeshGen::LoadObject(bool wait)
           status = GetParent()->GetLoader()->LoadNode(path, data, 0, sector->object);
       }
 
-      if(wait)
-      {
-          status->Wait();
-      }
-
       ready = TrivialLoadable::LoadObject(wait);
     }
 
@@ -301,6 +296,11 @@ void BgLoader::MeshGen::UnloadObject()
 
 bool BgLoader::Portal::LoadObject(bool wait)
 {
+    if(mObject.IsValid())
+    {
+        return true;
+    }
+
     iSector* target = targetSector->object;
 
     if(autoresolve)

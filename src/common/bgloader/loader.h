@@ -326,7 +326,7 @@ public:
     void RegisterPendingObject(Loadable* obj)
     {
         ++loadCount;
-        loadList.Add(obj);
+        loadList.Push(obj);
     }
 
     // decrease load count - to be used by loadables only
@@ -1422,7 +1422,7 @@ private:
     ObjectLoader<Zone> loadedZones;
 
     // currently loading objects
-    csSet<csPtrKey<Loadable> > loadList;
+    csArray<csPtrKey<Loadable> > loadList;
 
     // number of objects currently loading
     size_t loadCount;
@@ -1446,8 +1446,8 @@ private:
     // The last valid position.
     csVector3 lastPos;
 
-    // The last offset used for mesh loading
-    size_t loadingOffset;
+    // current load step - use for ContinueLoading
+    size_t loadStep;
 
     // For world manipulation.
     csRef<iMeshWrapper> selectedMesh;
