@@ -287,7 +287,7 @@ public:
     {
         csRefArray<StartPosition> array;
         CS::Threading::ScopedReadLock lock(parserData.positions.lock);
-        typename LockedType<StartPosition>::HashType::GlobalIterator it(parserData.positions.hash.GetIterator());
+        LockedType<StartPosition>::HashType::GlobalIterator it(parserData.positions.hash.GetIterator());
         while(it.HasNext())
         {
             array.Push(it.Next());
