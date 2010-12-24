@@ -67,11 +67,16 @@ pawsObjectView::~pawsObjectView()
         return;
     }
 
-    if(target.IsValid())
+    if(meshTarget.IsValid())
     {
         // unregister tex from render targets
-        csRef<iRenderManagerTargets> rmTargets = scfQueryInterface<iRenderManagerTargets>(engine->GetRenderManager());
-        rmTargets->UnregisterRenderTarget(target);
+        rmTargets->UnregisterRenderTarget(meshTarget);
+    }
+
+    if(stageTarget.IsValid())
+    {
+        // unregister tex from render targets
+        rmTargets->UnregisterRenderTarget(stageTarget);
     }
 
     PawsManager::GetSingleton().RemoveObjectView(this);
@@ -133,36 +138,37 @@ bool pawsObjectView::Setup(iDocumentNode* node )
 
 void pawsObjectView::OnResize()
 {
-    if(target.IsValid() && rmTargets.IsValid())
+    if(rmTargets.IsValid() && stageTarget.IsValid() && meshTarget.IsValid())
     {
-        // unregister old tex from render targets
-        csRef<iRenderManagerTargets> rmTargets = scfQueryInterface<iRenderManagerTargets>(engine->GetRenderManager());
-        rmTargets->UnregisterRenderTarget(target);
+        // unregister old texs from render targets
+        rmTargets->UnregisterRenderTarget(stageTarget);
+        rmTargets->UnregisterRenderTarget(meshTarget);
     }
 
     pawsWidget::OnResize();
     csRef<iTextureManager> texman = PawsManager::GetSingleton().GetGraphics3D()->GetTextureManager();
-    target = texman->CreateTexture(screenFrame.Width(), screenFrame.Height(), csimg2D, "rgba8",
-             CS_TEXTURE_2D | CS_TEXTURE_NOMIPMAPS | CS_TEXTURE_SCALE_UP | CS_TEXTURE_NPOTS);
-    if(target.IsValid())
+    meshTarget  = texman->CreateTexture(screenFrame.Width(), screenFrame.Height(), csimg2D, "rgba8",
+                    CS_TEXTURE_2D | CS_TEXTURE_NOMIPMAPS | CS_TEXTURE_SCALE_UP);
+    stageTarget = texman->CreateTexture(screenFrame.Width(), screenFrame.Height(), csimg2D, "rgba8",
+                    CS_TEXTURE_2D | CS_TEXTURE_NOMIPMAPS | CS_TEXTURE_SCALE_UP);
+
+    if(meshTarget.IsValid() && stageTarget.IsValid())
     {
-        target->SetAlphaType (csAlphaMode::alphaBinary);
+        meshTarget->SetAlphaType (csAlphaMode::alphaBinary);
+        stageTarget->SetAlphaType (csAlphaMode::alphaBinary);
     }
     else
     {
         Error1("pawsObjectView couldn't create render target!");
     }
 
-    /*if (!resizeToScreen)
-        distance = origDistance * float(screenFrame.Width() * graphics2D->GetWidth())/800.0f;*/
-
     // update the views
-    int w = screenFrame.Width();
-    int h = screenFrame.Height();
+    int w, h;
 
     // update the stage view
     if(view)
     {
+        stageTarget->GetRendererDimensions(w,h);
         view->SetWidth(w);
         view->SetHeight(h);
         view->SetRectangle(0, 0, w, h, false);
@@ -173,6 +179,7 @@ void pawsObjectView::OnResize()
     // update the doll view
     if(meshView)
     {
+        meshTarget->GetRendererDimensions(w,h);
         meshView->SetWidth(w);
         meshView->SetHeight(h);
         meshView->SetRectangle(0, 0, w, h, false);
@@ -307,7 +314,7 @@ void pawsObjectView::RotateTemp(int speed,float radians)
 
 void pawsObjectView::Draw3D(iGraphics3D* graphics3D)
 {
-    if(!target.IsValid() || !view || !meshView /*|| !needsDraw*/)
+    if(!meshTarget.IsValid() || !stageTarget.IsValid() || !view || !meshView)
     {
         return;
     }
@@ -318,27 +325,39 @@ void pawsObjectView::Draw3D(iGraphics3D* graphics3D)
     else
         DrawNoRotate();
 
-    // draw it
-    csRef<iRenderManagerTargets> rmTargets = scfQueryInterface<iRenderManagerTargets>(engine->GetRenderManager());
-    rmTargets->RegisterRenderTarget(target, view, 0, iRenderManagerTargets::updateOnce | iRenderManagerTargets::clearScreen);
-    rmTargets->MarkAsUsed(target);
-    engine->GetRenderManager()->RenderView(view);
-    rmTargets->RegisterRenderTarget(target, meshView, 0, iRenderManagerTargets::updateOnce);
-    rmTargets->MarkAsUsed(target);
+    // draw the stage if needed
+    if(needsDraw)
+    {
+        rmTargets->RegisterRenderTarget(stageTarget, view, 0, iRenderManagerTargets::updateOnce | iRenderManagerTargets::clearScreen);
+        rmTargets->MarkAsUsed(stageTarget);
+        engine->GetRenderManager()->RenderView(view);
+    }
+
+    // draw the mesh
+    rmTargets->RegisterRenderTarget(meshTarget, meshView, 0, iRenderManagerTargets::updateOnce | iRenderManagerTargets::clearScreen);
+    rmTargets->MarkAsUsed(meshTarget);
     engine->GetRenderManager()->RenderView(meshView);
 
-    //needsDraw = doRotate && !cameraLocked;
+    needsDraw = doRotate && !cameraLocked;
 }
 
 void pawsObjectView::Draw()
 {
     graphics2D->SetClipRect( 0,0, graphics2D->GetWidth(), graphics2D->GetHeight());
-    if(target.IsValid())
+    iGraphics3D* graphics3D = PawsManager::GetSingleton().GetGraphics3D();
+    int w = screenFrame.Width();
+    int h = screenFrame.Height();
+
+    if(stageTarget.IsValid())
     {
-        iGraphics3D* graphics3D = PawsManager::GetSingleton().GetGraphics3D();
-        graphics3D->DrawPixmap(target,
-            screenFrame.xmin, screenFrame.ymin, screenFrame.Width(), screenFrame.Height(),
-            0, 0, screenFrame.Width(), screenFrame.Height());
+        graphics3D->DrawPixmap(stageTarget,
+            screenFrame.xmin, screenFrame.ymin, w, h, 0, 0, w, h);
+    }
+
+    if(meshTarget.IsValid())
+    {
+        graphics3D->DrawPixmap(meshTarget,
+            screenFrame.xmin, screenFrame.ymin, w, h, 0, 0, w, h);
     }
     pawsWidget::Draw();
 }
