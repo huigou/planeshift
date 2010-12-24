@@ -901,7 +901,7 @@ private:
     class Texture : public TrivialLoadable<iTextureWrapper,ObjectNames::texture>
     {
     public:
-        Texture(BgLoader* parent) : TrivialLoadable(parent)
+        Texture(BgLoader* parent) : TrivialLoadable<iTextureWrapper,ObjectNames::texture>(parent)
         {
         }
 
@@ -950,7 +950,7 @@ private:
     class Trigger : public TrivialLoadable<iSequenceTrigger,ObjectNames::trigger>, public AlwaysLoaded
     {
     public:
-        Trigger(BgLoader* parent) : TrivialLoadable(parent)
+        Trigger(BgLoader* parent) : TrivialLoadable<iSequenceTrigger,ObjectNames::trigger>(parent)
         {
         }
 
@@ -965,7 +965,7 @@ private:
         using ObjectLoader<Sequence>::AddDependency;
         using ObjectLoader<Trigger>::AddDependency;
 
-        Sequence(BgLoader* parent) : TrivialLoadable(parent)
+        Sequence(BgLoader* parent) : TrivialLoadable<iSequenceWrapper,ObjectNames::sequence>(parent)
         {
         }
 
@@ -977,14 +977,14 @@ private:
             ready &= ObjectLoader<Trigger>::LoadObjects(wait);
             ready &= ObjectLoader<Sequence>::LoadObjects(wait);
 
-            return ready && TrivialLoadable::LoadObject(wait);
+            return ready && TrivialLoadable<iSequenceWrapper,ObjectNames::sequence>::LoadObject(wait);
         }
 
         void UnloadObject()
         {
             ObjectLoader<Trigger>::UnloadObjects();
             ObjectLoader<Sequence>::UnloadObjects();
-            TrivialLoadable::UnloadObject();
+            TrivialLoadable<iSequenceWrapper,ObjectNames::sequence>::UnloadObject();
         }
     };
 
@@ -1026,7 +1026,7 @@ private:
     public:
         using ObjectLoader<Material>::AddDependency;
 
-        MeshFact(BgLoader* parent) : TrivialLoadable(parent)
+        MeshFact(BgLoader* parent) : TrivialLoadable<iMeshFactoryWrapper,ObjectNames::meshfact>(parent)
         {
         }
 
@@ -1082,7 +1082,7 @@ private:
         using ObjectLoader<Sequence>::AddDependency;
         using ObjectLoader<Trigger>::AddDependency;
 
-        MeshObj(BgLoader* parent) : TrivialLoadable(parent), finished(false)
+        MeshObj(BgLoader* parent) : TrivialLoadable<iMeshWrapper,ObjectNames::meshobj>(parent), finished(false)
         {
         }
 
@@ -1095,7 +1095,7 @@ private:
 
         bool FindSubmesh(const csString& name) const
         {
-            typedef typename ObjectLoader<MeshFact>::HashType HashType;
+            typedef ObjectLoader<MeshFact>::HashType HashType;
             const HashType& factories = ObjectLoader<MeshFact>::GetDependencies();
             HashType::ConstGlobalIterator it(factories.GetIterator());
             bool found = false;
@@ -1127,7 +1127,7 @@ private:
         using ObjectLoader<MeshFact>::AddDependency;
         using ObjectLoader<Material>::AddDependency;
 
-        MeshGen(BgLoader* parent) : TrivialLoadable(parent)
+        MeshGen(BgLoader* parent) : TrivialLoadable<iMeshGenerator,ObjectNames::meshgen>(parent)
         {
         }
 
