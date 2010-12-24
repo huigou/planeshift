@@ -319,7 +319,7 @@ void BgLoader::UpdatePosition(const csVector3& pos, const char* sectorName, bool
         // clean the check flag for all sectors, so they'll be checked, again
         {
             CS::Threading::ScopedReadLock lock(parserData.sectors.lock);
-            typename LockedType<Sector>::HashType::GlobalIterator it(parserData.sectors.hash.GetIterator());
+            LockedType<Sector>::HashType::GlobalIterator it(parserData.sectors.hash.GetIterator());
             while(it.HasNext())
             {
                 it.Next()->ResetChecked();
@@ -348,7 +348,7 @@ void BgLoader::CleanDisconnectedSectors(Sector* sector)
 
     // clean sectors that aren't (indirectly) connected to this one
     CS::Threading::ScopedReadLock lock(parserData.sectors.lock);
-    typename LockedType<Sector>::HashType::GlobalIterator it(parserData.sectors.hash.GetIterator());
+    LockedType<Sector>::HashType::GlobalIterator it(parserData.sectors.hash.GetIterator());
     while(it.HasNext())
     {
         csRef<Sector> sector(it.Next());
