@@ -45,7 +45,7 @@ SCF_IMPLEMENT_FACTORY(BgLoader)
 
 BgLoader::BgLoader(iBase *p)
   : scfImplementationType (this, p), loadCount(0), loadRange(500), validPosition(false),
-  loadingOffset(0), currRot_h(0), currRot_v(0), resetHitbeam(true)
+  loadStep(0), currRot_h(0), currRot_v(0), resetHitbeam(true)
 {
 }
 
@@ -236,24 +236,31 @@ csPtr<iStringArray> BgLoader::GetShaderName(const char* usageType)
 
 void BgLoader::ContinueLoading(bool wait)
 {
-    // continue loading objects passed via LoadZones
-    loadedZones.LoadObjects(wait);
-    if(validPosition)
+    bool expensiveChecks = (loadStep == 0) || wait;
+
+    if(expensiveChecks)
     {
-        UpdatePosition(lastPos, lastSector->GetName(), true);
+        // checks objects passed via LoadZones
+        loadedZones.LoadObjects(wait);
+
+        
+        if(validPosition)
+        {
+            // checks regular objects
+            UpdatePosition(lastPos, lastSector->GetName(), true);
+        }
     }
 
     // find lingering objects that someone attempted to load but never finished
-    csSet<csPtrKey<Loadable> >::GlobalIterator it(loadList.GetIterator());
-    csArray<csPtrKey<Loadable> > toAbort;
-    while(it.HasNext())
+    for(size_t i = 0; i < loadList.GetSize(); ++i)
     {
-        Loadable* l = it.Next();
+        Loadable* l = loadList[i];
         if(!l->IsChecked())
         {
             if(l->GetLingerCount() > maxLingerCount)
             {
-                toAbort.Push(l);
+                LOADER_DEBUG_MESSAGE("aborting load for lingering object '%s'!\n", l->GetName());
+                l->AbortLoad();
             }
             else
             {
@@ -263,16 +270,13 @@ void BgLoader::ContinueLoading(bool wait)
         else
         {
             l->ResetChecked();
+
+            // continue loading
+            l->LoadObject(wait);
         }
     }
 
-    // abort loading for the objects we found
-    for(size_t i = 0; i < toAbort.GetSize(); ++i)
-    {
-        Loadable* l = toAbort[i];
-        LOADER_DEBUG_MESSAGE("aborting load for lingering object '%s'!\n", l->GetName());
-        l->AbortLoad();
-    }
+    loadStep = (loadStep + 1) % 10;
 }
 
 void BgLoader::UpdatePosition(const csVector3& pos, const char* sectorName, bool force)
