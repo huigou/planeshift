@@ -173,7 +173,7 @@ bool BgLoader::MeshFact::LoadObject(bool wait)
     // rest can be handled by trivial loadable
     if(ready)
     {
-        ready = TrivialLoadable::LoadObject(wait);
+        ready = TrivialLoadable<iMeshFactoryWrapper,ObjectNames::meshfact>::LoadObject(wait);
     }
 
     return ready;
@@ -181,7 +181,7 @@ bool BgLoader::MeshFact::LoadObject(bool wait)
 
 void BgLoader::MeshFact::UnloadObject()
 {
-    TrivialLoadable::UnloadObject();
+    TrivialLoadable<iMeshFactoryWrapper,ObjectNames::meshfact>::UnloadObject();
     ObjectLoader<Material>::UnloadObjects();
 }
 
@@ -193,7 +193,7 @@ bool BgLoader::MeshObj::LoadObject(bool wait)
 
     if(ready)
     {
-        ready = TrivialLoadable::LoadObject(wait);
+        ready = TrivialLoadable<iMeshWrapper,ObjectNames::meshobj>::LoadObject(wait);
     }
 
     if(ready)
@@ -278,7 +278,7 @@ bool BgLoader::MeshGen::LoadObject(bool wait)
           status = GetParent()->GetLoader()->LoadNode(path, data, 0, sector->object);
       }
 
-      ready = TrivialLoadable::LoadObject(wait);
+      ready = TrivialLoadable<iMeshGenerator,ObjectNames::meshgen>::LoadObject(wait);
     }
 
     return ready;
