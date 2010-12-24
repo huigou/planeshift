@@ -48,7 +48,8 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                                                 const csVector2& pos)
     {
         // Check that requested mesh is valid.
-        csRef<MeshFact> meshfact = meshfacts.Get(mfStringSet.Request(factName), csRef<MeshFact>());
+        csRef<MeshFact> meshfact = parserData.factories.Get(factName);
+
         if(!meshfact.IsValid())
             return 0;
 
@@ -60,12 +61,12 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
             return 0;
 
         // Load meshfactory.
-        if(!LoadMeshFact(meshfact, true))
+        if(!meshfact->Load(true))
         {
             return 0;
         }
         selectedFactory = factName;
-        csRef<iMeshFactoryWrapper> factory = meshfact->object;
+        csRef<iMeshFactoryWrapper> factory = meshfact->GetObject();
 
         // Update stored position.
         previousPosition = pos;
@@ -84,10 +85,11 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
         if(matName != NULL)
         {
             // Check that requested material is valid.
-            csRef<Material> material = materials.Get(mStringSet.Request(matName), csRef<Material>());
+            csRef<Material> material = parserData.materials.Get(matName);
+
             if(material.IsValid())
             {
-                if(!LoadMaterial(material, true))
+                if(!material->Load(true))
                 {
                     engine->RemoveObject(selectedMesh);
                     selectedMesh.Invalidate();
@@ -96,7 +98,8 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                     return 0;
                 }
                 selectedMaterial = matName;
-                selectedMesh->GetMeshObject()->SetMaterialWrapper(material->mat);
+                csRef<iMaterialWrapper> wrapper = material->GetObject();
+                selectedMesh->GetMeshObject()->SetMaterialWrapper(wrapper);
             }
         }
 

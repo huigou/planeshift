@@ -199,15 +199,6 @@ bool pawsObjectView::LoadMap( const char* map, const char* sector )
     static uint sectorCount = 0;
     meshSector = engine->CreateSector( csString(sector).AppendFmt("%u", sectorCount++));
 
-    iLightList* lightList = meshSector->GetLights();
-    iLightList* stageLightList = stage->GetLights();
-
-    for(int i=0; i<stageLightList->GetCount(); i++)
-    {
-        lightList->Add(stageLightList->Get(i));
-    }
-    meshSector->PrecacheDraw();
-
     meshView = csPtr<iView>(new csView(engine, PawsManager::GetSingleton().GetGraphics3D()));
     meshView->SetAutoResize(false);
     meshView->GetCamera()->SetSector(meshSector);
@@ -225,12 +216,23 @@ bool pawsObjectView::ContinueLoad()
 {
     if(loader->GetLoadingCount() == 0)
     {
+        iLightList* lightList = meshSector->GetLights();
+        iLightList* stageLightList = stage->GetLights();
+
+        for(int i=0; i<stageLightList->GetCount(); i++)
+        {
+            lightList->Add(stageLightList->Get(i));
+        }
+
+        meshSector->PrecacheDraw();
         stage->PrecacheDraw();
         return true;
     }
-
-    loader->ContinueLoading(false);
-    return false;
+    else
+    {
+        loader->ContinueLoading(true);
+        return false;
+    }
 }
 
 bool pawsObjectView::View( const char* factName)

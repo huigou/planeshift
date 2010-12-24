@@ -322,7 +322,7 @@ void ZoneHandler::OnDrawingFinished()
             if(loadCount)
             {
                 loadProgress = (float)(loadCount-psengine->GetLoader()->GetLoadingCount())/loadCount;
-                psengine->GetLoader()->ContinueLoading(true);
+                psengine->GetLoader()->ContinueLoading(false);
             }
             loadProgressBar->SetCurrentValue(csMin(loadProgress,timeProgress));
         }

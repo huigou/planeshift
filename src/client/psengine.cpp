@@ -544,16 +544,16 @@ bool psEngine::Initialize (int level)
           PS_PAUSEEXIT(1);
         }
 
-        // Start to fill the loader cache.
-        precaches.Push(loader->PrecacheData("/planeshift/materials/materials.cslib", false));
-        lastLoadingCount = 1;
-
         // Set progress bar.
         pawsProgressBar* progress = (pawsProgressBar*)paws->FindWidget("SplashProgress");
         meshes = vfs->FindFiles("/planeshift/meshes/");
         maps = vfs->FindFiles("/planeshift/world/");
         progress->SetTotalValue(2+meshes->GetSize()+maps->GetSize());
         progress->SetCurrentValue(0.0f);
+
+        // Start to fill the loader cache.
+        precaches.Push(loader->PrecacheData("/planeshift/materials/materials.cslib", false));
+        lastLoadingCount = 1;
 
         // Initialize Networking
         if (!netmanager)
@@ -711,6 +711,7 @@ bool psEngine::Initialize (int level)
 
         meshes.Invalidate();
         maps.Invalidate();
+        loader->ClearTemporaryData();
     }
     else if(level == 5)
     {

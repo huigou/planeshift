@@ -256,20 +256,35 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, cons
     CPrintf(CON_CMDOUTPUT,"Filling loader cache");
 
     csRef<iBgLoader> loader = csQueryRegistry<iBgLoader>(object_reg);
+    csRef<iThreadManager> threadManager = csQueryRegistry<iThreadManager>(object_reg);
+
+    // load materials
     loader->PrecacheDataWait("/planeshift/materials/materials.cslib", false);
 
+    csRefArray<iThreadReturn> precaches;
+
+    // load meshes
     csRef<iStringArray> meshes = vfs->FindFiles("/planeshift/meshes/");
     for(size_t j=0; j<meshes->GetSize(); ++j)
     {
-        loader->PrecacheDataWait(meshes->Get(j), false);
+        precaches.Push(loader->PrecacheData(meshes->Get(j), false));
     }
+    threadManager->Wait(precaches);
+    precaches.Empty();
+    meshes->Empty();
 
+    // load maps
     csRef<iStringArray> maps = vfs->FindFiles("/planeshift/world/");
-
     for(size_t j=0; j<maps->GetSize(); ++j)
     {
-        loader->PrecacheDataWait(maps->Get(j), false);
+        precaches.Push(loader->PrecacheData(maps->Get(j), false));
     }
+    threadManager->Wait(precaches);
+    precaches.Empty();
+    maps->Empty();
+
+    // clear up data that is only required parse time
+    loader->ClearTemporaryData();
 
     CPrintf(CON_CMDOUTPUT,"Loader cache filled");
     

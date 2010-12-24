@@ -3964,13 +3964,13 @@ bool AdminManager::GetStartOfMap(int clientnum, const csString & map, iSector * 
     iEngine* engine = EntityManager::GetSingleton().GetEngine();
     csRef<iBgLoader> loader = csQueryRegistry<iBgLoader>(psserver->GetObjectReg());
 
-    csRefArray<StartPosition>* positions = loader->GetStartPositions();
-    for(size_t i=0; i<positions->GetSize(); ++i)
+    csRefArray<StartPosition> positions = loader->GetStartPositions();
+    for(size_t i = 0; i < positions.GetSize(); ++i)
     {
-        if(positions->Get(i)->zone == map)
+        if(positions.Get(i)->zone == map)
         {
-            targetSector = engine->FindSector(positions->Get(i)->sector);
-            targetPoint = positions->Get(i)->position;
+            targetSector = engine->FindSector(positions.Get(i)->sector);
+            targetPoint = positions.Get(i)->position;
             return true;
         }
     }

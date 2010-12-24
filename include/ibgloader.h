@@ -35,9 +35,15 @@ struct iThreadedLoader;
  */
 struct StartPosition : public csRefCount
 {
+    csString name;
     csString zone;
     csString sector;
     csVector3 position;
+
+    const char* GetName()
+    {
+        return name.GetData();
+    }
 };
 
 /**
@@ -45,7 +51,7 @@ struct StartPosition : public csRefCount
  */
 struct iBgLoader : public virtual iBase
 {
-  SCF_INTERFACE(iBgLoader, 1, 6, 1);
+  SCF_INTERFACE(iBgLoader, 2, 0, 0);
 
  /**
   * Start loading a material into the engine. Returns 0 if the material is not yet loaded.
@@ -56,7 +62,7 @@ struct iBgLoader : public virtual iBase
   * @remark a successfull call(e.g. return pointer != 0) increases the usage count of the material.
   * call FreeMaterial in order to release your usage.
   */
-  virtual iMaterialWrapper* LoadMaterial(const char* name, bool* failed = NULL, bool wait = false) = 0;
+  virtual csPtr<iMaterialWrapper> LoadMaterial(const char* name, bool* failed = NULL, bool wait = false) = 0;
 
  /**
   * Start loading a mesh factory into the engine. Returns 0 if the factory is not yet loaded.
@@ -102,6 +108,14 @@ struct iBgLoader : public virtual iBase
   * You should wait for parsing to finish before calling UpdatePosition().
   */
   THREADED_INTERFACE2(PrecacheData, const char* path, bool recursive);
+
+ /**
+  * Clean up any intermediate data that was required parse time.
+  * Further calls to PrecacheData won't parse as this clears the token cache as well.
+  * On top of that this function mustn't be called while PrecacheData is running.
+  * I.e. all prior calls must have finished before you may call this function.
+  */
+  virtual void ClearTemporaryData() = 0;
 
  /**
   * Update your position in the world.
@@ -167,23 +181,22 @@ struct iBgLoader : public virtual iBase
   * E.g. 'default_alpha' to get an array of all default world alpha shaders.
   * @return pointer to an array holding the names of the requested shaders.
   */
-  virtual csPtr<iStringArray> GetShaderName(const char* usageType) const = 0;
+  virtual csPtr<iStringArray> GetShaderName(const char* usageType) = 0;
 
  /**
   * Request start positions in the world.
   * @return pointer to an array holding all known starting positions.
   */
-  virtual csRefArray<StartPosition>* GetStartPositions() = 0;
+  virtual csRefArray<StartPosition> GetStartPositions() = 0;
 
  /**
   * Load zones given by name.
   * @param regions pointer to an array holding the region names. if NULL, all regions are loaded.
-  * @param loadMeshes specify whether or not to load meshes.
   * @param priority specify whether the regions shall be marked high priority.
   * @see LoadPriorityZones.
   * @return true upon success, false otherwise.
   */
-  virtual bool LoadZones(iStringArray* regions = 0, bool loadMeshes = true, bool priority = false) = 0;
+  virtual bool LoadZones(iStringArray* regions = 0, bool priority = false) = 0;
 
  /**
   * Load high priority zones given by name.
