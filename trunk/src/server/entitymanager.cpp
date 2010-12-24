@@ -776,7 +776,7 @@ EID EntityManager::CreateNPC(PID npcID, bool updateProxList, bool alwaysWatching
 
 bool EntityManager::LoadMap (const char* mapname)
 {
-    return gameWorld->NewRegion(mapname, false);
+    return gameWorld->NewRegion(mapname);
 }
 
 gemItem *EntityManager::MoveItemToWorld(psItem       *chrItem,

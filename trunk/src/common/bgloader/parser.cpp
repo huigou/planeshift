@@ -40,16 +40,11 @@
 #include "util/psconst.h"
 #include "loader.h"
 
-//#ifdef CS_DEBUG
-#undef  CS_ASSERT_MSG
-#define CS_ASSERT_MSG(msg, x) if(!x) printf("ART ERROR: %s\n", msg)
-//#endif
-
 CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
 {
     void BgLoader::ParseShaders()
     {
-        if(!parseShaders || parsedShaders)
+        if(!parserData.config.parseShaders || parserData.config.parsedShaders)
             return;
 
         csRef<iConfigManager> config = csQueryRegistry<iConfigManager> (object_reg);
@@ -60,8 +55,13 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
         {
             csRef<iDocumentSystem> docsys = csQueryRegistry<iDocumentSystem>(object_reg);
             csRef<iDocument> doc = docsys->CreateDocument();
-            csRef<iDataBuffer> data = vfs->ReadFile(shaderList);
-            doc->Parse(data, true);
+            csString path;
+            {
+                CS::Threading::RecursiveMutexScopedLock lock(vfsLock);
+                csRef<iDataBuffer> data = vfs->ReadFile(shaderList);
+                doc->Parse(data, true);
+                path = vfs->GetCwd();
+            }
 
             if(doc->GetRoot())
             {
@@ -76,19 +76,25 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                         node = nodeItr->Next();
 
                         csRef<iDocumentNode> file = node->GetNode("file");
-                        shaders.Push(file->GetContentsValue());
-                        if(blockShaderLoad)
+
+                        CS::Threading::ScopedWriteLock lock(parserData.shaderLock);
+                        parserData.shaders.Push(file->GetContentsValue());
+                        csRef<iThreadReturn> shaderRet = tloader->LoadShader(path, file->GetContentsValue());
+                        if(parserData.config.blockShaderLoad)
                         {
-                            rets.Push(tloader->LoadShaderWait(vfs->GetCwd(), file->GetContentsValue()));
+                            shaderRet->Wait();
                         }
                         else
                         {
                             // Dispatch shader load to a thread.
-                            rets.Push(tloader->LoadShader(vfs->GetCwd(), file->GetContentsValue()));
+                            rets.Push(shaderRet);
                         }
 
-                        shadersByUsageType.Put(strings->Request(node->GetNode("type")->GetContentsValue()),
-                            node->GetAttributeValue("name"));
+                        csString typeName(node->GetNode("type")->GetContentsValue());
+                        csString shaderName(node->GetAttributeValue("name"));
+
+                        csStringID shaderID = parserData.strings->Request(typeName);
+                        parserData.shadersByUsage.Put(shaderID, shaderName);
                     }
 
                     // Wait for shader loads to finish.
@@ -97,77 +103,150 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
             }
         }
 
-        parsedShaders = true;
+        parserData.config.parsedShaders = true;
     }
 
-    BgLoader::ShaderVar* BgLoader::ParseShaderVar(const csString& name, const csString& type, const csString& value, csRef<Texture>& tex, bool doChecks)
+    bool BgLoader::Texture::Parse(iDocumentNode* node, ParserData& parserData)
     {
-        tex.Invalidate();
-        ShaderVar* sv = 0;
+        SetName(node->GetAttributeValue("name"));
+        data = node;
+        path = parserData.vfsPath;
+        return true;
+    }
+
+    bool BgLoader::ShaderVar::Parse(iDocumentNode* node, GlobalParserData& data)
+    {
         // Parse the different types. Currently texture, vector2 and vector3 are supported.
-        if(type == "texture")
+        csString typeName;
+        csString name;
+        if(csString("texture").Compare(node->GetValue()))
         {
+            typeName = "texture";
+            name = "tex diffuse";
+        }
+        else
+        {
+            typeName = node->GetAttributeValue("type");
+            name = node->GetAttributeValue("name");
+        }
+        nameID = data.svstrings->Request(name);
+        value = node->GetContentsValue();
+
+        if(typeName == "texture")
+        {
+            type = csShaderVariable::TEXTURE;
+
             // Ignore some shader variables if the functionality they bring is not enabled.
-            if(doChecks && enabledGfxFeatures & (useHighShaders | useMediumShaders | useLowShaders | useLowestShaders))
+            switch(data.config.enabledGfxFeatures)
             {
-                if(name == "tex height" || name == "tex ambient occlusion")
-                {
-                    return 0;
-                }
-
-                if(enabledGfxFeatures & (useMediumShaders | useLowShaders | useLowestShaders))
-                {
+                case useLowestShaders:
+                case useLowShaders:
+                    if(name == "tex normal" || name == "tex normal compressed")
+                        return false;
+                case useMediumShaders:
+                    if(name == "tex height" || name == "tex ambient occlusion")
+                        return false;
+                case useHighShaders:
                     if(name == "tex specular")
-                    {
-                        return 0;
-                    }
-
-                    if(enabledGfxFeatures & (useLowShaders | useLowestShaders))
-                    {
-                        if(name == "tex normal" || name == "tex normal compressed")
-                        {
-                            return 0;
-                        }
-                    }
-                }
+                        return false;
+                case useHighestShaders:
+                    break;
             }
 
-            sv = new ShaderVar(name.GetData(), csShaderVariable::TEXTURE);
-            sv->value = value;
-
+            // filter out standard textures we don't have to load and a special texture
+            // tht is used for undefined materials
+            if(value == "materialnotdefined")
             {
-                CS::Threading::ScopedReadLock lock(tLock);
-                tex = textures.Get(tStringSet.Request(value.GetData()), csRef<Texture>());
+                value = "stdtex white";
+            }
+
+            if(value.StartsWith("stdtex"))
+            {
+                return true;
+            }
+
+            csRef<Texture> texture = data.textures.Get(value);
+
+            if(texture.IsValid())
+            {
+                object->AddDependency(texture);
+            }
+            else
+            {
+                csString msg;
+                msg.Format("Invalid texture reference '%s' in ShaderVar '%s'", value.GetData(), name.GetData());
+                CS_ASSERT_MSG(msg.GetData(), false);
+                return false;
             }
         }
-        else if(type == "float")
+        else if(typeName == "float")
         {
-            sv = new ShaderVar(name.GetData(), csShaderVariable::FLOAT);
-            csScanStr (value.GetData(), "%f", &sv->vec1);
+            type = csShaderVariable::FLOAT;
+            vec1 = node->GetContentsValueAsFloat();
         }
-        else if(type == "vector2")
+        else if(typeName == "vector2")
         {
-            sv = new ShaderVar(name.GetData(), csShaderVariable::VECTOR2);
-            csScanStr (value.GetData(), "%f,%f", &sv->vec2.x, &sv->vec2.y);
+            type = csShaderVariable::VECTOR2;
+            data.syntaxService->ParseVector(node, vec2);
         }
-        else if(type == "vector3")
+        else if(typeName == "vector3")
         {
-            sv = new ShaderVar(name.GetData(), csShaderVariable::VECTOR3);
-            csScanStr (value.GetData(), "%f,%f,%f", &sv->vec3.x, &sv->vec3.y, &sv->vec3.z);
+            type = csShaderVariable::VECTOR3;
+            data.syntaxService->ParseVector(node, vec3);
         }
-        else if(type == "vector4")
+        else if(typeName == "vector4")
         {
-            sv = new ShaderVar(name.GetData(), csShaderVariable::VECTOR4);
-            csScanStr (value.GetData(), "%f,%f,%f,%f", &sv->vec4.x, &sv->vec4.y, &sv->vec4.z, &sv->vec4.w);
+            type = csShaderVariable::VECTOR4;
+            csScanStr(node->GetContentsValue(), "%f,%f,%f,%f", &vec4.x, &vec4.y, &vec4.z, &vec4.w);
         }
         else
         {
             // unknown type
             csString msg;
-            msg.Format("Unknown variable type in shadervar %s: %s", name.GetData(), type.GetData());
+            msg.Format("Unknown variable type in shadervar '%s': '%s'", name.GetData(), typeName.GetData());
             CS_ASSERT_MSG(msg.GetData(), false);
+            return false;
         }
-        return sv;
+        return true;
+    }
+
+    bool BgLoader::Material::Parse(iDocumentNode* materialNode, GlobalParserData& parserData)
+    {
+        SetName(materialNode->GetAttributeValue("name"));
+
+        csRef<iShaderManager> shaderMgr = csQueryRegistry<iShaderManager> (parserData.object_reg);
+
+        // Parse the texture for a material. Construct a shader variable for it.
+        csRef<iDocumentNodeIterator> nodeIt = materialNode->GetNodes();
+        while(nodeIt->HasNext())
+        {
+            csRef<iDocumentNode> node(nodeIt->Next());
+            csStringID id = parserData.xmltokens.Request(node->GetValue());
+            switch(id)
+            {
+                case PARSERTOKEN_TEXTURE:
+                case PARSERTOKEN_SHADERVAR:
+                {
+                    csRef<ShaderVar> sv;
+                    sv.AttachNew(new ShaderVar(GetParent(), this));
+                    if(sv->Parse(node, parserData))
+                    {
+                        shadervars.Push(sv);
+                    }
+                }
+                break;
+
+                case PARSERTOKEN_SHADER:
+                {
+                    Shader shader;
+                    shader.shader = shaderMgr->GetShader(node->GetContentsValue());
+                    shader.type = parserData.strings->Request(node->GetAttributeValue("type"));
+                    shaders.Push(shader);
+                }
+                break;
+            }
+        }
+        return true;
     }
 
     void BgLoader::ParseMaterials(iDocumentNode* materialsNode)
@@ -176,268 +255,180 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
         while(it->HasNext())
         {
             csRef<iDocumentNode> materialNode = it->Next();
-            csRef<Material> m = csPtr<Material>(new Material(materialNode->GetAttributeValue("name")));
-            if(m.IsValid())
+            csRef<Material> m;
+            m.AttachNew(new Material(this));
+            if(m->Parse(materialNode, parserData))
             {
-                CS::Threading::ScopedWriteLock lock(mLock);
-                materials.Put(mStringSet.Request(m->name), m);
-            }
-            else
-            {
-                csString msg;
-                msg.Format("Failed to create material '%s'", materialNode->GetAttributeValue("name"));
-                CS_ASSERT_MSG(msg.GetData(), false);
-                continue;
-            }
-
-            // Parse the texture for a material. Construct a shader variable for it.
-            csRef<iDocumentNodeIterator> nodeIt = materialNode->GetNodes();
-            while(nodeIt->HasNext())
-            {
-                csRef<iDocumentNode> node(nodeIt->Next());
-                csStringID id = xmltokens.Request(node->GetValue());
-                switch(id)
-                {
-                    case PARSERTOKEN_TEXTURE:
-                    case PARSERTOKEN_SHADERVAR:
-                    {
-                        csString varName;
-                        csString varType;
-                        csString varValue(node->GetContentsValue());
-                        csRef<Texture> texture;
-
-                        if(id == PARSERTOKEN_TEXTURE)
-                        {
-                            varName = "tex diffuse";
-                            varType = "texture";
-                        }
-                        else
-                        {
-                            varName = node->GetAttributeValue("name");
-                            varType = node->GetAttributeValue("type");
-                        }
-
-                        ShaderVar* sv = ParseShaderVar(varName, varType, varValue, texture, id != PARSERTOKEN_TEXTURE);
-                        if(!sv)
-                        {
-                            // no result probably means it wasn't validated for the shaders we use
-                            // if it was a parse error, the function already throws an error
-                            csString msg;
-                            msg.Format("failed to parse shadervar '%s' in material '%s'!", varName.GetData(), m->name.GetData());
-                            CS_ASSERT_MSG(msg.GetData(), false);
-                            continue;
-                        }
-                        else if(sv->type == csShaderVariable::TEXTURE && !texture.IsValid())
-                        {
-                            csString msg;
-                            msg.Format("Invalid texture reference '%s' in shadervar '%s' in material '%s'!",
-                                        varValue.GetData(), varName.GetData(), m->name.GetData());
-                            CS_ASSERT_MSG(msg.GetData(), false);
-                        }
-                        else
-                        {
-                            m->shadervars.Push(*sv);
-                            if(sv->type == csShaderVariable::TEXTURE && texture.IsValid())
-                            {
-                                m->textures.Push(texture);
-                                m->checked.Push(false);
-                            }
-                        }
-                        delete sv;
-                    }
-                    break;
-
-                    case PARSERTOKEN_SHADER:
-                    {
-                        m->shaders.Push(Shader(node->GetAttributeValue("type"), node->GetContentsValue()));
-                    }
-                    break;
-                }
+                parserData.materials.Put(m);
             }
         }
     }
 
-    void BgLoader::ParseMaterialReference(const char* name, csRefArray<Material>& materialArray, csArray<bool>& checked, const char* parent, const char* type)
+    void BgLoader::MaterialLoader::ParseMaterialReference(GlobalParserData& data, const char* name, const char* parentName, const char* type)
     {
-        csRef<Material> material;
-        {
-            CS::Threading::ScopedReadLock lock(mLock);
-            material = materials.Get(mStringSet.Request(name), csRef<Material>());
-        }
+        csRef<Material> material= data.materials.Get(name);
 
         if(material.IsValid())
         {
-            materialArray.Push(material);
-            checked.Push(false);
+            AddDependency(material);
         }
         else
         {
             // Validation.
             csString msg;
             msg.Format("Invalid material reference '%s' in %s", name, type);
-            if(parent)
+            if(parentName)
             {
-                msg.AppendFmt(" '%s'", parent);
+                msg.AppendFmt(" '%s'", parentName);
             }
             CS_ASSERT_MSG(msg.GetData(), false);
         }
     }
 
-    void BgLoader::ParsePortal(iDocumentNode* portalNode, ParserData& parserData)
+    bool BgLoader::Portal::Parse(iDocumentNode* portalNode, ParserData& parserData)
     {
-        csRef<iDocumentNodeIterator> portalsIt(portalNode->GetNodes("portal"));
-        while(portalsIt->HasNext())
+        SetName(portalNode->GetAttributeValue("name"));
+        sector = parserData.currentSector;
+
+        csRef<iSyntaxService> syntaxService = parserData.data.syntaxService;
+
+        csRef<iDocumentNodeIterator> nodeIt(portalNode->GetNodes());
+        while(nodeIt->HasNext())
         {
-            csRef<iDocumentNode> portalNode(portalsIt->Next());
-            csRef<Portal> p = csPtr<Portal>(new Portal(portalNode->GetAttributeValue("name")));
-
-            csRef<iDocumentNodeIterator> nodeIt(portalNode->GetNodes());
-            while(nodeIt->HasNext())
+            csRef<iDocumentNode> node(nodeIt->Next());
+            csStringID id = parserData.data.xmltokens.Request(node->GetValue());
+            switch(id)
             {
-                csRef<iDocumentNode> node(nodeIt->Next());
-                csStringID id = xmltokens.Request(node->GetValue());
-                switch(id)
+                case PARSERTOKEN_MATRIX:
                 {
-                    case PARSERTOKEN_MATRIX:
-                    {
-                        p->warp = true;
-                        syntaxService->ParseMatrix(node, p->matrix);
-                    }
-                    break;
-
-                    case PARSERTOKEN_WV:
-                    {
-                        p->warp = true;
-                        syntaxService->ParseVector(node, p->wv);
-                    }
-                    break;
-
-                    case PARSERTOKEN_WW:
-                    {
-                        p->warp = true;
-                        p->ww_given = true;
-                        syntaxService->ParseVector(node, p->ww);
-                    }
-                    break;
-
-                    case PARSERTOKEN_FLOAT:
-                    {
-                        p->pfloat = true;
-                    }
-                    break;
-
-                    case PARSERTOKEN_CLIP:
-                    {
-                        p->clip = true;
-                    }
-                    break;
-
-                    case PARSERTOKEN_ZFILL:
-                    {
-                        p->zfill = true;
-                    }
-                    break;
-
-                    case PARSERTOKEN_AUTORESOLVE:
-                    {
-                        p->autoresolve = true;
-                    }
-                    break;
-
-                    case PARSERTOKEN_SECTOR:
-                    {
-                        csString targetSector = node->GetContentsValue();
-                        {
-                            CS::Threading::ScopedReadLock lock(sLock);
-                            p->targetSector = sectorHash.Get(sStringSet.Request(targetSector), csRef<Sector>());
-                        }
-
-                        if(!p->targetSector.IsValid())
-                        {
-                            p->targetSector = csPtr<Sector>(new Sector(targetSector));
-                            CS::Threading::ScopedWriteLock lock(sLock);
-                            sectors.Push(p->targetSector);
-                            sectorHash.Put(sStringSet.Request(targetSector), p->targetSector);
-                        }
-                    }
-                    break;
-
-                    case PARSERTOKEN_V:
-                    {
-                        csVector3 vertex;
-                        syntaxService->ParseVector(node, vertex);
-                        p->poly.AddVertex(vertex);
-                        p->bbox.AddBoundingVertex(vertex);
-                    }
-                    break;
+                    warp = true;
+                    syntaxService->ParseMatrix(node, matrix);
                 }
-            }
+                break;
 
-            if(!p->ww_given)
-            {
-                p->ww = p->wv;
-            }
+                case PARSERTOKEN_WV:
+                {
+                    warp = true;
+                    syntaxService->ParseVector(node, wv);
+                }
+                break;
 
-            p->transform = csReversibleTransform(p->matrix.GetInverse(), p->ww - p->matrix * p->wv);
-            {
-                CS::Threading::ScopedWriteLock lock(parserData.currentSector->lock);
-                parserData.currentSector->portals.Push(p);
+                case PARSERTOKEN_WW:
+                {
+                    warp = true;
+                    ww_given = true;
+                    syntaxService->ParseVector(node, ww);
+                }
+                break;
+
+                case PARSERTOKEN_FLOAT:
+                {
+                    flags |= CS_PORTAL_FLOAT;
+                }
+                break;
+
+                case PARSERTOKEN_CLIP:
+                {
+                    flags |= CS_PORTAL_CLIPDEST;
+                }
+                break;
+
+                case PARSERTOKEN_ZFILL:
+                {
+                    flags |= CS_PORTAL_ZFILL;
+                }
+                break;
+
+                case PARSERTOKEN_AUTORESOLVE:
+                {
+                    autoresolve = true;
+                }
+                break;
+
+                case PARSERTOKEN_SECTOR:
+                {
+                    csString sectorName = node->GetContentsValue();
+                    targetSector = parserData.data.sectors.Get(sectorName);
+
+                    if(!targetSector.IsValid())
+                    {
+                        targetSector.AttachNew(new Sector(GetParent()));
+
+                        parserData.data.sectors.Put(targetSector, sectorName);
+                    }
+                }
+                break;
+
+                case PARSERTOKEN_V:
+                {
+                    csVector3 vertex;
+                    syntaxService->ParseVector(node, vertex);
+                    poly.AddVertex(vertex);
+                    bbox.AddBoundingVertex(vertex);
+                }
+                break;
             }
         }
+
+        if(!ww_given)
+        {
+            ww = wv;
+        }
+
+        transform = csReversibleTransform(matrix.GetInverse(), ww - matrix * wv);
+
+        return true;
     }
 
-    void BgLoader::ParseLight(iDocumentNode* lightNode, ParserData& parserData)
+    bool BgLoader::Light::Parse(iDocumentNode* lightNode, ParserData& parserData)
     {
-        csRef<Light> l = csPtr<Light>(new Light(lightNode->GetAttributeValue("name")));
-        {
-            CS::Threading::ScopedWriteLock lock(sLock);
-            parserData.lights.Put(sStringSet.Request(l->name), l);
-        }
+        SetName(lightNode->GetAttributeValue("name"));
+        sector = parserData.currentSector;
 
         // set default values
-        l->attenuation = CS_ATTN_LINEAR;
-        l->dynamic = CS_LIGHT_DYNAMICTYPE_STATIC;
-        l->type = CS_LIGHT_POINTLIGHT;
+        attenuation = CS_ATTN_LINEAR;
+        dynamic = CS_LIGHT_DYNAMICTYPE_STATIC;
+        type = CS_LIGHT_POINTLIGHT;
 
         csRef<iDocumentNodeIterator> nodeIt(lightNode->GetNodes());
         while(nodeIt->HasNext())
         {
             csRef<iDocumentNode> node(nodeIt->Next());
-            csStringID id = xmltokens.Request(node->GetValue());
+            csStringID id = parserData.data.xmltokens.Request(node->GetValue());
             switch(id)
             {
                 case PARSERTOKEN_ATTENUATION:
                 {
-                    csStringID type = xmltokens.Request(node->GetContentsValue());
+                    csStringID type = parserData.data.xmltokens.Request(node->GetContentsValue());
                     switch(type)
                     {
                         case PARSERTOKEN_NONE:
                         {
-                            l->attenuation = CS_ATTN_NONE;
+                            attenuation = CS_ATTN_NONE;
                         }
                         break;
 
                         case PARSERTOKEN_LINEAR:
                         {
-                            l->attenuation = CS_ATTN_LINEAR;
+                            attenuation = CS_ATTN_LINEAR;
                         }
                         break;
 
                         case PARSERTOKEN_INVERSE:
                         {
-                            l->attenuation = CS_ATTN_INVERSE;
+                            attenuation = CS_ATTN_INVERSE;
                         }
                         break;
 
                         case PARSERTOKEN_REALISTIC:
                         {
-                            l->attenuation = CS_ATTN_REALISTIC;
+                            attenuation = CS_ATTN_REALISTIC;
                         }
                         break;
 
                         case PARSERTOKEN_CLQ:
                         {
-                            l->attenuation = CS_ATTN_CLQ;
+                            attenuation = CS_ATTN_CLQ;
                         }
                         break;
                     }
@@ -446,92 +437,79 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
 
                 case PARSERTOKEN_DYNAMIC:
                 {
-                    l->dynamic = CS_LIGHT_DYNAMICTYPE_PSEUDO;
+                    dynamic = CS_LIGHT_DYNAMICTYPE_PSEUDO;
                 }
                 break;
 
                 case PARSERTOKEN_CENTER:
                 {
-                    syntaxService->ParseVector(node, l->pos);
-                    l->bbox.SetCenter(l->pos);
+                    parserData.data.syntaxService->ParseVector(node, pos);
+                    bbox.SetCenter(pos);
                 }
                 break;
                 
                 case PARSERTOKEN_RADIUS:
                 {
                     csVector3 size(node->GetContentsValueAsFloat());
-                    l->bbox.SetSize(size);
+                    bbox.SetSize(size);
                 }
                 break;
 
                 case PARSERTOKEN_COLOR:
                 {
-                    syntaxService->ParseColor(node, l->colour);
+                    parserData.data.syntaxService->ParseColor(node, colour);
                 }
                 break;
             }
         }
 
-        {
-            CS::Threading::ScopedWriteLock lock(parserData.currentSector->lock);
-            parserData.currentSector->lights.Push(l);
-        }
+        return true;
     }
 
-    void BgLoader::ParseSector(iDocumentNode* sectorNode, ParserData& parserData)
+    bool BgLoader::Sector::Parse(iDocumentNode* sectorNode, ParserData& parserData)
     {
-        csRef<Sector> s;
-        csString sectorName = sectorNode->GetAttributeValue("name");
-        {
-            CS::Threading::ScopedReadLock lock(sLock);
-            s = sectorHash.Get(sStringSet.Request(sectorName), csRef<Sector>());
-        }
+        SetName(sectorNode->GetAttributeValue("name"));
 
-        // This sector may have already been created (referenced by a portal somewhere else).
-        if(!s.IsValid())
-        {
-            // But if not then create its representation.
-            s = csPtr<Sector>(new Sector(sectorName));
-            CS::Threading::ScopedWriteLock lock(sLock);
-            sectors.Push(s);
-            sectorHash.Put(sStringSet.Request(sectorName), s);
-        }
-
-        if(parserData.zone.IsValid())
-        {
-            s->parent = parserData.zone;
-            parserData.zone->sectors.Push(s);
-        }
+        parent = parserData.zone;
+        parserData.zone->AddDependency(this);
 
         // let the other parser functions know about us
-        parserData.currentSector = s;
+        parserData.currentSector = this;
+
+        // copy the portalsOnly setting
+        portalsOnly = parserData.data.config.portalsOnly;
 
         // set this sector as initialized
-        s->init = true;
+        init = true;
 
         csRef<iDocumentNodeIterator> it(sectorNode->GetNodes());
         while(it->HasNext())
         {
             csRef<iDocumentNode> node(it->Next());
-            csStringID id = xmltokens.Request(node->GetValue());
+            csStringID id = parserData.data.xmltokens.Request(node->GetValue());
             switch(id)
             {
                 case PARSERTOKEN_CULLERP:
                 {
-                    s->culler = node->GetContentsValue();
+                    culler = node->GetContentsValue();
                 }
                 break;
 
                 case PARSERTOKEN_AMBIENT:
                 {
-                    s->ambient = csColor(node->GetAttributeValueAsFloat("red"),
-                                         node->GetAttributeValueAsFloat("green"),
-                                         node->GetAttributeValueAsFloat("blue"));
+                    ambient = csColor(node->GetAttributeValueAsFloat("red"),
+                                      node->GetAttributeValueAsFloat("green"),
+                                      node->GetAttributeValueAsFloat("blue"));
                 }
                 break;
 
                 case PARSERTOKEN_KEY:
                 {
+                    if(portalsOnly)
+                    {
+                        break;
+                    }
+
                     if(csString("water").Compare(node->GetAttributeValue("name")))
                     {
                         csRef<iDocumentNodeIterator> areasIt(node->GetNodes("area"));
@@ -542,7 +520,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                             csRef<iDocumentNode> colourNode = areaNode->GetNode("colour");
                             if(colourNode.IsValid())
                             {
-                                syntaxService->ParseColor(colourNode, area.colour);
+                                parserData.data.syntaxService->ParseColor(colourNode, area.colour);
                             }
                             else
                             {
@@ -554,14 +532,11 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                             {
                                 csRef<iDocumentNode> v(vs->Next());
                                 csVector3 vector;
-                                syntaxService->ParseVector(v, vector);
+                                parserData.data.syntaxService->ParseVector(v, vector);
                                 area.bbox.AddBoundingVertex(vector);
                             }
 
-                            {
-                                CS::Threading::ScopedWriteLock lock(parserData.currentSector->lock);
-                                parserData.currentSector->waterareas.Push(area);
-                            }
+                            waterareas.Push(area);
                         }
                     }
                 }
@@ -569,240 +544,411 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
 
                 case PARSERTOKEN_PORTALS:
                 {
-                    ParsePortal(node, parserData);
+                    csRef<iDocumentNodeIterator> it(node->GetNodes("portal"));
+                    while(it->HasNext())
+                    {
+                        csRef<iDocumentNode> portalNode(it->Next());
+                        csRef<Portal> p;
+                        p.AttachNew(new Portal(GetParent()));
+                        if(p->Parse(portalNode, parserData))
+                        {
+                            AddDependency(p);
+                        }
+                        else
+                        {
+                            csString msg;
+                            msg.Format("Portal %s failed to parse!", portalNode->GetAttributeValue("name"));
+                            CS_ASSERT_MSG(msg.GetData(), false);
+                        }
+                    }
                 }
                 break;
 
                 case PARSERTOKEN_LIGHT:
                 {
-                    ParseLight(node, parserData);
+                    if(portalsOnly)
+                    {
+                        break;
+                    }
+
+                    csRef<Light> l;
+                    l.AttachNew(new Light(GetParent()));
+                    if(l->Parse(node, parserData))
+                    {
+                        AddDependency(l);
+
+                        parserData.lights.Put(l);
+                    }
+                    else
+                    {
+                        csString msg;
+                        msg.Format("Light %s failed to parse!", node->GetAttributeValue("name"));
+                        CS_ASSERT_MSG(msg.GetData(), false);
+                    }
                 }
                 break;
 
                 case PARSERTOKEN_MESHOBJ:
-                {
-                    ParseMeshObj(node, parserData);
-                }
-                break;
-
                 case PARSERTOKEN_TRIMESH:
                 {
-                    ParseTriMesh(node, parserData);
+                    if(portalsOnly)
+                    {
+                        break;
+                    }
+
+                    csRef<MeshObj> mesh;
+                    mesh.AttachNew(new MeshObj(GetParent()));
+                    bool alwaysLoaded;
+                    if((id == PARSERTOKEN_MESHOBJ && mesh->Parse(node, parserData, alwaysLoaded))
+                        || (id == PARSERTOKEN_TRIMESH && mesh->ParseTriMesh(node, parserData, alwaysLoaded)))
+                    {
+                        if(alwaysLoaded)
+                        {
+                            AddAlwaysLoaded(mesh);
+                        }
+                        else
+                        {
+                            AddDependency(mesh);
+                        }
+
+                        parserData.data.meshes.Put(mesh);
+                    }
+                    else
+                    {
+                        csString msg;
+                        msg.Format("Mesh %s failed to parse!", node->GetAttributeValue("name"));
+                        CS_ASSERT_MSG(msg.GetData(), false);
+                    }
                 }
                 break;
 
                 case PARSERTOKEN_MESHGEN:
                 {
-                    ParseMeshGen(node, parserData);
+                    if(portalsOnly || !parserData.data.config.enabledGfxFeatures & useMeshGen)
+                    {
+                        break;
+                    }
+
+                    csRef<MeshGen> meshGen;
+                    meshGen.AttachNew(new MeshGen(GetParent()));
+                    if(meshGen->Parse(node, parserData))
+                    {
+                        AddDependency(meshGen);
+                    }
+                    else
+                    {
+                        csString msg;
+                        msg.Format("MeshGen %s failed to parse!", node->GetAttributeValue("name"));
+                        CS_ASSERT_MSG(msg.GetData(), false);
+                    }
                 }
                 break;
             }
         }
+
+        return true;
     }
 
-    void BgLoader::ParseSequences(iDocumentNode* sequencesNode, ParserData& parserData)
+    bool BgLoader::Sequence::Parse(iDocumentNode* sequenceNode, ParserData& parserData)
     {
-        // do a 2 pass parsing of sequences
-        // first create all sequences.
-        csRef<iDocumentNodeIterator> sequenceIt(sequencesNode->GetNodes("sequence"));
-        while(sequenceIt->HasNext())
-        {
-            csRef<iDocumentNode> sequenceNode(sequenceIt->Next());
-            csRef<Sequence> seq = csPtr<Sequence>(new Sequence(sequenceNode->GetAttributeValue("name"), sequenceNode));
-            {
-                CS::Threading::ScopedWriteLock lock(sLock);
-                parserData.sequences.Put(sStringSet.Request(seq->name), seq);
-            }
-            CS_ASSERT_MSG("Created invalid sequence!", seq.IsValid());
-        }
+        SetName(sequenceNode->GetAttributeValue("name"));
+        data = sequenceNode;
+        path = parserData.vfsPath;
 
-        // now actually parse them.
-        sequenceIt = sequencesNode->GetNodes("sequence");
-        while(sequenceIt->HasNext())
-        {
-            csRef<iDocumentNode> sequenceNode(sequenceIt->Next());
-            csRef<Sequence> seq;
-            {
-                CS::Threading::ScopedWriteLock lock(sLock);
-                seq = parserData.sequences.Get(sStringSet.Request(sequenceNode->GetAttributeValue("name")), csRef<Sequence>());
-            }
-            CS_ASSERT_MSG("Created invalid sequence!", seq.IsValid());
+        bool loaded = false;
+        bool failed = false;
 
-            bool loaded = false;
-            csRef<iDocumentNodeIterator> nodeIt(sequenceNode->GetNodes());
-            while(nodeIt->HasNext())
+        // used to work around ambigious call issues
+        csRef<Sequence> self(this);
+
+        // objects we already added ourself as dependency to
+        // used in case we fail to parse
+        csArray<ObjectLoader<Sequence>* > parents;
+
+        csRef<iDocumentNodeIterator> nodeIt(sequenceNode->GetNodes());
+        while(nodeIt->HasNext())
+        {
+            csRef<iDocumentNode> node(nodeIt->Next());
+            csStringID id = parserData.data.xmltokens.Request(node->GetValue());
+            bool parsed = true;
+            switch(id)
             {
-                csRef<iDocumentNode> node(nodeIt->Next());
-                csStringID id = xmltokens.Request(node->GetValue());
-                bool parsed = true;
-                switch(id)
+                // sequence types operating on a sector.
+                case PARSERTOKEN_SETAMBIENT:
+                case PARSERTOKEN_FADEAMBIENT:
+                case PARSERTOKEN_SETFOG:
+                case PARSERTOKEN_FADEFOG:
                 {
-                    // sequence types operating on a sector.
-                    case PARSERTOKEN_SETAMBIENT:
-                    case PARSERTOKEN_FADEAMBIENT:
-                    case PARSERTOKEN_SETFOG:
-                    case PARSERTOKEN_FADEFOG:
-                    {
-                        CS::Threading::ScopedWriteLock lock(sLock);
-                        csRef<Sector> s = sectorHash.Get(sStringSet.Request(node->GetAttributeValue("sector")), csRef<Sector>());
-                        s->sequences.Push(seq);
-                    }
-                    break;
+                    csString name(node->GetAttributeValue("sector"));
+                    csRef<Sector> s = parserData.data.sectors.Get(name);
 
-                    // sequence types operating on a mesh.
-                    case PARSERTOKEN_SETCOLOR:
-                    case PARSERTOKEN_FADECOLOR:
-                    case PARSERTOKEN_MATERIAL:
-                    case PARSERTOKEN_ROTATE:
-                    case PARSERTOKEN_MOVE:
+                    if(s.IsValid())
                     {
-                        CS::Threading::ScopedWriteLock lock(meshLock);
-                        csRef<MeshObj> m = meshes.Get(meshStringSet.Request(node->GetAttributeValue("mesh")), csRef<MeshObj>());
-                        m->sequences.Push(seq);
+                        s->AddDependency(self);
+                        parents.Push(s);
                     }
-                    break;
-
-                    // sequence types operating on a light.
-                    case PARSERTOKEN_ROTATELIGHT:
-                    case PARSERTOKEN_MOVELIGHT:
-                    case PARSERTOKEN_FADELIGHT:
-                    case PARSERTOKEN_SETLIGHT:
+                    else
                     {
-                        CS::Threading::ScopedWriteLock lock(sLock);
-                        csRef<Light> l = parserData.lights.Get(sStringSet.Request(node->GetAttributeValue("light")), csRef<Light>());
-                        l->sequences.Push(seq);
+                        csString msg;
+                        msg.Format("Invalid sector reference '%s' in sequence '%s'", name.GetData(), GetName());
+                        CS_ASSERT_MSG(msg.GetData(), false);
+                        failed = true;
                     }
-                    break;
-
-                    // sequence types operating on a sequence.
-                    case PARSERTOKEN_RUN:
-                    {
-                        CS::Threading::ScopedWriteLock lock(sLock);
-                        csRef<Sequence> dep = parserData.sequences.Get(sStringSet.Request(node->GetAttributeValue("sequence")), csRef<Sequence>());
-                        dep->sequences.Push(seq);
-                    }
-                    break;
-
-                    // sequence types operating on a trigger.
-                    case PARSERTOKEN_ENABLE:
-                    case PARSERTOKEN_DISABLE:
-                    case PARSERTOKEN_CHECK:
-                    case PARSERTOKEN_TEST:
-                    {
-                        CS::Threading::ScopedWriteLock lock(sLock);
-                        csRef<Trigger> t = parserData.triggers.Get(sStringSet.Request(node->GetAttributeValue("trigger")), csRef<Trigger>());
-                        if(!t.IsValid())
-                        {
-                            // trigger doesn't exist, yet - create it
-                            t = csPtr<Trigger>(new Trigger(node->GetAttributeValue("trigger"), 0));
-                            csString msg;
-                            msg.Format("created trigger %s that is referenced by a sequence, but didn't exist, yet!",
-                                        t->name.GetData());
-                            CS_ASSERT_MSG(msg.GetData(), false);
-
-                            parserData.triggers.Put(sStringSet.Request(t->name), t);
-                        }
-                        seq->triggers.Push(t);
-                    }
-                    break;
-
-                    // miscallenous sequence types.
-                    case PARSERTOKEN_DELAY:
-                    case PARSERTOKEN_SETVAR:
-                    default:
-                    {
-                        parsed = false;
-                    }
-                    break;
                 }
-                loaded |= parsed;
+                break;
+
+                // sequence types operating on a mesh.
+                case PARSERTOKEN_SETCOLOR:
+                case PARSERTOKEN_FADECOLOR:
+                case PARSERTOKEN_MATERIAL:
+                case PARSERTOKEN_ROTATE:
+                case PARSERTOKEN_MOVE:
+                {
+                    csString name(node->GetAttributeValue("mesh"));
+                    csRef<MeshObj> m = parserData.data.meshes.Get(name);
+
+                    if(m.IsValid())
+                    {
+                        m->AddDependency(self);
+                        parents.Push(m);
+                    }
+                    else
+                    {
+                        csString msg;
+                        msg.Format("Invalid mesh reference '%s' in sequence '%s'", name.GetData(), GetName());
+                        CS_ASSERT_MSG(msg.GetData(), false);
+                        failed = true;
+                    }
+                }
+                break;
+
+                // sequence types operating on a light.
+                case PARSERTOKEN_ROTATELIGHT:
+                case PARSERTOKEN_MOVELIGHT:
+                case PARSERTOKEN_FADELIGHT:
+                case PARSERTOKEN_SETLIGHT:
+                {
+                    csString name(node->GetAttributeValue("light"));
+                    csRef<Light> l = parserData.lights.Get(name);
+
+                    if(l.IsValid())
+                    {
+                        l->AddDependency(self);
+                        parents.Push(l);
+                    }
+                    else
+                    {
+                        csString msg;
+                        msg.Format("Invalid light reference '%s' in sequence '%s'", name.GetData(), GetName());
+                        CS_ASSERT_MSG(msg.GetData(), false);
+                        failed = true;
+                    }
+                }
+                break;
+
+                // sequence types operating on a sequence.
+                case PARSERTOKEN_RUN:
+                {
+                    csString name(node->GetAttributeValue("sequence"));
+                    csRef<Sequence> seq = parserData.sequences.Get(name);
+
+                    if(seq.IsValid())
+                    {
+                        seq->AddDependency(self);
+                        parents.Push(seq);
+                    }
+                    else
+                    {
+                        csString msg;
+                        msg.Format("Invalid sequence reference '%s' in sequence '%s'", name.GetData(), GetName());
+                        CS_ASSERT_MSG(msg.GetData(), false);
+                        failed = true;
+                    }
+                }
+                break;
+
+                // sequence types operating on a trigger.
+                case PARSERTOKEN_ENABLE:
+                case PARSERTOKEN_DISABLE:
+                case PARSERTOKEN_CHECK:
+                case PARSERTOKEN_TEST:
+                {
+                    csString name(node->GetAttributeValue("trigger"));
+                    csRef<Trigger> t = parserData.triggers.Get(name);
+
+                    if(t.IsValid())
+                    {
+                        AddDependency(t);
+                    }
+                    else
+                    {
+                        csString msg;
+                        msg.Format("Invalid sequence reference '%s' in sequence '%s'", name.GetData(), GetName());
+                        CS_ASSERT_MSG(msg.GetData(), false);
+                        failed = true;
+                    }
+                }
+                break;
+
+                // miscallenous sequence types.
+                case PARSERTOKEN_DELAY:
+                case PARSERTOKEN_SETVAR:
+                default:
+                {
+                    parsed = false;
+                }
+                break;
+            }
+            loaded |= parsed;
+        }
+
+        if(failed)
+        {
+            // failed to parse, remove us as dependency from parents
+            for(size_t i = 0; i < parents.GetSize(); ++i)
+            {
+                parents[i]->RemoveDependency(self);
             }
 
-            CS_ASSERT_MSG("Unknown sequence type!", loaded);
+            return false;
         }
+
+        CS_ASSERT_MSG("Unknown sequence type!", loaded);
+        return loaded;
     }
 
-    void BgLoader::ParseTriggers(iDocumentNode* triggers, ParserData& parserData)
+    bool BgLoader::Trigger::Parse(iDocumentNode* triggerNode, ParserData& parserData)
     {
-        csRef<iDocumentNodeIterator> triggerIt(triggers->GetNodes("trigger"));
-        while(triggerIt->HasNext())
+        SetName(triggerNode->GetAttributeValue("name"));
+        data = triggerNode;
+        path = parserData.vfsPath;
+        bool loaded = false;
+        bool failed = false;
+
+        // used to work around issues with ambigious calls
+        csRef<Trigger> self(this);
+
+        // objects we already added ourself as dependency to
+        // used in case we fail to parse
+        csArray<ObjectLoader<Trigger>* > parents;
+
+        csRef<iDocumentNodeIterator> nodeIt(triggerNode->GetNodes());
+        while(nodeIt->HasNext())
         {
-            csRef<iDocumentNode> triggerNode(triggerIt->Next());
-            csRef<Trigger> trigger;
+            csRef<iDocumentNode> node(nodeIt->Next());
+            csStringID id = parserData.data.xmltokens.Request(node->GetValue());
+            bool parsed = true;
+            switch(id)
             {
-                const char* triggerName = triggerNode->GetAttributeValue("name");
-                CS::Threading::ScopedWriteLock lock(sLock);
-                trigger = parserData.triggers.Get(sStringSet.Request(triggerName), csRef<Trigger>());
-                if(!trigger.IsValid())
+                // triggers fired by a sector.
+                case PARSERTOKEN_SECTORVIS:
                 {
-                    trigger = csPtr<Trigger>(new Trigger(triggerName, triggerNode));
-                    parserData.triggers.Put(sStringSet.Request(triggerName), trigger);
+                    csString name(node->GetAttributeValue("sector"));
+                    csRef<Sector> s = parserData.data.sectors.Get(name);
+
+                    if(s.IsValid())
+                    {
+                        s->AddDependency(self);
+                        parents.Push(s);
+                    }
+                    else
+                    {
+                        csString msg;
+                        msg.Format("Invalid sector reference '%s' in trigger '%s'", name.GetData(), GetName());
+                        CS_ASSERT_MSG(msg.GetData(), false);
+                        failed = true;
+                    }
                 }
-                else
+                break;
+
+                // triggers fired by a mesh.
+                case PARSERTOKEN_ONCLICK:
                 {
-                    trigger->data = triggerNode;
+                    csString name(node->GetAttributeValue("mesh"));
+                    csRef<MeshObj> m = parserData.data.meshes.Get(name);
+
+                    if(m.IsValid())
+                    {
+                        m->AddDependency(self);
+                        parents.Push(m);
+                    }
+                    else
+                    {
+                        csString msg;
+                        msg.Format("Invalid mesh reference '%s' in trigger '%s'", name.GetData(), GetName());
+                        CS_ASSERT_MSG(msg.GetData(), false);
+                        failed = true;
+                    }
                 }
+                break;
+
+                // triggers fired by a light.
+                case PARSERTOKEN_LIGHTVALUE:
+                {
+                    csString name(node->GetAttributeValue("light"));
+                    csRef<Light> l = parserData.lights.Get(name);
+
+                    if(l.IsValid())
+                    {
+                        l->AddDependency(self);
+                        parents.Push(l);
+                    }
+                    else
+                    {
+                        csString msg;
+                        msg.Format("Invalid light reference '%s' in trigger '%s'", name.GetData(), GetName());
+                        CS_ASSERT_MSG(msg.GetData(), false);
+                        failed = true;
+                    }
+                }
+                break;
+
+                // triggers fired by a sequence.
+                case PARSERTOKEN_FIRE:
+                {
+                    csString name(node->GetAttributeValue("sequence"));
+                    csRef<Sequence> seq = parserData.sequences.Get(name);
+
+                    if(seq.IsValid())
+                    {
+                        seq->AddDependency(self);
+                        parents.Push(seq);
+                    }
+                    else
+                    {
+                        csString msg;
+                        msg.Format("Invalid sequence reference '%s' in trigger '%s'", name.GetData(), GetName());
+                        CS_ASSERT_MSG(msg.GetData(), false);
+                        failed = true;
+                    }
+                }
+                break;
+
+                // triggers fired by a miscallenous operation.
+                case PARSERTOKEN_MANUAL:
+                default:
+                {
+                    parsed = false;
+                }
+                break;
             }
-            bool loaded = false;
 
-            csRef<iDocumentNodeIterator> nodeIt(triggerNode->GetNodes());
-            while(nodeIt->HasNext())
-            {
-                csRef<iDocumentNode> node(nodeIt->Next());
-                csStringID id = xmltokens.Request(node->GetValue());
-                bool parsed = true;
-                switch(id)
-                {
-                    // triggers fired by a sector.
-                    case PARSERTOKEN_SECTORVIS:
-                    {
-                        CS::Threading::ScopedWriteLock lock(sLock);
-                        csRef<Sector> s = sectorHash.Get(sStringSet.Request(node->GetAttributeValue("sector")), csRef<Sector>());
-                        s->triggers.Push(trigger);
-                    }
-                    break;
-
-                    // triggers fired by a mesh.
-                    case PARSERTOKEN_ONCLICK:
-                    {
-                        CS::Threading::ScopedWriteLock lock(meshLock);
-                        csRef<MeshObj> m = meshes.Get(meshStringSet.Request(node->GetAttributeValue("mesh")), csRef<MeshObj>());
-                        m->triggers.Push(trigger);
-                    }
-                    break;
-
-                    // triggers fired by a light.
-                    case PARSERTOKEN_LIGHTVALUE:
-                    {
-                        CS::Threading::ScopedWriteLock lock(sLock);
-                        csRef<Light> l = parserData.lights.Get(sStringSet.Request(node->GetAttributeValue("light")), csRef<Light>());
-                        l->triggers.Push(trigger);
-                    }
-                    break;
-
-                    // triggers fired by a sequence.
-                    case PARSERTOKEN_FIRE:
-                    {
-                        CS::Threading::ScopedWriteLock lock(sLock);
-                        csRef<Sequence> seq = parserData.sequences.Get(sStringSet.Request(node->GetAttributeValue("sequence")), csRef<Sequence>());
-                        seq->triggers.Push(trigger);
-                    }
-                    break;
-
-                    // triggers fired by a miscallenous operation.
-                    case PARSERTOKEN_MANUAL:
-                    default:
-                    {
-                        parsed = false;
-                    }
-                    break;
-                }
-
-                loaded |= parsed;
-            }
-
-            CS_ASSERT_MSG("Unknown trigger type!", loaded);
+            loaded |= parsed;
         }
+
+        if(failed)
+        {
+            // failed to parse, remove us as dependency from parents
+            for(size_t i = 0; i < parents.GetSize(); ++i)
+            {
+                parents[i]->RemoveDependency(self);
+            }
+
+            return false;
+        }
+
+        CS_ASSERT_MSG("Unknown trigger type!", loaded);
+        return loaded;
     }
 
     THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive)
@@ -810,7 +956,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
         // Make sure shaders are parsed at this point.
         ParseShaders();
 
-        ParserData data;
+        ParserData data(parserData);
         data.path = path;
 
         // Don't parse folders.
@@ -820,11 +966,13 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
 
         if(vfs->Exists(data.vfsPath))
         {
-            // Restores any directory changes.
-            csVfsDirectoryChanger dirchange(vfs);
-
             csRef<iDocumentNode> root;
             {
+                CS::Threading::RecursiveMutexScopedLock lock(vfsLock);
+
+                // Restores any directory changes.
+                csVfsDirectoryChanger dirchange(vfs);
+
                 // XML doc structures.
                 csRef<iDocumentSystem> docsys = csQueryRegistry<iDocumentSystem>(object_reg);
                 csRef<iDocument> doc = docsys->CreateDocument();
@@ -863,20 +1011,23 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                 {
                     csString zonen(path);
                     zonen = zonen.Slice(zonen.FindLast('/')+1);
-                    data.zone = csPtr<Zone>(new Zone(zonen));
+                    csRef<Zone> zone;
+                    zone.AttachNew(new Zone(this, zonen));
+                    data.zone = zone;
 
-                    CS::Threading::ScopedWriteLock lock(zLock);
-                    zones.Put(zStringSet.Request(zonen.GetData()), data.zone);
+                    parserData.zones.Put(zone);
                 }
             }
 
             if(root.IsValid())
             {
+                bool portalsOnly = parserData.config.portalsOnly;
+
                 csRef<iDocumentNodeIterator> nodeIt(root->GetNodes());
                 while(nodeIt->HasNext())
                 {
                     csRef<iDocumentNode> node(nodeIt->Next());
-                    csStringID id = xmltokens.Request(node->GetValue());
+                    csStringID id = parserData.xmltokens.Request(node->GetValue());
                     switch(id)
                     {
                         // Parse referenced libraries.
@@ -890,7 +1041,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                         // Parse needed plugins.
                         case PARSERTOKEN_PLUGINS:
                         {
-                            data.rets.Push(tloader->LoadNode(vfs->GetCwd(), node));
+                            data.rets.Push(tloader->LoadNode(data.vfsPath, node));
                         }
                         break;
 
@@ -907,21 +1058,21 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                                 {
                                     bool loadShader = false;
                                     const char* fileName = fileNode->GetContentsValue();
+
+                                    CS::Threading::ScopedWriteLock lock(parserData.shaderLock);
+
+                                    // Keep track of shaders that have already been parsed.
+                                    if(parserData.shaders.Contains(fileName) == csArrayItemNotFound)
                                     {
-                                        // Keep track of shaders that have already been parsed.
-                                        CS::Threading::ScopedWriteLock lock(sLock);
-                                        if(shaders.Contains(fileName) == csArrayItemNotFound)
-                                        {
-                                            shaders.Push(fileName);
-                                            loadShader = true;
-                                        }
+                                        parserData.shaders.Push(fileName);
+                                        loadShader = true;
                                     }
 
-                                    if(loadShader && parseShaders)
+                                    if(loadShader && parserData.config.parseShaders)
                                     {
                                         // Dispatch shader load to a thread.
-                                        csRef<iThreadReturn> shaderRet = tloader->LoadShader(vfs->GetCwd(), fileName);
-                                        if(blockShaderLoad)
+                                        csRef<iThreadReturn> shaderRet = tloader->LoadShader(data.vfsPath, fileName);
+                                        if(parserData.config.blockShaderLoad)
                                         {
                                             shaderRet->Wait();
                                         }
@@ -938,14 +1089,26 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                         // Parse all referenced textures.
                         case PARSERTOKEN_TEXTURES:
                         {
+                            if(portalsOnly)
+                            {
+                                break;
+                            }
+
                             csRef<iDocumentNodeIterator> textureIt(node->GetNodes("texture"));
                             while(textureIt->HasNext())
                             {
                                 csRef<iDocumentNode> textureNode(textureIt->Next());
-                                csRef<Texture> t = csPtr<Texture>(new Texture(textureNode->GetAttributeValue("name"), data.vfsPath, textureNode));
+                                csRef<Texture> t;
+                                t.AttachNew(new Texture(this));
+                                if(t->Parse(textureNode, data))
                                 {
-                                    CS::Threading::ScopedWriteLock lock(tLock);
-                                    textures.Put(tStringSet.Request(t->name), t);
+                                    parserData.textures.Put(t);
+                                }
+                                else
+                                {
+                                    csString msg;
+                                    msg.Format("Texture %s failed to parse!", node->GetAttributeValue("name"));
+                                    CS_ASSERT_MSG(msg.GetData(), false);
                                 }
                             }
                         }
@@ -954,6 +1117,11 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                         // Parse all referenced materials.
                         case PARSERTOKEN_MATERIALS:
                         {
+                            if(portalsOnly)
+                            {
+                                break;
+                            }
+
                             ParseMaterials(node);
                         }
                         break;
@@ -961,39 +1129,135 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                         // Parse mesh factory.
                         case PARSERTOKEN_MESHFACT:
                         {
-                            ParseMeshFact(node, data);
+                            if(portalsOnly)
+                            {
+                                break;
+                            }
+
+                            csRef<MeshFact> factory;
+                            factory.AttachNew(new MeshFact(this));
+                            if(factory->Parse(node, data))
+                            {
+                                parserData.factories.Put(factory);
+                            }
+                            else
+                            {
+                                csString msg;
+                                msg.Format("Mesh factory %s failed to parse!", node->GetAttributeValue("name"));
+                                CS_ASSERT_MSG(msg.GetData(), false);
+                            }
                         }
                         break;
 
                         // Parse sector.
                         case PARSERTOKEN_SECTOR:
                         {
-                            ParseSector(node, data);
+                            csString name(node->GetAttributeValue("name"));
+                            csRef<Sector> sector = parserData.sectors.Get(name);
+                            if(!sector.IsValid())
+                            {
+                                sector.AttachNew(new Sector(this));
+                                parserData.sectors.Put(sector, name);
+                            }
+
+                            if(!sector->Parse(node, data))
+                            {
+                                parserData.sectors.Delete(name);
+
+                                csString msg;
+                                msg.Format("Sector %s failed to parse!", name.GetData());
+                                CS_ASSERT_MSG(msg.GetData(), false);
+                            }
                         }
                         break;
 
                         // Parse start position.
                         case PARSERTOKEN_START:
                         {
-                            csRef<StartPosition> startPos = csPtr<StartPosition>(new StartPosition());
-                            csString zonen(path);
-                            zonen = zonen.Slice(zonen.FindLast('/')+1);
-                            startPos->zone = zonen;
+                            csRef<StartPosition> startPos;
+                            startPos.AttachNew(new StartPosition());
+                            startPos->name = node->GetAttributeValue("name");
+                            startPos->zone = data.zone->GetName();
                             startPos->sector = node->GetNode("sector")->GetContentsValue();
-                            syntaxService->ParseVector(node->GetNode("position"), startPos->position);
-                            startPositions.Push(startPos);
+                            parserData.syntaxService->ParseVector(node->GetNode("position"), startPos->position);
+
+                            parserData.positions.Put(startPos);
                         }
                         break;
 
                         case PARSERTOKEN_SEQUENCES:
                         {
-                            ParseSequences(node, data);
+                            if(portalsOnly)
+                            {
+                                break;
+                            }
+
+                            // do a 2 pass parsing of sequences
+                            // first create all sequences.
+                            csRef<iDocumentNodeIterator> sequenceIt(node->GetNodes("sequence"));
+                            while(sequenceIt->HasNext())
+                            {
+                                csRef<iDocumentNode> sequenceNode(sequenceIt->Next());
+                                csString sequenceName(sequenceNode->GetAttributeValue("name"));
+
+                                csRef<Sequence> seq;
+                                seq.AttachNew(new Sequence(this));
+                                data.sequences.Put(seq, sequenceName);
+                            }
+
+                            // now actually parse them.
+                            sequenceIt = node->GetNodes("sequence");
+                            while(sequenceIt->HasNext())
+                            {
+                                csRef<iDocumentNode> sequenceNode(sequenceIt->Next());
+                                csString sequenceName(sequenceNode->GetAttributeValue("name"));
+
+                                csRef<Sequence> seq = data.sequences.Get(sequenceName);
+
+                                if(!seq->Parse(sequenceNode, data))
+                                {
+                                    // failed to parse the sequence, remove it from the lookup table
+                                    data.sequences.Delete(sequenceName);
+
+                                    csString msg;
+                                    msg.Format("Sequence %s failed to parse!", sequenceName.GetData());
+                                    CS_ASSERT_MSG(msg.GetData(), false);
+                                }
+                            }
                         }
                         break;
 
                         case PARSERTOKEN_TRIGGERS:
                         {
-                            ParseTriggers(node, data);
+                            if(portalsOnly)
+                            {
+                                break;
+                            }
+
+                            csRef<iDocumentNodeIterator> triggerIt(node->GetNodes("trigger"));
+                            while(triggerIt->HasNext())
+                            {
+                                csRef<iDocumentNode> triggerNode(triggerIt->Next());
+                                csString triggerName(triggerNode->GetAttributeValue("name"));
+
+                                csRef<Trigger> trigger = data.triggers.Get(triggerName);
+                                if(!trigger.IsValid())
+                                {
+                                    // not yet loaded, attach a new one
+                                    trigger.AttachNew(new Trigger(this));
+                                    data.triggers.Put(trigger, triggerName);
+                                }
+
+                                if(!trigger->Parse(triggerNode, data))
+                                {
+                                    // failed to parse the trigger, remove it from the lookup table
+                                    data.triggers.Delete(triggerName);
+
+                                    csString msg;
+                                    msg.Format("Trigger %s failed to parse!", triggerName.GetData());
+                                    CS_ASSERT_MSG(msg.GetData(), false);
+                                }
+                            }
                         }
                         break;
                     }

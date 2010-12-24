@@ -1114,7 +1114,7 @@ void psCharAppearance::ProcessAttach(csRef<iMaterialWrapper> material, const cha
         else if (success > 1)
         {
             // we use it twice, but only got 1 reference, therefore we get another one
-            psengine->GetLoader()->LoadMaterial(materialName);
+            csRef<iMaterialWrapper> material = psengine->GetLoader()->LoadMaterial(materialName);
         }
     }
 }

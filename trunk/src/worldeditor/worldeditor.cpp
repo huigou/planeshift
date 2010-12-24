@@ -243,7 +243,7 @@ bool WorldEditor::Init()
     if(mapPath)
     {
         loader->PrecacheDataWait(mapPath, false);
-        csRef<StartPosition> startPos = loader->GetStartPositions()->Get(0);
+        csRef<StartPosition> startPos = loader->GetStartPositions().Get(0);
         loader->UpdatePosition(startPos->position, startPos->sector, true);
         while(loader->GetLoadingCount() != 0)
         {

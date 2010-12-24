@@ -63,10 +63,10 @@ bool psWorld::Initialize(iObjectRegistry* objectReg)
     return true;
 }
 
-bool psWorld::NewRegion(const char *mapfile, bool loadMeshes)
+bool psWorld::NewRegion(const char *mapfile)
 {
     regions->Push(mapfile);
-    if(!loader->LoadZones(regions, loadMeshes))
+    if(!loader->LoadZones(regions))
     {
 	// Oh no, failed so don't try again!
 	regions->Pop();

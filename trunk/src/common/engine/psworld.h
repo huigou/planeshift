@@ -105,7 +105,7 @@ public:
     bool Initialize(iObjectRegistry* object_reg);
 
     /// Create a new psRegion entry and load it if specified
-    bool NewRegion(const char *mapfile, bool loadMeshes = true);
+    bool NewRegion(const char *mapfile);
 
     /// This makes a string out of all region names, separated by | chars.
     void GetAllRegionNames(csString& str);
