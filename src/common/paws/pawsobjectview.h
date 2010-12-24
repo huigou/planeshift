@@ -149,7 +149,8 @@ private:
     csRef<iMeshWrapper> mesh;
     csRef<iSector> meshSector;
     csRef<iView>   meshView;
-    csRef<iTextureHandle> target;
+    csRef<iTextureHandle> stageTarget;
+    csRef<iTextureHandle> meshTarget;
     psCharAppearance* charApp;
 
     csVector3 objectPos;
@@ -160,11 +161,11 @@ private:
 
     float distance;
     float origDistance;
-    
+
     int rotateTime;
     float rotateRadians;
     float camRotate;
-    
+
     unsigned int ID;
     
     csString meshFactory;
