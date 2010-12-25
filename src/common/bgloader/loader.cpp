@@ -77,8 +77,13 @@ bool BgLoader::Initialize(iObjectRegistry* object_reg)
     // Check whether we're caching files for performance.    
     parserData.config.cache = config->GetBool("PlaneShift.Loading.Cache", false);
 
-    // Check whether we only want to load portal data (e.g. for the server)
+    // Check whether we only want to load portal data (e.g. for the server) or only meshes (i.e. no lights, etc.)
     parserData.config.portalsOnly = config->GetBool("PlaneShift.Loading.OnlyPortals", false);
+    parserData.config.meshesOnly = config->GetBool("PlaneShift.Loading.OnlyMeshes", false);
+    parserData.config.meshesOnly |= parserData.config.portalsOnly;
+
+    // Check whether we want to parse textures
+    parserData.config.parseShaderVars = config->GetBool("PlaneShift.Loading.ParseShaderVariables", true);
 
     // Check whether we want to parse shaders
     parserData.config.parseShaders = config->GetBool("PlaneShift.Loading.ParseShaders",true);

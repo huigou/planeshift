@@ -400,16 +400,12 @@ bool BgLoader::Sector::LoadObject(bool wait)
 
     bool ready = true;
     ready &= ObjectLoader<Portal>::LoadObjects(wait);
-
-    if(!portalsOnly)
-    {
-        ready &= ObjectLoader<Light>::LoadObjects(wait);
-        ready &= ObjectLoader<Sequence>::LoadObjects(wait);
-        ready &= ObjectLoader<Trigger>::LoadObjects(wait);
-        ready &= ObjectLoader<MeshObj>::LoadObjects(wait);
-        ready &= ObjectLoader<MeshGen>::LoadObjects(wait);
-        ready &= alwaysLoaded.LoadObjects(wait);
-    }
+    ready &= ObjectLoader<Light>::LoadObjects(wait);
+    ready &= ObjectLoader<Sequence>::LoadObjects(wait);
+    ready &= ObjectLoader<Trigger>::LoadObjects(wait);
+    ready &= ObjectLoader<MeshObj>::LoadObjects(wait);
+    ready &= ObjectLoader<MeshGen>::LoadObjects(wait);
+    ready &= alwaysLoaded.LoadObjects(wait);
 
     ForceUpdateObjectCount();
 
@@ -443,25 +439,22 @@ int BgLoader::Sector::UpdateObjects(const csBox3& loadBox, const csBox3& keepBox
 
         objectCount += ObjectLoader<Portal>::UpdateObjects(loadBox, keepBox);
 
-        if(!portalsOnly)
+        // as we don't just load portals, load objects in the sector
+        objectCount += ObjectLoader<Light>::UpdateObjects(loadBox, keepBox);
+        objectCount += ObjectLoader<Sequence>::UpdateObjects(loadBox, keepBox);
+        objectCount += ObjectLoader<Trigger>::UpdateObjects(loadBox, keepBox);
+
+        objectCount += ObjectLoader<MeshObj>::UpdateObjects(loadBox, keepBox);
+        objectCount += ObjectLoader<MeshGen>::UpdateObjects(loadBox, keepBox);
+
+        if(objectCount > 0)
         {
-            // as we don't just load portals, load objects in the sector
-            objectCount += ObjectLoader<Light>::UpdateObjects(loadBox, keepBox);
-            objectCount += ObjectLoader<Sequence>::UpdateObjects(loadBox, keepBox);
-            objectCount += ObjectLoader<Trigger>::UpdateObjects(loadBox, keepBox);
-
-            objectCount += ObjectLoader<MeshObj>::UpdateObjects(loadBox, keepBox);
-            objectCount += ObjectLoader<MeshGen>::UpdateObjects(loadBox, keepBox);
-
-            if(objectCount > 0)
-            {
-                // we have visible objects, load those that are marked always visible
-                alwaysLoaded.LoadObjects();
-            }
-            else
-            {
-                alwaysLoaded.UnloadObjects();
-            }
+            // we have visible objects, load those that are marked always visible
+            alwaysLoaded.LoadObjects();
+        }
+        else
+        {
+            alwaysLoaded.UnloadObjects();
         }
     }
 

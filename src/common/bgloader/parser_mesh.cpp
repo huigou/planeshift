@@ -236,7 +236,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                         csRef<iDocumentNode> shaderVar(shaderVarIt->Next());
                         csRef<ShaderVar> sv;
                         sv.AttachNew(new ShaderVar(GetParent(), this));
-                        if(sv->Parse(shaderVar, parserData.data))
+                        if(sv->Parse<false>(shaderVar, parserData.data))
                         {
                             shadervars.Push(sv);
                         }
@@ -336,7 +336,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                                 csRef<iDocumentNode> shaderVar(shaderVarIt->Next());
                                 csRef<ShaderVar> sv;
                                 sv.AttachNew(new ShaderVar(GetParent(), this));
-                                if(sv->Parse(shaderVar, parserData.data))
+                                if(sv->Parse<false>(shaderVar, parserData.data))
                                 {
                                     shadervars.Push(sv);
                                 }
