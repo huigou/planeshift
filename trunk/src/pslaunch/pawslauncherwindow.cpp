@@ -612,13 +612,13 @@ void pawsLauncherWindow::LoadSettings()
     }
 
     pawsCheckBox* enableWeather = (pawsCheckBox*)FindWidget("EnableWeather");
-    if(configUser->KeyExists("PlaneShift.Effects.Weather.Enabled"))
+    if(configUser->KeyExists("PlaneShift.Weather.Enabled"))
     {
-        enableWeather->SetState(configUser->GetBool("PlaneShift.Effects.Weather.Enabled"));
+        enableWeather->SetState(configUser->GetBool("PlaneShift.Weather.Enabled"));
     }
     else
     {
-        enableWeather->SetState(configPSC.GetBool("PlaneShift.Effects.Weather.Enabled"));
+        enableWeather->SetState(configPSC.GetBool("PlaneShift.Weather.Enabled"));
     }
 
     pawsCheckBox* VBO = (pawsCheckBox*)FindWidget("VBO");
@@ -831,7 +831,7 @@ void pawsLauncherWindow::SaveSettings()
             configUser->SetBool("PlaneShift.Graphics.EnableGrass", false);
             configUser->SetBool("Video.OpenGL.UseExtension.GL_ARB_vertex_buffer_object", true);
             configUser->SetStr("PlaneShift.Graphics.Particles", "Medium");
-            configUser->SetBool("PlaneShift.Effects.Weather.Enabled", false);
+            configUser->SetBool("PlaneShift.Weather.Enabled", false);
             break;
         }
     case LOWEST:
@@ -844,7 +844,7 @@ void pawsLauncherWindow::SaveSettings()
             configUser->SetBool("PlaneShift.Graphics.EnableGrass", false);
             configUser->SetBool("Video.OpenGL.UseExtension.GL_ARB_vertex_buffer_object", true);
             configUser->SetStr("PlaneShift.Graphics.Particles", "Medium");
-            configUser->SetBool("PlaneShift.Effects.Weather.Enabled", false);
+            configUser->SetBool("PlaneShift.Weather.Enabled", false);
             break;
         }
     case CUSTOM:
@@ -889,7 +889,7 @@ void pawsLauncherWindow::SaveSettings()
             configUser->SetBool("PlaneShift.Graphics.EnableGrass", enableGrass->GetState());
 
             pawsCheckBox* enableWeather = (pawsCheckBox*)FindWidget("EnableWeather");
-            configUser->SetBool("PlaneShift.Effects.Weather.Enabled", enableWeather->GetState());
+            configUser->SetBool("PlaneShift.Weather.Enabled", enableWeather->GetState());
 
             pawsCheckBox* VBO = (pawsCheckBox*)FindWidget("VBO");
             configUser->SetBool("Video.OpenGL.UseExtension.GL_ARB_vertex_buffer_object", VBO->GetState());
