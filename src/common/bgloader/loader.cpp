@@ -427,7 +427,7 @@ csPtr<iMeshFactoryWrapper> BgLoader::LoadFactory(const char* name, bool* failed,
         else if(!mfw.IsValid())
         {
             *failed = true;
-            return csPtr<iMeshFactoryWrapper>(0);
+            meshfact->Unload();
         }
 
         return csPtr<iMeshFactoryWrapper>(mfw);
@@ -530,7 +530,20 @@ csPtr<iMaterialWrapper> BgLoader::LoadMaterial(const char* name, bool* failed, b
 
     if(material->Load(wait))
     {
-        csRef<iMaterialWrapper> wrapper = material->GetObject();
+        csRef<iMaterialWrapper> wrapper(material->GetObject());
+        if(!failed)
+        {
+            // Check success.
+            csString msg;
+            msg.Format("Failed to load material '%s'", name);
+            CS_ASSERT_MSG(msg.GetData(), wrapper.IsValid());
+        }
+        else if(!wrapper.IsValid())
+        {
+            *failed = true;
+            material->Unload();
+        }
+
         return csPtr<iMaterialWrapper>(wrapper);
     }
 

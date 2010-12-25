@@ -146,15 +146,19 @@ bool BgLoader::Light::LoadObject(bool wait)
 
     // Load all light sequences.
     bool ready = ObjectLoader<Sequence>::LoadObjects(wait);
-    ready &= ObjectLoader<Trigger>::LoadObjects(wait);
+
+    if(ready)
+    {
+        ready &= ObjectLoader<Trigger>::LoadObjects(wait);
+    }
 
     return ready;
 }
 
 void BgLoader::Light::UnloadObject()
 {
-    ObjectLoader<Sequence>::UnloadObjects();
     ObjectLoader<Trigger>::UnloadObjects();
+    ObjectLoader<Sequence>::UnloadObjects();
 
     Loadable::CheckRemove<iLight,ObjectNames::light>(light);
 }
@@ -199,6 +203,10 @@ bool BgLoader::MeshObj::LoadObject(bool wait)
     if(ready)
     {
         ready = ObjectLoader<Sequence>::LoadObjects(wait);
+    }
+
+    if(ready)
+    {
         ready &= ObjectLoader<Trigger>::LoadObjects(wait);
     }
 
@@ -253,11 +261,10 @@ void BgLoader::MeshObj::UnloadObject()
     ObjectLoader<Trigger>::UnloadObjects();
     ObjectLoader<Sequence>::UnloadObjects();
 
-    csRef<iMeshWrapper> meshWrapper = GetObject();
-    CheckRemove<iMeshWrapper,ObjectNames::meshobj>(meshWrapper);
+    TrivialLoadable<iMeshWrapper,ObjectNames::meshobj>::UnloadObject();
 
-    ObjectLoader<Material>::UnloadObjects();
     ObjectLoader<Texture>::UnloadObjects();
+    ObjectLoader<Material>::UnloadObjects();
     ObjectLoader<MeshFact>::UnloadObjects();
 }
 
@@ -289,9 +296,9 @@ void BgLoader::MeshGen::UnloadObject()
   sector->object->RemoveMeshGenerator(GetName());
   status.Invalidate();
 
-  ObjectLoader<MeshFact>::UnloadObjects();
-  ObjectLoader<Material>::UnloadObjects();
   mesh->Unload();
+  ObjectLoader<Material>::UnloadObjects();
+  ObjectLoader<MeshFact>::UnloadObjects();
 }
 
 bool BgLoader::Portal::LoadObject(bool wait)
@@ -401,10 +408,10 @@ bool BgLoader::Sector::LoadObject(bool wait)
     bool ready = true;
     ready &= ObjectLoader<Portal>::LoadObjects(wait);
     ready &= ObjectLoader<Light>::LoadObjects(wait);
-    ready &= ObjectLoader<Sequence>::LoadObjects(wait);
-    ready &= ObjectLoader<Trigger>::LoadObjects(wait);
     ready &= ObjectLoader<MeshObj>::LoadObjects(wait);
     ready &= ObjectLoader<MeshGen>::LoadObjects(wait);
+    ready &= ObjectLoader<Sequence>::LoadObjects(wait);
+    ready &= ObjectLoader<Trigger>::LoadObjects(wait);
     ready &= alwaysLoaded.LoadObjects(wait);
 
     ForceUpdateObjectCount();
@@ -439,10 +446,10 @@ int BgLoader::Sector::UpdateObjects(const csBox3& loadBox, const csBox3& keepBox
 
         objectCount += ObjectLoader<Portal>::UpdateObjects(loadBox, keepBox);
         objectCount += ObjectLoader<Light>::UpdateObjects(loadBox, keepBox);
-        objectCount += ObjectLoader<Sequence>::UpdateObjects(loadBox, keepBox);
-        objectCount += ObjectLoader<Trigger>::UpdateObjects(loadBox, keepBox);
         objectCount += ObjectLoader<MeshObj>::UpdateObjects(loadBox, keepBox);
         objectCount += ObjectLoader<MeshGen>::UpdateObjects(loadBox, keepBox);
+        objectCount += ObjectLoader<Sequence>::UpdateObjects(loadBox, keepBox);
+        objectCount += ObjectLoader<Trigger>::UpdateObjects(loadBox, keepBox);
 
         if(objectCount > 0)
         {
@@ -487,10 +494,11 @@ int BgLoader::Sector::UpdateObjects(const csBox3& loadBox, const csBox3& keepBox
 
 void BgLoader::Sector::UnloadObject()
 {
-    ObjectLoader<Light>::UnloadObjects();
+    ObjectLoader<Trigger>::UnloadObjects();
     ObjectLoader<Sequence>::UnloadObjects();
     ObjectLoader<MeshGen>::UnloadObjects();
     ObjectLoader<MeshObj>::UnloadObjects();
+    ObjectLoader<Light>::UnloadObjects();
     ObjectLoader<Portal>::UnloadObjects();
     alwaysLoaded.UnloadObjects();
 
