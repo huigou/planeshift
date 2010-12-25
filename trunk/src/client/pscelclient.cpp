@@ -2045,7 +2045,6 @@ bool GEMClientActor::CheckLoadStatus()
             csReversibleTransform & trans = movable->GetTransform();
             trans.SetO2T(trans.GetO2T() * scale);
         }*/
-        csRef<iSpriteCal3DState> meshstate = scfQueryInterface<iSpriteCal3DState> (mesh->GetMeshObject());
         if(scale >= 0)
         {
             csRef<iSpriteCal3DFactoryState> sprite = scfQueryInterface<iSpriteCal3DFactoryState> (mesh->GetFactory()->GetMeshObjectFactory());
