@@ -55,7 +55,7 @@ psEffectObjMesh::~psEffectObjMesh()
         mesh.Invalidate();
     }
 
-    if(meshFact.IsValid())
+    if(meshFact.IsValid() && usedBgLoader)
     {
         meshFact.Invalidate();
         loader->FreeFactory(factName);
@@ -201,6 +201,10 @@ bool psEffectObjMesh::PostSetup(iLoaderContext * ldr_context)
     if(failed)
     {
         meshFact = ldr_context->FindMeshFactory(factName);
+    }
+    else
+    {
+        usedBgLoader = true;
     }
 
     if (!meshFact.IsValid())
