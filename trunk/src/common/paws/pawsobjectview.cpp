@@ -85,12 +85,20 @@ pawsObjectView::~pawsObjectView()
     Clear();
 
     // free map ressources
-    engine->RemoveObject(view);
-    view.Invalidate();
-    engine->RemoveObject(meshView);
-    meshView.Invalidate();
-    engine->RemoveObject(meshSector);
-    meshSector.Invalidate();
+    if(view.IsValid())
+    {
+        engine->RemoveObject(view);
+    }
+
+    if(meshView.IsValid())
+    {
+        engine->RemoveObject(meshView);
+    }
+
+    if(meshSector.IsValid())
+    {
+        engine->RemoveObject(meshSector);
+    }
 }
 
 bool pawsObjectView::Setup(iDocumentNode* node )
@@ -201,7 +209,10 @@ bool pawsObjectView::LoadMap( const char* map, const char* sector )
 
     stage = engine->FindSector( sector );
     if (!stage)
-         return false;
+    {
+        Error2("couldn't find stage sector '%s'", sector);
+        return false;
+    }
 
     static uint sectorCount = 0;
     meshSector = engine->CreateSector( csString(sector).AppendFmt("%u", sectorCount++));
