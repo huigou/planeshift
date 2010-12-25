@@ -46,6 +46,7 @@ private:
     bool PostSetup(iLoaderContext * ldr_context);
 
     csString factName;
+    bool usedBgLoader;
     csRef<iSprite3DState> sprState;
 };
 

@@ -40,7 +40,7 @@
 #include "util/log.h"
 
 psEffectObjMesh::psEffectObjMesh(iView * parentView, psEffect2DRenderer * renderer2d)
-                :psEffectObj(parentView, renderer2d)
+                : psEffectObj(parentView, renderer2d), usedBgLoader(false)
 {
 }
 
@@ -198,7 +198,12 @@ bool psEffectObjMesh::PostSetup(iLoaderContext * ldr_context)
     csRef<iBgLoader> loader = csQueryRegistry<iBgLoader>(psCSSetup::object_reg);
     meshFact = loader->LoadFactory(factName, &failed, true);
 
-    if (!meshFact)
+    if(failed)
+    {
+        meshFact = ldr_context->FindMeshFactory(factName);
+    }
+
+    if (!meshFact.IsValid())
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Couldn't find mesh factory %s in effect %s\n", factName.GetData(), name.GetData());
         return false;
