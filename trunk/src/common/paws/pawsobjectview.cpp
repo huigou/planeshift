@@ -223,6 +223,13 @@ bool pawsObjectView::ContinueLoad()
 {
     if(loader->GetLoadingCount() == 0)
     {
+        // precache stage
+        stage->PrecacheDraw();
+
+        // copy ambient light
+        meshSector->SetDynamicAmbientLight(stage->GetDynamicAmbientLight());
+
+        // copy static and pseudo-dynamic lights
         iLightList* lightList = meshSector->GetLights();
         iLightList* stageLightList = stage->GetLights();
 
@@ -231,13 +238,13 @@ bool pawsObjectView::ContinueLoad()
             lightList->Add(stageLightList->Get(i));
         }
 
+        // precache mesh sector
         meshSector->PrecacheDraw();
-        stage->PrecacheDraw();
         return true;
     }
     else
     {
-        loader->ContinueLoading(true);
+        loader->ContinueLoading(false);
         return false;
     }
 }
