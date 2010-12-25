@@ -878,7 +878,7 @@ private:
         {
         }
 
-        bool Parse(iDocumentNode* node, GlobalParserData& data);
+        template<bool check> bool Parse(iDocumentNode* node, GlobalParserData& data);
         void LoadObject(csShaderVariable* var);
         CS::ShaderVarStringID GetID() const
         {
@@ -1281,7 +1281,6 @@ private:
         csSet<csPtrKey<Portal> > activePortals;
         bool init;
         bool isLoading;
-        bool portalsOnly;
     };
 
     // Stores world representation.
@@ -1362,9 +1361,11 @@ private:
             bool cache;
             uint enabledGfxFeatures;
             bool portalsOnly;
+            bool meshesOnly;
             bool parseShaders;
             bool blockShaderLoad;
             bool parsedShaders;
+            bool parseShaderVars;
         } config;
     } parserData;
 

@@ -114,7 +114,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
         return true;
     }
 
-    bool BgLoader::ShaderVar::Parse(iDocumentNode* node, GlobalParserData& data)
+    template<bool check> bool BgLoader::ShaderVar::Parse(iDocumentNode* node, GlobalParserData& data)
     {
         // Parse the different types. Currently texture, vector2 and vector3 are supported.
         csString typeName;
@@ -132,35 +132,46 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
         nameID = data.svstrings->Request(name);
         value = node->GetContentsValue();
 
+        if(check && !data.config.parseShaderVars)
+        {
+            if(typeName != "texture" || name != "tex diffuse")
+            {
+                return false;
+            }
+        }
+
         if(typeName == "texture")
         {
             type = csShaderVariable::TEXTURE;
 
             // Ignore some shader variables if the functionality they bring is not enabled.
-            switch(data.config.enabledGfxFeatures)
+            if(check)
             {
-                case useLowestShaders:
-                case useLowShaders:
-                    if(name == "tex normal" || name == "tex normal compressed")
-                        return false;
-                case useMediumShaders:
-                    if(name == "tex height" || name == "tex ambient occlusion")
-                        return false;
-                case useHighShaders:
-                    if(name == "tex specular")
-                        return false;
-                case useHighestShaders:
-                    break;
+                switch(data.config.enabledGfxFeatures)
+                {
+                    case useLowestShaders:
+                    case useLowShaders:
+                        if(name == "tex normal" || name == "tex normal compressed")
+                            return false;
+                    case useMediumShaders:
+                        if(name == "tex height" || name == "tex ambient occlusion")
+                            return false;
+                    case useHighShaders:
+                        if(name == "tex specular")
+                            return false;
+                    case useHighestShaders:
+                        break;
+                }
+
+                // filter out standard textures we don't have to load and a special texture
+                // tht is used for undefined materials
+                if(value == "materialnotdefined" || !data.config.parseShaderVars)
+                {
+                    value = "standardtex white";
+                }
             }
 
-            // filter out standard textures we don't have to load and a special texture
-            // tht is used for undefined materials
-            if(value == "materialnotdefined")
-            {
-                value = "stdtex white";
-            }
-
-            if(value.StartsWith("stdtex"))
+            if(value.StartsWith("stdtex") || value.StartsWith("standardtex"))
             {
                 return true;
             }
@@ -210,6 +221,10 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
         return true;
     }
 
+    // explicitly instantiate template as we defined, but not declared it in the header
+    template bool BgLoader::ShaderVar::Parse<true>(iDocumentNode*, GlobalParserData&);
+    template bool BgLoader::ShaderVar::Parse<false>(iDocumentNode*, GlobalParserData&);
+
     bool BgLoader::Material::Parse(iDocumentNode* materialNode, GlobalParserData& parserData)
     {
         SetName(materialNode->GetAttributeValue("name"));
@@ -229,7 +244,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                 {
                     csRef<ShaderVar> sv;
                     sv.AttachNew(new ShaderVar(GetParent(), this));
-                    if(sv->Parse(node, parserData))
+                    if(sv->Parse<true>(node, parserData))
                     {
                         shadervars.Push(sv);
                     }
@@ -476,11 +491,11 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
         // let the other parser functions know about us
         parserData.currentSector = this;
 
-        // copy the portalsOnly setting
-        portalsOnly = parserData.data.config.portalsOnly;
-
         // set this sector as initialized
         init = true;
+
+        bool portalsOnly = parserData.data.config.portalsOnly;
+        bool meshesOnly = parserData.data.config.meshesOnly;
 
         csRef<iDocumentNodeIterator> it(sectorNode->GetNodes());
         while(it->HasNext())
@@ -505,7 +520,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
 
                 case PARSERTOKEN_KEY:
                 {
-                    if(portalsOnly)
+                    if(meshesOnly)
                     {
                         break;
                     }
@@ -566,7 +581,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
 
                 case PARSERTOKEN_LIGHT:
                 {
-                    if(portalsOnly)
+                    if(meshesOnly)
                     {
                         break;
                     }
@@ -624,7 +639,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
 
                 case PARSERTOKEN_MESHGEN:
                 {
-                    if(portalsOnly || !parserData.data.config.enabledGfxFeatures & useMeshGen)
+                    if(portalsOnly || !(parserData.data.config.enabledGfxFeatures & useMeshGen))
                     {
                         break;
                     }
@@ -1022,6 +1037,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
             if(root.IsValid())
             {
                 bool portalsOnly = parserData.config.portalsOnly;
+                bool meshesOnly = parserData.config.meshesOnly;
 
                 csRef<iDocumentNodeIterator> nodeIt(root->GetNodes());
                 while(nodeIt->HasNext())
@@ -1187,7 +1203,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
 
                         case PARSERTOKEN_SEQUENCES:
                         {
-                            if(portalsOnly)
+                            if(meshesOnly)
                             {
                                 break;
                             }
@@ -1229,7 +1245,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
 
                         case PARSERTOKEN_TRIGGERS:
                         {
-                            if(portalsOnly)
+                            if(meshesOnly)
                             {
                                 break;
                             }
