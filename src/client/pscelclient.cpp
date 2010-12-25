@@ -1435,6 +1435,8 @@ GEMClientActor::~GEMClientActor()
 {
     delete vitalManager;
     delete linmove;
+    delete post_load;
+
     cal3dstate.Invalidate();
     if(pcmesh.IsValid())
     {
@@ -2090,10 +2092,8 @@ GEMClientItem::GEMClientItem( psCelClient* cel, psPersistItem& mesg )
 
 GEMClientItem::~GEMClientItem()
 {
-    if(solid)
-    {
-        delete solid;
-    }
+    delete solid;
+    delete post_load;
 
     if(instance.IsValid())
     {
