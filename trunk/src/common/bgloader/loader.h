@@ -472,18 +472,15 @@ private:
     class Loadable : public csObject
     {
     public:
-        Loadable(BgLoader* parent) : parent(parent), loading(false)
+        Loadable(BgLoader* parent) : parent(parent),
+                                     loading(false), useCount(0)
         {
-            // we want to start with an initial ref count of 0
-            useCount.DecRef();
         }
 
-        Loadable(const Loadable& other) : parent(other.parent)
+        Loadable(const Loadable& other) : parent(other.parent),
+                                          loading(false), useCount(0)
         {
             SetName(other.GetName());
-
-            // we want to start with an initial ref count of 0
-            useCount.DecRef();
         }
 
         virtual ~Loadable()
@@ -494,7 +491,7 @@ private:
         {
             CS::Threading::RecursiveMutexScopedLock lock(busy);
             checked = true;
-            if(useCount.GetRefCount() == 0)
+            if(useCount == 0)
             {
                 lingerCount = 0;
 
@@ -507,8 +504,8 @@ private:
                 if(LoadObject(wait))
                 {
                     loading = false;
+                    ++useCount;
                     GetParent()->UnregisterPendingObject(this);
-                    useCount.IncRef();
 
                     FinishObject();
                 }
@@ -517,7 +514,7 @@ private:
             }
             else
             {
-                useCount.IncRef();
+                ++useCount;
                 return true;
             }
         }
@@ -529,6 +526,7 @@ private:
             {
                 loading = false;
                 checked = false;
+                UnloadObject();
                 GetParent()->UnregisterPendingObject(this);
             }
         }
@@ -536,7 +534,7 @@ private:
         void Unload()
         {
             CS::Threading::RecursiveMutexScopedLock lock(busy);
-            if(!useCount.GetRefCount())
+            if(useCount == 0)
             {
                 LOADER_DEBUG_MESSAGE("tried to free not loaded object '%s'\n", GetName());
                 return;
@@ -544,8 +542,8 @@ private:
 
             CS_ASSERT_MSG("unloading currently loading object!", !loading);
 
-            useCount.DecRef();
-            if(useCount.GetRefCount() == 0)
+            --useCount;
+            if(useCount == 0)
             {
                 UnloadObject();
             }
@@ -557,7 +555,8 @@ private:
 
         bool IsLoaded() const
         {
-            return useCount.GetRefCount() > 0;
+            CS::Threading::RecursiveMutexScopedLock lock(busy);
+            return useCount > 0;
         }
 
         inline BgLoader* GetParent() const
@@ -598,29 +597,26 @@ private:
 
         template<typename T, const char* TypeName> void CheckRemove(csRef<T>& ref)
         {
-            csWeakRef<T> check(ref);
-            parent->GetEngine()->RemoveObject(ref);
-            ref.Invalidate();
-            if(check.IsValid())
+            if(ref.IsValid())
             {
-                LOADER_DEBUG_MESSAGE("detected leaking %s: %u %s\n", TypeName, check->GetRefCount(), GetName());
+                csWeakRef<T> check(ref);
+                parent->GetEngine()->RemoveObject(ref);
+                ref.Invalidate();
+                if(check.IsValid())
+                {
+                    LOADER_DEBUG_MESSAGE("detected leaking %s: %u %s\n", TypeName, check->GetRefCount(), GetName());
+                }
             }
         }
 
     private:
         mutable CS::Threading::RecursiveMutex busy;
-        class UsageCounter : public CS::Utility::AtomicRefCount
-        {
-        private:
-            void Delete()
-            {
-            }
-        } useCount;
 
         BgLoader* parent;
         bool loading;
         bool checked;
         size_t lingerCount;
+        size_t useCount;
     };
 
     // trivial loadable (e.g. triggers, textures, ...)
@@ -641,7 +637,7 @@ private:
         {
             if(!status.IsValid())
             {
-                status = GetParent()->GetLoader()->LoadNode(path,data);
+                status = GetParent()->GetLoader()->LoadNode(path, data);
             }
 
             if(wait)
@@ -665,20 +661,22 @@ private:
 
         void UnloadObject()
         {
-            csRef<T> ref = scfQueryInterface<T>(status->GetResultRefPtr());
+            csRef<T> ref = GetObject();
             status.Invalidate();
             Loadable::CheckRemove<T,TypeName>(ref);
         }
 
         csPtr<T> GetObject()
         {
-            csRef<T> obj = scfQueryInterface<T>(status->GetResultRefPtr());
-            return csPtr<T>(obj);
-        }
-
-        void SetData(iDocumentNode* newData)
-        {
-            data = newData;
+            if(status.IsValid())
+            {
+                csRef<T> obj = scfQueryInterface<T>(status->GetResultRefPtr());
+                return csPtr<T>(obj);
+            }
+            else
+            {
+                return csPtr<T>(0);
+            }
         }
 
     protected:
@@ -1034,7 +1032,7 @@ private:
 
         csPtr<MeshFact> Clone(const char* name)
         {
-            csRef<MeshFact> clone/*(this)*/;
+            csRef<MeshFact> clone;
             clone.AttachNew(new MeshFact(*this));
             clone->SetName(name);
             return csPtr<MeshFact>(clone);
