@@ -438,12 +438,9 @@ int BgLoader::Sector::UpdateObjects(const csBox3& loadBox, const csBox3& keepBox
         }
 
         objectCount += ObjectLoader<Portal>::UpdateObjects(loadBox, keepBox);
-
-        // as we don't just load portals, load objects in the sector
         objectCount += ObjectLoader<Light>::UpdateObjects(loadBox, keepBox);
         objectCount += ObjectLoader<Sequence>::UpdateObjects(loadBox, keepBox);
         objectCount += ObjectLoader<Trigger>::UpdateObjects(loadBox, keepBox);
-
         objectCount += ObjectLoader<MeshObj>::UpdateObjects(loadBox, keepBox);
         objectCount += ObjectLoader<MeshGen>::UpdateObjects(loadBox, keepBox);
 
@@ -454,6 +451,7 @@ int BgLoader::Sector::UpdateObjects(const csBox3& loadBox, const csBox3& keepBox
         }
         else
         {
+            // no objects visible, unload always loaded objects
             alwaysLoaded.UnloadObjects();
         }
     }
