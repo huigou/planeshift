@@ -74,6 +74,8 @@ psCharAppearance::psCharAppearance(iObjectRegistry* objectReg)
 
 void psCharAppearance::Free()
 {
+    csRef<iBgLoader> loader(psengine->GetLoader());
+
     while(!delayedAttach.IsEmpty())
     {
         // free ressources allocated by delayed loading
@@ -82,13 +84,13 @@ void psCharAppearance::Free()
         if(attach.materialPtr.IsValid())
         {
             attach.materialPtr.Invalidate();
-            psengine->GetLoader()->FreeMaterial(attach.materialName);
+            loader->FreeMaterial(attach.materialName);
         }
 
         if(attach.factoryPtr.IsValid())
         {
             attach.factoryPtr.Invalidate();
-            psengine->GetLoader()->FreeFactory(attach.factName);
+            loader->FreeFactory(attach.factName);
         }
 
         delayedAttach.PopFront();
@@ -104,9 +106,24 @@ void psCharAppearance::Free()
         DefaultMaterial(part);
     }
 
-    while(CheckLoadStatus())
+    while(!delayedAttach.IsEmpty())
     {
-        continue; // wait for material resets to finish
+        // free ressources allocated by delayed loading
+        // that won't be used
+        Attachment & attach = delayedAttach.Front();
+
+        bool failed;
+        attach.materialPtr = loader->LoadMaterial(attach.materialName, &failed, true);
+        if(!failed && attach.materialPtr.IsValid())
+        {
+            ProcessAttach(attach.materialPtr, attach.materialName, attach.partName);
+        }
+        else
+        {
+            Error2("failed to reset material on part %s", attach.partName.GetData());
+        }
+
+        delayedAttach.PopFront();
     }
 
     state.Invalidate();
@@ -120,7 +137,7 @@ void psCharAppearance::Free()
     {
         // reset all materials
         csString& value = it.Next();
-        psengine->GetLoader()->FreeMaterial(value);
+        loader->FreeMaterial(value);
     }
     materials.DeleteAll();
     removedMeshes.DeleteAll();
