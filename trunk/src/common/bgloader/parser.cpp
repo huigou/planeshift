@@ -291,17 +291,13 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                 case PARSERTOKEN_SHADER:
                 {
                     csString shaderName(node->GetContentsValue());
-                    csString oldShaderName(shaderName);
                     {
+                        csString oldShaderName(shaderName);
+
                         CS::Threading::ScopedReadLock lock(parserData.shaderLock);
                         if(parserData.shaderAliases.Contains(shaderName))
                         {
                             shaderName = parserData.shaderAliases.Get(oldShaderName, oldShaderName);
-                        }
-
-                        if(oldShaderName != shaderName)
-                        {
-                            csPrintf("replaced shader '%s' with '%s'\n", oldShaderName.GetData(), shaderName.GetData());
                         }
                     }
                     Shader shader;
@@ -330,7 +326,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
         }
     }
 
-    void BgLoader::MaterialLoader::ParseMaterialReference(GlobalParserData& data, const char* name, const char* parentName, const char* type)
+    void BgLoader::MaterialLoader::ParseMaterialReference(GlobalParserData& data, const char* name, const char* type, const char* parentName)
     {
         csRef<Material> material= data.materials.Get(name);
 
