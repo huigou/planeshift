@@ -73,28 +73,65 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                     csRef<iDocumentNodeIterator> nodeItr = node->GetNodes("shader");
                     while(nodeItr->HasNext())
                     {
-                        node = nodeItr->Next();
+                        csRef<iDocumentNode> shaderNode(nodeItr->Next());
 
-                        csRef<iDocumentNode> file = node->GetNode("file");
+                        csString typeName(shaderNode->GetNode("type")->GetContentsValue());
+                        csString shaderName(shaderNode->GetAttributeValue("name"));
 
-                        CS::Threading::ScopedWriteLock lock(parserData.shaderLock);
-                        parserData.shaders.Push(file->GetContentsValue());
-                        csRef<iThreadReturn> shaderRet = tloader->LoadShader(path, file->GetContentsValue());
-                        if(parserData.config.blockShaderLoad)
+                        csRef<iDocumentNode> file = shaderNode->GetNode("file");
+                        if(file.IsValid())
                         {
-                            shaderRet->Wait();
+                            csString fileName(file->GetContentsValue());
+                            if(parserData.shaders.Contains(fileName) == csArrayItemNotFound)
+                            {
+                                CS::Threading::ScopedWriteLock lock(parserData.shaderLock);
+                                parserData.shaders.Push(file->GetContentsValue());
+                                csRef<iThreadReturn> shaderRet = tloader->LoadShader(path, file->GetContentsValue());
+                                if(parserData.config.blockShaderLoad)
+                                {
+                                    shaderRet->Wait();
+                                }
+                                else
+                                {
+                                    // Dispatch shader load to a thread.
+                                    rets.Push(shaderRet);
+                                }
+                            }
+
+                            csStringID shaderID = parserData.strings->Request(typeName);
+                            parserData.shadersByUsage.Put(shaderID, shaderName);
                         }
-                        else
+                    }
+                    
+                    nodeItr = node->GetNodes("alias");
+                    while(nodeItr->HasNext())
+                    {
+                        csRef<iDocumentNode> aliasNode(nodeItr->Next());
+                        csString shaderName(aliasNode->GetAttributeValue("name"));
+                        csString aliasName(aliasNode->GetAttributeValue("alias"));
+
+                        csRef<iDocumentNode> file = aliasNode->GetNode("file");
+                        if(file.IsValid())
                         {
-                            // Dispatch shader load to a thread.
-                            rets.Push(shaderRet);
+                            csString fileName(file->GetContentsValue());
+                            if(parserData.shaders.Contains(fileName) == csArrayItemNotFound)
+                            {
+                                CS::Threading::ScopedWriteLock lock(parserData.shaderLock);
+                                parserData.shaders.Push(file->GetContentsValue());
+                                csRef<iThreadReturn> shaderRet = tloader->LoadShader(path, file->GetContentsValue());
+                                if(parserData.config.blockShaderLoad)
+                                {
+                                    shaderRet->Wait();
+                                }
+                                else
+                                {
+                                    // Dispatch shader load to a thread.
+                                    rets.Push(shaderRet);
+                                }
+                            }
+
+                            parserData.shaderAliases.Put(aliasName, shaderName);
                         }
-
-                        csString typeName(node->GetNode("type")->GetContentsValue());
-                        csString shaderName(node->GetAttributeValue("name"));
-
-                        csStringID shaderID = parserData.strings->Request(typeName);
-                        parserData.shadersByUsage.Put(shaderID, shaderName);
                     }
 
                     // Wait for shader loads to finish.
@@ -253,8 +290,22 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
 
                 case PARSERTOKEN_SHADER:
                 {
+                    csString shaderName(node->GetContentsValue());
+                    csString oldShaderName(shaderName);
+                    {
+                        CS::Threading::ScopedReadLock lock(parserData.shaderLock);
+                        if(parserData.shaderAliases.Contains(shaderName))
+                        {
+                            shaderName = parserData.shaderAliases.Get(oldShaderName, oldShaderName);
+                        }
+
+                        if(oldShaderName != shaderName)
+                        {
+                            csPrintf("replaced shader '%s' with '%s'\n", oldShaderName.GetData(), shaderName.GetData());
+                        }
+                    }
                     Shader shader;
-                    shader.shader = shaderMgr->GetShader(node->GetContentsValue());
+                    shader.shader = shaderMgr->GetShader(shaderName);
                     shader.type = parserData.strings->Request(node->GetAttributeValue("type"));
                     shaders.Push(shader);
                 }

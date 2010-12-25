@@ -1354,6 +1354,7 @@ private:
         CS::Threading::ReadWriteMutex shaderLock;
         csHash<csString, csStringID> shadersByUsage;
         csStringArray shaders;
+        csHash<csString, csString> shaderAliases;
 
         // config
         struct ParserConfig

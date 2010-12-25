@@ -39,4 +39,12 @@
     <file>/shader/particles/soft-alpha.xml</file>
     <type>particles</type>
   </shader>
+
+  <alias name="terrain_multisplat" alias="terrain_alphasplat">
+    <file>/shader/terrain/multisplat.xml</file>
+  </alias>
+  <alias name="terrain_multisplat_pvl" alias="terrain_alphasplat_pvl">
+    <file>/shader/terrain/multisplat_pvl.xml</file>
+  </alias>
 </shaders>
+
