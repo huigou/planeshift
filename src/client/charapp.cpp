@@ -684,7 +684,7 @@ void psCharAppearance::Equip( csString& slotname,
     if ( mesh.Length() )
     {
         if( texture.Length() && !subMesh.Length() )
-            Attach(slotname, mesh, texture);
+            Attach(slotname, mesh, ParseStrings(part,texture));
         else
             Attach(slotname, mesh);
     }
@@ -922,7 +922,8 @@ bool psCharAppearance::Attach(const char* socketName, const char* meshFactName, 
     }
 
     bool failed = false;
-    csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(meshFactName, &failed);
+    csRef<iBgLoader> loader(psengine->GetLoader());
+    csRef<iMeshFactoryWrapper> factory = loader->LoadFactory(meshFactName, &failed);
     if(failed)
     {
         Notify2(LOG_CHARACTER, "Mesh factory %s not found.", meshFactName );
@@ -932,10 +933,14 @@ bool psCharAppearance::Attach(const char* socketName, const char* meshFactName, 
     csRef<iMaterialWrapper> material;
     if(materialName != NULL)
     {
-        material = psengine->GetLoader()->LoadMaterial(materialName, &failed);
+        material = loader->LoadMaterial(materialName, &failed);
         if(failed)
         {
             Notify2(LOG_CHARACTER, "Material %s not found.", materialName);
+            if(factory.IsValid())
+            {
+                loader->FreeFactory(meshFactName);
+            }
             return false;
         }
     }
