@@ -401,32 +401,36 @@ csPtr<iMeshFactoryWrapper> BgLoader::LoadFactory(const char* name, bool* failed,
         meshfact = parserData.factories.hash.Get(factoryID, csRef<MeshFact>());
     }
 
-    if(!failed)
+    if(!meshfact.IsValid())
     {
         // Validation.
         csString msg;
         msg.Format("Invalid factory reference '%s'", name);
         CS_ASSERT_MSG(msg.GetData(), meshfact.IsValid());
-    }
-    else if(!meshfact.IsValid())
-    {
-        *failed = true;
+
+        if(failed)
+        {
+            *failed = true;
+        }
+
         return csPtr<iMeshFactoryWrapper>(0);
     }
  
     if(meshfact->Load(wait))
     {
         csRef<iMeshFactoryWrapper> mfw(meshfact->GetObject());
-        if(!failed)
+        if(!mfw.IsValid())
         {
             // Check success.
             csString msg;
             msg.Format("Failed to load factory '%s'", name);
             CS_ASSERT_MSG(msg.GetData(), mfw.IsValid());
-        }
-        else if(!mfw.IsValid())
-        {
-            *failed = true;
+
+            if(failed)
+            {
+                *failed = true;
+            }
+
             meshfact->Unload();
         }
 
@@ -465,18 +469,15 @@ void BgLoader::CloneFactory(const char* name, const char* newName, bool* failed)
 
     if(!meshfact.IsValid())
     {
-        if(!failed)
-        {
-            // Validation.
-            csString msg;
-            msg.Format("Invalid factory reference '%s' passed for cloning.", name);
-            CS_ASSERT_MSG(msg.GetData(), false);
-        }
-        else
+        // Validation.
+        csString msg;
+        msg.Format("Invalid factory reference '%s' passed for cloning.", name);
+        CS_ASSERT_MSG(msg.GetData(), false);
+
+        if(failed)
         {
             *failed = true;
         }
-        return;
     }
 
     // check whether newName already exists
@@ -484,14 +485,12 @@ void BgLoader::CloneFactory(const char* name, const char* newName, bool* failed)
 
     if(newMeshFact.IsValid() && !(*meshfact == *newMeshFact))
     {
-        if(!failed)
-        {
-            // validation
-            csString msg;
-            msg.Format("Cloning factory '%s' to '%s' that already exists and doesn't match.", name, newName);
-            CS_ASSERT_MSG(msg.GetData(), false);
-        }
-        else
+        // validation
+        csString msg;
+        msg.Format("Cloning factory '%s' to '%s' that already exists and doesn't match.", name, newName);
+        CS_ASSERT_MSG(msg.GetData(), false);
+
+        if(failed)
         {
             *failed = true;
         }
@@ -515,33 +514,36 @@ csPtr<iMaterialWrapper> BgLoader::LoadMaterial(const char* name, bool* failed, b
         material = parserData.materials.hash.Get(materialID, csRef<Material>());
     }
 
-    if(!failed)
+    if(!material.IsValid())
     {
         // Validation.
         csString msg;
         msg.Format("Invalid material reference '%s'", name);
-        CS_ASSERT_MSG(msg.GetData(), material.IsValid());
-    }
-    else if(!material.IsValid())
-    {
-        *failed = true;
+        CS_ASSERT_MSG(msg.GetData(), false);
+
+        if(failed)
+        {
+            *failed = true;
+        }
+
         return csPtr<iMaterialWrapper>(0);
     }
 
     if(material->Load(wait))
     {
         csRef<iMaterialWrapper> wrapper(material->GetObject());
-        if(!failed)
+        if(!wrapper.IsValid())
         {
             // Check success.
             csString msg;
             msg.Format("Failed to load material '%s'", name);
-            CS_ASSERT_MSG(msg.GetData(), wrapper.IsValid());
-        }
-        else if(!wrapper.IsValid())
-        {
-            *failed = true;
-            material->Unload();
+            CS_ASSERT_MSG(msg.GetData(), false);
+
+            if(failed)
+            {
+                *failed = true;
+                material->Unload();
+            }
         }
 
         return csPtr<iMaterialWrapper>(wrapper);
