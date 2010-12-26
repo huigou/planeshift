@@ -2154,8 +2154,8 @@ public:
 
         //loads data about the randomization status of the item.
         randomize = node->GetAttributeValueAsBool("randomize");
-        randomCost = node->GetAttributeValueAsInt("randomcost");
-        randomLevel = node->GetAttributeValueAsInt("randomlevel");
+        randomCost = node->GetAttributeValueAsInt("randomcost", 1000);
+        randomLevel = node->GetAttributeValueAsInt("randomlevel", 3);
 
         return !name.IsEmpty() && count && Imperative1::Load(node);
     }
