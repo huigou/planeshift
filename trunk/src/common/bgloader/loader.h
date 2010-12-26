@@ -668,15 +668,17 @@ private:
 
         csPtr<T> GetObject()
         {
-            if(status.IsValid())
+            if(status.IsValid() && status->IsFinished() && status->WasSuccessful())
             {
-                csRef<T> obj = scfQueryInterface<T>(status->GetResultRefPtr());
-                return csPtr<T>(obj);
+                csRef<iBase> rawObj = status->GetResultRefPtr();
+                if(rawObj.IsValid())
+                {
+                    csRef<T> obj = scfQueryInterface<T>(status->GetResultRefPtr());
+                    return csPtr<T>(obj);
+                }
             }
-            else
-            {
-                return csPtr<T>(0);
-            }
+
+            return csPtr<T>(0);
         }
 
     protected:
