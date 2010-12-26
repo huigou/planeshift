@@ -53,7 +53,7 @@ class pawsScript
 private:
     pawsScriptStatement * statement;
     pawsWidget * widget;
-	csString scriptText;
+    csString scriptText;
 
     bool NextChar(const char * script, size_t & currIndex, char & c, char & n);
     bool Parse(const char * script);
