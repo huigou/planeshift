@@ -76,18 +76,6 @@ CharCreationManager::CharCreationManager(GEMSupervisor* gemsupervisor, CacheMana
 
 CharCreationManager::~CharCreationManager()
 {
-    if (psserver->GetEventManager())
-    {
-        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_CHAR_CREATE_UPLOAD);
-        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_CHAR_CREATE_CP);
-        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_CHAR_CREATE_PARENTS);
-        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_CHAR_CREATE_CHILDHOOD);
-        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_CHAR_CREATE_LIFEEVENTS);
-        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_CHAR_CREATE_TRAITS);
-        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_CHAR_CREATE_NAME);
-        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_CHAR_DELETE);
-    }
-
     delete [] raceCPValues;
 }
 
@@ -98,15 +86,15 @@ bool CharCreationManager::Initialize( )
             LoadCreationChoices() && 
             LoadLifeEvents()) )
         return false;
-        
-    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<CharCreationManager>(this,&CharCreationManager::HandleUploadMessage), MSGTYPE_CHAR_CREATE_UPLOAD,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<CharCreationManager>(this,&CharCreationManager::HandleCharCreateCP), MSGTYPE_CHAR_CREATE_CP,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<CharCreationManager>(this,&CharCreationManager::HandleParents), MSGTYPE_CHAR_CREATE_PARENTS,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<CharCreationManager>(this,&CharCreationManager::HandleChildhood), MSGTYPE_CHAR_CREATE_CHILDHOOD,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<CharCreationManager>(this,&CharCreationManager::HandleLifeEvents), MSGTYPE_CHAR_CREATE_LIFEEVENTS,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<CharCreationManager>(this,&CharCreationManager::HandleTraits), MSGTYPE_CHAR_CREATE_TRAITS,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<CharCreationManager>(this,&CharCreationManager::HandleName), MSGTYPE_CHAR_CREATE_NAME,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<CharCreationManager>(this,&CharCreationManager::HandleCharDelete), MSGTYPE_CHAR_DELETE,REQUIRE_ANY_CLIENT);
+
+    Subscribe(&CharCreationManager::HandleUploadMessage, MSGTYPE_CHAR_CREATE_UPLOAD, REQUIRE_ANY_CLIENT);
+    Subscribe(&CharCreationManager::HandleCharCreateCP, MSGTYPE_CHAR_CREATE_CP, REQUIRE_ANY_CLIENT);
+    Subscribe(&CharCreationManager::HandleParents, MSGTYPE_CHAR_CREATE_PARENTS, REQUIRE_ANY_CLIENT);
+    Subscribe(&CharCreationManager::HandleChildhood, MSGTYPE_CHAR_CREATE_CHILDHOOD, REQUIRE_ANY_CLIENT);
+    Subscribe(&CharCreationManager::HandleLifeEvents, MSGTYPE_CHAR_CREATE_LIFEEVENTS, REQUIRE_ANY_CLIENT);
+    Subscribe(&CharCreationManager::HandleTraits, MSGTYPE_CHAR_CREATE_TRAITS, REQUIRE_ANY_CLIENT);
+    Subscribe(&CharCreationManager::HandleName, MSGTYPE_CHAR_CREATE_NAME, REQUIRE_ANY_CLIENT);
+    Subscribe(&CharCreationManager::HandleCharDelete, MSGTYPE_CHAR_DELETE, REQUIRE_ANY_CLIENT);
    
     // Other loaders are here.        
     return true;

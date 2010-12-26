@@ -77,8 +77,7 @@ pawsPetStatWindow::~pawsPetStatWindow()
 
 bool pawsPetStatWindow::PostSetup()
 {
-    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_PET_SKILL))
-        return false;
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_PET_SKILL);
 
     xml =  csQueryRegistry<iDocumentSystem > ( PawsManager::GetSingleton().GetObjectRegistry());
 

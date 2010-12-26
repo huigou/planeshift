@@ -51,7 +51,7 @@ class MathScript;
  *  and information from the pspccharacterinfo Prop Classes for both
  *  the attacker and the target.
  */
-class CombatManager: public MessageManager
+class CombatManager: public MessageManager<CombatManager>
 {
 public:
 

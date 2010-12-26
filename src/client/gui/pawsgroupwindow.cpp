@@ -61,8 +61,7 @@ pawsGroupWindow::~pawsGroupWindow()
 
 bool pawsGroupWindow::PostSetup()
 {
-    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_GUIGROUP))
-        return false;
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_GUIGROUP);
 
     memberList = (pawsListBox*)FindWidget("List");
     if ( !memberList ) return false;

@@ -54,15 +54,14 @@
 
 SlotManager::~SlotManager()
 {
-    psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_SLOT_MOVEMENT);
-    psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_CMDDROP);
+    //do nothing
 }
 
 bool SlotManager::Initialize()
 {
     worldContainer = NULL;
-    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<SlotManager>(this,&SlotManager::HandleSlotMovement),MSGTYPE_SLOT_MOVEMENT, REQUIRE_READY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<SlotManager>(this,&SlotManager::HandleDropCommand),MSGTYPE_CMDDROP, REQUIRE_READY_CLIENT);
+    Subscribe(&SlotManager::HandleSlotMovement, MSGTYPE_SLOT_MOVEMENT, REQUIRE_READY_CLIENT);
+    Subscribe(&SlotManager::HandleDropCommand, MSGTYPE_CMDDROP, REQUIRE_READY_CLIENT);
     return true;
 }
 

@@ -151,7 +151,7 @@ struct constraint
 *  and information from the pspccharacterinfo Prop Classes for both
 *  the worker and the target.
 */
-class WorkManager : public MessageManager
+class WorkManager : public MessageManager<WorkManager>
 {
 public:
 

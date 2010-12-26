@@ -34,7 +34,7 @@
 //=============================================================================
 #include "msgmanager.h"             // Parent class
 
-class IntroductionManager : public MessageManager
+class IntroductionManager : public MessageManager<IntroductionManager>
 {
 public:
     IntroductionManager();

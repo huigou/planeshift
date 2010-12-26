@@ -94,9 +94,9 @@ void pawsGlyphWindow::Hide()
 bool pawsGlyphWindow::PostSetup()
 {
     // Subscribe our message types that we are interested in.
-    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_GLYPH_REQUEST))  return false;
-    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_GLYPH_ASSEMBLE)) return false;
-    
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_GLYPH_REQUEST);
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_GLYPH_ASSEMBLE);
+
     description = dynamic_cast <pawsMessageTextBox*> (FindWidget("SpellDescription"));
     if ( !description ) return false;
 

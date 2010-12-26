@@ -38,7 +38,7 @@
  * and decides whether each client needs to be notified about
  * them, in order to show a tutorial page about that event.
  */
-class TutorialManager : public MessageManager
+class TutorialManager : public MessageManager<TutorialManager>
 {
 public:
 

@@ -49,13 +49,11 @@ GMEventManager::GMEventManager()
     // initialise gmEvents
     gmEvents.DeleteAll();
 
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<GMEventManager>(this,&GMEventManager::HandleGMEventCommand), MSGTYPE_GMEVENT_INFO, REQUIRE_READY_CLIENT);
+    Subscribe(&GMEventManager::HandleGMEventCommand, MSGTYPE_GMEVENT_INFO, REQUIRE_READY_CLIENT);
 }
 
 GMEventManager::~GMEventManager()
 {
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_GMEVENT_INFO);
-
     for (size_t e = 0; e < gmEvents.GetSize(); e++)
     {
         gmEvents[e]->Player.DeleteAll();

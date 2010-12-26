@@ -71,11 +71,7 @@ void pawsCharDescription::Show()
 
 void pawsCharDescription::RequestDetails()
 {
-    if ( !psengine->GetMsgHandler()->Subscribe( this, MSGTYPE_CHARACTERDETAILS ) )
-    {
-        printf("Couldn't subscribe to MSGTYPE_CHARACTERDETAILS (pawsCharDescription)");
-        return;
-    }
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_CHARACTERDETAILS);
 
     psCharacterDetailsRequestMessage requestMsg(true, true, "pawsCharDescription");
     requestMsg.SendMessage();

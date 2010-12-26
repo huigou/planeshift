@@ -192,22 +192,16 @@ GuildManager::GuildManager(ClientConnectionSet *cs,
     xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
     CS_ASSERT( xml );
 
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<GuildManager>(this,&GuildManager::HandleCmdMessage),MSGTYPE_GUILDCMD,REQUIRE_READY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<GuildManager>(this,&GuildManager::HandleGUIMessage),MSGTYPE_GUIGUILD,REQUIRE_READY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<GuildManager>(this,&GuildManager::HandleMOTDSet),MSGTYPE_GUILDMOTDSET,REQUIRE_ANY_CLIENT);
+    Subscribe(&GuildManager::HandleCmdMessage,MSGTYPE_GUILDCMD,REQUIRE_READY_CLIENT);
+    Subscribe(&GuildManager::HandleGUIMessage,MSGTYPE_GUIGUILD,REQUIRE_READY_CLIENT);
+    Subscribe(&GuildManager::HandleMOTDSet,MSGTYPE_GUILDMOTDSET,REQUIRE_ANY_CLIENT);
 }
 
 GuildManager::~GuildManager()
 {
-    size_t i;
-
-    for (i=0; i < notifySubscr.GetSize(); i++)
+    for(size_t i = 0; i < notifySubscr.GetSize(); i++)
         delete notifySubscr[i];
     notifySubscr.DeleteAll();
-
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_GUILDCMD);
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_GUIGUILD);
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_GUILDMOTDSET);
 }
 
 

@@ -39,7 +39,7 @@ class MathScript;
  *  holding slot.  It then looks for the destination slot and sees if it can be placed
  *  there.  If not it will Replace the holding item back to where it came from.
  */
-class SlotManager : public MessageManager
+class SlotManager : public MessageManager<SlotManager>
 {
 public:
     virtual ~SlotManager();

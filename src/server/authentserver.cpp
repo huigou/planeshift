@@ -80,25 +80,17 @@ AuthenticationServer::AuthenticationServer(ClientConnectionSet *pCCS,
     usermanager  = usermgr;
     guildmanager = gm;
 
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<AuthenticationServer>(this,&AuthenticationServer::HandlePreAuthent),MSGTYPE_PREAUTHENTICATE,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<AuthenticationServer>(this,&AuthenticationServer::HandleAuthent),MSGTYPE_AUTHENTICATE,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<AuthenticationServer>(this,&AuthenticationServer::HandleStringsRequest),MSGTYPE_MSGSTRINGS,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<AuthenticationServer>(this,&AuthenticationServer::HandleDisconnect),MSGTYPE_DISCONNECT,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<AuthenticationServer>(this,&AuthenticationServer::HandleAuthCharacter),MSGTYPE_AUTHCHARACTER,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<AuthenticationServer>(this,&AuthenticationServer::HandleStatusUpdate),MSGTYPE_CLIENTSTATUS,REQUIRE_ANY_CLIENT);
+    Subscribe(&AuthenticationServer::HandlePreAuthent, MSGTYPE_PREAUTHENTICATE, REQUIRE_ANY_CLIENT);
+    Subscribe(&AuthenticationServer::HandleAuthent, MSGTYPE_AUTHENTICATE, REQUIRE_ANY_CLIENT);
+    Subscribe(&AuthenticationServer::HandleStringsRequest, MSGTYPE_MSGSTRINGS, REQUIRE_ANY_CLIENT);
+    Subscribe(&AuthenticationServer::HandleDisconnect, MSGTYPE_DISCONNECT, REQUIRE_ANY_CLIENT);
+    Subscribe(&AuthenticationServer::HandleAuthCharacter, MSGTYPE_AUTHCHARACTER, REQUIRE_ANY_CLIENT);
+    Subscribe(&AuthenticationServer::HandleStatusUpdate, MSGTYPE_CLIENTSTATUS, REQUIRE_ANY_CLIENT);
 }
 
 AuthenticationServer::~AuthenticationServer()
 {
-    if (psserver->GetEventManager())
-    {
-        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_PREAUTHENTICATE);
-        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_AUTHENTICATE);
-        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_MSGSTRINGS);
-        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_DISCONNECT);
-        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_AUTHCHARACTER);
-        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_CLIENTSTATUS);
-    }
+    //do nothing
 }
 
 

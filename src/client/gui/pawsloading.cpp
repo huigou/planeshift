@@ -48,9 +48,7 @@ void pawsLoadWindow::Clear()
 
 bool pawsLoadWindow::PostSetup()
 {
-
-    if ( !psengine->GetMsgHandler()->Subscribe(this,MSGTYPE_MOTD))
-        return false;
+    psengine->GetMsgHandler()->Subscribe(this,MSGTYPE_MOTD);
 
     loadingText = (pawsMessageTextBox*)FindWidget("loadtext");
     

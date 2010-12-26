@@ -31,7 +31,8 @@
   
 bool pawsCraftWindow::PostSetup()
 {
-    return psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_CRAFT_INFO);
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_CRAFT_INFO);
+    return true;
 }
 
 void pawsCraftWindow::Show()

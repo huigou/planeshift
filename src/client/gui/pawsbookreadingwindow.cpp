@@ -45,8 +45,8 @@
 
 bool pawsBookReadingWindow::PostSetup()
 {
-    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_READ_BOOK))  return false;
-    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_CRAFT_INFO)) return false;
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_READ_BOOK);
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_CRAFT_INFO);
 
     // Store some of our children for easy access later on.
     name = dynamic_cast<pawsTextBox*> (FindWidget("ItemName"));

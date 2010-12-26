@@ -42,7 +42,7 @@
 class psCharacter;
 class ProgressionScript;
 
-class ProgressionManager : public MessageManager
+class ProgressionManager : public MessageManager<ProgressionManager>
 {
 public:
 

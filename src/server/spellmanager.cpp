@@ -80,25 +80,17 @@ SpellManager::SpellManager(ClientConnectionSet *ccs,
     this->object_reg = object_reg;
     cacheManager = cachemanager;
 
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<SpellManager>(this,&SpellManager::HandleGlyphRequest),MSGTYPE_GLYPH_REQUEST,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);  
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<SpellManager>(this,&SpellManager::HandleAssembler),MSGTYPE_GLYPH_ASSEMBLE,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);  
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<SpellManager>(this,&SpellManager::Cast),MSGTYPE_SPELL_CAST,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);  
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<SpellManager>(this,&SpellManager::StartPurifying),MSGTYPE_PURIFY_GLYPH,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);  
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<SpellManager>(this,&SpellManager::SendSpellBook),MSGTYPE_SPELL_BOOK,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);  
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<SpellManager>(this,&SpellManager::HandleCancelSpell),MSGTYPE_SPELL_CANCEL,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);      
+    Subscribe(&SpellManager::HandleGlyphRequest, MSGTYPE_GLYPH_REQUEST, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);  
+    Subscribe(&SpellManager::HandleAssembler, MSGTYPE_GLYPH_ASSEMBLE, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);  
+    Subscribe(&SpellManager::Cast, MSGTYPE_SPELL_CAST, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);  
+    Subscribe(&SpellManager::StartPurifying, MSGTYPE_PURIFY_GLYPH, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);  
+    Subscribe(&SpellManager::SendSpellBook, MSGTYPE_SPELL_BOOK, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);  
+    Subscribe(&SpellManager::HandleCancelSpell, MSGTYPE_SPELL_CANCEL, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);      
 }
 
 SpellManager::~SpellManager()
 {
-    if (psserver->GetEventManager())
-    {
-        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_GLYPH_REQUEST);
-        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_GLYPH_ASSEMBLE);
-        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_SPELL_CAST);  
-        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_PURIFY_GLYPH);  
-        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_SPELL_BOOK);
-        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_SPELL_CANCEL);
-    }
+    //do nothing
 }
 
 

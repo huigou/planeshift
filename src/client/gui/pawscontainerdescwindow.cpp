@@ -65,10 +65,8 @@ pawsContainerDescWindow::~pawsContainerDescWindow()
 
 bool pawsContainerDescWindow::PostSetup()
 {
-    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_VIEW_CONTAINER))
-        return false;
-    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_UPDATE_ITEM))
-        return false;
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_VIEW_CONTAINER);
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_UPDATE_ITEM);
 
     // Store some of our children for easy access later on.
     name = (pawsTextBox*)FindWidget("ItemName");

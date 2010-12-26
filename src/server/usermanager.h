@@ -49,7 +49,7 @@ class EntityManager;
 /** Used to manage incoming user commands from a client. Most commands are in
  * the format of /command param1 param2 ... paramN
  */
-class UserManager : public MessageManager
+class UserManager : public MessageManager<UserManager>
 {
 public:
 

@@ -46,7 +46,7 @@ class psSpell;
 /** Manager class that handles loading/searching/casting spells. 
   * This class also manages a number of psSpell Events.  
   */
-class SpellManager : public MessageManager
+class SpellManager : public MessageManager<SpellManager>
 {
 public:
 

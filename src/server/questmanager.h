@@ -53,7 +53,7 @@ class psString;
  * This class handles quest management for the player,
  * tracking who has what quests assigned, etc.
  */
-class QuestManager : public MessageManager
+class QuestManager : public MessageManager<QuestManager>
 {
 protected:
     csArray<QuestRewardOffer*>  offers;

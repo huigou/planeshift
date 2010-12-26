@@ -96,17 +96,6 @@ ServerCharManager::ServerCharManager(CacheManager* cachemanager, GEMSupervisor* 
 
 ServerCharManager::~ServerCharManager()
 {
-    if (psserver->GetEventManager())
-    {
-        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_GUIINVENTORY);
-        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_GUIMERCHANT);
-        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_GUISTORAGE);
-        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_VIEW_ITEM);
-        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_VIEW_SKETCH);
-        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_WRITE_BOOK);
-        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_FACTION_INFO);
-    }
-
     delete slotManager;
     slotManager = NULL;
 }
@@ -115,13 +104,13 @@ bool ServerCharManager::Initialize()
 {
 //    clients = ccs;
 
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ServerCharManager>(this,&ServerCharManager::HandleInventoryMessage), MSGTYPE_GUIINVENTORY,REQUIRE_READY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ServerCharManager>(this,&ServerCharManager::HandleMerchantMessage),  MSGTYPE_GUIMERCHANT,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ServerCharManager>(this,&ServerCharManager::HandleStorageMessage),  MSGTYPE_GUISTORAGE,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ServerCharManager>(this,&ServerCharManager::ViewItem),               MSGTYPE_VIEW_ITEM,REQUIRE_READY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ServerCharManager>(this,&ServerCharManager::UpdateSketch),           MSGTYPE_VIEW_SKETCH,REQUIRE_READY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ServerCharManager>(this,&ServerCharManager::HandleBookWrite),        MSGTYPE_WRITE_BOOK, REQUIRE_READY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ServerCharManager>(this,&ServerCharManager::HandleFaction),          MSGTYPE_FACTION_INFO, REQUIRE_READY_CLIENT);
+    Subscribe(&ServerCharManager::HandleInventoryMessage, MSGTYPE_GUIINVENTORY, REQUIRE_READY_CLIENT);
+    Subscribe(&ServerCharManager::HandleMerchantMessage, MSGTYPE_GUIMERCHANT, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);
+    Subscribe(&ServerCharManager::HandleStorageMessage, MSGTYPE_GUISTORAGE, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);
+    Subscribe(&ServerCharManager::ViewItem, MSGTYPE_VIEW_ITEM, REQUIRE_READY_CLIENT);
+    Subscribe(&ServerCharManager::UpdateSketch, MSGTYPE_VIEW_SKETCH, REQUIRE_READY_CLIENT);
+    Subscribe(&ServerCharManager::HandleBookWrite, MSGTYPE_WRITE_BOOK, REQUIRE_READY_CLIENT);
+    Subscribe(&ServerCharManager::HandleFaction, MSGTYPE_FACTION_INFO, REQUIRE_READY_CLIENT);
 
     slotManager = new SlotManager(gemSupervisor, cacheManager);
     if ( !(slotManager && slotManager->Initialize()) )

@@ -49,23 +49,18 @@
 TutorialManager::TutorialManager(ClientConnectionSet *pCCS)
 {
     clients = pCCS;
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<TutorialManager>(this,&TutorialManager::HandleConnect),MSGTYPE_CONNECT_EVENT, REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<TutorialManager>(this,&TutorialManager::HandleMovement),MSGTYPE_MOVEMENT_EVENT,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<TutorialManager>(this,&TutorialManager::HandleTarget),MSGTYPE_TARGET_EVENT,  NO_VALIDATION);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<TutorialManager>(this,&TutorialManager::HandleGeneric),MSGTYPE_GENERIC_EVENT, REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<TutorialManager>(this,&TutorialManager::HandleDamage),MSGTYPE_DAMAGE_EVENT,  NO_VALIDATION);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<TutorialManager>(this,&TutorialManager::HandleDeath),MSGTYPE_DEATH_EVENT,  NO_VALIDATION);
+    Subscribe(&TutorialManager::HandleConnect, MSGTYPE_CONNECT_EVENT, REQUIRE_ANY_CLIENT);
+    Subscribe(&TutorialManager::HandleMovement, MSGTYPE_MOVEMENT_EVENT, REQUIRE_ANY_CLIENT);
+    Subscribe(&TutorialManager::HandleTarget, MSGTYPE_TARGET_EVENT, NO_VALIDATION);
+    Subscribe(&TutorialManager::HandleGeneric, MSGTYPE_GENERIC_EVENT, REQUIRE_ANY_CLIENT);
+    Subscribe(&TutorialManager::HandleDamage, MSGTYPE_DAMAGE_EVENT, NO_VALIDATION);
+    Subscribe(&TutorialManager::HandleDeath, MSGTYPE_DEATH_EVENT, NO_VALIDATION);
     LoadTutorialStrings();
 }
 
 TutorialManager::~TutorialManager()
 {
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_CONNECT_EVENT);
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_MOVEMENT_EVENT);
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_TARGET_EVENT);
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_GENERIC_EVENT);
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_DAMAGE_EVENT);
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_DEATH_EVENT);
+    //do nothing
 }
 
 bool TutorialManager::LoadTutorialStrings()

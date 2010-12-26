@@ -103,8 +103,7 @@ pawsMerchantWindow::~pawsMerchantWindow()
 
 bool pawsMerchantWindow::PostSetup()
 {
-    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_GUIMERCHANT))
-        return false;
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_GUIMERCHANT);
 
     categoryBox = (pawsListBox*)FindWidget("Categories");
     itemsBox    = (pawsListBox*)FindWidget("Items");

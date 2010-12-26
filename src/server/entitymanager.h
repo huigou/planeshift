@@ -73,10 +73,8 @@ public:
     csString MagicalAffinity;
 };
 
-
-
 /// Manages CEL entities on the server
-class EntityManager : public MessageManager, public Singleton<EntityManager>
+class EntityManager : public MessageManager<EntityManager>, public Singleton<EntityManager>
 {
 public:
     EntityManager();

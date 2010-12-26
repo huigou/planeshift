@@ -154,13 +154,13 @@ UserManager::UserManager(ClientConnectionSet *cs, CacheManager* cachemanager, Ba
     bankManager = bankmanager;
     entityManager = entitymanager;
 
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<UserManager>(this,&UserManager::HandleUserCommand),    MSGTYPE_USERCMD,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<UserManager>(this,&UserManager::HandleMOTDRequest),    MSGTYPE_MOTDREQUEST,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<UserManager>(this,&UserManager::HandleCharDetailsRequest),MSGTYPE_CHARDETAILSREQUEST,REQUIRE_READY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<UserManager>(this,&UserManager::HandleCharDescUpdate), MSGTYPE_CHARDESCUPDATE,REQUIRE_READY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<UserManager>(this,&UserManager::HandleTargetEvent),    MSGTYPE_TARGET_EVENT,NO_VALIDATION);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<UserManager>(this,&UserManager::HandleEntranceMessage),MSGTYPE_ENTRANCE,REQUIRE_READY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<UserManager>(this,&UserManager::HandleClientReady),    MSGTYPE_CONNECT_EVENT, REQUIRE_ANY_CLIENT);
+    Subscribe(&UserManager::HandleUserCommand, MSGTYPE_USERCMD, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);
+    Subscribe(&UserManager::HandleMOTDRequest, MSGTYPE_MOTDREQUEST, REQUIRE_ANY_CLIENT);
+    Subscribe(&UserManager::HandleCharDetailsRequest, MSGTYPE_CHARDETAILSREQUEST, REQUIRE_READY_CLIENT);
+    Subscribe(&UserManager::HandleCharDescUpdate, MSGTYPE_CHARDESCUPDATE, REQUIRE_READY_CLIENT);
+    Subscribe(&UserManager::HandleTargetEvent, MSGTYPE_TARGET_EVENT, NO_VALIDATION);
+    Subscribe(&UserManager::HandleEntranceMessage, MSGTYPE_ENTRANCE, REQUIRE_READY_CLIENT);
+    Subscribe(&UserManager::HandleClientReady, MSGTYPE_CONNECT_EVENT, REQUIRE_ANY_CLIENT);
 
     userCommandHash.Put("/admin",        &UserManager::HandleAdminCommand);
     userCommandHash.Put("/assist",       &UserManager::Assist);
@@ -196,17 +196,6 @@ UserManager::UserManager(ClientConnectionSet *cs, CacheManager* cachemanager, Ba
 
 UserManager::~UserManager()
 {
-    if (psserver->GetEventManager())
-    {
-        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_USERCMD);
-        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_MOTDREQUEST);
-        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_CHARDETAILSREQUEST);
-        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_CHARDESCUPDATE);
-        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_TARGET_EVENT);
-        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_ENTRANCE);
-        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_CONNECT_EVENT);
-    }
-    
     csHash<EMOTE *, csString>::GlobalIterator it(emoteHash.GetIterator ());
     while (it.HasNext ())
     {

@@ -71,7 +71,7 @@ struct ItemSupplyDemandInfo : public csRefCount
     unsigned int sold;
 };
 
-class EconomyManager : public MessageManager
+class EconomyManager : public MessageManager<EconomyManager>
 {
 public:
     EconomyManager();

@@ -83,7 +83,7 @@ protected:
 /** Handles the map interaction system.
   * Used to populate/update/change current action locations.
   */
-class ActionManager : public MessageManager
+class ActionManager : public MessageManager<ActionManager>
 {
 public:
 

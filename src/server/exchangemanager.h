@@ -335,7 +335,7 @@ protected:
 
 /* Maintains a list of all the exchanges that are ongoing.
  */
-class ExchangeManager : public MessageManager
+class ExchangeManager : public MessageManager<ExchangeManager>
 {
 public:
 

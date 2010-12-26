@@ -27,6 +27,9 @@
 // Project Includes
 //=============================================================================
 #include "net/subscriber.h"         // Subscriber class
+#include "net/message.h"            // For msgtype typedef
+#include "util/eventmanager.h"
+#include "globals.h"
 
 //=============================================================================
 // Local Includes
@@ -49,13 +52,16 @@ class gemActor;
 class MsgEntry;
 class GEMSupervisor;
 
-class MessageManager : public iNetSubscriber
+/** @brief Base server-side class for subscriptions
+ *
+ * Contains non-templated functions for classes that need to be able to subscribe
+ * to messages.
+ */
+class MessageManagerBase : public iNetSubscriber
 {
-public:	
-    virtual ~MessageManager() {}
-
-
-    virtual bool Verify(MsgEntry *pMsg,unsigned int flags,Client*& client);
+public:
+    
+    virtual bool Verify(MsgEntry *pMsg, unsigned int flags, Client* &client);
 
     /** Finds Client* of character with given name. */
     Client * FindPlayerClient(const char *name);
@@ -76,6 +82,150 @@ public:
      * @param me the client's actor who is sending the command
      */
     gemObject* FindObjectByString(const csString& str, gemActor * me) const;
+};
+
+/** @brief Provides a manager to facilitate subscriptions
+ *
+ * Any server-side class that needs to be informed of incoming messages should
+ * derive from this class. To use, simply inherit from this class with the
+ * template name being your class name.
+ */
+template <class SubClass>
+class MessageManager : public MessageManagerBase
+{
+    public:
+        typedef void(SubClass::*FunctionPointer)(MsgEntry*, Client*);
+
+        /** @brief Unsubscribes all messages then destroys this object */
+        virtual ~MessageManager()
+        {
+            UnsubscribeAll();
+        }
+
+        /** @brief Subscribes this manager to a specific message type
+         *
+         * Any time a message with the specified type (and flags are met) is
+         * received \ref SubClass::HandleMessage(MsgEntry *me, Client *client)
+         * is called.
+         * @param type The type of message to be notified of
+         * @param flags Optional flags to check <i>Default: 0x01</i>
+         */
+        inline void Subscribe(msgtype type, uint32_t flags = 0x01)
+        {
+            CS::Threading::RecursiveMutexScopedLock lock(mutex);
+            if(!handlers.Contains(type))
+            {
+                GetEventManager()->Subscribe(this, type, flags);
+            }
+            handlers.Put(type, &SubClass::HandleMessage);
+        }
+
+        /** @brief Subscribes this manager to a specific message type with a custom callback
+         *
+         * Any time a message with the specified type (and flags are met) is
+         * received the specified function is called
+         * @param fpt The function to call
+         * @param type The type of message to be notified of
+         * @param Optional flags to check <i>Default: 0x01</i>
+         */
+        inline void Subscribe(FunctionPointer fpt, msgtype type, uint32_t flags = 0x01)
+        {
+            CS::Threading::RecursiveMutexScopedLock lock(mutex);
+            if(!handlers.Contains(type))
+            {
+                GetEventManager()->Subscribe(this, type, flags);
+            }
+            handlers.Put(type, fpt);
+        }
+
+        /** @brief Unsubscribes this manager from a specific message type
+         *
+         * @param type The type of message to unsubscribe from
+         * @return True if a subscription was removed, false if this was not subscribed
+         */
+        inline bool Unsubscribe(msgtype type)
+        {
+            CS::Threading::RecursiveMutexScopedLock lock(mutex);
+            if(handlers.Contains(type))
+            {
+                handlers.DeleteAll(type);
+                return GetEventManager()->Unsubscribe(this, type);
+            }
+        }
+
+        /** @brief Unsubscribes a specific handler from a specific message type
+         *
+         * @param handler The handler to unsubscribe
+         * @param type The type of message to unsubscribe from
+         * @return True if a subscription was removed, false if this was not subscribed
+         */
+        inline bool Unsubscribe(FunctionPointer handler, msgtype type)
+        {
+            CS::Threading::RecursiveMutexScopedLock lock(mutex);
+            if(handlers.Contains(type))
+            {
+                handlers.Delete(type, handler);
+                if(!handlers.Contains(type))
+                {
+                    return GetEventManager()->Unsubscribe(this, type);
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /** @brief Unsubscribes this manager from all message types
+         *
+         * @return True if a subscription was removed, false if this was not subscribed
+         */
+        inline bool UnsubscribeAll()
+        {
+            CS::Threading::RecursiveMutexScopedLock lock(mutex);
+            handlers.Empty();
+            return GetEventManager()->UnsubscribeAll(this);
+        }
+        
+        void HandleMessage(MsgEntry* msg, Client* client)
+        {
+            csArray<FunctionPointer> msgHandlers;
+            {
+                CS::Threading::RecursiveMutexScopedLock lock(mutex);
+                msgHandlers = handlers.GetAll(msg->GetType());
+            }
+            SubClass* self = dynamic_cast<SubClass*>(this);
+            if(!self)
+            {
+                // fatal error, we aren't a base of our subclass!
+                return;
+            }
+
+            for(size_t i = 0; i < msgHandlers.GetSize(); ++i)
+            {
+                (self->*msgHandlers[i])(msg, client);
+            }
+        }
+
+    private:
+        CS::Threading::RecursiveMutex mutex;
+        csHash<FunctionPointer, msgtype> handlers;
+        /** @brief Gets the event manager from the server
+         *
+         * Asserts if the retrieved manager is valid
+         *
+         * @return The event manager
+         */
+        inline EventManager* GetEventManager() const
+        {
+            EventManager* eventManager = psserver->GetEventManager();
+            CS_ASSERT(eventManager);
+            return eventManager;
+        }
 };
 
 #endif

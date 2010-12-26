@@ -61,15 +61,14 @@
 QuestManager::QuestManager(CacheManager* cachemanager)
 {
 	cacheManager = cachemanager;
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<QuestManager>(this,&QuestManager::HandleQuestInfo),  MSGTYPE_QUESTINFO,REQUIRE_READY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<QuestManager>(this,&QuestManager::HandleQuestReward),MSGTYPE_QUESTREWARD,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
+    Subscribe(&QuestManager::HandleQuestInfo, MSGTYPE_QUESTINFO, REQUIRE_READY_CLIENT);
+    Subscribe(&QuestManager::HandleQuestReward, MSGTYPE_QUESTREWARD, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);
 }
 
 QuestManager::~QuestManager()
 {
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_QUESTINFO);
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_QUESTREWARD);
-    if (dict) delete dict;
+    if(dict)
+        delete dict;
 }
 
 

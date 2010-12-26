@@ -39,7 +39,7 @@ class PaladinJr;
 class CacheManager;
 class EntityManager;
 
-class psServerDR : public MessageManager
+class psServerDR : public MessageManager<psServerDR>
 {
 public:    
     psServerDR(CacheManager* cachemanager, EntityManager* entitymanager);

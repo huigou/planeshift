@@ -44,7 +44,7 @@ enum ReservedNames {NAME_RESERVED_FOR_YOU, NAME_RESERVED, NAME_AVAILABLE};
  *   character_creation
  *
  */
-class CharCreationManager : MessageManager
+class CharCreationManager : MessageManager<CharCreationManager>
 {
 public:        
     CharCreationManager(GEMSupervisor* gemsupervisor, CacheManager* cachemanager, EntityManager* entitymanager);

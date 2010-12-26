@@ -96,7 +96,7 @@
 class AreaTargetConfirm : public PendingQuestion
 {
     public:
-        AreaTargetConfirm(MessageManager* msgmanager, const csString in_msg, csString in_player, const csString & question, Client *in_client)
+        AreaTargetConfirm(AdminManager* msgmanager, const csString in_msg, csString in_player, const csString & question, Client *in_client)
             : PendingQuestion(in_client->GetClientNum(),question, psQuestionMessage::generalConfirm)
         {   //save variables for later use
             this->command = in_msg;
@@ -135,7 +135,7 @@ class AreaTargetConfirm : public PendingQuestion
         csString command;   ///< The complete command sent from the client originally (without any modification)
         Client *client;     ///< Originating client of the command
         csString player;    ///< Normally this should be the area:x:x command extrapolated from the original command
-        MessageManager* msgmanager;
+        AdminManager* msgmanager;
 };
 
 
@@ -143,11 +143,11 @@ AdminManager::AdminManager()
 {
     clients = psserver->GetNetManager()->GetConnections();
 
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<AdminManager>(this,&AdminManager::HandleAdminCmdMessage),MSGTYPE_ADMINCMD,REQUIRE_READY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<AdminManager>(this,&AdminManager::HandlePetitionMessage),MSGTYPE_PETITION_REQUEST,REQUIRE_READY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<AdminManager>(this,&AdminManager::HandleGMGuiMessage)   ,MSGTYPE_GMGUI,REQUIRE_READY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<AdminManager>(this,&AdminManager::SendSpawnItems)       ,MSGTYPE_GMSPAWNITEMS,REQUIRE_READY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<AdminManager>(this,&AdminManager::SpawnItemInv)         ,MSGTYPE_GMSPAWNITEM,REQUIRE_READY_CLIENT);
+    Subscribe(&AdminManager::HandleAdminCmdMessage, MSGTYPE_ADMINCMD, REQUIRE_READY_CLIENT);
+    Subscribe(&AdminManager::HandlePetitionMessage, MSGTYPE_PETITION_REQUEST, REQUIRE_READY_CLIENT);
+    Subscribe(&AdminManager::HandleGMGuiMessage, MSGTYPE_GMGUI, REQUIRE_READY_CLIENT);
+    Subscribe(&AdminManager::SendSpawnItems, MSGTYPE_GMSPAWNITEMS, REQUIRE_READY_CLIENT);
+    Subscribe(&AdminManager::SpawnItemInv, MSGTYPE_GMSPAWNITEM, REQUIRE_READY_CLIENT);
 
 
     // this makes sure that the player dictionary exists on start up.
@@ -162,12 +162,6 @@ AdminManager::AdminManager()
 
 AdminManager::~AdminManager()
 {
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_ADMINCMD);
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_PETITION_REQUEST);
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_GMGUI);
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_GMSPAWNITEMS);
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_GMSPAWNITEM);
-
     delete npcdlg;
     delete pathNetwork;
 }

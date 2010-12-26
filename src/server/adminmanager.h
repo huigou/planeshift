@@ -77,7 +77,7 @@ enum GM_LEVEL
 
 /** Admin manager that handles GM commands and general game control.
  */
-class AdminManager : public MessageManager
+class AdminManager : public MessageManager<AdminManager>
 {
 public:
     AdminManager();

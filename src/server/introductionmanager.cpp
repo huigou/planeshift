@@ -48,12 +48,12 @@
 
 IntroductionManager::IntroductionManager()
 {
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<IntroductionManager>(this,&IntroductionManager::HandleIntroduction),MSGTYPE_INTRODUCTION,REQUIRE_READY_CLIENT);
+    Subscribe(&IntroductionManager::HandleIntroduction, MSGTYPE_INTRODUCTION, REQUIRE_READY_CLIENT);
 }
 
 IntroductionManager::~IntroductionManager()
 {
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_INTRODUCTION);
+    //do nothing
 }
 
 void IntroductionManager::HandleIntroduction(MsgEntry *me, Client *client)

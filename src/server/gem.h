@@ -130,7 +130,7 @@ protected:
 /**
 * This class holds the refs to the core factories, etc in CEL.
 */
-class GEMSupervisor : public MessageManager
+class GEMSupervisor : public MessageManager<GEMSupervisor>
 {
     EntityManager *entityManager;
     CacheManager *cacheManager;

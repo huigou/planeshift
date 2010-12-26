@@ -169,11 +169,8 @@ pawsGuildWindow::~pawsGuildWindow()
 
 bool pawsGuildWindow::PostSetup()
 {
-    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_GUIGUILD))
-        return false;
-
-    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_MOTD))
-        return false;
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_GUIGUILD);
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_MOTD);
     //Request a MOTD for the guild
     psMOTDRequestMessage motdReq;
     motdReq.SendMessage();

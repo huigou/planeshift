@@ -48,8 +48,7 @@ pawsBankWindow::~pawsBankWindow()
 
 bool pawsBankWindow::PostSetup()
 {
-    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_BANKING))
-        return false;
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_BANKING);
 
     Money = (pawsButton*)(FindWidget("MoneyButton"));
     if(!Money)

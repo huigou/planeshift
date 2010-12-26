@@ -22,6 +22,7 @@
 #include <csutil/parray.h>
 #include <csutil/refcount.h>
 #include <csutil/threading/thread.h>
+#include <csutil/threading/rwmutex.h>
 
 #include "net/message.h"
 #include "net/netbase.h"
@@ -31,70 +32,36 @@ struct iNetSubscriber;
 class NetBase;
 class Client;
 
-#define  MAX_MESSAGE_TYPES 255   // MSGTYPE enumeration in messages.h has less types than this
-
-/// Functor base class for direct callbacks on Subscriptions
-class MsgtypeCallback
-{
-public:
-    virtual ~MsgtypeCallback() { };
-    virtual void operator()(MsgEntry *message, Client *client) = 0; // call using operator
-    virtual void Call(MsgEntry *message, Client *client)       = 0; // call using function
-};
-
-
 //-----------------------------------------------------------------------------
 
 
-template <class Manager>
-class NetMessageCallback : public MsgtypeCallback
-{
-private:
-    void (Manager::*funcptr)(MsgEntry *message, Client *client);   // pointer to member function
-    Manager *thisPtr;                                              // pointer to object
-
-public:
-    // constructor - takes pointer to an object and pointer to a member and stores
-    // them in two private variables
-    NetMessageCallback(Manager *myObject, void(Manager::*fpt)(MsgEntry *message, Client *client))
-    { 
-        thisPtr = myObject;
-        funcptr = fpt;
-    }
-
-    virtual ~NetMessageCallback() { };
-
-    // override operator "()"
-    virtual void operator()(MsgEntry *message, Client *client)
-    {
-        (*thisPtr.*funcptr)(message,client);
-    }
-
-    // override function "Call"
-    virtual void Call(MsgEntry *message, Client *client)
-    {
-        (*thisPtr.*funcptr)(message,client);
-    }
-};
-
-
-//-----------------------------------------------------------------------------
-
-
-/// This little struct tracks who is interested in what.
+/** @brief Manages a \ref iNetSubscriber watching a certain message type
+ *
+ * Simple class containing data for subscribes that want to be informed of
+ * messages.
+ */
 struct Subscription
 {
-    /// type of the messages this listener listens to
-    msgtype type;
+    uint32_t flags; /**< Additional flags for detecting if the subscriber should be notified */
+    iNetSubscriber* subscriber; /**< The actual subscriber that wants to be notified */
 
-    /// Flags for central testing
-    uint32_t flags;
+    /**@brief Constructor without a callback
+     *
+     * \ref callback is set to NULL
+     * 
+     * @param nSubscriber Sets \ref subscriber
+     * @param nFlags Sets \ref flags
+     */
+    Subscription(iNetSubscriber *nSubscriber, uint32_t nFlags = 0x01/*REQUIRE_READY_CLIENT*/)
+        : flags(nFlags), subscriber(nSubscriber)
+    {
+    }
 
-    /// pointer to the subscriber
-    iNetSubscriber *subscriber;
-
-    /// pointer to functor class callback as alternative to iNetSubscriber
-    MsgtypeCallback *callback;
+    // comparison operator required for usage in csHash
+    bool operator<(const Subscription& other) const
+    {
+        return subscriber < other.subscriber;
+    }
 };
 
 
@@ -126,9 +93,7 @@ struct OrderedMessageChannel
     }
 };
 
-
 //-----------------------------------------------------------------------------
-
 
 /**
  * This class is the client's and server's main interface for either sending
@@ -144,14 +109,36 @@ public:
     /** Initializes the Handler */
     bool Initialize(NetBase *nb, int queuelen = 500);
 
-    /** Any subclass of iNetSubscriber can subscribe to incoming network messages
-     * with this function
+    /** @brief Subscribes an \ref iNetSubscriber to a specific message type
+     *
+     * Subclasses of \ref iNetSubscriber subscribe to incoming network messages
+     * using this function. Adds the resulting \ref Subscription to
+     * \ref subscribers.
+     * 
+     * @param subscriber The subscriber that wants to be informed of messages
+     * @param type The type of message to monitor
+     * @param flags Additional flags to determine if the message should be forwarded
      */
-    virtual bool Subscribe(iNetSubscriber *subscriber, msgtype type, uint32_t flags = 0x01/*REQUIRE_READY_CLIENT*/);
-    virtual bool Subscribe(iNetSubscriber *subscriber, MsgtypeCallback *callback, msgtype type, uint32_t flags = 0x01/*REQUIRE_READY_CLIENT*/);
+    virtual void Subscribe(iNetSubscriber *subscriber, msgtype type, uint32_t flags = 0x01/*REQUIRE_READY_CLIENT*/);
 
-    /// Remove subscriber from list
-    virtual bool Unsubscribe(iNetSubscriber *subscriber, msgtype type);
+    /** @brief Unsubscribes a subscriber from a specific message type
+     *
+     * If \ref subscribers contains a \ref Subscription that has the specified
+     * subscriber and the message type key it is removed and true is returned
+     * 
+     * @param subscriber The subscriber to look for in the hash
+     * @param type The type of message to search
+     * @return True if the subscription is found and deleted, false otherwise
+     */
+    virtual bool Unsubscribe(iNetSubscriber *subscriber , msgtype type);
+
+    /**
+     * Searches all message types and deletes any \ref Subscription that has
+     * the specified subscriber.
+     * @param subscriber The subscriber to search for and remove
+     * @return True if at least one Subscription was deleted, false otherwise
+     */
+    virtual bool UnsubscribeAll(iNetSubscriber *subscriber);
 
     /// Distribute message to all subscribers
     void Publish(MsgEntry *msg);
@@ -171,9 +158,6 @@ public:
     virtual void Multicast(MsgEntry* msg, csArray<PublishDestination>& multi, int except, float range)
     { netbase->Multicast(msg, multi, except, range); }
 
-    /// Detects multiple subscriptions on the same object
-    bool IsSubscribed (Subscription* p );
-
     void AddToLocalQueue(MsgEntry *me) { netbase->QueueMessage(me); }
 
     csTicks GetPing() { return netbase->GetPing(); }
@@ -186,11 +170,10 @@ protected:
     MsgQueue                      *queue;
 
     /** 
-     * Each message type now has an array of subscribers so we can publish 
-     * to them directly instead of searching the entire list of all subscribers.
+     * @brief Stores the hash of all subscribers and the message type they are subscribed to
      */
-    csPDelArray<Subscription>      subscribers[MAX_MESSAGE_TYPES];
-    CS::Threading::RecursiveMutex  mutex;
+    csHash<Subscription, msgtype> subscribers;
+    CS::Threading::ReadWriteMutex mutex; /**< @brief Protects \ref subscribers */
 };
 
 #endif

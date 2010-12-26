@@ -118,14 +118,13 @@ ActionManager::ActionManager(  psDatabase *db)
     database = db;
 
     // Action Messages from client that need handling
-    psserver->GetEventManager()->Subscribe( this,new NetMessageCallback<ActionManager>(this,&ActionManager::HandleMapAction), MSGTYPE_MAPACTION, REQUIRE_READY_CLIENT );
+    Subscribe(&ActionManager::HandleMapAction, MSGTYPE_MAPACTION, REQUIRE_READY_CLIENT);
 }
 
 
 ActionManager::~ActionManager()
 {
     // Unsubscribe from Messages
-    psserver->GetEventManager()->Unsubscribe( this, MSGTYPE_MAPACTION );
     
     csHash<psActionLocation *>::GlobalIterator it (actionLocationList.GetIterator ());
     while ( it.HasNext () )

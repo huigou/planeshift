@@ -35,12 +35,9 @@
 #include "msgmanager.h"
 #include "gem.h"
 #include "clients.h"
-#include "globals.h"
 #include "entitymanager.h"
-#include "net/msghandler.h"
 
-
-bool MessageManager::Verify(MsgEntry *pMsg,unsigned int flags,Client*& client)
+bool MessageManagerBase::Verify(MsgEntry *pMsg,unsigned int flags,Client*& client)
 {
     client = NULL;
 
@@ -104,8 +101,7 @@ bool MessageManager::Verify(MsgEntry *pMsg,unsigned int flags,Client*& client)
     return true;
 }
 
-
-Client *MessageManager::FindPlayerClient(const char *name)
+Client *MessageManagerBase::FindPlayerClient(const char *name)
 {
     if (!name || strlen(name)==0)
     {
@@ -119,7 +115,7 @@ Client *MessageManager::FindPlayerClient(const char *name)
     return player;
 }
 
-csArray<csString> MessageManager::DecodeCommandArea(Client *client, csString target)
+csArray<csString> MessageManagerBase::DecodeCommandArea(Client *client, csString target)
 {
     csArray<csString> result;
 
@@ -263,7 +259,7 @@ csArray<csString> MessageManager::DecodeCommandArea(Client *client, csString tar
     return result;
 }
 
-gemObject* MessageManager::FindObjectByString(const csString& str, gemActor * me) const
+gemObject* MessageManagerBase::FindObjectByString(const csString& str, gemActor * me) const
 {
     gemObject* found = NULL;
 

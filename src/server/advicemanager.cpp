@@ -326,7 +326,7 @@ AdviceManager::AdviceManager(psDatabase *db)
 
     database = db;
 
-    psserver->GetEventManager()->Subscribe( this, MSGTYPE_ADVICE,REQUIRE_READY_CLIENT );
+    Subscribe(MSGTYPE_ADVICE,REQUIRE_READY_CLIENT);
 }
 
 AdviceManager::~AdviceManager()
@@ -334,7 +334,6 @@ AdviceManager::~AdviceManager()
 	csHash<AdviceSession*>::GlobalIterator iter(AdviseeList.GetIterator());
 	while(iter.HasNext())
 		delete iter.Next();
-    psserver->GetEventManager()->Unsubscribe( this, MSGTYPE_ADVICE );
 }
 
 void AdviceManager::HandleMessage(MsgEntry *me,Client *client)
