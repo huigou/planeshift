@@ -46,9 +46,6 @@
 #include "lootrandomizer.h"
 #include "scripting.h"
 
-//temporary hack as csNaN,isnan etc seems to not be behaving correctly.
-#define csNaN(x) ((*(int*)&x & 0x7FC00000) == 0x7FC00000)
-
 LootRandomizer::LootRandomizer(CacheManager* cachemanager)
 {
     prefix_max = 0;
@@ -482,7 +479,7 @@ void LootRandomizer::ApplyModifier(psItemStats* baseItem, RandomizedOverlay* ove
     }
     
     //clamp speed at 1.5s to keep consistency with item_stats
-    if(!csNaN(overlay->latency) && overlay->latency < 1.5F)
+    if(!CS::IsNaN(overlay->latency) && overlay->latency < 1.5F)
         overlay->latency = 1.5F;
 }
 
