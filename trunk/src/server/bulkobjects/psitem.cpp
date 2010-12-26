@@ -70,9 +70,6 @@
 #include <csutil/callstack.h>
 #endif
 
-//temporary hack as csNaN,isnan etc seems to not be behaving correctly.
-#define csNaN(x) ((*(int*)&x & 0x7FC00000) == 0x7FC00000)
-
 /**
  * This class handles auto-removal of transient objects
  * (objects placed in the world by players, basically).
@@ -1783,7 +1780,7 @@ PSSKILL psItem::GetWeaponSkill(PSITEMSTATS_WEAPONSKILL_INDEX index)
 float psItem::GetLatency()
 {
     //we have a modification overlay?
-    if(itemModifiers->active && !csNaN(itemModifiers->latency))
+    if(itemModifiers->active && !CS::IsNaN(itemModifiers->latency))
         return itemModifiers->latency;
     return current_stats->Weapon().Latency();
 }
@@ -1792,7 +1789,7 @@ float psItem::GetLatency()
 float psItem::GetDamage(PSITEMSTATS_DAMAGETYPE dmgtype)
 {
     //we have a modification overlay?
-    if(itemModifiers->active && !csNaN(itemModifiers->damageStats[dmgtype]))
+    if(itemModifiers->active && !CS::IsNaN(itemModifiers->damageStats[dmgtype]))
         return itemModifiers->damageStats[dmgtype];
     return current_stats->Weapon().Damage(dmgtype);
 }
@@ -1836,7 +1833,7 @@ float psItem::GetDamageProtection(PSITEMSTATS_DAMAGETYPE dmgtype)
     {
         useNat = false;
         //we have a modification overlay?
-        if(itemModifiers->active && !csNaN(itemModifiers->damageStats[dmgtype]))
+        if(itemModifiers->active && !CS::IsNaN(itemModifiers->damageStats[dmgtype]))
             return itemModifiers->damageStats[dmgtype];
         return current_stats->Armor().Protection(dmgtype);
     }
@@ -1872,7 +1869,7 @@ float psItem::GetWeaponAttributeBonusMax(int index)
 float psItem::GetWeight()
 {
     //we have a modification overlay?
-    if(itemModifiers->active && !csNaN(itemModifiers->weight))
+    if(itemModifiers->active && !CS::IsNaN(itemModifiers->weight))
         return (itemModifiers->weight * GetStackCount());
     return (current_stats->GetWeight() * GetStackCount());
 }
