@@ -524,7 +524,7 @@ bool PawsManager::HandleSelectionNotify( iEvent &ev )
                                               &actualType, &actualFormat, &nitems, &bytesLeft,
                                               &clipData)) == Success)
             {
-                printf ("type:%i len:%i format:%i byte_left:%i %s\n", 
+                printf ("type:%i len:%lu format:%i byte_left:%lu %s\n", 
                         (int)actualType, nitems, actualFormat, bytesLeft,clipData);
                 /*
                   if (actualType == atom_UTF8_STRING && actualFormat == 8) {
