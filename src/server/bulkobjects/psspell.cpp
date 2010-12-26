@@ -484,7 +484,7 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
                                   /(attackerToAffected.Norm()*attackerToTarget.Norm());
 
                 // cap the value to meaningful ones to account for rounding issues
-                if (cosATAngle > 1.0f || csNaN(cosATAngle))
+                if (cosATAngle > 1.0f || CS::IsNaN(cosATAngle))
                     cosATAngle = 1.0f;
                 if (cosATAngle < -1.0f)
                     cosATAngle = -1.0f;
