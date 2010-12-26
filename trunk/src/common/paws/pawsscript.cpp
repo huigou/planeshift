@@ -25,9 +25,13 @@
 #include "pawswidget.h"
 #include "util/mathscript.h"
 
-pawsScriptStatement::pawsScriptStatement(const char *scriptText) : env(PawsManager::GetSingleton().ExtraScriptVars())
+pawsScriptStatement::pawsScriptStatement(const char *scriptText) : env(&PawsManager::GetSingleton().ExtraScriptVars())
 {
     script = MathScript::Create("pawsScript", scriptText);
+    if(!script)
+    {
+        Error2("pawsScript: failed to parse script: %s", scriptText);
+    }
 }
 
 void pawsScriptStatement::ChangedResultsVarCallback(void * arg)
