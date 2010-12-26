@@ -97,8 +97,8 @@ void MiniGameManagerTick::Trigger()
 
 MiniGameManager::MiniGameManager()
 {
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<MiniGameManager>(this,&MiniGameManager::HandleStartStop), MSGTYPE_MINIGAME_STARTSTOP, REQUIRE_READY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<MiniGameManager>(this,&MiniGameManager::HandleGameUpdate), MSGTYPE_MINIGAME_UPDATE, REQUIRE_READY_CLIENT);
+    Subscribe(&MiniGameManager::HandleStartStop, MSGTYPE_MINIGAME_STARTSTOP, REQUIRE_READY_CLIENT);
+    Subscribe(&MiniGameManager::HandleGameUpdate, MSGTYPE_MINIGAME_UPDATE, REQUIRE_READY_CLIENT);
 
     MiniGameManagerTick *tick = new MiniGameManagerTick(MINIGAME_TICK_INTERVAL, this);
     psserver->GetEventManager()->Push(tick);
@@ -106,9 +106,6 @@ MiniGameManager::MiniGameManager()
 
 MiniGameManager::~MiniGameManager()
 {
-    psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_MINIGAME_STARTSTOP);
-    psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_MINIGAME_UPDATE);
-
     csHash<psMiniGameBoardDef *, csString>::GlobalIterator iter(gameBoardDef.GetIterator());
     while(iter.HasNext())
         delete iter.Next();

@@ -93,16 +93,14 @@ ProgressionManager::ProgressionManager(ClientConnectionSet *ccs, CacheManager *c
 
 ProgressionManager::~ProgressionManager()
 {
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_GUISKILL);
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_DEATH_EVENT);
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_ZPOINT_EVENT);
+    //do nothing
 }
 
 bool ProgressionManager::Initialize()
 {
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ProgressionManager>(this,&ProgressionManager::HandleSkill)      ,MSGTYPE_GUISKILL,    REQUIRE_READY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ProgressionManager>(this,&ProgressionManager::HandleDeathEvent) ,MSGTYPE_DEATH_EVENT, NO_VALIDATION);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ProgressionManager>(this,&ProgressionManager::HandleZPointEvent),MSGTYPE_ZPOINT_EVENT,REQUIRE_READY_CLIENT);
+    Subscribe(&ProgressionManager::HandleSkill, MSGTYPE_GUISKILL, REQUIRE_READY_CLIENT);
+    Subscribe(&ProgressionManager::HandleDeathEvent, MSGTYPE_DEATH_EVENT, NO_VALIDATION);
+    Subscribe(&ProgressionManager::HandleZPointEvent, MSGTYPE_ZPOINT_EVENT, REQUIRE_READY_CLIENT);
 
     Result result_affinitycategories(db->Select("SELECT * from char_create_affinity"));
 

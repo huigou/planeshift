@@ -71,7 +71,7 @@ struct AdvisorStruct
  * An invitation is pending between the time that the Noob
  * sends the invitation and when an Advisor sends a response.
  */
-class AdviceManager : public MessageManager
+class AdviceManager : public MessageManager<AdviceManager>
 {
 public:
 

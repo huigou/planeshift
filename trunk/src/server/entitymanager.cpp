@@ -93,16 +93,6 @@ EntityManager::~EntityManager()
 {
     delete serverdr;
 
-    if (psserver->GetEventManager())
-    {
-        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_CELPERSIST);
-        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_USERACTION);
-        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_PERSIST_WORLD_REQUEST);
-        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_PERSIST_ACTOR_REQUEST);
-        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_PERSIST_ALL);
-        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_REQUESTMOVEMENTS);
-    }
-
     {
         csHash<psAffinityAttribute *>::GlobalIterator it(affinityAttributeList.GetIterator ());
         while (it.HasNext ())
@@ -139,11 +129,11 @@ bool EntityManager::Initialize(iObjectRegistry* object_reg,
 
     usermanager = umanager;
 
-    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<EntityManager>(this,&EntityManager::HandleUserAction), MSGTYPE_USERACTION,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
-    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<EntityManager>(this,&EntityManager::HandleWorld)     , MSGTYPE_PERSIST_WORLD_REQUEST,REQUIRE_ANY_CLIENT );
-    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<EntityManager>(this,&EntityManager::HandleActor)     , MSGTYPE_PERSIST_ACTOR_REQUEST,REQUIRE_ANY_CLIENT );    
-    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<EntityManager>(this,&EntityManager::HandleAllRequest), MSGTYPE_PERSIST_ALL,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<EntityManager>(this,&EntityManager::SendMovementInfo), MSGTYPE_REQUESTMOVEMENTS,REQUIRE_ANY_CLIENT);
+    Subscribe(&EntityManager::HandleUserAction, MSGTYPE_USERACTION, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);
+    Subscribe(&EntityManager::HandleWorld, MSGTYPE_PERSIST_WORLD_REQUEST, REQUIRE_ANY_CLIENT );
+    Subscribe(&EntityManager::HandleActor, MSGTYPE_PERSIST_ACTOR_REQUEST, REQUIRE_ANY_CLIENT );
+    Subscribe(&EntityManager::HandleAllRequest, MSGTYPE_PERSIST_ALL, REQUIRE_ANY_CLIENT);
+    Subscribe(&EntityManager::SendMovementInfo, MSGTYPE_REQUESTMOVEMENTS, REQUIRE_ANY_CLIENT);
 
     EntityManager::clients = clients;
 

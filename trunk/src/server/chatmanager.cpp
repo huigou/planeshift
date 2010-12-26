@@ -61,10 +61,10 @@
 
 ChatManager::ChatManager() : nextChannelID(2)
 {
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ChatManager>(this,&ChatManager::HandleChannelJoinMessage),MSGTYPE_CHANNEL_JOIN,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ChatManager>(this,&ChatManager::HandleChannelLeaveMessage),MSGTYPE_CHANNEL_LEAVE,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ChatManager>(this,&ChatManager::HandleChatMessage),MSGTYPE_CHAT,REQUIRE_ALIVE);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<ChatManager>(this,&ChatManager::HandleCacheMessage),MSGTYPE_CACHEFILE,REQUIRE_READY_CLIENT);
+    Subscribe(&ChatManager::HandleChannelJoinMessage, MSGTYPE_CHANNEL_JOIN, REQUIRE_ANY_CLIENT);
+    Subscribe(&ChatManager::HandleChannelLeaveMessage, MSGTYPE_CHANNEL_LEAVE, REQUIRE_ANY_CLIENT);
+    Subscribe(&ChatManager::HandleChatMessage, MSGTYPE_CHAT, REQUIRE_ALIVE);
+    Subscribe(&ChatManager::HandleCacheMessage, MSGTYPE_CACHEFILE, REQUIRE_READY_CLIENT);
 
     // Default channel
     channelIDs.PutUnique("gossip", 1);
@@ -73,10 +73,7 @@ ChatManager::ChatManager() : nextChannelID(2)
 
 ChatManager::~ChatManager()
 {
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_CHANNEL_JOIN);
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_CHANNEL_LEAVE);
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_CHAT);
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_CACHEFILE);
+    //do nothing
 }
 
 

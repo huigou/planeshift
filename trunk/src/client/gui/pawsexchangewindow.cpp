@@ -76,14 +76,14 @@ bool pawsExchangeWindow::PostSetup()
 {
     csString slotName;
     
-    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_GUIEXCHANGE)) return false;
-    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_EXCHANGE_REQUEST)) return false;
-    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_EXCHANGE_ADD_ITEM)) return false;
-    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_EXCHANGE_REMOVE_ITEM)) return false;
-    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_EXCHANGE_ACCEPT)) return false;
-    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_EXCHANGE_END)) return false;
-    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_EXCHANGE_STATUS)) return false;
-    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_EXCHANGE_MONEY)) return false;
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_GUIEXCHANGE);
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_EXCHANGE_REQUEST);
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_EXCHANGE_ADD_ITEM);
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_EXCHANGE_REMOVE_ITEM);
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_EXCHANGE_ACCEPT);
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_EXCHANGE_END);
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_EXCHANGE_STATUS);
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_EXCHANGE_MONEY);
      
     // the two backgrounds for the offering/receiving frame
     offeringBG  = FindWidget("Offering Frame");

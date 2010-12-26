@@ -54,26 +54,26 @@ bool MsgHandler::Initialize(NetBase* nb, int queuelen)
 
 void MsgHandler::Publish(MsgEntry* me)
 {
-    CS::Threading::RecursiveMutexScopedLock lock(mutex);
-
+    const int mtype = me->GetType();
+    bool handled = false;
     netbase->LogMessages('R',me);
 
-    bool handled = false;
-
-    int mtype = me->GetType();
-
-    for ( size_t x = 0; x < subscribers[mtype].GetSize(); x++ )
+    csArray<Subscription> handlers;
     {
+        CS::Threading::ScopedReadLock lock(mutex);
+        handlers = subscribers.GetAll(mtype);
+    }
+
+    for(size_t i = 0; i < handlers.GetSize(); ++i)
+    {
+        Subscription& sub = handlers[i];
         Client *client;
         me->Reset();
-		// Copy the reference so we can modify it in the loop
-		MsgEntry *message = me;
-        if (subscribers[mtype][x]->subscriber->Verify(message,subscribers[mtype][x]->flags,client))
+        // Copy the reference so we can modify it in the loop
+        MsgEntry *message = me;
+        if(sub.subscriber->Verify(message, sub.flags, client))
         {
-            if (subscribers[mtype][x]->callback)
-	            subscribers[mtype][x]->callback->Call(message,client);
-		    else
-			    subscribers[mtype][x]->subscriber->HandleMessage(message,client);
+            sub.subscriber->HandleMessage(message, client);
         }
         handled = true;
     }
@@ -85,73 +85,35 @@ void MsgHandler::Publish(MsgEntry* me)
     }
 }
 
-bool MsgHandler::Subscribe(iNetSubscriber *subscriber, msgtype type,uint32_t flags)
+void MsgHandler::Subscribe(iNetSubscriber* subscriber, msgtype type, uint32_t flags)
 {
-    Subscription* p = new Subscription;
+    CS_ASSERT(subscriber);
 
-    p->subscriber = subscriber;
-    p->callback   = NULL; 
-    p->type       = type;
-    p->flags      = flags;
-
-    CS::Threading::RecursiveMutexScopedLock lock(mutex);
-    if ( IsSubscribed(p) )
-        delete p;
-    else
-        subscribers[type].Push(p);
-
-    return true;
+    CS::Threading::ScopedWriteLock lock(mutex);
+    subscribers.Delete(type, subscriber);
+    subscribers.Put(type, Subscription(subscriber, flags));
 }
 
-bool MsgHandler::Subscribe(iNetSubscriber *subscriber, MsgtypeCallback *callback, msgtype type,uint32_t flags)
+bool MsgHandler::Unsubscribe(iNetSubscriber* subscriber, msgtype type)
 {
-    Subscription* p = new Subscription;
-
-    p->subscriber = subscriber;
-    p->callback   = callback;
-    p->type       = type;
-    p->flags      = flags;
-
-    CS::Threading::RecursiveMutexScopedLock lock(mutex);
-    if ( IsSubscribed(p) )
-    {
-        if (p->callback)
-            delete p->callback;
-        delete p;
-    }
-    else
-        subscribers[type].Push(p);
-
-    return true;
+    CS::Threading::ScopedWriteLock lock(mutex);
+    return subscribers.Delete(type, subscriber);
 }
 
-bool MsgHandler::Unsubscribe(iNetSubscriber *subscriber, msgtype type)
+bool MsgHandler::UnsubscribeAll(iNetSubscriber *subscriber)
 {
-    CS::Threading::RecursiveMutexScopedLock lock(mutex);
+    CS::Threading::ScopedWriteLock lock(mutex);
+    bool found = false;
 
-    for ( size_t x = 0; x < subscribers[type].GetSize(); x++ )
+    csHash<Subscription, msgtype>::GlobalIterator iter = subscribers.GetIterator();
+    while(iter.HasNext())
     {
-        if (subscribers[type][x]->subscriber == subscriber)
+        if(iter.Next().subscriber == subscriber)
         {
-            delete subscribers[type][x]->callback; // delete functor if present
-            subscribers[type].DeleteIndex(x);
-            return true;
-        }        
+            subscribers.DeleteElement(iter);
+            found = true;
+        }
     }
-
-    return false;
+    return found;
 }
 
-
-bool MsgHandler::IsSubscribed( Subscription* sub )
-{
-    for ( size_t x = 0; x < subscribers[sub->type].GetSize(); x++ )
-    {
-        if (subscribers[sub->type][x]->subscriber == sub->subscriber)
-        {
-            return true;
-        }        
-    }
-
-    return false;
-}

@@ -99,7 +99,7 @@ public:
  * QuestionManager keeps track of all the questions of any kind
  * that are pending
  */
-class QuestionManager : public MessageManager
+class QuestionManager : public MessageManager<QuestionManager>
 {
 public:
 

@@ -125,9 +125,9 @@ WorkManager::WorkManager(CacheManager* cachemanager, EntityManager* entitymanage
 	entityManager = entitymanager;
     currentQuality = 1.00;
 
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<WorkManager>(this,&WorkManager::HandleWorkCommand),MSGTYPE_WORKCMD,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<WorkManager>(this,&WorkManager::HandleLockPick),MSGTYPE_LOCKPICK,REQUIRE_READY_CLIENT|REQUIRE_ALIVE|REQUIRE_TARGET);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<WorkManager>(this,&WorkManager::StopUseWork),MSGTYPE_CRAFT_CANCEL,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
+    Subscribe(&WorkManager::HandleWorkCommand, MSGTYPE_WORKCMD, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);
+    Subscribe(&WorkManager::HandleLockPick, MSGTYPE_LOCKPICK, REQUIRE_READY_CLIENT | REQUIRE_ALIVE | REQUIRE_TARGET);
+    Subscribe(&WorkManager::StopUseWork, MSGTYPE_CRAFT_CANCEL, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);
 
     calc_repair_rank            = psserver->GetMathScriptEngine()->FindScript("Calculate Repair Rank");
     calc_repair_time            = psserver->GetMathScriptEngine()->FindScript("Calculate Repair Time");
@@ -160,12 +160,7 @@ WorkManager::WorkManager(CacheManager* cachemanager, EntityManager* entitymanage
 
 WorkManager::~WorkManager()
 {
-    if (psserver->GetEventManager())
-    {
-        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_WORKCMD);
-        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_LOCKPICK);
-        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_CRAFT_CANCEL);
-    }
+    //do nothing
 }
 
 void WorkManager::Initialize()

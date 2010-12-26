@@ -102,8 +102,7 @@ pawsStorageWindow::~pawsStorageWindow()
 
 bool pawsStorageWindow::PostSetup()
 {
-    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_GUISTORAGE))
-        return false;
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_GUISTORAGE);
 
     categoryBox = (pawsListBox*)FindWidget("Categories");
     itemsBox    = (pawsListBox*)FindWidget("Items");

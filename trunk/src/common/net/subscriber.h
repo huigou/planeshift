@@ -32,9 +32,9 @@ class Client;
  */
 struct iNetSubscriber : public virtual csRefCount
 {
-	virtual bool Verify(MsgEntry *msg,unsigned int flags,Client*& client) = 0;
+    virtual bool Verify(MsgEntry *msg,unsigned int flags,Client*& client) = 0;
 
-	/**
+    /**
      *  Interprets a received message and executes the command.
      */
     virtual void HandleMessage(MsgEntry* msg,Client *client) = 0;

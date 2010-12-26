@@ -1348,21 +1348,15 @@ ExchangeManager::ExchangeManager(ClientConnectionSet *pClnts)
 {
     clients      = pClnts;
 
-    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<ExchangeManager>(this,&ExchangeManager::HandleExchangeRequest),MSGTYPE_EXCHANGE_REQUEST,  REQUIRE_READY_CLIENT|REQUIRE_ALIVE|REQUIRE_TARGETACTOR);
-    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<ExchangeManager>(this,&ExchangeManager::HandleExchangeAccept) ,MSGTYPE_EXCHANGE_ACCEPT,   REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
-    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<ExchangeManager>(this,&ExchangeManager::HandleExchangeEnd)    ,MSGTYPE_EXCHANGE_END,      REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
-    psserver->GetEventManager()->Subscribe(this, new NetMessageCallback<ExchangeManager>(this,&ExchangeManager::HandleAutoGive)       ,MSGTYPE_EXCHANGE_AUTOGIVE, REQUIRE_READY_CLIENT|REQUIRE_ALIVE|REQUIRE_TARGETACTOR);
+    Subscribe(&ExchangeManager::HandleExchangeRequest, MSGTYPE_EXCHANGE_REQUEST, REQUIRE_READY_CLIENT | REQUIRE_ALIVE | REQUIRE_TARGETACTOR);
+    Subscribe(&ExchangeManager::HandleExchangeAccept, MSGTYPE_EXCHANGE_ACCEPT, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);
+    Subscribe(&ExchangeManager::HandleExchangeEnd, MSGTYPE_EXCHANGE_END, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);
+    Subscribe(&ExchangeManager::HandleAutoGive, MSGTYPE_EXCHANGE_AUTOGIVE, REQUIRE_READY_CLIENT | REQUIRE_ALIVE | REQUIRE_TARGETACTOR);
 }
 
 ExchangeManager::~ExchangeManager()
 {
-    if (psserver->GetEventManager())
-    {
-        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_EXCHANGE_REQUEST);
-        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_EXCHANGE_ACCEPT);
-        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_EXCHANGE_END);
-        psserver->GetEventManager()->Unsubscribe(this, MSGTYPE_EXCHANGE_AUTOGIVE);
-    }
+    //do nothing
 }
 void ExchangeManager::StartExchange( Client* client, bool withPlayer, bool automaticExchange )
 {

@@ -50,7 +50,7 @@ enum coin
 
 BankManager::BankManager()
 {
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<BankManager>(this,&BankManager::HandleBanking),MSGTYPE_BANKING,REQUIRE_READY_CLIENT);
+    Subscribe(&BankManager::HandleBanking, MSGTYPE_BANKING, REQUIRE_READY_CLIENT);
 
     // Load money events.
     Result result(db->Select("select * from money_events"));
@@ -90,7 +90,7 @@ BankManager::BankManager()
 
 BankManager::~BankManager()
 {
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_BANKING);
+    //do nothing
 }
 
 psMoneyGameEvent::psMoneyGameEvent(int delayTicks, BankManager *bankMan)

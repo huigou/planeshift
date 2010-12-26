@@ -53,7 +53,7 @@ class PendingGroupChallenge;
  * This maintains all the groups on the servers and is responsible for all 
  * the group functions.
  */
-class GroupManager : public MessageManager
+class GroupManager : public MessageManager<GroupManager>
 {
 public:
 

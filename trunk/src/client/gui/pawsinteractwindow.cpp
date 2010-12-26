@@ -158,7 +158,8 @@ pawsInteractWindow::~pawsInteractWindow()
 
 bool pawsInteractWindow::PostSetup()
 {
-    return psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_GUIINTERACT);
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_GUIINTERACT);
+    return true;
 }
 
 void pawsInteractWindow::HandleMessage( MsgEntry* me )

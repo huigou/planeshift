@@ -205,24 +205,15 @@ bool psClientCharManager::Initialize( MsgHandler* msgHandler,
     msghandler = msgHandler;
     cel = GEMSupervisor;
 
-    if ( !msghandler->Subscribe(this, MSGTYPE_CHARREJECT) )
-        return false;
-    if ( !msghandler->Subscribe(this, MSGTYPE_EQUIPMENT) )
-        return false;
-    if ( !msghandler->Subscribe(this, MSGTYPE_EFFECT) )
-        return false;
-    if ( !msghandler->Subscribe(this, MSGTYPE_EFFECT_STOP) )
-        return false;
-    if ( !msghandler->Subscribe(this, MSGTYPE_PLAYSOUND) )
-        return false;
-    if (!msghandler->Subscribe(this, MSGTYPE_USERACTION) )
-        return false;
-    if (!msghandler->Subscribe(this, MSGTYPE_GUITARGETUPDATE) )
-        return false;
-    if (!msghandler->Subscribe(this, MSGTYPE_CHANGE_TRAIT) )
-        return false;
+    msghandler->Subscribe(this, MSGTYPE_CHARREJECT);
+    msghandler->Subscribe(this, MSGTYPE_EQUIPMENT);
+    msghandler->Subscribe(this, MSGTYPE_EFFECT);
+    msghandler->Subscribe(this, MSGTYPE_EFFECT_STOP);
+    msghandler->Subscribe(this, MSGTYPE_PLAYSOUND);
+    msghandler->Subscribe(this, MSGTYPE_USERACTION);
+    msghandler->Subscribe(this, MSGTYPE_GUITARGETUPDATE);
+    msghandler->Subscribe(this, MSGTYPE_CHANGE_TRAIT);
     charCreation = new psCreationManager( objectReg );
-
 
     return true;
 }

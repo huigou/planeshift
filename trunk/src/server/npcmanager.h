@@ -51,7 +51,7 @@ class gemActor;
 class gemNPC;
 class PetOwnerSession;
 
-class NPCManager : public MessageManager
+class NPCManager : public MessageManager<NPCManager>
 {
 public:
     NPCManager(ClientConnectionSet *pCCS,

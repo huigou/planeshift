@@ -64,25 +64,18 @@
 
 EconomyManager::EconomyManager()
 {
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_BUY_EVENT,NO_VALIDATION);
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_SELL_EVENT,NO_VALIDATION);
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_PICKUP_EVENT,NO_VALIDATION);
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_DROP_EVENT,NO_VALIDATION);
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_LOOT_EVENT,NO_VALIDATION);
+    Subscribe(MSGTYPE_BUY_EVENT, NO_VALIDATION);
+    Subscribe(MSGTYPE_SELL_EVENT, NO_VALIDATION);
+    Subscribe(MSGTYPE_PICKUP_EVENT, NO_VALIDATION);
+    Subscribe(MSGTYPE_DROP_EVENT, NO_VALIDATION);
+    Subscribe(MSGTYPE_LOOT_EVENT, NO_VALIDATION);
 
 };
 
 
 EconomyManager::~EconomyManager()
 {
-    if(psserver->GetEventManager())
-    {
-        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_BUY_EVENT);
-        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_SELL_EVENT);
-        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_PICKUP_EVENT);
-        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_DROP_EVENT);
-        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_LOOT_EVENT);
-    }
+    //do nothing
 }
 
 void EconomyManager::AddTransaction(TransactionEntity* trans,bool moneyIn, const char* type)

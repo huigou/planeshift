@@ -55,7 +55,7 @@ class psMerchantInfo;
  * is an all or nothing sort of thing. By using this we can make
  * more efficient use of the net traffic
  */
-class ServerCharManager : public MessageManager
+class ServerCharManager : public MessageManager<ServerCharManager>
 {
 public:
 

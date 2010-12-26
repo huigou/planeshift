@@ -140,9 +140,9 @@ GEMSupervisor::GEMSupervisor(iObjectRegistry *objreg,
     // 90000 enties another scope should be added to cel
     nextEID = 10000;
 
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_DAMAGE_EVENT,NO_VALIDATION);
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_STATDRUPDATE, REQUIRE_READY_CLIENT );
-    psserver->GetEventManager()->Subscribe(this,MSGTYPE_STATS, REQUIRE_READY_CLIENT);
+    Subscribe(MSGTYPE_DAMAGE_EVENT,NO_VALIDATION);
+    Subscribe(MSGTYPE_STATDRUPDATE, REQUIRE_READY_CLIENT );
+    Subscribe(MSGTYPE_STATS, REQUIRE_READY_CLIENT);
 
     engine = csQueryRegistry<iEngine> (psserver->GetObjectReg());
 }
@@ -162,12 +162,6 @@ GEMSupervisor::~GEMSupervisor()
         CS_ASSERT(count > entities_by_eid.GetSize());
         count = entities_by_eid.GetSize();
         continue;
-    }
-    if (psserver->GetEventManager())
-    {
-        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_DAMAGE_EVENT);
-        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_STATDRUPDATE);
-        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_STATS);
     }
 }
 

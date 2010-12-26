@@ -199,14 +199,12 @@ SpawnManager::SpawnManager(psDatabase *db, CacheManager *cachemanager, EntityMan
 
     PreloadDatabase();
 
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<SpawnManager>(this,&SpawnManager::HandleLootItem),MSGTYPE_LOOTITEM,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<SpawnManager>(this,&SpawnManager::HandleDeathEvent),MSGTYPE_DEATH_EVENT,NO_VALIDATION);
+    Subscribe(&SpawnManager::HandleLootItem, MSGTYPE_LOOTITEM, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);
+    Subscribe(&SpawnManager::HandleDeathEvent, MSGTYPE_DEATH_EVENT, NO_VALIDATION);
 }
 
 SpawnManager::~SpawnManager()
 {
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_LOOTITEM);
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_DEATH_EVENT);
 
     csHash<LootEntrySet *>::GlobalIterator it(looting.GetIterator ());
     while (it.HasNext ())

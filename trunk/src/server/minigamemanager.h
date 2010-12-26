@@ -230,7 +230,7 @@ private:
  * This is the manager class of mini-games, handling overall mini-game definitions,
  * action-location gameboards and game sessions.
  */
-class MiniGameManager : public MessageManager
+class MiniGameManager : public MessageManager<MiniGameManager>
 {
 
 public:

@@ -338,13 +338,12 @@ GroupManager::GroupManager(ClientConnectionSet *cs, ChatManager *chat)
     chatserver = chat;  // Needed to GROUPSAY things.
 
     eventmanager = psserver->GetEventManager();
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<GroupManager>(this,&GroupManager::HandleGroupCommand),MSGTYPE_GROUPCMD,REQUIRE_READY_CLIENT|REQUIRE_ALIVE);
+    Subscribe(&GroupManager::HandleGroupCommand, MSGTYPE_GROUPCMD, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);
 }
 
 GroupManager::~GroupManager()
 {
-    if (psserver->GetEventManager())
-        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_GROUPCMD);
+    //do nothing
 }
 
 void GroupManager::HandleGroupCommand(MsgEntry *me, Client *client)

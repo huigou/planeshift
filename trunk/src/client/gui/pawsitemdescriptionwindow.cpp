@@ -50,8 +50,7 @@ pawsItemDescriptionWindow::~pawsItemDescriptionWindow()
 
 bool pawsItemDescriptionWindow::PostSetup()
 {
-    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_VIEW_ITEM))
-        return false;
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_VIEW_ITEM);
 
     // Store some of our children for easy access later on.
     

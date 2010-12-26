@@ -63,7 +63,7 @@ enum RangeSpecifier
 
 /** GameMaster Events manager class.
  */
-class GMEventManager : public MessageManager
+class GMEventManager : public MessageManager<GMEventManager>
 {
 public:
     GMEventManager();

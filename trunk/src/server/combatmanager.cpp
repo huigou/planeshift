@@ -167,12 +167,11 @@ CombatManager::CombatManager(CacheManager* cachemanager, EntityManager* entityma
 
     staminacombat = psserver->GetMathScriptEngine()->FindScript("StaminaCombat");
 
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<CombatManager>(this,&CombatManager::HandleDeathEvent),MSGTYPE_DEATH_EVENT,NO_VALIDATION);
+    Subscribe(&CombatManager::HandleDeathEvent, MSGTYPE_DEATH_EVENT, NO_VALIDATION);
 }
 
 CombatManager::~CombatManager()
 {
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_DEATH_EVENT);
     if (pvp_region) 
     {
         delete pvp_region;

@@ -69,8 +69,7 @@ bool pawsInfoWindow::PostSetup()
 {
     pawsControlledWindow::PostSetup();
 
-    if (!psengine->GetMsgHandler()->Subscribe(this,MSGTYPE_MODE))
-        return false;
+    psengine->GetMsgHandler()->Subscribe(this,MSGTYPE_MODE);
 
     targetName = (pawsTextBox*)FindWidget( "Targeted" );
     if ( !targetName )

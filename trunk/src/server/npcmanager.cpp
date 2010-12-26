@@ -341,15 +341,15 @@ NPCManager::NPCManager(ClientConnectionSet *pCCS,
     cacheManager = cachemanager;
     entityManager = entitymanager;
 
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<NPCManager>(this,&NPCManager::HandleAuthentRequest),MSGTYPE_NPCAUTHENT,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<NPCManager>(this,&NPCManager::HandleCommandList)   ,MSGTYPE_NPCOMMANDLIST,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<NPCManager>(this,&NPCManager::HandleConsoleCommand),MSGTYPE_NPC_COMMAND,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<NPCManager>(this,&NPCManager::HandleNPCReady)   ,MSGTYPE_NPCREADY, REQUIRE_ANY_CLIENT);
+    Subscribe(&NPCManager::HandleAuthentRequest,MSGTYPE_NPCAUTHENT,REQUIRE_ANY_CLIENT);
+    Subscribe(&NPCManager::HandleCommandList,MSGTYPE_NPCOMMANDLIST,REQUIRE_ANY_CLIENT);
+    Subscribe(&NPCManager::HandleConsoleCommand,MSGTYPE_NPC_COMMAND,REQUIRE_ANY_CLIENT);
+    Subscribe(&NPCManager::HandleNPCReady,MSGTYPE_NPCREADY, REQUIRE_ANY_CLIENT);
 
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<NPCManager>(this,&NPCManager::HandleDamageEvent),MSGTYPE_DAMAGE_EVENT,NO_VALIDATION);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<NPCManager>(this,&NPCManager::HandleDeathEvent) ,MSGTYPE_DEATH_EVENT,NO_VALIDATION);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<NPCManager>(this,&NPCManager::HandlePetCommand) ,MSGTYPE_PET_COMMAND,REQUIRE_ANY_CLIENT);
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<NPCManager>(this,&NPCManager::HandlePetSkill)   ,MSGTYPE_PET_SKILL,REQUIRE_ANY_CLIENT);
+    Subscribe(&NPCManager::HandleDamageEvent,MSGTYPE_DAMAGE_EVENT,NO_VALIDATION);
+    Subscribe(&NPCManager::HandleDeathEvent,MSGTYPE_DEATH_EVENT,NO_VALIDATION);
+    Subscribe(&NPCManager::HandlePetCommand,MSGTYPE_PET_COMMAND,REQUIRE_ANY_CLIENT);
+    Subscribe(&NPCManager::HandlePetSkill,MSGTYPE_PET_SKILL,REQUIRE_ANY_CLIENT);
 
     PrepareMessage();
 
@@ -382,17 +382,9 @@ bool NPCManager::Initialize()
 
 NPCManager::~NPCManager()
 {
-	csHash<PetOwnerSession*, PID>::GlobalIterator iter(OwnerPetList.GetIterator());
-	while(iter.HasNext())
-		delete iter.Next();
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_NPCAUTHENT);
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_NPCOMMANDLIST);
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_NPCREADY);
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_NPC_COMMAND);
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_DAMAGE_EVENT);
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_DEATH_EVENT);
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_PET_COMMAND);
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_PET_SKILL);
+    csHash<PetOwnerSession*, PID>::GlobalIterator iter(OwnerPetList.GetIterator());
+    while(iter.HasNext())
+        delete iter.Next();
     delete outbound;
 }
 

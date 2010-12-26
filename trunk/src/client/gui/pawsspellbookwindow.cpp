@@ -53,8 +53,7 @@ pawsSpellBookWindow::~pawsSpellBookWindow()
 
 bool pawsSpellBookWindow::PostSetup()
 {
-    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_SPELL_BOOK))
-        return false;
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_SPELL_BOOK);
 
     spellList        = (pawsListBox*)FindWidget("SpellList");
     spellDescription = (pawsMessageTextBox*)FindWidget("Description");

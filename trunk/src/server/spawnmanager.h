@@ -237,7 +237,7 @@ public:
  *  This class is periodically called by the engine to ensure that
  *  monsters (and other NPCs) are respawned appropriately.
  */
-class SpawnManager : public MessageManager
+class SpawnManager : public MessageManager<SpawnManager>
 {
 protected:
     psDatabase             *database;

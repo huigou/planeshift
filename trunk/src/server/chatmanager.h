@@ -67,7 +67,7 @@ struct CachedData
     }
 };
 
-class ChatManager : public MessageManager
+class ChatManager : public MessageManager<ChatManager>
 {
 public:
 

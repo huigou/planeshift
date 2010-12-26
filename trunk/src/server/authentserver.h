@@ -74,7 +74,7 @@ protected:
  * "Not Authorized" message.
  *
  */
-class AuthenticationServer : public MessageManager
+class AuthenticationServer : public MessageManager<AuthenticationServer>
 {
 public:
 

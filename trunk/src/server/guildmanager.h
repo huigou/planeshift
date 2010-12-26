@@ -58,7 +58,7 @@ public:
 };
 
 
-class GuildManager : public MessageManager
+class GuildManager : public MessageManager<GuildManager>
 {
 friend class PendingAllianceInvite;
 public:

@@ -59,8 +59,7 @@ bool pawsActiveMagicWindow::PostSetup()
     if(!LoadSetting())
         return false;
 
-    if (!psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_ACTIVEMAGIC))
-        return false;
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_ACTIVEMAGIC);
 
     // do something here....
     return true;

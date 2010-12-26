@@ -71,16 +71,12 @@ psServerDR::psServerDR(CacheManager* cachemanager, EntityManager* entitymanager)
 
 psServerDR::~psServerDR()
 {
-    if (psserver->GetEventManager())
-        psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_DEAD_RECKONING);
-    
     delete paladin;
 }
 
 bool psServerDR::Initialize()
 {
-    if (!psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<psServerDR>(this,&psServerDR::HandleDeadReckoning),MSGTYPE_DEAD_RECKONING,REQUIRE_READY_CLIENT))
-        return false;
+    Subscribe(&psServerDR::HandleDeadReckoning, MSGTYPE_DEAD_RECKONING, REQUIRE_READY_CLIENT);
 
     calc_damage   = psserver->GetMathScriptEngine()->FindScript("Calculate Fall Damage");
     if(!calc_damage)

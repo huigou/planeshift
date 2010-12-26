@@ -97,7 +97,7 @@ void psQuestionCancelEvent::Trigger()
 
 QuestionManager::QuestionManager()
 {
-    psserver->GetEventManager()->Subscribe(this,new NetMessageCallback<QuestionManager>(this,&QuestionManager::HandleQuestionResponse),MSGTYPE_QUESTIONRESPONSE,REQUIRE_READY_CLIENT);
+    Subscribe(&QuestionManager::HandleQuestionResponse, MSGTYPE_QUESTIONRESPONSE, REQUIRE_READY_CLIENT);
 }
 
 QuestionManager::~QuestionManager()
@@ -105,7 +105,6 @@ QuestionManager::~QuestionManager()
 	csHash<PendingQuestion*>::GlobalIterator iter(questions.GetIterator());
 	while(iter.HasNext())
 		delete iter.Next();
-    psserver->GetEventManager()->Unsubscribe(this,MSGTYPE_QUESTIONRESPONSE);
 }
 
 void QuestionManager::HandleQuestionResponse(MsgEntry *me,Client *client)
