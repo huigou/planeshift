@@ -168,6 +168,7 @@
   <item orig="Prev" trans="Prec" />
   <item orig="No Petitions" trans="Nessuna Petizione" />
   <item orig="Requesting connection" trans="Richiesta connessione" />
+  <item orig="Lastname:" trans="" />
   <item orig="Guild Alignment" trans="Allineamento Gilda" />
   <item orig="Prv notes" trans="" />
   <item orig="Marriage" trans="" />
@@ -246,6 +247,7 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="Filter" trans="" />
   <item orig="New" trans="Nuovo" />
   <item orig="Mute sounds on focus loss" trans="" />
+  <item orig="Firstname:" trans="" />
   <item orig="Exchange all items" trans="" />
   <item orig="Add Linked" trans="Aggiungi collegato" />
   <item orig="keyboard" trans="Tastiera" />
@@ -674,6 +676,7 @@ Per disabilitare questa funzione cancella tutto in questa finestra usando il bot
   <item orig="Main chat brackets" trans="" />
   <item orig="Assemble Slot" trans="" />
   <item orig="set givekillexp" trans="" />
+  <item orig="Add Petition" trans="" />
   <item orig="You can not ignore yourself." trans="Non puoi ignorare te stesso.." />
   <item orig="Members" trans="Membri" />
   <item orig="Shout text colour" trans="" />
