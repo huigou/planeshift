@@ -68,50 +68,9 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                          {
                              case PARSERTOKEN_CELLS:
                              {
-                                 csRef<iDocumentNodeIterator> cellsIt(paramNode->GetNodes());
-                                 while(cellsIt->HasNext())
+                                 if(!ParseCells(paramNode, parserData))
                                  {
-                                     csRef<iDocumentNode> cellNode(cellsIt->Next());
-                                     csStringID cell = parserData.data.xmltokens.Request(cellNode->GetValue());
-                                     switch(cell)
-                                     {
-                                         case PARSERTOKEN_CELLDEFAULT:
-                                         {
-                                             csRef<iDocumentNode> cellSize = cellNode->GetNode("size");
-                                             if(cellSize.IsValid())
-                                             {
-                                                 csVector3 bound(cellSize->GetAttributeValueAsInt("x")/2,
-                                                                 cellSize->GetAttributeValueAsInt("y"),
-                                                                 cellSize->GetAttributeValueAsInt("z")/2);
-                                                 bboxvs.Push(bound);
-                                                 bound *= -1;
-                                                 bound.y = 0;
-                                                 bboxvs.Push(bound);
-                                             }
-
-                                             csRef<iDocumentNode> baseMat = cellNode->GetNode("basematerial");
-                                             if(baseMat.IsValid())
-                                             {
-                                                 ParseMaterialReference(parserData.data, baseMat->GetContentsValue(), "terrain mesh", 0);
-                                             }
-                                         }
-                                         break;
-
-                                         case PARSERTOKEN_CELL:
-                                         {
-                                             csRef<iDocumentNode> feederProps = cellNode->GetNode("feederproperties");
-                                             if(feederProps.IsValid())
-                                             {
-                                                 csRef<iDocumentNode> alphamap = feederProps->GetNode("alphamap");
-                                                 if(alphamap.IsValid())
-                                                 {
-                                                     ParseMaterialReference(parserData.data, alphamap->GetAttributeValue("material"),
-                                                                            "terrain mesh", 0);
-                                                 }
-                                             }
-                                         }
-                                         break;
-                                     }
+                                     return false;
                                  }
                              }
                              break;
@@ -171,6 +130,76 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                  break;
              }
          }
+         return true;
+    }
+
+    bool BgLoader::MeshFact::ParseCells(iDocumentNode* paramNode, ParserData& parserData)
+    {
+         csRef<iDocumentNodeIterator> cellsIt(paramNode->GetNodes());
+         while(cellsIt->HasNext())
+         {
+             csRef<iDocumentNode> cellNode(cellsIt->Next());
+             csStringID cell = parserData.data.xmltokens.Request(cellNode->GetValue());
+             switch(cell)
+             {
+                 case PARSERTOKEN_CELLDEFAULT:
+                 case PARSERTOKEN_CELL:
+                 {
+                     csRef<iDocumentNodeIterator> cellIt(cellNode->GetNodes());
+                     while(cellIt->HasNext())
+                     {
+                         csRef<iDocumentNode> cellParamNode(cellIt->Next());
+                         csStringID cellParamID = parserData.data.xmltokens.Request(cellParamNode->GetValue());
+                         switch(cellParamID)
+                         {
+                             case PARSERTOKEN_SIZE:
+                             {
+                                 if(cellParamNode.IsValid())
+                                 {
+                                     csVector3 bound(cellParamNode->GetAttributeValueAsInt("x")/2,
+                                                     cellParamNode->GetAttributeValueAsInt("y"),
+                                                     cellParamNode->GetAttributeValueAsInt("z")/2);
+                                     bboxvs.Push(bound);
+                                     bound *= -1;
+                                     bound.y = 0;
+                                     bboxvs.Push(bound);
+                                 }
+                             }
+                             break;
+
+                             case PARSERTOKEN_BASEMATERIAL:
+                             case PARSERTOKEN_ALPHASPLATMATERIAL:
+                             {
+                                 ParseMaterialReference(parserData.data, cellParamNode->GetContentsValue(), "terrain mesh", 0);
+                             }
+                             break;
+
+                             case PARSERTOKEN_FEEDERPROPERTIES:
+                             {
+                                 csRef<iDocumentNode> alphaMatNode = cellParamNode->GetNode("alphamap");
+                                 if(alphaMatNode.IsValid())
+                                 {
+                                     ParseMaterialReference(parserData.data, alphaMatNode->GetAttributeValue("material"),
+                                                            "terrain mesh", 0);
+                                 }
+                                 /*csRef<iiDocumentNodeIterator> propertyIt(cellParamNode->GetNodes("param"));
+                                 while(propertyIt->HasNext())
+                                 {
+                                     csRef<iDocumentNode> propertyNode(propertyIt->Next());
+                                     csString propertyName = propertyNode->GetAttributeValue("name");
+                                     if(name == "heightmap source" || name == "normalmap source")
+                                     {
+                                         
+                                     }
+                                 }*/
+                             }
+                         }
+                     }
+                 }
+                 break;
+             }
+         }
+
          return true;
     }
 

@@ -1029,6 +1029,7 @@ private:
         }
 
         bool Parse(iDocumentNode* node, ParserData& data);
+        bool ParseCells(iDocumentNode* node, ParserData& data);
 
         csPtr<MeshFact> Clone(const char* name)
         {
