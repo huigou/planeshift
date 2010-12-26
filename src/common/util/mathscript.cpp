@@ -129,6 +129,20 @@ void MathVar::SetString(const char* p)
 
 //----------------------------------------------------------------------------
 
+void MathEnvironment::Init()
+{
+    // always define the environment as variable
+    // as that's required to pass the environment to scriptable
+    // objects in custom compound functions
+    MathScriptEngine::IDConverter converter;
+    converter.p = (uintptr_t)this;
+
+    // don't use Define here as it'd check the parent
+    MathVar* env = new MathVar(this);
+    env->SetValue(converter.value);
+    variables.Put("environment", env);
+}
+
 MathEnvironment::~MathEnvironment()
 {
     csHash<MathVar*, csString>::GlobalIterator it(variables.GetIterator());

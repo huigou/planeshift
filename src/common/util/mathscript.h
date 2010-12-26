@@ -177,24 +177,19 @@ private:
     const MathEnvironment *parent;
     csHash<MathVar*, csString> variables;
 
+    void Init();
+
+    // environments mustn't be copy-constructed
+    MathEnvironment(const MathEnvironment&);
+
 public:
     MathEnvironment() : UID(new uint32),parent(NULL)
     {
-        // always define the environment as variable
-        // as that's required to pass the environment to scriptable
-        // objects in custom compound functions
-        MathScriptEngine::IDConverter converter;
-        converter.p = (uintptr_t)this;
-        Define("environment", converter.value);
+        Init();
     }
     MathEnvironment(const MathEnvironment *parent) : UID(parent->UID),parent(parent)
     {
-        // always define the environment as variable
-        // as that's required to pass the environment to scriptable
-        // objects in custom compound functions
-        MathScriptEngine::IDConverter converter;
-        converter.p = (uintptr_t)this;
-        Define("environment", converter.value);
+        Init();
     }
     ~MathEnvironment();
 
