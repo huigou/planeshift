@@ -58,7 +58,7 @@ private:
     bool NextChar(const char * script, size_t & currIndex, char & c, char & n);
     bool Parse(const char * script);
 
-	pawsWidget * FindWidget(pawsWidget * widget, const char * name);
+    pawsWidget * FindWidget(pawsWidget * widget, const char * name);
 public:
     pawsScript(pawsWidget * widget, const char * script);
     ~pawsScript();
