@@ -74,14 +74,14 @@ bool pawsScript::NextChar(const char * script, size_t & currIndex, char & c, cha
 
 pawsWidget * pawsScript::FindWidget(pawsWidget * widget, const char * name)
 {
-	// a better FindWidget that will go back up the parents to really try and find the thing
-	pawsWidget * ret = 0;
-	while (!ret && widget)
-	{
-		ret = widget->FindWidget(name, false);
-		widget = widget->GetParent();
-	}
-	return ret;
+    // a better FindWidget that will go back up the parents to really try and find the thing
+    pawsWidget * ret = 0;
+    while (!ret && widget)
+    {
+        ret = widget->FindWidget(name, false);
+        widget = widget->GetParent();
+    }
+    return ret;
 }
 
 bool pawsScript::Parse(const char * script)
@@ -158,10 +158,10 @@ bool pawsScript::Parse(const char * script)
             if (!isExtraVar)
             {
                 pawsWidget * dep;
-				if (tokens[a-1] == "Me" || tokens[a-1] == "me")
-					dep = widget;
-				else
-					dep = FindWidget(widget, tokens[a-1]);
+                if (tokens[a-1] == "Me" || tokens[a-1] == "me")
+                    dep = widget;
+                else
+                    dep = FindWidget(widget, tokens[a-1]);
                 if (!dep)
                 {
                     Error2("pawsWidget '%s' referenced in a PAWS Script could not be found\n", tokens[a-1].GetData());
@@ -202,27 +202,27 @@ bool pawsScript::Parse(const char * script)
         }
         else if (tokens[a] == ';')
         {
-			if (!onRHS)
-			{ // if we didn't get a rhs then we might have something like 'widget:Blah()', so try to resolve the widget name
-				for (size_t b=a-1; b>0 && tokens[b] != ';'; --b)
-				{
-					if (tokens[b] == ':')
-					{
-						pawsWidget * w;
-						if (tokens[b-1] == "Me" || tokens[b-1] == "me")
-							w = widget;
-						else
-							w = FindWidget(widget, tokens[b-1]);
-						if (w)
-						{
-							tokens[b-1] = "W";
-							tokens[b-1] += (unsigned int)rhsDependencies.GetSize();
-							rhsDependencies.Push(w);
-						}
-						break;
-					}
-				}
-			}
+            if (!onRHS)
+            { // if we didn't get a rhs then we might have something like 'widget:Blah()', so try to resolve the widget name
+                for (size_t b=a-1; b>0 && tokens[b] != ';'; --b)
+                {
+                    if (tokens[b] == ':')
+                    {
+                        pawsWidget * w;
+                        if (tokens[b-1] == "Me" || tokens[b-1] == "me")
+                            w = widget;
+                        else
+                            w = FindWidget(widget, tokens[b-1]);
+                        if (w)
+                        {
+                            tokens[b-1] = "W";
+                            tokens[b-1] += (unsigned int)rhsDependencies.GetSize();
+                            rhsDependencies.Push(w);
+                        }
+                        break;
+                    }
+                }
+            }
 
             onRHS = false;
             startToken = a+1;
@@ -254,8 +254,8 @@ bool pawsScript::Parse(const char * script)
 pawsScript::pawsScript(pawsWidget * widget, const char * script)
           : widget(widget)
 {
-	statement = 0;
-	scriptText = script;
+    statement = 0;
+    scriptText = script;
 }
 
 pawsScript::~pawsScript()
@@ -265,12 +265,12 @@ pawsScript::~pawsScript()
 
 void pawsScript::Execute()
 {
-	if (!scriptText.IsEmpty())
-	{
-		Parse(scriptText);
-		scriptText.Clear();
-	}
+    if (!scriptText.IsEmpty())
+    {
+        Parse(scriptText);
+        scriptText.Clear();
+    }
 
-	if (statement)
-		statement->Execute();
+    if (statement)
+        statement->Execute();
 }
