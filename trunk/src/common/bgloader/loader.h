@@ -1366,6 +1366,8 @@ private:
             bool blockShaderLoad;
             bool parsedShaders;
             bool parseShaderVars;
+            bool forceCuller;
+            csString culler;
         } config;
     } parserData;
 

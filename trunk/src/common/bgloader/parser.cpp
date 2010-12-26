@@ -538,6 +538,12 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
         // let the other parser functions know about us
         parserData.currentSector = this;
 
+        // check whether we want to force a specific culler
+        if(parserData.data.config.forceCuller)
+        {
+            culler = parserData.data.config.culler;
+        }
+
         // set this sector as initialized
         init = true;
 
@@ -553,7 +559,10 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
             {
                 case PARSERTOKEN_CULLERP:
                 {
-                    culler = node->GetContentsValue();
+                    if(!parserData.data.config.forceCuller)
+                    {
+                        culler = node->GetContentsValue();
+                    }
                 }
                 break;
 

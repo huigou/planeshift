@@ -77,6 +77,26 @@ bool BgLoader::Initialize(iObjectRegistry* object_reg)
     // Check whether we're caching files for performance.    
     parserData.config.cache = config->GetBool("PlaneShift.Loading.Cache", false);
 
+    // Check whether we want to force a specific culler
+    csString forceCuller = config->GetStr("PlaneShift.Loading.ForceCuller");
+    if(forceCuller.IsEmpty())
+    {
+        parserData.config.forceCuller = false;
+    }
+    else
+    {
+        parserData.config.forceCuller = true;
+        // check whether we want to set the default culler as we have to use NULL in that case
+        if(forceCuller == "default")
+        {
+            parserData.config.culler = (const char*)NULL;
+        }
+        else
+        {
+            parserData.config.culler = forceCuller;
+        }
+    }
+
     // Check whether we only want to load portal data (e.g. for the server) or only meshes (i.e. no lights, etc.)
     parserData.config.portalsOnly = config->GetBool("PlaneShift.Loading.OnlyPortals", false);
     parserData.config.meshesOnly = config->GetBool("PlaneShift.Loading.OnlyMeshes", false);
