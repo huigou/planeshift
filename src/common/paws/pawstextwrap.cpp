@@ -295,7 +295,61 @@ bool pawsMultilineEditTextBox::OnMouseDown(int button, int modifiers, int x, int
             vScrollBar->SetCurrentValue(vScrollBar->GetCurrentValue() + EDIT_TEXTBOX_MOUSE_SCROLL_AMOUNT);
         return true;
     } 
-    return pawsWidget::OnMouseDown(button, modifiers, x ,y);
+
+
+
+#if defined(CS_PLATFORM_UNIX) && defined(INCLUDE_CLIPBOARD)
+    if (button == csmbMiddle)
+    {
+        // Only included for platforms using Middle button to past.
+
+        // Request Clipboard. Reuslt will be available in OnClipboard
+        PawsManager::GetSingleton().RequestClipboardContent();
+
+        return true;
+    }
+#endif
+
+
+    return pawsWidget::OnMouseDown( button, modifiers, x ,y);
+}
+
+bool pawsMultilineEditTextBox::OnClipboard( const csString& content )
+{
+    printf("Received from clipboard: %s\n", content.GetDataSafe());
+
+    size_t position = GetCursorPosition(cursorLine, cursorLoc);
+    if ( position >= text.Length() )
+    {
+        text.Append( content );
+    }
+    else
+    {
+        text.Insert( position, content );
+    }
+    
+    if(maxLen)
+        text.Truncate( maxLen );
+    position += content.Length();
+
+    LayoutText();
+
+    GetCursorLocation(position, cursorLine, cursorLoc);
+    if(cursorLine >= topLine + canDrawLines)
+        topLine = cursorLine - canDrawLines + 1;
+    else if(cursorLine < topLine)
+        topLine = cursorLine;
+    SetupScrollBar();
+
+
+    if (subscribedVar)
+    {
+        PawsManager::GetSingleton().Publish(subscribedVar, text);
+    }
+
+    parent->OnChange(this);
+
+    return true;
 }
 
 bool pawsMultilineEditTextBox::OnMouseUp(int button, int modifiers, int x, int y)
