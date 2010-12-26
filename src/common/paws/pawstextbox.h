@@ -565,6 +565,11 @@ public:
     virtual void OnResize();
     virtual bool OnMouseUp( int button, int modifiers, int x, int y );
     virtual bool OnMouseDown( int button, int modifiers, int x, int y );
+    /** Called as a callback to a request for clipboard content if avaliabe.
+     *
+     * @note Only implemented for unix
+     */
+    virtual bool OnClipboard( const csString& content );
     virtual void OnUpdateData(const char *dataname,PAWSData& data);
     virtual bool OnKeyDown( utf32_char code, utf32_char key, int modifiers );
     virtual void CalcMouseClick( int x, int y, size_t &cursorLine, size_t &cursorChar);
