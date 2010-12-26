@@ -317,7 +317,7 @@ bool PawsManager::HandleEvent( iEvent &event )
     }    
 
 #if defined(CS_PLATFORM_UNIX) && defined(INCLUDE_CLIPBOARD)
-    if (ev.Name == SelectionNotifyEvent)
+    if (event.Name == SelectionNotifyEvent)
     {
       return HandleSelectionNotify (event);
     }
