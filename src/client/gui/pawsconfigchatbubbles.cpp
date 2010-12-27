@@ -542,21 +542,21 @@ bool pawsConfigChatBubbles::SaveConfig()
 
     size_t lenPawsBubbleChatTypes = pawsBubbleChatTypes.GetSize();
     for (size_t c = 0; c < lenPawsBubbleChatTypes; ++c) {
-        xml.AppendFmt("\t<chat type=\"%s\"\t", pawsBubbleChatTypes[c].type.GetData());
+        xml.AppendFmt("    <chat type=\"%s\" ", pawsBubbleChatTypes[c].type.GetData());
 
-        xml.AppendFmt("enabled=\"%s\"\t", pawsBubbleChatTypes[c].enabled->GetState() ? "yes" : "no");
+        xml.AppendFmt("enabled=\"%s\" ", pawsBubbleChatTypes[c].enabled->GetState() ? "yes" : "no");
 
-        xml.AppendFmt("colourR=\"%s\"\t", pawsBubbleChatTypes[c].TextR->GetText());
-        xml.AppendFmt("colourG=\"%s\"\t", pawsBubbleChatTypes[c].TextG->GetText());
-        xml.AppendFmt("colourB=\"%s\"\t", pawsBubbleChatTypes[c].TextB->GetText());
+        xml.AppendFmt("colourR=\"%s\" ", pawsBubbleChatTypes[c].TextR->GetText());
+        xml.AppendFmt("colourG=\"%s\" ", pawsBubbleChatTypes[c].TextG->GetText());
+        xml.AppendFmt("colourB=\"%s\" ", pawsBubbleChatTypes[c].TextB->GetText());
 
-        xml.AppendFmt("shadowR=\"%s\"\t", pawsBubbleChatTypes[c].ShadowR->GetText());
-        xml.AppendFmt("shadowG=\"%s\"\t", pawsBubbleChatTypes[c].ShadowG->GetText());
-        xml.AppendFmt("shadowB=\"%s\"\t", pawsBubbleChatTypes[c].ShadowB->GetText());
+        xml.AppendFmt("shadowR=\"%s\" ", pawsBubbleChatTypes[c].ShadowR->GetText());
+        xml.AppendFmt("shadowG=\"%s\" ", pawsBubbleChatTypes[c].ShadowG->GetText());
+        xml.AppendFmt("shadowB=\"%s\" ", pawsBubbleChatTypes[c].ShadowB->GetText());
 
-        xml.AppendFmt("outlineR=\"%s\"\t", pawsBubbleChatTypes[c].OutlineR->GetText());
-        xml.AppendFmt("outlineG=\"%s\"\t", pawsBubbleChatTypes[c].OutlineG->GetText());
-        xml.AppendFmt("outlineB=\"%s\"\t", pawsBubbleChatTypes[c].OutlineB->GetText());
+        xml.AppendFmt("outlineR=\"%s\" ", pawsBubbleChatTypes[c].OutlineR->GetText());
+        xml.AppendFmt("outlineG=\"%s\" ", pawsBubbleChatTypes[c].OutlineG->GetText());
+        xml.AppendFmt("outlineB=\"%s\" ", pawsBubbleChatTypes[c].OutlineB->GetText());
 
         csString align;
         if (pawsBubbleChatTypes[c].Align->GetSelectedRowNum() == 2)
@@ -565,7 +565,7 @@ bool pawsConfigChatBubbles::SaveConfig()
             align = "center";
         else
             align = "left";
-        xml.AppendFmt("align=\"%s\"\t", align.GetData());
+        xml.AppendFmt("align=\"%s\" ", align.GetData());
 
         xml += "effectPrefix=\"chatbubble_\" />\n";
     }
