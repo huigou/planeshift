@@ -1410,6 +1410,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
   <ItemGroup>
     <ClCompile Include="..\..\mk\msvc\plugin_impl.cpp" />
     <ClCompile Include="..\..\src\common\bgloader\loader.cpp" />
+    <ClCompile Include="..\..\src\common\bgloader\loader_objects.cpp" />
     <ClCompile Include="..\..\src\common\bgloader\manipulate.cpp" />
     <ClCompile Include="..\..\src\common\bgloader\parser.cpp" />
     <ClCompile Include="..\..\src\common\bgloader\parser_mesh.cpp" />
