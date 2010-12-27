@@ -300,11 +300,6 @@ public:
     void RepopulateLive(psSectorInfo *sectorinfo = 0);
 
     /**
-     * This function receives inbound net messages from the client.
-     */
-    void HandleMessage(MsgEntry *me,Client *client) { };
-
-    /**
      * Respawn a NPC given by playerID and find the position
      * from the spawnRule.
      */

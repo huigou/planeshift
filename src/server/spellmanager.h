@@ -55,14 +55,6 @@ public:
                    CacheManager *cachemanager);
     virtual ~SpellManager();
     
-    /** Handles a network message.  
-      * This is a factory for the different types of message that the manager handles.
-      *
-      * @param me The message entry incoming.
-      * @param client The client that this message came from.
-      */
-    virtual void HandleMessage(MsgEntry *me,Client *client) { }
-
     /** Purifying on a glyph has been complete.  
       *  This will send out a network message to the client and update it's inventory 
       *  with the new purified glyph.

@@ -51,8 +51,6 @@ public:
 
     bool Initialize();
 
-    virtual void HandleMessage(MsgEntry *me, Client *client) { }
-
     psItem* FindItem(Client* client, int containerID, INVENTORY_SLOT_NUMBER slotID);
 
     gemContainer *worldContainer;   ///< Working world GEM container we are using.

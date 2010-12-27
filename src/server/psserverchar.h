@@ -64,9 +64,6 @@ public:
 
     bool Initialize();
 
-    virtual void HandleMessage( MsgEntry *me, Client *client ) { };
-
-
     /// Sends the client an inventory
     virtual bool SendInventory( int clientNum, bool sendUpdatesOnly=true );
 

@@ -50,8 +50,6 @@ public:
 
     virtual ~ProgressionManager();
 
-    virtual void HandleMessage(MsgEntry *pMsg,Client *client)  {}
-    
     /** Send the skill list to the client. 
       * @param client The client that the message is for.
       * @param forceOpen  If true it will force open the skills screen on the client.

@@ -173,8 +173,6 @@ public:
                                           csString& name,
                                           csString& description);
 
-     virtual void HandleMessage(MsgEntry *me, Client *client) { };
-     
      /// handle message from client
      virtual void HandleGMEventCommand(MsgEntry *me, Client *client);
 

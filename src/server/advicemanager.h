@@ -78,7 +78,7 @@ public:
     AdviceManager(psDatabase *db);
     virtual ~AdviceManager();
 
-    virtual void HandleMessage(MsgEntry *pMsg,Client *client);
+    void HandleAdviceMessage(MsgEntry *pMsg,Client *client);
 
     /** Adds a new advisor available to answer questions.
       *

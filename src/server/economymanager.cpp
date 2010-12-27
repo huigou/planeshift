@@ -64,11 +64,11 @@
 
 EconomyManager::EconomyManager()
 {
-    Subscribe(MSGTYPE_BUY_EVENT, NO_VALIDATION);
-    Subscribe(MSGTYPE_SELL_EVENT, NO_VALIDATION);
-    Subscribe(MSGTYPE_PICKUP_EVENT, NO_VALIDATION);
-    Subscribe(MSGTYPE_DROP_EVENT, NO_VALIDATION);
-    Subscribe(MSGTYPE_LOOT_EVENT, NO_VALIDATION);
+    Subscribe(&EconomyManager::HandleBuyMessage,MSGTYPE_BUY_EVENT, NO_VALIDATION);
+    Subscribe(&EconomyManager::HandleSellMessage,MSGTYPE_SELL_EVENT, NO_VALIDATION);
+    Subscribe(&EconomyManager::HandlePickupMessage,MSGTYPE_PICKUP_EVENT, NO_VALIDATION);
+    Subscribe(&EconomyManager::HandleDropMessage,MSGTYPE_DROP_EVENT, NO_VALIDATION);
+    Subscribe(&EconomyManager::HandleLootMessage,MSGTYPE_LOOT_EVENT, NO_VALIDATION);
 
 };
 
@@ -124,46 +124,39 @@ void EconomyManager::AddTransaction(TransactionEntity* trans,bool moneyIn, const
 
 }
 
-void EconomyManager::HandleMessage(MsgEntry* me,Client* client)
+void EconomyManager::HandleBuyMessage(MsgEntry* me,Client* client)
 {
-    switch(me->GetType())
-    {
-        case MSGTYPE_BUY_EVENT:
-        {
-            psBuyEvent event(me);
-            AddTransaction(event.trans,false, "Buy");
-            economy.buyingValue += event.trans->price;
-            break;
-        }
-        case MSGTYPE_SELL_EVENT:
-        {
-            psSellEvent event(me);
-            AddTransaction(event.trans,true, "Sell");
-            economy.sellingValue += event.trans->price;
-            break;
-        }
-        case MSGTYPE_PICKUP_EVENT:
-        {
-            psPickupEvent event(me);
-            AddTransaction(event.trans,true, "Pickup");
-            economy.pickupsValue += event.trans->price;
-            break;
-        }
-        case MSGTYPE_DROP_EVENT:
-        {
-            psDropEvent event(me);
-            AddTransaction(event.trans,false, "Drop");
-            economy.droppedValue += event.trans->price;
-            break;
-        }
-        case MSGTYPE_LOOT_EVENT:
-        {
-            psLootEvent event(me);
-            AddTransaction(event.trans,true, "Loot");
-            economy.lootValue += event.trans->price;
-            break;
-        }
-    }
+    psBuyEvent event(me);
+    AddTransaction(event.trans,false, "Buy");
+    economy.buyingValue += event.trans->price;
+}
+
+void EconomyManager::HandleSellMessage(MsgEntry* me,Client* client)
+{
+    psSellEvent event(me);
+    AddTransaction(event.trans,true, "Sell");
+    economy.sellingValue += event.trans->price;
+}
+
+void EconomyManager::HandlePickupMessage(MsgEntry* me,Client* client)
+{
+    psPickupEvent event(me);
+    AddTransaction(event.trans,true, "Pickup");
+    economy.pickupsValue += event.trans->price;
+}
+
+void EconomyManager::HandleDropMessage(MsgEntry* me,Client* client)
+{
+    psDropEvent event(me);
+    AddTransaction(event.trans,false, "Drop");
+    economy.droppedValue += event.trans->price;
+}
+
+void EconomyManager::HandleLootMessage(MsgEntry* me,Client* client)
+{
+    psLootEvent event(me);
+    AddTransaction(event.trans,true, "Loot");
+    economy.lootValue += event.trans->price;
 }
 
 TransactionEntity* EconomyManager::GetTransaction(int id)

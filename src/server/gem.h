@@ -213,8 +213,9 @@ public:
      */
     void Teleport( gemObject* object, float x, float y, float z, float rot, const char* sectorname );
 
-    void HandleMessage(MsgEntry *me, Client *client);
-
+    void HandleStatsMessage(MsgEntry *me, Client *client);
+    void HandleDamageMessage(MsgEntry *me, Client *client);
+    void HandleStatDRUpdateMessage(MsgEntry *me, Client *client);
 
    /** @brief Attach a server gemObject to a Crystal Space object.
      *

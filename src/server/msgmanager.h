@@ -102,24 +102,6 @@ class MessageManager : public MessageManagerBase
             UnsubscribeAll();
         }
 
-        /** @brief Subscribes this manager to a specific message type
-         *
-         * Any time a message with the specified type (and flags are met) is
-         * received \ref SubClass::HandleMessage(MsgEntry *me, Client *client)
-         * is called.
-         * @param type The type of message to be notified of
-         * @param flags Optional flags to check <i>Default: 0x01</i>
-         */
-        inline void Subscribe(msgtype type, uint32_t flags = 0x01)
-        {
-            CS::Threading::RecursiveMutexScopedLock lock(mutex);
-            if(!handlers.Contains(type))
-            {
-                GetEventManager()->Subscribe(this, type, flags);
-            }
-            handlers.Put(type, &SubClass::HandleMessage);
-        }
-
         /** @brief Subscribes this manager to a specific message type with a custom callback
          *
          * Any time a message with the specified type (and flags are met) is
@@ -191,6 +173,12 @@ class MessageManager : public MessageManagerBase
             return GetEventManager()->UnsubscribeAll(this);
         }
         
+        /** @brief Transfers the message to the manager specific function
+         *
+         * @note DO NOT OVERRIDE
+         * @param msg Message that is forwarded to the manager's function
+         * @param client Client that is forwarded to the manager's function
+         */
         void HandleMessage(MsgEntry* msg, Client* client)
         {
             csArray<FunctionPointer> msgHandlers;

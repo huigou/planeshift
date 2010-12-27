@@ -83,8 +83,6 @@ public:
     AdminManager();
     virtual ~AdminManager();
 
-	virtual void HandleMessage(MsgEntry *pMsg,Client *client) {};
-
     /** This is called when a player does /admin.
       * This builds up the list of commands that are available to the player
       * at their current GM rank. This commands allows player to check the commands

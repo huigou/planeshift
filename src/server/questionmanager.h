@@ -106,8 +106,6 @@ public:
     QuestionManager();
     virtual ~QuestionManager();
 
-    virtual void HandleMessage(MsgEntry *pMsg,Client *client) { }
-
     /** Sends a question to a client */
     void SendQuestion(PendingQuestion *question);
     

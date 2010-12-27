@@ -77,7 +77,11 @@ public:
     EconomyManager();
     ~EconomyManager();
 
-    void HandleMessage(MsgEntry *me,Client *client);
+    void HandleBuyMessage(MsgEntry *me,Client *client);
+    void HandleSellMessage(MsgEntry *me,Client *client);
+    void HandlePickupMessage(MsgEntry *me,Client *client);
+    void HandleDropMessage(MsgEntry *me,Client *client);
+    void HandleLootMessage(MsgEntry *me,Client *client);
 
     void AddTransaction(TransactionEntity* trans,bool sell, const char* type);
 

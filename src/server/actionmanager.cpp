@@ -136,11 +136,6 @@ ActionManager::~ActionManager()
     database = NULL;
 }
 
-void ActionManager::HandleMessage( MsgEntry *me, Client *client )
-{
-    // here for backwards compatibility.  no longer used
-}
-
 void ActionManager::HandleMapAction(MsgEntry *me, Client *client )
 {
     psMapActionMessage msg( me );
