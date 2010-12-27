@@ -66,9 +66,6 @@ public:
     /// Initialize the npc manager.
     bool Initialize();
 
-    /// Handle incoming messages from the superclients.
-    virtual void HandleMessage(MsgEntry *pMsg,Client *client) { }
-
     /// Send a list of managed NPCs to a newly connecting superclient.
     void SendNPCList(Client *client);
 

@@ -995,9 +995,9 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
 *    StartAutoWork - Item moved into container: SlotManager::MoveFromInventory()
 *                  - Item stack split in container: SlotManager::MoveFromWorldContainer()
 *    HandleUse - Client issues /use command from buttons: gemActiveObject::SendBehaviorMessage()
-*              - Workmanager gets /use message: WorkManager::HandleMessage()
+*              - Workmanager gets /use message: WorkManager::HandleWorkCommand()
 *    HandleCombine - Client issues /combine command from buttons: gemActiveObject::SendBehaviorMessage()
-*                  - Workmanager gets /combine message: WorkManager::HandleMessage()
+*                  - Workmanager gets /combine message: WorkManager::HandleWorkCommand()
 *    HandleWorkEvent - Work event triggers: psWorkGameEvent::Trigger()
 *    StopWork - Items removed from containers: SlotManager::MoveFromWorldContainer();
 *

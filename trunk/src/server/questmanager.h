@@ -151,8 +151,6 @@ public:
 
     bool Initialize();
 
-    virtual void HandleMessage(MsgEntry *pMsg,Client *client) { }
-
     void Assign(psQuest *quest, Client *who, gemNPC *assigner,csTicks timeDelay=0);
     bool Complete(psQuest *quest, Client *who, csTicks timeDelay = 0);
 

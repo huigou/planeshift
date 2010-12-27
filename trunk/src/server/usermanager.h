@@ -58,8 +58,6 @@ public:
     
     virtual bool Initialize(GEMSupervisor* gemsupervisor) {gem = gemsupervisor; return true; }
 
-    virtual void HandleMessage(MsgEntry *pMsg,Client *client) { }
-
     /** @brief Send a notification to all clients on a person buddy list if they log on/off.
      *
      *  This does a database hit.

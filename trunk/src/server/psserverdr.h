@@ -49,8 +49,6 @@ public:
 
     void SendPersist();
 
-    virtual void HandleMessage(MsgEntry* me,Client *client) {}
-
 protected:
 
     void HandleDeadReckoning(MsgEntry* me,Client *client);

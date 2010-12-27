@@ -53,12 +53,6 @@ public:
     /** Caches the data from the database needed for character creation.
      */
     bool Initialize();
-          
-    /** Handles incoming net messages.
-     * Have to add what messages it is subscribed to.
-     */    
-    virtual void HandleMessage(MsgEntry *pMsg,Client *client) { }
-    
     
     bool Validate( psCharUploadMessage& mesg, csString& errorMsg );
 

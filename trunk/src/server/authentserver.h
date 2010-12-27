@@ -85,14 +85,13 @@ public:
      *     - MSGTYPE_AUTHENTICATE
      *     - MSGTYPE_DISCONNECT
      *     .
-     * When eithre of these messages appear on the message queue, the function
-     * HandleMessage() is called with the message as the argument. 
+     * When either of these messages appear on the message queue, the corresponding
+     * function is called with the message as the argument. 
      *
      * @param pCCS: Reference to the client connection set.
      * @param usermgr: Reference to the user manager.
      * @param netpersist: Reference to the network persistance manager.
      * @param gm: Reference to the guild manager.
-     * @see HandleMessage() , MsgHandler::Subscribe()
      */
     AuthenticationServer(ClientConnectionSet *pCCS,
                            UserManager *usermgr,
@@ -104,17 +103,6 @@ public:
      * @see MsgHandler::Unsubscribe()
      */
     virtual ~AuthenticationServer();
-
-    /** Handles a subscribed message.
-     * This function handles the messages we subscribed to:
-     *     - MSGTYPE_AUTHENTICATE
-     *     - MSGTYPE_DISCONNECT
-     *     .
-     * For these two messages will check to see if it is a valid message, and
-     * then call the appropiate function of eithre: HandleAuthent() or
-     * HandleDisconnect() .
-     */
-    virtual void HandleMessage(MsgEntry *me,Client *client) {}
 
     /** Sends a disconnect message to the given client. 
      * This will send a disconnect to the given client. Before doing that it
@@ -160,11 +148,10 @@ protected:
     bool CheckAuthenticationPreCondition(int clientnum, bool netversionok, const char* sUser);
     
     /** Handles an authenticate message from the message queue.
-     * This method recieves a authenticate message which is passed from the
-     * HandleMessage() method. uses the following steps to atuthenticate a
-     * client. Sends a psAuthMessageApproved message back to the client if it
-     * was successfully authenticated and adds the client to the current
-     * client list.
+     * This method recieves a authenticate message. Uses the following steps to
+     * authenticate a client. Sends a psAuthMessageApproved message back to the
+     * client if it was successfully authenticated and adds the client to the
+     * current client list.
      *
      * @param me: Is a message entry that contains the authenticate message.
      * @see psAuthMessageApproved 

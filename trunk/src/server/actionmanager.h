@@ -101,13 +101,6 @@ public:
       */
     bool CacheActionLocation(psActionLocation* action);
 
-    /** Delegates MsgEntry to correct MessageHandler
-      *
-      * @param pMsg            The MsgEntry to crack.
-      * @param client      The client that sent the message.
-      */
-    void HandleMessage( MsgEntry *pMsg, Client *client );
-
     /** Processes psMapActionMessages
       *
       * @param msg            The message to process

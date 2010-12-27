@@ -124,8 +124,6 @@ public:
                              psCharacter*  owner,
                              bool          transient);
 
-    virtual void HandleMessage(MsgEntry* me,Client *client) {};
-
     bool RemoveActor(gemObject *actor);
 
     bool AddRideRelation(gemActor *rider, gemActor *mount);

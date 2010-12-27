@@ -38,7 +38,6 @@ public:
     BankManager();
     ~BankManager();
     inline void StartBanking(Client* client, bool guild) { SendBankWindow(client, guild, true); }
-    void HandleMessage(MsgEntry *me, Client *client) { }
     void ProcessTax();
 
 protected:

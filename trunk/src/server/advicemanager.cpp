@@ -326,7 +326,7 @@ AdviceManager::AdviceManager(psDatabase *db)
 
     database = db;
 
-    Subscribe(MSGTYPE_ADVICE,REQUIRE_READY_CLIENT);
+    Subscribe(&AdviceManager::HandleAdviceMessage,MSGTYPE_ADVICE,REQUIRE_READY_CLIENT);
 }
 
 AdviceManager::~AdviceManager()
@@ -336,7 +336,7 @@ AdviceManager::~AdviceManager()
 		delete iter.Next();
 }
 
-void AdviceManager::HandleMessage(MsgEntry *me,Client *client)
+void AdviceManager::HandleAdviceMessage(MsgEntry *me,Client *client)
 {
     psAdviceMessage msg(me);
     if (!msg.valid)

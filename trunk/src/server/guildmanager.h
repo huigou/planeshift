@@ -66,8 +66,6 @@ public:
     GuildManager(ClientConnectionSet *pCCS, ChatManager *chat);
     virtual ~GuildManager();
 
-    virtual void HandleMessage(MsgEntry *pMsg,Client *client) { };
-
     void HandleJoinGuild(PendingGuildInvite *invite);
     void AcceptWar(PendingGuildWarInvite *invite);
 

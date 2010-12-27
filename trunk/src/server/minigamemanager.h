@@ -239,9 +239,6 @@ public:
 
     ~MiniGameManager();
 
-    /// Handles message from client.
-    virtual void HandleMessage(MsgEntry *me, Client *client) { }
-    
     /// returns session by its id.
     psMiniGameSession *GetSessionByID(uint32_t id);
 

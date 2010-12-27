@@ -140,9 +140,9 @@ GEMSupervisor::GEMSupervisor(iObjectRegistry *objreg,
     // 90000 enties another scope should be added to cel
     nextEID = 10000;
 
-    Subscribe(MSGTYPE_DAMAGE_EVENT,NO_VALIDATION);
-    Subscribe(MSGTYPE_STATDRUPDATE, REQUIRE_READY_CLIENT );
-    Subscribe(MSGTYPE_STATS, REQUIRE_READY_CLIENT);
+    Subscribe(&GEMSupervisor::HandleDamageMessage,MSGTYPE_DAMAGE_EVENT,NO_VALIDATION);
+    Subscribe(&GEMSupervisor::HandleStatDRUpdateMessage,MSGTYPE_STATDRUPDATE, REQUIRE_READY_CLIENT );
+    Subscribe(&GEMSupervisor::HandleStatsMessage,MSGTYPE_STATS, REQUIRE_READY_CLIENT);
 
     engine = csQueryRegistry<iEngine> (psserver->GetObjectReg());
 }
@@ -165,42 +165,35 @@ GEMSupervisor::~GEMSupervisor()
     }
 }
 
-void GEMSupervisor::HandleMessage(MsgEntry *me,Client *client)
+void GEMSupervisor::HandleStatsMessage(MsgEntry *me,Client *client)
 {
-    switch ( me->GetType() )
+    if(!client->GetActor())
     {
-        case MSGTYPE_STATS:
-        {
-            if(!client->GetActor())
-             return;
-            psCharacter* psChar = client->GetActor()->GetCharacterData();
-
-            psStatsMessage msg(client->GetClientNum(),
-                               psChar->GetMaxHP().Current(),
-                               psChar->GetMaxMana().Current(),
-                               psChar->Inventory().MaxWeight(),
-                               psChar->Inventory().GetCurrentMaxSpace() );
-
-            msg.SendMessage();
-            break;
-        }
-
-        case MSGTYPE_DAMAGE_EVENT:
-        {
-            psDamageEvent evt(me);
-            evt.target->BroadcastTargetStatDR(entityManager->GetClients());
-            break;
-        }
-
-        case MSGTYPE_STATDRUPDATE:
-        {
-            gemActor *actor = client->GetActor();
-            psCharacter *psChar = actor->GetCharacterData();
-
-            psChar->SendStatDRMessage(client->GetClientNum(), actor->GetEID(), DIRTY_VITAL_ALL);
-            break;
-        }
+        return;
     }
+    psCharacter* psChar = client->GetActor()->GetCharacterData();
+
+    psStatsMessage msg(client->GetClientNum(),
+                       psChar->GetMaxHP().Current(),
+                       psChar->GetMaxMana().Current(),
+                       psChar->Inventory().MaxWeight(),
+                       psChar->Inventory().GetCurrentMaxSpace() );
+
+    msg.SendMessage();
+}
+
+void GEMSupervisor::HandleDamageMessage(MsgEntry *me,Client *client)
+{
+    psDamageEvent evt(me);
+    evt.target->BroadcastTargetStatDR(entityManager->GetClients());
+}
+
+void GEMSupervisor::HandleStatDRUpdateMessage(MsgEntry *me,Client *client)
+{
+    gemActor *actor = client->GetActor();
+    psCharacter *psChar = actor->GetCharacterData();
+
+    psChar->SendStatDRMessage(client->GetClientNum(), actor->GetEID(), DIRTY_VITAL_ALL);
 }
 
 EID GEMSupervisor::GetNextID()

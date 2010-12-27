@@ -1654,13 +1654,6 @@ void ExchangeManager::HandleAutoGive(MsgEntry *me,Client *client)
     }
 }
 
-void ExchangeManager::HandleMessage(MsgEntry *me,Client *client)
-{
-    // not used anymore
-}
-
-
-
 Exchange * ExchangeManager::GetExchange(int id)
 {
     // TODO:  Make this a hashmap

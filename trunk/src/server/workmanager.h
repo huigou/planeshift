@@ -158,8 +158,6 @@ public:
     WorkManager(CacheManager* cachemanager, EntityManager* entitymanager);
     virtual ~WorkManager();
 
-    virtual void HandleMessage(MsgEntry *me, Client *client)  { }
-
 //-----------------------------------------------------------------------------
 // Entry points
 //-----------------------------------------------------------------------------

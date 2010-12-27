@@ -60,7 +60,6 @@ public:
     GroupManager(ClientConnectionSet *pCCS, ChatManager *chat);
     virtual ~GroupManager();
 
-    virtual void HandleMessage(MsgEntry *pMsg,Client *client) { }
     void HandleJoinGroup(PendingGroupInvite *invite);
     
     /** Handles the answer to the request of challenge.
