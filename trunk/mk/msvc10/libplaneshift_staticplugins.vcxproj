@@ -1314,6 +1314,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClCompile Include="..\..\mk\msvc\libcelgraph_staticreg.cpp" />
     <ClCompile Include="..\..\mk\msvc\librecast_staticreg.cpp" />
     <ClCompile Include="..\..\src\common\bgloader\loader.cpp" />
+    <ClCompile Include="..\..\src\common\bgloader\loader_objects.cpp" />
     <ClCompile Include="..\..\src\common\bgloader\manipulate.cpp" />
     <ClCompile Include="..\..\src\common\bgloader\parser.cpp" />
     <ClCompile Include="..\..\src\common\bgloader\parser_mesh.cpp" />

@@ -1741,6 +1741,9 @@
 				RelativePath="..\..\src\common\bgloader\loader.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\common\bgloader\loader_objects.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\common\bgloader\manipulate.cpp">
 			</File>
 			<File
