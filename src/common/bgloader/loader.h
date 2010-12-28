@@ -396,7 +396,13 @@ private:
             return csPtr<T>(object);
         }
 
-        void Put(const csRef<T>& obj, const char* name = 0)
+        // workaround for completely braindead gcc 4.0.x (thanks apple!)
+        void Put(const csRef<T>& obj)
+        {
+            Put(obj, 0);
+        }
+
+        void Put(const csRef<T>& obj, const char* name)
         {
             CS::Threading::ScopedWriteLock scopedLock(lock);
             csStringID objectID;
