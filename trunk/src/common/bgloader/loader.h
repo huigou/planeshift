@@ -730,9 +730,15 @@ private:
             return objectCount;
         }
 
+        // workaround for bug in gcc 4.0: fails to parse default function arguments in template classes
+        bool LoadObjects()
+        {
+            return LoadObjects(false);
+        }
+
         // load all dependencies of this type
         // return true if all are ready
-        bool LoadObjects(bool wait = false)
+        bool LoadObjects(bool wait)
         {
             CS::Threading::RecursiveMutexScopedLock lock(busy);
             if(objectCount == objects.GetSize())
@@ -842,7 +848,13 @@ private:
             objects.DeleteAll(obj->GetName());
         }
 
-        const csRef<T>& GetDependency(const csString& name, const csRef<T>& fallbackobj = csRef<T>()) const
+        // workaround for bug in gcc 4.0: fails to parse default function argument in template classes
+        const csRef<T>& GetDependency(const csString& name) const
+        {
+            return GetDependency(name, csRef<T>());
+        }
+
+        const csRef<T>& GetDependency(const csString& name, const csRef<T>& fallbackobj) const
         {
             CS::Threading::RecursiveMutexScopedLock lock(busy);
             ObjectType fallback(fallbackobj);
