@@ -88,7 +88,7 @@ int Location::GetSectorID(iDataConnection *db,const char* name)
 }
 
 
-bool Location::Load(iResultRow& row, iEngine *engine, iDataConnection *db)
+bool Location::Load(iResultRow& row, iEngine* engine, iDataConnection* /*db*/)
 {
     id         = row.GetInt("id");
     name       = row["name"];

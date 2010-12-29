@@ -225,7 +225,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
         }
     }
 
-    void BgLoader::GetPosition(csVector3 & pos, csVector3 & rot, const csVector2& screenPos)
+    void BgLoader::GetPosition(csVector3 & pos, csVector3 & rot, const csVector2& /*screenPos*/)
     {
         if(selectedMesh.IsValid())
         {

@@ -64,7 +64,7 @@ void DebugDrawCS::depthMask (bool state)
   }
 }
 
-void DebugDrawCS::begin (duDebugDrawPrimitives prim, float size)
+void DebugDrawCS::begin (duDebugDrawPrimitives prim, float /*size*/)
 {  
   currentMesh = new csSimpleRenderMesh();
   currentMesh->z_buf_mode = currentZBufMode;
@@ -476,25 +476,12 @@ bool celNavMesh::Update (const csBox3& boundingBox)
 
 bool celNavMesh::Update (const csOBB& boundingBox)
 {
-  csVector3 min;
-  csVector3 max;
-  for (int i = 0; i < 8; i++)
+  csBox3 aabb;
+  aabb.AddBoundingVertex(boundingBox.GetCorner(0));
+  for (int i = 1; i < 8; i++)
   {
-    csVector3 v = boundingBox.GetCorner(i);
-    for (int j = 0; j < 3; j++)
-    {
-      if (v[j] < min[j])
-      {
-        min[j] = v[j];
-      }
-      if (v[j] > max[j])
-      {
-        max[j] = v[j];
-      }
-    }
+    aabb.AddBoundingVertexSmart(boundingBox.GetCorner(i));
   }
-
-  csBox3 aabb(min, max);
 
   return Update(aabb);
 }
@@ -2468,10 +2455,10 @@ bool celNavMeshBuilder::UpdateNavMesh (celNavMesh* navMesh, const csBox3& boundi
   }
 
   // Calculate which tiles intersect with the object
-  unsigned xmin = (min.x - boundingMin[0]) / tcs;
-  unsigned xmax = (max.x - boundingMin[0]) / tcs;
-  unsigned zmin = (min.z - boundingMin[2]) / tcs;
-  unsigned zmax = (max.z - boundingMin[2]) / tcs;
+  int xmin = (min.x - boundingMin[0]) / tcs;
+  int xmax = (max.x - boundingMin[0]) / tcs;
+  int zmin = (min.z - boundingMin[2]) / tcs;
+  int zmax = (max.z - boundingMin[2]) / tcs;
 
   // Adjust boundaries to be within the navmesh
   if (xmin < 0)
@@ -2482,11 +2469,11 @@ bool celNavMeshBuilder::UpdateNavMesh (celNavMesh* navMesh, const csBox3& boundi
   {
     zmin = 0;
   }
-  if (xmax > (unsigned)tw)
+  if (xmax > tw)
   {
     xmax = tw;
   }
-  if (zmax > (unsigned)th)
+  if (zmax > th)
   {
     zmax = th;
   }
@@ -2518,9 +2505,9 @@ bool celNavMeshBuilder::UpdateNavMesh (celNavMesh* navMesh, const csBox3& boundi
   float tileBoundingMax[3];
   tileBoundingMin[1] = boundingMin[1];
   tileBoundingMax[1] = boundingMax[1];
-  for (unsigned y = zmin; y <= zmax; ++y)
+  for (int y = zmin; y <= zmax; ++y)
   {
-    for (unsigned x = xmin; x <= xmax; ++x)
+    for (int x = xmin; x <= xmax; ++x)
     {
       tileBoundingMin[0] = boundingMin[0] + x * tcs;
       tileBoundingMin[2] = boundingMin[2] + y * tcs;

@@ -277,7 +277,7 @@ void psSkillCache::apply(psSkillCache *list)
     modified = true;
 }
 
-void psSkillCache::addItem(int skillId, psSkillCacheItem *item)
+void psSkillCache::addItem(int /*skillId*/, psSkillCacheItem *item)
 {
     skillCache.PushBack(item);
 }

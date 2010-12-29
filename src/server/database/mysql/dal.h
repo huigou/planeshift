@@ -273,7 +273,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(dbmysql)
                 command.Push(fname);
         }
         
-        virtual void SetID(uint32 uid)  {  };
+        virtual void SetID(uint32 /*uid*/)  {  };
         
     public:
         dbInsert(MYSQL* db, const char* Table, unsigned int count, LogCSV* logcsv, const char* file, unsigned int line)

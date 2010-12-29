@@ -59,8 +59,8 @@ CS_PLUGIN_NAMESPACE_BEGIN(dbsqlite3)
         return true;
     }
 
-    bool psMysqlConnection::Initialize(const char *host, unsigned int port, const char *database,
-                                  const char *user, const char *pwd, LogCSV* logcsv)
+    bool psMysqlConnection::Initialize(const char* /*host*/, unsigned int /*port*/, const char* database,
+                                  const char* /*user*/, const char* /*pwd*/, LogCSV* logcsv)
     {
         this->logcsv = logcsv;
         // Create a mydb

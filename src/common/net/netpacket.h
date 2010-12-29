@@ -242,7 +242,7 @@ public:
     /////////////////////////////////
     // Dummy functions required by GenericQueue
     ////////////////////////////////////
-    void SetPending(bool flag)
+    void SetPending(bool /*flag*/)
     {   }
     bool GetPending()
     { return false; }
