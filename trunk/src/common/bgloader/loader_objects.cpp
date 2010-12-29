@@ -301,7 +301,7 @@ void BgLoader::MeshGen::UnloadObject()
   ObjectLoader<MeshFact>::UnloadObjects();
 }
 
-bool BgLoader::Portal::LoadObject(bool wait)
+bool BgLoader::Portal::LoadObject(bool /*wait*/)
 {
     if(mObject.IsValid())
     {

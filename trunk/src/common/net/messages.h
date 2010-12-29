@@ -2132,7 +2132,7 @@ public:
         msg->SetType(MSGTYPE_SPELL_CANCEL);
         msg->clientnum = 0;
     }
-    psSpellCancelMessage( MsgEntry * message ){};
+    psSpellCancelMessage( MsgEntry* /*message*/ ){};
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -2374,7 +2374,7 @@ private:
     }
 
     PSF_DECLARE_MSG_FACTORY();
-    csString ToString(AccessPointers * access_ptrs)
+    csString ToString(AccessPointers* /*access_ptrs*/)
     {
         csString msgtext;
         msgtext.AppendFmt("Effect ID: %d", uid);
@@ -3507,7 +3507,7 @@ public:
         msg->SetType(MSGTYPE_MOTDREQUEST);
         msg->clientnum  = 0;
     }
-    psMOTDRequestMessage( MsgEntry* me ) {}
+    psMOTDRequestMessage( MsgEntry* /*me*/ ) {}
 
 
     PSF_DECLARE_MSG_FACTORY();
@@ -5064,7 +5064,7 @@ public:
      * @param access_ptrs A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(AccessPointers * access_ptrs)
+    virtual csString ToString(AccessPointers* /*access_ptrs*/)
     {
         return csString("not implemented");
     }
@@ -5471,7 +5471,7 @@ public:
      * @param access_ptrs A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(AccessPointers * access_ptrs)
+    virtual csString ToString(AccessPointers* /*access_ptrs*/)
     {
         return csString("not implemented");
     }
@@ -5537,7 +5537,7 @@ public:
      * @param access_ptrs A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(AccessPointers * access_ptrs)
+    virtual csString ToString(AccessPointers* /*access_ptrs*/)
     {
         return csString("not implemented");
     }
@@ -5564,7 +5564,7 @@ public:
     * @param access_ptrs A struct to a number of access pointers.
     * @return Return a human readable string for the message.
     */
-    virtual csString ToString(AccessPointers * access_ptrs)
+    virtual csString ToString(AccessPointers* /*access_ptrs*/)
     {
         return csString("not implemented");
     }

@@ -70,7 +70,7 @@ csString MathVar::Dump() const
         case VARTYPE_STR:
             return GetString();
         case VARTYPE_OBJ:
-            return csString().Format("%p", GetObject());
+            return csString().Format("%p", (void*)GetObject());
         default:
             return csString().Format("%1.4f", value);
     }
@@ -768,7 +768,7 @@ double MathScriptEngine::CustomCompoundFunc(const double * parms)
 
     if(!v || !env)
     {
-        Error5("custom compound function %s called with invalid scriptable variable %p(%f) and env %p", funcName.GetData(), v, parms[2], env);
+        Error5("custom compound function %s called with invalid scriptable variable %p(%f) and env %p", funcName.GetData(), (void*)v, parms[2], (void*)env);
     }
 
     if (funcName == "IsValid")

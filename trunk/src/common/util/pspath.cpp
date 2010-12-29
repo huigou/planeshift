@@ -595,7 +595,7 @@ void psLinearPath::GetInterpolatedPosition (int index, float fraction, csVector3
     pos.z = pp->pos.z + dz[index]* fraction;
 }
 
-void psLinearPath::GetInterpolatedUp (int index, float fraction, csVector3& up)
+void psLinearPath::GetInterpolatedUp (int /*index*/, float /*fraction*/, csVector3& up)
 {
     up = csVector3(0,1,0);
 }

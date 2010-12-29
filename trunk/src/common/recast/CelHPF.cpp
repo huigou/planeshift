@@ -327,7 +327,7 @@ float celHPath::GetDistance () const
 
 csList<csSimpleRenderMesh>* celHPath::GetDebugMeshes ()
 {
-  float halfHeight;
+  float halfHeight = 1.f;
   csHash<csRef<iCelNavMesh>, csPtrKey<iSector> >::GlobalIterator it = navMeshes.GetIterator();
   if (it.HasNext())
   {
@@ -842,25 +842,12 @@ bool celHNavStruct::Update (const csBox3& boundingBox, iSector* sector)
 
 bool celHNavStruct::Update (const csOBB& boundingBox, iSector* sector)
 {
-  csVector3 min;
-  csVector3 max;
-  for (int i = 0; i < 8; i++)
+  csBox3 aabb;
+  aabb.AddBoundingVertex(boundingBox.GetCorner(0));
+  for (int i = 1; i < 8; i++)
   {
-    csVector3 v = boundingBox.GetCorner(i);
-    for (int j = 0; j < 3; j++)
-    {
-      if (v[j] < min[j])
-      {
-        min[j] = v[j];
-      }
-      if (v[j] > max[j])
-      {
-        max[j] = v[j];
-      }
-    }
+    aabb.AddBoundingVertexSmart(boundingBox.GetCorner(i));
   }
-
-  csBox3 aabb(min, max);
 
   return Update(aabb, sector);
 }
@@ -1226,7 +1213,7 @@ bool celHNavStructBuilder::ParseParameters (iDocumentNode* node, iCelNavMeshPara
 }
 
 bool celHNavStructBuilder::ParseMeshes (iDocumentNode* node, csHash<csRef<iSector>, const char*>& sectors, 
-                                        celHNavStruct* navStruct, iVFS* vfs, iCelNavMeshParams* params)
+                                        celHNavStruct* navStruct, iVFS* vfs, iCelNavMeshParams* /*params*/)
 {
   csRef<iEngine> engine = csLoadPluginCheck<iEngine>(objectRegistry, "crystalspace.engine.3d");
   if (!engine)

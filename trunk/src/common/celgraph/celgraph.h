@@ -104,7 +104,7 @@ celPath, csObject, iCelPath, iComponent>
 {
  private:
   iObjectRegistry* object_reg;
-  size_t cur_node;
+  int cur_node;
   csRefArray<iMapNode> nodes;
   
  public:

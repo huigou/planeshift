@@ -45,7 +45,7 @@ static const int DT_MAX_AREAS = 64;
 // Flags for addTile
 enum dtTileFlags
 {
-	DT_TILE_FREE_DATA = 0x01,					// Navmesh owns the tile memory and should free it.
+	DT_TILE_FREE_DATA = 0x01					// Navmesh owns the tile memory and should free it.
 };
 
 // Flags returned by findStraightPath().
@@ -53,14 +53,14 @@ enum dtStraightPathFlags
 {
 	DT_STRAIGHTPATH_START = 0x01,				// The vertex is the start position.
 	DT_STRAIGHTPATH_END = 0x02,					// The vertex is the end position.
-	DT_STRAIGHTPATH_OFFMESH_CONNECTION = 0x04,	// The vertex is start of an off-mesh link.
+	DT_STRAIGHTPATH_OFFMESH_CONNECTION = 0x04	// The vertex is start of an off-mesh link.
 };
 
 // Flags describing polygon properties.
 enum dtPolyTypes
 {
 	DT_POLYTYPE_GROUND = 0,						// Regular ground polygons.
-	DT_POLYTYPE_OFFMESH_CONNECTION = 1,			// Off-mesh connections.
+	DT_POLYTYPE_OFFMESH_CONNECTION = 1			// Off-mesh connections.
 };
 
 struct dtQueryFilter

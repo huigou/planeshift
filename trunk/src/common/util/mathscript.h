@@ -398,7 +398,7 @@ public:
         opcode = MATH_NONE;
     }
 
-    double Evaluate(MathEnvironment *env) const
+    double Evaluate(MathEnvironment* /*env*/) const
     {
         return 0;
     }

@@ -66,7 +66,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
 // string literals for usage as template parameter
 namespace ObjectNames
 {
-    extern const char texture[8];;
+    extern const char texture[8];
     extern const char material[9];
     extern const char trigger[8];
     extern const char sequence[9];
@@ -464,12 +464,12 @@ private:
     class AlwaysLoaded
     {
     public:
-        inline bool InRange(const csBox3& curBBox) const
+        inline bool InRange(const csBox3& /*curBBox*/) const
         {
             return true;
         }
 
-        inline bool OutOfRange(const csBox3& curBBox) const
+        inline bool OutOfRange(const csBox3& /*curBBox*/) const
         {
             return false;
         }
@@ -483,7 +483,7 @@ private:
         {
         }
 
-        Loadable(const Loadable& other) : parent(other.parent),
+        Loadable(const Loadable& other) : csObject(0), parent(other.parent),
                                           loading(false), useCount(0)
         {
             SetName(other.GetName());

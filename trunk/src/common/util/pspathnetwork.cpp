@@ -525,7 +525,7 @@ void psPathNetwork::ListWaypoints(const char * pattern)
 }
 
 
-void psPathNetwork::ListPaths(const char *name)
+void psPathNetwork::ListPaths(const char* /*name*/)
 {
     csPDelArray<psPath>::Iterator iter(paths.GetIterator());
     psPath *path;
