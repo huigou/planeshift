@@ -238,7 +238,7 @@ bool pawsLoginWindow::OnChange(pawsWidget * widget)
     return true;
 }
 
-bool pawsLoginWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsLoginWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     switch( widget->GetID() )
     {
@@ -484,7 +484,7 @@ bool pawsLoginWindow::LoadServerList()
     return true;         
 }
 
-void pawsLoginWindow::OnListAction( pawsListBox* selected, int status ) 
+void pawsLoginWindow::OnListAction(pawsListBox* /*selected*/, int /*status*/) 
 {
     if (listBox->GetSelectedRowNum() == -1)
         return;

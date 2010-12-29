@@ -84,7 +84,7 @@ void pawsQuitInfoBox::MoveToCenter()
     this->MoveTo( (graphics2D->GetWidth()-512)/2 , (graphics2D->GetHeight()-256)/2);
 }
 
-bool pawsQuitInfoBox::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsQuitInfoBox::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     if (widget->GetID() == 100)
     {

@@ -428,7 +428,7 @@ void pawsStorageWindow::Close()
 }
 
 
-bool pawsStorageWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsStorageWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     switch ( widget->GetID() )
     {
@@ -514,7 +514,7 @@ void pawsStorageWindow::DoTrade(int count,const char* itemName,const char* itemI
     Error2("%s", commandData);
 }
 
-void pawsStorageWindow::OnNumberEntered(const char *name,int param,int value)
+void pawsStorageWindow::OnNumberEntered(const char* /*name*/, int /*param*/, int value)
 {
     if (value == -1)
         return;

@@ -186,7 +186,7 @@ void pawsPetStatWindow::Close()
     selectedSkill.Clear();
 }
 
-bool pawsPetStatWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsPetStatWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {       
     switch ( widget->GetID() )
     {

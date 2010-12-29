@@ -394,7 +394,7 @@ public:
      * @param access_ptrs A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(AccessPointers * access_ptrs) { return command; }
+    virtual csString ToString(AccessPointers* /*access_ptrs*/) { return command; }
 };
 
 

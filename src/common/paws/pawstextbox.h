@@ -420,7 +420,7 @@ public:
 
     void SetCursorPosition(size_t pos) { cursorPosition = pos; }
 
-    virtual const bool GetFocusOverridesControls() const { return true; }
+    virtual bool GetFocusOverridesControls() const { return true; }
 
     /**
      * Sets the max length for the text box
@@ -503,7 +503,7 @@ public:
     virtual bool OnMouseDown( int button, int modifiers, int x, int y );
 
     // Normal text boxes should not be focused.
-    virtual bool OnGainFocus( bool notifyParent = true ) {return false;}
+    virtual bool OnGainFocus(bool /*notifyParent*/ = true) {return false;}
     virtual void OnUpdateData(const char *dataname,PAWSData& data);
 
 protected:
@@ -574,7 +574,7 @@ public:
     virtual bool OnKeyDown( utf32_char code, utf32_char key, int modifiers );
     virtual void CalcMouseClick( int x, int y, size_t &cursorLine, size_t &cursorChar);
 
-    virtual const bool GetFocusOverridesControls() const { return true; }
+    virtual bool GetFocusOverridesControls() const { return true; }
 
     void PushLineInfo( size_t lineLength, size_t lineBreak, int lineExtra);
 
@@ -603,7 +603,7 @@ public:
     void GetLineRelative(size_t pos, size_t &start, size_t &end);
     bool EndsWithNewLine(int lineNumber);
     void GetCursorLocation(size_t pos, size_t &destLine, size_t &destCursor);
-    const char GetAt(size_t destLine, size_t destCursor);
+    char GetAt(size_t destLine, size_t destCursor);
 
     /**
      * Sets the max length for the text box
@@ -679,7 +679,7 @@ public:
     pawsFadingTextBox();
     virtual ~pawsFadingTextBox() {};
 
-    bool Setup ( iDocumentNode* node ) { return true;} // Shouldn't be created in XML, only by code
+    bool Setup(iDocumentNode* /*node*/) { return true;} // Shouldn't be created in XML, only by code
 
     void Draw();
 

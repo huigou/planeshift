@@ -156,7 +156,7 @@ void pawsGmGUIWindow::Show()
     QueryServer();
 }
 
-const char* pawsGmGUIWindow::HandleCommand( const char* cmd )
+const char* pawsGmGUIWindow::HandleCommand(const char* /*cmd*/)
 {
     return NULL;
 }
@@ -254,7 +254,7 @@ void pawsGmGUIWindow::HandleMessage ( MsgEntry* me )
     }
 }
 
-bool pawsGmGUIWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsGmGUIWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     const char* errorMessage;
     csString cmd;

@@ -332,7 +332,7 @@ void RainWeatherObject::SetDrops(int drops)
 }
 
 
-void RainWeatherObject::Update(csTicks delta)
+void RainWeatherObject::Update(csTicks /*delta*/)
 {
     SetDrops(parent->downfall_params.value);
 }
@@ -540,7 +540,7 @@ void SnowWeatherObject::SetDrops(int drops)
 
 
 
-void SnowWeatherObject::Update(csTicks delta)
+void SnowWeatherObject::Update(csTicks /*delta*/)
 {
     //    Notify2(LOG_WEATHER,"Updating snow object, Setting drops: %d",parent->downfall_params.value);
     
@@ -618,7 +618,7 @@ bool FogWeatherObject::CreateMesh()
     return true;
 }
 
-void FogWeatherObject::Update(csTicks delta)
+void FogWeatherObject::Update(csTicks /*delta*/)
 {
     //    Notify2(LOG_WEATHER,"Updating fog object, Setting fog: %d",parent->fog_params.value);
     SetColor(parent->r / 255.0f, parent->g / 255.0f, parent->b / 255.0f);

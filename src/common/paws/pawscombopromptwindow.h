@@ -68,7 +68,7 @@ protected:
     ComboWrapper * wrapper;
 };
 
-CREATE_PAWS_FACTORY(pawsComboPromptWindow)
-
+CREATE_PAWS_FACTORY(pawsComboPromptWindow);
 
 #endif
+

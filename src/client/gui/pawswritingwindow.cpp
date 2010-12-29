@@ -102,7 +102,7 @@ void pawsWritingWindow::HandleMessage( MsgEntry* me )
 
 //When we close the window, we should send some sort of save or cancel message in case server
 //is tracking current writing task.  Right now it doesn't.
-bool pawsWritingWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsWritingWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     switch(widget->GetID())
     {
@@ -151,7 +151,7 @@ bool pawsWritingWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsW
     return false;
 }
 
-void pawsWritingWindow::OnStringEntered(const char *name, int param,const char *value)
+void pawsWritingWindow::OnStringEntered(const char* /*name*/, int /*param*/, const char* value)
 {
     const unsigned int MAX_BOOK_FILE_SIZE = 60000;
 

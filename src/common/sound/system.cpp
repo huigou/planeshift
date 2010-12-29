@@ -147,8 +147,8 @@ void SoundSystem::Create3dSource (csRef<iSndSysSource> &sndsource,
  */
 
 void SoundSystem::CreateDirectional3dSource
-                     (csRef<iSndSysSource3D> &sndsource3d,
-                      csRef<iSndSysSource3DDirectionalSimple> &sndsourcedir,
+                     (csRef<iSndSysSource3D>& /*sndsource3d*/,
+                      csRef<iSndSysSource3DDirectionalSimple>& sndsourcedir,
                       csVector3 direction, float rad)
 {
     sndsourcedir->SetDirection(direction);

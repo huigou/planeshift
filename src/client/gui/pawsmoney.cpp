@@ -260,7 +260,7 @@ psMoney pawsMoney::Get()
 }
 
 
-void pawsMoney::OnUpdateData(const char *dataname,PAWSData& value)
+void pawsMoney::OnUpdateData(const char* /*dataname*/, PAWSData& value)
 {
     psMoney money( value.GetStr() );
     Set( money );            

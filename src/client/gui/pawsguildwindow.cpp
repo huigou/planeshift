@@ -635,7 +635,7 @@ void pawsGuildWindow::ExtractLevelInfo(csRef<iDocumentNode> levelNode)
     }
 }
 
-bool pawsGuildWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsGuildWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     guildMemberInfo * member;
 
@@ -1161,7 +1161,7 @@ void pawsGuildWindow::OnNumberEntered(const char *name,int param,int value)
     }
 }
 
-void pawsGuildWindow::OnItemChosen(const char *name,int param,int itemNum, const csString & itemText)
+void pawsGuildWindow::OnItemChosen(const char* /*name*/, int param, int itemNum, const csString& /*itemText*/)
 {
     guildMemberInfo * member;
 

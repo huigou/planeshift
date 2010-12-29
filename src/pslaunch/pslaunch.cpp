@@ -613,7 +613,7 @@ int main(int argc, char* argv[])
               if(fork() == 0)
               {
 #ifdef CS_PLATFORM_MACOSX
-                  char* nargv[argc+2];
+                  char** nargv = new char*[argc+2];
                   char* name = "/usr/bin/open";
                   char* psc = "psclient.app";
                   nargv[0] = name;
@@ -623,9 +623,10 @@ int main(int argc, char* argv[])
                       nargv[i] = argv[i-1];
                   }
                   nargv[argc+1] = (char*)0;
-                  execv("/usr/bin/open", nargv); 
+                  execv("/usr/bin/open", nargv);
+                  delete nargv;
 #else
-                  char* nargv[argc+1];
+                  char** nargv = new char*[argc+1];
                   char* name = const_cast<char*>("./psclient");
                   nargv[0] = name;
                   for(int i=1; i<argc; ++i)
@@ -633,7 +634,8 @@ int main(int argc, char* argv[])
                       nargv[i] = argv[i];
                   }
                   nargv[argc] = (char*)0;
-                  execv("./psclient", nargv);  
+                  execv("./psclient", nargv);
+                  delete nargv;
 #endif
               }                
               else

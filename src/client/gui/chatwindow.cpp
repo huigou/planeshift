@@ -1913,8 +1913,8 @@ void pawsChatWindow::SendChatLine(csString& textToSend)
             {
                 int i = 0;
                 csString buf;
-                while (!replyList[i].IsEmpty() && i <= 4)
-                    i++;
+                while (i < 4 && !replyList[i].IsEmpty())
+                    ++i;
                 if (!i)
                 {
                     textToSend.Insert(0, "/tell ");
@@ -1982,7 +1982,7 @@ bool pawsChatWindow::OnMenuAction(pawsWidget * widget, const pawsMenuAction & ac
     return pawsWidget::OnMenuAction(widget, action);
 }
 
-bool pawsChatWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsChatWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     // We know that the calling widget is a button.
     csString name = widget->GetName();
@@ -2160,8 +2160,8 @@ void pawsChatWindow::AutoReply(void)
     int i = 0;
     csString buf;
 
-    while (!replyList[i].IsEmpty() && i <= 4)
-        i++;
+    while (i < 4 && !replyList[i].IsEmpty())
+        ++i;
 
     if (!i)
     {
@@ -2308,7 +2308,7 @@ csString pawsChatWindow::GetBracket(int type) //according to the type return the
     return "";
 }
 
-void pawsChatWindow::ChatOutput(const char* data, int colour, int type, bool flashEnabled, bool hasCharName, int hotkeyChannel)
+void pawsChatWindow::ChatOutput(const char* data, int colour, int type, bool /*flashEnabled*/, bool /*hasCharName*/, int hotkeyChannel)
 {
     csString s = data;
     if (settings.enableBadWordsFilterIncoming && type != CHAT_SERVER_INFO &&

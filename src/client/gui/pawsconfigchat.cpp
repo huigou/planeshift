@@ -284,7 +284,7 @@ void pawsConfigChat::SetDefault()
     LoadConfig();
 }
 
-bool pawsConfigChat::OnChange(pawsWidget * widget)
+bool pawsConfigChat::OnChange(pawsWidget* /*widget*/)
 {
     return true;
 }

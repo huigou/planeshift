@@ -187,7 +187,7 @@ void pawsCharParents::HandleMotherStatus( int newMod )
 }
 
 
-bool pawsCharParents::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsCharParents::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     csString name = widget->GetName();
 

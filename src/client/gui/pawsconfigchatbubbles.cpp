@@ -591,7 +591,7 @@ void pawsConfigChatBubbles::Show()
     pawsWidget::Show();
 }
 
-bool pawsConfigChatBubbles::OnMouseDown(int button, int modifiers, int x, int y )
+bool pawsConfigChatBubbles::OnMouseDown(int button, int /*modifiers*/, int /*x*/, int /*y*/)
 {
     if (button) {
         if (button == csmbWheelUp)
@@ -603,13 +603,14 @@ bool pawsConfigChatBubbles::OnMouseDown(int button, int modifiers, int x, int y 
     return true;
 }
 
-bool pawsConfigChatBubbles::OnScroll( int direction, pawsScrollBar* widget )
+bool pawsConfigChatBubbles::OnScroll(int /*direction*/, pawsScrollBar* /*widget*/)
 {
     drawFrame();
     return true;
 }
 
-void pawsConfigChatBubbles::OnListAction( pawsListBox* selected, int status )
+void pawsConfigChatBubbles::OnListAction(pawsListBox* /*selected*/, int /*status*/)
 {
     dirty = true;
 }
+

@@ -67,7 +67,7 @@ bool pawsQuestRewardWindow::PostSetup()
 }
 
 
-const char* pawsQuestRewardWindow::HandleCommand( const char* cmd )
+const char* pawsQuestRewardWindow::HandleCommand(const char* /*cmd*/)
 {
     return NULL;
 }
@@ -84,7 +84,7 @@ void pawsQuestRewardWindow::HandleMessage ( MsgEntry* me )
 }
 
 
-bool pawsQuestRewardWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsQuestRewardWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     switch( widget->GetID() )
     {

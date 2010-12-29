@@ -86,10 +86,8 @@ protected:
 };
 
 
-CREATE_PAWS_FACTORY(pawsConfigSound)
+CREATE_PAWS_FACTORY(pawsConfigSound);
 
 
 #endif
-
-
 

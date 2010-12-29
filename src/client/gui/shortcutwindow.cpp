@@ -446,8 +446,8 @@ csString pawsShortcutWindow::GetTriggerText(int shortcutNum)
 }
 
 
-bool pawsShortcutWindow::OnScroll( int direction, pawsScrollBar* widget )
-{    
+bool pawsShortcutWindow::OnScroll(int /*direction*/, pawsScrollBar* /*widget*/)
+{
     UpdateMatrix();
     return true;
 }

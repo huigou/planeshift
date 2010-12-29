@@ -56,7 +56,7 @@ public:
 
     int GetBorderStyle();
 
-    virtual const bool GetFocusOverridesControls() const { return true; }
+    virtual bool GetFocusOverridesControls() const { return true; }
 
 protected:
     

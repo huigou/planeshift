@@ -80,7 +80,7 @@ void pawsItemDescriptionWindow::HandleMessage( MsgEntry* me )
 
 }
 
-bool pawsItemDescriptionWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsItemDescriptionWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     csString widgetName(widget->GetName());
     if ( widgetName == "StudyButton" )

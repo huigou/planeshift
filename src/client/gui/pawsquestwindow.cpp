@@ -166,7 +166,7 @@ bool pawsQuestListWindow::PostSetup()
 // Command and Message Handling
 //////////////////////////////////////////////////////////////////////
 
-const char* pawsQuestListWindow::HandleCommand( const char* cmd )
+const char* pawsQuestListWindow::HandleCommand(const char* /*cmd*/)
 {
     return NULL;
 }
@@ -300,7 +300,7 @@ void pawsQuestListWindow::HandleMessage ( MsgEntry* me )
     }
 }
 
-bool pawsQuestListWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsQuestListWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     // We know that the calling widget is a button.
     int button = widget->GetID();
@@ -449,7 +449,7 @@ bool pawsQuestListWindow::OnButtonPressed( int mouseButton, int keyModifier, paw
     return true;
 }
 
-void pawsQuestListWindow::OnStringEntered(const char *name,int param,const char *value)
+void pawsQuestListWindow::OnStringEntered(const char* /*name*/, int /*param*/, const char* value)
 {
     if (!value)
         return; // Cancel was clicked
@@ -460,7 +460,7 @@ void pawsQuestListWindow::OnStringEntered(const char *name,int param,const char 
     RequestGMEventData(questID); //refreshes the informations (just disables the evaluate button in practice for now)
 }
 
-void pawsQuestListWindow::OnNumberEntered(const char *name,int param, int value)
+void pawsQuestListWindow::OnNumberEntered(const char* /*name*/, int /*param*/, int value)
 {
     if (value == -1) //not confirmed action
         return;
@@ -503,7 +503,7 @@ inline void pawsQuestListWindow::EvaluateGMEvent(int Id, uint8_t Vote, csString 
     msgqueue->SendMessage(info.msg);
 }
 
-void pawsQuestListWindow::OnListAction( pawsListBox* selected, int status )
+void pawsQuestListWindow::OnListAction(pawsListBox* selected, int /*status*/)
 {
     int previousQuestID = questID;
     size_t numOfQuests;

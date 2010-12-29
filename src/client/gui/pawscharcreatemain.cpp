@@ -285,7 +285,7 @@ void pawsCreationMain::SetHairStyle( int newStyle )
         hairStyleLabel->SetText(PawsManager::GetSingleton().Translate("Hair Style"));
 }
 
-void pawsCreationMain::ChangeHairStyle( int newChoice, int oldChoice )
+void pawsCreationMain::ChangeHairStyle(int newChoice, int /*oldChoice*/)
 {
 //    RemoveHairStyle( oldChoice );
     SetHairStyle( newChoice );
@@ -481,7 +481,7 @@ void pawsCreationMain::SelectGender(int newGender)
     UpdateRace(race);
 }
 
-bool pawsCreationMain::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsCreationMain::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
      ////////////////////////////////////////////////////////////////////
      // Previous face.

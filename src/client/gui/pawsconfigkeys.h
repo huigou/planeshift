@@ -111,7 +111,7 @@ protected:
 
 
 
-CREATE_PAWS_FACTORY(pawsConfigKeys)
+CREATE_PAWS_FACTORY(pawsConfigKeys);
 
 
 
@@ -148,7 +148,7 @@ public:
     /// Sets widget that should be notified the result
     void SetNotify( pawsFingeringReceiver* widget );
         
-    virtual const bool GetFocusOverridesControls() const { return true; }
+    virtual bool GetFocusOverridesControls() const { return true; }
 
 private:
 
@@ -167,7 +167,7 @@ private:
 };
 
 
-CREATE_PAWS_FACTORY(pawsFingeringWindow)
-#endif
+CREATE_PAWS_FACTORY(pawsFingeringWindow);
 
+#endif
 

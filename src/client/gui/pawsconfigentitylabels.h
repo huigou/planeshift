@@ -72,9 +72,8 @@ protected:
 };
 
 
-CREATE_PAWS_FACTORY(pawsConfigEntityLabels)
+CREATE_PAWS_FACTORY(pawsConfigEntityLabels);
 
 
 #endif 
-
 

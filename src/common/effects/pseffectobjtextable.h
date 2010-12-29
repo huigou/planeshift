@@ -26,7 +26,7 @@ enum psEffectTextAlignment
 {
     ETA_LEFT,
     ETA_CENTER,
-    ETA_RIGHT,
+    ETA_RIGHT
 };
 
 struct psEffectTextRow

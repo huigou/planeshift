@@ -116,7 +116,7 @@ void psNetConnection::DisConnect()
    shouldRun = false;
    if (thread){
       thread->Wait();
-      Debug2(LOG_NET,0, "psNetConnection::DisConnect Thread %p supposedly terminated..",this);
+      Debug2(LOG_NET,0, "psNetConnection::DisConnect Thread %p supposedly terminated..", (void*)this);
       thread = NULL;
     }
     if (server)
@@ -151,6 +151,8 @@ psNetConnection::Connection *psNetConnection::GetConnByNum (uint32_t clientnum)
 #ifdef DEBUG
     if (clientnum!=0)
     Error1 ("clientnum != 0        !?!");
+#else
+    (void)clientnum; // supress unused var warning
 #endif
     return server;
 }
@@ -228,7 +230,7 @@ void psNetConnection::Run ()
         }
     }
 
-    Debug2(LOG_NET, 0, "Run Stopped this=%p\n",this);
+    Debug2(LOG_NET, 0, "Run Stopped this=%p\n", (void*)this);
 }
 
 void psNetConnection::CheckLinkDead (csTicks currenttime)

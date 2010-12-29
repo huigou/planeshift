@@ -79,12 +79,12 @@ void pawsSpellCancelWindow::Start(csTicks castingTime)
 }
 
 
-bool pawsSpellCancelWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsSpellCancelWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     if (!strcmp(widget->GetName(),"Cancel"))
     {
-            Cancel();
-            return true;
+        Cancel();
+        return true;
     }
     return false;
 }

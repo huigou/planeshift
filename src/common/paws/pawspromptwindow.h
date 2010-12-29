@@ -78,7 +78,7 @@ protected:
     int spacing;
 };
 
-CREATE_PAWS_FACTORY(pawsPromptWindow)
-
+CREATE_PAWS_FACTORY(pawsPromptWindow);
 
 #endif
+

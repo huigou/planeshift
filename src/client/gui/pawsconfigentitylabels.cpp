@@ -107,9 +107,9 @@ bool pawsConfigEntityLabels::CreateTree()
     return true;
 }
 
-bool pawsConfigEntityLabels::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsConfigEntityLabels::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget )
 {
-    int     widID = widget->GetID();      //widget identificator
+    int widID = widget->GetID(); //widget identificator
     
     if ((widID >= ENTITY_TYPES_AMOUNT)&&(widID <= 100))
     {
@@ -121,7 +121,7 @@ bool pawsConfigEntityLabels::OnButtonPressed( int mouseButton, int keyModifier, 
             colorPicker = colorPicker->Create("Choose color",labelColors[widID],0,0xff,this,"colorPick",widID);
     return true;
 }
-void pawsConfigEntityLabels::OnColorEntered(const char *name,int param,int color)
+void pawsConfigEntityLabels::OnColorEntered(const char* /*name*/, int param, int color)
 {
     if (color != labelColors[param])    //param store button ID
     {

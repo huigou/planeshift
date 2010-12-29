@@ -90,7 +90,7 @@ void pawsPetitionWindow::Show()
         QueryServer();
 }
 
-const char* pawsPetitionWindow::HandleCommand( const char* cmd )
+const char* pawsPetitionWindow::HandleCommand(const char* /*cmd*/)
 {
     return NULL;
 }
@@ -175,7 +175,7 @@ void pawsPetitionWindow::Close()
     pawsControlledWindow::Hide();
 }
 
-bool pawsPetitionWindow::OnButtonReleased(int mouseButton, int keyModifier, pawsWidget* widget)
+bool pawsPetitionWindow::OnButtonReleased(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     // We know that the calling widget is a button.
     int button = widget->GetID();
@@ -367,7 +367,7 @@ void pawsPetitionWindow::AddPetitions(csArray<psPetitionInfo> &petitions)
     }
 }
 
-void pawsPetitionWindow::OnListAction( pawsListBox* selected, int status )
+void pawsPetitionWindow::OnListAction(pawsListBox* /*selected*/, int status)
 {
     if (status == LISTBOX_HIGHLIGHTED)
     {
@@ -388,7 +388,7 @@ void pawsPetitionWindow::OnListAction( pawsListBox* selected, int status )
     }
 }
 
-void pawsPetitionWindow::OnStringEntered(const char *name,int param,const char *value)
+void pawsPetitionWindow::OnStringEntered(const char* /*name*/, int /*param*/, const char* value)
 {
     if (!value)
         return; // Cancel was clicked

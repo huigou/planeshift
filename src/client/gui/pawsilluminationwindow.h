@@ -275,7 +275,7 @@ public:
     void DrawColorWidgetText(const char *text, int x, int y, int color);
     bool IsMouseDown() { return mouseDown; }
 
-    virtual const bool GetFocusOverridesControls() const { return true; }
+    virtual bool GetFocusOverridesControls() const { return true; }
 };
 
 CREATE_PAWS_FACTORY( pawsSketchWindow );

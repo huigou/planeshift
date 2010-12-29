@@ -262,7 +262,7 @@ bool pawsGMSpawnWindow::CheckLoadStatus()
     return true;
 }
 
-bool pawsGMSpawnWindow::OnButtonPressed(int button,int keyModifier,pawsWidget* widget)
+bool pawsGMSpawnWindow::OnButtonPressed(int /*button*/, int /*keyModifier*/, pawsWidget* widget)
 {
     if(widget == cbLockable)
     {

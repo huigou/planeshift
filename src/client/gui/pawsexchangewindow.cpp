@@ -333,7 +333,7 @@ void pawsExchangeWindow::Close()
     Hide();
 }   
 
-bool pawsExchangeWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsExchangeWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     csString widgetName(widget->GetName());
     

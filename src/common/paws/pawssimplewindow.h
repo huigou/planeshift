@@ -31,6 +31,7 @@ public:
     pawsSimpleWindow();
 };
 
-CREATE_PAWS_FACTORY(pawsSimpleWindow)
+CREATE_PAWS_FACTORY(pawsSimpleWindow);
 
 #endif // PAWS_SIMPLE_WINDOW_H
+

@@ -148,7 +148,7 @@ bool pawsInfoWindow::OnScroll( int direction, pawsScrollBar* widget )
     return true;
 }
 
-bool pawsInfoWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* reporter )
+bool pawsInfoWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* reporter)
 {
     csString cmd;
 

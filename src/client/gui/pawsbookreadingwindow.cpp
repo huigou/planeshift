@@ -128,7 +128,7 @@ void pawsBookReadingWindow::HandleMessage( MsgEntry* me )
     }
 }
 
-bool pawsBookReadingWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsBookReadingWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     if(widget->GetID() == EDIT){
         // attempt to write on this book

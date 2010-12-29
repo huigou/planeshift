@@ -85,7 +85,7 @@ csString normalize_seconds(double seconds)
 	return time;
 }
 
-int ProgressCallback(void *clientp, double finalSize, double dlnow, double ultotal, double ulnow)
+int ProgressCallback(void *clientp, double finalSize, double dlnow, double /*ultotal*/, double /*ulnow*/)
 {
     progressData* data = (progressData*) clientp;
     double progress = dlnow / finalSize;
@@ -177,7 +177,7 @@ Downloader::~Downloader()
     curl_easy_cleanup(curl);
 }
 
-void Downloader::SetProxy(const char *host, int port)
+void Downloader::SetProxy(const char* /*host*/, int /*port*/)
 {
 }
 

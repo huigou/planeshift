@@ -1024,6 +1024,8 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
 
     THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive)
     {
+        (void)sync; // prevent unused variable warning
+
         // Make sure shaders are parsed at this point.
         ParseShaders();
 

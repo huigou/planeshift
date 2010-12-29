@@ -287,7 +287,7 @@ csString psUtilityCommands::SaveCamera()
 }
 
 
-void psUtilityCommands::HandleQuit( bool answeredYes, void *thisPtr )
+void psUtilityCommands::HandleQuit( bool answeredYes, void* /*thisPtr*/ )
 {
     if (answeredYes)
         psengine->QuitClient();

@@ -123,7 +123,7 @@ bool pawsCharBirth::PostSetup()
     return true;
 }
 
-bool pawsCharBirth::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsCharBirth::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
         /// Check to see if it is one of the sibling buttons
     if ( strncmp( widget->GetName(), "sibling", 7 ) == 0 )

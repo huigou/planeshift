@@ -392,7 +392,7 @@ void psCharAppearance::HairColor(csVector3& color)
 void psCharAppearance::EyeColor(csVector3& color)
 {
     eyeShader = color;
-    iShaderVariableContext* context_eyes;
+    iShaderVariableContext* context_eyes = 0;
 
     if(state)
     {
@@ -1058,7 +1058,7 @@ void psCharAppearance::ProcessAttach(csRef<iMeshWrapper> meshWrap, const char* s
     usedSlots.PushSmart(socket);
 }
 
-bool psCharAppearance::ProcessMaterial(csRef<iMaterialWrapper> material, const char* materialName, const char* partName)
+bool psCharAppearance::ProcessMaterial(csRef<iMaterialWrapper> material, const char* /*materialName*/, const char* partName)
 {
     bool success = false;
     if (state.IsValid())

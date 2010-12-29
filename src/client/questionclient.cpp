@@ -115,7 +115,7 @@ public:
     {
     }
     virtual ~psSecretGuildNotify() {};
-    virtual void SetDecision(bool dec)
+    virtual void SetDecision(bool /*dec*/)
     {
         // always decline no matter what
         qc->SendResponseToQuestion(questionID, "no");
@@ -128,7 +128,7 @@ public:
 *                   psQuestionClient
 *******************************************************************/
 
-psQuestionClient::psQuestionClient(MsgHandler* mh,iObjectRegistry* obj)
+psQuestionClient::psQuestionClient(MsgHandler* mh, iObjectRegistry* /*obj*/)
 {
     messageHandler = mh;
     

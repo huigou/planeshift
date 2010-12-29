@@ -231,7 +231,7 @@ void pawsConfigSound::SetDefault()
     LoadConfig();
 }
 
-bool pawsConfigSound::OnScroll(int scrollDir,pawsScrollBar* wdg)
+bool pawsConfigSound::OnScroll(int /*scrollDir*/, pawsScrollBar* wdg)
 {
     dirty = true;
     if(wdg == generalVol && loaded)
@@ -285,7 +285,7 @@ bool pawsConfigSound::OnScroll(int scrollDir,pawsScrollBar* wdg)
     return true;
 }
 
-bool pawsConfigSound::OnButtonPressed(int button, int mod, pawsWidget* wdg)
+bool pawsConfigSound::OnButtonPressed(int /*button*/, int /*mod*/, pawsWidget* wdg)
 {
     dirty = true;
 
@@ -334,7 +334,7 @@ bool pawsConfigSound::OnButtonPressed(int button, int mod, pawsWidget* wdg)
     return true;
 }
 
-void pawsConfigSound::OnListAction(pawsListBox* selected, int status)
+void pawsConfigSound::OnListAction(pawsListBox* /*selected*/, int /*status*/)
 {
     pawsComboBox* soundlocation = (pawsComboBox*)FindWidget("soundLocation");
     csString _selected = soundlocation->GetSelectedRowString();

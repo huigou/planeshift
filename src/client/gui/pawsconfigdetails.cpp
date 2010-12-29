@@ -113,7 +113,7 @@ bool pawsConfigDetails::OnChange(pawsWidget* widget)
     return true;
 }
 
-bool pawsConfigDetails::OnScroll( int scrollDirection, pawsScrollBar* widget )
+bool pawsConfigDetails::OnScroll(int /*scrollDirection*/, pawsScrollBar* widget)
 {
     csString valueName, scrollName;
     pawsEditTextBox * value;

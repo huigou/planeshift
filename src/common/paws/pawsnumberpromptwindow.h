@@ -88,6 +88,7 @@ protected:
     int param;
 };
 
-CREATE_PAWS_FACTORY(pawsNumberPromptWindow)
+CREATE_PAWS_FACTORY(pawsNumberPromptWindow);
 
 #endif
+

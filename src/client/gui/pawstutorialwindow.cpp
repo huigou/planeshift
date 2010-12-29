@@ -123,7 +123,7 @@ void pawsTutorialNotifyWindow::HandleMessage ( MsgEntry* me )
     }
 }
 
-bool pawsTutorialNotifyWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsTutorialNotifyWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* /*widget*/)
 {
     // This window only has the one button on it, so any call to this
     // is from clicking that button and we know what to do.
@@ -131,14 +131,6 @@ bool pawsTutorialNotifyWindow::OnButtonPressed( int mouseButton, int keyModifier
     this->Hide();
     return true;
 }
-
-
-
-
-
-
-
-
 
 pawsTutorialWindow::pawsTutorialWindow()
 {

@@ -70,7 +70,7 @@ const char *psGroupCommands::HandleCommand(const char *cmd)
     return NULL;
 }
 
-void psGroupCommands::HandleMessage(MsgEntry *msg)
+void psGroupCommands::HandleMessage(MsgEntry* /*msg*/)
 {
 
 }

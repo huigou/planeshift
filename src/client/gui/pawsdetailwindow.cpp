@@ -264,7 +264,7 @@ void pawsDetailWindow::HandleMessage( MsgEntry* me )
     }
 }
 
-bool pawsDetailWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsDetailWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     return SelectTab(widget);
 }

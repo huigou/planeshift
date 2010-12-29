@@ -110,7 +110,7 @@ void pawsGroupWindow::HandleMessage( MsgEntry* me )
     }
 }
 
-void pawsGroupWindow::HandleGroup( csString& group )
+void pawsGroupWindow::HandleGroup(csString& /*group*/)
 {
     Show();
 }
@@ -226,7 +226,7 @@ void pawsGroupWindow::Draw()
     pawsWidget::Draw();
 }
 
-void pawsGroupWindow::OnStringEntered(const char *name,int param,const char *value)
+void pawsGroupWindow::OnStringEntered(const char* name, int /*param*/, const char* value)
 {
     if (value && strlen(value))
     {

@@ -204,27 +204,27 @@ private:
             : scfImplementationType(this)
         {
             movableDead = false;
-			movableChanged = false;
-			movable = 0;
+            movableChanged = false;
+            movable = 0;
         }
 
         virtual ~psEffectMovableListener() {}
 
         /** Implementation of the iMovableListener function, allows us to detect the movements of the movable
          */
-        virtual void MovableChanged(iMovable * movable)
+        virtual void MovableChanged(iMovable* movable)
         {
-			movableChanged = true;
-			this->movable = movable;
+            movableChanged = true;
+            this->movable = movable;
         }
 
         /** Implementation of the iMovableListener function, allows us to detect if the movable was destroyed
          */
-        virtual void MovableDestroyed(iMovable * movable)
+        virtual void MovableDestroyed(iMovable* /*movable*/)
         {
             movableDead = true;
-			this->movable = 0;
-			movableChanged = false;
+            this->movable = 0;
+            movableChanged = false;
         }
         
         /** Checks to see if the movable has disappeared

@@ -53,7 +53,7 @@ public:
     GUIHandler();
     void HandleMessage( MsgEntry* me );    
         
-    const char* HandleCommand( const char* cmd ) { return NULL; }
+    const char* HandleCommand( const char* /*cmd*/ ) { return NULL; }
     
     psInventoryCache* GetInventoryCache(void) { return inventoryCache; }
 

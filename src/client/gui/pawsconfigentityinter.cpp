@@ -104,7 +104,7 @@ void pawsConfigEntityInteraction::SetDefault()
     dirty = true;
 }
 
-void pawsConfigEntityInteraction::OnListAction( pawsListBox* selected, int status )
+void pawsConfigEntityInteraction::OnListAction(pawsListBox* /*selected*/, int /*status*/)
 {
     dirty = true;
 }

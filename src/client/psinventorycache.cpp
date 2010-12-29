@@ -75,7 +75,7 @@ void psInventoryCache::EmptyInventory(void)
     PawsManager::GetSingleton().Publish("sigClearInventorySlots");
 }
 
-bool psInventoryCache::EmptyInventoryItem(int slot, int container)
+bool psInventoryCache::EmptyInventoryItem(int slot, int /*container*/)
 {
     CachedItemDescription *id = itemhash.Get(slot,NULL);
     delete id;
@@ -85,7 +85,7 @@ bool psInventoryCache::EmptyInventoryItem(int slot, int container)
 }
 
 bool psInventoryCache::SetInventoryItem(int slot,
-                                        int container,
+                                        int /*container*/,
                                         csString name,
                                         csString meshName,
                                         csString materialName,

@@ -99,7 +99,7 @@ void pawsCharDescription::HandleMessage( MsgEntry* me )
     }
 }
 
-bool pawsCharDescription::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsCharDescription::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     switch ( widget->GetID() )
     {

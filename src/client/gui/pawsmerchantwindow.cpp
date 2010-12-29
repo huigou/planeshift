@@ -431,7 +431,7 @@ void pawsMerchantWindow::Close()
 }
 
 
-bool pawsMerchantWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsMerchantWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     switch ( widget->GetID() )
     {
@@ -517,7 +517,7 @@ void pawsMerchantWindow::DoTrade(int count,const char* itemName,const char* item
     Error2("%s", commandData);
 }
 
-void pawsMerchantWindow::OnNumberEntered(const char *name,int param,int value)
+void pawsMerchantWindow::OnNumberEntered(const char* /*name*/, int /*param*/, int value)
 {
     if (value == -1)
         return;

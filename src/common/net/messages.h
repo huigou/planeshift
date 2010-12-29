@@ -388,14 +388,14 @@ csString GetDecodedMessage(MsgEntry* me, csStringSet* msgstrings, csStringHashRe
 void psfRegisterMsgFactoryFunction(psfMsgFactoryFunc factoryfunc, int msgtype, const char* msgtypename);
 psMessageCracker* psfCreateMsg(int msgtype,
                                MsgEntry* me,
-                               psMessageCracker::AccessPointers * access_ptrs);
+                               psMessageCracker::AccessPointers* access_ptrs);
 csString psfMsgTypeName(int msgType);
-int psfMsgType(const char * msgTypeName);
+int psfMsgType(const char* msgTypeName);
 
 #define PSF_DECLARE_MSG_FACTORY()                                 \
     virtual csString GetMessageTypeName() const;                  \
-    static psMessageCracker* CreateMessage(MsgEntry * me,         \
-               psMessageCracker::AccessPointers * access_ptrs)
+    static psMessageCracker* CreateMessage(MsgEntry* me,          \
+               psMessageCracker::AccessPointers* access_ptrs)
 
 #define PSF_IMPLEMENT_MSG_FACTORY_REGISTER(Class,MsgType)         \
     class Class##_StaticInit                                      \
@@ -406,12 +406,12 @@ int psfMsgType(const char * msgTypeName);
             psfRegisterMsgFactoryFunction (Class::CreateMessage,  \
                                            MsgType,#MsgType);     \
         }                                                         \
-    } Class##_static_init__;
+    } Class##_static_init__
 
 
 #define PSF_IMPLEMENT_MSG_FACTORY_CREATE(Class)                   \
-    psMessageCracker* Class::CreateMessage(MsgEntry * me,         \
-           psMessageCracker::AccessPointers * access_ptrs)        \
+    psMessageCracker* Class::CreateMessage(MsgEntry* me,          \
+           psMessageCracker::AccessPointers* /*access_ptrs*/)     \
     {                                                             \
         return (psMessageCracker*)new Class(me);                  \
     }
@@ -423,13 +423,13 @@ int psfMsgType(const char * msgTypeName);
     }
 
 #define PSF_IMPLEMENT_MSG_FACTORY(Class,MsgType)                  \
-    PSF_IMPLEMENT_MSG_FACTORY_REGISTER(Class,MsgType)             \
     PSF_IMPLEMENT_MSG_FACTORY_TYPENAME(Class,MsgType)             \
-    PSF_IMPLEMENT_MSG_FACTORY_CREATE(Class)
+    PSF_IMPLEMENT_MSG_FACTORY_CREATE(Class)                       \
+    PSF_IMPLEMENT_MSG_FACTORY_REGISTER(Class,MsgType)
 
 #define PSF_IMPLEMENT_MSG_FACTORY_CREATE2(Class)                  \
-    psMessageCracker* Class::CreateMessage(MsgEntry * me,         \
-           psMessageCracker::AccessPointers * a_p)                \
+    psMessageCracker* Class::CreateMessage(MsgEntry* me,          \
+           psMessageCracker::AccessPointers* a_p)                 \
     {                                                             \
         return (psMessageCracker*)new Class(me,                   \
                                             a_p->msgstrings,      \
@@ -437,13 +437,13 @@ int psfMsgType(const char * msgTypeName);
     }
 
 #define PSF_IMPLEMENT_MSG_FACTORY2(Class,MsgType)                 \
-    PSF_IMPLEMENT_MSG_FACTORY_REGISTER(Class,MsgType)             \
     PSF_IMPLEMENT_MSG_FACTORY_TYPENAME(Class,MsgType)             \
-    PSF_IMPLEMENT_MSG_FACTORY_CREATE2(Class)
+    PSF_IMPLEMENT_MSG_FACTORY_CREATE2(Class)                      \
+    PSF_IMPLEMENT_MSG_FACTORY_REGISTER(Class,MsgType)
 
 #define PSF_IMPLEMENT_MSG_FACTORY_CREATE3(Class)                  \
-    psMessageCracker* Class::CreateMessage(MsgEntry * me,         \
-           psMessageCracker::AccessPointers * a_p)                \
+    psMessageCracker* Class::CreateMessage(MsgEntry* me,          \
+           psMessageCracker::AccessPointers* a_p)                 \
     {                                                             \
         return (psMessageCracker*)new Class(me,                   \
                                             a_p->msgstrings,      \
@@ -452,22 +452,22 @@ int psfMsgType(const char * msgTypeName);
     }
 
 #define PSF_IMPLEMENT_MSG_FACTORY3(Class,MsgType)                 \
-    PSF_IMPLEMENT_MSG_FACTORY_REGISTER(Class,MsgType)             \
     PSF_IMPLEMENT_MSG_FACTORY_TYPENAME(Class,MsgType)             \
-    PSF_IMPLEMENT_MSG_FACTORY_CREATE3(Class)
+    PSF_IMPLEMENT_MSG_FACTORY_CREATE3(Class)                      \
+    PSF_IMPLEMENT_MSG_FACTORY_REGISTER(Class,MsgType)
 
 #define PSF_IMPLEMENT_MSG_FACTORY_CREATE4(Class)                  \
-    psMessageCracker* Class::CreateMessage(MsgEntry * me,         \
-           psMessageCracker::AccessPointers * a_p)                \
+    psMessageCracker* Class::CreateMessage(MsgEntry* me,          \
+           psMessageCracker::AccessPointers* a_p)                 \
     {                                                             \
         return (psMessageCracker*)new Class(me,                   \
                                             a_p->msgstringshash); \
     }
 
 #define PSF_IMPLEMENT_MSG_FACTORY4(Class,MsgType)                 \
-    PSF_IMPLEMENT_MSG_FACTORY_REGISTER(Class,MsgType)             \
     PSF_IMPLEMENT_MSG_FACTORY_TYPENAME(Class,MsgType)             \
-    PSF_IMPLEMENT_MSG_FACTORY_CREATE4(Class)
+    PSF_IMPLEMENT_MSG_FACTORY_CREATE4(Class)                      \
+    PSF_IMPLEMENT_MSG_FACTORY_REGISTER(Class,MsgType)
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------

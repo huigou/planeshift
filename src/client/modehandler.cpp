@@ -87,7 +87,7 @@ psPortalCallback::~psPortalCallback()
 {
 }
 
-bool psPortalCallback::Traverse(iPortal* portal,iBase* base)
+bool psPortalCallback::Traverse(iPortal* portal, iBase* /*base*/)
 {
     // Refresh the weather
     psengine->GetModeHandler()->CreatePortalWeather(portal, 0);
@@ -2063,7 +2063,7 @@ void ModeHandler::OtherNearlyDead(GEMClientActor *tarObject)
     msghandler->Publish(ev.msg);
 }
 
-void ModeHandler::Other(  int type, float damage, GEMClientActor* atObject, GEMClientActor* tarObject, csString& location )
+void ModeHandler::Other(int type, float damage, GEMClientActor* atObject, GEMClientActor* tarObject, csString& /*location*/)
 {
     switch (type)
     {

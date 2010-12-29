@@ -69,6 +69,7 @@ namespace psMiniGame
         DISABLED_TILE      = 15    ///< Disable game tile.
     };
 
-};
+}
 
 #endif
+

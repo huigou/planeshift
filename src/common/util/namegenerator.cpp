@@ -37,7 +37,7 @@ PhonicEntry::PhonicEntry()
     phonic[0]=0x00; 
     begin_probability=end_probability=middle_probability=0.0f;
     flags=0x00; 
-};
+}
 
 PhonicEntry::PhonicEntry(char *ph,float b_p,float e_p,float m_p,unsigned int fl)
 {

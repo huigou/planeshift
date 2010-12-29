@@ -148,12 +148,14 @@ bool FactionSet::CheckFaction(Faction * faction, int value)
     }
 }
 
-int FactionSet::GetFaction(Faction *faction)
+int FactionSet::GetFaction(Faction* faction)
 {
-    int standing;
+    int standing = 0;
     float weight;
     bool worked = GetFactionStanding(faction->id,standing,weight);
     CS_ASSERT(worked);
+    (void)worked; // supress unused var warning
+
     return standing;
 }
 

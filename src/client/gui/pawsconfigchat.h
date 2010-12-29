@@ -105,9 +105,8 @@ protected:
 };
 
 
-CREATE_PAWS_FACTORY(pawsConfigChat)
+CREATE_PAWS_FACTORY(pawsConfigChat);
 
 
 #endif 
-
 
