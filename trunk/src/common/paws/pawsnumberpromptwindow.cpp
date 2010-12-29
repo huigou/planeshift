@@ -103,7 +103,7 @@ void pawsNumberPromptWindow::LayoutWindow()
     inputWidget->SetRelativeFramePos(inputWidget->DefaultFrame().xmin, inputWidget->DefaultFrame().ymin-3);
 }
 
-bool pawsNumberPromptWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsNumberPromptWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     if (action == NULL)
         return false;
@@ -154,7 +154,7 @@ void pawsNumberPromptWindow::SetBoundaries(int minNumber, int maxNumber)
     }
 }
 
-bool pawsNumberPromptWindow::OnScroll( int scrollDirection, pawsScrollBar* widget )
+bool pawsNumberPromptWindow::OnScroll(int /*scrollDirection*/, pawsScrollBar* /*widget*/)
 {
     lastValidText.Format("%d",(int)scrollBar->GetCurrentValue());
     editBox->SetText(lastValidText);

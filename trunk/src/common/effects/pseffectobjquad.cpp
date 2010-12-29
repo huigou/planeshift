@@ -256,12 +256,14 @@ bool psEffectObjQuad::UseUniqueMeshFact() const
   return false;
 }
 
-const csVector3 * psEffectObjQuad::MeshAnimControl::UpdateVertices(csTicks current, const csVector3 * verts, int num_verts, uint32 version_id)
+const csVector3* psEffectObjQuad::MeshAnimControl::UpdateVertices(csTicks /*current*/, const csVector3* /*verts*/,
+                                                                  int /*num_verts*/, uint32 /*version_id*/)
 {
     return parent->vert;
 }
 
-const csVector2 * psEffectObjQuad::MeshAnimControl::UpdateTexels(csTicks current, const csVector2 * texels, int num_texels, uint32 version_id)
+const csVector2* psEffectObjQuad::MeshAnimControl::UpdateTexels(csTicks /*current*/, const csVector2* /*texels*/,
+                                                                int /*num_texels*/, uint32 /*version_id*/)
 {
     return parent->texel;
 }

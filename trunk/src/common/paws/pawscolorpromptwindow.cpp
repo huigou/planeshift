@@ -103,7 +103,7 @@ bool pawsColorPromptWindow::PostSetup()
     return true;
 }
 
-bool pawsColorPromptWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsColorPromptWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     if (action == NULL)
         return false;
@@ -133,7 +133,7 @@ bool pawsColorPromptWindow::OnButtonPressed( int mouseButton, int keyModifier, p
     return false;
 }
 
-bool pawsColorPromptWindow::OnKeyDown( utf32_char code, utf32_char key, int modifiers )
+bool pawsColorPromptWindow::OnKeyDown(utf32_char /*code*/, utf32_char key, int /*modifiers*/)
 {
     if ( key==CSKEY_ENTER )
     {
@@ -184,7 +184,7 @@ void pawsColorPromptWindow::SetBoundaries(int minColor, int maxColor)
     }
 }
 
-bool pawsColorPromptWindow::OnScroll( int scrollDirection, pawsScrollBar* widget )
+bool pawsColorPromptWindow::OnScroll(int /*scrollDirection*/, pawsScrollBar* /*widget*/)
 {
     int r,g,b;
     r = (int)scrollBarR->GetCurrentValue();

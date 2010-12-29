@@ -138,7 +138,7 @@ bool psEffectObjLight::AttachToAnchor(psEffectAnchor* anchor)
     return false;
 }
 
-bool psEffectObjLight::Render(const csVector3 &up)
+bool psEffectObjLight::Render(const csVector3& /*up*/)
 {
     if(light.IsValid())
         return true;

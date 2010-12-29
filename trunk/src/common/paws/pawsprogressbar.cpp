@@ -134,7 +134,8 @@ void pawsProgressBar::DrawProgressBar(
   graphics3D->DrawSimpleMesh (mesh, csSimpleMeshScreenspace);
 }
 
-void pawsProgressBar::OnUpdateData(const char *dataname,PAWSData& value)
+void pawsProgressBar::OnUpdateData(const char* /*dataname*/, PAWSData& value)
 {
     SetCurrentValue( value.GetFloat() );
 }
+

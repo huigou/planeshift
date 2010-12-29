@@ -400,7 +400,7 @@ void pawsScrollBar::SetThumbLayout()
     }
 }
 
-bool pawsScrollBar::OnMouseDown( int button, int modifiers, int x, int y )
+bool pawsScrollBar::OnMouseDown(int button, int /*modifiers*/, int x, int y)
 {
     if (button == csmbWheelUp || button == csmbHWheelLeft)
     {
@@ -431,7 +431,7 @@ bool pawsScrollBar::OnMouseDown( int button, int modifiers, int x, int y )
     return true;
 }
 
-bool pawsScrollBar::OnMouseUp( int button, int modifiers, int x, int y )
+bool pawsScrollBar::OnMouseUp(int /*button*/, int /*modifiers*/, int /*x*/, int /*y*/)
 {
     mouseIsDraggingThumb = false;
     thumb->SetBackground(thumbStopped);
@@ -448,7 +448,7 @@ bool pawsScrollBar::OnMouseExit()
     return true;
 }
 
-void pawsScrollBar::OnUpdateData(const char *dataname,PAWSData& value)
+void pawsScrollBar::OnUpdateData(const char* /*dataname*/, PAWSData& value)
 {
     SetCurrentValue(value.GetFloat(), true, false);
 }
@@ -518,7 +518,7 @@ bool pawsScrollBar::OnButtonPressed( int button, int keyModifier, pawsWidget* wi
     return false;
 }
 
-bool pawsScrollBar::OnButtonReleased( int button, int keyModifier, pawsWidget* widget )
+bool pawsScrollBar::OnButtonReleased(int /*button*/, int /*keyModifier*/, pawsWidget* /*widget*/)
 {
     mouseDown = false;
     return true;

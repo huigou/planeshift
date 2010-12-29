@@ -65,8 +65,8 @@ public:
 	void Draw();
 
 	void Resize() {}
-	void MoveDelta(int dx, int dy) {}
-	void MoveTo(int x, int y) {}
+	void MoveDelta(int /*dx*/, int /*dy*/) {}
+	void MoveTo(int /*x*/, int /*y*/) {}
 };
 
 #endif // PAWS_TITLE_HEADER

@@ -118,7 +118,7 @@ bool pawsFileNavigation::PostSetup()
     return true;
 }
 
-bool pawsFileNavigation::OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* widget)
+bool pawsFileNavigation::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     if (!widget)
         return false;
@@ -153,7 +153,7 @@ bool pawsFileNavigation::OnButtonPressed(int mouseButton, int keyModifier, pawsW
     return true;
 }
 
-bool pawsFileNavigation::OnChange(pawsWidget * widget)
+bool pawsFileNavigation::OnChange(pawsWidget* /*widget*/)
 {
     return true;
 }
@@ -671,7 +671,7 @@ void pawsFileNavigation::Show()
 }
 
 
-bool pawsFileNavigation::OnKeyDown( utf32_char keyCode, utf32_char key, int modifiers )
+bool pawsFileNavigation::OnKeyDown(utf32_char /*keyCode*/, utf32_char key, int /*modifiers*/)
 {
     if (key==CSKEY_ENTER)
     {

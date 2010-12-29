@@ -73,7 +73,7 @@ public:
 
     int GetWidth() const;
     int GetHeight() const;
-    void ExpandClipRect(csRect &clipRect) {};
+    void ExpandClipRect(csRect& /*clipRect*/) {};
 
     int GetDefaultAlpha() const;
 

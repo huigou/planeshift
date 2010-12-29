@@ -68,7 +68,7 @@ bool psEffectAnchorSpline::Load(iDocumentNode * node)
     return PostSetup();
 }
 
-bool psEffectAnchorSpline::Create(const csVector3 & offset, iMeshWrapper * posAttach, bool rotateWithMesh)
+bool psEffectAnchorSpline::Create(const csVector3& offset, iMeshWrapper* /*posAttach*/, bool rotateWithMesh)
 {
     static unsigned long nextUniqueID = 0;
     csString anchorID = "effect_anchor_spline";

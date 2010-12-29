@@ -330,7 +330,7 @@ void pawsObjectView::RotateTemp(int speed,float radians)
     }
 }
 
-void pawsObjectView::Draw3D(iGraphics3D* graphics3D)
+void pawsObjectView::Draw3D(iGraphics3D* /*graphics3D*/)
 {
     if(!meshTarget.IsValid() || !stageTarget.IsValid() || !view || !meshView)
     {
@@ -491,7 +491,7 @@ void pawsObjectView::DrawRotate()
     }
 }
 
-bool pawsObjectView::OnMouseDown(int button,int mod, int x, int y)
+bool pawsObjectView::OnMouseDown(int button, int /*mod*/, int x, int y)
 {
     if(!mouseControlled)
         return false;
@@ -512,7 +512,7 @@ bool pawsObjectView::OnMouseDown(int button,int mod, int x, int y)
     return true;
 }
 
-bool pawsObjectView::OnMouseUp(int button,int mod, int x, int y)
+bool pawsObjectView::OnMouseUp(int /*button*/, int /*mod*/, int x, int y)
 {
     if(!mouseControlled)
         return false;

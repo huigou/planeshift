@@ -1219,7 +1219,7 @@ void pawsWidget::DrawWidgetText(const char *text, int x, int y, int style)
     }
 }
 
-csRect pawsWidget::GetWidgetTextRect(const char *text, int x, int y, int style)
+csRect pawsWidget::GetWidgetTextRect(const char* text, int x, int y, int /*style*/)
 {
     csRef<iFont> font = GetFont();
 
@@ -1525,7 +1525,7 @@ bool pawsWidget::OnMouseEnter()
     else return true;
 }
 
-bool pawsWidget::OnChildMouseEnter( pawsWidget* widget )
+bool pawsWidget::OnChildMouseEnter(pawsWidget* /*widget*/)
 {
     return true;
 }
@@ -1537,7 +1537,7 @@ bool pawsWidget::OnMouseExit()
     else return true;
 }
 
-bool pawsWidget::OnChildMouseExit( pawsWidget* child )
+bool pawsWidget::OnChildMouseExit(pawsWidget* /*child*/)
 {
     return true;
 }
@@ -2790,7 +2790,7 @@ void pawsWidget::RunScriptEvent(PAWS_WIDGET_SCRIPT_EVENTS event)
         script->Execute();
 }
 
-double pawsWidget::GetProperty(MathEnvironment* env, const char* ptr)
+double pawsWidget::GetProperty(MathEnvironment* /*env*/, const char* ptr)
 {
     if (!strcasecmp(ptr, "visible"))
         return visible ? 1.0 : 0.0;
@@ -2799,7 +2799,7 @@ double pawsWidget::GetProperty(MathEnvironment* env, const char* ptr)
     return 0.0;
 }
 
-double pawsWidget::CalcFunction(MathEnvironment* env, const char* functionName, const double* params)
+double pawsWidget::CalcFunction(MathEnvironment* /*env*/, const char* functionName, const double* params)
 {
     if (!strcasecmp(functionName, "closeparent"))
     {
@@ -2814,7 +2814,7 @@ double pawsWidget::CalcFunction(MathEnvironment* env, const char* functionName, 
     return 0.0;
 }
 
-void pawsWidget::SetProperty(const char * ptr, double value)
+void pawsWidget::SetProperty(const char* ptr, double value)
 {
     if (!strcasecmp(ptr, "visible"))
     {

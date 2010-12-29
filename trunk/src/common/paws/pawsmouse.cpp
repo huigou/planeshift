@@ -124,6 +124,8 @@ void pawsMouse::SetOSMouse(csRef<iPawsImage> drawable)
       return;
     }
     else g2d->SetMouseCursor (csmcNone);
+#else
+    (void)drawable; // supress unused variable warning
 #endif
 }
 

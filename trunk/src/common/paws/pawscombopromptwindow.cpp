@@ -97,7 +97,7 @@ void pawsComboPromptWindow::Select(int optionNum)
     wrapper->combo->Select(optionNum);
 }
 
-bool pawsComboPromptWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsComboPromptWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     if (action == NULL)
         return false;

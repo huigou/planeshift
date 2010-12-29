@@ -114,7 +114,7 @@ bool psEffectObjSound::Load(iDocumentNode *node, iLoaderContext* ldr_context)
     return PostSetup();
 }
 
-bool psEffectObjSound::Render(const csVector3 &up)
+bool psEffectObjSound::Render(const csVector3& /*up*/)
 {
     static unsigned long nextUniqueID = 0;
     effectID += nextUniqueID++;

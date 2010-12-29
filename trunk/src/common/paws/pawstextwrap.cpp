@@ -416,13 +416,13 @@ void pawsMultilineEditTextBox::CalcMouseClick(int x, int y, size_t &cursorLine, 
 }
 
 
-void pawsMultilineEditTextBox::OnUpdateData(const char *dataname,PAWSData& value)
+void pawsMultilineEditTextBox::OnUpdateData(const char* /*dataname*/, PAWSData& value)
 {
     // This is called automatically whenever subscribed data is published.
     SetText(value.GetStr(), false);
 }
 
-bool pawsMultilineEditTextBox::OnScroll(int direction, pawsScrollBar* widget)
+bool pawsMultilineEditTextBox::OnScroll(int /*direction*/, pawsScrollBar* widget)
 {    
     topLine = (int)widget->GetCurrentValue();
     return true;
@@ -688,7 +688,7 @@ void pawsMultilineEditTextBox::GetLineRelative(size_t pos, size_t &start, size_t
     }
 }
 
-int pawsMultilineEditTextBox::GetLineWidth(int lineNumber)
+int pawsMultilineEditTextBox::GetLineWidth(int /*lineNumber*/)
 {
     int width = 0;
     int height = 0;

@@ -802,7 +802,7 @@ void pawsListBox::CalculateDrawPositions()
 }
 
 
-bool pawsListBox::OnScroll( int direction, pawsScrollBar* widget )
+bool pawsListBox::OnScroll(int /*direction*/, pawsScrollBar* widget)
 {
     if(widget == scrollBar)
     {
@@ -818,7 +818,7 @@ bool pawsListBox::OnScroll( int direction, pawsScrollBar* widget )
     return true;
 }
 
-bool pawsListBox::OnMouseDown(int button, int modifiers, int x, int y )
+bool pawsListBox::OnMouseDown(int button, int modifiers, int x, int y)
 {
     if (button == csmbWheelUp)
     {
@@ -1311,7 +1311,7 @@ bool pawsListBoxRow::OnKeyDown(utf32_char keyCode, utf32_char keyChar, int modif
 }
 
 
-bool pawsListBoxRow::OnMouseDown( int button, int modifiers, int x, int y )
+bool pawsListBoxRow::OnMouseDown(int button, int modifiers, int x, int y)
 {
     // Heading rows are not clickable or selectable
     if (isHeading)
@@ -1327,7 +1327,7 @@ bool pawsListBoxRow::OnMouseDown( int button, int modifiers, int x, int y )
     return parentBox->Select( this );
 }
 
-bool pawsListBoxRow::OnDoubleClick(int button, int modifiers, int x, int y)
+bool pawsListBoxRow::OnDoubleClick(int button, int /*modifiers*/, int /*x*/, int /*y*/)
 {
     // Heading rows are not clickable or selectable
     if (isHeading)

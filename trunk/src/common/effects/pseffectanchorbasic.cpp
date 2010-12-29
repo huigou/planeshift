@@ -66,7 +66,7 @@ bool psEffectAnchorBasic::Load(iDocumentNode * node)
     return true;
 }
 
-bool psEffectAnchorBasic::Create(const csVector3 & offset, iMeshWrapper * posAttach, bool rotateWithMesh)
+bool psEffectAnchorBasic::Create(const csVector3& offset, iMeshWrapper* /*posAttach*/, bool rotateWithMesh)
 {
     static unsigned long nextUniqueID = 0;
     csString anchorID = "effect_anchor_basic_";

@@ -45,7 +45,7 @@ enum psEffectBackgroundAlign
 
     EA_BOTTOM_LEFT,
     EA_BOTTOM,
-    EA_BOTTOM_RIGHT,
+    EA_BOTTOM_RIGHT
 };
 struct psEffectBackgroundElem
 {

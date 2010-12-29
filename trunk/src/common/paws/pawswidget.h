@@ -1342,8 +1342,8 @@ public:
      */
     bool IsConfigurable() { return configurable; }
 
-    virtual void OnUpdateData(const char *dataname,PAWSData& data) {}
-    virtual void NewSubscription(const char *dataname) { subscribedVar = dataname; }
+    virtual void OnUpdateData(const char* /*dataname*/, PAWSData& /*data*/) {}
+    virtual void NewSubscription(const char* dataname) { subscribedVar = dataname; }
 
     /** Sets up the title bar for the widget.
      * 

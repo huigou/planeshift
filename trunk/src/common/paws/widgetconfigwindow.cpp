@@ -48,7 +48,7 @@ WidgetConfigWindow::WidgetConfigWindow()
 /**
  * @brief Handle any events involving one of the scrollbars being "scrolled"
  */
-bool WidgetConfigWindow::OnScroll( int direction, pawsScrollBar* widget )
+bool WidgetConfigWindow::OnScroll(int /*direction*/, pawsScrollBar* widget)
 {
     if (!configWidget)
         return true;
@@ -123,7 +123,7 @@ bool WidgetConfigWindow::OnScroll( int direction, pawsScrollBar* widget )
 /**
  * @brief Handle all button presses.
  */
-bool WidgetConfigWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool WidgetConfigWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     if (widget == buttonOK)
     {

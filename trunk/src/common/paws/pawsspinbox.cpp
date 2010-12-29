@@ -66,7 +66,7 @@ pawsSpinBox::~pawsSpinBox()
 {
 }
 
-bool pawsSpinBox::Perform(iTimerEvent * ev )
+bool pawsSpinBox::Perform(iTimerEvent* /*ev*/)
 {
     if (spinState)
     {
