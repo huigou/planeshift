@@ -194,7 +194,7 @@ pawsImageDrawable::pawsImageDrawable(const char * file, const char * resource, b
     PreparePixmap();
 }
 
-pawsImageDrawable::pawsImageDrawable(const char * file, const char * resource)
+pawsImageDrawable::pawsImageDrawable(const char* file, const char* /*resource*/)
                  : scfImplementationType (this)
 {
     debugImageErrors = false;

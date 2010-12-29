@@ -57,7 +57,7 @@ pawsMainWidget::~pawsMainWidget()
 }
 
 
-bool pawsMainWidget::OnKeyDown( utf32_char keyCode, utf32_char key, int modifiers )
+bool pawsMainWidget::OnKeyDown(utf32_char keyCode, utf32_char /*key*/, int modifiers)
 {
     pawsScriptKey* found = 0;
     
@@ -84,17 +84,17 @@ bool pawsMainWidget::OnKeyDown( utf32_char keyCode, utf32_char key, int modifier
     return false;
 }
 
-bool pawsMainWidget::OnMouseDown( int button, int keyModifier, int x, int y )
+bool pawsMainWidget::OnMouseDown(int /*button*/, int /*keyModifier*/, int /*x*/, int /*y*/)
 {
     return false;
 }
 
-bool pawsMainWidget::OnMouseUp( int button, int keyModifier, int x, int y )
+bool pawsMainWidget::OnMouseUp(int /*button*/, int /*keyModifier*/, int /*x*/, int /*y*/)
 {
     return false;
 }
 
-bool pawsMainWidget::OnDoubleClick( int button, int keyModifier, int x, int y )
+bool pawsMainWidget::OnDoubleClick(int /*button*/, int /*keyModifier*/, int /*x*/, int /*y*/)
 {
     return false;
 }

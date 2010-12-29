@@ -48,7 +48,7 @@ void psEffect2DElement::SetAlpha(int alpha)
 	this->alpha = alpha;
 }
 
-void psEffect2DElement::Draw(iGraphics3D * g3d, iGraphics2D * g2d)
+void psEffect2DElement::Draw(iGraphics3D* /*g3d*/, iGraphics2D* /*g2d*/)
 {
 }
 
@@ -63,7 +63,7 @@ psEffect2DTextElement::~psEffect2DTextElement()
 {
 }
 
-void psEffect2DTextElement::Draw(iGraphics3D * g3d, iGraphics2D * g2d)
+void psEffect2DTextElement::Draw(iGraphics3D* /*g3d*/, iGraphics2D* g2d)
 {
 	int x = this->x + originx;
 	int y = this->y + originy;
@@ -93,28 +93,29 @@ psEffect2DImgElement::~psEffect2DImgElement()
 {
 }
 
-void psEffect2DImgElement::Draw(iGraphics3D * g3d, iGraphics2D * g2d)
+void psEffect2DImgElement::Draw(iGraphics3D* g3d, iGraphics2D* /*g2d*/)
 {
-	int tw = texRect.Width();
-	int th = texRect.Height();
-	int left = destRect.xmin + originx;
-	int top = destRect.ymin + originy;
-	if (!tiled)
-		g3d->DrawPixmap(texHandle, left, top, destRect.Width(), destRect.Height(), texRect.xmin, texRect.ymin, tw, th, 255 - alpha);
-	else
-	{
-		int right = left + destRect.Width();
-		int bottom = top + destRect.Height();
-		for (int x=left; x<right;  x+=tw)
-		{
-			for (int y=top; y<bottom; y+=th)
-			{
-				int w = csMin<int>(tw, right - x);
-				int h = csMin<int>(th, bottom - y);
-				g3d->DrawPixmap(texHandle, x, y, w, h, texRect.xmin, texRect.ymin, w, h, 255 - alpha);
-			}
-		}
-	}
+    int tw = texRect.Width();
+    int th = texRect.Height();
+    int left = destRect.xmin + originx;
+    int top = destRect.ymin + originy;
+    if (!tiled)
+        g3d->DrawPixmap(texHandle, left, top, destRect.Width(), destRect.Height(),
+                        texRect.xmin, texRect.ymin, tw, th, 255 - alpha);
+    else
+    {
+        int right = left + destRect.Width();
+        int bottom = top + destRect.Height();
+        for (int x=left; x<right;  x+=tw)
+        {
+            for (int y=top; y<bottom; y+=th)
+            {
+                int w = csMin<int>(tw, right - x);
+                int h = csMin<int>(th, bottom - y);
+                g3d->DrawPixmap(texHandle, x, y, w, h, texRect.xmin, texRect.ymin, w, h, 255 - alpha);
+            }
+        }
+    }
 }
 
 
@@ -126,7 +127,7 @@ psEffect2DRenderer::~psEffect2DRenderer()
 {
 }
 
-int psEffect2DRendererCompareZOrder(psEffect2DElement * const & a, psEffect2DElement * const & b)
+int psEffect2DRendererCompareZOrder(psEffect2DElement* const& a, psEffect2DElement* const& b)
 {
     if (a->GetZOrder() < b->GetZOrder())
         return -1;
@@ -135,7 +136,7 @@ int psEffect2DRendererCompareZOrder(psEffect2DElement * const & a, psEffect2DEle
     return 1;
 }
 
-psEffect2DElement * psEffect2DRenderer::Add2DElement(psEffect2DElement * elem)
+psEffect2DElement* psEffect2DRenderer::Add2DElement(psEffect2DElement* elem)
 {
     effect2DElements.Push(elem);
     effect2DElements.Sort(&psEffect2DRendererCompareZOrder);
@@ -143,7 +144,7 @@ psEffect2DElement * psEffect2DRenderer::Add2DElement(psEffect2DElement * elem)
     return elem;
 }
 
-void psEffect2DRenderer::Remove2DElement(psEffect2DElement * elem)
+void psEffect2DRenderer::Remove2DElement(psEffect2DElement* elem)
 {
     size_t a;
     size_t len = effect2DElements.GetSize();

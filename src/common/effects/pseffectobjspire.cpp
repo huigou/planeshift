@@ -394,17 +394,20 @@ bool psEffectObjSpire::PostSetup()
     return true;
 }
 
-const csVector3 * psEffectObjSpire::MeshAnimControl::UpdateVertices(csTicks current, const csVector3 * verts, int num_verts, uint32 version_id)
+const csVector3* psEffectObjSpire::MeshAnimControl::UpdateVertices(csTicks /*current*/, const csVector3* /*verts*/,
+                                                                   int /*num_verts*/, uint32 /*version_id*/)
 {
     return parent->vert;
 }
 
-const csVector2 * psEffectObjSpire::MeshAnimControl::UpdateTexels(csTicks current, const csVector2 * texels, int num_texels, uint32 version_id)
+const csVector2* psEffectObjSpire::MeshAnimControl::UpdateTexels(csTicks /*current*/, const csVector2* /*texels*/,
+                                                                 int /*num_texels*/, uint32 /*version_id*/)
 {
     return parent->texel;
 }
 
-const csColor4 * psEffectObjSpire::MeshAnimControl::UpdateColors(csTicks current, const csColor4 * colors, int num_colors, uint32 version_id)
+const csColor4* psEffectObjSpire::MeshAnimControl::UpdateColors(csTicks /*current*/, const csColor4* /*colors*/,
+                                                                int /*num_colors*/, uint32 /*version_id*/)
 {
     return parent->colour;
 }

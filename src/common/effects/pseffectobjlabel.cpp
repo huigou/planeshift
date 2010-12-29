@@ -312,13 +312,13 @@ psEffectObj * psEffectObjLabel::Clone() const
     return newObj;
 }
 
-bool psEffectObjLabel::SetText(const csArray<psEffectTextElement> & elements)
+bool psEffectObjLabel::SetText(const csArray<psEffectTextElement>& /*elements*/)
 {
    printf("settext <array> not supported\n");
    return false;
 }
 
-bool psEffectObjLabel::SetText(const csArray<psEffectTextRow> & rows)
+bool psEffectObjLabel::SetText(const csArray<psEffectTextRow>& /*rows*/)
 {
    printf("settext <textrow> not supported\n");
    return false;

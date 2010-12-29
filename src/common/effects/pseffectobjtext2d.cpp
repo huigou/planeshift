@@ -320,7 +320,7 @@ bool psEffectObjText2D::Load(iDocumentNode * node, iLoaderContext* ldr_context)
     while (elemNodes->HasNext())
     {
         dataNode = elemNodes->Next();
-        psEffectBackgroundElem elem = { EA_NONE, 0, 0, 0, 0, true, 0, 0 };
+        psEffectBackgroundElem elem = { EA_NONE, 0, 0, 0, 0, true, 0, 0, 0 };
 
         // align
         csString alignText = dataNode->GetAttributeValue("align");
@@ -365,12 +365,12 @@ bool psEffectObjText2D::Load(iDocumentNode * node, iLoaderContext* ldr_context)
     return PostSetup();
 }
 
-bool psEffectObjText2D::Render(const csVector3 &up)
+bool psEffectObjText2D::Render(const csVector3& /*up*/)
 {
     return true;
 }
 
-bool psEffectObjText2D::AttachToAnchor(psEffectAnchor * newAnchor)
+bool psEffectObjText2D::AttachToAnchor(psEffectAnchor* newAnchor)
 {
     if (newAnchor && newAnchor->GetMesh())
         anchorMesh = newAnchor->GetMesh();

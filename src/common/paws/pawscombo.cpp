@@ -174,7 +174,7 @@ pawsListBoxRow* pawsComboBox::NewOption(const csString & text)
     return row;    
 }
 
-bool pawsComboBox::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsComboBox::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     switch ( widget->GetID() )
     {

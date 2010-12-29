@@ -127,7 +127,7 @@ pawsTreeNode * pawsTreeNode::GetParent()
     return parent;
 }
 
-void pawsTreeNode::SetParent(pawsTreeNode * _parent)
+void pawsTreeNode::SetParent(pawsTreeNode* _parent)
 {
     parent = _parent;
 }
@@ -137,13 +137,13 @@ pawsTreeNode * pawsTreeNode::GetFirstChild()
     return firstChild;
 }
 
-pawsTreeNode * pawsTreeNode::FindNodeByPath(const csString & path)
+pawsTreeNode * pawsTreeNode::FindNodeByPath(const csString& /*path*/)
 {
     //not implemented yet
     return NULL;
 }
 
-pawsTreeNode * pawsTreeNode::FindChildByName(const csString & name, bool indirectToo)
+pawsTreeNode * pawsTreeNode::FindChildByName(const csString& name, bool indirectToo)
 {
     pawsTreeNode * child, * foundIndirect;
 
@@ -857,7 +857,7 @@ void pawsStdTreeDecorator::DecorateSubtree(pawsTreeNode * node)
     }
 }
 
-bool pawsStdTreeDecorator::OnMouseDown(int button, int modifiers, int x, int y)
+bool pawsStdTreeDecorator::OnMouseDown(int /*button*/, int /*modifiers*/, int x, int y)
 {
     pawsTreeNode * target, * root;
 
@@ -1193,7 +1193,7 @@ bool pawsTree::OnMouseDown(int button, int modifiers, int x, int y)
     return false;
 }
 
-bool pawsTree::OnKeyDown( utf32_char keyCode, utf32_char keyChar, int modifiers )
+bool pawsTree::OnKeyDown(utf32_char /*keyCode*/, utf32_char keyChar, int /*modifiers*/)
 {
     pawsTreeNode *node;
 
@@ -1294,7 +1294,7 @@ void pawsTree::SetNotify(pawsWidget* _notificationTarget)
     notificationTarget = _notificationTarget;
 }
 
-bool pawsTree::OnScroll(int scrollDirection, pawsScrollBar* widget)
+bool pawsTree::OnScroll(int /*scrollDirection*/, pawsScrollBar* widget)
 {
     int scroll;
 
@@ -1426,7 +1426,7 @@ bool pawsCheckTreeNode::GetCheck()
     return false;
 }
 
-void pawsCheckTreeNode::SetCheck(bool ch)
+void pawsCheckTreeNode::SetCheck(bool /*ch*/)
 {
     //checkbox->Set(ch);
 }
@@ -1520,7 +1520,7 @@ pawsSimpleTreeNode::~pawsSimpleTreeNode()
 {
 }
 
-void pawsSimpleTreeNode::Set(int mode, bool checked, const csString & imageName, const csString & label)
+void pawsSimpleTreeNode::Set(int mode, bool /*checked*/, const csString& imageName, const csString& label)
 {
     csRect frame;
     int lastX;

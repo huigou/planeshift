@@ -316,7 +316,7 @@ void pawsTextBox::Draw()
     }
 }
 
-void pawsTextBox::OnUpdateData(const char *dataname,PAWSData& value)
+void pawsTextBox::OnUpdateData(const char* /*dataname*/, PAWSData& value)
 {
     // This is called automatically whenever subscribed data is published.
     if (subscription_format == "percent")
@@ -790,7 +790,7 @@ void pawsMessageTextBox::ReplaceLastMessage(const char* rawMessage)
     }
 }
 
-void pawsMessageTextBox::OnUpdateData(const char *dataname,PAWSData& value)
+void pawsMessageTextBox::OnUpdateData(const char* /*dataname*/, PAWSData& value)
 {
     // This is called automatically whenever subscribed data is published.
     if (overwrite_subscription)
@@ -816,7 +816,7 @@ void pawsMessageTextBox::FullScroll()
 }
 
 void pawsMessageTextBox::SplitMessage(const char* newText, int colour,
-        int size, MessageLine*& msgLine, int& startPosition)
+        int /*size*/, MessageLine*& msgLine, int& startPosition)
 {
     csString stringBuffer(newText);
 
@@ -925,7 +925,7 @@ csString pawsMessageTextBox::FindStringThatFits(csString stringBuffer, int canDr
     return processedString;
 }
 
-bool pawsMessageTextBox::OnScroll( int direction, pawsScrollBar* widget )
+bool pawsMessageTextBox::OnScroll(int /*direction*/, pawsScrollBar* widget)
 {
     topLine = (int)widget->GetCurrentValue();
     return true;
@@ -1055,7 +1055,7 @@ void pawsEditTextBox::SetText( const char* newText, bool publish )
         cursorPosition = 0;
 }
 
-void pawsEditTextBox::OnUpdateData(const char *dataname,PAWSData& value)
+void pawsEditTextBox::OnUpdateData(const char* /*dataname*/, PAWSData& value)
 {
     // This is called automatically whenever subscribed data is published.
     SetText( value.GetStr(), false );
@@ -1603,7 +1603,7 @@ void pawsMultiLineTextBox::SetText( const char* newText )
     text.Replace( str.GetData() );
 }
 
-void pawsMultiLineTextBox::OnUpdateData(const char *dataname,PAWSData& value)
+void pawsMultiLineTextBox::OnUpdateData(const char* /*dataname*/, PAWSData& value)
 {
     // This is called automatically whenever subscribed data is published.
     SetText( value.GetStr() );
@@ -1636,7 +1636,7 @@ void pawsMultiLineTextBox::Draw()
 
 }
 
-bool pawsMultiLineTextBox::OnScroll( int direction, pawsScrollBar* widget )
+bool pawsMultiLineTextBox::OnScroll(int /*direction*/, pawsScrollBar* widget)
 {
     startLine = (int)widget->GetCurrentValue();
     return true;

@@ -297,7 +297,7 @@ psEffectObj::~psEffectObj()
     // CS's smart pointer system
 }
 
-bool psEffectObj::Load(iDocumentNode *node, iLoaderContext* ldr_context)
+bool psEffectObj::Load(iDocumentNode *node, iLoaderContext* /*ldr_context*/)
 {
     
     csRef<iDocumentNode> dataNode;
@@ -446,7 +446,7 @@ void psEffectObj::SetAnimationScaling(float s)
 }
 
 
-bool psEffectObj::Render(const csVector3 &up)
+bool psEffectObj::Render(const csVector3& /*up*/)
 {
     return false;
 }

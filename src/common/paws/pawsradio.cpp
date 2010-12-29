@@ -40,7 +40,7 @@ void pawsRadioButton::SetState( bool state )
 pawsRadioButton::~pawsRadioButton()
 {
 }
-pawsRadioButton* pawsRadioButton::Create(const char * txt, psRadioPos pos , bool state)
+pawsRadioButton* pawsRadioButton::Create(const char* txt, psRadioPos pos , bool /*state*/)
 {
     pawsRadioButtonGroup* rbg = dynamic_cast<pawsRadioButtonGroup*>(parent);
 
@@ -231,10 +231,10 @@ bool pawsRadioButton::Setup( iDocumentNode* node )
 }
 
 
-bool pawsRadioButton::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsRadioButton::OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* /*widget*/)
 {
-    if ( parent ) 
-        return parent->OnButtonPressed( mouseButton, keyModifier, this );
+    if(parent)
+        return parent->OnButtonPressed(mouseButton, keyModifier, this);
 
     return false;
 }

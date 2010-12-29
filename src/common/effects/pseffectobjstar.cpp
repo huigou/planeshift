@@ -277,12 +277,14 @@ bool psEffectObjStar::PostSetup()
     return true;
 }
 
-const csVector3 * psEffectObjStar::MeshAnimControl::UpdateVertices(csTicks current, const csVector3 * verts, int num_verts, uint32 version_id)
+const csVector3* psEffectObjStar::MeshAnimControl::UpdateVertices(csTicks /*current*/, const csVector3* /*verts*/,
+                                                                  int /*num_verts*/, uint32 /*version_id*/)
 {
     return parent->vert;
 }
 
-const csColor4 * psEffectObjStar::MeshAnimControl::UpdateColors(csTicks current, const csColor4 * colors, int num_colors, uint32 version_id)
+const csColor4* psEffectObjStar::MeshAnimControl::UpdateColors(csTicks /*current*/, const csColor4* /*colors*/,
+                                                               int /*num_colors*/, uint32 /*version_id*/)
 {
     return parent->colour;
 }

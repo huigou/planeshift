@@ -426,7 +426,7 @@ void pawsMenu::SetPositionsOfItems()
 
 }
 
-bool pawsMenu::OnButtonPressed(int button, int keyModifier, pawsWidget* widget)
+bool pawsMenu::OnButtonPressed(int /*button*/, int /*keyModifier*/, pawsWidget* widget)
 {
     if ((widget == stickyButton) && !sticky)
     {
@@ -563,7 +563,7 @@ void pawsMenu::SetButtonPositions()
                                         GetActualHeight(BORDER_SIZE));
 }
 
-void pawsMenu::OnParentMenuDestroyed(pawsMenuClose reason)
+void pawsMenu::OnParentMenuDestroyed(pawsMenuClose /*reason*/)
 {
     parentMenu = NULL;
     if (!sticky)

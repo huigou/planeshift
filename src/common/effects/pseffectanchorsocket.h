@@ -40,9 +40,9 @@ public:
 
     // these functions are overridden, because the parent mesh takes care of position/sectoring
     // we want to override these functions, because the default behaviour is for the effect to manage it
-    void SetRotBase(const csMatrix3 & newRotBase) {}
-    void SetPosition(const csVector3 & basePos, iSector * sector, const csMatrix3 & transf) {}
-    void SetPosition(const csVector3 & basePos, iSectorList * sectors, const csMatrix3 & transf) {}
+    void SetRotBase(const csMatrix3& /*newRotBase*/) {}
+    void SetPosition(const csVector3& /*basePos*/, iSector* /*sector*/, const csMatrix3& /*transf*/) {}
+    void SetPosition(const csVector3& /*basePos*/, iSectorList* /*sectors*/, const csMatrix3& /*transf*/) {}
 
     /** Gets the name of the socket where this anchor is attached.
      *   @return the name of the socket.

@@ -218,7 +218,7 @@ bool psEffectAnchor::Load(iDocumentNode *node)
     return true;
 }
 
-bool psEffectAnchor::Create(const csVector3 & offset, iMeshWrapper * posAttach, bool rotateWithMesh)
+bool psEffectAnchor::Create(const csVector3& /*offset*/, iMeshWrapper* /*posAttach*/, bool /*rotateWithMesh*/)
 {
     return false;
 }

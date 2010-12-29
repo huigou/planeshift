@@ -48,13 +48,13 @@ psEffectLoader::psEffectLoader()
 {
 }
 
-void psEffectLoader::SetManager(psEffectManager *manager)
+void psEffectLoader::SetManager(psEffectManager* manager)
 {
     this->manager = manager;
 }
 
-csPtr<iBase> psEffectLoader::Parse(iDocumentNode * node, iStreamSource * istream, iLoaderContext * ldr_context,
-                                   iBase * context)
+csPtr<iBase> psEffectLoader::Parse(iDocumentNode* node, iStreamSource* /*istream*/, iLoaderContext* ldr_context,
+                                   iBase* context)
 {
 #ifndef DONT_DO_EFFECTS
     if (manager)

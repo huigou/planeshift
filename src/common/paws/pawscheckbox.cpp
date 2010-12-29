@@ -162,10 +162,10 @@ bool pawsCheckBox::SelfPopulate( iDocumentNode *node)
     return true;
 }
 
-bool pawsCheckBox::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsCheckBox::OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* /*widget*/)
 {
-    if ( parent )
-        return parent->OnButtonPressed( mouseButton, keyModifier, this );
+    if(parent)
+        return parent->OnButtonPressed(mouseButton, keyModifier, this);
     else
         return false;
 }
@@ -192,12 +192,12 @@ void pawsCheckBox::SetImages(const char* up, const char* down)
     checkBox->SetDownImage( down );
 }
 
-void pawsCheckBox::OnUpdateData(const char *dataname,PAWSData& value)
+void pawsCheckBox::OnUpdateData(const char* /*dataname*/, PAWSData& value)
 {
     // This is called automatically whenever subscribed data is published.
-    if (checkBox)
+    if(checkBox)
     {
-        checkBox->SetState( value.GetBool(), false );
+        checkBox->SetState(value.GetBool(), false);
     }
 }
 
