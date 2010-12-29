@@ -220,7 +220,7 @@ void pawsContainerDescWindow::HandleMessage( MsgEntry* me )
 
 }
 
-bool pawsContainerDescWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsContainerDescWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     csString widgetName(widget->GetName());
 

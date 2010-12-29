@@ -344,7 +344,7 @@ void pawsPetitionGMWindow::HandleMessage ( MsgEntry* me )
     }
 }
 
-bool pawsPetitionGMWindow::OnButtonReleased( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsPetitionGMWindow::OnButtonReleased(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     // We know that the calling widget is a button.
     int button = widget->GetID();
@@ -582,7 +582,7 @@ bool pawsPetitionGMWindow::OnButtonReleased( int mouseButton, int keyModifier, p
     return true;
 }
 
-void pawsPetitionGMWindow::OnStringEntered(const char *name,int param,const char *value)
+void pawsPetitionGMWindow::OnStringEntered(const char* /*name*/, int /*param*/, const char* value)
 {
     if (value && strlen(value))
         CloseCurrPetition(value);
@@ -702,7 +702,7 @@ void pawsPetitionGMWindow::AddPetitions(csArray<psPetitionInfo> &petitions)
 }
 
 
-void pawsPetitionGMWindow::OnListAction( pawsListBox* selected, int status )
+void pawsPetitionGMWindow::OnListAction(pawsListBox* /*selected*/, int status)
 {
     if (status == LISTBOX_HIGHLIGHTED)
     {

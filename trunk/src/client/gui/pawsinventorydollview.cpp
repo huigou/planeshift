@@ -37,7 +37,7 @@
 *
 ***********************************************************************/
 
-bool pawsInventoryDollView::OnMouseDown( int button, int modifiers, int x, int y )
+bool pawsInventoryDollView::OnMouseDown(int /*button*/, int /*modifiers*/, int /*x*/, int /*y*/)
 {
     // Make sure we actually have something
     if ( !psengine->GetSlotManager()->IsDragging() )
@@ -62,3 +62,4 @@ bool pawsInventoryDollView::OnMouseDown( int button, int modifiers, int x, int y
     
     return true;
 }
+

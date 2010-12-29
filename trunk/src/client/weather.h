@@ -80,8 +80,8 @@ public:
     // If you use this function, you need to call SetupMesh and stuff like that too
     virtual void SetParent(WeatherInfo* new_parent) { parent = new_parent;}
     virtual WeatherInfo* GetParent() {return parent;}
-    virtual void SetColor(float r,float g,float b){};
-    virtual void Update(csTicks delta){};
+    virtual void SetColor(float /*r*/, float /*g*/, float /*b*/){};
+    virtual void Update(csTicks /*delta*/){};
     
     // Specific
     virtual bool CreateMesh() = 0;
@@ -184,10 +184,10 @@ public:
     bool Valid();
     bool CreateMesh();
     void MoveTo(WeatherInfo* newParent,iSector* sector);
-    void SetupMesh(csBox3 bbox){}
+    void SetupMesh(csBox3 /*bbox*/){}
     iSector* GetSector();
 
-    void MoveTo(csVector3 pos)  {}
+    void MoveTo(csVector3 /*pos*/)  {}
     void StartFollow()          {}
     void StopFollow()           {}
 

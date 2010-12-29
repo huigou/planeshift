@@ -537,7 +537,7 @@ void pawsSketchWindow::AddSketchText()
     }
 }
 
-void pawsSketchWindow::OnStringEntered(const char *name,int param,const char *value)
+void pawsSketchWindow::OnStringEntered(const char* /*name*/, int /*param*/, const char* value)
 {
     stringPending = false;
 
@@ -583,7 +583,7 @@ void pawsSketchWindow::OnStringEntered(const char *name,int param,const char *va
     }
 }
 
-void pawsSketchWindow::OnColorEntered(const char *name,int param,int color)
+void pawsSketchWindow::OnColorEntered(const char* /*name*/, int param, int color)
 {
     colorPending = false;
 

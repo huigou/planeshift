@@ -121,34 +121,35 @@ void pawsNpcDialogWindow::HandleMessage( MsgEntry* me )
 
 void pawsNpcDialogWindow::AdjustForPromptWindow()
 {
-	csString str;
+    csString str;
 
-	for (size_t i=0; i<responseList->GetRowCount(); i++)
-	{
-		str = responseList->GetTextCellValue(i,0);
-		size_t where = str.Find("?=");
-		if (where != SIZET_NOT_FOUND) // we have a prompt choice
-		{
-			pawsTextBox *hidden = (pawsTextBox *)responseList->GetRow(i)->GetColumn(1);
-			if (where != SIZET_NOT_FOUND)
-			{
-				str.DeleteAt(where,1); // take out the ?
-				hidden->SetText(str.GetData() + where); // Save the question prompt, starting with the =, in the hidden column
-				str.DeleteAt(where,1); // take out the =
+    for (size_t i=0; i<responseList->GetRowCount(); i++)
+    {
+        str = responseList->GetTextCellValue(i,0);
+        size_t where = str.Find("?=");
+        if (where != SIZET_NOT_FOUND) // we have a prompt choice
+        {
+            pawsTextBox *hidden = (pawsTextBox *)responseList->GetRow(i)->GetColumn(1);
+            if (where != SIZET_NOT_FOUND)
+            {
+                str.DeleteAt(where,1); // take out the ?
+                // Save the question prompt, starting with the =, in the hidden column
+                hidden->SetText(str.GetData() + where);
+                str.DeleteAt(where,1); // take out the =
 
-				// now change the visible menu choice to something better
-				pawsTextBox *prompt = (pawsTextBox *)responseList->GetRow(i)->GetColumn(0);
+                // now change the visible menu choice to something better
+                pawsTextBox *prompt = (pawsTextBox *)responseList->GetRow(i)->GetColumn(0);
 
-				csString menuPrompt(str);
-				menuPrompt.Insert(where,"<Answer ");
-				menuPrompt.Append('>');
-				prompt->SetText(menuPrompt);
-			}
-		}
-	}
+                csString menuPrompt(str);
+                menuPrompt.Insert(where,"<Answer ");
+                menuPrompt.Append('>');
+                prompt->SetText(menuPrompt);
+            }
+        }
+    }
 }
 
-void pawsNpcDialogWindow::OnStringEntered(const char *name,int param,const char *value)
+void pawsNpcDialogWindow::OnStringEntered(const char* name, int /*param*/, const char* value)
 {
     //The user cancelled the operation. So show again the last window and do nothing else.
     if(value == NULL) 

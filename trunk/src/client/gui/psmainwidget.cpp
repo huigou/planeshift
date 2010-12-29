@@ -444,7 +444,7 @@ bool psMainWidget::OnMouseDown( int button, int keyModifier, int x, int y )
     return false;
 }
 
-bool psMainWidget::OnMouseUp( int button, int keyModifier, int x, int y )
+bool psMainWidget::OnMouseUp(int /*button*/, int /*keyModifier*/, int /*x*/, int /*y*/)
 {
     return false;
 }

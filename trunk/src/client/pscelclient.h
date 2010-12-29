@@ -420,7 +420,7 @@ public:
      /**
       * Delayed load 'post-process'.
       */
-     virtual void PostLoad(bool nullmesh) { }
+     virtual void PostLoad(bool /*nullmesh*/) { }
 
 protected:
     static psCelClient *cel;

@@ -84,7 +84,7 @@ protected:
     void RecalculateAmount();
 };
 
-CREATE_PAWS_FACTORY(pawsMoney)
-
+CREATE_PAWS_FACTORY(pawsMoney);
 
 #endif
+

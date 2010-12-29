@@ -203,7 +203,7 @@ void pawsBankWindow::HandleMessage( MsgEntry* me )
     }
 }
 
-bool pawsBankWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsBankWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     if(widget->GetID() == MONEYBUTTON)
     {

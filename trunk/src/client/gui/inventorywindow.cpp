@@ -256,7 +256,7 @@ bool pawsInventoryWindow::OnMouseDown( int button, int keyModifier, int x, int y
 }
 
 
-bool pawsInventoryWindow::OnButtonPressed( int mouseButton, int keyModifer, pawsWidget* widget )
+bool pawsInventoryWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifer*/, pawsWidget* widget)
 {
     // Check to see if this was the view button.
     if ( widget->GetID() == VIEW_BUTTON )

@@ -667,7 +667,7 @@ void pawsMultilineEditTextBox::GetLinePos(size_t lineNumber, size_t &start, size
     end = start + lineInfo[lineNumber]->lineLength;
 }
 
-const char pawsMultilineEditTextBox::GetAt(size_t destLine, size_t destCursor)
+char pawsMultilineEditTextBox::GetAt(size_t destLine, size_t destCursor)
 {
     return GetLine(destLine).GetAt(destCursor);
 }

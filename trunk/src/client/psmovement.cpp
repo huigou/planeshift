@@ -422,6 +422,8 @@ void psMovementManager::Stop(const psCharMode* mode)
 {
     #ifdef MOVE_DEBUG
         printf("Stopping mode %s\n", mode->name.GetData() );
+    #else
+        (void)mode; // surpress unused variable warning
     #endif
 
     SetActorMode(defaultmode);

@@ -331,7 +331,7 @@ void pawsSkillWindow::Close()
     unsortedSkills.DeleteAll();
 }
 
-bool pawsSkillWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsSkillWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     switch ( widget->GetID() )
     {
@@ -603,7 +603,7 @@ void pawsSkillWindow::HandleSkillDescription( csString& description )
     }
 }
 
-void pawsSkillWindow::OnNumberEntered(const char *name,int param,int number)
+void pawsSkillWindow::OnNumberEntered(const char* /*name*/, int /*param*/, int number)
 {
     csString commandData;
 

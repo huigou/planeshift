@@ -259,7 +259,7 @@ pawsGlyphSlot * pawsGlyphWindow::FindFreeSlot(int wayNum)
     return dynamic_cast <pawsGlyphSlot*> (way->GetRow(way->GetRowCount()-1)->GetColumn(0));
 }
 
-bool pawsGlyphWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsGlyphWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     pawsWidget *dndWidget = PawsManager::GetSingleton().GetDragDropWidget();
     pawsGlyphSlot *floatingSlot = dynamic_cast <pawsGlyphSlot*> (dndWidget);

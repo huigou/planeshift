@@ -131,7 +131,7 @@ bool psChatBubbles::Load(const char * filename, bool saveAgain)
         csRef<iDocumentNode> chatNode = nodes->Next();
 
         int r, g, b;
-        BubbleChatType chat = { CHAT_SAY, {"", 0, false, 0, false, 0, ETA_LEFT}, "chatbubble_"};
+        BubbleChatType chat = { CHAT_SAY, {"", 0, false, 0, false, 0, ETA_LEFT}, "chatbubble_", true };
 
         csString type = chatNode->GetAttributeValue("type");
         type.Downcase();
@@ -231,7 +231,7 @@ bool psChatBubbles::Load(const char * filename, bool saveAgain)
     return true;
 }
 
-bool psChatBubbles::Verify(MsgEntry * msg, unsigned int flags, Client *& client)
+bool psChatBubbles::Verify(MsgEntry* /*msg*/, unsigned int /*flags*/, Client*& /*client*/)
 {
     return true;
 }
@@ -251,7 +251,7 @@ BubbleChatType* psChatBubbles::GetTemplate(int iChatType)
     return NULL;
 }
 
-void psChatBubbles::HandleMessage(MsgEntry * msg, Client * client)
+void psChatBubbles::HandleMessage(MsgEntry* msg, Client* /*client*/)
 {
 #ifdef DISABLE_CHAT_BUBBLES
     return;

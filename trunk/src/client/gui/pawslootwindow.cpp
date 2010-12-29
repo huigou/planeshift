@@ -77,9 +77,9 @@ bool pawsLootWindow::PostSetup()
 // Command and Message Handling
 //////////////////////////////////////////////////////////////////////
 
-const char* pawsLootWindow::HandleCommand( const char* cmd )
+const char* pawsLootWindow::HandleCommand(const char* /*cmd*/)
 {
-    /***
+    /*
     char* buff = csStrNew(cmd);
 
     // Check which command was invoked:
@@ -91,7 +91,7 @@ const char* pawsLootWindow::HandleCommand( const char* cmd )
     // Query the server for messages:
     QueryServer();
     }
-    ***/
+    */
     return NULL;
 }
 
@@ -164,7 +164,7 @@ void pawsLootWindow::HandleMessage ( MsgEntry* me )
     }
 }
 
-bool pawsLootWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsLootWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     int button = widget->GetID();
 

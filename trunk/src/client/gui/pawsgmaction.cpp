@@ -87,7 +87,7 @@ bool pawsGMActionWindow::PostSetup()
     return true;
 }
 
-bool pawsGMActionWindow::OnButtonPressed(int button,int keyModifier,pawsWidget* widget)
+bool pawsGMActionWindow::OnButtonPressed(int /*button*/, int /*keyModifier*/, pawsWidget* widget)
 {
     switch ( widget->GetID() )
     {
@@ -145,7 +145,7 @@ bool pawsGMActionWindow::OnButtonPressed(int button,int keyModifier,pawsWidget* 
     return true;
 }
 
-bool pawsGMActionWindow::OnChange( pawsWidget * widget )
+bool pawsGMActionWindow::OnChange(pawsWidget* /*widget*/)
 {
     isDirty = true;
     return true;

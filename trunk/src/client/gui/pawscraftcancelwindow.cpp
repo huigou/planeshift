@@ -79,12 +79,12 @@ void pawsCraftCancelWindow::Start(csTicks craftTime)
 }
 
 
-bool pawsCraftCancelWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsCraftCancelWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     if (!strcmp(widget->GetName(),"Cancel"))
     {
-            Cancel();
-            return true;
+        Cancel();
+        return true;
     }
     return false;
 }

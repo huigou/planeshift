@@ -100,7 +100,7 @@ pawsButton* pawsLauncherWindow::FindButton(WidgetID id)
     return static_cast<pawsButton*>(FindWidget(id));
 }
 
-bool pawsLauncherWindow::OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* widget)
+bool pawsLauncherWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     int ID = widget->GetID();
 
@@ -1236,7 +1236,7 @@ bool pawsLauncherWindow::LoadResource(const char* resource,const char* resname, 
     return true;
 }
 
-void pawsLauncherWindow::OnListAction(pawsListBox* widget, int status)
+void pawsLauncherWindow::OnListAction(pawsListBox* widget, int /*status*/)
 {
     switch(widget->GetID())
     {

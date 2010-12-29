@@ -39,7 +39,7 @@ psEntity::psEntity ()
     handle = NULL;
 }
 
-psEntity::psEntity (psEntity* const &entity)
+psEntity::psEntity (psEntity* const& /*entity*/)
 {
 }
 

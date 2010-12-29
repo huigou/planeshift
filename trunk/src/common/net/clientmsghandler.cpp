@@ -68,7 +68,7 @@ bool ClientMsgHandler::Initialize(NetBase* nb, iObjectRegistry* object_reg)
     return true;
 }
 
-bool ClientMsgHandler::HandleEvent(iEvent &ev)
+bool ClientMsgHandler::HandleEvent(iEvent& /*ev*/)
 {
     if (!netbase->IsReady())
         return false;

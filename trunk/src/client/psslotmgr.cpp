@@ -168,7 +168,7 @@ void psSlotManager::CancelDrag()
 }
 
 
-void psSlotManager::OnNumberEntered(const char *name,int param,int count)
+void psSlotManager::OnNumberEntered(const char* /*name*/, int param, int count)
 {
     if ( count == -1 )
         return;

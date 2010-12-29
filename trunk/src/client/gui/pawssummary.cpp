@@ -263,7 +263,7 @@ void pawsSummaryWindow::SetVerify( csArray<psCharVerificationMesg::Attribute> st
     CheckLoadStatus();
 }
 
-bool pawsSummaryWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsSummaryWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     if(!widget)
         return false;

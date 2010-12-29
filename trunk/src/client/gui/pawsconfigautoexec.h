@@ -41,8 +41,13 @@ public:
     virtual void SetDefault();///< @see pawsConfigSectionWindow
     virtual void Show();      ///< @see pawsConfigSectionWindow
 
-    bool OnChange(pawsWidget *widget) { dirty = true; return true; } ///< @see pawsWidget
-    virtual bool OnButtonPressed(int button, int keyModifier, pawsWidget *widget) { dirty = true; return true; } ///< @see pawsWidget
+    bool OnChange(pawsWidget* /*widget*/) { dirty = true; return true; } ///< @see pawsWidget
+    /// @see pawsWidget
+    virtual bool OnButtonPressed(int /*button*/, int /*keyModifier*/, pawsWidget* /*widget*/)
+    {
+         dirty = true;
+         return true;
+    }
     virtual void OnListAction( pawsListBox* selected, int status ); ///< @see pawsWidget
 
 private:

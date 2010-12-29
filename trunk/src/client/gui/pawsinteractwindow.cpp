@@ -208,7 +208,7 @@ void pawsInteractWindow::HandleMessage( MsgEntry* me )
     genericCommand = guimsg.genericCommand;
 }
 
-bool pawsInteractWindow::OnMouseDown(int button, int modifiers,int x,int y)
+bool pawsInteractWindow::OnMouseDown(int /*button*/, int /*modifiers*/, int /*x*/, int /*y*/)
 {
     Hide();
     //PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
@@ -216,7 +216,7 @@ bool pawsInteractWindow::OnMouseDown(int button, int modifiers,int x,int y)
 }
 
 
-bool pawsInteractWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsInteractWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     switch ( widget->GetID() )
     {
@@ -458,7 +458,7 @@ void pawsInteractWindow::Draw()
 
 }
 
-void pawsInteractWindow::OnStringEntered(const char *name,int param,const char *value)
+void pawsInteractWindow::OnStringEntered(const char* name, int /*param*/, const char* value)
 {
     if ( value && strlen(value) )
     {

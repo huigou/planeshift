@@ -263,7 +263,7 @@ void pawsConfigCamera::SetCameraValues(pawsTreeNode * subtreeRoot)
 }
 
 
-bool pawsConfigCamera::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsConfigCamera::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* /*widget*/)
 {
     dirty = true;
     return true;

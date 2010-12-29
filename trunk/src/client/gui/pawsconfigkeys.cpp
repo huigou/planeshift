@@ -316,7 +316,7 @@ void pawsConfigKeys::SetTriggerTextOfCommand(const csString & command, const csS
     textBox->SetText(trigger);
 }
 
-bool pawsConfigKeys::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsConfigKeys::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     editedCmd = GetCommandOfButton(widget);
     if (editedCmd.IsEmpty())
@@ -388,7 +388,7 @@ void pawsFingeringWindow::ShowDialog(pawsFingeringReceiver * receiver, const cha
     PawsManager::GetSingleton().SetModalWidget(this);
 }
 
-bool pawsFingeringWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsFingeringWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     if (!strcmp(widget->GetName(),"CancelButton"))
     {
@@ -452,7 +452,7 @@ void pawsFingeringWindow::SetCollisionInfo(const char* action)
     buttonTextBox->SetText(str);
 }
 
-bool pawsFingeringWindow::OnKeyDown(utf32_char keyCode, utf32_char keyChar, int modifiers)
+bool pawsFingeringWindow::OnKeyDown(utf32_char keyCode, utf32_char /*keyChar*/, int modifiers)
 {
     /* Ignore autorepeats.
      * You can get odd results like ctrl+Lctrl if you accept them here,
@@ -468,7 +468,7 @@ bool pawsFingeringWindow::OnKeyDown(utf32_char keyCode, utf32_char keyChar, int 
     return true;
 }
 
-bool pawsFingeringWindow::OnMouseDown( int mousebtn, int modifiers, int x, int y )
+bool pawsFingeringWindow::OnMouseDown(int mousebtn, int modifiers, int /*x*/, int /*y*/)
 {
     device = psControl::MOUSE;
     button = mousebtn;

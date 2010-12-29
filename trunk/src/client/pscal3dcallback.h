@@ -94,13 +94,13 @@ struct vmAnimCallback : public CalAnimationCallback
     unsigned int callbackcount;
 
     // Not using this for now.
-    void AnimationUpdate(float anim_time,CalModel *model, void * userData)
+    void AnimationUpdate(float /*anim_time*/, CalModel* /*model*/, void* /*userData*/)
     {
         //printf("Anim Update at time %.2f.\n",anim_time);
     }
 
     // This is used to keep animations repeating.
-    void AnimationComplete(CalModel *model, void * userData)
+    void AnimationComplete(CalModel* /*model*/, void* /*userData*/)
     {
         //printf("Anim Completed (%d)!\n",callbackcount);
         if (callbackcount > 0)

@@ -70,13 +70,13 @@ public:
         // sets content of dialog according to default configuration
 protected:
     csString sectionName;
-            // Says what section of configuration is being configured by this window.
-            // A pawsConfigSectionWindow could be used by more than one section
-            // and 'sectionName' tells which section it is.
+        // Says what section of configuration is being configured by this window.
+        // A pawsConfigSectionWindow could be used by more than one section
+        // and 'sectionName' tells which section it is.
     bool dirty;
-            // Is data in configuration window different from data in configuration file
-            // i.e. do we need to save it ?
-            // Should be set to true when user changes something, and to false when the data is loaded/saved.
+        // Is data in configuration window different from data in configuration file
+        // i.e. do we need to save it ?
+        // Should be set to true when user changes something, and to false when the data is loaded/saved.
 };
 
 
@@ -129,9 +129,8 @@ private:
 };
 
 
-CREATE_PAWS_FACTORY(pawsConfigWindow)
+CREATE_PAWS_FACTORY(pawsConfigWindow);
 
 
 #endif 
-
 

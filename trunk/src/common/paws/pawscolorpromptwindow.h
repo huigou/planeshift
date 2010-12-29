@@ -82,6 +82,7 @@ protected:
     int param;
 };
 
-CREATE_PAWS_FACTORY(pawsColorPromptWindow)
+CREATE_PAWS_FACTORY(pawsColorPromptWindow);
 
 #endif
+

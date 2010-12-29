@@ -302,7 +302,7 @@ protected:
     iGraphics2D * graphics2d;
 };
 
-CREATE_PAWS_FACTORY(pawsMenu)
+CREATE_PAWS_FACTORY(pawsMenu);
 
 //-----------------------------------------------------------------------------
 //                            class pawsMenuItem
@@ -322,7 +322,7 @@ public:
     /**
      * Sets/gets content of event that will be sent when the menu item is invoked.
      */
-    virtual void SetAction(const pawsMenuAction & action)
+    virtual void SetAction(const pawsMenuAction& /*action*/)
     {
     }
     virtual pawsMenuAction GetAction()
@@ -412,7 +412,7 @@ protected:
     iGraphics2D * graphics2d;
 };
 
-CREATE_PAWS_FACTORY(pawsMenuItem)
+CREATE_PAWS_FACTORY(pawsMenuItem);
 
 
 //-----------------------------------------------------------------------------
@@ -436,7 +436,7 @@ protected:
     iGraphics2D * graphics2d;
 };
 
-CREATE_PAWS_FACTORY(pawsMenuSeparator)
+CREATE_PAWS_FACTORY(pawsMenuSeparator);
 
 
 #endif

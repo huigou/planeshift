@@ -45,7 +45,7 @@ public:
             parent = 0;
         }
     
-        void Update(csTicks elapsed, int num_verts, uint32 version_id)
+        void Update(csTicks /*elapsed*/, int /*num_verts*/, uint32 /*version_id*/)
         {
         }
 
@@ -55,10 +55,18 @@ public:
         bool AnimatesNormals() const { return false; }
         bool AnimatesColors() const { return false; }
 
-        const csVector3 * UpdateVertices(csTicks current, const csVector3 * verts, int num_verts, uint32 version_id);
-        const csVector2 * UpdateTexels(csTicks current, const csVector2 * texels, int num_texels, uint32 version_id);
-        const csVector3 * UpdateNormals(csTicks current, const csVector3 * normals, int num_normals, uint32 version_id) { return normals; }
-        const csColor4 * UpdateColors(csTicks current, const csColor4 * colors, int num_colors, uint32 version_id) { return colors; }
+        const csVector3* UpdateVertices(csTicks current, const csVector3* verts, int num_verts, uint32 version_id);
+        const csVector2* UpdateTexels(csTicks current, const csVector2* texels, int num_texels, uint32 version_id);
+        const csVector3* UpdateNormals(csTicks /*current*/, const csVector3* normals, int /*num_normals*/,
+                                       uint32 /*version_id*/)
+        {
+            return normals;
+        }
+        const csColor4* UpdateColors(csTicks /*current*/, const csColor4* colors, int /*num_colors*/,
+                                     uint32 /*version_id*/)
+        {
+            return colors;
+        }
     };
     csRef<MeshAnimControl> meshControl;
     friend struct MeshAnimControl;

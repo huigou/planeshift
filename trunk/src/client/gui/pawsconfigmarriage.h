@@ -81,6 +81,7 @@ protected:
     pawsRadioButtonGroup * confirmRadioGroup;
 };
 
-CREATE_PAWS_FACTORY(pawsConfigMarriage)
+CREATE_PAWS_FACTORY(pawsConfigMarriage);
 
 #endif
+

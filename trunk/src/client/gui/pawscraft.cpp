@@ -116,7 +116,7 @@ void pawsCraftWindow::Add( const char* parent, const char* realParent, psMsgCraf
 }
 */
 
-bool pawsCraftWindow::OnSelected(pawsWidget *widget)
+bool pawsCraftWindow::OnSelected(pawsWidget* /*widget*/)
 {
 /*
     pawsTreeNode* node = static_cast<pawsTreeNode*> (widget);

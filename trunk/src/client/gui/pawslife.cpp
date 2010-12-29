@@ -68,7 +68,7 @@ bool pawsLifeEventWindow::PostSetup()
 }
 
 
-bool pawsLifeEventWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsLifeEventWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     if ( strcmp(widget->GetName(),"randomize") == 0 )
     {

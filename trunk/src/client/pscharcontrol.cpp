@@ -411,7 +411,7 @@ psTriggerHandler::~psTriggerHandler()
     movement = NULL;
 }
 
-void psTriggerHandler::HandleBrightnessUp(const psControl* trigger, bool value)
+void psTriggerHandler::HandleBrightnessUp(const psControl* /*trigger*/, bool /*value*/)
 {
     csString sysmsg;
 
@@ -428,7 +428,7 @@ void psTriggerHandler::HandleBrightnessUp(const psControl* trigger, bool value)
     ackmsg.FireEvent();
 }
 
-void psTriggerHandler::HandleBrightnessDown(const psControl* trigger, bool value)
+void psTriggerHandler::HandleBrightnessDown(const psControl* /*trigger*/, bool /*value*/)
 {
     csString sysmsg;
 
@@ -445,7 +445,7 @@ void psTriggerHandler::HandleBrightnessDown(const psControl* trigger, bool value
     ackmsg.FireEvent();
 }
 
- void psTriggerHandler::HandleBrightnessReset(const psControl* trigger, bool value)
+ void psTriggerHandler::HandleBrightnessReset(const psControl* /*trigger*/, bool /*value*/)
 {
     psengine->SetBrightnessCorrection(0.0f);
     psengine->UpdateLights();
@@ -502,7 +502,7 @@ void psTriggerHandler::HandleMode(const psControl* trigger, bool value)
     }
 }
 
-void psTriggerHandler::HandleModeRun(const psControl* trigger, bool value)
+void psTriggerHandler::HandleModeRun(const psControl* /*trigger*/, bool /*value*/)
 {
     if(movement && !movement->Sneaking())
     { 
@@ -519,7 +519,7 @@ void psTriggerHandler::HandleModeSneak(const psControl* trigger, bool value)
     }
 }
 
-void psTriggerHandler::HandleAutoMove(const psControl* trigger, bool value)
+void psTriggerHandler::HandleAutoMove(const psControl* /*trigger*/, bool /*value*/)
 {
     if(movement)
     {
@@ -542,7 +542,7 @@ void psTriggerHandler::HandleLook(const psControl* trigger, bool value)
     }
 }
 
-void psTriggerHandler::HandleZoom(const psControl* trigger, bool value)
+void psTriggerHandler::HandleZoom(const psControl* trigger, bool /*value*/)
 {
     // KL: Removed check for value because we now treat this event as TOGGLE.
     if (trigger->name == "Zoom in")
@@ -567,7 +567,7 @@ void psTriggerHandler::HandleZoom(const psControl* trigger, bool value)
       //should be SetPitch... but there is no method to do that currently so the movement is blocky for now
 }
 
-void psTriggerHandler::HandleMouseLook(const psControl* trigger, bool value)
+void psTriggerHandler::HandleMouseLook(const psControl* /*trigger*/, bool value)
 {
     // RS: invert mouselook status so the mouselook button can be
     // used to temporarily switch out of mouselook mode too
@@ -602,7 +602,7 @@ void psTriggerHandler::HandleMouseLookToggle(const psControl* trigger, bool valu
     HandleMouseLook(trigger,!movement->MouseLook());
 }
   
-void psTriggerHandler::HandleMouseZoom(const psControl* trigger, bool value)
+void psTriggerHandler::HandleMouseZoom(const psControl* /*trigger*/, bool value)
 {
     // KL: Changed order to match HandleMouseLookToggle (no change in functionality, just to keep code more readable).
     if (movement->MouseZoom()!=value) // KL: Switch only if necessary to avoid jumping mouse cursor or overwriting last saved position.
@@ -614,7 +614,7 @@ void psTriggerHandler::HandleMouseZoom(const psControl* trigger, bool value)
 }
 
 
-void psTriggerHandler::HandleMouseMove(const psControl* trigger, bool value)
+void psTriggerHandler::HandleMouseMove(const psControl* /*trigger*/, bool value)
 {
     if (value && psengine->GetCelClient()
      && psengine->GetCelClient()->GetMainPlayer()
@@ -629,13 +629,13 @@ void psTriggerHandler::HandleMouseMove(const psControl* trigger, bool value)
     }
 }
 
-void psTriggerHandler::HandleCameraMode(const psControl* trigger, bool value)
+void psTriggerHandler::HandleCameraMode(const psControl* /*trigger*/, bool value)
 {
     if (value)
         psengine->GetPSCamera()->NextCameraMode();
 }
 
-void psTriggerHandler::HandleCenterCamera(const psControl* trigger, bool value)
+void psTriggerHandler::HandleCenterCamera(const psControl* /*trigger*/, bool value)
 {
     if (value)
     {        
@@ -654,7 +654,7 @@ void psTriggerHandler::HandleCenterCamera(const psControl* trigger, bool value)
     }
 }
 
-void psTriggerHandler::HandleMovementAction(const psControl* trigger, bool value)
+void psTriggerHandler::HandleMovementAction(const psControl* trigger, bool /*value*/)
 {
     if (trigger->name == "Sit" && psengine->GetCelClient()->GetMainPlayer())
     {

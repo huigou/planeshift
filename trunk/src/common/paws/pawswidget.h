@@ -420,7 +420,7 @@ public:
      * Allow pawsButton to simulate button pushes based on keypresses.
      * Return true if key is handled.
      */
-    virtual bool CheckKeyHandled(int keyCode) { return false; }
+    virtual bool CheckKeyHandled(int /*keyCode*/) { return false; }
 
     /** Add a child widget to this widget.  
      * This widget is then responsible for deleting this child.
@@ -537,7 +537,7 @@ public:
 
     /** Setup this widget.
     */
-    virtual bool Setup( iDocumentNode* node ) { return true; }
+    virtual bool Setup(iDocumentNode* /*node*/) { return true; }
 
     /** This is called after the widget and all of it's children have been 
      * created.
@@ -624,7 +624,7 @@ public:
      * @remark Acts recursively on it's parents. If the widget cannot 
      * be focused, this function needs be overridden.
      */   
-    virtual bool OnGainFocus( bool notifyParent = true ) 
+    virtual bool OnGainFocus(bool /*notifyParent*/ = true)
     { 
         hasFocus = true; 
         if ( hasFocus ) return true;
@@ -762,7 +762,7 @@ public:
     /** Test if the widget should intercept all key presses.
      * @remark False by default, should be true for text entry widgets
      */
-    virtual const bool GetFocusOverridesControls() const { return false; }
+    virtual bool GetFocusOverridesControls() const { return false; }
 
     /** Move this widget up the z order to the top
      * If the widget is alwaysOnTop, it will be placed in position 0.
@@ -912,7 +912,7 @@ public:
      * @param widget
      * @return bool
      */
-    virtual bool OnSelected( pawsWidget* widget) { return false; }
+    virtual bool OnSelected(pawsWidget* /*widget*/) { return false; }
     
     /** Called whenever a menu action occurs.
      * @param widget The widget acted upon.
@@ -1464,7 +1464,7 @@ public: \
     { \
         return new factoryName( ); \
     } \
-};
+}
 
 
 

@@ -149,7 +149,7 @@ protected:
     int param;
 };
 
-CREATE_PAWS_FACTORY(pawsStringPromptWindow)
-
+CREATE_PAWS_FACTORY(pawsStringPromptWindow);
 
 #endif
+

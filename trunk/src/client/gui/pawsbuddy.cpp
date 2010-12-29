@@ -155,7 +155,7 @@ void pawsBuddyWindow::HandleMessage( MsgEntry* me )
 }
 
 
-bool pawsBuddyWindow::OnButtonReleased( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsBuddyWindow::OnButtonReleased(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     switch ( widget->GetID() )
     {
@@ -217,7 +217,7 @@ bool pawsBuddyWindow::OnButtonReleased( int mouseButton, int keyModifier, pawsWi
     return false;
 }
 
-void pawsBuddyWindow::OnStringEntered(const char *name,int param,const char *value)
+void pawsBuddyWindow::OnStringEntered(const char* name, int /*param*/, const char* value)
 {
     if (!value || !strlen(value))
     {

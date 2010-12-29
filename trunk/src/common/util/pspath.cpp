@@ -600,7 +600,7 @@ void psLinearPath::GetInterpolatedUp (int /*index*/, float /*fraction*/, csVecto
     up = csVector3(0,1,0);
 }
     
-void psLinearPath::GetInterpolatedForward (int index, float fraction, csVector3& forward)
+void psLinearPath::GetInterpolatedForward (int index, float /*fraction*/, csVector3& forward)
 {
     forward.x = dx[index];
     forward.y = dy[index];

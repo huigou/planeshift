@@ -30,11 +30,11 @@ class pawsCheckBox;
 class pawsConfigShadows : public pawsConfigSectionWindow
 {
 public:
-	pawsConfigShadows();
-	void drawFrame();
+    pawsConfigShadows();
+    void drawFrame();
 
     //from pawsWidget:
-	virtual bool PostSetup();
+    virtual bool PostSetup();
 	
     // from pawsConfigSectionWindow:
     virtual bool Initialize();
@@ -43,15 +43,19 @@ public:
     virtual void SetDefault();
     virtual void Show();	
 	
-	// from pawsWidget
-	bool OnChange(pawsWidget *widget) { dirty = true; return true; }
-	virtual bool OnButtonPressed(int button, int keyModifier, pawsWidget *widget) { dirty = true; return true; }
-	virtual void OnListAction( pawsListBox* selected, int status );
+    // from pawsWidget
+    bool OnChange(pawsWidget* /*widget*/) { dirty = true; return true; }
+    virtual bool OnButtonPressed(int /*button*/, int /*keyModifier*/, pawsWidget* /*widget*/)
+    {
+        dirty = true;
+        return true;
+    }
+    virtual void OnListAction( pawsListBox* selected, int status );
 
 private:
-	psShadowManager *shadowManager;
+    psShadowManager *shadowManager;
 
-	pawsCheckBox *enabled;
+    pawsCheckBox *enabled;
 	
 };
 

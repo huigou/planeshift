@@ -355,7 +355,7 @@ bool pawsConfigMouse::OnButtonPressed( int mouseButton, int keyModifier, pawsWid
     return true;
 }
 
-void pawsConfigMouse::HandleEditedAction( csString& editedAction )
+void pawsConfigMouse::HandleEditedAction( csString& /*editedAction*/ )
 {
 /*
     if ( editedAction == "InvertMouse" )

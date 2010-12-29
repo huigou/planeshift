@@ -115,7 +115,8 @@ bool pawsSmallInventoryWindow::OnMouseDown( int button, int keyModifier, int x, 
     return pawsWidget::OnMouseDown(  button, keyModifier, x, y );
 }
 
-bool pawsSmallInventoryWindow::OnButtonPressed( int mouseButton, int keyModifer, pawsWidget* widget )
+bool pawsSmallInventoryWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifer*/, pawsWidget* /*widget*/)
 {
     return true;
 }
+

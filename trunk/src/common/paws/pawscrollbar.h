@@ -93,7 +93,7 @@ public:
     virtual void SetReversed(bool reversed) { this->reversed = reversed; }
 
     // Scroll bars should not be focused.
-    virtual bool OnGainFocus( bool notifyParent = true ) {return false;}
+    virtual bool OnGainFocus(bool /*notifyParent*/ = true) {return false;}
 
     virtual void OnResize();
 

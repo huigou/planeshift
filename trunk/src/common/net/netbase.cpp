@@ -305,7 +305,7 @@ bool NetBase::CheckIn()
 }
 
 
-bool NetBase::Flush(MsgQueue * queue)
+bool NetBase::Flush(MsgQueue* /*queue*/)
 {
     //@@@ Dirty, hack, this might be in a diffrent thread
     //@@@ need to syncronize this in some way. But at least

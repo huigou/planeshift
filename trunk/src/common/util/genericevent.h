@@ -49,7 +49,7 @@ public:                                                                         
                                                                                     \
     CS_EVENTHANDLER_NAMES(eventName);                                               \
     CS_EVENTHANDLER_NIL_CONSTRAINTS;                                                \
-};
+}
 
 #endif
 

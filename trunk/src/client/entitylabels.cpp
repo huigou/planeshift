@@ -173,7 +173,7 @@ void psEntityLabels::GetConfiguration(psEntityLabelVisib & _visCreatures, psEnti
     colors[ENTITY_GUILD] = entityColors[ENTITY_GUILD];
 }
 
-bool psEntityLabels::HandleEvent(iEvent & ev)
+bool psEntityLabels::HandleEvent(iEvent& /*ev*/)
 {
     static unsigned int count = 0;
     if (++count%10 != 0)  // Update once every 10th frame

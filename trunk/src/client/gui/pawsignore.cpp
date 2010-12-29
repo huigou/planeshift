@@ -68,7 +68,7 @@ void pawsIgnoreWindow::OnListAction( pawsListBox* widget, int status )
 
 
 
-bool pawsIgnoreWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsIgnoreWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
 
     switch ( widget->GetID() )
@@ -221,7 +221,7 @@ bool pawsIgnoreWindow::IsIgnored(csString &name)
     return result;
 }
 
-void pawsIgnoreWindow::OnStringEntered(const char *name,int param,const char *value)
+void pawsIgnoreWindow::OnStringEntered(const char* name, int /*param*/, const char* value)
 {
     if (!value || !strlen(value))
         return;

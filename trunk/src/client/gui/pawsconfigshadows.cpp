@@ -120,7 +120,8 @@ void pawsConfigShadows::Show()
 	pawsWidget::Show();
 }
 
-void pawsConfigShadows::OnListAction( pawsListBox* selected, int status )
+void pawsConfigShadows::OnListAction(pawsListBox* /*selected*/, int /*status*/)
 {
     dirty = true;
 }
+

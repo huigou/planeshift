@@ -183,7 +183,7 @@ bool pawsControlWindow::OnMouseExit()
     return true;
 }
 
-bool pawsControlWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* reporter )
+bool pawsControlWindow::OnButtonPressed(int mouseButton, int /*keyModifier*/, pawsWidget* reporter)
 {
     if(reporter->GetID() == CONTROL_MINIDOWN || reporter->GetID() == CONTROL_MINIUP)
     {

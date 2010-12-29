@@ -55,9 +55,8 @@ protected:
 };
 
 
-CREATE_PAWS_FACTORY(pawsConfigEntityInteraction)
+CREATE_PAWS_FACTORY(pawsConfigEntityInteraction);
 
 
 #endif 
-
 

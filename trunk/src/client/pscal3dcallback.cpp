@@ -51,8 +51,8 @@ psCal3DCallbackLoader::~psCal3DCallbackLoader()
 {
 }
 
-csPtr<iBase> psCal3DCallbackLoader::Parse(iDocumentNode * node, iStreamSource*, iLoaderContext * ldr_context,
-                                          iBase * context)
+csPtr<iBase> psCal3DCallbackLoader::Parse(iDocumentNode* node, iStreamSource*, iLoaderContext* /*ldr_context*/,
+                                          iBase* context)
 {
     // turn the iBase into an iSpriteCal3DFactoryState so we can use it
     csRef<iMeshFactoryWrapper> meshFactoryWrapper =  scfQueryInterface<iMeshFactoryWrapper > ( context);
@@ -124,7 +124,7 @@ psCal3DCallbackEffect::~psCal3DCallbackEffect()
 {
 }
 
-void psCal3DCallbackEffect::AnimationUpdate(float anim_time, CalModel * model, void * userData)
+void psCal3DCallbackEffect::AnimationUpdate(float anim_time, CalModel* /*model*/, void* userData)
 {
     if (resetPerCycle)
     {
@@ -134,7 +134,7 @@ void psCal3DCallbackEffect::AnimationUpdate(float anim_time, CalModel * model, v
     if (anim_time >= triggerTime && !hasTriggered)
     {
         hasTriggered = true;
-        GEMClientObject * gemObj = (GEMClientObject *)userData;
+        GEMClientObject* gemObj = (GEMClientObject*)userData;
         if (gemObj)
         {
             effectID = psengine->GetEffectManager()->RenderEffect(effectName, csVector3(0,0,0), gemObj->GetMesh());
@@ -144,7 +144,7 @@ void psCal3DCallbackEffect::AnimationUpdate(float anim_time, CalModel * model, v
     lastUpdateTime = anim_time;
 }
 
-void psCal3DCallbackEffect::AnimationComplete(CalModel * model, void * userData)
+void psCal3DCallbackEffect::AnimationComplete(CalModel* /*model*/, void* /*userData*/)
 {
     hasTriggered = false;
     

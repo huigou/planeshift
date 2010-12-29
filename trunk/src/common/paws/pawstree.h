@@ -545,13 +545,12 @@ protected:
 //////////////////////////////////////////////////////////////////////
 
 
-CREATE_PAWS_FACTORY(pawsTree)
-CREATE_PAWS_FACTORY(pawsSimpleTree)
-CREATE_PAWS_FACTORY(pawsSimpleTreeNode)
-CREATE_PAWS_FACTORY(pawsTreeNode)
-CREATE_PAWS_FACTORY(pawsSeqTreeNode)
-CREATE_PAWS_FACTORY(pawsWidgetTreeNode)
+CREATE_PAWS_FACTORY(pawsTree);
+CREATE_PAWS_FACTORY(pawsSimpleTree);
+CREATE_PAWS_FACTORY(pawsSimpleTreeNode);
+CREATE_PAWS_FACTORY(pawsTreeNode);
+CREATE_PAWS_FACTORY(pawsSeqTreeNode);
+CREATE_PAWS_FACTORY(pawsWidgetTreeNode);
 
 #endif 
-
 

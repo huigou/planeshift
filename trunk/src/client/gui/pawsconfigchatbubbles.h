@@ -73,8 +73,12 @@ public:
     virtual void Show();	
 	
 	// from pawsWidget
-	bool OnChange(pawsWidget *widget) { dirty = true; return true; }
-	virtual bool OnButtonPressed(int button, int keyModifier, pawsWidget *widget) { dirty = true; return true; }
+	bool OnChange(pawsWidget* /*widget*/) { dirty = true; return true; }
+	virtual bool OnButtonPressed(int /*button*/, int /*keyModifier*/, pawsWidget* /*widget*/)
+        {
+            dirty = true;
+            return true;
+        }
 	bool OnMouseDown(int button, int modifiers, int x, int y );
 	bool OnScroll( int direction, pawsScrollBar* widget );
 	virtual void OnListAction( pawsListBox* selected, int status );

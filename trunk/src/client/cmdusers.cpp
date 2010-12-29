@@ -1007,7 +1007,7 @@ void psUserCommands::UpdateTarget(SearchDirection searchDirection,
     csVector3 myPos = myEntity->GetPosition();
 
     float seDistance;
-    csVector3 sePos;
+    csVector3 sePos(myPos);
     if (startingEntity != NULL)
     {
         sePos = startingEntity->GetPosition();

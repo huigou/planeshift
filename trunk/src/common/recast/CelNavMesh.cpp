@@ -2066,6 +2066,8 @@ bool celNavMeshBuilder::UpdateFakeTriangles ()
 // Based on Recast Sample_TileMesh::buildAllTiles()
 THREADED_CALLABLE_IMPL(celNavMeshBuilder,BuildNavMesh)
 {
+  (void)sync; // supress unused var warning
+
   CS_ASSERT(currentSector);
   if (!currentSector) 
   {

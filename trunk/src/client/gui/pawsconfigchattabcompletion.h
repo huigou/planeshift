@@ -42,9 +42,13 @@ public:
     virtual void Show();
 
        // from pawsWidget
-       bool OnChange(pawsWidget *widget) { dirty = true; return true; }
-       virtual bool OnButtonPressed(int button, int keyModifier, pawsWidget *widget) { dirty = true; return true; }
-       virtual void OnListAction( pawsListBox* selected, int status ) {dirty = true;};
+       bool OnChange(pawsWidget* /*widget*/) { dirty = true; return true; }
+       virtual bool OnButtonPressed(int /*button*/, int /*keyModifier*/, pawsWidget* /*widget*/)
+       {
+           dirty = true;
+           return true;
+       }
+       virtual void OnListAction(pawsListBox* /*selected*/, int /*status*/) {dirty = true;};
 
 private:
        pawsChatWindow* chatWindow;

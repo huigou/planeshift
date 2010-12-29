@@ -263,7 +263,7 @@ const char * psCamera::HandleCommand(const char *cmd)
 }
 
 
-void psCamera::HandleMessage(MsgEntry *msg)
+void psCamera::HandleMessage(MsgEntry* /*msg*/)
 {
     return;
 }
@@ -870,6 +870,11 @@ void psCamera::SetCameraMode(int mode)
 //  if (lastCameraMode == currCameraMode)
 //      return;
 
+    if (mode < 0)
+    {
+        return;
+    }
+
     lastCameraMode = currCameraMode;
     currCameraMode = mode;
 
@@ -994,7 +999,7 @@ iMeshWrapper *psCamera::Get3DPointFrom2D(int x, int y, csVector3 * worldCoord, c
     return NULL;
 }
 
-iMeshWrapper* psCamera::FindMeshUnder2D(int x, int y, csVector3 *pos, int *poly)
+iMeshWrapper* psCamera::FindMeshUnder2D(int x, int y, csVector3* pos, int* /*poly*/)
 {
     if (!GetICamera() || !GetICamera()->GetCamera()->GetSector())
         return NULL;

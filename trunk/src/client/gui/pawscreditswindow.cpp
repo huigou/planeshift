@@ -353,7 +353,7 @@ void pawsCreditsWindow::Draw()
     }
 }
 
-bool pawsCreditsWindow::OnButtonPressed(int button, int keyModifier, pawsWidget *widget)
+bool pawsCreditsWindow::OnButtonPressed(int /*button*/, int /*keyModifier*/, pawsWidget* widget)
 {
     if (widget->GetID() == 100) //Ok button
     {

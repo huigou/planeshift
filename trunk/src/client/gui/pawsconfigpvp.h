@@ -54,9 +54,8 @@ protected:
 };
 
 
-CREATE_PAWS_FACTORY(pawsConfigPvP)
+CREATE_PAWS_FACTORY(pawsConfigPvP);
 
 
 #endif 
-
 

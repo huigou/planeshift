@@ -414,12 +414,12 @@ psCharacterApprovedMessage::psCharacterApprovedMessage(uint32_t clientnum)
 }
 
 
-psCharacterApprovedMessage::psCharacterApprovedMessage( MsgEntry* message )
+psCharacterApprovedMessage::psCharacterApprovedMessage(MsgEntry* /*message*/)
 {
    // No data, always valid
 }
 
-csString psCharacterApprovedMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psCharacterApprovedMessage::ToString(AccessPointers* /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -2010,7 +2010,7 @@ psWeatherMessage::psWeatherMessage(uint32_t client, int minute, int hour, int da
     valid=!(msg->overrun);
 }
 
-psWeatherMessage::psWeatherMessage(uint32_t client, psWeatherMessage::NetWeatherInfo info, uint clientnum )
+psWeatherMessage::psWeatherMessage(uint32_t client, psWeatherMessage::NetWeatherInfo info, uint /*clientnum*/)
 {
     size_t size =
         sizeof(uint8_t) +        // type
@@ -4367,7 +4367,7 @@ void psDRMessage::CreateMsgEntry(uint32_t client, csStringSet* msgstrings, csStr
         sectorName = sector->QueryObject()->GetName();
     }
 
-    csStringID sectorNameStrId;
+    csStringID sectorNameStrId = csInvalidStringID;
     if (msgstrings)
     {
         sectorNameStrId = msgstrings ? msgstrings->Request(sectorName.GetDataSafe()) : csInvalidStringID;
@@ -4442,7 +4442,7 @@ uint8_t psDRMessage::GetDataFlags(const csVector3& v, const csVector3& wv, float
     return flags;
 }
 
-void psDRMessage::WriteDRInfo(uint32_t client, EID mappedid,
+void psDRMessage::WriteDRInfo(uint32_t /*client*/, EID mappedid,
                         bool on_ground, uint8_t mode, uint8_t counter,
                         const csVector3& pos, float yrot, iSector *sector,
                         csString sectorName, const csVector3& vel, csVector3& worldVel,
@@ -4672,11 +4672,11 @@ psPersistWorldRequest::psPersistWorldRequest()
     msg->clientnum  = 0;
 }
 
-psPersistWorldRequest::psPersistWorldRequest(MsgEntry* me)
+psPersistWorldRequest::psPersistWorldRequest(MsgEntry* /*me*/)
 {
 }
 
-csString psPersistWorldRequest::ToString(AccessPointers * /*access_ptrs*/)
+csString psPersistWorldRequest::ToString(AccessPointers* /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -4699,11 +4699,11 @@ psRequestAllObjects::psRequestAllObjects()
     valid=!(msg->overrun);
 }
 
-psRequestAllObjects::psRequestAllObjects(MsgEntry* me)
+psRequestAllObjects::psRequestAllObjects(MsgEntry* /*me*/)
 {
 }
 
-csString psRequestAllObjects::ToString(AccessPointers * /*access_ptrs*/)
+csString psRequestAllObjects::ToString(AccessPointers* /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -4729,7 +4729,7 @@ psPersistWorld::psPersistWorld( uint32_t clientNum, csVector3 pos, const char* s
     msg->Add( sector );
 }
 
-psPersistWorld::psPersistWorld( MsgEntry* me )
+psPersistWorld::psPersistWorld(MsgEntry* me)
 {
     float x = me->GetFloat();
     float y = me->GetFloat();
@@ -4738,7 +4738,7 @@ psPersistWorld::psPersistWorld( MsgEntry* me )
     sector = me->GetStr();
 }
 
-csString psPersistWorld::ToString(AccessPointers * /*access_ptrs*/)
+csString psPersistWorld::ToString(AccessPointers* /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -4752,11 +4752,11 @@ csString psPersistWorld::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psPersistActorRequest,MSGTYPE_PERSIST_ACTOR_REQUEST);
 
-psPersistActorRequest::psPersistActorRequest( MsgEntry* me )
+psPersistActorRequest::psPersistActorRequest(MsgEntry* /*me*/)
 {
 }
 
-csString psPersistActorRequest::ToString(AccessPointers * /*access_ptrs*/)
+csString psPersistActorRequest::ToString(AccessPointers* /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -4770,12 +4770,12 @@ csString psPersistActorRequest::ToString(AccessPointers * /*access_ptrs*/)
 PSF_IMPLEMENT_MSG_FACTORY(psPersistAllEntities,MSGTYPE_PERSIST_ALL_ENTITIES);
 
 
-psPersistAllEntities::psPersistAllEntities( MsgEntry* me )
+psPersistAllEntities::psPersistAllEntities(MsgEntry* me)
 {
     msg = me;
 }
 
-csString psPersistAllEntities::ToString(AccessPointers * access_ptrs)
+csString psPersistAllEntities::ToString(AccessPointers* /*access_ptrs*/)
 {
     return "PersistAllEntities";
 }
@@ -4827,9 +4827,9 @@ psPersistActor::psPersistActor( uint32_t clientNum,
                                 const char* MounterAnim,
                                 unsigned short int gender,
                                 float scale,
-                                float mountscale,
+                                float /*mountscale*/,
                                 const char* helmGroup,
-                                const char* bracerGroup,
+                                const char* /*bracerGroup*/,
                                 const char* BeltGroup,
                                 const char* CloakGroup,
                                 csVector3 collTop, csVector3 collBottom, csVector3 collOffSet,
@@ -6102,11 +6102,11 @@ psExchangeAcceptMsg::psExchangeAcceptMsg( uint32_t client )
     msg->clientnum = client;
 }
 
-psExchangeAcceptMsg::psExchangeAcceptMsg( MsgEntry* me )
+psExchangeAcceptMsg::psExchangeAcceptMsg(MsgEntry* /*me*/)
 {
 }
 
-csString psExchangeAcceptMsg::ToString(AccessPointers * /*access_ptrs*/)
+csString psExchangeAcceptMsg::ToString(AccessPointers* /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -6157,11 +6157,11 @@ psExchangeEndMsg::psExchangeEndMsg( uint32_t client )
     msg->clientnum = client;
 }
 
-psExchangeEndMsg::psExchangeEndMsg( MsgEntry* me )
+psExchangeEndMsg::psExchangeEndMsg(MsgEntry* /*me*/)
 {
 }
 
-csString psExchangeEndMsg::ToString(AccessPointers * /*access_ptrs*/)
+csString psExchangeEndMsg::ToString(AccessPointers* /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -6188,13 +6188,13 @@ psUpdateObjectNameMessage::psUpdateObjectNameMessage(uint32_t client, EID eid, c
     valid=!(msg->overrun);
 }
 
-psUpdateObjectNameMessage::psUpdateObjectNameMessage( MsgEntry* me )
+psUpdateObjectNameMessage::psUpdateObjectNameMessage(MsgEntry* me)
 {
     objectID      = EID(me->GetUInt32());
     newObjName    = me->GetStr();
 }
 
-csString psUpdateObjectNameMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psUpdateObjectNameMessage::ToString(AccessPointers* /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -6327,7 +6327,7 @@ psNameCheckMessage::psNameCheckMessage( uint32_t client, bool accept, const char
     msg->Add( reason );
 }
 
-psNameCheckMessage::psNameCheckMessage( MsgEntry* me )
+psNameCheckMessage::psNameCheckMessage(MsgEntry* /*me*/)
 {
     /*
       TODO: Check if this is this way or the other way around.
@@ -6413,7 +6413,7 @@ csString psPingMsg::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psHeartBeatMsg,MSGTYPE_HEART_BEAT);
 
-psHeartBeatMsg::psHeartBeatMsg( MsgEntry* me )
+psHeartBeatMsg::psHeartBeatMsg(MsgEntry* /*me*/)
 {
 }
 
@@ -6425,7 +6425,7 @@ psHeartBeatMsg::psHeartBeatMsg( uint32_t client )
     msg->clientnum = client;
 }
 
-csString psHeartBeatMsg::ToString(AccessPointers * /*access_ptrs*/)
+csString psHeartBeatMsg::ToString(AccessPointers* /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -6709,7 +6709,7 @@ csString psCharCreateTraitsMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psClientStatusMessage,MSGTYPE_CLIENTSTATUS);
 
-psClientStatusMessage::psClientStatusMessage(bool ready)
+psClientStatusMessage::psClientStatusMessage(bool /*ready*/)
 {
     msg.AttachNew(new MsgEntry(sizeof(uint8_t)));
 
@@ -6721,7 +6721,7 @@ psClientStatusMessage::psClientStatusMessage(bool ready)
     valid=true;
 }
 
-psClientStatusMessage::psClientStatusMessage(MsgEntry *message)
+psClientStatusMessage::psClientStatusMessage(MsgEntry* message)
 {
     uint8_t status = message->GetUInt8();
 
@@ -6731,7 +6731,7 @@ psClientStatusMessage::psClientStatusMessage(MsgEntry *message)
     valid=!(message->overrun);
 }
 
-csString psClientStatusMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psClientStatusMessage::ToString(AccessPointers* /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -7528,7 +7528,7 @@ psSequenceMessage::psSequenceMessage(MsgEntry* msg)
 }
 
 
-csString psSequenceMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psSequenceMessage::ToString(AccessPointers* /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -7542,7 +7542,7 @@ csString psSequenceMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psPlaySoundMessage, MSGTYPE_PLAYSOUND);
 
-psPlaySoundMessage::psPlaySoundMessage(uint32_t clientnum, csString snd)
+psPlaySoundMessage::psPlaySoundMessage(uint32_t clientnum, csString /*snd*/)
 {
     msg.AttachNew(new MsgEntry(sound.Length()+1));
     msg->SetType(MSGTYPE_PLAYSOUND);
@@ -7557,7 +7557,7 @@ psPlaySoundMessage::psPlaySoundMessage(MsgEntry* msg)
     valid=!(msg->overrun);
 }
 
-csString psPlaySoundMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psPlaySoundMessage::ToString(AccessPointers* /*access_ptrs*/)
 {
     csString msgtext("Message Sound:");
     return msgtext+sound;
@@ -7606,11 +7606,11 @@ psCharIntroduction::psCharIntroduction( )
     valid = !(msg->overrun);
 }
 
-psCharIntroduction::psCharIntroduction( MsgEntry* message )
+psCharIntroduction::psCharIntroduction(MsgEntry* /*message*/)
 {
 }
 
-csString psCharIntroduction::ToString(AccessPointers * access_ptrs)
+csString psCharIntroduction::ToString(AccessPointers* /*access_ptrs*/)
 {
     csString msgtext;
     return msgtext;
@@ -7719,7 +7719,7 @@ void psDialogMenuMessage::BuildMsg(int clientnum)
     valid = !(msg->overrun);
 }
 
-csString psDialogMenuMessage::ToString(AccessPointers *access_ptrs)
+csString psDialogMenuMessage::ToString(AccessPointers* /*access_ptrs*/)
 {
     csString text;
     for( size_t i = 0; i < responses.GetSize(); i++ )
@@ -7743,7 +7743,7 @@ psSimpleStringMessage::psSimpleStringMessage( uint32_t client,MSG_TYPES type, co
     valid=!(msg->overrun);
 }
 
-psSimpleStringMessage::psSimpleStringMessage( MsgEntry* me )
+psSimpleStringMessage::psSimpleStringMessage(MsgEntry* me)
 {
     str   = me->GetStr();
     valid = !(me->overrun);
@@ -7763,7 +7763,7 @@ psOrderedMessage::psOrderedMessage( uint32_t client, int valueToSend, int sequen
     valid=!(msg->overrun);
 }
 
-psOrderedMessage::psOrderedMessage( MsgEntry* me )
+psOrderedMessage::psOrderedMessage(MsgEntry* me)
 {
     value   = me->GetUInt32();
     valid = !(me->overrun);
