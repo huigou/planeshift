@@ -718,7 +718,7 @@ bool psCharacter::LoadFamiliar( Result& pet, Result& owner )
         if ( strcmp( pet[x][ "relationship_type" ], "familiar" ) == 0 )
         {
             familiars_id.Push(pet[x].GetInt( "related_id" ));
-            Notify2( LOG_MARRIAGE, "Successfully loaded familair for %s", name.GetData() );
+            Notify2( LOG_PETS, "Successfully loaded familair for %s", name.GetData() );
         }
     }
 
@@ -728,7 +728,7 @@ bool psCharacter::LoadFamiliar( Result& pet, Result& owner )
         if ( strcmp( owner[x][ "relationship_type" ], "familiar" ) == 0 )
         {
             owner_id = owner[x].GetInt( "character_id" );
-            Notify2( LOG_MARRIAGE, "Successfully loaded owner for %s", name.GetData() );
+            Notify2( LOG_PETS, "Successfully loaded owner for %s", name.GetData() );
             break;
         }
     }
