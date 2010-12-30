@@ -88,16 +88,16 @@ protected:
     bool empty;
     bool dragDrop;
     bool drawStackCount;
-    bool reserved;		// implemented to fix dequip behaviour. Cleared on PlaceItem and Clear
+    bool reserved;		///< implemented to fix dequip behaviour. Cleared on PlaceItem and Clear
     
     csRef<iPawsImage> image;
     pawsWidget* purifySign;
     pawsTextBox* stackCountLabel;
     bool handleMouseClicks;
-    bool emptyOnZeroCount;      // should the slot clear itself when the stackcount hits 0 ?
+    bool emptyOnZeroCount;      ///< should the slot clear itself when the stackcount hits 0 ?
 
-    bool isBartender;       /// Flag on if this a special bartender slot. 
-    csString action;        /// This is the action to do if this a bartender button.
+    bool isBartender;       ///< Flag on if this a special bartender slot. 
+    csString action;        ///< This is the action to do if this a bartender button.
 };
 
 CREATE_PAWS_FACTORY( pawsSlot );
