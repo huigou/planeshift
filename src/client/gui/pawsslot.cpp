@@ -109,7 +109,7 @@ bool pawsSlot::OnMouseDown( int button, int modifiers, int x, int y )
   
    
     printf("Is Bartender Slot: %d, Empty %d\n", isBartender ,empty);
-    if ( isBartender && empty == false)
+    if ( isBartender && (!empty && !psengine->GetSlotManager()->IsDragging()))
     {
         printf("This is a bartender button with action: %s\n", action.GetData());
         psengine->GetCmdHandler()->Execute(action.GetData());
