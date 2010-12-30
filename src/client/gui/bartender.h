@@ -44,7 +44,11 @@
 class pawsBartenderWindow :public pawsWidget
 {
 public:
+    ///Constructor
     pawsBartenderWindow();
+    ///Prepares the widget by loading the commands
+    bool PostSetup();
+    ///Destructor. Saves the widget commands
     virtual ~pawsBartenderWindow();
 
 protected:

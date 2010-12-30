@@ -1,7 +1,7 @@
 /*
-* shortcutwindow.cpp - Author: Andrew Dai
+* bartender.cpp - Author: Andrew Craig, Stefano Angeleri
 *
-* Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
+* Copyright (C) 2010 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
 *
 *
 * This program is free software; you can redistribute it and/or
@@ -23,12 +23,16 @@
 // Application Includes
 //=============================================================================
 #include "bartender.h"
+#include "pawsslot.h"
 
 
 //=============================================================================
 // Defines
 //=============================================================================
-
+#define BARTENDER_FILE "/planeshift/userdata/options/bartender.xml"
+//#define DEFAULT_BARTENDER_FILE "/planeshift/data/options/bartender_def.xml"
+#define ROOTNODE "bartender"
+#define SLOTNODE "slot"
 
 //=============================================================================
 // Classes
@@ -38,9 +42,89 @@ pawsBartenderWindow::pawsBartenderWindow()
 {
 }
 
+bool pawsBartenderWindow::PostSetup()
+{
+    //prepares to load the file
+    csRef<iVFS> vfs =  csQueryRegistry<iVFS > ( PawsManager::GetSingleton().GetObjectRegistry());
+    csRef<iDocumentSystem> xml = psengine->GetXMLParser ();
+    csRef<iDocumentNode> root, bartenderNode;
+    csRef<iDocument> doc = xml->CreateDocument();
+    csRef<iDataBuffer> buf (vfs->ReadFile (BARTENDER_FILE));
+    //if the file is empty or not opeanable we are done. We return true because it's not a failure.
+    if (!buf || !buf->GetSize ())
+    {
+        return true;
+    }
+    const char* error = doc->Parse( buf );
+    if ( error )
+    {
+        Error2("Error loading bartender entries: %s\n", error);
+        return true;
+    }
+
+    root = doc->GetRoot();
+    if (root == NULL)
+    {
+        Error2("%s has no XML root", BARTENDER_FILE);
+    }
+    bartenderNode = root->GetNode(ROOTNODE);
+    if (bartenderNode == NULL)
+    {
+        Error2("%s has no <bartender> tag", BARTENDER_FILE);
+    }
+
+    //iterate all the nodes starting with slot in order to find the ones
+    //to associate to the slots
+    csRef<iDocumentNodeIterator> slotNodes = bartenderNode->GetNodes(SLOTNODE);
+    while (slotNodes->HasNext())
+    {
+        csRef<iDocumentNode> slotNode = slotNodes->Next();
+
+        //get the data needed for the widget to be setup
+        csString slotName = slotNode->GetAttributeValue("name");
+        csString slotImage = slotNode->GetAttributeValue("image");
+        csString slotAction = slotNode->GetAttributeValue("action");
+
+        //checks if this widget is a pawsslot
+        pawsSlot * slot = dynamic_cast<pawsSlot*>(FindWidget(slotName));
+
+        //if it's a pawsslot and it's a bartenderslot associate the data taken above to it
+        if(slot && slot->IsBartender())
+        {
+            slot->PlaceItem(slotImage, "", "", 1);
+            slot->SetBartenderAction(slotAction);
+        }
+    }
+    return true;
+}
 
 pawsBartenderWindow::~pawsBartenderWindow()
 {
+    //prepares the file for writing
+    csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
+    csRef<iDocument> doc = xml->CreateDocument();
+    csRef<iDocumentNode> root = doc->CreateRoot ();
+    csRef<iDocumentNode> bartenderNode = root->CreateNodeBefore(CS_NODE_ELEMENT);
+    bartenderNode->SetValue(ROOTNODE);
+
+    //searches all childrens for pawsslot supporting bartender
+    for (size_t i = 0; i < GetChildrenCount(); i++)
+    {
+        pawsSlot * slot = dynamic_cast<pawsSlot*>(GetChild(i));
+        if (slot && slot->IsBartender() && !slot->IsEmpty())
+        {
+            //if we found a not empty bartender we save it's current status in order to restore it on relog.
+            csRef<iDocumentNode> slotNode = bartenderNode->CreateNodeBefore(CS_NODE_ELEMENT);
+            slotNode->SetValue(SLOTNODE);
+            slotNode->SetAttribute("name", slot->GetName());
+            slotNode->SetAttribute("image", slot->ImageName());
+            slotNode->SetAttribute("action", slot->GetBartenderAction());
+        }
+    }
+
+    //finally save the file
+    csRef<iVFS> vfs =  csQueryRegistry<iVFS > ( PawsManager::GetSingleton().GetObjectRegistry());
+    doc->Write(vfs, BARTENDER_FILE);    
 }
 
 
