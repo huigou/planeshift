@@ -950,7 +950,7 @@ bool pawsCreationMain::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/,
                 newWindow = "Paths";
             }
 
-            psNameCheckMessage msg(csfirstname + " " + cslastname);
+            psNameCheckMessage msg(csfirstname, cslastname);
             msg.SendMessage();
         }
     }

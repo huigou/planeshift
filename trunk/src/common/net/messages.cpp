@@ -6316,6 +6316,16 @@ psNameCheckMessage::psNameCheckMessage( const char* newname )
     msg->Add( lastname );
 }
 
+psNameCheckMessage::psNameCheckMessage( const char* firstName, const char* lastName )
+{
+    msg.AttachNew(new MsgEntry( strlen(firstName)+strlen(lastName)+2));
+
+    msg->SetType(MSGTYPE_CHAR_CREATE_NAME);
+
+    msg->Add( firstName );
+    msg->Add( lastName );
+}
+
 
 psNameCheckMessage::psNameCheckMessage( uint32_t client, bool accept, const char* reason )
 {
