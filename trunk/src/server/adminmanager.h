@@ -1067,11 +1067,12 @@ class AdminCmdDataRunScript : public AdminCmdDataTarget
 {
 public:
     csString scriptName; ///< name of the script to execute
+    AdminCmdTargetParser origObj; ///< Optional argument to specify a different origin for the script being run.
 
     /** @brief Creates obj for specified command that execute a script.
      */
     AdminCmdDataRunScript()
-    : AdminCmdDataTarget("/runscript", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_CLIENTTARGET)
+    : AdminCmdDataTarget("/runscript", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_CLIENTTARGET), origObj(ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_CLIENTTARGET)
     {};
     
     /** @brief Parses the given message and stores its data.
