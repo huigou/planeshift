@@ -196,5 +196,6 @@ void pawsSpellBookWindow::OnListAction( pawsListBox* widget, int status )
         spellImage->PlaceItem(images_Hash.Get(spellName->GetText(),""), "", "", 1);
         csString action = "/cast " + csString(spellName->GetText());
         spellImage->SetBartenderAction(action);
+        spellImage->SetToolTip(spellName->GetText());
     }
 }
