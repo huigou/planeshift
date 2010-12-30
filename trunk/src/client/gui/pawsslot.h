@@ -44,7 +44,7 @@ public:
 
     const char *GetMeshFactName()
     {
-      return meshfactName;
+        return meshfactName;
     }
 
     const char *GetMaterialName()
