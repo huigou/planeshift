@@ -83,6 +83,7 @@ bool pawsBartenderWindow::PostSetup()
         //get the data needed for the widget to be setup
         csString slotName = slotNode->GetAttributeValue("name");
         csString slotImage = slotNode->GetAttributeValue("image");
+        csString slotToolTip = slotNode->GetAttributeValue("tooltip");
         csString slotAction = slotNode->GetAttributeValue("action");
 
         //checks if this widget is a pawsslot
@@ -92,6 +93,7 @@ bool pawsBartenderWindow::PostSetup()
         if(slot && slot->IsBartender())
         {
             slot->PlaceItem(slotImage, "", "", 1);
+            slot->SetToolTip(slotToolTip);
             slot->SetBartenderAction(slotAction);
         }
     }
@@ -118,6 +120,7 @@ pawsBartenderWindow::~pawsBartenderWindow()
             slotNode->SetValue(SLOTNODE);
             slotNode->SetAttribute("name", slot->GetName());
             slotNode->SetAttribute("image", slot->ImageName());
+            slotNode->SetAttribute("tooltip", slot->GetToolTip());
             slotNode->SetAttribute("action", slot->GetBartenderAction());
         }
     }
