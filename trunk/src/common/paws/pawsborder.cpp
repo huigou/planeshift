@@ -103,12 +103,6 @@ csRect pawsBorder::GetRect()
     return frame;
 }
 
-
-#ifndef min
-#define min(a,b) (((a) < (b)) ? (a) : (b))
-#endif
-
-
 void pawsBorder::Draw()
 {
     if ( !draw )
@@ -138,8 +132,8 @@ void pawsBorder::Draw()
     int locX, locY = frame.ymin - borderImages[PAWS_BORDER_TOPMIDDLE]->GetHeight();
     for (locX = frame.xmin; locX < frame.xmax; locX += borderImages[PAWS_BORDER_TOPMIDDLE]->GetWidth() )
     {
-        borderImages[PAWS_BORDER_TOPMIDDLE]->Draw( locX, locY, min(borderImages[PAWS_BORDER_TOPMIDDLE]->GetWidth(),frame.xmax-locX), 0 );
-        borderImages[PAWS_BORDER_BOTTOMMIDDLE]->Draw( locX, frame.ymax, min(borderImages[PAWS_BORDER_BOTTOMMIDDLE]->GetWidth(),frame.xmax-locX), 0 );
+        borderImages[PAWS_BORDER_TOPMIDDLE]->Draw( locX, locY, csMin(borderImages[PAWS_BORDER_TOPMIDDLE]->GetWidth(),frame.xmax-locX), 0 );
+        borderImages[PAWS_BORDER_BOTTOMMIDDLE]->Draw( locX, frame.ymax, csMin(borderImages[PAWS_BORDER_BOTTOMMIDDLE]->GetWidth(),frame.xmax-locX), 0 );
     }
 
     /////////////////////////////
@@ -149,8 +143,8 @@ void pawsBorder::Draw()
     locX = frame.xmin - borderImages[PAWS_BORDER_LEFTMIDDLE]->GetWidth();
     for (locY = frame.ymin; locY < frame.ymax; locY += borderImages[PAWS_BORDER_LEFTMIDDLE]->GetHeight() )
     {
-        borderImages[PAWS_BORDER_LEFTMIDDLE]->Draw( locX, locY, 0, min(borderImages[PAWS_BORDER_LEFTMIDDLE]->GetHeight(), frame.ymax-locY) );
-        borderImages[PAWS_BORDER_RIGHTMIDDLE]->Draw( frame.xmax, locY, 0, min(borderImages[PAWS_BORDER_RIGHTMIDDLE]->GetHeight(), frame.ymax-locY) );
+        borderImages[PAWS_BORDER_LEFTMIDDLE]->Draw( locX, locY, 0, csMin(borderImages[PAWS_BORDER_LEFTMIDDLE]->GetHeight(), frame.ymax-locY) );
+        borderImages[PAWS_BORDER_RIGHTMIDDLE]->Draw( frame.xmax, locY, 0, csMin(borderImages[PAWS_BORDER_RIGHTMIDDLE]->GetHeight(), frame.ymax-locY) );
     }
 
     borderImages[PAWS_BORDER_TOPRIGHT]->Draw( frame.xmax, 
