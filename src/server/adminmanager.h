@@ -1030,7 +1030,9 @@ public:
     /** @brief Creates obj for specified command managing locks.
      */
     AdminCmdDataKey()
-    : AdminCmdDataTarget("/key", ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_CLIENTTARGET), subTargetCommandList("changelock makeunlockable securitylockable addlock removelock"), subCommandList("make makemaster copy clearlocks skel")
+    : AdminCmdDataTarget("/key", ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_CLIENTTARGET),
+            subCommandList("make makemaster copy clearlocks skel"),
+            subTargetCommandList("changelock makeunlockable securitylockable addlock removelock")
     {};
     
     /** @brief Parses the given lock manage message and stores its data.
@@ -1792,7 +1794,7 @@ public:
     /** @brief Creates obj for specified command that control fog.
      */
     AdminCmdDataFog()
-    : AdminCmdDataSectorTarget("/fog"), enabled(false), density(200), fadeTime(10000), r(200), g(200), b(200), interval(0)
+    : AdminCmdDataSectorTarget("/fog"), enabled(false), density(200), fadeTime(10000), interval(0), r(200), g(200), b(200)
     {};
 
     /** @brief Parses the given message and stores its data.
@@ -2881,7 +2883,7 @@ public:
       * @param cap if nonzero the skill will be set to a value smaller or equal to the specified one
       * @return bool FALSE if an error occured
       */
-    bool ApplySkill(int gmClientNum, Client* target, psSkillInfo* skill, int value, bool relative = false, unsigned int cap = 0);
+    bool ApplySkill(int gmClientNum, Client* target, psSkillInfo* skill, int value, bool relative = false, int cap = 0);
     
     /** @brief universal function to award a target.
       * @param gmClientNum ClientID of the issuer
