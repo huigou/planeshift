@@ -58,7 +58,6 @@ bool pawsSpellBookWindow::PostSetup()
     spellList        = (pawsListBox*)FindWidget("SpellList");
     spellDescription = (pawsMessageTextBox*)FindWidget("Description");
     spellImage       = (pawsSlot*)FindWidget("SpellImage");
-    spellImage->DrawStackCount(false);
 
     spellList->SetSortingFunc(0, textBoxSortFunc);
     spellList->SetSortingFunc(5, textBoxSortFunc);

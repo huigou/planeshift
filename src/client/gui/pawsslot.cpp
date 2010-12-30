@@ -90,6 +90,12 @@ bool pawsSlot::Setup( iDocumentNode* node )
     {
        isBartender = bartender->GetContentsValueAsInt();
     }
+
+    csRef<iDocumentNode> showStackAmount = node->GetNode("show_stack_amount");
+    if ( showStackAmount )
+    {
+       DrawStackCount(showStackAmount->GetContentsValueAsInt());
+    }
    
     mgr = psengine->GetSlotManager();
            

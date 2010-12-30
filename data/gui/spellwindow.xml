@@ -27,6 +27,7 @@
     </widget>
     <widget name="SpellImage" factory="pawsSlot" >
         <frame x="395" y="20" width="60" height="60" border="yes" />
+        <show_stack_amount>0</show_stack_amount>
     </widget>
 
 
