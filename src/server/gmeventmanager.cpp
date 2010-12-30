@@ -420,13 +420,10 @@ bool GMEventManager::RewardPlayersInGMEvent (Client* client,
                                              RangeSpecifier rewardRecipient,
                                              float range,
                                              Client* target,
-                                             short stackCount,
-                                             csString itemName)
+					     psRewardData* rewardData)
 {
     GMEvent* gmEvent;
     int clientnum = client->GetClientNum(), zero = 0;
-    WordArray rewardDesc(itemName);
-    RewardType rewardType = REWARD_ITEM;
     PID gmID = client->GetPID();
 
     // make sure GM is running (or assisting) an event
@@ -448,50 +445,6 @@ bool GMEventManager::RewardPlayersInGMEvent (Client* client,
        return false;
     }
 
-    // identify reward type: experience, faction points or an item
-    if (rewardDesc[0] == "exp" && rewardDesc.GetCount() == 1)
-        rewardType = REWARD_EXPERIENCE;
-    else if (rewardDesc[0] == "faction" && rewardDesc.GetCount() > 1)
-        rewardType = REWARD_FACTION_POINTS;
-
-    // retrieve base stats item
-    psItemStats *basestats;
-    if (rewardType == REWARD_ITEM)
-    {
-        basestats = psserver->GetCacheManager()->GetBasicItemStatsByName(itemName.GetDataSafe());
-        if (basestats == NULL)
-        {
-            psserver->SendSystemInfo(clientnum, "Reward \'%s\' not recognised.", itemName.GetDataSafe());
-            Error2("'%s' was not found as a valid base item.", itemName.GetDataSafe());
-            return false;
-        }
-
-        if (stackCount <= 0)
-        {
-           psserver->SendSystemInfo(clientnum,
-                                "You must reward at least 1 item to participant(s).");
-           return false;
-        }
-        
-        if (stackCount >= 65 && !basestats->IsMoney())
-        {
-           psserver->SendSystemInfo(clientnum,
-                                "You can't reward that amount of items to partecipant(s).");
-           return false;
-        }
-
-        // cant reward personalised or unique items
-        if (basestats->GetBuyPersonalise() || basestats->GetUnique())
-        {
-           psserver->SendSystemInfo(clientnum,
-                                "You cannot reward personalised / unique items.");
-           return false;
-        }
-    }
-    else
-        basestats = NULL;
-
-
     if (rewardRecipient == INDIVIDUAL)
     {
         if (!target)
@@ -502,12 +455,7 @@ bool GMEventManager::RewardPlayersInGMEvent (Client* client,
             GMEvent* playersEvent = GetGMEventByPlayer(target->GetPID(), RUNNING, zero);
             if (playersEvent && playersEvent->id == gmEvent->id)
             {
-                if (rewardType == REWARD_EXPERIENCE)
-                    psserver->GetAdminManager()->AwardExperienceToTarget(clientnum, target, target->GetName(), stackCount);
-                else if (rewardType == REWARD_FACTION_POINTS)
-                    psserver->GetAdminManager()->AdjustFactionStandingOfTarget(clientnum, target, rewardDesc.GetTail(1), stackCount);
-                else
-                    RewardPlayer(clientnum, target, stackCount, basestats);
+                psserver->GetAdminManager()->AwardToTarget(clientnum, target, rewardData);
             }
             else
             {
@@ -528,13 +476,8 @@ bool GMEventManager::RewardPlayersInGMEvent (Client* client,
             if ((target = clientConnections->FindPlayer(gmEvent->Player[p].PlayerID)))
             {
                 if (rewardRecipient == ALL || clientActor->RangeTo(target->GetActor()) <= range)
-                {
-                    if (rewardType == REWARD_EXPERIENCE)
-                        psserver->GetAdminManager()->AwardExperienceToTarget(clientnum, target, target->GetName(), stackCount);
-                    else if (rewardType == REWARD_FACTION_POINTS)
-                        psserver->GetAdminManager()->AdjustFactionStandingOfTarget(clientnum, target, rewardDesc.GetTail(1), stackCount);
-                    else
-                        RewardPlayer(clientnum, target, stackCount, basestats);
+		{
+		    psserver->GetAdminManager()->AwardToTarget(clientnum, target, rewardData);
                 }
             }
         }
@@ -977,51 +920,6 @@ size_t GMEventManager::GetPlayerFromEvent(PID& PlayerID, GMEvent *Event)
             return Position;
     }
     return SIZET_NOT_FOUND;
-}
-
-void GMEventManager::RewardPlayer(int clientnum, Client* target, short stackCount, psItemStats* basestats)
-{
-    // If it's money don't instantiate them just directly give them.
-    if(basestats->IsMoney())
-    {
-        target->GetActor()->GetCharacterData()->SetMoney(basestats, stackCount);
-        psserver->SendSystemInfo(target->GetClientNum(),
-                                 "You have been rewarded %d %s%s for participating in this event.",
-                                 stackCount, basestats->GetName(), (stackCount>1)?"s":"");
-        psserver->SendSystemInfo(clientnum, "%s has been rewarded %d %s%s.",
-                                 target->GetName(), stackCount,
-                                 basestats->GetName(), (stackCount>1)?"s":"");
-        return;
-    }
-
-    // generate the prize item
-    psItem* newitem = basestats->InstantiateBasicItem(true);
-    if (newitem == NULL)
-    {
-        Error1("Could not instantiate from base item.");
-        psserver->SendSystemInfo(clientnum, "%s has not been rewarded.", target->GetName());
-        return;
-    }
-    newitem->SetItemQuality(basestats->GetQuality());
-    newitem->SetStackCount(stackCount);
-
-    // spawn the item into the recipients inventory
-    newitem->SetLoaded();  // Item is fully created
-    if (target->GetActor()->GetCharacterData()->Inventory().Add(newitem))
-    {
-        // inform recipient of their prize
-        psserver->SendSystemInfo(target->GetClientNum(),
-                                 "You have been rewarded %d %s%s for participating in this event.",
-                                 stackCount, basestats->GetName(), (stackCount>1)?"s":"");
-        psserver->SendSystemInfo(clientnum, "%s has been rewarded %d %s%s.",
-                                 target->GetName(), stackCount,
-                                 basestats->GetName(), (stackCount>1)?"s":"");
-        return;
-    }
-
-    // failed to stash item, so remove it
-    psserver->GetCacheManager()->RemoveInstance(newitem);
-    psserver->SendSystemInfo(clientnum, "%s has not been rewarded.", target->GetName());
 }
 
 int GMEventManager::GetNextEventID(void)

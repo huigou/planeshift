@@ -44,6 +44,7 @@
 #define SUPPORT_GM_LEVEL      GM_LEVEL_4
 
 class psItemStats;
+class psRewardData;
 
 enum GMEventStatus
 {
@@ -146,8 +147,7 @@ public:
                                  RangeSpecifier rewardRecipient,
                                  float range,
                                  Client *target,
-                                 short stackCount,
-                                 csString itemName);
+				 psRewardData* reward);
 
     /** @brief Returns all events for a player.
      *
@@ -285,21 +285,6 @@ private:
      *                    an event, else false
      */
     void SetEvalStatus(PID PlayerID, GMEvent *Event, bool NewStatus);
-
-    /** @brief Reward player in event.
-     *
-     *  @param clientnum: GM client number.
-     *  @param target: client pointer to recipient.
-     *  @param stackCount: stack count # items in reward.
-     *  @param basestats: base stats of reward item.
-     */
-    void RewardPlayer(int clientnum, Client* target, short stackCount, psItemStats* basestats);
-    enum RewardType
-    {
-        REWARD_ITEM,
-        REWARD_EXPERIENCE,
-        REWARD_FACTION_POINTS
-    };
 
     /** Get next free event id number.
      */
