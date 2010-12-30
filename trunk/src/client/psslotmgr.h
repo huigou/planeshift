@@ -70,6 +70,7 @@ private:
         pawsSlot* slot;
         csString meshFactName;
         csString materialName;
+        csString toolTip;
         int parentID;
     } draggingSlot;
  

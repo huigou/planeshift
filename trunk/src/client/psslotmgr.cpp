@@ -164,6 +164,7 @@ void psSlotManager::CancelDrag()
         res.Clear();
 
     draggingSlot.slot->PlaceItem(res, draggingSlot.meshFactName, draggingSlot.materialName, oldStack);
+    draggingSlot.slot->SetToolTip(draggingSlot.toolTip);
     PawsManager::GetSingleton().SetDragDropWidget( NULL );
 }
 
@@ -204,12 +205,12 @@ void psSlotManager::OnNumberEntered(const char* /*name*/, int param, int count)
     else        
         widget->PlaceItem( NULL, parent->GetMeshFactName(), parent->GetMaterialName(), count );
 
-    parent->StackCount( newStack );
     widget->SetPurifyStatus( purifyStatus );
     widget->SetBackgroundAlpha(0);
     widget->SetParent( NULL );
            
     SetDragDetails( parent, count );
+    parent->StackCount( newStack );
     isDragging = true;
     PawsManager::GetSingleton().SetDragDropWidget( widget );
 }
@@ -224,6 +225,7 @@ void psSlotManager::SetDragDetails( pawsSlot* slot, int count )
     draggingSlot.slot           = slot;
     draggingSlot.meshFactName   = slot->GetMeshFactName();
     draggingSlot.materialName   = slot->GetMaterialName();
+    draggingSlot.toolTip        = slot->GetToolTip();
 }
 
 
@@ -347,9 +349,10 @@ void psSlotManager::Handle( pawsSlot* slot, bool grabOne, bool grabAll )
         //printf("Sending slot movement message\n");
         if ( slot->IsBartender() )
         {
-            CancelDrag(); 
+            CancelDrag();
             slot->PlaceItem( draggingSlot.slot->ImageName(), "", "", draggingSlot.stackCount);
             slot->SetBartenderAction( draggingSlot.slot->GetBartenderAction() );
+            slot->SetToolTip(draggingSlot.slot->GetToolTip());
         }
         else
         {
