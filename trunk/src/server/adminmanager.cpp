@@ -1495,23 +1495,30 @@ AdminCmdDataRunScript::AdminCmdDataRunScript(AdminManager* msgManager, MsgEntry*
 
     // /runscript <scriptName> <player> <player>
 
+    //first take the name of the script
     scriptName = words[index++];
+    //if there are more entries probably we have a target
     if(words.GetCount() >= index + 1)
     {
+        //check first the target
         if(ParseTarget(msgManager, me, msg, client, words[index++]))
         {
+            //if there is another field we have also an origin
             if(words.GetCount() == index + 1)
             {
+                //check the origin if it's valid
                 if(!origObj.ParseTarget(msgManager, me, msg, client, words[index++]))
                 {
                     ParseError(me,"Invalid origin target given");
                 }
             }
+            //if we have more commands it means we have too many parameters
             else
             {
                 ParseError(me,"Syntax error");
             }
         }
+        //the given target is invalid
         else
         {
             ParseError(me,"Invalid target given");
