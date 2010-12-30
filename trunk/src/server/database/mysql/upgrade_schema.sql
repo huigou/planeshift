@@ -1401,7 +1401,7 @@ ALTER TABLE `npc_spawn_ranges` ADD COLUMN `radius` FLOAT DEFAULT '0.0' COMMENT '
 UPDATE `server_options` SET `option_value`='1237' WHERE `option_name`='db_version';
 
 #1238 - Stefano Angeleri Added instanced action locations.
-ALTER TABLE `action_locations` ADD COLUMN `pos_instance` INTEGER UNSIGNED NOT NULL DEFAULT 4294967295 COMMENT 'Indicates the instance where this action location will be accessible from. 0xFFFFFFFF (default) is instance all';
+ALTER TABLE `action_locations` ADD COLUMN `pos_instance` INTEGER UNSIGNED NOT NULL DEFAULT 4294967295 COMMENT 'Indicates the instance where this action location will be accessible from. 0xFFFFFFFF (default) is instance all' AFTER `pos_z`;
 UPDATE `server_options` SET `option_value`='1238' WHERE `option_name`='db_version';
 
 #1239 - Stefano Angeleri Expanded notification system
@@ -1537,6 +1537,18 @@ ALTER TABLE `planeshift`.`sectors` MODIFY COLUMN `name` VARCHAR(30)  CHARACTER S
  ADD COLUMN `fog_max_fade_out` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Sets the maximum time that the automatically triggered fog event will take to disappear at its end.' AFTER `fog_min_fade_out`
 , COMMENT = 'Stores data about sectors available in game.';
  UPDATE `server_options` SET `option_value`='1256' WHERE `option_name`='db_version';
+
+#1256 - Stefano Angeleri - Changes to commands for adminmanager
+INSERT INTO command_group_assignment VALUES( "/list", 30 );
+INSERT INTO command_group_assignment VALUES( "/list", 25 );
+INSERT INTO command_group_assignment VALUES( "/list", 24 );
+INSERT INTO command_group_assignment VALUES( "/list", 23 );
+INSERT INTO command_group_assignment VALUES( "/list", 22 );
+INSERT INTO command_group_assignment VALUES( "/list", 21 );
+INSERT INTO command_group_assignment VALUES( "/award", 30 );
+INSERT INTO command_group_assignment VALUES( "/award", 25 );
+INSERT INTO command_group_assignment VALUES( "/award", 24 );
+DELETE FROM command_group_assignment where command_name in("/money","/awardexp");
 
 
 
