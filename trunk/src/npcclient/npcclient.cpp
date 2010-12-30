@@ -253,7 +253,7 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, cons
 
     PFMaps = new psPFMaps(objreg);
 
-    CPrintf(CON_CMDOUTPUT,"Filling loader cache");
+    CPrintf(CON_CMDOUTPUT,"Filling loader cache\n");
 
     csRef<iBgLoader> loader = csQueryRegistry<iBgLoader>(object_reg);
     csRef<iThreadManager> threadManager = csQueryRegistry<iThreadManager>(object_reg);
@@ -286,7 +286,7 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, cons
     // clear up data that is only required parse time
     loader->ClearTemporaryData();
 
-    CPrintf(CON_CMDOUTPUT,"Loader cache filled");
+    CPrintf(CON_CMDOUTPUT,"Loader cache filled\n");
     
     CPrintf(CON_DEBUG, "Connecting to Host: '%s' User: '%s' Password: '%s' Port %d...\n",
         (const char*) host, (const char*) user, (const char*) pass, port);
