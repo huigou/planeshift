@@ -30,7 +30,7 @@
 // Defines
 //=============================================================================
 #define BARTENDER_FILE "/planeshift/userdata/options/bartender.xml"
-//#define DEFAULT_BARTENDER_FILE "/planeshift/data/options/bartender_def.xml"
+#define DEFAULT_BARTENDER_FILE "/planeshift/data/options/bartender_def.xml"
 #define ROOTNODE "bartender"
 #define SLOTNODE "slot"
 
