@@ -3,18 +3,22 @@
     <frame x="200" y="100" width="650" height="50" border="yes" />        
     <widget name="TestBartenderSlot_1" factory="pawsSlot">
         <bartender_slot>1</bartender_slot>
+        <show_stack_amount>0</show_stack_amount>
         <frame x="0" y="0" width="48" height="48" />
     </widget>
 <widget name="TestBartenderSlot_2" factory="pawsSlot">
         <bartender_slot>1</bartender_slot>
+        <show_stack_amount>0</show_stack_amount>
         <frame x="50" y="0" width="48" height="48" />
     </widget>
 <widget name="TestBartenderSlot_3" factory="pawsSlot">
         <bartender_slot>1</bartender_slot>
+        <show_stack_amount>0</show_stack_amount>
         <frame x="100" y="0" width="48" height="48" />
     </widget>
 <widget name="TestBartenderSlot_4" factory="pawsSlot">
         <bartender_slot>1</bartender_slot>
+        <show_stack_amount>0</show_stack_amount>
         <frame x="150" y="0" width="48" height="48" />
     </widget>
 
