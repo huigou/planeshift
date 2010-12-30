@@ -133,17 +133,13 @@ void Autoexec::LoadCommands(const char * fileName)
     {
         Error2("%s has no <options> tag", fileName);
     }
-    csRef<iDocumentNodeIterator> oNodes = autoexecNode->GetNodes();
+    csRef<iDocumentNodeIterator> oNodes = autoexecNode->GetNodes(AUTOEXECCOMMANDSNODE);
     while (oNodes->HasNext())
     {
         csRef<iDocumentNode> commands = oNodes->Next();
-        csString nodeName (commands->GetValue());
-        if (nodeName == AUTOEXECCOMMANDSNODE)
-        {
-            csString charname = commands->GetAttributeValue("charname");
-            csString cmds = commands->GetAttributeValue("execute");
-            addCommand(charname, cmds);
-        }
+        csString charname = commands->GetAttributeValue("charname");
+        csString cmds = commands->GetAttributeValue("execute");
+        addCommand(charname, cmds);
     }
 }
 
