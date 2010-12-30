@@ -4553,6 +4553,13 @@ class psNameCheckMessage : public psMessageCracker
 public:
     psNameCheckMessage(){}
     psNameCheckMessage( const char* name );
+    /** Constructor.
+     *  Prepares a message to be sent to the server with a first and last name.
+     *  This is done to ask the server if the choosen name is usable.
+     *  @param firstName The first name to be tried.
+     *  @param lastName The last name to be tried.
+     */
+    psNameCheckMessage(const char* firstName, const char* lastName);
     psNameCheckMessage( uint32_t client, bool accepted, const char* reason );
     psNameCheckMessage( MsgEntry* me );
 
