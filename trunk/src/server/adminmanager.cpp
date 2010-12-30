@@ -1438,7 +1438,9 @@ csString AdminCmdDataItem::GetHelpMessage()
 }
 
 AdminCmdDataKey::AdminCmdDataKey(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client *client, WordArray &words)
-: AdminCmdDataTarget("/key", ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_CLIENTTARGET), subTargetCommandList("changelock makeunlockable securitylockable addlock removelock"), subCommandList("make makemaster copy clearlocks skel")
+: AdminCmdDataTarget("/key", ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_CLIENTTARGET),
+        subCommandList("make makemaster copy clearlocks skel"),
+        subTargetCommandList("changelock makeunlockable securitylockable addlock removelock")
 {
     size_t index = 1;
     bool found;
@@ -2261,7 +2263,7 @@ csString AdminCmdDataWeatherEffect::GetHelpMessage()
 }
 
 AdminCmdDataFog::AdminCmdDataFog(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client *client, WordArray &words)
-: AdminCmdDataSectorTarget("/fog"), enabled(false), density(200), interval(600000), fadeTime(10000), r(200), g(200), b(200)
+: AdminCmdDataSectorTarget("/fog"), enabled(false), density(200), fadeTime(10000), interval(600000), r(200), g(200), b(200)
 {
     size_t index = 1;
 
@@ -3479,7 +3481,6 @@ AdminCmdDataSetKillExp::AdminCmdDataSetKillExp(AdminManager* msgManager, MsgEntr
     if (found || IsTargetType(ADMINCMD_TARGET_CLIENTTARGET))
     {
         // required argumet is the experience value
-        int i = words.GetCount();
         if (words.GetCount() == index +1)
         {
             expValue = words.GetInt(index);
@@ -4155,7 +4156,7 @@ void AdminManager::HandleList(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     size_t pos =0;
     size_t next;
 
-    AdminCmdDataList* data = dynamic_cast<AdminCmdDataList*>(cmddata);
+    //AdminCmdDataList* data = dynamic_cast<AdminCmdDataList*>(cmddata);
 
     csString mapnames;
     psserver->entitymanager->GetWorld()->GetAllRegionNames(mapnames);
@@ -8491,7 +8492,7 @@ void AdminManager::SendSpawnItems (MsgEntry* me, Client *client)
     {
         unsigned id = result[i].GetUInt32(0);
         psItemStats* item = psserver->GetCacheManager()->GetBasicItemStatsByID(id);
-        if(item && !item->IsMoney() && item->IsSpawnable())
+        if(item && !item->IsMoney() /*&& item->IsSpawnable()*/)
         {
             csString name(item->GetName());
             csString mesh(item->GetMeshName());
@@ -8576,11 +8577,11 @@ void AdminManager::SpawnItemInv( MsgEntry* me, psGMSpawnItem& msg, Client *clien
         return;
     }
     
-    if(!stats->IsSpawnable())
+    /*if(!stats->IsSpawnable())
     {
         psserver->SendSystemError(me->clientnum, "This item cannot be spawned!");
         return;
-    }
+    }*/
     
     psItem* item = stats->InstantiateBasicItem();
     
@@ -9246,7 +9247,7 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* 
         psserver->GetProgressionManager()->SendSkillList(data->targetActor->GetClient(), false);
 }
 
-bool AdminManager::ApplySkill(int client, Client* target, psSkillInfo* skill, int value, bool relative, unsigned int cap)
+bool AdminManager::ApplySkill(int client, Client* target, psSkillInfo* skill, int value, bool relative, int cap)
 {
     // perform sanity checks
     if (!skill)
