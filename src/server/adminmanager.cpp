@@ -1486,27 +1486,36 @@ csString AdminCmdDataKey::GetHelpMessage()
 }
 
 AdminCmdDataRunScript::AdminCmdDataRunScript(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client *client, WordArray &words)
-: AdminCmdDataTarget("/runscript", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_CLIENTTARGET)
+: AdminCmdDataTarget("/runscript", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_CLIENTTARGET), origObj(ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_CLIENTTARGET)
 {
+    size_t index = 1;
     // when help is requested, return immediate
-    if (IsHelp(words[1]))
+    if (IsHelp(words[index]))
         return;
 
-    // /runscript <scriptName> <player>
-    if (words.GetCount() == 3)
+    // /runscript <scriptName> <player> <player>
+
+    scriptName = words[index++];
+    if(words.GetCount() >= index + 1)
     {
-        if(ParseTarget(msgManager, me, msg, client, words[2]))
+        if(ParseTarget(msgManager, me, msg, client, words[index++]))
         {
-            scriptName = words[1];
+            if(words.GetCount() == index + 1)
+            {
+                if(!origObj.ParseTarget(msgManager, me, msg, client, words[index++]))
+                {
+                    ParseError(me,"Invalid origin target given");
+                }
+            }
+            else
+            {
+                ParseError(me,"Syntax error");
+            }
         }
         else
         {
-            ParseError(me,"No target given");
+            ParseError(me,"Invalid target given");
         }
-    }
-    else
-    {
-        ParseError(me,"Syntax error");
     }
 }
 
@@ -1514,7 +1523,7 @@ ADMINCMDFACTORY_IMPLEMENT_MSG_FACTORY_CREATE(AdminCmdDataRunScript)
 
 csString AdminCmdDataRunScript::GetHelpMessage()
 {
-    return "Syntax: \"" + command + " <scriptname> " + GetHelpMessagePartForTarget() + "\"";
+    return "Syntax: \"" + command + " <scriptname> " + GetHelpMessagePartForTarget() + " [origin: " + origObj.GetHelpMessagePartForTarget() +"]\"";
 }
 
 AdminCmdDataCrystal::AdminCmdDataCrystal(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client *client, WordArray &words)
@@ -6628,9 +6637,12 @@ void AdminManager::RunScript(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData*
 
     // We don't know what the script expects the actor to be called, so define...basically everything.
     MathEnvironment env;
-    env.Define("Actor",  client->GetActor());
-    env.Define("Caster", client->GetActor());
-    env.Define("NPC",    client->GetActor());
+    //checks if an origin was specified, if so check if it's valid and if it's not assign it to the client issuing the command
+    gemObject *originActor = data->origObj.IsTargetType(ADMINCMD_TARGET_UNKNOWN) ?
+                             client->GetActor() : data->origObj.targetObject ? data->origObj.targetObject : client->GetActor();
+    env.Define("Actor",  originActor);
+    env.Define("Caster", originActor);
+    env.Define("NPC",    originActor);
     env.Define("Target", data->targetObject ? data->targetObject : client->GetActor());
     script->Run(&env);
 }
