@@ -185,6 +185,7 @@ private:
 public:
     MathEnvironment() : UID(new uint32),parent(NULL)
     {
+        UID = 0;
         Init();
     }
     MathEnvironment(const MathEnvironment *parent) : UID(parent->UID),parent(parent)
