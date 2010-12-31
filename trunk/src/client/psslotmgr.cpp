@@ -345,24 +345,28 @@ void psSlotManager::Handle( pawsSlot* slot, bool grabOne, bool grabAll )
     }
     else
     {
+        //do nothing if it's the same slot
+        if(slot == draggingSlot.slot)
+        {
+            CancelDrag();
+            return;
+        }
         //printf("Dropping Slot Here\n");
         //printf("Target Slot Information: \n");
         //printf("Bartender Slot: %d\n", slot->IsBartender());
         //printf("Sending slot movement message\n");
         if ( slot->IsBartender() )
         {
+            //we cancel dragging because we aren't moving the original item but just taking
+            //a reference to it. If it's among bartender slots we will handle them differently
             CancelDrag();
-            //do nothing if it's the same slot
-            if(slot != draggingSlot.slot)
+            slot->PlaceItem( draggingSlot.slot->ImageName(), "", "", draggingSlot.stackCount);
+            slot->SetBartenderAction(draggingSlot.bartenderAction);
+            slot->SetToolTip(draggingSlot.toolTip);
+            //if the original slot was a bartender clear it as we are moving it to a new one
+            if(draggingSlot.slot->IsBartender())
             {
-                slot->PlaceItem( draggingSlot.slot->ImageName(), "", "", draggingSlot.stackCount);
-                slot->SetBartenderAction(draggingSlot.bartenderAction);
-                slot->SetToolTip(draggingSlot.toolTip);
-                //if the original slot was a bartender clear it as we are moving it to a new one
-                if(draggingSlot.slot->IsBartender())
-                {
-                    draggingSlot.slot->Clear();
-                }
+                draggingSlot.slot->Clear();
             }
         }
         else
@@ -370,6 +374,7 @@ void psSlotManager::Handle( pawsSlot* slot, bool grabOne, bool grabAll )
             //printf("Slot->ID: %d\n", slot->ID() );
             //printf("Container: %d\n", slot->ContainerID() );
             //printf("DraggingSlot.ID %d\n", draggingSlot.slotID);
+            
 
             if ( draggingSlot.containerID == CONTAINER_SPELL_BOOK )
             {
