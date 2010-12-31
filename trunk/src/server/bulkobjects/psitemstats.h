@@ -31,6 +31,7 @@
 #include "util/poolallocator.h"
 #include "util/slots.h"
 #include "util/psxmlparser.h"
+#include "util/scriptvar.h"
 #include "util/psconst.h"
 
 #include "rpgrules/psmoney.h"
@@ -389,7 +390,7 @@ private:
  * magic stat alterations, combat properties, spell effects,
  * and so forth are all stored here.
  */
-class psItemStats
+class psItemStats : public iScriptableVar
 {
 public:
     psItemStats ();
@@ -734,6 +735,11 @@ public:
 
     ///returns the special command assigned to this item
     csString GetItemCommand() { return itemCommand; }
+
+    double GetProperty(MathEnvironment* env, const char *ptr);
+    double CalcFunction(MathEnvironment* env, const char * functionName, const double * params);
+    const char *ToString() { return name.GetDataSafe(); }
+
 
 public:
 
