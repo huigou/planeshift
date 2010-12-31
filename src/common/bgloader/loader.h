@@ -87,6 +87,7 @@ class BgLoader : public ThreadedCallable<BgLoader>,
 private:
     // forward declaration
     class Loadable;
+    struct iDelayedLoader;
 
 public:
     BgLoader(iBase *p);
@@ -98,28 +99,14 @@ public:
     bool Initialize(iObjectRegistry* _object_reg);
 
    /**
-    * Start loading a material into the engine. Returns 0 if the material is not yet loaded.
-    * @param failed Pass a boolean to be able to manually handle a failed load.
+    * Start loading a material into the engine. Check return for success once it's finished.
     */
-    csPtr<iMaterialWrapper> LoadMaterial(const char* name, bool* failed = NULL, bool wait = false);
+    csPtr<iThreadReturn> LoadMaterial(const char* name, bool wait = false);
 
    /**
-    * Start loading a mesh factory into the engine. Returns 0 if the factory is not yet loaded.
-    * @param failed Pass a boolean to be able to manually handle a failed load.
+    * Start loading a mesh factory into the engine. Check return for success once it's finished.
     */
-    csPtr<iMeshFactoryWrapper> LoadFactory(const char* name, bool* failed = NULL, bool wait = false);
-
-   /**
-    * Free your instance of a material.
-    * @return true upon success, false otherwise.
-    */
-    bool FreeMaterial(const char* name);
-
-   /**
-    * Free your instance of a factory.
-    * @return true upon success, false otherwise.
-    */
-    bool FreeFactory(const char* name);
+    csPtr<iThreadReturn> LoadFactory(const char* name, bool wait = false);
 
     /**
     * Clone a mesh factory.
@@ -325,6 +312,7 @@ public:
     // increase load count - to be used by loadables only
     void RegisterPendingObject(Loadable* obj)
     {
+        CS::Threading::RecursiveMutexScopedLock lock(loadLock);
         ++loadCount;
         loadList.Push(obj);
     }
@@ -332,8 +320,37 @@ public:
     // decrease load count - to be used by loadables only
     void UnregisterPendingObject(Loadable* obj)
     {
+        CS::Threading::RecursiveMutexScopedLock lock(loadLock);
+        size_t index = loadList.Find(obj);
+
+        // make sure ContinuedLoading won't skip any elements
+        if(index <= loadOffset)
+        {
+            --loadOffset;
+        }
+        loadList.DeleteIndex(index);
+
         --loadCount;
-        loadList.Delete(obj);
+    }
+
+    // register delayed loader
+    void RegisterDelayedLoader(iDelayedLoader* loader)
+    {
+        CS::Threading::RecursiveMutexScopedLock lock(loadLock);
+        delayedLoadList.Push(loader);
+    }
+
+    void UnregisterDelayedLoader(iDelayedLoader* loader)
+    {
+        CS::Threading::RecursiveMutexScopedLock lock(loadLock);
+        size_t index = delayedLoadList.Find(loader);
+
+        // make sure ContinuedLoading won't skip any elements
+        if(index <= delayedOffset)
+        {
+            --delayedOffset;
+        }
+        delayedLoadList.DeleteIndex(index);
     }
 
 private:
@@ -360,6 +377,8 @@ private:
     class Texture;
     struct ParserData;
     struct GlobalParserData;
+
+    // generic objects used for loading/parsing
 
     // helper clases used with object classes that represent the world
     template<typename T> struct CheckedLoad
@@ -532,7 +551,13 @@ private:
             {
                 loading = false;
                 checked = false;
-                UnloadObject();
+                
+                // do a blocked load and then unload for now
+                // to prevent some race conditions with CS' internal loader
+                Load(true);
+                Unload();
+
+                //UnloadObject();
                 GetParent()->UnregisterPendingObject(this);
             }
         }
@@ -625,10 +650,155 @@ private:
         size_t useCount;
     };
 
+    struct iDelayedLoader : public iThreadReturn
+    {
+        virtual void ContinueLoading(bool wait) = 0;
+    };
+
+    template<typename T> class DelayedLoader : public scfImplementation1<DelayedLoader<T>, iDelayedLoader>
+    {
+    public:
+        DelayedLoader(T* target) : scfImplementation1<DelayedLoader<T>, iDelayedLoader>(this),
+                                   target(target), finished(false),
+                                   waitLock(0), waitCondition(0)
+        {
+            if(target)
+            {
+                // valid target, register us with the parent
+                BgLoader* parent = target->GetParent();
+                parent->RegisterDelayedLoader(this);
+            }
+        }
+
+        virtual ~DelayedLoader()
+        {
+            if(!target.IsValid())
+            {
+                return;
+            }
+
+            // free result
+            result.Invalidate();
+
+            if(finished)
+            {
+                // unload the object
+                target->Unload(); 
+            }
+            else
+            {
+                // unregister us with the parent
+                BgLoader* parent = target->GetParent();
+                parent->UnregisterDelayedLoader(this);
+
+                // don't abort load here - we're still on the load
+                // list so we'll be detected as lingering if applicaple
+                // and removed accordingly
+            }
+        }
+
+        void ContinueLoading(bool wait)
+        {
+            CS::Threading::MutexScopedLock lock(busy);
+            if(target.IsValid() && !finished && target->Load(wait))
+            {
+                // done loading
+
+                // unregister us with the parent
+                BgLoader* parent = target->GetParent();
+                parent->UnregisterDelayedLoader(this);
+
+                if(waitLock) waitLock->Lock();
+
+                // mark finished and set result accordingly;
+                finished = true;
+                csRef<typename T::ObjectType> ref = target->GetObject();
+                result = ref;
+
+                // notify tm if it's waiting for us
+                if(waitCondition)
+                {
+                    waitCondition->NotifyAll();
+                }
+
+                if(waitLock) waitLock->Unlock();
+            }
+        }
+
+        void Wait(bool /*process*/)
+        {
+            ContinueLoading(true);
+        }
+
+        void* GetResultPtr()
+        {
+            CS::Threading::MutexScopedLock lock(busy);
+            return result;
+        }
+
+        csRef<iBase> GetResultRefPtr()
+        {
+            CS::Threading::MutexScopedLock lock(busy);
+            return result;
+        }
+
+        bool IsFinished()
+        {
+            CS::Threading::MutexScopedLock lock(busy);
+            return finished;
+        }
+
+        bool WasSuccessful()
+        {
+            CS::Threading::MutexScopedLock lock(busy);
+            return result.IsValid();
+        }
+
+        void SetWaitPtrs(CS::Threading::Condition* c, CS::Threading::Mutex* m)
+        {
+            CS::Threading::MutexScopedLock lock(busy);
+            waitCondition = c;
+            waitLock = m;
+        }
+
+        // doesn't have to be threadsafe
+        void SetJob(iJob* newJob)
+        {
+            job = newJob;
+        }
+
+        // doesn't have to be threadsafe
+        iJob* GetJob() const
+        {
+            return job;
+        }
+
+    private:
+        // disable functions iThreadReturn requires but we don't want to implement
+        void MarkSuccessful() {}
+        void MarkFinished() {}
+        void SetResult(csRef<iBase> result) {}
+        void SetResult(void* result) {}
+        void Copy(iThreadReturn* other) {}
+
+        // private data
+        CS::Threading::Mutex busy;
+        csRef<T> target;
+        csRef<iBase> result;
+        bool finished;
+
+        // thread return specific data
+        CS::Threading::Mutex* waitLock;
+        CS::Threading::Condition* waitCondition;
+        csRef<iJob> job;
+    };
+
     // trivial loadable (e.g. triggers, textures, ...)
     template<typename T, const char* TypeName> class TrivialLoadable : public Loadable
     {
     public:
+        typedef T ObjectType;
+
         TrivialLoadable(BgLoader* parent) : Loadable(parent)
         {
         }
@@ -700,8 +870,8 @@ private:
     template<typename T> class ObjectLoader
     {
     public:
-        typedef CheckedLoad<T> ObjectType;
-        typedef csHash<ObjectType, csString> HashType;
+        typedef CheckedLoad<T> HashObjectType;
+        typedef csHash<HashObjectType, csString> HashType;
 
         ObjectLoader() : objectCount(0)
         {
@@ -714,7 +884,7 @@ private:
             while(it.HasNext())
             {
                 csString key;
-                ObjectType obj(it.Next(key));
+                HashObjectType obj(it.Next(key));
                 objects.Put(key, obj);
             }
         }
@@ -751,7 +921,7 @@ private:
             typename HashType::GlobalIterator it(objects.GetIterator());
             while(it.HasNext())
             {
-                ObjectType& ref = it.Next();
+                HashObjectType& ref = it.Next();
                 if(!ref.checked)
                 {
                     ref.checked = ref.obj->Load(wait);
@@ -781,7 +951,7 @@ private:
             typename HashType::GlobalIterator it(objects.GetIterator());
             while(it.HasNext())
             {
-                ObjectType& ref = it.Next();
+                HashObjectType& ref = it.Next();
                 if(ref.checked)
                 {
                     ref.obj->Unload();
@@ -800,7 +970,7 @@ private:
                 typename HashType::GlobalIterator it(objects.GetIterator());
                 while(it.HasNext())
                 {
-                    ObjectType& ref = it.Next();
+                    HashObjectType& ref = it.Next();
                     if(ref.checked)
                     {
                         if(ref.obj->OutOfRange(keepBox))
@@ -839,7 +1009,7 @@ private:
         void RemoveDependency(const T* obj)
         {
             CS::Threading::RecursiveMutexScopedLock lock(busy);
-            const ObjectType& ref = objects.Get(obj->GetName(), ObjectType(csRef<T>()));
+            const HashObjectType& ref = objects.Get(obj->GetName(), HashObjectType(csRef<T>()));
             if(ref.checked)
             {
                 ref.obj->Unload();
@@ -857,8 +1027,8 @@ private:
         const csRef<T>& GetDependency(const csString& name, const csRef<T>& fallbackobj) const
         {
             CS::Threading::RecursiveMutexScopedLock lock(busy);
-            ObjectType fallback(fallbackobj);
-            const ObjectType& ref = objects.Get(name,fallbackobj);
+            HashObjectType fallback(fallbackobj);
+            const HashObjectType& ref = objects.Get(name,fallbackobj);
             return ref.obj;
         }
 
@@ -878,6 +1048,8 @@ private:
         HashType objects;
         size_t objectCount;
     };
+
+    // actual world objects
 
     struct WaterArea
     {
@@ -929,6 +1101,8 @@ private:
     class Material : public Loadable, public ObjectLoader<Texture>
     {
     public:
+        typedef iMaterialWrapper ObjectType;
+
         using ObjectLoader<Texture>::AddDependency;
 
         Material(BgLoader* parent) : Loadable(parent)
@@ -1010,6 +1184,8 @@ private:
                   public ObjectLoader<Trigger>
     {
     public:
+        typedef iLight ObjectType;
+
         using ObjectLoader<Sequence>::AddDependency;
         using ObjectLoader<Trigger>::AddDependency;
 
@@ -1021,6 +1197,12 @@ private:
 
         bool LoadObject(bool wait);
         void UnloadObject();
+
+        csPtr<iLight> GetObject()
+        {
+            csRef<iLight> obj(light);
+            return csPtr<iLight>(obj);
+        }
 
     private:
         // parse results
@@ -1101,7 +1283,7 @@ private:
         using ObjectLoader<Sequence>::AddDependency;
         using ObjectLoader<Trigger>::AddDependency;
 
-        MeshObj(BgLoader* parent) : TrivialLoadable<iMeshWrapper,ObjectNames::meshobj>(parent), finished(false)
+        MeshObj(BgLoader* parent) : TrivialLoadable<iMeshWrapper,ObjectNames::meshobj>(parent)
         {
         }
 
@@ -1133,10 +1315,6 @@ private:
         // dependencies
         Sector* sector;
         csRefArray<ShaderVar> shadervars;
-
-        // load data
-        csRef<iThreadReturn> status;
-        bool finished;
     };
 
     class MeshGen : public TrivialLoadable<iMeshGenerator,ObjectNames::meshgen>, public RangeBased, public MaterialLoader,
@@ -1155,21 +1333,20 @@ private:
         bool LoadObject(bool wait);
         void UnloadObject();
 
+    private:
         // parser data
-        csString name;
-        csRef<iDocumentNode> data;
         Sector* sector;
 
         // dependencies
         csRef<MeshObj> mesh;
-
-        // load data
-        csRef<iThreadReturn> status;
     };
 
     class Portal : public Loadable, public RangeBased
     {
+    friend class Sector;
     public:
+        typedef iMeshWrapper ObjectType;
+
         Portal(BgLoader* parent) : Loadable(parent), flags(0), warp(false)
         {
         }
@@ -1179,8 +1356,14 @@ private:
         bool LoadObject(bool wait);
         void UnloadObject();
 
+        csPtr<iMeshWrapper> GetObject()
+        {
+            csRef<iMeshWrapper> obj(mObject);
+            return csPtr<iMeshWrapper>(obj);
+        }
+
+    private:
         // parser results
-        csString name;
         csMatrix3 matrix;
         csVector3 wv;
         bool ww_given;
@@ -1191,7 +1374,7 @@ private:
 	bool autoresolve;
         csPoly3D poly;
 
-        csRef<Sector> targetSector;
+        Sector* targetSector;
         Sector* sector;
 
         // load data
@@ -1216,9 +1399,10 @@ private:
 
             virtual bool Traverse(iPortal* p, iBase* /*context*/)
             {
-                if(targetSector->object.IsValid())
+                csRef<iSector> target = targetSector->GetObject();
+                if(target.IsValid())
                 {
-                    p->SetSector(targetSector->object);
+                    p->SetSector(target);
                 }
                 else
                 {
@@ -1269,11 +1453,13 @@ private:
 
         void AddPortal(Portal* p)
         {
+            CS::Threading::RecursiveMutexScopedLock lock(busy);
             activePortals.Add(p);
         }
 
         void RemovePortal(Portal* p)
         {
+            CS::Threading::RecursiveMutexScopedLock lock(busy);
             activePortals.Delete(p);
         }
 
@@ -1282,9 +1468,13 @@ private:
             alwaysLoaded.AddDependency(mesh);
         }
 
-        // parser data
-        CS::Threading::ReadWriteMutex lock;
+        csPtr<iSector> GetObject()
+        {
+            csRef<iSector> obj(object);
+            return csPtr<iSector>(obj);
+        }
 
+    private:
         // parser results
         csString culler;
         csColor ambient;
@@ -1296,6 +1486,7 @@ private:
         ObjectLoader<MeshObj> alwaysLoaded;
 
         // load data
+        CS::Threading::RecursiveMutex busy;
         csRef<iSector> object;
         csSet<csPtrKey<Portal> > activePortals;
         bool init;
@@ -1309,7 +1500,7 @@ private:
         using ObjectLoader<Sector>::AddDependency;
 
         Zone(BgLoader* parent, const char* name)
-            : Loadable(parent), loading(false), priority(false)
+            : Loadable(parent), priority(false)
         {
             Loadable::SetName(name);
         }
@@ -1344,8 +1535,8 @@ private:
             return priority;
         }
 
+    private:
         // loader data
-        bool loading;
         bool priority;
     };
 
@@ -1445,7 +1636,11 @@ private:
     ObjectLoader<Zone> loadedZones;
 
     // currently loading objects
+    CS::Threading::RecursiveMutex loadLock;
+    size_t loadOffset;
+    size_t delayedOffset;
     csArray<csPtrKey<Loadable> > loadList;
+    csArray<csPtrKey<iDelayedLoader> > delayedLoadList;
 
     // number of objects currently loading
     size_t loadCount;
@@ -1474,8 +1669,8 @@ private:
 
     // For world manipulation.
     csRef<iMeshWrapper> selectedMesh;
-    csString selectedFactory;
-    csString selectedMaterial;
+    csRef<MeshFact> selectedFactory;
+    csRef<Material> selectedMaterial;
     csVector2 previousPosition;
     csVector3 origTrans;
     csVector3 rotBase;

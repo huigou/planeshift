@@ -1438,6 +1438,11 @@ GEMClientActor::~GEMClientActor()
     delete post_load;
 
     cal3dstate.Invalidate();
+    if(rider.IsValid())
+    {
+        psengine->GetEngine()->RemoveObject(rider);
+    }
+
     if(pcmesh.IsValid())
     {
         cel->GetShadowManager()->RemoveShadow(this);
@@ -1445,22 +1450,8 @@ GEMClientActor::~GEMClientActor()
         psengine->GetEngine()->RemoveObject(pcmesh);
         pcmesh.Invalidate();
     }
-    
+
     delete charApp;
-
-    if(factory.IsValid())
-    {
-        factory.Invalidate();
-        if (!factName.IsEmpty() && factName != "nullmesh")
-            psengine->GetLoader()->FreeFactory(factName);
-    }
-
-    if(mountFactory.IsValid())
-    {
-        mountFactory.Invalidate();
-        if (!mountFactname.IsEmpty() && mountFactname != "null")
-            psengine->GetLoader()->FreeFactory(mountFactname);
-    }
 }
 
 void GEMClientActor::SwitchToRealMesh(iMeshWrapper* mesh)
@@ -1978,7 +1969,6 @@ const char* GEMClientActor::GetName(bool trueName)
 
 bool GEMClientActor::CheckLoadStatus()
 {
-    bool failed = false;
     if (psengine->GetZoneHandler()->IsLoading() || !post_load->sector)
     {
         post_load->sector = psengine->GetEngine()->GetSectors()->FindByName(post_load->sector_name);
@@ -1986,43 +1976,56 @@ bool GEMClientActor::CheckLoadStatus()
     }
 
     if(!factory.IsValid())
-        factory = psengine->GetLoader()->LoadFactory(factName, &failed);
-
-    if(!factory.IsValid())
     {
-        if(failed)
+        factory = psengine->GetLoader()->LoadFactory(factName);
+
+        if(!factory.IsValid())
         {
-            printf("Failed to load factory: '%s'\n", factName.GetData());
+            Error2("Failed to find factory: '%s'\n", factName.GetData());
             psengine->UnregisterDelayedLoader(this);
-            delete post_load;
-            post_load = NULL;
             return false;
         }
-        return true;
     }
 
-    if (!mountFactname.IsEmpty() && !mountFactname.Compare("null") && !mountFactory.IsValid())
+    if(!factory->IsFinished())
     {
-        mountFactory = psengine->GetLoader()->LoadFactory(mountFactname, &failed);
+        return true;
+    }
+    else if(!factory->WasSuccessful())
+    {
+        Error2("Failed to load factory: '%s'\n", factName.GetData());
+        psengine->UnregisterDelayedLoader(this);
+        return false;
+    }
+
+    if (!mountFactname.IsEmpty() && !mountFactname.Compare("null"))
+    {
         if(!mountFactory.IsValid())
         {
-            if(failed)
+            mountFactory = psengine->GetLoader()->LoadFactory(mountFactname);
+
+            if(!mountFactory.IsValid())
             {
                 Error2("Couldn't find the mesh factory: '%s' for mount.", mountFactname.GetData());
                 psengine->UnregisterDelayedLoader(this);
-                delete post_load;
-                post_load = NULL;
-                
-                // free allocate factory
-                factory.Invalidate();
-                psengine->GetLoader()->FreeFactory(factName);
                 return false;
             }
+        }
+
+        if(!mountFactory->IsFinished())
+        {
             return true;
         }
+        else if(!mountFactory->WasSuccessful())
+        {
+            Error2("Couldn't load the mesh factory: '%s' for mount.", mountFactname.GetData());
+            psengine->UnregisterDelayedLoader(this);
+            return false;
+        }
     }
-    
-    csRef<iMeshWrapper> mesh = factory->CreateMeshWrapper();
+
+    csRef<iMeshFactoryWrapper> meshFact = scfQueryInterface<iMeshFactoryWrapper>(factory->GetResultRefPtr());
+    csRef<iMeshWrapper> mesh = meshFact->CreateMeshWrapper();
     charApp->SetMesh(mesh);
 
     if(!matName.IsEmpty())
@@ -2032,7 +2035,9 @@ bool GEMClientActor::CheckLoadStatus()
 
     if (!mountFactname.IsEmpty() && !mountFactname.Compare("null"))
     {
-        csRef<iMeshWrapper> mountMesh = mountFactory->CreateMeshWrapper();
+        rider = mesh;
+        csRef<iMeshFactoryWrapper> mountMeshFact = scfQueryInterface<iMeshFactoryWrapper>(mountFactory->GetResultRefPtr());
+        csRef<iMeshWrapper> mountMesh = mountMeshFact->CreateMeshWrapper();
         SwitchToRealMesh(mountMesh);
         charApp->ApplyRider(pcmesh);
         csRef<iSpriteCal3DState> riderstate = scfQueryInterface<iSpriteCal3DState> (mesh->GetMeshObject());
@@ -2095,6 +2100,12 @@ GEMClientItem::~GEMClientItem()
     delete solid;
     delete post_load;
 
+    if(pcmesh.IsValid())
+    {
+        psengine->GetEngine()->RemoveObject(pcmesh);
+        pcmesh.Invalidate();
+    }
+
     if(instance.IsValid())
     {
         // Remove instance.
@@ -2104,25 +2115,6 @@ GEMClientItem::~GEMClientItem()
             instance.Invalidate();
             cel->RemoveInstanceObject(factName+matName);
         }
-        else
-        {
-            // clear material here to make sure it won't be freed
-            // as the instance is still alive
-            matName.Empty();
-        }
-    }
-    else
-    {
-        if(factory.IsValid())
-        {
-            factory.Invalidate();
-            psengine->GetLoader()->FreeFactory(factName);
-        }
-    }
-
-    if(!matName.IsEmpty())
-    {
-        psengine->GetLoader()->FreeMaterial(matName);
     }
 }
 
@@ -2216,81 +2208,102 @@ bool GEMClientItem::CheckLoadStatus()
     instance = cel->FindInstanceObject(factName+matName);
     if(!instance.IsValid())
     {
-        bool failed = false;
         if(!factory.IsValid())
         {
-            factory = psengine->GetLoader()->LoadFactory(factName, &failed);
-        }
+            factory = psengine->GetLoader()->LoadFactory(factName);
 
-        if(!factory.IsValid())
-        {
-            if(failed)
+            if(!factory.IsValid())
             {
-                Error3("Unable to load item %s with factory %s!\n", name.GetData(), factName.GetData());
+                Error3("Unable to find factory %s for item %s!\n", factName.GetData(), name.GetData());
                 psengine->UnregisterDelayedLoader(this);
-                delete post_load;
-                post_load = NULL;
                 return false;
             }
-
-            return true;
         }
 
-        csRef<iMaterialWrapper> material;
+        if(!factory->IsFinished())
+        {
+            return true;
+        }
+        else if(!factory->WasSuccessful())
+        {
+            Error3("Unable to load item %s with factory %s!\n", name.GetData(), factName.GetData());
+            psengine->UnregisterDelayedLoader(this);
+            return false;
+        }
+
         if(!matName.IsEmpty())
         {
-            material = psengine->GetLoader()->LoadMaterial(matName, &failed);
             if(!material.IsValid())
             {
-                if(failed)
+                material = psengine->GetLoader()->LoadMaterial(matName);
+
+                if(!material.IsValid())
                 {
-                    Error4("Unable to load item %s with material %s (factory %s)!\n", name.GetData(), matName.GetData(), factName.GetData());
+                    Error4("Unable to find material %s for item %s (factory %s)!\n",
+                           matName.GetData(), name.GetData(), factName.GetData());
                     psengine->UnregisterDelayedLoader(this);
-                    delete post_load;
-                    post_load = NULL;
-                    matName.Empty();
-                    
-                    // free allocated factory
-                    factory.Invalidate();
-                    psengine->GetLoader()->FreeFactory(factName);
                     return false;
                 }
+            }
 
+            if(!material->IsFinished())
+            {
                 return true;
+            }
+            else if(!factory->WasSuccessful())
+            {
+                Error4("Unable to load item %s with material %s (factory %s)!\n",
+                       name.GetData(), matName.GetData(), factName.GetData());
+                psengine->UnregisterDelayedLoader(this);
+                return false;
             }
         }
 
-        // Create the mesh.
+        // obtain the load results
+        csRef<iMeshFactoryWrapper> meshFact = scfQueryInterface<iMeshFactoryWrapper>(factory->GetResultRefPtr());
+        csRef<iMaterialWrapper> matWrap;
+        if(material.IsValid())
+        {
+            matWrap = scfQueryInterface<iMaterialWrapper>(material->GetResultRefPtr());
+        }
+
+        // create the mesh
         if(cel->InstanceItems())
         {
-            instance = csPtr<InstanceObject>(new InstanceObject());
-            instance->pcmesh = factory->CreateMeshWrapper();
+            csRef<iMeshFactoryWrapper> meshFact = scfQueryInterface<iMeshFactoryWrapper>(factory->GetResultRefPtr());
+
+            instance.AttachNew(new InstanceObject());
+            instance->pcmesh = meshFact->CreateMeshWrapper();
             instance->pcmesh->GetFlags().Set(CS_ENTITY_NODECAL | CS_ENTITY_NOHITBEAM);
+            instance->meshFact = factory;
+            instance->material = material;
             psengine->GetEngine()->PrecacheMesh(instance->pcmesh);
             cel->AddInstanceObject(factName+matName, instance);
 
-            if(material.IsValid())
+            if(matWrap.IsValid())
             {
-                csRef<iMaterialWrapper> mat = CloneMaterial(material);
-                instance->pcmesh->GetMeshObject()->SetMaterialWrapper(mat);
+                matWrap = CloneMaterial(matWrap);
+                CS_ASSERT(matWrap.IsValid());
+                instance->pcmesh->GetMeshObject()->SetMaterialWrapper(matWrap);
             }
         }
         else
         {
-            pcmesh = factory->CreateMeshWrapper();
+            pcmesh = meshFact->CreateMeshWrapper();
             pcmesh->GetFlags().Set(CS_ENTITY_NODECAL);
             psengine->GetEngine()->PrecacheMesh(pcmesh);
 
-            if(material.IsValid())
+            if(matWrap.IsValid())
             {
-                pcmesh->GetMeshObject()->SetMaterialWrapper(material);
+                pcmesh->GetMeshObject()->SetMaterialWrapper(matWrap);
             }
         }
 
+        // set appropriate shaders for instanced objects
         if(cel->InstanceItems())
         {
             // Set appropriate shader.
-            csRef<iGeneralFactoryState> gFact = scfQueryInterface<iGeneralFactoryState>(factory->GetMeshObjectFactory());
+            csRef<iGeneralFactoryState> gFact = scfQueryInterface<iGeneralFactoryState>(meshFact->GetMeshObjectFactory());
             csRef<iGeneralMeshState> gState = scfQueryInterface<iGeneralMeshState>(instance->pcmesh->GetMeshObject());
 
             for(size_t i=0; (!gFact.IsValid() && i == 0) || (gFact.IsValid() && i<gFact->GetSubMeshCount()); ++i)
@@ -2315,32 +2328,31 @@ bool GEMClientItem::CheckLoadStatus()
                 }
                 else
                 {
-                    material = factory->GetMeshObjectFactory()->GetMaterialWrapper();
+                    material = meshFact->GetMeshObjectFactory()->GetMaterialWrapper();
                 }
 
-                // Create a new wrapper for this material and set it on the mesh.
-                csRef<iMaterialWrapper> matwrap = CloneMaterial(material);
+                csRef<iMaterialWrapper> clonedMatWrap = CloneMaterial(material);
                 if(gSubmesh)
                 {
-                    gSubmesh->SetMaterial(matwrap);
+                    gSubmesh->SetMaterial(clonedMatWrap);
                 }
                 else
                 {
-                    instance->pcmesh->GetMeshObject()->SetMaterialWrapper(matwrap);
+                    instance->pcmesh->GetMeshObject()->SetMaterialWrapper(clonedMatWrap);
                 }
             }
-
-            // Set biggest bbox so that instances aren't wrongly culled.
-            instance->bbox = factory->GetMeshObjectFactory()->GetObjectModel()->GetObjectBoundingBox();
-            factory->GetMeshObjectFactory()->GetObjectModel()->SetObjectBoundingBox(csBox3(-CS_BOUNDINGBOX_MAXVALUE,
-                -CS_BOUNDINGBOX_MAXVALUE, -CS_BOUNDINGBOX_MAXVALUE, CS_BOUNDINGBOX_MAXVALUE, CS_BOUNDINGBOX_MAXVALUE,
-                CS_BOUNDINGBOX_MAXVALUE));
 
             // create nullmesh factory
             instance->nullFactory = psengine->GetEngine()->CreateMeshFactory("crystalspace.mesh.object.null", factName + "_nullmesh", false);
             csRef<iNullFactoryState> nullstate = scfQueryInterface<iNullFactoryState> (instance->nullFactory->GetMeshObjectFactory());
             nullstate->SetBoundingBox(instance->bbox);
-            nullstate->SetCollisionMeshData(factory->GetMeshObjectFactory()->GetObjectModel());
+            nullstate->SetCollisionMeshData(meshFact->GetMeshObjectFactory()->GetObjectModel());
+
+            // Set biggest bbox so that instances aren't wrongly culled.
+            instance->bbox = meshFact->GetMeshObjectFactory()->GetObjectModel()->GetObjectBoundingBox();
+            meshFact->GetMeshObjectFactory()->GetObjectModel()->SetObjectBoundingBox(csBox3(-CS_BOUNDINGBOX_MAXVALUE,
+                -CS_BOUNDINGBOX_MAXVALUE, -CS_BOUNDINGBOX_MAXVALUE, CS_BOUNDINGBOX_MAXVALUE, CS_BOUNDINGBOX_MAXVALUE,
+                CS_BOUNDINGBOX_MAXVALUE));
         }
     }
 
@@ -2355,10 +2367,6 @@ bool GEMClientItem::CheckLoadStatus()
         pcmesh->GetFlags().Set(CS_ENTITY_NODECAL);
         csRef<iNullMeshState> nullmeshstate = scfQueryInterface<iNullMeshState> (pcmesh->GetMeshObject());
         nullmeshstate->SetHitBeamMeshObject(instance->pcmesh->GetMeshObject());
-        
-        // release the no longer needed factory reference here
-        // required to prevent a double-free
-        factory.Invalidate();
     }
 
     cel->AttachObject(pcmesh->QueryObject(), this);
@@ -2426,22 +2434,22 @@ InstanceObject::~InstanceObject()
 {
     if (pcmesh.IsValid())
     {
-        csString factory;
+        csRef<iMeshFactoryWrapper> fact = pcmesh->GetFactory();
 
-        iMeshFactoryWrapper* fact = pcmesh->GetFactory();
-
-        // tell the loader we don't need this factory anymore
         if(fact)
         {
             // reset factory bbox so it won't be wrong on next instance creation
             fact->GetMeshObjectFactory()->GetObjectModel()->SetObjectBoundingBox(bbox);
-            factory = fact->QueryObject()->GetName();
         }
 
         psengine->GetEngine()->RemoveObject(pcmesh);
-        pcmesh.Invalidate();
-
-        if(!factory.IsEmpty())
-            psengine->GetLoader()->FreeFactory(factory);
     }
+    psengine->GetEngine()->RemoveObject(nullFactory);
+
+    // explicitly free ressources so they're freed before the
+    // automatic frees of the loader-allocated object in order
+    // to let leak detection work properly
+    pcmesh.Invalidate();
+    nullFactory.Invalidate();
 }
+

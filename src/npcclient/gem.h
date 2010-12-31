@@ -125,8 +125,7 @@ protected:
     
     csRef<iEngine> engine;
 
-    // needed to free loader ressources upon destruction
-    csString factory;
+    csRef<iThreadReturn> factory;
 };
 
 

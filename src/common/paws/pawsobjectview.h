@@ -168,7 +168,7 @@ private:
 
     unsigned int ID;
     
-    csString meshFactory;
+    csRef<iThreadReturn> meshFactory;
 };
 CREATE_PAWS_FACTORY( pawsObjectView );
 

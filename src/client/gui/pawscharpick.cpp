@@ -495,6 +495,7 @@ void pawsCharacterPickerWindow::SelectCharacter(int character)
         // Show the model for the selected character.
         loaded = false;
         view->Show();
+        charApp->SetMesh(0);
         CheckLoadStatus();
     }
 }
@@ -536,6 +537,7 @@ void pawsCharacterPickerWindow::SelectCharacter(int character, pawsWidget* widge
     {
         // Show the model for the selected character.
         loaded = false;
+        charApp->SetMesh(0);
         CheckLoadStatus();
     }
 }
@@ -544,11 +546,11 @@ bool pawsCharacterPickerWindow::CheckLoadStatus()
 {
     if(!loaded)
     {
-        if (view->View(models[selectedCharacter].factName))
+        if(view->View(models[selectedCharacter].factName))
         {
             psengine->UnregisterDelayedLoader(this);
 
-            iMeshWrapper * mesh = view->GetObject();        
+            iMeshWrapper* mesh = view->GetObject();
             if (!mesh)
             {
                 PawsManager::GetSingleton().CreateWarningBox("Couldn't find mesh! Please run the updater");
@@ -564,12 +566,10 @@ bool pawsCharacterPickerWindow::CheckLoadStatus()
                 csString traits(models[selectedCharacter].traits);
                 csString equipment( models[selectedCharacter].equipment );
 
-                //psengine->BuildAppearance( mesh, traits );     
                 charApp->ApplyTraits(traits);
-
-                //csPDelArray<Trait> dummy;
-                //psengine->BuildEquipment(mesh, equipment, dummy);               
                 charApp->ApplyEquipment(equipment);
+
+                psengine->GetLoader()->ContinueLoading(true); // make sure everything is loaded *now*
             }
             loaded = true;
 

@@ -74,71 +74,52 @@ psCharAppearance::psCharAppearance(iObjectRegistry* objectReg)
 
 void psCharAppearance::Free()
 {
-    csRef<iBgLoader> loader(psengine->GetLoader());
-
-    while(!delayedAttach.IsEmpty())
+    // abort delayed loads
+    if(!delayedAttach.IsEmpty())
     {
-        // free ressources allocated by delayed loading
-        // that won't be used
-        Attachment & attach = delayedAttach.Front();
-        if(attach.materialPtr.IsValid())
-        {
-            attach.materialPtr.Invalidate();
-            loader->FreeMaterial(attach.materialName);
-        }
-
-        if(attach.factoryPtr.IsValid())
-        {
-            attach.factoryPtr.Invalidate();
-            loader->FreeFactory(attach.factName);
-        }
-
-        delayedAttach.PopFront();
+        psengine->UnregisterDelayedLoader(this);
     }
+    delayedAttach.DeleteAll();
+
 
     ClearEquipment();
-    csHash<csString,csString>::GlobalIterator it = materials.GetIterator();
+
+    // reset all materials
+    csHash<csRef<iThreadReturn>,csString>::GlobalIterator it = materials.GetIterator();
     csString part;
     while(it.HasNext())
     {
-        // reset all materials
         it.Next(part);
         DefaultMaterial(part);
     }
 
+    // process the resets
     while(!delayedAttach.IsEmpty())
     {
-        // free ressources allocated by delayed loading
-        // that won't be used
         Attachment & attach = delayedAttach.Front();
 
-        bool failed;
-        attach.materialPtr = loader->LoadMaterial(attach.materialName, &failed, true);
-        if(!failed && attach.materialPtr.IsValid())
+        attach.materialPtr = psengine->GetLoader()->LoadMaterial(attach.materialName, true);
+        if(attach.materialPtr.IsValid() && attach.materialPtr->WasSuccessful())
         {
             ProcessAttach(attach.materialPtr, attach.materialName, attach.partName);
         }
         else
         {
-            Error2("failed to reset material on part %s", attach.partName.GetData());
+            Notify2(LOG_CHARACTER, "failed to reset material on part %s", attach.partName.GetData());
         }
 
         delayedAttach.PopFront();
     }
 
+    // free mesh states
     state.Invalidate();
     stateFactory.Invalidate();
     animeshObject.Invalidate();
     animeshFactory.Invalidate();
     baseMesh.Invalidate();
 
-    it.Reset();
-    while(it.HasNext())
-    {
-        // reset all materials
-        csString& value = it.Next();
-        loader->FreeMaterial(value);
-    }
+    // free allocaed loader ressources
+    factories.DeleteAll();
     materials.DeleteAll();
     removedMeshes.DeleteAll();
 
@@ -164,6 +145,12 @@ void psCharAppearance::SetMesh(iMeshWrapper* mesh)
         return;
 
     Free();
+
+    if(!mesh)
+    {
+        // we only want to free here
+        return;
+    }
 
     state = scfQueryInterface<iSpriteCal3DState>(mesh->GetMeshObject());
     stateFactory = scfQueryInterface<iSpriteCal3DFactoryState>(mesh->GetMeshObject()->GetFactory());
@@ -845,33 +832,33 @@ bool psCharAppearance::ChangeMaterial(const char* part, const char* materialName
 
     csString materialNameParsed = ParseStrings(part, materialName);
 
-    bool failed = false;
-    csRef<iMaterialWrapper> material = psengine->GetLoader()->LoadMaterial(materialNameParsed, &failed);
-    if(!failed)
+    csRef<iThreadReturn> material = psengine->GetLoader()->LoadMaterial(materialNameParsed);
+    if(!material.IsValid())
     {
-        if(!material.IsValid())
+        // failed
+    }
+    else if(!material->IsFinished())
+    {
+        Attachment attach(false);
+        attach.materialName = materialNameParsed;
+        attach.partName = part;
+        attach.materialPtr = material;
+        if(delayedAttach.IsEmpty())
         {
-            Attachment attach(false);
-            attach.materialName = materialNameParsed;
-            attach.partName = part;
-            attach.materialPtr = material;
-            if(delayedAttach.IsEmpty())
-            {
-                psengine->RegisterDelayedLoader(this);
-            }
-            delayedAttach.PushBack(attach);
-
-            return true;
+            psengine->RegisterDelayedLoader(this);
         }
+        delayedAttach.PushBack(attach);
 
+        return true;
+    }
+    else if(material->WasSuccessful())
+    {
         ProcessAttach(material, materialNameParsed, part);
         return true;
     }
 
     // The material isn't available to load.
-    csReport(psengine->GetObjectRegistry(), CS_REPORTER_SEVERITY_NOTIFY,
-        "planeshift.character.appearance", "Attempted to change to material %s and failed; material not found.",
-        materialNameParsed.GetData());
+    Notify2(LOG_CHARACTER, "Attempted to change to material %s and failed; material not found.", materialNameParsed.GetData());
     return false;
 }
 
@@ -879,25 +866,27 @@ bool psCharAppearance::ChangeMaterial(const char* part, const char* materialName
 bool psCharAppearance::ChangeMesh(const char* partPattern, const char* newPart)
 {
     csString newPartParsed = ParseStrings(partPattern, newPart);
+    csString pattern(partPattern);
 
     if(stateFactory && state)
     {
         // If the new mesh cannot be found then do nothing.
-        int newMeshAvailable = stateFactory->FindMeshName(newPartParsed);
-        if ( newMeshAvailable == -1 )
+        if(stateFactory->FindMeshName(newPartParsed) == -1)
+        {
             return false;
+        }
 
         /* First we detach every mesh that match the partPattern */
-        for (int idx=0; idx < stateFactory->GetMeshCount(); idx++)
+        for(int idx = 0; idx < stateFactory->GetMeshCount(); ++idx)
         {
-            const char * meshName = stateFactory->GetMeshName( idx );
-            if (strstr(meshName,partPattern))
+            if(pattern.Find(stateFactory->GetMeshName(idx)) != (size_t)-1)
             {
-                state->DetachCoreMesh( meshName );
+                state->DetachCoreMesh(idx);
             }
         }
 
-        state->AttachCoreMesh( newPartParsed.GetData() );
+        // now attach the new mesh
+        state->AttachCoreMesh(newPartParsed);
     }
     else if(animeshFactory && animeshObject)
     {
@@ -912,14 +901,13 @@ bool psCharAppearance::ChangeMesh(const char* partPattern, const char* newPart)
             const char* meshName = animeshFactory->GetSubMesh(idx)->GetName();
             if(meshName)
             {
-                if (strstr(meshName, partPattern))
-                {
-                    animeshObject->GetSubMesh(idx)->SetRendering(false);
-                }
-
-                if (!strcmp(meshName, newPartParsed))
+                if(newPartParsed.Find(meshName) != (size_t)-1)
                 {
                     animeshObject->GetSubMesh(idx)->SetRendering(true);
+                }
+                else if(pattern.Find(meshName) != (size_t)-1)
+                {
+                    animeshObject->GetSubMesh(idx)->SetRendering(false);
                 }
             }
         }
@@ -938,39 +926,33 @@ bool psCharAppearance::Attach(const char* socketName, const char* meshFactName, 
         return false;
     }
 
-    bool failed = false;
     csRef<iBgLoader> loader(psengine->GetLoader());
-    csRef<iMeshFactoryWrapper> factory = loader->LoadFactory(meshFactName, &failed);
-    if(failed)
+    csRef<iThreadReturn> factory = loader->LoadFactory(meshFactName);
+    if(!factory.IsValid() || (factory->IsFinished() && !factory->WasSuccessful()))
     {
-        Notify2(LOG_CHARACTER, "Mesh factory %s not found.", meshFactName );
+        Notify2(LOG_CHARACTER, "Mesh factory %s not found.", meshFactName);
         return false;
     }
 
-    csRef<iMaterialWrapper> material;
+    csRef<iThreadReturn> material;
     if(materialName != NULL)
     {
-        material = loader->LoadMaterial(materialName, &failed);
-        if(failed)
+        material = loader->LoadMaterial(materialName);
+        if(!material.IsValid() || (material->IsFinished() && !material->WasSuccessful()))
         {
             Notify2(LOG_CHARACTER, "Material %s not found.", materialName);
-            if(factory.IsValid())
-            {
-                loader->FreeFactory(meshFactName);
-            }
             return false;
         }
     }
 
-    Detach(socketName); // detach anything previously attached (free ressources)
-
-    if(!factory.IsValid() || (materialName != NULL && !material.IsValid()))
+    if(!factory->IsFinished() || (materialName != NULL && !material->IsFinished()))
     {
         Attachment attach(true);
         attach.factName = meshFactName;
         attach.factoryPtr = factory;
         attach.materialName = materialName;
         attach.materialPtr = material;
+
         // using socket name as the mesh may change while loading the factory/materials
         attach.socket = socketName;
         if(delayedAttach.IsEmpty())
@@ -979,39 +961,44 @@ bool psCharAppearance::Attach(const char* socketName, const char* meshFactName, 
         }
         delayedAttach.PushBack(attach);
     }
-    else
+    else if(factory->WasSuccessful() && (materialName == NULL || material->WasSuccessful()))
     {
         ProcessAttach(factory, material, meshFactName, socketName);
-        if(materialName != NULL)
-        {
-            csString & mat = materials.GetOrCreate(socketName);
-            if(!mat.IsEmpty()) // free previously allocated loader ressource
-            {
-                psengine->GetLoader()->FreeMaterial(materialName);
-            }
-            mat = materialName;
-        }
+    }
+    else
+    {
+        return false;
     }
 
     return true;
 }
 
-void psCharAppearance::ProcessAttach(iMeshFactoryWrapper* factory, iMaterialWrapper* material, const char* meshFactName, const char* socket)
+void psCharAppearance::ProcessAttach(iThreadReturn* factory, iThreadReturn* material, const char* meshFactName, const char* socket)
 {
-     csRef<iMeshWrapper> meshWrap = engine->CreateMeshWrapper( factory, meshFactName );
+    csRef<iMeshFactoryWrapper> meshFact = scfQueryInterface<iMeshFactoryWrapper>(factory->GetResultRefPtr());
+    csRef<iMeshWrapper> meshWrap = engine->CreateMeshWrapper(meshFact, meshFactName);
 
-     if(material != NULL)
-     {
-         meshWrap->GetMeshObject()->SetMaterialWrapper(material);
-     }
+    if(material != NULL)
+    {
+        csRef<iMaterialWrapper> matWrap = scfQueryInterface<iMaterialWrapper>(material->GetResultRefPtr());
+        meshWrap->GetMeshObject()->SetMaterialWrapper(matWrap);
+    }
 
     ProcessAttach(meshWrap, socket);
 
-    psengine->GetCelClient()->HandleItemEffect(factory->QueryObject()->GetName(), meshWrap, false, socket, &effectids, &lightids);
+    psengine->GetCelClient()->HandleItemEffect(meshFact->QueryObject()->GetName(), meshWrap, false,
+                                               socket, &effectids, &lightids);
+
+    materials.GetOrCreate(socket) = material;
+    factories.GetOrCreate(socket) = factory;
 }
 
-void psCharAppearance::ProcessAttach(csRef<iMeshWrapper> meshWrap, const char* socket)
+void psCharAppearance::ProcessAttach(iMeshWrapper* meshWrap, const char* socket)
 {
+    CS_ASSERT(meshWrap);
+
+    Detach(socket);
+
     meshWrap->GetFlags().Set(CS_ENTITY_NODECAL);
 
     // Given a socket name of "righthand", we're looking for a key in the form of "socket_righthand"
@@ -1028,19 +1015,22 @@ void psCharAppearance::ProcessAttach(csRef<iMeshWrapper> meshWrap, const char* s
         if (key && keyName == key->GetKey())
         {
             sscanf(key->GetValue(),"%f,%f,%f,%f,%f,%f",&trans_x,&trans_y,&trans_z,&rot_x,&rot_y,&rot_z);
+            break;
         }
     }
 
     csReversibleTransform transform(csZRotMatrix3(rot_z)*csYRotMatrix3(rot_y)*csXRotMatrix3(rot_x), csVector3(trans_x,trans_y,trans_z));
+    bool success = false;
 
     if (state.IsValid())
     {
         csRef<iSpriteCal3DSocket> cal3DSocket = state->FindSocket(socket);
         if (cal3DSocket.IsValid())
         {
-            meshWrap->QuerySceneNode()->SetParent( baseMesh->QuerySceneNode ());
+            meshWrap->QuerySceneNode()->SetParent(baseMesh->QuerySceneNode());
             cal3DSocket->SetMeshWrapper(meshWrap);
             cal3DSocket->SetTransform(transform);
+            success = true;
         }
     }
     else if (animeshObject.IsValid() && animeshFactory.IsValid())
@@ -1048,96 +1038,71 @@ void psCharAppearance::ProcessAttach(csRef<iMeshWrapper> meshWrap, const char* s
         size_t idx = animeshFactory->FindSocket(socket);
         if (idx != (size_t)-1)
         {
-            meshWrap->QuerySceneNode()->SetParent( baseMesh->QuerySceneNode ());
             csRef<iAnimatedMeshSocket> animeshSocket = animeshObject->GetSocket(idx);
             animeshSocket->SetSceneNode(meshWrap->QuerySceneNode());
             animeshSocket->SetTransform(transform);
+            success = true;
         }
     }
 
-    usedSlots.PushSmart(socket);
+    if(success)
+    {
+        usedSlots.PushSmart(socket);
+    }
+    else
+    {
+        engine->RemoveObject(meshWrap);
+        Notify2(LOG_CHARACTER, "Failed to set mesh on socket '%s'.", socket);
+    }
 }
 
-bool psCharAppearance::ProcessMaterial(csRef<iMaterialWrapper> material, const char* /*materialName*/, const char* partName)
+bool psCharAppearance::ProcessMaterial(iThreadReturn* material, const char* /*materialName*/, const char* partName)
 {
+    csRef<iMaterialWrapper> matWrap = scfQueryInterface<iMaterialWrapper>(material->GetResultRefPtr());
+
     bool success = false;
     if (state.IsValid())
     {
-        success = state->SetMaterial(partName, material);
+        success = state->SetMaterial(partName, matWrap);
     }
     else if (animeshObject.IsValid() && animeshFactory.IsValid())
     {
         size_t idx = animeshFactory->FindSubMesh(partName);
         if (idx != (size_t)-1)
         {
-            animeshObject->GetSubMesh(idx)->SetMaterial(material);
+            animeshObject->GetSubMesh(idx)->SetMaterial(matWrap);
             success = true;
         }
+    }
+
+    if(success)
+    {
+        materials.GetOrCreate(partName) = material;
     }
 
     return success;
 }
 
-void psCharAppearance::ProcessAttach(csRef<iMaterialWrapper> material, const char* materialName, const char* partName)
+void psCharAppearance::ProcessAttach(iThreadReturn* material, const char* materialName, const char* partName)
 {
-    if (ProcessMaterial(material, materialName, partName))
-    {
-        csString & mat = materials.GetOrCreate(partName);
-        if (!mat.IsEmpty())
-        {
-            // free loader ressources
-            psengine->GetLoader()->FreeMaterial(mat);
-        }
-        mat = materialName;
-    }
-    else
+    bool success = false;
+    success = ProcessMaterial(material, materialName, partName);
+
+    if(!success)
     {
         // Try mirroring
         csString left, right;
         left.Format("Left %s", partName);
         right.Format("Right %s", partName);
+        success = true;
 
-        size_t success = 0;
+        success &= ProcessMaterial(material, materialName, left);
+        success &= ProcessMaterial(material, materialName, right);
+    }
 
-        if (ProcessMaterial(material, materialName, partName))
-        {
-            ++success;
-            csString & mat = materials.GetOrCreate(left);
-            if (!mat.IsEmpty())
-            {
-                // free loader ressources
-                psengine->GetLoader()->FreeMaterial(mat);
-            }
-            mat = materialName;
-        }
-
-        if (ProcessMaterial(material, materialName, partName))
-        {
-            ++success;
-            csString & mat = materials.GetOrCreate(right);
-            if (!mat.IsEmpty())
-            {
-                // free loader ressources
-                psengine->GetLoader()->FreeMaterial(mat);
-            }
-            mat = materialName;
-        }
-
-        if (success < 2)
-        {
-            Error3("Failed to set material \"%s\" on part \"%s\"", materialName, partName);
-        }
-
-        if (success < 1)
-        {
-            // free loader ressources
-            psengine->GetLoader()->FreeMaterial(materialName);
-        }
-        else if (success > 1)
-        {
-            // we use it twice, but only got 1 reference, therefore we get another one
-            csRef<iMaterialWrapper> material = psengine->GetLoader()->LoadMaterial(materialName);
-        }
+    if(!success)
+    {
+        Notify3(LOG_CHARACTER, "Failed to set material \"%s\" on part \"%s\"", materialName, partName);
     }
 }
 
@@ -1149,56 +1114,92 @@ bool psCharAppearance::CheckLoadStatus()
 
         if(attach.factory)
         {
-            csRef<iMeshFactoryWrapper> & factory = attach.factoryPtr;
+            csRef<iThreadReturn>& factory = attach.factoryPtr;
             if(!factory.IsValid())
             {
                 factory = psengine->GetLoader()->LoadFactory(attach.factName);
+                if(!factory.IsValid())
+                {
+                    Notify2(LOG_CHARACTER, "failed to find factory %s", attach.factName.GetData());
+                    delayedAttach.PopFront();
+                    return true;
+                }
             }
 
-            if(factory.IsValid())
+            if(!factory->IsFinished())
             {
-                if(!attach.materialName.IsEmpty())
-                {
-                    csRef<iMaterialWrapper> & material = attach.materialPtr;
+                return true;
+            }
+            else if(!factory->WasSuccessful())
+            {
+                Notify2(LOG_CHARACTER, "failed to load factory %s", attach.factName.GetData());
+                delayedAttach.PopFront();
+                return true;
+            }
 
+            if(!attach.materialName.IsEmpty())
+            {
+                csRef<iThreadReturn>& material = attach.materialPtr;
+
+                if(!material.IsValid())
+                {
+                    material = psengine->GetLoader()->LoadMaterial(attach.materialName);
                     if(!material.IsValid())
                     {
-                        material = psengine->GetLoader()->LoadMaterial(attach.materialName);
-                    }
-
-                    if(material.IsValid())
-                    {
-                        ProcessAttach(factory, material, attach.factName, attach.socket);
-                        csString & mat = materials.GetOrCreate(attach.socket);
-                        if(!mat.IsEmpty()) // free previously allocated loader ressource
-                        {
-                            psengine->GetLoader()->FreeMaterial(attach.materialName);
-                        }
-                        mat = attach.materialName;
+                        Notify2(LOG_CHARACTER, "failed to find material %s", attach.materialName.GetData());
                         delayedAttach.PopFront();
+                        return true;
                     }
                 }
-                else
+
+                if(!material->IsFinished())
                 {
-                    ProcessAttach(factory, NULL, attach.factName, attach.socket);
-                    delayedAttach.PopFront();
+                    return true;
                 }
+                else if(!material->WasSuccessful())
+                {
+                    Notify2(LOG_CHARACTER, "failed to load material %s", attach.materialName.GetData());
+                    delayedAttach.PopFront();
+                    return true;
+                }
+
+                ProcessAttach(factory, material, attach.factName, attach.socket);
+                delayedAttach.PopFront();
+            }
+            else
+            {
+                ProcessAttach(factory, NULL, attach.factName, attach.socket);
+                delayedAttach.PopFront();
             }
         }
         else
         {
-            csRef<iMaterialWrapper> & material = attach.materialPtr;
+            csRef<iThreadReturn>& material = attach.materialPtr;
 
             if(!material.IsValid())
             {
                 material = psengine->GetLoader()->LoadMaterial(attach.materialName);
+                if(!material.IsValid())
+                {
+                    Notify2(LOG_CHARACTER, "failed to find material %s", attach.materialName.GetData());
+                    delayedAttach.PopFront();
+                    return true;
+                }
             }
 
-            if(material.IsValid())
+            if(!material->IsFinished())
             {
-                ProcessAttach(material, attach.materialName, attach.partName);
-                delayedAttach.PopFront();
+                return true;
             }
+            else if(!material->WasSuccessful())
+            {
+                Notify2(LOG_CHARACTER, "failed to load material %s", attach.materialName.GetData());
+                delayedAttach.PopFront();
+                return true;
+            }
+
+            ProcessAttach(material, attach.materialName, attach.partName);
+            delayedAttach.PopFront();
         }
 
         return true;
@@ -1220,9 +1221,9 @@ void psCharAppearance::ApplyTraits(const csString& traitString)
     csRef<iDocument> doc = xmlparser->CreateDocument();
 
     const char* traitError = doc->Parse(traitString);
-    if ( traitError )
+    if(traitError)
     {
-        Error2("Error in XML: %s", traitError );
+        Error2("Error in XML: %s", traitError);
         return;
 
     }
@@ -1268,7 +1269,7 @@ void psCharAppearance::ApplyTraits(const csString& traitString)
         {
             if (!SetTrait(trait))
             {
-                Error2("Failed to set trait %s for mesh.", traitString.GetData());
+                Notify2(LOG_CHARACTER, "Failed to set trait %s for mesh.", traitString.GetData());
             }
         }
     }
@@ -1405,7 +1406,7 @@ void psCharAppearance::ClearEquipment(const char* slot)
 }
 
 
-bool psCharAppearance::Detach(const char* socketName, bool removeItem )
+bool psCharAppearance::Detach(const char* socketName)
 {
     if (!socketName || usedSlots.Find(socketName) == csArrayItemNotFound || (!state.IsValid() && !animeshObject.IsValid()))
     {
@@ -1447,36 +1448,12 @@ bool psCharAppearance::Detach(const char* socketName, bool removeItem )
     }
     else
     {
-        meshWrap->QuerySceneNode()->SetParent (0);
-
-        csString material = materials.Get(socketName, "");
-        csString factory;
-
-        iMeshFactoryWrapper* fact = meshWrap->GetFactory();
-
-        // check whether we have a factory to free
-        if(fact)
-        {
-            factory = fact->QueryObject()->GetName();
-        }
-
-        if(removeItem)
-        {
-            engine->RemoveObject(meshWrap);
-        }
+        meshWrap->QuerySceneNode()->SetParent(0);
+        engine->RemoveObject(meshWrap);
         meshWrap.Invalidate();
 
-        // free loader ressources
-        if(factory)
-        {
-            psengine->GetLoader()->FreeFactory(factory);
-        }
-
-        if(!material.IsEmpty())
-        {
-            psengine->GetLoader()->FreeMaterial(material);
-            materials.DeleteAll(socketName);
-        }
+        materials.DeleteAll(socketName);
+        factories.DeleteAll(socketName);
     }
 
     usedSlots.Delete(socketName);

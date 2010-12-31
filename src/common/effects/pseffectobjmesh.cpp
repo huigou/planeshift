@@ -40,14 +40,12 @@
 #include "util/log.h"
 
 psEffectObjMesh::psEffectObjMesh(iView * parentView, psEffect2DRenderer * renderer2d)
-                : psEffectObj(parentView, renderer2d), usedBgLoader(false)
+                : psEffectObj(parentView, renderer2d)
 {
 }
 
 psEffectObjMesh::~psEffectObjMesh()
 {
-    csRef<iBgLoader> loader = csQueryRegistry<iBgLoader>(psCSSetup::object_reg);
-
     // the mesh needs to be removed - else the loader's leak detection fails
     if(mesh.IsValid())
     {
@@ -55,17 +53,19 @@ psEffectObjMesh::~psEffectObjMesh()
         mesh.Invalidate();
     }
 
-    if(meshFact.IsValid() && usedBgLoader)
+    if(!factory.IsValid())
     {
-        meshFact.Invalidate();
-        loader->FreeFactory(factName);
+        engine->RemoveObject(meshFact);
     }
+    meshFact.Invalidate();
+
+    sprState.Invalidate();
 }
 
 bool psEffectObjMesh::Load(iDocumentNode *node, iLoaderContext * ldr_context)
 {
-	globalStringSet = csQueryRegistryTagInterface<iStringSet> 
-	        (psCSSetup::object_reg, "crystalspace.shared.stringset");
+    globalStringSet = csQueryRegistryTagInterface<iStringSet>
+                        (psCSSetup::object_reg, "crystalspace.shared.stringset");
 	        
     // get the attributes
     name.Clear();
@@ -194,17 +194,16 @@ psEffectObj *psEffectObjMesh::Clone() const
 
 bool psEffectObjMesh::PostSetup(iLoaderContext * ldr_context)
 {   
-    bool failed = false;
     csRef<iBgLoader> loader = csQueryRegistry<iBgLoader>(psCSSetup::object_reg);
-    meshFact = loader->LoadFactory(factName, &failed, true);
+    factory = loader->LoadFactory(factName, true);
 
-    if(failed)
+    if(!factory.IsValid() || !factory->IsFinished() || !factory->WasSuccessful())
     {
         meshFact = ldr_context->FindMeshFactory(factName);
     }
     else
     {
-        usedBgLoader = true;
+        meshFact = scfQueryInterface<iMeshFactoryWrapper>(factory->GetResultRefPtr());
     }
 
     if (!meshFact.IsValid())
@@ -215,3 +214,4 @@ bool psEffectObjMesh::PostSetup(iLoaderContext * ldr_context)
 
     return true;
 }
+

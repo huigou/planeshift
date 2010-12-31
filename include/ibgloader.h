@@ -51,43 +51,25 @@ struct StartPosition : public csRefCount
  */
 struct iBgLoader : public virtual iBase
 {
-  SCF_INTERFACE(iBgLoader, 2, 0, 0);
+  SCF_INTERFACE(iBgLoader, 2, 1, 0);
 
  /**
-  * Start loading a material into the engine. Returns 0 if the material is not yet loaded.
+  * Start loading a material into the engine. Check return for finished state/success.
   * @param name name of the material to load.
-  * @param failed Pass a boolean to be able to manually handle a failed load.
   * @param wait specify whether to wait for the texture to be loaded.
-  * @return pointer to the material.
-  * @remark a successfull call(e.g. return pointer != 0) increases the usage count of the material.
-  * call FreeMaterial in order to release your usage.
+  * @return threaded result.
+  * @see iThreadResult
   */
-  virtual csPtr<iMaterialWrapper> LoadMaterial(const char* name, bool* failed = NULL, bool wait = false) = 0;
+  virtual csPtr<iThreadReturn> LoadMaterial(const char* name, bool wait = false) = 0;
 
  /**
-  * Start loading a mesh factory into the engine. Returns 0 if the factory is not yet loaded.
+  * Start loading a mesh factory into the engine. Check return for finished state/success.
   * @param name name of the factory to load.
-  * @param failed Pass a boolean to be able to manually handle a failed load.
   * @param wait specify whether to wait until the factory is full loaded.
-  * @return pointer to the factory.
-  * @remark a successfull call(e.g. return pointer != 0) increases the usage count of the factory.
-  * call FreeFactory in order to release your usage.
+  * @return threaded result.
+  * @see iThreadResult
   */
-  virtual csPtr<iMeshFactoryWrapper> LoadFactory(const char* name, bool* failed = NULL, bool wait = false) = 0;
-
- /**
-  * free your instance of a material.
-  * @param name name of the material to free.
-  * @return true upon success, false otherwise
-  */
-  virtual bool FreeMaterial(const char * name) = 0;
-
- /**
-  * free your instance of a mesh factory.
-  * @param name name of the factory to free.
-  * @return true upon success, false otherwise
-  */
-  virtual bool FreeFactory(const char * name) = 0;
+  virtual csPtr<iThreadReturn> LoadFactory(const char* name, bool wait = false) = 0;
 
  /**
   * Clone a mesh factory.
