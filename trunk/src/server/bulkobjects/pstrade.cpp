@@ -30,6 +30,7 @@
 #include "../psserver.h"
 #include "../cachemanager.h"
 #include "../globals.h"
+#include "util/serverconsole.h"
 
 //=============================================================================
 // Local Includes
@@ -136,6 +137,11 @@ double psTradeTransformations::CalcFunction(MathEnvironment* env, const char * f
 {
     CPrintf(CON_ERROR, "psTradeTransformations::CalcFunction(%s) failed\n", functionName);
     return 0;
+}
+
+const char* psTradeTransformations::ToString()
+{
+    return "transformation";
 }
     
 

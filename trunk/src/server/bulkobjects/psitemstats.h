@@ -736,9 +736,21 @@ public:
     ///returns the special command assigned to this item
     csString GetItemCommand() { return itemCommand; }
 
-    double GetProperty(MathEnvironment* env, const char *ptr);
-    double CalcFunction(MathEnvironment* env, const char * functionName, const double * params);
-    const char *ToString() { return name.GetDataSafe(); }
+    /** Returns the name of the item.
+     *  @note Needed for iScriptableVar. 
+     *  @return the name of the item.
+     */
+    const char* ToString() { return name.GetDataSafe(); }
+
+    ///Needed for iScriptableVar. Does nothing right now just returns 0 for anything passed.
+    double CalcFunction(MathEnvironment* env, const char* functionName, const double* params);
+
+    /** Returns the requested variable stored in this item stats.
+     *  @note Needed for iScriptableVar.
+     *  @param ptr A pointer to a char array stating the requested variable.
+     *  @return A double with the value of the requested variable.
+     */
+    double GetProperty(MathEnvironment* env, const char* ptr);
 
 
 public:
