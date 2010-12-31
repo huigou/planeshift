@@ -638,10 +638,10 @@ double MathScript::Evaluate(MathEnvironment *env) const
         size_t op = s->GetOpcode();
 
         // handle "do { }" and "while { }"
-        if (op & MATH_LOOP)
+        if(op & MATH_LOOP)
         {
             MathExpression* l = scriptLines[i+1];
-            while (!(op & MATH_EXP) || s->Evaluate(env))
+            while(!(op & MATH_EXP) || s->Evaluate(env))
             {
                 // code blocks(MathScript) shall return a value < 0 to
                 // signal an error/break
@@ -659,26 +659,34 @@ double MathScript::Evaluate(MathEnvironment *env) const
             i++; // skip next statement as it's already handled
         }
         // handle "return x;"
-        else if (op & MATH_BREAK)
+        else if(op & MATH_BREAK)
         {
             return s->Evaluate(env);
         }
         // handle "if { } [ else { } ]"
-        else if (op == MATH_IF)
+        else if(op == MATH_IF)
         {
             size_t nextOp = MATH_NONE;
+
             if (i + 3 < scriptLines.GetSize())
             {
                 nextOp = scriptLines[i+2]->GetOpcode();
             }
 
+            double result = 0;
             if (s->Evaluate(env))
             {
-                scriptLines[i+1]->Evaluate(env);
+                result = scriptLines[i+1]->Evaluate(env);
             }
             else if (nextOp == MATH_ELSE)
             {
-                scriptLines[i+3]->Evaluate(env);
+                result = scriptLines[i+3]->Evaluate(env);
+            }
+            if(result < 0)
+            {
+                // code blocks(MathScript) shall return a value < 0 to
+                // signal an error/break
+                return result;
             }
 
             if (nextOp == MATH_ELSE)
@@ -691,12 +699,12 @@ double MathScript::Evaluate(MathEnvironment *env) const
             }
         }
         // handle regular expressions, e.g. assignments
-        else if (op & MATH_EXP)
+        else if(op & MATH_EXP)
         {
             s->Evaluate(env);
         }
 
-        if (exitsignal && exitsignal->GetValue() != 0.0)
+        if(exitsignal && exitsignal->GetValue() != 0.0)
         {
             // printf("Terminating mathscript at line %d of %d.\n",i, scriptLines.GetSize());
             break;
