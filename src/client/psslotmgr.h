@@ -71,6 +71,7 @@ private:
         csString meshFactName;
         csString materialName;
         csString toolTip;
+        csString bartenderAction;
         int parentID;
     } draggingSlot;
  
