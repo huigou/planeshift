@@ -3312,7 +3312,7 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
     float startQuality = transItem->GetItemQuality();
     if ( process )
     {
-        if ( result > 0 && !ApplySkills(workEvent->GetKFactor(), workEvent->GetTranformationItem(), owner, itemQty == 0, currentQuality, process) && process->GetGarbageId() != 0 )
+        if ( result > 0 && !ApplySkills(workEvent->GetKFactor(), workEvent->GetTranformationItem(), owner, itemQty == 0, currentQuality, process, trans) && process->GetGarbageId() != 0 )
         {
             result = process->GetGarbageId();
             resultQty = process->GetGarbageQty();
@@ -3532,10 +3532,11 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
 }
 
 // Apply skills if any to quality and practice points
-bool WorkManager::ApplySkills(float factor, psItem* transItem, gemActor *worker, bool amountModifier, float &currentQuality, psTradeProcesses* process)
+bool WorkManager::ApplySkills(float factor, psItem* transItem, gemActor *worker, bool amountModifier, float &currentQuality, psTradeProcesses* process, psTradeTransformations* trans)
 {
     if(calc_transform_apply_skill)
     {
+        printf("using script\n");
         MathEnvironment env;
         env.Define("Quality", currentQuality);
         env.Define("Factor", factor);
@@ -3543,11 +3544,13 @@ bool WorkManager::ApplySkills(float factor, psItem* transItem, gemActor *worker,
         env.Define("BasicObject", transItem->GetBaseStats());
         env.Define("Worker", worker);
         env.Define("Process", process);
+        env.Define("Transform", trans);
         env.Define("Secure", secure);
         env.Define("AmountModifier", amountModifier);
         calc_transform_apply_skill->Evaluate(&env);
         currentQuality = env.Lookup("Quality")->GetValue();
-        return (currentQuality == 0);
+        printf("%f\n", currentQuality);
+        return (currentQuality > 0);
     }
     
     // just return for processless transforms
