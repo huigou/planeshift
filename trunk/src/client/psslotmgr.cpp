@@ -165,6 +165,7 @@ void psSlotManager::CancelDrag()
 
     draggingSlot.slot->PlaceItem(res, draggingSlot.meshFactName, draggingSlot.materialName, oldStack);
     draggingSlot.slot->SetToolTip(draggingSlot.toolTip);
+    draggingSlot.slot->SetBartenderAction(draggingSlot.bartenderAction);
     PawsManager::GetSingleton().SetDragDropWidget( NULL );
 }
 
@@ -219,13 +220,14 @@ void psSlotManager::OnNumberEntered(const char* /*name*/, int param, int count)
 void psSlotManager::SetDragDetails( pawsSlot* slot, int count ) 
 { 
     printf("SetDragDetails: \n");
-    draggingSlot.containerID    = slot->ContainerID();
-    draggingSlot.slotID         = slot->ID();
-    draggingSlot.stackCount     = count;
-    draggingSlot.slot           = slot;
-    draggingSlot.meshFactName   = slot->GetMeshFactName();
-    draggingSlot.materialName   = slot->GetMaterialName();
-    draggingSlot.toolTip        = slot->GetToolTip();
+    draggingSlot.containerID     = slot->ContainerID();
+    draggingSlot.slotID          = slot->ID();
+    draggingSlot.stackCount      = count;
+    draggingSlot.slot            = slot;
+    draggingSlot.meshFactName    = slot->GetMeshFactName();
+    draggingSlot.materialName    = slot->GetMaterialName();
+    draggingSlot.toolTip         = slot->GetToolTip();
+    draggingSlot.bartenderAction = slot->GetBartenderAction();
 }
 
 
@@ -343,9 +345,9 @@ void psSlotManager::Handle( pawsSlot* slot, bool grabOne, bool grabAll )
     }
     else
     {
-        printf("Dropping Slot Here\n");
-        printf("Target Slot Information: \n");
-        printf("Bartender Slot: %d\n", slot->IsBartender());
+        //printf("Dropping Slot Here\n");
+        //printf("Target Slot Information: \n");
+        //printf("Bartender Slot: %d\n", slot->IsBartender());
         //printf("Sending slot movement message\n");
         if ( slot->IsBartender() )
         {
@@ -357,15 +359,14 @@ void psSlotManager::Handle( pawsSlot* slot, bool grabOne, bool grabAll )
             if(draggingSlot.slot->IsBartender())
             {
                 draggingSlot.slot->Clear();
-                csString empty;
-                draggingSlot.slot->SetBartenderAction(empty);
+                draggingSlot.slot->clearBartenderAction();
             }
         }
         else
         {
-            printf("Slot->ID: %d\n", slot->ID() );
-            printf("Container: %d\n", slot->ContainerID() );
-            printf("DraggingSlot.ID %d\n", draggingSlot.slotID);
+            //printf("Slot->ID: %d\n", slot->ID() );
+            //printf("Container: %d\n", slot->ContainerID() );
+            //printf("DraggingSlot.ID %d\n", draggingSlot.slotID);
 
             if ( draggingSlot.containerID == CONTAINER_SPELL_BOOK )
             {
