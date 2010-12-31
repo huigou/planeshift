@@ -115,8 +115,18 @@ bool pawsSlot::OnMouseDown( int button, int modifiers, int x, int y )
   
    
     printf("Is Bartender Slot: %d, Empty %d\n", isBartender ,empty);
+    //if it's a bartender slot and we aren't dragging
     if ( isBartender && (!empty && !psengine->GetSlotManager()->IsDragging()))
     {
+        //check if ctrl+alt is being held if so delete (probably should use a lock feature and allow
+        //to drag them around and out making the "deleted"?)
+        if((modifiers & CSMASK_CTRL) && (modifiers & CSMASK_ALT))
+        {
+            Clear();
+            action.Empty();
+            return true;
+        }
+        //in case they are not just act normally
         printf("This is a bartender button with action: %s\n", action.GetData());
         psengine->GetCmdHandler()->Execute(action.GetData());
         return true;
