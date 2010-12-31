@@ -126,10 +126,14 @@ bool pawsSlot::OnMouseDown( int button, int modifiers, int x, int y )
             action.Empty();
             return true;
         }
-        //in case they are not just act normally
-        printf("This is a bartender button with action: %s\n", action.GetData());
-        psengine->GetCmdHandler()->Execute(action.GetData());
-        return true;
+        //if we aren't pressing ctrl we execute the command else we allow drag and drop
+        else if(!(modifiers & CSMASK_CTRL))
+        {
+            //in case they are not just act normally
+            printf("This is a bartender button with action: %s\n", action.GetData());
+            psengine->GetCmdHandler()->Execute(action.GetData());
+            return true;
+        }
     }
      
     if ( !empty && psengine->GetMouseBinds()->CheckBind("ContextMenu",button,modifiers) )
