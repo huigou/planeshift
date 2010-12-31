@@ -359,7 +359,6 @@ void psSlotManager::Handle( pawsSlot* slot, bool grabOne, bool grabAll )
             if(draggingSlot.slot->IsBartender())
             {
                 draggingSlot.slot->Clear();
-                draggingSlot.slot->clearBartenderAction();
             }
         }
         else
