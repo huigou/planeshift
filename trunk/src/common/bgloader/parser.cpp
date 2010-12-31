@@ -410,13 +410,15 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                 case PARSERTOKEN_SECTOR:
                 {
                     csString sectorName = node->GetContentsValue();
-                    targetSector = parserData.data.sectors.Get(sectorName);
+                    targetSector = csRef<Sector>(parserData.data.sectors.Get(sectorName));
 
-                    if(!targetSector.IsValid())
+                    if(!targetSector)
                     {
-                        targetSector.AttachNew(new Sector(GetParent()));
+                        csRef<Sector> newSector;
+                        newSector.AttachNew(new Sector(GetParent()));
 
-                        parserData.data.sectors.Put(targetSector, sectorName);
+                        parserData.data.sectors.Put(newSector, sectorName);
+                        targetSector = newSector;
                     }
                 }
                 break;

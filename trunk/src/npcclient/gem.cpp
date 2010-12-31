@@ -66,11 +66,6 @@ gemNPCObject::gemNPCObject(psNPCClient* npcclient, EID id)
 gemNPCObject::~gemNPCObject()
 {
     delete pcmesh;
-    if(!factory.IsEmpty())
-    {
-        csRef<iBgLoader> loader = csQueryRegistry<iBgLoader> (npcclient->GetObjectReg());
-        loader->FreeFactory(factory);
-    }
 }
 
 void gemNPCObject::Move(const csVector3& pos, float rotangle,  const char* room, InstanceID instance)
@@ -132,28 +127,22 @@ bool gemNPCObject::InitMesh(    const char *factname,
         fact_name.ReplaceAll("$C", "stonebm");
         factname = fact_name;
 
-        bool failed = false;
         csRef<iBgLoader> loader = csQueryRegistry<iBgLoader> (npcclient->GetObjectReg());
-        csRef<iMeshFactoryWrapper> meshFact = loader->LoadFactory(factname, &failed, true);
+        factory = loader->LoadFactory(factname, true);
 
-        if(failed)
+        if(!(factory.IsValid() && factory->IsFinished() && factory->WasSuccessful()))
         {
-            failed = false;
-            meshFact = loader->LoadFactory("stonebm", &failed, true);
+            factory = loader->LoadFactory("stonebm", true);
         }
 
-        if(meshFact.IsValid())
+        if(factory.IsValid() && factory->IsFinished() && factory->WasSuccessful())
         {
+            csRef<iMeshFactoryWrapper> meshFact = scfQueryInterface<iMeshFactoryWrapper>(factory->GetResultRefPtr());
             mesh = meshFact->CreateMeshWrapper();
-            if(!factory.IsEmpty())
-            {
-                loader->FreeFactory(factory);
-                factory = factname;
-            }
         }
         else
         {
-            Error2("Could not use dummy CVS mesh with factname=%s", factname);        
+            Error2("Could neither load factory nor use dummy CVS mesh with factname=%s", factname);
             return false;
         }
     }

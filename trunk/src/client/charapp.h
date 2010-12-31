@@ -227,7 +227,7 @@ private:
       *
       * @return True if the item was successfully removed from the socket.
       */
-    bool Detach(const char* socketName, bool removeItem = true);
+    bool Detach(const char* socketName);
 
     /** Set the default material back onto a particular part of the model.
       * @param part The part we want to set the default material back on.
@@ -247,10 +247,10 @@ private:
      */
     void Free();
 
-    void ProcessAttach(iMeshFactoryWrapper* factory, iMaterialWrapper* material, const char* meshFactName, const char* socket);
-    void ProcessAttach(csRef<iMeshWrapper> meshWrap, const char* socket);
-    void ProcessAttach(csRef<iMaterialWrapper> material, const char* materialName, const char* partName);
-    bool ProcessMaterial(csRef<iMaterialWrapper> material, const char* materialName, const char* partName);
+    void ProcessAttach(iThreadReturn* factory, iThreadReturn* material, const char* meshFactName, const char* socket);
+    void ProcessAttach(iMeshWrapper* meshWrap, const char* socket);
+    void ProcessAttach(iThreadReturn* material, const char* materialName, const char* partName);
+    bool ProcessMaterial(iThreadReturn* material, const char* materialName, const char* partName);
 
     csRef<iMeshWrapper> baseMesh;                       ///< The mesh that is our base model.
 
@@ -284,7 +284,8 @@ private:
     bool beardAttached;                                 ///< Flag if beard is on/off.
 
     csHash<csString> removedMeshes;                     ///< Contains the mesh which have been removed from the model.
-    csHash<csString, csString> materials;               ///< Contains the custom materials for the slots
+    csHash<csRef<iThreadReturn>, csString> materials;   ///< Contains the custom materials for the slots
+    csHash<csRef<iThreadReturn>, csString> factories;   ///< Ctonains the custom factories for the slots
 
     bool eyeColorSet;                                   ///< Flag if eye colour set.
     bool hairColorSet;                                  ///< Flag if hair colour set.
@@ -307,9 +308,9 @@ private:
         csString partName;
 
         csString factName;
-        csRef<iMeshFactoryWrapper> factoryPtr;
+        csRef<iThreadReturn> factoryPtr;
         csString materialName;
-        csRef<iMaterialWrapper> materialPtr;
+        csRef<iThreadReturn> materialPtr;
 
         Attachment(bool factory) : factory(factory)
         {

@@ -44,8 +44,8 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
 SCF_IMPLEMENT_FACTORY(BgLoader)
 
 BgLoader::BgLoader(iBase *p)
-  : scfImplementationType (this, p), loadCount(0), loadRange(500), validPosition(false),
-  loadStep(0), currRot_h(0), currRot_v(0), resetHitbeam(true)
+  : scfImplementationType (this, p), loadOffset(0), delayedOffset(0), loadCount(0),
+    loadRange(500), validPosition(false), loadStep(0), currRot_h(0), currRot_v(0), resetHitbeam(true)
 {
 }
 
@@ -276,10 +276,17 @@ void BgLoader::ContinueLoading(bool wait)
         }
     }
 
-    // find lingering objects that someone attempted to load but never finished
-    for(size_t i = 0; i < loadList.GetSize(); ++i)
+    // continue loading delayed loaders
+    CS::Threading::RecursiveMutexScopedLock lock(loadLock);
+    for(delayedOffset = 0; delayedOffset < delayedLoadList.GetSize(); ++delayedOffset)
     {
-        Loadable* l = loadList[i];
+        delayedLoadList[delayedOffset]->ContinueLoading(wait);
+    }
+
+    // find lingering objects that someone attempted to load but never finished
+    for(loadOffset = 0; loadOffset < loadList.GetSize(); ++loadOffset)
+    {
+        Loadable* l = loadList[loadOffset];
         if(!l->IsChecked())
         {
             if(l->GetLingerCount() > maxLingerCount)
@@ -377,7 +384,8 @@ void BgLoader::CleanDisconnectedSectors(Sector* sector)
     while(it.HasNext())
     {
         csRef<Sector> sector(it.Next());
-        if(sector->object.IsValid() && !connectedSectors.Contains(csPtrKey<Sector>(sector)))
+        csRef<iSector> sectorObj = sector->GetObject();
+        if(sectorObj.IsValid() && !connectedSectors.Contains(csPtrKey<Sector>(sector)))
         {
             // unload everything, but don't traverse into linked sectors
             sector->UpdateObjects(unloadAll, unloadAll, 0);
@@ -391,7 +399,7 @@ bool BgLoader::InWaterArea(const char* sectorName, csVector3* pos, csColor4** co
     /*if(!strcmp("SectorWhereWeKeepEntitiesResidingInUnloadedMaps", sectorName))
         return false;*/
 
-    csRef<Sector> sector;
+    /*csRef<Sector> sector;
     {
         CS::Threading::ScopedReadLock lock(parserData.sectors.lock);
         csStringID sectorID = parserData.sectors.stringSet.Request(sectorName);
@@ -407,12 +415,12 @@ bool BgLoader::InWaterArea(const char* sectorName, csVector3* pos, csColor4** co
             *colour = &sector->waterareas[i].colour;
             return true;
         }
-    }
+    }*/
 
     return false;
 }
 
-csPtr<iMeshFactoryWrapper> BgLoader::LoadFactory(const char* name, bool* failed, bool wait)
+csPtr<iThreadReturn> BgLoader::LoadFactory(const char* name, bool wait)
 {
     csRef<MeshFact> meshfact;
     {
@@ -421,60 +429,14 @@ csPtr<iMeshFactoryWrapper> BgLoader::LoadFactory(const char* name, bool* failed,
         meshfact = parserData.factories.hash.Get(factoryID, csRef<MeshFact>());
     }
 
-    if(!meshfact.IsValid())
-    {
-        // Validation.
-        csString msg;
-        msg.Format("Invalid factory reference '%s'", name);
-        CS_ASSERT_MSG(msg.GetData(), meshfact.IsValid());
+    // create delayed loader
+    csRef<iDelayedLoader> result;
+    result.AttachNew(new DelayedLoader<MeshFact>(meshfact));
 
-        if(failed)
-        {
-            *failed = true;
-        }
+    // start loading now
+    result->ContinueLoading(wait);
 
-        return csPtr<iMeshFactoryWrapper>(0);
-    }
- 
-    if(meshfact->Load(wait))
-    {
-        csRef<iMeshFactoryWrapper> mfw(meshfact->GetObject());
-        if(!mfw.IsValid())
-        {
-            // Check success.
-            csString msg;
-            msg.Format("Failed to load factory '%s'", name);
-            CS_ASSERT_MSG(msg.GetData(), mfw.IsValid());
-
-            if(failed)
-            {
-                *failed = true;
-            }
-
-            meshfact->Unload();
-        }
-
-        return csPtr<iMeshFactoryWrapper>(mfw);
-    }
-
-    return csPtr<iMeshFactoryWrapper>(0);
-}
-
-bool BgLoader::FreeFactory(const char* name)
-{
-    csRef<MeshFact> meshfact;
-    {
-        CS::Threading::ScopedReadLock lock(parserData.factories.lock);
-        csStringID factoryID = parserData.factories.stringSet.Request(name);
-        meshfact = parserData.factories.hash.Get(factoryID, csRef<MeshFact>());
-    }
-
-    bool success = meshfact.IsValid();
-    if(success)
-    {
-        meshfact->Unload();
-    }
-    return success;
+    return csPtr<iThreadReturn>(result);
 }
 
 void BgLoader::CloneFactory(const char* name, const char* newName, bool* failed)
@@ -525,7 +487,7 @@ void BgLoader::CloneFactory(const char* name, const char* newName, bool* failed)
     }
 }
 
-csPtr<iMaterialWrapper> BgLoader::LoadMaterial(const char* name, bool* failed, bool wait)
+csPtr<iThreadReturn> BgLoader::LoadMaterial(const char* name, bool wait)
 {
     csRef<Material> material;
     {
@@ -534,59 +496,14 @@ csPtr<iMaterialWrapper> BgLoader::LoadMaterial(const char* name, bool* failed, b
         material = parserData.materials.hash.Get(materialID, csRef<Material>());
     }
 
-    if(!material.IsValid())
-    {
-        // Validation.
-        csString msg;
-        msg.Format("Invalid material reference '%s'", name);
-        CS_ASSERT_MSG(msg.GetData(), false);
+    // create delayed loader
+    csRef<iDelayedLoader> result;
+    result.AttachNew(new DelayedLoader<Material>(material));
 
-        if(failed)
-        {
-            *failed = true;
-        }
+    // start loading now
+    result->ContinueLoading(wait);
 
-        return csPtr<iMaterialWrapper>(0);
-    }
-
-    if(material->Load(wait))
-    {
-        csRef<iMaterialWrapper> wrapper(material->GetObject());
-        if(!wrapper.IsValid())
-        {
-            // Check success.
-            csString msg;
-            msg.Format("Failed to load material '%s'", name);
-            CS_ASSERT_MSG(msg.GetData(), false);
-
-            if(failed)
-            {
-                *failed = true;
-                material->Unload();
-            }
-        }
-
-        return csPtr<iMaterialWrapper>(wrapper);
-    }
-
-    return csPtr<iMaterialWrapper>(0);
-}
-
-bool BgLoader::FreeMaterial(const char* name)
-{
-    csRef<Material> material;
-    {
-        CS::Threading::ScopedReadLock lock(parserData.materials.lock);
-        csStringID materialID = parserData.materials.stringSet.Request(name);
-        material = parserData.materials.hash.Get(materialID, csRef<Material>());
-    }
-
-    bool success = material.IsValid();
-    if(success)
-    {
-        material->Unload();
-    }
-    return success;
+    return csPtr<iThreadReturn>(result);
 }
 
 }

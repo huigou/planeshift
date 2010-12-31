@@ -137,11 +137,12 @@ bool BgLoader::Light::LoadObject(bool wait)
 {
     if(!light.IsValid())
     {
+        csRef<iSector> parent = sector->GetObject();
         light = GetParent()->GetEngine()->CreateLight(GetName(), pos, radius, colour, dynamic);
         light->SetAttenuationMode(attenuation);
         light->SetType(type);
-	light->GetMovable()->SetSector(sector->object);
-	sector->object->GetLights()->Add(light);
+	light->GetMovable()->SetSector(parent);
+	parent->GetLights()->Add(light);
     }
 
     // Load all light sequences.
@@ -233,7 +234,8 @@ void BgLoader::MeshObj::FinishObject()
     }
 
     // Set world position.
-    meshWrapper->GetMovable()->SetSector(sector->object);
+    csRef<iSector> sectorObj = sector->GetObject();
+    meshWrapper->GetMovable()->SetSector(sectorObj);
     meshWrapper->GetMovable()->UpdateMove();
 
     // Init collision data.
@@ -256,8 +258,6 @@ void BgLoader::MeshObj::FinishObject()
 
 void BgLoader::MeshObj::UnloadObject()
 {
-    finished = false;
-
     ObjectLoader<Trigger>::UnloadObjects();
     ObjectLoader<Sequence>::UnloadObjects();
 
@@ -282,7 +282,8 @@ bool BgLoader::MeshGen::LoadObject(bool wait)
     {
       if(!status.IsValid())
       {
-          status = GetParent()->GetLoader()->LoadNode(path, data, 0, sector->object);
+          csRef<iSector> sectorObj = sector->GetObject();
+          status = GetParent()->GetLoader()->LoadNode(path, data, 0, sectorObj);
       }
 
       ready = TrivialLoadable<iMeshGenerator,ObjectNames::meshgen>::LoadObject(wait);
@@ -293,12 +294,13 @@ bool BgLoader::MeshGen::LoadObject(bool wait)
 
 void BgLoader::MeshGen::UnloadObject()
 {
-  sector->object->RemoveMeshGenerator(GetName());
-  status.Invalidate();
+    csRef<iSector> sectorObj = sector->GetObject();
+    sectorObj->RemoveMeshGenerator(GetName());
+    status.Invalidate();
 
-  mesh->Unload();
-  ObjectLoader<Material>::UnloadObjects();
-  ObjectLoader<MeshFact>::UnloadObjects();
+    mesh->Unload();
+    ObjectLoader<Material>::UnloadObjects();
+    ObjectLoader<MeshFact>::UnloadObjects();
 }
 
 bool BgLoader::Portal::LoadObject(bool /*wait*/)
@@ -308,14 +310,15 @@ bool BgLoader::Portal::LoadObject(bool /*wait*/)
         return true;
     }
 
-    iSector* target = targetSector->object;
+    csRef<iSector> target = targetSector->GetObject();
+    csRef<iSector> source = sector->GetObject();
 
     if(autoresolve)
     {
         target = 0;
     }
 
-    mObject = GetParent()->GetEngine()->CreatePortal(name, sector->object, csVector3(0),
+    mObject = GetParent()->GetEngine()->CreatePortal(GetName(), source, csVector3(0),
                      target, poly.GetVertices(), (int)poly.GetVertexCount(), pObject);
 
     // set name on portal object for debugging purposes
@@ -360,6 +363,7 @@ void BgLoader::Sector::FindConnectedSectors(csSet<csPtrKey<Sector> >& connectedS
     connectedSectors.Add(this);
 
     // Travers into sectors linked to by active portals.
+    CS::Threading::RecursiveMutexScopedLock lock(busy);
     csSet<csPtrKey<Portal> >::GlobalIterator it(activePortals.GetIterator());
     while(it.HasNext())
     {
@@ -473,7 +477,7 @@ int BgLoader::Sector::UpdateObjects(const csBox3& loadBox, const csBox3& keepBox
         while(it.HasNext())
         {
             Portal* portal = it.Next();
-            csRef<Sector>& target = portal->targetSector;
+            csRef<Sector> target = portal->targetSector;
 
             csBox3 newLoadBox(loadBox);
             csBox3 newKeepBox(keepBox);

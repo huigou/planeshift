@@ -92,6 +92,8 @@ struct InstanceObject : public CS::Utility::FastRefCount<InstanceObject>
     csBox3 bbox;
     csWeakRefArray<iSector> sectors;
     csRef<iMeshFactoryWrapper> nullFactory;
+    csRef<iThreadReturn> meshFact;
+    csRef<iThreadReturn> material;
     ~InstanceObject();
 };
 
@@ -573,9 +575,10 @@ public:
     virtual void Update();
 
 protected:
-    // needed during delayed loading
-    csRef<iMeshFactoryWrapper> factory;
-    csRef<iMeshFactoryWrapper> mountFactory;
+    // keep track of allocated ressources
+    csRef<iThreadReturn> factory;
+    csRef<iThreadReturn> mountFactory;
+    csRef<iMeshWrapper> rider;
 
     psCharAppearance* charApp;
 
@@ -648,7 +651,8 @@ private:
     };
 
     PostLoadData* post_load;
-    csRef<iMeshFactoryWrapper> factory; // only used during loading
+    csRef<iThreadReturn> factory;
+    csRef<iThreadReturn> material;
     csRef<iShaderManager> shman;
     csRef<iStringSet> strings;
 };

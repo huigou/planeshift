@@ -81,9 +81,6 @@ pawsObjectView::~pawsObjectView()
 
     PawsManager::GetSingleton().RemoveObjectView(this);
 
-    // free mesh
-    Clear();
-
     // free map ressources
     if(view.IsValid())
     {
@@ -99,6 +96,8 @@ pawsObjectView::~pawsObjectView()
     {
         engine->RemoveObject(meshSector);
     }
+
+    Clear();
 }
 
 bool pawsObjectView::Setup(iDocumentNode* node )
@@ -215,7 +214,7 @@ bool pawsObjectView::LoadMap( const char* map, const char* sector )
     }
 
     static uint sectorCount = 0;
-    meshSector = engine->CreateSector( csString(sector).AppendFmt("%u", sectorCount++));
+    meshSector = engine->CreateSector(csString(sector).AppendFmt("%u", sectorCount++));
 
     meshView = csPtr<iView>(new csView(engine, PawsManager::GetSingleton().GetGraphics3D()));
     meshView->SetAutoResize(false);
@@ -262,20 +261,22 @@ bool pawsObjectView::ContinueLoad()
 
 bool pawsObjectView::View( const char* factName)
 {
-    csRef<iMeshFactoryWrapper> meshfact = 0;
-    bool failed = false;
-    meshfact = loader->LoadFactory (factName, &failed, true);
+    csRef<iThreadReturn> factory = loader->LoadFactory(factName, true);
 
-    if ( !meshfact.IsValid() )
+    if(!factory.IsValid())
     {
-        if(failed)
-            Error2("failed to load factory %s", factName);
-        CS_ASSERT(!failed);
+        Error2("failed to find factory %s", factName);
+        return false;
+    }
+    else if(!factory->IsFinished() || !factory->WasSuccessful())
+    {
+        Error2("failed to load factory %s", factName);
         return false;
     }
 
+    csRef<iMeshFactoryWrapper> meshfact = scfQueryInterface<iMeshFactoryWrapper>(factory->GetResultRefPtr());
     View(meshfact);
-    meshFactory = factName;
+    meshFactory = factory;
     return true;
 }
 
@@ -552,16 +553,14 @@ bool pawsObjectView::OnMouseExit()
 
 void pawsObjectView::Clear()
 {
-    // notify the loader that we don't need the factory, anymore
+    // remove the mesh
     if (mesh.IsValid())
     {
         engine->RemoveObject(mesh);
         mesh.Invalidate();
     }
 
-    if (!meshFactory.IsEmpty())
-    {
-        loader->FreeFactory(meshFactory);
-        meshFactory.Empty();
-    }
+    // notify the loader that we don't need the factory, anymore
+    meshFactory.Invalidate();
 }
+

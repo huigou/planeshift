@@ -1032,11 +1032,8 @@ bool pawsCreationMain::CheckLoadStatus()
 {
     if(!loaded)
     {
-        csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(factName);
-        if(factory.IsValid())
+        if(view->View(factName))
         {
-            view->View(factory);
-
             iMeshWrapper* mesh = view->GetObject();
             charApp->SetMesh(mesh);
             if (!mesh)

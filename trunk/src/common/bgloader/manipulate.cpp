@@ -65,7 +65,8 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
         {
             return 0;
         }
-        selectedFactory = factName;
+        selectedFactory = meshfact;
+
         csRef<iMeshFactoryWrapper> factory = meshfact->GetObject();
 
         // Update stored position.
@@ -93,11 +94,13 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                 {
                     engine->RemoveObject(selectedMesh);
                     selectedMesh.Invalidate();
-                    FreeFactory(selectedFactory);
-                    selectedFactory.Empty();
+
+                    selectedFactory->Unload();
+                    selectedFactory.Invalidate();
+
                     return 0;
                 }
-                selectedMaterial = matName;
+                selectedMaterial = material;
                 csRef<iMaterialWrapper> wrapper = material->GetObject();
                 selectedMesh->GetMeshObject()->SetMaterialWrapper(wrapper);
             }
@@ -212,16 +215,16 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
             selectedMesh.Invalidate();
         }
 
-        if(!selectedMaterial.IsEmpty())
+        if(selectedMaterial.IsValid())
         {
-            FreeMaterial(selectedMaterial);
-            selectedMaterial.Empty();
+            selectedMaterial->Unload();
+            selectedMaterial.Invalidate();
         }
 
-        if(!selectedFactory.IsEmpty())
+        if(selectedFactory.IsValid())
         {
-            FreeFactory(selectedFactory);
-            selectedFactory.Empty();
+            selectedFactory->Unload();
+            selectedFactory.Invalidate();
         }
     }
 

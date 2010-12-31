@@ -43,7 +43,10 @@ psEffectObjSimpMesh::psEffectObjSimpMesh(iView * parentView, psEffect2DRenderer 
 
 psEffectObjSimpMesh::~psEffectObjSimpMesh()
 {
-
+    if(mesh.IsValid())
+    {
+        engine->RemoveObject(mesh);
+    }
 }
 
 bool psEffectObjSimpMesh::Load(iDocumentNode *node, iLoaderContext* ldr_context)
@@ -167,3 +170,4 @@ bool psEffectObjSimpMesh::PostSetup()
 
     return true;
 }
+

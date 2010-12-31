@@ -172,16 +172,8 @@ bool pawsGMSpawnWindow::OnSelected(pawsWidget* widget)
         {
             factName = item.mesh;
             psengine->GetCelClient()->replaceRacialGroup(factName);
-            csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(factName);
-            if(!factory)
-            {
-                loaded = false;
-                CheckLoadStatus();
-            }
-            else
-            {
-                objView->View(factory);
-            }
+            loaded = false;
+            CheckLoadStatus();
         }
 
         // set stuff
@@ -246,12 +238,10 @@ bool pawsGMSpawnWindow::CheckLoadStatus()
 {
     if(!loaded)
     {
-        csRef<iMeshFactoryWrapper> factory = psengine->GetLoader()->LoadFactory(factName);
-        if(factory.IsValid())
+        loaded = objView->View(factName);
+        if(loaded)
         {
             psengine->UnregisterDelayedLoader(this);
-            objView->View(factory);
-            loaded = true;
         }
         else
         {
