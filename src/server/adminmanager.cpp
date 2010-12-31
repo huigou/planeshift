@@ -331,7 +331,7 @@ csString AdminCmdTargetParser::GetHelpMessagePartForTarget()
     // remove the starting '|' character
     if (!help.IsEmpty())
     {
-        help[0] = ' ';
+        help.SetAt(0, ' ');
         help.LTrim();
     }
 
@@ -774,7 +774,7 @@ csString AdminCmdSubCommandParser::GetHelpMessage()
     }
     
     // remove the starting '|' character
-    help[0] = ' ';
+    help.SetAt(0, ' ');
     help.LTrim();
 
     return help;
