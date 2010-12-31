@@ -123,7 +123,7 @@ bool pawsSlot::OnMouseDown( int button, int modifiers, int x, int y )
         if((modifiers & CSMASK_CTRL) && (modifiers & CSMASK_ALT))
         {
             Clear();
-            action.Empty();
+            clearBartenderAction();
             return true;
         }
         //if we aren't pressing ctrl we execute the command else we allow drag and drop
@@ -269,6 +269,7 @@ void pawsSlot::Clear()
     stackCountLabel->Hide();
     SetPurifyStatus(0);
     SetToolTip("");
+    clearBartenderAction();
 
     reserved = false;
     image = NULL;
