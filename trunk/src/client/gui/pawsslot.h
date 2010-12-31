@@ -76,6 +76,7 @@ public:
 
     void SetBartenderAction(csString& act) { action = act; }
     csString &GetBartenderAction() { return action; }
+    void clearBartenderAction() { action.Empty(); }
 protected:
     psSlotManager*   mgr;
     csString         meshfactName;
