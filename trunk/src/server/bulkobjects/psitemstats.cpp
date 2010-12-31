@@ -1672,11 +1672,9 @@ double psItemStats::GetProperty(MathEnvironment* env, const char *ptr)
     {
         return (double) GetQuality();
     }
-    else
-    {
-        CPrintf(CON_ERROR, "psItemStats::GetProperty(%s) failed\n",ptr);
-        return 0;
-    }
+
+    CPrintf(CON_ERROR, "psItemStats::GetProperty(%s) failed\n",ptr);
+    return 0;
 }
 
 double psItemStats::CalcFunction(MathEnvironment* env, const char * functionName, const double * params)

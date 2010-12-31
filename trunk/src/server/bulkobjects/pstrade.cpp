@@ -116,6 +116,29 @@ bool psTradeTransformations::Load(iResultRow& row)
     return true;
 }
 
+double psTradeTransformations::GetProperty(MathEnvironment* env, const char *ptr)
+{
+    csString property(ptr);
+    if (property == "ItemQualityPenaltyPercent")
+    {
+        return (double)GetItemQualityPenaltyPercent();
+    }
+    if (property == "TransformPoints")
+    {
+        return (double)GetTransPoints();
+    }
+
+    CPrintf(CON_ERROR, "psTradeTransformations::GetProperty(%s) failed\n",ptr);
+    return 0;
+}
+
+double psTradeTransformations::CalcFunction(MathEnvironment* env, const char * functionName, const double * params)
+{
+    CPrintf(CON_ERROR, "psTradeTransformations::CalcFunction(%s) failed\n", functionName);
+    return 0;
+}
+    
+
 ///////////////////////////////////////////////////////////////////////
 // Processes
 psTradeProcesses::psTradeProcesses()
@@ -153,6 +176,7 @@ const char* psTradeProcesses::ToString()
 
 double psTradeProcesses::CalcFunction(MathEnvironment* env, const char* functionName, const double* params)
 {
+    CPrintf(CON_ERROR, "psTradeProcesses::CalcFunction(%s) failed\n", functionName);
     return 0;
 }
 
