@@ -219,7 +219,7 @@ void psSlotManager::OnNumberEntered(const char* /*name*/, int param, int count)
 
 void psSlotManager::SetDragDetails( pawsSlot* slot, int count )
 {
-    printf("SetDragDetails: \n");
+    //printf("SetDragDetails: \n");
     draggingSlot.containerID     = slot->ContainerID();
     draggingSlot.slotID          = slot->ID();
     draggingSlot.stackCount      = count;
@@ -352,13 +352,17 @@ void psSlotManager::Handle( pawsSlot* slot, bool grabOne, bool grabAll )
         if ( slot->IsBartender() )
         {
             CancelDrag();
-            slot->PlaceItem( draggingSlot.slot->ImageName(), "", "", draggingSlot.stackCount);
-            slot->SetBartenderAction(draggingSlot.bartenderAction);
-            slot->SetToolTip(draggingSlot.toolTip);
-            //if the original slot was a bartender clear it as we are moving it to a new one
-            if(draggingSlot.slot->IsBartender())
+            //do nothing if it's the same slot
+            if(slot != draggingSlot.slot)
             {
-                draggingSlot.slot->Clear();
+                slot->PlaceItem( draggingSlot.slot->ImageName(), "", "", draggingSlot.stackCount);
+                slot->SetBartenderAction(draggingSlot.bartenderAction);
+                slot->SetToolTip(draggingSlot.toolTip);
+                //if the original slot was a bartender clear it as we are moving it to a new one
+                if(draggingSlot.slot->IsBartender())
+                {
+                    draggingSlot.slot->Clear();
+                }
             }
         }
         else
