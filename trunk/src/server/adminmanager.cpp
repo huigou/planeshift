@@ -855,7 +855,7 @@ bool AdminCmdRewardParser::ParseWords(size_t index, const WordArray& words)
             skill = words[index++];
 
             // check for relative value
-            if (words[index][0] == '+' || words[index][0] == '-')
+            if (words[index].GetAt(0) == '+' || words[index].GetAt(0) == '-')
                 relative = true;
             delta = words.GetInt(index++);
 
@@ -2513,7 +2513,7 @@ AdminCmdDataSetSkill::AdminCmdDataSetSkill(AdminManager* msgManager, MsgEntry* m
         else
         {
             skillData.skillName = words[index++];
-            if (words[index][0] == '-' || words[index][0] == '+')
+            if (words[index].GetAt(0) == '-' || words[index].GetAt(0) == '+')
             {
                 skillData.relativeSkill = true;
             }
