@@ -353,6 +353,13 @@ void psSlotManager::Handle( pawsSlot* slot, bool grabOne, bool grabAll )
             slot->PlaceItem( draggingSlot.slot->ImageName(), "", "", draggingSlot.stackCount);
             slot->SetBartenderAction( draggingSlot.slot->GetBartenderAction() );
             slot->SetToolTip(draggingSlot.slot->GetToolTip());
+            //if the original slot was a bartender clear it as we are moving it to a new one
+            if(draggingSlot.slot->IsBartender())
+            {
+                draggingSlot.slot->Clear();
+                csString empty;
+                draggingSlot.slot->SetBartenderAction(empty);
+            }
         }
         else
         {
