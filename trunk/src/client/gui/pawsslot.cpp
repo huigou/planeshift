@@ -114,7 +114,7 @@ bool pawsSlot::OnMouseDown( int button, int modifiers, int x, int y )
         return true;
 
 
-    printf("Is Bartender Slot: %d, Empty %d\n", isBartender ,empty);
+    //printf("Is Bartender Slot: %d, Empty %d\n", isBartender ,empty);
     //if it's a bartender slot and we aren't dragging
     if ( isBartender && (!empty && !psengine->GetSlotManager()->IsDragging()))
     {
@@ -129,7 +129,7 @@ bool pawsSlot::OnMouseDown( int button, int modifiers, int x, int y )
         else if(!(modifiers & CSMASK_CTRL))
         {
             //in case they are not just act normally
-            printf("This is a bartender button with action: %s\n", action.GetData());
+            //printf("This is a bartender button with action: %s\n", action.GetData());
             psengine->GetCmdHandler()->Execute(action.GetData());
             return true;
         }
@@ -377,6 +377,9 @@ void pawsSlot::OnUpdateData(const char *dataname,PAWSData& value)
 
         PlaceItem( icon, mesh, material, atoi(  count.GetData() ) );
         SetToolTip( name );
+        //as here are only items for now at least we assign an use bartenderaction.
+        csString action = "/use " + name;
+        SetBartenderAction(action);
         SetPurifyStatus( atoi(status.GetData())  );
     }
 
