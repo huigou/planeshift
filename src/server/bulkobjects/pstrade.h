@@ -103,9 +103,9 @@ class psTradeTransformations : public iScriptableVar
      */
     int GetTransformationCacheFlag() { return transCached; }
 
-    /** Returns the name of the current process.
+    /** Returns the name of the current transform.
      *  @note Needed for iScriptableVar. 
-     *  @return the name of the process.
+     *  @return just "transform".
      */
     const char* ToString();
 
