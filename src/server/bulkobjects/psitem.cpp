@@ -2224,6 +2224,10 @@ double psItem::GetProperty(MathEnvironment* env, const char *ptr)
     {
         return (double)GetIsShield();
     }
+    else if(property == "StackCount")
+    {
+        return (double)GetStackCount();
+    }
     else
     {
         CPrintf(CON_ERROR, "psItem::GetProperty(%s) failed\n",ptr);
