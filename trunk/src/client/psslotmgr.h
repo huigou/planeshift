@@ -44,26 +44,26 @@ public:
     virtual ~psSlotManager();
 
     bool HandleEvent( iEvent& ev );
-    
+
     void Handle( pawsSlot* slot, bool grabOne = false, bool grabAll = false );
     void SetDragDetails( pawsSlot* slot, int count );
-    
+
     bool IsDragging() { return isDragging; }
-    
+
     /** Set the state of the drag flag. */
     void SetDragFlag( bool flag ) { isDragging = flag; }
-    
+
     int HoldingContainerID() { return draggingSlot.containerID; }
     int HoldingSlotID() { return draggingSlot.slotID; }
 
     void CancelDrag();
-    
+
     void OnNumberEntered(const char *name,int param,int value);
 
 
 private:
     struct DraggingSlot
-    {       
+    {
         int containerID;
         int slotID;
         int stackCount;
@@ -74,12 +74,12 @@ private:
         csString bartenderAction;
         int parentID;
     } draggingSlot;
- 
+
     void PlaceItem();
     void UpdateItem();
     void DropItem(bool guard);
 
- 
+
     bool isDragging;
     bool isPlacing;
     bool isRotating;
@@ -94,7 +94,7 @@ private:
     csEventID MouseUp;   ///< Shortcut for event mouse up
     csEventID KeyDown;   ///< Shortcut for event key down
     csEventID KeyUp;     ///< Shortcut for event key up
-    
+
     csString draggedMesh;
     iMeshWrapper* outline;
 };
