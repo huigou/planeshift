@@ -2389,7 +2389,7 @@ AdminCmdDataModify::AdminCmdDataModify(AdminManager* msgManager, MsgEntry* me, p
             }
         }
         // everything else is a syntax error
-        else
+        else if(subcommand != "remove")
         {
             ParseError(me,"Invalid subcommand");
         }
