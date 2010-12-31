@@ -3536,7 +3536,6 @@ bool WorkManager::ApplySkills(float factor, psItem* transItem, gemActor *worker,
 {
     if(calc_transform_apply_skill)
     {
-        printf("using script\n");
         MathEnvironment env;
         env.Define("Quality", currentQuality);
         env.Define("Factor", factor);
@@ -3549,7 +3548,6 @@ bool WorkManager::ApplySkills(float factor, psItem* transItem, gemActor *worker,
         env.Define("AmountModifier", amountModifier);
         calc_transform_apply_skill->Evaluate(&env);
         currentQuality = env.Lookup("Quality")->GetValue();
-        printf("%f\n", currentQuality);
         return (currentQuality > 0);
     }
     
