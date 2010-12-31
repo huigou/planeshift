@@ -71,7 +71,7 @@ class psTradeCombinations
  * This class holds the master list of all trade transformatations possible in the game.
  * This class is read only since it is cached and shared by multiple users.
  */
-class psTradeTransformations
+class psTradeTransformations : public iScriptableVar
 {
  public:
     psTradeTransformations();
@@ -97,10 +97,27 @@ class psTradeTransformations
 
     int GetTransPoints() const { return transPoints; }
 
-    // Cache flag is used for garbage collection
-    // If true transformation is cached and should not be deleted after use
-    //  otherwise it needs to be cleaned up
+    /**Cache flag is used for garbage collection
+     * If true transformation is cached and should not be deleted after use
+     *  otherwise it needs to be cleaned up
+     */
     int GetTransformationCacheFlag() { return transCached; }
+
+    /** Returns the name of the current process.
+     *  @note Needed for iScriptableVar. 
+     *  @return the name of the process.
+     */
+    const char* ToString();
+
+    ///Needed for iScriptableVar. Does nothing right now just returns 0 for anything passed.
+    double CalcFunction(MathEnvironment* env, const char* functionName, const double* params);
+
+    /** Returns the requested variable stored in this transform.
+     *  @note Needed for iScriptableVar.
+     *  @param ptr A pointer to a char array stating the requested variable.
+     *  @return A double with the value of the requested variable.
+     */
+    double GetProperty(MathEnvironment* env, const char* ptr);
 
  protected:
     uint32 id;
@@ -114,9 +131,10 @@ class psTradeTransformations
     int transPoints;
 
 private:
-    // Cache flag is used for garbage collection
-    // If true transformation is cached and should not be deleted after use
-    //  otherwise it needs to be cleaned up
+    /** Cache flag is used for garbage collection
+     *  If true transformation is cached and should not be deleted after use
+     *  otherwise it needs to be cleaned up
+     */
     bool transCached;
 };
 
