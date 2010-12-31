@@ -1374,7 +1374,7 @@ csString AdminCmdDataLoadQuest::GetHelpMessage()
 }
 
 AdminCmdDataItem::AdminCmdDataItem(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client *client, WordArray &words)
-: AdminCmdDataTarget("/item", ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_STRING), random(false), quality(0)
+: AdminCmdDataTarget("/item", ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_STRING), random(false), quality(50)
 {
     size_t index = 1;
 
@@ -1387,7 +1387,7 @@ AdminCmdDataItem::AdminCmdDataItem(AdminManager* msgManager, MsgEntry* me, psAdm
     {// no action required
     }
     // /item <item> [random] <quality>
-    else if (words.GetCount() >2)
+    else if (words.GetCount() >=2)
     {
         // try first parameter as a target string (item name string)
         if (ParseTarget(msgManager, me, msg, client, words[index]))
@@ -1400,23 +1400,14 @@ AdminCmdDataItem::AdminCmdDataItem(AdminManager* msgManager, MsgEntry* me, psAdm
             {
                 index++;
                 random = true;
-                if (words.GetCount() == index + 1)
-                {
-                    quality = words.GetInt(index++);
-                }
-                else if (words.GetCount() > index + 1)
-                {
-                    ParseError(me, "Too many parameters");
-                }
             }
-            // quality is required
-            else if (words.GetCount() == index+1)
+            if (words.GetCount() == index + 1)
             {
                 quality = words.GetInt(index++);
             }
-            else
+            if (words.GetCount() > index)
             {
-                ParseError(me, "Unknown subcommand" + words[index]);
+                ParseError(me, "Too many parameters");
             }
         }
         else 
