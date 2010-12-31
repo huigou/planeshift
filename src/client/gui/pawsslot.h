@@ -26,17 +26,17 @@ public:
     void SetEmptyOnZeroCount( bool emptyOnZeroCount ) { this->emptyOnZeroCount = emptyOnZeroCount; }
     bool Setup( iDocumentNode* node );
     void SetContainer( int id ) { containerID  = id; }
-    
+
     bool OnMouseDown( int button, int modifiers, int x, int y );
     void Draw();
     void SetToolTip( const char* text );
-    
+
     int StackCount() { return stackCount; }
     void StackCount( int newCount );
 
     int GetPurifyStatus();
     void SetPurifyStatus(int status);
-    
+
     void PlaceItem( const char* imageName, const char* meshFactName,
         const char* matName = NULL, int count = 0 );
     csRef<iPawsImage> Image() { return image;}
@@ -51,7 +51,7 @@ public:
     {
         return materialName;
     }
-    
+
     const csString & SlotName() const { return slotName; }
     void SetSlotName(const csString & name) { slotName = name; }
 
@@ -65,14 +65,14 @@ public:
     void Reserve() { reserved = true; }
 
     void DrawStackCount(bool value);
-    
+
     bool SelfPopulate( iDocumentNode *node);
-     
+
     void OnUpdateData(const char *dataname,PAWSData& value);
 
     void ScalePurifyStatus();
-      
-    bool IsBartender() { return isBartender; } 
+
+    bool IsBartender() { return isBartender; }
 
     void SetBartenderAction(csString& act) { action = act; }
     csString &GetBartenderAction() { return action; }
@@ -82,22 +82,22 @@ protected:
     csString         meshfactName;
     csString         materialName;
     csString         slotName;
-    int              containerID;  
+    int              containerID;
     int              slotID;
     int              stackCount;
     int              purifyStatus;
     bool empty;
     bool dragDrop;
     bool drawStackCount;
-    bool reserved;		///< implemented to fix dequip behaviour. Cleared on PlaceItem and Clear
-    
+    bool reserved;      ///< implemented to fix dequip behaviour. Cleared on PlaceItem and Clear
+
     csRef<iPawsImage> image;
     pawsWidget* purifySign;
     pawsTextBox* stackCountLabel;
     bool handleMouseClicks;
     bool emptyOnZeroCount;      ///< should the slot clear itself when the stackcount hits 0 ?
 
-    bool isBartender;       ///< Flag on if this a special bartender slot. 
+    bool isBartender;       ///< Flag on if this a special bartender slot.
     csString action;        ///< This is the action to do if this a bartender button.
 };
 

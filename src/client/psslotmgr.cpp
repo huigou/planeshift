@@ -152,7 +152,7 @@ void psSlotManager::CancelDrag()
     pawsSlot* dragging = (pawsSlot*)PawsManager::GetSingleton().GetDragDropWidget();
     if ( !dragging )
         return;
-        
+
     draggingSlot.slot->SetPurifyStatus(dragging->GetPurifyStatus());
     int oldStack =  draggingSlot.slot->StackCount();
     oldStack += draggingSlot.stackCount;
@@ -182,7 +182,7 @@ void psSlotManager::OnNumberEntered(const char* /*name*/, int param, int count)
         // Get the slot ptr
         parent = slotsInUse[i];
         slotsInUse[i] = NULL;
-        
+
         // Clean up the trailing NULLs  (can't just delete the index, as that would change other indicies)
         for (i=slotsInUse.GetSize()-1; i!=(size_t)-1; i--)
         {
@@ -197,19 +197,19 @@ void psSlotManager::OnNumberEntered(const char* /*name*/, int param, int count)
 
     int purifyStatus = parent->GetPurifyStatus();
     int newStack = parent->StackCount() - count;
-            
+
     pawsSlot* widget = new pawsSlot();
     widget->SetRelativeFrame( 0,0, parent->DefaultFrame().Width(), parent->DefaultFrame().Height() );
-    
-    if (parent->Image())    
+
+    if (parent->Image())
         widget->PlaceItem( parent->Image()->GetName(), parent->GetMeshFactName(), parent->GetMaterialName(), count );
-    else        
+    else
         widget->PlaceItem( NULL, parent->GetMeshFactName(), parent->GetMaterialName(), count );
 
     widget->SetPurifyStatus( purifyStatus );
     widget->SetBackgroundAlpha(0);
     widget->SetParent( NULL );
-           
+
     SetDragDetails( parent, count );
     parent->StackCount( newStack );
     isDragging = true;
@@ -217,8 +217,8 @@ void psSlotManager::OnNumberEntered(const char* /*name*/, int param, int count)
 }
 
 
-void psSlotManager::SetDragDetails( pawsSlot* slot, int count ) 
-{ 
+void psSlotManager::SetDragDetails( pawsSlot* slot, int count )
+{
     printf("SetDragDetails: \n");
     draggingSlot.containerID     = slot->ContainerID();
     draggingSlot.slotID          = slot->ID();
@@ -316,13 +316,13 @@ void psSlotManager::Handle( pawsSlot* slot, bool grabOne, bool grabAll )
         // Make sure other code isn't drag-and-dropping a different object.
         pawsWidget *dndWidget = PawsManager::GetSingleton().GetDragDropWidget();
         if (dndWidget)
-            return; 
+            return;
 
         //printf("Starting a drag/drop action\n");
 
         int stackCount = slot->StackCount();
         if ( stackCount > 0 )
-        {          
+        {
             int tmpID = (int)slotsInUse.Push(slot);
 
             if ( stackCount == 1 || grabOne )
@@ -337,7 +337,7 @@ void psSlotManager::Handle( pawsSlot* slot, bool grabOne, bool grabAll )
             {
                 csString max;
                 max.Format("Max %d", stackCount );
-                
+
                 pawsNumberPromptWindow::Create(max,
                                                -1, 1, stackCount, this, "StackCount", tmpID);
             }
@@ -372,7 +372,7 @@ void psSlotManager::Handle( pawsSlot* slot, bool grabOne, bool grabAll )
                 // Stop dragging the spell around
                 CancelDrag();
 
-                // Set the image to this slot. 
+                // Set the image to this slot.
                 slot->PlaceItem( draggingSlot.slot->ImageName(), "", "", draggingSlot.stackCount);
             }
             else
@@ -398,5 +398,5 @@ void psSlotManager::Handle( pawsSlot* slot, bool grabOne, bool grabAll )
                 }
             }
         }
-    }       
+    }
 }

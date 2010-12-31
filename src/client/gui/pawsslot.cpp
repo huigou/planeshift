@@ -62,7 +62,7 @@ pawsSlot::pawsSlot()
     stackCountLabel->Hide();
     stackCountLabel->Ignore(true);
     dragDrop = true;
-    StackCount(0); 
+    StackCount(0);
 
     reserved = false;
 
@@ -81,10 +81,10 @@ bool pawsSlot::Setup( iDocumentNode* node )
     csRef<iDocumentNode> ident = node->GetNode( "ident" );
     if ( ident )
     {
-        containerID = ident->GetAttributeValueAsInt("container");        
-        slotID = ident->GetAttributeValueAsInt("id");            
-    }        
-   
+        containerID = ident->GetAttributeValueAsInt("container");
+        slotID = ident->GetAttributeValueAsInt("id");
+    }
+
     csRef<iDocumentNode> bartender = node->GetNode("bartender_slot");
     if ( bartender )
     {
@@ -96,10 +96,10 @@ bool pawsSlot::Setup( iDocumentNode* node )
     {
        DrawStackCount(showStackAmount->GetContentsValueAsInt());
     }
-   
+
     mgr = psengine->GetSlotManager();
-           
-    return true;        
+
+    return true;
 }
 
 
@@ -112,8 +112,8 @@ bool pawsSlot::OnMouseDown( int button, int modifiers, int x, int y )
 
     if ( !psengine->GetCelClient()->GetMainPlayer()->IsAlive() )
         return true;
-  
-   
+
+
     printf("Is Bartender Slot: %d, Empty %d\n", isBartender ,empty);
     //if it's a bartender slot and we aren't dragging
     if ( isBartender && (!empty && !psengine->GetSlotManager()->IsDragging()))
@@ -134,7 +134,7 @@ bool pawsSlot::OnMouseDown( int button, int modifiers, int x, int y )
             return true;
         }
     }
-     
+
     if ( !empty && psengine->GetMouseBinds()->CheckBind("ContextMenu",button,modifiers) )
     {
         psViewItemDescription out(containerID, slotID);
@@ -146,16 +146,16 @@ bool pawsSlot::OnMouseDown( int button, int modifiers, int x, int y )
         bool grab = psengine->GetMouseBinds()->CheckBind("EntityDragDrop", button, modifiers);
         bool grabAll = psengine->GetMouseBinds()->CheckBind("EntityDragDropAll", button, modifiers);
         bool grabOne = psengine->GetMouseBinds()->CheckBind("EntityDragDropOne", button, modifiers);
-        
+
         if(!grab && !grabAll && !grabOne)
         {
-        	// TODO: this should be removed sometime  
-        	// fallback for old configuration files (pre 0.4.02)
-        	grab = psengine->GetMouseBinds()->CheckBind("EntitySelect", button, modifiers);
-        	grabAll = (modifiers == 2 || button == 2);
-        	grabOne = (modifiers == 1);
+            // TODO: this should be removed sometime
+            // fallback for old configuration files (pre 0.4.02)
+            grab = psengine->GetMouseBinds()->CheckBind("EntitySelect", button, modifiers);
+            grabAll = (modifiers == 2 || button == 2);
+            grabOne = (modifiers == 1);
         }
-        
+
         if ( dragDrop && (grab || grabAll || grabOne) && (!empty || psengine->GetSlotManager()->IsDragging()) )
         {
             // Grab one item if EntityDragDropOne modifiers key are used. Grab everything in the slot
@@ -206,16 +206,16 @@ void pawsSlot::PlaceItem( const char* imageName, const char* meshFactName, const
     //printf( "Placing Image: %s\n", imageName);
     meshfactName = meshFactName;
     materialName = matName;
-    
+
     psengine->GetCelClient()->replaceRacialGroup(meshfactName);
-    
+
     empty = false;
 
     image = PawsManager::GetSingleton().GetTextureManager()->GetOrAddPawsImage(imageName);
 
     if (drawStackCount)
         stackCountLabel->ShowBehind();
-       
+
     stackCount = count;
     StackCount( count );
 
@@ -229,9 +229,9 @@ void pawsSlot::Draw()
         stackCountLabel->Hide();
 
     pawsWidget::Draw();
-    ClipToParent(false);    
+    ClipToParent(false);
     csRect frame = screenFrame;
-    
+
     // Deal with frames that are taller than they are high (left/right hand
     // slots).
     if (frame.Height() > frame.Width())
@@ -240,7 +240,7 @@ void pawsSlot::Draw()
         frame.ymin += excess/2;
         frame.ymax -= excess/2;
     }
-	//Deal with money slots that are wider than thay are high
+    //Deal with money slots that are wider than thay are high
     if (frame.Height() < frame.Width())
     {
         int excess = frame.Width() - frame.Height();
@@ -255,9 +255,9 @@ void pawsSlot::Draw()
         if (drawStackCount)
             stackCountLabel->Draw();
     }
-              
+
     graphics2D->SetClipRect( 0,0, graphics2D->GetWidth(), graphics2D->GetHeight());
-}    
+}
 
 
 void pawsSlot::Clear()
@@ -272,7 +272,7 @@ void pawsSlot::Clear()
 
     reserved = false;
     image = NULL;
-}    
+}
 
 
 const char *pawsSlot::ImageName()
@@ -300,7 +300,7 @@ void pawsSlot::SetPurifyStatus(int status)
             break;
         case 1:
             purifySign->ShowBehind();
-            purifySign->SetBackground("GlyphSlotPurifying");	
+            purifySign->SetBackground("GlyphSlotPurifying");
             break;
         case 2:
             purifySign->ShowBehind();
@@ -329,7 +329,7 @@ bool pawsSlot::SelfPopulate( iDocumentNode *node)
         this->SetDrag(false);
         PlaceItem(node->GetAttributeValue("icon"), "", "", 1);
     }
-    
+
     return true;
 }
 
@@ -337,16 +337,16 @@ bool pawsSlot::SelfPopulate( iDocumentNode *node)
 void pawsSlot::OnUpdateData(const char *dataname,PAWSData& value)
 {
     csString sig(dataname);
-    
+
     if (sig.StartsWith("sigClear"))
     {
         // Clear out the pub-sub cache for this specific slot to avoid stale
         // stuff coming back to life when a slot subscribes again.
         if (!slotName.IsEmpty())
             PawsManager::GetSingleton().Publish(slotName, "");
-            
+
         Clear();
-        SetDefaultToolTip();                        
+        SetDefaultToolTip();
     }
     else if (value.IsData())
     {
@@ -375,10 +375,10 @@ void pawsSlot::OnUpdateData(const char *dataname,PAWSData& value)
         material = words[4];
         data.GetSubString( name, icon.Length()+count.Length()+status.Length()+mesh.Length()+material.Length()+5, data.Length());
 
-        PlaceItem( icon, mesh, material, atoi(  count.GetData() ) );        
+        PlaceItem( icon, mesh, material, atoi(  count.GetData() ) );
         SetToolTip( name );
         SetPurifyStatus( atoi(status.GetData())  );
-    }   
+    }
 
 }
 
