@@ -223,9 +223,9 @@ void UserManager::HandleMOTDRequest(MsgEntry *me,Client *client)
         psGuildInfo* playerGuild = client->GetCharacterData()->GetGuild();
 
         if (playerGuild)
-            guildID = playerGuild->id;
+            guildID = playerGuild->GetID();
         else
-            guildID =0;
+            guildID = 0;
     }
 
     csString tip;
@@ -1004,7 +1004,7 @@ bool UserManager::WhoProcessClient(Client *curr, int guildId, csString* message,
     psGuildInfo* guild = curr->GetActor()->GetGuild();
     if (guild != NULL)
     {
-        if (guild->id && (!guild->IsSecret() || guild->id
+        if (guild->GetID() && (!guild->IsSecret() || guild->GetID()
                 == guildId))
         {
             psGuildLevel* level = curr->GetActor()->GetGuildLevel();
@@ -1017,7 +1017,7 @@ bool UserManager::WhoProcessClient(Client *curr, int guildId, csString* message,
             {
                 format.Append(", %s");
             }
-            guildName = guild->name;
+            guildName = guild->GetName();
         }
     }
     temp.Format(format.GetData(), curr->GetName(), guildTitle.GetData(),
@@ -1251,12 +1251,14 @@ void UserManager::NotifyGuildBuddies(Client * client, bool logged_in)
     if(!charGuild)
         return;
         
-    for(size_t i = 0; i < charGuild->members.GetSize(); i++)
+    csArray<psGuildMember*>::Iterator mIter = charGuild->GetMemberIterator();
+    while(mIter.HasNext())
     {
-        psCharacter *notifiedmember = charGuild->members[i]->actor;
+        psGuildMember *member = mIter.Next();
+        psCharacter *notifiedmember = member->actor;
         gemActor *notifiedactor = notifiedmember? notifiedmember->GetActor() : NULL;
 
-        if(notifiedactor && notifiedmember && (charGuild->members[i]->char_id != char_id)
+        if(notifiedactor && notifiedmember && (member->char_id != char_id)
            && notifiedmember->IsGettingGuildNotifications())
         {
             csString text;
@@ -1302,9 +1304,10 @@ void UserManager::NotifyAllianceBuddies(Client * client, bool logged_in)
         if(!currentGuild || currentGuild == charGuild)
             continue;
 
-        for(size_t i = 0; i < currentGuild->members.GetSize(); i++)
+        csArray<psGuildMember*>::Iterator mIter = currentGuild->GetMemberIterator();
+        while(mIter.HasNext())
         {
-            psCharacter *notifiedmember = currentGuild->members[i]->actor;
+            psCharacter *notifiedmember = mIter.Next()->actor;
             gemActor *notifiedactor = notifiedmember? notifiedmember->GetActor() : NULL;
 
             if(notifiedactor && notifiedmember && notifiedmember->IsGettingAllianceNotifications())

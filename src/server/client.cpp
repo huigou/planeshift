@@ -291,7 +291,7 @@ int Client::GetGuildID()
     if (guild == NULL)
         return 0;
 
-    return guild->id;
+    return guild->GetID();
 }
 
 int Client::GetAllianceID()

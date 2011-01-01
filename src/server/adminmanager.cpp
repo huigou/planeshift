@@ -8483,7 +8483,7 @@ void AdminManager::SendSpawnItems (MsgEntry* me, Client *client)
     {
         unsigned id = result[i].GetUInt32(0);
         psItemStats* item = psserver->GetCacheManager()->GetBasicItemStatsByID(id);
-        if(item && !item->IsMoney() /*&& item->IsSpawnable()*/)
+        if(item && !item->IsMoney() && item->IsSpawnable())
         {
             csString name(item->GetName());
             csString mesh(item->GetMeshName());
@@ -8568,11 +8568,11 @@ void AdminManager::SpawnItemInv( MsgEntry* me, psGMSpawnItem& msg, Client *clien
         return;
     }
     
-    /*if(!stats->IsSpawnable())
+    if(!stats->IsSpawnable())
     {
         psserver->SendSystemError(me->clientnum, "This item cannot be spawned!");
         return;
-    }*/
+    }
     
     psItem* item = stats->InstantiateBasicItem();
     
@@ -9426,7 +9426,7 @@ void AdminManager::RenameGuild(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDat
     }
 
     guild->SetName(data->newName);
-    psserver->GetGuildManager()->ResendGuildData(guild->id);
+    psserver->GetGuildManager()->ResendGuildData(guild->GetID());
 
     // Notify the guild leader if he is online
     psGuildMember* gleader = guild->FindLeader();
@@ -9445,11 +9445,15 @@ void AdminManager::RenameGuild(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDat
 
     // Get all connected guild members
     csArray<EID> array;
-    for (size_t i = 0; i < guild->members.GetSize();i++)
+    
+    csArray<psGuildMember*>::Iterator mIter = guild->GetMemberIterator();
+    while(mIter.HasNext())
     {
-        psGuildMember* member = guild->members[i];
+        psGuildMember* member = mIter.Next();
         if(member->actor)
+        {
             array.Push(member->actor->GetActor()->GetEID());
+        }
     }
 
     // Update the labels
@@ -9505,7 +9509,7 @@ void AdminManager::ChangeGuildLeader(MsgEntry* me, psAdminCmdMessage& msg, Admin
         return;
     }
 
-    psserver->GetGuildManager()->ResendGuildData(guild->id);
+    psserver->GetGuildManager()->ResendGuildData(guild->GetID());
 
     psserver->SendSystemOK(me->clientnum,"Guild leader changed to '%s'.", data->target.GetData());
 
