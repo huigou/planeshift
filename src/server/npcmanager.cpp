@@ -1574,6 +1574,13 @@ void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
                 // Send OwnerActionLogon Perception
                 pet->SetOwner( owner->GetActor() );
                 owner->GetCharacterData()->Skills().AddSkillPractice(petSkill, 1);
+                // Have the pet auto follow when summoned
+                // If no target target owner
+                if (!pet->GetTarget())
+                {
+                    pet->SetTarget( owner->GetActor() );
+                }
+                QueueOwnerCmdPerception( owner->GetActor(), pet, psPETCommandMessage::CMD_FOLLOW );
             }
             else
             {
