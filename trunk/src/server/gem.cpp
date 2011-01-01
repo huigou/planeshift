@@ -2056,7 +2056,7 @@ double gemActor::CalcFunction(MathEnvironment* env, const char* f, const double*
         size_t argc = static_cast<size_t>(params[1]);
         const double* args = argc ? &params[2] : NULL;
         csString format = env->GetString(params[0]);
-        Error2("got format string '%s'", format.GetData());
+        Debug2(LOG_SCRIPT, pid.Unbox(),"got format string '%s'", format.GetData());
         csString string = MathScriptEngine::FormatMessage(format,argc,args);
 
         if (func == "SendSystemInfo")
@@ -2647,7 +2647,7 @@ void gemActor::Send( int clientnum, bool control, bool to_superclients, psPersis
     guildName.Clear();
     if ( psChar->GetGuild() && !psChar->GetGuild()->IsSecret() )
     {
-        guildName = psChar->GetGuild()->name;
+        guildName = psChar->GetGuild()->GetName();
     }
 
     uint32_t groupID = 0;
@@ -2755,7 +2755,7 @@ void gemActor::Broadcast(int clientnum, bool control)
             eid,
             psChar->GetGuild()->GetName());
 
-        psserver->GetEventManager()->Broadcast(update.msg,NetBase::BC_GUILD,psChar->GetGuild()->id);
+        psserver->GetEventManager()->Broadcast(update.msg,NetBase::BC_GUILD,psChar->GetGuild()->GetID());
     }
 }
 
@@ -4605,7 +4605,7 @@ void gemNPC::Send( int clientnum, bool control, bool to_superclients, psPersistA
     csString guildName;
     guildName.Clear();
     if ( psChar->GetGuild() && !psChar->GetGuild()->IsSecret() )
-        guildName = psChar->GetGuild()->name;
+        guildName = psChar->GetGuild()->GetName();
 
     if ( this->owner.IsValid())
     {
