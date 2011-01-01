@@ -612,24 +612,6 @@ bool FogWeatherObject::CreateMesh()
     float density = GetDensity(parent->fog_params.value);
     sector->SetFog(density,color);
 
-    // Use this as a clipping plane if it's not adaptive
-    psCamera* cam = psengine->GetPSCamera();
-    if( cam && cam->GetICamera()->GetCamera()->GetSector() == sector && !cam->GetDistanceCfg().adaptive )
-    {
-        if(density)
-        {
-            float distance = csFogMath::DistanceForOpacity(density, 0.8f);
-            if(distance > cam->GetFixedDistClip())
-                distance = cam->GetFixedDistClip();
-            cam->UseFixedDistanceClipping(distance); // It's only the last applied fog in this sector that matters
-        }
-        else
-        {
-            // Set back to value specified in options window.
-            cam->UseFixedDistanceClipping(cam->GetFixedDistClip());
-        }
-    }
-
     applied = true;
     return true;
 }
