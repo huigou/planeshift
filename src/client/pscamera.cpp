@@ -1803,7 +1803,9 @@ void psCamera::SetDistanceClipping(float dist)
     shadowManager->SetShadowRange(dist);
 
     // control load distance.
-    float loadRange = dist+dist/10 < 500 ? 500 : dist+dist/10;
+    float loadRange = dist*1.1f;
+    if(loadRange < 500)
+        loadRange = 500;
     psengine->GetLoader()->SetLoadRange(loadRange);
 }
 
@@ -1842,37 +1844,42 @@ void psCamera::AdaptDistanceClipping()
     }
 
     currTime = csGetTicks();
-    if (currTime == lastTime)
-        currFPS = 1000;  // ha, ha .... this is just a theoretial check ;-)
-    else
-        currFPS = 1000 / (currTime - lastTime);
-    smoothFPS = 0.5*currFPS + 0.5*smoothFPS;
+    currFPS = psengine->getFPS();
+    smoothFPS = (currFPS + smoothFPS)/2;
 
     //debug.AppendFmt("fps=%.0f avg=%.0f ", currFPS, smoothFPS);
 
-    if (distanceCfg.adaptive  &&  currTime-lastChangeTime>1000*2)
+    if(distanceCfg.adaptive && currTime-lastChangeTime > (1000/smoothFPS)*10)
     {
-        float change;
-
         currDist = GetDistanceClipping();
         if (currDist == -1)
             currDist = INITIAL_DISTANCE;
 
         if (smoothFPS < distanceCfg.minFPS)
         {
-            change = - (distanceCfg.minFPS-smoothFPS);
-            currDist += change;
+            currDist *= (1 - csQsqrt((distanceCfg.minFPS-smoothFPS)/distanceCfg.minFPS));
             if (currDist >= distanceCfg.minDist)
+            {
                 SetDistanceClipping(currDist);
+            }
+            else
+            {
+                currDist = distanceCfg.minDist;
+            }
             //debug.AppendFmt("%.5f-=%.5f \n",currDist, change);
         }
         else
         if (smoothFPS > distanceCfg.maxFPS)
         {
-            change = (smoothFPS-distanceCfg.maxFPS);
-            currDist += change;
+            currDist *= (1 + csQsqrt((smoothFPS-distanceCfg.maxFPS)/distanceCfg.maxFPS));
             if (currDist <= MAX_DIST)
+            {
                 SetDistanceClipping(currDist);
+            }
+            else
+            {
+                currDist = MAX_DIST;
+            }
             //debug.AppendFmt("%.5f+=%.5f \n",currDist, change);
         }
         lastChangeTime = currTime;
