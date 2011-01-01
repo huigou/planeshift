@@ -54,7 +54,7 @@
      
     <block location="cg:fragmentMain">
       <?if vars."snow density" ?>
-        float4 snowColor = tex2D (texSnow1, texCoord/2);
+        float4 snowColor = tex2D (texSnow1, texCoord);
         float3 normals = normalize(normal);
 
         float2 snow = float2(clamp(normals.y, 0.0f, 1.0f));
@@ -65,7 +65,8 @@
         //the place for the snow coverage.
         float snowplace  = clamp(dot(snow, float2(2.0f)), 0.0f, 1.0f);
 
-        result = lerp(diffuse, snowColor, snowplace*snowDensity);
+        result.rgb = lerp(diffuse.rgb, snowColor.rgb, snowplace*snowDensity);
+        result.a = diffuse.a;
       <?else?>
         result = diffuse;
       <?endif?>
