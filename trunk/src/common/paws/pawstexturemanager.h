@@ -86,7 +86,7 @@ public:
    csPtr<iPawsImage> GetPawsImage(const char *name);
    csPtr<iPawsImage> GetOrAddPawsImage(const char * name);
    bool AddImage(const char* resource);
-   void AddPawsImage(iPawsImage *element);
+   void AddPawsImage(csRef<iPawsImage> element);
     
 public:
     iObjectRegistry* objectReg;

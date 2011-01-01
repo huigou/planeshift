@@ -100,15 +100,15 @@ bool pawsTextureManager::LoadImageList( const char* listName )
         if (elementList.Contains(node->GetAttributeValue("resource")))
             continue;
 
-        iPawsImage *element = NULL;
+        csRef<iPawsImage> element;
         if (!strcmp(node->GetValue(), "image"))
-            element = new pawsImageDrawable(node);
-		else if (!strcmp(node->GetValue(), "frame"))
-			element = new pawsFrameDrawable(node);
+            element.AttachNew(new pawsImageDrawable(node));
+        else if (!strcmp(node->GetValue(), "frame"))
+            element.AttachNew(new pawsFrameDrawable(node));
         else
             Error2("Illegal node name in imagelist.xml: %s", node->GetValue() );
 
-        if (element)
+        if(element.IsValid())
             AddPawsImage(element);
     }
 
@@ -117,14 +117,13 @@ bool pawsTextureManager::LoadImageList( const char* listName )
 
 bool pawsTextureManager::AddImage(const char* resource)
 {
-    iPawsImage *element = NULL;
-    element = new pawsImageDrawable(resource, resource);
+    csRef<iPawsImage> element;
+    element.AttachNew(new pawsImageDrawable(resource, resource));
     if(element->IsLoaded()) //if all went ok this will be true.
     {
         AddPawsImage(element);
         return true;
     }
-    delete element; //it failed loading so we discard it.
     return false;
 }
 
@@ -157,7 +156,7 @@ csPtr<iPawsImage> pawsTextureManager::GetOrAddPawsImage(const char * name)
 }
 
 
-void pawsTextureManager::AddPawsImage(iPawsImage * element)
+void pawsTextureManager::AddPawsImage(csRef<iPawsImage> element)
 {
     // printf("Adding pawsImage called %s\n", element->GetName() );
     elementList.Put(element->GetName(), element);
