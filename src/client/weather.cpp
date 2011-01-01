@@ -356,11 +356,12 @@ SnowWeatherObject::SnowWeatherObject(WeatherInfo* parent)  : WeatherObject(paren
     csString snowNoise = psengine->GetConfig()->GetStr("PlaneShift.Effects.Snow.Noise", "");
     if(!snowNoise.IsEmpty())
     {
-        csRef<iTextureWrapper> tex = psengine->GetEngine()->CreateTexture("snowdiffuse", snowNoise.GetData(), 0, 0);
-        csRef<iTextureHandle> texHandle = tex->GetTextureHandle();
+        csRef<iLoader> loader = csQueryRegistry<iLoader> (psengine->GetObjectRegistry());
+        loader->LoadTexture("snowdiffuse", snowNoise.GetData());
+        iMaterialWrapper* material = psengine->GetEngine()->GetMaterialList()->FindByName("snowdiffuse");
         CS::ShaderVarStringID snowTex = strings->Request ("tex snow 1");
         csShaderVariable* snowTexSV = shman->GetVariableAdd(snowTex);
-        snowTexSV->SetValue(texHandle);
+        snowTexSV->SetValue(material->GetMaterial()->GetTexture());
     }
 }
 
