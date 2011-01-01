@@ -133,12 +133,12 @@ void ClientStatusLogger::LogGuildInfo(Client* client, csRef<iDocumentNode> node)
     gemActor* actor = client->GetActor();
     psGuildInfo* guild = actor->GetGuild();
     if (guild == NULL) return; // is this an error or indicates no guild?
-    if (guild->id == 0) return;
+    if (guild->GetID() == 0) return;
     
 
     csRef<iDocumentNode> guildNode = AddContainerNode(node, "GuildData");
 
-    AddBasicNode(guildNode, "GuildName", guild->name.GetData());
+    AddBasicNode(guildNode, "GuildName", guild->GetName().GetData());
 
     if (psGuildLevel* guildLevel = actor->GetGuildLevel())
     {

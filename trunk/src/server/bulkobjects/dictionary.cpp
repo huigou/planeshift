@@ -2329,8 +2329,7 @@ bool GuildAwardResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,
         CPrintf(CON_ERROR, "Couldn't find guild (%d). Guild karma points not added\n",target->GetGuildID());
         return false;
     }
-    guild->karma_points += karma;
-    db->Command("UPDATE guilds SET karma_points = '%d' WHERE id = '%d'",guild->karma_points,guild->id);
+    guild->SetKarmaPoints(guild->GetKarmaPoints() + karma);
     // TODO: Notify player and guild of what happened here.
     return true;
 }

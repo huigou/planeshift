@@ -137,14 +137,14 @@ void psServerStatusRunEvent::ReportClient(Client * curr, ClientStatusLogger & cl
     psGuildInfo *guild = curr->GetActor()->GetGuild();
     csString guildTitle;
     csString guildName;
-    if (guild && guild->id && !guild->IsSecret())
+    if(guild && guild->GetID() && !guild->IsSecret())
     {
         psGuildLevel *level = curr->GetActor()->GetGuildLevel();
         if (level)
         {
             guildTitle = EscpXML(level->title);
         }
-        guildName = EscpXML(guild->name);
+        guildName = EscpXML(guild->GetName());
     }
     
     reportString.AppendFmt("<player name=\"%s\" characterID=\"%u\" guild=\"%s\" title=\"%s\" security=\"%d\" kills=\"%u\" deaths=\"%u\" suicides=\"%u\" pos_x=\"%.2f\" pos_y=\"%.2f\" pos_z=\"%.2f\" sector=\"%s\" />\n",

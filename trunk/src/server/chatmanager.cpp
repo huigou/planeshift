@@ -505,7 +505,7 @@ void ChatManager::SendGuild(const csString & sender, EID senderEID, psGuildInfo 
     {
         Client *client = iter.Next();
         if (!client->IsReady()) continue;
-        if (client->GetGuildID() != guild->id) continue;
+        if (client->GetGuildID() != guild->GetID()) continue;
         member = client->GetCharacterData()->GetGuildMembership();
         if ( (!member) || (!member->HasRights(RIGHTS_VIEW_CHAT)) ) continue;
         // Send the chat message

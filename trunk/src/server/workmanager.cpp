@@ -2987,7 +2987,7 @@ psItem* WorkManager::CreateTradeItem(uint32 newId, int newQty, float itemQuality
 
         // Set current player guild to creator mark
         if (owner->GetGuild())
-            newItem->SetGuildID(owner->GetGuild()->id);
+            newItem->SetGuildID(owner->GetGuild()->GetID());
         else
             newItem->SetGuildID(0);
 

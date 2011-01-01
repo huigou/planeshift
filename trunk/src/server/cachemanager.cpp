@@ -3122,7 +3122,7 @@ csWeakRef<psGuildInfo> CacheManager::FindGuild(unsigned int id)
     g = new psGuildInfo;
     if (g->Load(id))
     {
-        guildinfo_by_id.Put(g->id,g);
+        guildinfo_by_id.Put(g->GetID(), g);
         return g;
     }
     delete g;
@@ -3131,23 +3131,24 @@ csWeakRef<psGuildInfo> CacheManager::FindGuild(unsigned int id)
 
 csWeakRef<psGuildInfo> CacheManager::FindGuild(const csString & name)
 {
-    unsigned int id;
-    csString escape;
-    db->Escape( escape, name );
-    Result result(db->Select("select id from guilds where name=\"%s\"", escape.GetData()) );
-    if (!result.IsValid())
+    csHash<csRef<psGuildInfo> >::GlobalIterator gIter = guildinfo_by_id.GetIterator();
+    while(gIter.HasNext())
     {
-        return NULL;
+        psGuildInfo* guild = gIter.Next();
+        if(guild->GetName() == name)
+        {
+            return guild;
+        }
     }
-
-    if (result.Count() == 0)
+    
+    psGuildInfo *g = new psGuildInfo;
+    if(g->Load(name))
     {
-        return NULL;
+        guildinfo_by_id.Put(g->GetID(), g);
+        return g;
     }
-
-    id = result[0].GetInt("id");
-
-    return FindGuild(id);
+    delete g;
+    return NULL;
 }
 
 bool CacheManager::CreateGuild(const char *guildname, Client *client)
@@ -3156,7 +3157,7 @@ bool CacheManager::CreateGuild(const char *guildname, Client *client)
 
     psGuildInfo *gi = new psGuildInfo(guildname,leaderID);
 
-    if (!gi->InsertNew(leaderID))
+    if(!gi->InsertNew())
     {
         delete gi;
         return false;
@@ -3164,13 +3165,13 @@ bool CacheManager::CreateGuild(const char *guildname, Client *client)
 
     gi->AddNewMember(client->GetCharacterData(), MAX_GUILD_LEVEL);
 
-    guildinfo_by_id.Put(gi->id,gi);
+    guildinfo_by_id.Put(gi->GetID(),gi);
     return true;
 }
 
 void CacheManager::RemoveGuild(psGuildInfo *which)
 {
-    guildinfo_by_id.Delete(which->id,which);
+    guildinfo_by_id.Delete(which->GetID(),which);
     delete which;
 }
 
