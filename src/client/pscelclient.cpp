@@ -688,6 +688,10 @@ void psCelClient::Update(bool loaded)
             // Update loader.
             psengine->GetLoader()->UpdatePosition(local_player->Pos(), sectorName, false);
         }
+        else
+        {
+            psengine->GetLoader()->ContinueLoading(false);
+        }
 
         //const char* sectorName = local_player->GetSector()->QueryObject()->GetName();
         // Check if we're inside a water area.
