@@ -169,6 +169,7 @@ public:
 
 private:
     csRef<csShaderVariable> snowDensitySV;
+    CS::ShaderVarStringID snowDensity;
 };
 
 //-----------------------------------------------------------------------------

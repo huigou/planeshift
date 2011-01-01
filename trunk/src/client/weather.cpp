@@ -347,8 +347,9 @@ SnowWeatherObject::SnowWeatherObject(WeatherInfo* parent)  : WeatherObject(paren
             psengine->GetObjectRegistry(), "crystalspace.shader.variablenameset");
 
     // set density variable
-    CS::ShaderVarStringID snowDensity = strings->Request("snow density");
-    snowDensitySV = shman->GetVariableAdd(snowDensity);
+    snowDensity = strings->Request("snow density");
+    iSector* sector = psengine->GetEngine()->FindSector(parent->sector);
+    snowDensitySV = sector->GetSVContext()->GetVariableAdd(snowDensity);
     snowDensitySV->SetValue(0.75f);
 
     // set texture variable
@@ -365,8 +366,8 @@ SnowWeatherObject::SnowWeatherObject(WeatherInfo* parent)  : WeatherObject(paren
 
 SnowWeatherObject::~SnowWeatherObject()
 {
-    csRef<iShaderManager> shman = csQueryRegistry<iShaderManager>(psengine->GetObjectRegistry());
-    shman->RemoveVariable(snowDensitySV);
+    iSector* sector = psengine->GetEngine()->FindSector(parent->sector);
+    sector->GetSVContext()->RemoveVariable(snowDensitySV);
 }
 
 WeatherSound SnowWeatherObject::GetWeatherSoundForced()
@@ -411,9 +412,23 @@ void SnowWeatherObject::Destroy()
 
 void SnowWeatherObject::MoveTo(WeatherInfo* wi,iSector* sect)
 {
+    // get current density
+    float density = 0.f;
+    snowDensitySV->GetValue(density);
+
+    // remove density from old position
+    iSector* sector = psengine->GetEngine()->FindSector(parent->sector);
+    sector->GetSVContext()->RemoveVariable(snowDensitySV);
+
+    // perform the basic move
     WeatherObject::MoveTo(wi,sect);
     psengine->GetModeHandler()->AddDownfallObject(this);
 
+    // add density to new position
+    snowDensitySV = sect->GetSVContext()->GetVariableAdd(snowDensity);
+    snowDensitySV->SetValue(density);
+
+    // setup particle emittor
     SetupMesh(bbox);
 }
 
