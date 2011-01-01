@@ -53,113 +53,109 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-pawsWidget::pawsWidget( )
+pawsWidget::pawsWidget( ) :
+        id(-1),
+        parent(NULL),
+        defaultFrame(csRect(0, 0, 0, 0)),
+        screenFrame(csRect(0, 0, 0, 0)),
+        clipRect(csRect(0, 0, 0, 0)),
+        titleBar(NULL),
+        close_widget(NULL),
+        onEnter(NULL),
+        visible(true),
+        saveWidgetPositions(false),
+        configurable(false),
+        movable(false),
+        isResizable(false),
+        showResize(true),
+        resizeToScreen(false),
+        keepaspect(true),
+        alwaysOnTop(false),
+        min_width(DEFAULT_MIN_WIDTH),
+        min_height(DEFAULT_MIN_HEIGHT),
+        name("None"),
+        bgColour(-1),
+        border(NULL),
+        attachFlags(0),
+        hasFocus(false),
+        hasMouseFocus(false),
+        fadeVal(100),
+        alpha(0),
+        alphaMin(0),
+        fade(true),
+        fadeSpeed(8.0f),
+        contextMenu(NULL),
+        hasBorderColours(false),
+        defaultFontColour(-1),
+        defaultFontSize(10),
+        fontSize(10),
+        scaleFont(true),
+        fontStyle(0),
+        ignore(false),
+        margin(0),
+        extraData(NULL),
+        needsRender(false),
+        parentDraw(true)
+        
 {
     graphics2D = PawsManager::GetSingleton().GetGraphics2D();
 
-    screenFrame = csRect(0,0,0,0);
-    clipRect = csRect(0,0,0,0);
-    saveWidgetPositions = false;
-
-    visible  = true;
-    movable  = false;
-    alwaysOnTop = false;
-    isResizable = false;
-    showResize = true;
-    resizeToScreen = false;
-    keepaspect = true;
-    scaleFont = true;
-    needsRender = false;
-    parentDraw = true;
-    id = -1;
-    parent   = NULL;
-    bgColour = -1;
-    border   = NULL;
-    name = "None";
-    attachFlags = 0;
-    fadeVal = 100;
-    fadeSpeed = 8.0f;
-    fade = true;
-    alphaMin=0;
-    alpha=0;
-    hasFocus = false;
-    hasMouseFocus=false;
-    configurable = false;
-    fontStyle = 0;
-    min_height = DEFAULT_MIN_HEIGHT;
-    min_width = DEFAULT_MIN_WIDTH;
     max_height = graphics2D->GetHeight();
     max_width = graphics2D->GetWidth();
-    hasBorderColours = false;
-    contextMenu = NULL;
-    xmlbinding.Clear();
-    ignore = false;
-    onEnter = NULL;
-    margin = 0;
-    close_widget = 0;
-    extraData = 0;
-    defaultFontColour = -1;
-    defaultFontSize = 10;
-    fontSize = 10;
-    titleBar = 0;
 
-    size_t a;
-    for (a=0; a<PW_SCRIPT_EVENT_COUNT; ++a)
+    for(size_t a = 0; a < PW_SCRIPT_EVENT_COUNT; ++a)
         scriptEvents[a] = 0;
 }
 
-pawsWidget::pawsWidget(const pawsWidget &origin)
+pawsWidget::pawsWidget(const pawsWidget &origin) :
+        id(origin.id),
+        parent(NULL),
+        defaultFrame(csRect(0, 0, 0, 0)),
+        screenFrame(origin.screenFrame),
+        clipRect(origin.clipRect),
+        titleBar(origin.titleBar),
+        close_widget(origin.close_widget),
+        onEnter(NULL),
+        visible(origin.visible),
+        saveWidgetPositions(origin.saveWidgetPositions),
+        configurable(origin.configurable),
+        movable(origin.movable),
+        isResizable(origin.isResizable),
+        showResize(origin.showResize),
+        resizeToScreen(origin.resizeToScreen),
+        keepaspect(origin.keepaspect),
+        alwaysOnTop(origin.alwaysOnTop),
+        min_width(origin.min_width),
+        min_height(origin.min_height),
+        max_width(origin.max_width),
+        max_height(origin.max_height),
+        name(origin.name),
+        bgColour(origin.bgColour),
+        border(NULL),
+        attachFlags(origin.attachFlags),
+        hasFocus(origin.hasFocus),
+        hasMouseFocus(origin.hasMouseFocus),
+        fadeVal(origin.fadeVal),
+        alpha(origin.alpha),
+        alphaMin(origin.alphaMin),
+        fade(origin.fade),
+        fadeSpeed(origin.fadeSpeed),
+        contextMenu(NULL),
+        hasBorderColours(origin.hasBorderColours),
+        defaultFontColour(origin.defaultFontColour),
+        defaultFontSize(origin.defaultFontSize),
+        fontSize(origin.fontSize),
+        scaleFont(origin.scaleFont),
+        fontStyle(origin.fontStyle),
+        ignore(origin.ignore),
+        margin(origin.margin),
+        extraData(origin.extraData),
+        needsRender(origin.needsRender),
+        parentDraw(origin.parentDraw)
 {
     graphics2D = PawsManager::GetSingleton().GetGraphics2D();
 
-    screenFrame = csRect(origin.screenFrame);
-    clipRect = csRect(origin.clipRect);
-    saveWidgetPositions = origin.saveWidgetPositions;
-
-    visible  = origin.visible;
-    movable  = origin.movable;
-    alwaysOnTop = origin.alwaysOnTop;
-    isResizable = origin.isResizable;
-    showResize = origin.showResize;
-    resizeToScreen = origin.resizeToScreen;
-    keepaspect = origin.keepaspect;
-    scaleFont = origin.scaleFont;
-    needsRender = origin.needsRender;
-    parentDraw = origin.parentDraw;
-    id = origin.id;
-    parent   = NULL;
-    bgColour = origin.bgColour;
-    border   = NULL;
-    name = origin.name;
-    attachFlags = origin.attachFlags;
-    fadeVal = origin.fadeVal;
-    fadeSpeed = origin.fadeSpeed;
-    fade = origin.fade;
-    alphaMin = origin.alphaMin;
-    alpha = origin.alpha;
-    hasFocus = origin.hasFocus;
-    hasMouseFocus = origin.hasMouseFocus;
-    configurable = origin.configurable;
-    fontStyle = origin.fontStyle;
-    min_height = origin.min_height;
-    min_width = origin.min_width;
-    max_height = origin.max_height;
-    max_width = origin.max_width;
-    hasBorderColours = origin.hasBorderColours;
-    contextMenu = NULL;
-    xmlbinding.Clear();
-    ignore = origin.ignore;
-    onEnter = NULL;
-    margin = origin.margin;
-    close_widget = origin.close_widget;
-    extraData = origin.extraData;
-    defaultFontColour = origin.defaultFontColour;
-    defaultFontSize = origin.defaultFontSize;
-    fontSize = origin.fontSize;
-    titleBar = origin.titleBar;
-
-    size_t a;
-    for (a=0; a<PW_SCRIPT_EVENT_COUNT; ++a)
+    for(size_t a = 0; a < PW_SCRIPT_EVENT_COUNT; ++a)
         scriptEvents[a] = origin.scriptEvents[a];
 }
 
