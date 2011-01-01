@@ -19,7 +19,7 @@
 -->
 <shader compiler="shaderweaver" name="lighting_simple" lights="3">
   <alias name="position" file="/shader-snippets/position-noclip.xml" />
-  <alias name="ambient" file="/shader-snippets/lighting/ambient-static.xml" />
+  <alias name="ambient" file="/shader-snippets/lighting/ambient-simple.xml" />
   <alias name="parallax" file="/shader-snippets/surface/parallax-none.xml" />
   <alias name="normalmap" file="/shader-snippets/surface/normalmap-none.xml" />
   <alias name="specular" file="/shader-snippets/surface/specular-none.xml" />
