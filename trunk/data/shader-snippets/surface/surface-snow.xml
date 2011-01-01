@@ -51,10 +51,15 @@
   	       texSnow1 = fragmentIn.texSnow1;
         </block>
     </input>
-     
+
+    <block location="cg:vertexMain">
+        result = diffuse;
+        result_attr_perfragment = true;
+    </block>
+
     <block location="cg:fragmentMain">
       <?if vars."snow density" ?>
-        float4 snowColor = tex2D (texSnow1, texCoord);
+        float4 snowColor = tex2D (texSnow1, texCoord/2);
         float3 normals = normalize(normal);
 
         float2 snow = float2(clamp(normals.y, 0.0f, 1.0f));
@@ -67,8 +72,10 @@
 
         result.rgb = lerp(diffuse.rgb, snowColor.rgb, snowplace*snowDensity);
         result.a = diffuse.a;
+        result_attr_perfragment = true;
       <?else?>
         result = diffuse;
+        result_attr_perfragment = true;
       <?endif?>
     </block>
     
