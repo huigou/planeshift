@@ -96,6 +96,8 @@ psMovementManager::psMovementManager(iEventNameRegistry* eventname_reg, psContro
     runToMarkerID = 0;
     lastDist = 0.0f;
     runToDiff = csVector3(0.0f);
+    lastDeltaX = 0.0f;
+    lastDeltaY = 0.0f;
 
     sensY = 1.0f;
     sensX = 1.0f;
