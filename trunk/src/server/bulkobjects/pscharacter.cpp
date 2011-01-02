@@ -3115,7 +3115,7 @@ double psCharacter::CalcFunction(MathEnvironment* env, const char* functionName,
             item = inventory.GetEquipmentObject(slot).default_if_empty;
         }
 
-        return env->GetValue(item);;
+        return env->GetValue(item);
     }
     else if (function == "GetArmorSkill")
     {
