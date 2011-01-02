@@ -1668,6 +1668,7 @@ int psItemStats::GetMaxCharges() const
 double psItemStats::GetProperty(MathEnvironment* env, const char *ptr)
 {
     csString property(ptr);
+    //returns the basic quality of this item.
     if (property == "Quality")
     {
         return (double) GetQuality();
@@ -1679,6 +1680,7 @@ double psItemStats::GetProperty(MathEnvironment* env, const char *ptr)
 
 double psItemStats::CalcFunction(MathEnvironment* env, const char * functionName, const double * params)
 {
+    //we have no functions here yet.
     CPrintf(CON_ERROR, "psItemStats::CalcFunction(%s) failed\n", functionName);
     return 0;
 }
