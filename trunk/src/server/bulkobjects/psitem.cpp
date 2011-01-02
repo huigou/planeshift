@@ -2249,6 +2249,12 @@ double psItem::CalcFunction(MathEnvironment* env, const char * functionName, con
 
         return weapon->GetArmorVSWeaponResistance(armor->GetCurrentStats());
     }
+    //returns to the script a psitemstats object. used to access the base stats
+    //without the psitem overlay.
+    if (function == "GetBaseItem")
+    {
+        return env->GetValue(GetBaseStats());
+    }
 
     CPrintf(CON_ERROR, "psItem::CalcFunction(%s) failed\n", functionName);
     return 0;
