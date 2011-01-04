@@ -3138,7 +3138,7 @@ double psCharacter::CalcFunction(MathEnvironment* env, const char* functionName,
     }
     else if (function == "CalculateAddExperience")
     {
-        return (double)CalculateAddExperience((PSSKILL) params[0], (unsigned int) params[1], (float) params[2]);
+        return (double)CalculateAddExperience((PSSKILL)(int) params[0], (unsigned int) params[1], (float) params[2]);
     }
 
     CPrintf(CON_ERROR, "psCharacter::CalcFunction(%s) failed\n", functionName);
