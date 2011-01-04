@@ -48,12 +48,12 @@ psAdminCommands::psAdminCommands(ClientMsgHandler* mh,
                                  iObjectRegistry* obj )
   : psCmdBase(mh,ch,obj)
 {
-	msgqueue->Subscribe(this, MSGTYPE_ADMINCMD);
-	msgqueue->Subscribe(this, MSGTYPE_ORDEREDTEST);
+    msgqueue->Subscribe(this, MSGTYPE_ADMINCMD);
+    msgqueue->Subscribe(this, MSGTYPE_ORDEREDTEST);
 
     cmdsource->Subscribe( "/petition",   this );
     cmdsource->Subscribe( "/deputize",   this );
-	cmdsource->Subscribe( "/rndmsgtest", this );
+    cmdsource->Subscribe( "/rndmsgtest", this );
 }
 
 psAdminCommands::~psAdminCommands()
@@ -77,78 +77,78 @@ const char *psAdminCommands::HandleCommand(const char *cmd)
 
 void psAdminCommands::HandleMessage(MsgEntry *me)
 {
-	switch (me->GetType())
-	{
+    switch (me->GetType())
+    {
         case MSGTYPE_ADMINCMD:
-		{
-			psAdminCmdMessage msg(me);
+        {
+            psAdminCmdMessage msg(me);
 
-			pawsChatWindow* chat = static_cast<pawsChatWindow*>(PawsManager::GetSingleton().FindWidget("ChatWindow"));
+            pawsChatWindow* chat = static_cast<pawsChatWindow*>(PawsManager::GetSingleton().FindWidget("ChatWindow"));
 
-			if( !msg.cmd )
-			{
-				if ( chat )
-				{
-					psSystemMessage sysMsg( 0, MSG_INFO, "You lack administrator access" );
-					msgqueue->Publish( sysMsg.msg );
-				}
+            if( !msg.cmd )
+            {
+                if ( chat )
+                {
+                    psSystemMessage sysMsg( 0, MSG_INFO, "You lack administrator access" );
+                    msgqueue->Publish( sysMsg.msg );
+                }
 
-				return;
-			}
+                return;
+            }
 
-			if ( chat )
-			{
-				psSystemMessage sysMsg( 0, MSG_INFO, "You now have the following admin commands available:" );
-				msgqueue->Publish( sysMsg.msg );
-			}
-	        
-			iDocumentSystem* xml = psengine->GetXMLParser ();
-			csRef<iDocument> doc = xml->CreateDocument();
-			const char* error = doc->Parse(msg.cmd);
-			bool subscribe = true;
-			csRef<iDocumentNode> subscribeNode = doc->GetRoot()->GetNode("subscribe");
-			if(subscribeNode.IsValid())
-				subscribe = subscribeNode->GetAttributeValueAsBool("value");
+            if ( chat )
+            {
+                psSystemMessage sysMsg( 0, MSG_INFO, "You now have the following admin commands available:" );
+                msgqueue->Publish( sysMsg.msg );
+            }
+            
+            iDocumentSystem* xml = psengine->GetXMLParser ();
+            csRef<iDocument> doc = xml->CreateDocument();
+            const char* error = doc->Parse(msg.cmd);
+            bool subscribe = true;
+            csRef<iDocumentNode> subscribeNode = doc->GetRoot()->GetNode("subscribe");
+            if(subscribeNode.IsValid())
+                subscribe = subscribeNode->GetAttributeValueAsBool("value");
 
-			if ( error )
-			{
-				Error3("Failure to parse XML string %s Error %s\n", msg.cmd.GetData(), error);            
-			}
-			else
-			{
-				csRef<iDocumentNodeIterator> cmdIter = doc->GetRoot()->GetNodes("command");
-	        
-				csString commands;
-				while ( cmdIter->HasNext() )
-				{
-					csRef<iDocumentNode> commandNode = cmdIter->Next();
-					csString cmdString = commandNode->GetAttributeValue("name");
-					commands.Append( cmdString );
-					commands.Append( "  " );
-					if(subscribe)
-						cmdsource->Subscribe( cmdString, this );
-				}
-	            
-				if ( chat )
-				{
-					psSystemMessage commandMsg( 0, MSG_INFO, commands.GetData() );
-					msgqueue->Publish( commandMsg.msg );
+            if ( error )
+            {
+                Error3("Failure to parse XML string %s Error %s\n", msg.cmd.GetData(), error);            
+            }
+            else
+            {
+                csRef<iDocumentNodeIterator> cmdIter = doc->GetRoot()->GetNodes("command");
+            
+                csString commands;
+                while ( cmdIter->HasNext() )
+                {
+                    csRef<iDocumentNode> commandNode = cmdIter->Next();
+                    csString cmdString = commandNode->GetAttributeValue("name");
+                    commands.Append( cmdString );
+                    commands.Append( "  " );
+                    if(subscribe)
+                        cmdsource->Subscribe( cmdString, this );
+                }
+                
+                if ( chat )
+                {
+                    psSystemMessage commandMsg( 0, MSG_INFO, commands.GetData() );
+                    msgqueue->Publish( commandMsg.msg );
 
-					// Update the auto-complete list if there were subscritions
-					if(subscribe)
-						chat->RefreshCommandList();
-				}
-			}
-			break;
-		}
+                    // Update the auto-complete list if there were subscritions
+                    if(subscribe)
+                        chat->RefreshCommandList();
+                }
+            }
+            break;
+        }
 
-		case MSGTYPE_ORDEREDTEST:
-		{
-			psOrderedMessage seq(me);
-			csString str;
-			psSystemMessage msg(0,MSG_INFO,"Random sequence %d.", seq.value);
-			msg.FireEvent();
-//			psengine->GetMainWidget()->PrintOnScreen(str,0xffffff);
-		}
+        case MSGTYPE_ORDEREDTEST:
+        {
+            psOrderedMessage seq(me);
+            csString str;
+            psSystemMessage msg(0,MSG_INFO,"Random sequence %d.", seq.value);
+            msg.FireEvent();
+            //psengine->GetMainWidget()->PrintOnScreen(str,0xffffff);
+        }
     }
 }
