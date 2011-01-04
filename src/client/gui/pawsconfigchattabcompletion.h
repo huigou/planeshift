@@ -39,7 +39,6 @@ public:
     virtual bool LoadConfig();
     virtual bool SaveConfig();
     virtual void SetDefault();
-    virtual void Show();
 
        // from pawsWidget
        bool OnChange(pawsWidget* /*widget*/) { dirty = true; return true; }

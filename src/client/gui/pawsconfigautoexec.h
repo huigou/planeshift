@@ -39,7 +39,6 @@ public:
     virtual bool LoadConfig();///< @see pawsConfigSectionWindow
     virtual bool SaveConfig();///< @see pawsConfigSectionWindow
     virtual void SetDefault();///< @see pawsConfigSectionWindow
-    virtual void Show();      ///< @see pawsConfigSectionWindow
 
     bool OnChange(pawsWidget* /*widget*/) { dirty = true; return true; } ///< @see pawsWidget
     /// @see pawsWidget
