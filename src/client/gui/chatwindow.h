@@ -89,6 +89,7 @@ struct ChatSettings
     bool defaultlastchat;
     bool looseFocusOnSend;
     bool logChannel[CHAT_NLOG];
+    bool enabledLogging[CHAT_END];
     bool enableBadWordsFilterIncoming, enableBadWordsFilterOutgoing;
     bool echoScreenInSystem;
     bool mainBrackets; ///< If it's true brackets like [guild] [tell] will be put in main tab.
