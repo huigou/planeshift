@@ -93,7 +93,7 @@ struct ChatSettings
     bool enableBadWordsFilterIncoming, enableBadWordsFilterOutgoing;
     bool echoScreenInSystem;
     bool mainBrackets; ///< If it's true brackets like [guild] [tell] will be put in main tab.
-    bool yourColorMix; ///< If it's true the yourColor will be mixed with the Color of the destination 
+    bool yourColorMix; ///< If it's true the yourColor will be mixed with the Color of the destination
                        ///Example: if you send a tell the color of your text will be (yourColor+tellColor)/2
     csString chatWidget; ///< contains the widget to load, default being chat.xml. It's used during engine init and for changing settings.
     csArray<csString> badWords;
@@ -169,29 +169,29 @@ public:
 
     void SaveChatSettings();
     void LoadChatSettings();
-    
+
     void RefreshCommandList();
 
     pawsIgnoreWindow*  GetIgnoredList() { return IgnoredList; }
-    
+
     /// Remove bad words from the output string
     void BadWordsFilter(csString& s);
-    
+
     /// mixes two colours and returns their mixed colour
     int mixColours(int colour1, int colour2);
-    
+
     /// Leaves the channel and removes the hotkey association
     bool LeaveChannel(int hotkeyChannel);
-    
+
     /// Joins the channel and adds the hotkey when the server accepts the join.
     void JoinChannel(csString name);
-    
+
 protected:
 
     void HandleSystemMessage( MsgEntry* message );
 
     /** Takes as input a message and formats it with colours, /me and /my support.
-     *  
+     *
      *  @param sText: The message main text.
      *  @param sPerson: The message sender.
      *  @param prependingText: the text which will be prepended before the message. This will get translated.
@@ -199,7 +199,7 @@ protected:
      *  @param hasCharName: Tells if the player character name is inside the message.
      */
     void FormatMessage(csString &sText, csString &sPerson, csString prependingText, csString &buff, bool &hasCharName);
-    
+
     /// Sends the contents of the input text to the server.
     void SendChatLine(csString& inputText);
 
@@ -242,14 +242,14 @@ protected:
 
     /// Chat history
     pawsChatHistory* chatHistory;
-    
+
     /// Current line, stored for when scrolling back in the chat history
     csString currLine;
 
     ChatSettings settings;
 
     csRef<iFile> logFile[CHAT_NLOG];
-    
+
     void LogMessage(enum E_CHAT_LOG channel, const char* message, int type = CHAT_SAY);
 
     void CreateSettingNode(iDocumentNode* mNode,int color,const char* name);
@@ -258,7 +258,7 @@ protected:
      *  @param reqLines The amount of lines to load from the log starting from the bottom.
      */
     void ReplayMessages(unsigned int reqLines);
-    
+
     /// Subscribed channel name to server channel ID reversible mapping
     csHashReversible<uint32_t, csString> channelIDs;
     /// Hotkeys for server channel IDs

@@ -67,12 +67,12 @@ bool pawsConfigChatLogs::Initialize()
     for(int i = 0; i < CHAT_END; i++)
     {
         pawsListBoxRow* row =  chatTypes->NewRow();
-        //this is important as it's a corrispondence to the chat types enum/char array       
+        //this is important as it's a corrispondence to the chat types enum/char array
         row->SetID(i);
         pawsTextBox* name = (pawsTextBox*)row->GetColumn(0);
-        name->SetText(CHAT_TYPES[i]);              
+        name->SetText(CHAT_TYPES[i]);
     }
-    
+
     return true;
 }
 
