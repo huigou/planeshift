@@ -121,8 +121,3 @@ void pawsConfigChatTabCompletion::SetDefault()
     LoadConfig();
 }
 
-void pawsConfigChatTabCompletion::Show()
-{
-    pawsWidget::Show();
-}
-

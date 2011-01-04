@@ -123,11 +123,6 @@ void pawsConfigAutoexec::SetDefault()
     LoadConfig();
 }
 
-void pawsConfigAutoexec::Show()
-{
-    pawsWidget::Show();
-}
-
 void pawsConfigAutoexec::OnListAction(pawsListBox* /*selected*/, int /*status*/)
 {
     dirty = true;
