@@ -440,22 +440,22 @@ void pawsChatWindow::LoadChatSettings()
     }
 
     //adds the items for configured autocompletion in their own array.
-    tabCompletionNode = chatNode->GetNode("tabcompletion");                                                      
-    if(!tabCompletionNode)                                                                                       
-        tabCompletionNode = defaultChatNode->GetNode("tabcompletion");                                           
-    if (tabCompletionNode != NULL)                                                                               
-    {                                                                                                            
-        csRef<iDocumentNodeIterator> oNodes = tabCompletionNode->GetNodes();                                       
-        while(oNodes->HasNext())                                                                                   
-        {                                                                                                          
-            csRef<iDocumentNode> option = oNodes->Next();                                                            
-            if (option->GetType() == CS_NODE_ELEMENT && csString(option->GetValue()) == "completionitem")            
-            {                                                                                                        
-                csString completionItem = option->GetAttributeValue("value");                                          
-                if (settings.completionItems.Find(completionItem) == csArrayItemNotFound)                              
-                    settings.completionItems.Push(completionItem);                                                       
-            }                                                                                                        
-        }                                                                                                          
+    tabCompletionNode = chatNode->GetNode("tabcompletion");
+    if(!tabCompletionNode)
+        tabCompletionNode = defaultChatNode->GetNode("tabcompletion");
+    if (tabCompletionNode != NULL)
+    {
+        csRef<iDocumentNodeIterator> oNodes = tabCompletionNode->GetNodes();
+        while(oNodes->HasNext())
+        {
+            csRef<iDocumentNode> option = oNodes->Next();
+            if (option->GetType() == CS_NODE_ELEMENT && csString(option->GetValue()) == "completionitem")
+            {
+                csString completionItem = option->GetAttributeValue("value");
+                if (settings.completionItems.Find(completionItem) == csArrayItemNotFound)
+                    settings.completionItems.Push(completionItem);
+            }
+        }
     }
 
     // Load message filters
@@ -548,7 +548,7 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
             ReplayMessages(strtoul(text.GetDataSafe(), NULL, 0));
             return NULL;
         }
-        
+
         if (words.GetCount() == 1)
         {
             error = PawsManager::GetSingleton().Translate("You must enter the text");
@@ -888,7 +888,7 @@ void pawsChatWindow::LogMessage(enum E_CHAT_LOG channel, const char* message, in
     //check if this log is enabled
     if(!settings.logChannel[channel])
         return;
-        
+
     //check if logging for this chat type is enabled
     if(!settings.enabledLogging[type])
         return;
@@ -907,7 +907,7 @@ void pawsChatWindow::LogMessage(enum E_CHAT_LOG channel, const char* message, in
             time_t aclock;
             struct tm *newtime;
             char buf[32];
-            
+
             time(&aclock);
             newtime = localtime(&aclock);
             strftime(buf, 32, "%a %d-%b-%Y %H:%M:%S", newtime);
