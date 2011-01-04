@@ -95,7 +95,7 @@ pawsListBox::pawsListBox()
     highlightImage = "Highlight";
     highlightAlpha = 128;
 
-    arrowSize       = 16;
+    arrowSize       = 12;
     arrowUp         = "Up Arrow";
     arrowDown       = "Down Arrow";
     scrollbarWidth  = 15;
@@ -1098,7 +1098,7 @@ void pawsListBox::CreateSortingArrow(int colNum)
         
     pawsWidget * arrow = new pawsWidget();
     title->AddChild(arrow);
-    arrow->SetRelativeFrame(title->ScreenFrame().Width()-arrowSize, 0, arrowSize, arrowSize);
+    arrow->SetRelativeFrame(title->ScreenFrame().Width()-arrowSize, 4, arrowSize, arrowSize);
     arrow->SetName("SortingArrow");
 }
 
