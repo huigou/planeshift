@@ -77,6 +77,10 @@
                     <attr name="SectionName" value="chat"/>
                     <attr name="factory" value="pawsConfigChat"/>
                 </widget>
+                <widget factory="pawsSimpleTreeNode" label="Chat - Logs">
+                    <attr name="SectionName" value="chatlogs"/>
+                    <attr name="factory" value="pawsConfigChatLogs"/>
+                </widget>
                 <widget factory="pawsSimpleTreeNode" label="Chat - Filters">
                     <attr name="SectionName" value="chatfilter"/>
                     <attr name="factory" value="pawsConfigChatFilter"/>
