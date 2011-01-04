@@ -62,7 +62,7 @@
             <scrollbar arrowup="Up Arrow" arrowdown="Down Arrow" arrowsize="8" width="15"  border="no"/>
             <highlight resource="Highlight" />
             <columns height="20">
-                <column width="120" >
+                <column width="140" >
                     <widget name="" factory="pawsTextBox"></widget>
                 </column>
             </columns>
@@ -116,7 +116,7 @@
             <scrollbar arrowup="Up Arrow" arrowdown="Down Arrow" arrowsize="8" width="15"  border="no"/>
             <highlight resource="Highlight" />
             <columns height="20">
-                <column width="120" >
+                <column width="140" >
                     <widget name="" factory="pawsTextBox"></widget>
                 </column>
             </columns>
@@ -141,7 +141,7 @@
             <scrollbar arrowup="Up Arrow" arrowdown="Down Arrow" arrowsize="8" width="15"  border="no"/>
             <highlight resource="Highlight" />
             <columns height="20" headings="no">
-                <column width="115" >
+                <column width="130" >
                     <widget name="Religion" factory="pawsTextBox"></widget>
                 </column>
             </columns>
