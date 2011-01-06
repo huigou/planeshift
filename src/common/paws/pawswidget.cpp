@@ -1388,6 +1388,9 @@ void pawsWidget::SaveSettings()
     configName.Format("PlaneShift.GUI.%s.Fade", GetName());
     cfgMgr->SetBool(configName, fade);
 
+    configName.Format("PlaneShift.GUI.%s.ScaleFont", GetName());
+    cfgMgr->SetBool(configName, scaleFont);
+
     cfgMgr->Save();
 }
 
@@ -1407,8 +1410,12 @@ void pawsWidget::LoadSettings()
     configName.Format("PlaneShift.GUI.%s.Fade", GetName());
     fade = cfgMgr->GetBool(configName, fade);
 
+    configName.Format("PlaneShift.GUI.%s.ScaleFont", GetName());
+    fade = cfgMgr->GetBool(configName, scaleFont);
+
     configName.Format("PlaneShift.GUI.%s.FadeSpeed", GetName());
     fadeSpeed = cfgMgr->GetFloat(configName, fadeSpeed);
+    
 }
 
 void pawsWidget::CreateWidgetConfigWindow()
