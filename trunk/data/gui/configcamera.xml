@@ -15,6 +15,9 @@
                         <text string="General"/>
                     </widget>
                 </nodewidget>
+            <widget factory="pawsSeqTreeNode" name="Use Collision Detection">
+            <attr name="type" value="onoff"/>
+                </widget>
             <widget factory="pawsSeqTreeNode" name="Use NPC Chat Camera">
              <attr name="type" value="onoff"/>
             </widget>
