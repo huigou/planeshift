@@ -1,3 +1,6 @@
-<serverlist>
-    <server name="localhost" description="New User? Register at http://laanx.fragnetics.com/register" ip="localhost" port="13331" />
-</serverlist>    
+<serverlist>
+
+    <server name="localhost" description="New User? Register at http://laanx.fragnetics.com/register" ip="localhost" port="13331" />
+
+</serverlist>    
+
