@@ -105,7 +105,7 @@ public:
     void HandleMessage( MsgEntry* message );
 
     /// Handles commands (unused for now)
-    const char* HandleCommand(const char* /*cmd*/) { return NULL; };
+    const char* HandleCommand(const char* /*cmd*/) { return NULL; }
 
     /**
      * Print a message on screen
@@ -124,6 +124,12 @@ public:
     void ClearFadingText();
 
     void DrawChildren();
+
+    /** Draw method.
+     *  As the main widget is not a real widget which should show things, but only it's children
+     *  are drawn by calling drawchildren directly, the draw function does nothing.
+     */
+    void Draw() {}
     bool SetupMain();
 
     void DeleteChild(pawsWidget* txtBox); // Removes the fading text box from the array and the memory

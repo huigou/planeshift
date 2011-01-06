@@ -784,10 +784,7 @@ void PawsManager::Draw()
     }
 
     // Now everything else.
-    //NOTE: if the modal widget is the main widget we don't want to draw it
-    //else we would draw it's widgets again
-    //@TODO: check if we can avoid this by overloading the Draw() method in the main widget.
-    if(modalWidget != NULL && modalWidget != mainWidget) modalWidget->Draw();
+    if(modalWidget != NULL) modalWidget->Draw();
 
     graphics2D->SetClipRect( 0,0, graphics2D->GetWidth(), graphics2D->GetHeight());
 
