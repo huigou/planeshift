@@ -229,12 +229,12 @@ bool psMainWidget::OnKeyDown( utf32_char keyCode, utf32_char key, int modifiers 
     {
         return true;
     }
-    
+    printf("look KEYDOWN %d\n", psengine->GetCharControl()->GetMovementManager()->MouseLook());
     // Check for tabing in and out of chat window.
     psCharController* charctrl = psengine->GetCharControl();
     if(!charctrl)
         return true;
-
+    if(!psengine->GetCharControl()->GetMovementManager()->MouseLook()){
     if ( charctrl->MatchTrigger("Toggle chat",psControl::KEYBOARD,keyCode,modifiers) )
     {
         if ( chatWindow == NULL )
@@ -297,11 +297,12 @@ bool psMainWidget::OnKeyDown( utf32_char keyCode, utf32_char key, int modifiers 
         }
         return true;
     }
-    
+}
     // Unlock mouse look if a matching key was pressed
     if (charctrl->MatchTrigger("Toggle MouseLook", psControl::KEYBOARD, keyCode, modifiers) || 
     	charctrl->MatchTrigger("MouseLook", psControl::KEYBOARD, keyCode, modifiers))
     {
+        //SetModalState(!psengine->GetCharControl()->GetMovementManager()->MouseLook());
         psengine->GetCharControl()->GetMovementManager()->MouseLookCanAct(true);
     }
     
@@ -358,21 +359,24 @@ bool psMainWidget::OnMouseDown( int button, int keyModifier, int x, int y )
     if ( psengine->GetPSCamera() && underlaying == this )
     {
         GEMClientObject* over = FindMouseOverObject( x, y );
-
+printf("look MOUSEDOWN %d\n", psengine->GetCharControl()->GetMovementManager()->MouseLook());
         // Unlock mouse look if a matching key was pressed
         const psControl* mouseLook = psengine->GetCharControl()->GetTrigger("MouseLook");
         if(mouseLook->button==(uint)button && mouseLook->mods==(uint)keyModifier)
         {
+            //SetModalState(!psengine->GetCharControl()->GetMovementManager()->MouseLook());
             psengine->GetCharControl()->GetMovementManager()->MouseLookCanAct(true);
         }
 
         const psControl* mouseLookToggle = psengine->GetCharControl()->GetTrigger("Toggle MouseLook");
         if(mouseLookToggle->button==(uint)button && mouseLookToggle->mods==(uint)keyModifier)
         {
+            //SetModalState(!psengine->GetCharControl()->GetMovementManager()->MouseLook());
             psengine->GetCharControl()->GetMovementManager()->MouseLookCanAct(true);
         }
-        
-        
+
+        printf("look MOUSEDOWN %d\n", psengine->GetCharControl()->GetMovementManager()->MouseLook());
+        if(!psengine->GetCharControl()->GetMovementManager()->MouseLook()){
         if (psengine->GetMouseBinds()->CheckBind("EntitySelect", button, keyModifier))
         {
             if ( over )
@@ -437,6 +441,7 @@ bool psMainWidget::OnMouseDown( int button, int keyModifier, int x, int y )
                     }
                 }
             }
+        }
         }
 
     }
