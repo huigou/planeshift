@@ -464,6 +464,7 @@ bool psMainWidget::OnMouseDown( int button, int keyModifier, int x, int y )
 
 bool psMainWidget::OnMouseUp(int /*button*/, int /*keyModifier*/, int /*x*/, int /*y*/)
 {
+    SetModalState(psengine->GetCharControl()->GetMovementManager()->MouseLook());
     return false;
 }
 
