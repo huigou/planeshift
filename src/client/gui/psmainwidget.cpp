@@ -229,81 +229,88 @@ bool psMainWidget::OnKeyDown( utf32_char keyCode, utf32_char key, int modifiers 
     {
         return true;
     }
-    printf("look KEYDOWN %d\n", psengine->GetCharControl()->GetMovementManager()->MouseLook());
+    
     // Check for tabing in and out of chat window.
     psCharController* charctrl = psengine->GetCharControl();
     if(!charctrl)
         return true;
-    if(!psengine->GetCharControl()->GetMovementManager()->MouseLook()){
-    if ( charctrl->MatchTrigger("Toggle chat",psControl::KEYBOARD,keyCode,modifiers) )
+
+    //if we are using mouselook we don't want these to trigger or we would have some
+    //funny effects (like being unable to get out of mouse look without exiting the
+    //chat window targeting)
+    if(!psengine->GetCharControl()->GetMovementManager()->MouseLook())
     {
-        if ( chatWindow == NULL )
+        if ( charctrl->MatchTrigger("Toggle chat",psControl::KEYBOARD,keyCode,modifiers) )
         {
-            chatWindow = (pawsChatWindow*)FindWidget("ChatWindow");           
-        }
-               
-        if ( chatWindow )
-        {
-            if ( chatWindow->InputActive() )
+            if ( chatWindow == NULL )
             {
-                if ( lastWidget )
+                chatWindow = (pawsChatWindow*)FindWidget("ChatWindow");           
+            }
+                   
+            if ( chatWindow )
+            {
+                if ( chatWindow->InputActive() )
                 {
-                    BringToTop(lastWidget);                
-                    PawsManager::GetSingleton().SetCurrentFocusedWidget( lastWidget );
-                }                    
-            }                                
-            else
+                    if ( lastWidget )
+                    {
+                        BringToTop(lastWidget);                
+                        PawsManager::GetSingleton().SetCurrentFocusedWidget( lastWidget );
+                    }                    
+                }                                
+                else
+                {
+                    lastWidget = PawsManager::GetSingleton().GetCurrentFocusedWidget();
+                    chatWindow->Show();
+                    BringToTop( chatWindow );
+                    PawsManager::GetSingleton().SetCurrentFocusedWidget( chatWindow->FindWidget("InputText") );
+                }
+            }
+            return true;
+        }
+        
+        if ( charctrl->MatchTrigger("Reply tell",psControl::KEYBOARD,keyCode,modifiers) )
+        {
+            if ( chatWindow == NULL )
             {
-                lastWidget = PawsManager::GetSingleton().GetCurrentFocusedWidget();
+                chatWindow = (pawsChatWindow*)FindWidget("ChatWindow");
+            }
+            if (chatWindow && HasFocus())
+            {
                 chatWindow->Show();
                 BringToTop( chatWindow );
                 PawsManager::GetSingleton().SetCurrentFocusedWidget( chatWindow->FindWidget("InputText") );
+                chatWindow->AutoReply();
             }
+            return true;
         }
-        return true;
+        if ( charctrl->MatchTrigger("Close",psControl::KEYBOARD,keyCode,modifiers) )
+        {
+            pawsWidget* widget = PawsManager::GetSingleton().GetCurrentFocusedWidget();
+            if (widget != this)
+            {
+                //Keep checking for a parent untill the main widget is found
+                for (pawsWidget* parent = widget->GetParent();parent != this;parent=widget->GetParent())
+                    widget = parent;
+                widget->Close();
+            }
+            else
+            {
+                pawsControlWindow* ctrlWindow =  dynamic_cast<pawsControlWindow*>(FindWidget("ControlWindow"));
+                if(!ctrlWindow)
+                    return false; // Should never happen, but no way to be sure.
+                ctrlWindow->Toggle();
+            }
+            return true;
+        }
     }
-    
-    if ( charctrl->MatchTrigger("Reply tell",psControl::KEYBOARD,keyCode,modifiers) )
-    {
-        if ( chatWindow == NULL )
-        {
-            chatWindow = (pawsChatWindow*)FindWidget("ChatWindow");
-        }
-        if (chatWindow && HasFocus())
-        {
-            chatWindow->Show();
-            BringToTop( chatWindow );
-            PawsManager::GetSingleton().SetCurrentFocusedWidget( chatWindow->FindWidget("InputText") );
-            chatWindow->AutoReply();
-        }
-        return true;
-    }
-    if ( charctrl->MatchTrigger("Close",psControl::KEYBOARD,keyCode,modifiers) )
-    {
-        pawsWidget* widget = PawsManager::GetSingleton().GetCurrentFocusedWidget();
-        if (widget != this)
-        {
-            //Keep checking for a parent untill the main widget is found
-            for (pawsWidget* parent = widget->GetParent();parent != this;parent=widget->GetParent())
-                widget = parent;
-            widget->Close();
-        }
-        else
-        {
-            pawsControlWindow* ctrlWindow =  dynamic_cast<pawsControlWindow*>(FindWidget("ControlWindow"));
-            if(!ctrlWindow)
-                return false; // Should never happen, but no way to be sure.
-            ctrlWindow->Toggle();
-        }
-        return true;
-    }
-}
     // Unlock mouse look if a matching key was pressed
     if (charctrl->MatchTrigger("Toggle MouseLook", psControl::KEYBOARD, keyCode, modifiers) || 
     	charctrl->MatchTrigger("MouseLook", psControl::KEYBOARD, keyCode, modifiers))
     {
-        //SetModalState(!psengine->GetCharControl()->GetMovementManager()->MouseLook());
         psengine->GetCharControl()->GetMovementManager()->MouseLookCanAct(true);
+        //set this window modal so it has precedence over everything... or at least
+        //a model widget should...
+        SetModalState(psengine->GetCharControl()->GetMovementManager()->MouseLook());
     }
     
     return false;
@@ -359,89 +366,95 @@ bool psMainWidget::OnMouseDown( int button, int keyModifier, int x, int y )
     if ( psengine->GetPSCamera() && underlaying == this )
     {
         GEMClientObject* over = FindMouseOverObject( x, y );
-printf("look MOUSEDOWN %d\n", psengine->GetCharControl()->GetMovementManager()->MouseLook());
         // Unlock mouse look if a matching key was pressed
         const psControl* mouseLook = psengine->GetCharControl()->GetTrigger("MouseLook");
         if(mouseLook->button==(uint)button && mouseLook->mods==(uint)keyModifier)
         {
-            //SetModalState(!psengine->GetCharControl()->GetMovementManager()->MouseLook());
             psengine->GetCharControl()->GetMovementManager()->MouseLookCanAct(true);
+            //set this window modal so it has precedence over everything... or at least
+            //a model widget should...
+            SetModalState(psengine->GetCharControl()->GetMovementManager()->MouseLook());
         }
 
         const psControl* mouseLookToggle = psengine->GetCharControl()->GetTrigger("Toggle MouseLook");
         if(mouseLookToggle->button==(uint)button && mouseLookToggle->mods==(uint)keyModifier)
         {
-            //SetModalState(!psengine->GetCharControl()->GetMovementManager()->MouseLook());
             psengine->GetCharControl()->GetMovementManager()->MouseLookCanAct(true);
+            //set this window modal so it has precedence over everything... or at least
+            //a model widget should...
+            SetModalState(psengine->GetCharControl()->GetMovementManager()->MouseLook());
         }
 
-        printf("look MOUSEDOWN %d\n", psengine->GetCharControl()->GetMovementManager()->MouseLook());
-        if(!psengine->GetCharControl()->GetMovementManager()->MouseLook()){
-        if (psengine->GetMouseBinds()->CheckBind("EntitySelect", button, keyModifier))
+        //if we are using mouselook we don't want these to trigger or we would have some
+        //funny effects (like being unable to get out of mouse look without exiting the
+        //chat window targeting)
+        if(!psengine->GetCharControl()->GetMovementManager()->MouseLook())
         {
-            if ( over )
+            if (psengine->GetMouseBinds()->CheckBind("EntitySelect", button, keyModifier))
             {
-                psengine->GetCharControl()->GetMovementManager()->SetMouseMove(false);
-                psengine->GetCharManager()->SetTarget(over,"select"); 
-            }
-            else 
-            {
-                // Deselect current target
-                psengine->GetCharManager()->SetTarget(NULL, "select");
-
-                //// Check for Action Location
-                //{
-                //    int poly = 0;
-                //    csVector3 pos;
-
-                //    iMeshWrapper* mesh  = psengine->GetPSCamera()->FindMeshUnder2D( x, y, &pos, &poly );
-
-                //    if (mesh)
-                //    {
-                //        iSector* sector = psengine->GetPSCamera()->GetICamera()->GetSector();
-                //        const char* sectorname = sector->QueryObject()->GetName();
-                //        const char* meshname = mesh->QueryObject()->GetName();
-                //        psengine->GetActionHandler()->Query( "SELECT", sectorname, meshname, poly, pos);
-                //    }
-                //}
-            }
-        }
-
-        // Check Context Menu
-        if (psengine->GetMouseBinds()->CheckBind("ContextMenu", button, keyModifier))
-        {
-            if ( over )
-            {
-                psengine->GetCharManager()->SetTarget(over, "context");
-            }
-            else
-            {
-                // Deselect current target
-                psengine->GetCharManager()->SetTarget(NULL, "select");
-
-                // Check for Action Location
+                if ( over )
                 {
-                    int poly = 0;
-                    csVector3 pos;
+                    psengine->GetCharControl()->GetMovementManager()->SetMouseMove(false);
+                    psengine->GetCharManager()->SetTarget(over,"select"); 
+                }
+                else 
+                {
+                    // Deselect current target
+                    psengine->GetCharManager()->SetTarget(NULL, "select");
 
-                    iMeshWrapper* mesh  = psengine->GetPSCamera()->FindMeshUnder2D( x, y, &pos, &poly );
+                    //// Check for Action Location
+                    //{
+                    //    int poly = 0;
+                    //    csVector3 pos;
 
-                    if (mesh)
+                    //    iMeshWrapper* mesh  = psengine->GetPSCamera()->FindMeshUnder2D( x, y, &pos, &poly );
+
+                    //    if (mesh)
+                    //    {
+                    //        iSector* sector = psengine->GetPSCamera()->GetICamera()->GetSector();
+                    //        const char* sectorname = sector->QueryObject()->GetName();
+                    //        const char* meshname = mesh->QueryObject()->GetName();
+                    //        psengine->GetActionHandler()->Query( "SELECT", sectorname, meshname, poly, pos);
+                    //    }
+                    //}
+                }
+            }
+
+            // Check Context Menu
+            if (psengine->GetMouseBinds()->CheckBind("ContextMenu", button, keyModifier))
+            {
+                if ( over )
+                {
+                    psengine->GetCharManager()->SetTarget(over, "context");
+                }
+                else
+                {
+                    // Deselect current target
+                    psengine->GetCharManager()->SetTarget(NULL, "select");
+
+                    // Check for Action Location
                     {
-                        iSector* sector = psengine->GetPSCamera()->GetICamera()->GetCamera()->GetSector();
-                        const char* sectorname = sector->QueryObject()->GetName();
-                        const char* meshname = mesh->QueryObject()->GetName();
+                        int poly = 0;
+                        csVector3 pos;
 
-                        // See if it's worth quering
-                        //bool meshRecorded = psengine->GetCelClient()->IsMeshSubjectToAction(sectorname,meshname);
-                        //pawsWidget* action = PawsManager::GetSingleton().FindWidget("AddEditActionWindow");
+                        iMeshWrapper* mesh  = psengine->GetPSCamera()->FindMeshUnder2D( x, y, &pos, &poly );
 
-                        //if((action && action->IsVisible()) || meshRecorded)
-                            psengine->GetActionHandler()->Query( "SELECT", sectorname, meshname, poly, pos);
+                        if (mesh)
+                        {
+                            iSector* sector = psengine->GetPSCamera()->GetICamera()->GetCamera()->GetSector();
+                            const char* sectorname = sector->QueryObject()->GetName();
+                            const char* meshname = mesh->QueryObject()->GetName();
+
+                            // See if it's worth quering
+                            //bool meshRecorded = psengine->GetCelClient()->IsMeshSubjectToAction(sectorname,meshname);
+                            //pawsWidget* action = PawsManager::GetSingleton().FindWidget("AddEditActionWindow");
+
+                            //if((action && action->IsVisible()) || meshRecorded)
+                                psengine->GetActionHandler()->Query( "SELECT", sectorname, meshname, poly, pos);
+                        }
                     }
                 }
             }
-        }
         }
 
     }
