@@ -19,7 +19,7 @@
     <!-- OK button -->
     <widget name="ok" factory="pawsButton">
         <frame x="300" y="530" width="200" height="30" border="yes" />
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"/>  
+        <font name="LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"/>  
         <buttonup resource="Blue Title"/>
         <buttondown resource="Blue Title" />
     <label text="Ok"/>

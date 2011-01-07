@@ -35,7 +35,7 @@
 	    <!-- OK button -->
 	    <widget name="Apply" factory="pawsButton">
 		<frame x="50" y="245" width="60" height="30" border="yes"/>
-		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"/>  
+		<font name="LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"/>  
 		<buttonup resource="peStandardButton"/>
 		<buttondown resource="peStandardButton"/>
 		<label text="Apply"/>
@@ -44,7 +44,7 @@
 	   <!-- Cancel button --> 
 	    <widget name="Close" factory="pawsButton" toggle="no" shadows="yes">
 		<frame x="150" y="245" width="60" height="30" border="yes"/>
-		<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"/>  
+		<font name="LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"/>  
 		<buttonup resource="peStandardButton"/>
 		<buttondown resource="peStandardButton"/>
 		<label text="Close"/>

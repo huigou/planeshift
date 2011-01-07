@@ -472,40 +472,46 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
     csRef<iDocumentNode> fontAttribute = node->GetNode("font");
     if ( fontAttribute )
     {
-            fontName = fontAttribute->GetAttributeValue("name");
-            defaultFontSize = fontAttribute->GetAttributeValueAsFloat("size");
-            fontSize = defaultFontSize;
-            bool scaleToScreen = fontAttribute->GetAttributeValueAsBool("resizetoscreen", true);
-            scaleFont = fontAttribute->GetAttributeValueAsBool("scalefont", false);
+        fontName = fontAttribute->GetAttributeValue("name");
+        
+        // Check if it's a short definition
+        if(!fontName.StartsWith("/"))
+        {
+            fontName = PawsManager::GetSingleton().GetLocalization()->FindLocalizedFile("data/ttf/" + fontName);
+        }
+        defaultFontSize = fontAttribute->GetAttributeValueAsFloat("size");
+        fontSize = defaultFontSize;
+        bool scaleToScreen = fontAttribute->GetAttributeValueAsBool("resizetoscreen", true);
+        scaleFont = fontAttribute->GetAttributeValueAsBool("scalefont", false);
 
-            if ( this->resizeToScreen && scaleToScreen )
-                fontSize *= PawsManager::GetSingleton().GetFontFactor();
+        if ( this->resizeToScreen && scaleToScreen )
+            fontSize *= PawsManager::GetSingleton().GetFontFactor();
 
-            myFont = graphics2D->GetFontServer()->LoadFont(fontName, (fontSize)?fontSize:10);
-            if ( !myFont )
-            {
-                Error2("Could not load font: >%s<", (const char*)fontName );
-                return false;
-            }
-            int r = fontAttribute->GetAttributeValueAsInt( "r" );
-            int g = fontAttribute->GetAttributeValueAsInt( "g" );
-            int b = fontAttribute->GetAttributeValueAsInt( "b" );
+        myFont = graphics2D->GetFontServer()->LoadFont(fontName, (fontSize)?fontSize:10);
+        if ( !myFont )
+        {
+            Error2("Could not load font: >%s<", (const char*)fontName );
+            return false;
+        }
+        int r = fontAttribute->GetAttributeValueAsInt( "r" );
+        int g = fontAttribute->GetAttributeValueAsInt( "g" );
+        int b = fontAttribute->GetAttributeValueAsInt( "b" );
 
-            if ( r == -1  &&  g == -1  &&  b == -1 )
-                defaultFontColour = PawsManager::GetSingleton().GetPrefs()->GetDefaultFontColour();
-            else
-                defaultFontColour = graphics2D->FindRGB( r, g, b );
+        if ( r == -1  &&  g == -1  &&  b == -1 )
+            defaultFontColour = PawsManager::GetSingleton().GetPrefs()->GetDefaultFontColour();
+        else
+            defaultFontColour = graphics2D->FindRGB( r, g, b );
 
-            r = fontAttribute->GetAttributeValueAsInt( "sr" );
-            g = fontAttribute->GetAttributeValueAsInt( "sg" );
-            b = fontAttribute->GetAttributeValueAsInt( "sb" );
+        r = fontAttribute->GetAttributeValueAsInt( "sr" );
+        g = fontAttribute->GetAttributeValueAsInt( "sg" );
+        b = fontAttribute->GetAttributeValueAsInt( "sb" );
 
-            defaultFontShadowColour = graphics2D->FindRGB( r, g, b );
+        defaultFontShadowColour = graphics2D->FindRGB( r, g, b );
 
-            if (fontAttribute->GetAttributeValueAsBool( "shadow" ))
-                fontStyle |= FONT_STYLE_DROPSHADOW;
-            if (fontAttribute->GetAttributeValueAsBool( "bold" ))
-                fontStyle |= FONT_STYLE_BOLD;
+        if (fontAttribute->GetAttributeValueAsBool( "shadow" ))
+            fontStyle |= FONT_STYLE_DROPSHADOW;
+        if (fontAttribute->GetAttributeValueAsBool( "bold" ))
+            fontStyle |= FONT_STYLE_BOLD;
     }
 
     // Get the frame for this widget.

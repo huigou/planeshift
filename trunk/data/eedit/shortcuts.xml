@@ -12,7 +12,7 @@
 
     <title resource="TitleBar" text="EEdit Shortcuts" align="left" />
 
-    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />   
+    <font name="LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />   
 
     <bgimage resource="Back" alpha="75" />
 
@@ -24,7 +24,7 @@
 
         <bgimage resource="Shaded" alpha="100" />
 
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />   
+        <font name="LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />   
 
         <highlight resource="ListSelect" alpha="100" />
 
@@ -56,7 +56,7 @@
 
         <frame x="190" y="205" width="70" height="25" border="no" />
 
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="7"  sr="0" sg="0" sb="0" shadow="yes" />   
+        <font name="LiberationSans-Regular.ttf" r="255" g="255" b="255" size="7"  sr="0" sg="0" sb="0" shadow="yes" />   
 
         <buttonup resource="ButtonUp"/>
 
@@ -70,7 +70,7 @@
 
         <frame x="265" y="205" width="70" height="25" border="no" />
 
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="7"  sr="0" sg="0" sb="0" shadow="yes" />   
+        <font name="LiberationSans-Regular.ttf" r="255" g="255" b="255" size="7"  sr="0" sg="0" sb="0" shadow="yes" />   
 
         <buttonup resource="ButtonUp"/>
 
@@ -84,7 +84,7 @@
 
         <frame x="340" y="205" width="70" height="25" border="no" />
 
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="7"  sr="0" sg="0" sb="0" shadow="yes" />   
+        <font name="LiberationSans-Regular.ttf" r="255" g="255" b="255" size="7"  sr="0" sg="0" sb="0" shadow="yes" />   
 
         <buttonup resource="ButtonUp"/>
 

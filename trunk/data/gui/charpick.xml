@@ -1,7 +1,7 @@
 <widget_description>
 	<widget name="CharPickerWindow" factory="pawsCharacterPickerWindow" visible="no" movable="no" resizable="no" resizetoscreen="yes" scalablefont="yes">
 		<frame x="0" y="0" width="800" height="600" border="no" />
-		<font name="/planeshift/data/ttf/LiberationSerif-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="no" size="12" resizetoscreen="yes" />
+		<font name="LiberationSerif-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="no" size="12" resizetoscreen="yes" />
 <!-- 
 		<bgcolour r="255" g="255" b="255" />
  -->
@@ -16,7 +16,7 @@
 		<!-- Title -->
 		<widget name="label_login" factory="pawsTextBox">
 			<frame x="200" y="35" width="400" height="35" />
-			<font name="/planeshift/data/ttf/scurlock.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="24" resizetoscreen="yes" />
+			<font name="scurlock.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="24" resizetoscreen="yes" />
 			<text string="Choose Your Character"  horizAdjust="CENTRE" />
 <!-- 
             <bgcolour r="255" g="127" b="40" />
@@ -36,7 +36,7 @@
 		<!-- re-code to use instructions above -->
 		<widget name="wait_label" factory="pawsTextBox">
             <frame x="100" y="70" width="600" height="25" border="no" />
-			<font name="/planeshift/data/ttf/LiberationSerif-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="no" size="16" resizetoscreen="yes" />
+			<font name="LiberationSerif-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="no" size="16" resizetoscreen="yes" />
 			<text string="Waiting on server data.." horizAdjust="CENTRE" resizetoscreen="yes" />
 <!-- 
             <bgcolour r="255" g="127" b="40" />
@@ -55,7 +55,7 @@
 		<!-- Character Select -->
         <widget name="characterSelect" factory="pawsWidget">
 			<frame x="425" y="200" width="295" height="190" />
-			<font name="/planeshift/data/ttf/LiberationSerif-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="no" size="13" resizetoscreen="yes" horizAdjust="LEFT" />
+			<font name="LiberationSerif-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="no" size="13" resizetoscreen="yes" horizAdjust="LEFT" />
 <!-- 
 			<bgcolour r="200" g="40" b="80" />
  -->
@@ -103,7 +103,7 @@
 			<!-- Delete Char Button -->
 			<widget name="delete" factory="pawsButton" id="150" visible="yes">
 				<frame x="35" y="160" width="260" height="30" border="no" />
-				<font name="/planeshift/data/ttf/LiberationSerif-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="no" size="14" resizetoscreen="yes" />
+				<font name="LiberationSerif-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="no" size="14" resizetoscreen="yes" />
 				<label text="Delete Selected Character" />
 				<bgimage resource="buttonDefaultLong" />
 			</widget>
@@ -114,7 +114,7 @@
         <!-- Navigation Buttons -->
         <widget name="navBar" factory="pawsWidget">
 			<frame x="30" y="550" width="740" height="40" />
-			<font name="/planeshift/data/ttf/scurlock.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="no" size="16" resizetoscreen="yes" />
+			<font name="scurlock.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="no" size="16" resizetoscreen="yes" />
 <!-- 
 			<bgcolour r="200" g="40" b="80" />
  -->

@@ -38,7 +38,7 @@
   ----------
     <!-- defines standard letter look -->
     <style name="standard font">
-        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="-1" g="-1" b="-1" size="12" 
+        <font name="cupandtalon.ttf" r="-1" g="-1" b="-1" size="12" 
               sr="0" sg="0" sb="0"/> 
     </style>
 
@@ -52,7 +52,7 @@
     <!-- this widget uses "big" style but changes font face to "verdana" -->
     <widget name="version" factory="pawsTextBox" style="big">
         <frame x="100" y="100" width="330" height="30" />
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf"/> 
+        <font name="LiberationSans-Regular.ttf"/> 
         <text string="omgwtf"  horizAdjust="CENTRE" />    
     </widget>
 

@@ -2,7 +2,7 @@
 
 <widget name="ConfigKeysTree" factory="pawsSeqTreeNode"
     visible="yes" savepositions="no" movable="no" resizable="no" >
-    <!--<font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="200" b="200" size="10" scalefont="no" /> -->
+    <!--<font name="LiberationSans-Regular.ttf" r="200" g="200" b="200" size="10" scalefont="no" /> -->
 	<frame x="0" y="10" width="420" height="300" border="yes" style="New Standard GUI" />
 
     <!-- subtree for visibility selection-->

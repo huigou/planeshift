@@ -3,13 +3,13 @@
     <widget name="CharBirth" factory="pawsCharBirth"
             visible="no" movable="no" resizable="no" resizetoscreen="yes" >
         <frame x="0" y="0" width="800" height="600" border="no" />
-        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="15" resizetoscreen="yes" />
+        <font name="cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="15" resizetoscreen="yes" />
         <bgimage resource="login_background" />
 
         <!-- Title -->
         <widget name="label_birth" factory="pawsTextBox">
             <frame x="200" y="40" width="400" height="35" />
-            <font name="/planeshift/data/ttf/scurlock.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="24" resizetoscreen="yes" />
+            <font name="scurlock.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="24" resizetoscreen="yes" />
             <text string="BIRTH" horizAdjust="CENTRE" />
         </widget>
 
@@ -23,49 +23,49 @@
         <!-- Date of birth -->
 		<widget name="label" factory="pawsTextBox">
             <frame x="100" y="120" width="200" height="30" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="16" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
+            <font name="cupandtalon.ttf" r="255" g="255" b="255" size="16" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
             <text string="Choose your birthday:" />
         </widget>
 
 		<widget name="label" factory="pawsTextBox">
             <frame x="132" y="150" width="70" height="30" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="13" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
+            <font name="cupandtalon.ttf" r="255" g="255" b="255" size="13" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
             <text string="Day:" horizAdjust="CENTRE" />
         </widget>
 
         <widget name="day" factory="pawsComboBox">
             <frame x="200" y="150" width="59" height="25" border="no"/>
-			<font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="13" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
+			<font name="cupandtalon.ttf" r="255" g="255" b="255" size="13" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
             <listbox rows="6" height="20" text="" alpha="50"/>
         </widget>
 
        <widget name="label" factory="pawsTextBox">
             <frame x="300" y="150" width="70" height="30" border="no" />
-        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="13" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
+        <font name="cupandtalon.ttf" r="255" g="255" b="255" size="13" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
             <text string="Month:" horizAdjust="CENTRE" />
         </widget>
 
         <widget name="month" factory="pawsComboBox" id="5" sorted="false">
             <frame x="400" y="150" width="91" height="25" border="no"/>
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="13" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
+            <font name="cupandtalon.ttf" r="255" g="255" b="255" size="13" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
             <listbox rows="6" height="25" text="" alpha="100"/>
         </widget>
 
         <widget name="label" factory="pawsTextBox">
             <frame x="500" y="150" width="70" height="30" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="13" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
+            <font name="cupandtalon.ttf" r="255" g="255" b="255" size="13" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
             <text string="Year:" horizAdjust="CENTRE" />
         </widget>
 
         <widget name="year" factory="pawsTextBox">
             <frame x="600" y="150" width="70" height="30" border="no" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="13" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
+            <font name="cupandtalon.ttf" r="255" g="255" b="255" size="13" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
             <text string="750" horizAdjust="CENTRE" />
         </widget>
 
         <widget name="zodiac" factory="pawsTextBox">
             <frame x="100" y="185" width="210" height="25" border="no"/>
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="18" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
+            <font name="cupandtalon.ttf" r="255" g="255" b="255" size="18" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
             <text string=""/>
         </widget>
 
@@ -75,14 +75,14 @@
 
         <widget name="zodiac_description" factory="pawsMultiLineTextBox">
             <frame x="200" y="220" width="480" height="100" border="no"/>
-            <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="11" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
+            <font name="LiberationSans-Regular.ttf" r="255" g="255" b="255" size="11" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
             <text string=""/>
         </widget>
 
         <!-- Siblings -->
         <widget name="text" factory="pawsTextBox" >
             <frame x="100" y="354" width="200" height="30" />
-            <font name="/planeshift/data/ttf/cupandtalon.ttf" r="255" g="255" b="255" size="18" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
+            <font name="cupandtalon.ttf" r="255" g="255" b="255" size="18" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
             <text string="Number of Siblings" />
         </widget>
 
@@ -114,14 +114,14 @@
 
         <widget name="sibling_desc" factory="pawsMultiLineTextBox"  >
             <frame x="200" y="385" width="480" height="115" border="no" />
-            <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="11" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
+            <font name="LiberationSans-Regular.ttf" r="255" g="255" b="255" size="11" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
             <text string="Select your sibling count" />
         </widget>
 
         <!-- Navigation Buttons -->
         <widget name="navBar" factory="pawsWidget">
 			<frame x="30" y="550" width="740" height="40" />
-			<font name="/planeshift/data/ttf/scurlock.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="no" size="16" resizetoscreen="yes" />
+			<font name="scurlock.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="no" size="16" resizetoscreen="yes" />
 			
 			<widget name="BackButton" factory="pawsButton" id="6000">
 				<frame x="110" y="0" width="100" height="40" />

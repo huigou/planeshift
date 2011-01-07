@@ -5,7 +5,7 @@
 
     <frame x="325" y="30" width="90" height="55" border="yes" justtitle="yes" />
     <title resource="TitleBar" text="Camera" align="left" />
-    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />   
+    <font name="LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />   
     <bgimage resource="Back" alpha="100" />
 
     <!-- camera controls -->
