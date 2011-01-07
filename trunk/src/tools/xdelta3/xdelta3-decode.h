@@ -331,12 +331,14 @@ xd3_decode_instruction (xd3_stream *stream)
 }
 
 /* Output the result of a single half-instruction. OPT: This the
-   decoder hotspot. */
+   decoder hotspot.  Modifies "hinst", see below.  */
 static int
 xd3_decode_output_halfinst (xd3_stream *stream, xd3_hinst *inst)
 {
-  /* To make this reentrant, set take = min (inst->size, available
-     space)... */
+  /* This method is reentrant for copy instructions which may return
+   * XD3_GETSRCBLK to the caller.  Each time through a copy takes the
+   * minimum of inst->size and the available space on whichever block
+   * supplies the data */
   usize_t take = inst->size;
 
   XD3_ASSERT (inst->type != XD3_NOOP);
@@ -388,22 +390,33 @@ xd3_decode_output_halfinst (xd3_stream *stream, xd3_hinst *inst)
 
 	/* See if it copies from the VCD_TARGET/VCD_SOURCE window or
 	 * the target window.  Out-of-bounds checks for the addresses
-	 * and sizes are performed in xd3_decode_parse_halfinst. */
+	 * and sizes are performed in xd3_decode_parse_halfinst.  This
+	 * if/else must set "overlap", "src", and "dst". */
 	if (inst->addr < stream->dec_cpylen)
 	  {
+	    /* In both branches we are copying from outside the
+	     * current decoder window, the first (VCD_TARGET) is
+	     * unimplemented. */
 	    overlap = 0;
-
+	    
+	    /* This branch sets "src".  As a side-effect, we modify
+	     * "inst" so that if we reenter this method after a
+	     * XD3_GETSRCBLK response the state is correct.  So if the
+	     * instruction can be fulfilled by a contiguous block of
+	     * memory then we will set:
+	     *
+	     *  inst->type = XD3_NOOP;
+	     *  inst->size = 0;
+	     */
 	    if (stream->dec_win_ind & VCD_TARGET)
 	      {
-		/* For VCD_TARGET we know the entire range is
-		 * in-memory, as established by
-		 * decode_setup_buffers.
-                 *
-                 * TODO: this is totally bogus, VCD_TARGET won't work.
-                 */
-		src = stream->dec_cpyaddrbase + inst->addr;
-		inst->type = XD3_NOOP;
+		/* TODO: Users have requested long-distance copies of
+		 * similar material within a target (e.g., for dup
+		 * supression in backups). */
 		inst->size = 0;
+		inst->type = XD3_NOOP;
+		stream->msg = "VCD_TARGET not implemented";
+		return XD3_UNIMPLEMENTED;
 	      }
 	    else
 	      {
@@ -411,30 +424,21 @@ xd3_decode_output_halfinst (xd3_stream *stream, xd3_hinst *inst)
 		 * could return control to the caller.  We need to
 		 * know the first block number needed for this
 		 * copy. */
-		xd3_source *source;
-		xoff_t block;
-		usize_t blkoff;
-		usize_t blksize;
+		xd3_source *source = stream->src;
+		xoff_t block = source->cpyoff_blocks;
+		usize_t blkoff = source->cpyoff_blkoff;
+		const usize_t blksize = source->blksize;
 		int ret;
 
-	      more:
-
-		source  = stream->src;
-		block   = source->cpyoff_blocks;
-		blkoff  = source->cpyoff_blkoff + inst->addr;
-		blksize = source->blksize;
-
- 		while (blkoff >= blksize)
-		  {
-		    block  += 1;
-		    blkoff -= blksize;
-		  }
+		xd3_blksize_add (&block, &blkoff, source, inst->addr);
+		XD3_ASSERT (blkoff < blksize);
 
 		if ((ret = xd3_getblk (stream, block)))
 		  {
 		    /* could be a XD3_GETSRCBLK failure. */
 		    if (ret == XD3_TOOFARBACK)
 		      {
+			stream->msg = "non-seekable source in decode";
 			ret = XD3_INTERNAL;
 		      }
 		    return ret;
@@ -442,8 +446,8 @@ xd3_decode_output_halfinst (xd3_stream *stream, xd3_hinst *inst)
 
 		src = source->curblk + blkoff;
 
-		/* This block either contains enough data or the source file
-		 * is short. */
+		/* This block is either full, or a partial block that
+		 * must contain enough bytes. */
 		if ((source->onblk != blksize) &&
 		    (blkoff + take > source->onblk))
 		  {
@@ -460,6 +464,8 @@ xd3_decode_output_halfinst (xd3_stream *stream, xd3_hinst *inst)
 
 		XD3_ASSERT (blkoff != blksize);
 
+		/* Check if we have enough data on this block to
+		 * finish the instruction. */
 		if (blkoff + take <= blksize)
 		  {
 		    inst->type = XD3_NOOP;
@@ -467,16 +473,23 @@ xd3_decode_output_halfinst (xd3_stream *stream, xd3_hinst *inst)
 		  }
 		else
 		  {
-		    /* This block doesn't contain all the data, modify
-		     * the instruction, do not set to XD3_NOOP. */
 		    take = blksize - blkoff;
 		    inst->size -= take;
 		    inst->addr += take;
+
+		    /* because (blkoff + take > blksize), above */
+		    XD3_ASSERT (inst->size != 0);
 		  }
 	      }
 	  }
 	else
 	  {
+	    /* TODO: the memcpy/overlap optimization, etc.  Overlap
+	     * here could be more specific, it's whether (inst->addr -
+	     * srclen) + inst->size > input_pos ?  And is the system
+	     * memcpy really any good? */
+	    overlap = 1;
+
 	    /* For a target-window copy, we know the entire range is
 	     * in-memory.  The dec_tgtaddrbase is negatively offset by
 	     * dec_cpylen because the addresses start beyond that
@@ -484,12 +497,6 @@ xd3_decode_output_halfinst (xd3_stream *stream, xd3_hinst *inst)
 	    src = stream->dec_tgtaddrbase + inst->addr;
 	    inst->type = XD3_NOOP;
 	    inst->size = 0;
-
-	    /* TODO: This can be more specific, it's whether 
-	     *   (inst->addr - srclen) + inst->size > input_pos
-	     * ?
-	     */
-	    overlap = 1;
 	  }
 
  	dst = stream->next_out + stream->avail_out;
@@ -507,19 +514,6 @@ xd3_decode_output_halfinst (xd3_stream *stream, xd3_hinst *inst)
 	else
 	  {
 	    memcpy (dst, src, take);
-	  }
-
-	take = inst->size;
-
-	/* If there is more to copy, call getblk again. */
-	if (inst->type != XD3_NOOP)
-	  {
-	    XD3_ASSERT (take > 0);
-	    goto more;
-	  }
-	else
-	  {
-	    XD3_ASSERT (take == 0);
 	  }
       }
     }
@@ -637,9 +631,7 @@ xd3_decode_sections (xd3_stream *stream)
 
   /* OPT: A possible optimization is to avoid allocating memory in
    * decode_setup_buffers and to avoid a large memcpy when the window
-   * consists of a single VCD_SOURCE copy instruction.  The only
-   * potential problem is if the following window is a VCD_TARGET,
-   * then you need to remember... */
+   * consists of a single VCD_SOURCE copy instruction. */
   if ((ret = xd3_decode_setup_buffers (stream))) { return ret; }
 
   return 0;
@@ -672,17 +664,21 @@ xd3_decode_emit (xd3_stream *stream)
 	  (stream->dec_current2.type == XD3_NOOP) &&
 	  (ret = xd3_decode_instruction (stream))) { return ret; }
 
-      /* Output for each instruction. */
-      if ((stream->dec_current1.type != XD3_NOOP) &&
-	  (ret = xd3_decode_output_halfinst (stream, & stream->dec_current1)))
+      /* Output dec_current1 */
+      while ((stream->dec_current1.type != XD3_NOOP))
 	{
-	  return ret;
+	  if ((ret = xd3_decode_output_halfinst (stream, & stream->dec_current1)))
+	    {
+	      return ret;
+	    }
 	}
-
-      if ((stream->dec_current2.type != XD3_NOOP) &&
-	  (ret = xd3_decode_output_halfinst (stream, & stream->dec_current2)))
+      /* Output dec_current2 */
+      while (stream->dec_current2.type != XD3_NOOP)
 	{
-	  return ret;
+	  if ((ret = xd3_decode_output_halfinst (stream, & stream->dec_current2)))
+	    {
+	      return ret;
+	    }
 	}
     }
 
@@ -904,7 +900,8 @@ xd3_decode_input (xd3_stream *stream)
 	    }
 	}
 
-      stream->dec_hdrsize = stream->total_in;
+      /* xoff_t -> usize_t is safe because this is the first block. */
+      stream->dec_hdrsize = (usize_t) stream->total_in;
       stream->dec_state = DEC_WININD;
 
     case DEC_WININD:
