@@ -121,15 +121,22 @@ END -%]
     <Lib>
 [% interpolate('librarian') -%]
       <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TargetMachine>[% platform.targetmachine10 %]</TargetMachine>
     </Lib>
     <PostBuildEvent>
 [% interpolate('postbuild') -%]
     </PostBuildEvent>
     <ResourceCompile>
-      <PreprocessorDefinitions>[% composedefs([glue (['PROJECTGEN_VERSION', my.doc.msvcversion.0], '=')]) %];%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>
+[%- composedefs(platform.rcdefs.merge([glue (['PROJECTGEN_VERSION', my.doc.msvcversion.0], '=')])) %];%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>[% composedirs('incdirs', ['.', path([my.doc.sourceroot.0, my.doc.subdir.0])]) %]</AdditionalIncludeDirectories>
       <Culture>0x0409</Culture>
     </ResourceCompile>
+[%- IF ${"my.doc.manifest${platform.suffix}"} %]
+    <Manifest>
+      <AdditionalManifestFiles>[% path([my.doc.sourceroot.0, ${"my.doc.manifest${platform.suffix}.0"}]) %]</AdditionalManifestFiles>
+    </Manifest>
+[%- END %]
   </ItemDefinitionGroup>
       [%~ END %]
     [%~ END %]
