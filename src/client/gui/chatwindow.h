@@ -135,6 +135,16 @@ public:
 
     bool OnKeyDown( utf32_char keyCode, utf32_char key, int modifiers );
 
+    /** Handle double click events.
+     *  We handle double mouse click like mouse down events. As we don't need
+     *  to handle them particularly and we don't want to pass events to the widgets.
+     *  @param button The button being pressed.
+     *  @param modifiers The modifiers being actually held.
+     *  @param x The x position of the mouse.
+     *  @param y The y position of the mouse.
+     */
+    bool OnDoubleClick(int button, int modifiers, int x , int y) { return OnMouseDown(button, modifiers, x, y); }
+
     /** Check to see if the text input box is active.
      *  @return true if the text box is active.
      */
