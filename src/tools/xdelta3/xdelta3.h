@@ -1,5 +1,6 @@
 /* xdelta 3 - delta compression tools and library
- * Copyright (C) 2001, 2003, 2004, 2005, 2006, 2007.  Joshua P. MacDonald
+ * Copyright (C) 2001, 2003, 2004, 2005, 2006, 2007,
+ * 2008, 2009, 2010.  Joshua P. MacDonald
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -132,8 +133,12 @@ typedef ULONGLONG      uint64_t;
  * 64bit platform because we allocate large arrays of these values. */
 #if XD3_USE_LARGEFILE64
 #define __USE_FILE_OFFSET64 1 /* GLIBC: for 64bit fileops, ... ? */
+#ifndef _LARGEFILE_SOURCE
 #define _LARGEFILE_SOURCE
+#endif
+#ifndef _FILE_OFFSET_BITS
 #define _FILE_OFFSET_BITS 64
+#endif
 
 typedef uint64_t xoff_t;
 #define SIZEOF_XOFF_T 8
@@ -346,6 +351,7 @@ typedef enum {
   XD3_INVALID_INPUT = -17712, /* invalid input/decoder error */
   XD3_NOSECOND    = -17713, /* when secondary compression finds no
 			       improvement. */
+  XD3_UNIMPLEMENTED = -17714, /* currently VCD_TARGET */
 } xd3_rvalues;
 
 /* special values in config->flags */
@@ -689,7 +695,8 @@ struct _xd3_config
 					buffer */
   usize_t             srcwin_maxsz;  /* srcwin_size grows by a factor
 					of 2 when no matches are
-					found */
+					found.  encoder will not seek
+				        back further than this. */
 
   xd3_getblk_func   *getblk;        /* The three callbacks. */
   xd3_alloc_func    *alloc;
@@ -738,17 +745,24 @@ struct _xd3_source
   xoff_t              srcbase;       /* offset of this source window
 					in the source itself */
   int                 shiftby;       /* for power-of-two blocksizes */
-  int                 maskby;        /* for power-of-two blocksizes */  
+  int                 maskby;        /* for power-of-two blocksizes */
   xoff_t              cpyoff_blocks; /* offset of dec_cpyoff in blocks */
   usize_t             cpyoff_blkoff; /* offset of copy window in
 					blocks, remainder */
   xoff_t              getblkno;      /* request block number: xd3 sets
 					current getblk request */
 
-  xoff_t              max_blkno;
-  xoff_t              frontier_blkno;
-  usize_t             onlastblk;
-  int                 eof_known;
+  /* See xd3_getblk() */
+  xoff_t              max_blkno;  /* Maximum block, if eof is known,
+				   * otherwise, equals frontier_blkno
+				   * (initially 0). */
+  xoff_t              frontier_blkno;  /* If eof is unknown, the next
+					* source position to be read.
+					* Otherwise, equal to
+					* max_blkno. */
+  usize_t             onlastblk;  /* Number of bytes on max_blkno */
+  int                 eof_known;  /* Set to true when the first
+				   * partial block is read. */
 };
 
 /* The primary xd3_stream object, used for encoding and decoding.  You
@@ -794,7 +808,7 @@ struct _xd3_stream
   void*             opaque;           /* private data object passed to
 					 alloc, free, and getblk */
   int               flags;            /* various options */
-  
+
   /* secondary compressor configuration */
   xd3_sec_cfg       sec_data;         /* Secondary compressor config: data */
   xd3_sec_cfg       sec_inst;         /* Secondary compressor config: inst */
@@ -829,9 +843,12 @@ struct _xd3_stream
 
   // SRCWIN
   // these variables plus srcwin_maxsz above (set by config)
-  int                srcwin_decided;    /* boolean: true if the
-					   srclen,srcbase have been
+  int                srcwin_decided;    /* boolean: true if srclen and
+					   srcbase have been
 					   decided. */
+  int                srcwin_decided_early;  /* boolean: true if srclen
+					       and srcbase were
+					       decided early. */
   xoff_t             srcwin_cksum_pos;  /* Source checksum position */
 
   // MATCH
@@ -1038,7 +1055,7 @@ int     xd3_decode_memory (const uint8_t *input,
  *   xd3_stream stream;
  *   xd3_config config;
  *   xd3_source src;
- * 
+ *
  *   memset (& src, 0, sizeof (src));
  *   memset (& stream, 0, sizeof (stream));
  *   memset (& config, 0, sizeof (config));
@@ -1111,7 +1128,7 @@ int     xd3_decode_stream (xd3_stream    *stream,
  *                      assert(stream->current_window == 0);
  *                      stuff;
  *                    }
- *                    // fallthrough 
+ *                    // fallthrough
  *                    case XD3_WINSTART: {
  *                      something(stream->current_window);
  *                      goto again;
@@ -1163,7 +1180,7 @@ void    xd3_free_stream   (xd3_stream    *stream);
 int     xd3_set_source    (xd3_stream    *stream,
 			   xd3_source    *source);
 
-/* If the source size is known, call this instead of xd3_set_source(). 
+/* If the source size is known, call this instead of xd3_set_source().
  * to avoid having stream->getblk called (and/or to avoid XD3_GETSRCBLK).
  *
  * Follow these steps:
@@ -1223,7 +1240,7 @@ void    xd3_init_config (xd3_config *config,
   config->flags = flags;
 }
 
-/* This supplies some input to the stream.  
+/* This supplies some input to the stream.
  *
  * For encoding, if the input is larger than the configured window
  * size (xd3_config.winsize), the entire input will be consumed and
@@ -1289,7 +1306,7 @@ void xd3_set_flags (xd3_stream *stream, int flags)
 }
 
 /* Gives some extra information about the latest library error, if any
-   is known. */
+ * is known. */
 static inline
 const char* xd3_errstring (xd3_stream  *stream)
 {
@@ -1297,19 +1314,38 @@ const char* xd3_errstring (xd3_stream  *stream)
 }
 
 
-/* 64-bit divisions are expensive.  on a 32bit platform, these show in
- * a profile as __udivdi3().  these are all the xoff_t divisions: */
+/* 64-bit divisions are expensive, which is why we require a
+ * power-of-two source->blksize.  To relax this restriction is
+ * relatively easy, see the history for xd3_blksize_div(). */
 static inline
 void xd3_blksize_div (const xoff_t offset,
 		      const xd3_source *source,
 		      xoff_t *blkno,
 		      usize_t *blkoff) {
-  *blkno = source->maskby ?
-    (offset >> source->shiftby) :
-    (offset / source->blksize);
-  *blkoff = source->maskby ?
-    (offset & source->maskby) :
-    (offset - *blkno * source->blksize);
+  *blkno = (xoff_t) (offset >> source->shiftby);
+  *blkoff = (usize_t) (offset & source->maskby);
+  XD3_ASSERT (*blkoff < source->blksize);
+}
+
+static inline
+void xd3_blksize_add (xoff_t *blkno,
+		      usize_t *blkoff,
+		      const xd3_source *source,
+		      const usize_t add)
+{
+  usize_t blkdiff;
+
+  /* Does not check for overflow, checked in xdelta3-decode.h. */
+  *blkoff += add;
+  blkdiff = *blkoff >> source->shiftby;
+
+  if (blkdiff)
+    {
+      *blkno += blkdiff;
+      *blkoff &= source->maskby;
+    }
+
+  XD3_ASSERT (*blkoff < source->blksize);
 }
 
 #endif /* _XDELTA3_H_ */
