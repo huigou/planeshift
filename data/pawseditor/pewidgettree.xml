@@ -6,7 +6,7 @@
         
     <frame x="600" y="60" width="200" height="540" border="yes" justtitle="yes" />
     <title resource="peTitleBar" text="Widget" align="left" />
-    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />   
+    <font name="LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />   
     <bgimage resource="peBackTall" alpha="75" />
 
     <widget name="WidgetItemsTree" factory="pawsTree">

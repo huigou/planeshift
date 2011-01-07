@@ -8,19 +8,19 @@
  
         <widget name="ItemName" factory="pawsTextBox" >
 	        <frame x="35" y="35" width="385" height="40"/>
-	        <font name="/planeshift/data/ttf/becker-m.ttf" r="0" g="0" b="0" size="15"/>
+	        <font name="becker-m.ttf" r="0" g="0" b="0" size="15"/>
         	<text horizAdjust="CENTRE" />
         </widget>
       
 
     <widget name="ItemDescription" factory="pawsMultiLineTextBox" style="textinput">
         <frame x="35" y="90" width="385" height="380" border="no"/>
-        <font name="/planeshift/data/ttf/becker-m.ttf" r="0" g="0" b="0" size="12"/>
+        <font name="becker-m.ttf" r="0" g="0" b="0" size="12"/>
     </widget>
     
     <widget name="ItemDescriptionCraft" factory="pawsMultiLineTextBox" style="textinput">
         <frame x="35" y="90" width="385" height="380" border="no"/>
-        <font name="/planeshift/data/ttf/becker-m.ttf" r="0" g="0" b="0" size="12"/>
+        <font name="becker-m.ttf" r="0" g="0" b="0" size="12"/>
     </widget>
 
     <widget name="WriteButton" factory="pawsButton" id="1001" tooltip="Write in this book">

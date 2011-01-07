@@ -115,7 +115,7 @@
                 <widget name="KillWarn" factory="pawsTextBox" style="label" >
                     <frame x="495" y="105" width="115" height="20" />
                     <text string="!!!WARNING!!!" horizAdjust="CENTRE" vertAdjust="CENTRE" />
-                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="0" b="0" size="10" />
+                    <font name="LiberationSans-Regular.ttf" r="255" g="0" b="0" size="10" />
                 </widget>  
                 <widget name="Kill" factory="pawsButton" toggle="no" id="1233" style="Standard Button">
                     <frame x="495" y="125" width="115" height="20" />

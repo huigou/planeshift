@@ -6,7 +6,7 @@
         
     <frame x="8" y="30" width="310" height="690" border="yes" justtitle="yes" />
     <title resource="TitleBar" text="Effect" align="left" />
-    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />   
+    <font name="LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />   
     <bgimage resource="BackTall" alpha="75" />
 
     <widget name="EffectItemsTree" factory="pawsTree">
@@ -20,7 +20,7 @@
     </widget>
     <widget name="ApplyEffect" factory="pawsButton" toggle="no">
         <frame x="200" y="655" width="90" height="25" border="no" />
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="7"  sr="0" sg="0" sb="0" shadow="yes" />   
+        <font name="LiberationSans-Regular.ttf" r="255" g="255" b="255" size="7"  sr="0" sg="0" sb="0" shadow="yes" />   
         <buttonup resource="ButtonUp"/>
         <buttondown resource="ButtonDown" />
         <label text="Save Effect"/>

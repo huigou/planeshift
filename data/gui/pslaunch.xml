@@ -4,7 +4,7 @@
     <bgimage resource="Launcher BG1" alpha="0"/>
     <frame x="0" y="0" width="850" height="600" border="no"/>
     <title resource="Blue Title" text="PlaneShift Launcher" align="left"/>
-    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="8"/>
+    <font name="LiberationSans-Regular.ttf" r="255" g="255" b="255" size="8"/>
 
     <widget name="LauncherMain" factory="pawsWidget" visible="yes" savepositions="no" movable="no" resizable="no" resizetoscreen="yes" id="11">
 

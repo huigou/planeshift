@@ -12,7 +12,7 @@
 
     <title resource="TitleBar" text="FPS: 0.0" align="left" />
 
-    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />   
+    <font name="LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />   
 
     <bgimage resource="Back" alpha="75" />
 
@@ -22,7 +22,7 @@
 
         <frame x="15" y="16" width="30" height="18" border="no"/>
 
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />   
+        <font name="LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />   
 
         <text string="FPS:" />
 
@@ -32,7 +32,7 @@
 
         <frame x="45" y="16" width="40" height="18" border="no" />        
 
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />   
+        <font name="LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />   
 
         <text string="0.0" />
 
@@ -42,7 +42,7 @@
 
         <frame x="80" y="16" width="50" height="18" border="no" />
 
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />   
+        <font name="LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />   
 
         <text string="Target:" />
 
@@ -52,7 +52,7 @@
 
         <frame x="135" y="10" width="65" height="25" border="no" />        
 
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />   
+        <font name="LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"  sr="0" sg="0" sb="0" shadow="yes" />   
 
         <bgimage resource="Shaded" alpha="75" />
 

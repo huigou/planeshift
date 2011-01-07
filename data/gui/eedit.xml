@@ -19,7 +19,7 @@
     <!-- render button -->
     <widget name="render" factory="pawsButton">
         <frame x="300" y="530" width="145" height="30" border="yes" />
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"/>  
+        <font name="LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"/>  
         <buttonup resource="Blue Title"/>
         <buttondown resource="Blue Title" />
     <label text="Render"/>
@@ -28,7 +28,7 @@
     <!-- stop button -->
     <widget name="stop" factory="pawsButton">
         <frame x="450" y="530" width="50" height="30" border="yes" />
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"/>  
+        <font name="LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"/>  
         <buttonup resource="Blue Title"/>
         <buttondown resource="Blue Title" />
     <label text="Stop"/>
@@ -37,12 +37,12 @@
     <!-- effect selector textbox -->
     <widget name="effect_selector_lbl" factory="pawsTextBox">
         <frame x="300" y="570" width="100" height="15" />
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="0" size="9"  sr="0" sg="0" sb="0" shadow="yes" />   
+        <font name="LiberationSans-Regular.ttf" r="255" g="255" b="0" size="9"  sr="0" sg="0" sb="0" shadow="yes" />   
         <text string="Effect:" />
     </widget>
     <widget name="effect_selector" factory="pawsEditTextBox">
         <frame x="400" y="570" width="100" height="15" border="yes" />
-        <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"/>
+        <font name="LiberationSans-Regular.ttf" r="255" g="255" b="255" size="9"/>
     <text string="test" />
     </widget>
 

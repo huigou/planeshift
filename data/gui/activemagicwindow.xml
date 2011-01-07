@@ -8,7 +8,7 @@
 	
     <widget name="lblBuffCategories" factory="pawsTextBox">
         <frame x="10" y="0" width="145" height="20" border="no" />
-        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="64" g="250" b="64" size="11" shadow="true" />
+        <font name="cupandtalon.ttf" r="64" g="250" b="64" size="11" shadow="true" />
         <text string="Buffs" horizAdjust="CENTRE" />    
     </widget>
     <widget name="BuffCategories" factory="pawsListBox">
@@ -16,7 +16,7 @@
         <columns height="15" headings="no">
             <column width="125" >
                 <widget name="BuffName" factory="pawsTextBox">
-                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="30" g="200" b="30" size="9" />
+                    <font name="LiberationSans-Regular.ttf" r="30" g="200" b="30" size="9" />
                 </widget>
             </column>     
         </columns>                                          
@@ -24,7 +24,7 @@
 
     <widget name="lblDebuffCategories" factory="pawsTextBox">
         <frame x="175" y="0" width="145" height="20" border="no" />
-        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="250" g="64" b="64" size="11" shadow="true" />
+        <font name="cupandtalon.ttf" r="250" g="64" b="64" size="11" shadow="true" />
         <text string="Debuffs" horizAdjust="CENTRE" />    
     </widget>
     <widget name="DebuffCategories" factory="pawsListBox">
@@ -32,7 +32,7 @@
         <columns height="15" headings="no">
             <column width="125" >
                 <widget name="DebuffName" factory="pawsTextBox">
-                    <font name="/planeshift/data/ttf/LiberationSans-Regular.ttf" r="200" g="30" b="30" size="9" />
+                    <font name="LiberationSans-Regular.ttf" r="200" g="30" b="30" size="9" />
                 </widget>
             </column>     
         </columns>                                          
