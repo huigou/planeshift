@@ -2061,8 +2061,13 @@ bool AdminCmdDataSectorTarget::ParseTarget(AdminManager* msgManager, MsgEntry* m
     // reset sector name
     sectorName = "";
     // when string to parse is not empty
-    if (!target.IsEmpty() && target != "here")
+    if(!target.IsEmpty())
     {
+        //if here was provided just get the sector of the client directly
+        if(target == "here")
+        {
+            return GetSectorOfClient(client);
+        }
         // retrieve and save sector information
         sectorInfo = psserver->GetCacheManager()->GetSectorInfoByName(target);
         sectorName = target;
