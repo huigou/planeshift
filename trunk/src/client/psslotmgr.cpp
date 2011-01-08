@@ -209,6 +209,7 @@ void psSlotManager::OnNumberEntered(const char* /*name*/, int param, int count)
     widget->SetPurifyStatus( purifyStatus );
     widget->SetBackgroundAlpha(0);
     widget->SetParent( NULL );
+    widget->DrawStackCount(parent->IsDrawingStackCount());
 
     SetDragDetails( parent, count );
     parent->StackCount( newStack );
