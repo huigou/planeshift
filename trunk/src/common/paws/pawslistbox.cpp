@@ -43,21 +43,22 @@ bool pawsListBox::sort_ascOrder;
 class pawsListBoxTitle : public pawsWidget
 {
 public:
-    pawsListBoxTitle(pawsListBox * listBox, int colNum, pawsWidget * innerWidget)
+    pawsListBoxTitle(pawsListBox * listBox, int colNum, pawsWidget * innerWidget, bool sortable = true)
     {
         this->listBox = listBox;
         this->colNum  = colNum;
+        this->sortable = sortable;
 
         AddChild(innerWidget);
     }
 
     bool OnMouseDown( int button, int modifiers, int x, int y )
     {
-        if (button == csmbWheelUp || button == csmbWheelDown || button == csmbHWheelLeft || button == csmbHWheelRight)
+        if(button == csmbWheelUp || button == csmbWheelDown || button == csmbHWheelLeft || button == csmbHWheelRight)
             return listBox->OnMouseDown( button, modifiers, x, y );
-        else if (listBox->GetSortedColumn() == colNum)
+        else if(listBox->GetSortedColumn() == colNum)
             listBox->SetSortOrder( ! listBox->GetSortOrder() );
-        else
+        else if(sortable)
             listBox->SetSortedColumn(colNum);
 
         return true;
@@ -65,8 +66,9 @@ public:
 
 protected:
 
-    pawsListBox * listBox;    // our mother listbox
-    int colNum;               // the number of the column this widget is used in
+    pawsListBox * listBox;    ///< Our mother listbox
+    int colNum;               ///< The number of the column this widget is used in
+    bool sortable;            ///< Should this this column be sortable
 };
 
 //-----------------------------------------------------------------------------
@@ -162,6 +164,7 @@ bool pawsListBox::Setup( iDocumentNode* node )
         cInfo.width      = GetActualWidth(colNode->GetAttributeValueAsInt("width"));
         cInfo.height     = GetActualHeight(columnHeight);
         cInfo.xmlbinding = colNode->GetAttributeValue("xmlbinding");
+        cInfo.sortable   = colNode->GetAttributeValueAsBool("sortable", true);
         
         cInfo.widgetNode = colNode->GetNode("widget");
         if (!cInfo.widgetNode)
@@ -1413,7 +1416,7 @@ void pawsListBoxRow::AddTitleColumn( int column, ColumnDef* def )
 
     // create the wrapper widget
     pawsListBoxTitle * title = new pawsListBoxTitle(dynamic_cast<pawsListBox*> (parent),
-                                                    column, innerWidget);
+                                                    column, innerWidget, def[column].sortable);
     AddChild(title);
 
     int offset = 0;
@@ -1469,23 +1472,31 @@ void pawsListBox::SetTextCellValue(int rowNum, int colNum, const csString & valu
         cell->SetText(value);
 }
 
-
-
-
-
 int textBoxSortFunc(pawsWidget * widgetA, pawsWidget * widgetB)
 {
     pawsTextBox * textBoxA, * textBoxB;
-    const char  * textA,    * textB;
-
+    const char  * textA = NULL;
+    const char  * textB = NULL;
     textBoxA = dynamic_cast <pawsTextBox*> (widgetA);
     textBoxB = dynamic_cast <pawsTextBox*> (widgetB);
-    assert(textBoxA && textBoxB);
-    textA = textBoxA->GetText();
+
+    //if this happens you should consider using your own sorting function
+    //or disabling sorting for this column as the column you are trying to
+    //sort is not a textbox and so not compatible with this sorter
+    CS_ASSERT(textBoxA && textBoxB);
+
+    //regardless we avoid a crash by checking if it's a textbox.
+    if(textBoxA)
+        textA = textBoxA->GetText();
+
     if (textA == NULL)
         textA = "";
-    textB = textBoxB->GetText();
+
+    if(textBoxB)
+        textB = textBoxB->GetText();
+
     if (textB == NULL)
         textB = "";
+
     return strcmp(textA, textB);
 }

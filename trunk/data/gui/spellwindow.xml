@@ -38,17 +38,17 @@
                 <widget name="Name" factory="pawsTextBox">
                 </widget>
             </column>
-            <column width="35" >
+            <column width="35" sortable="false" >
                 <widget name="Glyph" factory="pawsWidget">
                 </widget>
             </column>
-            <column width="35" >
+            <column width="35" sortable="false" >
                 <widget name="" factory="pawsWidget"></widget>
             </column>
-            <column width="35" >
+            <column width="35" sortable="false" >
                 <widget name="" factory="pawsWidget"></widget>
             </column>
-            <column width="35" >
+            <column width="35" sortable="false" >
                 <widget name="" factory="pawsWidget"></widget>
             </column>
             <column width="47" >

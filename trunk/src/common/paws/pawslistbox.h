@@ -48,12 +48,14 @@ struct ColumnDef
     {
         widgetNode  =  NULL;
         sortFunc    =  NULL;
+        sortable = true;
     }
     
     int width;
     int height;
     csRef<iDocumentNode> widgetNode;    /// Passed to new column widgets to create
     csString xmlbinding;
+    bool sortable;
     
     listBoxSortingFunc sortFunc;        /// Function used for comparing rows when sorting the listbox
 };
