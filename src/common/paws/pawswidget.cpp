@@ -1417,7 +1417,7 @@ void pawsWidget::LoadSettings()
     fade = cfgMgr->GetBool(configName, fade);
 
     configName.Format("PlaneShift.GUI.%s.ScaleFont", GetName());
-    fade = cfgMgr->GetBool(configName, scaleFont);
+    scaleFont = cfgMgr->GetBool(configName, scaleFont);
 
     configName.Format("PlaneShift.GUI.%s.FadeSpeed", GetName());
     fadeSpeed = cfgMgr->GetFloat(configName, fadeSpeed);
@@ -2314,8 +2314,7 @@ void pawsWidget::Resize()
     {
         if (screenFrame.Width() && defaultFrame.Height())
         {
-            float newSize = defaultFontSize * float(screenFrame.Width())/float(defaultFrame.Width());
-            ChangeFontSize(newSize);
+            SetFontScaling(true);
         }
     }
 }
