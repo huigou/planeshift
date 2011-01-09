@@ -66,6 +66,8 @@ public:
 
     void DrawStackCount(bool value);
 
+    bool IsDrawingStackCount()  { return drawStackCount; }
+
     bool SelfPopulate( iDocumentNode *node);
 
     void OnUpdateData(const char *dataname,PAWSData& value);
