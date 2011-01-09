@@ -77,6 +77,10 @@ LinkStaticPlugins eedit_static : $(STATIC.PLUGINLIST)
 : CRYSTAL
 ;
 
+LinkStaticPlugins eedit_static :
+  bgloader 
+;
+
   SubVariant ;
 }
 
