@@ -917,11 +917,14 @@ void pawsWidget::Show()
     RunScriptEvent(PW_SCRIPT_EVENT_SHOW);
 }
 
-void pawsWidget::Hide()
+void pawsWidget::Hide(bool focusParent)
 {
     visible = false;
     if ( border )
         border->Hide();
+
+    if(focusParent && Includes(PawsManager::GetSingleton().GetCurrentFocusedWidget()))
+        PawsManager::GetSingleton().SetCurrentFocusedWidget(parent);
 
     PawsManager::GetSingleton().OnWidgetHidden(this);
     RunScriptEvent(PW_SCRIPT_EVENT_HIDE);
