@@ -109,16 +109,6 @@
             <widget name="helptextg" factory="pawsEditTextBox"><frame border="yes" x="180" y="240" width="30" height="20" /></widget>
             <widget name="helptextb" factory="pawsEditTextBox"><frame border="yes" x="220" y="240" width="30" height="20" /></widget>
 
-            <widget name="logAllChat" factory="pawsCheckBox">
-                <frame x="10" y="260" width="180" height="20" />
-                <text string="Log the chat messages" />
-            </widget>
-
-            <widget name="logSystemChat" factory="pawsCheckBox">
-                <frame x="200" y="260" width="200" height="20" />
-                <text string="Log the system messages" />
-            </widget>
-
             <widget name="badwordsincoming" factory="pawsCheckBox">
                 <frame x="10" y="280" width="180" height="20" />
                 <text string="Filter incoming bad words" />    

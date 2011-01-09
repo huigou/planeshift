@@ -21,6 +21,9 @@
         <text string="Enable logging" />
         <tooltip string="Enables the logging of the selected chat type" />
     </widget>
+    <widget name="filename" factory="pawsEditTextBox">
+        <frame border="yes" x="200" y="30" width="200" height="20" />
+    </widget>
 </widget>
 
 </widget_description>
