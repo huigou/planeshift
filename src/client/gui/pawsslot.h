@@ -64,8 +64,14 @@ public:
 
     void Reserve() { reserved = true; }
 
+    /** Sets if this widget has to draw the stack count.
+     *  @param value Sets if the widget has to draw the stack count. True to do so.
+     */
     void DrawStackCount(bool value);
 
+    /** Tells if this widget is currently drawing the stack count.
+     *  @return BOOL TRUE if the widget is drawing the stack count.
+     */
     bool IsDrawingStackCount()  { return drawStackCount; }
 
     bool SelfPopulate( iDocumentNode *node);
