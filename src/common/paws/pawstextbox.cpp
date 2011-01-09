@@ -1344,7 +1344,6 @@ bool pawsEditTextBox::OnMouseDown( int button, int modifiers, int x, int y )
     }
 #endif
 
-
     return pawsWidget::OnMouseDown( button, modifiers, x ,y);
 }
 

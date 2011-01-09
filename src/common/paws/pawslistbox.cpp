@@ -765,7 +765,7 @@ void pawsListBox::CalculateDrawPositions()
 
     //Hide all rows till the one which will be drawn
     for ( size_t x = 0; x < row; x++ )
-        rows[x]->Hide();
+        rows[x]->Hide(true);
 
     //figure out which ones to draw and position them
     for ( size_t z = 0; z < numberOfRows; z++ )
@@ -793,7 +793,7 @@ void pawsListBox::CalculateDrawPositions()
 
     //hide the last rows we don't see
     for (size_t x = row; x < rows.GetSize(); x++ )
-        rows[x]->Hide();
+        rows[x]->Hide(true);
 
     if (scrollBar)
     {
@@ -1310,6 +1310,7 @@ pawsListBoxRow::pawsListBoxRow()
 
 bool pawsListBoxRow::OnKeyDown(utf32_char keyCode, utf32_char keyChar, int modifiers)
 {
+    //give focus to the parentbox to avoid issues when using keys
     return GetParent()->OnKeyDown(keyCode,keyChar,modifiers);
 }
 
@@ -1327,6 +1328,7 @@ bool pawsListBoxRow::OnMouseDown(int button, int modifiers, int x, int y)
     {
         return parentBox->OnMouseDown(button, modifiers, x, y);
     }
+    //give focus back to the parent (the listbox)
     return parentBox->Select( this );
 }
 
