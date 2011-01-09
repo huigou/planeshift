@@ -82,6 +82,7 @@ struct ChatSettings
     bool looseFocusOnSend;
     bool dirtyLogChannelFile[CHAT_END];
     csString logChannelFile[CHAT_END];
+    csString channelBracket[CHAT_END];
     bool enabledLogging[CHAT_END]; ///< Stores if a chat type should be put in the logs.
     bool enableBadWordsFilterIncoming;
     bool enableBadWordsFilterOutgoing;
@@ -102,10 +103,8 @@ struct ChatSettings
 
     void SetLogChannelFile(unsigned int type, csString newName)
     {
-        printf("called --- %d %s %s\n", type, newName.GetData(), logChannelFile[type].GetData());
         if(type < CHAT_END && newName != logChannelFile[type])
         {
-            printf("dirtied\n");
             dirtyLogChannelFile[type] = true;
             logChannelFile[type] = newName;
         }

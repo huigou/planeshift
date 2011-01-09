@@ -142,6 +142,7 @@ pawsChatWindow::pawsChatWindow()
     {
         settings.enabledLogging[i] = true;
         settings.SetLogChannelFile(i, "chat.txt");
+        settings.channelBracket[i] = GetBracket(i);        
     }
 
     channels.SetSize(10, 0);
@@ -295,9 +296,8 @@ void pawsChatWindow::LoadChatSettings()
                     if(nodeName == CHAT_TYPES[i])
                     {
                         settings.enabledLogging[i] = option->GetAttributeValueAsBool("log", true);
-                        csString file = option->GetAttributeValue("file");
-                        if(file.Length())
-                            settings.SetLogChannelFile(i, file);
+                        csString file = option->GetAttributeValue("file","chat.txt");
+                        csString bracket = option->GetAttributeValue("bracket",GetBracket(i).GetDataSafe());
                     }
                 }
             }
@@ -964,9 +964,9 @@ void pawsChatWindow::LogMessage(const char* message, int type)
         strftime(buf, 32, "(%H:%M:%S)", newtime);
         csString buffer;
         #ifdef _WIN32
-        buffer.Format("%s %s%s\r\n", buf, GetBracket(type).GetDataSafe(), message);
+        buffer.Format("%s %s%s\r\n", buf, settings.channelBracket[type].GetDataSafe(), message);
         #else
-        buffer.Format("%s %s%s\n", buf, GetBracket(type).GetDataSafe(), message);
+        buffer.Format("%s %s%s\n", buf, settings.channelBracket[type].GetDataSafe(), message);
         #endif
         logFile[type]->Write(buffer.GetData(), buffer.Length());
         logFile[type]->Flush();
@@ -1044,6 +1044,7 @@ void pawsChatWindow::SaveChatSettings()
         logNode->SetValue(CHAT_TYPES[i]);
         logNode->SetAttributeAsInt("log",(int)settings.enabledLogging[i]);
         logNode->SetAttribute("file",settings.logChannelFile[i].GetData());
+        logNode->SetAttribute("bracket",settings.channelBracket[i].GetData());
     }
 
     csRef<iDocumentNode> bindingsNode = chatNode->CreateNodeBefore(CS_NODE_ELEMENT, 0);
