@@ -80,9 +80,9 @@ struct ChatSettings
     bool joindefaultchannel;
     bool defaultlastchat;
     bool looseFocusOnSend;
-    bool dirtyLogChannelFile[CHAT_END];
-    csString logChannelFile[CHAT_END];
-    csString channelBracket[CHAT_END];
+    bool dirtyLogChannelFile[CHAT_END]; ///< Stores if the log file name was changed.
+    csString logChannelFile[CHAT_END];  ///< Stores the log files to use for each chat type
+    csString channelBracket[CHAT_END];  ///< Stores the brackets to add for each chat type
     bool enabledLogging[CHAT_END]; ///< Stores if a chat type should be put in the logs.
     bool enableBadWordsFilterIncoming;
     bool enableBadWordsFilterOutgoing;
@@ -101,6 +101,11 @@ struct ChatSettings
     int vicinityFilters; ///< Flags int
     int meFilters; ///< Flags int
 
+    /** Helper function to set correctly the @see dirtyLogChannelFile and @see logChannelFile options.
+     *  If the filename was changed it will set the dirty flag else nothing will be done.
+     *  @param type The chat type of which we are changing the log filename.
+     *  @param newName The new file name to apply to this chat type
+     */
     void SetLogChannelFile(unsigned int type, csString newName)
     {
         if(type < CHAT_END && newName != logChannelFile[type])
@@ -259,11 +264,20 @@ protected:
     /// Current line, stored for when scrolling back in the chat history
     csString currLine;
 
+    ///Stores the settings for the chat.
     ChatSettings settings;
 
+    ///Stores the references to the actually used files for each chat type.
     csRef<iFile> logFile[CHAT_END];
+    ///Stores a reference to all opened log files for easy search.
     csHash<csRef<iFile>, uint> openLogFiles;
 
+    /** @brief Logs a message coming from the chat.
+     *  It handles the book keeping of the log files, opens and closes them on need,
+     *  Formats the log files by adding headings when opening a new one and adds brackets to them.
+     *  @param message The message to log.
+     *  @param type The chat type of this message to log.
+     */    
     void LogMessage(const char* message, int type = CHAT_SAY);
 
     void CreateSettingNode(iDocumentNode* mNode,int color,const char* name);
