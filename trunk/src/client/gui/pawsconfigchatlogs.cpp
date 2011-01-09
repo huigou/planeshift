@@ -60,6 +60,12 @@ bool pawsConfigChatLogs::PostSetup()
            Error1("Could not locate filename widget!");
            return false;
     }
+    bracket = dynamic_cast<pawsEditTextBox*>(FindWidget("bracket"));
+    if (!bracket)
+    {
+           Error1("Could not locate bracket widget!");
+           return false;
+    }
     return true;
 }
 
@@ -97,6 +103,7 @@ bool pawsConfigChatLogs::LoadConfig()
     {
         logStatus[i] = settings.enabledLogging[i];
         logFile[i] = settings.logChannelFile[i];
+        logBracket[i] = settings.channelBracket[i];
     }
 
     //select the first, if none were selected, or the
@@ -127,6 +134,7 @@ bool pawsConfigChatLogs::SaveConfig()
     {
         settings.enabledLogging[i] = logStatus[i];
         settings.SetLogChannelFile(i, logFile[i]);
+        settings.channelBracket[i] = logBracket[i];
     }
 
     // Save to file
@@ -156,12 +164,14 @@ void pawsConfigChatLogs::OnListAction(pawsListBox* selected, int /*status*/)
             {
                 logStatus[currentType] = enabled->GetState();
                 logFile[currentType] = fileName->GetText();
+                logBracket[currentType] = bracket->GetText();
             }
             //set the current type with the row which was choosen
             currentType = row->GetID();
             //update the checkboxes accordly to the selection
             enabled->SetState(logStatus[currentType]);
             fileName->SetText(logFile[currentType]);
+            bracket->SetText(logBracket[currentType]);
         }
     }
 }

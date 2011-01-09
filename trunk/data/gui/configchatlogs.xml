@@ -24,6 +24,9 @@
     <widget name="filename" factory="pawsEditTextBox">
         <frame border="yes" x="200" y="30" width="200" height="20" />
     </widget>
+    <widget name="bracket" factory="pawsEditTextBox">
+        <frame border="yes" x="200" y="50" width="200" height="20" />
+    </widget>
 </widget>
 
 </widget_description>
