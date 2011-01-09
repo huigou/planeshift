@@ -85,8 +85,6 @@ pawsConfigChat::pawsConfigChat()
     helpG = NULL;
     helpB = NULL;
     loose = NULL;
-    for (int i = 0; i < CHAT_NLOG; i++)
-        logEnable[i] = NULL;
     badwordsIncoming = NULL;
     badwordsOutgoing = NULL;
     echoScreenInSystem = NULL;
@@ -157,8 +155,6 @@ bool pawsConfigChat::PostSetup()
     helpG = (pawsEditTextBox*)FindWidget("helptextg");
     helpB = (pawsEditTextBox*)FindWidget("helptextb");
     loose = (pawsCheckBox*)FindWidget("loosefocus");
-    for (int i = 0; i < CHAT_NLOG; i++)
-        logEnable[i] = (pawsCheckBox*)FindWidget(logWidgetName[i]);
     badwordsIncoming = (pawsCheckBox*)FindWidget("badwordsincoming");
     badwordsOutgoing = (pawsCheckBox*)FindWidget("badwordsoutgoing");
     selectTabStyleGroup = dynamic_cast<pawsRadioButtonGroup*> (FindWidget("selecttabstyle"));
@@ -219,10 +215,6 @@ bool pawsConfigChat::LoadConfig()
     badwordsIncoming->SetState(settings.enableBadWordsFilterIncoming);
     badwordsOutgoing->SetState(settings.enableBadWordsFilterOutgoing);
 
-    //gets the log settings from the chat settings
-    for (int i = 0; i < CHAT_NLOG; i++)
-        logEnable[i]->SetState(settings.logChannel[i]);
-
     // Check boxes doesn't send OnChange :(
     dirty = true;
 
@@ -248,8 +240,6 @@ bool pawsConfigChat::SaveConfig()
     SET_CHAT_VALUE(tell);
     SET_CHAT_VALUE(chat);
     settings.looseFocusOnSend = loose->GetState();
-    for (i = 0; i < CHAT_NLOG; i++)
-        settings.logChannel[i] = logEnable[i]->GetState();
     settings.enableBadWordsFilterIncoming = badwordsIncoming->GetState();
     settings.enableBadWordsFilterOutgoing = badwordsOutgoing->GetState();    
 
@@ -262,8 +252,6 @@ bool pawsConfigChat::SaveConfig()
     settings.yourColorMix = yourColorMix->GetState();
     settings.joindefaultchannel = joinDefaultChannel->GetState();
     settings.defaultlastchat = defaultlastchat->GetState();
-
-    chatWindow->SetSettings(settings);
 
     // Save to file
     chatWindow->SaveChatSettings();
