@@ -21,11 +21,19 @@
         <text string="Enable logging" />
         <tooltip string="Enables the logging of the selected chat type" />
     </widget>
+    <widget name="filenameLabel" factory="pawsTextBox" style="Header Font">
+       <frame x="200" y="40" width="200" height="20" />
+       <text string="Log Filename:" />
+    </widget>
     <widget name="filename" factory="pawsEditTextBox">
-        <frame border="yes" x="200" y="30" width="200" height="20" />
+        <frame border="yes" x="200" y="60" width="200" height="20" />
+    </widget>
+    <widget name="bracketLabel" factory="pawsTextBox" style="Header Font">
+       <frame x="200" y="90" width="200" height="20" />
+       <text string="Log Bracket:" />
     </widget>
     <widget name="bracket" factory="pawsEditTextBox">
-        <frame border="yes" x="200" y="50" width="200" height="20" />
+        <frame border="yes" x="200" y="110" width="200" height="20" />
     </widget>
 </widget>
 
