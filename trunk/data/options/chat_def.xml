@@ -27,7 +27,7 @@
         <CHAT_SERVER_INFO log="0" file="system.txt" />
         <CHAT_NPC log="1" file="chat.txt" />
         <CHAT_NPCINTERNAL log="1" file="chat.txt" />
-        <CHAT_SYSTEM_BASE log="1" file="chat.txt" />
+        <CHAT_SYSTEM_BASE log="0" file="system.txt" />
         <CHAT_PET_ACTION log="1" file="chat.txt" />
         <CHAT_NPC_ME log="1" file="chat.txt" />
         <CHAT_NPC_MY log="1" file="chat.txt" />
