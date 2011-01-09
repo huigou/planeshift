@@ -400,12 +400,9 @@ public:
 
     /** Makes widget invisible and removes focus if widget has current focus.
      * Sets visible FALSE, hides border if present and then if focused when 
-     * called it calls SetCurrentFocusedWidget(NULL) or focuses the parent
-     * depending on the case.
-     * @param focusParent Determines if this widget should give his focus to
-     *                    the parent.
+     * called it calls SetCurrentFocusedWidget(NULL).
      */
-    virtual void Hide(bool focusParent = false);
+    virtual void Hide();
 
     /** Simply calls Hide() unless overidden.
      */

@@ -765,7 +765,7 @@ void pawsListBox::CalculateDrawPositions()
 
     //Hide all rows till the one which will be drawn
     for ( size_t x = 0; x < row; x++ )
-        rows[x]->Hide(true);
+        rows[x]->Hide();
 
     //figure out which ones to draw and position them
     for ( size_t z = 0; z < numberOfRows; z++ )
@@ -793,7 +793,7 @@ void pawsListBox::CalculateDrawPositions()
 
     //hide the last rows we don't see
     for (size_t x = row; x < rows.GetSize(); x++ )
-        rows[x]->Hide(true);
+        rows[x]->Hide();
 
     if (scrollBar)
     {
@@ -1310,7 +1310,6 @@ pawsListBoxRow::pawsListBoxRow()
 
 bool pawsListBoxRow::OnKeyDown(utf32_char keyCode, utf32_char keyChar, int modifiers)
 {
-    //give focus to the parentbox to avoid issues when using keys
     return GetParent()->OnKeyDown(keyCode,keyChar,modifiers);
 }
 
@@ -1328,7 +1327,6 @@ bool pawsListBoxRow::OnMouseDown(int button, int modifiers, int x, int y)
     {
         return parentBox->OnMouseDown(button, modifiers, x, y);
     }
-    //give focus back to the parent (the listbox)
     return parentBox->Select( this );
 }
 
@@ -1438,6 +1436,16 @@ void pawsListBoxRow::SetHeading(bool flag)
     {
         columns[i]->SetFontStyle(flag ? FONT_STYLE_BOLD : DEFAULT_FONT_STYLE);
     }
+}
+
+void pawsListBoxRow::Hide()
+{
+    //check if we are focused or a children is.
+    //if it's this way to avoid the listbox loosing focus we give focus back to it.
+    if(Includes(PawsManager::GetSingleton().GetCurrentFocusedWidget()))
+        PawsManager::GetSingleton().SetCurrentFocusedWidget(parent);
+
+    pawsWidget::Hide();
 }
 
 size_t pawsListBox::GetRowCount()

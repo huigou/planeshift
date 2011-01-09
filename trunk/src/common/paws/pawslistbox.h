@@ -100,6 +100,11 @@ public:
     /// Heading rows exist within the list but are not clickable
     void SetHeading(bool flag);
 
+    /** Handles hiding of the row. Used to give focus back to the list box
+     *  before hiding
+     */
+    void Hide();
+
     bool IsHeading() { return isHeading; }
 private:
     /// Store whether this row should be a heading or not
