@@ -141,8 +141,6 @@ bool pawsConfigChatFilter::SaveConfig()
             settings.vicinityFilters |= filter;
     }
 
-    chatWindow->SetSettings(settings);
-
     // Save to file
     chatWindow->SaveChatSettings();
 

@@ -41,12 +41,6 @@
 #define CONFIG_CHAT_FILE_NAME       "/planeshift/userdata/options/chat.xml"
 #define CONFIG_CHAT_FILE_NAME_DEF   "/planeshift/data/options/chat_def.xml"
 
-enum E_CHAT_LOG {
-    CHAT_LOG_ALL    = 0,
-    CHAT_LOG_SYSTEM,
-    CHAT_NLOG
-};
-
 enum CHAT_COMBAT_FILTERS {
     COMBAT_SUCCEEDED = 1,
     COMBAT_BLOCKED   = 2,
@@ -57,8 +51,6 @@ enum CHAT_COMBAT_FILTERS {
     COMBAT_TOTAL_AMOUNT = 6
 };
 
-extern const char *logWidgetName[];
-extern const char *logFileName[];
 
 class pawsMessageTextBox;
 class pawsEditTextBox;
@@ -88,9 +80,11 @@ struct ChatSettings
     bool joindefaultchannel;
     bool defaultlastchat;
     bool looseFocusOnSend;
-    bool logChannel[CHAT_NLOG];
+    bool dirtyLogChannelFile[CHAT_END];
+    csString logChannelFile[CHAT_END];
     bool enabledLogging[CHAT_END]; ///< Stores if a chat type should be put in the logs.
-    bool enableBadWordsFilterIncoming, enableBadWordsFilterOutgoing;
+    bool enableBadWordsFilterIncoming;
+    bool enableBadWordsFilterOutgoing;
     bool echoScreenInSystem;
     bool mainBrackets; ///< If it's true brackets like [guild] [tell] will be put in main tab.
     bool yourColorMix; ///< If it's true the yourColor will be mixed with the Color of the destination
@@ -105,6 +99,17 @@ struct ChatSettings
     int selectTabStyle;
     int vicinityFilters; ///< Flags int
     int meFilters; ///< Flags int
+
+    void SetLogChannelFile(unsigned int type, csString newName)
+    {
+        printf("called --- %d %s %s\n", type, newName.GetData(), logChannelFile[type].GetData());
+        if(type < CHAT_END && newName != logChannelFile[type])
+        {
+            printf("dirtied\n");
+            dirtyLogChannelFile[type] = true;
+            logChannelFile[type] = newName;
+        }
+    }
 };
 
 
@@ -175,7 +180,6 @@ public:
     void RemoveAutoCompleteName(const char *name);
 
     ChatSettings& GetSettings() {return settings;}
-    void SetSettings(ChatSettings& newSets);
 
     void SaveChatSettings();
     void LoadChatSettings();
@@ -258,9 +262,10 @@ protected:
 
     ChatSettings settings;
 
-    csRef<iFile> logFile[CHAT_NLOG];
+    csRef<iFile> logFile[CHAT_END];
+    csHash<csRef<iFile>, uint> openLogFiles;
 
-    void LogMessage(enum E_CHAT_LOG channel, const char* message, int type = CHAT_SAY);
+    void LogMessage(const char* message, int type = CHAT_SAY);
 
     void CreateSettingNode(iDocumentNode* mNode,int color,const char* name);
 

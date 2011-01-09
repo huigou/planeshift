@@ -107,8 +107,6 @@ bool pawsConfigChatTabCompletion::SaveConfig()
         settings.completionItems.Push(tmpItem);
     }
 
-    chatWindow->SetSettings(settings);
-
     // Save to file
     chatWindow->SaveChatSettings();
     LoadConfig();

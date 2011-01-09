@@ -65,16 +65,6 @@
 //=============================================================================
 #include "pscelclient.h"
 
-const char *logWidgetName[CHAT_NLOG] = {
-    "logAllChat",
-    "logSystemChat"
-};
-
-const char *logFileName[CHAT_NLOG] = {
-    "chat.txt",
-    "system.txt"
-};
-
 // Must match the chat types in messages.h
 const char *CHAT_TYPES[] = {
         "CHAT_SYSTEM",
@@ -149,10 +139,10 @@ pawsChatWindow::pawsChatWindow()
     settings.chatWidget = "chat.xml";
 
     for (int i = 0; i < CHAT_END; i++)
+    {
         settings.enabledLogging[i] = true;
-
-    for (int i = 0; i < CHAT_NLOG; i++)
-        logFile[i] = NULL;
+        settings.SetLogChannelFile(i, "chat.txt");
+    }
 
     channels.SetSize(10, 0);
 
@@ -168,7 +158,7 @@ pawsChatWindow::~pawsChatWindow()
     msgqueue->Unsubscribe(this, MSGTYPE_SYSTEM);
 
     delete chatHistory;
-    for (int i = 0; i < CHAT_NLOG; i++)
+    for (int i = 0; i < CHAT_END; i++)
         logFile[i].Invalidate();
 }
 
@@ -300,18 +290,15 @@ void pawsChatWindow::LoadChatSettings()
             }
             else
             {
-                for (int i = 0; i < CHAT_NLOG; i++)
-                {
-                    if (nodeName == logWidgetName[i])   // Take the same name for simplicity
-                    {
-                        settings.logChannel[i] = option->GetAttributeValueAsBool("value", false);
-                        continue;
-                    }
-                }
                 for(int i = 0; i < CHAT_END; i++)
                 {
                     if(nodeName == CHAT_TYPES[i])
+                    {
                         settings.enabledLogging[i] = option->GetAttributeValueAsBool("log", true);
+                        csString file = option->GetAttributeValue("file");
+                        if(file.Length())
+                            settings.SetLogChannelFile(i, file);
+                    }
                 }
             }
         }
@@ -831,7 +818,7 @@ void pawsChatWindow::ReplayMessages(unsigned int reqLines)
     csString filename;
     filename.Format("/planeshift/userdata/logs/%s_%s",
                         psengine->GetMainPlayerName(),
-                        logFileName[CHAT_LOG_ALL]);
+                        settings.logChannelFile[CHAT_SAY].GetData());
     filename.ReplaceAll(" ", "_");
 
     // Open file and seek to 100*line bytes from the end, unlikely to need anything earlier than that.
@@ -883,59 +870,90 @@ void pawsChatWindow::ReplayMessages(unsigned int reqLines)
     delete buf;
 }
 
-void pawsChatWindow::LogMessage(enum E_CHAT_LOG channel, const char* message, int type)
+void pawsChatWindow::LogMessage(const char* message, int type)
 {
-    //check if this log is enabled
-    if(!settings.logChannel[channel])
-        return;
-
     //check if logging for this chat type is enabled
     if(!settings.enabledLogging[type])
         return;
 
-    if (!logFile[channel])
+    //if the reference to the file is invalid or it's set as dirty
+    // (the player changed it at runtime) try opening it
+    if(settings.dirtyLogChannelFile[type] || !logFile[type])
     {
+        //generates the filename
         csString filename;
         filename.Format("/planeshift/userdata/logs/%s_%s",
                         psengine->GetMainPlayerName(),
-                        logFileName[channel]);
+                        settings.logChannelFile[type].GetData());
         filename.ReplaceAll(" ", "_");
 
-        logFile[channel] = psengine->GetVFS()->Open(filename, VFS_FILE_APPEND);
-        if (logFile[channel])
+        //if the file was changed at runtime (so the logfile is valid already)
+        //check if we need to remove it from the list of opened files
+        //because it's not used in other files
+        //TODO: maybe avoid removing it if other dirty logfiles not yet checked
+        //have the old file name?
+        if(logFile[type])
         {
-            time_t aclock;
-            struct tm *newtime;
-            char buf[32];
-
-            time(&aclock);
-            newtime = localtime(&aclock);
-            strftime(buf, 32, "%a %d-%b-%Y %H:%M:%S", newtime);
-            csString buffer;
-            #ifdef _WIN32
-            buffer.Format(
-                "================================================\r\n"
-                "%s %s\r\n"
-                "------------------------------------------------\r\n",
-                buf, psengine->GetMainPlayerName()
-                );
-            #else
-            buffer.Format(
-                "================================================\n"
-                "%s %s\n"
-                "------------------------------------------------\n",
-                buf, psengine->GetMainPlayerName()
-                );
-            #endif
-            logFile[channel]->Write(buffer.GetData(), buffer.Length());
+            if(logFile[type]->GetRefCount() <= 2)
+            {
+                openLogFiles.DeleteAll(csHashCompute(logFile[type]->GetName()));
+            }
         }
+
+        //get the hash for the new filename
+        uint filenameHash = csHashCompute(filename);
+        //try searching for it in the opened files
+        csRef<iFile> openedFile = (csRef<iFile>)openLogFiles.Get(filenameHash, NULL);
+        //if the file was found among the opened files we just associate it and we are done
+        if(openedFile.IsValid())
+        {
+            logFile[type] = openedFile;
+        }
+        //if the file was not found open a new one, put it in the openedfiles hash and
+        //put the log headings
         else
         {
-            // Trouble opening the log file
-            Error2("Couldn't create chat log file '%s'.\n", logFileName[channel]);
+            logFile[type] = psengine->GetVFS()->Open(filename, VFS_FILE_APPEND);
+            if (logFile[type])
+            {
+                openLogFiles.PutUnique(filenameHash, logFile[type]);
+                //we set the channelfile for the type not dirty only when it is
+                //for sure opened so we will continue to try till it can be opened.
+                settings.dirtyLogChannelFile[type] = false;
+
+                time_t aclock;
+                struct tm *newtime;
+                char buf[32];
+
+                time(&aclock);
+                newtime = localtime(&aclock);
+                strftime(buf, 32, "%a %d-%b-%Y %H:%M:%S", newtime);
+                csString buffer;
+                #ifdef _WIN32
+                buffer.Format(
+                    "================================================\r\n"
+                    "%s %s\r\n"
+                    "------------------------------------------------\r\n",
+                    buf, psengine->GetMainPlayerName()
+                    );
+                #else
+                buffer.Format(
+                    "================================================\n"
+                    "%s %s\n"
+                    "------------------------------------------------\n",
+                    buf, psengine->GetMainPlayerName()
+                    );
+                #endif
+                logFile[type]->Write(buffer.GetData(), buffer.Length());
+            }
+            else
+            {
+                // Trouble opening the log file
+                Error2("Couldn't create chat log file '%s'.\n", settings.logChannelFile[type].GetData());
+            }
         }
     }
-    if (logFile[channel])
+    if (logFile[type])
     {
         time_t aclock;
         struct tm *newtime;
@@ -950,8 +968,8 @@ void pawsChatWindow::LogMessage(enum E_CHAT_LOG channel, const char* message, in
         #else
         buffer.Format("%s %s%s\n", buf, GetBracket(type).GetDataSafe(), message);
         #endif
-        logFile[channel]->Write(buffer.GetData(), buffer.Length());
-        logFile[channel]->Flush();
+        logFile[type]->Write(buffer.GetData(), buffer.Length());
+        logFile[type]->Flush();
     }
 }
 
@@ -1015,24 +1033,17 @@ void pawsChatWindow::SaveChatSettings()
     chatWidgetNode = optionNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
     chatWidgetNode->SetValue("chatWidget");
     chatWidgetNode->SetAttribute("value",settings.chatWidget.GetData());
-    printf("%s\n", settings.chatWidget.GetData());
 
     looseNode = optionNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
     looseNode->SetValue("loose");
     looseNode->SetAttributeAsInt("value",(int)settings.looseFocusOnSend);
-
-    for (int i = 0; i < CHAT_NLOG; i++)
-    {
-        logNode = optionNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
-        logNode->SetValue(logWidgetName[i]);
-        logNode->SetAttributeAsInt("value",(int)settings.logChannel[i]);
-    }
 
     for (int i = 0; i < CHAT_END; i++)
     {
         logNode = optionNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
         logNode->SetValue(CHAT_TYPES[i]);
         logNode->SetAttributeAsInt("log",(int)settings.enabledLogging[i]);
+        logNode->SetAttribute("file",settings.logChannelFile[i].GetData());
     }
 
     csRef<iDocumentNode> bindingsNode = chatNode->CreateNodeBefore(CS_NODE_ELEMENT, 0);
@@ -1294,7 +1305,7 @@ void pawsChatWindow::HandleSystemMessage(MsgEntry *me)
                 soundmgr->HandleSoundType(msg.type);
             } i think this is misplaced FIXMESOUND*/
 
-            LogMessage((msg.type == MSG_INFO_BASE || msg.type == MSG_INFO_SERVER) ? CHAT_LOG_ALL : CHAT_LOG_SYSTEM, buff.GetData());
+            LogMessage(buff.GetData(), chatType);
         }
         delete[] currentLine;
     }
@@ -1661,7 +1672,7 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
         colourStart = buff.FindFirst(ESCAPECODE);
     }
 
-    LogMessage(CHAT_LOG_ALL, buff.GetDataSafe(), msg.iChatType);
+    LogMessage(buff.GetDataSafe(), msg.iChatType);
 
     if ( sendAway )
     {
@@ -2471,11 +2482,4 @@ csString *pawsChatHistory::GetNext()
 csString *pawsChatHistory::GetPrev()
 {
     return GetCommand(getLoc + 1);
-}
-
-//------------------------------------------------------------------------------
-
-void pawsChatWindow::SetSettings(ChatSettings& newSets)
-{
-    settings = newSets;
 }

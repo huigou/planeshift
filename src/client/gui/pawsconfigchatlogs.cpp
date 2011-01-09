@@ -22,6 +22,7 @@
 
 //PAWS INCLUDES
 #include "pawsconfigchatlogs.h"
+#include "chatwindow.h"
 #include "paws/pawsmanager.h"
 #include "paws/pawscheckbox.h"
 #include "paws/pawslistbox.h"
@@ -51,6 +52,12 @@ bool pawsConfigChatLogs::PostSetup()
     if (!chatTypes)
     {
            Error1("Could not locate logtypes widget!");
+           return false;
+    }
+    fileName = dynamic_cast<pawsEditTextBox*>(FindWidget("filename"));
+    if (!fileName)
+    {
+           Error1("Could not locate filename widget!");
            return false;
     }
     return true;
@@ -89,6 +96,7 @@ bool pawsConfigChatLogs::LoadConfig()
     for(int i = 0; i < CHAT_END; i++)
     {
         logStatus[i] = settings.enabledLogging[i];
+        logFile[i] = settings.logChannelFile[i];
     }
 
     //select the first, if none were selected, or the
@@ -111,13 +119,15 @@ bool pawsConfigChatLogs::SaveConfig()
 
     ChatSettings& settings = chatWindow->GetSettings();
 
+    //force updating of the data structures
+    OnListAction(chatTypes, 0 /*unused*/);
+
     //save back the data to the chat primary settings
     for(int i = 0; i < CHAT_END; i++)
     {
         settings.enabledLogging[i] = logStatus[i];
+        settings.SetLogChannelFile(i, logFile[i]);
     }
-
-    chatWindow->SetSettings(settings);
 
     // Save to file
     chatWindow->SaveChatSettings();
@@ -145,11 +155,13 @@ void pawsConfigChatLogs::OnListAction(pawsListBox* selected, int /*status*/)
             if(currentType >= 0)
             {
                 logStatus[currentType] = enabled->GetState();
+                logFile[currentType] = fileName->GetText();
             }
             //set the current type with the row which was choosen
             currentType = row->GetID();
             //update the checkboxes accordly to the selection
             enabled->SetState(logStatus[currentType]);
+            fileName->SetText(logFile[currentType]);
         }
     }
 }
