@@ -168,7 +168,7 @@ void pawsConfigChatLogs::OnListAction(pawsListBox* selected, int /*status*/)
             }
             //set the current type with the row which was choosen
             currentType = row->GetID();
-            //update the checkboxes accordly to the selection
+            //update the checkboxes and textboxes accordly to the selection
             enabled->SetState(logStatus[currentType]);
             fileName->SetText(logFile[currentType]);
             bracket->SetText(logBracket[currentType]);

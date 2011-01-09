@@ -51,14 +51,14 @@ public:
     }
 
 private:
-       pawsCheckBox *enabled; ///< Checkbox which mantains if the selected chat type logging is enabled.
-       pawsListBox *chatTypes; ///< Listbox which mantains a list of all chat types available.
-       pawsEditTextBox *fileName;
-       pawsEditTextBox *bracket;
-       bool logStatus[CHAT_END]; ///< Used to temporarily store the options.
-       csString logFile[CHAT_END];
-       csString logBracket[CHAT_END];
-       int currentType;           ///< Stores the last selected chat type.
+       pawsCheckBox *enabled;         ///< Checkbox which mantains if the selected chat type logging is enabled.
+       pawsListBox *chatTypes;        ///< Listbox which mantains a list of all chat types available.
+       pawsEditTextBox *fileName;     ///< Textbix used to edit the log file for the selected chat type.
+       pawsEditTextBox *bracket;      ///< Textbix used to edit the brackets for the selected chat type.
+       bool logStatus[CHAT_END];      ///< Used to temporarily store the enabled status of a chat type logging.
+       csString logFile[CHAT_END];    ///< Used to temporarily store the log file names for the various chat types.
+       csString logBracket[CHAT_END]; ///< Used to temporarily store the brackets for the various chat types.
+       int currentType;               ///< Stores the last selected chat type.
 
 
 };
