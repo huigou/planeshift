@@ -7,32 +7,32 @@
         <loose value="0" />
         <defaultlastchat value="0" />
         <chatWidget value="chat_basic.xml" />
-        <CHAT_SYSTEM log="0" file="system.txt" />
-        <CHAT_COMBAT log="0" file="system.txt" />
-        <CHAT_SAY log="1" file="chat.txt" />
-        <CHAT_TELL log="1" file="chat.txt" />
-        <CHAT_GROUP log="1" file="chat.txt" />
-        <CHAT_GUILD log="1" file="chat.txt" />
-        <CHAT_ALLIANCE log="1" file="chat.txt" />
-        <CHAT_AUCTION log="1" file="chat.txt" />
-        <CHAT_SHOUT log="1" file="chat.txt" />
-        <CHAT_CHANNEL log="1" file="chat.txt" />
-        <CHAT_TELLSELF log="1" file="chat.txt" />
-        <CHAT_REPORT log="1" file="chat.txt" />
-        <CHAT_ADVISOR log="1" file="chat.txt" />
-        <CHAT_ADVICE log="1" file="chat.txt" />
-        <CHAT_ADVICE_LIST log="1" file="chat.txt" />
-        <CHAT_SERVER_TELL log="1" file="chat.txt" />
-        <CHAT_GM log="1" file="chat.txt" />
-        <CHAT_SERVER_INFO log="0" file="system.txt" />
-        <CHAT_NPC log="1" file="chat.txt" />
-        <CHAT_NPCINTERNAL log="1" file="chat.txt" />
-        <CHAT_SYSTEM_BASE log="0" file="system.txt" />
-        <CHAT_PET_ACTION log="1" file="chat.txt" />
-        <CHAT_NPC_ME log="1" file="chat.txt" />
-        <CHAT_NPC_MY log="1" file="chat.txt" />
-        <CHAT_NPC_NARRATE log="1" file="chat.txt" />
-        <CHAT_AWAY log="1" file="chat.txt" />
+        <CHAT_SYSTEM log="0" file="chat.txt" bracket="" />
+        <CHAT_COMBAT log="0" file="chat.txt" bracket="" />
+        <CHAT_SAY log="1" file="chat.txt" bracket="" />
+        <CHAT_TELL log="1" file="chat.txt" bracket="[Tell]" />
+        <CHAT_GROUP log="1" file="chat.txt" bracket="[Group]" />
+        <CHAT_GUILD log="1" file="chat.txt" bracket="[Guild]" />
+        <CHAT_ALLIANCE log="1" file="chat.txt" bracket="[Alliance]" />
+        <CHAT_AUCTION log="1" file="chat.txt" bracket="[Auction]" />
+        <CHAT_SHOUT log="1" file="chat.txt" bracket="" />
+        <CHAT_CHANNEL log="1" file="chat.txt" bracket="[Channel]" />
+        <CHAT_TELLSELF log="1" file="chat.txt" bracket="[Tell]" />
+        <CHAT_REPORT log="1" file="chat.txt" bracket="" />
+        <CHAT_ADVISOR log="1" file="chat.txt" bracket="[Help]" />
+        <CHAT_ADVICE log="1" file="chat.txt" bracket="[Help]" />
+        <CHAT_ADVICE_LIST log="1" file="chat.txt" bracket="[Help]" />
+        <CHAT_SERVER_TELL log="1" file="chat.txt" bracket="" />
+        <CHAT_GM log="1" file="chat.txt" bracket="" />
+        <CHAT_SERVER_INFO log="1" file="chat.txt" bracket="" />
+        <CHAT_NPC log="1" file="chat.txt" bracket="[NPC]" />
+        <CHAT_NPCINTERNAL log="1" file="chat.txt" bracket="[NPC]" />
+        <CHAT_SYSTEM_BASE log="0" file="chat.txt" bracket="" />
+        <CHAT_PET_ACTION log="1" file="chat.txt" bracket="" />
+        <CHAT_NPC_ME log="1" file="chat.txt" bracket="[NPC]" />
+        <CHAT_NPC_MY log="1" file="chat.txt" bracket="[NPC]" />
+        <CHAT_NPC_NARRATE log="1" file="chat.txt" bracket="[NPC]" />
+        <CHAT_AWAY log="1" file="chat.txt" bracket="[Tell]" />
     </chatoptions>
     <bindings>
     <listener name="subMainText">

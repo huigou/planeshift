@@ -964,9 +964,11 @@ void pawsChatWindow::LogMessage(const char* message, int type)
         strftime(buf, 32, "(%H:%M:%S)", newtime);
         csString buffer;
         #ifdef _WIN32
-        buffer.Format("%s %s%s\r\n", buf, settings.channelBracket[type].GetDataSafe(), message);
+        buffer.Format("%s %s%s%s\r\n", buf, settings.channelBracket[type].GetDataSafe(),
+                       settings.channelBracket[type].Length() ? " " :"", message);
         #else
-        buffer.Format("%s %s%s\n", buf, settings.channelBracket[type].GetDataSafe(), message);
+        buffer.Format("%s %s%s%s\n", buf, settings.channelBracket[type].GetDataSafe(),
+                       settings.channelBracket[type].Length() ? " " :"", message);
         #endif
         logFile[type]->Write(buffer.GetData(), buffer.Length());
         logFile[type]->Flush();
@@ -2319,27 +2321,27 @@ csString pawsChatWindow::GetBracket(int type) //according to the type return the
         case CHAT_TELL:
         case CHAT_AWAY:
         case CHAT_TELLSELF:
-            return "[Tell] ";
+            return "[Tell]";
         case CHAT_GUILD:
-            return "[Guild] ";
+            return "[Guild]";
         case CHAT_ALLIANCE:
-            return "[Alliance] ";
+            return "[Alliance]";
         case CHAT_GROUP:
-            return "[Group] ";
+            return "[Group]";
         case CHAT_AUCTION:
-            return "[Auction] ";
+            return "[Auction]";
         case CHAT_ADVISOR:
         case CHAT_ADVICE:
         case CHAT_ADVICE_LIST:
-            return "[Help] ";
+            return "[Help]";
         case CHAT_NPC:
         case CHAT_NPC_ME:
         case CHAT_NPC_MY:
         case CHAT_NPC_NARRATE:
         case CHAT_NPCINTERNAL:
-            return "[NPC] ";
+            return "[NPC]";
         case CHAT_CHANNEL:
-            return "[Channel] ";
+            return "[Channel]";
     }
     return "";
 }
