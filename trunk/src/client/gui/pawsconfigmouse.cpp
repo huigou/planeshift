@@ -195,7 +195,7 @@ void pawsConfigMouse::CreateTreeWidgets(pawsTreeNode * subtreeRoot)
             button->SetSize(30, 20);
             button->SetUpImage("Standard Button");
             button->SetDownImage("Standard Button Down");
-            button->SetText("Set");
+            button->SetText(PawsManager::GetSingleton().Translate("Set"));
             button->SetToggle(false);
             button->Show();
             button->SetRelativeFrame( GetActualWidth(COMMAND_WIDTH)+GetActualWidth(TRIGGER_WIDTH)+5, 0, 30, 20 );
