@@ -308,9 +308,6 @@ bool psMainWidget::OnKeyDown( utf32_char keyCode, utf32_char key, int modifiers 
     	charctrl->MatchTrigger("MouseLook", psControl::KEYBOARD, keyCode, modifiers))
     {
         psengine->GetCharControl()->GetMovementManager()->MouseLookCanAct(true);
-        //set this window modal so it has precedence over everything... or at least
-        //a model widget should...
-        SetModalState(psengine->GetCharControl()->GetMovementManager()->MouseLook());
     }
     
     return false;
@@ -323,6 +320,7 @@ bool psMainWidget::OnKeyDown( utf32_char keyCode, utf32_char key, int modifiers 
 
 bool psMainWidget::OnMouseDown( int button, int keyModifier, int x, int y )
 {
+    printf("maindown\n");
     pawsWidget* bar = FindWidget("ControlWindow");
     if (!bar)
         return false;// no gui loaded, so nothing here can be done.
@@ -371,18 +369,12 @@ bool psMainWidget::OnMouseDown( int button, int keyModifier, int x, int y )
         if(mouseLook->button==(uint)button && mouseLook->mods==(uint)keyModifier)
         {
             psengine->GetCharControl()->GetMovementManager()->MouseLookCanAct(true);
-            //set this window modal so it has precedence over everything... or at least
-            //a model widget should...
-            SetModalState(psengine->GetCharControl()->GetMovementManager()->MouseLook());
         }
 
         const psControl* mouseLookToggle = psengine->GetCharControl()->GetTrigger("Toggle MouseLook");
         if(mouseLookToggle->button==(uint)button && mouseLookToggle->mods==(uint)keyModifier)
         {
             psengine->GetCharControl()->GetMovementManager()->MouseLookCanAct(true);
-            //set this window modal so it has precedence over everything... or at least
-            //a model widget should...
-            SetModalState(psengine->GetCharControl()->GetMovementManager()->MouseLook());
         }
 
         //if we are using mouselook we don't want these to trigger or we would have some
@@ -464,9 +456,6 @@ bool psMainWidget::OnMouseDown( int button, int keyModifier, int x, int y )
 
 bool psMainWidget::OnMouseUp(int /*button*/, int /*keyModifier*/, int /*x*/, int /*y*/)
 {
-    //check if the subsystem is available (could not be in some cases)
-    if(psengine->GetCharControl())
-        SetModalState(psengine->GetCharControl()->GetMovementManager()->MouseLook());
     return false;
 }
 
