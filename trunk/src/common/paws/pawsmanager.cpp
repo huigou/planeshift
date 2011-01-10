@@ -330,9 +330,14 @@ bool PawsManager::HandleEvent( iEvent &event )
 bool PawsManager::HandleDoubleClick( csMouseEventData &data )
 {
     pawsWidget* widget = NULL;
-    
-    widget = mainWidget->WidgetAt( data.x, data.y );
 
+    //we need to handle this specially else modality is broken as the
+    //mainwidget contains all the other widgets.
+    if(modalWidget != mainWidget)
+        widget = mainWidget->WidgetAt(data.x, data.y);
+    else
+        widget = mainWidget;
+    
     if ( widget != NULL )
     {
         if ( modalWidget != NULL )
@@ -568,6 +573,8 @@ bool PawsManager::HandleMouseDown( csMouseEventData &data )
 {
     pawsWidget* widget = 0;
 
+    //we need to handle this specially else modality is broken as the
+    //mainwidget contains all the other widgets.
     if(modalWidget != mainWidget)
         widget = mainWidget->WidgetAt(data.x, data.y);
     else
@@ -575,7 +582,6 @@ bool PawsManager::HandleMouseDown( csMouseEventData &data )
 
     if ( widget != NULL )
     {
-
         // Enforce modality by only allowing button clicks within the modal widget if there is one.
         if ( modalWidget != NULL )
         {
@@ -1010,7 +1016,6 @@ void PawsManager::SetModalWidget( pawsWidget* widget )
 
     modalWidget = widget;
 }
-
 
 void PawsManager::SetCurrentFocusedWidget ( pawsWidget* widget )
 {
