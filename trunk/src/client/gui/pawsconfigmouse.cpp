@@ -195,7 +195,7 @@ void pawsConfigMouse::CreateTreeWidgets(pawsTreeNode * subtreeRoot)
             button->SetSize(30, 20);
             button->SetUpImage("Standard Button");
             button->SetDownImage("Standard Button Down");
-            button->SetText("set");
+            button->SetText("Set");
             button->SetToggle(false);
             button->Show();
             button->SetRelativeFrame( GetActualWidth(COMMAND_WIDTH)+GetActualWidth(TRIGGER_WIDTH)+5, 0, 30, 20 );
@@ -213,12 +213,11 @@ void pawsConfigMouse::CreateTreeWidgets(pawsTreeNode * subtreeRoot)
 
             button = new pawsButton();
             button->SetNotify(this);
-            button->SetSize(20, 20);
-            button->SetUpImage("radiooff");
-            button->SetDownImage("radioon");
+            button->SetUpImage("Checkbox Off");
+            button->SetDownImage("Checkbox On");
             button->SetToggle(true);
             button->Show();
-            button->SetRelativeFrame( GetActualWidth(COMMAND_WIDTH)+5, 0, 20, 20 );
+            button->SetRelativeFrame( GetActualWidth(COMMAND_WIDTH)+30, 0, 16, 16 );
             rootAsSeq->AddSeqWidget(button);
         }
         else if (!strcmp(subtreeRoot->GetAttr("type"), "natnum"))
