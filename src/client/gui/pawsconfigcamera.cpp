@@ -97,14 +97,14 @@ bool pawsConfigCamera::CreateTree()
     */
     if (!LoadFromFile("configcamera.xml"))
         return false;
-        
+
     tree = dynamic_cast<pawsTree *>(children[0]);
     tree->SetRelativeFrameSize(parent->ScreenFrame().Width()-20, parent->ScreenFrame().Height()-20);
 
     root = tree->GetRoot();
     if (root != NULL)
         CreateTreeWidgets(root);
-        
+
     tree->SetScrollBars(false,true);
 
     return true;
@@ -144,12 +144,12 @@ void pawsConfigCamera::CreateTreeWidgets(pawsTreeNode * subtreeRoot)
 
             button = new pawsButton();
             button->SetNotify(this);
-            button->SetUpImage("radiooff");
-            button->SetDownImage("radioon");
+            button->SetUpImage("Checkbox Off");
+            button->SetDownImage("Checkbox On");
             button->SetToggle(true);
             button->Show();
             button->SetState(GetCameraSetting(subtreeRoot->GetName(), currCamMode) > 0.0f);
-            button->SetRelativeFrame( (int)labelWidth+5, 0, 20, 20 );
+            button->SetRelativeFrame( (int)labelWidth+5, 0, 16, 16 );
             rootAsSeq->AddSeqWidget(button);
         }
         else if (!strcmp(subtreeRoot->GetAttr("type"), "real"))
