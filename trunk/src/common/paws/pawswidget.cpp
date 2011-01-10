@@ -1620,7 +1620,7 @@ bool pawsWidget::OnMouseDown( int button, int modifiers, int x, int y )
         }
     }
 
-    if ( parent )
+    if ( parent && PawsManager::GetSingleton().GetModalWidget() != this )
         return parent->OnMouseDown( button, modifiers, x, y );
 
     return false;
@@ -1650,7 +1650,7 @@ csRect pawsWidget::ScreenFrame()
 
 bool pawsWidget::OnMouseUp( int button, int modifiers, int x, int y )
 {
-    if ( parent )
+    if ( parent && PawsManager::GetSingleton().GetModalWidget() != this)
         return parent->OnMouseUp( button, modifiers, x, y );
     else
     {
@@ -1660,7 +1660,7 @@ bool pawsWidget::OnMouseUp( int button, int modifiers, int x, int y )
 
 bool pawsWidget::OnDoubleClick( int button, int modifiers, int x, int y )
 {
-    if ( parent )
+    if ( parent && PawsManager::GetSingleton().GetModalWidget() != this)
     {
         return parent->OnDoubleClick( button, modifiers, x, y );
     }
@@ -1672,7 +1672,7 @@ bool pawsWidget::OnDoubleClick( int button, int modifiers, int x, int y )
 
 bool pawsWidget::OnJoypadDown( int button, int modifiers )
 {
-    if ( parent )
+    if ( parent && PawsManager::GetSingleton().GetModalWidget() != this)
     {
         return parent->OnJoypadDown( button, modifiers);
     }
@@ -1686,7 +1686,7 @@ bool pawsWidget::OnKeyDown( utf32_char keyCode, utf32_char key, int modifiers )
 {
     if (key == CSKEY_ENTER)
     {
-        if (!onEnter && parent)
+        if (!onEnter && parent && PawsManager::GetSingleton().GetModalWidget() != this)
             return parent->OnKeyDown(keyCode,key,modifiers);
 
         onEnter->OnMouseDown(1,0,0,0)  ;
@@ -1751,7 +1751,7 @@ bool pawsWidget::OnKeyDown( utf32_char keyCode, utf32_char key, int modifiers )
                 return true;
         }
     }
-    if ( parent )
+    if ( parent && PawsManager::GetSingleton().GetModalWidget() != this)
         return parent->OnKeyDown( keyCode, key, modifiers );
 
     return false;
