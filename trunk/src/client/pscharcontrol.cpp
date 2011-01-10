@@ -578,6 +578,9 @@ void psTriggerHandler::HandleMouseLook(const psControl* /*trigger*/, bool value)
  
     if (movement->MouseLook() )
     {
+        //we set modality to the main widget so it's not possible for other widgets to grab focus
+        //which could make weird situations
+        PawsManager::GetSingleton().SetModalWidget(PawsManager::GetSingleton().GetMainWidget());
         PawsManager::GetSingleton().GetMouse()->Hide(true);
 
         if (psengine->GetPSCamera()->GetCameraMode()
@@ -588,6 +591,12 @@ void psTriggerHandler::HandleMouseLook(const psControl* /*trigger*/, bool value)
             PawsManager::GetSingleton().GetMouse()->WantCrosshair(false);
         }
     } else {
+        //if the main widget owns modality status we remove it from it.
+        //we check for this because this can happen also if the mouselook() returns false because it wasn't
+        //allowed from the main widget to activate: in that case it means, most probably, another widget has modality
+        //and it must retain it.
+        if(PawsManager::GetSingleton().GetModalWidget() == PawsManager::GetSingleton().GetMainWidget())
+            PawsManager::GetSingleton().SetModalWidget(NULL);
         PawsManager::GetSingleton().GetMouse()->Hide(false);
     }
 }
