@@ -2,6 +2,7 @@
 
   <widget name="ConfigKeysTree" factory="pawsConfigKeys"
           visible="yes" savepositions="no" movable="no" resizable="no" style="New Standard GUI">
+    <bgimage resource="Scaling Widget Background" />
 
     <widget factory="pawsTree">
       <layout rowSpacing="5" levelSpacing="20" />

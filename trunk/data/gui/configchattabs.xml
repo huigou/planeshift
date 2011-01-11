@@ -3,58 +3,57 @@
             visible="no" savepositions="no" movable="no"
             resizable="no" style="New Standard GUI" >
         <frame x="225" y="10" width="400" height="300" border="no" />
-    <font name="LiberationSans-Regular.ttf" r="200" g="200" b="200" size="10" scalefont="no" />
-    <!-- Labels -->
-    <widget name="lblMainIncludes" factory="pawsTextBox">
-        <frame x="20" y="10" width="120" height="20" />
-        <text string="Main tab" />
-    </widget>
-        <!-- Other chat channels included on the Main tab -->
-    <widget name="isysbase" factory="pawsCheckBox">
-        <frame x="20" y="60" width="120" height="20" />
-        <text string="System Base" />
-    </widget>
-    <widget name="ichat" factory="pawsCheckBox">
-        <frame x="20" y="80" width="120" height="20" />
-        <text string="Chat" />
-    </widget>
-    <widget name="inpc" factory="pawsCheckBox">
-        <frame x="20" y="100" width="120" height="20" />
-        <text string="NPC" />
-    </widget>
-    <widget name="itells" factory="pawsCheckBox">
-        <frame x="20" y="120" width="120" height="20" />
-        <text string="Whisper" />
-    </widget>
-    <widget name="iguild" factory="pawsCheckBox">
-        <frame x="20" y="140" width="120" height="20" />
-        <text string="Guild" />
-    </widget>
-    <widget name="ialliance" factory="pawsCheckBox">
-        <frame x="20" y="160" width="120" height="20" />
-        <text string="Alliance" />
-    </widget>
-    <widget name="igroup" factory="pawsCheckBox">
-        <frame x="20" y="180" width="120" height="20" />
-        <text string="Group" />
-    </widget>
-    <widget name="iauction" factory="pawsCheckBox">
-        <frame x="20" y="200" width="120" height="20" />
-        <text string="Auction" />
-    </widget>
-    <widget name="isys" factory="pawsCheckBox">
-        <frame x="20" y="220" width="120" height="20" />
-        <text string="System" />
-    </widget>
-    <widget name="ihelp" factory="pawsCheckBox">
-        <frame x="20" y="240" width="120" height="20" />
-        <text string="Help" />
-    </widget>
+        <bgimage resource="Scaling Widget Background" />
+        <!-- Labels -->
+        <widget name="lblMainIncludes" factory="pawsTextBox">
+            <frame x="20" y="10" width="120" height="20" />
+            <text string="Main tab" />
+        </widget>
+            <!-- Other chat channels included on the Main tab -->
+        <widget name="isysbase" factory="pawsCheckBox">
+            <frame x="20" y="60" width="120" height="20" />
+            <text string="System Base" />
+        </widget>
+        <widget name="ichat" factory="pawsCheckBox">
+            <frame x="20" y="80" width="120" height="20" />
+            <text string="Chat" />
+        </widget>
+        <widget name="inpc" factory="pawsCheckBox">
+            <frame x="20" y="100" width="120" height="20" />
+            <text string="NPC" />
+        </widget>
+        <widget name="itells" factory="pawsCheckBox">
+            <frame x="20" y="120" width="120" height="20" />
+            <text string="Whisper" />
+        </widget>
+        <widget name="iguild" factory="pawsCheckBox">
+            <frame x="20" y="140" width="120" height="20" />
+            <text string="Guild" />
+        </widget>
+        <widget name="ialliance" factory="pawsCheckBox">
+            <frame x="20" y="160" width="120" height="20" />
+            <text string="Alliance" />
+        </widget>
+        <widget name="igroup" factory="pawsCheckBox">
+            <frame x="20" y="180" width="120" height="20" />
+            <text string="Group" />
+        </widget>
+        <widget name="iauction" factory="pawsCheckBox">
+            <frame x="20" y="200" width="120" height="20" />
+            <text string="Auction" />
+        </widget>
+        <widget name="isys" factory="pawsCheckBox">
+            <frame x="20" y="220" width="120" height="20" />
+            <text string="System" />
+        </widget>
+        <widget name="ihelp" factory="pawsCheckBox">
+            <frame x="20" y="240" width="120" height="20" />
+            <text string="Help" />
+        </widget>
 
-    <widget name="basicchat" factory="pawsCheckBox">
-        <frame x="160" y="60" width="240" height="20" />
-        <text string="Use basic chat window (need reload)" />
-    </widget>
-
+        <widget name="basicchat" factory="pawsCheckBox">
+            <frame x="160" y="60" width="240" height="20" />
+            <text string="Use basic chat window (need reload)" />
+        </widget>
     </widget>
 </widget_description>
