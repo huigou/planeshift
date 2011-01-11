@@ -320,7 +320,6 @@ bool psMainWidget::OnKeyDown( utf32_char keyCode, utf32_char key, int modifiers 
 
 bool psMainWidget::OnMouseDown( int button, int keyModifier, int x, int y )
 {
-    printf("maindown\n");
     pawsWidget* bar = FindWidget("ControlWindow");
     if (!bar)
         return false;// no gui loaded, so nothing here can be done.
