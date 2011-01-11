@@ -7,10 +7,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "appccheck_static", "appcche
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "appeedit_static", "appeedit_static.vcproj", "{5725E019-FBF3-2156-7895-09F95D99764E}"
 	ProjectSection(ProjectDependencies) = postProject
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5} = {686096CD-F68D-A219-EDDF-F2535CB7AAA5}
 		{8FF8A554-5EA3-421E-04AC-037BF4DDF018} = {8FF8A554-5EA3-421E-04AC-037BF4DDF018}
 		{A04BE757-E4C1-A003-8FDB-47430BC64269} = {A04BE757-E4C1-A003-8FDB-47430BC64269}
 		{56CFA369-1F2F-7609-9E86-069C1B5F5651} = {56CFA369-1F2F-7609-9E86-069C1B5F5651}
 		{50E607EE-8026-ADD6-213E-6EE7F95FDFB1} = {50E607EE-8026-ADD6-213E-6EE7F95FDFB1}
+		{DA886D16-6C20-BDA5-D8CC-0E06ABE8B5C7} = {DA886D16-6C20-BDA5-D8CC-0E06ABE8B5C7}
 		{D9DEA6DD-ED82-1526-6BBF-851FF399854C} = {D9DEA6DD-ED82-1526-6BBF-851FF399854C}
 		{1B4A7655-07C5-8C89-4BDB-97E82AD36BB0} = {1B4A7655-07C5-8C89-4BDB-97E82AD36BB0}
 	EndProjectSection
@@ -173,6 +175,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libbulkobjects", "libbulkob
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libccheck_static_plugins_CRYSTAL", "libccheck_static_plugins_CRYSTAL.vcproj", "{CA3264C4-F9D7-DDEE-3AB0-274ABC0C4779}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libeedit_static_plugins", "libeedit_static_plugins.vcproj", "{686096CD-F68D-A219-EDDF-F2535CB7AAA5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DA886D16-6C20-BDA5-D8CC-0E06ABE8B5C7} = {DA886D16-6C20-BDA5-D8CC-0E06ABE8B5C7}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libeedit_static_plugins_CRYSTAL", "libeedit_static_plugins_CRYSTAL.vcproj", "{8FF8A554-5EA3-421E-04AC-037BF4DDF018}"
 EndProject
@@ -1337,6 +1344,54 @@ Global
 		{CA3264C4-F9D7-DDEE-3AB0-274ABC0C4779}.ThreadChecker (with static libs)|Win32.Build.0 = ThreadChecker (with static libs)|Win32
 		{CA3264C4-F9D7-DDEE-3AB0-274ABC0C4779}.ThreadChecker (with static libs)|x64.ActiveCfg = ThreadChecker (with static libs)|x64
 		{CA3264C4-F9D7-DDEE-3AB0-274ABC0C4779}.ThreadChecker (with static libs)|x64.Build.0 = ThreadChecker (with static libs)|x64
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.Debug (with DLLs)|Win32.ActiveCfg = Debug (with DLLs)|Win32
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.Debug (with DLLs)|Win32.Build.0 = Debug (with DLLs)|Win32
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.Debug (with DLLs)|x64.ActiveCfg = Debug (with DLLs)|x64
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.Debug (with DLLs)|x64.Build.0 = Debug (with DLLs)|x64
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.Debug (with static libs)|Win32.ActiveCfg = Debug (with static libs)|Win32
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.Debug (with static libs)|Win32.Build.0 = Debug (with static libs)|Win32
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.Debug (with static libs)|x64.ActiveCfg = Debug (with static libs)|x64
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.Debug (with static libs)|x64.Build.0 = Debug (with static libs)|x64
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.DebugPSReleaseCSCEL (with DLLs)|Win32.ActiveCfg = DebugPSReleaseCSCEL (with DLLs)|Win32
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.DebugPSReleaseCSCEL (with DLLs)|Win32.Build.0 = DebugPSReleaseCSCEL (with DLLs)|Win32
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.DebugPSReleaseCSCEL (with DLLs)|x64.ActiveCfg = DebugPSReleaseCSCEL (with DLLs)|x64
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.DebugPSReleaseCSCEL (with DLLs)|x64.Build.0 = DebugPSReleaseCSCEL (with DLLs)|x64
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.DebugPSReleaseCSCEL (with static libs)|Win32.ActiveCfg = DebugPSReleaseCSCEL (with static libs)|Win32
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.DebugPSReleaseCSCEL (with static libs)|Win32.Build.0 = DebugPSReleaseCSCEL (with static libs)|Win32
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.DebugPSReleaseCSCEL (with static libs)|x64.ActiveCfg = DebugPSReleaseCSCEL (with static libs)|x64
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.DebugPSReleaseCSCEL (with static libs)|x64.Build.0 = DebugPSReleaseCSCEL (with static libs)|x64
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.MemoryTracker (with DLLs)|Win32.ActiveCfg = MemoryTracker (with DLLs)|Win32
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.MemoryTracker (with DLLs)|Win32.Build.0 = MemoryTracker (with DLLs)|Win32
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.MemoryTracker (with DLLs)|x64.ActiveCfg = MemoryTracker (with DLLs)|x64
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.MemoryTracker (with DLLs)|x64.Build.0 = MemoryTracker (with DLLs)|x64
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.MemoryTracker (with static libs)|Win32.ActiveCfg = MemoryTracker (with static libs)|Win32
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.MemoryTracker (with static libs)|Win32.Build.0 = MemoryTracker (with static libs)|Win32
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.MemoryTracker (with static libs)|x64.ActiveCfg = MemoryTracker (with static libs)|x64
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.MemoryTracker (with static libs)|x64.Build.0 = MemoryTracker (with static libs)|x64
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.RefTracker (with DLLs)|Win32.ActiveCfg = RefTracker (with DLLs)|Win32
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.RefTracker (with DLLs)|Win32.Build.0 = RefTracker (with DLLs)|Win32
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.RefTracker (with DLLs)|x64.ActiveCfg = RefTracker (with DLLs)|x64
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.RefTracker (with DLLs)|x64.Build.0 = RefTracker (with DLLs)|x64
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.RefTracker (with static libs)|Win32.ActiveCfg = RefTracker (with static libs)|Win32
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.RefTracker (with static libs)|Win32.Build.0 = RefTracker (with static libs)|Win32
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.RefTracker (with static libs)|x64.ActiveCfg = RefTracker (with static libs)|x64
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.RefTracker (with static libs)|x64.Build.0 = RefTracker (with static libs)|x64
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.Release (with DLLs)|Win32.ActiveCfg = Release (with DLLs)|Win32
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.Release (with DLLs)|Win32.Build.0 = Release (with DLLs)|Win32
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.Release (with DLLs)|x64.ActiveCfg = Release (with DLLs)|x64
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.Release (with DLLs)|x64.Build.0 = Release (with DLLs)|x64
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.Release (with static libs)|Win32.ActiveCfg = Release (with static libs)|Win32
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.Release (with static libs)|Win32.Build.0 = Release (with static libs)|Win32
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.Release (with static libs)|x64.ActiveCfg = Release (with static libs)|x64
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.Release (with static libs)|x64.Build.0 = Release (with static libs)|x64
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.ThreadChecker (with DLLs)|Win32.ActiveCfg = ThreadChecker (with DLLs)|Win32
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.ThreadChecker (with DLLs)|Win32.Build.0 = ThreadChecker (with DLLs)|Win32
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.ThreadChecker (with DLLs)|x64.ActiveCfg = ThreadChecker (with DLLs)|x64
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.ThreadChecker (with DLLs)|x64.Build.0 = ThreadChecker (with DLLs)|x64
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.ThreadChecker (with static libs)|Win32.ActiveCfg = ThreadChecker (with static libs)|Win32
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.ThreadChecker (with static libs)|Win32.Build.0 = ThreadChecker (with static libs)|Win32
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.ThreadChecker (with static libs)|x64.ActiveCfg = ThreadChecker (with static libs)|x64
+		{686096CD-F68D-A219-EDDF-F2535CB7AAA5}.ThreadChecker (with static libs)|x64.Build.0 = ThreadChecker (with static libs)|x64
 		{8FF8A554-5EA3-421E-04AC-037BF4DDF018}.Debug (with DLLs)|Win32.ActiveCfg = Debug (with DLLs)|Win32
 		{8FF8A554-5EA3-421E-04AC-037BF4DDF018}.Debug (with DLLs)|Win32.Build.0 = Debug (with DLLs)|Win32
 		{8FF8A554-5EA3-421E-04AC-037BF4DDF018}.Debug (with DLLs)|x64.ActiveCfg = Debug (with DLLs)|x64
