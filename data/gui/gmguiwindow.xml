@@ -26,8 +26,8 @@
                 <label text="Attributes" />
             </widget>
 
-		<!-- The Tab Panels -->
-		<!-- The Player Panel here -->
+        <!-- The Tab Panels -->
+        <!-- The Player Panel here -->
             <widget name="Player Controls" factory="pawsWidget" visible="no" id="1100">
                 <frame x="0" y="25" width="620" height="397" />
                 <attachpoints>
@@ -55,7 +55,7 @@
                     </column>
                     <column width="120" >
                         <pawsTextBox name="Sector"/>
-                    </column>                
+                    </column>
                     </columns>
                 </widget>
 
@@ -116,7 +116,7 @@
                     <frame x="495" y="105" width="115" height="20" />
                     <text string="!!!WARNING!!!" horizAdjust="CENTRE" vertAdjust="CENTRE" />
                     <font name="LiberationSans-Regular.ttf" r="255" g="0" b="0" size="10" />
-                </widget>  
+                </widget>
                 <widget name="Kill" factory="pawsButton" toggle="no" id="1233" style="Standard Button">
                     <frame x="495" y="125" width="115" height="20" />
                     <label text="Kill Player" />
@@ -145,30 +145,30 @@
                     <label text="Kick Player" />
                 </widget>
 
-                <widget name="BanMin" factory="pawsEditTextBox">    
+                <widget name="BanMin" factory="pawsEditTextBox">
                     <frame x="510" y="311" width="20" height="20" border="no"/>
-                    <text string="30" horizAdjust="CENTRE" />    
+                    <text string="30" horizAdjust="CENTRE" />
                 </widget>
-                <widget name="BanHrs" factory="pawsEditTextBox">    
+                <widget name="BanHrs" factory="pawsEditTextBox">
                     <frame x="545" y="311" width="20" height="20" border="no"/>
-                    <text string="0" horizAdjust="CENTRE" />    
-                </widget>        
-                <widget name="BanDays" factory="pawsEditTextBox">    
-                    <frame x="582" y="311" width="20" height="20" border="no"/> 
-                    <text string="0" horizAdjust="CENTRE" />    
+                    <text string="0" horizAdjust="CENTRE" />
                 </widget>
-					
-                <widget name="BanMinlbl" factory="pawsTextBox" style="label">    
+                <widget name="BanDays" factory="pawsEditTextBox">
+                    <frame x="582" y="311" width="20" height="20" border="no"/>
+                    <text string="0" horizAdjust="CENTRE" />
+                </widget>
+
+                <widget name="BanMinlbl" factory="pawsTextBox" style="label">
                     <frame x="492" y="314" width="20" height="20" />
-                    <text string="M:" horizAdjust="CENTRE" />    
+                    <text string="M:" horizAdjust="CENTRE" />
                 </widget>
-                <widget name="BanHrslbl" factory="pawsTextBox" style="label">    
+                <widget name="BanHrslbl" factory="pawsTextBox" style="label">
                     <frame x="528" y="314" width="20" height="20" />
-                    <text string="H:" horizAdjust="CENTRE" />    
-                </widget>        
-                <widget name="BanDayslbl" factory="pawsTextBox" style="label">    
-                    <frame x="563" y="314" width="20" height="20" /> 
-                    <text string="D:" horizAdjust="CENTRE" />    
+                    <text string="H:" horizAdjust="CENTRE" />
+                </widget>
+                <widget name="BanDayslbl" factory="pawsTextBox" style="label">
+                    <frame x="563" y="314" width="20" height="20" />
+                    <text string="D:" horizAdjust="CENTRE" />
                 </widget>
 
                 <widget name="Ban" factory="pawsButton" id="1236" style="Standard Button">
@@ -177,7 +177,7 @@
                 </widget>
 
             </widget>
-				<!-- Action Panel below here -->
+                <!-- Action Panel below here -->
             <widget name="Action Controls" factory="pawsWidget" visible="no" id="1102">
                 <frame x="0" y="25" width="680" height="397" border="no"/>
                 <attachpoints>
@@ -206,7 +206,7 @@
                         </column>
                         <column width="120" >
                             <pawsTextBox name="Type"/>
-                        </column>                
+                        </column>
                     </columns>
                 </widget>
 
@@ -219,12 +219,12 @@
                     <frame x="20" y="375" width="105" height="20" />
                     <label text="Reload Cache" />
                 </widget>
-                
+
                 <widget name="cmdAdd" factory="pawsButton" id="1261" style="Standard Button">
                     <frame x="140" y="350" width="105" height="20" />
                     <label text="Add New" />
                 </widget>
-                
+
                 <widget name="cmdAddLink" factory="pawsButton" id="1262" style="Standard Button">
                     <frame x="140" y="375" width="105" height="20"  />
                     <label text="Add Linked" />
@@ -242,7 +242,7 @@
 
 
             </widget>
-				<!-- Attribute Panel here -->
+                <!-- Attribute Panel here -->
             <widget name="Attribute Controls" factory="pawsWidget" visible="no" id="1103">
                 <frame x="0" y="25" width="620" height="397" border="no"/>
                 <attachpoints>
@@ -269,7 +269,7 @@
                 </widget>
 
 
-		<widget name="invisible" factory="pawsTextBox" visible="no" tooltip="set invisible">
+        <widget name="invisible" factory="pawsTextBox" visible="no" tooltip="set invisible">
                     <frame x="30" y="68" width="160" height="20" border="no" />
                     <text string="Invisible" />
                 </widget>
@@ -279,7 +279,7 @@
                 </widget>
 
 
-		<widget name="viewall" factory="pawsTextBox" visible="no" tooltip="set viewall">
+        <widget name="viewall" factory="pawsTextBox" visible="no" tooltip="set viewall">
                     <frame x="30" y="92" width="160" height="20" border="no"/>
                     <text string="View all" />
                 </widget>
@@ -289,7 +289,7 @@
                 </widget>
 
 
-		<widget name="nevertired" factory="pawsTextBox" visible="no" tooltip="set nevertired">
+        <widget name="nevertired" factory="pawsTextBox" visible="no" tooltip="set nevertired">
                     <frame x="30" y="116" width="160" height="20" border="no"/>
                     <text string="Never tired" />
                 </widget>
@@ -299,7 +299,7 @@
                 </widget>
 
 
-		<widget name="nofalldamage" factory="pawsTextBox" visible="no" tooltip="set nofalldamage">
+        <widget name="nofalldamage" factory="pawsTextBox" visible="no" tooltip="set nofalldamage">
                     <frame x="30" y="140" width="160" height="20" border="no" />
                     <text string="No Fall Damage" />
                 </widget>
@@ -309,7 +309,7 @@
                 </widget>
 
 
-		<widget name="infiniteinventory" factory="pawsTextBox" visible="no" tooltip="set infiniteinventory">
+        <widget name="infiniteinventory" factory="pawsTextBox" visible="no" tooltip="set infiniteinventory">
                     <frame x="30" y="164" width="160" height="20" border="no" />
                     <text string="Infinite Inventory" />
                 </widget>
@@ -319,7 +319,7 @@
                 </widget>
 
 
-		<widget name="questtester" factory="pawsTextBox" visible="no" tooltip="set questtester">
+        <widget name="questtester" factory="pawsTextBox" visible="no" tooltip="set questtester">
                     <frame x="30" y="188" width="160" height="20" border="no" />
                     <text string="Quest Testing" />
                 </widget>
@@ -329,7 +329,7 @@
                 </widget>
 
 
-		<widget name="infinitemana" factory="pawsTextBox" visible="no" tooltip="set infinitemana">
+        <widget name="infinitemana" factory="pawsTextBox" visible="no" tooltip="set infinitemana">
                     <frame x="30" y="212" width="160" height="20" border="no" />
                     <text string="Infinite Mana" />
                 </widget>
@@ -339,7 +339,7 @@
                 </widget>
 
 
-		<widget name="instantcast" factory="pawsTextBox" visible="no" tooltip="set instantcast">
+        <widget name="instantcast" factory="pawsTextBox" visible="no" tooltip="set instantcast">
                     <frame x="30" y="236" width="160" height="20" border="no" />
                     <text string="Instant Cast" />
                 </widget>
@@ -348,7 +348,7 @@
                     <text string="disabled" />
                 </widget>
 
-		<widget name="givekillexp" factory="pawsTextBox" visible="no" tooltip="set givekillexp">
+        <widget name="givekillexp" factory="pawsTextBox" visible="no" tooltip="set givekillexp">
                     <frame x="30" y="260" width="160" height="20" border="no" />
                     <text string="Give Kill Experience" />
                 </widget>
@@ -357,7 +357,7 @@
                     <text string="disabled" />
                 </widget>
 
-		<widget name="attackable" factory="pawsTextBox" visible="no" tooltip="set attackable">
+        <widget name="attackable" factory="pawsTextBox" visible="no" tooltip="set attackable">
                     <frame x="30" y="284" width="160" height="20" border="no" />
                     <text string="Attackable" />
                 </widget>
@@ -366,7 +366,7 @@
                     <text string="disabled" />
                 </widget>
 
-		<widget name="buddyhide" factory="pawsTextBox" visible="no" tooltip="set buddyhide">
+        <widget name="buddyhide" factory="pawsTextBox" visible="no" tooltip="set buddyhide">
                     <frame x="30" y="308" width="160" height="20" border="no" />
                     <text string="Buddy List Hide" />
                 </widget>

@@ -1,6 +1,6 @@
 <widget_description>
 
-    <widget name="CreditsWindow" factory="pawsCreditsWindow" 
+    <widget name="CreditsWindow" factory="pawsCreditsWindow"
             visible="yes" movable="no" resizable="no" resizetoscreen="yes" >
         <frame x="0" y="0" width="800" height="600" border="no" />
         <font name="cupandtalon.ttf" r="255" g="255" b="255" size="18" resizetoscreen="yes" />

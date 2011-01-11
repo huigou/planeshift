@@ -2,7 +2,7 @@
 
 <widget name="ExchangeWindow" factory="pawsExchangeWindow" visible="no" movable="yes" style="New Standard GUI">
     <frame x="100" y="100" width="350" height="390" border="yes" />
-    <title resource="Scaling Title Bar" text="Exchange" align="left" close_button="yes"/>    
+    <title resource="Scaling Title Bar" text="Exchange" align="left" close_button="yes"/>
 
     <!-- Accept, Open Inventory BUTTONS -->
     <widget name="Accept" factory="pawsButton" id="100" tooltip="Accept trade">
@@ -21,17 +21,17 @@
 
     <widget name="offeringlbl" factory="pawsTextBox" style="Header Font">
         <frame x="10" y="30" width="135" height="20" />
-        <text string="Give:" horizAdjust="LEFT" />    
+        <text string="Give:" horizAdjust="LEFT" />
     </widget>
-    
+
     <!-- OFFERING -->
     <widget name="Offering Frame" factory="pawsWidget">
         <frame x="10" y="50" width="150" height="270" border="no"/>
 
         <!-- BULK -->
         <widget name="OfferingList" factory="pawsListBox" selectable="0">
-		<frame x="5" y="0" width="144" height="150" border="no"/>
-        	<bgimage resource="Scaling Field Background" />
+        <frame x="5" y="0" width="144" height="150" border="no"/>
+            <bgimage resource="Scaling Field Background" />
 
             <columns height="48" headings="no" >
                 <column width="48" >
@@ -56,19 +56,19 @@
             <frame x="0" y="150" width="100" height="100"/>
         </widget>
 
-	    <widget name="TotalTriasOffer" factory="pawsTextBox">
-	        <frame x="0" y="250" width="150" height="20" />
-	    </widget>
+        <widget name="TotalTriasOffer" factory="pawsTextBox">
+            <frame x="0" y="250" width="150" height="20" />
+        </widget>
 
-          
+
     </widget>
-    
-    
-   
+
+
+
 
     <widget name="receivinglbl" factory="pawsTextBox" >
         <frame x="185" y="30" width="135" height="20" style="Header Font" />
-        <text string="Receive:" horizAdjust="LEFT" />    
+        <text string="Receive:" horizAdjust="LEFT" />
     </widget>
 
     <!-- RECEIVING -->
@@ -77,8 +77,8 @@
 
         <!-- BULK -->
         <widget name="ReceivingList" factory="pawsListBox" selectable="0">
-		<frame x="5" y="0" width="144" height="150" border="no"/>
-        	<bgimage resource="Scaling Field Background" />
+        <frame x="5" y="0" width="144" height="150" border="no"/>
+            <bgimage resource="Scaling Field Background" />
 
             <columns height="48" headings="no" >
                 <column width="48" >
@@ -101,15 +101,15 @@
 
         <widget name="ReceivingMoney" factory="pawsMoney" border="no">
             <frame x="0" y="150" width="100" height="100"/>
-        </widget>        
+        </widget>
 
-	    <widget name="TotalTriasRec" factory="pawsTextBox">
-	        <frame x="0" y="250" width="150" height="20" />
-	    </widget>  
+        <widget name="TotalTriasRec" factory="pawsTextBox">
+            <frame x="0" y="250" width="150" height="20" />
+        </widget>
 
-          
+
     </widget>
-    
+
 
 </widget>
 

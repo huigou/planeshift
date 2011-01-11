@@ -1,9 +1,9 @@
 <widget_description>
 
 <widget name="OkWindow" factory="pawsOkBox" visible="no" savepositions="no" movable="yes" resizable="no" style="New Standard GUI" >
-       
+
     <frame x="0" y="0" width="460" height="240" border="no" />
-    
+
         <form>
             <enter name="OkButton" />
         </form>

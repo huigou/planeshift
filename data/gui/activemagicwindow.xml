@@ -1,15 +1,15 @@
 <widget_description>
 
-<widget name="ActiveMagicWindow" factory="pawsActiveMagicWindow" 
+<widget name="ActiveMagicWindow" factory="pawsActiveMagicWindow"
         visible="no" savepositions="yes" movable="yes" resizable="no" configurable="yes" style="New Standard GUI">
-        
+
     <frame x="600" y="200" width="330" height="165" border="yes" />
     <title resource="Scaling Title Bar" text="Active Magic" align="left" close_button="yes" />
-	
+
     <widget name="lblBuffCategories" factory="pawsTextBox">
         <frame x="10" y="0" width="145" height="20" border="no" />
         <font name="cupandtalon.ttf" r="64" g="250" b="64" size="11" shadow="true" />
-        <text string="Buffs" horizAdjust="CENTRE" />    
+        <text string="Buffs" horizAdjust="CENTRE" />
     </widget>
     <widget name="BuffCategories" factory="pawsListBox">
         <frame x="10" y="23" width="145" height="110" margin="5" border="no" />
@@ -18,14 +18,14 @@
                 <widget name="BuffName" factory="pawsTextBox">
                     <font name="LiberationSans-Regular.ttf" r="30" g="200" b="30" size="9" />
                 </widget>
-            </column>     
-        </columns>                                          
+            </column>
+        </columns>
     </widget>
 
     <widget name="lblDebuffCategories" factory="pawsTextBox">
         <frame x="175" y="0" width="145" height="20" border="no" />
         <font name="cupandtalon.ttf" r="250" g="64" b="64" size="11" shadow="true" />
-        <text string="Debuffs" horizAdjust="CENTRE" />    
+        <text string="Debuffs" horizAdjust="CENTRE" />
     </widget>
     <widget name="DebuffCategories" factory="pawsListBox">
         <frame x="175" y="23" width="145" height="110" margin="5" border="no" />
@@ -34,15 +34,15 @@
                 <widget name="DebuffName" factory="pawsTextBox">
                     <font name="LiberationSans-Regular.ttf" r="200" g="30" b="30" size="9" />
                 </widget>
-            </column>     
-        </columns>                                          
+            </column>
+        </columns>
     </widget>
-    
+
       <widget name="ShowActiveMagicWindow" factory="pawsCheckBox" >
         <frame x="0" y="140" width="185" height="20" border="no" />
         <text string="Don't show this window again" />
     </widget>
-    
+
 </widget>
 
 </widget_description>

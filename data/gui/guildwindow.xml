@@ -7,25 +7,25 @@
         <frame x="100" y="200" width="630" height="385" border="yes"/>
         <title resource="Scaling Title Bar" text="Guild" align="left" close_button="yes"/>
 
-	    <!--
-		<childborders>
-	            <colour r="0" g="0" b="0" />
-	            <colour r="0" g="0" b="255" />
-	            <colour r="32" g="32" b="32" />
-	            <colour r="148" g="138" b="255" />
-	            <colour r="64" g="64" b="64" />
-		</childborders>
-	    -->
+        <!--
+        <childborders>
+                <colour r="0" g="0" b="0" />
+                <colour r="0" g="0" b="255" />
+                <colour r="32" g="32" b="32" />
+                <colour r="148" g="138" b="255" />
+                <colour r="64" g="64" b="64" />
+        </childborders>
+        -->
 
 
 
         <widget name="Settings_Tab" factory="pawsButton" id="203" toggle="yes" shadows="yes" style="Standard Tab" >
             <frame x="5" y="5" width="80" height="25" />
 
-		<attachpoints>
-			<attach point="PROPORTIONAL_RIGHT" />
-			<attach point="PROPORTIONAL_LEFT" />
-		</attachpoints>
+        <attachpoints>
+            <attach point="PROPORTIONAL_RIGHT" />
+            <attach point="PROPORTIONAL_LEFT" />
+        </attachpoints>
 
             <label text="Settings" />
         </widget>
@@ -33,10 +33,10 @@
         <widget name="Members_Tab" factory="pawsButton" id="201" toggle="yes" shadows="yes" style="Standard Tab" >
             <frame x="93" y="5" width="80" height="25" />
 
-		<attachpoints>
-			<attach point="PROPORTIONAL_RIGHT" />
-			<attach point="PROPORTIONAL_LEFT" />
-		</attachpoints>
+        <attachpoints>
+            <attach point="PROPORTIONAL_RIGHT" />
+            <attach point="PROPORTIONAL_LEFT" />
+        </attachpoints>
 
             <label text="Members" />
         </widget>
@@ -44,10 +44,10 @@
         <widget name="Permissions_Tab" factory="pawsButton" id="200" toggle="yes" shadows="yes" style="Standard Tab" >
             <frame x="179" y="5" width="80" height="25" />
 
-		<attachpoints>
-			<attach point="PROPORTIONAL_RIGHT" />
-			<attach point="PROPORTIONAL_LEFT" />
-		</attachpoints>
+        <attachpoints>
+            <attach point="PROPORTIONAL_RIGHT" />
+            <attach point="PROPORTIONAL_LEFT" />
+        </attachpoints>
 
             <label text="Permissions" />
         </widget>
@@ -55,10 +55,10 @@
         <widget name="Alliances_Tab" factory="pawsButton" id="202" toggle="yes" shadows="yes" style="Standard Tab" >
             <frame x="266" y="5" width="80" height="25" />
 
-		<attachpoints>
-			<attach point="PROPORTIONAL_RIGHT" />
-			<attach point="PROPORTIONAL_LEFT" />
-		</attachpoints>
+        <attachpoints>
+            <attach point="PROPORTIONAL_RIGHT" />
+            <attach point="PROPORTIONAL_LEFT" />
+        </attachpoints>
 
             <label text="Alliance" />
         </widget>
@@ -345,7 +345,7 @@
             </widget>
 
 
-	    <widget name="Invite" factory="pawsButton" id="502" style="Standard Button">
+        <widget name="Invite" factory="pawsButton" id="502" style="Standard Button">
                 <frame x="380" y="7" width="70" height="19" />
                 <label text="Invite" />
             </widget>
@@ -404,7 +404,7 @@
                 <frame x="110" y="320" width="90" height="19" />
                 <label text="Make leader" />
             </widget>
-            
+
             <widget name="AllianceMemberNotifications" factory="pawsCheckBox" id="1006" shadows="yes" >
                 <frame x="10" y="270" width="400" height="20" />
                 <text string="Notify when alliance members login/logout" position="right" />
@@ -422,8 +422,8 @@
 
 
             <widget name="label" factory="pawsTextBox">
-			<frame x="25" y="7" width="300" height="30" border="no"/>
-			<text string="Guild message of the day (A short message):" />
+            <frame x="25" y="7" width="300" height="30" border="no"/>
+            <text string="Guild message of the day (A short message):" />
             </widget>
 
 
@@ -431,10 +431,10 @@
             <widget name="motd" factory="pawsMultilineEditTextBox">
                 <frame x="24" y="37" width="390" height="150" border="no"/>
                 <attachpoints>
-	                <attach point="ATTACH_LEFT" />
-	                <attach point="ATTACH_RIGHT" />
-	                <attach point="ATTACH_BOTTOM" />
-	                <attach point="ATTACH_TOP" />
+                    <attach point="ATTACH_LEFT" />
+                    <attach point="ATTACH_RIGHT" />
+                    <attach point="ATTACH_BOTTOM" />
+                    <attach point="ATTACH_TOP" />
                 </attachpoints>
             </widget>
 

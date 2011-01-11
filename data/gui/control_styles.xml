@@ -17,11 +17,11 @@
     <button name="HelpButton"  x="512" y="1" />
     <button name="QuitButton"     x="576" y="1" />
 
-	<button name="GuildButton"      x="-500" y="-500" />
-	<button name="PetitionButton"   x="-500" y="-500" />
+    <button name="GuildButton"      x="-500" y="-500" />
+    <button name="PetitionButton"   x="-500" y="-500" />
     <button name="BuddyButton"      x="-500" y="-500" />
     <button name="GroupButton"      x="-500" y="-500" />
-    <button name="ShortcutButton"   x="-500" y="-500" />	
+    <button name="ShortcutButton"   x="-500" y="-500" />
 </style1>
 
 <style2>
@@ -40,7 +40,7 @@
     <button name="GuildButton"      x="325" y="5" />
     <button name="InfoButton"  x="389" y="5" />
     <button name="BuddyButton"     x="453" y="5" />
-    <!-- Down -->  
+    <!-- Down -->
     <button name="GroupButton"      x="5" y="134" />
     <button name="PetitionButton"      x="5" y="198" />
     <button name="ShortcutButton"       x="5" y="262" />
@@ -79,7 +79,7 @@
     <button name="ShowButtonDown"   x="0" y="0" />
 
     <button name="ChatButton"       x="64" y="0" />
-    <button name="InfoButton"		x="128" y="0" />
+    <button name="InfoButton"       x="128" y="0" />
     <button name="ShortcutButton"   x="192" y="0" />
 
     <button name="BuddyButton"      x="256" y="0" />

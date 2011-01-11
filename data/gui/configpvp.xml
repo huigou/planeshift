@@ -1,10 +1,10 @@
 <widget_description>
 
 <widget name="ConfigPvPTree" factory="pawsConfigPvP"
-        visible="no" savepositions="no" movable="no" 
+        visible="no" savepositions="no" movable="no"
         resizable="no" style="New Standard GUI" >
-	<frame x="225" y="10" width="400" height="300" border="no" />
-	<bgimage resource="Scaling Widget Background" />
+    <frame x="225" y="10" width="400" height="300" border="no" />
+    <bgimage resource="Scaling Widget Background" />
 
             <widget name="confirm" factory="pawsRadioButtonGroup">
             <frame x="180" y="100" width="190" height="120" />

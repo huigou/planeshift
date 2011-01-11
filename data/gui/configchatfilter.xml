@@ -33,7 +33,7 @@
             <frame x="10" y="130" width="300" height="20" />
             <text string="Own combat stance changes" />
         </widget>
-            
+
 
         <!-- Messages that's aimed to the entites near the player -->
         <widget name="cmnlbl" factory="pawsTextBox">

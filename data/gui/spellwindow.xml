@@ -1,7 +1,7 @@
 <widget_description>
 
 <widget name="SpellBookWindow" factory="pawsSpellBookWindow" visible="no" savepositions="yes" movable="yes" resizable="no"
-	 configurable="yes" style="New Standard GUI">
+     configurable="yes" style="New Standard GUI">
 
     <frame x="100" y="100" width="600" height="350" border="yes" />
     <title resource="Scaling Title Bar" text="Spell Book" align="left" close_button="yes"/>

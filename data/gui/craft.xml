@@ -4,9 +4,9 @@
         <frame x="70" y="70" width="670" height="285" border="yes"/>
         <title resource="Scaling Title Bar" text="Study notes:" align="left" close_button="yes"/>
 
-	<widget name="HelpText" factory="pawsMultiLineTextBox">
-	    <frame x="10" y="10" width="655" height="270" border="no"/>
-	</widget>
+    <widget name="HelpText" factory="pawsMultiLineTextBox">
+        <frame x="10" y="10" width="655" height="270" border="no"/>
+    </widget>
 
     </widget>
 </widget_description>
