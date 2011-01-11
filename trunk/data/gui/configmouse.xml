@@ -7,7 +7,7 @@
     <widget factory="pawsTree">
       <layout rowSpacing="5" levelSpacing="20" />
 
-	<widget factory="pawsSeqTreeNode">
+    <widget factory="pawsSeqTreeNode">
 
         <widget factory="pawsWidgetTreeNode">
             <nodewidget>

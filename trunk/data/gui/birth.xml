@@ -17,17 +17,17 @@
         <widget name="CP" factory="pawsTextBox">
             <frame x="605" y="40" width="100" height="40" border="no" />
             <text string="" horizAdjust="CENTRE" />
-			<bgimage resource="cpBox" />
+            <bgimage resource="cpBox" />
         </widget>
 
         <!-- Date of birth -->
-		<widget name="label" factory="pawsTextBox">
+        <widget name="label" factory="pawsTextBox">
             <frame x="100" y="120" width="200" height="30" border="no" />
             <font name="cupandtalon.ttf" r="255" g="255" b="255" size="16" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
             <text string="Choose your birthday:" />
         </widget>
 
-		<widget name="label" factory="pawsTextBox">
+        <widget name="label" factory="pawsTextBox">
             <frame x="132" y="150" width="70" height="30" border="no" />
             <font name="cupandtalon.ttf" r="255" g="255" b="255" size="13" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
             <text string="Day:" horizAdjust="CENTRE" />
@@ -35,7 +35,7 @@
 
         <widget name="day" factory="pawsComboBox">
             <frame x="200" y="150" width="59" height="25" border="no"/>
-			<font name="cupandtalon.ttf" r="255" g="255" b="255" size="13" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
+            <font name="cupandtalon.ttf" r="255" g="255" b="255" size="13" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
             <listbox rows="6" height="20" text="" alpha="50"/>
         </widget>
 
@@ -120,29 +120,29 @@
 
         <!-- Navigation Buttons -->
         <widget name="navBar" factory="pawsWidget">
-			<frame x="30" y="550" width="740" height="40" />
-			<font name="scurlock.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="no" size="16" resizetoscreen="yes" />
-			
-			<widget name="BackButton" factory="pawsButton" id="6000">
-				<frame x="110" y="0" width="100" height="40" />
-				<label text="Prev"/>
-				<bgimage resource="buttonDefault" />
-			</widget>
+            <frame x="30" y="550" width="740" height="40" />
+            <font name="scurlock.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="no" size="16" resizetoscreen="yes" />
 
-			<!-- Randomize button -->
-			<widget name="randomize" factory="pawsButton">
-				<frame x="306" y="0" width="130" height="40" />
-				<label text="Randomize"/>
-				<bgimage resource="buttonBrown" />
-			</widget>
+            <widget name="BackButton" factory="pawsButton" id="6000">
+                <frame x="110" y="0" width="100" height="40" />
+                <label text="Prev"/>
+                <bgimage resource="buttonDefault" />
+            </widget>
 
-			<widget name="NextButton" factory="pawsButton" id="5000">
-				<frame x="520" y="0" width="100" height="40" />
-				<label text="Next" />
-				<bgimage resource="buttonDefault" />
-			</widget>
-			
-		</widget>
+            <!-- Randomize button -->
+            <widget name="randomize" factory="pawsButton">
+                <frame x="306" y="0" width="130" height="40" />
+                <label text="Randomize"/>
+                <bgimage resource="buttonBrown" />
+            </widget>
+
+            <widget name="NextButton" factory="pawsButton" id="5000">
+                <frame x="520" y="0" width="100" height="40" />
+                <label text="Next" />
+                <bgimage resource="buttonDefault" />
+            </widget>
+
+        </widget>
 
     </widget>
 

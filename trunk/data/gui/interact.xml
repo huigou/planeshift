@@ -49,11 +49,11 @@
             <frame x="64" y="128" width="64" height="64" />
             <bgimage resource="ButtonClose" />
         </widget>
-        
+
         <widget name="ButtonPlayerDesc" factory="pawsButton" id="1000" tooltip="Description">
             <frame x="64" y="64" width="64" height="64" />
             <bgimage resource="ButtonLook" />
-        </widget>        
+        </widget>
 
         <widget name="ButtonAttack" factory="pawsButton" id="1100" tooltip="Attack">
             <frame x="64" y="0" width="64" height="64" />
@@ -129,7 +129,7 @@
              <frame x="0" y="128" width="64" height="64" />
              <bgimage resource="ButtonBanking" />
         </widget>
-        
+
         <widget name="ButtonIntroduce" factory="pawsButton" id="2600" tooltip="Introduce yourself">
              <frame x="128" y="128" width="64" height="64" />
              <bgimage resource="ButtonIntroduce" />
@@ -147,12 +147,12 @@
              <frame x="0" y="128" width="64" height="64" />
              <bgimage resource="ButtonStorage" />
         </widget>
-        
+
         <widget name="ButtonGeneric" factory="pawsButton" id="3000" tooltip="Use Equipped tool">
             <frame x="0" y="64" width="64" height="64" />
             <bgimage resource="ButtonPush" />
         </widget>
-        
+
     </widget>
-    
+
 </widget_description>

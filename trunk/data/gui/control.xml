@@ -1,6 +1,6 @@
 <widget_description>
 
-    <widget name="ControlWindow" factory="pawsControlWindow" 
+    <widget name="ControlWindow" factory="pawsControlWindow"
             visible="yes" savepositions="yes" movable="yes" resizable="yes" keepaspect="no">
         <frame x="0" y="0" width="960" height="70" border="no" />
         <minframe width="360" height="30" />
@@ -25,7 +25,7 @@
                 <attach point="PROPORTIONAL_TOP" />
             </attachpoints>
         </widget>
-        
+
         <widget name="QuitButton" factory="pawsButton" id="100" tooltip="Quit" sound="gui.quit">
             <frame x="64" y="1" width="64" height="64" />
             <bgimage resource="QuitButton" />
@@ -36,7 +36,7 @@
                 <attach point="PROPORTIONAL_TOP" />
             </attachpoints>
         </widget>
-        
+
         <widget name="OptionsButton" factory="pawsButton" id="200" tooltip="Options" sound="gui.toolbar">
             <frame x="128" y="1" width="64" height="64" />
             <bgimage resource="OptionsButton" />
@@ -58,7 +58,7 @@
                 <attach point="PROPORTIONAL_TOP" />
             </attachpoints>
         </widget>
-        
+
         <widget name="ShortcutButton" factory="pawsButton" id="400" tooltip="Shortcuts" sound="gui.toolbar">
             <frame x="256" y="1" width="64" height="64" />
             <bgimage resource="ShortcutButton" />
@@ -68,8 +68,8 @@
                 <attach point="PROPORTIONAL_BOTTOM" />
                 <attach point="PROPORTIONAL_TOP" />
             </attachpoints>
-        </widget>     
-        
+        </widget>
+
         <widget name="GuildButton" factory="pawsButton" id="500" tooltip="Guild info" sound="gui.toolbar">
             <frame x="320" y="1" width="64" height="64" />
             <bgimage resource="GuildButton" />
@@ -79,7 +79,7 @@
                 <attach point="PROPORTIONAL_BOTTOM" />
                 <attach point="PROPORTIONAL_TOP" />
             </attachpoints>
-        </widget>    
+        </widget>
 
         <widget name="QuestButton" factory="pawsButton" id="600" tooltip="Quests" sound="gui.toolbar">
             <frame x="384" y="1" width="64" height="64" />
@@ -90,8 +90,8 @@
                 <attach point="PROPORTIONAL_BOTTOM" />
                 <attach point="PROPORTIONAL_TOP" />
             </attachpoints>
-        </widget>  
-        
+        </widget>
+
         <widget name="SpellBookButton" factory="pawsButton" id="700" tooltip="Spell book" sound="gui.toolbar">
             <frame x="448" y="1" width="64" height="64" />
             <bgimage resource="MagicButton" />
@@ -101,7 +101,7 @@
                 <attach point="PROPORTIONAL_BOTTOM" />
                 <attach point="PROPORTIONAL_TOP" />
             </attachpoints>
-        </widget>  
+        </widget>
 
         <widget name="BuddyButton" factory="pawsButton" id="800" tooltip="Buddy list" sound="gui.toolbar">
             <frame x="512" y="1" width="64" height="64" />
@@ -135,7 +135,7 @@
                 <attach point="PROPORTIONAL_TOP" />
             </attachpoints>
         </widget>
-        
+
         <widget name="PetitionButton" factory="pawsButton" id="1100" tooltip="Petitions" sound="gui.toolbar">
             <frame x="704" y="1" width="64" height="64" />
             <bgimage resource="PetitionButton" />
@@ -146,7 +146,7 @@
                 <attach point="PROPORTIONAL_TOP" />
             </attachpoints>
         </widget>
-        
+
         <widget name="ChatButton" factory="pawsButton" id="1200" tooltip="Communications" sound="gui.toolbar">
             <frame x="768" y="1" width="64" height="64" />
             <bgimage resource="ChatButton" />
@@ -157,7 +157,7 @@
                 <attach point="PROPORTIONAL_TOP" />
             </attachpoints>
         </widget>
-        
+
         <widget name="InventoryButton" factory="pawsButton" id="1300" tooltip="Inventory" sound="gui.toolbar">
             <frame x="832" y="1" width="64" height="64" />
             <bgimage resource="InventoryButton" />

@@ -1,6 +1,6 @@
 <widget_description>
 <widget name="HotBar" factory="pawsBartenderWindow" visible="no" savepositions="yes" movable="yes" resizable="no" configurable="yes" style="New Standard GUI">
-    <frame x="200" y="100" width="650" height="50" border="yes" />        
+    <frame x="200" y="100" width="650" height="50" border="yes" />
     <widget name="BartenderSlot_1" factory="pawsSlot">
         <bartender_slot>1</bartender_slot>
         <show_stack_amount>0</show_stack_amount>

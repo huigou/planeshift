@@ -1,11 +1,11 @@
 <widget_description>
- 
+
     <pawsCharDescription name="DescriptionEdit" visible="yes" savepositions="no" movable="yes" keepaspect="no" resizable="yes" configurable="yes" style="New Standard GUI">
- 
+
         <frame x="100" y="100" width="320" height="270" border="no" />
         <minframe width="250" height="250" />
         <title resource="Scaling Title Bar" text="Modify description" align="left" close_button="yes" />
- 
+
         <pawsTextBox name="lbl">
             <frame x="34" y="8" width="200" height="20" border="no" style="Main Header Font" />
             <text string="Character description:" />
@@ -17,7 +17,7 @@
             </attachpoints>
         </pawsTextBox>
 
- 
+
         <pawsMultilineEditTextBox name="Description">
             <frame x="25" y="30" width="270" height="185" border="no" />
             <attachpoints>
@@ -26,8 +26,8 @@
                 <attach point="PROPORTIONAL_LEFT" />
                 <attach point="PROPORTIONAL_BOTTOM" />
             </attachpoints>
-        </pawsMultilineEditTextBox>  
- 
+        </pawsMultilineEditTextBox>
+
         <pawsButton name="OK" id="100" style="Standard Button">
             <frame x="5" y="238" width="70" height="30" />
             <attachpoints>
@@ -38,7 +38,7 @@
             </attachpoints>
             <label text="OK" />
         </pawsButton>
-        
+
         <pawsButton name="Cancel" id="101" style="Standard Button">
             <frame x="80" y="238" width="70" height="30" />
             <attachpoints>
@@ -49,7 +49,7 @@
             </attachpoints>
             <label text="Cancel" />
         </pawsButton>
-        
+
         <pawsButton name="Save" id="102" style="Standard Button">
             <frame x="170" y="238" width="70" height="30" />
             <attachpoints>
@@ -60,7 +60,7 @@
             </attachpoints>
             <label text="Store" />
         </pawsButton>
-        
+
         <pawsButton name="Load" id="103" style="Standard Button">
             <frame x="245" y="238" width="70" height="30" />
             <attachpoints>
@@ -71,7 +71,7 @@
             </attachpoints>
             <label text="Load" />
         </pawsButton>
-        
+
     </pawsCharDescription>
- 
+
 </widget_description>

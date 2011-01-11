@@ -2,7 +2,7 @@
 
 <widget name="NPCDialogWindow" factory="pawsNpcDialogWindow" xmlbinding="dlgmenu"
         visible="no" savepositions="yes" movable="yes" scalefont="yes" keepaspect="no" configurable="yes" resizable="yes" style="New Standard GUI">
-        
+
     <frame x="0" y="100" width="400" height="100" border="yes" />
     <!--minframe width="165" height="100" /-->
     <!--maxframe width="600" height="500" /-->
@@ -25,7 +25,7 @@
             <attach point="ATTACH_BOTTOM" />
         </attachpoints>
     </widget>
-    
+
 </widget>
 
 </widget_description>

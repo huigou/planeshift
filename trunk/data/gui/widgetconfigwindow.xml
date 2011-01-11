@@ -116,7 +116,7 @@
         <frame x="110" y="110" width="80" height="20" border="yes" />
         <label text="Cancel"/>
    </widget>
-   
+
    <!-- Apply to all button -->
     <widget name="ApplyAllButton" factory="pawsButton" toggle="no" shadows="yes" style="Standard Button" >
         <frame x="210" y="110" width="80" height="20" border="yes" />

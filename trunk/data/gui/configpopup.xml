@@ -3,7 +3,7 @@
             visible="no" savepositions="no" movable="no"
             resizable="no" style="New Standard GUI">
         <bgimage resource="Scaling Widget Background" />
-            
+
         <widget name="ShowActiveMagicWindowConfig" factory="pawsCheckBox" >
             <frame x="10" y="20" width="200" height="20" border="no" />
             <text string="Show Active Magic window" />

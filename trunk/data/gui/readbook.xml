@@ -4,20 +4,20 @@
         <frame x="100" y="70" width="447" height="500" border="yes"/>
         <bgimage resource="Book Background" />
         <title resource="Scaling Title Bar" text="Read Book" align="left" close_button="yes"/>
-        
- 
+
+
         <widget name="ItemName" factory="pawsTextBox" >
-	        <frame x="35" y="35" width="385" height="40"/>
-	        <font name="becker-m.ttf" r="0" g="0" b="0" size="15"/>
-        	<text horizAdjust="CENTRE" />
+            <frame x="35" y="35" width="385" height="40"/>
+            <font name="becker-m.ttf" r="0" g="0" b="0" size="15"/>
+            <text horizAdjust="CENTRE" />
         </widget>
-      
+
 
     <widget name="ItemDescription" factory="pawsMultiLineTextBox" style="textinput">
         <frame x="35" y="90" width="385" height="380" border="no"/>
         <font name="becker-m.ttf" r="0" g="0" b="0" size="12"/>
     </widget>
-    
+
     <widget name="ItemDescriptionCraft" factory="pawsMultiLineTextBox" style="textinput">
         <frame x="35" y="90" width="385" height="380" border="no"/>
         <font name="becker-m.ttf" r="0" g="0" b="0" size="12"/>
@@ -32,7 +32,7 @@
         <frame x="35" y="5" width="22" height="22" />
         <bgimage resource="Scribe" />
     </widget>
-        
+
     </widget>
 
 </widget_description>

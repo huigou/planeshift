@@ -17,7 +17,7 @@
         <widget name="CP" factory="pawsTextBox">
             <frame x="605" y="40" width="100" height="40" border="no" />
             <text string="" horizAdjust="CENTRE" />
-			<bgimage resource="cpBox" />
+            <bgimage resource="cpBox" />
         </widget>
 
         <!-- Life Event -->
@@ -37,16 +37,16 @@
             <frame x="100" y="145" width="650" height="210" border="no" />
             <available width="300" rowheight="24" />
             <selected width="420" rowheight="24" />
-			<widget name="addbutton" factory="pawsButton" id="-100">
-				<frame x="300" y="85" width="25" height="20" />
-				<bgimage resource="arrowRight" />
-			</widget>
-			<widget name="removebutton" factory="pawsButton" id="-200">
-				<frame x="300" y="123" width="25" height="20" />
-				<bgimage resource="arrowLeft" />
-			</widget>
+            <widget name="addbutton" factory="pawsButton" id="-100">
+                <frame x="300" y="85" width="25" height="20" />
+                <bgimage resource="arrowRight" />
+            </widget>
+            <widget name="removebutton" factory="pawsButton" id="-200">
+                <frame x="300" y="123" width="25" height="20" />
+                <bgimage resource="arrowLeft" />
+            </widget>
             <highlight resource="Highlight" />
-			<font name="LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="12" />
+            <font name="LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="12" />
         </widget>
 
         <widget name="desc_label" factory="pawsTextBox" >
@@ -69,28 +69,28 @@
 
         <!-- Navigation Buttons -->
         <widget name="navBar" factory="pawsWidget">
-			<frame x="30" y="550" width="740" height="40" />
-			<font name="scurlock.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="no" size="16" resizetoscreen="yes" />
-			
-			<widget name="BackButton" factory="pawsButton" id="6000">
-				<frame x="110" y="0" width="100" height="40" />
-				<label text="Prev"/>
-				<bgimage resource="buttonDefault" />
-			</widget>
+            <frame x="30" y="550" width="740" height="40" />
+            <font name="scurlock.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="no" size="16" resizetoscreen="yes" />
 
-			<!-- Randomize button -->
-			<widget name="randomize" factory="pawsButton">
-				<frame x="306" y="0" width="130" height="40" />
-				<label text="Randomize"/>
-				<bgimage resource="buttonBrown" />
-			</widget>
-			
-			<widget name="NextButton" factory="pawsButton" id="5000">
-				<frame x="520" y="0" width="100" height="40" />
-				<label text="Next" />
-				<bgimage resource="buttonDefault" />
-			</widget>
-		</widget>
+            <widget name="BackButton" factory="pawsButton" id="6000">
+                <frame x="110" y="0" width="100" height="40" />
+                <label text="Prev"/>
+                <bgimage resource="buttonDefault" />
+            </widget>
+
+            <!-- Randomize button -->
+            <widget name="randomize" factory="pawsButton">
+                <frame x="306" y="0" width="130" height="40" />
+                <label text="Randomize"/>
+                <bgimage resource="buttonBrown" />
+            </widget>
+
+            <widget name="NextButton" factory="pawsButton" id="5000">
+                <frame x="520" y="0" width="100" height="40" />
+                <label text="Next" />
+                <bgimage resource="buttonDefault" />
+            </widget>
+        </widget>
 
     </widget>
 

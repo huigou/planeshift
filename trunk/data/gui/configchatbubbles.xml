@@ -35,14 +35,14 @@
             <widget name="sayOutlineR" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
             <widget name="sayOutlineG" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
             <widget name="sayOutlineB" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
-			<widget name="sayAlignText" factory="pawsTextBox">
+            <widget name="sayAlignText" factory="pawsTextBox">
                 <frame x="10" y="70" width="130" height="20" />
                 <text string="Say Alignment" />
             </widget>
-			<widget name="sayAlign" factory="pawsComboBox" >
-				<listbox rows="3" height="20" text="Left" />
-				<frame x="150" y="20" width="200" height="25" border="no" />
-			</widget>
+            <widget name="sayAlign" factory="pawsComboBox" >
+                <listbox rows="3" height="20" text="Left" />
+                <frame x="150" y="20" width="200" height="25" border="no" />
+            </widget>
 
             <widget name="tellText" factory="pawsTextBox">
                 <frame x="10" y="30" width="130" height="20" />
@@ -69,14 +69,14 @@
             <widget name="tellOutlineR" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
             <widget name="tellOutlineG" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
             <widget name="tellOutlineB" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
-			<widget name="tellAlignText" factory="pawsTextBox">
+            <widget name="tellAlignText" factory="pawsTextBox">
                 <frame x="10" y="70" width="130" height="20" />
                 <text string="Tell Alignment" />
             </widget>
-			<widget name="tellAlign" factory="pawsComboBox" >
-				<listbox rows="3" height="20" text="Left" />
-				<frame x="150" y="20" width="200" height="25" border="no" />
-			</widget>
+            <widget name="tellAlign" factory="pawsComboBox" >
+                <listbox rows="3" height="20" text="Left" />
+                <frame x="150" y="20" width="200" height="25" border="no" />
+            </widget>
 
             <widget name="groupText" factory="pawsTextBox">
                 <frame x="10" y="30" width="130" height="20" />
@@ -103,14 +103,14 @@
             <widget name="groupOutlineR" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
             <widget name="groupOutlineG" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
             <widget name="groupOutlineB" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
-			<widget name="groupAlignText" factory="pawsTextBox">
+            <widget name="groupAlignText" factory="pawsTextBox">
                 <frame x="10" y="70" width="130" height="20" />
                 <text string="Group Alignment" />
             </widget>
-			<widget name="groupAlign" factory="pawsComboBox" >
-				<listbox rows="3" height="20" text="Left" />
-				<frame x="150" y="20" width="200" height="25" border="no" />
-			</widget>
+            <widget name="groupAlign" factory="pawsComboBox" >
+                <listbox rows="3" height="20" text="Left" />
+                <frame x="150" y="20" width="200" height="25" border="no" />
+            </widget>
 
             <widget name="guildText" factory="pawsTextBox">
                 <frame x="10" y="30" width="130" height="20" />
@@ -137,15 +137,15 @@
             <widget name="guildOutlineR" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
             <widget name="guildOutlineG" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
             <widget name="guildOutlineB" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
-			<widget name="guildAlignText" factory="pawsTextBox">
+            <widget name="guildAlignText" factory="pawsTextBox">
                 <frame x="10" y="70" width="130" height="20" />
                 <text string="Guild Alignment" />
             </widget>
-			<widget name="guildAlign" factory="pawsComboBox" >
-				<listbox rows="3" height="20" text="Left" />
-				<frame x="150" y="20" width="200" height="25" border="no" />
-			</widget>
-            
+            <widget name="guildAlign" factory="pawsComboBox" >
+                <listbox rows="3" height="20" text="Left" />
+                <frame x="150" y="20" width="200" height="25" border="no" />
+            </widget>
+
             <widget name="allianceText" factory="pawsTextBox">
                 <frame x="10" y="30" width="130" height="20" />
                 <text string="alliance text colour" />
@@ -171,14 +171,14 @@
             <widget name="allianceOutlineR" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
             <widget name="allianceOutlineG" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
             <widget name="allianceOutlineB" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
-			<widget name="allianceAlignText" factory="pawsTextBox">
+            <widget name="allianceAlignText" factory="pawsTextBox">
                 <frame x="10" y="70" width="130" height="20" />
                 <text string="alliance Alignment" />
             </widget>
-			<widget name="allianceAlign" factory="pawsComboBox" >
-				<listbox rows="3" height="20" text="Left" />
-				<frame x="150" y="20" width="200" height="25" border="no" />
-			</widget>
+            <widget name="allianceAlign" factory="pawsComboBox" >
+                <listbox rows="3" height="20" text="Left" />
+                <frame x="150" y="20" width="200" height="25" border="no" />
+            </widget>
 
             <widget name="auctionText" factory="pawsTextBox">
                 <frame x="10" y="30" width="130" height="20" />
@@ -205,14 +205,14 @@
             <widget name="auctionOutlineR" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
             <widget name="auctionOutlineG" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
             <widget name="auctionOutlineB" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
-			<widget name="auctionAlignText" factory="pawsTextBox">
+            <widget name="auctionAlignText" factory="pawsTextBox">
                 <frame x="10" y="70" width="130" height="20" />
                 <text string="Auction Alignment" />
             </widget>
-			<widget name="auctionAlign" factory="pawsComboBox" >
-				<listbox rows="3" height="20" text="Left" />
-				<frame x="150" y="20" width="200" height="25" border="no" />
-			</widget>
+            <widget name="auctionAlign" factory="pawsComboBox" >
+                <listbox rows="3" height="20" text="Left" />
+                <frame x="150" y="20" width="200" height="25" border="no" />
+            </widget>
 
             <widget name="shoutText" factory="pawsTextBox">
                 <frame x="10" y="30" width="130" height="20" />
@@ -239,14 +239,14 @@
             <widget name="shoutOutlineR" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
             <widget name="shoutOutlineG" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
             <widget name="shoutOutlineB" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
-			<widget name="shoutAlignText" factory="pawsTextBox">
+            <widget name="shoutAlignText" factory="pawsTextBox">
                 <frame x="10" y="70" width="130" height="20" />
                 <text string="Shout Alignment" />
             </widget>
-			<widget name="shoutAlign" factory="pawsComboBox" >
-				<listbox rows="3" height="20" text="Left" />
-				<frame x="150" y="20" width="200" height="25" border="no" />
-			</widget>
+            <widget name="shoutAlign" factory="pawsComboBox" >
+                <listbox rows="3" height="20" text="Left" />
+                <frame x="150" y="20" width="200" height="25" border="no" />
+            </widget>
 
             <widget name="meText" factory="pawsTextBox">
                 <frame x="10" y="30" width="130" height="20" />
@@ -273,14 +273,14 @@
             <widget name="meOutlineR" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
             <widget name="meOutlineG" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
             <widget name="meOutlineB" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
-			<widget name="meAlignText" factory="pawsTextBox">
+            <widget name="meAlignText" factory="pawsTextBox">
                 <frame x="10" y="70" width="130" height="20" />
                 <text string="Me Alignment" />
             </widget>
-			<widget name="meAlign" factory="pawsComboBox" >
-				<listbox rows="3" height="20" text="Left" />
-				<frame x="150" y="20" width="200" height="25" border="no" />
-			</widget>
+            <widget name="meAlign" factory="pawsComboBox" >
+                <listbox rows="3" height="20" text="Left" />
+                <frame x="150" y="20" width="200" height="25" border="no" />
+            </widget>
 
             <widget name="tellselfText" factory="pawsTextBox">
                 <frame x="10" y="30" width="130" height="20" />
@@ -307,14 +307,14 @@
             <widget name="tellselfOutlineR" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
             <widget name="tellselfOutlineG" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
             <widget name="tellselfOutlineB" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
-			<widget name="tellselfAlignText" factory="pawsTextBox">
+            <widget name="tellselfAlignText" factory="pawsTextBox">
                 <frame x="10" y="70" width="130" height="20" />
                 <text string="Tellself Alignment" />
             </widget>
-			<widget name="tellselfAlign" factory="pawsComboBox" >
-				<listbox rows="3" height="20" text="Left" />
-				<frame x="150" y="20" width="200" height="25" border="no" />
-			</widget>
+            <widget name="tellselfAlign" factory="pawsComboBox" >
+                <listbox rows="3" height="20" text="Left" />
+                <frame x="150" y="20" width="200" height="25" border="no" />
+            </widget>
 
             <widget name="myText" factory="pawsTextBox">
                 <frame x="10" y="30" width="130" height="20" />
@@ -341,14 +341,14 @@
             <widget name="myOutlineR" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
             <widget name="myOutlineG" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
             <widget name="myOutlineB" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
-			<widget name="myAlignText" factory="pawsTextBox">
+            <widget name="myAlignText" factory="pawsTextBox">
                 <frame x="10" y="70" width="130" height="20" />
                 <text string="My Alignment" />
             </widget>
-			<widget name="myAlign" factory="pawsComboBox" >
-				<listbox rows="3" height="20" text="Left" />
-				<frame x="150" y="20" width="200" height="25" border="no" />
-			</widget>
+            <widget name="myAlign" factory="pawsComboBox" >
+                <listbox rows="3" height="20" text="Left" />
+                <frame x="150" y="20" width="200" height="25" border="no" />
+            </widget>
 
             <widget name="npcText" factory="pawsTextBox">
                 <frame x="10" y="30" width="130" height="20" />
@@ -375,14 +375,14 @@
             <widget name="npcOutlineR" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
             <widget name="npcOutlineG" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
             <widget name="npcOutlineB" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
-			<widget name="npcAlignText" factory="pawsTextBox">
+            <widget name="npcAlignText" factory="pawsTextBox">
                 <frame x="10" y="70" width="130" height="20" />
                 <text string="NPC Alignment" />
             </widget>
-			<widget name="npcAlign" factory="pawsComboBox" >
-				<listbox rows="3" height="20" text="Left" />
-				<frame x="150" y="20" width="200" height="25" border="no" />
-			</widget>
+            <widget name="npcAlign" factory="pawsComboBox" >
+                <listbox rows="3" height="20" text="Left" />
+                <frame x="150" y="20" width="200" height="25" border="no" />
+            </widget>
 
             <widget name="npc_meText" factory="pawsTextBox">
                 <frame x="10" y="30" width="130" height="20" />
@@ -409,14 +409,14 @@
             <widget name="npc_meOutlineR" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
             <widget name="npc_meOutlineG" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
             <widget name="npc_meOutlineB" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
-			<widget name="npc_meAlignText" factory="pawsTextBox">
+            <widget name="npc_meAlignText" factory="pawsTextBox">
                 <frame x="10" y="70" width="130" height="20" />
                 <text string="NPC_me Alignment" />
             </widget>
-			<widget name="npc_meAlign" factory="pawsComboBox" >
-				<listbox rows="3" height="20" text="Left" />
-				<frame x="150" y="20" width="200" height="25" border="no" />
-			</widget>
+            <widget name="npc_meAlign" factory="pawsComboBox" >
+                <listbox rows="3" height="20" text="Left" />
+                <frame x="150" y="20" width="200" height="25" border="no" />
+            </widget>
 
             <widget name="npc_myText" factory="pawsTextBox">
                 <frame x="10" y="30" width="130" height="20" />
@@ -443,14 +443,14 @@
             <widget name="npc_myOutlineR" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
             <widget name="npc_myOutlineG" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
             <widget name="npc_myOutlineB" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
-			<widget name="npc_myAlignText" factory="pawsTextBox">
+            <widget name="npc_myAlignText" factory="pawsTextBox">
                 <frame x="10" y="70" width="130" height="20" />
                 <text string="NPC_my Alignment" />
             </widget>
-			<widget name="npc_myAlign" factory="pawsComboBox" >
-				<listbox rows="3" height="20" text="Left" />
-				<frame x="150" y="20" width="200" height="25" border="no" />
-			</widget>
+            <widget name="npc_myAlign" factory="pawsComboBox" >
+                <listbox rows="3" height="20" text="Left" />
+                <frame x="150" y="20" width="200" height="25" border="no" />
+            </widget>
 
             <widget name="npc_narrateText" factory="pawsTextBox">
                 <frame x="10" y="30" width="130" height="20" />
@@ -477,21 +477,21 @@
             <widget name="npc_narrateOutlineR" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
             <widget name="npc_narrateOutlineG" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
             <widget name="npc_narrateOutlineB" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
-			<widget name="npc_narrateAlignText" factory="pawsTextBox">
+            <widget name="npc_narrateAlignText" factory="pawsTextBox">
                 <frame x="10" y="70" width="130" height="20" />
                 <text string="NPC_narrate Alignment" />
             </widget>
-			<widget name="npc_narrateAlign" factory="pawsComboBox" >
-				<listbox rows="3" height="20" text="Left" />
-				<frame x="150" y="20" width="200" height="25" border="no" />
-			</widget>
-			
+            <widget name="npc_narrateAlign" factory="pawsComboBox" >
+                <listbox rows="3" height="20" text="Left" />
+                <frame x="150" y="20" width="200" height="25" border="no" />
+            </widget>
+
             <widget name="maxLineLenText" factory="pawsTextBox">
                 <frame x="10" y="50" width="210" height="20" />
                 <text string="Max Line Length" />
             </widget>
             <widget name="maxLineLen" factory="pawsEditTextBox"><frame border="yes" x="140" y="50" width="30" height="20" /></widget>
-			
+
             <widget name="shortPhraseCharCountText" factory="pawsTextBox">
                 <frame x="10" y="50" width="210" height="20" />
                 <text string="Short Phrase Char Count" />

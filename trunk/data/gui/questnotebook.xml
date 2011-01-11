@@ -26,7 +26,7 @@
     <pawsTabWindow name="QuestTabs" id="400">
 
         <frame x="0" y="30" width="250" height="220" border="yes" />
-    
+
         <pawsButton name="UncompletedButton" id="1000" style="Standard Tab">
             <frame x="17" y="185" width="80" height="15" />
             <label text="Uncompleted" />
@@ -123,7 +123,7 @@
         <frame x="450" y="225" width="78" height="15"/>
         <label text="Discard"/>
     </pawsButton>
-    
+
         <pawsButton name="Evaluate" id="1205" visible="no" style="Standard Button">
         <frame x="350" y="225" width="78" height="15"/>
         <label text="Evaluate"/>

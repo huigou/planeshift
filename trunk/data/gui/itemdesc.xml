@@ -4,10 +4,10 @@
         <frame x="100" y="100" width="320" height="200" border="yes"/>
 
         <title resource="Scaling Title Bar" text="Examine" align="left" close_button="yes"/>
-        
+
         <widget name="ItemImage" factory="pawsWidget" visible="yes" >
-		<frame x="20" y="50" width="48" height="48" border="no"/>
-        	<bgimage resource="Standard Slot" />
+        <frame x="20" y="50" width="48" height="48" border="no"/>
+            <bgimage resource="Standard Slot" />
         </widget>
 
         <widget name="ItemName" factory="pawsTextBox" >
@@ -17,13 +17,13 @@
         <widget name="ItemDescription" factory="pawsMultiLineTextBox" >
             <frame x="85" y="40" width="225" height="150" border="no"/>
         </widget>
-        
-	<!-- Study button --> 
-	<widget name="StudyButton" factory="pawsButton" tooltip="Study Item" visible="no">
+
+    <!-- Study button -->
+    <widget name="StudyButton" factory="pawsButton" tooltip="Study Item" visible="no">
             <frame x="20" y="120" width="50" height="20"/>
             <label text="Study" />
-    	</widget>
-    
+        </widget>
+
     </widget>
 
 </widget_description>
