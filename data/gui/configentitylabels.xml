@@ -1,9 +1,9 @@
 <widget_description>
 
-<widget name="ConfigKeysTree" factory="pawsSeqTreeNode"
-    visible="yes" savepositions="no" movable="no" resizable="no" >
-    <!--<font name="LiberationSans-Regular.ttf" r="200" g="200" b="200" size="10" scalefont="no" /> -->
-	<frame x="0" y="10" width="420" height="300" border="yes" style="New Standard GUI" />
+<widget name="ConfigKeysTree" factory="pawsSeqTreeNode" visible="yes"
+        savepositions="no" movable="no" resizable="no" style="New Standard GUI" >
+     <frame x="5" y="5" width="433" height="294" border="no" />
+     <bgimage resource="Scaling Widget Background" />
 
     <!-- subtree for visibility selection-->
     <widget factory="pawsSeqTreeNode" name = "rootNode">
@@ -17,7 +17,7 @@
             <widget factory="pawsSeqTreeNode" name="Creatures">
                 <nodewidget>
                     <widget factory="pawsTextBox" name="ShowCreaturesLabel">
-                        <frame x="0" y="0" width="60" height="20" border="no" />
+                        <frame x="0" y="5" width="60" height="20" border="no" />
                         <text string="Creatures"/>
                     </widget>
 <!-- I have no clue yet, why listbox in combo, placed in the tree don't show-->
@@ -26,17 +26,17 @@
 <!--                        <frame x="225" y="0" width="100" height="25" border="no" />-->
 <!--                    </widget>-->
                     <widget name="CreaturesRG" factory="pawsRadioButtonGroup">
-                        <radio on="radioon" off="radiooff" size="20"/>
+                        <radio on="radioon" off="radiooff" size="16"/>
                         <frame x="0" y="0" width="350" height="25" />
-                        <radionode name = "always" id="100">
+                        <radionode name="always" id="100">
                             <text string="Always" position="right" />
                             <frame x="90" y="0" width="90" height="25" />
                         </radionode>
-                        <radionode name = "mouse" id="101">
+                        <radionode name="mouse" id="101">
                             <text string="On Mouse" position="right" />
                             <frame x="170" y="0" width="110" height="25" />
                         </radionode>
-                        <radionode name = "never" id="102">
+                        <radionode name="never" id="102">
                             <text string="Never" position="right" />
                             <frame x="270" y="0" width="80" height="25" />
                         </radionode>
@@ -47,7 +47,7 @@
             <widget factory="pawsSeqTreeNode" name="Items">
                 <nodewidget>
                     <widget factory="pawsTextBox" name="ShowItemsLabel">
-                        <frame x="0" y="0" width="80" height="20" border="no" />
+                        <frame x="0" y="5" width="80" height="20" border="no" />
                         <text string="Items"/>
                     </widget>
 <!--                    <widget name="visItems" factory="pawsComboBox" >-->
@@ -56,17 +56,17 @@
 <!--                    </widget>-->
 
                     <widget name="ItemsRG" factory="pawsRadioButtonGroup">
-                        <radio on="radioon" off="radiooff" size="20"/>
+                        <radio on="radioon" off="radiooff" size="16"/>
                         <frame x="0" y="0" width="350" height="25" />
-                        <radionode name = "always" id="103">
+                        <radionode name="always" id="103">
                             <text string="Always" position="right" />
                             <frame x="90" y="0" width="90" height="25" />
                         </radionode>
-                        <radionode name = "mouse" id="104">
+                        <radionode name="mouse" id="104">
                             <text string="On Mouse" position="right" />
                             <frame x="170" y="0" width="110" height="25" />
                         </radionode>
-                        <radionode name = "never" id="105">
+                        <radionode name="never" id="105">
                             <text string="Never" position="right" />
                             <frame x="270" y="0" width="80" height="25" />
                         </radionode>
@@ -78,7 +78,7 @@
                 <nodewidget>
                     <widget name="visGuild" factory="pawsCheckBox" id="100">
                         <frame x="0" y="0" width="112" height="20"/>
-                        <text string="Show guild " position="left"/>
+                        <text string="Show guild" position="left"/>
                     </widget>
                 </nodewidget>
                 <attr name="type" value="guild"/>

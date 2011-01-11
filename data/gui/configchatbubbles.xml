@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <widget_description>
-<widget name="ConfigChatBubblesTree" factory="pawsConfigChatBubbles"
+    <widget name="ConfigChatBubblesTree" factory="pawsConfigChatBubbles"
         visible="no" savepositions="no" movable="no"
         resizable="no" style="New Standard GUI" >
-	<frame x="225" y="10" width="400" height="300" border="no" />
-	<font name="LiberationSans-Regular.ttf" r="200" g="200" b="200" size="10" scalefont="no" />
+        <frame x="225" y="10" width="400" height="300" border="no" />
+        <bgimage resource="Scaling Widget Background" />
             <widget name="allEnabled" factory="pawsCheckBox">
                 <frame x="10" y="10" width="350" height="20"/>
                 <text string="Enable Chat Bubbles" />
@@ -544,6 +544,6 @@
             </widget>
 
 
-		</widget>
+    </widget>
 
 </widget_description>
