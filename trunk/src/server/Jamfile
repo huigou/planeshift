@@ -6,7 +6,7 @@ Application psserver :
 	[ Wildcard *.cpp *.h ] : console
 ;
 
-ExternalLibs psserver : CRYSTAL ;
+ExternalLibs psserver : CRYSTAL LIBMYSQLCLIENT ;
 LinkWith psserver : bulkobjects fparser psnet psengine psutil psrpgrules ;
 CompileGroups psserver : server ;
 
@@ -54,7 +54,7 @@ LinkStaticPlugins psserver_static :
   dbmysql
 ;
 
-ExternalLibs psserver_static : CRYSTAL ;
+ExternalLibs psserver_static : CRYSTAL LIBMYSQLCLIENT ;
 CompileGroups psserver_static : server_static ;
 
 
