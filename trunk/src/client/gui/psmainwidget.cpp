@@ -88,27 +88,27 @@ psEntityTypes::psEntityTypes(iObjectRegistry* objReg)
     this->objReg = objReg;
     vfs =  csQueryRegistry<iVFS > ( objReg);
     
-    types.Push(new psEntityType("items", "Items", 2,
-               "use|combine|pickup|unlock|examine|context", 
-               "Use|Combine|Pick up|Unlock|Examine|Context"));
-    types.Push(new psEntityType("players", "Players", 0,
-               "playerdesc|exchange|attack|context", 
-               "Description|Exchange|Attack|Context"));
-    types.Push(new psEntityType("merchants", "Merchants", 0,
-               "buysell|give|playerdesc|attack|talk|context", 
-               "Buy/Sell|Give|Description|Attack|Talk|Context"));
-    types.Push(new psEntityType("aliveNPCs", "Alive NPCs", 3,
-               "buysell|give|playerdesc|attack|talk|context", 
-               "Buy/Sell|Give|Description|Attack|Talk|Context"));
-    types.Push(new psEntityType("deadNPCs", "Dead NPCs", 0,
-               "loot|playerdesc|context", 
-               "Loot|Description|Context"));
-    types.Push(new psEntityType("petNPCs", "Pet NPCs", 0,
-               "playerdesc|context", 
-               "Description|Context"));
-    types.Push(new psEntityType("imperviousNPCs", "Impervious NPCs", 2,
-               "give|playerdesc|talk|context", 
-               "Give|Description|Talk|Context"));
+    types.Push(new psEntityType("items", "Items", 3,
+               "combine|context|examine|pickup|unlock|use", 
+               "Combine|Context|Examine|Pick up|Unlock|Use"));
+    types.Push(new psEntityType("players", "Players", 2,
+               "attack|context|playerdesc|exchange", 
+               "Attack|Context|Description|Exchange"));
+    types.Push(new psEntityType("merchants", "Merchants", 1,
+               "attack|buysell|context|playerdesc|give|talk", 
+               "Attack|Buy/Sell|Context|Description|Give|Talk"));
+    types.Push(new psEntityType("aliveNPCs", "Alive NPCs", 5,
+               "attack|buysell|context|playerdesc|give|talk", 
+               "Attack|Buy/Sell|Context|Description|Give|Talk"));
+    types.Push(new psEntityType("deadNPCs", "Dead NPCs", 2,
+               "context|playerdesc|loot", 
+               "Context|Description|Loot"));
+    types.Push(new psEntityType("petNPCs", "Pet NPCs", 1,
+               "context|playerdesc", 
+               "Context|Description"));
+    types.Push(new psEntityType("imperviousNPCs", "Impervious NPCs", 3,
+               "context|playerdesc|give|talk", 
+               "Context|Description|Give|Talk"));
     /*If you add a new psEntityType don't forget to add the widgets in 
     data/gui/configentityinter.xml!!!*/
 }
