@@ -3540,7 +3540,6 @@ bool WorkManager::ApplySkills(float factor, psItem* transItem, gemActor *worker,
         env.Define("Quality", currentQuality);
         env.Define("Factor", factor);
         env.Define("Object", transItem);
-        env.Define("BasicObject", transItem->GetBaseStats());
         env.Define("Worker", worker);
         env.Define("Process", process);
         env.Define("Transform", trans);
