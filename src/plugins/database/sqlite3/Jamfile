@@ -1,4 +1,4 @@
-SubDir TOP src server database sqlite3 ;
+SubDir TOP src plugins database sqlite3 ;
 
 if $(LIBSQLITE3.AVAILABLE) = "yes"
 {
