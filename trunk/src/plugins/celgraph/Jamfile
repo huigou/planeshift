@@ -1,4 +1,4 @@
-SubDir TOP src common celgraph ;
+SubDir TOP src plugins celgraph ;
 
 Plugin celgraph
        : celgraph.cpp celgraph.h

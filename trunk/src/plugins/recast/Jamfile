@@ -1,4 +1,4 @@
-SubDir TOP src common recast ;
+SubDir TOP src plugins recast ;
 
 Plugin recast :
   [ Wildcard *.cpp *.h ]

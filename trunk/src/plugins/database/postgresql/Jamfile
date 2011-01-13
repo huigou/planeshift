@@ -1,4 +1,4 @@
-SubDir TOP src server database postgresql ;
+SubDir TOP src plugins database postgresql ;
 
 if $(LIBPQ.AVAILABLE) = "yes"
 {

@@ -1,4 +1,4 @@
-SubDir TOP src server database mysql ;
+SubDir TOP src plugins database mysql ;
 
 if $(LIBMYSQLCLIENT.AVAILABLE) = "yes"
 {

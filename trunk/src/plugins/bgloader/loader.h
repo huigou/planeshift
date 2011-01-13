@@ -1608,7 +1608,7 @@ private:
 
     /* Parsing Methods */
     // parser tokens
-#define CS_TOKEN_ITEM_FILE "src/common/bgloader/parser.tok"
+#define CS_TOKEN_ITEM_FILE "src/plugins/bgloader/parser.tok"
 #define CS_TOKEN_LIST_TOKEN_PREFIX PARSERTOKEN_
 #include "cstool/tokenlist.h"
 #undef CS_TOKEN_ITEM_FILE

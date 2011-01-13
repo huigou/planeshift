@@ -1,4 +1,4 @@
-SubDir TOP src common bgloader ;
+SubDir TOP src plugins bgloader ;
 
 Description bgloader : "Background Loader" ;
 
