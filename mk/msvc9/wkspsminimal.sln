@@ -140,9 +140,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "plgcelgraph", "plgcelgraph.vcproj", "{8BBC74D9-616A-F075-D8FC-8B101A6C5730}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "plgdbmysql", "plgdbmysql.vcproj", "{44F637AC-3D1B-9DC4-22C0-3F216BF1EB41}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D9DEA6DD-ED82-1526-6BBF-851FF399854C} = {D9DEA6DD-ED82-1526-6BBF-851FF399854C}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "plgrecast", "plgrecast.vcproj", "{75923200-1694-6BF2-8A0E-3D45BD120F86}"
 EndProject
