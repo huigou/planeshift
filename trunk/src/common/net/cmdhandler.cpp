@@ -85,47 +85,54 @@ bool CmdHandler::UnsubscribeAll(iCmdSubscriber *subscriber)
     return unsubscribed_commands;
 }
 
-const char *CmdHandler::Publish(const char *cmd)
+const char *CmdHandler::Publish(const csString & cmd)
 {
-    
     if (subscribers.GetSize() == 0)
         return "No command handlers installed!";
 
-    char command[100];
-
+    csString fullLine = cmd;
+    csString command;
     // Get first word of line if there is a space, or get entire line if one word
-    const char *space = strchr(cmd,' ');
-    if (space)
     {
-        int len = space-cmd;
-        if (len>99)
-            len=99;
-        strncpy(command,cmd,len);
-        command[len] = 0;
-    }
-    else
-    {
-        strncpy(command,cmd,100);
-        command[99] = 0;
-    }
-
-
-    int count=0;
-    const char *err=NULL,*ret;
-    for ( size_t x = 0; x < subscribers.GetSize(); x++ )
-    {
-        if (subscribers[x]->cmd == command)
+        size_t spacePosition = cmd.FindFirst(' ');
+        if(spacePosition != SIZET_NOT_FOUND)
         {
-            count++;
-            ret = subscribers[x]->subscriber->HandleCommand(cmd);
-            if (ret)
-                err = ret;  // This structure is needed in case several classes handle the same command.
+            command = fullLine.Slice(0, spacePosition);
+        }
+        else
+        {
+            command = fullLine;
+        }
+    }
+    // Ensure the command is lower case
+    {
+        csString commandLower = command;
+        if(commandLower.Downcase() != command)
+        {
+            // Splice the rest of the command in after the downcase command
+            // so that we don't replace the command in the text
+            // e.g.  /Say /Say is preserved as /say /Say
+            fullLine = commandLower + fullLine.Slice(commandLower.Length());
+            command = commandLower;
+        }
+    }
+    
+    bool found = false;
+    const char *err = NULL;
+    for( size_t x = 0; x < subscribers.GetSize(); x++ )
+    {
+        if(subscribers[x]->cmd == command)
+        {
+            found = true;
+            const char* ret = subscribers[x]->subscriber->HandleCommand(fullLine);
+            if(ret)
+                err = ret;
         }        
     }
 
     // Only last error returned will be shown.
     // This should be ok since most commands will only have one subscriber.
-    return count ? err : "Sorry.  Unknown command (use /show help).";
+    return found ? err : "Sorry.  Unknown command (use /show help).";
 }
 
 void CmdHandler::Execute(const char *script, bool breakSemiColon)
@@ -166,8 +173,8 @@ void CmdHandler::Execute(const char *script, bool breakSemiColon)
 
 void CmdHandler::GetSubscribedCommands(csRedBlackTree<psString>& tree)
 {
-	//we empty the list first
-	tree.DeleteAll();
+    //we empty the list first
+    tree.DeleteAll();
 
     for ( size_t x = 0; x < subscribers.GetSize(); x++ )
     {
