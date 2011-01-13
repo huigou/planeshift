@@ -985,7 +985,7 @@ public:
     /** @brief Creates obj for specified command that needs a reason.
      */
     AdminCmdDataItem()
-    : AdminCmdDataTarget("/item", ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_STRING), random(false), quality(0)
+    : AdminCmdDataTarget("/item", ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_STRING), random(false), quality(50)
     {};
     
     /** @brief Parses the given message and stores its data.
