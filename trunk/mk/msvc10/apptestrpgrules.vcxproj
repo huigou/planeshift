@@ -1480,6 +1480,9 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ProjectReference Include="libpsrpgrules.vcxproj">
       <Project>{4B7B2CDB-4DE7-2E3D-0FF6-EA8AC90E4A27}</Project>
     </ProjectReference>
+    <ProjectReference Include="libpsutil.vcxproj">
+      <Project>{D9DEA6DD-ED82-1526-6BBF-851FF399854C}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
