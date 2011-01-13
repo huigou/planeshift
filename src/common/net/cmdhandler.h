@@ -75,7 +75,7 @@ public:
     bool UnsubscribeAll(iCmdSubscriber *subscriber);
     
     /// Call all HandleCommand funcs for all subscribed commands
-    const char *Publish(const char *cmd);
+    const char *Publish(const csString & cmd);
 
     /** Eventually will execute script commands, but now just wrapper to Publish.
       * @param script The full script to run.
