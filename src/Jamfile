@@ -1,5 +1,6 @@
 SubDir TOP src ;
 
+SubInclude TOP src plugins ;
 SubInclude TOP src common ;
 SubInclude TOP src tools ;
 SubInclude TOP src server ;
