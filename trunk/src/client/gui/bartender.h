@@ -18,7 +18,7 @@
 */
 
 #ifndef PAWS_BARTENDER_WINDOW
-#define PAWS_BARTENDER_WINDOW 
+#define PAWS_BARTENDER_WINDOW
 
 //=============================================================================
 // Library Includes
@@ -35,11 +35,11 @@
 
 
 //=============================================================================
-// Classes 
+// Classes
 //=============================================================================
 
 /**
- * 
+ *
  */
 class pawsBartenderWindow :public pawsWidget
 {
