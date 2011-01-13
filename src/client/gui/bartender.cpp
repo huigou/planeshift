@@ -127,8 +127,8 @@ pawsBartenderWindow::~pawsBartenderWindow()
 
     //finally save the file
     csRef<iVFS> vfs =  csQueryRegistry<iVFS > ( PawsManager::GetSingleton().GetObjectRegistry());
-    doc->Write(vfs, BARTENDER_FILE);    
+    doc->Write(vfs, BARTENDER_FILE);
 }
 
 
-        
+
