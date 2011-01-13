@@ -1,12 +1,13 @@
 SubDir TOP src server ;
 SubInclude TOP src server database ;
 SubInclude TOP src server bulkobjects ;
+StaticPluginLibrary planeshift_staticplugins ;
 
 Application psserver :
 	[ Wildcard *.cpp *.h ] : console
 ;
 
-ExternalLibs psserver : CRYSTAL LIBMYSQLCLIENT ;
+ExternalLibs psserver : CRYSTAL ;
 LinkWith psserver : bulkobjects fparser psnet psengine psutil psrpgrules ;
 CompileGroups psserver : server ;
 
@@ -54,7 +55,7 @@ LinkStaticPlugins psserver_static :
   dbmysql
 ;
 
-ExternalLibs psserver_static : CRYSTAL LIBMYSQLCLIENT ;
+ExternalLibs psserver_static : CRYSTAL ;
 CompileGroups psserver_static : server_static ;
 
 
