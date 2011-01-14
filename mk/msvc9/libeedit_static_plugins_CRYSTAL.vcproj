@@ -29,7 +29,7 @@
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32;CS_USE_STATIC_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				PrecompiledHeaderFile="..\..\out\release9\build\libeedit_static_plugins_CRYSTAL\libeedit_static_plugins_CRYSTAL.pch"
 				AssemblerListingLocation="..\..\out\release9\build\libeedit_static_plugins_CRYSTAL\"
 				ObjectFile="..\..\out\release9\build\libeedit_static_plugins_CRYSTAL\"
@@ -50,9 +50,9 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD"
 				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib libcrystalspace_staticplugins.lib libcrystalspace_windows.lib libcrystalspace_opengl.lib libcrystalspace.lib opengl32.lib zlib.lib version.lib "
-				AdditionalDependencies=""
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib cal3d-vc9.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="..\..\..\CS\out\release9\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release9\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib"
 				LargeAddressAware="2"
 				TargetMachine="1"/>
 			<Tool
@@ -77,7 +77,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -103,7 +103,7 @@
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;WIN32;CS_USE_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				PrecompiledHeaderFile="..\..\out\release9\build\libeedit_static_plugins_CRYSTAL\libeedit_static_plugins_CRYSTAL.pch"
 				AssemblerListingLocation="..\..\out\release9\build\libeedit_static_plugins_CRYSTAL\"
 				ObjectFile="..\..\out\release9\build\libeedit_static_plugins_CRYSTAL\"
@@ -127,9 +127,9 @@
 				ImportLibrary="..\..\out\release9\libs\libeedit_static_plugins_CRYSTAL.lib"
 				ProgramDatabaseFile="..\..\out\release9\build\libeedit_static_plugins_CRYSTAL\Win32\eedit_static_plugins_CRYSTAL-0.5-vc9.pdb"
 				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib libcrystalspace_staticplugins.lib libcrystalspace_windows.lib libcrystalspace_opengl.lib libcrystalspace.lib opengl32.lib zlib.lib version.lib "
-				AdditionalDependencies=""
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib cal3d-vc9.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="..\..\..\CS\out\release9\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release9\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib"
 				LargeAddressAware="2"
 				TargetMachine="1"/>
 			<Tool
@@ -153,7 +153,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -178,7 +178,7 @@
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32;CS_USE_STATIC_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				PrecompiledHeaderFile="..\..\out\debug9\build\libeedit_static_plugins_CRYSTAL\libeedit_static_plugins_CRYSTAL.pch"
 				AssemblerListingLocation="..\..\out\debug9\build\libeedit_static_plugins_CRYSTAL\"
 				ObjectFile="..\..\out\debug9\build\libeedit_static_plugins_CRYSTAL\"
@@ -197,9 +197,9 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
-				AdditionalDependencies=""
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc9_d.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib"
 				LargeAddressAware="2"
 				TargetMachine="1"/>
 			<Tool
@@ -224,7 +224,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -250,7 +250,7 @@
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;WIN32;CS_USE_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				PrecompiledHeaderFile="..\..\out\debug9\build\libeedit_static_plugins_CRYSTAL\libeedit_static_plugins_CRYSTAL.pch"
 				AssemblerListingLocation="..\..\out\debug9\build\libeedit_static_plugins_CRYSTAL\"
 				ObjectFile="..\..\out\debug9\build\libeedit_static_plugins_CRYSTAL\"
@@ -272,9 +272,9 @@
 				ImportLibrary="..\..\out\debug9\libs\libeedit_static_plugins_CRYSTAL_d.lib"
 				ProgramDatabaseFile="..\..\out\debug9\build\libeedit_static_plugins_CRYSTAL\Win32\eedit_static_plugins_CRYSTAL-0.5-vc9_d.pdb"
 				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
-				AdditionalDependencies=""
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc9_d.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib"
 				LargeAddressAware="2"
 				TargetMachine="1"/>
 			<Tool
@@ -298,7 +298,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -323,7 +323,7 @@
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;WIN32;CS_USE_STATIC_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				PrecompiledHeaderFile="..\..\out\debug9\build\libeedit_static_plugins_CRYSTAL\libeedit_static_plugins_CRYSTAL.pch"
 				AssemblerListingLocation="..\..\out\debug9\build\libeedit_static_plugins_CRYSTAL\"
 				ObjectFile="..\..\out\debug9\build\libeedit_static_plugins_CRYSTAL\"
@@ -342,9 +342,9 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
-				AdditionalDependencies=""
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc9_d.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib"
 				LargeAddressAware="2"
 				TargetMachine="1"/>
 			<Tool
@@ -369,7 +369,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -395,7 +395,7 @@
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;WIN32;CS_USE_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				PrecompiledHeaderFile="..\..\out\debug9\build\libeedit_static_plugins_CRYSTAL\libeedit_static_plugins_CRYSTAL.pch"
 				AssemblerListingLocation="..\..\out\debug9\build\libeedit_static_plugins_CRYSTAL\"
 				ObjectFile="..\..\out\debug9\build\libeedit_static_plugins_CRYSTAL\"
@@ -417,9 +417,9 @@
 				ImportLibrary="..\..\out\debug9\libs\libeedit_static_plugins_CRYSTAL_d.lib"
 				ProgramDatabaseFile="..\..\out\debug9\build\libeedit_static_plugins_CRYSTAL\Win32\eedit_static_plugins_CRYSTAL-0.5-vc9_d.pdb"
 				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
-				AdditionalDependencies=""
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc9_d.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib"
 				LargeAddressAware="2"
 				TargetMachine="1"/>
 			<Tool
@@ -443,7 +443,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -468,7 +468,7 @@
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;WIN32;CS_USE_STATIC_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				PrecompiledHeaderFile="..\..\out\debug9\build\libeedit_static_plugins_CRYSTAL\libeedit_static_plugins_CRYSTAL.pch"
 				AssemblerListingLocation="..\..\out\debug9\build\libeedit_static_plugins_CRYSTAL\"
 				ObjectFile="..\..\out\debug9\build\libeedit_static_plugins_CRYSTAL\"
@@ -487,9 +487,9 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
-				AdditionalDependencies=""
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc9_d.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib"
 				LargeAddressAware="2"
 				TargetMachine="1"/>
 			<Tool
@@ -514,7 +514,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -540,7 +540,7 @@
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;WIN32;CS_USE_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				PrecompiledHeaderFile="..\..\out\debug9\build\libeedit_static_plugins_CRYSTAL\libeedit_static_plugins_CRYSTAL.pch"
 				AssemblerListingLocation="..\..\out\debug9\build\libeedit_static_plugins_CRYSTAL\"
 				ObjectFile="..\..\out\debug9\build\libeedit_static_plugins_CRYSTAL\"
@@ -562,9 +562,9 @@
 				ImportLibrary="..\..\out\debug9\libs\libeedit_static_plugins_CRYSTAL_d.lib"
 				ProgramDatabaseFile="..\..\out\debug9\build\libeedit_static_plugins_CRYSTAL\Win32\eedit_static_plugins_CRYSTAL-0.5-vc9_d.pdb"
 				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
-				AdditionalDependencies=""
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc9_d.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib"
 				LargeAddressAware="2"
 				TargetMachine="1"/>
 			<Tool
@@ -588,7 +588,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -613,7 +613,7 @@
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;WIN32;CS_USE_STATIC_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				PrecompiledHeaderFile="..\..\out\debug9\build\libeedit_static_plugins_CRYSTAL\libeedit_static_plugins_CRYSTAL.pch"
 				AssemblerListingLocation="..\..\out\debug9\build\libeedit_static_plugins_CRYSTAL\"
 				ObjectFile="..\..\out\debug9\build\libeedit_static_plugins_CRYSTAL\"
@@ -632,9 +632,9 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
-				AdditionalDependencies=""
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc9_d.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib"
 				LargeAddressAware="2"
 				TargetMachine="1"/>
 			<Tool
@@ -659,7 +659,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -685,7 +685,7 @@
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_WINDOWS;WIN32;CS_USE_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				PrecompiledHeaderFile="..\..\out\debug9\build\libeedit_static_plugins_CRYSTAL\libeedit_static_plugins_CRYSTAL.pch"
 				AssemblerListingLocation="..\..\out\debug9\build\libeedit_static_plugins_CRYSTAL\"
 				ObjectFile="..\..\out\debug9\build\libeedit_static_plugins_CRYSTAL\"
@@ -707,9 +707,9 @@
 				ImportLibrary="..\..\out\debug9\libs\libeedit_static_plugins_CRYSTAL_d.lib"
 				ProgramDatabaseFile="..\..\out\debug9\build\libeedit_static_plugins_CRYSTAL\Win32\eedit_static_plugins_CRYSTAL-0.5-vc9_d.pdb"
 				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
-				AdditionalDependencies=""
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc9_d.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug9\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug9\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib"
 				LargeAddressAware="2"
 				TargetMachine="1"/>
 			<Tool
@@ -733,7 +733,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_WINDOWS;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -758,7 +758,7 @@
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32;CS_USE_STATIC_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				PrecompiledHeaderFile="..\..\out\debug9\build\libeedit_static_plugins_CRYSTAL\libeedit_static_plugins_CRYSTAL.pch"
 				AssemblerListingLocation="..\..\out\debug9\build\libeedit_static_plugins_CRYSTAL\"
 				ObjectFile="..\..\out\debug9\build\libeedit_static_plugins_CRYSTAL\"
@@ -777,9 +777,9 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
-				AdditionalDependencies=""
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib cal3d-vc9.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="..\..\..\CS\out\release9\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release9\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib"
 				LargeAddressAware="2"
 				TargetMachine="1"/>
 			<Tool
@@ -804,7 +804,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -830,7 +830,7 @@
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;WIN32;CS_USE_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				PrecompiledHeaderFile="..\..\out\debug9\build\libeedit_static_plugins_CRYSTAL\libeedit_static_plugins_CRYSTAL.pch"
 				AssemblerListingLocation="..\..\out\debug9\build\libeedit_static_plugins_CRYSTAL\"
 				ObjectFile="..\..\out\debug9\build\libeedit_static_plugins_CRYSTAL\"
@@ -852,9 +852,9 @@
 				ImportLibrary="..\..\out\debug9\libs\libeedit_static_plugins_CRYSTAL_d.lib"
 				ProgramDatabaseFile="..\..\out\debug9\build\libeedit_static_plugins_CRYSTAL\Win32\eedit_static_plugins_CRYSTAL-0.5-vc9_d.pdb"
 				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
-				AdditionalDependencies=""
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib cal3d-vc9.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="..\..\..\CS\out\release9\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release9\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib"
 				LargeAddressAware="2"
 				TargetMachine="1"/>
 			<Tool
@@ -878,7 +878,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -903,7 +903,7 @@
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32;CS_USE_STATIC_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				PrecompiledHeaderFile="..\..\out\release9-x64\build\libeedit_static_plugins_CRYSTAL\libeedit_static_plugins_CRYSTAL.pch"
 				AssemblerListingLocation="..\..\out\release9-x64\build\libeedit_static_plugins_CRYSTAL\"
 				ObjectFile="..\..\out\release9-x64\build\libeedit_static_plugins_CRYSTAL\"
@@ -924,9 +924,9 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD"
 				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib libcrystalspace_staticplugins.lib libcrystalspace_windows.lib libcrystalspace_opengl.lib libcrystalspace.lib opengl32.lib zlib.lib version.lib "
-				AdditionalDependencies=""
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib cal3d-vc9.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="..\..\..\CS\out\release9-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release9-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib"
 				LargeAddressAware="2"
 				TargetMachine="17"/>
 			<Tool
@@ -951,7 +951,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WIN64;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -977,7 +977,7 @@
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;WIN32;CS_USE_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				PrecompiledHeaderFile="..\..\out\release9-x64\build\libeedit_static_plugins_CRYSTAL\libeedit_static_plugins_CRYSTAL.pch"
 				AssemblerListingLocation="..\..\out\release9-x64\build\libeedit_static_plugins_CRYSTAL\"
 				ObjectFile="..\..\out\release9-x64\build\libeedit_static_plugins_CRYSTAL\"
@@ -1001,9 +1001,9 @@
 				ImportLibrary="..\..\out\release9-x64\libs\libeedit_static_plugins_CRYSTAL.lib"
 				ProgramDatabaseFile="..\..\out\release9-x64\build\libeedit_static_plugins_CRYSTAL\x64\eedit_static_plugins_CRYSTAL-0.5-vc9-x64.pdb"
 				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib libcrystalspace_staticplugins.lib libcrystalspace_windows.lib libcrystalspace_opengl.lib libcrystalspace.lib opengl32.lib zlib.lib version.lib "
-				AdditionalDependencies=""
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib cal3d-vc9.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="..\..\..\CS\out\release9-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release9-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib"
 				LargeAddressAware="2"
 				TargetMachine="17"/>
 			<Tool
@@ -1027,7 +1027,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;_WIN64;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1052,7 +1052,7 @@
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32;CS_USE_STATIC_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				PrecompiledHeaderFile="..\..\out\debug9-x64\build\libeedit_static_plugins_CRYSTAL\libeedit_static_plugins_CRYSTAL.pch"
 				AssemblerListingLocation="..\..\out\debug9-x64\build\libeedit_static_plugins_CRYSTAL\"
 				ObjectFile="..\..\out\debug9-x64\build\libeedit_static_plugins_CRYSTAL\"
@@ -1071,9 +1071,9 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
-				AdditionalDependencies=""
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc9_d.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug9-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug9-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib"
 				LargeAddressAware="2"
 				TargetMachine="17"/>
 			<Tool
@@ -1098,7 +1098,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WIN64;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1124,7 +1124,7 @@
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;WIN32;CS_USE_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				PrecompiledHeaderFile="..\..\out\debug9-x64\build\libeedit_static_plugins_CRYSTAL\libeedit_static_plugins_CRYSTAL.pch"
 				AssemblerListingLocation="..\..\out\debug9-x64\build\libeedit_static_plugins_CRYSTAL\"
 				ObjectFile="..\..\out\debug9-x64\build\libeedit_static_plugins_CRYSTAL\"
@@ -1146,9 +1146,9 @@
 				ImportLibrary="..\..\out\debug9-x64\libs\libeedit_static_plugins_CRYSTAL_d.lib"
 				ProgramDatabaseFile="..\..\out\debug9-x64\build\libeedit_static_plugins_CRYSTAL\x64\eedit_static_plugins_CRYSTAL-0.5-vc9-x64_d.pdb"
 				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
-				AdditionalDependencies=""
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc9_d.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug9-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug9-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib"
 				LargeAddressAware="2"
 				TargetMachine="17"/>
 			<Tool
@@ -1172,7 +1172,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;_WIN64;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1197,7 +1197,7 @@
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;WIN32;CS_USE_STATIC_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				PrecompiledHeaderFile="..\..\out\debug9-x64\build\libeedit_static_plugins_CRYSTAL\libeedit_static_plugins_CRYSTAL.pch"
 				AssemblerListingLocation="..\..\out\debug9-x64\build\libeedit_static_plugins_CRYSTAL\"
 				ObjectFile="..\..\out\debug9-x64\build\libeedit_static_plugins_CRYSTAL\"
@@ -1216,9 +1216,9 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
-				AdditionalDependencies=""
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc9_d.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug9-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug9-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib"
 				LargeAddressAware="2"
 				TargetMachine="17"/>
 			<Tool
@@ -1243,7 +1243,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WIN64;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1269,7 +1269,7 @@
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;WIN32;CS_USE_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				PrecompiledHeaderFile="..\..\out\debug9-x64\build\libeedit_static_plugins_CRYSTAL\libeedit_static_plugins_CRYSTAL.pch"
 				AssemblerListingLocation="..\..\out\debug9-x64\build\libeedit_static_plugins_CRYSTAL\"
 				ObjectFile="..\..\out\debug9-x64\build\libeedit_static_plugins_CRYSTAL\"
@@ -1291,9 +1291,9 @@
 				ImportLibrary="..\..\out\debug9-x64\libs\libeedit_static_plugins_CRYSTAL_d.lib"
 				ProgramDatabaseFile="..\..\out\debug9-x64\build\libeedit_static_plugins_CRYSTAL\x64\eedit_static_plugins_CRYSTAL-0.5-vc9-x64_d.pdb"
 				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
-				AdditionalDependencies=""
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc9_d.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug9-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug9-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib"
 				LargeAddressAware="2"
 				TargetMachine="17"/>
 			<Tool
@@ -1317,7 +1317,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;_WIN64;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1342,7 +1342,7 @@
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;WIN32;CS_USE_STATIC_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				PrecompiledHeaderFile="..\..\out\debug9-x64\build\libeedit_static_plugins_CRYSTAL\libeedit_static_plugins_CRYSTAL.pch"
 				AssemblerListingLocation="..\..\out\debug9-x64\build\libeedit_static_plugins_CRYSTAL\"
 				ObjectFile="..\..\out\debug9-x64\build\libeedit_static_plugins_CRYSTAL\"
@@ -1361,9 +1361,9 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
-				AdditionalDependencies=""
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc9_d.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug9-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug9-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib"
 				LargeAddressAware="2"
 				TargetMachine="17"/>
 			<Tool
@@ -1388,7 +1388,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WIN64;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1414,7 +1414,7 @@
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;WIN32;CS_USE_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				PrecompiledHeaderFile="..\..\out\debug9-x64\build\libeedit_static_plugins_CRYSTAL\libeedit_static_plugins_CRYSTAL.pch"
 				AssemblerListingLocation="..\..\out\debug9-x64\build\libeedit_static_plugins_CRYSTAL\"
 				ObjectFile="..\..\out\debug9-x64\build\libeedit_static_plugins_CRYSTAL\"
@@ -1436,9 +1436,9 @@
 				ImportLibrary="..\..\out\debug9-x64\libs\libeedit_static_plugins_CRYSTAL_d.lib"
 				ProgramDatabaseFile="..\..\out\debug9-x64\build\libeedit_static_plugins_CRYSTAL\x64\eedit_static_plugins_CRYSTAL-0.5-vc9-x64_d.pdb"
 				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
-				AdditionalDependencies=""
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc9_d.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug9-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug9-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib"
 				LargeAddressAware="2"
 				TargetMachine="17"/>
 			<Tool
@@ -1462,7 +1462,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;_WIN64;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1487,7 +1487,7 @@
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;WIN32;CS_USE_STATIC_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				PrecompiledHeaderFile="..\..\out\debug9-x64\build\libeedit_static_plugins_CRYSTAL\libeedit_static_plugins_CRYSTAL.pch"
 				AssemblerListingLocation="..\..\out\debug9-x64\build\libeedit_static_plugins_CRYSTAL\"
 				ObjectFile="..\..\out\debug9-x64\build\libeedit_static_plugins_CRYSTAL\"
@@ -1506,9 +1506,9 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
-				AdditionalDependencies=""
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc9_d.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug9-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug9-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib"
 				LargeAddressAware="2"
 				TargetMachine="17"/>
 			<Tool
@@ -1533,7 +1533,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_WIN64;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1559,7 +1559,7 @@
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_WINDOWS;WIN32;CS_USE_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				PrecompiledHeaderFile="..\..\out\debug9-x64\build\libeedit_static_plugins_CRYSTAL\libeedit_static_plugins_CRYSTAL.pch"
 				AssemblerListingLocation="..\..\out\debug9-x64\build\libeedit_static_plugins_CRYSTAL\"
 				ObjectFile="..\..\out\debug9-x64\build\libeedit_static_plugins_CRYSTAL\"
@@ -1581,9 +1581,9 @@
 				ImportLibrary="..\..\out\debug9-x64\libs\libeedit_static_plugins_CRYSTAL_d.lib"
 				ProgramDatabaseFile="..\..\out\debug9-x64\build\libeedit_static_plugins_CRYSTAL\x64\eedit_static_plugins_CRYSTAL-0.5-vc9-x64_d.pdb"
 				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
-				AdditionalDependencies=""
+				AdditionalDependencies="libcrystalspace_d.lib ws2_32.lib zlib.lib cal3d-vc9_d.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="..\..\..\CS\out\debug9-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug9-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib"
 				LargeAddressAware="2"
 				TargetMachine="17"/>
 			<Tool
@@ -1607,7 +1607,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_WINDOWS;_WIN64;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1632,7 +1632,7 @@
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;WIN32;CS_USE_STATIC_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				PrecompiledHeaderFile="..\..\out\debug9-x64\build\libeedit_static_plugins_CRYSTAL\libeedit_static_plugins_CRYSTAL.pch"
 				AssemblerListingLocation="..\..\out\debug9-x64\build\libeedit_static_plugins_CRYSTAL\"
 				ObjectFile="..\..\out\debug9-x64\build\libeedit_static_plugins_CRYSTAL\"
@@ -1651,9 +1651,9 @@
 				GenerateDebugInformation="TRUE"
 				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT,LIBCMTD,MSVCRT"
 				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
-				AdditionalDependencies=""
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib cal3d-vc9.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="..\..\..\CS\out\release9-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release9-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib"
 				LargeAddressAware="2"
 				TargetMachine="17"/>
 			<Tool
@@ -1678,7 +1678,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WIN64;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -1704,7 +1704,7 @@
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;WIN32;CS_USE_SHARED_LIBS"
 				OptimizeForProcessor="1"
 				AdditionalOptions=" "
-				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				PrecompiledHeaderFile="..\..\out\debug9-x64\build\libeedit_static_plugins_CRYSTAL\libeedit_static_plugins_CRYSTAL.pch"
 				AssemblerListingLocation="..\..\out\debug9-x64\build\libeedit_static_plugins_CRYSTAL\"
 				ObjectFile="..\..\out\debug9-x64\build\libeedit_static_plugins_CRYSTAL\"
@@ -1726,9 +1726,9 @@
 				ImportLibrary="..\..\out\debug9-x64\libs\libeedit_static_plugins_CRYSTAL_d.lib"
 				ProgramDatabaseFile="..\..\out\debug9-x64\build\libeedit_static_plugins_CRYSTAL\x64\eedit_static_plugins_CRYSTAL-0.5-vc9-x64_d.pdb"
 				AdditionalOptions="libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib libcrystalspace_staticplugins_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib libcrystalspace_d.lib opengl32.lib zlib.lib version.lib "
-				AdditionalDependencies=""
+				AdditionalDependencies="libcrystalspace.lib ws2_32.lib zlib.lib cal3d-vc9.lib"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="..\..\..\CS\out\release9-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release9-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib"
 				LargeAddressAware="2"
 				TargetMachine="17"/>
 			<Tool
@@ -1752,7 +1752,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;_WIN64;PROJECTGEN_VERSION=9"
-				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include"
+				AdditionalIncludeDirectories=".;..\..\src\eedit;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include"
 				Culture="1033"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
