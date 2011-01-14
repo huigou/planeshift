@@ -20,8 +20,6 @@ if $(HAVE_STATIC_PLUGINS) = "yes"
   ;
 
   CFlags eedit_static : [ FDefines CS_STATIC_LINKED ] ;
-  CompileGroups eedit_static : tools ;
-  ExternalLibs eedit_static : CRYSTAL CAL3D ;
   MsvcDefine eedit_static : CS_STATIC_LINKED ;
   LinkWith eedit_static : sound paws psutil effects fparser ;
 
@@ -80,6 +78,9 @@ LinkStaticPlugins eedit_static : $(STATIC.PLUGINLIST)
 LinkStaticPlugins eedit_static :
   bgloader 
 ;
+
+  CompileGroups eedit_static : tools ;
+  ExternalLibs eedit_static : CRYSTAL CAL3D ;
 
   SubVariant ;
 }
