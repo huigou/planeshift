@@ -1377,6 +1377,9 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
     pcmesh = nullmesh->CreateMeshWrapper();
     pcmesh->QueryObject()->SetName(name);
 
+    // make sure char app won't crash
+    charApp->SetMesh(pcmesh);
+
     linmove->InitCD(mesg.top, mesg.bottom, mesg.offset, pcmesh);
     linmove->SetDeltaLimit(0.2f);
 
