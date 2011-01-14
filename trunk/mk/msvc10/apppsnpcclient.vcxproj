@@ -1501,9 +1501,6 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ProjectReference Include="libpaws.vcxproj">
       <Project>{50E607EE-8026-ADD6-213E-6EE7F95FDFB1}</Project>
     </ProjectReference>
-    <ProjectReference Include="libsound.vcxproj">
-      <Project>{1B4A7655-07C5-8C89-4BDB-97E82AD36BB0}</Project>
-    </ProjectReference>
     <ProjectReference Include="libpsnet.vcxproj">
       <Project>{DCD16C71-CB69-046C-3AF4-8BBDA8CD0361}</Project>
     </ProjectReference>
@@ -1515,6 +1512,9 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     </ProjectReference>
     <ProjectReference Include="libpsutil.vcxproj">
       <Project>{D9DEA6DD-ED82-1526-6BBF-851FF399854C}</Project>
+    </ProjectReference>
+    <ProjectReference Include="libsound.vcxproj">
+      <Project>{1B4A7655-07C5-8C89-4BDB-97E82AD36BB0}</Project>
     </ProjectReference>
     <ProjectReference Include="libfparser.vcxproj">
       <Project>{56CFA369-1F2F-7609-9E86-069C1B5F5651}</Project>
