@@ -235,12 +235,12 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
         else if(typeName == "vector2")
         {
             type = csShaderVariable::VECTOR2;
-            data.syntaxService->ParseVector(node, vec2);
+            csScanStr(node->GetContentsValue(), "%f,%f,%f,%f", &vec2.x, &vec2.y);
         }
         else if(typeName == "vector3")
         {
             type = csShaderVariable::VECTOR3;
-            data.syntaxService->ParseVector(node, vec3);
+            csScanStr(node->GetContentsValue(), "%f,%f,%f,%f", &vec3.x, &vec3.y, &vec3.z);
         }
         else if(typeName == "vector4")
         {
