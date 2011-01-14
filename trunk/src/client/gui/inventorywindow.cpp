@@ -214,10 +214,15 @@ bool pawsInventoryWindow::SetupDoll()
         if (!actor)
             return false;
 
+        while(!widget->ContinueLoad())
+        {
+            csSleep(100);
+        }
+
         // Set the doll view
         while(!widget->View(actor->GetFactName()))
         {
-            continue;
+            csSleep(100);
         }
 
         CS_ASSERT(widget->GetObject()->GetMeshObject());
