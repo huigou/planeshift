@@ -16,8 +16,6 @@ if $(HAVE_STATIC_PLUGINS) = "yes"
   ;
   CFlags worldeditor_static : [ FDefines CS_STATIC_LINKED ]
   LFlags worldeditor_static : -lcrystalspace_staticplugins-$(CRYSTAL.VERSION)
-  CompileGroups worldeditor_static : tools ;
-  ExternalLibs worldeditor_static : CRYSTAL ;
   MsvcDefine worldeditor_static : CS_STATIC_LINKED ;
   LinkWith worldeditor_static : fparser paws psutil ;
 
@@ -74,6 +72,9 @@ LinkStaticPlugins worldeditor_static : $(STATIC.PLUGINLIST)
 LinkStaticPlugins worldeditor_static :
   bgloader 
 ;
+
+  CompileGroups worldeditor_static : tools ;
+  ExternalLibs worldeditor_static : CRYSTAL ;
 
   SubVariant ;
 }
