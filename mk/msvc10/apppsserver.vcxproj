@@ -327,9 +327,6 @@ copy /y "$(TargetPath)" ..\..\out\release10\bin\
     <Manifest>
       <AdditionalManifestFiles>..\..\mk\msvc\apppsserver.manifest</AdditionalManifestFiles>
     </Manifest>
-    <ProjectReference>
-      <LinkLibraryDependencies>true</LinkLibraryDependencies>
-    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release (with DLLs)|Win32'">
     <ClCompile>
@@ -383,9 +380,6 @@ copy /y "$(TargetPath)" ..\..\out\release10\bin\
     <Manifest>
       <AdditionalManifestFiles>..\..\mk\msvc\apppsserver.manifest</AdditionalManifestFiles>
     </Manifest>
-    <ProjectReference>
-      <LinkLibraryDependencies>true</LinkLibraryDependencies>
-    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug (with static libs)|Win32'">
     <ClCompile>
@@ -436,9 +430,6 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
     <Manifest>
       <AdditionalManifestFiles>..\..\mk\msvc\apppsserver.manifest</AdditionalManifestFiles>
     </Manifest>
-    <ProjectReference>
-      <LinkLibraryDependencies>true</LinkLibraryDependencies>
-    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug (with DLLs)|Win32'">
     <ClCompile>
@@ -489,9 +480,6 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
     <Manifest>
       <AdditionalManifestFiles>..\..\mk\msvc\apppsserver.manifest</AdditionalManifestFiles>
     </Manifest>
-    <ProjectReference>
-      <LinkLibraryDependencies>true</LinkLibraryDependencies>
-    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MemoryTracker (with static libs)|Win32'">
     <ClCompile>
@@ -542,9 +530,6 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
     <Manifest>
       <AdditionalManifestFiles>..\..\mk\msvc\apppsserver.manifest</AdditionalManifestFiles>
     </Manifest>
-    <ProjectReference>
-      <LinkLibraryDependencies>true</LinkLibraryDependencies>
-    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MemoryTracker (with DLLs)|Win32'">
     <ClCompile>
@@ -595,9 +580,6 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
     <Manifest>
       <AdditionalManifestFiles>..\..\mk\msvc\apppsserver.manifest</AdditionalManifestFiles>
     </Manifest>
-    <ProjectReference>
-      <LinkLibraryDependencies>true</LinkLibraryDependencies>
-    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RefTracker (with static libs)|Win32'">
     <ClCompile>
@@ -648,9 +630,6 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
     <Manifest>
       <AdditionalManifestFiles>..\..\mk\msvc\apppsserver.manifest</AdditionalManifestFiles>
     </Manifest>
-    <ProjectReference>
-      <LinkLibraryDependencies>true</LinkLibraryDependencies>
-    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RefTracker (with DLLs)|Win32'">
     <ClCompile>
@@ -701,9 +680,6 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
     <Manifest>
       <AdditionalManifestFiles>..\..\mk\msvc\apppsserver.manifest</AdditionalManifestFiles>
     </Manifest>
-    <ProjectReference>
-      <LinkLibraryDependencies>true</LinkLibraryDependencies>
-    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ThreadChecker (with static libs)|Win32'">
     <ClCompile>
@@ -754,9 +730,6 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
     <Manifest>
       <AdditionalManifestFiles>..\..\mk\msvc\apppsserver.manifest</AdditionalManifestFiles>
     </Manifest>
-    <ProjectReference>
-      <LinkLibraryDependencies>true</LinkLibraryDependencies>
-    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ThreadChecker (with DLLs)|Win32'">
     <ClCompile>
@@ -807,9 +780,6 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
     <Manifest>
       <AdditionalManifestFiles>..\..\mk\msvc\apppsserver.manifest</AdditionalManifestFiles>
     </Manifest>
-    <ProjectReference>
-      <LinkLibraryDependencies>true</LinkLibraryDependencies>
-    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCEL (with static libs)|Win32'">
     <ClCompile>
@@ -860,9 +830,6 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
     <Manifest>
       <AdditionalManifestFiles>..\..\mk\msvc\apppsserver.manifest</AdditionalManifestFiles>
     </Manifest>
-    <ProjectReference>
-      <LinkLibraryDependencies>true</LinkLibraryDependencies>
-    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCEL (with DLLs)|Win32'">
     <ClCompile>
@@ -913,9 +880,6 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
     <Manifest>
       <AdditionalManifestFiles>..\..\mk\msvc\apppsserver.manifest</AdditionalManifestFiles>
     </Manifest>
-    <ProjectReference>
-      <LinkLibraryDependencies>true</LinkLibraryDependencies>
-    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release (with static libs)|x64'">
     <ClCompile>
@@ -969,9 +933,6 @@ copy /y "$(TargetPath)" ..\..\out\release10-x64\bin\
     <Manifest>
       <AdditionalManifestFiles>..\..\mk\msvc\apppsserver-x64.manifest</AdditionalManifestFiles>
     </Manifest>
-    <ProjectReference>
-      <LinkLibraryDependencies>true</LinkLibraryDependencies>
-    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release (with DLLs)|x64'">
     <ClCompile>
@@ -1025,9 +986,6 @@ copy /y "$(TargetPath)" ..\..\out\release10-x64\bin\
     <Manifest>
       <AdditionalManifestFiles>..\..\mk\msvc\apppsserver-x64.manifest</AdditionalManifestFiles>
     </Manifest>
-    <ProjectReference>
-      <LinkLibraryDependencies>true</LinkLibraryDependencies>
-    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug (with static libs)|x64'">
     <ClCompile>
@@ -1078,9 +1036,6 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <Manifest>
       <AdditionalManifestFiles>..\..\mk\msvc\apppsserver-x64.manifest</AdditionalManifestFiles>
     </Manifest>
-    <ProjectReference>
-      <LinkLibraryDependencies>true</LinkLibraryDependencies>
-    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug (with DLLs)|x64'">
     <ClCompile>
@@ -1131,9 +1086,6 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <Manifest>
       <AdditionalManifestFiles>..\..\mk\msvc\apppsserver-x64.manifest</AdditionalManifestFiles>
     </Manifest>
-    <ProjectReference>
-      <LinkLibraryDependencies>true</LinkLibraryDependencies>
-    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MemoryTracker (with static libs)|x64'">
     <ClCompile>
@@ -1184,9 +1136,6 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <Manifest>
       <AdditionalManifestFiles>..\..\mk\msvc\apppsserver-x64.manifest</AdditionalManifestFiles>
     </Manifest>
-    <ProjectReference>
-      <LinkLibraryDependencies>true</LinkLibraryDependencies>
-    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MemoryTracker (with DLLs)|x64'">
     <ClCompile>
@@ -1237,9 +1186,6 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <Manifest>
       <AdditionalManifestFiles>..\..\mk\msvc\apppsserver-x64.manifest</AdditionalManifestFiles>
     </Manifest>
-    <ProjectReference>
-      <LinkLibraryDependencies>true</LinkLibraryDependencies>
-    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RefTracker (with static libs)|x64'">
     <ClCompile>
@@ -1290,9 +1236,6 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <Manifest>
       <AdditionalManifestFiles>..\..\mk\msvc\apppsserver-x64.manifest</AdditionalManifestFiles>
     </Manifest>
-    <ProjectReference>
-      <LinkLibraryDependencies>true</LinkLibraryDependencies>
-    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RefTracker (with DLLs)|x64'">
     <ClCompile>
@@ -1343,9 +1286,6 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <Manifest>
       <AdditionalManifestFiles>..\..\mk\msvc\apppsserver-x64.manifest</AdditionalManifestFiles>
     </Manifest>
-    <ProjectReference>
-      <LinkLibraryDependencies>true</LinkLibraryDependencies>
-    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ThreadChecker (with static libs)|x64'">
     <ClCompile>
@@ -1396,9 +1336,6 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <Manifest>
       <AdditionalManifestFiles>..\..\mk\msvc\apppsserver-x64.manifest</AdditionalManifestFiles>
     </Manifest>
-    <ProjectReference>
-      <LinkLibraryDependencies>true</LinkLibraryDependencies>
-    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ThreadChecker (with DLLs)|x64'">
     <ClCompile>
@@ -1449,9 +1386,6 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <Manifest>
       <AdditionalManifestFiles>..\..\mk\msvc\apppsserver-x64.manifest</AdditionalManifestFiles>
     </Manifest>
-    <ProjectReference>
-      <LinkLibraryDependencies>true</LinkLibraryDependencies>
-    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCEL (with static libs)|x64'">
     <ClCompile>
@@ -1502,9 +1436,6 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <Manifest>
       <AdditionalManifestFiles>..\..\mk\msvc\apppsserver-x64.manifest</AdditionalManifestFiles>
     </Manifest>
-    <ProjectReference>
-      <LinkLibraryDependencies>true</LinkLibraryDependencies>
-    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCEL (with DLLs)|x64'">
     <ClCompile>
@@ -1555,9 +1486,6 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <Manifest>
       <AdditionalManifestFiles>..\..\mk\msvc\apppsserver-x64.manifest</AdditionalManifestFiles>
     </Manifest>
-    <ProjectReference>
-      <LinkLibraryDependencies>true</LinkLibraryDependencies>
-    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\server\actionmanager.cpp" />
@@ -1671,9 +1599,6 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ProjectReference Include="libbulkobjects.vcxproj">
       <Project>{44689D68-F60B-F78C-02E4-1659987614BD}</Project>
     </ProjectReference>
-    <ProjectReference Include="libfparser.vcxproj">
-      <Project>{56CFA369-1F2F-7609-9E86-069C1B5F5651}</Project>
-    </ProjectReference>
     <ProjectReference Include="libpsnet.vcxproj">
       <Project>{DCD16C71-CB69-046C-3AF4-8BBDA8CD0361}</Project>
     </ProjectReference>
@@ -1685,6 +1610,12 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     </ProjectReference>
     <ProjectReference Include="libpsrpgrules.vcxproj">
       <Project>{4B7B2CDB-4DE7-2E3D-0FF6-EA8AC90E4A27}</Project>
+    </ProjectReference>
+    <ProjectReference Include="libwordnet.vcxproj">
+      <Project>{A4D92586-089F-D6D3-52C4-F11AA71CA951}</Project>
+    </ProjectReference>
+    <ProjectReference Include="libfparser.vcxproj">
+      <Project>{56CFA369-1F2F-7609-9E86-069C1B5F5651}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
