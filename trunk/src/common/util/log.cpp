@@ -401,7 +401,7 @@ void LogCSV::StartLog(const char* logfile, iVFS* vfs, const char* header, size_t
 				writeHeader = true;
             }
         }
-		if(writeHeader)
+		if(csvFile.IsValid() && writeHeader)
 		{
             csvFile->Write(header, strlen(header));
             csvFile->Flush();
