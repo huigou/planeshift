@@ -223,8 +223,6 @@ bool pawsConfigChat::LoadConfig()
 
 bool pawsConfigChat::SaveConfig()
 {
-    int i;
-    
     ChatSettings &settings = chatWindow->GetSettings();
     SET_CHAT_VALUE(admin);
     SET_CHAT_VALUE(system);
