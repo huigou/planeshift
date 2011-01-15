@@ -87,6 +87,10 @@ void ChatManager::HandleChatMessage(MsgEntry *me, Client *client)
         Debug2(LOG_NET,me->clientnum,"Received unparsable psChatMessage from client %u.\n",me->clientnum);
         return;
     }
+    if(!client->GetActor())
+    {
+        Debug2(LOG_NET,me->clientnum,"Received psChatMessage from client %u before it was ready.\n",me->clientnum);
+    }
 
     const char *pType = msg.GetTypeText();
 
