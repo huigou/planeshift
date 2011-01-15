@@ -54,6 +54,17 @@ bool MessageManagerBase::Verify(MsgEntry *pMsg,unsigned int flags,Client*& clien
         Warning3(LOG_NET, "MessageManager got unknown client %d with message %d!", pMsg->clientnum, pMsg->GetType());
         return false;
     }
+
+    if(flags & REQUIRE_ALREADY_READY_CLIENT)
+    {
+        if(!client->IsReady())
+            return false;
+    }
+    if(flags & REQUIRE_ACTOR)
+    {
+        if(!client->GetActor())
+            return false;
+    }
     
     if (flags & REQUIRE_READY_CLIENT)
     {
