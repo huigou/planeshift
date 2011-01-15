@@ -63,7 +63,7 @@ ChatManager::ChatManager() : nextChannelID(2)
 {
     Subscribe(&ChatManager::HandleChannelJoinMessage, MSGTYPE_CHANNEL_JOIN, REQUIRE_ANY_CLIENT);
     Subscribe(&ChatManager::HandleChannelLeaveMessage, MSGTYPE_CHANNEL_LEAVE, REQUIRE_ANY_CLIENT);
-    Subscribe(&ChatManager::HandleChatMessage, MSGTYPE_CHAT, REQUIRE_ALIVE);
+    Subscribe(&ChatManager::HandleChatMessage, MSGTYPE_CHAT, REQUIRE_ACTOR | REQUIRE_ALIVE);
     Subscribe(&ChatManager::HandleCacheMessage, MSGTYPE_CACHEFILE, REQUIRE_READY_CLIENT);
 
     // Default channel
@@ -86,10 +86,6 @@ void ChatManager::HandleChatMessage(MsgEntry *me, Client *client)
     {
         Debug2(LOG_NET,me->clientnum,"Received unparsable psChatMessage from client %u.\n",me->clientnum);
         return;
-    }
-    if(!client->GetActor())
-    {
-        Debug2(LOG_NET,me->clientnum,"Received psChatMessage from client %u before it was ready.\n",me->clientnum);
     }
 
     const char *pType = msg.GetTypeText();

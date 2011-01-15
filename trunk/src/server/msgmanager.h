@@ -38,13 +38,16 @@
 
 /// These flags define the tests that are centrally done 
 /// before subclasses get the message.
-#define NO_VALIDATION        0x00
-#define REQUIRE_ANY_CLIENT   0x01
-#define REQUIRE_READY_CLIENT 0x02
-#define REQUIRE_ALIVE        0x04
-#define REQUIRE_TARGET       0x08
-#define REQUIRE_TARGETACTOR  0x10
-#define REQUIRE_TARGETNPC    0x20
+#define NO_VALIDATION                0x00
+#define REQUIRE_ANY_CLIENT           0x01
+#define REQUIRE_READY_CLIENT         0x02
+#define REQUIRE_ALREADY_READY_CLIENT 0x04
+#define REQUIRE_ACTOR                0x08
+#define REQUIRE_ALIVE                0x10
+#define REQUIRE_TARGET               0x20
+#define REQUIRE_TARGETACTOR          0x40
+#define REQUIRE_TARGETNPC            0x80
+
 
 class Client;
 class gemObject;
