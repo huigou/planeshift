@@ -8488,7 +8488,7 @@ void AdminManager::SendSpawnItems (MsgEntry* me, Client *client)
     {
         unsigned id = result[i].GetUInt32(0);
         psItemStats* item = psserver->GetCacheManager()->GetBasicItemStatsByID(id);
-        if(item && !item->IsMoney() && item->IsSpawnable())
+        if(item && !item->IsMoney() /*&& item->IsSpawnable()*/)
         {
             csString name(item->GetName());
             csString mesh(item->GetMeshName());
@@ -8573,11 +8573,11 @@ void AdminManager::SpawnItemInv( MsgEntry* me, psGMSpawnItem& msg, Client *clien
         return;
     }
     
-    if(!stats->IsSpawnable())
+    /*if(!stats->IsSpawnable())
     {
         psserver->SendSystemError(me->clientnum, "This item cannot be spawned!");
         return;
-    }
+    }*/
     
     psItem* item = stats->InstantiateBasicItem();
     
@@ -10432,7 +10432,7 @@ void AdminManager::HandleSetQuality(psAdminCmdMessage& msg, AdminCmdData* cmddat
 
     item->Save(false);
 
-    psserver->SendSystemOK(client->GetClientNum(), "Quality changed successfully to: %d/%d", data->quality, item->GetItemQuality());
+    psserver->SendSystemOK(client->GetClientNum(), "Quality changed successfully to: %d/%d", data->quality, data->qualityMax);
 }
 
 void AdminManager::HandleSetTrait(psAdminCmdMessage& msg, AdminCmdData* cmddata, Client *client)
