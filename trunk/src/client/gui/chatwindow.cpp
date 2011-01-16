@@ -992,6 +992,13 @@ void pawsChatWindow::SaveChatSettings()
     csRef<iFile> file;
     file = psengine->GetVFS()->Open(CONFIG_CHAT_FILE_NAME,VFS_FILE_WRITE);
 
+    //if the file couldn't be opened report it to the terminal and exite
+    if(!file.IsValid())
+    {
+        Error2("Unable to save chat settings to %s.", CONFIG_CHAT_FILE_NAME);
+        return;
+    }
+
     csRef<iDocumentSystem> docsys = csPtr<iDocumentSystem> (new csTinyDocumentSystem ());
 
     csRef<iDocument> doc = docsys->CreateDocument();
