@@ -10432,7 +10432,7 @@ void AdminManager::HandleSetQuality(psAdminCmdMessage& msg, AdminCmdData* cmddat
 
     item->Save(false);
 
-    psserver->SendSystemOK(client->GetClientNum(), "Quality changed successfully to: %f/%f", data->GetItemQuality(), item->GetMaxItemQuality());
+    psserver->SendSystemOK(client->GetClientNum(), "Quality changed successfully to: %f/%f", item->GetItemQuality(), item->GetMaxItemQuality());
 }
 
 void AdminManager::HandleSetTrait(psAdminCmdMessage& msg, AdminCmdData* cmddata, Client *client)
