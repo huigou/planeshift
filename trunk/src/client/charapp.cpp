@@ -1122,21 +1122,19 @@ bool psCharAppearance::CheckLoadStatus()
                 {
                     Notify2(LOG_CHARACTER, "failed to find factory %s", attach.factName.GetData());
                     delayedAttach.PopFront();
-                    psengine->UnregisterDelayedLoader(this);
-                    return true;
+                    return false;
                 }
             }
 
             if(!factory->IsFinished())
             {
-                return true;
+                return false;
             }
             else if(!factory->WasSuccessful())
             {
                 Notify2(LOG_CHARACTER, "failed to load factory %s", attach.factName.GetData());
                 delayedAttach.PopFront();
-                psengine->UnregisterDelayedLoader(this);
-                return true;
+                return false;
             }
 
             if(!attach.materialName.IsEmpty())
@@ -1150,21 +1148,19 @@ bool psCharAppearance::CheckLoadStatus()
                     {
                         Notify2(LOG_CHARACTER, "failed to find material %s", attach.materialName.GetData());
                         delayedAttach.PopFront();
-                        psengine->UnregisterDelayedLoader(this);
-                        return true;
+                        return false;
                     }
                 }
 
                 if(!material->IsFinished())
                 {
-                    return true;
+                    return false;
                 }
                 else if(!material->WasSuccessful())
                 {
                     Notify2(LOG_CHARACTER, "failed to load material %s", attach.materialName.GetData());
                     delayedAttach.PopFront();
-                    psengine->UnregisterDelayedLoader(this);
-                    return true;
+                    return false;
                 }
 
                 ProcessAttach(factory, material, attach.factName, attach.socket);
@@ -1187,27 +1183,25 @@ bool psCharAppearance::CheckLoadStatus()
                 {
                     Notify2(LOG_CHARACTER, "failed to find material %s", attach.materialName.GetData());
                     delayedAttach.PopFront();
-                    psengine->UnregisterDelayedLoader(this);
-                    return true;
+                    return false;
                 }
             }
 
             if(!material->IsFinished())
             {
-                return true;
+                return false;
             }
             else if(!material->WasSuccessful())
             {
                 Notify2(LOG_CHARACTER, "failed to load material %s", attach.materialName.GetData());
                 delayedAttach.PopFront();
-                psengine->UnregisterDelayedLoader(this);
-                return true;
+                return false;
             }
 
             ProcessAttach(material, attach.materialName, attach.partName);
             delayedAttach.PopFront();
         }
-        psengine->UnregisterDelayedLoader(this);
+
         return true;
     }
     else
