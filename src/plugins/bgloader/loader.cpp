@@ -429,14 +429,21 @@ csPtr<iThreadReturn> BgLoader::LoadFactory(const char* name, bool wait)
         meshfact = parserData.factories.hash.Get(factoryID, csRef<MeshFact>());
     }
 
-    // create delayed loader
-    csRef<iDelayedLoader> result;
-    result.AttachNew(new DelayedLoader<MeshFact>(meshfact));
+    if(meshfact.IsValid())
+    {
+        // create delayed loader
+        csRef<iDelayedLoader> result;
+        result.AttachNew(new DelayedLoader<MeshFact>(meshfact));
 
-    // start loading now
-    result->ContinueLoading(wait);
+        // start loading now
+        result->ContinueLoading(wait);
 
-    return csPtr<iThreadReturn>(result);
+        return csPtr<iThreadReturn>(result);
+    }
+    else
+    {
+        return csPtr<iThreadReturn>(0);
+    }
 }
 
 void BgLoader::CloneFactory(const char* name, const char* newName, bool* failed)
@@ -496,14 +503,21 @@ csPtr<iThreadReturn> BgLoader::LoadMaterial(const char* name, bool wait)
         material = parserData.materials.hash.Get(materialID, csRef<Material>());
     }
 
-    // create delayed loader
-    csRef<iDelayedLoader> result;
-    result.AttachNew(new DelayedLoader<Material>(material));
+    if(material.IsValid())
+    {
+        // create delayed loader
+        csRef<iDelayedLoader> result;
+        result.AttachNew(new DelayedLoader<Material>(material));
 
-    // start loading now
-    result->ContinueLoading(wait);
+        // start loading now
+        result->ContinueLoading(wait);
 
-    return csPtr<iThreadReturn>(result);
+        return csPtr<iThreadReturn>(result);
+    }
+    else
+    {
+        return csPtr<iThreadReturn>(0);
+    }
 }
 
 }
