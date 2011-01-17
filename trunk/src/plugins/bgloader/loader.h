@@ -668,6 +668,10 @@ private:
                 BgLoader* parent = target->GetParent();
                 parent->RegisterDelayedLoader(this);
             }
+            else
+            {
+                finished = true;
+            }
         }
 
         virtual ~DelayedLoader()
