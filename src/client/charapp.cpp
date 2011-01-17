@@ -1122,6 +1122,7 @@ bool psCharAppearance::CheckLoadStatus()
                 {
                     Notify2(LOG_CHARACTER, "failed to find factory %s", attach.factName.GetData());
                     delayedAttach.PopFront();
+                    psengine->UnregisterDelayedLoader(this);
                     return true;
                 }
             }
@@ -1134,6 +1135,7 @@ bool psCharAppearance::CheckLoadStatus()
             {
                 Notify2(LOG_CHARACTER, "failed to load factory %s", attach.factName.GetData());
                 delayedAttach.PopFront();
+                psengine->UnregisterDelayedLoader(this);
                 return true;
             }
 
@@ -1148,6 +1150,7 @@ bool psCharAppearance::CheckLoadStatus()
                     {
                         Notify2(LOG_CHARACTER, "failed to find material %s", attach.materialName.GetData());
                         delayedAttach.PopFront();
+                        psengine->UnregisterDelayedLoader(this);
                         return true;
                     }
                 }
@@ -1160,6 +1163,7 @@ bool psCharAppearance::CheckLoadStatus()
                 {
                     Notify2(LOG_CHARACTER, "failed to load material %s", attach.materialName.GetData());
                     delayedAttach.PopFront();
+                    psengine->UnregisterDelayedLoader(this);
                     return true;
                 }
 
@@ -1183,6 +1187,7 @@ bool psCharAppearance::CheckLoadStatus()
                 {
                     Notify2(LOG_CHARACTER, "failed to find material %s", attach.materialName.GetData());
                     delayedAttach.PopFront();
+                    psengine->UnregisterDelayedLoader(this);
                     return true;
                 }
             }
@@ -1195,13 +1200,14 @@ bool psCharAppearance::CheckLoadStatus()
             {
                 Notify2(LOG_CHARACTER, "failed to load material %s", attach.materialName.GetData());
                 delayedAttach.PopFront();
+                psengine->UnregisterDelayedLoader(this);
                 return true;
             }
 
             ProcessAttach(material, attach.materialName, attach.partName);
             delayedAttach.PopFront();
         }
-
+        psengine->UnregisterDelayedLoader(this);
         return true;
     }
     else
