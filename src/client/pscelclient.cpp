@@ -173,7 +173,7 @@ bool psCelClient::Initialize(iObjectRegistry* object_reg, MsgHandler* newmsghand
 
     unresSector = psengine->GetEngine()->CreateSector("SectorWhereWeKeepEntitiesResidingInUnloadedMaps");
 
-    instantiateItems = psengine->GetConfig()->GetBool("PlaneShift.Items.Instantiate", true);
+    instantiateItems = psengine->GetConfig()->GetBool("PlaneShift.Items.Instantiate", false);
 
     LoadEffectItems();
 
