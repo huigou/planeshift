@@ -53,7 +53,7 @@ psEffectObjMesh::~psEffectObjMesh()
         mesh.Invalidate();
     }
 
-    if(!factory.IsValid())
+    if(!factory.IsValid() && meshFact.IsValid())
     {
         engine->RemoveObject(meshFact);
     }
