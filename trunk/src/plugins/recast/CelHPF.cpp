@@ -1324,7 +1324,7 @@ iCelHNavStruct* celHNavStructBuilder::LoadHNavStruct (iVFS* vfs, const char* dir
   // Read XML file
   csRef<iDocument> doc = docsys->CreateDocument();
   csRef<iFile> xmlFile = vfs->Open("navstruct.xml", VFS_FILE_READ);
-  if(xmlFile.IsValid())
+  if(!xmlFile.IsValid())
   {
     return 0;
   }
