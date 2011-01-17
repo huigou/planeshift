@@ -605,7 +605,7 @@ void Client::SaveAccountData()
         spamPoints = 1;
 
     // Save to the db
-    db->CommandPump("UPDATE accounts SET spam_points = '%d', advisor_points = '%d' WHERE id = '%d' LIMIT 1",
+    db->CommandPump("UPDATE accounts SET spam_points = '%d', advisor_points = '%d' WHERE id = '%d'",
                     spamPoints, advisorPoints, accountID.Unbox());
 }
 
