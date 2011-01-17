@@ -1979,7 +1979,7 @@ bool GEMClientActor::CheckLoadStatus()
     if (psengine->GetZoneHandler()->IsLoading() || !post_load->sector)
     {
         post_load->sector = psengine->GetEngine()->GetSectors()->FindByName(post_load->sector_name);
-        return true;
+        return false;
     }
 
     if(!factory.IsValid())
@@ -1996,7 +1996,7 @@ bool GEMClientActor::CheckLoadStatus()
 
     if(!factory->IsFinished())
     {
-        return true;
+        return false;
     }
     else if(!factory->WasSuccessful())
     {
@@ -2021,7 +2021,7 @@ bool GEMClientActor::CheckLoadStatus()
 
         if(!mountFactory->IsFinished())
         {
-            return true;
+            return false;
         }
         else if(!mountFactory->WasSuccessful())
         {
@@ -2229,7 +2229,7 @@ bool GEMClientItem::CheckLoadStatus()
 
         if(!factory->IsFinished())
         {
-            return true;
+            return false;
         }
         else if(!factory->WasSuccessful())
         {
@@ -2255,7 +2255,7 @@ bool GEMClientItem::CheckLoadStatus()
 
             if(!material->IsFinished())
             {
-                return true;
+                return false;
             }
             else if(!factory->WasSuccessful())
             {
