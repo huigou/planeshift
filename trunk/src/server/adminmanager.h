@@ -226,6 +226,7 @@ enum ADMINCMD_TARGET_TYPES
     ADMINCMD_TARGET_ITEM = 1 << 8, ///< when object is an item
     ADMINCMD_TARGET_CLIENTTARGET = 1 << 9, ///< the targeted object of the client issuing the admincomman
     ADMINCMD_TARGET_ACCOUNT = 1 << 10, ///< when the target word gives an account name
+    ADMINCMD_TARGET_DATABASE = 1 << 11, ///< when it's allowed to lookup the database.
     ADMINCMD_TARGET_STRING = 1 << 14 ///< when the target does not need to be any of the above defined targets
 };
 
@@ -735,7 +736,7 @@ public:
     /** @brief Creates obj for specified command that needs a reason.
      */
     AdminCmdDataDeleteChar()
-    : AdminCmdDataTarget("/deletechar", ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_PID), requestor(ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET)
+    : AdminCmdDataTarget("/deletechar", ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_PID), requestor(ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE)
     {};
 
     /** @brief Creates obj for specified command that needs a reason.
@@ -820,7 +821,7 @@ public:
     /** @brief Creates obj for specified command that bans a player.
      */
     AdminCmdDataBan()
-    : AdminCmdDataTarget("/ban", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_ACCOUNT | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET)
+    : AdminCmdDataTarget("/ban", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_ACCOUNT | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE)
     {};
 
     /** Creates obj for specified command parsing the words banning a player.
@@ -860,7 +861,7 @@ public:
     /** @brief Creates obj for specified command that kills/reloads a npc.
      */
     AdminCmdDataKillNPC()
-    : AdminCmdDataTarget("/killnpc", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET), reload(false)
+    : AdminCmdDataTarget("/killnpc", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE), reload(false)
     {};
     
     /** @brief Parses the given message for killing/reloadin a npc.
@@ -1173,7 +1174,7 @@ public:
     /** @brief Creates obj for teleport command data
      */
     AdminCmdDataTeleport()
-    : AdminCmdDataTarget("/teleport", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM), destList("here there last spawn restore"), destObj(ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM)
+    : AdminCmdDataTarget("/teleport", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_DATABASE), destList("here there last spawn restore"), destObj(ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM)
     {};
     
     /** @brief Parses the given message and stores its data for teleporting.
@@ -1261,7 +1262,7 @@ public:
     /** @brief Creates obj for specified command that changes a players name.
      */
     AdminCmdDataChangeName()
-    : AdminCmdDataTarget("/changename", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET), uniqueName(true), uniqueFirstName(true)
+    : AdminCmdDataTarget("/changename", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE), uniqueName(true), uniqueFirstName(true)
     {};
     
     /** @brief Parses the given message and stores its data.
@@ -1345,7 +1346,7 @@ public:
     /** @brief Creates obj for specified command that changes a guild leader.
      */
     AdminCmdDataChangeGuildLeader()
-    : AdminCmdDataTarget("/changeguildleader", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET)
+    : AdminCmdDataTarget("/changeguildleader", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE)
     {};
     
     /** @brief Parses the given message and stores its data.
@@ -2309,7 +2310,7 @@ public:
     /** @brief Creates obj for specified command that examine/modify quests.
      */
     AdminCmdDataQuest()
-    : AdminCmdDataTarget("/quest", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET),
+    : AdminCmdDataTarget("/quest", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE),
         subCommandList("complete list discard assign")
     {};
     
@@ -2519,7 +2520,7 @@ public:
     /** @brief Creates obj for specified command that issues a player warning.
      */
     AdminCmdDataListWarnings()
-    : AdminCmdDataTarget("/listwarnings", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_CLIENTTARGET)
+    : AdminCmdDataTarget("/listwarnings", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE)
     {};
     
     /** Parses the given message and stores its data.
