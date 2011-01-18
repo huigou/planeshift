@@ -99,7 +99,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{DA886D16-6C20-BDA5-D8CC-0E06ABE8B5C7}</ProjectGuid>
+    <ProjectGuid>{5DFC8F2F-79FD-89B5-6EEC-FDEEB1E3225D}</ProjectGuid>
     <SccProjectName />
     <SccLocalPath />
   </PropertyGroup>
@@ -166,100 +166,100 @@
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release (with static libs)|Win32'">false</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release (with static libs)|Win32'">..\..\out\release10\libs\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release (with static libs)|Win32'">..\..\out\release10\build\libplaneshift_staticplugins\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release (with static libs)|Win32'">libplaneshift_staticplugins</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release (with static libs)|Win32'">..\..\out\release10\build\libplaneshift_database_staticplugins\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release (with static libs)|Win32'">libplaneshift_database_staticplugins</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release (with DLLs)|Win32'">false</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release (with DLLs)|Win32'">..\..\out\release10\libs\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release (with DLLs)|Win32'">..\..\out\release10\build\libplaneshift_staticplugins\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release (with DLLs)|Win32'">libplaneshift_staticplugins</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release (with DLLs)|Win32'">..\..\out\release10\build\libplaneshift_database_staticplugins\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release (with DLLs)|Win32'">libplaneshift_database_staticplugins</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug (with static libs)|Win32'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug (with static libs)|Win32'">..\..\out\debug10\libs\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug (with static libs)|Win32'">..\..\out\debug10\build\libplaneshift_staticplugins\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug (with static libs)|Win32'">libplaneshift_staticplugins_d</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug (with static libs)|Win32'">..\..\out\debug10\build\libplaneshift_database_staticplugins\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug (with static libs)|Win32'">libplaneshift_database_staticplugins_d</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug (with DLLs)|Win32'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug (with DLLs)|Win32'">..\..\out\debug10\libs\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug (with DLLs)|Win32'">..\..\out\debug10\build\libplaneshift_staticplugins\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug (with DLLs)|Win32'">libplaneshift_staticplugins_d</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug (with DLLs)|Win32'">..\..\out\debug10\build\libplaneshift_database_staticplugins\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug (with DLLs)|Win32'">libplaneshift_database_staticplugins_d</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='MemoryTracker (with static libs)|Win32'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='MemoryTracker (with static libs)|Win32'">..\..\out\debug10\libs\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='MemoryTracker (with static libs)|Win32'">..\..\out\debug10\build\libplaneshift_staticplugins\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='MemoryTracker (with static libs)|Win32'">libplaneshift_staticplugins_d</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MemoryTracker (with static libs)|Win32'">..\..\out\debug10\build\libplaneshift_database_staticplugins\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MemoryTracker (with static libs)|Win32'">libplaneshift_database_staticplugins_d</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='MemoryTracker (with DLLs)|Win32'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='MemoryTracker (with DLLs)|Win32'">..\..\out\debug10\libs\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='MemoryTracker (with DLLs)|Win32'">..\..\out\debug10\build\libplaneshift_staticplugins\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='MemoryTracker (with DLLs)|Win32'">libplaneshift_staticplugins_d</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MemoryTracker (with DLLs)|Win32'">..\..\out\debug10\build\libplaneshift_database_staticplugins\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MemoryTracker (with DLLs)|Win32'">libplaneshift_database_staticplugins_d</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='RefTracker (with static libs)|Win32'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='RefTracker (with static libs)|Win32'">..\..\out\debug10\libs\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='RefTracker (with static libs)|Win32'">..\..\out\debug10\build\libplaneshift_staticplugins\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='RefTracker (with static libs)|Win32'">libplaneshift_staticplugins_d</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RefTracker (with static libs)|Win32'">..\..\out\debug10\build\libplaneshift_database_staticplugins\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RefTracker (with static libs)|Win32'">libplaneshift_database_staticplugins_d</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='RefTracker (with DLLs)|Win32'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='RefTracker (with DLLs)|Win32'">..\..\out\debug10\libs\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='RefTracker (with DLLs)|Win32'">..\..\out\debug10\build\libplaneshift_staticplugins\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='RefTracker (with DLLs)|Win32'">libplaneshift_staticplugins_d</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RefTracker (with DLLs)|Win32'">..\..\out\debug10\build\libplaneshift_database_staticplugins\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RefTracker (with DLLs)|Win32'">libplaneshift_database_staticplugins_d</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='ThreadChecker (with static libs)|Win32'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='ThreadChecker (with static libs)|Win32'">..\..\out\debug10\libs\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='ThreadChecker (with static libs)|Win32'">..\..\out\debug10\build\libplaneshift_staticplugins\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='ThreadChecker (with static libs)|Win32'">libplaneshift_staticplugins_d</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='ThreadChecker (with static libs)|Win32'">..\..\out\debug10\build\libplaneshift_database_staticplugins\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='ThreadChecker (with static libs)|Win32'">libplaneshift_database_staticplugins_d</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='ThreadChecker (with DLLs)|Win32'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='ThreadChecker (with DLLs)|Win32'">..\..\out\debug10\libs\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='ThreadChecker (with DLLs)|Win32'">..\..\out\debug10\build\libplaneshift_staticplugins\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='ThreadChecker (with DLLs)|Win32'">libplaneshift_staticplugins_d</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='ThreadChecker (with DLLs)|Win32'">..\..\out\debug10\build\libplaneshift_database_staticplugins\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='ThreadChecker (with DLLs)|Win32'">libplaneshift_database_staticplugins_d</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCEL (with static libs)|Win32'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCEL (with static libs)|Win32'">..\..\out\debug10\libs\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCEL (with static libs)|Win32'">..\..\out\debug10\build\libplaneshift_staticplugins\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCEL (with static libs)|Win32'">libplaneshift_staticplugins_d</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCEL (with static libs)|Win32'">..\..\out\debug10\build\libplaneshift_database_staticplugins\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCEL (with static libs)|Win32'">libplaneshift_database_staticplugins_d</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCEL (with DLLs)|Win32'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCEL (with DLLs)|Win32'">..\..\out\debug10\libs\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCEL (with DLLs)|Win32'">..\..\out\debug10\build\libplaneshift_staticplugins\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCEL (with DLLs)|Win32'">libplaneshift_staticplugins_d</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCEL (with DLLs)|Win32'">..\..\out\debug10\build\libplaneshift_database_staticplugins\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCEL (with DLLs)|Win32'">libplaneshift_database_staticplugins_d</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release (with static libs)|x64'">false</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release (with static libs)|x64'">..\..\out\release10-x64\libs\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release (with static libs)|x64'">..\..\out\release10-x64\build\libplaneshift_staticplugins\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release (with static libs)|x64'">libplaneshift_staticplugins</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release (with static libs)|x64'">..\..\out\release10-x64\build\libplaneshift_database_staticplugins\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release (with static libs)|x64'">libplaneshift_database_staticplugins</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release (with DLLs)|x64'">false</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release (with DLLs)|x64'">..\..\out\release10-x64\libs\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release (with DLLs)|x64'">..\..\out\release10-x64\build\libplaneshift_staticplugins\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release (with DLLs)|x64'">libplaneshift_staticplugins</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release (with DLLs)|x64'">..\..\out\release10-x64\build\libplaneshift_database_staticplugins\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release (with DLLs)|x64'">libplaneshift_database_staticplugins</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug (with static libs)|x64'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug (with static libs)|x64'">..\..\out\debug10-x64\libs\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug (with static libs)|x64'">..\..\out\debug10-x64\build\libplaneshift_staticplugins\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug (with static libs)|x64'">libplaneshift_staticplugins_d</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug (with static libs)|x64'">..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug (with static libs)|x64'">libplaneshift_database_staticplugins_d</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug (with DLLs)|x64'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug (with DLLs)|x64'">..\..\out\debug10-x64\libs\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug (with DLLs)|x64'">..\..\out\debug10-x64\build\libplaneshift_staticplugins\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug (with DLLs)|x64'">libplaneshift_staticplugins_d</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug (with DLLs)|x64'">..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug (with DLLs)|x64'">libplaneshift_database_staticplugins_d</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='MemoryTracker (with static libs)|x64'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='MemoryTracker (with static libs)|x64'">..\..\out\debug10-x64\libs\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='MemoryTracker (with static libs)|x64'">..\..\out\debug10-x64\build\libplaneshift_staticplugins\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='MemoryTracker (with static libs)|x64'">libplaneshift_staticplugins_d</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MemoryTracker (with static libs)|x64'">..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MemoryTracker (with static libs)|x64'">libplaneshift_database_staticplugins_d</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='MemoryTracker (with DLLs)|x64'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='MemoryTracker (with DLLs)|x64'">..\..\out\debug10-x64\libs\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='MemoryTracker (with DLLs)|x64'">..\..\out\debug10-x64\build\libplaneshift_staticplugins\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='MemoryTracker (with DLLs)|x64'">libplaneshift_staticplugins_d</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MemoryTracker (with DLLs)|x64'">..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MemoryTracker (with DLLs)|x64'">libplaneshift_database_staticplugins_d</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='RefTracker (with static libs)|x64'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='RefTracker (with static libs)|x64'">..\..\out\debug10-x64\libs\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='RefTracker (with static libs)|x64'">..\..\out\debug10-x64\build\libplaneshift_staticplugins\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='RefTracker (with static libs)|x64'">libplaneshift_staticplugins_d</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RefTracker (with static libs)|x64'">..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RefTracker (with static libs)|x64'">libplaneshift_database_staticplugins_d</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='RefTracker (with DLLs)|x64'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='RefTracker (with DLLs)|x64'">..\..\out\debug10-x64\libs\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='RefTracker (with DLLs)|x64'">..\..\out\debug10-x64\build\libplaneshift_staticplugins\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='RefTracker (with DLLs)|x64'">libplaneshift_staticplugins_d</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RefTracker (with DLLs)|x64'">..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RefTracker (with DLLs)|x64'">libplaneshift_database_staticplugins_d</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='ThreadChecker (with static libs)|x64'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='ThreadChecker (with static libs)|x64'">..\..\out\debug10-x64\libs\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='ThreadChecker (with static libs)|x64'">..\..\out\debug10-x64\build\libplaneshift_staticplugins\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='ThreadChecker (with static libs)|x64'">libplaneshift_staticplugins_d</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='ThreadChecker (with static libs)|x64'">..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='ThreadChecker (with static libs)|x64'">libplaneshift_database_staticplugins_d</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='ThreadChecker (with DLLs)|x64'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='ThreadChecker (with DLLs)|x64'">..\..\out\debug10-x64\libs\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='ThreadChecker (with DLLs)|x64'">..\..\out\debug10-x64\build\libplaneshift_staticplugins\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='ThreadChecker (with DLLs)|x64'">libplaneshift_staticplugins_d</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='ThreadChecker (with DLLs)|x64'">..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='ThreadChecker (with DLLs)|x64'">libplaneshift_database_staticplugins_d</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCEL (with static libs)|x64'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCEL (with static libs)|x64'">..\..\out\debug10-x64\libs\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCEL (with static libs)|x64'">..\..\out\debug10-x64\build\libplaneshift_staticplugins\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCEL (with static libs)|x64'">libplaneshift_staticplugins_d</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCEL (with static libs)|x64'">..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCEL (with static libs)|x64'">libplaneshift_database_staticplugins_d</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCEL (with DLLs)|x64'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCEL (with DLLs)|x64'">..\..\out\debug10-x64\libs\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCEL (with DLLs)|x64'">..\..\out\debug10-x64\build\libplaneshift_staticplugins\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCEL (with DLLs)|x64'">libplaneshift_staticplugins_d</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCEL (with DLLs)|x64'">..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCEL (with DLLs)|x64'">libplaneshift_database_staticplugins_d</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release (with static libs)|Win32'">
     <ClCompile>
@@ -268,13 +268,13 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <ProgramDataBaseFileName>..\..\out\release10\build\libplaneshift_staticplugins\Win32\planeshift_staticplugins.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>..\..\out\release10\build\libplaneshift_database_staticplugins\Win32\planeshift_database_staticplugins.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;WIN32;CS_USE_STATIC_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeaderOutputFile>..\..\out\release10\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>..\..\out\release10\build\libplaneshift_staticplugins\</AssemblerListingLocation>
-      <ObjectFileName>..\..\out\release10\build\libplaneshift_staticplugins\</ObjectFileName>
+      <PrecompiledHeaderOutputFile>..\..\out\release10\build\libplaneshift_database_staticplugins\libplaneshift_database_staticplugins.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>..\..\out\release10\build\libplaneshift_database_staticplugins\</AssemblerListingLocation>
+      <ObjectFileName>..\..\out\release10\build\libplaneshift_database_staticplugins\</ObjectFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
@@ -294,7 +294,7 @@
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
-      <OutputFile>..\..\out\release10\libs\libplaneshift_staticplugins.lib</OutputFile>
+      <OutputFile>..\..\out\release10\libs\libplaneshift_database_staticplugins.lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetMachine>MachineX86</TargetMachine>
     </Lib>
@@ -305,7 +305,7 @@ copy /y "$(TargetPath)" ..\..\out\release10\bin\
     </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=10;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;..\..\src\plugins;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\..\src\plugins\database;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
       <Culture>0x0409</Culture>
     </ResourceCompile>
   </ItemDefinitionGroup>
@@ -316,13 +316,13 @@ copy /y "$(TargetPath)" ..\..\out\release10\bin\
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <ProgramDataBaseFileName>..\..\out\release10\build\libplaneshift_staticplugins\Win32\planeshift_staticplugins.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>..\..\out\release10\build\libplaneshift_database_staticplugins\Win32\planeshift_database_staticplugins.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;WIN32;CS_USE_SHARED_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeaderOutputFile>..\..\out\release10\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>..\..\out\release10\build\libplaneshift_staticplugins\</AssemblerListingLocation>
-      <ObjectFileName>..\..\out\release10\build\libplaneshift_staticplugins\</ObjectFileName>
+      <PrecompiledHeaderOutputFile>..\..\out\release10\build\libplaneshift_database_staticplugins\libplaneshift_database_staticplugins.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>..\..\out\release10\build\libplaneshift_database_staticplugins\</AssemblerListingLocation>
+      <ObjectFileName>..\..\out\release10\build\libplaneshift_database_staticplugins\</ObjectFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
@@ -342,7 +342,7 @@ copy /y "$(TargetPath)" ..\..\out\release10\bin\
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
-      <OutputFile>..\..\out\release10\libs\libplaneshift_staticplugins.lib</OutputFile>
+      <OutputFile>..\..\out\release10\libs\libplaneshift_database_staticplugins.lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetMachine>MachineX86</TargetMachine>
     </Lib>
@@ -353,7 +353,7 @@ copy /y "$(TargetPath)" ..\..\out\release10\bin\
     </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=10;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;..\..\src\plugins;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\..\src\plugins\database;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
       <Culture>0x0409</Culture>
     </ResourceCompile>
   </ItemDefinitionGroup>
@@ -363,13 +363,13 @@ copy /y "$(TargetPath)" ..\..\out\release10\bin\
       <MinimalRebuild>true</MinimalRebuild>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <ProgramDataBaseFileName>..\..\out\debug10\build\libplaneshift_staticplugins\Win32\planeshift_staticplugins.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>..\..\out\debug10\build\libplaneshift_database_staticplugins\Win32\planeshift_database_staticplugins.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;WIN32;CS_USE_STATIC_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeaderOutputFile>..\..\out\debug10\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>..\..\out\debug10\build\libplaneshift_staticplugins\</AssemblerListingLocation>
-      <ObjectFileName>..\..\out\debug10\build\libplaneshift_staticplugins\</ObjectFileName>
+      <PrecompiledHeaderOutputFile>..\..\out\debug10\build\libplaneshift_database_staticplugins\libplaneshift_database_staticplugins.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>..\..\out\debug10\build\libplaneshift_database_staticplugins\</AssemblerListingLocation>
+      <ObjectFileName>..\..\out\debug10\build\libplaneshift_database_staticplugins\</ObjectFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
@@ -387,7 +387,7 @@ copy /y "$(TargetPath)" ..\..\out\release10\bin\
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
-      <OutputFile>..\..\out\debug10\libs\libplaneshift_staticplugins_d.lib</OutputFile>
+      <OutputFile>..\..\out\debug10\libs\libplaneshift_database_staticplugins_d.lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetMachine>MachineX86</TargetMachine>
     </Lib>
@@ -398,7 +398,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
     </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=10;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;..\..\src\plugins;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\..\src\plugins\database;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
       <Culture>0x0409</Culture>
     </ResourceCompile>
   </ItemDefinitionGroup>
@@ -408,13 +408,13 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <MinimalRebuild>true</MinimalRebuild>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <ProgramDataBaseFileName>..\..\out\debug10\build\libplaneshift_staticplugins\Win32\planeshift_staticplugins.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>..\..\out\debug10\build\libplaneshift_database_staticplugins\Win32\planeshift_database_staticplugins.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;WIN32;CS_USE_SHARED_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeaderOutputFile>..\..\out\debug10\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>..\..\out\debug10\build\libplaneshift_staticplugins\</AssemblerListingLocation>
-      <ObjectFileName>..\..\out\debug10\build\libplaneshift_staticplugins\</ObjectFileName>
+      <PrecompiledHeaderOutputFile>..\..\out\debug10\build\libplaneshift_database_staticplugins\libplaneshift_database_staticplugins.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>..\..\out\debug10\build\libplaneshift_database_staticplugins\</AssemblerListingLocation>
+      <ObjectFileName>..\..\out\debug10\build\libplaneshift_database_staticplugins\</ObjectFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
@@ -432,7 +432,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
-      <OutputFile>..\..\out\debug10\libs\libplaneshift_staticplugins_d.lib</OutputFile>
+      <OutputFile>..\..\out\debug10\libs\libplaneshift_database_staticplugins_d.lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetMachine>MachineX86</TargetMachine>
     </Lib>
@@ -443,7 +443,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
     </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=10;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;..\..\src\plugins;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\..\src\plugins\database;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
       <Culture>0x0409</Culture>
     </ResourceCompile>
   </ItemDefinitionGroup>
@@ -453,13 +453,13 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <MinimalRebuild>true</MinimalRebuild>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <ProgramDataBaseFileName>..\..\out\debug10\build\libplaneshift_staticplugins\Win32\planeshift_staticplugins.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>..\..\out\debug10\build\libplaneshift_database_staticplugins\Win32\planeshift_database_staticplugins.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;CS_STATIC_LINKED;WIN32;CS_USE_STATIC_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeaderOutputFile>..\..\out\debug10\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>..\..\out\debug10\build\libplaneshift_staticplugins\</AssemblerListingLocation>
-      <ObjectFileName>..\..\out\debug10\build\libplaneshift_staticplugins\</ObjectFileName>
+      <PrecompiledHeaderOutputFile>..\..\out\debug10\build\libplaneshift_database_staticplugins\libplaneshift_database_staticplugins.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>..\..\out\debug10\build\libplaneshift_database_staticplugins\</AssemblerListingLocation>
+      <ObjectFileName>..\..\out\debug10\build\libplaneshift_database_staticplugins\</ObjectFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
@@ -477,7 +477,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
-      <OutputFile>..\..\out\debug10\libs\libplaneshift_staticplugins_d.lib</OutputFile>
+      <OutputFile>..\..\out\debug10\libs\libplaneshift_database_staticplugins_d.lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetMachine>MachineX86</TargetMachine>
     </Lib>
@@ -488,7 +488,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
     </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=10;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;..\..\src\plugins;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\..\src\plugins\database;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
       <Culture>0x0409</Culture>
     </ResourceCompile>
   </ItemDefinitionGroup>
@@ -498,13 +498,13 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <MinimalRebuild>true</MinimalRebuild>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <ProgramDataBaseFileName>..\..\out\debug10\build\libplaneshift_staticplugins\Win32\planeshift_staticplugins.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>..\..\out\debug10\build\libplaneshift_database_staticplugins\Win32\planeshift_database_staticplugins.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;CS_STATIC_LINKED;WIN32;CS_USE_SHARED_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeaderOutputFile>..\..\out\debug10\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>..\..\out\debug10\build\libplaneshift_staticplugins\</AssemblerListingLocation>
-      <ObjectFileName>..\..\out\debug10\build\libplaneshift_staticplugins\</ObjectFileName>
+      <PrecompiledHeaderOutputFile>..\..\out\debug10\build\libplaneshift_database_staticplugins\libplaneshift_database_staticplugins.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>..\..\out\debug10\build\libplaneshift_database_staticplugins\</AssemblerListingLocation>
+      <ObjectFileName>..\..\out\debug10\build\libplaneshift_database_staticplugins\</ObjectFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
@@ -522,7 +522,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
-      <OutputFile>..\..\out\debug10\libs\libplaneshift_staticplugins_d.lib</OutputFile>
+      <OutputFile>..\..\out\debug10\libs\libplaneshift_database_staticplugins_d.lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetMachine>MachineX86</TargetMachine>
     </Lib>
@@ -533,7 +533,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
     </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=10;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;..\..\src\plugins;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\..\src\plugins\database;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
       <Culture>0x0409</Culture>
     </ResourceCompile>
   </ItemDefinitionGroup>
@@ -543,13 +543,13 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <MinimalRebuild>true</MinimalRebuild>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <ProgramDataBaseFileName>..\..\out\debug10\build\libplaneshift_staticplugins\Win32\planeshift_staticplugins.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>..\..\out\debug10\build\libplaneshift_database_staticplugins\Win32\planeshift_database_staticplugins.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;CS_STATIC_LINKED;WIN32;CS_USE_STATIC_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeaderOutputFile>..\..\out\debug10\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>..\..\out\debug10\build\libplaneshift_staticplugins\</AssemblerListingLocation>
-      <ObjectFileName>..\..\out\debug10\build\libplaneshift_staticplugins\</ObjectFileName>
+      <PrecompiledHeaderOutputFile>..\..\out\debug10\build\libplaneshift_database_staticplugins\libplaneshift_database_staticplugins.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>..\..\out\debug10\build\libplaneshift_database_staticplugins\</AssemblerListingLocation>
+      <ObjectFileName>..\..\out\debug10\build\libplaneshift_database_staticplugins\</ObjectFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
@@ -567,7 +567,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
-      <OutputFile>..\..\out\debug10\libs\libplaneshift_staticplugins_d.lib</OutputFile>
+      <OutputFile>..\..\out\debug10\libs\libplaneshift_database_staticplugins_d.lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetMachine>MachineX86</TargetMachine>
     </Lib>
@@ -578,7 +578,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
     </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=10;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;..\..\src\plugins;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\..\src\plugins\database;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
       <Culture>0x0409</Culture>
     </ResourceCompile>
   </ItemDefinitionGroup>
@@ -588,13 +588,13 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <MinimalRebuild>true</MinimalRebuild>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <ProgramDataBaseFileName>..\..\out\debug10\build\libplaneshift_staticplugins\Win32\planeshift_staticplugins.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>..\..\out\debug10\build\libplaneshift_database_staticplugins\Win32\planeshift_database_staticplugins.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;CS_STATIC_LINKED;WIN32;CS_USE_SHARED_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeaderOutputFile>..\..\out\debug10\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>..\..\out\debug10\build\libplaneshift_staticplugins\</AssemblerListingLocation>
-      <ObjectFileName>..\..\out\debug10\build\libplaneshift_staticplugins\</ObjectFileName>
+      <PrecompiledHeaderOutputFile>..\..\out\debug10\build\libplaneshift_database_staticplugins\libplaneshift_database_staticplugins.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>..\..\out\debug10\build\libplaneshift_database_staticplugins\</AssemblerListingLocation>
+      <ObjectFileName>..\..\out\debug10\build\libplaneshift_database_staticplugins\</ObjectFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
@@ -612,7 +612,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
-      <OutputFile>..\..\out\debug10\libs\libplaneshift_staticplugins_d.lib</OutputFile>
+      <OutputFile>..\..\out\debug10\libs\libplaneshift_database_staticplugins_d.lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetMachine>MachineX86</TargetMachine>
     </Lib>
@@ -623,7 +623,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
     </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=10;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;..\..\src\plugins;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\..\src\plugins\database;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
       <Culture>0x0409</Culture>
     </ResourceCompile>
   </ItemDefinitionGroup>
@@ -633,13 +633,13 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <MinimalRebuild>true</MinimalRebuild>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <ProgramDataBaseFileName>..\..\out\debug10\build\libplaneshift_staticplugins\Win32\planeshift_staticplugins.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>..\..\out\debug10\build\libplaneshift_database_staticplugins\Win32\planeshift_database_staticplugins.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;CS_STATIC_LINKED;WIN32;CS_USE_STATIC_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeaderOutputFile>..\..\out\debug10\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>..\..\out\debug10\build\libplaneshift_staticplugins\</AssemblerListingLocation>
-      <ObjectFileName>..\..\out\debug10\build\libplaneshift_staticplugins\</ObjectFileName>
+      <PrecompiledHeaderOutputFile>..\..\out\debug10\build\libplaneshift_database_staticplugins\libplaneshift_database_staticplugins.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>..\..\out\debug10\build\libplaneshift_database_staticplugins\</AssemblerListingLocation>
+      <ObjectFileName>..\..\out\debug10\build\libplaneshift_database_staticplugins\</ObjectFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
@@ -657,7 +657,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
-      <OutputFile>..\..\out\debug10\libs\libplaneshift_staticplugins_d.lib</OutputFile>
+      <OutputFile>..\..\out\debug10\libs\libplaneshift_database_staticplugins_d.lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetMachine>MachineX86</TargetMachine>
     </Lib>
@@ -668,7 +668,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
     </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=10;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;..\..\src\plugins;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\..\src\plugins\database;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
       <Culture>0x0409</Culture>
     </ResourceCompile>
   </ItemDefinitionGroup>
@@ -678,13 +678,13 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <MinimalRebuild>true</MinimalRebuild>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <ProgramDataBaseFileName>..\..\out\debug10\build\libplaneshift_staticplugins\Win32\planeshift_staticplugins.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>..\..\out\debug10\build\libplaneshift_database_staticplugins\Win32\planeshift_database_staticplugins.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;CS_STATIC_LINKED;WIN32;CS_USE_SHARED_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeaderOutputFile>..\..\out\debug10\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>..\..\out\debug10\build\libplaneshift_staticplugins\</AssemblerListingLocation>
-      <ObjectFileName>..\..\out\debug10\build\libplaneshift_staticplugins\</ObjectFileName>
+      <PrecompiledHeaderOutputFile>..\..\out\debug10\build\libplaneshift_database_staticplugins\libplaneshift_database_staticplugins.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>..\..\out\debug10\build\libplaneshift_database_staticplugins\</AssemblerListingLocation>
+      <ObjectFileName>..\..\out\debug10\build\libplaneshift_database_staticplugins\</ObjectFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
@@ -702,7 +702,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
-      <OutputFile>..\..\out\debug10\libs\libplaneshift_staticplugins_d.lib</OutputFile>
+      <OutputFile>..\..\out\debug10\libs\libplaneshift_database_staticplugins_d.lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetMachine>MachineX86</TargetMachine>
     </Lib>
@@ -713,7 +713,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
     </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;CS_STATIC_LINKED;PROJECTGEN_VERSION=10;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;..\..\src\plugins;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\..\src\plugins\database;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
       <Culture>0x0409</Culture>
     </ResourceCompile>
   </ItemDefinitionGroup>
@@ -723,13 +723,13 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <MinimalRebuild>true</MinimalRebuild>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <ProgramDataBaseFileName>..\..\out\debug10\build\libplaneshift_staticplugins\Win32\planeshift_staticplugins.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>..\..\out\debug10\build\libplaneshift_database_staticplugins\Win32\planeshift_database_staticplugins.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;WIN32;CS_USE_STATIC_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeaderOutputFile>..\..\out\debug10\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>..\..\out\debug10\build\libplaneshift_staticplugins\</AssemblerListingLocation>
-      <ObjectFileName>..\..\out\debug10\build\libplaneshift_staticplugins\</ObjectFileName>
+      <PrecompiledHeaderOutputFile>..\..\out\debug10\build\libplaneshift_database_staticplugins\libplaneshift_database_staticplugins.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>..\..\out\debug10\build\libplaneshift_database_staticplugins\</AssemblerListingLocation>
+      <ObjectFileName>..\..\out\debug10\build\libplaneshift_database_staticplugins\</ObjectFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
@@ -747,7 +747,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
-      <OutputFile>..\..\out\debug10\libs\libplaneshift_staticplugins_d.lib</OutputFile>
+      <OutputFile>..\..\out\debug10\libs\libplaneshift_database_staticplugins_d.lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetMachine>MachineX86</TargetMachine>
     </Lib>
@@ -758,7 +758,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
     </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=10;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;..\..\src\plugins;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\..\src\plugins\database;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
       <Culture>0x0409</Culture>
     </ResourceCompile>
   </ItemDefinitionGroup>
@@ -768,13 +768,13 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <MinimalRebuild>true</MinimalRebuild>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <ProgramDataBaseFileName>..\..\out\debug10\build\libplaneshift_staticplugins\Win32\planeshift_staticplugins.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>..\..\out\debug10\build\libplaneshift_database_staticplugins\Win32\planeshift_database_staticplugins.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;WIN32;CS_USE_SHARED_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeaderOutputFile>..\..\out\debug10\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>..\..\out\debug10\build\libplaneshift_staticplugins\</AssemblerListingLocation>
-      <ObjectFileName>..\..\out\debug10\build\libplaneshift_staticplugins\</ObjectFileName>
+      <PrecompiledHeaderOutputFile>..\..\out\debug10\build\libplaneshift_database_staticplugins\libplaneshift_database_staticplugins.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>..\..\out\debug10\build\libplaneshift_database_staticplugins\</AssemblerListingLocation>
+      <ObjectFileName>..\..\out\debug10\build\libplaneshift_database_staticplugins\</ObjectFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
@@ -792,7 +792,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
-      <OutputFile>..\..\out\debug10\libs\libplaneshift_staticplugins_d.lib</OutputFile>
+      <OutputFile>..\..\out\debug10\libs\libplaneshift_database_staticplugins_d.lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetMachine>MachineX86</TargetMachine>
     </Lib>
@@ -803,7 +803,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
     </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;PROJECTGEN_VERSION=10;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;..\..\src\plugins;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\..\src\plugins\database;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
       <Culture>0x0409</Culture>
     </ResourceCompile>
   </ItemDefinitionGroup>
@@ -814,13 +814,13 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <ProgramDataBaseFileName>..\..\out\release10-x64\build\libplaneshift_staticplugins\x64\planeshift_staticplugins.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>..\..\out\release10-x64\build\libplaneshift_database_staticplugins\x64\planeshift_database_staticplugins.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;WIN32;CS_USE_STATIC_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeaderOutputFile>..\..\out\release10-x64\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>..\..\out\release10-x64\build\libplaneshift_staticplugins\</AssemblerListingLocation>
-      <ObjectFileName>..\..\out\release10-x64\build\libplaneshift_staticplugins\</ObjectFileName>
+      <PrecompiledHeaderOutputFile>..\..\out\release10-x64\build\libplaneshift_database_staticplugins\libplaneshift_database_staticplugins.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>..\..\out\release10-x64\build\libplaneshift_database_staticplugins\</AssemblerListingLocation>
+      <ObjectFileName>..\..\out\release10-x64\build\libplaneshift_database_staticplugins\</ObjectFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
@@ -840,7 +840,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
-      <OutputFile>..\..\out\release10-x64\libs\libplaneshift_staticplugins.lib</OutputFile>
+      <OutputFile>..\..\out\release10-x64\libs\libplaneshift_database_staticplugins.lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetMachine>MachineX64</TargetMachine>
     </Lib>
@@ -851,7 +851,7 @@ copy /y "$(TargetPath)" ..\..\out\release10-x64\bin\
     </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;_WIN64;PROJECTGEN_VERSION=10;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;..\..\src\plugins;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\..\src\plugins\database;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
       <Culture>0x0409</Culture>
     </ResourceCompile>
   </ItemDefinitionGroup>
@@ -862,13 +862,13 @@ copy /y "$(TargetPath)" ..\..\out\release10-x64\bin\
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <ProgramDataBaseFileName>..\..\out\release10-x64\build\libplaneshift_staticplugins\x64\planeshift_staticplugins.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>..\..\out\release10-x64\build\libplaneshift_database_staticplugins\x64\planeshift_database_staticplugins.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;WIN32;CS_USE_SHARED_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeaderOutputFile>..\..\out\release10-x64\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>..\..\out\release10-x64\build\libplaneshift_staticplugins\</AssemblerListingLocation>
-      <ObjectFileName>..\..\out\release10-x64\build\libplaneshift_staticplugins\</ObjectFileName>
+      <PrecompiledHeaderOutputFile>..\..\out\release10-x64\build\libplaneshift_database_staticplugins\libplaneshift_database_staticplugins.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>..\..\out\release10-x64\build\libplaneshift_database_staticplugins\</AssemblerListingLocation>
+      <ObjectFileName>..\..\out\release10-x64\build\libplaneshift_database_staticplugins\</ObjectFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
@@ -888,7 +888,7 @@ copy /y "$(TargetPath)" ..\..\out\release10-x64\bin\
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
-      <OutputFile>..\..\out\release10-x64\libs\libplaneshift_staticplugins.lib</OutputFile>
+      <OutputFile>..\..\out\release10-x64\libs\libplaneshift_database_staticplugins.lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetMachine>MachineX64</TargetMachine>
     </Lib>
@@ -899,7 +899,7 @@ copy /y "$(TargetPath)" ..\..\out\release10-x64\bin\
     </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;_WIN64;PROJECTGEN_VERSION=10;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;..\..\src\plugins;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\..\src\plugins\database;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
       <Culture>0x0409</Culture>
     </ResourceCompile>
   </ItemDefinitionGroup>
@@ -909,13 +909,13 @@ copy /y "$(TargetPath)" ..\..\out\release10-x64\bin\
       <MinimalRebuild>true</MinimalRebuild>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\libplaneshift_staticplugins\x64\planeshift_staticplugins.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\x64\planeshift_database_staticplugins.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;WIN32;CS_USE_STATIC_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeaderOutputFile>..\..\out\debug10-x64\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>..\..\out\debug10-x64\build\libplaneshift_staticplugins\</AssemblerListingLocation>
-      <ObjectFileName>..\..\out\debug10-x64\build\libplaneshift_staticplugins\</ObjectFileName>
+      <PrecompiledHeaderOutputFile>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\libplaneshift_database_staticplugins.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\</AssemblerListingLocation>
+      <ObjectFileName>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\</ObjectFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
@@ -933,7 +933,7 @@ copy /y "$(TargetPath)" ..\..\out\release10-x64\bin\
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
-      <OutputFile>..\..\out\debug10-x64\libs\libplaneshift_staticplugins_d.lib</OutputFile>
+      <OutputFile>..\..\out\debug10-x64\libs\libplaneshift_database_staticplugins_d.lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetMachine>MachineX64</TargetMachine>
     </Lib>
@@ -944,7 +944,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;_WIN64;PROJECTGEN_VERSION=10;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;..\..\src\plugins;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\..\src\plugins\database;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
       <Culture>0x0409</Culture>
     </ResourceCompile>
   </ItemDefinitionGroup>
@@ -954,13 +954,13 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <MinimalRebuild>true</MinimalRebuild>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\libplaneshift_staticplugins\x64\planeshift_staticplugins.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\x64\planeshift_database_staticplugins.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;WIN32;CS_USE_SHARED_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeaderOutputFile>..\..\out\debug10-x64\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>..\..\out\debug10-x64\build\libplaneshift_staticplugins\</AssemblerListingLocation>
-      <ObjectFileName>..\..\out\debug10-x64\build\libplaneshift_staticplugins\</ObjectFileName>
+      <PrecompiledHeaderOutputFile>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\libplaneshift_database_staticplugins.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\</AssemblerListingLocation>
+      <ObjectFileName>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\</ObjectFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
@@ -978,7 +978,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
-      <OutputFile>..\..\out\debug10-x64\libs\libplaneshift_staticplugins_d.lib</OutputFile>
+      <OutputFile>..\..\out\debug10-x64\libs\libplaneshift_database_staticplugins_d.lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetMachine>MachineX64</TargetMachine>
     </Lib>
@@ -989,7 +989,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;_WIN64;PROJECTGEN_VERSION=10;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;..\..\src\plugins;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\..\src\plugins\database;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
       <Culture>0x0409</Culture>
     </ResourceCompile>
   </ItemDefinitionGroup>
@@ -999,13 +999,13 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <MinimalRebuild>true</MinimalRebuild>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\libplaneshift_staticplugins\x64\planeshift_staticplugins.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\x64\planeshift_database_staticplugins.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;CS_STATIC_LINKED;WIN32;CS_USE_STATIC_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeaderOutputFile>..\..\out\debug10-x64\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>..\..\out\debug10-x64\build\libplaneshift_staticplugins\</AssemblerListingLocation>
-      <ObjectFileName>..\..\out\debug10-x64\build\libplaneshift_staticplugins\</ObjectFileName>
+      <PrecompiledHeaderOutputFile>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\libplaneshift_database_staticplugins.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\</AssemblerListingLocation>
+      <ObjectFileName>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\</ObjectFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
@@ -1023,7 +1023,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
-      <OutputFile>..\..\out\debug10-x64\libs\libplaneshift_staticplugins_d.lib</OutputFile>
+      <OutputFile>..\..\out\debug10-x64\libs\libplaneshift_database_staticplugins_d.lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetMachine>MachineX64</TargetMachine>
     </Lib>
@@ -1034,7 +1034,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;CS_STATIC_LINKED;_WIN64;PROJECTGEN_VERSION=10;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;..\..\src\plugins;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\..\src\plugins\database;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
       <Culture>0x0409</Culture>
     </ResourceCompile>
   </ItemDefinitionGroup>
@@ -1044,13 +1044,13 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <MinimalRebuild>true</MinimalRebuild>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\libplaneshift_staticplugins\x64\planeshift_staticplugins.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\x64\planeshift_database_staticplugins.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;CS_STATIC_LINKED;WIN32;CS_USE_SHARED_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeaderOutputFile>..\..\out\debug10-x64\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>..\..\out\debug10-x64\build\libplaneshift_staticplugins\</AssemblerListingLocation>
-      <ObjectFileName>..\..\out\debug10-x64\build\libplaneshift_staticplugins\</ObjectFileName>
+      <PrecompiledHeaderOutputFile>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\libplaneshift_database_staticplugins.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\</AssemblerListingLocation>
+      <ObjectFileName>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\</ObjectFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
@@ -1068,7 +1068,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
-      <OutputFile>..\..\out\debug10-x64\libs\libplaneshift_staticplugins_d.lib</OutputFile>
+      <OutputFile>..\..\out\debug10-x64\libs\libplaneshift_database_staticplugins_d.lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetMachine>MachineX64</TargetMachine>
     </Lib>
@@ -1079,7 +1079,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;CS_STATIC_LINKED;_WIN64;PROJECTGEN_VERSION=10;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;..\..\src\plugins;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\..\src\plugins\database;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
       <Culture>0x0409</Culture>
     </ResourceCompile>
   </ItemDefinitionGroup>
@@ -1089,13 +1089,13 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <MinimalRebuild>true</MinimalRebuild>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\libplaneshift_staticplugins\x64\planeshift_staticplugins.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\x64\planeshift_database_staticplugins.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;CS_STATIC_LINKED;WIN32;CS_USE_STATIC_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeaderOutputFile>..\..\out\debug10-x64\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>..\..\out\debug10-x64\build\libplaneshift_staticplugins\</AssemblerListingLocation>
-      <ObjectFileName>..\..\out\debug10-x64\build\libplaneshift_staticplugins\</ObjectFileName>
+      <PrecompiledHeaderOutputFile>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\libplaneshift_database_staticplugins.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\</AssemblerListingLocation>
+      <ObjectFileName>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\</ObjectFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
@@ -1113,7 +1113,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
-      <OutputFile>..\..\out\debug10-x64\libs\libplaneshift_staticplugins_d.lib</OutputFile>
+      <OutputFile>..\..\out\debug10-x64\libs\libplaneshift_database_staticplugins_d.lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetMachine>MachineX64</TargetMachine>
     </Lib>
@@ -1124,7 +1124,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;CS_STATIC_LINKED;_WIN64;PROJECTGEN_VERSION=10;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;..\..\src\plugins;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\..\src\plugins\database;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
       <Culture>0x0409</Culture>
     </ResourceCompile>
   </ItemDefinitionGroup>
@@ -1134,13 +1134,13 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <MinimalRebuild>true</MinimalRebuild>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\libplaneshift_staticplugins\x64\planeshift_staticplugins.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\x64\planeshift_database_staticplugins.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;CS_STATIC_LINKED;WIN32;CS_USE_SHARED_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeaderOutputFile>..\..\out\debug10-x64\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>..\..\out\debug10-x64\build\libplaneshift_staticplugins\</AssemblerListingLocation>
-      <ObjectFileName>..\..\out\debug10-x64\build\libplaneshift_staticplugins\</ObjectFileName>
+      <PrecompiledHeaderOutputFile>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\libplaneshift_database_staticplugins.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\</AssemblerListingLocation>
+      <ObjectFileName>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\</ObjectFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
@@ -1158,7 +1158,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
-      <OutputFile>..\..\out\debug10-x64\libs\libplaneshift_staticplugins_d.lib</OutputFile>
+      <OutputFile>..\..\out\debug10-x64\libs\libplaneshift_database_staticplugins_d.lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetMachine>MachineX64</TargetMachine>
     </Lib>
@@ -1169,7 +1169,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;CS_STATIC_LINKED;_WIN64;PROJECTGEN_VERSION=10;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;..\..\src\plugins;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\..\src\plugins\database;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
       <Culture>0x0409</Culture>
     </ResourceCompile>
   </ItemDefinitionGroup>
@@ -1179,13 +1179,13 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <MinimalRebuild>true</MinimalRebuild>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\libplaneshift_staticplugins\x64\planeshift_staticplugins.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\x64\planeshift_database_staticplugins.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;CS_STATIC_LINKED;WIN32;CS_USE_STATIC_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeaderOutputFile>..\..\out\debug10-x64\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>..\..\out\debug10-x64\build\libplaneshift_staticplugins\</AssemblerListingLocation>
-      <ObjectFileName>..\..\out\debug10-x64\build\libplaneshift_staticplugins\</ObjectFileName>
+      <PrecompiledHeaderOutputFile>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\libplaneshift_database_staticplugins.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\</AssemblerListingLocation>
+      <ObjectFileName>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\</ObjectFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
@@ -1203,7 +1203,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
-      <OutputFile>..\..\out\debug10-x64\libs\libplaneshift_staticplugins_d.lib</OutputFile>
+      <OutputFile>..\..\out\debug10-x64\libs\libplaneshift_database_staticplugins_d.lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetMachine>MachineX64</TargetMachine>
     </Lib>
@@ -1214,7 +1214,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;CS_STATIC_LINKED;_WIN64;PROJECTGEN_VERSION=10;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;..\..\src\plugins;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\..\src\plugins\database;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
       <Culture>0x0409</Culture>
     </ResourceCompile>
   </ItemDefinitionGroup>
@@ -1224,13 +1224,13 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <MinimalRebuild>true</MinimalRebuild>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\libplaneshift_staticplugins\x64\planeshift_staticplugins.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\x64\planeshift_database_staticplugins.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;CS_STATIC_LINKED;WIN32;CS_USE_SHARED_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeaderOutputFile>..\..\out\debug10-x64\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>..\..\out\debug10-x64\build\libplaneshift_staticplugins\</AssemblerListingLocation>
-      <ObjectFileName>..\..\out\debug10-x64\build\libplaneshift_staticplugins\</ObjectFileName>
+      <PrecompiledHeaderOutputFile>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\libplaneshift_database_staticplugins.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\</AssemblerListingLocation>
+      <ObjectFileName>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\</ObjectFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
@@ -1248,7 +1248,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
-      <OutputFile>..\..\out\debug10-x64\libs\libplaneshift_staticplugins_d.lib</OutputFile>
+      <OutputFile>..\..\out\debug10-x64\libs\libplaneshift_database_staticplugins_d.lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetMachine>MachineX64</TargetMachine>
     </Lib>
@@ -1259,7 +1259,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;CS_STATIC_LINKED;_WIN64;PROJECTGEN_VERSION=10;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;..\..\src\plugins;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\..\src\plugins\database;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
       <Culture>0x0409</Culture>
     </ResourceCompile>
   </ItemDefinitionGroup>
@@ -1269,13 +1269,13 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <MinimalRebuild>true</MinimalRebuild>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\libplaneshift_staticplugins\x64\planeshift_staticplugins.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\x64\planeshift_database_staticplugins.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;WIN32;CS_USE_STATIC_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeaderOutputFile>..\..\out\debug10-x64\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>..\..\out\debug10-x64\build\libplaneshift_staticplugins\</AssemblerListingLocation>
-      <ObjectFileName>..\..\out\debug10-x64\build\libplaneshift_staticplugins\</ObjectFileName>
+      <PrecompiledHeaderOutputFile>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\libplaneshift_database_staticplugins.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\</AssemblerListingLocation>
+      <ObjectFileName>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\</ObjectFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
@@ -1293,7 +1293,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
-      <OutputFile>..\..\out\debug10-x64\libs\libplaneshift_staticplugins_d.lib</OutputFile>
+      <OutputFile>..\..\out\debug10-x64\libs\libplaneshift_database_staticplugins_d.lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetMachine>MachineX64</TargetMachine>
     </Lib>
@@ -1304,7 +1304,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;_WIN64;PROJECTGEN_VERSION=10;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;..\..\src\plugins;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\..\src\plugins\database;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
       <Culture>0x0409</Culture>
     </ResourceCompile>
   </ItemDefinitionGroup>
@@ -1314,13 +1314,13 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <MinimalRebuild>true</MinimalRebuild>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\libplaneshift_staticplugins\x64\planeshift_staticplugins.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\x64\planeshift_database_staticplugins.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;WIN32;CS_USE_SHARED_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeaderOutputFile>..\..\out\debug10-x64\build\libplaneshift_staticplugins\libplaneshift_staticplugins.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>..\..\out\debug10-x64\build\libplaneshift_staticplugins\</AssemblerListingLocation>
-      <ObjectFileName>..\..\out\debug10-x64\build\libplaneshift_staticplugins\</ObjectFileName>
+      <PrecompiledHeaderOutputFile>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\libplaneshift_database_staticplugins.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\</AssemblerListingLocation>
+      <ObjectFileName>..\..\out\debug10-x64\build\libplaneshift_database_staticplugins\</ObjectFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
@@ -1338,7 +1338,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Lib>
-      <OutputFile>..\..\out\debug10-x64\libs\libplaneshift_staticplugins_d.lib</OutputFile>
+      <OutputFile>..\..\out\debug10-x64\libs\libplaneshift_database_staticplugins_d.lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetMachine>MachineX64</TargetMachine>
     </Lib>
@@ -1349,70 +1349,16 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_STATIC_LINKED;_WIN64;PROJECTGEN_VERSION=10;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;..\..\src\plugins;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..\..\src\plugins\database;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include</AdditionalIncludeDirectories>
       <Culture>0x0409</Culture>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\mk\msvc\libbgloader_staticreg.cpp" />
-    <ClCompile Include="..\..\mk\msvc\libcelgraph_staticreg.cpp" />
     <ClCompile Include="..\..\mk\msvc\libdbmysql_staticreg.cpp" />
-    <ClCompile Include="..\..\mk\msvc\librecast_staticreg.cpp" />
-    <ClCompile Include="..\..\src\plugins\bgloader\loader.cpp" />
-    <ClCompile Include="..\..\src\plugins\bgloader\loader_objects.cpp" />
-    <ClCompile Include="..\..\src\plugins\bgloader\manipulate.cpp" />
-    <ClCompile Include="..\..\src\plugins\bgloader\parser.cpp" />
-    <ClCompile Include="..\..\src\plugins\bgloader\parser_mesh.cpp" />
-    <ClCompile Include="..\..\src\plugins\celgraph\celgraph.cpp" />
     <ClCompile Include="..\..\src\plugins\database\mysql\dal.cpp" />
-    <ClCompile Include="..\..\src\plugins\recast\CelHPF.cpp" />
-    <ClCompile Include="..\..\src\plugins\recast\CelNavMesh.cpp" />
-    <ClCompile Include="..\..\src\plugins\recast\recastnavigation\ChunkyTriMesh.cpp" />
-    <ClCompile Include="..\..\src\plugins\recast\recastnavigation\DebugDraw.cpp" />
-    <ClCompile Include="..\..\src\plugins\recast\recastnavigation\DetourAlloc.cpp" />
-    <ClCompile Include="..\..\src\plugins\recast\recastnavigation\DetourCommon.cpp" />
-    <ClCompile Include="..\..\src\plugins\recast\recastnavigation\DetourDebugDraw.cpp" />
-    <ClCompile Include="..\..\src\plugins\recast\recastnavigation\DetourNavMesh.cpp" />
-    <ClCompile Include="..\..\src\plugins\recast\recastnavigation\DetourNavMeshBuilder.cpp" />
-    <ClCompile Include="..\..\src\plugins\recast\recastnavigation\DetourNode.cpp" />
-    <ClCompile Include="..\..\src\plugins\recast\recastnavigation\InputGeom.cpp" />
-    <ClCompile Include="..\..\src\plugins\recast\recastnavigation\MeshLoaderObj.cpp" />
-    <ClCompile Include="..\..\src\plugins\recast\recastnavigation\Recast.cpp" />
-    <ClCompile Include="..\..\src\plugins\recast\recastnavigation\RecastAlloc.cpp" />
-    <ClCompile Include="..\..\src\plugins\recast\recastnavigation\RecastArea.cpp" />
-    <ClCompile Include="..\..\src\plugins\recast\recastnavigation\RecastContour.cpp" />
-    <ClCompile Include="..\..\src\plugins\recast\recastnavigation\RecastDebugDraw.cpp" />
-    <ClCompile Include="..\..\src\plugins\recast\recastnavigation\RecastDump.cpp" />
-    <ClCompile Include="..\..\src\plugins\recast\recastnavigation\RecastFilter.cpp" />
-    <ClCompile Include="..\..\src\plugins\recast\recastnavigation\RecastLog.cpp" />
-    <ClCompile Include="..\..\src\plugins\recast\recastnavigation\RecastMesh.cpp" />
-    <ClCompile Include="..\..\src\plugins\recast\recastnavigation\RecastMeshDetail.cpp" />
-    <ClCompile Include="..\..\src\plugins\recast\recastnavigation\RecastRasterization.cpp" />
-    <ClCompile Include="..\..\src\plugins\recast\recastnavigation\RecastRegion.cpp" />
-    <ClCompile Include="..\..\src\plugins\recast\recastnavigation\RecastTimer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\plugins\bgloader\loader.h" />
-    <ClInclude Include="..\..\src\plugins\celgraph\celgraph.h" />
     <ClInclude Include="..\..\src\plugins\database\mysql\dal.h" />
-    <ClInclude Include="..\..\src\plugins\recast\CelHPF.h" />
-    <ClInclude Include="..\..\src\plugins\recast\CelNavMesh.h" />
-    <ClInclude Include="..\..\src\plugins\recast\recastnavigation\ChunkyTriMesh.h" />
-    <ClInclude Include="..\..\src\plugins\recast\recastnavigation\DebugDraw.h" />
-    <ClInclude Include="..\..\src\plugins\recast\recastnavigation\DetourAlloc.h" />
-    <ClInclude Include="..\..\src\plugins\recast\recastnavigation\DetourCommon.h" />
-    <ClInclude Include="..\..\src\plugins\recast\recastnavigation\DetourDebugDraw.h" />
-    <ClInclude Include="..\..\src\plugins\recast\recastnavigation\DetourNavMesh.h" />
-    <ClInclude Include="..\..\src\plugins\recast\recastnavigation\DetourNavMeshBuilder.h" />
-    <ClInclude Include="..\..\src\plugins\recast\recastnavigation\DetourNode.h" />
-    <ClInclude Include="..\..\src\plugins\recast\recastnavigation\InputGeom.h" />
-    <ClInclude Include="..\..\src\plugins\recast\recastnavigation\MeshLoaderObj.h" />
-    <ClInclude Include="..\..\src\plugins\recast\recastnavigation\Recast.h" />
-    <ClInclude Include="..\..\src\plugins\recast\recastnavigation\RecastAlloc.h" />
-    <ClInclude Include="..\..\src\plugins\recast\recastnavigation\RecastDebugDraw.h" />
-    <ClInclude Include="..\..\src\plugins\recast\recastnavigation\RecastDump.h" />
-    <ClInclude Include="..\..\src\plugins\recast\recastnavigation\RecastLog.h" />
-    <ClInclude Include="..\..\src\plugins\recast\recastnavigation\RecastTimer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
