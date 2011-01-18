@@ -1582,32 +1582,32 @@ AdminCmdDataTeleport::AdminCmdDataTeleport(AdminManager* msgManager, MsgEntry* m
         index++;
         destInstance = DEFAULT_INSTANCE;
         destInstanceValid = false;
+
         if (destList.IsSubCommand(words[index]))
         {
             dest = words[index++];
-        }
-        // current word is not a default target
-        // but it might be 'map'
-        else if (words[index] == "map")
-        {
-            dest = words[index++];
-            // map target specified by map name
-            if (words.GetCount() == index + 1)
+            // current word is not a default target
+            // but it might be 'map'
+            if(dest == "map")
             {
-                destMap = words[index++];
-            }
-            // or sector target specified by coordinates
-            // with optional instance id at the end (parsed below)
-            else if (words.GetCount() == index + 4 || words.GetCount() == index + 5)
-            {
-                destSector = words[index++];
-                x = words.GetFloat(index++);
-                y = words.GetFloat(index++);
-                z = words.GetFloat(index++);
-            }
-            else
-            {
-                ParseError(me, "Missing x,y,z coordinates");
+                // map target specified by map name
+                if (words.GetCount() == index + 1)
+                {
+                    destMap = words[index++];
+                }
+                // or sector target specified by coordinates
+                // with optional instance id at the end (parsed below)
+                else if (words.GetCount() == index + 4 || words.GetCount() == index + 5)
+                {
+                    destSector = words[index++];
+                    x = words.GetFloat(index++);
+                    y = words.GetFloat(index++);
+                    z = words.GetFloat(index++);
+                }
+                else
+                {
+                    ParseError(me, "Missing x,y,z coordinates");
+                }
             }
         }
         // when the second word is me|pid:<PID>|playername|...
