@@ -1563,6 +1563,9 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ResourceCompile Include="..\..\mk\msvc\apppsclient_static.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="libplaneshift_staticplugins.vcxproj">
+      <Project>{DA886D16-6C20-BDA5-D8CC-0E06ABE8B5C7}</Project>
+    </ProjectReference>
     <ProjectReference Include="libgui.vcxproj">
       <Project>{CB174702-BB9B-E18A-7352-E9B7326EB494}</Project>
     </ProjectReference>

@@ -1354,10 +1354,64 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\mk\msvc\libbgloader_staticreg.cpp" />
+    <ClCompile Include="..\..\mk\msvc\libcelgraph_staticreg.cpp" />
     <ClCompile Include="..\..\mk\msvc\libdbmysql_staticreg.cpp" />
+    <ClCompile Include="..\..\mk\msvc\librecast_staticreg.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\bgloader\loader.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\bgloader\loader_objects.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\bgloader\manipulate.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\bgloader\parser.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\bgloader\parser_mesh.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\celgraph\celgraph.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\recast\CelHPF.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\recast\CelNavMesh.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\recast\recastnavigation\ChunkyTriMesh.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\recast\recastnavigation\DebugDraw.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\recast\recastnavigation\DetourAlloc.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\recast\recastnavigation\DetourCommon.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\recast\recastnavigation\DetourDebugDraw.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\recast\recastnavigation\DetourNavMesh.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\recast\recastnavigation\DetourNavMeshBuilder.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\recast\recastnavigation\DetourNode.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\recast\recastnavigation\InputGeom.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\recast\recastnavigation\MeshLoaderObj.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\recast\recastnavigation\Recast.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\recast\recastnavigation\RecastAlloc.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\recast\recastnavigation\RecastArea.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\recast\recastnavigation\RecastContour.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\recast\recastnavigation\RecastDebugDraw.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\recast\recastnavigation\RecastDump.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\recast\recastnavigation\RecastFilter.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\recast\recastnavigation\RecastLog.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\recast\recastnavigation\RecastMesh.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\recast\recastnavigation\RecastMeshDetail.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\recast\recastnavigation\RecastRasterization.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\recast\recastnavigation\RecastRegion.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\recast\recastnavigation\RecastTimer.cpp" />
     <ClCompile Include="..\..\src\plugins\database\mysql\dal.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\plugins\common\bgloader\loader.h" />
+    <ClInclude Include="..\..\src\plugins\common\celgraph\celgraph.h" />
+    <ClInclude Include="..\..\src\plugins\common\recast\CelHPF.h" />
+    <ClInclude Include="..\..\src\plugins\common\recast\CelNavMesh.h" />
+    <ClInclude Include="..\..\src\plugins\common\recast\recastnavigation\ChunkyTriMesh.h" />
+    <ClInclude Include="..\..\src\plugins\common\recast\recastnavigation\DebugDraw.h" />
+    <ClInclude Include="..\..\src\plugins\common\recast\recastnavigation\DetourAlloc.h" />
+    <ClInclude Include="..\..\src\plugins\common\recast\recastnavigation\DetourCommon.h" />
+    <ClInclude Include="..\..\src\plugins\common\recast\recastnavigation\DetourDebugDraw.h" />
+    <ClInclude Include="..\..\src\plugins\common\recast\recastnavigation\DetourNavMesh.h" />
+    <ClInclude Include="..\..\src\plugins\common\recast\recastnavigation\DetourNavMeshBuilder.h" />
+    <ClInclude Include="..\..\src\plugins\common\recast\recastnavigation\DetourNode.h" />
+    <ClInclude Include="..\..\src\plugins\common\recast\recastnavigation\InputGeom.h" />
+    <ClInclude Include="..\..\src\plugins\common\recast\recastnavigation\MeshLoaderObj.h" />
+    <ClInclude Include="..\..\src\plugins\common\recast\recastnavigation\Recast.h" />
+    <ClInclude Include="..\..\src\plugins\common\recast\recastnavigation\RecastAlloc.h" />
+    <ClInclude Include="..\..\src\plugins\common\recast\recastnavigation\RecastDebugDraw.h" />
+    <ClInclude Include="..\..\src\plugins\common\recast\recastnavigation\RecastDump.h" />
+    <ClInclude Include="..\..\src\plugins\common\recast\recastnavigation\RecastLog.h" />
+    <ClInclude Include="..\..\src\plugins\common\recast\recastnavigation\RecastTimer.h" />
     <ClInclude Include="..\..\src\plugins\database\mysql\dal.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
