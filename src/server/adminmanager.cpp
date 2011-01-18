@@ -1572,22 +1572,9 @@ AdminCmdDataTeleport::AdminCmdDataTeleport(AdminManager* msgManager, MsgEntry* m
         index++;
         destInstance = DEFAULT_INSTANCE;
         destInstanceValid = false;
-        // when the second word is me|pid:<PID>|playername|...
-        if (destObj.ParseTarget(msgManager, me, msg, client, words[index]))
+        if (destList.IsSubCommand(words[index]))
         {
-            index++;
-            /*if (destObj.targetType == ADMINCMD_TARGET_ME)
-            {
-                // optional instance name
-                if (words.GetCount() == index + 1)
-                {
-                    instanceName = words[index++];
-                }
-                else if (words.GetCount() != index)
-                {
-                    ParseError(me, "Too many arguments");
-                }
-            }*/
+            dest = words[index++];
         }
         // current word is not a default target
         // but it might be 'map'
@@ -1613,9 +1600,22 @@ AdminCmdDataTeleport::AdminCmdDataTeleport(AdminManager* msgManager, MsgEntry* m
                 ParseError(me, "Missing x,y,z coordinates");
             }
         }
-        else if (destList.IsSubCommand(words[index]))
+        // when the second word is me|pid:<PID>|playername|...
+        else if (destObj.ParseTarget(msgManager, me, msg, client, words[index]))
         {
-            dest = words[index++];
+            index++;
+            /*if (destObj.targetType == ADMINCMD_TARGET_ME)
+            {
+                // optional instance name
+                if (words.GetCount() == index + 1)
+                {
+                    instanceName = words[index++];
+                }
+                else if (words.GetCount() != index)
+                {
+                    ParseError(me, "Too many arguments");
+                }
+            }*/
         }
         else
         {
@@ -1623,7 +1623,7 @@ AdminCmdDataTeleport::AdminCmdDataTeleport(AdminManager* msgManager, MsgEntry* m
         }
         if (words.GetCount() == index + 1)
         {
-            destInstance = words.GetInt(index);
+            destInstance = words.GetInt(index++);
             destInstanceValid = true;
         }
         else if (words.GetCount() != index)
