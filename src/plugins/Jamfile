@@ -1,9 +1,4 @@
 SubDir TOP src plugins ;
 
+SubInclude TOP src plugins common ;
 SubInclude TOP src plugins database ;
-SubInclude TOP src plugins bgloader ;
-SubInclude TOP src plugins recast ;
-SubInclude TOP src plugins celgraph ;
-
-StaticPluginLibrary planeshift_staticplugins ;
-
