@@ -514,8 +514,8 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                 
                 case PARSERTOKEN_RADIUS:
                 {
-                    csVector3 size(node->GetContentsValueAsFloat());
-                    bbox.SetSize(size);
+                    radius = node->GetContentsValueAsFloat();
+                    bbox.SetSize(csVector3(radius));
                 }
                 break;
 
