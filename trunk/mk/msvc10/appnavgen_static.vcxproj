@@ -1506,8 +1506,8 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ProjectReference Include="libnavgen_static_plugins.vcxproj">
       <Project>{9A5A860D-E541-4C9D-6E6E-62FD73EAEA4E}</Project>
     </ProjectReference>
-    <ProjectReference Include="libplaneshift_staticplugins.vcxproj">
-      <Project>{DA886D16-6C20-BDA5-D8CC-0E06ABE8B5C7}</Project>
+    <ProjectReference Include="libplaneshift_database_staticplugins.vcxproj">
+      <Project>{5DFC8F2F-79FD-89B5-6EEC-FDEEB1E3225D}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
