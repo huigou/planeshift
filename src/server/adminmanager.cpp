@@ -354,6 +354,11 @@ bool AdminCmdTargetParser::GetPlayerAccountIDByPID(size_t gmClientNum, const csS
     // basically the pid is resolved to an account id that is then used to
     // execute the specified command
 
+    //first of all check if db hits are allowed. most commands don't
+    //work with the database so there is no use to hit the db for that.
+    if(!IsAllowedTargetType(ADMINCMD_TARGET_DATABASE))
+        return false;
+
     PID pid = PID(strtoul(word.Slice(4).GetData(), NULL, 10));
     if (!pid.IsValid())
     {
@@ -409,6 +414,11 @@ AccountID AdminCmdTargetParser::GetAccountID(size_t gmClientNum)
 
 bool AdminCmdTargetParser::GetPlayerAccountIDByName(size_t gmClientNum, const csString &word, bool reporterror)
 {
+    //first of all check if db hits are allowed. most commands don't
+    //work with the database so there is no use to hit the db for that.
+    if(!IsAllowedTargetType(ADMINCMD_TARGET_DATABASE))
+        return false;
+
     // try to find an offline player by name and resolve to a pid
     csString name;
     // normalize and escape name (to avoid security issues)
@@ -1083,7 +1093,7 @@ csString AdminCmdDataDeath::GetHelpMessage()
 }
 
 AdminCmdDataDeleteChar::AdminCmdDataDeleteChar(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client *client, WordArray &words)
-: AdminCmdDataTarget("/deletechar", ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_PID), requestor(ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET)
+: AdminCmdDataTarget("/deletechar", ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_PID), requestor(ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE)
 {
     size_t index = 1;
 
@@ -1174,7 +1184,7 @@ csString AdminCmdDataUpdateRespawn::GetHelpMessage()
 }
 
 AdminCmdDataBan::AdminCmdDataBan(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client *client, WordArray &words)
-: AdminCmdDataTarget("/ban", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_ACCOUNT | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET)
+: AdminCmdDataTarget("/ban", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_ACCOUNT | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE)
 {
     size_t index = 1;
     bool found;
@@ -1245,7 +1255,7 @@ csString AdminCmdDataBan::GetHelpMessage()
 }
 
 AdminCmdDataKillNPC::AdminCmdDataKillNPC(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client *client, WordArray &words)
-: AdminCmdDataTarget("/killnpc", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET), reload(false)
+: AdminCmdDataTarget("/killnpc", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE), reload(false)
 {
     size_t index = 1;
     bool found;
@@ -1554,7 +1564,7 @@ csString AdminCmdDataCrystal::GetHelpMessage()
 }
 
 AdminCmdDataTeleport::AdminCmdDataTeleport(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client *client, WordArray &words)
-: AdminCmdDataTarget("/teleport", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM), destList("here there last spawn restore"), destObj(ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM)
+: AdminCmdDataTarget("/teleport", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_DATABASE), destList("here there last spawn restore"), destObj(ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM)
 {
     destList.Push("map", "(<map name>|here) | (<sector name> <x> <y> <z>) [<instance>]");
     size_t index = 1;
@@ -1685,7 +1695,7 @@ csString AdminCmdDataSlide::GetHelpMessage()
 }
 
 AdminCmdDataChangeName::AdminCmdDataChangeName(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client *client, WordArray &words)
-: AdminCmdDataTarget("/changename", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET), uniqueName(true), uniqueFirstName(true)
+: AdminCmdDataTarget("/changename", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE), uniqueName(true), uniqueFirstName(true)
 {
     size_t index = 1;
     bool found;
@@ -1776,7 +1786,7 @@ csString AdminCmdDataChangeGuildName::GetHelpMessage()
 }
 
 AdminCmdDataChangeGuildLeader::AdminCmdDataChangeGuildLeader(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client *client, WordArray &words)
-: AdminCmdDataTarget("/changeguildleader", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET)
+: AdminCmdDataTarget("/changeguildleader", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE)
 {
     size_t index = 1;
     bool found = false;
@@ -3130,7 +3140,7 @@ csString AdminCmdDataBadText::GetHelpMessage()
 }
 
 AdminCmdDataQuest::AdminCmdDataQuest(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client *client, WordArray &words)
-: AdminCmdDataTarget("/quest", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET),
+: AdminCmdDataTarget("/quest", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE),
         subCommandList("complete list discard assign")
 {
     size_t index = 1;
@@ -3400,7 +3410,7 @@ csString AdminCmdDataReload::GetHelpMessage()
 }
 
 AdminCmdDataListWarnings::AdminCmdDataListWarnings(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client *client, WordArray &words)
-: AdminCmdDataTarget("/listwarnings", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_CLIENTTARGET)
+: AdminCmdDataTarget("/listwarnings", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE)
 {
     size_t index = 1;
     bool found;
@@ -3727,19 +3737,19 @@ AdminCmdDataFactory::AdminCmdDataFactory()
     RegisterMsgFactoryFunction(new AdminCmdDataTarget("/mute", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET));
 
     RegisterMsgFactoryFunction(new AdminCmdDataTarget("/unmute", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET));
-    RegisterMsgFactoryFunction(new AdminCmdDataTarget("/unban", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ACCOUNT));
-    RegisterMsgFactoryFunction(new AdminCmdDataTarget("/banadvisor", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ACCOUNT | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET));
-    RegisterMsgFactoryFunction(new AdminCmdDataTarget("/unbanadvisor", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ACCOUNT | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET));
-    RegisterMsgFactoryFunction(new AdminCmdDataTarget("/info", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_CLIENTTARGET));
-    RegisterMsgFactoryFunction(new AdminCmdDataTarget("/charlist", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_CLIENTTARGET));
+    RegisterMsgFactoryFunction(new AdminCmdDataTarget("/unban", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ACCOUNT | ADMINCMD_TARGET_DATABASE));
+    RegisterMsgFactoryFunction(new AdminCmdDataTarget("/banadvisor", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ACCOUNT | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE));
+    RegisterMsgFactoryFunction(new AdminCmdDataTarget("/unbanadvisor", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ACCOUNT | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE));
+    RegisterMsgFactoryFunction(new AdminCmdDataTarget("/info", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE));
+    RegisterMsgFactoryFunction(new AdminCmdDataTarget("/charlist", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE));
     RegisterMsgFactoryFunction(new AdminCmdDataTarget("/inspect", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET));
     RegisterMsgFactoryFunction(new AdminCmdDataTarget("/npc", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_CLIENTTARGET));
     //has got its own class (but this is not really needed yet)
     // RegisterMsgFactoryFunction(new AdminCmdDataTarget("/setstackable", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET)); //natoka: actually here is a need for ADMIN_TARGET_ITEM
     RegisterMsgFactoryFunction(new AdminCmdDataTarget("/divorce", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET));
 
-    RegisterMsgFactoryFunction(new AdminCmdDataTarget("/marriageinfo", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET));
-    RegisterMsgFactoryFunction(new AdminCmdDataTarget("/targetname", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_CLIENTTARGET));
+    RegisterMsgFactoryFunction(new AdminCmdDataTarget("/marriageinfo", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE));
+    RegisterMsgFactoryFunction(new AdminCmdDataTarget("/targetname", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_ACCOUNT | ADMINCMD_TARGET_DATABASE | ADMINCMD_TARGET_STRING));
 
 }
 
@@ -7109,6 +7119,22 @@ void AdminManager::KillNPC (MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData* 
             psserver->SendSystemResult(me->clientnum, "NPC (%s) has been reloaded.", npcid.Show().GetData());
         }
         return;
+    }
+    else if(!target)
+    {
+        //as the npc was not found but it's id was found from db or direct data from the user
+        PID npcid = data->targetID;
+        if(npcid.IsValid()) //check if the pid is really one
+        {
+            //try to load the new npc
+            psCharacter *npcdata = psServer::CharacterLoader.LoadCharacterData(npcid,true);
+            //if the load was successful we can try completing the load process
+            if(npcdata)
+            {
+                EntityManager::GetSingleton().CreateNPC(npcdata);
+                psserver->SendSystemResult(me->clientnum, "NPC (%s) has been loaded.", npcid.Show().GetData());
+            }
+        }
     }
     psserver->SendSystemError(me->clientnum, "No NPC found to kill.");
 }
@@ -10627,13 +10653,14 @@ void AdminManager::CheckTarget(psAdminCmdMessage& msg, AdminCmdData* cmddata, Cl
 {
     AdminCmdDataTarget* data = dynamic_cast<AdminCmdDataTarget*>(cmddata);
 
-    if ((!data->target || !data->target.Length()) && !data->target)
+    if (!data->target.Length())
     {
         psserver->SendSystemInfo(client->GetClientNum(),"Syntax: \"/targetname [me/target/eid/pid/area/name]\"");
         return;
     }
-    if(data->targetObject) //just to be sure
-        psserver->SendSystemInfo(client->GetClientNum(),"Targeted: %s", data->targetObject->GetName());
+    AccountID aid = (!data->IsTargetType(ADMINCMD_TARGET_PLAYER) && !data->IsTargetType(ADMINCMD_TARGET_PID)) ? 0 : data->GetAccountID(client->GetClientNum());
+    psserver->SendSystemInfo(client->GetClientNum(),"Targeted: %s (%s, %s, online: %d)", data->target.GetData(),
+                             data->targetID.Show().GetData(), aid.Show().GetData(), data->IsOnline() ? "yes" : "no");
 }
 
 void AdminManager::DisableQuest(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client *client )
