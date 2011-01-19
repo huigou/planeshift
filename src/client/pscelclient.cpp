@@ -1897,7 +1897,7 @@ void GEMClientActor::SetMode(uint8_t mode, bool newactor)
         case psModeMessage::SIT:
         case psModeMessage::OVERWEIGHT:
         case psModeMessage::DEFEATED:
-            if (!newactor) //we do this only if this isn't a new actor
+            if (!newactor && serverMode != mode) //we do this only if this isn't a new actor
                 cal3dstate->SetAnimAction("sit", 0.0f, 1.0f);
             SetIdleAnimation("sit idle");
             break;
