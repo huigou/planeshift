@@ -189,7 +189,7 @@ bool pawsConfigChatTabs::SaveConfig()
     {
         settings.bindings.Put("subMainText", "CHAT_GUILD");
     }
-    if(iguild->GetState())
+    if(ialliance->GetState())
     {
         settings.bindings.Put("subMainText", "CHAT_ALLIANCE");
     }
