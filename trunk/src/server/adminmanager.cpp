@@ -182,7 +182,7 @@ psRewardDataSkill::psRewardDataSkill(csString pskillName, int pskillDelta, int p
 
 bool psRewardDataSkill::IsZero()
 {
-    return (skillName.IsEmpty() || (skillDelta == 0 && !relativeSkill));
+    return (skillName.IsEmpty());
 }
 
 psRewardDataMoney::psRewardDataMoney(csString pmoneyType, int pmoneyCount, bool prandom)
