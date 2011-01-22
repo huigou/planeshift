@@ -318,7 +318,6 @@ void ModeHandler::HandleMessage(MsgEntry* me)
             return;
 
         case MSGTYPE_WEATHER:
-            if(processWeather)
                 HandleWeatherMessage(me);
             return;
 
@@ -819,17 +818,20 @@ void ModeHandler::HandleWeatherMessage(MsgEntry* me)
     {
         case psWeatherMessage::WEATHER:
         {
-            if (msg.weather.has_lightning)
+            if(processWeather)
             {
-                ProcessLighting(msg.weather);
-            }
-            if (msg.weather.has_downfall)
-            {
-                ProcessDownfall(msg.weather);
-            }
-            if (msg.weather.has_fog)
-            {
-                ProcessFog(msg.weather);
+                if (msg.weather.has_lightning)
+                {
+                    ProcessLighting(msg.weather);
+                }
+                if (msg.weather.has_downfall)
+                {
+                    ProcessDownfall(msg.weather);
+                }
+                if (msg.weather.has_fog)
+                {
+                    ProcessFog(msg.weather);
+                }
             }
             break;
         }
