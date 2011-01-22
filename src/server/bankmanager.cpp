@@ -358,7 +358,7 @@ void BankManager::DepositFunds(Client* client, bool guild, int circles, int octa
             return;
 
         character->AdjustMoney(psMoney(-circles, -octas, -hexas, -trias), false);
-        g->AdjustMoney(psMoney(circles, octas, hexas, trias), true);
+        g->AdjustMoney(psMoney(circles, octas, hexas, trias));
     }
     else
     {
@@ -393,7 +393,7 @@ void BankManager::WithdrawFunds(Client* client, bool guild, int circles, int oct
         if(!g)
             return;
 
-        g->AdjustMoney(psMoney(-circles, -octas, -hexas, -trias), true);
+        g->AdjustMoney(psMoney(-circles, -octas, -hexas, -trias));
         character->AdjustMoney(psMoney(circles, octas, hexas, trias), false);
     }
     else
@@ -533,7 +533,7 @@ void BankManager::ExchangeFunds(Client *client, bool guild, int coins, int coin)
             }
         }
         // Finally deduct and add the amounts needed.
-        guild->AdjustMoney(psMoney(-circlesToDeduct, -octasToDeduct, -hexasToDeduct, -triasToDeduct), true);
+        guild->AdjustMoney(psMoney(-circlesToDeduct, -octasToDeduct, -hexasToDeduct, -triasToDeduct));
     }
     else
     {
