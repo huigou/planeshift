@@ -171,6 +171,8 @@ void pawsObjectView::OnResize()
 
     // update the views
     int w, h;
+    int originW = screenFrame.Width();
+    int originH = screenFrame.Height();
 
     // update the stage view
     if(view)
@@ -180,7 +182,10 @@ void pawsObjectView::OnResize()
         view->SetHeight(h);
         view->SetRectangle(0, 0, w, h, false);
         view->GetCamera()->SetViewportSize(w, h);
-        view->GetPerspectiveCamera()->SetFOV((float)(h)/w, 1);
+        //we need to use the original height and widht of the window because we just resize the texture
+        //to fill the whole space (and we don't do a relative rescaling so the fov would screw up if
+        //we used the render size)
+        view->GetPerspectiveCamera()->SetFOV((float)(originH)/originW, 1);
     }
 
     // update the doll view
@@ -191,7 +196,7 @@ void pawsObjectView::OnResize()
         meshView->SetHeight(h);
         meshView->SetRectangle(0, 0, w, h, false);
         meshView->GetCamera()->SetViewportSize(w, h);
-        meshView->GetPerspectiveCamera()->SetFOV((float)(h)/w, 1);
+        meshView->GetPerspectiveCamera()->SetFOV((float)(originH)/originW, 1);
     }
 
     needsDraw = true;
