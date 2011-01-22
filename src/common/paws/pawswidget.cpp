@@ -1431,7 +1431,7 @@ void pawsWidget::CreateWidgetConfigWindow()
 
     // there can only be one config window active for each widget
     WidgetConfigWindow* configWindow = dynamic_cast<WidgetConfigWindow*>(widget);
-    if ( widget ==NULL)
+    if(widget == NULL)
     {
         configWindow = new WidgetConfigWindow();
         configWindow->LoadFromFile("widgetconfigwindow.xml");

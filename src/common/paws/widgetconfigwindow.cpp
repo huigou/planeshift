@@ -120,6 +120,16 @@ bool WidgetConfigWindow::OnScroll(int /*direction*/, pawsScrollBar* widget)
 }
 
 
+void WidgetConfigWindow::restoreSettings()
+{
+    // restore settings
+    configWidget->SetMinAlpha((int)oldMinAlpha);
+    configWidget->SetMaxAlpha((int)oldMaxAlpha);
+    configWidget->SetFadeSpeed(oldFadeSpeed);
+    configWidget->SetFade(oldFadeStatus);
+    configWidget->SetFontScaling(oldFontStatus);
+}
+
 /**
  * @brief Handle all button presses.
  */
@@ -138,16 +148,9 @@ bool WidgetConfigWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*
     } 
     else if (widget == buttonCancel)
     {
-        // restore settings
-        configWidget->SetMinAlpha((int)oldMinAlpha);
-        configWidget->SetMaxAlpha((int)oldMaxAlpha);
-        configWidget->SetFadeSpeed(oldFadeSpeed);
-        configWidget->SetFade(oldFadeStatus);
-        configWidget->SetFontScaling(oldFontStatus);
-
-        // close this window
-        //PawsManager::GetSingleton().GetMainWidget()->DeleteChild(this);
-        Hide();
+        //just act like if the user closed the window.
+        //it will restore the previous settings and hide the widget.
+        Close();
         return true;
     }
     else if (widget == checkboxFade)
@@ -192,6 +195,14 @@ bool WidgetConfigWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*
  */
 void WidgetConfigWindow::SetConfigurableWidget(pawsWidget *configWidget)
 {
+    //if it's the same widget we ignore the input we are already open with this.
+    if(this->configWidget == configWidget)
+        return;
+    //if we were working on a different widget we restore the previous widget setting
+    //before proceeding.
+    else if(this->configWidget != NULL)
+        restoreSettings();
+
     this->configWidget = configWidget;
 
     // get new values
@@ -220,11 +231,11 @@ void WidgetConfigWindow::SetConfigurableWidget(pawsWidget *configWidget)
     oldFontStatus = currentFontStatus;
     oldFadeStatus = currentFadeStatus;
 
-    scrollBarMinAlpha->SetCurrentValue(currentMinAlpha);
-    progressBarMinAlpha->SetCurrentValue(currentMinAlpha);
-
     scrollBarMaxAlpha->SetCurrentValue(currentMaxAlpha);
     progressBarMaxAlpha->SetCurrentValue(currentMaxAlpha);
+
+    scrollBarMinAlpha->SetCurrentValue(currentMinAlpha);
+    progressBarMinAlpha->SetCurrentValue(currentMinAlpha);
 
     scrollBarFadeSpeed->SetCurrentValue(currentFadeSpeed);
     progressBarFadeSpeed->SetCurrentValue(currentFadeSpeed);
