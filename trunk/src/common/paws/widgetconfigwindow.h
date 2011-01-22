@@ -43,6 +43,13 @@ public:
     bool PostSetup();
     bool OnScroll( int direction, pawsScrollBar* widget );
     bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );
+    /** Restores the settings of the widget being configured to their previous values.
+     */
+    void restoreSettings();
+    /** Overrides the pawsWidget Close() in order to restore settings and null out
+     *  the widget being configured.
+     */
+    void Close() { restoreSettings(); configWidget = NULL; Hide(); }
 
     void SetConfigurableWidget(pawsWidget* w);
 
