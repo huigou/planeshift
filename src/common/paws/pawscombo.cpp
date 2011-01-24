@@ -106,7 +106,7 @@ bool pawsComboBox::PostSetup()
     // Create the textbox that has the current selected choice
     ///////////////////////////////////////////////////////////////////////    
     itemChoice = new pawsTextBox;
-	itemChoice->SetBackground("Scaling Widget Background");
+    itemChoice->SetBackground("Scaling Field Background");
     AddChild( itemChoice );
 
     // Puts the button at the edge of the text box widget
