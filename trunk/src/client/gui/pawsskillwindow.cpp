@@ -1000,7 +1000,12 @@ void pawsSkillIndicator::Set(unsigned int x, int rank, int y, int yCost, int z, 
 {
     this->x = x;
     this->rank = rank;
-    this->y = y;
+    //clamp ycost so if someone overtrained (due to training before changes to the training cost)
+    //it won't show a wrong progress bar filled status.
+    if(y > yCost)
+        this->y = yCost;
+    else
+        this->y = y;
     this->yCost = yCost;
     this->z = z;
     this->zCost = zCost;
