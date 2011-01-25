@@ -718,8 +718,7 @@ bool AdminCmdTargetParser::ParseTarget(AdminManager* msgManager, MsgEntry* me, p
             username.Downcase();
             db->Escape(usernameEscaped, username.GetData());
             result = db->Select("SELECT id FROM accounts WHERE username = '%s' LIMIT 1",usernameEscaped.GetData());
-        
-            if ( result.IsValid() || result.Count() == 1 )
+            if ( result.IsValid() && result.Count() == 1 )
             {
                 AccountID accountID = AccountID(result[0].GetUInt32("id"));
                 if (accountID.IsValid())
