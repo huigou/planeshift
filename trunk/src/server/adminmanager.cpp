@@ -8233,7 +8233,8 @@ void AdminManager::BanClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData*
     }
 
     // Find client to get target
-    if (!data->IsTargetType(ADMINCMD_TARGET_PLAYER))
+    if (!data->IsTargetType(ADMINCMD_TARGET_PLAYER) && !data->IsTargetType(ADMINCMD_TARGET_PID) &&
+        !data->IsTargetType(ADMINCMD_TARGET_ACCOUNT))
     {
         psserver->SendSystemError(me->clientnum, "You can only ban a player!");
         return;
