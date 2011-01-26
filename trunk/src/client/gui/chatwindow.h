@@ -167,7 +167,7 @@ protected:
     /** spellchecker class
      */
     #ifdef HUNSPELL
-    Hunspell* spellChecker;
+    csArray<Hunspell*> spellChecker;
     #endif
     /** Colour used for typos
      */

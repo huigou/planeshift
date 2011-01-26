@@ -285,7 +285,7 @@ void pawsChatWindow::LoadChatSettings()
                 settings.defaultlastchat = option->GetAttributeValueAsBool("value", true);
             else if (nodeName == "spellChecker")
             {
-                inputText->setUseSpellChecker(option->GetAttributeValueAsBool("value", true));
+                inputText->setUseSpellChecker(option->GetAttributeValueAsBool("value", false));
                 int r = option->GetAttributeValueAsInt( "r", 255 );
                 int g = option->GetAttributeValueAsInt( "g", 0 );
                 int b = option->GetAttributeValueAsInt( "b", 0 );
@@ -2521,14 +2521,18 @@ pawsSpellCheckedEditBox::pawsSpellCheckedEditBox() : pawsEditTextBox(), typoColo
     AffPath = psengine->GetVFS()->GetRealPath(DICTIONARY_AFF);
     DicPath = psengine->GetVFS()->GetRealPath(DICTIONARY_DIC);        
     // create the spellchecker object
-    spellChecker = new Hunspell(AffPath->GetData(), DicPath->GetData());
+    spellChecker.Push(new Hunspell(AffPath->GetData(), DicPath->GetData()));
     #endif
 }
 
 pawsSpellCheckedEditBox::~pawsSpellCheckedEditBox()
 {
     #ifdef HUNSPELL
-    delete spellChecker;
+    for(size_t i = 0; i < spellChecker.GetSize(); i++)
+    {
+        delete spellChecker.Get(i);
+    }
+    spellChecker.DeleteAll();
     #endif
 }
 
@@ -2550,9 +2554,15 @@ void pawsSpellCheckedEditBox::checkSpelling()
             // before spellchecking remove chars that lead to wrong results
             removeSpecialChars(tmpString);	    
             // now do the spellchecking
-            #ifdef HUNSPELL
-            tmpWord.correct = spellChecker->spell(tmpString.GetData());
-            #endif
+            tmpWord.correct = false;
+            for(size_t i = 0; i < spellChecker.GetSize(); i++)
+            {
+                if(spellChecker.Get(i)->spell(tmpString.GetData()))
+                {
+                    tmpWord.correct = true;
+                    break;
+                }
+            }
             tmpWord.endPos = foundSpace;	    
             // and save everything
             words.Push(tmpWord);	    
@@ -2563,7 +2573,15 @@ void pawsSpellCheckedEditBox::checkSpelling()
         // before spellchecking remove chars that lead to wrong results
         removeSpecialChars(tmpString);	
         // now do the spellchecking
-        tmpWord.correct = spellChecker->spell(tmpString.GetData());
+        tmpWord.correct = false;
+        for(size_t i = 0; i < spellChecker.GetSize(); i++)
+        {
+            if(spellChecker.Get(i)->spell(tmpString.GetData()))
+            {
+                tmpWord.correct = true;
+                break;
+            }
+        }
         tmpWord.endPos = text.Length();	
         if (tmpWord.endPos > 0)
         {	    
