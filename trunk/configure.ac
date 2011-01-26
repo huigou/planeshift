@@ -392,6 +392,15 @@ CS_CHECK_LIB_WITH([pq],
 PS_CHECK_LIBCURL
 
 #----------------------------------------------------------------------------
+# Check for hunspell
+#----------------------------------------------------------------------------
+
+CS_CHECK_LIB_WITH([hunspell],
+	[AC_LANG_PROGRAM([[#include <hunspell.hxx>]],
+	[Hunspell* spell=new Hunspell("",""); delete spell;])],	[/usr /usr/include/|usr/lib /usr/local/ /usr/include/hunspell|/usr/lib/ /usr/local/include/|/usr/local/lib/ /usr/local/include/hunspell/|/usr/local/lib/ /usr/lib/], [C++],
+	[CS_EMIT_BUILD_RESULT([cs_cv_libhunspell], [HUNSPELL])], [], [], [], [], [])
+
+#----------------------------------------------------------------------------
 # Check for Google Test
 #----------------------------------------------------------------------------
 
