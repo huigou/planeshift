@@ -32,6 +32,11 @@
 #include "net/cmdbase.h"
 #include "util/stringarray.h"
 
+// Hunspell includes
+#ifdef HUNSPELL
+#include <hunspell.hxx>
+#endif
+
 // PAWS INCLUDES
 #include "paws/pawswidget.h"
 #include "paws/pawsmenu.h"
@@ -40,6 +45,8 @@
 
 #define CONFIG_CHAT_FILE_NAME       "/planeshift/userdata/options/chat.xml"
 #define CONFIG_CHAT_FILE_NAME_DEF   "/planeshift/data/options/chat_def.xml"
+#define DICTIONARY_AFF              "/planeshift/data/dict/en_US.aff"
+#define DICTIONARY_DIC              "/planeshift/data/dict/en_US.dic"
 
 enum CHAT_COMBAT_FILTERS {
     COMBAT_SUCCEEDED = 1,
@@ -53,7 +60,7 @@ enum CHAT_COMBAT_FILTERS {
 
 
 class pawsMessageTextBox;
-class pawsEditTextBox;
+//class pawsEditTextBox;
 class pawsChatHistory;
 class pawsTabWindow;
 //struct iSoundManager;
@@ -115,6 +122,66 @@ struct ChatSettings
         }
     }
 };
+
+/** subclass for pawsEditTextBox that includes spellchecking support with hunspell
+ *  used for the chat window. 
+ */
+class pawsSpellCheckedEditBox : public pawsEditTextBox
+{
+public:  
+    pawsSpellCheckedEditBox();
+    virtual ~pawsSpellCheckedEditBox(); 
+    /** overwritten Draw method that handles printing text in two different colours
+     */
+    virtual void Draw();
+    /** overwritten OnKeyDown Method that just adds specllchecking but otherwise relies on pawsEditTextBox::OnKeyDown
+     */
+    virtual bool OnKeyDown( utf32_char code, utf32_char key, int modifiers );
+    /** Method to set the colour used for typos     
+     *  @param col The new colour to be used for typos
+     */
+    void setTypoColour(unsigned int col) {typoColour = col;};
+    /** Method the get the current colour used for typos
+     */
+    unsigned int getTypoColour() {return typoColour;};
+    /** Method to enable/disable spellchecking     
+     *  @param check set true to enable the spellchecker, false to disable
+     */
+    void setUseSpellChecker(bool check) {spellChecking = check;};
+    /** get the current status of the spellchecker (enabled/disabled)
+     */ 
+    bool getUseSpellChecker() {return spellChecking;};        
+protected:
+    /** Helper method that does the actual spellchecking. Called from OnKeyDown
+     */
+    void checkSpelling();
+    /** Helper method that removes cahrs that confuse the spellchecker from a string. Called from checkSpelling
+     */
+    void removeSpecialChars(csString& str);
+    /** struct to contain the end boundry of a word and it's spellcheck status
+     */
+    struct Word { bool correct; int endPos; };
+    /** Array that contains the boundries of the words and if the spellchecker recognizes them or not
+     */
+    csArray<Word> words;
+    /** spellchecker class
+     */
+    #ifdef HUNSPELL
+    Hunspell* spellChecker;
+    #endif
+    /** Colour used for typos
+     */
+    unsigned int typoColour;
+    /** status of the spellchecker (enabled/disabled)
+     */
+    bool spellChecking;
+};
+
+//--------------------------------------------------------------------------
+
+CREATE_PAWS_FACTORY( pawsSpellCheckedEditBox );
+
+//--------------------------------------------------------------------------
 
 
 /** Main Chat window for PlaneShift.
@@ -247,7 +314,7 @@ protected:
     csArray<csString> chatTriggers;
 
     /// Input box for quick access
-    pawsEditTextBox* inputText;
+    pawsSpellCheckedEditBox* inputText;
 
     pawsTabWindow* tabs;
 
@@ -290,7 +357,7 @@ protected:
     /// Subscribed channel name to server channel ID reversible mapping
     csHashReversible<uint32_t, csString> channelIDs;
     /// Hotkeys for server channel IDs
-    csArray<uint16_t> channels;
+    csArray<uint16_t> channels;    
 };
 
 //--------------------------------------------------------------------------

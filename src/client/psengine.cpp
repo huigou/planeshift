@@ -753,6 +753,7 @@ void psEngine::DeclareExtraFactories()
     RegisterFactory (pawsInfoWindowFactory);
     RegisterFactory (pawsSplashWindowFactory);
     RegisterFactory (pawsLoadWindowFactory);
+    RegisterFactory (pawsSpellCheckedEditBoxFactory);
     RegisterFactory (pawsChatWindowFactory);
     RegisterFactory (pawsInventoryWindowFactory);
     RegisterFactory (pawsItemDescriptionWindowFactory);
