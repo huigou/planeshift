@@ -166,6 +166,18 @@ MsvcGenConfig LIBPQ.INCDIRS ;
 MsvcGenConfig LIBPQ.LIBDIRS ;
 MsvcGenConfig LIBPQ.LIBDIRS.DEBUG ;
 
+# HUNSPELL
+
+MsvcGenConfig HUNSPELL.AVAILABLE : no ;
+MsvcGenConfig HUNSPELL.DEFINES ;
+MsvcGenConfig HUNSPELL.CFLAGS ;
+MsvcGenConfig HUNSPELL.LFLAGS ;
+MsvcGenConfig HUNSPELL.LIBS : "libhunspell.lib" ;
+MsvcGenConfig HUNSPELL.LIBS.DEBUG : "libhunspell.lib" ;
+MsvcGenConfig HUNSPELL.INCDIRS ;
+MsvcGenConfig HUNSPELL.LIBDIRS ;
+MsvcGenConfig HUNSPELL.LIBDIRS.DEBUG ;
+
 # CURL
 
 MsvcGenConfig CURL.AVAILABLE : yes ;
