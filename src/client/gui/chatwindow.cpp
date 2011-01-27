@@ -2515,13 +2515,34 @@ csString *pawsChatHistory::GetPrev()
 pawsSpellCheckedEditBox::pawsSpellCheckedEditBox() : pawsEditTextBox(), typoColour(0xFF0000), spellChecking(true)
 {
     #ifdef HUNSPELL
-    // Hunspell needs real file pathes...so get them from the VFS
-    csRef<iDataBuffer> AffPath;
-    csRef<iDataBuffer> DicPath;    
-    AffPath = psengine->GetVFS()->GetRealPath(DICTIONARY_AFF);
-    DicPath = psengine->GetVFS()->GetRealPath(DICTIONARY_DIC);        
-    // create the spellchecker object
-    spellChecker.Push(new Hunspell(AffPath->GetData(), DicPath->GetData()));
+    csRef<iStringArray> files;
+    //search for dic files in the dict folder
+    files = psengine->GetVFS()->FindFiles("/planeshift/data/dict/");
+    if(files.IsValid())
+    {
+        for(size_t i = 0; i < files->GetSize(); i++)
+        {
+            csRef<iDataBuffer> AffPath;
+            csRef<iDataBuffer> DicPath;
+            csString file = files->Get(i);
+            csString fileAff;
+
+            if(file.Length() <= 4)
+                continue;
+
+            //check if the file is a dic file
+            if(file.Slice(file.Length()-4) != ".dic")
+                continue;
+
+            //if so generate also the aff file path and add the dictionary to the list.
+            fileAff = file.Slice(0, file.Length()-3) + "aff";
+            // Hunspell needs real file pathes...so get them from the VFS
+            AffPath = psengine->GetVFS()->GetRealPath(fileAff);
+            DicPath = psengine->GetVFS()->GetRealPath(file);
+            // create the spellchecker object
+            spellChecker.Push(new Hunspell(AffPath->GetData(), DicPath->GetData()));
+        }
+    }
     #endif
 }
 
@@ -2532,7 +2553,7 @@ pawsSpellCheckedEditBox::~pawsSpellCheckedEditBox()
     {
         delete spellChecker.Get(i);
     }
-    spellChecker.DeleteAll();
+    spellChecker.DeleteAll();   
     #endif
 }
 
@@ -2554,6 +2575,7 @@ void pawsSpellCheckedEditBox::checkSpelling()
             // before spellchecking remove chars that lead to wrong results
             removeSpecialChars(tmpString);	    
             // now do the spellchecking
+            #ifdef HUNSPELL
             tmpWord.correct = false;
             for(size_t i = 0; i < spellChecker.GetSize(); i++)
             {
@@ -2563,6 +2585,7 @@ void pawsSpellCheckedEditBox::checkSpelling()
                     break;
                 }
             }
+            #endif
             tmpWord.endPos = foundSpace;	    
             // and save everything
             words.Push(tmpWord);	    
@@ -2679,20 +2702,20 @@ void pawsSpellCheckedEditBox::Draw()
                     // set correct word borders according to displayed chars
                     if (wordStart < 0)
                     {
-                    wordStart = 0;
+                        wordStart = 0;
                     }
                     if (wordEnd >= tmp.Length())
                     {
-                      wordEnd = tmp.Length();
+                        wordEnd = tmp.Length();
                     }
                     // set different fontcolours for correct/incorrect words
                     if (words[i].correct)
                     {
-                      SetColour(-1);
+                        SetColour(-1);
                     }
                     else
                     {
-                      SetColour(typoColour);
+                        SetColour(typoColour);
                     }				    		    
                     DrawWidgetText( tmp.Slice(wordStart, wordEnd-wordStart).GetData(),
                         textXPos,
@@ -2703,6 +2726,9 @@ void pawsSpellCheckedEditBox::Draw()
                     textXPos += textWidth;
                 }	    	   	    	    
             }        
+
+            //restore default color
+            SetColour(-1);
 
             if ( blink && hasFocus )
             {
