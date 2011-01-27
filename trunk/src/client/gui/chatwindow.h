@@ -45,8 +45,6 @@
 
 #define CONFIG_CHAT_FILE_NAME       "/planeshift/userdata/options/chat.xml"
 #define CONFIG_CHAT_FILE_NAME_DEF   "/planeshift/data/options/chat_def.xml"
-#define DICTIONARY_AFF              "/planeshift/data/dict/en_US.aff"
-#define DICTIONARY_DIC              "/planeshift/data/dict/en_US.dic"
 
 enum CHAT_COMBAT_FILTERS {
     COMBAT_SUCCEEDED = 1,
