@@ -103,7 +103,7 @@ void SoundSystemManager::Update ()
     SndTime = csGetTicks();
 
     // call it all 100 Ticks
-    if (LastUpdateTime + 100 <= SndTime && (Initialised == true))
+    if (Initialised && LastUpdateTime + 100 <= SndTime)
     {
         UpdateSound();
         // make a update on sounddata to check if there are sounds to unload
