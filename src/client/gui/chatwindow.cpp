@@ -2576,7 +2576,8 @@ void pawsSpellCheckedEditBox::checkSpelling()
             removeSpecialChars(tmpString);	    
             // now do the spellchecking
             #ifdef HUNSPELL
-            tmpWord.correct = false;
+            //if we have no spellcheckers it's correct by default
+            tmpWord.correct = (spellChecker.GetSize() == 0);
             for(size_t i = 0; i < spellChecker.GetSize(); i++)
             {
                 if(spellChecker.Get(i)->spell(tmpString.GetData()))
@@ -2596,7 +2597,7 @@ void pawsSpellCheckedEditBox::checkSpelling()
         // before spellchecking remove chars that lead to wrong results
         removeSpecialChars(tmpString);	
         // now do the spellchecking
-        tmpWord.correct = false;
+        tmpWord.correct = (spellChecker.GetSize() == 0);
         for(size_t i = 0; i < spellChecker.GetSize(); i++)
         {
             if(spellChecker.Get(i)->spell(tmpString.GetData()))
