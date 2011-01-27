@@ -75,6 +75,11 @@ public:
         experiencePoints  = 0;
         progressionPoints = 0;
         lastDRUpdate = 0;
+        for(int i = 0; i < VITAL_COUNT; i++)
+        {
+            vitals[i].value = 0;
+            origVitals[i].value = 0;
+        }
     }
     ~psVitalManager() {}
     
