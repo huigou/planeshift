@@ -1098,6 +1098,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
             {
                 bool portalsOnly = parserData.config.portalsOnly;
                 bool meshesOnly = parserData.config.meshesOnly;
+                data.parsedMeshFact = false;
 
                 csRef<iDocumentNodeIterator> nodeIt(root->GetNodes());
                 while(nodeIt->HasNext())
