@@ -63,6 +63,7 @@
 #include "authentserver.h"
 #include "entitymanager.h"
 #include "spawnmanager.h"
+#include "usermanager.h"
 #include "clients.h"                // Client, and ClientConnectionSet classes
 #include "client.h"                 // Client, and ClientConnectionSet classes
 #include "psserverchar.h"
@@ -801,6 +802,40 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                 }
                 break;
             }
+            case psNPCCommandsMessage::CMD_SIT:
+            {
+                EID  npc_id = EID(list.msg->GetUInt32()); // NPC
+		bool sit = list.msg->GetBool();
+
+                Debug3(LOG_SUPERCLIENT, npc_id.Unbox(), "-->Got sit cmd for entity %s to %s\n", ShowID(npc_id), sit?"sit":"stand");
+
+                // Make sure we haven't run past the end of the buffer
+                if (list.msg->overrun)
+                {
+                    Debug2(LOG_SUPERCLIENT,me->clientnum,"Received incomplete CMD_SIT from NPC client %u.\n",me->clientnum);
+                    break;
+                }
+
+                gemNPC *npc = dynamic_cast<gemNPC *> (gemSupervisor->FindObject(npc_id));
+
+                if (npc)
+                {  
+		    if (sit)
+		    {
+		        npc->Sit();
+		    }
+		    else
+		    {
+		        npc->Stand();
+		    }
+                }
+                else
+                {
+                    Error1("NPC Client try to sit/stand with no existing npc");
+                }
+
+                break;
+            }
             case psNPCCommandsMessage::CMD_SPAWN:
             {
                 EID spawner_id = EID(list.msg->GetUInt32()); // Mother
@@ -946,6 +981,33 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     {
                         // TODO: Handle of pickup of partial stacks.
                     }
+                }
+
+                break;
+            }
+            case psNPCCommandsMessage::CMD_EMOTE:
+            {
+                EID  npc_id = EID(list.msg->GetUInt32()); // NPC
+		csString cmd = list.msg->GetStr();
+
+                Debug3(LOG_SUPERCLIENT, npc_id.Unbox(), "-->Got emote cmd for entity %s with %s\n", ShowID(npc_id), cmd.GetData());
+
+                // Make sure we haven't run past the end of the buffer
+                if (list.msg->overrun)
+                {
+                    Debug2(LOG_SUPERCLIENT,me->clientnum,"Received incomplete CMD_EMOTE from NPC client %u.\n",me->clientnum);
+                    break;
+                }
+
+                gemNPC *npc = dynamic_cast<gemNPC *> (gemSupervisor->FindObject(npc_id));
+
+                if (npc)
+                {  
+                    psserver->usermanager->CheckForEmote( cmd, true, client );
+                }
+                else
+                {
+                    Error1("NPC Client try to emote with no existing npc");
                 }
 
                 break;

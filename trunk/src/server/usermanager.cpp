@@ -681,13 +681,8 @@ void UserManager::HandleCharDescUpdate(MsgEntry *me,Client *client)
 void UserManager::HandleSit(psUserCmdMessage& msg, Client *client)
 {
     gemActor *actor = client->GetActor();
-    
-    if (actor->GetMode() == PSCHARACTER_MODE_PEACE 
-    && actor->AtRest() && !actor->IsFalling())
-    {
-        actor->SetMode(PSCHARACTER_MODE_SIT);
-        Emote("%s takes a seat.", "%s takes a seat by %s.", "sit", client);
-    }
+
+    actor->Sit();
 }
 
 void UserManager::HandleAdminCommand(psUserCmdMessage& msg, Client *client)

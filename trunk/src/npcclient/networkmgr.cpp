@@ -1045,6 +1045,21 @@ void NetworkManager::QueueAttackCommand(gemNPCActor *attacker, gemNPCActor *targ
     cmd_count++;
 }
 
+void NetworkManager::QueueSitCommand(gemNPCActor *npc, bool sit)
+{
+    CheckCommandsOverrun(100);
+
+    outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_SIT);
+    outbound->msg->Add( npc->GetEID().Unbox() );
+    outbound->msg->Add( sit );
+
+    if ( outbound->msg->overrun )
+    {
+        CS_ASSERT(!"NetworkManager::QueueSpawnCommand put message in overrun state!\n");
+    }
+    cmd_count++;
+}
+
 void NetworkManager::QueueSpawnCommand(gemNPCActor *mother, gemNPCActor *father, uint32_t tribeMemberType)
 {
     CheckCommandsOverrun(100);
@@ -1119,6 +1134,23 @@ void NetworkManager::QueuePickupCommand(gemNPCActor *entity, gemNPCObject *item,
 
     cmd_count++;
 }
+
+void NetworkManager::QueueEmoteCommand(gemNPCActor *npc, const csString& cmd)
+{
+    CheckCommandsOverrun(100);
+
+    outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_EMOTE);
+    outbound->msg->Add( npc->GetEID().Unbox() );
+    outbound->msg->Add( cmd );
+
+    if ( outbound->msg->overrun )
+    {
+        CS_ASSERT(!"NetworkManager::QueueEmoteCommand put message in overrun state!\n");
+    }
+
+    cmd_count++;
+}
+
 
 void NetworkManager::QueueEquipCommand(gemNPCActor *entity, csString item, csString slot, int count)
 {

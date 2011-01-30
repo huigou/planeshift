@@ -1108,6 +1108,35 @@ bool EatOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 
 //---------------------------------------------------------------------------
 
+bool EmoteOperation::Load(iDocumentNode *node)
+{
+    cmd    = node->GetAttributeValue("cmd");
+    if (cmd.IsEmpty())
+    {
+        Error1("Emote operation needs an cmd");
+        return false;
+    }
+    return true;
+}
+
+ScriptOperation *EmoteOperation::MakeCopy()
+{
+    EmoteOperation *op = new EmoteOperation;
+    op->cmd    = cmd;
+    return op;
+}
+
+bool EmoteOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+    npc->Printf(5, "   Who: %s Emote: %s", npc->GetName(), cmd.GetData());
+
+    npcclient->GetNetworkMgr()->QueueEmoteCommand(npc->GetActor(), cmd);
+
+    return true;
+}
+
+//---------------------------------------------------------------------------
+
 bool EquipOperation::Load(iDocumentNode *node)
 {
     item    = node->GetAttributeValue("item");
@@ -3120,6 +3149,28 @@ bool ShareMemoriesOperation::Run(NPC *npc, EventManager *eventmgr, bool interrup
     tribe->ShareMemories( npc );
 
     return true; // Nothing more to do for this op.
+}
+
+//---------------------------------------------------------------------------
+
+bool SitOperation::Load(iDocumentNode *node)
+{
+    return true;
+}
+
+ScriptOperation *SitOperation::MakeCopy()
+{
+    SitOperation *op = new SitOperation(sit);
+    return op;
+}
+
+bool SitOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+    npc->Printf(5, "   Who: %s %s", npc->GetName(), sit?"sit":"stand" );
+
+    npcclient->GetNetworkMgr()->QueueSitCommand(npc->GetActor(), sit);
+
+    return true;
 }
 
 //---------------------------------------------------------------------------

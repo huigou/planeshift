@@ -2163,6 +2163,16 @@ void gemActor::SetAllowedToMove(bool newvalue)
     msg.SendMessage();
 }
 
+void gemActor::Sit()
+{
+    if (GetMode() == PSCHARACTER_MODE_PEACE 
+        && AtRest() && !IsFalling())
+    {
+        SetMode(PSCHARACTER_MODE_SIT);
+        psserver->GetUserManager()->Emote("%s takes a seat.", "%s takes a seat by %s.", "sit", GetClient());
+    }
+}
+
 void gemActor::Stand()
 {
     if (GetMode() == PSCHARACTER_MODE_SIT)

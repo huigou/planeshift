@@ -200,10 +200,12 @@ public:
         CMD_TERMINATOR, // cmds go from superclient to server
         CMD_DRDATA,
         CMD_ATTACK,
+	CMD_SIT,
         CMD_SPAWN,
         CMD_TALK,
         CMD_VISIBILITY,
         CMD_PICKUP,
+        CMD_EMOTE,
         CMD_EQUIP,
         CMD_DEQUIP,
         CMD_DIG,
