@@ -863,7 +863,7 @@ public:
  *
  *  Examples:
  *  <sit />
- *  <stand />
+ *  <standup />
  */
 class SitOperation : public ScriptOperation
 {
