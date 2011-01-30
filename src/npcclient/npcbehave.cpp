@@ -736,7 +736,7 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         {
 	    op = new SitOperation(true);
         }
-        else if ( strcmp( node->GetValue(), "stand" ) == 0 )
+        else if ( strcmp( node->GetValue(), "standup" ) == 0 )
         {
             op = new SitOperation(false);
         }
