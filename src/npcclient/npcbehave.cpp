@@ -654,6 +654,10 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         {
             op = new EatOperation;
         }
+        else if ( strcmp( node->GetValue(), "emote" ) == 0 )
+        {
+            op = new EmoteOperation;
+        }
         else if ( strcmp( node->GetValue(), "equip" ) == 0 )
         {
             op = new EquipOperation;
@@ -727,6 +731,14 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         else if ( strcmp( node->GetValue(), "share_memories" ) == 0 )
         {
             op = new ShareMemoriesOperation;
+        }
+        else if ( strcmp( node->GetValue(), "sit" ) == 0 )
+        {
+	    op = new SitOperation(true);
+        }
+        else if ( strcmp( node->GetValue(), "stand" ) == 0 )
+        {
+            op = new SitOperation(false);
         }
         else if ( strcmp( node->GetValue(), "talk" ) == 0 )
         {

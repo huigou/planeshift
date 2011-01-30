@@ -368,6 +368,30 @@ public:
 
 //-----------------------------------------------------------------------------
 
+/** Emote will make the NPC show an emotion
+ *
+ *  This class is the implementation of the emote operations
+ *  used in behavior scripts for NPCS.
+ *
+ *  Examples:
+ *  <emote cmd="greet" />
+ */
+class EmoteOperation : public ScriptOperation
+{
+protected:
+    csString cmd; ///< The emote command
+
+public:
+
+    EmoteOperation(): ScriptOperation("Emote") {};
+    virtual ~EmoteOperation() {};
+    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual bool Load(iDocumentNode *node);
+    virtual ScriptOperation *MakeCopy();
+};
+
+//-----------------------------------------------------------------------------
+
 /**
 * Equip will tell the npc to equip a item
 *
@@ -825,6 +849,31 @@ public:
 
     ShareMemoriesOperation(): ScriptOperation("ShareMemories") {};
     virtual ~ShareMemoriesOperation() {};
+    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual bool Load(iDocumentNode *node);
+    virtual ScriptOperation *MakeCopy();
+};
+
+//-----------------------------------------------------------------------------
+
+/** Sit will make the NPC sit or stand
+ *
+ *  This class is the implementation of the sit operations
+ *  used in behavior scripts for NPCS.
+ *
+ *  Examples:
+ *  <sit />
+ *  <stand />
+ */
+class SitOperation : public ScriptOperation
+{
+protected:
+    bool sit; ///< True if sit false for stand
+
+public:
+
+    SitOperation(bool sit): ScriptOperation("Sit"), sit(sit) {};
+    virtual ~SitOperation() {};
     virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();

@@ -151,6 +151,13 @@ public:
      */
     bool LoadEmotes(const char *xmlfile, iVFS *vfs);
     
+    /** @brief Check to see if command is an emote.
+     *
+     *  @param command  The command in question.
+     *  @param execute  Execute the emote or not.
+     */
+    bool CheckForEmote(csString command, bool execute, Client *client);
+
      /** @brief Process an emote command.
      *
      *  @param general   The phrase to broadcast if no target is selected.
@@ -467,12 +474,6 @@ protected:
 
     void SwitchAttackTarget(Client *targeter, Client *targeted);
 
-    /** @brief Check to see if command is an emote.
-     *
-     *  @param command  The command in question.
-     *  @param execute  Execute the emote or not.
-     */
-    bool CheckForEmote(csString command, bool execute, Client *client);
 
     /// Struct to hold our emote data.
     struct EMOTE {

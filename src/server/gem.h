@@ -898,6 +898,11 @@ public:
     void SetAllowedToMove(bool newvalue);
 
     /**
+     * @brief Make the character sit
+     */
+    void Sit();
+
+    /**
      * @brief Makes the character stand up
      *
      * @param the client who stand
