@@ -196,7 +196,7 @@ void psAuthenticationClient::HandlePreAuth( MsgEntry* me )
     iGraphics2D *graphics2D = PawsManager::GetSingleton().GetGraphics3D()->GetDriver2D();
     csString HWRender =  graphics2D->GetHWRenderer();
     csString HWGLVersion =  graphics2D->GetHWGLVersion();
-    psAuthenticationMessage request(0,username.GetData(), hexstring.GetData(), CS_PLATFORM_NAME "-" CS_PROCESSOR_NAME "-" CS_COMPILER_NAME, HWRender.GetDataSafe(), HWGLVersion.GetDataSafe() );
+    psAuthenticationMessage request(0,username.GetData(), hexstring.GetData(), CS_PLATFORM_NAME "-" CS_PROCESSOR_NAME "(" CS_VER_QUOTE(CS_PROCESSOR_SIZE) ")-" CS_COMPILER_NAME, HWRender.GetDataSafe(), HWGLVersion.GetDataSafe() );
     
     request.SendMessage();                
 }
