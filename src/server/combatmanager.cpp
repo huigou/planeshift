@@ -863,12 +863,6 @@ void CombatManager::HandleCombatEvent(psCombatGameEvent *event)
 
     if (!skipThisRound)
     {
-        // If we didn't attack last time target might have forgotten about us by now
-        // so we should remind him.
-        if(event->PreviousAttackResult == ATTACK_OUTOFRANGE ||
-           event->PreviousAttackResult == ATTACK_BADANGLE)
-            NotifyTarget(gemAttacker,gemTarget);
-
         if (weapon->GetIsRangeWeapon() && weapon->GetUsesAmmo())
         {
             INVENTORY_SLOT_NUMBER otherHand = event->GetWeaponSlot() == PSCHARACTER_SLOT_RIGHTHAND ?
