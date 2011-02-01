@@ -145,7 +145,7 @@ public:
 
     // Target information
     void SetTargetObject(gemObject *object, bool updateClientGUI=false);
-    gemObject* GetTargetObject() const { return target; }
+    gemObject* GetTargetObject() const;
 
     // Targeted mesh information - i.e. for adding action locations
     void SetMesh(csString nextMesh) { mesh = nextMesh; }
@@ -398,7 +398,6 @@ protected:
     gemActor *actor;
 
     csArray<PID> pets;
-    csWeakRef<gemObject> target;
     csString mesh;
     bool ready;
 

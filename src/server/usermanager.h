@@ -156,7 +156,7 @@ public:
      *  @param command  The command in question.
      *  @param execute  Execute the emote or not.
      */
-    bool CheckForEmote(csString command, bool execute, Client *client);
+    bool CheckForEmote(csString command, bool execute, gemActor *actor);
 
      /** @brief Process an emote command.
      *
@@ -164,7 +164,7 @@ public:
      *  @param specific  The phrase to broadcast if a target is selected.
      *  @param animation The animation for the emote. If there isn't one pass "noanim".
      */
-    void Emote(csString general, csString specific, csString animation, Client *client);
+    void Emote(csString general, csString specific, csString animation, gemActor *actor);
 
     /** Handles the /mount command
      *  @param rider The actor which is going to mount

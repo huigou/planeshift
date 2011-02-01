@@ -2169,7 +2169,7 @@ void gemActor::Sit()
         && AtRest() && !IsFalling())
     {
         SetMode(PSCHARACTER_MODE_SIT);
-        psserver->GetUserManager()->Emote("%s takes a seat.", "%s takes a seat by %s.", "sit", GetClient());
+        psserver->GetUserManager()->Emote("%s takes a seat.", "%s takes a seat by %s.", "sit", this );
     }
 }
 
@@ -2178,13 +2178,13 @@ void gemActor::Stand()
     if (GetMode() == PSCHARACTER_MODE_SIT)
     {
         SetMode(PSCHARACTER_MODE_PEACE);
-        psUserActionMessage anim(GetClient()->GetClientNum(), GetEID(), "stand up");
-        anim.Multicast(GetClient()->GetActor()->GetMulticastClients(),0,PROX_LIST_ANY_RANGE );
-        psserver->GetUserManager()->Emote("%s stands up.", "%s stands up.", "stand", GetClient());
+        psUserActionMessage anim(GetClientID(), GetEID(), "stand up");
+        anim.Multicast(GetMulticastClients(),0,PROX_LIST_ANY_RANGE );
+        psserver->GetUserManager()->Emote("%s stands up.", "%s stands up.", "stand", this);
     }
     else if (GetMode() == PSCHARACTER_MODE_OVERWEIGHT)
     {
-        psserver->SendSystemError(GetClient()->GetClientNum(), "You can't stand up because you're overloaded!");
+        psserver->SendSystemError(GetClientID(), "You can't stand up because you're overloaded!");
     }
 }
 

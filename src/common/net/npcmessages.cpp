@@ -296,6 +296,25 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 msgtext.AppendFmt("Attacker: %u Target: %u ", attacker_id.Unbox(), target_id.Unbox());
                 break;
             }
+            case psNPCCommandsMessage::CMD_SIT:
+            {
+                msgtext.Append("CMD_SIT: ");
+
+                // Extract the data
+                EID npcID = EID(msg->GetUInt32());
+                EID targetID = EID(msg->GetUInt32());
+                bool sit = msg->GetBool();
+
+                // Make sure we haven't run past the end of the buffer
+                if (msg->overrun)
+                {
+                    Debug2(LOG_SUPERCLIENT,msg->clientnum,"Received incomplete CMD_SIT from NPC client %u.\n",msg->clientnum);
+                    break;
+                }
+                
+                msgtext.AppendFmt("NPC: %u Target: %u To: %s", npcID.Unbox(), targetID.Unbox(), sit?"Sit":"Stand" );
+                break;
+            }
             case psNPCCommandsMessage::CMD_SPAWN:
             {
                 msgtext.Append("CMD_SPAWN: ");
@@ -375,6 +394,25 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 break;
             }
 
+            case psNPCCommandsMessage::CMD_EMOTE:
+            {
+                msgtext.Append("CMD_EMOTE: ");
+
+                // Extract the data
+                EID npcID = EID(msg->GetUInt32());
+                EID targetID = EID(msg->GetUInt32());
+                csString cmd = msg->GetStr();
+
+                // Make sure we haven't run past the end of the buffer
+                if (msg->overrun)
+                {
+                    Debug2(LOG_SUPERCLIENT,msg->clientnum,"Received incomplete CMD_Emote from NPC client %u.\n",msg->clientnum);
+                    break;
+                }
+                
+                msgtext.AppendFmt("NPC: %u Target: %u Cmd: %s", npcID.Unbox(), targetID.Unbox(), cmd.GetDataSafe() );
+                break;
+            }
 
             case psNPCCommandsMessage::CMD_EQUIP:
             {

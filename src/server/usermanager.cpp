@@ -267,36 +267,40 @@ void UserManager::HandleUserCommand(MsgEntry *me,Client *client)
     }
 
     // We don't check for validity for emotes, they always are.
-    if (!msg.valid && !CheckForEmote(msg.command, true, client))
+    if (!msg.valid && !CheckForEmote(msg.command, true, client->GetActor()))
     {
         psserver->SendSystemError(me->clientnum,"Command not supported by server yet.");
         return;
     }
 }
 
-bool UserManager::CheckForEmote(csString command, bool execute, Client *client)
+bool UserManager::CheckForEmote(csString command, bool execute, gemActor *actor)
 {
     EMOTE *emotePtr = emoteHash.Get(command, NULL);
     if(emotePtr == NULL)
         return false;
     
-    Emote(emotePtr->general, emotePtr->specific, emotePtr->anim, client);
+    Emote(emotePtr->general, emotePtr->specific, emotePtr->anim, actor);
     return true;
 }
 
-void UserManager::Emote(csString general, csString specific, csString animation, Client *client)
+void UserManager::Emote(csString general, csString specific, csString animation, gemActor *actor )
 {
     csString cssText("");
-    if (client->GetTargetObject() && (client->GetTargetObject() != client->GetActor()))
-        cssText.Format(specific, client->GetActor()->GetName(), client->GetTargetObject()->GetName());
+    if (actor->GetTargetObject() && (actor->GetTargetObject() != actor))
+    {
+        cssText.Format(specific, actor->GetName(), actor->GetTargetObject()->GetName());
+    }
     else
-        cssText.Format(general, client->GetActor()->GetName());
+    {
+        cssText.Format(general, actor->GetName());
+    }
 
     // retrieve proximity list
-    csArray<PublishDestination>& clients = client->GetActor()->GetMulticastClients();
+    csArray<PublishDestination>& clients = actor->GetMulticastClients();
 
     // Create and multicast the message
-    psSystemMessage newmsg(client->GetClientNum(), MSG_INFO_BASE, cssText.GetData());
+    psSystemMessage newmsg(actor->GetClientID(), MSG_INFO_BASE, cssText.GetData());
     newmsg.Multicast(clients, 0, CHAT_SAY_RANGE);
 
     // Save message to clients chat history meeting SAY range (PS#2789)
@@ -310,8 +314,8 @@ void UserManager::Emote(csString general, csString specific, csString animation,
     // Send animation message, if animation is set
     if (animation != "noanim")
     {
-        psUserActionMessage anim(client->GetClientNum(), client->GetActor()->GetEID(), animation);
-        anim.Multicast(client->GetActor()->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE);
+        psUserActionMessage anim(actor->GetClientID(), actor->GetEID(), animation);
+        anim.Multicast(actor->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE);
     }
 }
 

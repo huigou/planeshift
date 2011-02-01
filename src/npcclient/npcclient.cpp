@@ -616,6 +616,11 @@ bool psNPCClient::ReadNPCsFromDatabase()
 bool psNPCClient::LoadPathNetwork()
 {
     csRef<iCelHNavStructBuilder> builder = csQueryRegistry<iCelHNavStructBuilder>(objreg);
+    if (!builder.IsValid())
+    {
+        Error1("Could find builder");
+        return false;
+    }
     csString navmesh = configmanager->GetStr("PlaneShift.NPCClient.NavMesh","/planeshift/navmesh");
     navStruct = builder->LoadHNavStruct(vfs, navmesh);
 

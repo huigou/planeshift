@@ -213,17 +213,32 @@
       </behavior>
   </npctype>
 
-  <npctype name="Answerer">
+  <npctype name="DoNothing" >
       <behavior name="do nothing" decay="0" growth="0" initial="50">
 	  <wait duration="1" anim="stand" />
       </behavior>
+  </npctype>
+
+  <npctype name="Answerer" parent="DoNothing" >
       <behavior name="turn to face" completion_decay="-1" growth="0" initial="0" >
 	  <locate obj="perception" />
           <rotate type="locatedest" anim="walk" ang_vel="20" />
+          <emote cmd="/greet" />
           <wait duration="10" anim="stand" />
       </behavior>
       <react event="talk" inactive_only="yes" faction_diff="-100" oper=">" behavior="turn to face" delta="100"  when_invisible="yes" when_invincible="yes" />
   </npctype>  
+
+
+  <npctype name="Sit" parent="DoNothing" >
+      <behavior name="sit" completion_decay="-1" growth="0" initial="0" >
+	  <sit />
+          <wait duration="10" anim="sit_idle" />
+          <standup />
+      </behavior>
+      <react event="player adjacent" inactive_only="yes" behavior="sit" delta="100"  when_invisible="yes" when_invincible="yes" />
+  </npctype>  
+
   
   <npctype name="Dynamic Guard" ang_vel=".6" >
       <behavior name="march" decay="0" growth="0" initial="80" loop="yes">

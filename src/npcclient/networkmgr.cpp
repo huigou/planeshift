@@ -1045,12 +1045,20 @@ void NetworkManager::QueueAttackCommand(gemNPCActor *attacker, gemNPCActor *targ
     cmd_count++;
 }
 
-void NetworkManager::QueueSitCommand(gemNPCActor *npc, bool sit)
+void NetworkManager::QueueSitCommand(gemNPCActor *npc, gemNPCObject* target, bool sit)
 {
     CheckCommandsOverrun(100);
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_SIT);
     outbound->msg->Add( npc->GetEID().Unbox() );
+    if (target)
+    {
+        outbound->msg->Add( target->GetEID().Unbox() );
+    }
+    else
+    {
+        outbound->msg->Add( (uint32_t)0 );
+    }
     outbound->msg->Add( sit );
 
     if ( outbound->msg->overrun )
@@ -1135,12 +1143,20 @@ void NetworkManager::QueuePickupCommand(gemNPCActor *entity, gemNPCObject *item,
     cmd_count++;
 }
 
-void NetworkManager::QueueEmoteCommand(gemNPCActor *npc, const csString& cmd)
+void NetworkManager::QueueEmoteCommand(gemNPCActor *npc, gemNPCObject* target,  const csString& cmd)
 {
     CheckCommandsOverrun(100);
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_EMOTE);
     outbound->msg->Add( npc->GetEID().Unbox() );
+    if (target)
+    {
+        outbound->msg->Add( target->GetEID().Unbox() );
+    }
+    else
+    {
+        outbound->msg->Add( (uint32_t)0 );
+    }
     outbound->msg->Add( cmd );
 
     if ( outbound->msg->overrun )

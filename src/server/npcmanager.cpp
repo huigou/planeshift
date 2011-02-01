@@ -804,10 +804,11 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
             }
             case psNPCCommandsMessage::CMD_SIT:
             {
-                EID  npc_id = EID(list.msg->GetUInt32()); // NPC
+                EID  npcId = EID(list.msg->GetUInt32()); // NPC
+                EID  targetId = EID(list.msg->GetUInt32()); // Target
 		bool sit = list.msg->GetBool();
 
-                Debug3(LOG_SUPERCLIENT, npc_id.Unbox(), "-->Got sit cmd for entity %s to %s\n", ShowID(npc_id), sit?"sit":"stand");
+                Debug3(LOG_SUPERCLIENT, npcId.Unbox(), "-->Got sit cmd for entity %s to %s\n", ShowID(npcId), sit?"sit":"stand");
 
                 // Make sure we haven't run past the end of the buffer
                 if (list.msg->overrun)
@@ -816,10 +817,12 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     break;
                 }
 
-                gemNPC *npc = dynamic_cast<gemNPC *> (gemSupervisor->FindObject(npc_id));
+		gemObject* target = dynamic_cast<gemObject*> (gemSupervisor->FindObject(targetId));
 
+                gemNPC *npc = dynamic_cast<gemNPC *> (gemSupervisor->FindObject(npcId));
                 if (npc)
                 {  
+                    npc->SetTargetObject( target );
 		    if (sit)
 		    {
 		        npc->Sit();
@@ -987,10 +990,11 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
             }
             case psNPCCommandsMessage::CMD_EMOTE:
             {
-                EID  npc_id = EID(list.msg->GetUInt32()); // NPC
+                EID  npcId = EID(list.msg->GetUInt32()); // NPC
+                EID  targetId = EID(list.msg->GetUInt32()); // Target
 		csString cmd = list.msg->GetStr();
 
-                Debug3(LOG_SUPERCLIENT, npc_id.Unbox(), "-->Got emote cmd for entity %s with %s\n", ShowID(npc_id), cmd.GetData());
+                Debug3(LOG_SUPERCLIENT, npcId.Unbox(), "-->Got emote cmd for entity %s with %s\n", ShowID(npcId), cmd.GetData());
 
                 // Make sure we haven't run past the end of the buffer
                 if (list.msg->overrun)
@@ -999,11 +1003,13 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     break;
                 }
 
-                gemNPC *npc = dynamic_cast<gemNPC *> (gemSupervisor->FindObject(npc_id));
+		gemObject* target = dynamic_cast<gemObject*> (gemSupervisor->FindObject(targetId));
 
+                gemNPC *npc = dynamic_cast<gemNPC *> (gemSupervisor->FindObject(npcId));
                 if (npc)
                 {  
-                    psserver->usermanager->CheckForEmote( cmd, true, client );
+                    npc->SetTargetObject( target );
+                    psserver->usermanager->CheckForEmote( cmd, true, npc );
                 }
                 else
                 {
