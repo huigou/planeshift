@@ -820,6 +820,8 @@ protected:
     bool visible;             ///< is visible to clients ?
     bool viewAllObjects;      ///< can view invisible objects?
 
+    csWeakRef<gemObject> targetObject; ///< Is the current targeted object for this actor.
+
     csPDelArray<AttackerHistory> dmgHistory;
     csPDelArray<ProgressionScript> onAttackScripts, onDefenseScripts, onNearlyDeadScripts, onMovementScripts;
 
@@ -1166,6 +1168,10 @@ public:
 
     bool GetFiniteInventory() { return GetCharacterData()->Inventory().GetDoRestrictions(); }
     void SetFiniteInventory(bool v) { GetCharacterData()->Inventory().SetDoRestrictions(v); }
+
+    // Target information
+    void SetTargetObject(gemObject *object){ targetObject = object; }
+    gemObject* GetTargetObject() const { return targetObject; }
 };
 
 //-----------------------------------------------------------------------------

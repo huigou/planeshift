@@ -1130,7 +1130,7 @@ bool EmoteOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     npc->Printf(5, "   Who: %s Emote: %s", npc->GetName(), cmd.GetData());
 
-    npcclient->GetNetworkMgr()->QueueEmoteCommand(npc->GetActor(), cmd);
+    npcclient->GetNetworkMgr()->QueueEmoteCommand(npc->GetActor(), npc->GetTarget(), cmd);
 
     return true;
 }
@@ -3168,7 +3168,7 @@ bool SitOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     npc->Printf(5, "   Who: %s %s", npc->GetName(), sit?"sit":"stand" );
 
-    npcclient->GetNetworkMgr()->QueueSitCommand(npc->GetActor(), sit);
+    npcclient->GetNetworkMgr()->QueueSitCommand(npc->GetActor(), npc->GetTarget(), sit);
 
     return true;
 }

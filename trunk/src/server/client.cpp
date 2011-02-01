@@ -60,7 +60,6 @@ Client::Client ()
       locationEffectID(0), locationIsDisplaying(false),cheatMask(NO_CHEAT)
 {
     actor           = 0;
-    target          = 0;
     exchangeID      = 0;
     advisorPoints   = 0;
     lastInviteTime  = 0;
@@ -174,24 +173,34 @@ bool Client::ZombieAllowDisconnect()
 
 void Client::SetTargetObject(gemObject* newobject, bool updateClientGUI)
 {
-    // We don't want to fire a target change event if the target hasn't changed.
-    if (newobject == target)
-        return;
-
-    target = newobject;
-
     gemActor * myactor = GetActor();
     if (myactor)
     {
+        // We don't want to fire a target change event if the target hasn't changed.
+        if (newobject == myactor->GetTargetObject())
+           return;
+
+        myactor->SetTargetObject(newobject);
+
         psTargetChangeEvent targetevent( myactor, newobject );
         targetevent.FireEvent();
-    }
 
-    if (updateClientGUI)
-    {
-        psGUITargetUpdateMessage updateMessage(GetClientNum(), newobject? newobject->GetEID() : 0);
-        updateMessage.SendMessage();
+	if (updateClientGUI)
+	{
+            psGUITargetUpdateMessage updateMessage(GetClientNum(), newobject? newobject->GetEID() : 0);
+            updateMessage.SendMessage();
+        }
     }
+}
+
+gemObject* Client::GetTargetObject() const 
+{
+    gemActor * myactor = GetActor();
+    if (myactor)
+    {
+        return myactor->GetTargetObject();
+    }
+    return NULL; 
 }
 
 void Client::SetFamiliar( gemActor *familiar )
@@ -266,19 +275,22 @@ psCharacter *Client::GetCharacterData()
 
 bool Client::ValidateDistanceToTarget(float range)
 {
-    // Check if target is set
-    if (!target) return false;
+    gemObject* targetObject = GetTargetObject();
 
-    return actor->IsNear(target,range);
+    // Check if target is set
+    if (!targetObject) return false;
+
+    return actor->IsNear(targetObject, range);
 }
 
 
 int Client::GetTargetClientID()
 {
+    gemObject* targetObject = GetTargetObject();
     // Check if target is set
-    if (!target) return -1;
+    if (!targetObject) return -1;
 
-    return target->GetClientID();
+    return targetObject->GetClientID();
 }
 
 int Client::GetGuildID()

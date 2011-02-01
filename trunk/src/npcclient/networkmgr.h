@@ -109,9 +109,10 @@ public:
     /** Send a sit command to server
      *
      * @param npc             The npc that sit/stand
+     * @param target          The current target of then npc
      * @param sit             True if sitting, false if standing
      */
-    void QueueSitCommand(gemNPCActor *npc, bool sit);
+    void QueueSitCommand(gemNPCActor *npc, gemNPCObject *target, bool sit);
 
     /** Send a spawn command to server
      *
@@ -129,12 +130,14 @@ public:
     void QueueTalkCommand(gemNPCActor *speaker, gemNPCActor* target, psNPCCommandsMessage::PerceptionTalkType talkType, bool publicTalk, const char* text);
     void QueueVisibilityCommand(gemNPCActor *entity, bool status);
     void QueuePickupCommand(gemNPCActor *entity, gemNPCObject *item, int count);
+
     /** Send an emote command to server
      *
      * @param npc             The npc that has an emotion
+     * @param target          The current target of then npc
      * @param cmd             The emotion
      */
-    void QueueEmoteCommand(gemNPCActor *npc, const csString& cmd);
+    void QueueEmoteCommand(gemNPCActor *npc, gemNPCObject *target, const csString& cmd);
 
     void QueueEquipCommand(gemNPCActor *entity, csString item, csString slot, int count);
     void QueueDequipCommand(gemNPCActor *entity, csString slot);
