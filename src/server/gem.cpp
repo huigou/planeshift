@@ -2095,7 +2095,7 @@ Client* gemActor::GetClient() const
     return clientRef.IsValid() ? clientRef : NULL ;
 }
 
-bool gemActor::MoveToSpawnPos(int32_t delay, csString background, csVector2 point1, csVector2 point2)
+bool gemActor::MoveToSpawnPos(int32_t delay, csString background)
 {
     csVector3 startingPos;
     float startingYrot;
@@ -2106,7 +2106,7 @@ bool gemActor::MoveToSpawnPos(int32_t delay, csString background, csVector2 poin
         return false;
 
     pcmove->SetOnGround(false);
-    Teleport(startingSector, startingPos, startingYrot, DEFAULT_INSTANCE, delay, background, point1, point2);
+    Teleport(startingSector, startingPos, startingYrot, DEFAULT_INSTANCE, delay, background);
     
     psGenericEvent evt(GetClientID(), psGenericEvent::SPAWN_MOVE);
     evt.FireEvent();
@@ -3259,7 +3259,7 @@ void gemActor::SetInstance(InstanceID worldInstance)
     this->worldInstance = worldInstance;
 }
 
-void gemActor::Teleport(const char *sectorName, const csVector3 & pos, float yrot, InstanceID instance, int32_t loadDelay, csString background, csVector2 point1, csVector2 point2)
+void gemActor::Teleport(const char *sectorName, const csVector3 & pos, float yrot, InstanceID instance, int32_t loadDelay, csString background)
 {
     csRef<iEngine> engine = csQueryRegistry<iEngine>(psserver->GetObjectReg());
     iSector *sector = engine->GetSectors()->FindByName(sectorName);
@@ -3268,16 +3268,16 @@ void gemActor::Teleport(const char *sectorName, const csVector3 & pos, float yro
         Bug2("Sector %s is not found!", sectorName);
         return;
     }
-    Teleport(sector, pos, yrot, instance, loadDelay, background, point1, point2);
+    Teleport(sector, pos, yrot, instance, loadDelay, background);
 }
 
-void gemActor::Teleport(iSector *sector, const csVector3 & pos, float yrot, InstanceID instance, int32_t loadDelay, csString background, csVector2 point1, csVector2 point2)
+void gemActor::Teleport(iSector *sector, const csVector3 & pos, float yrot, InstanceID instance, int32_t loadDelay, csString background)
 {
     SetInstance(instance);
-    Teleport(sector, pos, yrot, loadDelay, background, point1, point2);
+    Teleport(sector, pos, yrot, loadDelay, background);
 }
 
-void gemActor::Teleport(iSector *sector, const csVector3 & pos, float yrot, int32_t loadDelay, csString background, csVector2 point1, csVector2 point2)
+void gemActor::Teleport(iSector *sector, const csVector3 & pos, float yrot, int32_t loadDelay, csString background)
 {
     StopMoving();
     SetPosition(pos, yrot, sector);
@@ -3287,7 +3287,7 @@ void gemActor::Teleport(iSector *sector, const csVector3 & pos, float yrot, int3
 
     UpdateProxList();
     MulticastDRUpdate();
-    ForcePositionUpdate(loadDelay, background, point1, point2);
+    ForcePositionUpdate(loadDelay, background);
     BroadcastTargetStatDR(entityManager->GetClients()); //we need to update the stats too
 }
 
@@ -3584,13 +3584,13 @@ void gemActor::MulticastDRUpdate()
     drmsg.Multicast(GetMulticastClients(),0,PROX_LIST_ANY_RANGE);
 }
 
-void gemActor::ForcePositionUpdate(int32_t loadDelay, csString background, csVector2 point1, csVector2 point2)
+void gemActor::ForcePositionUpdate(int32_t loadDelay, csString background)
 {
     uint32_t clientnum = GetClientID();
     forcedSector = GetSector();
 
     psForcePositionMessage msg(clientnum, ++forceDRcounter, GetPosition(), GetAngle(), GetSector(),
-                               cacheManager->GetMsgStrings(), loadDelay, background, point1, point2);
+                               cacheManager->GetMsgStrings(), loadDelay, background);
     msg.SendMessage();
 }
 

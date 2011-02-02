@@ -1738,7 +1738,7 @@ public:
 class psNewSectorMessage : public psMessageCracker
 {
 public:
-    psNewSectorMessage(const csString & oldSector, const csString & newSector, csVector3 pos);
+    psNewSectorMessage(const csString & oldSector, const csString & newSector, csVector3 pos, int32_t loadDelay = 0, csString background = "");
     psNewSectorMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
@@ -1755,6 +1755,9 @@ public:
     /// Holds the options that the window should display.
     csString oldSector, newSector;
     csVector3 pos;
+	///Custom delay and background controlled by script
+	csString background;
+	int32_t loadDelay;
 };
 
 //---------------------------------------------------------------------------
@@ -3058,13 +3061,11 @@ public:
     csString sectorName;     ///< Name of the sector
     csString backgroundname; ///< Name of the background to use instead of the normal one in delay.
     uint32_t loadTime;       ///< time to wait even if there is no need to load
-    csVector2 start; ///<Start point of anmiation
-    csVector2 dest;///<Destination point of animation
 
     psForcePositionMessage() { }
     psForcePositionMessage(uint32_t client, uint8_t sequence,
                            const csVector3& pos, float yRot, iSector *sector,
-                           csStringSet *msgstrings, uint32_t time = 0, csString loadBackground = "", csVector2 start = 0, csVector2 dest = 0);
+                           csStringSet *msgstrings, uint32_t time = 0, csString loadBackground = "");
     psForcePositionMessage(MsgEntry *me, csStringSet *msgstrings, csStringHashReversible* msgstringshash, iEngine *engine);
 
     PSF_DECLARE_MSG_FACTORY();

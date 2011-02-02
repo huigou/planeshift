@@ -1437,31 +1437,13 @@ protected:
 class TeleportOp : public Imperative1
 {
 public:
-    TeleportOp(EntityManager* entitymanager) : Imperative1() { entityManager = entitymanager; loadDelay = 0; background = ""; point1 = 0; point2 = 0;}
+    TeleportOp(EntityManager* entitymanager) : Imperative1() { entityManager = entitymanager; }
     virtual ~TeleportOp() { }
 
     bool Load(iDocumentNode* node)
     {
         if (!Imperative1::Load(node))
             return false;
-
-        if(node->GetAttribute("delay"))
-		{
-			loadDelay = node->GetAttributeValueAsInt("delay");
-		}
-
-        if(node->GetAttribute("background"))
-        {
-            background = node->GetAttributeValue("background");
-        }
-    
-        if(node->GetAttribute("x1") && node->GetAttribute("y1") && node->GetAttribute("x2") && node->GetAttribute("y2"))
-        {
-            point1.x = node->GetAttributeValueAsFloat("x1");
-            point1.y = node->GetAttributeValueAsFloat("y1");
-            point2.x = node->GetAttributeValueAsFloat("x2");
-            point2.y = node->GetAttributeValueAsFloat("y2");
-        }
 
         if (node->GetAttribute("location"))
         {
@@ -1493,6 +1475,17 @@ public:
             Error1("<teleport> specified with neither a location or map attribute.");
             return false;
         }
+
+		if(node->GetAttribute("delay"))
+		{
+			loadDelay = node->GetAttributeValueAsInt("delay");
+		}
+
+		if(node->GetAttribute("background"))
+		{
+			background = node->GetAttributeValue("background");
+		}
+
         return true;
     }
 
@@ -1504,7 +1497,7 @@ public:
         if (type == NAMED)
         {
             // we only handle "spawn" for now...
-            actor->MoveToSpawnPos(loadDelay, background, point1, point2);
+            actor->MoveToSpawnPos(loadDelay, background);
         }
         else
         {
@@ -1532,9 +1525,9 @@ public:
             }
 
             if (type & INSTANCE)
-                actor->Teleport(sector, destPos, 0.0, instance, loadDelay, background, point1, point2);
+                actor->Teleport(sector, destPos, 0.0, instance, loadDelay, background);
             else
-                actor->Teleport(sector, destPos, 0.0, loadDelay, background, point1, point2);
+                actor->Teleport(sector, destPos, 0.0, loadDelay, background);
         }
     }
 
@@ -1546,8 +1539,6 @@ protected:
     InstanceID instance;
 	int32_t loadDelay;   ///<The delay the loading screen shall have, in seconds; YOU DON'T HAVE TO DEFINE IT
 	csString background; ///<The background of the loading screen; YOU DON'T HAVE TO DEFINE IT
-    csVector2 point1;///<Defines start of animation
-    csVector2 point2;///<Defines start of animation
     
     EntityManager* entityManager;
 };
