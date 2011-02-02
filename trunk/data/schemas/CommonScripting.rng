@@ -366,6 +366,14 @@
       </group>
          <attribute name="delay"/>
          <attribute name="background"/>
+       <group>
+         <optional>
+           <attribute name="x1"/>
+           <attribute name="y1"/>
+           <attribute name="x2"/>
+           <attribute name="y2"/>
+         </optional>
+       </group>
     </choice>
   </define>
 
