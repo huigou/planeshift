@@ -52,33 +52,10 @@ public:
     void Clear();
     void Show();
     void Hide();
-    void Draw();
     
-    /** Initializing of the dot animation.
-    *@param start A vector representing the start of the animation.
-    *@param dest A vector representing the destination of the animation.
-    */
-    void InitAnim(csVector2 start, csVector2 dest, csTicks delay);
 private:
     pawsMessageTextBox* loadingText;
-    
-    bool renderAnim;///<Bool used to switch off or on the dot animation
-    csVector2 lastPos;///<Position of the last rendered dot
-    csVector2 vel;///<Velocity/space between the dots
-    csVector2 diffVector;///<Diffusion vector, used to noise the velocity vector
-    csVector2 destination;///<Destination of last dot
-    csArray<csVector2> positions;///<The dots positions 
-    csTicks delayBetDot;///<The delay between the dots
-    csTicks startFrom;///<Time from last dot rendered
-    int numberDot;///<Number of dots which shall be rendered
-    csRef<iPawsImage> dot;///<The dot image
-    int iter;///<A iterator variable
-    
-    /** 
-    *Render the dot animation.
-    *Called only if renderAnim == true
-    */
-    void DrawAnim();
+      
 };
 
 CREATE_PAWS_FACTORY( pawsLoadWindow );

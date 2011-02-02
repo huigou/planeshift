@@ -160,7 +160,10 @@ void ZoneHandler::HandleMessage(MsgEntry* me)
     psNewSectorMessage msg(me);
 
     Notify3(LOG_LOAD, "Crossed from sector %s to sector %s.", msg.oldSector.GetData(), msg.newSector.GetData());
-        
+
+    if(msg.loadDelay != 0)
+        ForceLoadScreen(msg.background, msg.loadDelay);
+
     LoadZone(msg.pos, msg.newSector);
 }
 
@@ -313,10 +316,8 @@ void ZoneHandler::OnDrawingFinished()
         {
             float timeProgress = 1.0f;
             if(forcedLoadingEndTime)
-            {
                 timeProgress = (float)(csGetTicks() - forcedLoadingStartTime)/(forcedLoadingEndTime-forcedLoadingStartTime);
-            }
-            
+
             float loadProgress = 1.0f;
             if(loadCount)
             {
@@ -348,15 +349,4 @@ void ZoneHandler::ForceLoadScreen(csString backgroundImage, uint32_t length)
     forcedBackgroundImg = backgroundImage;
     forcedLoadingStartTime = csGetTicks();
     forcedLoadingEndTime = forcedLoadingStartTime + (length * 1000);
-}
-
-void ZoneHandler::HandleDelayAndAnim(int32_t loadDelay, csVector2 start, csVector2 dest, csString background)
-{
-    if(loadDelay > 0)
-    {
-        ForceLoadScreen(background, loadDelay);
-
-        if(start != 0 || dest != 0)
-            loadWindow->InitAnim(start, dest, loadDelay);
-    }
 }

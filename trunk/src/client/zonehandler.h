@@ -27,7 +27,6 @@
 // Project Includes
 //=============================================================================
 #include "net/cmdbase.h"
-#include "paws/pawstexturemanager.h"
 
 //=============================================================================
 // Local Includes
@@ -42,7 +41,7 @@ class pawsLoadWindow;
 class pawsProgressBar;
 
 /** @brief Information for loading a specific zone
-/*
+ *
  * The ZoneHandler keeps a tree of these structures, loaded
  * from an XML file, which specifies which regions are to
  * be loaded when in that particular sector.  Every sector
@@ -153,15 +152,6 @@ public:
      * @param newSector Target sector to move to
      */
     void MovePlayerTo(const csVector3 & newPos, const csString & newSector);
-
-    /** @brief Handles delay and dot animation
-    *
-    * @param loadDelay Delay of loading screen
-    * @param start Start of dot animation
-    * @param dest Destination of dot animation 
-    * @param background The loading background
-    */
-    void HandleDelayAndAnim(int32_t loadDelay, csVector2 start, csVector2 dest, csString background);
 
     /** @brief Returns if this is loading a zone
      *
