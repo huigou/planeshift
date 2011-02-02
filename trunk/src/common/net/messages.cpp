@@ -2377,7 +2377,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psNewSectorMessage,MSGTYPE_NEWSECTOR);
 
 // Leaving this one marshalled the old way.  This message is NEVER sent on
 // the network.
-psNewSectorMessage::psNewSectorMessage(const csString & oldSector, const csString & newSector, csVector3 pos, int32_t loadDelay, csString background)
+psNewSectorMessage::psNewSectorMessage(const csString & oldSector, const csString & newSector, csVector3 pos)
 {
     msg.AttachNew(new MsgEntry( 1024 ));
 
@@ -2389,8 +2389,6 @@ psNewSectorMessage::psNewSectorMessage(const csString & oldSector, const csStrin
     msg->Add(pos.x);
     msg->Add(pos.y);
     msg->Add(pos.z);
-	msg->Add(loadDelay);
-	msg->Add(background);
 
     // Since this message is never sent, we don't adjust the valid flag
 }
@@ -2406,8 +2404,6 @@ psNewSectorMessage::psNewSectorMessage( MsgEntry *message )
     pos.x = message->GetFloat();
     pos.y = message->GetFloat();
     pos.z = message->GetFloat();
-	loadDelay = message->GetInt32();	
-	background = message->GetStr();
 
     // Since this message is never sent, we don't adjust the valid flag
 }
@@ -4602,26 +4598,32 @@ PSF_IMPLEMENT_MSG_FACTORY3(psForcePositionMessage, MSGTYPE_FORCE_POSITION);
 
 psForcePositionMessage::psForcePositionMessage(uint32_t client, uint8_t sequenceNumber,
                          const csVector3 & pos, float yRot, iSector *sector,
-                         csStringSet *msgstrings, uint32_t time, csString loadBackground)
+                         csStringSet *msgstrings, uint32_t time, csString loadBackground,
+                         csVector2 start, csVector2 dest)
 {
     CS_ASSERT(sector);
     csString sectorName = sector->QueryObject()->GetName();
     csStringID sectorNameStrId = msgstrings ? msgstrings->Request(sectorName) : csInvalidStringID;
 
-    msg.AttachNew(new MsgEntry(sizeof(float)*4 + sizeof(uint8_t) + sizeof(uint32_t) + (sectorNameStrId == csInvalidStringID ? sectorName.Length() + 1 : 0) + sizeof(uint32_t) + loadBackground.Length() + 1 , PRIORITY_HIGH, sequenceNumber));
+    msg.AttachNew(new MsgEntry(sizeof(float)*8 + sizeof(uint8_t) + sizeof(uint32_t) + (sectorNameStrId == csInvalidStringID ? sectorName.Length() + 1 : 0) + sizeof(uint32_t) + loadBackground.Length() + 1, PRIORITY_HIGH, sequenceNumber));
 
     msg->SetType(MSGTYPE_FORCE_POSITION);
     msg->clientnum = client;
 
     msg->Add(pos);
     msg->Add(yRot);
-
+    
     msg->Add((uint32_t) sectorNameStrId);
     if (sectorNameStrId == csInvalidStringID)
         msg->Add(sectorName);
     
     msg->Add(time);
     msg->Add(loadBackground);
+
+    msg->Add(start.x);
+    msg->Add(start.y);
+    msg->Add(dest.x);
+    msg->Add(dest.y);
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
@@ -4630,7 +4632,7 @@ psForcePositionMessage::psForcePositionMessage(uint32_t client, uint8_t sequence
 psForcePositionMessage::psForcePositionMessage(MsgEntry *me, csStringSet *msgstrings, csStringHashReversible* msgstringshash, iEngine *engine)
 {
     pos = me->GetVector();
-    yrot = me->GetFloat();
+    yrot = me->GetFloat();    
 
     csStringID sectorNameStrId = (csStringID) me->GetUInt32();
     if(msgstrings)
@@ -4641,6 +4643,11 @@ psForcePositionMessage::psForcePositionMessage(MsgEntry *me, csStringSet *msgstr
     
     loadTime = me->GetUInt32();
     backgroundname = me->GetStr();
+
+    start.x = me->GetFloat();
+    start.y = me->GetFloat();
+    dest.x = me->GetFloat();
+    dest.y = me->GetFloat();
 
     valid = !(me->overrun);
 }
