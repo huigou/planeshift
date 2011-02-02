@@ -1261,11 +1261,8 @@ int xd3_compute_code_table_encoding (xd3_stream *in_stream,
 {
   /* Use DJW secondary compression if it is on by default.  This saves
    * about 20 bytes. */
-  int flags = (SECONDARY_DJW ? XD3_SEC_DJW : 0) | XD3_COMPLEVEL_9 | XD3_ADLER32;
-
   uint8_t dflt_string[CODE_TABLE_STRING_SIZE];
   uint8_t code_string[CODE_TABLE_STRING_SIZE];
-  int ret;
 
   xd3_compute_code_table_string (xd3_rfc3284_code_table (), dflt_string);
   xd3_compute_code_table_string (code_table, code_string);
@@ -1273,7 +1270,8 @@ int xd3_compute_code_table_encoding (xd3_stream *in_stream,
   return xd3_encode_memory (code_string, CODE_TABLE_STRING_SIZE,
 			    dflt_string, CODE_TABLE_STRING_SIZE,
 			    comp_string, comp_string_size,
-			    CODE_TABLE_VCDIFF_SIZE);
+			    CODE_TABLE_VCDIFF_SIZE,
+			    /* flags */ 0);
 }
 
 /* Compute a delta between alternate and rfc3284 tables.  As soon as
@@ -1364,7 +1362,9 @@ xd3_apply_table_string (xd3_stream *stream, const uint8_t *code_string)
   xd3_dinst *code_table;
 
   if ((code_table = stream->code_table_alloc =
-       (xd3_dinst*) xd3_alloc (stream, sizeof (xd3_dinst), 256)) == NULL)
+       (xd3_dinst*) xd3_alloc (stream,
+			       (usize_t) sizeof (xd3_dinst),
+			       256)) == NULL)
     {
       return ENOMEM;
     }
@@ -1638,7 +1638,7 @@ xd3_decode_bytes (xd3_stream *stream, uint8_t *buf, usize_t *pos, usize_t size)
       want = size - *pos;
       take = min (want, stream->avail_in);
 
-      memcpy (buf + *pos, stream->next_in, take);
+      memcpy (buf + *pos, stream->next_in, (size_t) take);
 
       DECODE_INPUT (take);
       (*pos) += take;
@@ -1698,7 +1698,7 @@ xd3_emit_bytes (xd3_stream     *stream,
 
       take = min (output->avail - output->next, size);
 
-      memcpy (output->base + output->next, base, take);
+      memcpy (output->base + output->next, base, (size_t) take);
 
       output->next += take;
       size -= take;
@@ -1873,11 +1873,13 @@ xd3_alloc_cache (xd3_stream *stream)
 
   if (((stream->acache.s_near > 0) &&
        (stream->acache.near_array = (usize_t*)
-	xd3_alloc (stream, stream->acache.s_near, sizeof (usize_t)))
+	xd3_alloc (stream, stream->acache.s_near,
+		   (usize_t) sizeof (usize_t)))
        == NULL) ||
       ((stream->acache.s_same > 0) &&
        (stream->acache.same_array = (usize_t*)
-	xd3_alloc (stream, stream->acache.s_same * 256, sizeof (usize_t)))
+	xd3_alloc (stream, stream->acache.s_same * 256,
+		   (usize_t) sizeof (usize_t)))
        == NULL))
     {
       return ENOMEM;
@@ -2047,7 +2049,7 @@ xd3_decode_address (xd3_stream *stream, usize_t here,
 static void*
 __xd3_alloc_func (void* opaque, usize_t items, usize_t size)
 {
-  return malloc (items * size);
+  return malloc ((size_t) items * (size_t) size);
 }
 
 static void
@@ -2101,7 +2103,7 @@ xd3_alloc0 (xd3_stream *stream,
 
   if (a != NULL)
     {
-      memset (a, 0, elts * size);
+      memset (a, 0, (size_t) (elts * size));
     }
 
   return a;
@@ -2122,7 +2124,8 @@ xd3_alloc_output (xd3_stream *stream,
   else
     {
       if ((output = (xd3_output*) xd3_alloc (stream, 1,
-					     sizeof (xd3_output))) == NULL)
+					     (usize_t) sizeof (xd3_output)))
+	  == NULL)
 	{
 	  return NULL;
 	}
@@ -2533,7 +2536,7 @@ xd3_getblk (xd3_stream *stream, xoff_t blkno)
       ret = stream->getblk (stream, source, blkno);
       if (ret != 0)
 	{
-	  IF_DEBUG1 (DP(RINT "[getblk] app error blkno %"Q"u: %s\n", 
+	  IF_DEBUG1 (DP(RINT "[getblk] app error blkno %"Q"u: %s\n",
 			blkno, xd3_strerror (ret)));
 	  return ret;
 	}
@@ -2620,7 +2623,7 @@ xd3_set_source (xd3_stream *stream,
 }
 
 int
-xd3_set_source_and_size (xd3_stream *stream, 
+xd3_set_source_and_size (xd3_stream *stream,
 			 xd3_source *user_source,
 			 xoff_t source_size) {
   int ret = xd3_set_source (stream, user_source);
@@ -2796,7 +2799,7 @@ xd3_iopt_finish_encoding (xd3_stream *stream, xd3_rinst *inst)
 	    else
 	      {
 		stream->srcwin_decided_early = (!stream->src->eof_known ||
-						(stream->srcwin_cksum_pos < 
+						(stream->srcwin_cksum_pos <
 						 xd3_source_eof (stream->src)));
 	      }
 
@@ -2804,7 +2807,7 @@ xd3_iopt_finish_encoding (xd3_stream *stream, xd3_rinst *inst)
 	    if (inst->xtra)
 	      {
 		XD3_ASSERT (inst->addr >= src->srcbase);
-		XD3_ASSERT (inst->addr + inst->size <= 
+		XD3_ASSERT (inst->addr + inst->size <=
 			    src->srcbase + src->srclen);
 		addr = (usize_t)(inst->addr - src->srcbase);
 		stream->n_scpy += 1;
@@ -2812,7 +2815,7 @@ xd3_iopt_finish_encoding (xd3_stream *stream, xd3_rinst *inst)
 	      }
 	    else
 	      {
-		/* with source window: target copy address is offset 
+		/* with source window: target copy address is offset
 		 * by taroff. */
 		addr = stream->taroff + (usize_t) inst->addr;
 		stream->n_tcpy += 1;
@@ -3807,7 +3810,7 @@ xd3_encode_input (xd3_stream *stream)
 
     case ENC_SEARCH:
       IF_DEBUG2 (DP(RINT "[SEARCH] match_state %d avail_in %u %s\n",
-		    stream->match_state, stream->avail_in, 
+		    stream->match_state, stream->avail_in,
 		    stream->src ? "source" : "no source"));
 
       /* Reentrant matching. */
