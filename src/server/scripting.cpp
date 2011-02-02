@@ -1446,9 +1446,9 @@ public:
             return false;
 
         if(node->GetAttribute("delay"))
-		{
-			loadDelay = node->GetAttributeValueAsInt("delay");
-		}
+        {
+            loadDelay = node->GetAttributeValueAsInt("delay");
+        }
 
         if(node->GetAttribute("background"))
         {
