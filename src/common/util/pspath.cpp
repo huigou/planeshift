@@ -531,6 +531,12 @@ csString psPath::GetFlags() const
         flagStr.Append("NO_WANDER");
         added = true;
     }
+    if (teleport)
+    {
+        if (added) flagStr.Append(", ");
+        flagStr.Append("TELEPORT");
+        added = true;
+    }
 
     return flagStr;
 }
@@ -539,6 +545,7 @@ void psPath::SetFlags(const psString& flagStr)
 {
     oneWay    = isFlagSet(flagStr,"ONEWAY");
     noWander  = isFlagSet(flagStr,"NO_WANDER");
+    teleport  = isFlagSet(flagStr,"TELEPORT");
 }
 
 //---------------------------------------------------------------------------
@@ -556,6 +563,13 @@ psLinearPath::psLinearPath(int pathID, csString name, psString flagStr)
 void psLinearPath::PrecalculatePath(psWorld * world, iEngine *engine)
 {
     totalDistance = 0;
+
+    // Accept 0 distance for teleports
+    if (teleport)
+    {
+        precalculationValid = true;
+        return;
+    }
 
     for (size_t ii=0;ii<points.GetSize()-1;ii++)
     {
