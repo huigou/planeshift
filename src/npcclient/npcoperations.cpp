@@ -3647,22 +3647,28 @@ bool WanderOperation::CalculateWaypointList(NPC *npc)
                 }
             }
             
-            psString wp_str;
-            if (!WaypointListEmpty())
+            // Start print waypoint list
+            if (npc->IsDebugging(5))
             {
-                csList<Waypoint*> wps = WaypointListGet();
-                Waypoint * wp;
-                while (!wps.IsEmpty() && (wp = wps.Front()))
+                psString wp_str;
+                if (!WaypointListEmpty())
                 {
-                    wp_str.AppendFmt("%s",wp->GetName());
-                    wps.PopFront();
-                    if (!wps.IsEmpty())
+                    csList<Waypoint*> wps = WaypointListGet();
+                    Waypoint * wp;
+                    while (!wps.IsEmpty() && (wp = wps.Front()))
                     {
-                        wp_str.Append(" -> ");
+                        wp_str.AppendFmt("%s",wp->GetName());
+                        wps.PopFront();
+                        if (!wps.IsEmpty())
+                        {
+                            wp_str.Append(" -> ");
+                        }
                     }
+                    npc->Printf(5, "Waypoint list: %s",wp_str.GetDataSafe());
                 }
-                npc->Printf(5, "Waypoint list: %s",wp_str.GetDataSafe());
             }
+            // End print waypoint list
+
         }
     }
 
