@@ -91,6 +91,7 @@ public:
     /// Flags
     bool                   oneWay;
     bool                   noWander;
+    bool                   teleport; ///< Teleport between the waypoints
     
     bool                   precalculationValid;
     float                  totalDistance;
