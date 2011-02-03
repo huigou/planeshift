@@ -86,3 +86,9 @@ INSERT INTO `sc_waypoints` VALUES (58,'npcr3_013','',-10.45,8.23,-5.24,2,'ALLOW_
 INSERT INTO `sc_waypoints` VALUES (59,'npcr3_014','',-4.48,8.23,-18.47,2,'ALLOW_RETURN, PUBLIC',6);
 INSERT INTO `sc_waypoints` VALUES (60,'npcr3_015','',-2.02,7.22,-36.83,2,'ALLOW_RETURN, PUBLIC',6);
 INSERT INTO `sc_waypoints` VALUES (61,'npcr3_016','',-28.37,4.21,-36.28,2,'ALLOW_RETURN, PUBLIC',6);
+INSERT INTO `sc_waypoints` VALUES (62,'npcr1_013','',6.45,0.01,-230.46, 2, 'ALLOW_RETURN, PUBLIC', 3);
+INSERT INTO `sc_waypoints` VALUES (63,'npcr1_014','',-6.83,0.01,-230.10, 2, 'ALLOW_RETURN, PUBLIC', 3);
+INSERT INTO `sc_waypoints` VALUES (64,'npcr1_015','',-7.50,0.01,-239.00, 1, 'ALLOW_RETURN, PUBLIC', 3);
+INSERT INTO `sc_waypoints` VALUES (65,'npcr1_016','',-7.50,0.01,-244.70, 1, 'ALLOW_RETURN, PUBLIC', 3);
+INSERT INTO `sc_waypoints` VALUES (66,'npcr1_017','',-8.00,0.01,-254.00, 2, 'ALLOW_RETURN, PUBLIC', 3);
+

@@ -3698,7 +3698,19 @@ bool WanderOperation::StartMoveToWaypoint(NPC *npc, EventManager *eventmgr)
         anchor = NULL;
     }
 
+
     anchor = path->CreatePathAnchor();
+
+    if (path->teleport)
+    {
+        npc->Printf(5, ">>>WanderOp teleport to next waypoint!");
+        
+        // Stop the movement
+        StopMovement(npc);
+
+        return false; // Force a call to CompleteOperation that
+                      // will find next waypoint.
+    }
 
     // Get Going at the right velocity
     csVector3 velvector(0,0,  -GetVelocity(npc) );
@@ -3706,7 +3718,6 @@ bool WanderOperation::StartMoveToWaypoint(NPC *npc, EventManager *eventmgr)
     npc->GetLinMove()->SetAngularVelocity( 0 );
 
     npcclient->GetNetworkMgr()->QueueDRData(npc);
-
 
     return true;
 }
