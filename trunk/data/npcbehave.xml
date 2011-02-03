@@ -627,6 +627,18 @@
       <locate obj="waypoint:name:p3"  static="no" />
       <wander anim="walk" vel="$run" />        <!-- Navigate using waypoints -->
       <wait anim="stand" duration="5" />
+
+      <!-- Test the teleport flag on paths -->
+      <locate obj="waypoint:name:npcr1_014"  static="no" />
+      <wander anim="walk" vel="$run" />        <!-- Navigate using waypoints -->
+      <wait anim="stand" duration="5" />
+      <talk text="Going for the teleport" target="false" />
+      <locate obj="waypoint:name:npcr1_017"  static="no" />
+      <talk text="Going to test teleport path" target="false" />
+      <wander anim="walk" vel="$run" />        <!-- Navigate using waypoints -->
+      <talk text="Did I make it?" target="false" />
+      <wait anim="stand" duration="5" />
+
     </behavior>
   </npctype>
 
