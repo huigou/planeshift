@@ -566,23 +566,24 @@ psPath   *psPathNetwork::FindPath(const char *name)
 
 psPath   *psPathNetwork::FindPath(const Waypoint * wp1, const Waypoint * wp2, psPath::Direction & direction)
 {
-    csPDelArray<psPath>::Iterator iter(paths.GetIterator());
-    psPath *path;
-
+    // Check every path from the starting waypoint
+    csArray<psPath*>::ConstIterator iter(wp1->paths.GetIterator());
     while (iter.HasNext())
     {
-        path = iter.Next();
+        psPath *path = iter.Next();
 
-        if (path->start == wp1 && path->end == wp2)
+        // If end is the second waypoint than direction is forward
+        if (path->end == wp2)
         {
             // Forward path
             direction = psPath::FORWARD;
             return path;
         }
 
-        if (path->start == wp2 && path->end == wp1)
+        // If start is the second waypoint than direction is reverse
+        if (path->start == wp2)
         {
-            // Reverse path
+            // Forward path
             direction = psPath::REVERSE;
             return path;
         }
