@@ -39,6 +39,7 @@ struct iCollideSystem;
 #include "util/psconst.h"
 #include "util/serverconsole.h"
 #include "util/pspath.h"
+#include "util/pspathnetwork.h"
 
 class  psDatabase;
 class  MsgHandler;
@@ -212,7 +213,7 @@ public:
     /**
      * Find the shortest route between waypoint start and stop.
      */
-    csList<Waypoint*> FindWaypointRoute(Waypoint * start, Waypoint * end);
+    csList<Waypoint*> FindWaypointRoute(Waypoint * start, Waypoint * end, const psPathNetwork::RouteFilter* filter);
 
     /**
      * This function handles the searching for the specified NPCType name

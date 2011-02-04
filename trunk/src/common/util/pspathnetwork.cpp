@@ -410,7 +410,7 @@ psPath *psPathNetwork::FindNearestPoint(csVector3& v,iSector *sector, float rang
     return found;
 }
 
-csList<Waypoint*> psPathNetwork::FindWaypointRoute(Waypoint * start, Waypoint * end)
+csList<Waypoint*> psPathNetwork::FindWaypointRoute(Waypoint * start, Waypoint * end, const psPathNetwork::RouteFilter* routeFilter)
 {
     csList<Waypoint*> waypoint_list;
     csList<Waypoint*> priority; // Should have been a priority queue
@@ -424,6 +424,16 @@ csList<Waypoint*> psPathNetwork::FindWaypointRoute(Waypoint * start, Waypoint * 
     {
         wp = iter.Next();
 
+        if (routeFilter->Filter(wp))
+        {
+            wp->excluded = true;
+            continue; // No need to think more about this waypoint
+        }
+        else    
+        {
+            wp->excluded = false;
+        }
+
         wp->distance = INFINITY;
         wp->pi = NULL;
         
@@ -434,7 +444,9 @@ csList<Waypoint*> psPathNetwork::FindWaypointRoute(Waypoint * start, Waypoint * 
 
     while (!priority.IsEmpty())
     {
-        Waypoint *wp_u = NULL, *pri_wp = NULL;
+        Waypoint *wp_u = NULL;
+        Waypoint *pri_wp = NULL;
+
         // Extract min from priority queue
         csList<Waypoint*>::Iterator pri(priority);
         csList<Waypoint*>::Iterator pri_loc;
@@ -453,6 +465,13 @@ csList<Waypoint*> psPathNetwork::FindWaypointRoute(Waypoint * start, Waypoint * 
         for (v = 0; v < wp_u->links.GetSize(); v++)
         {
             Waypoint * wp_v = wp_u->links[v];
+
+            // Is the target waypoint excluded, in that case continue on.
+            if (wp_v->excluded)
+            {
+                continue;
+            }
+
             // Relax
             if (wp_v->distance > wp_u->distance + wp_u->dists[v])
             {

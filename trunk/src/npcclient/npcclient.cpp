@@ -1136,9 +1136,9 @@ Waypoint *psNPCClient::FindWaypoint(const char * name)
     return pathNetwork->FindWaypoint(name);
 }
 
-csList<Waypoint*> psNPCClient::FindWaypointRoute(Waypoint * start, Waypoint * end)
+csList<Waypoint*> psNPCClient::FindWaypointRoute(Waypoint * start, Waypoint * end, const psPathNetwork::RouteFilter* filter)
 {
-    return pathNetwork->FindWaypointRoute(start,end);
+    return pathNetwork->FindWaypointRoute(start, end, filter);
 }
 
 void psNPCClient::EnableDisableNPCs( const char* pattern, bool enable )

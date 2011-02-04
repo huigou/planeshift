@@ -33,6 +33,20 @@ class psPath;
 class psPathNetwork
 {
 public:
+
+    /**
+     * Template class for implementing waypoint filtering when calculating routes.
+     */
+    class RouteFilter
+    {
+      public:
+       /**
+        * Called to check if a waypoint should be filters.
+        */
+        virtual bool Filter(const Waypoint* wp) const = 0;
+    };
+
+
     csPDelArray<Waypoint> waypoints;
     csPDelArray<psPath> paths;
     
@@ -108,7 +122,7 @@ public:
     /**
      * Find the shortest route between waypoint start and stop.
      */
-    csList<Waypoint*> FindWaypointRoute(Waypoint * start, Waypoint * end);
+    csList<Waypoint*> FindWaypointRoute(Waypoint * start, Waypoint * end, const RouteFilter* routeFilter);
     
     /**
      * List all waypoints matching pattern to console.

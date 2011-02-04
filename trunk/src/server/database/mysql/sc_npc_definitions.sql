@@ -52,3 +52,4 @@ INSERT INTO sc_npc_definitions VALUES("51","FAMILIAR:Clacker","Minion","","0.00"
 INSERT INTO sc_npc_definitions VALUES("52","FAMILIAR:Rat","Minion","","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("53","MoveUnderground","MoveUnderground","","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("62","Hunter","HuntingTribe","","0.00","0.00","0","N","N");
+INSERT INTO sc_npc_definitions VALUES("78","MoveMaster6","MoveTest6","","0.00","0.00","0","N","N");
