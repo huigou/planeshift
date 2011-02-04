@@ -693,6 +693,33 @@
 
   </npctype>
 
+  <npctype name="MoveTest6" vel="$run">
+    <!-- Initial behavior to locate the starting point -->
+    <behavior name="Initialize" completion_decay="-1" initial="1000">
+      <!--debug level="0" /-->
+      <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
+      <navigate anim="walk" />                  <!-- Local navigation -->
+    </behavior>
+
+    <!-- Advanced movement using waypoints -->
+    <behavior name="Move1" decay="0" growth="0" initial="80" loop="yes">
+      <debug level="15" />
+      <!--debug level="0" /-->
+      <talk text="Going to other waypoint not using private" target="false" />
+      <locate obj="waypoint:name:npcr1_021"  static="no" />
+      <wander anim="walk" private="false" />        <!-- Navigate using waypoints -->
+      <rotate type="relative" value="180" ang_vel="45"/>
+      <wait anim="stand" duration="5" />
+
+      <talk text="Going to other waypoint" target="false" />
+      <locate obj="waypoint:name:npcr1_014"  random="yes" static="no" />
+      <wander anim="walk" />        <!-- Navigate using waypoints -->
+      <rotate type="relative" value="180" ang_vel="45"/>
+      <wait anim="stand" duration="5" />
+    </behavior>
+  </npctype>
+
+
   <npctype name="MoveUnderground" vel="$walk">
     <!-- Testing the wander operation. -->
 

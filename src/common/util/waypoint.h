@@ -123,6 +123,7 @@ public:
     /// Data used in the dijkstra's algorithm to find waypoint path
     float distance; /// Hold current shortest distance to the start WP.
     Waypoint * pi;  /// Predecessor WP to track shortest way back to start.
+    bool excluded;  /// Set to true if the waypoint is filtered out.
     
 };
 

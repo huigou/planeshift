@@ -35,6 +35,7 @@ struct iSector;
 //=============================================================================
 #include "util/psconst.h"
 #include "util/pspath.h"
+#include "util/pspathnetwork.h"
 #include <celhpf.h>
 #include "net/npcmessages.h"
 
@@ -794,7 +795,15 @@ protected:
 
 public:
 
-    RotateOperation(): ScriptOperation("Rotate") { vel=0; op_type=ROT_UNKNOWN; ang_vel=999; }
+    RotateOperation(): ScriptOperation("Rotate")
+    {
+        vel=0; ang_vel=999; 
+        op_type=ROT_UNKNOWN;
+        min_range=0; max_range=0;
+        delta_angle=0;
+        target_angle=0;
+        angle_delta=0;
+    }
     virtual ~RotateOperation() { }
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
@@ -1038,6 +1047,19 @@ protected:
     psPath            *path;
     psPathAnchor      *anchor;
 
+
+    class WanderRouteFilter : public psPathNetwork::RouteFilter
+    {
+      public:
+        WanderRouteFilter( WanderOperation * parent ):parent(parent){};
+        virtual bool Filter( const Waypoint* waypoint ) const;
+      protected:
+        WanderOperation * parent;
+    };
+
+    WanderRouteFilter wanderRouteFilter;
+
+
     /** Calculate a random position within the waypoint as destination */
     void CalculateTargetPos(csVector3& dest, iSector*&sector);
 
@@ -1051,7 +1073,7 @@ protected:
     
 public:
 
-    WanderOperation(): ScriptOperation("Wander")
+    WanderOperation(): ScriptOperation("Wander"), wanderRouteFilter(this)
         { active_wp=NULL; prior_wp=NULL; next_wp=NULL;
           dest_sector=NULL; current_sector=NULL;
           turn_queued=false;

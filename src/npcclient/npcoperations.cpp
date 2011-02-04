@@ -3442,6 +3442,17 @@ WanderOperation::~WanderOperation()
     }
 }
 
+
+bool WanderOperation::WanderRouteFilter::Filter( const Waypoint * waypoint ) const
+{
+    return ( !((!parent->undergroundValid || waypoint->underground == parent->underground) &&
+               (!parent->underwaterValid || waypoint->underwater == parent->underwater) &&
+               (!parent->privValid || waypoint->priv == parent->priv) &&
+               (!parent->pubValid || waypoint->pub == parent->pub) &&
+               (!parent->cityValid || waypoint->city == parent->city) &&
+               (!parent->indoorValid || waypoint->indoor == parent->indoor)) );
+}
+
 void WanderOperation::CalculateTargetPos(csVector3& dest, iSector*&sector)
 {
     dest = active_wp->loc.pos;
@@ -3468,12 +3479,7 @@ Waypoint * WanderOperation::GetNextRandomWaypoint(NPC *npc, Waypoint * prior_wp,
 
         if ( ((new_wp == prior_wp && new_wp->allow_return)||(new_wp != prior_wp)) &&
              (!active_wp->prevent_wander[ii]) &&
-             (!undergroundValid || new_wp->underground == underground) &&
-             (!underwaterValid || new_wp->underwater == underwater) &&
-             (!privValid || new_wp->priv == priv) &&
-             (!pubValid || new_wp->pub == pub) &&
-             (!cityValid || new_wp->city == city) &&
-             (!indoorValid || new_wp->indoor == indoor))
+             (!wanderRouteFilter.Filter(new_wp)) )
         {
             npc->Printf(10, "Possible next waypoint: %s",new_wp->GetName());
             waypoints.Push(new_wp);
@@ -3633,7 +3639,7 @@ bool WanderOperation::CalculateWaypointList(NPC *npc)
             {
                 csList<Waypoint*> wps;
                 
-                wps = npcclient->FindWaypointRoute(start,end);
+                wps = npcclient->FindWaypointRoute(start, end, &wanderRouteFilter );
                 if (wps.IsEmpty())
                 {
                     npc->Printf(5, "Can't find route...");

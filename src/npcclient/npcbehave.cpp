@@ -1093,6 +1093,10 @@ void psGameObject::GetPosition(gemNPCObject* object, csVector3& pos, float& yrot
     // rotation
     csMatrix3 transf = npcMovable->GetTransform().GetT2O();
     yrot = psWorld::Matrix2YRot(transf);
+    if (CS::IsNaN(yrot))
+    {
+        yrot = 0;
+    }
 
     // Sector
     if (npcMovable->GetSectors()->GetCount())
@@ -1160,6 +1164,8 @@ float psGameObject::CalculateIncidentAngle(const csVector3& pos, const csVector3
 
 void psGameObject::ClampRadians(float &target_angle)
 {
+    if (CS::IsNaN(target_angle)) return;
+
     // Clamp the angle witin 0 to 2*PI
     while (target_angle < 0)
         target_angle += TWO_PI;
@@ -1169,6 +1175,8 @@ void psGameObject::ClampRadians(float &target_angle)
 
 void psGameObject::NormalizeRadians(float &target_angle)
 {
+    if (CS::IsNaN(target_angle)) return;
+
     // Normalize angle within -PI to PI
     while (target_angle < PI)
         target_angle += TWO_PI;
