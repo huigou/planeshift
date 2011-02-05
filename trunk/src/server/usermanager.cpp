@@ -259,10 +259,10 @@ void UserManager::HandleUserCommand(MsgEntry *me,Client *client)
     Debug3(LOG_USER, client->GetClientNum(),"Received user command: %s from %s\n",
         me->bytes->payload, (const char *)client->GetName());
 
-    userCmdPointer cmdPt = userCommandHash.Get(msg.command, NULL);
+    userCmdPointer *cmdPt = userCommandHash.GetElementPointer(msg.command);
     if(cmdPt != NULL)
     {
-        (this->*cmdPt)(msg,client);
+        (this->**cmdPt)(msg,client);
         return;
     }
 
