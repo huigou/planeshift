@@ -2667,6 +2667,7 @@ void pawsSpellCheckedEditBox::Draw()
             // Make the text the correct length
             csString tmp ( text.GetData() + start );
             tmp.Truncate( maxChars );
+
             if (password) //show astrices instead of text
             for (unsigned int i=0;i<tmp.Length();i++)
                 tmp.SetAt(i,'*');
@@ -2696,8 +2697,9 @@ void pawsSpellCheckedEditBox::Draw()
                     wordStart=words[i-1].endPos - start;
                 }
                 int wordEnd = words[i].endPos - start;
+
                 // is the word or parts of it displayed?
-                if (!(((wordStart < 0) && (wordEnd < 0)) || ((wordStart >= tmp.Length()) && (wordEnd >= tmp.Length()))))
+                if (!(((wordStart < 0) && (wordEnd < 0)) || ((wordStart >= (int) tmp.Length()) && (wordEnd >= tmp.Length()))))
                 {
                     // set correct word borders according to displayed chars
                     if (wordStart < 0)
@@ -2716,10 +2718,12 @@ void pawsSpellCheckedEditBox::Draw()
                     else
                     {
                         SetColour(typoColour);
-                    }				    		    
+                    }
+
                     DrawWidgetText( tmp.Slice(wordStart, wordEnd-wordStart).GetData(),
                         textXPos,
-                        screenFrame.ymin + textCenterY + margin);	
+                        screenFrame.ymin + textCenterY + margin);
+
                     // get the x-offest for the next word
                     int textWidth, textHeight;				
                     GetFont()->GetDimensions( tmp.Slice(wordStart, wordEnd-wordStart).GetData(), textWidth, textHeight );
