@@ -2794,4 +2794,5 @@ void pawsSpellCheckedEditBox::removeSpecialChars(csString& str)
     str.ReplaceAll("}", "");
     str.ReplaceAll("[", "");
     str.ReplaceAll("]", "");
+    str.ReplaceAll("/", "");
 }
