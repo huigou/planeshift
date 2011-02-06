@@ -575,39 +575,150 @@ void NPC::ClearState()
     disabled = false;
 }
 
-EID NPC::GetNearestEntity(csVector3& dest,csString& name,float range)
+gemNPCActor* NPC::GetNearestActor(float range, csVector3 &destPosition, iSector* &destSector, float &destRange)
 {
     csVector3 loc;
     iSector*  sector;
-    float     min_range;
 
-    psGameObject::GetPosition(GetActor(),loc,sector);
+    psGameObject::GetPosition(GetActor(), loc, sector);
 
-    csArray<gemNPCObject*> nearlist = npcclient->FindNearbyEntities(sector,loc,range);
+    csArray<gemNPCActor*> nearlist = npcclient->FindNearbyActors(sector, loc, range);
     if (nearlist.GetSize() > 0)
     {
-        min_range=range;
+        gemNPCActor* nearestEnt = NULL;
+        csVector3    nearestLoc;
+        iSector*     nearestSector;
+
+        float nearestRange=range;
+
         for (size_t i=0; i<nearlist.GetSize(); i++)
         {
-            gemNPCObject *ent = nearlist[i];
+            gemNPCActor *ent = nearlist[i];
+
+            // Filter own NPC actor
             if(ent == GetActor())
                 continue;
+
             csVector3 loc2;
             iSector *sector2;
             psGameObject::GetPosition(ent, loc2, sector2);
 
             float dist = world->Distance(loc, sector, loc2, sector2);
-            if (dist < min_range)
+            if (dist < nearestRange)
             {
-                min_range = dist;
-                dest = loc2;
-                name = ent->GetName();
-                return ent->GetEID();
+                nearestRange  = dist;
+                nearestEnt    = ent;
+                nearestLoc    = loc2;
+                nearestSector = sector2;
             }
         }
+        if (nearestEnt)
+        {
+            destPosition = nearestLoc;
+            destSector   = nearestSector;
+            destRange    = nearestRange;
+            return nearestEnt;
+        }
     }
-    return EID(0);
+    return NULL;
 }
+
+gemNPCActor* NPC::GetNearestNPC(float range, csVector3 &destPosition, iSector* &destSector, float &destRange)
+{
+    csVector3 loc;
+    iSector*  sector;
+
+    psGameObject::GetPosition(GetActor(), loc, sector);
+
+    csArray<gemNPCActor*> nearlist = npcclient->FindNearbyActors(sector, loc, range);
+    if (nearlist.GetSize() > 0)
+    {
+        gemNPCActor* nearestEnt = NULL;
+        csVector3    nearestLoc;
+        iSector*     nearestSector;
+
+        float nearestRange=range;
+
+        for (size_t i=0; i<nearlist.GetSize(); i++)
+        {
+            gemNPCActor *ent = nearlist[i];
+
+            // Filter own NPC actor, and all players
+            if(ent == GetActor() || !ent->GetNPC())
+                continue;
+
+            csVector3 loc2;
+            iSector *sector2;
+            psGameObject::GetPosition(ent, loc2, sector2);
+
+            float dist = world->Distance(loc, sector, loc2, sector2);
+            if (dist < nearestRange)
+            {
+                nearestRange  = dist;
+                nearestEnt    = ent;
+                nearestLoc    = loc2;
+                nearestSector = sector2;
+            }
+        }
+        if (nearestEnt)
+        {
+            destPosition = nearestLoc;
+            destSector   = nearestSector;
+            destRange    = nearestRange;
+            return nearestEnt;
+        }
+    }
+    return NULL;
+}
+
+gemNPCActor* NPC::GetNearestPlayer(float range, csVector3 &destPosition, iSector* &destSector, float &destRange)
+{
+    csVector3 loc;
+    iSector*  sector;
+
+    psGameObject::GetPosition(GetActor(), loc, sector);
+
+    csArray<gemNPCActor*> nearlist = npcclient->FindNearbyActors(sector, loc, range);
+    if (nearlist.GetSize() > 0)
+    {
+        gemNPCActor* nearestEnt = NULL;
+        csVector3    nearestLoc;
+        iSector*     nearestSector;
+
+        float nearestRange=range;
+
+        for (size_t i=0; i<nearlist.GetSize(); i++)
+        {
+            gemNPCActor *ent = nearlist[i];
+
+            // Filter own NPC actor, and all NPCs
+            if(ent == GetActor() || ent->GetNPC())
+                continue;
+
+            csVector3 loc2;
+            iSector *sector2;
+            psGameObject::GetPosition(ent, loc2, sector2);
+
+            float dist = world->Distance(loc, sector, loc2, sector2);
+            if (dist < nearestRange)
+            {
+                nearestRange  = dist;
+                nearestEnt    = ent;
+                nearestLoc    = loc2;
+                nearestSector = sector2;
+            }
+        }
+        if (nearestEnt)
+        {
+            destPosition = nearestLoc;
+            destSector   = nearestSector;
+            destRange    = nearestRange;
+            return nearestEnt;
+        }
+    }
+    return NULL;
+}
+
 
 gemNPCActor* NPC::GetNearestVisibleFriend(float range)
 {

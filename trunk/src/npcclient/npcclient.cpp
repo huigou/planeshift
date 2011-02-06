@@ -1655,6 +1655,31 @@ csArray<gemNPCObject*> psNPCClient::FindNearbyEntities( iSector* sector, const c
     return list;
 }
 
+csArray<gemNPCActor*> psNPCClient::FindNearbyActors( iSector* sector, const csVector3& pos, float radius, bool doInvisible )
+{
+    csArray<gemNPCActor*> list;
+    
+    csRef<iMeshWrapperIterator> obj_it =  engine->GetNearbyMeshes( sector, pos, radius );
+    while (obj_it->HasNext())
+    {
+        iMeshWrapper* m = obj_it->Next();
+        if (!doInvisible)
+        {
+            bool invisible = m->GetFlags().Check(CS_ENTITY_INVISIBLE);
+            if (invisible)
+                continue;
+        }
+
+        gemNPCActor* actor = dynamic_cast<gemNPCActor*>(FindAttachedObject(m->QueryObject()));
+
+        if (actor)
+        {
+            list.Push( actor );
+        }
+    }
+
+    return list;
+}
 
 /*------------------------------------------------------------------*/
 

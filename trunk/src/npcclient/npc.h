@@ -325,7 +325,33 @@ public:
      */
     void SetInsideRegion(bool inside) { insideRegion = inside; }
 
-    EID GetNearestEntity(csVector3& dest, csString& name, float range);
+
+    /** Return the nearest actor within the given range.
+     *  @param range The search range to look for players
+     *  @param destPosition Return the position of the target
+     *  @param destSector Return the sector of the target
+     *  @param destRange Return the range to the target
+     *  @return The actor of the nearest player or NPC or NULL if none within range
+     */
+    gemNPCActor* GetNearestActor(float range, csVector3 &destPosition, iSector* &destSector, float &destRange);
+
+    /** Return the nearest NPC within the given range.
+     *  @param range The search range to look for players
+     *  @param destPosition Return the position of the target
+     *  @param destSector Return the sector of the target
+     *  @param destRange Return the range to the target
+     *  @return The actor of the nearest NPC or NULL if none within range
+     */
+    gemNPCActor* GetNearestNPC(float range, csVector3 &destPosition, iSector* &destSector, float &destRange);
+
+    /** Return the nearest player within the given range.
+     *  @param range The search range to look for players
+     *  @param destPosition Return the position of the target
+     *  @param destSector Return the sector of the target
+     *  @param destRange Return the range to the target
+     *  @return The actor of the nearest player or NULL if none within range
+     */
+    gemNPCActor* GetNearestPlayer(float range, csVector3 &destPosition, iSector* &destSector, float &destRange);
 
     gemNPCActor * GetNearestVisibleFriend(float range);
     gemNPCActor * GetNearestDeadActor(float range);

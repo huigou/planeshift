@@ -1184,4 +1184,19 @@ void psGameObject::NormalizeRadians(float &target_angle)
         target_angle -= TWO_PI;
 }
 
+csVector3 psGameObject::DisplaceTargetPos(const iSector* mySector, const csVector3& myPos, iSector* targetSector, csVector3& targetPos , float offset)
+{
+    csVector3 displace;
+
+    // This prevents NPCs from wanting to occupy the same physical space as something else
+    if(mySector == targetSector)
+    {
+        csVector3 displacement = targetPos - myPos;
+        displacement.y = 0;
+        displace = offset*displacement.Unit();
+    }
+    return displace;
+}
+
+
 //---------------------------------------------------------------------------
