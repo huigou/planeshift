@@ -487,7 +487,7 @@ protected:
      *  @param worker The actor which is working on the object.
      *  @return The amount of time which will be needed to complete the work.
      */
-    int CalculateEventDuration(psTradeTransformations* trans, psItem *transItem, gemActor *worker);
+    int CalculateEventDuration(psTradeTransformations* trans, psTradeProcesses* process, psItem *transItem, gemActor *worker);
 
     bool CheckStamina(psCharacter * owner) const;
 
