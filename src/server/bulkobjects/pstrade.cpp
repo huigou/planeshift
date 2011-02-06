@@ -101,6 +101,10 @@ psTradeTransformations::psTradeTransformations(uint32 rId, int rQty, uint32 iId,
 
 psTradeTransformations::~psTradeTransformations()
 {
+    if(transPoints)
+    {
+        delete transPoints;
+    }
 }
 
 bool psTradeTransformations::Load(iResultRow& row)
