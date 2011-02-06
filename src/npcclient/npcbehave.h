@@ -403,6 +403,8 @@ public:
     // Normalize angle within -PI to PI
     static void NormalizeRadians(float &target_angle);
 
+    static csVector3 DisplaceTargetPos(const iSector* mySector, const csVector3& myPos, iSector* targetSector, csVector3& targetPos, float offset);
+
 };
 
 

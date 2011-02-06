@@ -703,7 +703,6 @@
 
     <!-- Advanced movement using waypoints -->
     <behavior name="Move1" decay="0" growth="0" initial="80" loop="yes">
-      <debug level="15" />
       <!--debug level="0" /-->
       <talk text="Going to other waypoint not using private" target="false" />
       <locate obj="waypoint:name:npcr1_021"  static="no" />

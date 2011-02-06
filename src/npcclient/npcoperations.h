@@ -192,12 +192,16 @@ protected:
     
     enum
     {
-        NEAREST,OWNER,TARGET
+        NEAREST_ACTOR,   ///< Sense Players and NPC's
+        NEAREST_NPC,     ///< Sense only NPC's
+        NEAREST_PLAYER,  ///< Sense only players
+        OWNER,
+        TARGET
     };
     static const char * typeStr[];
 public:
 
-    ChaseOperation(): ScriptOperation("Chase") { target_id=(uint32_t)-1; type = NEAREST; searchRange=2.0; chaseRange=-1.0; ang_vel = 0; vel=0; };
+    ChaseOperation(): ScriptOperation("Chase") { target_id=(uint32_t)-1; type = NEAREST_PLAYER; searchRange=2.0; chaseRange=-1.0; ang_vel = 0; vel=0; };
     virtual ~ChaseOperation() {};
 
     virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
@@ -1106,14 +1110,19 @@ class WatchOperation : public ScriptOperation
 protected:
     float     watchRange;
     int       type;
-    float     range;  //  Used for watch of type NEAREST 
-    bool      watchInvisible, watchInvincible;
+    float     searchRange;       ///<  Used for watch of type NEAREST_* 
+    bool      watchInvisible;
+    bool      watchInvincible;
 
     csWeakRef<gemNPCObject> watchedEnt;
 
     enum
     {
-        NEAREST,OWNER,TARGET
+        NEAREST_ACTOR,   ///< Sense Players and NPC's
+        NEAREST_NPC,     ///< Sense only NPC's
+        NEAREST_PLAYER,  ///< Sense only players
+        OWNER,
+        TARGET
     };
     static const char * typeStr[];
     

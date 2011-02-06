@@ -454,6 +454,18 @@ public:
       */
     csArray<gemNPCObject*> FindNearbyEntities (iSector* sector, const csVector3& pos, float radius, bool doInvisible = false);
 
+    /** Create a list of all nearby gem actors.
+      * @param sector The sector to check in.
+      * @param pos The starting position
+      * @param radius The distance around the starting point to check.
+      * @param doInvisible If true check invisible meshes otherwise ignore them.     
+      *
+      * @return A csArray<> of all the objects in the given radius.
+      */
+    csArray<gemNPCActor*> FindNearbyActors (iSector* sector, const csVector3& pos, float radius, bool doInvisible = false);
+
+    /** Load and return the root node of an xml file.
+     */
     csRef<iDocumentNode> GetRootNode(const char *xmlfile);
     
     bool LoadNPCTypes(iDocumentNode* root);
