@@ -80,12 +80,12 @@ psTradeTransformations::psTradeTransformations()
     itemId          = 0;
     itemQty         = 0;
     penaltyPct      = 0.0;
-    transPoints     = 0;
+    transPoints     = NULL;
     transCached     = true;    
 }
 
 // Non-cache constructor
-psTradeTransformations::psTradeTransformations(uint32 rId, int rQty, uint32 iId, int iQty, int tPoints)
+psTradeTransformations::psTradeTransformations(uint32 rId, int rQty, uint32 iId, int iQty, char* tPoints)
 {
     id              = 0;
     patternId       = 0;
@@ -95,7 +95,7 @@ psTradeTransformations::psTradeTransformations(uint32 rId, int rQty, uint32 iId,
     itemId          = iId;
     itemQty         = iQty;
     penaltyPct      = 0.0;
-    transPoints     = tPoints;
+    transPoints     = MathExpression::Create(tPoints);
     transCached     = false;    
 }
 
@@ -105,16 +105,17 @@ psTradeTransformations::~psTradeTransformations()
 
 bool psTradeTransformations::Load(iResultRow& row)
 {
-    id                = row.GetUInt32("id");
-    patternId         = row.GetUInt32("pattern_id");
-    processId         = row.GetUInt32("process_id");
-    resultId          = row.GetUInt32("result_id");
-    resultQty         = row.GetInt("result_qty");
-    itemId            = row.GetUInt32("item_id");
-    itemQty           = row.GetInt("item_qty");
-    transPoints       = row.GetInt("trans_points");
-    //transPointsScript = MathScript::Create("transpoints", row["trans_points"]);
-    penaltyPct        = row.GetFloat("penalty_pct");
+    if(transPoints) delete transPoints;
+
+    id           = row.GetUInt32("id");
+    patternId    = row.GetUInt32("pattern_id");
+    processId    = row.GetUInt32("process_id");
+    resultId     = row.GetUInt32("result_id");
+    resultQty    = row.GetInt("result_qty");
+    itemId       = row.GetUInt32("item_id");
+    itemQty      = row.GetInt("item_qty");
+    transPoints  = MathExpression::Create(row["trans_points"]);
+    penaltyPct   = row.GetFloat("penalty_pct");
     return true;
 }
 
@@ -139,7 +140,7 @@ double psTradeTransformations::GetProperty(MathEnvironment* env, const char *ptr
     }
     if(property == "TransformPoints")
     {
-        return (double)GetTransPoints();
+        return (double)transPoints->Evaluate(env);
     }
 
     CPrintf(CON_ERROR, "psTradeTransformations::GetProperty(%s) failed\n",ptr);

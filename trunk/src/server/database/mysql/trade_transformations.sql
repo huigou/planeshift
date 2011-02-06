@@ -16,7 +16,7 @@ CREATE TABLE trade_transformations (
   result_qty int(8) unsigned NOT NULL                   COMMENT 'resulting item quantity',
   item_id int(10) unsigned NOT NULL                     COMMENT 'item to be transformed',
   item_qty int(8) unsigned NOT NULL                     COMMENT 'required quantity for transformation',
-  trans_points int(8) unsigned NOT NULL DEFAULT '0'     COMMENT 'ammount of time to complete transformation',
+  trans_points varchar(255) NOT NULL DEFAULT '0'        COMMENT 'ammount of time to complete transformation',
   penalty_pct float(10,6) NOT NULL DEFAULT '1.000000'   COMMENT 'percent of quality for resulting item',
   description varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (id)

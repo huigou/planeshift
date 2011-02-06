@@ -76,7 +76,7 @@ class psTradeTransformations : public iScriptableVar
 {
  public:
     psTradeTransformations();
-    psTradeTransformations(uint32 rId, int rQty, uint32 iId, int iQty, int tPoints);
+    psTradeTransformations(uint32 rId, int rQty, uint32 iId, int iQty, char* tPoints);
     ~psTradeTransformations();
 
     bool Load(iResultRow& row);
@@ -96,7 +96,7 @@ class psTradeTransformations : public iScriptableVar
 
     float GetItemQualityPenaltyPercent() const { return penaltyPct; }
 
-    int GetTransPoints() const { return transPoints; }
+    int GetTransPoints() const { MathEnvironment env; return transPoints->Evaluate(&env); }
 
     /**Cache flag is used for garbage collection
      * If true transformation is cached and should not be deleted after use
@@ -129,8 +129,7 @@ class psTradeTransformations : public iScriptableVar
     uint32 itemId;
     int itemQty;
     float penaltyPct;
-    int transPoints;
-    MathScript* transPointsScript;
+    MathExpression* transPoints;
 
 private:
     /** Cache flag is used for garbage collection
