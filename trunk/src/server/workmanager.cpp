@@ -2511,7 +2511,7 @@ int WorkManager::CalculateEventDuration(psTradeTransformations* trans, psItem *t
         env.Define("Object", transItem);
         env.Define("Worker", worker);
         env.Define("Transform", trans);
-        calc_transform_apply_skill->Evaluate(&env);
+        calc_transform_time->Evaluate(&env);
         int time = env.Lookup("Time")->GetValue();
         return time;
     }
