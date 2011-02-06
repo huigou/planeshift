@@ -2505,7 +2505,7 @@ int WorkManager::CalculateEventDuration(psTradeTransformations* trans, psItem *t
 {
     // Calculate the seconds needed in order to complete this event
     int time = 0;
-    if(calc_transform_apply_skill)
+    if(calc_transform_time)
     {
         MathEnvironment env;
         env.Define("Object", transItem);
