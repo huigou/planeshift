@@ -623,8 +623,8 @@ public:
     /// Alters the owning character of this item.  Also see UpdateInventoryStatus.
     virtual void SetOwningCharacter(psCharacter *owner);
 
-    /* Item guardians: items dropped in the world or placed in a public
-     * container are not owned, but "guarded" by a character. */
+    /** Item guardians: items dropped in the world or placed in a public
+     *  container are not owned, but "guarded" by a character. */
     PID  GetGuardingCharacterID() const { return guardingCharacterID; }
     void SetGuardingCharacterID(PID guardian) { guardingCharacterID = guardian; }
 
