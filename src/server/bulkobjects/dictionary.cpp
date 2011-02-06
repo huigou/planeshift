@@ -376,7 +376,7 @@ bool NPCDialogDict::LoadTriggers(iDataConnection *db)
 
         if (!FindKnowledgeArea(newtrig->area))
         {
-            printf("--------Adding KA: %s\n",newtrig->area.GetDataSafe());
+            Debug2(LOG_QUESTS, 0, "--------Adding KA: %s",newtrig->area.GetDataSafe());
             knowledgeAreas.PutUnique(newtrig->area,newtrig->area);
         }
     }
@@ -816,7 +816,7 @@ NpcTrigger *NPCDialogDict::AddTrigger(const char *k_area,const char *mytrigger,i
 
         if (!FindKnowledgeArea(newtrig->area))
         {
-            printf("--------Adding KA: %s\n",newtrig->area.GetDataSafe());
+            Debug2(LOG_QUESTS, 0,"--------Adding KA: %s",newtrig->area.GetDataSafe());
             knowledgeAreas.PutUnique(newtrig->area,newtrig->area);
         }
 
