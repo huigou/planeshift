@@ -139,6 +139,7 @@ WorkManager::WorkManager(CacheManager* cachemanager, EntityManager* entitymanage
     calc_transform_exp          = psserver->GetMathScriptEngine()->FindScript("Calculate Trasformation Experience");
     calc_lockpick_time          = psserver->GetMathScriptEngine()->FindScript("Lockpicking Time");
     calc_transform_apply_skill  = psserver->GetMathScriptEngine()->FindScript("Calculate Transformation Apply Skill");
+    calc_transform_time         = psserver->GetMathScriptEngine()->FindScript("Calculate Transformation Time");
 
 
     CS_ASSERT_MSG("Could not load mathscript 'Calculate Repair Rank'", calc_repair_rank);
@@ -152,6 +153,7 @@ WorkManager::WorkManager(CacheManager* cachemanager, EntityManager* entitymanage
     CS_ASSERT_MSG("Could not load mathscript 'Lockpicking Time'", calc_lockpick_time);
     //optional for now
     //CS_ASSERT_MSG("Could not load mathscript 'Calculate Transformation Apply Skill'", calc_transform_apply_skill);
+    //CS_ASSERT_MSG("Could not load mathscript 'Calculate Transformation Time'", calc_transform_time);
 
 
     Initialize();
@@ -1146,7 +1148,7 @@ void WorkManager::StartUseWork(Client* client)
                     TRANSFORMTYPE_CONTAINER, PSCHARACTER_SLOT_NONE, count, itemArray[0]->GetItemQuality(), itemArray[0]);
                 psserver->SendSystemOK(clientNum,"You start work on %d %s.", itemArray[0]->GetStackCount(), itemArray[0]->GetName());
                 psCraftCancelMessage msg;
-                msg.SetCraftTime(CalculateEventDuration(trans, count), clientNum);
+                msg.SetCraftTime(CalculateEventDuration(trans, itemArray[0], worker), clientNum);
                 msg.SendMessage();
                 return;
             }
@@ -1182,7 +1184,7 @@ void WorkManager::StartUseWork(Client* client)
                     TRANSFORMTYPE_SLOT, PSCHARACTER_SLOT_RIGHTHAND, handCount, rhand->GetItemQuality(), rhand);
                 psserver->SendSystemOK(clientNum,"You start work on %d %s.", rhand->GetStackCount(), rhand->GetName());
                 psCraftCancelMessage msg;
-                msg.SetCraftTime(CalculateEventDuration(trans, handCount), clientNum);
+                msg.SetCraftTime(CalculateEventDuration(trans, rhand, worker), clientNum);
                 msg.SendMessage();
                 return;
             }
@@ -1211,7 +1213,7 @@ void WorkManager::StartUseWork(Client* client)
                     TRANSFORMTYPE_SLOT, PSCHARACTER_SLOT_LEFTHAND, handCount, lhand->GetItemQuality(), lhand);
                 psserver->SendSystemOK(clientNum,"You start work on %d %s.", lhand->GetStackCount(), lhand->GetName());
                 psCraftCancelMessage msg;
-                msg.SetCraftTime(CalculateEventDuration(trans, handCount), clientNum);
+                msg.SetCraftTime(CalculateEventDuration(trans, lhand, worker), clientNum);
                 msg.SendMessage();
                 return;
             }
@@ -2058,7 +2060,7 @@ void WorkManager::StartTransformationEvent(int transType, INVENTORY_SLOT_NUMBER 
 
     if(trans)
     {
-        delay = CalculateEventDuration( trans, resultQty );
+        delay = CalculateEventDuration(trans, item,  worker);
     }
     else
     {
@@ -2499,14 +2501,30 @@ bool WorkManager::ValidateConstraints(psTradeTransformations* transCandidate, ps
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Calculate how long it will take to complete event
 //  based on the transformation's point quanity
-int WorkManager::CalculateEventDuration(psTradeTransformations* trans, int itemQty)
+int WorkManager::CalculateEventDuration(psTradeTransformations* trans, psItem *transItem, gemActor *worker)
 {
-    // Translate the points into seconds
-    // ToDo: For now the point quantity is the duration
-    // TODO: CONVERT TO MATHSCRIPT
-    if(trans->GetItemQty() == 0 && trans->GetItemId() != 0 && trans->GetResultId() != 0)
-        return int(trans->GetTransPoints() +  trans->GetTransPoints() * (itemQty - 1) * 0.1);
-    return trans->GetTransPoints();
+    // Calculate the seconds needed in order to complete this event
+    int time = 0;
+    if(calc_transform_apply_skill)
+    {
+        MathEnvironment env;
+        env.Define("Object", transItem);
+        env.Define("Worker", worker);
+        env.Define("Transform", trans);
+        calc_transform_apply_skill->Evaluate(&env);
+        int time = env.Lookup("Time")->GetValue();
+        return time;
+    }
+    else
+    {
+        //if we lack a script we fallback to this solution.
+        if(trans->GetItemQty() == 0 && trans->GetItemId() != 0 && trans->GetResultId() != 0)
+            time = int(trans->GetTransPoints() +  trans->GetTransPoints() * (transItem->GetStackCount() - 1) * 0.1);
+        else
+            time = trans->GetTransPoints();
+    }
+
+    return time;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
