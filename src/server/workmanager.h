@@ -305,6 +305,7 @@ protected:
     MathScript *calc_transform_exp;               ///< This is the calculation for the experience to assign to player for trasformations.
     MathScript *calc_lockpick_time;               ///< This is the calculation for how long it takes to pick a lock.
     MathScript *calc_transform_apply_skill;       ///< This is the calculation for the quality resulting from the item.
+    MathScript *calc_transform_time;              ///< This is the calculation for the time needed to accomplish a transformation.
 
 
     void HandleLockPick(MsgEntry* me,Client *client);
@@ -479,7 +480,15 @@ protected:
     bool ValidateSkills(psTradeTransformations* transCandidate, psTradeProcesses* processCandidate);
     bool ValidateNotOverSkilled(psTradeTransformations* transCandidate, psTradeProcesses* processCandidate);
     bool ValidateConstraints(psTradeTransformations* transCandidate, psTradeProcesses* processCandidate);
-    int CalculateEventDuration(psTradeTransformations* trans, int itemQty);
+
+    /** Calculates the event duration to accomplish a work using a math script.
+     *  @param trans The transformation which is being applied.
+     *  @param transItem The item which is being transformed.
+     *  @param worker The actor which is working on the object.
+     *  @return The amount of time which will be needed to complete the work.
+     */
+    int CalculateEventDuration(psTradeTransformations* trans, psItem *transItem, gemActor *worker);
+
     bool CheckStamina(psCharacter * owner) const;
 
     void Initialize();
