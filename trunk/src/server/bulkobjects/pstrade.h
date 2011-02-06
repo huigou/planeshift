@@ -28,6 +28,7 @@
 // Project Includes
 //=============================================================================
 #include <idal.h>
+#include "util/mathscript.h"
 
 //=============================================================================
 // Local Includes
@@ -129,6 +130,7 @@ class psTradeTransformations : public iScriptableVar
     int itemQty;
     float penaltyPct;
     int transPoints;
+    MathScript* transPointsScript;
 
 private:
     /** Cache flag is used for garbage collection

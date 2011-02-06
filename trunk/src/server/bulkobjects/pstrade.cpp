@@ -105,26 +105,39 @@ psTradeTransformations::~psTradeTransformations()
 
 bool psTradeTransformations::Load(iResultRow& row)
 {
-    id              = row.GetUInt32("id");
-    patternId       = row.GetUInt32("pattern_id");
-    processId       = row.GetUInt32("process_id");
-    resultId        = row.GetUInt32("result_id");
-    resultQty       = row.GetInt("result_qty");
-    itemId          = row.GetUInt32("item_id");
-    itemQty         = row.GetInt("item_qty");
-    transPoints     = row.GetInt("trans_points");
-    penaltyPct     = row.GetFloat("penalty_pct");
+    id                = row.GetUInt32("id");
+    patternId         = row.GetUInt32("pattern_id");
+    processId         = row.GetUInt32("process_id");
+    resultId          = row.GetUInt32("result_id");
+    resultQty         = row.GetInt("result_qty");
+    itemId            = row.GetUInt32("item_id");
+    itemQty           = row.GetInt("item_qty");
+    transPoints       = row.GetInt("trans_points");
+    //transPointsScript = MathScript::Create("transpoints", row["trans_points"]);
+    penaltyPct        = row.GetFloat("penalty_pct");
     return true;
 }
 
 double psTradeTransformations::GetProperty(MathEnvironment* env, const char *ptr)
 {
     csString property(ptr);
-    if (property == "ItemQualityPenaltyPercent")
+    if(property == "ItemQualityPenaltyPercent")
     {
         return (double)GetItemQualityPenaltyPercent();
     }
-    if (property == "TransformPoints")
+    if(property == "ItemQuantity")
+    {
+        return (double)GetItemQty();
+    }
+    if(property == "ItemID")
+    {
+        return (double)GetItemId();
+    }
+    if(property == "ResultItemID")
+    {
+        return (double)GetResultId();
+    }
+    if(property == "TransformPoints")
     {
         return (double)GetTransPoints();
     }
