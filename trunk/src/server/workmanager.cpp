@@ -1148,7 +1148,7 @@ void WorkManager::StartUseWork(Client* client)
                     TRANSFORMTYPE_CONTAINER, PSCHARACTER_SLOT_NONE, count, itemArray[0]->GetItemQuality(), itemArray[0]);
                 psserver->SendSystemOK(clientNum,"You start work on %d %s.", itemArray[0]->GetStackCount(), itemArray[0]->GetName());
                 psCraftCancelMessage msg;
-                msg.SetCraftTime(CalculateEventDuration(trans, itemArray[0], worker), clientNum);
+                msg.SetCraftTime(CalculateEventDuration(trans, process, itemArray[0], worker), clientNum);
                 msg.SendMessage();
                 return;
             }
@@ -1184,7 +1184,7 @@ void WorkManager::StartUseWork(Client* client)
                     TRANSFORMTYPE_SLOT, PSCHARACTER_SLOT_RIGHTHAND, handCount, rhand->GetItemQuality(), rhand);
                 psserver->SendSystemOK(clientNum,"You start work on %d %s.", rhand->GetStackCount(), rhand->GetName());
                 psCraftCancelMessage msg;
-                msg.SetCraftTime(CalculateEventDuration(trans, rhand, worker), clientNum);
+                msg.SetCraftTime(CalculateEventDuration(trans, process, rhand, worker), clientNum);
                 msg.SendMessage();
                 return;
             }
@@ -1213,7 +1213,7 @@ void WorkManager::StartUseWork(Client* client)
                     TRANSFORMTYPE_SLOT, PSCHARACTER_SLOT_LEFTHAND, handCount, lhand->GetItemQuality(), lhand);
                 psserver->SendSystemOK(clientNum,"You start work on %d %s.", lhand->GetStackCount(), lhand->GetName());
                 psCraftCancelMessage msg;
-                msg.SetCraftTime(CalculateEventDuration(trans, lhand, worker), clientNum);
+                msg.SetCraftTime(CalculateEventDuration(trans, process, lhand, worker), clientNum);
                 msg.SendMessage();
                 return;
             }
@@ -2060,7 +2060,7 @@ void WorkManager::StartTransformationEvent(int transType, INVENTORY_SLOT_NUMBER 
 
     if(trans)
     {
-        delay = CalculateEventDuration(trans, item,  worker);
+        delay = CalculateEventDuration(trans, process, item,  worker);
     }
     else
     {
@@ -2501,7 +2501,7 @@ bool WorkManager::ValidateConstraints(psTradeTransformations* transCandidate, ps
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Calculate how long it will take to complete event
 //  based on the transformation's point quanity
-int WorkManager::CalculateEventDuration(psTradeTransformations* trans, psItem *transItem, gemActor *worker)
+int WorkManager::CalculateEventDuration(psTradeTransformations* trans, psTradeProcesses* process, psItem *transItem, gemActor *worker)
 {
     // Calculate the seconds needed in order to complete this event
     int time = 0;
@@ -2511,6 +2511,7 @@ int WorkManager::CalculateEventDuration(psTradeTransformations* trans, psItem *t
         env.Define("Object", transItem);
         env.Define("Worker", worker);
         env.Define("Transform", trans);
+        env.Define("Process", process);
         calc_transform_time->Evaluate(&env);
         int time = env.Lookup("Time")->GetValue();
         return time;
