@@ -1105,6 +1105,7 @@ double MathExpression::Evaluate(MathEnvironment *env) const
             msg.Format("Error in >%s<: Required variable >%s< not supplied in environment.", name, varName.GetData());
             CS_ASSERT_MSG(msg.GetData(),false);
             Error2("%s",msg.GetData());
+            delete [] values;
             return 0.0;
         }
         values[i++] = var->GetValue();
@@ -1126,6 +1127,7 @@ double MathExpression::Evaluate(MathEnvironment *env) const
             msg.Format("Error in >%s<: Type inference requires >%s< to be an iScriptableVar, but it isn't.", name, objName.GetData());
             CS_ASSERT_MSG(msg.GetData(),false);
             Error2("%s",msg.GetData());
+            delete [] values;
             return 0.0;
         }
         else if (!var->GetObject()) // invalid object
@@ -1134,6 +1136,7 @@ double MathExpression::Evaluate(MathEnvironment *env) const
             msg.Format("Error in >%s<: Given a NULL iScriptableVar* for >%s<.", name, objName.GetData());
             CS_ASSERT_MSG(msg.GetData(),false);
             Error2("%s",msg.GetData());
+            delete [] values;
             return 0.0;
         }
     }
