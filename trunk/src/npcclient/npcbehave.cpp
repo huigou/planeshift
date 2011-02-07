@@ -1065,10 +1065,10 @@ void psResumeScriptEvent::Trigger()
 csString psResumeScriptEvent::ToString() const
 {
     csString result;
-    result.Format("Resuming script operation %s for %s",scriptOp->GetName(),npc->GetName());
+    result.Format("Resuming script operation %s",scriptOp->GetName());
     if (npc)
     {
-        result.AppendFmt("(%s)", ShowID(npc->GetEID()));
+        result.AppendFmt("for %s (%s)", npc->GetName(), ShowID(npc->GetEID()));
     }
     return result;
 }
