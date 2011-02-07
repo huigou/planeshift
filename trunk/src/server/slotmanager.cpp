@@ -314,9 +314,6 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
                 
                 chr->Inventory().Add(newItem, false);
                 itemProposed->SetGuardingCharacterID(0);
-                
-                             
-            
                 return;
             }
 
