@@ -2700,8 +2700,10 @@ void pawsWidget::SetCloseButtonPos()
 void pawsWidget::RemoveTitle()
 {
     if(border)
+    {
         border->SetTitle(NULL);
         border->SetTitleImage(NULL);
+    }
 
     if(close_widget)
         close_widget->DeleteYourself();
