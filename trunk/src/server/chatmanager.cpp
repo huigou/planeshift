@@ -451,13 +451,18 @@ void ChatManager::SendShout(Client *c, psChatMessage& msg)
 void ChatManager::SendSay(uint32_t clientNum, gemActor *actor, psChatMessage& msg,const char* who)
 {
     float range = 0;
-    psSectorInfo * sectorinfo;
+    psSectorInfo * sectorinfo = NULL;
     iSector * sector = actor->GetMeshWrapper()->GetMovable()->GetSectors()->Get(0);
 
     if (sector)
+    {
         sectorinfo = psserver->GetCacheManager()->GetSectorInfoByName(sector->QueryObject()->GetName());
-    if (sectorinfo)
-        range = sectorinfo->say_range;
+        if (sectorinfo)
+        {
+            range = sectorinfo->say_range;
+        }
+    }
+
     if (range == 0) // If 0 set default
         range = CHAT_SAY_RANGE;
 
