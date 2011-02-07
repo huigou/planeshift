@@ -27,6 +27,7 @@
 //====================================================================================
 // Project Includes
 //====================================================================================
+#include "util/psconst.h"
 #include "util/psutil.h"
 #include "util/strutil.h"
 #include "util/log.h"
@@ -40,10 +41,6 @@
 // Local Includes
 //====================================================================================
 #include "pspathnetwork.h"
-
-#ifndef INFINITY
-#define INFINITY 999999999.0F
-#endif
 
 bool psPathNetwork::Load(iEngine *engine, iDataConnection *db,psWorld * world)
 {
@@ -434,7 +431,7 @@ csList<Waypoint*> psPathNetwork::FindWaypointRoute(Waypoint * start, Waypoint * 
             wp->excluded = false;
         }
 
-        wp->distance = INFINITY;
+        wp->distance = INFINITY_DISTANCE;
         wp->pi = NULL;
         
         // Insert WP into priority queue

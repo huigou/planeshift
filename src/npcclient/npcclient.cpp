@@ -71,10 +71,6 @@
 #include "tribeneed.h"
 #include "status.h"
 
-#ifndef INFINITY
-#define INFINITY 999999999.0F
-#endif
-
 bool running;
 extern iDataConnection *db;
 
