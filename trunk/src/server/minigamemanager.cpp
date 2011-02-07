@@ -1036,7 +1036,7 @@ void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
             {
                 wonText = "Puzzle solved.";
             }
-            psserver->SendSystemInfo(winningPlayer->playerID, wonText);
+            psserver->SendSystemInfo(movingPlayer->playerID, wonText);
         }
 
         pIter.Reset();
