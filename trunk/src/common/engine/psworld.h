@@ -98,7 +98,6 @@ protected:
     csArray<sectorTransformation> transarray;
 
 public:
-    static const float INFINIT = 9999999.99f;
 
     psWorld();
     ~psWorld();
