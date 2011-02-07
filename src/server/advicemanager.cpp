@@ -583,9 +583,10 @@ void AdviceManager::HandleAdviceRequest( Client *advisee, csString message )
         }
         psAdviceSessionTimeoutGameEvent *ev = new psAdviceSessionTimeoutGameEvent( this, activeSession->answered?ADVICE_SESSION_TIMEOUT:ADVICE_SESSION_TIMEOUT/2, advisee->GetActor(), activeSession );
         activeSession->timeoutEvent = ev;
-        psserver->GetEventManager()->Push(ev);
-        activeSession->answered = false;
     }
+
+    psserver->GetEventManager()->Push(ev);
+    activeSession->answered = false;
 
     activeSession->lastRequest = message;
 
