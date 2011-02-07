@@ -817,7 +817,7 @@ void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
 
     distance = npcclient->GetWorld()->Distance(myPos,mySector,dest->GetPosition(),dest->GetSector());
     //value used for relative infinity. maybe make a global define?
-    if (distance == 9999999.99f)
+    if (distance >= 9999999.99f)
     {
         npc->Printf(5, "No connecting portal to current path segment.");
         npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior());
