@@ -263,9 +263,11 @@ csString psUtilityCommands::SaveCamera()
 
     //Get the iCamera stucture
     iCamera *c = psengine->GetPSCamera()->GetICamera()->GetCamera();
-    csOrthoTransform& camtrans = c->GetTransform ();
+
     if (!c)
         return "No camera found! (This is fatal!)";
+
+    csOrthoTransform& camtrans = c->GetTransform ();
 
     const csMatrix3& m_o2t = camtrans.GetO2T ();
     const csVector3& v_o2t = camtrans.GetOrigin ();
