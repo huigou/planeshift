@@ -220,7 +220,7 @@ float psWorld::Distance(const csVector3& from_pos, const iSector* from_sector, c
         }
         else
         {
-            return psWorld::INFINIT; // No transformation found, so just set larg distance.
+            return 9999999.99f; // No transformation found, so just set larg distance.
         }
 
     }
