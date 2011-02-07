@@ -145,7 +145,7 @@ bool psNPCDialog::Initialize(iDataConnection *db, PID NPCID)
     randomgen = psserver->rng;
     this->db = db;
     // Initialize base dictionary
-    if (!dict)
+    if(!dict.IsValid())
     {
         dict.AttachNew(new NPCDialogDict());
 
