@@ -2575,7 +2575,6 @@ void pawsSpellCheckedEditBox::checkSpelling()
             // before spellchecking remove chars that lead to wrong results
             removeSpecialChars(tmpString);	    
             // now do the spellchecking
-            #ifdef HUNSPELL
             tmpWord.correct = false;
             for(size_t i = 0; i < spellChecker.GetSize(); i++)
             {
@@ -2585,7 +2584,6 @@ void pawsSpellCheckedEditBox::checkSpelling()
                     break;
                 }
             }
-            #endif
             tmpWord.endPos = foundSpace;	    
             // and save everything
             words.Push(tmpWord);	    
