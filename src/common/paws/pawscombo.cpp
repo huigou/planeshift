@@ -34,6 +34,7 @@ pawsComboBox::pawsComboBox()
     oldWidth = 0;
     closed = true;  
     fliptotop = false;
+    listChoice = NULL;
     
     rows = 0;
     rowHeight = 0;
@@ -167,6 +168,7 @@ void pawsComboBox::SetSorted(bool sorting)
 
 pawsListBoxRow* pawsComboBox::NewOption(const csString & text)
 {
+    if(!listChoice) return NULL;
     pawsListBoxRow * row;
     csList<csString> rowEntry;
     rowEntry.PushBack(text);
