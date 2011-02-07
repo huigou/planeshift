@@ -437,7 +437,7 @@ float ProximityList::RangeTo( gemObject* object, bool ignoreY, bool ignoreInstan
     if (!ignoreInstance && object->GetInstance() != INSTANCE_ALL && self->GetInstance() != INSTANCE_ALL &&
         object->GetInstance() != self->GetInstance())
     {
-        return 9999999.99f;
+        return INFINITY_DISTANCE;
     }
 
     // Find the current position of the specified entity
@@ -466,7 +466,7 @@ float ProximityList::RangeTo( gemObject* object, bool ignoreY, bool ignoreInstan
         }
         else
         {
-            return 9999999.99f; // No transformation found, so just set larg distance.
+            return INFINITY_DISTANCE; // No transformation found, so just set larg distance.
         }
     }
     else

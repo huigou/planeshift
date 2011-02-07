@@ -36,6 +36,7 @@
 #include "engine/linmove.h"
 #include "engine/psworld.h"
 
+#include "util/psconst.h"
 #include "util/waypoint.h"
 #include "util/pspath.h"
 #include "util/strutil.h"
@@ -760,8 +761,7 @@ void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
     // Check if we shold stop chaseing
     float distance = npcclient->GetWorld()->Distance(myPos,mySector,targetPos,targetSector);
 
-    //value used for relative infinity. maybe make a global define?
-    if((distance >=  9999999.99f) || 
+    if((distance >= INFINITY_DISTANCE) || 
        (chaseRange > 0 && distance > chaseRange) ||
        (targetInstance != myInstance))
     {
@@ -816,8 +816,7 @@ void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
     iMapNode* dest = path->Current();
 
     distance = npcclient->GetWorld()->Distance(myPos,mySector,dest->GetPosition(),dest->GetSector());
-    //value used for relative infinity. maybe make a global define?
-    if (distance >= 9999999.99f)
+    if (distance >= INFINITY_DISTANCE)
     {
         npc->Printf(5, "No connecting portal to current path segment.");
         npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior());

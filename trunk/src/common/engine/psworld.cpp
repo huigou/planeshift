@@ -35,6 +35,7 @@
 // Project Includes
 //=============================================================================
 #include <ibgloader.h>
+#include "util/psconst.h"
 #include "util/consoleout.h"
 #include "util/log.h"
 #include "util/strutil.h"
@@ -220,7 +221,7 @@ float psWorld::Distance(const csVector3& from_pos, const iSector* from_sector, c
         }
         else
         {
-            return 9999999.99f; // No transformation found, so just set larg distance.
+            return INFINITY_DISTANCE; // No transformation found, so just set larg distance.
         }
 
     }

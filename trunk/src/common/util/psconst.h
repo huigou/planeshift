@@ -27,6 +27,8 @@
 #include <csutil/hash.h>
 #include "psstdint.h" //Added to fix msvc build
 
+#include <math.h> // To include HUGE_VALF for INFINITY_DISTANCE
+
 #define SOCKET_CLOSE_FORCED  true
 
 #define DEF_PROX_DIST   100        ///< 100m is trial distance here
@@ -152,5 +154,12 @@ MAKE_ID_TYPE(AccountID);   ///< Account IDs
   * This is quite ugly; we don't try to add proper typing.
   */
 typedef int32_t ContainerID;
+
+// This is just a large number, may be changed to infinity.
+#ifdef HUGE_VALF
+#define INFINITY_DISTANCE HUGE_VALF
+#else
+#define INFINITY_DISTANCE 9999999.99f
+#endif
 
 #endif

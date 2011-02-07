@@ -30,6 +30,7 @@
 //=============================================================================
 // Project Includes
 //=============================================================================
+#include "util/psconst.h"
 #include "util/pspath.h"
 #include "util/location.h"
 #include "util/log.h"
@@ -252,7 +253,7 @@ float psPath::Distance(psWorld * world, iEngine *engine,csVector3& pos, iSector 
         if (!world->WarpSpace(points[i]->GetSector(engine),sector,l1) ||
             !world->WarpSpace(points[i+1]->GetSector(engine),sector,l2))
         {
-            dist = 9999999.99f;
+            dist = INFINITY_DISTANCE;
             break;
         }
 
