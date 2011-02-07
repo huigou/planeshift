@@ -555,16 +555,17 @@ void AdviceManager::HandleAdviceRequest( Client *advisee, csString message )
             return;
         }
     }
-
+    //at this point active session will always be valid because it's either recovered from the
+    //stored sessions or it was just created.
     // Create psAdviceRequestTimeoutGameEvent to timeout question.
-    if ( activeSession && activeSession->timeoutEvent == NULL && activeSession->requestEvent == NULL)
+    if (activeSession->timeoutEvent == NULL && activeSession->requestEvent == NULL)
     {
         psAdviceRequestTimeoutGameEvent *ev = new psAdviceRequestTimeoutGameEvent( this, ADVICE_QUESTION_TIMEOUT, advisee->GetActor(), activeSession );
         activeSession->requestEvent = ev;
         psserver->GetEventManager()->Push(ev);
         activeSession->answered = false;
     }
-    else if ( activeSession )
+    else
     {
         WordArray words(message);
 
