@@ -718,30 +718,29 @@ void pawsMessageTextBox::AddMessage( const char* data, int msgColour )
             }
         }
         messages.Push(msg);
-        if (scrollBar)
-        {
-            if ( adjusted.GetSize() > maxLines )
-                scrollBar->ShowBehind();
-            else
-                scrollBar->Hide();
-        }
-
-
-        scrollBar->SetMaxValue( maxLines > adjusted.GetSize() ? 0 : (float)(adjusted.GetSize()-maxLines) );
 
         topLine = (int)adjusted.GetSize() - (int)maxLines;
         if ( topLine < 0 )
             topLine = 0;
 
+        if (scrollBar)
+        {
+            if (adjusted.GetSize() > maxLines)
+                scrollBar->ShowBehind();
+            else
+                scrollBar->Hide();
 
-        if ( !onBottom )
-        {
-            topLine = oldTopLine;
-            scrollBar->SetCurrentValue( float(topLine) );
-        }
-        else
-        {
-            scrollBar->SetCurrentValue( float(topLine) );
+            scrollBar->SetMaxValue(maxLines > adjusted.GetSize() ? 0 : (float)(adjusted.GetSize()-maxLines));
+
+            if (!onBottom)
+            {
+                topLine = oldTopLine;
+                scrollBar->SetCurrentValue(float(topLine));
+            }
+            else
+            {
+                scrollBar->SetCurrentValue(float(topLine));
+            }
         }
     }
 }
