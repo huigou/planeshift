@@ -563,7 +563,6 @@ void AdviceManager::HandleAdviceRequest( Client *advisee, csString message )
         psAdviceRequestTimeoutGameEvent *ev = new psAdviceRequestTimeoutGameEvent( this, ADVICE_QUESTION_TIMEOUT, advisee->GetActor(), activeSession );
         activeSession->requestEvent = ev;
         psserver->GetEventManager()->Push(ev);
-        activeSession->answered = false;
     }
     else
     {
@@ -583,11 +582,11 @@ void AdviceManager::HandleAdviceRequest( Client *advisee, csString message )
         }
         psAdviceSessionTimeoutGameEvent *ev = new psAdviceSessionTimeoutGameEvent( this, activeSession->answered?ADVICE_SESSION_TIMEOUT:ADVICE_SESSION_TIMEOUT/2, advisee->GetActor(), activeSession );
         activeSession->timeoutEvent = ev;
+        psserver->GetEventManager()->Push(ev);
     }
 
-    psserver->GetEventManager()->Push(ev);
+    //we set the session as unanswered as we have a new message.
     activeSession->answered = false;
-
     activeSession->lastRequest = message;
 
     csString buf;
