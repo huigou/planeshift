@@ -181,12 +181,14 @@ bool pawsPrefManager::LoadBorderFile( const char* file )
             if (!tempnode)
             {
                 Error2("XML problem in %s", file);
+                delete definition;
                 return false;
             }
             csRef<iDocumentNode> image = tempnode->GetNode("image"); 
             if (!image)
             {
                 Error2("Missing <image> tag in %s", file);
+                delete definition;
                 return false;
             }
             csRef<iPawsImage> drawable;
