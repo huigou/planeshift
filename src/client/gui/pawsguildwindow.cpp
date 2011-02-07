@@ -233,7 +233,7 @@ bool pawsGuildWindow::PostSetup()
     onlineOnly->SetState(true);
 
     guildNotifications = dynamic_cast<pawsCheckBox*>(FindWidget("GuildMemberNotifications"));
-    if (!onlineOnly)
+    if (!guildNotifications)
         return false;
     guildNotifications->SetState(false);
     
