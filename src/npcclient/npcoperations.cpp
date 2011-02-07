@@ -760,7 +760,8 @@ void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
     // Check if we shold stop chaseing
     float distance = npcclient->GetWorld()->Distance(myPos,mySector,targetPos,targetSector);
 
-    if((distance == psWorld::INFINIT) || 
+    //value used for relative infinity. maybe make a global define?
+    if((distance >=  9999999.99f) || 
        (chaseRange > 0 && distance > chaseRange) ||
        (targetInstance != myInstance))
     {
@@ -815,7 +816,8 @@ void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
     iMapNode* dest = path->Current();
 
     distance = npcclient->GetWorld()->Distance(myPos,mySector,dest->GetPosition(),dest->GetSector());
-    if (distance == psWorld::INFINIT)
+    //value used for relative infinity. maybe make a global define?
+    if (distance == 9999999.99f)
     {
         npc->Printf(5, "No connecting portal to current path segment.");
         npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior());
