@@ -45,6 +45,7 @@ INSERT INTO `server_options` VALUES('death:sectory', '-119.0');
 INSERT INTO `server_options` VALUES('death:sectoryrot', '0.00');
 INSERT INTO `server_options` VALUES('death:avoidtext', '');
 INSERT INTO `server_options` VALUES('death:avoidtime', '0');
+INSERT INTO `server_options` VALUES('npcmanager:petskill', '31');
 
 
 

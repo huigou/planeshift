@@ -1552,6 +1552,7 @@ DELETE FROM command_group_assignment where command_name in("/money","/awardexp")
 
 #1256 - Stefano Angeleri - Converted trans_points in a math expression.
 ALTER TABLE `planeshift`.`trade_transformations` MODIFY COLUMN `trans_points` VARCHAR(255)  NOT NULL DEFAULT '0';
+INSERT INTO `server_options` VALUES('npcmanager:petskill', '31');
 
 
 
