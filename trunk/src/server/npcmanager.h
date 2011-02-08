@@ -31,6 +31,7 @@
 #include "net/npcmessages.h"
 
 #include "bulkobjects/psskills.h"
+#include "cachemanager.h"
 
 //=============================================================================
 // Local Includes
@@ -144,7 +145,7 @@ public:
     /** Returns the skill used to handle pet operations.
      *  @return A PSSKILL which is the skill choosen to handle pet operations.
      */
-    PSSKILL GetPetSkill() { return petSkill; }
+    PSSKILL GetPetSkill() { return (PSSKILL)petSkill->getValueAsInt(); }
 
 protected:
 
@@ -207,7 +208,7 @@ protected:
     ClientConnectionSet* clients;
     psNPCCommandsMessage *outbound;
     int cmd_count;
-    PSSKILL petSkill;
+    optionEntry* petSkill;
 
     csHash<PetOwnerSession*, PID> OwnerPetList;
 
