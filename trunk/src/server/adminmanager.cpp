@@ -8764,7 +8764,7 @@ void AdminManager::AwardToTarget(unsigned int gmClientNum, Client* target, psRew
         bool modified = false;
         if (rewardDataSkill->skillName == "all") // update all skills
         {
-            for (int i=0; i<PSSKILL_COUNT; i++)
+            for(int i=0; i < psserver->GetCacheManager()->GetSkillAmount(); i++)
             {
                 psSkillInfo* skill = psserver->GetCacheManager()->GetSkillByID(i);
                 if (!skill) continue; // skill doesn't exist -> this should not happen
@@ -9203,7 +9203,7 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* 
     {
         if (data->skillData.skillName == "all")
         {
-            for (int i=0; i<PSSKILL_COUNT; i++)
+            for(int i=0; i < psserver->GetCacheManager()->GetSkillAmount(); i++)
             {
                 psSkillInfo * skill = psserver->GetCacheManager()->GetSkillByID(i);
                 if (skill == NULL) continue;
@@ -9257,7 +9257,7 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* 
     }
 
     bool modified = false;
-    for (int i=0; i<PSSKILL_COUNT; i++)
+    for (int i=0; i < psserver->GetCacheManager()->GetSkillAmount(); i++)
     {
         psSkillInfo * skill = psserver->GetCacheManager()->GetSkillByID(i);
         if (skill == NULL) continue;
