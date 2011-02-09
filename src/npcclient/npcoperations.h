@@ -69,34 +69,56 @@ class ScriptOperation
         VEL_WALK,
         VEL_RUN
     };
+
+public:
+    // Used to indicate the result of the Run and Advance operations.
+    enum OperationResult {
+        OPERATION_NOT_COMPLETED, ///< Used to indicate that an operation will complete at a later stage
+        OPERATION_COMPLETED,     ///< All parts of this operation has been completed
+        OPERATION_FAILED         ///< The operation failed
+    };
     
 protected:
-    VelSource            velSource;
-    float                vel;  // Shared by many functions
-    float                ang_vel;  // Shared by many functions
-    
-    bool                 completed; /// This flag is set to false by Run(), and set to true by CompleteOperation(), in case of multiple Complete's being called.
-    psResumeScriptEvent *resumeScriptEvent;
+    ////////////////////////////////////////////////////////////
+    // Start of instance temp variables. These dosn't need to be copied.
     csString             name;
+
+
+    bool                 completed; /// This flag is set to false by Run(), and set to true by CompleteOperation(), in case of multiple Complete's being called.
+
+    psResumeScriptEvent *resumeScriptEvent;
+
     csVector3            interrupted_position;
     iSector             *interrupted_sector;
     float                interrupted_angle;
 
+    int                  consecCollisions; ///< Shared by move functions. Used by CheckMoveOk to detect collisions
+    // End of instance temp variables.
+    ////////////////////////////////////////////////////////////
 
-    /////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////
+    // Start of shared values between operation
+
+    // Failure handling
+    csString             failurePerception;    ///< The Perception to fire when a operation return OPERATION_FAILED
+
+    // Velocity is shared for all move operations
+    VelSource            velSource;            ///< Source used for velocity
+    float                vel;                  ///< Shared linear velocity, used by all that moves
+    float                ang_vel;              ///< Shared angular velocity, used by all that rotates
+
     // Start Check Move OK parameters
-
     // Configuration paramters. Set by using LoadCheckMoveOk    
     csString             collision;       ///< Perception names to use for collision detected by CheckMoveOk
     csString             outOfBounds;     ///< Perception names to use for out of bounds detected by CheckMoveOk
     csString             inBounds;        ///< Perception names to use for in bounds detected by CheckMoveOk
     bool                 checkTribeHome;  ///< Set to true if the tribe home should be checked by CheckMoveOk
-
-    // Instance temp variables. These dosn't need to be copied.
-    int                  consecCollisions; ///< Shared by move functions. Used by CheckMoveOk to detect collisions
-        
     // End Check Move OK parameters
-    /////////////////////////////////////////////////////////
+
+    
+    // End of shared values between operations
+    ////////////////////////////////////////////////////////////
+
     
     void Resume(csTicks delay, NPC *npc, EventManager *eventmgr);
     void ResumeTrigger(psResumeScriptEvent * event);
@@ -116,10 +138,12 @@ protected:
 public:
 
     ScriptOperation(const char* sciptName);
+    ScriptOperation(const ScriptOperation* other);
     virtual ~ScriptOperation() {}
 
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted)=0;
+    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted)=0;
     virtual void Advance(float timedelta,NPC *npc,EventManager *eventmgr);
+
     virtual void InterruptOperation(NPC *npc,EventManager *eventmgr);
     virtual bool AtInterruptedPosition(const csVector3& pos, const iSector* sector);
     virtual bool AtInterruptedAngle(const csVector3& pos, const iSector* sector, float angle);
@@ -136,7 +160,7 @@ public:
                              const csVector3 & newPos, iSector* newSector, float timedelta);
 
     virtual bool CompleteOperation(NPC *npc,EventManager *eventmgr) { completed = true; return completed; }
-    virtual bool Load(iDocumentNode *node)=0;
+    virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy()=0;
 
     float GetVelocity(NPC *npc);
@@ -156,13 +180,18 @@ public:
      */
     void CopyCheckMoveOk(ScriptOperation * source);
     
-    void AddRandomRange(csVector3& dest,float radius);
-    void SetAnimation(NPC *npc, const char *name);
+    void AddRandomRange(csVector3 &dest,float radius);
+    void SetAnimation(NPC* npc, const char *name);
 
-    const char* GetName(){ return name; };
+    virtual const char* GetName() const { return name.GetDataSafe(); };
     bool HasCompleted() { return completed; }
     void SetCompleted(bool c) { completed = c; }
-    
+
+    /**
+     * Called when the run operation return OPERATION_FAILED.
+     * Default implementation will percept with the failure perception
+     */
+    virtual void Failure(NPC* npc);
 };
 
 //---------------------------------------------------------------------------
@@ -204,7 +233,7 @@ public:
     ChaseOperation(): ScriptOperation("Chase") { target_id=(uint32_t)-1; type = NEAREST_PLAYER; searchRange=2.0; chaseRange=-1.0; ang_vel = 0; vel=0; };
     virtual ~ChaseOperation() {};
 
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual void Advance(float timedelta,NPC *npc,EventManager *eventmgr);
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
@@ -237,7 +266,7 @@ public:
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual void Advance(float timedelta,NPC *npc,EventManager *eventmgr);
     virtual void InterruptOperation(NPC *npc,EventManager *eventmgr);
     virtual bool CompleteOperation(NPC *npc,EventManager *eventmgr);
@@ -260,7 +289,7 @@ public:
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
 };
 
 //-----------------------------------------------------------------------------
@@ -278,7 +307,7 @@ public:
 
     DebugOperation(): ScriptOperation("Debug") {};
     virtual ~DebugOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 };
@@ -297,7 +326,7 @@ public:
 
     DequipOperation(): ScriptOperation("Dequip") {};
     virtual ~DequipOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 };
@@ -322,7 +351,7 @@ public:
 
     DigOperation(): ScriptOperation("Dig") {};
     virtual ~DigOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 };
@@ -342,7 +371,7 @@ public:
 
     DropOperation(): ScriptOperation("Drop") {};
     virtual ~DropOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 };
@@ -366,7 +395,7 @@ public:
 
     EatOperation(): ScriptOperation("Eat") {};
     virtual ~EatOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 };
@@ -390,7 +419,7 @@ public:
 
     EmoteOperation(): ScriptOperation("Emote") {};
     virtual ~EmoteOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 };
@@ -415,7 +444,7 @@ public:
 
     EquipOperation(): ScriptOperation("Equip") {};
     virtual ~EquipOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 };
@@ -431,7 +460,7 @@ public:
 
     InvisibleOperation(): ScriptOperation("Invisible") {};
     virtual ~InvisibleOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 };
@@ -445,9 +474,7 @@ public:
 class LocateOperation : public ScriptOperation
 {
 protected:
-    float     range;
-    csString  object;
-    bool      static_loc;
+    // Instance variables
     bool      located;
     csVector3 located_pos;
     float     located_angle;
@@ -455,27 +482,27 @@ protected:
     Waypoint* located_wp;
     float     located_radius;
 
+    // Operation parameters
+    csString  object;
+    float     range;
+    bool      static_loc;
     bool      random;
     bool      locate_invisible;
     bool      locate_invincible;
 
-    csString  failurePerception; ///< The perception to fire when failing to find the object to locate
     
 public:
-
-    LocateOperation(): ScriptOperation("Locate") { range = 0; static_loc=true; located=false; }
+    LocateOperation();
+    LocateOperation(const LocateOperation* other);
     virtual ~LocateOperation() { }
 
     /// Use -1 for located_range if range scheck sould be skipped.
     Waypoint* CalculateWaypoint(NPC *npc, csVector3 located_pos, iSector* located_sector, float located_range);
 
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 private:
-    /** Send the failure perception if set
-     */
-    void Failure(NPC* npc);
 };
 
 //-----------------------------------------------------------------------------
@@ -494,7 +521,7 @@ public:
     LoopBeginOperation(): ScriptOperation("BeginLoop") { iterations=0; }
     virtual ~LoopBeginOperation() { }
 
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 };
@@ -516,7 +543,7 @@ public:
 
     LoopEndOperation(int which,int iterations): ScriptOperation("LoopEnd") { loopback_op = which; this->iterations = iterations; current = 0;}
     virtual ~LoopEndOperation() { }
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 };
@@ -541,7 +568,7 @@ public:
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual void Advance(float timedelta,NPC *npc,EventManager *eventmgr);
     virtual void InterruptOperation(NPC *npc,EventManager *eventmgr);
     virtual bool CompleteOperation(NPC *npc,EventManager *eventmgr);
@@ -560,7 +587,7 @@ public:
 
     MemorizeOperation(): ScriptOperation("Memorize") {};
     virtual ~MemorizeOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 };
@@ -594,7 +621,7 @@ public:
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual void Advance(float timedelta,NPC *npc,EventManager *eventmgr);
     virtual void InterruptOperation(NPC *npc,EventManager *eventmgr);
     virtual bool CompleteOperation(NPC *npc,EventManager *eventmgr);
@@ -617,7 +644,7 @@ public:
     MoveToOperation(): ScriptOperation("MoveTo") { dest.Set(0,0,0); vel=0; }
     virtual ~MoveToOperation() { }
 
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual void Advance(float timedelta,NPC *npc,EventManager *eventmgr);
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
@@ -645,7 +672,7 @@ public:
     NavigateOperation(): ScriptOperation("Navigate") { vel=0; };
     virtual ~NavigateOperation() {};
 
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual void Advance(float timedelta,NPC *npc,EventManager *eventmgr);
     virtual void InterruptOperation(NPC *npc,EventManager *eventmgr);
     virtual bool Load(iDocumentNode *node);
@@ -677,7 +704,7 @@ public:
 
     PerceptOperation(): ScriptOperation("Percept") {};
     virtual ~PerceptOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 };
@@ -699,7 +726,7 @@ public:
 
     PickupOperation(): ScriptOperation("Pickup") {};
     virtual ~PickupOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 };
@@ -717,7 +744,7 @@ public:
 
     ReproduceOperation(): ScriptOperation("Reproduce") {};
     virtual ~ReproduceOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 };
@@ -735,7 +762,7 @@ public:
 
     ResurrectOperation(): ScriptOperation("Resurrect") {};
     virtual ~ResurrectOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 };
@@ -761,7 +788,7 @@ public:
 
     RewardOperation(): ScriptOperation("Reward") {};
     virtual ~RewardOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 };
@@ -812,7 +839,7 @@ public:
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual void Advance(float timedelta,NPC *npc,EventManager *eventmgr);
     virtual void InterruptOperation(NPC *npc,EventManager *eventmgr);
     virtual bool CompleteOperation(NPC *npc,EventManager *eventmgr);
@@ -836,7 +863,7 @@ protected:
         LOOP = 3  
     };
     
-    csString name;
+    csString sequenceName;
     int      cmd;    // See enum above
     int      count;  // Number of times to run the sequence
 
@@ -844,7 +871,7 @@ public:
 
     SequenceOperation(): ScriptOperation("Sequence") {};
     virtual ~SequenceOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 };
@@ -862,7 +889,7 @@ public:
 
     ShareMemoriesOperation(): ScriptOperation("ShareMemories") {};
     virtual ~ShareMemoriesOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 };
@@ -887,7 +914,7 @@ public:
 
     SitOperation(bool sit): ScriptOperation("Sit"), sit(sit) {};
     virtual ~SitOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 };
@@ -913,7 +940,7 @@ public:
 
     TalkOperation(): ScriptOperation("Talk") {};
     virtual ~TalkOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 };
@@ -931,7 +958,7 @@ public:
 
     TeleportOperation(): ScriptOperation("Teleport") {};
     virtual ~TeleportOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 };
@@ -953,7 +980,7 @@ public:
 
     TransferOperation(): ScriptOperation("Transfer") {};
     virtual ~TransferOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 };
@@ -971,7 +998,7 @@ public:
 
     TribeHomeOperation(): ScriptOperation("Tribe_Home") {};
     virtual ~TribeHomeOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 };
@@ -987,7 +1014,7 @@ public:
 
     VisibleOperation(): ScriptOperation("Visible") {};
     virtual ~VisibleOperation() {};
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 };
@@ -1013,7 +1040,7 @@ public:
     WaitOperation(): ScriptOperation("Wait") { duration=0; }
     virtual ~WaitOperation() { }
 
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual bool Load(iDocumentNode *node);
     virtual void Advance(float timedelta,NPC *npc,EventManager *eventmgr);
     virtual ScriptOperation *MakeCopy();
@@ -1086,7 +1113,7 @@ public:
     virtual ~WanderOperation();
 
     bool CalculateWaypointList(NPC *npc);
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual void Advance(float timedelta,NPC *npc,EventManager *eventmgr);
     virtual void InterruptOperation(NPC *npc,EventManager *eventmgr);
     virtual bool Load(iDocumentNode *node);
@@ -1134,7 +1161,7 @@ public:
     virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
 
-    virtual bool Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual void Advance(float timedelta,NPC *npc,EventManager *eventmgr);
     virtual void InterruptOperation(NPC *npc,EventManager *eventmgr);
     virtual bool CompleteOperation(NPC *npc,EventManager *eventmgr);

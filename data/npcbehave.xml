@@ -799,4 +799,34 @@
 
   </npctype>
 
+  <npctype name="LocateTest1" vel="$run">
+    <!-- Test some locate fetures -->
+
+    <behavior name="LocateNearestWaypointTest" decay="0" completion_decay="-1" growth="0.1" initial="80" >
+      <!--debug level="0" /-->
+      <talk text="Try to locating nearest waypoint" target="false" />
+      <locate obj="waypoint"  static="no" />
+      <navigate anim="walk" />                  <!-- Local navigation -->
+      <talk text="Found nearest waypoint" target="false" />
+      <wait anim="stand" duration="5" />
+    </behavior>
+
+    <behavior name="LocateFailureTest" decay="0" completion_decay="-1" growth="0.1" initial="0" >
+      <!--debug level="0" /-->
+      <talk text="Try to locate something that will fail" target="false" />
+      <locate obj="SomethingThatDoNotExists" failure="LocateFailed" static="no" />
+      <talk text="Error, Locate should have failed and operation stopped." target="false" />
+      <wait anim="stand" duration="5" />
+    </behavior>
+    <behavior name="LocateFailureFailed" >
+      <!--debug level="0" /-->
+      <talk text="Locate failed, what do I do?" target="false" />
+      <wait anim="stand" duration="5" />
+    </behavior>
+    <react event="LocateFailed" behavior="LocateFailureTest" only_interrupt="LocateFailureTest" absolute="0" />
+    <react event="LocateFailed" behavior="LocateFailureFailed" />
+
+  </npctype>
+
+
 </npctypes>

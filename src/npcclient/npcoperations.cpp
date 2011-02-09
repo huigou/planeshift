@@ -59,18 +59,48 @@
 //---------------------------------------------------------------------------
 
 ScriptOperation::ScriptOperation(const char* scriptName)
-    : velSource(VEL_DEFAULT),vel(0.0), ang_vel(0.0), completed(true), 
-      resumeScriptEvent(NULL), name(scriptName), 
-      interrupted_angle(0.0f),collision("collision"),
-      outOfBounds("out of bounds"),inBounds("in bounds"),
-      checkTribeHome(false),
-      consecCollisions(0)
+    : // Instance parameters
+      name(scriptName),
+      completed(true), 
+      resumeScriptEvent(NULL),
+      interrupted_sector(NULL),
+      interrupted_angle(0.0f),
+      consecCollisions(0),
+      // Shared parameters between operations
+      velSource(VEL_DEFAULT),
+      vel(0.0),
+      ang_vel(0.0),
+      collision("collision"),
+      outOfBounds("out of bounds"),
+      inBounds("in bounds"),
+      checkTribeHome(false)
+{
+}
+
+ScriptOperation::ScriptOperation(const ScriptOperation* other)
+    : // Instance parameters
+      name(other->name),
+      completed(true), 
+      resumeScriptEvent(NULL),
+      interrupted_sector(NULL),
+      interrupted_angle(0.0f),
+      consecCollisions(0),
+      // Shared parameters between operations
+      failurePerception(other->failurePerception),
+      velSource(other->velSource),
+      vel(other->vel),
+      ang_vel(other->ang_vel),
+      collision(other->collision),
+      outOfBounds(other->outOfBounds),
+      inBounds(other->inBounds),
+      checkTribeHome(other->checkTribeHome)
 {
 }
 
 float ScriptOperation::GetVelocity(NPC *npc)
 {
-    switch (velSource){
+    switch (velSource)
+    {
     case VEL_DEFAULT:
         return npc->GetVelocity();
     case VEL_USER:
@@ -144,6 +174,12 @@ void ScriptOperation::CopyCheckMoveOk(ScriptOperation * source)
     checkTribeHome = source->checkTribeHome;
 }
 
+bool ScriptOperation::Load(iDocumentNode *node)
+{
+    failurePerception = node->GetAttributeValue("failure");
+
+    return true;
+}
 
 void ScriptOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr) 
 {
@@ -302,7 +338,7 @@ bool ScriptOperation::CheckMoveOk(NPC *npc, EventManager *eventmgr, csVector3 ol
         
     }
 
-    return true;
+    return OPERATION_COMPLETED;
 }
 
 void ScriptOperation::Resume(csTicks delay, NPC *npc, EventManager *eventmgr)
@@ -476,6 +512,20 @@ void ScriptOperation::SetAnimation(NPC * npc, const char*name)
     //npc->GetActor()->pcmesh->SetAnimation(name, false);
 }
 
+void ScriptOperation::Failure(NPC* npc)
+{
+    if (!failurePerception.IsEmpty())
+    {
+        npc->Printf(5,"Operation failed tigger failure perception: %s",failurePerception.GetData());
+        Perception perception(failurePerception);
+        npc->TriggerEvent(&perception);
+    }
+    else
+    {
+        npc->Printf(5,"Operation failed, no failure perception");
+    }
+}
+
 //---------------------------------------------------------------------------
 //         Following section contain specefix NPC operations.
 //         Ordered alphabeticaly
@@ -567,7 +617,7 @@ ScriptOperation *ChaseOperation::MakeCopy()
 
 
 
-bool ChaseOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult ChaseOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     float targetRot;
     iSector* targetSector;
@@ -580,7 +630,6 @@ bool ChaseOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     float angle;
 
     csVector3 dest;
-    csString name;
 
     gemNPCObject *entity = NULL;
     target_id = EID(0);
@@ -594,7 +643,7 @@ bool ChaseOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
             target_id = entity->GetEID();
 
             npc->Printf(6, "Targeting nearest player (%s) at (%1.2f,%1.2f,%1.2f) range %.2f for chase ...",
-                        (const char *)name, dest.x, dest.y, dest.z, targetRange);
+                        entity->GetName(), dest.x, dest.y, dest.z, targetRange);
         }
         break;
     case NEAREST_ACTOR:
@@ -604,7 +653,7 @@ bool ChaseOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
             target_id = entity->GetEID();
 
             npc->Printf(6, "Targeting nearest actor (%s) at (%1.2f,%1.2f,%1.2f) range %.2f for chase ...",
-                        (const char *)name, dest.x, dest.y, dest.z, targetRange);
+                        entity->GetName(), dest.x, dest.y, dest.z, targetRange);
         }
         break;
     case OWNER:
@@ -644,7 +693,7 @@ bool ChaseOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     if (!target_id.IsValid() || !entity)
     {
         npc->Printf(5, "No one found to chase!");
-        return true;  // This operation is complete
+        return OPERATION_COMPLETED;  // This operation is complete
     }
 
     psGameObject::GetPosition(npc->GetActor(),myPos, myRot, mySector);
@@ -662,21 +711,21 @@ bool ChaseOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     {
         // failed to find a path between us and the target
         npc->Printf(5, "Failed to find a path to the enemy!");
-        return true;  // This operation is complete
+        return OPERATION_COMPLETED;  // This operation is complete
     }
     else if ( path->GetDistance() < 0.5 )  // Distance allready adjusted for offset
     {
         npc->Printf(5, "We are done..");
-        return true; // This operation is complete
+        return OPERATION_COMPLETED; // This operation is complete
     }
     else if ( GetAngularVelocity(npc) > 0 || GetVelocity(npc) > 0 )
     {
         iMapNode* dest = path->Next();
         StartMoveTo(npc, eventmgr, dest->GetPosition(), dest->GetSector(), GetVelocity(npc), action, false, angle);
-        return false; // This behavior isn't done yet
+        return OPERATION_NOT_COMPLETED; // This behavior isn't done yet
     }
 
-    return true; // This operation is complete
+    return OPERATION_COMPLETED; // This operation is complete
 }
 
 void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
@@ -929,7 +978,7 @@ ScriptOperation *CircleOperation::MakeCopy()
     return op;
 }
 
-bool CircleOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult CircleOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     // Calculate parameters not given
     if (angle == 0)
@@ -975,7 +1024,7 @@ ScriptOperation *DebugOperation::MakeCopy()
     return op;
 }
 
-bool DebugOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult DebugOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     if (exclusive.Length())
     {
@@ -984,7 +1033,7 @@ bool DebugOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         if (level && debug_exclusive)
         {
             // Can't turn on when exclusive is set.
-            return true; // Nothing more to do for this op.
+            return OPERATION_COMPLETED; // Nothing more to do for this op.
         }
         if (level)
         {
@@ -1009,7 +1058,7 @@ bool DebugOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         npc->Printf(1, "DebugOp Set debug %d",level);            
     }
 
-    return true;  // Nothing more to do for this op.
+    return OPERATION_COMPLETED;  // Nothing more to do for this op.
 }
 
 //---------------------------------------------------------------------------
@@ -1034,14 +1083,14 @@ ScriptOperation *DequipOperation::MakeCopy()
     return op;
 }
 
-bool DequipOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult DequipOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     npc->Printf(5, "   Who: %s Where: %s",
                 npc->GetName(), slot.GetData());
 
     npcclient->GetNetworkMgr()->QueueDequipCommand(npc->GetActor(), slot );
 
-    return true; // Nothing more to do for this op.
+    return OPERATION_COMPLETED; // Nothing more to do for this op.
 }
 
 //---------------------------------------------------------------------------
@@ -1067,7 +1116,7 @@ ScriptOperation *DigOperation::MakeCopy()
     return op;
 }
 
-bool DigOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult DigOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     if (resource == "tribe:wealth")
     {
@@ -1082,7 +1131,7 @@ bool DigOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     }
     
 
-    return true; // Nothing more to do for this op.
+    return OPERATION_COMPLETED; // Nothing more to do for this op.
 }
 
 //---------------------------------------------------------------------------
@@ -1106,11 +1155,11 @@ ScriptOperation *DropOperation::MakeCopy()
     return op;
 }
 
-bool DropOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult DropOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     npcclient->GetNetworkMgr()->QueueDropCommand(npc->GetActor(), slot );
 
-    return true; // Nothing more to do for this op.
+    return OPERATION_COMPLETED; // Nothing more to do for this op.
 }
 
 //---------------------------------------------------------------------------
@@ -1129,7 +1178,7 @@ ScriptOperation *EatOperation::MakeCopy()
     return op;
 }
 
-bool EatOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult EatOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     csString res = resource;
     
@@ -1151,7 +1200,7 @@ bool EatOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         }
     }
 
-    return true; // Nothing more to do for this op.
+    return OPERATION_COMPLETED; // Nothing more to do for this op.
 }
 
 //---------------------------------------------------------------------------
@@ -1174,13 +1223,13 @@ ScriptOperation *EmoteOperation::MakeCopy()
     return op;
 }
 
-bool EmoteOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult EmoteOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     npc->Printf(5, "   Who: %s Emote: %s", npc->GetName(), cmd.GetData());
 
     npcclient->GetNetworkMgr()->QueueEmoteCommand(npc->GetActor(), npc->GetTarget(), cmd);
 
-    return true;
+    return OPERATION_COMPLETED;
 }
 
 //---------------------------------------------------------------------------
@@ -1213,14 +1262,14 @@ ScriptOperation *EquipOperation::MakeCopy()
     return op;
 }
 
-bool EquipOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult EquipOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     npc->Printf(5, "   Who: %s What: %s Where: %s Count: %d",
                 npc->GetName(),item.GetData(), slot.GetData(), count);
 
     npcclient->GetNetworkMgr()->QueueEquipCommand(npc->GetActor(), item, slot, count);
 
-    return true;
+    return OPERATION_COMPLETED;
 }
 
 //---------------------------------------------------------------------------
@@ -1236,16 +1285,45 @@ ScriptOperation *InvisibleOperation::MakeCopy()
     return op;
 }
 
-bool InvisibleOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult InvisibleOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     npcclient->GetNetworkMgr()->QueueVisibilityCommand(npc->GetActor(), false);
-    return true; // Nothing more to do for this op.
+    return OPERATION_COMPLETED; // Nothing more to do for this op.
 }
 
 //---------------------------------------------------------------------------
 
+LocateOperation::LocateOperation()
+    : ScriptOperation("Locate"),
+      // Instance variables
+      located(false)
+      // Operation parameters
+      // Initialized in the load function
+{
+}
+
+LocateOperation::LocateOperation(const LocateOperation* other)
+    : ScriptOperation(other),
+      // Instance variables
+      located(false),
+      // Operation parameters
+      object(other->object),
+      range(other->range),
+      static_loc(other->static_loc),
+      random(other->random),
+      locate_invisible(other->locate_invisible),
+      locate_invincible(other->locate_invincible)
+{
+}
+
 bool LocateOperation::Load(iDocumentNode *node)
 {
+    // Load common stuff from script operation
+    if (!ScriptOperation::Load(node))
+    {
+        Error1("Locate operation failed to load common script operation parameters");
+        return false;
+    }
 
     object = node->GetAttributeValue("obj");
     if (object.IsEmpty())
@@ -1266,8 +1344,6 @@ bool LocateOperation::Load(iDocumentNode *node)
     random = node->GetAttributeValueAsBool("random",false);
     locate_invisible = node->GetAttributeValueAsBool("invisible",false);
     locate_invincible = node->GetAttributeValueAsBool("invincible",false);
-
-    failurePerception = node->GetAttributeValue("failure");
 
     // Some more validation checks on obj.
     csArray<csString> split_obj = psSplit(object,':');   
@@ -1370,15 +1446,7 @@ bool LocateOperation::Load(iDocumentNode *node)
 
 ScriptOperation *LocateOperation::MakeCopy()
 {
-    LocateOperation *op = new LocateOperation;
-    op->range  = range;
-    op->object = object;
-    op->static_loc = static_loc;
-    op->random = random;
-    op->locate_invisible = locate_invisible;
-    op->locate_invincible = locate_invincible;
-    op->failurePerception = failurePerception;
-
+    LocateOperation *op = new LocateOperation( this );
     return op;
 }
 
@@ -1421,7 +1489,7 @@ void ReplaceVariables(csString & object,NPC *npc)
 }
 
 
-bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     // Reset old target
     npc->SetTarget(NULL);
@@ -1447,13 +1515,11 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 
         if (!npc->GetLastPerception())
         {
-            Failure(npc);
-            return true;  // Nothing more to do for this op.
+            return OPERATION_FAILED;  // Nothing more to do for this op.
         }
         if (!npc->GetLastPerception()->GetLocation(located_pos,located_sector))
         {
-            Failure(npc);
-            return true;  // Nothing more to do for this op.
+            return OPERATION_FAILED;  // Nothing more to do for this op.
         }
         located_angle = 0; // not used in perceptions
     }
@@ -1470,8 +1536,7 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         }
         else
         {
-            Failure(npc);
-            return true;  // Nothing more to do for this op.
+            return OPERATION_FAILED;  // Nothing more to do for this op.
         }
 
         float rot;
@@ -1489,9 +1554,7 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 
         if (!npc->GetTribe())
         {
-            npc->Printf(5,"Not part of a tribe");
-            Failure(npc);
-            return true; //  Nothing more to do for this op.
+            return OPERATION_FAILED; //  Nothing more to do for this op.
         }
 
         // Since we don't have a current enemy targeted, find one!
@@ -1503,8 +1566,7 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         }
         else
         {
-            Failure(npc);
-            return true;  // Nothing more to do for this op.
+            return OPERATION_FAILED;  // Nothing more to do for this op.
         }
 
         float rot;
@@ -1531,8 +1593,7 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         else
         {
             npc->Printf("Failed to find owner");
-            Failure(npc);
-            return true; // Nothing more to do for this op.
+            return OPERATION_FAILED; // Nothing more to do for this op.
         }
 
         float rot;
@@ -1551,8 +1612,7 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         if (!region)
         {
             npc->Printf("Failed to locate region");
-            Failure(npc);
-            return true; // Nothing more to do for this op.
+            return OPERATION_FAILED; // Nothing more to do for this op.
         }
 
         iSector *sector = NULL;
@@ -1582,8 +1642,7 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         }
         else
         {
-            Failure(npc);
-            return true; // Nothing more to do for this op.
+            return OPERATION_FAILED; // Nothing more to do for this op.
         }
 
         float rot;
@@ -1601,8 +1660,7 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 
         if (!npc->GetTribe())
         {
-            Failure(npc);
-            return true; // Nothing more to do for this op.
+            return OPERATION_FAILED; // Nothing more to do for this op.
         }
 
         if (split_obj[1] == "home")
@@ -1636,8 +1694,7 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
             {
                 npc->Printf(5, "Couldn't locate any <%s> in npc script for <%s>.",
                             (const char *)object,npc->GetName() );
-                Failure(npc);
-                return true; // Nothing more to do for this op.
+                return OPERATION_FAILED; // Nothing more to do for this op.
             }
             located_pos = memory->pos;
             located_sector = memory->sector;
@@ -1664,8 +1721,7 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         }
         else
         {
-            Failure(npc);
-            return true; // Nothing more to do for this op.
+            return OPERATION_FAILED; // Nothing more to do for this op.
         }
 
         float rot;
@@ -1717,8 +1773,7 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         {
             npc->Printf(5, "Couldn't locate any <%s> in npc script for <%s>.",
                 (const char *)object,npc->GetName() );
-            Failure(npc);
-            return true; // Nothing more to do for this op.
+            return OPERATION_FAILED; // Nothing more to do for this op.
         }
         npc->Printf(5, "Located waypoint: %s at %s range %.2f",located_wp->GetName(),
                     toString(located_wp->loc.pos,located_wp->loc.GetSector(npcclient->GetEngine())).GetData(),located_range);
@@ -1753,8 +1808,7 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         {
             npc->Printf(5, "Couldn't locate any <%s> in npc script for <%s>.",
                 (const char *)object,npc->GetName() );
-            Failure(npc);
-            return true; // Nothing more to do for this op.
+            return OPERATION_FAILED; // Nothing more to do for this op.
         }
         located_pos = location->pos;
         located_angle = location->rot_angle;
@@ -1782,19 +1836,8 @@ bool LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
                 toString(located_pos,located_sector).GetData(),located_angle,
                 (located_wp?located_wp->GetName():"(NULL)"));
 
-    return true; // Nothing more to do for this op.
+    return OPERATION_COMPLETED; // Nothing more to do for this op.
 }
-
-void LocateOperation::Failure(NPC* npc)
-{
-    npc->Printf(5,"Failed to locate object");
-    if (!failurePerception.IsEmpty())
-    {
-        Perception failure(failurePerception);
-        npc->TriggerEvent(&failure);
-    }
-}
-
 
 //---------------------------------------------------------------------------
 
@@ -1811,9 +1854,9 @@ ScriptOperation *LoopBeginOperation::MakeCopy()
     return op;
 }
 
-bool LoopBeginOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult LoopBeginOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
-    return true;
+    return OPERATION_COMPLETED;
 }
 
 //---------------------------------------------------------------------------
@@ -1829,7 +1872,7 @@ ScriptOperation *LoopEndOperation::MakeCopy()
     return op;
 }
 
-bool LoopEndOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult LoopEndOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     Behavior * behavior = npc->GetCurrentBehavior();
 
@@ -1839,13 +1882,13 @@ bool LoopEndOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     {
         behavior->SetCurrentStep(loopback_op-1);
         npc->Printf(5, "LoopEnd - Loop %d of %d",current,iterations);
-        return true;
+        return OPERATION_COMPLETED;
     }
 
     current = 0; // Make sure we will loop next time to
 
     npc->Printf(5, "LoopEnd - Exit %d %d",current,iterations);
-    return true;
+    return OPERATION_COMPLETED;
 }
 
 //---------------------------------------------------------------------------
@@ -1891,7 +1934,7 @@ ScriptOperation *MeleeOperation::MakeCopy()
     return op;
 }
 
-bool MeleeOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult MeleeOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     npc->Printf(5, "MeleeOperation starting with meele range %.2f seek range %.2f will attack:%s%s.",
                 melee_range, seek_range,(attack_invisible?" Invisible":" Visible"),
@@ -1910,7 +1953,7 @@ bool MeleeOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         npc->SetTarget( npc->GetLastPerception()->GetTarget() );
     }
 
-    return false; // This behavior isn't done yet
+    return OPERATION_NOT_COMPLETED; // This behavior isn't done yet
 }
 
 void MeleeOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
@@ -2008,7 +2051,7 @@ bool MeleeOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
 
     completed = true;
 
-    return true;
+    return OPERATION_COMPLETED;
 }
 
 //---------------------------------------------------------------------------
@@ -2024,24 +2067,24 @@ ScriptOperation *MemorizeOperation::MakeCopy()
     return op;
 }
 
-bool MemorizeOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult MemorizeOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     Perception * percept = npc->GetLastPerception();
     if (!percept)
     {
         npc->Printf(5, ">>> Memorize No Perception.");
-        return true; // Nothing more to do for this op.
+        return OPERATION_COMPLETED; // Nothing more to do for this op.
     }
     
     npc->Printf(5, ">>> Memorize '%s' '%s'.",percept->GetType(),percept->GetName());
 
     Tribe * tribe = npc->GetTribe();
     
-    if ( !tribe ) return true; // Nothing more to do for this op.
+    if ( !tribe ) return OPERATION_COMPLETED; // Nothing more to do for this op.
 
     tribe->Memorize(npc, percept );
 
-    return true; // Nothing more to do for this op.
+    return OPERATION_COMPLETED; // Nothing more to do for this op.
 }
 
 //---------------------------------------------------------------------------
@@ -2074,7 +2117,7 @@ ScriptOperation *MoveOperation::MakeCopy()
     return op;
 }
 
-bool MoveOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult MoveOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     // Get Going at the right velocity
     csVector3 velvec(0,0,-GetVelocity(npc) );
@@ -2101,7 +2144,7 @@ bool MoveOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         Resume((int)(remaining*1000.0),npc,eventmgr);
     }
 
-    return false;
+    return OPERATION_NOT_COMPLETED;
 }
 
 void MoveOperation::InterruptOperation(NPC *npc,EventManager *eventmgr)
@@ -2189,7 +2232,7 @@ ScriptOperation *MovePathOperation::MakeCopy()
     return op;
 }
 
-bool MovePathOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult MovePathOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     if (!path)
     {
@@ -2199,7 +2242,7 @@ bool MovePathOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     if (!path)
     {
         Error2("Could not find path '%s'",pathname.GetDataSafe());
-        return true;  // Nothing more to do for this op.
+        return OPERATION_COMPLETED;  // Nothing more to do for this op.
     }
 
     anchor = path->CreatePathAnchor();
@@ -2211,7 +2254,7 @@ bool MovePathOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 
     npcclient->GetNetworkMgr()->QueueDRData(npc);
 
-    return false;
+    return OPERATION_NOT_COMPLETED;
 }
 
 void MovePathOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
@@ -2280,7 +2323,7 @@ bool MovePathOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
 
     completed = true;
 
-    return true; // Script can keep going
+    return OPERATION_COMPLETED; // Script can keep going
 }
 
 //---------------------------------------------------------------------------
@@ -2307,7 +2350,7 @@ ScriptOperation *MoveToOperation::MakeCopy()
     return op;
 }
 
-bool MoveToOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult MoveToOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     npc->Printf(5,"MoveToOp Start dest=(%1.2f,%1.2f,%1.2f) at %1.2f m/sec.",
                 dest.x,dest.y,dest.z,GetVelocity(npc));
@@ -2325,7 +2368,7 @@ bool MoveToOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     // Using "true" teleports to dest location after proper time has 
     // elapsed and is therefore more tolerant of CD errors.
     StartMoveTo(npc, eventmgr, localDest, sector,vel,action, true,rot); 
-    return false;
+    return OPERATION_NOT_COMPLETED;
 }
 
 void MoveToOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
@@ -2399,7 +2442,7 @@ bool MoveToOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
                 dest.x,dest.y,dest.z);
     completed = true;
 
-    return true;  // Script can keep going
+    return OPERATION_COMPLETED;  // Script can keep going
 }
 
 //---------------------------------------------------------------------------
@@ -2428,7 +2471,7 @@ ScriptOperation *NavigateOperation::MakeCopy()
     return op;
 }
 
-bool NavigateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult NavigateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     float rot=0;
 
@@ -2438,7 +2481,7 @@ bool NavigateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     // Start the move and calculate the endAngle value
     StartMoveTo(npc,eventmgr,endPos,endSector,GetVelocity(npc),action,true,endAngle);
 
-    return false; // This behavior isn't done yet
+    return OPERATION_NOT_COMPLETED; // This behavior isn't done yet
 }
 
 void NavigateOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr) 
@@ -2535,7 +2578,7 @@ ScriptOperation *PerceptOperation::MakeCopy()
     return op;
 }
 
-bool PerceptOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult PerceptOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     Perception pcpt(perception);
 
@@ -2553,7 +2596,7 @@ bool PerceptOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         if (maxRange >= 0.0)
         {
             npc->Printf(1,"Perception not sent based on range since no known position");
-            return true; // Nothing more to do for this op.
+            return OPERATION_COMPLETED; // Nothing more to do for this op.
         }
         
     }
@@ -2569,7 +2612,7 @@ bool PerceptOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         if (!tribe)
         {
             npc->Printf("No tribe to percept");
-            return true; // Nothing more to do for this op.
+            return OPERATION_COMPLETED; // Nothing more to do for this op.
         }
         
         tribe->TriggerEvent(&pcpt, maxRange, &basePos, baseSector);
@@ -2583,7 +2626,7 @@ bool PerceptOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         if (!npc->GetTarget())
         {
             npc->Printf(1,"Failed to percept since no target");
-            return true; // Nothing more to do for this op.
+            return OPERATION_COMPLETED; // Nothing more to do for this op.
         }
         
         NPC *targetNPC = npc->GetTarget()->GetNPC();
@@ -2601,7 +2644,7 @@ bool PerceptOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         Error1("Unkown target type for Percept operation");
     }
 
-    return true;  // Nothing more to do for this op.
+    return OPERATION_COMPLETED;  // Nothing more to do for this op.
 }
 
 //---------------------------------------------------------------------------
@@ -2628,7 +2671,7 @@ ScriptOperation *PickupOperation::MakeCopy()
     return op;
 }
 
-bool PickupOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult PickupOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     gemNPCObject *item = NULL;
 
@@ -2637,20 +2680,20 @@ bool PickupOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         if (!npc->GetLastPerception())
         {
             npc->Printf(5,"Pickup operation. No perception for NPC");
-            return true;  // Nothing more to do for this op.
+            return OPERATION_COMPLETED;  // Nothing more to do for this op.
         }
         
         if (!(item = npc->GetLastPerception()->GetTarget()))
         {
             npc->Printf(5,"Pickup operation. No target in perception for NPC.");
-            return true;  // Nothing more to do for this op.
+            return OPERATION_COMPLETED;  // Nothing more to do for this op.
         }
         
         if (!item->IsPickable())
         {
             npc->Printf(1,"Pickup operation failed since object %s isn't pickable",
                         item->GetName());
-            return true;  // Nothing more to do for this op.
+            return OPERATION_COMPLETED;  // Nothing more to do for this op.
         }
         
         
@@ -2658,14 +2701,14 @@ bool PickupOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     {
         // TODO: Insert code to find the nearest item
         //       with name given by object.
-        return true;  // Nothing more to do for this op.
+        return OPERATION_FAILED;  // Nothing more to do for this op.
     }
 
     npc->Printf(5, "   Who: %s What: %s Count: %d",npc->GetName(),item->GetName(), count);
 
     npcclient->GetNetworkMgr()->QueuePickupCommand(npc->GetActor(), item, count);
 
-    return true;  // Nothing more to do for this op.
+    return OPERATION_COMPLETED;  // Nothing more to do for this op.
 }
 
 //---------------------------------------------------------------------------
@@ -2681,10 +2724,10 @@ ScriptOperation *ReproduceOperation::MakeCopy()
     return op;
 }
 
-bool ReproduceOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult ReproduceOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     if(!npc->GetTarget())
-        return true;  // Nothing more to do for this op.
+        return OPERATION_COMPLETED;  // Nothing more to do for this op.
 
     NPC * friendNPC = npc->GetTarget()->GetNPC();
     if(friendNPC)
@@ -2693,7 +2736,7 @@ bool ReproduceOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         npcclient->GetNetworkMgr()->QueueSpawnCommand(friendNPC->GetActor(), npc->GetActor(), 0);
     }
 
-    return true;  // Nothing more to do for this op.
+    return OPERATION_COMPLETED;  // Nothing more to do for this op.
 }
 
 //---------------------------------------------------------------------------
@@ -2709,11 +2752,11 @@ ScriptOperation *ResurrectOperation::MakeCopy()
     return op;
 }
 
-bool ResurrectOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult ResurrectOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     Tribe * tribe = npc->GetTribe();
     
-    if ( !tribe ) return true;  // Nothing more to do for this op.
+    if ( !tribe ) return OPERATION_COMPLETED;  // Nothing more to do for this op.
 
     csVector3 where;
     float     radius;
@@ -2737,7 +2780,7 @@ bool ResurrectOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 
     npcclient->GetNetworkMgr()->QueueResurrectCommand(where, rot, sector, npc->GetPID());
 
-    return true;  // Nothing more to do for this op.
+    return OPERATION_COMPLETED;  // Nothing more to do for this op.
 }
 
 //---------------------------------------------------------------------------
@@ -2771,7 +2814,7 @@ ScriptOperation *RewardOperation::MakeCopy()
     return op;
 }
 
-bool RewardOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult RewardOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     csString res = resource;
     
@@ -2788,7 +2831,7 @@ bool RewardOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         npc->GetTribe()->AddResource(res,count);
     }
 
-    return true;  // Nothing more to do for this op.
+    return OPERATION_COMPLETED;  // Nothing more to do for this op.
 }
 
 //---------------------------------------------------------------------------
@@ -2864,7 +2907,7 @@ ScriptOperation *RotateOperation::MakeCopy()
     return op;
 }
 
-bool RotateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult RotateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     float rot;
     csVector3 pos;
@@ -2960,7 +3003,7 @@ bool RotateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         if(pos == dest && sector == dest_sector && rot == dest_rot)
         {
             npc->Printf(5,"At located destination, end rotation.");
-            return true;  // Nothing more to do for this op.
+            return OPERATION_COMPLETED;  // Nothing more to do for this op.
         }
         
         target_angle = psGameObject::CalculateIncidentAngle(pos,dest);
@@ -2971,7 +3014,7 @@ bool RotateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         if (fabs(angle_delta) < TWO_PI/60.0)
         {
             npc->Printf(5, "Rotation at destination angle. Ending rotation.");
-            return true;  // Nothing more to do for this op.
+            return OPERATION_COMPLETED;  // Nothing more to do for this op.
         }
     }
     else if (op_type == ROT_ABSOLUTE)
@@ -2990,7 +3033,7 @@ bool RotateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     else
     {
         Error1("ERROR: No known rotation type defined");
-        return true;  // Nothing more to do for this op.
+        return OPERATION_COMPLETED;  // Nothing more to do for this op.
     }
 
     psGameObject::NormalizeRadians(angle_delta); // -PI to PI
@@ -3009,7 +3052,7 @@ bool RotateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     npc->Printf(5,"Rotating %1.2f deg from %1.2f to %1.2f at %1.2f deg/sec in %.3f sec.",
                 angle_delta*180/PI,rot*180.0f/PI,target_angle*180.0f/PI,ang_vel*180.0f/PI,msec/1000.0f);
 
-    return false;
+    return OPERATION_NOT_COMPLETED;
 }
 
 void RotateOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr) 
@@ -3125,7 +3168,7 @@ bool RotateOperation::CompleteOperation(NPC *npc, EventManager *eventmgr)
 
 bool SequenceOperation::Load(iDocumentNode *node)
 {
-    name = node->GetAttributeValue("name");
+    sequenceName = node->GetAttributeValue("name");
     if (name.IsEmpty())
     {
         Error1("Sequence operation must have a name attribute");
@@ -3160,17 +3203,17 @@ bool SequenceOperation::Load(iDocumentNode *node)
 ScriptOperation *SequenceOperation::MakeCopy()
 {
     SequenceOperation *op = new SequenceOperation;
-    op->name = name;
+    op->sequenceName = sequenceName;
     op->cmd = cmd;
     op->count = count;
     return op;
 }
 
-bool SequenceOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult SequenceOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
 
-    npcclient->GetNetworkMgr()->QueueSequenceCommand(name, cmd, count );
-    return true; // Nothing more to do for this op.
+    npcclient->GetNetworkMgr()->QueueSequenceCommand(sequenceName, cmd, count );
+    return OPERATION_COMPLETED; // Nothing more to do for this op.
 }
 
 //---------------------------------------------------------------------------
@@ -3186,17 +3229,17 @@ ScriptOperation *ShareMemoriesOperation::MakeCopy()
     return op;
 }
 
-bool ShareMemoriesOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult ShareMemoriesOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
 
     npc->Printf("ShareMemories with tribe.");
 
     Tribe * tribe = npc->GetTribe();
-    if ( !tribe ) return true; // Nothing more to do for this op.
+    if ( !tribe ) return OPERATION_COMPLETED; // Nothing more to do for this op.
 
     tribe->ShareMemories( npc );
 
-    return true; // Nothing more to do for this op.
+    return OPERATION_COMPLETED; // Nothing more to do for this op.
 }
 
 //---------------------------------------------------------------------------
@@ -3212,13 +3255,13 @@ ScriptOperation *SitOperation::MakeCopy()
     return op;
 }
 
-bool SitOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult SitOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     npc->Printf(5, "   Who: %s %s", npc->GetName(), sit?"sit":"stand" );
 
     npcclient->GetNetworkMgr()->QueueSitCommand(npc->GetActor(), npc->GetTarget(), sit);
 
-    return true;
+    return OPERATION_COMPLETED;
 }
 
 //---------------------------------------------------------------------------
@@ -3262,7 +3305,7 @@ ScriptOperation *TalkOperation::MakeCopy()
     return op;
 }
 
-bool TalkOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult TalkOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     gemNPCActor* talkTarget = NULL;
 
@@ -3274,7 +3317,7 @@ bool TalkOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         if (!talkTarget)
         {
             npc->Printf(1,"No target for talk operation.");
-            return true;  // Nothing more to do for this op.
+            return OPERATION_COMPLETED;  // Nothing more to do for this op.
         }
     }
             
@@ -3292,7 +3335,7 @@ bool TalkOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         }
     }
 
-    return true;  // Nothing more to do for this op.
+    return OPERATION_COMPLETED;  // Nothing more to do for this op.
 }
 
 //---------------------------------------------------------------------------
@@ -3308,14 +3351,14 @@ ScriptOperation *TeleportOperation::MakeCopy()
     return op;
 }
 
-bool TeleportOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult TeleportOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     gemNPCActor* actor = npc->GetActor();
     
     if (!actor)
     {
         npc->Printf(1,"No actor for telport operation.");
-        return true;  // Nothing more to do for this op.
+        return OPERATION_COMPLETED;  // Nothing more to do for this op.
     }
     
     csVector3 pos;
@@ -3327,7 +3370,7 @@ bool TeleportOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 
     psGameObject::SetPosition(npc->GetActor(), pos, sector);
 
-    return true;  // Nothing more to do for this op.
+    return OPERATION_COMPLETED;  // Nothing more to do for this op.
 }
 
 //---------------------------------------------------------------------------
@@ -3353,7 +3396,7 @@ ScriptOperation *TransferOperation::MakeCopy()
     return op;
 }
 
-bool TransferOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult TransferOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     csString transferItem = item;
 
@@ -3363,7 +3406,7 @@ bool TransferOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         if (!npc->GetTribe())
         {
             npc->Printf(5, "No tribe");
-            return true; // Nothing more to do for this op. 
+            return OPERATION_COMPLETED; // Nothing more to do for this op. 
         }
         
         if (splitItem[1] == "wealth")
@@ -3373,14 +3416,14 @@ bool TransferOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         else
         {
             Error2("Transfer operation for tribe with unknown sub type %s",splitItem[1].GetDataSafe())
-            return true; // Nothing more to do for this op.
+            return OPERATION_COMPLETED; // Nothing more to do for this op.
         }
         
     }
     
     npcclient->GetNetworkMgr()->QueueTransferCommand(npc->GetActor(), transferItem, count, target );
 
-    return true; // Nothing more to do for this op.
+    return OPERATION_COMPLETED; // Nothing more to do for this op.
 }
 //---------------------------------------------------------------------------
 
@@ -3395,11 +3438,11 @@ ScriptOperation *TribeHomeOperation::MakeCopy()
     return op;
 }
 
-bool TribeHomeOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult TribeHomeOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     Tribe * tribe = npc->GetTribe();
     
-    if ( !tribe ) return true; // Nothing more to do for this op.
+    if ( !tribe ) return OPERATION_COMPLETED; // Nothing more to do for this op.
 
     csVector3 pos;
     iSector*  sector;
@@ -3416,7 +3459,7 @@ bool TribeHomeOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     Perception move("tribe:home moved");
     tribe->TriggerEvent(&move);
 
-    return true; // Nothing more to do for this op.
+    return OPERATION_COMPLETED; // Nothing more to do for this op.
 }
 
 //---------------------------------------------------------------------------
@@ -3432,10 +3475,10 @@ ScriptOperation *VisibleOperation::MakeCopy()
     return op;
 }
 
-bool VisibleOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult VisibleOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     npcclient->GetNetworkMgr()->QueueVisibilityCommand(npc->GetActor(), true);
-    return true;  // Nothing more to do for this op.
+    return OPERATION_COMPLETED;  // Nothing more to do for this op.
 }
 
 //---------------------------------------------------------------------------
@@ -3455,7 +3498,7 @@ ScriptOperation *WaitOperation::MakeCopy()
     return op;
 }
 
-bool WaitOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult WaitOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     if (!interrupted)
     {
@@ -3468,7 +3511,7 @@ bool WaitOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     //now persist
     npcclient->GetNetworkMgr()->QueueDRData(npc);
 
-    return false;
+    return OPERATION_NOT_COMPLETED;
 }
 
 void WaitOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
@@ -3776,7 +3819,7 @@ bool WanderOperation::StartMoveToWaypoint(NPC *npc, EventManager *eventmgr)
     return true;
 }
 
-bool WanderOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult WanderOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     if (interrupted && AtInterruptedPosition(npc))
     {
@@ -3785,7 +3828,7 @@ bool WanderOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         // Restart current behavior
         StartMoveTo(npc,eventmgr,dest,dest_sector,GetVelocity(npc),action, true, angle);
 
-        return false; // This behavior isn't done yet
+        return OPERATION_NOT_COMPLETED; // This behavior isn't done yet
     }
     // If interruped and not at interruped position we do the same
     // as we do when started.
@@ -3797,14 +3840,14 @@ bool WanderOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     if (!CalculateWaypointList(npc))
     {
         npc->Printf(5, ">>>WanderOp no list to wander");
-        return true; // Nothing more to do for this op.
+        return OPERATION_COMPLETED; // Nothing more to do for this op.
     }
     
 
     if (!FindNextWaypoint(npc))
     {
         npc->Printf(5, ">>>WanderOp NO waypoints, %s cannot move.",npc->GetName());
-        return true; // Nothing more to do for this op.
+        return OPERATION_COMPLETED; // Nothing more to do for this op.
     }
 
     // Turn off CD and hug the ground
@@ -3814,10 +3857,10 @@ bool WanderOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 
     if (StartMoveToWaypoint(npc, eventmgr))
     {
-        return false; // This behavior isn't done yet
+        return OPERATION_NOT_COMPLETED; // This behavior isn't done yet
     }
     
-    return true; // This behavior is done
+    return OPERATION_COMPLETED; // This behavior is done
 }
 
 void WanderOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
@@ -3921,7 +3964,7 @@ bool WanderOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
 
     completed = true;
 
-    return true; // Script can keep going, no more waypoints.
+    return OPERATION_COMPLETED; // Script can keep going, no more waypoints.
 }
 
 bool LoadAttributeBool(iDocumentNode *node, const char * attribute, bool defaultValue, bool * valid = NULL)
@@ -4065,7 +4108,7 @@ ScriptOperation *WatchOperation::MakeCopy()
     return op;
 }
 
-bool WatchOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult WatchOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     npc->Printf(5, "WatchOperation starting with watch range (%.2f) will watch:%s%s.",
                 watchRange,(watchInvisible?" Invisible":" Visible"),
@@ -4132,7 +4175,7 @@ bool WatchOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
     if (!watchedEnt)
     {
         npc->Printf(5,"No entity to watch");
-        return true; // Nothing to do for this behaviour.
+        return OPERATION_COMPLETED; // Nothing to do for this behaviour.
     }
     
     npc->SetTarget( watchedEnt );
@@ -4145,11 +4188,11 @@ bool WatchOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
         str.Append(" out of range");
         Perception range(str);
         npc->TriggerEvent(&range, eventmgr);
-        return true; // Nothing to do for this behavior.
+        return OPERATION_COMPLETED; // Nothing to do for this behavior.
     }
     */
     
-    return false; // This behavior isn't done yet
+    return OPERATION_NOT_COMPLETED; // This behavior isn't done yet
 }
 
 bool WatchOperation::OutOfRange(NPC *npc)

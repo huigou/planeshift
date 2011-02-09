@@ -316,11 +316,12 @@ public:
     size_t GetCurrentStep(){ return current_step; }
     void ResetNeed() { current_need = new_need = init_need; }
 
-    bool ApplicableToNPCState(NPC *npc);
-    bool StartScript(NPC *npc,EventManager *eventmgr);
-    bool RunScript(NPC *npc,EventManager *eventmgr,bool interruped);
-    bool ResumeScript(NPC *npc,EventManager *eventmgr);
-    void InterruptScript(NPC *npc,EventManager *eventmgr);
+    bool ApplicableToNPCState(NPC* npc);
+    void DoCompletionDecay(NPC* npc);
+    bool StartScript(NPC* npc, EventManager* eventmgr);
+    bool RunScript(NPC* npc, EventManager* eventmgr, bool interruped);
+    bool ResumeScript(NPC* npc, EventManager* eventmgr);
+    void InterruptScript(NPC* npc, EventManager* eventmgr);
     bool IsInterrupted(){ return interrupted; }
     void ClearInterrupted() { interrupted = false; }
     Behavior* SetCompletionDecay(float completion_decay) { this->completion_decay = completion_decay; return this; }
