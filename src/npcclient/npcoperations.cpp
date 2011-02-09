@@ -3524,6 +3524,59 @@ void WaitOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
 
 //---------------------------------------------------------------------------
 
+WanderOperation::WanderOperation()
+    : ScriptOperation("Wander"),
+      // Instance states
+      // Instance states
+      wanderRouteFilter(this),
+      active_wp(NULL),
+      prior_wp(NULL),
+      next_wp(NULL),
+      dest_sector(NULL),
+      current_sector(NULL),
+      turn_queued(false),
+      turn_angle_vel(0.0f),
+      turn_end_angle(0.0f),
+      path(NULL),
+      anchor(NULL)
+      // Operation parameters
+      // Initialized in the load function
+{ 
+}
+
+WanderOperation::WanderOperation(const WanderOperation* other)
+    : ScriptOperation(other),
+      // Instance states
+      wanderRouteFilter(this),
+      active_wp(NULL),
+      prior_wp(NULL),
+      next_wp(NULL),
+      dest_sector(NULL),
+      current_sector(NULL),
+      turn_queued(false),
+      turn_angle_vel(0.0f),
+      turn_end_angle(0.0f),
+      path(NULL),
+      anchor(NULL),
+      // Operation parameters
+      action(other->action),
+      random(other->random),
+      undergroundValid(other->undergroundValid),
+      underground(other->underground),
+      underwaterValid(other->underwaterValid),
+      underwater(other->underwater),
+      privValid(other->privValid),
+      priv(other->priv),
+      pubValid(other->pubValid),
+      pub(other->pub),
+      cityValid(other->cityValid),
+      city(other->city),
+      indoorValid(other->indoorValid),
+      indoor(other->indoor)
+{ 
+}
+
+
 WanderOperation::~WanderOperation()
 {
     if (anchor)
@@ -4006,27 +4059,7 @@ bool WanderOperation::Load(iDocumentNode *node)
 
 ScriptOperation *WanderOperation::MakeCopy()
 {
-    WanderOperation *op  = new WanderOperation;
-    op->action           = action;
-    op->velSource        = velSource;
-    op->vel              = vel;
-    op->random           = random;
-    op->undergroundValid = undergroundValid;
-    op->underground      = underground;
-    op->underwaterValid  = underwaterValid;
-    op->underwater       = underwater;
-    op->privValid        = privValid;
-    op->priv             = priv;
-    op->pubValid         = pubValid;
-    op->pub              = pub;
-    op->cityValid        = cityValid;
-    op->city             = city;
-    op->indoorValid      = indoorValid;
-    op->indoor           = indoor;
-
-    // Internal variables set to defaults
-    path = NULL;
-    anchor = NULL;
+    WanderOperation *op  = new WanderOperation(this);
     
     return op;
 }
