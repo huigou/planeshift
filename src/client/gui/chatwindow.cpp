@@ -845,7 +845,7 @@ void pawsChatWindow::ReplayMessages(unsigned int reqLines)
     // At least 5 chars
     if(readLength < 5)
     {
-        delete buf;
+        delete [] buf;
         return;
     }
 
@@ -875,7 +875,7 @@ void pawsChatWindow::ReplayMessages(unsigned int reqLines)
     PawsManager::GetSingleton().Publish(CHAT_TYPES[CHAT_SAY], PawsManager::GetSingleton().Translate("Replaying previous chat..."), settings.systemColor );
     while(!line.IsEmpty())
         PawsManager::GetSingleton().Publish(CHAT_TYPES[CHAT_SAY], line.Pop(), settings.chatColor );
-    delete buf;
+    delete [] buf;
 }
 
 void pawsChatWindow::LogMessage(const char* message, int type)
