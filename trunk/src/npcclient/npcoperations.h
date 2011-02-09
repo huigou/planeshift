@@ -83,7 +83,6 @@ protected:
     // Start of instance temp variables. These dosn't need to be copied.
     csString             name;
 
-
     bool                 completed; /// This flag is set to false by Run(), and set to true by CompleteOperation(), in case of multiple Complete's being called.
 
     psResumeScriptEvent *resumeScriptEvent;
@@ -1055,16 +1054,20 @@ public:
 class WanderOperation : public ScriptOperation
 {
 protected:
-    csString  action;
-    bool      random;
-    bool      undergroundValid,underground;
-    bool      underwaterValid,underwater;
-    bool      privValid,priv;
-    bool      pubValid,pub;
-    bool      cityValid,city;
-    bool      indoorValid,indoor;
+    ////////////////////////////////////////////////////////////
+    // Start of instance temp variables. These dosn't need to be copied.
 
-    // Instance temp variables. These dosn't need to be copied.
+    class WanderRouteFilter : public psPathNetwork::RouteFilter
+    {
+      public:
+        WanderRouteFilter( WanderOperation * parent ):parent(parent){};
+        virtual bool Filter( const Waypoint* waypoint ) const;
+      protected:
+        WanderOperation * parent;
+    };
+
+    WanderRouteFilter wanderRouteFilter;
+
     Waypoint *active_wp,*prior_wp,*next_wp;
     csVector3 dest,current_pos;
     iSector  *dest_sector,*current_sector;
@@ -1078,17 +1081,21 @@ protected:
     psPath            *path;
     psPathAnchor      *anchor;
 
+    // End of instance temp variables.
+    ////////////////////////////////////////////////////////////
 
-    class WanderRouteFilter : public psPathNetwork::RouteFilter
-    {
-      public:
-        WanderRouteFilter( WanderOperation * parent ):parent(parent){};
-        virtual bool Filter( const Waypoint* waypoint ) const;
-      protected:
-        WanderOperation * parent;
-    };
-
-    WanderRouteFilter wanderRouteFilter;
+    ////////////////////////////////////////////////////////////
+    // Start of operation parameters
+    csString  action;
+    bool      random;
+    bool      undergroundValid,underground;
+    bool      underwaterValid,underwater;
+    bool      privValid,priv;
+    bool      pubValid,pub;
+    bool      cityValid,city;
+    bool      indoorValid,indoor;
+    // End of operation parameters
+    ////////////////////////////////////////////////////////////
 
 
     /** Calculate a random position within the waypoint as destination */
@@ -1104,12 +1111,8 @@ protected:
     
 public:
 
-    WanderOperation(): ScriptOperation("Wander"), wanderRouteFilter(this)
-        { active_wp=NULL; prior_wp=NULL; next_wp=NULL;
-          dest_sector=NULL; current_sector=NULL;
-          turn_queued=false;
-          turn_angle_vel=0.0f; turn_end_angle=0.0f; path=NULL, anchor=NULL;
-        };
+    WanderOperation();
+    WanderOperation(const WanderOperation* other);
     virtual ~WanderOperation();
 
     bool CalculateWaypointList(NPC *npc);
