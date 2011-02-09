@@ -40,7 +40,8 @@ public:
         bool AnimatesTexels() const { return false; }
         bool AnimatesNormals() const { return false; }
         bool AnimatesColors()const { return true; }
-      
+        bool AnimatesBBoxRadius () const { return false; }
+
         MeshAnimControl ( psEffectObjTrail* parent ) : scfImplementationType (this)
         {
             this->parent = parent;
@@ -54,6 +55,9 @@ public:
         {
         }
 
+        const csBox3& UpdateBoundingBox (csTicks /*current*/, uint32 /*version_id*/, const csBox3& bbox) { return bbox; }
+        const float UpdateRadius (csTicks /*current*/, uint32 /*version_id*/, const float radius) { return radius; }
+        const csBox3* UpdateBoundingBoxes (csTicks /*current*/, uint32 /*version_id*/) { return nullptr; }
         const csVector3* UpdateVertices(csTicks current, const csVector3* verts, int num_verts, uint32 version_id);
         const csVector2* UpdateTexels(csTicks /*current*/, const csVector2* texels,
                                       int /*num_texels*/, uint32 /*version_id*/)
