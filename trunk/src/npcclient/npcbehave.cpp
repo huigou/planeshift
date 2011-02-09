@@ -905,12 +905,26 @@ void Behavior::ApplyNeedAbsolute(NPC *npc, float absoluteDesire)
 }
 
 
-bool Behavior::ApplicableToNPCState(NPC *npc)
+bool Behavior::ApplicableToNPCState(NPC* npc)
 {
     return npc->IsAlive() || (!npc->IsAlive() && is_applicable_when_dead);
 }
 
-
+void Behavior::DoCompletionDecay(NPC* npc)
+{
+    if (completion_decay)
+    {
+        float delta_decay = completion_decay;
+        
+        if (completion_decay == -1)
+        {
+            delta_decay = current_need;
+        }
+        
+        npc->Printf(10, "Subtracting completion decay of %.2f from behavior '%s'.",delta_decay,GetName() );
+        new_need = current_need - delta_decay;
+    }
+}
 
 bool Behavior::StartScript(NPC *npc, EventManager *eventmgr)
 {
@@ -954,15 +968,38 @@ bool Behavior::RunScript(NPC *npc, EventManager *eventmgr, bool interrupted)
                         name.GetData(),current_step,sequence[current_step]->GetName(),
                         (interrupted?" Interrupted":""));
             sequence[current_step]->SetCompleted(false);
-            if (!sequence[current_step]->Run(npc,eventmgr,interrupted)) // Run returning false means that
-            {                                                           // op is not finished but should
-                                                                        // relinquish
-                npc->Printf(2, "Behavior %s step %d - %s will complete later...",
-                            name.GetData(),current_step,sequence[current_step]->GetName());
-                return false; // This behavior isn't done yet
+
+            // Run the script
+            ScriptOperation::OperationResult result;
+            result = sequence[current_step]->Run(npc, eventmgr, interrupted);
+            interrupted = false; // Reset the interrupted flag after operation has run
+            
+            // Check the result from the script run operation
+            switch (result)
+            {
+                case ScriptOperation::OPERATION_NOT_COMPLETED:
+                {
+                    // Operation not completed and should relinquish
+                    npc->Printf(2, "Behavior %s step %d - %s will complete later...",
+                                name.GetData(),current_step,sequence[current_step]->GetName());
+                    return false; // This behavior isn't done yet
+                    break;
+                }
+                case ScriptOperation::OPERATION_COMPLETED:
+                {
+                    current_step++;  // Continue to the next script operation
+                    break;
+                }
+                case ScriptOperation::OPERATION_FAILED:
+                {
+                    sequence[current_step]->Failure(npc);
+                    current_step = 0; // Restart operation next time
+                    DoCompletionDecay(npc);
+                    npc->Printf(1, "End of behaviour '%s'",GetName());
+                    return true; // This behavior is done
+                    break;
+                }
             }
-            interrupted = false; // Only the first script operation should be interrupted.
-            current_step++;
         }
 
         if (current_step >= sequence.GetSize())
@@ -975,20 +1012,9 @@ bool Behavior::RunScript(NPC *npc, EventManager *eventmgr, bool interrupted)
             }
             else
             {
-                if (completion_decay)
-                {
-                    float delta_decay = completion_decay;
-
-                    if (completion_decay == -1)
-                    {
-                        delta_decay = current_need;
-                    }
-
-                    npc->Printf(10, "Subtracting completion decay of %.2f from behavior '%s'.",delta_decay,GetName() );
-                    new_need = current_need - delta_decay;
-                }
+                DoCompletionDecay(npc);
                 npc->Printf(1, "End of non looping behaviour '%s'",GetName());
-                break; // This behavior is done
+                return true; // This behavior is done
             }
         }
 
