@@ -142,7 +142,8 @@ pawsChatWindow::pawsChatWindow()
     {
         settings.enabledLogging[i] = true;
         settings.SetLogChannelFile(i, "chat.txt");
-        settings.channelBracket[i] = GetBracket(i);        
+        settings.channelBracket[i] = GetBracket(i);
+        settings.dirtyLogChannelFile[i] = true;
     }
 
     channels.SetSize(10, 0);
@@ -304,8 +305,9 @@ void pawsChatWindow::LoadChatSettings()
                     if(nodeName == CHAT_TYPES[i])
                     {
                         settings.enabledLogging[i] = option->GetAttributeValueAsBool("log", true);
-                        csString file = option->GetAttributeValue("file","chat.txt");
-                        csString bracket = option->GetAttributeValue("bracket",GetBracket(i).GetDataSafe());
+                        settings.logChannelFile[i] = option->GetAttributeValue("file","chat.txt");
+                        settings.channelBracket[i] = option->GetAttributeValue("bracket",GetBracket(i).GetDataSafe());
+                        settings.dirtyLogChannelFile[i] = true;
                     }
                 }
             }
