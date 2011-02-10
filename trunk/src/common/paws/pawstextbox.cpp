@@ -640,9 +640,10 @@ void pawsMessageTextBox::AddMessage( const char* data, int msgColour )
         bool onBottom = false;
         int oldTopLine = topLine;
 
-        if ( topLine == (int)scrollBar->GetMaxValue() )
+        if (scrollBar->GetCurrentValue() == scrollBar->GetMaxValue())
             onBottom = true;
-        if ( (size_t)scrollBar->GetMaxValue() < maxLines )
+        //this handles the case in case the scrollbar is not needed yet.
+        else if (scrollBar->GetMaxValue() < 1)
             onBottom = true;
 
         if ( topLine < 0 )
@@ -718,29 +719,32 @@ void pawsMessageTextBox::AddMessage( const char* data, int msgColour )
             }
         }
         messages.Push(msg);
+        if (scrollBar)
+        {
+            if ( adjusted.GetSize() > maxLines )
+                scrollBar->ShowBehind();
+            else
+                scrollBar->Hide();
+
+            scrollBar->SetMaxValue( maxLines > adjusted.GetSize() ? 0 : (float)(adjusted.GetSize()-maxLines) );
+        }
 
         topLine = (int)adjusted.GetSize() - (int)maxLines;
         if ( topLine < 0 )
             topLine = 0;
 
-        if (scrollBar)
+printf("%d\n", onBottom);
+        if ( !onBottom )
         {
-            if (adjusted.GetSize() > maxLines)
-                scrollBar->ShowBehind();
-            else
-                scrollBar->Hide();
-
-            scrollBar->SetMaxValue(maxLines > adjusted.GetSize() ? 0 : (float)(adjusted.GetSize()-maxLines));
-
-            if (!onBottom)
-            {
-                topLine = oldTopLine;
-                scrollBar->SetCurrentValue(float(topLine));
-            }
-            else
+            topLine = oldTopLine;
+            if(scrollBar)
             {
                 scrollBar->SetCurrentValue(float(topLine));
             }
+        }
+        else if(scrollBar)
+        {
+            scrollBar->SetCurrentValue( float(topLine) );
         }
     }
 }
