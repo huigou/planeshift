@@ -733,7 +733,7 @@ void pawsMessageTextBox::AddMessage( const char* data, int msgColour )
         if ( topLine < 0 )
             topLine = 0;
 
-printf("%d\n", onBottom);
+
         if ( !onBottom )
         {
             topLine = oldTopLine;
