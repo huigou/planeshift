@@ -608,8 +608,7 @@ void MovementOperation::Advance(float timedelta, NPC *npc, EventManager *eventmg
 {
 
     csVector3    myPos;
-    float        myRot,dummyrot;
-    InstanceID   myInstance, targetInstance;
+    float        myRot;
     iSector*     mySector;
     csVector3    forward;
     float        angle;
@@ -919,7 +918,6 @@ bool ChaseOperation::GetEndPosition(NPC* npc, const csVector3 &myPos, const iSec
 gemNPCActor* ChaseOperation::UpdateChaseTarget(NPC* npc)
 {
     csVector3    targetPos;
-    float        dummyrot;
     iSector*     targetSector;
     gemNPCActor* targetEntity = NULL;
 
@@ -2527,20 +2525,20 @@ bool MoveToOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
 
 NavigateOperation::NavigateOperation()
     : MovementOperation("Navigate"),
-      // Instance variables
-      endSector(NULL),
       // Operation parameters
-      forceEndPosition(false)
+      forceEndPosition(false),
+      // Instance variables
+      endSector(NULL)
 {
 }
 
 NavigateOperation::NavigateOperation(const NavigateOperation* other)
     : MovementOperation(other),
-      // Instance variables
-      endSector(NULL),
       // Operation parameters
       action(other->action),
-      forceEndPosition(other->forceEndPosition)
+      forceEndPosition(other->forceEndPosition),
+      // Instance variables
+      endSector(NULL)
 {
 }
 
