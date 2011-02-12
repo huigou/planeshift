@@ -6268,7 +6268,14 @@ bool AdminManager::GetTargetOfTeleport(Client *client, psAdminCmdMessage& msg, A
                 return false;
             }
 
-            targetSector = EntityManager::GetSingleton().GetEngine()->FindSector(data->destSector);
+            if (data->destSector == "here")
+            {
+                targetSector = client->GetActor()->GetSector();
+            }
+            else
+            {
+                targetSector = EntityManager::GetSingleton().GetEngine()->FindSector(data->destSector);
+            }
             if (!targetSector)
             {
                 psserver->SendSystemError(client->GetClientNum(), "Cannot find sector " + data->destSector);
