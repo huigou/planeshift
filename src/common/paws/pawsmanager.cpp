@@ -703,7 +703,6 @@ psPoint PawsManager::MouseLocation( iEvent &ev )
 bool PawsManager::HandleMouseMove( csMouseEventData &data )
 {
     mouse->SetPosition( data.x, data.y );
-    PositionDragDropWidget();
 
     timeOver = csGetTicks();
 
@@ -800,10 +799,7 @@ void PawsManager::Draw()
         mouseoverWidget->DrawToolTip(mouse->GetPosition().x, mouse->GetPosition().y);
     }
 
-    if (dragDropWidget == NULL)
-        mouse->Draw();
-    else
-        dragDropWidget->Draw();
+    mouse->Draw();
 }
 
 void PawsManager::Draw3D()
@@ -1146,19 +1142,8 @@ void PawsManager::SetDragDropWidget(pawsWidget * dragDropWidget)
     if (PawsManager::dragDropWidget != NULL)
         delete PawsManager::dragDropWidget;
     PawsManager::dragDropWidget = dragDropWidget;
-    PositionDragDropWidget();
+    mouse->UpdateDragPosition();
 }
-
-void PawsManager::PositionDragDropWidget()
-{
-    if (dragDropWidget != NULL)
-    {
-        csRect frame = dragDropWidget->ScreenFrame();
-        psPoint mousePos = mouse->GetPosition();
-        dragDropWidget->MoveTo(mousePos.x - frame.Width()/2, mousePos.y - frame.Height()/2);
-    }
-}
-
 
 #define RegisterFactory(factoryclass)   \
     factory = new factoryclass();

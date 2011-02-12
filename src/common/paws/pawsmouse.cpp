@@ -33,6 +33,7 @@
 #include "pawsmanager.h"
 #include "pawstexturemanager.h"
 #include "pawsimagedrawable.h"
+#include "pawswidget.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -65,6 +66,19 @@ void pawsMouse::SetPosition( int x, int y )
 
     currentPosition.x = x;
     currentPosition.y = y;
+
+    UpdateDragPosition();
+}
+
+void pawsMouse::UpdateDragPosition()
+{
+    //update the drag and drop widget if any
+    pawsWidget *widget = PawsManager::GetSingleton().GetDragDropWidget();
+    if(widget)
+    {
+        csRect frame = widget->ScreenFrame();
+        widget->MoveTo(currentPosition.x - frame.Width()/2, currentPosition.y - frame.Height()/2);
+    }
 }
 
 void pawsMouse::ChangeImage( const char* imageName )
@@ -126,7 +140,10 @@ void pawsMouse::SetOSMouse(csRef<iPawsImage> drawable)
 
 void pawsMouse::Draw()
 {
-    if (!useOS && !hidden && cursorImage)
+    pawsWidget *widget = PawsManager::GetSingleton().GetDragDropWidget();
+    if(widget)
+        widget->Draw();
+    else if (!useOS && !hidden && cursorImage)
         cursorImage->Draw(currentPosition.x , currentPosition.y );
     if (crosshair && crosshairImage)
         crosshairImage->Draw( graphics3D->GetDriver2D()->GetWidth() / 2, graphics3D->GetDriver2D()->GetHeight() / 2 );
