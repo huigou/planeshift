@@ -676,7 +676,6 @@ void psServer::UnmutePlayer (uint32_t clientnum,const char *reason)
 
 bool psServer::LoadMap(char* mapname)
 {
-    printf("%p\n", mapname);
     if (entitymanager->LoadMap(mapname))
     {
         MapLoaded=true;
