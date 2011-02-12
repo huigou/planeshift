@@ -43,6 +43,9 @@ public:
 
     /// Set the absolute screen position for mouse.
     void SetPosition( int x, int y );
+
+    /// Updates the position of the dragged widget if any.
+    void UpdateDragPosition();
    
     /// Get the absolute position. 
     psPoint GetPosition() { return currentPosition; }
@@ -55,6 +58,7 @@ public:
      */
     void ChangeImage( const char* imageName );
     void ChangeImage(csRef<iPawsImage> drawable);
+
     void Draw();
     void Hide(bool h = true);
     void WantCrosshair(bool h = true) { crosshair = h; }

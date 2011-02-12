@@ -360,11 +360,6 @@ protected:
 
     psPoint MouseLocation( iEvent &ev );
 
-    /** Sets position of the dragDropWidget (if there is one) to the position
-     * of the mouse cursor.
-     */
-    void PositionDragDropWidget();
-
     /// VFS Mount directory mapping to the specified skin zip file
     csString vfsPathToSkin;
 
