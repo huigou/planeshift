@@ -54,3 +54,4 @@ INSERT INTO sc_npc_definitions VALUES("53","MoveUnderground","MoveUnderground","
 INSERT INTO sc_npc_definitions VALUES("62","Hunter","HuntingTribe","","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("78","MoveMaster6","MoveTest6","","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("79","LocateMaster1","LocateTest1","","0.00","0.00","0","N","N");
+INSERT INTO sc_npc_definitions VALUES("80","Chaser1","ChaseTest1","","0.00","0.00","0","N","N");

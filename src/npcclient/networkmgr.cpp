@@ -689,7 +689,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                     pcpt_name.Append("sensed");
                 if (cmd == psNPCCommandsMessage::PCPT_SHORTRANGEPLAYER)
                     pcpt_name.Append("nearby");
-                if (cmd == psNPCCommandsMessage::PCPT_VERYSHORTRANGEPLAYER)
+                if (cmd == psNPCCommandsMessage::PCPT_VERYSHORTRANGEPLAYER) // PERSONAL_RANGE
                     pcpt_name.Append("adjacent");
 
                 npc->Printf("Got Player %s in Range of %s with the %s Perception, with faction %d",

@@ -193,6 +193,53 @@ public:
     virtual void Failure(NPC* npc);
 };
 
+//-----------------------------------------------------------------------------
+
+/**
+* Abstract common class for Move operations that use paths.
+*/
+class MovementOperation : public ScriptOperation
+{
+protected:
+
+    // Instance variables
+    csRef<iCelHPath> path;
+
+    // Cache values for end position 
+    csVector3 endPos;
+    iSector*  endSector;
+
+    // Operation parameters
+    csString         action;        ///< The animation used during chase
+
+    // Constructor
+    MovementOperation( const MovementOperation* other );
+
+public:
+
+    MovementOperation( const char * name );
+
+    virtual ~MovementOperation() { }
+
+    virtual bool Load(iDocumentNode *node);
+
+    bool EndPointChanged(const csVector3 &endPos, const iSector* endSector) const;
+
+    virtual bool GetEndPosition(NPC* npc, const csVector3 &myPos, const iSector* mySector,
+                                csVector3 &endPos, iSector* &endSector) = 0;
+
+    virtual bool UpdateEndPosition(NPC* npc, const csVector3 &myPos, const iSector* mySector,
+                                   csVector3 &endPos, iSector* &endSector) = 0;
+
+    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
+
+    virtual void Advance(float timedelta,NPC *npc,EventManager *eventmgr);
+
+    virtual void InterruptOperation(NPC *npc,EventManager *eventmgr);
+
+    virtual bool CompleteOperation(NPC *npc,EventManager *eventmgr);
+};
+
 //---------------------------------------------------------------------------
 //         Following section contain specefix NPC operations.
 //         Ordered alphabeticaly, with exception for when needed
@@ -206,17 +253,18 @@ public:
 * Chase updates periodically and turns, moving towards a certain
 * location.  This is normally used to chase a targeted player.
 */
-class ChaseOperation : public ScriptOperation
+class ChaseOperation : public MovementOperation
 {
 protected:
-    csString         action;
+    // Instance varaibles
+    EID              target_id;
+    csVector3        localDest;
+
+    // Operaiton parameters
     int              type;
     float            searchRange;
     float            chaseRange;
     float            offset;
-    EID              target_id;
-    csRef<iCelHPath> path;
-    csVector3        localDest;
     
     enum
     {
@@ -227,17 +275,25 @@ protected:
         TARGET
     };
     static const char * typeStr[];
+
+    ChaseOperation(const ChaseOperation* other);
+
 public:
 
-    ChaseOperation(): ScriptOperation("Chase") { target_id=(uint32_t)-1; type = NEAREST_PLAYER; searchRange=2.0; chaseRange=-1.0; ang_vel = 0; vel=0; };
+    ChaseOperation();
     virtual ~ChaseOperation() {};
 
-    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
-    virtual void Advance(float timedelta,NPC *npc,EventManager *eventmgr);
+    virtual bool GetEndPosition(NPC* npc, const csVector3 &myPos, const iSector* mySector,
+                                csVector3 &endPos, iSector* &endSector);
+
+    virtual gemNPCActor* UpdateChaseTarget(NPC* npc);
+
+    virtual bool UpdateEndPosition(NPC* npc, const csVector3 &myPos, const iSector* mySector,
+                                   csVector3 &endPos, iSector* &endSector);
+
     virtual bool Load(iDocumentNode *node);
+
     virtual ScriptOperation *MakeCopy();
-    virtual bool CompleteOperation(NPC *npc,EventManager *eventmgr);
-    virtual void InterruptOperation(NPC *npc,EventManager *eventmgr);
 };
 
 
@@ -656,7 +712,7 @@ public:
 * Navigate moves the NPC to the position and orientation
 * of the last located thing.  (See LocateOperation)
 */
-class NavigateOperation : public ScriptOperation
+class NavigateOperation : public MovementOperation
 {
 protected:
     csString action;
@@ -668,14 +724,21 @@ protected:
         
 public:
 
-    NavigateOperation(): ScriptOperation("Navigate") { vel=0; };
+    NavigateOperation();
+protected:
+    NavigateOperation(const NavigateOperation* other );
+public:
     virtual ~NavigateOperation() {};
 
-    virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
-    virtual void Advance(float timedelta,NPC *npc,EventManager *eventmgr);
-    virtual void InterruptOperation(NPC *npc,EventManager *eventmgr);
-    virtual bool Load(iDocumentNode *node);
     virtual ScriptOperation *MakeCopy();
+
+    virtual bool GetEndPosition(NPC* npc, const csVector3 &myPos, const iSector* mySector,
+                                csVector3 &endPos, iSector* &endSector);
+
+    virtual bool UpdateEndPosition(NPC* npc, const csVector3 &myPos, const iSector* mySector,
+                                   csVector3 &endPos, iSector* &endSector);
+
+    virtual bool Load(iDocumentNode *node);
     virtual bool CompleteOperation(NPC *npc,EventManager *eventmgr);
 };
 

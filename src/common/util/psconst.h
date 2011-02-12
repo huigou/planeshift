@@ -70,8 +70,11 @@ typedef uint32 InstanceID;
 #define MAX_DROP_DISTANCE 5 ///< Maximum distance at which a player may drop an item
 #define RANGE_TO_GUARD 6 ///< Range in which you can guard an item - should be slightly bigger than drop range
 
+// Used to fire item/owner/player sensed
 #define LONG_RANGE_PERCEPTION  30
+// Used to fire item/owner/player nearby
 #define SHORT_RANGE_PERCEPTION 10
+// Used to fire item/owner/player adjacent
 #define PERSONAL_RANGE_PERCEPTION  4
 
 #define IS_CONTAINER true

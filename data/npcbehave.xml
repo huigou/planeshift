@@ -1,5 +1,15 @@
 <npctypes>
 
+  <!-- Building blocks to inherrit into NPCTypes -->
+
+  <npctype name="DoNothing" >
+      <behavior name="do nothing" decay="0" growth="0" initial="50">
+	  <wait duration="1" anim="stand" />
+      </behavior>
+  </npctype>
+
+
+
   <npctype name="GoHomeOnTeleport">
     <behavior name="Teleported" completion_decay="-1" growth="0" initial="0">
       <locate obj="perception" />
@@ -159,12 +169,12 @@
 
   <!-- Basic fight behavior. Will chase the enemy if attacked -->
   <npctype name="Fight" >
-      <behavior name="Fight" decay="0" growth="0" initial="0">
-	  <locate obj="target"  range="20"/>
+      <behavior name="Fight"   initial="0" growth="0" decay="0" completion_decay="-1" >
+	  <locate obj="target"  range="20" />
           <rotate type="locatedest" anim="walk" ang_vel="120" />
 	  <melee seek_range="20" melee_range="3" />
       </behavior>
-      <behavior name="Chase" decay="1" completion_decay="100" growth="0" initial="0">
+      <behavior name="Chase" initial="0" growth="0" decay="1" completion_decay="-1" >
           <chase type="target" chase_range="20" anim="run" vel="5" />
       </behavior>
       <react event="attack"              behavior="Fight" />
@@ -186,10 +196,7 @@
     </behavior>
   </npctype>
 
-  <npctype name="Fighter" parent="InRegion,Fight" >
-      <behavior name="do nothing" decay="0" growth="0" initial="50">
-	  <wait duration="1" anim="stand" />
-      </behavior>
+  <npctype name="Fighter" parent="DoNothing,InRegion,Fight" >
   </npctype>
 
   <npctype name="On Sight Fighter" parent="Fighter">
@@ -199,7 +206,7 @@
       </behavior>
 
       <react event="player sensed"       behavior="TurnToFace" delta="100" inactive_only="yes" />
-      <react event="player nearby"       behavior="Fight" delta="100" inactive_only="yes" faction_diff="-200" oper=">"  />
+      <react event="player nearby"       behavior="Fight" delta="100" inactive_only="yes" faction_diff="-200" oper=">"  /> <!-- Nearby(<10) -->
       <react event="player adjacent"     behavior="Fight" delta="100" inactive_only="yes" faction_diff="-200" oper=">"  />
 
   </npctype>
@@ -210,12 +217,6 @@
           <wait anim="stand" duration="10" />
           <moveto x="-36.84" y="0" z="-155.61" anim="walk" />
           <wait anim="stand" duration="10" />
-      </behavior>
-  </npctype>
-
-  <npctype name="DoNothing" >
-      <behavior name="do nothing" decay="0" growth="0" initial="50">
-	  <wait duration="1" anim="stand" />
       </behavior>
   </npctype>
 
@@ -261,6 +262,20 @@
       </behavior>
       <react event="enemy in range" range="50" behavior="chase" delta="100" />
       <react event="enemy outside range" range="50" behavior="chase" delta="-100" />
+  </npctype>
+
+  <npctype name="ChaseTest1" parent="DoNothing">
+      <behavior name="init" initial="1000" completion_decay="-1" >
+          <!--debug level="0" /-->
+          <debug level="11" />
+      </behavior>
+      <behavior name="chase" decay="1" completion_decay="-1" growth="0" initial="0">
+          <talk text="Start chaseing actor" target="false" />
+          <chase type="nearest_actor" offset="1" range="11" chase_range="20" anim="walk" />
+          <talk text="Stop chaseing actor" target="false" />
+      </behavior>
+      <react event="player nearby" behavior="chase" delta="100" /> <!-- Nearby(<10) -->
+      <react event="nearest_actor out of chase" behavior="chase" absolute="0" />
   </npctype>
 
   <npctype name="Bird">

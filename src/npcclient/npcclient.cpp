@@ -1518,12 +1518,12 @@ void psNPCClient::PerceptProximityItems()
                     {
                         if (npc_pos < bboxPersonal)
                         {
-                            ItemPerception pcpt_nearby("item nearby", item);
-                            npcs[i]->TriggerEvent(&pcpt_nearby);
+                            ItemPerception pcpt_adjacent("item adjacent", item);
+                            npcs[i]->TriggerEvent(&pcpt_adjacent);
                             continue;
                         }
-                        ItemPerception pcpt_adjacent("item adjacent", item);
-                        npcs[i]->TriggerEvent(&pcpt_adjacent);
+                        ItemPerception pcpt_nearby("item nearby", item);
+                        npcs[i]->TriggerEvent(&pcpt_nearby);
                         continue;
                     }
                     ItemPerception pcpt_sensed("item sensed", item);

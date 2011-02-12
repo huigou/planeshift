@@ -526,6 +526,193 @@ void ScriptOperation::Failure(NPC* npc)
     }
 }
 
+
+//---------------------------------------------------------------------------
+
+MovementOperation::MovementOperation(const char* name)
+    :ScriptOperation( name )
+{
+}
+
+MovementOperation::MovementOperation(const MovementOperation* other)
+    :ScriptOperation( other ),
+     // Instance variables
+     // Operation parameters
+     action(other->action)
+{
+}
+
+bool MovementOperation::Load(iDocumentNode *node)
+{
+    if (!ScriptOperation::Load(node))
+    {
+        return false;
+    }
+
+    action = node->GetAttributeValue("anim");
+
+    return true;
+}
+
+bool MovementOperation::EndPointChanged(const csVector3 &endPos, const iSector* endSector) const
+{
+    iMapNode* pathEndDest = path->GetLast();
+    return ((pathEndDest->GetSector() != endSector) ||
+            (Calc2DDistance(pathEndDest->GetPosition(), endPos) > EPSILON) );
+}
+
+ScriptOperation::OperationResult MovementOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+    iSector* mySector;
+    csVector3 myPos;
+
+    psGameObject::GetPosition(npc->GetActor(), myPos, mySector);
+
+    if (!GetEndPosition(npc, myPos, mySector, endPos, endSector))
+    {
+        npc->Printf(5, "Failed to find target position!");
+        return OPERATION_FAILED;  // This operation is complete
+    }
+
+
+    path = npcclient->GetNavStruct()->ShortestPath(myPos,mySector,endPos,endSector);
+    if(!path || !path->HasNext())
+    {
+        // failed to find a path between us and the target
+        npc->Printf(5, "Failed to find a path to the target!");
+
+        return OPERATION_COMPLETED;  // This operation is complete
+    }
+    else if ( path->GetDistance() < 0.5 )  // Distance allready adjusted for offset
+    {
+        npc->Printf(5, "We are done..");
+
+        return OPERATION_COMPLETED; // This operation is complete
+    }
+    else if ( GetAngularVelocity(npc) > 0 || GetVelocity(npc) > 0 )
+    { 
+        float dummyAngle;
+        
+        // Find next local destination and start moving towords local destination
+        iMapNode* dest = path->Next();
+        StartMoveTo(npc, eventmgr, dest->GetPosition(), dest->GetSector(), GetVelocity(npc),
+                    action, false, dummyAngle);
+
+        return OPERATION_NOT_COMPLETED; // This behavior isn't done yet
+    }
+
+    return OPERATION_COMPLETED; // This operation is complete
+}
+
+void MovementOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
+{
+
+    csVector3    myPos;
+    float        myRot,dummyrot;
+    InstanceID   myInstance, targetInstance;
+    iSector*     mySector;
+    csVector3    forward;
+    float        angle;
+
+    npc->GetLinMove()->GetLastPosition(myPos, myRot, mySector);
+
+    if (!UpdateEndPosition(npc, myPos, mySector, endPos, endSector ))
+    {
+        npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
+        return;
+    }
+
+    // Check if path endpoint has changed and needs to be updated
+    if(EndPointChanged( endPos, endSector ))
+    {
+        npc->Printf(8, "target diverged, recalculate path..");
+        path = npcclient->GetNavStruct()->ShortestPath(myPos, const_cast<iSector*>(mySector),
+                                                       endPos, endSector);
+        if(!path)
+        {
+            npc->Printf(5, "Failed to calculate new path between %s and %s", 
+                        toString(myPos,const_cast<iSector*>(mySector)).GetData(), 
+                        toString(endPos, endSector).GetData());
+            npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior());
+            return;
+        }
+    }
+
+    iMapNode* dest = path->Current();
+    float distance = npcclient->GetWorld()->Distance(myPos,mySector,dest->GetPosition(),dest->GetSector());
+    if (distance >= INFINITY_DISTANCE)
+    {
+        npc->Printf(5, "No connection found..");
+        npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior());
+        return;
+    }
+    else if (distance <= 0.5f)
+    {
+        if (!path->HasNext())
+        {
+            npc->Printf(5, "We are done..");
+            npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior());
+            return;
+        }
+        else
+        {
+            npc->Printf(6, "We are at localDest..");
+            dest = path->Next();
+            StartMoveTo(npc, eventmgr, dest->GetPosition(), dest->GetSector(), GetVelocity(npc),
+                        action, false, angle);
+        }
+    }
+    else
+    {
+        TurnTo(npc, dest->GetPosition(), dest->GetSector(), forward, angle);
+    }
+
+    // Limit time extrapolation so we arrive near the correct place.
+    float close = GetVelocity(npc)*timedelta;
+    if(distance <= close)
+    {
+    	timedelta = distance / GetVelocity(npc);
+    }
+
+    npc->Printf(8, "advance: pos=(%f.2,%f.2,%f.2) rot=%.2f %s localDest=%s dist=%f", 
+                myPos.x,myPos.y,myPos.z, myRot, mySector->QueryObject()->GetName(),
+                dest->GetPosition().Description().GetData(),distance);
+
+    {
+        ScopedTimer st(250, "Movement extrapolate %.2f time for %s", timedelta, ShowID(npc->GetActor()->GetEID()));
+        npc->GetLinMove()->ExtrapolatePosition(timedelta);
+    }
+
+    {
+        bool on_ground;
+        float speed,ang_vel;
+        csVector3 bodyVel,worldVel,myNewPos;
+        iSector* myNewSector;
+
+        npc->GetLinMove()->GetDRData(on_ground,speed,myNewPos,myRot,myNewSector,bodyVel,worldVel,ang_vel);
+        npc->Printf(8,"World position bodyVel=%s worldVel=%s",
+                       toString(bodyVel).GetDataSafe(),toString(worldVel).GetDataSafe());
+
+        CheckMoveOk(npc, eventmgr, myPos, mySector, myNewPos, myNewSector, timedelta);
+    }
+}
+
+void MovementOperation::InterruptOperation(NPC *npc,EventManager *eventmgr)
+{
+    ScriptOperation::InterruptOperation(npc,eventmgr);
+
+    StopMovement(npc);
+}
+
+bool MovementOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
+{
+    StopMovement(npc);
+
+    completed = true;
+
+    return true;  // Script can keep going
+}
+
 //---------------------------------------------------------------------------
 //         Following section contain specefix NPC operations.
 //         Ordered alphabeticaly
@@ -535,9 +722,40 @@ void ScriptOperation::Failure(NPC* npc)
 
 const char * ChaseOperation::typeStr[]={"nearest_actor","nearest_npc","nearest_player","owner","target"};
 
+ChaseOperation::ChaseOperation()
+    : MovementOperation("Chase"),
+      // Instance variables
+      target_id(EID(0)),
+      // Operation parameters
+      // Initialized in the load function
+      type(NEAREST_PLAYER),
+      searchRange(2.0),
+      chaseRange(-1.0),
+      offset(0.5)
+{ 
+}
+
+ChaseOperation::ChaseOperation( const ChaseOperation* other )
+    : MovementOperation( other ),
+      // Instance variables
+      target_id(other->target_id),
+      // Operation parameters
+      // Initialized in the load function
+      type(other->type),
+      searchRange(other->searchRange),
+      chaseRange(other->chaseRange),
+      offset(other->offset)
+{ 
+}
+
+
 bool ChaseOperation::Load(iDocumentNode *node)
 {
-    action = node->GetAttributeValue("anim");
+    if (!MovementOperation::Load(node))
+    {
+        return false;
+    }
+
     csString typestr = node->GetAttributeValue("type");
     if (typestr.CompareNoCase("nearest_actor"))
     {
@@ -588,7 +806,9 @@ bool ChaseOperation::Load(iDocumentNode *node)
         offset = node->GetAttributeValueAsFloat("offset");
     }
     else
+    {
     	offset = 0.5f;
+    }
 
     LoadVelocity(node);
     LoadCheckMoveOk(node);
@@ -599,61 +819,40 @@ bool ChaseOperation::Load(iDocumentNode *node)
 
 ScriptOperation *ChaseOperation::MakeCopy()
 {
-    ChaseOperation *op = new ChaseOperation;
-    op->action = action;
-    op->type   = type;
-    op->searchRange  = searchRange;
-    op->chaseRange  = chaseRange;
-    op->velSource = velSource;
-    op->vel    = vel;
-    op->ang_vel= ang_vel;
-    op->offset = offset;
-
-    op->CopyCheckMoveOk(this);
-
+    ChaseOperation *op = new ChaseOperation( this );
     return op;
 }
 
-
-
-
-ScriptOperation::OperationResult ChaseOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+bool ChaseOperation::GetEndPosition(NPC* npc, const csVector3 &myPos, const iSector* mySector, csVector3 &endPos, iSector* &endSector)
 {
     float targetRot;
-    iSector* targetSector;
-    csVector3 targetPos;
     float targetRange;
     
-    float myRot;
-    iSector* mySector;
-    csVector3 myPos;
-    float angle;
-
-    csVector3 dest;
-
-    gemNPCObject *entity = NULL;
+    gemNPCObject *targetEntity = NULL;
     target_id = EID(0);
         
     switch (type)
     {
     case NEAREST_PLAYER:
-        entity = npc->GetNearestPlayer(searchRange, targetPos, targetSector, targetRange);
-        if (entity)
+        targetEntity = npc->GetNearestPlayer(searchRange, endPos, endSector, targetRange);
+        if (targetEntity)
         {
-            target_id = entity->GetEID();
+            target_id = targetEntity->GetEID();
 
-            npc->Printf(6, "Targeting nearest player (%s) at (%1.2f,%1.2f,%1.2f) range %.2f for chase ...",
-                        entity->GetName(), dest.x, dest.y, dest.z, targetRange);
+            npc->Printf(6, "Targeting nearest player (%s) at %s range %.2f for chase ...",
+                        targetEntity->GetName(), toString(endPos,endSector).GetDataSafe(),
+                        targetRange);
         }
         break;
     case NEAREST_ACTOR:
-        entity = npc->GetNearestActor(searchRange, targetPos, targetSector, targetRange);
-        if (entity)
+        targetEntity = npc->GetNearestActor(searchRange, endPos, endSector, targetRange);
+        if (targetEntity)
         {
-            target_id = entity->GetEID();
+            target_id = targetEntity->GetEID();
 
-            npc->Printf(6, "Targeting nearest actor (%s) at (%1.2f,%1.2f,%1.2f) range %.2f for chase ...",
-                        entity->GetName(), dest.x, dest.y, dest.z, targetRange);
+            npc->Printf(6, "Targeting nearest actor (%s) at %s range %.2f for chase ...",
+                        targetEntity->GetName(), toString(endPos,endSector).GetDataSafe(), 
+                        targetRange);
         }
         break;
     case OWNER:
@@ -663,12 +862,12 @@ ScriptOperation::OperationResult ChaseOperation::Run(NPC *npc, EventManager *eve
             if (owner)
             {
                 // Assign owner as entity to chase
-                entity = owner;
+                targetEntity = owner;
 
-                target_id = entity->GetEID();
-                psGameObject::GetPosition(entity, dest, targetRot, targetSector);
-                npc->Printf(6, "Targeting owner (%s) at (%1.2f,%1.2f,%1.2f) for chase ...",
-                            entity->GetName(),dest.x,dest.y,dest.z );
+                target_id = targetEntity->GetEID();
+                psGameObject::GetPosition(targetEntity, endPos, targetRot, endSector);
+                npc->Printf(6, "Targeting owner (%s) at %s for chase ...",
+                            targetEntity->GetName(), toString(endPos,endSector).GetDataSafe());
             }
         }
         break;
@@ -679,68 +878,51 @@ ScriptOperation::OperationResult ChaseOperation::Run(NPC *npc, EventManager *eve
             if (target)
             {
                 // Assign target as entity to chase
-                entity = target;
+                targetEntity = target;
 
-                target_id = entity->GetEID();
-                psGameObject::GetPosition(entity, dest, targetRot,targetSector);
-                npc->Printf(6, "Targeting current target (%s) at (%1.2f,%1.2f,%1.2f) for chase ...",
-                            entity->GetName(), dest.x,dest.y, dest.z );
+                target_id = targetEntity->GetEID();
+                psGameObject::GetPosition(targetEntity, endPos, endSector);
+                npc->Printf(6, "Targeting current target (%s) at %s for chase ...",
+                            targetEntity->GetName(), toString(endPos,endSector).GetDataSafe());
             }
         }
         break;
     }
 
-    if (!target_id.IsValid() || !entity)
+    if (!target_id.IsValid() || !targetEntity)
     {
         npc->Printf(5, "No one found to chase!");
-        return OPERATION_COMPLETED;  // This operation is complete
+        return false;
+    }
+    if (targetEntity->GetInstance() != npc->GetActor()->GetInstance())
+    {
+        npc->Printf(5, "Target found in different instance, no one found to chase!");
+        return false;
     }
 
-    psGameObject::GetPosition(npc->GetActor(),myPos, myRot, mySector);
-    psGameObject::GetPosition(entity, targetPos, targetRot, targetSector);
 
-    npc->Printf(5, "Chasing enemy <%s, %s> at %s", entity->GetName(), ShowID(entity->GetEID()),
-                toString(targetPos,targetSector).GetDataSafe());
+    psGameObject::GetPosition(targetEntity, endPos, targetRot, endSector);
+
 
     // This prevents NPCs from wanting to occupy the same physical space as something else
-    targetPos -= psGameObject::DisplaceTargetPos(mySector, myPos, targetSector, targetPos, offset );
+    endPos -= psGameObject::DisplaceTargetPos(mySector, myPos, endSector, endPos, offset );
+    // TODO: Check if new endPos is within same sector!!!
 
 
-    path = npcclient->GetNavStruct()->ShortestPath(myPos,mySector,targetPos,targetSector);
-    if(!path || !path->HasNext())
-    {
-        // failed to find a path between us and the target
-        npc->Printf(5, "Failed to find a path to the enemy!");
-        return OPERATION_COMPLETED;  // This operation is complete
-    }
-    else if ( path->GetDistance() < 0.5 )  // Distance allready adjusted for offset
-    {
-        npc->Printf(5, "We are done..");
-        return OPERATION_COMPLETED; // This operation is complete
-    }
-    else if ( GetAngularVelocity(npc) > 0 || GetVelocity(npc) > 0 )
-    {
-        iMapNode* dest = path->Next();
-        StartMoveTo(npc, eventmgr, dest->GetPosition(), dest->GetSector(), GetVelocity(npc), action, false, angle);
-        return OPERATION_NOT_COMPLETED; // This behavior isn't done yet
-    }
+    npc->Printf(5, "Chasing enemy <%s, %s> at %s", targetEntity->GetName(),
+                ShowID(targetEntity->GetEID()),
+                toString(endPos,endSector).GetDataSafe());
 
-    return OPERATION_COMPLETED; // This operation is complete
+    return true;
 }
 
-void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
+gemNPCActor* ChaseOperation::UpdateChaseTarget(NPC* npc)
 {
-
-    csVector3    myPos,targetPos;
-    float        myRot,dummyrot;
-    InstanceID   myInstance, targetInstance;
-    iSector*     mySector, *targetSector;
-    csVector3    forward;
-    float        angle;
+    csVector3    targetPos;
+    float        dummyrot;
+    iSector*     targetSector;
     gemNPCActor* targetEntity = NULL;
-    
-    npc->GetLinMove()->GetLastPosition(myPos, myRot, mySector);
-    myInstance = npc->GetActor()->GetInstance();
+
 
     // If chaseing nearest and there is a new target within search range the target is changed
     if (type == NEAREST_PLAYER)
@@ -791,7 +973,14 @@ void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
     {   
         targetEntity = dynamic_cast<gemNPCActor*>(npcclient->FindEntityID(target_id));
     }
-    
+
+    return targetEntity;
+}
+
+bool ChaseOperation::UpdateEndPosition(NPC* npc, const csVector3 &myPos, const iSector* mySector,
+                                       csVector3 &targetPos, iSector* &targetSector)
+{
+    gemNPCActor* targetEntity = UpdateChaseTarget(npc);
     if (!targetEntity) // No target entity anymore
     {
         npc->Printf(5, "ChaseOp has no target now!");
@@ -800,19 +989,22 @@ void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
         str.Append(" out of target");
         Perception range(str);
         npc->TriggerEvent(&range);
-        npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
-        return;
+        return false;
     }
-    
-    psGameObject::GetPosition(targetEntity,targetPos,dummyrot,targetSector);
-    targetInstance = targetEntity->GetInstance();
+
+    if (targetEntity->GetInstance() != npc->GetActor()->GetInstance())
+    {
+        npc->Printf(5, "Target found in different instance, no one found to chase!");
+        return false;
+    }
+
+    psGameObject::GetPosition(targetEntity,targetPos,targetSector);
+
 
     // Check if we shold stop chaseing
     float distance = npcclient->GetWorld()->Distance(myPos,mySector,targetPos,targetSector);
-
-    if((distance >= INFINITY_DISTANCE) || 
-       (chaseRange > 0 && distance > chaseRange) ||
-       (targetInstance != myInstance))
+    if ( (distance >= INFINITY_DISTANCE) ||
+         ((chaseRange > 0) && (distance > chaseRange)) )
     {
         npc->Printf(5, "Target out of chase range -> we are done..");
         csString str;
@@ -820,128 +1012,14 @@ void ChaseOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
         str.Append(" out of chase");
         Perception range(str);
         npc->TriggerEvent(&range);
-        npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
-        return;
+        return false;
     }
-
-    // Check if we are at end position
-    if (distance <= (offset+0.5f))
-    {
-        npc->Printf(5, "We are done..");
-        npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior());
-        return;
-    }
-
-    npc->Printf(10, "Still chasing %s at %s with range %.1f...",
-                targetEntity->GetName(),toString(targetPos,targetSector).GetDataSafe(),distance);
-
 
     // This prevents NPCs from wanting to occupy the same physical space as something else
     targetPos -= psGameObject::DisplaceTargetPos(mySector, myPos, targetSector, targetPos, offset );
+    // TODO: Check if new targetPos is within same sector!!!
 
-    // Check if path endpoint has changed and needs to be updated
-    {
-        iMapNode* pathDest = path->GetLast();
-
-        // if the target diverged from the end of our path, we must calculate it again
-        if((pathDest->GetSector() != targetSector) ||                       // Change of sector qualify for recalculation
-           (Calc2DDistance(pathDest->GetPosition(), targetPos) > (offset+EPSILON)))
-        {
-            npc->Printf(8, "target diverged, recalculate path..");
-            path = npcclient->GetNavStruct()->ShortestPath(myPos,mySector,targetPos,targetSector);
-            if(!path || !path->HasNext())
-            {
-                npc->Printf(5, "Failed to calculate new path between %s and %s", 
-                            toString(myPos,mySector).GetData(), toString(targetPos,targetSector).GetData());
-                npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior());
-                return;
-            }
-            iMapNode* dest = path->Next();
-            StartMoveTo(npc,eventmgr,dest->GetPosition(), dest->GetSector(), GetVelocity(npc), action, false, angle);
-            return;
-        }
-    }
-
-    iMapNode* dest = path->Current();
-
-    distance = npcclient->GetWorld()->Distance(myPos,mySector,dest->GetPosition(),dest->GetSector());
-    if (distance >= INFINITY_DISTANCE)
-    {
-        npc->Printf(5, "No connecting portal to current path segment.");
-        npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior());
-        return;
-    }
-
-    if (distance <= 0.5f)
-    {
-        // @@RlyDontKnow: disabled the forceful setting of the position as the path points
-        // aren't guaranteed to be valid (they may be slightly below the geometry)
-        // so the set would cause NPCs falling off the world - a "stuck" one is better
-        // as it can free itself
-        // do NOT re-enable this without triple checking all possible destinations are valid
-        //npc->GetLinMove()->SetPosition(myPos,myRot,mySector);
-        //npc->Printf(5,"Set position %g %g %g, sector %s\n", myPos.x, myPos.y, myPos.z, mySector->QueryObject()->GetName());
-        
-        if (!path->HasNext())
-        {
-            npc->Printf(5, "We are done..");
-            npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior());
-            return;
-        }
-        else
-        {
-            npc->Printf(6, "We are at localDest..");
-            dest = path->Next();
-            StartMoveTo(npc, eventmgr, dest->GetPosition(), dest->GetSector(), GetVelocity(npc), action, false, angle);
-        }
-    }
-    else
-    {
-        TurnTo(npc, dest->GetPosition(), dest->GetSector(), forward, angle);
-    }
-
-    // Limit time extrapolation so we arrive near the correct place.
-    float close = GetVelocity(npc)*timedelta;
-    if(distance <= close)
-    	timedelta = distance / GetVelocity(npc);
-
-    npc->Printf(8, "advance: pos=(%f.2,%f.2,%f.2) rot=%.2f %s localDest=%s dist=%f", 
-                myPos.x,myPos.y,myPos.z, myRot, mySector->QueryObject()->GetName(),
-                dest->GetPosition().Description().GetData(),distance);
-
-    {
-        ScopedTimer st(250, "chase extrapolate %.2f time for %s", timedelta, ShowID(npc->GetActor()->GetEID()));
-        npc->GetLinMove()->ExtrapolatePosition(timedelta);
-    }
-
-    {
-        bool on_ground;
-        float speed,ang_vel;
-        csVector3 bodyVel,worldVel,myNewPos;
-        iSector* myNewSector;
-
-        npc->GetLinMove()->GetDRData(on_ground,speed,myNewPos,myRot,myNewSector,bodyVel,worldVel,ang_vel);
-        npc->Printf(8,"World position bodyVel=%s worldVel=%s",
-                       toString(bodyVel).GetDataSafe(),toString(worldVel).GetDataSafe());
-
-        CheckMoveOk(npc, eventmgr, myPos, mySector, myNewPos, myNewSector, timedelta);
-    }
-}
-
-void ChaseOperation::InterruptOperation(NPC *npc,EventManager *eventmgr)
-{
-    ScriptOperation::InterruptOperation(npc,eventmgr);
-    
-    StopMovement(npc);
-}
-
-bool ChaseOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
-{
-    StopMovement(npc);
-
-    completed = true;
-
-    return true;  // Script can keep going
+    return true;
 }
 
 //---------------------------------------------------------------------------
@@ -2447,68 +2525,67 @@ bool MoveToOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
 
 //---------------------------------------------------------------------------
 
+NavigateOperation::NavigateOperation()
+    : MovementOperation("Navigate"),
+      // Instance variables
+      endSector(NULL),
+      // Operation parameters
+      forceEndPosition(false)
+{
+}
+
+NavigateOperation::NavigateOperation(const NavigateOperation* other)
+    : MovementOperation(other),
+      // Instance variables
+      endSector(NULL),
+      // Operation parameters
+      action(other->action),
+      forceEndPosition(other->forceEndPosition)
+{
+}
+
 bool NavigateOperation::Load(iDocumentNode *node)
 {
+    if (!MovementOperation::Load(node))
+    {
+        return false;
+    }
+
     LoadVelocity(node);
     LoadCheckMoveOk(node);
 
     action = node->GetAttributeValue("anim");
-    forceEndPosition = node->GetAttributeValueAsBool("force",false);
+    forceEndPosition = node->GetAttributeValueAsBool("force", false);
     
     return true;
 }
 
 ScriptOperation *NavigateOperation::MakeCopy()
 {
-    NavigateOperation *op = new NavigateOperation;
-    op->action           = action;
-    op->velSource        = velSource;
-    op->vel              = vel;
-    op->forceEndPosition = forceEndPosition;
-
-    op->CopyCheckMoveOk(this);
+    NavigateOperation *op = new NavigateOperation(this);
 
     return op;
 }
 
-ScriptOperation::OperationResult NavigateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+bool NavigateOperation::GetEndPosition(NPC* npc, const csVector3 &myPos, const iSector* mySector,
+                                       csVector3 &endPos, iSector* &endSector)
 {
-    float rot=0;
+    float dummyRot;
 
-    npc->GetActiveLocate(endPos,endSector,rot);
-    npc->Printf(5, "Located %s at %1.2f m/sec.",toString(endPos,endSector).GetData(), GetVelocity(npc) );
+    npc->GetActiveLocate(endPos,endSector,dummyRot);
 
-    // Start the move and calculate the endAngle value
-    StartMoveTo(npc,eventmgr,endPos,endSector,GetVelocity(npc),action,true,endAngle);
+    npc->Printf(5, "Located %s at %1.2f m/sec.",toString(endPos,endSector).GetData(),
+                GetVelocity(npc) );
 
-    return OPERATION_NOT_COMPLETED; // This behavior isn't done yet
+    return true;
 }
 
-void NavigateOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr) 
+bool NavigateOperation::UpdateEndPosition(NPC* npc, const csVector3 &myPos, const iSector* mySector,
+                                          csVector3 &endPos, iSector* &endSector)
 {
-    csVector3 oldPos,newPos;
-    float     oldRot,newRot;
-    iSector  *oldSector,*newSector;
-
-    npc->GetLinMove()->GetLastPosition(oldPos, oldRot, oldSector);
-
-    npc->GetLinMove()->ExtrapolatePosition(timedelta);
-
-    npc->GetLinMove()->GetLastPosition(newPos, newRot, newSector);
-
-    npc->Printf(10,"New position: %s",toString(newPos,newSector).GetDataSafe());
-
-    psGameObject::SetPosition(npc->GetActor(), newPos, newSector);
-
-    CheckMoveOk(npc, eventmgr, oldPos, oldSector, newPos, newSector, timedelta);
+    return true;
 }
 
-void NavigateOperation::InterruptOperation(NPC *npc,EventManager *eventmgr)
-{
-    ScriptOperation::InterruptOperation(npc,eventmgr);
-
-    StopMovement(npc);
-}
 
 bool NavigateOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
 {
@@ -2518,12 +2595,7 @@ bool NavigateOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
         npc->GetLinMove()->SetPosition(endPos,endAngle,endSector);
     }
 
-    // Stop the movement
-    StopMovement(npc);
-
-    completed = true;
-
-    return true;  // Script can keep going
+    return MovementOperation::CompleteOperation(npc, eventmgr);
 }
 
 //---------------------------------------------------------------------------
