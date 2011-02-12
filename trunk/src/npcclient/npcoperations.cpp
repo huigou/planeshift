@@ -725,12 +725,14 @@ ChaseOperation::ChaseOperation()
     : MovementOperation("Chase"),
       // Instance variables
       target_id(EID(0)),
+      offsetAngle(0.0),
       // Operation parameters
       // Initialized in the load function
       type(NEAREST_PLAYER),
       searchRange(2.0),
       chaseRange(-1.0),
-      offset(0.5)
+      offset(0.5),
+      offsetAngleMax(0.0)
 { 
 }
 
@@ -739,12 +741,14 @@ ChaseOperation::ChaseOperation( const ChaseOperation* other )
       // Instance variables
       target_id(other->target_id),
       // Operation parameters
-      // Initialized in the load function
       type(other->type),
       searchRange(other->searchRange),
       chaseRange(other->chaseRange),
-      offset(other->offset)
+      offset(other->offset),
+      offsetAngleMax(other->offsetAngleMax)
 { 
+    // Select a offset_angle for this instance of chase
+    offsetAngle = (2.0f*psGetRandom()-1.0f)*offsetAngleMax;
 }
 
 
@@ -807,6 +811,16 @@ bool ChaseOperation::Load(iDocumentNode *node)
     else
     {
     	offset = 0.5f;
+    }
+
+    if ( node->GetAttributeValue("offset_angle") )
+    {
+        offsetAngleMax = node->GetAttributeValueAsFloat("offset_angle")*PI/180.0f;
+        offsetAngle = (2.0f*psGetRandom()-1.0f)*offsetAngleMax; // Select a offset_angle for this instance
+    }
+    else
+    {
+    	offsetAngleMax = 0.0f;
     }
 
     LoadVelocity(node);
@@ -903,8 +917,14 @@ bool ChaseOperation::GetEndPosition(NPC* npc, const csVector3 &myPos, const iSec
     psGameObject::GetPosition(targetEntity, endPos, targetRot, endSector);
 
 
+    // Calculate an offset point from the target.
+    // This point is used until new target is found
+    offsetDelta= psGameObject::DisplaceTargetPos(mySector, myPos,
+                                                 endSector, endPos, offset);
+    offsetDelta = csMatrix3(0.0,1.0,0.0,offsetAngle)*offsetDelta;
+
     // This prevents NPCs from wanting to occupy the same physical space as something else
-    endPos -= psGameObject::DisplaceTargetPos(mySector, myPos, endSector, endPos, offset );
+    endPos -= offsetDelta;
     // TODO: Check if new endPos is within same sector!!!
 
 
@@ -915,7 +935,7 @@ bool ChaseOperation::GetEndPosition(NPC* npc, const csVector3 &myPos, const iSec
     return true;
 }
 
-gemNPCActor* ChaseOperation::UpdateChaseTarget(NPC* npc)
+gemNPCActor* ChaseOperation::UpdateChaseTarget(NPC* npc, const csVector3 &myPos, const iSector* mySector)
 {
     csVector3    targetPos;
     iSector*     targetSector;
@@ -937,6 +957,12 @@ gemNPCActor* ChaseOperation::UpdateChaseTarget(NPC* npc)
             if (target_id != targetEntity->GetEID())
             {
                 npc->Printf(5, "Changing chase to new player %s", newTarget->GetName());
+
+                // Calculate an offset point from the target. 
+                // This point is used until new target is found
+                offsetDelta= psGameObject::DisplaceTargetPos(mySector, myPos,
+                                                             targetSector, targetPos, offset);
+                offsetDelta = csMatrix3(0.0,1.0,0.0,offsetAngle)*offsetDelta;
             }
 
 
@@ -958,6 +984,12 @@ gemNPCActor* ChaseOperation::UpdateChaseTarget(NPC* npc)
             if (target_id != targetEntity->GetEID())
             {
                 npc->Printf(5, "Changing chase to new actor %s", newTarget->GetName());
+
+                // Calculate an offset point from the target. 
+                // This point is used until new target is found
+                offsetDelta= psGameObject::DisplaceTargetPos(mySector, myPos,
+                                                             targetSector, targetPos, offset);
+                offsetDelta = csMatrix3(0.0,1.0,0.0,offsetAngle)*offsetDelta;
             }
 
             // Update chase operations target
@@ -978,7 +1010,7 @@ gemNPCActor* ChaseOperation::UpdateChaseTarget(NPC* npc)
 bool ChaseOperation::UpdateEndPosition(NPC* npc, const csVector3 &myPos, const iSector* mySector,
                                        csVector3 &targetPos, iSector* &targetSector)
 {
-    gemNPCActor* targetEntity = UpdateChaseTarget(npc);
+    gemNPCActor* targetEntity = UpdateChaseTarget(npc, myPos, mySector);
     if (!targetEntity) // No target entity anymore
     {
         npc->Printf(5, "ChaseOp has no target now!");
@@ -1014,7 +1046,8 @@ bool ChaseOperation::UpdateEndPosition(NPC* npc, const csVector3 &myPos, const i
     }
 
     // This prevents NPCs from wanting to occupy the same physical space as something else
-    targetPos -= psGameObject::DisplaceTargetPos(mySector, myPos, targetSector, targetPos, offset );
+    // OffsetDelta calculated at first contact with this target.
+    targetPos -= offsetDelta;
     // TODO: Check if new targetPos is within same sector!!!
 
     return true;

@@ -271,7 +271,7 @@
       </behavior>
       <behavior name="chase" decay="1" completion_decay="-1" growth="0" initial="0">
           <talk text="Start chaseing actor" target="false" />
-          <chase type="nearest_actor" offset="1" range="11" chase_range="20" anim="walk" />
+          <chase type="nearest_actor" offset="3" offset_angle="90" range="11" chase_range="20" anim="walk" />
           <talk text="Stop chaseing actor" target="false" />
       </behavior>
       <react event="player nearby" behavior="chase" delta="100" /> <!-- Nearby(<10) -->

@@ -1224,5 +1224,23 @@ csVector3 psGameObject::DisplaceTargetPos(const iSector* mySector, const csVecto
     return displace;
 }
 
+csVector3 psGameObject::DisplaceTargetPos(const iSector* mySector, const csVector3& myPos, iSector* targetSector, csVector3& targetPos , float offset, float angle)
+{
+    csVector3 displace;
+
+    // This prevents NPCs from wanting to occupy the same physical space as something else
+    if(mySector == targetSector)
+    {
+        csVector3 displacement = targetPos - myPos;
+        displacement.y = 0;
+        
+        csTransform transform;
+        displacement = csMatrix3 (0.0,1.0,0.0,angle)*displacement;
+
+        displace = offset*displacement.Unit();
+    }
+    return displace;
+}
+
 
 //---------------------------------------------------------------------------

@@ -259,12 +259,15 @@ protected:
     // Instance varaibles
     EID              target_id;
     csVector3        localDest;
+    float            offsetAngle;     //< The actual offset angle in radians
+    csVector3        offsetDelta;     //< The actual delta relative to target
 
     // Operaiton parameters
     int              type;
     float            searchRange;
     float            chaseRange;
     float            offset;
+    float            offsetAngleMax;  //< The maximum offset angle in radians
     
     enum
     {
@@ -286,7 +289,7 @@ public:
     virtual bool GetEndPosition(NPC* npc, const csVector3 &myPos, const iSector* mySector,
                                 csVector3 &endPos, iSector* &endSector);
 
-    virtual gemNPCActor* UpdateChaseTarget(NPC* npc);
+    virtual gemNPCActor* UpdateChaseTarget(NPC* npc, const csVector3 &myPos, const iSector* mySector);
 
     virtual bool UpdateEndPosition(NPC* npc, const csVector3 &myPos, const iSector* mySector,
                                    csVector3 &endPos, iSector* &endSector);
