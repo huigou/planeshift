@@ -510,7 +510,9 @@ MathScript* MathScript::Create(const char *name, const csString & script)
                 exp.Collapse();
                 if (!exp.IsEmpty())
                 {
-                    if (exp.FindFirst("=") != SIZET_NOT_FOUND)
+                    // disable assignments here for now - we need some better
+                    // way to verify it's an assignment and not a comparison
+                    if (0/*exp.FindFirst("=") != SIZET_NOT_FOUND*/)
                     {
                         opcode |= MATH_ASSIGN;
                         st = MathStatement::Create(exp, s->name);
