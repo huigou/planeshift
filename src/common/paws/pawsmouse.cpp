@@ -51,8 +51,7 @@ pawsMouse::pawsMouse()
     crosshairImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage("Crosshair Mouse Pointer");
     useOS = false;
     csRef<iConfigManager> cfg =  csQueryRegistry<iConfigManager> (PawsManager::GetSingleton().GetObjectRegistry());
-    basicCursor = cfg->GetBool("PlaneShift.GUI.BasicCursor");
-    
+    basicCursor = cfg->GetBool("PlaneShift.GUI.BasicCursor");    
 }
 
 pawsMouse::~pawsMouse()
@@ -99,7 +98,6 @@ void pawsMouse::ChangeImage(csRef<iPawsImage> drawable)
 
 void pawsMouse::SetOSMouse(csRef<iPawsImage> drawable)
 {
-#ifdef CS_PLATFORM_WIN32
     pawsImageDrawable * pwDraw = dynamic_cast<pawsImageDrawable *>((iPawsImage *)drawable);
     if (!pwDraw)
       return;
@@ -124,9 +122,6 @@ void pawsMouse::SetOSMouse(csRef<iPawsImage> drawable)
       return;
     }
     else g2d->SetMouseCursor (csmcNone);
-#else
-    (void)drawable; // supress unused variable warning
-#endif
 }
 
 void pawsMouse::Draw()
