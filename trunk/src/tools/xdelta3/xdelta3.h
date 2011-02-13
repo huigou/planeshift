@@ -351,7 +351,7 @@ typedef enum {
   XD3_INVALID_INPUT = -17712, /* invalid input/decoder error */
   XD3_NOSECOND    = -17713, /* when secondary compression finds no
 			       improvement. */
-  XD3_UNIMPLEMENTED = -17714, /* currently VCD_TARGET */
+  XD3_UNIMPLEMENTED = -17714 /* currently VCD_TARGET */
 } xd3_rvalues;
 
 /* special values in config->flags */
@@ -408,7 +408,7 @@ typedef enum
   XD3_COMPLEVEL_2 = (2 << XD3_COMPLEVEL_SHIFT),
   XD3_COMPLEVEL_3 = (3 << XD3_COMPLEVEL_SHIFT),
   XD3_COMPLEVEL_6 = (6 << XD3_COMPLEVEL_SHIFT),
-  XD3_COMPLEVEL_9 = (9 << XD3_COMPLEVEL_SHIFT),
+  XD3_COMPLEVEL_9 = (9 << XD3_COMPLEVEL_SHIFT)
 
 } xd3_flags;
 
@@ -423,7 +423,7 @@ typedef enum
   XD3_SMATCH_FAST    = 2,
   XD3_SMATCH_FASTER  = 3,
   XD3_SMATCH_FASTEST = 4,
-  XD3_SMATCH_SOFT    = 5,
+  XD3_SMATCH_SOFT    = 5
 } xd3_smatch_cfg;
 
 /*********************************************************************
@@ -448,7 +448,7 @@ typedef enum {
 			  source/target. */
   MATCH_FORWARD   = 2, /* currently expanding a match forward in the
 			  source/target. */
-  MATCH_SEARCHING = 3, /* currently searching for a match. */
+  MATCH_SEARCHING = 3 /* currently searching for a match. */
 
 } xd3_match_state;
 
@@ -467,7 +467,7 @@ typedef enum {
   ENC_FLUSH     = 4, /* currently emitting output. */
   ENC_POSTOUT   = 5, /* after an output section. */
   ENC_POSTWIN   = 6, /* after all output sections. */
-  ENC_ABORTED   = 7, /* abort. */
+  ENC_ABORTED   = 7 /* abort. */
 } xd3_encode_state;
 
 /* The xd3_decode_input state machine steps through these states in
@@ -520,7 +520,7 @@ typedef enum {
 
   DEC_FINISH   = 23, /* window finished */
 
-  DEC_ABORTED  = 24, /* xd3_abort_stream */
+  DEC_ABORTED  = 24 /* xd3_abort_stream */
 } xd3_decode_state;
 
 /************************************************************
