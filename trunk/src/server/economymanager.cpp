@@ -70,7 +70,7 @@ EconomyManager::EconomyManager()
     Subscribe(&EconomyManager::HandleDropMessage,MSGTYPE_DROP_EVENT, NO_VALIDATION);
     Subscribe(&EconomyManager::HandleLootMessage,MSGTYPE_LOOT_EVENT, NO_VALIDATION);
 
-};
+}
 
 
 EconomyManager::~EconomyManager()
