@@ -329,14 +329,14 @@
 
 typedef enum {
   VCD_DJW_ID    = 1,
-  VCD_FGK_ID    = 16, /* Note: these are not standard IANA-allocated IDs! */
+  VCD_FGK_ID    = 16 /* Note: these are not standard IANA-allocated IDs! */
 } xd3_secondary_ids;
 
 typedef enum {
   SEC_NOFLAGS     = 0,
 
   /* Note: SEC_COUNT_FREQS Not implemented (to eliminate 1st Huffman pass) */
-  SEC_COUNT_FREQS = (1 << 0),
+  SEC_COUNT_FREQS = (1 << 0)
 } xd3_secondary_flags;
 
 typedef enum {
@@ -344,7 +344,7 @@ typedef enum {
                  * compressor. */
   INST_SECTION, /* The header section is not compressed, therefore not
                  * listed here. */
-  ADDR_SECTION,
+  ADDR_SECTION
 } xd3_section_type;
 
 typedef unsigned int xd3_rtype;
