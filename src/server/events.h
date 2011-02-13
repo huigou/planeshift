@@ -134,6 +134,7 @@ class psBuyEvent : public psMessageCracker
 public:
     psBuyEvent(PID from, const char* fromName, PID to, const char* toName, unsigned int item, const char* itemName, int stack, int quality, unsigned int price);
     psBuyEvent( MsgEntry* event);
+    ~psBuyEvent();
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -154,6 +155,7 @@ class psSellEvent : public psMessageCracker
 public:
     psSellEvent(PID from, const char* fromName, PID to, const char* toName, unsigned int item, const char* itemName, int stack, int quality, unsigned int price);
     psSellEvent( MsgEntry* event);
+    ~psSellEvent();
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -168,10 +170,11 @@ public:
     TransactionEntity* trans;
 };
 class psPickupEvent : public psMessageCracker
-    {
+{
     public:
         psPickupEvent(PID to, const char* toName, unsigned int item, const char* itemName, int stack, int quality,unsigned int price);
         psPickupEvent( MsgEntry* event);
+        ~psPickupEvent();
         
         PSF_DECLARE_MSG_FACTORY();
         
@@ -184,12 +187,14 @@ class psPickupEvent : public psMessageCracker
         virtual csString ToString(AccessPointers * access_ptrs);
         
         TransactionEntity* trans;
-    };
+};
+
 class psDropEvent : public psMessageCracker
-    {
+{
     public:
         psDropEvent(PID from, const char* fromName, unsigned int item, const char* itemName, int stack, int quality,unsigned int price);
         psDropEvent( MsgEntry* event);
+        ~psDropEvent();
         
         PSF_DECLARE_MSG_FACTORY();
         
@@ -202,13 +207,14 @@ class psDropEvent : public psMessageCracker
         virtual csString ToString(AccessPointers * access_ptrs);
         
         TransactionEntity* trans;
-    };
+};
 
 class psLootEvent : public psMessageCracker
-    {
+{
     public:
         psLootEvent(PID from, const char* fromName, PID to, const char* toName, unsigned int item, const char* itemName, int stack, int quality, unsigned int price);
         psLootEvent( MsgEntry* event);
+        ~psLootEvent();
         
         PSF_DECLARE_MSG_FACTORY();
         
@@ -221,7 +227,7 @@ class psLootEvent : public psMessageCracker
         virtual csString ToString(AccessPointers * access_ptrs);
         
         TransactionEntity* trans;
-    };
+};
 
 
 /**
