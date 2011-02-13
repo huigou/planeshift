@@ -61,7 +61,7 @@ enum Rule_MovePieceType
 enum Rule_MoveablePieces
 {
     ANY_PIECE,
-    OWN_PIECES_ONLY,
+    OWN_PIECES_ONLY
 };
 enum Rule_MovePiecesTo
 {
