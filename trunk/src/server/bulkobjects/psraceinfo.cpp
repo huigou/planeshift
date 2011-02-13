@@ -232,7 +232,7 @@ void psRaceInfo::GetStartingLocation(float& x,float& y, float& z,float& rot,floa
     rot = selectedLoc.yrot;
     range = selectedLoc.range;
     sectorname = selectedLoc.sector_name;
-};
+}
 
 const char* psRaceInfo::GetHonorific()
 {
