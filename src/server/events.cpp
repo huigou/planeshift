@@ -232,6 +232,15 @@ psBuyEvent::psBuyEvent( MsgEntry* event)
     trans->price = event->GetUInt32();
 }
 
+psBuyEvent::~psBuyEvent()
+{
+    //unalloc memory
+    if(trans)
+    {
+        delete trans;
+    }
+}
+
 csString psBuyEvent::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
@@ -287,6 +296,15 @@ psSellEvent::psSellEvent( MsgEntry* event)
     trans->price = event->GetUInt32();
 }
 
+psSellEvent::~psSellEvent()
+{
+    //unalloc memory
+    if(trans)
+    {
+        delete trans;
+    }
+}
+
 csString psSellEvent::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
@@ -334,6 +352,16 @@ psPickupEvent::psPickupEvent( MsgEntry* event)
     trans->count = event->GetInt32();
     trans->quality = event->GetInt32();
     trans->price = event->GetUInt32();
+}
+
+
+psPickupEvent::~psPickupEvent()
+{
+    //unalloc memory
+    if(trans)
+    {
+        delete trans;
+    }
 }
 
 csString psPickupEvent::ToString(AccessPointers * /*access_ptrs*/)
@@ -384,6 +412,15 @@ psDropEvent::psDropEvent( MsgEntry* event)
     trans->count = event->GetInt32();
     trans->quality = event->GetInt32();
     trans->price = event->GetUInt32();
+}
+
+psDropEvent::~psDropEvent()
+{
+    //unalloc memory
+    if(trans)
+    {
+        delete trans;
+    }
 }
 
 csString psDropEvent::ToString(AccessPointers * /*access_ptrs*/)
@@ -438,6 +475,15 @@ psLootEvent::psLootEvent( MsgEntry* event)
     trans->count = event->GetInt32();
     trans->quality = event->GetInt32();
     trans->price = event->GetUInt32();
+}
+
+psLootEvent::~psLootEvent()
+{
+    //unalloc memory
+    if(trans)
+    {
+        delete trans;
+    }
 }
 
 csString psLootEvent::ToString(AccessPointers * /*access_ptrs*/)
