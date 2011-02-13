@@ -2684,7 +2684,7 @@ void pawsSpellCheckedEditBox::Draw()
             int textXPos = screenFrame.xmin + textCenterX + margin;
             
             // now we need to draw every word separately as the color might change
-            for (int i = 0; i < words.GetSize(); i++)
+            for (size_t i = 0; i < words.GetSize(); i++)
             {	    
                 int wordStart;	    
                 if (i == 0)
