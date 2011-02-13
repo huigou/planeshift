@@ -211,6 +211,7 @@ psBuyEvent::psBuyEvent(PID from, const char* fromName, PID to, const char* toNam
     msg->Add( (int32_t) stack);
     msg->Add( (int32_t) quality);
     msg->Add( (uint32_t) price);
+    trans = NULL;
 }
 
 psBuyEvent::psBuyEvent( MsgEntry* event)
@@ -274,6 +275,7 @@ psSellEvent::psSellEvent(PID from, const char* fromName, PID to, const char* toN
     msg->Add( (int32_t) stack);
     msg->Add( (int32_t) quality);
     msg->Add( (uint32_t) price);
+    trans = NULL;
 }
 
 psSellEvent::psSellEvent( MsgEntry* event)
@@ -335,6 +337,7 @@ psPickupEvent::psPickupEvent(PID to, const char* toName, unsigned int item, cons
     msg->Add( (int32_t) stack);
     msg->Add( (int32_t) quality);
     msg->Add( (uint32_t) price);
+    trans = NULL;
 }
 
 psPickupEvent::psPickupEvent( MsgEntry* event)
@@ -395,6 +398,7 @@ psDropEvent::psDropEvent(PID from, const char* fromName, unsigned int item, cons
     msg->Add( (int32_t) stack);
     msg->Add( (int32_t) quality);
     msg->Add( (uint32_t) price);
+    trans = NULL;
 }
 
 psDropEvent::psDropEvent( MsgEntry* event)
@@ -456,6 +460,7 @@ psLootEvent::psLootEvent(PID from, const char* fromName, PID to, const char* toN
     msg->Add( (int32_t) stack);
     msg->Add( (int32_t) quality);
     msg->Add( (uint32_t) price);
+    trans = NULL;
 }
 
 psLootEvent::psLootEvent( MsgEntry* event)
