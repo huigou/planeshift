@@ -3732,7 +3732,7 @@ CharStat & StatSet::Get(PSITEMSTATS_STAT which)
 
 SkillSet::SkillSet(psCharacter *self) : CharacterAttribute(self)
 {
-    for (int i=0; i < psserver->GetCacheManager()->GetSkillAmount(); i++)
+    for (size_t i = 0; i < psserver->GetCacheManager()->GetSkillAmount(); i++)
     {
         //generate a new skill
         Skill mySkill;
