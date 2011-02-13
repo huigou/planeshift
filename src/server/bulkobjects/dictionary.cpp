@@ -1140,7 +1140,7 @@ bool NpcTrigger::operator==(const NpcTrigger& other) const
     return (area==other.area &&
             trigger==other.trigger &&
             priorresponseID==other.priorresponseID);
-};
+}
 
 bool NpcTrigger::operator<=(const NpcTrigger& other) const
 {
@@ -1155,7 +1155,7 @@ bool NpcTrigger::operator<=(const NpcTrigger& other) const
             return false;
     }
     return true;
-};
+}
 
 
 NpcResponse::NpcResponse()
