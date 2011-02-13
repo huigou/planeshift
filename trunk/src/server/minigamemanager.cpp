@@ -876,7 +876,7 @@ void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
     }
 
     // Check moves and apply updates if rules passed
-    bool moveAccepted;
+    bool moveAccepted = false;
     if (msg.msgNumUpdates == 1)
     {
         // 1 update means a new piece is added to the board
