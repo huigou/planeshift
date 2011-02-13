@@ -157,7 +157,7 @@ WorkManager::WorkManager(CacheManager* cachemanager, EntityManager* entitymanage
 
 
     Initialize();
-};
+}
 
 
 WorkManager::~WorkManager()
