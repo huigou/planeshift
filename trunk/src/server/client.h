@@ -61,7 +61,7 @@ enum TARGET_TYPES
     TARGET_SELF     = 0x08,
     TARGET_FRIEND   = 0x10,
     TARGET_FOE      = 0x20,
-    TARGET_DEAD     = 0x40,
+    TARGET_DEAD     = 0x40
 };
 
 enum CheatFlags // will have more of these as Paladin gets better
