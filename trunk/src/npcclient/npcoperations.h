@@ -249,53 +249,113 @@ public:
 
 //-----------------------------------------------------------------------------
 
-/**
-* Chase updates periodically and turns, moving towards a certain
-* location.  This is normally used to chase a targeted player.
+/** Detect and chase a target until reached o out of bound.
+*   Chase updates periodically and turns, moving towards a certain
+*   location.  This is normally used to chase a targeted player.
 */
 class ChaseOperation : public MovementOperation
 {
 protected:
-    // Instance varaibles
-    EID              target_id;
-    csVector3        localDest;
-    float            offsetAngle;     //< The actual offset angle in radians
-    csVector3        offsetDelta;     //< The actual delta relative to target
+    /** @name Instance varaibles
+     *  These parameters are local to one instance of the operation.
+     */
+    //@{
+    EID              targetEID;              ///< The EID of the chased target
+    float            offsetAngle;            ///< The actual offset angle in radians
+    csVector3        offsetDelta;            ///< The actual delta relative to target
+    //@}
 
-    // Operaiton parameters
-    int              type;
-    float            searchRange;
-    float            chaseRange;
-    float            offset;
-    float            offsetAngleMax;  //< The maximum offset angle in radians
+    /** @name Operation Parameters
+     *  These parameters are initialized by the Load function
+     *  and copied by the MakeCopy function.
+     */
+    //@{
+    int              type;                   ///< The type of chase to perform
+    float            searchRange;            ///< Search for targets within this range
+    float            chaseRange;             ///< Chase as long targets are within this range.
+                                             ///< Chase forever if set to -1.
+    float            offset;                 ///< Used to stop a offset from the target.
+    float            offsetAngleMax;         ///< The maximum offset angle in radians
+    float            sideOffset;             ///< Add a offset to the side of the target
+    bool             offsetRelativeHeading;  ///< Set to true will make the offset relative target heading
+    //@}
     
     enum
     {
         NEAREST_ACTOR,   ///< Sense Players and NPC's
         NEAREST_NPC,     ///< Sense only NPC's
         NEAREST_PLAYER,  ///< Sense only players
-        OWNER,
-        TARGET
+        OWNER,           ///< Sense only the owner
+        TARGET           ///< Sense only target
     };
     static const char * typeStr[];
 
+    /** Constructor for this operation, used by the MakeCopy.
+     *
+     *  This constructor will copy all the Operation Parameters
+     *  from the other operation and initialize all Instance Variables
+     *  to default values.
+     */
     ChaseOperation(const ChaseOperation* other);
 
 public:
-
+    /** Constructor for this operation.
+     *
+     *  Construct this operation and initialzie with default
+     *  Instance Variables. The Operation Parameters
+     */
     ChaseOperation();
+
+    /** Destructor for this operation
+     */
     virtual ~ChaseOperation() {};
 
+    /** Calculate any offset from target to stop chase.
+     *
+     *  The chase support several different modes. The default is that the
+     *  chaser ends up at the top of the target. This function calculate the offset
+     *  as a 3D vector that represents the distance from the target to the end
+     *  point of the chase.
+     */
+    csVector3 CalculateOffsetDelta(const csVector3 &myPos, const iSector* mySector,
+                                   const csVector3 &endPos, const iSector* endSector,
+                                   float endRot) const;
+
+    /** Calculate the end position for this chase.
+     *
+     *  Called by the Run funciton in the MovementOperation. Will calculate
+     *  end posiiton for the chase including any offset deltas.
+     */
     virtual bool GetEndPosition(NPC* npc, const csVector3 &myPos, const iSector* mySector,
                                 csVector3 &endPos, iSector* &endSector);
 
+    /** Call to update the target to chase.
+     *
+     *  When called the chase target will be checked to se if a new target should be selected.
+     *  This mostly apply to chases of type NEAREST_*
+     */
     virtual gemNPCActor* UpdateChaseTarget(NPC* npc, const csVector3 &myPos, const iSector* mySector);
 
+    /** Update end position for moving targets.
+     *
+     *  Called from advance in the MovementOperation. Will update the end position for
+     *  targets that moves. This may include change of target as well.
+     */
     virtual bool UpdateEndPosition(NPC* npc, const csVector3 &myPos, const iSector* mySector,
                                    csVector3 &endPos, iSector* &endSector);
 
+    /** Load Operation Parameters from xml.
+     *
+     *  Load this operation from the given node. This will
+     *  initialzie the Operation Parameters for this operation.
+     */
     virtual bool Load(iDocumentNode *node);
 
+    /** Make a deep copy of this operation.
+     *
+     *  MakeCopy will make a copy of all Operation Parameters and reset each
+     *  Instance Variable.
+     */
     virtual ScriptOperation *MakeCopy();
 };
 

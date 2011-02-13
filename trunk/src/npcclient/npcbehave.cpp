@@ -1210,7 +1210,7 @@ void psGameObject::NormalizeRadians(float &target_angle)
         target_angle -= TWO_PI;
 }
 
-csVector3 psGameObject::DisplaceTargetPos(const iSector* mySector, const csVector3& myPos, iSector* targetSector, csVector3& targetPos , float offset)
+csVector3 psGameObject::DisplaceTargetPos(const iSector* mySector, const csVector3& myPos, const iSector* targetSector, const csVector3& targetPos , float offset)
 {
     csVector3 displace;
 
@@ -1224,7 +1224,7 @@ csVector3 psGameObject::DisplaceTargetPos(const iSector* mySector, const csVecto
     return displace;
 }
 
-csVector3 psGameObject::DisplaceTargetPos(const iSector* mySector, const csVector3& myPos, iSector* targetSector, csVector3& targetPos , float offset, float angle)
+csVector3 psGameObject::DisplaceTargetPos(const iSector* mySector, const csVector3& myPos, const iSector* targetSector, const csVector3& targetPos , float offset, float angle)
 {
     csVector3 displace;
 

@@ -519,6 +519,20 @@ gemNPCObject *psNPCClient::FindEntityID(EID EID)
     return all_gem_objects_by_eid.Get(EID, 0);
 }
 
+gemNPCObject *psNPCClient::FindEntityByName(const char* name)
+{
+    for (size_t i=0; i < all_gem_objects.GetSize(); i++)
+    {
+        gemNPCObject * object = all_gem_objects[i];
+
+        if (strcmp(object->GetName(),name) == 0)
+        {
+            return object;
+        }
+    }
+    return NULL;
+}
+
 gemNPCObject *psNPCClient::FindCharacterID(PID PID)
 {
     return all_gem_objects_by_pid.Get(PID, 0);
