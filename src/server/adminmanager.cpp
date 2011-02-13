@@ -2105,7 +2105,7 @@ csString AdminCmdDataSectorTarget::GetHelpMessage()
 bool AdminCmdDataSectorTarget::GetSectorOfClient(Client* client)
 {
     // Get the current sector
-    iSector* here;
+    iSector* here = NULL;
     if (client->GetActor())
     {
         here = client->GetActor()->GetSector();
@@ -8771,7 +8771,7 @@ void AdminManager::AwardToTarget(unsigned int gmClientNum, Client* target, psRew
         bool modified = false;
         if (rewardDataSkill->skillName == "all") // update all skills
         {
-            for(int i=0; i < psserver->GetCacheManager()->GetSkillAmount(); i++)
+            for(size_t i = 0; i < psserver->GetCacheManager()->GetSkillAmount(); i++)
             {
                 psSkillInfo* skill = psserver->GetCacheManager()->GetSkillByID(i);
                 if (!skill) continue; // skill doesn't exist -> this should not happen
@@ -9210,7 +9210,7 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* 
     {
         if (data->skillData.skillName == "all")
         {
-            for(int i=0; i < psserver->GetCacheManager()->GetSkillAmount(); i++)
+            for(size_t i = 0; i < psserver->GetCacheManager()->GetSkillAmount(); i++)
             {
                 psSkillInfo * skill = psserver->GetCacheManager()->GetSkillByID(i);
                 if (skill == NULL) continue;
@@ -9264,7 +9264,7 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* 
     }
 
     bool modified = false;
-    for (int i=0; i < psserver->GetCacheManager()->GetSkillAmount(); i++)
+    for (size_t i = 0; i < psserver->GetCacheManager()->GetSkillAmount(); i++)
     {
         psSkillInfo * skill = psserver->GetCacheManager()->GetSkillByID(i);
         if (skill == NULL) continue;
@@ -10213,7 +10213,7 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
     AdminCmdDataQuest *data = dynamic_cast<AdminCmdDataQuest*>(cmddata);
     Client *subject = data->targetClient;
 
-    Client *target; //holds the target of our query
+    Client *target = NULL; //holds the target of our query
     PID pid; //used to keep player pid used *only* in offline queries
     csString name; //stores the char name
     if(!data->IsOnline())    //the target was empty check if it was because it's a command targetting the issuer or an offline player
