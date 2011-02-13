@@ -373,6 +373,12 @@ public:
     gemNPCObject *FindCharacterID(PID pid);
     gemNPCObject *FindEntityID(EID eid);
 
+    /** Find named entity.
+     *
+     *  Return first entity that macht the given name.
+     */
+    gemNPCObject *FindEntityByName(const char* name);
+
     /**
      * Loop through every tribe and check if this npc is a member.
      */

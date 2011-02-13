@@ -624,10 +624,12 @@ void MovementOperation::Advance(float timedelta, NPC *npc, EventManager *eventmg
     // Check if path endpoint has changed and needs to be updated
     if(EndPointChanged( endPos, endSector ))
     {
-        npc->Printf(8, "target diverged, recalculate path..");
+        npc->Printf(8, "target diverged, recalculate path between %s and %s", 
+                        toString(myPos,const_cast<iSector*>(mySector)).GetData(), 
+                        toString(endPos, endSector).GetData());
         path = npcclient->GetNavStruct()->ShortestPath(myPos, const_cast<iSector*>(mySector),
                                                        endPos, endSector);
-        if(!path)
+        if(!path || !path->HasNext())
         {
             npc->Printf(5, "Failed to calculate new path between %s and %s", 
                         toString(myPos,const_cast<iSector*>(mySector)).GetData(), 
@@ -635,6 +637,10 @@ void MovementOperation::Advance(float timedelta, NPC *npc, EventManager *eventmg
             npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior());
             return;
         }
+        // Start moving toward new dest
+        iMapNode* dest = path->Next();
+        StartMoveTo(npc, eventmgr, dest->GetPosition(), dest->GetSector(), GetVelocity(npc),
+                    action, false, angle);
     }
 
     iMapNode* dest = path->Current();
@@ -724,7 +730,7 @@ const char * ChaseOperation::typeStr[]={"nearest_actor","nearest_npc","nearest_p
 ChaseOperation::ChaseOperation()
     : MovementOperation("Chase"),
       // Instance variables
-      target_id(EID(0)),
+      targetEID(EID(0)),
       offsetAngle(0.0),
       // Operation parameters
       // Initialized in the load function
@@ -732,20 +738,24 @@ ChaseOperation::ChaseOperation()
       searchRange(2.0),
       chaseRange(-1.0),
       offset(0.5),
-      offsetAngleMax(0.0)
+      offsetAngleMax(0.0),
+      sideOffset(0.0),
+      offsetRelativeHeading(false)
 { 
 }
 
 ChaseOperation::ChaseOperation( const ChaseOperation* other )
     : MovementOperation( other ),
       // Instance variables
-      target_id(other->target_id),
+      targetEID(other->targetEID),
       // Operation parameters
       type(other->type),
       searchRange(other->searchRange),
       chaseRange(other->chaseRange),
       offset(other->offset),
-      offsetAngleMax(other->offsetAngleMax)
+      offsetAngleMax(other->offsetAngleMax),
+      sideOffset(other->sideOffset),
+      offsetRelativeHeading(other->offsetRelativeHeading)
 { 
     // Select a offset_angle for this instance of chase
     offsetAngle = (2.0f*psGetRandom()-1.0f)*offsetAngleMax;
@@ -813,6 +823,16 @@ bool ChaseOperation::Load(iDocumentNode *node)
     	offset = 0.5f;
     }
 
+    if ( node->GetAttributeValue("side_offset") )
+    {
+        sideOffset = node->GetAttributeValueAsFloat("side_offset");
+    }
+    else
+    {
+    	sideOffset = 0.5f;
+    }
+    offsetRelativeHeading = node->GetAttributeValueAsBool("offset_relative_heading",false);
+
     if ( node->GetAttributeValue("offset_angle") )
     {
         offsetAngleMax = node->GetAttributeValueAsFloat("offset_angle")*PI/180.0f;
@@ -836,13 +856,48 @@ ScriptOperation *ChaseOperation::MakeCopy()
     return op;
 }
 
+csVector3 ChaseOperation::CalculateOffsetDelta(const csVector3 &myPos, const iSector* mySector,
+                                               const csVector3 &endPos, const iSector* endSector,
+                                               float endRot) const
+{
+    csVector3 offsetDelta;
+
+    if (offsetRelativeHeading)
+    {
+        offsetDelta = csMatrix3(0.0,1.0,0.0,endRot)*csVector3(offset, 0.0, sideOffset);
+            
+    }
+    else
+    {
+
+        if (offsetAngle != 0.0)
+        {
+            offsetDelta= psGameObject::DisplaceTargetPos(mySector, myPos,
+                                                     endSector, endPos, offset);
+            offsetDelta = csMatrix3(0.0,1.0,0.0,offsetAngle)*offsetDelta;
+        }
+
+        if (sideOffset != 0.0)
+        {
+            csVector3 sideOffsetDelta = psGameObject::DisplaceTargetPos(mySector, myPos,
+                                                                    endSector, endPos, offset);
+            // Rotate 90 degree to make it a side offset to the line between NPC and target.
+            sideOffsetDelta = csMatrix3(0.0,1.0,0.0,PI)*sideOffsetDelta;
+            offsetDelta += sideOffsetDelta;
+        }
+    }
+    
+    return offsetDelta;
+}
+
+
 bool ChaseOperation::GetEndPosition(NPC* npc, const csVector3 &myPos, const iSector* mySector, csVector3 &endPos, iSector* &endSector)
 {
     float targetRot;
     float targetRange;
     
     gemNPCObject *targetEntity = NULL;
-    target_id = EID(0);
+    targetEID = EID(0);
         
     switch (type)
     {
@@ -850,7 +905,7 @@ bool ChaseOperation::GetEndPosition(NPC* npc, const csVector3 &myPos, const iSec
         targetEntity = npc->GetNearestPlayer(searchRange, endPos, endSector, targetRange);
         if (targetEntity)
         {
-            target_id = targetEntity->GetEID();
+            targetEID = targetEntity->GetEID();
 
             npc->Printf(6, "Targeting nearest player (%s) at %s range %.2f for chase ...",
                         targetEntity->GetName(), toString(endPos,endSector).GetDataSafe(),
@@ -861,7 +916,7 @@ bool ChaseOperation::GetEndPosition(NPC* npc, const csVector3 &myPos, const iSec
         targetEntity = npc->GetNearestActor(searchRange, endPos, endSector, targetRange);
         if (targetEntity)
         {
-            target_id = targetEntity->GetEID();
+            targetEID = targetEntity->GetEID();
 
             npc->Printf(6, "Targeting nearest actor (%s) at %s range %.2f for chase ...",
                         targetEntity->GetName(), toString(endPos,endSector).GetDataSafe(), 
@@ -877,7 +932,7 @@ bool ChaseOperation::GetEndPosition(NPC* npc, const csVector3 &myPos, const iSec
                 // Assign owner as entity to chase
                 targetEntity = owner;
 
-                target_id = targetEntity->GetEID();
+                targetEID = targetEntity->GetEID();
                 psGameObject::GetPosition(targetEntity, endPos, targetRot, endSector);
                 npc->Printf(6, "Targeting owner (%s) at %s for chase ...",
                             targetEntity->GetName(), toString(endPos,endSector).GetDataSafe());
@@ -893,7 +948,7 @@ bool ChaseOperation::GetEndPosition(NPC* npc, const csVector3 &myPos, const iSec
                 // Assign target as entity to chase
                 targetEntity = target;
 
-                target_id = targetEntity->GetEID();
+                targetEID = targetEntity->GetEID();
                 psGameObject::GetPosition(targetEntity, endPos, endSector);
                 npc->Printf(6, "Targeting current target (%s) at %s for chase ...",
                             targetEntity->GetName(), toString(endPos,endSector).GetDataSafe());
@@ -902,7 +957,7 @@ bool ChaseOperation::GetEndPosition(NPC* npc, const csVector3 &myPos, const iSec
         break;
     }
 
-    if (!target_id.IsValid() || !targetEntity)
+    if (!targetEID.IsValid() || !targetEntity)
     {
         npc->Printf(5, "No one found to chase!");
         return false;
@@ -917,12 +972,7 @@ bool ChaseOperation::GetEndPosition(NPC* npc, const csVector3 &myPos, const iSec
     psGameObject::GetPosition(targetEntity, endPos, targetRot, endSector);
 
 
-    // Calculate an offset point from the target.
-    // This point is used until new target is found
-    offsetDelta= psGameObject::DisplaceTargetPos(mySector, myPos,
-                                                 endSector, endPos, offset);
-    offsetDelta = csMatrix3(0.0,1.0,0.0,offsetAngle)*offsetDelta;
-
+    offsetDelta = CalculateOffsetDelta(myPos, mySector, endPos, endSector, targetRot );
     // This prevents NPCs from wanting to occupy the same physical space as something else
     endPos -= offsetDelta;
     // TODO: Check if new endPos is within same sector!!!
@@ -954,7 +1004,7 @@ gemNPCActor* ChaseOperation::UpdateChaseTarget(NPC* npc, const csVector3 &myPos,
         {
             targetEntity = newTarget;
 
-            if (target_id != targetEntity->GetEID())
+            if (targetEID != targetEntity->GetEID())
             {
                 npc->Printf(5, "Changing chase to new player %s", newTarget->GetName());
 
@@ -967,7 +1017,7 @@ gemNPCActor* ChaseOperation::UpdateChaseTarget(NPC* npc, const csVector3 &myPos,
 
 
             // Update chase operations target
-            target_id = targetEntity->GetEID();
+            targetEID = targetEntity->GetEID();
         }
  
     } else if (type == NEAREST_ACTOR)
@@ -981,7 +1031,7 @@ gemNPCActor* ChaseOperation::UpdateChaseTarget(NPC* npc, const csVector3 &myPos,
         {
             targetEntity = newTarget;
 
-            if (target_id != targetEntity->GetEID())
+            if (targetEID != targetEntity->GetEID())
             {
                 npc->Printf(5, "Changing chase to new actor %s", newTarget->GetName());
 
@@ -993,15 +1043,15 @@ gemNPCActor* ChaseOperation::UpdateChaseTarget(NPC* npc, const csVector3 &myPos,
             }
 
             // Update chase operations target
-            target_id = targetEntity->GetEID();
+            targetEID = targetEntity->GetEID();
         }
  
     }
 
-    // If no entity found yet find entity from target_id
+    // If no entity found yet find entity from targetEID
     if (!targetEntity) 
     {   
-        targetEntity = dynamic_cast<gemNPCActor*>(npcclient->FindEntityID(target_id));
+        targetEntity = dynamic_cast<gemNPCActor*>(npcclient->FindEntityID(targetEID));
     }
 
     return targetEntity;
@@ -1028,7 +1078,8 @@ bool ChaseOperation::UpdateEndPosition(NPC* npc, const csVector3 &myPos, const i
         return false;
     }
 
-    psGameObject::GetPosition(targetEntity,targetPos,targetSector);
+    float targetRot;
+    psGameObject::GetPosition(targetEntity, targetPos, targetRot, targetSector);
 
 
     // Check if we shold stop chaseing
@@ -1046,7 +1097,10 @@ bool ChaseOperation::UpdateEndPosition(NPC* npc, const csVector3 &myPos, const i
     }
 
     // This prevents NPCs from wanting to occupy the same physical space as something else
-    // OffsetDelta calculated at first contact with this target.
+    if (offsetRelativeHeading)
+    {
+        offsetDelta = CalculateOffsetDelta(myPos, mySector, endPos, endSector, targetRot );
+    }
     targetPos -= offsetDelta;
     // TODO: Check if new targetPos is within same sector!!!
 
@@ -1456,7 +1510,40 @@ bool LocateOperation::Load(iDocumentNode *node)
 
     // Some more validation checks on obj.
     csArray<csString> split_obj = psSplit(object,':');   
-    if (split_obj[0] == "perception")
+    if (split_obj[0] == "entity")
+    {
+        if (split_obj.GetSize() < 2)
+        {
+            Error1("Locate operation with obj attribute of entity without sub type.");
+            return false;
+        }
+        else if (split_obj[1] == "name")
+        {
+            if (split_obj[2].IsEmpty())
+            {
+                Error1("Locate operation with obj attribute entity:name:<name> is missing the name.");
+                return false;
+            }
+            return true;
+        }
+        else if (split_obj[1] == "pid")
+        {
+            if (split_obj[2].IsEmpty())
+            {
+                Error1("Locate operation with obj attribute entity:pid:<pid> is missing the pid.");
+                return false;
+            }
+            else if (atoi(split_obj[2]) == 0)
+            {
+                Error2("Locate operation with obj attribute entity:pid:<pid> where pid '%s' isn't a number or is zero.",split_obj[2].GetDataSafe() );
+                return false;
+            }
+
+            return true;
+        }
+        return false;
+    }
+    else if (split_obj[0] == "perception")
     {
         return true;
     }
@@ -1617,8 +1704,41 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, EventManager *ev
     ReplaceVariables(object,npc);
 
     csArray<csString> split_obj = psSplit(object,':');
+ 
+    if (split_obj[0] == "entity")
+    {
+        npc->Printf(5,"LocateOp - Entity");
 
-    if (split_obj[0] == "perception")
+        gemNPCObject *entity = NULL;
+
+        if (split_obj[1] == "name")
+        {
+            entity = npcclient->FindEntityByName(split_obj[2]);
+        }
+        else if (split_obj[1] == "pid")
+        {
+            entity = npcclient->FindCharacterID(atoi(split_obj[2]));
+        }
+
+        if(entity)
+        {
+            npc->SetTarget(entity);
+        }
+        else
+        {
+            return OPERATION_FAILED; // Nothing more to do for this op.
+        }
+
+        float rot;
+        iSector *sector;
+        csVector3 pos;
+        psGameObject::GetPosition(entity,pos,rot,sector);
+
+        located_pos = pos;
+        located_angle = 0;
+        located_sector = sector;
+    }
+    else if (split_obj[0] == "perception")
     {
         npc->Printf(5,"LocateOp - Perception");
 
@@ -4254,7 +4374,7 @@ ScriptOperation::OperationResult WatchOperation::Run(NPC *npc, EventManager *eve
     csVector3 targetPos;
     float     targetRange;
 
-    EID target_id = EID(0);
+    EID targetEID = EID(0);
 
     switch (type)
     {
@@ -4262,7 +4382,7 @@ ScriptOperation::OperationResult WatchOperation::Run(NPC *npc, EventManager *eve
             watchedEnt = npc->GetNearestActor(searchRange, targetPos, targetSector, targetRange);
             if (watchedEnt)
             {
-                target_id = watchedEnt->GetEID();
+                targetEID = watchedEnt->GetEID();
                 npc->Printf(5, "Targeting nearest actor (%s) at (%1.2f,%1.2f,%1.2f) range %.2f for watch ...",
                             watchedEnt->GetName(),targetPos.x,targetPos.y,targetPos.z,targetRange);
             }
@@ -4271,7 +4391,7 @@ ScriptOperation::OperationResult WatchOperation::Run(NPC *npc, EventManager *eve
             watchedEnt = npc->GetNearestActor(searchRange, targetPos, targetSector, targetRange);
             if (watchedEnt)
             {
-                target_id = watchedEnt->GetEID();
+                targetEID = watchedEnt->GetEID();
                 npc->Printf(5, "Targeting nearest player (%s) at (%1.2f,%1.2f,%1.2f) range %.2f for watch ...",
                             watchedEnt->GetName(),targetPos.x,targetPos.y,targetPos.z,targetRange);
             }
@@ -4280,7 +4400,7 @@ ScriptOperation::OperationResult WatchOperation::Run(NPC *npc, EventManager *eve
             watchedEnt = npc->GetNearestNPC(searchRange, targetPos, targetSector, targetRange);
             if (watchedEnt)
             {
-                target_id = watchedEnt->GetEID();
+                targetEID = watchedEnt->GetEID();
                 npc->Printf(5, "Targeting nearest NPC (%s) at (%1.2f,%1.2f,%1.2f) range %.2f for watch ...",
                             watchedEnt->GetName(),targetPos.x,targetPos.y,targetPos.z,targetRange);
             }
@@ -4289,7 +4409,7 @@ ScriptOperation::OperationResult WatchOperation::Run(NPC *npc, EventManager *eve
             watchedEnt = npc->GetOwner();
             if (watchedEnt)
             {
-                target_id = watchedEnt->GetEID();
+                targetEID = watchedEnt->GetEID();
                 psGameObject::GetPosition(watchedEnt, targetPos, targetSector);
                 npc->Printf(5, "Targeting owner (%s) at (%1.2f,%1.2f,%1.2f) for watch ...",
                             watchedEnt->GetName(),targetPos.x,targetPos.y,targetPos.z );
@@ -4300,7 +4420,7 @@ ScriptOperation::OperationResult WatchOperation::Run(NPC *npc, EventManager *eve
             watchedEnt = npc->GetTarget();
             if (watchedEnt)
             {
-                target_id = watchedEnt->GetEID();
+                targetEID = watchedEnt->GetEID();
                 psGameObject::GetPosition(watchedEnt, targetPos, targetSector);
                 npc->Printf(5, "Targeting current target (%s) at (%1.2f,%1.2f,%1.2f) for chase ...",
                             watchedEnt->GetName(),targetPos.x,targetPos.y,targetPos.z );

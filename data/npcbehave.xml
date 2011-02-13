@@ -264,10 +264,9 @@
       <react event="enemy outside range" range="50" behavior="chase" delta="-100" />
   </npctype>
 
-  <npctype name="ChaseTest1" parent="DoNothing">
+  <npctype name="ChaseTest1" parent="DoNothing" >
       <behavior name="init" initial="1000" completion_decay="-1" >
           <!--debug level="0" /-->
-          <debug level="11" />
       </behavior>
       <behavior name="chase" decay="1" completion_decay="-1" growth="0" initial="0">
           <talk text="Start chaseing actor" target="false" />
@@ -276,6 +275,17 @@
       </behavior>
       <react event="player nearby" behavior="chase" delta="100" /> <!-- Nearby(<10) -->
       <react event="nearest_actor out of chase" behavior="chase" absolute="0" />
+  </npctype>
+
+  <npctype name="ChaseTest2" parent="DoNothing" vel="6" >
+      <behavior name="init" initial="1000" completion_decay="-1" >
+          <!--debug level="0" /-->
+      </behavior>
+      <behavior name="chase" initial="100" >
+          <locate obj="entity:pid:22" />  <!-- Locate MoveMaster2 -->
+          <chase type="target" side_offset="2" offset_relative_heading="true" anim="walk" />
+          <wait anim="stand" duration="1" />  <!-- Could be a watch operation!! -->
+      </behavior>
   </npctype>
 
   <npctype name="Bird">
