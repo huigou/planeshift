@@ -208,7 +208,7 @@ psAdviceRequestTimeoutGameEvent::psAdviceRequestTimeoutGameEvent( AdviceManager 
         if ( advisorActor ) advisorActor->RegisterCallback( this );
     }
     else advisorActor = NULL;
-};
+}
 
 psAdviceRequestTimeoutGameEvent::~psAdviceRequestTimeoutGameEvent()
 {
@@ -253,7 +253,7 @@ void psAdviceRequestTimeoutGameEvent::DeleteObjectCallback(iDeleteNotificationOb
 void psAdviceRequestTimeoutGameEvent::Trigger()
 {
     advicemanager->AdviceRequestTimeout( adviceSession );
-};
+}
 
 
 /****************************************************************************/
@@ -286,7 +286,7 @@ psAdviceSessionTimeoutGameEvent::psAdviceSessionTimeoutGameEvent( AdviceManager 
         if ( advisorActor ) advisorActor->RegisterCallback( this );
     }
 
-};
+}
 
 psAdviceSessionTimeoutGameEvent::~psAdviceSessionTimeoutGameEvent()
 {
@@ -309,12 +309,12 @@ void psAdviceSessionTimeoutGameEvent::DeleteObjectCallback(iDeleteNotificationOb
 
     if ( advisorActor != NULL ) advisorActor->UnregisterCallback( this );
     advisorActor = NULL;
-};
+}
 
 void psAdviceSessionTimeoutGameEvent::Trigger()
 {
     adviceSession->SessionTimeout();
-};
+}
 
 /****************************************************************************/
 
