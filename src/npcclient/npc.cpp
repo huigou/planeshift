@@ -587,7 +587,7 @@ gemNPCActor* NPC::GetNearestActor(float range, csVector3 &destPosition, iSector*
     {
         gemNPCActor* nearestEnt = NULL;
         csVector3    nearestLoc;
-        iSector*     nearestSector;
+        iSector*     nearestSector = NULL;
 
         float nearestRange=range;
 
