@@ -103,7 +103,7 @@ enum PSCHARACTER_MODE
     PSCHARACTER_MODE_EXHAUSTED,
     PSCHARACTER_MODE_DEFEATED,
     PSCHARACTER_MODE_STATUE,
-    PSCHARACTER_MODE_COUNT,
+    PSCHARACTER_MODE_COUNT
 };
 
 enum PSCHARACTER_CUSTOM
@@ -323,17 +323,13 @@ struct Skill
 class SkillSet : public CharacterAttribute
 {
 protected:
-    Skill skills[PSSKILL_COUNT];
+    csArray<Skill> skills; ///< Array to store all the skills.
 
 public:
-    SkillSet(psCharacter *self) : CharacterAttribute(self)
-    {
-        for (int i=0; i<PSSKILL_COUNT; i++)
-        {
-            skills[i].Clear();
-            skills[i].rank.Initialize(self);
-        }
-    }
+    /** Constructor.
+     *  @param self The psCharacter this skillset is associated with.
+     */
+    SkillSet(psCharacter *self);
 
     /** @brief Sets the common skill info for this skill ( data from the database )
       * @param which  The skill we want to set

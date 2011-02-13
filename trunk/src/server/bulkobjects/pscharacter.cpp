@@ -3730,6 +3730,20 @@ CharStat & StatSet::Get(PSITEMSTATS_STAT which)
     return stats[which];
 }
 
+SkillSet::SkillSet(psCharacter *self) : CharacterAttribute(self)
+{
+    for (int i=0; i < psserver->GetCacheManager()->GetSkillAmount(); i++)
+    {
+        //generate a new skill
+        Skill mySkill;
+        //initialize the new skill
+        mySkill.Clear();
+        mySkill.rank.Initialize(self);
+        //push the new skill in the skillset
+        skills.Push(mySkill);
+    }
+}
+
 int SkillSet::AddSkillPractice(PSSKILL skill, unsigned int val)
 {
     unsigned int added;
