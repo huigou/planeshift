@@ -575,6 +575,8 @@ void NPC::ClearState()
     disabled = false;
 }
 
+///TODO: The next 3 functions are exactly the same except a line in the code, maybe figure out a better way to handle this?
+
 gemNPCActor* NPC::GetNearestActor(float range, csVector3 &destPosition, iSector* &destSector, float &destRange)
 {
     csVector3 loc;
@@ -635,7 +637,7 @@ gemNPCActor* NPC::GetNearestNPC(float range, csVector3 &destPosition, iSector* &
     {
         gemNPCActor* nearestEnt = NULL;
         csVector3    nearestLoc;
-        iSector*     nearestSector;
+        iSector*     nearestSector = NULL;
 
         float nearestRange=range;
 
@@ -683,7 +685,7 @@ gemNPCActor* NPC::GetNearestPlayer(float range, csVector3 &destPosition, iSector
     {
         gemNPCActor* nearestEnt = NULL;
         csVector3    nearestLoc;
-        iSector*     nearestSector;
+        iSector*     nearestSector = NULL;
 
         float nearestRange=range;
 
