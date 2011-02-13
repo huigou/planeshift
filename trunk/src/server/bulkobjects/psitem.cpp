@@ -3293,7 +3293,7 @@ bool psItem::SendActionContents(Client *client, psActionLocation *action)
     csString icon( GetImageName() );
 
     csString description = action->GetDescription();
-    if (description.Lenght())
+    if (description.Length())
     {
         desc = description.GetData();
     }
