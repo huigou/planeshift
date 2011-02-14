@@ -1518,9 +1518,9 @@ public:
         if(point1X && point1Y && point2X && point2Y)
         {
             point1.x = point1X->Evaluate(env);
-            point1.x = point1Y->Evaluate(env);
+            point1.y = point1Y->Evaluate(env);
             point2.x = point2X->Evaluate(env);
-            point2.x = point2Y->Evaluate(env);
+            point2.y = point2Y->Evaluate(env);
         }
 
         if (type == NAMED)
