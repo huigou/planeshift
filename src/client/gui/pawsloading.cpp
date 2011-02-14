@@ -133,7 +133,7 @@ void pawsLoadWindow::InitAnim(csVector2 start, csVector2 dest, csTicks delay)
     positions.DeleteAll();
     iter = 0;
     
-    csVector2 direction = dest - start;
+    csVector2 direction = destination - lastPos;
     length = direction.Norm();
 
     numberDot = (int)ceil(length / 40);
@@ -147,10 +147,10 @@ void pawsLoadWindow::DrawAnim()
 {       
     if(startFrom + delayBetDot <= csGetTicks())
     {
-        if(iter == 0 || iter + 1 == numberDot) //First and last dot shall not have noise
+        if(iter == 0 || iter == numberDot) //First and last dot shall not have noise
         {
-            positions.Push((iter == 0) ? lastPos : destination); //lastPos has the start position of the first dot
-            lastPos = positions[iter];
+            lastPos = (iter == 0) ? lastPos : destination; //lastPos has the start position of the first dot
+            positions.Push(lastPos);
             startFrom = csGetTicks();
             ++iter;
         }
