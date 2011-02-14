@@ -52,7 +52,7 @@ bool pawsLoadWindow::PostSetup()
 
     loadingText = (pawsMessageTextBox*)FindWidget("loadtext");
 
-    dot = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage("Dot");
+    dot = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage("MapDot");
     
     if(!loadingText) 
         return false;
