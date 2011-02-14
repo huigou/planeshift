@@ -137,8 +137,6 @@ void pawsLoadWindow::InitAnim(csVector2 start, csVector2 dest, csTicks delay)
     length = direction.Norm();
 
     numberDot = (int)ceil(length / 40);
-    
-    positions.SetSize(numberDot);
 
     //we make the dots complete a bit before the end of the delay so it's
     //possible to see the last dot
@@ -151,7 +149,7 @@ void pawsLoadWindow::DrawAnim()
     {
         if(iter == 0 || iter + 1 == numberDot) //First and last dot shall not have noise
         {
-            positions[iter] = (iter == 0) ? lastPos : destination; //lastPos has the start position of the first dot
+            positions.Push((iter == 0) ? lastPos : destination); //lastPos has the start position of the first dot
             lastPos = positions[iter];
             startFrom = csGetTicks();
             ++iter;
@@ -166,8 +164,9 @@ void pawsLoadWindow::DrawAnim()
             direction += diffVector;
             vel = direction.Unit() * 40;    
 
-            positions[iter] = lastPos + vel;
-            lastPos = positions[iter];
+            lastPos += vel;
+            positions.Push(lastPos);
+
             startFrom = csGetTicks();
             ++iter;
         }
