@@ -123,6 +123,13 @@ void pawsLoadWindow::InitAnim(csVector2 start, csVector2 dest, csTicks delay)
     startFrom = 0;
     lastPos = start;
     destination = dest;
+
+    //adjust the anim to resolution
+    lastPos.x = GetActualWidth((int)lastPos.x);
+    lastPos.y = GetActualHeight((int)lastPos.y);
+    destination.x = GetActualWidth((int)destination.x);
+    destination.y = GetActualHeight((int)destination.y);
+
     positions.DeleteAll();
     iter = 0;
     
@@ -132,7 +139,10 @@ void pawsLoadWindow::InitAnim(csVector2 start, csVector2 dest, csTicks delay)
     numberDot = (int)ceil(length / 40);
     
     positions.SetSize(numberDot);
-    delayBetDot = (delay * 1000) / numberDot; 
+
+    //we make the dots complete a bit before the end of the delay so it's
+    //possible to see the last dot
+    delayBetDot = ((delay * 1000)*0.9) / numberDot; 
 }
 
 void pawsLoadWindow::DrawAnim()
