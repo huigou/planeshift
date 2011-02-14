@@ -131,7 +131,6 @@ void pawsLoadWindow::InitAnim(csVector2 start, csVector2 dest, csTicks delay)
     destination.y = GetActualHeight((int)destination.y);
 
     positions.DeleteAll();
-    iter = 0;
     
     csVector2 direction = destination - lastPos;
     length = direction.Norm();
@@ -145,14 +144,13 @@ void pawsLoadWindow::InitAnim(csVector2 start, csVector2 dest, csTicks delay)
 
 void pawsLoadWindow::DrawAnim()
 {       
-    if(startFrom + delayBetDot <= csGetTicks())
+    if(startFrom + delayBetDot <= csGetTicks() && positions.GetSize() <= numberDot)
     {
-        if(iter == 0 || iter == numberDot) //First and last dot shall not have noise
+        if(positions.GetSize() == 0 || positions.GetSize() == numberDot) //First and last dot shall not have noise
         {
-            lastPos = (iter == 0) ? lastPos : destination; //lastPos has the start position of the first dot
+            lastPos = (positions.GetSize() == 0) ? lastPos : destination; //lastPos has the start position of the first dot
             positions.Push(lastPos);
             startFrom = csGetTicks();
-            ++iter;
         }
         else
         {
@@ -168,7 +166,6 @@ void pawsLoadWindow::DrawAnim()
             positions.Push(lastPos);
 
             startFrom = csGetTicks();
-            ++iter;
         }
     } 
     
