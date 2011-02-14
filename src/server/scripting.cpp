@@ -1437,7 +1437,7 @@ protected:
 class TeleportOp : public Imperative1
 {
 public:
-    TeleportOp(EntityManager* entitymanager) : Imperative1() { entityManager = entitymanager; loadDelay = 0; background = ""; point1 = 0; point2 = 0;}
+    TeleportOp(EntityManager* entitymanager) : Imperative1() { entityManager = entitymanager; loadDelay = NULL; background = ""; point1X = NULL; point1X = NULL; point2X = NULL; point2Y = NULL; }
     virtual ~TeleportOp() { }
 
     bool Load(iDocumentNode* node)
@@ -1447,7 +1447,7 @@ public:
 
         if(node->GetAttribute("delay"))
         {
-            loadDelay = node->GetAttributeValueAsInt("delay");
+            loadDelay = MathExpression::Create(node->GetAttributeValue("delay"));
         }
 
         if(node->GetAttribute("background"))
@@ -1457,10 +1457,10 @@ public:
     
         if(node->GetAttribute("x1") && node->GetAttribute("y1") && node->GetAttribute("x2") && node->GetAttribute("y2"))
         {
-            point1.x = node->GetAttributeValueAsFloat("x1");
-            point1.y = node->GetAttributeValueAsFloat("y1");
-            point2.x = node->GetAttributeValueAsFloat("x2");
-            point2.y = node->GetAttributeValueAsFloat("y2");
+            point1X = MathExpression::Create(node->GetAttributeValue("x1"));
+            point1Y = MathExpression::Create(node->GetAttributeValue("y1"));
+            point2X = MathExpression::Create(node->GetAttributeValue("x2"));
+            point2Y = MathExpression::Create(node->GetAttributeValue("y2"));
         }
 
         if (node->GetAttribute("location"))
@@ -1499,12 +1499,34 @@ public:
     void Run(MathEnvironment* env)
     {
         gemActor* actor = GetActor(env, aim);
+        //holds the value calculated of the delay in case it's needed
+        int32_t loadDelayInt = 0;
+        //holds the value calculated of the origin point of the anim
+        csVector2 point1 = 0;
+        //holds the value calculated of the destination point of the anim
+        csVector2 point2 = 0;
         CS_ASSERT(actor);
+
+
+        //calculate math expressions in case they where found
+        if(loadDelay)
+        {
+            loadDelayInt = loadDelay->Evaluate(env);
+        }
+
+        //calculate cordinates only if all math expressions are valid
+        if(point1X && point1Y && point2X && point2Y)
+        {
+            point1.x = point1X->Evaluate(env);
+            point1.x = point1Y->Evaluate(env);
+            point2.x = point2X->Evaluate(env);
+            point2.x = point2Y->Evaluate(env);
+        }
 
         if (type == NAMED)
         {
             // we only handle "spawn" for now...
-            actor->MoveToSpawnPos(loadDelay, background, point1, point2);
+            actor->MoveToSpawnPos(loadDelayInt, background, point1, point2);
         }
         else
         {
@@ -1532,9 +1554,9 @@ public:
             }
 
             if (type & INSTANCE)
-                actor->Teleport(sector, destPos, 0.0, instance, loadDelay, background, point1, point2);
+                actor->Teleport(sector, destPos, 0.0, instance, loadDelayInt, background, point1, point2);
             else
-                actor->Teleport(sector, destPos, 0.0, loadDelay, background, point1, point2);
+                actor->Teleport(sector, destPos, 0.0, loadDelayInt, background, point1, point2);
         }
     }
 
@@ -1544,10 +1566,12 @@ protected:
     csString destination;
     csVector3 pos;
     InstanceID instance;
-	int32_t loadDelay;   ///<The delay the loading screen shall have, in seconds; YOU DON'T HAVE TO DEFINE IT
+	MathExpression *loadDelay;   ///<The delay the loading screen shall have, in seconds; YOU DON'T HAVE TO DEFINE IT
 	csString background; ///<The background of the loading screen; YOU DON'T HAVE TO DEFINE IT
-    csVector2 point1;///<Defines start of animation
-    csVector2 point2;///<Defines start of animation
+    MathExpression *point1X; ///<Defines x cordinate start of animation
+    MathExpression *point1Y; ///<Defines y cordinate start of animation
+    MathExpression *point2X; ///<Defines x cordinate end of animation
+    MathExpression *point2Y; ///<Defines y cordinate end of animation
     
     EntityManager* entityManager;
 };
