@@ -70,14 +70,13 @@ private:
     csArray<csVector2> positions;///<The dots positions 
     csTicks delayBetDot;///<The delay between the dots
     csTicks startFrom;///<Time from last dot rendered
-    int numberDot;///<Number of dots which shall be rendered
+    size_t numberDot;///<Number of dots which shall be rendered
     csRef<iPawsImage> dot;///<The dot image
-    int iter;///<A iterator variable
     
     /** 
-    *Render the dot animation.
-    *Called only if renderAnim == true
-    */
+     *  Render the dot animation.
+     *  Called only if renderAnim == true
+     */
     void DrawAnim();
 };
 
