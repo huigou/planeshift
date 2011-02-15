@@ -259,8 +259,9 @@ void CCheck::ParseFile(const char* filePath, const char* fileName, bool processi
                     csRef<iDocumentNode> fileNode = node->GetNode("file");
                     if(fileNode.IsValid())
                     {
-                        size_t l = shaders.PushSmart(fileNode->GetContentsValue());
-                        if(l == shaders.GetSize()-1)
+                        size_t prevSize = shaders.GetSize();
+                        shaders.PushSmart(fileNode->GetContentsValue());
+                        if(prevSize != shaders.GetSize())
                         {
                             csRef<iDocumentNode> newNode = newShaders->CreateNodeBefore(CS_NODE_ELEMENT);
                             CS::DocSystem::CloneNode(node, newNode);
@@ -286,8 +287,9 @@ void CCheck::ParseFile(const char* filePath, const char* fileName, bool processi
                 while(itr->HasNext())
                 {
                     csRef<iDocumentNode> node = itr->Next();
-                    size_t l = textures.PushSmart(node->GetAttributeValue("name"));
-                    if(l == textures.GetSize()-1)
+                    size_t prevSize = textures.GetSize();
+                    textures.PushSmart(node->GetAttributeValue("name"));
+                    if(prevSize != textures.GetSize())
                     {
                         csRef<iDocumentNode> newNode = newTextures->CreateNodeBefore(CS_NODE_ELEMENT);
                         CS::DocSystem::CloneNode(node, newNode);
@@ -310,8 +312,9 @@ void CCheck::ParseFile(const char* filePath, const char* fileName, bool processi
             while(itr->HasNext())
             {
                 csRef<iDocumentNode> node = itr->Next();
-                size_t l = materials.PushSmart(node->GetAttributeValue("name"));
-                if(l == materials.GetSize()-1)
+                size_t prevSize = materials.GetSize();
+                materials.PushSmart(node->GetAttributeValue("name"));
+                if(prevSize != materials.GetSize())
                 {
                     csRef<iDocumentNode> newNode = newMaterials->CreateNodeBefore(CS_NODE_ELEMENT);
                     if(strip)
