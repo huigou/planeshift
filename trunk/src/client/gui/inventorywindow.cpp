@@ -55,7 +55,6 @@
 #define DEC_STACK_BUTTON 1010
 #define INC_STACK_BUTTON 1011
 
-#define  PSCHARACTER_SLOT_COUNT 16
 
 /**********************************************************************
 *
@@ -68,7 +67,7 @@ pawsInventoryWindow::pawsInventoryWindow()
     loader =  csQueryRegistry<iThreadedLoader> ( PawsManager::GetSingleton().GetObjectRegistry() );
 
     bulkSlots.SetSize( 32 );
-    equipmentSlots.SetSize( PSCHARACTER_SLOT_COUNT );
+    equipmentSlots.SetSize(INVENTORY_EQUIP_COUNT);
     for ( size_t n = 0; n < equipmentSlots.GetSize(); n++ )
         equipmentSlots[n] = NULL;
 
@@ -116,6 +115,9 @@ bool pawsInventoryWindow::SetupSlot( const char* slotName )
 
 bool pawsInventoryWindow::PostSetup()
 {
+    // If you add something here, DO NOT FORGET TO CHANGE 'INVENTORY_EQUIP_COUNT'!!!
+   const char* equipmentSlotNames[] = { "lefthand", "righthand", "leftfinger", "rightfinger", "helm", "neck", "back", "arms", "gloves", "boots", "legs", "belt", "bracers", "torso", "mind" };
+
     // Setup the Doll
     if ( !SetupDoll() )
         return false;
@@ -125,23 +127,11 @@ bool pawsInventoryWindow::PostSetup()
         money->SetContainer( CONTAINER_INVENTORY_MONEY );
     }
 
-    // If you add something here, DO NOT FORGET TO CHANGE 'INVENTORY_EQUIP_COUNT'!!!
-    if(!(SetupSlot("lefthand") &&
-    SetupSlot("righthand") &&
-    SetupSlot("leftfinger") &&
-    SetupSlot("rightfinger") &&
-    SetupSlot("helm") &&
-    SetupSlot("neck") &&
-    SetupSlot("back") &&
-    SetupSlot("arms") &&
-    SetupSlot("gloves") &&
-    SetupSlot("boots") &&
-    SetupSlot("legs") &&
-    SetupSlot("belt") &&
-    SetupSlot("bracers") &&
-    SetupSlot("torso") &&
-    SetupSlot("mind")))
-        return false;
+    for(size_t x = 0; x < INVENTORY_EQUIP_COUNT-1; x++)
+    {
+        if(!SetupSlot(equipmentSlotNames[x]))
+           return false;
+    }
 
     pawsListBox * bulkList = dynamic_cast <pawsListBox*> (FindWidget("BulkList"));
     if (bulkList)
@@ -178,17 +168,14 @@ bool pawsInventoryWindow::PostSetup()
         }
     }
 
-    // also subscribe lefthand and righthand slots to sigClearInventorySlots - needed e.g for stacks of ammo
-    pawsSlot * lefthand = dynamic_cast<pawsSlot*>(FindWidget("lefthand"));
-    if(lefthand)
+    // subscribe all equipment slots to sigClearInventorySlots - needed e.g for stacks of ammo or showing the orignal tooltip
+    for(size_t z = 0; z < INVENTORY_EQUIP_COUNT-1; z++)
     {
-        PawsManager::GetSingleton().Subscribe("sigClearInventorySlots", lefthand);
-    }
-
-    pawsSlot * righthand = dynamic_cast<pawsSlot*>(FindWidget("righthand"));
-    if(righthand)
-    {
-        PawsManager::GetSingleton().Subscribe("sigClearInventorySlots", righthand);
+        pawsSlot * slotname = dynamic_cast<pawsSlot*>(FindWidget(equipmentSlotNames[z]));
+        if(slotname)
+        {
+            PawsManager::GetSingleton().Subscribe("sigClearInventorySlots", slotname);
+        }
     }
 
     // Ask the server to send us the inventory
