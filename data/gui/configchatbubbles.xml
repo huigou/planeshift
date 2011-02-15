@@ -1,12 +1,11 @@
 <?xml version="1.0"?>
 <widget_description>
-    <widget name="ConfigChatBubblesTree" factory="pawsConfigChatBubbles"
-        visible="no" savepositions="no" movable="no"
-        resizable="no" style="New Standard GUI" >
-        <frame x="225" y="10" width="400" height="300" border="no" />
+    <widget name="ConfigChatBubblesTree" factory="pawsConfigChatBubbles" visible="no" savepositions="no" movable="no" resizable="no" style="New Standard GUI" >
+        <frame x="225" y="10" width="445" height="313" border="no" />
         <bgimage resource="Scaling Widget Background" />
+
             <widget name="allEnabled" factory="pawsCheckBox">
-                <frame x="10" y="10" width="350" height="20"/>
+                <frame x="2" y="5" width="350" height="20"/>
                 <text string="Enable Chat Bubbles" />
             </widget>
 
@@ -396,7 +395,7 @@
                 <text string="Enable NPC_me" />
             </widget>
             <widget name="npc_meShadow" factory="pawsTextBox">
-                <frame x="10" y="50" width="130" height="20" />
+                <frame x="10" y="50" width="135" height="20" />
                 <text string="NPC_me shadow colour" />
             </widget>
             <widget name="npc_meShadowR" factory="pawsEditTextBox"><frame border="yes" x="140" y="50" width="30" height="20" /></widget>
@@ -430,7 +429,7 @@
                 <text string="Enable NPC_my" />
             </widget>
             <widget name="npc_myShadow" factory="pawsTextBox">
-                <frame x="10" y="50" width="130" height="20" />
+                <frame x="10" y="50" width="135" height="20" />
                 <text string="NPC_my shadow colour" />
             </widget>
             <widget name="npc_myShadowR" factory="pawsEditTextBox"><frame border="yes" x="140" y="50" width="30" height="20" /></widget>
@@ -453,32 +452,32 @@
             </widget>
 
             <widget name="npc_narrateText" factory="pawsTextBox">
-                <frame x="10" y="30" width="130" height="20" />
+                <frame x="10" y="30" width="135" height="20" />
                 <text string="NPC_narrate text colour" />
             </widget>
             <widget name="npc_narrateTextR" factory="pawsEditTextBox"><frame border="yes" x="140" y="30" width="30" height="20" /></widget>
             <widget name="npc_narrateTextG" factory="pawsEditTextBox"><frame border="yes" x="180" y="30" width="30" height="20" /></widget>
             <widget name="npc_narrateTextB" factory="pawsEditTextBox"><frame border="yes" x="220" y="30" width="30" height="20" /></widget>
             <widget name="npc_narrateEnabled" factory="pawsCheckBox">
-                <frame x="260" y="30" width="130" height="20"/>
+                <frame x="260" y="30" width="135" height="20"/>
                 <text string="Enable NPC_narrate" />
             </widget>
             <widget name="npc_narrateShadow" factory="pawsTextBox">
-                <frame x="10" y="50" width="130" height="20" />
+                <frame x="10" y="50" width="155" height="20" />
                 <text string="NPC_narrate shadow colour" />
             </widget>
             <widget name="npc_narrateShadowR" factory="pawsEditTextBox"><frame border="yes" x="140" y="50" width="30" height="20" /></widget>
             <widget name="npc_narrateShadowG" factory="pawsEditTextBox"><frame border="yes" x="180" y="50" width="30" height="20" /></widget>
             <widget name="npc_narrateShadowB" factory="pawsEditTextBox"><frame border="yes" x="220" y="50" width="30" height="20" /></widget>
             <widget name="npc_narrateOutline" factory="pawsTextBox">
-                <frame x="10" y="70" width="130" height="20" />
+                <frame x="10" y="70" width="150" height="20" />
                 <text string="NPC_narrate outline colour" />
             </widget>
             <widget name="npc_narrateOutlineR" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
             <widget name="npc_narrateOutlineG" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
             <widget name="npc_narrateOutlineB" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>
             <widget name="npc_narrateAlignText" factory="pawsTextBox">
-                <frame x="10" y="70" width="130" height="20" />
+                <frame x="10" y="70" width="135" height="20" />
                 <text string="NPC_narrate Alignment" />
             </widget>
             <widget name="npc_narrateAlign" factory="pawsComboBox" >
@@ -521,14 +520,14 @@
                 <text string="Enable npcinternal" />
             </widget>
             <widget name="npcinternalShadow" factory="pawsTextBox">
-                <frame x="10" y="50" width="130" height="20" />
+                <frame x="10" y="50" width="150" height="20" />
                 <text string="npcinternal shadow colour" />
             </widget>
             <widget name="npcinternalShadowR" factory="pawsEditTextBox"><frame border="yes" x="140" y="50" width="30" height="20" /></widget>
             <widget name="npcinternalShadowG" factory="pawsEditTextBox"><frame border="yes" x="180" y="50" width="30" height="20" /></widget>
             <widget name="npcinternalShadowB" factory="pawsEditTextBox"><frame border="yes" x="220" y="50" width="30" height="20" /></widget>
             <widget name="npcinternalOutline" factory="pawsTextBox">
-                <frame x="10" y="70" width="130" height="20" />
+                <frame x="10" y="70" width="140" height="20" />
                 <text string="npcinternal outline colour" />
             </widget>
             <widget name="npcinternalOutlineR" factory="pawsEditTextBox"><frame border="yes" x="140" y="70" width="30" height="20" /></widget>

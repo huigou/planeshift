@@ -40,15 +40,15 @@
 
 #define LINES_IN_FRAME	13
 #define NO_CHAT_TYPES	15
-#define	SCROLLBAR_SIZE	15
-#define SCROLLBAR_LINES NO_CHAT_TYPES * 4 + 4 - LINES_IN_FRAME
+#define	SCROLLBAR_SIZE	20
+#define SCROLLBAR_LINES NO_CHAT_TYPES * 4 + 6 - LINES_IN_FRAME
 #define Y_START_POS		10
-#define HEIGHT			20
-#define X_ENABLED_POS	260
-#define X_TEXT_POS		10
-#define X_R_POS			140
-#define X_G_POS			180
-#define X_B_POS			220
+#define HEIGHT			25
+#define X_ENABLED_POS		293
+#define X_TEXT_POS		15
+#define X_R_POS			182
+#define X_G_POS			222
+#define X_B_POS			262
 
 pawsConfigChatBubbles::pawsConfigChatBubbles()
 {
@@ -405,7 +405,7 @@ void pawsConfigChatBubbles::drawFrame()
 
             chatType->AlignText->SetRelativeFramePos(X_TEXT_POS, yPos);
             chatType->AlignText->Show();
-            chatType->Align->SetRelativeFramePos(X_R_POS, yPos);			
+            chatType->Align->SetRelativeFramePos(X_R_POS, yPos - 4);
             chatType->Align->Show();
         }
     }	
