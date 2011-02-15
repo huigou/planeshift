@@ -76,7 +76,7 @@ void CCheck::Run()
     csString inpath = cmdline->GetOption("in");
     if(inpath.IsEmpty())
     {
-        inpath = "/this/ccheck/";
+        inpath = "/this/ccheckin/";
     }
 
     outpath = cmdline->GetOption("out");
