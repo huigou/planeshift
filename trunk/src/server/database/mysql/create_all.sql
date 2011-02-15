@@ -1,4 +1,3 @@
-source accessrules.sql;
 source accounts.sql;
 source action_locations.sql;
 source alliances.sql;
