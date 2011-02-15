@@ -256,11 +256,15 @@ void CCheck::ParseFile(const char* filePath, const char* fileName, bool processi
                 while(itr->HasNext())
                 {
                     csRef<iDocumentNode> node = itr->Next();
-                    size_t l = shaders.PushSmart(node->GetAttributeValue("file"));
-                    if(l == shaders.GetSize()-1)
+                    csRef<iDocumentNode> fileNode = node->GetNode("file");
+                    if(filenode.IsValid())
                     {
-                        csRef<iDocumentNode> newNode = newShaders->CreateNodeBefore(CS_NODE_ELEMENT);
-                        CS::DocSystem::CloneNode(node, newNode);
+                        size_t l = shaders.PushSmart(filenode->GetContentsValue());
+                        if(l == shaders.GetSize()-1)
+                        {
+                            csRef<iDocumentNode> newNode = newShaders->CreateNodeBefore(CS_NODE_ELEMENT);
+                            CS::DocSystem::CloneNode(node, newNode);
+                        }
                     }
                 }
             }
