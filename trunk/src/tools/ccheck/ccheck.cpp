@@ -241,6 +241,33 @@ void CCheck::ParseFile(const char* filePath, const char* fileName, bool processi
 
     if(processing)
     {
+
+        if(root->GetNode("shaders"))
+        {
+            if(!strip)
+            {
+                csRef<iDocumentNode> newShaders = texmat->GetNode("shaders");
+                if(!newShaders.IsValid())
+                {
+                    newShaders = texmat->CreateNodeBefore(CS_NODE_ELEMENT);
+                    newShaders->SetValue("shaders");
+                }
+                csRef<iDocumentNodeIterator> itr = root->GetNode("shaders")->GetNodes("shader");
+                while(itr->HasNext())
+                {
+                    csRef<iDocumentNode> node = itr->Next();
+                    size_t l = shaders.PushSmart(node->GetAttributeValue("file"));
+                    if(l == shaders.GetSize()-1)
+                    {
+                        csRef<iDocumentNode> newNode = newShaders->CreateNodeBefore(CS_NODE_ELEMENT);
+                        CS::DocSystem::CloneNode(node, newNode);
+                    }
+                }
+            }
+            
+            root->RemoveNode(root->GetNode("shaders"));
+        }
+
         if(root->GetNode("textures"))
         {
             if(!strip)

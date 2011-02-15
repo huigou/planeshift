@@ -39,6 +39,7 @@ private:
     csString outpath;
     bool strip;
 
+    csArray<csString> shaders;
     csArray<csString> textures;
     csArray<csString> materials;
     csArray<csString> meshfacts;
