@@ -154,7 +154,7 @@
             </subscriptions>
         </widget>
 
-        <widget name="helm" factory="pawsSlot" tooltip="Head">
+        <widget name="helm" factory="pawsSlot" tooltip="Helm">
             <frame x="100" y="0" width="48" height="48" />
             <bgimage resource="InventoryHead" alpha="0"/>
             <subscriptions>
