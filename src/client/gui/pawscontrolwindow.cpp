@@ -54,8 +54,6 @@
 #define CONTROL_MINIUP    10
 #define CONTROL_MINIDOWN  20
 #define CONTROL_QUIT      100
-#define CONTROL_GUILD     500
-#define CONTROL_QUEST     600
 
 #define IMAGE_SIZE 52
 #define ICONS 14
@@ -105,13 +103,13 @@ bool pawsControlWindow::PostSetup()
 
     //The quit button is a bit special
     //We need to manualy register it
-    Icon* icon = new Icon;
-    icon->window = NULL;
-    icon->theirButton = (pawsButton*)FindWidget("QuitButton");
-    icon->orgRes = icon->theirButton->GetBackground();
-    icon->IsActive = false;
-    icon->IsOver = false;
-    buttons.Push(icon);
+    QuitIcon = new Icon;
+    QuitIcon->window = NULL;
+    QuitIcon->theirButton = (pawsButton*)FindWidget("QuitButton");
+    QuitIcon->orgRes = QuitIcon->theirButton->GetBackground();
+    QuitIcon->IsActive = false;
+    QuitIcon->IsOver = false;
+    buttons.Push(QuitIcon);
 
     csRef<iConfigManager> file = psengine->GetConfig();
     int loadStyle = file->GetInt("PlaneShift.GUI.ControlWindow.CurrentStyle", 1);
@@ -183,7 +181,7 @@ bool pawsControlWindow::OnMouseExit()
     return true;
 }
 
-bool pawsControlWindow::OnButtonPressed(int mouseButton, int /*keyModifier*/, pawsWidget* reporter)
+bool pawsControlWindow::OnButtonReleased(int mouseButton, int /*keyModifier*/, pawsWidget* reporter)
 {
     if(reporter->GetID() == CONTROL_MINIDOWN || reporter->GetID() == CONTROL_MINIUP)
     {
@@ -220,6 +218,11 @@ bool pawsControlWindow::OnButtonPressed(int mouseButton, int /*keyModifier*/, pa
         case CONTROL_QUIT:
         {
             HandleQuit();
+
+			QuitIcon->IsActive = true;
+			csString bg(QuitIcon->orgRes);
+			bg += "_active";
+			QuitIcon->theirButton->SetBackground(bg.GetData());
             return true;
         }
         ////////////////////////////////////////////////////////////////////
@@ -238,6 +241,9 @@ bool pawsControlWindow::OnButtonPressed(int mouseButton, int /*keyModifier*/, pa
         {
             PawsManager::GetSingleton().SetModalWidget( 0 );
             reporter->GetParent()->Hide();
+
+			QuitIcon->IsActive = false;
+			QuitIcon->theirButton->SetBackground(QuitIcon->orgRes.GetData());
             return true;
         }
         ////////////////////////////////////////////////////////////////////

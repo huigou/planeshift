@@ -62,7 +62,7 @@ public:
      * depending on the window state when called.
      */
     void Toggle();
-    bool OnButtonPressed ( int mouseButton, int keyModifier, pawsWidget* reporter );
+    bool OnButtonReleased(int mouseButton, int keyModifier, pawsWidget* reporter);
     bool OnChildMouseEnter(pawsWidget *child);
     bool OnChildMouseExit(pawsWidget *child);
     void Hide();
@@ -153,6 +153,8 @@ private:
 
     pawsWidget* buttonUp;
     pawsWidget* buttonDown;
+
+    Icon* QuitIcon;
 
     csRef<iKeyboardDriver> keyboard;
 
