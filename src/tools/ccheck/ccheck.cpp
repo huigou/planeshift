@@ -259,7 +259,7 @@ void CCheck::ParseFile(const char* filePath, const char* fileName, bool processi
                     csRef<iDocumentNode> fileNode = node->GetNode("file");
                     if(filenode.IsValid())
                     {
-                        size_t l = shaders.PushSmart(filenode->GetContentsValue());
+                        size_t l = shaders.PushSmart(fileNode->GetContentsValue());
                         if(l == shaders.GetSize()-1)
                         {
                             csRef<iDocumentNode> newNode = newShaders->CreateNodeBefore(CS_NODE_ELEMENT);
