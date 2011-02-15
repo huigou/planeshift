@@ -257,7 +257,7 @@ void CCheck::ParseFile(const char* filePath, const char* fileName, bool processi
                 {
                     csRef<iDocumentNode> node = itr->Next();
                     csRef<iDocumentNode> fileNode = node->GetNode("file");
-                    if(filenode.IsValid())
+                    if(fileNode.IsValid())
                     {
                         size_t l = shaders.PushSmart(fileNode->GetContentsValue());
                         if(l == shaders.GetSize()-1)
