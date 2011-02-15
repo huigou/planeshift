@@ -99,7 +99,7 @@ bool pawsYesNoBox::OnButtonReleased( int mouseButton, int keyModifier, pawsWidge
     // The parent is responsible for handling the button presses.
     if ( notify )
     {
-        bool result = notify->OnButtonPressed( mouseButton, keyModifier, widget );
+        bool result = notify->OnButtonReleased(mouseButton, keyModifier, widget);
         SetNotify(0);
         Hide();
         return result;

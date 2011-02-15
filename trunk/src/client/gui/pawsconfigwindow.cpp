@@ -42,7 +42,8 @@
 #include "paws/pawsokbox.h"
 
 #define TREE_FILE_NAME "configtree.xml"
-#define RESET_OPTIONS_CONFIRM_TEXT "Do you really want to reset options to default values?"
+#define RESET_OPTIONS_CONFIRM_TEXT "Do you really want to reset these settings to default values?"
+#define RESET_OPTIONS_WARNING_TEXT "You didn't select an option category!"
 
 // config window layout:
 #define SPACING             10            // space between parts of window
@@ -109,15 +110,10 @@ bool pawsConfigWindow::OnButtonReleased(int /*mouseButton*/, int keyModifier, pa
             notify->OnButtonPressed(0, keyModifier, this);
         Hide();
     }
-    else if (widget == resetButton)
-    {
-        // If the user has selected some options category
-        if ( currSectWnd != NULL )
-        {
-            // there's no option category selected, inform the player
-            PawsManager::GetSingleton().CreateYesNoBox( RESET_OPTIONS_CONFIRM_TEXT, this );
-        }
-    }
+	else if (currSectWnd == NULL)   // there's no option category selected, inform the player
+        PawsManager::GetSingleton().CreateWarningBox(RESET_OPTIONS_WARNING_TEXT, this);
+    else if (widget == resetButton) // If the user has selected some options category
+        PawsManager::GetSingleton().CreateYesNoBox(RESET_OPTIONS_CONFIRM_TEXT, this);
     else
     {
         switch ( widget->GetID() )
@@ -126,16 +122,12 @@ bool pawsConfigWindow::OnButtonReleased(int /*mouseButton*/, int keyModifier, pa
             case CONFIRM_YES:
             {
                 // Reset the selected options category
-                if ( currSectWnd != NULL )
-                    currSectWnd->SetDefault();
-               
-                return true;
+                currSectWnd->SetDefault();
             }
             case CONFIRM_NO:
             {
-                PawsManager::GetSingleton().SetModalWidget( 0 );
+                PawsManager::GetSingleton().SetModalWidget(0);
                 widget->GetParent()->Hide();
-                return true;
             }
         }
     }      
