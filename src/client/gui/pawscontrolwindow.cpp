@@ -219,10 +219,10 @@ bool pawsControlWindow::OnButtonReleased(int mouseButton, int /*keyModifier*/, p
         {
             HandleQuit();
 
-			QuitIcon->IsActive = true;
-			csString bg(QuitIcon->orgRes);
-			bg += "_active";
-			QuitIcon->theirButton->SetBackground(bg.GetData());
+            QuitIcon->IsActive = true;
+            csString bg(QuitIcon->orgRes);
+            bg += "_active";
+            QuitIcon->theirButton->SetBackground(bg.GetData());
             return true;
         }
         ////////////////////////////////////////////////////////////////////
@@ -242,8 +242,8 @@ bool pawsControlWindow::OnButtonReleased(int mouseButton, int /*keyModifier*/, p
             PawsManager::GetSingleton().SetModalWidget( 0 );
             reporter->GetParent()->Hide();
 
-			QuitIcon->IsActive = false;
-			QuitIcon->theirButton->SetBackground(QuitIcon->orgRes.GetData());
+            QuitIcon->IsActive = false;
+            QuitIcon->theirButton->SetBackground(QuitIcon->orgRes.GetData());
             return true;
         }
         ////////////////////////////////////////////////////////////////////
