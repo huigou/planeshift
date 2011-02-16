@@ -254,7 +254,7 @@ void pawsGmGUIWindow::HandleMessage ( MsgEntry* me )
     }
 }
 
-bool pawsGmGUIWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
+bool pawsGmGUIWindow::OnButtonReleased(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     const char* errorMessage;
     csString cmd;
