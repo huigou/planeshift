@@ -64,7 +64,7 @@ public:
     void ShowWidget(const char* name);
 
     /// Handle button clicks
-    bool OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* reporter);
+    bool OnButtonReleased(int mouseButton, int keyModifier, pawsWidget* reporter);
 
     const char* GetSelectedName();
     const char* GetSelectedSector();
