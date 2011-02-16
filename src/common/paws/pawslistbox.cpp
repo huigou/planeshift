@@ -120,8 +120,7 @@ void pawsListBox::Clear()
     selected = -1;
     for ( size_t x = 0; x < rows.GetSize(); x++ )
     {
-        children.Delete( rows[x] );
-        delete rows[x];
+        DeleteChild(rows[x]);
     }
 
     rows.DeleteAll();
@@ -385,7 +384,7 @@ void pawsListBox::Remove (pawsListBoxRow* rowToRemove)
             selectedRow = rows[selected];
 
         rows.Delete( rowToRemove );
-        children.Delete( rowToRemove );
+        RemoveChild(rowToRemove);
         totalRows--;
         Select(selectedRow);
         CalculateDrawPositions();
@@ -451,7 +450,7 @@ pawsListBoxRow* pawsListBox::NewRow(size_t position )
 
     if ( position != (size_t)-1 )
     {
-        children.Insert( position, newRow );
+        AddChild(newRow);
         rows.Insert( position, newRow );
     }
     else
@@ -505,7 +504,7 @@ pawsListBoxRow* pawsListBox::NewTextBoxRow( csList<csString> &rowEntry,size_t po
 
     if ( position != (size_t)-1 )
     {
-        children.Insert( position, newRow );
+        AddChild(newRow);
         rows.Insert( position, newRow );
     }
     else
