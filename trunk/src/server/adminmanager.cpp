@@ -8247,7 +8247,7 @@ void AdminManager::BanClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData*
         return;
     }
 
-    if(data->targetClient->GetClientNum() == client->GetClientNum())
+    if(data->targetClient && data->targetClient->GetClientNum() == client->GetClientNum())
     {
         psserver->SendSystemError(me->clientnum, "You can't ban yourself!");
         return;
