@@ -9,7 +9,7 @@
 
 DROP TABLE IF EXISTS `character_quests`;
 CREATE TABLE `character_quests` (
-  `player_id` int(10) NOT NULL default '0',
+  `player_id` int(10) unsigned NOT NULL default '0',
   `quest_id` int(10) unsigned NOT NULL default '0',
   `status` char(1) NOT NULL default 'O',
   `assigner_id` int(10) unsigned default '0',

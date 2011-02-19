@@ -20,7 +20,7 @@
 
 DROP TABLE IF EXISTS `characters`;
 CREATE TABLE `characters` (
-  `id` int(10) NOT NULL auto_increment,
+  `id` int(10) unsigned NOT NULL auto_increment,
   `name` varchar(30) NOT NULL default '',
   `lastname` varchar(30) NOT NULL default '',
   `old_lastname` varchar(30) NOT NULL default '',

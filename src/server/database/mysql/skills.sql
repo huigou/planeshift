@@ -20,7 +20,7 @@
 
 DROP TABLE IF EXISTS `skills`;
 CREATE TABLE `skills` (
-  `skill_id` int(10) NOT NULL default '0',
+  `skill_id` int(10) unsigned NOT NULL default '0',
   `name` varchar(35) NOT NULL default '',
   `description` text,
   `practice_factor` int(8) NOT NULL default '100',

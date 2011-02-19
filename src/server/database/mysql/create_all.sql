@@ -69,7 +69,6 @@ source traits.sql;
 source tribes.sql;
 source tribe_members.sql;
 source tribe_needs.sql;
-source unique_content.sql;
 source ways.sql;
 source trade_combinations.sql;
 source trade_patterns.sql;
