@@ -10,7 +10,7 @@
 DROP TABLE IF EXISTS `petitions`;
 CREATE TABLE petitions (
   id int(10) unsigned NOT NULL auto_increment,
-  player int(11) NOT NULL DEFAULT '0' ,
+  player int(10) NOT NULL DEFAULT '0' ,
   petition blob NOT NULL,
   status varchar(20) DEFAULT 'Open' ,
   category varchar(30) DEFAULT 'Not Assigned' ,
@@ -21,7 +21,8 @@ CREATE TABLE petitions (
   escalation_level int(10) unsigned DEFAULT '1' ,
   PRIMARY KEY (id),
   UNIQUE id (id)
-);
+)
+COMMENT = 'Requests from players to GMs (petition window)';
 
 
 #
