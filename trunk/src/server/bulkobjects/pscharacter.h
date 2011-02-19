@@ -225,11 +225,75 @@ class psWorkGameEvent;
 
 //-----------------------------------------------------------------------------
 
-struct Buddy
+/** Class to handle buddies.
+*/
+class psBuddyManager
 {
-    csString name;
-    PID playerID;
+public:
+    struct Buddy
+    {
+        csString name;      ///< Character name of buddy.
+        PID playerId;       ///< The PID of the player that is the buddy.
+    };
+
+    /** @brief Setup the buddy manager
+     *
+     *  @param charID The PID of the owner of this buddy manager.
+     */
+    void Initialize(PID charId) { characterId = charId; }
+
+    /** @brief Add the player with a certain Player ID to this character buddy list
+     *
+     *  @param buddyID the Player ID which we are going to add to the character buddy list
+     */
+    bool AddBuddy(PID buddyID, csString & name);
+
+    /** @brief Remove the player with a certain Player ID from this character buddy list
+     *
+     *  @param buddyID the Player ID which we are going to remove from the character buddy list
+     */
+    void RemoveBuddy(PID buddyId);
+
+    /** @brief Checks if a playerID is a buddy of this character
+     *
+     *  @param buddyID the Player ID of which we are checking the presence in the character buddy list
+     *  @return  true if the provided PID was found in this character.
+     */
+    bool IsBuddy(PID buddyId);
+
+    /** @brief Adds this player as having this character on their buddy list. 
+     *
+     *  @param buddyID the Player ID of the character that has this character as a buddy.
+     */
+    void AddBuddyOf(PID buddyID);
+
+    /** @brief Remove character as having this character on their buddy list. 
+     *
+     *  @param buddyID the Player ID of the character that has removed this character as a buddy.
+     */
+    void RemoveBuddyOf(PID buddyID);
+
+    /** @brief Load the set of my buddies as well as those that have me as a buddy.
+     *
+     *  @param myBuddies The database set of characters that are my buddy.
+     *  @param buddyOf   The database set of characters that have me as a buddy.
+     */
+    bool LoadBuddies( Result& myBuddies, Result& buddyOf );
+
+
+    csArray<psBuddyManager::Buddy>  GetBuddyList()   { return buddyList; }
+    csArray<PID>                    GetBuddyOfList() { return buddyOfList; }
+
+private:
+
+    csArray<psBuddyManager::Buddy> buddyList;       ///< List of my buddies.
+    csArray<PID> buddyOfList;       ///< List of people that have me as a buddy.
+
+    PID characterId;                ///< PID of the owner of this buddy system
 };
+
+
+//-----------------------------------------------------------------------------
 
 // Need to recalculate Max HP/Mana/Stamina and inventory limits whenever stats
 // change (whether via buffs or base value changes).
@@ -628,28 +692,6 @@ public:
     void SetRaceInfo(psRaceInfo *rinfo);
     psRaceInfo *GetRaceInfo() { return raceinfo; }
 
-    /** @brief Remove the player with a certain Player ID from this character buddy list
-     *
-     *  @param buddyID the Player ID which we are going to remove from the character buddy list
-     */
-    void RemoveBuddy(PID buddyID);
-
-    /** @brief Checks if a playerID is a buddy of this character
-     *
-     *  @param buddyID the Player ID of which we are checking the presence in the character buddy list
-     *  @return  true if the provided PID was found in this character.
-     */
-    bool IsBuddy(PID buddyID);
-
-    /** @brief Add the player with a certain Player ID to this character buddy list
-     *
-     *  @param buddyID the Player ID which we are going to add to the character buddy list
-     */
-    bool AddBuddy(PID buddyID, csString & name);
-
-    void BuddyOf(PID buddyID);
-    void NotBuddyOf(PID buddyID);
-
     /** @brief Add a new explored area.
      *
      *  @param explored The PID of the area npc.
@@ -1009,6 +1051,8 @@ public:
     int NPC_GetSpawnRuleID() { return npc_spawnruleid; }
     void NPC_SetSpawnRuleID(int v) { npc_spawnruleid=v; }
 
+    psBuddyManager& GetBuddyMgr() { return buddyManager; }
+
     ///  The new operator is overriden to call PoolAllocator template functions
     void *operator new(size_t);
     ///  The delete operator is overriden to call PoolAllocator template functions
@@ -1055,9 +1099,6 @@ public:
 
     csString spouseName;
     bool     isMarried;
-
-    csArray<Buddy> buddyList;
-    csArray<PID> buddyOfList;
 
     psRaceInfo *raceinfo;
     csString faction_standings;
@@ -1109,9 +1150,8 @@ protected:
     unsigned int                kills;
     unsigned int                suicides;
     bool                        loaded;
-    
-    
-    
+    psBuddyManager              buddyManager;
+
     csString lastlogintime;///< String value copied from the database containing the last login time
 
     //Stats for this character

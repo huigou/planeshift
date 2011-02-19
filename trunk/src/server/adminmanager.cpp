@@ -8134,15 +8134,15 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
       they are online. */
     if(online)
     {
-        csArray<PID> & buddyOfList = target->GetCharacterData()->buddyOfList;
+        csArray<PID> buddyOfList = target->GetCharacterData()->GetBuddyMgr().GetBuddyOfList();
 
         for (size_t i=0; i<buddyOfList.GetSize(); i++)
         {
             buddy = clients->FindPlayer(buddyOfList[i]);
             if (buddy && buddy->IsReady())
             {
-                buddy->GetCharacterData()->RemoveBuddy(pid);
-                buddy->GetCharacterData()->AddBuddy(pid, data->newName);
+                buddy->GetCharacterData()->GetBuddyMgr().RemoveBuddy(pid);
+                buddy->GetCharacterData()->GetBuddyMgr().AddBuddy(pid, data->newName);
                 //We refresh the buddy list
                 psserver->usermanager->BuddyList(buddy, buddy->GetClientNum(), true);
            }
@@ -8164,8 +8164,8 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
                 buddy = clients->FindPlayer(buddyid);
                 if (buddy && buddy->IsReady())
                 {
-                    buddy->GetCharacterData()->RemoveBuddy(pid);
-                    buddy->GetCharacterData()->AddBuddy(pid, data->newName);
+                    buddy->GetCharacterData()->GetBuddyMgr().RemoveBuddy(pid);
+                    buddy->GetCharacterData()->GetBuddyMgr().AddBuddy(pid, data->newName);
                     //We refresh the buddy list
                     psserver->usermanager->BuddyList(buddy, buddy->GetClientNum(), true);
                 }
