@@ -115,10 +115,6 @@ bool pawsCharBirth::PostSetup()
             months->NewOption(zodiac->name)->SetName(zodiac->name);
         }
     }
-    
-    //set first item in month and day
-    months->Select(0);
-    days->Select(0);
 
     return true;
 }
@@ -254,6 +250,11 @@ void pawsCharBirth::Draw()
     if (!dataLoaded && createManager->HasChildhoodData())
     {
         PopulateFields();
+
+        //set first item in month and day
+        months->Select(0);
+        days->Select(0);
+
         dataLoaded = true;
     }
 }
