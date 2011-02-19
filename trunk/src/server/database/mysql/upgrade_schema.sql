@@ -1566,6 +1566,7 @@ ALTER TABLE characters modify column `id` int(10) unsigned NOT NULL auto_increme
 ALTER TABLE character_relationships modify column character_id int(10) unsigned NOT NULL default '0' COMMENT 'character id from the characters table', modify column related_id int(10) unsigned NOT NULL default '0' COMMENT 'character id of the related character';
 ALTER TABLE skills modify column skill_id int(10) unsigned NOT NULL default '0';
 ALTER TABLE character_quests modify column `player_id` int(10) unsigned NOT NULL default '0';
+ALTER TABLE tribe_members modify column `member_id` int(10) unsigned NOT NULL;
 
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
