@@ -9,8 +9,8 @@
 
 DROP TABLE IF EXISTS `trainer_skills`;
 CREATE TABLE trainer_skills (
-  player_id int(8) unsigned NOT NULL DEFAULT '0' ,
-  skill_id int(8) unsigned NOT NULL DEFAULT '0' ,
+  player_id int(10) unsigned NOT NULL DEFAULT '0' ,
+  skill_id int(10) unsigned NOT NULL DEFAULT '0' ,
   min_rank int(8) unsigned NOT NULL DEFAULT '0' ,
   max_rank int(8) unsigned NOT NULL DEFAULT '0' ,
   min_faction float(10,2) NOT NULL DEFAULT '0.0',

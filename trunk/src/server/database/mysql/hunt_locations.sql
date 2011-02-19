@@ -20,7 +20,8 @@ CREATE TABLE `hunt_locations` (
   `amount` int(10) unsigned NOT NULL default '1',
   `range` double(10,2) unsigned NOT NULL default '0.00',
   PRIMARY KEY  (`id`)
-);
+)
+COMMENT = 'Areas to spawn items, like apples or mushrooms';
 
 #
 # Dumping data for table 'hunt_locations'
