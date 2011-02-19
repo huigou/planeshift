@@ -9,4 +9,5 @@ CREATE TABLE `character_events` (
   `vote` TINYINT(1) NULL DEFAULT NULL COMMENT 'The vote expressed by the player on the specific event (range 1-10 where 0 is equal to 1/10)' ,
   `comments` TEXT NULL DEFAULT NULL COMMENT 'A comment left by the player on the event',
   PRIMARY KEY  (`player_id`,`event_id`)
-);
+)
+COMMENT = 'List of players who participate into a GM event';
