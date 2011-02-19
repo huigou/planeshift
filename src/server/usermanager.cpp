@@ -1087,9 +1087,9 @@ void UserManager::Buddy(psUserCmdMessage& msg,Client *client)
     }
 
     //If the player used add or didn't provide arguments and the buddy is missing from the list add it
-    if((onoff && !toggle)|| (toggle && !chardata->IsBuddy(buddyid)))
+    if((onoff && !toggle)|| (toggle && !chardata->GetBuddyMgr().IsBuddy(buddyid)))
     {
-        if ( !chardata->AddBuddy( buddyid, msg.player ) )
+        if ( !chardata->GetBuddyMgr().AddBuddy( buddyid, msg.player ) )
         {
             psserver->SendSystemError(client->GetClientNum(),"%s could not be added to buddy list.",(const char *)msg.player);
             return;
@@ -1098,7 +1098,7 @@ void UserManager::Buddy(psUserCmdMessage& msg,Client *client)
         Client* buddyClient = clients->FindPlayer( buddyid );
         if ( buddyClient && buddyClient->IsReady() )
         {
-            buddyClient->GetCharacterData()->BuddyOf( selfid );
+            buddyClient->GetCharacterData()->GetBuddyMgr().AddBuddyOf( selfid );
         }
 
         if (!psserver->AddBuddy(selfid,buddyid))
@@ -1111,13 +1111,13 @@ void UserManager::Buddy(psUserCmdMessage& msg,Client *client)
     }
     else //If the player used remove or the buddy was found in the player list remove it from there
     {
-        chardata->RemoveBuddy( buddyid );
+        chardata->GetBuddyMgr().RemoveBuddy( buddyid );
         Client* buddyClient = clients->FindPlayer( buddyid );
         if ( buddyClient )
         {
             psCharacter* buddyChar = buddyClient->GetCharacterData();
             if (buddyChar)
-                buddyChar->NotBuddyOf( selfid );
+                buddyChar->GetBuddyMgr().RemoveBuddyOf( selfid );
         }
 
         if (!psserver->RemoveBuddy(selfid,buddyid))
@@ -1141,7 +1141,7 @@ void UserManager::BuddyList(Client *client,int clientnum,bool filter)
         return;
     }
 
-    int totalBuddies = (int)chardata->buddyList.GetSize(); //psBuddyListMsg should have as parameter a size_t. This is temporary.
+    int totalBuddies = (int)chardata->GetBuddyMgr().GetBuddyList().GetSize(); //psBuddyListMsg should have as parameter a size_t. This is temporary.
 
 
     psBuddyListMsg mesg( clientnum, totalBuddies );
@@ -1150,15 +1150,15 @@ void UserManager::BuddyList(Client *client,int clientnum,bool filter)
     {
         for ( int i = 0; i < totalBuddies; i++ )
         {
-            mesg.AddBuddy( i, chardata->buddyList[i].name, (clients->Find(chardata->buddyList[i].name)? true : false) );
+            mesg.AddBuddy( i, chardata->GetBuddyMgr().GetBuddyList()[i].name, (clients->Find(chardata->GetBuddyMgr().GetBuddyList()[i].name)? true : false) );
         }
     }
     else // Others only see none hiding GM+
     {
         for ( int i = 0; i < totalBuddies; i++ )
         {
-            Client *buddy = clients->Find(chardata->buddyList[i].name);
-            mesg.AddBuddy( i, chardata->buddyList[i].name, (buddy&&(!buddy->GetBuddyListHide()) ? true : false) );
+            Client *buddy = clients->Find(chardata->GetBuddyMgr().GetBuddyList()[i].name);
+            mesg.AddBuddy( i, chardata->GetBuddyMgr().GetBuddyList()[i].name, (buddy&&(!buddy->GetBuddyListHide()) ? true : false) );
         }
     }
 
@@ -1185,9 +1185,9 @@ void UserManager::NotifyBuddies(Client * client, bool logged_in)
 {
     csString name (client->GetActor()->GetFirstName());
 
-    for (size_t i=0; i< client->GetCharacterData()->buddyOfList.GetSize(); i++)
+    for (size_t i=0; i< client->GetCharacterData()->GetBuddyMgr().GetBuddyOfList().GetSize(); i++)
     {
-        Client *buddy = clients->FindPlayer( client->GetCharacterData()->buddyOfList[i] );  // name of player buddy
+        Client *buddy = clients->FindPlayer( client->GetCharacterData()->GetBuddyMgr().GetBuddyOfList()[i] );  // name of player buddy
 
         if (buddy)  // is buddy online at the moment?  if so let him know buddy just logged on
         {
@@ -1213,9 +1213,9 @@ void UserManager::NotifyPlayerBuddies(Client * client, bool logged_in)
 {
     csString name (client->GetActor()->GetFirstName());
 
-    for (size_t i=0; i< client->GetCharacterData()->buddyOfList.GetSize(); i++)
+    for (size_t i=0; i< client->GetCharacterData()->GetBuddyMgr().GetBuddyOfList().GetSize(); i++)
     {
-        Client *buddy = clients->FindPlayer( client->GetCharacterData()->buddyOfList[i] );  // name of player buddy
+        Client *buddy = clients->FindPlayer( client->GetCharacterData()->GetBuddyMgr().GetBuddyOfList()[i] );  // name of player buddy
 
         if (buddy)  // is buddy online at the moment?  if so let him know buddy just logged on
         {

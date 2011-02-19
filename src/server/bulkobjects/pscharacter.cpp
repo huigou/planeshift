@@ -266,6 +266,9 @@ bool psCharacter::Load(iResultRow& row)
     // TODO:  Link in account ID?
     csTicks start = csGetTicks();
     pid = row.GetInt("id");
+
+    buddyManager.Initialize(pid);
+
     accountid = AccountID(row.GetInt("account_id"));
     SetCharType( row.GetUInt32("character_type") );
 
@@ -603,7 +606,7 @@ bool psCharacter::LoadRelationshipInfo(PID pid)
       return false;
     }
 
-    if ( !LoadBuddies( has_a, of_a ) )
+    if ( !buddyManager.LoadBuddies( has_a, of_a ) )
     {
         Error2("Cannot load buddies for Character %s.", ShowID(pid));
         return false;
@@ -633,40 +636,6 @@ void psCharacter::LoadIntroductions()
 }
 
 
-bool psCharacter::LoadBuddies( Result& myBuddies, Result& buddyOf )
-{
-    unsigned int x;
-
-    if ( !myBuddies.IsValid() )
-      return true;
-
-    for ( x = 0; x < myBuddies.Count(); x++ )
-    {
-
-        if ( strcmp( myBuddies[x][ "relationship_type" ], "buddy" ) == 0 )
-        {
-            Buddy newBud;
-            newBud.name = myBuddies[x][ "buddy_name" ];
-            newBud.playerID = PID(myBuddies[x].GetUInt32("related_id"));
-
-            buddyList.Insert( 0, newBud );
-        }
-    }
-
-
-    // Load all the people that I am a buddy of. This is used to inform these people
-    // of when I log in/out.
-
-    for (x = 0; x < buddyOf.Count(); x++ )
-    {
-        if ( strcmp( buddyOf[x][ "relationship_type" ], "buddy" ) == 0 )
-        {
-            buddyOfList.Insert( 0, buddyOf[x].GetUInt32( "character_id" ) );
-        }
-    }
-
-    return true;
-}
 
 bool psCharacter::LoadMarriageInfo( Result& result)
 {
@@ -2737,65 +2706,6 @@ bool psCharacter::Unintroduce(psCharacter *c)
     return false;
 }
 
-void psCharacter::RemoveBuddy(PID buddyID)
-{
-    for ( size_t x = 0; x < buddyList.GetSize(); x++ )
-    {
-        if ( buddyList[x].playerID == buddyID )
-        {
-            buddyList.DeleteIndex(x);
-            return;
-        }
-    }
-}
-
-void psCharacter::BuddyOf(PID buddyID)
-{
-    if ( buddyOfList.Find( buddyID )  == csArrayItemNotFound )
-    {
-        buddyOfList.Push( buddyID );
-    }
-}
-
-void psCharacter::NotBuddyOf(PID buddyID)
-{
-    buddyOfList.Delete( buddyID );
-}
-
-bool psCharacter::IsBuddy(PID buddyID)
-{
-    for ( size_t x = 0; x < buddyList.GetSize(); x++ )
-    {
-        if ( buddyList[x].playerID == buddyID )
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
-bool psCharacter::AddBuddy(PID buddyID, csString & buddyName)
-{
-    // Cannot addself to buddy list
-    if (buddyID == pid)
-        return false;
-
-    for ( size_t x = 0; x < buddyList.GetSize(); x++ )
-    {
-        if ( buddyList[x].playerID == buddyID )
-        {
-            return true;
-        }
-    }
-
-    Buddy b;
-    b.name = buddyName;
-    b.playerID = buddyID;
-
-    buddyList.Push( b );
-
-    return true;
-}
 
 bool psCharacter::AddExploredArea(PID explored)
 {
@@ -3987,4 +3897,102 @@ void QuestAssignment::SetQuest(psQuest *q)
     }
 }
 
+//////////////////////////////////////////////////////////////////////////
+// BuddyManager
+//////////////////////////////////////////////////////////////////////////
+bool psBuddyManager::AddBuddy(PID buddyID, csString & buddyName)
+{
+    // Cannot addself to buddy list
+    if (buddyID == characterId)
+        return false;
 
+    for ( size_t x = 0; x < buddyList.GetSize(); x++ )
+    {
+        if ( buddyList[x].playerId == buddyID )
+        {
+            return true;
+        }
+    }
+
+    Buddy b;
+    b.name      = buddyName;
+    b.playerId  = buddyID;
+
+    buddyList.Push( b );
+    return true;
+}
+
+
+void psBuddyManager::RemoveBuddy(PID buddyID)
+{
+    for ( size_t x = 0; x < buddyList.GetSize(); x++ )
+    {
+        if ( buddyList[x].playerId == buddyID )
+        {
+            buddyList.DeleteIndex(x);
+            return;
+        }
+    }
+}
+
+
+void psBuddyManager::AddBuddyOf(PID buddyID)
+{
+    if ( buddyOfList.Find( buddyID )  == csArrayItemNotFound )
+    {
+        buddyOfList.Push( buddyID );
+    }
+}
+
+
+void psBuddyManager::RemoveBuddyOf(PID buddyID)
+{
+    buddyOfList.Delete( buddyID );
+}
+
+
+bool psBuddyManager::LoadBuddies( Result& myBuddies, Result& buddyOf )
+{
+    unsigned int x;
+
+    if ( !myBuddies.IsValid() )
+      return true;
+
+    for ( x = 0; x < myBuddies.Count(); x++ )
+    {
+
+        if ( strcmp( myBuddies[x][ "relationship_type" ], "buddy" ) == 0 )
+        {
+            Buddy newBud;
+            newBud.name = myBuddies[x][ "buddy_name" ];
+            newBud.playerId = PID(myBuddies[x].GetUInt32("related_id"));
+
+            buddyList.Insert( 0, newBud );
+        }
+    }
+
+    // Load all the people that I am a buddy of. This is used to inform these people
+    // of when I log in/out.
+    for (x = 0; x < buddyOf.Count(); x++ )
+    {
+        if ( strcmp( buddyOf[x][ "relationship_type" ], "buddy" ) == 0 )
+        {
+            buddyOfList.Insert( 0, buddyOf[x].GetUInt32( "character_id" ) );
+        }
+    }
+
+    return true;
+}
+
+
+bool psBuddyManager::IsBuddy(PID buddyID) 
+{
+    for ( size_t x = 0; x < buddyList.GetSize(); x++ ) 
+    {
+        if ( buddyList[x].playerId == buddyID )
+        {
+            return true;
+        }
+    }
+    return false; 
+}
