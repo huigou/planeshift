@@ -470,56 +470,38 @@ struct Stance
 
 class psCharacter : public iScriptableVar, public iCachedObject
 {
-protected:
-    psCharacterInventory      inventory;                    ///< Character's inventory handler.
-    psMoney money;                                          ///< Current cash set on player.
-    psMoney bankMoney;                                      ///< Money stored in the players bank account.
-
-    csWeakRef<psGuildInfo>    guildinfo;
-    csArray<psSpell*>         spellList;
-    csArray<QuestAssignment*> assigned_quests;
-    StatSet                   attributes, modifiers;
-    SkillSet                  skills;
-    psSkillCache              skillCache;
-    GMEventsAssignment        assigned_events;
-    csArray<PID>              explored_areas;
-
-    ///< A bitfield which contains the notifications the player will get if a guild or alliance member login/logoff.
-    int joinNotifications;
-
-    bool LoadSpells(PID use_id);
-    bool LoadAdvantages(PID use_id);
-    bool LoadSkills(PID use_id);
-    bool LoadTraits(PID use_id);
-    bool LoadQuestAssignments();
-    bool LoadRelationshipInfo(PID pid);
-    bool LoadBuddies( Result& myBuddy, Result& buddyOf);
-    bool LoadMarriageInfo( Result& result);
-    bool LoadFamiliar( Result& pet, Result& owner);
-    bool LoadExploration(Result& exploration);
-    bool LoadGMEvents();
-
-    float override_max_hp,override_max_mana;  ///< These values are loaded from base_hp_max,base_mana_max in the db and
-                                              ///< should prevent normal HP calculations from taking place
-
-    static const char *characterTypeName[];
-    unsigned int characterType;
-
-    /// Array of items waiting to be looted.
-    csArray<psItem*> loot_pending;
-    /// Last response of an NPC to this character (not saved)
-    int  lastResponse;
-    /// Amount of money ready to be looted
-    int  loot_money;
-    /// Says if this npc is a statue
-    bool isStatue;
-
 public:
+    enum TradingStatus 
+    {
+        NOT_TRADING, 
+        SELLING, 
+        BUYING, 
+        WITHDRAWING, 
+        STORING
+    };
+
+    struct st_location
+    {
+        psSectorInfo *loc_sector;
+        csVector3 loc;
+        float loc_yrot;
+        InstanceID worldInstance;
+    };
+
+    psCharacter();
+
+    virtual ~psCharacter();
+
+    bool Load(iResultRow& row);
+
     bool IsStatue() { return isStatue; }
+
     psCharacterInventory& Inventory() { return inventory; }
 
     psMoney Money() { return money; }
+    
     psMoney& BankMoney() { return bankMoney; }
+    
     void SetMoney(psMoney m);
     /** @brief Add a money object to the current wallet.
       *
@@ -537,33 +519,13 @@ public:
       * @param amount The amount of the base object which was rewarded.
       */
     void SetMoney(psItemStats* MoneyObject,  int amount);
+    
     void AdjustMoney(psMoney m, bool bank);
+    
     void SaveMoney(bool bank);
 
     void ResetStats();
 
-//    WorkInformation* workInfo;
-    PID pid;
-    AccountID accountid;
-
-    csString name;
-    csString lastname;
-    csString fullname;
-    csString oldlastname;
-
-    csString spouseName;
-    bool     isMarried;
-
-    csArray<Buddy> buddyList;
-    csArray<PID> buddyOfList;
-    csSet<PID> acquaintances;
-
-    psRaceInfo *raceinfo;
-    csString faction_standings;
-    csString progressionScriptText; ///< flat string loaded from the DB.
-    int     impervious_to_attack;
-    /// Bitfield for which help events a character has already encountered.
-    unsigned int     help_event_flags;
 
     /// Checks the bit field for a bit flag from the enum in TutorialManager.h
     bool NeedsHelpEvent(int which) { return (help_event_flags & (1 << which))==0; }
@@ -609,35 +571,7 @@ public:
     virtual void *RecoverObject() { return this; }  ///< Turn iCachedObject ptr into psCharacter
     virtual void DeleteSelf() { delete this; }  ///< Delete must come from inside object to handle operator::delete overrides.
 
-    struct st_location
-    {
-        psSectorInfo *loc_sector;
-        csVector3 loc;
-        float loc_yrot;
-        InstanceID worldInstance;
-    } location;
-
-    psServerVitals* vitals;
-
-    psTrait *traits[PSTRAIT_LOCATION_COUNT];
-
-    // NPC specific data.  Should this go here?
-    int npc_spawnruleid;
-    int npc_masterid;
-
-    /// Id of Loot category to use if this char has extra loot
-    int  loot_category_id;
-
-    csString animal_affinity;
-    PID owner_id;
-    csArray<PID> familiars_id;
-    Buffable<int> canSummonFamiliar;
-
-public:
-    psCharacter();
-    virtual ~psCharacter();
-
-    bool Load(iResultRow& row);
+    
 
     /// Load the bare minimum to know what this character is looks like
     bool QuickLoad(iResultRow& row, bool noInventory);
@@ -885,30 +819,6 @@ public:
      *  @return TRUE if the character mantains a storage
      */
     bool IsStorage() const { return IsBanker(); }
-
-private:
-    int FindGlyphSlot(const csArray<glyphSlotInfo>& slots, psItemStats * glyphType, int purifyStatus);
-
-    /** Some races share helms so this tells which
-        group it's in. If empty assume in racial group. */
-    csString helmGroup;
-
-    /** Some races share bracers so this tells which
-        group it's in. If empty assume in racial group.*/
-    csString BracerGroup;
-
-    /** Some races share belts so this tells which
-        group it's in. If empty assume in racial group.*/
-    csString BeltGroup;
-
-    /** Some races share cloaks so this tells which
-        group it's in. If empty assume in racial group.*/
-    csString CloakGroup;
-
-    bool banker;    ///< Whether or not the character is a banker
-    void CalculateArmorForSlot(INVENTORY_SLOT_NUMBER slot, float& heavy_p, float& med_p, float& light_p);
-    bool ArmorUsesSkill(INVENTORY_SLOT_NUMBER slot, PSITEMSTATS_ARMORTYPE skill);
-public:
     void RecalculateStats();
 
     bool IsNPC() { return characterType == PSCHARACTER_TYPE_NPC; };
@@ -1010,9 +920,7 @@ public:
     psSpell * GetSpellByIdx(int index);
     csArray<psSpell*>& GetSpellList() { return spellList; }
 
-    typedef enum
-        { NOT_TRADING, SELLING, BUYING, WITHDRAWING, STORING} TradingStatus;
-
+    
     psCharacter* GetMerchant() { return merchant; }
     TradingStatus GetTradingStatus() { return tradingStatus; }
     void SetTradingStatus(TradingStatus trading, psCharacter *merchant)
@@ -1031,9 +939,6 @@ public:
     /// Number of seconds online ever including this session in seconds.
     unsigned int GetTotalOnlineTime() { return timeconnected + GetOnlineTimeThisSession(); }
 
-    /// Total number of seconds online.  Updated at logoff.
-    unsigned int timeconnected;
-    csTicks startTimeThisSession;
 
     unsigned int GetTimeConnected() { return timeconnected; }
 
@@ -1097,6 +1002,17 @@ public:
 
     void CalculateEquipmentModifiers();
     float GetStatModifier(PSITEMSTATS_STAT attrib);
+    
+    bool AppendCharacterSelectData(psAuthApprovedMessage& auth);
+
+    // NPC based functions - should these go here?
+    int NPC_GetSpawnRuleID() { return npc_spawnruleid; }
+    void NPC_SetSpawnRuleID(int v) { npc_spawnruleid=v; }
+
+    ///  The new operator is overriden to call PoolAllocator template functions
+    void *operator new(size_t);
+    ///  The delete operator is overriden to call PoolAllocator template functions
+    void operator delete(void *);
 
     // State information for merchants
     csRef<psMerchantInfo>  merchantInfo;
@@ -1126,35 +1042,136 @@ public:
     static MathScript *staminaRatioSit;  ///< The stamina regen ration while sitting script
     static MathScript *staminaRatioWork; ///< The stamina regen ration while working script
 
+    st_location spawn_loc;
+
+    //WorkInformation* workInfo;
+    PID pid;
+    AccountID accountid;
+
+    csString name;
+    csString lastname;
+    csString fullname;
+    csString oldlastname;
+
+    csString spouseName;
+    bool     isMarried;
+
+    csArray<Buddy> buddyList;
+    csArray<PID> buddyOfList;
+
+    psRaceInfo *raceinfo;
+    csString faction_standings;
+    csString progressionScriptText; ///< flat string loaded from the DB.
+    int     impervious_to_attack;
+    /// Bitfield for which help events a character has already encountered.
+    unsigned int     help_event_flags;
+    st_location location;
+    psServerVitals* vitals;
+
+    psTrait *traits[PSTRAIT_LOCATION_COUNT];
+
+    // NPC specific data.  Should this go here?
+    int npc_spawnruleid;
+    
+    /// Id of Loot category to use if this char has extra loot
+    int  loot_category_id;
+
+    csString animal_affinity;
+    PID owner_id;
+    csArray<PID> familiars_id;
+    Buffable<int> canSummonFamiliar;
+    /// Total number of seconds online.  Updated at logoff.
+    unsigned int timeconnected;
+    csTicks startTimeThisSession;
+
+    friend class psCharacterLoader;
 protected:
+
+    bool LoadSpells(PID use_id);
+    bool LoadAdvantages(PID use_id);
+    bool LoadSkills(PID use_id);
+    bool LoadTraits(PID use_id);
+    bool LoadQuestAssignments();
+    bool LoadRelationshipInfo(PID pid);
+    bool LoadBuddies( Result& myBuddy, Result& buddyOf);
+    bool LoadMarriageInfo( Result& result);
+    bool LoadFamiliar( Result& pet, Result& owner);
+    bool LoadExploration(Result& exploration);
+    bool LoadGMEvents();
+
+    psCharacterInventory        inventory;                    ///< Character's inventory handler.
+    csWeakRef<psGuildInfo>      guildinfo;
+    StatSet                     attributes, modifiers;
+    SkillSet                    skills;
+    csSet<PID>                  acquaintances;
+    int                         npc_masterid;
+    unsigned int                deaths;
+    unsigned int                kills;
+    unsigned int                suicides;
+    bool                        loaded;
+    
+    
+    
     csString lastlogintime;///< String value copied from the database containing the last login time
 
     //Stats for this character
-    unsigned int deaths;
-    unsigned int kills;
-    unsigned int suicides;
+    
+    
 
+    psMoney money;                                          ///< Current cash set on player.
+    psMoney bankMoney;                                      ///< Money stored in the players bank account.
 
-public:
-    // NPC based functions - should these go here?
-    int NPC_GetSpawnRuleID() { return npc_spawnruleid; }
-    void NPC_SetSpawnRuleID(int v) { npc_spawnruleid=v; }
+    csArray<psSpell*>         spellList;
+    csArray<QuestAssignment*> assigned_quests;
+    
+    psSkillCache              skillCache;
+    GMEventsAssignment        assigned_events;
+    csArray<PID>              explored_areas;
 
-    st_location spawn_loc;
+    ///< A bitfield which contains the notifications the player will get if a guild or alliance member login/logoff.
+    int joinNotifications;
 
-    bool AppendCharacterSelectData(psAuthApprovedMessage& auth);
+    float override_max_hp,override_max_mana;  ///< These values are loaded from base_hp_max,base_mana_max in the db and
+                                              ///< should prevent normal HP calculations from taking place
 
-    ///  The new operator is overriden to call PoolAllocator template functions
-    void *operator new(size_t);
-    ///  The delete operator is overriden to call PoolAllocator template functions
-    void operator delete(void *);
+    static const char *characterTypeName[];
+    unsigned int characterType;
+
+    /// Array of items waiting to be looted.
+    csArray<psItem*> loot_pending;
+    /// Last response of an NPC to this character (not saved)
+    int  lastResponse;
+    /// Amount of money ready to be looted
+    int  loot_money;
+    /// Says if this npc is a statue
+    bool isStatue;
+
 
 private:
+    void CalculateArmorForSlot(INVENTORY_SLOT_NUMBER slot, float& heavy_p, float& med_p, float& light_p);
+    bool ArmorUsesSkill(INVENTORY_SLOT_NUMBER slot, PSITEMSTATS_ARMORTYPE skill);
+
+    int FindGlyphSlot(const csArray<glyphSlotInfo>& slots, psItemStats * glyphType, int purifyStatus);
+
+    /** Some races share helms so this tells which
+        group it's in. If empty assume in racial group. */
+    csString helmGroup;
+
+    /** Some races share bracers so this tells which
+        group it's in. If empty assume in racial group.*/
+    csString BracerGroup;
+
+    /** Some races share belts so this tells which
+        group it's in. If empty assume in racial group.*/
+    csString BeltGroup;
+
+    /** Some races share cloaks so this tells which
+        group it's in. If empty assume in racial group.*/
+    csString CloakGroup;
+
+    bool banker;    ///< Whether or not the character is a banker
     /// Static reference to the pool for all psItem objects
     static PoolAllocator<psCharacter> characterpool;
-
-public:
-    bool loaded;
 };
 
 #endif
