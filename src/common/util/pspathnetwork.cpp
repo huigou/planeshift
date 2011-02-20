@@ -557,7 +557,7 @@ void psPathNetwork::ListWaypoints(const char * pattern)
 
             for (size_t i = 0; i < wp->links.GetSize(); i++)
             {
-                CPrintf(CON_CMDOUTPUT," %s%s(%d,%.1f)",(wp->prevent_wander[i]?"#":""),
+                CPrintf(CON_CMDOUTPUT," %s%s(%d,%.1f)",(wp->preventWander[i]?"#":""),
                         wp->links[i]->GetName(),wp->links[i]->GetID(),wp->dists[i]);
             }
 
