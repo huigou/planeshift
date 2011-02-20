@@ -846,7 +846,7 @@ bool psNPCLoader::SaveToFile(int id, csString &filename)
 
 
     npcID = id;
-    area  = npc->name;
+    area  = npc->GetCharName();
 
     csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
     csRef<iDocument> doc = xml->CreateDocument();
@@ -984,7 +984,7 @@ void psNPCLoader::WriteBasicInfo()
     else
         gender = "n";
 
-    npcRoot->SetAttribute("name", npc->name.GetData());
+    npcRoot->SetAttribute("name", npc->GetCharName());
     npcRoot->SetAttribute("race", raceInfo->name.GetData());
     npcRoot->SetAttribute("sex", gender);
     npcRoot->SetAttribute("invulnerable", (npc->GetImperviousToAttack() & ALWAYS_IMPERVIOUS) ? "Y":"N");

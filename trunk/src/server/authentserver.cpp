@@ -443,7 +443,7 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
                     continue;
                 }
 
-                Notify3(LOG_CHARACTER, "Sending %s to client %d\n", character->name.GetData(), me->clientnum );
+                Notify3(LOG_CHARACTER, "Sending %s to client %d\n", character->GetCharName(), me->clientnum );
                 character->AppendCharacterSelectData(*message);
 
                 delete character;

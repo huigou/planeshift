@@ -661,7 +661,7 @@ public:
 
     const char *GetCharName() const     { return name.GetData(); }
     const char *GetCharLastName() const { return lastname.GetData(); }
-    const char *GetCharFullName() const { return fullname.GetData(); }
+    const char *GetCharFullName() const { return fullName.GetData(); }
     const char *GetOldLastName() const  { return oldlastname.GetData(); }
 
     // Introductions
@@ -1033,11 +1033,11 @@ public:
     /// This is used by the math scripting engine to get various values.
     double GetProperty(MathEnvironment* env, const char* ptr);
     double CalcFunction(MathEnvironment* env, const char* functionName, const double* params);
-    const char* ToString() { return fullname.GetData(); }
+    const char* ToString() { return fullName.GetData(); }
 
     /// The exp to be handed out when this actor dies
-    int GetKillExperience() { return kill_exp; }
-    void SetKillExperience(int newValue) { kill_exp=newValue; }
+    int GetKillExperience() { return killExp; }
+    void SetKillExperience(int newValue) { killExp=newValue; }
 
     void SetImperviousToAttack(int newValue) { impervious_to_attack=newValue; }
     int GetImperviousToAttack() { return impervious_to_attack; }
@@ -1058,44 +1058,16 @@ public:
     ///  The delete operator is overriden to call PoolAllocator template functions
     void operator delete(void *);
 
-    // State information for merchants
-    csRef<psMerchantInfo>  merchantInfo;
-    bool tradingStopped;
-    TradingStatus tradingStatus;
-    psCharacter* merchant; ///< The merchant this charcter trade with
-    gemActor * actor;
-    //
-    csRef<psTrainerInfo>  trainerInfo;
-    psCharacter* trainer;
+    /** @brief Get the account ID that this character is attached to.
+    *   @return The account ID that this character is attached to.
+    */
+    AccountID GetAccountId() { return accountid; }
 
-    csString description;     ///<Player description
-    csString oocdescription;  ///<Player OOC description
-    csString creationinfo;    ///<Creation manager informations
-    csString lifedescription; ///<Custom life events informations
+    /** @brief Get the character spawn location.
+    *   @return The struct that has the information about where the character spawns. 
+    */    
+    st_location GetSpawnLocation() { return spawnLoc; }
 
-    int kill_exp; ///< Kill Exp
-
-    Multiplier attackModifier;  ///< Attack  value is multiplied by this
-    Multiplier defenseModifier; ///< Defense value is multiplied by this
-
-    static MathScript *maxRealmScript;
-    static MathScript *staminaCalc;  ///< The stamina calc script
-    static MathScript *expSkillCalc; ///< The exp calc script to assign experience on skill ranking
-    static MathScript *staminaRatioWalk; ///< The stamina regen ration while walking script
-    static MathScript *staminaRatioStill;///< The stamina regen ration while standing script
-    static MathScript *staminaRatioSit;  ///< The stamina regen ration while sitting script
-    static MathScript *staminaRatioWork; ///< The stamina regen ration while working script
-
-    st_location spawn_loc;
-
-    //WorkInformation* workInfo;
-    PID pid;
-    AccountID accountid;
-
-    csString name;
-    csString lastname;
-    csString fullname;
-    csString oldlastname;
 
     csString spouseName;
     bool     isMarried;
@@ -1151,6 +1123,45 @@ protected:
     unsigned int                suicides;
     bool                        loaded;
     psBuddyManager              buddyManager;
+
+    csRef<psMerchantInfo>       merchantInfo;           ///< Character's merchant info
+    psCharacter*                merchant;               ///< The merchant this charcter trade with
+
+    bool                        tradingStopped;
+    TradingStatus               tradingStatus;          ///< See the enum for the various status.
+
+    gemActor * actor;               ///< The current game entity object this characater is attached to.
+    PID pid;                        ///< Current  PID for this characater ( or is it the above entity? )
+    AccountID accountid;            ///< Account ID that this characater is attached to.
+
+    csRef<psTrainerInfo>    trainerInfo;        ///< Character's trainer information 
+    psCharacter*            trainer;            ///<  The current character that is being trained?
+
+    csString description;     ///<Player description
+    csString oocdescription;  ///<Player OOC description
+    csString creationinfo;    ///<Creation manager informations
+    csString lifedescription; ///<Custom life events informations
+
+    int killExp; ///< Kill Exp
+
+    Multiplier attackModifier;  ///< Attack  value is multiplied by this
+    Multiplier defenseModifier; ///< Defense value is multiplied by this
+
+
+    static MathScript *maxRealmScript;
+    static MathScript *staminaCalc;  ///< The stamina calc script
+    static MathScript *expSkillCalc; ///< The exp calc script to assign experience on skill ranking
+    static MathScript *staminaRatioWalk; ///< The stamina regen ration while walking script
+    static MathScript *staminaRatioStill;///< The stamina regen ration while standing script
+    static MathScript *staminaRatioSit;  ///< The stamina regen ration while sitting script
+    static MathScript *staminaRatioWork; ///< The stamina regen ration while working script
+
+    st_location spawnLoc;
+
+    csString name;
+    csString lastname;
+    csString fullName;
+    csString oldlastname;
 
     csString lastlogintime;///< String value copied from the database containing the last login time
 

@@ -753,9 +753,9 @@ void GuildManager::HandleSetMemberPoints(Client *client,iDocumentNode * root)
 
     SendNotifications(guild->GetID(), psGUIGuildMessage::MEMBER_DATA);
 
-    if (member->actor)
+    if (member->character)
     {
-        Client* destclient = psserver->GetConnections()->FindAccount(member->actor->accountid);
+        Client* destclient = psserver->GetConnections()->FindAccount(member->character->GetAccountId());
 
         if (destclient)
         {
@@ -1086,8 +1086,8 @@ void GuildManager::CheckMinimumRequirements(psGuildInfo *guild, gemActor *notify
 
         if (!notify) // If not auto-notifying the leader, find the leader if online
         {
-            if (guild->FindLeader() && guild->FindLeader()->actor && guild->FindLeader()->actor->GetActor())
-                clientid = guild->FindLeader()->actor->GetActor()->GetClientID();
+            if (guild->FindLeader() && guild->FindLeader()->character && guild->FindLeader()->character->GetActor())
+                clientid = guild->FindLeader()->character->GetActor()->GetClientID();
         }
         else
             clientid = notify->GetClientID();
@@ -2162,7 +2162,7 @@ void GuildManager::GuildWar(psGuildCmdMessage &msg, Client *client)
         return;
     }
 
-    if (attackguild->FindLeader()->actor != client->GetActor()->GetCharacterData() )
+    if (attackguild->FindLeader()->character != client->GetActor()->GetCharacterData() )
     {
         psserver->SendSystemError(clientnum, "You are not guild leader");
         return;
@@ -2176,7 +2176,7 @@ void GuildManager::GuildWar(psGuildCmdMessage &msg, Client *client)
         return;
     }
 
-    if (targetguild->FindLeader()->actor != wartarget->GetCharacterData() )
+    if (targetguild->FindLeader()->character != wartarget->GetCharacterData() )
     {
         psserver->SendSystemError(clientnum, "This player is not guild leader");
         return;
@@ -2260,7 +2260,7 @@ void GuildManager::GuildYield(psGuildCmdMessage &msg, Client *client)
         return;
     }
 
-    if (loserguild->FindLeader()->actor != client->GetActor()->GetCharacterData() )
+    if (loserguild->FindLeader()->character != client->GetActor()->GetCharacterData() )
     {
         psserver->SendSystemError(clientnum, "You are not guild leader");
         return;
