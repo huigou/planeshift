@@ -32,7 +32,7 @@ class pawsSummaryWindow : public pawsWidget, public DelayedLoader
 public:
     pawsSummaryWindow();
     ~pawsSummaryWindow(); 
-    bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );
+    bool OnButtonReleased( int mouseButton, int keyModifier, pawsWidget* widget );
     void Update();
     bool PostSetup();
     
