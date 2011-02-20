@@ -151,7 +151,7 @@ bool psGuildInfo::Load(iResultRow& row)
         gm->char_id = PID(member[i].GetUInt32("id"));
         gm->name    = NormalizeCharacterName(member[i]["name"]);
 
-        gm->actor         = NULL;
+        gm->character     = NULL;
         gm->guildlevel    = FindLevel(member[i].GetInt("guild_level"));
 
         gm->guild_points         = member[i].GetInt("guild_points");
@@ -289,7 +289,7 @@ void psGuildInfo::Connect(psCharacter *player)
         if(members[i]->char_id == player->GetPID())
         {
             player->SetGuild(this);
-            members[i]->actor = player;
+            members[i]->character = player;
             break;
         }
     }
@@ -300,10 +300,10 @@ void psGuildInfo::Disconnect(psCharacter *player)
     // remove connection player <---> guild
     for(size_t i = 0; i < members.GetSize(); i++)
     {
-        if (members[i]->actor == player)
+        if (members[i]->character == player)
         {
             player->SetGuild(NULL);
-            members[i]->actor = NULL;
+            members[i]->character = NULL;
             break;
         }
     }
@@ -314,7 +314,7 @@ void psGuildInfo::UpdateLastLogin(psCharacter *player)
     //updates last login informations for this member
     for (size_t i=0; i<members.GetSize(); i++)
     {
-        if (members[i]->actor == player)
+        if (members[i]->character == player)
         {
             members[i]->last_login = player->GetLastLoginTime();
             break;
@@ -347,10 +347,10 @@ bool psGuildInfo::AddNewMember(psCharacter *player, int level)
     psGuildMember *gm = new psGuildMember;
 
     gm->char_id = player->GetPID();
-    gm->actor   = NULL;
+    gm->character   = NULL;
     gm->guild_points = 0;
     gm->guildlevel = FindLevel(level);
-    gm->name = player->name;
+    gm->name = player->GetCharName();
     gm->privileges = 0;
     gm->removedPrivileges = 0;
 
@@ -384,8 +384,8 @@ bool psGuildInfo::RemoveMember(psGuildMember *target)
         return false;
     }
 
-    if (target->actor)
-        Disconnect(target->actor);
+    if (target->character)
+        Disconnect(target->character);
 
     members.DeleteIndex(i);
     return true;

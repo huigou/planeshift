@@ -1254,7 +1254,7 @@ void UserManager::NotifyGuildBuddies(Client * client, bool logged_in)
     while(mIter.HasNext())
     {
         psGuildMember *member = mIter.Next();
-        psCharacter *notifiedmember = member->actor;
+        psCharacter *notifiedmember = member->character;
         gemActor *notifiedactor = notifiedmember? notifiedmember->GetActor() : NULL;
 
         if(notifiedactor && notifiedmember && (member->char_id != char_id)
@@ -1306,7 +1306,7 @@ void UserManager::NotifyAllianceBuddies(Client * client, bool logged_in)
         csArray<psGuildMember*>::Iterator mIter = currentGuild->GetMemberIterator();
         while(mIter.HasNext())
         {
-            psCharacter *notifiedmember = mIter.Next()->actor;
+            psCharacter *notifiedmember = mIter.Next()->character;
             gemActor *notifiedactor = notifiedmember? notifiedmember->GetActor() : NULL;
 
             if(notifiedactor && notifiedmember && notifiedmember->IsGettingAllianceNotifications())

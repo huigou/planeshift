@@ -361,7 +361,7 @@ PID EntityManager::GetMasterFamiliarID(psCharacter *charData)
     if(!xmlDoc.IsValid())
     {
       csString msg("Error parsing animal affinity for character ");
-      msg.AppendFmt("%s!\n", charData->fullname.GetData());
+      msg.AppendFmt("%s!\n", charData->GetCharFullName());
       CS_ASSERT_MSG(msg.GetData(), xmlDoc.IsValid());
     }
 	

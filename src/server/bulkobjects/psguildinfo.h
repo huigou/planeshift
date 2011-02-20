@@ -116,7 +116,7 @@ class psGuildMember
 public:
     PID char_id;                ///< The character ID of the person.
     csString name;              ///< The name of the member
-    psCharacter  *actor;        ///< Pointer to the character data of the person.
+    psCharacter  *character;    ///< Pointer to the character data of the person.
     psGuildLevel *guildlevel;   ///< Members current level.
     int guild_points;           ///< Their points in the guild.
     csString public_notes;      ///< The public notes the member has.

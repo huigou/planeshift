@@ -125,7 +125,7 @@ psCharacter::psCharacter() : inventory(this),
     override_max_hp = 0.0f;
     override_max_mana = 0.0f;
 
-    name = lastname = fullname = " ";
+    name = lastname = fullName = " ";
     SetSpouseName( "" );
     isMarried = false;
 
@@ -139,26 +139,28 @@ psCharacter::psCharacter() : inventory(this),
     location.loc_sector = NULL;
     location.loc.Set(0.0f);
     location.loc_yrot = 0.0f;
-    spawn_loc = location;
+    spawnLoc = location;
 
     for (int i=0;i<PSTRAIT_LOCATION_COUNT;i++)
         traits[i] = NULL;
 
     npc_spawnruleid = -1;
 
-    tradingStopped = false;
-    tradingStatus = psCharacter::NOT_TRADING;
-    merchant = NULL;
-    trainer = NULL;
-    actor = NULL;
-    merchantInfo = NULL;
-    trainerInfo = NULL;
+    tradingStopped  = false;
+    tradingStatus   = psCharacter::NOT_TRADING;
 
+    merchant        = NULL;
+    merchantInfo    = NULL;
+
+    trainerInfo = NULL;
+    trainer     = NULL;
+    actor = NULL;
+    
     timeconnected = 0;
     startTimeThisSession = csGetTicks();
 
 //    transformation = NULL;
-    kill_exp = 0;
+    killExp = 0;
     impervious_to_attack = 0;
 
     faction_standings.Clear();
@@ -399,7 +401,7 @@ bool psCharacter::Load(iResultRow& row)
                       csGetTicks() - start, ShowID(pid), __FILE__, __LINE__);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
-    spawn_loc = location;
+    spawnLoc = location;
 
     // Guild fields here
     guildinfo = psserver->GetCacheManager()->FindGuild(row.GetUInt32("guild_member_of"));
@@ -540,7 +542,7 @@ bool psCharacter::Load(iResultRow& row)
     SetProgressionPoints(row.GetUInt32("progression_points"),false);
 
     // Load the kill exp
-    kill_exp = row.GetUInt32("kill_exp");
+    killExp = row.GetUInt32("kill_exp");
 
     // Load if the character/npc is a banker
     if(row.GetInt("banker") == 1)
@@ -899,7 +901,7 @@ void psCharacter::SetFullName(const char* newFirstName, const char* newLastName)
     if ( strlen(newFirstName) )
     {
         name = newFirstName;
-        fullname = name;
+        fullName = name;
     }
     if ( newLastName )
     {
@@ -907,8 +909,8 @@ void psCharacter::SetFullName(const char* newFirstName, const char* newLastName)
 
         if ( strlen(newLastName) )
         {
-            fullname += " ";
-            fullname += lastname;
+            fullName += " ";
+            fullName += lastname;
         }
     }
 
@@ -951,10 +953,10 @@ void psCharacter::LoadActiveSpells()
     if (progressionScriptText.IsEmpty())
         return;
 
-    ProgressionScript *script = ProgressionScript::Create(psserver->entitymanager, psserver->GetCacheManager(), fullname, progressionScriptText);
+    ProgressionScript *script = ProgressionScript::Create(psserver->entitymanager, psserver->GetCacheManager(), fullName, progressionScriptText);
     if (!script)
     {
-        Error3("Saved progression script for >%s< is invalid:\n%s", fullname.GetData(), progressionScriptText.GetData());
+        Error3("Saved progression script for >%s< is invalid:\n%s", fullName.GetData(), progressionScriptText.GetData());
         return;
     }
 
@@ -969,13 +971,13 @@ void psCharacter::LoadActiveSpells()
 
 void psCharacter::UpdateRespawn(csVector3 pos, float yrot, psSectorInfo *sector, InstanceID instance)
 {
-    spawn_loc.loc_sector = sector;
-    spawn_loc.loc = pos;
-    spawn_loc.loc_yrot   = yrot;
-    spawn_loc.worldInstance = instance;
+    spawnLoc.loc_sector = sector;
+    spawnLoc.loc = pos;
+    spawnLoc.loc_yrot   = yrot;
+    spawnLoc.worldInstance = instance;
 
     // Save to database
-    st_location & l = spawn_loc;
+    st_location & l = spawnLoc;
     psString sql;
 
     sql.AppendFmt("update characters set loc_x=%10.2f, loc_y=%10.2f, loc_z=%10.2f, loc_yrot=%10.2f, loc_sector_id=%u, loc_instance=%u where id=%u",
@@ -1197,7 +1199,7 @@ void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, const csVector
     psserver->GetCharManager()->SendOutPlaySoundMessage(actor->GetClientID(), item->GetSound(), "drop");
 
     // Announce drop (in the future, there should be a drop animation)
-    psSystemMessage newmsg(actor->GetClientID(), MSG_INFO_BASE, "%s dropped %s.", fullname.GetData(), item->GetQuantityName().GetData());
+    psSystemMessage newmsg(actor->GetClientID(), MSG_INFO_BASE, "%s dropped %s.", fullName.GetData(), item->GetQuantityName().GetData());
     newmsg.Multicast(actor->GetMulticastClients(), 0, RANGE_TO_SELECT);
 
     // If we're dropping from inventory, we should properly remove it.
@@ -1343,7 +1345,7 @@ void psCharacter::AddLootItem(psItem *item)
 {
     if (!item)
     {
-        Error2("Attempted to add 'null' loot item to character %s, ignored.",fullname.GetDataSafe());
+        Error2("Attempted to add 'null' loot item to character %s, ignored.",fullName.GetDataSafe());
         return;
     }
     loot_pending.Push(item);
@@ -2128,7 +2130,7 @@ bool psCharacter::AppendCharacterSelectData(psAuthApprovedMessage& auth)
     MakeTextureString( traits );
     MakeEquipmentString( equipment );
 
-    auth.AddCharacter(fullname, raceinfo->name, raceinfo->mesh_name, traits, equipment);
+    auth.AddCharacter(fullName, raceinfo->name, raceinfo->mesh_name, traits, equipment);
     return true;
 }
 
@@ -2756,7 +2758,7 @@ double psCharacter::GetProperty(MathEnvironment* env, const char* ptr)
     }
     else if (property == "KillExp")
     {
-        return kill_exp;
+        return killExp;
     }
     else if (property == "GetAttackValueModifier")
     {

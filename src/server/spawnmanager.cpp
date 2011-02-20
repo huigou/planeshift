@@ -1125,7 +1125,7 @@ bool SpawnRule::DetermineSpawnLoc(psCharacter *ch, csVector3& pos, float& angle,
                 sectorname = range->GetSector();
                 if (ch && sectorname == "startlocation")
                 {
-                    sectorname = ch->spawn_loc.loc_sector->name;
+                    sectorname = ch->GetSpawnLocation().loc_sector->name;
                 }
                 found = true;
                 break;
@@ -1145,10 +1145,10 @@ bool SpawnRule::DetermineSpawnLoc(psCharacter *ch, csVector3& pos, float& angle,
     }
     else if (ch && fixedspawnsector == "startlocation")
     {
-        pos = ch->spawn_loc.loc;
-        angle = ch->spawn_loc.loc_yrot;
-        sectorname = ch->spawn_loc.loc_sector->name;
-        instance = ch->spawn_loc.worldInstance;
+        pos = ch->GetSpawnLocation().loc;
+        angle = ch->GetSpawnLocation().loc_yrot;
+        sectorname = ch->GetSpawnLocation().loc_sector->name;
+        instance = ch->GetSpawnLocation().worldInstance;
         return false; // This is a static position fix.
     }
     else

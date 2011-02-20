@@ -7596,7 +7596,7 @@ void AdminManager::SendGMPlayerList(MsgEntry* me, psGMGuiMessage& msg,Client *cl
         psGMGuiMessage::PlayerInfo playerInfo;
 
         playerInfo.name = curr->GetName();
-        playerInfo.lastName = curr->GetCharacterData()->lastname;
+        playerInfo.lastName = curr->GetCharacterData()->GetCharLastName();
         playerInfo.gender = curr->GetCharacterData()->GetRaceInfo()->gender;
 
         psGuildInfo *guild = curr->GetCharacterData()->GetGuild();
@@ -9470,9 +9470,9 @@ void AdminManager::RenameGuild(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDat
     psGuildMember* gleader = guild->FindLeader();
     if(gleader)
     {
-        if(gleader->actor && gleader->actor->GetActor())
+        if(gleader->character && gleader->character->GetActor())
         {
-            psserver->SendSystemInfo(gleader->actor->GetActor()->GetClientID(),
+            psserver->SendSystemInfo(gleader->character->GetActor()->GetClientID(),
                 "Your guild has been renamed to %s by a GM",
                 data->newName.GetData()
                 );
@@ -9488,9 +9488,9 @@ void AdminManager::RenameGuild(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDat
     while(mIter.HasNext())
     {
         psGuildMember* member = mIter.Next();
-        if(member->actor)
+        if(member->character)
         {
-            array.Push(member->actor->GetActor()->GetEID());
+            array.Push(member->character->GetActor()->GetEID());
         }
     }
 
