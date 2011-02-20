@@ -28,7 +28,7 @@ class pawsPathWindow : public pawsWidget
 public:
     pawsPathWindow();
     ~pawsPathWindow(); 
-    bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );
+    bool OnButtonReleased( int mouseButton, int keyModifier, pawsWidget* widget );
     bool PostSetup();
 
 private:

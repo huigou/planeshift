@@ -61,7 +61,7 @@ bool pawsPathWindow::PostSetup()
     return true;
 }
 
-bool pawsPathWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
+bool pawsPathWindow::OnButtonReleased(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     int id = widget->GetID();
     if (id <= PATH_0 + 6 && id > PATH_0)
