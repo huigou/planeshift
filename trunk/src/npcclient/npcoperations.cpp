@@ -3782,7 +3782,13 @@ WanderOperation::WanderOperation(const WanderOperation* other)
       cityValid(other->cityValid),
       city(other->city),
       indoorValid(other->indoorValid),
-      indoor(other->indoor)
+      indoor(other->indoor),
+      pathValid(other->pathValid),
+      path(other->path),
+      roadValid(other->roadValid),
+      road(other->road),
+      groundValid(other->groundValid),
+      ground(other->ground)
 { 
 }
 
@@ -3799,7 +3805,10 @@ bool WanderOperation::WanderRouteFilter::Filter( const Waypoint * waypoint ) con
                (!parent->privValid || waypoint->priv == parent->priv) &&
                (!parent->pubValid || waypoint->pub == parent->pub) &&
                (!parent->cityValid || waypoint->city == parent->city) &&
-               (!parent->indoorValid || waypoint->indoor == parent->indoor)) );
+               (!parent->indoorValid || waypoint->indoor == parent->indoor) &&
+               (!parent->pathValid || waypoint->path == parent->path) &&
+               (!parent->roadValid || waypoint->road == parent->road) &&
+               (!parent->groundValid || waypoint->ground == parent->ground)) );
 }
 
 bool WanderOperation::StartMoveTo(NPC *npc, psPathPoint* point)
@@ -4205,6 +4214,9 @@ bool WanderOperation::Load(iDocumentNode *node)
     pub = LoadAttributeBool(node,"public",false,&pubValid);
     city = LoadAttributeBool(node,"city",false,&cityValid);
     indoor = LoadAttributeBool(node,"indoor",false,&indoorValid);
+    path = LoadAttributeBool(node,"path",false,&pathValid);
+    road = LoadAttributeBool(node,"road",false,&roadValid);
+    ground = LoadAttributeBool(node,"ground",false,&groundValid);
 
     return true;
 }
