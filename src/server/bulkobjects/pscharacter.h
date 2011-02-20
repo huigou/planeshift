@@ -592,10 +592,10 @@ public:
 
 
     /// Checks the bit field for a bit flag from the enum in TutorialManager.h
-    bool NeedsHelpEvent(int which) { return (help_event_flags & (1 << which))==0; }
+    bool NeedsHelpEvent(int which) { return (helpEventFlags & (1 << which))==0; }
 
     /// Sets a bit field complete for a specified flag from the enum in tutorialmanager.h
-    void CompleteHelpEvent(int which) { help_event_flags |= (1 << which); }
+    void CompleteHelpEvent(int which) { helpEventFlags |= (1 << which); }
 
     /// Set the active guild for the character.
     void SetGuild(psGuildInfo *g) { guildinfo = g; }
@@ -649,7 +649,7 @@ public:
     void SetPID(PID characterID) { pid = characterID; }
     PID GetPID() const { return pid; }
 
-    PID GetMasterNPCID() const { return npc_masterid ? npc_masterid : pid; }
+    PID GetMasterNPCID() const { return npcMasterId ? npcMasterId : pid; }
 
     void SetAccount(AccountID id) { accountid = id; }
     AccountID GetAccount() const { return accountid; }
@@ -704,10 +704,10 @@ public:
      */
     bool HasExploredArea(PID explored);
 
-    const char *GetFactionStandings() { return faction_standings; }
+    const char *GetFactionStandings() { return factionStandings; }
 
-    void SetLootCategory(int id) { loot_category_id = id; }
-    int  GetLootCategory() const { return loot_category_id; }
+    void SetLootCategory(int id) { lootCategoryId = id; }
+    int  GetLootCategory() const { return lootCategoryId; }
     /** Removes an item from the loot loaded on the character due to it's defeat.
      *  It searches for an item with the base stats item having the passed id and returns it
      *  if it was found, removing it from the list of the lootable items.
@@ -720,7 +720,7 @@ public:
      *  @param psItem A pointer to the item being lootable from this character.
      */
     void AddLootItem(psItem *item);
-    void AddLootMoney(int money) { loot_money += money; }
+    void AddLootMoney(int money) { lootMoney += money; }
     size_t GetLootItems(psLootMessage& msg, EID entity, int cnum);
 
     /// Gets and zeroes the loot money
@@ -735,7 +735,7 @@ public:
     void DiscardQuest(QuestAssignment *q, bool force = false);
     bool DiscardQuest(psQuest *quest, bool force = false);
     bool SetAssignedQuestLastResponse(psQuest *quest, int response, gemObject *npc);
-    size_t GetNumAssignedQuests() { return assigned_quests.GetSize(); }
+    size_t GetNumAssignedQuests() { return assignedQuests.GetSize(); }
     int GetAssignedQuestLastResponse(size_t i);
     /// The last_response given by an npc to this player.
     int GetLastResponse() { return lastResponse; }
@@ -750,7 +750,7 @@ public:
     bool UpdateQuestAssignments(bool force_update = false);
 
     size_t  GetAssignedQuests(psQuestListMessage& quests,int cnum);
-    csArray<QuestAssignment*>& GetAssignedQuests() { return assigned_quests; }
+    csArray<QuestAssignment*>& GetAssignedQuests() { return assignedQuests; }
 
     bool CheckQuestAssigned(psQuest *quest);
     bool CheckQuestCompleted(psQuest *quest);
@@ -869,14 +869,14 @@ public:
     bool IsPet() { return (characterType == PSCHARACTER_TYPE_PET || characterType == PSCHARACTER_TYPE_MOUNTPET); };
     /// Used to determine if this NPC is a mount
     bool IsMount() { return (characterType == PSCHARACTER_TYPE_MOUNT || characterType == PSCHARACTER_TYPE_MOUNTPET); };
-    PID  GetFamiliarID(size_t id) { return familiars_id.GetSize() > id ? familiars_id.Get(id) : 0; };
+    PID  GetFamiliarID(size_t id) { return familiarsId.GetSize() > id ? familiarsId.Get(id) : 0; };
     void SetFamiliarID(PID v);
     bool CanSummonFamiliar(int id) { return GetFamiliarID(id) != 0 && canSummonFamiliar.Current() > 0; }
     Buffable<int> & GetCanSummonFamiliar() { return canSummonFamiliar; }
-    const char *GetAnimalAffinity() { return animal_affinity.GetDataSafe(); };
-    void SetAnimialAffinity( const char* v ) { animal_affinity = v; };
-    PID  GetOwnerID() { return owner_id; };
-    void SetOwnerID(PID v) { owner_id = v; };
+    const char *GetAnimalAffinity() { return animalAffinity.GetDataSafe(); };
+    void SetAnimialAffinity( const char* v ) { animalAffinity = v; };
+    PID  GetOwnerID() { return ownerId; };
+    void SetOwnerID(PID v) { ownerId = v; };
 
     bool UpdateStatDRData(csTicks now);
     bool SendStatDRMessage(uint32_t clientnum, EID eid, int flags, csRef<PlayerGroup> group = NULL);
@@ -1039,8 +1039,8 @@ public:
     int GetKillExperience() { return killExp; }
     void SetKillExperience(int newValue) { killExp=newValue; }
 
-    void SetImperviousToAttack(int newValue) { impervious_to_attack=newValue; }
-    int GetImperviousToAttack() { return impervious_to_attack; }
+    void SetImperviousToAttack(int newValue) { imperviousToAttack=newValue; }
+    int GetImperviousToAttack() { return imperviousToAttack; }
 
     void CalculateEquipmentModifiers();
     float GetStatModifier(PSITEMSTATS_STAT attrib);
@@ -1048,8 +1048,8 @@ public:
     bool AppendCharacterSelectData(psAuthApprovedMessage& auth);
 
     // NPC based functions - should these go here?
-    int NPC_GetSpawnRuleID() { return npc_spawnruleid; }
-    void NPC_SetSpawnRuleID(int v) { npc_spawnruleid=v; }
+    int NPC_GetSpawnRuleID() { return npcSpawnRuleId; }
+    void NPC_SetSpawnRuleID(int v) { npcSpawnRuleId=v; }
 
     psBuddyManager& GetBuddyMgr() { return buddyManager; }
 
@@ -1068,36 +1068,13 @@ public:
     */    
     st_location GetSpawnLocation() { return spawnLoc; }
 
-
-    csString spouseName;
-    bool     isMarried;
-
-    psRaceInfo *raceinfo;
-    csString faction_standings;
-    csString progressionScriptText; ///< flat string loaded from the DB.
-    int     impervious_to_attack;
-    /// Bitfield for which help events a character has already encountered.
-    unsigned int     help_event_flags;
-    st_location location;
-    psServerVitals* vitals;
-
-    psTrait *traits[PSTRAIT_LOCATION_COUNT];
-
-    // NPC specific data.  Should this go here?
-    int npc_spawnruleid;
-    
-    /// Id of Loot category to use if this char has extra loot
-    int  loot_category_id;
-
-    csString animal_affinity;
-    PID owner_id;
-    csArray<PID> familiars_id;
-    Buffable<int> canSummonFamiliar;
-    /// Total number of seconds online.  Updated at logoff.
-    unsigned int timeconnected;
-    csTicks startTimeThisSession;
+    /** @brief Get the character location
+    *   @return The struct that has the information about where the character is
+    */    
+    st_location GetLocation() const { return location; }
 
     friend class psCharacterLoader;
+    
 protected:
 
     bool LoadSpells(PID use_id);
@@ -1117,7 +1094,7 @@ protected:
     StatSet                     attributes, modifiers;
     SkillSet                    skills;
     csSet<PID>                  acquaintances;
-    int                         npc_masterid;
+    int                         npcMasterId;
     unsigned int                deaths;
     unsigned int                kills;
     unsigned int                suicides;
@@ -1163,37 +1140,67 @@ protected:
     csString fullName;
     csString oldlastname;
 
-    csString lastlogintime;///< String value copied from the database containing the last login time
+    csString spouseName;
+    bool     isMarried;
 
-    //Stats for this character
+    psRaceInfo *raceinfo;
     
+    csString factionStandings;
     
+    csString progressionScriptText; ///< flat string loaded from the DB.
+    
+    int     imperviousToAttack;
+    
+    /// Bitfield for which help events a character has already encountered.
+    unsigned int     helpEventFlags;
+    
+    st_location location;
+    psServerVitals* vitals;
+
+    psTrait *traits[PSTRAIT_LOCATION_COUNT];
+
+    // NPC specific data.  Should this go here?
+    int npcSpawnRuleId;
+    
+    /// Id of Loot category to use if this char has extra loot
+    int  lootCategoryId;
+
+    csString animalAffinity;
+    PID ownerId;
+    csArray<PID> familiarsId;
+    Buffable<int> canSummonFamiliar;
+    
+    /// Total number of seconds online.  Updated at logoff.
+    unsigned int timeconnected;
+    csTicks startTimeThisSession;
+
+    csString lastlogintime;///< String value copied from the database containing the last login time
 
     psMoney money;                                          ///< Current cash set on player.
     psMoney bankMoney;                                      ///< Money stored in the players bank account.
 
     csArray<psSpell*>         spellList;
-    csArray<QuestAssignment*> assigned_quests;
+    csArray<QuestAssignment*> assignedQuests;
     
     psSkillCache              skillCache;
-    GMEventsAssignment        assigned_events;
-    csArray<PID>              explored_areas;
+    GMEventsAssignment        assignedEvents;
+    csArray<PID>              exploredAreas;
 
     ///< A bitfield which contains the notifications the player will get if a guild or alliance member login/logoff.
     int joinNotifications;
 
-    float override_max_hp,override_max_mana;  ///< These values are loaded from base_hp_max,base_mana_max in the db and
+    float overrideMaxHp,overrideMaxMana;  ///< These values are loaded from base_hp_max,base_mana_max in the db and
                                               ///< should prevent normal HP calculations from taking place
 
     static const char *characterTypeName[];
     unsigned int characterType;
 
     /// Array of items waiting to be looted.
-    csArray<psItem*> loot_pending;
+    csArray<psItem*> lootPending;
     /// Last response of an NPC to this character (not saved)
     int  lastResponse;
     /// Amount of money ready to be looted
-    int  loot_money;
+    int  lootMoney;
     /// Says if this npc is a statue
     bool isStatue;
 

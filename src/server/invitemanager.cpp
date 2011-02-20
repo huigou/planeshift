@@ -167,7 +167,7 @@ bool PendingInvite::CheckForSpam(Client *inviter, psQuestionMessage::questionTyp
                                    "Let this be a lesson to all...",
                                    inviter->GetName(),
                                    (three)?"struck down":"banished to another realm",
-                                   inviter->GetCharacterData()->location.loc_sector->god_name.GetData() );
+                                   inviter->GetCharacterData()->GetLocation().loc_sector->god_name.GetData() );
             newmsg.Multicast(inviter->GetActor()->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE);
 
             inviter->GetActor()->Kill(NULL);

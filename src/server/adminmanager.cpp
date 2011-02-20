@@ -7241,8 +7241,8 @@ void AdminManager::Death( MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cm
             csString message = "You were struck down by ";
             if(data->requestor == "god") //get the god from the sector
             {
-                if(data->targetActor->GetCharacterData() && data->targetActor->GetCharacterData()->location.loc_sector)
-                    message += data->targetActor->GetCharacterData()->location.loc_sector->god_name.GetData();
+                if(data->targetActor->GetCharacterData() && data->targetActor->GetCharacterData()->GetLocation().loc_sector)
+                    message += data->targetActor->GetCharacterData()->GetLocation().loc_sector->god_name.GetData();
                 else
                     message += "the gods";
             }

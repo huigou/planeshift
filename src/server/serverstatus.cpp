@@ -148,7 +148,18 @@ void psServerStatusRunEvent::ReportClient(Client * curr, ClientStatusLogger & cl
     }
     
     reportString.AppendFmt("<player name=\"%s\" characterID=\"%u\" guild=\"%s\" title=\"%s\" security=\"%d\" kills=\"%u\" deaths=\"%u\" suicides=\"%u\" pos_x=\"%.2f\" pos_y=\"%.2f\" pos_z=\"%.2f\" sector=\"%s\" />\n",
-                           EscpXML(curr->GetName()).GetData(), chr->GetPID().Unbox(), guildName.GetDataSafe(), guildTitle.GetDataSafe(), curr->GetSecurityLevel(), chr->GetKills(), chr->GetDeaths(), chr->GetSuicides(), chr->location.loc.x, chr->location.loc.y, chr->location.loc.z, EscpXML(chr->location.loc_sector->name).GetData());
+                           EscpXML(curr->GetName()).GetData(), 
+                           chr->GetPID().Unbox(), 
+                           guildName.GetDataSafe(), 
+                           guildTitle.GetDataSafe(), 
+                           curr->GetSecurityLevel(), 
+                           chr->GetKills(), 
+                           chr->GetDeaths(), 
+                           chr->GetSuicides(), 
+                           chr->GetLocation().loc.x, 
+                           chr->GetLocation().loc.y, 
+                           chr->GetLocation().loc.z, 
+                           EscpXML(chr->GetLocation().loc_sector->name).GetData());
 }
 
 void psServerStatusRunEvent::ReportNPC(psCharacter* chardata, csString & reportString)
@@ -158,7 +169,7 @@ void psServerStatusRunEvent::ReportNPC(psCharacter* chardata, csString & reportS
                
     player.Format("<npc name=\"%s\" characterID=\"%u\" kills=\"%u\" deaths=\"%u\" suicides=\"%u\" pos_x=\"%.2f\" pos_y=\"%.2f\" pos_z=\"%.2f\" sector=\"%s\" />\n", 
                   escpxml_name.GetData(), chardata->GetPID().Unbox(),
-                  chardata->GetKills(), chardata->GetDeaths(), chardata->GetSuicides(), chardata->location.loc.x, chardata->location.loc.y, chardata->location.loc.z, (const char*) EscpXML(chardata->location.loc_sector->name));
+                  chardata->GetKills(), chardata->GetDeaths(), chardata->GetSuicides(), chardata->GetLocation().loc.x, chardata->GetLocation().loc.y, chardata->GetLocation().loc.z, (const char*) EscpXML(chardata->GetLocation().loc_sector->name));
     
     reportString.Append( player ); 
 }

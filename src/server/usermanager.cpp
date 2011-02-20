@@ -507,7 +507,7 @@ void UserManager::SendCharacterDescription(Client * client, gemActor *actor, boo
     {
         // Don't guess strength if we can't attack the character or if he's
         //  dead or if we are viewing our own description
-        if (!charData->impervious_to_attack && actor->GetMode() != PSCHARACTER_MODE_DEAD && !isSelf)
+        if (!charData->GetImperviousToAttack() && actor->GetMode() != PSCHARACTER_MODE_DEAD && !isSelf)
         {
             // Begin by gathering stats. We will get overall strength for physical and magical and also a comparison.
             int myPhysicalStat = client->GetCharacterData()->GetCharLevel(true);

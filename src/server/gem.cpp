@@ -4275,7 +4275,7 @@ csString gemNPC::GetDefaultBehavior(const csString & dfltBehaviors)
     int behNum;
     if (psChar->IsMerchant())
         behNum = 2;
-    else if (IsAlive() && GetCharacterData()->impervious_to_attack && GetNPCDialogPtr() != NULL)
+    else if (IsAlive() && GetCharacterData()->GetImperviousToAttack() && GetNPCDialogPtr() != NULL)
     {
         behNum = 6;
         //temporary code to support old clients. when netbumping move this to a more appropriate number.
