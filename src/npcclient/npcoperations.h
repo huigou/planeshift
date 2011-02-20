@@ -38,6 +38,7 @@ struct iSector;
 #include "util/pspathnetwork.h"
 #include <celhpf.h>
 #include "net/npcmessages.h"
+#include "util/edge.h"
 
 //=============================================================================
 // Project Includes
@@ -124,7 +125,7 @@ protected:
     void StopResume();
 
     /// This function is used by MoveTo AND Navigate operations
-    int StartMoveTo(NPC *npc,EventManager *eventmgr, const csVector3& dest, iSector* sector, float vel,const char *action, bool autoresume, float &angle);
+    int StartMoveTo(NPC *npc, EventManager *eventmgr, const csVector3& dest, iSector* sector, float vel,const char *action, bool autoresume, float &angle);
     
     /// This function is used by MoveTo AND Navigate operations
     int StartTurnTo(NPC *npc,EventManager *eventmgr,float turn_end_angle, float ang_vel,const char *action, bool autoresume=true);
@@ -1194,18 +1195,14 @@ protected:
 
     WanderRouteFilter wanderRouteFilter;
 
-    Waypoint *active_wp,*prior_wp,*next_wp;
-    csVector3 dest,current_pos;
-    iSector  *dest_sector,*current_sector;
-    csList<Waypoint*>  waypoint_list;
-    bool      turn_queued;
-    float     turn_angle_vel;
-    float     turn_end_angle;
-    
-    // Internal variables
-    psPath::Direction  direction;
-    psPath            *path;
-    psPathAnchor      *anchor;
+    csList<Edge*> edgeList;
+
+    csList<Edge*>::Iterator   edgeIterator;
+    Edge*                     currentEdge;              ///< The current edge
+    Edge::Iterator*           currentPathPointIterator; ///< The current iterator for path points
+    psPathPoint*              currentPathPoint;         ///< The current local destination
+    csVector3                 currentPointOffset;       ///< The offset used for current local dest.
+//    psPath::PathPointIterator pointIterator;
 
     // End of instance temp variables.
     ////////////////////////////////////////////////////////////
@@ -1223,37 +1220,72 @@ protected:
     // End of operation parameters
     ////////////////////////////////////////////////////////////
 
+    /** Start move to point.
+     *
+     *  Set up a movement from current position to next local dest point.
+     */
+    bool StartMoveTo(NPC *npc, psPathPoint* point);
 
-    /** Calculate a random position within the waypoint as destination */
-    void CalculateTargetPos(csVector3& dest, iSector*&sector);
+    /** Teleport to point.
+     *
+     *  Teleport from current position to next local dest point.
+     */
+    bool MoveTo(NPC *npc, psPathPoint* point);
 
-    Waypoint * GetNextRandomWaypoint(NPC *npc, Waypoint * prior_wp, Waypoint * active_wp);
+    /** Calculate the edgeList to be used by wander.
+     *
+     *  Will calculate a list of edges between start and end for wander.
+     *  For random wander the list is empty but still returning true. 
+     */
+    OperationResult CalculateEdgeList(NPC *npc);
     
-    /** From current waypoint find next */
-    bool FindNextWaypoint(NPC *npc);
-    
-    /** Set up move from current position to next waypoint */
-    bool StartMoveToWaypoint(NPC *npc, EventManager *eventmgr);
-    
+
+    /** Set the current path point iterator.
+     */
+    void SetPathPointIterator(Edge::Iterator* iterator);
+
 public:
 
     WanderOperation();
     WanderOperation(const WanderOperation* other);
     virtual ~WanderOperation();
 
-    bool CalculateWaypointList(NPC *npc);
+    virtual ScriptOperation *MakeCopy();
+
+
+    /** Clear list of edges
+     */
+    void EdgeListClear() { edgeList.DeleteAll(); }
+
+    /** Get the next edge for local destination
+     *
+     *  Will return the next edge from the edge list or
+     *  find a new radom edge for random wander.
+     */
+    Edge* GetNextEdge(NPC* npc);
+
+
+    /** Get the next path point to use for local destination
+     *
+     *  Will return the next path point from the active edge.
+     *  It will get next edge when at end of path. This include
+     *  random edge if operation is random.
+     */
+    psPathPoint* GetNextPathPoint(NPC* npc, bool &teleport);
+
+    /** Return the current path point
+     *
+     */
+    psPathPoint* GetCurrentPathPoint(NPC* npc);
+
+
     virtual OperationResult Run(NPC *npc,EventManager *eventmgr,bool interrupted);
     virtual void Advance(float timedelta,NPC *npc,EventManager *eventmgr);
     virtual void InterruptOperation(NPC *npc,EventManager *eventmgr);
     virtual bool Load(iDocumentNode *node);
-    virtual ScriptOperation *MakeCopy();
     virtual bool CompleteOperation(NPC *npc,EventManager *eventmgr);
 
-    void WaypointListClear() { waypoint_list.DeleteAll(); }
-    void WaypointListPushBack(Waypoint * wp) { waypoint_list.PushBack(wp); }
-    Waypoint * WaypointListGetNext();
-    bool WaypointListEmpty() { return waypoint_list.IsEmpty(); }
-    csList<Waypoint*> WaypointListGet() { return waypoint_list; }
+
 };
 
 //-----------------------------------------------------------------------------

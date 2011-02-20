@@ -33,10 +33,12 @@
 // Project Includes
 //=============================================================================
 #include "util/waypoint.h"
+#include "util/edge.h"
 #include "util/location.h"
 #include "util/log.h"
 #include "util/psstring.h"
 #include "util/strutil.h"
+#include "util/psutil.h"
 
 
 Waypoint::Waypoint()
@@ -156,6 +158,7 @@ bool Waypoint::Load(iResultRow& row, iEngine *engine)
 void Waypoint::AddLink(psPath * path, Waypoint * wp, psPath::Direction direction, float distance)
 {
     links.Push(wp);
+    edges.Push(new Edge(path, direction));
     paths.Push(path);
     pathDir.Push(direction);
     dists.Push(distance);
@@ -168,11 +171,47 @@ void Waypoint::RemoveLink(psPath * path)
     if (index != csArrayItemNotFound)
     {
         links.DeleteIndexFast(index);
+        edges.DeleteIndexFast(index);
         paths.DeleteIndexFast(index);
         pathDir.DeleteIndexFast(index);
         dists.DeleteIndexFast(index);
         prevent_wander.DeleteIndexFast(index);
     }
+}
+
+Edge* Waypoint::GetRandomEdge(const psPathNetwork::RouteFilter* routeFilter)
+{
+    // If there are only one way out don't bother to find if its legal
+    if (edges.GetSize() == 1)
+    {
+        return edges[0];
+    }
+    else if (edges.GetSize() == 0)
+    {
+        return NULL; // No point in trying to find a way out here
+    }
+
+    csArray<Edge*> candidateEdges; // List of available waypoints
+
+    // Calculate possible edges
+    for (size_t ii = 0; ii < edges.GetSize(); ii++)
+    {
+        Edge *edge = edges[ii];
+
+        if ( (!prevent_wander[ii]) && (!routeFilter->Filter(edge->GetEndWaypoint())) )
+        {
+            candidateEdges.Push(edge);
+        }
+    }
+
+    // If no path out of is possible to go, just return.
+    if (candidateEdges.GetSize() == 0)
+    {
+        return edges[0];
+    }
+    
+
+    return candidateEdges[psGetRandom((int)candidateEdges.GetSize())];
 }
 
 
@@ -401,9 +440,9 @@ bool Waypoint::Adjust(iDataConnection * db, csVector3 & pos, csString sector)
     loc.sectorName = sector;
     loc.sector = NULL;
 
-    for (size_t i=0; i<paths.GetSize(); i++)
+    for (size_t i=0; i<edges.GetSize(); i++)
     {
-        psPathPoint * pp = paths[i]->GetStartPoint(pathDir[i]);
+        psPathPoint * pp = edges[i]->GetStartPoint();
         pp->Adjust(pos,sector);
     }
 

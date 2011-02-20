@@ -97,12 +97,12 @@ public:
      * Starts a thread for the Network, Message Handler. Also 
      * binds the status socket for the network.
      */
-    bool Initialize(iObjectRegistry* object_reg,const char *host, const char *user, const char *pass, int port);
+    bool Initialize(iObjectRegistry* object_reg,const char* host, const char* user, const char* pass, int port);
 
     /**
      * Just make iObjectRegistry available to other classes.
      */
-    iObjectRegistry *GetObjectReg()
+    iObjectRegistry* GetObjectReg()
     { return objreg; }
 
     /**
@@ -111,7 +111,7 @@ public:
      */
     void MainLoop ();
 
-    virtual void CatchCommand(const char *cmd);
+    virtual void CatchCommand(const char* cmd);
 
     /**
      * Used to load the log settings
@@ -142,84 +142,100 @@ public:
      * Load a map into a region.  This is a copy of code
      * from entitymanager->CreateRoom().
      */
-    bool LoadMap(const char *mapfile);
+    bool LoadMap(const char* mapfile);
    
     /**
      * This function handles the searching for the specified region name
      * so that other functions can refer to the region directly.
      */
-    LocationType *FindRegion(const char *regname);
+    LocationType* FindRegion(const char* regname);
 
     /**
      * This function handles the searching for the specified location type
      * so that other functions can refer to the location type directly.
      */
-    LocationType *FindLocation(const char *locname);
+    LocationType* FindLocation(const char *locname);
     
     /**
      * This function handles the searching for the specified object
      * type and basically does the work for the <locate> script command.
      */
-    Location *FindLocation(const char *loctype, const char *name);
+    Location* FindLocation(const char* loctype, const char* name);
     
     /**
      * This function handles the searching for the specified object
      * type and basically does the work for the <locate> script command.
      */
-    Location *FindNearestLocation(const char *loctype, csVector3& pos, iSector* sector, float range = -1, float *found_range = NULL);
+    Location* FindNearestLocation(const char* loctype, csVector3& pos, iSector* sector, float range = -1, float* found_range = NULL);
 
     /**
      * This function handles the searching for the specified object
      * type and basically does the work for the <locate> script command.
      */
-    Location *FindRandomLocation(const char *loctype, csVector3& pos, iSector* sector, float range = -1, float *found_range = NULL);
+    Location* FindRandomLocation(const char* loctype, csVector3& pos, iSector* sector, float range = -1, float* found_range = NULL);
 
     /**
      * This iterates over all waypoints and finds the nearest one.
      * There is probably a more efficient structure to accomplish this.
      */
-    Waypoint *FindNearestWaypoint(csVector3& v, iSector* sector, float range = -1, float * found_range = NULL);
+    Waypoint* FindNearestWaypoint(csVector3& v, iSector* sector, float range = -1, float*  found_range = NULL);
 
     /**
      * This iterates over all waypoints and finds the nearest one.
      * There is probably a more efficient structure to accomplish this.
      */
-    Waypoint *FindRandomWaypoint(csVector3& v, iSector* sector, float range = -1, float * found_range = NULL);
+    Waypoint* FindRandomWaypoint(csVector3& v, iSector* sector, float range = -1, float*  found_range = NULL);
     
     /**
      * This iterates over all waypoints and finds the nearest one with the given group.
      * There is probably a more efficient structure to accomplish this.
      */
-    Waypoint *FindNearestWaypoint(const char *group, csVector3& v, iSector* sector, float range = -1, float * found_range = NULL);
+    Waypoint* FindNearestWaypoint(const char* group, csVector3& v, iSector* sector, float range = -1, float*  found_range = NULL);
 
     /**
      * This iterates over all waypoints and finds the nearest one with the given group.
      * There is probably a more efficient structure to accomplish this.
      */
-    Waypoint *FindRandomWaypoint(const char *group, csVector3& v, iSector* sector, float range = -1, float * found_range = NULL);
+    Waypoint* FindRandomWaypoint(const char* group, csVector3& v, iSector* sector, float range = -1, float*  found_range = NULL);
     
+    /**
+     * This iterates over all waypoints and finds the one the entity is at.
+     * There is probably a more efficient structure to accomplish this.
+     */
+    Waypoint* FindWaypoint( gemNPCObject* entity );
+
+    /** Return the nearest waypoint to the entity.
+     */
+    Waypoint* FindNearestWaypoint( gemNPCObject* entity, float range, float* found_range);
+
+
     /**
      * This iterates over all waypoints and finds the one with the given id.
      * There is probably a more efficient structure to accomplish this.
      */
-    Waypoint *FindWaypoint(int id);
+    Waypoint* FindWaypoint(int id);
 
     /**
      * This iterates over all waypoints and finds the one with the given name.
      * There is probably a more efficient structure to accomplish this.
      */
-    Waypoint *FindWaypoint(const char * name);
+    Waypoint* FindWaypoint(const char* name);
     
     /**
      * Find the shortest route between waypoint start and stop.
      */
-    csList<Waypoint*> FindWaypointRoute(Waypoint * start, Waypoint * end, const psPathNetwork::RouteFilter* filter);
+    csList<Waypoint*> FindWaypointRoute(Waypoint*  start, Waypoint*  end, const psPathNetwork::RouteFilter* filter);
+
+    /**
+     * Find the shortest route between waypoint start and stop.
+     */
+    csList<Edge*> FindEdgeRoute(Waypoint*  start, Waypoint*  end, const psPathNetwork::RouteFilter* filter);
 
     /**
      * This function handles the searching for the specified NPCType name
      * so that other NPCTypes can subclass an existing one.
      */
-    NPCType *FindNPCType(const char *npctype_name);
+    NPCType* FindNPCType(const char* npctype_name);
 
     /**
      * Add a race info to the race info list
@@ -234,7 +250,7 @@ public:
     /**
      * Dump all race infos
      */
-    bool DumpRace(const char * pattern);
+    bool DumpRace(const char* pattern);
         
     /**
      * Find the walk velocity for a given race
@@ -249,13 +265,13 @@ public:
     /**
      * Returns the network handler so script ops can invoke the network.
      */
-    NetworkManager *GetNetworkMgr()
+    NetworkManager* GetNetworkMgr()
     { return network; }
 
     /**
      * Returns the network handler so script ops can invoke the network.
      */
-    psNetConnection *GetNetConnection()
+    psNetConnection* GetNetConnection()
     { return connection; }
 
     /**
@@ -271,11 +287,11 @@ public:
      * @param baseSector The base sector for range checks.
      * @param sameSector Only trigger if in same sector
      */
-    void TriggerEvent(Perception *pcpt, float maxRange=-1.0,
-                      csVector3 *basePos=NULL, iSector *baseSector=NULL,
+    void TriggerEvent(Perception* pcpt, float maxRange=-1.0,
+                      csVector3* basePos=NULL, iSector* baseSector=NULL,
                       bool sameSector=false);
 
-    EventManager *GetEventMgr()
+    EventManager* GetEventMgr()
     { return eventmanager; }
 
     /**
@@ -293,22 +309,22 @@ public:
     /**
      * Find the NPC* attached to the entity with the specified character ID
      */
-    NPC *FindNPCByPID(PID character_id);
+    NPC* FindNPCByPID(PID character_id);
     
     /**
      * Find the NPC* attached to the entity with the specified EID
      */
-    NPC *FindNPC(EID entid);
+    NPC* FindNPC(EID entid);
 
     /**
      * Find a given path.
      */
-    psPath *FindPath(const char *name);
+    psPath* FindPath(const char* name);
 
     /**
      * Find a given path.
      */
-    psPath *FindPath(const Waypoint * wp1, const Waypoint * wp2, psPath::Direction & direction);
+    psPath* FindPath(const Waypoint*  wp1, const Waypoint*  wp2, psPath::Direction & direction);
 
     /** Enable or disable NPCs
      *
@@ -322,7 +338,7 @@ public:
     /**
      * List all NPCs matching pattern to console.
      */
-    void ListAllNPCs(const char *pattern);
+    void ListAllNPCs(const char* pattern);
 
     /**
      * List the amount of npc currently loaded.
@@ -332,52 +348,52 @@ public:
     /**
      * Find one npc and print its current state info.
      */
-    bool DumpNPC(const char *pattern);
+    bool DumpNPC(const char* pattern);
     
     /**
      * List all known entities on superclient.
      */
-    void ListAllEntities(const char *pattern, bool onlyCharacters = false);
+    void ListAllEntities(const char* pattern, bool onlyCharacters = false);
 
     /**
      * List all tribes matching pattern to console.
      */
-    void ListTribes(const char *pattern);
+    void ListTribes(const char* pattern);
     
     /**
      * List all waypoints matching pattern to console.
      */
-    void ListWaypoints(const char *pattern);
+    void ListWaypoints(const char* pattern);
 
     /**
      * List all paths matching pattern to console.
      */
-    void ListPaths(const char *pattern);
+    void ListPaths(const char* pattern);
     
     /**
      * List all locations matching pattern to console.
      */
-    void ListLocations(const char *pattern);
+    void ListLocations(const char* pattern);
     
     /**
      * Special handling for death notifications from the server
      * is required, to stop behavior scripting, delete hate lists,
      * etc.
      */
-    void HandleDeath(NPC *who);
+    void HandleDeath(NPC* who);
 
     void Add( gemNPCObject* object );
     void Remove ( gemNPCObject* object );
     void RemoveAll();
     
-    gemNPCObject *FindCharacterID(PID pid);
-    gemNPCObject *FindEntityID(EID eid);
+    gemNPCObject* FindCharacterID(PID pid);
+    gemNPCObject* FindEntityID(EID eid);
 
     /** Find named entity.
      *
      *  Return first entity that macht the given name.
      */
-    gemNPCObject *FindEntityByName(const char* name);
+    gemNPCObject* FindEntityByName(const char* name);
 
     /**
      * Loop through every tribe and check if this npc is a member.
@@ -386,9 +402,9 @@ public:
 
     void AttachNPC( gemNPCActor* actor, uint8_t DRcounter, EID ownerEID, PID masterID ); 
 
-    iCollideSystem *GetCollDetSys() { return cdsys; }
+    iCollideSystem* GetCollDetSys() { return cdsys; }
 
-    NPC *ReadSingleNPC(PID char_id, PID master_id = 0);
+    NPC* ReadSingleNPC(PID char_id, PID master_id = 0);
     
     /** Clones a master npc to a new npc whith the passed PID.
      *  Used to inheredit behaviours from other npc.
@@ -409,15 +425,15 @@ public:
      */
     void UpdateTime(int minute, int hour, int day, int month, int year);
     
-    psPFMaps * GetMaps() { return PFMaps; }
+    psPFMaps*  GetMaps() { return PFMaps; }
 
-    iCelHNavStruct * GetNavStruct() { return navStruct; }
+    iCelHNavStruct*  GetNavStruct() { return navStruct; }
 
-    psWorld * GetWorld() { return world; }
+    psWorld*  GetWorld() { return world; }
 
-    iEngine * GetEngine() { return engine; }
+    iEngine*  GetEngine() { return engine; }
     
-    iVFS *  GetVFS() { return vfs; }
+    iVFS*   GetVFS() { return vfs; }
 
     int GetGameTODMinute() { return gameMinute;}
     int GetGameTODHour() { return gameHour; }
@@ -472,7 +488,7 @@ public:
 
     /** Load and return the root node of an xml file.
      */
-    csRef<iDocumentNode> GetRootNode(const char *xmlfile);
+    csRef<iDocumentNode> GetRootNode(const char* xmlfile);
     
     bool LoadNPCTypes(iDocumentNode* root);
     
@@ -504,51 +520,51 @@ protected:
      */
     void PerceptProximityLocations();
     
-    psNetConnection           *connection;
-    iObjectRegistry*           objreg;
-    csRef<iEngine>             engine;
-    csRef<iConfigManager >     configmanager;
-    csRef<MsgHandler>          msghandler;
-    ServerConsole             *serverconsole;
-    EventManager              *eventmanager;
-    NetworkManager            *network;
-    psDatabase                *database;
-    csRef<iVFS>                vfs;
+    psNetConnection*                connection;
+    iObjectRegistry*                objreg;
+    csRef<iEngine>                  engine;
+    csRef<iConfigManager >          configmanager;
+    csRef<MsgHandler>               msghandler;
+    ServerConsole*                  serverconsole;
+    EventManager*                   eventmanager;
+    NetworkManager*                 network;
+    psDatabase*                     database;
+    csRef<iVFS>                     vfs;
 
-    csHash<NPCType*, const char*> npctypes;
+    csHash<NPCType*, const char*>   npctypes;
     csHash<LocationType*, csString> loctypes;
-    psPathNetwork             *pathNetwork;
-    csRef<iCelHNavStruct>       navStruct;
-    csArray<NPC*>              npcs;
-    csArray<DeferredNPC>       npcsDeferred;
-    csArray<Tribe*>            tribes;
-    csHash<gemNPCObject*, EID> all_gem_objects_by_eid;
-    csHash<gemNPCObject*, PID> all_gem_objects_by_pid;
-    csArray<gemNPCObject*>     all_gem_objects;
-    csArray<gemNPCItem*>       all_gem_items;
-    csArray<Location*>         all_locations;
-    csHash<RaceInfo_t,csString> raceInfos;
+    psPathNetwork*                  pathNetwork;
+    csRef<iCelHNavStruct>           navStruct;
+    csArray<NPC*>                   npcs;
+    csArray<DeferredNPC>            npcsDeferred;
+    csArray<Tribe*>                 tribes;
+    csHash<gemNPCObject*, EID>      all_gem_objects_by_eid;
+    csHash<gemNPCObject*, PID>      all_gem_objects_by_pid;
+    csArray<gemNPCObject*>          all_gem_objects;
+    csArray<gemNPCItem*>            all_gem_items;
+    csArray<Location*>              all_locations;
+    csHash<RaceInfo_t,csString>     raceInfos;
 
-    csRef<iCollideSystem>      cdsys;
+    csRef<iCollideSystem>           cdsys;
 
-    psWorld                   *world;
+    psWorld*                        world;
     
-    psPFMaps                  *PFMaps;
+    psPFMaps*                       PFMaps;
 
     /// Counter used to start events at every nth client tick
-    unsigned int               tick_counter;
+    unsigned int                    tick_counter;
 
-    int                        current_long_range_perception_index;
+    int                             current_long_range_perception_index;
 
-    int                        current_long_range_perception_loc_index;
+    int                             current_long_range_perception_loc_index;
 
     // Game Time
-    int     gameMinute;
-    int     gameHour;
-    int     gameDay;
-    int     gameMonth;
-    int     gameYear;
-    csTicks gameTimeUpdated;
+    int                             gameMinute;
+    int                             gameHour;
+    int                             gameDay;
+    int                             gameMonth;
+    int                             gameYear;
+    csTicks                         gameTimeUpdated;
     
 };
 

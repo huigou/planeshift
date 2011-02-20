@@ -58,8 +58,14 @@ public:
     void SetPrevious(int previous) { prevPointId = previous; }
 
     int GetID() { return id; }
-    
+
+    const csVector3& GetPosition() { return pos; }
     iSector * GetSector(iEngine *engine);
+    float GetRadius() { return radius; }
+
+    void SetWaypoint(Waypoint* waypoint);
+
+    csString GetName();
 private:
     int                    id;
     int                    prevPointId;
@@ -67,10 +73,13 @@ private:
     csString               sectorName;       /**< Should really only be the pointer, but
                                                   since sector might not be available
                                                   when loaded we use the name for now.**/
+    float                  radius;           ///< The radious of ths path point. Extrapolated
+                                             ///< from start to end waypoint radiuses.
 
     // Internal data
     csWeakRef<iSector>     sector;           ///< Cached sector
     float                  startDistance[2]; ///< Start distance for FORWARD and REVERS    
+    Waypoint*              waypoint;         ///< Pointer to the waypoint if this point is on a wp.
 };
 
 class psPath
@@ -81,12 +90,14 @@ public:
         FORWARD,
         REVERSE
     } Direction;
+
+    typedef csPDelArray<psPathPoint> PathPointArray;
             
-    int                          id;
-    csString                   name;
-    Waypoint                 *start; ///< This path start waypoint
-    Waypoint                   *end; ///< This path end waypoint
-    csPDelArray<psPathPoint> points;
+    int                id;
+    csString           name;
+    Waypoint*          start;   ///< This path start waypoint
+    Waypoint*          end;     ///< This path end waypoint
+    PathPointArray     points;  ///< The points this path consists of including start wp and end wp
 
     /// Flags
     bool                   oneWay;
@@ -117,7 +128,7 @@ public:
     void AddPoint(iDataConnection *db, const csVector3& pos, const char * sectorName, bool first = false);
     
     /// Add a new point to the path
-    psPathPoint* AddPoint(const csVector3& pos, const char * sectorName, bool first = false);
+    psPathPoint* AddPoint(const csVector3& pos, float radius, const char * sectorName, bool first = false);
 
     /// Set the start of the path
     void SetStart(Waypoint * wp);
@@ -139,6 +150,12 @@ public:
     
     /// Get the end point
     psPathPoint* GetEndPoint(Direction direction);
+
+    /// Get the start waypoint
+    Waypoint* GetStartWaypoint(Direction direction);
+    
+    /// Get the end waypoint
+    Waypoint* GetEndWaypoint(Direction direction);
     
     /// Get the end point position
     csVector3 GetEndPos(Direction direction);
@@ -148,6 +165,7 @@ public:
     
     /// Get the end sector
     iSector* GetEndSector(iEngine * engine, Direction direction);
+
     
     /// Return a path anchor to this path
     virtual psPathAnchor* CreatePathAnchor();

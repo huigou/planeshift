@@ -425,7 +425,7 @@ void ScriptOperation::StopMovement(NPC *npc)
 }
 
 
-int ScriptOperation::StartMoveTo(NPC *npc,EventManager *eventmgr, const csVector3& dest, iSector* sector, float vel, const char *action, bool autoresume, float &angle)
+int ScriptOperation::StartMoveTo(NPC *npc, EventManager *eventmgr, const csVector3& dest, iSector* sector, float vel, const char *action, bool autoresume, float &angle)
 {
     csVector3 forward;
     
@@ -441,7 +441,7 @@ int ScriptOperation::StartMoveTo(NPC *npc,EventManager *eventmgr, const csVector
     int msec = (int)(1000.0 * dist / GetVelocity(npc)); // Move will take this many msecs.
     
     npc->Printf(6,"MoveTo op should take approx %d msec.  ", msec);
-    if (autoresume)
+    if (autoresume && eventmgr != NULL)
     {
         // wake me up when it's over
         Resume(msec,npc,eventmgr);
@@ -2280,7 +2280,7 @@ bool MeleeOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
 
     completed = true;
 
-    return OPERATION_COMPLETED;
+    return true;
 }
 
 //---------------------------------------------------------------------------
@@ -2552,7 +2552,7 @@ bool MovePathOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
 
     completed = true;
 
-    return OPERATION_COMPLETED; // Script can keep going
+    return true; // Script can keep going
 }
 
 //---------------------------------------------------------------------------
@@ -2671,7 +2671,7 @@ bool MoveToOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
                 dest.x,dest.y,dest.z);
     completed = true;
 
-    return OPERATION_COMPLETED;  // Script can keep going
+    return true;  // Script can keep going
 }
 
 //---------------------------------------------------------------------------
@@ -3588,10 +3588,13 @@ ScriptOperation::OperationResult TeleportOperation::Run(NPC *npc, EventManager *
     iSector*  sector;
     float     rot;
 
-    npc->GetActiveLocate(pos,sector,rot);
+    npc->GetActiveLocate(pos, sector, rot);
     npc->Printf(5, "Teleport to %s",toString(pos,sector).GetDataSafe());
 
     psGameObject::SetPosition(npc->GetActor(), pos, sector);
+
+    //now persist
+    npcclient->GetNetworkMgr()->QueueDRData(npc);
 
     return OPERATION_COMPLETED;  // Nothing more to do for this op.
 }
@@ -3752,16 +3755,8 @@ WanderOperation::WanderOperation()
       // Instance states
       // Instance states
       wanderRouteFilter(this),
-      active_wp(NULL),
-      prior_wp(NULL),
-      next_wp(NULL),
-      dest_sector(NULL),
-      current_sector(NULL),
-      turn_queued(false),
-      turn_angle_vel(0.0f),
-      turn_end_angle(0.0f),
-      path(NULL),
-      anchor(NULL)
+      currentEdge(NULL),
+      currentPathPointIterator(NULL)
       // Operation parameters
       // Initialized in the load function
 { 
@@ -3771,16 +3766,8 @@ WanderOperation::WanderOperation(const WanderOperation* other)
     : ScriptOperation(other),
       // Instance states
       wanderRouteFilter(this),
-      active_wp(NULL),
-      prior_wp(NULL),
-      next_wp(NULL),
-      dest_sector(NULL),
-      current_sector(NULL),
-      turn_queued(false),
-      turn_angle_vel(0.0f),
-      turn_end_angle(0.0f),
-      path(NULL),
-      anchor(NULL),
+      currentEdge(NULL),
+      currentPathPointIterator(NULL),
       // Operation parameters
       action(other->action),
       random(other->random),
@@ -3802,11 +3789,6 @@ WanderOperation::WanderOperation(const WanderOperation* other)
 
 WanderOperation::~WanderOperation()
 {
-    if (anchor)
-    {
-        delete anchor;
-        anchor = NULL;
-    }
 }
 
 
@@ -3820,179 +3802,84 @@ bool WanderOperation::WanderRouteFilter::Filter( const Waypoint * waypoint ) con
                (!parent->indoorValid || waypoint->indoor == parent->indoor)) );
 }
 
-void WanderOperation::CalculateTargetPos(csVector3& dest, iSector*&sector)
+bool WanderOperation::StartMoveTo(NPC *npc, psPathPoint* point)
 {
-    dest = active_wp->loc.pos;
-    sector = active_wp->loc.GetSector(npcclient->GetEngine());
+    float dummyAngle;
+
+    currentPointOffset = csVector3(0.0,0.0,0.0);
+    AddRandomRange(currentPointOffset, point->GetRadius());
+
+    csVector3 destPos = point->GetPosition();
+    destPos += currentPointOffset;
+
+    ScriptOperation::StartMoveTo(npc, NULL, destPos,
+                                 point->GetSector(npcclient->GetEngine()),
+                                 GetVelocity(npc), action.GetDataSafe(), false, dummyAngle);
+
+    return true;
 }
 
-Waypoint * WanderOperation::GetNextRandomWaypoint(NPC *npc, Waypoint * prior_wp, Waypoint * active_wp)
+bool WanderOperation::MoveTo(NPC *npc, psPathPoint* point)
 {
-    // If there are only one way out don't bother to find if its legal
-    if (active_wp->links.GetSize() == 1)
-    {
-        npc->Printf(10, "Only one way out of this waypoint");
-        return active_wp->links[0];
-    }
+    StopMovement( npc );
 
-    csArray<Waypoint*> waypoints; // List of available waypoints
+    currentPointOffset = csVector3(0.0,0.0,0.0);
+    AddRandomRange(currentPointOffset, point->GetRadius());
 
-    // Calculate possible waypoints
-    for (size_t ii = 0; ii < active_wp->links.GetSize(); ii++)
-    {
-        Waypoint *new_wp = active_wp->links[ii];
+    csVector3 destPos = point->GetPosition();
+    destPos += currentPointOffset;
 
-        npc->Printf(11, "Considering: %s ",new_wp->GetName());
+    psGameObject::SetPosition(npc->GetActor(),destPos,
+                              point->GetSector(npcclient->GetEngine()));
 
-        if ( ((new_wp == prior_wp && new_wp->allow_return)||(new_wp != prior_wp)) &&
-             (!active_wp->prevent_wander[ii]) &&
-             (!wanderRouteFilter.Filter(new_wp)) )
-        {
-            npc->Printf(10, "Possible next waypoint: %s",new_wp->GetName());
-            waypoints.Push(new_wp);
-        }
-    }
+    //now persist
+    npcclient->GetNetworkMgr()->QueueDRData(npc);
 
-    // If no path out of waypoint is possible to go, just return.
-    if (waypoints.GetSize() == 0)
-    {
-        npc->Printf(10, "No possible ways, going back");
-        return prior_wp;
-    }
-    
-
-    return waypoints[psGetRandom((int)waypoints.GetSize())];
+    return true;
 }
 
-
-bool WanderOperation::FindNextWaypoint(NPC *npc)
+ScriptOperation::OperationResult WanderOperation::CalculateEdgeList(NPC *npc)
 {
-    float rot=0;
-    psGameObject::GetPosition(npc->GetActor(),current_pos,rot,current_sector);
+    // Get the current waypoint
+    Waypoint *start = npcclient->FindNearestWaypoint(npc->GetActor(), 5.0, NULL);
+    if (!start)
+    {
+        npc->Printf(5,"Failed, not at a waypoint nearby.");
+        return OPERATION_FAILED;
+    }
+
+
+    // Cleare old values
+    if (currentPathPointIterator)
+    {
+        delete currentPathPointIterator;
+        currentPathPointIterator = NULL;
+    }
+    EdgeListClear();
+    currentPathPoint = NULL;
+    currentEdge = NULL;
 
     if (random)
     {
-        prior_wp = active_wp;
-        active_wp = next_wp;
-        if (!active_wp) active_wp = npcclient->FindNearestWaypoint(current_pos,current_sector);
-        next_wp = GetNextRandomWaypoint(npc,prior_wp,active_wp);
-
-        npc->Printf(6, "Active waypoint: %s at %s",active_wp->GetName(),
-                    toString(active_wp->loc.pos,
-                             active_wp->loc.GetSector(npcclient->GetEngine())).GetDataSafe());
-        npc->Printf(6, "Next   waypoint: %s at %s",next_wp->GetName(),
-                    toString(next_wp->loc.pos,
-                             next_wp->loc.GetSector(npcclient->GetEngine())).GetDataSafe());
-        return true;
+        // We don't calculate a list for random movement, only currentEdge.
+        currentEdge = start->GetRandomEdge( &wanderRouteFilter );
+        if (!currentEdge)
+        {
+            npc->Printf(5, "Failed, to find route from waypoint %s.",start->GetName());
+            return OPERATION_FAILED;
+        }
     }
     else
     {
-        prior_wp = active_wp;
-        active_wp = next_wp;
-        if (!active_wp) active_wp = WaypointListGetNext();
-        next_wp = WaypointListGetNext();
+        Waypoint* end;
 
-        if (active_wp)
-        {
-            // Check if we are on the waypoint, in that case find next
-            if (active_wp->CheckWithin(npcclient->GetEngine(),current_pos,current_sector))
-            {
-                npc->Printf(6, "Within waypoint %s",active_wp->GetName());
-                
-                if (FindNextWaypoint(npc))
-                {
-                    return true;
-                }
-                else
-                {
-                    npc->Printf(5, "WanderOp At end of waypoint list.");
-                    return false;
-                }
-            } else
-            {
-                if (!prior_wp)
-                {
-                    npc->Printf(7, "Make sure we have a previous wp.");
-                    prior_wp = active_wp;
-                    active_wp = next_wp;
-                    next_wp = NULL;
-                }
-
-                if (active_wp)
-                {
-                    npc->Printf(6, "Active waypoint: %s at %s",active_wp->GetName(),
-                                toString(active_wp->loc.pos,
-                                         active_wp->loc.GetSector(npcclient->GetEngine())).GetDataSafe());
-                }
-                else
-                {
-                    npc->Printf(5, ">>>WanderOp At end of waypoint list.");
-                    return false;
-                }
-                
-                if (next_wp)
-                {
-                    npc->Printf(6, "Next   waypoint: %s at %s",next_wp->GetName(),
-                                toString(next_wp->loc.pos,
-                                         next_wp->loc.GetSector(npcclient->GetEngine())).GetDataSafe());
-                }
-                return true;
-            }
-        } else
-        {
-            npc->Printf(5, ">>>WanderOp At end of waypoint list.");
-            return false;
-        }
-        
-    }
-    return false;
-}
-
-bool WanderOperation::CalculateWaypointList(NPC *npc)
-{
-    float start_rot;
-    csVector3 start_pos;
-    iSector* start_sector;
-    
-    psGameObject::GetPosition(npc->GetActor(), start_pos, start_rot, start_sector);
-
-    if (random)
-    {
-        npc->Printf(5,"Calculate waypoint list for random movement...");
-        if (active_wp == NULL)
-        {
-            prior_wp = NULL;
-            active_wp = npcclient->FindNearestWaypoint(start_pos,start_sector);
-            next_wp = GetNextRandomWaypoint(npc,prior_wp,active_wp);
-
-            if (active_wp)
-            {
-                npc->Printf(6,"Active waypoint: %s at %s",active_wp->GetName(),
-                            toString(active_wp->loc.pos,
-                                     active_wp->loc.GetSector(npcclient->GetEngine())).GetDataSafe());
-            }
-            if (next_wp)
-            {
-                npc->Printf(6,"Next   waypoint: %s at %s",next_wp->GetName(),
-                            toString(next_wp->loc.pos,
-                                     next_wp->loc.GetSector(npcclient->GetEngine())).GetDataSafe());
-            }
-            
-        }
-        return true;
-    }
-    else
-    {
-        Waypoint *start, *end;
-
+        // Get the end waypoint
         npc->GetActiveLocate(end);
         if (!end)
         {
-            return false;
+            npc->Printf(5,"Failed to find active locate waypoint");
+            return OPERATION_FAILED;
         }
-        start = npcclient->FindNearestWaypoint(start_pos,start_sector);
-        
-        WaypointListClear();
         
         if (start && end)
         {
@@ -4001,99 +3888,133 @@ bool WanderOperation::CalculateWaypointList(NPC *npc)
             
             if (start == end)
             {
-                WaypointListPushBack(start);
+                return OPERATION_COMPLETED;
             } else
             {
                 csList<Waypoint*> wps;
                 
-                wps = npcclient->FindWaypointRoute(start, end, &wanderRouteFilter );
-                if (wps.IsEmpty())
+                edgeList = npcclient->FindEdgeRoute(start, end, &wanderRouteFilter );
+                if (edgeList.IsEmpty())
                 {
                     npc->Printf(5, "Can't find route...");
-                    return false;
-                }
-                
-                while (!wps.IsEmpty())
-                {
-                    WaypointListPushBack(wps.Front());
-                    wps.PopFront();
+                    return OPERATION_FAILED;
                 }
             }
             
-            // Start print waypoint list
+            // Start print edge list
             if (npc->IsDebugging(5))
             {
                 psString wp_str;
-                if (!WaypointListEmpty())
+                bool first = true;
+                csList<Edge*>::Iterator iter(edgeList);
+                while (iter.HasNext())
                 {
-                    csList<Waypoint*> wps = WaypointListGet();
-                    Waypoint * wp;
-                    while (!wps.IsEmpty() && (wp = wps.Front()))
+                    Edge* edge = iter.Next();
+                    if (first)
                     {
-                        wp_str.AppendFmt("%s",wp->GetName());
-                        wps.PopFront();
-                        if (!wps.IsEmpty())
-                        {
-                            wp_str.Append(" -> ");
-                        }
+                        wp_str.Append(edge->GetStartWaypoint()->GetName());
+                        first = false;
                     }
-                    npc->Printf(5, "Waypoint list: %s",wp_str.GetDataSafe());
+                    wp_str.Append(" -> ");
+                    wp_str.Append(edge->GetEndWaypoint()->GetName());
                 }
+                npc->Printf(5, "Waypoint list: %s",wp_str.GetDataSafe());
             }
             // End print waypoint list
 
+            edgeIterator = csList<Edge*>::Iterator(edgeList);
+            currentEdge = edgeIterator.Next();
         }
     }
 
-    return true;
+    SetPathPointIterator(currentEdge->GetIterator());
+
+    return OPERATION_NOT_COMPLETED;
 }
 
-bool WanderOperation::StartMoveToWaypoint(NPC *npc, EventManager *eventmgr)
+Edge* WanderOperation::GetNextEdge(NPC* npc)
 {
-    // now calculate new destination from new active wp
-    CalculateTargetPos(dest,dest_sector);
+    Edge* edge = NULL;
 
-    // Find path and return direction for that path between wps 
-    path = npcclient->FindPath(prior_wp,active_wp,direction);
-    
-    if (!path)
+    if (random)
     {
-        Error5("%s(%s) Could not find path between '%s' and '%s'",
-               npc->GetName(), ShowID(npc->GetActor()->GetEID()),
-               (prior_wp?prior_wp->GetName():""),
-               (active_wp?active_wp->GetName():""));
-        return false;
+        edge = currentEdge->GetRandomEdge( &wanderRouteFilter );
+    }
+    else
+    {
+        if (edgeIterator.HasNext())
+        {
+            edge = edgeIterator.Next();
+        }
     }
 
-    if (anchor)
+    if (edge)
     {
-        delete anchor;
-        anchor = NULL;
+        npc->Printf(5,"Running from %s to %s",edge->GetStartWaypoint()->GetName(),
+                    edge->GetEndWaypoint()->GetName());
     }
 
-
-    anchor = path->CreatePathAnchor();
-
-    if (path->teleport)
-    {
-        npc->Printf(5, ">>>WanderOp teleport to next waypoint!");
-        
-        // Stop the movement
-        StopMovement(npc);
-
-        return false; // Force a call to CompleteOperation that
-                      // will find next waypoint.
-    }
-
-    // Get Going at the right velocity
-    csVector3 velvector(0,0,  -GetVelocity(npc) );
-    npc->GetLinMove()->SetVelocity(velvector);
-    npc->GetLinMove()->SetAngularVelocity( 0 );
-
-    npcclient->GetNetworkMgr()->QueueDRData(npc);
-
-    return true;
+    return edge;
 }
+
+void WanderOperation::SetPathPointIterator(Edge::Iterator* iterator)
+{
+    if (currentPathPointIterator)
+    {
+        delete currentPathPointIterator;
+    }
+
+    currentPathPointIterator = iterator;
+
+    if (currentPathPointIterator)
+    {
+        currentPathPoint = currentPathPointIterator->Next(); // Skip first point
+    }
+}
+
+psPathPoint* WanderOperation::GetNextPathPoint(NPC* npc, bool &teleport)
+{
+    // We are at the end of the path, get next edge.
+    if (!currentPathPointIterator || !currentPathPointIterator->HasNext())
+    {
+        npc->Printf(5,"No more path points, changing edge...");
+
+        currentEdge = GetNextEdge(npc);
+        if (!currentEdge)
+        {
+            currentPathPoint = NULL;
+            SetPathPointIterator( NULL );
+
+            return NULL; // Found no edge to wander, so no more path points either.
+        }
+        SetPathPointIterator( currentEdge->GetIterator() );
+    }
+
+    // Check if we should teleport this edge
+    if (currentEdge->IsTeleport())
+    {
+        teleport = true;
+    }
+    
+    if (currentPathPointIterator->HasNext())
+    {
+        currentPathPoint = currentPathPointIterator->Next();
+        npc->Printf(6,"Next point %s",
+                    toString(currentPathPoint->GetPosition(),
+                             currentPathPoint->GetSector(npcclient->GetEngine())).GetData());
+    } else
+    {
+        currentPathPoint = NULL;
+    }
+
+    return currentPathPoint; // Return the found path point
+}
+
+psPathPoint* WanderOperation::GetCurrentPathPoint(NPC* npc)
+{
+    return currentPathPoint;
+}
+
 
 ScriptOperation::OperationResult WanderOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
@@ -4102,90 +4023,140 @@ ScriptOperation::OperationResult WanderOperation::Run(NPC *npc, EventManager *ev
         float angle;
         
         // Restart current behavior
-        StartMoveTo(npc,eventmgr,dest,dest_sector,GetVelocity(npc),action, true, angle);
+        StartMoveTo(npc, GetCurrentPathPoint(npc));
 
         return OPERATION_NOT_COMPLETED; // This behavior isn't done yet
     }
-    // If interruped and not at interruped position we do the same
-    // as we do when started.
 
-    prior_wp = NULL;
-    active_wp = NULL;
-    next_wp = NULL;
-
-    if (!CalculateWaypointList(npc))
+    OperationResult result = CalculateEdgeList(npc);
+    if (result != OPERATION_NOT_COMPLETED)
     {
-        npc->Printf(5, ">>>WanderOp no list to wander");
-        return OPERATION_COMPLETED; // Nothing more to do for this op.
-    }
-    
-
-    if (!FindNextWaypoint(npc))
-    {
-        npc->Printf(5, ">>>WanderOp NO waypoints, %s cannot move.",npc->GetName());
-        return OPERATION_COMPLETED; // Nothing more to do for this op.
+        return result;
     }
 
-    // Turn off CD and hug the ground
-    npc->GetLinMove()->UseCD(false);
-    npc->GetLinMove()->SetOnGround(true); // Wander is ALWAYS on_ground.  This ensures correct animation on the client.
-    npc->GetLinMove()->SetHugGround(true);
+    bool teleport = false;
+    psPathPoint* destPoint = GetNextPathPoint(npc, teleport);
 
-    if (StartMoveToWaypoint(npc, eventmgr))
+    if (!destPoint)
     {
-        return OPERATION_NOT_COMPLETED; // This behavior isn't done yet
+        npc->Printf(5,">>>WanderOp NO pathpoints, %s cannot move.",npc->GetName());
+        return OPERATION_FAILED;
     }
-    
-    return OPERATION_COMPLETED; // This behavior is done
+
+    if (teleport)
+    {
+        MoveTo(npc, destPoint);
+    }
+    else if (!StartMoveTo(npc, destPoint))
+    {
+        npc->Printf(5,">>>Failed to start move to.");
+        return OPERATION_FAILED;
+    }
+
+    return OPERATION_NOT_COMPLETED;
 }
 
 void WanderOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
 {
-    npc->GetLinMove()->ExtrapolatePosition(timedelta);
-    
-    if (!anchor->Extrapolate(npcclient->GetWorld(),npcclient->GetEngine(),
-                             timedelta*GetVelocity(npc),
-                             direction, npc->GetMovable()))
+    csVector3    myPos;
+    float        myRot;
+    iSector*     mySector;
+    csVector3    forward;
+    float        angle;
+
+    npc->GetLinMove()->GetLastPosition(myPos, myRot, mySector);
+
+    psPathPoint* destPoint = GetCurrentPathPoint(npc);
+    csVector3 destPos = destPoint->GetPosition();
+    destPos += currentPointOffset;
+
+    float distance = npcclient->GetWorld()->Distance(myPos, mySector,
+                                                     destPos, destPoint->GetSector(npcclient->GetEngine()));
+
+    npc->Printf(6,"Current localDest %s at %s dist %.2f",
+                destPoint->GetName().GetData(),
+                toString(destPos, destPoint->GetSector(npcclient->GetEngine())).GetData(),
+                distance);
+                
+
+    if (distance >= INFINITY_DISTANCE)
     {
-        // At end of path
-        npc->Printf(5, "We are done...");
-
-        // None linear movement so we have to queue DRData updates.
-        npcclient->GetNetworkMgr()->QueueDRData(npc);
-
-        npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
-
+        npc->Printf(5, "No connection found..");
+        npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior());
         return;
     }
-    
-    if (npc->IsDebugging(10))
+    else if (distance <= 0.5f)
     {
-        csVector3 pos; float rot; iSector *sec;
-        psGameObject::GetPosition(npc->GetActor(),pos,rot,sec);
+        npc->Printf(6, "We are at localDest...");
 
-        npc->Printf(10, "Wander Loc is %s %s, Rot: %1.2f Vel: %.2f Dist: %.2f Index: %d Fraction %.2f",
-                    toString(pos).GetDataSafe(), sec->QueryObject()->GetName(),
-                    rot,
-                    GetVelocity(npc),
-                    anchor->GetDistance(),
-                    anchor->GetCurrentAtIndex(),
-                    anchor->GetCurrentAtFraction());
-        
-        csVector3 anchor_pos,anchor_up,anchor_forward;
+        bool teleport = false;
 
-        anchor->GetInterpolatedPosition(anchor_pos);
-        anchor->GetInterpolatedUp(anchor_up);
-        anchor->GetInterpolatedForward(anchor_forward);
-        
+        // We reached the path point, check for next
+        destPoint = GetNextPathPoint(npc, teleport);
 
-        npc->Printf(10, "Anchor pos: %s forward: %s up: %s",toString(anchor_pos).GetDataSafe(),
-                    toString(anchor_forward).GetDataSafe(),toString(anchor_up).GetDataSafe());
-        
+        if (destPoint)
+        {
+            destPos = destPoint->GetPosition();
+            destPos += currentPointOffset;
+
+            npc->Printf(6,"New localDest %s",
+                        toString(destPos,
+                                 destPoint->GetSector(npcclient->GetEngine())).GetData(),
+                        distance);
+
+            if (teleport)
+            {
+
+                MoveTo(npc, destPoint);
+            }
+            else if (!StartMoveTo(npc, destPoint))
+            {
+                npc->Printf(5, "We are done..Failed to start to next localDest.");
+                npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior());
+                return;
+            }
+        }
+        else
+        {
+            npc->Printf(5, "We are done..");
+            npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior());
+            return;
+        }
     }
-    
+    else
+    {
+        TurnTo(npc, destPos, destPoint->GetSector(npcclient->GetEngine()),
+               forward, angle);
+    }
 
-    // None linear movement so we have to queue DRData updates.
-    npcclient->GetNetworkMgr()->QueueDRData(npc);
+    // Limit time extrapolation so we arrive near the correct place.
+    float close = GetVelocity(npc)*timedelta;
+    if(distance <= close)
+    {
+    	timedelta = distance / GetVelocity(npc);
+    }
+
+    npc->Printf(8, "advance: pos=(%f.2,%f.2,%f.2) rot=%.2f %s localDest=%s dist=%f", 
+                myPos.x,myPos.y,myPos.z, myRot, mySector->QueryObject()->GetName(),
+                destPoint->GetPosition().Description().GetData(),distance);
+
+    {
+        ScopedTimer st(250, "Movement extrapolate %.2f time for %s", timedelta, ShowID(npc->GetActor()->GetEID()));
+        npc->GetLinMove()->ExtrapolatePosition(timedelta);
+    }
+
+    {
+        bool on_ground;
+        float speed,ang_vel;
+        csVector3 bodyVel,worldVel,myNewPos;
+        iSector* myNewSector;
+
+        npc->GetLinMove()->GetDRData(on_ground,speed,myNewPos,myRot,myNewSector,bodyVel,worldVel,ang_vel);
+        npc->Printf(8,"World position bodyVel=%s worldVel=%s",
+                       toString(bodyVel).GetDataSafe(),toString(worldVel).GetDataSafe());
+
+        CheckMoveOk(npc, eventmgr, myPos, mySector, myNewPos, myNewSector, timedelta);
+    }
 }
 
 void WanderOperation::InterruptOperation(NPC *npc,EventManager *eventmgr)
@@ -4197,50 +4168,12 @@ void WanderOperation::InterruptOperation(NPC *npc,EventManager *eventmgr)
 
 bool WanderOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
 {
-    // Wander never really completes, so this finds the next
-    // waypoint and heads toward it again.
-
-    if (next_wp)
-    {
-        npc->Printf(5, "WanderOp - Reached waypoint %s next waypoint is %s.",
-                    active_wp->GetName(), next_wp->GetName() );
-    }
-    else
-    {
-        npc->Printf(5, "WanderOp - Reached final waypoint %s.",active_wp->GetName() );
-
-        // Only set position if at a end point.
-        psGameObject::SetPosition(npc->GetActor(),dest,dest_sector);
-        current_pos = dest;  // make sure waypoint is starting point of next path
-    }
-
-    if (FindNextWaypoint(npc))
-    {
-        StartMoveToWaypoint(npc, eventmgr);
-
-        return false;  // Script requeues termination event so this CompleteOp is essentially an infinite loop
-    }
-
-
-    // Set position to where it is supposed to go
-    npc->GetLinMove()->SetPosition(path->GetEndPos(direction),path->GetEndRot(direction),path->GetEndSector(npcclient->GetEngine(),direction));
-
-    if (anchor)
-    {
-        delete anchor;
-        anchor = NULL;
-    }
-
-    // Turn on CD again
-    npc->GetLinMove()->UseCD(true);
-    npc->GetLinMove()->SetHugGround(false);
-
     // Stop the movement
     StopMovement(npc);
 
     completed = true;
 
-    return OPERATION_COMPLETED; // Script can keep going, no more waypoints.
+    return true; // Script can keep going, no more waypoints.
 }
 
 bool LoadAttributeBool(iDocumentNode *node, const char * attribute, bool defaultValue, bool * valid = NULL)
@@ -4273,10 +4206,6 @@ bool WanderOperation::Load(iDocumentNode *node)
     city = LoadAttributeBool(node,"city",false,&cityValid);
     indoor = LoadAttributeBool(node,"indoor",false,&indoorValid);
 
-    // Internal variables set to defaults
-    path = NULL;
-    anchor = NULL;
-
     return true;
 }
 
@@ -4285,20 +4214,6 @@ ScriptOperation *WanderOperation::MakeCopy()
     WanderOperation *op  = new WanderOperation(this);
     
     return op;
-}
-
-Waypoint* WanderOperation::WaypointListGetNext()
-{
-    if (waypoint_list.IsEmpty()) return NULL;
-
-    Waypoint * wp;
-    wp = waypoint_list.Front();
-    if (wp)
-    {
-        waypoint_list.PopFront();
-        return wp;
-    }
-    return NULL;
 }
 
 //---------------------------------------------------------------------------

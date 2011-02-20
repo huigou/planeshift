@@ -1,5 +1,5 @@
 /*
- * location.h
+ * waypoint.h
  *
  * Copyright (C) 2004 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
  *
@@ -26,6 +26,7 @@
 #include "util/psdatabase.h"
 #include "util/location.h"
 #include "util/pspath.h"
+#include "util/edge.h"
 
 /**
  * A waypoint is a specified circle on the map with a name,
@@ -36,24 +37,25 @@
 class Waypoint
 {
 public:
-    Location                   loc;            /// Id and position
-    csString                   group;          /// Hold group name for this waypoint if any.
-    csArray<csString>          aliases;        /// Hold aliases for this waypoint
+    Location                   loc;            ///< Id and position
+    csString                   group;          ///< Hold group name for this waypoint if any.
+    csArray<csString>          aliases;        ///< Hold aliases for this waypoint
 
-    csArray<Waypoint*>         links;          /// Links to other waypoinst connected with paths from this node.
-    csArray<float>             dists;          /// Distances of each link.
-    csArray<psPath*>           paths;          /// Path object for each of the links
-    csArray<psPath::Direction> pathDir;        /// Forward or reverse indication for each path.
+    csArray<Waypoint*>         links;          ///< Links to other waypoinst connected with paths from this node.
+    csArray<float>             dists;          ///< Distances of each link.
+    csPDelArray<Edge>          edges;          ///< Edges for each link.
+    csArray<psPath*>           paths;          ///< Path object for each of the links
+    csArray<psPath::Direction> pathDir;        ///< Forward or reverse indication for each path.
 
-    bool                       allow_return;   /// This prevents the link back to the prior waypoint
-                                               /// from being chosen, if true.
-    csArray<bool>              prevent_wander; /// This prevents wandering NPCs from going that way.
-    bool                       underground;    /// True if this waypoint is underground
-    bool                       underwater;     /// True if this waypoint is underwater
-    bool                       priv;           /// True if this waypoint is private
-    bool                       pub;            /// True if this waypoint is public
-    bool                       city;           /// True if this waypoint is in a city
-    bool                       indoor;         /// True if this waypoint is indoor
+    bool                       allow_return;   ///< This prevents the link back to the prior waypoint
+                                               ///< from being chosen, if true.
+    csArray<bool>              prevent_wander; ///< This prevents wandering NPCs from going that way.
+    bool                       underground;    ///< True if this waypoint is underground
+    bool                       underwater;     ///< True if this waypoint is underwater
+    bool                       priv;           ///< True if this waypoint is private
+    bool                       pub;            ///< True if this waypoint is public
+    bool                       city;           ///< True if this waypoint is in a city
+    bool                       indoor;         ///< True if this waypoint is indoor
 
     Waypoint();
     Waypoint(const char *name);
@@ -71,6 +73,10 @@ public:
 
     void AddLink(psPath * path, Waypoint * wp, psPath::Direction direction, float distance);
     void RemoveLink(psPath * path);
+
+    Edge* GetRandomEdge(const psPathNetwork::RouteFilter* routeFilter);
+
+
     /// Add a new alias to this waypoint
     void AddAlias(csString alias);
     /// Remove a alias from this waypoint
@@ -124,7 +130,7 @@ public:
     float distance; /// Hold current shortest distance to the start WP.
     Waypoint * pi;  /// Predecessor WP to track shortest way back to start.
     bool excluded;  /// Set to true if the waypoint is filtered out.
-    
+
 };
 
 #endif

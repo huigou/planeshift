@@ -41,7 +41,7 @@
 #include "engine/psworld.h"
 
 psPathPoint::psPathPoint():
-    id(-1),prevPointId(0)
+    id(-1),prevPointId(0),radius(0.0),waypoint(NULL)
 {
 }
 
@@ -122,6 +122,22 @@ bool psPathPoint::Adjust(csVector3 & pos, csString sector)
     return true;
 }
 
+void psPathPoint::SetWaypoint(Waypoint* waypoint)
+{
+    this->waypoint = waypoint;
+}
+
+csString psPathPoint::GetName()
+{
+    csString name("PP"); // Default to just PathPoint (PP).
+
+    if (waypoint)
+    {
+        name = waypoint->GetName();
+    }
+
+    return name;
+}
 
 //---------------------------------------------------------------------------
 
@@ -162,24 +178,25 @@ psPath::~psPath()
 
 void psPath::AddPoint(Location * loc, bool first)
 {
-    AddPoint(loc->pos,loc->sectorName,first);
+    AddPoint(loc->pos,loc->radius,loc->sectorName,first);
 }
 
 void psPath::AddPoint(iDataConnection * db, const csVector3& pos, const char * sectorName, bool first)
 {
-    psPathPoint * pp = AddPoint(pos,sectorName,first);
+    psPathPoint * pp = AddPoint(pos, 0.0, sectorName, first);
     if (id != -1)
     {
         pp->Create(db,id);
     }
 }
 
-psPathPoint* psPath::AddPoint(const csVector3& pos, const char * sectorName, bool first)
+psPathPoint* psPath::AddPoint(const csVector3& pos, float radius, const char * sectorName, bool first)
 {
     psPathPoint * pp = new psPathPoint();
 
     pp->id = -1;
     pp->pos = pos;
+    pp->radius = radius;
     pp->sectorName = sectorName;
 
     if (first)
@@ -215,13 +232,17 @@ psPathPoint* psPath::AddPoint(const csVector3& pos, const char * sectorName, boo
 
 void psPath::SetStart(Waypoint * wp)
 {
-    AddPoint(wp->loc.pos,wp->loc.sectorName,true);
+    psPathPoint* pathPoint = AddPoint(wp->loc.pos, wp->loc.radius, wp->loc.sectorName, true); //Add start wp as a point
+    pathPoint->SetWaypoint(wp);
+
     start = wp; // AddPoint use start so set after call to AddPoint
 }
 
 void psPath::SetEnd(Waypoint * wp)
 {
-    AddPoint(wp->loc.pos,wp->loc.sectorName,false); 
+    psPathPoint* pathPoint = AddPoint(wp->loc.pos, wp->loc.radius, wp->loc.sectorName, false); // Add end wp as a point
+    pathPoint->SetWaypoint(wp);
+
     end = wp; // AddPoint use end so set after call to AddPoint
 }
 
@@ -336,6 +357,31 @@ psPathPoint* psPath::GetEndPoint(Direction direction)
         return points[0];
     }
 }
+
+Waypoint* psPath::GetStartWaypoint(Direction direction)
+{
+    if (direction == FORWARD)
+    {
+        return start;
+    }
+    else
+    {
+        return end;
+    }
+}
+    
+Waypoint* psPath::GetEndWaypoint(Direction direction)
+{
+    if (direction == FORWARD)
+    {
+        return end;
+    }
+    else
+    {
+        return start;
+    }
+}
+
 
 csVector3 psPath::GetEndPos(Direction direction)
 {
@@ -594,10 +640,14 @@ void psLinearPath::PrecalculatePath(psWorld * world, iEngine *engine)
         dz.Push( pos2.z - pos1.z);        
     }    
     points[points.GetSize()-1]->startDistance[FORWARD] = totalDistance;
+    
+    float r1=points[0]->radius;
+    float r2=points[points.GetSize()-1]->radius;
 
     for (size_t ii=0;ii<points.GetSize();ii++)
     {
         points[ii]->startDistance[REVERSE] =  totalDistance - points[ii]->startDistance[FORWARD];
+        points[ii]->radius = r1 + (r2-r1)*points[ii]->startDistance[FORWARD]/totalDistance;
     }
     precalculationValid = true;
 }
