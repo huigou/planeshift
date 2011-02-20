@@ -1115,6 +1115,26 @@ Waypoint *psNPCClient::FindRandomWaypoint(csVector3& v,iSector *sector, float ra
     return pathNetwork->FindRandomWaypoint(v, sector, range, found_range);
 }
 
+Waypoint *psNPCClient::FindWaypoint( gemNPCObject* entity )
+{
+    csVector3 position;
+    iSector*  sector;
+
+    psGameObject::GetPosition(entity, position, sector );
+
+    return pathNetwork->FindWaypoint(position, sector);
+}
+
+Waypoint *psNPCClient::FindNearestWaypoint( gemNPCObject* entity, float range, float * found_range)
+{
+    csVector3 position;
+    iSector*  sector;
+
+    psGameObject::GetPosition(entity, position, sector );
+
+    return pathNetwork->FindNearestWaypoint(position, sector, range, found_range);
+}
+
 Waypoint *psNPCClient::FindNearestWaypoint(const char* group, csVector3& v,iSector *sector, float range, float * found_range)
 {
     int groupIndex = pathNetwork->FindWaypointGroup(group);
@@ -1149,6 +1169,11 @@ Waypoint *psNPCClient::FindWaypoint(const char * name)
 csList<Waypoint*> psNPCClient::FindWaypointRoute(Waypoint * start, Waypoint * end, const psPathNetwork::RouteFilter* filter)
 {
     return pathNetwork->FindWaypointRoute(start, end, filter);
+}
+
+csList<Edge*> psNPCClient::FindEdgeRoute(Waypoint * start, Waypoint * end, const psPathNetwork::RouteFilter* filter)
+{
+    return pathNetwork->FindEdgeRoute(start, end, filter);
 }
 
 void psNPCClient::EnableDisableNPCs( const char* pattern, bool enable )

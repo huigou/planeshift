@@ -1162,7 +1162,7 @@ void psGameObject::GetPosition(gemNPCObject* object, csVector3& pos,iSector*& se
 }
 
 
-void psGameObject::SetPosition(gemNPCObject* object, csVector3& pos, iSector* sector)
+void psGameObject::SetPosition(gemNPCObject* object, const csVector3& pos, iSector* sector)
 {
     npcMesh * pcmesh = object->pcmesh;
     pcmesh->MoveMesh(sector,pos);

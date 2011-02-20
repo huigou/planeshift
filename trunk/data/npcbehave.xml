@@ -589,7 +589,7 @@
   <npctype name="MoveTest2" vel="$run">
     <!-- Initial behavior to locate the starting point -->
     <behavior name="Initialize" completion_decay="-1" initial="1000">
-      <!--debug level="0" /-->
+      <!--debug level="15" /-->
       <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
       <navigate anim="walk" />                  <!-- Local navigation -->
     </behavior>
@@ -749,9 +749,9 @@
 
     <!-- Locate nearest waypoint -->
     <behavior name="Initialize" completion_decay="-1" initial="100">
+      <!-- debug level="15" /-->
       <locate obj="waypoint"  static="no" />
       <navigate anim="walk" />        <!-- Local navigation -->
-      <!-- debug level="15" /-->
       <locate obj="waypoint:name:ug_1" static="no" />
       <wander anim="walk" />          <!-- Navigate using waypoints -->
     </behavior>

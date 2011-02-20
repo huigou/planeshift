@@ -205,6 +205,27 @@ Waypoint *psPathNetwork::FindWaypoint(const char * name)
     return NULL;
 }
 
+
+Waypoint *psPathNetwork::FindWaypoint(csVector3& v, iSector *sector)
+{
+    csPDelArray<Waypoint>::Iterator iter(waypoints.GetIterator());
+    Waypoint *wp;
+
+    while (iter.HasNext())
+    {
+        Waypoint *wp = iter.Next();
+
+        float dist = world->Distance(v,sector,wp->loc.pos,wp->GetSector(engine));
+        
+        if (dist < wp->loc.radius)
+        {
+            return wp;
+        }
+    }
+
+    return NULL;
+}
+
 Waypoint *psPathNetwork::FindNearestWaypoint(csVector3& v,iSector *sector, float range, float * found_range)
 {
     csPDelArray<Waypoint>::Iterator iter(waypoints.GetIterator());
@@ -495,6 +516,28 @@ csList<Waypoint*> psPathNetwork::FindWaypointRoute(Waypoint * start, Waypoint * 
 }
 
 
+csList<Edge*> psPathNetwork::FindEdgeRoute(Waypoint * start, Waypoint * end, const psPathNetwork::RouteFilter* routeFilter)
+{
+    csList<Edge*> edges;
+
+    csList<Waypoint*> waypoints = FindWaypointRoute(start, end, routeFilter);
+    csList<Waypoint*>::Iterator iter(waypoints);
+    Waypoint* last = NULL;
+    while (iter.HasNext())
+    {
+        Waypoint* wp = iter.Next();
+        if (last)
+        {
+            Edge* edge = FindEdge(last,wp);
+            edges.PushBack(edge);
+        }
+
+        last = wp;
+    }
+    return edges;
+}
+
+
 void psPathNetwork::ListWaypoints(const char * pattern)
 {
     csPDelArray<Waypoint>::Iterator iter(waypoints.GetIterator());
@@ -580,7 +623,7 @@ psPath   *psPathNetwork::FindPath(const char *name)
     return NULL;
 }
 
-psPath   *psPathNetwork::FindPath(const Waypoint * wp1, const Waypoint * wp2, psPath::Direction & direction)
+psPath* psPathNetwork::FindPath(const Waypoint * wp1, const Waypoint * wp2, psPath::Direction & direction)
 {
     // Is there a link between wp1 and wp2?
     const size_t index = wp1->links.Find(const_cast<Waypoint*>(wp2));
@@ -589,6 +632,19 @@ psPath   *psPathNetwork::FindPath(const Waypoint * wp1, const Waypoint * wp2, ps
         // Get chached values
         direction = wp1->pathDir[index];
         return wp1->paths[index];
+    }
+
+    return NULL;
+}
+
+Edge* psPathNetwork::FindEdge(const Waypoint * wp1, const Waypoint * wp2)
+{
+    // Is there a link between wp1 and wp2?
+    const size_t index = wp1->links.Find(const_cast<Waypoint*>(wp2));
+    if (index != csArrayItemNotFound)
+    {
+        // Get chached values
+        return wp1->edges[index];
     }
 
     return NULL;

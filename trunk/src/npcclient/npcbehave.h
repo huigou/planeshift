@@ -375,7 +375,7 @@ public:
      * @param yrot   Return the Y Rotation of the object
      * @param sector Return the sector of object
      */
-    static void GetPosition(gemNPCObject* object, csVector3& pos, float& yrot,iSector*& sector);
+    static void GetPosition(gemNPCObject* object, csVector3 &pos, float &yrot, iSector* &sector);
     
     /** Helper function to return position of a gemNPCObject
      *
@@ -383,11 +383,11 @@ public:
      * @param pos    Return the position of object
      * @param sector Return the sector of object
      */
-    static void GetPosition(gemNPCObject* object, csVector3& pos, iSector*& sector);
+    static void GetPosition(gemNPCObject* object, csVector3 &pos, iSector* &sector);
     
-    static void SetPosition(gemNPCObject* objecty, csVector3& pos, iSector* = NULL);
+    static void SetPosition(gemNPCObject* objecty, const csVector3 &pos, iSector* = NULL);
     static void SetRotationAngle(gemNPCObject* object, float angle);
-    static void GetRotationAngle(gemNPCObject* object, float& yrot)
+    static void GetRotationAngle(gemNPCObject* object, float &yrot)
     {
         csVector3 pos;
         iSector *sector;

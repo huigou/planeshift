@@ -29,6 +29,7 @@
 class Waypoint;
 class psWorld;
 class psPath;
+class Edge;
 
 class psPathNetwork
 {
@@ -79,6 +80,14 @@ public:
     Waypoint *FindWaypoint(const char * name);
     
     /**
+     * Find waypoint at a given point in the world.
+     *
+     * Return the first waypoint where the position
+     * is within the radius of the waypoint.
+     */
+    Waypoint *FindWaypoint(csVector3& v, iSector *sector);
+
+    /**
      * Find waypoint nearest to a point in the world
      * @param range Find only waypoints within range from waypoint, -1 if range dosn't matter
      */
@@ -123,6 +132,11 @@ public:
      * Find the shortest route between waypoint start and stop.
      */
     csList<Waypoint*> FindWaypointRoute(Waypoint * start, Waypoint * end, const RouteFilter* routeFilter);
+
+    /**
+     * Find the shortest route between waypoint start and stop.
+     */
+    csList<Edge*> FindEdgeRoute(Waypoint * start, Waypoint * end, const RouteFilter* routeFilter);
     
     /**
      * List all waypoints matching pattern to console.
@@ -137,12 +151,17 @@ public:
     /**
      * Find the named path.
      */
-    psPath   *FindPath(const char *name);
+    psPath* FindPath(const char *name);
     
     /**
      * Find a given path from starting waypoint wp1 to end waypoint wp2.
      */
-    psPath *FindPath(const Waypoint * wp1, const Waypoint * wp2, psPath::Direction & direction);
+    psPath* FindPath(const Waypoint * wp1, const Waypoint * wp2, psPath::Direction & direction);
+
+    /**
+     * Find a given edge from starting waypoint wp1 to end waypoint wp2.
+     */
+    Edge* FindEdge(const Waypoint * wp1, const Waypoint * wp2);
 
 
     /**
