@@ -82,9 +82,9 @@ Edge* Edge::GetRandomEdge(const psPathNetwork::RouteFilter* routeFilter)
     {
         Edge *edge = endWaypoint->edges[ii];
 
-        if ( ((edge->endWaypoint == startWaypoint && edge->endWaypoint->allow_return)||
+        if ( ((edge->endWaypoint == startWaypoint && edge->endWaypoint->allowReturn)||
               (edge->endWaypoint != startWaypoint)) &&
-             (!endWaypoint->prevent_wander[ii]) &&
+             (!endWaypoint->preventWander[ii]) &&
              (!routeFilter->Filter(edge->endWaypoint)) )
         {
             edges.Push(edge);

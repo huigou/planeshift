@@ -47,9 +47,9 @@ public:
     csArray<psPath*>           paths;          ///< Path object for each of the links
     csArray<psPath::Direction> pathDir;        ///< Forward or reverse indication for each path.
 
-    bool                       allow_return;   ///< This prevents the link back to the prior waypoint
+    bool                       allowReturn;    ///< This prevents the link back to the prior waypoint
                                                ///< from being chosen, if true.
-    csArray<bool>              prevent_wander; ///< This prevents wandering NPCs from going that way.
+    csArray<bool>              preventWander;  ///< This prevents wandering NPCs from going that way.
     bool                       underground;    ///< True if this waypoint is underground
     bool                       underwater;     ///< True if this waypoint is underwater
     bool                       priv;           ///< True if this waypoint is private

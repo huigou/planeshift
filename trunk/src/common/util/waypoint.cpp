@@ -87,7 +87,7 @@ bool Waypoint::Load(iDocumentNode *node, iEngine * engine)
 
     loc.radius = node->GetAttributeValueAsFloat("radius");
     loc.rot_angle = 0.0;
-    allow_return = node->GetAttributeValueAsBool("allow_return",false); // by default don't allow return to previous point
+    allowReturn = node->GetAttributeValueAsBool("allow_return",false); // by default don't allow return to previous point
 
     return (loc.name.Length()>0);
 }
@@ -105,7 +105,7 @@ bool Waypoint::Import(iDocumentNode *node, iEngine * engine, iDataConnection *db
 
     loc.radius = node->GetAttributeValueAsFloat("radius");
     loc.rot_angle = 0.0;
-    allow_return = node->GetAttributeValueAsBool("allow_return",false); // by default don't allow return to previous point
+    allowReturn = node->GetAttributeValueAsBool("allow_return",false); // by default don't allow return to previous point
 
 
     const char * fields[] = 
@@ -162,7 +162,7 @@ void Waypoint::AddLink(psPath * path, Waypoint * wp, psPath::Direction direction
     paths.Push(path);
     pathDir.Push(direction);
     dists.Push(distance);
-    prevent_wander.Push(path->noWander);
+    preventWander.Push(path->noWander);
 }
 
 void Waypoint::RemoveLink(psPath * path)
@@ -175,7 +175,7 @@ void Waypoint::RemoveLink(psPath * path)
         paths.DeleteIndexFast(index);
         pathDir.DeleteIndexFast(index);
         dists.DeleteIndexFast(index);
-        prevent_wander.DeleteIndexFast(index);
+        preventWander.DeleteIndexFast(index);
     }
 }
 
@@ -198,7 +198,7 @@ Edge* Waypoint::GetRandomEdge(const psPathNetwork::RouteFilter* routeFilter)
     {
         Edge *edge = edges[ii];
 
-        if ( (!prevent_wander[ii]) && (!routeFilter->Filter(edge->GetEndWaypoint())) )
+        if ( (!preventWander[ii]) && (!routeFilter->Filter(edge->GetEndWaypoint())) )
         {
             candidateEdges.Push(edge);
         }
@@ -235,7 +235,7 @@ void Waypoint::RemoveAlias(csString alias)
 
 void Waypoint::SetFlags(const csString & flagstr)
 {
-    allow_return = isFlagSet(flagstr,"ALLOW_RETURN");
+    allowReturn  = isFlagSet(flagstr,"ALLOW_RETURN");
     underground  = isFlagSet(flagstr,"UNDERGROUND");
     underwater   = isFlagSet(flagstr,"UNDERWATER");
     priv         = isFlagSet(flagstr,"PRIVATE");
@@ -248,7 +248,7 @@ bool Waypoint::SetFlag(iDataConnection * db, const csString &flagstr, bool enabl
 {
     if (isFlagSet(flagstr,"ALLOW_RETURN"))
     {
-        allow_return = enable;
+        allowReturn = enable;
     } else if (isFlagSet(flagstr,"UNDERGROUND"))
     {
         underground = enable;
@@ -287,7 +287,7 @@ csString Waypoint::GetFlags()
 {
     csString flagStr;
     bool added = false;
-    if (allow_return)
+    if (allowReturn)
     {
         if (added) flagStr.Append(", ");
         flagStr.Append("ALLOW_RETURN");
