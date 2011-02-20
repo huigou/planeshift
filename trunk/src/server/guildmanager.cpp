@@ -950,7 +950,7 @@ void GuildManager::SendMemberData(Client *client,bool onlineOnly)
             psCharacter* character = memberClient->GetCharacterData();
             if(character)
             {
-                sector = character->location.loc_sector;
+                sector = character->GetLocation().loc_sector;
                 lastOnline = character->GetLastLoginTime();
                 lastOnline.Truncate(16);
             }

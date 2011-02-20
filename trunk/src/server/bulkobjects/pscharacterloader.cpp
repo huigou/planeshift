@@ -365,9 +365,9 @@ bool psCharacterLoader::NewNPCCharacterData(AccountID accountid, psCharacter *ch
         chardata->GetActor()->GetFactions()->GetFactionListCSV(csv);
     values.FormatPush("%s",csv.GetData());
 
-    values.FormatPush("%u",chardata->npc_spawnruleid);
-    values.FormatPush("%u",chardata->npc_masterid);
-    values.FormatPush("%u",chardata->loot_category_id);
+    values.FormatPush("%u",chardata->npcSpawnRuleId);
+    values.FormatPush("%u",chardata->npcMasterId);
+    values.FormatPush("%u",chardata->lootCategoryId);
     values.FormatPush("%c",chardata->GetImperviousToAttack() & ALWAYS_IMPERVIOUS ? 'Y' : 'N');
     values.FormatPush("%u",chardata->GetKillExperience() );
     values.FormatPush("%s",chardata->GetAnimalAffinity() );
@@ -388,8 +388,8 @@ bool psCharacterLoader::NewNPCCharacterData(AccountID accountid, psCharacter *ch
 
 bool psCharacterLoader::NewCharacterData(AccountID accountid, psCharacter *chardata)
 {
-    chardata->npc_spawnruleid = 0;
-    chardata->npc_masterid    = 0;
+    chardata->npcSpawnRuleId = 0;
+    chardata->npcMasterId    = 0;
 
     if (!NewNPCCharacterData(accountid, chardata))
     {
@@ -748,9 +748,9 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
     targetUpdate->AddField("time_connected_sec", chardata->GetTotalOnlineTime());
     targetUpdate->AddField("experience_points", chardata->GetExperiencePoints()); // Save W
     // X is saved when changed
-    targetUpdate->AddField("animal_affinity", chardata->animal_affinity.GetDataSafe() );
+    targetUpdate->AddField("animal_affinity", chardata->animalAffinity.GetDataSafe() );
     //fields.FormatPush("%u", chardata->owner_id );
-    targetUpdate->AddField("help_event_flags", chardata->help_event_flags );
+    targetUpdate->AddField("help_event_flags", chardata->helpEventFlags );
     targetUpdate->AddField("description",chardata->GetDescription());
     targetUpdate->AddField("description_ooc",chardata->GetOOCDescription());
     targetUpdate->AddField("creation_info",chardata->GetCreationInfo());

@@ -109,7 +109,7 @@ void psCharacter::operator delete(void *releasePtr)
 
 psCharacter::psCharacter() : inventory(this),
     guildinfo(NULL), attributes(this), modifiers(this),
-    skills(this), acquaintances(101, 10, 101), npc_masterid(0), deaths(0), kills(0), suicides(0), loaded(false)
+    skills(this), acquaintances(101, 10, 101), npcMasterId(0), deaths(0), kills(0), suicides(0), loaded(false)
 {
     characterType = PSCHARACTER_TYPE_UNKNOWN;
 
@@ -117,13 +117,13 @@ psCharacter::psCharacter() : inventory(this),
     BracerGroup.Clear();
     BeltGroup.Clear();
     CloakGroup.Clear();
-    help_event_flags = 0;
+    helpEventFlags = 0;
     accountid = 0;
     pid = 0;
-    owner_id = 0;
+    ownerId = 0;
 
-    override_max_hp = 0.0f;
-    override_max_mana = 0.0f;
+    overrideMaxHp = 0.0f;
+    overrideMaxMana = 0.0f;
 
     name = lastname = fullName = " ";
     SetSpouseName( "" );
@@ -133,8 +133,8 @@ psCharacter::psCharacter() : inventory(this),
     vitals = new psServerVitals(this);
 //    workInfo = new WorkInformation();
 
-    loot_category_id = 0;
-    loot_money = 0;
+    lootCategoryId = 0;
+    lootMoney = 0;
 
     location.loc_sector = NULL;
     location.loc.Set(0.0f);
@@ -144,7 +144,7 @@ psCharacter::psCharacter() : inventory(this),
     for (int i=0;i<PSTRAIT_LOCATION_COUNT;i++)
         traits[i] = NULL;
 
-    npc_spawnruleid = -1;
+    npcSpawnRuleId = -1;
 
     tradingStopped  = false;
     tradingStatus   = psCharacter::NOT_TRADING;
@@ -161,9 +161,9 @@ psCharacter::psCharacter() : inventory(this),
 
 //    transformation = NULL;
     killExp = 0;
-    impervious_to_attack = 0;
+    imperviousToAttack = 0;
 
-    faction_standings.Clear();
+    factionStandings.Clear();
 
     lastResponse = -1;
 
@@ -244,7 +244,7 @@ psCharacter::~psCharacter()
     // First force and update of the DB of all QuestAssignments before deleting
     // every assignment.
     UpdateQuestAssignments(true);
-    assigned_quests.DeleteAll();
+    assignedQuests.DeleteAll();
 
     delete vitals;
     vitals = NULL;
@@ -322,17 +322,17 @@ bool psCharacter::Load(iResultRow& row)
     attributes[PSITEMSTATS_STAT_CHARISMA]  .  SetBase((int) row.GetFloat("base_charisma"));
 
     // NPC fields here
-    npc_spawnruleid = row.GetUInt32("npc_spawn_rule");
-    npc_masterid    = row.GetUInt32("npc_master_id");
+    npcSpawnRuleId = row.GetUInt32("npc_spawn_rule");
+    npcMasterId    = row.GetUInt32("npc_master_id");
 
     // This substitution allows us to make 100 orcs which are all copies of the stats, traits and equipment
     // from a single master instance.
-    PID use_id = npc_masterid ? npc_masterid : pid;
+    PID use_id = npcMasterId ? npcMasterId : pid;
 
     GetMaxHP().SetBase(row.GetFloat("base_hitpoints_max"));
-    override_max_hp = GetMaxHP().Base();
+    overrideMaxHp = GetMaxHP().Base();
     GetMaxMana().SetBase(row.GetFloat("base_mana_max"));
-    override_max_mana = GetMaxMana().Base();
+    overrideMaxMana = GetMaxMana().Base();
 
     if (!LoadSkills(use_id))
     {
@@ -364,7 +364,7 @@ bool psCharacter::Load(iResultRow& row)
     vitals->SetOrigVitals(); // This saves them as loaded state for restoring later without hitting db, npc death resurrect.
 
     lastlogintime = row["last_login"];
-    faction_standings = row["faction_standings"];
+    factionStandings = row["faction_standings"];
     progressionScriptText = row["progression_script"];
 
     // Set on-hand money.
@@ -411,14 +411,14 @@ bool psCharacter::Load(iResultRow& row)
     SetNotifications(row.GetInt("join_notifications"));
 
     // Loot rule here
-    loot_category_id = row.GetInt("npc_addl_loot_category_id");
+    lootCategoryId = row.GetInt("npc_addl_loot_category_id");
 
-    impervious_to_attack = (row["npc_impervious_ind"][0]=='Y') ? ALWAYS_IMPERVIOUS : 0;
+    imperviousToAttack = (row["npc_impervious_ind"][0]=='Y') ? ALWAYS_IMPERVIOUS : 0;
 
     // Familiar Fields here
-    animal_affinity  = row[ "animal_affinity" ];
-    //owner_id         = row.GetUInt32( "owner_id" );
-    help_event_flags = row.GetUInt32("help_event_flags");
+    animalAffinity  = row[ "animal_affinity" ];
+    //ownerId         = row.GetUInt32( "ownerId" );
+    helpEventFlags = row.GetUInt32("help_event_flags");
 
     timeconnected        = row.GetUInt32("time_connected_sec");
     startTimeThisSession = csGetTicks();
@@ -668,7 +668,7 @@ bool psCharacter::LoadMarriageInfo( Result& result)
 
 bool psCharacter::LoadFamiliar( Result& pet, Result& owner )
 {
-    owner_id = 0;
+    ownerId = 0;
 
     if ( !pet.IsValid() )
     {
@@ -688,7 +688,7 @@ bool psCharacter::LoadFamiliar( Result& pet, Result& owner )
 
         if ( strcmp( pet[x][ "relationship_type" ], "familiar" ) == 0 )
         {
-            familiars_id.Push(pet[x].GetInt( "related_id" ));
+            familiarsId.Push(pet[x].GetInt( "related_id" ));
             Notify2( LOG_PETS, "Successfully loaded familiar for %s", name.GetData() );
         }
     }
@@ -698,7 +698,7 @@ bool psCharacter::LoadFamiliar( Result& pet, Result& owner )
 
         if ( strcmp( owner[x][ "relationship_type" ], "familiar" ) == 0 )
         {
-            owner_id = owner[x].GetInt( "character_id" );
+            ownerId = owner[x].GetInt( "character_id" );
             Notify2( LOG_PETS, "Successfully loaded owner for %s", name.GetData() );
             break;
         }
@@ -719,7 +719,7 @@ bool psCharacter::LoadExploration(Result& exploration)
     {
         if(strcmp(exploration[i]["relationship_type"], "exploration") == 0)
         {
-            explored_areas.Push(exploration[i].GetInt("related_id"));
+            exploredAreas.Push(exploration[i].GetInt("related_id"));
         }
     }
 
@@ -729,11 +729,11 @@ bool psCharacter::LoadExploration(Result& exploration)
 /// Load GM events for this player from GMEventManager
 bool psCharacter::LoadGMEvents(void)
 {
-    assigned_events.runningEventID =
+    assignedEvents.runningEventID =
         psserver->GetGMEventManager()->GetAllGMEventsForPlayer(pid,
-                                                               assigned_events.completedEventIDs,
-                                                               assigned_events.runningEventIDAsGM,
-                                                               assigned_events.completedEventIDsAsGM);
+                                                               assignedEvents.completedEventIDs,
+                                                               assignedEvents.runningEventIDAsGM,
+                                                               assignedEvents.completedEventIDsAsGM);
     return true;  // cant see how this can fail, but keep convention for now.
 }
 
@@ -938,7 +938,7 @@ void psCharacter::SetRaceInfo(psRaceInfo *rinfo)
 
 void psCharacter::SetFamiliarID(PID v)
 {
-    familiars_id.Push(v);
+    familiarsId.Push(v);
 
     csString sql;
     sql.Format("INSERT INTO character_relationships VALUES (%u, %d, 'familiar', '')", pid.Unbox(), v.Unbox());
@@ -1348,53 +1348,53 @@ void psCharacter::AddLootItem(psItem *item)
         Error2("Attempted to add 'null' loot item to character %s, ignored.",fullName.GetDataSafe());
         return;
     }
-    loot_pending.Push(item);
+    lootPending.Push(item);
 }
 
 size_t psCharacter::GetLootItems(psLootMessage& msg, EID entity, int cnum)
 {
-    if (loot_pending.GetSize() )
+    if (lootPending.GetSize() )
     {
         csString loot;
         loot.Append("<loot>");
 
-        for (size_t i=0; i<loot_pending.GetSize(); i++)
+        for (size_t i=0; i<lootPending.GetSize(); i++)
         {
-            if (!loot_pending[i]) {
+            if (!lootPending[i]) {
               printf("Potential ERROR: why this happens?");
               continue;
             }
             csString item;
-            csString escpxml_imagename = EscpXML(loot_pending[i]->GetImageName());
-            csString escpxml_name = EscpXML(loot_pending[i]->GetName());
+            csString escpxml_imagename = EscpXML(lootPending[i]->GetImageName());
+            csString escpxml_name = EscpXML(lootPending[i]->GetName());
             item.Format("<li><image icon=\"%s\" count=\"1\" /><desc text=\"%s\" /><id text=\"%u\" /></li>",
                   escpxml_imagename.GetData(),
                   escpxml_name.GetData(),
-                  loot_pending[i]->GetBaseStats()->GetUID()); //use the basic item id to reference this.
+                  lootPending[i]->GetBaseStats()->GetUID()); //use the basic item id to reference this.
             loot.Append(item);
         }
         loot.Append("</loot>");
         Debug3(LOG_COMBAT, pid.Unbox(), "Loot was %s for %s\n", loot.GetData(), name.GetData());
         msg.Populate(entity,loot,cnum);
     }
-    return loot_pending.GetSize();
+    return lootPending.GetSize();
 }
 
 psItem* psCharacter::RemoveLootItem(int id)
 {
     size_t x;
-    for (x=0; x<loot_pending.GetSize(); x++)
+    for (x=0; x<lootPending.GetSize(); x++)
     {
-        if (!loot_pending[x]) {
+        if (!lootPending[x]) {
           printf("Potential ERROR: why this happens?");
-          loot_pending.DeleteIndex(x);
+          lootPending.DeleteIndex(x);
           continue;
         }
 
-        if (loot_pending[x]->GetBaseStats()->GetUID() == (uint32) id)
+        if (lootPending[x]->GetBaseStats()->GetUID() == (uint32) id)
         {
-            psItem* item = loot_pending[x];
-            loot_pending.DeleteIndex(x);
+            psItem* item = lootPending[x];
+            lootPending.DeleteIndex(x);
             return item;
         }
     }
@@ -1402,20 +1402,20 @@ psItem* psCharacter::RemoveLootItem(int id)
 }
 int psCharacter::GetLootMoney()
 {
-    int val = loot_money;
-    loot_money = 0;
+    int val = lootMoney;
+    lootMoney = 0;
     return val;
 }
 
 void psCharacter::ClearLoot()
 {
     //delete the instanced items
-    for(size_t i = 0; i < loot_pending.GetSize(); i++)
-        delete loot_pending.Get(i);
+    for(size_t i = 0; i < lootPending.GetSize(); i++)
+        delete lootPending.Get(i);
 
     //delete the pointers to the instanced items we have just deleted
-    loot_pending.DeleteAll();
-    loot_money = 0;
+    lootPending.DeleteAll();
+    lootMoney = 0;
 }
 
 void psCharacter::SetMoney(psMoney m)
@@ -2136,11 +2136,11 @@ bool psCharacter::AppendCharacterSelectData(psAuthApprovedMessage& auth)
 
 QuestAssignment *psCharacter::IsQuestAssigned(int id)
 {
-    for (size_t i=0; i<assigned_quests.GetSize(); i++)
+    for (size_t i=0; i<assignedQuests.GetSize(); i++)
     {
-        if (assigned_quests[i]->GetQuest().IsValid() && assigned_quests[i]->GetQuest()->GetID() == id &&
-            assigned_quests[i]->status != PSQUEST_DELETE)
-            return assigned_quests[i];
+        if (assignedQuests[i]->GetQuest().IsValid() && assignedQuests[i]->GetQuest()->GetID() == id &&
+            assignedQuests[i]->status != PSQUEST_DELETE)
+            return assignedQuests[i];
     }
 
     return NULL;
@@ -2148,9 +2148,9 @@ QuestAssignment *psCharacter::IsQuestAssigned(int id)
 
 int psCharacter::GetAssignedQuestLastResponse(size_t i)
 {
-    if (i<assigned_quests.GetSize())
+    if (i<assignedQuests.GetSize())
     {
-        return assigned_quests[i]->last_response;
+        return assignedQuests[i]->last_response;
     }
     else
     {
@@ -2175,14 +2175,14 @@ bool psCharacter::SetAssignedQuestLastResponse(psQuest *quest, int response, gem
         return false;
 
 
-    for (size_t i=0; i<assigned_quests.GetSize(); i++)
+    for (size_t i=0; i<assignedQuests.GetSize(); i++)
     {
-        if (assigned_quests[i]->GetQuest().IsValid() && assigned_quests[i]->GetQuest()->GetID() == id &&
-            assigned_quests[i]->status == PSQUEST_ASSIGNED && !assigned_quests[i]->GetQuest()->GetParentQuest())
+        if (assignedQuests[i]->GetQuest().IsValid() && assignedQuests[i]->GetQuest()->GetID() == id &&
+            assignedQuests[i]->status == PSQUEST_ASSIGNED && !assignedQuests[i]->GetQuest()->GetParentQuest())
         {
-            assigned_quests[i]->last_response = response;
-            assigned_quests[i]->last_response_from_npc_pid = npc->GetPID();
-            assigned_quests[i]->dirty = true;
+            assignedQuests[i]->last_response = response;
+            assignedQuests[i]->last_response_from_npc_pid = npc->GetPID();
+            assignedQuests[i]->dirty = true;
             UpdateQuestAssignments();
             return true;
         }
@@ -2192,11 +2192,11 @@ bool psCharacter::SetAssignedQuestLastResponse(psQuest *quest, int response, gem
 
 size_t  psCharacter::GetAssignedQuests(psQuestListMessage& questmsg,int cnum)
 {
-    if (assigned_quests.GetSize() )
+    if (assignedQuests.GetSize() )
     {
         csString quests;
         quests.Append("<quests>");
-        csArray<QuestAssignment*>::Iterator iter = assigned_quests.GetIterator();
+        csArray<QuestAssignment*>::Iterator iter = assignedQuests.GetIterator();
 
         while(iter.HasNext())
         {
@@ -2222,7 +2222,7 @@ size_t  psCharacter::GetAssignedQuests(psQuestListMessage& questmsg,int cnum)
         Debug2(LOG_QUESTS, pid.Unbox(), "QuestMsg was %s\n", quests.GetData());
         questmsg.Populate(quests,cnum);
     }
-    return assigned_quests.GetSize();
+    return assignedQuests.GetSize();
 }
 
 QuestAssignment *psCharacter::AssignQuest(psQuest *quest, PID assigner_id)
@@ -2232,14 +2232,14 @@ QuestAssignment *psCharacter::AssignQuest(psQuest *quest, PID assigner_id)
     // Shame on Kayden for cutting and pasting those code from CheckQuestAvailable instead of making a distinct function for it. :)
     /*********************************
     //first check if there is not another assigned quest with the same NPC
-    for (size_t i=0; i<assigned_quests.GetSize(); i++)
+    for (size_t i=0; i<assignedQuests.GetSize(); i++)
     {
-        if (assigned_quests[i]->GetQuest().IsValid() &&
-            assigned_quests[i]->assigner_id == assigner_id &&
-            assigned_quests[i]->GetQuest()->GetID() != quest->GetID() &&
+        if (assignedQuests[i]->GetQuest().IsValid() &&
+            assignedQuests[i]->assigner_id == assigner_id &&
+            assignedQuests[i]->GetQuest()->GetID() != quest->GetID() &&
             quest->GetParentQuest() == NULL &&
-            assigned_quests[i]->GetQuest()->GetParentQuest() == NULL &&
-            assigned_quests[i]->status == PSQUEST_ASSIGNED)
+            assignedQuests[i]->GetQuest()->GetParentQuest() == NULL &&
+            assignedQuests[i]->status == PSQUEST_ASSIGNED)
         {
             Debug3(LOG_QUESTS, pid.Unbox(), "Did not assign %s quest to %s because (s)he already has a quest assigned with this npc.\n", quest->GetName(), GetCharName());
             return false; // Cannot have multiple quests from the same guy
@@ -2254,7 +2254,7 @@ QuestAssignment *psCharacter::AssignQuest(psQuest *quest, PID assigner_id)
         q->SetQuest(quest);
         q->status = PSQUEST_DELETE;
 
-        assigned_quests.Push(q);
+        assignedQuests.Push(q);
     }
 
     if (q->status != PSQUEST_ASSIGNED)
@@ -2448,12 +2448,12 @@ bool psCharacter::CheckQuestAvailable(psQuest *quest, PID assigner_id)
     //Since the quest is not assigned, this conversation will lead to starting the quest.
     //Check all assigned quests, to make sure there is no other quest already started by this NPC
     /*****
-    for (size_t i=0; i<assigned_quests.GetSize(); i++)
+    for (size_t i=0; i<assignedQuests.GetSize(); i++)
     {
-        if (assigned_quests[i]->GetQuest().IsValid() && assigned_quests[i]->assigner_id == assigner_id &&
-            assigned_quests[i]->GetQuest()->GetID() != quest->GetID() &&
-            assigned_quests[i]->GetQuest()->GetParentQuest() == NULL &&
-            assigned_quests[i]->status == PSQUEST_ASSIGNED)
+        if (assignedQuests[i]->GetQuest().IsValid() && assignedQuests[i]->assigner_id == assigner_id &&
+            assignedQuests[i]->GetQuest()->GetID() != quest->GetID() &&
+            assignedQuests[i]->GetQuest()->GetParentQuest() == NULL &&
+            assignedQuests[i]->status == PSQUEST_ASSIGNED)
         {
             if (notify)
             {
@@ -2504,7 +2504,7 @@ bool psCharacter::CheckQuestAvailable(psQuest *quest, PID assigner_id)
         }
     }
 
-    // If here, quest is not in assigned_quests, or it is completed and not in player lockout time
+    // If here, quest is not in assignedQuests, or it is completed and not in player lockout time
     // Player is allowed to start this quest, now check if quest has a lockout
     if (quest->GetQuestLastActivatedTime() &&
         (quest->GetQuestLastActivatedTime() + quest->GetQuestLockoutTime() > now))
@@ -2540,12 +2540,12 @@ bool psCharacter::CheckResponsePrerequisite(NpcResponse *resp)
 int psCharacter::NumberOfQuestsCompleted(csString category)
 {
     int count=0;
-    for (size_t i=0; i<assigned_quests.GetSize(); i++)
+    for (size_t i=0; i<assignedQuests.GetSize(); i++)
     {
         // Character have this quest
-        if (assigned_quests[i]->GetQuest().IsValid() && assigned_quests[i]->GetQuest()->GetParentQuest() == NULL &&
-            assigned_quests[i]->status == PSQUEST_COMPLETE &&
-            assigned_quests[i]->GetQuest()->GetCategory() == category)
+        if (assignedQuests[i]->GetQuest().IsValid() && assignedQuests[i]->GetQuest()->GetParentQuest() == NULL &&
+            assignedQuests[i]->status == PSQUEST_COMPLETE &&
+            assignedQuests[i]->GetQuest()->GetCategory() == category)
         {
             count++;
         }
@@ -2555,9 +2555,9 @@ int psCharacter::NumberOfQuestsCompleted(csString category)
 
 bool psCharacter::UpdateQuestAssignments(bool force_update)
 {
-    for (size_t i=0; i<assigned_quests.GetSize(); i++)
+    for (size_t i=0; i<assignedQuests.GetSize(); i++)
     {
-        QuestAssignment *q = assigned_quests[i];
+        QuestAssignment *q = assignedQuests[i];
         if (q->GetQuest().IsValid() && (q->dirty || force_update))
         {
             int r;
@@ -2573,8 +2573,8 @@ bool psCharacter::UpdateQuestAssignments(bool force_update)
                 r = db->CommandPump("DELETE FROM character_quests WHERE player_id=%d AND quest_id=%d",
                                     pid.Unbox(), q->GetQuest()->GetID());
 
-                delete assigned_quests[i];
-                assigned_quests.DeleteIndex(i);
+                delete assignedQuests[i];
+                assignedQuests.DeleteIndex(i);
                 i--;  // reincremented in loop
                 continue;
             }
@@ -2602,8 +2602,8 @@ bool psCharacter::UpdateQuestAssignments(bool force_update)
                             q->lockout_end,
                             q->last_response,
                             q->last_response_from_npc_pid.Unbox());
-            Debug3(LOG_QUESTS, pid.Unbox(), "Updated quest info for player %d, quest %d.\n", pid.Unbox(), assigned_quests[i]->GetQuest()->GetID());
-            assigned_quests[i]->dirty = false;
+            Debug3(LOG_QUESTS, pid.Unbox(), "Updated quest info for player %d, quest %d.\n", pid.Unbox(), assignedQuests[i]->GetQuest()->GetID());
+            assignedQuests[i]->dirty = false;
         }
     }
     return true;
@@ -2647,7 +2647,7 @@ bool psCharacter::LoadQuestAssignments()
         Debug6(LOG_QUESTS, pid.Unbox(), "Loaded quest %-40.40s, status %c, lockout %lu, last_response %d, for player %s.\n",
                q->GetQuest()->GetName(),q->status,
                ( q->lockout_end > age ? q->lockout_end-age:0),q->last_response, GetCharFullName());
-        assigned_quests.Push(q);
+        assignedQuests.Push(q);
     }
     return true;
 }
@@ -2720,16 +2720,16 @@ bool psCharacter::AddExploredArea(PID explored)
         return false;
     }
 
-    explored_areas.Push(explored);
+    exploredAreas.Push(explored);
 
     return true;
 }
 
 bool psCharacter::HasExploredArea(PID explored)
 {
-    for(size_t i=0; i<explored_areas.GetSize(); ++i)
+    for(size_t i=0; i<exploredAreas.GetSize(); ++i)
     {
-        if(explored == explored_areas[i])
+        if(explored == exploredAreas[i])
             return true;
     }
 
@@ -2898,7 +2898,7 @@ double psCharacter::GetProperty(MathEnvironment* env, const char* ptr)
     }
     else if (property == "owner")
     {
-        return (double) owner_id.Unbox();
+        return (double) ownerId.Unbox();
     }
     else if (property == "IsNPC")
     {
@@ -3003,7 +3003,7 @@ double psCharacter::CalcFunction(MathEnvironment* env, const char* functionName,
     else if (function == "IsEnemy")
     {
         // Check for self.
-        if(owner_id == params[0])
+        if(ownerId == params[0])
             return 0.0;
 
         Client* owner = EntityManager::GetSingleton().GetClients()->FindPlayer((PID)params[0]);
@@ -3292,9 +3292,9 @@ void psCharacter::RecalculateStats()
     }
 
 
-    if (override_max_mana)
+    if (overrideMaxMana)
     {
-        GetMaxMana().SetBase(override_max_mana);
+        GetMaxMana().SetBase(overrideMaxMana);
     }
     else if (maxManaScript)
     {
@@ -3319,9 +3319,9 @@ void psCharacter::RecalculateStats()
         CS_ASSERT(maxHPScript != NULL);
     }
 
-    if (override_max_hp)
+    if (overrideMaxHp)
     {
-        GetMaxHP().SetBase(override_max_hp);
+        GetMaxHP().SetBase(overrideMaxHp);
     }
     else if (maxHPScript)
     {
@@ -3351,28 +3351,28 @@ size_t psCharacter::GetAssignedGMEvents(psGMEventListMessage& gmeventsMsg, int c
     GMEventStatus eventStatus;
 
     // XML: <event><name text><role text><status text><id text></event>
-    if (assigned_events.runningEventIDAsGM >= 0)
+    if (assignedEvents.runningEventIDAsGM >= 0)
     {
-        eventStatus = psserver->GetGMEventManager()->GetGMEventDetailsByID(assigned_events.runningEventIDAsGM,
+        eventStatus = psserver->GetGMEventManager()->GetGMEventDetailsByID(assignedEvents.runningEventIDAsGM,
                                                                            name,
                                                                            desc);
         event.Format("<event><name text=\"%s\" /><role text=\"*\" /><status text=\"R\" /><id text=\"%d\" /></event>",
-                     name.GetData(), assigned_events.runningEventIDAsGM);
+                     name.GetData(), assignedEvents.runningEventIDAsGM);
         gmeventsStr.Append(event);
         numberOfEvents++;
     }
-    if (assigned_events.runningEventID >= 0)
+    if (assignedEvents.runningEventID >= 0)
     {
-        eventStatus = psserver->GetGMEventManager()->GetGMEventDetailsByID(assigned_events.runningEventID,
+        eventStatus = psserver->GetGMEventManager()->GetGMEventDetailsByID(assignedEvents.runningEventID,
                                                                            name,
                                        desc);
         event.Format("<event><name text=\"%s\" /><role text=\" \" /><status text=\"R\" /><id text=\"%d\" /></event>",
-                     name.GetData(), assigned_events.runningEventID);
+                     name.GetData(), assignedEvents.runningEventID);
         gmeventsStr.Append(event);
         numberOfEvents++;
     }
 
-    csArray<int>::Iterator iter = assigned_events.completedEventIDsAsGM.GetIterator();
+    csArray<int>::Iterator iter = assignedEvents.completedEventIDsAsGM.GetIterator();
     while(iter.HasNext())
     {
         int gmEventIDAsGM = iter.Next();
@@ -3385,7 +3385,7 @@ size_t psCharacter::GetAssignedGMEvents(psGMEventListMessage& gmeventsMsg, int c
         numberOfEvents++;
     }
 
-    csArray<int>::Iterator iter2 = assigned_events.completedEventIDs.GetIterator();
+    csArray<int>::Iterator iter2 = assignedEvents.completedEventIDs.GetIterator();
     while(iter2.HasNext())
     {
         int gmEventID = iter2.Next();
@@ -3409,22 +3409,22 @@ size_t psCharacter::GetAssignedGMEvents(psGMEventListMessage& gmeventsMsg, int c
 void psCharacter::AssignGMEvent(int id, bool playerIsGM)
 {
     if (playerIsGM)
-        assigned_events.runningEventIDAsGM = id;
+        assignedEvents.runningEventIDAsGM = id;
     else
-        assigned_events.runningEventID = id;
+        assignedEvents.runningEventID = id;
 }
 
 void psCharacter::CompleteGMEvent(bool playerIsGM)
 {
     if (playerIsGM)
     {
-        assigned_events.completedEventIDsAsGM.Push(assigned_events.runningEventIDAsGM);
-    assigned_events.runningEventIDAsGM = -1;
+        assignedEvents.completedEventIDsAsGM.Push(assignedEvents.runningEventIDAsGM);
+    assignedEvents.runningEventIDAsGM = -1;
     }
     else
     {
-        assigned_events.completedEventIDs.Push(assigned_events.runningEventID);
-        assigned_events.runningEventID = -1;
+        assignedEvents.completedEventIDs.Push(assignedEvents.runningEventID);
+        assignedEvents.runningEventID = -1;
     }
 }
 
@@ -3432,17 +3432,17 @@ void psCharacter::RemoveGMEvent(int id, bool playerIsGM)
 {
     if (playerIsGM)
     {
-        if (assigned_events.runningEventIDAsGM == id)
-            assigned_events.runningEventIDAsGM = -1;
+        if (assignedEvents.runningEventIDAsGM == id)
+            assignedEvents.runningEventIDAsGM = -1;
         else
-            assigned_events.completedEventIDsAsGM.Delete(id);
+            assignedEvents.completedEventIDsAsGM.Delete(id);
     }
     else
     {
-        if (assigned_events.runningEventID == id)
-            assigned_events.runningEventID = -1;
+        if (assignedEvents.runningEventID == id)
+            assignedEvents.runningEventID = -1;
         else
-            assigned_events.completedEventIDs.Delete(id);
+            assignedEvents.completedEventIDs.Delete(id);
     }
 }
 

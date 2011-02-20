@@ -1828,7 +1828,7 @@ float psItem::GetDamageProtection(PSITEMSTATS_DAMAGETYPE dmgtype)
 {
     // Add the characters natural armour bonus onto his normal armour.
     psItemStats* natArm;
-    natArm = psserver->GetCacheManager()->GetBasicItemStatsByID(owning_character->raceinfo->natural_armor_id);
+    natArm = psserver->GetCacheManager()->GetBasicItemStatsByID(owning_character->GetRaceInfo()->natural_armor_id);
     if (!natArm || current_stats->Armor().Protection(dmgtype) > natArm->Armor().Protection(dmgtype))
     {
         useNat = false;
@@ -2088,7 +2088,7 @@ double psItem::GetProperty(MathEnvironment* env, const char *ptr)
     {
         // For natural armour quality
         if(useNat)
-            return psserver->GetCacheManager()->GetBasicItemStatsByID(owning_character->raceinfo->natural_armor_id)->GetQuality();
+            return psserver->GetCacheManager()->GetBasicItemStatsByID(owning_character->GetRaceInfo()->natural_armor_id)->GetQuality();
         return GetItemQuality();
     }
     else if (property == "MaxQuality")

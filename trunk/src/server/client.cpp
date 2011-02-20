@@ -507,7 +507,7 @@ int Client::GetTargetType(gemObject* target)
         return TARGET_SELF; /* Self */
     }
 
-    if (target->GetCharacterData()->impervious_to_attack)
+    if (target->GetCharacterData()->GetImperviousToAttack())
     {
         return TARGET_FRIEND; /* Impervious NPC */
     }
