@@ -56,6 +56,9 @@ public:
     bool                       pub;            ///< True if this waypoint is public
     bool                       city;           ///< True if this waypoint is in a city
     bool                       indoor;         ///< True if this waypoint is indoor
+    bool                       path;           ///< True if this waypoint is a path
+    bool                       road;           ///< True if this waypoint is a road/street
+    bool                       ground;         ///< True if this waypoint is ground
 
     Waypoint();
     Waypoint(const char *name);

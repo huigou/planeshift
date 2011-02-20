@@ -242,6 +242,9 @@ void Waypoint::SetFlags(const csString & flagstr)
     pub          = isFlagSet(flagstr,"PUBLIC");
     city         = isFlagSet(flagstr,"CITY");
     indoor       = isFlagSet(flagstr,"INDOOR");
+    path         = isFlagSet(flagstr,"PATH");
+    road         = isFlagSet(flagstr,"ROAD");
+    ground       = isFlagSet(flagstr,"GROUND");
 }
 
 bool Waypoint::SetFlag(iDataConnection * db, const csString &flagstr, bool enable)
@@ -267,6 +270,15 @@ bool Waypoint::SetFlag(iDataConnection * db, const csString &flagstr, bool enabl
     } else if (isFlagSet(flagstr,"INDOOR"))
     {
         indoor = enable;
+    } else if (isFlagSet(flagstr,"PATH"))
+    {
+        path = enable;
+    } else if (isFlagSet(flagstr,"ROAD"))
+    {
+        road = enable;
+    } else if (isFlagSet(flagstr,"GROUND"))
+    {
+        ground = enable;
     } else
     {
         return false;
@@ -327,6 +339,24 @@ csString Waypoint::GetFlags()
     {
         if (added) flagStr.Append(", ");
         flagStr.Append("INDOOR");
+        added = true;
+    }
+    if (path)
+    {
+        if (added) flagStr.Append(", ");
+        flagStr.Append("PATH");
+        added = true;
+    }
+    if (road)
+    {
+        if (added) flagStr.Append(", ");
+        flagStr.Append("ROAD");
+        added = true;
+    }
+    if (ground)
+    {
+        if (added) flagStr.Append(", ");
+        flagStr.Append("GROUND");
         added = true;
     }
     return flagStr;

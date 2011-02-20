@@ -1217,6 +1217,9 @@ protected:
     bool      pubValid,pub;
     bool      cityValid,city;
     bool      indoorValid,indoor;
+    bool      pathValid,path;
+    bool      roadValid,road;
+    bool      groundValid,ground;
     // End of operation parameters
     ////////////////////////////////////////////////////////////
 
