@@ -29,13 +29,13 @@
 // Project Includes
 //=============================================================================
 #include "net/messages.h"
+#include "economymanager.h"
 
 //=============================================================================
 // Local Includes
 //=============================================================================
 
 
-struct TransactionEntity;
 class gemActor;
 class gemObject;
 
@@ -134,7 +134,6 @@ class psBuyEvent : public psMessageCracker
 public:
     psBuyEvent(PID from, const char* fromName, PID to, const char* toName, unsigned int item, const char* itemName, int stack, int quality, unsigned int price);
     psBuyEvent( MsgEntry* event);
-    ~psBuyEvent();
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -146,7 +145,10 @@ public:
      */
     virtual csString ToString(AccessPointers * access_ptrs);
 
-    TransactionEntity* trans;
+    /**Contains informations about the specific event and will be taken in ownership by the economymanager for accounting.
+     * They will all be freed after a certain amount of time.
+     */
+    csRef<TransactionEntity> trans;
 };
 
 
@@ -155,7 +157,6 @@ class psSellEvent : public psMessageCracker
 public:
     psSellEvent(PID from, const char* fromName, PID to, const char* toName, unsigned int item, const char* itemName, int stack, int quality, unsigned int price);
     psSellEvent( MsgEntry* event);
-    ~psSellEvent();
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -167,66 +168,75 @@ public:
      */
     virtual csString ToString(AccessPointers * access_ptrs);
 
-    TransactionEntity* trans;
+    /**Contains informations about the specific event and will be taken in ownership by the economymanager for accounting.
+     * They will all be freed after a certain amount of time.
+     */
+    csRef<TransactionEntity> trans;
 };
 class psPickupEvent : public psMessageCracker
 {
     public:
-        psPickupEvent(PID to, const char* toName, unsigned int item, const char* itemName, int stack, int quality,unsigned int price);
-        psPickupEvent( MsgEntry* event);
-        ~psPickupEvent();
+    psPickupEvent(PID to, const char* toName, unsigned int item, const char* itemName, int stack, int quality,unsigned int price);
+    psPickupEvent( MsgEntry* event);
+    
+    PSF_DECLARE_MSG_FACTORY();
         
-        PSF_DECLARE_MSG_FACTORY();
-        
-        /**
-         * Convert the message into human readable string.
-         *
-         * @param access_ptrs A struct to a number of access pointers.
-         * @return Return a human readable string for the message.
-         */
-        virtual csString ToString(AccessPointers * access_ptrs);
-        
-        TransactionEntity* trans;
+    /**
+     * Convert the message into human readable string.
+     *
+     * @param access_ptrs A struct to a number of access pointers.
+     * @return Return a human readable string for the message.
+     */
+    virtual csString ToString(AccessPointers * access_ptrs);
+
+    /**Contains informations about the specific event and will be taken in ownership by the economymanager for accounting.
+     * They will all be freed after a certain amount of time.
+     */
+    csRef<TransactionEntity> trans;
 };
 
 class psDropEvent : public psMessageCracker
 {
     public:
-        psDropEvent(PID from, const char* fromName, unsigned int item, const char* itemName, int stack, int quality,unsigned int price);
-        psDropEvent( MsgEntry* event);
-        ~psDropEvent();
+    psDropEvent(PID from, const char* fromName, unsigned int item, const char* itemName, int stack, int quality,unsigned int price);
+    psDropEvent( MsgEntry* event);
         
-        PSF_DECLARE_MSG_FACTORY();
+    PSF_DECLARE_MSG_FACTORY();
         
-        /**
-         * Convert the message into human readable string.
-         *
-         * @param access_ptrs A struct to a number of access pointers.
-         * @return Return a human readable string for the message.
-         */
-        virtual csString ToString(AccessPointers * access_ptrs);
-        
-        TransactionEntity* trans;
+    /**
+     * Convert the message into human readable string.
+     *
+     * @param access_ptrs A struct to a number of access pointers.
+     * @return Return a human readable string for the message.
+     */
+    virtual csString ToString(AccessPointers * access_ptrs);
+
+    /**Contains informations about the specific event and will be taken in ownership by the economymanager for accounting.
+     * They will all be freed after a certain amount of time.
+     */    
+    csRef<TransactionEntity> trans;
 };
 
 class psLootEvent : public psMessageCracker
 {
     public:
-        psLootEvent(PID from, const char* fromName, PID to, const char* toName, unsigned int item, const char* itemName, int stack, int quality, unsigned int price);
-        psLootEvent( MsgEntry* event);
-        ~psLootEvent();
-        
-        PSF_DECLARE_MSG_FACTORY();
-        
-        /**
-         * Convert the message into human readable string.
-         *
-         * @param access_ptrs A struct to a number of access pointers.
-         * @return Return a human readable string for the message.
-         */
-        virtual csString ToString(AccessPointers * access_ptrs);
-        
-        TransactionEntity* trans;
+    psLootEvent(PID from, const char* fromName, PID to, const char* toName, unsigned int item, const char* itemName, int stack, int quality, unsigned int price);
+    psLootEvent( MsgEntry* event);
+    
+    PSF_DECLARE_MSG_FACTORY();
+    
+    /**
+     * Convert the message into human readable string.
+     *
+     * @param access_ptrs A struct to a number of access pointers.
+     * @return Return a human readable string for the message.
+     */
+    virtual csString ToString(AccessPointers * access_ptrs);
+
+    /**Contains informations about the specific event and will be taken in ownership by the economymanager for accounting.
+     * They will all be freed after a certain amount of time.
+     */
+    csRef<TransactionEntity> trans;
 };
 
 

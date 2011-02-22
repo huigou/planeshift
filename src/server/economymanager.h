@@ -44,7 +44,7 @@
 #include "msgmanager.h"             // Parent class
 
 
-struct TransactionEntity
+struct TransactionEntity : public csRefCount
 {
     PID from;
     PID to;
@@ -83,7 +83,7 @@ public:
     void HandleDropMessage(MsgEntry *me,Client *client);
     void HandleLootMessage(MsgEntry *me,Client *client);
 
-    void AddTransaction(TransactionEntity* trans,bool sell, const char* type);
+    void AddTransaction(csRef<TransactionEntity> trans, bool sell, const char* type);
 
     TransactionEntity* GetTransaction(int id);
     unsigned int GetTotalTransactions();
@@ -108,7 +108,7 @@ public:
     Economy economy;
 
 protected:
-    csPDelArray<TransactionEntity> history;
+    csArray< csRef<TransactionEntity> > history;
     csHash< csRef<ItemSupplyDemandInfo> > supplyDemandInfo;
     
 };
