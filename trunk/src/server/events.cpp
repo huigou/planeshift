@@ -211,7 +211,6 @@ psBuyEvent::psBuyEvent(PID from, const char* fromName, PID to, const char* toNam
     msg->Add( (int32_t) stack);
     msg->Add( (int32_t) quality);
     msg->Add( (uint32_t) price);
-    trans = NULL;
 }
 
 psBuyEvent::psBuyEvent( MsgEntry* event)
@@ -219,7 +218,7 @@ psBuyEvent::psBuyEvent( MsgEntry* event)
     if(!event)
         return;
 
-    trans = new TransactionEntity(); // needs to be handled by economy manager
+    trans.AttachNew(new TransactionEntity()); // needs to be handled by economy manager
 
     trans->from = PID(event->GetUInt32());
     trans->fromName = event->GetStr();
@@ -231,15 +230,6 @@ psBuyEvent::psBuyEvent( MsgEntry* event)
     trans->count = event->GetInt32();
     trans->quality = event->GetInt32();
     trans->price = event->GetUInt32();
-}
-
-psBuyEvent::~psBuyEvent()
-{
-    //unalloc memory
-    if(trans)
-    {
-        delete trans;
-    }
 }
 
 csString psBuyEvent::ToString(AccessPointers * /*access_ptrs*/)
@@ -275,7 +265,6 @@ psSellEvent::psSellEvent(PID from, const char* fromName, PID to, const char* toN
     msg->Add( (int32_t) stack);
     msg->Add( (int32_t) quality);
     msg->Add( (uint32_t) price);
-    trans = NULL;
 }
 
 psSellEvent::psSellEvent( MsgEntry* event)
@@ -283,7 +272,7 @@ psSellEvent::psSellEvent( MsgEntry* event)
     if(!event)
         return;
 
-    trans = new TransactionEntity(); // needs to be handled by economy manager
+    trans.AttachNew(new TransactionEntity()); // needs to be handled by economy manager
 
     trans->from = PID(event->GetUInt32());
     trans->fromName = event->GetStr();
@@ -296,15 +285,6 @@ psSellEvent::psSellEvent( MsgEntry* event)
     trans->count = event->GetInt32();
     trans->quality = event->GetInt32();
     trans->price = event->GetUInt32();
-}
-
-psSellEvent::~psSellEvent()
-{
-    //unalloc memory
-    if(trans)
-    {
-        delete trans;
-    }
 }
 
 csString psSellEvent::ToString(AccessPointers * /*access_ptrs*/)
@@ -337,7 +317,6 @@ psPickupEvent::psPickupEvent(PID to, const char* toName, unsigned int item, cons
     msg->Add( (int32_t) stack);
     msg->Add( (int32_t) quality);
     msg->Add( (uint32_t) price);
-    trans = NULL;
 }
 
 psPickupEvent::psPickupEvent( MsgEntry* event)
@@ -345,7 +324,7 @@ psPickupEvent::psPickupEvent( MsgEntry* event)
     if(!event)
         return;
     
-    trans = new TransactionEntity(); // needs to be handled by economy manager
+    trans.AttachNew(new TransactionEntity()); // needs to be handled by economy manager
     
     trans->to = PID(event->GetUInt32());
     trans->toName = event->GetStr();
@@ -355,16 +334,6 @@ psPickupEvent::psPickupEvent( MsgEntry* event)
     trans->count = event->GetInt32();
     trans->quality = event->GetInt32();
     trans->price = event->GetUInt32();
-}
-
-
-psPickupEvent::~psPickupEvent()
-{
-    //unalloc memory
-    if(trans)
-    {
-        delete trans;
-    }
 }
 
 csString psPickupEvent::ToString(AccessPointers * /*access_ptrs*/)
@@ -398,7 +367,6 @@ psDropEvent::psDropEvent(PID from, const char* fromName, unsigned int item, cons
     msg->Add( (int32_t) stack);
     msg->Add( (int32_t) quality);
     msg->Add( (uint32_t) price);
-    trans = NULL;
 }
 
 psDropEvent::psDropEvent( MsgEntry* event)
@@ -406,7 +374,7 @@ psDropEvent::psDropEvent( MsgEntry* event)
     if(!event)
         return;
     
-    trans = new TransactionEntity(); // needs to be handled by economy manager
+    trans.AttachNew(new TransactionEntity()); // needs to be handled by economy manager
     
     trans->from = PID(event->GetUInt32());
     trans->fromName = event->GetStr();
@@ -416,15 +384,6 @@ psDropEvent::psDropEvent( MsgEntry* event)
     trans->count = event->GetInt32();
     trans->quality = event->GetInt32();
     trans->price = event->GetUInt32();
-}
-
-psDropEvent::~psDropEvent()
-{
-    //unalloc memory
-    if(trans)
-    {
-        delete trans;
-    }
 }
 
 csString psDropEvent::ToString(AccessPointers * /*access_ptrs*/)
@@ -460,7 +419,6 @@ psLootEvent::psLootEvent(PID from, const char* fromName, PID to, const char* toN
     msg->Add( (int32_t) stack);
     msg->Add( (int32_t) quality);
     msg->Add( (uint32_t) price);
-    trans = NULL;
 }
 
 psLootEvent::psLootEvent( MsgEntry* event)
@@ -468,7 +426,7 @@ psLootEvent::psLootEvent( MsgEntry* event)
     if(!event)
         return;
     
-    trans = new TransactionEntity(); // needs to be handled by economy manager
+    trans.AttachNew(new TransactionEntity()); // needs to be handled by economy manager
     
     trans->from = PID(event->GetUInt32());
     trans->fromName = event->GetStr();
@@ -480,15 +438,6 @@ psLootEvent::psLootEvent( MsgEntry* event)
     trans->count = event->GetInt32();
     trans->quality = event->GetInt32();
     trans->price = event->GetUInt32();
-}
-
-psLootEvent::~psLootEvent()
-{
-    //unalloc memory
-    if(trans)
-    {
-        delete trans;
-    }
 }
 
 csString psLootEvent::ToString(AccessPointers * /*access_ptrs*/)

@@ -78,7 +78,7 @@ EconomyManager::~EconomyManager()
     //do nothing
 }
 
-void EconomyManager::AddTransaction(TransactionEntity* trans,bool moneyIn, const char* type)
+void EconomyManager::AddTransaction(csRef<TransactionEntity> trans, bool moneyIn, const char* type)
 {
     if(!trans)
         return;
