@@ -5129,6 +5129,46 @@ void AdminManager::ViewMarriage(MsgEntry* me, AdminCmdData* cmddata)
     }
 }
 
+void AdminManager::TeleportOfflineCharacter(Client* client, AdminCmdDataTeleport* data)
+{
+    psString sql;
+    iSector * gmSector; // sector of gamemaster issuing the cmd
+    csVector3 gmPoint;  // position of the gm
+    psSectorInfo * gmSectorInfo = NULL;
+    float yRot = 0.0;
+
+    client->GetActor()->GetPosition(gmPoint, yRot, gmSector);
+
+    if (gmSector != NULL)
+    {
+        gmSectorInfo = psserver->GetCacheManager()->GetSectorInfoByName(gmSector->QueryObject()->GetName());
+    }
+    if (gmSectorInfo == NULL)
+    {
+        psserver->SendSystemError(client->GetClientNum(), "Sector not found!");
+        return;
+    }
+
+    //escape the player name so it's not possible to do nasty things
+    csString escapedName;
+    db->Escape( escapedName, data->target.GetDataSafe() );
+
+    sql.AppendFmt("update characters set loc_x=%10.2f, loc_y=%10.2f, loc_z=%10.2f, loc_yrot=%10.2f, loc_sector_id=%u, loc_instance=%u where name=\"%s\"",
+                  gmPoint.x, gmPoint.y, gmPoint.z, yRot, gmSectorInfo->uid, client->GetActor()->GetInstance(), escapedName.GetDataSafe());
+
+    if (db->CommandPump(sql) != 1)
+    {
+        Error3 ("Couldn't save character's position to database.\nCommand was "
+                "<%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
+
+        psserver->SendSystemError(client->GetClientNum(), "Offline character %s could not be moved!", data->target.GetData());
+    }
+    else
+    {
+        psserver->SendSystemResult(client->GetClientNum(), "%s will next log in at your current location", data->target.GetData());
+    }
+}
+
 void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client *client) //, gemObject* subject)
 {
     AdminCmdDataTeleport* data = dynamic_cast<AdminCmdDataTeleport*>(cmddata);
@@ -5138,7 +5178,7 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* 
         psserver->SendSystemInfo(client->GetClientNum(), "Use: /teleport <subject> <destination>\n"
                                  "Subject    : me/target/<object name>/<NPC name>/<player name>/eid:<EID>/pid:<PID>\n"
                                  "Destination: me [<instance>]/target/<object name>/<NPC name>/<player name>/eid:<EID>/pid:<PID>/\n"
-                                 "             here [<instance>]/last/spawn/restore/map [<map name>|here] <x> <y> <z> [<instance>]\n"
+                                 "             here [<instance>]/last/spawn/restore/map <map name>|here|list [<x> <y> <z> [<instance>]]\n"
                                  "             there <instance>");
         return;
     }
@@ -5146,45 +5186,29 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* 
     // If player is offline and the special argument is called
     if (!data->IsOnline() && data->dest == "restore")
     {
-        psString sql;
-        iSector * gmSector; // sector of gamemaster issuing the cmd
-        csVector3 gmPoint;  // position of the gm
-        psSectorInfo * gmSectorInfo = NULL;
-        float yRot = 0.0;
-        client->GetActor()->GetPosition(gmPoint, yRot, gmSector);
-
-        if (gmSector != NULL)
-        {
-            gmSectorInfo = psserver->GetCacheManager()->GetSectorInfoByName(gmSector->QueryObject()->GetName());
-        }
-        if (gmSectorInfo == NULL)
-        {
-            psserver->SendSystemError(client->GetClientNum(), "Sector not found!");
-            return;
-        }
-
-        //escape the player name so it's not possible to do nasty things
-        csString escapedName;
-        db->Escape( escapedName, data->target.GetDataSafe() );
-
-        sql.AppendFmt("update characters set loc_x=%10.2f, loc_y=%10.2f, loc_z=%10.2f, loc_yrot=%10.2f, loc_sector_id=%u, loc_instance=%u where name=\"%s\"",
-            gmPoint.x, gmPoint.y, gmPoint.z, yRot, gmSectorInfo->uid, client->GetActor()->GetInstance(), escapedName.GetDataSafe());
-
-        if (db->CommandPump(sql) != 1)
-        {
-            Error3 ("Couldn't save character's position to database.\nCommand was "
-                    "<%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
-
-            psserver->SendSystemError(client->GetClientNum(), "Offline character %s could not be moved!", data->target.GetData());
-        }
-        else
-            psserver->SendSystemResult(client->GetClientNum(), "%s will next log in at your current location", data->target.GetData());
-
+        TeleportOfflineCharacter(client, data);
         return;
     }
     else if (data->targetObject == NULL)
     {
         psserver->SendSystemError(client->GetClientNum(), "Cannot teleport target");
+        return;
+    }
+
+    if (data->dest == "map" && (data->destSector == "list" || data->destMap == "list") )
+    {
+        // Build list of sectors
+        csString sectorList;
+        csHash<psSectorInfo*>::GlobalIterator iter(psserver->GetCacheManager()->GetSectorIterator());
+        while (iter.HasNext())
+        {
+            psSectorInfo* info = iter.Next();
+            sectorList += "\n";
+            sectorList += info->name;
+        }
+
+        psserver->SendSystemInfo(client->GetClientNum(),"List of sectors:%s",
+                                 sectorList.GetDataSafe());
         return;
     }
     
@@ -5195,7 +5219,8 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* 
 
     if ( !GetTargetOfTeleport(client, msg, data, targetSector, targetPoint, yRot, data->targetObject, targetInstance) )
     {
-        psserver->SendSystemError(client->GetClientNum(), "Cannot teleport %s to %s", data->target.GetData(), data->destObj.target.GetData() );
+        psserver->SendSystemError(client->GetClientNum(), "Cannot teleport %s to %s",
+                                  data->target.GetData(), data->destObj.target.GetData() );
         return;
     }
 
@@ -6370,7 +6395,7 @@ bool AdminManager::GetStartOfMap(int clientnum, const csString & map, iSector * 
     csRefArray<StartPosition> positions = loader->GetStartPositions();
     for(size_t i = 0; i < positions.GetSize(); ++i)
     {
-        if(positions.Get(i)->zone == map)
+        if ( positions.Get(i)->zone == map || positions.Get(i)->sector == map )
         {
             targetSector = engine->FindSector(positions.Get(i)->sector);
             targetPoint = positions.Get(i)->position;

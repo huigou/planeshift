@@ -3120,6 +3120,12 @@ protected:
      */ 
     void Slide(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
 
+    /** @brief Teleport an offline character.
+     * @param client The GM client the command came from.
+     * @param data A pointer to the command parser object with target data
+     */
+    void TeleportOfflineCharacter(Client* client, AdminCmdDataTeleport* data);
+
     /** @brief Move an object to a certain position.
      * @param me The incoming message from the GM
      * @param msg The cracked command message.
