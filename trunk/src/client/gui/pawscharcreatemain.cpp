@@ -844,7 +844,7 @@ bool pawsCreationMain::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/,
         case NAMEHELP_BUTTON:
         {
             csString help;
-            help = "A full name is required, the first & last name separated with a space. ";
+            help = "A first and last name are required. ";
             help += "You can use any alphabetic (A-Z) in your name, but no numbers. ";
             help += "Each name must be between 3 and 27 letters.\n";
             help += "The name should follow the rules here:\n";
