@@ -300,7 +300,7 @@ void pawsQuestListWindow::HandleMessage ( MsgEntry* me )
     }
 }
 
-bool pawsQuestListWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
+bool pawsQuestListWindow::OnButtonReleased(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     // We know that the calling widget is a button.
     int button = widget->GetID();
