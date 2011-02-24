@@ -421,7 +421,7 @@ bool pawsSketchWindow::OnKeyDown( utf32_char keyCode, utf32_char key, int modifi
         }
         return true;
     }
-    else if (key == 's' && !readOnly) //allow saving also when not in edit mode but check if the player saving the sketch
+    else if (key == 's' )//&& !readOnly) //allow saving also when not in edit mode but check if the player saving the sketch
     {                                 //has editing rights over the sketch it's being saved
             SaveSketch();
             return true;
@@ -537,13 +537,14 @@ void pawsSketchWindow::AddSketchText()
     }
 }
 
-void pawsSketchWindow::OnStringEntered(const char* /*name*/, int /*param*/, const char* value)
+void pawsSketchWindow::OnStringEntered(const char* name, int /*param*/, const char* value)
 {
+    printf("called\n");
     stringPending = false;
-
+printf("%s %d\n", value, strlen(value));
     if (!value || !strlen(value))
         return;
-
+printf("entering\n");
     if (!strcasecmp(name,"AddText"))
     {
         // deselect the previous object, if any
