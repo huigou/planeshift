@@ -539,12 +539,11 @@ void pawsSketchWindow::AddSketchText()
 
 void pawsSketchWindow::OnStringEntered(const char* name, int /*param*/, const char* value)
 {
-    printf("called\n");
     stringPending = false;
-printf("%s %d\n", value, strlen(value));
+
     if (!value || !strlen(value))
         return;
-printf("entering\n");
+
     if (!strcasecmp(name,"AddText"))
     {
         // deselect the previous object, if any
