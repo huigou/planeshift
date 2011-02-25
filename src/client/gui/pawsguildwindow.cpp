@@ -635,11 +635,11 @@ void pawsGuildWindow::ExtractLevelInfo(csRef<iDocumentNode> levelNode)
     }
 }
 
-bool pawsGuildWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
+bool pawsGuildWindow::OnButtonReleased(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     guildMemberInfo * member;
 
-    Notify3(LOG_ANY,"Widget %s(%d) pressed",widget->GetName(),widget->GetID());
+    Notify3(LOG_ANY,"Widget %s(%d) released",widget->GetName(),widget->GetID());
 
     int row,col;
     if (levelList->ConvertFromAutoID(widget->GetID(),row,col))
