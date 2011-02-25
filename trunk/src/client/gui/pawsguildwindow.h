@@ -48,7 +48,7 @@ public:
     virtual ~pawsGuildWindow();
 
     virtual bool PostSetup();
-    virtual bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );
+    virtual bool OnButtonReleased( int mouseButton, int keyModifier, pawsWidget* widget );
     virtual void Show();
     virtual void Hide();
 
