@@ -224,7 +224,7 @@ void pawsCharacterPickerWindow::OnStringEntered(const char* /*name*/, int /*para
     }
 }
 
-bool pawsCharacterPickerWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifer*/, pawsWidget* widget)
+bool pawsCharacterPickerWindow::OnButtonReleased(int /*mouseButton*/, int /*keyModifer*/, pawsWidget* widget)
 {
     if(!widget)
         return false;
