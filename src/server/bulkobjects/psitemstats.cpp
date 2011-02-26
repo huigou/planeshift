@@ -604,7 +604,7 @@ bool psItemStats::ReadItemStats(iResultRow& row)
         reqs[1].name = row["requirement_2_name"];
         reqs[1].min_value = row.GetFloat("requirement_2_value");
     }
-    if(row["requirement_1_name"])
+    if(row["requirement_3_name"])
     {
         reqs[2].name = row["requirement_3_name"];
         reqs[2].min_value = row.GetFloat("requirement_3_value");
