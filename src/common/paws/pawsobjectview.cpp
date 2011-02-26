@@ -259,7 +259,7 @@ bool pawsObjectView::ContinueLoad()
     }
     else
     {
-        loader->ContinueLoading(false);
+        loader->ContinueLoading(true);
         return false;
     }
 }
