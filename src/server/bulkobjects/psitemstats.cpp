@@ -616,6 +616,8 @@ bool psItemStats::ReadItemStats(iResultRow& row)
         reqs.Push(req);
     }
 
+    reqs.ShrinkBestFit();
+
     psString strTmpAmmoList = row["item_type_id_ammo"];
     csStringArray strTmpAmmoListArray;
     strTmpAmmoList.Split(strTmpAmmoListArray, ',');
@@ -1521,6 +1523,7 @@ bool psItemStats::SetRequirement(const csString & statName, float statValue)
     req.name = statName;
     req.min_value = statValue;
     reqs.Push(req);
+    reqs.ShrinkBestFit();
 
     return true;
 }
