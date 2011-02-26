@@ -100,6 +100,19 @@ bool Tribe::LoadNeed(iResultRow& row)
     if (needType.CompareNoCase(TribeNeed::TribeNeedTypeName[TribeNeed::GENERIC]))
     {
         need = new TribeNeedGeneric(needName,perception,needStartValue,needGrowthValue);
+    } else if (needType.CompareNoCase(TribeNeed::TribeNeedTypeName[TribeNeed::TIME_OF_DAY]))
+    {
+        csArray<csString> arguments = psSplit(row.GetString("arguments"), ',');
+        if (arguments.GetSize() != 2)
+        {
+            Error3("No start and end time for time of day vent for tribe %d need %d",id,needId);
+            return false;
+        }
+            
+        int startHour = atoi(arguments[0]);
+        int endHour   = atoi(arguments[1]);
+            
+        need = new TribeNeedTimeOfDay(needName,perception,needStartValue,needGrowthValue,startHour,endHour);
     } else
     {
         // The rest of the needs are depened on other needs.
@@ -107,8 +120,8 @@ bool Tribe::LoadNeed(iResultRow& row)
 
         if (depend == NULL)
         {
-            Error4("Failed to find dependend need '%s' for the need %d for tribe %d",
-                   dependName.GetDataSafe(),needId,id);
+            Error5("Failed to find dependend need '%s' for the %s need %d for tribe %d",
+                   dependName.GetDataSafe(),needType.GetDataSafe(),needId,id);
             return false;
         }
 

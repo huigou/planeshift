@@ -256,6 +256,12 @@ csArray<csString> psSplit(csString& str, char delimer)
     return split;
 }
 
+csArray<csString> psSplit(const char* str, char delimer)
+{
+    csString tempStr(str);
+    return psSplit(tempStr, delimer);
+}
+
 bool isFlagSet(const psString & flagstr, const char * flag)
 {
     return flagstr.FindSubString(flag,0,XML_CASE_INSENSITIVE)!=-1;

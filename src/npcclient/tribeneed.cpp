@@ -34,11 +34,12 @@
 
 const char* TribeNeed::TribeNeedTypeName[] =
 {
+    "DEATH_RATE",
     "GENERIC",
-    "RESOURCE_AREA",
     "REPRODUCE",
+    "RESOURCE_AREA",
     "RESOURCE_RATE",
-    "DEATH_RATE"
+    "TIME_OF_DAY",
     ""
 };
 
@@ -213,6 +214,30 @@ void TribeNeedDeathRate::UpdateNeed(NPC * npc)
 const TribeNeed* TribeNeedDeathRate::GetNeed() const
 {
     return dependendNeed;
+}
+
+// ---------------------------------------------------------------------------------
+void TribeNeedTimeOfDay::UpdateNeed(NPC * npc)
+{
+    int gameTODHour = psNPCClient::npcclient->GetGameTODHour();
+
+    // If current hour is less than start hour, add a cycle
+    if (gameTODHour < startHour) gameTODHour += 24;
+
+    if (gameTODHour >= startHour && gameTODHour <= endHour)
+    {
+        current_need += needGrowthValue;
+    }
+    else
+    {
+        current_need = 0.0;
+    }
+    
+}
+
+const TribeNeed* TribeNeedTimeOfDay::GetNeed() const
+{
+    return this;
 }
 
 // ---------------------------------------------------------------------------------

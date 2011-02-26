@@ -102,6 +102,7 @@ bool psContain(const csString& str, const csArray<csString>& strs);
 bool psSentenceContain(const csString& sentence,const csString& word);
 const char* PS_GetFileName(const char* path);
 csArray<csString> psSplit(csString& str, char delimer);
+csArray<csString> psSplit(const char* str, char delimer);
 bool isFlagSet(const psString & flagstr, const char * flag);
 csString toString(const csVector3& pos);
 csString toString(const csVector3& pos, iSector* sector);

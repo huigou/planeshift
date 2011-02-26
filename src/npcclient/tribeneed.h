@@ -43,11 +43,12 @@ public:
      */
     enum TribeNeedType
     {
+        DEATH_RATE,
         GENERIC,
-        RESOURCE_AREA,
         REPRODUCE,
+        RESOURCE_AREA,
         RESOURCE_RATE,
-        DEATH_RATE
+        TIME_OF_DAY
     };
 
     static const char *TribeNeedTypeName[];    
@@ -389,6 +390,39 @@ public:
 private:
     TribeNeed* dependendNeed;
     float      limit;
+};
+
+// ---------------------------------------------------------------------------------
+
+/** TribeNeedTimeOfDay respond to the time of day.
+ *
+ *  Will start to grow need when the time of day is reached.
+ */
+class TribeNeedTimeOfDay : public TribeNeed
+{
+public:
+    
+    TribeNeedTimeOfDay(const csString& name, const csString& perception,
+                       float needStartValue, float needGrowthValue,
+                       int startHour, int endHour)
+        :TribeNeed(TIME_OF_DAY,name,perception,needStartValue,needGrowthValue),
+         startHour(startHour), endHour(endHour)
+    {
+        // Make sure the endHour is greather than the start hour
+        if (endHour < startHour) endHour += 24;
+    }
+
+    virtual ~TribeNeedTimeOfDay()
+    {
+    }
+
+    virtual void UpdateNeed(NPC * npc);
+
+    virtual const TribeNeed* GetNeed() const;
+    
+private:
+    int        startHour;
+    int        endHour;
 };
 
 // ---------------------------------------------------------------------------------

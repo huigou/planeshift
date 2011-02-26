@@ -524,7 +524,9 @@ protected:
      * NPC.
      */
     void PerceptProximityLocations();
-    
+public:
+    static psNPCClient*             npcclient;
+protected:    
     psNetConnection*                connection;
     iObjectRegistry*                objreg;
     csRef<iEngine>                  engine;

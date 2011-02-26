@@ -140,6 +140,9 @@ CS_PLUGIN_NAMESPACE_BEGIN(dbmysql)
         const char *operator[](int whichfield);
         const char *operator[](const char *fieldname);
 
+        const char* GetString(int whichfield);
+        const char* GetString(const char *fieldname);
+
         int GetInt(int whichfield);
         int GetInt(const char *fieldname);
 
