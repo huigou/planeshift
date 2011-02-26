@@ -345,6 +345,11 @@ public:
      */
     size_t GetNpcListAmount() { return npcs.GetSize(); }
 
+    /** Retrive the current tick counter
+     */
+    unsigned int GetTickCounter() const { return tick_counter; }
+
+
     /**
      * Find one npc and print its current state info.
      */

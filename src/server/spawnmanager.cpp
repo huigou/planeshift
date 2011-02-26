@@ -822,12 +822,12 @@ void SpawnManager::Respawn(PID playerID, SpawnRule* spawnRule)
 }
 
 
-void SpawnManager::Respawn(psCharacter* chardata, InstanceID instance, csVector3& where, float rot, csString& sector)
+void SpawnManager::Respawn(psCharacter* chardata, InstanceID instance, csVector3& where, float rot, const char* sector)
 {
     psSectorInfo* spawnsector = cacheManager->GetSectorInfoByName(sector);
     if (spawnsector==NULL)
     {
-        Error2("Spawn message indicated unresolvable sector '%s'\n",(const char*)sector);
+        Error2("Spawn message indicated unresolvable sector '%s'\n",sector);
         return;
     }
 

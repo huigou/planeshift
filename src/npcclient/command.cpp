@@ -350,6 +350,8 @@ int com_setlog(char *line)
 
     pslog::SetFlag(log, flag, filter_id);
     
+    npcclient->SaveLogSettings();
+
     return 0;
 }
 
@@ -379,6 +381,7 @@ int com_showtime(char *)
 int com_status(char *)
 {
     CPrintf(CON_CMDOUTPUT,"Amount of loaded npcs: %d\n", npcclient->GetNpcListAmount());
+    CPrintf(CON_CMDOUTPUT,"Tick counter         : %d\n", npcclient->GetTickCounter());
     return 0;
 }
 
