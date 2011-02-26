@@ -264,8 +264,8 @@ void psNetConnection::CheckLinkDead (csTicks currenttime)
             }
 
             // If no packets received ever, then use -1 to indicate cannot connect 
-            psDisconnectMessage msgb(0,server->pcknumin?0:-1, disconnectTextMsg.GetData());
-            HandleCompletedMessage(msgb.msg, server, &server->addr,NULL);
+           // psDisconnectMessage msgb(0,server->pcknumin?0:-1, disconnectTextMsg.GetData());
+           // HandleCompletedMessage(msgb.msg, server, &server->addr,NULL);
         }
     }
     else

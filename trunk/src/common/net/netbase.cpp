@@ -186,26 +186,29 @@ bool NetBase::CheckIn()
     psNetPacket *bufpacket = psNetPacket::NetPacketFromBuffer(input_buffer,packetlen);
     if (bufpacket==NULL)
     {
-        unsigned int a1,a2,a3,a4;
-#ifdef WIN32
-        unsigned long a = addr.sin_addr.S_un.S_addr;
-#else
-        unsigned long a = addr.sin_addr.s_addr;
-#endif
-        
-        a1 = a&0x000000FF;
-        a2 = (a&0x0000FF00)>>8;
-        a3 = (a&0x00FF0000)>>16;
-        a4 = (a&0xFF000000)>>24;
+        char addrText[INET_ADDRSTRLEN];
+
+        //for win32 for now only inet_ntoa as inet_ntop wasn't supported till vista.
+        //it has the same degree of compatibility of the previous code and it's supported till win2000
+        #ifdef WIN32
+        strcpy(addrText, inet_ntoa(addr.sin_addr));
+        #else
+        //there was a failure in conversion if null
+        if(!inet_ntop(addr.sin_family,&addr.sin_addr, addrText, sizeof(addrText)))
+        {
+            strcpy(addrText, "UNKNOWN");
+        }
+        #endif
+
         // The data received was too small to make a full packet.
         if (connection)
         {
-            Debug3(LOG_NET,connection->clientnum,"Too short packet received from client %d (%d bytes)\n",connection->clientnum,packetlen);
+            Debug4(LOG_NET, connection->clientnum, "Too short packet received from client %d (IP: %s) (%d bytes)", connection->clientnum, addrText, packetlen);
         }
         else
         {
-            Debug6(LOG_NET,0,"Too short packet received from IP address %d.%d.%d.%d. (%d bytes) No existing connection from this IP.\n",
-                a1, a2, a3, a4,packetlen);
+            Debug3(LOG_NET, 0, "Too short packet received from IP address %s. (%d bytes) No existing connection from this IP.",
+                addrText, packetlen);
         }
         return true; // Continue processing more packets if available
     }
@@ -217,29 +220,30 @@ bool NetBase::CheckIn()
     // Check for too-big packets - no harm in processing them, but probably a bug somewhere
     if (bufpacket->GetPacketSize() < static_cast<unsigned int>(packetlen))
     {
-        unsigned int a1,a2,a3,a4;
-#ifdef WIN32
-        unsigned long a = addr.sin_addr.S_un.S_addr;
-#else
-        unsigned long a = addr.sin_addr.s_addr;
-#endif
-        
-        a1 = a&0x000000FF;
-        a2 = (a&0x0000FF00)>>8;
-        a3 = (a&0x00FF0000)>>16;
-        a4 = (a&0xFF000000)>>24;
+        char addrText[INET_ADDRSTRLEN];
 
+        //for win32 for now only inet_ntoa as inet_ntop wasn't supported till vista.
+        //it has the same degree of compatibility of the previous code and it's supported till win2000
+        #ifdef WIN32
+        strcpy(addrText, inet_ntoa(addr.sin_addr));
+        #else
+        //there was a failure in conversion if null
+        if(!inet_ntop(addr.sin_family,&addr.sin_addr, addrText, sizeof(addrText)))
+        {
+            strcpy(addrText, "UNKNOWN");
+        }
+        #endif
+        
         if (connection)
         {
-            Debug4(LOG_NET,connection->clientnum,"Too long packet received from client %d (%d bytes received, header reports %zu bytes)\n",
-                connection->clientnum,packetlen,bufpacket->GetPacketSize());
+            Debug5(LOG_NET, connection->clientnum, "Too long packet received from client %d (IP: %s) (%d bytes received, header reports %zu bytes)",
+                connection->clientnum, addrText, packetlen, bufpacket->GetPacketSize());
         }
         else
         {
             
-            pslog::LogMessage (__FILE__, __LINE__, __FUNCTION__,CS_REPORTER_SEVERITY_DEBUG, LOG_NET,
-                0,"Too long packet received from IP address %d.%d.%d.%d. (%d bytes received, header reports %zu bytes) No existing connection from this IP.\n",
-                a1, a2, a3, a4 ,packetlen,bufpacket->GetPacketSize());
+            Debug4(LOG_NET, 0,"Too long packet received from IP address %s. (%d bytes received, header reports %zu bytes) No existing connection from this IP.",
+                   addrText, packetlen, bufpacket->GetPacketSize());
         }
     }
 
