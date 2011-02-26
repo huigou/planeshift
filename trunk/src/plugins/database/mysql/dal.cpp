@@ -520,6 +520,16 @@ CS_PLUGIN_NAMESPACE_BEGIN(dbmysql)
         return ""; // Illegal name.
     }
 
+    const char* psResultRow::GetString(int whichfield)
+    {
+        return this->operator [](whichfield);
+    }
+
+    const char* psResultRow::GetString(const char *fieldname)
+    {
+        return this->operator [](fieldname);
+    }
+
     int psResultRow::GetInt(int whichfield)
     {
         const char *ptr = this->operator [](whichfield);

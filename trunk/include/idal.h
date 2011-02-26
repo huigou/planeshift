@@ -146,6 +146,9 @@ public:
      */
     virtual const char *operator[](const char *fieldname)=0;
 
+    virtual const char* GetString(int whichfield)=0;
+    virtual const char* GetString(const char *fieldname)=0;
+
     virtual int GetInt(int whichfield)=0;
     virtual int GetInt(const char *fieldname)=0;
 

@@ -43,6 +43,9 @@ INSERT INTO `tribe_needs` VALUES (1,0,5,'REPRODUCE'    ,'Reproduce','tribe:repro
 # Two gemeric tribe needs. To show that any perceptions could be triggered at any rate.
 INSERT INTO `tribe_needs` VALUES (1,0,6,'GENERIC'      ,'Walk1'    ,'tribe:path1'    ,''       ,'0.00','0.11','');
 INSERT INTO `tribe_needs` VALUES (1,0,7,'GENERIC'      ,'Walk2'    ,'tribe:path2'    ,''       ,'0.00','0.09','');
+#
+# The tribe should go home during night
+INSERT INTO `tribe_needs` VALUES (1,0,8,'TIME_OF_DAY'  ,'Night',    'tribe:night'        ,''        ,'100.00','10.0','21,9');
 
 
 #
@@ -68,4 +71,7 @@ INSERT INTO `tribe_needs` VALUES (2,0,6,'GENERIC'      ,'Move'     ,'tribe:move'
 #
 # The tribe home should be guarded
 INSERT INTO `tribe_needs` VALUES (2,0,7,'GENERIC'      ,'GuardHome','tribe:guard'    ,''        ,'0.00','0.30','');
+#
+# The tribe should go home during day
+INSERT INTO `tribe_needs` VALUES (2,0,8,'TIME_OF_DAY'  ,'Day',    'tribe:day'        ,''        ,'100.00','10.0','9,21');
 

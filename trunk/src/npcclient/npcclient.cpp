@@ -85,8 +85,11 @@ public:
     virtual csString ToString() const;
 };
 
+psNPCClient* psNPCClient::npcclient = NULL;
+
 psNPCClient::psNPCClient () : serverconsole(NULL)
 {
+    npcclient    = this;  // Static pointer to self
     world        = NULL;
     PFMaps       = NULL;
     pathNetwork  = NULL;
