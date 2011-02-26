@@ -489,7 +489,7 @@ void WorkManager::HandleRepairEvent(psWorkGameEvent* workEvent)
 // Production
 //-----------------------------------------------------------------------------
 
-void WorkManager::HandleProduction(gemActor* actor, size_t type,const char *reward, Client *client)
+void WorkManager::HandleProduction(gemActor* actor, size_t type, const char *reward, Client *client)
 {
     if ( client && !LoadLocalVars(client) )
     {
@@ -631,8 +631,9 @@ void WorkManager::HandleProduction(gemActor* actor, size_t type,const char *rewa
     int time_req = nr->anim_duration_seconds;
 
     // Send anim and confirmation message to client and nearby people
-    psOverrideActionMessage msg(client->GetClientNum(),client->GetActor()->GetEID(),nr->anim,nr->anim_duration_seconds);
+    psOverrideActionMessage msg(0,actor->GetEID(),nr->anim,nr->anim_duration_seconds);
     psserver->GetEventManager()->Multicast(msg.msg, actor->GetMulticastClients(),0,PROX_LIST_ANY_RANGE);
+
     actor->SetMode(PSCHARACTER_MODE_WORK);
 
     actor->GetCharacterData()->SetStaminaRegenerationWork(nr->skill->id);
