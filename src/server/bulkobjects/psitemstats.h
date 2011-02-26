@@ -454,7 +454,7 @@ private:
 
     csString stat_type;
 
-    ItemRequirement reqs[3];
+    csArray<ItemRequirement> reqs;
     int spell_id_on_hit;
     float spell_on_hit_probability;
     int spell_id_feature;
@@ -698,7 +698,7 @@ public:
     /** Gets the list of requirements of this item, used by psitem to check them over a player
      *  @return A pointer to the start of the array of itemRequirement (they are 3 elements)
      */
-    ItemRequirement *GetRequirements();
+    csArray<ItemRequirement> &GetRequirements();
     bool SetRequirement(const csString & statName, float statValue);
 
     /**
