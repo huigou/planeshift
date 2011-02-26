@@ -2466,14 +2466,8 @@ bool psItem::CheckRequirements( psCharacter* charData, csString& resp )
 {
     //keeps the requirement list for use later.
     csArray<ItemRequirement> requirements;
-    //get the basic requirements we will have to check both. note this is an array of 3 elements.
-    ItemRequirement *baseReqs = base_stats->GetRequirements();
-    //first copy in the array the requirements coming from the base stats as is.
-    for(int i = 0; i < 3; i++)
-    {
-        if(!baseReqs[i].name.IsEmpty())
-            requirements.Push(baseReqs[i]);
-    }
+    //get the basic requirements we will have to check both.
+    requirements = base_stats->GetRequirements();
 
     //check if the requirements in the modded stat, if presents, are higher.
     //maybe this should be optimized?

@@ -594,20 +594,26 @@ bool psItemStats::ReadItemStats(iResultRow& row)
     SetCategory(category);
 
     //set only if there is a valid value
-    if(row["requirement_1_name"])
+    if(row["requirement_1_name"] && strlen(row["requirement_1_name"]))
     {
-        reqs[0].name = row["requirement_1_name"];
-        reqs[0].min_value = row.GetFloat("requirement_1_value");
+        ItemRequirement req;
+        req.name = row["requirement_1_name"];
+        req.min_value = row.GetFloat("requirement_1_value");
+        reqs.Push(req);
     }
-    if(row["requirement_2_name"])
+    if(row["requirement_2_name"] && strlen(row["requirement_2_name"]))
     {
-        reqs[1].name = row["requirement_2_name"];
-        reqs[1].min_value = row.GetFloat("requirement_2_value");
+        ItemRequirement req;
+        req.name = row["requirement_2_name"];
+        req.min_value = row.GetFloat("requirement_2_value");
+        reqs.Push(req);
     }
-    if(row["requirement_3_name"])
+    if(row["requirement_3_name"] && strlen(row["requirement_3_name"]))
     {
-        reqs[2].name = row["requirement_3_name"];
-        reqs[2].min_value = row.GetFloat("requirement_3_value");
+        ItemRequirement req;
+        req.name = row["requirement_3_name"];
+        req.min_value = row.GetFloat("requirement_3_value");
+        reqs.Push(req);
     }
 
     psString strTmpAmmoList = row["item_type_id_ammo"];
@@ -950,12 +956,22 @@ bool psItemStats::Save()
     update->AddField("cstr_gfx_mesh", mesh_name); //Mesh
 
     // stat requirements
-    update->AddField("requirement_1_name", reqs[0].name);
-    update->AddField("requirement_1_value", reqs[0].min_value);
-    update->AddField("requirement_2_name", reqs[1].name);
-    update->AddField("requirement_2_value", reqs[1].min_value);
-    update->AddField("requirement_3_name", reqs[2].name);
-    update->AddField("requirement_3_value", reqs[2].min_value);
+    if(reqs.GetSize() >= 1)
+    {
+        update->AddField("requirement_1_name", reqs[0].name);
+        update->AddField("requirement_1_value", reqs[0].min_value);
+    }
+
+    if(reqs.GetSize() >= 2)
+    {
+        update->AddField("requirement_2_name", reqs[1].name);
+        update->AddField("requirement_2_value", reqs[1].min_value);
+    }
+    if(reqs.GetSize() >= 3)
+    {
+        update->AddField("requirement_3_name", reqs[2].name);
+        update->AddField("requirement_3_value", reqs[2].min_value);
+    }
 
     // equip/unequip events
     //update->AddField("equip_script", we haven't saved the script XML);
@@ -1477,7 +1493,7 @@ bool psItemStats::SetEquipScript(const csString & equipXML)
     return true;
 }
 
-ItemRequirement *psItemStats::GetRequirements()
+csArray<ItemRequirement> &psItemStats::GetRequirements()
 {
     return reqs;
 }
@@ -1487,7 +1503,7 @@ bool psItemStats::SetRequirement(const csString & statName, float statValue)
     CS_ASSERT(!statName.IsEmpty());
 
     // If it's already required, use the higher of the two requirements.
-    for (int i = 0; i < 3; i++)
+    for (size_t i = 0; i < reqs.GetSize(); i++)
     {
         if (statName.CompareNoCase(reqs[i].name))
         {
@@ -1496,19 +1512,17 @@ bool psItemStats::SetRequirement(const csString & statName, float statValue)
         }
     }
 
-    // Otherwise try and add it.
-    for (int i = 0; i < 3; i++)
-    {
-        if (reqs[i].name.IsEmpty())
-        {
-            reqs[i].name = statName;
-            reqs[i].min_value = statValue;
-            return true;
-        }
-    }
-
     // No space available (we're limited to three requirements by the DB)
-    return false;
+    if(reqs.GetSize() >= 3)
+        return true;
+
+    // Otherwise try and add it.
+    ItemRequirement req;
+    req.name = statName;
+    req.min_value = statValue;
+    reqs.Push(req);
+
+    return true;
 }
 
 psItem *psItemStats::InstantiateBasicItem(bool transient)
