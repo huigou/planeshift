@@ -255,7 +255,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
 
                 // Extract the data
                 uint32_t len = 0;
-				void *data = msg->GetBufferPointerUnsafe(len);
+                void *data = msg->GetBufferPointerUnsafe(len);
 
                 // Make sure we haven't run past the end of the buffer
                 if (msg->overrun)
@@ -264,7 +264,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                     break;
                 }
                 
-                if (access_ptrs->msgstrings && access_ptrs->engine)
+                if ( (access_ptrs->msgstrings || access_ptrs->msgstringshash) && access_ptrs->engine)
                 {
                     psDRMessage drmsg(data,len,
                                       access_ptrs->msgstrings, access_ptrs->msgstringshash,
@@ -523,7 +523,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 EID character_id = EID(msg->GetUInt32());
                 float rot = msg->GetFloat();
                 where = msg->GetVector();
-                iSector* sector = msg->GetSector(access_ptrs->msgstrings, 0, access_ptrs->engine);
+                iSector* sector = msg->GetSector(access_ptrs->msgstrings, access_ptrs->msgstringshash, access_ptrs->engine);
 
                 // Make sure we haven't run past the end of the buffer
                 if (msg->overrun)
@@ -772,7 +772,7 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 EID npc_eid = EID(msg->GetUInt32());
                 csVector3 pos = msg->GetVector();
                 float yrot = msg->GetFloat();
-                iSector* sector = msg->GetSector( access_ptrs->msgstrings, 0, access_ptrs->engine );
+                iSector* sector = msg->GetSector( access_ptrs->msgstrings, access_ptrs->msgstringshash, access_ptrs->engine );
                 InstanceID instance = msg->GetUInt32();
                 
                 msgtext.AppendFmt("NPC: %s Pos: %s Rot: %f Inst: %d",ShowID(npc_eid),toString(pos,sector).GetDataSafe(),yrot,instance);

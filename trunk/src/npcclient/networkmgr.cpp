@@ -1257,8 +1257,8 @@ void NetworkManager::QueueResurrectCommand(csVector3 where, float rot, iSector* 
 {
     CheckCommandsOverrun(100);
 
-    outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_RESURRECT);
-    outbound->msg->Add(character_id.Unbox());
+    outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_RESURRECT );
+    outbound->msg->Add( character_id.Unbox() );
     outbound->msg->Add( (float)rot );
     outbound->msg->Add( where );
     outbound->msg->Add( sector, 0, GetMsgStrings() );

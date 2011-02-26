@@ -409,6 +409,7 @@ void BehaviorSet::Advance(csTicks delta,NPC *npc)
                 // This behavior is done so set it inactive
                 active->SetIsActive(false);
                 active = NULL;
+                break;
             }
             else
             {
@@ -958,7 +959,9 @@ bool Behavior::RunScript(NPC *npc, EventManager *eventmgr, bool interrupted)
 
     // Without this, we will get an infinite loop.
     if (start_step >= sequence.GetSize())
-	    start_step = 0;
+    {
+        start_step = 0;
+    }
 
     while (true)
     {

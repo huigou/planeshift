@@ -621,6 +621,11 @@ void Tribe::GetHome(csVector3& pos, float& radius, iSector* &sector)
     if (homeSector == NULL)
     {
         homeSector = npcclient->GetEngine()->FindSector(homeSectorName);
+        if (!homeSector)
+        {
+            Error3("Failed to find sector for tribe %s home for homeSectorName: %s",
+                   GetName(),homeSectorName.GetDataSafe());
+        }
     }
     sector = homeSector;
 }
