@@ -1310,7 +1310,8 @@ void psNPCLoader::WriteFactions()
     //      ....
     // </factions>
 
-    csString factions = npc->GetFactionStandings();
+    csString factions;
+    npc->GetFactions()->GetFactionListCSV(factions);
 
     // consider (null) and NULL as empty entries
     if (factions.StartsWith("(null)") || factions.StartsWith("NULL"))

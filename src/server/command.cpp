@@ -1790,7 +1790,7 @@ int com_factions(char *)
         while (iter.HasNext())
         {
             Faction * faction = iter.Next();
-            FactionSet * factionSet = actors[j]->GetFactions();
+            FactionSet * factionSet = actors[j]->GetCharacterData()->GetFactions();
             int standing = 0;
             float weight = 0.0;
             factionSet->GetFactionStanding(faction->id,standing,weight);

@@ -489,7 +489,7 @@ void UserManager::SendCharacterDescription(Client * client, gemActor *actor, boo
         }
 
         csHash<FactionStanding*, int>::GlobalIterator iter(
-            charData->GetActor()->GetFactions()->GetStandings().GetIterator());
+            charData->GetFactions()->GetStandings().GetIterator());
         while(iter.HasNext())
         {
             FactionStanding* standing = iter.Next();

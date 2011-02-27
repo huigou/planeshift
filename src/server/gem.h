@@ -63,7 +63,6 @@ class psItem;
 class csMatrix3;
 class NPCManager;
 class psGlyphList;
-class FactionSet;
 class ProgressionManager;
 class psNPCDialog;
 class psAllEntityPosMessage;
@@ -726,7 +725,6 @@ class gemActor :  public gemObject, public iDeathNotificationObject
 {
 protected:
     psCharacter *psChar;
-    FactionSet *factions;
     PID pid; ///< Player ID (also known as character ID or PID)
     csRef<PlayerGroup> group;
 
@@ -1002,7 +1000,6 @@ public:
     void HandleDeath();
 
     float GetRelativeFaction(gemActor *speaker);
-    FactionSet *GetFactions() { return factions; }
 
     csPtr<PlayerGroup> GetGroup();
     void SetGroup(PlayerGroup *group);
