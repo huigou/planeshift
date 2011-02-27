@@ -704,6 +704,13 @@ bool UpdaterEngine::SelfUpdate(int selfUpdating)
                 return false;
             }
 
+            csString path = appName;
+#if defined(CS_PLATFORM_MAXOSX)
+            path.AppendFmt(".app/Contents/MacOS/%s_static", appName.GetData());
+#endif
+            //save previous permissions
+            csRef<FileStat> fs = fileUtil->StatFile("/this/" + path);
+
             csString cmd;
             csRef<iDataBuffer> thisPath = vfs->GetRealPath("/this/");
             cmd.Format("cd %s; unzip -oqq %s", thisPath->GetData(), zip.GetData());
@@ -713,11 +720,10 @@ bool UpdaterEngine::SelfUpdate(int selfUpdating)
                 printf("system(%s) failed!\n", cmd.GetData());
             }
 
+            //restore previous file permissions
+            fileUtil->SetPermissions("/this/" + path, fs);
+
             // Create a new process of the updater and exit.
-            csString path = appName;
-#if defined(CS_PLATFORM_MAXOSX)
-            path.AppendFmt(".app/Contents/MacOS/%s_static", appName.GetData());
-#endif
             if(fork() == 0)
                 execl(path, path, "selfUpdateSecond", NULL);
 
