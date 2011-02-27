@@ -21,6 +21,7 @@
 // Crystal Space Includes
 //=============================================================================
 #include <csutil/csstring.h>
+#include <csutil/stringarray.h>
 #include <iutil/object.h>
 #include <iengine/sector.h>
 #include <iengine/engine.h>
@@ -102,7 +103,8 @@ bool Tribe::LoadNeed(iResultRow& row)
         need = new TribeNeedGeneric(needName,perception,needStartValue,needGrowthValue);
     } else if (needType.CompareNoCase(TribeNeed::TribeNeedTypeName[TribeNeed::TIME_OF_DAY]))
     {
-        csArray<csString> arguments = psSplit(row.GetString("arguments"), ',');
+        CS::Utility::StringArray<> arguments;
+        arguments.SplitString(row.GetString("arguments"), ",");
         if (arguments.GetSize() != 2)
         {
             Error3("No start and end time for time of day vent for tribe %d need %d",id,needId);
@@ -354,7 +356,8 @@ void Tribe::HandlePerception(NPC * npc, Perception *perception)
 {
     csString name = perception->GetName();
     
-    csArray<csString> strarr = psSplit(name,':');
+    CS::Utility::StringArray<> strarr;
+    strarr.SplitString(name, ":");
     
     if (strarr[0] == "transfer")
     {
