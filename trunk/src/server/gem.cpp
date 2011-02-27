@@ -1909,7 +1909,7 @@ gemActor::gemActor(GEMSupervisor* gemsupervisor, CacheManager* cachemanager, Ent
                        float rotangle,
                        int clientnum) :
   gemObject(gemsupervisor,entitymanager,cachemanager,chardata->GetCharFullName(),factname,myInstance,room,pos,rotangle,clientnum),
-psChar(chardata), factions(NULL), mount(NULL), DRcounter(0), forceDRcounter(0), lastDR(0), lastV(0), lastSentSuperclientPos(0, 0, 0),
+psChar(chardata), mount(NULL), DRcounter(0), forceDRcounter(0), lastDR(0), lastV(0), lastSentSuperclientPos(0, 0, 0),
 lastSentSuperclientInstance(-1), activeReports(0), isFalling(false), invincible(false), visible(true), viewAllObjects(false),
   movementMode(0), isAllowedToMove(true), atRest(true), player_mode(PSCHARACTER_MODE_PEACE), spellCasting(NULL), workEvent(NULL), pcmove(NULL),
 nevertired(false), infinitemana(false), instantcast(false), safefall(false), givekillexp(false), attackable(false)
@@ -1977,12 +1977,6 @@ gemActor::~gemActor()
 
     cel->RemoveActorEntity(this);
 
-    if (factions)
-    {
-        delete factions;
-        factions = NULL;
-    }
-
     while (!activeSpells.IsEmpty())
     {
         delete activeSpells.Pop();
@@ -2037,12 +2031,6 @@ double gemActor::CalcFunction(MathEnvironment* env, const char* f, const double*
         // we'd need to check both gemObject and psCharacter, and that's a bit
         // of a pain with the current interface.
         return RangeTo((gemObject*)(intptr_t)params[0]);
-    }
-    else if (func == "Faction")
-    {
-        const char *factionName = env->GetString(params[0]);
-        Faction *faction = cacheManager->GetFactionByName(factionName);
-        return (double) (faction ? factions->GetFaction(faction) : 0);
     }
     else if (func.StartsWith("SendSystem"))
     {
@@ -2991,14 +2979,7 @@ bool gemActor::InitLinMove (const csVector3& pos,
 
 bool gemActor::SetupCharData()
 {
-    csString texparts;
-    csString race,file,gender;
-    csString faction_standings;
-
-    faction_standings = psChar->GetFactionStandings();
-
-    factions = new FactionSet(faction_standings,cacheManager->GetFactionHash() );
-
+    //dummy function
     return true;  // right now this func never fail, but might later.
 }
 
@@ -3619,7 +3600,7 @@ void gemActor::SetLastSuperclientPos(const csVector3& pos, InstanceID instance)
 
 float gemActor::GetRelativeFaction(gemActor *speaker)
 {
-    return factions->FindWeightedDiff(speaker->factions);
+    return GetCharacterData()->GetFactions()->FindWeightedDiff(speaker->GetCharacterData()->GetFactions());
 }
 
 void gemActor::SetGroup(PlayerGroup * group)

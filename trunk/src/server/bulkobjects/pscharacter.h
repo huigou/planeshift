@@ -38,6 +38,7 @@
 
 #include "../icachedobject.h"
 #include "../playergroup.h"
+#include "rpgrules/factions.h"
 
 //=============================================================================
 // Local Includes
@@ -704,7 +705,7 @@ public:
      */
     bool HasExploredArea(PID explored);
 
-    const char *GetFactionStandings() { return factionStandings; }
+    FactionSet *GetFactions() { return factions; }
 
     void SetLootCategory(int id) { lootCategoryId = id; }
     int  GetLootCategory() const { return lootCategoryId; }
@@ -1144,8 +1145,8 @@ protected:
     bool     isMarried;
 
     psRaceInfo *raceinfo;
-    
-    csString factionStandings;
+
+    FactionSet *factions;
     
     csString progressionScriptText; ///< flat string loaded from the DB.
     

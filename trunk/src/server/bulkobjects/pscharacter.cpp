@@ -163,7 +163,7 @@ psCharacter::psCharacter() : inventory(this),
     killExp = 0;
     imperviousToAttack = 0;
 
-    factionStandings.Clear();
+    factions = NULL;
 
     lastResponse = -1;
 
@@ -240,6 +240,12 @@ psCharacter::~psCharacter()
 {
     if (guildinfo)
         guildinfo->Disconnect(this);
+
+    if (factions)
+    {
+        delete factions;
+        factions = NULL;
+    }
 
     // First force and update of the DB of all QuestAssignments before deleting
     // every assignment.
@@ -364,7 +370,7 @@ bool psCharacter::Load(iResultRow& row)
     vitals->SetOrigVitals(); // This saves them as loaded state for restoring later without hitting db, npc death resurrect.
 
     lastlogintime = row["last_login"];
-    factionStandings = row["faction_standings"];
+    factions = new FactionSet(row["faction_standings"], psserver->GetCacheManager()->GetFactionHash());
     progressionScriptText = row["progression_script"];
 
     // Set on-hand money.
@@ -2922,6 +2928,12 @@ double psCharacter::CalcFunction(MathEnvironment* env, const char* functionName,
         psQuest *quest = psserver->GetCacheManager()->GetQuestByName(questName);
         return (double) CheckQuestCompleted(quest);
     }
+    else if (function == "Faction")
+    {
+        const char *factionName = env->GetString(params[0]);
+        Faction *faction = psserver->GetCacheManager()->GetFactionByName(factionName);
+        return (double) (faction ? factions->GetFaction(faction) : 0);
+    }
     else if (function == "GetStatValue")
     {
         PSITEMSTATS_STAT stat = (PSITEMSTATS_STAT)(int)params[0];
@@ -3454,7 +3466,7 @@ bool psCharacter::UpdateFaction(Faction * faction, int delta)
         return false;
     }
 
-    GetActor()->GetFactions()->UpdateFactionStanding(faction->id,delta);
+    GetFactions()->UpdateFactionStanding(faction->id,delta);
     if (delta > 0)
     {
         psserver->SendSystemInfo(GetActor()->GetClientID(),"Your faction with %s has improved.",faction->name.GetData());
@@ -3468,7 +3480,7 @@ bool psCharacter::UpdateFaction(Faction * faction, int delta)
     psFactionMessage factUpdate( GetActor()->GetClientID(), psFactionMessage::MSG_UPDATE);
     int standing;
     float weight;
-    GetActor()->GetFactions()->GetFactionStanding(faction->id, standing ,weight);
+    GetFactions()->GetFactionStanding(faction->id, standing ,weight);
 
     factUpdate.AddFaction(faction->name, standing);
     factUpdate.BuildMsg();
@@ -3481,7 +3493,7 @@ bool psCharacter::CheckFaction(Faction * faction, int value)
 {
     if (!GetActor()) return false;
 
-    return GetActor()->GetFactions()->CheckFaction(faction,value);
+    return GetFactions()->CheckFaction(faction,value);
 }
 
 const char* psCharacter::GetDescription()
@@ -3546,7 +3558,7 @@ void psCharacter::SetCreationInfo(const char* newValue)
 bool psCharacter::GetFactionEventsDescription(csString & factionDescription)
 {
     //iterates all the various factions in this character
-    csHash<FactionStanding*, int>::GlobalIterator iter(GetActor()->GetFactions()->GetStandings().GetIterator());
+    csHash<FactionStanding*, int>::GlobalIterator iter(GetFactions()->GetStandings().GetIterator());
     while(iter.HasNext())
     {
         FactionStanding* standing = iter.Next();

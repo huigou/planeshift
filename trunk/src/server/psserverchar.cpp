@@ -304,7 +304,7 @@ void ServerCharManager::HandleFaction(MsgEntry* me,Client *client)
 
     psFactionMessage outMsg(me->clientnum, psFactionMessage::MSG_FULL_LIST);
 
-    csHash<FactionStanding*, int>::GlobalIterator iter(chardata->GetActor()->GetFactions()->GetStandings().GetIterator());
+    csHash<FactionStanding*, int>::GlobalIterator iter(chardata->GetFactions()->GetStandings().GetIterator());
     while(iter.HasNext())
     {
         FactionStanding* standing = iter.Next();
