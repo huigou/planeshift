@@ -1686,11 +1686,18 @@ bool pawsWidget::OnKeyDown( utf32_char keyCode, utf32_char key, int modifiers )
 {
     if (key == CSKEY_ENTER)
     {
-        if (!onEnter && parent && PawsManager::GetSingleton().GetModalWidget() != this)
-            return parent->OnKeyDown(keyCode,key,modifiers);
-
-        onEnter->OnMouseDown(1,0,0,0)  ;
+        if(!onEnter)
+        {
+            if(parent && PawsManager::GetSingleton().GetModalWidget() != this)
+                return parent->OnKeyDown(keyCode,key,modifiers);
+            //else we ignore the command and proceed
+        }
+        else
+        {
+            onEnter->OnMouseDown(1,0,0,0);
+        }
         return true;
+
     }
 
     bool tab = false;
