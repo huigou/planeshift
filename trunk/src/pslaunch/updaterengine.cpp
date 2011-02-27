@@ -711,6 +711,8 @@ bool UpdaterEngine::SelfUpdate(int selfUpdating)
             //save previous permissions
             csRef<FileStat> fs = fileUtil->StatFile("/this/" + path);
 
+            //TODO: make a proper extraction without unzip dependancy (which isn't even assured to be there)
+            //see the windows part above. maybe also merge the two pieces of code.
             csString cmd;
             csRef<iDataBuffer> thisPath = vfs->GetRealPath("/this/");
             cmd.Format("cd %s; unzip -oqq %s", thisPath->GetData(), zip.GetData());
