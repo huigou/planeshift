@@ -164,10 +164,11 @@ bool Config::Initialize(csRef<iDocumentNode> node)
     if(updaterNode)
     {
         updaterVersionLatest = updaterNode->GetAttributeValueAsFloat("version");
-        csString tmpVersion = updaterNode->GetAttributeValue("version");
+
+        //we need to split the version in two separate numbers
         csStringArray versionArray;
         versionArray.SplitString(updaterNode->GetAttributeValue("version"), ".");
-        //we take for granted we always have 2 numbers
+        //we take for granted we always have 2 numbers and convert to unsigned ints
         updaterVersionLatestMajor = strtoul(versionArray.Get(0),NULL,0);
         updaterVersionLatestMinor = strtoul(versionArray.Get(1),NULL,0);
         
