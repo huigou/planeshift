@@ -254,7 +254,7 @@ public:
     void HandleMessage( MsgEntry* message );
 
     /// inherited from iOnStringEnteredAction
-    void OnStringEntered(const char *name,int param,const char *value);
+    void OnStringEntered(const char *name, int param, const char *value);
 
     /// inherited from iOnColorEnteredAction
     void OnColorEntered(const char *name,int param,int color);
