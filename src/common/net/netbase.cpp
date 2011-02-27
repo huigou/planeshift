@@ -47,6 +47,11 @@
 #include "util/serverconsole.h"
 #include "util/strutil.h"
 
+//temporary definition for os lacking this
+#ifndef INET_ADDRSTRLEN
+#define INET_ADDRSTRLEN 16
+#endif
+
 int NetBase::socklibrefcount=0;
 
 // warning: this messes your logs with much data
