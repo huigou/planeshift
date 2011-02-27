@@ -459,6 +459,16 @@ CS_PLUGIN_NAMESPACE_BEGIN(dbsqlite3)
         return row;
     }
 
+    const char* psResultRow::GetString(int whichfield)
+    {
+        return this->operator [](whichfield);
+    }
+
+    const char* psResultRow::GetString(const char *fieldname)
+    {
+        return this->operator [](fieldname);
+    }
+
     void psResultRow::SetResultSet(void * resultsettoken)
     {
         rs = (char **)resultsettoken;
