@@ -156,6 +156,16 @@ public:
     /* Get latest updater version */
     float GetUpdaterVersionLatest() const { return updaterVersionLatest; }
 
+    /** Get latest updater major version
+     *  @return An unsigned int with the major version
+     */
+    unsigned int GetUpdaterVersionLatestMajor() const { return updaterVersionLatestMajor; }
+
+    /** Get latest updater minor version
+     *  @return An unsigned int with the minor version
+     */
+    unsigned int GetUpdaterVersionLatestMinor() const { return updaterVersionLatestMinor; }
+
     /* Get latest updater version md5sum */
     const char* GetUpdaterVersionLatestMD5() const { return updaterVersionLatestMD5; }
 
@@ -163,8 +173,14 @@ public:
     bool IsActive() const { return active; }
 
 private:
-    /* Latest updater version */
+    /// Latest updater version
     float updaterVersionLatest;
+
+    /// Latest updater version, only major version
+    unsigned int updaterVersionLatestMajor;
+
+    /// Latest updater version, only major version
+    unsigned int updaterVersionLatestMinor;
 
     /* Latest version md5sum */
     csString updaterVersionLatestMD5;

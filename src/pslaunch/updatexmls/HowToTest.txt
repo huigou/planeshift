@@ -5,14 +5,14 @@ So for 'psupdater' on win32 it would be called: psupdaterwin32.zip
 
 Possible names are: win32, linux32, linux64, macosx.
 
-Get the md5sum of that zip and in a different updaterinfo.xml change the <version> to a number higher than the number in your current UPDATER_VERSION in psupdaterengine.h
+Get the md5sum of that zip and in a different updaterinfo.xml change the <version> to a number higher than the number in your current UPDATER_VERSION_MAJOR and UPDATER_VERSION_MINOR in psupdaterengine.h
 and place the md5sum in the correct platform "".
 
 Also change the mirror in both .xml to be the full path to the folder you're going to upload to.
 
 Upload the zip and the second .xml to that location.
 
-Now when you run the updater it should self-update. It will self-update every time you run the updater, unless you set UPDATER_VERSION in the 'new' updater to be the same as or higher
+Now when you run the updater it should self-update. It will self-update every time you run the updater, unless you set UPDATER_VERSION_MAJOR and UPDATER_VERSION_MINOR in the 'new' updater to be the same as or higher
 than the number specified in the updaterinfo.xml on the mirror.
 
 

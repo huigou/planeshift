@@ -403,14 +403,14 @@ int main(int argc, char* argv[])
         // Initialize updater engine.
         UpdaterEngine* engine = new UpdaterEngine(args, updater->GetObjectRegistry(), "pslaunch");
 
-        printf("PlaneShift Updater Version %1.2f for %s.\n"
+        printf("PlaneShift Updater Version %d.%d for %s.\n"
                "Launcher and updater for Planeshift\n\n"
                "pslaunch [--help] [--console] [--repair] [--switch]\n\n"
                "--help      Displays this help dialog\n"
                "--console   Run updater without the GUI\n"
                "--switch    Switch active updater mirror\n"
                "--repair    Check for any problems and prompt to repair them\n", 
-               UPDATER_VERSION, engine->GetConfig()->GetCurrentConfig()->GetPlatform());
+               UPDATER_VERSION_MAJOR, UPDATER_VERSION_MINOR, engine->GetConfig()->GetCurrentConfig()->GetPlatform());
 
         // Terminate updater!
         delete argvs;
@@ -442,7 +442,7 @@ int main(int argc, char* argv[])
         // Initialize updater engine.
         UpdaterEngine* engine = new UpdaterEngine(args, updater->GetObjectRegistry(), "pslaunch");
 
-        printf("\nPlaneShift Updater Version %1.2f for %s.\n\n", UPDATER_VERSION, engine->GetConfig()->GetCurrentConfig()->GetPlatform());
+        printf("\nPlaneShift Updater Version %d.%d for %s.\n\n", UPDATER_VERSION_MAJOR, UPDATER_VERSION_MINOR, engine->GetConfig()->GetCurrentConfig()->GetPlatform());
 
         // Run the update process!
         updater->RunUpdate(engine);

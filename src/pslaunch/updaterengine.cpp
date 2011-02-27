@@ -391,7 +391,9 @@ bool UpdaterEngine::CheckUpdater()
     }
 
     // Compare Versions.
-    return(config->UpdatePlatform() && (config->GetNewConfig()->GetUpdaterVersionLatest() - UPDATER_VERSION > 0.01));        
+    return(config->UpdatePlatform() &&
+          (config->GetNewConfig()->GetUpdaterVersionLatestMajor() > UPDATER_VERSION_MAJOR) &&
+          (config->GetNewConfig()->GetUpdaterVersionLatestMinor() > UPDATER_VERSION_MINOR));        
 }
 
 bool UpdaterEngine::CheckGeneral()
