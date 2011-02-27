@@ -117,7 +117,9 @@ const char* Config::GetPlatform() const
 
 Config::Config()
 {
-    updaterVersionLatest = 0.0f;    
+    updaterVersionLatest = 0.0f;
+    updaterVersionLatestMajor = 0;
+    updaterVersionLatestMinor = 0;
 }
 
 bool Config::LoadMirrors(csRef<iDocumentNode> node)
@@ -162,6 +164,12 @@ bool Config::Initialize(csRef<iDocumentNode> node)
     if(updaterNode)
     {
         updaterVersionLatest = updaterNode->GetAttributeValueAsFloat("version");
+        csString tmpVersion = updaterNode->GetAttributeValue("version");
+        csStringArray versionArray;
+        versionArray.SplitString(updaterNode->GetAttributeValue("version"), ".");
+        //we take for granted we always have 2 numbers
+        updaterVersionLatestMajor = strtoul(versionArray.Get(0),NULL,0);
+        updaterVersionLatestMinor = strtoul(versionArray.Get(1),NULL,0);
         
         csString md5 = "md5";
         csRef<iDocumentNode> md5Node;

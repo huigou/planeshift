@@ -36,6 +36,9 @@
 /* To be incremented every time we want to make an update. */
 #define UPDATER_VERSION 2.92
 
+#define UPDATER_VERSION_MAJOR 2
+#define UPDATER_VERSION_MINOR 92
+
 struct iConfigManager;
 struct iVFS;
 
