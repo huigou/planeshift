@@ -8,6 +8,7 @@ DROP TABLE bans;
 DROP TABLE `character_events`;
 DROP TABLE `character_limitations`;
 DROP TABLE `character_quests`;
+DROP TABLE `character_factions`;
 DROP TABLE `character_relationships`;
 DROP TABLE `characters`;
 DROP TABLE character_advantages;
