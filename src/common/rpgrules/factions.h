@@ -91,8 +91,11 @@ public:
       * @param factionID The ID of the faction to update.
       * @param delta The amount to change the faction score by.  If the faction is
       *              not in the current list this will be the starting score.
+      * @param overwrite Sets if the delta should overwrite the current value (true)
+      *        or just be added to the current value (false)
+      * 
       */
-    void UpdateFactionStanding(int factionID,int delta);
+    void UpdateFactionStanding(int factionID, int delta, bool overwrite = false);
 
     /** Create a comma delimited string based on the current faction standings.
       * @param csv The destination for the constructed string.

@@ -370,7 +370,6 @@ bool psCharacter::Load(iResultRow& row)
     vitals->SetOrigVitals(); // This saves them as loaded state for restoring later without hitting db, npc death resurrect.
 
     lastlogintime = row["last_login"];
-    factions = new FactionSet(row["faction_standings"], psserver->GetCacheManager()->GetFactionHash());
     progressionScriptText = row["progression_script"];
 
     // Set on-hand money.
@@ -490,6 +489,12 @@ bool psCharacter::Load(iResultRow& row)
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
     if (!LoadRelationshipInfo(pid)) // Buddies, Marriage Info, Familiars
+    {
+        return false;
+    }
+
+    factions = new FactionSet(row["faction_standings"], psserver->GetCacheManager()->GetFactionHash());
+    if(!LoadFactions(pid))
     {
         return false;
     }
@@ -624,6 +629,42 @@ bool psCharacter::LoadRelationshipInfo(PID pid)
     {
         Error2("Cannot load exploration points for Character %s.", ShowID(pid));
         return false;
+    }
+
+    return true;
+}
+
+void psCharacter::UpdateFactions()
+{
+    //not initialized yet
+    if(!GetFactions())
+        return;
+    //iterate all the standings and update them
+    csHash<FactionStanding*, int>::GlobalIterator iter(GetFactions()->GetStandings().GetIterator());
+    while(iter.HasNext())
+    {
+        FactionStanding* standing = iter.Next();
+        db->CommandPump("INSERT INTO character_factions "
+                        "(character_id, faction_id, value) "
+                        "values (%d, %d, %d) "
+                        "ON DUPLICATE KEY UPDATE value=%d;",
+                        pid.Unbox(),
+                        standing->faction->id,
+                        standing->score,
+                        standing->score);
+    }
+}
+
+bool psCharacter::LoadFactions(PID pid)
+{
+    Result factions(db->Select("SELECT faction_id, value from character_factions where character_id = %u", pid.Unbox()));
+    
+    if (factions.IsValid())
+    {
+        for (unsigned long i = 0; i < factions.Count(); i++)
+        {
+            GetFactions()->UpdateFactionStanding(factions[i].GetUInt32("faction_id"), factions[i].GetUInt32("value"), true);
+        }
     }
 
     return true;

@@ -54,7 +54,6 @@ FactionSet::FactionSet(const char *csv_list,csHash<Faction*, int> &factionset)
     delete[] buff;
 }
 
-
 FactionSet::~FactionSet()
 {
     // Safely delete the FactionStanding objects
@@ -78,12 +77,19 @@ bool FactionSet::GetFactionStanding(int factionID,int& standing, float& weight)
     return false;
 }
 
-void FactionSet::UpdateFactionStanding(int factionID, int delta)
+void FactionSet::UpdateFactionStanding(int factionID, int delta, bool overwrite)
 {
     FactionStanding *fs = factionstandings.Get(factionID,0);
     
     if (fs)
-        fs->score += delta;
+    {
+        //if overwrite is true we set the value directly
+        if(overwrite)
+            fs->score = delta;
+        //if overwrite is false in place we sum the delta
+        else
+            fs->score += delta;
+    }
     else
     {
         fs = new FactionStanding;        
