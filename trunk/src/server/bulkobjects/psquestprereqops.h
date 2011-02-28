@@ -1187,9 +1187,9 @@ class psQuestPrereqOpVariable : public psQuestPrereqOp
  public:
 
     /**
-     * Construct a gender operator
+     * Construct a variable operator
      *
-     * @param gender The sex the character must be
+     * @param variableName The variable to check for assignment.
      */
     psQuestPrereqOpVariable(const char *variableName):variableName(variableName){};
 
