@@ -1087,6 +1087,10 @@ protected:
     bool LoadBuddies( Result& myBuddy, Result& buddyOf);
     bool LoadMarriageInfo( Result& result);
     bool LoadFamiliar( Result& pet, Result& owner);
+    /// Helper function which loads the factions from the database.
+    bool LoadFactions(PID pid);
+    /// Helper function which saves the factions to the database.
+    void UpdateFactions();
     bool LoadExploration(Result& exploration);
     bool LoadGMEvents();
 
