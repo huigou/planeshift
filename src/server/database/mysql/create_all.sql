@@ -9,6 +9,7 @@ source characters.sql;
 source character_limitations.sql;
 source char_creation.sql;
 source character_quests.sql;
+source character_factions.sql;
 source char_skills.sql;
 source char_traits.sql;
 source command_access.sql;
