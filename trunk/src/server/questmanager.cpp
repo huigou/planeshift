@@ -602,6 +602,11 @@ csString QuestManager::ParseRequireCommand(csString& block, bool& result, psQues
         csString questname = block.Slice(13,block.Length()-1).Trim();
         command.Format("<assigned quest=\"%s\"/>", questname.GetData());
     }
+    else if (!strncasecmp(block,"variable",4))
+    {
+        csString variableName = block.Slice(9,block.Length()).Trim();
+        command.Format("<variable name=\"%s\"/>", variableName.GetData() );
+    }
     else
     {
         //it seems the require op we have found isn't

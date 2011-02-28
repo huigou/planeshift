@@ -1740,6 +1740,7 @@ public:
             if(!factionVar)
             {
                 Error2("Faction Imperative Op Run with invalid faction name variable: %s", variableName.GetData());
+                return;
             }
             
             csString factionName = factionVar->GetString();
@@ -1761,6 +1762,99 @@ protected:
      */
     csString variableName;
     CacheManager* cachemanager;
+};
+
+//----------------------------------------------------------------------------
+
+/**
+ * VariableSetOp - imperative factions.
+ *
+ * <variable aim="Actor" name="LOVEDBYKLYROS" value="true"/> (sets the variable LOVEDBYKLYROS and sets it's value to "true")
+ *
+ * Note that if the variable is set already it will be overwritten
+ *
+ * This is permanent.
+ */
+class VariableSetOp : public Imperative1
+{
+public:
+    VariableSetOp() : Imperative1() { }
+    virtual ~VariableSetOp() { }
+
+    bool Load(iDocumentNode* node)
+    {
+        variableName = node->GetAttributeValue("name");
+        variableValue = node->GetAttributeValue("value","");
+        return Imperative1::Load(node);
+    }
+
+    void Run(MathEnvironment* env)
+    {
+        psCharacter* c = GetCharacter(env, aim);
+        //evaluate the variables so we can get it's value
+        MathVar* nameVar = env->Lookup(variableName);
+        MathVar* valueVar = env->Lookup(variableValue);
+        csString varName;
+        csString varValue;
+        
+        if(nameVar)
+            varName = nameVar->GetString();
+        else //if the variable was not found try getting the value associated directly (not in <let>)
+            varName = variableName;
+
+        if(valueVar)
+            varValue = valueVar->GetString();
+        else //if the variable was not found try getting the value associated directly (not in <let>)
+            varValue = variableValue;
+
+        c->SetVariable(varName, varValue);
+    }
+protected:
+
+    /// Used to store the variable name math expression.
+    csString variableName;
+    /// Used to store the variable value math expression.
+    csString variableValue;
+};
+
+//----------------------------------------------------------------------------
+
+/**
+ * VariableUnSetOp - imperative factions.
+ *
+ * <variable aim="Actor" name="LOVEDBYKLYROS" /> (unset the variable LOVEDBYKLYROS)
+ *
+ * This is permanent.
+ */
+class VariableUnSetOp : public Imperative1
+{
+public:
+    VariableUnSetOp() : Imperative1() { }
+    virtual ~VariableUnSetOp() { }
+
+    bool Load(iDocumentNode* node)
+    {
+        variableName = node->GetAttributeValue("name");
+        return Imperative1::Load(node);
+    }
+
+    void Run(MathEnvironment* env)
+    {
+        psCharacter* c = GetCharacter(env, aim);
+        //evaluate the variables so we can get it's value
+        MathVar* nameVar = env->Lookup(variableName);
+        csString varName;
+        if(nameVar)
+            varName = nameVar->GetString();
+        else //if the variable was not found try getting the value associated directly (not in <let>)
+            varName = variableName;
+        
+        c->UnSetVariable(varName);
+    }
+protected:
+
+    /// Used to store the variable name math expression.
+    csString variableName;
 };
 
 //----------------------------------------------------------------------------
@@ -2450,6 +2544,14 @@ ProgressionScript* ProgressionScript::Create(EntityManager* entitymanager, Cache
         else if (elem == "faction")
         {
             op = new FactionOp(cachemanager);
+        }
+        else if (elem == "variableset")
+        {
+            op = new VariableSetOp();
+        }
+        else if (elem == "variableunset")
+        {
+            op = new VariableUnSetOp();
         }
         else if (elem == "animal-affinity")
         {

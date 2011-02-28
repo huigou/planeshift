@@ -796,7 +796,11 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
 
     UpdateQuestAssignments( chardata );
 
+    //saves the faction to db
     chardata->UpdateFactions();
+
+    //saves the character varaibles to db
+    chardata->UpdateVariables();
 
     return true;
 }
