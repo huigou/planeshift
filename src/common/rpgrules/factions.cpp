@@ -48,6 +48,7 @@ FactionSet::FactionSet(const char *csv_list,csHash<Faction*, int> &factionset)
             break;
         }
         fs->score = atoi(ptr);
+        fs->dirty = false;
         factionstandings.Put(fs->faction->id,fs);
         ptr = strtok(NULL,",");
     }
@@ -77,7 +78,7 @@ bool FactionSet::GetFactionStanding(int factionID,int& standing, float& weight)
     return false;
 }
 
-void FactionSet::UpdateFactionStanding(int factionID, int delta, bool overwrite)
+void FactionSet::UpdateFactionStanding(int factionID, int delta, bool setDirty, bool overwrite)
 {
     FactionStanding *fs = factionstandings.Get(factionID,0);
     
@@ -89,12 +90,18 @@ void FactionSet::UpdateFactionStanding(int factionID, int delta, bool overwrite)
         //if overwrite is false in place we sum the delta
         else
             fs->score += delta;
+
+        if(setDirty)
+            fs->dirty = true;
     }
     else
     {
         fs = new FactionStanding;        
         fs->faction = factions_by_id->Get(factionID,0);
         fs->score = delta;
+        //sets the dirty flag depending if this should setDirty or not
+        //so it's possible to use this function even for db loading
+        fs->dirty = setDirty;
         factionstandings.Put(fs->faction->id,fs);
     }
 }

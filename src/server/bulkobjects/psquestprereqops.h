@@ -1175,6 +1175,56 @@ class psQuestPrereqOpTimeOfDay : public psQuestPrereqOp
 };
 
 /**
+ * Variable set prerequisite operator
+ *
+ * The character must have the specified variable set.
+ */
+class psQuestPrereqOpVariable : public psQuestPrereqOp
+{
+ protected:
+    csString variableName;
+
+ public:
+
+    /**
+     * Construct a gender operator
+     *
+     * @param gender The sex the character must be
+     */
+    psQuestPrereqOpVariable(const char *variableName):variableName(variableName){};
+
+    virtual ~psQuestPrereqOpVariable() {}
+
+    /**
+     * Check if the character has the variable defined.
+     *
+     * @param  character The character that are checking for a prerequisite
+     * @return True if the variable we are searching for was found.
+     */
+    virtual bool Check(psCharacter * character);
+
+    /**
+     * Convert the prerequisite operator to a xml string
+     *
+     * Convert the operator into the xml string:
+     * <variable name="variablename"/>
+     *
+     * @return XML string for the prerequisite operator.
+     */
+    virtual csString GetScriptOp();
+
+    /**
+     * Copy the prerequisite operator
+     *
+     * Override this function to return a copy of the prerequisite
+     * operator.
+     *
+     * @return Copy of the prerequisite operator.
+     */
+    virtual csPtr<psQuestPrereqOp> Copy();
+};
+
+/**
  * Xor prerequisite operator.
  *
  * A multi term or operator. Value of XORs between prerequisites

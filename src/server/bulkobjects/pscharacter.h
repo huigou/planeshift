@@ -531,6 +531,22 @@ struct Stance
     float defense_absorb_mod;
 };
 
+/** This is used to char a charVariable.
+ *  This is a variable which can be set and then accessed from various places
+ *  allowing for example scripts or quests to check if they are set and or
+ *  with what value. The names must be unique (only one per character)
+ */
+class charVariable
+{
+    public:
+    csString name;    ///< The name of the variable.
+    csString value;   ///< The value assigned to this variable.
+    bool dirty;       ///< Says if the variable was modified
+    charVariable() : dirty(false) {}
+    charVariable(csString name, csString value) : name(name), value(value), dirty(false) {}
+    charVariable(csString name, csString value, bool dirty) : name(name), value(value), dirty(dirty) {}
+};
+
 //-----------------------------------------------------------------------------
 
 class psCharacter : public iScriptableVar, public iCachedObject
@@ -767,6 +783,35 @@ public:
     int NumberOfQuestsCompleted(csString category);
 
     void CombatDrain(int);
+
+    /** Checks if a variable was defined for this character.
+     *  @param name The name of the variable to search for.
+     *  @return TRUE if the variable was found.
+     */
+    bool HasVariableDefined(csString &name);
+
+    /** Returns the value of a variable.
+     *  @param name The name of the variable to search for.
+     *  @return A csString with the value of the variable.
+     */
+    csString GetVariableValue(csString &name);
+
+    /** Sets a new variable for this character.
+     *  @param name The name of the new variable.
+     *  @param value The value of the new variable.
+     */
+    void SetVariable(csString &name, csString &value);
+
+    /** Sets a new variable for this character.
+     *  The value will be set to a default empty string.
+     *  @param name The name of the new variable.
+     */
+    void SetVariable(csString &name);
+
+    /** Remove a variable from this character.
+     *  @param name The name of the variable to remove.
+     */
+    void UnSetVariable(csString &name);
 
     unsigned int GetExperiencePoints(); // W
     void SetExperiencePoints(unsigned int W);
@@ -1091,6 +1136,12 @@ protected:
     bool LoadFactions(PID pid);
     /// Helper function which saves the factions to the database.
     void UpdateFactions();
+    /** Helper function which loads the character variables from the database.
+     *  @return TRUE always. bool was used for consistancy.
+     */
+    bool LoadVariables(PID pid);
+    /// Helper function which saves the character variables to the database.
+    void UpdateVariables();
     bool LoadExploration(Result& exploration);
     bool LoadGMEvents();
 
@@ -1164,7 +1215,7 @@ protected:
 
     psTrait *traits[PSTRAIT_LOCATION_COUNT];
 
-    // NPC specific data.  Should this go here?
+    /// NPC specific data.  Should this go here?
     int npcSpawnRuleId;
     
     /// Id of Loot category to use if this char has extra loot
@@ -1186,6 +1237,8 @@ protected:
 
     csArray<psSpell*>         spellList;
     csArray<QuestAssignment*> assignedQuests;
+
+    csHash<charVariable, csString> charVariables; ///< Used to store character variables for this character.
     
     psSkillCache              skillCache;
     GMEventsAssignment        assignedEvents;

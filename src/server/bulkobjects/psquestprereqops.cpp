@@ -697,6 +697,29 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpTimeOfDay::Copy()
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
+bool psQuestPrereqOpVariable::Check(psCharacter * character)
+{
+    return character->HasVariableDefined(variableName);
+}
+
+csString psQuestPrereqOpVariable::GetScriptOp()
+{
+    csString script;
+
+    script.Format("<variableset name=\"%s\"/>", variableName.GetData());
+
+    return script;
+}
+
+csPtr<psQuestPrereqOp> psQuestPrereqOpVariable::Copy()
+{
+    csRef<psQuestPrereqOpVariable> copy;
+    copy.AttachNew(new psQuestPrereqOpVariable(variableName));
+    return csPtr<psQuestPrereqOp>(copy);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////
+
 bool psQuestPrereqOpXor::Check(psCharacter * character)
 {
     // Check if any of the prereqs are valid

@@ -57,6 +57,7 @@ struct FactionStanding
 {
     Faction *faction;
     int score;
+    bool dirty;
 };
 
 
@@ -91,11 +92,12 @@ public:
       * @param factionID The ID of the faction to update.
       * @param delta The amount to change the faction score by.  If the faction is
       *              not in the current list this will be the starting score.
+      * @param setDirty declares if the variable should be set dirty when updated.
       * @param overwrite Sets if the delta should overwrite the current value (true)
       *        or just be added to the current value (false)
       * 
       */
-    void UpdateFactionStanding(int factionID, int delta, bool overwrite = false);
+    void UpdateFactionStanding(int factionID, int delta, bool setDirty = true, bool overwrite = false);
 
     /** Create a comma delimited string based on the current faction standings.
       * @param csv The destination for the constructed string.

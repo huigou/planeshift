@@ -499,6 +499,12 @@ bool psCharacter::Load(iResultRow& row)
         return false;
     }
 
+    if(!LoadVariables(pid))
+    {
+        return false;
+    }
+
+
     if(csGetTicks() - start > 500)
     {
         csString status;
@@ -639,19 +645,23 @@ void psCharacter::UpdateFactions()
     //not initialized yet
     if(!GetFactions())
         return;
+
     //iterate all the standings and update them
     csHash<FactionStanding*, int>::GlobalIterator iter(GetFactions()->GetStandings().GetIterator());
     while(iter.HasNext())
     {
         FactionStanding* standing = iter.Next();
-        db->CommandPump("INSERT INTO character_factions "
-                        "(character_id, faction_id, value) "
-                        "values (%d, %d, %d) "
-                        "ON DUPLICATE KEY UPDATE value=%d;",
-                        pid.Unbox(),
-                        standing->faction->id,
-                        standing->score,
-                        standing->score);
+        if(standing->dirty)
+        {
+            db->CommandPump("INSERT INTO character_factions "
+                            "(character_id, faction_id, value) "
+                            "values (%d, %d, %d) "
+                            "ON DUPLICATE KEY UPDATE value=%d",
+                            pid.Unbox(),
+                            standing->faction->id,
+                            standing->score,
+                            standing->score);
+        }
     }
 }
 
@@ -663,7 +673,47 @@ bool psCharacter::LoadFactions(PID pid)
     {
         for (unsigned long i = 0; i < factions.Count(); i++)
         {
-            GetFactions()->UpdateFactionStanding(factions[i].GetUInt32("faction_id"), factions[i].GetUInt32("value"), true);
+            //sets the faction, overwrites what could be there and doesn't set the dirty flag
+            GetFactions()->UpdateFactionStanding(factions[i].GetUInt32("faction_id"), factions[i].GetUInt32("value"), false, true);
+        }
+    }
+
+    return true;
+}
+
+void psCharacter::UpdateVariables()
+{
+    //iterate all the variables and update them
+    //we don't escape as we use " and the variables are set internally.
+    //maybe that could be done anyway as an additional safety measure
+    //update only if the variable was changed in the mean time (dirty flag)
+    csHash<charVariable, csString>::GlobalIterator iter(charVariables.GetIterator());
+    while(iter.HasNext())
+    {
+        charVariable& variable = iter.Next();
+        if(variable.dirty)
+        {
+            db->CommandPump("INSERT INTO character_variables "
+                            "(character_id, name, value) "
+                            "values (%d, \"%s\", \"%s\") "
+                            "ON DUPLICATE KEY UPDATE value=\"%s\"",
+                            pid.Unbox(),
+                            variable.name.GetData(),
+                            variable.value.GetData(),
+                            variable.value.GetData());
+        }
+    }
+}
+
+bool psCharacter::LoadVariables(PID pid)
+{
+    Result variables(db->Select("SELECT name, value from character_variables where character_id = %u", pid.Unbox()));
+    
+    if (variables.IsValid())
+    {
+        for (unsigned long i = 0; i < variables.Count(); i++)
+        {
+            charVariables.PutUnique(variables[i]["name"], charVariable(variables[i]["name"], variables[i]["value"]));
         }
     }
 
@@ -1034,6 +1084,40 @@ void psCharacter::UpdateRespawn(csVector3 pos, float yrot, psSectorInfo *sector,
         Error3 ("Couldn't save character's position to database.\nCommand was "
             "<%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
     }
+}
+
+bool psCharacter::HasVariableDefined(csString &name)
+{
+    return charVariables.Contains(name);
+}
+
+csString psCharacter::GetVariableValue(csString &name)
+{
+    return charVariables.Get(name, charVariable()).value;
+}
+
+void psCharacter::SetVariable(csString &name, csString &value)
+{
+    //we set the variable dirty so this should be used only for variables.
+    //not already in the db (aka don't use this to load from the db)
+    charVariables.PutUnique(name, charVariable(name,value, true));
+}
+
+void psCharacter::SetVariable(csString &name)
+{
+    csString value("");
+    SetVariable(name, value);
+}
+
+void psCharacter::UnSetVariable(csString &name)
+{
+    charVariables.DeleteAll(name);
+    //update the database
+    db->CommandPump("DELETE FROM character_variables where "
+                            "character_id = %u and name = \"%s\"",
+                            pid.Unbox(),
+                            name.GetData());
+    
 }
 
 unsigned int psCharacter::GetExperiencePoints() // W
