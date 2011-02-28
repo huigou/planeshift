@@ -189,8 +189,7 @@ void pawsCharacterPickerWindow::HandleMessage( MsgEntry* me )
         }
         case MSGTYPE_CHAR_DELETE:
         {
-            // Emulate back click
-            OnButtonReleased(1,0,FindWidget(BACK_BUTTON));
+            ReturnToLoginWindow();
             break;
         }
     }
