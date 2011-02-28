@@ -54,6 +54,10 @@ void pawsNpcDialogWindow::OnListAction( pawsListBox* widget, int status )
     }
 	else if (status == LISTBOX_SELECTED)
 	{
+        //if no row is selected
+        if(!widget->GetSelectedRow())
+            return;
+
 		pawsTextBox *fld  = dynamic_cast<pawsTextBox *>(widget->GetSelectedRow()->FindWidgetXMLBinding("text"));
 		Debug2(LOG_QUESTS, 0,"Player chose '%s'.\n", fld->GetText() );
 		pawsTextBox *trig = dynamic_cast<pawsTextBox *>(widget->GetSelectedRow()->FindWidgetXMLBinding("trig"));
