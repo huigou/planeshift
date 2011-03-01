@@ -1356,6 +1356,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
   <ItemGroup>
     <ClCompile Include="..\..\src\common\util\consoleout.cpp" />
     <ClCompile Include="..\..\src\common\util\dbprofile.cpp" />
+    <ClCompile Include="..\..\src\common\util\edge.cpp" />
     <ClCompile Include="..\..\src\common\util\eventmanager.cpp" />
     <ClCompile Include="..\..\src\common\util\fileutil.cpp" />
     <ClCompile Include="..\..\src\common\util\gameevent.cpp" />
@@ -1388,6 +1389,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClInclude Include="..\..\src\common\util\command.h" />
     <ClInclude Include="..\..\src\common\util\consoleout.h" />
     <ClInclude Include="..\..\src\common\util\dbprofile.h" />
+    <ClInclude Include="..\..\src\common\util\edge.h" />
     <ClInclude Include="..\..\src\common\util\eventmanager.h" />
     <ClInclude Include="..\..\src\common\util\fileutil.h" />
     <ClInclude Include="..\..\src\common\util\gameevent.h" />

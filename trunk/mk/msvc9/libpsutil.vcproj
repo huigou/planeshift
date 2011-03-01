@@ -1735,6 +1735,9 @@
 				RelativePath="..\..\src\common\util\dbprofile.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\common\util\edge.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\common\util\eventmanager.cpp">
 			</File>
 			<File
@@ -1827,6 +1830,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\common\util\dbprofile.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\util\edge.h">
 			</File>
 			<File
 				RelativePath="..\..\src\common\util\eventmanager.h">
