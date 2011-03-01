@@ -250,7 +250,40 @@ bool pawsCharacterPickerWindow::OnButtonReleased(int /*mouseButton*/, int /*keyM
         {
             return true;
         }
+        case CONFIRM_YES:
+        {
+            //Delete the selected character
+            csString name;
+            name.Format("SelectCharacter%i", selectedCharacter);
 
+            // Get Full name.
+            psString charFullName( ((pawsButton*)FindWidget(name))->GetText() );
+            psString charFirstName;
+            charFullName.GetWord( 0, charFirstName );
+
+            psCharDeleteMessage msg(charFirstName, 0);
+            msg.SendMessage();
+
+            return true;
+        }
+
+        case CONFIRM_NO:
+        {
+            PawsManager::GetSingleton().SetModalWidget(NULL);
+            widget->GetParent()->Hide();
+            return true;
+        }
+    }
+    return false;
+}
+
+bool pawsCharacterPickerWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifer*/, pawsWidget* widget)
+{
+    if(!widget)
+        return false;
+
+    switch ( widget->GetID() )
+    {
         case CHARACTER_DELETE_BUTTON:
         {
             csString name;
@@ -277,30 +310,6 @@ bool pawsCharacterPickerWindow::OnButtonReleased(int /*mouseButton*/, int /*keyM
         case BACK_BUTTON:
         {
             ReturnToLoginWindow();
-            return true;
-        }
-
-        case CONFIRM_YES:
-        {
-            //Delete the selected character
-            csString name;
-            name.Format("SelectCharacter%i", selectedCharacter);
-
-            // Get Full name.
-            psString charFullName( ((pawsButton*)FindWidget(name))->GetText() );
-            psString charFirstName;
-            charFullName.GetWord( 0, charFirstName );
-
-            psCharDeleteMessage msg(charFirstName, 0);
-            msg.SendMessage();
-
-            return true;
-        }
-
-        case CONFIRM_NO:
-        {
-            PawsManager::GetSingleton().SetModalWidget(NULL);
-            widget->GetParent()->Hide();
             return true;
         }
 
