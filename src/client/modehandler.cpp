@@ -1445,7 +1445,7 @@ bool ModeHandler::CheckCurrentSector(GEMClientObject* entity,
                                      csVector3& pos,
                                      iSector*&  sector)
 {
-    if (entity && !entity->GetMesh())
+    if (!entity || !entity->GetMesh())
     {
         Bug1("No Mesh found on entity!\n");
         return false;
