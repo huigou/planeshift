@@ -475,7 +475,7 @@ NpcResponse *NPCDialogDict::FindResponse(gemNPC * npc,
     csArray<int> availableResponseList;
 
     // Check if not all responses is blocked(Not available in quests, Prequests not fullfitted,...)
-    if (trig && !trig->HaveAvailableResponses(client,npc,this,&availableResponseList))
+    if (!trig || !trig->HaveAvailableResponses(client,npc,this,&availableResponseList))
     {
         Debug1(LOG_NPC, client ? client->GetClientNum() : 0,"NPCDialogDict::FindResponse no available responses found");
         return NULL;
