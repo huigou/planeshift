@@ -2351,9 +2351,10 @@ void NPCManager::HandlePetSkill(MsgEntry * me,Client *client)
                 csString escpxml = EscpXML( info->description );
                 buff.Format( "<DESCRIPTION DESC=\"%s\" CAT=\"%d\"/>", escpxml.GetData(), info->category);
             }
+            //TODO: this code needs some checking. before it attempted to get info->category. which would be a null pointer deference.
             else
             {
-                buff.Format( "<DESCRIPTION DESC=\"\" CAT=\"%d\"/>", info->category );
+                buff.Format( "<DESCRIPTION DESC=\"\" CAT=\"\"/>");
             }
 
             psCharacter* chr = client->GetFamiliar()->GetCharacterData();
