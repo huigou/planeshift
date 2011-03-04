@@ -359,7 +359,7 @@ void Tribe::HandlePerception(NPC * npc, Perception *perception)
     CS::Utility::StringArray<> strarr;
     strarr.SplitString(name, ":");
     
-    if (strarr[0] == "transfer")
+    if (strarr[0] == csString("transfer"))
     {
         InventoryPerception *invPcpt = dynamic_cast<InventoryPerception*>(perception);
         if (!invPcpt) return;
