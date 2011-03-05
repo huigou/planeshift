@@ -74,6 +74,11 @@ bool pawsPetitionWindow::PostSetup()
 
     hasPetInterest = false;
 
+    petitionList->SetSortingFunc(0, textBoxSortFunc);
+    petitionList->SetSortingFunc(1, textBoxSortFunc);
+    petitionList->SetSortingFunc(2, textBoxSortFunc);
+    petitionList->SetSortingFunc(3, textBoxSortFunc);
+
     return true;
 }
 
@@ -166,6 +171,7 @@ void pawsPetitionWindow::HandleMessage ( MsgEntry* me )
 
     // Update the listbox:
     AddPetitions(message.petitions);
+    petitionList->SortRows();   ///sort the column specified in xml
 }
 
 void pawsPetitionWindow::Close()

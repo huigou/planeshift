@@ -85,6 +85,14 @@ bool pawsPetitionGMWindow::PostSetup()
         QueryServer();           //Query the server for messages
     }
 
+    petitionList->SetSortingFunc(0, textBoxSortFunc);
+    petitionList->SetSortingFunc(1, textBoxSortFunc);
+    petitionList->SetSortingFunc(2, textBoxSortFunc);
+    petitionList->SetSortingFunc(3, textBoxSortFunc);
+    petitionList->SetSortingFunc(4, textBoxSortFunc);
+    petitionList->SetSortingFunc(5, textBoxSortFunc);
+    petitionList->SetSortingFunc(6, textBoxSortFunc);
+
     return true;
 }
 
@@ -323,6 +331,7 @@ void pawsPetitionGMWindow::HandleMessage ( MsgEntry* me )
     // Update the listbox:
     int tempCount = petCount;
     AddPetitions(message.petitions);
+    petitionList->SortRows();   ///sort the column specified in xml
 
     //alert GM that there are petitions waiting
     if (tempCount == -1)
