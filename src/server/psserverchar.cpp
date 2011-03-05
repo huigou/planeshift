@@ -151,7 +151,6 @@ void ServerCharManager::UpdateSketch(MsgEntry* me, Client *client)
             {
                 printf("Updated sketch for item %u to: %s\n", sketchMsg.ItemID, sketchMsg.Sketch.GetDataSafe());
                 psserver->SendSystemInfo(me->clientnum, "Your drawing has been updated.");
-                item->GetBaseStats()->Save();
                 item->Save(false);
             }
         }
