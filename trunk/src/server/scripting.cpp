@@ -166,7 +166,7 @@ protected:
 
 //----------------------------------------------------------------------------
 
-// Applied mode vitals.
+/// Applied mode vitals.
 class VitalAOp : public Applied1
 {
 public:
@@ -245,7 +245,7 @@ public:
     }
 
 protected:
-    csString attacker; //< optional MathScript var containing the attacker
+    csString attacker; ///< optional MathScript var containing the attacker
 };
 
 //----------------------------------------------------------------------------
@@ -292,12 +292,12 @@ public:
     }
 
 protected:
-    PSITEMSTATS_STAT stat; //< which stat we're actually buffing
+    PSITEMSTATS_STAT stat; ///< which stat we're actually buffing
 };
 
 //----------------------------------------------------------------------------
 
-// Applied mode skills.
+/// Applied mode skills.
 class SkillAOp : public Applied2
 {
 public:
@@ -332,7 +332,7 @@ protected:
 
 //----------------------------------------------------------------------------
 
-// Applied mode support for attack and defense modifiers.
+/// Applied mode support for attack and defense modifiers.
 class CombatModAOp : public Applied1
 {
 public:
@@ -365,7 +365,7 @@ protected:
 
 //----------------------------------------------------------------------------
 
-// Applied mode mesh overriding.
+/// Applied mode mesh overriding.
 class MeshAOp : public AppliedOp
 {
 public:
@@ -407,7 +407,7 @@ public:
 
 //----------------------------------------------------------------------------
 
-// A cancel action that sends the "undo" part of <msg text="..." undo="..."/>.
+/// A cancel action that sends the "undo" part of <msg text="..." undo="..."/>.
 class MsgCancel : public iCancelAction
 {
 public:
@@ -424,7 +424,7 @@ protected:
     csString undo;
 };
 
-// Applied mode messages - with both text and undo.
+/// Applied mode messages - with both text and undo.
 class MsgAOp : public AppliedOp
 {
 public:
@@ -473,9 +473,9 @@ public:
     }
 
 protected:
-    csString text; //< message to send immediately
-    csString undo; //< message to send when canceled
-    csString type; //< message type to send
+    csString text; ///< message to send immediately
+    csString undo; ///< message to send when canceled
+    csString type; ///< message type to send
 };
 
 //----------------------------------------------------------------------------
@@ -585,15 +585,15 @@ public:
 
 protected:
     csString name;
-    csString source;  //< The name of the MathVar containing the entity the effect originates from (optional)
-    csVector3 offset; //< An offset from the target which the effect originates from
+    csString source;  ///< The name of the MathVar containing the entity the effect originates from (optional)
+    csVector3 offset; ///< An offset from the target which the effect originates from
     
     CacheManager *cacheManager;
 };
 
 //----------------------------------------------------------------------------
 
-// A cancel action that unregisters an event triggered spell.
+/// A cancel action that unregisters an event triggered spell.
 class OnCancel : public iCancelAction
 {
 public:
@@ -613,8 +613,9 @@ protected:
     SCRIPT_TRIGGER type;
 };
 
-// Support for event triggered scripts.
-// This really deserves quite a bit of commentary.
+/** Support for event triggered scripts.
+ *  This really deserves quite a bit of commentary.
+ */
 class OnAOp : public AppliedOp
 {
 public:
@@ -1003,8 +1004,8 @@ public:
         debuffAsp->Link(buffAsp);
     }
 protected:
-    ApplicativeScript* buff;   //< The buff (beneficiary) script
-    ApplicativeScript* debuff; //< The debuff (victim) script
+    ApplicativeScript* buff;   ///< The buff (beneficiary) script
+    ApplicativeScript* debuff; ///< The debuff (victim) script
     CacheManager* cachemanager;
     EntityManager* entitymanager;
 };
@@ -1170,9 +1171,9 @@ public:
     }
 
 protected:
-    csString aim;  //< name of the MathScript var to aim at
-    csString text; //< message to send
-    csString type; //< message type to send
+    csString aim;  ///< name of the MathScript var to aim at
+    csString text; ///< message to send
+    csString type; ///< message type to send
 };
 
 //----------------------------------------------------------------------------
@@ -1292,8 +1293,8 @@ protected:
         csString name;
     };
 
-    csString aim;  //< name of the MathScript var to aim at
-    csArray<Spell> spells; //< list of spells to cancel.
+    csString aim;  ///< name of the MathScript var to aim at
+    csArray<Spell> spells; ///< list of spells to cancel.
 };
 
 //----------------------------------------------------------------------------
@@ -1356,9 +1357,9 @@ public:
 
 protected:
     bool attached;
-    csString name;    //< the name of the effect
-    csString sourceVar;  //< name of the MathVar containing where the effect starts
-    csString targetVar;  //< name of the MathVar containing where the effect is aimed
+    csString name;       ///< the name of the effect
+    csString sourceVar;  ///< name of the MathVar containing where the effect starts
+    csString targetVar;  ///< name of the MathVar containing where the effect is aimed
 };
 
 //----------------------------------------------------------------------------
@@ -1375,10 +1376,10 @@ public:
     }
 
 protected:
-    csString aim;   //< name of the MathScript var to aim at
+    csString aim;   ///< name of the MathScript var to aim at
 };
 
-// A base class supporting aim and a MathExpression value.
+/// A base class supporting aim and a MathExpression value.
 class Imperative2 : public Imperative1
 {
 public:
@@ -1395,10 +1396,10 @@ public:
     }
 
 protected:
-    MathExpression* value; //< an embedded MathExpression
+    MathExpression* value; ///< an embedded MathExpression
 };
 
-// A base class supporting aim, value, and name.
+/// A base class supporting aim, value, and name.
 class Imperative3 : public Imperative2
 {
 public:
@@ -1412,7 +1413,7 @@ public:
     }
 
 protected:
-    csString name; //< plain text - name of something, like a skill or faction
+    csString name; ///< plain text - name of something, like a skill or faction
 };
 
 //----------------------------------------------------------------------------
@@ -1647,7 +1648,7 @@ public:
     }
 
 protected:
-    csString attacker; //< optional MathScript var containing the attacker
+    csString attacker; ///< optional MathScript var containing the attacker
 };
 
 //----------------------------------------------------------------------------
@@ -1699,7 +1700,7 @@ public:
     }
 
 protected:
-    PSITEMSTATS_STAT stat; //< which stat we're actually buffing
+    PSITEMSTATS_STAT stat; ///< which stat we're actually buffing
 };
 
 //----------------------------------------------------------------------------
