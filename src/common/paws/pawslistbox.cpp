@@ -1054,11 +1054,11 @@ void pawsListBox::SetSortedColumn(int colNum)
     if (colNum < -1  ||  colNum >= totalColumns)
         return;
 
-    if (columnDef[colNum].sortFunc == NULL)
+    if (colNum != -1 && columnDef[colNum].sortFunc == NULL)
         columnDef[colNum].sortFunc = textBoxSortFunc;
 
-    if (sortColNum != -1)
-        DeleteSortingArrow(sortColNum);
+    if (sortColNum != -1){ printf("delete %d\n", sortColNum);
+        DeleteSortingArrow(sortColNum); }
 
     sortColNum = colNum;
     ascOrder   = true;
@@ -1097,7 +1097,7 @@ void pawsListBox::CreateSortingArrow(int colNum)
     pawsWidget * title = GetColumnTitle(colNum);
     if (title == NULL)
         return;
-        
+        printf("creating sorting arrow\n");
     pawsWidget * arrow = new pawsWidget();
     title->AddChild(arrow);
     arrow->SetRelativeFrame(title->ScreenFrame().Width()-arrowSize, 4, arrowSize, arrowSize);
@@ -1147,7 +1147,7 @@ void pawsListBox::DeleteSortingArrow(int colNum)
 
 pawsWidget * pawsListBox::GetColumnTitle(int colNum)
 {
-    if (titleRow == NULL)
+    if (colNum < 0 || colNum > totalColumns || titleRow == NULL)
         return NULL;
 
     return titleRow->FindWidget(colNum);
