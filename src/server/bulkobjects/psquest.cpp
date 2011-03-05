@@ -467,6 +467,17 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
         prerequisite.AttachNew(new psQuestPrereqOpTimeOfDay(min,max));
 
     }
+    else if ( strcmp( topNode->GetValue(), "variable" ) == 0 )
+    {
+        csString name = topNode->GetAttributeValue("name");
+        if (name.IsEmpty())
+        {
+            Error1("No name given for character variable prerequisite operation");
+            return false;
+        }
+
+        prerequisite.AttachNew(new psQuestPrereqOpVariable(name));
+    }
     else if ( strcmp( topNode->GetValue(), "onlinetime" ) == 0 )
     {
         int min = topNode->GetAttributeValueAsInt("min");
@@ -519,7 +530,10 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
 
         unsigned int max = topNode->GetAttributeValueAsInt("max");
 
-        prerequisite.AttachNew(new psQuestPrereqOpSkill(skill,min,max));
+        //we don't allow buffed stats to be taken in consideration by default
+        bool allowBuffed = topNode->GetAttributeValueAsBool("allowbuffed", false);
+
+        prerequisite.AttachNew(new psQuestPrereqOpSkill(skill,min,max, allowBuffed));
     }
     else
     {

@@ -758,7 +758,14 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpXor::Copy()
 
 bool psQuestPrereqOpSkill::Check(psCharacter * character)
 {
-    int skill_val = character->GetSkillRank(skill->id).Current();
+    int skill_val;
+
+    //if we allow buffed stats to be taken in consideration we take the
+    //current skill else we take the base skill (without buff/debuff)
+    if(allowBuffed)
+        skill_val = character->GetSkillRank(skill->id).Current();
+    else
+        skill_val = character->GetSkillRank(skill->id).Base();
 
     if(max && skill_val > max)
     {
@@ -784,7 +791,8 @@ csString psQuestPrereqOpSkill::GetScriptOp()
     {
         script.AppendFmt(" max=\"%d\"", max);
     }
-    script.Append(" />");
+    
+    script.AppendFmt(" allowbuffed=\"%s\" />", allowBuffed ? "true" : "false");
 
     return script;
 }
@@ -792,6 +800,6 @@ csString psQuestPrereqOpSkill::GetScriptOp()
 csPtr<psQuestPrereqOp> psQuestPrereqOpSkill::Copy()
 {
     csRef<psQuestPrereqOpSkill> copy;
-    copy.AttachNew(new psQuestPrereqOpSkill(skill,min,max));
+    copy.AttachNew(new psQuestPrereqOpSkill(skill, min, max, allowBuffed));
     return csPtr<psQuestPrereqOp>(copy);
 }
