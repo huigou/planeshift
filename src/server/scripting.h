@@ -38,7 +38,7 @@ class ActiveSpell;
 class EntityManager;
 class CacheManager;
 
-// Events that can trigger scripts, i.e. <on type="attack">
+/** Events that can trigger scripts, i.e. <on type="attack"> */
 enum SCRIPT_TRIGGER
 {
     ATTACK,
@@ -47,7 +47,7 @@ enum SCRIPT_TRIGGER
     NEARLYDEAD
 };
 
-class ImperativeOp; // private script internals
+class ImperativeOp; ///< private script internals
 
 /** ProgressionScripts
  *
@@ -80,7 +80,7 @@ protected:
     csArray<ImperativeOp*> ops;
 };
 
-class AppliedOp; // private script internals
+class AppliedOp; ///< private script internals
 
 class ApplicativeScript
 {
@@ -94,11 +94,11 @@ public:
 protected:
     ApplicativeScript();
 
-    SPELL_TYPE type;            //< spell type...buff, debuff, etc.
-    csString aim;               //< name of the MathScript var to aim at
-    csString name;              //< the name of the spell
-    MathExpression* duration;   //< an embedded MathExpression
-    csPDelArray<AppliedOp> ops; //< all the sub-operations
+    SPELL_TYPE type;            ///< spell type...buff, debuff, etc.
+    csString aim;               ///< name of the MathScript var to aim at
+    csString name;              ///< the name of the spell
+    MathExpression* duration;   ///< an embedded MathExpression
+    csPDelArray<AppliedOp> ops; ///< all the sub-operations
 };
 
 #if 0
