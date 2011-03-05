@@ -958,22 +958,12 @@ bool psItemStats::Save()
     update->AddField("cstr_gfx_mesh", mesh_name); //Mesh
 
     // stat requirements
-    if(reqs.GetSize() >= 1)
-    {
-        update->AddField("requirement_1_name", reqs[0].name);
-        update->AddField("requirement_1_value", reqs[0].min_value);
-    }
-
-    if(reqs.GetSize() >= 2)
-    {
-        update->AddField("requirement_2_name", reqs[1].name);
-        update->AddField("requirement_2_value", reqs[1].min_value);
-    }
-    if(reqs.GetSize() >= 3)
-    {
-        update->AddField("requirement_3_name", reqs[2].name);
-        update->AddField("requirement_3_value", reqs[2].min_value);
-    }
+    update->AddField("requirement_1_name", reqs.GetSize() >= 1 ? reqs[0].name : "");
+    update->AddField("requirement_1_value", reqs.GetSize() >= 1 ? reqs[0].min_value : 0);
+    update->AddField("requirement_2_name", reqs.GetSize() >= 2 ? reqs[1].name : "");
+    update->AddField("requirement_2_value", reqs.GetSize() >= 2 ? reqs[1].min_value : 0);
+    update->AddField("requirement_3_name", reqs.GetSize() >= 3 ? reqs[2].name : "");
+    update->AddField("requirement_3_value", reqs.GetSize() >= 3 ? reqs[2].min_value : 0);
 
     // equip/unequip events
     //update->AddField("equip_script", we haven't saved the script XML);
