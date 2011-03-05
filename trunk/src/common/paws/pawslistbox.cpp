@@ -1114,9 +1114,9 @@ void pawsListBox::SetSortingArrow(int colNum, bool ascOrder)
     if (arrow != NULL)
     {
         if (ascOrder)
-            arrow->SetBackground(arrowUp);
-        else
             arrow->SetBackground(arrowDown);
+        else
+            arrow->SetBackground(arrowUp);
     }
 }
 
