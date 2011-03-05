@@ -1057,8 +1057,8 @@ void pawsListBox::SetSortedColumn(int colNum)
     if (colNum != -1 && columnDef[colNum].sortFunc == NULL)
         columnDef[colNum].sortFunc = textBoxSortFunc;
 
-    if (sortColNum != -1){ printf("delete %d\n", sortColNum);
-        DeleteSortingArrow(sortColNum); }
+    if (sortColNum != -1)
+        DeleteSortingArrow(sortColNum);
 
     sortColNum = colNum;
     ascOrder   = true;
