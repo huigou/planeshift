@@ -1284,21 +1284,23 @@ class psQuestPrereqOpSkill: public psQuestPrereqOp
      */
     psSkillInfo *skill;
 
-    /**
-     * The skill level range
-     */
-    int min;
-    int max;
+    int min; ///< The minimum skill level
+    int max; ///< The maximum skill level
+    bool allowBuffed; ///< Stores if we should allow buff to be taken in consideration
  public:
 
     /**
-     * Construct a faction operator
+     * Construct a skill operator
      *
-     * @param faction The quest that need to be assigned.
+     * @param skill The skill which should be checked for.
+     * @param min The minimum acceptable for this prerequisite to be true.
+     * @param max The maximum acceptable for this prerequisite to be true.
+     * @param allowBuffed Declares if buff should be taken in consideration
      */
-    psQuestPrereqOpSkill(psSkillInfo *skill, unsigned int min, unsigned int max):skill(skill),min(min),max(max){};
+    psQuestPrereqOpSkill(psSkillInfo *skill, unsigned int min, unsigned int max, bool allowBuffed):skill(skill),min(min),max(max),allowBuffed(allowBuffed){};
 
     /**
+     * Destructor
      */
     virtual ~psQuestPrereqOpSkill() {}
 
@@ -1314,7 +1316,7 @@ class psQuestPrereqOpSkill: public psQuestPrereqOp
      * Convert the prerequisite operator to a xml string
      *
      * Convert the operator into the xml string:
-     * <skill name="skill name" min="0" max="0"/>
+     * <skill name="skill name" min="0" max="0" allowbuffed="false" />
      *
      * @return XML string for the prerequisite operator.
      */
