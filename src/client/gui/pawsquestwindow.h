@@ -84,6 +84,9 @@ public:
     bool PostSetup();
 
     /// Handle button clicks
+    bool OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* reporter);
+
+    /// Handle question boxes
     bool OnButtonReleased(int mouseButton, int keyModifier, pawsWidget* reporter);
 
     void OnListAction( pawsListBox* selected, int status );
@@ -175,6 +178,8 @@ protected:
     pawsMessageTextBox* description;
 
     pawsMultilineEditTextBox* notes;
+
+    pawsTextBox* total;
     
     /// The button which brings up the evaluation procedure
     pawsButton* EvaluateBtn;
@@ -189,6 +194,8 @@ protected:
     csRef<iVFS> vfs;
     csRef<iDocumentSystem> xml;
     csString filename;
+    csString TotalNumberStr;
+    pawsButton* QuestListsBtn;
 };
 
 /** The pawsLootWindow factory

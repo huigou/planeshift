@@ -78,6 +78,8 @@ pawsQuestListWindow::pawsQuestListWindow()
     uncompletedEventList = NULL;
     description = NULL;
     notes = NULL;
+    total = NULL;
+    currentTab = NULL;
 
     populateGMEventLists = false;
     populateQuestLists = false;
@@ -152,12 +154,21 @@ bool pawsQuestListWindow::PostSetup()
     // get pointer to active listbox:
     eventList  = (pawsListBox*)eventTab->GetActiveTab();
 
-    currentTab = NULL;
-
+    total = (pawsTextBox*)FindWidget("Total");
     description = (pawsMessageTextBox*)FindWidget("Description");
     notes = (pawsMultilineEditTextBox*)FindWidget("Notes");
     
     EvaluateBtn = (pawsButton*)FindWidget("Evaluate");
+
+    completedQuestList->SetSortingFunc(0, textBoxSortFunc);
+    uncompletedQuestList->SetSortingFunc(0, textBoxSortFunc);
+    completedEventList->SetSortingFunc(0, textBoxSortFunc);
+    uncompletedEventList->SetSortingFunc(0, textBoxSortFunc);
+
+    QuestListsBtn = (pawsButton*)FindWidget("QuestLists");
+    QuestListsBtn->SetState(true);  ///Set the button down so it looks pressed on load
+
+    PopulateQuestTab(); ///open questlist on opening
 
     return true;
 }
@@ -302,6 +313,37 @@ void pawsQuestListWindow::HandleMessage ( MsgEntry* me )
 
 bool pawsQuestListWindow::OnButtonReleased(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
+    int button = widget->GetID();
+
+    questList = (pawsListBox*)questTab->GetActiveTab();
+    eventList = (pawsListBox*)eventTab->GetActiveTab();
+
+    switch( button )
+    {
+        case CONFIRM_YES:
+        {
+            if (currentTab == questTab)
+                DiscardQuest(questIDBuffer);
+            else if (currentTab == eventTab)
+                DiscardGMEvent(questIDBuffer);
+            questID = -1;
+
+            // Refresh window
+            notes->Clear();
+            description->Clear();
+            eventList->Clear();
+            questList->Clear();
+
+            psUserCmdMessage msg("/quests");
+            psengine->GetMsgHandler()->SendMessage(msg.msg);
+            break;
+        }
+    }
+    return true;
+}
+
+bool pawsQuestListWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
+{
     // We know that the calling widget is a button.
     int button = widget->GetID();
 
@@ -311,19 +353,45 @@ bool pawsQuestListWindow::OnButtonReleased(int /*mouseButton*/, int /*keyModifie
     switch( button )
     {
         case TAB_COMPLETED_QUESTS_OR_EVENTS:
-        case TAB_UNCOMPLETED_QUESTS_OR_EVENTS:
         {
         if (currentTab == questTab)
             {
                 questID = -1;
                 completedQuestList->Select(NULL);
-                uncompletedQuestList->Select(NULL);
+
+                TotalNumberStr.Format("%lu",completedQuestList->GetRowCount());
+                total->SetText("Total: " + TotalNumberStr);
             }
             else
         {
                 questID = -1;
                 completedEventList->Select(NULL);
+
+                TotalNumberStr.Format("%lu",completedEventList->GetRowCount());
+                total->SetText("Total: " + TotalNumberStr);
+        }
+            description->Clear();
+            notes->Clear();
+            break;
+        }
+
+        case TAB_UNCOMPLETED_QUESTS_OR_EVENTS:
+        {
+        if (currentTab == questTab)
+            {
+                questID = -1;
+                uncompletedQuestList->Select(NULL);
+
+                TotalNumberStr.Format("%lu",uncompletedQuestList->GetRowCount());
+                total->SetText("Total: " + TotalNumberStr);
+            }
+            else
+        {
+                questID = -1;
                 uncompletedEventList->Select(NULL);
+
+                TotalNumberStr.Format("%lu",uncompletedEventList->GetRowCount());
+                total->SetText("Total: " + TotalNumberStr);
         }
             description->Clear();
             notes->Clear();
@@ -345,24 +413,6 @@ bool pawsQuestListWindow::OnButtonReleased(int /*mouseButton*/, int /*keyModifie
                     "Are you sure you want to discard the selected quest?", this );
                 questIDBuffer = questID;
             }
-            break;
-        }
-        case CONFIRM_YES:
-        {
-            if (currentTab == questTab)
-                DiscardQuest(questIDBuffer);
-            else if (currentTab == eventTab)
-                DiscardGMEvent(questIDBuffer);
-            questID = -1;
-
-            // Refresh window
-            notes->Clear();
-            description->Clear();
-            eventList->Clear();
-            questList->Clear();
-
-            psUserCmdMessage msg("/quests");
-            psengine->GetMsgHandler()->SendMessage(msg.msg);
             break;
         }
         
@@ -428,7 +478,6 @@ bool pawsQuestListWindow::OnButtonReleased(int /*mouseButton*/, int /*keyModifie
                 description->Clear();
                 notes->Clear();
             }
-
             break;
         }
         
@@ -441,8 +490,10 @@ bool pawsQuestListWindow::OnButtonReleased(int /*mouseButton*/, int /*keyModifie
                 PopulateGMEventTab();
                 description->Clear();
                 notes->Clear();
-            }
 
+                if(QuestListsBtn->IsDown())
+                QuestListsBtn->SetState(false);
+            }
             break;
         }
     }
@@ -650,6 +701,13 @@ void pawsQuestListWindow::PopulateQuestTab(void)
     questTab->SetTab(TAB_UNCOMPLETED_QUESTS_OR_EVENTS);
     completedQuestList->Select(NULL);
     uncompletedQuestList->Select(NULL);
+
+    completedQuestList->SortRows();
+    uncompletedQuestList->SortRows();
+
+    TotalNumberStr.Format("%lu",uncompletedQuestList->GetRowCount());
+    total->SetText("Total: " + TotalNumberStr);
+
     EvaluateBtn->Hide();
 
     currentTab->Show();
@@ -668,6 +726,13 @@ void pawsQuestListWindow::PopulateGMEventTab(void)
     eventTab->SetTab(TAB_UNCOMPLETED_QUESTS_OR_EVENTS);
     completedEventList->Select(NULL);
     uncompletedEventList->Select(NULL);
+
+    completedEventList->SortRows();
+    uncompletedEventList->SortRows();
+
+    TotalNumberStr.Format("%lu",uncompletedEventList->GetRowCount());
+    total->SetText("Total: " + TotalNumberStr);
+
     EvaluateBtn->Hide();
 
     currentTab->Show();
