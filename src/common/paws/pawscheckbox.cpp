@@ -28,8 +28,8 @@
 pawsCheckBox::pawsCheckBox()
             : textOffsetX(0), textOffsetY(0)
 {
-    checkBoxOff = "radiooff";
-    checkBoxOn  = "radioon";
+    checkBoxOff = "Checkbox Off";
+    checkBoxOn  = "Checkbox On";
     checkBoxSize = 16;
     checkBox = 0;
 }
