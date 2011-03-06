@@ -1517,7 +1517,7 @@ public:
 public:
     EID actorID;
     uint8_t mode;
-    uint32_t value; //< stance if COMBAT, duration if SPELL_CASTING, ...
+    uint32_t value; ///< stance if COMBAT, duration if SPELL_CASTING, ...
 };
 
 //---------------------------------------------------------------------------
