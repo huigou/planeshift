@@ -2682,6 +2682,8 @@ void pawsSpellCheckedEditBox::Draw()
             int textCenterY = (screenFrame.Height()-(margin*2)) / 2  - textHeight / 2;
             
             int textXPos = screenFrame.xmin + textCenterX + margin;
+
+            int basicFontColor = GetFontColour();
             
             // now we need to draw every word separately as the color might change
             for (size_t i = 0; i < words.GetSize(); i++)
@@ -2712,7 +2714,7 @@ void pawsSpellCheckedEditBox::Draw()
                     // set different fontcolours for correct/incorrect words
                     if (words[i].correct)
                     {
-                        SetColour(-1);
+                       SetColour(basicFontColor);
                     }
                     else
                     {
@@ -2727,11 +2729,11 @@ void pawsSpellCheckedEditBox::Draw()
                     int textWidth, textHeight;				
                     GetFont()->GetDimensions( tmp.Slice(wordStart, wordEnd-wordStart).GetData(), textWidth, textHeight );
                     textXPos += textWidth;
-                }	    	   	    	    
+                }
             }        
 
             //restore default color
-            SetColour(-1);
+            SetColour(basicFontColor);
 
             if ( blink && hasFocus )
             {
