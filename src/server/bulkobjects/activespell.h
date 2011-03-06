@@ -36,7 +36,7 @@
 struct iDocumentNode;
 class gemActor;
 
-/* iCancelAction
+/** iCancelAction
  *
  * A generic way to make necessary stuff happen when an ActiveSpell
  * is cancelled.  For example, sending the undo half of a <msg>, or
@@ -81,8 +81,9 @@ public:
     SPELL_TYPE      Type() const { return type; }
     csTicks Duration() const { return duration; }
 
-    // If Cancel() returns true, you're responsible for freeing the ActiveSpell's memory.
-    // If it returns false, it ignored the (second) attempt to cancel it (due to links).
+    /** If Cancel() returns true, you're responsible for freeing the ActiveSpell's memory.
+     *  If it returns false, it ignored the (second) attempt to cancel it (due to links).
+     */
     bool Cancel();
     bool HasExpired() const;
 
@@ -90,18 +91,18 @@ public:
     csString Persist() const;
 
 protected:
-    csString name;            //< The name of the spell
-    SPELL_TYPE type;          //< Spell type - buff, debuff, etc.
-    csString script;          //< the contents of an <apply> node which recreates this effect
-    csTicks duration;         //< How long this spell lasts
-    bool cancelOnDeath;       //< Whether or not this spell should be cancelled on death
-    bool damagesHP;           //< Whether or not this spell damages HP (for cancel on duel defeat)
+    csString name;            ///< The name of the spell
+    SPELL_TYPE type;          ///< Spell type - buff, debuff, etc.
+    csString script;          ///< the contents of an <apply> node which recreates this effect
+    csTicks duration;         ///< How long this spell lasts
+    bool cancelOnDeath;       ///< Whether or not this spell should be cancelled on death
+    bool damagesHP;           ///< Whether or not this spell damages HP (for cancel on duel defeat)
 
-    gemActor* target;         //< Who this spell is registered with
-    csTicks registrationTime; //< Timestamp when the spell was registered, for comparison with csGetTicks().
+    gemActor* target;         ///< Who this spell is registered with
+    csTicks registrationTime; ///< Timestamp when the spell was registered, for comparison with csGetTicks().
 
-    csArray<iSpellModifier*> modifiers; //< The iSpellModifiers this ActiveSpell altered, for cancelling.
-    csPDelArray<iCancelAction> actions; //< Actions to take when cancelling (i.e. unattaching scripts).
+    csArray<iSpellModifier*> modifiers; ///< The iSpellModifiers this ActiveSpell altered, for cancelling.
+    csPDelArray<iCancelAction> actions; ///< Actions to take when cancelling (i.e. unattaching scripts).
 };
 
 #endif
