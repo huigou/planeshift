@@ -376,78 +376,71 @@ bool psMainWidget::OnMouseDown( int button, int keyModifier, int x, int y )
             psengine->GetCharControl()->GetMovementManager()->MouseLookCanAct(true);
         }
 
-        //if we are using mouselook we don't want these to trigger or we would have some
-        //funny effects (like being unable to get out of mouse look without exiting the
-        //chat window targeting)
-        if(!psengine->GetCharControl()->GetMovementManager()->MouseLook())
+        if (psengine->GetMouseBinds()->CheckBind("EntitySelect", button, keyModifier))
         {
-            if (psengine->GetMouseBinds()->CheckBind("EntitySelect", button, keyModifier))
+            if ( over )
             {
-                if ( over )
-                {
-                    psengine->GetCharControl()->GetMovementManager()->SetMouseMove(false);
-                    psengine->GetCharManager()->SetTarget(over,"select"); 
-                }
-                else 
-                {
-                    // Deselect current target
-                    psengine->GetCharManager()->SetTarget(NULL, "select");
-
-                    //// Check for Action Location
-                    //{
-                    //    int poly = 0;
-                    //    csVector3 pos;
-
-                    //    iMeshWrapper* mesh  = psengine->GetPSCamera()->FindMeshUnder2D( x, y, &pos, &poly );
-
-                    //    if (mesh)
-                    //    {
-                    //        iSector* sector = psengine->GetPSCamera()->GetICamera()->GetSector();
-                    //        const char* sectorname = sector->QueryObject()->GetName();
-                    //        const char* meshname = mesh->QueryObject()->GetName();
-                    //        psengine->GetActionHandler()->Query( "SELECT", sectorname, meshname, poly, pos);
-                    //    }
-                    //}
-                }
+                psengine->GetCharControl()->GetMovementManager()->SetMouseMove(false);
+                psengine->GetCharManager()->SetTarget(over,"select"); 
             }
-
-            // Check Context Menu
-            if (psengine->GetMouseBinds()->CheckBind("ContextMenu", button, keyModifier))
+            else 
             {
-                if ( over )
-                {
-                    psengine->GetCharManager()->SetTarget(over, "context");
-                }
-                else
-                {
-                    // Deselect current target
-                    psengine->GetCharManager()->SetTarget(NULL, "select");
+                // Deselect current target
+                psengine->GetCharManager()->SetTarget(NULL, "select");
 
-                    // Check for Action Location
+                //// Check for Action Location
+                //{
+                //    int poly = 0;
+                //    csVector3 pos;
+
+                //    iMeshWrapper* mesh  = psengine->GetPSCamera()->FindMeshUnder2D( x, y, &pos, &poly );
+
+                //    if (mesh)
+                //    {
+                //        iSector* sector = psengine->GetPSCamera()->GetICamera()->GetSector();
+                //        const char* sectorname = sector->QueryObject()->GetName();
+                //        const char* meshname = mesh->QueryObject()->GetName();
+                //        psengine->GetActionHandler()->Query( "SELECT", sectorname, meshname, poly, pos);
+                //    }
+                //}
+            }
+        }
+
+        // Check Context Menu
+        if (psengine->GetMouseBinds()->CheckBind("ContextMenu", button, keyModifier))
+        {
+            if ( over )
+            {
+                psengine->GetCharManager()->SetTarget(over, "context");
+            }
+            else
+            {
+                // Deselect current target
+                psengine->GetCharManager()->SetTarget(NULL, "select");
+
+                // Check for Action Location
+                {
+                    int poly = 0;
+                    csVector3 pos;
+
+                    iMeshWrapper* mesh  = psengine->GetPSCamera()->FindMeshUnder2D( x, y, &pos, &poly );
+
+                    if (mesh)
                     {
-                        int poly = 0;
-                        csVector3 pos;
+                        iSector* sector = psengine->GetPSCamera()->GetICamera()->GetCamera()->GetSector();
+                        const char* sectorname = sector->QueryObject()->GetName();
+                        const char* meshname = mesh->QueryObject()->GetName();
 
-                        iMeshWrapper* mesh  = psengine->GetPSCamera()->FindMeshUnder2D( x, y, &pos, &poly );
+                        // See if it's worth quering
+                        //bool meshRecorded = psengine->GetCelClient()->IsMeshSubjectToAction(sectorname,meshname);
+                        //pawsWidget* action = PawsManager::GetSingleton().FindWidget("AddEditActionWindow");
 
-                        if (mesh)
-                        {
-                            iSector* sector = psengine->GetPSCamera()->GetICamera()->GetCamera()->GetSector();
-                            const char* sectorname = sector->QueryObject()->GetName();
-                            const char* meshname = mesh->QueryObject()->GetName();
-
-                            // See if it's worth quering
-                            //bool meshRecorded = psengine->GetCelClient()->IsMeshSubjectToAction(sectorname,meshname);
-                            //pawsWidget* action = PawsManager::GetSingleton().FindWidget("AddEditActionWindow");
-
-                            //if((action && action->IsVisible()) || meshRecorded)
-                                psengine->GetActionHandler()->Query( "SELECT", sectorname, meshname, poly, pos);
-                        }
+                        //if((action && action->IsVisible()) || meshRecorded)
+                            psengine->GetActionHandler()->Query( "SELECT", sectorname, meshname, poly, pos);
                     }
                 }
             }
         }
-
     }
         
     return false;
