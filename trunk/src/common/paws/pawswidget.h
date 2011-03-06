@@ -1164,8 +1164,14 @@ public:
      */
      csRect ClipRect() { return clipRect; }
 
-    /// Set text color.
-    void SetColour( int newColour = -1 );
+    /** Set text color.
+     *  @param newColour The colour to use from now on for this widget.
+     *                   If it's -1 it will make the selection at runtime
+     *                   (by checking first the parent then the default colour)
+     *                   If it's -2 (default) it will make the choice upon
+     *                   this call by setting the default color.
+     */
+    void SetColour( int newColour = -2 );
 
     /// Set font to use programmatically.
     void SetFont( const char* fontName, int Size=0 );

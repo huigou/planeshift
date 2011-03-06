@@ -2521,7 +2521,10 @@ void pawsWidget::SetFont( const char* Name , int Size)
 
 void pawsWidget::SetColour( int newColour )
 {
-    if ( newColour != -1 )
+    //-2 means we get the default color from the settings,
+    //else we set the not set color (so that we get the value from the parents, like what
+    //happens when nothing is defined or requested)
+    if ( newColour != -2 )
     {
         defaultFontColour = newColour;
     }
