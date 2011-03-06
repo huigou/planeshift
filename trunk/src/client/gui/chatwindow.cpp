@@ -2635,7 +2635,7 @@ void pawsSpellCheckedEditBox::Draw()
         ClipToParent(false);
         
         //check if the current widgets text is already spell-checked by comparing the the end of the last word with the length of the text.
-        int length = 0;
+        size_t length = 0;
         if (words.GetSize() > 0)
         {
             length = words[words.GetSize()-1].endPos;
@@ -2685,8 +2685,8 @@ void pawsSpellCheckedEditBox::Draw()
             
             // now we need to draw every word separately as the color might change
             for (size_t i = 0; i < words.GetSize(); i++)
-            {	    
-                int wordStart;	    
+            {
+                int wordStart;
                 if (i == 0)
                 {
                     wordStart = 0 - start;
@@ -2698,14 +2698,14 @@ void pawsSpellCheckedEditBox::Draw()
                 int wordEnd = words[i].endPos - start;
 
                 // is the word or parts of it displayed?
-                if (!(((wordStart < 0) && (wordEnd < 0)) || ((wordStart >= (int) tmp.Length()) && (wordEnd >= tmp.Length()))))
+                if (!(((wordStart < 0) && (wordEnd < 0)) || ((wordStart >= (int) tmp.Length()) && (wordEnd >= (int) tmp.Length()))))
                 {
                     // set correct word borders according to displayed chars
                     if (wordStart < 0)
                     {
                         wordStart = 0;
                     }
-                    if (wordEnd >= tmp.Length())
+                    if (wordEnd >= (int) tmp.Length())
                     {
                         wordEnd = tmp.Length();
                     }
