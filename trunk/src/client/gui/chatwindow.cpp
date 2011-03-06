@@ -150,7 +150,7 @@ pawsChatWindow::pawsChatWindow()
 
     //set the autocompletion arraylist
     autoCompleteLists.Push(&autoCompleteNames);
-    autoCompleteLists.Push(&settings.completionItems);    
+    autoCompleteLists.Push(&settings.completionItems);
 }
 
 pawsChatWindow::~pawsChatWindow()
@@ -161,7 +161,7 @@ pawsChatWindow::~pawsChatWindow()
 
     delete chatHistory;
     for (int i = 0; i < CHAT_END; i++)
-        logFile[i].Invalidate();    
+        logFile[i].Invalidate();
 }
 
 bool pawsChatWindow::PostSetup()
@@ -290,7 +290,7 @@ void pawsChatWindow::LoadChatSettings()
                 int r = option->GetAttributeValueAsInt( "r", 255 );
                 int g = option->GetAttributeValueAsInt( "g", 0 );
                 int b = option->GetAttributeValueAsInt( "b", 0 );
-                inputText->setTypoColour(graphics2D->FindRGB( r, g, b ));		
+                inputText->setTypoColour(graphics2D->FindRGB( r, g, b ));
             }
             else if (nodeName == "chatWidget")
             {
@@ -1047,7 +1047,7 @@ void pawsChatWindow::SaveChatSettings()
     defaultlastchatNode = optionNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
     defaultlastchatNode->SetValue("defaultlastchat");
     defaultlastchatNode->SetAttributeAsInt("value",(int)settings.defaultlastchat);
-    
+
     spellCheckerNode = optionNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
     spellCheckerNode->SetValue("spellChecker");
     spellCheckerNode->SetAttributeAsInt("value",(int)inputText->getUseSpellChecker());
@@ -1055,7 +1055,7 @@ void pawsChatWindow::SaveChatSettings()
     graphics2D->GetRGB(inputText->getTypoColour(), red, green, blue, alpha);
     spellCheckerNode->SetAttributeAsInt("r", red);
     spellCheckerNode->SetAttributeAsInt("g", green);
-    spellCheckerNode->SetAttributeAsInt("b", blue);    
+    spellCheckerNode->SetAttributeAsInt("b", blue);
 
     chatWidgetNode = optionNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
     chatWidgetNode->SetValue("chatWidget");
@@ -1831,7 +1831,7 @@ void pawsChatWindow::OnLostFocus()
 
 
 bool pawsChatWindow::OnKeyDown(utf32_char keyCode, utf32_char key, int modifiers )
-{      
+{
     // Do not handle key presses if the text box is not focused. This can occur if the chat tabs are clicked,
     // since they handle the mouse click the input text box is not focused,
     // which allows different tabs to be checked without interrupting movement
@@ -1842,7 +1842,7 @@ bool pawsChatWindow::OnKeyDown(utf32_char keyCode, utf32_char key, int modifiers
         else
             return false;
     }
-       				
+
     switch ( key )
     {
         case CSKEY_ENTER:
@@ -1951,7 +1951,7 @@ bool pawsChatWindow::OnKeyDown(utf32_char keyCode, utf32_char key, int modifiers
             // if ( !isprint( (char)key ))
             //{
             if (parent)
-                return parent->OnKeyDown( keyCode, key, modifiers );	    
+                return parent->OnKeyDown( keyCode, key, modifiers );
             else
                 return false;
             //}
@@ -2554,7 +2554,7 @@ pawsSpellCheckedEditBox::~pawsSpellCheckedEditBox()
     {
         delete spellChecker.Get(i);
     }
-    spellChecker.DeleteAll();   
+    spellChecker.DeleteAll();
     #endif
 }
 
@@ -2562,7 +2562,7 @@ void pawsSpellCheckedEditBox::checkSpelling()
 {
     #ifdef HUNSPELL
     if (!text.IsEmpty())
-    {	
+    {
         // clear the word-list
         words.Empty();
         // get the postitions of the words by checking for spaces in the widget's text
@@ -2571,10 +2571,10 @@ void pawsSpellCheckedEditBox::checkSpelling()
         size_t oldSpace = 0;
         size_t foundSpace = text.Find(" ", oldSpace);
         while (foundSpace != (size_t)-1)
-        {	  
+        {
             text.SubString(tmpString, oldSpace, foundSpace-oldSpace);
             // before spellchecking remove chars that lead to wrong results
-            removeSpecialChars(tmpString);	    
+            removeSpecialChars(tmpString);
             // now do the spellchecking
             tmpWord.correct = false;
             for(size_t i = 0; i < spellChecker.GetSize(); i++)
@@ -2585,15 +2585,15 @@ void pawsSpellCheckedEditBox::checkSpelling()
                     break;
                 }
             }
-            tmpWord.endPos = foundSpace;	    
+            tmpWord.endPos = foundSpace;
             // and save everything
-            words.Push(tmpWord);	    
+            words.Push(tmpWord);
             oldSpace = foundSpace;
             foundSpace = text.Find(" ", oldSpace+1);
-        }	
+        }
         text.SubString(tmpString, oldSpace, text.Length()-oldSpace);
         // before spellchecking remove chars that lead to wrong results
-        removeSpecialChars(tmpString);	
+        removeSpecialChars(tmpString);
         // now do the spellchecking
         tmpWord.correct = false;
         for(size_t i = 0; i < spellChecker.GetSize(); i++)
@@ -2604,12 +2604,12 @@ void pawsSpellCheckedEditBox::checkSpelling()
                 break;
             }
         }
-        tmpWord.endPos = text.Length();	
+        tmpWord.endPos = text.Length();
         if (tmpWord.endPos > 0)
-        {	    
+        {
             // save only if the word contains something
-            words.Push(tmpWord);  
-        }	
+            words.Push(tmpWord);
+        }
     }
     else
     {
@@ -2633,7 +2633,7 @@ void pawsSpellCheckedEditBox::Draw()
         pawsWidget::Draw();
 
         ClipToParent(false);
-        
+
         //check if the current widgets text is already spell-checked by comparing the the end of the last word with the length of the text.
         size_t length = 0;
         if (words.GetSize() > 0)
@@ -2641,10 +2641,10 @@ void pawsSpellCheckedEditBox::Draw()
             length = words[words.GetSize()-1].endPos;
         }
         if (length != text.Length())
-        {      	
+        {
             checkSpelling();
         }
-            
+
 
         if (cursorPosition>text.Length())
             cursorPosition=text.Length();
@@ -2680,11 +2680,11 @@ void pawsSpellCheckedEditBox::Draw()
             // Get the center
             int textCenterX = 4;
             int textCenterY = (screenFrame.Height()-(margin*2)) / 2  - textHeight / 2;
-            
+
             int textXPos = screenFrame.xmin + textCenterX + margin;
 
             int basicFontColor = GetFontColour();
-            
+
             // now we need to draw every word separately as the color might change
             for (size_t i = 0; i < words.GetSize(); i++)
             {
@@ -2726,11 +2726,11 @@ void pawsSpellCheckedEditBox::Draw()
                         screenFrame.ymin + textCenterY + margin);
 
                     // get the x-offest for the next word
-                    int textWidth, textHeight;				
+                    int textWidth, textHeight;
                     GetFont()->GetDimensions( tmp.Slice(wordStart, wordEnd-wordStart).GetData(), textWidth, textHeight );
                     textXPos += textWidth;
                 }
-            }        
+            }
 
             //restore default color
             SetColour(basicFontColor);
@@ -2782,14 +2782,14 @@ bool pawsSpellCheckedEditBox::OnKeyDown( utf32_char code, utf32_char key, int mo
 
 void pawsSpellCheckedEditBox::removeSpecialChars(csString& str)
 {
-    // remove all chars that interfere with spellchecking of a word 
+    // remove all chars that interfere with spellchecking of a word
     // ("'" can't be removed so that "don't" is recognized correctly....
     // this will lead to things like "/me says 'Hello'" being displayed as error
     str.ReplaceAll("?", "");
     str.ReplaceAll("!", "");
-    str.ReplaceAll("\"", "");  
+    str.ReplaceAll("\"", "");
     str.ReplaceAll("*", "");
-    str.ReplaceAll(".", ""); 
+    str.ReplaceAll(".", "");
     str.ReplaceAll(",", "");
     str.ReplaceAll(";", "");
     str.ReplaceAll("-", "");
