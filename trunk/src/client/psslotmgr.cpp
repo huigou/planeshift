@@ -347,9 +347,10 @@ void psSlotManager::Handle( pawsSlot* slot, bool grabOne, bool grabAll )
     else
     {
         //do nothing if it's the same slot
-        if(slot == draggingSlot.slot)
+        if(slot == draggingSlot.slot && draggingSlot.stackCount == slot->StackCount())
         {
             CancelDrag();
+            printf("here\n");
             return;
         }
         //printf("Dropping Slot Here\n");
