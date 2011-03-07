@@ -49,8 +49,6 @@ public:
     unsigned short mode;
     short uid;
     short gid;
-    time_t acctime;   /// time of last access
-    time_t modtime;   /// time of last modification
 
     FileStat ()
     { target = NULL; }
