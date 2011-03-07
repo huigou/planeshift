@@ -129,6 +129,10 @@ bool pawsCreationMain::PostSetup()
 
 
     view = (pawsObjectView*)FindWidget("ModelView");
+    while(!view->ContinueLoad())
+    {
+        csSleep(100);
+    }
 
     faceLabel = (pawsTextBox*)FindWidget( "Face" );
     hairStyleLabel = (pawsTextBox*)FindWidget( "HairStyles" );
