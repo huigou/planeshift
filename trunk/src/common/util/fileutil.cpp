@@ -228,7 +228,7 @@ bool FileUtil::CopyFile(csString from, csString to, bool vfsPath, bool executabl
         struct utimbuf times;
         times.actime = fromStat->acctime;       /* access time */
         times.modtime = fromStat->modtime;      /* modification time */
-
+        utime(buff->GetData(), &times);
     }    
 #endif
 
