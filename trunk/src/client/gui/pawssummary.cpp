@@ -65,6 +65,10 @@ bool pawsSummaryWindow::PostSetup()
     
     view = (pawsObjectView*)FindWidget("ModelView");
     if ( view == NULL ) return false;
+    while(!view->ContinueLoad())
+    {
+        csSleep(100);
+    }
     
     return true;
 }
