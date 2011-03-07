@@ -48,7 +48,7 @@ bool pawsImageDrawable::PreparePixmap()
 
     // Check if already loaded first.
     csRef<iEngine> engine = csQueryRegistry<iEngine>(PawsManager::GetSingleton().GetObjectRegistry());
-    iTextureWrapper* tex = engine->GetTextureList()->FindByName(imageFileLocation);
+    iTextureWrapper* tex = engine ? engine->GetTextureList()->FindByName(imageFileLocation) : nullptr;
     if(tex)
     {
         textureHandle = tex->GetTextureHandle();
@@ -97,8 +97,11 @@ bool pawsImageDrawable::PreparePixmap()
         textureHandle->SetTextureClass("cegui");
 
         // Store wrapped handle in the engine for later use.
-        tex = engine->GetTextureList()->NewTexture(textureHandle);
-        tex->QueryObject()->SetName(imageFileLocation);
+	if (engine)
+	{
+	  tex = engine->GetTextureList()->NewTexture(textureHandle);
+	  tex->QueryObject()->SetName(imageFileLocation);
+	}
 
         // If colour key exists.
         if ( defaultTransparentColourBlue  != -1 &&
@@ -112,7 +115,7 @@ bool pawsImageDrawable::PreparePixmap()
     }
 
     // Get other texture data.
-    tex->GetTextureHandle()->GetOriginalDimensions(width, height);
+    textureHandle->GetOriginalDimensions(width, height);
 
     if ( textureRectangle.Width() == 0 || textureRectangle.Height() == 0 )
     {
