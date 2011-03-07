@@ -27,12 +27,8 @@ STATIC.PLUGINLIST =
   fontplex
   freefnt2
   gl3d
-  engine
   imgplex
-  shadermgr
-  shaderweaver
   sndsysopenal
-  xmlshader
   xmltiny
   vfs
   ;
