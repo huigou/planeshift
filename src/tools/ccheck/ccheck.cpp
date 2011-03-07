@@ -140,8 +140,36 @@ void CCheck::Run()
                         {
                             FileUtil futil(vfs);
                             csString path = bindata->Get(k);
-                            if((path.GetAt(path.Length()-3) == '_' && path.GetAt(path.Length()-2) == 'l' && path.GetAt(path.Length()-1) == 'm') || path.Find("_c0") != size_t(-1))
+                            if((path.GetAt(path.Length()-3) == '_' && path.GetAt(path.Length()-2) == 'l' && path.GetAt(path.Length()-1) == 'm'))
                                 futil.CopyFile(bindata->Get(k), outpath+"/world/bindata/" + path.Slice(path.FindLast('/')), true, false);
+                            else if(path.Find("_c") != size_t(-1))
+                            {
+                                //if we have found a _c check if it's really the right one (_c# or _c#_pd#)
+                                bool found = true; //we take for granted at the start that we have found all correctly as expected
+                                //we start from the c our checks
+                                for(size_t i  = path.Find("_c") + 2; i < path.Length(); i++)
+                                {
+                                    //when we find numbers we are ok
+                                    if(path.GetAt(i) >= '0' && path.GetAt(i) <= '9')
+                                        continue;
+                                    //when we find _ we are ok only if we have enough space to house pd + at least a number
+                                    //and the next chars are actually pd
+                                    if(path.Length() > i + 3 && path.GetAt(i) == '_' && path.GetAt(i+1) == 'p' && path.GetAt(i+2) == 'd')
+                                    {
+                                        i += 2; //move to the end of _pd
+                                        continue;
+                                    }
+
+                                    //if the two tests above failed it means we have something different so abort the parsing
+                                    found = false;
+                                    break;
+                                }
+                                if(found)
+                                    futil.CopyFile(bindata->Get(k), outpath+"/world/bindata/" + path.Slice(path.FindLast('/')), true, false);
+                                else
+                                    futil.CopyFile(bindata->Get(k), outpath+"/meshes/bindata/" + path.Slice(path.FindLast('/')), true, false);
+
+                            }
                             else
                                 futil.CopyFile(bindata->Get(k), outpath+"/meshes/bindata/" + path.Slice(path.FindLast('/')), true, false);
                         }
