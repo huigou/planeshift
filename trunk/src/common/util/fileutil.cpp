@@ -35,6 +35,7 @@
 #include <iutil/stringarray.h>
 
 #include "fileutil.h"
+#include <utime.h>
 
 FileUtil::FileUtil(csRef<iVFS> _vfs)
 {
@@ -76,6 +77,8 @@ csPtr<FileStat> FileUtil::StatFile (const char* path)
     filestat->mode = filestats.st_mode;
     filestat->uid = filestats.st_uid;
     filestat->gid = filestats.st_gid;
+    filestat->acctime = filestats.st_atime;
+    filestat->modtime = filestats.st_mtime;
 
     return csPtr<FileStat>(filestat);
 }
@@ -220,6 +223,13 @@ bool FileUtil::CopyFile(csString from, csString to, bool vfsPath, bool executabl
         if(chmod(buff->GetData(), fromStat->mode | S_IXUSR | S_IXGRP) == -1)
             printf("Failed to set permissions on file %s.\n", to.GetData());
     }
+    //keep the previous modification time. TODO? make it a flag?
+    {
+        struct utimbuf times;
+        times.actime = fromStat->acctime;       /* access time */
+        times.modtime = fromStat->modtime;      /* modification time */
+
+    }    
 #endif
 
     return true;
