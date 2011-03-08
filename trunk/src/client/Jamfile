@@ -88,8 +88,6 @@ STATIC.PLUGINLIST =
   particlesldr
   ptanimimg
   ptpdlight
-  rendloop_loader
-  rendstep_std
   reporter
   rm_shadow_pssm
   rm_unshadowed
