@@ -35,7 +35,6 @@
 #include <iutil/stringarray.h>
 
 #include "fileutil.h"
-#include <utime.h>
 
 FileUtil::FileUtil(csRef<iVFS> _vfs)
 {
