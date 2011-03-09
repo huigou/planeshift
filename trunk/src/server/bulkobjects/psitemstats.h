@@ -185,9 +185,9 @@ typedef unsigned int PSITEMSTATS_SLOTLIST;
 #define PSITEMSTATS_FLAG_IS_EQUIP_STACKABLE  0x00010000
 #define PSITEMSTATS_FLAG_IS_WRITEABLE        0x00020000
 #define PSITEMSTATS_FLAG_NOPICKUP            0x00040000
-#define PSITEMSTATS_FLAG_AVERAGEQUALITY      0x00080000     //< Flag if the item can stack and average out quality.
-#define PSITEMSTATS_FLAG_CREATIVE            0x00100000         // A creative thing, eg book, sketch
-#define PSITEMSTATS_FLAG_BUY_PERSONALISE     0x00200000         // duplicate & personalise at purchase
+#define PSITEMSTATS_FLAG_AVERAGEQUALITY      0x00080000     ///< Flag if the item can stack and average out quality.
+#define PSITEMSTATS_FLAG_CREATIVE            0x00100000     ///< A creative thing, eg book, sketch
+#define PSITEMSTATS_FLAG_BUY_PERSONALISE     0x00200000     ///< duplicate & personalise at purchase
 #define PSITEMSTATS_FLAG_IS_RECHARGEABLE     0x00400000
 #define PSITEMSTATS_FLAG_IS_A_TRAP           0x00800000
 #define PSITEMSTATS_FLAG_IS_CONSTRUCTIBLE    0x01000000
