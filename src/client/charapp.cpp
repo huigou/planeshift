@@ -155,8 +155,8 @@ void psCharAppearance::SetMesh(iMeshWrapper* mesh)
     state = scfQueryInterface<iSpriteCal3DState>(mesh->GetMeshObject());
     stateFactory = scfQueryInterface<iSpriteCal3DFactoryState>(mesh->GetMeshObject()->GetFactory());
 
-    animeshObject = scfQueryInterface<iAnimatedMesh>(mesh->GetMeshObject());
-    animeshFactory = scfQueryInterface<iAnimatedMeshFactory>(mesh->GetMeshObject()->GetFactory());
+    animeshObject = scfQueryInterface<CS::Mesh::iAnimatedMesh>(mesh->GetMeshObject());
+    animeshFactory = scfQueryInterface<CS::Mesh::iAnimatedMeshFactory>(mesh->GetMeshObject()->GetFactory());
 
     baseMesh = mesh;
 }
@@ -562,8 +562,8 @@ void psCharAppearance::ApplyRider(csRef<iMeshWrapper> mesh)
     baseMesh->QuerySceneNode()->SetParent(mesh->QuerySceneNode());
 
     csRef<iSpriteCal3DState> mountState = scfQueryInterface<iSpriteCal3DState> (mesh->GetMeshObject());
-    csRef<iAnimatedMesh> mountObject = scfQueryInterface<iAnimatedMesh> (mesh->GetMeshObject());
-    csRef<iAnimatedMeshFactory> mountFactory = scfQueryInterface<iAnimatedMeshFactory>(mesh->GetMeshObject()->GetFactory());
+    csRef<CS::Mesh::iAnimatedMesh> mountObject = scfQueryInterface<CS::Mesh::iAnimatedMesh> (mesh->GetMeshObject());
+    csRef<CS::Mesh::iAnimatedMeshFactory> mountFactory = scfQueryInterface<CS::Mesh::iAnimatedMeshFactory>(mesh->GetMeshObject()->GetFactory());
 
     csReversibleTransform transform(csZRotMatrix3(rot_z)*csYRotMatrix3(rot_y)*csXRotMatrix3(rot_x), csVector3(trans_x,trans_y,trans_z));
     if (mountState.IsValid())
