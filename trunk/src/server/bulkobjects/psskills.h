@@ -31,6 +31,7 @@
 #include "util/poolallocator.h"
 
 #include "rpgrules/psmoney.h"
+#include "util/mathscript.h"
 
 //=============================================================================
 // Local Includes
@@ -38,6 +39,10 @@
 
 #define MAX_SKILL 5000
 #define MAX_STAT  5000
+
+//used for testing the degree of hardcoding of skills
+//typedef int PSSKILL;
+//#define PSSKILL_NONE -1
 
 enum PSSKILL {
     PSSKILL_NONE            =   -1,
@@ -143,6 +148,7 @@ public:
     PSSKILLS_CATEGORY category;
     /// The base cost that this skill requires. Used to calculate costs for next rank.
     int baseCost;
+    csString costScript; ///< Keeps the script used to calculate the cost of this skill.
 
 private:
     /// Static reference to the pool for all psSkillInfo objects

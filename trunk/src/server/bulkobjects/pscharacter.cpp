@@ -3276,16 +3276,11 @@ void Skill::CalculateCosts(psCharacter* user)
         return;
 
     // Calc the new Y/Z cost
-    csString scriptName;
-    if (info->id < PSSKILL_AGI || info->id > PSSKILL_WILL)
-        scriptName = "CalculateSkillCosts";
-    else
-        scriptName = "CalculateStatCosts";
-
-    MathScript *script = psserver->GetMathScriptEngine()->FindScript(scriptName);
+    MathScript *script = psserver->GetMathScriptEngine()->FindScript(info->costScript);
     if (!script)
     {
-        Error2("Couldn't find script %s!", scriptName.GetData());
+        Error4("Couldn't find script %s to calculate skill cost of %d (%s)!",
+                info->costScript.GetData(), info->id, info->name.GetData());
         return;
     }
 
@@ -3303,7 +3298,8 @@ void Skill::CalculateCosts(psCharacter* user)
     MathVar *zCostVar = env.Lookup("ZCost");
     if (!yCostVar || !zCostVar)
     {
-        Error2("Failed to evaluate MathScript >%s<.", scriptName.GetData());
+        Error4("Failed to evaluate MathScript >%s< to calculate skill cost of %d (%s).",
+               info->costScript.GetData(), info->id, info->name.GetData());
         return;
     }
 
