@@ -1554,7 +1554,17 @@ DELETE FROM command_group_assignment where command_name in("/money","/awardexp")
 ALTER TABLE `planeshift`.`trade_transformations` MODIFY COLUMN `trans_points` VARCHAR(255)  NOT NULL DEFAULT '0';
 INSERT INTO `server_options` VALUES('npcmanager:petskill', '31');
 
-
+#1257 - Stefano Angeleri - defined the math script used for calculation in the skill rows
+ALTER TABLE `skills` ADD COLUMN `cost_script` VARCHAR(255)  NOT NULL DEFAULT 'CalculateSkillCosts' COMMENT 'Stores the script to be run when calculating the costs of this skill.' AFTER `category`;
+update skills set cost_script="CalculateStatCosts" where name in("Agility","Charisma","Endurance","Intelligence","Will", "Strength");
+CREATE TABLE IF NOT EXISTS `character_variables` (
+  `character_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'The character this variable is assigned to',
+  `name` varchar(255) NOT NULL COMMENT 'The name of the variable',
+  `value` varchar(255) NOT NULL COMMENT 'The value of the variable',
+  PRIMARY KEY (`character_id`,`name`),
+  KEY `character_id` (`character_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Used to store variables for a character';
+UPDATE `server_options` SET `option_value`='1256' WHERE `option_name`='db_version';
 
 # PROPOSED CHANGES TO IMPROVE DB CONSISTENCY
 drop table accessrules;

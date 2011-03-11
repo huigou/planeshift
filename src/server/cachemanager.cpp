@@ -625,7 +625,16 @@ bool CacheManager::PreloadSkills()
                 return false;
             }
 
+            newskill->costScript = result[currentrow]["cost_script"];
 
+            //check if there is a valid cost_script
+            if(!psserver->GetMathScriptEngine()->FindScript(newskill->costScript))
+            {
+                Error3("Unknown script '%s' for skill id %u", newskill->costScript, newskill->id);
+                delete newskill;
+                return false;
+            }
+            
             skillinfo_IDHash.Put((int)newskill->id, newskill);
             skillinfo_NameHash.Put(csString(newskill->name).Upcase(), newskill);
             skillinfo_CategoryHash.Put((int)newskill->category, newskill);
