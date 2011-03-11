@@ -196,12 +196,12 @@ bool NetBase::CheckIn()
         //for win32 for now only inet_ntoa as inet_ntop wasn't supported till vista.
         //it has the same degree of compatibility of the previous code and it's supported till win2000
         #ifdef WIN32
-        strcpy(addrText, inet_ntoa(addr.sin_addr));
+        strncpy(addrText, inet_ntoa(addr.sin_addr), INET_ADDRSTRLEN);
         #else
         //there was a failure in conversion if null
         if(!inet_ntop(addr.sin_family,&addr.sin_addr, addrText, sizeof(addrText)))
         {
-            strcpy(addrText, "UNKNOWN");
+            strncpy(addrText, "UNKNOWN", INET_ADDRSTRLEN);
         }
         #endif
 
@@ -230,12 +230,12 @@ bool NetBase::CheckIn()
         //for win32 for now only inet_ntoa as inet_ntop wasn't supported till vista.
         //it has the same degree of compatibility of the previous code and it's supported till win2000
         #ifdef WIN32
-        strcpy(addrText, inet_ntoa(addr.sin_addr));
+        strncpy(addrText, inet_ntoa(addr.sin_addr), INET_ADDRSTRLEN);
         #else
         //there was a failure in conversion if null
         if(!inet_ntop(addr.sin_family,&addr.sin_addr, addrText, sizeof(addrText)))
         {
-            strcpy(addrText, "UNKNOWN");
+            strncpy(addrText, "UNKNOWN", INET_ADDRSTRLEN);
         }
         #endif
         
