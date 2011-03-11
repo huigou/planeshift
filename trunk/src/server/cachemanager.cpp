@@ -630,7 +630,7 @@ bool CacheManager::PreloadSkills()
             //check if there is a valid cost_script
             if(!psserver->GetMathScriptEngine()->FindScript(newskill->costScript))
             {
-                Error3("Unknown script '%s' for skill id %u", newskill->costScript, newskill->id);
+                Error3("Unknown script '%s' for skill id %u", newskill->costScript.GetData(), newskill->id);
                 delete newskill;
                 return false;
             }
