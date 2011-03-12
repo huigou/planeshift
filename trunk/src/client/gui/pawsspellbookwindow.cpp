@@ -62,7 +62,6 @@ bool pawsSpellBookWindow::PostSetup()
     spellList->SetSortingFunc(0, textBoxSortFunc);
     spellList->SetSortingFunc(5, textBoxSortFunc);
     spellList->SetSortingFunc(6, textBoxSortFunc);
-    spellList->SetSortedColumn(0);
 
     return true;
 }
@@ -75,6 +74,7 @@ void pawsSpellBookWindow::HandleMessage( MsgEntry* me )
         case MSGTYPE_SPELL_BOOK:
         {
             HandleSpells( me );
+            spellList->SortRows();   ///after getting spells sort the column specified in xml
             break;
         }
     }              
