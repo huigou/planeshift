@@ -91,6 +91,10 @@ bool pawsCharacterPickerWindow::PostSetup()
     psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_CHAR_DELETE);
         
     view = (pawsObjectView*)FindWidget("PaperDollView");
+    while(!view->ContinueLoad())
+    {
+        csSleep(100);
+    } 
     view->Rotate(10,0.01f);
     view->EnableMouseControl(true);
 
