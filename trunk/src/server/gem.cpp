@@ -1387,7 +1387,7 @@ void gemItem::SendBehaviorMessage(const csString & msg_id, gemObject *actor)
          gemContainer* container = dynamic_cast<gemContainer*>(this);
 
          uint32 origUID = item->GetUID();
-	 csString itemName = item->GetName();
+	     csString itemName = item->GetName();
          unsigned short origStackCount = item->GetStackCount();
 
          gemActor* gActor = actor->GetActorPtr();
