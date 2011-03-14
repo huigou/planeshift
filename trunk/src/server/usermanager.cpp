@@ -192,6 +192,7 @@ UserManager::UserManager(ClientConnectionSet *cs, CacheManager* cachemanager, Ba
     userCommandHash.Put("/unstick",      &UserManager::HandleUnstick);
     userCommandHash.Put("/who",          &UserManager::Who);
     userCommandHash.Put("/yield",        &UserManager::HandleYield);
+    userCommandHash.Put("/takeall",        &UserManager::HandleTakeAll); // Handle trying to take all items from container
 }
 
 UserManager::~UserManager()
@@ -2025,6 +2026,19 @@ void UserManager::HandleBanking(psUserCmdMessage& msg, Client *client)
         psserver->SendSystemError( client->GetClientNum(), "Usage: /bank [personal|guild]" );
         return;
     }
+}
+
+void UserManager::HandleTakeAll(psUserCmdMessage& msg, Client *client)
+{
+    // Check the client has targeted a container.
+    gemObject *object = client->GetTargetObject();
+    if (object->GetItem())
+    {
+        object->SendBehaviorMessage("takeall", client->GetActor() );
+    }
+    else
+        psserver->SendSystemError(client->GetClientNum(),
+                    "You need to target a container");
 }
 
 void UserManager::HandlePickup(psUserCmdMessage& msg, Client *client)
