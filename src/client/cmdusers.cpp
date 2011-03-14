@@ -132,6 +132,7 @@ psUserCommands::psUserCommands(ClientMsgHandler* mh,CmdHandler *ch,iObjectRegist
     cmdsource->Subscribe("/who",           this); // list players on server
     cmdsource->Subscribe("/write",         this);
     cmdsource->Subscribe("/yield",         this);
+    cmdsource->Subscribe("/takeall",       this); // Take all items from a container
 }
 
 psUserCommands::~psUserCommands()
@@ -204,6 +205,7 @@ psUserCommands::~psUserCommands()
     cmdsource->Unsubscribe("/who",                   this);
     cmdsource->Unsubscribe("/write",                 this);
     cmdsource->Unsubscribe("/yield",                 this);
+    cmdsource->Unsubscribe("/takeall",               this);
 
 
 
@@ -791,6 +793,17 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         }
         else
             return "You need to specify a target or to select one";
+    }
+    
+    // Handle /takeall command
+    else if (words[0] == "/takeall")
+    {
+        //printf("cmdusers 801, sending /takeall to server.\n");
+        csString newCmd;
+        newCmd.Append("/takeall");
+        
+        psUserCmdMessage cmdmsg(newCmd);
+        cmdmsg.SendMessage();
     }
 
     else if ( words[0] == "/game" )

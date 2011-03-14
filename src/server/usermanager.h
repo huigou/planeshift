@@ -17,6 +17,7 @@
  *
  */
 
+
 /**
  * This implements the user command handler which handles who's online messages,
  * buddy lists, and so forth.
@@ -471,6 +472,9 @@ protected:
     void HandleTargetEvent(MsgEntry *me,Client *client);
     void HandleEntranceMessage( MsgEntry* me, Client *client );
     void HandleClientReady( MsgEntry* me, Client *client );
+    
+    /// Handle taking all items from a container.
+    void HandleTakeAll(psUserCmdMessage& me, Client *client);
 
     void SwitchAttackTarget(Client *targeter, Client *targeted);
 

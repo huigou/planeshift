@@ -231,6 +231,29 @@ bool pawsContainerDescWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModi
             widget->Show();
         return true;
     }
+    // Check to see if player attempts to take everything
+    else if (widgetName == "TakeAll")
+    {        
+        GEMClientObject* oldtarget = psengine->GetCharManager()->GetTarget();
+        EID oldID;
+        
+        if(oldtarget)
+        {
+             oldID = oldtarget->GetEID();
+        }
+        
+        //printf("selecting containerID %d, oldID %d\n", containerID, oldID);
+        psUserActionMessage setnewtarget(0, containerID, "select");
+        setnewtarget.SendMessage();
+        //printf("taking all\n");
+        
+        // Attempt to grab all items in the container.
+        psengine->GetCmdHandler()->Execute("/takeall");
+
+        //printf("selecting oldID %d\n", oldID);
+        psUserActionMessage setoldtarget(0, oldID, "select");
+        setoldtarget.SendMessage();
+    }
 
     // Check to see if this was the view button.
     if ( widget->GetID() == VIEW_BUTTON )
@@ -246,6 +269,7 @@ bool pawsContainerDescWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModi
 
         return true;
     }
+ /* Ahhem! - internal memoír for tzaeru to not forget uncommenting this & completing the bottom most this. */
     else if ( widget->GetID() == INVENTORY_BUTTON )
     {
         if ( psengine->GetSlotManager()->IsDragging() )
@@ -263,7 +287,7 @@ bool pawsContainerDescWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModi
         }
 
         return true;
-    }
+    } 
     else if ( widget->GetID() == COMBINE_BUTTON || widget->GetID() == UNCOMBINE_BUTTON )
     {
         GEMClientObject* oldtarget = psengine->GetCharManager()->GetTarget();
@@ -284,7 +308,7 @@ bool pawsContainerDescWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModi
         psUserActionMessage setoldtarget(0, oldID, "select");
         setoldtarget.SendMessage();
     }
-
+    
     return true;
 }
 
