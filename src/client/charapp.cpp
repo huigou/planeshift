@@ -271,30 +271,22 @@ void psCharAppearance::BeardMesh(csString& subMesh)
 
 void psCharAppearance::HairMesh(csString& subMesh)
 {
-    csString newPartParsed = subMesh.Length() ? ParseStrings("Hair", subMesh) : hairMesh;
+    csString newPartParsed = ParseStrings("Hair", subMesh);
 
     if(state && stateFactory)
     {
-        int newMeshAvailable = stateFactory->FindMeshName(newPartParsed);
-        if ( newMeshAvailable == -1 )
+        for ( int idx=0; idx < stateFactory->GetMeshCount(); idx++)
         {
-            return;
-        }
-        else
-        {
-            for ( int idx=0; idx < stateFactory->GetMeshCount(); idx++)
+            const char* meshName = stateFactory->GetMeshName(idx);
+
+            if ( strstr(meshName, "Hair") )
             {
-                const char* meshName = stateFactory->GetMeshName(idx);
-
-                if ( strstr(meshName, "Hair") )
-                {
-                    state->DetachCoreMesh(meshName);
-                }
+                state->DetachCoreMesh(meshName);
             }
-
-            state->AttachCoreMesh(newPartParsed);
-            hairMesh = newPartParsed;
         }
+
+        state->AttachCoreMesh(newPartParsed);
+        hairMesh = newPartParsed;
     }
     else if(animeshObject && animeshFactory)
     {
