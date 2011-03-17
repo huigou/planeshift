@@ -635,12 +635,8 @@ void pawsGuildWindow::ExtractLevelInfo(csRef<iDocumentNode> levelNode)
     }
 }
 
-bool pawsGuildWindow::OnButtonReleased(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
+bool pawsGuildWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
-    guildMemberInfo * member;
-
-    Notify3(LOG_ANY,"Widget %s(%d) released",widget->GetName(),widget->GetID());
-
     int row,col;
     if (levelList->ConvertFromAutoID(widget->GetID(),row,col))
     {
@@ -662,6 +658,14 @@ bool pawsGuildWindow::OnButtonReleased(int /*mouseButton*/, int /*keyModifier*/,
         }
         return true;
     }
+    return false;
+}
+
+bool pawsGuildWindow::OnButtonReleased(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
+{
+    guildMemberInfo * member;
+
+    Notify3(LOG_ANY,"Widget %s(%d) released",widget->GetName(),widget->GetID());
 
     // If the user clicked on clickable level titles in level listbox, then ask for new level title
     if (widget->GetID()>=LEVEL_NAME_BUTTON  &&  widget->GetID()<LEVEL_NAME_BUTTON+MAX_GUILD_LEVEL)
