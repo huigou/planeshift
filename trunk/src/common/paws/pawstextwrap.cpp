@@ -102,7 +102,7 @@ bool pawsMultilineEditTextBox::OnKeyDown(utf32_char code, utf32_char key, int mo
         position = GetCursorPosition(cursorLine, cursorLoc);
         if(text.Length() > 0 && position > 0)//&& position <=text.Length())
         {
-            position--;        
+            position -= csUnicodeTransform::UTF8Rewind((const utf8_char*)text.GetData() + position, position);
             text.DeleteAt(position, csUnicodeTransform::UTF8Skip((const utf8_char*)text.GetData() + position, text.Length() - position));
             repositionCursor = true;
             changed = true;
