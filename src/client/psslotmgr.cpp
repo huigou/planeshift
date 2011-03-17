@@ -211,14 +211,14 @@ void psSlotManager::OnNumberEntered(const char* /*name*/, int param, int count)
     widget->SetParent( NULL );
     widget->DrawStackCount(parent->IsDrawingStackCount());
 
-    SetDragDetails( parent, count );
+    SetDragDetails(parent, count);
     parent->StackCount( newStack );
     isDragging = true;
     PawsManager::GetSingleton().SetDragDropWidget( widget );
 }
 
 
-void psSlotManager::SetDragDetails( pawsSlot* slot, int count )
+void psSlotManager::SetDragDetails(pawsSlot* slot, int count)
 {
     //printf("SetDragDetails: \n");
     draggingSlot.containerID     = slot->ContainerID();
@@ -229,6 +229,8 @@ void psSlotManager::SetDragDetails( pawsSlot* slot, int count )
     draggingSlot.materialName    = slot->GetMaterialName();
     draggingSlot.toolTip         = slot->GetToolTip();
     draggingSlot.bartenderAction = slot->GetBartenderAction();
+    //checks if we are dragging the whole thing or not
+    draggingSlot.split           = slot->StackCount() != count;
 }
 
 
@@ -346,11 +348,10 @@ void psSlotManager::Handle( pawsSlot* slot, bool grabOne, bool grabAll )
     }
     else
     {
-        //do nothing if it's the same slot
-        if(slot == draggingSlot.slot && draggingSlot.stackCount == slot->StackCount())
+        //do nothing if it's the same slot and we aren't dragging a split item
+        if(slot == draggingSlot.slot && !draggingSlot.split)
         {
             CancelDrag();
-            printf("here\n");
             return;
         }
         //printf("Dropping Slot Here\n");

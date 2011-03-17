@@ -46,7 +46,7 @@ public:
     bool HandleEvent( iEvent& ev );
 
     void Handle( pawsSlot* slot, bool grabOne = false, bool grabAll = false );
-    void SetDragDetails( pawsSlot* slot, int count );
+    void SetDragDetails(pawsSlot* slot, int count);
 
     bool IsDragging() { return isDragging; }
 
@@ -73,6 +73,7 @@ private:
         csString toolTip;
         csString bartenderAction;
         int parentID;
+        bool split; ///< Holds if the slot we are dragging contains a split of a stack.
     } draggingSlot;
 
     void PlaceItem();
