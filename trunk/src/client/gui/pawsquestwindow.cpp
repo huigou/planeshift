@@ -359,7 +359,7 @@ bool pawsQuestListWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier
                 questID = -1;
                 completedQuestList->Select(NULL);
 
-                TotalNumberStr.Format("%lu",completedQuestList->GetRowCount());
+                TotalNumberStr.Format("%zu",completedQuestList->GetRowCount());
                 total->SetText("Total: " + TotalNumberStr);
             }
             else
@@ -367,7 +367,7 @@ bool pawsQuestListWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier
                 questID = -1;
                 completedEventList->Select(NULL);
 
-                TotalNumberStr.Format("%lu",completedEventList->GetRowCount());
+                TotalNumberStr.Format("%zu",completedEventList->GetRowCount());
                 total->SetText("Total: " + TotalNumberStr);
         }
             description->Clear();
@@ -382,7 +382,7 @@ bool pawsQuestListWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier
                 questID = -1;
                 uncompletedQuestList->Select(NULL);
 
-                TotalNumberStr.Format("%lu",uncompletedQuestList->GetRowCount());
+                TotalNumberStr.Format("%zu",uncompletedQuestList->GetRowCount());
                 total->SetText("Total: " + TotalNumberStr);
             }
             else
@@ -390,7 +390,7 @@ bool pawsQuestListWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier
                 questID = -1;
                 uncompletedEventList->Select(NULL);
 
-                TotalNumberStr.Format("%lu",uncompletedEventList->GetRowCount());
+                TotalNumberStr.Format("%zu",uncompletedEventList->GetRowCount());
                 total->SetText("Total: " + TotalNumberStr);
         }
             description->Clear();
@@ -705,7 +705,7 @@ void pawsQuestListWindow::PopulateQuestTab(void)
     completedQuestList->SortRows();
     uncompletedQuestList->SortRows();
 
-    TotalNumberStr.Format("%lu",uncompletedQuestList->GetRowCount());
+    TotalNumberStr.Format("%zu",uncompletedQuestList->GetRowCount());
     total->SetText("Total: " + TotalNumberStr);
 
     EvaluateBtn->Hide();
@@ -730,7 +730,7 @@ void pawsQuestListWindow::PopulateGMEventTab(void)
     completedEventList->SortRows();
     uncompletedEventList->SortRows();
 
-    TotalNumberStr.Format("%lu",uncompletedEventList->GetRowCount());
+    TotalNumberStr.Format("%zu",uncompletedEventList->GetRowCount());
     total->SetText("Total: " + TotalNumberStr);
 
     EvaluateBtn->Hide();
