@@ -407,7 +407,7 @@ bool psMainWidget::OnMouseDown( int button, int keyModifier, int x, int y )
         }
 
         // Check Context Menu
-        if (psengine->GetMouseBinds()->CheckBind("ContextMenu", button, keyModifier))
+        if (psengine->GetMouseBinds()->CheckBind("ContextMenu", button, keyModifier) && !psengine->GetSlotManager()->IsPlacing())
         {
             if ( over )
             {

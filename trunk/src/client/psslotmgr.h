@@ -49,6 +49,7 @@ public:
     void SetDragDetails(pawsSlot* slot, int count);
 
     bool IsDragging() { return isDragging; }
+    bool IsPlacing() { return isPlacing; }
 
     /** Set the state of the drag flag. */
     void SetDragFlag( bool flag ) { isDragging = flag; }
