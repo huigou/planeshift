@@ -1496,7 +1496,7 @@ ALTER TABLE `item_instances` ADD COLUMN `prefix` INTEGER UNSIGNED NOT NULL DEFAU
  UPDATE `server_options` SET `option_value`='1255' WHERE `option_name`='db_version';
 
 #1256 - Stefano Angeleri - Added support for automatic fog and snow events.
-ALTER TABLE `planeshift`.`sectors` MODIFY COLUMN `name` VARCHAR(30)  CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL COMMENT 'The name of the sector (as defined in map files)',
+ALTER TABLE `sectors` MODIFY COLUMN `name` VARCHAR(30)  CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL COMMENT 'The name of the sector (as defined in map files)',
  MODIFY COLUMN `rain_enabled` CHAR(1)  CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT 'N' COMMENT 'Sets if automatic rain should trigger. Put Y to enable it, N to disable it.',
  MODIFY COLUMN `rain_min_gap` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Sets the minimum time between two automatically triggered rain events.',
  MODIFY COLUMN `rain_max_gap` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Sets the maximum time between two automatically triggered rain events.',
@@ -1551,7 +1551,7 @@ INSERT INTO command_group_assignment VALUES( "/award", 24 );
 DELETE FROM command_group_assignment where command_name in("/money","/awardexp");
 
 #1256 - Stefano Angeleri - Converted trans_points in a math expression.
-ALTER TABLE `planeshift`.`trade_transformations` MODIFY COLUMN `trans_points` VARCHAR(255)  NOT NULL DEFAULT '0';
+ALTER TABLE `trade_transformations` MODIFY COLUMN `trans_points` VARCHAR(255)  NOT NULL DEFAULT '0';
 INSERT INTO `server_options` VALUES('npcmanager:petskill', '31');
 
 #1257 - Stefano Angeleri - defined the math script used for calculation in the skill rows
