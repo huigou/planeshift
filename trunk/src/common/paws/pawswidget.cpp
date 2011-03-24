@@ -372,7 +372,7 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
 
     isResizable = node->GetAttributeValueAsBool("resizable", isResizable);
 
-    resizeToScreen = node->GetAttributeValueAsBool("resizetoscreen", parent->resizeToScreen);
+    resizeToScreen = node->GetAttributeValueAsBool("resizetoscreen", parent? parent->resizeToScreen : resizeToScreen);
 
     keepaspect = node->GetAttributeValueAsBool("keepaspect", keepaspect );
 
