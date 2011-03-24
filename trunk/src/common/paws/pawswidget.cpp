@@ -347,85 +347,40 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
 
     ReadDefaultWidgetStyles(node);
 
-    atr = node->GetAttribute("ignore");
-    if ( atr )
-    {
-        csString choice = csString( atr->GetValue() );
-        if ( choice == "yes" ) ignore = true;
-        if ( choice == "no"  ) ignore = false;
-    }
+    //if we don't find the attribute we set the previous one
+    ignore = node->GetAttributeValueAsBool("ignore", ignore);
+
 
     // Check to see if this widget is visible directly after a load.
-    atr = node->GetAttribute( "visible" );
-    if ( atr )
+    if(node->GetAttributeValueAsBool("visible", visible))
     {
-        csString choice = csString( atr->GetValue() );
-        if ( choice == "yes" ) Show();
-        if ( choice == "no"  ) Hide();
+        Show();
     }
-
+    else
+    {
+        Hide();
+    }
 
     // Check to see if this widget should save it's position
-    atr = node->GetAttribute("savepositions");
-    if ( atr )
-    {
-        csString choice = csString(atr->GetValue());
-        if ( choice == "yes" ) saveWidgetPositions = true;
-        if ( choice == "no"  ) saveWidgetPositions = false;
-    }
+    saveWidgetPositions = node->GetAttributeValueAsBool("savepositions", saveWidgetPositions);
 
     // Check to see if this widget is movable
-    atr = node->GetAttribute("movable");
-    if ( atr )
-    {
-        csString choice = csString(atr->GetValue());
-        if ( choice == "yes" ) movable = true;
-        if ( choice == "no"  ) movable = false;
-    }
+    movable = node->GetAttributeValueAsBool("movable", movable);
 
     // Check to see if this widget is configurable
-    atr = node->GetAttribute("configurable");
-    if ( atr )
-    {
-        csString choice = csString(atr->GetValue());
-        if ( choice == "yes" ) configurable = true;
-        if ( choice == "no"  ) configurable = false;
-    }
+    configurable = node->GetAttributeValueAsBool("configurable", configurable);
 
-    atr = node->GetAttribute( "resizable" );
-    if ( atr )
-    {
-        csString choice = csString(atr->GetValue());
-        if ( choice == "yes" ) isResizable = true;
-        if ( choice == "no"  ) isResizable = false;
-    }
+    resizable = node->GetAttributeValueAsBool("resizable", resizable);
 
-    atr = node->GetAttribute( "resizetoscreen" );
-    if(atr)
-    {
-        resizeToScreen = atr->GetValueAsBool();
-    }
-    else if(parent)
-    {
-        resizeToScreen = parent->resizeToScreen;
-    }
+    resizeToScreen = node->GetAttributeValueAsBool("resizetoscreen", parent->resizeToScreen);
 
-    atr = node->GetAttribute( "keepaspect" );
-    if(atr)
-    {
-        csString choice = csString(atr->GetValue());
-        if ( choice == "no"  ) keepaspect = false;
-    }
+    keepaspect = node->GetAttributeValueAsBool("keepaspect", keepaspect );
 
     atr = node->GetAttribute( "ContextMenu" );
     if ( atr )
         contextMenuFile = atr->GetValue();
 
-    atr = node->GetAttribute( "id" );
-    if ( atr )
-    {
-        id = atr->GetValueAsInt();
-    }
+    id = node->GetAttributeValueAsInt("id", id);
 
     atr = node->GetAttribute( "xmlbinding" );
     if ( atr )
@@ -433,7 +388,7 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
         xmlbinding = atr->GetValue();
     }
 
-    alwaysOnTop = node->GetAttributeValueAsBool( "alwaysontop", false );
+    alwaysOnTop = node->GetAttributeValueAsBool("alwaysontop", alwaysOnTop);
 
     // Get tool tip, if any
     atr = node->GetAttribute( "tooltip" );
@@ -508,14 +463,14 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
 
         defaultFontShadowColour = graphics2D->FindRGB( r, g, b );
 
-        if (fontAttribute->GetAttributeValueAsBool( "shadow" ))
+        if (fontAttribute->GetAttributeValueAsBool("shadow"))
             fontStyle |= FONT_STYLE_DROPSHADOW;
-        if (fontAttribute->GetAttributeValueAsBool( "bold" ))
+        if (fontAttribute->GetAttributeValueAsBool("bold"))
             fontStyle |= FONT_STYLE_BOLD;
     }
 
     // Get the frame for this widget.
-    csRef<iDocumentNode> frameNode = node->GetNode( "frame" );
+    csRef<iDocumentNode> frameNode = node->GetNode("frame");
     if ( frameNode )
     {
         defaultFrame.xmin = GetActualWidth(frameNode->GetAttributeValueAsInt("x"));
@@ -563,19 +518,11 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
 
         if ( border )
         {
-            csRef<iDocumentAttribute> useJustTitle = frameNode->GetAttribute("justtitle");
-            if ( useJustTitle )
-            {
-                csString useJustTitleString = useJustTitle->GetValue();
-
-                if ( useJustTitleString != "no" )
-                    border->JustTitle();
-            }
+            if(frameNode->GetAttributeAsBool("justtitle", false))
+                border->JustTitle();
         }
 
-        atr = frameNode->GetAttribute( "margin" );
-        if (atr)
-            margin = atr->GetValueAsInt();
+        margin = frameNode->GetAttributeAsInt("margin", margin);
     }
 
     // Process title bar, if any
@@ -633,13 +580,11 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
                 alpha = bgImage->GetDefaultAlpha();
 
             //alphaMax = alpha;
-            csRef<iDocumentAttribute> fadeattr = bgImageNode->GetAttribute("fading");
-            if (fadeattr)
-                fade = fadeattr->GetValueAsBool();
+            fade = bgImageNode->GetAttributeValueAsBool("fading", fade);
         }
     }
 
-    if ( configurable )
+    if(configurable)
     {
         LoadSettings();
     }
