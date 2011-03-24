@@ -370,7 +370,7 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
     // Check to see if this widget is configurable
     configurable = node->GetAttributeValueAsBool("configurable", configurable);
 
-    resizable = node->GetAttributeValueAsBool("resizable", resizable);
+    isResizable = node->GetAttributeValueAsBool("resizable", isResizable);
 
     resizeToScreen = node->GetAttributeValueAsBool("resizetoscreen", parent->resizeToScreen);
 
@@ -518,11 +518,11 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
 
         if ( border )
         {
-            if(frameNode->GetAttributeAsBool("justtitle", false))
+            if(frameNode->GetAttributeValueAsBool("justtitle", false))
                 border->JustTitle();
         }
 
-        margin = frameNode->GetAttributeAsInt("margin", margin);
+        margin = frameNode->GetAttributeValueAsInt("margin", margin);
     }
 
     // Process title bar, if any
