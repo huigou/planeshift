@@ -217,6 +217,7 @@ PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* 
         guiTexture->SetAlphaType (csAlphaMode::alphaBinary);
     else
 	render2texture = false;
+    TooltipsColors[] = {0,0,0};
 }
 
 PawsManager::~PawsManager()

@@ -46,7 +46,7 @@ public:
     /// from iOnColorEnteredAction (set color to param-identified label)
     virtual void OnColorEntered(const char *name,int param,int color);
 
-    virtual bool PostSetup(); /// see pawsWidget
+    virtual bool PostSetup(); ///< @see pawsWidget
 
     /// from pawsConfigSectionWindow
     virtual bool Initialize();
@@ -54,25 +54,26 @@ public:
     virtual bool SaveConfig();
     virtual void SetDefault();
 
-    void SaveSetting();         /// Saves the configuration file
-    bool LoadDefaults();         /// Loads the default values
+    void SaveSetting();          ///< Saves the configuration file
+    bool LoadDefaults();         ///< Loads the default values
 
 private:
-    pawsCheckBox* EnableTooltips; /// Checkbox for toggling the tooltips on/off
-    pawsCheckBox* EnableBgColor;  /// Checkbox for toggling the tooltip background on/off
+    pawsCheckBox* EnableTooltips; ///< Checkbox for toggling the tooltips on/off
+    pawsCheckBox* EnableBgColor;  ///< Checkbox for toggling the tooltip background on/off
 
-    pawsTextBox* TooltipBgColor;        /// Textboxes for showing the colors
-    pawsTextBox* TooltipFontColor;
-    pawsTextBox* TooltipShadowColor;
+    pawsTextBox* TooltipBgColor;      /// Textbox for showing the bgcolor
+    pawsTextBox* TooltipFontColor;    /// Textbox for showing the font color
+    pawsTextBox* TooltipShadowColor;  /// Textbox for showing the shadow color
 
     pawsWidget* widget;
 
-    void RefreshColorFrames();               /// Refreshes the color frames
+    void RefreshColorFrames();               ///< Refreshes the color frames
 
-    pawsColorPromptWindow * colorPicker;    /// pointer to colorPicker window
+    pawsColorPromptWindow * colorPicker;    ///< pointer to colorPicker window
 
-    int defTooltipsColors[3];  /// array of default colors
-    int defToolTipEnable, defToolTipEnableBgColor;
+    int defTooltipsColors[3];               ///< array of default colors
+    int defToolTipEnable;                   ///< Holds the status of the tooltip (being enabled)
+    int defToolTipEnableBgColor;            ///< Holds if the bgcolor should be enabled
 
 };
 

@@ -1214,7 +1214,7 @@ void pawsWidget::DrawToolTip(int x, int y)
     if(!IsVisible())
        return;
 
-    if (PawsManager::GetSingleton().getToolTipEnable() == 1)
+    if (PawsManager::GetSingleton().getToolTipEnable())
     {
         int width=0;
         int height=0;
@@ -1252,15 +1252,15 @@ void pawsWidget::DrawToolTip(int x, int y)
 
         // Note: negative value on realX is impossible
 
-    	// BgColor
-    	if (PawsManager::GetSingleton().getToolTipEnableBgColor() != 0)
-    	    graphics2D->DrawBox( realX, realY, width+4, height+4, PawsManager::GetSingleton().getTooltipsColors(0) );
+        // BgColor
+        if (PawsManager::GetSingleton().getToolTipEnableBgColor())
+            graphics2D->DrawBox( realX, realY, width+4, height+4, PawsManager::GetSingleton().getTooltipsColors(0) );
 
-    	// Shadow
-    	graphics2D->Write( fontPtr, realX+3, realY+3, PawsManager::GetSingleton().getTooltipsColors(2), -1, toolTip );
+        // Shadow
+        graphics2D->Write( fontPtr, realX+3, realY+3, PawsManager::GetSingleton().getTooltipsColors(2), -1, toolTip );
 
-    	// Text
-    	graphics2D->Write( fontPtr, realX+2, realY+2, PawsManager::GetSingleton().getTooltipsColors(1), -1, toolTip );
+        // Text
+        graphics2D->Write( fontPtr, realX+2, realY+2, PawsManager::GetSingleton().getTooltipsColors(1), -1, toolTip );
     }
 }
 
