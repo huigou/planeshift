@@ -299,14 +299,14 @@ public:
 
     /*                          ToolTips Functions/Variables
     ------------------------------------------------------------------------*/
-    static int TooltipsColors[];      /// array of colors
-    static int ToolTipEnable, ToolTipEnableBgColor;
-    static csString CONFIG_TOOLTIPS_FILE_NAME_SKIN;
+    int TooltipsColors[3];      ///< Array of tooltip colors
+    int ToolTipEnable;          ///< Sets if the tooltip should be enable
+    int ToolTipEnableBgColor;   ///< Sets if the tooltip should have a bgcolor
 
     /// Loads the Tooltips config-file
     bool LoadTooltips(const char* fileName);
     /// returns the full path to the tooltips.xml in skin.zip
-    csString getToolTipSkinPath() { return CONFIG_TOOLTIPS_FILE_NAME_SKIN; };
+    csString getToolTipSkinPath();
     /// returns tooltips enabled/disabled
     int getToolTipEnable() { return ToolTipEnable; };
     /// changes tooltips enabled/disabled
