@@ -125,6 +125,7 @@
   <item orig="Edit Mode (F2)" trans="" />
   <item orig="each values 10 Tria" trans="" />
   <item orig="Open Inventory" trans="" />
+  <item orig="Please enter a first name" trans="" />
   <item orig="auctions" trans="" />
   <item orig="The number of octas that you may exchange." trans="" />
   <item orig="Attributes" trans="Attributi" />
@@ -503,6 +504,7 @@ chiamato " />
   <item orig="Information" trans="" />
   <item orig="Modify Description" trans="" />
   <item orig="Name of the mesh fact" trans="" />
+  <item orig="Take All" trans="" />
   <item orig="Attackable" trans="Attaccabile" />
   <item orig="Auction text color" trans="" />
   <item orig="Hello" trans="Ciao" />
