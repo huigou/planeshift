@@ -95,6 +95,15 @@
 
 
 //////////////////////////////////////////////////////////////////////
+// DEFINITION OF STATIC VARIABLES
+//////////////////////////////////////////////////////////////////////
+csString PawsManager::CONFIG_TOOLTIPS_FILE_NAME_SKIN = "";
+int PawsManager::ToolTipEnable = 0;
+int PawsManager::ToolTipEnableBgColor = 0;
+int PawsManager::TooltipsColors[3];
+
+
+//////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* skinBase) : render2texture(false)
@@ -455,6 +464,16 @@ bool PawsManager::LoadSkinDefinition(const char* zip)
     // Load additional resources
     csString imageFile = mountPath + "/imagelist.xml";
     textureManager->LoadImageList(imageFile);
+
+    // Load tooltip settings from file
+    CONFIG_TOOLTIPS_FILE_NAME_SKIN = vfsPathToSkin + "tooltips.xml";
+    // Check if custom tooltips.xml was created. If not load defaults from skin.zip or data/options.
+    if( vfs->Exists(CONFIG_TOOLTIPS_FILE_NAME) )
+       LoadTooltips(CONFIG_TOOLTIPS_FILE_NAME);          // custom file
+    else if (vfs->Exists(CONFIG_TOOLTIPS_FILE_NAME_SKIN))
+       LoadTooltips(CONFIG_TOOLTIPS_FILE_NAME_SKIN);     // skin.zip
+    else
+       LoadTooltips(CONFIG_TOOLTIPS_FILE_NAME_DEF);      // data/options
 
     return true;
 }
@@ -1581,3 +1600,57 @@ void PawsManager::RequestClipboardContent()
     }
 }
 #endif
+
+bool PawsManager::LoadTooltips(const char* fileName)
+{
+    // if the file structure changes don't forget to change it in pawsConfigTooltips too!
+    csRef<iDocument> ToolTipdoc;
+    csRef<iDocumentNode> ToolTiproot,TooltipsNode;
+    csString TooltipOption;
+
+    ToolTipdoc = ParseFile(GetObjectRegistry(), fileName);
+    if (ToolTipdoc == NULL)
+    {
+        Error1("Failed to parse file");
+        return false;
+    }
+
+    ToolTiproot = ToolTipdoc->GetRoot();
+    if (ToolTiproot == NULL)
+    {
+        Error1("File has no XML root");
+        return false;
+    }
+
+    TooltipsNode = ToolTiproot->GetNode("tooltips");
+    if (TooltipsNode == NULL)
+    {
+        Error1("File has no <tooltips> tag");
+        return false;
+    }
+    else
+    {
+        csRef<iDocumentNodeIterator> ToolTipoNodes = TooltipsNode->GetNodes();
+        while(ToolTipoNodes->HasNext())
+        {
+            csRef<iDocumentNode> TooltipOption = ToolTipoNodes->Next();
+            csString ToolTipnodeName (TooltipOption->GetValue());
+
+            if (ToolTipnodeName == "enable_tooltips")
+                ToolTipEnable = TooltipOption->GetAttributeValueAsBool("value");
+
+            if (ToolTipnodeName == "enable_bgcolor")
+                ToolTipEnableBgColor = TooltipOption->GetAttributeValueAsBool("value");
+
+            if (ToolTipnodeName == "bgcolor")
+                TooltipsColors[0] = TooltipOption->GetAttributeValueAsInt("value");
+
+            if (ToolTipnodeName == "fontcolor")
+                TooltipsColors[1] = TooltipOption->GetAttributeValueAsInt("value");
+
+            if (ToolTipnodeName == "shadowcolor")
+                TooltipsColors[2] = TooltipOption->GetAttributeValueAsInt("value");
+        }
+    }
+    return true;
+}

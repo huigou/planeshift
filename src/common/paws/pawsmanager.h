@@ -69,6 +69,8 @@ typedef csHash<PAWSSubscription*,csString> PAWSSubscriptionsHash;
 
 #endif
 
+#define CONFIG_TOOLTIPS_FILE_NAME       "/planeshift/userdata/options/tooltips.xml"
+#define CONFIG_TOOLTIPS_FILE_NAME_DEF   "/planeshift/data/options/tooltips_def.xml"
 
 /**
  * Main PlaneShift Window manager.
@@ -294,6 +296,29 @@ public:
      *  @see pawsstyles.h
      */
     bool ApplyStyle(const char * name, iDocumentNode * target);
+
+    /*                          ToolTips Functions/Variables
+    ------------------------------------------------------------------------*/
+    static int TooltipsColors[];      /// array of colors
+    static int ToolTipEnable, ToolTipEnableBgColor;
+    static csString CONFIG_TOOLTIPS_FILE_NAME_SKIN;
+
+    /// Loads the Tooltips config-file
+    bool LoadTooltips(const char* fileName);
+    /// returns the full path to the tooltips.xml in skin.zip
+    csString getToolTipSkinPath() { return CONFIG_TOOLTIPS_FILE_NAME_SKIN; };
+    /// returns tooltips enabled/disabled
+    int getToolTipEnable() { return ToolTipEnable; };
+    /// changes tooltips enabled/disabled
+    void setToolTipEnable(int state) { ToolTipEnable = state; };
+    /// returns tooltips brackground color
+    int getToolTipEnableBgColor() { return ToolTipEnableBgColor; };
+    /// changes tooltips backround enabled/disabled
+    void setToolTipEnableBgColor(int state) { ToolTipEnableBgColor = state; };
+    /// returns one element of the TooltipsColors-array
+    int getTooltipsColors(int element) { return TooltipsColors[element]; };
+    /// transfers a value to the TooltipsColors-array
+    void setTooltipsColors(int element, int param) { TooltipsColors[element] = param; };
 
     /*                          Sound Functions
     ------------------------------------------------------------------------*/

@@ -1208,65 +1208,61 @@ void pawsWidget::FormatToolTip( const char *fmt, ... )
 
 void pawsWidget::DrawToolTip(int x, int y)
 {
-    if (toolTip.Length() == 0)
-        return;
+   if (toolTip.Length() == 0)
+       return;
 
     if(!IsVisible())
-        return;
+       return;
 
-    int width=0;
-    int height=0;
-
-    int realX = x, realY = y;
-
-    //iFont* font = GetFont();
-    csString fontName = "/planeshift/data/ttf/cupandtalon.ttf";
-
-    csRef<iFont> font = graphics2D->GetFontServer()->LoadFont(fontName,16);
-    iFont* fontPtr = font;
-
-    if (!fontPtr)
+    if (PawsManager::GetSingleton().getToolTipEnable() == 1)
     {
-        Error2("Couldn't load font '%s', reverting to default",fontName.GetData());
-        fontPtr = GetFont();
+        int width=0;
+        int height=0;
+
+        int realX = x, realY = y;
+
+        //iFont* font = GetFont();
+        csString fontName = "/planeshift/data/ttf/cupandtalon.ttf";
+
+        csRef<iFont> font = graphics2D->GetFontServer()->LoadFont(fontName,16);
+        iFont* fontPtr = font;
+
+        if (!fontPtr)
+        {
+            Error2("Couldn't load font '%s', reverting to default",fontName.GetData());
+            fontPtr = GetFont();
+        }
+
+        fontPtr->GetDimensions( toolTip , width, height );
+
+        // Draw above the cursor for the time being
+        realY = realY - height - 2;
+
+        realX += 2;
+        realY += 1;
+
+        if (realY < 0)
+        {
+            realY = 5;
+            realX += PawsManager::GetSingleton().GetMouse()->GetImageSize().width + 2;
+        }
+
+        if (realX + width > graphics2D->GetWidth())
+            realX = graphics2D->GetWidth() - width - 5;
+
+        // Note: negative value on realX is impossible
+
+    	// BgColor
+    	if (PawsManager::GetSingleton().getToolTipEnableBgColor() != 0)
+    	    graphics2D->DrawBox( realX, realY, width+4, height+4, PawsManager::GetSingleton().getTooltipsColors(0) );
+
+    	// Shadow
+    	graphics2D->Write( fontPtr, realX+3, realY+3, PawsManager::GetSingleton().getTooltipsColors(2), -1, toolTip );
+
+    	// Text
+    	graphics2D->Write( fontPtr, realX+2, realY+2, PawsManager::GetSingleton().getTooltipsColors(1), -1, toolTip );
     }
-
-    fontPtr->GetDimensions( toolTip , width, height );
-
-    // Draw above the cursor for the time being
-    realY = realY - height - 2;
-
-    realX += 2;
-    realY += 1;
-
-    if (realY < 0)
-    {
-        realY = 5;
-        realX += PawsManager::GetSingleton().GetMouse()->GetImageSize().width + 2;
-    }
-
-    if (realX + width > graphics2D->GetWidth())
-        realX = graphics2D->GetWidth() - width - 5;
-
-    // Note: negative value on realX is impossible
-
-    //Shadow
-    graphics2D->Write( fontPtr,
-        realX+1,
-        realY+1,
-        graphics2D->FindRGB(0, 0, 0),
-        -1,
-        toolTip);
-
-    //Text
-    graphics2D->Write( fontPtr,
-        realX,
-        realY,
-        graphics2D->FindRGB(255, 255, 255),
-        -1,
-        toolTip);
 }
-
 
 void pawsWidget::DrawChildren()
 {
