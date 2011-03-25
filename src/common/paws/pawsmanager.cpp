@@ -1,5 +1,5 @@
 /*
- * pspawsmanger.cpp - Author: Andrew Craig
+ * pawsmanger.cpp - Author: Andrew Craig
  *
  * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
@@ -93,20 +93,11 @@
 #define min(a,b)            (((a) < (b)) ? (a) : (b))
 #endif
 
-
-//////////////////////////////////////////////////////////////////////
-// DEFINITION OF STATIC VARIABLES
-//////////////////////////////////////////////////////////////////////
-csString PawsManager::CONFIG_TOOLTIPS_FILE_NAME_SKIN = "";
-int PawsManager::ToolTipEnable = 0;
-int PawsManager::ToolTipEnableBgColor = 0;
-int PawsManager::TooltipsColors[3];
-
-
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* skinBase) : render2texture(false)
+PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* skinBase) :
+    ToolTipEnable(true), ToolTipEnableBgColor(false), render2texture(false)
 {
     objectReg = object;
 
@@ -466,12 +457,11 @@ bool PawsManager::LoadSkinDefinition(const char* zip)
     textureManager->LoadImageList(imageFile);
 
     // Load tooltip settings from file
-    CONFIG_TOOLTIPS_FILE_NAME_SKIN = vfsPathToSkin + "tooltips.xml";
     // Check if custom tooltips.xml was created. If not load defaults from skin.zip or data/options.
-    if( vfs->Exists(CONFIG_TOOLTIPS_FILE_NAME) )
+    if(vfs->Exists(CONFIG_TOOLTIPS_FILE_NAME))
        LoadTooltips(CONFIG_TOOLTIPS_FILE_NAME);          // custom file
-    else if (vfs->Exists(CONFIG_TOOLTIPS_FILE_NAME_SKIN))
-       LoadTooltips(CONFIG_TOOLTIPS_FILE_NAME_SKIN);     // skin.zip
+    else if (vfs->Exists(GetLocalization()->FindLocalizedFile("tooltips.xml")))
+       LoadTooltips(GetLocalization()->FindLocalizedFile("tooltips.xml"));     // skin.zip
     else
        LoadTooltips(CONFIG_TOOLTIPS_FILE_NAME_DEF);      // data/options
 
@@ -1653,4 +1643,9 @@ bool PawsManager::LoadTooltips(const char* fileName)
         }
     }
     return true;
+}
+
+csString PawsManager::getToolTipSkinPath()
+{
+    return GetLocalization()->FindLocalizedFile("tooltips.xml");
 }
