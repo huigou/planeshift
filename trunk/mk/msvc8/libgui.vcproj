@@ -1825,6 +1825,9 @@
 				RelativePath="..\..\src\client\gui\pawsconfigsound.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\client\gui\pawsconfigtooltips.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\client\gui\pawsconfigwindow.cpp">
 			</File>
 			<File
@@ -2067,6 +2070,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawsconfigsound.h">
+			</File>
+			<File
+				RelativePath="..\..\src\client\gui\pawsconfigtooltips.h">
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawsconfigwindow.h">
