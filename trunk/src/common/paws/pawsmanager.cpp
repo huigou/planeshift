@@ -217,9 +217,15 @@ PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* 
         guiTexture->SetAlphaType (csAlphaMode::alphaBinary);
     else
 	render2texture = false;
-    TooltipsColors[0] = 0;
-    TooltipsColors[1] = 0;
-    TooltipsColors[2] = 0;
+
+    // Load tooltip settings from file
+    // Check if custom tooltips.xml was created. If not load defaults from skin.zip or data/options.
+    if(vfs->Exists(CONFIG_TOOLTIPS_FILE_NAME))
+       LoadTooltips(CONFIG_TOOLTIPS_FILE_NAME);          // custom file
+    else if (vfs->Exists(GetLocalization()->FindLocalizedFile("tooltips.xml")))
+       LoadTooltips(GetLocalization()->FindLocalizedFile("tooltips.xml"));     // skin.zip
+    else
+       LoadTooltips(CONFIG_TOOLTIPS_FILE_NAME_DEF);      // data/options
 }
 
 PawsManager::~PawsManager()
@@ -458,15 +464,6 @@ bool PawsManager::LoadSkinDefinition(const char* zip)
     // Load additional resources
     csString imageFile = mountPath + "/imagelist.xml";
     textureManager->LoadImageList(imageFile);
-
-    // Load tooltip settings from file
-    // Check if custom tooltips.xml was created. If not load defaults from skin.zip or data/options.
-    if(vfs->Exists(CONFIG_TOOLTIPS_FILE_NAME))
-       LoadTooltips(CONFIG_TOOLTIPS_FILE_NAME);          // custom file
-    else if (vfs->Exists(GetLocalization()->FindLocalizedFile("tooltips.xml")))
-       LoadTooltips(GetLocalization()->FindLocalizedFile("tooltips.xml"));     // skin.zip
-    else
-       LoadTooltips(CONFIG_TOOLTIPS_FILE_NAME_DEF);      // data/options
 
     return true;
 }
