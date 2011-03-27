@@ -1,132 +1,132 @@
-<?xml version="1.0"?>
 <widget_description>
 
-    <pawsConfigWindow name="ConfigWindow"
-            visible="no" savepositions="yes" movable="yes"
-            resizable="no"
-            configurable="yes" style="New Standard GUI">
+<pawsConfigWindow name="ConfigWindow" visible="no" savepositions="yes" movable="yes" resizable="no" configurable="yes" style="New Standard GUI">
 
-        <frame x="10" y="100" width="680" height="346" border="yes" />
-        <title resource="Scaling Title Bar" text="Options" align="left" close_button="yes"/>
+    <frame x="10" y="100" width="680" height="346" border="yes" />
+    <title resource="Scaling Title Bar" text="Options" align="left" close_button="yes"/>
 
-        <pawsSimpleTree name="ConfigTree" >
+    <pawsSimpleTree name="ConfigTree" >
 
-            <frame x="10" y="8" width="200" height="305" border="no" />
+        <frame x="10" y="8" width="200" height="305" border="no" />
 
-            <widget factory="pawsSimpleTreeNode">
-            <frame x="225" y="0" width="400" height="305" border="yes" />
+        <widget factory="pawsSimpleTreeNode">
+        <frame x="225" y="0" width="400" height="305" border="yes" />
 
-                <widget factory="pawsSimpleTreeNode" label="Controls">
-                    <widget factory="pawsSimpleTreeNode" label="Keys">
-                        <attr name="SectionName" value="keyboard"/>
-                        <attr name="factory" value="pawsConfigKeys"/>
-                    </widget>
-                    <widget factory="pawsSimpleTreeNode" label="Mouse">
-                        <attr name="SectionName" value="mouse"/>
-                        <attr name="factory" value="pawsConfigMouse"/>
-                    </widget>
-                    <widget factory="pawsSimpleTreeNode" label="Entities">
-                        <attr name="SectionName" value="entityinteract"/>
-                        <attr name="factory" value="pawsConfigEntityInteraction"/>
-                    </widget>
+            <widget factory="pawsSimpleTreeNode" label="Controls">
+                <widget factory="pawsSimpleTreeNode" label="Keys">
+                    <attr name="SectionName" value="keyboard"/>
+                    <attr name="factory" value="pawsConfigKeys"/>
                 </widget>
-
-                <widget factory="pawsSimpleTreeNode" label="Graphics">
-                    <widget factory="pawsSimpleTreeNode" label="Camera">
-                        <attr name="SectionName" value="camera"/>
-                        <attr name="factory" value="pawsConfigCamera"/>
-                    </widget>
-                    <widget factory="pawsSimpleTreeNode" label="Details">
-                        <attr name="SectionName" value="details"/>
-                        <attr name="factory" value="pawsConfigDetails"/>
-                    </widget>
-                    <widget factory="pawsSimpleTreeNode" label="Labels">
-                        <attr name="SectionName" value="entitylabels"/>
-                        <attr name="factory" value="pawsConfigEntityLabels"/>
-                    </widget>
-                    <widget factory="pawsSimpleTreeNode" label="Shadows">
-                        <attr name="SectionName" value="shadows"/>
-                        <attr name="factory" value="pawsConfigShadows"/>
-                    </widget>
+                <widget factory="pawsSimpleTreeNode" label="Mouse">
+                    <attr name="SectionName" value="mouse"/>
+                    <attr name="factory" value="pawsConfigMouse"/>
                 </widget>
-
-                <widget factory="pawsSimpleTreeNode" label="Sound">
-                    <widget factory="pawsSimpleTreeNode" label="General">
-                        <attr name="SectionName" value="configsound"/>
-                        <attr name="factory" value="pawsConfigSound"/>
-                    </widget>
+                <widget factory="pawsSimpleTreeNode" label="Entities">
+                    <attr name="SectionName" value="entityinteract"/>
+                    <attr name="factory" value="pawsConfigEntityInteraction"/>
                 </widget>
-
-                <widget factory="pawsSimpleTreeNode" label="Confirmations">
-                    <widget factory="pawsSimpleTreeNode" label="PvP">
-                        <attr name="SectionName" value="configpvp"/>
-                        <attr name="factory" value="pawsConfigPvP"/>
-                    </widget>
-                    <widget factory="pawsSimpleTreeNode" label="Marriage">
-                        <attr name="SectionName" value="configmarriage"/>
-                        <attr name="factory" value="pawsConfigMarriage"/>
-                    </widget>
-                </widget>
-
-                <widget factory="pawsSimpleTreeNode" label="Interface">
-                     <widget factory="pawsSimpleTreeNode" label="Pop-ups">
-                        <attr name="SectionName" value="popup"/>
-                        <attr name="factory" value="pawsConfigPopup"/>
-                    </widget>
-                    <widget factory="pawsSimpleTreeNode" label="Chat">
-                        <attr name="SectionName" value="chat"/>
-                        <attr name="factory" value="pawsConfigChat"/>
-                    </widget>
-                    <widget factory="pawsSimpleTreeNode" label="Chat - Logs">
-                        <attr name="SectionName" value="chatlogs"/>
-                        <attr name="factory" value="pawsConfigChatLogs"/>
-                    </widget>
-                    <widget factory="pawsSimpleTreeNode" label="Chat - Filters">
-                        <attr name="SectionName" value="chatfilter"/>
-                        <attr name="factory" value="pawsConfigChatFilter"/>
-                    </widget>
-                    <widget factory="pawsSimpleTreeNode" label="Chat - Tabs">
-                        <attr name="SectionName" value="chattabs" />
-                        <attr name="factory" value="pawsConfigChatTabs" />
-                    </widget>
-                    <widget factory="pawsSimpleTreeNode" label="Chat - Bubbles">
-                        <attr name="SectionName" value="chatbubbles"/>
-                        <attr name="factory" value="pawsConfigChatBubbles"/>
-                    </widget>
-                   <widget factory="pawsSimpleTreeNode" label="Chat - TabCompletion">
-                        <attr name="SectionName" value="tabcompletion"/>
-                        <attr name="factory" value="pawsConfigChatTabCompletion"/>
-                    </widget>
-                   <widget factory="pawsSimpleTreeNode" label="Autoexec">
-                        <attr name="SectionName" value="autoexec"/>
-                        <attr name="factory" value="pawsConfigAutoexec"/>
-                    </widget>
-                </widget>
-
             </widget>
 
-        </pawsSimpleTree>
+            <widget factory="pawsSimpleTreeNode" label="Graphics">
+                <widget factory="pawsSimpleTreeNode" label="Camera">
+                    <attr name="SectionName" value="camera"/>
+                    <attr name="factory" value="pawsConfigCamera"/>
+                </widget>
+                <widget factory="pawsSimpleTreeNode" label="Details">
+                    <attr name="SectionName" value="details"/>
+                    <attr name="factory" value="pawsConfigDetails"/>
+                </widget>
+                <widget factory="pawsSimpleTreeNode" label="Labels">
+                    <attr name="SectionName" value="entitylabels"/>
+                    <attr name="factory" value="pawsConfigEntityLabels"/>
+                </widget>
+                <widget factory="pawsSimpleTreeNode" label="Shadows">
+                    <attr name="SectionName" value="shadows"/>
+                    <attr name="factory" value="pawsConfigShadows"/>
+                </widget>
+            </widget>
 
-        <pawsWidget name="PanelParent">
-            <frame x="220" y="0" width="460" height="321" border="no" />
-            <attachpoints>
-                <attach point="ATTACH_RIGHT" />
-                <attach point="ATTACH_TOP" />
-                <attach point="ATTACH_LEFT" />
-                <attach point="ATTACH_BOTTOM" />
-            </attachpoints>
-        </pawsWidget>
+            <widget factory="pawsSimpleTreeNode" label="Sound">
+                <widget factory="pawsSimpleTreeNode" label="General">
+                    <attr name="SectionName" value="configsound"/>
+                    <attr name="factory" value="pawsConfigSound"/>
+                </widget>
+            </widget>
 
-        <pawsButton name="OKButton" id="-10" toggle="no" style="Standard Button">
-            <frame x="25" y="322" width="80" height="20" border="no"/>
-            <label text="Save"/>
-        </pawsButton>
+            <widget factory="pawsSimpleTreeNode" label="Confirmations">
+                <widget factory="pawsSimpleTreeNode" label="PvP">
+                    <attr name="SectionName" value="configpvp"/>
+                    <attr name="factory" value="pawsConfigPvP"/>
+                </widget>
+                <widget factory="pawsSimpleTreeNode" label="Marriage">
+                    <attr name="SectionName" value="configmarriage"/>
+                    <attr name="factory" value="pawsConfigMarriage"/>
+                </widget>
+            </widget>
 
-        <pawsButton name="ResetButton" id="-20" toggle="no" style="Standard Button">
-            <frame x="115" y="322" width="80" height="20" border="no"/>
-            <label text="Reset"/>
-        </pawsButton>
+            <widget factory="pawsSimpleTreeNode" label="Interface">
+                 <widget factory="pawsSimpleTreeNode" label="Pop-ups">
+                    <attr name="SectionName" value="popup"/>
+                    <attr name="factory" value="pawsConfigPopup"/>
+                </widget>
+                <widget factory="pawsSimpleTreeNode" label="Tooltips">
+                    <attr name="SectionName" value="tooltips"/>
+                    <attr name="factory" value="pawsConfigTooltips"/>
+                </widget>
+                <widget factory="pawsSimpleTreeNode" label="Chat">
+                    <attr name="SectionName" value="chat"/>
+                    <attr name="factory" value="pawsConfigChat"/>
+                </widget>
+                <widget factory="pawsSimpleTreeNode" label="Chat - Logs">
+                    <attr name="SectionName" value="chatlogs"/>
+                    <attr name="factory" value="pawsConfigChatLogs"/>
+                </widget>
+                <widget factory="pawsSimpleTreeNode" label="Chat - Filters">
+                    <attr name="SectionName" value="chatfilter"/>
+                    <attr name="factory" value="pawsConfigChatFilter"/>
+                </widget>
+                <widget factory="pawsSimpleTreeNode" label="Chat - Tabs">
+                    <attr name="SectionName" value="chattabs" />
+                    <attr name="factory" value="pawsConfigChatTabs" />
+                </widget>
+                <widget factory="pawsSimpleTreeNode" label="Chat - Bubbles">
+                    <attr name="SectionName" value="chatbubbles"/>
+                    <attr name="factory" value="pawsConfigChatBubbles"/>
+                </widget>
+               <widget factory="pawsSimpleTreeNode" label="Chat - TabCompletion">
+                    <attr name="SectionName" value="tabcompletion"/>
+                    <attr name="factory" value="pawsConfigChatTabCompletion"/>
+                </widget>
+               <widget factory="pawsSimpleTreeNode" label="Autoexec">
+                    <attr name="SectionName" value="autoexec"/>
+                    <attr name="factory" value="pawsConfigAutoexec"/>
+                </widget>
+            </widget>
 
-    </pawsConfigWindow>
+        </widget>
+
+    </pawsSimpleTree>
+
+    <pawsWidget name="PanelParent">
+        <frame x="220" y="0" width="460" height="321" border="no" />
+        <attachpoints>
+            <attach point="ATTACH_RIGHT" />
+            <attach point="ATTACH_TOP" />
+            <attach point="ATTACH_LEFT" />
+            <attach point="ATTACH_BOTTOM" />
+        </attachpoints>
+    </pawsWidget>
+
+    <pawsButton name="OKButton" toggle="no" style="Standard Button">
+        <frame x="25" y="322" width="80" height="20" border="no"/>
+        <label text="Save"/>
+    </pawsButton>
+
+    <pawsButton name="ResetButton" toggle="no" style="Standard Button">
+        <frame x="115" y="322" width="80" height="20" border="no"/>
+        <label text="Reset"/>
+    </pawsButton>
+
+</pawsConfigWindow>
 
 </widget_description>
