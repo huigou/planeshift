@@ -195,6 +195,7 @@ if (!myref)                                                  \
 #include "gui/pawsconfigshadows.h"
 #include "gui/pawsnpcdialog.h"
 #include "gui/bartender.h"
+#include "gui/pawsconfigtooltips.h"
 
 
 // Needed for debugging
@@ -833,6 +834,7 @@ void psEngine::DeclareExtraFactories()
     RegisterFactory (pawsNpcDialogWindowFactory);
     RegisterFactory (pawsBartenderWindowFactory);
     RegisterFactory (pawsCraftCancelWindowFactory);
+    RegisterFactory (pawsConfigTooltipsFactory);
 }
 
 //-----------------------------------------------------------------------------
