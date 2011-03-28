@@ -673,7 +673,7 @@ void pawsSkillWindow::BuySkill()
         return;
     }
     psSkillCacheItem* currSkill = skillCache.getItemBySkillId(skillId);
-    if(currSkill)
+    if(!currSkill)
     {
         PawsManager::GetSingleton().CreateWarningBox("You have to select a skill to buy.");
         return;
