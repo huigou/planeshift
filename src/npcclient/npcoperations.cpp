@@ -864,23 +864,24 @@ csVector3 ChaseOperation::CalculateOffsetDelta(const csVector3 &myPos, const iSe
 
     if (offsetRelativeHeading)
     {
+        // Calculate the offset relative to the heading of the end target
         offsetDelta = csMatrix3(0.0,1.0,0.0,endRot)*csVector3(offset, 0.0, sideOffset);
-            
     }
     else
     {
+        // Calculate the offset relative to the tangent between myPos and endPos
+        offsetDelta = psGameObject::DisplaceTargetPos(mySector, myPos,
+                                                      endSector, endPos, offset);
 
         if (offsetAngle != 0.0)
         {
-            offsetDelta= psGameObject::DisplaceTargetPos(mySector, myPos,
-                                                     endSector, endPos, offset);
             offsetDelta = csMatrix3(0.0,1.0,0.0,offsetAngle)*offsetDelta;
         }
 
         if (sideOffset != 0.0)
         {
             csVector3 sideOffsetDelta = psGameObject::DisplaceTargetPos(mySector, myPos,
-                                                                    endSector, endPos, offset);
+                                                                        endSector, endPos, sideOffset);
             // Rotate 90 degree to make it a side offset to the line between NPC and target.
             sideOffsetDelta = csMatrix3(0.0,1.0,0.0,PI)*sideOffsetDelta;
             offsetDelta += sideOffsetDelta;
