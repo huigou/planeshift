@@ -829,7 +829,7 @@ bool ChaseOperation::Load(iDocumentNode *node)
     }
     else
     {
-    	sideOffset = 0.5f;
+    	sideOffset = 0.0f;
     }
     offsetRelativeHeading = node->GetAttributeValueAsBool("offset_relative_heading",false);
 
@@ -865,7 +865,7 @@ csVector3 ChaseOperation::CalculateOffsetDelta(const csVector3 &myPos, const iSe
     if (offsetRelativeHeading)
     {
         // Calculate the offset relative to the heading of the end target
-        offsetDelta = csMatrix3(0.0,1.0,0.0,endRot)*csVector3(offset, 0.0, sideOffset);
+        offsetDelta = csYRotMatrix3(endRot)*csVector3(offset, 0.0, sideOffset);
     }
     else
     {
@@ -875,7 +875,7 @@ csVector3 ChaseOperation::CalculateOffsetDelta(const csVector3 &myPos, const iSe
 
         if (offsetAngle != 0.0)
         {
-            offsetDelta = csMatrix3(0.0,1.0,0.0,offsetAngle)*offsetDelta;
+            offsetDelta = csYRotMatrix3(offsetAngle)*offsetDelta;
         }
 
         if (sideOffset != 0.0)
@@ -883,11 +883,11 @@ csVector3 ChaseOperation::CalculateOffsetDelta(const csVector3 &myPos, const iSe
             csVector3 sideOffsetDelta = psGameObject::DisplaceTargetPos(mySector, myPos,
                                                                         endSector, endPos, sideOffset);
             // Rotate 90 degree to make it a side offset to the line between NPC and target.
-            sideOffsetDelta = csMatrix3(0.0,1.0,0.0,PI)*sideOffsetDelta;
+            sideOffsetDelta = csYRotMatrix3(PI/2.0)*sideOffsetDelta;
             offsetDelta += sideOffsetDelta;
         }
-    }
-    
+
+    }    
     return offsetDelta;
 }
 
@@ -972,16 +972,17 @@ bool ChaseOperation::GetEndPosition(NPC* npc, const csVector3 &myPos, const iSec
 
     psGameObject::GetPosition(targetEntity, endPos, targetRot, endSector);
 
-
     offsetDelta = CalculateOffsetDelta(myPos, mySector, endPos, endSector, targetRot );
+
+    npc->Printf(5, "Chasing enemy <%s, %s> at %s with offset %s", targetEntity->GetName(),
+                ShowID(targetEntity->GetEID()),
+                toString(endPos,endSector).GetDataSafe(),
+                toString(offsetDelta).GetDataSafe());
+
     // This prevents NPCs from wanting to occupy the same physical space as something else
     endPos -= offsetDelta;
     // TODO: Check if new endPos is within same sector!!!
 
-
-    npc->Printf(5, "Chasing enemy <%s, %s> at %s", targetEntity->GetName(),
-                ShowID(targetEntity->GetEID()),
-                toString(endPos,endSector).GetDataSafe());
 
     return true;
 }
@@ -1011,8 +1012,8 @@ gemNPCActor* ChaseOperation::UpdateChaseTarget(NPC* npc, const csVector3 &myPos,
 
                 // Calculate an offset point from the target. 
                 // This point is used until new target is found
-                offsetDelta= psGameObject::DisplaceTargetPos(mySector, myPos,
-                                                             targetSector, targetPos, offset);
+                offsetDelta = psGameObject::DisplaceTargetPos(mySector, myPos,
+                                                              targetSector, targetPos, offset);
                 offsetDelta = csMatrix3(0.0,1.0,0.0,offsetAngle)*offsetDelta;
             }
 
@@ -1038,8 +1039,8 @@ gemNPCActor* ChaseOperation::UpdateChaseTarget(NPC* npc, const csVector3 &myPos,
 
                 // Calculate an offset point from the target. 
                 // This point is used until new target is found
-                offsetDelta= psGameObject::DisplaceTargetPos(mySector, myPos,
-                                                             targetSector, targetPos, offset);
+                offsetDelta = psGameObject::DisplaceTargetPos(mySector, myPos,
+                                                              targetSector, targetPos, offset);
                 offsetDelta = csMatrix3(0.0,1.0,0.0,offsetAngle)*offsetDelta;
             }
 
