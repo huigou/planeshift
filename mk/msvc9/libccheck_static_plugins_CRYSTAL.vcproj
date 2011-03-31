@@ -12,7 +12,7 @@
   	</Platforms>
 	<Configurations>
             		<Configuration
-			Name="Release (with static libs)|Win32"
+			Name="ReleaseWithStaticLibs|Win32"
 			OutputDirectory="..\..\out\release9\build\libccheck_static_plugins_CRYSTAL\"
 			IntermediateDirectory="..\..\out\release9\build\libccheck_static_plugins_CRYSTAL\"
 			ConfigurationType="4"
@@ -85,7 +85,7 @@
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
       		<Configuration
-			Name="Release (with DLLs)|Win32"
+			Name="ReleaseWithDlls|Win32"
 			OutputDirectory="..\..\out\release9\build\libccheck_static_plugins_CRYSTAL\"
 			IntermediateDirectory="..\..\out\release9\build\libccheck_static_plugins_CRYSTAL\"
 			ConfigurationType="2"
@@ -161,7 +161,7 @@
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
                 		<Configuration
-			Name="Debug (with static libs)|Win32"
+			Name="DebugWithStaticLibs|Win32"
 			OutputDirectory="..\..\out\debug9\build\libccheck_static_plugins_CRYSTAL\"
 			IntermediateDirectory="..\..\out\debug9\build\libccheck_static_plugins_CRYSTAL\"
 			ConfigurationType="4"
@@ -232,7 +232,7 @@
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
       		<Configuration
-			Name="Debug (with DLLs)|Win32"
+			Name="DebugWithDlls|Win32"
 			OutputDirectory="..\..\out\debug9\build\libccheck_static_plugins_CRYSTAL\"
 			IntermediateDirectory="..\..\out\debug9\build\libccheck_static_plugins_CRYSTAL\"
 			ConfigurationType="2"
@@ -306,7 +306,7 @@
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
                 		<Configuration
-			Name="MemoryTracker (with static libs)|Win32"
+			Name="MemoryTrackerWithStaticLibs|Win32"
 			OutputDirectory="..\..\out\debug9\build\libccheck_static_plugins_CRYSTAL\"
 			IntermediateDirectory="..\..\out\debug9\build\libccheck_static_plugins_CRYSTAL\"
 			ConfigurationType="4"
@@ -377,7 +377,7 @@
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
       		<Configuration
-			Name="MemoryTracker (with DLLs)|Win32"
+			Name="MemoryTrackerWithDlls|Win32"
 			OutputDirectory="..\..\out\debug9\build\libccheck_static_plugins_CRYSTAL\"
 			IntermediateDirectory="..\..\out\debug9\build\libccheck_static_plugins_CRYSTAL\"
 			ConfigurationType="2"
@@ -451,7 +451,7 @@
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
                 		<Configuration
-			Name="RefTracker (with static libs)|Win32"
+			Name="RefTrackerWithStaticLibs|Win32"
 			OutputDirectory="..\..\out\debug9\build\libccheck_static_plugins_CRYSTAL\"
 			IntermediateDirectory="..\..\out\debug9\build\libccheck_static_plugins_CRYSTAL\"
 			ConfigurationType="4"
@@ -522,7 +522,7 @@
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
       		<Configuration
-			Name="RefTracker (with DLLs)|Win32"
+			Name="RefTrackerWithDlls|Win32"
 			OutputDirectory="..\..\out\debug9\build\libccheck_static_plugins_CRYSTAL\"
 			IntermediateDirectory="..\..\out\debug9\build\libccheck_static_plugins_CRYSTAL\"
 			ConfigurationType="2"
@@ -596,7 +596,7 @@
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
                 		<Configuration
-			Name="ThreadChecker (with static libs)|Win32"
+			Name="ThreadCheckerWithStaticLibs|Win32"
 			OutputDirectory="..\..\out\debug9\build\libccheck_static_plugins_CRYSTAL\"
 			IntermediateDirectory="..\..\out\debug9\build\libccheck_static_plugins_CRYSTAL\"
 			ConfigurationType="4"
@@ -667,7 +667,7 @@
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
       		<Configuration
-			Name="ThreadChecker (with DLLs)|Win32"
+			Name="ThreadCheckerWithDlls|Win32"
 			OutputDirectory="..\..\out\debug9\build\libccheck_static_plugins_CRYSTAL\"
 			IntermediateDirectory="..\..\out\debug9\build\libccheck_static_plugins_CRYSTAL\"
 			ConfigurationType="2"
@@ -741,7 +741,7 @@
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
                 		<Configuration
-			Name="DebugPSReleaseCSCEL (with static libs)|Win32"
+			Name="DebugPSReleaseCSCELWithStaticLibs|Win32"
 			OutputDirectory="..\..\out\debug9\build\libccheck_static_plugins_CRYSTAL\"
 			IntermediateDirectory="..\..\out\debug9\build\libccheck_static_plugins_CRYSTAL\"
 			ConfigurationType="4"
@@ -812,7 +812,7 @@
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
       		<Configuration
-			Name="DebugPSReleaseCSCEL (with DLLs)|Win32"
+			Name="DebugPSReleaseCSCELWithDlls|Win32"
 			OutputDirectory="..\..\out\debug9\build\libccheck_static_plugins_CRYSTAL\"
 			IntermediateDirectory="..\..\out\debug9\build\libccheck_static_plugins_CRYSTAL\"
 			ConfigurationType="2"
@@ -886,7 +886,7 @@
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
                         		<Configuration
-			Name="Release (with static libs)|x64"
+			Name="ReleaseWithStaticLibs|x64"
 			OutputDirectory="..\..\out\release9-x64\build\libccheck_static_plugins_CRYSTAL\"
 			IntermediateDirectory="..\..\out\release9-x64\build\libccheck_static_plugins_CRYSTAL\"
 			ConfigurationType="4"
@@ -959,7 +959,7 @@
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
       		<Configuration
-			Name="Release (with DLLs)|x64"
+			Name="ReleaseWithDlls|x64"
 			OutputDirectory="..\..\out\release9-x64\build\libccheck_static_plugins_CRYSTAL\"
 			IntermediateDirectory="..\..\out\release9-x64\build\libccheck_static_plugins_CRYSTAL\"
 			ConfigurationType="2"
@@ -1035,7 +1035,7 @@
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
                 		<Configuration
-			Name="Debug (with static libs)|x64"
+			Name="DebugWithStaticLibs|x64"
 			OutputDirectory="..\..\out\debug9-x64\build\libccheck_static_plugins_CRYSTAL\"
 			IntermediateDirectory="..\..\out\debug9-x64\build\libccheck_static_plugins_CRYSTAL\"
 			ConfigurationType="4"
@@ -1106,7 +1106,7 @@
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
       		<Configuration
-			Name="Debug (with DLLs)|x64"
+			Name="DebugWithDlls|x64"
 			OutputDirectory="..\..\out\debug9-x64\build\libccheck_static_plugins_CRYSTAL\"
 			IntermediateDirectory="..\..\out\debug9-x64\build\libccheck_static_plugins_CRYSTAL\"
 			ConfigurationType="2"
@@ -1180,7 +1180,7 @@
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
                 		<Configuration
-			Name="MemoryTracker (with static libs)|x64"
+			Name="MemoryTrackerWithStaticLibs|x64"
 			OutputDirectory="..\..\out\debug9-x64\build\libccheck_static_plugins_CRYSTAL\"
 			IntermediateDirectory="..\..\out\debug9-x64\build\libccheck_static_plugins_CRYSTAL\"
 			ConfigurationType="4"
@@ -1251,7 +1251,7 @@
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
       		<Configuration
-			Name="MemoryTracker (with DLLs)|x64"
+			Name="MemoryTrackerWithDlls|x64"
 			OutputDirectory="..\..\out\debug9-x64\build\libccheck_static_plugins_CRYSTAL\"
 			IntermediateDirectory="..\..\out\debug9-x64\build\libccheck_static_plugins_CRYSTAL\"
 			ConfigurationType="2"
@@ -1325,7 +1325,7 @@
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
                 		<Configuration
-			Name="RefTracker (with static libs)|x64"
+			Name="RefTrackerWithStaticLibs|x64"
 			OutputDirectory="..\..\out\debug9-x64\build\libccheck_static_plugins_CRYSTAL\"
 			IntermediateDirectory="..\..\out\debug9-x64\build\libccheck_static_plugins_CRYSTAL\"
 			ConfigurationType="4"
@@ -1396,7 +1396,7 @@
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
       		<Configuration
-			Name="RefTracker (with DLLs)|x64"
+			Name="RefTrackerWithDlls|x64"
 			OutputDirectory="..\..\out\debug9-x64\build\libccheck_static_plugins_CRYSTAL\"
 			IntermediateDirectory="..\..\out\debug9-x64\build\libccheck_static_plugins_CRYSTAL\"
 			ConfigurationType="2"
@@ -1470,7 +1470,7 @@
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
                 		<Configuration
-			Name="ThreadChecker (with static libs)|x64"
+			Name="ThreadCheckerWithStaticLibs|x64"
 			OutputDirectory="..\..\out\debug9-x64\build\libccheck_static_plugins_CRYSTAL\"
 			IntermediateDirectory="..\..\out\debug9-x64\build\libccheck_static_plugins_CRYSTAL\"
 			ConfigurationType="4"
@@ -1541,7 +1541,7 @@
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
       		<Configuration
-			Name="ThreadChecker (with DLLs)|x64"
+			Name="ThreadCheckerWithDlls|x64"
 			OutputDirectory="..\..\out\debug9-x64\build\libccheck_static_plugins_CRYSTAL\"
 			IntermediateDirectory="..\..\out\debug9-x64\build\libccheck_static_plugins_CRYSTAL\"
 			ConfigurationType="2"
@@ -1615,7 +1615,7 @@
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
                 		<Configuration
-			Name="DebugPSReleaseCSCEL (with static libs)|x64"
+			Name="DebugPSReleaseCSCELWithStaticLibs|x64"
 			OutputDirectory="..\..\out\debug9-x64\build\libccheck_static_plugins_CRYSTAL\"
 			IntermediateDirectory="..\..\out\debug9-x64\build\libccheck_static_plugins_CRYSTAL\"
 			ConfigurationType="4"
@@ -1686,7 +1686,7 @@
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
       		<Configuration
-			Name="DebugPSReleaseCSCEL (with DLLs)|x64"
+			Name="DebugPSReleaseCSCELWithDlls|x64"
 			OutputDirectory="..\..\out\debug9-x64\build\libccheck_static_plugins_CRYSTAL\"
 			IntermediateDirectory="..\..\out\debug9-x64\build\libccheck_static_plugins_CRYSTAL\"
 			ConfigurationType="2"
