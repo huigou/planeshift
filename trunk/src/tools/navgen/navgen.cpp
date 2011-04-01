@@ -87,8 +87,9 @@ void NavGen::Run()
     float width  = config->GetFloat("NavGen.Agent.Width", 0.5f);
     float slope  = config->GetFloat("NavGen.Agent.Slope", 45.f);
     float step   = config->GetFloat("NavGen.Agent.MaxStepSize", 0.5f);
-    int tileSize = config->GetInt("NavGen.TileSize", 64);
     float cellSize = config->GetFloat("NavGen.CellSize", width/2);
+    float cellHeight = config->GetFloat("NavGen.CellHeight", cellSize/2);
+    int tileSize = config->GetInt("NavGen.TileSize", 64) / cellSize;
     int borderSize = csMin(config->GetInt("NavGen.BorderSize", width+1),1);
 
     csRef<iEventQueue> queue = csQueryRegistry<iEventQueue>(object_reg);
@@ -118,7 +119,7 @@ void NavGen::Run()
         csRef<iStringArray> worldFiles = vfs->FindFiles(world);
 
         size_t loadCount = meshFiles->GetSize() + worldFiles->GetSize();
-        size_t progress;
+        size_t progress = 0;
 
         csPrintf("caching meshes\n");
         csRefArray<iThreadReturn> returns;
@@ -215,6 +216,7 @@ void NavGen::Run()
         parameters->SetAgentMaxClimb(step);
         parameters->SetTileSize(tileSize);
         parameters->SetCellSize(cellSize);
+        parameters->SetCellHeight(cellHeight);
         parameters->SetBorderSize(borderSize);
         builder->SetNavMeshParams(parameters);
 
