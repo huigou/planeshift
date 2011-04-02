@@ -792,7 +792,9 @@ void psNPCClient::AttachNPC( gemNPCActor* actor, uint8_t DRcounter, EID ownerEID
         if(!npc) //still not found. we do a last check
         {
             if(masterID.IsValid()) //Probably it's mastered. Try loading the master for this
+            {
                 npc = ReadMasteredNPC(actor->GetPID(), masterID); //loads the master npc data and assign it to this
+            }
             if(!npc) //last chance if false good bye
             {
                 Error3("NPC %s(%s) was not found in scripted npcs for this npcclient.\n",
@@ -817,6 +819,9 @@ void psNPCClient::AttachNPC( gemNPCActor* actor, uint8_t DRcounter, EID ownerEID
 
     // Test if this actor is in a valid starting position.
     npc->CheckPosition();
+
+    // Store the spawn position
+    npc->StoreSpawnPosition();
 
     // Report final correct starting position.
     GetNetworkMgr()->QueueDRData(npc);

@@ -183,6 +183,11 @@ protected:
                                      ///< by each behavior.
     VelSource             velSource; ///< 
 
+    csString              collisionPerception;   ///< Global perception value for falling
+    csString              outOfBoundsPerception; ///< Global perception value for falling
+    csString              inBoundsPerception;    ///< Global perception value for falling
+    csString              fallingPerception;     ///< Global perception value for falling
+
 public:
     NPCType(psNPCClient* npcclient, EventManager* eventmanager);
     NPCType(NPCType& other, EventManager* eventmanager): behaviors(eventmanager) { DeepCopy(other); }
@@ -209,6 +214,11 @@ public:
     
     float GetAngularVelocity(NPC *npc);
     float GetVelocity(NPC *npc);
+
+    const csString& GetCollisionPerception() const;
+    const csString& GetOutOfBoundsPerception() const;
+    const csString& GetInBoundsPerception() const;
+    const csString& GetFallingPerception() const;
     
 private:
     static psNPCClient* npcclient;

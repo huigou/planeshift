@@ -206,9 +206,9 @@ void Reaction::React(NPC *who, Perception *pcpt)
     // Check if the perception is a match for this reaction
     if (!pcpt->ShouldReact(this,who))
     {
-        if (who->IsDebugging(12))
+        if (who->IsDebugging(20))
         {
-            who->Printf(12, "Reaction '%s' skipping perception %s", GetEventType(), pcpt->ToString().GetDataSafe());
+            who->Printf(20, "Reaction '%s' skipping perception %s", GetEventType(), pcpt->ToString().GetDataSafe());
         }
         return;
     }
