@@ -157,6 +157,10 @@ bool ScriptOperation::LoadCheckMoveOk(iDocumentNode *node)
     {
         inBounds = node->GetAttributeValue("in_bounds");
     }
+    if (node->GetAttribute("falling"))
+    {
+        falling = node->GetAttributeValue("falling");
+    }
     
     if (node->GetAttribute("check_tribe_home"))
     {
@@ -171,6 +175,7 @@ void ScriptOperation::CopyCheckMoveOk(ScriptOperation * source)
     collision = source->collision;
     outOfBounds = source->outOfBounds;
     inBounds = source->inBounds;
+    falling = source->falling;
     checkTribeHome = source->checkTribeHome;
 }
 
@@ -239,8 +244,13 @@ bool ScriptOperation::CheckMoveOk(NPC *npc, EventManager *eventmgr, csVector3 ol
 
     if ((oldPos - newPos).SquaredNorm() < 0.01f) // then stopped dead, presumably by collision
     {
-        Perception collisionPerception(collision);
-        npc->TriggerEvent(&collisionPerception);
+        csString collision = GetCollisionPerception(npc);
+        if (!collision.IsEmpty())
+        {
+            Perception perception(collision);
+            npc->TriggerEvent(&perception);
+        }
+
         return false;
     }
     else
@@ -253,7 +263,23 @@ bool ScriptOperation::CheckMoveOk(NPC *npc, EventManager *eventmgr, csVector3 ol
         expected_pos = mat*(velvec*timedelta) + oldPos;
 
         float diffx = fabs(newPos.x - expected_pos.x);
+        float diffy = fabs(newPos.y - expected_pos.y);
         float diffz = fabs(newPos.z - expected_pos.z);
+
+        // Check if this NPC is falling.
+        if (fabs(diffy) > 800.0)  // Server is using 1000, npc client 
+        {                         // should be a little tighter
+
+            csString falling = GetFallingPerception(npc);
+            
+            if (!falling.IsEmpty())
+            {
+                Perception perception(falling);
+                npc->TriggerEvent(&perception);
+            }
+
+            return false;
+        }
 
         if (diffx > EPSILON ||
             diffz > EPSILON)
@@ -263,10 +289,16 @@ bool ScriptOperation::CheckMoveOk(NPC *npc, EventManager *eventmgr, csVector3 ol
                         consecCollisions,diffx,diffz);
             if (consecCollisions > 8)  // allow for hitting trees but not walls
             {
+                csString collision = GetCollisionPerception(npc);
+
                 // after a couple seconds of sliding against something
                 // the npc should give up and react to the obstacle.
-                Perception collisionPerception(collision);
-                npc->TriggerEvent(&collisionPerception);
+                if (!collision.IsEmpty())
+                {
+                    Perception perception(collision);
+                    npc->TriggerEvent(&perception);
+                }
+
                 return false;
             }
         }
@@ -286,8 +318,13 @@ bool ScriptOperation::CheckMoveOk(NPC *npc, EventManager *eventmgr, csVector3 ol
             {
                 if (!rgn->CheckWithinBounds(npcclient->GetEngine(),newPos,newSector))
                 {
-                    Perception outbounds(outOfBounds);
-                    npc->TriggerEvent(&outbounds);
+                    csString outOfBounds = GetOutOfBoundsPerception(npc);
+                    if (!outOfBounds.IsEmpty())
+                    {
+                        Perception outbounds(outOfBounds);
+                        npc->TriggerEvent(&outbounds);
+                    }
+
                     npc->SetInsideRegion(false);
                 }
             }
@@ -295,8 +332,13 @@ bool ScriptOperation::CheckMoveOk(NPC *npc, EventManager *eventmgr, csVector3 ol
             {
                 if (rgn->CheckWithinBounds(npcclient->GetEngine(),newPos,newSector))
                 {
-                    Perception inbounds(inBounds);
-                    npc->TriggerEvent(&inbounds);
+                    csString inBounds = GetInBoundsPerception(npc);
+                    if (!inBounds.IsEmpty())
+                    {
+                        Perception perception(inBounds);
+                        npc->TriggerEvent(&perception);
+                    }
+
                     npc->SetInsideRegion(true);
                 }
             }
@@ -316,8 +358,13 @@ bool ScriptOperation::CheckMoveOk(NPC *npc, EventManager *eventmgr, csVector3 ol
             {
                 if (!npc->GetTribe()->CheckWithinBoundsTribeHome(npc,newPos,newSector))
                 {
-                    Perception outbounds(outOfBounds);
-                    npc->TriggerEvent(&outbounds);
+                    csString outOfBounds = GetOutOfBoundsPerception(npc);
+                    if (!outOfBounds.IsEmpty())
+                    {
+                        Perception outbounds(outOfBounds);
+                        npc->TriggerEvent(&outbounds);
+                    }
+
                     npc->SetInsideTribeHome(false);
                 }
             }
@@ -325,8 +372,13 @@ bool ScriptOperation::CheckMoveOk(NPC *npc, EventManager *eventmgr, csVector3 ol
             {
                 if (npc->GetTribe()->CheckWithinBoundsTribeHome(npc,newPos,newSector))
                 {
-                    Perception inbounds(inBounds);
-                    npc->TriggerEvent(&inbounds);
+                    csString inBounds = GetInBoundsPerception(npc);
+                    if (!inBounds.IsEmpty())
+                    {
+                        Perception inbounds(inBounds);
+                        npc->TriggerEvent(&inbounds);
+                    }
+
                     npc->SetInsideTribeHome(true);
                 }                
             }
@@ -339,6 +391,42 @@ bool ScriptOperation::CheckMoveOk(NPC *npc, EventManager *eventmgr, csVector3 ol
     }
 
     return OPERATION_COMPLETED;
+}
+
+const csString& ScriptOperation::GetCollisionPerception(NPC* npc)
+{
+    if (collision.IsEmpty())
+    {
+        return npc->GetBrain()->GetCollisionPerception();
+    }
+    return collision;
+}
+
+const csString& ScriptOperation::GetOutOfBoundsPerception(NPC* npc)
+{
+    if (outOfBounds.IsEmpty())
+    {
+        return npc->GetBrain()->GetOutOfBoundsPerception();
+    }
+    return outOfBounds;
+}
+
+const csString& ScriptOperation::GetInBoundsPerception(NPC* npc)
+{
+    if (inBounds.IsEmpty())
+    {
+        return npc->GetBrain()->GetInBoundsPerception();
+    }
+    return inBounds;
+}
+
+const csString& ScriptOperation::GetFallingPerception(NPC* npc)
+{
+    if (falling.IsEmpty())
+    {
+        return npc->GetBrain()->GetFallingPerception();
+    }
+    return falling;
 }
 
 void ScriptOperation::Resume(csTicks delay, NPC *npc, EventManager *eventmgr)
@@ -514,15 +602,17 @@ void ScriptOperation::SetAnimation(NPC * npc, const char*name)
 
 void ScriptOperation::Failure(NPC* npc)
 {
-    if (!failurePerception.IsEmpty())
+    if (failurePerception.IsEmpty())
     {
-        npc->Printf(5,"Operation failed tigger failure perception: %s",failurePerception.GetData());
-        Perception perception(failurePerception);
-        npc->TriggerEvent(&perception);
+        npc->Printf(5,"Operation failed with no failure perception");
     }
     else
     {
-        npc->Printf(5,"Operation failed, no failure perception");
+        npc->Printf(5,"Operation failed tigger failure perception: %s",
+                    failurePerception.GetData());
+
+        Perception perception(failurePerception);
+        npc->TriggerEvent(&perception);
     }
 }
 
@@ -581,7 +671,7 @@ ScriptOperation::OperationResult MovementOperation::Run(NPC *npc, EventManager *
         // failed to find a path between us and the target
         npc->Printf(5, "Failed to find a path to the target!");
 
-        return OPERATION_COMPLETED;  // This operation is complete
+        return OPERATION_FAILED;  // This operation is complete
     }
     else if ( path->GetDistance() < 0.5 )  // Distance allready adjusted for offset
     {
@@ -1573,6 +1663,10 @@ bool LocateOperation::Load(iDocumentNode *node)
     {
         return true;
     }
+    else if (split_obj[0] == "spawn")
+    {
+        return true;
+    }
     else if (split_obj[0] == "tribe")
     {
         if (split_obj.GetSize() < 2)
@@ -1603,7 +1697,7 @@ bool LocateOperation::Load(iDocumentNode *node)
             return false;
         }
     }
-    else if(split_obj[0] == "friend")
+    else if (split_obj[0] == "friend")
     {
         return true;
     }
@@ -1884,6 +1978,14 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, EventManager *ev
         located_pos = pos;
         located_angle = 0;
         located_sector = sector;
+    }
+    else if (split_obj[0] == "spawn")
+    {
+        npc->Printf(5,"LocateOp - Spawn");
+
+        located_pos = npc->GetSpawnPosition();
+        located_angle = 0;
+        located_sector = npc->GetSpawnSector();
     }
     else if (split_obj[0] == "tribe")
     {

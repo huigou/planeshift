@@ -123,7 +123,7 @@ bool EntityManager::Initialize(iObjectRegistry* object_reg,
                                psServerDR* psserverdr,
                                CacheManager* cachemanager)
 {
-	cacheManager = cachemanager;
+    cacheManager = cachemanager;
     csRef<iEngine> engine2 = csQueryRegistry<iEngine> (psserver->GetObjectReg());
     engine = engine2; // get out of csRef;
 

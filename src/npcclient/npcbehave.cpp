@@ -72,11 +72,15 @@ NPCType::~NPCType()
 
 void NPCType::DeepCopy(NPCType& other)
 {
-    npcclient = other.npcclient;
-    name      = other.name;
-    ang_vel   = other.ang_vel;
-    velSource = other.velSource;
-    vel       = other.vel;
+    npcclient             = other.npcclient;
+    name                  = other.name;
+    ang_vel               = other.ang_vel;
+    velSource             = other.velSource;
+    vel                   = other.vel;
+    collisionPerception   = other.collisionPerception;
+    outOfBoundsPerception = other.outOfBoundsPerception;
+    inBoundsPerception    = other.inBoundsPerception;
+    fallingPerception     = other.fallingPerception;
 
     behaviors.DeepCopy(other.behaviors);
 
@@ -139,6 +143,11 @@ bool NPCType::Load(iDocumentNode *node)
         velSource = VEL_USER;
         vel = node->GetAttributeValueAsFloat("vel");
     }
+
+    collisionPerception   = node->GetAttributeValue("collision");
+    outOfBoundsPerception = node->GetAttributeValue("out_of_bounds");
+    inBoundsPerception    = node->GetAttributeValue("in_bounds");
+    fallingPerception     = node->GetAttributeValue("falling");
 
     // Now read in behaviors and reactions
     csRef<iDocumentNodeIterator> iter = node->GetNodes();
@@ -285,6 +294,26 @@ float NPCType::GetVelocity(NPC *npc)
         return npc->GetRunVelocity();
     }
     return 0.0; // Should not return
+}
+
+const csString& NPCType::GetCollisionPerception() const
+{
+    return collisionPerception;
+}
+
+const csString& NPCType::GetOutOfBoundsPerception() const
+{
+    return outOfBoundsPerception;
+}
+
+const csString& NPCType::GetInBoundsPerception() const
+{
+    return inBoundsPerception;
+}
+
+const csString& NPCType::GetFallingPerception() const
+{
+    return fallingPerception;
 }
 
 //---------------------------------------------------------------------------

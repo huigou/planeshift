@@ -505,6 +505,7 @@ void NPC::DumpState()
     CPrintf(CON_CMDOUTPUT, "Active locate angle: %.2f\n",active_locate_angle);
     CPrintf(CON_CMDOUTPUT, "Active locate radius:%.2f\n",active_locate_radius);
     CPrintf(CON_CMDOUTPUT, "Active locate WP:    %s\n",active_locate_wp?active_locate_wp->GetName():"");
+    CPrintf(CON_CMDOUTPUT, "Spawn position:      %s\n",toString(spawnPosition,spawnSector).GetDataSafe());
     CPrintf(CON_CMDOUTPUT, "Ang vel:             %.2f\n",ang_vel);
     CPrintf(CON_CMDOUTPUT, "Vel:                 %.2f\n",vel);
     CPrintf(CON_CMDOUTPUT, "Walk velocity:       %.2f\n",walkVelocity);
@@ -1027,6 +1028,22 @@ void NPC::CheckPosition()
     checkedSector = pcmesh->GetMesh()->GetMovable()->GetSectors()->Get(0);
     checkedResult = alive;
 }
+
+void NPC::StoreSpawnPosition()
+{
+    psGameObject::GetPosition(GetActor(), spawnPosition, spawnSector );
+}
+
+const csVector3& NPC::GetSpawnPosition() const
+{
+    return spawnPosition;
+}
+
+iSector* NPC::GetSpawnSector() const
+{
+    return spawnSector;
+}
+
 
 //-----------------------------------------------------------------------------
 

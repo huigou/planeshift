@@ -104,6 +104,7 @@ void psServerDR::HandleFallDamage(gemActor *actor,int clientnum, const csVector3
 
     MathEnvironment env;
     env.Define("FallHeight", fallHeight);
+    env.Define("Damage", 0.0); // Make sure damage is defined.
     calc_damage->Evaluate(&env);
     MathVar *var_fall_dmg = env.Lookup("Damage");
     Debug4(LOG_LINMOVE,actor->GetClientID(), "%s fell %.2fm for damage %.2f",

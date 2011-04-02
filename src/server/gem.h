@@ -387,7 +387,15 @@ public:
     /** @name Networking functions
      */
     //@{
+
+    /**
+     * @param control  Set to true when sent to the controlling client.
+     */
     virtual void Broadcast(int clientnum, bool control);
+
+    /**
+     * @param control  Set to true when sent to the controlling client.
+     */
     virtual void Send( int clientnum, bool control, bool to_superclients, psPersistAllEntities *allEntities=NULL) {}
     virtual void SendGroupMessage(MsgEntry *me) { };
     //@}
@@ -474,7 +482,14 @@ public:
 
     virtual const char* GetObjectType() { return "Active object"; }
 
+    /**
+     * @param control  Set to true when sent to the controlling client.
+     */
     virtual void Broadcast(int clientnum, bool control);
+
+    /**
+     * @param control  Set to true when sent to the controlling client.
+     */
     virtual void Send( int clientnum, bool control, bool to_superclients, psPersistAllEntities *allEntities=NULL) { }
 
     virtual void SendBehaviorMessage(const csString & str, gemObject *obj);
@@ -525,7 +540,14 @@ public:
 
     virtual float GetBaseAdvertiseRange();
 
+    /**
+     * @param control  Set to true when sent to the controlling client.
+     */
     virtual void Broadcast(int clientnum, bool control);
+
+    /**
+     * @param control  Set to true when sent to the controlling client.
+     */
     virtual void Send( int clientnum, bool control, bool super_clients, psPersistAllEntities *allEntities=NULL);
 
     /** @brief Set position of item in world.
@@ -657,7 +679,14 @@ public:
     virtual float GetBaseAdvertiseRange();
     virtual bool SeesObject(gemObject * object, float range);
 
+    /**
+     * @param control  Set to true when sent to the controlling client.
+     */
     virtual void Broadcast(int clientnum, bool control);
+
+    /**
+     * @param control  Set to true when sent to the controlling client.
+     */
     virtual void Send( int clientnum, bool control, bool super_clients, psPersistAllEntities *allEntities=NULL);
 
     virtual bool GetVisibility() { return visible; };
@@ -1050,7 +1079,7 @@ public:
 
     virtual void Broadcast(int clientnum, bool control);
     /**
-     * @param control  Set to true when sent to the controling client.
+     * @param control  Set to true when sent to the controlling client.
      */
     virtual void Send( int clientnum, bool control, bool to_superclients, psPersistAllEntities *allEntities=NULL);
     virtual void SendGroupMessage(MsgEntry *me);
@@ -1270,7 +1299,14 @@ public:
     void AddBadText(const char *playerSaid,const char *trigger);
     void GetBadText(size_t first,size_t last, csStringArray& saidArray, csStringArray& trigArray);
 
+    /**
+     * @param control  Set to true when sent to the controlling client.
+     */
     virtual void Send(int clientnum, bool control, bool to_superclients, psPersistAllEntities *allEntities=NULL);
+
+    /**
+     * @param control  Set to true when sent to the controlling client.
+     */
     virtual void Broadcast(int clientnum, bool control );
 
     virtual void SendBehaviorMessage(const csString & str, gemObject *obj);

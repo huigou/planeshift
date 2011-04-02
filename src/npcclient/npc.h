@@ -129,6 +129,9 @@ protected:
     uint32_t           tribeMemberType;      ///< What type/class is this NPC in the tribe. 
     bool               insideTribeHome;      ///< State variable for inside outside tribe home checks.
         
+    csVector3          spawnPosition;        ///< The stored position that this NPC where spawned
+    iSector*           spawnSector;          ///< The stored sector that this NPC where spawned
+
     RaceInfo_t        *raceInfo;
 
     // Initial position checks
@@ -408,13 +411,26 @@ public:
     bool IsDebugging(int debug) { return (debugging > 0 && debug <= debugging);};
 
     void CheckPosition();
+
+    /** Store the start position.
+     *
+     * Store the current position as spawn position so that NPCs can locate
+     * spawn position.
+     */
+    void StoreSpawnPosition();
     
+    /** Return the position part of the spawn position */
+    const csVector3& GetSpawnPosition() const;
+
+    /** Return the sector part of the spawn position */
+    iSector* GetSpawnSector() const;
+
 private:
-    psNPCTick* tick;
-    psNPCClient* npcclient;
-    NetworkManager* networkmanager;
-    psWorld* world;
-    iCollideSystem* cdsys;
+    psNPCTick*        tick;
+    psNPCClient*      npcclient;
+    NetworkManager*   networkmanager;
+    psWorld*          world;
+    iCollideSystem*   cdsys;
     
     friend class psNPCTick;
 
@@ -430,11 +446,13 @@ protected:
 
 public:
 	psNPCTick(int offsetticks, NPC *npc): psGameEvent(0,offsetticks,"psNPCTick"), npc(npc) {};
+
     virtual void Trigger()
     {
     	npc->tick = NULL;
     	npc->Tick();
     }
+
     virtual csString ToString() const { return "psNPCTick"; } 
 };
 
