@@ -1485,8 +1485,6 @@ void gemItem::SendBehaviorMessage(const csString & msg_id, gemObject *actor)
         gemContainer* worldContainer = NULL;
         psItem* currentItem = NULL;
         psItem* newItem = NULL;
-
-        psCharacterInventory* characterInventory = NULL;
     
         // Check the client is actually targetting something
         if (!targetObject)
@@ -1546,7 +1544,6 @@ void gemItem::SendBehaviorMessage(const csString & msg_id, gemObject *actor)
             // Check the current item can be added to character inventory
             if (chr->Inventory().Add(currentItem, true))
             {
-        
                 newItem = i.RemoveCurrent(fromClient);
         
                 // Check the removing was succesful
@@ -1838,6 +1835,7 @@ psItem *gemContainer::psContainerIterator::RemoveCurrent(Client *fromClient)
     {
         psItem *item = container->GetIndexItem(current);
         container->RemoveFromContainer(item,fromClient);
+        psserver->GetWorkManager()->StopWork(fromClient, item);
         current--; // This adjusts so that the next "Next()" call actually returns the next item and doesn't skip one.
         return item;
     }
