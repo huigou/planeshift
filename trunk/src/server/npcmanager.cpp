@@ -386,16 +386,18 @@ NPCManager::~NPCManager()
 {
     csHash<PetOwnerSession*, PID>::GlobalIterator iter(OwnerPetList.GetIterator());
     while(iter.HasNext())
+    {
         delete iter.Next();
+    }
     delete outbound;
 }
 
 void NPCManager::HandleNPCReady(MsgEntry *me,Client *client)
 {
-	gemSupervisor->ActivateNPCs(client->GetAccountID());
-	// NPC Client is now ready so add onto superclients list
-	client->SetReady(true);
-	superclients.Push(PublishDestination(client->GetClientNum(), client, 0, 0));
+    gemSupervisor->ActivateNPCs(client->GetAccountID());
+    // NPC Client is now ready so add onto superclients list
+    client->SetReady(true);
+    superclients.Push(PublishDestination(client->GetClientNum(), client, 0, 0));
 }
 
 void NPCManager::HandleDamageEvent(MsgEntry *me,Client *client)
