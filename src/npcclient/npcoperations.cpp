@@ -43,6 +43,7 @@
 #include "util/psutil.h"
 #include "util/psstring.h"
 #include "util/eventmanager.h"
+#include "util/log.h"
 
 //=============================================================================
 // Local Includes
@@ -262,13 +263,16 @@ bool ScriptOperation::CheckMoveOk(NPC *npc, EventManager *eventmgr, csVector3 ol
         csVector3 expected_pos;
         expected_pos = mat*(velvec*timedelta) + oldPos;
 
-        float diffx = fabs(newPos.x - expected_pos.x);
-        float diffy = fabs(newPos.y - expected_pos.y);
-        float diffz = fabs(newPos.z - expected_pos.z);
+        float diffExpectedX = fabs(newPos.x - expected_pos.x);
+        float diffExpectedZ = fabs(newPos.z - expected_pos.z);
+
+
+        float diffPositionY = fabs(newPos.y - oldPos.y);
 
         // Check if this NPC is falling.
-        if (fabs(diffy) > 800.0)  // Server is using 1000, npc client 
-        {                         // should be a little tighter
+        if (fabs(diffPositionY) > 800.0 ||
+            fabs(newPos.y) > 800.0 )  
+        {                         
 
             csString falling = GetFallingPerception(npc);
             
@@ -278,15 +282,21 @@ bool ScriptOperation::CheckMoveOk(NPC *npc, EventManager *eventmgr, csVector3 ol
                 npc->TriggerEvent(&perception);
             }
 
+            Error3("NPC %s starts to fall pos %s",
+                   ShowID(npc->GetPID()),
+                   toString(oldPos,oldSector).GetDataSafe());
+                   
+            npc->Dump();
+
             return false;
         }
 
-        if (diffx > EPSILON ||
-            diffz > EPSILON)
+        if (diffExpectedX > EPSILON ||
+            diffExpectedZ > EPSILON)
         {
             consecCollisions++;
             npc->Printf(10,"Bang. %d consec collisions last with diffs (%1.2f,%1.2f)...",
-                        consecCollisions,diffx,diffz);
+                        consecCollisions,diffExpectedX,diffExpectedZ);
             if (consecCollisions > 8)  // allow for hitting trees but not walls
             {
                 csString collision = GetCollisionPerception(npc);

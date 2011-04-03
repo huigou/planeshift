@@ -745,14 +745,14 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         else if ( strcmp( node->GetValue(), "resurrect" ) == 0 )
         {
             op = new ResurrectOperation;
+        } 
+        else if ( strcmp( node->GetValue(), "reward" ) == 0 )
+        {
+            op = new RewardOperation;
         }
         else if ( strcmp( node->GetValue(), "rotate" ) == 0 )
         {
             op = new RotateOperation;
-        }
-        else if ( strcmp( node->GetValue(), "reward" ) == 0 )
-        {
-            op = new RewardOperation;
         }
         else if ( strcmp( node->GetValue(), "sequence" ) == 0 )
         {
