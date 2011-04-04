@@ -2591,13 +2591,13 @@ psItem* WorkManager::CombineContainedItem(uint32 newId, int newQty, float itemQu
         Error3("Bad container slot %i when trying to add item instance #%u.", PSCHARACTER_SLOT_NONE, newItem->GetUID());
         return NULL;
     }
-    workItem->Save(true);
+    containerItem->Save(true);
 
     // Zero out x,y,z location because it is in container
     float xpos,ypos,zpos,yrot;
     psSectorInfo* sectorinfo;
     InstanceID instance;
-    workItem->GetLocationInWorld(instance, &sectorinfo, xpos, ypos, zpos, yrot );
+    containerItem->GetLocationInWorld(instance, &sectorinfo, xpos, ypos, zpos, yrot );
     newItem->SetLocationInWorld(instance,sectorinfo, 0.00, 0.00, 0.00, 0.00 );
 
     newItem->SetLoaded();  // Item is fully created
