@@ -125,7 +125,7 @@
            <!-- Connecting [used for server descriptions] -->
             <widget name="connecting" factory="pawsMultiLineTextBox" visible="yes">
                 <frame x="390" y="10" width="200" height="190" border="no" />
-                <scrollbar arrowup="Up Arrow" arrowdown="Down Arrow" arrowsize="8" width="15"  border="no"/>
+                <pawsScrollBar arrowup="Up Arrow" arrowdown="Down Arrow" arrowsize="8" width="15"  border="no"/>
                 <font name="LiberationSerif-Regular.ttf" r="255" g="255" b="255" size="11" resizetoscreen="yes" />
                 <!-- <bgcolour r="255" g="127" b="40" /> -->
             </widget>
