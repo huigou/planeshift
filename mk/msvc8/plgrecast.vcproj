@@ -1964,6 +1964,9 @@
 			<File
 				RelativePath="..\..\src\plugins\common\recast\recastnavigation\RecastTimer.h">
 			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\recast\RecastScopedDelete.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
