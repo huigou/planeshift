@@ -304,13 +304,13 @@ private:
   // Recast & Detour
   rcChunkyTriMesh* chunkyTriMesh;
   
-  // Tile specific
-  unsigned char* triangleAreas;
-  rcHeightfield* solid;
-  rcCompactHeightfield* chf;
-  rcContourSet* cSet;
-  rcPolyMesh* pMesh;
-  rcPolyMeshDetail* dMesh;
+  struct tileData
+  {
+    unsigned char* data;
+    int size;
+    int x;
+    int y;
+  };
   
   // Off-Mesh connections.
   static const int MAX_OFFMESH_CONNECTIONS = 256;
@@ -342,8 +342,9 @@ private:
   void CleanUpSectorData ();
   void CleanUpTileData ();
   bool GetSectorData ();  
-  unsigned char* BuildTile(const int tx, const int ty, const float* bmin, const float* bmax, 
-                           const rcConfig& tileConfig, int& dataSize);
+
+  THREADED_CALLABLE_DECL5(celNavMeshBuilder,BuildTile,csThreadReturn,int,tx,int,ty,const float*,bmin,const float*,bmax,const rcConfig*,tileConfig,THREADEDL,false,false);
+
   void CreateFakeTriangles (csList<float>& vertices, csList<int>& indices, int& numberOfVertices, 
                             int& numberOfTriangles, int firstIndex);
   bool UpdateFakeTriangles ();

@@ -19,6 +19,7 @@
 
 
 #include "CelNavMesh.h"
+#include "RecastScopedDelete.h"
 
 CS_PLUGIN_NAMESPACE_BEGIN(celNavMesh)
 {
@@ -1679,12 +1680,6 @@ celNavMeshBuilder::celNavMeshBuilder (iBase* parent) : scfImplementationType (th
   triangleVertices = 0;
   triangleIndices = 0;
   chunkyTriMesh = 0;
-  triangleAreas = 0;
-  solid = 0;
-  chf = 0;
-  cSet = 0;
-  pMesh = 0;
-  dMesh = 0;
 
   numberOfVertices = 0;
   numberOfTriangles = 0;
@@ -1697,7 +1692,6 @@ celNavMeshBuilder::celNavMeshBuilder (iBase* parent) : scfImplementationType (th
 celNavMeshBuilder::~celNavMeshBuilder ()
 {
   CleanUpSectorData();
-  CleanUpTileData();
 }
 
 void celNavMeshBuilder::CleanUpSectorData () 
@@ -2109,6 +2103,8 @@ THREADED_CALLABLE_IMPL(celNavMeshBuilder,BuildNavMesh)
 
   float tileBoundingMin[3];
   float tileBoundingMax[3];
+
+  csRefArray<iThreadReturn> results;
   for (int y = 0; y < th; ++y)
   {
     for (int x = 0; x < tw; ++x)
@@ -2128,45 +2124,48 @@ THREADED_CALLABLE_IMPL(celNavMeshBuilder,BuildNavMesh)
       tileConfig.bmax[0] += tileConfig.borderSize * tileConfig.cs;
       tileConfig.bmax[2] += tileConfig.borderSize * tileConfig.cs;
 
-      int dataSize = 0;
-      unsigned char* data = BuildTile(x, y, tileBoundingMin, tileBoundingMax, tileConfig, dataSize);
-      if (data)
-      {
-        if (!navMesh->AddTile(data, dataSize))
-        {
-          dtFree(data);
-          csApplicationFramework::ReportWarning("could not add tile at location %d, %d in sector %s",
-              x, y, currentSector->QueryObject()->GetName());
-          continue;
-        }
-      }
+      results.Push(BuildTile(x, y, tileBoundingMin, tileBoundingMax, &tileConfig));
     }
   }
+
+  csRef<iThreadManager> tm = csQueryRegistry<iThreadManager>(GetObjectRegistry());
+  tm->Wait(results, true);
+  
+  for(size_t i = 0; i < results.GetSize(); i++)
+  {
+    csRef<iThreadReturn> ret = results.Get(i);
+    if(ret->WasSuccessful())
+    {
+      tileData* tile = static_cast<tileData*>(ret->GetResultPtr());
+      if(tile && tile->data)
+      {
+        if(!navMesh->AddTile(tile->data,tile->size))
+        {
+          dtFree(tile->data);
+          csApplicationFramework::ReportWarning("could not add tile at location %d, %d in sector %s",
+              tile->x, tile->y, currentSector->QueryObject()->GetName());
+        }
+      }
+      delete tile;
+    }
+  }
+
   ret->SetResult(csRef<iBase>(navMesh));
   return true;
 }
 
 void celNavMeshBuilder::CleanUpTileData()
 {
-  delete [] triangleAreas;
-  triangleAreas = 0;
-  rcFreeHeightField(solid);
-  solid = 0;
-  rcFreeCompactHeightfield(chf);
-  chf = 0;
-  rcFreeContourSet(cSet);
-  cSet = 0;
-  rcFreePolyMesh(pMesh);
-  pMesh = 0;
-  rcFreePolyMeshDetail(dMesh);
-  dMesh = 0;
 }
 
 // Based on Recast Sample_TileMesh::buildTileMesh()
 // NOTE I left the original Recast comments
-unsigned char* celNavMeshBuilder::BuildTile(const int tx, const int ty, const float* bmin, const float* bmax, 
-                                            const rcConfig& tileConfig, int& dataSize)
+THREADED_CALLABLE_IMPL5(celNavMeshBuilder,BuildTile,int tx, int ty, const float* bmin, const float* bmax, 
+                        const rcConfig* tileConfigPtr)
 {
+  (void)sync;
+  const rcConfig& tileConfig = *tileConfigPtr;
+  ret->SetResult((void*)0);
 
   if (!triangleVertices || !triangleIndices || !chunkyTriMesh)
   {
@@ -2178,7 +2177,7 @@ unsigned char* celNavMeshBuilder::BuildTile(const int tx, const int ty, const fl
   CleanUpTileData();
 
   // Allocate voxel heighfield where we rasterize our input data to.
-  solid = rcAllocHeightfield();
+  CS::Utility::ScopedDelete<rcHeightfield> solid(rcAllocHeightfield());
   if (!solid)
   {
     csApplicationFramework::ReportError("Out of memory building navigation mesh.");
@@ -2194,7 +2193,7 @@ unsigned char* celNavMeshBuilder::BuildTile(const int tx, const int ty, const fl
   // Allocate array that can hold triangle flags.
   // If you have multiple meshes you need to process, allocate
   // and array which can hold the max number of triangles you need to process.
-  triangleAreas = new unsigned char[chunkyTriMesh->maxTrisPerChunk];
+  unsigned char* triangleAreas = new unsigned char[chunkyTriMesh->maxTrisPerChunk];
   if (!triangleAreas)
   {
     csApplicationFramework::ReportError("Out of memory building navigation mesh.");
@@ -2210,6 +2209,7 @@ unsigned char* celNavMeshBuilder::BuildTile(const int tx, const int ty, const fl
   const int ncid = rcGetChunksInRect(chunkyTriMesh, tbmin, tbmax, cid, 512);
   if (!ncid)
   {
+    delete [] triangleAreas;
     return 0;
   }
 
@@ -2231,7 +2231,6 @@ unsigned char* celNavMeshBuilder::BuildTile(const int tx, const int ty, const fl
   }
 
   delete [] triangleAreas;
-  triangleAreas = 0;
 
   // Once all geoemtry is rasterized, we do initial pass of filtering to
   // remove unwanted overhangs caused by the conservative rasterization
@@ -2243,7 +2242,7 @@ unsigned char* celNavMeshBuilder::BuildTile(const int tx, const int ty, const fl
   // Compact the heightfield so that it is faster to handle from now on.
   // This will result more cache coherent data as well as the neighbours
   // between walkable cells will be calculated.
-  chf = rcAllocCompactHeightfield();
+  CS::Utility::ScopedDelete<rcCompactHeightfield> chf(rcAllocCompactHeightfield());
   if (!chf)
   {
     csApplicationFramework::ReportError("Out of memory building navigation mesh.");
@@ -2255,8 +2254,7 @@ unsigned char* celNavMeshBuilder::BuildTile(const int tx, const int ty, const fl
     return 0;
   }
 
-  rcFreeHeightField(solid);
-  solid = 0;
+  solid.Free();
 
   // Erode the walkable area by agent radius.
   if (!rcErodeWalkableArea(tileConfig.walkableRadius, *chf))
@@ -2287,7 +2285,7 @@ unsigned char* celNavMeshBuilder::BuildTile(const int tx, const int ty, const fl
   }
 
   // Create contours.
-  cSet = rcAllocContourSet();
+  CS::Utility::ScopedDelete<rcContourSet> cSet(rcAllocContourSet());
   if (!cSet)
   {
     csApplicationFramework::ReportError("Out of memory building navigation mesh.");
@@ -2304,7 +2302,7 @@ unsigned char* celNavMeshBuilder::BuildTile(const int tx, const int ty, const fl
   }
 
   // Build polygon navmesh from the contours.
-  pMesh = rcAllocPolyMesh();
+  CS::Utility::ScopedDelete<rcPolyMesh> pMesh(rcAllocPolyMesh());
   if (!pMesh)
   {
     csApplicationFramework::ReportError("Out of memory building navigation mesh.");
@@ -2317,7 +2315,7 @@ unsigned char* celNavMeshBuilder::BuildTile(const int tx, const int ty, const fl
   }
 
   // Build detail mesh.
-  dMesh = rcAllocPolyMeshDetail();
+  CS::Utility::ScopedDelete<rcPolyMeshDetail> dMesh(rcAllocPolyMeshDetail());
   if (!dMesh)
   {
     csApplicationFramework::ReportError("Out of memory building navigation mesh.");
@@ -2329,10 +2327,8 @@ unsigned char* celNavMeshBuilder::BuildTile(const int tx, const int ty, const fl
     return 0;
   }
 
-  rcFreeCompactHeightfield(chf);
-  chf = 0;
-  rcFreeContourSet(cSet);
-  cSet = 0;
+  chf.Free();
+  cSet.Free();
 
   unsigned char* navData = 0;
   int navDataSize = 0;
@@ -2413,13 +2409,15 @@ unsigned char* celNavMeshBuilder::BuildTile(const int tx, const int ty, const fl
     }
   }
 
-  rcFreePolyMesh(pMesh);
-  pMesh = 0;
-  rcFreePolyMeshDetail(dMesh);
-  dMesh = 0;
+  tileData* tile = new tileData;
+  tile->x = tx;
+  tile->y = ty;
+  tile->data = navData;
+  tile->size = navDataSize;
+  
+  ret->SetResult((void*)tile);
 
-  dataSize = navDataSize;
-  return navData;
+  return true;
 }
 
 iCelNavMesh* celNavMeshBuilder::LoadNavMesh (iFile* file)
@@ -2507,6 +2505,8 @@ bool celNavMeshBuilder::UpdateNavMesh (celNavMesh* navMesh, const csBox3& boundi
   float tileBoundingMax[3];
   tileBoundingMin[1] = boundingMin[1];
   tileBoundingMax[1] = boundingMax[1];
+  
+  csRefArray<iThreadReturn> results;
   for (int y = zmin; y <= zmax; ++y)
   {
     for (int x = xmin; x <= xmax; ++x)
@@ -2524,19 +2524,32 @@ bool celNavMeshBuilder::UpdateNavMesh (celNavMesh* navMesh, const csBox3& boundi
       tileConfig.bmax[0] += tileConfig.borderSize * tileConfig.cs;
       tileConfig.bmax[2] += tileConfig.borderSize * tileConfig.cs;
 
-      int dataSize = 0;
-      unsigned char* data = BuildTile(x, y, tileBoundingMin, tileBoundingMax, tileConfig, dataSize);
-      if (data)
-      {        
-        if (!navMesh->RemoveTile(x, y) || !navMesh->AddTile(data, dataSize))
-        {
-          dtFree(data);
-          return false;
-        }
-      }
+      results.Push(BuildTile(x, y, tileBoundingMin, tileBoundingMax, &tileConfig));
     }
   }
-  return true;
+
+  csRef<iThreadManager> tm = csQueryRegistry<iThreadManager>(GetObjectRegistry());
+  tm->Wait(results, true);
+  
+  bool success = true;
+  for(size_t i = 0; i < results.GetSize(); i++)
+  {
+    csRef<iThreadReturn> ret = results.Get(i);
+    if(ret->WasSuccessful())
+    {
+      tileData* tile = static_cast<tileData*>(ret->GetResultPtr());
+      if(tile && tile->data)
+      {
+        if(!navMesh->RemoveTile(tile->x,tile->y) || !navMesh->AddTile(tile->data,tile->size))
+        {
+          dtFree(tile->data);
+          success = false;
+        }
+      }
+      delete tile;
+    }
+  }
+  return success;
 }
 
 const iCelNavMeshParams* celNavMeshBuilder::GetNavMeshParams () const
