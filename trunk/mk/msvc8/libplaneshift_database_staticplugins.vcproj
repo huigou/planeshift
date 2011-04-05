@@ -1901,6 +1901,9 @@
 				RelativePath="..\..\src\plugins\common\recast\recastnavigation\RecastTimer.h">
 			</File>
 			<File
+				RelativePath="..\..\src\plugins\common\recast\RecastScopedDelete.h">
+			</File>
+			<File
 				RelativePath="..\..\src\plugins\database\mysql\dal.h">
 			</File>
 		</Filter>

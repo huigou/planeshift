@@ -1412,6 +1412,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClInclude Include="..\..\src\plugins\common\recast\recastnavigation\RecastDump.h" />
     <ClInclude Include="..\..\src\plugins\common\recast\recastnavigation\RecastLog.h" />
     <ClInclude Include="..\..\src\plugins\common\recast\recastnavigation\RecastTimer.h" />
+    <ClInclude Include="..\..\src\plugins\common\recast\RecastScopedDelete.h" />
     <ClInclude Include="..\..\src\plugins\database\mysql\dal.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
