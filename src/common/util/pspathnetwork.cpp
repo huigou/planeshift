@@ -209,7 +209,6 @@ Waypoint *psPathNetwork::FindWaypoint(const char * name)
 Waypoint *psPathNetwork::FindWaypoint(csVector3& v, iSector *sector)
 {
     csPDelArray<Waypoint>::Iterator iter(waypoints.GetIterator());
-    Waypoint *wp;
 
     while (iter.HasNext())
     {
