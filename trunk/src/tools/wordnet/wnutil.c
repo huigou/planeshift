@@ -707,7 +707,7 @@ char *SetSearchdir()
 
 int default_display_message(char *msg)
 {
-    printf(msg);
+    printf("%s",msg);
     return(-1);
 }
 
