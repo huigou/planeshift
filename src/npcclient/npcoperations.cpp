@@ -4143,8 +4143,6 @@ ScriptOperation::OperationResult WanderOperation::Run(NPC *npc, EventManager *ev
 {
     if (interrupted && AtInterruptedPosition(npc))
     {
-        float angle;
-        
         // Restart current behavior
         StartMoveTo(npc, GetCurrentPathPoint(npc));
 
