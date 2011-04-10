@@ -138,7 +138,8 @@ bool pawsLoginWindow::PostSetup()
     //psMainWidget* ps = (psMainWidget*)PawsManager::GetSingleton().GetMainWidget();
     if(first)
     {
-        psSystemMessage msg(0,MSG_OK,PawsManager::GetSingleton().Translate("Welcome to PlaneShift!"));
+        psSystemMessage msg(0,MSG_OK,PawsManager::GetSingleton().Translate(
+                                     csString("Welcome to ").AppendFmt("%s!", APPNAME)));
         msg.FireEvent();
         //handles auto login in case the option is set.
         int autoLoginServer = cfg->GetInt(CNF_AUTOLOGIN_SERVER, -2);
