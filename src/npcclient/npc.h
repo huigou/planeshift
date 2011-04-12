@@ -140,6 +140,8 @@ protected:
     bool               checked;
     bool               checkedResult;
     bool               disabled;
+
+    int                fallCounter; // Incremented if the NPC fall off the map
     
     void Advance(csTicks when);
 
@@ -424,6 +426,19 @@ public:
 
     /** Return the sector part of the spawn position */
     iSector* GetSpawnSector() const;
+
+
+    /** Increment the fall counter 
+    *
+    * Fall counter is used for debugging.
+    */
+    void IncrementFallCounter()  { ++fallCounter; }
+
+    /** Return the fall counter 
+    *
+    * Fall counter is used for debugging.
+    */
+    int GetFallCounter()  { return fallCounter; }
 
 private:
     psNPCTick*        tick;
