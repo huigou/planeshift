@@ -274,6 +274,8 @@ bool ScriptOperation::CheckMoveOk(NPC *npc, EventManager *eventmgr, csVector3 ol
             fabs(newPos.y) > 800.0 )  
         {                         
 
+            npc->IncrementFallCounter();
+
             csString falling = GetFallingPerception(npc);
             
             if (!falling.IsEmpty())

@@ -87,6 +87,7 @@ NPC::NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world,
     checked = false;
     checkedResult = false;
     disabled = false;
+    fallCounter = 0;
     owner_id = 0;
     this->npcclient = npcclient;
     this->networkmanager = networkmanager;
@@ -518,6 +519,7 @@ void NPC::DumpState()
     CPrintf(CON_CMDOUTPUT, "Inside tribe home:   %s\n",insideTribeHome?"Yes":"No");
     CPrintf(CON_CMDOUTPUT, "Target:              %s\n",GetTarget()?GetTarget()->GetName():"");
     CPrintf(CON_CMDOUTPUT, "Last perception:     %s\n",last_perception?last_perception->GetName():"(None)");
+    CPrintf(CON_CMDOUTPUT, "Fall counter:        %d\n", GetFallCounter());
 }
 
 
