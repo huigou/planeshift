@@ -1097,11 +1097,12 @@ void pawsGuildWindow::OnStringEntered(const char *name,int param,const char *val
     }
     else if (!strcmp(name,"PrivateNotes"))
     {
-        if (!value || !strlen(value))
+        if (!value)
             return;
-
         csString command;
+
         csString escpxml = EscpXML(value);
+
         command.Format("<n char_id=\"%i\" notes=\"%s\"/>", param, escpxml.GetData());
         psGUIGuildMessage msg(psGUIGuildMessage::SET_MEMBER_PRIVATE_NOTES, command);
         msg.SendMessage();
