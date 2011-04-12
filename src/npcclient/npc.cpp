@@ -520,6 +520,7 @@ void NPC::DumpState()
     CPrintf(CON_CMDOUTPUT, "Target:              %s\n",GetTarget()?GetTarget()->GetName():"");
     CPrintf(CON_CMDOUTPUT, "Last perception:     %s\n",last_perception?last_perception->GetName():"(None)");
     CPrintf(CON_CMDOUTPUT, "Fall counter:        %d\n", GetFallCounter());
+    CPrintf(CON_CMDOUTPUT, "Brain:               %s\n", brain->GetName());
 }
 
 
