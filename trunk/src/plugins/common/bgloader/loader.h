@@ -114,8 +114,9 @@ public:
     * @param newName The name of the new cloned mesh factory.
     * @param load Begin loading the cloned mesh factory.
     * @param failed Pass a boolean to be able to manually handle a failed clone.
+    * @param scale pass a transform in here that should be applied to the factory
     */
-    void CloneFactory(const char* name, const char* newName, bool* failed = NULL);
+    void CloneFactory(const char* name, const char* newName, bool* failed = NULL, const csReversibleTransform& trans = csReversibleTransform());
 
    /**
     * Pass a data file to be cached. This method will parse your data and add it to it's
@@ -1232,6 +1233,7 @@ private:
 
         MeshFact(BgLoader* parent) : TrivialLoadable<iMeshFactoryWrapper,ObjectNames::meshfact>(parent)
         {
+            cloned = false;
         }
 
         bool Parse(iDocumentNode* node, ParserData& data);
@@ -1240,23 +1242,85 @@ private:
         csPtr<MeshFact> Clone(const char* name)
         {
             csRef<MeshFact> clone;
-            clone.AttachNew(new MeshFact(*this));
+            clone.AttachNew(new MeshFact(GetParent()));
             clone->SetName(name);
+
+            clone->cloned = true;
+            clone->parentFactory = &*this;
             return csPtr<MeshFact>(clone);
         }
 
         bool operator==(const MeshFact& other)
         {
-            if (filename != other.filename)
-                return false;
-            if ((iDocumentNode*)data != (iDocumentNode*)other.data)
-                return false;
+            if(cloned != other.cloned)
+            {
+                if(parentFactory.IsValid())
+                {
+                    if(*parentFactory != other)
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    if(*this != *other.parentFactory)
+                    {
+                        return false;
+                    }
+                }
+            }
+            else if(cloned)
+            {
+                if(parentFactory != other.parentFactory)
+                    return false;
+            }
+            else
+            {
+                if(filename != other.filename)
+                    return false;
+                if((iDocumentNode*)data != (iDocumentNode*)other.data)
+                    return false;
+            }
+
+            // ignore transformations for this check
 
             return true;
         }
 
+        bool operator!=(const MeshFact& other)
+        {
+            return !(*this == other);
+        }
+
+        csPtr<iMeshFactoryWrapper> GetObject()
+        {
+            csRef<iMeshFactoryWrapper> object;
+            if(cloned)
+            {
+                if(factory.IsValid())
+                {
+                    object = factory;
+                }
+                else if(parentFactory.IsValid())
+                {
+                    object = parentFactory->GetObject();
+                }
+            }
+            else
+            {
+                object = TrivialLoadable<iMeshFactoryWrapper,ObjectNames::meshfact>::GetObject();
+            }
+            return csPtr<iMeshFactoryWrapper>(object);
+        }
+
+        void SetTransform(const csReversibleTransform& transform)
+        {
+            trans = transform;
+        }
+
         bool LoadObject(bool wait);
         void UnloadObject();
+        void FinishObject();
 
         bool FindSubmesh(const csString& name) const
         {
@@ -1269,6 +1333,14 @@ private:
         }
 
     private:
+        // cloning data
+        bool cloned;
+        csRef<MeshFact> parentFactory;
+        csRef<iMeshFactoryWrapper> factory;
+
+        // transformation data
+        csReversibleTransform trans;
+
         // parser results
         csString filename;
         csArray<csVector3> bboxvs;

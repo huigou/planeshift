@@ -446,7 +446,7 @@ csPtr<iThreadReturn> BgLoader::LoadFactory(const char* name, bool wait)
     }
 }
 
-void BgLoader::CloneFactory(const char* name, const char* newName, bool* failed)
+void BgLoader::CloneFactory(const char* name, const char* newName, bool* failed, const csReversibleTransform& trans)
 {
     // Find meshfact to clone.
     csRef<MeshFact> meshfact;
@@ -490,6 +490,7 @@ void BgLoader::CloneFactory(const char* name, const char* newName, bool* failed)
     if(!newMeshFact.IsValid())
     {
         newMeshFact = meshfact->Clone(newName);
+        newMeshFact->SetTransform(trans);
         parserData.factories.Put(newMeshFact);
     }
 }
