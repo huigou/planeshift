@@ -166,22 +166,104 @@ void BgLoader::Light::UnloadObject()
 
 bool BgLoader::MeshFact::LoadObject(bool wait)
 {
-    bool ready = ObjectLoader<Material>::LoadObjects(wait);
+    bool ready;
 
-    if(ready && !status.IsValid() && !filename.IsEmpty())
+    bool cached = filename.IsEmpty();
+
+    // we can't get the loader to create a new copy
+    // of the factory if caching is enabled, so if
+    // we want to clone, we have to do it post-load
+    // in that case
+    if(cloned && cached)
     {
-        // it's not exactly a trivial loadable if we don't cache
-        // manually start the load in this case
-        status = GetParent()->GetLoader()->LoadMeshObjectFactory(path, filename);
+        if(parentFactory.IsValid())
+        {
+            ready = parentFactory->Load(wait);
+        }
     }
-
-    // rest can be handled by trivial loadable
-    if(ready)
+    else
     {
-        ready = TrivialLoadable<iMeshFactoryWrapper,ObjectNames::meshfact>::LoadObject(wait);
+        ready = ObjectLoader<Material>::LoadObjects(wait);
+        
+        if(ready && !status.IsValid() && !cached)
+        {
+            // it's not exactly a trivial loadable if we don't cache
+            // manually start the load in this case
+            status = GetParent()->GetLoader()->LoadMeshObjectFactory(path, filename);
+        }
+
+        // rest can be handled by trivial loadable
+        if(ready)
+        {
+            ready = TrivialLoadable<iMeshFactoryWrapper,ObjectNames::meshfact>::LoadObject(wait);
+        }
     }
 
     return ready;
+}
+
+void BgLoader::MeshFact::FinishObject()
+{
+    bool cached = !filename.IsEmpty();
+
+    // we have to (try to) manually clone
+    // the factory if we loaded from cache
+    if(cloned && cached)
+    {
+        // get source factory
+        if(parentFactory.IsValid())
+        {
+            csRef<iMeshFactoryWrapper> fact = parentFactory->GetObject();
+            if(fact.IsValid())
+            {
+                // get source object factory and clone it
+                csRef<iMeshObjectFactory> objectFact = fact->GetMeshObjectFactory();
+                csRef<iMeshObjectFactory> newObjectFact = objectFact->Clone();
+                if(newObjectFact.IsValid())
+                {
+                    // set new factory
+                    factory = newObjectFact->GetMeshFactoryWrapper();
+                }
+                else
+                {
+                    csString msg;
+                    msg.Format("mesh factory %s doesn't support cloning - falling back to using original factory",parentFactory->GetName());
+                    CS_ASSERT_MSG(msg.GetData(),false);
+                }
+            }
+        }
+    }
+
+    if(!trans.IsIdentity())
+    {
+        // get factory to scale
+        csRef<iMeshFactoryWrapper> fact;
+        if(cloned && cached)
+        {
+            if(factory.IsValid())
+            {
+                fact = factory;
+            }
+        }
+        else
+        {
+            fact = GetObject();
+        }
+
+        if(fact.IsValid())
+        {
+            // scale factory
+            csRef<iMeshObjectFactory> objectFact = fact->GetMeshObjectFactory();
+            if(objectFact.IsValid() && objectFact->SupportsHardTransform())
+            {
+                objectFact->HardTransform(trans);
+            }
+            else
+            {
+                fact->SetTransform(trans);
+            }
+        }
+    }
 }
 
 void BgLoader::MeshFact::UnloadObject()
