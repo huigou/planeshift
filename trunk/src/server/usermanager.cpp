@@ -2102,7 +2102,7 @@ void UserManager::HandleMount(psUserCmdMessage& msg, Client *client)
 
     gemObject* mount;
 
-    if(msg.target.Lenght() < 5)
+    if(msg.target.Length() < 5)
     {
         if(client->GetActor()->GetMount())
             HandleUnmount(msg,client);
