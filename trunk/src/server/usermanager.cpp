@@ -2101,7 +2101,16 @@ void UserManager::HandleMount(psUserCmdMessage& msg, Client *client)
     }
 
     gemObject* mount;
-    
+
+    if(msg.target.Lenght() < 5)
+    {
+        if(client->GetActor()->GetMount())
+            HandleUnmount(msg,client);
+        else
+            psserver->SendSystemError(client->GetClientNum(), "Can't find object to mount.");
+        return;
+    }
+
     csString eid_str = msg.target.Slice(4);
     EID targetEID = EID(strtoul(eid_str.GetDataSafe(), NULL, 10));
 
@@ -2160,6 +2169,8 @@ void UserManager::HandleMount(psUserCmdMessage& msg, Client *client)
     // If you are not the rider(passenger), you shouldn't be allowed to move
     // client->GetActor()->SetAllowedToMove(false);
 
+    if(client->GetActor()->GetMount())
+        HandleUnmount(msg,client);
     Mount(client->GetActor(), mount->GetActorPtr());
 
     return;

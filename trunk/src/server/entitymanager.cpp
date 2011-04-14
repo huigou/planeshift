@@ -1115,12 +1115,6 @@ bool EntityManager::AddRideRelation(gemActor *rider, gemActor *mount)
         return false;
     }
 
-    if(rider->GetMount())
-    {
-        psserver->SendSystemError(rider->GetClientID(), "You are already on a mount.");
-        return false;
-    }
-
     psCharacter *mountChar = mount->GetCharacterData();
     RemoveActor(mount);
     psserver->GetCacheManager()->RemoveFromCache(psserver->GetCacheManager()->MakeCacheName("char",mountChar->GetPID().Unbox()));
