@@ -931,6 +931,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     else if(words[0] == "/mount")
     {
          GEMClientObject *object = NULL;
+         csString newCmd;
 
          if (words[1].IsEmpty())
              object = psengine->GetCharManager()->GetTarget();
@@ -940,13 +941,14 @@ const char *psUserCommands::HandleCommand(const char *cmd)
          {
              psengine->GetCharManager()->SetTarget(object,"select");
              EID mappedID = object->GetEID();
-             csString newCmd;
              newCmd.Format("/mount eid:%u", mappedID.Unbox());
-             psUserCmdMessage cmdmsg(newCmd);
-             cmdmsg.SendMessage();
          }
          else
-            return "Mount not found!";
+         {
+             newCmd.Format("/mount");
+         }
+         psUserCmdMessage cmdmsg(newCmd);
+         cmdmsg.SendMessage();
     }
     else if(words[0] == "/unmount")
     {
