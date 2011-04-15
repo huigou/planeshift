@@ -476,7 +476,20 @@ public:
     virtual csString GetResponseScript();    
     virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
 };
+class SetVariableResponseOp : public ResponseOperation
+{
+protected:
+    csString variableName;
+    csString variableValue;
 
+public:
+    SetVariableResponseOp() { name = "offer"; }
+    virtual ~SetVariableResponseOp() {};
+    virtual bool Load(iDocumentNode *node);
+    virtual csString GetResponseScript();    
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
+
+};
 /**
  * This script operation checks to make sure a named quest
  * has been assigned to a player, and stops the script if not,

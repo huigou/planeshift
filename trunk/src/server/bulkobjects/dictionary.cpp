@@ -1358,6 +1358,10 @@ bool NpcResponse::ParseResponseScript(const char *xmlstr,bool insertBeginning)
         {
             op = new TrainResponseOp;
         }
+        else if( strcmp( node->GetValue(), "setvariable" ) == 0 )
+        {
+            op = new SetVariableResponseOp;
+        }
         else if ( strcmp( node->GetValue(), "guild_award" ) == 0 )
         {
             op = new GuildAwardResponseOp;
@@ -2308,7 +2312,25 @@ bool TrainResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTic
     return true;
 }
 
-
+bool SetVariableResponseOp::Load(iDocumentNode *node)
+{
+    variableName = node->GetAttributeValue("name");
+    variableValue = node->GetAttributeValue("value");
+    return true;
+}
+csString SetVariableResponseOp::GetResponseScript()
+{
+    psString resp = GetName();
+    resp.AppendFmt(" name=\"%s\"",variableName.GetData());
+    resp.AppendFmt(" value=\"%s\"",variableValue.GetData());
+    return resp;
+}
+bool SetVariableResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber)
+{
+    psCharacter *c = target->GetCharacterData();
+    c->SetVariable(variableName,variableValue);
+    return true;
+}
 bool GuildAwardResponseOp::Load(iDocumentNode *node)
 {
     karma = node->GetAttributeValueAsInt("karma");

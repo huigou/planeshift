@@ -343,6 +343,12 @@ bool QuestManager::HandleScriptCommand(csString& block,
             AutocompleteQuestName(questname, mainQuest);
             op.Format("<uncomplete quest_id=\"%s\"/>",questname.GetData());
         }
+        else if (!strncasecmp(block,"setvariable", 10))
+        {
+            csString variableData = block.Slice(12, block.Length()).Trim();
+            csArray<csString> variableinfo = psSplit(variableData, ' ');
+            op.Format("<setvariable name=\"%s\" value=\"%s\" />", variableinfo[0].GetData(),variableinfo[1].GetData());
+        }
         else if (!strncasecmp(block,"Give",4))
         {
             WordArray words(block);
