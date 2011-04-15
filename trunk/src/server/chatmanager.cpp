@@ -612,8 +612,6 @@ void ChatManager::SendTell(psChatMessage& msg, const char* who,Client *client,Cl
     target->GetActor()->LogChatMessage(who, msg);
 }
 
-#define MAX_NPC_DIALOG_DIST 10
-
 NpcResponse *ChatManager::CheckNPCEvent(Client *client,csString& triggerText,gemNPC * &target)
 {
     gemNPC *npc = target;
