@@ -59,6 +59,7 @@ typedef uint32 InstanceID;
 #define GLYPH_WAYS               6
 #define GLYPH_ASSEMBLER_SLOTS    4
 
+#define MAX_NPC_DIALOG_DIST 10
 #define RANGE_TO_SEE_ACTOR_LABELS 14
 #define RANGE_TO_SEE_ITEM_LABELS 7
 #define RANGE_TO_SELECT 5
@@ -83,7 +84,7 @@ typedef uint32 InstanceID;
  */
 //@{
 #define GUILD_FEE 20000
-#define GUILD_MIN_MEMBERS 5
+#define GUILD_MIN_MEMBERS 1
 #define GUILD_KICK_GRACE 5 ///< minutes
 
 #define GUILD_NAME_CHANGE_LIMIT 24 * 60 * 60000 ///< Minimum number of ticks between name change of guild

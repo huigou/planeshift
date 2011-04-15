@@ -2417,6 +2417,11 @@ void UserManager::ShowNpcMenu(psUserCmdMessage& msg, Client *client)
     gemNPC *npc = dynamic_cast<gemNPC*> ( client->GetTargetObject() );
     if (npc)
     {
+        if(!client->GetActor()->IsNear(npc, MAX_NPC_DIALOG_DIST, true))
+        {
+            psserver->SendSystemError(client->GetClientNum(), "You are too far away from the NPC.");
+            return;
+        }
         npc->ShowPopupMenu(client);
     }
     else
