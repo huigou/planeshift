@@ -209,7 +209,18 @@ public:
      */
     void CopyCheckMoveOk(ScriptOperation*  source);
     
-    void AddRandomRange(csVector3 &dest,float radius);
+    /** Move a point somwhere random within radius of the orignial point.
+     *
+     * Will add a random part to the dest. The margin can
+     * be used to prevent using the margin around the edge of the circle.
+     *
+     * @param dest   The center position of the cicle. Will return with the
+     *               new position.
+     * @param radius The radius of the circle.
+     * @param margin A margin around the circle that will not be used.
+     *
+     */
+    void AddRandomRange(csVector3 &dest, float radius, float margin = 0.0);
     void SetAnimation(NPC* npc, const char* name);
 
     virtual const char* GetName() const { return name.GetDataSafe(); };

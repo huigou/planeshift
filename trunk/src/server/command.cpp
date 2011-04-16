@@ -1678,7 +1678,7 @@ int com_print(char *line)
     return 0;
 }
 
-int com_entlist(char *)
+int com_entlist(char * pattern)
 {
     csHash<gemObject*, EID> & gems = psserver->entitymanager->GetGEM()->GetAllGEMS();
     csHash<gemObject*, EID>::GlobalIterator i(gems.GetIterator());
@@ -1688,8 +1688,13 @@ int com_entlist(char *)
     while ( i.HasNext() )
     {
         obj = i.Next();
-        if (obj)
+        if (!obj)
         {
+            continue;
+        }
+
+        if (!pattern || strstr(obj->GetName(),pattern) || atoi(pattern) == (int)obj->GetEID().Unbox())
+	{
             csVector3 pos;
             float     rot;
             iSector  *sector;

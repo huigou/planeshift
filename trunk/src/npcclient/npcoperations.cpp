@@ -598,10 +598,17 @@ int ScriptOperation::StartTurnTo(NPC *npc, EventManager *eventmgr, float turn_en
     return msec;
 }
 
-void ScriptOperation::AddRandomRange(csVector3& dest,float radius)
+void ScriptOperation::AddRandomRange(csVector3& dest, float radius, float margine)
 {
+    // Adjust for margines.
+    radius -= margine;
+    if (radius < 0.0)
+    {
+        return; // Don't add random if there are no margine.
+    }
+
     float angle = psGetRandom()*TWO_PI;
-    float range = psGetRandom()* radius;
+    float range = psGetRandom()*radius;
 
     dest.x += cosf(angle)*range;
     dest.z += sinf(angle)*range;
@@ -786,8 +793,9 @@ void MovementOperation::Advance(float timedelta, NPC *npc, EventManager *eventmg
                 dest->GetPosition().Description().GetData(),distance);
 
     {
+        int ret;
         ScopedTimer st(250, "Movement extrapolate %.2f time for %s", timedelta, ShowID(npc->GetActor()->GetEID()));
-        npc->GetLinMove()->ExtrapolatePosition(timedelta);
+        ret = npc->GetLinMove()->ExtrapolatePosition(timedelta);
     }
 
     {
@@ -2014,7 +2022,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, EventManager *ev
             csVector3 pos;
             npc->GetTribe()->GetHome(pos,radius,located_sector);
             
-            AddRandomRange(pos,radius);
+            AddRandomRange(pos, radius, 0.5);
             
             located_pos = pos;
             located_angle = 0;
@@ -2045,7 +2053,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, EventManager *ev
             located_sector = memory->sector;
             located_radius = memory->radius;
             
-            AddRandomRange(located_pos,memory->radius);
+            AddRandomRange(located_pos, memory->radius, 0.5);
         }
         else if (split_obj[1] == "resource")
         {
@@ -2160,7 +2168,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, EventManager *ev
         located_sector = location->GetSector(npcclient->GetEngine());
         located_radius = location->radius;
 
-        AddRandomRange(located_pos,location->radius);
+        AddRandomRange(located_pos, location->radius, 0.5);
         
         if (static_loc)
             located = true;  // if it is a static location, we only have to do this locate once, and save the answer
@@ -2517,20 +2525,20 @@ void MoveOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
 
     csVector3 oldPos,newPos;
     float     oldRot,newRot;
-    iSector  *oldSector,*newSector;
+    iSector*  oldSector;
+    iSector*  newSector;
+    int       ret;
 
     npc->GetLinMove()->GetLastPosition(oldPos, oldRot, oldSector);
 
     npc->Printf(10,"Old position: %s",toString(oldPos,oldSector).GetDataSafe());
 
-    npc->GetLinMove()->ExtrapolatePosition(timedelta);
+    ret = npc->GetLinMove()->ExtrapolatePosition(timedelta);
+
     npc->GetLinMove()->GetLastPosition(newPos, newRot, newSector);
+    CheckMoveOk(npc, eventmgr, oldPos, oldSector, newPos, newSector, timedelta);
 
     npc->Printf(10,"New position: %s",toString(newPos,newSector).GetDataSafe());
-
-    psGameObject::SetPosition(npc->GetActor(), newPos, newSector);
-
-    CheckMoveOk(npc, eventmgr, oldPos, oldSector, newPos, newSector, timedelta);
 }
 
 
@@ -2604,7 +2612,8 @@ ScriptOperation::OperationResult MovePathOperation::Run(NPC *npc, EventManager *
 
 void MovePathOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
 {
-    npc->GetLinMove()->ExtrapolatePosition(timedelta);
+    int ret;
+    ret = npc->GetLinMove()->ExtrapolatePosition(timedelta);
 
     if (!anchor->Extrapolate(npcclient->GetWorld(),npcclient->GetEngine(),
                              timedelta*GetVelocity(npc),
@@ -2721,8 +2730,9 @@ void MoveToOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
     csVector3 pos,pos2;
     float     rot;
     float     angle;
-    iSector * sector;
+    iSector*  sector;
     csVector3 forward;
+    int       ret;
 
     npc->GetLinMove()->GetLastPosition(pos,rot,sector);
     
@@ -2757,7 +2767,7 @@ void MoveToOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
     }
     else
     {
-        npc->GetLinMove()->ExtrapolatePosition(timedelta);
+        ret = npc->GetLinMove()->ExtrapolatePosition(timedelta);
         npc->GetLinMove()->GetLastPosition(pos2,rot,sector);
     
         if ((pos-pos2).SquaredNorm() < SMALL_EPSILON) // then stopped dead, presumably by collision
@@ -3396,7 +3406,8 @@ ScriptOperation::OperationResult RotateOperation::Run(NPC *npc, EventManager *ev
 
 void RotateOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr) 
 {
-    npc->GetLinMove()->ExtrapolatePosition(timedelta);
+    int ret;
+    ret = npc->GetLinMove()->ExtrapolatePosition(timedelta);
 }
 
 float RotateOperation::SeekAngle(NPC* npc, float targetYRot)
@@ -3932,7 +3943,8 @@ bool WanderOperation::StartMoveTo(NPC *npc, psPathPoint* point)
     float dummyAngle;
 
     currentPointOffset = csVector3(0.0,0.0,0.0);
-    AddRandomRange(currentPointOffset, point->GetRadius());
+
+    AddRandomRange(currentPointOffset,  point->GetRadius(), 0.5);
 
     csVector3 destPos = point->GetPosition();
     destPos += currentPointOffset;
@@ -3949,7 +3961,7 @@ bool WanderOperation::MoveTo(NPC *npc, psPathPoint* point)
     StopMovement( npc );
 
     currentPointOffset = csVector3(0.0,0.0,0.0);
-    AddRandomRange(currentPointOffset, point->GetRadius());
+    AddRandomRange(currentPointOffset, point->GetRadius(), 0.5);
 
     csVector3 destPos = point->GetPosition();
     destPos += currentPointOffset;
@@ -4264,8 +4276,13 @@ void WanderOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
                 destPoint->GetPosition().Description().GetData(),distance);
 
     {
+        int ret;
         ScopedTimer st(250, "Movement extrapolate %.2f time for %s", timedelta, ShowID(npc->GetActor()->GetEID()));
-        npc->GetLinMove()->ExtrapolatePosition(timedelta);
+        ret = npc->GetLinMove()->ExtrapolatePosition(timedelta);
+        if (ret != PS_MOVE_SUCCEED)
+        {
+            npc->Printf("Extrapolated didn't success: %d",ret);
+        }
     }
 
     {
