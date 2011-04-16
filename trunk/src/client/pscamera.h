@@ -109,6 +109,16 @@ public:
      */
     void SetActor(GEMClientActor* entity);
 
+    /** Replace the actor the camera is targeting when in npc camera mode.
+     *  It's replaced only if the actor is equal. This is to be used when
+     *  deleting actor objects or replacing them, in order to avoid a pending
+     *  invalid pointer in pscamera.
+     *  @param currentEntity The actor which is being replaced/deleted.
+     *  @param replacementEntity The actor instance which is being created. Pass NULL if it's
+     *                           only being destroyed.
+     */
+    void npcTargetReplaceIfEqual(GEMClientObject *currentEntity, GEMClientObject* replacementEntity);
+
     /** loads the camera settings from a file
      *   @param useDefault if true, use the default config file even if the normal exists
      *   @param overrideCurrent if true, change current camera settings with loaded data
