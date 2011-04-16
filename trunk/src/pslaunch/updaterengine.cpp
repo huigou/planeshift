@@ -300,17 +300,15 @@ bool UpdaterEngine::CheckUpdater()
     // Download the latest updaterinfo and updateservers.xml
     fileUtil->RemoveFile(UPDATERINFO_FILENAME, true);
     bool infosuccess = downloader->DownloadFile("updaterinfo.xml", UPDATERINFO_FILENAME, false, true, 1, true);
-    
     fileUtil->RemoveFile(SERVERS_FILENAME, true);
     bool serversuccess = downloader->DownloadFile("updateservers.xml", SERVERS_FILENAME, false, true, 1, true);
-    
     if(!infosuccess && !serversuccess) //try getting new servers from the default server
     {
         bool success = true;
         delete downloader;
         downloader = new Downloader(vfs);
         downloader->SetProxy(config->GetProxy().host.GetData(), config->GetProxy().port);
-        if(!downloader->DownloadFile(FALLBACK_SERVER "updateservers.xml", SERVERS_CURRENT_FILENAME, true, true, 1, true))
+        if(!downloader->DownloadFile(FALLBACK_SERVER "updateservers.xml", SERVERS_FILENAME, true, true, 1, true))
         {
             PrintOutput("\nFailed to download servers info!\n");
             success = false;
