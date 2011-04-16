@@ -172,7 +172,7 @@ psCamera::psCamera()
 
     fixedDistClip = 200;
 
-    useCameraCD = true;
+    useCameraCD = false;
     useNPCCam = false;
     npcModePosition = csVector3(0, 0, 0);
     npcOldRot = 0.0f;
@@ -385,6 +385,14 @@ bool psCamera::InitializeView(GEMClientActor* entity)
 void psCamera::SetActor(GEMClientActor* entity)
 {
     actor = entity;
+}
+
+void psCamera::npcTargetReplaceIfEqual(GEMClientObject *currentEntity, GEMClientObject* replacementEntity)
+{
+    if(npcModeTarget == currentEntity)
+    {
+        npcModeTarget = dynamic_cast<GEMClientActor*>(replacementEntity);
+    }
 }
 
 bool psCamera::LoadFromFile(bool useDefault, bool overrideCurrent)

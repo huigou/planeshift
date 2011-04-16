@@ -290,7 +290,10 @@ void psCelClient::AddEntity(GEMClientObject* obj)
         // If we're removing the targeted entity, update the target to the new one:
         GEMClientObject* target = psengine->GetCharManager()->GetTarget();
         if (target == existing)
+        {
             psengine->GetCharManager()->SetTarget(obj, "select", false);
+            psengine->GetPSCamera()->npcTargetReplaceIfEqual(existing, obj);
+        }
 
         Debug3(LOG_CELPERSIST, 0, "Found existing entity >%s< with %s - removing.\n", existing->GetName(), ShowID(existing->GetEID()));
         RemoveObject(existing);
@@ -471,6 +474,7 @@ void psCelClient::RemoveObject(GEMClientObject* entity)
 
     entityLabels->RemoveObject(entity);
     shadowManager->RemoveShadow(entity);
+    psengine->GetPSCamera()->npcTargetReplaceIfEqual(entity, NULL);
     pawsLootWindow* loot = (pawsLootWindow*)PawsManager::GetSingleton().FindWidget("LootWindow");
     if(loot && loot->GetLootingActor() == entity->GetEID())
     {
