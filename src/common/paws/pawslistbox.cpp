@@ -21,7 +21,7 @@
 #include <ivideo/fontserv.h>
 #include <iutil/document.h>
 #include <csutil/xmltiny.h>
-#include <csutil/documenthelper.h> 
+#include <csutil/documenthelper.h>
 #include <iutil/virtclk.h>
 #include <iutil/event.h>
 #include "pawslistbox.h"
@@ -125,7 +125,7 @@ void pawsListBox::Clear()
 
     rows.DeleteAll();
     totalRows = 0;
-    if (scrollBar) 
+    if (scrollBar)
         scrollBar->Hide();
     if (horzscrollBar)
         horzscrollBar->Hide();
@@ -164,7 +164,7 @@ bool pawsListBox::Setup( iDocumentNode* node )
         cInfo.height     = GetActualHeight(columnHeight);
         cInfo.xmlbinding = colNode->GetAttributeValue("xmlbinding");
         cInfo.sortable   = colNode->GetAttributeValueAsBool("sortable", true);
-        
+
         cInfo.widgetNode = colNode->GetNode("widget");
         if (!cInfo.widgetNode)
         {
@@ -194,7 +194,7 @@ bool pawsListBox::Setup( iDocumentNode* node )
     }
     columnDef = new ColumnDef[totalColumns];
     for (int i = 0; i < totalColumns; i++)
-	{
+    {
         columnDef[i] = colInfo[i];
     }
 
@@ -439,7 +439,7 @@ pawsListBoxRow* pawsListBox::NewRow(size_t position )
     pawsListBoxRow* newRow = new pawsListBoxRow();
 
     newRow->SetParent( this );
-	// Here we automatically resize the row to be the width of the parent listbox, so the row can reference that when adding columns
+    // Here we automatically resize the row to be the width of the parent listbox, so the row can reference that when adding columns
     newRow->SetRelativeFrame( 0 ,(totalRows+1)*GetActualHeight(columnHeight), parent->GetActualWidth(), GetActualHeight(columnHeight));//GetActualHeight(columnHeight) );
 
     for ( int x = 0; x < totalColumns; x++ )
@@ -483,7 +483,7 @@ pawsListBoxRow* pawsListBox::NewRow(size_t position )
     CalculateDrawPositions();
     newRow->SetBackground("Standard Background");
     newRow->SetBackgroundAlpha(255);
-    
+
     return newRow;
 }
 pawsListBoxRow* pawsListBox::NewTextBoxRow( csList<csString> &rowEntry,size_t position )
@@ -491,7 +491,7 @@ pawsListBoxRow* pawsListBox::NewTextBoxRow( csList<csString> &rowEntry,size_t po
     pawsListBoxRow* newRow = new pawsListBoxRow();
 
     newRow->SetParent( this );
-	// Here we automatically resize the row to be the width of the parent listbox, so the row can reference that when adding columns
+    // Here we automatically resize the row to be the width of the parent listbox, so the row can reference that when adding columns
     newRow->SetRelativeFrame( 0 ,(totalRows+1)*GetActualHeight(columnHeight), parent->GetActualWidth(), GetActualHeight(columnHeight));//GetActualHeight(columnHeight) );
 
     for ( int x = 0; x < totalColumns; x++ )
@@ -537,7 +537,7 @@ pawsListBoxRow* pawsListBox::NewTextBoxRow( csList<csString> &rowEntry,size_t po
     CalculateDrawPositions();
     newRow->SetBackground("Standard Background");
     newRow->SetBackgroundAlpha(255);
-    
+
     SortRows();
     return newRow;
 }
@@ -1285,15 +1285,15 @@ void pawsListBox::MoveRow(int rownr,int dest)
 
 const char *pawsListBox::GetSelectedText(size_t columnId)
 {
-	pawsListBoxRow *row = GetSelectedRow();
-	if (!row)
-		return NULL;
+    pawsListBoxRow *row = GetSelectedRow();
+    if (!row)
+        return NULL;
 
-	pawsTextBox *box = (pawsTextBox *)GetSelectedRow()->GetColumn(columnId);
-	if (!box)
-		return NULL;
+    pawsTextBox *box = (pawsTextBox *)GetSelectedRow()->GetColumn(columnId);
+    if (!box)
+        return NULL;
 
-	return box->GetText();
+    return box->GetText();
 }
 
 //-----------------------------------------------------------------------------
@@ -1384,10 +1384,10 @@ void pawsListBoxRow::AddColumn( int column, ColumnDef* def )
     for ( int x = 0; x < column; x++ )
         offset += children[x]->GetActualWidth();
 
-	// Adjust this column width by the percentage growth of this column on the screen compared to original spec in file
-	float w = this->screenFrame.Width();
-	w /= GetLogicalWidth(screenFrame.Width());
-	int myWidth = int(def[column].width * w);
+    // Adjust this column width by the percentage growth of this column on the screen compared to original spec in file
+    float w = this->screenFrame.Width();
+    w /= GetLogicalWidth(screenFrame.Width());
+    int myWidth = int(def[column].width * w);
     widget->SetRelativeFrame( offset+borderW+widget->DefaultFrame().xmin, borderH+widget->DefaultFrame().ymin,
                               GetActualWidth(myWidth), GetActualHeight(def[column].height) );
 
