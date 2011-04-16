@@ -719,7 +719,7 @@ csTicks psLinearMovement::TimeDiff ()
   return csGetTicks () - lastDRUpdate;
 }
 
-void psLinearMovement::ExtrapolatePosition (float delta)
+int psLinearMovement::ExtrapolatePosition (float delta)
 {
   if (path)
   {
@@ -749,13 +749,11 @@ void psLinearMovement::ExtrapolatePosition (float delta)
       path = 0;
       path_time = 0;
     }
+    return PS_MOVE_SUCCEED;
   }
   else
   {
-    // bool rc =
-    MoveSprite (delta);    
-    //if (rc)
-    //  pcmesh->GetMesh ()->GetMovable ()->UpdateMove ();
+    return MoveSprite (delta);    
   }
 }
 

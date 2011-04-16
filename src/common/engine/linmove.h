@@ -168,7 +168,7 @@ public:
    * This function actually moves and rotates the mesh, relighting
    * if necessary.
    */
-  virtual void ExtrapolatePosition (float delta);
+  virtual int ExtrapolatePosition (float delta);
 
   /**
    * This function calls ExtrapolatePosition with a certain time
