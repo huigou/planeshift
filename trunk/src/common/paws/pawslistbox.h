@@ -38,7 +38,7 @@ int textBoxSortFunc(pawsWidget * widgetA, pawsWidget * widgetB);
 //                            struct ColumnInfo
 //-----------------------------------------------------------------------------
 
-/** Defines the structure of the list box table. 
+/** Defines the structure of the list box table.
  * This describes how a column is defined.  The height should be constant across
  * all the columns for a particular table.
  */
@@ -50,19 +50,19 @@ struct ColumnDef
         sortFunc    =  NULL;
         sortable = true;
     }
-    
+
     int width;
     int height;
     csRef<iDocumentNode> widgetNode;    /// Passed to new column widgets to create
     csString xmlbinding;
     bool sortable;
-    
+
     listBoxSortingFunc sortFunc;        /// Function used for comparing rows when sorting the listbox
 };
 
 
 #define LISTBOX_HIGHLIGHTED  0x01  /// Single click event
-#define LISTBOX_SELECTED     0x02    
+#define LISTBOX_SELECTED     0x02
 
 //-----------------------------------------------------------------------------
 //                            class pawsListBoxRow
@@ -123,42 +123,42 @@ private:
 
 #define LISTBOX_MOUSE_SCROLL_AMOUNT 3
 /** A simple list box widget.
- * A list box is made up a list of another type of widgets called 
- * pawsListBoxRows.  Each row is then made up of several widgets that 
- * constitue a 'row'.  So a row may be a textbox, image, button.  
+ * A list box is made up a list of another type of widgets called
+ * pawsListBoxRows.  Each row is then made up of several widgets that
+ * constitue a 'row'.  So a row may be a textbox, image, button.
  *
- * This is how a list box is defined in XML.  You define the basic layout 
+ * This is how a list box is defined in XML.  You define the basic layout
  * of it and how each column in the rows should be constructed. If you use
  * the autoid="yes" every widget in the listbox will have an
  * id=ListBoxID+ row*numberOfColumns+coloum:
 
-  
-    <widget name="PetitionList" factory="pawsListBox" xmlbinding="petition_list" id="0" autoid="yes" sortBy="2" sortOrder="asc" >    
+
+    <widget name="PetitionList" factory="pawsListBox" xmlbinding="petition_list" id="0" autoid="yes" sortBy="2" sortOrder="asc" >
         Size of entire list box
         <frame x="4" y="34" width="592" height="288" border="yes"/>
-        
+
         Each row in the list box will be 32 high
         <columns height="32" xmlbinding="p">
-                 
+
             define a column that is 140 wide.  The first column of any row
-            will be a textbox widget as defined by the <widget></widget> class            
-            <column width="140" xmlbinding="GM">            
+            will be a textbox widget as defined by the <widget></widget> class
+            <column width="140" xmlbinding="GM">
                 <widget name="GM" factory="pawsTextBox"></widget>
-            </column>                    
-                                       
+            </column>
+
             define other columns:
-            <column width="150"  xmlbinding="stat">            
+            <column width="150"  xmlbinding="stat">
                 <widget name="Status" factory="pawsWidget">
                     <bgimage resource="Funny" />
                 </widget>
-            </column>                                               
-            
-            <column width="302"  xmlbinding="pet">            
+            </column>
+
+            <column width="302"  xmlbinding="pet">
                 <widget name="Petition" factory="pawsTextBox"></widget>
-            </column>                                               
+            </column>
         </columns>
     </widget>
- 
+
  */
 class pawsListBox : public pawsWidget
 {
@@ -177,16 +177,16 @@ public:
 
     /// Get selected row
     pawsListBoxRow* GetSelectedRow();
-    
-	/// Get text from specified column in the selected row
-	const char *GetSelectedText(size_t columnId);
+
+    /// Get text from specified column in the selected row
+    const char *GetSelectedText(size_t columnId);
 
     /// Returns number of selected row (-1 if none is selected)
     int GetSelectedRowNum();
 
     /// Remove selected row
     pawsListBoxRow* RemoveSelected();
-    
+
     /// Remove based on widget id. Note this also deletes the row.
     void Remove( int id );
 
@@ -197,12 +197,12 @@ public:
 
     /// Get number of rows in listboz
     size_t GetRowCount();
- 
+
     /// Get a particular row
     pawsListBoxRow* GetRow( size_t x );
 
     /// Creates a new row ( default at the end ) and returns a pointer to it.
-    pawsListBoxRow* NewRow( size_t position = (size_t)-1 );           
+    pawsListBoxRow* NewRow( size_t position = (size_t)-1 );
     /// Creates a new row ( default at the end ) filled by values from rowEntry and returns a pointer to it.
     pawsListBoxRow* NewTextBoxRow( csList<csString> &rowEntry,size_t position = (size_t)-1 );
 
@@ -222,25 +222,25 @@ public:
 
     bool OnScroll( int direction, pawsScrollBar* widget );
 
-    bool OnMouseDown(int button, int modifiers, int x, int y );    
+    bool OnMouseDown(int button, int modifiers, int x, int y );
 
     int GetTotalColumns() { return totalColumns; }
-    
+
     /** Set how many columns this list box will have.
-      * This is usually for code constructed list boxes and creates a new 
+      * This is usually for code constructed list boxes and creates a new
       * set of column definitions.
       */
     void SetTotalColumns( int numCols );
-    
+
     /** Set how a column should be constructed.
-      * This is usuall used for code constructed list boxes.  
+      * This is usuall used for code constructed list boxes.
       *@param col The column number
       *@param  height The height of what rows should be.
-      *@param widgetDesc This is an XML description of the widget. Much the same as you 
-                         would find in the .xml files. 
+      *@param widgetDesc This is an XML description of the widget. Much the same as you
+                         would find in the .xml files.
       */
     void SetColumnDef( int col, int width, int height, const char* widgetDesc );
-   
+
     void UseTitleRow( bool yes );
 
     /**
@@ -260,18 +260,18 @@ public:
      */
     bool ConvertFromAutoID(int id, int &row, int &col);
 
-    /** 
+    /**
      *  Moves the select bar up (direction=true) or down (direction=false).
      */
     void MoveSelectBar(bool direction);
 
-    void CalculateDrawPositions();    
-   
+    void CalculateDrawPositions();
+
     /** When enter is pressed the highlighted row will be selected
      *  and the widget will be notified
      */
     bool OnKeyDown(utf32_char keyCode, utf32_char keyChar, int modifiers);
-    
+
     void Resize();
 
     /** Sets the widget that will be notified when a row is selected.
@@ -279,17 +279,17 @@ public:
      *  to the parent widget
      */
     void SetNotify(pawsWidget* target){notifyTarget = target;};
-    
+
     /**
      * Gets and sets the column that the listbox is sorted by.
      * Number -1 means no sorting, in both cases.
      */
     int  GetSortedColumn();
     void SetSortedColumn(int colNum);
-    
+
     bool GetSortOrder();
     void SetSortOrder(bool ascOrder);
-    
+
     /**
      * Sets the function that compares listbox rows when sorting by given column.
      * This makes the column sortable.
@@ -305,10 +305,10 @@ public:
 
     /** Returns listbox cell of type pawsTextBox or NULL (when the cell does not exist or it is another type) */
     pawsTextBox * GetTextCell(int rowNum, int colNum);
-    
+
     /** Returns value of cell of type pawsTextBox */
     csString GetTextCellValue(int rowNum, int colNum);
-    
+
     /** Sets value of cell of type pawsTextBox */
     void SetTextCellValue(int rowNum, int colNum, const csString & value);
 
@@ -323,12 +323,12 @@ protected:
     void SetSortingArrow(int colNum, bool ascOrder);
     void CheckSortingArrow(int colNum, bool ascOrder);
     void DeleteSortingArrow(int colNum);
-    
+
     pawsWidget * GetColumnTitle(int colNum);
-    
+
 
     bool usingTitleRow;
-    
+
     pawsScrollBar* scrollBar;
     pawsScrollBar* horzscrollBar;
 
@@ -351,10 +351,10 @@ protected:
     csArray<pawsListBoxRow*> rows;
     pawsListBoxRow* titleRow;
     csString xmlbinding_row;
-    
+
     int sortColNum;    // number of sorted column (or -1)
     bool ascOrder;
-    
+
     /**
      * This is static function that is used as argument to qsort() and a few variables that influence
      * how this function works.
@@ -379,4 +379,4 @@ protected:
 CREATE_PAWS_FACTORY ( pawsListBox );
 
 
-#endif 
+#endif
