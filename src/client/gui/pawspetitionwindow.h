@@ -114,6 +114,8 @@ protected:
 
     /// Displays text of petition
     pawsMultilineEditTextBox * petText;
+    
+    bool updateSelectedPetition; ///< used to know if we have to update the selected petition after deleting one, or saving one
 
 };
 

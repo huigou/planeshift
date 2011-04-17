@@ -447,7 +447,7 @@ pawsListBoxRow* pawsListBox::NewRow(size_t position )
         newRow->AddColumn( x, columnDef );
     }
 
-
+    newRow->SetLastIndex(rows.GetSize()); // the last row inserted has the highest index by default, even if inserted in the middle of the list
     if ( position != (size_t)-1 )
     {
         AddChild(newRow);
@@ -501,7 +501,7 @@ pawsListBoxRow* pawsListBox::NewTextBoxRow( csList<csString> &rowEntry,size_t po
         rowEntry.PopFront();
     }
 
-
+    newRow->SetLastIndex(rows.GetSize()); // the last row inserted has the highest index by default, even if inserted in the middle of the list
     if ( position != (size_t)-1 )
     {
         AddChild(newRow);
@@ -1192,6 +1192,22 @@ void pawsListBox::SortRows()
     sort_ascOrder    = ascOrder;
     qsort(sortedRows, rows.GetSize(), sizeof (void*), sort_cmp);
 
+    // find rows that match with sortedRows to set their LastIndex correctly
+    // that can be use to point data that is stored outside of the listBox
+    for(i=0; i<rows.GetSize(); i++)
+    {
+        for (size_t j=0; j<rows.GetSize(); j++)
+        {
+            if(sortedRows[j] == rows[i])
+            {
+                if(rows[i]->GetLastIndex() == -1)
+                    sortedRows[j]->SetLastIndex(i); // if the index isn't set, it's the first sorting, simple indexes
+                else
+                    sortedRows[j]->SetLastIndex(rows[i]->GetLastIndex()); // else, update the index
+            }
+        }
+    }
+    
     for ( i=0; i < rows.GetSize(); i++)
         rows[i] = sortedRows[i]; // save the sorting
 
@@ -1304,6 +1320,7 @@ const char *pawsListBox::GetSelectedText(size_t columnId)
 pawsListBoxRow::pawsListBoxRow()
 {
     isHeading = false;
+    lastIndex = -1;
 }
 
 
