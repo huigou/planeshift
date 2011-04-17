@@ -1,5 +1,5 @@
 <emotes>
 
-<emote command="/greet" general="%s greets everyone." specific="%s greets %s" anim="greet" />
+<emote command="/greet" general="%s greets everyone." specific="%s greets %s" anim="greet" enabled="0" />
 
 </emotes>

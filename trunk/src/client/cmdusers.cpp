@@ -212,7 +212,9 @@ psUserCommands::~psUserCommands()
     // Unsubscribe emotes.
     for(unsigned int i=0; i < emoteList.GetSize(); i++)
     {
-        cmdsource->Unsubscribe(emoteList[i].command, this);
+        // unsubscribe emotes which are subscribed earlier 
+        if(emoteList[i].enabled)
+            cmdsource->Unsubscribe(emoteList[i].command, this);
     }
 }
 
@@ -246,6 +248,8 @@ bool psUserCommands::LoadEmotes()
         emote.general = emoteNode->GetAttributeValue("general");
         emote.specific = emoteNode->GetAttributeValue("specific");
         emote.anim = emoteNode->GetAttributeValue("anim");
+        // take the value of enabled and check whether its 0 or not 
+        emote.enabled = emoteNode->GetAttributeValueAsBool("enabled");
 
         emoteList.Push(emote);
     }
@@ -254,7 +258,9 @@ bool psUserCommands::LoadEmotes()
     // Subscribe emotes.
     for(unsigned int i=0; i < emoteList.GetSize(); i++)
     {
-        cmdsource->Subscribe(emoteList[i].command, this);
+        // only subscribe emotes that are enabled 
+        if(emoteList[i].enabled)
+            cmdsource->Subscribe(emoteList[i].command, this);
     }
 
     return true;
@@ -919,7 +925,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         {
             for(unsigned int i=0; i < emoteList.GetSize(); i++)
             {
-                if(words[1].Find(emoteList[i].command) != (size_t)-1)
+                if(emoteList[i].command.Slice(1) == words[1])
                 {
                     psUserCmdMessage cmdmsg(emoteList[i].command);
                     cmdmsg.SendMessage();
