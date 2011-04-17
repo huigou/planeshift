@@ -29,7 +29,7 @@
             <text string="Show OK Messages on screen" />
         </widget>
 
-        <widget name="ShowACKMessages" id="65540" factory="pawsCheckBox" >
+        <widget name="ShowACKMessages" id="65541" factory="pawsCheckBox" >
             <frame x="10" y="120" width="200" height="20" border="no" />
             <text string="Show ACK Messages on screen" />
         </widget>
