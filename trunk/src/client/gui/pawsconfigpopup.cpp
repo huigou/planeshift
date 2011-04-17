@@ -41,8 +41,12 @@
 //==============================================================================
 #include "gui/pawsactivemagicwindow.h"
 #include "pawsconfigpopup.h"
+#include "gui/psmainwidget.h"
 #include "paws/pawsmanager.h"
 #include "paws/pawscheckbox.h"
+
+#define MSGCONFIG_FILE_NAME         "/planeshift/userdata/options/screenmsg.xml"
+
 
 pawsConfigPopup::pawsConfigPopup(void)
 {
@@ -64,20 +68,60 @@ bool pawsConfigPopup::PostSetup()
         Error1("Couldn't find ActiveMagicWindow!");
         return false;
     }
+    //check if we can get the psmainwidget else fail.
+    mainWidget = psengine->GetMainWidget();
+    if(!mainWidget)
+    {
+        Error1("Couldn't find psmainwidget!");
+        return false;
+    }
 
     showActiveMagicConfig = (pawsCheckBox*)FindWidget("ShowActiveMagicWindowConfig");
     if (!showActiveMagicConfig)
         return false;
+
+    //we set all checkboxes as true by default
+    for(size_t i = 0; i < children.GetSize(); i++)
+    {
+        pawsCheckBox *check = dynamic_cast<pawsCheckBox*>(children.Get(i));
+        if(check)
+        {
+            check->SetState(true);
+        }
+    }
                 
     return true;
 }
 
 bool pawsConfigPopup::LoadConfig()
 {
-    if (!magicWindow->LoadSetting())
+    if(!magicWindow->LoadSetting())
+        return false;
+
+    if(!mainWidget->LoadConfigFromFile())
         return false;
 
     showActiveMagicConfig->SetState(!magicWindow->showWindow->GetState());
+
+    //we take for granted ids of the widgets correspond to message types id
+    csHash<psMainWidget::mesgOption, int>::GlobalIterator iter = mainWidget->GetMesgOptionsIterator();
+    while(iter.HasNext())
+    {
+        //get to the next option
+        psMainWidget::mesgOption &opt = iter.Next();
+        //check if we have a widget with that id
+        pawsWidget *wdg = FindWidget(opt.type, false);
+        if(wdg)
+        {
+            pawsCheckBox *check = dynamic_cast<pawsCheckBox*>(wdg);
+            if(check)
+            {
+                //set the option in the interface
+                check->SetState(opt.value);
+            }
+        }
+    }
+        
 
     dirty = true;
 
@@ -88,7 +132,25 @@ bool pawsConfigPopup::SaveConfig()
 {
     magicWindow->showWindow->SetState(!showActiveMagicConfig->GetState());
 
+    //we take for granted ids of the widgets correspond to message types id
+    csHash<psMainWidget::mesgOption, int>::GlobalIterator iter = mainWidget->GetMesgOptionsIterator();
+    while(iter.HasNext())
+    {
+        //get to the next option
+        psMainWidget::mesgOption &opt = iter.Next();
+        //check if we have a widget with that id
+        pawsCheckBox *check = dynamic_cast<pawsCheckBox*>(FindWidget(opt.type, false));
+        if(check)
+        {
+            //set the option in backend
+            opt.value = check->GetState();
+        }
+    }
+
+    //save the settings to the config files
     magicWindow->SaveSetting();
+
+    mainWidget->SaveConfigToFile();
 
     return true;
 }
@@ -97,5 +159,6 @@ bool pawsConfigPopup::SaveConfig()
 void pawsConfigPopup::SetDefault()
 {
     psengine->GetVFS()->DeleteFile(CONFIG_ACTIVEMAGIC_FILE_NAME);
+    psengine->GetVFS()->DeleteFile(MSGCONFIG_FILE_NAME);
     LoadConfig();
 }
