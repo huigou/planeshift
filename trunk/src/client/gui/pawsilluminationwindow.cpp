@@ -403,12 +403,12 @@ bool pawsSketchWindow::OnKeyDown( utf32_char keyCode, utf32_char key, int modifi
             // notify the user that we are entering/leaving edit mode
             if (editMode)
             {
-                psSystemMessage sysMsg( 0, MSG_OK, PawsManager::GetSingleton().Translate("You have entered edit mode.") );
+                psSystemMessage sysMsg( 0, MSG_ACK, PawsManager::GetSingleton().Translate("You have entered edit mode.") );
                 sysMsg.FireEvent();
             }
             else
             {
-                psSystemMessage sysMsg( 0, MSG_OK, PawsManager::GetSingleton().Translate("Edit mode has been disabled.") );
+                psSystemMessage sysMsg( 0, MSG_ACK, PawsManager::GetSingleton().Translate("Edit mode has been disabled.") );
                 sysMsg.FireEvent();
             }
             SetToolbarButtons();
