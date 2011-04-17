@@ -50,6 +50,7 @@ pawsPetitionWindow::pawsPetitionWindow()
     petitionList = NULL;
     currentRow = -1;
     petText = NULL;
+    updateSelectedPetition = true;
 }
 
 pawsPetitionWindow::~pawsPetitionWindow()
@@ -160,18 +161,27 @@ void pawsPetitionWindow::HandleMessage ( MsgEntry* me )
         }
 
         // Remove the item and refresh the list:
-        //petitionMessage.petitions.DeleteIndex(currentRow);
+        //petitionMessage.petitions.DeleteIndex(petitionList->GetRow(currentRow)->GetLastIndex());
         AddPetitions(petitionMessage.petitions);
+        petitionList->SelectByIndex(currentRow);
 
         psSystemMessage confirm(0,MSG_INFO,PawsManager::GetSingleton().Translate("The selected petition was cancelled."));
         msgqueue->Publish(confirm.msg);
 
         return;
     }
-
     // Update the listbox:
+    size_t modifiedRow = -1;
+    if (petitionList->GetSelectedRow())
+        modifiedRow = petitionList->GetSelectedRow()->GetLastIndex(); 
     AddPetitions(message.petitions);
     petitionList->SortRows();   ///sort the column specified in xml
+    if(updateSelectedPetition && modifiedRow != -1) // if the selected row needs a new selection (save/cancel)
+    {
+        for(size_t i = 0; i < petitionList->GetRowCount(); i++)
+            if(petitionList->GetRow(i)->GetLastIndex()==modifiedRow)
+                petitionList->SelectByIndex(i); // reselect the row we've modified
+    }
 }
 
 void pawsPetitionWindow::Close()
@@ -185,7 +195,8 @@ bool pawsPetitionWindow::OnButtonReleased(int /*mouseButton*/, int /*keyModifier
 {
     // We know that the calling widget is a button.
     int button = widget->GetID();
-
+    updateSelectedPetition = false;
+    
     switch( button )
     {
         case CANCEL_BUTTON:
@@ -202,9 +213,10 @@ bool pawsPetitionWindow::OnButtonReleased(int /*mouseButton*/, int /*keyModifier
                 }
 
                 currentRow = sel;
+                updateSelectedPetition = true; // need an update
 
                 // Send a message to the server requesting cancel
-                psPetitionRequestMessage queryMsg(false, "cancel", petitionMessage.petitions.Get(currentRow).id);
+                psPetitionRequestMessage queryMsg(false, "cancel", petitionMessage.petitions.Get(petitionList->GetRow(currentRow)->GetLastIndex()).id);
                 msgqueue->SendMessage(queryMsg.msg);
             }
             break;
@@ -230,9 +242,10 @@ bool pawsPetitionWindow::OnButtonReleased(int /*mouseButton*/, int /*keyModifier
                 }
 
                 currentRow = sel;
+                updateSelectedPetition = true; // need an update
 
                 // check petitions status
-                if (petitionMessage.petitions.Get(currentRow).status != "Open")
+                if (petitionMessage.petitions.Get(petitionList->GetRow(currentRow)->GetLastIndex()).status != "Open")
                 {
                     psSystemMessage error(0, MSG_INFO, "You can only change open petitions.");
                     msgqueue->Publish(error.msg);
@@ -246,7 +259,7 @@ bool pawsPetitionWindow::OnButtonReleased(int /*mouseButton*/, int /*keyModifier
                 if (!text.IsEmpty())
                 {
                     // Send a message to the server requesting change
-                    psPetitionRequestMessage changeMsg(false, "change", petitionMessage.petitions.Get(currentRow).id,petText->GetText());
+                    psPetitionRequestMessage changeMsg(false, "change", petitionMessage.petitions.Get(petitionList->GetRow(currentRow)->GetLastIndex()).id,petText->GetText());
                     msgqueue->SendMessage(changeMsg.msg);
                 }
                 else
@@ -383,13 +396,14 @@ void pawsPetitionWindow::OnListAction(pawsListBox* /*selected*/, int status)
             return;
         }
         petText->Clear();
-        if( petitionMessage.petitions.Get(sel).status=="Closed" )
+        size_t petitionIndex = petitionList->GetRow(sel)->GetLastIndex();
+        if( petitionMessage.petitions.Get(petitionIndex).status=="Closed" )
         {
-            petText->SetText( petitionMessage.petitions.Get(sel).petition+" "+PawsManager::GetSingleton().Translate("Resolution")+": "+petitionMessage.petitions.Get(sel).resolution );
+            petText->SetText(petitionMessage.petitions.Get(petitionIndex).petition+" "+PawsManager::GetSingleton().Translate("Resolution")+": "+petitionMessage.petitions.Get(petitionIndex).resolution );
         }
         else
         {
-            petText->SetText( petitionMessage.petitions.Get(sel).petition );
+            petText->SetText(petitionMessage.petitions.Get(petitionIndex).petition);
         }
     }
 }

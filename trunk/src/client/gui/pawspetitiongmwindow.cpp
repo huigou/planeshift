@@ -388,7 +388,7 @@ bool pawsPetitionGMWindow::OnButtonReleased(int /*mouseButton*/, int /*keyModifi
                     currentRow = sel;
 
                     // Send a message to the server requesting cancel
-                    psPetitionRequestMessage queryMsg(true, "cancel", petitionMessage.petitions.Get(currentRow).id);
+                    psPetitionRequestMessage queryMsg(true, "cancel", petitionMessage.petitions.Get(petitionList->GetRow(currentRow)->GetLastIndex()).id);
                     msgqueue->SendMessage(queryMsg.msg);
                 }
                 else
@@ -418,7 +418,7 @@ bool pawsPetitionGMWindow::OnButtonReleased(int /*mouseButton*/, int /*keyModifi
                     currentRow = sel;
 
                     // Send a message to the server requesting assignment:
-                    psPetitionRequestMessage queryMsg(true, "assign", petitionMessage.petitions.Get(currentRow).id);
+                    psPetitionRequestMessage queryMsg(true, "assign", petitionMessage.petitions.Get(petitionList->GetRow(currentRow)->GetLastIndex()).id);
                     msgqueue->SendMessage(queryMsg.msg);
                 }
                 else
@@ -450,7 +450,7 @@ bool pawsPetitionGMWindow::OnButtonReleased(int /*mouseButton*/, int /*keyModifi
                     currentRow = sel;
 
                     // Send a message to the server requesting deassignment:
-                    psPetitionRequestMessage queryMsg(true, "deassign", petitionMessage.petitions.Get(currentRow).id);
+                    psPetitionRequestMessage queryMsg(true, "deassign", petitionMessage.petitions.Get(petitionList->GetRow(currentRow)->GetLastIndex()).id);
                     msgqueue->SendMessage(queryMsg.msg);
                 }
                 else
@@ -518,7 +518,7 @@ bool pawsPetitionGMWindow::OnButtonReleased(int /*mouseButton*/, int /*keyModifi
                     currentRow = sel;
 
                     // Send a message to the server requesting assignment:
-                    psPetitionRequestMessage queryMsg(true, "escalate", petitionMessage.petitions.Get(currentRow).id);
+                    psPetitionRequestMessage queryMsg(true, "escalate", petitionMessage.petitions.Get(petitionList->GetRow(currentRow)->GetLastIndex()).id);
                     msgqueue->SendMessage(queryMsg.msg);
                 }
             }
@@ -551,7 +551,7 @@ bool pawsPetitionGMWindow::OnButtonReleased(int /*mouseButton*/, int /*keyModifi
                     currentRow = sel;
 
                     // Send a message to the server requesting assignment:
-                    psPetitionRequestMessage queryMsg(true, "descalate", petitionMessage.petitions.Get(currentRow).id);
+                    psPetitionRequestMessage queryMsg(true, "descalate", petitionMessage.petitions.Get(petitionList->GetRow(currentRow)->GetLastIndex()).id);
                     msgqueue->SendMessage(queryMsg.msg);
                 }
             }
@@ -604,7 +604,7 @@ void pawsPetitionGMWindow::OnStringEntered(const char* /*name*/, int /*param*/, 
 void pawsPetitionGMWindow::CloseCurrPetition(const char *desc)
 {
     // Send a message to the server requesting assignment:
-    psPetitionRequestMessage queryMsg(true, "close", petitionMessage.petitions.Get(currentRow).id, desc);
+    psPetitionRequestMessage queryMsg(true, "close", petitionMessage.petitions.Get(petitionList->GetRow(currentRow)->GetLastIndex()).id, desc);
     msgqueue->SendMessage(queryMsg.msg);
 }
 
@@ -719,7 +719,7 @@ void pawsPetitionGMWindow::OnListAction(pawsListBox* /*selected*/, int status)
         if (sel >= petitionMessage.petitions.GetSize())
             return;
         petText->Clear();
-        petText->AddMessage(petitionMessage.petitions.Get(sel).petition);
+        petText->AddMessage(petitionMessage.petitions.Get(petitionList->GetRow(sel)->GetLastIndex()).petition);
     }
 }
 

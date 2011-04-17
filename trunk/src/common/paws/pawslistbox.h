@@ -100,6 +100,12 @@ public:
     /// Heading rows exist within the list but are not clickable
     void SetHeading(bool flag);
 
+    /// Returns the last index of the row
+    int GetLastIndex()const{return lastIndex;}
+
+    /// Sets the last index of the row. Is used by pawsListBox to update lastIndex variable when sorting.
+    void SetLastIndex(int index){lastIndex = index;}
+    
     /** Handles hiding of the row. Used to give focus back to the list box
      *  before hiding
      */
@@ -110,6 +116,8 @@ private:
     /// Store whether this row should be a heading or not
     bool isHeading;
 
+    int lastIndex; ///< index of the related row
+    
     /// Store a list of columns for easy access.
     csArray<pawsWidget*> columns;
 
