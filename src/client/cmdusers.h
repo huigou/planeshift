@@ -99,13 +99,14 @@ protected:
                       EntityTypes entityType);
 
 
-    // Struct to hold our emote data.
+    /// Struct to hold our emote data.
     struct EMOTE 
     {
         csString command;
         csString general;
         csString specific;
         csString anim;
+        bool enabled; ///< changed type of enabled from csString to bool 
     };
 
     csArray<EMOTE> emoteList;
