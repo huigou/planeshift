@@ -56,6 +56,7 @@
   <item orig="Log Out" trans="" />
   <item orig="Cannot connect to server!" trans="" />
   <item orig="male " trans="maschio di " />
+  <item orig="Show Info Messages on screen" trans="" />
   <item orig="Description" trans="Descrizione" />
   <item orig="alliance text colour" trans="colore testo alleanza" />
   <item orig="Active" trans="Attivo" />
@@ -130,11 +131,13 @@
   <item orig="The number of octas that you may exchange." trans="" />
   <item orig="Attributes" trans="Attributi" />
   <item orig="M. Stamina" trans="Stamina M." />
+  <item orig="Show Result Messages on screen" trans="" />
   <item orig="The server is locked!" trans="Il server è bloccato!" />
   <item orig="Mount" trans="" />
   <item orig="Quest &amp; Events Notebook" trans="" />
   <item orig="Are you sure you want to upload?  You have 2 CP left." trans="" />
   <item orig="Remove!" trans="" />
+  <item orig="Enable background color" trans="" />
   <item orig="You will now ignore %s." trans="Da ora ignorerai %s." />
   <item orig="Study" trans="Studia" />
   <item orig="Private notes" trans="Note private" />
@@ -145,7 +148,6 @@
   <item orig="set invincible" trans="" />
   <item orig="Getting Characters" trans="Caricamento Personaggi" />
   <item orig="Introduce yourself" trans="" />
-  <item orig="Enable background color" trans="" />
   <item orig="Main tab" trans="" />
   <item orig="Unknown command" trans="Comando sconosciuto" />
   <item orig="Others&apos; attacks that missed the target" trans="Attacchi altrui che hanno mancato l&apos;obbiettivo" />
@@ -237,6 +239,7 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="Buy Skill" trans="" />
   <item orig="Upload!" trans="Carica!" />
   <item orig="Deposit" trans="Deposita" />
+  <item orig="Show OK Messages on screen" trans="" />
   <item orig="? Weight" trans="? Peso" />
   <item orig="Create Line (\)" trans="" />
   <item orig="M. stamina" trans="Stamina M." />
@@ -251,6 +254,7 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="Filter" trans="" />
   <item orig="New" trans="Nuovo" />
   <item orig="Mute sounds on focus loss" trans="" />
+  <item orig="Show Error Messages on screen" trans="" />
   <item orig="Firstname:" trans="" />
   <item orig="Exchange all items" trans="" />
   <item orig="Add Linked" trans="Aggiungi collegato" />
@@ -318,8 +322,8 @@ of you named " trans=" davanti a te
 chiamato " />
   <item orig="mouse" trans="" />
   <item orig="Various Skills List:" trans="" />
-  <item orig="Stats description:" trans="" />
   <item orig="Shadow color" trans="" />
+  <item orig="Stats description:" trans="" />
   <item orig="Lets go !" trans="Andiamo!" />
   <item orig="Account:" trans="" />
   <item orig="%s %s" trans="%s %s" />
@@ -663,6 +667,7 @@ If your name is inappropriate, a Game Master (GM) will change it." trans="" />
   <item orig="Notify when alliance members login/logout" trans="" />
   <item orig="F" trans="" />
   <item orig="Tooltips" trans="" />
+  <item orig="Show ACK Messages on screen" trans="" />
   <item orig="%s tells you: %s" trans="%s ti dice: %s" />
   <item orig="D:" trans="" />
   <item orig="Jobs Skill description:" trans="" />
@@ -856,6 +861,7 @@ Per disabilitare questa funzione cancella tutto in questa finestra usando il bot
   <item orig="P. Stamina" trans="Stamina F.:" />
   <item orig="Left Finger" trans="" />
   <item orig="Failed" trans="" />
+  <item orig="Welcome to" trans="" />
   <item orig="Realm" trans="Reame" />
   <item orig="cancelled." trans="cancellata." />
   <item orig="closed." trans="chiusa." />
