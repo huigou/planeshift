@@ -132,7 +132,43 @@ public:
     void Draw() {}
     bool SetupMain();
 
-    void DeleteChild(pawsWidget* txtBox); // Removes the fading text box from the array and the memory
+    void DeleteChild(pawsWidget* txtBox); ///< Removes the fading text box from the array and the memory
+
+    /** @name Functions to handle on-screen messages options */
+    /*@{*/
+    /** Gets an on-screen message option
+     *  @param mesgType The id of the message. @see messages.h for a list of them.
+     *  @return The status set for this message (true is show, false is hide)
+     */
+    bool GetMesgOption(int mesgType);
+    /** Sets a on screen message option
+     *  @param mesgType The id of the message. @see messages.h for a list of them.
+     *  @param value The status to set for this message (true is show, false is hide)
+     */
+    void SetMesgOption(int mesgType, bool value);
+    /** Loads the configuration of this widget.
+     *  For now it loads just the options about the on-screen messages to show/hide.
+     *  @return The result of the operation
+     */
+    bool LoadConfigFromFile();
+    /** Saves the configuration of this widget.
+     *  For now it saves just the options about the on-screen messages to show/hide.
+     *  @return The result of the operation
+     */
+    bool SaveConfigToFile();
+
+    /** Used to store an option about on screen options */
+    struct mesgOption
+    {
+        int type; ///< The type of message.
+        bool value; ///< If the message is active or not.
+    };
+
+    /** Returns an iterator to iterate the options about on-screen messages
+     *  @returns a GlobalIterator instance to the message options
+     */
+    csHash<mesgOption, int>::GlobalIterator GetMesgOptionsIterator(){ return mesgOptions.GetIterator(); }
+    /*@}*/
     
 private:
 
@@ -146,11 +182,14 @@ private:
     
     pawsWidget* lastWidget;
 
-    // Options to the on-screen messages
+    /** @name Options to the on-screen messages */
+    /*@{*/    
     csRef<iFont>    mesgFont;
     csRef<iFont>    mesgFirstFont;
 
     csArray<pawsWidget*> onscreen;
+    csHash<mesgOption, int> mesgOptions; ///< Stores if a message shall be displayed on-screen.
+    /*@}*/
 };
 
 #endif

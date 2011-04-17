@@ -62,6 +62,8 @@
 
 #define DEFAULT_CONFIG_FILE_NAME "/planeshift/data/options/entityinter_def.xml"
 #define CONFIG_FILE_NAME         "/planeshift/userdata/options/entityinter.xml"
+#define DEFAULT_MSGCONFIG_FILE_NAME "/planeshift/data/options/screenmsg_def.xml"
+#define MSGCONFIG_FILE_NAME         "/planeshift/userdata/options/screenmsg.xml"
 #define FONT_SIZE                13  // Size for the font at 800x600
 
 
@@ -190,6 +192,7 @@ psMainWidget::psMainWidget() : psCmdBase(NULL, NULL, PawsManager::GetSingleton()
     locked = false;
     entTypes.LoadConfigFromFile();
     lastWidget = 0;
+    LoadConfigFromFile();
 }
 
 psMainWidget::~psMainWidget()
@@ -500,6 +503,13 @@ void psMainWidget::HandleMessage( MsgEntry* message )
 
     psSystemMessage mesg(message);
 
+    //Don't proceed if the message is disabled and it's not a server admin
+    //or gm message
+    if(!GetMesgOption(mesg.type) &&
+        mesg.msgline.Find("server admin") == (size_t)-1 &&
+         mesg.msgline.Find("gm warning") == (size_t)-1)
+        return;
+
     int color = -1;
 
     if(mesg.type == MSG_ERROR)
@@ -515,6 +525,83 @@ void psMainWidget::HandleMessage( MsgEntry* message )
 
     if(color != -1)
         PrintOnScreen(mesg.msgline,color);
+}
+
+bool psMainWidget::GetMesgOption(int mesgType)
+{
+    //get the message in the hash
+    struct mesgOption * opt = mesgOptions.GetElementPointer(mesgType);
+
+    //if found return it's value
+    if(opt) return opt->value;
+
+    //else we always return true by default
+    return true;
+}
+
+void psMainWidget::SetMesgOption(int mesgType, bool value)
+{
+    //create a new mesgOption item
+    struct mesgOption opt;
+    opt.type = mesgType;
+    opt.value = value;
+    //place it in the hash
+    mesgOptions.PutUnique(mesgType,opt);
+}
+
+bool psMainWidget::LoadConfigFromFile()
+{
+    // Check if there have been created a custom file
+    // else use the default file.
+    csString fileName = MSGCONFIG_FILE_NAME;
+    if (!psengine->GetVFS()->Exists(fileName))
+    {
+        fileName = DEFAULT_MSGCONFIG_FILE_NAME;
+    }
+
+    csRef<iDocument> doc = ParseFile(psengine->GetObjectRegistry(), fileName);
+    if (!doc) 
+    {
+        Error2("Parse error in %s", fileName.GetData());
+        return false;
+    }
+    csRef<iDocumentNode> rootNode = doc->GetRoot();
+    if(!rootNode)
+    {
+        Error2("No XML root in %s", fileName.GetData());
+        return false;
+    }
+    csRef<iDocumentNode> topNode = rootNode->GetNode("ScreenMessages");
+    if(!topNode)
+    {
+        Error2("No <ScreenMessages> tag in %s", fileName.GetData());
+        return false;
+    }
+    csRef<iDocumentNodeIterator> nodes = topNode->GetNodes("message");
+    mesgOptions.Empty();
+    while(nodes->HasNext())
+    {
+        csRef<iDocumentNode> curNode = nodes->Next();
+        struct mesgOption opt;
+        opt.type = curNode->GetAttributeValueAsInt("id");
+        opt.value = curNode->GetAttributeValueAsBool("value", true);
+        mesgOptions.PutUnique(opt.type, opt);        
+    }
+    return true;
+}
+
+bool psMainWidget::SaveConfigToFile()
+{
+    csString xml;
+    csHash<mesgOption, int>::GlobalIterator iter = mesgOptions.GetIterator();
+    xml = "<ScreenMessages>\n";
+    while(iter.HasNext())
+    {
+        struct mesgOption &opt  = iter.Next();
+        xml += csString().Format("\t<message id='%i' value='%i'/>\n", opt.type, opt.value);
+    }
+    xml += "</ScreenMessages>";
+    return psengine->GetVFS()->WriteFile(MSGCONFIG_FILE_NAME, xml.GetData(), xml.Length());
 }
 
 void psMainWidget::DrawChildren()

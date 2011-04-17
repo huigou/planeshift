@@ -55,6 +55,7 @@ public:
 
 protected:
     pawsActiveMagicWindow* magicWindow; ///< This is used to point to a instance of magic window
+    psMainWidget* mainWidget; ///< This is used to point to the main widget
 };
 
 CREATE_PAWS_FACTORY(pawsConfigPopup);
