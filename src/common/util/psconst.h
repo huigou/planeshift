@@ -52,7 +52,7 @@ typedef uint32 InstanceID;
 
 #define ASSIST_MAX_DIST 25   ///< Maximum distance that the /assist command will work
 
-#define EXCHANGE_SLOT_COUNT         8
+#define EXCHANGE_SLOT_COUNT         9
 #define INVENTORY_BULK_COUNT        32
 #define INVENTORY_EQUIP_COUNT       16
 
@@ -84,7 +84,7 @@ typedef uint32 InstanceID;
  */
 //@{
 #define GUILD_FEE 20000
-#define GUILD_MIN_MEMBERS 1
+#define GUILD_MIN_MEMBERS 5
 #define GUILD_KICK_GRACE 5 ///< minutes
 
 #define GUILD_NAME_CHANGE_LIMIT 24 * 60 * 60000 ///< Minimum number of ticks between name change of guild
