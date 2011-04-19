@@ -243,14 +243,12 @@ const Stance & CombatManager::GetStance(CacheManager* cachemanager, csString nam
 
 const Stance & CombatManager::GetLoweredActorStance(CacheManager* cachemanager, gemActor* attacker)
 {
-    Stance currentStance;
-
-    currentStance = attacker->GetCombatStance();
+    Stance currentStance = attacker->GetCombatStance();
 
     if(currentStance.stance_id == (cachemanager->stances.GetSize()-1)) // The lowest possible stance is already choosen
     {
         // Propably nothing to do here
-        return currentStance;
+        return cachemanager->stances.Get(currentStance.stance_id);
     }
 
     return cachemanager->stances.Get(currentStance.stance_id+1);
@@ -259,14 +257,12 @@ const Stance & CombatManager::GetLoweredActorStance(CacheManager* cachemanager, 
 
 const Stance & CombatManager::GetRaisedActorStance(CacheManager* cachemanager, gemActor* attacker)
 {
-    Stance currentStance;
-
-    currentStance = attacker->GetCombatStance();
+    Stance currentStance = attacker->GetCombatStance();
 
     if(currentStance.stance_id == 1) // The greatest possible stance is already choosen
     {
         // Propably nothing to do here
-        return currentStance;
+        return cachemanager->stances.Get(currentStance.stance_id);
     }
 
     return cachemanager->stances.Get(currentStance.stance_id-1);
