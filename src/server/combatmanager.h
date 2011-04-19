@@ -70,7 +70,35 @@ public:
 
     void HandleCombatEvent(psCombatGameEvent *event);
 
+    /** @brief Gets combat stance by name
+     *
+     *  If combat stance name is invalid returns default global stance
+     *
+     *  @param cachemanager: manager that holds details about stances from database.
+     *  @param name: name of requested stance
+     *  @return Returns combat stance.
+     */
     static const Stance & GetStance(CacheManager* cachemanager, csString name);
+
+    /** @brief Gets increased combat stance of particular attacker
+     *
+     *  If current combat stance is the highest returns current combat stance
+     *
+     *  @param cachemanager: manager that holds details about stances from database.
+     *  @param attacker: gemActor that requests to raise his stance
+     *  @return Returns combat stance.
+     */
+    static const Stance & GetRaisedActorStance(CacheManager* cachemanager, gemActor* attacker);
+	
+    /** @brief Gets increased combat stance of particular attacker
+     *
+     *  If current combat stance is the lowest returns current combat stance
+     *
+     *  @param cachemanager: manager that holds details about stances from database.
+     *  @param attacker: gemActor that requests to lower his stance
+     *  @return Returns combat stance.
+     */
+    static const Stance & GetLoweredActorStance(CacheManager* cachemanager, gemActor* attacker);
 
     /***********************
      * Not implemented yet *
