@@ -609,10 +609,16 @@ public:
         }
     }
 
-    /// Check if we are at the end of the curretn psMessageBytes buffer
+    /// Check if we are at the end of the current psMessageBytes buffer
     bool IsEmpty()
     {
         return current >= bytes->GetSize();
+    }
+
+    /// Check if we have more data in the current psMessageBytes buffer
+    bool HasMore(int howMuchMore = 1)
+    {
+        return current+howMuchMore <= bytes->GetSize();
     }
 
     /// Get a null-terminated string from the current psMessageBytes buffer

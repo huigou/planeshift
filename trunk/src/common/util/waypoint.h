@@ -107,6 +107,8 @@ public:
     
     csString     GetFlags();
 
+    float GetRadius() { return loc.radius; }
+
     bool CheckWithin(iEngine * engine, const csVector3& pos, const iSector* sector);
 
     int Create(iDataConnection * db);
