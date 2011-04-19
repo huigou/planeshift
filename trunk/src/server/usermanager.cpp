@@ -1560,7 +1560,17 @@ void UserManager::StopAllCombat(Client *client)
 
 void UserManager::HandleAttack(psUserCmdMessage& msg,Client *client)
 {
-    Attack(CombatManager::GetStance(cacheManager,msg.stance), client);
+    Stance stance;
+
+    //it is important to check if actor is in combat mode already when trying to raise/lower stance
+    if(msg.stance == "raise" && client->GetActor()->GetMode() == PSCHARACTER_MODE_COMBAT) 
+        stance = CombatManager::GetRaisedActorStance(cacheManager, client->GetActor());
+    else if(msg.stance == "lower" && client->GetActor()->GetMode() == PSCHARACTER_MODE_COMBAT)
+        stance = CombatManager::GetLoweredActorStance(cacheManager, client->GetActor());
+    else
+        stance = CombatManager::GetStance(cacheManager,msg.stance);
+
+    Attack(stance, client);
 }
 
 void UserManager::HandleStopAttack(psUserCmdMessage& msg,Client *client)

@@ -224,16 +224,52 @@ bool CombatManager::InPVPRegion(csVector3& pos,iSector * sector)
     return false;
 }
 
+
 const Stance & CombatManager::GetStance(CacheManager* cachemanager, csString name)
 {
     name.Downcase();
     size_t id = cachemanager->stanceID.Find(name);
-    if (id == csArrayItemNotFound)
+    if(id == csArrayItemNotFound)
     {
-        name = "normal"; // Default to Normal stance.
-        id = cachemanager->stanceID.Find(name);
+        //getting gloabal default combat stance
+        id = cachemanager->stanceID.Find(cachemanager->getOption("combat:default_stance")->getValue());
+
+        if(id == csArrayItemNotFound)
+            id = cachemanager->stanceID.Find("normal");
     }
     return cachemanager->stances.Get(id);
+}
+
+
+const Stance & CombatManager::GetLoweredActorStance(CacheManager* cachemanager, gemActor* attacker)
+{
+    Stance currentStance;
+
+    currentStance = attacker->GetCombatStance();
+
+    if(currentStance.stance_id == (cachemanager->stances.GetSize()-1)) // The lowest possible stance is already choosen
+    {
+        // Propably nothing to do here
+        return currentStance;
+    }
+
+    return cachemanager->stances.Get(currentStance.stance_id+1);
+}
+
+
+const Stance & CombatManager::GetRaisedActorStance(CacheManager* cachemanager, gemActor* attacker)
+{
+    Stance currentStance;
+
+    currentStance = attacker->GetCombatStance();
+
+    if(currentStance.stance_id == 1) // The greatest possible stance is already choosen
+    {
+        // Propably nothing to do here
+        return currentStance;
+    }
+
+    return cachemanager->stances.Get(currentStance.stance_id-1);
 }
 
 void CombatManager::AttackSomeone(gemActor *attacker,gemObject *target,Stance stance)
