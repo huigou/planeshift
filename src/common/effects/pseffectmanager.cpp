@@ -315,7 +315,7 @@ unsigned int psEffectManager::RenderEffect(const csString & effectName, const cs
 
 unsigned int psEffectManager::RenderEffect(const csString & effectName, iSector * sector, const csVector3 & pos, 
                                            iMeshWrapper * attachTarget, const csVector3 & up, 
-                                           const unsigned int uniqueIDOverride)
+                                           const unsigned int uniqueIDOverride, const float scale)
 {
 #ifndef DONT_DO_EFFECTS
     // check if it's a single effect

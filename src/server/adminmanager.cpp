@@ -5569,7 +5569,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
             {
                 if (client->WaypointIsDisplaying())
                 {
-                    psEffectMessage msg(me->clientnum,"admin_waypoint",myPos,0,0,client->PathGetEffectID());
+                    psEffectMessage msg(me->clientnum,"admin_waypoint",myPos,0,0,client->PathGetEffectID(),wp->GetRadius());
                     msg.SendMessage();
                 }
 
@@ -5584,7 +5584,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
             {
                 if (client->PathIsDisplaying())
                 {
-                    psEffectMessage msg(me->clientnum,"admin_path_point",myPos,0,0,client->PathGetEffectID());
+                    psEffectMessage msg(me->clientnum,"admin_path_point",myPos,0,0,client->PathGetEffectID(),0.0f);
                     msg.SendMessage();
                 }
 
@@ -5758,7 +5758,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
 
             if (client->WaypointIsDisplaying())
             {
-                psEffectMessage msg(me->clientnum,"admin_waypoint",myPos,0,0,client->WaypointGetEffectID());
+                psEffectMessage msg(me->clientnum,"admin_waypoint",myPos,0,0,client->WaypointGetEffectID(),wp->GetRadius());
                 msg.SendMessage();
             }
             psserver->SendSystemInfo( me->clientnum, "Starting path, using new waypoint %s(%d)",
@@ -5819,7 +5819,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
 
             if (client->WaypointIsDisplaying())
             {
-                psEffectMessage msg(me->clientnum,"admin_waypoint",myPos,0,0,client->WaypointGetEffectID());
+                psEffectMessage msg(me->clientnum,"admin_waypoint",myPos,0,0,client->WaypointGetEffectID(),wp->GetRadius());
                 msg.SendMessage();
             }
         }
@@ -5853,7 +5853,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
             {
 
                 csVector3 pos(rs[i].GetFloat("x"),rs[i].GetFloat("y"),rs[i].GetFloat("z"));
-                psEffectMessage msg(me->clientnum,"admin_path_point",pos,0,0,client->PathGetEffectID());
+                psEffectMessage msg(me->clientnum,"admin_path_point",pos,0,0,client->PathGetEffectID(),0.0f);
                 msg.SendMessage();
             }
 
@@ -5874,7 +5874,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
             {
 
                 csVector3 pos(rs[i].GetFloat("x"),rs[i].GetFloat("y"),rs[i].GetFloat("z"));
-                psEffectMessage msg(me->clientnum,"admin_waypoint",pos,0,0,client->WaypointGetEffectID());
+                psEffectMessage msg(me->clientnum,"admin_waypoint",pos,0,0,client->WaypointGetEffectID(),(float)(rs[i].GetFloat("radius")));
                 msg.SendMessage();
             }
             client->WaypointSetIsDisplaying(true);
@@ -6030,7 +6030,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         }
         if (client->WaypointIsDisplaying())
         {
-            psEffectMessage msg(me->clientnum,"admin_waypoint",myPos,0,0,client->WaypointGetEffectID());
+            psEffectMessage msg(me->clientnum,"admin_waypoint",myPos,0,0,client->WaypointGetEffectID(),wp->GetRadius());
             msg.SendMessage();
         }
 
@@ -6257,7 +6257,7 @@ void AdminManager::HandleLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmd
         {
 
             csVector3 pos(rs[i].GetFloat("x"),rs[i].GetFloat("y"),rs[i].GetFloat("z"));
-            psEffectMessage msg(me->clientnum,"admin_location",pos,0,0,client->LocationGetEffectID());
+            psEffectMessage msg(me->clientnum,"admin_location",pos,0,0,client->LocationGetEffectID(),(float)(rs[i].GetFloat("radius")));
             msg.SendMessage();
         }
 

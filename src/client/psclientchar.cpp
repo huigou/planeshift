@@ -538,14 +538,15 @@ void psClientCharManager::HandleEffect( MsgEntry* me )
             if (anchor)
             {
                 effectID = psengine->GetEffectManager()->RenderEffect(effect.name, effect.offset,
-                                                                      anchor, target,up,uniqueIDOverride);
+                                                                      anchor, target, up, uniqueIDOverride,
+                                                                      effect.scale);
             }
             else
             {
                 iSector * sector = psengine->GetPSCamera()->GetICamera()->GetCamera()->GetSector(); // Sector should come in the message
                 effectID = psengine->GetEffectManager()->RenderEffect(effect.name, sector,
                                                                       effect.offset, target,
-                                                                      up,uniqueIDOverride);
+                                                                      up, uniqueIDOverride, effect.scale);
             }
 
             if (effectID == 0)

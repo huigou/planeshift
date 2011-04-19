@@ -136,7 +136,7 @@ public:
      */
     unsigned int RenderEffect(const csString & effectName, iSector * sector, const csVector3 & pos, 
                               iMeshWrapper * attachTarget, const csVector3 & up=csVector3(0,1,0), 
-                              const unsigned int uniqueIDOverride = 0);
+                              const unsigned int uniqueIDOverride = 0, const float scale = 0.0);
 
     /** begins rendering an effect that isn't attached to anything
      *   @param effectName the name of the effect to render

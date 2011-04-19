@@ -3262,10 +3262,11 @@ PSF_IMPLEMENT_MSG_FACTORY(psEffectMessage,MSGTYPE_EFFECT);
 
 psEffectMessage::psEffectMessage(uint32_t clientNum, const csString &effectName,
                                  const csVector3 &effectOffset, EID anchorID,
-                                 EID targetID, uint32_t uid)
+                                 EID targetID, uint32_t uid, float scale)
 {
-    msg.AttachNew(new MsgEntry(effectName.Length() + sizeof(csVector3)
-                + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t) + 1));
+    msg.AttachNew(new MsgEntry(effectName.Length() + 1 + sizeof(csVector3)
+                  + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t)
+                  + (scale==0.0?0:sizeof(float)) ));
 
     msg->SetType(MSGTYPE_EFFECT);
     msg->clientnum = clientNum;
@@ -3278,16 +3279,21 @@ psEffectMessage::psEffectMessage(uint32_t clientNum, const csString &effectName,
     msg->Add(targetID.Unbox());
     msg->Add((uint32_t)0);
     msg->Add((uint32_t)uid);
-
+    if (scale != 0.0)
+    {
+       msg->Add(scale);
+    }
     valid = !(msg->overrun);
 }
 
 psEffectMessage::psEffectMessage(uint32_t clientNum, const csString &effectName,
                                  const csVector3 &effectOffset, EID anchorID,
-                                 EID targetID, uint32_t duration, uint32_t uid)
+                                 EID targetID, uint32_t duration, uint32_t uid,
+                                 float scale)
 {
-    msg.AttachNew(new MsgEntry(effectName.Length() + sizeof(csVector3)
-                + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t) + 1));
+    msg.AttachNew(new MsgEntry(effectName.Length() + 1 + sizeof(csVector3)
+                  + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t)
+                  + (scale==0.0?0:sizeof(float)) ));
 
     msg->SetType(MSGTYPE_EFFECT);
     msg->clientnum = clientNum;
@@ -3300,6 +3306,10 @@ psEffectMessage::psEffectMessage(uint32_t clientNum, const csString &effectName,
     msg->Add(targetID.Unbox());
     msg->Add(duration);
     msg->Add(uid);
+    if (scale != 0.0)
+    {
+       msg->Add(scale);
+    }
 
     valid = !(msg->overrun);
 }
@@ -3317,7 +3327,13 @@ psEffectMessage::psEffectMessage(MsgEntry* message)
     targetID = EID(message->GetUInt32());
     duration = message->GetUInt32();
     uid = message->GetUInt32();
-
+    if (message->HasMore(sizeof(float)))
+    {
+        scale = message->GetFloat();
+    } else
+    {
+        scale = 0.0;
+    }
     valid = !(message->overrun);
 }
 
@@ -3325,13 +3341,13 @@ csString psEffectMessage::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
-    msgtext.AppendFmt("Name: '%s' Offset: (%.3f, %.3f, %.3f) Anchor: %d Target: %d Duration: %d UID: %d",
+    msgtext.AppendFmt("Name: '%s' Offset: (%.3f, %.3f, %.3f) Anchor: %d Target: %d Duration: %d UID: %d Scale: %.3f",
             name.GetDataSafe(),
             offset.x, offset.y, offset.z,
             anchorID.Unbox(),
             targetID.Unbox(),
             duration,
-            uid);
+            uid, scale);
 
     return msgtext;
 }
@@ -3511,6 +3527,13 @@ psMsgStringsMessage::psMsgStringsMessage(MsgEntry *message)
 csString psMsgStringsMessage::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
+
+    msgtext.AppendFmt("Digest: %s ", digest->HEXString().GetDataSafe());
+    msgtext.AppendFmt("Only carrying digest: %s",only_carrying_digest?"True":"False");
+    if (only_carrying_digest)
+    {
+      return msgtext;
+    }
 
     msgtext.AppendFmt("No. Strings: %d ", nstrings);
 

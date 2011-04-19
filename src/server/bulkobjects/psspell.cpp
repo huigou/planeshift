@@ -382,7 +382,7 @@ void psSpell::Cast(Client *client, float kFactor) const
 
     if (!castingEffect.IsEmpty() && (castingDuration > 0 || client->GetActor()->instantcast))
     {
-        psEffectMessage fx(0, castingEffect, csVector3(0,0,0), caster->GetEID(), target->GetEID(), castingDuration, 0);
+        psEffectMessage fx(0, castingEffect, csVector3(0,0,0), caster->GetEID(), target->GetEID(), castingDuration, 0, 0.0);
         fx.Multicast(caster->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE);
     }
 
