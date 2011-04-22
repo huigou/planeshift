@@ -1313,6 +1313,7 @@ public:
         name      = top->GetAttributeValue("name");
         sourceVar = top->GetAttributeValue("source");
         targetVar = top->GetAttributeValue("target");
+        effectRange = top->GetAttributeValueAsFloat("range", 0.0);        
 
         return !name.IsEmpty() && !targetVar.IsEmpty();
     }
@@ -1326,7 +1327,7 @@ public:
 
         if (attached)
         {
-            psEffectMessage fx(0, name, csVector3(0,0,0), source->GetEID(), target->GetEID(), 0);
+            psEffectMessage fx(0, name, csVector3(0,0,0), source->GetEID(), target->GetEID(), 0, effectRange);
             if (!fx.valid)
             {
                 Error1("Error: <fx> could not create valid psEffectMessage\n");
@@ -1345,7 +1346,7 @@ public:
             pos.z -= DROP_DISTANCE*  cosf(yrot);
 
             // Send effect message
-            psEffectMessage fx(0, name, pos, 0, 0, 0);
+            psEffectMessage fx(0, name, pos, 0, 0, 0, effectRange);
             if (!fx.valid)
             {
                 Error1("Error: <fx> could not create valid psEffectMessage\n");
@@ -1360,6 +1361,7 @@ protected:
     csString name;       ///< the name of the effect
     csString sourceVar;  ///< name of the MathVar containing where the effect starts
     csString targetVar;  ///< name of the MathVar containing where the effect is aimed
+    float effectRange;   ///< the range which this effect will apply on the effect
 };
 
 //----------------------------------------------------------------------------
