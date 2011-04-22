@@ -79,7 +79,7 @@ void pawsLoadWindow::HandleMessage(MsgEntry *me)
             guildMOTD = tipmsg.guildmotd;
         
         if (!guildMOTD.IsEmpty())
-            guildmotdMsg.Format("%s's MOTD: %s", guildName.GetData(), guildMOTD.GetData());
+            guildmotdMsg.Format("%s's info: %s", guildName.GetData(), guildMOTD.GetData());
 
         //Set the text
         if(tipBox && tipmsg.tip.Length())
