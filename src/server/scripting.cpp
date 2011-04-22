@@ -1455,6 +1455,11 @@ public:
         {
             background = node->GetAttributeValue("background");
         }
+
+        if(node->GetAttribute("widget"))
+        {
+            widget = node->GetAttributeValue("widget");
+        }
     
         if(node->GetAttribute("x1") && node->GetAttribute("y1") && node->GetAttribute("x2") && node->GetAttribute("y2"))
         {
@@ -1527,7 +1532,7 @@ public:
         if (type == NAMED)
         {
             // we only handle "spawn" for now...
-            actor->MoveToSpawnPos(loadDelayInt, background, point1, point2);
+            actor->MoveToSpawnPos(loadDelayInt, background, point1, point2, widget);
         }
         else
         {
@@ -1555,9 +1560,9 @@ public:
             }
 
             if (type & INSTANCE)
-                actor->Teleport(sector, destPos, 0.0, instance, loadDelayInt, background, point1, point2);
+                actor->Teleport(sector, destPos, 0.0, instance, loadDelayInt, background, point1, point2, widget);
             else
-                actor->Teleport(sector, destPos, 0.0, loadDelayInt, background, point1, point2);
+                actor->Teleport(sector, destPos, 0.0, loadDelayInt, background, point1, point2, widget);
         }
     }
 
@@ -1567,12 +1572,13 @@ protected:
     csString destination;
     csVector3 pos;
     InstanceID instance;
-	MathExpression *loadDelay;   ///<The delay the loading screen shall have, in seconds; YOU DON'T HAVE TO DEFINE IT
-	csString background; ///<The background of the loading screen; YOU DON'T HAVE TO DEFINE IT
-    MathExpression *point1X; ///<Defines x cordinate start of animation
-    MathExpression *point1Y; ///<Defines y cordinate start of animation
-    MathExpression *point2X; ///<Defines x cordinate end of animation
-    MathExpression *point2Y; ///<Defines y cordinate end of animation
+    MathExpression *loadDelay; ///<The delay the loading screen shall have, in seconds; YOU DON'T HAVE TO DEFINE IT
+    csString background;       ///<The background of the loading screen; YOU DON'T HAVE TO DEFINE IT
+    csString widget;           ///< The replacement widget used for the loading screen
+    MathExpression *point1X;   ///<Defines x cordinate start of animation
+    MathExpression *point1Y;   ///<Defines y cordinate start of animation
+    MathExpression *point2X;   ///<Defines x cordinate end of animation
+    MathExpression *point2Y;   ///<Defines y cordinate end of animation
     
     EntityManager* entityManager;
 };

@@ -4622,7 +4622,7 @@ PSF_IMPLEMENT_MSG_FACTORY3(psForcePositionMessage, MSGTYPE_FORCE_POSITION);
 psForcePositionMessage::psForcePositionMessage(uint32_t client, uint8_t sequenceNumber,
                          const csVector3 & pos, float yRot, iSector *sector,
                          csStringSet *msgstrings, uint32_t time, csString loadBackground,
-                         csVector2 start, csVector2 dest)
+                         csVector2 start, csVector2 dest, csString loadWidget)
 {
     CS_ASSERT(sector);
     csString sectorName = sector->QueryObject()->GetName();
@@ -4648,6 +4648,9 @@ psForcePositionMessage::psForcePositionMessage(uint32_t client, uint8_t sequence
     msg->Add(dest.x);
     msg->Add(dest.y);
 
+    //widget which replaces the standard load one
+    msg->Add(loadWidget);
+
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
 }
@@ -4671,6 +4674,8 @@ psForcePositionMessage::psForcePositionMessage(MsgEntry *me, csStringSet *msgstr
     start.y = me->GetFloat();
     dest.x = me->GetFloat();
     dest.y = me->GetFloat();
+
+    loadWidget = me->GetStr();
 
     valid = !(me->overrun);
 }

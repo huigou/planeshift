@@ -148,6 +148,36 @@
                 <value>ground</value>
               </choice>           
             </attribute>
+            <attribute name="randomize" />
+              <choice>
+                <value>true</value>
+                <value>false</value>
+              </choice>
+            </attribute>
+            <attribute name="randomcost"/>
+            <attribute name="randomlevel"/>
+          </optional>
+        </element>
+
+        <element name="variableset">
+          <attribute name="aim"/>
+          <attribute name="name"/>
+          <optional>
+            <attribute name="value"/>
+          </optional>
+        </element>
+
+        <element name="variableunset">
+          <attribute name="aim"/>
+          <attribute name="name"/>
+          <attribute name="value"/>
+        </element>
+
+        <element name="faction">
+          <attribute name="aim"/>
+          <attribute name="name"/>
+          <optional>
+            <attribute name="value"/>
           </optional>
         </element>
 
@@ -296,6 +326,7 @@
                 <value>attack</value>
                 <value>defense</value>
                 <value>nearlydead</value>
+                <value>move</value>
               </choice>
             </attribute>
             <attribute name="distance"/> <!-- how do we handle enter/exit pairing again? -->
@@ -366,6 +397,7 @@
       </group>
          <attribute name="delay"/>
          <attribute name="background"/>
+         <attribute name="widget"/>
        <group>
          <optional>
            <attribute name="x1"/>
@@ -376,6 +408,9 @@
        </group>
     </choice>
   </define>
+
+
+
 
   <define name="weatherbase">
     <attribute name="type">

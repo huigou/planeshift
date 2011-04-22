@@ -2185,7 +2185,7 @@ Client* gemActor::GetClient() const
     return clientRef.IsValid() ? clientRef : NULL ;
 }
 
-bool gemActor::MoveToSpawnPos(int32_t delay, csString background, csVector2 point1, csVector2 point2)
+bool gemActor::MoveToSpawnPos(int32_t delay, csString background, csVector2 point1, csVector2 point2, csString widget)
 {
     csVector3 startingPos;
     float startingYrot;
@@ -2196,7 +2196,7 @@ bool gemActor::MoveToSpawnPos(int32_t delay, csString background, csVector2 poin
         return false;
 
     pcmove->SetOnGround(false);
-    Teleport(startingSector, startingPos, startingYrot, DEFAULT_INSTANCE, delay, background, point1, point2);
+    Teleport(startingSector, startingPos, startingYrot, DEFAULT_INSTANCE, delay, background, point1, point2, widget);
     
     psGenericEvent evt(GetClientID(), psGenericEvent::SPAWN_MOVE);
     evt.FireEvent();
@@ -3342,7 +3342,7 @@ void gemActor::SetInstance(InstanceID worldInstance)
     this->worldInstance = worldInstance;
 }
 
-void gemActor::Teleport(const char *sectorName, const csVector3 & pos, float yrot, InstanceID instance, int32_t loadDelay, csString background, csVector2 point1, csVector2 point2)
+void gemActor::Teleport(const char *sectorName, const csVector3 & pos, float yrot, InstanceID instance, int32_t loadDelay, csString background, csVector2 point1, csVector2 point2, csString widget)
 {
     csRef<iEngine> engine = csQueryRegistry<iEngine>(psserver->GetObjectReg());
     iSector *sector = engine->GetSectors()->FindByName(sectorName);
@@ -3351,16 +3351,16 @@ void gemActor::Teleport(const char *sectorName, const csVector3 & pos, float yro
         Bug2("Sector %s is not found!", sectorName);
         return;
     }
-    Teleport(sector, pos, yrot, instance, loadDelay, background, point1, point2);
+    Teleport(sector, pos, yrot, instance, loadDelay, background, point1, point2, widget);
 }
 
-void gemActor::Teleport(iSector *sector, const csVector3 & pos, float yrot, InstanceID instance, int32_t loadDelay, csString background, csVector2 point1, csVector2 point2)
+void gemActor::Teleport(iSector *sector, const csVector3 & pos, float yrot, InstanceID instance, int32_t loadDelay, csString background, csVector2 point1, csVector2 point2, csString widget)
 {
     SetInstance(instance);
-    Teleport(sector, pos, yrot, loadDelay, background, point1, point2);
+    Teleport(sector, pos, yrot, loadDelay, background, point1, point2, widget);
 }
 
-void gemActor::Teleport(iSector *sector, const csVector3 & pos, float yrot, int32_t loadDelay, csString background, csVector2 point1, csVector2 point2)
+void gemActor::Teleport(iSector *sector, const csVector3 & pos, float yrot, int32_t loadDelay, csString background, csVector2 point1, csVector2 point2, csString widget)
 {
     StopMoving();
     SetPosition(pos, yrot, sector);

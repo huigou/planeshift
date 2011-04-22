@@ -3063,11 +3063,12 @@ public:
     uint32_t loadTime;       ///< time to wait even if there is no need to load
     csVector2 start; ///<Start point of anmiation
     csVector2 dest;///<Destination point of animation
+    csString loadWidget; ///< The widget to replace the load window with.
 
     psForcePositionMessage() { }
     psForcePositionMessage(uint32_t client, uint8_t sequence,
                            const csVector3& pos, float yRot, iSector *sector,
-                           csStringSet *msgstrings, uint32_t time = 0, csString loadBackground = "", csVector2 start = 0, csVector2 dest = 0);
+                           csStringSet *msgstrings, uint32_t time = 0, csString loadBackground = "", csVector2 start = 0, csVector2 dest = 0, csString loadWidget = "");
     psForcePositionMessage(MsgEntry *me, csStringSet *msgstrings, csStringHashReversible* msgstringshash, iEngine *engine);
 
     PSF_DECLARE_MSG_FACTORY();

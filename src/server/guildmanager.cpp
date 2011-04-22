@@ -1400,6 +1400,10 @@ void GuildManager::ChangeGuildName(psGuildCmdMessage& msg,Client *client)
         psserver->SendSystemInfo(clientnum,"Your guild name has been changed to: %s",msg.guildname.GetData());
     }
 
+    csString guildName(guild->GetName());
+    psMOTDMessage motd(client->GetClientNum(), "", "", "", guildName);
+    psserver->GetEventManager()->Broadcast(motd.msg, NetBase::BC_GUILD, guild->GetID());
+
     SendNotifications(guild->GetID(), psGUIGuildMessage::GUILD_DATA);
 }
 

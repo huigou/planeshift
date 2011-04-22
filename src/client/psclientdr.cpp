@@ -247,14 +247,14 @@ void psClientDR::HandleForcePosition(MsgEntry *me)
 
     if(last_sector != msg.sectorName)
     {
-        psengine->GetZoneHandler()->HandleDelayAndAnim(msg.loadTime, msg.start, msg.dest, msg.backgroundname);
+        psengine->GetZoneHandler()->HandleDelayAndAnim(msg.loadTime, msg.start, msg.dest, msg.backgroundname, msg.loadWidget);
         psNewSectorMessage cross(last_sector, msg.sectorName, msg.pos);
         msghandler->Publish(cross.msg);
         Error3("Sector crossed from %s to %s after forced position update.\n", last_sector.GetData(), msg.sectorName.GetData());
     }
     else
     {
-        psengine->GetZoneHandler()->HandleDelayAndAnim(msg.loadTime, msg.start, msg.dest, msg.backgroundname);
+        psengine->GetZoneHandler()->HandleDelayAndAnim(msg.loadTime, msg.start, msg.dest, msg.backgroundname, msg.loadWidget);
         psengine->GetZoneHandler()->LoadZone(msg.pos, msg.sectorName, true);
     }
 }

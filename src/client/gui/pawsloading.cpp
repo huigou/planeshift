@@ -38,12 +38,14 @@ pawsLoadWindow::~pawsLoadWindow()
 
 void pawsLoadWindow::AddText( const char* newText )
 {
-    loadingText->AddMessage( newText );
+    if(loadingText)
+        loadingText->AddMessage( newText );
 }
 
 void pawsLoadWindow::Clear()
 {
-    loadingText->Clear();
+    if(loadingText)
+        loadingText->Clear();
 }
 
 bool pawsLoadWindow::PostSetup()
@@ -53,9 +55,6 @@ bool pawsLoadWindow::PostSetup()
     loadingText = (pawsMessageTextBox*)FindWidget("loadtext");
 
     dot = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage("MapDot");
-    
-    if(!loadingText) 
-        return false;
         
     return true;
 }
@@ -73,15 +72,34 @@ void pawsLoadWindow::HandleMessage(MsgEntry *me)
         //Format the guild motd
         csString guildmotdMsg;
 
-        if (!tipmsg.guildmotd.IsEmpty())
-            guildmotdMsg.Format("%s's MOTD: %s",tipmsg.guild.GetData(),tipmsg.guildmotd.GetData());
+        if(tipmsg.guild.Length())
+            guildName = tipmsg.guild;
+
+        if(tipmsg.guildmotd.Length())
+            guildMOTD = tipmsg.guildmotd;
+        
+        if (!guildMOTD.IsEmpty())
+            guildmotdMsg.Format("%s's MOTD: %s", guildName.GetData(), guildMOTD.GetData());
 
         //Set the text
-        tipBox->SetText(tipmsg.tip.GetData());
-        motdBox->SetText(tipmsg.motd.GetData());
-        guildmotdBox->SetText(guildmotdMsg.GetData());
+        if(tipBox && tipmsg.tip.Length())
+            tipBox->SetText(tipmsg.tip.GetData());
+        if(motdBox && tipmsg.motd.Length())
+            motdBox->SetText(tipmsg.motd.GetData());
+        if(guildmotdBox && guildmotdMsg.Length())
+            guildmotdBox->SetText(guildmotdMsg.GetData());
 
     }
+}
+
+void pawsLoadWindow::PublishMOTD()
+{
+    pawsMultiLineTextBox* tipBox = (pawsMultiLineTextBox*)FindWidget( "tip" );
+    pawsMultiLineTextBox* motdBox = (pawsMultiLineTextBox*)FindWidget( "motd" );
+    pawsMultiLineTextBox* guildmotdBox = (pawsMultiLineTextBox*)FindWidget( "guildmotd" );
+
+    psMOTDMessage motd(0, tipBox->GetText(), motdBox->GetText(), guildMOTD, guildName);
+    motd.FireEvent();
 }
 
 void pawsLoadWindow::Show()
