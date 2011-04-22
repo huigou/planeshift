@@ -85,6 +85,7 @@ public:
     enum SPI_SHAPE
     {
         SPI_CIRCLE = 0,
+        SPI_CYLINDER,
         SPI_ASTERIX,
         SPI_STAR,
         SPI_LAYERED,

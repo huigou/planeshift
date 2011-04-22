@@ -619,6 +619,19 @@ int psEffect::GetKillTime() const
     return killTime;
 }
 
+bool psEffect::SetFrameParamScalings(float scale)
+{
+    bool result = false;
+    for(size_t a = 0; a < effectObjs.GetSize(); ++a)
+    {
+        if (effectObjs[a]->SetFrameParamScalings(scale))
+        {
+            result = true;
+        }
+    }
+    return result;
+}
+
 psEffect * psEffect::Clone() const
 {
     psEffect * newEffect = new psEffect();
