@@ -92,6 +92,7 @@
                 <value>unattached</value>
               </choice>
             </attribute>
+            <attribute name="range"/>
           </optional>
         </element>
 
