@@ -96,18 +96,52 @@ ZoneHandler::~ZoneHandler()
         
 }
 
-bool ZoneHandler::FindLoadWindow()
+bool ZoneHandler::FindLoadWindow(bool force, const char* widgetName)
 {
-    if(loadProgressBar != NULL)
+    if(loadProgressBar != NULL && !force)
         return true;  // Already found
 
-    loadWindow = static_cast <pawsLoadWindow*> (PawsManager::GetSingleton().FindWidget("LoadWindow"));
+    loadWindow = static_cast <pawsLoadWindow*> (PawsManager::GetSingleton().FindWidget(widgetName));
     if(loadWindow == NULL)
         return false;
 
     loadProgressBar = static_cast <pawsProgressBar*> (loadWindow->FindWidget("Progress"));
     if(loadProgressBar == NULL)
         return false;
+
+    return true;
+}
+
+bool ZoneHandler::ForceLoadWindowWidget(bool enable, csString loadWindowName)
+{
+    if(enable)
+    {
+        //check first if the window name is valid. shouldn't end up here
+        if(loadWindowName.IsEmpty())
+        {
+            return false;
+        }
+        else //if it's valid we load it and set it as load window for now
+        {
+            PawsManager::GetSingleton().LoadWidget(loadWindowName.GetData());
+
+            //request the load window to update the new window
+            if(loadWindow)
+                loadWindow->PublishMOTD();
+
+            return FindLoadWindow(true, loadWindowName.GetData());
+        }
+    }
+    else //restore the pointers to the normal window and removes the specified window from the memory
+    {
+        //restore the ties to the default load window
+        bool result = FindLoadWindow(true);
+        //as we have reloaded the load window we can remove the widget we don't need anymore
+        if(loadWindowName.Length())
+            PawsManager::GetSingleton().RemoveWidget(loadWindowName.GetData(), false);
+
+        return result;
+    }
 
     return true;
 }
@@ -219,6 +253,7 @@ void ZoneHandler::LoadZone(csVector3 pos, const char* sector, bool force)
     loadCount = psengine->GetLoader()->GetLoadingCount();
     if (FindLoadWindow() && (loadCount != 0 || !psengine->HasLoadedMap() || !connected || forcedLoadingEndTime != 0))
     {
+        
         loading = true;
 
         if(psengine->HasLoadedMap())
@@ -279,7 +314,7 @@ void ZoneHandler::MovePlayerTo(const csVector3 & newPos, const csString & newSec
 void ZoneHandler::OnDrawingFinished()
 {
     if (loading)
-    {		
+    {
         if(psengine->GetLoader()->GetLoadingCount() == 0 && csGetTicks() >= forcedLoadingEndTime)
         {
             // move player to new pos
@@ -308,6 +343,10 @@ void ZoneHandler::OnDrawingFinished()
             //Update delay data
             forcedBackgroundImg.Empty();
             forcedLoadingEndTime = 0;
+
+            //restore the previous load window if any
+            if(forcedWidgetName.Length())
+                ForceLoadWindowWidget(false, forcedWidgetName);
         }
         else
         {
@@ -343,18 +382,21 @@ ZoneLoadInfo::ZoneLoadInfo(iDocumentNode *node)
     }    
 }
 
-void ZoneHandler::ForceLoadScreen(csString backgroundImage, uint32_t length)
+void ZoneHandler::ForceLoadScreen(csString backgroundImage, uint32_t length, csString widgetName)
 {
     forcedBackgroundImg = backgroundImage;
     forcedLoadingStartTime = csGetTicks();
     forcedLoadingEndTime = forcedLoadingStartTime + (length * 1000);
+    forcedWidgetName = widgetName;
+    if(forcedWidgetName.Length())
+        ForceLoadWindowWidget(true, forcedWidgetName);
 }
 
-void ZoneHandler::HandleDelayAndAnim(int32_t loadDelay, csVector2 start, csVector2 dest, csString background)
+void ZoneHandler::HandleDelayAndAnim(int32_t loadDelay, csVector2 start, csVector2 dest, csString background, csString widgetName)
 {
     if(loadDelay > 0)
     {
-        ForceLoadScreen(background, loadDelay);
+        ForceLoadScreen(background, loadDelay, widgetName);
 
         if(start != 0 || dest != 0)
             loadWindow->InitAnim(start, dest, loadDelay);

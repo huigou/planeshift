@@ -1009,9 +1009,9 @@ public:
     void ProcessStamina();
     void ProcessStamina(const csVector3& velocity, bool force=false);
 
-    void Teleport(const char *sec, const csVector3 & pos, float yrot, InstanceID instance, int32_t loadDelay = 0, csString background = "", csVector2 point1 = 0, csVector2 point2 = 0);
-    void Teleport(iSector *sector, const csVector3 & pos, float yrot, InstanceID instance, int32_t loadDelay = 0, csString background = "", csVector2 point1 = 0, csVector2 point2 = 0);
-    void Teleport(iSector *sector, const csVector3 & pos, float yrot, int32_t loadDelay = 0, csString background = "", csVector2 point1 = 0, csVector2 point2 = 0);
+    void Teleport(const char *sec, const csVector3 & pos, float yrot, InstanceID instance, int32_t loadDelay = 0, csString background = "", csVector2 point1 = 0, csVector2 point2 = 0, csString widget = "");
+    void Teleport(iSector *sector, const csVector3 & pos, float yrot, InstanceID instance, int32_t loadDelay = 0, csString background = "", csVector2 point1 = 0, csVector2 point2 = 0, csString widget = "");
+    void Teleport(iSector *sector, const csVector3 & pos, float yrot, int32_t loadDelay = 0, csString background = "", csVector2 point1 = 0, csVector2 point2 = 0, csString widget = "");
 
     void SetPosition(const csVector3& pos,float angle, iSector* sector);
     void SetInstance(InstanceID worldInstance);
@@ -1121,9 +1121,10 @@ public:
     /** Moves player to his spawn position
      *  @param delay The time to wait in the load screen even if the new position was already loaded.
      *  @param background The background to use when the load screen is shown or if it's forced.
+     *  @paran widget The widget which will replace the normal loading one, if any is defined.
      *  @return TRUE in case of success. FALSE if the character lacks a spawn position.
      */
-    bool MoveToSpawnPos(int32_t delay = 0, csString background = "", csVector2 point1 = 0, csVector2 point2 = 0);
+    bool MoveToSpawnPos(int32_t delay = 0, csString background = "", csVector2 point1 = 0, csVector2 point2 = 0, csString widget = "");
     /** Gets the player spawn position according to his race.
      * 
      *  @todo Implement the support for player specific spawn pos, not only race specific.

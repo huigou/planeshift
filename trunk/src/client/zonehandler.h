@@ -160,8 +160,9 @@ public:
     * @param start Start of dot animation
     * @param dest Destination of dot animation 
     * @param background The loading background
+    * @param widgetName The name of the widget to use for this loading.
     */
-    void HandleDelayAndAnim(int32_t loadDelay, csVector2 start, csVector2 dest, csString background);
+    void HandleDelayAndAnim(int32_t loadDelay, csVector2 start, csVector2 dest, csString background, csString widgetName);
 
     /** @brief Returns if this is loading a zone
      *
@@ -187,6 +188,7 @@ protected:
     csString forcedBackgroundImg; ///<String which holds the background of the loading screen
     csTicks forcedLoadingEndTime;///<Holds how long the loading shall be delayed
     csTicks forcedLoadingStartTime;///<Holds how long the loading shall be delayed
+    csString forcedWidgetName;///<Holds the widget name used to replace the load window.
     size_t loadCount; ///< The number of items that are being loaded
     
     pawsLoadWindow* loadWindow; ///< A load window that can be shown to users while loading
@@ -197,9 +199,11 @@ protected:
      * Checks if there is a loading window. If there is not a loading window
      * or the loading window does not have a progress bar, false is returned.
      *
+     * @param force If true it will force the window to be searched even if we have it already
+     * @param widgetName if defined it will hook the loading windows to the defined name
      * @return True if a valid window was found, false otherwise.
      */
-    bool FindLoadWindow();
+    bool FindLoadWindow(bool force = false, const char *widgetName = "LoadWindow");
 
     /** @brief Extracts zone information out of a XML
      *
@@ -228,8 +232,17 @@ private:
      * Also allows to change the background of the load screen.
      * @param backgroundImage The image to put in the load screen.
      * @param length the minimum length the load screen will show up
+     * @param widgetName The name of the widget to use during the forced load screen.
      */
-    void ForceLoadScreen(csString backgroundImage, uint32_t length);
+    void ForceLoadScreen(csString backgroundImage, uint32_t length, csString widgetName);
+
+    /** Loads the defined widget as load widget if enable is true else
+     *  removes the defined widget and reloads the default load window
+     *  @param enable Tells if we have to load a new widget or restore the canonical one.
+     *  @param loadWindowName The widget name we work on
+     *  @return TRUE if it was a success.
+     */
+    bool ForceLoadWindowWidget(bool enable, csString loadWindowName);
 };
 
 #endif

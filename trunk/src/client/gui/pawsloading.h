@@ -59,6 +59,13 @@ public:
     *@param dest A vector representing the destination of the animation.
     */
     void InitAnim(csVector2 start, csVector2 dest, csTicks delay);
+
+    /** @brief Sends the motd message to local listeners.
+     * 
+     *  Used to handle the update of newly spawned custom loading windows.
+     */
+    void PublishMOTD();
+
 private:
     pawsMessageTextBox* loadingText;
     
@@ -72,7 +79,10 @@ private:
     csTicks startFrom;///<Time from last dot rendered
     size_t numberDot;///<Number of dots which shall be rendered
     csRef<iPawsImage> dot;///<The dot image
-    
+
+    csString guildName; ///< The name of the guild the user is associated to.
+    csString guildMOTD; ///< The MOTD of the guild the user is associated to.
+
     /** 
      *  Render the dot animation.
      *  Called only if renderAnim == true
