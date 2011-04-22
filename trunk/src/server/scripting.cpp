@@ -1302,7 +1302,7 @@ protected:
 class FxOp : public ImperativeOp
 {
 public:
-    virtual ~FxOp() { }
+    virtual ~FxOp(),effectRange(NULL) { }
 
     bool Load(iDocumentNode* top)
     {
@@ -1313,7 +1313,10 @@ public:
         name      = top->GetAttributeValue("name");
         sourceVar = top->GetAttributeValue("source");
         targetVar = top->GetAttributeValue("target");
-        effectRange = top->GetAttributeValueAsFloat("range", 0.0);        
+        if(top->GetAttributeValue("range"))
+        {
+            effectRange = MathExpression::Create(top->GetAttributeValue("range"));
+        }
 
         return !name.IsEmpty() && !targetVar.IsEmpty();
     }
@@ -1322,12 +1325,18 @@ public:
     {
         gemObject* target = GetObject(env, targetVar);
         gemObject* source = target;
+        float range = 0.0f;
         if (!sourceVar.IsEmpty())
             source = GetObject(env, sourceVar);
 
+        if(effectRange)
+        {
+            range = effectRange->Evaluate(env);
+        }
+
         if (attached)
         {
-            psEffectMessage fx(0, name, csVector3(0,0,0), source->GetEID(), target->GetEID(), 0, effectRange);
+            psEffectMessage fx(0, name, csVector3(0,0,0), source->GetEID(), target->GetEID(), 0, range);
             if (!fx.valid)
             {
                 Error1("Error: <fx> could not create valid psEffectMessage\n");
@@ -1346,7 +1355,7 @@ public:
             pos.z -= DROP_DISTANCE*  cosf(yrot);
 
             // Send effect message
-            psEffectMessage fx(0, name, pos, 0, 0, 0, effectRange);
+            psEffectMessage fx(0, name, pos, 0, 0, 0, range);
             if (!fx.valid)
             {
                 Error1("Error: <fx> could not create valid psEffectMessage\n");
@@ -1358,10 +1367,10 @@ public:
 
 protected:
     bool attached;
-    csString name;       ///< the name of the effect
-    csString sourceVar;  ///< name of the MathVar containing where the effect starts
-    csString targetVar;  ///< name of the MathVar containing where the effect is aimed
-    float effectRange;   ///< the range which this effect will apply on the effect
+    csString name;               ///< the name of the effect
+    csString sourceVar;          ///< name of the MathVar containing where the effect starts
+    csString targetVar;          ///< name of the MathVar containing where the effect is aimed
+    MathExpression* effectRange; ///< the range which this effect will apply on the effect
 };
 
 //----------------------------------------------------------------------------
