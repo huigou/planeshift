@@ -246,6 +246,12 @@ public:
      */
     pawsWidget* FindWidget( const char* name, bool complain=true );
 
+    /** Remove the named widget from the mainwidget
+     *  @param widgetName The name of the widget to look for.
+     *  @param complain If true it will show errors if the widget wasn't found.
+     *  @return a boolean stating if the widget was found (and so removed)
+     */
+    bool RemoveWidget(const char* widgetName, bool complain);
 
     /// Returns the main widget.
     pawsMainWidget * GetMainWidget() { return mainWidget; }

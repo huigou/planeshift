@@ -265,6 +265,15 @@ pawsWidget* PawsManager::FindWidget( const char* widgetName, bool complain )
     return mainWidget->FindWidget( widgetName, complain );
 }
 
+bool PawsManager::RemoveWidget(const char* widgetName, bool complain)
+{
+    pawsWidget *widget = mainWidget->FindWidget(widgetName, complain);
+    if(!widget)
+        return false;
+    mainWidget->DeleteChild(widget);
+    return true;
+}
+
 void PawsManager::MovingWidget( pawsWidget* widget )
 {
     if ( modalWidget == NULL )
