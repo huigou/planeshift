@@ -92,7 +92,7 @@
                 <value>unattached</value>
               </choice>
             </attribute>
-            <attribute name="range"/>
+            <attribute name="scale"/>
           </optional>
         </element>
 
