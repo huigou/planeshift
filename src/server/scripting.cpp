@@ -1302,7 +1302,8 @@ protected:
 class FxOp : public ImperativeOp
 {
 public:
-    virtual ~FxOp(),effectRange(NULL) { }
+    FxOp() : ImperativeOp(), effectRange(NULL) { }
+    virtual ~FxOp() { }
 
     bool Load(iDocumentNode* top)
     {
