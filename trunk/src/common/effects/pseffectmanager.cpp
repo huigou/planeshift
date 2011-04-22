@@ -323,6 +323,13 @@ unsigned int psEffectManager::RenderEffect(const csString & effectName, iSector 
     if (currEffect != 0)
     {
         currEffect = currEffect->Clone();
+        if (scale != 0.0f)
+        {
+            if (!currEffect->SetFrameParamScalings(scale))
+            {
+                Error2("Received scale factor for effect %s that don't use param scaling",effectName.GetDataSafe());
+            }
+        }
     
         unsigned int uniqueID = currEffect->Render(sector, pos, 0, attachTarget, up.Unit(), uniqueIDOverride);
         actualEffects.Put(uniqueID, currEffect);

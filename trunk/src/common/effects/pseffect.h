@@ -126,6 +126,10 @@ public:
     /// returns the time after which this effect will be killed
     int GetKillTime() const;
 
+    /** Set the scalings for each frame parameter.
+     */
+    bool SetFrameParamScalings(float scale);
+
     /** returns the animation length of the effect.
      *   @return the animation length (max anim length of effect objs)
      */

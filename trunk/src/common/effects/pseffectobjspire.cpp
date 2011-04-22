@@ -77,6 +77,8 @@ bool psEffectObjSpire::Load(iDocumentNode *node, iLoaderContext* ldr_context)
             sshape.Downcase();
             if (sshape == "circle")
                 shape = SPI_CIRCLE;
+            else if (sshape == "cylinder")
+                shape = SPI_CYLINDER;
             else if (sshape == "asterix")
                 shape = SPI_ASTERIX;
             else if (sshape == "star")
@@ -215,6 +217,23 @@ void psEffectObjSpire::CalculateData(int shape, int segments, csVector3 * verts,
                 texels[b*2+1].Set(u1, 0.99f);
             }
             break;
+        case SPI_CYLINDER:
+            for (int b=0; b<=segments; ++b)
+            {
+                float currAng = b * 2.0f*PI / segments;
+                float cosCurr = topScale*cosf(currAng);
+                float sinCurr = topScale*sinf(currAng);
+                
+                // vertex data
+                verts[b*2  ].Set(cosCurr, height, sinCurr);
+                verts[b*2+1].Set(cosCurr, 0, sinCurr);
+
+                // texture coordinates
+                float u1 = (float)b / (float)segments;
+                texels[b*2  ].Set(u1, 0.01f);
+                texels[b*2+1].Set(u1, 0.99f);
+            }
+            break;
         case SPI_ASTERIX:
             for (int b=0; b<segments; ++b)
             {
@@ -314,6 +333,7 @@ bool psEffectObjSpire::PostSetup()
     switch (shape)
     {
         case SPI_CIRCLE:
+        case SPI_CYLINDER:
             segments = (segments >= 3 ? segments : 3);
             facState->SetVertexCount(2 * segments + 2);
             break;
@@ -342,6 +362,7 @@ bool psEffectObjSpire::PostSetup()
     switch (shape)
     {
         case SPI_CIRCLE:
+        case SPI_CYLINDER:
             facState->SetTriangleCount(4*segments);
             for (int q=0; q<segments; ++q)
             {

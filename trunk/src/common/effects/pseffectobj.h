@@ -52,8 +52,16 @@ class psEffectObjKeyFrame
 {
 public:
     psEffectObjKeyFrame();
+    psEffectObjKeyFrame(const psEffectObjKeyFrame* other);
     psEffectObjKeyFrame(iDocumentNode *node, const psEffectObjKeyFrame *prevKeyFrame);
     ~psEffectObjKeyFrame();
+
+    /** Adjust each parameter that have the use_scale 
+     *  property set with this scale. 
+     *  @return True if if any params where scaled
+     */
+    bool SetParamScalings(float scale);
+
 
     /// this is the time of the keyframe animation (in milliseconds)
     csTicks time;
@@ -91,8 +99,9 @@ public:
         KA_VEC_COUNT
     };
 
-    float actions[KA_COUNT];
+    float     actions[KA_COUNT];
     csVector3 vecActions[KA_VEC_COUNT - KA_COUNT];
+    bool      useScale[KA_VEC_COUNT];  // If set to true upon load the actions are scaled after cloning.
 
     /// keep track of which actions were specified for which 
     csBitArray specAction;
@@ -146,6 +155,17 @@ public:
      */
     void DeleteAll()
     { keyFrames.DeleteAll(); }
+
+    /** Clones the key frame group object.
+     */
+    psEffectObjKeyFrameGroup* Clone() const;
+
+    /** Adjust each parameter in each frame that have the use_scale 
+     *  property set with this scale. 
+     *  @return True if if any params where scaled
+     */
+    bool SetFrameParamScalings(float scale);
+
 };
 
 /**
@@ -174,6 +194,12 @@ public:
     /** If the obj supports it, sets the scaling parameters.
      */
     virtual bool SetScaling(float scale, float aspect);
+
+    /** Adjust each parameter in each frame that have the use_scale 
+     *  property set with this scale. 
+     *  @return True if if any params where scaled
+     */
+    virtual bool SetFrameParamScalings(float scale);
 
     /** Updates the spell effect -- called every frame.
      *   @param elapsed the ticks elapsed since last update
