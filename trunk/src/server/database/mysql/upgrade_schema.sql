@@ -1564,7 +1564,17 @@ CREATE TABLE IF NOT EXISTS `character_variables` (
   PRIMARY KEY (`character_id`,`name`),
   KEY `character_id` (`character_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Used to store variables for a character';
-UPDATE `server_options` SET `option_value`='1256' WHERE `option_name`='db_version';
+UPDATE `server_options` SET `option_value`='1257' WHERE `option_name`='db_version';
+
+#1258 - Stefano Angeleri - removed useless columns. run faction-convert before doing the second part of these action
+CREATE TABLE IF NOT EXISTS `character_factions` (
+  `character_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'The PID of the character this faction is assigned to',
+  `faction_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'The id of the faction the points are for',
+  `value` int(10) NOT NULL DEFAULT '0' COMMENT 'The amount of points in this faction',
+  PRIMARY KEY (`character_id`,`faction_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 ROW_FORMAT=FIXED COMMENT='Stores the faction of the characters';
+UPDATE `server_options` SET `option_value`='1258' WHERE `option_name`='db_version';
+ALTER TABLE `characters` DROP COLUMN `faction_standings`;
 
 # PROPOSED CHANGES TO IMPROVE DB CONSISTENCY
 drop table accessrules;

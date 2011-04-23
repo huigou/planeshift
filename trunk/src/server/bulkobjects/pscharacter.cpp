@@ -493,7 +493,7 @@ bool psCharacter::Load(iResultRow& row)
         return false;
     }
 
-    factions = new FactionSet(row["faction_standings"], psserver->GetCacheManager()->GetFactionHash());
+    factions = new FactionSet(NULL, psserver->GetCacheManager()->GetFactionHash());
     if(!LoadFactions(pid))
     {
         return false;
