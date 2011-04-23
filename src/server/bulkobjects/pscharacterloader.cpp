@@ -311,7 +311,6 @@ bool psCharacterLoader::NewNPCCharacterData(AccountID accountid, psCharacter *ch
             "loc_yrot",
             "loc_sector_id",
             "loc_instance",
-            "faction_standings",
             "npc_spawn_rule",
             "npc_master_id",
             "npc_addl_loot_category_id",
@@ -360,10 +359,6 @@ bool psCharacterLoader::NewNPCCharacterData(AccountID accountid, psCharacter *ch
     values.FormatPush("%10.2f",yrot);
     values.FormatPush("%u",sectorinfo->uid);
     values.FormatPush("%u",instance);
-    csString csv = "";
-    if (chardata->GetFactions())
-        chardata->GetFactions()->GetFactionListCSV(csv);
-    values.FormatPush("%s",csv.GetData());
 
     values.FormatPush("%u",chardata->npcSpawnRuleId);
     values.FormatPush("%u",chardata->npcMasterId);
@@ -728,11 +723,6 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
     }
     else
         targetUpdate->AddField("last_login", chardata->GetLastLoginTime().GetData() );
-
-    csString csv = "";
-    if(chardata->GetFactions())
-        chardata->GetFactions()->GetFactionListCSV(csv);
-    targetUpdate->AddField("faction_standings", csv.GetData());
 
     // Create XML for a new progression script that'll restore ActiveSpells.
     csString script;
