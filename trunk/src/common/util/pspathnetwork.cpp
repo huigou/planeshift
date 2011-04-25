@@ -713,12 +713,16 @@ bool psPathNetwork::Delete(psPath * path)
     Waypoint * start = path->start;
     Waypoint * end = path->end;
 
+    start->RemoveLink(path);
+    end->RemoveLink(path);
+
     delete path;
 
     // Now delete any waypoints that dosn't have any links anymore.
     if (start->links.GetSize() == 0)
     {
         db->CommandPump("delete from sc_waypoints where id=%d",start->GetID());
+        db->CommandPump("delete from sc_waypoint_aliases where wp_id=%d",start->GetID());
 
         size_t index = waypoints.Find(start);
         if (index != csArrayItemNotFound)
@@ -731,6 +735,7 @@ bool psPathNetwork::Delete(psPath * path)
     if (end->links.GetSize() == 0)
     {
         db->CommandPump("delete from sc_waypoints where id=%d",end->GetID());
+        db->CommandPump("delete from sc_waypoint_aliases where wp_id=%d",end->GetID());
 
         size_t index = waypoints.Find(end);
         if (index != csArrayItemNotFound)
