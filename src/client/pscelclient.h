@@ -527,6 +527,7 @@ public:
     unsigned GetChatBubbleID() const;
 
     csRef<iSpriteCal3DState> cal3dstate;
+    csRef<CS::Mesh::iAnimatedMesh> animeshObject;
 
     /**
      * This optimal routine tries to get the animation index given an
