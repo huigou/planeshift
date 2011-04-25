@@ -2793,7 +2793,7 @@ AdminCmdDataPath::AdminCmdDataPath(AdminManager* msgManager, MsgEntry* me, psAdm
         else if (subCmd == "format" && words.GetCount() >= index+1)
         {
             waypointPathName = words[index++];    // Format
-            index = words.GetInt(index++); // First waypointnameindex
+            firstIndex = words.GetInt(index++); // First waypointnameindex
         }
         else if (subCmd == "hide")
         {
@@ -5734,7 +5734,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     }
     else if (data->subCmd == "format")
     {
-        client->WaypointSetPath(data->waypointPathName,data->index);
+        client->WaypointSetPath(data->waypointPathName,data->firstIndex);
         csString wp;
         wp.Format(client->WaypointGetPathName(),client->WaypointGetPathIndex());
         psserver->SendSystemInfo( me->clientnum, "New path format, first new WP will be: '%s'",wp.GetDataSafe());

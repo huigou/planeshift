@@ -2165,7 +2165,7 @@ public:
     bool addAlias; ///< alias subsubcommand add/remove flag
     csString flagName; ///< single flag name
     csString waypointPathName; ///< pathname for waypoints
-    int index; ///< index for waypoint paths
+    int firstIndex; ///< index for waypoint paths
     csString waypointFlags; ///< waypoint flags
     csString pathFlags; ///< path flags
     csString cmdTarget; ///< 'W' or 'P' as a target for hide/show
