@@ -779,7 +779,8 @@ csString AdminCmdSubCommandParser::GetHelpMessage()
     csHash<csString, csString>::GlobalIterator it = subCommands.GetIterator();
     while(it.HasNext())
     {
-        help += "|" + it.Next();
+        csTuple2<csString,csString> tuple = it.NextTuple();
+        help += "|" + tuple.second;
     }
     
     // remove the starting '|' character
@@ -806,7 +807,7 @@ void AdminCmdSubCommandParser::Push(csString subcommand, csString helpmsg)
 {
     // Lazyness^3, prefix the helpmessage automatically with the subcommand
     csString extendedhelpmsg(subcommand + " " + helpmsg);
-    subCommands.Put(subcommand, helpmsg);
+    subCommands.PutUnique(subcommand, helpmsg);
 }
 
 AdminCmdRewardParser::AdminCmdRewardParser()
@@ -2713,27 +2714,35 @@ csString AdminCmdDataAction::GetHelpMessage()
 }
 
 AdminCmdDataPath::AdminCmdDataPath(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client *client, WordArray &words)
-: AdminCmdData("/path"), subCommandList("show end point"), aliasSubCommandList("add remove"), wpList("waypoints points"), subCmd(), defaultRadius(2.0)
+: AdminCmdData("/path"), aliasSubCommandList("add remove"), wpList("waypoints points"), subCmd(), defaultRadius(2.0)
 {
-    // when help is requested, return immediate
-    if (IsHelp(words[1]))
-        return;
-
-    // register sub commands with their extended help message
-    subCommandList.Push("alias", "[add|remove]<alias>");
+    // register sub commands with their extended help message 
     subCommandList.Push("adjust","[<radius>]");
-    subCommandList.Push("display","['points'|'waypoints']");
-    subCommandList.Push("flagset","<flag> [<radius>]");
+    subCommandList.Push("alias", "[add|remove]<alias>");
+    subCommandList.Push("display","[points|waypoints]");
     subCommandList.Push("flagclear","<flag> [<radius>]");
+    subCommandList.Push("flagset","<flag> [<radius>]");
     subCommandList.Push("format","<format> [first]");
     subCommandList.Push("help","[sub command]");
-    subCommandList.Push("hide","['points'|'waypoints']");
+    subCommandList.Push("hide","[points|waypoints]");
     subCommandList.Push("info","[<radius>]");
+    subCommandList.Push("radius","<new radius> [<radius>]");
     subCommandList.Push("remove","[<radius>]");
     subCommandList.Push("rename","[<radius>] <name>");
     subCommandList.Push("select","<radius>");
+    subCommandList.Push("split","<radius> [wp flags]");
     subCommandList.Push("start","<radius> [wp flags] [path flags]");
     subCommandList.Push("stop","<radius> [wp flags]");
+
+    subCommandList.Push("end","See /path help stop");
+    subCommandList.Push("show","See /path help display");
+
+    // when help is requested, return immediate
+    if (IsHelp(words[1]))
+    {
+        subCmd = words[2]; // Next workd might be a sub Cmd.
+        return;
+    }
 
     size_t index = 1;
 
@@ -2772,7 +2781,7 @@ AdminCmdDataPath::AdminCmdDataPath(AdminManager* msgManager, MsgEntry* me, psAdm
             // error if there is a string
             else if (words.GetCount() != index)
             {
-                ParseError(me, "Waypoint or path expected, but >" + words[index] + "< found");
+                ParseError(me, "Waypoints or points expected, but >" + words[index] + "< found");
             }
         }
         // flagset|flagclear and at least one further word
@@ -2795,7 +2804,7 @@ AdminCmdDataPath::AdminCmdDataPath(AdminManager* msgManager, MsgEntry* me, psAdm
             // error if there is a string
             else if (words.GetCount() != index)
             {
-                ParseError(me,"Waypoint or path expected, but >" + words[index] + "< found");
+                ParseError(me,"Waypoints or points expected, but >" + words[index] + "< found");
             }
         }
         else if (subCmd == "info")
@@ -2805,6 +2814,11 @@ AdminCmdDataPath::AdminCmdDataPath(AdminManager* msgManager, MsgEntry* me, psAdm
         else if (subCmd == "point")
         {
             // No params
+        }
+        else if (subCmd == "radius")
+        {
+            newRadius = words.GetFloat(index++);
+            radius = words.GetFloat(index++);
         }
         else if (subCmd == "remove")
         {
@@ -2828,6 +2842,15 @@ AdminCmdDataPath::AdminCmdDataPath(AdminManager* msgManager, MsgEntry* me, psAdm
                 ParseError(me, "Missing waypoint");
             }
         }
+        else if (subCmd == "select")
+        {
+            radius = words.GetFloat(index++);
+        }
+        else if (subCmd == "split")
+        {
+            radius = words.GetFloat(index++);
+            waypointFlags = words[index++]; // Waypoint flags
+        }
         // start and at least radius is given
         else if (subCmd == "start" && words.GetCount() == index+1)
         {
@@ -2842,20 +2865,6 @@ AdminCmdDataPath::AdminCmdDataPath(AdminManager* msgManager, MsgEntry* me, psAdm
             subCmd = "stop";
             radius = words.GetFloat(index++);
             waypointFlags = words[index++];
-        }
-        else if (subCmd == "select")
-        {
-            radius = words.GetFloat(index++);
-        }
-        else if (subCmd == "split")
-        {
-            radius = words.GetFloat(index++);
-            waypointFlags = words[index++]; // Waypoint flags
-        }
-        else if (subCmd == "help")
-        {
-            help = true;
-            subCmd = words[index++]; // This might be help on a specific command
         }
     }
     // no target -> syntax error
@@ -2874,7 +2883,8 @@ ADMINCMDFACTORY_IMPLEMENT_MSG_FACTORY_CREATE(AdminCmdDataPath)
 
 csString AdminCmdDataPath::GetHelpMessage()
 {
-    if (!subCmd.IsEmpty()) {
+    if (!subCmd.IsEmpty())
+    {
         return "Syntax: \"" + command + " " + subCommandList.GetHelpMessage(subCmd) + "\"";
     }
     return "Syntax: \"" + command + " " + subCommandList.GetHelpMessage() + " [options]\"";
@@ -3887,10 +3897,10 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, Client *client)
     {
         KillNPC(me, msg, data, client);
     }
-	else if (data->command == "/rndmsgtest")
-	{
-		RandomMessageTest(data, client);
-	}
+    else if (data->command == "/rndmsgtest")
+    {
+        RandomMessageTest(data, client);
+    }
     else if (data->command == "/item")
     {
         CreateItem(me,msg,data,client);
@@ -5584,7 +5594,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
             {
                 if (client->PathIsDisplaying())
                 {
-                    psEffectMessage msg(me->clientnum,"admin_path_point",myPos,0,0,client->PathGetEffectID(),0.0f);
+                    psEffectMessage msg(me->clientnum,"admin_path_point",myPos,0,0,client->PathGetEffectID(),point->GetRadius());
                     msg.SendMessage();
                 }
 
@@ -5681,6 +5691,44 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         {
             psserver->SendSystemInfo(me->clientnum, "Failed to update flag %s for %s.",
                                      data->flagName.GetDataSafe(),wp->GetName());
+            return;
+        }
+    }
+    else if (data->subCmd == "radius")
+    {
+        float rangeWP,rangePoint;
+        int indexPoint;
+
+        Waypoint * wp = NULL;
+        psPath * pathPoint = NULL;
+
+        FindPath(myPos,mySector,data->radius,
+                 &wp,&rangeWP,
+                 NULL,NULL,NULL,NULL,
+                 &pathPoint,&rangePoint,&indexPoint);
+
+        if (!wp)
+        {
+            psserver->SendSystemInfo(me->clientnum, "No waypoint in range of %.2f.",data->radius);
+            return;
+        }
+
+        if (wp->SetRadius(db, data->newRadius))
+        {
+            if (client->WaypointIsDisplaying())
+            {
+                psEffectMessage msg(me->clientnum,"admin_waypoint",wp->GetPosition(),0,0,client->PathGetEffectID(),wp->GetRadius());
+                msg.SendMessage();
+            }
+
+            psserver->SendSystemInfo(me->clientnum, "Waypoint %s updated with new radius %.3f.",
+                                     wp->GetName(),wp->GetRadius());
+            return;
+        }
+        else
+        {
+            psserver->SendSystemInfo(me->clientnum, "Failed to update radius for %s.",
+                                     wp->GetName());
             return;
         }
     }

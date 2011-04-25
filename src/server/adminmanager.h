@@ -492,7 +492,7 @@ public:
      */
     bool IsSubCommand(const csString& word);
 
-    /** @brief test if a single word is a subcommand.
+    /** @brief add a new sub command with help text.
      * @param subcommand to register
      * @param helpmsg help message for the command
      * @return true when it is in the list of subcommands, otherwise false.
@@ -529,7 +529,7 @@ public:
     /** @brief Returns a help message describing the rewards syntax.
      * @return help message for the rewards syntax
      */
-    csString GetHelpMessage();
+    virtual csString GetHelpMessage();
 };
 
 /** @brief Base class for on, off, toggle string Parser.
@@ -2160,6 +2160,7 @@ public:
     csString subCmd;    ///< storage for subcommand
     float defaultRadius; ///< default radius for the case radius == 0.0
     float radius; ///< radius for waypoint/path operations
+    float newRadius; ///< The radius to set for new radius for wps.
     csString waypoint; ///< waypoint name
     bool addAlias; ///< alias subsubcommand add/remove flag
     csString flagName; ///< single flag name
