@@ -362,6 +362,25 @@ csString Waypoint::GetFlags()
     return flagStr;
 }
 
+bool Waypoint::SetRadius(iDataConnection * db, float radius)
+{
+    int res =db->Command("update sc_waypoints set radius='%f' where id=%d",
+                         radius, GetID());
+    if (res != 1)
+    {
+        return false;
+    } 
+   
+    return SetRadius( radius );
+}
+
+bool Waypoint::SetRadius(float radius)
+{
+    loc.radius = radius;
+    return true;
+}
+
+
 bool Waypoint::Rename(iDataConnection * db,const char* name)
 {
     int res =db->Command("update sc_waypoints set name='%s' where id=%d",
