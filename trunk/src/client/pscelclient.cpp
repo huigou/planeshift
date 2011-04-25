@@ -1449,6 +1449,7 @@ GEMClientActor::~GEMClientActor()
     delete post_load;
 
     cal3dstate.Invalidate();
+    animeshObject.Invalidate();
     if(rider.IsValid())
     {
         psengine->GetEngine()->RemoveObject(rider);
@@ -1504,7 +1505,7 @@ void GEMClientActor::CopyNewestData(GEMClientActor& oldActor)
 
 int GEMClientActor::GetAnimIndex (csStringHashReversible* msgstrings, csStringID animid)
 {
-    if (!cal3dstate)
+    if (!cal3dstate && (!animeshObject || !animeshObject->GetSkeleton() || !animeshObject->GetSkeleton()->GetFactory()))
     {
         return -1;
     }
@@ -1524,7 +1525,26 @@ int GEMClientActor::GetAnimIndex (csStringHashReversible* msgstrings, csStringID
     }
     else //no need to call this with an empty string in case of bad data so let's skip it in that case
     {
-        idx = cal3dstate->FindAnim (animName.GetData());
+        //a cal3d mesh
+        if(cal3dstate)
+            idx = cal3dstate->FindAnim (animName.GetData());
+        else // an animesh mesh
+        {
+            CS::Animation::iSkeletonAnimPacketFactory* packetFactory = animeshObject->GetSkeleton()->GetFactory()->GetAnimationPacket();
+            idx = -1; //we initialize this at -1 in case we are unable to find our result
+            if (packetFactory)
+            {
+                for (size_t i = 0; i < packetFactory->GetAnimationCount (); i++)
+                {
+                    if(animName == packetFactory->GetAnimation(i)->GetName())
+                    {
+                        //we have found the name
+                        idx = i;
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     if (idx >= 0)
@@ -1957,6 +1977,7 @@ void GEMClientActor::SetIdleAnimation(const char* anim)
 void GEMClientActor::RefreshCal3d()
 {
     cal3dstate =  scfQueryInterface<iSpriteCal3DState > ( pcmesh->GetMeshObject());
+    animeshObject = scfQueryInterface<CS::Mesh::iAnimatedMesh>(pcmesh->GetMeshObject());
     CS_ASSERT(cal3dstate);
 }
 
