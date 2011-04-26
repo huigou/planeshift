@@ -1766,7 +1766,7 @@ float psCamera::SaturateAngle(float angle) const
     while (angle >= PI)
         angle -= 2*PI;
 
-    while (angle < -3.14169f)  //TODO : is this right, or should it be replaced with PI?
+    while (angle < -PI)
         angle += 2*PI;
 
     return angle;
