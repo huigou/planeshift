@@ -292,7 +292,7 @@
         <element name="animal-affinity"> <ref name="applied2"/> </element>
 
         <!-- overridables -->
-        <element name="mesh"> <ref name="applied1"/> </element>
+        <element name="race"> <ref name="applied1"/> <attribute name="sex"/> </element>
         <element name="pos"> <ref name="teleport"/> </element>
 
         <!-- other -->
