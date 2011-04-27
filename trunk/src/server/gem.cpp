@@ -2017,7 +2017,6 @@ lastSentSuperclientInstance(-1), activeReports(0), isFalling(false), invincible(
 nevertired(false), infinitemana(false), instantcast(false), safefall(false), givekillexp(false), attackable(false)
 {
     forcedSector = NULL;
-    matname = chardata->GetRaceInfo()->base_texture_name;
     entityManager = entitymanager;
 
     pid = chardata->GetPID();
@@ -2787,7 +2786,7 @@ void gemActor::Send( int clientnum, bool control, bool to_superclients, psPersis
                          name,
                          guildName,
                          factname.Current(),
-                         matname,
+                         psChar->GetRaceInfo()->GetTextureName(),
                          psChar->GetRaceInfo()->name,
                          GetMount() ? GetMount()->GetRaceInfo()->mesh_name : "null",
                          GetMount() ? GetMount()->GetRaceInfo()->GetMounterAnim() : "null",
@@ -4734,7 +4733,7 @@ void gemNPC::Send( int clientnum, bool control, bool to_superclients, psPersistA
                          name,
                          guildName,
                          factname.Current(),
-                         matname,
+                         psChar->GetRaceInfo()->GetTextureName(),
                          psChar->GetRaceInfo()->name,
                          GetMount() ? GetMount()->GetRaceInfo()->mesh_name : "null",
                          GetMount() ? GetMount()->GetRaceInfo()->GetMounterAnim() : "null",
