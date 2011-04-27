@@ -406,7 +406,6 @@ void UserManager::SendCharacterDescription(Client * client, gemActor *actor, boo
 {
     psCharacter *charData = actor->GetCharacterData();
     //StatSet & playerAttr = client->GetCharacterData()->Stats();
-    csString meshName = charData->GetActor()->GetMesh();
 
     bool isSelf = (charData->GetPID() == client->GetCharacterData()->GetPID());
 
@@ -414,7 +413,7 @@ void UserManager::SendCharacterDescription(Client * client, gemActor *actor, boo
     csString raceName;
     csString creationinfo;
     PSCHARACTER_GENDER gender;
-    psRaceInfo* charrinfo = cacheManager->GetRaceInfoByMeshName(meshName);
+    psRaceInfo* charrinfo = charData->GetRaceInfo();
     if (charrinfo != NULL)
     {
         raceName = charrinfo->GetRace();

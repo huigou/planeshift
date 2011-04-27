@@ -323,7 +323,7 @@ bool psCharacterLoader::NewNPCCharacterData(AccountID accountid, psCharacter *ch
     values.FormatPush("%d",accountid.Unbox() ? accountid.Unbox() : chardata->GetAccount().Unbox());
     values.FormatPush("%s",chardata->GetCharName());
     values.FormatPush("%s",chardata->GetCharLastName());
-    values.FormatPush("%u",chardata->GetRaceInfo()->uid);
+    values.FormatPush("%u",chardata->GetOverridableRace().Base()->uid);
     values.FormatPush("%u",chardata->GetCharType() );
     values.FormatPush("%s",chardata->GetDescription());
     values.FormatPush("%s",chardata->GetOOCDescription());
@@ -651,7 +651,7 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
     targetUpdate->AddField("name", chardata->GetCharName());
     targetUpdate->AddField("lastname", chardata->GetCharLastName());
     targetUpdate->AddField("old_lastname", chardata->GetOldLastName());
-    targetUpdate->AddField("racegender_id", chardata->GetRaceInfo()->uid);
+    targetUpdate->AddField("racegender_id", chardata->GetOverridableRace().Base()->uid);
     targetUpdate->AddField("character_type", chardata->GetCharType());
     targetUpdate->AddField("base_strength", chardata->Stats()[PSITEMSTATS_STAT_STRENGTH].Base());
     targetUpdate->AddField("base_agility", chardata->Stats()[PSITEMSTATS_STAT_AGILITY].Base());

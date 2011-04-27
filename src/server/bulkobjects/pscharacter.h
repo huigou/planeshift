@@ -547,6 +547,33 @@ class charVariable
     charVariable(csString name, csString value, bool dirty) : name(name), value(value), dirty(dirty) {}
 };
 
+class OverridableRace : public Overridable<psRaceInfo*>
+{
+public:
+
+    /** Constructor, wants a @see psRaceInfo pointer which should be the default one usually.
+     *  @param race A pointer to a @see psRaceInfo.
+     */
+    OverridableRace(psRaceInfo* race) : Overridable<psRaceInfo*>(race) {}
+
+    /// Destructor
+    virtual ~OverridableRace() { }
+
+    /** Sets a which character owns this overridableRace.
+     *  @param psChar A pointer to a pscharacter.
+     */
+    void SetCharacter(psCharacter *psChar) { character = psChar; }
+
+protected:
+
+    /** Function called when the overridable is changed. It sets the base
+     *  values of the race and the helm/belt... groups.
+     */
+    virtual void OnChange();
+
+    psCharacter *character; ///< Pointer to the psCharacter owning this overridable class.
+};
+
 //-----------------------------------------------------------------------------
 
 class psCharacter : public iScriptableVar, public iCachedObject
@@ -706,8 +733,23 @@ public:
     void SetIsMarried( bool married ) { isMarried = married; }
     bool GetIsMarried() const { return isMarried; }
 
+    /** Sets the provided race info as the base default one.
+     *  Don't use this to change temporarily the raceinfo but only definitely
+     *  (or upon load)
+     *  @param rinfo A pointer to a @see psRaceInfo
+     */
     void SetRaceInfo(psRaceInfo *rinfo);
-    psRaceInfo *GetRaceInfo() { return raceinfo; }
+
+    /** Gets the pointer to the global current raceinfo applied to this character.
+     *  @return A @see psRaceInfo pointer
+     */
+    psRaceInfo *GetRaceInfo();
+
+    /** Gets a reference to the overridable race allowing to override it or check the base race.
+     * 
+     *  @return A @see OverridableRace reference in this psCharacter
+     */
+    OverridableRace & GetOverridableRace();
 
     /** @brief Add a new explored area.
      *
@@ -1199,7 +1241,7 @@ protected:
     csString spouseName;
     bool     isMarried;
 
-    psRaceInfo *raceinfo;
+    OverridableRace race; ///< Holds the race of this character and it's overriden values.
 
     FactionSet *factions;
     

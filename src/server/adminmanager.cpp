@@ -2448,14 +2448,14 @@ AdminCmdDataMorph::AdminCmdDataMorph(AdminManager* msgManager, MsgEntry* me, psA
         index++;
     }
     //always allow list whathever there is a target or not
-    if(words.GetCount() == index && words[index] == "list")
+    if(words.GetCount() == index + 1 && words[index] == "list")
     {
         subCommand = words[index++];
         if (words.GetCount() > index + 1)
             ParseError(me, "Subcommand " + subCommand + " does not have any parameters");
     }
     // when first word is a target or the client has selected a target
-    if(words.GetCount() == index + 1 && (found || (IsTargetType(ADMINCMD_TARGET_CLIENTTARGET)))) 
+    else if(words.GetCount() >= index + 1 && (found || (IsTargetType(ADMINCMD_TARGET_CLIENTTARGET)))) 
     {
         // test for a subcommand then
         if (words[index] == "list" || words[index] == "reset")
@@ -2466,7 +2466,17 @@ AdminCmdDataMorph::AdminCmdDataMorph(AdminManager* msgManager, MsgEntry* me, psA
         }
         else
         {
-            meshName = words[index++];
+            raceName = words[index++];
+            //if there is another entry (specifying the gender)
+            //use it else use a default.
+            if(words.GetCount() == index + 1)
+            {
+                genderName = words[index++];
+            }
+            else
+            {
+                genderName = "m";
+            }
         }
     }
     // no target -> syntax error
@@ -2480,7 +2490,7 @@ ADMINCMDFACTORY_IMPLEMENT_MSG_FACTORY_CREATE(AdminCmdDataMorph)
 
 csString AdminCmdDataMorph::GetHelpMessage()
 {
-    return "Syntax: \"" + command + " " + GetHelpMessagePartForTarget() + "\"";
+    return "Syntax: \"" + command + " " + GetHelpMessagePartForTarget() + "\" racename|list|reset [gender]";
 }
 
 AdminCmdDataSetSkill::AdminCmdDataSetSkill(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client *client, WordArray &words)
@@ -9977,39 +9987,19 @@ void AdminManager::Morph(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmd
     if (data->subCommand == "list")
     {
         static csString list;
-        /*// Get array of mounted model directories
-        const char* modelsPath = "/planeshift/models/";
-        size_t modelsPathLength = strlen(modelsPath);
-        csRef<iVFS> vfs = csQueryRegistry<iVFS> (psserver->GetObjectReg());
-        csRef<iStringArray> dirPaths = vfs->FindFiles(modelsPath);*/
-        csStringArray dirNames;
-        /*for (size_t i=0; i < dirPaths->GetSize(); i++)
-        {
-            csString path = dirPaths->Get(i);
-            csString name = path.Slice( modelsPathLength, path.Length()-modelsPathLength-1 );
-            if (name.Length() && name.GetAt(0) != '.')
-            {
-                if ( vfs->Exists(path+name+".cal3d") )
-                    dirNames.Push(name);
-                else
-                    Error2("Model dir %s lacks a valid cal3d file!", name.GetData() );
-            }
-        }*/
-        
-        //construct a list coming from the race info list, will probably kill duplicates coming
-        //from races with same mesh name but different texture for now
-        //but till we have an idea on how to allow the user to select them let's leave like this to
-        //have at least a basic listing
+        csStringArray raceNames;
+
+        //construct a list coming from the race info list.
         for(size_t i = 0; i < psserver->GetCacheManager()->GetRaceInfoCount(); i++)
-            dirNames.PushSmart(psserver->GetCacheManager()->GetRaceInfoByIndex(i)->GetMeshName());
+            raceNames.PushSmart(psserver->GetCacheManager()->GetRaceInfoByIndex(i)->GetName());
  
         // Make alphabetized list
-        dirNames.Sort();
-        list = "Available models:  ";
-        for (size_t i=0; i<dirNames.GetSize(); i++)
+        raceNames.Sort();
+        list = "Available races:  ";
+        for (size_t i=0; i<raceNames.GetSize(); i++)
         {
-            list += dirNames[i];
-            if (i < dirNames.GetSize()-1)
+            list += raceNames[i];
+            if (i < raceNames.GetSize()-1)
                 list += ", ";
         }
 
@@ -10023,28 +10013,35 @@ void AdminManager::Morph(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmd
         return;
     }
 
+    //check if there is permissions to morph other players
     if(data->targetClient != client && !psserver->CheckAccess(client, "morph others"))
     {
-        psserver->SendSystemError(me->clientnum,"You don't have permission to change mesh of %s!", data->targetClient->GetName());
+        psserver->SendSystemError(me->clientnum,"You don't have permission to change race of %s!", data->targetClient->GetName());
         return;
     }
 
     gemActor* target = data->targetClient->GetActor();
 
+    //if the user issued a reset restore the basic race
     if (data->subCommand == "reset")
     {
-        psserver->SendSystemInfo(me->clientnum, "Resetting mesh for %s", data->targetClient->GetName());
-        target->GetOverridableMesh().Cancel(MORPH_FAKE_ACTIVESPELL);
+        psserver->SendSystemInfo(me->clientnum, "Resetting race for %s", data->targetClient->GetName());
+        target->GetCharacterData()->GetOverridableRace().Cancel(MORPH_FAKE_ACTIVESPELL);
     }
     else
     {
-        if(!psserver->GetCacheManager()->GetRaceInfoByMeshName(data->meshName.GetData()))
+        //otherwise set the defined race by race name and gender
+        psRaceInfo *race = psserver->GetCacheManager()->GetRaceInfoByNameGender(data->raceName, psserver->GetCacheManager()->ConvertGenderString(data->genderName)) ;
+        if(!race)
         {
-            psserver->SendSystemError(me->clientnum, "Unable to override mesh for %s to %s. Race not found.", data->targetClient->GetName(), data->meshName.GetData());
+            //the race couldn't be found in this case
+            psserver->SendSystemError(me->clientnum, "Unable to override race for %s to %s (%s). Race not found.", data->targetClient->GetName(),
+                                                     data->raceName.GetData(), data->genderName.GetData());
             return;
         }
-        psserver->SendSystemInfo(me->clientnum, "Overriding mesh for %s to %s", data->targetClient->GetName(), data->meshName.GetData());
-        target->GetOverridableMesh().Override(MORPH_FAKE_ACTIVESPELL, data->meshName);
+        //override the race using a fake spell
+        psserver->SendSystemInfo(me->clientnum, "Overriding race for %s to %s", data->targetClient->GetName(), data->raceName.GetData());
+        target->GetCharacterData()->GetOverridableRace().Override(MORPH_FAKE_ACTIVESPELL, race);
     }
 }
 

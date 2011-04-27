@@ -366,26 +366,29 @@ protected:
 //----------------------------------------------------------------------------
 
 /// Applied mode mesh overriding.
-class MeshAOp : public AppliedOp
+class RaceAOp : public AppliedOp
 {
 public:
-    MeshAOp() : AppliedOp() { }
-    virtual ~MeshAOp() { }
+    RaceAOp() : AppliedOp() { }
+    virtual ~RaceAOp() { }
 
     bool Load(iDocumentNode* node)
     {
         value = node->GetAttributeValue("value");
+        sex   = node->GetAttributeValue("sex");
         return !value.IsEmpty();
     }
 
     void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
-        target->GetOverridableMesh().Override(asp, value);
-        asp->Add(target->GetOverridableMesh(), "<mesh value=\"%s\"/>", value.GetData());
+        psRaceInfo *race = psserver->GetCacheManager()->GetRaceInfoByNameGender(value,psserver->GetCacheManager()->ConvertGenderString(sex));
+        target->GetCharacterData()->GetOverridableRace().Override(asp, race);
+        asp->Add(target->GetCharacterData()->GetOverridableRace(), "<race value=\"%s\" sex=\"%s\"/>", value.GetData(), sex.GetData());
     }
 
 protected:
     csString value;
+    csString sex;
 };
 
 //----------------------------------------------------------------------------
@@ -837,9 +840,9 @@ ApplicativeScript* ApplicativeScript::Create(EntityManager* entitymanager, Cache
             continue;
         }
         // overridables
-        else if (elem == "mesh")
+        else if (elem == "race")
         {
-            op = new MeshAOp;
+            op = new RaceAOp;
         }
         else if (elem == "pos")
         {

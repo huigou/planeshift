@@ -109,23 +109,6 @@ private:
     gemObject* object;          ///< The object that is attached to a iMeshWrapper object.
 };
 
-//-----------------------------------------------------------------------------
-
-class OverridableMesh : public Overridable<csString>
-{
-public:
-    OverridableMesh(CacheManager* cachemanager, const csString mesh) : Overridable<csString>(mesh), actor(NULL) {cacheManager = cachemanager; }
-    virtual ~OverridableMesh() { }
-
-    void SetActor(gemActor *act) { actor = act; }
-protected:
-    virtual void OnChange();
-    gemActor *actor;
-    CacheManager *cacheManager;
-};
-
-//-----------------------------------------------------------------------------
-
 /**
 * This class holds the refs to the core factories, etc in CEL.
 */
@@ -337,8 +320,7 @@ public:
      */
     //@{
     iMeshWrapper *GetMeshWrapper();
-    csString GetMesh() { return factname.Current(); }
-    OverridableMesh & GetOverridableMesh() { return factname; }
+    csString GetMesh() { return factname; }
     void Move(const csVector3& pos,float rotangle,iSector* room);
     bool IsNear(gemObject *obj,float radius, bool ignoreY = false);
     const csVector3 & GetPosition();
@@ -449,7 +431,7 @@ protected:
     CacheManager* cacheManager;
     InstanceID worldInstance;                   ///< Only objects which match instances can see each other
     bool is_alive;                              ///< Flag indicating whether object is alive or not
-    OverridableMesh factname;                   ///< Name of CS Mesh Factory used to create this object
+    csString factname;                          ///< Name of CS Mesh Factory used to create this object
     csString matname;                           ///< Name of base material used by this object.
     EID eid;                                    ///< Entity ID (unique identifier for object)
     csRef<iMeshFactoryWrapper> nullfact;        ///< Null factory for our mesh instances.
