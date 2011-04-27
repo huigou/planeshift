@@ -115,6 +115,11 @@ public:
     const char *GetRace() { return name; }
     
     const char *GetMeshName() { return mesh_name.GetDataSafe(); }
+
+    /** Gets the name of the texture associated to this race, if any.
+     *  @return The name of the texture.
+     */
+    const char *GetTextureName() { return base_texture_name.GetDataSafe(); }
     
     const char *GetHelmGroup()   { return helmGroup.GetDataSafe(); }
     const char *GetBracerGroup() { return BracerGroup.GetDataSafe(); }
