@@ -175,7 +175,7 @@ INSERT INTO progression_events VALUES('drink_strange_potion','<script><msg aim="
 INSERT INTO progression_events VALUES('create_familiar','<script><create-familiar aim="Target"/></script>');
 INSERT INTO progression_events VALUES('fire_damage','<script><hp aim="Actor" value="-6"/><msg aim="Actor" text="You touch the ingots and your hand is burned!"/></script>');
 INSERT INTO progression_events VALUES('healing_tree','<script><hp aim="Actor" value="6"/><msg aim="Actor" text="Walking near the tree you feel refreshed!"/></script>');
-INSERT INTO progression_events VALUES('morph_ulbernaut','<script><apply aim="Actor" type="buff" name="Ulberform" duration="60000"><mesh value="ulbernaut"/><msg text="You turn into a lumbering giant!" undo="Your ulbernaut form wears off."/></apply></script>');
+INSERT INTO progression_events VALUES('morph_ulbernaut','<script><apply aim="Actor" type="buff" name="Ulberform" duration="60000"><race value="ulbernaut" sex="n"/><msg text="You turn into a lumbering giant!" undo="Your ulbernaut form wears off."/></apply></script>');
 INSERT INTO progression_events VALUES('stronglegs','<script><msg aim="Actor" text="stronglegs not implemented."/></script>');
 INSERT INTO progression_events VALUES('rain','<script><msg aim="Actor" text="rain not implemented."/></script>');
 -- I don't think we can do the original Nitroglycerin effect anymore. :(
