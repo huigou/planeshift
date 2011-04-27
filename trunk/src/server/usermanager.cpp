@@ -1541,7 +1541,7 @@ void UserManager::LogStuck(Client* client)
 
     csString buffer;
     buffer.Format("%s, %s, %d, %s, %.3f, %.3f, %.3f, %.3f", client->GetName(),
-        race->name.GetDataSafe(), race->gender,
+        race->GetName(), race->gender,
         sector->QueryObject()->GetName(), pos.x, pos.y, pos.z, yrot);
     psserver->GetLogCSV()->Write(CSV_STUCK, buffer);
 }

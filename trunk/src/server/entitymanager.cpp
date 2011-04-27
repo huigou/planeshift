@@ -315,7 +315,7 @@ gemNPC* EntityManager::CloneNPC ( psCharacter *chardata )
     }
 
     db->Command("INSERT INTO npc_knowledge_areas(player_id, area, priority) VALUES (%d, 'Pet %s 1', '1')", 
-                npcPID.Unbox(), npc->GetCharacterData()->GetRaceInfo()->name.GetData() );
+                npcPID.Unbox(), npc->GetCharacterData()->GetRaceInfo()->GetName() );
 
     psServer::CharacterLoader.SaveCharacterData( npc->GetCharacterData(), npc, false );
 
