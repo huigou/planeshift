@@ -2196,7 +2196,7 @@ psRaceInfo *CacheManager::GetRaceInfoByNameGender(const char *name,PSCHARACTER_G
     for (i=0;i<raceinfolist.GetSize();i++)
     {
         currentri=raceinfolist.Get(i);
-        if (currentri!=NULL && currentri->gender==gender && raceName.CompareNoCase(currentri->name))
+        if (currentri!=NULL && currentri->gender==gender && raceName.CompareNoCase(currentri->GetName()))
         {
             return currentri;
         }

@@ -486,7 +486,7 @@ void psNPCDialog::SubstituteKeywords(Client * player, csString& resp) const
         }
         else if (word == "$playerrace")
         {            
-            if (!response.ReplaceSubString(word, player->GetCharacterData()->GetRaceInfo()->name))
+            if (!response.ReplaceSubString(word, player->GetCharacterData()->GetRaceInfo()->GetName()))
             {
                 Error4("Failed to replace substring %s in %s with %s",word.GetData(),response.GetData(),player->GetName());
             }

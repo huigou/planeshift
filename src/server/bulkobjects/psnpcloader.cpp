@@ -975,7 +975,6 @@ bool psNPCLoader::SaveDialogsToFile(csString &area, csString &filename, int ques
 void psNPCLoader::WriteBasicInfo()
 {
     psRaceInfo* raceInfo = npc->GetOverridableRace().Base();
-    csString race = raceInfo->name;
     csString gender;
     if (raceInfo->gender==PSCHARACTER_GENDER_FEMALE) 
         gender = "f" ;
@@ -985,7 +984,7 @@ void psNPCLoader::WriteBasicInfo()
         gender = "n";
 
     npcRoot->SetAttribute("name", npc->GetCharName());
-    npcRoot->SetAttribute("race", raceInfo->name.GetData());
+    npcRoot->SetAttribute("race", raceInfo->GetName());
     npcRoot->SetAttribute("sex", gender);
     npcRoot->SetAttribute("invulnerable", (npc->GetImperviousToAttack() & ALWAYS_IMPERVIOUS) ? "Y":"N");
     npcRoot->SetAttributeAsInt("kill_exp", npc->GetKillExperience());
