@@ -19,8 +19,10 @@ while ($row = mysql_fetch_array($scripts))
     {
         $factionVALUE = strtok(",");
         //protection against malformed faction standings
-        if($factionVALUE == FALSE || $factionVALUE == "")
+        if($factionVALUE === FALSE || $factionVALUE == "")
+        {
             break;
+        }
         //add the new faction in the new table
         $query = "INSERT INTO character_factions (character_id, faction_id, value) values (".$pid.",".$factionID.",".$factionVALUE.")";
         mysql_query($query);
