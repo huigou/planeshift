@@ -974,7 +974,7 @@ bool psNPCLoader::SaveDialogsToFile(csString &area, csString &filename, int ques
 
 void psNPCLoader::WriteBasicInfo()
 {
-    psRaceInfo* raceInfo = npc->GetRaceInfo();
+    psRaceInfo* raceInfo = npc->GetOverridableRace().Base();
     csString race = raceInfo->name;
     csString gender;
     if (raceInfo->gender==PSCHARACTER_GENDER_FEMALE) 

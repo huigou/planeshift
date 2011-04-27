@@ -570,7 +570,7 @@ gemObject::gemObject(GEMSupervisor* gemsupervisor,
                      iSector* room,
                      const csVector3& pos,
                      float rotangle,
-                     int clientnum) : factname(cachemanager,factname)
+                     int clientnum) : factname(factname)
 {
     cel = gemsupervisor;
     entityManager = entitymanager;
@@ -1221,7 +1221,7 @@ void gemItem::Broadcast(int clientnum, bool control )
                          eid,
                          -2,
                          name,
-                         factname.Current(),
+                         factname,
                          matname,
                          GetSectorName(),
                          GetPosition(),
@@ -1290,7 +1290,7 @@ void gemItem::Send( int clientnum, bool , bool to_superclients, psPersistAllEnti
                          eid,
                          -2,
                          name,
-                         factname.Current(),
+                         factname,
                          matname,
                          GetSectorName(),
                          GetPosition(),
@@ -1971,33 +1971,6 @@ void gemActionLocation::Send( int clientnum, bool , bool to_superclients, psPers
 
     */
 }
-//-====================================================================================-
-
-void OverridableMesh::OnChange()
-{
-    if (actor)
-    {
-        //NOTE: maybe we should change also the raceinfo of the character? But this would affect the output
-        //      of a lot of things, including the save functions of the character
-        psRaceInfo* race = cacheManager->GetRaceInfoByMeshName(Current());
-        if (race != NULL)
-        {
-            actor->GetCharacterData()->SetHelmGroup(race->GetHelmGroup());
-            actor->GetCharacterData()->SetBracerGroup(race->GetBracerGroup());
-            actor->GetCharacterData()->SetBeltGroup(race->GetBeltGroup());
-            actor->GetCharacterData()->SetCloakGroup(race->GetCloakGroup());
-        }
-        else //default no group
-        {
-            actor->GetCharacterData()->SetHelmGroup("");
-            actor->GetCharacterData()->SetBracerGroup("");
-            actor->GetCharacterData()->SetBeltGroup("");
-            actor->GetCharacterData()->SetCloakGroup("");
-        }
-
-        actor->SetMesh(Current());
-    }
-}
 
 //--------------------------------------------------------------------------------------
 // gemActor
@@ -2050,8 +2023,6 @@ nevertired(false), infinitemana(false), instantcast(false), safefall(false), giv
     if (psChar->IsStatue())
         player_mode = PSCHARACTER_MODE_STATUE;
     combat_stance = CombatManager::GetStance(cachemanager,"None");
-
-    this->factname.SetActor(this);
 
     Debug6(LOG_NPC,0,"Successfully created actor %s at %1.2f,%1.2f,%1.2f in sector %s.\n",
         factname,pos.x,pos.y,pos.z,GetSectorName());
@@ -2756,10 +2727,6 @@ void gemActor::Send( int clientnum, bool control, bool to_superclients, psPersis
     }
 
     uint32_t flags = 0;
-    csString helmGroup   = psChar->GetHelmGroup();
-    csString BracerGroup = psChar->GetBracerGroup();
-    csString BeltGroup   = psChar->GetBeltGroup();
-    csString CloakGroup  = psChar->GetCloakGroup();
 
     // The following flags will be percepted to the NPC client in the FlagPerception message
     // upon change.
@@ -2785,18 +2752,18 @@ void gemActor::Send( int clientnum, bool control, bool to_superclients, psPersis
                          control,
                          name,
                          guildName,
-                         factname.Current(),
+                         psChar->GetRaceInfo()->GetMeshName(),
                          psChar->GetRaceInfo()->GetTextureName(),
-                         psChar->GetRaceInfo()->name,
+                         psChar->GetRaceInfo()->GetName(),
                          GetMount() ? GetMount()->GetRaceInfo()->mesh_name : "null",
                          GetMount() ? GetMount()->GetRaceInfo()->GetMounterAnim() : "null",
                          psChar->GetRaceInfo()->gender,
                          psChar->GetRaceInfo()->GetScale(),
                          GetMount() ? GetMount()->GetRaceInfo()->GetScale() : 1,
-                         helmGroup,
-                         BracerGroup,
-                         BeltGroup,
-                         CloakGroup,
+                         psChar->GetHelmGroup(),
+                         psChar->GetBracerGroup(),
+                         psChar->GetBeltGroup(),
+                         psChar->GetCloakGroup(),
                          top, bottom,offset,
                          texparts,
                          equipmentParts,
@@ -4720,11 +4687,6 @@ void gemNPC::Send( int clientnum, bool control, bool to_superclients, psPersistA
                                                              flags |= psPersistActor::NAMEKNOWN;*/
     }
 
-    csString helmGroup   = psChar->GetHelmGroup();
-    csString BracerGroup = psChar->GetBracerGroup();
-    csString BeltGroup    = psChar->GetBeltGroup();
-    csString CloakGroup  = psChar->GetCloakGroup();
-
     psPersistActor mesg(
                          clientnum,
                          securityLevel,
@@ -4732,18 +4694,18 @@ void gemNPC::Send( int clientnum, bool control, bool to_superclients, psPersistA
                          control,
                          name,
                          guildName,
-                         factname.Current(),
+                         psChar->GetRaceInfo()->GetMeshName(),
                          psChar->GetRaceInfo()->GetTextureName(),
-                         psChar->GetRaceInfo()->name,
+                         psChar->GetRaceInfo()->GetName(),
                          GetMount() ? GetMount()->GetRaceInfo()->mesh_name : "null",
                          GetMount() ? GetMount()->GetRaceInfo()->GetMounterAnim() : "null",
                          psChar->GetRaceInfo()->gender,
                          psChar->GetRaceInfo()->GetScale(),
                          GetMount() ? GetMount()->GetRaceInfo()->GetScale() : 1,
-                         helmGroup,
-                         BracerGroup,
-                         BeltGroup,
-                         CloakGroup,
+                         psChar->GetHelmGroup(),
+                         psChar->GetBracerGroup(),
+                         psChar->GetBeltGroup(),
+                         psChar->GetCloakGroup(),
                          top, bottom,offset,
                          texparts,
                          equipmentParts,

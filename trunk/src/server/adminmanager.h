@@ -1885,7 +1885,8 @@ class AdminCmdDataMorph : public AdminCmdDataTarget
 {
 public:
     csString subCommand; ///< subcommand (if any)
-    csString meshName; ///< name of the mesh to morph to
+    csString raceName;   ///< name of the race to morph to
+    csString genderName; ///< name of the gender to morph to
 
     /** @brief Creates obj for specified command that needs a reason.
      */

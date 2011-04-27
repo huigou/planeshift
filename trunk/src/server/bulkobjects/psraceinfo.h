@@ -78,9 +78,10 @@ public:
     uint32 natural_weapon_id;
     float runMinSpeed,runBaseSpeed,runMaxSpeed;
     float walkMinSpeed,walkBaseSpeed,walkMaxSpeed;
-    float scale; ///< The scale override of this race
     
     float GetBaseAttribute(PSITEMSTATS_STAT attrib);
+
+private:
     
     csString helmGroup;         ///< The name of the helm group race is in.
     csString BracerGroup;       ///< The name of the bracer group race is in.
@@ -89,9 +90,10 @@ public:
     
     csString MounterAnim;       ///< The name of the anim the mounter will use when mounting this race.
 
-    float speedModifier;
-    
-private:
+    float speedModifier;        ///< The speed modifier of this race compared to default speeds
+
+    float scale;                ///< The scale override of this race
+
     void  SetBaseAttribute(PSITEMSTATS_STAT attrib, float val);
 public:
 
@@ -104,6 +106,11 @@ public:
     {
         size = this->size;
     };
+
+    /** Gets the name of this race.
+     *  @return The race name.
+     */
+    const char *GetName() { return name.GetDataSafe(); }
 
     const char *GetHonorific();
     const char *GetObjectPronoun();

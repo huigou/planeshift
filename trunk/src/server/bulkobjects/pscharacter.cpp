@@ -109,7 +109,8 @@ void psCharacter::operator delete(void *releasePtr)
 
 psCharacter::psCharacter() : inventory(this),
     guildinfo(NULL), attributes(this), modifiers(this),
-    skills(this), acquaintances(101, 10, 101), npcMasterId(0), deaths(0), kills(0), suicides(0), loaded(false)
+    skills(this), acquaintances(101, 10, 101), npcMasterId(0), deaths(0), kills(0), suicides(0), loaded(false),
+    race(NULL)
 {
     characterType = PSCHARACTER_TYPE_UNKNOWN;
 
@@ -129,7 +130,7 @@ psCharacter::psCharacter() : inventory(this),
     SetSpouseName( "" );
     isMarried = false;
 
-    raceinfo = NULL;
+    race.SetCharacter(this);
     vitals = new psServerVitals(this);
 //    workInfo = new WorkInformation();
 
@@ -292,9 +293,6 @@ bool psCharacter::Load(iResultRow& row)
     }
     SetRaceInfo(raceinfo);
 
-    //Assign the Helm/bracer/belt/cloak Group
-    Result GroupsResult(db->Select("SELECT helm, bracer, belt, cloak FROM race_info WHERE id=%d", raceid));
-
     if(csGetTicks() - start > 500)
     {
         csString status;
@@ -303,13 +301,6 @@ bool psCharacter::Load(iResultRow& row)
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
 
-    helmGroup = GroupsResult[0]["helm"];
-
-    BracerGroup = GroupsResult[0]["bracer"];
-
-    BeltGroup = GroupsResult[0]["belt"];
-
-    CloakGroup = GroupsResult[0]["cloak"];
 
     SetDescription(row["description"]);
 
@@ -589,11 +580,6 @@ bool psCharacter::QuickLoad(iResultRow& row, bool noInventory)
     if (!noInventory)
     {
         SetRaceInfo(raceinfo);
-
-        helmGroup = raceinfo->helmGroup;
-        BracerGroup = raceinfo->BracerGroup;
-        BeltGroup = raceinfo->BeltGroup;
-        CloakGroup = raceinfo->CloakGroup;
 
         if (!LoadTraits(pid))
         {
@@ -1016,21 +1002,46 @@ void psCharacter::SetFullName(const char* newFirstName, const char* newLastName)
 
 void psCharacter::SetRaceInfo(psRaceInfo *rinfo)
 {
-    raceinfo=rinfo;
+    race.SetBase(rinfo);
+}
 
-    if ( !rinfo )
+void OverridableRace::OnChange()
+{
+    //if the race info is invalid do nothing
+    psRaceInfo *raceInfo = Current();
+    if(!raceInfo)
         return;
 
-    attributes[PSITEMSTATS_STAT_STRENGTH] .   SetBase(int(rinfo->GetBaseAttribute(PSITEMSTATS_STAT_STRENGTH)));
-    attributes[PSITEMSTATS_STAT_AGILITY]   .  SetBase(int(rinfo->GetBaseAttribute(PSITEMSTATS_STAT_AGILITY)));
-    attributes[PSITEMSTATS_STAT_ENDURANCE]  . SetBase(int(rinfo->GetBaseAttribute(PSITEMSTATS_STAT_ENDURANCE)));
-    attributes[PSITEMSTATS_STAT_INTELLIGENCE].SetBase(int(rinfo->GetBaseAttribute(PSITEMSTATS_STAT_INTELLIGENCE)));
-    attributes[PSITEMSTATS_STAT_WILL]       . SetBase(int(rinfo->GetBaseAttribute(PSITEMSTATS_STAT_WILL)));
-    attributes[PSITEMSTATS_STAT_CHARISMA]  .  SetBase(int(rinfo->GetBaseAttribute(PSITEMSTATS_STAT_CHARISMA)));
+    character->Stats()[PSITEMSTATS_STAT_STRENGTH] .   SetBase(int(raceInfo->GetBaseAttribute(PSITEMSTATS_STAT_STRENGTH)));
+    character->Stats()[PSITEMSTATS_STAT_AGILITY]   .  SetBase(int(raceInfo->GetBaseAttribute(PSITEMSTATS_STAT_AGILITY)));
+    character->Stats()[PSITEMSTATS_STAT_ENDURANCE]  . SetBase(int(raceInfo->GetBaseAttribute(PSITEMSTATS_STAT_ENDURANCE)));
+    character->Stats()[PSITEMSTATS_STAT_INTELLIGENCE].SetBase(int(raceInfo->GetBaseAttribute(PSITEMSTATS_STAT_INTELLIGENCE)));
+    character->Stats()[PSITEMSTATS_STAT_WILL]       . SetBase(int(raceInfo->GetBaseAttribute(PSITEMSTATS_STAT_WILL)));
+    character->Stats()[PSITEMSTATS_STAT_CHARISMA]  .  SetBase(int(raceInfo->GetBaseAttribute(PSITEMSTATS_STAT_CHARISMA)));
 
     //as we are changing or obtaining for the first time a race set the inventory correctly for this.
-    inventory.SetBasicArmor(raceinfo);
-    inventory.SetBasicWeapon(raceinfo);
+    character->Inventory().SetBasicArmor(raceInfo);
+    character->Inventory().SetBasicWeapon(raceInfo);
+
+    //set the race groups accordly too.
+    character->SetHelmGroup(raceInfo->GetHelmGroup());
+    character->SetBracerGroup(raceInfo->GetBracerGroup());
+    character->SetBeltGroup(raceInfo->GetBeltGroup());
+    character->SetCloakGroup(raceInfo->GetCloakGroup());
+
+    //this is needed to force an update the mesh in gem. but do it only if the actor is already initialized
+    if(character->GetActor())
+        character->GetActor()->SetMesh(raceInfo->GetMeshName());
+}
+
+psRaceInfo *psCharacter::GetRaceInfo()
+{
+    return race.Current();
+}
+
+OverridableRace & psCharacter::GetOverridableRace()
+{
+    return race;
 }
 
 void psCharacter::SetFamiliarID(PID v)
@@ -2261,7 +2272,7 @@ bool psCharacter::AppendCharacterSelectData(psAuthApprovedMessage& auth)
     MakeTextureString( traits );
     MakeEquipmentString( equipment );
 
-    auth.AddCharacter(fullName, raceinfo->name, raceinfo->mesh_name, traits, equipment);
+    auth.AddCharacter(fullName, GetRaceInfo()->GetName(), GetRaceInfo()->GetMeshName(), traits, equipment);
     return true;
 }
 
