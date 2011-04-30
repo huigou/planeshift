@@ -3421,15 +3421,22 @@ psMsgStringsMessage::psMsgStringsMessage(uint32_t clientnum, csMD5::Digest& dige
     msg->clientnum = clientnum;
 
     msg->Add(&digest, sizeof(csMD5::Digest));
-    msg->Add(false);
-    msg->Add(num_strings);
-    msg->Add(stringsdata, size);
-
+    if (num_strings > 0 )
+    {
+       msg->Add(false);
+       msg->Add(num_strings);
+       msg->Add(stringsdata, size);
+    }
+    else
+    {
+       msg->Add(true);
+    }
     // Sets valid flag based on message overrun state
     valid = !(msg->overrun);
 }
 
 psMsgStringsMessage::psMsgStringsMessage(MsgEntry *message)
+  :msgstrings(NULL), nstrings(0)
 {
     if (!message)
         return;
@@ -3528,24 +3535,26 @@ csString psMsgStringsMessage::ToString(AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
-    msgtext.AppendFmt("Digest: %s ", digest->HEXString().GetDataSafe());
+    msgtext.AppendFmt("Digest: %s ", digest?digest->HEXString().GetDataSafe():"(NULL)");
     msgtext.AppendFmt("Only carrying digest: %s",only_carrying_digest?"True":"False");
     if (only_carrying_digest)
     {
-      return msgtext;
+       return msgtext;
     }
 
-    msgtext.AppendFmt("No. Strings: %d ", nstrings);
+    msgtext.AppendFmt(" No. Strings: %d", nstrings);
 
 #ifdef FULL_DEBUG_DUMP
     uint32_t s = 1;
-
-    csStringSet::GlobalIterator it = msgstrings->GetIterator();
-    while (it.HasNext())
+    if (msgstrings)
     {
-        const char* string;
-        it.Next(string);
-        msgtext.AppendFmt("String %d: '%s', ", s++, string);
+       csStringSet::GlobalIterator it = msgstrings->GetIterator();
+       while (it.HasNext())
+       {
+          const char* string;
+          it.Next(string);
+          msgtext.AppendFmt(" String %d: '%s',", s++, string);
+       }
     }
 #endif
 
