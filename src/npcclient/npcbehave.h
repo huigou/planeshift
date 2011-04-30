@@ -199,6 +199,12 @@ public:
     bool Load(iDocumentNode *node);
     const char* GetName(){ return name.GetDataSafe(); }
 
+    /** Find a behavior in the set.
+     *
+     *  Search the set for a behavior maching the given name.
+     */
+    Behavior *Find(const char *name) { return behaviors.Find(name); }
+
     void Advance(csTicks delta,NPC *npc);
     void Interrupt(NPC *npc);
     void ResumeScript(NPC *npc,Behavior *which);

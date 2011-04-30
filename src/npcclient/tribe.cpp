@@ -72,12 +72,15 @@ bool Tribe::Load(iResultRow& row)
     wealthResourceName = row["wealth_resource_name"];
     wealthResourceNick = row["wealth_resource_nick"];
     wealthResourceArea = row["wealth_resource_area"];
+
+    wealthGatherNeed = row["wealth_gather_need"];
+
     wealthResourceGrowth = row.GetFloat("wealth_resource_growth");
     wealthResourceGrowthActive = row.GetFloat("wealth_resource_growth_active");
     wealthResourceGrowthActiveLimit = row.GetInt("wealth_resource_growth_active_limit"); 
         
     reproductionCost = row.GetInt("reproduction_cost");
-    wealthGatherNeed = row["wealth_gather_need"];
+    npcIdleBehavior = row["npc_idle_behavior"];
 
     return true;
 }
@@ -302,16 +305,32 @@ bool Tribe::CheckAttach(NPC * npc)
     {
         if (npc->GetPID() == membersId[i].pid)
         {
-            AttachMember(npc, membersId[i].tribeMemberType);
-            return true;
+            // Found a member so attach to the tribe.
+            return AttachMember(npc, membersId[i].tribeMemberType);
         }
     }
 
-    return false;
+    return true; // Not part of tribe but didn't fail either
 }
 
 bool Tribe::AttachMember(NPC * npc, uint32_t tribeMemberType)
 {
+    // Some checks to see if this NPC is fitt for this Tribe
+    if (tribeMemberType >= needSet.GetSize())
+    {
+        Error5("Trying to attach a NPC %s(%u) that have a type %d largert than the supported type %d",
+	       npc->GetName(),npc->GetPID().Unbox(),tribeMemberType, needSet.GetSize());
+        return false;
+    }
+
+    Behavior * idleBehavior = npc->GetBrain()->Find(npcIdleBehavior.GetDataSafe());
+    if (!idleBehavior)
+    {
+        Error4("Trying to attach a NPC %s(%u) to tribe without matching idle behavior of %s",
+	       npc->GetName(),npc->GetPID().Unbox(), npcIdleBehavior.GetDataSafe());
+        return false;
+    }
+
     npc->SetTribe(this);
     npc->SetTribeMemberType( tribeMemberType );
     for (size_t i=0; i < members.GetSize(); i++)
@@ -453,7 +472,7 @@ void Tribe::Advance(csTicks when, EventManager *eventmgr)
         
         Behavior * behavior = npc->GetCurrentBehavior();
 
-        if ((behavior && strcmp(behavior->GetName(),"do nothing")==0) ||
+        if ((behavior && strcasecmp(behavior->GetName(),npcIdleBehavior.GetDataSafe())==0) ||
             (!npc->IsAlive()) )
         {
             csString perc;

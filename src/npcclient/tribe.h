@@ -140,6 +140,7 @@ public:
     size_t GetResourceCount() { return resources.GetSize(); }
     const Resource& GetResource(size_t n) { return resources[n]; }
     csList<Memory*>::Iterator GetMemoryIterator() { csList<Memory*>::Iterator it(memories); return it; };
+    const char* GetNPCIdleBehavior() { return npcIdleBehavior.GetDataSafe(); }
 
     /** Get need set based on NPC.
      *
@@ -387,6 +388,7 @@ protected:
     int                       wealthResourceGrowthActiveLimit;
     float                     accWealthGrowth; ///< Accumelated rest of wealth growth.
     int                       reproductionCost;
+    csString                  npcIdleBehavior; ///< The name of the behavior that indicate that the member is idle
     csString                  wealthGatherNeed;
     csHash<TribeNeedSet*,unsigned int> needSet;
     csList<Memory*>           memories;

@@ -3817,6 +3817,35 @@ ScriptOperation::OperationResult TribeHomeOperation::Run(NPC *npc, EventManager 
 
 //---------------------------------------------------------------------------
 
+bool TribeTypeOperation::Load(iDocumentNode *node)
+{
+    tribeType = node->GetAttributeValueAsInt("type");
+    return true;
+}
+
+ScriptOperation *TribeTypeOperation::MakeCopy()
+{
+    TribeTypeOperation *op = new TribeTypeOperation;
+    op->tribeType = tribeType;
+    return op;
+}
+
+ScriptOperation::OperationResult TribeTypeOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+    // Check if NPC is part of a tribe
+    Tribe * tribe = npc->GetTribe();
+    
+    if ( !tribe ) return OPERATION_COMPLETED; // Nothing more to do for this op.
+
+  
+    npc->SetTribeMemberType(tribeType);  
+    npc->Printf("Change tribe type to : %d", tribeType );
+
+    return OPERATION_COMPLETED; // Nothing more to do for this op.
+}
+
+//---------------------------------------------------------------------------
+
 bool VisibleOperation::Load(iDocumentNode *node)
 {
     return true;

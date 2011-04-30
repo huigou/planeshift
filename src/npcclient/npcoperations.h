@@ -1172,6 +1172,24 @@ public:
 //-----------------------------------------------------------------------------
 
 /**
+* TribeType will change the need set used by the npc.
+*/
+class TribeTypeOperation : public ScriptOperation
+{
+protected:
+    int tribeType;
+public:
+
+    TribeTypeOperation(): ScriptOperation("Tribe_Type") {};
+    virtual ~TribeTypeOperation() {};
+    virtual OperationResult Run(NPC* npc,EventManager* eventmgr,bool interrupted);
+    virtual bool Load(iDocumentNode* node);
+    virtual ScriptOperation* MakeCopy();
+};
+
+//-----------------------------------------------------------------------------
+
+/**
 * Visible will make the npc visible.
 */
 class VisibleOperation : public ScriptOperation

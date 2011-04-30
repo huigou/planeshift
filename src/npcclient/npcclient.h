@@ -402,8 +402,9 @@ public:
 
     /**
      * Loop through every tribe and check if this npc is a member.
+     * @return false if tribe member and failed to attach, otherwise true
      */
-    void CheckAttachTribes( NPC* npc);
+    bool CheckAttachTribes( NPC* npc);
 
     void AttachNPC( gemNPCActor* actor, uint8_t DRcounter, EID ownerEID, PID masterID ); 
 
