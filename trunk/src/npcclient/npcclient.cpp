@@ -615,7 +615,10 @@ bool psNPCClient::ReadNPCsFromDatabase()
             npc->Tick();
             npcs.Push(npc);
 
-            CheckAttachTribes(npc);
+            if (!CheckAttachTribes(npc))
+            {
+	       return false;
+            }
         }
         else
         {
@@ -767,14 +770,18 @@ bool psNPCClient::LoadTribes()
     return true;
 }
 
-void psNPCClient::CheckAttachTribes( NPC* npc)
+bool psNPCClient::CheckAttachTribes( NPC* npc)
 {
     // Check if this NPC is part of a tribe
     for (size_t j=0; j<tribes.GetSize(); j++)
     {
         // Check if npc is part of the tribe and if so attach the npc
-        tribes[j]->CheckAttach(npc);
+        if (!tribes[j]->CheckAttach(npc))
+        {
+            return false;
+        }
     }
+    return true;
 }
 
 
@@ -1376,6 +1383,7 @@ void psNPCClient::ListTribes(const char * pattern)
             CPrintf(CON_CMDOUTPUT,"Resource rate         : %f ticks/resource\n",tribes[i]->GetResourceRate());
             CPrintf(CON_CMDOUTPUT,"Death rate            : %f ticks/death\n",tribes[i]->GetDeathRate());
             CPrintf(CON_CMDOUTPUT,"Needed resource       : '%s' Nick: '%s'\n",tribes[i]->GetNeededResource(),tribes[i]->GetNeededResourceNick());
+            CPrintf(CON_CMDOUTPUT,"NPC Idle behavior     : '%s'\n",tribes[i]->GetNPCIdleBehavior());
             
             CPrintf(CON_CMDOUTPUT,"Members:\n");
             CPrintf(CON_CMDOUTPUT, "%-6s %-6s %-30s %-6s %-6s %-15s %-15s %-20s %-20s\n", 

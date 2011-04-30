@@ -1588,6 +1588,12 @@ ALTER TABLE skills modify column skill_id int(10) unsigned NOT NULL default '0';
 ALTER TABLE character_quests modify column `player_id` int(10) unsigned NOT NULL default '0';
 ALTER TABLE tribe_members modify column `member_id` int(10) unsigned NOT NULL;
 
+#1259 - Anders Reggestad - Added idle behaviour to tribes
+
+ALTER TABLE tribes  ADD COLUMN  npc_idle_behavior varchar(30) NOT NULL default 'do nothing' after reproduction_cost;
+UPDATE `server_options` SET `option_value`='1259' WHERE `option_name`='db_version';
+
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to

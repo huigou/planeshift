@@ -786,6 +786,10 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         {
             op = new TribeHomeOperation;
         }
+        else if ( strcmp( node->GetValue(), "tribe_type" ) == 0 )
+        {
+            op = new TribeTypeOperation;
+        }
         else if ( strcmp( node->GetValue(), "visible" ) == 0 )
         {
             op = new VisibleOperation;

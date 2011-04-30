@@ -883,7 +883,9 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 npc->GetTribe()->AddMember(spawned_pid, tribeMemberType);
                 NPC *spawned_npc = npcclient->FindNPC(spawned_eid);
                 if(spawned_npc)
-                	npcclient->CheckAttachTribes(spawned_npc);
+                {
+                   npcclient->CheckAttachTribes(spawned_npc);
+                }
                 break;
             }
             case psNPCCommandsMessage::PCPT_TELEPORT:
