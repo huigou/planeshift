@@ -39,7 +39,7 @@ class  Client;  // dummy blind definition.  Only used on server.
 class psCmdBase : public iNetSubscriber, public iCmdSubscriber
 {
 protected:
-    ClientMsgHandler *msgqueue;
+    ClientMsgHandler   *msgqueue;
     CmdHandler         *cmdsource;
     iObjectRegistry    *objreg;
 
@@ -64,7 +64,7 @@ public:
 class psClientNetSubscriber : public iNetSubscriber
 {
 public:
-	virtual ~psClientNetSubscriber() {}
+    virtual ~psClientNetSubscriber() {}
 
     // iNetSubscriber interface
     virtual void HandleMessage(MsgEntry *msg,Client*) { HandleMessage(msg); }

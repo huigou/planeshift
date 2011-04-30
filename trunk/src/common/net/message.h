@@ -106,9 +106,9 @@ public:
 #pragma pack (1)
 struct psMessageBytes
 {
-    msgtype    type; ///< Version
-    uint16_t    size; ///< the size of the following data
-    char    payload[0]; ///< this can be used as a pointer to the data
+    msgtype  type;       ///< Version
+    uint16_t size;       ///< the size of the following data
+    char     payload[0]; ///< this can be used as a pointer to the data
 
     size_t GetTotalSize() const { return sizeof(psMessageBytes) + csLittleEndian::Convert(size); }
     size_t GetSize() const      { return csLittleEndian::Convert(size); }

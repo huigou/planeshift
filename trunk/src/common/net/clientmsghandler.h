@@ -61,8 +61,8 @@ public:
      */
     bool DispatchQueue();
 
-	/// Get the next sequence number to use for an ordered message
-	int GetNextSequenceNumber(msgtype mtype);
+    /// Get the next sequence number to use for an ordered message
+    int GetNextSequenceNumber(msgtype mtype);
 
 
     /// Declare our event handler
@@ -71,7 +71,7 @@ public:
 
 protected:
     iObjectRegistry* object_reg;
-	csHash<OrderedMessageChannel*> orderedMessages;
+    csHash<OrderedMessageChannel*> orderedMessages;
 };
 
 #endif

@@ -410,7 +410,7 @@ int Tribe::CountResource(csString resource) const
 }
 
 
-void Tribe::Advance(csTicks when,EventManager *eventmgr)
+void Tribe::Advance(csTicks when, EventManager *eventmgr)
 {
     if ( when - lastGrowth > 1000)
     {
