@@ -31,20 +31,20 @@
 /// Gives informations about the network connection
 class psNetInfos
 {
-    public:
-        /// Constructor
-        psNetInfos() { SetupTickArray(); }
-        /// Destructor
-        ~psNetInfos();
+public:
+    /// Constructor
+    psNetInfos() { SetupTickArray(); }
+    /// Destructor
+    ~psNetInfos();
     
-        /// Add a tick value to the global queue
+    /// Add a tick value to the global queue
     void    AddPingTicks(csTicks t);
     /// Compute the average ticks a ping uses
     csTicks GetAveragePingTicks();
 
-	int		droppedPackets;
+    int     droppedPackets;
 
-    private:
+private:
     /// Fill the tick array
     void    SetupTickArray();
     /// holds the tick values needed to compute the average ping ticks
