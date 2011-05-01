@@ -3730,6 +3730,7 @@ AdminCmdDataFactory::AdminCmdDataFactory()
     RegisterMsgFactoryFunction(new AdminCmdDataSetLabelColor());
     RegisterMsgFactoryFunction(new AdminCmdDataAction());
     RegisterMsgFactoryFunction(new AdminCmdDataPath());
+    RegisterMsgFactoryFunction(new AdminCmdDataLocation());
     RegisterMsgFactoryFunction(new AdminCmdDataGameMasterEvent());
     RegisterMsgFactoryFunction(new AdminCmdDataBadText());
     RegisterMsgFactoryFunction(new AdminCmdDataQuest());
