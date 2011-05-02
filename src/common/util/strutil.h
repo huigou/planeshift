@@ -29,6 +29,7 @@
 #include <iengine/sector.h>
 #include <csgeom/matrix3.h>
 #include <csgeom/transfrm.h>
+#include <csutil/stringconv.h>
 
 class psString;
 
@@ -77,9 +78,59 @@ public:
         return atoi(Get(wordNum).GetData());
     }
 
+    bool GetInt(size_t wordNum, int &retValue ) const
+    {
+        char *end;
+
+        const char *data = Get(wordNum).GetData();
+   
+        // The string has to contain some chars, otherwise the end pointer will not
+        // be able to tell if all data where an integer.
+        if (!data)
+        {
+            return false;
+        }
+
+        int value = (int)strtol(data,&end,10);
+
+        // If end point to a \0 then everyting where read.
+        if (*end == '\0')
+        {
+            retValue = value;
+            return true;
+        }
+
+        return false;
+    }
+
     float GetFloat(size_t wordNum) const
     {
         return atof(Get(wordNum).GetData());
+    }
+
+    bool GetFloat(size_t wordNum, float &retValue ) const
+    {
+        const char *end;
+
+        const char *data = Get(wordNum).GetData();
+   
+        // The string has to contain some chars, otherwise the end pointer will not
+        // be able to tell if all data where an integer.
+        if (!data)
+        {
+            return false;
+        }
+
+        float value = (float)CS::Utility::strtof(data,&end);
+
+        // If end point to a \0 then everyting where read.
+        if (*end == '\0')
+        {
+            retValue = value;
+            return true;
+        }
+
+        return false;
     }
 
     /* Returns all words, starting at given word */
