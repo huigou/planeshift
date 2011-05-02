@@ -86,14 +86,14 @@ public:
    
         // The string has to contain some chars, otherwise the end pointer will not
         // be able to tell if all data where an integer.
-        if (!data)
+        if (!data || *data == '\0')
         {
             return false;
         }
 
-        int value = (int)strtol(data,&end,10);
+        int value = (int)strtol(data, &end, 10);
 
-        // If end point to a \0 then everyting where read.
+        // If end point to a \0 then everything where read.
         if (*end == '\0')
         {
             retValue = value;
@@ -116,14 +116,14 @@ public:
    
         // The string has to contain some chars, otherwise the end pointer will not
         // be able to tell if all data where an integer.
-        if (!data)
+        if (!data || *data == '\0')
         {
             return false;
         }
 
-        float value = (float)CS::Utility::strtof(data,&end);
+        float value = (float)CS::Utility::strtof(data, &end);
 
-        // If end point to a \0 then everyting where read.
+        // If end point to a \0 then everything where read.
         if (*end == '\0')
         {
             retValue = value;
