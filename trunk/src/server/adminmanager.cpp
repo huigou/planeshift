@@ -2827,7 +2827,12 @@ AdminCmdDataPath::AdminCmdDataPath(AdminManager* msgManager, MsgEntry* me, psAdm
         }
         else if (subCmd == "radius")
         {
-            newRadius = words.GetFloat(index++);
+            // New Radius is mandatory
+            if (!words.GetFloat(index++,newRadius))
+            {
+                ParseError(me, "Radius not given or not a float value.");
+            }
+            // Search radius is optional
             radius = words.GetFloat(index++);
         }
         else if (subCmd == "remove")
