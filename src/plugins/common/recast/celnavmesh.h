@@ -1,6 +1,7 @@
 /*
     Crystal Space Entity Layer
-    Copyright (C) 2009 by Jorrit Tyberghein
+    Copyright (C) 2010 by Leonardo Rodrigo Domingues
+    Copyright (C) 2011 by Matthieu Kraus
   
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -43,7 +44,7 @@
 #include <iutil/document.h>
 #include <iutil/objreg.h>
 #include <iutil/vfs.h>
-#include <celnavmesh.h>
+#include <tools/celnavmesh.h>
 #include "recastnavigation/ChunkyTriMesh.h"
 #include "recastnavigation/DebugDraw.h"
 #include "recastnavigation/DetourCommon.h"
@@ -78,7 +79,7 @@ enum SamplePolyAreas
   SAMPLE_POLYAREA_ROAD,
   SAMPLE_POLYAREA_DOOR,
   SAMPLE_POLYAREA_GRASS,
-  SAMPLE_POLYAREA_JUMP
+  SAMPLE_POLYAREA_JUMP,
 };
 enum SamplePolyFlags
 {
@@ -280,6 +281,7 @@ public:
   virtual void SetSector (iSector* sector);
   virtual iCelNavMeshParams* GetParameters () const;
   virtual csBox3 GetBoundingBox() const;
+  virtual csArray<csPoly3D> QueryPolygons(const csBox3& box) const;
   virtual bool SaveToFile (iFile* file) const;
   virtual csList<csSimpleRenderMesh>* GetDebugMeshes () const;
   virtual csList<csSimpleRenderMesh>* GetAgentDebugMeshes (const csVector3& pos) const;
@@ -304,13 +306,13 @@ private:
   // Recast & Detour
   rcChunkyTriMesh* chunkyTriMesh;
   
-  struct tileData
-  {
-    unsigned char* data;
-    int size;
-    int x;
-    int y;
-  };
+  // Tile specific
+  unsigned char* triangleAreas;
+  rcHeightfield* solid;
+  rcCompactHeightfield* chf;
+  rcContourSet* cSet;
+  rcPolyMesh* pMesh;
+  rcPolyMeshDetail* dMesh;
   
   // Off-Mesh connections.
   static const int MAX_OFFMESH_CONNECTIONS = 256;
@@ -331,10 +333,8 @@ private:
 
   // Others
   int numberOfVertices;
-  int numberOfRealVertices;
   float* triangleVertices;
   int numberOfTriangles;
-  int numberOfRealTriangles;
   int* triangleIndices;
   float boundingMin[3];
   float boundingMax[3];
@@ -342,13 +342,19 @@ private:
   void CleanUpSectorData ();
   void CleanUpTileData ();
   bool GetSectorData ();  
-
-  THREADED_CALLABLE_DECL5(celNavMeshBuilder,BuildTile,csThreadReturn,int,tx,int,ty,const float*,bmin,const float*,bmax,const rcConfig*,tileConfig,THREADEDL,false,false);
-
-  void CreateFakeTriangles (csList<float>& vertices, csList<int>& indices, int& numberOfVertices, 
-                            int& numberOfTriangles, int firstIndex);
-  bool UpdateFakeTriangles ();
+  unsigned char* BuildTile(const int tx, const int ty, const float* bmin, const float* bmax, 
+                           const rcConfig& tileConfig, int& dataSize);
   iObjectRegistry* GetObjectRegistry() const { return objectRegistry; }
+
+  // helper function to check whether an object has to be clipped
+  // stores whether the object has to be clipped in result and returns true if it's visible
+  bool CheckClipping(const csPlane3& clipPlane, const csBox3& bbox, bool& result);
+
+  // helper function to clip a convex polygon to a plane and triangulate it apllying an object to world transform
+  void SplitPolygon(int indexOffset, int numVerts, csVector3* poly, csArray<csVector3>& vertices, csArray<csTriangle>& triangles,
+                    const csReversibleTransform& t, csPlane3& clipPlane, bool clipPolygon);
+
+  // helper function to add a bul of triangles to the sector data
 
 public:
   celNavMeshBuilder (iBase* parent);

@@ -1,6 +1,7 @@
 /*
     Crystal Space Entity Layer
-    Copyright (C) 2009 by Jorrit Tyberghein
+    Copyright (C) 2010 by Leonardo Rodrigo Domingues
+    Copyright (C) 2011 by Matthieu Kraus
   
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -18,7 +19,8 @@
 */
 
 
-#include "CelHPF.h"
+#include "celhpf.h"
+#include <csgeom/math3d.h>
 
 CS_PLUGIN_NAMESPACE_BEGIN(celNavMesh)
 {
@@ -50,17 +52,23 @@ void celHPath::Initialize(iCelPath* highLevelPath)
 
     iMapNode* src = hlPath->GetFirst();
     iMapNode* dst = hlPath->Next();
-    do
+    while(1)
     {
       // cross-sector connections are coincident
       if(src->GetSector() == dst->GetSector())
       {
         length += (dst->GetPosition()-src->GetPosition()).Norm();
       }
-      src = hlPath->Next();
-      dst = hlPath->Next();
+      if(hlPath->HasNext())
+      {
+        src = hlPath->Next();
+        dst = hlPath->Next();
+      }
+      else
+      {
+        break;
+      }
     }
-    while(hlPath->HasNext());
 
     // restart path for traversal
     hlPath->Restart();
@@ -87,170 +95,131 @@ void celHPath::Initialize(iCelPath* highLevelPath)
   currentNode = firstNode;
 }
 
-bool celHPath::HasNextInternal () const
+bool celHPath::HasNextInternal (bool reverse) const
 {
-  if (!llPaths[currentllPosition]->HasNext())
+  if(reverse)
   {
-    if (currentllPosition + 1 >= llPaths.GetSize())
+    if(llPaths[currentllPosition].IsValid())
     {
-      return false;
+      if(llPaths[currentllPosition]->HasPrevious() || currentllPosition > 0)
+      {
+        return true;
+      }
+    }
+    else
+    {
+      return true;
     }
   }
-
-  return true;
-}
-
-bool celHPath::HasPreviousInternal () const
-{
-  if (!llPaths[currentllPosition]->HasPrevious())
+  else
   {
-    if (currentllPosition <= 0)
+    if(llPaths[currentllPosition].IsValid())
     {
-      return false;
+      if(llPaths[currentllPosition]->HasNext() || currentllPosition + 1 < llPaths.GetSize())
+      {
+        return true;
+      }
+    }
+    else
+    {
+      return true;
     }
   }
-
-  return true;
+  return false;
 }
 
 bool celHPath::HasNext () const
 {
-  if (reverse)
-  {
-    return HasPreviousInternal();
-  }
-  return HasNextInternal();
+  return HasNextInternal(reverse);
 }
 
 bool celHPath::HasPrevious () const
 {
-  if (reverse)
-  {
-    return HasNextInternal();
-  }
-  return HasPreviousInternal();
+  return HasNextInternal(!reverse);
 }
 
-iMapNode* celHPath::NextInternal ()
+iMapNode* celHPath::NextInternal (bool reverse)
 {
-  csVector3 position;
-  
-  if (!llPaths[currentllPosition]->HasNext())
+  while(HasNextInternal(reverse))
   {
-    advanced += llPaths[currentllPosition]->Length();
-    if (currentllPosition + 1 >= llPaths.GetSize())
+    if(!llPaths[currentllPosition].IsValid())
     {
-      return 0;
-    }
-
-    if (!llPaths[currentllPosition + 1].IsValid())
-    {
-      csRef<iMapNode> from = hlPath->Next();
-      csRef<iMapNode> goal = hlPath->Next();
-      currentSector = from->GetSector();
-      csRef<iCelNavMesh> navMesh = navMeshes.Get(currentSector, 0);
-      csRef<iCelNavMeshPath> path = navMesh->ShortestPath(from->GetPosition(), goal->GetPosition());
-      currentllPosition++;
-      llPaths[currentllPosition] = path;
-      // naively walk towards the goal if we don't have a path
-      // this should only happen at warp portals
-      if(!path->HasNext())
+      csRef<iMapNode> src;
+      csRef<iMapNode> dst;
+      if(reverse)
       {
-        currentNode = goal;
-        return goal;
+        src = hlPath->Previous();
+        dst = hlPath->Previous();
       }
+      else
+      {
+        dst = hlPath->Next();
+        src = hlPath->Next();
+      }
+
+      csRef<iMapNode> target = reverse ? src : dst;
+      currentSector = target->GetSector();
+
+      if(src->GetSector() != dst->GetSector())
+      {
+        // cross-sector steps are coincident
+        currentNode = csPtr<iMapNode>(new csMapNode(""));
+        currentNode->SetPosition(target->GetPosition());
+        currentNode->SetSector(currentSector);
+        return currentNode;
+      }
+      else
+      {
+        csRef<iCelNavMesh> navMesh = navMeshes.Get(currentSector, 0);
+        llPaths[currentllPosition] = navMesh->ShortestPath(src->GetPosition(), dst->GetPosition());
+        if(reverse)
+        {
+          while(llPaths[currentllPosition]->HasNext())
+          {
+            csVector3 pos;
+            llPaths[currentllPosition]->Next(pos);
+          }
+        }
+        CS_ASSERT(llPaths[currentllPosition].IsValid());
+      }
+    }
+    else if((!reverse && !llPaths[currentllPosition]->HasNext())
+         || (reverse && !llPaths[currentllPosition]->HasPrevious()))
+    {
+      advanced += llPaths[currentllPosition]->Length();
+      currentllPosition += reverse ? -1 : 1;
     }
     else
     {
-      currentllPosition++;
-    }
-  }
-  // We don't use the first point of each low level path (except for the first path),
-  // since it should at the same position of the last point in the previous low level path.
-  llPaths[currentllPosition]->Next(position); 
-
-  csRef<iMapNode> node;
-  node.AttachNew(new csMapNode(""));
-  node->SetPosition(position);
-  node->SetSector(currentSector);
-  currentNode = node;
-
-  return node;
-}
-
-iMapNode* celHPath::PreviousInternal ()
-{
-  csVector3 position;
-  bool changellPath = !llPaths[currentllPosition]->HasPrevious();
-
-  if (!changellPath)
-  {
-    llPaths[currentllPosition]->Previous(position); 
-    if (!llPaths[currentllPosition]->HasPrevious() && currentllPosition > 0)
-    {
-      // We don't use the first point of each low level path (except for the first path),
-      // since it should at the same position of the last point in the previous low level path.
-      changellPath = true;
-    }
-  }
-
-  if (changellPath)
-  {
-    advanced += llPaths[currentllPosition]->Length();
-    if (currentllPosition <= 0)
-    {
-      return 0;
-    }
-
-    if (llPaths[currentllPosition - 1].IsValid())
-    {
-      currentllPosition--;
-    }
-    else
-    {
-      // This should only be reached if a user inverts a path after having read a few steps with Next(), and
-      // doesn't restart the path. In practice, this will probably never happen.
-      csRef<iMapNode> goal = hlPath->Previous();
-      csRef<iMapNode> from = hlPath->Previous();
-      currentSector = from->GetSector();
-      csRef<iCelNavMesh> navMesh = navMeshes.Get(currentSector, 0);
-      csRef<iCelNavMeshPath> path = navMesh->ShortestPath(from->GetPosition(), goal->GetPosition());
-      while (path->HasNext())
+      csVector3 position;
+      if(reverse)
       {
-        path->Next(position);
+        llPaths[currentllPosition]->Previous(position);
       }
-      currentllPosition--;
-      llPaths[currentllPosition] = path;
+      else
+      {
+        llPaths[currentllPosition]->Next(position);
+      }
+
+      currentNode = csPtr<iMapNode>(new csMapNode(""));
+      currentNode->SetPosition(position);
+      currentNode->SetSector(currentSector);
+
+      return currentNode;
     }
-    
-    llPaths[currentllPosition]->Current(position); // Always use the last point of a path
   }
 
-  csRef<iMapNode> node;
-  node.AttachNew(new csMapNode(""));
-  node->SetPosition(position);
-  node->SetSector(currentSector);
-  currentNode = node;
-
-  return node;
+  return 0;
 }
 
 iMapNode* celHPath::Next ()
 {
-  if (reverse)
-  {
-    return PreviousInternal();
-  }
-  return NextInternal();
+  return NextInternal(reverse);
 }
 
 iMapNode* celHPath::Previous ()
 {
-  if (reverse)
-  {
-    return NextInternal();
-  }
-  return PreviousInternal();
+  return NextInternal(!reverse);
 }
 
 iMapNode* celHPath::Current ()
@@ -278,42 +247,14 @@ iMapNode* celHPath::GetLast ()
 
 void celHPath::Invert ()
 {
-  reverse = reverse ? false : true;
+  reverse = !reverse;
 }
 
 void celHPath::Restart ()
 {
-  if (reverse)
+  while(HasNextInternal(reverse))
   {
-    while (HasNextInternal())
-    {
-      NextInternal();
-    }
-  }
-  else
-  {
-    for (size_t i = 0; i < llPaths.GetSize(); i++)
-    {
-      if (llPaths[i].IsValid())
-      {
-        llPaths[i]->Restart();
-      }
-    }
-    currentllPosition = 0;
-    hlPath->Restart();
-
-    // Set current node
-    csRef<iMapNode> goal = hlPath->Next();
-    currentSector = firstNode->GetSector();
-    if (!llPaths[0].IsValid())
-    {
-      // This should be reached if the user inverts the path and then restarts it, for example
-      csRef<iCelNavMesh> navMesh = navMeshes.Get(currentSector, 0);
-      csRef<iCelNavMeshPath> path = navMesh->ShortestPath(firstNode->GetPosition(), goal->GetPosition());
-      llPaths[0] = path;    
-    }
-
-    currentNode = firstNode;
+    NextInternal(reverse);
   }
 
   // reset travelled distance
@@ -327,7 +268,7 @@ float celHPath::GetDistance () const
 
 csList<csSimpleRenderMesh>* celHPath::GetDebugMeshes ()
 {
-  float halfHeight = 1.f;
+  float halfHeight = 0.f;
   csHash<csRef<iCelNavMesh>, csPtrKey<iSector> >::GlobalIterator it = navMeshes.GetIterator();
   if (it.HasNext())
   {
@@ -429,7 +370,8 @@ bool celHNavStruct::BuildHighLevelGraph()
   while (it.HasNext())
   {
     csPtrKey<iSector> sector;
-    it.Next(sector);
+    csRef<iCelNavMesh> navmesh = it.Next(sector);
+
     csSet<csPtrKey<iMeshWrapper> >::GlobalIterator portalMeshesIt = sector->GetPortalMeshes().GetIterator();
     while (portalMeshesIt.HasNext())
     {
@@ -439,7 +381,6 @@ bool celHNavStruct::BuildHighLevelGraph()
       {
         csRef<iPortal> portal = container->GetPortal(i);
         portal->CompleteSector(0);
-        csFlags flags = portal->GetFlags();
 
         // Get portal indices
         int indicesSize = portal->GetVertexIndicesCount();
@@ -450,57 +391,113 @@ bool celHNavStruct::BuildHighLevelGraph()
 
         if (indicesSize >= 3)
         {
-          // Calculate portal's bounding box
-          csVector3 boundingMin = verticesPortal[0];
-          csVector3 boundingMax = verticesPortal[0];
+          // Calculate portal's bounding box extended a little
+          // in the direction of it's normal
+          csVector3 extension = portal->GetWorldPlane().Normal()*0.1;
+          csBox3 bbox(verticesPortal[0]);
+          bbox.AddBoundingVertexSmart(verticesPortal[0]+extension);
           for (int j = 1; j < verticesSize; j++)
           {
-            for (int k = 0; k < 3; k++)
+            bbox.AddBoundingVertexSmart(verticesPortal[j]);
+            bbox.AddBoundingVertexSmart(verticesPortal[j]+extension);
+          }
+          bbox.SetSize(bbox.GetSize()+2*parameters->GetPolygonSearchBox());
+
+          // find the navmesh polygons overlapping with the portal
+          csArray<csPoly3D> polys = navmesh->QueryPolygons(bbox);
+
+          if(polys.IsEmpty())
+          {
+            continue;
+          }
+
+          csPlane3 clipPlane = portal->GetWorldPlane();
+
+          // find the points to be added to the high level graph
+          // by intersecting the portal plain with the polygons
+          csArray<csVector3> points;
+          csSegment3 intersection;
+          for(size_t j = 0; j < polys.GetSize(); j++)
+          {
+            if(csIntersect3::PlanePolygon(clipPlane,&polys[j],intersection))
             {
-              if (verticesPortal[j][k] < boundingMin[k])
+              bool foundStart = false;
+              bool foundEnd = false;
+              const csVector3& start = intersection.Start();
+              const csVector3& end = intersection.End();
+
+              for(size_t n = 0; n < points.GetSize() && !(foundStart && foundEnd); n++)
               {
-                boundingMin[k] = verticesPortal[j][k];
+                foundStart |= (points[n]-start).IsZero();
+                foundEnd |= (points[n]-end).IsZero();
               }
-              if (verticesPortal[j][k] > boundingMax[k])
+
+              if(!foundStart)
               {
-                boundingMax[k] = verticesPortal[j][k];
+                points.Push(start);
+              }
+
+              if(!foundEnd && !(start-end).IsZero())
+              {
+                points.Push(end);
               }
             }
           }
 
-          // Add the portal bounding box's center as a node in the current sector to the graph
-          csVector3 center(((boundingMin[0] + boundingMax[0]) / 2), boundingMin[1],
-              ((boundingMin[2] + boundingMax[2]) / 2));
-          csRef<iMapNode> mapNode;
-          mapNode.AttachNew(new csMapNode("hlg"));
-          mapNode->SetPosition(center);
-          mapNode->SetSector(sector);
-          size_t nodeIndex;
-          csRef<iCelNode> node = hlGraph->CreateEmptyNode(nodeIndex);
-          node->SetName("hlg");
-          node->SetMapNode(mapNode);
-
-          // Add the portal bounding box's center as a node in the destination sector to the graph
-          // Warp if necessary
-          csVector3 center2 = center;
-          if (flags.Check(CS_PORTAL_WARP))
+          if(points.IsEmpty())
           {
-            csReversibleTransform warp = portal->GetWarp();
-            center2 = warp.Other2This(center);
+            continue;
           }
-          csRef<iMapNode> mapNode2;
-          mapNode2.AttachNew(new csMapNode("hlg"));
-          mapNode2->SetPosition(center2);
-          mapNode2->SetSector(portal->GetSector());
-          csRef<iCelNode> node2 = hlGraph->CreateEmptyNode(nodeIndex);
-          node2->SetName("hlg");
-          node2->SetMapNode(mapNode2);
 
-          // Add an edge between the two points
-          hlGraph->AddEdge(node, node2, true, 0.0f);
+          // get warp transformation
+          bool warping = portal->GetFlags().Check(CS_PORTAL_WARP);
+          csReversibleTransform warp(portal->GetWarp());
 
-          nodes.Put(sector, node);
-          nodes.Put(portal->GetSector(), node2);
+          // Add the points we found to the high level graph
+          // @@TODO: don't add the node if there's one within PolygonSearchBox
+          iSector* targetSector = portal->GetSector();
+          csArray<csVector3>::Iterator it(points.GetIterator());
+          while(it.HasNext())
+          {
+            csVector3 pos(it.Next());
+
+            size_t nodeIndex;
+
+            // create start node
+            csRef<iCelNode> start = hlGraph->CreateEmptyNode(nodeIndex);
+            {
+              csRef<iMapNode> mapNode;
+              mapNode.AttachNew(new csMapNode("hlg"));
+              mapNode->SetPosition(pos);
+              mapNode->SetSector(sector);
+              start->SetMapNode(mapNode);
+            }
+            start->SetName("hlg");
+
+            // transform position for warp portals
+            if(warping)
+            {
+              pos = warp.Other2This(pos);
+            }
+
+            // create end node
+            csRef<iCelNode> end = hlGraph->CreateEmptyNode(nodeIndex);
+            {
+              csRef<iMapNode> mapNode;
+              mapNode.AttachNew(new csMapNode("hlg"));
+              mapNode->SetPosition(pos);
+              mapNode->SetSector(targetSector);
+              end->SetMapNode(mapNode);
+            }
+            end->SetName("hlg");
+
+            // Add an edge between the two points
+            hlGraph->AddEdge(start, end, true, 0.0f);
+
+            // add both nodes to our internal list
+            nodes.Put(sector, start);
+            nodes.Put(targetSector, end);
+          }
         }
       }
     }
@@ -842,12 +839,25 @@ bool celHNavStruct::Update (const csBox3& boundingBox, iSector* sector)
 
 bool celHNavStruct::Update (const csOBB& boundingBox, iSector* sector)
 {
-  csBox3 aabb;
-  aabb.AddBoundingVertex(boundingBox.GetCorner(0));
-  for (int i = 1; i < 8; i++)
+  csVector3 min;
+  csVector3 max;
+  for (int i = 0; i < 8; i++)
   {
-    aabb.AddBoundingVertexSmart(boundingBox.GetCorner(i));
+    csVector3 v = boundingBox.GetCorner(i);
+    for (int j = 0; j < 3; j++)
+    {
+      if (v[j] < min[j])
+      {
+        min[j] = v[j];
+      }
+      if (v[j] > max[j])
+      {
+        max[j] = v[j];
+      }
+    }
   }
+
+  csBox3 aabb(min, max);
 
   return Update(aabb, sector);
 }
@@ -1121,19 +1131,24 @@ iCelHNavStruct* celHNavStructBuilder::BuildHNavStruct ()
   while (it.HasNext())
   {
     csRef<iCelNavMeshBuilder> builder = it.Next();
-    results.Push(builder->BuildNavMesh());
+    results.Push(builder->BuildNavMeshWait());
   }
 
-  csRef<iThreadManager> tm = csQueryRegistry<iThreadManager>(objectRegistry);
-  tm->Wait(results,true);
-
-  for(size_t i = 0; i < results.GetSize(); i++)
+  while(!results.IsEmpty())
   {
-    csRef<iThreadReturn> ret = results.Get(i);
-    if(ret->WasSuccessful())
+    for(size_t i = 0; i < results.GetSize(); i++)
     {
-      csRef<iCelNavMesh> mesh = scfQueryInterface<iCelNavMesh>(ret->GetResultRefPtr());
-      navStruct->AddNavMesh(mesh);
+      csRef<iThreadReturn> ret = results.Get(i);
+      if(ret->IsFinished())
+      {
+        if(ret->WasSuccessful())
+        {
+          csRef<iCelNavMesh> mesh = scfQueryInterface<iCelNavMesh>(ret->GetResultRefPtr());
+          navStruct->AddNavMesh(mesh);
+        }
+        results.DeleteIndex(i);
+        i--;
+      }
     }
   }
 
@@ -1208,7 +1223,7 @@ bool celHNavStructBuilder::ParseParameters (iDocumentNode* node, iCelNavMeshPara
 }
 
 bool celHNavStructBuilder::ParseMeshes (iDocumentNode* node, csHash<csRef<iSector>, const char*>& sectors, 
-                                        celHNavStruct* navStruct, iVFS* vfs, iCelNavMeshParams* /*params*/)
+                                        celHNavStruct* navStruct, iVFS* vfs, iCelNavMeshParams* params)
 {
   csRef<iEngine> engine = csLoadPluginCheck<iEngine>(objectRegistry, "crystalspace.engine.3d");
   if (!engine)
@@ -1319,10 +1334,6 @@ iCelHNavStruct* celHNavStructBuilder::LoadHNavStruct (iVFS* vfs, const char* dir
   // Read XML file
   csRef<iDocument> doc = docsys->CreateDocument();
   csRef<iFile> xmlFile = vfs->Open("navstruct.xml", VFS_FILE_READ);
-  if(!xmlFile.IsValid())
-  {
-    return 0;
-  }
   const char* log = doc->Parse(xmlFile);
   if (log)
   {

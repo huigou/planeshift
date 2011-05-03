@@ -36,7 +36,7 @@ struct iSector;
 #include "util/psconst.h"
 #include "util/pspath.h"
 #include "util/pspathnetwork.h"
-#include <celhpf.h>
+#include <tools/celhpf.h>
 #include "net/npcmessages.h"
 #include "util/edge.h"
 

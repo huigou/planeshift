@@ -22,7 +22,6 @@
 
 #include "cstypes.h"
 #include "csutil/scf.h"
-//#include "csitil/scf_implementation.h"
 #include "csutil/flags.h"
 #include "csutil/stringarray.h"
 #include <ivaria/mapnode.h>
@@ -246,7 +245,7 @@ struct iCelPath : public virtual iBase
    */
   virtual void Invert () = 0;
   
-  /*
+  /**
    * Get number of nodes in the path.
    */
   virtual size_t GetNodeCount () = 0;
@@ -305,7 +304,7 @@ struct iCelGraph : public virtual iBase
    */
    virtual size_t GetNodeCount () = 0;
 
-  /*
+  /**
    * Get a node by index
    */
   virtual iCelNode* GetNode (size_t idx) = 0;

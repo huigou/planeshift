@@ -245,7 +245,7 @@ iSector* celPath:: CurrentSector ()
 
 bool celPath::HasNext ()
 {
-  return cur_node < (int)(nodes.GetSize()-1);
+  return cur_node < nodes.GetSize()-1;
 }
 
 bool celPath::HasPrevious ()

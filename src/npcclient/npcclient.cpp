@@ -50,7 +50,7 @@
 #include "util/strutil.h"
 #include "util/psutil.h"
 #include "util/pspathnetwork.h"
-#include <celhpf.h>
+#include <tools/celhpf.h>
 
 #include "net/connection.h"
 #include "net/clientmsghandler.h"

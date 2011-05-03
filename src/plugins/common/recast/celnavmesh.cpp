@@ -1,6 +1,7 @@
 /*
     Crystal Space Entity Layer
-    Copyright (C) 2009 by Jorrit Tyberghein
+    Copyright (C) 2010 by Leonardo Rodrigo Domingues
+    Copyright (C) 2011 by Matthieu Kraus
   
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -18,8 +19,8 @@
 */
 
 
-#include "CelNavMesh.h"
-#include "RecastScopedDelete.h"
+#include "celnavmesh.h"
+#include <csgeom/math3d.h>
 
 CS_PLUGIN_NAMESPACE_BEGIN(celNavMesh)
 {
@@ -65,7 +66,7 @@ void DebugDrawCS::depthMask (bool state)
   }
 }
 
-void DebugDrawCS::begin (duDebugDrawPrimitives prim, float /*size*/)
+void DebugDrawCS::begin (duDebugDrawPrimitives prim, float size)
 {  
   currentMesh = new csSimpleRenderMesh();
   currentMesh->z_buf_mode = currentZBufMode;
@@ -412,6 +413,44 @@ bool celNavMesh::Initialize (const iCelNavMeshParams* parameters, iSector* secto
   return !detourNavMesh->init(&params);
 }
 
+csArray<csPoly3D> celNavMesh::QueryPolygons(const csBox3& box) const
+{
+  csArray<csPoly3D> result;
+
+  // create a detour bbox
+  float center[3];
+  float extent[3];
+  box.GetCenter().Get(center);
+  (box.Max()-box.GetCenter()).Get(extent);
+
+  // get polygon references
+  dtPolyRef polyRefs[128];
+  int polyCount = detourNavMesh->queryPolygons(center,extent,&filter,polyRefs,128);
+
+  // process the references
+  for(int i = 0; i < polyCount; i++)
+  {
+    // find the title this poly belongs to and the poly itself
+    int polyIndex;
+    const dtMeshTile* tile = detourNavMesh->getTileByPolyRef(polyRefs[i], &polyIndex);
+    const dtPoly* detourPoly = &tile->polys[polyIndex];
+
+    // convert detour poly to cs poly
+    csPoly3D poly(detourPoly->vertCount);
+    for(int j = 0; j < detourPoly->vertCount; ++j)
+    {
+      poly.AddVertex(tile->verts[detourPoly->verts[j]*3],
+                     tile->verts[detourPoly->verts[j]*3+1],
+                     tile->verts[detourPoly->verts[j]*3+2]);
+    }
+
+    // add it to the result array
+    result.Push(poly);
+  }
+
+  return result;
+}
+
 // Based on Recast NavMeshTesterTool::recalc()
 iCelNavMeshPath* celNavMesh::ShortestPath (const csVector3& from, const csVector3& goal, const int maxPathSize)
 {
@@ -477,12 +516,25 @@ bool celNavMesh::Update (const csBox3& boundingBox)
 
 bool celNavMesh::Update (const csOBB& boundingBox)
 {
-  csBox3 aabb;
-  aabb.AddBoundingVertex(boundingBox.GetCorner(0));
-  for (int i = 1; i < 8; i++)
+  csVector3 min;
+  csVector3 max;
+  for (int i = 0; i < 8; i++)
   {
-    aabb.AddBoundingVertexSmart(boundingBox.GetCorner(i));
+    csVector3 v = boundingBox.GetCorner(i);
+    for (int j = 0; j < 3; j++)
+    {
+      if (v[j] < min[j])
+      {
+        min[j] = v[j];
+      }
+      if (v[j] > max[j])
+      {
+        max[j] = v[j];
+      }
+    }
   }
+
+  csBox3 aabb(min, max);
 
   return Update(aabb);
 }
@@ -1680,6 +1732,12 @@ celNavMeshBuilder::celNavMeshBuilder (iBase* parent) : scfImplementationType (th
   triangleVertices = 0;
   triangleIndices = 0;
   chunkyTriMesh = 0;
+  triangleAreas = 0;
+  solid = 0;
+  chf = 0;
+  cSet = 0;
+  pMesh = 0;
+  dMesh = 0;
 
   numberOfVertices = 0;
   numberOfTriangles = 0;
@@ -1692,6 +1750,7 @@ celNavMeshBuilder::celNavMeshBuilder (iBase* parent) : scfImplementationType (th
 celNavMeshBuilder::~celNavMeshBuilder ()
 {
   CleanUpSectorData();
+  CleanUpTileData();
 }
 
 void celNavMeshBuilder::CleanUpSectorData () 
@@ -1704,9 +1763,7 @@ void celNavMeshBuilder::CleanUpSectorData ()
   chunkyTriMesh = 0;
 
   numberOfVertices = 0;
-  numberOfRealVertices = 0;
-  numberOfTriangles = 0;    
-  numberOfRealTriangles = 0;
+  numberOfTriangles = 0;
   numberOfOffMeshCon = 0;
   numberOfVolumes = 0;
 }
@@ -1728,6 +1785,66 @@ bool celNavMeshBuilder::SetSector (iSector* sector) {
   return GetSectorData();
 }
 
+bool celNavMeshBuilder::CheckClipping(const csPlane3& clipPlane, const csBox3& bbox, bool& result)
+{
+  // test whether we really have to clip
+  result = true;
+  if(!csIntersect3::BoxPlane(bbox, clipPlane))
+  {
+    result = false;
+    // bbox doesn't intersect with the plane, check whether we have to process it
+    if(clipPlane.Classify(bbox.GetCenter()) >= 0)
+    {
+      return false;
+    }
+  }
+  return true;
+}
+
+void celNavMeshBuilder::SplitPolygon(int indexOffset, int vertCount, csVector3* verts, csArray<csVector3>& vertices, csArray<csTriangle>& triangles, const csReversibleTransform& transform, csPlane3& clipPlane, bool clipPolygon)
+{
+  // do the intersection
+  size_t numVerts = vertCount;
+  if(clipPolygon && !clipPlane.ClipPolygon(verts, vertCount))
+  {
+    // skip invisible polys if clipping is enabled
+    return;
+  }
+
+  size_t i;
+  if(!transform.IsIdentity())
+  {
+    for(i = 0; i < numVerts; ++i)
+    {
+      verts[i] = transform.This2Other(verts[i]);
+    }
+  }
+
+  // get indices and add vertices if not yet present
+  size_t* indices = new size_t[numVerts];
+  for(i = 0; i < numVerts; ++i)
+  {
+    indices[i] = vertices.Find(verts[i]);
+    if(indices[i] == csArrayItemNotFound)
+    {
+      indices[i] = vertices.GetSize();
+      vertices.Push(verts[i]);
+    }
+    indices[i] += indexOffset;
+  }
+
+  // add new triangles
+  csTriangle tri;
+  for(i = 2; i < numVerts; i++)
+  {
+    tri.Set(indices[0],indices[i-1],indices[i]);
+    triangles.Push(tri);
+  }
+
+  // free temporary buffer
+  delete [] indices;
+}
+
 /*
  * This method gets the triangles for all the meshes in the sector and stores them, in order to
  * be able to build the navigation meshes later.
@@ -1735,70 +1852,117 @@ bool celNavMeshBuilder::SetSector (iSector* sector) {
 // Based on Recast InputGeom::loadMesh
 bool celNavMeshBuilder::GetSectorData () 
 {
-  csList<int> indices;
-  csList<float> vertices;
+  csArray<csTriangle> triangles;
+  csArray<csVector3> vertices;
   csStringID base = strings->Request("base");
   csStringID collDet = strings->Request("colldet");
   
   csVector3 v;
-  csRef<iMeshList> meshList = currentSector->GetMeshes();
-  int numberOfMeshes = meshList->GetCount();
-  for (int i = 0; i < numberOfMeshes; i++) 
+  csRefArray<iMeshWrapper> meshList;
+  csHash<csRef<iPortal>,csPtrKey<iMeshWrapper> > portals;
+
+  // add nearby meshes from other sectors
   {
-    csRef<iMeshWrapper> meshWrapper = meshList->Get(i);
-    csReversibleTransform transform = meshWrapper->GetMovable()->GetTransform();
-
-    // Check if mesh is a terrain2 mesh
-    csRef<iTerrainSystem> terrainSystem = scfQueryInterface<iTerrainSystem>(meshWrapper->GetMeshObject());
-    if (terrainSystem)
+    csRef<iEngine> engine = csQueryRegistry<iEngine>(objectRegistry);
+    csSet<csPtrKey<iMeshWrapper> >::GlobalIterator portalMeshesIt = currentSector->GetPortalMeshes().GetIterator();
+    while(portalMeshesIt.HasNext())
     {
-      size_t size = terrainSystem->GetCellCount();
-      for (size_t j = 0; j < size; j++)
+      csRef<iPortalContainer> container = portalMeshesIt.Next()->GetPortalContainer();
+      int size = container->GetPortalCount();
+      for (int i = 0; i < size; i++)
       {
-        csRef<iTerrainCell> cell = terrainSystem->GetCell(j);
+        csRef<iPortal> portal = container->GetPortal(i);
+        portal->CompleteSector(0);
 
-        int width = cell->GetGridWidth();
-        int height = cell->GetGridHeight();
-
-        float offset_x = cell->GetPosition().x;
-        float offset_y = cell->GetPosition().y;
-
-        float scale_x = cell->GetSize().x / (width - 1);
-        float scale_z = cell->GetSize().z / (height - 1);
-
-        // Add triangles
-        for (int y = 0; y < height - 1; y++)
+        if (portal->GetVertexIndicesCount() >= 3 && portal->GetSector())
         {
-          int yr = y * width;
-          for (int x = 0 ; x < width - 1 ; x++)
+          // Calculate portal's bounding box
+          csBox3 bbox;
           {
-            indices.PushBack(yr + x + numberOfVertices);
-            indices.PushBack(yr + x + 1 + numberOfVertices);
-            indices.PushBack(yr + x + width + numberOfVertices);
-            indices.PushBack(yr + x + 1 + numberOfVertices);
-            indices.PushBack(yr + x + width + 1 + numberOfVertices);
-            indices.PushBack(yr + x + width + numberOfVertices);
-            numberOfTriangles += 2;
+            // Get portal vertices
+            int verticesSize = portal->GetVerticesCount();
+            const csVector3* verticesPortal = portal->GetWorldVertices();
+
+            // add vertices to bbox
+            bbox.AddBoundingVertex(verticesPortal[0]);
+            for (int j = 1; j < verticesSize; j++)
+            {
+              bbox.AddBoundingVertexSmart(verticesPortal[j]);
+            }
           }
-        }
 
-        // Add vertices
-        for (int y = 0; y < height; y++)
-        {
-          for (int x = 0 ; x < width ; x++)
+          // get the clipping plane
+          csPlane3 clipPlane = portal->GetWorldPlane();
+
+          // move the bbox slightly in front of portal so it will be traversed
+          csVector3 portalOrigin = bbox.GetCenter();
+          csVector3 portalNormal = clipPlane.Normal();
+          portalOrigin += 0.1*portalNormal;
+          bbox.SetCenter(portalOrigin);
+
+          // extend the bbox by PolygonSearchBox + 2*AgentSize
+          csVector3 size = bbox.GetSize();
+          size += parameters->GetPolygonSearchBox();
+          size += csVector3(parameters->GetAgentRadius()*2,
+                            parameters->GetAgentHeight(),
+                            parameters->GetAgentRadius()*2);
+          size += csVector3(parameters->GetBorderSize());
+          size += csVector3(parameters->GetTileSize());
+          bbox.SetSize(size);
+
+          // warp the clipping plane and bbox so we can use them in the target sector
+          if(portal->GetFlags().Check(CS_PORTAL_WARP))
           {
-            csVector3 vertex(x * scale_x + offset_x, cell->GetHeight(x, y), (height - 1 - y) * scale_z + offset_y);
-            csVector3 vertexTransformed = transform.This2Other(vertex);
-            vertices.PushBack(vertexTransformed.x);
-            vertices.PushBack(vertexTransformed.y);
-            vertices.PushBack(vertexTransformed.z);
-            numberOfVertices++;
+            clipPlane = portal->GetWarp().Other2This(clipPlane);
+            bbox = portal->GetWarp().Other2This(bbox);
+          }
+
+          // add meshes of the sector this portal leads to
+          csRef<iMeshList> sectorList = portal->GetSector()->GetMeshes();
+          int numberOfMeshes = sectorList->GetCount();
+
+          for (int i = 0; i < numberOfMeshes; i++) 
+          {
+            csRef<iMeshWrapper> meshWrapper = sectorList->Get(i);
+            csBox3 meshBBox = meshWrapper->GetWorldBoundingBox();
+            if(bbox.TestIntersect(meshBBox) && (csIntersect3::BoxPlane(meshBBox, clipPlane) || clipPlane.Classify(meshBBox.GetCenter()) < 0))
+            {
+              meshList.Push(meshWrapper);
+              portals.Put(csPtrKey<iMeshWrapper>(meshWrapper), portal);
+            }
           }
         }
       }
     }
+  }
 
+  csPrintf("added %zu meshes from other sectors to %s\n", meshList.GetSize(), currentSector->QueryObject()->GetName());
+
+  // add meshes in the sector
+  {
+    csRef<iMeshList> sectorList = currentSector->GetMeshes();
+    int numberOfMeshes = sectorList->GetCount();
+
+    for (int i = 0; i < numberOfMeshes; i++) 
+    {
+      meshList.Push(sectorList->Get(i));
+    }
+  }
+
+  csRefArray<iMeshWrapper>::Iterator it(meshList.GetIterator());
+  while(it.HasNext())
+  {
+    csRef<iMeshWrapper> meshWrapper(it.Next());
+    if(meshWrapper->GetFlags().Check(CS_ENTITY_INVISIBLEMESH|CS_ENTITY_CAMERA)
+       || meshWrapper->GetPortalContainer())
+    {
+      // we don't want to take this mesh into consideration for our navmesh
+      continue;
+    }
+
+    // obtain collision data
     csRef<iObjectModel> objectModel = meshWrapper->GetMeshObject()->GetObjectModel();
+    csRef<iTerrainSystem> terrainSystem = scfQueryInterface<iTerrainSystem>(meshWrapper->GetMeshObject());
     csRef<iTriangleMesh> triangleMesh;
     if (objectModel->IsTriangleDataSet(collDet))
     {
@@ -1809,82 +1973,174 @@ bool celNavMeshBuilder::GetSectorData ()
       triangleMesh = objectModel->GetTriangleData(base);
     }
 
-    if (triangleMesh) 
+    // skip meshes with empty collision data
+    if(!triangleMesh.IsValid() && !terrainSystem.IsValid())
+    {
+      continue;
+    }
+
+    csReversibleTransform transform = meshWrapper->GetMovable()->GetFullTransform();
+    csRef<iPortal> portal;
+    csPlane3 clipPlane;
+    bool needsClipping = false;
+    if(portals.Contains(csPtrKey<iMeshWrapper>(meshWrapper)))
+    {
+      portal = portals.Get(csPtrKey<iMeshWrapper>(meshWrapper),0);
+      if(portal->GetFlags().Check(CS_PORTAL_WARP))
+      {
+        transform *= portal->GetWarp();
+      }
+      needsClipping = portal->GetFlags().Check(CS_PORTAL_CLIPDEST
+                           | CS_PORTAL_CLIPSTRADDLING | CS_PORTAL_ZFILL
+                           | CS_PORTAL_MIRROR | CS_PORTAL_FLOAT);
+    }
+    needsClipping &= !meshWrapper->GetFlags().Check(CS_ENTITY_NOCLIP);
+
+    if(needsClipping)
+    {
+      // transform clipping plane into object space
+      clipPlane = transform.This2Other(portal->GetWorldPlane());
+
+      // check whether the object is visible and really needs clipping
+      if(!CheckClipping(clipPlane, objectModel->GetObjectBoundingBox(), needsClipping))
+      {
+        continue;
+      }
+    }
+
+    // process terrain mesh
+    if (terrainSystem.IsValid())
+    {
+      // temporary buffers
+      csArray<csVector3> cellVertices;
+      csArray<csTriangle> cellTriangles;
+      csVector3* polyVertices = new csVector3[4];
+
+      size_t size = terrainSystem->GetCellCount();
+      for (size_t j = 0; j < size; j++)
+      {
+        csRef<iTerrainCell> cell = terrainSystem->GetCell(j);
+
+        // get cell data
+        int width = cell->GetGridWidth();
+        int height = cell->GetGridHeight();
+
+        float offset_x = cell->GetPosition().x;
+        float offset_y = cell->GetPosition().y;
+
+        float scale_x = cell->GetSize().x / (width - 1);
+        float scale_z = cell->GetSize().z / (height - 1);
+
+        // tesselate and clip cell
+        for(int y = 0; y < height; ++y)
+        {
+          for(int x = 0; x < width; ++x)
+          {
+            float xbase = x*scale_x+offset_x;
+            float ybase = (height - 1 - y)*scale_z+offset_y;
+
+            csVector3* polyVerts = polyVertices;
+            polyVerts[0] = csVector3(xbase, cell->GetHeight(x,y), ybase);
+            polyVerts[1] = csVector3(xbase+scale_x, cell->GetHeight(x+1,y), ybase);
+            polyVerts[2] = csVector3(xbase+scale_x, cell->GetHeight(x+1,y+1), ybase-scale_z);
+            polyVerts[3] = csVector3(xbase, cell->GetHeight(x,y+1), ybase-scale_z);
+
+            SplitPolygon(vertices.GetSize(), 4, polyVerts, cellVertices, cellTriangles, transform, clipPlane, needsClipping);
+          }
+        }
+      }
+
+      vertices.Merge(cellVertices);
+      triangles.Merge(cellTriangles);
+
+      // free temporary buffers
+      delete [] polyVertices;
+    }
+    // process trimesh
+    else if (triangleMesh.IsValid()) 
     {
       int numberOfMeshTriangles = triangleMesh->GetTriangleCount();
-      if (numberOfMeshTriangles > 0) 
+      if (numberOfMeshTriangles > 0)
       {
-        // Copy triangles
-        csTriangle* triangles = triangleMesh->GetTriangles();
-        for (int k = 0; k < numberOfMeshTriangles; k++) 
-        {
-          indices.PushBack(triangles[k][0] + numberOfVertices);
-          indices.PushBack(triangles[k][1] + numberOfVertices);
-          indices.PushBack(triangles[k][2] + numberOfVertices); 
-        }
-        numberOfTriangles += numberOfMeshTriangles;
+        csArray<csVector3> meshVertices;
+        csArray<csTriangle> meshTriangles;
 
-        // Copy vertices
-        int numberOfMeshVertices = triangleMesh->GetVertexCount();
-        csVector3* meshVertices = triangleMesh->GetVertices();
-        for (int k = 0; k < numberOfMeshVertices; k++) 
+        // Copy triangles
+        csTriangle* triangleData = triangleMesh->GetTriangles();
+        csVector3* vertexData = triangleMesh->GetVertices();
+
+        csVector3* triVertices = new csVector3[3];
+
+        for (int k = 0; k < numberOfMeshTriangles; k++)
         {
-          v = transform.This2Other(meshVertices[k]);
-          vertices.PushBack(v[0]);
-          vertices.PushBack(v[1]);
-          vertices.PushBack(v[2]);
+          // build triangle
+          csVector3* triVerts = triVertices;
+          triVerts[0] = vertexData[triangleData[k][0]];
+          triVerts[1] = vertexData[triangleData[k][1]];
+          triVerts[2] = vertexData[triangleData[k][2]];
+
+          // clip triangle
+          SplitPolygon(vertices.GetSize(), 3, triVerts, meshVertices, meshTriangles, transform, clipPlane, needsClipping);
         }
-        numberOfVertices += numberOfMeshVertices;
+
+        delete [] triVertices;
+
+        vertices.Merge(meshVertices);
+        triangles.Merge(meshTriangles);
       }
     }
   }
 
-  numberOfRealVertices = numberOfVertices;
-  numberOfRealTriangles = numberOfTriangles;
-
-  // Create fake triangles, normal to the portals
-  int numberOfFakeTriangles;
-  int numberOfFakeVertices;
-  CreateFakeTriangles(vertices, indices, numberOfFakeVertices, numberOfFakeTriangles, numberOfVertices);
-  numberOfVertices += numberOfFakeVertices;
-  numberOfTriangles += numberOfFakeTriangles;
-
-  // Copy vertices from list to array
-  triangleVertices = new float[numberOfVertices * 3];
+  // allocate vertex buffer
+  triangleVertices = new float[vertices.GetSize() * 3];
   if (!triangleVertices) 
   {
     return csApplicationFramework::ReportError("Out of memory while loading triangle data from sector.");
   }
-  int i = 0;
-  csList<float>::Iterator verticesIt(vertices);
-  while (verticesIt.HasNext()) 
+
+  // copy vertex array data to the buffer
+  numberOfVertices = vertices.GetSize();
+  size_t i;
+  for (i = 0; i < vertices.GetSize(); ++i)
   {
-    triangleVertices[i++] = verticesIt.Next();
+    const csVector3& v = vertices[i];
+    triangleVertices[3*i  ] = v[0];
+    triangleVertices[3*i+1] = v[1];
+    triangleVertices[3*i+2] = v[2];
   }
 
-  // Copy indices from list to array
-  triangleIndices = new int[numberOfTriangles * 3];
+  // allocate indice buffer
+  triangleIndices = new int[triangles.GetSize() * 3];
   if (!triangleIndices) 
   {
     return csApplicationFramework::ReportError("Out of memory while loading triangle data from sector.");
   }
-  i = 0;
-  csList<int>::Iterator indicesIt(indices);
-  while (indicesIt.HasNext()) 
+
+  // copy index array data to the buffer
+  numberOfTriangles = triangles.GetSize();
+  for (i = 0; i < triangles.GetSize(); ++i)
   {
-    triangleIndices[i++] = indicesIt.Next();
+    const csTriangle& t = triangles[i];
+    triangleIndices[3*i  ] = t[0];
+    triangleIndices[3*i+1] = t[1];
+    triangleIndices[3*i+2] = t[2];
   }
 
   // Calculate a bounding box for the map triangles
-  rcCalcBounds(triangleVertices, numberOfVertices, boundingMin, boundingMax);
+  rcCalcBounds(triangleVertices, vertices.GetSize(), boundingMin, boundingMax);
 
-  // ChunkyTriMesh is a structure used by Recast
+  // free previously allocated trimesh
+  delete chunkyTriMesh;
+
+  // allocate new trimesh structure
   chunkyTriMesh = new rcChunkyTriMesh;
   if (!chunkyTriMesh) 
   {
     return csApplicationFramework::ReportError("Out of memory while loading triangle data from sector.");
   }
-  if (!rcCreateChunkyTriMesh(triangleVertices, triangleIndices, numberOfTriangles, 256, chunkyTriMesh)) 
+
+  // create new trimesh
+  if (!rcCreateChunkyTriMesh(triangleVertices, triangleIndices, triangles.GetSize(), 256, chunkyTriMesh)) 
   {
     return csApplicationFramework::ReportError("Error creating ChunkyTriMesh.");
   }	
@@ -1892,176 +2148,9 @@ bool celNavMeshBuilder::GetSectorData ()
   return true;
 }
 
-/*
- * When building a navigation mesh, recast removes a border from the walkable area of the sector, proportional
- * to the agent's radius. This is done to ensure that any linear path can be chosen inside the navigation mesh, 
- * without fear of part of the agent going into walls or not being able to walk that path due to collision with
- * walls. This however causes problems near a portal, since the area between two sectors will not be considered
- * walkable. In order to fix this, the navigation meshes are expanded near portals by creating "fake triangles"
- * that can be fed to Recast. This triangles form a tunnel going in the direction of the portal's normal, with
- * depth equal to the navmesh border. This way, the border will be removed from this fake triangles, and the
- * area that connects the sectors will still be walkable.
- */
-void celNavMeshBuilder::CreateFakeTriangles (csList<float>& vertices, csList<int>& indices, int& numberOfVertices, 
-                                             int& numberOfTriangles, int firstIndex)
-{
-  numberOfVertices = 0;
-  numberOfTriangles = 0;
-
-  csSet<csPtrKey<iMeshWrapper> >::GlobalIterator portalMeshesIt = 
-      currentSector->GetPortalMeshes().GetIterator();
-  while (portalMeshesIt.HasNext())
-  {
-    csRef<iPortalContainer> container = portalMeshesIt.Next()->GetPortalContainer();
-    int size = container->GetPortalCount();
-    for (int i = 0; i < size; i++)
-    {
-      csRef<iPortal> portal = container->GetPortal(i);
-
-      // Get portal indices
-      int indicesSize = portal->GetVertexIndicesCount();
-      const int* indicesPortal = portal->GetVertexIndices();
-
-      // Get portal vertices
-      int verticesSize = portal->GetVerticesCount();
-      const csVector3* verticesPortal = portal->GetWorldVertices();
-
-      if (indicesSize >= 3)
-      {
-        int firstPortalIndex = firstIndex + numberOfVertices;
-
-        // Copy portal vertices
-        for (int j = 0; j < verticesSize; j++)
-        {
-          vertices.PushBack(verticesPortal[j][0]);
-          vertices.PushBack(verticesPortal[j][1]);
-          vertices.PushBack(verticesPortal[j][2]);
-        }
-        numberOfVertices += verticesSize;
-
-        const csVector3 direction = portal->GetObjectPlane().Normal() * parameters->GetBorderSize() 
-            * parameters->GetCellSize();
-        const csVector3 v1 = verticesPortal[indicesPortal[0]];
-        const csVector3 v2 = verticesPortal[indicesPortal[1]];
-
-        // For the first triangle, add new vertices for the first and second vertices of current triangle
-        csVector3 v = v1 + direction;
-        vertices.PushBack(v[0]);
-        vertices.PushBack(v[1]);
-        vertices.PushBack(v[2]);
-        v = v2 + direction;
-        vertices.PushBack(v[0]);
-        vertices.PushBack(v[1]);
-        vertices.PushBack(v[2]);
-        
-        int lastVertexIndex = firstIndex + numberOfVertices;
-        int thisVertexIndex = lastVertexIndex + 1;
-        numberOfVertices += 2;
-
-        // Create two triangles for edge v1v2, v1-lastVertexIndex-v2 and v2-lastVertexIndex-thisVertexIndex
-        indices.PushBack(indicesPortal[0] + firstPortalIndex);
-        indices.PushBack(indicesPortal[1] + firstPortalIndex);
-        indices.PushBack(lastVertexIndex);
-        indices.PushBack(indicesPortal[1] + firstPortalIndex);
-        indices.PushBack(thisVertexIndex);
-        indices.PushBack(lastVertexIndex);        
-        numberOfTriangles += 2;
-
-        // For each triangle on the triangle fan, create new triangles in the direction of the plane normal
-        // We are basically extruding the polygon by agentRadius, in the direction of the polygon normal
-        int size2 = indicesSize - 2;
-        for (int j = 1; j <= size2; j++)
-        {
-          lastVertexIndex = thisVertexIndex;
-          thisVertexIndex++;
-          const csVector3 v3 = verticesPortal[indicesPortal[j + 1]];
-
-          // Add new vertex for the third vertex of current triangle          
-          v = v3 + direction;
-          vertices.PushBack(v[0]);
-          vertices.PushBack(v[1]);
-          vertices.PushBack(v[2]);
-          numberOfVertices++;
-
-          // Create two triangles for edge v2v3, v2-lastVertexIndex-v3 and v3-lastVertexIndex-thisVertexIndex
-          indices.PushBack(indicesPortal[j] + firstPortalIndex);
-          indices.PushBack(indicesPortal[j + 1] + firstPortalIndex);
-          indices.PushBack(lastVertexIndex);          
-          indices.PushBack(indicesPortal[j + 1] + firstPortalIndex);
-          indices.PushBack(thisVertexIndex);
-          indices.PushBack(lastVertexIndex);          
-          numberOfTriangles += 2;
-        }
-
-        // Create two triangles for edge v3v1 of the last triangle
-        // v3-thisVertexIndex-v1 v1-thisVertexIndex-firstVertexIndex
-        indices.PushBack(indicesPortal[indicesSize - 1] + firstPortalIndex);
-        indices.PushBack(indicesPortal[0] + firstPortalIndex);
-        indices.PushBack(thisVertexIndex);
-        indices.PushBack(indicesPortal[0] + firstPortalIndex);
-        indices.PushBack(firstPortalIndex);
-        indices.PushBack(thisVertexIndex);
-        numberOfTriangles += 2;
-      }
-    }    
-  }
-}
-
-// The fake triangles have to be updated if some parameter that affects the border size
-// of the navigation mesh is changed.
-bool celNavMeshBuilder::UpdateFakeTriangles ()
-{
-  if (!currentSector || ! triangleVertices || !triangleIndices)
-  {
-    return true;
-  }
-
-  csList<int> indices;
-  csList<float> vertices;
-
-  // Create fake triangles, normal to the portals
-  int numberOfFakeTriangles;
-  int numberOfFakeVertices;
-  CreateFakeTriangles(vertices, indices, numberOfFakeVertices, numberOfFakeTriangles, numberOfRealVertices);
-
-  // Copy vertices from list to array
-  int i = numberOfRealVertices * 3;
-  csList<float>::Iterator verticesIt(vertices);
-  while (verticesIt.HasNext()) 
-  {
-    triangleVertices[i++] = verticesIt.Next();
-  }
-
-  // Copy indices from list to array
-  i = numberOfRealTriangles * 3;
-  csList<int>::Iterator indicesIt(indices);
-  while (indicesIt.HasNext()) 
-  {
-    triangleIndices[i++] = indicesIt.Next();
-  }
-
-  // Calculate a bounding box for the map triangles
-  rcCalcBounds(triangleVertices, numberOfVertices, boundingMin, boundingMax);
-
-  // ChunkyTriMesh is a structure used by Recast
-  delete chunkyTriMesh;
-  chunkyTriMesh = new rcChunkyTriMesh;
-  if (!chunkyTriMesh) 
-  {
-    return csApplicationFramework::ReportError("Out of memory while loading triangle data from sector.");
-  }
-  if (!rcCreateChunkyTriMesh(triangleVertices, triangleIndices, numberOfTriangles, 256, chunkyTriMesh)) 
-  {
-    return csApplicationFramework::ReportError("Error creating ChunkyTriMesh.");
-  }
-  return true;
-}
-
 // Based on Recast Sample_TileMesh::buildAllTiles()
 THREADED_CALLABLE_IMPL(celNavMeshBuilder,BuildNavMesh)
 {
-  (void)sync; // supress unused var warning
-
   CS_ASSERT(currentSector);
   if (!currentSector) 
   {
@@ -2103,8 +2192,6 @@ THREADED_CALLABLE_IMPL(celNavMeshBuilder,BuildNavMesh)
 
   float tileBoundingMin[3];
   float tileBoundingMax[3];
-
-  csRefArray<iThreadReturn> results;
   for (int y = 0; y < th; ++y)
   {
     for (int x = 0; x < tw; ++x)
@@ -2124,48 +2211,45 @@ THREADED_CALLABLE_IMPL(celNavMeshBuilder,BuildNavMesh)
       tileConfig.bmax[0] += tileConfig.borderSize * tileConfig.cs;
       tileConfig.bmax[2] += tileConfig.borderSize * tileConfig.cs;
 
-      results.Push(BuildTile(x, y, tileBoundingMin, tileBoundingMax, &tileConfig));
-    }
-  }
-
-  csRef<iThreadManager> tm = csQueryRegistry<iThreadManager>(GetObjectRegistry());
-  tm->Wait(results, true);
-  
-  for(size_t i = 0; i < results.GetSize(); i++)
-  {
-    csRef<iThreadReturn> ret = results.Get(i);
-    if(ret->WasSuccessful())
-    {
-      tileData* tile = static_cast<tileData*>(ret->GetResultPtr());
-      if(tile && tile->data)
+      int dataSize = 0;
+      unsigned char* data = BuildTile(x, y, tileBoundingMin, tileBoundingMax, tileConfig, dataSize);
+      if (data)
       {
-        if(!navMesh->AddTile(tile->data,tile->size))
+        if (!navMesh->AddTile(data, dataSize))
         {
-          dtFree(tile->data);
+          dtFree(data);
           csApplicationFramework::ReportWarning("could not add tile at location %d, %d in sector %s",
-              tile->x, tile->y, currentSector->QueryObject()->GetName());
+              x, y, currentSector->QueryObject()->GetName());
+          continue;
         }
       }
-      delete tile;
     }
   }
-
   ret->SetResult(csRef<iBase>(navMesh));
   return true;
 }
 
 void celNavMeshBuilder::CleanUpTileData()
 {
+  delete [] triangleAreas;
+  triangleAreas = 0;
+  rcFreeHeightField(solid);
+  solid = 0;
+  rcFreeCompactHeightfield(chf);
+  chf = 0;
+  rcFreeContourSet(cSet);
+  cSet = 0;
+  rcFreePolyMesh(pMesh);
+  pMesh = 0;
+  rcFreePolyMeshDetail(dMesh);
+  dMesh = 0;
 }
 
 // Based on Recast Sample_TileMesh::buildTileMesh()
 // NOTE I left the original Recast comments
-THREADED_CALLABLE_IMPL5(celNavMeshBuilder,BuildTile,int tx, int ty, const float* bmin, const float* bmax, 
-                        const rcConfig* tileConfigPtr)
+unsigned char* celNavMeshBuilder::BuildTile(const int tx, const int ty, const float* bmin, const float* bmax, 
+                                            const rcConfig& tileConfig, int& dataSize)
 {
-  (void)sync;
-  const rcConfig& tileConfig = *tileConfigPtr;
-  ret->SetResult((void*)0);
 
   if (!triangleVertices || !triangleIndices || !chunkyTriMesh)
   {
@@ -2177,7 +2261,7 @@ THREADED_CALLABLE_IMPL5(celNavMeshBuilder,BuildTile,int tx, int ty, const float*
   CleanUpTileData();
 
   // Allocate voxel heighfield where we rasterize our input data to.
-  CS::Utility::ScopedDelete<rcHeightfield> solid(rcAllocHeightfield());
+  solid = rcAllocHeightfield();
   if (!solid)
   {
     csApplicationFramework::ReportError("Out of memory building navigation mesh.");
@@ -2193,7 +2277,7 @@ THREADED_CALLABLE_IMPL5(celNavMeshBuilder,BuildTile,int tx, int ty, const float*
   // Allocate array that can hold triangle flags.
   // If you have multiple meshes you need to process, allocate
   // and array which can hold the max number of triangles you need to process.
-  unsigned char* triangleAreas = new unsigned char[chunkyTriMesh->maxTrisPerChunk];
+  triangleAreas = new unsigned char[chunkyTriMesh->maxTrisPerChunk];
   if (!triangleAreas)
   {
     csApplicationFramework::ReportError("Out of memory building navigation mesh.");
@@ -2209,7 +2293,6 @@ THREADED_CALLABLE_IMPL5(celNavMeshBuilder,BuildTile,int tx, int ty, const float*
   const int ncid = rcGetChunksInRect(chunkyTriMesh, tbmin, tbmax, cid, 512);
   if (!ncid)
   {
-    delete [] triangleAreas;
     return 0;
   }
 
@@ -2231,6 +2314,7 @@ THREADED_CALLABLE_IMPL5(celNavMeshBuilder,BuildTile,int tx, int ty, const float*
   }
 
   delete [] triangleAreas;
+  triangleAreas = 0;
 
   // Once all geoemtry is rasterized, we do initial pass of filtering to
   // remove unwanted overhangs caused by the conservative rasterization
@@ -2242,7 +2326,7 @@ THREADED_CALLABLE_IMPL5(celNavMeshBuilder,BuildTile,int tx, int ty, const float*
   // Compact the heightfield so that it is faster to handle from now on.
   // This will result more cache coherent data as well as the neighbours
   // between walkable cells will be calculated.
-  CS::Utility::ScopedDelete<rcCompactHeightfield> chf(rcAllocCompactHeightfield());
+  chf = rcAllocCompactHeightfield();
   if (!chf)
   {
     csApplicationFramework::ReportError("Out of memory building navigation mesh.");
@@ -2254,7 +2338,8 @@ THREADED_CALLABLE_IMPL5(celNavMeshBuilder,BuildTile,int tx, int ty, const float*
     return 0;
   }
 
-  solid.Free();
+  rcFreeHeightField(solid);
+  solid = 0;
 
   // Erode the walkable area by agent radius.
   if (!rcErodeWalkableArea(tileConfig.walkableRadius, *chf))
@@ -2284,8 +2369,14 @@ THREADED_CALLABLE_IMPL5(celNavMeshBuilder,BuildTile,int tx, int ty, const float*
     return 0;
   }
 
+  // remove border mapping as we don't want those to be removed
+  /*for(int i = 0; i < chf->spanCount; i++)
+  {
+    chf->areas[i] &= ~RC_BORDER_REG;
+  }*/
+
   // Create contours.
-  CS::Utility::ScopedDelete<rcContourSet> cSet(rcAllocContourSet());
+  cSet = rcAllocContourSet();
   if (!cSet)
   {
     csApplicationFramework::ReportError("Out of memory building navigation mesh.");
@@ -2302,7 +2393,7 @@ THREADED_CALLABLE_IMPL5(celNavMeshBuilder,BuildTile,int tx, int ty, const float*
   }
 
   // Build polygon navmesh from the contours.
-  CS::Utility::ScopedDelete<rcPolyMesh> pMesh(rcAllocPolyMesh());
+  pMesh = rcAllocPolyMesh();
   if (!pMesh)
   {
     csApplicationFramework::ReportError("Out of memory building navigation mesh.");
@@ -2315,7 +2406,7 @@ THREADED_CALLABLE_IMPL5(celNavMeshBuilder,BuildTile,int tx, int ty, const float*
   }
 
   // Build detail mesh.
-  CS::Utility::ScopedDelete<rcPolyMeshDetail> dMesh(rcAllocPolyMeshDetail());
+  dMesh = rcAllocPolyMeshDetail();
   if (!dMesh)
   {
     csApplicationFramework::ReportError("Out of memory building navigation mesh.");
@@ -2327,8 +2418,10 @@ THREADED_CALLABLE_IMPL5(celNavMeshBuilder,BuildTile,int tx, int ty, const float*
     return 0;
   }
 
-  chf.Free();
-  cSet.Free();
+  rcFreeCompactHeightfield(chf);
+  chf = 0;
+  rcFreeContourSet(cSet);
+  cSet = 0;
 
   unsigned char* navData = 0;
   int navDataSize = 0;
@@ -2409,15 +2502,13 @@ THREADED_CALLABLE_IMPL5(celNavMeshBuilder,BuildTile,int tx, int ty, const float*
     }
   }
 
-  tileData* tile = new tileData;
-  tile->x = tx;
-  tile->y = ty;
-  tile->data = navData;
-  tile->size = navDataSize;
-  
-  ret->SetResult((void*)tile);
+  rcFreePolyMesh(pMesh);
+  pMesh = 0;
+  rcFreePolyMeshDetail(dMesh);
+  dMesh = 0;
 
-  return true;
+  dataSize = navDataSize;
+  return navData;
 }
 
 iCelNavMesh* celNavMeshBuilder::LoadNavMesh (iFile* file)
@@ -2455,10 +2546,10 @@ bool celNavMeshBuilder::UpdateNavMesh (celNavMesh* navMesh, const csBox3& boundi
   }
 
   // Calculate which tiles intersect with the object
-  int xmin = (min.x - boundingMin[0]) / tcs;
-  int xmax = (max.x - boundingMin[0]) / tcs;
-  int zmin = (min.z - boundingMin[2]) / tcs;
-  int zmax = (max.z - boundingMin[2]) / tcs;
+  unsigned xmin = (min.x - boundingMin[0]) / tcs;
+  unsigned xmax = (max.x - boundingMin[0]) / tcs;
+  unsigned zmin = (min.z - boundingMin[2]) / tcs;
+  unsigned zmax = (max.z - boundingMin[2]) / tcs;
 
   // Adjust boundaries to be within the navmesh
   if (xmin < 0)
@@ -2469,11 +2560,11 @@ bool celNavMeshBuilder::UpdateNavMesh (celNavMesh* navMesh, const csBox3& boundi
   {
     zmin = 0;
   }
-  if (xmax > tw)
+  if (xmax > (unsigned)tw)
   {
     xmax = tw;
   }
-  if (zmax > th)
+  if (zmax > (unsigned)th)
   {
     zmax = th;
   }
@@ -2505,11 +2596,9 @@ bool celNavMeshBuilder::UpdateNavMesh (celNavMesh* navMesh, const csBox3& boundi
   float tileBoundingMax[3];
   tileBoundingMin[1] = boundingMin[1];
   tileBoundingMax[1] = boundingMax[1];
-  
-  csRefArray<iThreadReturn> results;
-  for (int y = zmin; y <= zmax; ++y)
+  for (unsigned y = zmin; y <= zmax; ++y)
   {
-    for (int x = xmin; x <= xmax; ++x)
+    for (unsigned x = xmin; x <= xmax; ++x)
     {
       tileBoundingMin[0] = boundingMin[0] + x * tcs;
       tileBoundingMin[2] = boundingMin[2] + y * tcs;
@@ -2524,32 +2613,19 @@ bool celNavMeshBuilder::UpdateNavMesh (celNavMesh* navMesh, const csBox3& boundi
       tileConfig.bmax[0] += tileConfig.borderSize * tileConfig.cs;
       tileConfig.bmax[2] += tileConfig.borderSize * tileConfig.cs;
 
-      results.Push(BuildTile(x, y, tileBoundingMin, tileBoundingMax, &tileConfig));
-    }
-  }
-
-  csRef<iThreadManager> tm = csQueryRegistry<iThreadManager>(GetObjectRegistry());
-  tm->Wait(results, true);
-  
-  bool success = true;
-  for(size_t i = 0; i < results.GetSize(); i++)
-  {
-    csRef<iThreadReturn> ret = results.Get(i);
-    if(ret->WasSuccessful())
-    {
-      tileData* tile = static_cast<tileData*>(ret->GetResultPtr());
-      if(tile && tile->data)
-      {
-        if(!navMesh->RemoveTile(tile->x,tile->y) || !navMesh->AddTile(tile->data,tile->size))
+      int dataSize = 0;
+      unsigned char* data = BuildTile(x, y, tileBoundingMin, tileBoundingMax, tileConfig, dataSize);
+      if (data)
+      {        
+        if (!navMesh->RemoveTile(x, y) || !navMesh->AddTile(data, dataSize))
         {
-          dtFree(tile->data);
-          success = false;
+          dtFree(data);
+          return false;
         }
       }
-      delete tile;
     }
   }
-  return success;
+  return true;
 }
 
 const iCelNavMeshParams* celNavMeshBuilder::GetNavMeshParams () const
@@ -2560,7 +2636,10 @@ const iCelNavMeshParams* celNavMeshBuilder::GetNavMeshParams () const
 void celNavMeshBuilder::SetNavMeshParams (const iCelNavMeshParams* parameters)
 {
   this->parameters.AttachNew(new celNavMeshParams(parameters));
-  UpdateFakeTriangles();
+  if(currentSector)
+  {
+    GetSectorData(); // recreate the sector data based on the new parameters
+  }
 }
 
 iSector* celNavMeshBuilder::GetSector () const

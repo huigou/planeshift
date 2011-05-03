@@ -399,6 +399,7 @@ static void calcRect(const float* va, const float* vb,
 static void drawMeshTilePortal(duDebugDraw* dd, const dtMeshTile* tile)
 {
 	// Draw portals
+	//const float padx = 0.01f;
 	const float pady = tile->header->walkableClimb;
 
 	dd->begin(DU_DRAW_LINES, 2.0f);

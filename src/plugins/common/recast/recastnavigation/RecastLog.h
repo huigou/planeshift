@@ -23,7 +23,7 @@ enum rcLogCategory
 {
 	RC_LOG_PROGRESS = 1,
 	RC_LOG_WARNING,
-	RC_LOG_ERROR
+	RC_LOG_ERROR,
 };
 
 class rcLog

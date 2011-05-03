@@ -1,6 +1,7 @@
 /*
     Crystal Space Entity Layer
-    Copyright (C) 2009 by Jorrit Tyberghein
+    Copyright (C) 2010 by Leonardo Rodrigo Domingues
+    Copyright (C) 2011 by Matthieu Kraus
   
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -32,10 +33,10 @@
 #include <iutil/document.h>
 #include <iutil/objreg.h>
 #include <ivaria/mapnode.h>
-#include <celgraph.h>
-#include <celnavmesh.h>
-#include <celhpf.h>
-#include "CelNavMesh.h"
+#include <tools/celgraph.h>
+#include <tools/celnavmesh.h>
+#include <tools/celhpf.h>
+#include "celnavmesh.h"
 
 CS_PLUGIN_NAMESPACE_BEGIN(celNavMesh)
 {
@@ -50,7 +51,7 @@ private:
   csRef<iCelPath> hlPath; // High level path
   csHash<csRef<iCelNavMesh>, csPtrKey<iSector> >& navMeshes;
   csArray<csRef<iCelNavMeshPath> > llPaths; // Low level paths
-  size_t currentllPosition; // Current position for low level paths array
+  int currentllPosition; // Current position for low level paths array
   csRef<iMapNode> currentNode;
   csPtrKey<iSector> currentSector;
   csRef<iMapNode> firstNode; // Optimization for celHPath::GetFirst
@@ -59,10 +60,8 @@ private:
   float length;
   float advanced;
 
-  virtual bool HasNextInternal () const;
-  virtual bool HasPreviousInternal () const;
-  virtual iMapNode* NextInternal ();
-  virtual iMapNode* PreviousInternal ();
+  virtual bool HasNextInternal (bool reverse) const;
+  virtual iMapNode* NextInternal (bool reverse);
 
 public:
   celHPath (csHash<csRef<iCelNavMesh>, csPtrKey<iSector> >& navMeshes);
