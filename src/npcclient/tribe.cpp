@@ -318,7 +318,7 @@ bool Tribe::AttachMember(NPC * npc, uint32_t tribeMemberType)
     // Some checks to see if this NPC is fitt for this Tribe
     if (tribeMemberType >= needSet.GetSize())
     {
-        Error5("Trying to attach a NPC %s(%u) that have a type %d largert than the supported type %d",
+        Error5("Trying to attach a NPC %s(%u) that have a type %d largert than the supported type %zu",
 	       npc->GetName(),npc->GetPID().Unbox(),tribeMemberType, needSet.GetSize());
         return false;
     }
