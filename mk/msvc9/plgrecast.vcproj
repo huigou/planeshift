@@ -1832,10 +1832,10 @@
 				RelativePath="..\..\mk\msvc\plugin_impl.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\plugins\common\recast\CelHPF.cpp">
+				RelativePath="..\..\src\plugins\common\recast\celhpf.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\plugins\common\recast\CelNavMesh.cpp">
+				RelativePath="..\..\src\plugins\common\recast\celnavmesh.cpp">
 			</File>
 			<File
 				RelativePath="..\..\src\plugins\common\recast\recastnavigation\ChunkyTriMesh.cpp">
@@ -1911,10 +1911,10 @@
 			Name="Header Files"
 			Filter="">
 			<File
-				RelativePath="..\..\src\plugins\common\recast\CelHPF.h">
+				RelativePath="..\..\src\plugins\common\recast\celhpf.h">
 			</File>
 			<File
-				RelativePath="..\..\src\plugins\common\recast\CelNavMesh.h">
+				RelativePath="..\..\src\plugins\common\recast\celnavmesh.h">
 			</File>
 			<File
 				RelativePath="..\..\src\plugins\common\recast\recastnavigation\ChunkyTriMesh.h">
@@ -1963,9 +1963,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\plugins\common\recast\recastnavigation\RecastTimer.h">
-			</File>
-			<File
-				RelativePath="..\..\src\plugins\common\recast\RecastScopedDelete.h">
 			</File>
 		</Filter>
 		<Filter
