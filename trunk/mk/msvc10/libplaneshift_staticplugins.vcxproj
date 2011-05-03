@@ -1363,8 +1363,8 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClCompile Include="..\..\src\plugins\common\bgloader\parser.cpp" />
     <ClCompile Include="..\..\src\plugins\common\bgloader\parser_mesh.cpp" />
     <ClCompile Include="..\..\src\plugins\common\celgraph\celgraph.cpp" />
-    <ClCompile Include="..\..\src\plugins\common\recast\CelHPF.cpp" />
-    <ClCompile Include="..\..\src\plugins\common\recast\CelNavMesh.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\recast\celhpf.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\recast\celnavmesh.cpp" />
     <ClCompile Include="..\..\src\plugins\common\recast\recastnavigation\ChunkyTriMesh.cpp" />
     <ClCompile Include="..\..\src\plugins\common\recast\recastnavigation\DebugDraw.cpp" />
     <ClCompile Include="..\..\src\plugins\common\recast\recastnavigation\DetourAlloc.cpp" />
@@ -1392,8 +1392,8 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
   <ItemGroup>
     <ClInclude Include="..\..\src\plugins\common\bgloader\loader.h" />
     <ClInclude Include="..\..\src\plugins\common\celgraph\celgraph.h" />
-    <ClInclude Include="..\..\src\plugins\common\recast\CelHPF.h" />
-    <ClInclude Include="..\..\src\plugins\common\recast\CelNavMesh.h" />
+    <ClInclude Include="..\..\src\plugins\common\recast\celhpf.h" />
+    <ClInclude Include="..\..\src\plugins\common\recast\celnavmesh.h" />
     <ClInclude Include="..\..\src\plugins\common\recast\recastnavigation\ChunkyTriMesh.h" />
     <ClInclude Include="..\..\src\plugins\common\recast\recastnavigation\DebugDraw.h" />
     <ClInclude Include="..\..\src\plugins\common\recast\recastnavigation\DetourAlloc.h" />
@@ -1410,7 +1410,6 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClInclude Include="..\..\src\plugins\common\recast\recastnavigation\RecastDump.h" />
     <ClInclude Include="..\..\src\plugins\common\recast\recastnavigation\RecastLog.h" />
     <ClInclude Include="..\..\src\plugins\common\recast\recastnavigation\RecastTimer.h" />
-    <ClInclude Include="..\..\src\plugins\common\recast\RecastScopedDelete.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

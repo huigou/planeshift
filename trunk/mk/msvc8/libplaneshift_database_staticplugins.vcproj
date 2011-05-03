@@ -1759,10 +1759,10 @@
 				RelativePath="..\..\src\plugins\common\celgraph\celgraph.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\plugins\common\recast\CelHPF.cpp">
+				RelativePath="..\..\src\plugins\common\recast\celhpf.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\plugins\common\recast\CelNavMesh.cpp">
+				RelativePath="..\..\src\plugins\common\recast\celnavmesh.cpp">
 			</File>
 			<File
 				RelativePath="..\..\src\plugins\common\recast\recastnavigation\ChunkyTriMesh.cpp">
@@ -1847,10 +1847,10 @@
 				RelativePath="..\..\src\plugins\common\celgraph\celgraph.h">
 			</File>
 			<File
-				RelativePath="..\..\src\plugins\common\recast\CelHPF.h">
+				RelativePath="..\..\src\plugins\common\recast\celhpf.h">
 			</File>
 			<File
-				RelativePath="..\..\src\plugins\common\recast\CelNavMesh.h">
+				RelativePath="..\..\src\plugins\common\recast\celnavmesh.h">
 			</File>
 			<File
 				RelativePath="..\..\src\plugins\common\recast\recastnavigation\ChunkyTriMesh.h">
@@ -1899,9 +1899,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\plugins\common\recast\recastnavigation\RecastTimer.h">
-			</File>
-			<File
-				RelativePath="..\..\src\plugins\common\recast\RecastScopedDelete.h">
 			</File>
 			<File
 				RelativePath="..\..\src\plugins\database\mysql\dal.h">
