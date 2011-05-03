@@ -1,6 +1,6 @@
 /*
     Crystal Space Entity Layer
-    Copyright (C) 2009 by Jorrit Tyberghein
+    Copyright (C) 2010 by Leonardo Rodrigo Domingues
   
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -22,6 +22,7 @@
 
 #include <csutil/scf.h>
 #include <csutil/list.h>
+#include <csgeom/poly3d.h>
 
 class csBox3;
 class csOBB;
@@ -230,6 +231,9 @@ struct iCelNavMesh : public virtual iBase
 
   /// Get navigation mesh bounding box
   virtual csBox3 GetBoundingBox() const = 0;
+
+  // obtain a list of polygons overlapping a box
+  virtual csArray<csPoly3D> QueryPolygons(const csBox3& box) const = 0;
 
   /// Save to file
   virtual bool SaveToFile (iFile* file) const = 0;

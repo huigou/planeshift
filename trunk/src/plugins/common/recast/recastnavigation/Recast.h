@@ -209,7 +209,7 @@ static const int RC_AREA_BORDER = 0x20000;
 enum rcBuildContoursFlags
 {
 	RC_CONTOUR_TESS_WALL_EDGES = 0x01,	// Tesselate wall edges
-	RC_CONTOUR_TESS_AREA_EDGES = 0x02	// Tesselate edges between areas.
+	RC_CONTOUR_TESS_AREA_EDGES = 0x02,	// Tesselate edges between areas.
 };
 
 // Mask used with contours to extract region id.

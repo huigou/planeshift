@@ -24,7 +24,7 @@ enum duDebugDrawPrimitives
 	DU_DRAW_POINTS,
 	DU_DRAW_LINES,
 	DU_DRAW_TRIS,
-	DU_DRAW_QUADS
+	DU_DRAW_QUADS,	
 };
 
 // Abstrace debug draw interface.

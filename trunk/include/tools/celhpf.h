@@ -1,6 +1,6 @@
 /*
     Crystal Space Entity Layer
-    Copyright (C) 2009 by Jorrit Tyberghein
+    Copyright (C) 2010 by Leonardo Rodrigo Domingues
   
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -22,7 +22,7 @@
 
 #include <csutil/scf.h>
 #include <csutil/list.h>
-#include <celnavmesh.h>
+#include <tools/celnavmesh.h>
 
 class csBox3;
 class csOBB;

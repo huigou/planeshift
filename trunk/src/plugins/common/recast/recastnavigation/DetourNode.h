@@ -22,7 +22,7 @@
 enum dtNodeFlags
 {
 	DT_NODE_OPEN = 0x01,
-	DT_NODE_CLOSED = 0x02
+	DT_NODE_CLOSED = 0x02,
 };
 
 struct dtNode

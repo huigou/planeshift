@@ -32,7 +32,7 @@
 #include "ivaria/conin.h"
 #include "ivaria/conout.h"
 
-#include <celgraph.h>
+#include "tools/celgraph.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -104,7 +104,7 @@ celPath, csObject, iCelPath, iComponent>
 {
  private:
   iObjectRegistry* object_reg;
-  int cur_node;
+  size_t cur_node;
   csRefArray<iMapNode> nodes;
   
  public:
