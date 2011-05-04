@@ -650,6 +650,30 @@ List all warnings given to the targeted account.</topic>
 
 Reloads the given quest.
 Note that you might need to wrap it like this \"quest name\" in case the quest name has spaces</topic>
+        <branch name="/location">Online edit of locations
+
+/location add
+/location adjust
+/location display
+/location hide
+/location info
+
+        <topic name="/location add">/location add &lt;type&gt; &lt;name&gt; &lt;radius&gt; 
+
+Add a new location.</topic>
+        <topic name="/location adjust">/location adjust
+
+Addjust the position of the neares location to your position.</topic>
+        <topic name="/location adjust">/location display
+
+Display all locations in current sector.</topic>
+        <topic name="/location adjust">/location hide
+
+Hide all locaitons in current sector.</topic>
+        <topic name="/location adjust">/location info
+
+Display info about nearest location in current sector.</topic>
+        </branch>
         <topic name="/managepetitions">/managepetitions
 
 Manage petitions to help users.</topic>

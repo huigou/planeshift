@@ -2906,11 +2906,15 @@ csString AdminCmdDataPath::GetHelpMessage()
 }
 
 AdminCmdDataLocation::AdminCmdDataLocation(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client *client, WordArray &words)
-: AdminCmdData("/location"), subCommandList("help adjust display hide")
+: AdminCmdData("/location")
 {
 
+    subCommandList.Push("add","<type> <name> <radius>");
+    subCommandList.Push("adjust","");
+    subCommandList.Push("display","");
     subCommandList.Push("help","[sub command]");
-    subCommandList.Push("add","<type> <name>");
+    subCommandList.Push("hide","");
+    subCommandList.Push("info","");
 
     // when help is requested, return immediate
     if (IsHelp(words[1]))
@@ -2928,7 +2932,7 @@ AdminCmdDataLocation::AdminCmdDataLocation(AdminManager* msgManager, MsgEntry* m
         if (subCommand == "add")
         {
             // locationtype is required
-            if (words.GetCount() == index + 1)
+            if (words.GetCount() >= index + 1)
             {
                 locationType = words[index++];
             }
@@ -2937,13 +2941,18 @@ AdminCmdDataLocation::AdminCmdDataLocation(AdminManager* msgManager, MsgEntry* m
                 ParseError(me, "Locationtype is a required argument");
             }
             // locatinname is required
-            if (words.GetCount() == index + 1)
+            if (words.GetCount() >= index + 1)
             {
                 locationName = words[index++];
             }
             else
             {
                 ParseError(me, "Locationname is a required argument");
+            }
+
+            if (!words.GetInt(index++,radius))
+            {
+                ParseError(me, "Required radius not given or not an integer value.");
             }
         }
     }
@@ -6190,7 +6199,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
 }
 
 
-int AdminManager::LocationCreate(int typeID, csVector3& pos, csString& sectorName, csString & name)
+int AdminManager::LocationCreate(int typeID, csVector3& pos, csString& sectorName, csString & name, int radius)
 {
     const char *fieldnames[]=
         {
@@ -6216,7 +6225,7 @@ int AdminManager::LocationCreate(int typeID, csVector3& pos, csString& sectorNam
     values.FormatPush("%10.2f",pos.x);
     values.FormatPush("%10.2f",pos.y);
     values.FormatPush("%10.2f",pos.z);
-    values.FormatPush("%d", 0 );
+    values.FormatPush("%d", radius );
     values.FormatPush("%.2f", 0.0 );
     values.FormatPush("%s", "" );
     values.FormatPush("%u",si->uid);
@@ -6260,7 +6269,7 @@ void AdminManager::HandleLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmd
         client->GetActor()->GetPosition(myPos, myRotY, mySector);
         csString sectorName = mySector->QueryObject()->GetName();
 
-        loc_id = LocationCreate(typeID,myPos,sectorName,data->locationName);
+        loc_id = LocationCreate(typeID,myPos,sectorName,data->locationName,data->radius);
 
         psserver->SendSystemInfo( me->clientnum, "Created new Location %u",loc_id);
     }
@@ -6282,6 +6291,8 @@ void AdminManager::HandleLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmd
             return ;
         }
 
+        int radius;
+
         for (int i=0; i<(int)rs.Count(); i++)
         {
 
@@ -6290,6 +6301,7 @@ void AdminManager::HandleLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmd
             {
                 distance = (pos-myPos).SquaredNorm();
                 loc_id = rs[i].GetInt("id");
+                radius = rs[i].GetInt("radius");
             }
         }
 
@@ -6304,7 +6316,8 @@ void AdminManager::HandleLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmd
 
         if (client->LocationIsDisplaying())
         {
-            psEffectMessage msg(me->clientnum,"admin_location",myPos,0,0,client->LocationGetEffectID());
+            psEffectMessage msg(me->clientnum, "admin_location", myPos, 0, 0,
+                                client->LocationGetEffectID(), (float)radius);
             msg.SendMessage();
         }
 
@@ -6331,7 +6344,8 @@ void AdminManager::HandleLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmd
         {
 
             csVector3 pos(rs[i].GetFloat("x"),rs[i].GetFloat("y"),rs[i].GetFloat("z"));
-            psEffectMessage msg(me->clientnum,"admin_location",pos,0,0,client->LocationGetEffectID(),(float)(rs[i].GetFloat("radius")));
+            psEffectMessage msg(me->clientnum,"admin_location",pos,0,0,
+                                client->LocationGetEffectID(),(float)(rs[i].GetFloat("radius")));
             msg.SendMessage();
         }
 
@@ -6344,6 +6358,50 @@ void AdminManager::HandleLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmd
         msg.SendMessage();
         client->LocationSetIsDisplaying(false);
         psserver->SendSystemInfo(me->clientnum, "All Locations hidden");
+    }
+    else if (data->subCommand == "info")
+    {
+        csVector3 myPos;
+        float myRotY,distance=10000.0;
+        iSector* mySector = 0;
+        int loc_id = -1;
+
+        client->GetActor()->GetPosition(myPos, myRotY, mySector);
+        csString sectorName = mySector->QueryObject()->GetName();
+
+        Result rs(db->Select("select loc.*,t.name as type_name from sc_locations loc, sectors s, sc_location_type t where loc.loc_sector_id = s.id and s.name ='%s' and t.id = loc.type_id",sectorName.GetDataSafe()));
+
+        if (!rs.IsValid())
+        {
+            Error2("Could not load location from db: %s",db->GetLastError() );
+            return ;
+        }
+
+        int index;
+
+        for (int i=0; i<(int)rs.Count(); i++)
+        {
+
+            csVector3 pos(rs[i].GetFloat("x"),rs[i].GetFloat("y"),rs[i].GetFloat("z"));
+            if ((pos-myPos).SquaredNorm() < distance)
+            {
+                distance = (pos-myPos).SquaredNorm();
+                index = i;
+            }
+        }
+
+        if (distance >= 10.0)
+        {
+            psserver->SendSystemInfo(me->clientnum, "To far from any locations.");
+            return;
+        }
+
+        psserver->SendSystemInfo(me->clientnum, "Found Location %s(%d) at range %.2f\n"
+                                                "Radius: %d\n"
+                                                "Type: %s",
+                                                rs[index].GetString("name"),rs[index].GetInt("id"),distance,
+                                                rs[index].GetInt("radius"),
+                                                rs[index].GetString("type_name"));
     }
 }
 
