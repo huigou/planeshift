@@ -2750,7 +2750,7 @@ AdminCmdDataPath::AdminCmdDataPath(AdminManager* msgManager, MsgEntry* me, psAdm
     // when help is requested, return immediate
     if (IsHelp(words[1]))
     {
-        subCmd = words[2]; // Next workd might be a sub Cmd.
+        subCmd = words[2]; // Next word might be a sub Cmd.
         return;
     }
 
@@ -2908,11 +2908,17 @@ csString AdminCmdDataPath::GetHelpMessage()
 AdminCmdDataLocation::AdminCmdDataLocation(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client *client, WordArray &words)
 : AdminCmdData("/location"), subCommandList("help adjust display hide")
 {
+
+    subCommandList.Push("help","[sub command]");
+    subCommandList.Push("add","<type> <name>");
+
     // when help is requested, return immediate
     if (IsHelp(words[1]))
+    {
+        subCommand = words[2]; // Next word might be a sub Cmd.
         return;
+    }
 
-    subCommandList.Push("add","<type> <name>");
     size_t index = 1;
 
     // first word must be a sub command
@@ -2961,10 +2967,6 @@ csString AdminCmdDataLocation::GetHelpMessage()
 AdminCmdDataGameMasterEvent::AdminCmdDataGameMasterEvent(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client *client, WordArray &words)
 : AdminCmdData("/event"), subCommandList("help list"), subCmd(), player(ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_CLIENTTARGET)
 {
-    // when help is requested, return immediate
-    if (IsHelp(words[1]))
-        return;
-
     // register subcommands along with their help message
     subCommandList.Push("create","<name> <description>");
     subCommandList.Push("reward",(csString)"{REWARD}" + "\n" + rewardList.GetHelpMessage());
@@ -2973,6 +2975,14 @@ AdminCmdDataGameMasterEvent::AdminCmdDataGameMasterEvent(AdminManager* msgManage
     subCommandList.Push("register","[range <range> | <player>]");
     subCommandList.Push("control","<name>");
     subCommandList.Push("discard","<name>");
+
+    // when help is requested, return immediate
+    if (IsHelp(words[1]))
+    {
+        subCmd = words[2]; // Next word might be a sub Cmd.
+        return;
+    }
+
     size_t index = 1;
 
     // test if the first word is a subcommand
