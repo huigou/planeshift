@@ -2115,6 +2115,7 @@ public:
     csString subCommand; ///< subcommand storage
     csString locationType; ///< type of the location
     csString locationName; ///< name of the location
+    int radius; ///< radius of the location
 
     /** @brief Creates obj for specified command that needs a reason
      */
@@ -3287,8 +3288,9 @@ protected:
      * @param pos position of the new location.
      * @param sectorName name of the sector for the new location.
      * @param name for the location.
+     * @param radius for the location.
      */
-    int LocationCreate(int typeID, csVector3& pos, csString& sectorName, csString& name);
+    int LocationCreate(int typeID, csVector3& pos, csString& sectorName, csString& name, int radius);
 
     /** @brief Handle online path editing.
      * @param me The incoming message from the GM
