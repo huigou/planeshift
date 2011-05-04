@@ -741,6 +741,9 @@ PRIVATE
 PUBLIC
 CITY
 INDOOR
+PATH
+ROAD
+GROUND
 
 Use radius to narrow or widen the search for the waypoint. Use /path info to view current set flags.</topic>
            <topic name="/path flagset">/path flagset &lt;flag&gt; [&lt;radius&gt;]
@@ -786,7 +789,25 @@ Select the nearest path to be your current path. You need a select path to use /
 Split a path into two paths inserting a new waypoint with name according to whats set with /path format.</topic>
            <topic name="/path start">/path start &lt;radius&gt; [WP flags] [Path flags]
 
-Start a new path. If there are a waypoint nearby the waypoint is used to start the path. Otherwise a new waypoint is created.</topic>
+Start a new path. If there are a waypoint nearby the waypoint is used to start the path. Otherwise a new waypoint is created.
+
+Supported WP flags are:
+ALLOW_RETURN
+UNDERGROUND
+UNDERWATER
+PRIVATE
+PUBLIC
+CITY
+INDOOR
+PATH
+ROAD
+GROUND
+
+Supported Path flags are:
+ONEWAY
+NO_WANDER
+TELEPORT
+</topic>
            <topic name="/path stop|end">/path stop|end &lt;radius&gt; [WP flags]
 
 Stop the current path. If there are a waypoint nearby the waypoint is used to end the path. Otherwise a new aypoint is created.</topic>
