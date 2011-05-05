@@ -79,9 +79,9 @@ void NavGen::Run()
     if(world.IsEmpty())
         world = config->GetStr("NavGen.WorldDir", basePath+"world/");
 
-    csString output = cmdline->GetOption("NavGen.OutputDir");
+    csString output = cmdline->GetOption("output");
     if(output.IsEmpty())
-        output = config->GetStr("output", basePath+"navmesh");
+        output = config->GetStr("NavGen.OutputDir", basePath+"navmesh");
 
     float height = config->GetFloat("NavGen.Agent.Height", 2.f);
     float width  = config->GetFloat("NavGen.Agent.Width", 0.5f);
@@ -241,7 +241,7 @@ void NavGen::Run()
             csPrintf("failed to build navigation mesh\n");
             return;
         }
-
+printf("here\n");
         // save navmesh
         if(!navMesh->SaveToFile(vfs, output))
         {
