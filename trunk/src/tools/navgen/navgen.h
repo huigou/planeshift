@@ -23,7 +23,7 @@
 #include <iutil/cfgmgr.h>
 #include <iengine/engine.h>
 #include <ibgloader.h>
-#include <celhpf.h>
+#include <tools/celhpf.h>
 
 class NavGen
 {
