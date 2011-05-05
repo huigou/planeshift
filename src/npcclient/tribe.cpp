@@ -328,6 +328,8 @@ bool Tribe::AttachMember(NPC * npc, uint32_t tribeMemberType)
     {
         Error4("Trying to attach a NPC %s(%u) to tribe without matching idle behavior of %s",
 	       npc->GetName(),npc->GetPID().Unbox(), npcIdleBehavior.GetDataSafe());
+        // Dump the behavior list so that we see what behaviors we have for this npc.
+	npc->DumpBehaviorList();
         return false;
     }
 
