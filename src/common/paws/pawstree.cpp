@@ -1556,8 +1556,6 @@ void pawsSimpleTreeNode::Set(int mode, bool /*checked*/, const csString& imageNa
     {
         textBox = new pawsTextBox;
         textBox->SetParent(widget);
-        if (textBox == NULL)
-            return;
         textBox->SetText(label);
         textBox->SetSizeByText(5,5);
         textBox->VertAdjust(pawsTextBox::vertCENTRE);
