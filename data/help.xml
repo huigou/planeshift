@@ -770,9 +770,9 @@ ROAD
 GROUND
 
 Use radius to narrow or widen the search for the waypoint. Use /path info to view current set flags.</topic>
-           <topic name="/path flagset">/path flagset &lt;flag&gt; [&lt;radius&gt;]
+           <topic name="/path flagset">/path flagset [wp|path] &lt;flag&gt; [&lt;radius&gt;]
 
-Set flags on the nearest waypoint.
+Set flags on the nearest waypoint(wp) or path(path).
 
 Supported flags are:
 ALLOW_RETURN

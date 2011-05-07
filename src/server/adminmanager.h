@@ -2160,6 +2160,7 @@ public:
     AdminCmdSubCommandParser aliasSubCommandList; ///< subsubcmds of alias
     AdminCmdSubCommandParser wpList; ///< targetnames of hide/show
     csString subCmd;    ///< storage for subcommand
+    bool wpOrPathIsWP; ///< Is it the path or the wp that should be updated.
     float defaultRadius; ///< default radius for the case radius == 0.0
     float radius; ///< radius for waypoint/path operations
     float newRadius; ///< The radius to set for new radius for wps.

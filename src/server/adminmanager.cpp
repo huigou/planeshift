@@ -2730,8 +2730,8 @@ AdminCmdDataPath::AdminCmdDataPath(AdminManager* msgManager, MsgEntry* me, psAdm
     subCommandList.Push("adjust","[<radius>]");
     subCommandList.Push("alias", "[add|remove]<alias>");
     subCommandList.Push("display","[points|waypoints]");
-    subCommandList.Push("flagclear","<flag> [<radius>]");
-    subCommandList.Push("flagset","<flag> [<radius>]");
+    subCommandList.Push("flagclear","[wp|path] <flag> [<radius>]");
+    subCommandList.Push("flagset","[wp|path] <flag> [<radius>]");
     subCommandList.Push("format","<format> [first]");
     subCommandList.Push("help","[sub command]");
     subCommandList.Push("hide","[points|waypoints]");
@@ -2795,8 +2795,21 @@ AdminCmdDataPath::AdminCmdDataPath(AdminManager* msgManager, MsgEntry* me, psAdm
             }
         }
         // flagset|flagclear and at least one further word
-        else if ((subCmd == "flagset" || subCmd == "flagclear") && words.GetCount() >= index+1)
+        else if ((subCmd == "flagset" || subCmd == "flagclear") && words.GetCount() >= index+2)
         {
+            csString wpOrPath = words[index++];
+            if (wpOrPath == "wp")
+	    {
+              wpOrPathIsWP = true;
+	    }
+	    else if (wpOrPath == "path")
+	    {
+              wpOrPathIsWP = false;
+	    }
+	    else
+	    {
+                ParseError(me,"You have to select either wp or path.");
+	    }
             flagName = words[index++];    // Flag
             radius = words.GetFloat(index++); // try to parse an optional radius
         }
@@ -5699,34 +5712,59 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     }
     else if (data->subCmd == "flagset" || data->subCmd == "flagclear")
     {
-        float rangeWP,rangePoint;
-        int indexPoint;
+        float rangeWP,rangePath;
 
         Waypoint * wp = NULL;
-        psPath * pathPoint = NULL;
+        psPath * path = NULL;
 
         FindPath(myPos,mySector,data->radius,
                  &wp,&rangeWP,
-                 NULL,NULL,NULL,NULL,
-                 &pathPoint,&rangePoint,&indexPoint);
+                 &path,&rangePath,NULL,NULL,
+                 NULL,NULL,NULL);
 
-        if (!wp)
-        {
-            psserver->SendSystemInfo(me->clientnum, "No waypoint in range of %.2f.",data->radius);
-            return;
-        }
+        bool enable = data->subCmd == "flagset";
 
-        if (wp->SetFlag(db, data->flagName, data->subCmd == "flagset"))
-        {
-            psserver->SendSystemInfo(me->clientnum, "Flag %s updated for %s.",
-                                     data->flagName.GetDataSafe(),wp->GetName());
-            return;
+	if (data->wpOrPathIsWP)
+	{
+            if (!wp)
+            {
+                psserver->SendSystemInfo(me->clientnum, "No waypoint in range of %.2f.",data->radius);
+                return;
+            }
+
+            if (wp->SetFlag(db, data->flagName, enable ))
+            {
+                psserver->SendSystemInfo(me->clientnum, "Flag %s %s for %s.",
+                                         data->flagName.GetDataSafe(),enable?"updated":"cleared",wp->GetName());
+                return;
+            }
+            else
+            {
+                psserver->SendSystemInfo(me->clientnum, "Failed to update flag %s for %s.",
+                                         data->flagName.GetDataSafe(),wp->GetName());
+                return;
+            }
         }
         else
         {
-            psserver->SendSystemInfo(me->clientnum, "Failed to update flag %s for %s.",
-                                     data->flagName.GetDataSafe(),wp->GetName());
-            return;
+            if (!path)
+            {
+                psserver->SendSystemInfo(me->clientnum, "No path in range of %.2f.",data->radius);
+                return;
+            }
+
+            if (path->SetFlag(db, data->flagName, enable ))
+            {
+                psserver->SendSystemInfo(me->clientnum, "Flag %s %s for %s.",
+                                         data->flagName.GetDataSafe(),enable?"updated":"cleared",path->GetName());
+                return;
+            }
+            else
+            {
+                psserver->SendSystemInfo(me->clientnum, "Failed to update flag %s for %s.",
+                                         data->flagName.GetDataSafe(),path->GetName());
+                return;
+            }
         }
     }
     else if (data->subCmd == "radius")
