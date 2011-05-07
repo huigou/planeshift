@@ -595,6 +595,34 @@ void psPath::SetFlags(const psString& flagStr)
     teleport  = isFlagSet(flagStr,"TELEPORT");
 }
 
+bool psPath::SetFlag(iDataConnection * db, const csString &flagstr, bool enable)
+{
+    if (isFlagSet(flagstr,"ONEWAY"))
+    {
+        oneWay = enable;
+    } else if (isFlagSet(flagstr,"NO_WANDER"))
+    {
+        noWander = enable;
+    } else if (isFlagSet(flagstr,"TELEPORT"))
+    {
+        teleport = enable;
+    } else
+    {
+        return false;
+    }
+
+    int result = db->CommandPump("UPDATE sc_waypoint_links SET flags='%s' WHERE id=%d",
+                                 GetFlags().GetDataSafe(), id);
+    if (result != 1)
+    {
+        Error2("Sql failed: %s\n",db->GetLastError());
+        return false;
+    }
+    
+    return true;
+}
+
+
 //---------------------------------------------------------------------------
 
 psLinearPath::psLinearPath(csString name, Waypoint * wp1, Waypoint * wp2, const psString flagStr)

@@ -200,6 +200,9 @@ public:
     /// Set the flags from a string
     void SetFlags(const psString & flagStr);
 
+    /// Set the flags from a string and update the db.
+    bool SetFlag(iDataConnection * db, const csString &flagstr, bool enable);
+
 protected:
     /// Do the actual precalculate work
     virtual void PrecalculatePath(psWorld * world, iEngine *engine) = 0;
