@@ -143,6 +143,21 @@ GmpInt::GmpInt(long value)
     }
 }
 
+GmpInt::GmpInt(unsigned long value)
+{
+    if(value == 0)
+    {
+        mData = gmpIntDataContainer().const_0();
+        ++(mData->mRefCount);
+    }
+    else
+    {
+        mData = gmpIntDataContainer().allocateGmpIntData
+            (gIntDefaultNumberOfBits, false);
+        mpz_set_ui(mData->mInteger, value);
+    }
+}
+
 GmpInt::GmpInt(int value)
 {
     if(value == 0)

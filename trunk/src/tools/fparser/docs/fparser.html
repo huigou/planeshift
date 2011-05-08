@@ -3,11 +3,11 @@
 <head>
  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
  <link href="style.css" rel="stylesheet" type="text/css" title="normal" media=screen>
- <title>Function Parser for C++ v4.2    : Documentation</title>
+ <title>Function Parser for C++ v4.4    : Documentation</title>
 </head>
 
 <body>
-<h1>Function Parser for C++ v4.2    </h1>
+<h1>Function Parser for C++ v4.4    </h1>
 
 <p>Authors: Juha Nieminen
 (<a href="http://iki.fi/warp/">http://iki.fi/warp/</a>),
@@ -49,10 +49,12 @@ Joel Yliluoma
      <li><a href="#literals">Numeric literals</a>
      <li><a href="#identifiers">Identifier names</a>
      <li><a href="#functionsyntax">The function string syntax</a>
+     <li><a href="#inlinevars">Inline variables</a>
      <li><a href="#whitespace">Whitespace</a>
    </ul>
  <li>Miscellaneous
    <ul>
+     <li><a href="#fpaccuracy">About floating point accuracy</a>
      <li><a href="#evaluationchecks">About evaluation-time checks</a>
      <li><a href="#threadsafety">About thread safety</a>
      <li><a href="#tipsandtricks">Tips and tricks</a>
@@ -65,26 +67,16 @@ Joel Yliluoma
 <a name="whatsnew"></a>
 <h2>What's new</h2>
 
-<p>What's new in v4.2
+<p>What's new in v4.4
   <ul>
-    <li>The <code>Optimize()</code> method now works also with the
-      <code>float</code> and <code>long double</code> versions of the library.
-    </li>
-    <li>Some new optimizations added.</li>
-    <li>There was a call to the C99/C++0x function <code>isinf()</code> in the
-      optimizer which made it not compile with some compilers. This call has
-      been removed.</li>
-  </ul>
-
-<p>What's new in v4.1
-  <ul>
-    <li>Official support for hexadecimal literals (for all the parser types).
-      Previously there was support only if the <code>strto...()</code> C
-      library functions happened to support them (which is a non-standard
-      extension of those functions). See documentation for details.</li>
-    <li>Significant amount of new optimizations performed by
-      <code>Parse()</code>.</li>
-    <li>Minor bugfixes.</li>
+    <li>Added support for <code>std::complex</code> (of type
+      <code>double</code>, <code>float</code> and <code>long double</code>)
+      as the numerical type, along with new complex-specific functions.
+    <li>Removed all dependencies on C99 functions, making the non-double
+      versions of the library usable with older compilers (such as Visual
+      Studio 2005). (But consult the documentation on the <code>long
+	double</code> literal parsing accuracy.)
+    <li>Several minor bugfixes.
   </ul>
 
 
@@ -122,34 +114,34 @@ standard-conforming C++ compiler.
 <h2>Usage</h2>
 
 <p>To use the <code>FunctionParser</code> class, you have to include
-<code>"fparser.h"</code> in your source code files which use the
+<code>"fparser.hh"</code> in your source code files which use the
 <code>FunctionParser</code> class.
 
 <p>If you are going to use the MPFR version of the library, you need to
-include <code>"fparser_mpfr.h"</code>. If you are going to use the GMP
-version of the library, you need to include <code>"fparser_gmpint.h"</code>.
+include <code>"fparser_mpfr.hh"</code>. If you are going to use the GMP
+version of the library, you need to include <code>"fparser_gmpint.hh"</code>.
 (Note that support for these special parser versions needs to be specified
 with preprocessor macros. See the <a href="#parsertypes">documentation
 below</a> for details.)
 
-<p>When compiling, you have to compile <code>fparser.cpp</code> and
-<code>fpoptimizer.cpp</code> and link them to the main program. In many
+<p>When compiling, you have to compile <code>fparser.cc</code> and
+<code>fpoptimizer.cc</code> and link them to the main program. In many
 developement environments it's enough to add those two files to your
 current project (usually header files don't have to be added to the
 project for the compilation to work).
 
 <p>If you are going to use the MPFR or the GMP versions of the library,
-you also need to add <code>mpfr/MpfrFloat.cpp</code> or
-<code>mpfr/GmpInt.cpp</code> files to your project, respectively. Otherwise
+you also need to add <code>mpfr/MpfrFloat.cc</code> or
+<code>mpfr/GmpInt.cc</code> files to your project, respectively. Otherwise
 they should not be added to the project.
 
 <p>Note that part of the library source code is inside several
 <code>.inc</code> files (these files contain auto-generated C++ code),
 provided in the library package. These files are used by
-<code>fparser.cpp</code> and don't need to be added explicitly to the
+<code>fparser.cc</code> and don't need to be added explicitly to the
 project in most IDEs (such as Visual Studio). Basically, you don't need
 to do anything with these files, other than keep them in the same directory
-as <code>fparser.cpp</code>.
+as <code>fparser.cc</code>.
 
 <p>Simple usage example of the library:
 
@@ -169,12 +161,12 @@ as <code>fparser.cpp</code>.
 
 <p>All the classes other than the default one, <code>FunctionParser</code>,
   need to be enabled at compile time by defining a preprocessor macro
-  (specified below) either in the <code>fpconfig.h</code> file or your
-  compiler settings. (The reason for this is that all the other parser types
-  use either C99 standard libraries not yet available in the official C++
-  standard or the third-party libraries GMP and MPFR. It also makes
-  compilation faster and the resulting binary smaller when unused classes
-  are not compiled in.).
+  (specified below) either in the <code>fpconfig.hh</code> file or your
+  compiler settings. (The reason for this is that every parser that is
+  included in the compilation process will make the compilation slower
+  and increase the size of the executable, so they are compiled only on
+  demand. Also, the GMP and MPFR versions of the parser require for those
+  libraries to be available, which is often not the case.)
 
 <p>Note that if you try to use the other class types without enabling them
   with the correspondent preprocessor macro, you will get a linker error
@@ -202,9 +194,6 @@ as <code>fparser.cpp</code>.
     <p>This parser uses <code>float</code> as its numerical type.
     <p>The <code>FP_SUPPORT_FLOAT_TYPE</code> preprocessor macro needs to be
       defined for this class to be enabled.
-    <p>Note that this version of the class uses C99 standard math functions
-      not yet available in all C++ compilers. Also the <code>ld</code> version
-      of the class described below use such functions.
   </dd>
 
   <dt><p><code>FunctionParser_ld</code></dt>
@@ -212,6 +201,10 @@ as <code>fparser.cpp</code>.
     <p>This parser uses <code>long&nbsp;double</code> as its numerical type.
     <p>The <code>FP_SUPPORT_LONG_DOUBLE_TYPE</code> preprocessor macro needs
       to be defined for this class to be enabled.
+    <p>Note that the <code>FP_USE_STRTOLD</code> preprocessor macro should
+      also be defined when using this version of the parser if the compiler
+      supports the (C99) function <code>strtold()</code>. (See
+      <a href="#configuring">documentation</a> below.)
   </dd>
 
   <dt><p><code>FunctionParser_li</code></dt>
@@ -226,19 +219,35 @@ as <code>fparser.cpp</code>.
       basic arithmetic operators, except for the power operator).
   </dd>
 
+  <dt><p><code>FunctionParser_cd</code>, <code>FunctionParser_cf</code>,
+      <code>FunctionParser_cld</code></dt>
+  <dd>
+    <p>These parsers use <code>std::complex&lt;double&gt;</code>,
+      <code>std::complex&lt;float&gt;</code> and
+      <code>std::complex&lt;long&nbsp;double&gt;</code> as their numerical type,
+      respectively.
+    <p>The preprocessor macros to enable them are
+      <code>FP_SUPPORT_COMPLEX_DOUBLE_TYPE</code>,
+      <code>FP_SUPPORT_COMPLEX_FLOAT_TYPE</code> and
+      <code>FP_SUPPORT_COMPLEX_LONG_DOUBLE_TYPE</code>.
+    <p>If <code>FunctionParser_cld</code> is used, the
+      <code>FP_USE_STRTOLD</code> macro should also be defined if the compiler
+      supports the <code>strtlod()</code> function.
+  </dd>
+
   <dt><p><code>FunctionParser_mpfr</code></dt>
   <dd>
     <p>This parser uses <code>MpfrFloat</code> as its numerical type.
     <p>The <code>FP_SUPPORT_MPFR_FLOAT_TYPE</code> preprocessor macro needs
       to be defined for this class to be enabled.
     <p>Note that to use this version of the parser,
-      <code>"fparser_mpfr.h"</code> needs to be included.
+      <code>"fparser_mpfr.hh"</code> needs to be included.
     <p><code>MpfrFloat</code> is an auxiliary class which uses the MPFR
       library for multiple-precision floating point numbers. The class
       behaves largely like a floating point type, and is declared in the
-      <code>mpfr/MpfrFloat.h</code> file (see that file for info about
+      <code>mpfr/MpfrFloat.hh</code> file (see that file for info about
       the public interface of the class).
-    <p>If this class is enabled, <code>mpfr/MpfrFloat.cpp</code>
+    <p>If this class is enabled, <code>mpfr/MpfrFloat.cc</code>
       needs to be compiled into the project, as well as the GMP and MPFR
       libraries. (With the gcc compiler this means using the linker options
       "<code>-lgmp -lmpfr</code>".)
@@ -250,13 +259,13 @@ as <code>fparser.cpp</code>.
     <p>The <code>FP_SUPPORT_GMP_INT_TYPE</code> preprocessor macro needs
       to be defined for this class to be enabled.
     <p>Note that to use this version of the parser,
-      <code>"fparser_gmpint.h"</code> needs to be included.
+      <code>"fparser_gmpint.hh"</code> needs to be included.
     <p><code>GmpInt</code> is an auxiliary class which uses the GMP
       library for arbitrary-precision integer numbers. The class
       behaves largely like an integer type, and is declared in the
-      <code>mpfr/GmpInt.h</code> file (see that file for info about
+      <code>mpfr/GmpInt.hh</code> file (see that file for info about
       the public interface of the class).
-    <p>If this class is enabled, <code>mpfr/GmpInt.cpp</code>
+    <p>If this class is enabled, <code>mpfr/GmpInt.cc</code>
       needs to be compiled into the project, as well as the GMP library.
     <p>This version of the class also uses a reduced version of the syntax,
       like the <code>long int</code> version.
@@ -285,13 +294,23 @@ as <code>fparser.cpp</code>.
 <a name="configuring"></a>
 <h3>Configuring the compilation</h3>
 
-<p>There is a set of precompiler options in the <code>fpconfig.h</code> file
+<p>There is a set of precompiler options in the <code>fpconfig.hh</code> file
 which can be used for setting certain features on or off. All of these options
 can also be specified from the outside, using precompiler settings (eg. the
 <code>-D</code> option in gcc), and thus it's not necessary to modify this
 file.
 
 <dl>
+  <dt><p><code>FP_USE_STRTOLD</code> : (Default off)</dt>
+  <dd><p>If <code>FunctionParser_ld</code> or <code>FunctionParser_cld</code>
+      are used, this preprocessor macro should be defined if the compiler
+      supports the (C99) function <code>strtold()</code>. If not, then numeric
+      literals will be parsed with double precision only, which in most
+      systems is less accurate than long double precision, which will cause
+      small rounding errors. (This setting has no effect on the other parser
+      types.)
+  </dd>
+
   <dt><p><code>FP_SUPPORT_TR1_MATH_FUNCS</code> : (Default off)</dt>
   <dd><p>Define this precompiler constant to make the library use additional
       math functions defined in the C99 standard and the C++ TR1 standard
@@ -299,7 +318,9 @@ file.
       evaluation faster when these functions are involved.
     <p>The C++ TR1 math functions in question are: <code>asinh()</code>,
       <code>acosh()</code>, <code>atanh()</code>, <code>exp2()</code> and
-      <code>log2()</code>.
+      <code>log2()</code>. (Note that these functions are assumed to be
+      inside the <code>std::tr1</code> namespace and declared in the
+      <code>&lt;tr1/cmath&gt;</code> header.)
   </dd>
 
   <dt><p><code>FP_ENABLE_EVAL</code> : (Default off)</dt>
@@ -785,7 +806,7 @@ and checking <code>EvalError()</code>.
 
 <p>If the destination application is not going to use this method,
 the compiler constant <code>FP_SUPPORT_OPTIMIZER</code> can be undefined in
-<code>fpconfig.h</code> to make the library smaller (<code>Optimize()</code>
+<code>fpconfig.hh</code> to make the library smaller (<code>Optimize()</code>
 can still be called, but it will not do anything).
 
 <p>(If you are interested in seeing how this method optimizes the opcode,
@@ -1151,7 +1172,11 @@ or functions using the following operators in this order of precedence:
 </table>
 
 <p>(Note that currently the exponentiation operator is not supported for
-  <code>FunctionParser_li</code> nor <code>FunctionParser_gmpint</code>.)
+  <code>FunctionParser_li</code> nor <code>FunctionParser_gmpint</code>.
+  With the former the result would very easily overflow, making its
+  usefulness questionable. With the latter it could be easily abused to
+  make the program run out of memory; think of a function like
+  "10^10^10^100000".)
 
 <p>Since the unary minus has higher precedence than any other operator, for
   example the following expression is valid: <code>x*-y</code>
@@ -1161,7 +1186,7 @@ differ in very least-significant digits should work correctly. For example,
 <code>"0.1+0.1+0.1+0.1+0.1+0.1+0.1+0.1+0.1+0.1 = 1"</code> should always
 return 1, and the same comparison done with "<code>&gt;</code>" or
 "<code>&lt;</code>" should always return 0. (The epsilon value can be
-configured in the <code>fpconfig.h</code> file.)
+configured in the <code>fpconfig.hh</code> file.)
 Without epsilon this comparison probably returns the wrong value.
 
 <p>The class supports these functions:
@@ -1169,37 +1194,44 @@ Without epsilon this comparison probably returns the wrong value.
 <p><table border=2>
 <tr>
  <td><code>abs(A)</code></td>
- <td>Absolute value of A. If A is negative, returns -A otherwise returns A.</td>
+ <td>Absolute value (magnitude) of A.
+     With real numbers, if A is negative, returns -A otherwise returns A.
+     With complex numbers, equivalent to <code>hypot(real(x),imag(x))</code>.</td>
 </tr><tr>
   <td><code>acos(A)</code></td>
-  <td>Arc-cosine of A. Returns the angle, measured in radians, whose cosine
-      is A.</td>
+  <td>Arc-cosine of A. Returns the angle, measured in radians, whose cosine is A.</td>
 </tr><tr>
   <td><code>acosh(A)</code></td>
   <td>Same as acos() but for hyperbolic cosine.</td>
 </tr><tr>
+  <td><code>arg(A)</code></td>
+  <td>Phase angle of complex number A. Equivalent to <code>atan2(imag(x),real(x))</code>.</td>
+</tr><tr>
   <td><code>asin(A)</code></td>
-  <td>Arc-sine of A. Returns the angle, measured in radians, whose sine
-      is A.</td>
+  <td>Arc-sine of A. Returns the angle, measured in radians, whose sine is A.</td>
 </tr><tr>
   <td><code>asinh(A)</code></td>
   <td>Same as asin() but for hyperbolic sine.</td>
 </tr><tr>
   <td><code>atan(A)</code></td>
   <td>Arc-tangent of (A). Returns the angle, measured in radians,
-      whose tangent is (A).</td>
+      whose tangent is A.</td>
 </tr><tr>
   <td><code>atan2(A,B)</code></td>
-  <td>Arc-tangent of A/B. The two main differences to atan() is
-      that it will return the right angle depending on the signs of
-      A and B (atan() can only return values betwen -pi/2 and pi/2),
-      and that the return value of pi/2 and -pi/2 are possible.</td>
+  <td>Principal arc-tangent of A/B, using the signs of the
+      two arguments to determine the quadrant of the result.
+      Returns the solution to the two expressions
+      hypot(A,B)*sin(x)=A, hypot(A,B)*cos(x)=B.
+      The return value is in range -pi to pi, inclusive.</td>
 </tr><tr>
   <td><code>atanh(A)</code></td>
   <td>Same as atan() but for hyperbolic tangent.</td>
 </tr><tr>
   <td><code>cbrt(A)</code></td>
-  <td>Cube root of A. Returns the value whose cube is A.</td>
+  <td>Cube root of A. Returns a solution to expression pow(x,3)=A.</td>
+</tr><tr>
+  <td><code>conj(A)</code></td>
+  <td>Complex conjugate of A. Equivalent to <code>real(x) - 1i*imag(x)</code> or <code>polar(abs(x),-arg(x))</code>.</td>
 </tr><tr>
   <td><code>ceil(A)</code></td>
   <td>Ceiling of A. Returns the smallest integer not smaller than A.
@@ -1214,10 +1246,10 @@ Without epsilon this comparison probably returns the wrong value.
   <td>Same as cos() but for hyperbolic cosine.</td>
 </tr><tr>
   <td><code>cot(A)</code></td>
-  <td>Cotangent of A (equivalent to 1/tan(A)).</td>
+  <td>Cotangent of A. Equivalent to <code>1/tan(A)</code>.</td>
 </tr><tr>
   <td><code>csc(A)</code></td>
-  <td>Cosecant of A (equivalent to 1/sin(A)).</td>
+  <td>Cosecant of A. Equivalent to <code>1/sin(A)</code>.</td>
 </tr><tr>
   <td><code>eval(...)</code></td>
   <td>This a recursive call to the function to be evaluated. The
@@ -1230,11 +1262,17 @@ Without epsilon this comparison probably returns the wrong value.
       A where e is the base of the natural logarithm, i.e. the
       non-repeating value approximately equal to 2.71828182846.</td>
 </tr><tr>
+  <td><code>exp2(A)</code></td>
+  <td>Base 2 exponential of A. Equivalent to <code>pow(2,A)</code>.</td>
+</tr><tr>
   <td><code>floor(A)</code></td>
   <td>Floor of A. Returns the largest integer not greater than A. Rounds
       down to the next lower integer.
       E.g. -2.9, -2.5 and -2.1 are rounded to -3.0,
       and 2.9, 2.5 and 2.1 are rounded to 2.0.</td>
+</tr><tr>
+  <td><code>hypot(A,B)</code></td>
+  <td>Euclidean distance function. Equivalent to <code>sqrt(A^2+B^2)</code>.</td>
 </tr><tr>
   <td><code>if(A,B,C)</code></td>
   <td>If int(A) differs from 0, the return value of this function is B,
@@ -1242,13 +1280,19 @@ Without epsilon this comparison probably returns the wrong value.
       evaluated, the other parameter is skipped; this makes it safe to
       use <code>eval()</code> in them.</td>
 </tr><tr>
+  <td><code>imag(A)</code></td>
+  <td>Return the imaginary part of complex number A. Equivalent to <code>abs(A)*sin(arg(A))</code>.</td>
+</tr><tr>
   <td><code>int(A)</code></td>
-  <td>Rounds A to the closest integer. Equidistant values are rounded up.
-    E.g. -2.9 is rounded to -3.0; -2.5 and -2.1 are rounded to -2.0,
+  <td>Rounds A to the closest integer. Equidistant values are rounded away from
+    zero. E.g. -2.9 and -2.5 are rounded to -3.0; -2.1 is rounded to -2.0,
     and 2.9 and 2.5 are rounded to 3.0; 2.1 is rounded to 2.0.</td>
 </tr><tr>
   <td><code>log(A)</code></td>
-  <td>Natural (base e) logarithm of A.</td>
+  <td>Natural (base e) logarithm of A. Returns the solution to expression exp(x)=A.</td>
+</tr><tr>
+  <td><code>log2(A)</code></td>
+  <td>Base 2 logarithm of A. Equivalent to <code>log(A)/log(2)</code>.</td>
 </tr><tr>
   <td><code>log10(A)</code></td>
   <td>Base 10 logarithm of A.</td>
@@ -1259,11 +1303,18 @@ Without epsilon this comparison probably returns the wrong value.
   <td><code>min(A,B)</code></td>
   <td>If A&lt;B, the result is A, else B.</td>
 </tr><tr>
+  <td><code>polar(A,B)</code></td>
+  <td>Returns a complex number from magnitude A, phase angle B (in radians).
+      Equivalent to <code>real(A)*(cos(real(B))+1i*sin(real(B)))</code>.</td>
+</tr><tr>
   <td><code>pow(A,B)</code></td>
   <td>Exponentiation (A raised to the power B).</td>
 </tr><tr>
+  <td><code>real(A)</code></td>
+  <td>Return the real part of complex number A. Equivalent to <code>abs(A)*cos(arg(A))</code>.</td>
+</tr><tr>
   <td><code>sec(A)</code></td>
-  <td>Secant of A (equivalent to 1/cos(A)).</td>
+  <td>Secant of A. Equivalent to <code>1/cos(A)</code>.</td>
 </tr><tr>
   <td><code>sin(A)</code></td>
   <td>Sine of A. Returns the sine of the angle A, where A is
@@ -1273,7 +1324,7 @@ Without epsilon this comparison probably returns the wrong value.
   <td>Same as sin() but for hyperbolic sine.</td>
 </tr><tr>
   <td><code>sqrt(A)</code></td>
-  <td>Square root of A. Returns the value whose square is A.</td>
+  <td>Square root of A. Returns a solution to expression pow(x,2)=A.</td>
 </tr><tr>
   <td><code>tan(A)</code></td>
   <td>Tangent of A. Returns the tangent of the angle A, where A
@@ -1317,7 +1368,41 @@ Without epsilon this comparison probably returns the wrong value.
 never reach that level but still take enormous amounts of time to evaluate.
 This can sometimes be undesirable because it is prone to exploitation,
 which is why <code>eval()</code> is disabled by default. It can be enabled
-in the <code>fpconfig.h</code> file.
+in the <code>fpconfig.hh</code> file.
+
+
+<!-- -------------------------------------------------------------------- -->
+<a name="inlinevars"></a>
+<h3>Inline variables</h3>
+
+<p>The function syntax supports defining new variables inside the function
+string itself. This can be done with the following syntax:
+
+<p><code>"&lt;variable name&gt; := &lt;expression&gt;; &lt;function&gt;"</code>
+
+<p>For example:
+
+<p><code>"length := sqrt(x*x+y*y); 2*length*sin(length)"</code>
+
+<p>(Spaces around the '<code>:=</code>' operator are optional.)
+
+<p>The obvious benefit of this is that if a long expression needs to be
+used in the function several times, this allows writing it only once and
+using a named variable from that point forward.
+
+<p>The variable name must be an unused identifier (in other words, not an
+existing function, variable or unit name).
+
+<p>The <code>&lt;function&gt;</code> part can have further inline variable
+definitions, and thus it's possible to have any amount of them, for example:
+
+<p><code>"A := x^2; B := y^2; C := z^2; sqrt(A+B+C)"</code>
+
+<p>The expressions in subsequent inline variable definitions can use any
+of the previous inline variables. It is also possible to redefine an inline
+variable. For example:
+
+<p><code>"A := x^2; A := 2*A; sqrt(A)"</code>
 
 
 <!-- -------------------------------------------------------------------- -->
@@ -1359,6 +1444,36 @@ in the <code>fpconfig.h</code> file.
 
 <!-- -------------------------------------------------------------------- -->
 <h2>Miscellaneous</h2>
+
+<a name="fpaccuracy"></a>
+<h3>About floating point accuracy</h3>
+
+<p>Note that if you are using <code>FunctionParser_ld</code> or
+<code>FunctionParser_cld</code> and you want calculations to be as accurate
+as the <code>long double</code> type allows, you should pay special attention
+to floating point literals in your own code. For example, this is a very
+typical mistake:
+
+<pre>FunctionParser_ld parser;
+parser.AddConstant("pi", 3.14159265358979323846);</pre>
+
+<p>The mistake might not be immediately apparent. The mistake is that a
+literal of type <code>double</code> is passed to the <code>AddConstant()</code>
+function even though it expects a value of type <code>long&nbsp;double</code>.
+In most systems the latter has more bits of precision than the former, which
+means that the value will have its least-significant bits clipped,
+introducing a rounding error. The proper way of making the above calls is:
+
+<pre>FunctionParser_ld parser;
+parser.AddConstant("pi", 3.14159265358979323846L);</pre>
+
+<p>The same principle should be used everywhere in your own code, if you are
+using the <code>long&nbsp;double</code> type.
+
+<p>This is especially important if you are using the <code>MpfrFloat</code>
+type (in which case its string-parsing constructor or its
+<code>ParseValue()</code> or <code>parseString()</code> member functions
+should be used instead of using numerical literals).
 
 <a name="evaluationchecks"></a>
 <h3>About evaluation-time checks</h3>
@@ -1571,7 +1686,7 @@ make loops or anything.
 <a name="license"></a>
 <h2>Usage license</h2>
 
-<p>Copyright © 2003-2010 Juha Nieminen, Joel Yliluoma
+<p>Copyright © 2003-2011 Juha Nieminen, Joel Yliluoma
 
 <p>This Library is distributed under the
   <a href="http://www.gnu.org/copyleft/lesser.html">Lesser General Public

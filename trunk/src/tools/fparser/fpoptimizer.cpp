@@ -1,5 +1,5 @@
 /***************************************************************************\
-|* Function Parser for C++ v4.3                                            *|
+|* Function Parser for C++ v4.4                                            *|
 |*-------------------------------------------------------------------------*|
 |* Function optimizer                                                      *|
 |*-------------------------------------------------------------------------*|
@@ -20,1294 +20,1302 @@
 #ifdef FP_SUPPORT_OPTIMIZER
 #include "fparser.h"
 #include "fptypes.h"
-#define i43 nW1 a),
-#define i33 info.yH
-#define i23 ,cAtan2
-#define i13 =false;
-#define i03 cAbsIf
-#define tZ3 "Found "
-#define tY3 },{{2,
-#define tX3 {if(apos
-#define tW3 stackpos
-#define tV3 "dup(%u) "
-#define tU3 GetOpcode
-#define tT3 eR{assert
-#define tS3 "%d, cost "
-#define tR3 "immed "<<
-#define tQ3 mFuncParsers
-#define tP3 "PUSH ";xE3(
-#define tO3 stderr
-#define tN3 sep2=" "
-#define tM3 FPHASH_CONST
-#define tL3 cache_needed[
-#define tK3 fprintf
-#define tJ3 ::cout<<"Applying "
-#define tI3 ||tree.tU3
-#define tH3 HANDLE_UNARY_CONST_FUNC
-#define tG3 within,
-#define tF3 y21){if
-#define tE3 c_count
-#define tD3 s_count
-#define tC3 MaxOp
-#define tB3 2)lS 2*
-#define tA3 x11.cG3
-#define t93 l7 0,2,
-#define t83 <eS1(0)
-#define t73 );else{
-#define t63 (n6)nN3
-#define t53 b.Value)
-#define t43 b.Opcode
-#define t33 .nB synth
-#define t23 ].swap(
-#define t13 =synth.
-#define t03 codes[b
-#define eZ3 Value){
-#define eY3 whydump
-#define eX3 i01 eF2
-#define eW3 for(x53
-#define eV3 ;for yS{
-#define eU3 );synth
-#define eT3 info.SaveMatchedParamIndex(
-#define eS3 for(;a<
-#define eR3 nparams
-#define eQ3 first!=
-#define eP3 i03,
-#define eO3 l3 4,1,
-#define eN3 cTan,xJ
-#define eM3 cLog,xJ
-#define eL3 l3 0,1,
-#define eK3 cHypot,
-#define eJ3 nR 0,
-#define eI3 cAbs nR
-#define eH3 std::cO
-#define eG3 fp_pow(
-#define eF3 ,cM2 lD
-#define eE3 .second
-#define eD3 ]eE3
-#define eC3 ].first
-#define eB3 Ne_Mask
-#define eA3 Gt_Mask
-#define e93 Lt_Mask
-#define e83 {nL eS1(
-#define e73 131,4,1,
-#define e63 tC1 max
-#define e53 tU cMul);
-#define e43 131,8,1
-#define e33 FindPos
-#define e23 nN yL
-#define e13 public:
-#define e03 result xM
-#define cZ3 result))lA2
-#define cY3 result(
-#define cX3 {data->
-#define cW3 .eW1 n]
-#define cV3 eG cK1);
-#define cU3 eG yR1
-#define cT3 if(eY1==
-#define cS3 ),has_max(
-#define cR3 (count
-#define cQ3 .empty()
-#define cP3 .iH1 a);
-#define cO3 GetParamCount(nQ
-#define cN3 GetParamCount();
-#define cM3 ;}case
-#define cL3 pclone
-#define cK3 sim.x3
-#define cJ3 fpdata
-#define cI3 cCosh nR
-#define cH3 cCosh,
-#define cG3 Immeds
-#define cF3 l6 1,
-#define cE3 x8(tB2
-#define cD3 newpow
-#define cC3 change
-#define cB3 133,2,
-#define cA3 i01 x2
-#define c93 Params
-#define c83 Needs
-#define c73 byteCode
-#define c63 eT1&occ=
-#define c53 child)
-#define c43 AddFrom(
-#define c33 lT1 nE==
-#define c23 ;for xK2
-#define c13 tC1 lY1
-#define c03 factor_t
-#define yZ3 tree.xJ1
-#define yY3 yA tmp2)
-#define yX3 value1
-#define yW3 model.
-#define yV3 true;n31
-#define yU3 &&p0.max
-#define yT3 p2 eT ifp2
-#define yS3 yJ p2;p2
-#define yR3 cAbsNot
-#define yQ3 switch(tX
-#define yP3 tZ case
-#define yO3 IsNever
-#define yN3 }switch
-#define yM3 stackptr
-#define yL3 nN[++IP]
-#define yK3 const xH
-#define yJ3 yE cPow)
-#define yI3 default_function_handling
-#define yH3 cLog);x9
-#define yG3 ;sim.Push(
-#define yF3 eS1(0.5)
-#define yE3 iJ 1,
-#define yD3 [funcno].
-#define yC3 :start_at()
-#define yB3 Rehash(tT yA
-#define yA3 .size()
-#define y93 IsLogicalValue nW1
-#define y83 (tree))e5
-#define y73 stack[stack yA3-
-#define y63 stack yL
-#define y53 tmp yC 0))
-#define y43 ));tmp tU
-#define y33 ,(long tG1
-#define y23 );tmp2 yC
-#define y13 cMul);xK
-#define y03 1),eS1(1))
-#define xZ3 constvalue
-#define xY3 lD 0));
-#define xX3 )nG1 xK
-#define xW3 nN[IP]==
-#define xV3 opcodes
-#define xU3 did_muli
-#define xT3 switch(lF3.first iY2
-#define xS3 ;for iL1
-#define xR3 Ge0Lt1
-#define xQ3 &&p.max
-#define xP3 :tree.
-#define xO3 =y6 a));if(
-#define xN3 used[b]
-#define xM3 e8(),yG<
-#define xL3 size_t n
-#define xK3 sizeof(
-#define xJ3 cNotNot,
-#define xI3 cOr yF
-#define xH3 359463,
-#define xG3 2,7168,
-#define xF3 param.
-#define xE3 DumpTree
-#define xD3 Gt0Le1
-#define xC3 y21){eS1
-#define xB3 base,eS1
-#define xA3 ==cOr)l9
-#define x93 cAdd iU1
-#define x83 (cM2 lD
-#define x73 lD 2));
-#define x63 eT cond
-#define x53 iX2 0;b<
-#define x43 {}range(
-#define x33 .n_int_sqrt
-#define x23 ,cPow,xJ
-#define x13 ,{1,218,
-#define x03 lD 1))
-#define nZ3 tmp yA tree
-#define nY3 eS1(1)))
-#define nX3 iterator
-#define nW3 begin();
-#define nV3 TreeSet
-#define nU3 parent
-#define nT3 insert(i
-#define nS3 newrel
-#define nR3 eS1(2)));
-#define nQ3 {eS1 tmp
-#define nP3 iU.hash1
-#define nO3 (tree)!=
-#define nN3 )n5 lC
-#define nM3 break;}
-#define nL3 b_needed
-#define nK3 cachepos
-#define nJ3 half=
-#define nI3 src_pos
-#define nH3 reserve(
-#define nG3 treeptr
-#define nF3 iC2 size()
-#define nE3 .resize(
-#define nD3 eU1 void
-#define nC3 ImmedTag
-#define nB3 a,const
-#define nA3 RefCount
-#define n93 Birth();
-#define n83 mulgroup
-#define n73 template
-#define n63 cost_t
-#define n53 n72 nZ
-#define n43 middle
-#define n33 ))break;eS1
-#define n23 };enum
-#define n13 if(op==
-#define n03 (p1.xJ1
-#define lZ3 cLog2by);
-#define lY3 sqrt_cost
-#define lX3 const int
-#define lW3 mul_count
-#define lV3 maxValue1
-#define lU3 minValue1
-#define lT3 maxValue0
-#define lS3 minValue0
-#define lR3 ValueType
-#define lQ3 >(eS1(1),
-#define lP3 abs_mul
-#define lO3 pos_set
-#define lN3 goto e3
-#define lM3 nF1);}if(
-#define lL3 yE cAdd);
-#define lK3 subtree
-#define lJ3 invtree
-#define lI3 lV1=r.specs;if(r.found){
-#define lH3 ,lV1,info
-#define lG3 a;if(&t91
-#define lF3 parampair
-#define lE3 rulenumit
-#define lD3 cIf,l6 3,
-#define lC3 MakeEqual
-#define lB3 nH1,l4::
-#define lA3 nH1,{l4::
-#define l93 newbase
-#define l83 branch1op
-#define l73 branch2op
-#define l63 overlap
-#define l53 truth_a
-#define l43 ),Value(
-#define l33 );nW l4::
-#define l23 if nW1 0)
-#define l13 found_dup
-#define l03 &1)?(poly^(
-#define iZ2 (xF3
-#define iY2 ){case
-#define iX2 size_t b=
-#define iW2 i0 xQ3
-#define iV2 has_min
-#define iU2 Plan_Has(
-#define iT2 ;if(half
-#define iS2 ;}void
-#define iR2 )iS2
-#define iQ2 const nI2
-#define iP2 yV1 class
-#define iO2 namespace
-#define iN2 rhs.hash2;}
-#define iM2 rhs.hash1
-#define iL2 ::res,b8<
-#define iK2 inverted
-#define iJ2 has_max=
-#define iI2 has_max)
-#define iH2 iftree
-#define iG2 depcodes
-#define iF2 explicit
-#define iE2 VarBegin
-#define iD2 cM3 lZ2
-#define iC2 c93.
-#define iB2 ].data);
-#define iA2 y4)));nW
-#define i92 .what eX
-#define i82 ;if(fp_equal(
-#define i72 x02 yJ
-#define i62 begin(),
-#define i52 cond_add
-#define i42 cond_mul
-#define i32 cond_and
-#define i22 yG n91
-#define i12 bool e31
-#define i02 unsigned
-#define tZ2 costree
-#define tY2 sintree
-#define tX2 leaf_count
-#define tW2 =GetParam(
-#define tV2 sub_params
-#define tU2 printf(
-#define tT2 cbrt_count
-#define tS2 sqrt_count
-#define tR2 Finite
-#define tQ2 p1 eT ifp1
-#define tP2 pcall_tree
-#define tO2 after_powi
-#define tN2 grammar
-#define tM2 lE 0,1,
-#define tL2 cCos,xJ
-#define tK2 cEqual,
-#define tJ2 ,eO3 507 tS
-#define tI2 ,t71 l7 2,2,
-#define tH2 cLog nR
-#define tG2 l0 2,
-#define tF2 cPow,nU
-#define tE2 cAdd,xZ 2,
-#define tD2 cInv,xZ 1,
-#define tC2 cNeg,xZ 1,
-#define tB2 ),0},{
-#define tA2 x11.SubTrees
-#define t92 x11.Others
-#define t82 param=*i01
-#define t72 std::move(
-#define t62 nM3 switch(
-#define t52 constraints=
-#define t42 .constraints
-#define t32 data;data.
-#define t22 MakeNEqual
-#define t12 for yS eC1
-#define t02 yA mul)
-#define eZ2 Dump(std::
-#define eY2 isInteger(
-#define eX2 (cond.cI cA2
-#define eW2 yA3;++
-#define eV2 nG1 r;r tU
-#define eU2 Comparison
-#define eT2 needs_flip
-#define eS2 {data xB lM
-#define eR2 ,eQ,synth);
-#define eQ2 (half&63)-1;
-#define eP2 value]
-#define eO2 ));TriTruthValue
-#define eN2 );range.nN2
-#define eM2 ,2,1,4,1,2,
-#define eL2 >StackMax)
-#define eK2 ~size_t(0)
-#define eJ2 );t4=!t4;}
-#define eI2 ;}yV1 static
-#define eH2 info.lQ[b].
-#define eG2 const std::eO
-#define eF2 Rule&rule,
-#define eE2 .GetHash().
-#define eD2 (list.first
-#define eC2 ;iU.hash2+=
-#define eB2 ,xA1);lC
-#define eA2 ,const e1&
-#define e92 struct
-#define e82 cGreater,
-#define e72 tree lD 0)
-#define e62 const eS1&
-#define e52 mul_item
-#define e42 innersub
-#define e32 cbrt_cost
-#define e22 best_cost
-#define e12 )))l81 lH
-#define e02 result i0
-#define cZ2 fp_mod(m.
-#define cY2 Compare>
-#define cX2 (*x6)[a].info
-#define cW2 tree y21 yI
-#define cV2 tree nE==
-#define cU2 condition
-#define cT2 per_item
-#define cS2 item_type
-#define cR2 first2
-#define cQ2 ,l8 0,2,
-#define cP2 tS 396676
-#define cO2 Decision
-#define cN2 not_tree
-#define cM2 leaf1
-#define cL2 =tree lD
-#define cK2 group_by
-#define cJ2 ->second
-#define cI2 targetpos
-#define cH2 eat_count
-#define cG2 ParamSpec
-#define cF2 Forget()
-#define cE2 exponent
-#define cD2 ,bool abs){
-#define cC2 synth.Find(
-#define cB2 params
-#define cA2 &&cond eH))
-#define c92 source_tree
-#define c82 nE==cLog2&&
-#define c72 =lT1;bool iQ
-#define c62 <t8,n63>
-#define c52 p1_evenness
-#define c42 c32 i13 if(
-#define c32 tC1 iV2
-#define c22 isNegative(
-#define c12 n73 i5
-#define c02 neg_set
-#define yZ2 StackTopIs(
-#define yY2 cNop,cNop}}
-#define yX2 synth.PushImmed(
-#define yW2 FPoptimizer_ByteCode yU2
-#define yV2 FPoptimizer_ByteCode::
-#define yU2 ::ByteCodeSynth x8
-#define yT2 cTanh,cNop,
-#define yS2 matches
-#define yR2 goto fail;}
-#define yQ2 cSin,xJ
-#define yP2 cTan nR
-#define yO2 cCos nR
-#define yN2 negated
-#define yM2 i7,1,iX+1);
-#define yL2 CodeTree
-#define yK2 yL2 x8
-#define yJ2 ifdata
-#define yI2 best_score
-#define yH2 mulvalue
-#define yG2 pow_item
-#define yF2 nE==cPow&&tJ
-#define yE2 PowiResult
-#define yD2 maxValue
-#define yC2 minValue
-#define yB2 ;pow tU cPow);pow
-#define yA2 result cM3
-#define y92 fp_min(xA,
-#define y82 set_min_max(
-#define y72 div_tree
-#define y62 pow_tree
-#define y52 preserve
-#define y42 PullResult()
-#define y32 dup_or_fetch
-#define y22 nominator]
-#define y12 Rehash(false
-#define y02 test_order
-#define xZ2 lF3,
-#define xY2 .param_count
-#define xX2 shift(index)
-#define xW2 rulenumber
-#define xV2 cTanh nR
-#define xU2 (tree nE
-#define xT2 GetDepth()
-#define xS2 factor_immed
-#define xR2 changes
-#define xQ2 tU tree nE);
-#define xP2 tU cond nE
-#define xO2 Become nW1
-#define xN2 },0,0x1},{{1,
-#define xM2 ,lJ 0x7 tY3
-#define xL2 ;n41 eT y9 lD
-#define xK2 (size_t a=
-#define xJ2 ;}static yN1
-#define xI2 tree lD a)
-#define xH2 for(typename
-#define xG2 exp_diff
-#define xF2 ExponentInfo
-#define xE2 lower_bound(
-#define xD2 factor
-#define xC2 is_logical
-#define xB2 newrel_and
-#define xA2 Suboptimal
-#define x92 cW[c tO
-#define x82 IsAlways;if(
-#define x72 n73 nA1
-#define x62 res_stackpos
-#define x52 half_pos
-#define x42 ;}else{x6=new
-#define x32 )lS 3*
-#define x22 {e1 start_at;
-#define x12 ,(long double)
-#define x02 .Rehash()
-#define nZ2 )return
-#define nY2 );cK3 iJ 2,
-#define nX2 return false;}
-#define nW2 );nM3
-#define nV2 xD1 tA+1);
-#define nU2 ;i7.Remember(
-#define nT2 .match_tree
-#define nS2 l81 true;}
-#define nR2 nD OPCODE
-#define nQ2 yG x8&immed,
-#define nP2 >>1)):(
-#define nO2 CodeTreeData
-#define nN2 multiply(
-#define nM2 i0 i13
-#define nL2 .n73
-#define nK2 var_trees
-#define nJ2 cOr,lP 2,
-#define nI2 yL2&
-#define nH2 ::Optimize(){
-#define nG2 second eE3;
-#define nF2 second.first;
-#define nE2 log2_exponent
-#define nD2 tT.swap(tmp);
-#define nC2 Value(Value::
-#define nB2 dup_fetch_pos
-#define nA2 nN,size_t&l31
-#define n92 *)&*start_at;
-#define n82 yO3 yI lC
-#define n72 ,tree))
-#define n62 ContainsOtherCandidates(
-#define n52 ,cPow l7 2,2,
-#define n42 cSin nR
-#define n32 lK 2},0,iR 1,
-#define n22 lK 1},0,iR 1,
-#define n12 Value_EvenInt
-#define n02 Sign_Negative
-#define lZ2 SubFunction:{
-#define lY2 ParamHolder:{
-#define lX2 MakeFalse,{l4
-#define lW2 if(xW lD a)iA
-#define lV2 ConditionType
-#define lU2 SpecialOpcode
-#define lT2 synth_it
-#define lS2 fp_max(xA);
-#define lR2 assimilated
-#define lQ2 fraction
-#define lP2 0x12},{{
-#define lO2 DUP_BOTH();
-#define lN2 -1-offset].
-#define lM2 tU3()
-#define lL2 parent_opcode)
-#define lK2 TreeCounts
-#define lJ2 bool t4 i13
-#define lI2 SetOpcode(
-#define lH2 found_log2
-#define lG2 div_params
-#define lF2 .CopyOnWrite()
-#define lE2 immed_sum
-#define lD2 OPCODE(opcode)
-#define lC2 std::cout<<"POP "
-#define lB2 (stack yA3-
-#define lA2 break;result*=
-#define l92 FactorStack x8
-#define l82 IsAlways yI lC
-#define l72 l7 2,2,lB1
-#define l62 248024 tS
-#define l52 cAnd,lP 2,
-#define l42 cNot nR
-#define l32 cMul,xZ 2,
-#define l22 DumpHashesFrom
-#define l12 replacing_slot
-#define l02 RefParams
-#define iZ1 if_always[
-#define iY1 WhatDoWhenCase
-#define iX1 exponent_immed
-#define iW1 new_base_immed
-#define iV1 base_immed
-#define iU1 ||op1==
-#define iT1 (size_t a xX
-#define iS1 data[a eD3
-#define iR1 AddCollection(
-#define iQ1 if(newrel_or==
-#define iP1 DUP_ONE(apos);
-#define iO1 flipped
-#define iN1 .UseGetNeeded(
-#define iM1 e9 2,131,
-#define iL1 (i02
-#define iK1 OptimizedUsing
-#define iJ1 Var_or_Funcno
-#define iI1 iJ1;
-#define iH1 DelParam(
-#define iG1 typename nX1::nX3
-#define iF1 )nZ2 true
-#define iE1 GetParams(
-#define iD1 crc32_t
-#define iC1 fphash_value_t
-#define iB1 signed_chain
-#define iA1 IsDefined())
-#define i91 MinusInf
-#define i81 n_immeds
-#define i71 FindClone(xK
-#define i61 denominator]
-#define i51 needs_rehash
-#define i41 AnyWhere_Rec
-#define i31 minimum_need
-#define i21 ~i02(0)
-#define i11 tC1 min
-#define i01 (const
-#define tZ1 ,i01 void*)&
-#define tY1 41,42,43,44,
-#define tX1 constraints&
-#define tW1 tT.iH1
-#define tV1 p1_logical_b
-#define tU1 p0_logical_b
-#define tT1 p1_logical_a
-#define tS1 p0_logical_a
-#define tR1 ,PowiCache&i7,
-#define tQ1 synth.DoDup(
-#define tP1 else if(
-#define tO1 cache_needed
-#define tN1 e9 2,1,e9 2,
-#define tM1 treelist
-#define tL1 IsDescendantOf(
-#define tK1 has_bad_balance
-#define tJ1 (tree,std::cout)
-#define tI1 .SetParamsMove(
-#define tH1 c03 xD2
-#define tG1 double)cE2
-#define tF1 {case IsAlways:
-#define tE1 e02=false
-#define tD1 ;cE2.Rehash(
-#define tC1 result.
-#define tB1 range x8 result
-#define tA1 TopLevel)
-#define t91 *start_at){x6=(
-#define t81 (rule,tree,info
-#define t71 cNEqual
-#define t61 ,cEqual l7 2,2,
-#define t51 cAdd,AnyParams,
-#define t41 lP2 xG3
-#define t31 ,cNotNot nR
-#define t21 ,cLess l7 2,2,
-#define t11 Oneness_NotOne|
-#define t01 Value_IsInteger
-#define eZ1 iK1(
-#define eY1 reltype
-#define eX1 SequenceOpcodes
-#define eW1 sep_list[
-#define eV1 );eG n83);
-#define eU1 l02);
-#define eT1 TreeCountItem
-#define eS1 Value_t
-#define eR1 divgroup
-#define eQ1 ,eS1(-1)))xF
-#define eP1 set_min(fp_floor
-#define eO1 pihalf_limits
-#define eN1 y41 p0.min>=0.0)
-#define eM1 MaxChildDepth
-#define eL1 situation_flags&
-#define eK1 i02 opcode)
-#define eJ1 =yM|i02(nN yA3
-#define eI1 std::pair<It,It>
-#define eH1 eO3 483 tS
-#define eG1 ,l8 0,1,
-#define eF1 tG2 7168,
-#define eE1 Value_Logical
-#define eD1 new_factor_immed
-#define eC1 if(remaining[a])
-#define eB1 occurance_pos
-#define eA1 exponent_hash
-#define e91 exponent_list
-#define e81 CollectionSet x8
-#define e71 CollectMulGroup(
-#define e61 source_set
-#define e51 cE2,nV3
-#define e41 produce_count
-#define e31 operator
-#define e21 )yJ3;lC
-#define e11 back().thenbranch
-#define e01 ParamSpec_Extract
-#define cZ1 retry_anyparams_3
-#define cY1 retry_anyparams_2
-#define cX1 needlist_cached_t
-#define cW1 grammar_rules[*r]
-#define cV1 tF2 0x1 tY3
-#define cU1 CodeTreeImmed x8(
-#define cT1 GetParamCount()==
-#define cS1 by_float_exponent
-#define cR1 fp_equal(cE2
-#define cQ1 new_exp
-#define cP1 end()&&i->first==
-#define cO1 yB3 r);}
-#define cN1 return BecomeZero;
-#define cM1 return BecomeOne;
-#define cL1 if(lQ yA3<=n2)
-#define cK1 addgroup
-#define cJ1 found_log2by
-#define cI1 ())yE cMul);lC
-#define cH1 >=eS1(0)
-#define cG1 nE==yR3)
-#define cF1 ParsePowiMuli(
-#define cE1 branch1_backup
-#define cD1 branch2_backup
-#define cC1 exponent_map
-#define cB1 plain_set
-#define cA1 LightWeight(
-#define c91 }nM3 case
-#define c81 cN3++b)
-#define c71 synth.x5 1
-#define c61 ,i7 eR2
-#define c51 if(value
-#define c41 set_max(fp_ceil cY
-#define c31 e62 v,n7
-#define c21 {eS1 cE2=
-#define c11 should_regenerate=true;
-#define c01 should_regenerate,
-#define yZ1 Collection
-#define yY1 RelationshipResult
-#define yX1 Subdivide_Combine(
-#define yW1 long value
-#define yV1 n73 lT
-#define yU1 yV1 cA
-#define yT1 yV1 e92
-#define yS1 eP nE3 StackMax
-#define yR1 subgroup
-#define yQ1 best_sep_factor
-#define yP1 tP1!result
-#define yO1 needlist_cached
-#define yN1 inline i02
-#define yM1 221646 tS 24803
-#define yL1 Constness_Const
-#define yK1 opcode,bool pad
-#define yJ1 n_occurrences
-#define yI1 changed=true;
-#define yH1 iH1 a);}
-#define yG1 MakesInteger(
-#define yF1 e62 value
-#define yE1 best_sep_cost
-#define yD1 MultiplicationRange
-#define yC1 ;p1.yB3 p1
-#define yB1 yV1 eS1
-#define yA1 n_stacked
-#define y91 AnyParams_Rec
-#define y81 continue;
-#define y71 Become(value lD 0))
-#define y61 ,cGreater l7 2,2,
-#define y51 yV1 inline TriTruthValue
-#define y41 .iV2&&
-#define y31 ));n41 y3 op1 tT.DelParams(
-#define y21 .IsImmed()
-#define y11 =comp.AddItem(atree
-#define y01 needs_sincos
-#define xZ1 Recheck_RefCount_Div
-#define xY1 Recheck_RefCount_Mul
-#define xX1 n83.
-#define xW1 n83;n83 tU
-#define xV1 MultiplyAndMakeLong(
-#define xU1 cMul);y53;tmp
-#define xT1 covers_plus1
-#define xS1 lD2);
-#define xR1 if(synth.FindAndDup(
-#define xQ1 SynthesizeParam(
-#define xP1 public e8,public yG<
-#define xO1 grammar_func
-#define xN1 221426 tS 237795
-#define xM1 t93 165888 tS
-#define xL1 Modulo_Radians},
-#define xK1 tT.SetParam(
-#define xJ1 GetImmed()
-#define xI1 PositionType
-#define xH1 CollectionResult
-#define xG1 yV1 bool
-#define xF1 const_offset
-#define xE1 stacktop_desired
-#define xD1 SetStackTop(
-#define xC1 ,cLessOrEq l7 2,2,
-#define xB1 yV1 void
-#define xA1 cond_type
-#define x91 Recheck_RefCount_RDiv
-#define x81 static const range x8
-#define x71 fPExponentIsTooLarge(
-#define x61 CollectMulGroup_Item(
-#define x51 pair<eS1,nV3>
-#define x41 covers_full_cycle
-#define x31 AssembleSequence(
-#define x21 x8(rule.repl_param_list,
-#define x11 NeedList
-#define x01 )lF3 eE3
-#define nZ1 <<std::dec<<")";}
-#define nY1 &&IsLogicalValue(
-#define nX1 TreeCountType x8
-#define nW1 (tree lD
-#define nV1 <yK2>
-#define nU1 std::pair<T1,T2>&
-#define nT1 n73<typename
-#define nS1 has_good_balance_found
-#define nR1 Rehash();tV2 yL
-#define nQ1 found_log2_on_exponent
-#define nP1 covers_minus1
-#define nO1 needs_resynth
-#define nN1 immed_product
-#define nM1 }},{ProduceNewTree,2,1,
-#define nL1 ,2,1)nS if(found[data.
-#define nK1 t62 bitmask&
-#define nJ1 Sign_Positive
-#define nI1 {DataP slot_holder(xY[
-#define nH1 ::MakeTrue
-#define nG1 {yK2
-#define nF1 tree.iH1 a
-#define nE1 tree lD 1)y21&&
-#define nD1 },{l4::MakeNotP0,l4::
-#define nC1 SetParamMove(
-#define nB1 CodeTreeImmed(eS1(
-#define nA1 <i02 cY2 void
-#define n91 <yL2>&
-#define n81 yG<i02>&c73,
-#define n71 void ByteCodeSynth x8::
-#define n61 )const{return
-#define n51 rhs n61 hash1
-#define n41 changed_if
-#define n31 min=eS1(0);
-#define n21 opposite=
-#define n11 7168 tS 279818,
-#define n01 l81 xA2;
-#define lZ1 MatchResultType
-#define lY1 resulting_exponent
-#define lX1 Unknown:default:;}
-#define lW1 ,lE 2,1,
-#define lV1 (*x6)[a].start_at
-#define lU1 ,cAdd,SelectedParams,0},0,
-#define lT1 GetParam(a)
-#define lS1 inverse_nominator]
-#define lR1 void FunctionParserBase
-#define lQ1 ,nN,IP,limit,y1,stack);
-#define lP1 ByteCodeSynth x8&synth)
-#define lO1 xS3 a=0;a<xT;++a)
-#define lN1 ;std::cout<<
-#define lM1 const yK2
-#define lL1 const yG nV1
-#define lK1 synth.AddOperation(
-#define lJ1 tQ1 found[data.
-#define lI1 SetParams(iE1));
-#define lH1 o<<"("<<std::hex<<data.
-#define lG1 IfBalanceGood(
-#define lF1 n_as_tan_param
-#define lE1 changed_exponent
-#define lD1 retry_positionalparams_2
-#define lC1 i02 index
-#define lB1 463 tS 273436,
-#define lA1 l7 2,2,473304 tS
-#define l91 {l4::MakeNotP1,l4::
-#define l81 ;return
-#define l71 yO3 l81 Unknown;}
-#define l61 PlanNtimesCache(
-#define l51 AddFunctionOpcode_Float(
-#define l41 FPoptimizer_Grammar
-#define l31 IP,size_t limit,size_t y1
-#define l21 AddOperation(cInv,1,1)nS}
-#define l11 e92 ImmedHashGenerator
-#define l01 GetPositivityInfo nO3
-#define iZ tB2 eS1(
-#define iY CopyOnWrite();
-#define iX recursioncount
-#define iW ParamSpec_SubFunctionData
-#define iV inverse_denominator]
-#define iU NewHash
-#define iT tree.GetParamCount()
-#define iS PositionalParams_Rec
-#define iR 0x4},{{
-#define iQ needs_cow=GetRefCount()>1;
-#define iP );nC1 0,cE2);iH1 1);
-#define iO DumpTreeWithIndent(*this);
-#define iN switch(type iY2 cond_or:
-#define iM CalculateResultBoundaries(
-#define iL e62 v,eS1(lN
-#define iK AddFunctionOpcode_Integer(
-#define iJ sim.Eat(
-#define iI edited_powgroup
-#define iH has_unknown_max
-#define iG has_unknown_min
-#define iF if(keep_powi
-#define iE synthed_tree
-#define iD 356668 tS 24852
-#define iC +2]=yM|i02(Immed yA3);
-#define iB matched_params
-#define iA .IsIdenticalTo(
-#define i9 by_exponent
-#define i8 collections
-#define i7 cache
-#define i6 }inline
-#define i5 lT void range x8::
-#define i4 yA comp.cB1[a].value);
-#define i3 AnyParams,2},0,0x0},{{
-#define i2 cS1.data
-#define i1 iF2 nO2(
-#define i0 .has_max
-#define tZ goto ReplaceTreeWithZero;
-#define tY :goto ReplaceTreeWithOne;case
-#define tX GetLogicalValue nW1
-#define tW lN1 std::endl;DumpHashes(
-#define tV ;p2.yB3 p2);tH iH2 nE);e5}
-#define tU .lI2
-#define tT );tree
-#define tS ,{2,
-#define tR lZ 0x0},{{
-#define tQ yV1 nA
-#define tP MakeFalse,l4::
-#define tO ].relationship
-#define tN <=fp_const_negativezero x8())
-#define tM .hash1|=key;iC1 n9
-#define tL [n2 eC3=true;lQ[n2 eD3
-#define tK l41::Grammar*
-#define tJ powgroup lD
-#define tI ;pow tU cLog);tH cMul);
-#define tH tree tU
-#define tG eK2&&found[data.
-#define tF },{l4::MakeNotNotP1,l4::
-#define tE },{l4::MakeNotNotP0,l4::
-#define tD cN3 a-->0;)if(
-#define tC nB1(
-#define tB has_mulgroups_remaining
-#define tA StackTop
-#define t9 MatchInfo x8&
-#define t8 int_exponent_t
-#define t7 RootPowerTable x8::RootPowers[
-#define t6 MatchPositionSpec_AnyParams x8
-#define t5 iO2 FPoptimizer_ByteCode
-#define t4 is_signed
-#define t3 iE1));xX1 Rehash();
-#define t2 result_positivity
-#define t1 biggest_minimum
-#define t0 const iW
-#define eZ ParamSpec_NumConstant x8
-#define eY yK2&tree,std::ostream&o
-#define eX !=Unchanged)if(TestCase(
-#define eW cond_tree
-#define eV else_tree
-#define eU then_tree
-#define eT .AddParam(
-#define eS ;xE3(tree)lN1"\n";
-#define eR yK2&tree)
-#define eQ sequencing
-#define eP StackState
-#define eO string FP_GetOpcodeName(
-#define eN if_stack
-#define eM {return yK2(
-#define eL n_as_sin_param
-#define eK n_as_cos_param
-#define eJ PowiResolver::
-#define eI ];};extern"C"{
-#define eH .BalanceGood
-#define eG AddParamMove(
-#define eF valueType
-#define eE best_factor
-#define eD back().endif_location
-#define eC iC1(iJ1)
-#define eB iC1 key
-#define eA l8 2,1,
-#define e9 130,1,
-#define e8 MatchPositionSpecBase
-#define e7 iF2 yL2(
-#define e6 smallest_maximum
-#define e5 goto redo;
-#define e4 ++IP;y81}if(xW3 xV3.
-#define e3 ReplaceTreeWithParam0;
-#define e2 factor_needs_rehashing
-#define e1 MatchPositionSpecBaseP
-#define e0 nL eS1(-y03;
-#define cZ 79,112,113,117,118,123,124,127,128,
-#define cY )l81 m cM3
-#define cX e01 x8(nM.param_list,
-#define cW relationships
-#define cV 28,29,30,31,32,33,34,35,36,
-#define cU cIf,l0 3,
-#define cT lK 2},0,0x0},{{
-#define cS data.subfunc_opcode
-#define cR }if eD2.xJ1==eS1(
-#define cQ otherhalf
-#define cP :{AdoptChildrenWithSameOpcode(tree);
-#define cO map<fphash_t,std::set<std::string> >
-#define cN const SequenceOpCode x8
-#define cM =fp_cosh(m.min);m.max=fp_cosh(m.max);
-#define cL MatchPositionSpec_PositionalParams x8
-#define cK eS1(1.5)*fp_const_pi x8()
-#define cJ !=Unchanged nZ2 iZ1
-#define cI FoundChild
+#include "fpaux.h"
+#define iJ3 x22)l12
+#define iI3 info.SaveMatchedParamIndex(
+#define iH3 tree yI
+#define iG3 &*n21){
+#define iF3 cAbsIf
+#define iE3 "Found "
+#define iD3 stackpos
+#define iC3 "%d, cost"
+#define iB3 "dup(%u) "
+#define iA3 t2{assert
+#define i93 "immed "<<
+#define i83 mFuncParsers
+#define i73 param.data
+#define i63 ;DumpTree(
+#define i53 stderr
+#define i43 sep2=" "
+#define i33 GetOpcode
+#define i23 FPHASH_CONST
+#define i13 cache_needed[
+#define i03 "PUSH "i63
+#define tZ3 fprintf
+#define tY3 ::cout<<"Applying "
+#define tX3 HANDLE_UNARY_CONST_FUNC
+#define tW3 within,
+#define tV3 c_count
+#define tU3 s_count
+#define tT3 MaxOp
+#define tS3 3)lT 3*
+#define tR3 2)lT 2*
+#define tQ3 p0 eT&&
+#define tP3 PlusInf
+#define tO3 .nN 1));
+#define tN3 lE m.
+#define tM3 max.val
+#define tL3 sim.xC1
+#define tK3 .empty()
+#define tJ3 t71 xX=
+#define tI3 .Immeds
+#define tH3 b.Value)
+#define tG3 b.Opcode
+#define tF3 tO2 first
+#define tE3 .data.
+#define tD3 ].swap(
+#define tC3 codes[b
+#define tB3 whydump
+#define tA3 ,t5 a),
+#define t93 for xN3
+#define t83 const xU
+#define t73 const eZ
+#define t63 ){switch(
+#define t53 for(;a<
+#define t43 nparams
+#define t33 281856,
+#define t23 nW 0,
+#define t13 cAbs nW
+#define t03 yA2 cR1
+#define eZ3 iK1 cR1
+#define eY3 Params[
+#define eX3 Params(
+#define eW3 nL1,l4::
+#define eV3 nL1,{l4
+#define eU3 &&p lS1
+#define eT3 fp_pow(
+#define eS3 if(n71
+#define eR3 TreeCountItem
+#define eQ3 if(op==
+#define eP3 }case
+#define eO3 false;}
+#define eN3 for t52
+#define eM3 ].first
+#define eL3 ,cPow,y41
+#define eK3 )){data xH
+#define eJ3 ){case
+#define eI3 default_function_handling
+#define eH3 )&*start_at;
+#define eG3 nV2 n91
+#define eF3 Ne_Mask
+#define eE3 Gt_Mask
+#define eD3 Lt_Mask
+#define eC3 ,const cZ&
+#define eB3 opcode,
+#define eA3 FindPos
+#define e93 resize(
+#define e83 public:
+#define e73 pclone
+#define e63 yA1;lC
+#define e53 ,tree
+#define e43 cOr,l6
+#define e33 newpow
+#define e23 for xE
+#define e13 change
+#define e03 (count
+#define cZ3 133,2,
+#define cY3 synth.
+#define cX3 byteCode
+#define cW3 lY1 nC==
+#define cV3 cLog2by
+#define cU3 factor_t
+#define cT3 .n8 cY3
+#define cS3 tree.xY1
+#define cR3 value1
+#define cQ3 a));if(!
+#define cP3 else{if(
+#define cO3 (eS val
+#define cN3 t5 a).xY1
+#define cM3 p2 cO ifp2
+#define cL3 cP p2;p2
+#define cK3 cAbsNot
+#define cJ3 stackptr
+#define cI3 cLog);xO
+#define cH3 opcodes
+#define cG3 did_muli
+#define cF3 Value){
+#define cE3 used[b]
+#define cD3 xF)[0].
+#define cC3 info=(*
+#define cB3 size_t n
+#define cA3 sizeof(
+#define c93 iF3,
+#define c83 cNotNot,
+#define c73 cLess,cR
+#define c63 x62 2,2,
+#define c53 x62 0,2,
+#define c43 444848,
+#define c33 if(param
+#define c23 (op1==
+#define c13 cost_t
+#define c03 n21=r.specs;if(r.found){
+#define yZ3 ,n21,info
+#define yY3 break;}
+#define yX3 Ge0Lt1
+#define yW3 Gt0Le1
+#define yV3 ==cOr)l9
+#define yU3 cAdd lM2
+#define yT3 :start_at()
+#define yS3 eJ3 cImmed:
+#define yR3 1),x73(1));
+#define yQ3 (list.first
+#define yP3 nG3 size()
+#define yO3 yF1;++b)
+#define yN3 iterator
+#define yM3 begin();
+#define yL3 TreeSet
+#define yK3 parent
+#define yJ3 (cond c1 iC2
+#define yI3 insert(i
+#define yH3 newrel
+#define yG3 b_needed
+#define yF3 cachepos
+#define yE3 half&64)
+#define yD3 half=
+#define yC3 131,4,1,
+#define yB3 131,8,1,
+#define yA3 result
+#define y93 yA3 yT2
+#define y83 yA3 lJ1
+#define y73 yA3 eT
+#define y63 yA3 lS1
+#define y53 yA3 xQ
+#define y43 xN yA3
+#define y33 y03 iI2;if(
+#define y23 ;if(half
+#define y13 return p xQ
+#define y03 ))return
+#define xZ3 )))eL lI
+#define xY3 ;}static tM1
+#define xX3 );lC yQ
+#define xW3 ,iF,1,l51+1);
+#define xV3 4,1,2,1,
+#define xU3 .second
+#define xT3 ;x0 l4
+#define xS3 xU3);
+#define xR3 xF)[a].
+#define xQ3 eY1;if nX2
+#define xP3 std xM3<bool>
+#define xO3 else{xF=new
+#define xN3 (eY1=0;a<y3;++a)
+#define xM3 ::vector
+#define xL3 1 yE nD1
+#define xK3 src_pos
+#define xJ3 reserve(
+#define xI3 n11 void
+#define xH3 treeptr
+#define xG3 tI1 void
+#define xF3 ImmedTag
+#define xE3 a,const
+#define xD3 RefCount
+#define xC3 Birth();
+#define xB3 Rehash()
+#define xA3 mulgroup
+#define x93 exponent
+#define x83 unsigned
+#define x73 Value_t
+#define x63 7168,
+#define x53 x22 cP
+#define x43 template lL
+#define x33 template lY
+#define x23 tmp.nN 0))
+#define x13 tmp xC
+#define x03 fpdata
+#define nZ3 middle
+#define nY3 ContainsOtherCandidates
+#define nX3 nD2.end()
+#define nW3 sqrt_cost
+#define nV3 const int
+#define nU3 yA3=
+#define nT3 mul_count
+#define nS3 swap(tmp)
+#define nR3 lP1 tmp2)
+#define nQ3 maxValue1
+#define nP3 minValue1
+#define nO3 maxValue0
+#define nN3 minValue0
+#define nM3 ValueType
+#define nL3 eS n5 0),
+#define nK3 >x73(
+#define nJ3 max.known
+#define nI3 abs_mul
+#define nH3 eY3 a].
+#define nG3 Params.
+#define nF3 l8 a));
+#define nE3 pos_set
+#define nD3 nG1);}if(
+#define nC3 t5 0)nC
+#define nB3 sim.x4 1,
+#define nA3 )xD yC l8
+#define n93 switch(lZ1
+#define n83 (lS));nF lC
+#define n73 ;goto redo;
+#define n63 {sim.Eat(
+#define n53 subtree
+#define n43 invtree
+#define n33 MakeHash(
+#define n23 rulenumit
+#define n13 );}void
+#define n03 cGreaterOrEq xJ
+#define lZ3 ,cGreaterOrEq
+#define lY3 e53,info
+#define lX3 );range.xJ2
+#define lW3 IsLogicalValue(t5
+#define lV3 l7 0,2,
+#define lU3 l7 0,1,
+#define lT3 cEqual,
+#define lS3 lT3 lD
+#define lR3 0x4},{{3,
+#define lQ3 cNeg,lU 1
+#define lP3 MakeEqual
+#define lO3 newbase
+#define lN3 fp_equal(
+#define lM3 branch1op
+#define lL3 branch2op
+#define lK3 overlap
+#define lJ3 truth_b
+#define lI3 truth_a
+#define lH3 found_dup
+#define lG3 void set(
+#define lF3 rangeutil
+#define lE3 {tJ1 lF
+#define lD3 Plan_Has(
+#define lC3 StackMax)
+#define lB3 yA3 xZ
+#define lA3 namespace
+#define l93 DelParam(
+#define l83 tK=!tK;}
+#define l73 inverted
+#define l63 IsNever:
+#define l53 .known&&
+#define l43 ==cNot||
+#define l33 if(tC2==
+#define l23 ,cAnd,l6
+#define l13 const std::t0
+#define l03 const char*
+#define iZ2 if(lN3
+#define iY2 }switch(
+#define iX2 depcodes
+#define iW2 explicit
+#define iV2 cCosh nW
+#define iU2 lD cR1
+#define iT2 VarBegin
+#define iS2 continue;}
+#define iR2 ;iS2
+#define iQ2 )iR2
+#define iP2 ].data);
+#define iO2 ;x73
+#define iN2 tree.nK1
+#define iM2 begin(),
+#define iL2 cond_add
+#define iK2 cond_mul
+#define iJ2 cond_and
+#define iI2 IsAlways
+#define iH2 bool eJ1
+#define iG2 leaf1
+#define iF2 costree
+#define iE2 sintree
+#define iD2 leaf_count
+#define iC2 &&cond eD)
+#define iB2 .tN1 n]
+#define iA2 =GetParam(
+#define i92 sub_params
+#define i82 )cX1 x22);
+#define i72 printf(
+#define i62 cbrt_count
+#define i52 sqrt_count
+#define i42 Finite
+#define i32 );eS template set_if<
+#define i22 min.n5 0),
+#define i12 n51);nF lC
+#define i02 {AdoptChildrenWithSameOpcode yN2
+#define tZ2 p1 cO ifp1
+#define tY2 xC cond nC
+#define tX2 {if(rule.l81
+#define tW2 tree xC
+#define tV2 yH 2,cAdd)
+#define tU2 pcall_tree
+#define tT2 after_powi
+#define tS2 yA3 t61
+#define tR2 GetHash().
+#define tQ2 e31.SubTrees
+#define tP2 e31.Others
+#define tO2 parampair.
+#define tN2 ,xF1);lC
+#define tM2 ;break;
+#define tL2 xM3<x83>&t11
+#define tK2 )tM2
+#define tJ2 info.lR[b].
+#define tI2 info=info;
+#define tH2 yY eO3
+#define tG2 cEqual eW1
+#define tF2 cLog nW
+#define tE2 ),0},{
+#define tD2 std::move(
+#define tC2 tree nC
+#define tB2 MakeNEqual
+#define tA2 constraints=
+#define t92 ifdata.ofs
+#define t82 x22 false)
+#define t72 (IfData&ifdata
+#define t62 .constraints
+#define t52 (size_t b=0;b<
+#define t42 Dump(std::
+#define t32 ),Value(
+#define t22 ),child);
+#define t12 isInteger(
+#define t02 Comparison
+#define eZ2 needs_flip
+#define eY2 (half&63)-1;
+#define eX2 value]
+#define eW2 ~size_t(0)
+#define eV2 xR1 y1+1);
+#define eU2 >::res,b8<
+#define eT2 cO tree);
+#define eS2 mul_item
+#define eR2 innersub
+#define eQ2 cbrt_cost
+#define eP2 best_cost
+#define eO2 condition
+#define eN2 nominator
+#define eM2 TopLevel)
+#define eL2 per_item
+#define eK2 item_type
+#define eJ2 first2
+#define eI2 l3 18,1,
+#define eH2 x3 lU 2,
+#define eG2 );sim.x4 2,
+#define eF2 tE 1},0,
+#define eE2 n51)));x0
+#define eD2 Decision
+#define eC2 not_tree
+#define eB2 Become(t5
+#define eA2 group_by
+#define e92 x93=
+#define e82 ->second
+#define e72 targetpos
+#define e62 eL true;}
+#define e52 ParamSpec
+#define e42 rhs.hash2;}
+#define e32 rhs.hash1
+#define e22 struct
+#define e12 Forget()
+#define e02 source_tree
+#define cZ2 .n_int_sqrt
+#define cY2 nC==cLog2&&
+#define cX2 <tQ,c13>
+#define cW2 p1_evenness
+#define cV2 isNegative(
+#define cU2 ByteCodeSynth xN
+#define cT2 cNop,cNop}}
+#define cS2 cTanh,cNop,
+#define cR2 NewHash
+#define cQ2 >e22 cG<
+#define cP2 matches
+#define cO2 .match_tree
+#define cN2 nV2 void*)&
+#define cM2 cGreater,cR
+#define cL2 l5 0,1,
+#define cK2 cCos nW
+#define cJ2 .constvalue
+#define cI2 }data;data.
+#define cH2 +=1 eL nI1;
+#define cG2 negated
+#define cF2 Specializer
+#define cE2 yZ2 yA3(
+#define cD2 params
+#define cC2 coshtree
+#define cB2 sinhtree
+#define cA2 best_score
+#define c92 mulvalue
+#define c82 pow_item
+#define c72 subgroup
+#define c62 nC==cPow&&tW
+#define c52 PowiResult
+#define c42 )continue;if(
+#define c32 x73(2)));
+#define c22 break;iY2
+#define c12 (size_t a=
+#define c02 ;for c12
+#define yZ2 ){x73
+#define yY2 nU yZ2 tmp=
+#define yX2 ){iH3
+#define yW2 0));range xN
+#define yV2 maxValue
+#define yU2 minValue
+#define yT2 eT=false;if(
+#define yS2 fp_min(yB,
+#define yR2 div_tree
+#define yQ2 pow_tree
+#define yP2 x73 nY
+#define yO2 preserve
+#define yN2 (tree);
+#define yM2 x73(0.5)
+#define yL2 PullResult()
+#define yK2 dup_or_fetch
+#define yJ2 test_order
+#define yI2 parampair,
+#define yH2 .param_count
+#define yG2 shift(index)
+#define yF2 rulenumber
+#define yE2 cTan,l3 2,1,
+#define yD2 cLog,l3 2,1,
+#define yC2 cTanh nW
+#define yB2 cSinh nW
+#define yA2 lJ 2},0,
+#define y92 cInv,lU 1,
+#define y82 GetDepth()
+#define y72 factor_immed
+#define y62 changes
+#define y52 xO1 cO yC l8
+#define y42 cO cond l8
+#define y32 (tree,std::cout)
+#define y22 l8 0));
+#define y12 for(typename
+#define y02 exp_diff
+#define xZ2 ExponentInfo
+#define xY2 lower_bound(
+#define xX2 factor
+#define xW2 is_logical
+#define xV2 newrel_and
+#define xU2 t3[c eE
+#define xT2 res_stackpos
+#define xS2 half_pos
+#define xR2 ;iF.Remember(
+#define xQ2 ){half&=127;
+#define xP2 }c5 e22
+#define xO2 fphash_t
+#define xN2 .IsDefined(
+#define xM2 >>1)):(
+#define xL2 CodeTreeData
+#define xK2 x93)
+#define xJ2 multiply(
+#define xI2 eS known)
+#define xH2 var_trees
+#define xG2 const n91
+#define xF2 parent_opcode
+#define xE2 GetParam(a eU
+#define xD2 changed=true;
+#define xC2 log2_exponent
+#define xB2 dup_fetch_pos
+#define xA2 {cZ start_at;
+#define x92 IsNever eM lC
+#define x82 grammar
+#define x72 cSin nW
+#define x62 ,cPow,l2
+#define x52 0x12 nJ
+#define x42 (Value::tP3)
+#define x32 Value_EvenInt
+#define x22 .Rehash(
+#define x12 ,cTan nW
+#define x02 ,t1,synth);
+#define nZ2 282870 tD
+#define nY2 minimum_need
+#define nX2 (&*start_at){xF=(
+#define nW2 *)tO2 second;
+#define nV2 (const
+#define nU2 param=*nV2
+#define nT2 ParamHolder:{
+#define nS2 MakeFalse,{l4
+#define nR2 ConditionType
+#define nQ2 DUP_ONE(apos)
+#define nP2 (x83
+#define nO2 eW|nP2)
+#define nN2 SpecialOpcode
+#define nM2 =i e82.
+#define nL2 fp_max(yB);
+#define nK2 assimilated
+#define nJ2 fraction
+#define nI2 tree t51 eM
+#define nH2 DUP_BOTH();
+#define nG2 -1-offset].
+#define nF2 i33()
+#define nE2 nD2.erase(cs_it);
+#define nD2 TreeCounts
+#define nC2 .l93 a);
+#define nB2 ,x73(1))){
+#define nA2 bool tK=false;
+#define n92 nB OPCODE
+#define n82 SetOpcode(
+#define n72 found_log2
+#define n62 div_params
+#define n52 set(fp_ceil e3
+#define n42 immed_sum
+#define n32 ByteCode[++IP]
+#define n22 :sim.Eat(1,
+#define n12 OPCODE(opcode)
+#define n02 ;sim.Push(
+#define lZ2 FactorStack xN
+#define lY2 iI2 eM lC
+#define lX2 cLessOrEq,
+#define lW2 cNotNot nW
+#define lV2 cNot nW
+#define lU2 replacing_slot
+#define lT2 RefParams
+#define lS2 if_always[
+#define lR2 WhatDoWhenCase
+#define lQ2 exponent_immed
+#define lP2 new_base_immed
+#define lO2 base_immed
+#define lN2 )eN xA3)
+#define lM2 ||op1==
+#define lL2 c7 DelParams()
+#define lK2 data[a]xU3
+#define lJ2 AddCollection(
+#define lI2 if(newrel_or==
+#define lH2 .UseGetNeeded(
+#define lG2 e8 2,131,
+#define lF2 Immed.size());
+#define lE2 OptimizedUsing
+#define lD2 Var_or_Funcno
+#define lC2 lD2;
+#define lB2 GetParams(
+#define lA2 crc32_t
+#define l92 const x73&
+#define l82 signed_chain
+#define l72 MinusInf
+#define l62 return true;
+#define l52 n_immeds
+#define l42 xC tC2);
+#define l32 if(remaining[a])
+#define l22 ,PowiCache&iF,
+#define l12 ;tree lP1
+#define l02 ;tree.SetParam(
+#define iZ1 else if(
+#define iY1 iZ1!yA3
+#define iX1 )e62
+#define iW1 stack.size()
+#define iV1 FindClone(xX
+#define iU1 ByteCode[IP]
+#define iT1 denominator]
+#define iS1 needs_rehash
+#define iR1 AnyWhere_Rec
+#define iQ1 ~x83(0)
+#define iP1 41,42,43,44,
+#define iO1 );p2 x22)x5
+#define iN1 )val=func lF1
+#define iM1 divgroup
+#define iL1 ,l5 2,1,
+#define iK1 lJ 1},0,
+#define iJ1 constraints&
+#define iI1 p1_logical_b
+#define iH1 p0_logical_b
+#define iG1 p1_logical_a
+#define iF1 p0_logical_a
+#define iE1 cY3 DoDup(
+#define iD1 cache_needed
+#define iC1 e8 2,1,e8 2,
+#define iB1 treelist
+#define iA1 IsDescendantOf(
+#define i91 has_bad_balance
+#define i81 .SetParamsMove(
+#define i71 cU3 xX2
+#define i61 2)lT 3*
+#define i51 {case iI2:
+#define i41 fp_abs(tM3))
+#define i31 fp_abs(min.val)
+#define i21 cNEqual
+#define i11 tE 2},0,0x0},{{
+#define i01 Oneness_NotOne|
+#define tZ1 Value_IsInteger
+#define tY1 Constness_Const
+#define tX1 DumpHashesFrom(
+#define tW1 lE2(
+#define tV1 reltype
+#define tU1 l92 i)
+#define tT1 const CodeTree&
+#define tS1 l92 v
+#define tR1 SequenceOpcodes
+#define tQ1 cY3 PushImmed(
+#define tP1 ;cY3 StackTopIs(
+#define tO1 cY3 Find(
+#define tN1 sep_list[
+#define tM1 inline x83
+#define tL1 }inline
+#define tK1 goto fail;}
+#define tJ1 template<
+#define tI1 lT2);
+#define tH1 TreeCountType xN
+#define tG1 >(x73(1),
+#define tF1 {pow.CopyOnWrite
+#define tE1 const Rule&rule,
+#define tD1 x33 void
+#define tC1 <<tree.tR2
+#define tB1 ;flipped=!flipped;}
+#define tA1 cY3 xP 1
+#define t91 ,iF x02
+#define t81 ;xX i81
+#define t71 ){CodeTree xN
+#define t61 ))break;yA3*=
+#define t51 .IsImmed()
+#define t41 a)t51)
+#define t31 std::cout<<"POP "
+#define t21 stack[iW1-
+#define t11 ByteCode,size_t&IP,size_t limit,size_t y9
+#define t01 stack.push_back(
+#define eZ1 MaxChildDepth
+#define eY1 x83 a
+#define eX1 std::pair<It,It>
+#define eW1 ,l0 2,
+#define eV1 cPow,lD
+#define eU1 Sign_Negative
+#define eT1 Value_Logical
+#define eS1 new_factor_immed
+#define eR1 occurance_pos
+#define eQ1 exponent_hash
+#define eP1 exponent_list
+#define eO1 CollectionSet xN
+#define eN1 CollectMulGroup(
+#define eM1 source_set
+#define eL1 x93,yL3
+#define eK1 *const func)(
+#define eJ1 operator
+#define eI1 AddParamMove(
+#define eH1 FindAndDup yN2
+#define eG1 t5 1)t51&&
+#define eF1 .min.set(fp_floor
+#define eE1 back().thenbranch
+#define eD1 .repl_param_list,
+#define eC1 retry_anyparams_3
+#define eB1 retry_anyparams_2
+#define eA1 e7(),std xM3<
+#define e91 needlist_cached_t
+#define e81 grammar_rules[*r]
+#define e71 CodeTreeImmed xN(
+#define e61 by_float_exponent
+#define e51 lN3 x93
+#define e41 new_exp
+#define e31 NeedList
+#define e21 end()&&i->first==
+#define e11 =comp.AddItem(atree
+#define e01 return BecomeZero;
+#define cZ1 return BecomeOne;
+#define cY1 if(lR.size()<=n2)
+#define cX1 ;x93
+#define cW1 addgroup
+#define cV1 found_log2by
+#define cU1 nC==cK3)
+#define cT1 ParsePowiMuli(
+#define cS1 lD2)
+#define cR1 0x4},{{1,
+#define cQ1 branch1_backup
+#define cP1 branch2_backup
+#define cO1 exponent_map
+#define cN1 plain_set
+#define cM1 LightWeight(
+#define cL1 if(value
+#define cK1 x33 c4
+#define cJ1 x33 static
+#define cI1 79,122,123,158,159
+#define cH1 lA3 FPoptimizer_Optimize
+#define cG1 case SubFunction:{
+#define cF1 should_regenerate=true;
+#define cE1 should_regenerate,
+#define cD1 Collection
+#define cC1 CodeTree xN r;r xC
+#define cB1 RelationshipResult
+#define cA1 Subdivide_Combine(
+#define c91 long value
+#define c81 )const yY
+#define c71 rhs c81 hash1
+#define c61 best_sep_factor
+#define c51 tE3 subfunc_opcode
+#define c41 GetParamCount()
+#define c31 needlist_cached
+#define c21 eB3 bool pad
+#define c11 l93 a);}
+#define c01 MakesInteger(
+#define yZ1 l92 value
+#define yY1 best_sep_cost
+#define yX1 MultiplicationRange
+#define yW1 pihalf_limits
+#define yV1 n_stacked
+#define yU1 cR2.hash1
+#define yT1 AnyParams_Rec
+#define yS1 ApplyGrammar(
+#define yR1 cGreaterOrEq,
+#define yQ1 Become(value l8 0))
+#define yP1 ByteCode[t92+
+#define yO1 ByteCode.push_back(
+#define yN1 PositionalParams,0}
+#define yM1 always_sincostan
+#define yL1 Recheck_RefCount_Div
+#define yK1 Recheck_RefCount_Mul
+#define yJ1 xA3.
+#define yI1 xA3;xA3 xC
+#define yH1 MultiplyAndMakeLong(
+#define yG1 cMul);x23;tmp
+#define yF1 .c41
+#define yE1 :{CodeTree
+#define yD1 x73(0)
+#define yC1 covers_plus1
+#define yB1 }yY3 case
+#define yA1 )yH 2,cPow)
+#define y91 if(cY3 FindAndDup(
+#define y81 SynthesizeParam(
+#define y71 grammar_func
+#define y61 252415 tD 24830,
+#define y51 xJ 523510 tD
+#define y41 l2 0,2,165888 tD
+#define y31 cCos,l3 2,1,
+#define y21 cIf,lD lR3
+#define y11 Modulo_Radians},
+#define y01 );tree.l93
+#define xZ1 ,n12);
+#define xY1 GetImmed()
+#define xX1 PositionType
+#define xW1 CollectionResult
+#define xV1 x33 bool
+#define xU1 const_offset
+#define xT1 inline TriTruthValue
+#define xS1 stacktop_desired
+#define xR1 SetStackTop(
+#define xQ1 FPoptimizer_ByteCode
+#define xP1 1)?(poly^(
+#define xO1 changed_if
+#define xN1 x73(0.0)yX2
+#define xM1 cU2&synth)
+#define xL1 (long double)
+#define xK1 ::Optimize(){
+#define xJ1 (p1.xY1
+#define xI1 ;std::cout<<
+#define xH1 yD1)
+#define xG1 xD leaf2 l8
+#define xF1 cond_type
+#define xE1 fphash_value_t
+#define xD1 Recheck_RefCount_RDiv
+#define xC1 SwapLastTwoInStack();
+#define xB1 ParamSpec_Extract xN(
+#define xA1 fPExponentIsTooLarge(
+#define x91 CollectMulGroup_Item(
+#define x81 pair<x73,yL3>
+#define x71 (tree))goto redo;
+#define x61 nL xR1 y1-1);
+#define x51 covers_full_cycle
+#define x41 AssembleSequence(
+#define x31 inverse_nominator
+#define x21 252180 tD 281854,
+#define x11 <<std::dec<<")";}
+#define x01 MakeNotNotP0,l4::
+#define nZ1 &&IsLogicalValue(
+#define nY1 std::pair<T1,T2>&
+#define nX1 tJ1 typename
+#define nW1 has_good_balance_found
+#define nV1 n_occurrences
+#define nU1 found_log2_on_exponent
+#define nT1 covers_minus1
+#define nS1 needs_resynth
+#define nR1 immed_product
+#define nQ1 ,2,1)nT if(found[data.
+#define nP1 ,l1 0x0},{{3,
+#define nO1 c22 bitmask&
+#define nN1 Sign_Positive
+#define nM1 {DataP slot_holder(y8[
+#define nL1 ::MakeTrue
+#define nK1 SetParamMove(
+#define nJ1 CodeTreeImmed(x73(
+#define nI1 Suboptimal
+#define nH1 n_as_tanh_param
+#define nG1 tree.l93 a
+#define nF1 opposite=
+#define nE1 xE1(
+#define nD1 ByteCode.size()
+#define nC1 MatchResultType
+#define nB1 xN())yH 2,cMul);lC
+#define nA1 public e7,public std xM3<
+#define n91 CodeTree xN&
+#define n81 yY CodeTree xN(
+#define n71 needs_sincos
+#define n61 resulting_exponent
+#define n51 t5 1).xY1
+#define n41 cY3 AddOperation(
+#define n31 ,l7 2,1,
+#define n21 (*xR3 start_at
+#define n11 ;x33
+#define n01 Unknown:default:;}
+#define lZ1 GetLogicalValue(t5
+#define lY1 GetParam(a)
+#define lX1 },{l4::MakeNotP1,l4::
+#define lW1 },{l4::MakeNotP0,l4::
+#define lV1 },{l4::MakeNotNotP1,l4::
+#define lU1 yF1;a-->0;)if(
+#define lT1 .what!=xS)if(TestCase(
+#define lS1 .tM3
+#define lR1 cSin,l3 2,1,
+#define lQ1 AddFunctionOpcode(
+#define lP1 .eI1
+#define lO1 tmp lP1 tree);
+#define lN1 ;cR2.hash2+=
+#define lM1 t51 yZ2
+#define lL1 ,ByteCode,IP,limit,y9,stack);
+#define lK1 (lS,n51));nF
+#define lJ1 .nJ3
+#define lI1 SetParams(lB2));
+#define lH1 }},{ProduceNewTree,2,1,
+#define lG1 o<<"("<<std::hex<<data.
+#define lF1 (val);else*this=model;}
+#define lE1 IfBalanceGood(
+#define lD1 n_as_tan_param
+#define lC1 changed_exponent
+#define lB1 t71 tmp;x13
+#define lA1 retry_positionalparams_2
+#define l91 x83 index
+#define l81 situation_flags&
+#define l71 512 tD 400412,
+#define l61 CopyOnWrite();
+#define l51 recursioncount
+#define l41 PlanNtimesCache(
+#define l31 >){int mStackPtr=0;
+#define l21 FPoptimizer_Grammar
+#define l11 AddOperation(cInv,1,1)nT}
+#define l01 GetPositivityInfo(tree)!=
+#define iZ ParamSpec_SubFunctionData
+#define iY eU3<x73(
+#define iX inverse_denominator]
+#define iW PositionalParams_Rec
+#define iV DumpTreeWithIndent(*this);
+#define iU tJ1 x83 Compare>
+#define iT ,cPow,l3 2,1,
+#define iS yA2 0x0},{{1,
+#define iR edited_powgroup
+#define iQ has_unknown_max
+#define iP has_unknown_min
+#define iO static const range xN
+#define iN if(keep_powi
+#define iM synthed_tree
+#define iL 7168 tD 401798,
+#define iK )xI1 std::endl;DumpHashes(
+#define iJ SelectedParams,0},0,0x0},{{
+#define iI by_exponent
+#define iH collections
+#define iG {switch(type eJ3 cond_or:
+#define iF cache
+#define iE goto ReplaceTreeWithOne;case
+#define iD !=xS)return lS2
+#define iC e61.data
+#define iB iW2 xL2(
+#define iA needs_sinhcosh
+#define i9 ,cIf,l0 3,
+#define i8 tE2 x73(
+#define i7 ();pow xC cLog);tW2 cMul);
+#define i6 x33 nD
+#define i5 MakeFalse,l4::
+#define i4 CalculateResultBoundaries(t5
+#define i3 p0=CalculateResultBoundaries(
+#define i2 408963 tD 24959,
+#define i1 522359 tD 24713,
+#define i0 AnyParams,0}},{ReplaceParams,
+#define tZ matched_params
+#define tY [n2 eM3=true;lR[n2]xU3
+#define tX l21::Grammar*
+#define tW powgroup l8
+#define tV nJ1(
+#define tU has_mulgroups_remaining
+#define tT const iZ
+#define tS MatchInfo xN&
+#define tR xB3;i92.push_back(
+#define tQ int_exponent_t
+#define tP RootPowerTable xN::RootPowers[
+#define tO MatchPositionSpec_AnyParams xN
+#define tN lA3 FPoptimizer_CodeTree
+#define tM n_as_sinh_param
+#define tL n_as_cosh_param
+#define tK is_signed
+#define tJ best_factor
+#define tI lB2));yJ1 xB3;
+#define tH result_positivity
+#define tG biggest_minimum
+#define tF 122999 tD 139399,
+#define tE x3 AnyParams,
+#define tD ,{2,
+#define tC 142455 tD 141449,
+#define tB ParamSpec_NumConstant xN
+#define tA cond_tree
+#define t9 else_tree
+#define t8 then_tree
+#define t7 xB3 l12 r);}
+#define t6 tree yF1
+#define t5 tree l8
+#define t4 ;p1 iJ3 p1
+#define t3 relationships
+#define t2 n91 tree)
+#define t1 sequencing
+#define t0 string FP_GetOpcodeName(
+#define eZ std xM3<CodeTree xN>
+#define eY if_stack
+#define eX valueType
+#define eW );yO1 0x80000000u
+#define eV {if(needs_cow){l61 goto
+#define eU );bool needs_cow=GetRefCount()>1;
+#define eT .min.known
+#define eS m.max.
+#define eR x22);tW2 iG2 nC);tree.
+#define eQ ]);iE1 found[data.
+#define eP (p0 lJ1&&p0 lS1<=fp_const_negativezero xN())
+#define eO (tQ3 p0 xQ>=x73(0.0))
+#define eN ;eI1
+#define eM )return false;
+#define eL ;return
+#define eK )return IsNever eL Unknown;}
+#define eJ n_as_sin_param
+#define eI n_as_cos_param
+#define eH PowiResolver::
+#define eG ];};extern"C"{
+#define eF cIf,l3 0,1,
+#define eE ].relationship
+#define eD .BalanceGood
+#define eC eI1 c72
+#define eB back().endif_location
+#define eA xE1 key
+#define e9 eI1 mul);
+#define e8 130,1,
+#define e7 MatchPositionSpecBase
+#define e6 iW2 CodeTree(
+#define e5 nJ3=false;
+#define e4 x73(1.5)*fp_const_pi xN()
+#define e3 )eL m;eP3
+#define e2 smallest_maximum
+#define e1 ]!=eW2&&found[data.
+#define e0 factor_needs_rehashing
+#define cZ MatchPositionSpecBaseP
+#define cY typename tH1::yN3
+#define cX nQ x73(-yR3
+#define cW goto ReplaceTreeWithParam0;
+#define cV xB1 nR.param_list,
+#define cU 27,28,29,30,31,32,33,35,36,
+#define cT otherhalf
+#define cS StackState
+#define cR l2 16,2,
+#define cQ :goto ReplaceTreeWithZero;case
+#define cP );CodeTree xN
+#define cO .AddParam(
+#define cN const SequenceOpCode xN
+#define cM paramholder_matches[x1]
+#define cL nK1 0,xK2;l93 1);
+#define cK MatchPositionSpec_PositionalParams xN
+#define cJ xG2 tree,std::ostream&o
+#define cI paramholder_matches.
 #define cH CalculatePowiFactorCost(
-#define cG T1,typename T2>inline i12()(
-#define cF yK2 tmp;tmp tU
-#define cE has_nonlogical_values
-#define cD from_logical_context)
-#define cC for xK2 xW.cN3 a-->0;)
-#define cB POWI_CACHE_SIZE
-#define cA static inline yK2
-#define c9 BalanceResultType
-#define c8 cIf,eL3
-#define c7 nA3(0),Opcode(
-#define c6 const{return data->
-#define c5 +=fp_const_twopi x8();
-#define c4 .AddOperation(lM2,
-#define c3 for xK2 0;a<cN3++a){if(
-#define c2 static void MakeHash(nD fphash_t&iU,
-#define c1 l2 2,
-#define c0 MatchPositionSpec_AnyWhere
-#define yZ if iZ2 data.match_type==
-#define yY }PACKED_GRAMMAR_ATTRIBUTE;
-#define yX ,cGreaterOrEq l7 2,2,
-#define yW void OutFloatHex(std::ostream&o,
-#define yV yV1 x72 range x8::
-#define yU b;}};n73<>e92 Comp<
-#define yT eT CodeTreeImmed(
-#define yS xK2 0;a<iT;++a)
-#define yR t93 115824 tS 122999,
-#define yQ t93 129136 tS 128123,
-#define yP t93 472176 tS 24699,
-#define yO ,typename yK2::
-#define yN AssembleSequence_Subdivide(
-#define yM 0x80000000u
-#define yL .push_back(
-#define yK !=eK2){lJ1
-#define yJ ;yK2
-#define yI nZ2 false;
-#define yH paramholder_matches
-#define yG std::vector
-#define yF ,AnyParams,0 l1 0,1,
-#define yE ;iJ 2,
-#define yD for(lE3 r=range.first;r!=range eE3;++r){
-#define yC eT tree lD
-#define yB ComparisonSetBase::
-#define yA .eG
-#define y9 branch2
-#define y8 fp_const_twopi x8());if(
-#define y7 n73 set_min_max_if<cGreater>(eS1(0),
-#define y6 iM tree lD
-#define y5 =y6 0));range x8
-#define y4 tree lD 1).xJ1
-#define y3 x02;tH
-#define y2 lX&&tree lD 1)y21
-#define y1 factor_stack_base
-#define y0 cPow,l6 2,
-#define xZ GroupFunction,0},n0{{
-#define xY data->c93
-#define xX =0;a<nU3.cN3++a)if(
-#define xW branch1
-#define xV {lK2.erase(i);y81}
-#define xU xK2 iT;a-->0;)
-#define xT nM xY2
-#define xS i02 c;i02 char l[
-#define xR 158,167,168,169,178,179,191,195,203,207,215,227,229,232,233,234,235,236,239,240,241,242,245,246,247,248,250,251}};}e92
-#define xQ using iO2 FUNCTIONPARSERTYPES;
-#define xP const eY=std::cout
-#define xO IsIdenticalTo(leaf2 lD
-#define xN FPOPT_autoptr
-#define xM +=result l81 result;}yV1 inline eS1
-#define xL int_exponent
-#define xK newnode
-#define xJ l3 2,1,
-#define xI ParamSpec_SubFunction
-#define xH ParamSpec_ParamHolder
-#define xG has_highlevel_opcodes
-#define xF {if(needs_cow){iY goto
-#define xE ;if(fp_nequal(tmp,eS1(0)))lL eS1(1)/tmp)n5}lC
-#define xD },{l4::Unchanged,l4::Never},{l4::Unchanged,l4::Never}}
-#define xC best_selected_sep
-#define xB ->Recalculate_Hash_NoRecursion();}
-#define xA fp_sin(min),fp_sin(max))
-#define x9 sim.AddConst(
-#define x8 <eS1>
-#define x7 :nG1 tmp,tmp2;tmp2 tU
-#define x6 position
-#define x5 GetStackTop()-
-#define x4 for yS{range x8
-#define x3 SwapLastTwoInStack();
-#define x2 FPoptimizer_CodeTree::yK2&tree
-#define x1 SetParam(0,iH2 lD 0))yJ p1;p1 tU
-#define x0 TestImmedConstraints(param t42,tree)yI
-#define nZ {tree.FixIncompleteHashes();}
-#define nY {yE3 cInv nW2 x9-1 e21
-#define nX paramholder_index
-#define nW return true;case
-#define nV occurance_counts
-#define nU PositionalParams,0},0,
-#define nT xQ xD1 tA-1);
-#define nS ;synth.yZ2*this)l81;}
-#define nR ,l0 1,
-#define nQ );a-->0;){lM1&powgroup=lT1;if(powgroup
-#define nP ;a<iT;++a)if(ApplyGrammar(tN2,xI2,
-#define nO lK 1},0,0x0},{{
-#define nN ByteCode
-#define nM model_tree
-#define nL return range x8(
-#define nK yG nV1&l02
-#define nJ ConstantFolding_LogicCommon(tree,yB
-#define nI eS1>p xO3 p.
-#define nH nT1 Ref>inline void xN<Ref>::
-#define nG ;tmp2 yC 0 y43 cInv);tmp yY3 l81
-#define nF ):data(new nO2 x8(
-#define nE .lM2
-#define nD FUNCTIONPARSERTYPES::
-#define nC iJ1(),c93(),Hash(),Depth(1),eZ1 0){}
-#define nB SynthesizeByteCode(synth);
-#define nA nO2 x8::nO2(
-#define n9 crc=(key>>10)|(key<<(64-10))eC2((~iC1(crc))*3)^1234567;}};
-#define n8 GetIntegerInfo nW1 0))==IsAlways)lN3
-#define n7 eS1(*const func)(eS1),range x8 model){
-#define n6 e72.xJ1
-#define n5 ;goto do_return;}
-#define n4 while(ApplyGrammar(i01 Grammar&)
-#define n3 DumpParams x8 iZ2 data.param_list,xF3 data xY2,o);
+#define cG ImmedHashGenerator
+#define cF ::map<xO2,std::set<std::string> >
+#define cE eI1 comp.cN1[a].value);
+#define cD T1,typename T2>inline iH2()(
+#define cC has_nonlogical_values
+#define cB from_logical_context)
+#define cA AnyParams,0}},{ProduceNewTree,
+#define c9 for c12 y6 yF1;a-->0;)
+#define c8 );void lQ1 x83 eB3 cF2<
+#define c7 ;xO1 x22);tW2 op1);tree.
+#define c6 POWI_CACHE_SIZE
+#define c5 PACKED_GRAMMAR_ATTRIBUTE;
+#define c4 static inline CodeTree xN
+#define c3 ++IP iR2 if(iU1==cH3.
+#define c2 },{l4::xS,l4::Never},{l4::xS,l4::Never}}
+#define c1 .FoundChild
+#define c0 BalanceResultType
+#define yZ xD3(0),Opcode(
+#define yY {return
+#define yX const yY data->
+#define yW +=fp_const_twopi xN();
+#define yV x83 c;x83 short l[
+#define yU ,161,162,163,164,165,166,167,176,177,178,198,202,210,214,222,234,235,237,238,241,242,243,244,247,248,249,251,253,254,255,256,257}};}e22
+#define yT for c12 0;a<c41;++a){if(
+#define yS n41 nF2,
+#define yR !=eW2){iE1 found[data.
+#define yQ ComparisonSetBase::
+#define yP c12 t6;a-->0;)
+#define yO static void n33 nB xO2&cR2,
+#define yN MatchPositionSpec_AnyWhere
+#define yM c33 tE3 match_type==
+#define yL void OutFloatHex(std::ostream&o,
+#define yK CodeTree xN tmp,tmp2;tmp2 xC
+#define yJ AddParam(CodeTreeImmed(
+#define yI .ReplaceWithImmed(
+#define yH ;sim.Eat(
+#define yG ,typename CodeTree xN::
+#define yF AssembleSequence_Subdivide(
+#define yE ]=0x80000000u|x83(
+#define yD =fp_cosh(m xQ);eS val=fp_cosh cO3);
+#define yC branch2
+#define yB fp_sin(min),fp_sin(max))
+#define yA fp_const_twopi xN());if(
+#define y9 factor_stack_base
+#define y8 data->Params
+#define y7 iR2 if yQ3.xY1==x73(
+#define y6 branch1
+#define y5 (n23 r=range.first;r!=range xU3;++r){
+#define y4 ,x73(-1)))eV
+#define y3 nR yH2
+#define y2 {nD2.erase(i iQ2
+#define y1 StackTop
+#define y0 FPOPT_autoptr
+#define xZ +=yA3 eL yA3;}x33 inline x73
+#define xY int_exponent
+#define xX newnode
+#define xW iK1 0x0},{{
+#define xV ParamSpec_SubFunction
+#define xU ParamSpec_ParamHolder
+#define xT has_highlevel_opcodes
+#define xS Unchanged
+#define xR ,eV1 0x4 nJ
+#define xQ .min.val
+#define xP GetStackTop()-
+#define xO sim.AddConst(
+#define xN <x73>
+#define xM cJ=std::cout
+#define xL best_selected_sep
+#define xK tJ1>void FunctionParserBase<
+#define xJ ,l2 18,2,
+#define xI cAnd,i0
+#define xH ->Recalculate_Hash_NoRecursion();}
+#define xG size_t a=0;a<yK3 yF1;++a)if(
+#define xF position
+#define xE c12 0;a<t6;++a)
+#define xD .IsIdenticalTo(
+#define xC .n82
+#define xB e23{range xN
+#define xA std xM3<CodeTree>
+#define x9 TestImmedConstraints(param t62 e53)eM
+#define x8 )){tree.FixIncompleteHashes();}
+#define x7 ;tmp2.nN 0));x13 cInv);tmp nR3 eL
+#define x6 {tree.SetParam(0,iftree l8 0)cP p1;p1 xC
+#define x5 l12 p2);tW2 iftree nC)n73}
+#define x4 SwapLastTwoInStack()yH
+#define x3 ,cAdd,
+#define x2 n63 1,cInv tK2}xO-1 e63
+#define x1 paramholder_index
+#define x0 l62 case
+#define nZ occurance_counts
+#define nY >p=i4 a));if(p.
+#define nX i63 tree)xI1"\n";
+#define nW ,l0 1,
+#define nV -->0;){xG2 powgroup=lY1;if(powgroup
+#define nU if(t5 0)t51
+#define nT tP1*this)eL;}
+#define nS const FPoptimizer_CodeTree::n91 tree
+#define nR model_tree
+#define nQ return range xN(
+#define nP eZ&lT2
+#define nO ),rangehalf xN model=rangehalf xN()){if(known
+#define nN AddParam(t5
+#define nM ConstantFolding_LogicCommon(tree,yQ
+#define nL ){using lA3 FUNCTIONPARSERTYPES;
+#define nK )t71
+#define nJ },{{2,
+#define nI nX1 Ref>inline void y0<Ref>::
+#define nH AnyParams,1},0,0x0},{{
+#define nG cOr,i0 16,1,
+#define nF goto do_return;}
+#define nE ):data(new xL2 xN(
+#define nD xL2 xN::xL2(
+#define nC .nF2
+#define nB FUNCTIONPARSERTYPES::
+#define nA b;}};tJ1>e22 Comp<nB
+#define n9 lD2(),eX3),Hash(),Depth(1),tW1 0){}
+#define n8 SynthesizeByteCode(synth);
+#define n7 GetIntegerInfo(t5 0))==iI2)cW
+#define n6 l12 xO1 iX1
+#define n5 template set_if<cGreater>(x73(
+#define n4 while(yS1 nV2 Grammar&)
+#define n3 DumpParams xN(param tE3 param_list,i73 yH2,o);
 #define n2 restholder_index
-#define n1 yK2 cE2;cE2 e53 cE2 eT
-#define n0 yL1,0x0},
-#define lZ t51 1},0,
-#define lY ;tree yA n41)nS2
-#define lX l23 y21
-#define lW eG pow x03;pow.iH1 1);pow.Rehash(tT.nC1 0,pow);goto NowWeAreMulGroup;}
-#define lV {cF cPow);y53;tmp yT eS1(
-#define lU :if(ParamComparer x8()(c93[1],c93[0])){std::swap(c93[0],c93[1]);Opcode=
-#define lT <typename eS1>
-#define lS ,eS1(1)/eS1(
-#define lR SetParam(0,e72 lD 0)xK1 1,CodeTreeImmed(
-#define lQ restholder_matches
-#define lP SelectedParams,0},0,0x0},{{
-#define lO n41;n41 xQ2 n41 yA e72);n41 eT xW lD
-#define lN *const func)(eS1),range x8 model=range x8());
-#define lM yV1 yK2::yL2(
-#define lL {tree.ReplaceWithImmed(
-#define lK cMul,AnyParams,
-#define lJ cMul,SelectedParams,0},0,
-#define lI cPow,l0 2
-#define lH iM tmp)cM3
-#define lG :cC3=comp.AddRelationship(atree lD 0),atree lD 1),yB
-#define lF typename eS1>i12()i01 eS1&a,e62 b){return a
-#define lE t51 0 l1
-#define lD .GetParam(
+#define n1 CodeTree xN x93 cX1 xC cMul)cX1 cO
+#define n0 (lS);if(fp_nequal(tmp,xH1 yX2 x73(1)/tmp);nF}lC
+#define lZ :if(ParamComparer xN()(eY3 1],eY3 0])){std::swap(eY3 0],eY3 1]);Opcode=
+#define lY <typename x73>
+#define lX xN tmp;x13 cPow);x23;tmp.yJ x73(
+#define lW tY1,0x0},
+#define lV eI1 pow l8 1));pow.l93 1);pow x22);iN2 0,pow);goto NowWeAreMulGroup;}
+#define lU GroupFunction,0},lW{{
+#define lT ,x73(1)/x73(
+#define lS t5 0).xY1
+#define lR restholder_matches
+#define lQ yU1|=key;xE1 crc=(key>>10)|(key<<(64-10))lN1((~nE1 crc))*3)^1234567;}};
+#define lP (t5 0)t51&&t5 1)t51 yX2
+#define lO xO1;xO1 l42 xO1 lP1 t5 0));xO1 cO y6 l8
+#define lN x33 CodeTree xN::CodeTree(
+#define lM tree.SetParam(0,t5 0)l8 0))l02 1,CodeTreeImmed(
+#define lL lY void cU2::lQ1 x83 eB3 cF2<
+#define lK cMul,lU 2,
+#define lJ cMul,AnyParams,
+#define lI CalculateResultBoundaries(tmp);eP3
+#define lH :e13=comp.AddRelationship(atree l8 0),atree l8 1),yQ
+#define lG cPow,l0 2
+#define lF typename x73>inline iH2()(l92 a,l92 b)yY a
+#define lE {range xN m=i4 0));
+#define lD yN1,0,
 #define lC break;case
-#define lB {range x8 m=y6 0));
-#define lA xB1 yK2::
-#define l9 ?0:1))yJ n41;n41 xQ2 n41 tI1 tree.iE1));n41 y3
-#define l8 lK 0 l1
-#define l7 ,PositionalParams,0 l1
-#define l6 nU iR
-#define l5 cAdd,lP 2,
+#define lB tD1 CodeTree xN::
+#define lA l1 0x0 nJ
+#define l9 ?0:1)cP xO1;xO1 l42 xO1 i81 tree.lB2));xO1 x22);tW2
+#define l8 .GetParam(
+#define l7 cAdd,i0
+#define l6 SelectedParams,0},0,0x0 nJ
+#define l5 lJ 0}},{ReplaceParams,
 #define l4 RangeComparisonData
-#define l3 PositionalParams,0}},{ProduceNewTree,
-#define l2 lJ 0x0},{{
-#define l1 }},{ReplaceParams,
-#define l0 nU 0x0},{{
+#define l3 yN1},{ProduceNewTree,
+#define l2 yN1},{ReplaceParams,
+#define l1 cMul,SelectedParams,0},0,
+#define l0 lD 0x0},{{
 #ifdef _MSC_VER
 typedef
-i02
+x83
 int
-iD1;
+lA2;
 #else
 #include <stdint.h>
 typedef
 uint_least32_t
-iD1;
+lA2;
 #endif
-iO2
+lA3
 crc32{enum{startvalue=0xFFFFFFFFUL,poly=0xEDB88320UL}
-;n73<iD1
-crc>e92
-b8{enum{b1=(crc
-l03
+;tJ1
+lA2
+crc>e22
+b8{enum{b1=(crc&xP1
 crc
-nP2
-crc>>1),b2=(b1
-l03
+xM2
+crc>>1),b2=(b1&xP1
 b1
-nP2
-b1>>1),b3=(b2
-l03
+xM2
+b1>>1),b3=(b2&xP1
 b2
-nP2
-b2>>1),b4=(b3
-l03
+xM2
+b2>>1),b4=(b3&xP1
 b3
-nP2
-b3>>1),b5=(b4
-l03
+xM2
+b3>>1),b5=(b4&xP1
 b4
-nP2
-b4>>1),b6=(b5
-l03
+xM2
+b4>>1),b6=(b5&xP1
 b5
-nP2
-b5>>1),b7=(b6
-l03
+xM2
+b5>>1),b7=(b6&xP1
 b6
-nP2
-b6>>1),res=(b7
-l03
+xM2
+b6>>1),res=(b7&xP1
 b7
-nP2
+xM2
 b7>>1)}
 ;}
 ;inline
-iD1
-update(iD1
-crc,i02
+lA2
+update(lA2
+crc,x83
 b){
-#define B4(n) b8<n>iL2 n+1>iL2 n+2>iL2 n+3>::res
+#define B4(n) b8<n eU2 n+1 eU2 n+2 eU2 n+3>::res
 #define R(n) B4(n),B4(n+4),B4(n+8),B4(n+12)
 static
 const
-iD1
+lA2
 table[256]={R(0x00),R(0x10),R(0x20),R(0x30),R(0x40),R(0x50),R(0x60),R(0x70),R(0x80),R(0x90),R(0xA0),R(0xB0),R(0xC0),R(0xD0),R(0xE0),R(0xF0)}
 ;
 #undef R
 #undef B4
-return((crc>>8))^table[(crc^b)&0xFF];i6
-iD1
-calc_upd(iD1
+return((crc>>8))^table[(crc^b)&0xFF];tL1
+lA2
+calc_upd(lA2
 c,const
-i02
+x83
 char*buf,size_t
-size){iD1
+size){lA2
 value=c;for(size_t
-p=0;p<size;++p)value=update(value,buf[p])l81
-value;i6
-iD1
+p=0;p<size;++p)value=update(value,buf[p])eL
+value;tL1
+lA2
 calc
-i01
-i02
+nV2
+x83
 char*buf,size_t
-size){return
+size)yY
 calc_upd(startvalue,buf,size);}
 }
 #ifndef FPOptimizerAutoPtrHH
 #define FPOptimizerAutoPtrHH
-nT1
+nX1
 Ref>class
-xN{e13
-xN():p(0){}
-xN(Ref*b):p(b){n93}
-xN
-i01
-xN&b):p(b.p){n93
-i6
-Ref&e31*(n61*p;i6
-Ref*e31->(n61
+y0{e83
+y0():p(0){}
+y0(Ref*b):p(b){xC3}
+y0
+nV2
+y0&b):p(b.p){xC3
+tL1
+Ref&eJ1*(c81*p;tL1
+Ref*eJ1->(c81
 p;}
-xN&e31=(Ref*b){Set(b)l81*this;}
-xN&e31=i01
-xN&b){Set(b.p)l81*this;}
+y0&eJ1=(Ref*b){Set(b)eL*this;}
+y0&eJ1=nV2
+y0&b){Set(b.p)eL*this;}
 #ifdef __GXX_EXPERIMENTAL_CXX0X__
-xN(xN&&b):p(b.p){b.p=0;}
-xN&e31=(xN&&b){if(p!=b.p){cF2;p=b.p;b.p=0;}
+y0(y0&&b):p(b.p){b.p=0;}
+y0&eJ1=(y0&&b){if(p!=b.p){e12;p=b.p;b.p=0;}
 return*this;}
 #endif
-~xN(){cF2
-iS2
-UnsafeSetP(Ref*newp){p=newp
-iS2
-swap(xN<Ref>&b){Ref*tmp=p;p=b.p;b.p=tmp;}
+~y0(){e12;}
+void
+UnsafeSetP(Ref*newp){p=newp;}
+void
+swap(y0<Ref>&b){Ref*tmp=p;p=b.p;b.p=tmp;}
 private:inline
 static
 void
 Have(Ref*p2);inline
 void
-cF2;inline
+e12;inline
 void
-n93
+xC3
 inline
 void
 Set(Ref*p2);private:Ref*p;}
-;nH
-cF2{if(!p
-nZ2;p->nA3-=1;if(!p->nA3)delete
+;nI
+e12{if(!p)return;p->xD3-=1;if(!p->xD3)delete
 p;}
-nH
-Have(Ref*p2){if(p2)++(p2->nA3);}
-nH
+nI
+Have(Ref*p2){if(p2)++(p2->xD3);}
+nI
 Birth(){Have(p);}
-nH
-Set(Ref*p2){Have(p2);cF2;p=p2;}
+nI
+Set(Ref*p2){Have(p2);e12;p=p2;}
 #endif
 #include <utility>
-e92
-Compare2ndRev{nT1
+e22
+Compare2ndRev{nX1
 T>inline
-i12()i01
-T&nB3
+iH2()nV2
+T&xE3
 T&b
-n61
+c81
 a
-eE3>b
-eE3;}
+xU3>b
+xU3;}
 }
-;e92
-Compare1st{nT1
-cG
+;e22
+Compare1st{nX1
+cD
 const
-nU1
-nB3
-nU1
+nY1
+xE3
+nY1
 b
-n61
+c81
 a.first<b.first;}
-nT1
-cG
+nX1
+cD
 const
-nU1
+nY1
 a,T1
 b
-n61
+c81
 a.first<b;}
-nT1
-cG
+nX1
+cD
 T1
-nB3
-nU1
+xE3
+nY1
 b
-n61
+c81
 a<b.first;}
 }
 ;
@@ -1315,32 +1323,32 @@ a<b.first;}
 #define FPoptimizerHashHH
 #ifdef _MSC_VER
 typedef
-i02
+x83
 long
 long
-iC1;
+xE1;
 #define FPHASH_CONST(x) x##ULL
 #else
 #include <stdint.h>
 typedef
 uint_fast64_t
-iC1;
+xE1;
 #define FPHASH_CONST(x) x##ULL
 #endif
-iO2
-FUNCTIONPARSERTYPES{e92
-fphash_t{iC1
-hash1,hash2;fphash_t():hash1(0),hash2(0){}
-fphash_t
-i01
-iC1&nB3
-iC1&b):hash1(a),hash2(b){}
-i12==i01
-fphash_t&n51==iM2&&hash2==iN2
-i12!=i01
-fphash_t&n51!=iM2||hash2!=iN2
-i12<i01
-fphash_t&n51!=iM2?hash1<iM2:hash2<iN2}
+lA3
+FUNCTIONPARSERTYPES{e22
+xO2{xE1
+hash1,hash2;xO2():hash1(0),hash2(0){}
+xO2
+nV2
+xE1&xE3
+xE1&b):hash1(a),hash2(b){}
+iH2==nV2
+xO2&c71==e32&&hash2==e42
+iH2!=nV2
+xO2&c71!=e32||hash2!=e42
+iH2<nV2
+xO2&c71!=e32?hash1<e32:hash2<e42}
 ;}
 #endif
 #ifndef FPOptimizer_CodeTreeHH
@@ -1348,321 +1356,299 @@ fphash_t&n51!=iM2?hash1<iM2:hash2<iN2}
 #ifdef FP_SUPPORT_OPTIMIZER
 #include <vector>
 #include <utility>
-iO2
-l41{e92
+lA3
+l21{e22
 Grammar;}
-t5{iP2
+lA3
+xQ1{x33
+class
 ByteCodeSynth;}
-iO2
-FPoptimizer_CodeTree{iP2
-yL2;yT1
-nO2;iP2
-yL2{typedef
-xN<nO2
-x8>DataP;DataP
-data;e13
-yL2();~yL2();e92
+tN{x33
+class
+CodeTree
+n11
+e22
+xL2
+n11
+class
+CodeTree{typedef
+y0<xL2
+xN>DataP;DataP
+data;e83
+CodeTree();~CodeTree();e22
 OpcodeTag{}
-;e7
-nR2
-o,OpcodeTag);e92
+;e6
+n92
+o,OpcodeTag);e22
 FuncOpcodeTag{}
-;e7
-nR2
-o,i02
-f,FuncOpcodeTag);e92
-nC3{}
-;e7
-e62
-v,nC3);
+;e6
+n92
+o,x83
+f,FuncOpcodeTag);e22
+xF3{}
+;e6
+tS1,xF3);
 #ifdef __GXX_EXPERIMENTAL_CXX0X__
-e7
-eS1&&v,nC3);
+e6
+x73&&v,xF3);
 #endif
-e92
+e22
 VarTag{}
-;e7
-i02
-varno,VarTag);e92
+;e6
+x83
+varno,VarTag);e22
 CloneTag{}
-;e7
-iQ2
+;e6
+tT1
 b,CloneTag);void
 GenerateFrom
-i01
-n81
-const
-nQ2
-const
+nV2
 typename
 FunctionParserBase
-x8::Data&data,bool
+xN::Data&data,bool
 keep_powi=false);void
 GenerateFrom
-i01
-n81
-const
-nQ2
-const
+nV2
 typename
 FunctionParserBase
-x8::Data&data,const
-i22
-nK2,bool
+xN::Data&data,const
+xA&xH2,bool
 keep_powi=false);void
-SynthesizeByteCode(n81
-nQ2
-size_t&stacktop_max);void
-SynthesizeByteCode(yW2&synth,bool
+SynthesizeByteCode(std
+xM3<x83>&cX3,std
+xM3
+xN&immed,size_t&stacktop_max);void
+SynthesizeByteCode(xQ1::cU2&synth,bool
 MustPopTemps=true)const;size_t
-SynthCommonSubExpressions(yV2
-lP1
+SynthCommonSubExpressions(xQ1::xM1
 const;void
 SetParams
-i01
-i22
-nD3
-SetParamsMove(i22
-eU1
-yL2
+nV2
+xA&xG3
+SetParamsMove(xA&tI1
+CodeTree
 GetUniqueRef();
 #ifdef __GXX_EXPERIMENTAL_CXX0X__
 void
-SetParams(yG<yL2>&&eU1
+SetParams(xA&&tI1
 #endif
 void
 SetParam(size_t
-which,iQ2
+which,tT1
 b);void
-nC1
+nK1
 size_t
-which,nI2
-b);void
-AddParam
-i01
-nI2
+which,CodeTree&b);void
+AddParam(tT1
 param);void
-eG
-nI2
-param);void
+eI1
+CodeTree&param);void
 AddParams
-i01
-i22
-nD3
-AddParamsMove(i22
-nD3
-AddParamsMove(i22
-l02,size_t
-l12);void
-iH1
+nV2
+xA&xG3
+AddParamsMove(xA&xG3
+AddParamsMove(xA&lT2,size_t
+lU2);void
+l93
 size_t
 index);void
 DelParams();void
-Become
-i01
-nI2
+Become(tT1
 b);inline
 size_t
-GetParamCount(n61
-iE1)yA3;i6
-nI2
-GetParam(xL3){return
-iE1)[n];i6
-iQ2
-GetParam(xL3
-n61
-iE1)[n];i6
-void
-lI2
-nR2
-o)cX3
-Opcode=o;i6
-nR2
-lM2
-c6
-Opcode;i6
-nD
-fphash_t
-GetHash()c6
-Hash;i6
+c41
 const
-i22
-iE1
-n61
-xY;i6
-i22
-iE1){return
-xY;i6
+yY
+lB2).size();tL1
+CodeTree&GetParam(cB3)yY
+lB2)[n];tL1
+tT1
+GetParam(cB3
+c81
+lB2)[n];tL1
+void
+n82
+n92
+o){data->Opcode=o;tL1
+n92
+nF2
+yX
+Opcode;tL1
+nB
+xO2
+GetHash()yX
+Hash;tL1
+const
+xA&lB2
+c81
+y8;tL1
+xA&lB2)yY
+y8;tL1
 size_t
-xT2
-c6
-Depth;i6
-e62
-xJ1
-c6
-Value;i6
-i02
-GetVar()c6
-iI1
-i6
-i02
-GetFuncNo()c6
-iI1
-i6
+y82
+yX
+Depth;tL1
+l92
+xY1
+yX
+Value;tL1
+x83
+GetVar()yX
+lC2
+tL1
+x83
+GetFuncNo()yX
+lC2
+tL1
 bool
-IsDefined(n61
-lM2!=nD
-cNop;i6
+IsDefined(c81
+nF2!=nB
+cNop;tL1
 bool
-IsImmed(n61
-lM2==nD
-cImmed;i6
+IsImmed(c81
+nF2==nB
+cImmed;tL1
 bool
-IsVar(n61
-lM2==nD
-iE2;i6
-i02
-GetRefCount()c6
-nA3
-iS2
-ReplaceWithImmed
-i01
-eS1&i);void
+IsVar(c81
+nF2==nB
+iT2;tL1
+x83
+GetRefCount()yX
+xD3;}
+void
+ReplaceWithImmed(tU1;void
 Rehash(bool
 constantfolding=true);void
 Sort();inline
 void
-Mark_Incompletely_Hashed()cX3
-Depth=0;i6
+Mark_Incompletely_Hashed(){data->Depth=0;tL1
 bool
-Is_Incompletely_Hashed()c6
-Depth==0;i6
+Is_Incompletely_Hashed()yX
+Depth==0;tL1
 const
-tK
-GetOptimizedUsing()c6
-iK1;i6
+tX
+GetOptimizedUsing()yX
+lE2;tL1
 void
 SetOptimizedUsing
-i01
-tK
-g)cX3
-iK1=g;}
+nV2
+tX
+g){data->lE2=g;}
 bool
 RecreateInversionsAndNegations(bool
 prefer_base2=false);void
 FixIncompleteHashes();void
-swap(nI2
-b){data.swap(b.data);}
+swap(CodeTree&b){data.swap(b.data);}
 bool
-IsIdenticalTo
-i01
-nI2
+IsIdenticalTo(tT1
 b)const;void
-iY}
-;yT1
-nO2{int
-nA3;nR2
-Opcode;eS1
-Value;i02
-iI1
-yG
-nV1
-c93;nD
-fphash_t
+l61}
+n11
+e22
+xL2{int
+xD3;n92
+Opcode
+iO2
+Value;x83
+lC2
+eZ
+Params;nB
+xO2
 Hash;size_t
 Depth;const
-tK
-iK1;nO2();nO2
-i01
-nO2&b);i1
-nR2
-o);i1
-nR2
-o,i02
-f);i1
-e62
-i);
+tX
+lE2;xL2();xL2
+nV2
+xL2&b);iB
+n92
+o);iB
+n92
+o,x83
+f);iB
+tU1;
 #ifdef __GXX_EXPERIMENTAL_CXX0X__
-i1
-eS1&&i);nO2(nO2&&b);
+iB
+x73&&i);xL2(xL2&&b);
 #endif
 bool
 IsIdenticalTo
-i01
-nO2&b)const;void
+nV2
+xL2&b)const;void
 Sort();void
 Recalculate_Hash_NoRecursion();private:void
-e31=i01
-nO2&b);}
-;yU1
-CodeTreeImmed
-i01
-eS1&i)eM
+eJ1=nV2
+xL2&b);}
+n11
+c4
+CodeTreeImmed(tU1
+n81
 i
-yO
-nC3());}
+yG
+xF3());}
 #ifdef __GXX_EXPERIMENTAL_CXX0X__
-yU1
-CodeTreeImmed(eS1&&i)eM
-t72
-i)yO
-nC3());}
+cK1
+CodeTreeImmed(x73&&i)n81
+tD2
+i)yG
+xF3());}
 #endif
-yU1
-CodeTreeOp(nR2
-opcode)eM
+cK1
+CodeTreeOp(n92
+opcode)n81
 opcode
-yO
+yG
 OpcodeTag());}
-yU1
-CodeTreeFuncOp(nR2
-opcode,i02
-f)eM
-opcode,f
-yO
+cK1
+CodeTreeFuncOp(n92
+eB3
+x83
+f)n81
+eB3
+f
+yG
 FuncOpcodeTag());}
-yU1
+cK1
 CodeTreeVar
-iL1
-varno)eM
+nP2
+varno)n81
 varno
-yO
+yG
 VarTag());}
 #ifdef FUNCTIONPARSER_SUPPORT_DEBUGGING
-xB1
-DumpHashes(xP);xB1
-xE3(xP);xB1
-DumpTreeWithIndent(xP,const
+tD1
+DumpHashes(xM)xI3
+DumpTree(xM)xI3
+DumpTreeWithIndent(xM,const
 std::string&indent="\\"
 );
 #endif
 }
 #endif
 #endif
-#ifndef FPOPT_NAN_CONST
+#ifndef FPOptimizer_GrammarHH
+#define FPOptimizer_GrammarHH
 #include <iostream>
-#define FPOPT_NAN_CONST (-1712345.25)
-iO2
-FPoptimizer_CodeTree{iP2
-yL2;}
-iO2
-l41{enum
-ImmedConstraint_Value{ValueMask=0x07,Value_AnyNum=0x0,n12=0x1,Value_OddInt=0x2,t01=0x3,Value_NonInteger=0x4,eE1=0x5
-n23
-ImmedConstraint_Sign{SignMask=0x18,Sign_AnySign=0x00,nJ1=0x08,n02=0x10,Sign_NoIdea=0x18
-n23
-ImmedConstraint_Oneness{OnenessMask=0x60,Oneness_Any=0x00,Oneness_One=0x20,Oneness_NotOne=0x40
-n23
-ImmedConstraint_Constness{ConstnessMask=0x180,Constness_Any=0x00,yL1=0x80,Constness_NotConst=0x100
-n23
-Modulo_Mode{Modulo_None=0,Modulo_Radians=1
-n23
-Situation_Flags{LogicalContextOnly=0x01,NotForIntegers=0x02,OnlyForIntegers=0x04
-n23
-lU2{NumConstant,ParamHolder,SubFunction
-n23
-ParamMatchingType{PositionalParams,SelectedParams,AnyParams,GroupFunction
-n23
+tN{x33
+class
+CodeTree;}
+lA3
+l21{enum
+ImmedConstraint_Value{ValueMask=0x07,Value_AnyNum=0x0,x32=0x1,Value_OddInt=0x2,tZ1=0x3,Value_NonInteger=0x4,eT1=0x5}
+;enum
+ImmedConstraint_Sign{SignMask=0x18,Sign_AnySign=0x00,nN1=0x08,eU1=0x10,Sign_NoIdea=0x18}
+;enum
+ImmedConstraint_Oneness{OnenessMask=0x60,Oneness_Any=0x00,Oneness_One=0x20,Oneness_NotOne=0x40}
+;enum
+ImmedConstraint_Constness{ConstnessMask=0x180,Constness_Any=0x00,tY1=0x80,Constness_NotConst=0x100}
+;enum
+Modulo_Mode{Modulo_None=0,Modulo_Radians=1}
+;enum
+Situation_Flags{LogicalContextOnly=0x01,NotForIntegers=0x02,OnlyForIntegers=0x04,OnlyForComplex=0x08,NotForComplex=0x10}
+;enum
+nN2{NumConstant,ParamHolder,SubFunction}
+;enum
+ParamMatchingType{PositionalParams,SelectedParams,AnyParams,GroupFunction}
+;enum
 RuleType{ProduceNewTree,ReplaceParams}
 ;
 #ifdef __GNUC__
@@ -1671,63 +1657,63 @@ RuleType{ProduceNewTree,ReplaceParams}
 # define PACKED_GRAMMAR_ATTRIBUTE
 #endif
 typedef
-std::pair<lU2,const
-void*>cG2;yV1
-cG2
-e01
-iL1
-paramlist,lC1);xG1
+std::pair<nN2,const
+void*>e52
+n11
+e52
+ParamSpec_Extract
+nP2
+paramlist,l91)n11
+bool
 ParamSpec_Compare
-i01
-void*nB3
-void*b,lU2
-type);i02
+nV2
+void*xE3
+void*b,nN2
+type);x83
 ParamSpec_GetDepCode
-i01
-cG2&b);e92
-xH{lC1:8;i02
-constraints:9;i02
-depcode:15;yY
-yT1
-ParamSpec_NumConstant{eS1
-xZ3;i02
-modulo;yY
-e92
-iW{i02
-param_count:2;i02
-param_list:30;nR2
+nV2
+e52&b);e22
+xU{l91:8;x83
+constraints:9;x83
+depcode:15;}
+c5
+x33
+e22
+ParamSpec_NumConstant{x73
+constvalue;x83
+modulo;xP2
+iZ{x83
+param_count:2;x83
+param_list:30;n92
 subfunc_opcode:8;ParamMatchingType
-match_type:3;i02
-n2:5;yY
-e92
-xI{iW
-data;i02
-constraints:9;i02
-depcode:7;yY
-e92
+match_type:3;x83
+n2:5;xP2
+xV{iZ
+data;x83
+constraints:9;x83
+depcode:7;xP2
 Rule{RuleType
-ruletype:2;i02
-situation_flags:3;i02
-repl_param_count:2+11;i02
-repl_param_list:30;iW
-match_tree;yY
-e92
-Grammar{i02
-rule_count;i02
-char
+ruletype:2;x83
+situation_flags:5;x83
+repl_param_count:2+9;x83
+repl_param_list:30;iZ
+match_tree;xP2
+Grammar{x83
+rule_count;x83
+short
 rule_list[999
-eI
+eG
 extern
 const
 Rule
 grammar_rules[];}
-xB1
+tD1
 DumpParam
-i01
-cG2&p,std::ostream&o=std::cout);xB1
+nV2
+e52&p,std::ostream&o=std::cout)xI3
 DumpParams
-iL1
-paramlist,i02
+nP2
+paramlist,x83
 count,std::ostream&o=std::cout);}
 #endif
 #ifndef M_PI
@@ -1735,35 +1721,32 @@ count,std::ostream&o=std::cout);}
 #endif
 #define CONSTANT_POS_INF HUGE_VAL
 #define CONSTANT_NEG_INF (-HUGE_VAL)
-iO2
-FUNCTIONPARSERTYPES{yV1
+lA3
+FUNCTIONPARSERTYPES{x33
 inline
-eS1
-fp_const_pihalf(){return
+x73
+fp_const_pihalf()yY
 fp_const_pi
-x8()*yF3;}
-yV1
+xN()*yM2;}
+x33
 inline
-eS1
-fp_const_twopi(){eS1
-cY3
+x73
+fp_const_twopi(cE2
 fp_const_pi
-x8());e03
-fp_const_twoe(){eS1
-cY3
+xN());lB3
+fp_const_twoe(cE2
 fp_const_e
-x8());e03
-fp_const_twoeinv(){eS1
-cY3
+xN());lB3
+fp_const_twoeinv(cE2
 fp_const_einv
-x8());e03
+xN());lB3
 fp_const_negativezero(){
 #ifdef FP_EPSILON
 return-fp_epsilon
-x8();
+xN();
 #else
 return
-eS1(-1e-14);
+x73(-1e-14);
 #endif
 }
 }
@@ -1771,227 +1754,230 @@ eS1(-1e-14);
 #include <vector>
 #include <utility>
 #include <iostream>
-iO2
-FPoptimizer_Optimize{using
-iO2
-l41;using
-iO2
-FPoptimizer_CodeTree;xQ
-iP2
-MatchInfo{e13
-yG<std::pair<bool,yG
-nV1> >lQ;yG
-nV1
-yH;yG<i02>iB;e13
-MatchInfo():lQ(),yH(),iB(){}
-e13
+cH1{using
+lA3
+l21;using
+tN;using
+lA3
+FUNCTIONPARSERTYPES
+n11
+class
+MatchInfo{e83
+std
+xM3<std::pair<bool,eZ> >lR;eZ
+paramholder_matches;std
+xM3<x83>tZ;e83
+MatchInfo():lR(),paramholder_matches(),tZ(){}
+e83
 bool
 SaveOrTestRestHolder
-iL1
-n2,lL1&tM1){cL1{lQ
-nE3
-n2+1);lQ
-tL=tM1
-nS2
-if(lQ[n2
-eC3==false){lQ
-tL=tM1
-nS2
-lL1&found=lQ[n2
-eD3;if(tM1
-yA3!=found
-yA3
-yI
+nP2
+n2,t73&iB1){cY1{lR.e93
+n2+1);lR
+tY=iB1
+e62
+if(lR[n2
+eM3==false){lR
+tY=iB1
+e62
+t73&found=lR[n2]xU3;if(iB1.size()!=found.size()eM
 for
-xK2
-0;a<tM1
-eW2
-a)if(!tM1[a]iA
-found[a])yI
-return
-true
-iS2
+c12
+0;a<iB1.size();++a)if(!iB1[a]xD
+found[a]y03
+false
+e62
+void
 SaveRestHolder
-iL1
-n2,yG
-nV1&tM1){cL1
-lQ
-nE3
-n2+1);lQ
-tL.swap(tM1);}
+nP2
+n2,eZ&iB1){cY1
+lR.e93
+n2+1);lR
+tY.swap(iB1);}
 bool
 SaveOrTestParamHolder
-iL1
-nX,lM1&nG3){if(yH
-yA3<=nX){yH.nH3
-nX+1);yH
-nE3
-nX);yH
-yL
-nG3)nS2
-if(!yH[nX].iA1{yH[nX]=nG3
-nS2
+nP2
+x1,xG2
+xH3){if(cI
+size()<=x1){cI
+xJ3
+x1+1);cI
+e93
+x1);cI
+push_back(xH3
+iX1
+if(!cM
+xN2)){cM=xH3
+e62
 return
-nG3
-iA
-yH[nX]iR2
-SaveMatchedParamIndex(lC1){iB
-yL
-index);}
-lM1&GetParamHolderValueIfFound
-iL1
-nX)const{static
-lM1
-dummytree;if(yH
-yA3<=nX
-nZ2
+xH3
+xD
+cM
+n13
+SaveMatchedParamIndex(l91){tZ.push_back(index);}
+xG2
+GetParamHolderValueIfFound
+nP2
+x1)const{static
+const
+CodeTree
+xN
+dummytree;if(cI
+size()<=x1)return
 dummytree
-l81
-yH[nX];}
-lM1&GetParamHolderValue
-iL1
-nX
-n61
-yH[nX];}
+eL
+cM;}
+xG2
+GetParamHolderValue
+nP2
+x1
+c81
+cM;}
 bool
 HasRestHolder
-iL1
+nP2
 n2
-n61
-lQ
-yA3>n2&&lQ[n2
-eC3==true;}
-lL1&GetRestHolderValues
-iL1
+c81
+lR.size()>n2&&lR[n2
+eM3==true;}
+t73&GetRestHolderValues
+nP2
 n2)const{static
-lL1
-empty_result;cL1
+t73
+empty_result;cY1
 return
 empty_result
-l81
-lQ[n2
-eD3;}
+eL
+lR[n2]xU3;}
 const
-yG<i02>&GetMatchedParamIndexes(n61
-iB
-iS2
-swap(t9
-b){lQ.swap(b.lQ);yH.swap(b.yH);iB.swap(b.iB);}
-t9
-e31=i01
-t9
-b){lQ=b.lQ;yH=b.yH;iB=b.iB
-l81*this;}
+std
+xM3<x83>&GetMatchedParamIndexes(c81
+tZ;}
+void
+swap(tS
+b){lR.swap(b.lR);cI
+swap(b.paramholder_matches);tZ.swap(b.tZ);}
+tS
+eJ1=nV2
+tS
+b){lR=b.lR;paramholder_matches=b.paramholder_matches;tZ=b.tZ
+eL*this;}
 }
 ;class
-e8;typedef
-xN<e8>e1;class
-e8{e13
+e7;typedef
+y0<e7>cZ;class
+e7{e83
 int
-nA3;e13
-e8():nA3(0){}
-virtual~e8(){}
+xD3;e83
+e7():xD3(0){}
+virtual~e7(){}
 }
-;e92
-lZ1{bool
-found;e1
-specs;lZ1(bool
+;e22
+nC1{bool
+found;cZ
+specs;nC1(bool
 f):found(f),specs(){}
-lZ1(bool
+nC1(bool
 f
-eA2
+eC3
 s):found(f),specs(s){}
 }
-;xB1
-SynthesizeRule
-eX3
-yK2&tree,t9
-info);yV1
-lZ1
+xI3
+SynthesizeRule(tE1
+n91
+tree,tS
+info)n11
+nC1
 TestParam
-i01
-cG2&xZ2
-lM1&tree
-eA2
-start_at,t9
-info);yV1
-lZ1
-TestParams(t0&nM,lM1&tree
-eA2
-start_at,t9
+nV2
+e52&yI2
+xG2
+tree
+eC3
+start_at,tS
+info)n11
+nC1
+TestParams(tT&nR,xG2
+tree
+eC3
+start_at,tS
 info,bool
-tA1;xG1
-ApplyGrammar
-i01
-Grammar&tN2,x2,bool
-from_logical_context=false);xB1
-ApplyGrammars(x2);xG1
-IsLogisticallyPlausibleParamsMatch(t0&cB2,const
-eR;}
-iO2
-l41{xB1
-DumpMatch
-eX3
+eM2
+n11
+bool
+yS1
 const
-x2,const
-FPoptimizer_Optimize::t9
+Grammar&x82,FPoptimizer_CodeTree::n91
+tree,bool
+from_logical_context=false)xI3
+ApplyGrammars(FPoptimizer_CodeTree::t2
+n11
+bool
+IsLogisticallyPlausibleParamsMatch(tT&cD2,const
+t2;}
+lA3
+l21{tD1
+DumpMatch(tE1
+nS,const
+FPoptimizer_Optimize::tS
 info,bool
-DidMatch,std::ostream&o=std::cout);xB1
-DumpMatch
-eX3
-const
-x2,const
-FPoptimizer_Optimize::t9
-info,const
-char*eY3,std::ostream&o=std::cout);}
+DidMatch,std::ostream&o=std::cout)xI3
+DumpMatch(tE1
+nS,const
+FPoptimizer_Optimize::tS
+info,l03
+tB3,std::ostream&o=std::cout);}
 #endif
 #include <string>
-eG2
-l41::lU2
-yK1=false);eG2
-nR2
-yK1=false);
+l13
+l21::nN2
+c21=false);l13
+n92
+c21=false);
 #include <string>
 #include <sstream>
 #include <assert.h>
 #include <iostream>
 using
-iO2
-l41;xQ
-eG2
-l41::lU2
-yK1){
+lA3
+l21;using
+lA3
+FUNCTIONPARSERTYPES;l13
+l21::nN2
+c21){
 #if 1
-const
-char*p=0;switch(opcode
-iY2
+l03
+p=0;switch(opcode
+eJ3
 NumConstant:p="NumConstant"
 ;lC
 ParamHolder:p="ParamHolder"
 ;lC
 SubFunction:p="SubFunction"
-;nM3
+tM2}
 std::ostringstream
-tmp;assert(p);tmp<<p;if(pad)while(tmp.str()yA3<12)tmp<<' 'l81
+tmp;assert(p);tmp<<p;if(pad)while(tmp.str().size()<12)tmp<<' 'eL
 tmp.str();
 #else
 std::ostringstream
-tmp;tmp<<opcode;if(pad)while(tmp.str()yA3<5)tmp<<' 'l81
+tmp;tmp<<opcode;if(pad)while(tmp.str().size()<5)tmp<<' 'eL
 tmp.str();
 #endif
 }
-eG2
-nR2
-yK1){
+l13
+n92
+c21){
 #if 1
-const
-char*p=0;switch(opcode
-iY2
+l03
+p=0;switch(opcode
+eJ3
 cAbs:p="cAbs"
 ;lC
 cAcos:p="cAcos"
 ;lC
 cAcosh:p="cAcosh"
+;lC
+cArg:p="cArg"
 ;lC
 cAsin:p="cAsin"
 ;lC
@@ -2006,6 +1992,8 @@ cAtanh:p="cAtanh"
 cCbrt:p="cCbrt"
 ;lC
 cCeil:p="cCeil"
+;lC
+cConj:p="cConj"
 ;lC
 cCos:p="cCos"
 ;lC
@@ -2027,6 +2015,8 @@ cHypot:p="cHypot"
 ;lC
 cIf:p="cIf"
 ;lC
+cImag:p="cImag"
+;lC
 cInt:p="cInt"
 ;lC
 cLog:p="cLog"
@@ -2039,7 +2029,11 @@ cMax:p="cMax"
 ;lC
 cMin:p="cMin"
 ;lC
+cPolar:p="cPolar"
+;lC
 cPow:p="cPow"
+;lC
+cReal:p="cReal"
 ;lC
 cSec:p="cSec"
 ;lC
@@ -2073,7 +2067,7 @@ cMod:p="cMod"
 ;lC
 cEqual:p="cEqual"
 ;lC
-t71:p="cNEqual"
+i21:p="cNEqual"
 ;lC
 cLess:p="cLess"
 ;lC
@@ -2096,22 +2090,24 @@ cRad:p="cRad"
 cFCall:p="cFCall"
 ;lC
 cPCall:p="cPCall"
-;break;
+tM2
 #ifdef FP_SUPPORT_OPTIMIZER
 case
 cFetch:p="cFetch"
 ;lC
 cPopNMov:p="cPopNMov"
 ;lC
-cLog2by:p="cLog2by"
+cV3:p="cLog2by"
 ;lC
 cNop:p="cNop"
-;break;
+tM2
 #endif
 case
 cSinCos:p="cSinCos"
 ;lC
-yR3:p="cAbsNot"
+cSinhCosh:p="cSinhCosh"
+;lC
+cK3:p="cAbsNot"
 ;lC
 cAbsNotNot:p="cAbsNotNot"
 ;lC
@@ -2119,7 +2115,7 @@ cAbsAnd:p="cAbsAnd"
 ;lC
 cAbsOr:p="cAbsOr"
 ;lC
-i03:p="cAbsIf"
+iF3:p="cAbsIf"
 ;lC
 cDup:p="cDup"
 ;lC
@@ -2135,14 +2131,14 @@ cNotNot:p="cNotNot"
 ;lC
 cRSqrt:p="cRSqrt"
 ;lC
-iE2:p="VarBegin"
-;nM3
+iT2:p="VarBegin"
+tM2}
 std::ostringstream
-tmp;assert(p);tmp<<p;if(pad)while(tmp.str()yA3<12)tmp<<' 'l81
+tmp;assert(p);tmp<<p;if(pad)while(tmp.str().size()<12)tmp<<' 'eL
 tmp.str();
 #else
 std::ostringstream
-tmp;tmp<<opcode;if(pad)while(tmp.str()yA3<5)tmp<<' 'l81
+tmp;tmp<<opcode;if(pad)while(tmp.str().size()<5)tmp<<' 'eL
 tmp.str();
 #endif
 }
@@ -2157,2440 +2153,2496 @@ enum{MAX_POWI_BYTECODE_LENGTH=999}
 ;
 #endif
 enum{MAX_MULI_BYTECODE_LENGTH=3}
-;t5{iP2
-ByteCodeSynth{e13
-ByteCodeSynth():nN(),Immed(),eP(),tA(0),StackMax(0){nN.nH3
-64);Immed.nH3
-8);eP.nH3
+;lA3
+xQ1{x33
+class
+ByteCodeSynth{e83
+ByteCodeSynth():ByteCode(),Immed(),cS(),y1(0),StackMax(0){ByteCode.xJ3
+64);Immed.xJ3
+8);cS.xJ3
 16
-iR2
-Pull(yG<i02>&bc,yG
-x8&imm,size_t&StackTop_max){for
-iL1
-a=0;a<nN
-eW2
-a){nN[a]&=~yM;}
-nN.swap(bc);Immed.swap(imm);StackTop_max=StackMax;}
+n13
+Pull(std
+xM3<x83>&bc,std
+xM3
+xN&imm,size_t&StackTop_max){for(eY1=0;a<nD1;++a){ByteCode[a]&=~0x80000000u;}
+ByteCode.swap(bc);Immed.swap(imm);StackTop_max=StackMax;}
 size_t
-GetByteCodeSize(n61
-nN
-yA3;}
+GetByteCodeSize(c81
+nD1;}
 size_t
-GetStackTop(n61
-tA
-iS2
+GetStackTop(c81
+y1;}
+void
 PushVar
-iL1
-varno){e23
-varno);nV2}
+nP2
+varno){yO1
+varno);eV2}
 void
-PushImmed(eS1
-immed){xQ
-e23
-cImmed);Immed
-yL
-immed);nV2}
+PushImmed(x73
+immed
+nL
+yO1
+cImmed);Immed.push_back(immed);eV2}
 void
-StackTopIs
-cA3,int
-offset=0){if((int)tA>offset){eP[tA
-lN2
-first=true;eP[tA
-lN2
+StackTopIs(nS,int
+offset=0){if((int)y1>offset){cS[y1
+nG2
+first=true;cS[y1
+nG2
 second=tree;}
 }
 bool
-IsStackTop
-cA3,int
+IsStackTop(nS,int
 offset=0
-n61(int)tA>offset&&eP[tA
-lN2
-first&&eP[tA
-lN2
+c81(int)y1>offset&&cS[y1
+nG2
+first&&cS[y1
+nG2
 second
-iA
-tree);i6
+xD
+tree);tL1
 void
 EatNParams
-iL1
-cH2){tA-=cH2
-iS2
+nP2
+eat_count){y1-=eat_count;}
+void
 ProducedNParams
-iL1
-e41){xD1
-tA+e41
-iR2
-AddOperation
-iL1
-opcode,i02
-cH2,i02
-e41=1){EatNParams(cH2);xQ
-AddFunctionOpcode(opcode);ProducedNParams(e41
-iR2
+nP2
+produce_count){xR1
+y1+produce_count
+n13
 DoPopNMov(size_t
-cI2,size_t
-srcpos){xQ
-e23
-cPopNMov);e23
-yM|iL1)cI2);e23
-yM|iL1)srcpos);xD1
-srcpos+1);eP[cI2]=eP[srcpos];xD1
-cI2+1
-iR2
+e72,size_t
+srcpos
+nL
+yO1
+cPopNMov
+nO2
+e72
+nO2
+srcpos);xR1
+srcpos+1);cS[e72]=cS[srcpos];xR1
+e72+1
+n13
 DoDup(size_t
-nI3){xQ
-if(nI3==tA-1){e23
+xK3
+nL
+if(xK3==y1-1){yO1
 cDup);}
-else{e23
-cFetch);e23
-yM|iL1)nI3);}
-nV2
-eP[tA-1]=eP[nI3];}
+else{yO1
+cFetch
+nO2
+xK3);}
+eV2
+cS[y1-1]=cS[xK3];}
+#ifdef FUNCTIONPARSER_SUPPORT_DEBUGGING
+tJ1
+int>void
+Dump(){std::ostream&o=std::cout;o<<"Stack state now("
+<<y1<<"):\n"
+c02
+0;a<y1;++a){o<<a<<": "
+;if(cS[a
+eM3){nS=cS[a]xU3;o<<'['<<std::hex<<(void*)(&tree.lB2))<<std::dec<<','<<tree.GetRefCount()<<']'i63
+tree,o);}
+else
+o<<"?"
+;o<<"\n"
+;}
+o<<std::flush;}
+#endif
 size_t
-e33
-cA3)const{for
-xK2
-tA;a-->0;)if(eP[a
-eC3&&eP[a
-eD3
-iA
-tree)nZ2
+eA3(nS)const{for
+c12
+y1;a-->0;)if(cS[a
+eM3&&cS[a]xU3
+xD
+tree
+y03
 a
-l81
-eK2;}
+eL
+eW2;}
 bool
-Find
-cA3
-n61
-e33
-nO3
-eK2;}
+Find(nS
+c81
+eA3(tree)!=eW2;}
 bool
-FindAndDup
-cA3){size_t
-pos=e33(tree);if(pos!=eK2){
+FindAndDup(nS){size_t
+pos=eA3
+yN2
+if(pos!=eW2){
 #ifdef DEBUG_SUBSTITUTIONS
-std::cout<<tZ3"duplicate at ["
+std::cout<<iE3"duplicate at ["
 <<pos<<"]: "
-;xE3(tree)lN1" -- issuing cDup or cFetch\n"
+i63
+tree)xI1" -- issuing cDup or cFetch\n"
 ;
 #endif
-DoDup(pos)nS2
-nX2
-e92
+DoDup(pos
+iX1
+return
+eO3
+e22
 IfData{size_t
 ofs;}
 ;void
-SynthIfStep1(IfData&yJ2,nR2
-op){nT
-yJ2.ofs=nN
-yA3;e23
-op);e23
-yM);e23
-yM
-iR2
-SynthIfStep2(IfData&yJ2){nT
-nN[yJ2.ofs+1]eJ1+2);nN[yJ2.ofs
-iC
-yJ2.ofs=nN
-yA3;e23
-cJump);e23
-yM);e23
-yM
-iR2
-SynthIfStep3(IfData&yJ2){nT
-nN.back()|=yM;nN[yJ2.ofs+1]eJ1-1);nN[yJ2.ofs
-iC
-nV2
-for
-xK2
-0;a<yJ2.ofs;++a){if(nN[a]==cJump&&nN[a+1]==(yM|(yJ2.ofs-1))){nN[a+1]eJ1-1);nN[a
-iC
-yN3(nN[a]iY2
-i03:case
+SynthIfStep1
+t72,n92
+op
+x61
+t92=nD1;yO1
+op
+eW
+eW
+n13
+SynthIfStep2
+t72
+x61
+yP1
+xL3+2);yP1
+2
+yE
+lF2
+t92=nD1;yO1
+cJump
+eW
+eW
+n13
+SynthIfStep3
+t72
+x61
+ByteCode.back()|=0x80000000u;yP1
+xL3-1);yP1
+2
+yE
+lF2
+xR1
+y1+1)c02
+0;a<t92;++a){if(ByteCode[a]==cJump&&ByteCode[a+1]==(0x80000000u|(t92-1))){ByteCode[a+xL3-1);ByteCode[a+2
+yE
+lF2
+iY2
+ByteCode[a]eJ3
+iF3:case
 cIf:case
 cJump:case
 cPopNMov:a+=2;lC
 cFCall:case
 cPCall:case
-cFetch:a+=1;break;default:nM3}
+cFetch:a+=1
+tM2
+default:yY3}
 }
 protected:void
-xD1
+xR1
 size_t
-value){tA=value;if(tA
-eL2{StackMax=tA;yS1);}
+value){y1=value;if(y1>lC3{StackMax=y1;cS.e93
+lC3;}
 }
+protected:std
+xM3<x83>ByteCode;std
+xM3
+xN
+Immed;std
+xM3<std::pair<bool,FPoptimizer_CodeTree::CodeTree
+xN> >cS;size_t
+y1;size_t
+StackMax;private:void
+incStackPtr(){if(y1+2>lC3
+cS.e93
+StackMax=y1+2);}
+tJ1
+bool
+IsIntType,bool
+IsComplexType>e22
+cF2{}
+;e83
 void
-l51
-eK1;void
-iK
-eK1;void
-AddFunctionOpcode(eK1;private:yG<i02>nN;yG
-x8
-Immed;yG<std::pair<bool,FPoptimizer_CodeTree::yK2> >eP;size_t
-tA;size_t
-StackMax;}
-;yT1
-SequenceOpCode;yT1
-eX1{static
+AddOperation
+nP2
+eB3
+x83
+eat_count,x83
+produce_count=1){EatNParams(eat_count);lQ1
+opcode);ProducedNParams(produce_count
+n13
+lQ1
+x83
+eB3
+cF2<false,false>c8
+false,true>c8
+true,false>c8
+true,true>);inline
+void
+lQ1
+x83
+opcode){lQ1
+eB3
+cF2<bool(nB
+IsIntType
+xN::yA3),bool(nB
+IsComplexType
+xN::yA3)>());}
+}
+n11
+e22
+SequenceOpCode
+n11
+e22
+tR1{static
 cN
 AddSequence;static
 cN
 MulSequence;}
-;xB1
-x31
+xI3
+x41
 long
-count,cN&eQ,lP1;}
+count,cN&t1,xM1;}
 #endif
 #ifdef FP_SUPPORT_OPTIMIZER
-xQ
-t5{yT1
-SequenceOpCode{eS1
-basevalue;i02
-op_flip;i02
-op_normal,op_normal_flip;i02
+using
+lA3
+FUNCTIONPARSERTYPES;lA3
+xQ1{x33
+e22
+SequenceOpCode{x73
+basevalue;x83
+op_flip;x83
+op_normal,op_normal_flip;x83
 op_inverse,op_inverse_flip;}
-;yV1
+n11
 cN
-eX1
-x8::AddSequence={eS1(0),cNeg,cAdd,cAdd,cSub,cRSub}
-;yV1
+tR1
+xN::AddSequence={yD1,cNeg
+x3
+cAdd,cSub,cRSub}
+n11
 cN
-eX1
-x8::MulSequence={eS1(1),cInv,cMul,cMul,cDiv,cRDiv}
-;yV1
-n71
-l51
-eK1{int
-mStackPtr=0;
-#define incStackPtr() do{if(tA+2 eL2 yS1=tA+2);}while(0)
+tR1
+xN::MulSequence={x73(1),cInv,cMul,cMul,cDiv,cRDiv}
+;
 #define findName(a,b,c) "var"
 #define TryCompilePowi(o) false
 #define mData this
-#define mByteCode nN
+#define mByteCode ByteCode
 #define mImmed Immed
+x43
+false,false
+l31
 # define FP_FLOAT_VERSION 1
+# define FP_COMPLEX_VERSION 0
 # include "fp_opcode_add.inc"
+# undef FP_COMPLEX_VERSION
 # undef FP_FLOAT_VERSION
-#undef mImmed
-#undef mByteCode
-#undef mData
-#undef TryCompilePowi
-#undef incStackPtr
 }
-yV1
-n71
-iK
-eK1{int
-mStackPtr=0;
-#define incStackPtr() do{if(tA+2 eL2 yS1=tA+2);}while(0)
-#define findName(a,b,c) "var"
-#define TryCompilePowi(o) false
-#define mData this
-#define mByteCode nN
-#define mImmed Immed
+x43
+true,false
+l31
 # define FP_FLOAT_VERSION 0
+# define FP_COMPLEX_VERSION 0
 # include "fp_opcode_add.inc"
+# undef FP_COMPLEX_VERSION
 # undef FP_FLOAT_VERSION
+}
+#ifdef FP_SUPPORT_COMPLEX_NUMBERS
+x43
+false,true
+l31
+# define FP_FLOAT_VERSION 1
+# define FP_COMPLEX_VERSION 1
+# include "fp_opcode_add.inc"
+# undef FP_COMPLEX_VERSION
+# undef FP_FLOAT_VERSION
+}
+x43
+true,true
+l31
+# define FP_FLOAT_VERSION 0
+# define FP_COMPLEX_VERSION 1
+# include "fp_opcode_add.inc"
+# undef FP_COMPLEX_VERSION
+# undef FP_FLOAT_VERSION
+}
+#endif
+#undef findName
 #undef mImmed
 #undef mByteCode
 #undef mData
 #undef TryCompilePowi
-#undef incStackPtr
-}
-yV1
-n71
-AddFunctionOpcode(eK1{if(IsIntType
-x8::result)iK
-opcode);else
-l51
-opcode);}
 }
 using
-t5;
+lA3
+xQ1;
 #define POWI_TABLE_SIZE 256
 #define POWI_WINDOW_SIZE 3
-t5{
+lA3
+xQ1{
 #ifndef FP_GENERATING_POWI_TABLE
 extern
 const
-i02
+x83
 char
 powi_table[POWI_TABLE_SIZE];const
 #endif
-i02
+x83
 char
-powi_table[POWI_TABLE_SIZE]={0,1,1,1,2,1
-eM2
-1,4,1,2,e43
-eM2
-1,8,cB3
-e73
-15,1,16,1
-eM2
-e43,2,1,4,cB3
-1,16,1,25,e73
-27,5,8,3,2,1,30,1,31,3,32,1
-eM2
-1,8,1,2,e73
-39,1,16,137,2,1,4,cB3
-e43,45,135,4,31,2,5,32,1,2,131,50,1,51,1,8,3,2,1,54,1,55,3,16,1,57,133,4,137,2,135,60,1,61,3,62,133,63,1,tN1
-131,tN1
-139,iM1
-e9
-30,1,130,137,2,31,iM1
-e9
-e9
-130,cB3
-1,e9
-e9
-2,1,130,133,tN1
-61,130,133,62,139,130,137,e9
-iM1
-e9
-e9
-tN1
-131,e9
-e9
-130,131,2,133,iM1
-130,141,e9
-130,cB3
-1,e9
-5,135,e9
-iM1
-e9
-iM1
-130,133,130,141,130,131,e9
-e9
+powi_table[POWI_TABLE_SIZE]={0,1,1,1,2,1,2,1,xV3
+4,1,2,yB3
+2,1,xV3
+8,cZ3
+yC3
+15,1,16,1,2,1,4,1,2,yB3
+2,1,4,cZ3
+1,16,1,25,yC3
+27,5,8,3,2,1,30,1,31,3,32,1,2,1,xV3
+8,1,2,yC3
+39,1,16,137,2,1,4,cZ3
+yB3
+45,135,4,31,2,5,32,1,2,131,50,1,51,1,8,3,2,1,54,1,55,3,16,1,57,133,4,137,2,135,60,1,61,3,62,133,63,1,iC1
+131,iC1
+139,lG2
+e8
+30,1,130,137,2,31,lG2
+e8
+e8
+130,cZ3
+1,e8
+e8
+2,1,130,133,iC1
+61,130,133,62,139,130,137,e8
+lG2
+e8
+e8
+iC1
+131,e8
+e8
+130,131,2,133,lG2
+130,141,e8
+130,cZ3
+1,e8
+5,135,e8
+lG2
+e8
+lG2
+130,133,130,141,130,131,e8
+e8
 2,131}
 ;}
 static
-lX3
-cB=256;
+nV3
+c6=256;
 #define FPO(x)
-iO2{class
+lA3{class
 PowiCache{private:int
-i7[cB];int
-tO1[cB];e13
-PowiCache():i7(),tO1(){i7[1]=1;}
+iF[c6];int
+iD1[c6];e83
+PowiCache():iF(),iD1(){iF[1]=1;}
 bool
-Plan_Add(yW1,int
-count){c51>=cB
-yI
-tO1[eP2+=count
-l81
-i7[eP2!=0
-iS2
-iU2
-yW1){c51<cB)i7[eP2=1
-iS2
+Plan_Add(c91,int
+count){cL1>=c6
+eM
+iD1[eX2+=count
+eL
+iF[eX2!=0;}
+void
+lD3
+c91){cL1<c6)iF[eX2=1;}
+void
 Start(size_t
 value1_pos){for(int
-n=2;n<cB;++n)i7[n]=-1;Remember(1,value1_pos);DumpContents();}
+n=2;n<c6;++n)iF[n]=-1;Remember(1,value1_pos);DumpContents();}
 int
-Find(yW1)const{c51<cB){if(i7[eP2>=0){FPO(tK3(tO3,"* I found %ld from cache (%u,%d)\n",value,(unsigned)cache[value],tL3 value]))l81
-i7[eP2;}
+Find(c91)const{cL1<c6){if(iF[eX2>=0){FPO(tZ3(i53,"* I found %ld from cache (%u,%d)\n",value,(unsigned)cache[value],i13 value]))eL
+iF[eX2;}
 }
-return-1
-iS2
-Remember(yW1,size_t
-tW3){c51>=cB
-nZ2;FPO(tK3(tO3,"* Remembering that %ld can be found at %u (%d uses remain)\n",value,(unsigned)tW3,tL3 value]));i7[eP2=(int)tW3
-iS2
-DumpContents()const{FPO(for(int a=1;a<POWI_CACHE_SIZE;++a)if(cache[a]>=0||tL3 a]>0){tK3(tO3,"== cache: sp=%d, val=%d, needs=%d\n",cache[a],a,tL3 a]);})}
+return-1;}
+void
+Remember(c91,size_t
+iD3){cL1>=c6)return;FPO(tZ3(i53,"* Remembering that %ld can be found at %u (%d uses remain)\n",value,(unsigned)iD3,i13 value]));iF[eX2=(int)iD3;}
+void
+DumpContents()const{FPO(for(int a=1;a<POWI_CACHE_SIZE;++a)if(cache[a]>=0||i13 a]>0){tZ3(i53,"== cache: sp=%d, val=%d, needs=%d\n",cache[a],a,i13 a]);})}
 int
-UseGetNeeded(yW1){c51>=0&&value<cB
-nZ2--tO1[eP2
-l81
+UseGetNeeded(c91){cL1>=0&&value<c6)return--iD1[eX2
+eL
 0;}
 }
-;yV1
+n11
 size_t
-yN
+yF
 long
 count
-tR1
-cN&eQ,lP1;xB1
-yX1
+l22
+cN&t1,xM1
+xI3
+cA1
 size_t
 apos,long
 aval,size_t
 bpos,long
 bval
-tR1
-i02
-cumulation_opcode,i02
-cimulation_opcode_flip,lP1;void
-l61
-yW1
-tR1
+l22
+x83
+cumulation_opcode,x83
+cimulation_opcode_flip,xM1;void
+l41
+c91
+l22
 int
 need_count,int
-iX=0){c51<1
-nZ2;
+l51=0){cL1<1)return;
 #ifdef FP_GENERATING_POWI_TABLE
-if(iX>32)throw
+if(l51>32)throw
 false;
 #endif
-if(i7.Plan_Add(value,need_count)nZ2;long
-nJ3
-1;c51<POWI_TABLE_SIZE){nJ3
-powi_table[eP2
-iT2&128){half&=127
-iT2&64)nJ3-eQ2
-FPO(tK3(tO3,"value=%ld, half=%ld, otherhalf=%ld\n",value,half,value/half));l61
-half,yM2
-i7.iU2
-half)l81;}
-tP1
-half&64){nJ3-eQ2}
+if(iF.Plan_Add(value,need_count
+y03;long
+yD3
+1;cL1<POWI_TABLE_SIZE){yD3
+powi_table[eX2
+y23&128
+xQ2
+if(yE3
+yD3-eY2
+FPO(tZ3(i53,"value=%ld, half=%ld, otherhalf=%ld\n",value,half,value/half));l41
+half
+xW3
+iF.lD3
+half)eL;}
+iZ1
+yE3{yD3-eY2}
 }
 else
-c51&1)nJ3
+cL1&1)yD3
 value&((1<<POWI_WINDOW_SIZE)-1);else
-nJ3
+yD3
 value/2;long
-cQ=value-half
-iT2>cQ||half<0)std::swap(half,cQ);FPO(tK3(tO3,"value=%ld, half=%ld, otherhalf=%ld\n",value,half,otherhalf))iT2==cQ){l61
-half,i7,2,iX+1);}
-else{l61
-half,yM2
-l61
-cQ>0?cQ:-cQ,yM2}
-i7.iU2
+cT=value-half
+y23>cT||half<0)std::swap(half,cT);FPO(tZ3(i53,"value=%ld, half=%ld, otherhalf=%ld\n",value,half,otherhalf))y23==cT){l41
+half,iF,2,l51+1);}
+else{l41
+half
+xW3
+l41
+cT>0?cT:-cT
+xW3}
+iF.lD3
 value);}
-yV1
+x33
 size_t
-yN
-yW1
-tR1
-cN&eQ,lP1{int
-nK3=i7.Find(value);if(nK3>=0){return
-nK3;}
+yF
+c91
+l22
+cN&t1,xM1{int
+yF3=iF.Find(value);if(yF3>=0)yY
+yF3;}
 long
-nJ3
-1;c51<POWI_TABLE_SIZE){nJ3
-powi_table[eP2
-iT2&128){half&=127
-iT2&64)nJ3-eQ2
-FPO(tK3(tO3,"* I want %ld, my plan is %ld * %ld\n",value,half,value/half));size_t
-x52=yN
+yD3
+1;cL1<POWI_TABLE_SIZE){yD3
+powi_table[eX2
+y23&128
+xQ2
+if(yE3
+yD3-eY2
+FPO(tZ3(i53,"* I want %ld, my plan is %ld * %ld\n",value,half,value/half));size_t
+xS2=yF
 half
-c61
-if(i7
-iN1
-half)>0||x52!=c71){tQ1
-x52)nU2
-half,c71);}
-x31
+t91
+if(iF
+lH2
+half)>0||xS2!=tA1){iE1
+xS2)xR2
+half,tA1);}
+x41
 value/half
-eR2
+x02
 size_t
-tW3=c71
-nU2
-value,tW3);i7.DumpContents()l81
-tW3;}
-tP1
-half&64){nJ3-eQ2}
+iD3=tA1
+xR2
+value,iD3);iF.DumpContents()eL
+iD3;}
+iZ1
+yE3{yD3-eY2}
 }
 else
-c51&1)nJ3
+cL1&1)yD3
 value&((1<<POWI_WINDOW_SIZE)-1);else
-nJ3
+yD3
 value/2;long
-cQ=value-half
-iT2>cQ||half<0)std::swap(half,cQ);FPO(tK3(tO3,"* I want %ld, my plan is %ld + %ld\n",value,half,value-half))iT2==cQ){size_t
-x52=yN
+cT=value-half
+y23>cT||half<0)std::swap(half,cT);FPO(tZ3(i53,"* I want %ld, my plan is %ld + %ld\n",value,half,value-half))y23==cT){size_t
+xS2=yF
 half
-c61
-yX1
-x52,half,x52,half,i7,eQ.op_normal,eQ.op_normal_flip,synth);}
+t91
+cA1
+xS2,half,xS2,half,iF,t1.op_normal,t1.op_normal_flip,synth);}
 else{long
 part1=half;long
-part2=cQ>0?cQ:-cQ;size_t
-part1_pos=yN
+part2=cT>0?cT:-cT;size_t
+part1_pos=yF
 part1
-c61
+t91
 size_t
-part2_pos=yN
+part2_pos=yF
 part2
-c61
-FPO(tK3(tO3,"Subdivide(%ld: %ld, %ld)\n",value,half,otherhalf));yX1
-part1_pos,part1,part2_pos,part2,i7,cQ>0?eQ.op_normal:eQ.op_inverse,cQ>0?eQ.op_normal_flip:eQ.op_inverse_flip,synth);}
+t91
+FPO(tZ3(i53,"Subdivide(%ld: %ld, %ld)\n",value,half,otherhalf));cA1
+part1_pos,part1,part2_pos,part2,iF,cT>0?t1.op_normal:t1.op_inverse,cT>0?t1.op_normal_flip:t1.op_inverse_flip,synth);}
 size_t
-tW3=c71
-nU2
-value,tW3);i7.DumpContents()l81
-tW3;}
-xB1
-yX1
+iD3=tA1
+xR2
+value,iD3);iF.DumpContents()eL
+iD3;}
+tD1
+cA1
 size_t
 apos,long
 aval,size_t
 bpos,long
 bval
-tR1
-i02
-cumulation_opcode,i02
-cumulation_opcode_flip,lP1{int
-a_needed=i7
-iN1
+l22
+x83
+cumulation_opcode,x83
+cumulation_opcode_flip,xM1{int
+a_needed=iF
+lH2
 aval);int
-nL3=i7
-iN1
+yG3=iF
+lH2
 bval);bool
-iO1
-i13
-#define DUP_BOTH() do tX3<bpos){size_t tmp=apos;apos=bpos;bpos=tmp;iO1=!iO1;}FPO(tK3(tO3,"-> "tV3 tV3"op\n",(unsigned)apos,(unsigned)bpos));tQ1 apos);tQ1 apos==bpos?c71:bpos);}while(0)
-#define DUP_ONE(p) do{FPO(tK3(tO3,"-> "tV3"op\n",(unsigned)p));tQ1 p);}while(0)
-if(a_needed>0){if(nL3>0){lO2}
-else{if(bpos!=c71)lO2
-else{iP1
-iO1=!iO1;}
+flipped=false;
+#define DUP_BOTH() do{if(apos<bpos){size_t tmp=apos;apos=bpos;bpos=tmp tB1 FPO(tZ3(i53,"-> "iB3 iB3"op\n",(unsigned)apos,(unsigned)bpos));iE1 apos);iE1 apos==bpos?tA1:bpos);}while(0)
+#define DUP_ONE(p) do{FPO(tZ3(i53,"-> "iB3"op\n",(unsigned)p));iE1 p);}while(0)
+if(a_needed>0){if(yG3>0){nH2}
+cP3
+bpos!=tA1)nH2
+else{nQ2
+tB1}
 }
-}
-tP1
-nL3>0)tX3!=c71)lO2
+iZ1
+yG3>0){if(apos!=tA1)nH2
 else
 DUP_ONE(bpos);}
+cP3
+apos==bpos&&apos==tA1)nQ2;iZ1
+apos==tA1&&bpos==cY3
+xP
+2){FPO(tZ3(i53,"-> op\n"))tB1
+iZ1
+apos==cY3
+xP
+2&&bpos==tA1)FPO(tZ3(i53,"-> op\n"));iZ1
+apos==tA1)DUP_ONE(bpos);iZ1
+bpos==tA1){nQ2
+tB1
 else
-tX3==bpos&&apos==c71)iP1
-tP1
-apos==c71&&bpos==synth.x5
-2){FPO(tK3(tO3,"-> op\n"));iO1=!iO1;}
-tP1
-apos==synth.x5
-2&&bpos==c71)FPO(tK3(tO3,"-> op\n"));tP1
-apos==c71)DUP_ONE(bpos);tP1
-bpos==c71){iP1
-iO1=!iO1;}
-else
-lO2}
-lK1
-iO1?cumulation_opcode_flip:cumulation_opcode,2);}
-xB1
-cA1
+nH2}
+n41
+flipped?cumulation_opcode_flip:cumulation_opcode,2);}
+tD1
+cM1
 long
-count,cN&eQ,lP1{while
-cR3<256){int
-nJ3
-yV2
-powi_table[count]iT2&128){half&=127;cA1
+count,cN&t1,xM1{while
+e03<256){int
+yD3
+xQ1::powi_table[count]y23&128
+xQ2
+cM1
 half
-eR2
+x02
 count/=half;}
 else
-nM3
+yY3
 if
-cR3==1
-nZ2;if(!cR3&1)){lK1
-cSqr,1);cA1
+e03==1)return;if(!e03&1)){n41
+cSqr,1);cM1
 count/2
-eR2}
-else{tQ1
-c71);cA1
+x02}
+else{iE1
+tA1);cM1
 count-1
-eR2
-lK1
+x02
+n41
 cMul,2);}
 }
 }
-t5{xB1
-x31
+lA3
+xQ1{tD1
+x41
 long
-count,cN&eQ,lP1{if
-cR3==0)yX2
-eQ.basevalue
-t73
-bool
-eT2
-i13
-if
-cR3<0){eT2=true;count=-count;}
-if(false)cA1
+count,cN&t1,xM1{if
+e03==0)tQ1
+t1.basevalue);else{bool
+eZ2=false;if
+e03<0){eZ2=true;count=-count;}
+if(false)cM1
 count
-eR2
-tP1
+x02
+iZ1
 count>1){PowiCache
-i7;l61
-count,i7,1);size_t
-xE1
-t13
-GetStackTop();i7.Start(c71);FPO(tK3(tO3,"Calculating result for %ld...\n",count));size_t
-x62=yN
+iF;l41
+count,iF,1);size_t
+xS1=cY3
+GetStackTop();iF.Start(tA1);FPO(tZ3(i53,"Calculating result for %ld...\n",count));size_t
+xT2=yF
 count
-c61
+t91
 size_t
-n_excess
-t13
-x5
-xE1;if(n_excess>0||x62!=xE1-1){synth.DoPopNMov(xE1-1,x62);}
+n_excess=cY3
+xP
+xS1;if(n_excess>0||xT2!=xS1-1){cY3
+DoPopNMov(xS1-1,xT2);}
 }
-if(eT2)lK1
-eQ.op_flip,1);}
+if(eZ2)n41
+t1.op_flip,1);}
 }
 }
+#endif
+#ifndef FPOptimizer_ValueRangeHH
+#define FPOptimizer_ValueRangeHH
+tN{lA3
+lF3{iU
+e22
+Comp{}
+;tJ1>e22
+Comp<nB
+cLess>lE3<nA
+cLessOrEq>lE3<=nA
+cGreater>lE3>nA
+cGreaterOrEq>lE3>=nA
+cEqual>lE3==nA
+i21>lE3!=b;}
+}
+;}
+x33
+e22
+rangehalf{x73
+val;bool
+known;rangehalf():val(),known(false){}
+rangehalf(tS1):val(v),known(true){tL1
+lG3
+tS1){known=true;val=v;}
+lG3
+x73(eK1
+x73
+nO
+iN1
+lG3
+x73(eK1
+l92
+nO
+iN1
+iU
+void
+set_if(x73
+v,x73(eK1
+x73
+nO&&lF3::Comp<Compare>()(val,v)iN1
+iU
+void
+set_if(tS1,x73(eK1
+l92
+nO&&lF3::Comp<Compare>()(val,v)iN1}
+n11
+e22
+range{rangehalf
+xN
+min,max;range():min(),max(){}
+range(x73
+mi,x73
+ma):min(mi),max(ma){}
+range(bool,x73
+ma):min(),max(ma){}
+range(x73
+mi,bool):min(mi),max(){}
+void
+set_abs();void
+set_neg();}
+n11
+bool
+IsLogicalTrueValue
+nV2
+range
+xN&p,bool
+abs)n11
+bool
+IsLogicalFalseValue
+nV2
+range
+xN&p,bool
+abs);}
 #endif
 #ifndef FPOptimizer_RangeEstimationHH
 #define FPOptimizer_RangeEstimationHH
-iO2
-FPoptimizer_CodeTree{enum
-TriTruthValue{IsAlways,yO3,Unknown}
-;yT1
-range{eS1
-min,max;bool
-iV2,has_max;range():min(),max(),iV2(false
-cS3
-false)x43
-eS1
-mi,eS1
-ma):min(mi),max(ma),iV2(true
-cS3
-true)x43
-bool,eS1
-ma):min(),max(ma),iV2(false
-cS3
-true)x43
-eS1
-mi,bool):min(mi),max(),iV2(true
-cS3
-false){}
-void
-set_abs();void
-set_neg();x72
-set_min_max_if(iL
-x72
-set_min_if(iL
-x72
-set_max_if(iL
-void
-set_min(eS1(lN
-void
-set_max(eS1(lN
-void
-y82
-eS1(lN}
-;yV1
-inline
+tN{enum
+TriTruthValue{iI2,IsNever,Unknown}
+n11
+range
+xN
+CalculateResultBoundaries
+nV2
+t2
+n11
 bool
-IsLogicalTrueValue
-i01
-range
-x8&p
-cD2
-if(p
-y41
-p.min>=0.5
-nZ2
-true;if(!abs&&p
-iW2<=-0.5
-nZ2
-true
-l81
-false;}
-yV1
-inline
-bool
-IsLogicalFalseValue
-i01
-range
-x8&p
-cD2
-if(abs
-nZ2
-p
-iW2<0.5;else
-return
-p
-y41
-p
-i0&&p.min>-0.5
-xQ3<0.5;}
-yV1
-range
-x8
-iM
-const
-eR;xG1
 IsLogicalValue
-i01
-eR;yV1
+nV2
+t2
+n11
 TriTruthValue
 GetIntegerInfo
-i01
-eR;y51
+nV2
+t2
+n11
+xT1
 GetEvennessInfo
-i01
-eR{if(!tree
-y21
-nZ2
-Unknown;yF1=yZ3;if(isEvenInteger(value)nZ2
-x82
-isOddInteger(value)nZ2
-l71
-y51
+nV2
+t2{if(!tree
+t51)return
+Unknown;yZ1=cS3;if(isEvenInteger(value
+y33
+isOddInteger(value)eK
+x33
+xT1
 GetPositivityInfo
-i01
-eR{range
-x8
-p=iM
-tree);if(p
-y41
-p.min
-cH1
-nZ2
-x82
+nV2
+t2{range
+xN
+p=CalculateResultBoundaries
+yN2
+if(p
+eT&&p
+xQ>=x73(y33
 p
-iW2
-t83
-nZ2
-l71
-y51
-GetLogicalValue(lM1&tree
-cD2
-range
-x8
-p=iM
-tree);if(IsLogicalTrueValue(p,abs)nZ2
-x82
-IsLogicalFalseValue(p,abs)nZ2
-l71}
+lJ1
+iY)eK
+x33
+xT1
+GetLogicalValue
+eG3
+tree,bool
+abs){range
+xN
+p=CalculateResultBoundaries
+yN2
+if(IsLogicalTrueValue(p,abs
+y33
+IsLogicalFalseValue(p,abs)eK}
 #endif
 #ifndef FPOptimizer_ConstantFoldingHH
 #define FPOptimizer_ConstantFoldingHH
-iO2
-FPoptimizer_CodeTree{xB1
-ConstantFolding(eR;}
+tN{tD1
+ConstantFolding(t2;}
 #endif
-iO2{xQ
-using
-iO2
-FPoptimizer_CodeTree;e92
-ComparisonSetBase{enum{e93=0x1,Eq_Mask=0x2,Le_Mask=0x3,eA3=0x4,eB3=0x5,Ge_Mask=0x6}
+lA3{using
+lA3
+FUNCTIONPARSERTYPES;using
+tN;e22
+ComparisonSetBase{enum{eD3=0x1,Eq_Mask=0x2,Le_Mask=0x3,eE3=0x4,eF3=0x5,Ge_Mask=0x6}
 ;static
 int
 Swap_Mask(int
-m){return(m&Eq_Mask)|((m&e93)?eA3:0)|((m&eA3)?e93:0);}
+m)yY(m&Eq_Mask)|((m&eD3)?eE3:0)|((m&eE3)?eD3:0);}
 enum
-yY1{Ok,BecomeZero,BecomeOne,xA2
-n23
-lV2{cond_or,i32,i42,i52}
+cB1{Ok,BecomeZero,BecomeOne,nI1}
+;enum
+nR2{cond_or,iJ2,iK2,iL2}
 ;}
-;yT1
+n11
+e22
 ComparisonSet:public
-ComparisonSetBase{e92
-eU2
-nG1
-a
-yJ
+ComparisonSetBase{e22
+t02{CodeTree
+xN
+a;CodeTree
+xN
 b;int
-relationship;eU2():a(),b(),relationship(){}
+relationship;t02():a(),b(),relationship(){}
 }
-;yG<eU2>cW;e92
-Item
-nG1
+;std
+xM3<t02>t3;e22
+Item{CodeTree
+xN
 value;bool
-yN2;Item():value(),yN2(false){}
+cG2;Item():value(),cG2(false){}
 }
-;yG<Item>cB1;int
-xF1;ComparisonSet():cW(),cB1(),xF1(0){}
-yY1
-AddItem(lM1&a,bool
-yN2,lV2
+;std
+xM3<Item>cN1;int
+xU1;ComparisonSet():t3(),cN1(),xU1(0){}
+cB1
+AddItem
+eG3
+a,bool
+cG2,nR2
 type){for(size_t
-c=0;c<cB1
-eW2
-c)if(cB1[c].value
-iA
-a)){if(yN2!=cB1[c].yN2){iN
-cM1
+c=0;c<cN1.size();++c)if(cN1[c].value
+xD
+a)){if(cG2!=cN1[c].cG2)iG
+cZ1
 case
-i52:cB1.erase(cB1.begin()+c);xF1+=1
-n01
+iL2:cN1.erase(cN1.begin()+c);xU1
+cH2
 case
-i32:case
-i42:cN1}
+iJ2:case
+iK2:e01}
 }
 return
-xA2;}
+nI1;}
 Item
-pole;pole.value=a;pole.yN2=yN2;cB1
-yL
-pole)l81
+pole;pole.value=a;pole.cG2=cG2;cN1.push_back(pole)eL
 Ok;}
-yY1
-AddRelationship(yK2
-a,yK2
+cB1
+AddRelationship(CodeTree
+xN
+a,CodeTree
+xN
 b,int
-eY1,lV2
-type){iN
-cT3
-7)cM1
+tV1,nR2
+type)iG
+if(tV1==7)cZ1
 lC
-i52:cT3
-7){xF1+=1
-n01}
+iL2:if(tV1==7){xU1
+cH2}
 lC
-i32:case
-i42:cT3
-0)cN1
-nM3
-if(!(a.GetHash()<b.GetHash())){a.swap(b);eY1=Swap_Mask(eY1);}
+iJ2:case
+iK2:if(tV1==0)e01
+yY3
+if(!(a.GetHash()<b.GetHash())){a.swap(b);tV1=Swap_Mask(tV1);}
 for(size_t
-c=0;c<cW
-eW2
-c){if(cW[c].a
-iA
-a)&&cW[c].b
-iA
-b)){iN{int
-nS3=x92|eY1;if(nS3==7)cM1
-x92=nS3;nM3
-case
-i32:case
-i42:{int
-nS3=x92&eY1;if(nS3==0)cN1
-x92=nS3;nM3
-case
-i52:{int
-newrel_or=x92|eY1;int
-xB2=x92&eY1;iQ1
-5&&xB2==0){x92=eB3
-n01}
-iQ1
-7&&xB2==0){xF1+=1;cW.erase(cW.begin()+c)n01}
-iQ1
-7&&xB2==Eq_Mask){x92=Eq_Mask;xF1+=1
-n01}
-y81}
-}
+c=0;c<t3.size();++c){if(t3[c].a
+xD
+a)&&t3[c].b
+xD
+b))iG{int
+yH3=xU2|tV1;if(yH3==7)cZ1
+xU2=yH3
+tM2
+eP3
+iJ2:case
+iK2:{int
+yH3=xU2&tV1;if(yH3==0)e01
+xU2=yH3
+tM2
+eP3
+iL2:{int
+newrel_or=xU2|tV1;int
+xV2=xU2&tV1;lI2
+5&&xV2==0){xU2=eF3
+eL
+nI1;}
+lI2
+7&&xV2==0){xU1+=1;t3.erase(t3.begin()+c)eL
+nI1;}
+lI2
+7&&xV2==Eq_Mask){xU2=Eq_Mask;xU1
+cH2}
+iS2}
 return
-xA2;}
+nI1;}
 }
-eU2
-comp;comp.a=a;comp.b=b;comp.relationship=eY1;cW
-yL
-comp)l81
+t02
+comp;comp.a=a;comp.b=b;comp.relationship=tV1;t3.push_back(comp)eL
 Ok;}
 }
-;nT1
-eS1,typename
+;nX1
+x73,typename
 CondType>bool
-ConstantFolding_LogicCommon(yK2&tree,CondType
-xA1,bool
-xC2){bool
-should_regenerate
-i13
-ComparisonSet
-x8
-comp
-eV3
-typename
-yB
-yY1
-cC3=yB
-Ok;lM1&atree=xI2;switch(atree
-nE
-iY2
+ConstantFolding_LogicCommon(n91
+tree,CondType
+xF1,bool
+xW2){bool
+should_regenerate=false;ComparisonSet
+xN
+comp;e23{typename
+yQ
+cB1
+e13=yQ
+Ok;xG2
+atree=t5
+a);switch(atree
+nC
+eJ3
 cEqual
-lG
+lH
 Eq_Mask
-eB2
-t71
-lG
-eB3
-eB2
+tN2
+i21
+lH
+eF3
+tN2
 cLess
-lG
-e93
-eB2
+lH
+eD3
+tN2
 cLessOrEq
-lG
+lH
 Le_Mask
-eB2
+tN2
 cGreater
-lG
-eA3
-eB2
+lH
+eE3
+tN2
 cGreaterOrEq
-lG
+lH
 Ge_Mask
-eB2
-cNot:cC3
-y11
-lD
+tN2
+cNot:e13
+e11
+l8
 0),true
-eB2
-cNotNot:cC3
-y11
-lD
-0),false,xA1);break;default:if(xC2||IsLogicalValue(atree))cC3
-y11,false,xA1);yN3(cC3){ReplaceTreeWithZero
-xP3
-ReplaceWithImmed(0)l81
-true;ReplaceTreeWithOne
-xP3
-ReplaceWithImmed(1);nW
-yB
+tN2
+cNotNot:e13
+e11
+l8
+0),false,xF1
+tK2
+default:if(xW2||IsLogicalValue(atree))e13
+e11,false,xF1);iY2
+e13){ReplaceTreeWithZero:iH3
+0)eL
+true;ReplaceTreeWithOne:iH3
+1);x0
+yQ
 Ok:lC
-yB
-BecomeZero:yP3
-yB
-BecomeOne
-tY
-yB
-xA2:c11
-nM3}
+yQ
+BecomeZero
+cQ
+yQ
+BecomeOne:iE
+yQ
+nI1:cF1
+yY3}
 if(should_regenerate){
 #ifdef DEBUG_SUBSTITUTIONS
 std::cout<<"Before ConstantFolding_LogicCommon: "
-eS
+nX
 #endif
-if(xC2){tree.DelParams();}
+if(xW2){tree.DelParams();}
 else{for
-xU{lM1&atree=xI2;if(IsLogicalValue(atree))nF1);}
+yP{xG2
+atree=t5
+a);if(IsLogicalValue(atree))nG1);}
 }
 for
-xK2
-0;a<comp.cB1
-eW2
-a){if(comp.cB1[a].yN2)eV2
-cNot);r
-i4
-r.cO1
-tP1!xC2)eV2
-cNotNot);r
-i4
-r.cO1
+c12
+0;a<comp.cN1.size();++a){if(comp.cN1[a].cG2){cC1
+cNot);r.cE
+r.t7
+iZ1!xW2){cC1
+cNotNot);r.cE
+r.t7
 else
-tree
-i4}
+tree.cE}
 for
-xK2
-0;a<comp.cW
-eW2
-a)eV2
-cNop);switch(comp.cW[a
-tO
-iY2
-yB
-e93:r
-tU
-cLess);lC
-yB
+c12
+0;a<comp.t3.size();++a){cC1
+cNop);switch(comp.t3[a
+eE
+eJ3
+yQ
+eD3:r
+xC
+cLess
+xX3
 Eq_Mask:r
-tU
-cEqual);lC
-yB
-eA3:r
-tU
-cGreater);lC
-yB
+xC
+cEqual
+xX3
+eE3:r
+xC
+cGreater
+xX3
 Le_Mask:r
-tU
-cLessOrEq);lC
-yB
-eB3:r
-tU
-t71);lC
-yB
+xC
+cLessOrEq
+xX3
+eF3:r
+xC
+i21
+xX3
 Ge_Mask:r
-tU
+xC
 cGreaterOrEq
-nW2
+tK2}
 r
-yA
-comp.cW[a].a);r
-yA
-comp.cW[a].b);r.cO1
-if(comp.xF1!=0)tree
-yT
-eS1(comp.xF1)));
+lP1
+comp.t3[a].a);r
+lP1
+comp.t3[a].b);r.t7
+if(comp.xU1!=0)tree.yJ
+x73(comp.xU1)));
 #ifdef DEBUG_SUBSTITUTIONS
 std::cout<<"After ConstantFolding_LogicCommon: "
-eS
+nX
 #endif
+l62}
 return
-true;}
-nX2
-xG1
-ConstantFolding_AndLogic(tT3(tree.tU3()==cAnd
-tI3()==cAbsAnd)l81
-nJ
-i32,true);}
-xG1
-ConstantFolding_OrLogic(tT3(tree.tU3()==cOr
-tI3()==cAbsOr)l81
-nJ
+eO3
+xV1
+ConstantFolding_AndLogic(iA3(tree.i33()==cAnd||tree.i33()==cAbsAnd)eL
+nM
+iJ2,true);}
+xV1
+ConstantFolding_OrLogic(iA3(tree.i33()==cOr||tree.i33()==cAbsOr)eL
+nM
 cond_or,true);}
-xG1
-ConstantFolding_AddLogicItems(tT3(tree.tU3()==cAdd)l81
-nJ
-i52,false);}
-xG1
-ConstantFolding_MulLogicItems(tT3(tree.tU3()==cMul)l81
-nJ
-i42,false);}
+xV1
+ConstantFolding_AddLogicItems(iA3(tree.i33()==cAdd)eL
+nM
+iL2,false);}
+xV1
+ConstantFolding_MulLogicItems(iA3(tree.i33()==cMul)eL
+nM
+iK2,false);}
 }
 #include <vector>
 #include <map>
 #include <algorithm>
-iO2{xQ
-using
-iO2
-FPoptimizer_CodeTree;e92
+lA3{using
+lA3
+FUNCTIONPARSERTYPES;using
+tN;e22
 CollectionSetBase{enum
-xH1{Ok,xA2}
+xW1{Ok,nI1}
 ;}
-;yT1
+n11
+e22
 CollectionSet:public
-CollectionSetBase{e92
-yZ1
-nG1
-value
-yJ
-xD2;bool
-e2;yZ1():value(),xD2(),e2(false){}
-yZ1(lM1&v,lM1&f):value(v),xD2(f),e2(false){}
+CollectionSetBase{e22
+cD1{CodeTree
+xN
+value;CodeTree
+xN
+xX2;bool
+e0;cD1():value(),xX2(),e0(false){}
+cD1
+eG3
+v,xG2
+f):value(v),xX2(f),e0(false){}
 }
-;std::multimap<fphash_t,yZ1>i8;typedef
+;std::multimap<xO2,cD1>iH;typedef
 typename
-std::multimap<fphash_t,yZ1>::nX3
-xI1;CollectionSet():i8(){}
-xI1
-FindIdenticalValueTo(lM1&value){fphash_t
-hash=value.GetHash();for(xI1
-i=i8.xE2
-hash);i!=i8.cP1
-hash;++i){c51
-iA
+std::multimap<xO2,cD1>::yN3
+xX1;CollectionSet():iH(){}
+xX1
+FindIdenticalValueTo
+eG3
+value){xO2
+hash=value.GetHash();for(xX1
+i=iH.xY2
+hash);i!=iH.e21
+hash;++i){cL1
+xD
 i
-cJ2.value)nZ2
+e82.value
+y03
 i;}
 return
-i8.end();}
+iH.end();}
 bool
 Found
-i01
-xI1&b){return
-b!=i8.end();}
-xH1
-AddCollectionTo(lM1&xD2,const
-xI1&into_which){yZ1&c=into_which
-cJ2;if(c.e2)c.xD2
-eT
-xD2);else
-nG1
+nV2
+xX1&b)yY
+b!=iH.end();}
+xW1
+AddCollectionTo
+eG3
+xX2,const
+xX1&into_which){cD1&c=into_which
+e82;if(c.e0)c.xX2
+cO
+xX2);else{CodeTree
+xN
 add;add
-tU
+xC
 cAdd);add
-yA
-c.xD2);add
-eT
-xD2);c.xD2.swap(add);c.e2=true;}
+lP1
+c.xX2);add
+cO
+xX2);c.xX2.swap(add);c.e0=true;}
 return
-xA2;}
-xH1
-iR1
-lM1&value,lM1&xD2){const
-fphash_t
-hash=value.GetHash();xI1
-i=i8.xE2
-hash);for(;i!=i8.cP1
+nI1;}
+xW1
+lJ2
+xG2
+value,xG2
+xX2){const
+xO2
+hash=value.GetHash();xX1
+i=iH.xY2
+hash);for(;i!=iH.e21
 hash;++i){if(i
-cJ2.value
-iA
-value)nZ2
-AddCollectionTo(xD2,i);}
-i8.nT3,std::make_pair(hash,yZ1(value,xD2)))l81
+e82.value
+xD
+value
+y03
+AddCollectionTo(xX2,i);}
+iH.yI3,std::make_pair(hash,cD1(value,xX2)))eL
 Ok;}
-xH1
-iR1
-lM1&a){return
-iR1
-a,nB1
+xW1
+lJ2
+xG2
+a)yY
+lJ2
+a,nJ1
 1)));}
 }
-;yT1
+n11
+e22
 ConstantExponentCollection{typedef
-yG
-nV1
-nV3;typedef
-std::x51
-xF2;yG<xF2>data;ConstantExponentCollection():data(){}
+eZ
+yL3;typedef
+std::x81
+xZ2;std
+xM3<xZ2>data;ConstantExponentCollection():data(){}
 void
-MoveToSet_Unique
-i01
-eS1&e51&e61){data
-yL
-std::x51(e51()));data.back()eE3.swap(e61
-iR2
-MoveToSet_NonUnique
-i01
-eS1&e51&e61){typename
-yG<xF2>::nX3
-i=std::xE2
-data.i62
-data.end(),cE2,Compare1st());if(i!=data.cP1
-cE2){i
-cJ2.nT3
-cJ2.end(),e61.i62
-e61.end());}
-else{data.nT3,std::x51(cE2,e61));}
+MoveToSet_Unique(l92
+eL1&eM1){data.push_back(std::x81(eL1()));data.back()xU3.swap(eM1
+n13
+MoveToSet_NonUnique(l92
+eL1&eM1){typename
+std
+xM3<xZ2>::yN3
+i=std::xY2
+data.iM2
+data.end(),x93,Compare1st());if(i!=data.e21
+xK2{i
+e82.yI3
+e82.end(),eM1.iM2
+eM1.end());}
+else{data.yI3,std::x81(x93,eM1));}
 }
 bool
 Optimize(){bool
-changed
-i13
-std::sort(data.i62
+changed=false;std::sort(data.iM2
 data.end(),Compare1st());redo:for
-xK2
-0;a<data
-eW2
-a){eS1
+c12
+0;a<data.size();++a
+yZ2
 exp_a=data[a
-eC3
-i82
-exp_a,nY3
-y81
-for(iX2
-a+1;b<data
-eW2
-b){eS1
+eM3;iZ2
+exp_a,x73(1)))continue;for(size_t
+b=a+1;b<data.size();++b
+yZ2
 exp_b=data[b
-eC3;eS1
-xG2=exp_b-exp_a;if(xG2>=fp_abs(exp_a
-n33
-exp_diff_still_probable_integer=xG2*eS1(16);if(eY2
-exp_diff_still_probable_integer)&&!(eY2
-exp_b)&&!eY2
-xG2))){nV3&a_set=iS1;nV3&b_set=data[b
-eD3;
+eM3
+iO2
+y02=exp_b-exp_a;if(y02>=fp_abs(exp_a))break
+iO2
+exp_diff_still_probable_integer=y02*x73(16);if(t12
+exp_diff_still_probable_integer)&&!(t12
+exp_b)&&!t12
+y02))){yL3&a_set=lK2;yL3&b_set=data[b]xU3;
 #ifdef DEBUG_SUBSTITUTIONS
 std::cout<<"Before ConstantExponentCollection iteration:\n"
-;eZ2
+;t42
 cout);
 #endif
-if(isEvenInteger(exp_b)&&!isEvenInteger(xG2+exp_a))nG1
+if(isEvenInteger(exp_b)&&!isEvenInteger(y02+exp_a
+nK
 tmp2;tmp2
-e53
-tmp2
-tI1
+xC
+cMul);tmp2
+i81
 b_set);tmp2
-i72
-tmp;tmp
-tU
+x53
+tmp;x13
 cAbs);tmp
-yY3;tmp
-x02;b_set
-nE3
-1);b_set[0
-t23
-tmp);}
-a_set.insert(a_set.end(),b_set.i62
-b_set.end());nV3
-b_copy=b_set;data.erase(data.begin()+b);MoveToSet_NonUnique(xG2,b_copy);yI1
+nR3;tmp
+x22);b_set.e93
+1);b_set[0].nS3;}
+a_set.insert(a_set.end(),b_set.iM2
+b_set.end());yL3
+b_copy=b_set;data.erase(data.begin()+b);MoveToSet_NonUnique(y02,b_copy);xD2
 #ifdef DEBUG_SUBSTITUTIONS
 std::cout<<"After ConstantExponentCollection iteration:\n"
-;eZ2
+;t42
 cout);
 #endif
-e5}
+goto
+redo;}
 }
 }
 return
 changed;}
 #ifdef DEBUG_SUBSTITUTIONS
 void
-eZ2
+t42
 ostream&out){for
-xK2
-0;a<data
-eW2
-a){out.precision(12);out<<data[a
-eC3<<": "
-;eW3
-iS1
-eW2
-b){if(b>0)out<<'*';xE3(iS1[b],out);}
+c12
+0;a<data.size();++a){out.precision(12);out<<data[a
+eM3<<": "
+;eN3
+lK2.size();++b){if(b>0)out<<'*'i63
+lK2[b],out);}
 out<<std::endl;}
 }
 #endif
 }
-;yV1
+n11
 static
-yK2
-x61
-yK2&value,bool&xG){switch(value
-nE
-iY2
-cPow:nG1
-cE2=value
-lD
-1);value.y71
-l81
-cE2
-cM3
-cRSqrt:value.y71;xG=true
-l81
-nB1-0.5));case
-cInv:value.y71;xG=true
-l81
-nB1-1));default:nM3
-return
-nB1
-1))eI2
-void
-e71
-e81&mul,lM1&tree,lM1&xD2,bool&c01
-bool&xG){for
-yS
-nG1
+CodeTree
+xN
+x91
+n91
+value,bool&xT
+t63
 value
-nW1
-a))yJ
-cE2(x61
-value,xG));if(!xD2
-y21||xD2.xJ1!=1.0)nG1
-cQ1;cQ1
-e53
-cQ1
-eT
-cE2);cQ1
-eT
-xD2);cQ1
-x02;cE2.swap(cQ1);}
+nC
+eJ3
+cPow
+yE1
+xN
+e92
+value
+l8
+1);value.yQ1
+eL
+x93;eP3
+cRSqrt:value.yQ1;xT=true
+eL
+nJ1-0.5));case
+cInv:value.yQ1;xT=true
+eL
+nJ1-1));default:yY3
+return
+nJ1
+1));}
+cJ1
+void
+eN1
+eO1&mul,xG2
+tree,xG2
+xX2,bool&cE1
+bool&xT){e23{CodeTree
+xN
+value(t5
+a)cP
+x93(x91
+value,xT));if(!xX2
+t51||xX2.xY1!=x73(1.0
+nK
+e41;e41
+xC
+cMul);e41
+cO
+xK2;e41
+cO
+xX2);e41
+x22)cX1.swap(e41);}
 #if 0 /* FIXME: This does not work */
-c51
-nE==cMul){if(1){bool
-exponent_is_even=cE2
-y21&&isEvenInteger(cE2.xJ1);eW3
-value.c81{bool
-tmp=false
-yJ
+cL1
+nC==cMul){if(1){bool
+exponent_is_even=x93
+t51&&isEvenInteger(x93.xY1);eN3
+value
+yO3{bool
+tmp=false;CodeTree
+xN
 val(value
-lD
-b))yJ
-exp(x61
+l8
+b)cP
+exp(x91
 val,tmp));if(exponent_is_even||(exp
-y21&&isEvenInteger(exp.xJ1)))nG1
-cQ1;cQ1
-e53
-cQ1
-eT
-cE2);cQ1
-yA
-exp);cQ1.ConstantFolding();if(!cQ1
-y21||!isEvenInteger(cQ1.xJ1)){goto
+t51&&isEvenInteger(exp.xY1)nK
+e41;e41
+xC
+cMul);e41
+cO
+xK2;e41
+lP1
+exp);e41.ConstantFolding();if(!e41
+t51||!isEvenInteger(e41.xY1)){goto
 cannot_adopt_mul;}
 }
 }
 }
-e71
-mul,value,cE2,c01
-xG);}
+eN1
+mul,value,x93,cE1
+xT);}
 else
 cannot_adopt_mul:
 #endif
-{if(mul.iR1
-value,cE2)==CollectionSetBase::xA2)c11}
+{if(mul.lJ2
+value,xK2==CollectionSetBase::nI1)cF1}
 }
 }
-xG1
-ConstantFolding_MulGrouping(eR{bool
-xG
-i13
-bool
-should_regenerate
-i13
-e81
-mul;e71
-mul,tree,nB1
-1)),c01
-xG);typedef
-std::pair<yK2,yG
-nV1>e91;typedef
-std::multimap<fphash_t,e91>cC1;cC1
-i9;xH2
-e81::xI1
-j=mul.i8.nW3
-j!=mul.i8.end();++j)nG1&value=j
-cJ2.value
-yJ&cE2=j
-cJ2.xD2;if(j
-cJ2.e2)cE2
-x02;const
-fphash_t
-eA1=cE2.GetHash();typename
-cC1::nX3
-i=i9.xE2
-eA1);for(;i!=i9.cP1
-eA1;++i)if(i
-cJ2.first
-iA
-cE2)){if(!cE2
-y21||!cR1.xJ1,nY3
-c11
+xV1
+ConstantFolding_MulGrouping(t2{bool
+xT=false;bool
+should_regenerate=false;eO1
+mul;eN1
+mul
+e53,nJ1
+1)),cE1
+xT);typedef
+std::pair<CodeTree
+xN,eZ>eP1;typedef
+std::multimap<xO2,eP1>cO1;cO1
+iI;y12
+eO1::xX1
+j=mul.iH.yM3
+j!=mul.iH.end();++j){n91
+value=j
+e82.value;n91
+e92
+j
+e82.xX2;if(j
+e82.e0)x93
+x22);const
+xO2
+eQ1=x93.GetHash();typename
+cO1::yN3
+i=iI.xY2
+eQ1);for(;i!=iI.e21
+eQ1;++i)if(i
+e82.first
+xD
+xK2){if(!x93
+t51||!e51.xY1,x73(1)))cF1
 i
-cJ2
-eE3
-yL
-value);goto
+e82
+xU3.push_back(value);goto
 skip_b;}
-i9.nT3,std::make_pair(eA1,std::make_pair(cE2,yG
-nV1(size_t(1),value))));skip_b:;}
+iI.yI3,std::make_pair(eQ1,std::make_pair(x93,eZ(size_t(1),value))));skip_b:;}
 #ifdef FP_MUL_COMBINE_EXPONENTS
 ConstantExponentCollection
-x8
-cS1;xH2
-cC1::nX3
-j,i=i9.nW3
-i!=i9.end();i=j){j=i;++j;e91&list=i
-cJ2;if
-eD2
-y21)c21
-list.first.xJ1;if(!(cE2==eS1(0)))cS1.MoveToSet_Unique(cE2,list
-eE3);i9.erase(i);}
+xN
+e61;y12
+cO1::yN3
+j,i=iI.yM3
+i!=iI.end();i=j){j=i;++j;eP1&list=i
+e82;if
+yQ3
+lM1
+e92
+list.first.xY1;if(!(x93==xH1)e61.MoveToSet_Unique(x93,list
+xS3
+iI.erase(i);}
 }
-if(cS1.Optimize())c11
+if(e61.Optimize())cF1
 #endif
-if(should_regenerate)nG1
-before=tree;before.iY
+if(should_regenerate
+t71
+before=tree;before.l61
 #ifdef DEBUG_SUBSTITUTIONS
 std::cout<<"Before ConstantFolding_MulGrouping: "
-;xE3(before)lN1"\n"
+i63
+before)xI1"\n"
 ;
 #endif
-tree.DelParams();xH2
-cC1::nX3
-i=i9.nW3
-i!=i9.end();++i){e91&list=i
-cJ2;
+tree.DelParams();y12
+cO1::yN3
+i=iI.yM3
+i!=iI.end();++i){eP1&list=i
+e82;
 #ifndef FP_MUL_COMBINE_EXPONENTS
 if
-eD2
-y21)c21
-list.first.xJ1;if(cE2==eS1(0))y81
-if(cR1,nY3{tree.AddParamsMove(list
-eE3);y81}
-}
+yQ3
+lM1
+e92
+list.first.xY1;if(x93==xH1
+continue;if(e51
+nB2
+tree.AddParamsMove(list
+xU3
+iQ2}
 #endif
-yK2
+CodeTree
+xN
 mul;mul
-e53
-mul
-tI1
+xC
+cMul);mul
+i81
 list
-eE3);mul
-x02;if(xG&&list.first
-tF3
-eD2.xJ1==eS1(1)/eS1(3))nG1
+xS3
+mul
+x22);if(xT&&list.first
+t51){if
+yQ3.xY1==x73(1)/x73(3
+nK
 cbrt;cbrt
-tU
-cCbrt);cbrt
-t02;cbrt.yB3
-cbrt);y81
-cR
-0.5))nG1
+xC
+cCbrt);cbrt.e9
+cbrt
+iJ3
+cbrt)y7
+0.5
+nK
 sqrt;sqrt
-tU
-cSqrt);sqrt
-t02;sqrt.yB3
-sqrt);y81
-cR-0.5))nG1
+xC
+cSqrt);sqrt.e9
+sqrt
+iJ3
+sqrt)y7-0.5
+nK
 rsqrt;rsqrt
-tU
-cRSqrt);rsqrt
-t02;rsqrt.yB3
-rsqrt);y81
-cR-1))nG1
+xC
+cRSqrt);rsqrt.e9
+rsqrt
+iJ3
+rsqrt)y7-1
+nK
 inv;inv
-tU
-cInv);inv
-t02;inv.yB3
-inv);y81}
-}
-yK2
+xC
+cInv);inv.e9
+inv
+iJ3
+inv
+iQ2}
+CodeTree
+xN
+pow;pow
+xC
+cPow);pow.e9
 pow
-yB2
-t02;pow
-yA
-list.first);pow.yB3
+lP1
+list.first);pow
+iJ3
 pow);}
 #ifdef FP_MUL_COMBINE_EXPONENTS
-i9.clear()c23
-0;a<i2
-eW2
-a)c21
-i2[a
-eC3;if(cR1,nY3{tree.AddParamsMove(i2[a
-eD3);y81}
-yK2
+iI.clear()c02
+0;a<iC.size();++a
+yZ2
+e92
+iC[a
+eM3;if(e51
+nB2
+tree.AddParamsMove(iC[a]xU3
+iQ2
+CodeTree
+xN
 mul;mul
-e53
+xC
+cMul);mul
+i81
+iC[a]xS3
 mul
-tI1
-i2[a
-eD3);mul
-i72
-pow
-yB2
-t02;pow
-yT
-cE2));pow.yB3
+x53
+pow;pow
+xC
+cPow);pow.e9
+pow.yJ
+xK2);pow
+iJ3
 pow);}
 #endif
 #ifdef DEBUG_SUBSTITUTIONS
 std::cout<<"After ConstantFolding_MulGrouping: "
-eS
+nX
 #endif
 return!tree
-iA
+xD
 before);}
-nX2
-xG1
-ConstantFolding_AddGrouping(eR{bool
-should_regenerate
-i13
-e81
-add
-eV3
-if
-nW1
-a)nE==cMul)y81
-if(add.AddCollection
-nW1
-a))==CollectionSetBase::xA2)c11}
-yG<bool>remaining(iT);size_t
-tB=0
-eV3
-lM1&n83=xI2;if(n83
-nE==cMul){eW3
-xX1
-c81{if(n83
-lD
-b)y21)y81
-typename
-e81::xI1
-c=add.FindIdenticalValueTo(n83
-lD
-b));if(add.Found(c))nG1
-tmp(n83
-yO
-CloneTag());tmp.iH1
+return
+eO3
+xV1
+ConstantFolding_AddGrouping(t2{bool
+should_regenerate=false;eO1
+add;e23{if(t5
+a)nC==cMul
+c42
+add.lJ2
+t5
+a))==CollectionSetBase::nI1)cF1}
+xP3
+remaining(t6);size_t
+tU=0;e23{xG2
+xA3=t5
+a);if(xA3
+nC==cMul){eN3
+xA3
+yO3{if(xA3
+l8
+b)t51)continue;typename
+eO1::xX1
+c=add.FindIdenticalValueTo(xA3
+l8
+b));if(add.Found(c
+nK
+tmp(xA3
+yG
+CloneTag());tmp.l93
 b);tmp
-x02;add.AddCollectionTo(tmp,c);c11
+x22);add.AddCollectionTo(tmp,c);cF1
 goto
 done_a;}
 }
-remaining[a]=true;tB+=1;done_a:;}
+remaining[a]=true;tU+=1;done_a:;}
 }
-if(tB>0){if(tB>1){yG<std::pair<yK2,size_t> >nV;std::multimap<fphash_t,size_t>eB1;bool
-l13
-i13
-t12{eW3
-xI2.c81{lM1&p=xI2
-lD
+if(tU>0){if(tU>1){std
+xM3<std::pair<CodeTree
+xN,size_t> >nZ;std::multimap<xO2,size_t>eR1;bool
+lH3=false;e23
+l32{eN3
+t5
+a)yO3{xG2
+p=t5
+a)l8
 b);const
-fphash_t
-p_hash=p.GetHash();for(std::multimap<fphash_t,size_t>::const_iterator
-i=eB1.xE2
-p_hash);i!=eB1.cP1
-p_hash;++i){if(nV[i
-cJ2
-eC3
-iA
-p)){nV[i
-cJ2
-eD3+=1;l13=true;goto
+xO2
+p_hash=p.GetHash();for(std::multimap<xO2,size_t>::const_iterator
+i=eR1.xY2
+p_hash);i!=eR1.e21
+p_hash;++i){if(nZ[i
+e82
+eM3
+xD
+p)){nZ[i
+e82]xU3+=1;lH3=true;goto
 found_mulgroup_item_dup;}
 }
-nV
-yL
-std::make_pair(p,size_t(1)));eB1.insert(std::make_pair(p_hash,nV
-yA3-1));found_mulgroup_item_dup:;}
+nZ.push_back(std::make_pair(p,size_t(1)));eR1.insert(std::make_pair(p_hash,nZ.size()-1));found_mulgroup_item_dup:;}
 }
-if(l13)nG1
-cK2;{size_t
+if(lH3
+t71
+eA2;{size_t
 max=0;for(size_t
-p=0;p<nV
-eW2
-p)if(nV[p
-eD3<=1)nV[p
-eD3=0;else{nV[p
-eD3*=nV[p
-eC3.xT2;if(nV[p
-eD3>max){cK2=nV[p
-eC3;max=nV[p
-eD3;}
+p=0;p<nZ.size();++p)if(nZ[p]xU3<=1)nZ[p]xU3=0;else{nZ[p]xU3*=nZ[p
+eM3.y82;if(nZ[p]xU3>max){eA2=nZ[p
+eM3;max=nZ[p]xU3;}
 }
 }
-yK2
+CodeTree
+xN
 group_add;group_add
-tU
+xC
 cAdd);
 #ifdef DEBUG_SUBSTITUTIONS
 std::cout<<"Duplicate across some trees: "
-;xE3(cK2)lN1" in "
-eS
+i63
+eA2)xI1" in "
+nX
 #endif
-t12
-eW3
-xI2.c81
-if(cK2
-iA
-xI2
-lD
-b)))nG1
-tmp
-nW1
-a)yO
-CloneTag());tmp.iH1
+e23
+l32
+eN3
+t5
+a)yO3
+if(eA2
+xD
+t5
+a)l8
+b)nK
+tmp(t5
+a)yG
+CloneTag());tmp.l93
 b);tmp
-x02;group_add
-yA
-tmp);remaining[a]i13
-nM3
+x22);group_add
+lP1
+tmp);remaining[a]=false
+tM2}
 group_add
-i72
+x53
 group;group
-e53
-group
-yA
-cK2);group
-yA
+xC
+cMul);group
+lP1
+eA2);group
+lP1
 group_add);group
-x02;add.iR1
-group);c11}
+x22);add.lJ2
+group);cF1}
 }
-t12{if(add.AddCollection
-nW1
-a))==CollectionSetBase::xA2)c11}
+e23
+l32{if(add.lJ2
+t5
+a))==CollectionSetBase::nI1)cF1}
 }
 if(should_regenerate){
 #ifdef DEBUG_SUBSTITUTIONS
 std::cout<<"Before ConstantFolding_AddGrouping: "
-eS
+nX
 #endif
-tree.DelParams();xH2
-e81::xI1
-j=add.i8.nW3
-j!=add.i8.end();++j)nG1&value=j
-cJ2.value
-yJ&coeff=j
-cJ2.xD2;if(j
-cJ2.e2)coeff
-x02;if(coeff
-tF3(fp_equal(coeff.xJ1,eS1(0)))y81
-if(fp_equal(coeff.xJ1,nY3{tree
-yA
-value);y81}
-}
-yK2
+tree.DelParams();y12
+eO1::xX1
+j=add.iH.yM3
+j!=add.iH.end();++j){n91
+value=j
+e82.value;n91
+coeff=j
+e82.xX2;if(j
+e82.e0)coeff
+x22);if(coeff
+t51){iZ2
+coeff.xY1,xH1
+c42
+lN3
+coeff.xY1
+nB2
+tree
+lP1
+value
+iQ2}
+CodeTree
+xN
 mul;mul
-e53
-mul
-yA
+xC
+cMul);mul
+lP1
 value);mul
-yA
-coeff);mul.Rehash(tT
-t02;}
+lP1
+coeff);mul
+x22);tree.e9}
 #ifdef DEBUG_SUBSTITUTIONS
 std::cout<<"After ConstantFolding_AddGrouping: "
-eS
+nX
 #endif
+l62}
 return
-true;}
-nX2}
-iO2{xQ
-using
-iO2
-FPoptimizer_CodeTree;xG1
-ConstantFolding_IfOperations(tT3(tree.tU3()==cIf
-tI3()==i03);for(;;){l23
-nE==cNot){tH
-cIf
-tT
-lD
-0).xO2
-0)lD
-0)tT
-lD
-1).swap
-nW1
+eO3}
+lA3{using
+lA3
+FUNCTIONPARSERTYPES;using
+tN
+n11
+bool
+ConstantFolding_IfOperations(iA3(tree.i33()==cIf||tree.i33()==iF3);for(;;){if(nC3==cNot){tW2
+cIf);t5
+0).eB2
+0)y22
+t5
+1).swap(t5
+2));}
+iZ1
+t5
+0)cU1{tW2
+iF3);t5
+0).eB2
+0)y22
+t5
+1).swap(t5
 2));}
 else
-l23
-cG1{tH
-i03
-tT
-lD
-0).xO2
-0)lD
-0)tT
-lD
-1).swap
-nW1
-2));}
-else
-t62
-tX
-0),cV2
-i03))tF1
-tree.xO2
-1));nW
-yO3
-xP3
-xO2
-2));nW
-lX1
-l23
-nE==cIf||e72
-nE==i03)nG1
-cond
-cL2
-0)yJ
-l53;l53
-xP2==cIf?cNotNot:cAbsNotNot);l53
-x63
-x03;ConstantFolding(l53)yJ
-truth_b;truth_b
-xP2==cIf?cNotNot:cAbsNotNot);truth_b
-x63
-x73
-ConstantFolding(truth_b);if(l53
-y21||truth_b
-y21)nG1
-eU;eU
-xP2);eU
-x63
-x03;eU
-yC
-1));eU
-yC
-2));eU
-i72
-eV;eV
-xP2);eV
-x63
-x73
-eV
-yC
-1));eV
-yC
-2));eV
-y3
-cond
-nE
-xK1
-0,cond
-lD
-0)tT.nC1
-1,eU
-tT.nC1
-2,eV)nS2}
-if
-nW1
-1)nE==tree
-lD
-2)nE&&nW1
-1)nE==cIf||tree
-lD
-1)nE==i03))nG1&cM2
-cL2
-1)yJ&leaf2
-cL2
-2);if
-x83
-0).xO
-0))&&x83
-1).xO
-1))||cM2
-lD
-2).xO
-2))))nG1
-eU;eU
-xQ2
-eU
-yC
-0));eU
-eT
-cM2
-x03;eU
-eT
-leaf2
-x03;eU
-i72
-eV;eV
-xQ2
-eV
-yC
-0));eV
-eT
-cM2
-x73
-eV
-eT
-leaf2
-x73
-eV
-y3
-cM2
-nE
-xK1
+c22
+lZ1
+0),tC2==iF3))i51
+tree.eB2
+1));x0
+l63
+tree.eB2
+2));x0
+n01
+if(nC3==cIf||nC3==iF3
+t71
+cond=t5
 0
-eF3
-0)tT.nC1
-1,eU
-tT.nC1
-2,eV)nS2
-if
-x83
-1).xO
-1))&&cM2
-lD
-2).xO
-2)))nG1
-eW;eW
-xQ2
-eW
-yA
-e72);eW
-eT
-cM2
-xY3
-eW
-eT
+cP
+lI3;lI3
+tY2==cIf?cNotNot:cAbsNotNot);lI3
+y42
+1));ConstantFolding(lI3
+cP
+lJ3;lJ3
+tY2==cIf?cNotNot:cAbsNotNot);lJ3
+y42
+2));ConstantFolding(lJ3);if(lI3
+t51||lJ3.IsImmed(nK
+t8;t8
+tY2);t8
+y42
+1));t8
+tO3
+t8.nN
+2));t8
+x53
+t9;t9
+tY2);t9
+y42
+2));t9
+tO3
+t9.nN
+2));t9
+x22);tW2
+cond
+nC)l02
+0,cond
+y22
+iN2
+1,t8);iN2
+2,t9
+iX1}
+if(t5
+1)nC==t5
+2)nC&&(t5
+1)nC==cIf||t5
+1)nC==iF3
+nK&iG2=t5
+1
+cP&leaf2=t5
+2);if(iG2
+l8
+0)xG1
+0))&&(iG2
+l8
+1)xG1
+1))||iG2
+l8
+2)xG1
+2))nK
+t8;t8
+l42
+t8.nN
+0));t8
+cO
+iG2
+l8
+1));t8
+cO
 leaf2
-xY3
-eW
-y3
-cM2
-nE
-tT.nC1
-0,eW
-xK1
-2
-eF3
-2)xK1
-1,cM2
-x03
-nS2
-if
-x83
-1).xO
-2))&&cM2
-lD
-2).xO
-1)))nG1
-cN2;cN2
-tU
+l8
+1));t8
+x53
+t9;t9
+l42
+t9.nN
+0));t9
+cO
+iG2
+l8
+2));t9
+cO
 leaf2
-nE==cIf?cNot:yR3);cN2
-eT
+l8
+2));t9
+eR
+SetParam(0,iG2
+y22
+iN2
+1,t8);iN2
+2,t9
+iX1
+if(iG2
+l8
+1)xG1
+1))&&iG2
+l8
+2)xG1
+2)nK
+tA;tA
+l42
+tA
+lP1
+t5
+0));tA
+cO
+iG2
+y22
+tA
+cO
 leaf2
-xY3
-cN2
-i72
-eW;eW
-xQ2
-eW
-yA
-e72);eW
-eT
-cM2
-xY3
-eW
-yA
-cN2);eW
-y3
-cM2
-nE
-tT.nC1
-0,eW
-xK1
-2
-eF3
-2)xK1
-1,cM2
-x03
-nS2}
-yK2&xW
-cL2
-1)yJ&y9
-cL2
-2);if(xW
-iA
-y9)){tree.xO2
-1))nS2
+y22
+tA
+eR
+nK1
+0,tA)l02
+2,iG2
+l8
+2))l02
+1,iG2
+l8
+1)iX1
+if(iG2
+l8
+1)xG1
+2))&&iG2
+l8
+2)xG1
+1)nK
+eC2;eC2
+xC
+leaf2
+nC==cIf?cNot:cK3);eC2
+cO
+leaf2
+y22
+eC2
+x53
+tA;tA
+l42
+tA
+lP1
+t5
+0));tA
+cO
+iG2
+y22
+tA
+lP1
+eC2);tA
+eR
+nK1
+0,tA)l02
+2,iG2
+l8
+2))l02
+1,iG2
+l8
+1)iX1}
+n91
+y6=t5
+1
+cP&yC=t5
+2);if(y6
+xD
+yC)){tree.eB2
+1)iX1
 const
 OPCODE
-op1=xW
-nE;const
+op1=y6
+nC;const
 OPCODE
-op2=y9
-nE;if(op1==op2){if(xW.cT1
-1)nG1
+op2=yC
+nC;if
+c23
+op2){if(y6
+yF1==1
+t71
 lO
-0))xL2
+0));y52
+0))lL2
+n6
+if(y6
+yF1==2&&yC
+yF1==2){if(y6
+l8
 0
-y31)lY
-if(xW.cT1
-2&&y9.cT1
-2){if(xW
-lD
-0)iA
-y9
-lD
-0)))nG1
-param0=xW
-lD
-0)yJ
+nA3
+0)nK
+param0=y6
+l8
+0
+cP
 lO
-1))xL2
+1));y52
+1))lL2
+l12
+param0)n6
+if(y6
+l8
 1
-y31
-tT
-yA
-param0)lY
-if(xW
-lD
-1)iA
-y9
-x03)nG1
-param1=xW
-lD
-1)yJ
+nA3
+1)nK
+param1=y6
+l8
+1
+cP
 lO
-0))xL2
-0
-y31
-tT
-yA
-n41
-tT
-yA
-param1)nS2}
-if(op1==x93
+0));y52
+0))lL2
+l12
+xO1)l12
+param1
+iX1}
+if
+c23
+yU3
 cMul
-iU1
+lM2
 cAnd
-iU1
+lM2
 cOr
-iU1
+lM2
 cAbsAnd
-iU1
+lM2
 cAbsOr
-iU1
+lM2
 cMin
-iU1
-cMax){yG
-nV1
-l63;cC{for(iX2
-y9.cN3
-b-->0;){lW2
-y9
-lD
-b))){if(l63
-cQ3){xW.iY
-y9.iY}
-l63
-yL
-xW
-lD
-a));y9.iH1
-b);xW.iH1
+lM2
+cMax){eZ
+lK3;c9{for(size_t
+b=yC
+yF1;b-->0;){if(y6
+l8
 a
-nW2}
+nA3
+b))){if(lK3
+tK3){y6.l61
+yC.l61}
+lK3.push_back(y6
+nF3
+yC.l93
+b);y6
+nC2
+yY3}
 }
-if(!l63
-cQ3){xW
-x02;y9
-i72
-n41;n41
-xQ2
-n41
-tI1
-tree.iE1));n41
-y3
-op1
-tT
-tI1
-l63)lY}
+if(!lK3
+tK3){y6
+x22);yC
+x53
+xO1;xO1
+l42
+xO1
+i81
+tree.lB2))c7
+SetParamsMove(lK3)n6}
 }
-if(op1==x93
-cMul||(op1==cAnd
-nY1
-y9))||(op1==cOr
-nY1
-y9))){cC
-lW2
-y9)){xW.iY
-xW
-cP3
-xW
-i72
-cD1=y9;y9=tC
-op1==x93
+if
+c23
+yU3
+cMul||c23
+cAnd
+nZ1
+yC))||c23
+cOr
+nZ1
+yC))){c9
+if(y6
+l8
+a)xD
+yC)){y6.l61
+y6
+nC2
+y6
+x53
+cP1=yC;yC=tV
+op1==yU3
 cOr)l9
+op1)l12
+cP1)n6}
+if(c23
+cAnd
+lM2
+cOr)&&op2==cNotNot){n91
+lL3=yC
+l8
+0);c9
+if(y6
+l8
+a)xD
+lL3)){y6.l61
+y6
+nC2
+y6
+x53
+cP1=lL3;yC=tV
 op1
-tT
-yA
-cD1)lY}
-if((op1==cAnd
-iU1
-cOr)&&op2==cNotNot)nG1&l73=y9
-lD
-0);cC
-lW2
-l73)){xW.iY
-xW
-cP3
-xW
-i72
-cD1=l73;y9=tC
-op1
-xA3
-op1
-tT
-yA
-cD1)lY}
+yV3
+op1)l12
+cP1)n6}
 if(op2==cAdd||op2==cMul||(op2==cAnd
-nY1
-xW))||(op2==cOr
-nY1
-xW))){for
-xK2
-y9.tD
-y9
-lD
-a)iA
-xW)){y9.iY
-y9
-cP3
-y9
-i72
-cE1=xW;xW=tC
+nZ1
+y6))||(op2==cOr
+nZ1
+y6))){for
+c12
+yC
+lU1
+yC
+l8
+a)xD
+y6)){yC.l61
+yC
+nC2
+yC
+x53
+cQ1=y6;y6=tV
 op2==cAdd||op2
-xA3
+yV3
+op2)l12
+cQ1)n6}
+if((op2==cAnd||op2==cOr)&&op1==cNotNot){n91
+lM3=y6
+l8
+0)c02
+yC
+lU1
+yC
+l8
+a)xD
+lM3)){yC.l61
+yC
+nC2
+yC
+x53
+cQ1=lM3;y6=tV
 op2
-tT
-yA
-cE1)lY}
-if((op2==cAnd||op2==cOr)&&op1==cNotNot)nG1&l83=xW
-lD
-0)c23
-y9.tD
-y9
-lD
-a)iA
-l83)){y9.iY
-y9
-cP3
-y9
-i72
-cE1=l83;xW=tC
-op2
-xA3
-op2
-tT
-yA
-cE1)lY}
-nX2}
-#include <limits>
-iO2{xQ
-using
-iO2
-FPoptimizer_CodeTree;yV1
-int
-maxFPExponent(){return
-std::numeric_limits
-x8::max_exponent;}
-xG1
-x71
-eS1
-xB3
-cE2){if(base<eS1(0
-iF1
-i82
-xB3(0))||fp_equal(xB3(1))yI
+yV3
+op2)l12
+cQ1)n6}
 return
-cE2>=eS1(maxFPExponent
-x8())/fp_log2(base);}
-xG1
-ConstantFolding_PowOperations(tT3(tree.tU3()==cPow);y2){eS1
-const_value=eG3
-n6,y4
-tT.ReplaceWithImmed(const_value)l81
-false;}
-if(nE1
-fp_equal(y4,nY3{tree.xO2
-0))nS2
-lX&&fp_equal(n6,nY3
-lL
-1)l81
-false;}
-lX&&tree
-lD
-1)nE==cMul){bool
-xR2
-i13
-eS1
-iV1=n6
-yJ
-n83
-cL2
-1)c23
-xX1
-tD
-n83
-lD
-a)xC3
-imm=n83
-lD
-a).xJ1;{if(x71
-iV1,imm
-n33
-iW1=eG3
-iV1,imm)i82
-iW1,eS1(0)))break;if(!xR2){xR2=true;xX1
-iY}
-iV1=iW1;xX1
-iH1
+eO3}
+#include <limits>
+lA3{using
+lA3
+FUNCTIONPARSERTYPES;using
+tN
+n11
+int
+maxFPExponent()yY
+std::numeric_limits
+xN::max_exponent;}
+xV1
+xA1
+x73
+base,x73
+xK2{if(base<xH1
+l62
+iZ2
+base,xH1||lN3
+base,x73(1)y03
+false
+eL
+x93>=x73(maxFPExponent
+xN())/fp_log2(base);}
+xV1
+ConstantFolding_PowOperations(iA3(tree.i33()==cPow);nU&&t5
+1)lM1
+const_value=eT3
+lS,n51);iH3
+const_value)eL
+eO3
+if(eG1
+lN3
+n51
+nB2
+tree.eB2
+0)iX1
+nU&&lN3
+lS
+nB2
+iH3
+1)eL
+eO3
+nU&&t5
+1)nC==cMul){bool
+y62=false
+iO2
+lO2=lS;CodeTree
+xN
+xA3=t5
+1)c02
+xA3
+lU1
+xA3
+l8
+a)lM1
+imm=xA3
+l8
+a).xY1;{if(xA1
+lO2,imm))break
+iO2
+lP2=eT3
+lO2,imm);iZ2
+lP2,xH1)break;if(!y62){y62=true;yJ1
+l61}
+lO2=lP2;yJ1
+l93
 a
-nW2}
-if(xR2){xX1
-Rehash();
+tK2}
+}
+if(y62){yJ1
+xB3;
 #ifdef DEBUG_SUBSTITUTIONS
 std::cout<<"Before pow-mul change: "
-eS
+nX
 #endif
-e72.Become(cU1
-iV1)tT
-lD
-1).Become(n83);
+t5
+0).Become(e71
+lO2));t5
+1).Become(xA3);
 #ifdef DEBUG_SUBSTITUTIONS
 std::cout<<"After pow-mul change: "
-eS
+nX
 #endif
 }
 }
-if(nE1
-e72
-nE==cMul){eS1
-iX1=y4;eS1
-xS2=1.0;bool
-xR2=false
-yJ&n83
-cL2
-0)c23
-xX1
-tD
-n83
-lD
-a)xC3
-imm=n83
-lD
-a).xJ1;{if(x71
-imm,iX1
-n33
-eD1=eG3
-imm,iX1)i82
-eD1,eS1(0)))break;if(!xR2){xR2=true;xX1
-iY}
-xS2*=eD1;xX1
-iH1
-a
-nW2}
-if(xR2){xX1
-Rehash()yJ
-cD3;cD3
-tU
-cPow);cD3
-tI1
-tree.iE1));cD3.y12);tH
-cMul
-tT
-yA
-cD3
-tT
-eT
-cU1
-xS2))nS2}
-l23
-nE==cPow&&nE1
-e72
-lD
-1)xC3
-a
-cL2
-0)lD
-1).xJ1;eS1
-b=y4;eS1
-c=a*b;if(isEvenInteger(a)&&!isEvenInteger(c))nG1
-l93;l93
-tU
-cAbs);l93
-yC
-0)xY3
-l93.Rehash(tT.nC1
-0,l93);}
-else
-tree.SetParam(0,e72
-lD
-0)xK1
-1,cU1
-c));}
-nX2}
-iO2{xQ
-using
+if(eG1
+nC3==cMul
+yZ2
+lQ2=n51
 iO2
-FPoptimizer_CodeTree;e92
-l4{enum
-cO2{MakeFalse=0,MakeTrue=1,t22=2,lC3=3,MakeNotNotP0=4,MakeNotNotP1=5,MakeNotP0=6,MakeNotP1=7,Unchanged=8
-n23
-iY1{Never=0,Eq0=1,Eq1=2,xD3=3,xR3=4}
-;cO2
-if_identical;cO2
-iZ1
-4];e92{cO2
-what:4;iY1
-when:4;}
-tS1,tT1,tU1,tV1;yV1
-cO2
-Analyze(lM1&a,lM1&b)const{if(a
-iA
-b)nZ2
-if_identical;range
-x8
-p0=iM
-a);range
-x8
-p1=iM
-b);if(p0
-i0&&p1.iV2){if(p0.max<p1.min&&iZ1
-0]cJ
-0];if(p0.max<=p1.min&&iZ1
-1]cJ
-1];}
-if(p0
-y41
-p1
-i0){if(p0.min>p1.max&&iZ1
-2]cJ
-2];if(p0.min>=p1.max&&iZ1
-3]cJ
-3];}
-if(IsLogicalValue(a)){if(tS1
-i92
-tS1.when,p1)nZ2
-tS1.what;if(tU1
-i92
-tU1.when,p1)nZ2
-tU1.what;}
-if(IsLogicalValue(b)){if(tT1
-i92
-tT1.when,p0)nZ2
-tT1.what;if(tV1
-i92
-tV1.when,p0)nZ2
-tV1.what;}
+y72=1.0;bool
+y62=false;n91
+xA3=t5
+0)c02
+xA3
+lU1
+xA3
+l8
+a)lM1
+imm=xA3
+l8
+a).xY1;{if(xA1
+imm,lQ2))break
+iO2
+eS1=eT3
+imm,lQ2);iZ2
+eS1,xH1)break;if(!y62){y62=true;yJ1
+l61}
+y72*=eS1;yJ1
+l93
+a
+tK2}
+}
+if(y62){yJ1
+Rehash(cP
+e33;e33
+xC
+cPow);e33
+i81
+tree.lB2));e33
+t82;tW2
+cMul)l12
+e33);tree
+cO
+e71
+y72)iX1}
+if(nC3==cPow&&eG1
+t5
+0)l8
+1)lM1
+a=t5
+0)l8
+1).xY1
+iO2
+b=n51
+iO2
+c=a*b;if(isEvenInteger(a)&&!isEvenInteger(c
+nK
+lO3;lO3
+xC
+cAbs);lO3.nN
+0)y22
+lO3
+x22);iN2
+0,lO3);}
+else
+tree.SetParam(0,t5
+0)l8
+0))l02
+1,e71
+c));}
 return
-Unchanged
-eI2
+eO3}
+lA3{using
+lA3
+FUNCTIONPARSERTYPES;using
+tN;e22
+l4{enum
+eD2{MakeFalse=0,MakeTrue=1,tB2=2,lP3=3,MakeNotNotP0=4,MakeNotNotP1=5,MakeNotP0=6,MakeNotP1=7,xS=8}
+;enum
+lR2{Never=0,Eq0=1,Eq1=2,yW3=3,yX3=4}
+;eD2
+if_identical;eD2
+lS2
+4];e22{eD2
+what:4;lR2
+when:4;}
+iF1,iG1,iH1,iI1
+n11
+eD2
+Analyze
+eG3
+a,xG2
+b)const{if(a
+xD
+b
+y03
+if_identical;range
+xN
+i3
+a);range
+xN
+p1=CalculateResultBoundaries(b);if(p0
+lJ1&&p1
+eT){if(p0
+lS1<p1
+xQ&&lS2
+0]iD
+0];if(p0
+lS1<=p1
+xQ&&lS2
+1]iD
+1];}
+if(tQ3
+p1
+lJ1){if(p0
+xQ>p1
+lS1&&lS2
+2]iD
+2];if(p0
+xQ>=p1
+lS1&&lS2
+3]iD
+3];}
+if(IsLogicalValue(a)){if(iF1
+lT1
+iF1.when,p1
+y03
+iF1.what;if(iH1
+lT1
+iH1.when,p1
+y03
+iH1.what;}
+if(IsLogicalValue(b)){if(iG1
+lT1
+iG1.when,p0
+y03
+iG1.what;if(iI1
+lT1
+iI1.when,p0
+y03
+iI1.what;}
+return
+xS;}
+cJ1
 bool
-TestCase(iY1
+TestCase(lR2
 when,const
 range
-x8&p){if(!p.iV2||!p
-i0
-yI
+xN&p){if(!p
+eT||!p
+lJ1
+eM
 switch(when
-iY2
-Eq0:return
-p.min==0.0
-xQ3==p.min;case
-Eq1:return
-p.min==1.0
-xQ3==p.max;case
-xD3:return
-p.min>0
-xQ3<=1;case
-xR3:return
-p.min>=0
-xQ3<1;default:;}
-nX2}
-;iO2
+eJ3
+Eq0:y13==x73(0.0)eU3==p
+xQ;case
+Eq1:y13==x73(1.0)eU3==p
+lS1;case
+yW3:y13>yD1
+eU3<=x73(1);case
+yX3:y13>=yD1
+iY
+1);default:;}
+return
+eO3}
+;lA3
 RangeComparisonsData{static
 const
 l4
 Data[6]={{l4
-lA3
-tP
-Unchanged,l4::tP
-Unchanged
-tE
+eV3::i5
+xS,l4::i5
+xS}
+,{l4::x01
 Eq1
-tF
+lV1
 Eq1
-nD1
-Eq0}
-,l91
+lW1
+Eq0
+lX1
 Eq0}
 }
-,{l4::lX2
-lB3
-Unchanged,l4
-lB3
-Unchanged
-tE
+,{l4::nS2
+eW3
+xS,l4
+eW3
+xS}
+,{l4::x01
 Eq0
-tF
+lV1
 Eq0
-nD1
-Eq1}
-,l91
+lW1
+Eq1
+lX1
 Eq1}
 }
-,{l4::lX2
-lB3
-t22,l4::tP
+,{l4::nS2
+eW3
+tB2,l4::i5
 MakeFalse
-nD1
-xD3
-tF
-xR3
-xD,{l4
-lA3
-Unchanged,l4
-lB3
-tP
-lC3
-nD1
-xR3
-tF
-xD3
-xD,{l4::lX2::tP
-tP
-MakeTrue,l4::t22
-tE
-xR3}
-,l91
-xD3
-xD,{l4
-lA3
-tP
-lC3,l4::Unchanged,l4
-nH1
-tE
-xD3}
-,l91
-xR3
-xD}
+lW1
+yW3
+lV1
+yX3
+c2,{l4
+eV3::xS,l4
+eW3
+i5
+lP3
+lW1
+yX3
+lV1
+yW3
+c2,{l4::nS2::i5
+i5
+MakeTrue,l4::tB2}
+,{l4::x01
+yX3
+lX1
+yW3
+c2,{l4
+eV3::i5
+lP3,l4::xS,l4
+nL1}
+,{l4::x01
+yW3
+lX1
+yX3
+c2}
 ;}
-xG1
-ConstantFolding_Comparison(eR{using
-iO2
-RangeComparisonsData;assert(tree.tU3()>=cEqual&&tree.tU3()<=cGreaterOrEq);switch(Data[tree
-nE-cEqual].Analyze
-nW1
-0),tree
-x03
-iY2
-l4::MakeFalse
-xP3
-ReplaceWithImmed(0);nW
-l4
-nH1
-xP3
-ReplaceWithImmed(1
-l33
-lC3:tH
-cEqual
-l33
-t22:tH
-t71
-l33
-MakeNotNotP0:tH
+xV1
+ConstantFolding_Comparison(t2{using
+lA3
+RangeComparisonsData;assert(tree.i33()>=cEqual&&tree.i33()<=cGreaterOrEq);switch(Data[tC2-cEqual].Analyze(t5
+0),t5
+1))eJ3
+l4::MakeFalse:iH3
+0)xT3
+nL1:iH3
+1)xT3::lP3:tW2
+cEqual)xT3::tB2:tW2
+i21)xT3::MakeNotNotP0:tW2
 cNotNot
-tW1
-1
-l33
-MakeNotNotP1:tH
+y01
+1)xT3::MakeNotNotP1:tW2
 cNotNot
-tW1
-0
-l33
-MakeNotP0:tH
+y01
+0)xT3::MakeNotP0:tW2
 cNot
-tW1
-1
-l33
-MakeNotP1:tH
+y01
+1)xT3::MakeNotP1:tW2
 cNot
-tW1
-0
-l33
-Unchanged:;}
-if
-nW1
-1)y21)switch
-nW1
-0)nE
-iY2
-cAsin
-xP3
-lR
-fp_sin(iA2
-cAcos
-xP3
-lR
-fp_cos(y4)));tH
-cV2
-cLess?cGreater:cV2
-cLessOrEq?cGreaterOrEq:cV2
-cGreater?cLess:cV2
-cGreaterOrEq?cLessOrEq:tree
-nE);nW
-cAtan
-xP3
-lR
-fp_tan(iA2
-cLog
-xP3
-lR
-fp_exp(iA2
-cSinh
-xP3
-lR
-fp_asinh(iA2
-cTanh:if(fp_less(fp_abs(y4),nY3{tree.lR
-fp_atanh(y4)))nS2
-break;default:nM3
-nX2}
+y01
+0)xT3::xS:;}
+if(t5
+1)t51)switch(nC3
+eJ3
+cAsin:lM
+fp_sin(eE2
+cAcos:lM
+fp_cos(n51)));tW2
+tC2==cLess?cGreater:tC2==cLessOrEq?cGreaterOrEq:tC2==cGreater?cLess:tC2==cGreaterOrEq?cLessOrEq:tC2);x0
+cAtan:lM
+fp_tan(eE2
+cLog:lM
+fp_exp(eE2
+cSinh:lM
+fp_asinh(eE2
+cTanh:if(fp_less(fp_abs(n51)nB2
+lM
+fp_atanh(n51))iX1
+break;default:yY3
+return
+eO3}
 #include <list>
 #include <algorithm>
 #ifdef FP_SUPPORT_OPTIMIZER
-xQ
-iO2{
+using
+lA3
+FUNCTIONPARSERTYPES;lA3{
 #ifdef DEBUG_SUBSTITUTIONS
-yW
+yL
 double
 d){union{double
 d;uint_least64_t
-h;}
-t32
-d=d;lH1
+h;cI2
+d=d;lG1
 h
-nZ1
+x11
 #ifdef FP_SUPPORT_FLOAT_TYPE
-yW
+yL
 float
 f){union{float
 f;uint_least32_t
-h;}
-t32
-f=f;lH1
+h;cI2
+f=f;lG1
 h
-nZ1
+x11
 #endif
 #ifdef FP_SUPPORT_LONG_DOUBLE_TYPE
-yW
+yL
 long
 double
 ld){union{long
 double
-ld;e92{uint_least64_t
-a;i02
+ld;e22{uint_least64_t
+a;x83
 short
 b;}
-s;}
-t32
-ld=ld;lH1
+s;cI2
+ld=ld;lG1
 s.b<<data.s.a
-nZ1
+x11
 #endif
 #ifdef FP_SUPPORT_LONG_INT_TYPE
-yW
+yL
 long
 ld){o<<"("
 <<std::hex<<ld
-nZ1
+x11
 #endif
 #endif
 }
-iO2
-FPoptimizer_CodeTree{lM
-nF)){}
-lM
-e62
+tN{lN
+nE)){}
+lN
+l92
 i
-yO
-nC3
-nF
-i)){data
-xB
+yG
+xF3
+nE
+i
+eK3
 #ifdef __GXX_EXPERIMENTAL_CXX0X__
-lM
-eS1&&i
-yO
-nC3
-nF
-t72
-i))){data
-xB
+lN
+x73&&i
+yG
+xF3
+nE
+tD2
+i)eK3
 #endif
-lM
-i02
+lN
+x83
 v
-yO
+yG
 VarTag
-nF
-iE2,v))eS2
-nR2
+nE
+iT2,v
+eK3
+lN
+n92
 o
-yO
+yG
 OpcodeTag
-nF
-o))eS2
-nR2
-o,i02
+nE
+o
+eK3
+lN
+n92
+o,x83
 f
-yO
+yG
 FuncOpcodeTag
-nF
-o,f))eS2
-lM1&b
-yO
+nE
+o,f
+eK3
+lN
+xG2
+b
+yG
 CloneTag
-nF*b.data)){}
-yV1
-yK2::~yL2(){}
-lA
-ReplaceWithImmed
-i01
-eS1&i){
+nE*b.data)){}
+x33
+CodeTree
+xN::~CodeTree(){}
+lB
+ReplaceWithImmed(tU1{
 #ifdef DEBUG_SUBSTITUTIONS
 std::cout<<"Replacing "
-;xE3(*this);if(IsImmed())OutFloatHex(std::cout,xJ1)lN1" with const value "
-<<i;OutFloatHex(std::cout,i)lN1"\n"
+i63*this);if(IsImmed())OutFloatHex(std::cout,xY1)xI1" with const value "
+<<i;OutFloatHex(std::cout,i)xI1"\n"
 ;
 #endif
 data=new
-nO2
-x8(i);}
-yT1
-ParamComparer{i12()(lM1&a,lM1&b)const{if(a.xT2!=b.xT2
-nZ2
-a.xT2<b.xT2
-l81
+xL2
+xN(i);}
+x33
+e22
+ParamComparer{iH2()eG3
+a,xG2
+b)const{if(a.y82!=b.y82)return
+a.y82<b.y82
+eL
 a.GetHash()<b.GetHash();}
 }
-;xB1
-nO2
-x8::Sort(){switch(Opcode
-iY2
+xI3
+xL2
+xN::Sort(t63
+Opcode
+eJ3
 cAdd:case
 cMul:case
 cMin:case
@@ -4601,203 +4653,212 @@ cOr:case
 cAbsOr:case
 cHypot:case
 cEqual:case
-t71:std::sort(iC2
-i62
-iC2
+i21:std::sort(nG3
+iM2
+nG3
 end(),ParamComparer
-x8());lC
+xN());lC
 cLess
-lU
+lZ
 cGreater;}
 lC
 cLessOrEq
-lU
+lZ
 cGreaterOrEq;}
 lC
 cGreater
-lU
+lZ
 cLess;}
 lC
 cGreaterOrEq
-lU
+lZ
 cLessOrEq;}
-break;default:nM3}
-lA
-AddParam(lM1&param){xY
-yL
-param);}
-lA
-eG
-yK2&param){xY
-yL
-yK2());xY.back().swap(param);}
-lA
+break;default:yY3}
+lB
+AddParam
+eG3
+param){y8.push_back(param);}
+lB
+eI1
+n91
+param){y8.push_back(CodeTree
+xN());y8.back().swap(param);}
+lB
 SetParam(size_t
-which,lM1&b)nI1
+which,xG2
+b)nM1
 which
-iB2
-xY[which]=b;}
-lA
-nC1
+iP2
+y8[which]=b;}
+lB
+nK1
 size_t
-which,yK2&b)nI1
+which,n91
+b)nM1
 which
-iB2
-xY[which
-t23
+iP2
+y8[which
+tD3
 b);}
-lA
+lB
 AddParams
-i01
-nK){xY.insert(xY.end(),l02.i62
-l02.end());}
-lA
-AddParamsMove(nK){size_t
-endpos=xY
-yA3,added=l02
-yA3;xY
-nE3
-endpos+added,yK2());for(size_t
-p=0;p<added;++p)xY[endpos+p
-t23
-l02[p]);}
-lA
-AddParamsMove(nK,size_t
-l12)nI1
-l12
-iB2
-iH1
-l12);AddParamsMove(eU1}
-lA
+nV2
+nP){y8.insert(y8.end(),lT2.iM2
+lT2.end());}
+lB
+AddParamsMove(nP){size_t
+endpos=y8.size(),added=lT2.size();y8.e93
+endpos+added,CodeTree
+xN());for(size_t
+p=0;p<added;++p)y8[endpos+p
+tD3
+lT2[p]);}
+lB
+AddParamsMove(nP,size_t
+lU2)nM1
+lU2
+iP2
+l93
+lU2);AddParamsMove(tI1}
+lB
 SetParams
-i01
-nK){yG
-nV1
-tmp(eU1
-xY.swap(tmp);}
-lA
-SetParamsMove(nK){xY.swap(eU1
-l02.clear();}
+nV2
+nP){eZ
+tmp(tI1
+y8.nS3;}
+lB
+SetParamsMove(nP){y8.swap(tI1
+lT2.clear();}
 #ifdef __GXX_EXPERIMENTAL_CXX0X__
-lA
-SetParams(yG
-nV1&&l02){SetParamsMove(eU1}
+lB
+SetParams(eZ&&lT2){SetParamsMove(tI1}
 #endif
-lA
-iH1
+lB
+l93
 size_t
-index){yG
-nV1&c93=xY;
+index){eZ&Params=y8;
 #ifdef __GXX_EXPERIMENTAL_CXX0X__
-iC2
-erase(iC2
+nG3
+erase(nG3
 begin()+index);
 #else
-c93[index].data=0;for(size_t
-p=index;p+1<c93
-eW2
-p)c93[p].data.UnsafeSetP(&*c93[p+1
-iB2
-c93[nF3-1].data.UnsafeSetP(0);iC2
-resize(nF3-1);
+eY3
+index].data=0;for(size_t
+p=index;p+1<yP3;++p)eY3
+p]tE3
+UnsafeSetP(&*eY3
+p+1
+iP2
+eY3
+yP3-1]tE3
+UnsafeSetP(0);nG3
+e93
+yP3-1);
 #endif
 }
-lA
-DelParams(){xY.clear();}
-xG1
-yK2::IsIdenticalTo(lM1&b)const{if(&*data==&*b.data
-nZ2
+lB
+DelParams(){y8.clear();}
+xV1
+CodeTree
+xN::IsIdenticalTo
+eG3
+b)const{if(&*data==&*b.data)return
 true
-l81
+eL
 data->IsIdenticalTo(*b.data);}
-xG1
-nO2
-x8::IsIdenticalTo
-i01
-nO2
-x8&b)const{if(Hash!=b.Hash
-yI
-if(Opcode!=t43
-yI
+xV1
+xL2
+xN::IsIdenticalTo
+nV2
+xL2
+xN&b)const{if(Hash!=b.Hash
+eM
+if(Opcode!=tG3
+eM
 switch(Opcode
-iY2
-cImmed:return
-fp_equal(Value,t53;case
-iE2:return
-iJ1==b.iI1
+yS3
+return
+lN3
+Value,tH3;case
+iT2:return
+lD2==b.lC2
 case
 cFCall:case
-cPCall:if(iJ1!=b.iJ1
-yI
-break;default:nM3
-if(nF3!=b.nF3
-yI
+cPCall:if(lD2!=b.lD2
+eM
+break;default:yY3
+if(yP3!=b.yP3
+eM
 for
-xK2
-0;a<c93
-eW2
-a){if(!c93[a]iA
-b.c93[a])yI}
-return
-true;}
-lA
-Become(lM1&b){if(&b!=this&&&*data!=&*b.data){DataP
-tmp=b.data;iY
-data.swap(tmp);}
+c12
+0;a<yP3;++a){if(!eY3
+a]xD
+b.eY3
+a])eM}
+l62}
+lB
+Become
+eG3
+b){if(&b!=this&&&*data!=&*b.data){DataP
+tmp=b.data;l61
+data.nS3;}
 }
-lA
+lB
 CopyOnWrite(){if(GetRefCount()>1)data=new
-nO2
-x8(*data);}
-yV1
-yK2
-yK2::GetUniqueRef(){if(GetRefCount()>1
-nZ2
-yK2(*this,CloneTag())l81*this;}
-tQ):c7
+xL2
+xN(*data);}
+x33
+CodeTree
+xN
+CodeTree
+xN::GetUniqueRef(){if(GetRefCount()>1)return
+CodeTree
+xN(*this,CloneTag())eL*this;}
+i6):yZ
 cNop
-l43),nC
-tQ
+t32),n9
+i6
 const
-nO2&b):c7
-t43
-l43
-t53,iJ1(b.iJ1),c93(b.c93),Hash(b.Hash),Depth(b.Depth),eZ1
-b.iK1){}
-tQ
-e62
-i):c7
+xL2&b):yZ
+tG3
+t32
+tH3,lD2(b.cS1,eX3
+b.Params),Hash(b.Hash),Depth(b.Depth),tW1
+b.lE2){}
+i6
+tU1:yZ
 cImmed
-l43
-i),nC
+t32
+i),n9
 #ifdef __GXX_EXPERIMENTAL_CXX0X__
-tQ
-nO2
-x8&&b):c7
-t43
-l43
-t72
-t53),iJ1(b.iJ1),c93(t72
-b.c93)),Hash(b.Hash),Depth(b.Depth),eZ1
-b.iK1){}
-tQ
-eS1&&i):c7
+i6
+xL2
+xN&&b):yZ
+tG3
+t32
+tD2
+tH3),lD2(b.cS1,eX3
+tD2
+b.Params)),Hash(b.Hash),Depth(b.Depth),tW1
+b.lE2){}
+i6
+x73&&i):yZ
 cImmed
-l43
-t72
-i)),nC
+t32
+tD2
+i)),n9
 #endif
-tQ
-nR2
-o):c7
+i6
+n92
+o):yZ
 o
-l43),nC
-tQ
-nR2
-o,i02
-f):c7
+t32),n9
+i6
+n92
+o,x83
+f):yZ
 o
-l43),iJ1(f),c93(),Hash(),Depth(1),eZ1
+t32),lD2(f),eX3),Hash(),Depth(1),tW1
 0){}
 }
 #endif
@@ -4807,152 +4868,163 @@ l43),iJ1(f),c93(),Hash(),Depth(1),eZ1
 #include <map>
 #include <set>
 #include <iostream>
-xQ
+using
+lA3
+FUNCTIONPARSERTYPES;
 #ifdef FUNCTIONPARSER_SUPPORT_DEBUGGING
-iO2{xB1
-l22
-cA3,eH3&done,std::ostream&o){for
-yS
-l22
-i43
-done,o);std::ostringstream
-buf;xE3(tree,buf);done[tree.GetHash()].insert(buf.str());}
+lA3{tD1
+tX1
+nS,std
+cF&done,std::ostream&o){e23
+tX1
+t5
+a),done,o);std::ostringstream
+buf
+i63
+tree,buf);done[tree.GetHash()].insert(buf.str());}
 }
 #endif
-iO2
-FPoptimizer_CodeTree{
+tN{
 #ifdef FUNCTIONPARSER_SUPPORT_DEBUGGING
-xB1
-DumpHashes
-i01
-eY){eH3
-done;l22(tree,done,o);for(eH3::const_iterator
-i=done.nW3
+tD1
+DumpHashes(cJ){std
+cF
+done;tX1
+tree,done,o);for(std
+cF::const_iterator
+i=done.yM3
 i!=done.end();++i){const
 std::set<std::string>&flist=i
-cJ2;if(flist
-yA3!=1)o<<"ERROR - HASH COLLISION?\n"
+e82;if(flist.size()!=1)o<<"ERROR - HASH COLLISION?\n"
 ;for(std::set<std::string>::const_iterator
-j=flist.nW3
+j=flist.yM3
 j!=flist.end();++j){o<<'['<<std::hex<<i->first.hash1<<','<<i->first.hash2<<']'<<std::dec;o<<": "
 <<*j<<"\n"
 ;}
 }
 }
-xB1
-xE3
-i01
-eY){const
-char*tN3;switch
-xU2
-iY2
-cImmed:o<<yZ3
-l81;case
-iE2:o<<"Var"
-<<(tree.GetVar()-iE2)l81;case
-cAdd:tN3"+"
+tD1
+DumpTree(cJ){l03
+i43;switch(tC2
+yS3
+o<<cS3
+eL;case
+iT2:o<<"Var"
+<<(tree.GetVar()-iT2)eL;case
+cAdd:i43"+"
 ;lC
-cMul:tN3"*"
+cMul:i43"*"
 ;lC
-cAnd:tN3"&"
+cAnd:i43"&"
 ;lC
-cOr:tN3"|"
+cOr:i43"|"
 ;lC
-cPow:tN3"^"
-;break;default:tN3;o<<FP_GetOpcodeName
-xU2);if
-xU2==cFCall||cV2
-cPCall)o<<':'<<tree.GetFuncNo();}
-o<<'(';if(iT<=1&&sep2[1])o<<(sep2+1)<<' 'eV3
-if(a>0)o<<' ';xE3
-i43
-o);if(a+1<iT)o<<sep2;}
+cPow:i43"^"
+tM2
+default:i43;o<<FP_GetOpcodeName(tC2);l33
+cFCall||tC2==cPCall)o<<':'<<tree.GetFuncNo();}
+o<<'(';if(t6<=1&&sep2[1])o<<(sep2+1)<<' ';e23{if(a>0)o<<' 'i63
+t5
+a),o);if(a+1<t6)o<<sep2;}
 o<<')';}
-xB1
-DumpTreeWithIndent
-i01
-eY,const
-std::string&indent){o<<'['<<std::hex<<(void*)(&tree.iE1))<<std::dec<<','<<tree.GetRefCount()<<']';o<<indent<<'_';switch
-xU2
-iY2
-cImmed:o<<"cImmed "
-<<yZ3;o<<'\n'l81;case
-iE2:o<<"VarBegin "
-<<(tree.GetVar()-iE2);o<<'\n'l81;default:o<<FP_GetOpcodeName
-xU2);if
-xU2==cFCall||cV2
-cPCall)o<<':'<<tree.GetFuncNo();o<<'\n';}
-for
-yS{std::string
+tD1
+DumpTreeWithIndent(cJ,const
+std::string&indent){o<<'['<<std::hex<<(void*)(&tree.lB2))<<std::dec<<','<<tree.GetRefCount()<<']';o<<indent<<'_';switch(tC2
+yS3
+o<<"cImmed "
+<<cS3;o<<'\n'eL;case
+iT2:o<<"VarBegin "
+<<(tree.GetVar()-iT2);o<<'\n'eL;default:o<<FP_GetOpcodeName(tC2);l33
+cFCall||tC2==cPCall)o<<':'<<tree.GetFuncNo();o<<'\n';}
+e23{std::string
 ind=indent;for(size_t
-p=0;p<ind
-yA3;p+=2)if(ind[p]=='\\')ind[p]=' ';ind+=(a+1<iT)?" |"
+p=0;p<ind.size();p+=2)if(ind[p]=='\\')ind[p]=' ';ind+=(a+1<t6)?" |"
 :" \\"
-;DumpTreeWithIndent
-i43
-o,ind);}
+;DumpTreeWithIndent(t5
+a),o,ind);}
 o<<std::flush;}
 #endif
 }
 #endif
 using
-iO2
-l41;xQ
+lA3
+l21;using
+lA3
+FUNCTIONPARSERTYPES;
 #include <cctype>
-iO2
-l41{xG1
+lA3
+l21{xV1
 ParamSpec_Compare
-i01
+nV2
 void*aa,const
-void*bb,lU2
-type){switch(type
-iY2
-lY2
-xH&a=*(xH*)aa;xH&b=*(xH*)bb
-l81
+void*bb,nN2
+type
+t63
+type
+eJ3
+nT2
+xU&a=*(xU*)aa;xU&b=*(xU*)bb
+eL
 a
-t42==b
-t42&&a.index==b.index&&a.depcode==b.depcode
-cM3
-NumConstant:{eZ&a=*(eZ*)aa;eZ&b=*(eZ*)bb
-l81
-fp_equal(a.xZ3,b.xZ3)&&a.modulo==b.modulo
-iD2
-xI&a=*(xI*)aa;xI&b=*(xI*)bb
-l81
+t62==b
+t62&&a.index==b.index&&a.depcode==b.depcode;eP3
+NumConstant:{tB&a=*(tB*)aa;tB&b=*(tB*)bb
+eL
+lN3
 a
-t42==b
-t42&&a.cS==b.cS&&a.data.match_type==b.data.match_type&&a.data
-xY2==b.data
-xY2&&a.data.param_list==b.data.param_list&&a.data.n2==b.data.n2&&a.depcode==b.depcode;}
+cJ2,b
+cJ2)&&a.modulo==b.modulo;}
+cG1
+xV&a=*(xV*)aa;xV&b=*(xV*)bb
+eL
+a
+t62==b
+t62&&a
+c51==b
+c51&&a
+tE3
+match_type==b
+tE3
+match_type&&a.data
+yH2==b.data
+yH2&&a
+tE3
+param_list==b
+tE3
+param_list&&a
+tE3
+n2==b
+tE3
+n2&&a.depcode==b.depcode;}
 }
-return
-true;}
-i02
+l62}
+x83
 ParamSpec_GetDepCode
-i01
-cG2&b){switch(b.first
-iY2
-lY2
-yK3*s=i01
-xH*)b
-eE3
-l81
-s->depcode
-iD2
-const
-xI*s=i01
-xI*)b
-eE3
-l81
+nV2
+e52&b
+t63
+b.first
+eJ3
+nT2
+t83*s=nV2
+xU*)b
+xU3
+eL
 s->depcode;}
-default:nM3
+cG1
+const
+xV*s=nV2
+xV*)b
+xU3
+eL
+s->depcode;}
+default:yY3
 return
 0;}
-xB1
+tD1
 DumpParam
-i01
-cG2&xZ2
+nV2
+e52&yI2
 std::ostream&o){static
 const
 char
@@ -4965,1498 +5037,1823 @@ ParamHolderNames[][2]={"%"
 ,"b"
 ,"c"
 }
-;i02
-t52
-0;xT3
+;x83
+tA2
+0;switch(tF3
+eJ3
 NumConstant:{const
-eZ&t82
-eZ*x01;o.precision(12);o<<xF3
-xZ3;nM3
-case
-lY2
-yK3&t82
-xH*x01;o<<ParamHolderNames[xF3
-index];t52
+tB&nU2
+tB
+nW2
+using
+lA3
+FUNCTIONPARSERTYPES;o.precision(12);o<<param
+cJ2
+tM2
+eP3
+nT2
+t83&nU2
+xU
+nW2
+o<<ParamHolderNames[param.index];tA2
 param
-t42;break
-iD2
+t62
+tM2}
+cG1
 const
-xI&t82
-xI*x01;t52
+xV&nU2
+xV
+nW2
+tA2
 param
-t42;yZ
-GroupFunction){if
-iZ2
-cS==cNeg){o<<"-"
+t62;yM
+GroupFunction){c33
+c51==cNeg){o<<"-"
 ;n3}
-tP1
-xF3
-cS==cInv){o<<"/"
+iZ1
+param
+c51==cInv){o<<"/"
 ;n3}
 else{std::string
-opcode=FP_GetOpcodeName((nR2)xF3
-cS).substr(1)c23
-0;a<opcode
-eW2
-a)opcode[a]=(char)std::toupper(opcode[a]);o<<opcode<<"( "
+opcode=FP_GetOpcodeName((n92)param
+c51).substr(1)c02
+0;a<opcode.size();++a)opcode[a]=(char)std::toupper(opcode[a]);o<<opcode<<"( "
 ;n3
 o<<" )"
 ;}
 }
-else{o<<'('<<FP_GetOpcodeName((nR2)xF3
-cS)<<' ';yZ
-PositionalParams)o<<'[';yZ
+else{o<<'('<<FP_GetOpcodeName((n92)param
+c51)<<' ';yM
+PositionalParams)o<<'[';yM
 SelectedParams)o<<'{';n3
-if
-iZ2
-data.n2!=0)o<<" <"
-<<xF3
-data.n2<<'>';yZ
+c33
+tE3
+n2!=0)o<<" <"
+<<param
+tE3
+n2<<'>';yM
 PositionalParams)o<<"]"
-;yZ
+;yM
 SelectedParams)o<<"}"
 ;o<<')';}
-nM3
-yN3(ImmedConstraint_Value(tX1
-ValueMask)iY2
+yY3
+iY2
+ImmedConstraint_Value(iJ1
+ValueMask)eJ3
 ValueMask:lC
 Value_AnyNum:lC
-n12:o<<"@E"
+x32:o<<"@E"
 ;lC
 Value_OddInt:o<<"@O"
 ;lC
-t01:o<<"@I"
+tZ1:o<<"@I"
 ;lC
 Value_NonInteger:o<<"@F"
 ;lC
-eE1:o<<"@L"
-;t62
-ImmedConstraint_Sign(tX1
-SignMask)iY2
+eT1:o<<"@L"
+;c22
+ImmedConstraint_Sign(iJ1
+SignMask)eJ3
 SignMask:lC
 Sign_AnySign:lC
-nJ1:o<<"@P"
+nN1:o<<"@P"
 ;lC
-n02:o<<"@N"
-;t62
-ImmedConstraint_Oneness(tX1
-OnenessMask)iY2
+eU1:o<<"@N"
+;c22
+ImmedConstraint_Oneness(iJ1
+OnenessMask)eJ3
 OnenessMask:lC
 Oneness_Any:lC
 Oneness_One:o<<"@1"
 ;lC
 Oneness_NotOne:o<<"@M"
-;t62
-ImmedConstraint_Constness(tX1
-ConstnessMask)iY2
+;c22
+ImmedConstraint_Constness(iJ1
+ConstnessMask)eJ3
 ConstnessMask:lC
-yL1:if(lF3.first==ParamHolder){yK3&t82
-xH*x01;if
-iZ2
-index<2)nM3
+tY1:if(tF3==ParamHolder){t83&nU2
+xU
+nW2
+c33.index<2)yY3
 o<<"@C"
 ;lC
 Constness_NotConst:o<<"@V"
 ;lC
-Oneness_Any:nM3}
-xB1
+Oneness_Any:yY3}
+tD1
 DumpParams
-iL1
-paramlist,i02
-count,std::ostream&o){for
-iL1
-a=0;a<count;++a){if(a>0)o<<' ';const
-cG2&param=e01
-x8(paramlist,a);DumpParam
-x8(param,o);i02
+nP2
+paramlist,x83
+count,std::ostream&o){for(eY1=0;a<count;++a){if(a>0)o<<' ';const
+e52&param=xB1
+paramlist,a);DumpParam
+xN(param,o);x83
 depcode=ParamSpec_GetDepCode(param);if(depcode!=0)o<<"@D"
 <<depcode;}
 }
 }
 #include <algorithm>
 using
-iO2
-l41;xQ
-iO2{yK3
-plist_p[36]={{2,0,0x0}
-tS
+lA3
+l21;using
+lA3
+FUNCTIONPARSERTYPES;lA3{t83
+plist_p[37]={{2,0,0x0}
+tD
 0,0x4}
-tS
-nJ1,0x0}
-tS
-n02|Constness_NotConst,0x0}
-tS
+tD
+nN1,0x0}
+tD
+eU1|Constness_NotConst,0x0}
+tD
 Sign_NoIdea,0x0}
-tS
-eE1,0x0}
+tD
+eT1,0x0}
 ,{3,Sign_NoIdea,0x0}
 ,{3,0,0x0}
-,{3,eE1,0x0}
+,{3,eT1,0x0}
 ,{3,0,0x8}
 ,{3,Value_OddInt,0x0}
 ,{3,Value_NonInteger,0x0}
-,{3,n12,0x0}
-,{3,nJ1,0x0}
-,{0,n02|n0{0,n0{0,nJ1|n0{0,n12|n0{0,yL1,0x1}
-,{0,t01|nJ1|n0{0,t11
-yL1,0x1}
-,{0,t11
-n0{0,Oneness_One|n0{0,eE1|n0{1,n0{1,n12|n0{1,t11
-n0{1,t01|n0{1,nJ1|n0{6,0,0x0}
+,{3,x32,0x0}
+,{3,nN1,0x0}
+,{0,eU1|lW{0,lW{0,nN1|lW{0,x32|lW{0,tY1,0x1}
+,{0,tZ1|nN1|lW{0,i01
+tY1,0x1}
+,{0,i01
+lW{0,Oneness_One|lW{0,eT1|lW{1,lW{1,x32|lW{1,i01
+lW{1,tZ1|lW{1,nN1|lW{1,eU1|lW{6,0,0x0}
 ,{4,0,0x0}
-,{4,t01,0x0}
-,{4,n0{4,0,0x16}
+,{4,tZ1,0x0}
+,{4,lW{4,0,0x16}
 ,{5,0,0x0}
-,{5,n0}
-;yT1
+,{5,lW}
+n11
+e22
 plist_n_container{static
 const
-eZ
-plist_n[19];}
-;yV1
+tB
+plist_n[20];}
+n11
 const
-eZ
+tB
 plist_n_container
-x8::plist_n[19]={{eS1(-2
-iZ-1
-iZ-0.5
-iZ
+xN::plist_n[20]={{x73(-2
+i8-1
+i8-0.5
+i8-0.25
+i8
 0
-tB2
+tE2
 fp_const_deg_to_rad
-cE3
+xN(tE2
 fp_const_einv
-cE3
+xN(tE2
 fp_const_log10inv
-x8(iZ
+xN(i8
 0.5
-tB2
+tE2
 fp_const_log2
-x8(iZ
+xN(i8
 1
-tB2
+tE2
 fp_const_log2inv
-x8(iZ
+xN(i8
 2
-tB2
+tE2
 fp_const_log10
-cE3
+xN(tE2
 fp_const_e
-cE3
+xN(tE2
 fp_const_rad_to_deg
-cE3-fp_const_pihalf
-x8(),xL1{eS1(0),xL1{fp_const_pihalf
-x8(),xL1{fp_const_pi
-x8(),xL1}
+xN(tE2-fp_const_pihalf
+xN(),y11{yD1,y11{fp_const_pihalf
+xN(),y11{fp_const_pi
+xN(),y11}
 ;const
-xI
-plist_s[464]={{{1,15,tC2
-15,cNeg,GroupFunction,0}
-,yL1,0x1}
-,{{1,422,tC2
-423,tC2
-15,tD2
-24,tD2
-410,tD2
-411,cInv,xZ
-2,301330,cAdd,tG2
-271397
-lU1
-0x5
-tY3
-271397,l5
-45
-lU1
-iR
-2,58413,l5
-140333,l5
-194605
-lU1
-0x1
-tY3
-224301,l5
-270373,l5
-270381,l5
-271405,l5
-271405
-lU1
-0x5
-tY3
-140341,l5
-223285,l5
-286757,l5
-286765,l5
-322605,l5
-232501,l5
-7168,l5
-30727,l5
-141312,l5
-179207,l5
-58383,l5
-59407,l5
-285718
-lU1
-iR
-2,59416,l5
-29726,l5
-34823,l5
-18597,l5
-46264,l5
-15764,l5
-57509,l5
-293049,l5
-292026,l5
-161979,l5
-161980,l5
-172265,l5
-173308,l5
-243951,l5
-247024,l5
-38152,l5
-46344,l5
-293147,l5
-1332,l5
-24980,l5
-183473,l5
-183570,l5
-418001,l5
-420248,cAdd,lP
-0,0,tR
-0,0,cAdd,i3
-1,43,tR
-1,51,tR
-1,52,tR
-1,53,tR
-1,54,tR
-1,0,lZ
-iR
-1,0,t51
-2}
-,0,iR
-1,0,tR
-1,21,tR
-1,15,tR
-1,26,tR
-1,24,cAdd,i3
-2,56344,cAdd,i3
-1,219,tR
-1,230,cAdd,i3
-1,245,lZ
-0x16}
-,{{1,329,lZ
-0x16}
-,{{1,399,lZ
-iR
-1,401,lZ
-iR
-0,0,t51
-1}
-,nJ1,0x0
-tY3
-46095,tE2
-24591,tE2
-32783,tE2
-37,c1
-7205,c1
-114725,c1
-288805,lJ
-0x6
-tY3
-347173,lJ
-0x6
-tY3
-331813,c1
-350245,c1
-372773,c1
-377893,c1
-378917,c1
-383013,c1
-388133,c1
-439333,c1
-442405,c1
-447525,c1
-450597,c1
-459813,c1
-468005,c1
-305201,l2
-3,61910016,c1
-7168,c1
-114688,c1
-512000,l2
-3,45508608,c1
-15,c1
-30727,c1
-71695,c1
-130063,c1
-286735,lJ
-0x1
-tY3
-29726,c1
-34823,c1
-115736,c1
-114712,c1
-299008,c1
-288783
-xM2
-300032,c1
-347151
-xM2
-357376,l2
-3,65425438,c1
-420864,c1
-280611,c1
-358407,c1
-301088,c1
-55,c1
-38143,c1
-38143,lJ
-iR
-2,38145,lJ
-iR
-2,38152,c1
-38171,c1
-15631,c1
-15711,c1
-56671,c1
-38262,lJ
-iR
-2,60820,c1
-38325,lJ
-iR
-3,15777143,c1
-37303,c1
-48505,l2
-3,15777207,c1
-347191
-xM2
-48571,c1
-103714,c1
-104739,c1
-266538,c1
-307547,c1
-304475,c1
-353627,c1
-48490,c1
-310338,c1
-376173,lJ
-lP2
-3,39173485,lJ
-lP2
-2,436589,lJ
-lP2
-2,7578,c1
-376232,lJ
-lP2
-2,436648,lJ
-lP2
-3,39233901,lJ
-lP2
-3,39233960,lJ
-lP2
-2,7651,c1
-7675,l2
-0,0,nO
-0,0,cT
-1,37,nO
-1,37,cT
-1,2,n22
-2,n32
-3,n22
-3,n32
-0,nO
-1,0,n32
-0,cT
-1,14,nO
-1,16,nO
-1,16,lK
-1
-xN2
-21,nO
-1,15,nO
-1,24,cT
-2,24591,nO
-1,55,nO
-1,55,lK
-2
-xN2
-275,n22
-278,n32
-284,cT
-1,287,nO
-1,288,nO
-1,289,cT
-1,462,cT
-2,413757,lK
-1
-xN2
-295,nO
-1,329,cT
-2,414025,lK
-1}
-,0,0x16}
-,{{1,351,nO
-1,404,nO
-1,410,nO
-2,60459,l32
-44047,l32
-24591,l32
-32783,l32
-44056,l32
-41,lI,41,y0
-49,lI,49,y0
-365609,lI,222257,lI,365617,lI,366633,lI,366641,lI,48128,lI,15,lI,15,cV1
-16,lI,10240,lI,11264,lI,7170,lI,7168,lI,7168,y0
-7183,cV1
-17408,lI,19456,lI,16384,lI,15360,lI,27648,lI,30720,lI,30722,lI,24,tF2
-0x6
-tY3
-24,lI,7192,lI,68608,lI,83968,lI,86040,lI,87040,lI,88064,lI,90112,lI,432128,lI,433152,lI,37895,lI,14342,lI,25607,lI,7183,lI,56327,lI,114703,lI,114718,lI,257024,lI,419840,lI,260103,lI,37953,tF2
-0x5
-tY3
-37956,y0
-37961,tF2
-0x5
-tY3
-38105,lI,38114,y0
-38984,y0
-44103,y0
-44104,y0
-38991,lI,44111,lI,44135,lI,44124,y0
-44136,lI,48240,lI,60693,lI,38253,y0
-38253,lI,38259,tF2
-0x5
-tY3
-38260,cV1
-38262,y0
-38262,lI,48493,y0
-48493,lI,15734,y0
-137590,lI,38264,tF2
-0x5
-tY3
-38292,lI,38294,lI,38300,lI,38301,lI,38312,y0
-38325,y0
-38332,y0
-38332,lI,38341,lI,38341,y0
-38343,lI,60,lI,60,tF2
-0x6
-tY3
-48552,y0
-48552,lI,257198,lI,260274,lI,24792,lI,7172,cPow,PositionalParams,0}
-,nJ1,0x0
-tY3
-24591,cPow,xZ
-2,60440,cPow,xZ
-2,60451,cPow,xZ
-2,61472,cPow,xZ
-1,0,eI3
-7,eI3
-157,eI3
-0,cAcos
-eJ3
-cAcosh
-eJ3
-cAsin
-eJ3
-cAsinh
-nR
-112,cAsinh
-eJ3
-cAtan,eF1
-cAtan2,tG2
-303104
-i23
-eJ3
-cAtanh
-eJ3
-cCeil,cF3
-216,cCeil
-eJ3
-yO2
-0,cCos,cF3
-7,yO2
-81,yO2
-83,yO2
-112,yO2
-180,yO2
-234,yO2
-0,cH3
-cF3
-0,cI3
-176,cI3
-180,cI3
-409,cI3
-0,cFloor,cF3
-216,cFloor,tG2
-308523,eK3
-tG2
-352555,eK3
-tG2
-352599,eK3
+xV
+plist_s[511]={{{1,15,lQ3,397,lQ3,471,lQ3,15,cNeg,GroupFunction,0}
+,tY1,0x1}
+,{{1,15,y92
+24,y92
+459,y92
+460,y92
+492,cInv,lU
+2,333122
+x3
 l0
-3,31464448,cU
-507534336,cU
-508566528,cU
-33579008,cU
-30443520,lD3
-31464448,lD3
-7836672,cU
-24612864,cU
-93415424,cU
-142744576,cU
-174234624,cU
-265547776,cU
-435585024,cU
-439783424,cU
-519553024,cU
-526900224,cU
-58739160,cU
-58739160,lD3
-58739166,cU
-58739166,cIf,cF3
-112,cInt
-eJ3
-tH2
-7,tH2
-30,tH2
-157,tH2
-216,tH2
-282,tH2
-15,cLog,xZ
-1,24,cLog,xZ
-1,0,cLog10
-eJ3
-cLog2,eF1
-cMax,tG2
-29726,cMax,tG2
-34823,cMax
-eJ3
-cMax,AnyParams,1}
-,0,iR
-xG3
-cMin,tG2
-29726,cMin,tG2
-34823,cMin
-eJ3
-cMin,AnyParams,1}
-,0,iR
-2,46095,cMin,xZ
-2,24591,cMin,xZ
-1,0,n42
-0,cSin,cF3
-7,n42
-81,n42
-83,n42
-112,n42
-139,n42
-161,cSin,nU
-0x5}
-,{{1,216,n42
-227,n42
-231,cSin,nU
-0x1}
-,{{1,234,n42
-0,cSinh,cF3
-0,cSinh
-nR
-161,cSinh,nU
-0x5}
-,{{1,176,cSinh
-nR
-216,cSinh
-nR
-227,cSinh
-nR
-234,cSinh
-nR
-409,cSinh
-eJ3
-yP2
-0,cTan,cF3
-75,cTan,cF3
-76,yP2
-161,yP2
-216,yP2
-231,yP2
-227,yP2
-234,yP2
-0,xV2
-0,cTanh,cF3
-160,xV2
-161,xV2
-216,xV2
-227,xV2
-234,xV2
-0,cTrunc,tG2
-15384,cSub,xZ
-2,15384,cDiv,xZ
-2,420251,cDiv,xZ
-xG3
-tK2
-nU
-t41
-tK2
-tG2
-30720,tK2
-nU
-0x20
-tY3
-30727,tK2
-nU
-0x24
-tY3
-30727,tK2
-tG2
-114743,tK2
-tG2
-114743,t71,tG2
-39936,cLess,l6
-2,39936,cLess,tG2
-7,cLess,eF1
-cLess,nU
-t41
-cLessOrEq,tG2
-256216,cLessOrEq,tG2
-39936,e82
+2,48276
+x3
 l6
-2,39936,e82
-tG2
-7,e82
-eF1
-e82
-nU
-t41
-cGreaterOrEq,tG2
-256216,cGreaterOrEq
-eJ3
-l42
-7,l42
-15,l42
-30,l42
-156,l42
-494,l42
-497,l42
-498,l42
-501,l42
-504,l42
-505,cNot,eF1
-l52
-29726,l52
-34823,l52
-394270,l52
-398366,l52
-7651,cAnd,lP
-0,0,cAnd,AnyParams,1}
-,0,0x0}
-,{{xG3
-nJ2
-29726,nJ2
-34823,nJ2
-394270,nJ2
-398366,nJ2
-7651,cOr,lP
+260151
+x3
+l6
+464028
+x3
+l6
+172201
+x3
+l6
+48418
+x3
+l6
+1331
+x3
+l6
+172354
+x3
+l6
+39202
+x3
+l6
+312610
+x3
+l6
+470469
+x3
+l6
+296998
+x3
+l6
+47
+x3
+SelectedParams,0}
+,0,0x4
+nJ
+162863
+x3
+l6
+25030
+x3
+l6
+7168
+x3
+l6
+199680
+x3
+l6
+35847
+x3
+l6
+60440
+x3
+l6
+30751
+x3
+l6
+186549
+x3
+l6
+270599
+x3
+l6
+60431
+x3
+l6
+259119
+x3
+l6
+291840
+x3
+l6
+283648
+x3
+l6
+220360
+x3
+l6
+220403
+x3
+l6
+239890
+x3
+l6
+240926
+x3
+l6
+31751
+x3
+l6
+382998
+x3
+SelectedParams,0}
+,0,0x4
+nJ
+384239
+x3
+l6
+385071
+x3
+l6
+386289
+x3
+l6
+18674
+x3
+l6
+61682
+x3
+l6
+283969
+x3
+l6
+283971
+x3
+l6
+283976
+x3
+l6
+386376
+x3
+l6
+245767
+x3
+l6
+385062
+x3
+l6
+210991
+x3
+SelectedParams,0}
+,0,0x1
+nJ
+15814
+x3
+l6
+393254
+x3
+SelectedParams,0}
+,0,0x5
+nJ
+393254
+x3
+l6
+321583
+x3
+l6
+297007
+x3
+l6
+393263
+x3
+l6
+393263
+x3
+SelectedParams,0}
+,0,0x5
+nJ
+162871
+x3
+l6
+258103
+x3
+iJ
+0,0
+x3
+nH
+0,0
+i11
+1,45
+x3
+nH
+1,53
+x3
+nH
+1,54
+x3
+nH
+1,55
+x3
+nH
+1,56
+x3
+nH
+1,26
+x3
+nH
+1,259
+eF2
+0x16}
+,{{1,253
+x3
+nH
+1,272
+i11
+1,327
+eF2
+0x16}
+,{{1,0
+x3
+nH
+1,21
+x3
+nH
+1,441
+eF2
+cR1
+443
+eF2
+cR1
+0
+eF2
+cR1
+0
+tE
+2}
+,0,cR1
+15
+x3
+nH
+1,24
+tE
+2}
+,0,0x0
+nJ
+58392
+i11
+0,0
+tE
+1}
+,nN1,0x0
+nJ
+24591
+eH2
+33807
+eH2
+48143
+eH2
+289816
+eH2
+295960
+eH2
+307200,lA
+315470,lA
+39202,lA
+121894,lA
+421926,lA
+429094,lA
+437286,lA
+289073,lA
+325002,lA
+334218,lA
+7627,lA
+7700,lA
+7724,lA
+38,lA
+50587,lA
+405504,lA
+31751,lA
+404487,lA
+76816,l1
+x52
+318479,lA
+319503
+nP1
+7340060,l1
+x52
+332833,lA
+329764
+nP1
+7340176,lA
+89387,lA
+339273,lA
+332170,lA
+487462,lA
+490534,lA
+497702,lA
+509990,lA
+336947,lA
+342016,lA
+518182,lA
+503808,lA
+286727,lA
+91151,lA
+131087,lA
+328719,l1
+x52
+7217,lA
+304143,l1
+0x14
+nJ
+296976,l1
+lR3
+7340056,l1
+lR3
+7340061,l1
+x52
+7192,lA
+7447,lA
+24583,lA
+335887,l1
+0x10
+nJ
+7206,lA
+x63
+lA
+343078,l1
+0x6
+nJ
+354342,lA
+365606,lA
+58768,lA
+426398,l1
+0x12}
+,{{3,40272286,l1
+x52
+484766,l1
+0x12}
+,{{3,40330654,l1
+x52
+50600,lA
+62918,lA
+426456,l1
+x52
+484824,l1
+x52
+296998,l1
+0x4
+nJ
+428070
+nP1
+40330712,l1
+x52
+50665,lA
+367654,l1
+0x6
+nJ
+38372,lA
+121856
+nP1
+47655936,lA
+471040,lA
+367631,l1
+0x7
+nJ
+343097,l1
+0x7
+nJ
+39275,lA
+39278,l1
+0x4
+nJ
+39338,l1
+lR3
+15779300,lA
+343055,l1
+0x7}
+,{{3,15779238,lA
+436262,lA
+502822,lA
+39275,l1
+0x4
+nJ
+39403,l1
+0x4
+nJ
+35847,lA
+15,l1
+0x4
+nJ
+376870,lA
+15,lA
+122904,lA
+121880,lA
+30751,lA
+57
+nP1
+7340177,lA
+15681
+nP1
+67573791,lA
+39240,lA
+385039,l1
+0x1
+nJ
+15760
+nP1
+64009216,lA
+562176,l1
+0x0}
+,{{0,0,xW
+0,0,iS
+2,eZ3
+2,t03
+3,eZ3
+3,t03
+38,xW
+1,38,iS
+14,xW
+1,57,xW
+1,16,iK1
+0x0
+nJ
+464959,iK1
+0x1}
+,{{1,306,xW
+1,327,yA2
+0x0
+nJ
+465223,iK1
+0x16}
+,{{1,292,eZ3
+293,t03
+294,xW
+1,295,iS
+400,xW
+1,0,xW
+1,454,xW
+1,459,xW
+1,16,iK1
+0x1}
+,{{1,57,yA2
+0x1}
+,{{1,0,iS
+21,xW
+1,15,iK1
+0x0
+nJ
+24591,xW
+1,24,iS
+511,yA2
+0x0
+nJ
+46095,lK
+46104,lK
+50200,lK
+287789,lK
+66584,lK
+407836,lK
+15397,lK
+62504,lK
+39951,lK
+24591,lK
+33807,lK
+62509,lK
+15409,lK
+50176,lG,283648,lG,19456,lG,27648,lG,90112,lG,86016,lG,190464,eV1
+x52
+195584,lG,196608,eV1
+0x14
+nJ
+482304,lG,14342,lG,58375,lG,46147
+xR
+46151,lG,284679,lG,50183,lG,7183,lG,46157
+xR
+38991
+xR
+50279,lG,50280,lG,50257,lG,50258,lG,46193,lG,50295,lG,283809,lG,284835,lG,24822,lG,10240,lG,11264,lG,7170,lG,x63
+lG,17408,lG,197632,lG,470016,lG,25607,lG,121871,lG,39368,lG,7192,lG,121887,lG,416811,lG,252979,lG,50262,lG,46154,lG,38919,lG,62,lG,50281,lG,40050
+xR
+7566,eV1
+0x10
+nJ
+415787,lG,416819,lG,39326
+xR
+39326,lG,39332,eV1
+0x5
+nJ
+39333,eV1
+0x1
+nJ
+50590
+xR
+50590,lG,39338
+xR
+39338,lG,39335,eV1
+0x5
+nJ
+15786
+xR
+146858,lG,39366,lG,39373,lG,39374,lG,39384
+xR
+50648
+xR
+50648,lG,24,eV1
+0x6
+nJ
+24,lG,62,eV1
+0x6
+nJ
+40049,lG,46194
+xR
+43,lG,43
+xR
+415795,lG,51,lG,51
+xR
+50266,lG,50176
+xR
+50267,lG,39159,lG,39183
+xR
+7168
+xR
+31744,lG,98304,lG,31746,lG,109592,lG,39403
+xR
+39405
+xR
+39405,lG,39414,lG,39414
+xR
+16384,lG,15,lG,39024,eV1
+0x5
+nJ
+39027,eV1
+0x5
+nJ
+62853,lG,39416,lG,15360,lG,15,eV1
+0x1
+nJ
+16,lG,7183,eV1
+0x1
+nJ
+7172,cPow,yN1,nN1,0x0
+nJ
+24591,cPow,lU
+2,63521,cPow,lU
+2,62500,cPow,lU
+2,50453,cPow,lU
+2,50200,cPow,lU
+2,62488,cPow,lU
+1,0,t13
+7,t13
+196,t13
+0,cAcos
+t23
+cAcosh
+t23
+cAsin
+t23
+cAsinh
+nW
+119,cAsinh
+t23
+cAtan
+eW1
+308224,cAtan2
+eW1
+x63
+cAtan2
+t23
+cAtanh
+nW
+246,cCeil
+t23
+cCeil,iU2
+0,cK2
+0,cCos,iU2
+7,cK2
+81,cK2
+82,cK2
+119,cK2
+237,cK2
+255,cK2
+217,iV2
+237,iV2
+458,iV2
+0,cCosh,iU2
+0,iV2
+246,cFloor
+t23
+cFloor,lD
+0x4
+nJ
+311587,cHypot
+eW1
+323875,cHypot
+eW1
+323899,cHypot,l0
+3,32513024,y21
+34627584
+i9
+31493120,y21
+89213952
+i9
+149042176
+i9
+247699456
+i9
+301234176
+i9
+488062976
+i9
+492261376
+i9
+62933514
+i9
+62933514,y21
+62933520
+i9
+62933520,y21
+24664064
+i9
+573080576
+i9
+565189632
+i9
+32513024
+i9
+559963136
+i9
+7891968
+i9
+582524928,cIf
+nW
+119,cInt
+nW
+246,tF2
+0,tF2
+7,tF2
+31,tF2
+196,tF2
+359,tF2
+15,cLog,lU
+1,24,cLog,lU
+1,0,cLog10
+t23
+cLog2
+eW1
+x63
+cMax
+eW1
+35847,cMax
+eW1
+30751,cMax
+t23
+cMax,AnyParams,1}
+,0,0x4
+nJ
+x63
+cMin
+eW1
+35847,cMin
+eW1
+30751,cMin
+t23
+cMin,AnyParams,1}
+,0,0x4
+nJ
+24591,cMin,lU
+1,0,x72
+7,x72
+81,x72
+82,x72
+119,x72
+149,x72
+233,cSin,lD
+0x5}
+,{{1,246,x72
+255,x72
+254,x72
+0,cSin,iU2
+273,cSin,lD
+0x1}
+,{{1,217,yB2
+233,cSinh,lD
+0x5}
+,{{1,246,yB2
+254,yB2
+255,yB2
+458,yB2
+0,cSinh,iU2
+0,yB2
+15,cSqrt,lU
 1,0
-t31
-81
-t31
-121
-t31
-156
-t31
-159
-t31
-216,cDeg
-nR
-216,cRad,eF1
-cAbsAnd,lP
-xG3
-cAbsOr,lP
-1,0,yR3
-eJ3
+x12
+0,cTan,iU2
+117,cTan,iU2
+118
+x12
+233
+x12
+246
+x12
+273
+x12
+254
+x12
+255
+x12
+0,yC2
+0,cTanh,iU2
+216,yC2
+233,yC2
+246,yC2
+254,yC2
+255,yC2
+0,cTrunc
+eW1
+15384,cSub,lU
+2,15384,cDiv,lU
+2,470476,cDiv,lU
+2,121913,tG2
+x63
+lS3
+x52
+x63
+tG2
+31744,lS3
+0x20
+nJ
+31751,lS3
+0x24
+nJ
+31751,tG2
+121913,i21
+eW1
+x63
+cLess,lD
+x52
+41984,cLess,lD
+0x4
+nJ
+41984,cLess
+eW1
+7,cLess
+eW1
+x63
+cLessOrEq
+eW1
+295158,cLessOrEq
+eW1
+x63
+cGreater,lD
+x52
+41984,cGreater,lD
+0x4
+nJ
+41984,cGreater
+eW1
+7,cGreater
+eW1
+x63
+yR1
+l0
+2,295158
+lZ3
+t23
+lV2
+244,lV2
+7,lV2
+544,lV2
+547,lV2
+548,lV2
+550,lV2
+15,lV2
+31,lV2
+553,lV2
+554,cNot
+eW1
+7700
+l23
+7168
+l23
+35847
+l23
+30751
+l23
+457759
+l23
+460831,cAnd,iJ
+0,0,cAnd,nH
+2,x63
+e43
+7700,e43
+35847,e43
+457759,e43
+460831,e43
+30751,cOr,iJ
+1,0,lW2
+81,lW2
+131,lW2
+244,lW2
+245,lW2
+246,cDeg
+nW
+246,cRad
+eW1
+x63
+cAbsAnd,l6
+x63
+cAbsOr,iJ
+1,0,cK3
+t23
 cAbsNotNot,l0
-3,31464448,eP3
-nU
+3,32513024,c93
+lD
 0x0}
 ,}
 ;}
-iO2
-l41{const
+lA3
+l21{const
 Rule
-grammar_rules[253]={{ProduceNewTree,1,1,0,{1,0,cAbs,xJ
-361,{1,172,cAtan,xJ
-354
-tS
-1337
-i23,xJ
-356
-tS
-320513
-i23
-l7
-2,2,222424
-tS
-226524
-i23
-l7
-2,2,224474
-tS
-228574
-i23,xJ
-148
-x13
-cCeil,xJ
-435,{1,80,tL2
-429,{1,115,tL2
-430,{1,117,tL2
-146,{1,118,tL2
-370,{1,116,tL2
-0,{1,354,cCos
-l7
-2,1,0,{1,351,cCos
-l7
-2,1,216
-x13
-tL2
-314,{1,357,cCosh
-l7
-2,1,0,{1,351,cCosh
-l7
-2,1,216
-x13
-cH3
+grammar_rules[260]={{ProduceNewTree,17,1,0,{1,0,cAbs,eI2
+409,{1,146,cAtan,eI2
+403
+tD
+1326,cAtan2,eI2
+405
+tD
+309249,cAtan2
 xJ
-144
-x13
-cFloor,xJ
-403,{1,114,cFloor,eL3
-214,{3,7379968,c8
-518,{3,31464450,c8
-499,{3,8428544,c8
-501,{3,8434688,c8
-215,{3,40901632,c8
-494,{3,40902656,c8
-507,{3,40940544,c8
-506,{3,47194112,c8
-483,{3,47225856,c8
-414,{3,1058266,c8
-418,{3,1058272,c8
-418,{3,9438682,c8
-414,{3,9438688,c8
-460,{3,396733911,c8
-460,{3,381020637,cIf
-l7
-0,3,31492569,{3,35682779,cIf
-l7
-0,3,31492575,{3,35682785,cIf,xJ
-111,{1,228,eM3
-110,{1,244,eM3
-355,{1,106,eM3
-204,{1,205,cLog
-l7
-0,1,395
-cP2,cMax
-yF
-0
-tS
-431105,cMax
-yF
-396
-cP2,cMin
-yF
-0
-tS
-427009,cMin,AnyParams,0}
+253174
+tD
+255224,cAtan2
+xJ
+259324
+tD
+257274,cAtan2,eI2
+152,{1,252,cCeil,l3
+2,1,480,{1,68,y31
+476,{1,122,y31
+477,{1,124,y31
+151,{1,125,y31
+419,{1,123,y31
+0,{1,403,cCos,l2
+2,1,246,{1,252,cCos,l2
+18,1,0,{1,400,y31
+303,{1,406,cCosh,l2
+2,1,246,{1,252,cCosh,l2
+18,1,0,{1,400,cCosh,l3
+2,1,452,{1,121,cFloor,eI2
+150,{1,252,cFloor,l3
+0,1,157,{3,7382016,eF
+543,{3,8430592,eF
+550,{3,8436736,eF
+158,{3,42998784,eF
+544,{3,42999808,eF
+556,{3,43039744,eF
+551,{3,49291264,eF
+532,{3,49325056,eF
+463,{3,1058312,eF
+467,{3,1058318,eF
+467,{3,9438728,eF
+463,{3,9438734,cIf,l2
+0,3,32542219,{3,36732428,cIf,l2
+0,3,32542225,{3,36732434,cIf,l3
+16,1,567,{3,32513026,cIf,l3
+16,1,509,{3,449213961,cIf,l3
+16,1,509,{3,433500687,cIf,l3
+2,1,76,{1,256,yD2
+69,{1,258,yD2
+404,{1,72,yD2
+160,{1,147,cLog,l2
+0,1,0
+tD
+481281,cMax,i0
+16,1,439
+tD
+c43
+cMax,i0
+0,1,0
+tD
+477185,cMin,i0
+16,1,440
+tD
+c43
+cMin,cA
+0,1,154
+tD
+24832,cPow,l3
+0,1,154
+tD
+25854,cPow,l3
+0,1,155
+tD
+129039
+eL3
+32062
+eL3
+32063
+eL3
+32064
+c53
+166288
+tD
+32137
+eL3
+33089
+c53
+7168
+tD
+12688
+c53
+7434
+tD
+12553
+iT
+429
+tD
+46146
+iT
+430
+tD
+46153
+iT
+431
+tD
+46150
+iT
+173
+tD
+81935
+iT
+172
+tD
+130082
+iT
+178
+tD
+133154
+c63
+470016
+tD
+464911
+c63
+274432
+tD
+273423
+c63
+251904
+tD
+266274
+c63
+251904
+tD
+263186
+iT
+175,{1,252,lR1
+421,{1,68,lR1
+151,{1,122,lR1
+419,{1,124,lR1
+174,{1,125,lR1
+476,{1,123,lR1
+0,{1,405,lR1
+176,{1,252,cSinh,l3
+2,1,333,{1,404,cSinh,l3
+2,1,177,{1,252,yE2
+0,{1,408,yE2
+179,{1,410,yE2
+180,{1,252,cTanh,l2
+0,1,436
+tD
+443407,lU3
+435
+tD
+c43
+lU3
+171
+tD
+268549,lU3
+184
+tD
+276749,lU3
+183
+tD
+276500,lV3
+59701
+tD
+303289,lV3
+59702
+tD
+305339,lV3
+59728
+tD
+346306,lV3
+157004
+tD
+193724,lV3
+174245
+tD
+171172,lV3
+243878
+tD
+194724
+x3
+cA
+2,1,340,{1,313
+tE
+1
+lH1
+330,{1,361
+tE
+1}
 }
-,{ProduceNewTree,0,1,203
-tS
-24804,cPow,eL3
-203
-tS
-25827,cPow,eL3
-202
-tS
-126991,cPow
-xM1
-30988,cPow
-xM1
-30989,cPow
-xM1
-30990,cPow
-t93
-166239
-tS
-31066,cPow
-xM1
-32015,cPow
-t93
-7168
-tS
-12639,cPow
-t93
-7392
-tS
-12535
-x23
-380
-tS
-44095
-x23
-381
-tS
-44141
-x23
-382
-tS
-44140
-x23
-201
-tS
-109583
-x23
-200
-tS
-132129
-x23
-155
-tS
-133153
-n52
-419840
-tS
-413711
-n52
-254976
-tS
-253967
-n52
-221184
-tS
-251937
-n52
-221184
-tS
-248850
-x23
-150
-x13
-yQ2
-372,{1,80,yQ2
-146,{1,115,yQ2
-370,{1,117,yQ2
-149,{1,118,yQ2
-429,{1,116,yQ2
-0,{1,356,yQ2
-152
-x13
-cSinh,xJ
-312,{1,355,cSinh,xJ
-153
-x13
-eN3
-0,{1,359,eN3
-170,{1,360,eN3
-154
-x13
-cTanh
-l7
-0,1,392
-tS
-395279,tM2
-391
-cP2,tM2
-199
-tS
-242924,tM2
-198
-tS
-230636,tM2
-164
-tS
-240869,tM2
-163
-tS
-240660,t51
-0
-nM1
-263,{1,311,t51
-1
-nM1
-262,{1,310,t51
-1
-l1
-2,1,261
-tS
-1333
-lW1
-259
-tS
-1331
-lW1
-407
-tS
-415124
-lW1
-45
-tS
-331093
-lW1
-324
-tS
-146477
-lW1
-342
-tS
-145453
-lW1
-427
-tS
-213202
-lW1
-428
-tS
-217298
-lW1
-368
-tS
-216270
-lW1
-145
-tS
-216271
-lW1
-369
-tS
-218318
-lW1
-197
-tS
-144665
-lW1
-194
-tS
-348441
-lW1
-193
-tS
-348300
-lW1
-195
-tS
-200875
-lW1
-192
-tS
-177323
-lW1
-257
-tS
-446837
-lW1
-181
-tS
-446653
-lW1
-151
-tS
-187765
-lW1
-147
-tS
-187828
-lW1
-255
-tS
-195957
-lW1
-374
-tS
-264383
-lW1
-437
-tS
-264381
-lW1
-437
-tS
-186741
-lW1
-374
-tS
-262580
-lW1
-151
-tS
-262333,tM2
-98
-tS
-1155
-eG1
-97
-tS
-1156
-eG1
-305
-tS
-1330
-eG1
-99
-tS
-24704
-eG1
-100
-tS
-24698
-eG1
-394
-tS
-395279
-eG1
-393
-cP2
-eG1
-353
-tS
-360799
-eG1
-96
-tS
-89360
-eG1
-105
-tS
-80155
-eG1
-95
-tS
-79131
-cQ2
-56671
-tS
-1424
-cQ2
-15711
-tS
-1426
-cQ2
-107535
-tS
-93467
-cQ2
-97295
-tS
-96539,l8
-1,1,0,{1,351,l8
-1,1,55,{1,14,lK
-0
-nM1
-93
-tS
-70674,cMul,SelectedParams,0
-nM1
-512,{1,50,lK
-1
-nM1
-513,{1,40,lK
-1
-l1
-2,1,435
-tS
-443429,eA
-442
-tS
-451621,eA
-336
-tS
-382285,eA
-437
-tS
-382406,eA
-374
-tS
-446801,eA
-365
-tS
-435534,eA
-444
-tS
-325033,eA
-318
-tS
-340413,eA
-335
-tS
-375116,eA
-424
-tS
-375229,eA
-45
-tS
-456126,eA
-450
-tS
-328114,eA
-45
-tS
-460223,eA
-452
-tS
-461861,eA
-453
-tS
-329140,eA
-322
-tS
-341446,eA
-456
-tS
-335286,eA
-448
-tS
-327087,eA
-459
-tS
-469029,eA
-455
-tS
-311360,eA
-338
-tS
-309322,eA
-412
-tS
-43412,eA
-330
-tS
-49480,eA
-413
-tS
-47508,eA
-331
-tS
-45384,l8
-2,2,334277
-tS
-333236
-cQ2
-39936
-tS
-xH3
-cEqual
-yP
-cEqual
-yQ
-cEqual
-yR
-cEqual
-lA1
-24807
-t61
-iD
-t61
-l62
-237799
-t61
-n11
-cEqual
-l72
-tK2
-eH1
-39,tK2
-eO3
-0
-tS
-5165,cEqual
-t93
-39936
-tS
-xH3
-t71
-yP
-t71
-yQ
-t71
-yR
-t71
-lA1
-24807
-tI2
-iD
-tI2
-l62
-237799
-tI2
-n11
-t71
-l72
-t71
-tJ2
-39,t71,eH1
-5165,t71
-yP
-cLess
-yQ
-cLess
-yR
-cLess,xJ
-516
-tS
-44032,cLess
-lA1
-24804
-t21
-yM1
-t21
-iD
-t21
-l62
-237796
-t21
-xN1
-t21
-n11
-cLess
-l72
-cLess
-tJ2
-xH3
-cLess
-yP
-cLessOrEq
-yQ
-cLessOrEq
-yR
-cLessOrEq,xJ
-510
-tS
-359439,cLessOrEq
-lA1
-24804
-xC1
-yM1
-xC1
-iD
-xC1
-l62
-237796
-xC1
-xN1
-xC1
-n11
-cLessOrEq
-l72
-cLessOrEq
-tJ2
-359469,cLessOrEq
-yP
-cGreater
-yQ
-cGreater
-yR
-e82
-xJ
-487
-tS
-359439,cGreater
-lA1
-24804
-y61
-yM1
-y61
-iD
-y61
-l62
-237796
-y61
-xN1
-y61
-n11
-cGreater
-l72
-e82
-eH1
-359469,cGreater
-yP
-cGreaterOrEq
-yQ
-cGreaterOrEq
-yR
-cGreaterOrEq,xJ
-517
-tS
-44032
-yX
-473304
-tS
-24804
-yX
-yM1
-yX
-iD
-yX
-l62
-237796
-yX
-xN1
-yX
-7168
-tS
-279818
-yX
-lB1
-cGreaterOrEq,eH1
-xH3
-cGreaterOrEq,eL3
-516,{1,2,cNot,eO3
-469,{1,123,cNot,eL3
-511,{1,5,cAnd,AnyParams,1
-l1
-0,1,514
-tS
-13314,cAnd
-yF
-397
-cP2,cAnd
-yF
+,{ReplaceParams,2,1,365
+tD
+1386
+n31
+339
+tD
+1361
+n31
+457
+tD
+466374
+n31
+47
+tD
+353636
+n31
+346
+tD
+203823
+n31
+357
+tD
+202799
+n31
+474
+tD
+208079
+n31
+475
+tD
+209103
+n31
+417
+tD
+213193
+n31
+210
+tD
+213194
+n31
+418
+tD
+216265
+n31
+212
+tD
+202086
+n31
+205
+tD
+368998
+n31
+214
+tD
+368853
+n31
+223
+tD
+224474
+n31
+225
+tD
+229594
+n31
+366
+tD
+502185
+n31
+220
+tD
+501982
+n31
+227
+tD
+226729
+n31
+226
+tD
+226794
+n31
+363
+tD
+234921
+n31
+426
+tD
+376037
+n31
 491
-tS
-496099,cAnd
-yF
-492
-tS
-399846,cAnd
-yF
-493
-tS
-393702,cAnd,AnyParams,0
-l1
-0,2,479697,{3,489115088,cAnd
-yF
-515
-tS
-13314,xI3
-508
-tS
-8197,xI3
-398
-cP2,xI3
-488
-tS
-496099,xI3
-489
-tS
-399846,xI3
-490
-tS
-393702,xI3
-509
-tS
-136197,cOr,AnyParams,0}
-}
-,{ProduceNewTree,0,1,517,{1,2,xJ3
-l3
-1,1,0,{1,0,xJ3
-eO3
-470,{1,123,xJ3
-xJ
-482,{1,228,cAbsNotNot,AnyParams,0
-nM1
-476,{1,227,cAbsNotNot,AnyParams,0}
-}
-,{ProduceNewTree,0,1,383,{3,31464955,eP3
-eL3
-517,{3,40940544,eP3
-eL3
-516,{3,47225856,i03
-l7
-0,3,31492569,{3,35682779,eP3
-PositionalParams,0}
-}
-,}
-;e92
-grammar_optimize_abslogical_type{xS
-9
-eI
-grammar_optimize_abslogical_type
-grammar_optimize_abslogical={9,{21,183,219,228,231,237,244,249,252}
-}
-;}
-e92
-grammar_optimize_ignore_if_sideeffects_type{xS
-59
-eI
-grammar_optimize_ignore_if_sideeffects_type
-grammar_optimize_ignore_if_sideeffects={59,{0,20,22,23,24,25,26,27,cV
-tY1
-78,cZ
-xR
-grammar_optimize_nonshortcut_logical_evaluation_type{xS
-56
-eI
-grammar_optimize_nonshortcut_logical_evaluation_type
-grammar_optimize_nonshortcut_logical_evaluation={56,{0,26,cV
-tY1
-78,cZ
-158,167,168,169,178,179,191,195,203,207,215,227,229,230,232,233,234,235,236,238,239,240,241,242,243,245,246,247,248,250,251}
-}
-;}
-e92
-grammar_optimize_round1_type{xS
-118
-eI
-grammar_optimize_round1_type
-grammar_optimize_round1={118,{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,18,26,cV
-37,38,tY1
-45,46,47,48,49,50,51,52,53,54,58,59,60,61,62,63,64,65,66,67,68,69,70,71,78,79,80,81,82,83,88,89,90,91,92,93,94,95,96,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,132,xR
-grammar_optimize_round2_type{xS
+tD
+376030
+n31
+491
+tD
+233897
+n31
+426
+tD
+373226
+n31
+227
+tD
+372958,l7
+2,2,406760
+tD
+236753,l7
+2,2,59762
+tD
+236913,lU3
+371
+tD
+1396,cL2
+94
+tD
+24705,cL2
+95
+tD
+24708,cL2
+438
+tD
+443407,cL2
+437
+tD
+c43
+cL2
+98
+tD
+99701,cL2
+106
+tD
+101704,cL2
 100
-eI
-grammar_optimize_round2_type
-grammar_optimize_round2={100,{0,15,16,17,26,cV
-39,40,tY1
-45,46,47,48,49,50,51,52,53,54,59,60,72,73,78,79,84,85,86,87,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,117,118,119,120,121,122,123,124,125,126,127,128,133,157,xR
-grammar_optimize_round3_type{xS
-79
-eI
-grammar_optimize_round3_type
-grammar_optimize_round3={79,{74,75,76,77,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,159,160,161,162,163,164,165,166,170,171,172,173,174,175,176,177,180,181,182,184,185,186,187,188,189,190,192,193,194,196,197,198,199,200,201,202,204,205,206,208,209,210,211,212,213,214,216,217,218,220,221,222,223,224,225,226}
+tD
+110920,l5
+0,2,108559
+tD
+103752,l5
+0,2,102415
+tD
+104776,lJ
+0
+lH1
+110
+tD
+111634,cMul,SelectedParams,0
+lH1
+561,{1,52,lJ
+1
+lH1
+562,{1,42,lJ
+1}
 }
-;}
-e92
-grammar_optimize_round4_type{xS
-10
-eI
-grammar_optimize_round4_type
-grammar_optimize_round4={10,{19,55,56,57,130,131,153,154,155,156}
-}
-;}
-e92
-grammar_optimize_shortcut_logical_evaluation_type{xS
-53
-eI
-grammar_optimize_shortcut_logical_evaluation_type
-grammar_optimize_shortcut_logical_evaluation={53,{0,26,cV
-tY1
-78,cZ
-158,167,168,169,178,179,191,195,203,207,215,227,229,232,233,234,235,236,239,240,241,242,245,246,247,248,250,251}
-}
-;}
-}
-iO2
-l41{yV1
-cG2
-e01
+,{ReplaceParams,2,1,480
+tD
+492582
 iL1
-paramlist,lC1){index=(paramlist>>(index*10))&1023;if(index>=55
+488
+tD
+498726
+iL1
+381
+tD
+435578
+iL1
+491
+tD
+435703
+iL1
+426
+tD
+502142
+iL1
+414
+tD
+493947
+iL1
+493
+tD
+349666
+iL1
+342
+tD
+364014
+iL1
+380
+tD
+425315
+iL1
+472
+tD
+425454
+iL1
+47
+tD
+506351
+iL1
+499
+tD
+352739
+iL1
+47
+tD
+510448
+iL1
+501
+tD
+512038
+iL1
+502
+tD
+355818
+iL1
+348
+tD
+387575
+iL1
+505
+tD
+357861
+iL1
+497
+tD
+351710
+iL1
+508
+tD
+519206
+iL1
+504
+tD
+395375
+iL1
+388
+tD
+394356
+iL1
+461
+tD
+45510
+iL1
+353
+tD
+51552
+iL1
+462
+tD
+49606
+iL1
+354
+tD
+47456,l5
+2,2,359926
+tD
+358890,l5
+16,1,92
+tD
+1157,l5
+16,1,93
+tD
+1158,l5
+16,1,402
+tD
+411024,l5
+16,2,58768
+tD
+1466,l5
+16,2,15760
+tD
+1468,l5
+17,1,0,{1,400,l5
+17,1,57,{1,14,lJ
+0}
+}
+,{ProduceNewTree,4,1,532
+tD
+41,lT3
+l3
+4,1,0
+tD
+5167,lT3
+cR
+41984
+tD
+409641,lT3
+cR
+i1
+lT3
+cR
+tC
+lT3
+cR
+tF
+cEqual
+y51
+24849,cEqual
+xJ
+i2
+cEqual
+xJ
 nZ2
-cG2(SubFunction
-tZ1
-plist_s[index-55]);if(index>=36
+281873,cEqual
+xJ
+iL
+cEqual
+xJ
+l71
+lT3
+l3
+4,1,556
+tD
+41,i21,l3
+4,1,532
+tD
+5167,i21,cR
+41984
+tD
+409641,i21,cR
+i1
+i21,cR
+tC
+i21,cR
+tF
+i21
+y51
+24849,i21
+xJ
+i2
+i21
+xJ
 nZ2
-cG2(NumConstant
-tZ1
+281873,i21
+xJ
+iL
+i21
+xJ
+l71
+i21,cR
+i1
+c73
+tC
+c73
+tF
+cLess,eI2
+565
+tD
+46080,cLess
+y51
+24832,cLess
+xJ
+y61
+cLess
+xJ
+i2
+cLess
+xJ
+nZ2
+t33
+cLess
+xJ
+x21
+cLess
+xJ
+iL
+cLess
+xJ
+l71
+cLess,l3
+20,1,556
+tD
+409641,c73
+i1
+lX2
+cR
+tC
+lX2
+cR
+tF
+lX2
+eI2
+559
+tD
+409615,cLessOrEq
+y51
+24832,cLessOrEq
+xJ
+y61
+cLessOrEq
+xJ
+i2
+cLessOrEq
+xJ
+nZ2
+t33
+cLessOrEq
+xJ
+x21
+cLessOrEq
+xJ
+iL
+cLessOrEq
+xJ
+l71
+lX2
+l3
+20,1,556
+tD
+409647,lX2
+cR
+i1
+cM2
+tC
+cM2
+tF
+cGreater,eI2
+533
+tD
+409615,cGreater
+y51
+24832,cGreater
+xJ
+y61
+cGreater
+xJ
+i2
+cGreater
+xJ
+nZ2
+t33
+cGreater
+xJ
+x21
+cGreater
+xJ
+iL
+cGreater
+xJ
+l71
+cGreater,l3
+20,1,532
+tD
+409647,cM2
+i1
+yR1
+cR
+tC
+yR1
+cR
+tF
+yR1
+eI2
+566
+tD
+46080
+lZ3
+y51
+24832
+lZ3
+xJ
+y61
+n03
+i2
+n03
+nZ2
+281856
+lZ3
+xJ
+x21
+n03
+iL
+n03
+l71
+yR1
+l3
+20,1,532
+tD
+409641,yR1
+l3
+4,1,513,{1,137,cNot,l3
+16,1,565,{1,2,cNot,l2
+0,1,446
+tD
+c43
+xI
+0,2,530947,{3,541595138,cAnd,cA
+16,1,560,{1,5,cAnd,AnyParams,1}
+}
+,{ReplaceParams,16,1,563
+tD
+13314,xI
+16,1,538
+tD
+547348,xI
+16,1,541
+tD
+456220,xI
+16,1,542
+tD
+460316,xI
+0,1,451
+tD
+c43
+nG
+564
+tD
+13314,nG
+557
+tD
+8197,nG
+535
+tD
+547348,nG
+536
+tD
+456220,nG
+537
+tD
+460316,nG
+558
+tD
+143365,cOr,cA
+4,1,519,{1,137,c83
+l3
+16,1,566,{1,2,c83
+l3
+17,1,0,{1,0,c83
+eI2
+531,{1,256,cAbsNotNot,cA
+18,1,525,{1,254,cAbsNotNot,cA
+0,1,566,{3,43039744,c93
+l3
+0,1,565,{3,49325056,c93
+l3
+16,1,448,{3,32513580,c93
+l2
+16,3,32542219,{3,36732428,c93
+yN1}
+,}
+;e22
+grammar_optimize_abslogical_type{yV
+9
+eG
+grammar_optimize_abslogical_type
+grammar_optimize_abslogical={9,{34,190,226,236,240,245,252,258,259}
+}
+;}
+e22
+grammar_optimize_ignore_if_sideeffects_type{yV
+59
+eG
+grammar_optimize_ignore_if_sideeffects_type
+grammar_optimize_ignore_if_sideeffects={59,{0,20,21,22,23,24,25,26,cU
+iP1
+78,cI1
+yU
+grammar_optimize_nonshortcut_logical_evaluation_type{yV
+56
+eG
+grammar_optimize_nonshortcut_logical_evaluation_type
+grammar_optimize_nonshortcut_logical_evaluation={56,{0,25,cU
+iP1
+78,cI1,161,162,163,164,165,166,167,176,177,178,198,202,210,214,222,234,235,237,238,239,241,242,243,244,246,247,248,249,250,251,253,254,255,256,257}
+}
+;}
+e22
+grammar_optimize_round1_type{yV
+125
+eG
+grammar_optimize_round1_type
+grammar_optimize_round1={125,{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,19,25,cU
+37,38,iP1
+45,46,47,48,49,50,51,52,53,54,58,59,60,61,62,63,64,65,66,67,68,69,70,71,78,79,80,81,82,83,84,85,86,87,88,93,94,95,96,97,98,99,100,101,117,118,119,120,121,122,123,124,125,126,127,128,129,132,158,159,160
+yU
+grammar_optimize_round2_type{yV
+103
+eG
+grammar_optimize_round2_type
+grammar_optimize_round2={103,{0,15,16,17,25,cU
+39,40,iP1
+45,46,47,48,49,50,51,52,53,54,59,60,72,73,78,79,83,84,85,89,90,91,92,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,119,122,123,124,125,126,127,128,133,157,158,159,160
+yU
+grammar_optimize_round3_type{yV
+79
+eG
+grammar_optimize_round3_type
+grammar_optimize_round3={79,{74,75,76,77,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,168,169,170,171,172,173,174,175,179,180,181,182,183,184,185,186,187,188,189,191,192,193,194,195,196,197,199,200,201,203,204,205,206,207,208,209,211,212,213,215,216,217,218,219,220,221,223,224,225,227,228,229,230,231,232,233}
+}
+;}
+e22
+grammar_optimize_round4_type{yV
+10
+eG
+grammar_optimize_round4_type
+grammar_optimize_round4={10,{18,55,56,57,130,131,153,154,155,156}
+}
+;}
+e22
+grammar_optimize_shortcut_logical_evaluation_type{yV
+53
+eG
+grammar_optimize_shortcut_logical_evaluation_type
+grammar_optimize_shortcut_logical_evaluation={53,{0,25,cU
+iP1
+78,cI1,161,162,163,164,165,166,167,176,177,178,198,202,210,214,222,234,235,237,238,241,242,243,244,247,248,249,251,253,254,255,256,257}
+}
+;}
+}
+lA3
+l21{x33
+e52
+ParamSpec_Extract
+nP2
+paramlist,l91){index=(paramlist>>(index*10))&1023;if(index>=57)return
+e52(SubFunction,cN2
+plist_s[index-57]);if(index>=37)return
+e52(NumConstant,cN2
 plist_n_container
-x8::plist_n[index-36])l81
-cG2(ParamHolder
-tZ1
+xN::plist_n[index-37])eL
+e52(ParamHolder,cN2
 plist_p[index]);}
 }
 #ifdef FP_SUPPORT_OPTIMIZER
@@ -6464,272 +6861,292 @@ plist_p[index]);}
 #include <algorithm>
 #include <map>
 #include <sstream>
-xQ
 using
-iO2
-l41;using
-iO2
-FPoptimizer_CodeTree;using
-iO2
-FPoptimizer_Optimize;iO2{nT1
+lA3
+FUNCTIONPARSERTYPES;using
+lA3
+l21;using
+tN;using
+cH1;lA3{nX1
 It,typename
 T,typename
-Comp>eI1
+Comp>eX1
 MyEqualRange(It
 first,It
 last,const
 T&val,Comp
 comp){size_t
 len=last-first;while(len>0){size_t
-nJ3
+yD3
 len/2;It
-n43(first);n43+=half;if(comp(*n43,val)){first=n43;++first;len=len-half-1;}
-tP1
-comp(val,*n43)){len=half;}
+nZ3(first);nZ3+=half;if(comp(*nZ3,val)){first=nZ3;++first;len=len-half-1;}
+iZ1
+comp(val,*nZ3)){len=half;}
 else{It
-left(first);{It&cR2=left;It
-last2(n43);size_t
-len2=last2-cR2;while(len2>0){size_t
+left(first);{It&eJ2=left;It
+last2(nZ3);size_t
+len2=last2-eJ2;while(len2>0){size_t
 half2=len2/2;It
-middle2(cR2);middle2+=half2;if(comp(*middle2,val)){cR2=middle2;++cR2;len2=len2-half2-1;}
+middle2(eJ2);middle2+=half2;if(comp(*middle2,val)){eJ2=middle2;++eJ2;len2=len2-half2-1;}
 else
 len2=half2;}
 }
 first+=len;It
-right(++n43);{It&cR2=right;It&last2=first;size_t
-len2=last2-cR2;while(len2>0){size_t
+right(++nZ3);{It&eJ2=right;It&last2=first;size_t
+len2=last2-eJ2;while(len2>0){size_t
 half2=len2/2;It
-middle2(cR2);middle2+=half2;if(comp(val,*middle2))len2=half2;else{cR2=middle2;++cR2;len2=len2-half2-1;}
+middle2(eJ2);middle2+=half2;if(comp(val,*middle2))len2=half2;else{eJ2=middle2;++eJ2;len2=len2-half2-1;}
 }
 }
 return
-eI1(left,right);}
+eX1(left,right);}
 }
 return
-eI1(first,first);}
-yT1
-OpcodeRuleCompare{i12()(lM1&tree,i02
-xW2)const{const
-Rule&rule=grammar_rules[xW2]l81
-tree
-nE<rule
-nT2.subfunc_opcode;}
-i12()iL1
-xW2,const
-eR
+eX1(first,first);}
+x33
+e22
+OpcodeRuleCompare{iH2()eG3
+tree,x83
+yF2)const{const
+Rule&rule=grammar_rules[yF2]eL
+tC2<rule
+cO2.subfunc_opcode;}
+iH2()nP2
+yF2,const
+t2
 const{const
-Rule&rule=grammar_rules[xW2]l81
+Rule&rule=grammar_rules[yF2]eL
 rule
-nT2.subfunc_opcode<tree
-nE;}
+cO2.subfunc_opcode<tC2;}
 }
-;xG1
-TestRuleAndApplyIfMatch
-eX3
-yK2&tree,bool
-cD{MatchInfo
-x8
-info;lZ1
-found(false,e1());if((rule.eL1
-LogicalContextOnly)&&!cD{yR2
-if(nD
+n11
+bool
+TestRuleAndApplyIfMatch(tE1
+n91
+tree,bool
+cB{MatchInfo
+xN
+info;nC1
+found(false,cZ());if((rule.l81
+LogicalContextOnly)&&!cB{tK1
+if(nB
 IsIntType
-x8::result){if(rule.eL1
-NotForIntegers)yR2
-else{if(rule.eL1
-OnlyForIntegers)yR2
+xN::yA3)tX2
+NotForIntegers)tK1
+else
+tX2
+OnlyForIntegers)tK1
+if(nB
+IsComplexType
+xN::yA3)tX2
+NotForComplex)tK1
+else
+tX2
+OnlyForComplex)tK1
 for(;;){
 #ifdef DEBUG_SUBSTITUTIONS
 #endif
 found=TestParams(rule
-nT2,tree,found.specs,info,true);if(found.found)break;if(!&*found.specs){fail:;
+cO2
+e53,found.specs,info,true);if(found.found)break;if(!&*found.specs){fail:;
 #ifdef DEBUG_SUBSTITUTIONS
-DumpMatch
-t81,false);
+DumpMatch(rule
+lY3,false);
 #endif
-nX2}
+return
+eO3}
 #ifdef DEBUG_SUBSTITUTIONS
-DumpMatch
-t81,true);
+DumpMatch(rule
+lY3,true);
 #endif
-SynthesizeRule
-t81)nS2}
-iO2
-FPoptimizer_Optimize{xG1
-ApplyGrammar
-i01
-Grammar&tN2,yK2&tree,bool
-cD{if(tree.GetOptimizedUsing()==&tN2){
+SynthesizeRule(rule
+lY3
+iX1}
+cH1{xV1
+yS1
+const
+Grammar&x82,n91
+tree,bool
+cB{if(tree.GetOptimizedUsing()==&x82){
 #ifdef DEBUG_SUBSTITUTIONS
 std::cout<<"Already optimized:  "
-;xE3(tree)lN1"\n"
+i63
+tree)xI1"\n"
 <<std::flush;
 #endif
-nX2
+return
+eO3
 if(true){bool
-changed
-i13
-switch
-xU2
-iY2
+changed=false;switch(tC2
+eJ3
 cNot:case
 cNotNot:case
 cAnd:case
-cOr:for
-xK2
-0
-nP
-true))yI1
+cOr:e23
+if(yS1
+x82
+tA3
+true))xD2
 lC
 cIf:case
-i03:if(ApplyGrammar(tN2,e72,cV2
-cIf))yI1
+iF3:if(yS1
+x82,t5
+0),tC2==cIf))xD2
 for
-xK2
-1
-nP
-cD)yI1
-break;default:for
-xK2
-0
-nP
-false))yI1}
-if(changed){tree.Mark_Incompletely_Hashed()nS2}
+c12
+1;a<t6;++a)if(yS1
+x82
+tA3
+cB)xD2
+break;default:e23
+if(yS1
+x82
+tA3
+false))xD2}
+if(changed){tree.Mark_Incompletely_Hashed(iX1}
 typedef
 const
-i02
-char*lE3;std::pair<lE3,lE3>range=MyEqualRange(tN2.rule_list,tN2.rule_list+tN2.rule_count,tree,OpcodeRuleCompare
-x8());if(range.eQ3
+x83
+short*n23;std::pair<n23,n23>range=MyEqualRange(x82.rule_list,x82.rule_list+x82.rule_count
+e53,OpcodeRuleCompare
+xN());std
+xM3<x83
+short>rules;rules.xJ3
 range
-eE3){
+xU3-range.first);for
+y5
+if(IsLogisticallyPlausibleParamsMatch(e81
+cO2
+e53))rules.push_back(*r);}
+range.first=!rules
+tK3?&rules[0]:0;range
+xU3=!rules
+tK3?&rules[rules.size()-1]+1:0;if(range.first!=range
+xU3){
 #ifdef DEBUG_SUBSTITUTIONS
-yG<i02
-char>rules;rules.nH3
-range
-eE3-range.first);yD
-if(IsLogisticallyPlausibleParamsMatch(cW1
-nT2
-n72
-rules
-yL*r);}
-range.first=&rules[0];range
-eE3=&rules[rules
-yA3-1]+1;if(range.eQ3
-range
-eE3){std::cout<<"Input ("
-<<FP_GetOpcodeName
-xU2)<<")["
-<<iT<<"]"
-;if(cD
+if(range.first!=range
+xU3){std::cout<<"Input ("
+<<FP_GetOpcodeName(tC2)<<")["
+<<t6<<"]"
+;if(cB
 std::cout<<"(Logical)"
-;i02
-first=i21,prev=i21;const
-char*sep=", rules "
-;yD
-if(first==i21)first=prev=*r;tP1*r==prev+1)prev=*r;else{std::cout<<sep<<first;sep=","
+;x83
+first=iQ1,prev=iQ1;l03
+sep=", rules "
+;for
+y5
+if(first==iQ1)first=prev=*r;iZ1*r==prev+1)prev=*r;else{std::cout<<sep<<first;sep=","
 ;if(prev!=first)std::cout<<'-'<<prev;first=prev=*r;}
 }
-if(eQ3
-i21){std::cout<<sep<<first;if(prev!=first)std::cout<<'-'<<prev;}
+if(first!=iQ1){std::cout<<sep<<first;if(prev!=first)std::cout<<'-'<<prev;}
 std::cout<<": "
-;xE3(tree)lN1"\n"
+i63
+tree)xI1"\n"
 <<std::flush;}
 #endif
 bool
-changed
-i13
-yD
+changed=false;for
+y5
 #ifndef DEBUG_SUBSTITUTIONS
-if(!IsLogisticallyPlausibleParamsMatch(cW1
-nT2
-n72
-y81
+if(!IsLogisticallyPlausibleParamsMatch(e81
+cO2
+e53))continue;
 #endif
-if(TestRuleAndApplyIfMatch(cW1,tree,cD){yI1
-nM3}
+if(TestRuleAndApplyIfMatch(e81
+e53,cB){xD2
+yY3}
 if(changed){
 #ifdef DEBUG_SUBSTITUTIONS
 std::cout<<"Changed."
 <<std::endl
-lN1"Output: "
-;xE3(tree)lN1"\n"
+xI1"Output: "
+i63
+tree)xI1"\n"
 <<std::flush;
 #endif
-tree.Mark_Incompletely_Hashed()nS2}
-tree.SetOptimizedUsing(&tN2)l81
-false;}
-xB1
-ApplyGrammars(x2){
+tree.Mark_Incompletely_Hashed(iX1}
+tree.SetOptimizedUsing(&x82)eL
+eO3
+tD1
+ApplyGrammars(FPoptimizer_CodeTree::t2{
 #ifdef DEBUG_SUBSTITUTIONS
 std
-tJ3"grammar_optimize_round1\n"
+tY3"grammar_optimize_round1\n"
 ;
 #endif
 n4
 grammar_optimize_round1
-n53
+e53
+x8
 #ifdef DEBUG_SUBSTITUTIONS
 std
-tJ3"grammar_optimize_round2\n"
+tY3"grammar_optimize_round2\n"
 ;
 #endif
 n4
 grammar_optimize_round2
-n53
+e53
+x8
 #ifdef DEBUG_SUBSTITUTIONS
 std
-tJ3"grammar_optimize_round3\n"
+tY3"grammar_optimize_round3\n"
 ;
 #endif
 n4
 grammar_optimize_round3
-n53
+e53
+x8
 #ifndef FP_ENABLE_SHORTCUT_LOGICAL_EVALUATION
 #ifdef DEBUG_SUBSTITUTIONS
 std
-tJ3"grammar_optimize_nonshortcut_logical_evaluation\n"
+tY3"grammar_optimize_nonshortcut_logical_evaluation\n"
 ;
 #endif
 n4
 grammar_optimize_nonshortcut_logical_evaluation
-n53
+e53
+x8
 #endif
 #ifdef DEBUG_SUBSTITUTIONS
 std
-tJ3"grammar_optimize_round4\n"
+tY3"grammar_optimize_round4\n"
 ;
 #endif
 n4
 grammar_optimize_round4
-n53
+e53
+x8
 #ifdef FP_ENABLE_SHORTCUT_LOGICAL_EVALUATION
 #ifdef DEBUG_SUBSTITUTIONS
 std
-tJ3"grammar_optimize_shortcut_logical_evaluation\n"
+tY3"grammar_optimize_shortcut_logical_evaluation\n"
 ;
 #endif
 n4
 grammar_optimize_shortcut_logical_evaluation
-n53
+e53
+x8
 #endif
 #ifdef FP_ENABLE_IGNORE_IF_SIDEEFFECTS
 #ifdef DEBUG_SUBSTITUTIONS
 std
-tJ3"grammar_optimize_ignore_if_sideeffects\n"
+tY3"grammar_optimize_ignore_if_sideeffects\n"
 ;
 #endif
 n4
 grammar_optimize_ignore_if_sideeffects
-n53
+e53
+x8
 #endif
 #ifdef DEBUG_SUBSTITUTIONS
 std
-tJ3"grammar_optimize_abslogical\n"
+tY3"grammar_optimize_abslogical\n"
 ;
 #endif
 n4
 grammar_optimize_abslogical
-n53
+e53
+x8
 #undef C
 }
 }
@@ -6740,621 +7157,648 @@ n53
 #include <cstring>
 #include <cmath>
 #include <memory> /* for auto_ptr */
-xQ
 using
-iO2
-l41;using
-iO2
-FPoptimizer_CodeTree;using
-iO2
-FPoptimizer_Optimize;iO2{xG1
+lA3
+FUNCTIONPARSERTYPES;using
+lA3
+l21;using
+tN;using
+cH1;lA3{xV1
 TestImmedConstraints
-iL1
+nP2
 bitmask,const
-eR{switch(bitmask&ValueMask
-iY2
+t2{switch(bitmask&ValueMask
+eJ3
 Value_AnyNum:case
 ValueMask:lC
-n12:if(GetEvennessInfo
-nO3
-l82
-Value_OddInt:if(GetEvennessInfo
-nO3
-n82
-t01:if(GetIntegerInfo
-nO3
-l82
-Value_NonInteger:if(GetIntegerInfo
-nO3
-n82
-eE1:if(!IsLogicalValue(tree)yI
-nK1
+x32:if(GetEvennessInfo(tree)!=lY2
+Value_OddInt:if(GetEvennessInfo(tree)!=x92
+tZ1:if(GetIntegerInfo(tree)!=lY2
+Value_NonInteger:if(GetIntegerInfo(tree)!=x92
+eT1:if(!IsLogicalValue(tree)eM
+nO1
 SignMask
-iY2
+eJ3
 Sign_AnySign:lC
-nJ1:if(l01
-l82
-n02:if(l01
-n82
+nN1:if(l01
+lY2
+eU1:if(l01
+x92
 Sign_NoIdea:if(l01
 Unknown
-yI
-nK1
+eM
+nO1
 OnenessMask
-iY2
+eJ3
 Oneness_Any:case
 OnenessMask:lC
-Oneness_One:if(!cW2
-if(!fp_equal(fp_abs(yZ3),eS1(1))yI
+Oneness_One:if(!nI2
+if(!lN3
+fp_abs(cS3),x73(1))eM
 lC
-Oneness_NotOne:if(!cW2
-if(fp_equal(fp_abs(yZ3),eS1(1))yI
-nK1
+Oneness_NotOne:if(!nI2
+iZ2
+fp_abs(cS3),x73(1))eM
+nO1
 ConstnessMask
-iY2
+eJ3
 Constness_Any:lC
-yL1:if(!cW2
+tY1:if(!nI2
 lC
-Constness_NotConst:if(cW2
-nM3
-return
-true;}
-n73<i02
-extent,i02
+Constness_NotConst:if(nI2
+yY3
+l62}
+tJ1
+x83
+extent,x83
 nbits,typename
-cS2=i02
-int>e92
+eK2=x83
+int>e22
 nbitmap{private:static
 const
-i02
+x83
 bits_in_char=8;static
 const
-i02
-cT2=(xK3
-cS2)*bits_in_char)/nbits;cS2
-data[(extent+cT2-1)/cT2];e13
+x83
+eL2=(cA3
+eK2)*bits_in_char)/nbits;eK2
+data[(extent+eL2-1)/eL2];e83
 void
-inc(lC1,int
-by=1){data[pos(index)]+=by*cS2(1<<xX2);i6
+inc(l91,int
+by=1){data[pos(index)]+=by*eK2(1<<yG2);tL1
 void
-dec(lC1){inc(index,-1);}
+dec(l91){inc(index,-1);}
 int
-get(lC1
-n61(data[pos(index)]>>xX2)&mask()xJ2
-pos(lC1){return
-index/cT2
-xJ2
-shift(lC1){return
-nbits*(index%cT2)xJ2
-mask(){return(1<<nbits)-1
-xJ2
-mask(lC1){return
-mask()<<xX2;}
+get(l91
+c81(data[pos(index)]>>yG2)&mask()xY3
+pos(l91)yY
+index/eL2
+xY3
+shift(l91)yY
+nbits*(index%eL2)xY3
+mask()yY(1<<nbits)-1
+xY3
+mask(l91)yY
+mask()<<yG2;}
 }
-;e92
-c83{int
+;e22
+Needs{int
 SubTrees:8;int
 Others:8;int
-i31:8;int
-cG3:8;nbitmap<iE2,2>SubTreesDetail;c83(){std::memset(this,0,xK3*this));}
-c83
-i01
-c83&b){std::memcpy(this,&b,xK3
+nY2:8;int
+Immeds:8;nbitmap<iT2,2>SubTreesDetail;Needs(){std::memset(this,0,cA3*this));}
+Needs
+nV2
+Needs&b){std::memcpy(this,&b,cA3
 b));}
-c83&e31=i01
-c83&b){std::memcpy(this,&b,xK3
-b))l81*this;}
+Needs&eJ1=nV2
+Needs&b){std::memcpy(this,&b,cA3
+b))eL*this;}
 }
-;yV1
-c83
-CreateNeedList_uncached(t0&cB2){c83
-x11
-xS3
-a=0;a<cB2
-xY2;++a){const
-cG2&lF3=e01
-x8(cB2.param_list,a);xT3
-lZ2
+n11
+Needs
+CreateNeedList_uncached(tT&cD2){Needs
+e31;for(eY1=0;a<cD2
+yH2;++a){const
+e52&parampair=xB1
+cD2.param_list,a);switch(tF3){cG1
 const
-xI&t82
-xI*x01;yZ
-GroupFunction)++tA3;else{++tA2;assert(param.data.subfunc_opcode<VarBegin);x11.SubTreesDetail.inc
-iZ2
-cS);}
-++x11.i31;nM3
-case
+xV&nU2
+xV
+nW2
+yM
+GroupFunction)++e31
+tI3;else{++tQ2;assert(i73.subfunc_opcode<VarBegin);e31.SubTreesDetail.inc(param
+c51);}
+++e31.nY2
+tM2
+eP3
 NumConstant:case
-ParamHolder:++t92;++x11.i31;nM3}
+ParamHolder:++tP2;++e31.nY2
+tM2}
+}
 return
-x11;}
-yV1
-c83&CreateNeedList(t0&cB2){typedef
-std::map<t0*,c83>cX1;static
-cX1
-yO1;cX1::nX3
-i=yO1.xE2&cB2);if(i!=yO1.cP1&cB2
-nZ2
+e31;}
+x33
+Needs&CreateNeedList(tT&cD2){typedef
+std::map<tT*,Needs>e91;static
+e91
+c31;e91::yN3
+i=c31.xY2&cD2);if(i!=c31.e21&cD2)return
 i
-cJ2
-l81
-yO1.nT3,std::make_pair(&cB2,CreateNeedList_uncached
-x8(cB2)))cJ2;}
-yV1
-yK2
+e82
+eL
+c31.yI3,std::make_pair(&cD2,CreateNeedList_uncached
+xN(cD2)))e82;}
+x33
+CodeTree
+xN
 CalculateGroupFunction
-i01
-cG2&xZ2
+nV2
+e52&yI2
 const
-t9
-info){xT3
+tS
+info
+t63
+tF3
+eJ3
 NumConstant:{const
-eZ&t82
-eZ*x01
-l81
-CodeTreeImmed
-iZ2
-xZ3)cM3
-lY2
-yK3&t82
-xH*x01
-l81
-info.GetParamHolderValueIfFound
-iZ2
-index)iD2
+tB&nU2
+tB*)tO2
+second
+eL
+CodeTreeImmed(param
+cJ2);eP3
+nT2
+t83&nU2
+xU*)tO2
+second
+eL
+info.GetParamHolderValueIfFound(param.index);}
+cG1
 const
-xI&t82
-xI*x01
-yJ
-result;result
-tU
-xF3
-cS);tC1
-iE1).reserve
-iZ2
-data
-xY2)xS3
-a=0;a<xF3
-data
-xY2;++a)nG1
-tmp(CalculateGroupFunction(e01
-x8
-iZ2
-data.param_list,a),info));result
-yA
+xV&nU2
+xV
+nW2
+CodeTree
+y43;yA3
+xC
+param
+c51);yA3.lB2).xJ3
+i73
+yH2);for(eY1=0;a<i73
+yH2;++a
+t71
+tmp(CalculateGroupFunction(xB1
+param
+tE3
+param_list,a),info));yA3
+lP1
 tmp);}
-tC1
-Rehash()l81
-result;}
+yA3
+x22)eL
+yA3;}
 }
 return
-yK2();}
+CodeTree
+xN();}
 }
-iO2
-FPoptimizer_Optimize{xG1
-IsLogisticallyPlausibleParamsMatch(t0&cB2,const
-eR{c83
-x11(CreateNeedList
-x8(cB2));size_t
-eR3=iT;if(eR3<size_t(x11.i31)){nX2
+cH1{xV1
+IsLogisticallyPlausibleParamsMatch(tT&cD2,const
+t2{Needs
+e31(CreateNeedList
+xN(cD2));size_t
+t43=t6;if(t43<size_t(e31.nY2))tH2
 for
-xK2
-0;a<eR3;++a){i02
-opcode=xI2
-nE;switch(opcode
-iY2
-cImmed:if(tA3>0)--tA3;else--t92;lC
-iE2:case
+c12
+0;a<t43;++a){x83
+opcode=t5
+a)nC;switch(opcode
+yS3
+if(e31
+tI3>0)--e31
+tI3;else--tP2;lC
+iT2:case
 cFCall:case
-cPCall:--t92;break;default:assert(opcode<VarBegin);if(tA2>0&&x11.SubTreesDetail.get(opcode)>0){--tA2;x11.SubTreesDetail.dec(opcode);}
-else--t92;}
+cPCall:--tP2
+tM2
+default:assert(opcode<VarBegin);if(tQ2>0&&e31.SubTreesDetail.get(opcode)>0){--tQ2;e31.SubTreesDetail.dec(opcode);}
+else--tP2;}
 }
-if(tA3>0||tA2>0||t92>0){nX2
-if(cB2.match_type!=AnyParams){if(0||tA2<0||t92<0){nX2}
-return
-true;}
-yV1
-lZ1
+if(e31
+tI3>0||tQ2>0||tP2>0)tH2
+if(cD2.match_type!=AnyParams){if(0||tQ2<0||tP2<0)tH2}
+l62}
+x33
+nC1
 TestParam
-i01
-cG2&xZ2
-lM1&tree
-eA2
-start_at,t9
-info){xT3
+nV2
+e52&yI2
+xG2
+tree
+eC3
+start_at,tS
+info
+t63
+tF3
+eJ3
 NumConstant:{const
-eZ&t82
-eZ*x01;if(!cW2
-eS1
-imm=yZ3;switch
-iZ2
-modulo
-iY2
+tB&nU2
+tB
+nW2
+if(!nI2
+x73
+imm=cS3;switch(param.modulo
+eJ3
 Modulo_None:lC
-Modulo_Radians:imm=fp_mod(imm,y8
-imm<0)imm
-c5
+Modulo_Radians:imm=fp_mod(imm,yA
+imm<xH1
+imm
+yW
 if(imm>fp_const_pi
-x8())imm-=fp_const_twopi
-x8(nW2
+xN())imm-=fp_const_twopi
+xN(tK2}
 return
-fp_equal(imm,xF3
-xZ3)cM3
-lY2
-yK3&t82
-xH*x01;if(!x0
+lN3
+imm,param
+cJ2);eP3
+nT2
+t83&nU2
+xU
+nW2
+if(!x9
 return
-info.SaveOrTestParamHolder
-iZ2
-index,tree)iD2
+info.SaveOrTestParamHolder(param.index
+e53);}
+cG1
 const
-xI&t82
-xI*x01;yZ
-GroupFunction){if(!x0
-yK2
-xO1=CalculateGroupFunction(xZ2
+xV&nU2
+xV
+nW2
+yM
+GroupFunction){if(!x9
+CodeTree
+xN
+y71=CalculateGroupFunction(yI2
 info);
 #ifdef DEBUG_SUBSTITUTIONS
-DumpHashes(xO1)lN1*i01
-void**)&xO1.xJ1
-lN1"\n"
-lN1*i01
-void**)&yZ3
-lN1"\n"
-;DumpHashes(tree)lN1"Comparing "
-;xE3(xO1)lN1" and "
-;xE3(tree)lN1": "
-lN1(xO1
-iA
+DumpHashes(y71)xI1*nV2
+void**)&y71.xY1
+xI1"\n"
+xI1*nV2
+void**)&cS3
+xI1"\n"
+;DumpHashes(tree)xI1"Comparing "
+i63
+y71)xI1" and "
+i63
+tree)xI1": "
+xI1(y71
+xD
 tree)?"true"
 :"false"
-)lN1"\n"
+)xI1"\n"
 ;
 #endif
 return
-xO1
-iA
+y71
+xD
 tree);}
-else{if(!&*start_at){if(!x0
-if
-xU2!=xF3
-cS
-yI}
+cP3!&*start_at){if(!x9
+if(tC2!=param
+c51
+eM}
 return
-TestParams
-iZ2
-data,tree,start_at,info,false);}
+TestParams(i73
+e53,start_at,info,false);}
 }
 }
-nX2
-yT1
-iS
-x22
+return
+eO3
+x33
+e22
+iW
+xA2
 MatchInfo
-x8
-info;iS()yC3,info(){}
+xN
+info;iW()yT3,info(){}
 }
-;iP2
-MatchPositionSpec_PositionalParams:xP1
-iS
-x8>{e13
-iF2
-MatchPositionSpec_PositionalParams(xL3):xM3
-iS
-x8>(n){}
+n11
+class
+MatchPositionSpec_PositionalParams:nA1
+iW
+xN>{e83
+iW2
+MatchPositionSpec_PositionalParams(cB3):eA1
+iW
+xN>(n){}
 }
-;e92
-i41
-x22
-i41()yC3{}
+;e22
+iR1
+xA2
+iR1()yT3{}
 }
 ;class
-c0:xP1
-i41>{e13
-i02
-trypos;iF2
-c0(xL3):xM3
-i41>(n),trypos(0){}
+yN:nA1
+iR1>{e83
+x83
+trypos;iW2
+yN(cB3):eA1
+iR1>(n),trypos(0){}
 }
-;yV1
-lZ1
+n11
+nC1
 TestParam_AnyWhere
-i01
-cG2&xZ2
-lM1&tree
-eA2
-start_at,t9
-info,yG<bool>&used,bool
-tA1{xN<c0>x6;i02
-lG3
-c0
-n92
-a=x6->trypos;goto
-retry_anywhere_2
-x42
-c0(iT);a=0;}
-eS3
-iT;++a){if(used[a])y81
-retry_anywhere:{lZ1
-r=TestParam(xZ2
-xI2
-lH3);lI3
-used[a]=true;if(tA1
-eT3
-a);x6->trypos=a
-l81
-lZ1(true,&*x6);}
+nV2
+e52&yI2
+xG2
+tree
+eC3
+start_at,tS
+info,xP3&used,bool
+eM2{y0<yN>xF;xQ3
+yN*eH3
+a=xF->trypos;goto
+retry_anywhere_2;}
+xO3
+yN(t6);a=0;}
+t53
+t6;++a){if(used[a])continue;retry_anywhere:{nC1
+r=TestParam(yI2
+t5
+a)yZ3);c03
+used[a]=true;if(eM2
+iI3
+a);xF->trypos=a
+eL
+nC1(true,&*xF);}
 }
-retry_anywhere_2:if(&*lV1){goto
+retry_anywhere_2:if(iG3
+goto
 retry_anywhere;}
 }
-nX2
+return
+eO3
+x33
+e22
 yT1
-y91
-x22
+xA2
 MatchInfo
-x8
-info;yG<bool>used;iF2
-y91(size_t
-eR3)yC3,info(),used(eR3){}
+xN
+info;xP3
+used;iW2
+yT1(size_t
+t43)yT3,info(),used(t43){}
 }
-;iP2
-MatchPositionSpec_AnyParams:xP1
-y91
-x8>{e13
-iF2
-MatchPositionSpec_AnyParams(xL3,size_t
-m):xM3
-y91
-x8>(n,y91
-x8(m)){}
+n11
+class
+MatchPositionSpec_AnyParams:nA1
+yT1
+xN>{e83
+iW2
+MatchPositionSpec_AnyParams(cB3,size_t
+m):eA1
+yT1
+xN>(n,yT1
+xN(m)){}
 }
-;yV1
-lZ1
-TestParams(t0&nM,lM1&tree
-eA2
-start_at,t9
+n11
+nC1
+TestParams(tT&nR,xG2
+tree
+eC3
+start_at,tS
 info,bool
-tA1{if(nM.match_type!=AnyParams){if(xT!=iT
-yI}
-if(!IsLogisticallyPlausibleParamsMatch(nM
-n72{nX2
-switch(nM.match_type
-iY2
-PositionalParams:{xN<cL>x6;i02
-lG3
-cL
-n92
-a=xT-1;goto
-lD1
-x42
-cL(xT);a=0;}
-eS3
-xT;++a){cX2=info;retry_positionalparams:{lZ1
-r=TestParam(cX
-a),xI2
-lH3);lI3
-y81}
-}
-lD1:if(&*lV1){info=cX2;goto
+eM2{if(nR.match_type!=AnyParams){if(y3!=t6
+eM}
+if(!IsLogisticallyPlausibleParamsMatch(nR
+e53))tH2
+switch(nR.match_type
+eJ3
+PositionalParams:{y0<cK>xF;xQ3
+cK*eH3
+a=y3-1;goto
+lA1;}
+xO3
+cK(y3);a=0;}
+t53
+y3;++a){(*xR3
+tI2
+retry_positionalparams:{nC1
+r=TestParam(cV
+a),t5
+a)yZ3);c03
+iS2}
+lA1:if(iG3
+cC3
+xR3
+info;goto
 retry_positionalparams;}
 if(a>0){--a;goto
-lD1;}
-info=(*x6)[0].info
-l81
-false;}
-if(tA1
-for
-iL1
-a=0;a<xT;++a)eT3
-a)l81
-lZ1(true,&*x6)cM3
+lA1;}
+cC3
+cD3
+info
+eL
+eO3
+if(eM2
+t93
+iI3
+a)eL
+nC1(true,&*xF);eP3
 SelectedParams:case
-AnyParams:{xN<t6>x6;yG<bool>used(iT);yG<i02>iG2(xT);yG<i02>y02(xT)lO1{const
-cG2
-lF3=cX
-a);iG2[a]=ParamSpec_GetDepCode(lF3);}
-{i02
-b=0
-lO1
-if(iG2[a]!=0)y02[b++]=a
-lO1
-if(iG2[a]==0)y02[b++]=a;}
-i02
-lG3
-t6
-n92
-if(xT==0){a=0;goto
+AnyParams:{y0<tO>xF;xP3
+used(t6);std
+xM3<x83>iX2(y3);std
+xM3<x83>yJ2(y3);t93{const
+e52
+parampair=cV
+a);iX2[a]=ParamSpec_GetDepCode(parampair);}
+{x83
+b=0;t93
+if(iX2[a]!=0)yJ2[b++]=a;t93
+if(iX2[a]==0)yJ2[b++]=a;}
+xQ3
+tO*eH3
+if(y3==0){a=0;goto
 retry_anyparams_4;}
-a=xT-1;goto
-cY1
-x42
-t6(xT,iT);a=0;if(xT!=0){(*x6)[0].info=info;(*x6)[0].used=used;}
+a=y3-1;goto
+eB1;}
+xO3
+tO(y3,t6);a=0;if(y3!=0){(*cD3
+tI2(*cD3
+used=used;}
 }
-eS3
-xT;++a){if(a>0){cX2=info;(*x6)[a].used=used;}
-retry_anyparams:{lZ1
+t53
+y3;++a){if(a>0){(*xR3
+tI2(*xR3
+used=used;}
+retry_anyparams:{nC1
 r=TestParam_AnyWhere
-x8(cX
-y02[a]),tree
-lH3,used,tA1;lI3
-y81}
-}
-cY1:if(&*lV1){info=cX2;used=(*x6)[a].used;goto
+xN(cV
+yJ2[a])e53
+yZ3,used,eM2;c03
+iS2}
+eB1:if(iG3
+cC3
+xR3
+info;used=(*xR3
+used;goto
 retry_anyparams;}
-cZ1:if(a>0){--a;goto
-cY1;}
-info=(*x6)[0].info
-l81
-false;}
-retry_anyparams_4:if(nM.n2!=0){if(!TopLevel||!info.HasRestHolder(nM.n2)){yG
-nV1
-yS2;yS2.nH3
-iT)xS3
-b=0;b<iT;++b){if(xN3)y81
-yS2
-yL
-tree
-lD
-b));xN3=true;if(tA1
-eT3
+eC1:if(a>0){--a;goto
+eB1;}
+cC3
+cD3
+info
+eL
+eO3
+retry_anyparams_4:if(nR.n2!=0){if(!TopLevel||!info.HasRestHolder(nR.n2)){eZ
+cP2;cP2.xJ3
+t6);for
+nP2
+b=0;b<t6;++b){if(cE3)continue;cP2.push_back(t5
+b));cE3=true;if(eM2
+iI3
 b);}
-if(!info.SaveOrTestRestHolder(nM.n2,yS2)){goto
-cZ1;}
+if(!info.SaveOrTestRestHolder(nR.n2,cP2)){goto
+eC1;}
 }
-else{lL1&yS2=info.GetRestHolderValues(nM.n2)c23
-0;a<yS2
-eW2
-a){bool
-found=false
-xS3
-b=0;b<iT;++b){if(xN3)y81
-if(yS2[a]iA
-tree
-lD
-b))){xN3=true;if(tA1
-eT3
-b);found=true;nM3}
+else{t73&cP2=info.GetRestHolderValues(nR.n2)c02
+0;a<cP2.size();++a){bool
+found=false;for
+nP2
+b=0;b<t6;++b){if(cE3
+c42
+cP2[a]xD
+t5
+b))){cE3=true;if(eM2
+iI3
+b);found=true
+tM2}
+}
 if(!found){goto
-cZ1;}
+eC1;}
 }
 }
 }
 return
-lZ1(true,xT?&*x6:0)cM3
-GroupFunction:nM3
-nX2}
+nC1(true,y3?&*xF:0);eP3
+GroupFunction:yY3
+return
+eO3}
 #endif
 #ifdef FP_SUPPORT_OPTIMIZER
 #include <algorithm>
 #include <assert.h>
 using
-iO2
-FPoptimizer_CodeTree;using
-iO2
-FPoptimizer_Optimize;iO2{yV1
-yK2
-xQ1
+tN;using
+cH1;lA3{x33
+CodeTree
+xN
+y81
 const
-cG2&xZ2
-t9
+e52&yI2
+tS
 info,bool
-inner=true){xT3
+inner=true
+t63
+tF3
+eJ3
 NumConstant:{const
-eZ&t82
-eZ*x01
-l81
-CodeTreeImmed
-iZ2
-xZ3)cM3
-lY2
-yK3&t82
-xH*x01
-l81
-info.GetParamHolderValue
-iZ2
-index)iD2
+tB&nU2
+tB*)tO2
+second
+eL
+CodeTreeImmed(param
+cJ2);eP3
+nT2
+t83&nU2
+xU*)tO2
+second
+eL
+info.GetParamHolderValue(param.index);}
+cG1
 const
-xI&t82
-xI*x01
-yJ
-tree;tH
-xF3
-cS)xS3
-a=0;a<xF3
-data
-xY2;++a)nG1
-nparam=xQ1
-e01
-x8
-iZ2
-data.param_list,a),info,true
-tT
-yA
+xV&nU2
+xV
+nW2
+CodeTree
+xN
+tree;tW2
+param
+c51);for(eY1=0;a<i73
+yH2;++a
+t71
+nparam=y81
+xB1
+param
+tE3
+param_list,a),info,true)l12
 nparam);}
-if
-iZ2
-data.n2!=0){yG
-nV1
-trees(info.GetRestHolderValues
-iZ2
-data.n2)tT.AddParamsMove(trees);if(iT==1){assert(tree.tU3()==cAdd tI3()==cMul tI3()==cMin tI3()==cMax tI3()==cAnd tI3()==cOr tI3()==cAbsAnd tI3()==cAbsOr);tree.xO2
+c33
+tE3
+n2!=0){eZ
+trees(info.GetRestHolderValues(param
+tE3
+n2));tree.AddParamsMove(trees);if(t6==1){assert(tree.i33()==cAdd||tree.i33()==cMul||tree.i33()==cMin||tree.i33()==cMax||tree.i33()==cAnd||tree.i33()==cOr||tree.i33()==cAbsAnd||tree.i33()==cAbsOr);tree.eB2
 0));}
-tP1
-iT==0){switch
-xU2
-iY2
+iZ1
+t6==0
+t63
+tC2
+eJ3
 cAdd:case
-cOr:tree=nB1
+cOr:tree=nJ1
 0));lC
 cMul:case
-cAnd:tree=nB1
-1));default:nM3}
+cAnd:tree=nJ1
+1));default:yY3}
 }
 if(inner)tree
-x02
-l81
+x22)eL
 tree;}
 }
 return
-yK2();}
+CodeTree
+xN();}
 }
-iO2
-FPoptimizer_Optimize{xB1
-SynthesizeRule
-eX3
-yK2&tree,t9
-info){switch(rule.ruletype
-iY2
-ProduceNewTree:{tree.Become(xQ1
-e01
-x21
-0),info,false)nW2
-case
-ReplaceParams:default:{yG<i02>list=info.GetMatchedParamIndexes();std::sort(list.i62
-list.end())c23
-list
-yA3;a-->0;)tree.iH1
-list[a])xS3
-a=0;a<rule.repl_param_count;++a)nG1
-nparam=xQ1
-e01
-x21
-a),info,true
-tT
-yA
+cH1{tD1
+SynthesizeRule(tE1
+n91
+tree,tS
+info
+t63
+rule.ruletype
+eJ3
+ProduceNewTree:{tree.Become(y81
+xB1
+rule
+eD1
+0),info,false)tK2
+eP3
+ReplaceParams:default:{std
+xM3<x83>list=info.GetMatchedParamIndexes();std::sort(list.iM2
+list.end())c02
+list.size();a-->0;)tree.l93
+list[a]);for(eY1=0;a<rule.repl_param_count;++a
+t71
+nparam=y81
+xB1
+rule
+eD1
+a),info,true)l12
 nparam);}
-nM3}
+yY3}
 }
 }
 #endif
 #ifdef DEBUG_SUBSTITUTIONS
 #include <sstream>
 #include <cstring>
-xQ
 using
-iO2
-l41;using
-iO2
-FPoptimizer_CodeTree;using
-iO2
-FPoptimizer_Optimize;iO2
-l41{xB1
-DumpMatch
-eX3
-lM1&tree,const
-t9
+lA3
+FUNCTIONPARSERTYPES;using
+lA3
+l21;using
+tN;using
+cH1;lA3
+l21{tD1
+DumpMatch(tE1
+xG2
+tree,const
+tS
 info,bool
-DidMatch,std::ostream&o){DumpMatch
-t81,DidMatch?tZ3"match"
-:tZ3"mismatch"
+DidMatch,std::ostream&o){DumpMatch(rule
+lY3,DidMatch?iE3"match"
+:iE3"mismatch"
 ,o);}
-xB1
-DumpMatch
-eX3
-lM1&tree,const
-t9
-info,const
-char*eY3,std::ostream&o){static
+tD1
+DumpMatch(tE1
+xG2
+tree,const
+tS
+info,l03
+tB3,std::ostream&o){static
 const
 char
 ParamHolderNames[][2]={"%"
@@ -7366,45 +7810,41 @@ ParamHolderNames[][2]={"%"
 ,"b"
 ,"c"
 }
-;o<<eY3<<" (rule "
+;o<<tB3<<" (rule "
 <<(&rule-grammar_rules)<<")"
 <<":\n  Pattern    : "
-;{cG2
-tmp;tmp.first=SubFunction;xI
+;{e52
+tmp;tmp.first=SubFunction;xV
 tmp2;tmp2.data=rule
-nT2;tmp
-eE3=i01
-void*)&tmp2;DumpParam
-x8(tmp,o);}
+cO2;tmp
+xU3=cN2
+tmp2;DumpParam
+xN(tmp,o);}
 o<<"\n  Replacement: "
 ;DumpParams
-x21
+xN(rule
+eD1
 rule.repl_param_count,o);o<<"\n"
 ;o<<"  Tree       : "
-;xE3(tree,o);o<<"\n"
-;if(!std::strcmp(eY3,tZ3"match"
-))DumpHashes(tree,o)c23
-0;a<i33
-eW2
-a){if(!i33[a].iA1
-y81
-o<<"           "
+i63
+tree,o);o<<"\n"
+;if(!std::strcmp(tB3,iE3"match"
+))DumpHashes(tree,o)c02
+0;a<info.cI
+size();++a){if(!info.paramholder_matches[a]xN2))continue;o<<"           "
 <<ParamHolderNames[a]<<" = "
-;xE3(i33[a],o);o<<"\n"
+i63
+info.paramholder_matches[a],o);o<<"\n"
 ;}
-eW3
-info.lQ
-eW2
-b){if(!eH2
-first)y81
-for
-xK2
-0;a<eH2
-second
-eW2
-a){o<<"         <"
+eN3
+info.lR.size();++b){if(!tJ2
+first)continue
+c02
+0;a<tJ2
+second.size();++a){o<<"         <"
 <<b<<"> = "
-;xE3(eH2
+i63
+tJ2
 second[a],o);o<<std::endl;}
 }
 o<<std::flush;}
@@ -7413,117 +7853,136 @@ o<<std::flush;}
 #include <list>
 #include <algorithm>
 #ifdef FP_SUPPORT_OPTIMIZER
-xQ
-iO2{xG1
-MarkIncompletes(x2){if(tree.Is_Incompletely_Hashed(iF1;bool
-i51
-i13
-for
-yS
-i51|=MarkIncompletes
-nW1
-a));if(i51)tree.Mark_Incompletely_Hashed()l81
-i51;}
-xB1
-FixIncompletes(x2){if(tree.Is_Incompletely_Hashed()){for
-yS
-FixIncompletes
-nW1
-a)tT
-x02;}
+using
+lA3
+FUNCTIONPARSERTYPES;lA3{xV1
+MarkIncompletes(FPoptimizer_CodeTree::t2{if(tree.Is_Incompletely_Hashed())l62
+bool
+iS1=false;e23
+iS1|=MarkIncompletes(t5
+a));if(iS1)tree.Mark_Incompletely_Hashed()eL
+iS1;}
+tD1
+FixIncompletes(FPoptimizer_CodeTree::t2{if(tree.Is_Incompletely_Hashed()){e23
+FixIncompletes(t5
+a));tree
+x22);}
 }
 }
-iO2
-FPoptimizer_CodeTree{lA
-Sort()cX3
-Sort();}
-lA
+tN{lB
+Sort(){data->Sort();}
+lB
 Rehash(bool
 constantfolding){if(constantfolding)ConstantFolding(*this);else
 Sort();data
-xB
-yV1
-l11{c2
-e62
-eZ3
-nP3=0;
+xH
+x33
+e22
+cG{yO
+l92
+cF3
+yU1=0;
 #if 0
 long
 double
-value=Value;eB=crc32::calc(i01
-i02
-char*)&value,xK3
+value=Value;eA=crc32::calc(nV2
+x83
+char*)&value,cA3
 value));key^=(key<<24);
 #elif 0
-union{e92{i02
+union{e22{x83
 char
-filler1[16];eS1
-v;i02
+filler1[16]iO2
+v;x83
 char
 filler2[16];}
-buf2;e92{i02
+buf2;e22{x83
 char
-filler3[xK3
-eS1)+16-x
-K3
-iC1)];eB;}
+filler3[cA3
+x73)+16-cA3
+xE1)];eA;}
 buf1;}
-data;memset(&data,0,xK3
-data));data.buf2.v=Value;eB=data.buf1.key;
+data;memset(&data,0,cA3
+data));data.buf2.v=Value;eA=data.buf1.key;
 #else
 int
-cE2;eS1
-lQ2=std::frexp(Value,&cE2);eB=iL1(cE2+0x8000)&0xFFFF);if(lQ2<0){lQ2=-lQ2;key=key^0xFFFF;}
+x93
+iO2
+nJ2=std::frexp(Value,&xK2;eA=nP2(x93+0x8000)&0xFFFF);if(nJ2<0){nJ2=-nJ2;key=key^0xFFFF;}
 else
-key+=0x10000;lQ2-=yF3;key<<=39;key|=iC1((lQ2+lQ2)*eS1(1u<<31))<<8;
+key+=0x10000;nJ2-=yM2;key<<=39;key|=nE1(nJ2+nJ2)*x73(1u<<31))<<8;
 #endif
-iU
-tM
+lQ
+#ifdef FP_SUPPORT_COMPLEX_NUMBERS
+nX1
+T
+cQ2
+std::complex<T> >{yO
+const
+std::complex<T>&cF3
+cG<T>::n33
+cR2,Value.real());nB
+xO2
+temp;cG<T>::n33
+temp,Value.imag());yU1^=temp.hash2;cR2.hash2^=temp.hash1;}
+}
+;
+#endif
 #ifdef FP_SUPPORT_LONG_INT_TYPE
-n73<>l11<long>{c2
+tJ1
+cQ2
+long>{yO
 long
-eZ3
-eB=Value;iU
-tM
+cF3
+eA=Value;lQ
 #endif
 #ifdef FP_SUPPORT_GMP_INT_TYPE
-n73<>l11<GmpInt>{c2
+tJ1
+cQ2
+GmpInt>{yO
 const
-GmpInt&eZ3
-eB=Value.toInt();iU
-tM
+GmpInt&cF3
+eA=Value.toInt();lQ
 #endif
-xB1
-nO2
-x8::Recalculate_Hash_NoRecursion(){fphash_t
-iU(iC1(Opcode)<<56,Opcode*tM3(0x1131462E270012B));Depth=1;switch(Opcode
-iY2
-cImmed:{ImmedHashGenerator
-x8::MakeHash(iU,Value
-nW2
-case
-iE2:{nP3|=eC<<48
-eC2((eC)*11)^tM3(0x3A83A83A83A83A0);nM3
-case
+tD1
+xL2
+xN::Recalculate_Hash_NoRecursion(){xO2
+cR2(nE1
+Opcode)<<56,Opcode*i23(0x1131462E270012B));Depth=1;switch(Opcode
+yS3{cG
+xN::n33
+cR2,Value
+tK2
+eP3
+iT2:{yU1|=nE1
+cS1<<48
+lN1((nE1
+cS1)*11)^i23(0x3A83A83A83A83A0)tM2
+eP3
 cFCall:case
-cPCall:{nP3|=eC<<48
-eC2((~eC)*7)^3456789;}
+cPCall:{yU1|=nE1
+cS1<<48
+lN1((~nE1
+cS1)*7)^3456789;}
 default:{size_t
-eM1=0
-c23
-0;a<c93
-eW2
-a){if(c93[a].xT2>eM1)eM1=c93[a].xT2;nP3+=((c93[a]eE2
-hash1*(a+1))>>12)eC2
-c93[a]eE2
+eZ1=0
+c02
+0;a<yP3;++a){if(nH3
+y82>eZ1)eZ1=nH3
+y82;yU1+=((nH3
+tR2
+hash1*(a+1))>>12)lN1
+nH3
+tR2
 hash1
-eC2(3)*tM3(0x9ABCD801357);iU.hash2*=tM3(0xECADB912345)eC2(~c93[a]eE2
+lN1(3)*i23(0x9ABCD801357);cR2.hash2*=i23(0xECADB912345)lN1(~nH3
+tR2
 hash2)^4567890;}
-Depth+=eM1;}
+Depth+=eZ1;}
 }
-if(Hash!=iU){Hash=iU;iK1=0;}
+if(Hash!=cR2){Hash=cR2;lE2=0;}
 }
-lA
+lB
 FixIncompleteHashes(){MarkIncompletes(*this);FixIncompletes(*this);}
 }
 #endif
@@ -7531,22 +7990,24 @@ FixIncompleteHashes(){MarkIncompletes(*this);FixIncompletes(*this);}
 #include <list>
 #include <cassert>
 #ifdef FP_SUPPORT_OPTIMIZER
-xQ
-iO2{using
-iO2
-FPoptimizer_CodeTree;xG1
-x31
-lM1&tree,long
+using
+lA3
+FUNCTIONPARSERTYPES;lA3{using
+tN
+n11
+bool
+x41
+xG2
+tree,long
 count,const
-yV2
-SequenceOpCode
-x8&eQ,yW2&synth,size_t
+xQ1::SequenceOpCode
+xN&t1,xQ1::cU2&synth,size_t
 max_bytecode_grow_length);static
 const
-e92
+e22
 SinCosTanDataType{OPCODE
 whichopcode;OPCODE
-inverse_opcode;enum{nominator,denominator,inverse_nominator,inverse_denominator}
+inverse_opcode;enum{eN2,denominator,x31,inverse_denominator}
 ;OPCODE
 codes[4];}
 SinCosTanData[12]={{cTan,cCot,{cSin,cCos,cCsc,cSec}
@@ -7561,109 +8022,120 @@ SinCosTanData[12]={{cTan,cCot,{cSin,cCos,cCsc,cSec}
 }
 ,{cCsc,cSin,{cCot,cCos,cTan,cSec}
 }
-,{yT2{cSinh,cH3
-yY2,{cSinh,cNop,{yT2
+,{cS2{cSinh,cCosh,cT2,{cSinh,cNop,{cS2
 cNop,cCosh}
 }
-,{cH3
-cNop,{cSinh,yT2
+,{cCosh,cNop,{cSinh,cS2
 cNop}
 }
-,{cNop,cTanh,{cH3
-cSinh,yY2,{cNop,cSinh,{cNop,cTanh,cH3
-cNop}
+,{cNop,cTanh,{cCosh,cSinh,cT2,{cNop,cSinh,{cNop,cTanh,cCosh,cNop}
 }
-,{cNop,cH3{cTanh,cSinh,yY2}
+,{cNop,cCosh,{cTanh,cSinh,cT2}
 ;}
-iO2
-FPoptimizer_CodeTree{lA
-SynthesizeByteCode(yG<i02>&nN,yG
-x8&Immed,size_t&stacktop_max){
+tN{lB
+SynthesizeByteCode(std
+xM3<x83>&ByteCode,std
+xM3
+xN&Immed,size_t&stacktop_max){
 #ifdef DEBUG_SUBSTITUTIONS
 std::cout<<"Making bytecode for:\n"
-;iO
+;iV
 #endif
 while(RecreateInversionsAndNegations()){
 #ifdef DEBUG_SUBSTITUTIONS
 std::cout<<"One change issued, produced:\n"
-;iO
+;iV
 #endif
 FixIncompleteHashes();}
 #ifdef DEBUG_SUBSTITUTIONS
 std::cout<<"Actually synthesizing, after recreating inv/neg:\n"
-;iO
+;iV
 #endif
-yW2
-synth;SynthesizeByteCode(synth,false
-eU3.Pull(nN,Immed,stacktop_max);}
-lA
-SynthesizeByteCode(yW2&synth,bool
-MustPopTemps)const{xR1*this)){return;}
+xQ1::cU2
+synth;SynthesizeByteCode(synth,false);cY3
+Pull(ByteCode,Immed,stacktop_max);}
+lB
+SynthesizeByteCode(xQ1::cU2&synth,bool
+MustPopTemps)const{y91*this))yY;}
 for
-xK2
+c12
 0;a<12;++a){const
-SinCosTanDataType&data=SinCosTanData[a];if(data.whichopcode!=cNop){if(lM2!=data.whichopcode)y81
-yL2
-lJ3;lJ3.lI1
-lJ3
-tU
-data.inverse_opcode);lJ3.y12);xR1
-lJ3)){synth.l21
-else{if(lM2!=cInv)y81
-if(GetParam(0)nE!=data.inverse_opcode)y81
-xR1
-GetParam(0))){synth.l21
+SinCosTanDataType&data=SinCosTanData[a];if(data.whichopcode!=cNop){if(nF2!=data.whichopcode)continue;CodeTree
+n43;n43.lI1
+n43
+xC
+data.inverse_opcode);n43
+t82;y91
+n43)){cY3
+l11
+cP3
+nF2!=cInv
+c42
+GetParam(0)nC!=data.inverse_opcode)continue;y91
+GetParam(0))){cY3
+l11
 size_t
-found[4];eW3
-4;++b){yL2
-tree;if(data.t03]==cNop){tH
-cInv);yL2
-lK3;lK3.lI1
-lK3
-tU
-data.t03^2]);lK3.y12
-tT
-yA
-lK3);}
+found[4];eN3
+4;++b){CodeTree
+tree;if(data.tC3]==cNop){tW2
+cInv);CodeTree
+n53;n53.lI1
+n53
+xC
+data.tC3^2]);n53
+t82
+l12
+n53);}
 else{tree.lI1
-tH
-data.t03]);}
-tree.y12);found[b]t13
-e33(tree);}
-if(found[data.y22!=tG
-i61
-yK
-y22);lJ1
-i61);lK1
+tW2
+data.tC3]);}
+tree
+t82;found[b]=cY3
+eA3
+yN2}
+if(found[data.eN2
+e1
+iT1
+yR
+eN2
+eQ
+iT1);n41
 cDiv
-nL1
-y22!=tG
-iV
-yK
-y22);lJ1
-iV);lK1
+nQ1
+eN2
+e1
+iX
+yR
+eN2
+eQ
+iX);n41
 cMul
-nL1
-lS1!=tG
-iV
-yK
-lS1);lJ1
-iV);lK1
+nQ1
+x31
+e1
+iX
+yR
+x31
+eQ
+iX);n41
 cRDiv
-nL1
-lS1!=tG
-i61
-yK
-lS1);lJ1
-i61);lK1
-cMul,2,1
-eU3.l21
+nQ1
+x31
+e1
+iT1
+yR
+x31
+eQ
+iT1);n41
+cMul,2,1);cY3
+l11
 size_t
-n_subexpressions_synthesized=SynthCommonSubExpressions(synth);switch(lM2
-iY2
-iE2:synth.PushVar(GetVar());lC
-cImmed:yX2
-xJ1);lC
+n_subexpressions_synthesized=SynthCommonSubExpressions(synth);switch(nF2
+eJ3
+iT2:cY3
+PushVar(GetVar());lC
+cImmed:tQ1
+xY1);lC
 cAdd:case
 cMul:case
 cMin:case
@@ -7671,640 +8143,661 @@ cMax:case
 cAnd:case
 cOr:case
 cAbsAnd:case
-cAbsOr:{if(lM2==cMul){bool
-xU3
-i13
-c3
-lT1
-y21&&isLongInteger(lT1.xJ1)){yW1=makeLongInteger(lT1.xJ1);yL2
+cAbsOr:{if(nF2==cMul){bool
+cG3=false;yT
+lY1
+t51&&isLongInteger(lY1.xY1)){c91=makeLongInteger(lY1.xY1);CodeTree
 tmp(*this,typename
-yL2::CloneTag());tmp
-cP3
+CodeTree::CloneTag());tmp
+nC2
 tmp
-x02;if(x31
-tmp,value,yV2
-eX1
-x8::AddSequence,synth,MAX_MULI_BYTECODE_LENGTH)){xU3=true;nM3}
+x22);if(x41
+tmp,value,xQ1::tR1
+xN::AddSequence,synth,MAX_MULI_BYTECODE_LENGTH)){cG3=true
+tM2}
 }
-if(xU3)nM3
+}
+if(cG3)yY3
 int
-yA1=0;yG<bool>done(GetParamCount(),false);yL2
-iE;iE
-tU
-lM2);for(;;){bool
-found
-i13
-c3
-done[a])y81
-if(synth.IsStackTop(lT1)){found=true;done[a]=true;lT1.nB
-iE
-eT
-lT1);if(++yA1>1){synth
-c4
-2);iE.y12
-eU3.yZ2
-iE);yA1=yA1-2+1;}
+yV1=0;xP3
+done(c41,false);CodeTree
+iM;iM
+xC
+nF2);for(;;){bool
+found=false;yT
+done[a]c42
+cY3
+IsStackTop(lY1)){found=true;done[a]=true;lY1.n8
+iM
+cO
+lY1);if(++yV1>1){yS
+2);iM
+t82
+tP1
+iM);yV1=yV1-2+1;}
 }
 }
-if(!found)nM3
-c3
-done[a])y81
-lT1.nB
-iE
-eT
-lT1);if(++yA1>1){synth
-c4
-2);iE.y12
-eU3.yZ2
-iE);yA1=yA1-2+1;}
+if(!found)yY3
+yT
+done[a])continue;lY1.n8
+iM
+cO
+lY1);if(++yV1>1){yS
+2);iM
+t82
+tP1
+iM);yV1=yV1-2+1;}
 }
-if(yA1==0){switch(lM2
-iY2
+if(yV1==0
+t63
+nF2
+eJ3
 cAdd:case
 cOr:case
-cAbsOr:yX2
+cAbsOr:tQ1
 0);lC
 cMul:case
 cAnd:case
-cAbsAnd:yX2
+cAbsAnd:tQ1
 1);lC
 cMin:case
-cMax:yX2
-0);break;default:nM3++yA1;}
-assert(n_stacked==1);nM3
-case
-cPow:{iQ2
+cMax:tQ1
+0
+tK2
+default:yY3++yV1;}
+assert(n_stacked==1)tM2
+eP3
+cPow:{tT1
 p0
-tW2
-0);iQ2
+iA2
+0);tT1
 p1
-tW2
+iA2
 1);if(!p1
-y21||!isLongInteger
-n03)||!x31
+t51||!isLongInteger
+xJ1)||!x41
 p0,makeLongInteger
-n03),yV2
-eX1
-x8::MulSequence,synth,MAX_POWI_BYTECODE_LENGTH)){p0.nB
-p1
-t33
-c4
-2);c91
+xJ1),xQ1::tR1
+xN::MulSequence,synth,MAX_POWI_BYTECODE_LENGTH)){p0.n8
+p1.n8
+yS
+2);yB1
 cIf:case
-i03:{typename
-yW2::IfData
-yJ2;GetParam(0)t33.SynthIfStep1(yJ2,lM2);GetParam(1)t33.SynthIfStep2(yJ2);GetParam(2)t33.SynthIfStep3(yJ2
-nW2
-case
+iF3:{typename
+xQ1::cU2::IfData
+ifdata;GetParam(0)cT3
+SynthIfStep1(ifdata,nF2);GetParam(1)cT3
+SynthIfStep2(ifdata);GetParam(2)cT3
+SynthIfStep3(ifdata
+tK2
+eP3
 cFCall:case
 cPCall:{for
-xK2
-0;a<cN3++a)lT1
-t33
-c4
-iL1)GetParamCount());lK1
-yM|GetFuncNo(),0,0
-nW2
+c12
+0;a<c41;++a)lY1.n8
+yS
+nP2)c41);n41
+0x80000000u|GetFuncNo(),0,0
+tK2}
 default:{for
-xK2
-0;a<cN3++a)lT1
-t33
-c4
-iL1)GetParamCount()nW2}
-synth.yZ2*this);if(MustPopTemps&&n_subexpressions_synthesized>0){size_t
-top
-t13
-GetStackTop(eU3.DoPopNMov(top-1-n_subexpressions_synthesized,top-1);}
+c12
+0;a<c41;++a)lY1.n8
+yS
+nP2)c41
+tK2}
+}
+cY3
+StackTopIs(*this);if(MustPopTemps&&n_subexpressions_synthesized>0){size_t
+top=cY3
+GetStackTop();cY3
+DoPopNMov(top-1-n_subexpressions_synthesized,top-1);}
 }
 }
-iO2{xG1
-x31
-lM1&tree,long
+lA3{xV1
+x41
+xG2
+tree,long
 count,const
-yV2
-SequenceOpCode
-x8&eQ,yW2&synth,size_t
+xQ1::SequenceOpCode
+xN&t1,xQ1::cU2&synth,size_t
 max_bytecode_grow_length){if
-cR3!=0){yW2
-backup=synth;tree.nB
+e03!=0){xQ1::cU2
+backup=synth;tree.n8
 size_t
-bytecodesize_backup
-t13
-GetByteCodeSize();yV2
-x31
+bytecodesize_backup=cY3
+GetByteCodeSize();xQ1::x41
 count
-eR2
+x02
 size_t
-bytecode_grow_amount
-t13
+bytecode_grow_amount=cY3
 GetByteCodeSize()-bytecodesize_backup;if(bytecode_grow_amount>max_bytecode_grow_length){synth=backup
-l81
-false;}
-return
-true;}
-else{yV2
-x31
-count,eQ,synth)nS2}
+eL
+eO3
+l62}
+else{xQ1::x41
+count,t1,synth
+iX1}
 }
 #endif
 #include <cmath>
 #include <cassert>
 #ifdef FP_SUPPORT_OPTIMIZER
-xQ
-iO2{using
-iO2
-FPoptimizer_CodeTree;
-#define FactorStack yG
+using
+lA3
+FUNCTIONPARSERTYPES;lA3{using
+tN;
+#define FactorStack std xM3
 const
-e92
-PowiMuliType{i02
-opcode_square;i02
-opcode_cumulate;i02
-opcode_invert;i02
-opcode_half;i02
+e22
+PowiMuliType{x83
+opcode_square;x83
+opcode_cumulate;x83
+opcode_invert;x83
+opcode_half;x83
 opcode_invhalf;}
 iseq_powi={cSqr,cMul,cInv,cSqrt,cRSqrt}
-,iseq_muli={i21,cAdd,cNeg,i21,i21}
-;yB1
-cF1
+,iseq_muli={iQ1
+x3
+cNeg,iQ1,iQ1}
+n11
+x73
+cT1
 const
-PowiMuliType&xV3,const
-yG<i02>&nA2,l92&stack){eS1
-cY3
-1);while(IP<limit){if(xW3
-xV3.opcode_square){if(!eY2
-cZ3
-2;e4
-opcode_invert){result=-result;e4
-opcode_half){if(result>eS1(0)&&isEvenInteger(cZ3
-yF3;e4
-opcode_invhalf){if(result>eS1(0)&&isEvenInteger(cZ3
-eS1(-0.5);++IP;y81}
+PowiMuliType&cH3,const
+std
+tL2,lZ2&stack
+cE2
+1);while(IP<limit){if(iU1==cH3.opcode_square){if(!t12
+tS2
+2;c3
+opcode_invert){nU3-yA3;c3
+opcode_half){if(yA3>yD1&&isEvenInteger(tS2
+yM2;c3
+opcode_invhalf){if(yA3>yD1&&isEvenInteger(tS2
+x73(-0.5);++IP
+iR2
 size_t
-nB2=IP;eS1
-lhs(1);if(xW3
-cFetch){lC1=yL3;if(index<y1||size_t(index-y1)>=stack
-yA3){IP=nB2;nM3
-lhs=stack[index-y1];goto
-y32;}
-if(xW3
-cDup){lhs=result;goto
-y32;y32:y63
-result);++IP;eS1
-subexponent=cF1
-xV3
-lQ1
-if(IP>=limit||nN[IP]!=xV3.opcode_cumulate){IP=nB2;nM3++IP;stack.pop_back();result+=lhs*subexponent;y81}
-nM3
+xB2=IP
+iO2
+lhs(1);if(iU1==cFetch){l91=n32;if(index<y9||size_t(index-y9)>=iW1){IP=xB2
+tM2}
+lhs=stack[index-y9];goto
+yK2;}
+if(iU1==cDup){lhs=yA3;goto
+yK2;yK2:t01
+yA3);++IP
+iO2
+subexponent=cT1
+cH3
+lL1
+if(IP>=limit||iU1!=cH3.opcode_cumulate){IP=xB2
+tM2}
+++IP;stack.pop_back();yA3+=lhs*subexponent
+iR2
+yY3
 return
-result;}
-yB1
+yA3;}
+x33
+x73
 ParsePowiSequence
-i01
-yG<i02>&nA2){l92
-stack;y63
-eS1(1))l81
-cF1
+nV2
+std
+tL2){lZ2
+stack;t01
+x73(1))eL
+cT1
 iseq_powi
-lQ1}
-yB1
+lL1}
+x33
+x73
 ParseMuliSequence
-i01
-yG<i02>&nA2){l92
-stack;y63
-eS1(1))l81
-cF1
+nV2
+std
+tL2){lZ2
+stack;t01
+x73(1))eL
+cT1
 iseq_muli
-lQ1}
-iP2
-CodeTreeParserData{e13
-iF2
+lL1}
+x33
+class
+CodeTreeParserData{e83
+iW2
 CodeTreeParserData(bool
 k_powi):stack(),clones(),keep_powi(k_powi){}
 void
 Eat(size_t
-eR3,OPCODE
+t43,OPCODE
 opcode
-xX3;xK
-tU
-opcode);yG
-nV1
-cB2=Pop(eR3);xK
-tI1
-cB2);if(!keep_powi)switch(opcode
-iY2
-cTanh:nG1
+t71
+xX;xX
+xC
+opcode);eZ
+cD2=Pop(t43)t81
+cD2);if(!keep_powi)switch(opcode
+eJ3
+cTanh
+yE1
+xN
 sinh,cosh;sinh
-tU
+xC
 cSinh);sinh
-eT
-xK
-xY3
+cO
+xX
+y22
 sinh
-x02;cosh
-tU
+x22);cosh
+xC
 cCosh);cosh
-yA
-xK
-xY3
+lP1
+xX
+y22
 cosh
-i72
+x53
+pow;pow
+xC
+cPow);pow
+lP1
+cosh);pow.yJ
+x73(-1)));pow
+x22);xX
+xC
+cMul);xX.nK1
+0,sinh);xX
+lP1
 pow
-yB2
-yA
-cosh);pow
-yT
-eS1(-1)));pow
-x02;xK
-tU
-y13.nC1
-0,sinh);xK
-yA
-pow
-nW2
-case
-cTan:nG1
+tK2
+eP3
+cTan
+yE1
+xN
 sin,cos;sin
-tU
+xC
 cSin);sin
-eT
-xK
-xY3
+cO
+xX
+y22
 sin
-x02;cos
-tU
+x22);cos
+xC
 cCos);cos
-yA
-xK
-xY3
+lP1
+xX
+y22
 cos
-i72
+x53
+pow;pow
+xC
+cPow);pow
+lP1
+cos);pow.yJ
+x73(-1)));pow
+x22);xX
+xC
+cMul);xX.nK1
+0,sin);xX
+lP1
 pow
-yB2
-yA
-cos);pow
-yT
-eS1(-1)));pow
-x02;xK
-tU
-y13.nC1
-0,sin);xK
-yA
-pow
-nW2
-case
-cPow:{lM1&p0=xK
-lD
-0);lM1&p1=xK
-lD
+tK2
+eP3
+cPow:{xG2
+p0=xX
+l8
+0);xG2
+p1=xX
+l8
 1);if(p1
-nE==cAdd){yG
-nV1
-n83(p1.GetParamCount())c23
-0;a<p1.cN3++a)nG1
-pow
-yB2
-eT
+nC==cAdd){eZ
+xA3(p1
+yF1)c02
+0;a<p1
+yF1;++a
+t71
+pow;pow
+xC
+cPow);pow
+cO
 p0);pow
-eT
+cO
 p1
-lD
-a));pow
-x02;n83[a
-t23
+nF3
+pow
+x22);xA3[a
+tD3
 pow);}
-xK
-tU
-y13
-tI1
-n83);}
-nM3
-default:nM3
-xK.Rehash(!keep_powi);i71,false);
+xX
+xC
+cMul)t81
+xA3);}
+yY3
+default:yY3
+xX
+x22!keep_powi);iV1,false);
 #ifdef DEBUG_SUBSTITUTIONS
-lC2<<eR3<<", "
+t31<<t43<<", "
 <<FP_GetOpcodeName(opcode)<<"->"
-<<FP_GetOpcodeName(xK
-nE)<<": "
-tP3
-xK)tW
-xK);
+<<FP_GetOpcodeName(xX
+nC)<<": "
+i03
+xX
+iK
+xX);
 #endif
-y63
-xK
-iR2
+t01
+xX
+n13
 EatFunc(size_t
-eR3,OPCODE
-opcode,i02
+t43,OPCODE
+eB3
+x83
 funcno
-xX3=CodeTreeFuncOp
-x8(opcode,funcno);yG
-nV1
-cB2=Pop(eR3);xK
-tI1
-cB2);xK.y12);
+tJ3
+CodeTreeFuncOp
+xN(eB3
+funcno);eZ
+cD2=Pop(t43)t81
+cD2);xX
+t82;
 #ifdef DEBUG_SUBSTITUTIONS
-lC2<<eR3<<", "
-tP3
-xK)tW
-xK);
+t31<<t43<<", "
+i03
+xX
+iK
+xX);
 #endif
-i71);y63
-xK
-iR2
-AddConst(yF1
-xX3=CodeTreeImmed(value);i71);Push(xK
-iR2
+iV1);t01
+xX
+n13
+AddConst(yZ1
+tJ3
+CodeTreeImmed(value);iV1);Push(xX
+n13
 AddVar
-iL1
+nP2
 varno
-xX3=CodeTreeVar
-x8(varno);i71);Push(xK
-iR2
-SwapLastTwoInStack(){y73
+tJ3
+CodeTreeVar
+xN(varno);iV1);Push(xX
+n13
+SwapLastTwoInStack(){t21
 1
-t23
-y73
-2]iR2
-Dup(){Fetch
-lB2
-1
-iR2
+tD3
+t21
+2]n13
+Dup(){Fetch(iW1-1
+n13
 Fetch(size_t
 which){Push(stack[which]);}
-nT1
+nX1
 T>void
 Push(T
 tree){
 #ifdef DEBUG_SUBSTITUTIONS
-std::cout<<tP3
-tree)tW
+std::cout<<i03
+tree
+iK
 tree);
 #endif
-y63
+t01
 tree
-iR2
+n13
 PopNMov(size_t
 target,size_t
-source){stack[target]=stack[source];stack
-nE3
+source){stack[target]=stack[source];stack.e93
 target+1);}
-yK2
-y42{clones.clear()yJ
-cY3
-stack.back());stack.resize
-lB2
-1)l81
-result;}
-yG
-nV1
+CodeTree
+xN
+yL2{clones.clear(cP
+yA3(stack.back());stack.e93
+iW1-1)eL
+yA3;}
+eZ
 Pop(size_t
-n_pop){yG
-nV1
-cY3
-n_pop)xS3
-n=0;n<n_pop;++n)result[n
-t23
-y73
+n_pop){eZ
+yA3(n_pop);for
+nP2
+n=0;n<n_pop;++n)yA3[n
+tD3
+t21
 n_pop+n]);
 #ifdef DEBUG_SUBSTITUTIONS
-for(xL3=n_pop;n-->0;){lC2;xE3(result[n])tW
-result[n]);}
+for(cB3=n_pop;n-->0;){t31
+i63
+yA3[n]iK
+yA3[n]);}
 #endif
-stack.resize
-lB2
-n_pop)l81
-result;}
-size_t
-GetStackTop(n61
-stack
+stack.e93
+iW1-n_pop)eL
 yA3;}
+size_t
+GetStackTop(c81
+iW1;}
 private:void
-FindClone(yK2&,bool=true){return;}
-private:yG
-nV1
-stack;std::multimap<fphash_t,yK2>clones;bool
+FindClone(n91,bool=true)yY;}
+private:eZ
+stack;std::multimap<xO2,CodeTree
+xN>clones;bool
 keep_powi;private:CodeTreeParserData
-i01
-CodeTreeParserData&);CodeTreeParserData&e31=i01
+nV2
+CodeTreeParserData&);CodeTreeParserData&eJ1=nV2
 CodeTreeParserData&);}
-;yT1
-IfInfo
-nG1
-cU2
-yJ
+n11
+e22
+IfInfo{CodeTree
+xN
+eO2;CodeTree
+xN
 thenbranch;size_t
-endif_location;IfInfo():cU2(),thenbranch(),endif_location(){}
+endif_location;IfInfo():eO2(),thenbranch(),endif_location(){}
 }
 ;}
-iO2
-FPoptimizer_CodeTree{lA
+tN{lB
 GenerateFrom
-i01
-yG<i02>&nN,const
-yG
-x8&Immed,const
+nV2
 typename
 FunctionParserBase
-x8::Data&cJ3,bool
-keep_powi){yG
-nV1
-nK2;nK2.nH3
-cJ3.mVariablesAmount)xS3
-n=0;n<cJ3.mVariablesAmount;++n){nK2
-yL
-CodeTreeVar
-x8(n+iE2));}
-GenerateFrom(nN,Immed,cJ3,nK2,keep_powi);}
-lA
+xN::Data&x03,bool
+keep_powi){eZ
+xH2;xH2.xJ3
+x03.mVariablesAmount);for
+nP2
+n=0;n<x03.mVariablesAmount;++n){xH2.push_back(CodeTreeVar
+xN(n+iT2));}
+GenerateFrom(x03,xH2,keep_powi);}
+lB
 GenerateFrom
-i01
-yG<i02>&nN,const
-yG
-x8&Immed,const
+nV2
 typename
 FunctionParserBase
-x8::Data&cJ3,const
-i22
-nK2,bool
-keep_powi){
+xN::Data&x03,const
+xA&xH2,bool
+keep_powi){const
+std
+xM3<x83>&ByteCode=x03.mByteCode;const
+std
+xM3
+xN&Immed=x03.mImmed;
 #ifdef DEBUG_SUBSTITUTIONS
 std::cout<<"ENTERS GenerateFrom()\n"
 ;
 #endif
 CodeTreeParserData
-x8
-sim(keep_powi);yG<IfInfo
-x8>eN;for(size_t
-IP=0,DP=0;;++IP){tO2:while(!eN
-cQ3&&(eN.eD==IP||(IP<nN
-yA3&&xW3
-cJump&&eN.e11.iA1)){yL2
-elsebranch=sim.y42
-yG3
-eN.back().cU2)yG3
-eN.e11)yG3
-elsebranch);iJ
-3,cIf);eN.pop_back();}
-if(IP>=nN
-yA3)break;i02
-opcode=nN[IP];if((opcode==cSqr||opcode==cDup||(opcode==cInv&&!IsIntType
-x8::result)||opcode==cNeg||opcode==cSqrt||opcode==cRSqrt||opcode==cFetch)){size_t
-was_ip=IP;eS1
-cE2=ParsePowiSequence
-x8(nN,IP,eN
-cQ3?nN
-yA3:eN.eD,sim.x5
-1);if(cE2!=1.0){x9
-cE2)yJ3;goto
-tO2;}
-if(opcode==cDup||opcode==cFetch||opcode==cNeg){eS1
-xD2=ParseMuliSequence
-x8(nN,IP,eN
-cQ3?nN
-yA3:eN.eD,sim.x5
-1);if(xD2!=1.0){x9
-xD2)yE
-cMul);goto
-tO2;}
+xN
+sim(keep_powi);std
+xM3<IfInfo
+xN>eY;for(size_t
+IP=0,DP=0;;++IP){tT2:while(!eY
+tK3&&(eY.eB==IP||(IP<nD1&&iU1==cJump&&eY.eE1
+xN2)))){CodeTree
+elsebranch=sim.yL2
+n02
+eY.back().eO2)n02
+eY.eE1)n02
+elsebranch)yH
+3,cIf);eY.pop_back();}
+if(IP>=nD1)break;x83
+opcode=iU1;if((opcode==cSqr||opcode==cDup||(opcode==cInv&&!IsIntType
+xN::yA3)||opcode==cNeg||opcode==cSqrt||opcode==cRSqrt||opcode==cFetch)){size_t
+was_ip=IP
+iO2
+e92
+ParsePowiSequence
+xN(ByteCode,IP,eY
+tK3?nD1:eY.eB,sim.xP
+1);if(x93!=x73(1.0)){xO
+x93
+yA1;goto
+tT2;}
+if(opcode==cDup||opcode==cFetch||opcode==cNeg
+yZ2
+xX2=ParseMuliSequence
+xN(ByteCode,IP,eY
+tK3?nD1:eY.eB,sim.xP
+1);if(xX2!=x73(1.0)){xO
+xX2)yH
+2,cMul);goto
+tT2;}
 }
 IP=was_ip;}
-if(lD2>=iE2){sim.Push(nK2[opcode-iE2]);}
-else{switch(lD2
-iY2
+if(n12>=iT2){l91=opcode-iT2
+n02
+xH2[index]);}
+else{switch(n12
+eJ3
 cIf:case
-i03:{eN
-nE3
-eN
-yA3+1);yL2
-res(sim.y42);eN.back().cU2.swap(res);eN.eD=nN
-yA3;IP+=2;y81}
+iF3:{eY.e93
+eY.size()+1);CodeTree
+res(sim.yL2);eY.back().eO2.swap(res);eY.eB=nD1;IP+=2
+iR2
 case
-cJump:{yL2
-res(sim.y42);eN.e11.swap(res);eN.eD=nN[IP+1]+1;IP+=2;y81}
+cJump
+yE1
+res(sim.yL2);eY.eE1.swap(res);eY.eB=ByteCode[IP+1]+1;IP+=2
+iR2
 case
-cImmed:x9
+cImmed:xO
 Immed[DP++]);lC
 cDup:sim.Dup();lC
 cNop:lC
-cFCall:{i02
-funcno=yL3;assert(funcno<fpdata.mFuncPtrs.size());i02
-cB2=cJ3.mFuncPtrs
-yD3
-mParams;sim.EatFunc(cB2,lD2,funcno
-nW2
-case
-cPCall:{i02
-funcno=yL3;assert(funcno<fpdata.tQ3.size());const
+cFCall:{x83
+funcno=n32;assert(funcno<fpdata.mFuncPtrs.size());x83
+cD2=x03.mFuncPtrs[funcno].mParams;sim.EatFunc(cD2,n12,funcno
+tK2
+eP3
+cPCall:{x83
+funcno=n32;assert(funcno<fpdata.i83.size());const
 FunctionParserBase
-x8&p=*cJ3.tQ3
-yD3
-mParserPtr;i02
-cB2=cJ3.tQ3
-yD3
-mParams;yG<yL2>paramlist=sim.Pop(cB2);yL2
-tP2;tP2.GenerateFrom(p.mData->mByteCode,p.mData->mImmed,*p.mData,paramlist)yG3
-tP2
-nW2
-case
-cInv:x9
+xN&p=*x03.i83[funcno].mParserPtr;x83
+cD2=x03.i83[funcno].mParams;xA
+paramlist=sim.Pop(cD2);CodeTree
+tU2;tU2.GenerateFrom(*p.mData,paramlist)n02
+tU2
+tK2
+eP3
+cInv:xO
 1
-nY2
+eG2
 cDiv);lC
-cNeg:yE3
-cNeg);break;x9
+cNeg
+n22
+cNeg
+tK2
+xO
 0
-nY2
+eG2
 cSub);lC
-cSqr:x9
+cSqr:xO
 2
-e21
-cSqrt:x9
-yF3
-e21
-cRSqrt:x9
-eS1(-0.5)e21
-cCbrt:x9
-eS1(1)/eS1(3)e21
-cDeg:x9
+e63
+cSqrt:xO
+yM2
+e63
+cRSqrt:xO
+x73(-0.5)e63
+cCbrt:xO
+x73(1)/x73(3)e63
+cDeg:xO
 fp_const_rad_to_deg
-x8
-cI1
-cRad:x9
+nB1
+cRad:xO
 fp_const_deg_to_rad
-x8
-cI1
-cExp:iF)goto
-yI3;x9
+nB1
+cExp:iN)goto
+eI3;xO
 fp_const_e
-x8()nY2
+xN()eG2
 cPow);lC
-cExp2:iF)goto
-yI3;x9
+cExp2:iN)goto
+eI3;xO
 2.0
-nY2
+eG2
 cPow);lC
-cCot:yE3
-cTan);iF)nY
-cCsc:yE3
-cSin);iF)nY
-cSec:yE3
-cCos);iF)nY
+cCot
+n22
+cTan);iN)x2
+cCsc
+n22
+cSin);iN)x2
+cSec
+n22
+cCos);iN)x2
 cInt:
 #ifndef __x86_64
-iF){yE3
-cInt
-nW2
+iN)n63
+1,cInt
+tK2}
 #endif
-x9
-yF3)lL3
-yE3
-cFloor);lC
-cLog10:yE3
-yH3
+xO
+yM2)tV2
+yH
+1,cFloor);lC
+cLog10
+n22
+cI3
 fp_const_log10inv
-x8
-cI1
-cLog2:yE3
-yH3
+nB1
+cLog2
+n22
+cI3
 fp_const_log2inv
-x8
-cI1
-cLog2by:cK3
-yE3
-yH3
+nB1
+cV3:nB3
+cI3
 fp_const_log2inv
-x8());iJ
+xN())yH
 3,cMul);lC
-cHypot:x9
-2)yJ3;cK3
-x9
-2)yJ3
-lL3
-x9
-yF3
-e21
-cSinCos:sim.Dup();yE3
-cSin);cK3
-yE3
+cHypot:xO
+2
+yA1;tL3
+xO
+2
+yA1
+tV2;xO
+yM2
+e63
+cSinCos:sim.Dup()yH
+1,cSin);nB3
 cCos);lC
-cRSub:cK3
+cSinhCosh:sim.Dup()yH
+1,cSinh);nB3
+cCosh);lC
+cRSub:tL3
 case
-cSub:iF){iJ
+cSub:iN)n63
 2,cSub
-nW2
-x9-1)yE
-cMul)lL3
-lC
-cRDiv:cK3
+tK2}
+xO-1)yH
+2,cMul)tV2;lC
+cRDiv:tL3
 case
-cDiv:iF||IsIntType
-x8::result){iJ
+cDiv:iN||IsIntType
+xN::yA3)n63
 2,cDiv
-nW2
-x9-1)yJ3
-yE
-cMul);lC
+tK2}
+xO-1
+yA1
+yH
+2,cMul);lC
 cAdd:case
 cMul:case
 cMod:case
@@ -8312,43 +8805,46 @@ cPow:case
 cEqual:case
 cLess:case
 cGreater:case
-t71:case
+i21:case
 cLessOrEq:case
 cGreaterOrEq:case
 cAnd:case
 cOr:case
 cAbsAnd:case
-cAbsOr:iJ
-2,xS1
+cAbsOr:sim.Eat(2
+xZ1
 lC
 cNot:case
 cNotNot:case
-yR3:case
-cAbsNotNot:yE3
-xS1
+cK3:case
+cAbsNotNot:sim.Eat(1
+xZ1
 lC
-cFetch:sim.Fetch(yL3);lC
-cPopNMov:{i02
-stackOffs_target=yL3;i02
-stackOffs_source=yL3;sim.PopNMov(stackOffs_target,stackOffs_source
-nW2
+cFetch:sim.Fetch(n32);lC
+cPopNMov:{x83
+stackOffs_target=n32;x83
+stackOffs_source=n32;sim.PopNMov(stackOffs_target,stackOffs_source
+tK2}
 #ifndef FP_DISABLE_EVAL
 case
 cEval:{size_t
-paramcount=cJ3.mVariablesAmount;iJ
-paramcount,xS1
-nM3
+paramcount=x03.mVariablesAmount
+yH
+paramcount
+xZ1
+yY3
 #endif
-default:yI3:;i02
+default:eI3:;x83
 funcno=opcode-cAbs;assert(funcno<FUNC_AMOUNT);const
-FuncDefinition&func=Functions[funcno];iJ
-func.cB2,xS1
-nM3}
+FuncDefinition&func=Functions[funcno]yH
+func.cD2
+xZ1
+yY3}
 }
-Become(sim.y42);
+Become(sim.yL2);
 #ifdef DEBUG_SUBSTITUTIONS
 std::cout<<"Produced tree:\n"
-;iO
+;iV
 #endif
 }
 }
@@ -8357,1356 +8853,1473 @@ std::cout<<"Produced tree:\n"
 #ifdef FP_SUPPORT_OPTIMIZER
 #include <assert.h>
 #define FP_MUL_COMBINE_EXPONENTS
-iO2{xQ
-using
-iO2
-FPoptimizer_CodeTree;yV1
+lA3{using
+lA3
+FUNCTIONPARSERTYPES;using
+tN
+n11
 static
 void
-AdoptChildrenWithSameOpcode(eR{
+AdoptChildrenWithSameOpcode(t2{
 #ifdef DEBUG_SUBSTITUTIONS
 bool
-lR2
-i13
+nK2=false;
 #endif
 for
-xU
-if
-nW1
-a)nE==tree
-nE){
+yP
+if(t5
+a)nC==tC2){
 #ifdef DEBUG_SUBSTITUTIONS
-if(!lR2){std::cout<<"Before assimilation: "
-eS
-lR2=true;}
+if(!nK2){std::cout<<"Before assimilation: "
+nX
+nK2=true;}
 #endif
-tree.AddParamsMove
-nW1
-a).GetUniqueRef().iE1),a);}
+tree.AddParamsMove(t5
+a).GetUniqueRef().lB2),a);}
 #ifdef DEBUG_SUBSTITUTIONS
-if(lR2){std::cout<<"After assimilation:   "
-eS}
+if(nK2){std::cout<<"After assimilation:   "
+nX}
 #endif
 }
 }
-iO2
-FPoptimizer_CodeTree{xB1
-ConstantFolding(eR{tree.Sort();
+tN{tD1
+ConstantFolding(t2{tree.Sort();
 #ifdef DEBUG_SUBSTITUTIONS
-void*yM3=0
-lN1"["
-<<(&yM3)<<"]Runs ConstantFolding for: "
-eS
-DumpHashes(tree);
+void*cJ3=0
+xI1"["
+<<(&cJ3)<<"]Runs ConstantFolding for: "
+nX
+DumpHashes(tree)xI1
+std::flush;
 #endif
 if(false){redo:;tree.Sort();
 #ifdef DEBUG_SUBSTITUTIONS
 std::cout<<"["
-<<(&yM3)<<"]Re-runs ConstantFolding: "
-eS
-DumpHashes(tree);
+<<(&cJ3)<<"]Re-runs ConstantFolding: "
+nX
+DumpHashes
+yN2
 #endif
 }
-if
-xU2!=cImmed){range
-x8
-p=iM
-tree);if(p
-y41
+if(tC2!=cImmed){range
+xN
+p=CalculateResultBoundaries
+yN2
+if(p
+eT&&p
+lJ1&&p
+xQ==p
+lS1
+yX2
 p
-i0&&p.min==p.max)lL
-p.min)n5}
-if(false){ReplaceTreeWithOne
-xP3
-ReplaceWithImmed(eS1(1));goto
-do_return;ReplaceTreeWithZero
-xP3
-ReplaceWithImmed(eS1(0));goto
+xQ);nF}
+if(false){ReplaceTreeWithOne:iH3
+x73(1));goto
+do_return;ReplaceTreeWithZero:iH3
+xH1;goto
 do_return;ReplaceTreeWithParam0:
 #ifdef DEBUG_SUBSTITUTIONS
 std::cout<<"Before replace: "
-lN1
-std::hex<<'['<<tree
-eE2
-hash1<<','<<tree
-eE2
+xI1
+std::hex<<'['tC1
+hash1<<','tC1
 hash2<<']'<<std::dec
-eS
+nX
 #endif
-tree.xO2
+tree.eB2
 0));
 #ifdef DEBUG_SUBSTITUTIONS
 std::cout<<"After replace: "
-lN1
-std::hex<<'['<<tree
-eE2
-hash1<<','<<tree
-eE2
+xI1
+std::hex<<'['tC1
+hash1<<','tC1
 hash2<<']'<<std::dec
-eS
+nX
 #endif
-e5
-yN3
-xU2
-iY2
-cImmed:lC
-iE2:lC
+goto
+redo;iY2
+tC2
+yS3
+lC
+iT2:lC
 cAnd:case
-cAbsAnd
-cP
+cAbsAnd:i02
 bool
-cE
-i13
-for
-xU{if(!y93
-a)))cE=true;yQ3
-a),cV2
-cAbsAnd)iY2
-yO3:yP3
-IsAlways:nF1);lC
-lX1
-yN3(iT
+cC=false;for
+yP{if(!lW3
+a)))cC=true;n93
+a),tC2==cAbsAnd)eJ3
+IsNever
+cQ
+iI2:nG1);lC
+n01
 iY2
-0
-tY
-1:tH
-cV2
-cAnd?cNotNot:cAbsNotNot);e5
-default:if
-xU2==cAnd||!cE)if(ConstantFolding_AndLogic
-y83
-c91
+t6
+eJ3
+0:iE
+1:tW2
+tC2==cAnd?cNotNot:cAbsNotNot)n73
+default:l33
+cAnd||!cC)if(ConstantFolding_AndLogic
+x71
+yB1
 cOr:case
-cAbsOr
-cP
+cAbsOr:i02
 bool
-cE
-i13
-for
-xU{if(!y93
-a)))cE=true;yQ3
-a),cV2
-cAbsOr)iY2
-IsAlways
-tY
-yO3:nF1);lC
-lX1
-yN3(iT
+cC=false;for
+yP{if(!lW3
+a)))cC=true;n93
+a),tC2==cAbsOr))i51
+iE
+l63
+nG1);lC
+n01
 iY2
-0:yP3
-1:tH
-cV2
-cOr?cNotNot:cAbsNotNot);e5
-default:if
-xU2==cOr||!cE)if(ConstantFolding_OrLogic
-y83
-c91
+t6
+eJ3
+0
+cQ
+1:tW2
+tC2==cOr?cNotNot:cAbsNotNot)n73
+default:l33
+cOr||!cC)if(ConstantFolding_OrLogic
+x71
+yB1
 cNot:case
-yR3:{i02
-n21
-0;switch
-nW1
-0)nE
-iY2
-cEqual:n21
-t71;lC
-t71:n21
+cK3:{x83
+nF1
+0;switch(nC3
+eJ3
+cEqual:nF1
+i21;lC
+i21:nF1
 cEqual;lC
-cLess:n21
+cLess:nF1
 cGreaterOrEq;lC
-cGreater:n21
+cGreater:nF1
 cLessOrEq;lC
-cLessOrEq:n21
+cLessOrEq:nF1
 cGreater;lC
-cGreaterOrEq:n21
+cGreaterOrEq:nF1
 cLess;lC
-cNotNot:n21
+cNotNot:nF1
 cNot;lC
-cNot:n21
+cNot:nF1
 cNotNot;lC
-yR3:n21
+cK3:nF1
 cAbsNotNot;lC
-cAbsNotNot:n21
-yR3;break;default:nM3
-if(opposite){tH
-OPCODE(opposite)tT.SetParamsMove
-nW1
-0).GetUniqueRef().iE1));e5
-yN3(tX
-0),tree
-cG1)tF1
-yP3
-yO3
-tY
-lX1
-if
-xU2==cNot&&GetPositivityInfo
-nW1
-0))==IsAlways)tH
-yR3);l23
-nE==cIf||e72
-nE==i03)nG1
-iH2
-cL2
-0);lM1&ifp1=iH2
-lD
-1);lM1&ifp2=iH2
-lD
+cAbsNotNot:nF1
+cK3
+tM2
+default:yY3
+if(opposite){tW2
+OPCODE(opposite));tree
+i81
+t5
+0).GetUniqueRef().lB2))n73
+iY2
+lZ1
+0)e53
+cU1
+eJ3
+iI2
+cQ
+l63
+iE
+n01
+l33
+cNot&&GetPositivityInfo(t5
+0))==iI2)tW2
+cK3);if(nC3==cIf||nC3==iF3
+t71
+iftree=t5
+0);xG2
+ifp1=iftree
+l8
+1);xG2
+ifp2=iftree
+l8
 2);if(ifp1
-nE==cNot||ifp1
-cG1{tree.x1
+nC
+l43
 ifp1
-nE==cNot?cNotNot:cAbsNotNot);tQ2
-lD
-0))yC1)yS3
-xQ2
-yT3)tV
+cU1
+x6
+ifp1
+nC==cNot?cNotNot:cAbsNotNot);tZ2
+l8
+0))t4
+cL3
+l42
+cM3
+iO1
 if(ifp2
-nE==cNot||ifp2
-cG1{tree.x1
-tree
-nE);tQ2)yC1)yS3
-tU
+nC
+l43
 ifp2
-nE==cNot?cNotNot:cAbsNotNot);yT3
-lD
-0))tV
-c91
+cU1
+x6
+tC2);tZ2)t4
+cL3
+xC
+ifp2
+nC==cNot?cNotNot:cAbsNotNot);cM3
+l8
+0)iO1
+yB1
 cNotNot:case
-cAbsNotNot:{if(y93
-0)))lN3
-yQ3
-0),cV2
-cAbsNotNot)iY2
-yO3:yP3
-IsAlways
-tY
-lX1
-if
-xU2==cNotNot&&GetPositivityInfo
-nW1
-0))==IsAlways)tH
-cAbsNotNot);l23
-nE==cIf||e72
-nE==i03)nG1
-iH2
-cL2
-0);lM1&ifp1=iH2
-lD
-1);lM1&ifp2=iH2
-lD
+cAbsNotNot:{if(lW3
+0)))cW
+n93
+0),tC2==cAbsNotNot)eJ3
+IsNever
+cQ
+iI2:iE
+n01
+l33
+cNotNot&&GetPositivityInfo(t5
+0))==iI2)tW2
+cAbsNotNot);if(nC3==cIf||nC3==iF3
+t71
+iftree=t5
+0);xG2
+ifp1=iftree
+l8
+1);xG2
+ifp2=iftree
+l8
 2);if(ifp1
-nE==cNot||ifp1
-cG1{tree.SetParam(0,iH2
-lD
-0)tT
-eT
-ifp1)yS3
-xQ2
-yT3)tV
-if(ifp2
-nE==cNot||ifp2
-cG1{tree.x1
+nC
+l43
+ifp1
+cU1{tree.SetParam(0,iftree
+y22
 tree
-nE);tQ2)yC1
-tT
-eT
-ifp2);tH
-iH2
-nE);e5}
-c91
+cO
+ifp1
+cL3
+l42
+cM3
+iO1
+if(ifp2
+nC
+l43
+ifp2
+cU1
+x6
+tC2);tZ2)t4);tree
+cO
+ifp2);tW2
+iftree
+nC)n73}
+yB1
 cIf:case
-i03:{if(ConstantFolding_IfOperations
-y83
-nM3
+iF3:{if(ConstantFolding_IfOperations
+x71
+yY3
 case
-cMul:{NowWeAreMulGroup:;AdoptChildrenWithSameOpcode(tree);eS1
-nN1=eS1(1);size_t
-i81=0;bool
-nO1=false
-eV3
-if(!xI2
-y21)y81
-eS1
-immed=xI2.xJ1;if(immed==eS1(0))tZ
-nN1*=immed;++i81;}
-if(i81>1||(i81==1&&fp_equal(nN1,nY3)nO1=true;if(nO1){
+cMul:{NowWeAreMulGroup:;AdoptChildrenWithSameOpcode
+yN2
+x73
+nR1=x73(1);size_t
+l52=0;bool
+nS1=false;e23{if(!t5
+t41
+continue
+iO2
+immed=cN3;if(immed==xH1
+goto
+ReplaceTreeWithZero;nR1*=immed;++l52;}
+if(l52>1||(l52==1&&lN3
+nR1,x73(1))))nS1=true;if(nS1){
 #ifdef DEBUG_SUBSTITUTIONS
 std::cout<<"cMul: Will add new "
-tR3
-nN1<<"\n"
+i93
+nR1<<"\n"
 ;
 #endif
 for
-xU
-if
-nW1
-a)y21){
+yP
+if(t5
+t41{
 #ifdef DEBUG_SUBSTITUTIONS
 std::cout<<" - For that, deleting "
-tR3
-xI2.xJ1
-lN1"\n"
+i93
+cN3
+xI1"\n"
 ;
 #endif
-lM3!fp_equal(nN1,nY3
-tree
-eT
-cU1
-nN1));yN3(iT
-iY2
-0
-tY
-1:lN3
+nD3!lN3
+nR1,x73(1)))tree
+cO
+e71
+nR1));iY2
+t6
+eJ3
+0:iE
+1:cW
 default:if(ConstantFolding_MulGrouping
-y83
+x71
 if(ConstantFolding_MulLogicItems
-y83
-c91
-cAdd
-cP
-eS1
-lE2=0.0;size_t
-i81=0;bool
-nO1=false
-eV3
-if(!xI2
-y21)y81
-eS1
-immed=xI2.xJ1;lE2+=immed;++i81;}
-if(i81>1||(i81==1&&lE2==0.0))nO1=true;if(nO1){
+x71
+yB1
+cAdd:i02
+x73
+n42=0.0;size_t
+l52=0;bool
+nS1=false;e23{if(!t5
+t41
+continue
+iO2
+immed=cN3;n42+=immed;++l52;}
+if(l52>1||(l52==1&&n42==xH1)nS1=true;if(nS1){
 #ifdef DEBUG_SUBSTITUTIONS
 std::cout<<"cAdd: Will add new "
-tR3
-lE2<<"\n"
-lN1"In: "
-eS
+i93
+n42<<"\n"
+xI1"In: "
+nX
 #endif
 for
-xU
-if
-nW1
-a)y21){
+yP
+if(t5
+t41{
 #ifdef DEBUG_SUBSTITUTIONS
 std::cout<<" - For that, deleting "
-tR3
-xI2.xJ1
-lN1"\n"
+i93
+cN3
+xI1"\n"
 ;
 #endif
-lM3!(lE2==0.0))tree
-eT
-cU1
-lE2));yN3(iT
-iY2
-0:yP3
-1:lN3
+nD3!(n42==x73(0.0)))tree
+cO
+e71
+n42));iY2
+t6
+eJ3
+0
+cQ
+1:cW
 default:if(ConstantFolding_AddGrouping
-y83
+x71
 if(ConstantFolding_AddLogicItems
-y83
-c91
-cMin
-cP
+x71
+yB1
+cMin:i02
 size_t
-y52=0;range
-x8
-e6
-eV3
-while(a+1<iT&&xI2
-iA
-tree
-lD
-a+1)))nF1+1);range<nI
-has_max&&(!e6
-i0||(p.max)<e6.max)){e6.max=p.max;e6
-i0=true;y52=a;}
+yO2=0;range
+xN
+e2;e23{while(a+1<t6&&t5
+a)xD
+t5
+a+1)))nG1+1);range<yP2
+max
+l53(!e2
+lJ1||(p
+lS1)<e2
+lS1)){e2
+lS1=p
+lS1;e2
+lJ1=true;yO2=a;}
 }
-if(e6
-i0)for
-xU{range<nI
-iV2&&a!=y52&&p.min>=e6.max)lM3
-iT==1){lN3
-c91
-cMax
-cP
+if(e2
+lJ1)for
+yP{range<yP2
+min
+l53
+a!=yO2&&p
+xQ>=e2
+lS1)nD3
+t6==1){cW
+yB1
+cMax:i02
 size_t
-y52=0;range
-x8
-t1
-eV3
-while(a+1<iT&&xI2
-iA
-tree
-lD
-a+1)))nF1+1);range<nI
-iV2&&(!t1.iV2||p.min>t1.min)){t1.min=p.min;t1.iV2=true;y52=a;}
+yO2=0;range
+xN
+tG;e23{while(a+1<t6&&t5
+a)xD
+t5
+a+1)))nG1+1);range<yP2
+min
+l53(!tG
+eT||p
+xQ>tG
+xQ)){tG
+xQ=p
+xQ;tG
+eT=true;yO2=a;}
 }
-if(t1.iV2){for
-xU{range<nI
-has_max&&a!=y52&&(p.max)<t1.min){nF1);}
+if(tG
+eT){for
+yP{range<yP2
+max
+l53
+a!=yO2&&(p
+lS1)<tG
+xQ){nG1);}
 }
 }
-if(iT==1){lN3
-c91
+if(t6==1){cW
+yB1
 cEqual:case
-t71:case
+i21:case
 cLess:case
 cGreater:case
 cLessOrEq:case
 cGreaterOrEq:if(ConstantFolding_Comparison
-y83
+x71
 lC
 cAbs:{range
-x8
-p0=y6
-0));if(p0
-eN1
-lN3
-if(p0
-i0
-yU3
-tN{tH
-cMul
-tT
-yT
-nY3;goto
+xN
+i3
+t5
+0));if
+eO
+cW
+if
+eP{tW2
+cMul);tree.yJ
+x73(1)));goto
 NowWeAreMulGroup;}
-l23
-nE==cMul){lM1&p
-cL2
-0);yG
-nV1
-lO3;yG
-nV1
+if(nC3==cMul){xG2
+p=t5
+0);eZ
+nE3;eZ
+neg_set
 c02
-c23
-0;a<p.cN3++a){p0=iM
+0;a<p
+yF1;++a){i3
 p
-lD
-a));if(p0
-eN1{lO3
-yL
-p
-lD
-a));}
-if(p0
-i0
-yU3
-tN{c02
-yL
-p
-lD
-a));}
+nF3
+if
+eO{nE3.push_back(p
+nF3}
+if
+eP{neg_set.push_back(p
+nF3}
 }
 #ifdef DEBUG_SUBSTITUTIONS
 std::cout<<"Abs: mul group has "
-<<lO3
-yA3<<" pos, "
-<<c02
-yA3<<"neg\n"
+<<nE3.size()<<" pos, "
+<<neg_set.size()<<"neg\n"
 ;
 #endif
-if(!lO3
-cQ3||!c02
-cQ3){
+if(!nE3
+tK3||!neg_set
+tK3){
 #ifdef DEBUG_SUBSTITUTIONS
 std::cout<<"AbsReplace-Before: "
-;xE3(tree)lN1"\n"
+i63
+tree)xI1"\n"
 <<std::flush;DumpHashes
-tJ1;
+y32;
 #endif
-yK2
-cL3;cL3
-tU
-cMul)c23
-0;a<p.cN3++a){p0=iM
+CodeTree
+xN
+e73;e73
+xC
+cMul)c02
+0;a<p
+yF1;++a){i3
 p
-lD
-a));if((p0
-eN1||(p0
-i0
-yU3
-tN){}
+nF3
+if(eO||eP){}
 else
-cL3
-eT
+e73
+cO
 p
-lD
-a));}
-cL3
-i72
-lP3;lP3
-tU
-cAbs);lP3
-yA
-cL3);lP3
-i72
-xW1
-cMul);n83
-yA
-lP3);xX1
-AddParamsMove(lO3);if(!c02
-cQ3){if(c02
-yA3%2)n83
-yT
-eS1(-1)));xX1
-AddParamsMove(c02);}
-tree.Become(n83);
+nF3}
+e73
+x53
+nI3;nI3
+xC
+cAbs);nI3
+lP1
+e73);nI3
+x53
+yI1
+cMul);xA3
+lP1
+nI3);yJ1
+AddParamsMove(nE3);if(!neg_set
+tK3){if(neg_set.size()%2)yJ1
+yJ
+x73(-1)));yJ1
+AddParamsMove(neg_set);}
+tree.Become(xA3);
 #ifdef DEBUG_SUBSTITUTIONS
 std::cout<<"AbsReplace-After: "
-;xE3
-tJ1
-lN1"\n"
+;DumpTree
+y32
+xI1"\n"
 <<std::flush;DumpHashes
-tJ1;
+y32;
 #endif
 goto
 NowWeAreMulGroup;}
 }
-nM3
-#define HANDLE_UNARY_CONST_FUNC(funcname) lX)lL funcname(n6))n5
+yY3
+#define HANDLE_UNARY_CONST_FUNC(funcname) nU yX2 funcname(lS));nF
 case
-cLog:tH3(fp_log);l23
-nE==cPow)nG1
-pow
-cL2
+cLog:tX3(fp_log);if(nC3==cPow
+t71
+pow=t5
 0);if(GetPositivityInfo(pow
-lD
-0))==IsAlways){pow
-lF2
-tI
-tree.lW
+l8
+0))==iI2)tF1
+i7
+tree.lV
 if(GetEvennessInfo(pow
-x03==IsAlways){pow
-lF2
-yJ
+l8
+1))==iI2)tF1(cP
 abs;abs
-tU
+xC
 cAbs);abs
-yA
+lP1
 pow
-xY3
-abs
-x02
-tI
-pow.nC1
-0,abs
-tT.lW}
-else
-l23
-nE==cAbs)nG1
-pow
-cL2
-0)lD
+y22
+abs.Rehash
+i7
+pow.nK1
+0,abs);tree.lV}
+iZ1
+nC3==cAbs
+t71
+pow=t5
+0)l8
 0);if(pow
-nE==cPow){pow
-lF2
-yJ
+nC==cPow)tF1(cP
 abs;abs
-tU
+xC
 cAbs);abs
-yA
+lP1
 pow
-xY3
-abs
-x02
-tI
-pow.nC1
-0,abs
-tT.lW}
+y22
+abs.Rehash
+i7
+pow.nK1
+0,abs);tree.lV}
 lC
-cAcosh:tH3(fp_acosh);lC
-cAsinh:tH3(fp_asinh);lC
-cAtanh:tH3(fp_atanh);lC
-cAcos:tH3(fp_acos);lC
-cAsin:tH3(fp_asin);lC
-cAtan:tH3(fp_atan);lC
-cCosh:tH3(fp_cosh);lC
-cSinh:tH3(fp_sinh);lC
-cTanh:tH3(fp_tanh);lC
-cSin:tH3(fp_sin);lC
-cCos:tH3(fp_cos);lC
-cTan:tH3(fp_tan);lC
-cCeil:if(n8
-tH3(fp_ceil);lC
-cTrunc:if(n8
-tH3(fp_trunc);lC
-cFloor:if(n8
-tH3(fp_floor);lC
-cInt:if(n8
-tH3(fp_int);lC
-cCbrt:tH3(fp_cbrt);lC
-cSqrt:tH3(fp_sqrt);lC
-cExp:tH3(fp_exp);lC
-cLog2:tH3(fp_log2);lC
-cLog10:tH3(fp_log10);lC
-cLog2by:y2)lL
-fp_log2(n6)*y4
-nN3
-cMod:y2)lL
-fp_mod(n6,y4)nN3
+cAcosh:tX3(fp_acosh);lC
+cAsinh:tX3(fp_asinh);lC
+cAtanh:tX3(fp_atanh);lC
+cAcos:tX3(fp_acos);lC
+cAsin:tX3(fp_asin);lC
+cAtan:tX3(fp_atan);lC
+cCosh:tX3(fp_cosh);lC
+cSinh:tX3(fp_sinh);lC
+cTanh:tX3(fp_tanh);lC
+cSin:tX3(fp_sin);lC
+cCos:tX3(fp_cos);lC
+cTan:tX3(fp_tan);lC
+cCeil:if(n7
+tX3(fp_ceil);lC
+cTrunc:if(n7
+tX3(fp_trunc);lC
+cFloor:if(n7
+tX3(fp_floor);lC
+cInt:if(n7
+tX3(fp_int);lC
+cCbrt:tX3(fp_cbrt);lC
+cSqrt:tX3(fp_sqrt);lC
+cExp:tX3(fp_exp);lC
+cLog2:tX3(fp_log2);lC
+cLog10:tX3(fp_log10);lC
+cV3:if
+lP
+fp_log2(lS)*i12
+cArg:tX3(fp_arg);lC
+cConj:tX3(fp_conj);lC
+cImag:tX3(fp_imag);lC
+cReal:tX3(fp_real);lC
+cPolar:if
+lP
+fp_polar
+lK1
+lC
+cMod:if
+lP
+fp_mod
+lK1
+lC
 cAtan2:{range
-x8
-p0
-y5
-p1=y6
-1));lX&&fp_equal(n6,eS1(0))){if(p1
-i0&&(p1.max)<0)lL
+xN
+i3
+t5
+yW2
+p1=i4
+1));nU&&lN3
+lS,xH1){if(p1
+lJ1&&(p1
+lS1)<xH1{iH3
 fp_const_pi
-x8())n5
+xN());nF
 if(p1
-y41
-p1.min>=0.0)lL
-eS1(0))n5}
-if(nE1
-fp_equal(y4,eS1(0))){if(p0
-i0&&(p0.max)<0)lL-fp_const_pihalf
-x8())n5
-if(p0
-y41
-p0.min>0)lL
+eT&&p1
+xQ>=xN1
+xH1;nF}
+if(eG1
+lN3
+n51,xH1){if(p0
+lJ1&&(p0
+lS1)<xH1{iH3-fp_const_pihalf
+xN());nF
+if(tQ3
+p0
+xQ>xH1{iH3
 fp_const_pihalf
-x8())n5}
-y2)lL
-fp_atan2(n6,y4))n5
+xN());nF}
+if
+lP
+fp_atan2
+lK1
 if((p1
-y41
-p1.min>0.0)||(p1
-i0&&(p1.max)<fp_const_negativezero
-x8()))nG1
-y62;y62
-tU
-cPow);y62
-yA
-tree
-x03;y62
-yT
-eS1(-1)));y62
-i72
-y72;y72
-e53
-y72
-yA
-e72);y72
-yA
-y62);y72
-y3
-cAtan
-tT.nC1
-0,y72
-tW1
-1);c91
+eT&&p1
+xQ>xH1||(p1
+lJ1&&(p1
+lS1)<fp_const_negativezero
+xN()nK
+yQ2;yQ2
+xC
+cPow);yQ2
+lP1
+t5
+1));yQ2.yJ
+x73(-1)));yQ2
+x53
+yR2;yR2
+xC
+cMul);yR2
+lP1
+t5
+0));yR2
+lP1
+yQ2);yR2
+x22);tW2
+cAtan);iN2
+0,yR2
+y01
+1);yB1
 cPow:{if(ConstantFolding_PowOperations
-y83
-nM3
+x71
+yY3
 case
-cDiv:y2&&y4!=0.0)lL
-n6/y4
-nN3
-cInv:lX&&n6!=0.0)lL
-eS1(1)/n6
-nN3
-cSub:y2)lL
-n6-y4
-nN3
-cNeg:lX)lL-n6
-nN3
-cRad:lX)lL
+cDiv:nU&&eG1
+n51!=xN1
+lS/i12
+cInv:nU&&lS!=xN1
+x73(1)/lS);nF
+lC
+cSub:if
+lP
+lS-i12
+cNeg:nU
+yX2-lS);nF
+lC
+cRad:nU
+yX2
 RadiansToDegrees
-t63
-cDeg:lX)lL
+n83
+cDeg:nU
+yX2
 DegreesToRadians
-t63
-cSqr:lX)lL
-n6*n6
-nN3
-cExp2:tH3(fp_exp2);lC
-cRSqrt:lX)lL
-eS1(1)/fp_sqrt
-t63
-cCot:lX)nQ3=fp_tan(n6)xE
-cSec:lX)nQ3=fp_cos(n6)xE
-cCsc:lX)nQ3=fp_sin(n6)xE
-cHypot:y2)lL
-fp_hypot(n6,y4)nN3
+n83
+cSqr:nU
+yX2
+lS*lS);nF
+lC
+cExp2:tX3(fp_exp2);lC
+cRSqrt:nU
+yX2
+x73(1)/fp_sqrt
+n83
+cCot:yY2
+fp_tan
+n0
+cSec:yY2
+fp_cos
+n0
+cCsc:yY2
+fp_sin
+n0
+cHypot:if
+lP
+fp_hypot
+lK1
+lC
 cRDiv:case
 cRSub:case
 cDup:case
 cFetch:case
 cPopNMov:case
 cSinCos:case
+cSinhCosh:case
 cNop:case
 cJump:lC
 cPCall:case
 cFCall:case
-cEval:nM3
+cEval:yY3
 do_return:;
 #ifdef DEBUG_SUBSTITUTIONS
 std::cout<<"["
-<<(&yM3)<<"]Done ConstantFolding, result: "
-eS
-DumpHashes(tree);
+<<(&cJ3)<<"]Done ConstantFolding, result: "
+nX
+DumpHashes
+yN2
 #endif
 }
 }
 #endif
 #ifdef FP_SUPPORT_OPTIMIZER
-xQ
-using
-iO2
-FPoptimizer_CodeTree;iO2{n73<i02
-cY2
-e92
-Comp{}
-;n73<>e92
-Comp<cLess>{n73<lF<yU
-cLessOrEq>{n73<lF<=yU
-cGreater>{n73<lF>yU
-cGreaterOrEq>{n73<lF>=yU
-cEqual>{n73<lF==yU
-t71>{n73<lF!=b;}
-}
-;}
-iO2
-FPoptimizer_CodeTree{c12
-set_abs(){if(!iV2&&!iI2{iV2=yV3}
-tP1!iV2&&max
-t83){iV2=true;min=-max;iJ2
-false;}
-tP1!iV2){iV2=yV3
-iJ2
-false;}
-tP1
+tN{tD1
+range
+xN::set_abs(nL
+bool
+has_negative=!min.known||min.val<x73();bool
+has_positive=!nJ3||tM3
+nK3);bool
+crosses_axis=has_negative&&has_positive;rangehalf
+xN
+newmax;if(min
+l53
+nJ3)newmax.set(fp_max(i31,i41);if(crosses_axis)min.set(x73());cP3
 min
-cH1
-nZ2;tP1!iI2{iV2=yV3}
-tP1
-max
-t83)nQ3(-max);max=-min;min=tmp;}
-tP1-min>=max){max=-min;n31}
-else{n31}
-}
-c12
-set_neg(){std::swap(iV2,iI2;std::swap(min,max);min=-min;max=-max;}
-yV
-set_min_if(c31
-if(iV2&&Comp<cY2()(min,v))min=func(min
-t73
-iV2=yW3
-iV2;min=yW3
-min;}
-}
-yV
-set_max_if(c31
-if(has_max&&Comp<cY2()(max,v))max=func(max
-t73
-iJ2
-model
-i0;max=yW3
-max;}
-}
-yV
-set_min_max_if(c31
-set_min_if<cY2(v,func,model);set_max_if<cY2(v,func,model);}
-c12
-set_min(n7
-if(iV2)min=func(min
-t73
-iV2=yW3
-iV2;min=yW3
-min;}
-}
-c12
-set_max(n7
-if(iI2
-max=func(max
-t73
-iJ2
-model
-i0;max=yW3
-max;}
-}
-c12
-y82
-n7
-set_min(func,model);set_max(func,model);}
-yV1
+l53
+nJ3)min.set(fp_min(i31,i41);iZ1
+min.known)min.set(i31);else
+min.set(i41;}
+max=newmax;}
+tD1
 range
-x8
-iM
-const
-eR
-#ifdef DEBUG_SUBSTITUTIONS_extra_verbose
-{range
-x8
-tmp=CalculateResultBoundaries_do(tree)lN1"Estimated boundaries: "
-;if(tmp.iV2)std::cout<<tmp.min;else
-std::cout<<"-inf"
-lN1" .. "
-;if(tmp
-i0)std::cout<<tmp.max;else
-std::cout<<"+inf"
-lN1": "
-;xE3(tree)lN1
-std::endl
-l81
-tmp;}
-yV1
+xN::set_neg(){std::swap(min,max);min.val=-min.val;tM3=-tM3;}
+xV1
+IsLogicalTrueValue
+nV2
 range
-x8
-yK2::CalculateResultBoundaries_do
-i01
-eR
+xN&p,bool
+abs){if(nB
+IsIntType
+xN::yA3){if(p
+eT&&p
+xQ>=x73(1))l62
+if(!abs&&p
+lJ1
+eU3<=x73(-1))l62}
+cP3
+p
+eT&&p
+xQ>=yM2)l62
+if(!abs&&p
+lJ1
+eU3<=x73(-0.5))l62}
+return
+eO3
+xV1
+IsLogicalFalseValue
+nV2
+range
+xN&p,bool
+abs){if(nB
+IsIntType
+xN::yA3){if(abs)return
+p
+lJ1
+iY
+1);else
+return
+p
+eT&&p
+lJ1&&p
+xQ
+nK3-1)iY
+1);}
+cP3
+abs)return
+p
+lJ1
+iY
+0.5);else
+return
+p
+eT&&p
+lJ1&&p
+xQ
+nK3-0.5)iY
+0.5);}
+}
+}
 #endif
-{x81
-eO1(-fp_const_pihalf
-x8(),fp_const_pihalf
-x8());x81
+#ifdef FP_SUPPORT_OPTIMIZER
+using
+lA3
+FUNCTIONPARSERTYPES;using
+tN;tN{x33
+range
+xN
+CalculateResultBoundaries
+nV2
+t2
+#ifdef DEBUG_SUBSTITUTIONS_extra_verbose
+{using
+lA3
+FUNCTIONPARSERTYPES;range
+xN
+tmp=CalculateResultBoundaries_do(tree)xI1"Estimated boundaries: "
+;if(tmp
+eT)std::cout<<tmp
+xQ;else
+std::cout<<"-inf"
+xI1" .. "
+;if(tmp
+lJ1)std::cout<<tmp
+lS1;else
+std::cout<<"+inf"
+xI1": "
+i63
+tree)xI1
+std::endl
+eL
+tmp;}
+x33
+range
+xN
+CodeTree
+xN::CalculateResultBoundaries_do
+nV2
+t2
+#endif
+{iO
+yW1(-fp_const_pihalf
+xN(),fp_const_pihalf
+xN());iO
 pi_limits(-fp_const_pi
-x8(),fp_const_pi
-x8());x81
-abs_pi_limits(eS1(0),fp_const_pi
-x8());using
-iO2
-std;switch
-xU2
-iY2
-cImmed:nL
-yZ3,yZ3);case
+xN(),fp_const_pi
+xN());iO
+abs_pi_limits(yD1,fp_const_pi
+xN());iO
+plusminus1_limits(x73(-yR3
+using
+lA3
+std;switch(tC2
+yS3
+nQ
+cS3,cS3);case
 cAnd:case
 cAbsAnd:case
 cOr:case
 cAbsOr:case
 cNot:case
-yR3:case
+cK3:case
 cNotNot:case
 cAbsNotNot:case
 cEqual:case
-t71:case
+i21:case
 cLess:case
 cLessOrEq:case
 cGreater:case
-cGreaterOrEq:e83
-0),eS1(1))cM3
-cAbs:lB
-m.set_abs(cY
-cLog:lB
-m.y7
+cGreaterOrEq:{nQ
+yD1,x73(1));eP3
+cAbs:tN3
+set_abs(e3
+cLog:tN3
+i22
+fp_log);nL3
 fp_log
-cY
-cLog2:lB
-m.y7
+e3
+cLog2:tN3
+i22
+fp_log2);nL3
 fp_log2
-cY
-cLog10:lB
-m.y7
+e3
+cLog10:tN3
+i22
+fp_log10);nL3
 fp_log10
-cY
-cAcosh:lB
-m
-nL2
-set_min_max_if<cGreaterOrEq
-lQ3
+e3
+cAcosh:tN3
+min.template
+set_if<cGreaterOrEq
+tG1
 fp_acosh
-cY
-cAsinh:lB
-m.y82
-fp_asinh
-cY
-cAtanh:lB
-m
-nL2
-set_min_if<cGreater>(eS1(-1),fp_atanh);m
-nL2
-set_max_if<cLess
-lQ3
+i32
+cGreaterOrEq
+tG1
+fp_acosh
+e3
+cAsinh:tN3
+min.set(fp_asinh);eS
+set(fp_asinh
+e3
+cAtanh:tN3
+min.n5-1),fp_atanh
+i32
+cLess
+tG1
 fp_atanh
-cY
-cAcos:lB
-nL(m
-i0&&(m.max)<eS1(1))?fp_acos(m.max):eS1(0),(m
-y41(m.min)>=eS1(-1))?fp_acos(m.min):fp_const_pi
-x8())cM3
-cAsin:lB
-m
-nL2
-set_min_if<cGreater>(eS1(-1),fp_asin,eO1);m
-nL2
-set_max_if<cLess
-lQ3
-fp_asin,eO1
-cY
-cAtan:lB
-m.y82
-fp_atan,eO1
-cY
+e3
+cAcos:lE
+nQ(eS
+known&&cO3)<x73(1))?fp_acos
+cO3):yD1,(m
+eT&&(m
+xQ)>=x73(-1))?fp_acos(m
+xQ):fp_const_pi
+xN());eP3
+cAsin:tN3
+min.n5-1),fp_asin,yW1
+xQ
+i32
+cLess
+tG1
+fp_asin,yW1
+lS1
+e3
+cAtan:tN3
+min.set(fp_atan,yW1
+xQ);eS
+set(fp_atan,yW1
+lS1
+e3
 cAtan2:{range
-x8
-p0
-y5
-p1=y6
-1));lX&&fp_equal(n6,eS1(0))){return
+xN
+i3
+t5
+yW2
+p1=i4
+1));nU&&lN3
+lS,xH1)yY
 abs_pi_limits;}
-if(nE1
-fp_equal(y4,eS1(0))){return
-eO1;}
+if(eG1
+lN3
+n51,xH1)yY
+yW1;}
 return
-pi_limits
-cM3
-cSin:lB
+pi_limits;eP3
+cSin:lE
 bool
-x41=!m.iV2||!m
-i0||(m.max-m.min)>=(y8
-x41)e0
-eS1
-min=cZ2
-min,y8
+x51=!m
+eT||!eS
+known||cO3-m
+xQ)>=(yA
+x51)cX
+x73
+min=fp_mod(m
+xQ,yA
+min<xH1
 min
-t83)min
-c5
-eS1
-max=cZ2
-max,y8
+yW
+x73
+max=fp_mod
+cO3,yA
+max<xH1
 max
-t83)max
-c5
+yW
 if(max<min)max
-c5
+yW
 bool
-xT1=(min<=fp_const_pihalf
-x8()&&max>=fp_const_pihalf
-x8());bool
-nP1=(min<=cK&&max>=cK);if(xT1&&nP1)e0
-if(nP1)nL
-eS1(-1),lS2
-if(xT1)nL
-y92
-eS1(1));nL
-y92
-lS2}
-case
-cCos:lB
-if(m.iV2)m.min+=fp_const_pihalf
-x8();if(m
-i0)m.max+=fp_const_pihalf
-x8();bool
-x41=!m.iV2||!m
-i0||(m.max-m.min)>=(y8
-x41)e0
-eS1
-min=cZ2
-min,y8
+yC1=(min<=fp_const_pihalf
+xN()&&max>=fp_const_pihalf
+xN());bool
+nT1=(min<=e4&&max>=e4);if(yC1&&nT1)cX
+if(nT1)nQ
+x73(-1),nL2
+if(yC1)nQ
+yS2
+x73(1));nQ
+yS2
+nL2
+eP3
+cCos:lE
+if(m
+eT)m
+xQ+=fp_const_pihalf
+xN();if(xI2
+eS
+val+=fp_const_pihalf
+xN();bool
+x51=!m
+eT||!eS
+known||cO3-m
+xQ)>=(yA
+x51)cX
+x73
+min=fp_mod(m
+xQ,yA
+min<xH1
 min
-t83)min
-c5
-eS1
-max=cZ2
-max,y8
+yW
+x73
+max=fp_mod
+cO3,yA
+max<xH1
 max
-t83)max
-c5
+yW
 if(max<min)max
-c5
+yW
 bool
-xT1=(min<=fp_const_pihalf
-x8()&&max>=fp_const_pihalf
-x8());bool
-nP1=(min<=cK&&max>=cK);if(xT1&&nP1)e0
-if(nP1)nL
-eS1(-1),lS2
-if(xT1)nL
-y92
-eS1(1));nL
-y92
-lS2}
-case
-cTan:{nL)cM3
-cCeil:lB
-m.c41
-cFloor:lB
-m.eP1
-cY
-cTrunc:lB
-m.eP1);m.c41
-cInt:lB
-m.eP1);m.c41
-cSinh:lB
-m.y82
-fp_sinh
-cY
-cTanh:lB
-m.y82
-fp_tanh,range
-x8(eS1(-y03
-cY
-cCosh:lB
-if(m.iV2){if(m
-i0){if(m.min
-cH1&&m.max
-cH1){m.min
-cM}
-tP1(m.min)t83&&m.max
-cH1)nQ3
-cM
-if(tmp>m.max)m.max=tmp;m.min=eS1(1);}
-else{m.min
-cM
-std::swap(m.min,m.max);}
-}
-else{if(m.min
-cH1){m
-nM2
-m.min=fp_cosh(m.min);}
+yC1=(min<=fp_const_pihalf
+xN()&&max>=fp_const_pihalf
+xN());bool
+nT1=(min<=e4&&max>=e4);if(yC1&&nT1)cX
+if(nT1)nQ
+x73(-1),nL2
+if(yC1)nQ
+yS2
+x73(1));nQ
+yS2
+nL2
+eP3
+cTan:{nQ);eP3
+cCeil:lE
+eS
+n52
+cFloor:lE
+m
+eF1
+e3
+cTrunc:lE
+m
+eF1);eS
+n52
+cInt:lE
+m
+eF1);eS
+n52
+cSinh:tN3
+min.set(fp_sinh);eS
+set(fp_sinh
+e3
+cTanh:tN3
+min.set(fp_tanh,plusminus1_limits.min);eS
+set(fp_tanh,plusminus1_limits.max
+e3
+cCosh:lE
+if(m
+eT){if(xI2{if(m
+xQ>=yD1&&eS
+val>=xH1{m
+xQ
+yD}
+iZ1(m
+xQ)<yD1&&eS
+val>=xH1{x73
+tmp
+yD
+if(tmp>eS
+val)eS
+val=tmp;m
+xQ=x73(1);}
 else{m
-nM2
-m.min=eS1(1);}
+xQ
+yD
+std::swap(m
+xQ,eS
+val);}
+}
+cP3
+m
+xQ>=xH1{m.e5
+m
+xQ=fp_cosh(m
+xQ);}
+else{m.e5
+m
+xQ=x73(1);}
 }
 }
-else{m.iV2=true;m.min=eS1(1);if(m
-i0){m.min=fp_cosh(m.max);m
-nM2}
+else{m
+eT=true;m
+xQ=x73(1);if(xI2{m
+xQ=fp_cosh
+cO3);m.e5}
 else
-m
-nM2}
+m.e5}
 return
-m
-cM3
+m;eP3
 cIf:case
-i03:{range
-x8
-res1=y6
+iF3:{range
+xN
+res1=i4
 1));range
-x8
-res2=y6
-2));if(!res2.iV2)res1.iV2
-i13
-tP1
+xN
+res2=i4
+2));if(!res2
+eT)res1
+eT=false;iZ1
 res1
-y41(res2.min)<res1.min)res1.min=res2.min;if(!res2
-i0)res1
-nM2
-tP1
+eT&&(res2
+xQ)<res1
+xQ)res1
+xQ=res2
+xQ;if(!res2
+lJ1)res1.e5
+iZ1
 res1
-i0&&(res2.max)>res1.max)res1.max=res2.max
-l81
-res1
-cM3
+lJ1&&(res2
+lS1)>res1
+lS1)res1
+lS1=res2
+lS1
+eL
+res1;eP3
 cMin:{bool
-iG
-i13
-bool
-iH
-i13
-tB1;x4
+iP=false;bool
+iQ=false;range
+y43;xB
+m=i4
+cQ3
 m
-xO3!m.iV2)iG=true;yP1.iV2||(m.min)<i11)i11=m.min;if(!m
-i0)iH=true;yP1
-i0||(m.max)<e63)e63=m.max;}
-if(iG)c42
-iH)tE1
-l81
-yA2
+eT)iP=true;iY1
+eT||(m
+xQ)<y53)y53=m
+xQ;if(!xI2
+iQ=true;iY1
+lJ1||cO3)<y63)y63=eS
+val;}
+if(iP)y93
+iQ)yA3.e5
+return
+yA3;eP3
 cMax:{bool
-iG
-i13
-bool
-iH
-i13
-tB1;x4
+iP=false;bool
+iQ=false;range
+y43;xB
+m=i4
+cQ3
 m
-xO3!m.iV2)iG=true;yP1.iV2||m.min>i11)i11=m.min;if(!m
-i0)iH=true;yP1
-i0||m.max>e63)e63=m.max;}
-if(iG)c42
-iH)tE1
-l81
-yA2
-cAdd:{tB1(eS1(0),eS1(0));x4
+eT)iP=true;iY1
+eT||m
+xQ>y53)y53=m
+xQ;if(!xI2
+iQ=true;iY1
+lJ1||eS
+val>y63)y63=eS
+val;}
+if(iP)y93
+iQ)yA3.e5
+return
+yA3;eP3
+cAdd:{range
+y43(yD1,xH1;xB
+item=i4
+a));if(item
+eT)y53+=item
+xQ;else
+y93
 item
-xO3
-item.iV2)i11+=item.min;else
-c42
-item
-i0)e63+=item.max;else
-tE1;if(!result
-y41!e02)nM3
-if(result
-y41
-e02&&i11>e63)std::swap(i11,e63)l81
-yA2
-cMul:{e92
+lJ1)y63+=item
+lS1;else
+yA3.e5
+if(!y73&&!y83)yY3
+if(y73&&y83&&y53>y63)std::swap(y53,y63)eL
+yA3;eP3
+cMul:{e22
 Value{enum
-lR3{tR2,i91,PlusInf}
-;lR3
-eF;eS1
-value;Value(lR3
-t):eF(t),value(0){}
-Value(eS1
-v):eF(tR2),value(v){}
+nM3{i42,l72,tP3}
+;nM3
+eX
+iO2
+value;Value(nM3
+t):eX(t),value(0){}
+Value(x73
+v):eX(i42),value(v){}
 bool
-c22
-n61
-eF==i91||(eF==tR2&&value
-t83
-iR2
-e31*=i01
-Value&rhs){if(eF==tR2&&rhs.eF==tR2)value*=rhs.value;else
-eF=(c22)!=rhs.c22)?i91:PlusInf);}
-i12<i01
-Value&rhs
-n61(eF==i91&&rhs.eF!=i91)||(eF==tR2&&(rhs.eF==PlusInf||(rhs.eF==tR2&&value<rhs.value)));}
-}
-;e92
-yD1{Value
-yC2,yD2;yD1():yC2(Value::PlusInf),yD2(Value::i91){}
+cV2
+c81
+eX==l72||(eX==i42&&value<xH1;}
 void
-nN2
-Value
-yX3,const
-Value&value2){yX3*=value2;if(yX3<yC2)yC2=yX3;if(yD2<yX3)yD2=yX3;}
+eJ1*=nV2
+Value&rhs){if(eX==i42&&rhs.eX==i42)value*=rhs.value;else
+eX=(cV2)!=rhs.cV2)?l72:tP3);}
+iH2<nV2
+Value&rhs
+c81(eX==l72&&rhs.eX!=l72)||(eX==i42&&(rhs.eX==tP3||(rhs.eX==i42&&value<rhs.value)));}
 }
-;tB1(eS1(y03;x4
+;e22
+yX1{Value
+yU2,yV2;yX1():yU2
+x42,yV2(Value::l72){}
+void
+xJ2
+Value
+cR3,const
+Value&value2){cR3*=value2;if(cR3<yU2)yU2=cR3;if(yV2<cR3)yV2=cR3;}
+}
+;range
+y43(x73(yR3
+xB
+item=i4
+cQ3
 item
-xO3!item
-y41!item
-i0)nL);Value
-lS3=c32?Value(i11):nC2
-i91);Value
-lT3=e02?Value(e63):nC2
-PlusInf);Value
-lU3=item.iV2?Value(item.min):nC2
-i91);Value
-lV3=item
-i0?Value(item.max):nC2
-PlusInf);yD1
-range;range.nN2
-lS3,lU3
-eN2
-lS3,lV3
-eN2
-lT3,lU3
-eN2
-lT3,lV3);if(range.yC2.eF==Value::tR2)i11=range.yC2.value;else
-c42
-range.yD2.eF==Value::tR2)e63=range.yD2.value;else
-tE1;if(!result
-y41!e02)nM3
-if(result
-y41
-e02&&i11>e63)std::swap(i11,e63)l81
-yA2
+eT&&!item
+lJ1)nQ);Value
+nN3=y73?Value(y53):Value(Value::l72);Value
+nO3=y83?Value(y63):Value
+x42;Value
+nP3=item
+eT?Value(item
+xQ):Value(Value::l72);Value
+nQ3=item
+lJ1?Value(item
+lS1):Value
+x42;yX1
+range;range.xJ2
+nN3,nP3
+lX3
+nN3,nQ3
+lX3
+nO3,nP3
+lX3
+nO3,nQ3);if(range.yU2.eX==Value::i42)y53=range.yU2.value;else
+y93
+range.yV2.eX==Value::i42)y63=range.yV2.value;else
+yA3.e5
+if(!y73&&!y83)yY3
+if(y73&&y83&&y53>y63)std::swap(y53,y63)eL
+yA3;eP3
 cMod:{range
-x8
-x
-y5
-y=y6
+xN
+x=i4
+yW2
+y=i4
 1));if(y
-i0){if(y.max
-cH1){if(!x.iV2||(x.min)<0)nL-y.max,y.max);else
-nL
-eS1(0),y.max);}
-else{if(!x
-i0||(x.max)>=0)nL
-y.max,-y.max);else
-nL
-y.max,fp_const_negativezero
-x8());}
+lJ1){if(y
+lS1>=xH1{if(!x
+eT||(x
+xQ)<xH1
+nQ-y
+lS1,y
+lS1);else
+nQ
+yD1,y
+lS1);}
+cP3!x
+lJ1||(x
+lS1)>=xH1
+nQ
+y
+lS1,-y
+lS1);else
+nQ
+y
+lS1,fp_const_negativezero
+xN());}
 }
 else
-nL)cM3
-cPow:{if(nE1
-y4==eS1(0))e83
-y03;}
-lX&&n6==eS1(0))e83
-0),eS1(0));}
-lX&&fp_equal(n6,nY3
-e83
-y03;}
-if(nE1
-y4>0&&GetEvennessInfo
-nW1
-1))==IsAlways)c21
-y4;range
-x8
+nQ);eP3
+cPow:{if(eG1
+n51==xH1{nQ
+x73(yR3}
+nU&&lS==xH1{nQ
+yD1,xH1;}
+nU&&lN3
+lS
+nB2
+nQ
+x73(yR3}
+if(eG1
+n51>yD1&&GetEvennessInfo(t5
+1))==iI2
+yZ2
+e92
+n51;range
+xN
+tmp=i4
+yW2
+yA3;y73=true;y53=0;if(tmp
+eT&&tmp
+xQ>=xH1
+y53=eT3
 tmp
-y5
-result;c32=true;i11=0;if(tmp
-y41
-tmp.min>=0)i11=eG3
-tmp.min,cE2);tP1
+xQ,xK2;iZ1
 tmp
-i0&&tmp.max<=0)i11=eG3
-tmp.max,cE2);tE1;if(tmp
-y41
+lJ1&&tmp
+lS1<=xH1
+y53=eT3
 tmp
-i0){e02=true;e63=std::max(fp_abs(tmp.min),fp_abs(tmp.max));e63=eG3
-e63,cE2);}
+lS1,xK2;yA3.e5
+if(tmp
+eT&&tmp
+lJ1){y83=true;y63=fp_max(fp_abs(tmp
+xQ),fp_abs(tmp
+lS1));y63=eT3
+y63,xK2;}
 return
-result;}
+yA3;}
 range
-x8
+xN
+i3
+t5
+yW2
+p1=i4
+1));TriTruthValue
+p0_positivity=(tQ3(p0
+xQ)>=xH1?iI2:(p0
+lJ1&&(p0
+lS1)<yD1?l63
+Unknown);TriTruthValue
+cW2=GetEvennessInfo(t5
+1));TriTruthValue
+tH=Unknown;switch(p0_positivity)i51
+tH=iI2;lC
+l63{tH=cW2
+tM2}
+default:switch(cW2)i51
+tH=iI2;lC
+l63
+lC
+Unknown:{if(eG1!t12
+n51)&&n51>=xH1{tH=iI2;}
+yY3}
+iY2
+tH)i51{x73
+min=yD1;if(tQ3
+p1
+eT){min=eT3
 p0
-y5
-p1=y6
-1
-eO2
-p0_positivity=(p0
-y41(p0.min)cH1)?IsAlways:(p0
-i0&&(p0.max)t83?yO3:Unknown);TriTruthValue
-c52=GetEvennessInfo
-nW1
-1
-eO2
-t2=Unknown;switch(p0_positivity)tF1
-t2=IsAlways;lC
-yO3:{t2=c52;nM3
-default:switch(c52)tF1
-t2=IsAlways;lC
-yO3:lC
-Unknown:{if(nE1!eY2
-y4)&&y4
-cH1){t2=IsAlways;}
-nM3}
-yN3(t2)tF1{eS1
-n31
-if(p0
-y41
-p1.iV2){min=eG3
-p0.min,p1.min);if(p0.min
-t83&&(!p1
-i0||p1.max
-cH1)&&min
-cH1)n31}
-if(p0
-y41
-p0.min
-cH1&&p0
-i0&&p1
-i0){eS1
-max=eG3
-p0.max,p1.max);if(min>max)std::swap(min,max);nL
+xQ,p1
+xQ);if(p0
+xQ<yD1&&(!p1
+lJ1||p1
+lS1>=xH1&&min>=xH1
+min=yD1;}
+if(tQ3
+p0
+xQ>=yD1&&p0
+lJ1&&p1
+lJ1
+yZ2
+max=eT3
+p0
+lS1,p1
+lS1);if(min>max)std::swap(min,max);nQ
 min,max);}
-nL
-min,false)cM3
-yO3:{nL
+nQ
+min,false);eP3
+l63{nQ
 false,fp_const_negativezero
-x8());}
-default:{nM3
-c91
-cNeg:lB
-m.set_neg(cY
-cSub
-x7
-cNeg
-y23
-1
-y43
-cAdd);y53;tmp
-yY3
-l81
-lH
-cInv:lV-1
-e12
-cDiv
-x7
+xN());}
+default:{yY3
+yB1
+cNeg:tN3
+set_neg(e3
+cSub:{yK
+cNeg);tmp2
+tO3
+x13
+cAdd);x23;tmp
+nR3
+eL
+lI
 cInv
-y23
-1
-y43
-xU1
-yY3
-l81
-lH
-cRad:{cF
-xU1
-yT
+yE1
+lX-1
+xZ3
+cDiv:{yK
+cInv);tmp2
+tO3
+x13
+yG1
+nR3
+eL
+lI
+cRad
+yE1
+xN
+tmp;x13
+yG1.yJ
 fp_const_rad_to_deg
-x8(e12
-cDeg:{cF
-xU1
-yT
+xN(xZ3
+cDeg
+yE1
+xN
+tmp;x13
+yG1.yJ
 fp_const_deg_to_rad
-x8(e12
-cSqr:lV
+xN(xZ3
+cSqr
+yE1
+lX
 2
-e12
-cExp:{cF
-cPow);tmp
-yT
+xZ3
+cExp
+yE1
+xN
+tmp;x13
+cPow);tmp.yJ
 fp_const_e
-x8()));y53
-l81
-lH
-cExp2:{cF
-cPow);tmp
-yT
-nR3
-y53
-l81
-lH
-cCbrt:lB
-m.y82
-fp_cbrt
-cY
-cSqrt:lB
-if(m.iV2)m.min=(m.min)<0?0:fp_sqrt(m.min);if(m
-i0)m.max=(m.max)<0?0:fp_sqrt(m.max
-cY
-cRSqrt:lV-0.5
-e12
-cHypot:nG1
-xsqr,ysqr,add,sqrt;xsqr
-yC
-0));xsqr
-yT
-nR3
+xN()));x23
+eL
+lI
+cExp2
+yE1
+xN
+tmp;x13
+cPow);tmp.yJ
+c32
+x23
+eL
+lI
+cCbrt:tN3
+min.set(fp_cbrt);eS
+set(fp_cbrt
+e3
+cSqrt:lE
+if(m
+eT)m
+xQ=(m
+xQ)<yD1?0:fp_sqrt(m
+xQ);if(xI2
+eS
+val=cO3)<yD1?0:fp_sqrt
+cO3
+e3
+cRSqrt
+yE1
+lX-0.5
+xZ3
+cHypot
+yE1
+xN
+xsqr,ysqr,add,sqrt;xsqr.nN
+0));xsqr.yJ
+c32
 ysqr
-yC
-1));ysqr
-yT
-nR3
+tO3
+ysqr.yJ
+c32
 xsqr
-tU
+xC
 cPow);ysqr
-tU
+xC
 cPow);add
-yA
+lP1
 xsqr);add
-yA
+lP1
 ysqr);add
-tU
+xC
 cAdd);sqrt
-yA
+lP1
 add);sqrt
-tU
-cSqrt)l81
-iM
-sqrt)cM3
-cLog2by
-x7
-cLog2
-y23
-0
-y43
+xC
+cSqrt)eL
+CalculateResultBoundaries(sqrt);eP3
+cV3:{yK
+cLog2);tmp2.nN
+0));x13
 cMul);tmp
-yY3;tmp
-yC
-1))l81
-lH
-cCot
-x7
-cTan)nG
-lH
-cSec
-x7
-cCos)nG
-lH
-cCsc
-x7
-cSin)nG
-iM
-tmp);}
+nR3;tmp.nN
+1))eL
+lI
+cCot:{yK
+cTan)x7
+lI
+cSec:{yK
+cCos)x7
+lI
+cCsc:{yK
+cSin)x7
+CalculateResultBoundaries(tmp);}
 lC
 cRDiv:case
 cRSub:case
@@ -9714,1124 +10327,1252 @@ cDup:case
 cFetch:case
 cPopNMov:case
 cSinCos:case
+cSinhCosh:case
 cNop:case
 cJump:case
-iE2:lC
+iT2:lC
+cArg:case
+cConj:case
+cImag:case
+cReal:case
+cPolar:lC
 cPCall:lC
 cFCall:lC
-cEval:nM3
-nL);}
-yV1
+cEval:yY3
+nQ);}
+x33
 TriTruthValue
 GetIntegerInfo
-i01
-eR{switch
-xU2
-iY2
-cImmed:return
-eY2
-yZ3)?IsAlways:yO3;case
+nV2
+t2{switch(tC2
+yS3
+return
+t12
+cS3)?iI2:IsNever;case
 cFloor:case
 cCeil:case
 cTrunc:case
 cInt:return
-IsAlways;case
+iI2;case
 cAnd:case
 cOr:case
 cNot:case
 cNotNot:case
 cEqual:case
-t71:case
+i21:case
 cLess:case
 cLessOrEq:case
 cGreater:case
 cGreaterOrEq:return
-IsAlways;case
+iI2;case
 cIf:{TriTruthValue
-a=GetIntegerInfo
-nW1
-1
-eO2
-b=GetIntegerInfo
-nW1
-2));if(a==b
-nZ2
+a=GetIntegerInfo(t5
+1));TriTruthValue
+b=GetIntegerInfo(t5
+2));if(a==b)return
 a
-l81
-Unknown
-cM3
+eL
+Unknown;eP3
 cAdd:case
 cMul:{for
-xU
-if(GetIntegerInfo
-nW1
-a))!=IsAlways
-nZ2
+yP
+if(GetIntegerInfo(t5
+a))!=iI2)return
 Unknown
-l81
-IsAlways;}
-default:nM3
+eL
+iI2;}
+default:yY3
 return
 Unknown;}
-xG1
+xV1
 IsLogicalValue
-i01
-eR{switch
-xU2
-iY2
-cImmed:return
-fp_equal(yZ3,eS1(0))||fp_equal(yZ3,eS1(1));case
+nV2
+t2{switch(tC2
+yS3
+return
+lN3
+cS3,xH1||lN3
+cS3,x73(1));case
 cAnd:case
 cOr:case
 cNot:case
 cNotNot:case
 cAbsAnd:case
 cAbsOr:case
-yR3:case
+cK3:case
 cAbsNotNot:case
 cEqual:case
-t71:case
+i21:case
 cLess:case
 cLessOrEq:case
 cGreater:case
-cGreaterOrEq:nW
+cGreaterOrEq:x0
 cMul:{for
-xU
-if(!y93
-a))yI
-return
-true
-cM3
+yP
+if(!lW3
+a)y03
+false
+e62
+case
 cIf:case
-i03:{return
-y93
-1))&&y93
+iF3:yY
+lW3
+1))nZ1
+t5
 2));}
-default:nM3
-nX2}
+default:yY3
+return
+eO3}
 #endif
 #ifdef FP_SUPPORT_OPTIMIZER
-xQ
+using
+lA3
+FUNCTIONPARSERTYPES;
 #if defined(__x86_64) || !defined(FP_SUPPORT_CBRT)
 # define CBRT_IS_SLOW
 #endif
 #if defined(DEBUG_POWI) || defined(DEBUG_SUBSTITUTIONS)
 #include <cstdio>
 #endif
-t5{extern
+lA3
+xQ1{extern
 const
-i02
+x83
 char
 powi_table[256];}
-iO2{using
-iO2
-FPoptimizer_CodeTree;xG1
+lA3{using
+tN
+n11
+bool
 IsOptimizableUsingPowi(long
 immed,long
-penalty=0){yW2
-synth;synth.PushVar(iE2);size_t
-bytecodesize_backup
-t13
-GetByteCodeSize();yV2
-x31
-immed,yV2
-eX1
-x8::MulSequence,synth);size_t
-bytecode_grow_amount
-t13
+penalty=0){xQ1::cU2
+synth;cY3
+PushVar(iT2);size_t
+bytecodesize_backup=cY3
+GetByteCodeSize();xQ1::x41
+immed,xQ1::tR1
+xN::MulSequence,synth);size_t
+bytecode_grow_amount=cY3
 GetByteCodeSize()-bytecodesize_backup
-l81
+eL
 bytecode_grow_amount<size_t(MAX_POWI_BYTECODE_LENGTH-penalty);}
-xB1
-ChangeIntoRootChain(yK2&tree,bool
-iK2,long
-tS2,long
-tT2){while(tT2>0){cF
-cCbrt);nZ3);tmp.Rehash(nD2--tT2;}
-while(tS2>0){cF
-cSqrt);if(iK2){tmp
-tU
-cRSqrt);iK2
-i13}
-nZ3);tmp.Rehash(nD2--tS2;}
-if(iK2){cF
-cInv);nZ3
-nD2}
+tD1
+ChangeIntoRootChain(n91
+tree,bool
+l73,long
+i52,long
+i62){while(i62>0
+lB1
+cCbrt);lO1
+tmp
+x22);tree.nS3;--i62;}
+while(i52>0
+lB1
+cSqrt);if(l73){x13
+cRSqrt);l73=eO3
+lO1
+tmp
+x22);tree.nS3;--i52;}
+if(l73
+lB1
+cInv);lO1
+tree.nS3;}
 }
-yT1
+x33
+e22
 RootPowerTable{static
 const
-eS1
+x73
 RootPowers[(1+4)*(1+3)];}
-;yV1
+n11
 const
-eS1
-t7(1+4)*(1+3)]={eS1(1)lS
-tB3
-tB3
-2*tB3
-2*2*2)lS
-3
-x32
-2
-x32
-2*2
-x32
-2*2*2
-x32
-2*2*2*2
-x32
-3
-x32
-3*2
-x32
-3*2*2
-x32
-3*2*2*2
-x32
-3*2*2*2*2
-x32
-3*3
-x32
-3*3*2
-x32
-3*3*2*2
-x32
-3*3*2*2*2
-x32
+x73
+tP(1+4)*(1+3)]={x73(1)lT
+tR3
+tR3
+2*tR3
+2*2*2)lT
+tS3
+i61
+2*i61
+2*2*i61
+2*2*2*i61
+tS3
+3*i61
+3*2*i61
+3*2*2*i61
+3*2*2*2*i61
+3*tS3
+3*3*i61
+3*3*2*i61
+3*3*2*2*i61
 3*3*2*2*2*2)}
-;e92
+;e22
 PowiResolver{static
 const
-i02
+x83
 MaxSep=4;static
-lX3
-tC3=5;typedef
+nV3
+tT3=5;typedef
 int
-c03;typedef
+cU3;typedef
 long
-n63;typedef
+c13;typedef
 long
-t8;e92
-yE2{yE2():n_int_sqrt(0),n_int_cbrt(0),sep_list(),lY1(0){}
+tQ;e22
+c52{c52():n_int_sqrt(0),n_int_cbrt(0),sep_list(),n61(0){}
 int
 n_int_sqrt;int
 n_int_cbrt;int
-eW1
-MaxSep];t8
-lY1;}
-;yV1
+tN1
+MaxSep];tQ
+n61;}
+n11
 static
-yE2
-CreatePowiResult(eS1
-cE2){yE2
-result;c03
-eE=FindIntegerFactor(cE2);if(eE==0){
+c52
+CreatePowiResult(x73
+xK2{c52
+yA3;cU3
+tJ=FindIntegerFactor(xK2;if(tJ==0){
 #ifdef DEBUG_POWI
-tU2"no factor found for %Lg\n"
-y33);
+i72"no factor found for %Lg\n"
+,xL1
+xK2;
 #endif
 return
-result;}
-c13=xV1
-cE2,eE);n63
-e22=EvaluateFactorCost(eE,0,0,0)+cH
-c13);int
-tD3=0;int
-tE3=0;int
-lW3=0;
+yA3;}
+yA3.n61=yH1
+x93,tJ);c13
+eP2=EvaluateFactorCost(tJ,0,0,0)+cH
+yA3.n61);int
+tU3=0;int
+tV3=0;int
+nT3=0;
 #ifdef DEBUG_POWI
-tU2"orig = %Lg\n"
-y33);tU2"plain factor = "
-tS3"%ld\n"
-,(int)eE,(long)e22);
+i72"orig = %Lg\n"
+,xL1
+xK2;i72"plain factor = "
+iC3" %ld\n"
+,(int)tJ,(long)eP2);
 #endif
 for
-iL1
+nP2
 n_s=0;n_s<MaxSep;++n_s){int
-xC=0;n63
-yE1=e22;c03
-yQ1=eE;for(int
-s=1;s<tC3*4;++s){
+xL=0;c13
+yY1=eP2;cU3
+c61=tJ;for(int
+s=1;s<tT3*4;++s){
 #ifdef CBRT_IS_SLOW
-if(s>=tC3)break;
+if(s>=tT3)break;
 #endif
 int
-n_sqrt=s%tC3;int
-n_cbrt=s/tC3;if(n_sqrt+n_cbrt>4)y81
-eS1
-lE1=cE2;lE1-=t7
-s];tH1=FindIntegerFactor(lE1);if(xD2!=0){t8
-xL=xV1
-lE1,xD2);n63
-cost=EvaluateFactorCost(xD2,tD3+n_sqrt,tE3+n_cbrt,lW3+1)+cH
-xL);
+n_sqrt=s%tT3;int
+n_cbrt=s/tT3;if(n_sqrt+n_cbrt>4)continue
+iO2
+lC1=x93;lC1-=tP
+s];i71=FindIntegerFactor(lC1);if(xX2!=0){tQ
+xY=yH1
+lC1,xX2);c13
+cost=EvaluateFactorCost(xX2,tU3+n_sqrt,tV3+n_cbrt,nT3+1)+cH
+xY);
 #ifdef DEBUG_POWI
-tU2"Candidate sep %u (%d*sqrt %d*cbrt)factor = "
-tS3"%ld (for %Lg to %ld)\n"
-,s,n_sqrt,n_cbrt,xD2,(long)cost
-x12
-lE1,(long)xL);
+i72"Candidate sep %u (%d*sqrt %d*cbrt)factor = "
+iC3" %ld (for %Lg to %ld)\n"
+,s,n_sqrt,n_cbrt,xX2,(long)cost,xL1
+lC1,(long)xY);
 #endif
-if(cost<yE1){xC=s;yQ1=xD2;yE1=cost;}
+if(cost<yY1){xL=s;c61=xX2;yY1=cost;}
 }
 }
-if(!xC)break;
+if(!xL)break;
 #ifdef DEBUG_POWI
-tU2"CHOSEN sep %u (%d*sqrt %d*cbrt)factor = "
-tS3"%ld, exponent %Lg->%Lg\n"
-,xC,xC%tC3,xC/tC3,yQ1,yE1
-x12(cE2)x12(cE2-t7
-xC]));
+i72"CHOSEN sep %u (%d*sqrt %d*cbrt)factor = "
+iC3" %ld, exponent %Lg->%Lg\n"
+,xL,xL%tT3,xL/tT3,c61,yY1,xL1(xK2,xL1(x93-tP
+xL]));
 #endif
-tC1
-eW1
-n_s]=xC;cE2-=t7
-xC];tD3+=xC%tC3;tE3+=xC/tC3;e22=yE1;eE=yQ1;lW3+=1;}
-c13=xV1
-cE2,eE);
+yA3.tN1
+n_s]=xL
+cX1-=tP
+xL];tU3+=xL%tT3;tV3+=xL/tT3;eP2=yY1;tJ=c61;nT3+=1;}
+yA3.n61=yH1
+x93,tJ);
 #ifdef DEBUG_POWI
-tU2"resulting exponent is %ld (from exponent=%Lg, best_factor=%Lg)\n"
-,c13
-y33
-x12
-eE);
+i72"resulting exponent is %ld (from exponent=%Lg, best_factor=%Lg)\n"
+,yA3.n61,xL1
+x93,xL1
+tJ);
 #endif
-while(eE%2==0){++tC1
-n_int_sqrt;eE/=2;}
-while(eE%3==0){++tC1
-n_int_cbrt;eE/=3;}
+while(tJ%2==0){++yA3
+cZ2;tJ/=2;}
+while(tJ%3==0){++yA3.n_int_cbrt;tJ/=3;}
 return
-result;}
+yA3;}
 private:static
-n63
+c13
 cH
-t8
-xL){static
+tQ
+xY){static
 std::map
-c62
-i7;if(xL<0){n63
+cX2
+iF;if(xY<0){c13
 cost=22
-l81
-cost+cH-xL);}
+eL
+cost+cH-xY);}
 std::map
-c62::nX3
-i=i7.xE2
-xL);if(i!=i7.cP1
-xL
-nZ2
+cX2::yN3
+i=iF.xY2
+xY);if(i!=iF.e21
+xY)return
 i
-cJ2;std::pair
-c62
-cY3
-xL,0.0);n63&cost=tC1
-second;while(xL>1){int
-xD2=0;if(xL<256){xD2=yV2
-powi_table[xL];if(xD2&128)xD2&=127;else
-xD2=0;if(xD2&64)xD2=-(xD2&63)-1;}
-if(xD2){cost+=cH
-xD2);xL/=xD2;y81}
-if(!(xL&1)){xL/=2;cost+=6;}
-else{cost+=7;xL-=1;}
+e82;std::pair
+cX2
+yA3(xY,0.0);c13&cost=yA3
+xU3;while(xY>1){int
+xX2=0;if(xY<256){xX2=xQ1::powi_table[xY];if(xX2&128)xX2&=127;else
+xX2=0;if(xX2&64)xX2=-(xX2&63)-1;}
+if(xX2){cost+=cH
+xX2);xY/=xX2
+iR2
+if(!(xY&1)){xY/=2;cost+=6;}
+else{cost+=7;xY-=1;}
 }
-i7.nT3,result)l81
-cost
-eI2
-t8
-xV1
-yF1,tH1){return
-makeLongInteger(value*eS1(xD2))eI2
+iF.yI3,yA3)eL
+cost;}
+cJ1
+tQ
+yH1
+yZ1,i71)yY
+makeLongInteger(value*x73(xX2));}
+cJ1
 bool
-yG1
-yF1,tH1){eS1
-v=value*eS1(xD2)l81
-isLongInteger(v)eI2
-c03
-FindIntegerFactor(yF1){tH1=(2*2*2*2);
+c01
+yZ1,i71
+yZ2
+v=value*x73(xX2)eL
+isLongInteger(v);}
+cJ1
+cU3
+FindIntegerFactor(yZ1){i71=(2*2*2*2);
 #ifdef CBRT_IS_SLOW
 #else
-xD2*=(3*3*3);
+xX2*=(3*3*3);
 #endif
-c03
-result=0;if(yG1
-value,xD2)){result=xD2;while((xD2%2)==0&&yG1
-value,xD2/2))result=xD2/=2;while((xD2%3)==0&&yG1
-value,xD2/3))result=xD2/=3;}
+cU3
+nU3
+0;if(c01
+value,xX2)){nU3
+xX2;while((xX2%2)==0&&c01
+value,xX2/2))nU3
+xX2/=2;while((xX2%3)==0&&c01
+value,xX2/3))nU3
+xX2/=3;}
 #ifdef CBRT_IS_SLOW
-if(result==0){if(yG1
-value,3)nZ2
+if(yA3==0){if(c01
+value,3
+y03
 3;}
 #endif
 return
-result;}
+yA3;}
 static
 int
 EvaluateFactorCost(int
-xD2,int
+xX2,int
 s,int
 c,int
-nmuls){lX3
-lY3=6;
+nmuls){nV3
+nW3=6;
 #ifdef CBRT_IS_SLOW
-lX3
-e32=25;
+nV3
+eQ2=25;
 #else
-lX3
-e32=8;
+nV3
+eQ2=8;
 #endif
 int
-result=s*lY3+c*e32;while(xD2%2==0){xD2/=2;result+=lY3;}
-while(xD2%3==0){xD2/=3;result+=e32;}
-result+=nmuls
-l81
-result;}
+nU3
+s*nW3+c*eQ2;while(xX2%2==0){xX2/=2;yA3+=nW3;}
+while(xX2%3==0){xX2/=3;yA3+=eQ2;}
+yA3+=nmuls
+eL
+yA3;}
 }
 ;}
-iO2
-FPoptimizer_CodeTree{xG1
-yK2::RecreateInversionsAndNegations(bool
+tN{xV1
+CodeTree
+xN::RecreateInversionsAndNegations(bool
 prefer_base2){bool
 changed=false
-c23
-0;a<cN3++a)if(lT1.RecreateInversionsAndNegations(prefer_base2))yI1
-if(changed){exit_changed:Mark_Incompletely_Hashed()nS2
-switch(lM2
-iY2
-cMul:{yG
-nV1
-lG2
-yJ
-lH2,cJ1;if(true){bool
-nQ1
-i13
-eS1
-nE2=0
-c23
-cO3
-yF2
-0)c82
-tJ
-1)y21){nQ1=true;nE2=tJ
-1).xJ1;nM3}
-if(nQ1){eS1
+c02
+0;a<c41;++a)if(lY1.RecreateInversionsAndNegations(prefer_base2))xD2
+if(changed){exit_changed:Mark_Incompletely_Hashed(iX1
+switch(nF2
+eJ3
+cMul:{eZ
+n62;CodeTree
+xN
+n72,cV1;if(true){bool
+nU1=false
+iO2
+xC2=0
+c02
+c41;a
+nV
+c62
+0)cY2
+tW
+1)t51){nU1=true;xC2=tW
+1).xY1
+tM2}
+}
+if(nU1
+yZ2
 immeds=1.0
-c23
-cO3
-y21){immeds*=powgroup.xJ1;yH1}
+c02
+c41;a
+nV
+t51){immeds*=powgroup.xY1;c11}
 for
-xK2
-cN3
-a-->0;)nG1&powgroup=lT1;if(powgroup
-yF2
-0)c82
-tJ
-1)y21)nG1&log2=tJ
-0);log2.iY
+c12
+c41;a-->0;){n91
+powgroup=lY1;if(powgroup
+c62
+0)cY2
+tW
+1).IsImmed(nK&log2=tW
+0);log2.l61
 log2
-tU
-lZ3
-log2
-yT
-eG3
-immeds,eS1(1)/nE2)));log2.Rehash(nW2}
+xC
+cV3);log2.yJ
+eT3
+immeds,x73(1)/xC2)));log2
+x22
+tK2}
+}
 }
 }
 for
-xK2
-cO3
-yF2
-1)y21){lM1&exp_param=tJ
-1);eS1
-cE2=exp_param.xJ1;if(cR1,eS1(-1))){iY
-lG2
-yL
-lT1
-xY3
-yH1
-tP1
-cE2<0&&eY2
-cE2))nG1
-iI;iI
-tU
-cPow);iI
-eT
-tJ
-0));iI
-yT-cE2));iI
-x02;lG2
-yL
-iI);iY
-yH1}
-tP1
+c12
+c41;a
+nV
+c62
+1)t51){xG2
+exp_param=tW
+1)iO2
+e92
+exp_param.xY1;if(e51,x73(-1))){l61
+n62.push_back(lY1
+y22
+c11
+iZ1
+x93<yD1&&t12
+x93
+nK
+iR;iR
+xC
+cPow);iR
+cO
+tW
+0));iR.yJ-xK2);iR
+x22);n62.push_back(iR);l61
+c11}
+iZ1
 powgroup
-c82!lH2.iA1{lH2=tJ
-0);iY
-yH1
-tP1
+cY2!n72
+xN2)){n72=tW
+0);l61
+c11
+iZ1
 powgroup
-nE==cLog2by&&!cJ1.iA1{cJ1=powgroup;iY
-yH1}
-if(!lG2
-cQ3){changed=true
-yJ
-eR1;eR1
-e53
-eR1
-tI1
-lG2);eR1
-i72
-xW1
-cMul);xX1
-SetParamsMove(t3
-if(xX1
-IsImmed()&&fp_equal(xX1
-xJ1,nY3{lI2
-cInv);eG
-eR1);}
-else{if(xX1
-xT2>=eR1.xT2){lI2
-cDiv
-eV1
-eG
-eR1);}
-else{lI2
-cRDiv);eG
-eR1
-eV1}
-}
-}
-if(lH2.iA1
-nG1
-xW1
-lM2);xX1
-SetParamsMove(t3
-while(xX1
-RecreateInversionsAndNegations(prefer_base2))xX1
-FixIncompleteHashes();lI2
-lZ3
-eG
-lH2
-eV1
-yI1}
-if(cJ1.iA1
-nG1
-xW1
-cMul);n83
-yA
-cJ1
-x03;xX1
-AddParamsMove(t3
-while(xX1
-RecreateInversionsAndNegations(prefer_base2))xX1
-FixIncompleteHashes();DelParams();lI2
-lZ3
-eG
-cJ1
-lD
-0)eV1
+nC==cV3&&!cV1
+xN2)){cV1=powgroup;l61
+c11}
+if(!n62
+tK3){xD2
+CodeTree
+xN
+iM1;iM1
+xC
+cMul);iM1
+i81
+n62);iM1
+x53
 yI1
-c91
-cAdd:{yG
-nV1
-tV2
-c23
-tD
-c33
-cMul){lJ2
-xY1:yJ&n83
-c72
-for(iX2
-xX1
-cN3
-b-->0;){if(n83
-lD
-b)xC3
-xD2=n83
-lD
-b).xJ1
-i82
-xD2
-eQ1
-xY1;}
-xX1
-iY
-xX1
-iH1
-b
-eJ2
-tP1
-fp_equal(xD2,eS1(-2)))xF
-xY1;}
-xX1
-iY
-xX1
-iH1
-b);n83
-yT
-eS1(2))eJ2}
+cMul);yJ1
+SetParamsMove(tI
+if(yJ1
+IsImmed()&&lN3
+yJ1
+xY1
+nB2
+n82
+cInv)eN
+iM1);}
+cP3
+yJ1
+y82>=iM1.y82){n82
+cDiv
+lN2
+eN
+iM1);}
+else{n82
+cRDiv)eN
+iM1
+lN2;}
 }
-if(t4){xX1
-nR1
-n83);yH1}
-tP1
-c33
+}
+if(n72
+xN2
+nK
+yI1
+nF2);yJ1
+SetParamsMove(tI
+while(yJ1
+RecreateInversionsAndNegations(prefer_base2))yJ1
+FixIncompleteHashes();n82
+cV3)eN
+n72
+lN2;xD2}
+if(cV1
+xN2
+nK
+yI1
+cMul);xA3
+lP1
+cV1
+l8
+1));yJ1
+AddParamsMove(tI
+while(yJ1
+RecreateInversionsAndNegations(prefer_base2))yJ1
+FixIncompleteHashes();DelParams();n82
+cV3)eN
+cV1
+l8
+0)lN2;xD2
+yB1
+cAdd:{eZ
+i92
+c02
+c41;a-->0;)if(cW3
+cMul){nA2
+yK1:;n91
+xA3=xE2
+for(size_t
+b=xA3
+yF1;b-->0;){if(xA3
+l8
+b)lM1
+xX2=xA3
+l8
+b).xY1;iZ2
+xX2
+y4
+yK1;}
+yJ1
+l61
+yJ1
+l93
+b);l83
+iZ1
+lN3
+xX2,x73(-2)))eV
+yK1;}
+yJ1
+l61
+yJ1
+l93
+b);yJ1
+yJ
+c32
+l83}
+}
+if(tK){yJ1
+tR
+xA3);c11}
+iZ1
+cW3
 cDiv&&!IsIntType
-x8::result){lJ2
-xZ1:yJ&eR1
-c72
-if(eR1
-lD
-0)tF3(fp_equal(eR1
-lD
-0).xJ1
-eQ1
-xZ1;}
-eR1.iY
-eR1.iH1
-0);eR1
-tU
-cInv
-eJ2}
-if(t4)xF
-xZ1;}
-eR1.nR1
-eR1);yH1}
-tP1
-c33
+xN::yA3){nA2
+yL1:;n91
+iM1=xE2
+if(iM1
+l8
+0)t51){iZ2
+iM1
+l8
+0).xY1
+y4
+yL1;}
+iM1.l61
+iM1.l93
+0);iM1
+xC
+cInv);l83}
+if(tK)eV
+yL1;}
+iM1.tR
+iM1);c11}
+iZ1
+cW3
 cRDiv&&!IsIntType
-x8::result){lJ2
-x91:yJ&eR1
+xN::yA3){nA2
+xD1:;n91
+iM1=xE2
+if(iM1
+l8
+1)t51){iZ2
+iM1
+l8
+1).xY1
+y4
+xD1;}
+iM1.l61
+iM1.l93
+1);iM1
+xC
+cInv);l83}
+if(tK)eV
+xD1;}
+iM1.tR
+iM1);c11}
+if(!i92
+tK3){
+#ifdef DEBUG_SUBSTITUTIONS
+i72"Will make a Sub conversion in:\n"
+);fflush(stdout);iV
+#endif
+CodeTree
+xN
+c72;c72
+xC
+cAdd);c72
+i81
+i92);c72
+x53
+cW1;cW1
+xC
+cAdd);cW1
+i81
+lB2));cW1
+x22);if(cW1
+t51&&lN3
+cW1.xY1,xH1){n82
+cNeg);eC);}
+cP3
+cW1.y82==1){n82
+cRSub);eC)eN
+cW1);}
+iZ1
 c72
-if(eR1
-lD
-1)tF3(fp_equal(eR1
-lD
-1).xJ1
-eQ1
-x91;}
-eR1.iY
-eR1.iH1
-1);eR1
-tU
-cInv
-eJ2}
-if(t4)xF
-x91;}
-eR1.nR1
-eR1);yH1}
-if(!tV2
-cQ3){
-#ifdef DEBUG_SUBSTITUTIONS
-tU2"Will make a Sub conversion in:\n"
-);fflush(stdout);iO
-#endif
-yK2
-yR1;yR1
-tU
-cAdd);yR1
-tI1
-tV2);yR1
-i72
-cK1;cK1
-tU
-cAdd);cK1
-tI1
-iE1));cK1
-x02;if(cK1
-y21&&fp_equal(cK1.xJ1,eS1(0))){lI2
-cNeg);cU3);}
-else{if(cK1.xT2==1){lI2
-cRSub);cU3);cV3}
-tP1
-yR1
-nE==cAdd){lI2
-cSub);cV3
-cU3
-xY3
+nC==cAdd){n82
+cSub)eN
+cW1);eC
+y22
 for
-xK2
-1;a<yR1.cN3++a)nG1
-e42;e42
-tU
-cSub);e42
-tI1
-iE1));e42.y12);eG
-e42);cU3
-lD
-a));}
+c12
+1;a<c72
+yF1;++a
+t71
+eR2;eR2
+xC
+cSub);eR2
+i81
+lB2));eR2
+t82
+eN
+eR2);eC
+nF3}
 }
-else{lI2
-cSub);cV3
-cU3);}
+else{n82
+cSub)eN
+cW1);eC);}
 }
 #ifdef DEBUG_SUBSTITUTIONS
-tU2"After Sub conversion:\n"
-);fflush(stdout);iO
+i72"After Sub conversion:\n"
+);fflush(stdout);iV
 #endif
-c91
-cPow:{lM1&p0
-tW2
-0);lM1&p1
-tW2
+yB1
+cPow:{xG2
+p0
+iA2
+0);xG2
+p1
+iA2
 1);if(p1
-tF3
-n03!=eS1(0)&&!eY2
-p1.xJ1)){eJ
-yE2
-r=eJ
+t51){if
+xJ1!=yD1&&!isInteger
+xJ1)){eH
+c52
+r=eH
 CreatePowiResult(fp_abs
-n03));if(r.lY1!=0){bool
-iB1
-i13
-if
-n03<0&&r.eW1
+xJ1));if(r.n61!=0){bool
+l82=false;if
+xJ1<yD1&&r.tN1
 0]==0&&r
-x33>0){iB1=true;}
+cZ2>0){l82=true;}
 #ifdef DEBUG_POWI
-tU2"Will resolve powi %Lg as powi(chain(%d,%d),%ld)"
-x12
+i72"Will resolve powi %Lg as powi(chain(%d,%d),%ld)"
+,xL1
 fp_abs
-n03),r
-x33,r.n_int_cbrt,r.lY1)xS3
-n=0;n<eJ
+xJ1),r
+cZ2,r.n_int_cbrt,r.n61);for
+nP2
+n=0;n<eH
 MaxSep;++n){if(r
-cW3==0)break;int
+iB2==0)break;int
 n_sqrt=r
-cW3%eJ
-tC3;int
+iB2%eH
+tT3;int
 n_cbrt=r
-cW3/eJ
-tC3;tU2"*chain(%d,%d)"
+iB2/eH
+tT3;i72"*chain(%d,%d)"
 ,n_sqrt,n_cbrt);}
-tU2"\n"
+i72"\n"
 );
 #endif
-yK2
-c92
-tW2
-0)yJ
-yG2=c92;yG2.iY
-ChangeIntoRootChain(yG2,iB1,r
-x33,r.n_int_cbrt);yG2
-i72
-pow;if(r.lY1!=1){pow
-tU
+CodeTree
+xN
+e02
+iA2
+0
+cP
+c82=e02;c82.l61
+ChangeIntoRootChain(c82,l82,r
+cZ2,r.n_int_cbrt);c82
+x53
+pow;if(r.n61!=1){pow
+xC
 cPow);pow
-yA
-yG2);pow
-yT
-eS1(r.lY1)));}
+lP1
+c82);pow.yJ
+x73(r.n61)));}
 else
-pow.swap(yG2)yJ
+pow.swap(c82
+cP
 mul;mul
-e53
-mul
-yA
-pow)xS3
-n=0;n<eJ
+xC
+cMul);mul
+lP1
+pow);for
+nP2
+n=0;n<eH
 MaxSep;++n){if(r
-cW3==0)break;int
+iB2==0)break;int
 n_sqrt=r
-cW3%eJ
-tC3;int
+iB2%eH
+tT3;int
 n_cbrt=r
-cW3/eJ
-tC3
-yJ
-e52=c92;e52.iY
-ChangeIntoRootChain(e52,false,n_sqrt,n_cbrt);e52
-x02;mul
-yA
-e52);}
+iB2/eH
+tT3;CodeTree
+xN
+eS2=e02;eS2.l61
+ChangeIntoRootChain(eS2,false,n_sqrt,n_cbrt);eS2
+x22);mul
+lP1
+eS2);}
 if
-n03<0&&!iB1){mul
-x02;lI2
-cInv);nC1
-0,mul);iH1
+xJ1<yD1&&!l82){mul
+x22);n82
+cInv);nK1
+0,mul);l93
 1);}
-else{lI2
-cMul);SetParamsMove(mul.iE1));}
+else{n82
+cMul);SetParamsMove(mul.lB2));}
 #ifdef DEBUG_POWI
-iO
+iV
 #endif
-yI1
-nM3}
+xD2
+yY3}
 }
-if(lM2==cPow&&(!p1
-y21||!isLongInteger
-n03)||!IsOptimizableUsingPowi
-x8(makeLongInteger
-n03)))){if(p0
-y21&&p0.xJ1>0.0){if(prefer_base2){eS1
-yH2=fp_log2(p0.xJ1)i82
-yH2,nY3{iH1
+if(nF2==cPow&&(!p1
+t51||!isLongInteger
+xJ1)||!IsOptimizableUsingPowi
+xN(makeLongInteger
+xJ1)))){if(p0
+t51&&p0.xY1
+nK3
+0.0)){if(prefer_base2
+yZ2
+c92=fp_log2(p0.xY1);iZ2
+c92
+nB2
+l93
 0);}
 else{n1
-cU1
-yH2));cE2
-eT
-p1)tD1
-iP}
-lI2
-cExp2);yI1}
-else{eS1
-yH2=fp_log(p0.xJ1)i82
-yH2,nY3{iH1
+e71
+c92))cX1
+cO
+p1
+i82
+cL}
+n82
+cExp2);xD2}
+else{x73
+c92=fp_log(p0.xY1);iZ2
+c92
+nB2
+l93
 0);}
 else{n1
-cU1
-yH2));cE2
-eT
-p1)tD1
-iP}
-lI2
-cExp);yI1}
+e71
+c92))cX1
+cO
+p1
+i82
+cL}
+n82
+cExp);xD2}
 }
-tP1
-GetPositivityInfo(p0)==IsAlways){if(prefer_base2)nG1
+iZ1
+GetPositivityInfo(p0)==iI2){if(prefer_base2
+t71
 log;log
-tU
+xC
 cLog2);log
-eT
+cO
 p0);log
-x02;n1
-p1);cE2
-yA
-log)tD1);lI2
-cExp2
-iP
-yI1}
-else
-nG1
+x22);n1
+p1)cX1
+lP1
+log
+i82
+n82
+cExp2);cL
+xD2}
+else{CodeTree
+xN
 log;log
-tU
+xC
 cLog);log
-eT
+cO
 p0);log
-x02;n1
-p1);cE2
-yA
-log)tD1);lI2
-cExp
-iP
-yI1}
+x22);n1
+p1)cX1
+lP1
+log
+i82
+n82
+cExp);cL
+xD2}
 }
-c91
-cDiv:{if(GetParam(0)y21&&fp_equal(GetParam(0).xJ1,nY3{lI2
-cInv);iH1
+yB1
+cDiv:{if(GetParam(0)t51&&lN3
+GetParam(0).xY1
+nB2
+n82
+cInv);l93
 0);}
-nM3
-default:nM3
+yY3
+default:yY3
 if(changed)goto
 exit_changed
-l81
+eL
 changed;}
 }
 #endif
 #ifdef FP_SUPPORT_OPTIMIZER
-xQ
-iO2{using
-iO2
-FPoptimizer_CodeTree;class
-eT1{size_t
-yJ1;size_t
-eK;size_t
-eL;size_t
-lF1;e13
-eT1():yJ1(0),eK(0),eL(0),lF1(0){}
+using
+lA3
+FUNCTIONPARSERTYPES;lA3{using
+tN;class
+eR3{size_t
+nV1;size_t
+eI;size_t
+eJ;size_t
+lD1;size_t
+tL;size_t
+tM;size_t
+nH1;e83
+eR3():nV1(0),eI(0),eJ(0),lD1(0),tL(0),tM(0),nH1(0){}
 void
-c43
-OPCODE
-op){yJ1+=1;n13
-cCos)++eK;n13
-cSin)++eL;n13
-cSec)++eK;n13
-cCsc)++eL;n13
-cTan)++lF1;n13
-cCot)++lF1;}
+AddFrom(OPCODE
+op){nV1+=1;eQ3
+cCos)++eI;eQ3
+cSin)++eJ;eQ3
+cSec)++eI;eQ3
+cCsc)++eJ;eQ3
+cTan)++lD1;eQ3
+cCot)++lD1;eQ3
+cSinh)++tM;eQ3
+cCosh)++tL;eQ3
+cTanh)++nH1;}
 size_t
 GetCSEscore()const{size_t
-result=yJ1
-l81
-result;}
+nU3
+nV1
+eL
+yA3;}
 int
 NeedsSinCos()const{bool
-always_sincostan=(yJ1==(eK+eL+lF1));if((lF1&&(eL||eK))||(eL&&eK)){if(always_sincostan
-nZ2
+yM1=(nV1==(eI+eJ+lD1));if((lD1&&(eJ||eI))||(eJ&&eI)){if(yM1)return
 1
-l81
+eL
+2;}
+return
+0;}
+int
+NeedsSinhCosh()const{bool
+yM1=(nV1==(tL+tM+nH1));if((nH1&&(tM||tL))||(tM&&tL)){if(yM1)return
+1
+eL
 2;}
 return
 0;}
 size_t
 MinimumDepth()const{size_t
-n_sincos=std::min(eK,eL);if(n_sincos==0
-nZ2
+n_sincos=std::min(eI,eJ);size_t
+n_sinhcosh=std::min(tL,tM);if(n_sincos==0&&n_sinhcosh==0)return
 2
-l81
+eL
 1;}
 }
-;iP2
+n11
+class
 TreeCountType:public
-std::multimap<fphash_t,std::pair<eT1,yK2> >{}
-;xB1
-FindTreeCounts(nX1&lK2,lM1&tree,OPCODE
-lL2{iG1
-i=lK2.xE2
-tree.GetHash());bool
-found
-i13
-for(;i!=lK2.cP1
+std::multimap<xO2,std::pair<eR3,CodeTree
+xN> >{}
+xI3
+FindTreeCounts(tH1&nD2,xG2
+tree,OPCODE
+xF2,bool
+skip_root=false){cY
+i=nD2.xY2
+tree.GetHash());if(!skip_root){bool
+found=false;for(;i!=nD2.e21
 tree.GetHash();++i){if(tree
-iA
+xD
 i
-cJ2
-eE3)){i
-cJ2.first.c43
-lL2;found=true;nM3}
-if(!found){eT1
-count;count.c43
-lL2;lK2.nT3,std::make_pair(tree.GetHash(),std::make_pair
-cR3
-n72);}
-for
-yS
-FindTreeCounts(lK2,xI2,tree
-nE);}
-e92
-c9{bool
-BalanceGood;bool
-cI;}
-;yV1
-c9
-lG1
-lM1&root,lM1&c53{if(root
-iA
-c53){c9
-result={true,true}
-l81
-result;}
-c9
-result={true,false}
-;if(root
-nE==cIf||root
-nE==i03){c9
-cond=lG1
-root
-lD
-0),c53;c9
-xW=lG1
-root
-lD
-1),c53;c9
-y9=lG1
-root
-lD
-2),c53;if(cond.cI||xW.cI||y9.cI){tC1
-cI=true;}
-result
-eH=((xW.cI==y9.cI)||eX2&&(cond
-eH||(xW.cI&&y9.cI))&&(xW
-eH||eX2&&(y9
-eH||eX2;}
-else{bool
-tK1
-i13
-bool
-nS1
-i13
-for(iX2
-root.GetParamCount(),a=0;a<b;++a){c9
-tmp=lG1
-root
-lD
-a),c53;if(tmp.cI)tC1
-cI=true;if(tmp
-eH==false)tK1=true;tP1
-tmp.cI)nS1=true;}
-if(tK1&&!nS1)result
-eH
-i13}
-return
-result;}
-xG1
-n62
-lM1&tG3
-lM1&tree,const
-yW2&synth,const
-nX1&lK2){for(iX2
-iT,a=0;a<b;++a){lM1&leaf=xI2;iG1
-lT2;xH2
-nX1::const_iterator
-i=lK2.nW3
-i!=lK2.end();++i){if(i->eQ3
-leaf.GetHash())y81
-const
-c63
-i->nF2
-size_t
-score=occ.GetCSEscore();lM1&candidate=i->nG2
-if(cC2
-candidate))y81
-if(leaf.xT2<occ.MinimumDepth())y81
-if(score<2)y81
-if(lG1
-tG3
-leaf)eH==false)continue
-nS2
-if(n62
-tG3
-leaf,synth,lK2
-iF1;}
-nX2
-xG1
-tL1
-lM1&nU3,lM1&expr){for
-iT1
-nU3
-lD
-a)iA
-expr
-iF1;for
-iT1
-tL1
-nU3
-lD
-a),expr
-iF1
-l81
-false;}
-xG1
-GoodMomentForCSE(lM1&nU3,lM1&expr){if(nU3
-nE==cIf
-nZ2
-true;for
-iT1
-nU3
-lD
-a)iA
-expr
-iF1;size_t
-tX2=0;for
-iT1
-tL1
-nU3
-lD
-a),expr))++tX2
-l81
-tX2!=1;}
+e82
+xU3)){i
+e82.first.AddFrom(xF2);found=true
+tM2}
 }
-iO2
-FPoptimizer_CodeTree{yV1
+if(!found){eR3
+count;count.AddFrom(xF2);nD2.yI3,std::make_pair(tree.GetHash(),std::make_pair
+e03
+e53)));}
+}
+e23
+FindTreeCounts(nD2
+tA3
+tC2);}
+e22
+c0{bool
+BalanceGood;bool
+FoundChild;}
+n11
+c0
+lE1
+xG2
+root,xG2
+child){if(root
+xD
+child)){c0
+nU3{true,true}
+eL
+yA3;}
+c0
+nU3{true,false}
+;if(root
+nC==cIf||root
+nC==iF3){c0
+cond=lE1
+root
+l8
+0
+t22
+c0
+y6=lE1
+root
+l8
+1
+t22
+c0
+yC=lE1
+root
+l8
+2
+t22
+if(cond
+c1||y6
+c1||yC
+c1){yA3
+c1=true;}
+yA3
+eD=((y6
+c1==yC
+c1)||yJ3)&&(cond
+eD||(y6
+c1&&yC
+c1))&&(y6
+eD||yJ3)&&(yC
+eD||yJ3);}
+else{bool
+i91=false;bool
+nW1=false;for(size_t
+b=root
+yF1,a=0;a<b;++a){c0
+tmp=lE1
+root
+l8
+a
+t22
+if(tmp
+c1)yA3
+c1=true;if(tmp
+eD==false)i91=true;iZ1
+tmp
+c1)nW1=true;}
+if(i91&&!nW1)yA3
+eD=eO3
+return
+yA3;}
+xV1
+nY3
+eG3
+tW3
+xG2
+tree,const
+xQ1::cU2&synth,const
+tH1&nD2){for(size_t
+b=t6,a=0;a<b;++a){xG2
+leaf=t5
+a);cY
+synth_it;y12
+tH1::const_iterator
+i=nD2.yM3
+i!=nX3;++i){if(i->first!=leaf.GetHash())continue;const
+eR3&occ
+nM2
+first;size_t
+score=occ.GetCSEscore();xG2
+candidate
+nM2
+second;if(tO1
+candidate)c42
+leaf.y82<occ.MinimumDepth()c42
+score<2
+c42
+lE1
+tW3
+leaf)eD==false)continue
+e62
+if(nY3(tW3
+leaf,synth,nD2))l62}
+return
+eO3
+xV1
+iA1
+xG2
+yK3,xG2
+expr){for(xG
+yK3
+l8
+a)xD
+expr))l62
+for(xG
+iA1
+yK3
+l8
+a),expr
+y03
+true
+eL
+eO3
+xV1
+GoodMomentForCSE
+eG3
+yK3,xG2
+expr){if(yK3
+nC==cIf)l62
+for(xG
+yK3
+l8
+a)xD
+expr))l62
 size_t
-yK2::SynthCommonSubExpressions(yV2
-lP1
-const{size_t
-stacktop_before
-t13
-GetStackTop();nX1
-lK2;FindTreeCounts(lK2,*this,lM2);
+iD2=0;for(xG
+iA1
+yK3
+l8
+a),expr))++iD2
+eL
+iD2!=1;}
+}
+tN{x33
+size_t
+CodeTree
+xN::SynthCommonSubExpressions(xQ1::xM1
+const{if(c41==0)return
+0;size_t
+stacktop_before=cY3
+GetStackTop();tH1
+nD2;FindTreeCounts(nD2,*this,nF2,true);for(;;){size_t
+cA2=0;
 #ifdef DEBUG_SUBSTITUTIONS_CSE
-DumpHashes(*this);
+std::cout<<"Finding a CSE candidate, root is:"
+<<std::endl;DumpHashes(*this);
 #endif
-for(;;){size_t
-yI2=0;iG1
-lT2;for(iG1
-j,i=lK2.nW3
-i!=lK2.end();i=j){j=i;++j;const
-c63
-i->nF2
-size_t
-score=occ.GetCSEscore();lM1&tree=i->nG2
+cY
+cs_it(nX3);for(cY
+j=nD2.yM3
+j!=nX3;){cY
+i(j++);const
+eR3&occ
+nM2
+first;size_t
+score=occ.GetCSEscore();xG2
+tree
+nM2
+second;
 #ifdef DEBUG_SUBSTITUTIONS_CSE
 std::cout<<"Score "
 <<score<<":\n"
-;DumpTreeWithIndent(tree);
+<<std::flush;DumpTreeWithIndent
+yN2
 #endif
-if(cC2
-tree))xV
-if(tree.xT2<occ.MinimumDepth())xV
-if(score<2)xV
-if(lG1*this,tree)eH==false)xV
-if(n62*this,tree,synth,lK2)){y81}
+if(tO1
+tree))y2
+if(tree.y82<occ.MinimumDepth())y2
+if(score<2)y2
+if(lE1*this
+e53)eD==false)y2
+if(nY3(*this
+e53,synth,nD2)){iS2
 if(!GoodMomentForCSE(*this
-n72
-xV
-score*=tree.xT2;if(score>yI2){yI2=score;lT2=i;}
+e53))y2
+score*=tree.y82;if(score>cA2){cA2=score;cs_it=i;}
 }
-if(yI2<=0)break;const
-c63
-lT2->nF2
-lM1&tree=lT2->nG2
+if(cA2<=0){
 #ifdef DEBUG_SUBSTITUTIONS_CSE
-std::cout<<tZ3"Common Subexpression:"
-;xE3
-x8(tree)lN1"\n"
-;
+std::cout<<"No more CSE candidates.\n"
+<<std::flush;
 #endif
+yY3
+xG2
+tree=cs_it
+e82
+xU3;
+#ifdef DEBUG_SUBSTITUTIONS_CSE
+std::cout<<iE3"Common Subexpression:"
+;DumpTree
+xN(tree)xI1
+std::endl;
+#endif
+#if 0
 int
-y01=occ.NeedsSinCos()yJ
-tY2,tZ2;if(y01){tY2
-eT
-tree);tY2
-tU
-cSin);tY2
-x02;tZ2
-eT
-tree);tZ2
-tU
-cCos);tZ2
-x02;if(cC2
-tY2)||cC2
-tZ2)){if(y01==2){lK2.erase(lT2);y81}
-y01=0;}
+n71=occ.NeedsSinCos();int
+iA=occ.NeedsSinhCosh(cP
+iE2,iF2,cB2,cC2;eS3){iE2
+eT2
+iE2
+xC
+cSin);iE2
+x22);iF2
+eT2
+iF2
+xC
+cCos);iF2
+x22);if(tO1
+iE2)||tO1
+iF2)){eS3==2){nE2
+iS2
+n71=0;}
 }
-tree.SynthesizeByteCode(synth,false);lK2.erase(lT2);
-#ifdef DEBUG_SUBSTITUTIONS_CSE
-std::cout<<"Done with Common Subexpression:"
-;xE3
-x8(tree)lN1"\n"
-;
+if(iA){cB2
+eT2
+cB2
+xC
+cSinh);cB2
+x22);cC2
+eT2
+cC2
+xC
+cCosh);cC2
+x22);if(tO1
+cB2)||tO1
+cC2)){if(iA==2){nE2
+iS2
+iA=0;}
+}
 #endif
-if(y01){if(y01==2){tQ1
-c71);}
-lK1
-cSinCos,1,2
-eU3.yZ2
-tY2,1
-eU3.yZ2
-tZ2,0);}
+tree.SynthesizeByteCode(synth,false);nE2
+#ifdef DEBUG_SUBSTITUTIONS_CSE
+cY3
+template
+Dump<0>()xI1"Done with Common Subexpression:"
+;DumpTree
+xN(tree)xI1
+std::endl;
+#endif
+#if 0
+eS3){eS3==2||iA){cY3
+eH1}
+n41
+cSinCos,1,2)tP1
+iE2,1)tP1
+iF2,0);}
+if(iA){eS3)cY3
+eH1
+if(iA==2){cY3
+eH1}
+n41
+cSinhCosh,1,2)tP1
+cB2,1)tP1
+cC2,0);}
+#endif
 }
 return
-synth.x5
+cY3
+xP
 stacktop_before;}
 }
 #endif
 #ifdef FP_SUPPORT_OPTIMIZER
-yV1
-lR1
-x8
-nH2
+tD1
+FunctionParserBase
+xN
+xK1
 using
-iO2
-FPoptimizer_CodeTree;CopyOnWrite()yJ
-tree;tree.GenerateFrom(mData->mByteCode,mData->mImmed,*mData);FPoptimizer_Optimize::ApplyGrammars(tree);yG<i02>c73;yG
-x8
+tN;CopyOnWrite(cP
+tree;tree.GenerateFrom(*mData);FPoptimizer_Optimize::ApplyGrammars
+yN2
+std
+xM3<x83>cX3;std
+xM3
+xN
 immed;size_t
-stacktop_max=0;tree.SynthesizeByteCode(c73,immed,stacktop_max);if(mData->mStackSize!=stacktop_max){mData->mStackSize=i02(stacktop_max);
+stacktop_max=0;tree.SynthesizeByteCode(cX3,immed,stacktop_max);if(mData->mStackSize!=stacktop_max){mData->mStackSize=x83(stacktop_max);
 #if !defined(FP_USE_THREAD_SAFE_EVAL) && \
     !defined(FP_USE_THREAD_SAFE_EVAL_WITH_ALLOCA)
-mData->mStack
-nE3
+mData->mStack.e93
 stacktop_max);
 #endif
 }
-mData->mByteCode.swap(c73);mData->mImmed.swap(immed);}
+mData->mByteCode.swap(cX3);mData->mImmed.swap(immed);}
 #ifdef FP_SUPPORT_MPFR_FLOAT_TYPE
-n73<>lR1<MpfrFloat>nH2}
+xK
+MpfrFloat>xK1}
 #endif
 #ifdef FP_SUPPORT_GMP_INT_TYPE
-n73<>lR1<GmpInt>nH2}
+xK
+GmpInt>xK1}
+#endif
+#ifdef FP_SUPPORT_COMPLEX_DOUBLE_TYPE
+xK
+std::complex<double> >xK1}
+#endif
+#ifdef FP_SUPPORT_COMPLEX_FLOAT_TYPE
+xK
+std::complex<float> >xK1}
+#endif
+#ifdef FP_SUPPORT_COMPLEX_LONG_DOUBLE_TYPE
+xK
+std::complex<long
+double> >xK1}
 #endif
 FUNCTIONPARSER_INSTANTIATE_TYPES
 #endif
