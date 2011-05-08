@@ -1224,9 +1224,9 @@ protected:
 
 public:
     gemNPC(GEMSupervisor* gemSupervisor,
-    		CacheManager* cachemanager,
-    		EntityManager *entityManager,
-    		psCharacter *chardata, const char *factname,
+           CacheManager* cachemanager,
+           EntityManager *entityManager,
+           psCharacter *chardata, const char *factname,
            InstanceID myInstance,iSector* room,const csVector3& pos,float rotangle,int clientnum);
 
     virtual ~gemNPC();
@@ -1234,13 +1234,13 @@ public:
     virtual void SetCombatStance(const Stance & stance);
 
     virtual const char* GetObjectType()    { return "NPC";     }
-    virtual psNPCDialog *GetNPCDialogPtr() { return npcdialog; }
+    virtual psNPCDialog* GetNPCDialogPtr() { return npcdialog; }
 
     virtual AccountID GetSuperclientID()        { return superClientID; }
     virtual void SetSuperclientID(AccountID id) { superClientID = id; }
 
     void SetupDialog(PID npcID, PID masterNpcID, bool force=false);
-    void ReactToPlayerApproach(psNPCCommandsMessage::PerceptionType type,gemActor *player);
+    void ReactToPlayerApproach(psNPCCommandsMessage::PerceptionType type, gemActor* player);
 
     virtual void ApplyStaminaCalculations(const csVector3& velocity, float times) { } // NPCs usually have 0 stamina.
     // Before this fix, this caused a major long term bug where NPCs would give up attacking after a few hits and expending all stamina.
@@ -1313,7 +1313,7 @@ public:
      *
      * @return A boolean indicating if this gemNPC must have killsteal protection.
      */
-	virtual bool HasKillStealProtection() { return !GetCharacterData()->IsPet(); }
+    virtual bool HasKillStealProtection() { return !GetCharacterData()->IsPet(); }
 
     virtual void SendGroupStats();
     virtual void ForcePositionUpdate();

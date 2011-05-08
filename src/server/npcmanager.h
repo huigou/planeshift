@@ -121,6 +121,9 @@ public:
     /// Let the superclient know that the npc was teleported
     void QueueTeleportPerception(gemNPC* npc, csVector3& pos, float yrot, iSector* sector, InstanceID instance);
 
+    /// Let the superclient know that info where requested for a npc
+    void QueueInfoRequestPerception(gemNPC* npc, Client* client, const char* infoRequestSubCmd);
+
     /// Send all queued commands and perceptions to active superclients and reset the queues.
     void SendAllCommands(bool createNewTick = true);
 

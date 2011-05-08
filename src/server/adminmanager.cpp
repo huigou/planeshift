@@ -4499,7 +4499,16 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData* cm
         }
         else // NPC
         {
-            name = data->target;
+            gemNPC* npc = data->targetObject->GetNPCPtr();
+            if (!npc)
+            {
+                psserver->SendSystemError(client->GetClientNum(), "Error! Target is not a valid gemNPC.");
+                return;
+            }
+
+	    psCharacter* npcChar = npc->GetCharacterData();
+
+            name = npc->GetName();
 
             float dist = 0.0;
             {
@@ -4518,7 +4527,7 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData* cm
 
             psserver->SendSystemInfo(client->GetClientNum(),
                 "NPC: <%s, %s, %s> is at region %s, position (%1.2f, %1.2f, %1.2f) at range %.2f "
-                "angle: %d in sector: %s, instance: %d, and has been active for %1.1f hours.",
+                "angle: %d in sector: %s, instance: %d%s%s.",
                 name.GetData(),
                 ShowID(playerId),
                 ShowID(entityId),
@@ -4530,7 +4539,15 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData* cm
                 degrees,
                 sectorName.GetData(),
                 instance,
-                timeConnected );
+                npcChar->GetImperviousToAttack()&ALWAYS_IMPERVIOUS?", is always impervious":"",
+                npcChar->GetImperviousToAttack()&TEMPORARILY_IMPERVIOUS?", is temp impervious":""
+                );
+
+            if (client->GetSecurityLevel() >= GM_LEVEL_0)
+            {
+                // Queue info request percepton (Perception as command to superclient)
+                psserver->GetNPCManager()->QueueInfoRequestPerception(npc, client, "");
+            }
             return; // Done
         }
     }

@@ -379,9 +379,10 @@ void GEMSupervisor::StopAllNPCs(AccountID superclientID)
             csTicks timeDelay=0;
             actor->SetAction("idle",timeDelay);
             actor->SetMode(PSCHARACTER_MODE_PEACE);
-            // actor->MoveToValidPos();  // Khaki added this a year ago but it causes pathed npcs to teleport on npcclient exit.
-            // CPrintf(CON_NOTIFY,"--------> STOP ALL NPCS Setting Imperv\n");
             actor->GetCharacterData()->SetImperviousToAttack(actor->GetCharacterData()->GetImperviousToAttack() | TEMPORARILY_IMPERVIOUS);  // may switch this to 'hide' later
+
+            // actor->MoveToValidPos();  // Khaki added this a year ago but it causes pathed npcs to teleport on npcclient exit.
+
             actor->MulticastDRUpdate();
         }
     }

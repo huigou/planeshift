@@ -214,6 +214,7 @@ public:
         CMD_RESURRECT,
         CMD_SEQUENCE,
         CMD_IMPERVIOUS,
+        CMD_INFO_REPLY,
         PCPT_TALK,   // perceptions go from server to superclient
         PCPT_ATTACK,
         PCPT_GROUPATTACK,
@@ -231,7 +232,8 @@ public:
         PCPT_NPCCMD,
         PCPT_TRANSFER,
         PCPT_SPAWNED,
-        PCPT_TELEPORT
+        PCPT_TELEPORT,
+        PCPT_INFO_REQUEST //Command to superclient, not a perception
     };
 
     enum PerceptionTalkType

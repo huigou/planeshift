@@ -574,6 +574,17 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 msgtext.AppendFmt("EID: %u Impervious: %s ", entity_id.Unbox(), impervious ? "true" : "false");
                 break;
             }
+            case psNPCCommandsMessage::CMD_INFO_REPLY:
+            {
+                msgtext.Append("CMD_INFO_REPLY: ");
+                
+                // Extract the data
+                uint32_t clientnum = msg->GetUInt32();
+		csString reply = msg->GetStr();
+                
+                msgtext.AppendFmt("Client: %ul Reply: %s",clientnum,reply.GetDataSafe());
+                break;
+            }
 
             // perceptions go from server to superclient
             
@@ -778,7 +789,18 @@ csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
                 msgtext.AppendFmt("NPC: %s Pos: %s Rot: %f Inst: %d",ShowID(npc_eid),toString(pos,sector).GetDataSafe(),yrot,instance);
                 break;
             }
-
+            case psNPCCommandsMessage::PCPT_INFO_REQUEST:
+            {
+                msgtext.Append("PCPT_INFO_REQUEST: ");
+                
+                // Extract the data
+                EID npc_eid = EID(msg->GetUInt32());
+                uint32_t clientnum = msg->GetUInt32();
+		csString infoRequestSubCmd = msg->GetStr();
+                
+                msgtext.AppendFmt("NPC: %s Client: %ul SubCmd: %s",ShowID(npc_eid),clientnum,infoRequestSubCmd.GetDataSafe());
+                break;
+            }
 
         }
         cmd = msg->GetInt8();
