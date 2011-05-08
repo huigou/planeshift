@@ -100,8 +100,6 @@ void psWorld::BuildWarpCache()
 
     transarray.SetSize(sectorCount);
 
-    csReversibleTransform identity;
-
     for(int i=0; i<sectorCount; i++)
     {
         const csSet<csPtrKey<iMeshWrapper> >& portals = engine->GetSectors()->Get(i)->GetPortalMeshes();
@@ -120,7 +118,14 @@ void psWorld::BuildWarpCache()
                 {
                     if (engine->GetSectors()->Find(portal->GetSector()) != -1)
                     {
-                        transarray[i].Set(portal->GetSector(), portal->GetWarp());
+                        const csReversibleTransform warp = portal->GetWarp();
+                        csVector3 v_o2t = warp.GetO2TTranslation();
+                        if (fabs(v_o2t.x) > 1.0e+10 || fabs(v_o2t.y) > 1.0e+10 || fabs(v_o2t.z) > 1.0e+10)
+                        {
+                            Error3("Warpspace with very large o2t translation:  %s: %s",
+                                   portal->GetName(),warp.Description().GetData());
+                        }
+                        transarray[i].Set(portal->GetSector(), warp);
                     }
                 }
             }
