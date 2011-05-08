@@ -420,7 +420,7 @@ void NPCManager::HandleDeathEvent(MsgEntry *me,Client *client)
 }
 
 
-void NPCManager::HandleConsoleCommand(MsgEntry *me,Client *client)
+void NPCManager::HandleConsoleCommand(MsgEntry *me, Client *client)
 {
     csString buffer;
 
@@ -1328,6 +1328,23 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
 
                 break;
             }
+            case psNPCCommandsMessage::CMD_INFO_REPLY:
+            {
+                // Extract the data
+                uint32_t clientnum = list.msg->GetUInt32();
+		csString reply = list.msg->GetStr();
+		
+		// Check if client is still online
+		Client* client = psserver->GetConnections()->Find(clientnum);
+                if (!client)
+                {
+                     Debug1(LOG_SUPERCLIENT, clientnum, "Couldn't find client.\n");
+                    break;
+                }
+                psserver->SendSystemInfo(client->GetClientNum(),reply);
+                break;
+            }
+
 
         }
         times[cmd] += csGetTicks() - cmdBegin;
@@ -2172,6 +2189,16 @@ void NPCManager::QueueTeleportPerception(gemNPC* npc, csVector3& pos, float yrot
     Debug3(LOG_NPC, npc->GetEID().Unbox(), "Added teleport perception for %s to %s.\n", ShowID(npc->GetEID()), toString(pos,sector).GetDataSafe() );    
 }
 
+void NPCManager::QueueInfoRequestPerception(gemNPC* npc, Client* client, const char* infoRequestSubCmd )
+{
+    CheckSendPerceptionQueue(sizeof(int8_t)+sizeof(uint32_t)*2+(strlen(infoRequestSubCmd)+1));
+    outbound->msg->Add( (int8_t) psNPCCommandsMessage::PCPT_INFO_REQUEST);
+    outbound->msg->Add(npc->GetEID().Unbox());
+    outbound->msg->Add(client->GetClientNum());
+    outbound->msg->Add(infoRequestSubCmd);
+    cmd_count++;
+    Debug2(LOG_NPC, npc->GetEID().Unbox(), "Added Info Request perception for %s.\n", ShowID(npc->GetEID()) );    
+}
 
 
 void NPCManager::SendAllCommands(bool createNewTick)

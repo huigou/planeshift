@@ -908,6 +908,32 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 break;
             }
            
+            case psNPCCommandsMessage::PCPT_INFO_REQUEST:
+            {
+                EID npc_eid = EID(msg->GetUInt32());
+                uint32_t clientNum = msg->GetUInt32();
+                csString infoRequestSubCmd = msg->GetStr();
+
+                NPC *npc = npcclient->FindNPC(npc_eid);
+
+                if (!npc)
+                    break;
+
+                npc->Printf("Got info request.");
+
+		csString reply("NPCClent: ");
+                reply.AppendFmt("Brain: %s ",npc->GetBrain()->GetName());
+                if (npc->GetTribe())
+                {
+                    reply.AppendFmt("Tribe: %s ",npc->GetTribe()->GetName());
+                }
+
+		QueueInfoReplyCommand(clientNum,reply);
+
+                break;
+
+            }
+
             default:
             {
                 CPrintf(CON_ERROR,"************************\nUnknown npc cmd: %d\n*************************\n",cmd);
@@ -1301,6 +1327,22 @@ void NetworkManager::QueueImperviousCommand(gemNPCActor * entity, bool imperviou
     if ( outbound->msg->overrun )
     {
         CS_ASSERT(!"NetworkManager::QueueImperviousCommand put message in overrun state!\n");
+    }
+
+    cmd_count++;
+}
+
+void NetworkManager::QueueInfoReplyCommand(uint32_t clientNum,const char* reply)
+{
+    CheckCommandsOverrun(sizeof(int8_t)+sizeof(uint32_t)+(strlen(reply)+1));
+
+    outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_INFO_REPLY);
+    outbound->msg->Add( clientNum );
+    outbound->msg->Add( reply );
+
+    if ( outbound->msg->overrun )
+    {
+        CS_ASSERT(!"NetworkManager::QueueInfoReplyCommand put message in overrun state!\n");
     }
 
     cmd_count++;

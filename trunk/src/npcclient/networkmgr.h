@@ -147,6 +147,7 @@ public:
     void QueueResurrectCommand(csVector3 where, float rot, iSector* sector, PID character_id);
     void QueueSequenceCommand(csString name, int cmd, int count);
     void QueueImperviousCommand(gemNPCActor * entity, bool impervious);
+    void QueueInfoReplyCommand(uint32_t clientNum,const char* reply);
     void SendAllCommands(bool final = false);
 
     void SendConsoleCommand(const char *cmd);
