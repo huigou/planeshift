@@ -354,6 +354,11 @@ public:
      * Find one npc and print its current state info.
      */
     bool DumpNPC(const char* pattern);
+
+    /**
+     * Find one npc and print its current info.
+     */
+    bool InfoNPC(const char* pattern);
     
     /**
      * List all known entities on superclient.

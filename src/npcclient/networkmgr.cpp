@@ -922,11 +922,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 npc->Printf("Got info request.");
 
 		csString reply("NPCClent: ");
-                reply.AppendFmt("Brain: %s ",npc->GetBrain()->GetName());
-                if (npc->GetTribe())
-                {
-                    reply.AppendFmt("Tribe: %s ",npc->GetTribe()->GetName());
-                }
+		reply.Append(npc->Info());
 
 		QueueInfoReplyCommand(clientNum,reply);
 

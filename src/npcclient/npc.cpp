@@ -147,6 +147,56 @@ void NPC::ScopedTimerCallback(const ScopedTimer* timer)
     Dump();
 }
 
+csString NPC::Info()
+{
+    csString reply;
+    // Position and instance
+    {
+        csVector3 pos;
+        iSector* sector;
+        float rot;
+        InstanceID instance = INSTANCE_ALL;
+
+        if (npcActor)
+        {
+            psGameObject::GetPosition(npcActor,pos,rot,sector);
+            instance = npcActor->GetInstance();
+        }
+	reply.AppendFmt("Pos: %s Rot: %.2f Inst: %d ",
+                        npcActor?toString(pos,sector).GetDataSafe():"(none)", rot, instance);
+    }
+    reply.AppendFmt("DR Counter: %d ", DRcounter);
+    reply.AppendFmt("%s",disabled?"Disabled ":"");
+
+    reply.AppendFmt("Active locate( Pos: %s Angle: %.2f Radius: %.2f WP: %s ) ",
+		    toString(active_locate_pos,active_locate_sector).GetDataSafe(),
+		    active_locate_angle,active_locate_radius,
+		    active_locate_wp?active_locate_wp->GetName():"(None)");
+    reply.AppendFmt("Spawn pos: %s ", toString(spawnPosition,spawnSector).GetDataSafe());
+    if (GetOwner())
+    {
+        reply.AppendFmt("Owner: %s ",GetOwnerName());
+    }
+    if (GetRegion())
+    {
+        reply.AppendFmt("Region( Name: %s Inside: %s ) ", GetRegion()->GetName(), insideRegion?"Yes":"No");
+    }
+    if (GetTribe())
+    {
+	reply.AppendFmt("Tribe( Name: %s Type: %u Inside home: %s ) ",
+			GetTribe()->GetName(),GetTribeMemberType(),insideTribeHome?"Yes":"No");
+    }
+    if (GetTarget())
+    {
+        reply.AppendFmt("Target: %s ",GetTarget()->GetName());
+    }
+    reply.AppendFmt("Last perception: '%s' ",last_perception?last_perception->GetName():"(None)");
+    reply.AppendFmt("Fall counter: %d ", GetFallCounter());
+    reply.AppendFmt("Brain: %s ",GetBrain()->GetName());
+    reply.AppendFmt("Behaviors: %s",GetBrain()->InfoBehaviors(this).GetDataSafe());
+
+    return reply;
+}
 
 void NPC::Dump()
 {
@@ -483,12 +533,9 @@ void NPC::DumpState()
     float rot;
     InstanceID instance = INSTANCE_ALL;
 
-    if (GetActor())
-    {
-        psGameObject::GetPosition(GetActor(),loc,rot,sector);
-    }
     if (npcActor)
     {
+        psGameObject::GetPosition(npcActor,loc,rot,sector);
         instance = npcActor->GetInstance();
     }
 

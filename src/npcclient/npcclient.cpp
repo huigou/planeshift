@@ -1296,6 +1296,24 @@ bool psNPCClient::DumpNPC(const char *pattern)
     return false;
 }
 
+bool psNPCClient::InfoNPC(const char *pattern)
+{
+    unsigned int id = atoi(pattern);
+    for (size_t i=0; i<npcs.GetSize(); i++)
+    {
+        NPC* npc = npcs[i];
+        if (npc->GetPID() == id)
+        {
+            csString info = npc->Info();
+	    CPrintf(CON_CMDOUTPUT, "Info for %s(%s)\n%s\n",
+		    npc->GetName(), ShowID(npc->GetPID()), info.GetDataSafe());
+            return true;
+        }
+    }
+    return false;
+}
+
+
 void psNPCClient::ListAllEntities(const char * pattern, bool onlyCharacters)
 {
     if(onlyCharacters)

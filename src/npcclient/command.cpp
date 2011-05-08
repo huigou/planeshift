@@ -272,6 +272,16 @@ int com_print(char *line)
     return 0;
 }
 
+int com_info(char *line)
+{
+    if(!npcclient->InfoNPC(line))
+    {
+        CPrintf(CON_CMDOUTPUT, "No NPC with id '%s' found.\n", line);
+    }
+
+    return 0;
+}
+
 int com_race(char *line)
 {
     if(!npcclient->DumpRace(line))
@@ -411,6 +421,7 @@ const COMMAND commands[] = {
     { "npclist",      false, com_npclist,      "List all NPCs (npclist [{pattern | summary}])"},
     { "pathlist",     false, com_pathlist,     "List all known paths (pathlist)"},
     { "print",        false, com_print,        "List all behaviors/hate of 1 NPC"},
+    { "info",         false, com_info,         "Short print for 1 NPC"},
     { "quit",         false, com_quit,         "Makes the npc client exit"},
     { "racelist",     false, com_race,         "List all Race Info records"},
     { "setlog",       false, com_setlog,       "Set server log" },

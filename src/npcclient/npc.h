@@ -184,10 +184,20 @@ public:
      */
     void ScopedTimerCallback(const ScopedTimer* timer);
 
-    /** 
+    /** Provide info about the NPC.
+     *
+     *  This funcion is both used by the "/info" in the client
+     *  and the "info <pid> npcclient console command.
+     */
+    csString Info();
+    
+    /** Dump all information for one NPC to the console.
+     *
+     *  The main use of this fuction is the "print <pid>"
+     *  npcclient console command.
      */
     void Dump();
-    
+
     /**
      * Dump all state information for npc.
      */
