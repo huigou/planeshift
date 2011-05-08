@@ -511,11 +511,26 @@ void BehaviorSet::DumpBehaviorList(NPC *npc)
         }
 
         CPrintf(CON_CMDOUTPUT, "%c     %s%s %-30s %5.1f %5.1f\n",applicable,
-                (behaviors[i]->IsInterrupted()?"*":" "),
-                (behaviors[i]->IsActive()?"+":" "),
+                (behaviors[i]->IsInterrupted()?"!":" "),
+                (behaviors[i]->IsActive()?"*":" "),
                 behaviors[i]->GetName(),behaviors[i]->CurrentNeed(),
                 behaviors[i]->NewNeed());
     }
+}
+
+csString BehaviorSet::InfoBehaviors(NPC *npc)
+{
+    csString reply;
+
+    for (size_t i=0; i<behaviors.GetSize(); i++)
+    {
+        reply.AppendFmt("%s(%s%s%.1f) ",
+                        behaviors[i]->GetName(),
+                        (behaviors[i]->IsInterrupted()?"!":""),
+                        (behaviors[i]->IsActive()?"*":""),
+		        behaviors[i]->CurrentNeed());
+    }
+    return reply;
 }
 
 //---------------------------------------------------------------------------

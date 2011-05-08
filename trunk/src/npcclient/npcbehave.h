@@ -153,6 +153,13 @@ public:
      * @param npc   The NPC that own this BehaviorSet.
      */
     void DumpBehaviorList(NPC *npc);
+
+    /** Info about the behavior list for debug.
+     *
+     * @param npc   The NPC that own this BehaviorSet.
+     */
+    csString InfoBehaviors(NPC *npc);
+
 };
 
 
@@ -211,6 +218,7 @@ public:
     void FirePerception(NPC *npc,Perception *pcpt);
 
     void DumpBehaviorList(NPC *npc) { behaviors.DumpBehaviorList(npc); }
+    csString InfoBehaviors(NPC *npc) { return behaviors.InfoBehaviors(npc); }
     void DumpReactionList(NPC *npc);
 
     Behavior *GetCurrentBehavior()
