@@ -639,9 +639,10 @@ void psLinearPath::PrecalculatePath(psWorld * world, iEngine *engine)
 {
     totalDistance = 0;
 
-    // Accept 0 distance for teleports
+    // Sett a fixed high distance for teleports
     if (teleport)
     {
+        totalDistance = 1000.0;
         precalculationValid = true;
         return;
     }
