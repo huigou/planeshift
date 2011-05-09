@@ -651,9 +651,16 @@ void psLinearPath::PrecalculatePath(psWorld * world, iEngine *engine)
     {
         csVector3 pos1(points[ii]->pos),pos2(points[ii+1]->pos);
 
-        if (!world->WarpSpace(points[ii+1]->GetSector(engine),points[ii]->GetSector(engine),pos2))
+	iSector* sectorP1 = points[ii]->GetSector(engine);
+	iSector* sectorP2 = points[ii+1]->GetSector(engine);
+
+        if (!world->WarpSpace(sectorP2,sectorP1,pos2))
         {
-            Error4("In path \'%s\', sectors of points %lu and %lu are not connected by a portal!", name.GetDataSafe(), (unsigned long)ii, (unsigned long)ii+1);
+            Error6("In path \'%s\', sector %s of points %lu and"
+                   " sector %s of point %lu are not connected by a portal!",
+                   name.GetDataSafe(),
+                   sectorP1->QueryObject()->GetName(), (unsigned long)ii,
+                   sectorP2->QueryObject()->GetName(), (unsigned long)ii+1);
             precalculationValid = false;
             return;
         }
