@@ -137,6 +137,17 @@ public:
      * Find the shortest route between waypoint start and stop.
      */
     csList<Edge*> FindEdgeRoute(Waypoint * start, Waypoint * end, const RouteFilter* routeFilter);
+
+    /**
+     * Get a list of points in a sector
+     */
+    size_t FindPointsInSector(iSector *sector, csList<psPathPoint*>& list);
+
+    /**
+     * Get a list of waypoints in a sector
+     */
+    size_t FindWaypointsInSector(iSector *sector, csList<Waypoint*>& list);
+
     
     /**
      * List all waypoints matching pattern to console.

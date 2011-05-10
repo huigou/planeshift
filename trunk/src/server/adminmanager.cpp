@@ -5805,9 +5805,13 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
 
         if (wp->SetRadius(db, data->newRadius))
         {
+            wp->RecalculateEdges(EntityManager::GetSingleton().GetWorld(),EntityManager::GetSingleton().GetEngine());
+            
+
             if (client->WaypointIsDisplaying())
             {
-                psEffectMessage msg(me->clientnum,"admin_waypoint",wp->GetPosition(),0,0,client->PathGetEffectID(),wp->GetRadius());
+                psEffectMessage msg(me->clientnum,"admin_waypoint",wp->GetPosition(),0,0,
+                                    client->PathGetEffectID(),wp->GetRadius());
                 msg.SendMessage();
             }
 
@@ -5979,20 +5983,19 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     {
         if (data->cmdTarget.IsEmpty() || data->cmdTarget == 'P')
         {
-            Result rs(db->Select("select pp.* from sc_path_points pp, sectors s where pp.loc_sector_id = s.id and s.name ='%s'",mySectorName.GetDataSafe()));
-
-            if (!rs.IsValid())
+            csList<psPathPoint*> list;
+            if (pathNetwork->FindPointsInSector(mySector,list))
             {
-                Error2("Could not load path points from db: %s",db->GetLastError() );
-                return ;
-            }
+                csList<psPathPoint*>::Iterator iter(list);
+                while (iter.HasNext())
+                {
+                    psPathPoint* point = iter.Next();
 
-            for (int i=0; i<(int)rs.Count(); i++)
-            {
+                    psEffectMessage msg(me->clientnum,"admin_path_point",
+					point->GetPosition(),0,0,client->PathGetEffectID(),point->GetRadius());
+                    msg.SendMessage();
+                }
 
-                csVector3 pos(rs[i].GetFloat("x"),rs[i].GetFloat("y"),rs[i].GetFloat("z"));
-                psEffectMessage msg(me->clientnum,"admin_path_point",pos,0,0,client->PathGetEffectID(),0.0f);
-                msg.SendMessage();
             }
 
             client->PathSetIsDisplaying(true);

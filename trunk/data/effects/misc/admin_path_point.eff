@@ -11,6 +11,22 @@
                 <death>none</death>
                 <mixmode>mult2</mixmode>
             </obj>
+            <obj type="spire" shape="cylinder" name="spark" material="spark" segments="20">
+                <attach>pos</attach>
+                <dir>none</dir>
+                <death>none</death>
+                <keyFrame time="0">
+                    <action name="position" x="0" y="0.01" z="0" />
+                    <action name="rotate" x="0" y="0" z="0" />
+                    <action name="scale" value="1" />
+                    <action name="height" value="1" />
+                    <action name="topscale" value="1.0" use_scale="true" />
+                    <action name="colour" r="10" g="200" b="10" />
+                </keyFrame>
+                <keyFrame time="1000">
+                    <action name="topscale" value="1.0" use_scale="true" />
+                </keyFrame>
+            </obj>
         </effect>
     </addon>
 </library>

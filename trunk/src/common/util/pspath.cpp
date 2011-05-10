@@ -66,6 +66,18 @@ iSector* psPathPoint::GetSector(iEngine * engine)
     return sector;
 }
 
+float psPathPoint::GetRadius()
+{
+    if (waypoint)
+    {
+        radius = waypoint->GetRadius();
+    }
+
+    return radius;
+}
+
+
+
 bool psPathPoint::Create(iDataConnection * db, int pathID)
 {
     const char *fieldnames[]=
@@ -247,9 +259,9 @@ void psPath::SetEnd(Waypoint * wp)
 }
 
 
-void psPath::Precalculate(psWorld * world, iEngine *engine)
+void psPath::Precalculate(psWorld * world, iEngine *engine, bool forceUpdate)
 {
-    if (precalculationValid) return;
+    if (precalculationValid && !forceUpdate) return;
 
     PrecalculatePath(world,engine);
 }
@@ -541,7 +553,7 @@ bool psPath::Create(iDataConnection * db)
 bool psPath::Adjust(iDataConnection * db, int index, csVector3 & pos, csString sector)
 {
     // First and last point is a placeholder for the waypoint only update the position.
-    if (index == 0 || index == (int)points.GetSize()-1)
+    if (index == 0 || index == ((int)points.GetSize()-1))
     {
         return points[index]->Adjust(pos,sector);
     }
@@ -622,6 +634,22 @@ bool psPath::SetFlag(iDataConnection * db, const csString &flagstr, bool enable)
     return true;
 }
 
+size_t psPath::FindPointsInSector(iEngine * engine, iSector *sector, csList<psPathPoint*>& list)
+{
+    size_t count = 0;
+    for (size_t i = 0; i < points.GetSize(); i++)
+    {
+        psPathPoint* point = points[i];
+        if (point->GetSector(engine) == sector)
+        {
+            list.PushBack(point);
+            count++;
+        }
+    }
+    return count;
+}
+
+
 
 //---------------------------------------------------------------------------
 
@@ -677,8 +705,8 @@ void psLinearPath::PrecalculatePath(psWorld * world, iEngine *engine)
     }    
     points[points.GetSize()-1]->startDistance[FORWARD] = totalDistance;
     
-    float r1=points[0]->radius;
-    float r2=points[points.GetSize()-1]->radius;
+    float r1=points[0]->GetRadius();
+    float r2=points[points.GetSize()-1]->GetRadius();
 
     for (size_t ii=0;ii<points.GetSize();ii++)
     {

@@ -21,6 +21,7 @@
 
 #include <csutil/weakref.h>
 #include <csutil/parray.h>
+#include <csutil/list.h>
 #include <igeom/path.h>
 #include <csgeom/vector3.h>
 
@@ -61,7 +62,7 @@ public:
 
     const csVector3& GetPosition() { return pos; }
     iSector * GetSector(iEngine *engine);
-    float GetRadius() { return radius; }
+    float GetRadius();
 
     void SetWaypoint(Waypoint* waypoint);
 
@@ -137,7 +138,7 @@ public:
     void SetEnd(Waypoint * wp);
 
     /// Precalculate values needed for anchors
-    virtual void Precalculate(psWorld * world, iEngine *engine);
+    virtual void Precalculate(psWorld * world, iEngine *engine, bool forceUpdate = false);
 
     /// Calculate distance from point to path
     virtual float Distance(psWorld * world, iEngine *engine,csVector3& pos, iSector * sector, int * index = NULL, float * fraction = NULL);
@@ -202,6 +203,9 @@ public:
 
     /// Set the flags from a string and update the db.
     bool SetFlag(iDataConnection * db, const csString &flagstr, bool enable);
+
+    /// Get all points in the given sector for this path
+    size_t FindPointsInSector(iEngine * engine, iSector *sector, csList<psPathPoint*>& list);
 
 protected:
     /// Do the actual precalculate work
@@ -275,7 +279,7 @@ public:
     psPath::Direction GetCurrentAtDirection() { return currentAtDirection; }
     /// Get the current fraction of the current path segment
     float GetCurrentAtFraction(){ return currentAtFraction; }
-    
+
 private:
     psPath * path;
     // Internal non reentrant data leagal after calcuateAt operation
