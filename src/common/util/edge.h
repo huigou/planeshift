@@ -63,6 +63,10 @@ public:
      */
     psPathPoint* GetEndPoint();
 
+    /** Return the path
+     */
+    psPath* GetPath() { return path; }
+    
     /** Return the first waypoint in the edge
      */
     Waypoint* GetStartWaypoint();

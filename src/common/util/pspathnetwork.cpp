@@ -583,6 +583,38 @@ void psPathNetwork::ListWaypoints(const char * pattern)
 }
 
 
+
+size_t psPathNetwork::FindPointsInSector(iSector *sector, csList<psPathPoint*>& list)
+{
+    size_t count = 0;
+    for (size_t p = 0; p < paths.GetSize()-1; p++)
+    {
+       count += paths[p]->FindPointsInSector( engine, sector, list );
+    }
+
+    return count;
+}
+
+size_t psPathNetwork::FindWaypointsInSector(iSector *sector, csList<Waypoint*>& list)
+{
+    size_t count = 0;
+    csPDelArray<Waypoint>::Iterator iter(waypoints.GetIterator());
+    Waypoint *wp;
+
+    // Initialize
+    while (iter.HasNext())
+    {
+        wp = iter.Next();
+
+	if ( wp->GetSector(engine) == sector )
+        {
+           list.PushBack(wp);
+           count++;
+        }
+    }
+    return count;
+}
+
 void psPathNetwork::ListPaths(const char* /*name*/)
 {
     csPDelArray<psPath>::Iterator iter(paths.GetIterator());

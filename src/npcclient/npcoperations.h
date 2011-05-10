@@ -1260,6 +1260,7 @@ protected:
     Edge::Iterator*           currentPathPointIterator; ///< The current iterator for path points
     psPathPoint*              currentPathPoint;         ///< The current local destination
     csVector3                 currentPointOffset;       ///< The offset used for current local dest.
+    float                     currentDistance;          ///< The distance to the current local destination
 //    psPath::PathPointIterator pointIterator;
 
     // End of instance temp variables.
@@ -1338,6 +1339,11 @@ public:
      *
      */
     psPathPoint* GetCurrentPathPoint(NPC* npc);
+
+
+    /* Utility function to calcualte distance from npc to destPoint.
+     */
+    static float DistanceToDestPoint( NPC* npc, const csVector3& destPos, const iSector* destSector );
 
 
     virtual OperationResult Run(NPC* npc,EventManager* eventmgr,bool interrupted);

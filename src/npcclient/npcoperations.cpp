@@ -3912,7 +3912,8 @@ WanderOperation::WanderOperation()
       // Instance states
       wanderRouteFilter(this),
       currentEdge(NULL),
-      currentPathPointIterator(NULL)
+      currentPathPointIterator(NULL),
+      currentDistance(0.0f)
       // Operation parameters
       // Initialized in the load function
 { 
@@ -3924,6 +3925,7 @@ WanderOperation::WanderOperation(const WanderOperation* other)
       wanderRouteFilter(this),
       currentEdge(NULL),
       currentPathPointIterator(NULL),
+      currentDistance(0.0f),
       // Operation parameters
       action(other->action),
       random(other->random),
@@ -3971,10 +3973,6 @@ bool WanderOperation::StartMoveTo(NPC *npc, psPathPoint* point)
 {
     float dummyAngle;
 
-    currentPointOffset = csVector3(0.0,0.0,0.0);
-
-    AddRandomRange(currentPointOffset,  point->GetRadius(), 0.5);
-
     csVector3 destPos = point->GetPosition();
     destPos += currentPointOffset;
 
@@ -3988,9 +3986,6 @@ bool WanderOperation::StartMoveTo(NPC *npc, psPathPoint* point)
 bool WanderOperation::MoveTo(NPC *npc, psPathPoint* point)
 {
     StopMovement( npc );
-
-    currentPointOffset = csVector3(0.0,0.0,0.0);
-    AddRandomRange(currentPointOffset, point->GetRadius(), 0.5);
 
     csVector3 destPos = point->GetPosition();
     destPos += currentPointOffset;
@@ -4090,9 +4085,16 @@ ScriptOperation::OperationResult WanderOperation::CalculateEdgeList(NPC *npc)
 
             edgeIterator = csList<Edge*>::Iterator(edgeList);
             currentEdge = edgeIterator.Next();
+
+            if (currentEdge)
+            {
+                npc->Printf(5,"Running from %s to %s",currentEdge->GetStartWaypoint()->GetName(),
+                            currentEdge->GetEndWaypoint()->GetName());
+            }
+
         }
     }
-
+    
     SetPathPointIterator(currentEdge->GetIterator());
 
     return OPERATION_NOT_COMPLETED;
@@ -4100,27 +4102,31 @@ ScriptOperation::OperationResult WanderOperation::CalculateEdgeList(NPC *npc)
 
 Edge* WanderOperation::GetNextEdge(NPC* npc)
 {
-    Edge* edge = NULL;
-
     if (random)
     {
-        edge = currentEdge->GetRandomEdge( &wanderRouteFilter );
+        currentEdge = currentEdge->GetRandomEdge( &wanderRouteFilter );
     }
     else
     {
         if (edgeIterator.HasNext())
         {
-            edge = edgeIterator.Next();
+            currentEdge = edgeIterator.Next();
+        }
+        else
+        {
+            currentEdge = NULL;
         }
     }
 
-    if (edge)
+    if (currentEdge)
     {
-        npc->Printf(5,"Running from %s to %s",edge->GetStartWaypoint()->GetName(),
-                    edge->GetEndWaypoint()->GetName());
+        SetPathPointIterator(currentEdge->GetIterator());
+
+        npc->Printf(5,"Running from %s to %s",currentEdge->GetStartWaypoint()->GetName(),
+                    currentEdge->GetEndWaypoint()->GetName());
     }
 
-    return edge;
+    return currentEdge;
 }
 
 void WanderOperation::SetPathPointIterator(Edge::Iterator* iterator)
@@ -4145,15 +4151,14 @@ psPathPoint* WanderOperation::GetNextPathPoint(NPC* npc, bool &teleport)
     {
         npc->Printf(5,"No more path points, changing edge...");
 
-        currentEdge = GetNextEdge(npc);
-        if (!currentEdge)
+        Edge* edge = GetNextEdge(npc); // Indirect sets the currentEdge
+        if (!edge)
         {
             currentPathPoint = NULL;
             SetPathPointIterator( NULL );
 
             return NULL; // Found no edge to wander, so no more path points either.
         }
-        SetPathPointIterator( currentEdge->GetIterator() );
     }
 
     // Check if we should teleport this edge
@@ -4165,13 +4170,21 @@ psPathPoint* WanderOperation::GetNextPathPoint(NPC* npc, bool &teleport)
     if (currentPathPointIterator->HasNext())
     {
         currentPathPoint = currentPathPointIterator->Next();
-        npc->Printf(6,"Next point %s",
+
+	currentPointOffset = csVector3(0.0,0.0,0.0);
+	AddRandomRange(currentPointOffset,  currentPathPoint->GetRadius(), 0.5);
+
+        npc->Printf(6,"Next point %s with offset %s",
                     toString(currentPathPoint->GetPosition(),
-                             currentPathPoint->GetSector(npcclient->GetEngine())).GetData());
+                             currentPathPoint->GetSector(npcclient->GetEngine())).GetData(),
+		    toString(currentPointOffset).GetData());
+
+
     } else
     {
         currentPathPoint = NULL;
     }
+
 
     return currentPathPoint; // Return the found path point
 }
@@ -4179,6 +4192,17 @@ psPathPoint* WanderOperation::GetNextPathPoint(NPC* npc, bool &teleport)
 psPathPoint* WanderOperation::GetCurrentPathPoint(NPC* npc)
 {
     return currentPathPoint;
+}
+
+float WanderOperation::DistanceToDestPoint( NPC* npc, const csVector3& destPos, const iSector* destSector )
+{
+    csVector3    myPos;
+    float        myRot;
+    iSector*     mySector;
+
+    npc->GetLinMove()->GetLastPosition(myPos, myRot, mySector);
+
+    return  npcclient->GetWorld()->Distance(myPos, mySector, destPos, destSector);
 }
 
 
@@ -4206,6 +4230,12 @@ ScriptOperation::OperationResult WanderOperation::Run(NPC *npc, EventManager *ev
         npc->Printf(5,">>>WanderOp NO pathpoints, %s cannot move.",npc->GetName());
         return OPERATION_FAILED;
     }
+
+    csVector3 destPos = destPoint->GetPosition();
+    destPos += currentPointOffset;
+
+    // Store current distance to the next local point. Used to detect when we pass the waypoint.
+    currentDistance = DistanceToDestPoint(npc, destPos, destPoint->GetSector(npcclient->GetEngine()));
 
     if (teleport)
     {
@@ -4249,9 +4279,15 @@ void WanderOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
         npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior());
         return;
     }
-    else if (distance <= 0.5f)
+    else if (distance <= 0.5f || distance > currentDistance )
     {
-        npc->Printf(6, "We are at localDest...");
+        if (distance > currentDistance )
+        {
+            npc->Printf(6, "We passed localDest...");
+        } else
+        {
+            npc->Printf(6, "We are at localDest...");
+        }
 
         bool teleport = false;
 
@@ -4263,10 +4299,13 @@ void WanderOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
             destPos = destPoint->GetPosition();
             destPos += currentPointOffset;
 
-            npc->Printf(6,"New localDest %s",
+            currentDistance =  npcclient->GetWorld()->Distance(myPos, mySector,
+                                                               destPos, destPoint->GetSector(npcclient->GetEngine()));
+
+            npc->Printf(6,"New localDest %s at range %.2f",
                         toString(destPos,
                                  destPoint->GetSector(npcclient->GetEngine())).GetData(),
-                        distance);
+                        currentDistance);
 
             if (teleport)
             {
@@ -4291,6 +4330,9 @@ void WanderOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
     {
         TurnTo(npc, destPos, destPoint->GetSector(npcclient->GetEngine()),
                forward, angle);
+
+	// Store current distance, next advance we can check if we still approch the waypoint or not.
+	currentDistance = distance;
     }
 
     // Limit time extrapolation so we arrive near the correct place.

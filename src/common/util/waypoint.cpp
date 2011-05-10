@@ -377,8 +377,21 @@ bool Waypoint::SetRadius(iDataConnection * db, float radius)
 bool Waypoint::SetRadius(float radius)
 {
     loc.radius = radius;
+
     return true;
 }
+
+void Waypoint::RecalculateEdges(psWorld * world, iEngine *engine)
+{
+    // Recalculate radius for each of the path points connected
+    for (size_t ii = 0; ii < edges.GetSize(); ii++)
+    {
+        Edge *edge = edges[ii];
+
+        edge->GetPath()->Precalculate(world, engine, true);
+    }
+}
+
 
 
 bool Waypoint::Rename(iDataConnection * db,const char* name)
