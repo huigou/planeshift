@@ -3,11 +3,11 @@
 <head>
  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
  <link href="style.css" rel="stylesheet" type="text/css" title="normal" media=screen>
- <title>Function Parser for C++ v4.4    : Documentation</title>
+ <title>Function Parser for C++ v4.4.1  : Documentation</title>
 </head>
 
 <body>
-<h1>Function Parser for C++ v4.4    </h1>
+<h1>Function Parser for C++ v4.4.1  </h1>
 
 <p>Authors: Juha Nieminen
 (<a href="http://iki.fi/warp/">http://iki.fi/warp/</a>),
@@ -67,6 +67,20 @@ Joel Yliluoma
 <a name="whatsnew"></a>
 <h2>What's new</h2>
 
+<p>What's new in v4.4.1
+  <ul>
+    <li>Added missing documentation on complex literals.
+    <li>Fixed problem when using <code>std::complex</code> with TR1 math
+      functions enabled. (TR1 does not define any new math functions for
+      <code>std::complex</code> even though C++0x does. When attempting to
+      use them, the implementation of TR1 in the current gcc misbehaves
+      instead of giving a compiler error. This has now been replaced with
+      the equivalent formulas using standard math functions.)
+    <li>Fixed some compilation issues in the development version of the
+      library (which happened with certain combinations of disabled parsers
+      and compiler settings).
+  </ul>
+
 <p>What's new in v4.4
   <ul>
     <li>Added support for <code>std::complex</code> (of type
@@ -77,6 +91,7 @@ Joel Yliluoma
       Studio 2005). (But consult the documentation on the <code>long
 	double</code> literal parsing accuracy.)
     <li>Several minor bugfixes.
+    <li>Fixed some compilation issues with gcc&nbsp;4.6.
   </ul>
 
 
@@ -232,7 +247,7 @@ as <code>fparser.cc</code>.
       <code>FP_SUPPORT_COMPLEX_LONG_DOUBLE_TYPE</code>.
     <p>If <code>FunctionParser_cld</code> is used, the
       <code>FP_USE_STRTOLD</code> macro should also be defined if the compiler
-      supports the <code>strtlod()</code> function.
+      supports the <code>strtold()</code> function.
   </dd>
 
   <dt><p><code>FunctionParser_mpfr</code></dt>
@@ -1100,6 +1115,14 @@ the specified return values will be modified in case of error.
   '<code>P</code>' or '<code>p</code>' is used. A binary exponent indicates
   multiplication by a power of 2. For example, "<code>0xA.Bp10</code>"
   (which is equivalent to the value 10944).
+
+<p>With the complex versions of the library, the imaginary part of a numeric
+  literal is written as a regular numeric literal with an '<code>i</code>'
+  appended, for example "<code>5i</code>". Note that when also specifying
+  the real part of a complex literal, parentheses should be used to avoid
+  precedence problems. (For example, "<code>(2+5i)&nbsp;*&nbsp;x</code>"
+  is not the same thing as "<code>2+5i&nbsp;*&nbsp;x</code>". The latter
+  would be equivalent to "<code>2 + (5i&nbsp;*&nbsp;x)</code>".)
 
 <a name="identifiers"></a>
 <h3>Identifier names</h3>
