@@ -2806,6 +2806,50 @@ public:
     virtual csString GetHelpMessage();
 };
 
+/** Class for time command.
+ *
+ * Currently lists only available maps.
+ */
+class AdminCmdDataTime : public AdminCmdData
+{
+public:
+    AdminCmdSubCommandParser subCommandList; ///< List of possible sub commands
+    csString subCommand; ///< given subcommand
+    int hour,minute;
+
+    /** Creates obj for specified command that needs a reason
+     */
+    AdminCmdDataTime()
+    : AdminCmdData("/time"), subCommandList("show set")
+    {};
+    
+    /** Parses the given message and stores its data.
+     * @params msgmanager message manager that handles this command
+     * @params msg psAdminCmdMessage containing the message
+     * @params client client of the network communication
+     * @params words command message to parse
+     */
+    AdminCmdDataTime(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+
+    virtual ~AdminCmdDataTime()
+    {};
+
+     /** Creates a command data object of the current class containing the parsed data.
+     * @params msgmanager message manager that handles this command
+     * @params msg psAdminCmdMessage containing the message
+     * @params client client of the network communication
+     * @params words command message to parse
+     * @returns AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+     */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+
+    /** Returns the Helpmessageportion for the destination according to the type
+     * @returns csString containg the helpmessage part for destination
+     */
+    virtual csString GetHelpMessage();
+};
+
+
 /** @brief Class containing object factory for AdminCmdData objects.
  *
  * Creates specific AdminCmdData objects on demand.
@@ -3386,6 +3430,15 @@ protected:
      */
     void HandleList(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data,Client *client);
 
+    /** @brief Time command for setting of game time.
+     *
+     * @param me The incoming message from the GM
+     * @param msg The cracked command message.
+     * @param data A pointer to the command parser object with target data
+     * @param client The GM client the command came from.
+     */
+    void HandleTime(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data,Client *client);
+    
     /** @brief Changes the name of the player to the specified one.
      *  @param me The incoming message from the GM
      *  @param msg The cracked command message.
