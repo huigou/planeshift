@@ -639,13 +639,14 @@ void ScriptOperation::Failure(NPC* npc)
 //---------------------------------------------------------------------------
 
 MovementOperation::MovementOperation(const char* name)
-    :ScriptOperation( name )
+    :ScriptOperation( name ),currentDistance(0.0f)
 {
 }
 
 MovementOperation::MovementOperation(const MovementOperation* other)
     :ScriptOperation( other ),
      // Instance variables
+     currentDistance(0.0f),
      // Operation parameters
      action(other->action)
 {
@@ -706,6 +707,8 @@ ScriptOperation::OperationResult MovementOperation::Run(NPC *npc, EventManager *
         iMapNode* dest = path->Next();
         StartMoveTo(npc, eventmgr, dest->GetPosition(), dest->GetSector(), GetVelocity(npc),
                     action, false, dummyAngle);
+        currentDistance =  npcclient->GetWorld()->Distance(myPos, mySector,
+                                                           dest->GetPosition(), dest->GetSector());
 
         return OPERATION_NOT_COMPLETED; // This behavior isn't done yet
     }
@@ -750,6 +753,8 @@ void MovementOperation::Advance(float timedelta, NPC *npc, EventManager *eventmg
         iMapNode* dest = path->Next();
         StartMoveTo(npc, eventmgr, dest->GetPosition(), dest->GetSector(), GetVelocity(npc),
                     action, false, angle);
+        currentDistance =  npcclient->GetWorld()->Distance(myPos, mySector,
+                                                           dest->GetPosition(), dest->GetSector());
     }
 
     iMapNode* dest = path->Current();
@@ -760,8 +765,16 @@ void MovementOperation::Advance(float timedelta, NPC *npc, EventManager *eventmg
         npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior());
         return;
     }
-    else if (distance <= 0.5f)
+    else if (distance <= 0.5f || distance > currentDistance)
     {
+        if (distance > currentDistance )
+        {
+            npc->Printf(6, "We passed localDest...");
+        } else
+        {
+            npc->Printf(6, "We are at localDest...");
+        }
+
         if (!path->HasNext())
         {
             npc->Printf(5, "We are done..");
@@ -770,10 +783,11 @@ void MovementOperation::Advance(float timedelta, NPC *npc, EventManager *eventmg
         }
         else
         {
-            npc->Printf(6, "We are at localDest..");
             dest = path->Next();
             StartMoveTo(npc, eventmgr, dest->GetPosition(), dest->GetSector(), GetVelocity(npc),
                         action, false, angle);
+            currentDistance =  npcclient->GetWorld()->Distance(myPos, mySector,
+                                                               dest->GetPosition(), dest->GetSector());
         }
     }
     else

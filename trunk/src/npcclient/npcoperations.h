@@ -249,6 +249,8 @@ protected:
     csVector3 endPos;
     iSector*  endSector;
 
+    float currentDistance;          ///< The distance to the current local destination
+
     // Operation parameters
     csString         action;        ///< The animation used during chase
 
