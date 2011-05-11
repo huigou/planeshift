@@ -1294,4 +1294,12 @@ csVector3 psGameObject::DisplaceTargetPos(const iSector* mySector, const csVecto
 }
 
 
+float psGameObject::Calc2DDistance(const csVector3 & a, const csVector3 & b)
+{
+    csVector3 diff = a-b;
+    diff.y = 0;
+    return diff.Norm();
+}
+
+
 //---------------------------------------------------------------------------

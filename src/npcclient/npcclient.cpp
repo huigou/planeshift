@@ -91,7 +91,7 @@ psNPCClient::psNPCClient () : serverconsole(NULL)
 {
     npcclient    = this;  // Static pointer to self
     world        = NULL;
-    PFMaps       = NULL;
+    //    PFMaps       = NULL;
     pathNetwork  = NULL;
     eventmanager = NULL;
     running      = true;
@@ -131,7 +131,7 @@ psNPCClient::~psNPCClient()
 
 
     delete pathNetwork;
-    delete PFMaps;
+    //    delete PFMaps;
     delete world;
 }
 
@@ -250,7 +250,7 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, cons
 
     cdsys =  csQueryRegistry<iCollideSystem> (objreg);
 
-    PFMaps = new psPFMaps(objreg);
+    //    PFMaps = new psPFMaps(objreg);
 
     CPrintf(CON_CMDOUTPUT,"Filling loader cache\n");
 
