@@ -2710,7 +2710,16 @@ bool MoveToOperation::Load(iDocumentNode *node)
     destPos.x = node->GetAttributeValueAsFloat("x");
     destPos.y = node->GetAttributeValueAsFloat("y");
     destPos.z = node->GetAttributeValueAsFloat("z");
-    destSector = npcclient->GetEngine()->FindSector(node->GetAttributeValue("sector"));
+    const char * sector = node->GetAttributeValue("sector");
+    if (sector)
+    {
+        destSector = npcclient->GetEngine()->FindSector(sector);
+    }
+    else
+    {
+        destSector = NULL; // We will later assume sector current sector
+    }
+    
 
     action = node->GetAttributeValue("anim");
 
