@@ -96,7 +96,6 @@ void pawsLoadWindow::PublishMOTD()
 {
     pawsMultiLineTextBox* tipBox = (pawsMultiLineTextBox*)FindWidget( "tip" );
     pawsMultiLineTextBox* motdBox = (pawsMultiLineTextBox*)FindWidget( "motd" );
-    pawsMultiLineTextBox* guildmotdBox = (pawsMultiLineTextBox*)FindWidget( "guildmotd" );
 
     psMOTDMessage motd(0, tipBox->GetText(), motdBox->GetText(), guildMOTD, guildName);
     motd.FireEvent();
