@@ -3694,35 +3694,62 @@ csString AdminCmdDataList::GetHelpMessage()
     return "Syntax: \"" + command + " " + subCommandList.GetHelpMessage() + "\"";
 }
 
-/* 
-{
-    size_t index = 1;
-    bool found;
 
-    if ((found = ParseTarget(msgManager, me, msg, client, words[index])))
+AdminCmdDataTime::AdminCmdDataTime(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words)
+: AdminCmdData("/time")
+{
+    // register sub commands with their extended help message 
+    subCommandList.Push("show","#Show the current game time");
+    subCommandList.Push("set","<hour> <minutes>");
+
+    // when help is requested, return immediate
+    if (IsHelp(words[1]))
     {
-        index++;
+        subCommand = words[2]; // Next word might be a sub Cmd.
+        return;
     }
 
-    if (found || IsTargetType(ADMINCMD_TARGET_CLIENTTARGET))
-    {
+    size_t index = 1;
 
+    // first word must be a sub command
+    if (subCommandList.IsSubCommand(words[index]))
+    {
+        subCommand = words[index++];
+        if (subCommand == "set")
+        {
+            if (!words.GetInt(index++,hour))
+            {
+                ParseError(me, "Hour not given or not an integer value.");
+            } else if (hour < 0 || hour > 23)
+            {
+                ParseError(me, "Hour not between 0 and 23.");
+            }
+            if (!words.GetInt(index++,minute))
+            {
+                ParseError(me, "Minute not given or not an integer value.");
+            } else if (minute < 0 || minute > 59)
+            {
+                ParseError(me, "Minutes not between 0 and 59.");
+            }
+        }
     }
     else
     {
-        ParseError(me, "No target specified");
+        ParseError(me, "Missing subcommand");
     }
 }
-*/
 
-/*
-ADMINCMDFACTORY_IMPLEMENT_MSG_FACTORY_CREATE()
+ADMINCMDFACTORY_IMPLEMENT_MSG_FACTORY_CREATE(AdminCmdDataTime)
 
-csString ::GetHelpMessage()
+csString AdminCmdDataTime::GetHelpMessage()
 {
-    return "Syntax: \"" + command + " [sector]\"";
+    if (!subCommand.IsEmpty())
+    {
+        return "Syntax: \"" + command + " " + subCommandList.GetHelpMessage(subCommand) + "\"";
+    }
+    return "Syntax: \"" + command + " " + subCommandList.GetHelpMessage() + " [options]\"";
 }
-*/
+
 
 AdminCmdDataFactory::AdminCmdDataFactory()
 {
@@ -3784,6 +3811,7 @@ AdminCmdDataFactory::AdminCmdDataFactory()
     RegisterMsgFactoryFunction(new AdminCmdDataRndMsgTest());
 
     RegisterMsgFactoryFunction(new AdminCmdDataList());
+    RegisterMsgFactoryFunction(new AdminCmdDataTime());
 
     // register commands that only have a target|player|... and no additional
     // options/data
@@ -4209,6 +4237,10 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, Client *client)
     {
         HandleList(me, msg, data, client);
     }
+    else if (data->command == "/time")
+    {
+        HandleTime(me, msg, data, client);
+    }
     if (data)
         delete data;
 } 
@@ -4238,6 +4270,28 @@ void AdminManager::HandleList(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         // find next delimiter (= end of map)
         next = mapnames.FindFirst('|',pos);
     } while (next < mapnames.Length());
+}
+
+void AdminManager::HandleTime(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata,Client *client)
+{
+    AdminCmdDataTime* data = dynamic_cast<AdminCmdDataTime*>(cmddata);
+
+    if (data->subCommand == "show")
+    {
+        psserver->SendSystemInfo(client->GetClientNum(),"Game time is %d:%02d %d-%d-%d",
+                                 psserver->GetWeatherManager()->GetGameTODHour(),
+                                 psserver->GetWeatherManager()->GetGameTODMinute(),
+                                 psserver->GetWeatherManager()->GetGameTODYear(),
+                                 psserver->GetWeatherManager()->GetGameTODMonth(),
+                                 psserver->GetWeatherManager()->GetGameTODDay());
+        return;
+    } else if (data->subCommand == "set")
+    {
+        psserver->GetWeatherManager()->SetGameTime(data->hour,data->minute);
+        psserver->SendSystemInfo(client->GetClientNum(), "Current Game Hour set to: %d:%02d\n",
+                                 data->hour, data->minute);
+        return;
+    }
 }
 
 
