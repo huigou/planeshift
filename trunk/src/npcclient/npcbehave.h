@@ -435,6 +435,9 @@ public:
                                        const iSector* targetSector, const csVector3& targetPos,
                                        float offset, float angle);
 
+    static float Calc2DDistance(const csVector3 & a, const csVector3 & b);
+
+
 };
 
 

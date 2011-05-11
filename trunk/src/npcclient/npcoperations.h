@@ -43,7 +43,6 @@ struct iSector;
 //=============================================================================
 // Project Includes
 //=============================================================================
-#include "walkpoly.h"
 
 class psResumeScriptEvent;
 class EventManager;
@@ -792,22 +791,26 @@ public:
 * Moving to a spot entails a position vector, a linear velocity,
 * and an animation action.
 */
-class MoveToOperation : public ScriptOperation
+class MoveToOperation : public MovementOperation
 {
 protected:
-    csVector3 dest;
-    csVector3 localDest;
+    csVector3 destPos;
+    iSector*  destSector;
+    
     csString  action;
-    psAPath   path;
 public:
-    MoveToOperation(): ScriptOperation("MoveTo") { dest.Set(0,0,0); vel=0; }
+    MoveToOperation();
+    MoveToOperation(const MoveToOperation* other);
     virtual ~MoveToOperation() { }
 
-    virtual OperationResult Run(NPC* npc,EventManager* eventmgr,bool interrupted);
-    virtual void Advance(float timedelta,NPC* npc,EventManager* eventmgr);
+    virtual bool GetEndPosition(NPC* npc, const csVector3 &myPos, const iSector* mySector,
+                                csVector3 &endPos, iSector* &endSector);
+
+    virtual bool UpdateEndPosition(NPC* npc, const csVector3 &myPos, const iSector* mySector,
+                                   csVector3 &endPos, iSector* &endSector);
+
     virtual bool Load(iDocumentNode* node);
     virtual ScriptOperation* MakeCopy();
-    virtual bool CompleteOperation(NPC* npc,EventManager* eventmgr);
 };
 
 //-----------------------------------------------------------------------------

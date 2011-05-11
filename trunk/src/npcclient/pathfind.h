@@ -19,6 +19,8 @@
 #ifndef ___PATHFIND_HEADER___
 #define ___PATHFIND_HEADER___
 
+#ifdef USE_WALKPOLY
+
 //=============================================================================
 // Crystal Space Includes
 //=============================================================================
@@ -266,5 +268,6 @@ protected:
     csRef<iVFS> vfs;
 };
 
+#endif
 
 #endif

@@ -667,7 +667,7 @@ bool MovementOperation::EndPointChanged(const csVector3 &endPos, const iSector* 
 {
     iMapNode* pathEndDest = path->GetLast();
     return ((pathEndDest->GetSector() != endSector) ||
-            (Calc2DDistance(pathEndDest->GetPosition(), endPos) > EPSILON) );
+            (psGameObject::Calc2DDistance(pathEndDest->GetPosition(), endPos) > EPSILON) );
 }
 
 ScriptOperation::OperationResult MovementOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
@@ -2682,13 +2682,36 @@ bool MovePathOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
 
 //---------------------------------------------------------------------------
 
+MoveToOperation::MoveToOperation()
+    :MovementOperation("MoveTo")
+{ 
+    destPos.Set(0,0,0);
+    destSector = NULL;
+}
+
+MoveToOperation::MoveToOperation(const MoveToOperation* other )
+    :MovementOperation( other ), destPos(other->destPos),
+     destSector(other->destSector), action(other->action)
+{
+    
+}
+
+
 bool MoveToOperation::Load(iDocumentNode *node)
 {
-    dest.x = node->GetAttributeValueAsFloat("x");
-    dest.y = node->GetAttributeValueAsFloat("y");
-    dest.z = node->GetAttributeValueAsFloat("z");
+    if (!MovementOperation::Load(node))
+    {
+        return false;
+    }
 
     LoadVelocity(node);
+    LoadCheckMoveOk(node);
+
+    destPos.x = node->GetAttributeValueAsFloat("x");
+    destPos.y = node->GetAttributeValueAsFloat("y");
+    destPos.z = node->GetAttributeValueAsFloat("z");
+    destSector = npcclient->GetEngine()->FindSector(node->GetAttributeValue("sector"));
+
     action = node->GetAttributeValue("anim");
 
     return true;
@@ -2696,108 +2719,34 @@ bool MoveToOperation::Load(iDocumentNode *node)
 
 ScriptOperation *MoveToOperation::MakeCopy()
 {
-    MoveToOperation *op = new MoveToOperation;
-    op->velSource = velSource;
-    op->vel    = vel;
-    op->dest   = dest;
-    op->action = action;
+    MoveToOperation *op = new MoveToOperation(this);
+
     return op;
 }
 
-ScriptOperation::OperationResult MoveToOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+bool MoveToOperation::GetEndPosition(NPC* npc, const csVector3 &myPos, const iSector* mySector,
+                                     csVector3 &endPos, iSector* &endSector)
 {
-    npc->Printf(5,"MoveToOp Start dest=(%1.2f,%1.2f,%1.2f) at %1.2f m/sec.",
-                dest.x,dest.y,dest.z,GetVelocity(npc));
+    endPos = destPos;
+    endSector = destSector;
 
-    csVector3 pos, forward, up;
-    float rot;
-    iSector *sector;
-
-    psGameObject::GetPosition(npc->GetActor(),pos,rot,sector);
+    if (destSector)
+    {
+        endSector = destSector;
+    } else
+    {
+        // Guess that the sector is current sector if no sector is given
+        endSector = const_cast<iSector*>(mySector);
+    }
     
-    path.SetMaps(npcclient->GetMaps());
-    path.SetDest(dest);
-    path.CalcLocalDest(pos, sector, localDest);
     
-    // Using "true" teleports to dest location after proper time has 
-    // elapsed and is therefore more tolerant of CD errors.
-    StartMoveTo(npc, eventmgr, localDest, sector,vel,action, true,rot); 
-    return OPERATION_NOT_COMPLETED;
+    return true;
 }
 
-void MoveToOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
+bool MoveToOperation::UpdateEndPosition(NPC* npc, const csVector3 &myPos, const iSector* mySector,
+                                        csVector3 &endPos, iSector* &endSector)
 {
-    csVector3 pos,pos2;
-    float     rot;
-    float     angle;
-    iSector*  sector;
-    csVector3 forward;
-    int       ret;
-
-    npc->GetLinMove()->GetLastPosition(pos,rot,sector);
-    
-    npc->Printf(10,"advance: pos=(%1.2f,%1.2f,%1.2f) rot=%.2f localDest=(%.2f,%.2f,%.2f) dest=(%.2f,%.2f,%.2f) dist=%f", 
-                pos.x,pos.y,pos.z, rot,
-                localDest.x,localDest.y,localDest.z,
-                dest.x,dest.y,dest.z,
-                Calc2DDistance(localDest, pos));
-    
-    TurnTo(npc, localDest, sector, forward,angle);
-    
-    //tolerance must be according to step size
-    //we must ignore y
-    if (Calc2DDistance(localDest, pos) <= 0.5)
-    {
-        pos.x = localDest.x;
-        pos.z = localDest.z;
-        npc->GetLinMove()->SetPosition(pos,rot,sector);
-        
-        if (Calc2DDistance(localDest,dest) <= 0.5) //tolerance must be according to step size, ignore y
-        {
-            npc->Printf(8,"MoveTo within minimum acceptable range...Stopping him now.");
-            // npc->ResumeScript(eventmgr, npc->GetBrain()->GetCurrentBehavior() );
-            CompleteOperation(npc, eventmgr);
-        }
-        else
-        {
-            npc->Printf(8,"we are at localDest... WHAT DOES THIS MEAN?");
-            path.CalcLocalDest(pos, sector, localDest);
-            StartMoveTo(npc,eventmgr,localDest, sector, vel,action, false, angle);
-        }
-    }
-    else
-    {
-        ret = npc->GetLinMove()->ExtrapolatePosition(timedelta);
-        npc->GetLinMove()->GetLastPosition(pos2,rot,sector);
-    
-        if ((pos-pos2).SquaredNorm() < SMALL_EPSILON) // then stopped dead, presumably by collision
-        {
-            Perception collision("collision");
-            npc->TriggerEvent(&collision);
-        }
-    }
-}
-
-bool MoveToOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
-{
-    // Get the rot and sector here so they don't change in the SetPosition call
-    float rot;
-    iSector *sector;
-    csVector3 pos;
-    psGameObject::GetPosition(npc->GetActor(),pos,rot,sector);
-
-    // Set position to where it is supposed to go
-    npc->GetLinMove()->SetPosition(dest,rot,sector);
-
-    // Stop the movement
-    StopMovement(npc);
-    
-    npc->Printf(5,"MoveToOp - Completed. pos=(%1.2f,%1.2f,%1.2f) rot=%.2f dest set=(%1.2f,%1.2f,%1.2f)",
-                pos.x,pos.y,pos.z, rot,
-                dest.x,dest.y,dest.z);
-    completed = true;
-
-    return true;  // Script can keep going
+    return true;
 }
 
 //---------------------------------------------------------------------------

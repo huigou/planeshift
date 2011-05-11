@@ -57,7 +57,7 @@ class  psWorld;
 class  Location;
 class  LocationType;
 class  Waypoint;
-class  psPFMaps;
+//class  psPFMaps;
 class  Tribe;
 class  psPath;
 class  psPathNetwork;
@@ -436,7 +436,7 @@ public:
      */
     void UpdateTime(int minute, int hour, int day, int month, int year);
     
-    psPFMaps*  GetMaps() { return PFMaps; }
+    //    psPFMaps*  GetMaps() { return PFMaps; }
 
     iCelHNavStruct*  GetNavStruct() { return navStruct; }
 
@@ -562,7 +562,7 @@ protected:
 
     psWorld*                        world;
     
-    psPFMaps*                       PFMaps;
+    //    psPFMaps*                       PFMaps;
 
     /// Counter used to start events at every nth client tick
     unsigned int                    tick_counter;
