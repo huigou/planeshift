@@ -1,5 +1,5 @@
 /***************************************************************************\
-|* Function Parser for C++ v4.4.1                                          *|
+|* Function Parser for C++ v4.4.2                                          *|
 |*-------------------------------------------------------------------------*|
 |* Copyright: Juha Nieminen, Joel Yliluoma                                 *|
 |*                                                                         *|
@@ -399,7 +399,7 @@ namespace
        return value also contains the internal function opcode (defined in
        fptypes.h) that matches the name.
     */
-    unsigned readIdentifierForFloatType(const char* input)
+    unsigned readIdentifierCommon(const char* input)
     {
         /* Assuming unsigned = 32 bits:
               76543210 76543210 76543210 76543210
@@ -417,21 +417,27 @@ namespace
         return 0;
     }
 
-    inline unsigned readIdentifierForIntType(const char* input)
-    {
-        const unsigned value = readIdentifierForFloatType(input);
-        if((value & 0x80000000U) != 0 &&
-           !Functions[(value >> 16) & 0x7FFF].okForInt())
-            return value & 0xFFFF;
-        return value;
-    }
-
     template<typename Value_t>
     inline unsigned readIdentifier(const char* input)
     {
-        return IsIntType<Value_t>::result
-                ? readIdentifierForIntType(input)
-                : readIdentifierForFloatType(input);
+        const unsigned value = readIdentifierCommon(input);
+        if( (value & 0x80000000U) != 0) // Function?
+        {
+            // Verify that the function actually exists for this datatype
+            if(IsIntType<Value_t>::result
+            && !Functions[(value >> 16) & 0x7FFF].okForInt())
+            {
+                // If it does not exist, return it as an identifier instead
+                return value & 0xFFFFu;
+            }
+            if(!IsComplexType<Value_t>::result
+            && Functions[(value >> 16) & 0x7FFF].complexOnly())
+            {
+                // If it does not exist, return it as an identifier instead
+                return value & 0xFFFFu;
+            }
+        }
+        return value;
     }
 
     // Returns true if the entire string is a valid identifier
