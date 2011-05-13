@@ -125,7 +125,10 @@ public:
             requestEvent->valid = false;
     };
 
-    Client* GetAdvisee() { return advisee; };
+    Client* GetAdvisee()
+    {
+        return advisee;
+    };
 
     void SetAdvisor( Client *newAdvisor)
     {
@@ -145,7 +148,11 @@ public:
         AdvisorClientNum = advisor->GetClientNum();
         advisor->GetActor()->RegisterCallback( this );
     };
-    Client* GetAdvisor() { return advisor; };
+
+    Client* GetAdvisor()
+    {
+        return advisor;
+    };
 
     void RemoveAdvisor()
     {
