@@ -1394,7 +1394,9 @@ void NPCManager::UpdateWorldPositions()
         gemSupervisor->GetAllEntityPos(msgs);
 
         for(size_t i = 0; i < msgs.GetSize(); i++)
+        {
             msgs.Get(i).Multicast(superclients,-1,PROX_LIST_ANY_RANGE);
+        }
     }
 }
 
