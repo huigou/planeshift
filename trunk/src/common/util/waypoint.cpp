@@ -252,34 +252,44 @@ bool Waypoint::SetFlag(iDataConnection * db, const csString &flagstr, bool enabl
     if (isFlagSet(flagstr,"ALLOW_RETURN"))
     {
         allowReturn = enable;
-    } else if (isFlagSet(flagstr,"UNDERGROUND"))
+    }
+    else if (isFlagSet(flagstr,"UNDERGROUND"))
     {
         underground = enable;
-    } else if (isFlagSet(flagstr,"UNDERWATER"))
+    }
+    else if (isFlagSet(flagstr,"UNDERWATER"))
     {
         underwater = enable;
-    } else if (isFlagSet(flagstr,"PRIVATE"))
+    }
+    else if (isFlagSet(flagstr,"PRIVATE"))
     {
         priv = enable;
-    } else if (isFlagSet(flagstr,"PUBLIC"))
+    }
+    else if (isFlagSet(flagstr,"PUBLIC"))
     {
         pub = enable;
-    } else if (isFlagSet(flagstr,"CITY"))
+    }
+    else if (isFlagSet(flagstr,"CITY"))
     {
         city = enable;
-    } else if (isFlagSet(flagstr,"INDOOR"))
+    }
+    else if (isFlagSet(flagstr,"INDOOR"))
     {
         indoor = enable;
-    } else if (isFlagSet(flagstr,"PATH"))
+    }
+    else if (isFlagSet(flagstr,"PATH"))
     {
         path = enable;
-    } else if (isFlagSet(flagstr,"ROAD"))
+    }
+    else if (isFlagSet(flagstr,"ROAD"))
     {
         road = enable;
-    } else if (isFlagSet(flagstr,"GROUND"))
+    }
+    else if (isFlagSet(flagstr,"GROUND"))
     {
         ground = enable;
-    } else
+    }
+    else
     {
         return false;
     }

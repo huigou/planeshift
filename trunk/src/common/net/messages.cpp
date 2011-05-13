@@ -2084,11 +2084,13 @@ psWeatherMessage::psWeatherMessage(MsgEntry *message )
         {
             weather.has_downfall = true;
             weather.downfall_is_snow = true;
-        } else if (type & (uint8_t)RAIN)
+        }
+        else if (type & (uint8_t)RAIN)
         {
             weather.has_downfall = true;
             weather.downfall_is_snow = false;
-        } else
+        }
+        else
         {
             weather.has_downfall = false;
             weather.downfall_is_snow = false;
@@ -3330,7 +3332,8 @@ psEffectMessage::psEffectMessage(MsgEntry* message)
     if (message->HasMore(sizeof(float)))
     {
         scale = message->GetFloat();
-    } else
+    }
+    else
     {
         scale = 0.0;
     }

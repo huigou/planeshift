@@ -113,18 +113,19 @@ bool psNetConnection::Connect(const char *servaddr, int port)
 
 void psNetConnection::DisConnect()
 {
-   shouldRun = false;
-   if (thread){
-      thread->Wait();
-      Debug2(LOG_NET,0, "psNetConnection::DisConnect Thread %p supposedly terminated..", (void*)this);
-      thread = NULL;
+    shouldRun = false;
+    if (thread)
+    {
+        thread->Wait();
+        Debug2(LOG_NET,0, "psNetConnection::DisConnect Thread %p supposedly terminated..", (void*)this);
+        thread = NULL;
     }
     if (server)
     {
         delete server;
         server = NULL;
     }
-
+    
     // with proper refcounting this should kill all members of the hash
     awaitingack.Empty();
 }

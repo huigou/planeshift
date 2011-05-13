@@ -545,7 +545,8 @@ int psLinearMovement::MoveV (float delta)
       	+ velWorld.y < -(ABS_MAX_FREEFALL_VELOCITY))
       	velWorld.y = -(ABS_MAX_FREEFALL_VELOCITY)
       	- fulltransf.This2OtherRelative (velBody).y;
-      if (velWorld.y > 0){
+      if (velWorld.y > 0)
+      {
 	      // printf("Reset other y %g\n", fulltransf.This2OtherRelative (velBody).y);
         velWorld.y = 0;
       }

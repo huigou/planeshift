@@ -63,7 +63,8 @@ void Location::CalculateBoundingBox()
     {
         boundingBox.AddBoundingVertex(pos.x-radius,pos.z-radius);
         boundingBox.AddBoundingVertex(pos.x+radius,pos.z+radius);
-    } else
+    }
+    else
     {
         for (size_t i=0; i< locs.GetSize(); i++)
         {

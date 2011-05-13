@@ -612,13 +612,16 @@ bool psPath::SetFlag(iDataConnection * db, const csString &flagstr, bool enable)
     if (isFlagSet(flagstr,"ONEWAY"))
     {
         oneWay = enable;
-    } else if (isFlagSet(flagstr,"NO_WANDER"))
+    }
+    else if (isFlagSet(flagstr,"NO_WANDER"))
     {
         noWander = enable;
-    } else if (isFlagSet(flagstr,"TELEPORT"))
+    }
+    else if (isFlagSet(flagstr,"TELEPORT"))
     {
         teleport = enable;
-    } else
+    }
+    else
     {
         return false;
     }
@@ -763,7 +766,8 @@ bool psPathAnchor::CalculateAtDistance(psWorld * world, iEngine *engine, float d
             if (distance >= start && distance <= end) break; // Found segment
         }
         currentAtFraction = (distance - start) / (end - start);
-    } else
+    }
+    else
     {
         // First find the current index.
         for (currentAtIndex = 0; currentAtIndex < (int)path->points.GetSize() -1 ; currentAtIndex++)

@@ -116,7 +116,8 @@ bool psPathNetwork::Load(iEngine *engine, iDataConnection *db,psWorld * world)
         if (strcasecmp(pathType,"linear") == 0)
         {
             path = new psLinearPath(pathId,rs1[i]["name"],flagStr);
-        } else
+        }
+        else
         {
             path = new psLinearPath(pathId,rs1[i]["name"],flagStr); // For now
         }

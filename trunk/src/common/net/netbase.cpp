@@ -118,7 +118,8 @@ NetBase::~NetBase()
     Notify2(LOG_ANY,"Total bytes received was %li.\n", totaltransferin);
 
     socklibrefcount--;
-    if (socklibrefcount==0) {
+    if (socklibrefcount==0)
+    {
         exitSocket();
     }
 

@@ -623,7 +623,11 @@ bool pawsMultilineEditTextBox::Setup(iDocumentNode* node)
         {
             SetText(textAttribute->GetValue());
         }
-    } else SetText("");
+    }
+    else
+    {
+        SetText("");
+    }
 
     return true;
 }

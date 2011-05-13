@@ -197,7 +197,8 @@ void psSkillCacheItem::write(MsgEntry *msg)
     if (removed)
     {
         msg->Add((uint8_t)psSkillCacheItem::REMOVE);
-    } else
+    }
+    else
     {
         msg->Add((uint8_t)psSkillCacheItem::UPDATE_OR_ADD);
         msg->Add((uint16_t)rank);

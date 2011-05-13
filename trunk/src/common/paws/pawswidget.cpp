@@ -1054,14 +1054,21 @@ void pawsWidget::DrawBackground()
             {
                 // and the mouse is inside the widget
                 if (hasMouseFocus)
+                {
                     // slowly become opaque
                     fadeVal-=fadeSpeed;
+                }
                 else
+                {
                     // else slowly fade out
                     fadeVal+=fadeSpeed;
-            } else
+                }
+            }
+            else
+            {
                 // when it has got the focus become/stay opaque
                 fadeVal=0;
+            }
 
             if (fadeVal<0) fadeVal=0;
             if (fadeVal>100) fadeVal=100;
