@@ -160,7 +160,8 @@ void TribeNeedReproduce::UpdateNeed(NPC * npc)
     if (GetTribe()->ShouldGrow())
     {
         current_need += needGrowthValue;
-    } else
+    }
+    else
     {
         current_need = 0.0;
     }
@@ -186,7 +187,8 @@ void TribeNeedResourceRate::UpdateNeed(NPC * npc)
     if (GetTribe()->GetResourceRate() > 0.0 && GetTribe()->GetResourceRate() < limit)
     {
         current_need += needGrowthValue;
-    } else
+    }
+    else
     {
         current_need = 0.0;
     }
@@ -205,7 +207,8 @@ void TribeNeedDeathRate::UpdateNeed(NPC * npc)
     if (GetTribe()->GetDeathRate() > 0.0 && GetTribe()->GetDeathRate() < limit)
     {
         current_need += needGrowthValue;
-    } else
+    }
+    else
     {
         current_need = 0.0;
     }

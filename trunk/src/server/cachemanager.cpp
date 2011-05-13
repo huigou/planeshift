@@ -2405,7 +2405,8 @@ psItemStats *CacheManager::GetBasicItemStatsByName(csString name)
 
         delete itemstats;
         return NULL;
-    } else
+    }
+    else
     {
         CS_ASSERT( itemstats->GetUID() != 0 );
 
@@ -2457,7 +2458,8 @@ psItemStats *CacheManager::GetBasicItemStatsByID(uint32 id)
         }
         delete itemstats;
         return NULL;
-    } else
+    }
+    else
     {
         CS_ASSERT( itemstats->GetUID() != 0 );
 
@@ -2888,7 +2890,8 @@ bool CacheManager::PreloadItemStatsDatabase()
 
             delete newitem;
             return false;
-        } else
+        }
+        else
         {
             CS_ASSERT( newitem->GetUID() != 0 );
 

@@ -132,13 +132,16 @@ bool NPCType::Load(iDocumentNode *node)
     {
         // Do nothing. Use velSource from constructor default value
         // or as inherited from superclass.
-    } else if (velStr == "$WALK")
+    }
+    else if (velStr == "$WALK")
     {
         velSource = VEL_WALK;
-    } else if (velStr == "$RUN")
+    }
+    else if (velStr == "$RUN")
     {
         velSource = VEL_RUN;
-    } else if (node->GetAttributeValueAsFloat("vel") )
+    }
+    else if (node->GetAttributeValueAsFloat("vel") )
     {
         velSource = VEL_USER;
         vel = node->GetAttributeValueAsFloat("vel");
@@ -414,7 +417,8 @@ void BehaviorSet::Advance(csTicks delta,NPC *npc)
                 // Interrupt and stop current behaviour
                 active->InterruptScript(npc,eventmgr);
                 active->SetIsActive(false);
-            } else
+            }
+            else
             {
                 npc->Printf(1,"Activating behavior '%s'",
                             new_behaviour->GetName() );
@@ -632,7 +636,8 @@ bool Behavior::Load(iDocumentNode *node)
     {
         minLimitValid = true;
         minLimit = node->GetAttributeValueAsFloat("min");
-    } else
+    }
+    else
     {
         minLimitValid = false;
     }
@@ -640,7 +645,8 @@ bool Behavior::Load(iDocumentNode *node)
     {
         maxLimitValid = true;
         maxLimit = node->GetAttributeValueAsFloat("max");
-    } else
+    }
+    else
     {
         maxLimitValid = false;
     }

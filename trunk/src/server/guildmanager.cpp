@@ -624,43 +624,56 @@ bool GuildManager::ParseRightString(csString privilege,  GUILD_PRIVILEGE& right)
     if (privilege == "view_chat")
     {
         right = RIGHTS_VIEW_CHAT;
-    } else if (privilege == "chat")
+    }
+    else if (privilege == "chat")
     {
         right = RIGHTS_CHAT;
-    } else if (privilege == "invite")
+    }
+    else if (privilege == "invite")
     {
         right = RIGHTS_INVITE;
-    } else if (privilege == "remove")
+    }
+    else if (privilege == "remove")
     {
         right = RIGHTS_REMOVE;
-    } else if (privilege == "promote")
+    }
+    else if (privilege == "promote")
     {
         right = RIGHTS_PROMOTE;
-    } else if (privilege == "edit_level")
+    }
+    else if (privilege == "edit_level")
     {
         right = RIGHTS_EDIT_LEVEL;
-    } else if (privilege == "edit_points")
+    }
+    else if (privilege == "edit_points")
     {
         right = RIGHTS_EDIT_POINTS;
-    } else if (privilege == "edit_guild")
+    }
+    else if (privilege == "edit_guild")
     {
         right = RIGHTS_EDIT_GUILD;
-    } else if (privilege == "edit_public")
+    }
+    else if (privilege == "edit_public")
     {
         right = RIGHTS_EDIT_PUBLIC;
-    } else if (privilege == "edit_private")
+    }
+    else if (privilege == "edit_private")
     {
         right = RIGHTS_EDIT_PRIVATE;
-    } else if (privilege == "alliance_view_chat")
+    }
+    else if (privilege == "alliance_view_chat")
     {
         right = RIGHTS_VIEW_CHAT_ALLIANCE;
-    } else if (privilege == "alliance_chat")
+    }
+    else if (privilege == "alliance_chat")
     {
         right = RIGHTS_CHAT_ALLIANCE;
-    } else if (privilege == "guild_bank")
+    }
+    else if (privilege == "guild_bank")
     {
         right = RIGHTS_USE_BANK;
-    } else
+    }
+    else
     {
         Error2("Unkown privilege %s",privilege.GetData());
         return false;

@@ -1225,13 +1225,22 @@ void psServer::QuitServer(int time, Client *client) //-1 for stop, 0 for now > 0
                     psQuitEvent *Quit_event = new psQuitEvent(entitymanager, (quit_delay-quit_time)*60*1000, server_quit_event,
                                                                 outtext, quit_time == 5, false);
                     GetEventManager()->Push(Quit_event);
-                    if(quit_time == quit_delay) { break; } //we have got to the first message saying the server
-                                                           //will be shut down let's go out of the loop
-                    else if(quit_time+5 > quit_delay) { quit_time = quit_delay; } //we have reached the second message
-                                                                                  //saying the server will shut down
-                                                                                  //so manage the case of not multiple
-                                                                                  //of 5 minutes shut down times
-                    else { quit_time +=5; } //we have still a long way so let's go to the next 5 minutes message
+                    if(quit_time == quit_delay)
+                    {
+                        break;
+                    } //we have got to the first message saying the server
+                    //will be shut down let's go out of the loop
+                    else if(quit_time+5 > quit_delay)
+                    {
+                        quit_time = quit_delay;
+                    } //we have reached the second message
+                    //saying the server will shut down
+                    //so manage the case of not multiple
+                    //of 5 minutes shut down times
+                    else
+                    {
+                        quit_time +=5;
+                    } //we have still a long way so let's go to the next 5 minutes message
                 }
             }
             else //we have no arguments or the argument passed is zero let's quit immediately

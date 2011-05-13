@@ -215,7 +215,7 @@ public:
 enum ADMINCMD_TARGET_TYPES
 {
     ADMINCMD_TARGET_UNKNOWN = 0, ///< when not recognized as any of the below types
-    ADMINCMD_TARGET_TARGET = 1,	///< "target"
+    ADMINCMD_TARGET_TARGET = 1, ///< "target"
     ADMINCMD_TARGET_PID = 1 << 1, ///< "pid:PID"
     ADMINCMD_TARGET_AREA = 1 << 2, ///< "area:AREA"
     ADMINCMD_TARGET_ME = 1 << 3, ///< "me"
@@ -2730,7 +2730,7 @@ public:
     /** @brief Creates obj for specified command that ends the server.
      */
     AdminCmdDataSimple(csString commandName)
-    : AdminCmdData(commandName)
+        : AdminCmdData(commandName)
     {};
     
     /** @brief Parses the given message and stores its data.

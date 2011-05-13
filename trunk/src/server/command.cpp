@@ -713,7 +713,8 @@ int com_importnpc(char* filename)
     if (npcloader.LoadFromFile(file))
     {
         CPrintf(CON_CMDOUTPUT ,"Succesfully imported NPC.\n");
-    } else
+    }
+    else
     {
         CPrintf(CON_CMDOUTPUT ,"Failed to import NPC.\n");
     }
@@ -779,7 +780,8 @@ int com_exportnpc(char *args)
     if (npcloader.SaveToFile(id, fileName))
     {
         CPrintf(CON_CMDOUTPUT ,"Succesfully exported NPC.\n");
-    } else
+    }
+    else
     {
         CPrintf(CON_CMDOUTPUT ,"Failed to export NPC.\n");
     }
@@ -841,7 +843,8 @@ int com_importdialogs(char *filename)
     if (npcloader.LoadDialogsFromFile(file))
     {
         CPrintf(CON_CMDOUTPUT ,"Succesfully imported NPC dialogs.\n");
-    } else
+    }
+    else
     {
         CPrintf(CON_CMDOUTPUT ,"Failed to import NPC dialogs.\n");
     }
@@ -933,7 +936,8 @@ int com_exportdialogs(char *args)
     if (npcloader.SaveDialogsToFile(areaname, filename, questid, quest))
     {
         CPrintf(CON_CMDOUTPUT ,"Succesfully exported NPC dialogs\n");
-    } else
+    }
+    else
     {
         CPrintf(CON_CMDOUTPUT ,"Failed to export NPC dialogs\n");
     }
@@ -2235,9 +2239,12 @@ int com_killnpc(char* input)
 
 int com_motd(char* str)
 {
-    if (!strcmp(str,""))    {
+    if (!strcmp(str,""))
+    {
         CPrintf(CON_CMDOUTPUT ,"MOTD: %s\n",psserver->GetMOTD());
-    } else {
+    }
+    else
+    {
         psserver->SetMOTD((const char*)str);
     }
     return 0;
