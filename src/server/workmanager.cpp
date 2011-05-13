@@ -765,7 +765,8 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
         float cur_skill = workerchar->Skills().GetSkillRank((PSSKILL)workEvent->nrr.Get(resNum).resource->skill->id).Current();
 
         // If skill=0, check if it has at least theoretical training in that skill
-        if (cur_skill==0) {
+        if (cur_skill==0)
+        {
             bool fullTrainingReceived = !workerchar->Skills().Get((PSSKILL)workEvent->nrr.Get(resNum).resource->skill->id).CanTrain();
             if (fullTrainingReceived)
                 cur_skill = 0.7F; // consider the skill somewhat usable
@@ -3540,7 +3541,8 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
         {
             // If no transformations started go ahead and start a cleanup event
             psItem* newItem = workEvent->GetTranformationItem();
-            if (newItem) {
+            if (newItem)
+            {
                 StartCleanupEvent(transType,workEvent->client, newItem, workEvent->client->GetActor());
             }
         }

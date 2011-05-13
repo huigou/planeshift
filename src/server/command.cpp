@@ -794,7 +794,8 @@ int com_importdialogs(char *filename)
 {
     csString file;
 
-    if (filename==NULL || filename[0] == '\0') {
+    if (filename==NULL || filename[0] == '\0')
+    {
       CPrintf(CON_WARNING ,"Please speficy a filename, pattern or 'all' (for all files in /this/).\n\n");
       return 0;
     }
@@ -2038,8 +2039,16 @@ int com_liststats(char *line)
     {
         bool temploaded;
         psCharacter *chardata;
-        AutoRemove() : temploaded(false), chardata(NULL) { }
-        ~AutoRemove() { if (temploaded) delete chardata; }
+        AutoRemove() : temploaded(false), chardata(NULL)
+        {
+        }
+        ~AutoRemove()
+        {
+            if (temploaded)
+            {
+                delete chardata;
+            }
+        }
     };
     AutoRemove chardata_keeper;
 
@@ -2258,7 +2267,8 @@ int com_questreward( char* str )
     csString charactername = words[0];
     csString item   = words[1];
 
-    if (charactername.IsEmpty() || item.IsEmpty()) {
+    if (charactername.IsEmpty() || item.IsEmpty())
+    {
         CPrintf(CON_CMDOUTPUT ,"Both char name and item number should be specified.\n");
         return 0;
     }

@@ -1543,7 +1543,8 @@ AdminCmdDataCrystal::AdminCmdDataCrystal(AdminManager* msgManager, MsgEntry* me,
     if (IsHelp(words[1]))
         return;
 
-    if (words.GetCount() == 6) {
+    if (words.GetCount() == 6)
+    {
         interval = words.GetInt(1);
         random   = words.GetInt(2);
         amount = words.GetInt(3);
@@ -1768,7 +1769,8 @@ AdminCmdDataChangeGuildName::AdminCmdDataChangeGuildName(AdminManager* msgManage
     if (IsHelp(words[1]))
         return;
 
-    if (words.GetCount() >= 2) {
+    if (words.GetCount() >= 2)
+    {
         guildName = words[1];
         newName = words.GetTail(2);
     }
@@ -1802,7 +1804,8 @@ AdminCmdDataChangeGuildLeader::AdminCmdDataChangeGuildLeader(AdminManager* msgMa
         index++;
     }
     // when first param player|target or the client has selected a target
-    if (words.GetCount() >= index + 1 && (found || (IsTargetType(ADMINCMD_TARGET_CLIENTTARGET)))) {
+    if (words.GetCount() >= index + 1 && (found || (IsTargetType(ADMINCMD_TARGET_CLIENTTARGET))))
+    {
         guildName = words.GetTail(index);
     }
     else
@@ -1866,7 +1869,8 @@ AdminCmdDataImpersonate::AdminCmdDataImpersonate(AdminManager* msgManager, MsgEn
         index++;
     }
     // when first param player|target or the client has selected a target
-    if (words.GetCount() >= index + 1 && (found || (IsTargetType(ADMINCMD_TARGET_CLIENTTARGET)))) {
+    if (words.GetCount() >= index + 1 && (found || (IsTargetType(ADMINCMD_TARGET_CLIENTTARGET))))
+    {
         commandMod = words[index];
         commandMod.Downcase();
         if ( commandMod == "say" || commandMod == "shout" || commandMod == "worldshout")
@@ -1910,7 +1914,8 @@ AdminCmdDataDeputize::AdminCmdDataDeputize(AdminManager* msgManager, MsgEntry* m
         index++;
     }
     // when first param player|target or the client has selected a target
-    if (words.GetCount() >= index + 1 && (found || (IsTargetType(ADMINCMD_TARGET_CLIENTTARGET)))) {
+    if (words.GetCount() >= index + 1 && (found || (IsTargetType(ADMINCMD_TARGET_CLIENTTARGET))))
+    {
         securityLevel = words[index];
         securityLevel.Downcase();
         if (securityLevel != "reset" && securityLevel != "player" && securityLevel != "tester" && securityLevel != "gm" && (securityLevel.StartsWith("gm",true) && securityLevel.Length() != 3) && securityLevel != "developer")
@@ -1976,7 +1981,8 @@ AdminCmdDataItemTarget::AdminCmdDataItemTarget(csString commandName, AdminManage
         index++;
     }
     // when first param player|target or the client has selected a target
-    if (words.GetCount() >= index + 1 && (found || (IsTargetType(ADMINCMD_TARGET_CLIENTTARGET)))) {
+    if (words.GetCount() >= index + 1 && (found || (IsTargetType(ADMINCMD_TARGET_CLIENTTARGET))))
+    {
         // try to parse an integer value
         stackCount = words.GetInt(index);
         if (stackCount)
@@ -2024,7 +2030,8 @@ AdminCmdDataCheckItem::AdminCmdDataCheckItem(AdminManager* msgManager, MsgEntry*
         index++;
     }
     // when first param player|target or the client has selected a target
-    if (words.GetCount() >= index + 1 && (found || (IsTargetType(ADMINCMD_TARGET_CLIENTTARGET)))) {
+    if (words.GetCount() >= index + 1 && (found || (IsTargetType(ADMINCMD_TARGET_CLIENTTARGET))))
+    {
         stackCount = words.GetInt(index);
         if (stackCount)
         {
@@ -2349,7 +2356,8 @@ AdminCmdDataModify::AdminCmdDataModify(AdminManager* msgManager, MsgEntry* me, p
         index++;
     }
     // when first word is a target or the client has selected a target
-    if (words.GetCount() >= index + 1 && (found || (IsTargetType(ADMINCMD_TARGET_CLIENTTARGET)))) {
+    if (words.GetCount() >= index + 1 && (found || (IsTargetType(ADMINCMD_TARGET_CLIENTTARGET))))
+    {
         subCommand = words[index++];
         if (subCommand == "intervals" && words.GetCount() == index+2)
         {
@@ -2776,7 +2784,8 @@ AdminCmdDataPath::AdminCmdDataPath(AdminManager* msgManager, MsgEntry* me, psAdm
             else
             {
             }
-            if (words.GetCount() == index+1) {
+            if (words.GetCount() == index+1)
+            {
                 waypoint = words[index];
             }
         }
@@ -2980,7 +2989,8 @@ ADMINCMDFACTORY_IMPLEMENT_MSG_FACTORY_CREATE(AdminCmdDataLocation)
 
 csString AdminCmdDataLocation::GetHelpMessage()
 {
-    if (!subCommand.IsEmpty()) {
+    if (!subCommand.IsEmpty())
+    {
         return "Syntax: \"" + command + " " + subCommandList.GetHelpMessage(subCommand) + "\"";
     }
     return "Syntax: \"" + command + " " + subCommandList.GetHelpMessage() + " [options]\"";
@@ -3132,7 +3142,8 @@ ADMINCMDFACTORY_IMPLEMENT_MSG_FACTORY_CREATE(AdminCmdDataGameMasterEvent)
 
 csString AdminCmdDataGameMasterEvent::GetHelpMessage()
 {
-    if (!subCmd.IsEmpty() || subCmd == "help") {
+    if (!subCmd.IsEmpty() || subCmd == "help")
+    {
         return "Syntax: \"" + command + " " + subCommandList.GetHelpMessage(subCmd) + "\"";
     }
     return "Syntax: \"" + command + " " + subCommandList.GetHelpMessage() + " [options]\"";
@@ -3159,7 +3170,8 @@ AdminCmdDataBadText::AdminCmdDataBadText(AdminManager* msgManager, MsgEntry* me,
     {
         // try to read the next parameter as an integer
         first = atoi(words[index]);
-        if (first) {
+        if (first)
+        {
             index++;
             // try to read the next parameter as an integer
             last = atoi(words[index]);
@@ -3445,7 +3457,8 @@ AdminCmdDataReload::AdminCmdDataReload(AdminManager* msgManager, MsgEntry* me, p
         return;
 
     subCmd = words[index++];
-    if (subCmd == "item") {
+    if (subCmd == "item")
+    {
         itemID = words.GetInt(index++);
         if (itemID == 0)
         {
@@ -3623,7 +3636,8 @@ AdminCmdDataServerQuit::AdminCmdDataServerQuit(AdminManager* msgManager, MsgEntr
         return;
 
     size_t index = 1;
-    if (words.GetCount() >= index + 1) {
+    if (words.GetCount() >= index + 1)
+    {
         time = words.GetInt(index++);
         //optional parameter
         if(words.GetCount() == index + 1)
@@ -3969,7 +3983,8 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, Client *client)
         return;
     }
 
-    if (me->clientnum) {
+    if (me->clientnum)
+    {
         data->LogGMCommand( client, msg.cmd );
     }
 
@@ -7127,7 +7142,8 @@ void AdminManager::MakeUnlockable(MsgEntry *me, psAdminCmdMessage& msg, AdminCmd
 
     // Check if target is action item
     gemActionLocation* gemAction = dynamic_cast<gemActionLocation*>(target);
-    if(gemAction) {
+    if(gemAction)
+    {
         psActionLocation *action = gemAction->GetAction();
 
         // check if the actionlocation is linked to real item
@@ -7177,7 +7193,8 @@ void AdminManager::MakeSecurity(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdDa
 
     // Check if target is action item
     gemActionLocation* gemAction = dynamic_cast<gemActionLocation*>(target);
-    if(gemAction) {
+    if(gemAction)
+    {
         psActionLocation *action = gemAction->GetAction();
 
         // check if the actionlocation is linked to real item
@@ -7265,7 +7282,8 @@ void AdminManager::AddRemoveLock(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdD
 
     // Check if target is action item
     gemActionLocation* gemAction = dynamic_cast<gemActionLocation*>(target);
-    if(gemAction) {
+    if(gemAction)
+    {
         psActionLocation *action = gemAction->GetAction();
 
         // check if the actionlocation is linked to real item
@@ -7323,7 +7341,8 @@ void AdminManager::ChangeLock(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData
 
     // check for action location
     gemActionLocation* gemAction = dynamic_cast<gemActionLocation*>(target);
-    if(gemAction) {
+    if(gemAction)
+    {
         psActionLocation *action = gemAction->GetAction();
 
         // check if the actionlocation is linked to real item
