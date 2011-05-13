@@ -256,7 +256,10 @@ gemNPCItem::gemNPCItem( psNPCClient* npcclient, psPersistItem& mesg)
 }
 
 //Here we check the flag to see if we can pick up this item
-bool gemNPCItem::IsPickable() { return !(flags & NOPICKUP); }
+bool gemNPCItem::IsPickable()
+{
+    return !(flags & NOPICKUP);
+}
 
 gemNPCItem::~gemNPCItem()
 {

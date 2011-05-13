@@ -62,13 +62,34 @@ class CachedAuthMessage : public iCachedObject
 public: 
     psAuthApprovedMessage *msg;
 
-    CachedAuthMessage(psAuthApprovedMessage *message) { msg = message; }
-    ~CachedAuthMessage() { delete msg; }
+    CachedAuthMessage(psAuthApprovedMessage *message)
+    {
+        msg = message;
+    }
+
+    ~CachedAuthMessage()
+    {
+        delete msg;
+    }
 
     // iCachedObject Functions below
-    virtual void ProcessCacheTimeout() {};          /// required for iCachedObject but not used here
-    virtual void *RecoverObject() { return this; }  /// Turn iCachedObject ptr into psAccountInfo
-    virtual void DeleteSelf()     { delete this; }  /// Delete must come from inside object to handle operator::delete overrides.
+
+    /// required for iCachedObject but not used here
+    virtual void ProcessCacheTimeout()
+    {
+    }
+    
+    /// Turn iCachedObject ptr into psAccountInfo
+    virtual void *RecoverObject()
+    {
+        return this;
+    }
+
+    /// Delete must come from inside object to handle operator::delete overrides.
+    virtual void DeleteSelf()
+    {
+        delete this;
+    }  
 };
 
 
