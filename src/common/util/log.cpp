@@ -220,7 +220,8 @@ void SetFlag(int index, bool flag, uint32 filter)
     {
         filters_id[index]=filter;
         str.AppendFmt("with filter %d.\n",filter);
-    } else
+    }
+    else
     {
         filters_id[index]=0;
         str.AppendFmt("with no filter.\n");

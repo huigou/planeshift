@@ -32,8 +32,9 @@
 // This should be in header file somewhere...
 #define PSAPP   "planeshift.application.server"
 #define PS_QUERY_PLUGIN(goal,intf, str)                             \
-    goal =  csQueryRegistry<intf> (object_reg);                    \
-    if (!goal) {                                                    \
+    goal =  csQueryRegistry<intf> (object_reg);                     \
+    if (!goal)                                                      \
+    {                                                               \
         csReport (object_reg, CS_REPORTER_SEVERITY_ERROR, PSAPP,    \
             "No " str " plugin!");                                  \
         return false;                                               \

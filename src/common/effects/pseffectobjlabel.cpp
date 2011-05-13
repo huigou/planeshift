@@ -187,7 +187,9 @@ bool psEffectObjLabel::CreateMeshFact()
     if (mat)
     {
         fact->SetMaterialWrapper(mat);
-    } else {
+    }
+    else
+    {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "No material for label mesh: %s\n", materialName.GetData());
     }
     

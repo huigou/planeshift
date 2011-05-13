@@ -75,7 +75,8 @@ bool pawsMainWidget::OnKeyDown(utf32_char keyCode, utf32_char /*key*/, int modif
     if ( found )
     {
         pawsWidget* widget = FindWidget( found->widgetName );
-        if ( widget ){
+        if ( widget )
+        {
             widget->PerformAction( found->action );
             return true;
         }

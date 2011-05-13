@@ -550,9 +550,12 @@ bool PawsManager::HandleSelectionNotify( iEvent &ev )
                 printf ("type:%i len:%lu format:%i byte_left:%lu %s\n", 
                         (int)actualType, nitems, actualFormat, bytesLeft,clipData);
                 /*
-                  if (actualType == atom_UTF8_STRING && actualFormat == 8) {
+                  if (actualType == atom_UTF8_STRING && actualFormat == 8)
+                  {
                   returnData = String::fromUTF8 (clipData, nitems);
-                  } else if (actualType == XA_STRING && actualFormat == 8) {
+                  } 
+                  else if (actualType == XA_STRING && actualFormat == 8)
+                  {
                   returnData = String((const char*)clipData, nitems);
                   }
                 */
@@ -1588,7 +1591,7 @@ void PawsManager::RequestClipboardContent()
             Atom XA_UTF8_STRING = XInternAtom (dpy, "UTF8_STRING", False);
             
             //bool ok = juce_x11_requestSelectionContent(content, selection, atom_UTF8_STRING);
-            //static bool juce_x11_requestSelectionContent(String &selection_content, Atom selection, Atom requested_format) {
+            //static bool juce_x11_requestSelectionContent(String &selection_content, Atom selection, Atom requested_format)
             
             Atom property_name = XInternAtom(dpy, "PLANESHIFT_SEL", false);
             

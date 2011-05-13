@@ -351,7 +351,8 @@ void ServerConsole::MainLoop()
         }
 
         s=stripwhite(line);
-        if (*s) {
+        if (*s)
+        {
 #ifdef USE_HISTORY
             add_history(s);
 #endif
