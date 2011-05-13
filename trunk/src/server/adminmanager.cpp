@@ -3642,6 +3642,21 @@ csString AdminCmdDataServerQuit::GetHelpMessage()
     return "Syntax: \"" + command + " [-1/time] <reason>\"";
 }
 
+AdminCmdDataSimple::AdminCmdDataSimple(csString commandName, AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client *client, WordArray &words)
+  : AdminCmdData(commandName)
+{
+    // when help is requested, return immediate
+    if (IsHelp(words[1]))
+        return;
+}
+
+ADMINCMDFACTORY_IMPLEMENT_MSG_FACTORY_CREATE_WITH_CMD(AdminCmdDataSimple)
+
+csString AdminCmdDataSimple::GetHelpMessage()
+{
+    return "Syntax: \"" + command + "\"";
+}
+
 AdminCmdDataRndMsgTest::AdminCmdDataRndMsgTest(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words)
 : AdminCmdData("/rndmsgtest")
 {
@@ -3812,6 +3827,7 @@ AdminCmdDataFactory::AdminCmdDataFactory()
 
     RegisterMsgFactoryFunction(new AdminCmdDataList());
     RegisterMsgFactoryFunction(new AdminCmdDataTime());
+    RegisterMsgFactoryFunction(new AdminCmdDataSimple("/version"));
 
     // register commands that only have a target|player|... and no additional
     // options/data
@@ -4232,6 +4248,10 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, Client *client)
     else if (data->command == "/serverquit")
     {
         HandleServerQuit(me, msg, data, client);
+    }
+    else if (data->command == "/version")
+    {
+        HandleVersion(me, msg, data, client);
     }
     else if (data->command == "/list")
     {
@@ -7426,7 +7446,7 @@ void AdminManager::Admin(int clientnum, Client *client, int requestedLevel)
     if (type>30) type=30;
     
     if(type > 0 && requestedLevel >= 0)
-		type = requestedLevel;
+        type = requestedLevel;
 
     psserver->GetCacheManager()->GetCommandManager()->BuildXML( type, commandList, requestedLevel == -1 );
 	//NOTE: with only a check for requestedLevel == -1 players can actually make this function add the nonsubscrition flag
@@ -11032,6 +11052,14 @@ void AdminManager::HandleServerQuit(MsgEntry* me, psAdminCmdMessage& msg, AdminC
 
     psserver->QuitServer(data->time, client);
 }
+
+void AdminManager::HandleVersion(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client *client )
+{
+    //    AdminCmdDataSimple* data = dynamic_cast<AdminCmdDataSimple*>(cmddata);
+
+    psserver->SendSystemInfo(client->GetClientNum(),"Server svn version at last commit was $Rev$");
+}
+
 
 void AdminManager::RandomMessageTest(AdminCmdData *cmddata, Client *client)
 {

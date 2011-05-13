@@ -2722,6 +2722,46 @@ public:
     virtual csString GetHelpMessage();
 };
 
+/** @brief Simple one word commands.
+ */
+class AdminCmdDataSimple : public AdminCmdData
+{
+public:
+    /** @brief Creates obj for specified command that ends the server.
+     */
+    AdminCmdDataSimple(csString commandName)
+    : AdminCmdData(commandName)
+    {};
+    
+    /** @brief Parses the given message and stores its data.
+     * @param msgManager message manager that handles this command
+     * @param me The incoming message from the GM
+     * @param msg psAdminCmdMessage containing the message
+     * @param client client of the network communication
+     * @param words command message to parse
+     */
+    AdminCmdDataSimple(csString commandName, AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+
+    virtual ~AdminCmdDataSimple()
+    {};
+
+    /** @brief Creates an object containing the parsed data for server stop.
+     * @param msgManager message manager that handles this command
+     * @param me The incoming message from the GM
+     * @param msg psAdminCmdMessage containing the message
+     * @param client client of the network communication
+     * @param words command message to parse
+     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+     */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+
+    /** @brief Returns a helpmessage that fits to the parser of the class.
+     * @return csString: a help message to send back to the client
+     */
+    virtual csString GetHelpMessage();
+};
+
+
 /** @brief Class for sending sequenced test message.
  */
 class AdminCmdDataRndMsgTest : public AdminCmdData
@@ -3836,6 +3876,15 @@ protected:
      */
     void HandleServerQuit(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client );
 
+    /** @brief Allows to get version the server remotely from a client
+     *
+     *  @param me The incoming message from the GM
+     *  @param msg The cracked command message.
+     * @param data A pointer to the command parser object with target data
+     *  @param client The GM client the command came from.
+     */
+    void HandleVersion(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client );
+    
     /** @brief Adds a petition under the passed user's name to the 'petitions' table in the database.
      *
      *  Will automatically add the date and time of the petition's submission
