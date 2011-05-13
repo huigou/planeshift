@@ -58,6 +58,7 @@ INSERT INTO command_group_assignment VALUES( "setkillexp others", 30 );
 INSERT INTO command_group_assignment VALUES( "/serverquit", 30 );
 INSERT INTO command_group_assignment VALUES( "requested death", 30 );
 INSERT INTO command_group_assignment VALUES( "/time", 30 );
+INSERT INTO command_group_assignment VALUES( "/version", 30 );
 
 # GM5 and above
 INSERT INTO command_group_assignment VALUES( "/death", 30 );
