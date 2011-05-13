@@ -563,9 +563,9 @@ csString GetDefaultBehavior(const csString & dfltBehaviors, int behaviorNum)
 }
 
 gemObject::gemObject(GEMSupervisor* gemsupervisor,
-		EntityManager* entitymanager,
-		CacheManager* cachemanager,
-		const char* name,
+                     EntityManager* entitymanager,
+                     CacheManager* cachemanager,
+                     const char* name,
                      const char* factname,
                      InstanceID myInstance,
                      iSector* room,
