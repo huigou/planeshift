@@ -130,13 +130,16 @@ bool ScriptOperation::LoadVelocity(iDocumentNode *node)
     if (velStr.IsEmpty())
     {
         velSource = VEL_DEFAULT;
-    } else if (velStr == "$WALK")
+    }
+    else if (velStr == "$WALK")
     {
         velSource = VEL_WALK;
-    } else if (velStr == "$RUN")
+    }
+    else if (velStr == "$RUN")
     {
         velSource = VEL_RUN;
-    } else if (node->GetAttributeValueAsFloat("vel") )
+    }
+    else if (node->GetAttributeValueAsFloat("vel") )
     {
         velSource = VEL_USER;
         vel = node->GetAttributeValueAsFloat("vel");
@@ -770,7 +773,8 @@ void MovementOperation::Advance(float timedelta, NPC *npc, EventManager *eventmg
         if (distance > currentDistance )
         {
             npc->Printf(6, "We passed localDest...");
-        } else
+        }
+        else
         {
             npc->Printf(6, "We are at localDest...");
         }
@@ -1146,7 +1150,8 @@ gemNPCActor* ChaseOperation::UpdateChaseTarget(NPC* npc, const csVector3 &myPos,
             targetEID = targetEntity->GetEID();
         }
  
-    } else if (type == NEAREST_ACTOR)
+    }
+    else if (type == NEAREST_ACTOR)
     {   
         float dummyRange;
 
@@ -2118,7 +2123,8 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, EventManager *ev
                 {
                     located_wp = npcclient->FindNearestWaypoint(split_obj[2],start_pos,start_sector,range,&located_range);
                 }
-            } else if (split_obj[1] == "name")
+            }
+            else if (split_obj[1] == "name")
             {
                 located_wp = npcclient->FindWaypoint(split_obj[2]);
                 if (located_wp)
@@ -2756,7 +2762,8 @@ bool MoveToOperation::GetEndPosition(NPC* npc, const csVector3 &myPos, const iSe
     if (destSector)
     {
         endSector = destSector;
-    } else
+    }
+    else
     {
         // Guess that the sector is current sector if no sector is given
         endSector = const_cast<iSector*>(mySector);
@@ -3018,7 +3025,8 @@ ScriptOperation::OperationResult PickupOperation::Run(NPC *npc, EventManager *ev
         }
         
         
-    } else
+    }
+    else
     {
         // TODO: Insert code to find the nearest item
         //       with name given by object.
@@ -3502,13 +3510,16 @@ bool SequenceOperation::Load(iDocumentNode *node)
     if (strcasecmp(cmdStr,"start") == 0)
     {
         cmd = START;
-    } else if (strcasecmp(cmdStr,"stop") == 0)
+    }
+    else if (strcasecmp(cmdStr,"stop") == 0)
     {
         cmd = STOP;
-    } else if (strcasecmp(cmdStr,"loop") == 0)
+    }
+    else if (strcasecmp(cmdStr,"loop") == 0)
     {
         cmd = LOOP;
-    } else
+    }
+    else
     {
         return false;
     }
@@ -3598,16 +3609,20 @@ bool TalkOperation::Load(iDocumentNode *node)
     if (type.IsEmpty() || type.CompareNoCase("say"))
     {
         talkType = psNPCCommandsMessage::TALK_SAY;
-    } else if (type.CompareNoCase("me"))
+    }
+    else if (type.CompareNoCase("me"))
     {
         talkType = psNPCCommandsMessage::TALK_ME;
-    } else if (type.CompareNoCase("my"))
+    }
+    else if (type.CompareNoCase("my"))
     {
         talkType = psNPCCommandsMessage::TALK_MY;
-    } else if (type.CompareNoCase("narrate"))
+    }
+    else if (type.CompareNoCase("narrate"))
     {
         talkType = psNPCCommandsMessage::TALK_NARRATE;
-    } else
+    }
+    else
     {
         Error2("Type of '%s' is unkown for talk",type.GetDataSafe());
         return false;
@@ -4022,7 +4037,8 @@ ScriptOperation::OperationResult WanderOperation::CalculateEdgeList(NPC *npc)
             if (start == end)
             {
                 return OPERATION_COMPLETED;
-            } else
+            }
+            else
             {
                 csList<Waypoint*> wps;
                 
@@ -4152,7 +4168,8 @@ psPathPoint* WanderOperation::GetNextPathPoint(NPC* npc, bool &teleport)
 		    toString(currentPointOffset).GetData());
 
 
-    } else
+    }
+    else
     {
         currentPathPoint = NULL;
     }
@@ -4256,7 +4273,8 @@ void WanderOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
         if (distance > currentDistance )
         {
             npc->Printf(6, "We passed localDest...");
-        } else
+        }
+        else
         {
             npc->Printf(6, "We are at localDest...");
         }

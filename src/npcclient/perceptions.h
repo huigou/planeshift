@@ -140,7 +140,7 @@ public:
     csString        GetValue();
     int             GetRandom(int i);
     const csString& GetType()           { return type;         }
-    char            GetOp()             { if (oper.Length()) return oper.GetAt(0); else return 0; }
+    char            GetOp();
     csString        GetAffectedBehaviors();
     const csString& GetLastTriggerd()   { return lastTriggered; }
     

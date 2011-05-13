@@ -120,7 +120,8 @@ bool Reaction::Load(iDocumentNode *node,BehaviorSet& behaviors)
         {
             values.Push(atoi(valueStr[ii]));
             valuesValid.Push(true);
-        } else
+        }
+        else
         {
             values.Push(0);
             valuesValid.Push(false);
@@ -135,7 +136,8 @@ bool Reaction::Load(iDocumentNode *node,BehaviorSet& behaviors)
         {
             randoms.Push(atoi(randomStr[ii]));
             randomsValid.Push(true);
-        } else
+        }
+        else
         {
             randoms.Push(0);
             randomsValid.Push(false);
@@ -385,6 +387,19 @@ bool Reaction::GetRandomValid(int i)
     }
     return false;
 }
+
+char Reaction::GetOp()
+{
+    if (oper.Length())
+    {
+        return oper.GetAt(0);
+    }
+    else
+    {
+        return 0;
+    }
+}
+
 
 csString Reaction::GetValue()
 {

@@ -983,7 +983,8 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     if (chardata && chardata->Inventory().Add(item))
                     {
                         entityManager->RemoveActor(gItem);  // Destroy this
-                    } else
+                    }
+                    else
                     {
                         // TODO: Handle of pickup of partial stacks.
                     }

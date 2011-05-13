@@ -583,7 +583,8 @@ void ProgressionManager::SendSkillList(Client * client, bool forceOpen, PSSKILL 
                 item->update(charSkill.rank.Base(), actualStat,
                              charSkill.y, charSkill.yCost,
                              charSkill.z, charSkill.zCost);
-            } else
+            }
+            else
             {
                 item = new psSkillCacheItem(skillID, skillNameId,
                                             charSkill.rank.Base(), actualStat,
@@ -592,7 +593,8 @@ void ProgressionManager::SendSkillList(Client * client, bool forceOpen, PSSKILL 
                                             info->category, stat);
                 skills->addItem(skillID, item);
             }
-        } else if (trainerInfo)
+        }
+        else if (trainerInfo)
         {
             // We are training, but this skill is not available for training
             psSkillCacheItem *item = skills->getItemBySkillId(skillID);

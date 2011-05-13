@@ -104,7 +104,8 @@ bool Tribe::LoadNeed(iResultRow& row)
     if (needType.CompareNoCase(TribeNeed::TribeNeedTypeName[TribeNeed::GENERIC]))
     {
         need = new TribeNeedGeneric(needName,perception,needStartValue,needGrowthValue);
-    } else if (needType.CompareNoCase(TribeNeed::TribeNeedTypeName[TribeNeed::TIME_OF_DAY]))
+    }
+    else if (needType.CompareNoCase(TribeNeed::TribeNeedTypeName[TribeNeed::TIME_OF_DAY]))
     {
         CS::Utility::StringArray<> arguments;
         arguments.SplitString(row.GetString("arguments"), ",");
@@ -118,7 +119,8 @@ bool Tribe::LoadNeed(iResultRow& row)
         int endHour   = atoi(arguments[1]);
             
         need = new TribeNeedTimeOfDay(needName,perception,needStartValue,needGrowthValue,startHour,endHour);
-    } else
+    }
+    else
     {
         // The rest of the needs are depened on other needs.
         // Check that we have the dependend need.
@@ -133,10 +135,12 @@ bool Tribe::LoadNeed(iResultRow& row)
         if (needType.CompareNoCase(TribeNeed::TribeNeedTypeName[TribeNeed::RESOURCE_AREA]))
         {
             need = new TribeNeedResourceArea(needName,perception,needStartValue,needGrowthValue,depend);
-        } else if (needType.CompareNoCase(TribeNeed::TribeNeedTypeName[TribeNeed::REPRODUCE]))
+        }
+        else if (needType.CompareNoCase(TribeNeed::TribeNeedTypeName[TribeNeed::REPRODUCE]))
         {
             need = new TribeNeedReproduce(needName,perception,needStartValue,needGrowthValue,depend);
-        } else if (needType.CompareNoCase(TribeNeed::TribeNeedTypeName[TribeNeed::RESOURCE_RATE]))
+        }
+        else if (needType.CompareNoCase(TribeNeed::TribeNeedTypeName[TribeNeed::RESOURCE_RATE]))
         {
             float limit = row.GetFloat("arguments");
             if (limit <= 0.0)
@@ -146,7 +150,8 @@ bool Tribe::LoadNeed(iResultRow& row)
             }
 
             need = new TribeNeedResourceRate(needName,perception,needStartValue,needGrowthValue,depend,limit);
-        } else if (needType.CompareNoCase(TribeNeed::TribeNeedTypeName[TribeNeed::DEATH_RATE]))
+        }
+        else if (needType.CompareNoCase(TribeNeed::TribeNeedTypeName[TribeNeed::DEATH_RATE]))
         {
             float limit = row.GetFloat("arguments");
             if (limit <= 0.0)
@@ -156,7 +161,8 @@ bool Tribe::LoadNeed(iResultRow& row)
             }
             
             need = new TribeNeedDeathRate(needName,perception,needStartValue,needGrowthValue,depend,limit);
-        } else
+        }
+        else
         {
             Error3("Could not mach need '%s' for tribe %d",needName.GetDataSafe(),id);
             return false;
@@ -442,13 +448,15 @@ void Tribe::Advance(csTicks when, EventManager *eventmgr)
         if (AliveCount() <= 0)
         {
             growth = wealthResourceGrowth;
-        } else if (CountResource(wealthResourceName) < wealthResourceGrowthActiveLimit)
+        }
+        else if (CountResource(wealthResourceName) < wealthResourceGrowthActiveLimit)
         {
             // Some tribes need constant growth in wealth, though capped to a limit
             // to prevent tribes with no strain on the resources to grow
             // infinit in wealth
             growth = wealthResourceGrowthActive;
-        } else
+        }
+        else
         {
             growth = 0;
         }
@@ -462,7 +470,8 @@ void Tribe::Advance(csTicks when, EventManager *eventmgr)
         AddResource(wealthResourceName, amount );
         
         lastGrowth = when;
-    } else if (when - lastGrowth < 0) // Handle wrappoer of tick
+    }
+    else if (when - lastGrowth < 0) // Handle wrappoer of tick
     {
         lastGrowth = when;
     }
@@ -688,7 +697,8 @@ bool Tribe::CheckWithinBoundsTribeHome(NPC* npc, const csVector3& pos, const iSe
     if (dist > homeRadius)
     {
         return false;
-    } else
+    }
+    else
     {
         return true;
     }

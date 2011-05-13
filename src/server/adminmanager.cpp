@@ -2799,17 +2799,17 @@ AdminCmdDataPath::AdminCmdDataPath(AdminManager* msgManager, MsgEntry* me, psAdm
         {
             csString wpOrPath = words[index++];
             if (wpOrPath == "wp")
-	    {
+            {
               wpOrPathIsWP = true;
-	    }
-	    else if (wpOrPath == "path")
-	    {
+            }
+            else if (wpOrPath == "path")
+            {
               wpOrPathIsWP = false;
-	    }
-	    else
-	    {
+            }
+            else
+            {
                 ParseError(me,"You have to select either wp or path.");
-	    }
+            }
             flagName = words[index++];    // Flag
             radius = words.GetFloat(index++); // try to parse an optional radius
         }
@@ -3643,7 +3643,7 @@ csString AdminCmdDataServerQuit::GetHelpMessage()
 }
 
 AdminCmdDataSimple::AdminCmdDataSimple(csString commandName, AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client *client, WordArray &words)
-  : AdminCmdData(commandName)
+    : AdminCmdData(commandName)
 {
     // when help is requested, return immediate
     if (IsHelp(words[1]))
@@ -3735,14 +3735,17 @@ AdminCmdDataTime::AdminCmdDataTime(AdminManager* msgManager, MsgEntry* me, psAdm
             if (!words.GetInt(index++,hour))
             {
                 ParseError(me, "Hour not given or not an integer value.");
-            } else if (hour < 0 || hour > 23)
+            }
+            else if (hour < 0 || hour > 23)
             {
                 ParseError(me, "Hour not between 0 and 23.");
             }
+
             if (!words.GetInt(index++,minute))
             {
                 ParseError(me, "Minute not given or not an integer value.");
-            } else if (minute < 0 || minute > 59)
+            }
+            else if (minute < 0 || minute > 59)
             {
                 ParseError(me, "Minutes not between 0 and 59.");
             }
@@ -3890,7 +3893,7 @@ AdminManager::AdminManager()
     Subscribe(&AdminManager::HandleGMGuiMessage, MSGTYPE_GMGUI, REQUIRE_READY_CLIENT);
     Subscribe(&AdminManager::SendSpawnItems, MSGTYPE_GMSPAWNITEMS, REQUIRE_READY_CLIENT);
     Subscribe(&AdminManager::SpawnItemInv, MSGTYPE_GMSPAWNITEM, REQUIRE_READY_CLIENT);
-	
+
     // this makes sure that the player dictionary exists on start up.
     npcdlg = new psNPCDialog(NULL);
     npcdlg->Initialize( db );
@@ -4305,7 +4308,8 @@ void AdminManager::HandleTime(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
                                  psserver->GetWeatherManager()->GetGameTODMonth(),
                                  psserver->GetWeatherManager()->GetGameTODDay());
         return;
-    } else if (data->subCommand == "set")
+    }
+    else if (data->subCommand == "set")
     {
         psserver->GetWeatherManager()->SetGameTime(data->hour,data->minute);
         psserver->SendSystemInfo(client->GetClientNum(), "Current Game Hour set to: %d:%02d\n",
@@ -4580,7 +4584,7 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData* cm
                 return;
             }
 
-	    psCharacter* npcChar = npc->GetCharacterData();
+            psCharacter* npcChar = npc->GetCharacterData();
 
             name = npc->GetName();
 
@@ -5815,8 +5819,8 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
 
         bool enable = data->subCmd == "flagset";
 
-	if (data->wpOrPathIsWP)
-	{
+        if (data->wpOrPathIsWP)
+        {
             if (!wp)
             {
                 psserver->SendSystemInfo(me->clientnum, "No waypoint in range of %.2f.",data->radius);
@@ -5958,7 +5962,8 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         {
             psserver->SendSystemInfo( me->clientnum, "Starting path, using existing waypoint %s(%d) at range %.2f",
                                       wp->GetName(), wp->GetID(), range);
-        } else
+        }
+        else
         {
             csString wpName;
             wpName.Format(client->WaypointGetPathName(),client->WaypointGetNewPathIndex());
@@ -6019,7 +6024,8 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
 
             psserver->SendSystemInfo( me->clientnum, "Stoping path using existing waypoint %s(%d) at range %.2f",
                                       wp->GetName(), wp->GetID(), range);
-        } else
+        }
+        else
         {
             csString wpName;
             wpName.Format(client->WaypointGetPathName(),client->WaypointGetNewPathIndex());
@@ -6046,7 +6052,8 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         if (!path)
         {
             psserver->SendSystemError( me->clientnum, "Failed to create path");
-        } else
+        }
+        else
         {
             psserver->SendSystemInfo( me->clientnum, "New path %s(%d) created between %s(%d) and %s(%d)",
                                       path->GetName(),path->GetID(),path->start->GetName(),path->start->GetID(),
@@ -6066,7 +6073,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
                     psPathPoint* point = iter.Next();
 
                     psEffectMessage msg(me->clientnum,"admin_path_point",
-					point->GetPosition(),0,0,client->PathGetEffectID(),point->GetRadius());
+                                        point->GetPosition(),0,0,client->PathGetEffectID(),point->GetRadius());
                     msg.SendMessage();
                 }
 
@@ -7449,9 +7456,9 @@ void AdminManager::Admin(int clientnum, Client *client, int requestedLevel)
         type = requestedLevel;
 
     psserver->GetCacheManager()->GetCommandManager()->BuildXML( type, commandList, requestedLevel == -1 );
-	//NOTE: with only a check for requestedLevel == -1 players can actually make this function add the nonsubscrition flag
-	//      but as it brings no real benefits to the player there is no need to check for it. They will just get the commands
-	//      of their level and they won't be subscripted in their client
+    //NOTE: with only a check for requestedLevel == -1 players can actually make this function add the nonsubscrition flag
+    //      but as it brings no real benefits to the player there is no need to check for it. They will just get the commands
+    //      of their level and they won't be subscripted in their client
 
     psAdminCmdMessage admin(commandList.GetDataSafe(), clientnum);
     admin.SendMessage();
@@ -9925,11 +9932,11 @@ void AdminManager::Weather(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* c
             psserver->SendSystemInfo(me->clientnum,"Automatic weather cannot be %s in sector %s because data is missing",
                                     data->enabled ? "started" : "stopped", data->sectorName.GetDataSafe());
         }
- 	}
- 	else
- 	{
+         }
+         else
+         {
         psserver->SendSystemInfo(me->clientnum,"The weather is already automatic in sector %s", data->enabled ? "automatic" : "off", data->sectorName.GetDataSafe());
- 	}
+         }
 }
 
 void AdminManager::Rain(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client *client)
@@ -11064,20 +11071,20 @@ void AdminManager::HandleVersion(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdD
 void AdminManager::RandomMessageTest(AdminCmdData *cmddata, Client *client)
 {
     AdminCmdDataRndMsgTest *data = dynamic_cast<AdminCmdDataRndMsgTest*>(cmddata);
-	csArray<int> values;
-	for (int i=0; i<10; i++)
-	{
-		int value = psserver->GetRandom(10) + 1; // range from 1-10, not 0-9
-		if (values.Find(value) != SIZET_NOT_FOUND) // already used
-			i--;  // try again
-		else
-			values.Push(value);
-	}
+    csArray<int> values;
+    for (int i=0; i<10; i++)
+    {
+        int value = psserver->GetRandom(10) + 1; // range from 1-10, not 0-9
+        if (values.Find(value) != SIZET_NOT_FOUND) // already used
+            i--;  // try again
+        else
+            values.Push(value);
+    }
 
-	for (int i=0; i<10; i++)
-	{
-		psOrderedMessage seq(client->GetClientNum(), values[i], data->sequential ? values[i] : 0);  // 0 means not sequenced so values should show up randomly
-		// seq.SendMessage();
-		psserver->GetNetManager()->SendMessageDelayed(seq.msg,i*1000);  // send out 1 per second
-	}
+    for (int i=0; i<10; i++)
+    {
+        psOrderedMessage seq(client->GetClientNum(), values[i], data->sequential ? values[i] : 0);  // 0 means not sequenced so values should show up randomly
+        // seq.SendMessage();
+        psserver->GetNetManager()->SendMessageDelayed(seq.msg,i*1000);  // send out 1 per second
+    }
 }
