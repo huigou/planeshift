@@ -55,7 +55,9 @@
 class psPurifyEvent : public psGameEvent
 {
 public:
-    psPurifyEvent(csTicks duration, gemActor *actor, uint32 glyphItemID) : psGameEvent(0, duration, "psPurifyEvent"), actor(actor), glyphItemID(glyphItemID) { }
+    psPurifyEvent(csTicks duration, gemActor *actor, uint32 glyphItemID) : psGameEvent(0, duration, "psPurifyEvent"), actor(actor), glyphItemID(glyphItemID)
+    {
+    }
 
     void Trigger()
     {

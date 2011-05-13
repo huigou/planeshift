@@ -114,7 +114,9 @@ public:
     {
     }
 
-    virtual ~PendingDuelInvite() {}
+    virtual ~PendingDuelInvite()
+    {
+    }
 
     void HandleAnswer(const csString & answer);
 };
@@ -1458,7 +1460,8 @@ void UserManager::ReportPosition(psUserCmdMessage& msg,Client *client)
         csString sector_name = (sector) ? sector->QueryObject()->GetName() : "(null)";
 
         csString name,range;
-        if (self){
+        if (self)
+        {
             name = "Your";
             range = "";
         }

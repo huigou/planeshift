@@ -975,7 +975,8 @@ int QuestManager::GetNPCFromBlock(WordArray words,csString& current_npc)
     select.Format ("SELECT * from characters where name='%s' and lastname='' and npc_master_id!=0",first.GetData() );
     // check if NPC exists
     Result npc_db(db->Select(select));
-    if (npc_db.IsValid() && npc_db.Count()>0) {
+    if (npc_db.IsValid() && npc_db.Count()>0)
+    {
       current_npc = first;
       return 1;
     }

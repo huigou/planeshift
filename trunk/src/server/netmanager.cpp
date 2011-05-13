@@ -59,24 +59,27 @@
 class DelayedMessageSendEvent : public psGameEvent
 {
 protected:
-	bool valid;
-	csRef<MsgEntry> myMsg;
+    bool valid;
+    csRef<MsgEntry> myMsg;
 
 public:
-	DelayedMessageSendEvent(int delayticks,MsgEntry *msg)
-		: psGameEvent(0, delayticks, "DelayedMessageSendEvent")
-	{
-		valid = true;
-		myMsg = msg;
-	}
-	void CancelEvent() { valid = false;}
-	virtual void Trigger()
-	{
-		if (valid)
-		{
-			psserver->GetNetManager()->SendMessage(myMsg);
-		}
-	}
+    DelayedMessageSendEvent(int delayticks,MsgEntry *msg)
+        : psGameEvent(0, delayticks, "DelayedMessageSendEvent")
+    {
+        valid = true;
+        myMsg = msg;
+    }
+    void CancelEvent()
+    { 
+        valid = false;
+    }
+    virtual void Trigger()
+    {
+        if (valid)
+        {
+            psserver->GetNetManager()->SendMessage(myMsg);
+        }
+    }
 };
 
 
@@ -169,7 +172,8 @@ NetManager* NetManager::Create(CacheManager* cacheManager, int client_firstmsg, 
         CS::Threading::MutexScopedLock lock (netManagerStarter->doneMutex);
         thread->Start();
         
-        if (!thread->IsRunning()) {
+        if (!thread->IsRunning())
+        {
             return NULL;        
         }
 
@@ -562,10 +566,11 @@ void NetManager::Broadcast(MsgEntry *me, int scope, int guildID)
                     continue;
 
                 // send to superclient only the messages he needs
-                if (p->IsSuperClient()) {
-                  // time of the day is needed
-                  if (me->GetType()!=MSGTYPE_WEATHER)
-                    continue;
+                if (p->IsSuperClient())
+                {
+                    // time of the day is needed
+                    if (me->GetType()!=MSGTYPE_WEATHER)
+                        continue;
                 }
 
                 // Only clients that finished connecting get broadcastet

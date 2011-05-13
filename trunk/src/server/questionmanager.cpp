@@ -125,7 +125,8 @@ void QuestionManager::HandleQuestionResponse(MsgEntry *me,Client *client)
         return;
     }
 
-    if (question->event) {
+    if (question->event)
+    {
       question->event->valid = false;  // This keeps the cancellation timeout from firing.
     }
 
