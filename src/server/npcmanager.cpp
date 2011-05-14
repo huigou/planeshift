@@ -92,7 +92,7 @@ const int NPC_TICK_INTERVAL = 300;  //msec
  */
 class PetOwnerSession : public iDeleteObjectCallback
 {
-	EntityManager* entityManager;
+    EntityManager* entityManager;
 public:
     PID ownerID; ///< Character ID of the owner
     PID petID; ///< Character ID of the pet
