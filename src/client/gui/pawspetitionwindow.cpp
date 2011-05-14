@@ -171,7 +171,7 @@ void pawsPetitionWindow::HandleMessage ( MsgEntry* me )
         return;
     }
     // Update the listbox:
-    size_t modifiedRow = -1;
+    int modifiedRow = -1;
     if (petitionList->GetSelectedRow())
         modifiedRow = petitionList->GetSelectedRow()->GetLastIndex(); 
     AddPetitions(message.petitions);
