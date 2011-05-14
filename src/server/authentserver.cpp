@@ -565,7 +565,7 @@ void AuthenticationServer::SendMsgStrings(int cnum, bool send_digest)
     csMD5::Digest digest;
 
     // Get strings data.
-    psserver->GetCacheManager()->   GetCompressedMessageStrings(data, size, num_strings, digest);
+    psserver->GetCacheManager()->GetCompressedMessageStrings(data, size, num_strings, digest);
 
     // send message strings hash table to client
     if (send_digest)
