@@ -102,12 +102,18 @@ public:
     csString curDate;
     csString curTime;
 
+    float deathLockOutTime;
+    float trainingLockOutTime;
+    
+
     PetOwnerSession(EntityManager* entitymanager)
     {
         owner = NULL;
         elapsedTime = 0.0f;
         isActive = false;
         entityManager = entitymanager;
+        deathLockOutTime = 0.0f;
+        trainingLockOutTime = 0.0f;
     };
 
     PetOwnerSession(gemActor* owner, psCharacter* pet)
@@ -131,6 +137,9 @@ public:
 
         elapsedTime = 0.0f;
         isActive = true;
+
+        deathLockOutTime = 0.0f;
+        trainingLockOutTime = 0.0f;
 
         // Get pet characterdata
         if ( pet )
@@ -248,6 +257,20 @@ public:
                     psserver->SendSystemInfo( owner->GetClientID(), "You feel your power to maintain your pet wane." );
                 }
             }
+
+            deathLockOutTime -= elapsed;
+            if (deathLockOutTime < 0.0f)
+            {
+                deathLockOutTime = 0.0f;
+            }
+
+            trainingLockOutTime -= elapsed;
+            if (trainingLockOutTime < 0.0f)
+            {
+                trainingLockOutTime = 0.0f;
+            }
+
+            
         }
 
     };
@@ -308,11 +331,13 @@ public:
     /// Uses a MathScript to calculate the maximum amount of time a Pet can remain in world.
     double GetMaxPetTime()
     {
-        static MathScript *maxPetTime;
+        static MathScript* maxPetTime = NULL;
         double maxTime = 60 * 5 * 1000;
 
         if (!maxPetTime)
+        {
             maxPetTime = psserver->GetMathScriptEngine()->FindScript("CalculateMaxPetTime");
+        }
 
         if (maxPetTime && owner)
         {
@@ -326,6 +351,79 @@ public:
 
         return maxTime;
     }
+
+    /// Uses a MathScript to calculate the time/periode an killed pet can't be summoned again.
+    double GetDeathLockoutTime()
+    {
+        static MathScript* script = NULL;
+        double time = 10 * 1000.0;
+
+        if (!script)
+        {
+            script = psserver->GetMathScriptEngine()->FindScript("CalculatePetDeathLockoutTime");
+        }
+        
+
+        if (script && owner)
+        {
+            MathEnvironment env;
+            env.Define("Actor", owner->GetCharacterData());
+            env.Define("Skill", owner->GetCharacterData()->Skills().GetSkillRank(psserver->GetNPCManager()->GetPetSkill()).Current());
+            script->Evaluate(&env);
+            MathVar *timeValue = env.Lookup("DeathLockoutTime");
+            time = timeValue->GetValue();
+        }
+
+        return time;
+    }
+
+    /// Uses a MathScript to calculate the time/periode an npc can't be trained after receving training.
+    double GetTrainingLockoutTime()
+    {
+        static MathScript* script = NULL;
+        double time = 10 * 1000.0;
+
+        if (!script)
+        {
+            script = psserver->GetMathScriptEngine()->FindScript("CalculateTrainingLockoutTime");
+        }
+        
+
+        if (script && owner)
+        {
+            MathEnvironment env;
+            env.Define("Actor", owner->GetCharacterData());
+            env.Define("Skill", owner->GetCharacterData()->Skills().GetSkillRank(psserver->GetNPCManager()->GetPetSkill()).Current());
+            script->Evaluate(&env);
+            MathVar *timeValue = env.Lookup("TrainingLockoutTime");
+            time = timeValue->GetValue();
+        }
+
+        return time;
+    }
+
+
+    void HasBeenKilled()
+    {
+        deathLockOutTime += GetDeathLockoutTime();
+    }
+
+    bool IsKilled() const
+    {
+        return deathLockOutTime > 0.0f;
+    }
+
+    void ReceivedTraining()
+    {
+        trainingLockOutTime += GetTrainingLockoutTime();
+    }
+    
+    bool CanTrain() const
+    {
+        return trainingLockOutTime > 0.0f;
+    }
+    
+    
 };
 
 NPCManager::NPCManager(ClientConnectionSet *pCCS,
@@ -1521,6 +1619,13 @@ void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
     case psPETCommandMessage::CMD_FOLLOW :
         if ( pet != NULL )
         {
+            PetOwnerSession *session = OwnerPetList.Get( pet->GetCharacterData()->GetPID(), NULL );
+            if ( !session )
+            {
+                CPrintf(CON_NOTIFY, "Cannot locate PetSession for owner %s.\n", pet->GetName(), owner->GetName() );
+                return;
+            }
+
             if (CanPetHearYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 1))
             {
                 // If no target target owner
@@ -1529,7 +1634,11 @@ void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
                     pet->SetTarget( owner->GetActor() );
                 }
                 QueueOwnerCmdPerception( owner->GetActor(), pet, psPETCommandMessage::CMD_FOLLOW );
-                owner->GetCharacterData()->Skills().AddSkillPractice(GetPetSkill(), 1);
+                if (session->CanTrain())
+                {
+                    owner->GetCharacterData()->Skills().AddSkillPractice(GetPetSkill(), 1);
+                    session->ReceivedTraining();
+                }
             }
         }
         else
@@ -1541,10 +1650,22 @@ void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
     case psPETCommandMessage::CMD_STAY :
         if ( pet != NULL )
         {
+            PetOwnerSession *session = OwnerPetList.Get( pet->GetCharacterData()->GetPID(), NULL );
+            if ( !session )
+            {
+                CPrintf(CON_NOTIFY, "Cannot locate PetSession for owner %s.\n", pet->GetName(), owner->GetName() );
+                return;
+            }
+
             if (CanPetHearYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 1))
             {
                 QueueOwnerCmdPerception( owner->GetActor(), pet, psPETCommandMessage::CMD_STAY );
-                owner->GetCharacterData()->Skills().AddSkillPractice(GetPetSkill(), 1);
+                if (session->CanTrain())
+                {
+                    owner->GetCharacterData()->Skills().AddSkillPractice(GetPetSkill(), 1);
+                    session->ReceivedTraining();
+                }
+                
             }
         }
         else
@@ -1557,9 +1678,8 @@ void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
 
         if ( pet != NULL && pet->IsValid() )
         {
-            PetOwnerSession *session = NULL;
+            PetOwnerSession* session = OwnerPetList.Get( pet->GetCharacterData()->GetPID(), NULL );
 
-            session = OwnerPetList.Get( pet->GetCharacterData()->GetPID(), NULL );
             // Check for an existing session
             if ( !session )
             {
@@ -1634,7 +1754,26 @@ void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
             }
 
             // Check time in game for pet
-            if ( session->CheckSession() )
+            if ( session->CheckSession() == false )
+            {
+                psserver->SendSystemInfo(me->clientnum,"The power of the ring of familiar is currently depleted, it will take more time to summon a pet again.");
+                return;
+            }
+
+            if(session->IsKilled())
+            {
+                if (familiarID.IsValid())
+                {
+                    psserver->SendSystemInfo(me->clientnum, "Your pet is hiding in the netherworld.");
+                }
+                else
+                {
+                    psserver->SendSystemInfo(me->clientnum, "You familiar is avoiding you.");
+                }
+                return;
+            }
+            
+
             {
                 session->isActive = true; // re-enable time tracking on pet.
 
@@ -1665,7 +1804,11 @@ void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
                 owner->SetFamiliar( pet );
                 // Send OwnerActionLogon Perception
                 pet->SetOwner( owner->GetActor() );
-                owner->GetCharacterData()->Skills().AddSkillPractice(GetPetSkill(), 1);
+                if (session->CanTrain())
+                {
+                    owner->GetCharacterData()->Skills().AddSkillPractice(GetPetSkill(), 1);
+                    session->ReceivedTraining();
+                }
                 // Have the pet auto follow when summoned
                 // If no target target owner
                 if (!pet->GetTarget())
@@ -1673,10 +1816,6 @@ void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
                     pet->SetTarget( owner->GetActor() );
                 }
                 QueueOwnerCmdPerception( owner->GetActor(), pet, psPETCommandMessage::CMD_FOLLOW );
-            }
-            else
-            {
-                psserver->SendSystemInfo(me->clientnum,"The power of the ring of familiar is currently depleted, it will take more time to summon a pet again.");
             }
         }
         else
@@ -1689,6 +1828,13 @@ void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
     case psPETCommandMessage::CMD_ATTACK :
         if ( pet != NULL )
         {
+            PetOwnerSession *session = OwnerPetList.Get( pet->GetCharacterData()->GetPID(), NULL );
+            if ( !session )
+            {
+                CPrintf(CON_NOTIFY, "Cannot locate PetSession for owner %s.\n", pet->GetName(), owner->GetName() );
+                return;
+            }
+
             if (CanPetHearYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 4))
             {
                 gemActor *lastAttacker = NULL;
@@ -1729,7 +1875,11 @@ void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
                             stance.stance_id = words.GetInt( 0 );
                         }
                         QueueOwnerCmdPerception( owner->GetActor(), pet, psPETCommandMessage::CMD_ATTACK );
-                        owner->GetCharacterData()->Skills().AddSkillPractice(GetPetSkill(), 1);
+                        if (session->CanTrain())
+                        {
+                            owner->GetCharacterData()->Skills().AddSkillPractice(GetPetSkill(), 1);
+                            session->ReceivedTraining();
+                        }
                     }
                 }
                 else
@@ -1747,10 +1897,21 @@ void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
     case psPETCommandMessage::CMD_STOPATTACK :
         if ( pet != NULL )
         {
+            PetOwnerSession *session = OwnerPetList.Get( pet->GetCharacterData()->GetPID(), NULL );
+            if ( !session )
+            {
+                CPrintf(CON_NOTIFY, "Cannot locate PetSession for owner %s.\n", pet->GetName(), owner->GetName() );
+                return;
+            }
+
             if (CanPetHearYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 4))
             {
                 QueueOwnerCmdPerception( owner->GetActor(), pet, psPETCommandMessage::CMD_STOPATTACK );
-                owner->GetCharacterData()->Skills().AddSkillPractice(GetPetSkill(), 1);
+                if (session->CanTrain())
+                {
+                    owner->GetCharacterData()->Skills().AddSkillPractice(GetPetSkill(), 1);
+                    session->ReceivedTraining();
+                }
             }
         }
         else
@@ -2498,3 +2659,16 @@ void NPCManager::SendPetSkillList(Client * client, bool forceOpen, PSSKILL focus
         Bug2("Could not create valid psPetSkillMessage for client %u.\n",client->GetClientNum());
     }
 }
+
+
+void NPCManager::PetHasBeenKilled( gemNPC*  pet )
+{
+    PetOwnerSession* session = OwnerPetList.Get( pet->GetCharacterData()->GetPID(), NULL );   
+
+    if (session)
+    {
+        session->HasBeenKilled();
+    }
+
+}
+

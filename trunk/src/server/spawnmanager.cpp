@@ -75,6 +75,7 @@
 #include "serverstatus.h"
 #include "globals.h"
 #include "lootrandomizer.h"
+#include "npcmanager.h"
 
 
 /** A structure to hold the clients that are pending a group loot question.
@@ -715,6 +716,13 @@ void SpawnManager::KillNPC(gemActor *obj, gemActor* killer)
         }
 
     }
+
+    // Notify the OwnerSession
+    if (obj->GetCharacterData()->IsPet())
+    {
+        psserver->GetNPCManager()->PetHasBeenKilled(obj->GetNPCPtr());
+    }
+    
 
     // Set timer for when NPC will disappear
     csTicks delay = (respawn)?respawn->GetDeadRemainTime():5000;
