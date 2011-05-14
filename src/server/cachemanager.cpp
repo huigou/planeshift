@@ -1878,6 +1878,10 @@ void CacheManager::GetCompressedMessageStrings(char*& data, unsigned long& size,
         // Go
         err = deflate(&z,Z_FINISH);
         CS_ASSERT(err == Z_STREAM_END);
+        
+        // Now se how much data we did are left with after deflating
+        compressed_msg_strings_size = COMPRESSION_BUFFSIZE - z.avail_out;
+
         deflateEnd(&z);
 
         delete[] temp;

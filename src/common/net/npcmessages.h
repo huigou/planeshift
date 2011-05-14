@@ -83,7 +83,7 @@ public:
      * @param access_ptrs A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
 };
 
 /**
@@ -107,7 +107,7 @@ public:
      * @param access_ptrs A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
 };
 
 /**
@@ -135,7 +135,7 @@ public:
      * @param access_ptrs A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
 };
 
 /**
@@ -175,7 +175,7 @@ public:
      * @param access_ptrs A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
 };
 
 /**
@@ -257,7 +257,7 @@ public:
      *
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
 };
 
 
@@ -290,7 +290,7 @@ public:
      * @param access_ptrs A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
 
     /// Sets the max size of the buffer
     void SetLength(int size,int client);
@@ -326,7 +326,7 @@ public:
      * @param access_ptrs A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
 };
 
 /**
@@ -371,7 +371,7 @@ public:
      * @param access_ptrs A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
 };
 
 /**
@@ -398,7 +398,7 @@ public:
      * @param access_ptrs A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(AccessPointers* /*access_ptrs*/) { return command; }
+    virtual csString ToString(NetBase::AccessPointers* /*access_ptrs*/) { return command; }
 };
 
 

@@ -102,7 +102,6 @@ struct PublishDestination
     PublishDestination(int client, void* object, float dist, float min_dist) : client(client), object(object), dist(dist), min_dist(min_dist) {}
 };
 
-
 //-----------------------------------------------------------------------------
 
 /**
@@ -113,6 +112,27 @@ struct PublishDestination
 class NetBase
 {
 public:
+
+    /**
+     * Struct used by MessageCracher and ToString to distribute a number of access pointers.
+     * Collect all in one struct instead of creating multiple arguments that
+     * would be hard to maintain.
+     */
+    struct AccessPointers
+    {
+        csStringSet* msgstrings;
+        csStringHashReversible* msgstringshash;
+        iEngine *engine;
+
+        /** Utility function that either request from the msgstring or from the message has
+         *  depending on who that is set.
+         *
+         *  @return NULL if not found, or the string if found.
+         */
+        const char* Request(csStringID id) const;
+    };
+
+    
     /**
      * you can specify how much messages the ouptput queue can contain before
      * being full. 100 should be enough for the Client, but the server should
@@ -211,16 +231,19 @@ public:
     /// Set the MsgString Hash
     void SetMsgStrings(csStringSet* msgstrings, csStringHashReversible* msgstringshash)
     {
-        this->msgstrings = msgstrings;
-        this->msgstringshash = msgstringshash;
+        accessPointers.msgstrings = msgstrings;
+        accessPointers.msgstringshash = msgstringshash;
     }
 
     /// Set the Engine
-    void SetEngine(iEngine* engine) { this->engine = engine; }
-    
-    /// Get the Engine
-    iEngine* GetEngine() { return engine; }
+    void SetEngine(iEngine* engine) { accessPointers.engine = engine; }
 
+    /// Get the Engine
+    iEngine* GetEngine() { return accessPointers.engine; }
+
+    /// Get the access pointers
+    AccessPointers* GetAccessPointers() { return &accessPointers; }
+    
     /**
      * Log the message to LOG_MESSAGE.
      *
@@ -599,19 +622,11 @@ private:
     /** network information layer */
     psNetInfos netInfos;
 
-    /** MsgString Set */
-    csStringSet* msgstrings;
-
-    /** MsgString Hash */
-    csStringHashReversible* msgstringshash;
-
-    /** Engine */
-    iEngine * engine;
+    /** Access Pointers for MessageCrackers */
+    AccessPointers accessPointers;
 
     /** LogMessage filter setting */
     csArray<int> logmessagefilter;
-
-
 
     typedef struct {
         bool invert;

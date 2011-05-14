@@ -7433,10 +7433,16 @@ void AdminManager::KillNPC (MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData* 
         }
         else
         {
+            // Get the pid so we know what to restore.
             PID npcid = target->GetCharacterData()->GetPID();
-            psCharacter *npcdata = psServer::CharacterLoader.LoadCharacterData(npcid,true);
+
+            // Remove the NPC
             EntityManager::GetSingleton().RemoveActor(data->targetObject);
+
+            // Create the new NPC
+            psCharacter *npcdata = psServer::CharacterLoader.LoadCharacterData(npcid,true);
             EntityManager::GetSingleton().CreateNPC(npcdata);
+
             psserver->SendSystemResult(me->clientnum, "NPC (%s) has been reloaded.", npcid.Show().GetData());
         }
         return;

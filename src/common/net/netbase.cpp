@@ -59,6 +59,19 @@ int NetBase::socklibrefcount=0;
 // Percentage of packets to be simulated as lost. Set to between 0 and 1 to activate.
 const float TEST_PACKETLOSS = 0.0f;
 
+const char* NetBase::AccessPointers::Request(csStringID id) const
+{
+    if (msgstrings)
+    {
+        return msgstrings->Request(id);
+    }
+    else if(msgstringshash)
+    {
+        return msgstringshash->Request(id);
+    }
+    return NULL;
+}
+
 
 
 NetBase::NetBase(int outqueuesize)
@@ -89,8 +102,9 @@ NetBase::NetBase(int outqueuesize)
     timeout.tv_sec = 0;
     timeout.tv_usec = 30000;
 
-    msgstrings = NULL;
-    engine = NULL;
+    accessPointers.msgstrings = NULL;
+    accessPointers.msgstringshash = NULL;
+    accessPointers.engine = NULL;
 
     logmsgfiltersetting.invert = false;
     logmsgfiltersetting.filterhex = true;
@@ -897,7 +911,7 @@ void NetBase::LogMessages(char dir,MsgEntry* me)
 {
     if (DoLogDebug(LOG_MESSAGES) && !FilterLogMessage(me->bytes->type,dir))
         Debug3(LOG_MESSAGES,0,"%c: %s\n",dir,
-               GetDecodedMessage(me,msgstrings, msgstringshash,engine,logmsgfiltersetting.filterhex).GetData());
+               GetDecodedMessage(me, &accessPointers, logmsgfiltersetting.filterhex).GetData());
 }
 
 

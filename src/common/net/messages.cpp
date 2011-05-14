@@ -48,6 +48,7 @@
 
 MsgHandler *psMessageCracker::msghandler;
 
+
 void psMessageCracker::SendMessage()
 {
     CS_ASSERT(valid);
@@ -95,7 +96,7 @@ psCharDeleteMessage::psCharDeleteMessage( MsgEntry* message )
     charName = message->GetStr();
 }
 
-csString psCharDeleteMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psCharDeleteMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -139,7 +140,7 @@ bool psPreAuthenticationMessage::NetVersionOk()
     return netversion == PS_NETVERSION;
 }
 
-csString psPreAuthenticationMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psPreAuthenticationMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -200,7 +201,7 @@ bool psAuthenticationMessage::NetVersionOk()
     return netversion == PS_NETVERSION;
 }
 
-csString psAuthenticationMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psAuthenticationMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -275,7 +276,7 @@ void psAuthApprovedMessage::ConstructMsg()
         msg->Add(contents[i]);
 }
 
-csString psAuthApprovedMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psAuthApprovedMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -313,7 +314,7 @@ psPreAuthApprovedMessage::psPreAuthApprovedMessage(MsgEntry *message)
     valid=!(message->overrun);
 }
 
-csString psPreAuthApprovedMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psPreAuthApprovedMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -354,7 +355,7 @@ psAuthRejectedMessage::psAuthRejectedMessage(MsgEntry *message)
     valid=!(message->overrun);
 }
 
-csString psAuthRejectedMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psAuthRejectedMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -389,7 +390,7 @@ psCharacterPickerMessage::psCharacterPickerMessage( MsgEntry* message )
     valid=!(message->overrun);
 }
 
-csString psCharacterPickerMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psCharacterPickerMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -419,7 +420,7 @@ psCharacterApprovedMessage::psCharacterApprovedMessage(MsgEntry* /*message*/)
    // No data, always valid
 }
 
-csString psCharacterApprovedMessage::ToString(AccessPointers* /*access_ptrs*/)
+csString psCharacterApprovedMessage::ToString(NetBase::AccessPointers* /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -497,7 +498,7 @@ psChatMessage::psChatMessage(MsgEntry *message)
 }
 
 
-csString psChatMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psChatMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -557,7 +558,7 @@ psChannelJoinMessage::psChannelJoinMessage(MsgEntry* message)
     valid=!(message->overrun);
 }
 
-csString psChannelJoinMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psChannelJoinMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString text;
     text.Format("Channel name: %s", channel.GetData());
@@ -589,7 +590,7 @@ psChannelJoinedMessage::psChannelJoinedMessage(MsgEntry* message)
     valid=!(message->overrun);
 }
 
-csString psChannelJoinedMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psChannelJoinedMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString text;
     text.Format("Channel ID: %d, name: %s", id, channel.GetData());
@@ -619,7 +620,7 @@ psChannelLeaveMessage::psChannelLeaveMessage(MsgEntry* message)
     valid=!(message->overrun);
 }
 
-csString psChannelLeaveMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psChannelLeaveMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString text;
     text.Format("Channel ID: %d", chanID);
@@ -707,7 +708,7 @@ psSystemMessage::psSystemMessage(MsgEntry *message)
     valid=!(message->overrun);
 }
 
-csString psSystemMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psSystemMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -844,7 +845,7 @@ psPetitionMessage::psPetitionMessage(MsgEntry *message)
     valid=!(message->overrun);
 }
 
-csString psPetitionMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psPetitionMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -914,7 +915,7 @@ psPetitionRequestMessage::psPetitionRequestMessage(MsgEntry *message)
     valid=!(message->overrun);
 }
 
-csString psPetitionRequestMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psPetitionRequestMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -999,7 +1000,7 @@ psGMGuiMessage::psGMGuiMessage(MsgEntry *message)
     valid=!(message->overrun);
 }
 
-csString psGMGuiMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psGMGuiMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -1111,7 +1112,7 @@ psGuildCmdMessage::psGuildCmdMessage(MsgEntry *message)
     valid = false;
 }
 
-csString psGuildCmdMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psGuildCmdMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -1227,7 +1228,7 @@ psGUIGuildMessage::psGUIGuildMessage( MsgEntry* message )
     valid=!(message->overrun);
 }
 
-csString psGUIGuildMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psGUIGuildMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -1292,7 +1293,7 @@ psGroupCmdMessage::psGroupCmdMessage(MsgEntry *message)
     valid = false;
 }
 
-csString psGroupCmdMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psGroupCmdMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -1468,7 +1469,7 @@ psUserCmdMessage::psUserCmdMessage(MsgEntry *message)
     valid = false;
 }
 
-csString psUserCmdMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psUserCmdMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -1573,7 +1574,7 @@ psWorkCmdMessage::psWorkCmdMessage(MsgEntry *message)
     }
 }
 
-csString psWorkCmdMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psWorkCmdMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -1624,7 +1625,7 @@ psAdminCmdMessage::psAdminCmdMessage(MsgEntry *message)
     cmd = message->GetStr();
 }
 
-csString psAdminCmdMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psAdminCmdMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -1671,7 +1672,7 @@ psGenericCmdMessage::psGenericCmdMessage(MsgEntry *message)
     cmd = message->GetStr();
 }
 
-csString psGenericCmdMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psGenericCmdMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -1711,7 +1712,7 @@ psDisconnectMessage::psDisconnectMessage(MsgEntry *message)
     valid=!(message->overrun);
 }
 
-csString psDisconnectMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psDisconnectMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -1752,7 +1753,7 @@ psUserActionMessage::psUserActionMessage(MsgEntry *message)
     valid=!(message->overrun);
 }
 
-csString psUserActionMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psUserActionMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -1793,7 +1794,7 @@ psGUIInteractMessage::psGUIInteractMessage( MsgEntry *message )
     valid=!(message->overrun);
 }
 
-csString psGUIInteractMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psGUIInteractMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -1887,7 +1888,7 @@ psMapActionMessage::psMapActionMessage( MsgEntry *message )
     valid = !(message->overrun);
 }
 
-csString psMapActionMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psMapActionMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext,cmd;
     cmd = "UNKOWN";
@@ -1940,7 +1941,7 @@ psModeMessage::psModeMessage(MsgEntry *message)
     valid=!(message->overrun);
 }
 
-csString psModeMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psModeMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -1978,7 +1979,7 @@ psMoveLockMessage::psMoveLockMessage(MsgEntry *message )
     valid=!(message->overrun);
 }
 
-csString psMoveLockMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psMoveLockMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -2146,7 +2147,7 @@ psWeatherMessage::psWeatherMessage(MsgEntry *message )
     valid=!(message->overrun);
 }
 
-csString psWeatherMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psWeatherMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -2331,7 +2332,7 @@ void psGUIInventoryMessage::AddEmptySlot( int containerID, int slotID )
     msg->Add((uint32_t)slotID);
 }
 
-csString psGUIInventoryMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psGUIInventoryMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -2410,7 +2411,7 @@ psNewSectorMessage::psNewSectorMessage( MsgEntry *message )
     // Since this message is never sent, we don't adjust the valid flag
 }
 
-csString psNewSectorMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psNewSectorMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -2445,7 +2446,7 @@ psLootItemMessage::psLootItemMessage(MsgEntry* message)
     valid=!(message->overrun);
 }
 
-csString psLootItemMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psLootItemMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -2482,7 +2483,7 @@ void psLootMessage::Populate(EID entity, csString& lootstr, int cnum)
     valid=!(msg->overrun);
 }
 
-csString psLootMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psLootMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -2521,7 +2522,7 @@ void psQuestListMessage::Populate(csString& queststr, int cnum)
     valid=!(msg->overrun);
 }
 
-csString psQuestListMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psQuestListMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -2575,7 +2576,7 @@ psQuestInfoMessage::psQuestInfoMessage(MsgEntry* msg)
 }
 
 
-csString psQuestInfoMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psQuestInfoMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -2626,7 +2627,7 @@ psOverrideActionMessage::psOverrideActionMessage(MsgEntry* message)
     valid=!(message->overrun);
 }
 
-csString psOverrideActionMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psOverrideActionMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -2691,7 +2692,7 @@ psEquipmentMessage::psEquipmentMessage( MsgEntry* message )
     valid=!(message->overrun);
 }
 
-csString psEquipmentMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psEquipmentMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -2758,7 +2759,7 @@ psGUIMerchantMessage::psGUIMerchantMessage( MsgEntry* message )
     valid=!(message->overrun);
 }
 
-csString psGUIMerchantMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psGUIMerchantMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -2822,7 +2823,7 @@ psGUIStorageMessage::psGUIStorageMessage( MsgEntry* message )
     valid=!(message->overrun);
 }
 
-csString psGUIStorageMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psGUIStorageMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -2887,7 +2888,7 @@ psGUIGroupMessage::psGUIGroupMessage( MsgEntry* message )
     valid=!(message->overrun);
 }
 
-csString psGUIGroupMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psGUIGroupMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -2911,7 +2912,7 @@ void psCraftCancelMessage::SetCraftTime(int craftTime, uint32_t client)
     msg->Add(craftTime);
 }
 
-csString psCraftCancelMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psCraftCancelMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -2924,7 +2925,7 @@ csString psCraftCancelMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psSpellCancelMessage,MSGTYPE_SPELL_CANCEL);
 
-csString psSpellCancelMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psSpellCancelMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -3014,7 +3015,7 @@ void psSpellBookMessage::Construct(csStringSet* msgstrings)
 
 
 
-csString psSpellBookMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psSpellBookMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -3056,7 +3057,7 @@ psPurifyGlyphMessage::psPurifyGlyphMessage( MsgEntry* me )
     glyph = me->GetUInt32();
 }
 
-csString psPurifyGlyphMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psPurifyGlyphMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -3084,7 +3085,7 @@ psSpellCastMessage::psSpellCastMessage( MsgEntry* me )
     kFactor = me->GetFloat();
 }
 
-csString psSpellCastMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psSpellCastMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -3153,7 +3154,7 @@ void psGlyphAssembleMessage::FromServer( MsgEntry* me )
     description = me->GetStr();
 }
 
-csString psGlyphAssembleMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psGlyphAssembleMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -3240,7 +3241,7 @@ psRequestGlyphsMessage::psRequestGlyphsMessage( MsgEntry* me )
     }
 }
 
-csString psRequestGlyphsMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psRequestGlyphsMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -3340,7 +3341,7 @@ psEffectMessage::psEffectMessage(MsgEntry* message)
     valid = !(message->overrun);
 }
 
-csString psEffectMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psEffectMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -3384,7 +3385,7 @@ psGUITargetUpdateMessage::psGUITargetUpdateMessage(MsgEntry *message)
     valid=!(message->overrun);
 }
 
-csString psGUITargetUpdateMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psGUITargetUpdateMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -3482,10 +3483,8 @@ psMsgStringsMessage::psMsgStringsMessage(MsgEntry *message)
     z.zalloc = NULL;
     z.zfree = NULL;
     z.opaque = NULL;
-    z.next_in = (z_Byte*)data;
-    z.avail_in = (uInt)length;
-    z.next_out = (z_Byte*)buff;
-    z.avail_out = PACKING_BUFFSIZE;
+    z.avail_in = 0; // We pretend we don't have any data before after we call init
+    z.next_in = NULL;
 
     // Set
     if (inflateInit(&z) != Z_OK)
@@ -3493,6 +3492,12 @@ psMsgStringsMessage::psMsgStringsMessage(MsgEntry *message)
         valid=false;
         return;
     }
+
+    // Fill inn points to the data we have.
+    z.next_in = (z_Byte*)data;
+    z.avail_in = (uInt)length;
+    z.next_out = (z_Byte*)buff;
+    z.avail_out = PACKING_BUFFSIZE;
 
     // Go
     int res = inflate(&z,Z_FINISH);
@@ -3534,7 +3539,7 @@ psMsgStringsMessage::psMsgStringsMessage(MsgEntry *message)
     delete[] buff;
 }
 
-csString psMsgStringsMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psMsgStringsMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -3545,7 +3550,7 @@ csString psMsgStringsMessage::ToString(AccessPointers * /*access_ptrs*/)
        return msgtext;
     }
 
-    msgtext.AppendFmt(" No. Strings: %d", nstrings);
+    msgtext.AppendFmt(" Number of Strings: %d", nstrings);
 
 #ifdef FULL_DEBUG_DUMP
     uint32_t s = 1;
@@ -3556,7 +3561,7 @@ csString psMsgStringsMessage::ToString(AccessPointers * /*access_ptrs*/)
        {
           const char* string;
           it.Next(string);
-          msgtext.AppendFmt(" String %d: '%s',", s++, string);
+          msgtext.AppendFmt(", %d: '%s'", s++, string);
        }
     }
 #endif
@@ -3604,7 +3609,7 @@ psCharacterDataMessage::psCharacterDataMessage(MsgEntry *message)
     valid=!(message->overrun);
 }
 
-csString psCharacterDataMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psCharacterDataMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -3709,7 +3714,7 @@ psCombatEventMessage::psCombatEventMessage(MsgEntry *message)
 }
 
 
-csString psCombatEventMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psCombatEventMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -3742,7 +3747,7 @@ psSoundEventMessage::psSoundEventMessage(MsgEntry* msg)
     valid=!(msg->overrun);
 }
 
-csString psSoundEventMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psSoundEventMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -3762,15 +3767,19 @@ psStatDRMessage::psStatDRMessage(uint32_t clientnum, EID eid, csArray<float> fVi
     msg->clientnum = clientnum;
     msg->SetType(MSGTYPE_STATDRUPDATE);
 
-    msg->Add(eid.Unbox());
-    msg->Add((uint32_t) flags);
+    msg->Add( eid.Unbox() );
+    msg->Add( (uint32_t)flags );
 
     for (size_t i = 0; i < fVitals.GetSize(); i++)
+    {
         msg->Add(fVitals[i]);
+    }
     for (size_t i = 0; i < uiVitals.GetSize(); i++)
+    {
         msg->Add(uiVitals[i]);
+    }
 
-    msg->Add((uint8_t) version);
+    msg->Add((uint8_t)version);
 
     msg->ClipToCurrentSize();
 
@@ -3790,83 +3799,139 @@ psStatDRMessage::psStatDRMessage()
 psStatDRMessage::psStatDRMessage(MsgEntry* me)
 {
     entityid = EID(me->GetUInt32());
-    statsDirty = me->GetUInt32();
+    if (me->GetSize() <= 0)
+    {
+        request = true;
+        return;
+    }
+    else
+    {
+        request = false;
+        
+        statsDirty = me->GetUInt32();
+        
+        if (statsDirty & DIRTY_VITAL_HP)
+        {
+            hp = me->GetFloat();
+        }
+        
+        if (statsDirty & DIRTY_VITAL_HP_RATE)
+        {
+            hp_rate = me->GetFloat();
+        }
+        
+        if (statsDirty & DIRTY_VITAL_MANA)
+        {
+            mana = me->GetFloat();
+        }
+        
+        if (statsDirty & DIRTY_VITAL_MANA_RATE)
+        {
+            mana_rate = me->GetFloat();
+        }
+        
+        if (statsDirty & DIRTY_VITAL_PYSSTAMINA)
+        {
+            pstam = me->GetFloat();
+        }
 
-    if (statsDirty & DIRTY_VITAL_HP)
-        hp = me->GetFloat();
-
-    if (statsDirty & DIRTY_VITAL_HP_RATE)
-        hp_rate = me->GetFloat();
-
-    if (statsDirty & DIRTY_VITAL_MANA)
-        mana = me->GetFloat();
-
-    if (statsDirty & DIRTY_VITAL_MANA_RATE)
-        mana_rate = me->GetFloat();
-
-    if (statsDirty & DIRTY_VITAL_PYSSTAMINA)
-        pstam = me->GetFloat();
-
-    if (statsDirty & DIRTY_VITAL_PYSSTAMINA_RATE)
-        pstam_rate = me->GetFloat();
-
-    if (statsDirty & DIRTY_VITAL_MENSTAMINA)
-        mstam = me->GetFloat();
-
-    if (statsDirty & DIRTY_VITAL_MENSTAMINA_RATE)
-        mstam_rate = me->GetFloat();
-
-    if (statsDirty & DIRTY_VITAL_EXPERIENCE)
-        exp = me->GetInt32();
-
-    if (statsDirty & DIRTY_VITAL_PROGRESSION)
-        prog = me->GetInt32();
-
-    counter = me->GetUInt8();
-
+        if (statsDirty & DIRTY_VITAL_PYSSTAMINA_RATE)
+        {
+            pstam_rate = me->GetFloat();
+        }
+        
+        if (statsDirty & DIRTY_VITAL_MENSTAMINA)
+        {
+            mstam = me->GetFloat();
+        }
+        
+        if (statsDirty & DIRTY_VITAL_MENSTAMINA_RATE)
+        {
+            mstam_rate = me->GetFloat();
+        }
+        
+        if (statsDirty & DIRTY_VITAL_EXPERIENCE)
+        {
+            exp = me->GetInt32();
+        }
+        
+        if (statsDirty & DIRTY_VITAL_PROGRESSION)
+        {
+            prog = me->GetInt32();
+        }
+        
+        counter = me->GetUInt8();
+    }
+    
     valid=!(me->overrun);
 }
 
-csString psStatDRMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psStatDRMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
+    if(request)
+    {
+        msgtext.AppendFmt("Request for StatDR Update");
+    }
+    else
+    {
+        msgtext.AppendFmt("Ent: %d", entityid.Unbox());
 
-    msgtext.AppendFmt("Ent: %d", entityid.Unbox());
+        msgtext.AppendFmt(" Dirty: %X ", statsDirty);
 
-    msgtext.AppendFmt(" Dirty: %d ",statsDirty);
-
-    if (statsDirty & DIRTY_VITAL_HP)
-        msgtext.AppendFmt(" HP: %.2f",hp);
-
-    if (statsDirty & DIRTY_VITAL_HP_RATE)
-        msgtext.AppendFmt(" HP RATE: %.2f",hp_rate);
-
-    if (statsDirty & DIRTY_VITAL_MANA)
-        msgtext.AppendFmt(" MANA: %.2f",mana);
-
-    if (statsDirty & DIRTY_VITAL_MANA_RATE)
-        msgtext.AppendFmt(" MANA RATE: %.2f",mana_rate);
-
-    if (statsDirty & DIRTY_VITAL_PYSSTAMINA)
-        msgtext.AppendFmt(" PYSSTA: %.2f",pstam);
-
-    if (statsDirty & DIRTY_VITAL_PYSSTAMINA_RATE)
-        msgtext.AppendFmt(" PYSSTA RATE: %.2f",pstam_rate);
-
-    if (statsDirty & DIRTY_VITAL_MENSTAMINA)
-        msgtext.AppendFmt(" MENSTA: %.2f",mstam);
-
-    if (statsDirty & DIRTY_VITAL_MENSTAMINA_RATE)
-        msgtext.AppendFmt(" MENSTA RATE: %.2f",mstam_rate);
-
-    if (statsDirty & DIRTY_VITAL_EXPERIENCE)
-        msgtext.AppendFmt(" EXP: %.2f",exp);
-
-    if (statsDirty & DIRTY_VITAL_PROGRESSION)
-        msgtext.AppendFmt(" PP: %.2f",prog);
-
-    msgtext.AppendFmt(" C: %d",counter);
-
+        if (statsDirty & DIRTY_VITAL_HP)
+        {
+            msgtext.AppendFmt(" HP: %.2f",hp);
+        }
+        
+        if (statsDirty & DIRTY_VITAL_HP_RATE)
+        {
+            msgtext.AppendFmt(" HP RATE: %.2f",hp_rate);
+        }
+        
+        if (statsDirty & DIRTY_VITAL_MANA)
+        {
+            msgtext.AppendFmt(" MANA: %.2f",mana);
+        }
+        
+        if (statsDirty & DIRTY_VITAL_MANA_RATE) 
+        {
+            msgtext.AppendFmt(" MANA RATE: %.2f",mana_rate);
+        }
+        
+        if (statsDirty & DIRTY_VITAL_PYSSTAMINA)
+        {
+            msgtext.AppendFmt(" PYSSTA: %.2f",pstam);
+        }
+        
+        if (statsDirty & DIRTY_VITAL_PYSSTAMINA_RATE)
+        {
+            msgtext.AppendFmt(" PYSSTA RATE: %.2f",pstam_rate);
+        }
+        
+        if (statsDirty & DIRTY_VITAL_MENSTAMINA)
+        {
+            msgtext.AppendFmt(" MENSTA: %.2f",mstam);
+        }
+        
+        if (statsDirty & DIRTY_VITAL_MENSTAMINA_RATE)
+        {
+            msgtext.AppendFmt(" MENSTA RATE: %.2f",mstam_rate);
+        }
+        
+        if (statsDirty & DIRTY_VITAL_EXPERIENCE)
+        {
+            msgtext.AppendFmt(" EXP: %.2f",exp);
+        }
+        
+        if (statsDirty & DIRTY_VITAL_PROGRESSION)
+        {
+            msgtext.AppendFmt(" PP: %.2f",prog);
+        }
+        
+        msgtext.AppendFmt(" C: %d",counter);
+    }
+    
     return msgtext;
 }
 
@@ -3898,22 +3963,34 @@ psStatsMessage::psStatsMessage()
 
 psStatsMessage::psStatsMessage( MsgEntry* me )
 {
-    if ( !me )
-        return;
+    if(me->GetSize() <= 0)
+    {
+        request = true;
+    }
+    else
+    {
+        request = false;
 
-    hp = me->GetFloat();
-    mana = me->GetFloat();
-    weight = me->GetFloat();
-    capacity = me->GetFloat();
+        hp = me->GetFloat();
+        mana = me->GetFloat();
+        weight = me->GetFloat();
+        capacity = me->GetFloat();
+    }
 }
 
 
-csString psStatsMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psStatsMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
-
-    msgtext.AppendFmt("HP: %.3f Mana: %.3f Weight: %.3f Capacity: %.3f",
-            hp, mana, weight, capacity );
+    if (request)
+    {
+        msgtext.AppendFmt("Request for Stats");
+    }
+    else
+    {
+        msgtext.AppendFmt("HP: %.3f Mana: %.3f Weight: %.3f Capacity: %.3f",
+                          hp, mana, weight, capacity );
+    }
 
     return msgtext;
 }
@@ -4057,7 +4134,7 @@ psGUISkillMessage::psGUISkillMessage( MsgEntry* message )
     valid=!(message->overrun);
 }
 
-csString psGUISkillMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psGUISkillMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -4225,7 +4302,7 @@ psGUIBankingMessage::psGUIBankingMessage(MsgEntry *message)
     valid=!(message->overrun);
 }
 
-csString psGUIBankingMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psGUIBankingMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -4363,7 +4440,7 @@ psPetSkillMessage::psPetSkillMessage( MsgEntry* message )
     valid=!(message->overrun);
 }
 
-csString psPetSkillMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psPetSkillMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -4483,7 +4560,7 @@ void psDRMessage::WriteDRInfo(uint32_t /*client*/, EID mappedid,
         sectorName = sector->QueryObject()->GetName();
     csStringID sectorNameStrId = msgstrings ? msgstrings->Request(sectorName) : csInvalidStringID;
 
-    msg->Add(mappedid.Unbox());
+    msg->Add( mappedid.Unbox() );
     msg->Add( counter );
 
     if (on_ground)
@@ -4605,7 +4682,7 @@ bool psDRMessage::IsNewerThan(uint8_t oldCounter)
     return (uint8_t)(counter-oldCounter) <= 127;
 }
 
-csString psDRMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psDRMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -4699,7 +4776,7 @@ void psForcePositionMessage::operator=(psForcePositionMessage & other)
     sector = other.sector;
 }
 
-csString psForcePositionMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psForcePositionMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
     msgtext.AppendFmt("Sector: %s ", sectorName.GetDataSafe());
@@ -4723,7 +4800,7 @@ psPersistWorldRequest::psPersistWorldRequest(MsgEntry* /*me*/)
 {
 }
 
-csString psPersistWorldRequest::ToString(AccessPointers* /*access_ptrs*/)
+csString psPersistWorldRequest::ToString(NetBase::AccessPointers* /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -4750,7 +4827,7 @@ psRequestAllObjects::psRequestAllObjects(MsgEntry* /*me*/)
 {
 }
 
-csString psRequestAllObjects::ToString(AccessPointers* /*access_ptrs*/)
+csString psRequestAllObjects::ToString(NetBase::AccessPointers* /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -4785,7 +4862,7 @@ psPersistWorld::psPersistWorld(MsgEntry* me)
     sector = me->GetStr();
 }
 
-csString psPersistWorld::ToString(AccessPointers* /*access_ptrs*/)
+csString psPersistWorld::ToString(NetBase::AccessPointers* /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -4803,7 +4880,7 @@ psPersistActorRequest::psPersistActorRequest(MsgEntry* /*me*/)
 {
 }
 
-csString psPersistActorRequest::ToString(AccessPointers* /*access_ptrs*/)
+csString psPersistActorRequest::ToString(NetBase::AccessPointers* /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -4822,7 +4899,7 @@ psPersistAllEntities::psPersistAllEntities(MsgEntry* me)
     msg = me;
 }
 
-csString psPersistAllEntities::ToString(AccessPointers* /*access_ptrs*/)
+csString psPersistAllEntities::ToString(NetBase::AccessPointers* /*access_ptrs*/)
 {
     return "PersistAllEntities";
 }
@@ -4919,11 +4996,11 @@ psPersistActor::psPersistActor( uint32_t clientNum,
     msg->Add( msgstrings->Request(race).GetHash() );
     msg->Add( msgstrings->Request(mountFactname).GetHash() );
     msg->Add( msgstrings->Request(MounterAnim).GetHash() );
-    msg->Add ( gender );
+    msg->Add( gender );
     msg->Add( helmGroup );
-    msg->Add(BracerGroup);
-    msg->Add(BeltGroup);
-    msg->Add(CloakGroup);
+    msg->Add( BracerGroup );
+    msg->Add( BeltGroup );
+    msg->Add( CloakGroup );
     msg->Add( collTop );
     msg->Add( collBottom );
     msg->Add( collOffSet );
@@ -5022,7 +5099,7 @@ psPersistActor::psPersistActor( MsgEntry* me, csStringSet* msgstrings, csStringH
     csString msgtext;
 }
 
-csString psPersistActor::ToString(AccessPointers * access_ptrs)
+csString psPersistActor::ToString(NetBase::AccessPointers * access_ptrs)
 {
     csString msgtext;
 
@@ -5066,7 +5143,7 @@ void psPersistActor::SetInstance(InstanceID instance)
 
 //------------------------------------------------------------------------------
 
-PSF_IMPLEMENT_MSG_FACTORY4(psPersistItem,MSGTYPE_PERSIST_ITEM);
+PSF_IMPLEMENT_MSG_FACTORY1(psPersistItem,MSGTYPE_PERSIST_ITEM);
 
 psPersistItem::psPersistItem( uint32_t clientNum,
                               EID eid,
@@ -5087,7 +5164,7 @@ psPersistItem::psPersistItem( uint32_t clientNum,
     msg->SetType(MSGTYPE_PERSIST_ITEM);
     msg->clientnum  = clientNum;
 
-    msg->Add(eid.Unbox());
+    msg->Add( eid.Unbox() );
     msg->Add( (uint32_t) type );
     msg->Add( name );
     msg->Add( msgstrings->Request(factname).GetHash() );
@@ -5106,14 +5183,14 @@ psPersistItem::psPersistItem( uint32_t clientNum,
 }
 
 
-psPersistItem::psPersistItem( MsgEntry* me, csStringHashReversible* msgstrings )
+psPersistItem::psPersistItem( MsgEntry* me, NetBase::AccessPointers * access_ptrs )
 {
     eid         = EID(me->GetUInt32());
     type        = me->GetUInt32();
     name        = me->GetStr();
-    factname    = msgstrings->Request(csStringID(me->GetUInt32()));
-    matname     = msgstrings->Request(csStringID(me->GetUInt32()));
-    sector      = msgstrings->Request(csStringID(me->GetUInt32()));
+    factname    = access_ptrs->Request(csStringID(me->GetUInt32()));
+    matname     = access_ptrs->Request(csStringID(me->GetUInt32()));
+    sector      = access_ptrs->Request(csStringID(me->GetUInt32()));
     pos         = me->GetVector();
     xRot        = me->GetFloat();
     yRot        = me->GetFloat();
@@ -5128,7 +5205,7 @@ psPersistItem::psPersistItem( MsgEntry* me, csStringHashReversible* msgstrings )
     }
 }
 
-csString psPersistItem::ToString(AccessPointers * /*access_ptrs*/)
+csString psPersistItem::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -5178,7 +5255,7 @@ psPersistActionLocation::psPersistActionLocation( MsgEntry* me )
     mesh        = me->GetStr();
 }
 
-csString psPersistActionLocation::ToString(AccessPointers * /*access_ptrs*/)
+csString psPersistActionLocation::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -5208,7 +5285,7 @@ psRemoveObject::psRemoveObject( MsgEntry* me )
     objectEID = EID(me->GetUInt32());
 }
 
-csString psRemoveObject::ToString(AccessPointers * /*access_ptrs*/)
+csString psRemoveObject::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -5263,7 +5340,7 @@ void psBuddyListMsg::Build()
     valid=!(msg->overrun);
 }
 
-csString psBuddyListMsg::ToString(AccessPointers * /*access_ptrs*/)
+csString psBuddyListMsg::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -5280,7 +5357,7 @@ csString psBuddyListMsg::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psBuddyStatus,MSGTYPE_BUDDY_STATUS);
 
-csString psBuddyStatus::ToString(AccessPointers * /*access_ptrs*/)
+csString psBuddyStatus::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -5293,7 +5370,7 @@ csString psBuddyStatus::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psMOTDMessage,MSGTYPE_MOTD);
 
-csString psMOTDMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psMOTDMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -5307,7 +5384,7 @@ csString psMOTDMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psMOTDRequestMessage,MSGTYPE_MOTDREQUEST);
 
-csString psMOTDRequestMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psMOTDRequestMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -5320,7 +5397,7 @@ csString psMOTDRequestMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psQuestionResponseMsg,MSGTYPE_QUESTIONRESPONSE);
 
-csString psQuestionResponseMsg::ToString(AccessPointers * /*access_ptrs*/)
+csString psQuestionResponseMsg::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -5333,7 +5410,7 @@ csString psQuestionResponseMsg::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psQuestionMessage,MSGTYPE_QUESTION);
 
-csString psQuestionMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psQuestionMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -5346,7 +5423,7 @@ csString psQuestionMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psAdviceMessage,MSGTYPE_ADVICE);
 
-csString psAdviceMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psAdviceMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -5360,7 +5437,7 @@ csString psAdviceMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psGUIActiveMagicMessage,MSGTYPE_ACTIVEMAGIC);
 
-csString psGUIActiveMagicMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psGUIActiveMagicMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext(command == Add ? "Add " : "Remove ");
 
@@ -5377,7 +5454,7 @@ csString psGUIActiveMagicMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psSlotMovementMsg,MSGTYPE_SLOT_MOVEMENT);
 
-csString psSlotMovementMsg::ToString(AccessPointers * /*access_ptrs*/)
+csString psSlotMovementMsg::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -5413,7 +5490,7 @@ psCmdDropMessage::psCmdDropMessage( MsgEntry* me )
     inplace = me->GetBool();
 }
 
-csString psCmdDropMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psCmdDropMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -5426,7 +5503,7 @@ csString psCmdDropMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psQuestionCancelMessage,MSGTYPE_QUESTIONCANCEL);
 
-csString psQuestionCancelMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psQuestionCancelMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -5439,7 +5516,7 @@ csString psQuestionCancelMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psGuildMOTDSetMessage,MSGTYPE_GUILDMOTDSET);
 
-csString psGuildMOTDSetMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psGuildMOTDSetMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -5509,7 +5586,7 @@ psCharacterDetailsMessage::psCharacterDetailsMessage( MsgEntry* me )
     }
 }
 
-csString psCharacterDetailsMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psCharacterDetailsMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -5528,7 +5605,7 @@ csString psCharacterDetailsMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psCharacterDetailsRequestMessage,MSGTYPE_CHARDETAILSREQUEST);
 
-csString psCharacterDetailsRequestMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psCharacterDetailsRequestMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -5542,7 +5619,7 @@ csString psCharacterDetailsRequestMessage::ToString(AccessPointers * /*access_pt
 
 PSF_IMPLEMENT_MSG_FACTORY(psCharacterDescriptionUpdateMessage,MSGTYPE_CHARDESCUPDATE);
 
-csString psCharacterDescriptionUpdateMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psCharacterDescriptionUpdateMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -5572,7 +5649,7 @@ psViewActionLocationMessage::psViewActionLocationMessage(MsgEntry* me)
     description = me->GetStr();
 }
 
-csString psViewActionLocationMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psViewActionLocationMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -5716,7 +5793,7 @@ psViewItemDescription::psViewItemDescription( MsgEntry* me, csStringHashReversib
     }
 }
 
-csString psViewItemDescription::ToString(AccessPointers * /*access_ptrs*/)
+csString psViewItemDescription::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -5799,7 +5876,7 @@ psViewItemUpdate::psViewItemUpdate( MsgEntry* me, csStringHashReversible* msgstr
     materialName = msgstringshash->Request(csStringID(me->GetUInt32()));
 }
 
-csString psViewItemUpdate::ToString(AccessPointers * /*access_ptrs*/)
+csString psViewItemUpdate::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -5844,7 +5921,7 @@ psReadBookTextMessage::psReadBookTextMessage(MsgEntry* me )
     backgroundImg = me->GetStr();
 }
 
-csString psReadBookTextMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psReadBookTextMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -5935,7 +6012,7 @@ psWriteBookMessage::psWriteBookMessage(MsgEntry* me)
   }
 }
 
-csString psWriteBookMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psWriteBookMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 #ifdef FULL_DEBUG_DUMP
@@ -5970,7 +6047,7 @@ csString psWriteBookMessage::ToString(AccessPointers * /*access_ptrs*/)
 //------------------------------------------------------------------------------
 PSF_IMPLEMENT_MSG_FACTORY(psQuestRewardMessage,MSGTYPE_QUESTREWARD);
 
-csString psQuestRewardMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psQuestRewardMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -6007,7 +6084,7 @@ psExchangeMoneyMsg::psExchangeMoneyMsg( MsgEntry* me )
     octas = me->GetUInt32();
 }
 
-csString psExchangeMoneyMsg::ToString(AccessPointers * /*access_ptrs*/)
+csString psExchangeMoneyMsg::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -6048,7 +6125,7 @@ psExchangeRequestMsg::psExchangeRequestMsg( MsgEntry* me )
     withPlayer = me->GetBool();
 }
 
-csString psExchangeRequestMsg::ToString(AccessPointers * /*access_ptrs*/)
+csString psExchangeRequestMsg::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -6096,7 +6173,7 @@ psExchangeAddItemMsg::psExchangeAddItemMsg( MsgEntry* me, csStringHashReversible
     icon         = me->GetStr();
 }
 
-csString psExchangeAddItemMsg::ToString(AccessPointers * /*access_ptrs*/)
+csString psExchangeAddItemMsg::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -6129,7 +6206,7 @@ psExchangeRemoveItemMsg::psExchangeRemoveItemMsg( MsgEntry* msg )
 }
 
 
-csString psExchangeRemoveItemMsg::ToString(AccessPointers * /*access_ptrs*/)
+csString psExchangeRemoveItemMsg::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -6153,7 +6230,7 @@ psExchangeAcceptMsg::psExchangeAcceptMsg(MsgEntry* /*me*/)
 {
 }
 
-csString psExchangeAcceptMsg::ToString(AccessPointers* /*access_ptrs*/)
+csString psExchangeAcceptMsg::ToString(NetBase::AccessPointers* /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -6182,7 +6259,7 @@ psExchangeStatusMsg::psExchangeStatusMsg( MsgEntry* me )
     otherAccept = me->GetBool();
 }
 
-csString psExchangeStatusMsg::ToString(AccessPointers * /*access_ptrs*/)
+csString psExchangeStatusMsg::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -6208,7 +6285,7 @@ psExchangeEndMsg::psExchangeEndMsg(MsgEntry* /*me*/)
 {
 }
 
-csString psExchangeEndMsg::ToString(AccessPointers* /*access_ptrs*/)
+csString psExchangeEndMsg::ToString(NetBase::AccessPointers* /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -6241,7 +6318,7 @@ psUpdateObjectNameMessage::psUpdateObjectNameMessage(MsgEntry* me)
     newObjName    = me->GetStr();
 }
 
-csString psUpdateObjectNameMessage::ToString(AccessPointers* /*access_ptrs*/)
+csString psUpdateObjectNameMessage::ToString(NetBase::AccessPointers* /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -6297,7 +6374,7 @@ void psUpdatePlayerGuildMessage::AddPlayer(EID id)
     valid=!(msg->overrun);
 }
 
-csString psUpdatePlayerGuildMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psUpdatePlayerGuildMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -6335,7 +6412,7 @@ psUpdatePlayerGroupMessage::psUpdatePlayerGroupMessage( MsgEntry* me )
     groupID       = me->GetUInt32();
 }
 
-csString psUpdatePlayerGroupMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psUpdatePlayerGroupMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -6410,7 +6487,7 @@ void psNameCheckMessage::FromServer( MsgEntry* me )
     reason = me->GetStr();
 }
 
-csString psNameCheckMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psNameCheckMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -6449,7 +6526,7 @@ psPingMsg::psPingMsg( uint32_t client, uint32_t id, uint8_t flags )
     msg->Add( flags );
 }
 
-csString psPingMsg::ToString(AccessPointers * /*access_ptrs*/)
+csString psPingMsg::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -6482,7 +6559,7 @@ psHeartBeatMsg::psHeartBeatMsg( uint32_t client )
     msg->clientnum = client;
 }
 
-csString psHeartBeatMsg::ToString(AccessPointers* /*access_ptrs*/)
+csString psHeartBeatMsg::ToString(NetBase::AccessPointers* /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -6509,7 +6586,7 @@ psLockpickMessage::psLockpickMessage( MsgEntry* me )
     password = me->GetStr();
 }
 
-csString psLockpickMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psLockpickMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -6568,7 +6645,7 @@ psGMSpawnItems::psGMSpawnItems(MsgEntry* me)
     }
 }
 
-csString psGMSpawnItems::ToString(AccessPointers * /*access_ptrs*/)
+csString psGMSpawnItems::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -6610,7 +6687,7 @@ psGMSpawnTypes::psGMSpawnTypes(MsgEntry* me)
     }
 }
 
-csString psGMSpawnTypes::ToString(AccessPointers * /*access_ptrs*/)
+csString psGMSpawnTypes::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -6697,7 +6774,7 @@ psGMSpawnItem::psGMSpawnItem(MsgEntry *me)
     quality = me->GetFloat();
 }
 
-csString psGMSpawnItem::ToString(AccessPointers * /*access_ptrs*/)
+csString psGMSpawnItem::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -6740,7 +6817,7 @@ psLootRemoveMessage::psLootRemoveMessage(MsgEntry *me)
     id = me->GetInt32();
 }
 
-csString psLootRemoveMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psLootRemoveMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -6753,7 +6830,7 @@ csString psLootRemoveMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psCharCreateTraitsMessage,MSGTYPE_CHAR_CREATE_TRAITS);
 
-csString psCharCreateTraitsMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psCharCreateTraitsMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -6788,7 +6865,7 @@ psClientStatusMessage::psClientStatusMessage(MsgEntry* message)
     valid=!(message->overrun);
 }
 
-csString psClientStatusMessage::ToString(AccessPointers* /*access_ptrs*/)
+csString psClientStatusMessage::ToString(NetBase::AccessPointers* /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -6838,7 +6915,7 @@ psMoveModMsg::psMoveModMsg(MsgEntry* me)
     }
 }
 
-csString psMoveModMsg::ToString(AccessPointers * /*access_ptrs*/)
+csString psMoveModMsg::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -6866,7 +6943,7 @@ psMsgRequestMovement::psMsgRequestMovement(MsgEntry * /*me*/)
 {
 }
 
-csString psMsgRequestMovement::ToString(AccessPointers * /*access_ptrs*/)
+csString psMsgRequestMovement::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
     msgtext.Format("Requesting movements");
@@ -6932,7 +7009,7 @@ void psMovementInfoMessage::GetMove(uint32 &id, const char* &name, csVector3 &ba
     base_rotate = msg->GetVector();
 }
 
-csString psMovementInfoMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psMovementInfoMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
     msgtext.Format("%zu modes and %zu moves",modes,moves);
@@ -6944,7 +7021,7 @@ csString psMovementInfoMessage::ToString(AccessPointers * /*access_ptrs*/)
 PSF_IMPLEMENT_MSG_FACTORY(psMsgCraftingInfo,MSGTYPE_CRAFT_INFO);
 
 
-csString psMsgCraftingInfo::ToString(AccessPointers * /*access_ptrs*/)
+csString psMsgCraftingInfo::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -6957,7 +7034,7 @@ csString psMsgCraftingInfo::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psTraitChangeMessage,MSGTYPE_CHANGE_TRAIT);
 
-csString psTraitChangeMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psTraitChangeMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -6970,7 +7047,7 @@ csString psTraitChangeMessage::ToString(AccessPointers * /*access_ptrs*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psTutorialMessage,MSGTYPE_TUTORIAL);
 
-csString psTutorialMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psTutorialMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -7001,7 +7078,7 @@ psMGStartStopMessage::psMGStartStopMessage(MsgEntry *me)
     msgStart = me->GetBool();
 }
 
-csString psMGStartStopMessage::ToString(AccessPointers * /* access_ptrs */)
+csString psMGStartStopMessage::ToString(NetBase::AccessPointers * /* access_ptrs */)
 {
     csString msgText;
     msgText.AppendFmt("Start: %s", msgStart ? "Yes" : "No");
@@ -7075,7 +7152,7 @@ bool psMGBoardMessage::IsNewerThan(uint8_t oldCounter)
     return (uint8_t)(msgCounter-oldCounter) <= 127;
 }
 
-csString psMGBoardMessage::ToString(AccessPointers * /* access_ptrs */)
+csString psMGBoardMessage::ToString(NetBase::AccessPointers * /* access_ptrs */)
 {
     csString msgText;
     msgText.AppendFmt("GameID: %u", msgGameID);
@@ -7127,7 +7204,7 @@ psEntranceMessage::psEntranceMessage( MsgEntry* me )
     entranceID = EID(me->GetUInt32());
 }
 
-csString psEntranceMessage::ToString(AccessPointers * /* access_ptrs */)
+csString psEntranceMessage::ToString(NetBase::AccessPointers * /* access_ptrs */)
 {
     csString msgText;
     msgText.AppendFmt("EntranceID: %u", entranceID.Unbox());
@@ -7178,7 +7255,7 @@ bool psMGUpdateMessage::IsNewerThan(uint8_t oldCounter)
     return (uint8_t)(msgCounter-oldCounter) <= 127;
 }
 
-csString psMGUpdateMessage::ToString(AccessPointers * /* access_ptrs */)
+csString psMGUpdateMessage::ToString(NetBase::AccessPointers * /* access_ptrs */)
 {
     csString msgText;
     msgText.AppendFmt("GameID: %u", msgGameID);
@@ -7231,7 +7308,7 @@ void psGMEventListMessage::Populate(csString& gmeventStr, int clientnum)
     valid=!(msg->overrun);
 }
 
-csString psGMEventListMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psGMEventListMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -7301,7 +7378,7 @@ psGMEventInfoMessage::psGMEventInfoMessage(MsgEntry* msg)
 }
 
 
-csString psGMEventInfoMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psGMEventInfoMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -7377,7 +7454,7 @@ void psFactionMessage::BuildMsg()
     valid=!(msg->overrun);
 }
 
-csString psFactionMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psFactionMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
     msgtext.AppendFmt("Command: %d", cmd);
@@ -7404,7 +7481,7 @@ csString GetMsgTypeName(int msgType)
     return psfMsgTypeName(msgType);
 }
 
-csString GetDecodedMessage(MsgEntry* me, csStringSet* msgstrings, csStringHashReversible* msgstringshash, iEngine *engine, bool filterhex)
+csString GetDecodedMessage(MsgEntry* me, NetBase::AccessPointers* accessPointers, bool filterhex)
 {
     csString msgtext;
     MsgEntry msg(me); // Take a copy to make sure we dont destroy the message.
@@ -7418,14 +7495,9 @@ csString GetDecodedMessage(MsgEntry* me, csStringSet* msgstrings, csStringHashRe
 
     msgtext.AppendFmt("%7d %-32s %c %8d %4d",csGetTicks(),
                       msgname.GetData(),
-                      (me->priority==PRIORITY_LOW?'L':'H'),
+                      ((me->priority&PRIORITY_MASK)==PRIORITY_LOW?'L':'H'),
                       me->clientnum,me->bytes->size);
 
-
-    psMessageCracker::AccessPointers access_pointers;
-    access_pointers.msgstrings = msgstrings;
-    access_pointers.msgstringshash = msgstringshash;
-    access_pointers.engine = engine;
 
     // First print the hex of the message if not filtered
     if (!filterhex)
@@ -7440,11 +7512,11 @@ csString GetDecodedMessage(MsgEntry* me, csStringSet* msgstrings, csStringHashRe
     }
 
     // Than get the cracker and print the decoded message from the ToString function.
-    cracker = psfCreateMsg(me->bytes->type,&msg,&access_pointers);
+    cracker = psfCreateMsg(me->bytes->type,&msg,accessPointers);
     if (cracker)
     {
         msgtext.Append(" > ");
-        msgtext.Append(cracker->ToString(&access_pointers));
+        msgtext.Append(cracker->ToString(accessPointers));
 
         delete cracker;
     }
@@ -7523,7 +7595,7 @@ void psfRegisterMsgFactoryFunction(psfMsgFactoryFunc factoryfunc, int msgtype, c
 
 psMessageCracker* psfCreateMsg(int msgtype,
                                MsgEntry* me,
-                               psMessageCracker::AccessPointers * access_ptrs )
+                               NetBase::AccessPointers * access_ptrs )
 {
     if (!msgfactory) return NULL;
 
@@ -7585,7 +7657,7 @@ psSequenceMessage::psSequenceMessage(MsgEntry* msg)
 }
 
 
-csString psSequenceMessage::ToString(AccessPointers* /*access_ptrs*/)
+csString psSequenceMessage::ToString(NetBase::AccessPointers* /*access_ptrs*/)
 {
     csString msgtext;
 
@@ -7614,7 +7686,7 @@ psPlaySoundMessage::psPlaySoundMessage(MsgEntry* msg)
     valid=!(msg->overrun);
 }
 
-csString psPlaySoundMessage::ToString(AccessPointers* /*access_ptrs*/)
+csString psPlaySoundMessage::ToString(NetBase::AccessPointers* /*access_ptrs*/)
 {
     csString msgtext("Message Sound:");
     return msgtext+sound;
@@ -7645,7 +7717,7 @@ psCharCreateCPMessage::psCharCreateCPMessage( MsgEntry* message )
     CPValue = message->GetUInt32();
 }
 
-csString psCharCreateCPMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psCharCreateCPMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
     //msgtext.AppendFmt("Race '%i': has '%i' cppoints", raceID, CPValue);
@@ -7667,7 +7739,7 @@ psCharIntroduction::psCharIntroduction(MsgEntry* /*message*/)
 {
 }
 
-csString psCharIntroduction::ToString(AccessPointers* /*access_ptrs*/)
+csString psCharIntroduction::ToString(NetBase::AccessPointers* /*access_ptrs*/)
 {
     csString msgtext;
     return msgtext;
@@ -7776,7 +7848,7 @@ void psDialogMenuMessage::BuildMsg(int clientnum)
     valid = !(msg->overrun);
 }
 
-csString psDialogMenuMessage::ToString(AccessPointers* /*access_ptrs*/)
+csString psDialogMenuMessage::ToString(NetBase::AccessPointers* /*access_ptrs*/)
 {
     csString text;
     for( size_t i = 0; i < responses.GetSize(); i++ )

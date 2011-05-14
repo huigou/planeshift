@@ -71,7 +71,7 @@ psDamageEvent::psDamageEvent( MsgEntry* event )
     damage   = event->GetFloat();
 }
 
-csString psDamageEvent::ToString(AccessPointers * /*access_ptrs*/)
+csString psDamageEvent::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
     
@@ -106,7 +106,7 @@ psDeathEvent::psDeathEvent( MsgEntry* event )
     killer    = (gemActor*)event->GetPointer();
 }
 
-csString psDeathEvent::ToString(AccessPointers * /*access_ptrs*/)
+csString psDeathEvent::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
     
@@ -140,7 +140,7 @@ psTargetChangeEvent::psTargetChangeEvent(MsgEntry *event)
     target    = (gemObject*)event->GetPointer();
 }
 
-csString psTargetChangeEvent::ToString(AccessPointers * /*access_ptrs*/)
+csString psTargetChangeEvent::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
     
@@ -179,7 +179,7 @@ psZPointsGainedEvent::psZPointsGainedEvent( MsgEntry* event )
     rankUp = event->GetBool();    
 }
 
-csString psZPointsGainedEvent::ToString(AccessPointers * /*access_ptrs*/)
+csString psZPointsGainedEvent::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
     
@@ -232,7 +232,7 @@ psBuyEvent::psBuyEvent( MsgEntry* event)
     trans->price = event->GetUInt32();
 }
 
-csString psBuyEvent::ToString(AccessPointers * /*access_ptrs*/)
+csString psBuyEvent::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
     
@@ -287,7 +287,7 @@ psSellEvent::psSellEvent( MsgEntry* event)
     trans->price = event->GetUInt32();
 }
 
-csString psSellEvent::ToString(AccessPointers * /*access_ptrs*/)
+csString psSellEvent::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
     
@@ -336,7 +336,7 @@ psPickupEvent::psPickupEvent( MsgEntry* event)
     trans->price = event->GetUInt32();
 }
 
-csString psPickupEvent::ToString(AccessPointers * /*access_ptrs*/)
+csString psPickupEvent::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
     
@@ -386,7 +386,7 @@ psDropEvent::psDropEvent( MsgEntry* event)
     trans->price = event->GetUInt32();
 }
 
-csString psDropEvent::ToString(AccessPointers * /*access_ptrs*/)
+csString psDropEvent::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
     
@@ -440,7 +440,7 @@ psLootEvent::psLootEvent( MsgEntry* event)
     trans->price = event->GetUInt32();
 }
 
-csString psLootEvent::ToString(AccessPointers * /*access_ptrs*/)
+csString psLootEvent::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
     
@@ -475,7 +475,7 @@ psConnectEvent::psConnectEvent( MsgEntry* event)
     client_id = event->GetInt32();
 }
 
-csString psConnectEvent::ToString(AccessPointers * /*access_ptrs*/)
+csString psConnectEvent::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
     
@@ -505,7 +505,7 @@ psMovementEvent::psMovementEvent( MsgEntry* event)
     client_id = event->GetInt32();
 }
 
-csString psMovementEvent::ToString(AccessPointers * /*access_ptrs*/)
+csString psMovementEvent::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
     
@@ -539,7 +539,7 @@ psGenericEvent::psGenericEvent( MsgEntry* event)
     client_id = event->GetInt32();
 }
 
-csString psGenericEvent::ToString(AccessPointers * /*access_ptrs*/)
+csString psGenericEvent::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
     
