@@ -140,7 +140,9 @@ bool psServerVitals::Update( csTicks now )
         drdelta= 11000; //drdelta must be really high, in order to avoid randomness and guarantee stats update
     }
     else
+    {
        delta= (now-lastDRUpdate)/1000.0;
+    }
     lastDRUpdate = now;
 
     // iterate over all fields and predict their values based on their recharge rate
@@ -151,10 +153,14 @@ bool psServerVitals::Update( csTicks now )
     }
 
     if (vitals[VITAL_HITPOINTS].value == 0 && vitals[VITAL_HITPOINTS].drRate.Current() < 0)
+    {
         character->GetActor()->Kill(NULL);
+    }
 
     if (drdelta > 10000)
+    {
         statsDirty = QUERY_FAILED;
+    }
 
     return (statsDirty) ? true : false;
 }
