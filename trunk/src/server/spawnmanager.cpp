@@ -1000,7 +1000,9 @@ void SpawnManager::HandleDeathEvent(MsgEntry *me,Client *notused)
 
     death.deadActor->GetCharacterData()->KilledBy(death.killer ? death.killer->GetCharacterData() : NULL);
     if(death.killer)
+    {
         death.killer->GetCharacterData()->Kills(death.deadActor->GetCharacterData());
+    }
 
     // Respawning is handled with ResurrectEvents for players and by SpawnManager for NPCs
     if ( death.deadActor->GetClientID() )   // Handle Human Player dying

@@ -1335,10 +1335,10 @@ class gemPet : public gemNPC
 public:
 
     gemPet(GEMSupervisor* gemsupervisor,
-    		CacheManager* cachemanager,
-    		EntityManager* entitymanager,
-    		psCharacter *chardata, const char* factname, InstanceID instance, iSector* room,
-        const csVector3& pos,float rotangle,int clientnum,uint32 id) : gemNPC(gemsupervisor, cachemanager, entitymanager, chardata,factname,instance,room,pos,rotangle,clientnum)
+           CacheManager* cachemanager,
+           EntityManager* entitymanager,
+           psCharacter *chardata, const char* factname, InstanceID instance, iSector* room,
+           const csVector3& pos,float rotangle,int clientnum,uint32 id) : gemNPC(gemsupervisor, cachemanager, entitymanager, chardata,factname,instance,room,pos,rotangle,clientnum)
     {
         this->persistanceLevel = "Temporary";
     };
