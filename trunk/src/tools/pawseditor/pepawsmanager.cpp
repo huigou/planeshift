@@ -27,7 +27,7 @@
 
 #include "pepawsmanager.h"
 
-pePawsManager::pePawsManager(iObjectRegistry* objectReg, const char* skin, const char * pawsConfigFile ) : PawsManager( objectReg, skin, pawsConfigFile )
+pePawsManager::pePawsManager(iObjectRegistry* objectReg, const char* skin) : PawsManager(objectReg, skin)
 {
 }
 
