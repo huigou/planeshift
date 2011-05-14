@@ -13,7 +13,7 @@
                 <text string="Confirmation upon PvP duel:"/>
             </widget>
 
-                <radionode name="always" id="0">
+                <radionode name="ConfirmNever" id="0">
                     <frame x="0" y="20" width="180" height="20" />
                     <text string="Never accept" position="right" />
                 </radionode>
