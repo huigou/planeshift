@@ -80,10 +80,10 @@ public:
     /**
      * Convert the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 /**
@@ -104,10 +104,10 @@ public:
     /**
      * Convert the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 /**
@@ -132,10 +132,10 @@ public:
     /**
      * Convert the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 /**
@@ -172,10 +172,10 @@ public:
     /**
      * Convert the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 /**
@@ -257,7 +257,7 @@ public:
      *
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 
@@ -287,10 +287,10 @@ public:
     /**
      * Convert the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     /// Sets the max size of the buffer
     void SetLength(int size,int client);
@@ -323,10 +323,10 @@ public:
     /**
      * Convert the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 /**
@@ -368,10 +368,10 @@ public:
     /**
      * Convert the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 /**
@@ -395,10 +395,10 @@ public:
     /**
      * Convert the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers* /*access_ptrs*/) { return command; }
+    virtual csString ToString(NetBase::AccessPointers* /*accessPointers*/) { return command; }
 };
 
 

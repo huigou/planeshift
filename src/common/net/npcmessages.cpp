@@ -77,7 +77,7 @@ psNPCListMessage::psNPCListMessage(MsgEntry *message)
     msg = message;
 }
 
-csString psNPCListMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
+csString psNPCListMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
 {
     csString msgtext;
     
@@ -106,7 +106,7 @@ psNPCReadyMessage::psNPCReadyMessage(MsgEntry *message)
     msg = message;
 }
 
-csString psNPCReadyMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
+csString psNPCReadyMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
 {
     csString msgtext;
     
@@ -155,7 +155,7 @@ psMapListMessage::psMapListMessage(MsgEntry *message)
 
 }
 
-csString psMapListMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
+csString psMapListMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
 {
     csString msgtext;
     for (size_t c = 0; c < map.GetSize(); c++)
@@ -205,7 +205,7 @@ void psNPCRaceListMessage::AddRace(csString& name, float walkSpeed, float runSpe
     }
 }
 
-csString psNPCRaceListMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
+csString psNPCRaceListMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
 {
     csString msgtext;
     for (size_t c = 0; c < raceInfo.GetSize(); c++)
@@ -240,7 +240,7 @@ psNPCCommandsMessage::psNPCCommandsMessage(MsgEntry *message)
     msg = message;
 }
 
-csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * access_ptrs)
+csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers)
 {
     csString msgtext;
 
@@ -264,13 +264,13 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * access_ptrs)
                     break;
                 }
                 
-                if ( (access_ptrs->msgstrings || access_ptrs->msgstringshash) && access_ptrs->engine)
+                if ( (accessPointers->msgstrings || accessPointers->msgstringshash) && accessPointers->engine)
                 {
                     psDRMessage drmsg(data,len,
-                                      access_ptrs->msgstrings, access_ptrs->msgstringshash,
-                                      access_ptrs->engine);  // alternate method of cracking 
+                                      accessPointers->msgstrings, accessPointers->msgstringshash,
+                                      accessPointers->engine);  // alternate method of cracking 
 
-                    msgtext.Append(drmsg.ToString(access_ptrs));
+                    msgtext.Append(drmsg.ToString(accessPointers));
                 }
                 else
                 {
@@ -523,7 +523,7 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * access_ptrs)
                 EID character_id = EID(msg->GetUInt32());
                 float rot = msg->GetFloat();
                 where = msg->GetVector();
-                iSector* sector = msg->GetSector(access_ptrs->msgstrings, access_ptrs->msgstringshash, access_ptrs->engine);
+                iSector* sector = msg->GetSector(accessPointers->msgstrings, accessPointers->msgstringshash, accessPointers->engine);
 
                 // Make sure we haven't run past the end of the buffer
                 if (msg->overrun)
@@ -640,10 +640,10 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * access_ptrs)
                 uint32_t strhash = msg->GetUInt32();
                 float    severity = msg->GetInt8() / 10;
                 csString type;
-                if(access_ptrs->msgstrings)
-                    type = access_ptrs->msgstrings->Request(strhash);
-                else if(access_ptrs->msgstringshash)
-                    type = access_ptrs->msgstringshash->Request(strhash);
+                if(accessPointers->msgstrings)
+                    type = accessPointers->msgstrings->Request(strhash);
+                else if(accessPointers->msgstringshash)
+                    type = accessPointers->msgstringshash->Request(strhash);
 
                 msgtext.AppendFmt("Caster: %u Target: %u Type: \"%s\"(%u) Severity: %f ", caster.Unbox(), target.Unbox(), type.GetData(), strhash, severity);
                 break;
@@ -783,7 +783,7 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * access_ptrs)
                 EID npc_eid = EID(msg->GetUInt32());
                 csVector3 pos = msg->GetVector();
                 float yrot = msg->GetFloat();
-                iSector* sector = msg->GetSector( access_ptrs->msgstrings, access_ptrs->msgstringshash, access_ptrs->engine );
+                iSector* sector = msg->GetSector( accessPointers->msgstrings, accessPointers->msgstringshash, accessPointers->engine );
                 InstanceID instance = msg->GetUInt32();
                 
                 msgtext.AppendFmt("NPC: %s Pos: %s Rot: %f Inst: %d",ShowID(npc_eid),toString(pos,sector).GetDataSafe(),yrot,instance);
@@ -854,7 +854,7 @@ EID psAllEntityPosMessage::Get(csVector3& pos, iSector*& sector, InstanceID& ins
     return eid;
 }
 
-csString psAllEntityPosMessage::ToString(NetBase::AccessPointers * access_ptrs)
+csString psAllEntityPosMessage::ToString(NetBase::AccessPointers * accessPointers)
 {
     csString msgtext;
     
@@ -866,7 +866,7 @@ csString psAllEntityPosMessage::ToString(NetBase::AccessPointers * access_ptrs)
         InstanceID instance;
         bool forced;
         
-        EID eid = Get(pos, sector, instance, forced, access_ptrs->msgstrings, 0, access_ptrs->engine);
+        EID eid = Get(pos, sector, instance, forced, accessPointers->msgstrings, 0, accessPointers->engine);
 
         msgtext.AppendFmt(" ID: %s Pos: %s Inst: %d", ShowID(eid), toString(pos,sector).GetDataSafe(), instance);
     }
@@ -901,7 +901,7 @@ psNewNPCCreatedMessage::psNewNPCCreatedMessage(MsgEntry *message)
     owner_id   = PID(message->GetUInt32());
 }
 
-csString psNewNPCCreatedMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
+csString psNewNPCCreatedMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
 {
     csString msgtext;
     
@@ -949,7 +949,7 @@ psPETCommandMessage::psPETCommandMessage(MsgEntry *message)
     options = message->GetStr();
 }
 
-csString psPETCommandMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
+csString psPETCommandMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
 {
     csString msgtext;
     

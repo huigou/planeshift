@@ -355,10 +355,10 @@ public:
      * all data that was decoded when the message was initiated from a NetEntry.
      * See psDRMessage::ToString for an example.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs) = 0;
+    virtual csString ToString(NetBase::AccessPointers * accessPointers) = 0;
     //{ return "Not implemented"; }
 };
 
@@ -367,7 +367,7 @@ public:
 
 // PSF MESSAGE FACTORY stuff
 
-typedef psMessageCracker* (*psfMsgFactoryFunc)(MsgEntry* me, NetBase::AccessPointers * access_ptrs);
+typedef psMessageCracker* (*psfMsgFactoryFunc)(MsgEntry* me, NetBase::AccessPointers * accessPointers);
 
 csString GetMsgTypeName(int msgType);
 csString GetDecodedMessage(MsgEntry* me, NetBase::AccessPointers* accessPointers, bool filterhex);
@@ -375,14 +375,14 @@ csString GetDecodedMessage(MsgEntry* me, NetBase::AccessPointers* accessPointers
 void psfRegisterMsgFactoryFunction(psfMsgFactoryFunc factoryfunc, int msgtype, const char* msgtypename);
 psMessageCracker* psfCreateMsg(int msgtype,
                                MsgEntry* me,
-                               NetBase::AccessPointers* access_ptrs);
+                               NetBase::AccessPointers* accessPointers);
 csString psfMsgTypeName(int msgType);
 int psfMsgType(const char* msgTypeName);
 
 #define PSF_DECLARE_MSG_FACTORY()                                 \
     virtual csString GetMessageTypeName() const;                  \
     static psMessageCracker* CreateMessage(MsgEntry* me,          \
-               NetBase::AccessPointers* access_ptrs)
+               NetBase::AccessPointers* accessPointers)
 
 #define PSF_IMPLEMENT_MSG_FACTORY_REGISTER(Class,MsgType)         \
     class Class##_StaticInit                                      \
@@ -398,7 +398,7 @@ int psfMsgType(const char* msgTypeName);
 
 #define PSF_IMPLEMENT_MSG_FACTORY_CREATE(Class)                   \
     psMessageCracker* Class::CreateMessage(MsgEntry* me,          \
-           NetBase::AccessPointers* /*access_ptrs*/)              \
+           NetBase::AccessPointers* /*accessPointers*/)              \
     {                                                             \
         return (psMessageCracker*)new Class(me);                  \
     }
@@ -455,19 +455,6 @@ int psfMsgType(const char* msgTypeName);
     PSF_IMPLEMENT_MSG_FACTORY_CREATE3(Class)                      \
     PSF_IMPLEMENT_MSG_FACTORY_REGISTER(Class,MsgType)
 
-#define PSF_IMPLEMENT_MSG_FACTORY_CREATE4(Class)                  \
-    psMessageCracker* Class::CreateMessage(MsgEntry* me,          \
-           NetBase::AccessPointers* a_p)                          \
-    {                                                             \
-        return (psMessageCracker*)new Class(me,                   \
-                                            a_p->msgstringshash); \
-    }
-
-#define PSF_IMPLEMENT_MSG_FACTORY4(Class,MsgType)                 \
-    PSF_IMPLEMENT_MSG_FACTORY_TYPENAME(Class,MsgType)             \
-    PSF_IMPLEMENT_MSG_FACTORY_CREATE4(Class)                      \
-    PSF_IMPLEMENT_MSG_FACTORY_REGISTER(Class,MsgType)
-
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 
@@ -484,10 +471,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     csString charName;      /// Name of the character that we have to Propose
     csString proposeMsg;  /// Message from player to the character being Proposed
@@ -505,10 +492,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     csString divorceMsg;  /// Divorcing Message from player to spouse
 };
@@ -525,10 +512,10 @@ public:
     /**
      * @brief Convert the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 
@@ -547,10 +534,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     csString charName;
 };
@@ -581,10 +568,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     bool NetVersionOk();
 };
@@ -621,10 +608,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     bool NetVersionOk();
 };
@@ -640,10 +627,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     /// The name of the character that the account user wants to use.
     csString characterName;
@@ -660,10 +647,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 /**
@@ -685,10 +672,10 @@ public:
     /**
      * @brief Convert the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
 };
 
@@ -735,10 +722,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
 private:
     csStringArray contents;
@@ -765,10 +752,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
 };
 
@@ -852,10 +839,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     /** Translate type code into words.  Could be multilingual in future. */
     const char *GetTypeText();
@@ -876,10 +863,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 /**
@@ -898,10 +885,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 /**
@@ -920,10 +907,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 /**
@@ -949,10 +936,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 /**
@@ -1018,10 +1005,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 /**
@@ -1054,10 +1041,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 /**
@@ -1095,10 +1082,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 //--------------------------------------------------------------------------
@@ -1121,10 +1108,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 //--------------------------------------------------------------------------
@@ -1190,10 +1177,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     uint32_t command;
     csString commandData;
@@ -1218,10 +1205,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 //--------------------------------------------------------------------------
@@ -1246,10 +1233,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 //--------------------------------------------------------------------------
@@ -1275,10 +1262,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 //--------------------------------------------------------------------------
@@ -1302,10 +1289,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 //--------------------------------------------------------------------------
@@ -1329,10 +1316,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 //--------------------------------------------------------------------------
@@ -1350,10 +1337,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 //--------------------------------------------------------------------------
@@ -1373,10 +1360,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 //---------------------------------------------------------------------------
@@ -1393,10 +1380,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     enum guiOptions
     {
@@ -1474,10 +1461,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 //---------------------------------------------------------------------------
@@ -1494,10 +1481,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     enum playerMode
     {
@@ -1535,10 +1522,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
 public:
     bool locked;
@@ -1588,10 +1575,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
 public:
     /// Holds the options that the window should display.
@@ -1673,17 +1660,17 @@ public:
      * This is a switch statement that fills in particular data members
      * depending on the command that is given.
      */
-    psGUIInventoryMessage(MsgEntry *message, csStringHashReversible* msgstringshash);
+    psGUIInventoryMessage(MsgEntry *message, NetBase::AccessPointers * accessPointers);
 
     PSF_DECLARE_MSG_FACTORY();
 
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
 
     /// Add an item to the output message buffer
@@ -1745,10 +1732,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
 public:
     /// Holds the options that the window should display.
@@ -1775,10 +1762,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     EID entity;
     int lootitem;
@@ -1799,10 +1786,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     void Populate(EID entity, csString & lootstr, int cnum);
 
@@ -1824,10 +1811,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     void Populate(csString& queststr, int cnum);
 
@@ -1854,10 +1841,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     int command,id;
     csString xml;
@@ -1877,10 +1864,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     EID entity_id;
     csString action;
@@ -1939,10 +1926,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     uint8_t type;
     int player;
@@ -2008,10 +1995,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     uint8_t command;
     csString commandData;
@@ -2062,10 +2049,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     uint8_t command;
     csString commandData;
@@ -2110,10 +2097,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     uint8_t command;
     csString commandData;
@@ -2135,10 +2122,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 //--------------------------------------------------------------------------
@@ -2169,10 +2156,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     int craftTime;///<The time when the crafting shall be ready
 };
@@ -2193,17 +2180,17 @@ public:
 
     psSpellBookMessage();
     psSpellBookMessage( uint32_t client );
-    psSpellBookMessage( MsgEntry* me, csStringHashReversible* msgstringshash );
+    psSpellBookMessage( MsgEntry* me, NetBase::AccessPointers * accessPointers );
 
     PSF_DECLARE_MSG_FACTORY();
 
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     void AddSpell(const csString& name, const csString& description, const csString& way, int realm, const csString& glyph0, const csString& glyph1, const csString& glyph2, const csString& glyph3, const csString& image);
     void Construct(csStringSet* msgstrings);
@@ -2228,10 +2215,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     uint32_t glyph;
 };
@@ -2252,10 +2239,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     csString spell;
     float kFactor;
@@ -2280,10 +2267,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     int glyphs[4];
     bool info;
@@ -2319,10 +2306,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     void AddGlyph( csString name, csString image, int purifiedStatus,
                    int way, int statID );
@@ -2370,7 +2357,7 @@ private:
     }
 
     PSF_DECLARE_MSG_FACTORY();
-    csString ToString(NetBase::AccessPointers* /*access_ptrs*/)
+    csString ToString(NetBase::AccessPointers* /*accessPointers*/)
     {
         csString msgtext;
         msgtext.AppendFmt("Effect ID: %d", uid);
@@ -2427,10 +2414,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     csString  name;
     csVector3 offset;
@@ -2465,10 +2452,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     uint32_t clientNum;
     EID targetID;
@@ -2505,10 +2492,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     csMD5::Digest* digest;
     bool only_carrying_digest;
@@ -2546,10 +2533,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 #endif
 
@@ -2598,10 +2585,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 //--------------------------------------------------------------------------
@@ -2628,10 +2615,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 //--------------------------------------------------------------------------
 
@@ -2651,10 +2638,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     bool request; // Set to true if this is a request
     EID entityid;
@@ -2692,10 +2679,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     bool  request; // True if this is a request for stats
     float hp;
@@ -2770,10 +2757,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     uint8_t command;
     csString commandData;
@@ -2858,10 +2845,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     uint8_t command;
     bool guild;
@@ -2947,10 +2934,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     uint8_t command;
     csString commandData;
@@ -3044,10 +3031,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 //-----------------------------------------------------------------------------
@@ -3078,10 +3065,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 //-----------------------------------------------------------------------------
@@ -3097,10 +3084,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 class psRequestAllObjects : public psMessageCracker
@@ -3114,10 +3101,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 class psPersistWorld : public psMessageCracker
@@ -3131,10 +3118,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     csString sector;
     csVector3 pos;
@@ -3157,10 +3144,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
 };
 
@@ -3182,10 +3169,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     /**
      * @brief Appends the new entity message to the current pending message.
@@ -3253,10 +3240,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     /**
      * Used to insert instance into the message buffer after creation.
@@ -3321,17 +3308,17 @@ public:
                     csStringSet* msgstrings
                  );
 
-    psPersistItem( MsgEntry* me, NetBase::AccessPointers * access_ptrs );
+    psPersistItem( MsgEntry* me, NetBase::AccessPointers * accessPointers );
 
     PSF_DECLARE_MSG_FACTORY();
 
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     csString name;
     csString factname;
@@ -3364,10 +3351,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     csString name;
     csString sector;
@@ -3387,10 +3374,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     EID objectEID;
 };
@@ -3414,10 +3401,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     void AddBuddy( int num, const char* name, bool onlineStatus );
     void Build();
@@ -3452,10 +3439,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     csString buddy;
     bool onlineStatus;
@@ -3490,10 +3477,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     csString tip;
     csString motd;
@@ -3518,10 +3505,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 class psQuestionResponseMsg : public psMessageCracker
@@ -3550,10 +3537,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 class psQuestionMessage : public psMessageCracker
@@ -3603,10 +3590,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 class psAdviceMessage : public psMessageCracker
@@ -3644,10 +3631,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -3690,10 +3677,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     commandType command;
     SPELL_TYPE type;
@@ -3773,10 +3760,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     int fromContainer;
     int fromSlot;
@@ -3800,10 +3787,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     int quantity;
     csString itemName;
@@ -3837,10 +3824,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 class psGuildMOTDSetMessage : public psMessageCracker
@@ -3871,10 +3858,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     csString guildmotd;
     csString guild;
@@ -3898,10 +3885,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     csString name;
     unsigned short int gender;
@@ -3942,10 +3929,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     bool isMe;
     bool isSimple;          /// Weather simple description or full is requested
@@ -3984,10 +3971,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     csString newValue;
     DESCTYPE desctype;
@@ -4006,10 +3993,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     const char *name;
     const char *description;
@@ -4060,17 +4047,17 @@ public:
       * This will look at the packet and figure out if it is a single item or a container.
       * If it is a container it will populate it's internal array of data.
       */
-    psViewItemDescription( MsgEntry* me, csStringHashReversible* msgstringshash);
+    psViewItemDescription( MsgEntry* me, NetBase::AccessPointers * accessPointers);
 
     PSF_DECLARE_MSG_FACTORY();
 
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     /// The name of the item or container.
     const char *itemName;
@@ -4150,17 +4137,17 @@ public:
     psViewItemUpdate(uint32_t to, EID containerID, uint32_t slotID, bool clearSlot, const char *itemName, const char *icon, const char *meshName, const char *materialName, uint32_t stackCount, EID ownerID, csStringSet* msgstrings);
 
     /// Crack out the details from the message.
-    psViewItemUpdate( MsgEntry* me, csStringHashReversible* msgstringshash );
+    psViewItemUpdate( MsgEntry* me, NetBase::AccessPointers * accessPointers );
 
     PSF_DECLARE_MSG_FACTORY();
 
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
 //    /// Running count of message size. Used for constructing the outgoing message.
 //    int msgSize;
@@ -4210,7 +4197,7 @@ public:
 
     PSF_DECLARE_MSG_FACTORY();
 
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     uint8_t messagetype;
     csString title, content;
@@ -4242,10 +4229,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     csString name;
     csString text;
@@ -4289,10 +4276,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     int msgType;
     csString newValue;
@@ -4313,10 +4300,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     int container;
 
@@ -4344,10 +4331,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
 
     psExchangeRequestMsg( MsgEntry* me );
@@ -4373,17 +4360,17 @@ public:
                             const csString& icon,
                             csStringSet* msgstrings );
 
-    psExchangeAddItemMsg( MsgEntry* me, csStringHashReversible* msgstringshash );
+    psExchangeAddItemMsg( MsgEntry* me, NetBase::AccessPointers * accessPointers );
 
     PSF_DECLARE_MSG_FACTORY();
 
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     csString name;
     csString meshFactName;
@@ -4410,10 +4397,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     int container;          // CONTAINER_EXCHANGE_*
     int slot;
@@ -4433,10 +4420,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 //------------------------------------------------------------------------------
@@ -4452,10 +4439,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     bool playerAccept;
     bool otherAccept;
@@ -4474,10 +4461,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 
@@ -4494,10 +4481,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     EID objectID;
     csString newObjName;
@@ -4515,10 +4502,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     void AddPlayer(EID id); // Adds an object
 
@@ -4538,10 +4525,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     EID objectID;
     uint32_t groupID;
@@ -4574,10 +4561,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     csString firstName;
     csString lastName;
@@ -4606,10 +4593,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     uint32_t id;
     uint8_t flags;
@@ -4628,10 +4615,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 //-----------------------------------------------------------------------------
@@ -4647,10 +4634,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     csString password;
 };
@@ -4669,10 +4656,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     bool request;
 
@@ -4699,10 +4686,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     csArray<csString> types;
 };
@@ -4733,10 +4720,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     csString item;
     unsigned int count;
@@ -4759,10 +4746,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     int id;
 };
@@ -4800,10 +4787,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     const csString& GetString() const
     {
@@ -4825,10 +4812,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     bool ready;
 
@@ -4858,10 +4845,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     ModType type;
     csVector3 movementMod;
@@ -4879,10 +4866,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 class psMovementInfoMessage : public psMessageCracker
@@ -4902,10 +4889,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     // Count of each object
     size_t modes, moves;
@@ -4948,10 +4935,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     csString craftInfo;
 };
@@ -4987,10 +4974,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     EID target;
     csString string;
@@ -5025,10 +5012,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     int whichMessage;
     csString instrs;
@@ -5071,10 +5058,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers* /*access_ptrs*/)
+    virtual csString ToString(NetBase::AccessPointers* /*accessPointers*/)
     {
         return csString("not implemented");
     }
@@ -5104,10 +5091,10 @@ class psMGStartStopMessage : public psMessageCracker
         /**
          * @brief Converts the message into human readable string.
          *
-         * @param access_ptrs A struct to a number of access pointers
+         * @param accessPointers A struct to a number of access pointers
          * @return A human readable string for the message
          */
-        virtual csString ToString(NetBase::AccessPointers *access_ptrs);
+        virtual csString ToString(NetBase::AccessPointers *accessPointers);
 
         /// Indicates that this is a request to start the game
         bool msgStart;
@@ -5131,10 +5118,10 @@ class psMGBoardMessage : public psMessageCracker
         /**
          * @brief Converts the message into human readable string.
          *
-         * @param access_ptrs A struct to a number of access pointers
+         * @param accessPointers A struct to a number of access pointers
          * @return A human readable string for the message
          */
-        virtual csString ToString(NetBase::AccessPointers *access_ptrs);
+        virtual csString ToString(NetBase::AccessPointers *accessPointers);
 
         /// Returns true if this message recent compared to the passed sequence value
         bool IsNewerThan(uint8_t oldCounter);
@@ -5189,10 +5176,10 @@ class psMGUpdateMessage : public psMessageCracker
         /**
          * @brief Converts the message into human readable string.
          *
-         * @param access_ptrs A struct to a number of access pointers
+         * @param accessPointers A struct to a number of access pointers
          * @return A human readable string for the message
          */
-        virtual csString ToString(NetBase::AccessPointers *access_ptrs);
+        virtual csString ToString(NetBase::AccessPointers *accessPointers);
 
         /// Returns true if this message is newer than the passed sequence value
         bool IsNewerThan(uint8_t oldCounter);
@@ -5236,10 +5223,10 @@ class psEntranceMessage : public psMessageCracker
         /**
          * @brief Converts the message into human readable string.
          *
-         * @param access_ptrs A struct to a number of access pointers
+         * @param accessPointers A struct to a number of access pointers
          * @return A human readable string for the message
          */
-        virtual csString ToString(NetBase::AccessPointers *access_ptrs);
+        virtual csString ToString(NetBase::AccessPointers *accessPointers);
 
         /// The gem entity ID of the entrance object
         EID entranceID;
@@ -5268,10 +5255,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     csString gmEventsXML;
 };
@@ -5297,10 +5284,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     int command,id;
     bool Evaluatable; ///< Stores if an event can be evaluated
@@ -5348,7 +5335,7 @@ public:
     psFactionMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     int cmd;                                /// The command type of message.
     int client;                             /// Destination client.
@@ -5375,10 +5362,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     csString name;
     int command,count;
@@ -5406,10 +5393,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 //-----------------------------------------------------------------------------
@@ -5428,10 +5415,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     int32_t raceID;
     int32_t CPValue;
@@ -5453,10 +5440,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 
@@ -5478,10 +5465,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers* /*access_ptrs*/)
+    virtual csString ToString(NetBase::AccessPointers* /*accessPointers*/)
     {
         return csString("not implemented");
     }
@@ -5509,10 +5496,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 
     struct DialogResponse
     {
@@ -5544,10 +5531,10 @@ public:
     /**
      * @brief Converts the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers* /*access_ptrs*/)
+    virtual csString ToString(NetBase::AccessPointers* /*accessPointers*/)
     {
         return csString("not implemented");
     }
@@ -5571,10 +5558,10 @@ public:
     /**
     * @brief Converts the message into human readable string.
     *
-    * @param access_ptrs A struct to a number of access pointers.
+    * @param accessPointers A struct to a number of access pointers.
     * @return Return a human readable string for the message.
     */
-    virtual csString ToString(NetBase::AccessPointers* /*access_ptrs*/)
+    virtual csString ToString(NetBase::AccessPointers* /*accessPointers*/)
     {
         return csString("not implemented");
     }

@@ -52,10 +52,10 @@ public:
     /**
      * Convert the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
 };
 
 
@@ -91,10 +91,10 @@ public:
     /**
      * Convert the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
     
     /// The error type ( from enum )
     int errorType;
@@ -126,10 +126,10 @@ public:
     /**
      * Convert the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
     
     /** Add a new variable to the list.  
       * @param value = the value or rank of the attribute
@@ -168,10 +168,10 @@ public:
     /**
      * Convert the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
     
     
 public:  
@@ -261,10 +261,10 @@ public:
     /**
      * Convert the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
     
     /** Add a new choice the the message payload.
      *
@@ -322,10 +322,10 @@ public:
     /**
      * Convert the message into human readable string.
      *
-     * @param access_ptrs A struct to a number of access pointers.
+     * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
     
     void AddEvent( LifeEventChoice *choice );
     
