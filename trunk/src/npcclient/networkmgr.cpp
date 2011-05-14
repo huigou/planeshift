@@ -78,8 +78,8 @@ NetworkManager::NetworkManager(MsgHandler *mh,psNetConnection* conn, iEngine* en
     msghandler->Subscribe(this,MSGTYPE_NPC_COMMAND);
     msghandler->Subscribe(this,MSGTYPE_NPCRACELIST);
 
-    msgstrings = NULL;
     connection= conn;
+    connection->SetEngine( engine );
 
     PrepareCommandMessage();
 }
@@ -126,12 +126,14 @@ void NetworkManager::Disconnect()
     connection->DisConnect();
 }
 
+csStringHashReversible * NetworkManager::GetMsgStrings()
+{
+    return connection->GetAccessPointers()->msgstringshash;
+}
+
 const char *NetworkManager::GetCommonString(uint32_t id)
 {
-    if (!msgstrings)
-        return NULL;
-
-    return msgstrings->Request(id);
+    return connection->GetAccessPointers()->Request(id);
 }
 
 void NetworkManager::HandleMessage(MsgEntry *message)
@@ -206,9 +208,7 @@ void NetworkManager::HandleMessage(MsgEntry *message)
 
             // receive message strings hash table
             psMsgStringsMessage msg(message);
-            msgstrings = msg.msgstrings;
-            connection->SetMsgStrings(0, msgstrings);
-            connection->SetEngine(engine);
+            connection->SetMsgStrings(0, msg.msgstrings);
             break;
         }
         case MSGTYPE_DISCONNECT:
@@ -327,7 +327,7 @@ void NetworkManager::HandleActor(MsgEntry *me)
 
 void NetworkManager::HandleItem( MsgEntry* me )
 {
-    psPersistItem mesg(me, msgstrings);
+    psPersistItem mesg(me, connection->GetAccessPointers());
 
     gemNPCObject * obj = npcclient->FindEntityID(mesg.eid);
 
@@ -1032,7 +1032,7 @@ void NetworkManager::QueueDRData(gemNPCActor *entity, psLinearMovement *linmove,
 
     CheckCommandsOverrun(100);
    
-    psDRMessage drmsg(0,entity->GetEID(),counter,0,msgstrings,linmove);
+    psDRMessage drmsg(0,entity->GetEID(),counter,0,GetMsgStrings(),linmove);
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_DRDATA);
     outbound->msg->Add( drmsg.msg->bytes->payload,(uint32_t)drmsg.msg->bytes->GetTotalSize() );

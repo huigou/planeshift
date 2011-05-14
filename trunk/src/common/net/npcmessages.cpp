@@ -77,7 +77,7 @@ psNPCListMessage::psNPCListMessage(MsgEntry *message)
     msg = message;
 }
 
-csString psNPCListMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psNPCListMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
     
@@ -106,7 +106,7 @@ psNPCReadyMessage::psNPCReadyMessage(MsgEntry *message)
     msg = message;
 }
 
-csString psNPCReadyMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psNPCReadyMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
     
@@ -155,7 +155,7 @@ psMapListMessage::psMapListMessage(MsgEntry *message)
 
 }
 
-csString psMapListMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psMapListMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
     for (size_t c = 0; c < map.GetSize(); c++)
@@ -205,7 +205,7 @@ void psNPCRaceListMessage::AddRace(csString& name, float walkSpeed, float runSpe
     }
 }
 
-csString psNPCRaceListMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psNPCRaceListMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
     for (size_t c = 0; c < raceInfo.GetSize(); c++)
@@ -240,7 +240,7 @@ psNPCCommandsMessage::psNPCCommandsMessage(MsgEntry *message)
     msg = message;
 }
 
-csString psNPCCommandsMessage::ToString(AccessPointers * access_ptrs)
+csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * access_ptrs)
 {
     csString msgtext;
 
@@ -854,7 +854,7 @@ EID psAllEntityPosMessage::Get(csVector3& pos, iSector*& sector, InstanceID& ins
     return eid;
 }
 
-csString psAllEntityPosMessage::ToString(AccessPointers * access_ptrs)
+csString psAllEntityPosMessage::ToString(NetBase::AccessPointers * access_ptrs)
 {
     csString msgtext;
     
@@ -901,7 +901,7 @@ psNewNPCCreatedMessage::psNewNPCCreatedMessage(MsgEntry *message)
     owner_id   = PID(message->GetUInt32());
 }
 
-csString psNewNPCCreatedMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psNewNPCCreatedMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
     
@@ -949,7 +949,7 @@ psPETCommandMessage::psPETCommandMessage(MsgEntry *message)
     options = message->GetStr();
 }
 
-csString psPETCommandMessage::ToString(AccessPointers * /*access_ptrs*/)
+csString psPETCommandMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
 {
     csString msgtext;
     

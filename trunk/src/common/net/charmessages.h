@@ -55,7 +55,7 @@ public:
      * @param access_ptrs A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
 };
 
 
@@ -94,7 +94,7 @@ public:
      * @param access_ptrs A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
     
     /// The error type ( from enum )
     int errorType;
@@ -129,7 +129,7 @@ public:
      * @param access_ptrs A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
     
     /** Add a new variable to the list.  
       * @param value = the value or rank of the attribute
@@ -171,7 +171,7 @@ public:
      * @param access_ptrs A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
     
     
 public:  
@@ -264,7 +264,7 @@ public:
      * @param access_ptrs A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
     
     /** Add a new choice the the message payload.
      *
@@ -325,7 +325,7 @@ public:
      * @param access_ptrs A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(AccessPointers * access_ptrs);
+    virtual csString ToString(NetBase::AccessPointers * access_ptrs);
     
     void AddEvent( LifeEventChoice *choice );
     

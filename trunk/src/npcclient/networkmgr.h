@@ -52,7 +52,6 @@ protected:
     psNetConnection *connection;
     bool ready;
     bool connected;
-    csStringHashReversible*    msgstrings;  /// server-supplied list of strings to use in net msgs
 
     // Command Message Queue  
     psNPCCommandsMessage *outbound;
@@ -152,7 +151,7 @@ public:
 
     void SendConsoleCommand(const char *cmd);
 
-    csStringHashReversible * GetMsgStrings() { return msgstrings; }
+    csStringHashReversible * GetMsgStrings();
     const char * GetCommonString(uint32_t id);
 
     void ReAuthenticate();
