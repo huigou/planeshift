@@ -79,7 +79,12 @@ public:
     
     // Mark this client as ready to be deleted
     void MarkDelete(Client *client);
+
+    /// Count the number of clients connected, including superclients
     size_t Count(void) const;
+
+    /// Count the number of ready players connected
+    size_t CountReadyPlayers() const;
 
     ///  Find by 32bit id value, used in UDP messages, returns ready or not.
     Client *FindAny(uint32_t id);

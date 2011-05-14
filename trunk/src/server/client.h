@@ -234,8 +234,9 @@ public:
     bool IsZombie() { return zombie; }
     
     /// Allow distinguishing superclients from regular player clients
-    bool IsSuperClient() { return superclient; }
     void SetSuperClient(bool flag) { superclient = flag; }
+    bool IsSuperClient() { return superclient; }
+    bool IsPlayerClient() { return (!superclient); }
 
     long GetIPAddress(char *addr)
     {
@@ -362,20 +363,20 @@ public:
     void SetCheatMask(CheatFlags mask,bool flag);
     bool GetCheatMask(CheatFlags mask) { return (cheatMask & mask) != 0;  }
 
-	/// Get the channel to use for an ordered message
-	OrderedMessageChannel * GetOrderedMessageChannel(msgtype mtype);
-	
+    /// Get the channel to use for an ordered message
+    OrderedMessageChannel * GetOrderedMessageChannel(msgtype mtype);
+
     // FIXME: Ugly hack here as a temporary workaround for client-side issue that causes the server
-	// to be flooded with inventory/glyph requests. Remove after all clients have been updated
-	// to stop flooding.
+    // to be flooded with inventory/glyph requests. Remove after all clients have been updated
+    // to stop flooding.
     csTicks lastInventorySend;
     csTicks lastGlyphSend;
 
     /// Change whether hiding from buddylists
     void SetBuddyListHide(bool hide) { isBuddyListHiding = hide; }
     bool GetBuddyListHide() { return isBuddyListHiding; }
-	
-protected:
+
+ protected:
 
     /**
      * A zombie client is a client where the player has disconnected, but
@@ -391,18 +392,18 @@ protected:
      */
     bool allowedToDisconnect;
     
-	/// Currently active id of Exchange object managed by Exchange Manager, or 0 if no exchange is active.
+    /// Currently active id of Exchange object managed by Exchange Manager, or 0 if no exchange is active.
     int exchangeID;
 
-	/// Pointer to the gemActor object played by this client once a character is logged in and in-game.
+    /// Pointer to the gemActor object played by this client once a character is logged in and in-game.
     gemActor *actor;
 
     csArray<PID> pets;
     csString mesh;
     bool ready;
 
-	/// This collection stores queues of ordered messages while we're waiting for an out of order one to arrive.
-	csHash<OrderedMessageChannel*> orderedMessages;
+    /// This collection stores queues of ordered messages while we're waiting for an out of order one to arrive.
+    csHash<OrderedMessageChannel*> orderedMessages;
     
     bool isAdvisor;         ///< Store if this client is acting as an advisor.
 

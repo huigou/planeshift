@@ -983,7 +983,7 @@ void UserManager::Who(psUserCmdMessage& msg, Client* client)
 
     // Could be about to overflow by now, so check.
     csString temp;
-    temp.Format("%u shown from %zu players online\n", count, clients->Count());
+    temp.Format("%u shown from %zu players online\n", count, clients->CountReadyPlayers());
 
     message.Append('\n');
     message.Append(temp);

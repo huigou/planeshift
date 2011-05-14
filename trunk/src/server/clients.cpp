@@ -56,7 +56,7 @@ Client *ClientConnectionSet::Add(LPSOCKADDR_IN addr)
     Client* testclient;
     do 
     {
-        newclientnum= psserver->rng->Get(0x8fffff); //make clientnum random
+        newclientnum = psserver->rng->Get(0x8fffff); //make clientnum random
         testclient = FindAny(newclientnum);
     } while (testclient != NULL);
 
@@ -84,7 +84,7 @@ static int compareClientsByName(Client * const &a, Client * const &b)
 
 void ClientConnectionSet::MarkDelete(Client *client)
 {
-	CS::Threading::RecursiveMutexScopedLock lock (mutex);
+    CS::Threading::RecursiveMutexScopedLock lock (mutex);
     
     uint32_t clientid = client->GetClientNum();
     if (!addrHash.DeleteAll(client->GetAddress()))
@@ -96,7 +96,7 @@ void ClientConnectionSet::MarkDelete(Client *client)
 
 void ClientConnectionSet::SweepDelete()
 {
-	CS::Threading::RecursiveMutexScopedLock lock (mutex);
+    CS::Threading::RecursiveMutexScopedLock lock (mutex);
 
     toDelete.Empty();
 }
@@ -105,6 +105,31 @@ size_t ClientConnectionSet::Count() const
 {
     return addrHash.GetSize();
 }
+
+size_t ClientConnectionSet::CountReadyPlayers() const
+{
+    size_t count = 0;
+
+    // Need to lock even if we are const
+    ClientConnectionSet* ccs = const_cast<ClientConnectionSet*>(this);
+    CS::Threading::RecursiveMutexScopedLock lock(ccs->mutex);
+
+    AddressHash::ConstGlobalIterator it(addrHash.GetIterator());
+    while(it.HasNext())
+    {
+        Client* p = it.Next();
+        
+        if (p->IsReady() && p->IsPlayerClient())
+        {
+            count++;
+        }
+        
+    }
+    
+    return count;
+}
+
+
 
 Client *ClientConnectionSet::FindAny(uint32_t clientnum)
 {
