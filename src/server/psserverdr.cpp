@@ -61,11 +61,12 @@
 #include "psproxlist.h"
 #include "globals.h"
 #include "scripting.h"
+#include "netmanager.h"
 
 psServerDR::psServerDR(CacheManager* cachemanager, EntityManager* entitymanager)
 {
-	cacheManager = cachemanager;
-	entityManager = entitymanager;
+    cacheManager = cachemanager;
+    entityManager = entitymanager;
     paladin = NULL;
 }
 
@@ -147,7 +148,7 @@ void psServerDR::ResetPos(gemActor* actor)
 
 void psServerDR::HandleDeadReckoning(MsgEntry* me,Client *client)
 {
-    psDRMessage drmsg(me,cacheManager->GetMsgStrings(),0,entityManager->GetEngine() );
+    psDRMessage drmsg(me,psserver->GetNetManager()->GetAccessPointers() );
     if (!drmsg.valid)
     {
         Error2("Received unparsable psDRMessage from client %u.\n",me->clientnum);

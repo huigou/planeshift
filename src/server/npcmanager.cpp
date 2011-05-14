@@ -72,7 +72,7 @@
 #include "workmanager.h"
 #include "weathermanager.h"
 #include "adminmanager.h"
-
+#include "netmanager.h"
 
 
 class psNPCManagerTick : public psGameEvent
@@ -698,9 +698,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     break;
                 }
 
-                psDRMessage drmsg(data,len,
-                                  cacheManager->GetMsgStrings(), 0,
-                                  entityManager->GetEngine());  // alternate method of cracking
+                psDRMessage drmsg(data,len,psserver->GetNetManager()->GetAccessPointers()); // alternate method of cracking
 
                 // copy the DR data into an iDataBuffer
                 csRef<iDataBuffer> databuf = csPtr<iDataBuffer> (new csDataBuffer (len));

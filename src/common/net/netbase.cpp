@@ -72,6 +72,19 @@ const char* NetBase::AccessPointers::Request(csStringID id) const
     return NULL;
 }
 
+csStringID NetBase::AccessPointers::Request( const char* string) const
+{
+    if (msgstrings)
+    {
+        return msgstrings->Request(string);
+    }
+    else if(msgstringshash)
+    {
+        return msgstringshash->Request(string);
+    }
+    return csInvalidStringID;
+}
+
 
 
 NetBase::NetBase(int outqueuesize)

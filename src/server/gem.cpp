@@ -3556,13 +3556,17 @@ bool gemActor::SetDRData(psDRMessage& drmsg)
     // ignore it as it must be out of date
     if(forcedSector)
     {
-		if (drmsg.sector != forcedSector)
-			return false;
-		else
-			forcedSector = NULL;  // Reset the forced sector after we received the correct sector at least once.
+        if (drmsg.sector != forcedSector)
+        {
+            return false;
+        }
+        else
+        {
+            forcedSector = NULL;  // Reset the forced sector after we received the correct sector at least once.
+        }
     }
-	pcmove->SetDRData(drmsg.on_ground,1.0f,drmsg.pos,drmsg.yrot,drmsg.sector,drmsg.vel,drmsg.worldVel,drmsg.ang_vel);
-	DRcounter = drmsg.counter;
+    pcmove->SetDRData(drmsg.on_ground,1.0f,drmsg.pos,drmsg.yrot,drmsg.sector,drmsg.vel,drmsg.worldVel,drmsg.ang_vel);
+    DRcounter = drmsg.counter;
 
 
     // Apply stamina only on PCs
@@ -3647,7 +3651,7 @@ void gemActor::MulticastDRUpdate()
     pcmove->GetDRData(on_ground,speed,pos,yrot,sector,vel,worldVel,ang_vel);
     psDRMessage drmsg(0, eid, on_ground, movementMode, DRcounter,
                       pos,yrot,sector, "", vel,worldVel,ang_vel,
-                      cacheManager->GetMsgStrings(), 0 );
+                      psserver->GetNetManager()->GetAccessPointers());
     drmsg.Multicast(GetMulticastClients(),0,PROX_LIST_ANY_RANGE);
 }
 

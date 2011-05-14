@@ -130,6 +130,13 @@ public:
          *  @return NULL if not found, or the string if found.
          */
         const char* Request(csStringID id) const;
+
+        /** Utility function that either request from the msgstring or from the message has
+         *  depending on who that is set.
+         *
+         *  @return csInvalidStringID if not found, or the csStringID for the string if found.
+         */
+        csStringID Request(const char* string) const;
     };
 
     
