@@ -1689,7 +1689,7 @@ int com_entlist(char * pattern)
     csHash<gemObject*, EID>::GlobalIterator i(gems.GetIterator());
     gemObject* obj;
 
-    CPrintf(CON_CMDOUTPUT ,"%-5s %-15s %-20s Position\n","EID","Type","Name");
+    CPrintf(CON_CMDOUTPUT ,"%-5s %-7s %-15s %-20s Position\n","EID","PID","Type","Name");
     while ( i.HasNext() )
     {
         obj = i.Next();
@@ -1707,8 +1707,9 @@ int com_entlist(char * pattern)
             const char *sector_name =
                 (sector) ? sector->QueryObject()->GetName():"(null)";
 
-            CPrintf(CON_CMDOUTPUT ,"%5d %-15s %-20s (%9.3f,%9.3f,%9.3f, %s)\n",
+            CPrintf(CON_CMDOUTPUT ,"%5d %7d %-15s %-20s (%9.3f,%9.3f,%9.3f, %s)\n",
                     obj->GetEID().Unbox(),
+                    obj->GetPID().Unbox(),
                     obj->GetObjectType(),
                     obj->GetName(),
                     pos.x,pos.y,pos.z,sector_name );
