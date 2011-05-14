@@ -179,14 +179,21 @@ protected:
     bool WillPetReact(int clientnum, Client * owner, gemNPC * pet, const char * type, int level);
 
     /// Handle network message with pet directives
-    void HandlePetCommand(MsgEntry *me,Client *client);
-
-    /// Handle network message with console commands from npcclient
-    void HandleConsoleCommand(MsgEntry *me,Client *client);
+    void HandlePetCommand(MsgEntry *me, Client *client);
 
     /// Handle network message with pet skills
-    void HandlePetSkill(MsgEntry * me,Client *client);
+    void HandlePetSkill(MsgEntry * me, Client *client);
     void SendPetSkillList( Client * client, bool forceOpen = true, PSSKILL focus = PSSKILL_NONE );
+
+ public:
+    /// Notification that an pet has been killed.
+    /// Upon notification of a killed pet this function will start a timer that prevent
+    /// resummon of dead PETs.
+    void PetHasBeenKilled( gemNPC*  pet );
+    
+ protected:
+    /// Handle network message with console commands from npcclient
+    void HandleConsoleCommand(MsgEntry *me,Client *client);
 
     /// Create an empty command list message, waiting for items to be queued in it.
     void PrepareMessage();
