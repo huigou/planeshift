@@ -231,6 +231,29 @@ bool pawsContainerDescWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModi
             widget->Show();
         return true;
     }
+    // Check to see if player attempts to take and stack everything
+    else if(widgetName == "TakeStackAll")
+    {        
+        GEMClientObject* oldtarget = psengine->GetCharManager()->GetTarget();
+        EID oldID;
+        
+        if(oldtarget)
+        {
+             oldID = oldtarget->GetEID();
+        }
+        
+        //printf("selecting containerID %d, oldID %d\n", containerID, oldID);
+        psUserActionMessage setnewtarget(0, containerID, "select");
+        setnewtarget.SendMessage();
+        //printf("taking all\n");
+        
+        // Attempt to grab all items in the container.
+        psengine->GetCmdHandler()->Execute("/takestackall");
+
+        //printf("selecting oldID %d\n", oldID);
+        psUserActionMessage setoldtarget(0, oldID, "select");
+        setoldtarget.SendMessage();
+    }
     // Check to see if player attempts to take everything
     else if (widgetName == "TakeAll")
     {        

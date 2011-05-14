@@ -6,10 +6,10 @@
         <bgimage resource="Loading Background" />
 
         <widget name="motd" factory="pawsMultiLineTextBox" >
-            <frame x="460" y="140" width="295" height="100" />
+            <frame x="460" y="80" width="295" height="100" />
         </widget>
         <widget name="guildmotd" factory="pawsMultiLineTextBox" >
-            <frame x="460" y="200" width="295" height="100" border="no" />
+            <frame x="460" y="180" width="295" height="100" border="no" />
         </widget>
         <widget name="tip" factory="pawsMultiLineTextBox" >
             <frame x="460" y="400" width="310" height="100" border="no" />

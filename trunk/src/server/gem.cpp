@@ -1470,108 +1470,125 @@ void gemItem::SendBehaviorMessage(const csString & msg_id, gemObject *actor)
     // Command for taking everything in a container.
     else if (msg_id == "takeall")
     {
-        Client* fromClient = actor->GetClient();
-        if (!fromClient)
-        {
-            printf("Command /takell can't find valid Client - something's wrong");
-        }
-            
-        //printf("Attempting to do MoveAllFromContainer requested by client number %d\n", fromClient->GetClientNum());
-        psCharacter* chr = actor->GetCharacterData();
-        gemActor* actor = chr->GetActor();
-        
-        // Checks the current target of the actor, trying to take all items from it.
-        gemObject* targetObject = actor->GetTargetObject();
-        
-        gemContainer* worldContainer = NULL;
-        psItem* currentItem = NULL;
-        psItem* newItem = NULL;
-    
-        // Check the client is actually targetting something
-        if (!targetObject)
-        {
-            psserver->SendSystemError(fromClient->GetClientNum(),
-                    "You need to target a container to takeall.");
-            return;
-        }
-    
-        // Check the target is valid
-        if (!targetObject->IsValid())
-        {
-            psserver->SendSystemError(fromClient->GetClientNum(),
-                    "You need to target a container to takeall.");
-            return;
-        }
-    
-        worldContainer = dynamic_cast<gemContainer*>(targetObject);
-    
-        // Check the casting was succesful, suggesting the target of client might just be a container.
-        if (!worldContainer)
-        {
-            psserver->SendSystemError(fromClient->GetClientNum(),
-                "You need to target a container to takeall.");
-            return;
-        }
-    
-        // Checks if the target is a container
-        if (!worldContainer->IsContainer())
-        {
-            psserver->SendSystemError(fromClient->GetClientNum(),
-                "Can not put item into another item %s.",worldContainer->GetItem()->GetName());
-            return;
-        }
-    
-        // Check client is in range
-        if (fromClient->GetActor()->RangeTo(worldContainer, true, true) > RANGE_TO_USE)
-        {
-            psserver->SendSystemError(fromClient->GetClientNum(),
-                "You are not in range to use %s.",worldContainer->GetItem()->GetName());
-            return;
-        }
-    
-        //printf("Checks done, proceeding to take all items..\n");
-    
-        // Iterate through items in container, take what can be taken.
-        gemContainer::psContainerIterator i(worldContainer);
-        while (i.HasNext())
-        {
-            currentItem = i.Next();
-            //printf("Item name in selection: %s\n", currentItem->GetName());
-        
-            // Check the client can remove the current item
-            if (!worldContainer->CanTake(fromClient, currentItem))
-                continue;
-
-            // Check the current item can be added to character inventory
-            if (chr->Inventory().Add(currentItem, true))
-            {
-                newItem = i.RemoveCurrent(fromClient);
-        
-                // Check the removing was succesful
-                if (!newItem)
-                {
-                    printf("/takeall: Removing %s by %d unsuccesful", currentItem->GetName(), fromClient->GetClientNum());
-                    continue;
-                }
-
-                chr->Inventory().Add(newItem, false);
-            }
-            // UNIMPLEMENTED, as it's hard to know if next item in iteration could be stacked on top of another.
-            // Assume inventory might be full.
-            // else
-            //   psserver->SendSystemInfo(clientnum, "You can't carry anymore %s",GetName());
-        
-        //currentItem->Save(false);
-        }
-        
-        // Update character's inventory view
-        psserver->GetCharManager()->UpdateItemViews(fromClient->GetClientNum());
+       SendBehaviorMessageTakeAll(msg_id, actor, true);
+    }
+    else if(msg_id == "takestackall")
+    {
+       SendBehaviorMessageTakeAll(msg_id, actor, false);
     }
     else
     {
         gemActiveObject::SendBehaviorMessage(msg_id, actor);
     }
     
+}
+
+// Implement SendBehaviorMessage for takeall and takestackall
+void gemItem::SendBehaviorMessageTakeAll(const csString & msg_id, gemObject *obj, bool precise)
+{
+    Client* fromClient = obj->GetClient();
+    if(!fromClient)
+    {
+        printf("Command /%s can't find valid Client - something's wrong", msg_id.GetData());
+    }
+            
+    //printf("Attempting to do MoveAllFromContainer requested by client number %d\n", fromClient->GetClientNum());
+    psCharacter* chr = obj->GetCharacterData();
+    gemActor* actor = chr->GetActor();
+
+    // Checks the current target of the actor, trying to take all items from it.
+    gemObject* targetObject = actor->GetTargetObject();
+
+    gemContainer* worldContainer = NULL;
+    psItem* currentItem = NULL;
+    psItem* newItem = NULL;
+
+    // Check the client is actually targetting something
+    if(!targetObject)
+    {
+        psserver->SendSystemError(fromClient->GetClientNum(),
+        "You need to target a container to %s.", msg_id.GetData());
+        return;
+    }
+
+    // Check the target is valid
+    if(!targetObject->IsValid())
+    {
+        psserver->SendSystemError(fromClient->GetClientNum(),
+        "You need to target a container to %s.", msg_id.GetData());
+        return;
+    }
+
+    worldContainer = dynamic_cast<gemContainer*>(targetObject);
+
+    // Check the casting was succesful, suggesting the target of client might just be a container.
+    if(!worldContainer)
+    {
+        psserver->SendSystemError(fromClient->GetClientNum(),
+        "You need to target a container to %s.", msg_id.GetData());
+        return;
+    }
+
+    // Checks if the target is a container
+    if(!worldContainer->IsContainer())
+    {
+        psserver->SendSystemError(fromClient->GetClientNum(),
+        "Can not put item into another item %s.",worldContainer->GetItem()->GetName());
+        return;
+    }
+
+    // Check client is in range
+    if(fromClient->GetActor()->RangeTo(worldContainer, true, true) > RANGE_TO_USE)
+    {
+        psserver->SendSystemError(fromClient->GetClientNum(),
+        "You are not in range to use %s.",worldContainer->GetItem()->GetName());
+        return;
+    }
+
+    //printf("Checks done, proceeding to take all items..\n");
+
+    // Iterate through items in container, take what can be taken.
+    gemContainer::psContainerIterator i(worldContainer);
+    while(i.HasNext())
+    {
+        currentItem = i.Next();
+        //printf("Item name in selection: %s\n", currentItem->GetName());
+
+        // Check the client can remove the current item
+        if(!worldContainer->CanTake(fromClient, currentItem))
+            continue;
+
+        // Check the current item can be added to character inventory
+        if(chr->Inventory().Add(currentItem, true))
+        {
+            newItem = i.RemoveCurrent(fromClient);
+
+            //Check the removing was succesful
+            if(!newItem)
+            {
+               printf("/takeall: Removing %s by %d unsuccesful", currentItem->GetName(), fromClient->GetClientNum());
+               continue;
+            }
+
+            if(precise)
+            {
+                chr->Inventory().Add(newItem, false);
+            }
+            else
+            {
+                chr->Inventory().Add(newItem, false, true, PSCHARACTER_SLOT_NONE, 0, false);    // call Add with precise == false
+            }
+        }
+        // UNIMPLEMENTED, as it's hard to know if next item in iteration could be stacked on top of another.
+        // Assume inventory might be full.
+        // else
+        //   psserver->SendSystemInfo(clientnum, "You can't carry anymore %s",GetName());
+
+        //currentItem->Save(false);
+    }
+
+    // Update character's inventory view
+    psserver->GetCharManager()->UpdateItemViews(fromClient->GetClientNum());
 }
 
 //--------------------------------------------------------------------------------------

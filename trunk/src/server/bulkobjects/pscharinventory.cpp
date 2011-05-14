@@ -603,12 +603,12 @@ size_t psCharacterInventory::FindCompatibleStackedItem(psItem *item, bool checkS
     return SIZET_NOT_FOUND;
 }
 
-csArray<size_t> psCharacterInventory::FindCompatibleStackedItems(psItem *item, bool checkStackCount)
+csArray<size_t> psCharacterInventory::FindCompatibleStackedItems(psItem *item, bool checkStackCount, bool precise)
 {
     csArray<size_t> compatibleItems;
     for (size_t i=1; i<inventory.GetSize(); i++)
     {
-        if (inventory[i].item->CheckStackableWith(item, true, checkStackCount))
+        if(inventory[i].item->CheckStackableWith(item, precise, checkStackCount))
         {
             compatibleItems.Push(i);
         }
@@ -726,7 +726,7 @@ psItem * psCharacterInventory::AddStacked(psItem *& item, int & added)
     return NULL;
 }
 
-bool psCharacterInventory::Add(psItem *&item, bool test, bool stack, INVENTORY_SLOT_NUMBER slot, gemContainer* container)
+bool psCharacterInventory::Add(psItem *&item, bool test, bool stack, INVENTORY_SLOT_NUMBER slot, gemContainer* container, bool precise)
 {
     if (slot%100<ANY_EMPTY_BULK_SLOT || slot%100>=PSCHARACTER_SLOT_BULK_END)
     {
@@ -758,7 +758,7 @@ bool psCharacterInventory::Add(psItem *&item, bool test, bool stack, INVENTORY_S
     if (stack && slot == ANY_BULK_SLOT && item->GetIsStackable())
     {
 
-        itemIndices = FindCompatibleStackedItems(item);
+        itemIndices = FindCompatibleStackedItems(item, true, precise);
         for (i=0; i<itemIndices.GetSize(); i++)
         {
             float size=0;

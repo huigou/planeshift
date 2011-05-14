@@ -133,6 +133,7 @@ psUserCommands::psUserCommands(ClientMsgHandler* mh,CmdHandler *ch,iObjectRegist
     cmdsource->Subscribe("/write",         this);
     cmdsource->Subscribe("/yield",         this);
     cmdsource->Subscribe("/takeall",       this); // Take all items from a container
+    cmdsource->Subscribe("/takestackall",  this); // Take all items from a container and stack not precisely
 }
 
 psUserCommands::~psUserCommands()
@@ -206,6 +207,7 @@ psUserCommands::~psUserCommands()
     cmdsource->Unsubscribe("/write",                 this);
     cmdsource->Unsubscribe("/yield",                 this);
     cmdsource->Unsubscribe("/takeall",               this);
+    cmdsource->Unsubscribe("/takestackall",          this);
 
 
 
@@ -799,6 +801,17 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         }
         else
             return "You need to specify a target or to select one";
+    }
+
+   // Handle /takestackall command
+    else if (words[0] == "/takestackall")
+    {
+        //printf("cmdusers 801, sending /takestackall to server.\n");
+        csString newCmd;
+        newCmd.Append("/takestackall");
+        
+        psUserCmdMessage cmdmsg(newCmd);
+        cmdmsg.SendMessage();
     }
     
     // Handle /takeall command

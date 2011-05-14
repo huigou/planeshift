@@ -473,8 +473,16 @@ protected:
     void HandleEntranceMessage( MsgEntry* me, Client *client );
     void HandleClientReady( MsgEntry* me, Client *client );
     
-    /// Handle taking all items from a container.
+    /** Handle taking all items from a container.
+     *  @param me The message from the client which will be analyzed.
+     *  @param client The client which sent the message.
+     */
     void HandleTakeAll(psUserCmdMessage& me, Client *client);
+    /** Handle taking all items from a container ignoring some qualities when stacking.
+     *  @param me The message from the client which will be analyzed.
+     *  @param client The client which sent the message.
+     */ 
+    void HandleTakeStackAll(psUserCmdMessage& me, Client *client);
 
     void SwitchAttackTarget(Client *targeter, Client *targeted);
 
