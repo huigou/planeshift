@@ -179,7 +179,7 @@ bool PawsEditorApp::Init()
         SevereError("Could not initialize PAWS!");
         return false;
     }
-printf("b\n");
+
     // Mount base skin to satisfy unskined elements
 	csString skinPath = cfgmgr->GetStr("Planeshift.GUI.Skin.Base","/planeshift/art/skins/base/client_base.zip");
 	if(!paws->LoadSkinDefinition(skinPath))
