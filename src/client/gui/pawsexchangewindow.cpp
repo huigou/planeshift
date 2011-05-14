@@ -25,6 +25,7 @@
 /////////////////////////////////////////////////////////////////////////////
 #include "net/messages.h"
 #include "net/clientmsghandler.h"
+#include "net/connection.h"
 
 /////////////////////////////////////////////////////////////////////////////
 //  CLIENT INCLUDES
@@ -295,7 +296,7 @@ void pawsExchangeWindow::HandleMessage( MsgEntry* me )
         ///////////////////////////////////////////////////////////        
         case MSGTYPE_EXCHANGE_ADD_ITEM:
         {
-            psExchangeAddItemMsg item(me, psengine->GetMsgStrings());                        
+            psExchangeAddItemMsg item(me, ((psNetManager*)psengine->GetNetManager())->GetConnection()->GetAccessPointers());                        
             pawsSlot* itemSlot = 0;
             
             if ( item.container == CONTAINER_EXCHANGE_OFFERING )

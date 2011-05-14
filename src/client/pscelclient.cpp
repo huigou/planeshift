@@ -62,6 +62,7 @@
 #include "net/clientmsghandler.h"
 
 #include "util/psconst.h"
+#include "net/connection.h"
 
 #include "gui/pawsinfowindow.h"
 #include "gui/pawsconfigkeys.h"
@@ -264,7 +265,7 @@ void psCelClient::HandleActor( MsgEntry* me )
 
 void psCelClient::HandleItem( MsgEntry* me )
 {
-    psPersistItem msg(me, clientdr->GetMsgStrings());
+    psPersistItem msg(me, ((psNetManager*)psengine->GetNetManager())->GetConnection()->GetAccessPointers());
     GEMClientItem* item = new GEMClientItem(this, msg);
     AddEntity(item);
 }

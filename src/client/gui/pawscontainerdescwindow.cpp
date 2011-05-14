@@ -23,6 +23,8 @@
 #include <csgeom/vector3.h>
 #include <iutil/objreg.h>
 
+// COMMON INCLUDES
+#include "net/connection.h"
 
 // CLIENT INCLUDES
 #include "pscelclient.h"
@@ -91,7 +93,7 @@ bool pawsContainerDescWindow::PostSetup()
 
 void pawsContainerDescWindow::HandleUpdateItem( MsgEntry* me )
 {
-    psViewItemUpdate mesg( me, psengine->GetMsgStrings() );
+    psViewItemUpdate mesg( me, ((psNetManager*)psengine->GetNetManager())->GetConnection()->GetAccessPointers() );
     csString sigData, data;
 
     // We send ownerID to multiple clients, so each client must decide if the item is owned by
@@ -118,7 +120,7 @@ void pawsContainerDescWindow::HandleUpdateItem( MsgEntry* me )
 void pawsContainerDescWindow::HandleViewItem( MsgEntry* me )
 {
     Show();
-    psViewItemDescription mesg(me, psengine->GetMsgStrings());
+    psViewItemDescription mesg(me, ((psNetManager*)psengine->GetNetManager())->GetConnection()->GetAccessPointers());
 
     description->SetText( mesg.itemDescription );
     name->SetText( mesg.itemName );

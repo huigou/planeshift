@@ -33,6 +33,7 @@
 //=============================================================================
 #include "net/messages.h"
 #include "net/clientmsghandler.h"
+#include "net/connection.h"
 
 //=============================================================================
 // Local Includes
@@ -65,7 +66,7 @@ void GUIHandler::HandleMessage(MsgEntry* me)
 
 void GUIHandler::HandleInventory(MsgEntry* me)
 {
-    psGUIInventoryMessage incoming(me, psengine->GetMsgStrings());
+    psGUIInventoryMessage incoming(me, ((psNetManager*)psengine->GetNetManager())->GetConnection()->GetAccessPointers());
 
 	// drop inventory list, if its version is older than the current.
 	// this may happen due to UDP latency.

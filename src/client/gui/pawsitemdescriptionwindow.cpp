@@ -34,6 +34,7 @@
 #include "net/messages.h"
 #include "net/clientmsghandler.h"
 #include "util/log.h"
+#include "net/connection.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -69,7 +70,7 @@ bool pawsItemDescriptionWindow::PostSetup()
 void pawsItemDescriptionWindow::HandleMessage( MsgEntry* me )
 {   
     Show();
-    psViewItemDescription mesg(me, psengine->GetMsgStrings());
+    psViewItemDescription mesg(me, ((psNetManager*)psengine->GetNetManager())->GetConnection()->GetAccessPointers());
     description->SetText( mesg.itemDescription );
     csString nameStr;
     nameStr = mesg.itemName;

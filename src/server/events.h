@@ -57,7 +57,7 @@ public:
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * accessPointers);
+    virtual csString ToString(NetBase::AccessPointers*  accessPointers);
 };
 
 
@@ -78,7 +78,7 @@ public:
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * accessPointers);
+    virtual csString ToString(NetBase::AccessPointers*  accessPointers);
 };
 
 
@@ -99,7 +99,7 @@ class psTargetChangeEvent : public psMessageCracker
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * accessPointers);
+    virtual csString ToString(NetBase::AccessPointers*  accessPointers);
 };
 
 
@@ -119,7 +119,7 @@ public:
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * accessPointers);
+    virtual csString ToString(NetBase::AccessPointers*  accessPointers);
     
 public:
     gemActor* actor;        /// The player that gained the points.
@@ -143,7 +143,7 @@ public:
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * accessPointers);
+    virtual csString ToString(NetBase::AccessPointers*  accessPointers);
 
     /**Contains informations about the specific event and will be taken in ownership by the economymanager for accounting.
      * They will all be freed after a certain amount of time.
@@ -166,7 +166,7 @@ public:
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * accessPointers);
+    virtual csString ToString(NetBase::AccessPointers*  accessPointers);
 
     /**Contains informations about the specific event and will be taken in ownership by the economymanager for accounting.
      * They will all be freed after a certain amount of time.
@@ -187,7 +187,7 @@ class psPickupEvent : public psMessageCracker
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * accessPointers);
+    virtual csString ToString(NetBase::AccessPointers*  accessPointers);
 
     /**Contains informations about the specific event and will be taken in ownership by the economymanager for accounting.
      * They will all be freed after a certain amount of time.
@@ -209,7 +209,7 @@ class psDropEvent : public psMessageCracker
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * accessPointers);
+    virtual csString ToString(NetBase::AccessPointers*  accessPointers);
 
     /**Contains informations about the specific event and will be taken in ownership by the economymanager for accounting.
      * They will all be freed after a certain amount of time.
@@ -231,7 +231,7 @@ class psLootEvent : public psMessageCracker
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * accessPointers);
+    virtual csString ToString(NetBase::AccessPointers*  accessPointers);
 
     /**Contains informations about the specific event and will be taken in ownership by the economymanager for accounting.
      * They will all be freed after a certain amount of time.
@@ -261,7 +261,7 @@ public:
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * accessPointers);
+    virtual csString ToString(NetBase::AccessPointers*  accessPointers);
 };
 
 
@@ -286,7 +286,7 @@ public:
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * accessPointers);
+    virtual csString ToString(NetBase::AccessPointers*  accessPointers);
 };
 
 
@@ -319,7 +319,7 @@ public:
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * accessPointers);
+    virtual csString ToString(NetBase::AccessPointers* accessPointers);
 
 };
 

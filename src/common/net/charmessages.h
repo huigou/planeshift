@@ -55,7 +55,7 @@ public:
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * accessPointers);
+    virtual csString ToString(NetBase::AccessPointers*  accessPointers);
 };
 
 
@@ -94,7 +94,7 @@ public:
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * accessPointers);
+    virtual csString ToString(NetBase::AccessPointers*  accessPointers);
     
     /// The error type ( from enum )
     int errorType;
@@ -129,7 +129,7 @@ public:
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * accessPointers);
+    virtual csString ToString(NetBase::AccessPointers*  accessPointers);
     
     /** Add a new variable to the list.  
       * @param value = the value or rank of the attribute
@@ -171,7 +171,7 @@ public:
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * accessPointers);
+    virtual csString ToString(NetBase::AccessPointers*  accessPointers);
     
     
 public:  
@@ -264,7 +264,7 @@ public:
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * accessPointers);
+    virtual csString ToString(NetBase::AccessPointers*  accessPointers);
     
     /** Add a new choice the the message payload.
      *
@@ -325,7 +325,7 @@ public:
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers * accessPointers);
+    virtual csString ToString(NetBase::AccessPointers*  accessPointers);
     
     void AddEvent( LifeEventChoice *choice );
     
