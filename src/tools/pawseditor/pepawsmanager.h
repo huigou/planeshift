@@ -30,7 +30,7 @@
 class pePawsManager : public PawsManager
 {
 public:
-    pePawsManager(iObjectRegistry* objectReg, const char* skin, const char * pawsConfigFile = "/this/planeshift.cfg");
+    pePawsManager(iObjectRegistry* objectReg, const char* skin);
     virtual ~pePawsManager(void);
 
     void ReloadStyles();

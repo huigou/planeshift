@@ -165,7 +165,7 @@ PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* 
     {
         if(!LoadSkinDefinition(skinBase))
         {
-            Error2("Couldn't load base skin '%s'!\n", skinBase);
+            Error2("Couldn't load base skin '%s'!", skinBase);
         }
     }
 
@@ -173,7 +173,6 @@ PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* 
         Error2("Failed to load prefsFile '%s'", prefsFile.GetData());
     if ( !prefs->LoadBorderFile( borderFile ) )
         Error2("Failed to load borderFile '%s'", borderFile.GetData());
-
 
     mouse = new pawsMouse();
     mouse->ChangeImage("Standard Mouse Pointer");

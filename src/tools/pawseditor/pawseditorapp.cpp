@@ -179,7 +179,7 @@ bool PawsEditorApp::Init()
         SevereError("Could not initialize PAWS!");
         return false;
     }
-
+printf("b\n");
     // Mount base skin to satisfy unskined elements
 	csString skinPath = cfgmgr->GetStr("Planeshift.GUI.Skin.Base","/planeshift/art/skins/base/client_base.zip");
 	if(!paws->LoadSkinDefinition(skinPath))
@@ -200,8 +200,6 @@ bool PawsEditorApp::Init()
             "Warning: Some PAWS widgets failed to load");
     }
 
-    paws->GetMouse()->ChangeImage("peStandardMousePointer");
-
     paws->FindWidget( "peMenu" )->SetAlwaysOnTop( true );
     widgetTree = (peWidgetTree *) paws->FindWidget( "peWidgetTree" );
     widgetTree->SetAlwaysOnTop( true );
@@ -220,6 +218,7 @@ bool PawsEditorApp::Init()
 
     // Load Default Skin
     csString skin = cfgmgr->GetStr("PlaneShift.GUI.Skin.Selected","default");
+    printf("a  %s\n", skin.GetData());
     if(skin != "")  //should not happen but who knows what an user might do :P
         LoadSkin( skin );
 
