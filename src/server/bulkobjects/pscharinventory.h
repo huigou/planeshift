@@ -208,11 +208,13 @@ public:
       * @param stack Should the item be stacked?
       * @param slot The slot in which we want to place an item.
       *             (may be a slot number, ANY_BULK_SLOT, or ANY_EMPTY_BULK_SLOT)
+      * @param precise Says whathever if the stacking should be precise and not ignore
+      *                properties like quality.
       * @return true  if the item could be placed fully in the slot.
       * @return false if the item could not be placed.
       */
     bool Add(psItem *& item, bool test = false, bool stack = true, 
-             INVENTORY_SLOT_NUMBER slot = PSCHARACTER_SLOT_NONE, gemContainer* container = NULL);
+             INVENTORY_SLOT_NUMBER slot = PSCHARACTER_SLOT_NONE, gemContainer* container = NULL, bool precise = true);
 
     /** Attempt to stack an item on an existing one if Add failed.
       * @param item The item we want to place into the slot.
@@ -487,8 +489,10 @@ private:
 
     /** Returns an array of array indices for items that match the specified 
      *  ones, so they can be combined.
+     *  @param precise Says whathever if the stacking should be precise and not ignore
+     *                  properties like quality.
      */
-    csArray<size_t> FindCompatibleStackedItems(psItem *item, bool checkStackCount = true);
+    csArray<size_t> FindCompatibleStackedItems(psItem *item, bool checkStackCount = true, bool precise = true);
 
     /// Allocate either a psItem or a psGlyph
     psItem *GetItemFactory(psItemStats *stats);

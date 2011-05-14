@@ -4,6 +4,11 @@
         <frame x="100" y="100" width="300" height="365" border="yes"/>
         <title resource="Scaling Title Bar" text="Container" align="left" close_button="yes"/>
 
+    <widget name="TakeStackAll" factory="pawsButton" tooltip = "Take and Stack All">
+            <frame x="10" y="70" width="48" height="48" />
+            <bgimage resource="ButtonPickup" />
+        </widget>
+
 	<widget name="TakeAll" factory="pawsButton" tooltip = "Take All">
             <frame x="10" y="120" width="48" height="48" />
             <bgimage resource="ButtonPickup" />

@@ -568,6 +568,15 @@ public:
     virtual bool GetVisibility();
 
     virtual void SendBehaviorMessage(const csString & str, gemObject *obj);
+
+private:
+    /** Used to handle the take all messages with containers.
+     *  @param str The id of the message takestackall or takeall
+     *  @param obj The actor doing the action.
+     *  @param precise Whathever if we should stack the items only if they are equal or
+     *                 only if they are of the same type.
+     */ 
+    virtual void SendBehaviorMessageTakeAll(const csString & str, gemObject *obj, bool precise);
 };
 
 //-----------------------------------------------------------------------------
