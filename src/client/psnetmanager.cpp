@@ -56,6 +56,8 @@ bool psNetManager::Initialize( iObjectRegistry* newobjreg )
     if (!connection->Initialize(object_reg))
         return false;
 
+    connection->SetEngine(psengine->GetEngine());
+
     msghandler = csPtr<ClientMsgHandler> (new ClientMsgHandler);
     bool rc = msghandler->Initialize((NetBase*) connection, object_reg);
     if (!rc)
