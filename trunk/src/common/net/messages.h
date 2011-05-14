@@ -396,9 +396,9 @@ int psfMsgType(const char* msgTypeName);
     } Class##_static_init__
 
 
-#define PSF_IMPLEMENT_MSG_FACTORY_CREATE(Class)                   \
+#define PSF_IMPLEMENT_MSG_FACTORY_CREATE1(Class)                  \
     psMessageCracker* Class::CreateMessage(MsgEntry* me,          \
-           NetBase::AccessPointers* /*accessPointers*/)              \
+           NetBase::AccessPointers* /*accessPointers*/)           \
     {                                                             \
         return (psMessageCracker*)new Class(me);                  \
     }
@@ -411,34 +411,19 @@ int psfMsgType(const char* msgTypeName);
 
 #define PSF_IMPLEMENT_MSG_FACTORY(Class,MsgType)                  \
     PSF_IMPLEMENT_MSG_FACTORY_TYPENAME(Class,MsgType)             \
-    PSF_IMPLEMENT_MSG_FACTORY_CREATE(Class)                       \
+    PSF_IMPLEMENT_MSG_FACTORY_CREATE1(Class)                      \
     PSF_IMPLEMENT_MSG_FACTORY_REGISTER(Class,MsgType)
 
-#define PSF_IMPLEMENT_MSG_FACTORY_CREATE1(Class)                  \
+#define PSF_IMPLEMENT_MSG_FACTORY_CREATE2(Class)                  \
     psMessageCracker* Class::CreateMessage(MsgEntry* me,          \
            NetBase::AccessPointers* a_p)                          \
     {                                                             \
         return (psMessageCracker*)new Class(me, a_p);             \
     }
 
-#define PSF_IMPLEMENT_MSG_FACTORY1(Class,MsgType)                 \
+#define PSF_IMPLEMENT_MSG_FACTORY_ACCESS_POINTER(Class,MsgType)   \
     PSF_IMPLEMENT_MSG_FACTORY_TYPENAME(Class,MsgType)             \
-    PSF_IMPLEMENT_MSG_FACTORY_CREATE1(Class)                      \
-    PSF_IMPLEMENT_MSG_FACTORY_REGISTER(Class,MsgType)
-
-#define PSF_IMPLEMENT_MSG_FACTORY_CREATE3(Class)                  \
-    psMessageCracker* Class::CreateMessage(MsgEntry* me,          \
-           NetBase::AccessPointers* a_p)                          \
-    {                                                             \
-        return (psMessageCracker*)new Class(me,                   \
-                                            a_p->msgstrings,      \
-                                            a_p->msgstringshash,  \
-                                            a_p->engine);         \
-    }
-
-#define PSF_IMPLEMENT_MSG_FACTORY3(Class,MsgType)                 \
-    PSF_IMPLEMENT_MSG_FACTORY_TYPENAME(Class,MsgType)             \
-    PSF_IMPLEMENT_MSG_FACTORY_CREATE3(Class)                      \
+    PSF_IMPLEMENT_MSG_FACTORY_CREATE2(Class)                      \
     PSF_IMPLEMENT_MSG_FACTORY_REGISTER(Class,MsgType)
 
 //-----------------------------------------------------------------------------
@@ -2960,8 +2945,8 @@ protected:
                     const csVector3& pos, float yrot, iSector *sector,
                     csString sectorName, const csVector3& vel, csVector3& worldVel,
                     float ang_vel, csStringSet* msgstrings, bool donewriting=true);
-    void ReadDRInfo( MsgEntry* me, csStringSet* msgstrings, csStringHashReversible* msgstringshash, iEngine *engine);
-    void CreateMsgEntry(uint32_t client, csStringSet* msgstrings, csStringHashReversible* msgstringshash, iSector *sector, csString sectorName);
+    void ReadDRInfo( MsgEntry* me, NetBase::AccessPointers* accessPointers );
+    void CreateMsgEntry(uint32_t client, NetBase::AccessPointers* accessPointers, iSector *sector, csString sectorName);
 
     /// Flags indicating what components are packed in this message
     enum DRDataFlags
@@ -2997,15 +2982,15 @@ public:
 
     psDRMessage() { }
     psDRMessage(uint32_t client, EID mappedid, uint8_t counter,
-                csStringSet* msgstrings, csStringHashReversible* msgstringshash,
+                NetBase::AccessPointers* accessPointers,
                 psLinearMovement *linmove, uint8_t mode=0);
     psDRMessage(uint32_t client, EID mappedid,
                 bool on_ground, uint8_t mode, uint8_t counter,
                 const csVector3& pos, float yrot, iSector *sector, csString sectorName,
                 const csVector3& vel, csVector3& worldVel, float ang_vel,
-                csStringSet* msgstrings, csStringHashReversible* msgstringshash);
-    psDRMessage(void *data,int size, csStringSet* msgstrings, csStringHashReversible* msgstringshash, iEngine *engine);
-    psDRMessage( MsgEntry* me, csStringSet* msgstrings, csStringHashReversible* msgstringshash, iEngine *engine);
+                NetBase::AccessPointers* accessPointers);
+    psDRMessage(void *data, int size, NetBase::AccessPointers* accessPointers );
+    psDRMessage( MsgEntry* me, NetBase::AccessPointers* accessPointers );
 
     /// Returns true if this message is newer than the passed DR sequence value
     bool IsNewerThan(uint8_t oldCounter);
@@ -3042,7 +3027,7 @@ public:
     psForcePositionMessage(uint32_t client, uint8_t sequence,
                            const csVector3& pos, float yRot, iSector *sector,
                            csStringSet *msgstrings, uint32_t time = 0, csString loadBackground = "", csVector2 start = 0, csVector2 dest = 0, csString loadWidget = "");
-    psForcePositionMessage(MsgEntry *me, csStringSet *msgstrings, csStringHashReversible* msgstringshash, iEngine *engine);
+    psForcePositionMessage(MsgEntry *me, NetBase::AccessPointers* accessPointers );
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -3219,7 +3204,7 @@ public:
                     PID playerID = 0, uint32_t groupID = 0, EID ownerEID = 0,
                     uint32_t flags = NONE, PID masterID = 0, bool forNPClient = false);
 
-    psPersistActor( MsgEntry* me, csStringSet* msgstrings, csStringHashReversible* msgstringshash, iEngine *engine, bool forNPClient = false );
+    psPersistActor( MsgEntry* me, NetBase::AccessPointers* accessPointers, bool forNPClient = false );
 
     PSF_DECLARE_MSG_FACTORY();
 

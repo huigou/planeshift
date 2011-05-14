@@ -277,7 +277,7 @@ void NetworkManager::HandleAllEntities(MsgEntry *message)
 
 void NetworkManager::HandleActor(MsgEntry *me)
 {
-    psPersistActor mesg( me, 0, GetMsgStrings(), engine, true );
+    psPersistActor mesg( me, connection->GetAccessPointers(), true );
 
     Debug4(LOG_NET, 0, "Got persistActor message, size %zu, id=%d, name=%s", me->GetSize(),mesg.playerID.Unbox(),mesg.name.GetDataSafe() );
 
@@ -1032,7 +1032,7 @@ void NetworkManager::QueueDRData(gemNPCActor *entity, psLinearMovement *linmove,
 
     CheckCommandsOverrun(100);
    
-    psDRMessage drmsg(0,entity->GetEID(),counter,0,GetMsgStrings(),linmove);
+    psDRMessage drmsg(0,entity->GetEID(),counter,connection->GetAccessPointers(),linmove);
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_DRDATA);
     outbound->msg->Add( drmsg.msg->bytes->payload,(uint32_t)drmsg.msg->bytes->GetTotalSize() );

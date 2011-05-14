@@ -209,7 +209,7 @@ void psClientDR::ResetMsgStrings()
 
 void psClientDR::HandleDeadReckon( MsgEntry* me )
 {
-    psDRMessage drmsg(me,0,msgstrings,psengine->GetEngine() );
+    psDRMessage drmsg(me, ((psNetManager*)psengine->GetNetManager())->GetConnection()->GetAccessPointers() );
     GEMClientActor* gemActor = (GEMClientActor*)celclient->FindObject( drmsg.entityid );
      
     if (!gemActor)
@@ -243,7 +243,7 @@ void psClientDR::HandleDeadReckon( MsgEntry* me )
 
 void psClientDR::HandleForcePosition(MsgEntry *me)
 {
-    psForcePositionMessage msg(me, 0, msgstrings, psengine->GetEngine());
+    psForcePositionMessage msg(me, ((psNetManager*)psengine->GetNetManager())->GetConnection()->GetAccessPointers());
 
     if(last_sector != msg.sectorName)
     {

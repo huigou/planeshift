@@ -244,7 +244,7 @@ void psCelClient::HandleActor( MsgEntry* me )
         psengine->FatalError("Cannot load main actor. Error during loading.\n");
         return;
     }
-    psPersistActor msg(me, 0, GetClientDR()->GetMsgStrings(), psengine->GetEngine());
+    psPersistActor msg(me, ((psNetManager*)psengine->GetNetManager())->GetConnection()->GetAccessPointers());
 
     GEMClientActor* actor = new GEMClientActor(this, msg);
 
@@ -1698,7 +1698,8 @@ void GEMClientActor::SendDRUpdate(unsigned char priority, csStringHashReversible
     // ++DRcounter is the sequencer of these messages so the server and other
     // clients do not use out of date messages when delivered out of order.
     psDRMessage drmsg(0, mappedid, on_ground, 0, ++DRcounter, pos, yrot, sector,
-        sector->QueryObject()->GetName(), vel, worldVel, ang_vel, 0, msgstrings);
+                      sector->QueryObject()->GetName(), vel, worldVel, ang_vel,
+                      ((psNetManager*)psengine->GetNetManager())->GetConnection()->GetAccessPointers());
     drmsg.msg->priority = priority;
 
     //if (hackflag)

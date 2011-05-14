@@ -266,9 +266,7 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
                 
                 if ( (accessPointers->msgstrings || accessPointers->msgstringshash) && accessPointers->engine)
                 {
-                    psDRMessage drmsg(data,len,
-                                      accessPointers->msgstrings, accessPointers->msgstringshash,
-                                      accessPointers->engine);  // alternate method of cracking 
+                    psDRMessage drmsg(data, len, accessPointers);  // alternate method of cracking 
 
                     msgtext.Append(drmsg.ToString(accessPointers));
                 }
