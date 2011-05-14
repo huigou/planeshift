@@ -18,7 +18,7 @@ psCharApprovedMessage::psCharApprovedMessage(MsgEntry* )
 {
 }
 
-csString psCharApprovedMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
+csString psCharApprovedMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
 {
     csString msgtext;
     
@@ -54,7 +54,7 @@ psCharRejectedMessage::psCharRejectedMessage(MsgEntry* msg )
     valid = !(msg->overrun);
 }
 
-csString psCharRejectedMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
+csString psCharRejectedMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
 {
     csString msgtext;
     
@@ -138,7 +138,7 @@ psCharVerificationMesg::psCharVerificationMesg( MsgEntry* me )
     }
 } 
     
-csString psCharVerificationMesg::ToString(NetBase::AccessPointers * /*access_ptrs*/)
+csString psCharVerificationMesg::ToString(NetBase::AccessPointers * /*accessPointers*/)
 {
     csString msgtext;
     
@@ -240,7 +240,7 @@ psCharUploadMessage::psCharUploadMessage( MsgEntry* me )
 }
 
 
-csString psCharUploadMessage::ToString(NetBase::AccessPointers * /*access_ptrs*/)
+csString psCharUploadMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
 {
     csString msgtext;
     
@@ -340,7 +340,7 @@ void psCreationChoiceMsg::ConstructMessage()
     msg->ClipToCurrentSize();
 }
 
-csString psCreationChoiceMsg::ToString(NetBase::AccessPointers * /*access_ptrs*/)
+csString psCreationChoiceMsg::ToString(NetBase::AccessPointers * /*accessPointers*/)
 {
     csString msgtext;
     
@@ -464,7 +464,7 @@ psLifeEventMsg::psLifeEventMsg( MsgEntry* msg )
     }    
 }
 
-csString psLifeEventMsg::ToString(NetBase::AccessPointers * /*access_ptrs*/)
+csString psLifeEventMsg::ToString(NetBase::AccessPointers * /*accessPointers*/)
 {
     csString msgtext;
     
