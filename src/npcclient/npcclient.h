@@ -321,11 +321,6 @@ public:
      */
     psPath* FindPath(const char* name);
 
-    /**
-     * Find a given path.
-     */
-    psPath* FindPath(const Waypoint*  wp1, const Waypoint*  wp2, psPath::Direction & direction);
-
     /** Enable or disable NPCs
      *
      *  Alter the Disabled state of NPCs.

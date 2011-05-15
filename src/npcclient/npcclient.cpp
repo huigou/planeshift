@@ -873,11 +873,6 @@ psPath *psNPCClient::FindPath(const char *name)
     return pathNetwork->FindPath(name);
 }
 
-psPath *psNPCClient::FindPath(const Waypoint * wp1, const Waypoint * wp2, psPath::Direction & direction)
-{
-    return pathNetwork->FindPath(wp1,wp2,direction);
-}
-
 void psNPCClient::TriggerEvent(Perception *pcpt, float maxRange,
                                csVector3 *basePos, iSector *baseSector,
                                bool sameSector)

@@ -557,7 +557,7 @@ void psPathNetwork::ListWaypoints(const char * pattern)
 
             for (size_t i = 0; i < wp->links.GetSize(); i++)
             {
-                CPrintf(CON_CMDOUTPUT," %s%s(%d,%.1f)",(wp->preventWander[i]?"#":""),
+                CPrintf(CON_CMDOUTPUT," %s%s(%d,%.1f)",(wp->edges[i]->NoWander()?"#":""),
                         wp->links[i]->GetName(),wp->links[i]->GetID(),wp->dists[i]);
             }
 
@@ -650,20 +650,6 @@ psPath   *psPathNetwork::FindPath(const char *name)
         {
             return path;
         }
-    }
-
-    return NULL;
-}
-
-psPath* psPathNetwork::FindPath(const Waypoint * wp1, const Waypoint * wp2, psPath::Direction & direction)
-{
-    // Is there a link between wp1 and wp2?
-    const size_t index = wp1->links.Find(const_cast<Waypoint*>(wp2));
-    if (index != csArrayItemNotFound)
-    {
-        // Get chached values
-        direction = wp1->pathDir[index];
-        return wp1->paths[index];
     }
 
     return NULL;

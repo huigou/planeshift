@@ -165,11 +165,6 @@ public:
     psPath* FindPath(const char *name);
     
     /**
-     * Find a given path from starting waypoint wp1 to end waypoint wp2.
-     */
-    psPath* FindPath(const Waypoint * wp1, const Waypoint * wp2, psPath::Direction & direction);
-
-    /**
      * Find a given edge from starting waypoint wp1 to end waypoint wp2.
      */
     Edge* FindEdge(const Waypoint * wp1, const Waypoint * wp2);
