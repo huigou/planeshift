@@ -84,7 +84,7 @@ Edge* Edge::GetRandomEdge(const psPathNetwork::RouteFilter* routeFilter)
 
         if ( ((edge->endWaypoint == startWaypoint && edge->endWaypoint->allowReturn)||
               (edge->endWaypoint != startWaypoint)) &&
-             (!endWaypoint->preventWander[ii]) &&
+             (!edge->NoWander()) &&
              (!routeFilter->Filter(edge->endWaypoint)) )
         {
             edges.Push(edge);
@@ -104,6 +104,11 @@ Edge* Edge::GetRandomEdge(const psPathNetwork::RouteFilter* routeFilter)
 bool Edge::IsTeleport() const
 {
     return path->teleport;
+}
+
+bool Edge::NoWander() const
+{
+    return path->noWander;
 }
 
 Edge::Iterator* Edge::GetIterator()

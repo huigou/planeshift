@@ -66,6 +66,10 @@ public:
     /** Return the path
      */
     psPath* GetPath() { return path; }
+
+    /** Return the direction of path this edge is going
+     */
+    psPath::Direction GetDirection() { return direction; }
     
     /** Return the first waypoint in the edge
      */
@@ -82,6 +86,10 @@ public:
     /** Check if this edge a teleport edge.
      */
     bool IsTeleport() const;
+
+    /** Check if wander is allowed.
+     */
+    bool NoWander() const;
 
     /** Iterator base class for Forward and Reverse Iterators
      */

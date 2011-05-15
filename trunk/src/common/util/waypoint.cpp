@@ -160,9 +160,7 @@ void Waypoint::AddLink(psPath * path, Waypoint * wp, psPath::Direction direction
     links.Push(wp);
     edges.Push(new Edge(path, direction));
     paths.Push(path);
-    pathDir.Push(direction);
     dists.Push(distance);
-    preventWander.Push(path->noWander);
 }
 
 void Waypoint::RemoveLink(psPath * path)
@@ -173,9 +171,7 @@ void Waypoint::RemoveLink(psPath * path)
         links.DeleteIndexFast(index);
         edges.DeleteIndexFast(index);
         paths.DeleteIndexFast(index);
-        pathDir.DeleteIndexFast(index);
         dists.DeleteIndexFast(index);
-        preventWander.DeleteIndexFast(index);
     }
 }
 
@@ -198,7 +194,7 @@ Edge* Waypoint::GetRandomEdge(const psPathNetwork::RouteFilter* routeFilter)
     {
         Edge *edge = edges[ii];
 
-        if ( (!preventWander[ii]) && (!routeFilter->Filter(edge->GetEndWaypoint())) )
+        if ( (!edge->NoWander()) && (!routeFilter->Filter(edge->GetEndWaypoint())) )
         {
             candidateEdges.Push(edge);
         }
