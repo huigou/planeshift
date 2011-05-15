@@ -236,6 +236,16 @@ bool ScriptOperation::AtInterruptedAngle(NPC *npc)
     return AtInterruptedAngle(pos,sector,angle);
 }
 
+void ScriptOperation::SendCollitionPerception(NPC* npc)
+{
+    csString collision = GetCollisionPerception(npc);
+    if (!collision.IsEmpty())
+    {
+        Perception perception(collision);
+        npc->TriggerEvent(&perception);
+    }
+}
+
 bool ScriptOperation::CheckMoveOk(NPC *npc, EventManager *eventmgr, csVector3 oldPos, iSector* oldSector, const csVector3 & newPos, iSector* newSector, float timedelta)
 {
     npcMesh* pcmesh = npc->GetActor()->pcmesh;
@@ -248,13 +258,12 @@ bool ScriptOperation::CheckMoveOk(NPC *npc, EventManager *eventmgr, csVector3 ol
 
     if ((oldPos - newPos).SquaredNorm() < 0.01f) // then stopped dead, presumably by collision
     {
-        csString collision = GetCollisionPerception(npc);
-        if (!collision.IsEmpty())
-        {
-            Perception perception(collision);
-            npc->TriggerEvent(&perception);
-        }
-
+        // We collided. Now stop the movment and inform the server.
+        StopMovement(npc);
+        
+        // Send perception for collision
+        SendCollitionPerception(npc);
+        
         return false;
     }
     else
@@ -273,14 +282,13 @@ bool ScriptOperation::CheckMoveOk(NPC *npc, EventManager *eventmgr, csVector3 ol
         float diffPositionY = fabs(newPos.y - oldPos.y);
 
         // Check if this NPC is falling.
-        if (fabs(diffPositionY) > 800.0 ||
-            fabs(newPos.y) > 800.0 )  
+        if (fabs(diffPositionY) > 800.0 || fabs(newPos.y) > 800.0 )  
         {                         
 
             npc->IncrementFallCounter();
 
+            // Send Falling perception
             csString falling = GetFallingPerception(npc);
-            
             if (!falling.IsEmpty())
             {
                 Perception perception(falling);
@@ -296,26 +304,27 @@ bool ScriptOperation::CheckMoveOk(NPC *npc, EventManager *eventmgr, csVector3 ol
             return false;
         }
 
-        if (diffExpectedX > EPSILON ||
-            diffExpectedZ > EPSILON)
+        if (diffExpectedX > EPSILON || diffExpectedZ > EPSILON)
         {
             consecCollisions++;
             npc->Printf(10,"Bang. %d consec collisions last with diffs (%1.2f,%1.2f)...",
                         consecCollisions,diffExpectedX,diffExpectedZ);
             if (consecCollisions > 8)  // allow for hitting trees but not walls
             {
-                csString collision = GetCollisionPerception(npc);
 
-                // after a couple seconds of sliding against something
+                // Now we collided so may times, that we stop
+                StopMovement(npc);
+ 
+                // After a couple seconds of sliding against something
                 // the npc should give up and react to the obstacle.
-                if (!collision.IsEmpty())
-                {
-                    Perception perception(collision);
-                    npc->TriggerEvent(&perception);
-                }
+                // Send perception for collision
+                SendCollitionPerception(npc);
 
                 return false;
             }
+
+            // We have not ended up in the expected positon. Send updated position to server.
+            npcclient->GetNetworkMgr()->QueueDRData(npc);
         }
         else
         {
@@ -405,7 +414,7 @@ bool ScriptOperation::CheckMoveOk(NPC *npc, EventManager *eventmgr, csVector3 ol
         
     }
 
-    return OPERATION_COMPLETED;
+    return true;
 }
 
 const csString& ScriptOperation::GetCollisionPerception(NPC* npc)

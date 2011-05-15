@@ -1022,7 +1022,7 @@ void NetworkManager::CheckCommandsOverrun(size_t neededSize)
 		SendAllCommands();
 }
 
-void NetworkManager::QueueDRData(gemNPCActor *entity, psLinearMovement *linmove, uint8_t counter)
+void NetworkManager::QueueDRDataCommand(gemNPCActor *entity, psLinearMovement *linmove, uint8_t counter)
 {
     if(!entity) return; //TODO: This shouldn't happen but it happens so this is just a quick patch and
                         //      the real problem should be fixed (entities being removed from the game
@@ -1357,7 +1357,7 @@ void NetworkManager::SendAllCommands(bool final)
             {
                 if (npc->GetLinMove()->GetSector())
                 {
-                    QueueDRData(npc->GetActor(),npc->GetLinMove(),npc->GetDRCounter());
+                    QueueDRDataCommand(npc->GetActor(),npc->GetLinMove(),npc->GetDRCounter());
                 }
                 else
                 {
