@@ -241,7 +241,7 @@ void NavGen::Run()
             csPrintf("failed to build navigation mesh\n");
             return;
         }
-printf("here\n");
+        csPrintf("done generating, writing navmesh\n");
         // save navmesh
         if(!navMesh->SaveToFile(vfs, output))
         {
@@ -249,6 +249,7 @@ printf("here\n");
             return;
         }
     }
+    csPrintf("done writing, closing up.\n");
 
     loader.Invalidate();
     builder.Invalidate();
