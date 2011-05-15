@@ -149,7 +149,18 @@ public:
     virtual bool AtInterruptedAngle(const csVector3& pos, const iSector* sector, float angle);
     virtual bool AtInterruptedPosition(NPC* npc);
     virtual bool AtInterruptedAngle(NPC* npc);
+
+ private:
+    /** Send a collition perception to the npc.
+     *
+     * Get the collisiont detection for this operation.
+     * Can either be part of this operation, or the npctype.
+     *
+     * @param npc The npc to percept.
+     */
+    void SendCollitionPerception(NPC* npc);
     
+ public:
     /** Check if the move where ok.
      *
      * Check if a move operation has collided, walked out of bounds, or walked in bound. Will

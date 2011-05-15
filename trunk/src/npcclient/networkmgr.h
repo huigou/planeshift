@@ -98,11 +98,32 @@ public:
      * 	@param neededSize The size of data we are going to attempt to add to the npc commands message.
      */
     void CheckCommandsOverrun(size_t neededSize);
-    
-    void QueueDRData(gemNPCActor *entity,psLinearMovement *linmove,uint8_t counter);
+
+ private:
+
+    /** Send a DR Data command to server.
+     *
+     *  This command is private to the NetworkManager since it should
+     *  only be called as a result of first calling QueueDRData that will
+     *  put the npc in a queue for DR updates.
+     *
+     * @param npc             The npc that sit/stand
+     * @param target          The current target of then npc
+     * @param sit             True if sitting, false if standing
+     */
+    void QueueDRDataCommand(gemNPCActor *entity,psLinearMovement *linmove,uint8_t counter);
+
+ public:
+    /** Queue the NPC for an DR Update to the server.
+     *
+     *  Can be called multiple times. If in queue already nothing will
+     *  be added.
+     */
     void QueueDRData(NPC * npc );
+    
     /// Call to remove queued dr updates when entities are removed/deleted.
     void DequeueDRData(NPC * npc );
+    
     void QueueAttackCommand(gemNPCActor *attacker, gemNPCActor *target);
     
     /** Send a sit command to server
