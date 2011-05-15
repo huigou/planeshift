@@ -692,8 +692,10 @@ ScriptOperation::OperationResult MovementOperation::Run(NPC *npc, EventManager *
     if(!path || !path->HasNext())
     {
         // failed to find a path between us and the target
-        npc->Printf(5, "Failed to find a path to the target!");
-
+        npc->Printf(5, "Failed to find a path between %s and %s", 
+                    toString(myPos, mySector).GetData(), 
+                    toString(endPos, endSector).GetData());
+        
         return OPERATION_FAILED;  // This operation is complete
     }
     else if ( path->GetDistance() < 0.5 )  // Distance allready adjusted for offset
@@ -740,14 +742,14 @@ void MovementOperation::Advance(float timedelta, NPC *npc, EventManager *eventmg
     if(EndPointChanged( endPos, endSector ))
     {
         npc->Printf(8, "target diverged, recalculate path between %s and %s", 
-                        toString(myPos,const_cast<iSector*>(mySector)).GetData(), 
+                        toString(myPos, mySector).GetData(), 
                         toString(endPos, endSector).GetData());
-        path = npcclient->GetNavStruct()->ShortestPath(myPos, const_cast<iSector*>(mySector),
-                                                       endPos, endSector);
+
+        path = npcclient->GetNavStruct()->ShortestPath(myPos, mySector, endPos, endSector);
         if(!path || !path->HasNext())
         {
-            npc->Printf(5, "Failed to calculate new path between %s and %s", 
-                        toString(myPos,const_cast<iSector*>(mySector)).GetData(), 
+            npc->Printf(5, "Failed to find a path between %s and %s", 
+                        toString(myPos, mySector).GetData(), 
                         toString(endPos, endSector).GetData());
             npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior());
             return;
