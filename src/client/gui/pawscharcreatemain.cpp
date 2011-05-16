@@ -1013,9 +1013,9 @@ void pawsCreationMain::UpdateRace(int id)
     view->EnableMouseControl(true);
 
     //temporary hardcoding needs removal
-    maleButton->SetEnabled(currentGender != PSCHARACTER_GENDER_NONE);
-    femaleButton->SetEnabled(currentGender != PSCHARACTER_GENDER_NONE);
-    if(currentGender == PSCHARACTER_GENDER_NONE)
+    maleButton->SetEnabled(id != 9);
+    femaleButton->SetEnabled(id != 9);
+    if(id != 9)
     {
         maleButton->SetState(false);
         femaleButton->SetState(false);
