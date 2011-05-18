@@ -1231,9 +1231,9 @@ private:
     public:
         using ObjectLoader<Material>::AddDependency;
 
-        MeshFact(BgLoader* parent) : TrivialLoadable<iMeshFactoryWrapper,ObjectNames::meshfact>(parent)
+        MeshFact(BgLoader* parent) : TrivialLoadable<iMeshFactoryWrapper,ObjectNames::meshfact>(parent),
+                                     cloned(false)
         {
-            cloned = false;
         }
 
         bool Parse(iDocumentNode* node, ParserData& data);
@@ -1400,7 +1400,8 @@ private:
         using ObjectLoader<MeshFact>::AddDependency;
         using ObjectLoader<Material>::AddDependency;
 
-        MeshGen(BgLoader* parent) : TrivialLoadable<iMeshGenerator,ObjectNames::meshgen>(parent)
+        MeshGen(BgLoader* parent) : TrivialLoadable<iMeshGenerator,ObjectNames::meshgen>(parent),
+                                    sector(0)
         {
         }
 
@@ -1423,7 +1424,9 @@ private:
     public:
         typedef iMeshWrapper ObjectType;
 
-        Portal(BgLoader* parent) : Loadable(parent), flags(0), warp(false)
+        Portal(BgLoader* parent) : Loadable(parent), flags(0), warp(false), ww_given(false),
+                                                     wv(0.f), ww(0.f),
+                                                     autoresolve(0), targetSector(0), sector(0)
         {
         }
 
@@ -1440,18 +1443,23 @@ private:
 
     private:
         // parser results
+        uint32 flags;
+        
+        // transformation data
+        bool warp;
+        bool ww_given;
         csMatrix3 matrix;
         csVector3 wv;
-        bool ww_given;
         csVector3 ww;
         csReversibleTransform transform;
-        uint32 flags;
-        bool warp;
-	bool autoresolve;
-        csPoly3D poly;
 
+        // sector data
+        bool autoresolve;
         Sector* targetSector;
         Sector* sector;
+
+        // vertex data
+        csPoly3D poly;
 
         // load data
         iPortal* pObject;
