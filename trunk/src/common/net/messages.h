@@ -26,7 +26,7 @@
 #include <csutil/stringarray.h>
 #include <csutil/strset.h>
 #include <csutil/databuf.h>
-#include <csutil/csmd5.h>
+#include <csutil/md5.h>
 #include "util/psscf.h"
 #include <csgeom/vector3.h>
 #include "rpgrules/psmoney.h"

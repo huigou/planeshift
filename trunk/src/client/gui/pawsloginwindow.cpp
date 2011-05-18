@@ -21,7 +21,7 @@
 #include <iutil/cfgmgr.h>
 #include <csutil/sysfunc.h>
 #include <csutil/xmltiny.h>
-#include <csutil/csmd5.h>
+#include <csutil/md5.h>
 
 #include "pawsloginwindow.h"
 #include "paws/pawsmanager.h"

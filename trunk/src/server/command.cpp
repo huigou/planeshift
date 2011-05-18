@@ -34,7 +34,7 @@
 #include <iutil/objreg.h>
 #include <iutil/cfgmgr.h>
 #include <csutil/csstring.h>
-#include <csutil/csmd5.h>
+#include <csutil/md5.h>
 #include <iutil/stringarray.h>
 #include <iengine/collection.h>
 #include <iengine/engine.h>
