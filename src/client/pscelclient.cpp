@@ -1535,15 +1535,7 @@ int GEMClientActor::GetAnimIndex (csStringHashReversible* msgstrings, csStringID
             idx = -1; //we initialize this at -1 in case we are unable to find our result
             if (packetFactory)
             {
-                for (size_t i = 0; i < packetFactory->GetAnimationCount (); i++)
-                {
-                    if(animName == packetFactory->GetAnimation(i)->GetName())
-                    {
-                        //we have found the name
-                        idx = i;
-                        break;
-                    }
-                }
+                idx = packetFactory->FindAnimationIndex(animName);
             }
         }
     }
