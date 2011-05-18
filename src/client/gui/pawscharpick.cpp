@@ -18,7 +18,7 @@
  */
 #include <psconfig.h>
 #include <imesh/spritecal3d.h>
-#include <csutil/csmd5.h>
+#include <csutil/md5.h>
 
 #include "util/log.h"
 #include "globals.h"

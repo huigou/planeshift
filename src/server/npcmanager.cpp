@@ -19,7 +19,7 @@
 
 #include <psconfig.h>
 #include <ctype.h>
-#include <csutil/csmd5.h>
+#include <csutil/md5.h>
 
 //=============================================================================
 // Crystal Space Includes
