@@ -114,6 +114,7 @@ bool BgLoader::Initialize(iObjectRegistry* object_reg)
 
     // Check the level of shader use.
     csString shader(config->GetStr("PlaneShift.Graphics.Shaders"));
+    parserData.config.enabledGfxFeatures = 0;
     if(shader.CompareNoCase("Highest"))
     {
       parserData.config.enabledGfxFeatures |= useHighestShaders;
