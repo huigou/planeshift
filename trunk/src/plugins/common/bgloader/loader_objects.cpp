@@ -166,8 +166,7 @@ void BgLoader::Light::UnloadObject()
 
 bool BgLoader::MeshFact::LoadObject(bool wait)
 {
-    bool ready;
-
+    bool ready = false;
     bool cached = filename.IsEmpty();
 
     // we can't get the loader to create a new copy
@@ -179,6 +178,13 @@ bool BgLoader::MeshFact::LoadObject(bool wait)
         if(parentFactory.IsValid())
         {
             ready = parentFactory->Load(wait);
+        }
+        else
+        {
+            csString msg;
+            msg.Format("trying to load cloned mesh factory %s without a parent factory",GetName());
+            CS_ASSERT_MSG(msg.GetData(),false);
+            ready = true;
         }
     }
     else
