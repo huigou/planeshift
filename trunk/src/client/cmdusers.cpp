@@ -251,7 +251,7 @@ bool psUserCommands::LoadEmotes()
         emote.specific = emoteNode->GetAttributeValue("specific");
         emote.anim = emoteNode->GetAttributeValue("anim");
         // take the value of enabled and check whether its 0 or not 
-        emote.enabled = emoteNode->GetAttributeValueAsBool("enabled");
+        emote.enabled = emoteNode->GetAttributeValueAsBool("enabled", true);
 
         emoteList.Push(emote);
     }
