@@ -1,5 +1,5 @@
 #----------------------------------------------------------------------------
-# Copyright (C)2001-2010 by Atomic Blue.
+# Copyright (C)2001-2011 by Atomic Blue.
 #
 # Script taken from the Crystal Space SDK project.
 #
@@ -358,32 +358,47 @@ AS_IF([test $with_cs != no],
 
 CS_CHECK_COMMON_TOOLS_RELAYTOOL([$CRYSTAL_TOOLS_PREFIX/bin])
 
+#------------------------------------------------------------------------------
+# Check for subversion and, if available, whether the source directory is an
+# SVN checkout.
+#------------------------------------------------------------------------------
+CS_CHECK_TOOLS([SUBVERSION], [svn])
+AS_IF([test -n "$SUBVERSION"],
+    [AC_CACHE_CHECK([whether ${srcdir} is an SVN checkout], [ps_cv_source_is_svn],
+	[AS_IF([AC_TRY_COMMAND([$SUBVERSION info ${srcdir} > /dev/null])],
+	    [ps_cv_source_is_svn=yes], [ps_cv_source_is_svn=no])])],
+    [ps_cv_source_is_svn=no])
+CS_EMIT_BUILD_PROPERTY([SOURCE_IS_SVN], [$_cv_source_is_svn])
+
 #----------------------------------------------------------------------------
 # Check for MySQL
 #----------------------------------------------------------------------------
 
-CS_CHECK_LIB_WITH([mysqlclient],
+CS_NOTABLE([mysql], [database], [], [$cs_cv_libmysqlclient],
+    [CS_CHECK_LIB_WITH([mysqlclient],
 	[AC_LANG_PROGRAM([[#include <mysql.h>]],
 		[MYSQL mysql; mysql_init(&mysql);])], [/usr /usr/include/mysql|/usr/lib /usr/local/mysql /usr/include/mysql|/usr/lib/mysql /usr/local/include/mysql|/usr/local/lib/mysql /usr/lib /usr/local/mysql], [],
-		[CS_EMIT_BUILD_RESULT([cs_cv_libmysqlclient], [LIBMYSQLCLIENT])], [], [], [], [], [])
+		[CS_EMIT_BUILD_RESULT([cs_cv_libmysqlclient], [LIBMYSQLCLIENT])])])
 
 #----------------------------------------------------------------------------
 # Check for Sqlite3
 #----------------------------------------------------------------------------
 
-CS_CHECK_LIB_WITH([sqlite3],
+CS_NOTABLE([Sqlite3], [database], [], [$cs_cv_libsqlite3],
+    [CS_CHECK_LIB_WITH([sqlite3],
 	[AC_LANG_PROGRAM([[#include <sqlite3.h>]],
 		[sqlite3 **db; sqlite3_open("",db);])], [/usr /usr/include/|/usr/lib /usr/local/ /usr/include/|/usr/lib/ /usr/local/include/|/usr/local/lib/ /usr/lib /usr/local/], [],
-		[CS_EMIT_BUILD_RESULT([cs_cv_libsqlite3], [LIBSQLITE3])], [], [], [], [], [])
+		[CS_EMIT_BUILD_RESULT([cs_cv_libsqlite3], [LIBSQLITE3])])])
 
 #----------------------------------------------------------------------------
 # Check for PostgreSQL
 #----------------------------------------------------------------------------
 
-CS_CHECK_LIB_WITH([pq],
+CS_NOTABLE([PostgreSQL], [database], [], [$cs_cv_libpq],
+    [CS_CHECK_LIB_WITH([pq],
 	[AC_LANG_PROGRAM([[#include <postgres.h>]],
 		[PQconnectdb("");])], [/usr /usr/include/postgresql|/usr/lib /usr/local/ /usr/include/postgresql|/usr/lib/ /usr/local/include/postgresql|/usr/local/lib/ /usr/lib /usr/local/], [],
-		[CS_EMIT_BUILD_RESULT([cs_cv_libpq], [LIBPQ])], [], [], [], [], [])
+		[CS_EMIT_BUILD_RESULT([cs_cv_libpq], [LIBPQ])])])
 
 #----------------------------------------------------------------------------
 # Check for Curl
@@ -395,10 +410,11 @@ PS_CHECK_LIBCURL
 # Check for hunspell
 #----------------------------------------------------------------------------
 
-CS_CHECK_LIB_WITH([hunspell],
+CS_NOTABLE([hunspell], [], [], [$cs_cv_libhunspell],
+    [CS_CHECK_LIB_WITH([hunspell],
 	[AC_LANG_PROGRAM([[#include <hunspell.hxx>]],
 	[Hunspell* spell=new Hunspell("",""); delete spell;])],	[/usr /usr/include/|usr/lib /usr/local/ /usr/include/hunspell|/usr/lib/ /usr/local/include/|/usr/local/lib/ /usr/local/include/hunspell/|/usr/local/lib/ /usr/lib/], [C++],
-	[CS_EMIT_BUILD_RESULT([cs_cv_libhunspell], [HUNSPELL])], [], [], [], [], [])
+	[CS_EMIT_BUILD_RESULT([cs_cv_libhunspell], [HUNSPELL])])])
 
 #----------------------------------------------------------------------------
 # Check for Google Test
@@ -570,6 +586,21 @@ CS_EMIT_PACKAGEINFO
 CS_JAMCONFIG_OUTPUT([Jamconfig])
 AC_CONFIG_FILES([Jamfile])
 AC_OUTPUT
+
+#------------------------------------------------------------------------------
+# `Result Summary.
+#------------------------------------------------------------------------------
+cs_summary=`CS_SUMMARIZE([$cs_host_family], [Found], [Missing])`
+AC_MSG_NOTICE([
+******************************************************************************
+***                 Planeshift  --   Configuration Summary                 ***
+******************************************************************************
+Build mode: ${build_mode}
+Version: ${PACKAGE_VERSION} (SVN: ${ps_cv_source_is_svn})
+
+Optional Dependencies
+---------------------
+$cs_summary])
 
 AC_MSG_NOTICE([
 
