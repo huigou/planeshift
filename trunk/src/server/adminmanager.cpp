@@ -6518,7 +6518,6 @@ void AdminManager::HandleLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmd
         csVector3 myPos;
         float myRotY,distance=10000.0;
         iSector* mySector = 0;
-        int loc_id = -1;
 
         client->GetActor()->GetPosition(myPos, myRotY, mySector);
         csString sectorName = mySector->QueryObject()->GetName();
