@@ -194,7 +194,7 @@ public:
 
     void Render2D(iGraphics3D * g3d, iGraphics2D * g2d);
 
-  	psEffect2DRenderer * Get2DRenderer() const { return effect2DRenderer; }
+    psEffect2DRenderer * Get2DRenderer() const { return effect2DRenderer; }
 
 private:
 
