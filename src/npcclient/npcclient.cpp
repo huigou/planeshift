@@ -439,6 +439,7 @@ bool psNPCClient::LoadNPCTypes(iDocumentNode* root)
 
 bool psNPCClient::LoadNPCTypes()
 {
+    csArray<unsigned long> postponedNPCTypeID;
     Result rs(db->Select("SELECT * from sc_npctypes ORDER BY id"));
 
     if (!rs.IsValid() || !(rs.Count() >= 1))
@@ -465,10 +466,36 @@ bool psNPCClient::LoadNPCTypes()
         else
         {
             delete npctype;
-            return false;
+            //we keep these for a more deep inspection
+            postponedNPCTypeID.Push(i);
         }
     }
-    return true;
+
+    size_t lastSize = 0;
+    //try reloading all the failures till the size of failed ones changes and it's > 0
+    //as soon as one iteration didn't load anything we will exit with failure
+    while(postponedNPCTypeID.GetSize() != 0 && lastSize != postponedNPCTypeID.GetSize())
+    {
+        lastSize = postponedNPCTypeID.GetSize(); //keep the starting amount of items
+        for(size_t y = 0; y < postponedNPCTypeID.GetSize(); y++)
+        {
+            //maybe we should reorder them by dependency? the issue with that is that
+            //we would need to know more about the items inner working.
+            NPCType *npctype = new NPCType(this, eventmanager);
+            if(npctype->Load(rs[postponedNPCTypeID.Get(y)]))
+            {
+                npctypes.Put(npctype->GetName(), npctype);
+                postponedNPCTypeID.DeleteIndex(y);
+                y--;
+            }
+            else
+            {
+                delete npctype;
+            }
+        }
+    }
+    //success only if the array is empty at this point, else failure.
+    return postponedNPCTypeID.IsEmpty();
 }
     
 
