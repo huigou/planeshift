@@ -495,8 +495,9 @@ public:
     /** Load and return the root node of an xml file.
      */
     csRef<iDocumentNode> GetRootNode(const char* xmlfile);
-    
+
     bool LoadNPCTypes(iDocumentNode* root);
+    bool LoadNPCTypes();
     
 protected:
 

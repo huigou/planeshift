@@ -204,6 +204,7 @@ public:
     void ClearState(NPC *npc);
 
     bool Load(iDocumentNode *node);
+    bool Load(iResultRow &node);
     const char* GetName(){ return name.GetDataSafe(); }
 
     /** Find a behavior in the set.
