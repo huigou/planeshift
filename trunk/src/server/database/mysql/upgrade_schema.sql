@@ -1609,6 +1609,14 @@ CREATE TABLE  `planeshift`.`sc_npctypes` (
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Stores the list of npc types';
 
 
+#1260 - Stefano Angeleri - expanded loot rules functionalities
+
+ALTER TABLE `loot_rule_details` ADD COLUMN `min_items` INTEGER UNSIGNED NOT NULL DEFAULT 1 COMMENT 'The minimum amount of these items which could be created' AFTER `item_stat_id`,
+ ADD COLUMN `max_items` INTEGER UNSIGNED NOT NULL DEFAULT 1 COMMENT 'The maximum amount of these items which could be created' AFTER `min_items`,
+ ADD COLUMN `randomize_probability` FLOAT(5,4)  NOT NULL DEFAULT '0.00000' COMMENT 'The probability this items will be randomized if choosen' AFTER `randomize`;
+UPDATE `server_options` SET `option_value`='1260' WHERE `option_name`='db_version';
+
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to

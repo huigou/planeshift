@@ -245,10 +245,13 @@ void SpawnManager::PreloadLootRules()
         int item_id = result[i].GetInt("item_stat_id");
 
         entry->item = cacheManager->GetBasicItemStatsByID( item_id );
+        entry->min_item = result[i].GetInt("min_item");
+        entry->max_item = result[i].GetInt("max_item");
         entry->probability = result[i].GetFloat("probability");
         entry->min_money = result[i].GetInt("min_money");
         entry->max_money = result[i].GetInt("max_money");
         entry->randomize = (result[i].GetInt("randomize") ? true : false);
+        entry->randomizeProbability = result[i].GetFloat("randomize_probability");
 
         if (!entry->item && item_id != 0)
         {
@@ -1400,63 +1403,69 @@ void LootEntrySet::CreateMultipleLoot(psCharacter *chr, size_t numModifiers)
     for (size_t i=0; i<entries.GetSize(); i++)
     {
       float roll = psserver->rng->Get();
-      if (roll < entries[i]->probability)
+      if (roll <= entries[i]->probability)
       {
         if(entries[i]->item) // We don't always have a item.
         {
-            psItem* loot_item = entries[i]->item->InstantiateBasicItem();
-            if ( entries[i]->randomize )
-                loot_item = lootRandomizer->RandomizeItem( loot_item,
-                                                           maxcost,
-                                                           lootTesting,
-                                                           numModifiers );
-
-            if (!lootTesting)
-                chr->AddLootItem(loot_item);
-            else
+            int itemAmount = entries[i]->min_item + (int)(psserver->rng->Get() *
+                             (float)(entries[i]->max_item - entries[i]->min_item));
+            for(int y = 0; y < itemAmount; y++)
             {
-                // print out the stats
-                CPrintf(CON_CMDOUTPUT,
-                        "Randomized item (%d modifiers) : \'%s\', %s\n"
-                        "  Quality : %.2f  Weight : %.2f  Size : %d  Price : %d\n",
-                        numModifiers,
-                        loot_item->GetName(),
-                        loot_item->GetDescription(),
-                        loot_item->GetItemQuality(),
-                        loot_item->GetWeight(),
-                        loot_item->GetItemSize(),
-                        loot_item->GetPrice().GetTrias());
-                if (loot_item->GetIsArmor())
+                psItem* loot_item = entries[i]->item->InstantiateBasicItem();
+                
+                if (entries[i]->randomize && psserver->rng->Get() <= entries[i]->randomizeProbability)
+                    loot_item = lootRandomizer->RandomizeItem( loot_item,
+                                                               maxcost,
+                                                               lootTesting,
+                                                               numModifiers );
+
+                if (!lootTesting)
+                    chr->AddLootItem(loot_item);
+                else
                 {
+                    // print out the stats
                     CPrintf(CON_CMDOUTPUT,
-                            "Armour stats:\n"
-                            "  Class : %c  Hardness : %.2f\n"
-                            "  Protection Slash : %.2f  Blunt : %.2f  Pierce : %.2f\n",
-                            loot_item->GetBaseStats()->Armor().Class(),
-                            loot_item->GetHardness(),
-                            loot_item->GetDamage(PSITEMSTATS_DAMAGETYPE_SLASH),
-                            loot_item->GetDamage(PSITEMSTATS_DAMAGETYPE_BLUNT),
-                            loot_item->GetDamage(PSITEMSTATS_DAMAGETYPE_PIERCE));
+                            "Randomized item (%d modifiers) : \'%s\', %s\n"
+                            "  Quality : %.2f  Weight : %.2f  Size : %d  Price : %d\n",
+                            numModifiers,
+                            loot_item->GetName(),
+                            loot_item->GetDescription(),
+                            loot_item->GetItemQuality(),
+                            loot_item->GetWeight(),
+                            loot_item->GetItemSize(),
+                            loot_item->GetPrice().GetTrias());
+                    if (loot_item->GetIsArmor())
+                    {
+                        CPrintf(CON_CMDOUTPUT,
+                                "Armour stats:\n"
+                                "  Class : %c  Hardness : %.2f\n"
+                                "  Protection Slash : %.2f  Blunt : %.2f  Pierce : %.2f\n",
+                                loot_item->GetBaseStats()->Armor().Class(),
+                                loot_item->GetHardness(),
+                                loot_item->GetDamage(PSITEMSTATS_DAMAGETYPE_SLASH),
+                                loot_item->GetDamage(PSITEMSTATS_DAMAGETYPE_BLUNT),
+                                loot_item->GetDamage(PSITEMSTATS_DAMAGETYPE_PIERCE));
+                    }
+                    else if (loot_item->GetIsMeleeWeapon() || loot_item->GetIsRangeWeapon())
+                    {
+                        CPrintf(CON_CMDOUTPUT,
+                                "Weapon stats:\n"
+                                "  Latency : %.2f  Penetration : %.2f\n"
+                                "  Damage Slash : %.2f  Blunt : %.2f  Pierce : %.2f\n"
+                                "  BlockValue Untargeted : %.2f  Targeted : %.2f  Counter : %.2f\n",
+                                loot_item->GetLatency(),
+                                loot_item->GetPenetration(),
+                                loot_item->GetDamage(PSITEMSTATS_DAMAGETYPE_SLASH),
+                                loot_item->GetDamage(PSITEMSTATS_DAMAGETYPE_BLUNT),
+                                loot_item->GetDamage(PSITEMSTATS_DAMAGETYPE_PIERCE),
+                                loot_item->GetUntargetedBlockValue(),
+                                loot_item->GetTargetedBlockValue(),
+                                loot_item->GetCounterBlockValue());
+                    }
+                    /*CPrintf(CON_CMDOUTPUT,
+                        "Equip script: %s\n Un-equip script: %s\n",loot_item->GetProgressionEventEquip().GetData(),
+                        loot_item->GetProgressionEventUnEquip().GetData());*/
                 }
-                else if (loot_item->GetIsMeleeWeapon() || loot_item->GetIsRangeWeapon())
-                {
-                    CPrintf(CON_CMDOUTPUT,
-                            "Weapon stats:\n"
-                            "  Latency : %.2f  Penetration : %.2f\n"
-                            "  Damage Slash : %.2f  Blunt : %.2f  Pierce : %.2f\n"
-                            "  BlockValue Untargeted : %.2f  Targeted : %.2f  Counter : %.2f\n",
-                            loot_item->GetLatency(),
-                            loot_item->GetPenetration(),
-                            loot_item->GetDamage(PSITEMSTATS_DAMAGETYPE_SLASH),
-                            loot_item->GetDamage(PSITEMSTATS_DAMAGETYPE_BLUNT),
-                            loot_item->GetDamage(PSITEMSTATS_DAMAGETYPE_PIERCE),
-                            loot_item->GetUntargetedBlockValue(),
-                            loot_item->GetTargetedBlockValue(),
-                            loot_item->GetCounterBlockValue());
-                }
-                /*CPrintf(CON_CMDOUTPUT,
-                    "Equip script: %s\n Un-equip script: %s\n",loot_item->GetProgressionEventEquip().GetData(),
-                    loot_item->GetProgressionEventUnEquip().GetData());*/
             }
         }
         float pct = psserver->rng->Get();
