@@ -554,13 +554,22 @@ public:
         current += 3*sizeof(uint32);
     }
 
-    void Add(iSector* sector, csStringSet* msgstrings, csStringHashReversible* msgstringshash = NULL)
+    void Add(const iSector* sector, const csStringSet* msgstrings, const csStringHashReversible* msgstringshash = NULL)
     {
-        const char* sectorName = sector->QueryObject ()->GetName ();
+        const char* sectorName = const_cast<iSector*>(sector)->QueryObject()->GetName ();
         csStringID sectorNameStrId = csInvalidStringID;
         if (msgstrings)
         {
-            sectorNameStrId = msgstrings->Request(sectorName);
+            /// TODO: Should not need to call Contains, but as long as the request function
+            //        assign new IDs we have to check first.
+            if (msgstrings->Contains(sectorName))
+            {
+                sectorNameStrId =  const_cast<csStringSet*>(msgstrings)->Request(sectorName);
+            }
+            else
+            {
+                sectorNameStrId = csInvalidStringID;
+            }
         } else if (msgstringshash)
         {
             sectorNameStrId = msgstringshash->Request(sectorName);
@@ -839,7 +848,7 @@ public:
         return v;
     }
 
-    iSector* GetSector(csStringSet* msgstrings, csStringHashReversible* msgstringshash, iEngine *engine)
+    iSector* GetSector(const csStringSet* msgstrings, const csStringHashReversible* msgstringshash, iEngine *engine)
     {
         csString sectorName;
         csStringID sectorNameStrId;
