@@ -95,6 +95,10 @@ void NavGen::Run()
     csRef<iEventQueue> queue = csQueryRegistry<iEventQueue>(object_reg);
     csRef<iVirtualClock> vc = csQueryRegistry<iVirtualClock>(object_reg);
 
+    // Disable threaded loading.
+    csRef<iThreadManager> tman = csQueryRegistry<iThreadManager>(object_reg);
+    tman->SetAlwaysRunNow(true);
+
     vc->Advance();
     queue->Process();
 
