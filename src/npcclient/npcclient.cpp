@@ -439,7 +439,7 @@ bool psNPCClient::LoadNPCTypes(iDocumentNode* root)
 
 bool psNPCClient::LoadNPCTypes()
 {
-    Result rs(db->Select("SELECT * from sc_npctypes"));
+    Result rs(db->Select("SELECT * from sc_npctypes ORDER BY id"));
 
     if (!rs.IsValid() || !(rs.Count() >= 1))
     {
