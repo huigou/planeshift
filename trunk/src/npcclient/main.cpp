@@ -42,14 +42,15 @@ int main(int argc, char **argv)
     
     SndSysMgr = new SoundSystemManager(object_reg);
 
+    csRef<iCommandLineParser> clp = csQueryRegistry<iCommandLineParser>(object_reg);
+
     // Start the server
     npcclient = new psNPCClient;
-    const char *host, *user, *pass;
-    int port;
-    host = (argc > 2) ? argv[2] : NULL;
-    user = (argc > 3) ? argv[3] : NULL;
-    pass = (argc > 4) ? argv[4] : NULL;
-    port = (argc > 5) ? atoi(argv[5]) : 0;
+    csString host = clp->GetOption("host");
+    csString user = clp->GetOption("user");
+    csString pass = clp->GetOption("pass");
+    csString portStr = clp->GetOption("port");
+    int port = atoi(portStr.GetDataSafe());
 
     if (!npcclient->Initialize(object_reg,host,user,pass,port))
     {
@@ -59,11 +60,10 @@ int main(int argc, char **argv)
 
     // Check whether to init debug gui.
     NpcGui* gui = 0;
-    csRef<iCommandLineParser> clp = csQueryRegistry<iCommandLineParser>(object_reg);
     if(clp->GetBoolOption("gui"))
     {
-      gui = new NpcGui(object_reg, npcclient);
-      CS_ASSERT_MSG("GUI failed to initialise!", gui->Initialise());
+        gui = new NpcGui(object_reg, npcclient);
+        CS_ASSERT_MSG("GUI failed to initialise!", gui->Initialise());
     }
 
     npcclient->MainLoop ();
