@@ -193,10 +193,13 @@ class psCharacter;
 struct LootEntry
 {
     psItemStats *item;
+    int   min_item; ///< The minimal amount of these items.
+    int   max_item; ///< The maximum amount of these items.
     float probability;
     int   min_money;
     int   max_money;
     bool  randomize;
+    float randomizeProbability; ///< The probability that if this item was picked it will be randomized.
 };
 
 /**
