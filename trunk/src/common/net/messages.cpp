@@ -3490,6 +3490,7 @@ psMsgStringsMessage::psMsgStringsMessage(MsgEntry *message)
     if (inflateInit(&z) != Z_OK)
     {
         valid=false;
+        delete [] buff;
         return;
     }
 
@@ -3506,6 +3507,7 @@ psMsgStringsMessage::psMsgStringsMessage(MsgEntry *message)
     if (res != Z_STREAM_END)
     {
         valid=false;
+        delete [] buff;
         return;
     }
 
@@ -3531,6 +3533,7 @@ psMsgStringsMessage::psMsgStringsMessage(MsgEntry *message)
         if (pos > z.total_out)
         {
             delete msgstrings;
+            delete [] buff;
             msgstrings=NULL;
             valid=false;
             return;
