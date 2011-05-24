@@ -28,6 +28,8 @@
 #include <iutil/vfs.h>
 #include <iengine/mesh.h>
 #include <iengine/movable.h>
+#include <csutil/xmltiny.h>
+
 
 
 //=============================================================================
@@ -90,6 +92,151 @@ void NPCType::DeepCopy(NPCType& other)
     }
 }
 
+bool NPCType::Load(iResultRow &row)
+{
+    csString parents = row.GetString("parents");
+    if(!parents.IsEmpty()) // this npctype is a subclass of another npctype
+    {
+        csArray<csString> parent = psSplit(parents,',');
+        for(size_t i = 0; i < parent.GetSize(); i++)
+        {
+            NPCType *superclass = npcclient->FindNPCType(parent[i]);
+            if(superclass)
+            {
+                DeepCopy(*superclass);  // This pulls everything from the parent into this one.
+            }
+            else
+            {
+                Error2("Specified parent npctype '%s' could not be found.",
+                       parent[i].GetDataSafe());
+                return false;
+            }
+        }
+    }
+
+    name = row.GetString("name");
+    if(name.Length() == 0)
+    {
+        Error1("NPCType has no name attribute. Error in DB");
+        return false;
+    }
+
+    ang_vel = row.GetFloat("ang_vel");
+
+    csString velStr = row.GetString("vel");
+    velStr.Upcase();
+
+    if(velStr.IsEmpty())
+    {
+        // Do nothing. Use velSource from constructor default value
+        // or as inherited from superclass.
+    }
+    else if(velStr == "$WALK")
+    {
+        velSource = VEL_WALK;
+    }
+    else if (velStr == "$RUN")
+    {
+        velSource = VEL_RUN;
+    }
+    else if(row.GetFloat("vel"))
+    {
+        velSource = VEL_USER;
+        vel = row.GetFloat("vel");
+    }
+
+    collisionPerception   = row.GetString("collision");
+    outOfBoundsPerception = row.GetString("out_of_ounds");
+    inBoundsPerception    = row.GetString("in_bounds");
+    fallingPerception     = row.GetString("falling");
+
+    csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
+    csRef<iDocument> doc = xml->CreateDocument();
+    const char* error = doc->Parse(row.GetString("script"));
+    if(error)
+    {
+        Error3("NPCType script parsing error:%s in %s", error, name.GetData());
+        return false;
+    }
+    csRef<iDocumentNode> node = doc->GetRoot();
+    if(!node)
+    {
+        Error2("No XML root in npc type script of %s", name.GetData());
+        return false;
+    }
+    
+    // Now read in behaviors and reactions
+    csRef<iDocumentNodeIterator> iter = node->GetNodes();
+
+    while(iter->HasNext())
+    {
+        csRef<iDocumentNode> node = iter->Next();
+        if(node->GetType() != CS_NODE_ELEMENT)
+            continue;
+
+        // This is a widget so read it's factory to create it.
+        if(strcmp(node->GetValue(), "behavior") == 0)
+        {
+            Behavior *b = new Behavior;
+            if(!b->Load(node))
+            {
+                Error3("Could not load behavior '%s'. Error in DB XML in node '%s'.",
+                       b->GetName(),node->GetValue());
+                delete b;
+                return false;
+            }
+            behaviors.Add(b);
+            Debug3(LOG_STARTUP,0, "Added behavior '%s' to type %s.\n",b->GetName(),name.GetData() );
+        }
+        else if(strcmp( node->GetValue(), "react" ) == 0)
+        {
+            Reaction *r = new Reaction;
+            if(!r->Load(node,behaviors))
+            {
+                Error1("Could not load reaction. Error in DB XML");
+                delete r;
+                return false;
+            }
+            // check for duplicates and keeps the last one
+            for(size_t i=0; i<reactions.GetSize(); i++)
+            {
+                // Same event with same type
+                if(!strcmp(reactions[i]->GetEventType(),r->GetEventType())&&
+                    (reactions[i]->type == r->type)&&
+                    (reactions[i]->values == r->values))
+                {
+                    // Check if there is a mach in affected
+                    for(size_t k=0; k< r->affected.GetSize(); k++)
+                    {
+                        for(size_t j=0; j< reactions[i]->affected.GetSize(); j++)
+                        {
+                            if(!strcmp(r->affected[k]->GetName(),reactions[i]->affected[j]->GetName()))
+                            {
+                                // Should probably delete and clear out here
+                                // to allow for overiding of event,affected pairs.
+                                // Though now give error, until needed.
+                                Error4("Reaction of type '%s' already connected to '%s' in '%s'",
+                                       r->GetEventType(),reactions[i]->affected[j]->GetName(), name.GetDataSafe());
+                                return false;
+                                // delete reactions[i];
+                                //reactions.DeleteIndex(i);
+                                //break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            reactions.Insert(0,r);  // reactions get inserted at beginning so subclass ones take precedence over superclass.
+        }
+        else
+        {
+            Error1("Node under NPCType is not 'behavior' or 'react'. Error in DB XML");
+            return false;
+        }
+    }
+    return true; // success
+}
 
 bool NPCType::Load(iDocumentNode *node)
 {

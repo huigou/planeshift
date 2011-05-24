@@ -222,11 +222,9 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, cons
     }
     world->Initialize( object_reg );
 
-    csRef<iDocumentNode> root = GetRootNode("/this/data/npcbehave.xml");
-
-    if (!root.IsValid() || !LoadNPCTypes(root))
+    if (!LoadNPCTypes())
     {
-        CPrintf(CON_ERROR, "Couldn't load npcbehave.xml.\n");
+        CPrintf(CON_ERROR, "Couldn't load the npctypes\n");
         exit(1);
     }
     
@@ -438,6 +436,41 @@ bool psNPCClient::LoadNPCTypes(iDocumentNode* root)
 
     return true;
 }
+
+bool psNPCClient::LoadNPCTypes()
+{
+    Result rs(db->Select("SELECT * from sc_npctypes"));
+
+    if (!rs.IsValid() || !(rs.Count() >= 1))
+    {
+        Error2("Could not load npctypes from db: %s Loading from file",db->GetLastError());
+        csRef<iDocumentNode> root = GetRootNode("/this/data/npcbehave.xml");
+
+        if (!root.IsValid() || !LoadNPCTypes(root))
+        {
+            CPrintf(CON_ERROR, "Couldn't load the npctypes table\n");
+            return false;
+        }
+        return true;
+    }
+
+
+    for (unsigned long i = 0; i < rs.Count(); i++)
+    {
+        NPCType *npctype = new NPCType(this, eventmanager);
+        if (npctype->Load(rs[i]))
+        {
+            npctypes.Put(npctype->GetName(), npctype);
+        }
+        else
+        {
+            delete npctype;
+            return false;
+        }
+    }
+    return true;
+}
+    
 
 void psNPCClient::Add( gemNPCObject* object )
 {
@@ -685,6 +718,7 @@ bool psNPCClient::LoadLocations()
 
     return true;
 }
+
 
 bool psNPCClient::LoadTribes()
 {

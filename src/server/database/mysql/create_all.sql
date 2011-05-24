@@ -53,6 +53,7 @@ source race_spawns.sql;
 source sc_locations.sql;
 source sc_location_type.sql;
 source sc_npc_definitions.sql;
+source sc_npctypes.sql
 source sc_tribe_memories.sql;
 source sc_tribe_resources.sql;
 source sc_waypoints.sql;
