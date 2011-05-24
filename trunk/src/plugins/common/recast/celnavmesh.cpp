@@ -2032,9 +2032,9 @@ bool celNavMeshBuilder::GetSectorData ()
         float scale_z = cell->GetSize().z / (height - 1);
 
         // tesselate and clip cell
-        for(int y = 0; y < height; ++y)
+        for(int y = 0; y < (height-2); ++y)
         {
-          for(int x = 0; x < width; ++x)
+          for(int x = 0; x < (width-2); ++x)
           {
             float xbase = x*scale_x+offset_x;
             float ybase = (height - 1 - y)*scale_z+offset_y;
