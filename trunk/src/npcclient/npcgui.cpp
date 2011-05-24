@@ -70,9 +70,28 @@ bool NpcGui::Initialise()
     return false;
   }
 
+  csRef<iVFS> vfs = csQueryRegistry<iVFS> (object_reg);
+  if (!vfs)
+  {
+    printf("vfs failed to Init!\n");
+    return false;
+  }
+
   // paws initialization
   csString skinPath;
-  skinPath = configManager->GetStr("PlaneShift.GUI.Skin", "/planeshift/art/npcclient.zip");
+  skinPath += configManager->GetStr("PlaneShift.GUI.Skin.Dir", "/planeshift/art/skins/");
+  skinPath += configManager->GetStr("PlaneShift.GUI.Skin.Selected", "default.zip");
+  // This could be a file or a dir
+  csString slash(CS_PATH_SEPARATOR);
+  if(vfs->Exists(skinPath + slash))
+  {
+      skinPath += slash;
+  }
+  else if(vfs->Exists(skinPath + ".zip"))
+  {
+      skinPath += ".zip";
+  }
+
   paws = new PawsManager(object_reg, skinPath);
   if (!paws)
   {
