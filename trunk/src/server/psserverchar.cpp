@@ -260,6 +260,15 @@ void ServerCharManager::HandleBookWrite(MsgEntry* me, Client* client)
               item->SetCreator(client->GetCharacterData()->GetPID(), PSITEMSTATS_CREATOR_VALID);
             //  CPrintf(CON_DEBUG, "Sent: %s\n",resp.ToString(NULL).GetDataSafe());
          }
+         else if(item && item->GetIsWriteable() && 
+                  item->GetOwningCharacter() == client->GetCharacterData() && 
+                  psserver->CheckAccess(client, "write all"))
+         {
+              csString theText(item->GetBookText());
+              csString theTitle(item->GetName());
+              psWriteBookMessage resp(client->GetClientNum(), theTitle, theText, true,  (INVENTORY_SLOT_NUMBER)mesg.slotID, mesg.containerID);
+              resp.SendMessage();
+         }
          else
          {
             //construct error message indicating that the item is not editable
