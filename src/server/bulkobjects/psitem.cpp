@@ -3164,7 +3164,7 @@ bool psItem::SendBookText(Client *client, int containerID, int slotID)
     //is it a writable book?  In our inventory? Are we the author?
     bool shouldWrite = (GetIsWriteable() &&
         GetOwningCharacter() == client->GetCharacterData() &&
-        IsThisTheCreator(client->GetCharacterData()->GetPID()));
+        ( IsThisTheCreator(client->GetCharacterData()->GetPID()) || psserver->CheckAccess(client, "write all")) );
 
   //  CPrintf(CON_DEBUG,"Sent text for book %u %u\n",slotID, containerID);
     psReadBookTextMessage outgoing(client->GetClientNum(), name, text, shouldWrite, slotID, containerID,GetCreativeBackgroundImg());
@@ -3208,10 +3208,10 @@ void psItem::SendSketchDefinition(Client *client)
     csString xml("<limits>");
     xml.AppendFmt("<count>%d</count>",primCount);  // This limits how many things you can add on the client.
 
-    // writeable sketch? in inventory? author?
+    // writeable sketch? in inventory? author? gm?
     bool sketchReadOnly = !(GetIsWriteable() &&
           GetOwningCharacter() == client->GetCharacterData() &&
-          IsThisTheCreator(client->GetCharacterData()->GetPID()));
+          (IsThisTheCreator(client->GetCharacterData()->GetPID()) || psserver->CheckAccess(client, "write all")) );
     if (sketchReadOnly)
         xml.Append("<rdonly/>");
 
@@ -3228,7 +3228,7 @@ void psItem::SendSketchDefinition(Client *client)
     xml += "</limits>";
 
     // Now send all this
-    psSketchMessage msg( client->GetClientNum(), GetUID(), 0, xml, GetSketch(), IsThisTheCreator(client->GetCharacterData()->GetPID()), GetName(), GetCreativeBackgroundImg() );
+    psSketchMessage msg( client->GetClientNum(), GetUID(), 0, xml, GetSketch(), !sketchReadOnly, GetName(), GetCreativeBackgroundImg() );
     msg.SendMessage();
 }
 
