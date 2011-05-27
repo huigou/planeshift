@@ -619,20 +619,20 @@ void NPCManager::HandleAuthentRequest(MsgEntry *me,Client *notused)
 
     csString password = csMD5::Encode(msg.sPassword).HexString();
 
-    if (acctinfo==NULL || strcmp(acctinfo->password,(const char *)password)) // authentication error
+    //check  authentication errors
+    if (acctinfo==NULL)
     {
-        if (acctinfo==NULL)
-        {
-            psDisconnectMessage disconnectMsg(client->GetClientNum(), 0, "Username not found.");
-            psserver->GetEventManager()->Broadcast(disconnectMsg.msg, NetBase::BC_FINALPACKET);
-            Notify2(LOG_CONNECTIONS,"User '%s' authentication request rejected (Username not found).\n",(const char *)msg.sUser);
-        }
-        else
-        {
-            psDisconnectMessage disconnectMsg(client->GetClientNum(), 0, "Bad password.");
-            psserver->GetEventManager()->Broadcast(disconnectMsg.msg, NetBase::BC_FINALPACKET);
-            Notify2(LOG_CONNECTIONS,"User '%s' authentication request rejected (Bad password).\n",(const char *)msg.sUser);
-        }
+        psDisconnectMessage disconnectMsg(client->GetClientNum(), 0, "Username not found.");
+        psserver->GetEventManager()->Broadcast(disconnectMsg.msg, NetBase::BC_FINALPACKET);
+        Notify2(LOG_CONNECTIONS,"User '%s' authentication request rejected (Username not found).\n",(const char *)msg.sUser);
+        delete acctinfo;
+        return;
+    }
+    else if(strcmp(acctinfo->password,(const char *)password))
+    {
+        psDisconnectMessage disconnectMsg(client->GetClientNum(), 0, "Bad password.");
+        psserver->GetEventManager()->Broadcast(disconnectMsg.msg, NetBase::BC_FINALPACKET);
+        Notify2(LOG_CONNECTIONS,"User '%s' authentication request rejected (Bad password).\n",(const char *)msg.sUser);
         delete acctinfo;
         return;
     }
