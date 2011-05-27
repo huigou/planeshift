@@ -616,9 +616,6 @@ void NPCManager::HandleAuthentRequest(MsgEntry *me,Client *notused)
     Notify2(LOG_SUPERCLIENT, "Check Superclient Login for: '%s'\n", (const char*)msg.sUser);
     psAccountInfo *acctinfo=cacheManager->GetAccountInfoByUsername((const char *)msg.sUser);
 
-
-    csString password = csMD5::Encode(msg.sPassword).HexString();
-
     //check  authentication errors
     if (acctinfo==NULL)
     {
@@ -628,7 +625,10 @@ void NPCManager::HandleAuthentRequest(MsgEntry *me,Client *notused)
         delete acctinfo;
         return;
     }
-    else if(strcmp(acctinfo->password,(const char *)password))
+
+    csString password = csMD5::Encode(msg.sPassword).HexString();
+
+    if(strcmp(acctinfo->password,(const char *)password))
     {
         psDisconnectMessage disconnectMsg(client->GetClientNum(), 0, "Bad password.");
         psserver->GetEventManager()->Broadcast(disconnectMsg.msg, NetBase::BC_FINALPACKET);
