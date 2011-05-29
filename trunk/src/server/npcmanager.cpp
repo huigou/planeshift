@@ -420,7 +420,7 @@ public:
     
     bool CanTrain() const
     {
-        return trainingLockOutTime > 0.0f;
+        return true; //trainingLockOutTime > 0.0f;
     }
     
     
