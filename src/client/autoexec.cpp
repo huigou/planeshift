@@ -61,7 +61,7 @@ void Autoexec::execute()
         {
           if (cmds[i].cmd && cmds[i].cmd != "")
           {
-            psengine->GetCmdHandler()->Execute(cmds[i].cmd);
+            psengine->GetCmdHandler()->Execute(cmds[i].cmd, false);
             //printf("executing general commands: %s\n", cmds[i].cmd.GetData());
           }
         }
@@ -74,7 +74,7 @@ void Autoexec::execute()
         {
             if (cmds[i].cmd && cmds[i].cmd != "")
             {
-                psengine->GetCmdHandler()->Execute(cmds[i].cmd);
+                psengine->GetCmdHandler()->Execute(cmds[i].cmd, false);
                 //printf("executing commands for %s : %s\n", cmds[i].name.GetData(), cmds[i].cmd.GetData());
                 return; // No need to look for a second char name match
             }
