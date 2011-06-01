@@ -103,7 +103,7 @@ pawsObjectView::~pawsObjectView()
 bool pawsObjectView::Setup(iDocumentNode* node )
 {
     rmTargets = scfQueryInterface<iRenderManagerTargets>(engine->GetRenderManager());
-    if ( !rmTargets.IsValid())
+    if(!rmTargets.IsValid())
     {
         Error1("pawsObjectView: RenderManager doesn't support targets! object views will be disabled");
         return true;
@@ -236,6 +236,9 @@ bool pawsObjectView::LoadMap( const char* map, const char* sector )
 
 bool pawsObjectView::ContinueLoad()
 {
+    if(!rmTargets.IsValid())
+        return true;
+
     if(loader->GetLoadingCount() == 0)
     {
         // precache stage
