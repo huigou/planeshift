@@ -505,7 +505,7 @@ bool PawsManager::HandleKeyDown( iEvent& event )
 }
 
 #if defined(CS_PLATFORM_UNIX) && defined(INCLUDE_CLIPBOARD)
-bool PawsManager::HandleSelectionNotify( iEvent &ev )
+bool PawsManager::HandleSelectionNotify( iEvent &/*ev*/ )
 {
     int result = false;
     
