@@ -103,6 +103,11 @@ void LootRandomizer::AddLootModifier(LootModifier *entry)
             adjective_max = entry->probability;
         }
     }
+    else
+    {
+        Error2("Unsupported modifier type %s", entry->modifier_type.GetData());
+        return;
+    }
 
     //put the lootmodifier in an hash for a faster access when we just need to look it up by id.
     LootModifiersById.Put(entry->id, entry);
@@ -181,6 +186,12 @@ psItem* LootRandomizer::RandomizeItem( psItem* item, float maxcost, bool lootTes
             modifierList = &adjectives;
             max_probability=(int)adjective_max;
             modifierTypePos = 2;
+        }
+        else
+        {
+            //this shouldn't be reached
+            Error1("BUG in randomizeItem(). Found an unsupported modifier");
+            continue;
         }
 
         // Get min probability <= probability <= max probability in modifiers list
