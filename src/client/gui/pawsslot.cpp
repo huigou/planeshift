@@ -88,13 +88,13 @@ bool pawsSlot::Setup( iDocumentNode* node )
     csRef<iDocumentNode> bartender = node->GetNode("bartender_slot");
     if ( bartender )
     {
-       isBartender = bartender->GetContentsValueAsInt();
+       isBartender = bartender->GetContentsValueAsInt() != 0;
     }
 
     csRef<iDocumentNode> showStackAmount = node->GetNode("show_stack_amount");
     if ( showStackAmount )
     {
-       DrawStackCount(showStackAmount->GetContentsValueAsInt());
+       DrawStackCount(showStackAmount->GetContentsValueAsInt() != 0);
     }
 
     mgr = psengine->GetSlotManager();

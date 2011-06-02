@@ -305,22 +305,22 @@ public:
 
     /*                          ToolTips Functions/Variables
     ------------------------------------------------------------------------*/
-    int TooltipsColors[3];      ///< Array of tooltip colors
-    int ToolTipEnable;          ///< Sets if the tooltip should be enable
-    int ToolTipEnableBgColor;   ///< Sets if the tooltip should have a bgcolor
+    int  TooltipsColors[3];      ///< Array of tooltip colors
+    bool ToolTipEnable;          ///< Sets if the tooltip should be enable
+    bool ToolTipEnableBgColor;   ///< Sets if the tooltip should have a bgcolor
 
     /// Loads the Tooltips config-file
     bool LoadTooltips(const char* fileName);
     /// returns the full path to the tooltips.xml in skin.zip
     csString getToolTipSkinPath();
     /// returns tooltips enabled/disabled
-    int getToolTipEnable() { return ToolTipEnable; };
+    bool getToolTipEnable() { return ToolTipEnable; };
     /// changes tooltips enabled/disabled
-    void setToolTipEnable(int state) { ToolTipEnable = state; };
+    void setToolTipEnable(bool state) { ToolTipEnable = state; };
     /// returns tooltips brackground color
-    int getToolTipEnableBgColor() { return ToolTipEnableBgColor; };
+    bool getToolTipEnableBgColor() { return ToolTipEnableBgColor; };
     /// changes tooltips backround enabled/disabled
-    void setToolTipEnableBgColor(int state) { ToolTipEnableBgColor = state; };
+    void setToolTipEnableBgColor(bool state) { ToolTipEnableBgColor = state; };
     /// returns one element of the TooltipsColors-array
     int getTooltipsColors(int element) { return TooltipsColors[element]; };
     /// transfers a value to the TooltipsColors-array
