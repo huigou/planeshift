@@ -505,9 +505,9 @@ bool pawsPetitionGMWindow::OnButtonReleased(int /*mouseButton*/, int /*keyModifi
                     return true;
                 }
 
-                if (psengine->GetCelClient()->GetMainPlayer()->GetType() + 1 >= atof(petitionList->GetSelectedText(PGMCOL_LVL)))
+                if (psengine->GetCelClient()->GetMainPlayer()->GetType() + 1 >= atoi(petitionList->GetSelectedText(PGMCOL_LVL)))
                 {
-                    float level = atof(petitionList->GetSelectedText(PGMCOL_LVL));
+                    int level = atoi(petitionList->GetSelectedText(PGMCOL_LVL));
                     if ( level == 10 )
                     {
                         psSystemMessage error(0,MSG_INFO,"Cannot escalate above 10");
@@ -538,9 +538,9 @@ bool pawsPetitionGMWindow::OnButtonReleased(int /*mouseButton*/, int /*keyModifi
                     return true;
                 }
 
-                if (psengine->GetCelClient()->GetMainPlayer()->GetType() + 1 >= atof(petitionList->GetSelectedText(PGMCOL_LVL)))
+                if (psengine->GetCelClient()->GetMainPlayer()->GetType() + 1 >= atoi(petitionList->GetSelectedText(PGMCOL_LVL)))
                 {
-                    float level = atof(petitionList->GetSelectedText(PGMCOL_LVL));
+                    int level = atoi(petitionList->GetSelectedText(PGMCOL_LVL));
                     if ( level == 0 )
                     {
                         psSystemMessage error(0,MSG_INFO,"Cannot descalate below 0");
