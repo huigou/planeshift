@@ -782,9 +782,9 @@ private:
         // disable functions iThreadReturn requires but we don't want to implement
         void MarkSuccessful() {}
         void MarkFinished() {}
-        void SetResult(csRef<iBase> result) {}
-        void SetResult(void* result) {}
-        void Copy(iThreadReturn* other) {}
+        void SetResult(csRef<iBase> /*result*/) {}
+        void SetResult(void* /*result*/) {}
+        void Copy(iThreadReturn* /*other*/) {}
 
         // private data
         CS::Threading::Mutex busy;
