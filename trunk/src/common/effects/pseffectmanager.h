@@ -119,11 +119,12 @@ public:
      *   @param attachTarget the target of the effect, 0 assumes that the target is the same as the attachPos
      *   @param up the base up vector of the effect
      *   @param uniqueID overrides the unique ID of the effect (for things like group effects)
+	 *   @param scale input to the scale params for effects
      *   @return 0 on failure, a unique ID of the effect otherwise
      */
     unsigned int RenderEffect(const csString & effectName, const csVector3 & offset, iMeshWrapper * attachPos, 
                               iMeshWrapper * attachTarget=0, const csVector3 & up=csVector3(0,1,0), 
-                              const unsigned int uniqueIDOverride = 0, bool rotateWithMesh = false);
+                              const unsigned int uniqueIDOverride = 0, bool rotateWithMesh = false, const float scale = 0.0);
 
     /** begins rendering an effect that isn't attached to anything
      *   @param effectName the name of the effect to render
@@ -132,6 +133,7 @@ public:
      *   @param target the target of the effect, 0 assumes that the target is the same as the offset
      *   @param up the base up vector of the effect
      *   @param uniqueID overrides the unique ID of the effect (for things like group effects)
+	 *   @param scale input to the scale params for effects
      *   @return 0 on failure, a unique ID of the effect otherwise
      */
     unsigned int RenderEffect(const csString & effectName, iSector * sector, const csVector3 & pos, 
@@ -145,11 +147,12 @@ public:
      *   @param target the target of the effect, 0 assumes that the target is the same as the offset
      *   @param up the base up vector of the effect
      *   @param uniqueID overrides the unique ID of the effect (for things like group effects)
+	 *   @param scale input to the scale params for effects
      *   @return 0 on failure, a unique ID of the effect otherwise
      */
     unsigned int RenderEffect(const csString & effectName, iSectorList * sectors, const csVector3 & pos, 
                               iMeshWrapper * attachTarget=0, const csVector3 & up=csVector3(0,1,0), 
-                              const unsigned int uniqueIDOverride = 0);
+                              const unsigned int uniqueIDOverride = 0, const float scale = 0.0);
 
     unsigned int AttachLight(const char* name, const csVector3& pos,
   	float radius, const csColor& colour, csRef<iMeshWrapper> mw);

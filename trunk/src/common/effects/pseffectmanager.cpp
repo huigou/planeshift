@@ -291,7 +291,7 @@ bool psEffectManager::DeleteEffect(unsigned int effectID)
 
 unsigned int psEffectManager::RenderEffect(const csString & effectName, const csVector3 & offset, 
                                            iMeshWrapper * attachPos, iMeshWrapper * attachTarget, const csVector3 & up, 
-                                           const unsigned int uniqueIDOverride, bool rotateWithMesh)
+                                           const unsigned int uniqueIDOverride, bool rotateWithMesh, const float scale)
 {
 #ifndef DONT_DO_EFFECTS
     if (!attachPos)
@@ -302,6 +302,13 @@ unsigned int psEffectManager::RenderEffect(const csString & effectName, const cs
     if (currEffect != 0)
     {
         currEffect = currEffect->Clone();
+        if (scale != 0.0f)
+        {
+            if (!currEffect->SetFrameParamScalings(scale))
+            {
+                Error2("Received scale factor for effect %s that don't use param scaling",effectName.GetDataSafe());
+            }
+        }
 
         const unsigned int uniqueID = currEffect->Render(attachPos->GetMovable()->GetSectors(), offset, attachPos, 
                                                          attachTarget, up.Unit(), uniqueIDOverride, rotateWithMesh);
@@ -342,7 +349,7 @@ unsigned int psEffectManager::RenderEffect(const csString & effectName, iSector 
 
 unsigned int psEffectManager::RenderEffect(const csString & effectName, iSectorList * sectors, const csVector3 & pos, 
                                            iMeshWrapper * attachTarget, const csVector3 & up, 
-                                           const unsigned int uniqueIDOverride)
+                                           const unsigned int uniqueIDOverride, const float scale)
 {
 #ifndef DONT_DO_EFFECTS
     // check if it's a single effect
@@ -350,6 +357,14 @@ unsigned int psEffectManager::RenderEffect(const csString & effectName, iSectorL
     if (currEffect != 0)
     {
         currEffect = currEffect->Clone();
+
+		if (scale != 0.0f)
+        {
+            if (!currEffect->SetFrameParamScalings(scale))
+            {
+                Error2("Received scale factor for effect %s that don't use param scaling",effectName.GetDataSafe());
+            }
+        }
 
         const unsigned int uniqueID = currEffect->Render(sectors, pos, 0, attachTarget, up.Unit(), uniqueIDOverride);
         actualEffects.Put(uniqueID, currEffect);

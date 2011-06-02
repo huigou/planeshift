@@ -539,7 +539,7 @@ void psClientCharManager::HandleEffect( MsgEntry* me )
             {
                 effectID = psengine->GetEffectManager()->RenderEffect(effect.name, effect.offset,
                                                                       anchor, target, up, uniqueIDOverride,
-                                                                      effect.scale);
+                                                                      false, effect.scale);
             }
             else
             {
