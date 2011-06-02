@@ -71,9 +71,9 @@ private:
 
     pawsColorPromptWindow * colorPicker;    ///< pointer to colorPicker window
 
-    int defTooltipsColors[3];               ///< array of default colors
-    int defToolTipEnable;                   ///< Holds the status of the tooltip (being enabled)
-    int defToolTipEnableBgColor;            ///< Holds if the bgcolor should be enabled
+    int  defTooltipsColors[3];               ///< array of default colors
+    bool defToolTipEnable;                   ///< Holds the status of the tooltip (being enabled)
+    bool defToolTipEnableBgColor;            ///< Holds if the bgcolor should be enabled
 
 };
 
