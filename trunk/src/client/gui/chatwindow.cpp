@@ -406,11 +406,13 @@ void pawsChatWindow::LoadChatSettings()
                 csRef<iDocumentNode> option = oNodes->Next();
                 if (option->GetType() == CS_NODE_TEXT)
                 {
-                    csString s = option->GetValue();
-                    for (char *word = strtok((char*)s.GetData(), " \r\n\t"); word; word = strtok(NULL, " \r\n\t"))
+                    csStringArray words;
+                    words.SplitString(option->GetValue(), " \r\n\t", csStringArray::delimIgnore);
+                    for(size_t pos = 0; pos < words.GetSize(); pos++)
                     {
-                        if ( settings.badWords.Find(word)==csArrayItemNotFound ) {
-                            settings.badWords.Push(word);
+                        if(settings.badWords.Find(words.Get(pos))==csArrayItemNotFound)
+                        {
+                            settings.badWords.Push(words.Get(pos));
                             settings.goodWords.Push("");
                         }
                     }
