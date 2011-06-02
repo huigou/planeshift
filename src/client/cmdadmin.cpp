@@ -26,6 +26,7 @@
 #include "net/cmdhandler.h"
 #include "net/clientmsghandler.h"
 #include "net/messages.h"
+#include "net/connection.h"
 
 #include "util/strutil.h"
 
@@ -59,6 +60,8 @@ psAdminCommands::psAdminCommands(ClientMsgHandler* mh,
 psAdminCommands::~psAdminCommands()
 {
     msgqueue->Unsubscribe(this, MSGTYPE_ADMINCMD);
+    msgqueue->Unsubscribe(this, MSGTYPE_ORDEREDTEST);
+    
     cmdsource->UnsubscribeAll(this);
 }
 
