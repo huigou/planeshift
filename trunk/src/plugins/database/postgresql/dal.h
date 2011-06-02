@@ -277,7 +277,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(dbpostgresql)
                 command.Push(fname);
         }
         
-        virtual void SetID(uint32 uid)  {  };
+        virtual void SetID(uint32 /*uid*/) {};
         
     public:
         dbInsert(PGconn* db, int *StmtNum, const char* Table, unsigned int count, LogCSV* logcsv, const char* file, unsigned int line)
