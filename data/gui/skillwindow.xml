@@ -103,7 +103,7 @@
             <!-- Doll -->
             <widget name="Doll" factory="pawsInventoryDollView" visible="no">
                 <frame x="0" y="0" width="0" height="0" border="no"/>
-                <map file="podium" sector="room" />
+                <map file="podium" sector="podium" />
                 <distance value="7"/>
                 <subscriptions>
                     <subscribe data="sigActorUpdate" />
