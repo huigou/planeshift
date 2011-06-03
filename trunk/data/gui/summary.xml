@@ -121,7 +121,7 @@
         <widget name="ModelView" factory="pawsObjectView">
             <frame x="300" y="106" width="150" height="247" border="no" />
             <mask resource="charborder2"/>
-            <map file="podium" sector="room"/>
+            <map file="podium" sector="podium"/>
             <distance value="5.0"/>
           <cameramod x="-0.025" y="1.0" z="0.0"/>
         </widget>

@@ -30,7 +30,7 @@
         <widget name="ModelView" factory="pawsObjectView">
             <frame x="94" y="98" width="306" height="424" border="no" />
             <mask resource="charborder"/>
-            <map file="podium" sector="room"/>
+            <map file="podium" sector="podium"/>
             <distance value="3.0"/>
           <cameramod x="-0.025" y="1.0" z="0.0"/>
         </widget>
