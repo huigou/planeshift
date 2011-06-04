@@ -1,4 +1,4 @@
-@PlaneShift Team at Arcane Chrysalis 0.5.6 Release (released February 2010)
+@PlaneShift Team at Arcane Chrysalis 0.5.7 Release (released June 2011)
 
 &Project Leader, Director
 
@@ -12,11 +12,11 @@ Stefano "weltall" Angeleri, for massive amounts of new features and constant imp
 
 &Client and Server engine
 
+Stefano "weltall" Angeleri, for massive amounts of bug hunting and bug fixing, feature request implementation, and the loan of his personal server for testing.
+
 Andrew "Acraig" Craig, for client gui foundation, char creation screens, equipment, inventory, overall coordination ...
 
 Michael "Xordan" Gist, for a new updater system and game launcher, a background loader, graphical enhancements, many performance improvements and more...
-
-Stefano "weltall" Angeleri, for massive amounts of bug hunting and bug fixing, feature request implementation, and the loan of his personal server for testing.
 
 Anders "Magodra" Reggestad, for magic system implementation, NPC AI, tribes and a lot more.
 
@@ -43,7 +43,7 @@ Arco "Arcooo" Mul, for rigging and level modeling.
 
 Christophe "Nynn" Lehay, for player skins, robes, items, and more.
 
-Joel "Xoel" McLeay, for the modeling of Dsar Kore.
+Joel "Xoel" McLeay, for the modeling of Dsar Kore and Ojaveda guild.
 
 &Game Masters
 
@@ -76,9 +76,9 @@ Bruno "CyberMozart" Largarde, for the main theme, intro songs and battle theme.
 
 &Testing Team
 
-Bas "Lanarel" van den Broek, for leading the testing team, helping out with many issues, and fixing and closing many bugs.
-
 Frédéric "f-rd" Delcorso, for testing many bugs and making even weird ones reproducible.
+
+Bas "Lanarel" van den Broek, for leading the testing team, helping out with many issues, and fixing and closing many bugs.
 
 Mario "LigH" RohkrÃ¤mer, for reporting and testing many art bugs, and work on bug prevention.
 
