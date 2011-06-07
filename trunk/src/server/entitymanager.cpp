@@ -568,14 +568,14 @@ bool EntityManager::CreatePlayer (Client* client)
                                    instance,sector,pos,yrot,
                                    client->GetClientNum());
 
-    client->SetActor(actor);
-
     if (!actor || !actor->IsValid() )
     {
         Error2("Error while creating gemActor for Character '%s'\n", chardata->GetCharName());
         psserver->RemovePlayer (client->GetClientNum(),"The server could not create your character entity. (new gemActor() failed)  Please contact tech support about this.");
         return false;
     }
+
+    client->SetActor(actor);
   
     chardata->LoadActiveSpells();
 
