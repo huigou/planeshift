@@ -267,10 +267,24 @@ bool isFlagSet(const psString & flagstr, const char * flag)
     return flagstr.FindSubString(flag,0,XML_CASE_INSENSITIVE)!=-1;
 }
 
+csString toString(const csVector2& pos)
+{
+    csString result;
+    result.Format("(%.2f,%.2f)",pos.x,pos.y);
+    return result;
+}
+
 csString toString(const csVector3& pos)
 {
     csString result;
     result.Format("(%.2f,%.2f,%.2f)",pos.x,pos.y,pos.z);
+    return result;
+}
+
+csString toString(const csVector4& pos)
+{
+    csString result;
+    result.Format("(%.2f,%.2f,%.2f,%.2f)",pos.x,pos.y,pos.z,pos.w);
     return result;
 }
 
