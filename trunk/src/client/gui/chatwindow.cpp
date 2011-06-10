@@ -406,11 +406,14 @@ void pawsChatWindow::LoadChatSettings()
                 csRef<iDocumentNode> option = oNodes->Next();
                 if (option->GetType() == CS_NODE_TEXT)
                 {
-                    csStringArray words;
-                    words.SplitString(option->GetValue(), " \r\n\t", csStringArray::delimIgnore);
+                    csStringArray words(option->GetValue(), " \r\n\t", csStringArray::delimIgnore);
                     for(size_t pos = 0; pos < words.GetSize(); pos++)
                     {
-                        if(settings.badWords.Find(words.Get(pos))==csArrayItemNotFound)
+                        //Empty bad words will make the badword parser go in a deadloop
+                        if(csString(words.Get(pos)).IsEmpty())
+                            continue;
+
+                        if(settings.badWords.Find(words.Get(pos)) == csArrayItemNotFound)
                         {
                             settings.badWords.Push(words.Get(pos));
                             settings.goodWords.Push("");
@@ -421,7 +424,13 @@ void pawsChatWindow::LoadChatSettings()
                 {
                     csString bad = option->GetAttributeValue("bad");
                     csString good = option->GetAttributeValue("good");
-                    if ( settings.badWords.Find(bad)==csArrayItemNotFound ) {
+
+                    //Empty bad words will make the badword parser go in a deadloop
+                    if(bad.IsEmpty())
+                        continue;
+
+                    if(settings.badWords.Find(bad) == csArrayItemNotFound)
+                    {
                         settings.badWords.Push(bad);
                         settings.goodWords.Push(good);
                     }
