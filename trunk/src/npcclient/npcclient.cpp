@@ -256,7 +256,7 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, cons
     csRef<iThreadManager> threadManager = csQueryRegistry<iThreadManager>(object_reg);
 
     // load materials
-    loader->PrecacheDataWait("/planeshift/materials/materials.cslib", false);
+    loader->PrecacheDataWait("/planeshift/materials/materials.cslib");
 
     csRefArray<iThreadReturn> precaches;
 
@@ -264,7 +264,7 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, cons
     csRef<iStringArray> meshes = vfs->FindFiles("/planeshift/meshes/");
     for(size_t j=0; j<meshes->GetSize(); ++j)
     {
-        precaches.Push(loader->PrecacheData(meshes->Get(j), false));
+        precaches.Push(loader->PrecacheData(meshes->Get(j)));
     }
     threadManager->Wait(precaches);
     precaches.Empty();
@@ -274,7 +274,7 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, cons
     csRef<iStringArray> maps = vfs->FindFiles("/planeshift/world/");
     for(size_t j=0; j<maps->GetSize(); ++j)
     {
-        precaches.Push(loader->PrecacheData(maps->Get(j), false));
+        precaches.Push(loader->PrecacheData(maps->Get(j)));
     }
     threadManager->Wait(precaches);
     precaches.Empty();

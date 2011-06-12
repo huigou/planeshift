@@ -121,12 +121,10 @@ public:
    /**
     * Pass a data file to be cached. This method will parse your data and add it to it's
     * internal world representation. You may then request that these objects are loaded.
-    * @param recursive Mark true if this is a recursive call (no vfs chdir needed).
-    * If you don't know, set this to false.
     * This call will be dispatched to a thread, so it will return immediately.
     * You should wait for parsing to finish before calling UpdatePosition().
     */
-    THREADED_CALLABLE_DECL2(BgLoader, PrecacheData, csThreadReturn, const char*, path, bool, recursive, THREADEDL, false, false);
+    THREADED_CALLABLE_DECL1(BgLoader, PrecacheData, csThreadReturn, const char*, path, THREADEDL, false, false);
 
    /**
     * Clears all temporary data that is only required parse time.

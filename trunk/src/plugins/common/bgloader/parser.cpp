@@ -1024,7 +1024,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
         return loaded;
     }
 
-    THREADED_CALLABLE_IMPL2(BgLoader, PrecacheData, const char* path, bool recursive)
+    THREADED_CALLABLE_IMPL1(BgLoader, PrecacheData, const char* path)
     {
         (void)sync; // prevent unused variable warning
 
@@ -1061,14 +1061,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                 if(!doc->GetRoot())
                     return false;
 
-                if(!recursive)
-                {
-                    dirchange.ChangeTo(data.vfsPath.Truncate(data.vfsPath.FindLast('/')+1));
-                }
-                else
-                {
-                    data.vfsPath = vfs->GetCwd();
-                }
+                dirchange.ChangeTo(data.vfsPath.Truncate(data.vfsPath.FindLast('/')+1));
 
                 // Begin document parsing.
                 data.realRoot = false;
@@ -1110,8 +1103,9 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                         // Parse referenced libraries.
                         case PARSERTOKEN_LIBRARY:
                         {
-                            csString target(node->GetContentsValue());
-                            PrecacheDataTC(ret, false, target, target.FindFirst('/') == SIZET_NOT_FOUND);
+                            csString target(data.vfsPath);
+                            target.Append(node->GetContentsValue());
+                            PrecacheDataTC(ret, false, target);
                         }
                         break;
 

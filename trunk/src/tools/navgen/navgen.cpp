@@ -105,7 +105,7 @@ void NavGen::Run()
     // precache materials
     {
         csPrintf("caching materials\n");
-        csRef<iThreadReturn> ret = loader->PrecacheDataWait(materials+"materials.cslib", false);
+        csRef<iThreadReturn> ret = loader->PrecacheDataWait(materials+"materials.cslib");
         if(!ret->IsFinished() || !ret->WasSuccessful())
         {
             csPrintf("failed to cache materials\n");
@@ -129,7 +129,7 @@ void NavGen::Run()
         csRefArray<iThreadReturn> returns;
         for(size_t i = 0; i < meshFiles->GetSize(); i++)
         {
-            returns.Push(loader->PrecacheData(meshFiles->Get(i), false));
+            returns.Push(loader->PrecacheData(meshFiles->Get(i)));
         }
 
         csPrintf("finishing mesh cache\n");
@@ -159,7 +159,7 @@ void NavGen::Run()
         csPrintf("caching world\n");
         for(size_t i = 0; i < worldFiles->GetSize(); i++)
         {
-            returns.Push(loader->PrecacheData(worldFiles->Get(i), false));
+            returns.Push(loader->PrecacheData(worldFiles->Get(i)));
         }
 
         csPrintf("finishing world cache\n");
