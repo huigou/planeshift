@@ -52,7 +52,7 @@ struct StartPosition : public csRefCount
  */
 struct iBgLoader : public virtual iBase
 {
-  SCF_INTERFACE(iBgLoader, 2, 2, 0);
+  SCF_INTERFACE(iBgLoader, 2, 3, 0);
 
  /**
   * Start loading a material into the engine. Check return for finished state/success.
@@ -85,12 +85,10 @@ struct iBgLoader : public virtual iBase
   * Pass a data file to be cached. This method will parse your data and add it to it's
   * internal world representation. You may then request that these objects are loaded.
   * @param path path to the file to be cached.
-  * @param recursive Mark true if this is a recursive call (no vfs chdir needed).
-  * If you don't know, set this to false.
   * This call will be dispatched to a thread, so it will return immediately.
   * You should wait for parsing to finish before calling UpdatePosition().
   */
-  THREADED_INTERFACE2(PrecacheData, const char* path, bool recursive);
+  THREADED_INTERFACE1(PrecacheData, const char* path);
 
  /**
   * Clean up any intermediate data that was required parse time.

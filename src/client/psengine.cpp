@@ -554,7 +554,7 @@ bool psEngine::Initialize (int level)
         progress->SetCurrentValue(0.0f);
 
         // Start to fill the loader cache.
-        precaches.Push(loader->PrecacheData("/planeshift/materials/materials.cslib", false));
+        precaches.Push(loader->PrecacheData("/planeshift/materials/materials.cslib"));
         lastLoadingCount = 1;
 
         // Initialize Networking
@@ -644,7 +644,7 @@ bool psEngine::Initialize (int level)
         // Continue to fill the loader cache.
         for(size_t j=0; j<meshes->GetSize(); ++j)
         {
-            precaches.Push(loader->PrecacheData(meshes->Get(j), false));
+            precaches.Push(loader->PrecacheData(meshes->Get(j)));
         }
 
         lastLoadingCount = meshes->GetSize();
@@ -670,7 +670,7 @@ bool psEngine::Initialize (int level)
         // Continue to fill the loader cache.
         for(size_t j=0; j<maps->GetSize(); ++j)
         {
-            precaches.Push(loader->PrecacheData(maps->Get(j), false));
+            precaches.Push(loader->PrecacheData(maps->Get(j)));
         }
 
         lastLoadingCount = maps->GetSize();

@@ -218,19 +218,19 @@ bool EEditApp::Init()
     // loads materials, meshes and maps
     csRef<iBgLoader> loader = csQueryRegistry<iBgLoader>(object_reg);
 
-    loader->PrecacheDataWait("/planeshift/materials/materials.cslib", false);
+    loader->PrecacheDataWait("/planeshift/materials/materials.cslib");
 
     csRef<iStringArray> meshes = vfs->FindFiles("/planeshift/meshes/");
     for(size_t j=0; j<meshes->GetSize(); ++j)
     {
-        loader->PrecacheDataWait(meshes->Get(j), false);
+        loader->PrecacheDataWait(meshes->Get(j));
     }
 
     csRef<iStringArray> maps = vfs->FindFiles("/planeshift/world/");
 
     for(size_t j=0; j<maps->GetSize(); ++j)
     {
-        loader->PrecacheDataWait(maps->Get(j), false);
+        loader->PrecacheDataWait(maps->Get(j));
     }
     //CPrintf(CON_CMDOUTPUT,"Loader cache filled");
 

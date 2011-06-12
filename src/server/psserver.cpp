@@ -321,7 +321,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     csRef<iThreadManager> threadManager = csQueryRegistry<iThreadManager>(object_reg);
 
     // load materials
-    loader->PrecacheDataWait("/planeshift/materials/materials.cslib", false);
+    loader->PrecacheDataWait("/planeshift/materials/materials.cslib");
 
     csRefArray<iThreadReturn> precaches;
 
@@ -329,7 +329,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     csRef<iStringArray> meshes = vfs->FindFiles("/planeshift/meshes/");
     for(size_t j=0; j<meshes->GetSize(); ++j)
     {
-        precaches.Push(loader->PrecacheData(meshes->Get(j), false));
+        precaches.Push(loader->PrecacheData(meshes->Get(j)));
     }
     threadManager->Wait(precaches);
     precaches.Empty();
@@ -339,7 +339,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     csRef<iStringArray> maps = vfs->FindFiles("/planeshift/world/");
     for(size_t j=0; j<maps->GetSize(); ++j)
     {
-        precaches.Push(loader->PrecacheData(maps->Get(j), false));
+        precaches.Push(loader->PrecacheData(maps->Get(j)));
     }
     threadManager->Wait(precaches);
     precaches.Empty();
