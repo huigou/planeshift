@@ -33,7 +33,7 @@
 #include <iutil/eventh.h>
 
 #include "psnetmanager.h"
-#include "pssound/pssoundmngr.h"
+#include "isoundmngr.h"
 
 #include "util/slots.h"
 
@@ -179,6 +179,7 @@ public:
     iConfigManager*       GetConfig()             { return cfgmgr; }  ///< config file
     iBgLoader*            GetLoader()             { return loader; }
     iSceneManipulate*     GetSceneManipulator()   { return scenemanipulator; }
+    iSoundManager*        GetSoundManager()       { return SoundManager; }
 
     csRandomGen& GetRandomGen() { return random; }
     float GetRandom() { return random.Get(); }
@@ -201,7 +202,6 @@ public:
     psCSSetup*             GetCSSetup()        { return CS_Setup; }
     ZoneHandler*           GetZoneHandler()    { return zonehandler; }
     Autoexec*              GetAutoexec()       { return autoexec; }
-    psSoundManager*        GetSoundManager()   { return SoundManager; }
 
     /// Access the player's petitioner target
     void SetTargetPetitioner(const char * pet) { targetPetitioner = pet; }
@@ -417,6 +417,7 @@ private:
     csRef<iEventQueue>        queue;          ///< Event Queue
     csRef<iVirtualClock>      vc;             ///< Clock
     csRef<iDocumentSystem>    xmlparser;      ///< XML Parser
+    csRef<iSoundManager>      SoundManager;   ///< planehift soundmanager
     csRef<iStringSet>         stringset;
     csRandomGen               random;
 
@@ -439,7 +440,6 @@ private:
     PawsManager*              paws;          ///< Hold the ps AWS manager
     psMainWidget*             mainWidget;    ///< Hold the ps overridden version of the desktop
     psInventoryCache*	      inventoryCache;///< inventory cache for client
-    psSoundManager*           SoundManager;  ///< planehift soundmanager
     psCSSetup*                CS_Setup;
     csRef<iBgLoader>          loader;
     csRef<iSceneManipulate>   scenemanipulator;

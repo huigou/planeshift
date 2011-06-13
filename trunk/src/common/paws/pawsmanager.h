@@ -39,7 +39,6 @@
 #include "pawsmouse.h"
 #include "psmousebinds.h"
 #include "pawsstyles.h"
-#include "sound/sound.h"
 
 struct iObjectRegistry;
 struct iGraphics2D;
@@ -48,13 +47,14 @@ struct iXWindow;
 struct iEvent;
 class psLocalization;
 
+struct iSoundManager;
+
 class pawsWidget;
 class pawsWidgetFactory;
 
 class pawsMainWidget;
 class pawsTextureManager;
 class pawsPrefManager;
-class PawsSoundHandle;
 
 struct iPAWSSubscriber;
 struct PAWSData;
@@ -329,8 +329,8 @@ public:
     /*                          Sound Functions
     ------------------------------------------------------------------------*/
 
-    /// Turns sound on and off by setting useSounds.
-    void ToggleSounds(bool value);
+    /// Gets the soundManager.
+    iSoundManager* GetSoundManager() { return soundManager; };
 
     /*                       Subcription Functions
     ------------------------------------------------------------------------*/
@@ -367,12 +367,6 @@ public:
 
     /// Return a list of all subscribers.
     csArray<iPAWSSubscriber*> ListSubscribers(const char *dataname);
-
-    ///Get if sound is available or not (psclient.cfg)
-    bool GetSoundStatus() { return soundStatus;}
-
-    ///Set if sound is available or not (psclient.cfg)
-    void SetSoundStatus(bool sound){ soundStatus = sound; }
 
     MathEnvironment & ExtraScriptVars() { return extraScriptVars; }
 
@@ -566,30 +560,12 @@ protected:
     /*                      Sound Member Variables
     ------------------------------------------------------------------------*/
 
-    /** A hash of sounds currently available to Paws components.
-     * Hashed based on the registered name.
-     */
-    csHash<PawsSoundHandle *> sounds;
-
-    /// Pointer to the Crystal Space iSndSysLoader used to load sounds.
-    csRef<iSndSysLoader> soundloader;
-
-    /// Pointer to the Crystal Space iSndSysRenderer used to play sounds.
-    csRef<iSndSysRenderer> soundrenderer;
-
-    /// Destructor helper for sound hash.
-    void ReleaseAllSounds();
+    csRef<iSoundManager> soundManager;  ///< planeshift's sound manager
 
     /** @brief Parses given file and returns the <widget_description> tag of it
      *  @return NULL on failure.
      */
     csRef<iDocumentNode> ParseWidgetFile( const char* widgetFile );
-
-    /// This is the internal var for sounds.
-    bool useSounds;
-
-    /// The volume for PAWS sound playback.
-    float volume;
 
     /// PAWS style definitions.
     pawsStyles * styles;
@@ -597,8 +573,6 @@ protected:
     /// Table of subscriptions.
     PAWSSubscriptionsHash subscriptions;
 
-    /// Is sound on or off?
-    bool soundStatus;
 
     /*                      Shortcuts for events
     ------------------------------------------------------------------------*/
@@ -626,17 +600,6 @@ protected:
 #endif
 };
 
-/// Stores the relationship between iSndSysData * and sound filename.
-class PawsSoundHandle
-{
-public:
-    PawsSoundHandle(const char *soundname,csRef<iSndSysData> sounddata) : name (soundname), snddata (sounddata) {};
-    ~PawsSoundHandle() {};
-
-public:
-    csString name;
-    csRef<iSndSysData> snddata;
-};
 
 /// Data types for pub/sub.
 enum PAWSDATATYPE

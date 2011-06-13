@@ -58,7 +58,7 @@ bool pawsCreditsWindow::PostSetup()
 {
     char endOfLine[2] = {10, 0};
 
-    psengine->GetSoundManager()->Load("main");
+    psengine->GetSoundManager()->LoadActiveSector("main");
 
     font = PawsManager::GetSingleton().GetPrefs()->GetDefaultFont();
 
@@ -248,7 +248,7 @@ void pawsCreditsWindow::Hide()
     pawsWidget::Hide();
     loginWnd->Show();
 
-    psengine->GetSoundManager()->Load("main");
+    psengine->GetSoundManager()->LoadActiveSector("main");
 }
 
 void pawsCreditsWindow::Draw()

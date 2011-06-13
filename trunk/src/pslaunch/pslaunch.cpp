@@ -33,6 +33,7 @@
 #include "pslaunch.h"
 #include "pawslauncherwindow.h"
 #include "updater.h"
+#include "isoundmngr.h"
 
 #include "paws/pawsbutton.h"
 #include "paws/pawsmainwidget.h"
@@ -46,8 +47,6 @@ CS_IMPLEMENT_APPLICATION
 psLauncherGUI* psLaunchGUI;
 
 using namespace CS::Threading;
-
-SoundSystemManager *SndSysMgr;
     
 psLauncherGUI::psLauncherGUI(iObjectRegistry* _object_reg, InfoShare *_infoShare, bool *_execPSClient)
 {
@@ -75,8 +74,6 @@ void psLauncherGUI::Run()
     downloader = NULL;
     delete fileUtil;
     fileUtil = NULL;
-    delete SndSysMgr;
-    SndSysMgr = NULL;
 
     csInitializer::CloseApplication(object_reg);
 }
@@ -120,6 +117,19 @@ bool psLauncherGUI::InitApp()
         return false;
     }
 
+    // Initialise Sound
+	soundManager = csQueryRegistryOrLoad<iSoundManager>(object_reg, "iSoundManager");
+    if(!soundManager)
+    {
+        // if the main sound manager is not found load the dummy plugin
+        soundManager = csQueryRegistryOrLoad<iSoundManager>(object_reg, "crystalspace.planeshift.sound.dummy");
+        if(!soundManager)
+        {
+            printf("Could not load iSoundManager!\n");
+            return false;
+        }
+    }
+
     // Initialise downloader.
     downloader = new Downloader(vfs);
 
@@ -147,10 +157,6 @@ bool psLauncherGUI::InitApp()
         printf("Failed to init PAWS!\n");
         return false;
     }
-
-	// Initialise Sound
-	
-	SndSysMgr = new SoundSystemManager(object_reg);
 
     mainWidget = new pawsMainWidget();
     paws->SetMainWidget(mainWidget);
@@ -287,7 +293,7 @@ bool psLauncherGUI::HandleEvent (iEvent &ev)
             FrameLimit();
             g3d->BeginDraw(CSDRAW_2DGRAPHICS);
             paws->Draw();
-            SndSysMgr->Update();
+            soundManager->Update();
         }
         else
         {

@@ -199,7 +199,7 @@ const char *psUtilityCommands::HandleCommand(const char *cmd)
     {
         if (words[1] == "sound")
         {
-            psengine->GetSoundManager()->Reload();
+            psengine->GetSoundManager()->ReloadSectors();
             return "Soundmanager reloaded";
         }
         return "try /reload sound";

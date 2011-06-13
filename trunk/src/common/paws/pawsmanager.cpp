@@ -37,9 +37,11 @@
 #include <csutil/objreg.h>
 #include <csutil/syspath.h>
 #include <csutil/xmltiny.h>
+#include <iutil/plugin.h>
+
+#include <isoundmngr.h>
 
 #if defined(CS_PLATFORM_UNIX) && defined(INCLUDE_CLIPBOARD)
-#include <iutil/plugin.h>
 #include <ivaria/xwindow.h>
 #include <X11/Xlib.h>
 #endif
@@ -117,6 +119,18 @@ PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* 
     vfs =  csQueryRegistry<iVFS > ( objectReg);
     xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
     csRef<iConfigManager> cfg =  csQueryRegistry<iConfigManager> (objectReg);
+
+    // Getting sound manager
+    soundManager = csQueryRegistryOrLoad<iSoundManager>(objectReg, "iSoundManager");
+    if(!soundManager)
+    {
+        // if the main sound manager is not found load the dummy plugin
+        soundManager = csQueryRegistryOrLoad<iSoundManager>(objectReg, "crystalspace.planeshift.sound.dummy");
+        if(!soundManager)
+        {
+            Error1("Could not find iSoundManager!");
+        }
+    }
 
 #if defined(CS_PLATFORM_UNIX) && defined(INCLUDE_CLIPBOARD)
     csRef<iPluginManager> plugin_mgr = csQueryRegistry<iPluginManager> (objectReg);
@@ -202,10 +216,7 @@ PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* 
 
     hadKeyDown = false;
     dragDropWidget = NULL;
-    useSounds = true;
-    volume = 1.0;
 
-    soundStatus = false;
     timeOver = 0;
 
     // Init render texture.
@@ -1255,12 +1266,6 @@ void PawsManager::RegisterFactories()
 
     RegisterFactory (pawsSimpleWindowFactory);
 
-}
-
-void PawsManager::ToggleSounds(bool value)
-{
-    useSounds = value;
-    // No need to stop sounds since PAWS generaly use short sounds
 }
 
 bool PawsManager::ApplyStyle(const char * name, iDocumentNode * target)

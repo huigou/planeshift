@@ -58,7 +58,6 @@
 
 #include "effects/pseffectmanager.h"
 #include "effects/pseffect.h"
-#include "sound/sound.h"
 
 #include "pscal3dcallback.h"
 
@@ -89,7 +88,6 @@ CS_IMPLEMENT_APPLICATION
 
 EEditApp *editApp;
 /* FIXME NAMESPACE */
-SoundSystemManager *SndSysMgr;
 
 EEditApp::EEditApp(iObjectRegistry * obj_reg, EEditReporter * _reporter)
             :camFlags(CAM_COUNT)
@@ -121,8 +119,6 @@ EEditApp::EEditApp(iObjectRegistry * obj_reg, EEditReporter * _reporter)
 
 EEditApp::~EEditApp()
 {
-//    object_reg->Unregister ((iSoundManager*)soundmanager, "iSoundManager");
-
     delete rand;
 
     if (event_handler && queue)
@@ -136,8 +132,6 @@ EEditApp::~EEditApp()
     delete controlManager;
     
     // delete of effectManager is missing? TODO
-    
-    delete SndSysMgr;
 }
 
 void EEditApp::SevereError(const char* msg)
@@ -243,9 +237,6 @@ bool EEditApp::Init()
     {
         loader->ContinueLoading(true);
     }
-
-    // Set up sound
-    SndSysMgr = new SoundSystemManager(object_reg);
     
     // paws initialization
     paws = new PawsManager(object_reg, "/this/art/eedit.zip", NULL);

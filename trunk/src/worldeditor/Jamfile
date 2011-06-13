@@ -5,7 +5,7 @@ Application worldeditor :
 ;
 CompileGroups worldeditor : tools ;
 ExternalLibs worldeditor : CRYSTAL ;
-LinkWith worldeditor : fparser paws psutil sound ;
+LinkWith worldeditor : fparser paws psutil ;
 
 if $(HAVE_STATIC_PLUGINS) = "yes"
 {
@@ -70,7 +70,9 @@ LinkStaticPlugins worldeditor_static : $(STATIC.PLUGINLIST)
 ;
 
 LinkStaticPlugins worldeditor_static :
-  bgloader 
+  bgloader
+  soundmngr
+  dummysndmngr
 ;
 
   CompileGroups worldeditor_static : tools ;

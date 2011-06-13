@@ -18,6 +18,8 @@
  *
  */
 
+#include <csutil/event.h>
+
 #include <psconfig.h>
 #include "psslotmgr.h"
 

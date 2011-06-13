@@ -65,7 +65,6 @@
 #include "pepawsmanager.h"
 
 
-
 const char * PawsEditorApp::CONFIG_FILENAME = "/this/pawseditor.cfg";
 const char * PawsEditorApp::APP_NAME        = "planeshift.pawseditor.application";
 const char * PawsEditorApp::WINDOW_CAPTION  = "Planeshift Paws Editor";
@@ -74,7 +73,6 @@ const char * PawsEditorApp::KEY_DEFS_FILENAME = "/this/data/pawseditor/keys_def.
 CS_IMPLEMENT_APPLICATION
 
 PawsEditorApp *editApp;
-SoundSystemManager *SndSysMgr;
 
 PawsEditorApp::PawsEditorApp(iObjectRegistry *obj_reg)
             :camFlags(CAM_COUNT)
@@ -163,9 +161,6 @@ bool PawsEditorApp::Init()
         SevereError("Could not load iLoader!");
         return false;
     }
-
-    // init sound
-    SndSysMgr = new SoundSystemManager (object_reg);
 
     // set the window caption
     iNativeWindow *nw = g3d->GetDriver2D()->GetNativeWindow();

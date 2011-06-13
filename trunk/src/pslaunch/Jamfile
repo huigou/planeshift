@@ -7,7 +7,7 @@ Application pslaunch :
 
 ExternalLibs pslaunch : CRYSTAL CURL ;
 CompileGroups pslaunch : client ;
-LinkWith pslaunch : xdelta3 paws psutil sound fparser ;
+LinkWith pslaunch : xdelta3 paws psutil fparser ;
 
 if $(HAVE_STATIC_PLUGINS) = "yes"
 {
@@ -19,7 +19,7 @@ Application pslaunch_static : [ Wildcard *.cpp *.h ] ;
 CFlags pslaunch_static : [ FDefines CS_STATIC_LINKED CURL_STATICLIB ] ;
 LFlags pslaunch_static : -lcrystalspace_staticplugins-$(CRYSTAL.VERSION) ;
 MsvcDefine pslaunch_static : CS_STATIC_LINKED CURL_STATICLIB ;
-LinkWith pslaunch_static : xdelta3 paws psutil fparser sound ;
+LinkWith pslaunch_static : xdelta3 paws psutil fparser ;
 
 STATIC.PLUGINLIST = 
   csfont
@@ -49,6 +49,11 @@ if $(TARGET.OS) = "MACOS_X" { STATIC.PLUGINLIST += glosx2d ; }
 LinkStaticPlugins pslaunch_static : $(STATIC.PLUGINLIST)
 : $(STATIC.OPTIONALPLUGINLIST)
 : CRYSTAL
+;
+
+LinkStaticPlugins pslaunch_static :
+  soundmngr
+  dummysndmngr
 ;
 
 ExternalLibs pslaunch_static : CRYSTAL CURL ;
