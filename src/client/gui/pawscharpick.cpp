@@ -19,6 +19,7 @@
 #include <psconfig.h>
 #include <imesh/spritecal3d.h>
 #include <csutil/md5.h>
+#include <iutil/cfgmgr.h>
 
 #include "util/log.h"
 #include "globals.h"
@@ -451,8 +452,7 @@ void pawsCharacterPickerWindow::Show()
     }        
         
     // Play some music
-    
-    psengine->GetSoundManager()->Load("main");
+    psengine->GetSoundManager()->LoadActiveSector("main");
     
     PawsManager::GetSingleton().SetCurrentFocusedWidget(this);
 

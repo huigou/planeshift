@@ -5,5 +5,5 @@ Library paws
 	: noinstall
 ;
 
-LinkWith paws : psutil sound ;
+LinkWith paws : psutil ;
 ExternalLibs paws : CRYSTAL ;

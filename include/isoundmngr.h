@@ -1,212 +1,369 @@
 /*
- * isoundmngr.h -- Saul Leite <leite@engineer.com>
- *
- * Copyright (C) 2001 PlaneShift Team (info@planeshift.it,
- * http://www.planeshift.it)
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation (version 2 of the License)
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
- */
-#ifndef I_SOUND_H
-#define I_SOUND_H
+* isoundmngr.h, Author: Andrea Rizzi <88whacko@gmail.com>
+*
+* Copyright (C) 2001-2011 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+*
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation (version 2 of the License)
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*
+*/
 
+#ifndef _ISOUNDMANAGER_H_
+#define _ISOUNDMANAGER_H_
 
-
+//====================================================================================
+// Crystal Space Includes
+//====================================================================================
 #include <csutil/scf.h>
-#include <csutil/csstring.h>
-#include <iengine/engine.h>
+#include <csutil/scf_implementation.h>
 
+//====================================================================================
+// Local Includes
+//====================================================================================
+#include "isoundctrl.h"
 
-#include "isndsys/ss_structs.h"
-#include "isndsys/ss_source.h"
-#include "isndsys/ss_stream.h"
-#include "isndsys/ss_loader.h"
-#include "isndsys/ss_renderer.h"
-#include "isndsys/ss_listener.h"
-#include "isndsys/ss_data.h"
-
-
-// A few helper macros which were used during conversion to the new system
-//  these can all be migrated out of source code and then undefined as convenient
-#define SOUND_STREAM_TYPE iSndSysStream
-#define SOUND_SOURCE_TYPE iSndSysSource
-#define SOUND_SOURCE3D_TYPE iSndSysSource3D
-#define SOUND_LOADER_TYPE iSndSysLoader
-#define SOUND_RENDER_TYPE iSndSysRenderer
-#define SOUND_LISTENER_TYPE iSndSysListener
-#define SOUND_DATA_TYPE iSndSysData
-
-enum Fade_Direction
-{
-    FADE_UP,
-    FADE_DOWN
-};
-
-
+//------------------------------------------------------------------------------------
+// Forward Declarations
+//------------------------------------------------------------------------------------
 struct iView;
+class  csVector3;
 
-struct iSoundManager : public virtual iBase
+
+/** This interface defines a sound manager.
+ *
+ * The sound manager controls all the sound related aspects. It manages the
+ * background music and the ambient sounds and it handles the music changes
+ * when crossing between sectors or entrying in combat mode for example.
+ *
+ * The sound manager can be used to play a sound.
+ */
+struct iSoundManager: public virtual iBase
 {
-    SCF_INTERFACE(iSoundManager, 0, 0, 1);
-
-    enum
-    {
-    NO_LOOP = 0,
-    LOOP_SOUND = 1
-    };
-    /// Load soundlib.xml into memory and initialize the sound renderer.
-    virtual bool Setup() = 0;
-
-    virtual void ChangeTimeOfDay( int newTime ) = 0;
-
-    /// Get current volume of renderer, between 0 and 1.
-    virtual float GetVolume() =0;
-
-    /// Set current volume of renderer, between 0 and 1.
-    virtual void SetVolume(float vol) =0;
-
-    /// Get current volume of renderer, between 0 and 1.
-    virtual float GetMusicVolume() =0;
-
-    /// Set current volume of renderer, between 0 and 1.
-    virtual void SetMusicVolume(float vol) =0;
-
-    /// Get current volume of renderer, between 0 and 1.
-    virtual float GetAmbientVolume() =0;
-
-    /// Set current volume of renderer, between 0 and 1.
-    virtual void SetAmbientVolume(float vol) =0;
-
-    /// Get current volume of renderer, between 0 and 1.
-    virtual float GetActionsVolume() =0;
-
-    /// Set current volume of renderer, between 0 and 1.
-    virtual void SetActionsVolume(float vol) =0;
-
-    /// Get current volume of renderer, between 0 and 1.
-    virtual float GetGUIVolume() =0;
-
-    /// Set current volume of renderer, between 0 and 1.
-    virtual void SetGUIVolume(float vol) =0;
-
-    /// Get current volume of renderer, between 0 and 1.
-    virtual float GetVoicesVolume() =0;
-
-    /// Set current volume of renderer, between 0 and 1.
-    virtual void SetVoicesVolume(float vol) =0;
+    SCF_INTERFACE(iSoundManager, 1, 0, 0);
 
     /**
-     * Play a named sound and optionally loop it.  If it is looped,
-     * the caller must save the csRef returned by this function and
-     * call Stop() later itself.
+     * The sound manager initializes by default the SoundControls with the IDs
+     * in this enum. AMBIENT_SNDCTRL and MUSIC_SNDCTRL have type AMBIENT and
+     * MUSIC respectively.
      */
-    virtual csRef<SOUND_SOURCE_TYPE> StartMusicSound(const char* name,bool loop = NO_LOOP) = 0;
-    virtual csRef<SOUND_SOURCE_TYPE> StartAmbientSound(const char* name,bool loop = NO_LOOP) = 0;
-    virtual csRef<SOUND_SOURCE_TYPE> StartActionsSound(const char* name,bool loop = NO_LOOP) = 0;
-    virtual csRef<SOUND_SOURCE_TYPE> StartGUISound(const char* name,bool loop = NO_LOOP) = 0;
-    virtual csRef<SOUND_SOURCE_TYPE> StartVoiceSound(const char* name,bool loop = NO_LOOP) = 0;
+    enum SndCtrlID
+    {
+        AMBIENT_SNDCTRL ,
+        MUSIC_SNDCTRL,
+        VOICE_SNDCTRL,
+        ACTION_SNDCTRL,
+        EFFECT_SNDCTRL,
+        GUI_SNDCTRL
+    };
 
-    // Playback of GUI sounds can also be performed through the PawsManager.
-
-    // This one used to be the main one. Please avoid unless necessary.
-    virtual csRef<SOUND_SOURCE_TYPE> StartSound(const char* name,float volume,bool loop = NO_LOOP) = 0;
-
-
-    /// Stop playing the background sound and start another one.
-    virtual bool OverrideBGSong(const char* name,
-                                bool loop = true,
-                                float fadeTime = 2.0 ) = 0;
-    virtual void StopOverrideBG() = 0;
-
-    /// Set whether music will be played or not, based on toggle parm.
-    virtual void ToggleMusic(bool toggle) = 0;
-
-    /// Set whether ambient sounds will actually be played or not.
-    virtual void ToggleAmbient(bool toggle) = 0;
-
-    /// Set whether actions sounds will actually be played or not.
-    virtual void ToggleActions(bool toggle) = 0;
-
-    /// Set whether gui sounds will actually be played or not.
-    virtual void ToggleGUI(bool toggle) = 0;
-
-    /// Set whether voices will actually be played or not.
-    virtual void ToggleVoices(bool toggle) = 0;
-
-    virtual void ToggleLoop(bool toggle) = 0;
-    virtual bool LoopBGM() = 0;
-
-    virtual void ToggleCombatMusic(bool toggle) = 0;
-    virtual bool PlayingCombatMusic() = 0;
-
-    /// This returns if we are playing music as a setting or not
-    virtual bool PlayingMusic() = 0;
-
-    /// This returns if we are playing ambient sounds as a setting or not
-    virtual bool PlayingAmbient() = 0;
-
-    /// This returns if we are playing actions sounds as a setting or not
-    virtual bool PlayingActions() = 0;
-
-    /// This returns if we are playing gui sounds as a setting or not
-    virtual bool PlayingGUI() = 0;
-
-    /// This returns if we are playing npc voice sounds as a setting or not
-    virtual bool PlayingVoices() = 0;
-
-    /** Change the mode if the player is fighting 
-     *  @param combat TRUE if we have to set combat music, otherwise FALSE
+    /**
+     * The sound manager initialize by default the queues with the IDs specified
+     * in this enum.
      */
-    virtual void SetCombatMusicMode(bool combat) = 0;
-    
-    /** Get the mode if the player is fighting 
-     *  @return TRUE if we have combat music, otherwise FALSE
+    enum QueueID
+    {
+        VOICE_QUEUE
+    };
+
+    /**
+     * In this enum are listed the possible state of a player.
      */
-    virtual bool GetCombatMusicMode() = 0;
+    enum CombatStance
+    {
+        PEACE,
+        COMBAT,
+        DEAD
+    };
 
-    ///This returns the song name that is overriding
-    virtual const char* GetSongName() = 0;
+    //------------------//
+    // SECTORS MANAGING //
+    //------------------//
 
-    /// Play a sound effect based on message type
-    virtual void HandleSoundType(int type) = 0;
-
-
-    virtual void Update( csVector3 pos ) = 0;
-    virtual void Update( iView* view ) = 0;
-    /** Update the current weather. This will trigger WEATHER sounds in
-      * the current sector
-      * @param weather New weather from the WeatherSound enum (weather.h)
-      */
-    virtual void UpdateWeather(int weather,const char* sector) = 0;
-    virtual void UpdateWeather(int weather) = 0;
-
-    /** Retrieves a iSoundHandle for a given resource name.
-      * If the resource is not loaded and cannot be loaded an invalid csRef<> is returned.
-      * (ref.IsValid() == false).
-      *
-      * @param name The resource name of the sound file.
-      *
+    /**
+     * Load the sectors information into memory. If this method is not called
+     * the other sector related methods have no effects. If one does not need
+     * the sectors' features this method is not necessary.
+     *
+     * @return true if the sectors are loaded correctly, false otherwise.
      */
-    virtual csRef<SOUND_DATA_TYPE> GetSoundResource(const char *name) = 0;
+    virtual bool InitializeSectors() = 0;
 
-    /// Retrieves a pointer to the sound renderer - the main interface of the sound system
-    virtual csRef<SOUND_RENDER_TYPE> GetSoundSystem() = 0;
+    /**
+     * Set the sector indicated as the current one. It is neither necessary nor
+     * suggested to unload the previous active sector with UnloadActiveSector()
+     * because the transition would result less smooth.
+     *
+     * The method uses the information about the sector to manage the music and
+     * the ambient's sounds. If the sector has not been loaded properly with
+     * InitializeSectors(), the method does nothing.
+     *
+     * @param sector the sector's name.
+     */
+    virtual void LoadActiveSector(const char* sector) = 0;
 
-    virtual void StartMapSoundSystem() = 0;
-    virtual void EnterSector( const char* sectorName, int timeOfDay, int weather, csVector3& position ) = 0;
+    /**
+     * Unload the current active sector. The method stops both the music and all
+     * the ambient's sounds.
+     */
+    virtual void UnloadActiveSector() = 0;
 
-    virtual void FadeSectorSounds( Fade_Direction dir ) = 0;
+    /**
+     * Reload all the sectors information in the memory.
+     */
+    virtual void ReloadSectors() = 0;
+
+    //-------------------------//
+    // SOUND CONTROLS MANAGING //
+    //-------------------------//
+
+    /**
+     * Create and return a new SoundControl with the indicated ID and type. If a
+     * SoundControl with the same ID already exists nothing happens. To use a
+     * SoundControl with the same ID of an existing one, it must be first removed
+     * with RemoveSndCtrl(iSoundControl* sndCtrl).
+     *
+     * Only one SoundControl of type AMBIENT or MUSIC can exist at the same time.
+     * If an ambient(music) sound control already exists and the user tries to
+     * create a new SoundControl with the same type, the previous ambient(music)
+     * SoundControl's type becomes NORMAL.
+     * 
+     * @see iSoundControl::SndCtrl_Type for more information about types.
+     * @param ctrlID the new SoundControl's identifier.
+     * @param type the new SoundControl's type.
+     * @return a pointer to the new SoundControl or a null pointer if a sound
+     * controller with the same ID already exists.
+     */
+    virtual iSoundControl* AddSndCtrl(int ctrlID, int type) = 0;
+
+    /**
+     * Remove a SoundControl.
+     * @param sndCtrl the SoundControl to be removed.
+     */
+    virtual void RemoveSndCtrl(iSoundControl* sndCtrl) = 0;
+
+    /**
+     * Get the SoundControl with the given ID.
+     * @param ctrlID the SoundControl's ID.
+     * @return the sound controller with that ID.
+     */
+    virtual iSoundControl* GetSndCtrl(int ctrlID) = 0;
+
+    /**
+     * Get the main SoundControl that affects the overall volume and the sound's
+     * general state.
+     * @return the main SoundControl.
+     */
+    virtual iSoundControl* GetMainSndCtrl() = 0;
+
+    //-----------------//
+    // QUEUES MANAGING //
+    //-----------------//
+
+    /**
+     * Create a new sound queue with the given ID. The sounds of the queue are
+     * played with first-in-first-out order and they are controlled by the given
+     * SoundControl.
+     *
+     * If a queue with the same ID already exists nothing happens. To create a
+     * new queue with its same ID one has to remove the old one with the method
+     * RemoveSndQueue(int queueID).
+     *
+     * @param queueID the queue's ID.
+     * @param sndCtrl the SoundControl of the queue's sounds.
+     * @return true if the queue is created, false if another one with the same
+     * ID already exists.
+     */
+    virtual bool AddSndQueue(int queueID, iSoundControl* sndCtrl) = 0;
+
+    /**
+     * Remove the queue with the given ID.
+     * @param queueID the queue's ID.
+     */
+    virtual void RemoveSndQueue(int queueID) = 0;
+
+    /**
+     * Push a new sound in the queue with the given ID. The sound is played when
+     * all the item pushed before it have been played.
+     * 
+     * @param queueID the queue's ID.
+     * @param fileName the file's name of the sound to play.
+     * @return true if a queue with that ID exists, false otherwise.
+     */
+    virtual bool PushQueueItem(int queueID, const char* fileName) = 0;
+
+    //----------------//
+    // STATE MANAGING //
+    //----------------//
+
+    /**
+     * Set the new combat stance and starts the combat music if the combat toggle
+     * is on. The new value should be one of the enum CombatStance.
+     * @param newCombatStance the new combat state of the player.
+     */
+    virtual void SetCombatStance(int newCombatStance) = 0;
+
+    /**
+     * Get the current combat stance.
+     * @return the combat stance.
+     */
+    virtual int GetCombatStance() const = 0;
+
+    /**
+     * Set the player's position.
+     * @param playerPosition the player's position.
+     */
+    virtual void SetPosition(csVector3 playerPosition) = 0;
+
+    /**
+     * Get the player's position.
+     * @return the player's position.
+     */
+    virtual csVector3 GetPosition() const = 0;
+
+    /**
+     * Set the time of the day. The method works only if sectors have been
+     * initialized.
+     * @param newTimeOfDay the new time of the day.
+     */
+    virtual void SetTimeOfDay(int newTimeOfDay) = 0;
+
+    /**
+     * Get the current time of the day. The method works only if sectors have
+     * been initialized.
+     * @return the time of the day or -1 if the sectors are not initialized.
+     */
+    virtual int GetTimeOfDay() const = 0;
+
+    /**
+     * Set the weather's state.
+     * @param newWeather the weather to be set.
+     */
+    virtual void SetWeather(int newWeather) = 0;
+
+    /**
+     * Get the weather's state.
+     * @return the weather's state.
+     */
+    virtual int GetWeather() const = 0;
+
+    //------------------//
+    // TOGGLES MANAGING //
+    //------------------//
+
+    /**
+     * Set the value of background music toggle. If set to true the background
+     * music loops, otherwise it does not.
+     * @param toggle true to activate the background music loop, false otherwise.
+     */
+    virtual void SetLoopBGMToggle(bool toggle) = 0;
+
+    /**
+     * Get the value of LoopBGMToggle.
+     * @return true if the background music loop is activated, false otherwise.
+     */
+    virtual bool IsLoopBGMToggleOn() = 0;
+
+    /**
+     * Set the value of the combat music toggle. If set to true a change in the
+     * combat stance changes the sector's music accordingly.
+     * @param toggle true to allow the music change, false otherwise.
+     */
+    virtual void SetCombatMusicToggle(bool toggle) = 0;
+
+    /**
+     * Get the value of the combat music toggle.
+     * @return true if the music change with the combat stance, false otherwise.
+     */
+    virtual bool IsCombatMusicToggleOn() = 0;
+
+    /**
+     * Set the value of the listener on camera toggle. If set to true the
+     * listener takes the camera's position, otherwise the player's one.
+     * @param toggle true to place the listener on the camera, false otherwise.
+     */
+    virtual void SetListenerOnCameraToggle(bool toggle) = 0;
+
+    /**
+     * Get the value of the listener on camera toggle.
+     * @return true if the listener is placed on the camera, false otherwise.
+     */
+    virtual bool IsListenerOnCameraToggleOn() = 0;
+
+    /**
+     * Set the value of the chat toggle needed to keep track of the chat's sound state.
+     */
+    virtual void SetChatToggle(bool toggle) = 0;
+
+    /**
+     * Get the chat toggle value.
+     */
+    virtual bool IsChatToggleOn() = 0;
+
+    //------------//
+    // PLAY SOUND //
+    //------------//
+
+    /**
+     * Play a 2D sound.
+     * @param fileName the name of the file where the sound is stored.
+     * @param loop true if the sound have to loop, false otherwise.
+     * @param ctrl the SoundControl that handle the sound.
+     */
+    virtual void PlaySound(const char* fileName, bool loop, iSoundControl* &ctrl) = 0;
+
+    /**
+     * Play a 3D sound.
+     * @param fileName the name of the file where the sound is stored.
+     * @param loop true if the sound have to loop, false otherwise.
+     * @param ctrl the SoundControl that handle the sound.
+     * @param pos the position of the sound source.
+     * @param dir the direction of the sound.
+     * @param minDist the minimum distance at which the player can hear it.
+     * @param maxDist the maximum distance at which the player can hear it.
+     */
+    virtual void PlaySound(const char* fileName, bool loop, iSoundControl* &ctrl, csVector3 pos, csVector3 dir, float minDist, float maxDist) = 0;
+
+    /**
+     * Stop a sound with the given name.
+     * @param fileName the name of the file where the sound is stored.
+     * @return true if a sound with that name exists, false otherwise.
+     */
+    virtual bool StopSound(const char* fileName) = 0;
+
+    /**
+     * Set the sound source position.
+     * @param fileName the name of the file where the sound is stored.
+     * @param position the new position of the sound source.
+     * @return true if a sound with that name exists, false otherwise.
+     */
+    virtual bool SetSoundSource(const char* fileName, csVector3 position) = 0;
+
+    //--------//
+    // UPDATE //
+    //--------//
+
+    /**
+     * Update the sound manager. Update all non event based things.
+     */
+    virtual void Update() = 0;
+
+    /**
+     * Update the position of the listener. If the listener on camera toggle
+     * is on, the listener's position is set on the camera otherwise on the
+     * player's position.
+     *
+     * @param the view of the camera.
+     */
+    virtual void UpdateListener(iView* view) = 0;
 };
 
-#endif // I_SOUND_H
-
-
+#endif // _ISOUNDMANAGER_H_

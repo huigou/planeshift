@@ -30,6 +30,8 @@
 #include <csutil/strhashr.h>
 #include <iengine/collection.h>
 #include <iengine/sector.h>
+#include <imesh/animesh.h>
+#include <imesh/animnode/skeleton2anim.h>
 
 //=============================================================================
 // Project Includes

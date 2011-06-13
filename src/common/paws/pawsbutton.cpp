@@ -23,14 +23,15 @@
 #include <psconfig.h>
 #include <ivideo/fontserv.h>
 #include <iutil/evdefs.h>
+#include <iutil/plugin.h>
+
+#include <isoundmngr.h>
 
 #include "pawsmainwidget.h"
 #include "pawsmanager.h"
 #include "pawsbutton.h"
 #include "pawstexturemanager.h"
 #include "pawsprefmanager.h"
-
-extern SoundSystemManager *SndSysMgr;
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -335,8 +336,7 @@ bool pawsButton::OnMouseExit()
 }
 
 bool pawsButton::OnMouseDown( int button, int modifiers, int x, int y )
-{  
-	SoundHandle *Handle;
+{
 	
     if ( !enabled )
     {
@@ -354,9 +354,9 @@ bool pawsButton::OnMouseDown( int button, int modifiers, int x, int y )
         }
     }
 
-    // plays a sound
-    SndSysMgr->Play2DSound (sound_click, DONT_LOOP, 0, 0, VOLUME_NORM,
-                            SndSysMgr->guiSndCtrl, Handle);
+    // Play a sound
+    iSoundControl* guiSndCtrl = PawsManager::GetSingleton().GetSoundManager()->GetSndCtrl(iSoundManager::GUI_SNDCTRL);
+    PawsManager::GetSingleton().GetSoundManager()->PlaySound(sound_click, false, guiSndCtrl);
 
     if ( toggle )
     {

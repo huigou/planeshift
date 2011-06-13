@@ -498,8 +498,8 @@ void pawsLoginWindow::OnListAction(pawsListBox* /*selected*/, int /*status*/)
 
 void pawsLoginWindow::Show()
 {
-    // Play some music  
-    psengine->GetSoundManager()->Load("main");
+    // Play some music
+    psengine->GetSoundManager()->LoadActiveSector("main");
     pawsWidget::Show();
 }
 

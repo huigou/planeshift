@@ -17,7 +17,6 @@
 
 // global vars
 psNPCClient* npcclient;
-SoundSystemManager   *SndSysMgr;
 
 CS_IMPLEMENT_APPLICATION
 
@@ -39,8 +38,6 @@ int main(int argc, char **argv)
     iObjectRegistry *object_reg = CSSetup->InitCS();
 
     pslog::Initialize (object_reg);
-    
-    SndSysMgr = new SoundSystemManager(object_reg);
 
     csRef<iCommandLineParser> clp = csQueryRegistry<iCommandLineParser>(object_reg);
 

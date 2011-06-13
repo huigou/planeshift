@@ -46,8 +46,6 @@
 #define APPNAME "PlaneShift World Editor"
 #define WEDIT_CONFIG_FILENAME "/this/worldeditor.cfg"
 
-SoundSystemManager *SndSysMgr;
-
 WorldEditor::WorldEditor(int argc, char* argv[]) :
 editMode(Select), moveCamera(true), paws(NULL), rotX(0), rotY(0)
 {
@@ -164,9 +162,6 @@ bool WorldEditor::Init()
         printf("Failed to load iBgLoader!\n");
         return false;
     }
-
-    // Set up sound
-    SndSysMgr = new SoundSystemManager(objectReg);
 
     loader->SetLoadRange(1000);
     sceneManipulator = scfQueryInterface<iSceneManipulate>(loader);

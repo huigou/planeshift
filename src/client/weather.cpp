@@ -38,6 +38,8 @@
 #include <iutil/plugin.h>
 #include <iutil/stringarray.h>
 #include <ivideo/material.h>
+#include <imap/loader.h>
+#include <iutil/cfgmgr.h>
 
 #include <ibgloader.h>
 #include "pscelclient.h"

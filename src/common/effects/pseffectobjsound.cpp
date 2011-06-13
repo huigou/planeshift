@@ -22,6 +22,7 @@
 #include <iengine/camera.h>
 #include <cstool/csview.h>
 #include <csutil/xmltiny.h>
+#include <iutil/plugin.h>
 #include <iengine/engine.h>
 #include <iengine/material.h>
 #include <iengine/mesh.h>
@@ -30,11 +31,6 @@
 
 #include <imap/loader.h>
 
-#include <isndsys/ss_renderer.h>
-#include <isndsys/ss_source.h>
-#include <isndsys/ss_stream.h>
-#include <isndsys/ss_listener.h>
-
 #include "effects/pseffectobjsound.h"
 #include "effects/pseffectanchor.h"
 #include "effects/pseffect2drenderer.h"
@@ -42,18 +38,32 @@
 #include "util/pscssetup.h"
 #include "util/log.h"
 
-extern SoundSystemManager *SndSysMgr;
+#include "isoundmngr.h"
+
 
 psEffectObjSound::psEffectObjSound(iView *parentView, psEffect2DRenderer * renderer2d)
     : psEffectObj(parentView, renderer2d)
 {
-    sndHandle = NULL;
+    soundManager = csQueryRegistryOrLoad<iSoundManager>(psCSSetup::object_reg, "iSoundManager");
+    if(!soundManager)
+    {
+        // if the main sound manager is not found load the dummy plugin
+        soundManager = csQueryRegistryOrLoad<iSoundManager>(psCSSetup::object_reg, "crystalspace.planeshift.sound.dummy");
+        if(!soundManager)
+        {
+            csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Could not find plugin iSoundManager.\n");
+        }
+    }
+
+    isSoundActive = false;
 }
 
 psEffectObjSound::~psEffectObjSound()
 {
-    if (sndHandle != NULL)
-        sndHandle->sndstream->Pause();
+    if(isSoundActive)
+    {
+        soundManager->StopSound(soundName);
+    }
 }
 
 bool psEffectObjSound::Load(iDocumentNode *node, iLoaderContext* ldr_context)
@@ -154,10 +164,12 @@ bool psEffectObjSound::Update(csTicks elapsed)
     if (!isAlive && life >= birth)
     {
         isAlive = true;
-        SndSysMgr->Play3DSound (soundName, LOOP, 0, 0, VOLUME_NORM,
-                                SndSysMgr->effectSndCtrl, csVector3(0,0,0), csVector3(0,0,0),
-                                minDistSquared, maxDistSquared,
-                                0, CS_SND3D_ABSOLUTE, sndHandle);
+
+        iSoundControl* effectSndCtrl = soundManager->GetSndCtrl(iSoundManager::EFFECT_SNDCTRL);
+        soundManager->PlaySound(soundName, true, effectSndCtrl,
+            csVector3(0,0,0), csVector3(0,0,0), minDistSquared, maxDistSquared);
+        isSoundActive = true;
+
     }
 
     csVector3 soundPos = anchorMesh->GetMovable()->GetPosition();
@@ -171,8 +183,10 @@ bool psEffectObjSound::Update(csTicks elapsed)
         soundPos += LERP_VEC_KEY(KA_POS,LERP_FACTOR);
     }
 
-    if (sndHandle != NULL)
-        sndHandle->sndsource3d->SetPosition(soundPos);
+    if(isSoundActive)
+    {
+        isSoundActive = soundManager->SetSoundSource(soundName, soundPos);
+    }
 
     return true;
 }

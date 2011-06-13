@@ -42,6 +42,7 @@
 #include <iutil/vfs.h>
 #include <imap/ldrctxt.h>
 #include <iutil/object.h>
+#include <iutil/cfgmgr.h>
 #include <ivaria/engseq.h>
 
 //=============================================================================
@@ -379,13 +380,13 @@ void ModeHandler::SetModeSounds(uint8_t mode)
     switch (mode)
     {
         case psModeMessage::PEACE:
-        	psengine->GetSoundManager()->SetCombatStance(0);
+            psengine->GetSoundManager()->SetCombatStance(iSoundManager::PEACE);
             break;
         case psModeMessage::COMBAT:
-            psengine->GetSoundManager()->SetCombatStance(1);
+            psengine->GetSoundManager()->SetCombatStance(iSoundManager::COMBAT);
             break;
         case psModeMessage::DEAD:
-            psengine->GetSoundManager()->SetCombatStance(2);
+            psengine->GetSoundManager()->SetCombatStance(iSoundManager::DEAD);
             break;
     }
 }
@@ -755,7 +756,7 @@ void ModeHandler::SetSectorMusic(const char *sectorname)
     }
 
     csString sector(sectorname);
-    psengine->GetSoundManager()->Load (sector);
+    psengine->GetSoundManager()->LoadActiveSector(sector);
     psengine->GetSoundManager()->SetWeather((int) sound);
     psengine->GetSoundManager()->SetTimeOfDay(clockHour);
 }
@@ -2129,7 +2130,7 @@ void ModeHandler::HandleCachedFile(MsgEntry* me)
         csPrintf("Cached File Message received was not valid!\n");
         return;
     }
-    if (psengine->GetSoundManager()->GetVoiceToggle() == true)
+    if (psengine->GetSoundManager()->GetSndCtrl(iSoundManager::VOICE_SNDCTRL)->GetToggle() == true)
     {
         csString fname;
         fname.Format("/planeshift/userdata/cache/%s",msg.hash.GetDataSafe() );
@@ -2151,7 +2152,7 @@ void ModeHandler::HandleCachedFile(MsgEntry* me)
             {
                 csPrintf("Yes, it is cached already.  Playing immediately.\n");
                 // Queue that file
-                psengine->GetSoundManager()->voicequeue->AddItem(fname.GetData());
+                psengine->GetSoundManager()->PushQueueItem(iSoundManager::VOICE_QUEUE, fname.GetData());
             }
         }
         else
@@ -2164,7 +2165,7 @@ void ModeHandler::HandleCachedFile(MsgEntry* me)
                 return;
             }
             // Queue that file
-            psengine->GetSoundManager()->voicequeue->AddItem(fname.GetData());
+            psengine->GetSoundManager()->PushQueueItem(iSoundManager::VOICE_QUEUE, fname.GetData());
         }
     }
 }

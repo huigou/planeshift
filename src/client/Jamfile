@@ -20,8 +20,8 @@ Application psclient : [ Wildcard *.cpp *.h ] ;
 CFlags psclient : [ FDefines $(HUNSPELLDEF) ] ;
 ExternalLibs psclient : CRYSTAL CAL3D BREAKPAD $(HUNSPELLDEF) ;
 CompileGroups psclient : client ;
-COMMONLIBS = gui psnet psengine psrpgrules psutil paws pssound sound effects fparser ;
-LinkWith psclient : gui psnet psengine psrpgrules psutil paws sound effects fparser ;
+COMMONLIBS = gui psnet psengine psrpgrules psutil paws effects fparser ;
+LinkWith psclient : gui psnet psengine psrpgrules psutil paws effects fparser ;
 if $(REPORTER)
 {
   if $(TARGET.OS) = "MACOS_X" { COMMONLIBS += crashreport ; }
@@ -137,7 +137,9 @@ LinkStaticPlugins psclient_static : $(STATIC.PLUGINLIST)
 ;
 
 LinkStaticPlugins psclient_static :
-  bgloader 
+  bgloader
+  soundmngr
+  dummysndmngr
 ;
 
 ExternalLibs psclient_static : CRYSTAL CAL3D BREAKPAD $(HUNSPELLDEF) ;

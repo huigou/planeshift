@@ -335,9 +335,6 @@ void psEngine::Cleanup()
     effectManager.Invalidate();
 
     delete options;
-    
-    // Soundmanager should be among the last items its used by gui/paws and effectmanager
-    delete SoundManager;
 }
 
 // ----------------------------------------------------------------------------
@@ -361,12 +358,20 @@ bool psEngine::Initialize (int level)
         csReport (object_reg, CS_REPORTER_SEVERITY_NOTIFY, PSAPP, CS_VERSION);
 
         // Query for plugins
-        PS_QUERY_PLUGIN (queue,   iEventQueue,    "iEventQueue");
-        PS_QUERY_PLUGIN (vfs,     iVFS,           "iVFS");
-        PS_QUERY_PLUGIN (engine,  iEngine,        "iEngine");
-        PS_QUERY_PLUGIN (cfgmgr,  iConfigManager, "iConfigManager");
-        PS_QUERY_PLUGIN (g3d,     iGraphics3D,    "iGraphics3D");
-        PS_QUERY_PLUGIN (vc,      iVirtualClock,  "iVirtualClock");
+        PS_QUERY_PLUGIN (queue,        iEventQueue,    "iEventQueue");
+        PS_QUERY_PLUGIN (vfs,          iVFS,           "iVFS");
+        PS_QUERY_PLUGIN (engine,       iEngine,        "iEngine");
+        PS_QUERY_PLUGIN (cfgmgr,       iConfigManager, "iConfigManager");
+        PS_QUERY_PLUGIN (g3d,          iGraphics3D,    "iGraphics3D");
+        PS_QUERY_PLUGIN (vc,           iVirtualClock,  "iVirtualClock");
+
+        // Query for the sound plugin, if not found query the dummy one
+        SoundManager = csQueryRegistryOrLoad<iSoundManager>(object_reg, "iSoundManager");
+        if(!SoundManager)
+        {
+            PS_QUERY_PLUGIN (SoundManager, iSoundManager,  "crystalspace.planeshift.sound.dummy");
+        }
+
 
         g2d = g3d->GetDriver2D();
 
@@ -403,7 +408,9 @@ bool psEngine::Initialize (int level)
         csString soundPlugin;
 
         soundOn = true; // FIXMESOUND is this variable REALLY needed and if not how do we handle this in future? 
-        SoundManager = new psSoundManager (object_reg);
+
+        // Initialize sound
+        SoundManager->InitializeSectors();
 
         LoadLogSettings();
 
@@ -433,7 +440,6 @@ bool psEngine::Initialize (int level)
         maxFPS = cfgmgr->GetInt("Video.FrameLimit", 71);
         frameLimit = 1000 / maxFPS;
 
-        paws->SetSoundStatus(soundOn);
         mainWidget = new psMainWidget();
         paws->SetMainWidget( mainWidget );
 
@@ -1096,12 +1102,12 @@ inline void psEngine::FrameLimit()
 
 void psEngine::MuteAllSounds(void)
 {
-    SoundManager->mainSndCtrl->SetToggle(false);
+    SoundManager->GetMainSndCtrl()->SetToggle(false);
 }
 
 void psEngine::UnmuteAllSounds(void)
 {
-    SoundManager->mainSndCtrl->SetToggle(true);
+    SoundManager->GetMainSndCtrl()->SetToggle(true);
 }
 
 // ----------------------------------------------------------------------------
@@ -1674,23 +1680,23 @@ bool psEngine::LoadSoundSettings(bool forceDef)
     // load and apply the settings
     optionNode = mainNode->GetNode("ambient");
     if (optionNode != NULL)
-    	SoundManager->ambientSndCtrl->SetToggle(optionNode->GetAttributeValueAsBool("on",true));
+        SoundManager->GetSndCtrl(iSoundManager::AMBIENT_SNDCTRL)->SetToggle(optionNode->GetAttributeValueAsBool("on",true));
 
     optionNode = mainNode->GetNode("actions");
     if (optionNode != NULL)
-    	SoundManager->actionSndCtrl->SetToggle(optionNode->GetAttributeValueAsBool("on",true));
+    	SoundManager->GetSndCtrl(iSoundManager::ACTION_SNDCTRL)->SetToggle(optionNode->GetAttributeValueAsBool("on",true));
 
     optionNode = mainNode->GetNode("music");
     if (optionNode != NULL)
-    	SoundManager->musicSndCtrl->SetToggle(optionNode->GetAttributeValueAsBool("on",true));
+    	SoundManager->GetSndCtrl(iSoundManager::MUSIC_SNDCTRL)->SetToggle(optionNode->GetAttributeValueAsBool("on",true));
 
     optionNode = mainNode->GetNode("gui");
     if (optionNode != NULL)
-    	SoundManager->guiSndCtrl->SetToggle(optionNode->GetAttributeValueAsBool("on",true));
+    	SoundManager->GetSndCtrl(iSoundManager::GUI_SNDCTRL)->SetToggle(optionNode->GetAttributeValueAsBool("on",true));
 
     optionNode = mainNode->GetNode("voices");
     if (optionNode != NULL)
-    	SoundManager->SetVoiceToggle(optionNode->GetAttributeValueAsBool("on",true));
+    	SoundManager->GetSndCtrl(iSoundManager::VOICE_SNDCTRL)->SetToggle(optionNode->GetAttributeValueAsBool("on",true));
 
     optionNode = mainNode->GetNode("volume");
     if (optionNode != NULL)
@@ -1703,7 +1709,7 @@ bool psEngine::LoadSoundSettings(bool forceDef)
             volume = 100;
         }
 
-		SoundManager->mainSndCtrl->SetVolume((float) volume/100);
+		SoundManager->GetMainSndCtrl()->SetVolume((float) volume/100);
     }
 
     optionNode = mainNode->GetNode("musicvolume");
@@ -1717,7 +1723,7 @@ bool psEngine::LoadSoundSettings(bool forceDef)
             volume = 100;
         }
 
-        SoundManager->musicSndCtrl->SetVolume((float) volume/100);
+        SoundManager->GetSndCtrl(iSoundManager::MUSIC_SNDCTRL)->SetVolume((float) volume/100);
     }
 
     optionNode = mainNode->GetNode("ambientvolume");
@@ -1731,7 +1737,7 @@ bool psEngine::LoadSoundSettings(bool forceDef)
             volume = 100;
         }
 
-        SoundManager->ambientSndCtrl->SetVolume((float) volume/100);
+        SoundManager->GetSndCtrl(iSoundManager::AMBIENT_SNDCTRL)->SetVolume((float) volume/100);
     }
 
     optionNode = mainNode->GetNode("actionsvolume");
@@ -1745,7 +1751,7 @@ bool psEngine::LoadSoundSettings(bool forceDef)
             volume = 100;
         }
 
-		SoundManager->actionSndCtrl->SetVolume((float) volume/100);        
+		SoundManager->GetSndCtrl(iSoundManager::ACTION_SNDCTRL)->SetVolume((float) volume/100);        
     }
 
     optionNode = mainNode->GetNode("guivolume");
@@ -1759,7 +1765,7 @@ bool psEngine::LoadSoundSettings(bool forceDef)
             volume = 100;
         }
 
-        SoundManager->guiSndCtrl->SetVolume((float) volume/100);
+        SoundManager->GetSndCtrl(iSoundManager::GUI_SNDCTRL)->SetVolume((float) volume/100);
     }
 
     optionNode = mainNode->GetNode("voicesvolume");
@@ -1773,7 +1779,7 @@ bool psEngine::LoadSoundSettings(bool forceDef)
             volume = 100;
         }
 
-		SoundManager->voiceSndCtrl->SetVolume((float) volume/100);
+		SoundManager->GetSndCtrl(iSoundManager::VOICE_SNDCTRL)->SetVolume((float) volume/100);
     }
 
     optionNode = mainNode->GetNode("muteonfocusloss");
@@ -1782,19 +1788,19 @@ bool psEngine::LoadSoundSettings(bool forceDef)
 
     optionNode = mainNode->GetNode("loopbgm");
     if (optionNode)
-        SoundManager->loopBGM.SetToggle(optionNode->GetAttributeValueAsBool("on", false));
+        SoundManager->SetLoopBGMToggle(optionNode->GetAttributeValueAsBool("on", false));
 
     optionNode = mainNode->GetNode("combatmusic");
     if (optionNode)
-        SoundManager->combatMusic.SetToggle(optionNode->GetAttributeValueAsBool("on", true)); 
+        SoundManager->SetCombatMusicToggle(optionNode->GetAttributeValueAsBool("on", true)); 
 
     optionNode = mainNode->GetNode("chatsound");
     if (optionNode)
-        SoundManager->chatToggle.SetToggle(optionNode->GetAttributeValueAsBool("on", true));
+        SoundManager->SetChatToggle(optionNode->GetAttributeValueAsBool("on", true));
 
     optionNode = mainNode->GetNode("usecamerapos");
     if (optionNode)
-        SoundManager->listenerOnCamera.SetToggle(optionNode->GetAttributeValueAsBool("on", true));
+        SoundManager->SetListenerOnCameraToggle(optionNode->GetAttributeValueAsBool("on", true));
     return true;
 }
 

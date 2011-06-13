@@ -37,6 +37,8 @@
 
 #include <iutil/evdefs.h>
 #include <iutil/databuff.h>
+#include <iutil/virtclk.h>
+#include <iutil/stringarray.h>
 
 //=============================================================================
 // Project Includes
@@ -1410,10 +1412,11 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
         case CHAT_SERVER_TELL:
         case CHAT_TELLSELF:
         case CHAT_TELL:
-            if (psengine->GetSoundManager()->chatToggle.GetToggle() == true)
+            if (psengine->GetSoundManager()->IsChatToggleOn() == true)
             {
                  // Hardcoded Resource considered as FIXME
-                psengine->GetSoundManager()->PlayGUISound("sound.standardButtonClick");
+                iSoundControl* guiSndCtrl = psengine->GetSoundManager()->GetSndCtrl(iSoundManager::GUI_SNDCTRL);
+                psengine->GetSoundManager()->PlaySound("sound.standardButtonClick", false, guiSndCtrl);
             }
         case CHAT_AWAY:
         case CHAT_ADVICE:

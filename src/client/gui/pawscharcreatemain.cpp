@@ -972,8 +972,7 @@ bool pawsCreationMain::OnChange(pawsWidget *widget)
 void pawsCreationMain::Show()
 {
     // Play some music
-
-    psengine->GetSoundManager()->Load("charcreation");
+    psengine->GetSoundManager()->LoadActiveSector("charcreation");
 
     pawsWidget::Show();
     UpdateCP();

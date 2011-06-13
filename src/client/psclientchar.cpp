@@ -59,7 +59,7 @@
 #include "effects/pseffectmanager.h"
 #include "effects/pseffect.h"
 
-#include "pssound/pssoundmngr.h"
+#include "isoundmngr.h"
 
 //=============================================================================
 // Local Includes
@@ -384,7 +384,8 @@ void psClientCharManager::HandleAction( MsgEntry* me )
 
 void psClientCharManager::HandlePlaySound( MsgEntry* me )
 {
-    psengine->GetSoundManager()->PlayActionSound(me->GetStr());
+    iSoundControl* sc = psengine->GetSoundManager()->GetSndCtrl(iSoundManager::ACTION_SNDCTRL);
+    psengine->GetSoundManager()->PlaySound(me->GetStr(), false, sc);
 }
 
 void psClientCharManager::HandleTargetUpdate( MsgEntry* me )

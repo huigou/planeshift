@@ -21,6 +21,7 @@
 #include <fstream>
 
 #include <iutil/stringarray.h>
+#include <isndsys/ss_renderer.h>
 
 #include "paws/pawsbutton.h"
 #include "paws/pawscheckbox.h"
@@ -404,7 +405,7 @@ void pawsLauncherWindow::LoadSettings()
     bool openALAvailable;
     {
       // Try to load OpenAL plugin to see if it's supported
-      csRef<iSndSysRenderer> oal = csLoadPlugin<iSndSysRenderer> (
+      csRef<iSndSysRenderer> oal = csQueryRegistryOrLoad<iSndSysRenderer> (
 	PawsManager::GetSingleton().GetObjectRegistry(), "crystalspace.sndsys.renderer.openal", false);
       openALAvailable = oal.IsValid();
     }

@@ -36,6 +36,7 @@ class pawsMessageTextBox;
 class pawsLauncherWindowFactory;
 class pawsMainWidget;
 class PawsManager;
+struct iSoundManager;
 struct iObjectRegistry;
 
 class psLauncherGUI
@@ -48,6 +49,7 @@ private:
     csRef<iGraphics3D>      g3d;
     csRef<iGraphics2D>      g2d;
     csRef<iEventQueue>      queue;
+    csRef<iSoundManager>    soundManager;
     DeclareGenericEventHandler(EventHandler, psLauncherGUI, "planeshift.launcher");
     csRef<EventHandler> event_handler;
 
