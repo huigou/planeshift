@@ -1,5 +1,5 @@
 /***************************************************************************\
-|* Function Parser for C++ v4.4.2                                          *|
+|* Function Parser for C++ v4.4.3                                          *|
 |*-------------------------------------------------------------------------*|
 |* Copyright: Juha Nieminen, Joel Yliluoma                                 *|
 |*                                                                         *|
@@ -19,8 +19,8 @@
 #include <cassert>
 #include <limits>
 
-#include "fptypes.h"
-#include "fpaux.h"
+#include "extrasrc/fptypes.h"
+#include "extrasrc/fpaux.h"
 using namespace FUNCTIONPARSERTYPES;
 
 #ifdef FP_USE_THREAD_SAFE_EVAL_WITH_ALLOCA
@@ -413,7 +413,7 @@ namespace
            If unsigned has more than 32 bits, the other
            higher order bits are to be assumed zero.
         */
-#include "fp_identifier_parser.inc"
+#include "extrasrc/fp_identifier_parser.inc"
         return 0;
     }
 
@@ -424,6 +424,15 @@ namespace
         if( (value & 0x80000000U) != 0) // Function?
         {
             // Verify that the function actually exists for this datatype
+        #ifdef FP_DISABLE_EVAL
+            //if(!Functions[(value >> 16) & 0x7FFF].evalOnly())
+            if( value == ((cEval << 16) | 0x80000004U) ) // faster test
+            {
+                // If it's cEval, return it as an identifier instead
+                //return value & 0xFFFFu;
+                return 4;
+            }
+        #endif
             if(IsIntType<Value_t>::result
             && !Functions[(value >> 16) & 0x7FFF].okForInt())
             {
@@ -784,6 +793,63 @@ FunctionParserBase<Value_t>::Data::~Data()
     }
 }
 
+template<typename Value_t>
+void FunctionParserBase<Value_t>::incFuncWrapperRefCount
+(FunctionWrapper* wrapper)
+{
+    ++wrapper->mReferenceCount;
+}
+
+template<typename Value_t>
+unsigned FunctionParserBase<Value_t>::decFuncWrapperRefCount
+(FunctionWrapper* wrapper)
+{
+    return --wrapper->mReferenceCount;
+}
+
+template<typename Value_t>
+FunctionParserBase<Value_t>::Data::FuncWrapperPtrData::FuncWrapperPtrData():
+    mRawFuncPtr(0), mFuncWrapperPtr(0), mParams(0)
+{}
+
+template<typename Value_t>
+FunctionParserBase<Value_t>::Data::FuncWrapperPtrData::~FuncWrapperPtrData()
+{
+    if(mFuncWrapperPtr &&
+       FunctionParserBase::decFuncWrapperRefCount(mFuncWrapperPtr) == 0)
+        delete mFuncWrapperPtr;
+}
+
+template<typename Value_t>
+FunctionParserBase<Value_t>::Data::FuncWrapperPtrData::FuncWrapperPtrData
+(const FuncWrapperPtrData& rhs):
+    mRawFuncPtr(rhs.mRawFuncPtr),
+    mFuncWrapperPtr(rhs.mFuncWrapperPtr),
+    mParams(rhs.mParams)
+{
+    if(mFuncWrapperPtr)
+        FunctionParserBase::incFuncWrapperRefCount(mFuncWrapperPtr);
+}
+
+template<typename Value_t>
+typename FunctionParserBase<Value_t>::Data::FuncWrapperPtrData&
+FunctionParserBase<Value_t>::Data::FuncWrapperPtrData::operator=
+(const FuncWrapperPtrData& rhs)
+{
+    if(&rhs != this)
+    {
+        if(mFuncWrapperPtr &&
+           FunctionParserBase::decFuncWrapperRefCount(mFuncWrapperPtr) == 0)
+            delete mFuncWrapperPtr;
+        mRawFuncPtr = rhs.mRawFuncPtr;
+        mFuncWrapperPtr = rhs.mFuncWrapperPtr;
+        mParams = rhs.mParams;
+        if(mFuncWrapperPtr)
+            FunctionParserBase::incFuncWrapperRefCount(mFuncWrapperPtr);
+    }
+    return *this;
+}
+
 
 //=========================================================================
 // FunctionParser constructors, destructor and assignment
@@ -905,11 +971,38 @@ bool FunctionParserBase<Value_t>::AddFunction
     const bool success = addNewNameData(mData->mNamePtrs, newName, false);
     if(success)
     {
-        mData->mFuncPtrs.push_back(typename Data::FuncPtrData());
-        mData->mFuncPtrs.back().mFuncPtr = ptr;
+        mData->mFuncPtrs.push_back(typename Data::FuncWrapperPtrData());
+        mData->mFuncPtrs.back().mRawFuncPtr = ptr;
         mData->mFuncPtrs.back().mParams = paramsAmount;
     }
     return success;
+}
+
+template<typename Value_t>
+bool FunctionParserBase<Value_t>::addFunctionWrapperPtr
+(const std::string& name, FunctionWrapper* wrapper, unsigned paramsAmount)
+{
+    if(!AddFunction(name, FunctionPtr(0), paramsAmount)) return false;
+    mData->mFuncPtrs.back().mFuncWrapperPtr = wrapper;
+    return true;
+}
+
+template<typename Value_t>
+typename FunctionParserBase<Value_t>::FunctionWrapper*
+FunctionParserBase<Value_t>::GetFunctionWrapper(const std::string& name)
+{
+    CopyOnWrite();
+    NamePtr namePtr(name.data(), unsigned(name.size()));
+
+    typename NamePtrsMap<Value_t>::iterator nameIter =
+        mData->mNamePtrs.find(namePtr);
+
+    if(nameIter != mData->mNamePtrs.end() &&
+       nameIter->second.type == NameData<Value_t>::FUNC_PTR)
+    {
+        return mData->mFuncPtrs[nameIter->second.index].mFuncWrapperPtr;
+    }
+    return 0;
 }
 
 template<typename Value_t>
@@ -940,7 +1033,7 @@ bool FunctionParserBase<Value_t>::AddFunction(const std::string& name,
     const bool success = addNewNameData(mData->mNamePtrs, newName, false);
     if(success)
     {
-        mData->mFuncParsers.push_back(typename Data::FuncPtrData());
+        mData->mFuncParsers.push_back(typename Data::FuncParserPtrData());
         mData->mFuncParsers.back().mParserPtr = &fp;
         mData->mFuncParsers.back().mParams = fp.mData->mVariablesAmount;
     }
@@ -954,8 +1047,8 @@ bool FunctionParserBase<Value_t>::RemoveIdentifier(const std::string& name)
 
     NamePtr namePtr(name.data(), unsigned(name.size()));
 
-    typename NamePtrsMap<Value_t>::iterator
-        nameIter = mData->mNamePtrs.find(namePtr);
+    typename NamePtrsMap<Value_t>::iterator nameIter =
+        mData->mNamePtrs.find(namePtr);
 
     if(nameIter != mData->mNamePtrs.end())
     {
@@ -1552,7 +1645,7 @@ inline void FunctionParserBase<Value_t>::AddFunctionOpcode(unsigned opcode)
 {
 #define FP_FLOAT_VERSION 1
 #define FP_COMPLEX_VERSION 0
-#include "fp_opcode_add.inc"
+#include "extrasrc/fp_opcode_add.inc"
 #undef FP_COMPLEX_VERSION
 #undef FP_FLOAT_VERSION
 }
@@ -1564,7 +1657,7 @@ inline void FunctionParserBase<long>::AddFunctionOpcode(unsigned opcode)
     typedef long Value_t;
 #define FP_FLOAT_VERSION 0
 #define FP_COMPLEX_VERSION 0
-#include "fp_opcode_add.inc"
+#include "extrasrc/fp_opcode_add.inc"
 #undef FP_COMPLEX_VERSION
 #undef FP_FLOAT_VERSION
 }
@@ -1577,7 +1670,7 @@ inline void FunctionParserBase<GmpInt>::AddFunctionOpcode(unsigned opcode)
     typedef GmpInt Value_t;
 #define FP_FLOAT_VERSION 0
 #define FP_COMPLEX_VERSION 0
-#include "fp_opcode_add.inc"
+#include "extrasrc/fp_opcode_add.inc"
 #undef FP_COMPLEX_VERSION
 #undef FP_FLOAT_VERSION
 }
@@ -1590,7 +1683,7 @@ inline void FunctionParserBase<std::complex<double> >::AddFunctionOpcode(unsigne
     typedef std::complex<double> Value_t;
 #define FP_FLOAT_VERSION 1
 #define FP_COMPLEX_VERSION 1
-#include "fp_opcode_add.inc"
+#include "extrasrc/fp_opcode_add.inc"
 #undef FP_COMPLEX_VERSION
 #undef FP_FLOAT_VERSION
 }
@@ -1603,7 +1696,7 @@ inline void FunctionParserBase<std::complex<float> >::AddFunctionOpcode(unsigned
     typedef std::complex<float> Value_t;
 #define FP_FLOAT_VERSION 1
 #define FP_COMPLEX_VERSION 1
-#include "fp_opcode_add.inc"
+#include "extrasrc/fp_opcode_add.inc"
 #undef FP_COMPLEX_VERSION
 #undef FP_FLOAT_VERSION
 }
@@ -1616,7 +1709,7 @@ inline void FunctionParserBase<std::complex<long double> >::AddFunctionOpcode(un
     typedef std::complex<long double> Value_t;
 #define FP_FLOAT_VERSION 1
 #define FP_COMPLEX_VERSION 1
-#include "fp_opcode_add.inc"
+#include "extrasrc/fp_opcode_add.inc"
 #undef FP_COMPLEX_VERSION
 #undef FP_FLOAT_VERSION
 }
@@ -2826,10 +2919,13 @@ Value_t FunctionParserBase<Value_t>::Eval(const Value_t* Vars)
 // User-defined function calls:
           case cFCall:
               {
-                  unsigned index = byteCode[++IP];
-                  unsigned params = mData->mFuncPtrs[index].mParams;
-                  Value_t retVal =
-                      mData->mFuncPtrs[index].mFuncPtr(&Stack[SP-params+1]);
+                  const unsigned index = byteCode[++IP];
+                  const unsigned params = mData->mFuncPtrs[index].mParams;
+                  const Value_t retVal =
+                      mData->mFuncPtrs[index].mRawFuncPtr ?
+                      mData->mFuncPtrs[index].mRawFuncPtr(&Stack[SP-params+1]) :
+                      mData->mFuncPtrs[index].mFuncWrapperPtr->callFunction
+                      (&Stack[SP-params+1]);
                   SP -= int(params)-1;
                   Stack[SP] = retVal;
                   break;
@@ -2887,21 +2983,13 @@ Value_t FunctionParserBase<Value_t>::Eval(const Value_t* Vars)
 #endif // FP_SUPPORT_OPTIMIZER
 
           case cSinCos:
-              {
-                  fp_sinCosResult<Value_t> tmp ( fp_sinCos( Stack[SP] ) );
-                  Stack[SP]   = tmp.svalue;
-                  Stack[SP+1] = tmp.cvalue;
-                  ++SP;
-                  break;
-              }
+              fp_sinCos(Stack[SP], Stack[SP+1], Stack[SP]);
+              ++SP;
+              break;
           case cSinhCosh:
-              {
-                  fp_sinCosResult<Value_t> tmp ( fp_sinhCosh( Stack[SP] ) );
-                  Stack[SP]   = tmp.svalue;
-                  Stack[SP+1] = tmp.cvalue;
-                  ++SP;
-                  break;
-              }
+              fp_sinhCosh(Stack[SP], Stack[SP+1], Stack[SP]);
+              ++SP;
+              break;
 
           case cAbsNot:
               Stack[SP] = fp_absNot(Stack[SP]); break;

@@ -3,11 +3,11 @@
 <head>
  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
  <link href="style.css" rel="stylesheet" type="text/css" title="normal" media=screen>
- <title>Function Parser for C++ v4.4.2  : Documentation</title>
+ <title>Function Parser for C++ v4.4.3  : Documentation</title>
 </head>
 
 <body>
-<h1>Function Parser for C++ v4.4.2  </h1>
+<h1>Function Parser for C++ v4.4.3  </h1>
 
 <p>Authors: Juha Nieminen
 (<a href="http://iki.fi/warp/">http://iki.fi/warp/</a>),
@@ -40,9 +40,12 @@ Joel Yliluoma
 	  <li><a href="#longdesc_AddUnit"><code>AddUnit()</code></a>
 	  <li><a href="#longdesc_AddFunction1"><code>AddFunction()</code></a> (C++ function)
 	  <li><a href="#longdesc_AddFunction2"><code>AddFunction()</code></a> (FunctionParser)
+	  <li><a href="#longdesc_AddFunction3"><code>AddFunctionWrapper()</code></a>
 	  <li><a href="#longdesc_RemoveIdentifier"><code>RemoveIdentifier()</code></a>
 	  <li><a href="#longdesc_ParseAndDeduceVariables"><code>ParseAndDeduceVariables()</code></a>
         </ul>
+      <li><a href="#functionobjects">Specialized function objects</a>
+      <li><a href="#base">FunctionParserBase</a>
      </ul>
  <li>Syntax
    <ul>
@@ -66,6 +69,13 @@ Joel Yliluoma
 
 <a name="whatsnew"></a>
 <h2>What's new</h2>
+
+<p>What's new in v4.4.3
+  <ul>
+    <li>Added support for user-specialized function pointer objects for
+      user-defined functions (besides the existing support for raw C++
+      function pointers). See documentation for details.
+  </ul>
 
 <p>What's new in v4.4.2
   <ul>
@@ -160,12 +170,12 @@ you also need to add <code>mpfr/MpfrFloat.cc</code> or
 they should not be added to the project.
 
 <p>Note that part of the library source code is inside several
-<code>.inc</code> files (these files contain auto-generated C++ code),
-provided in the library package. These files are used by
-<code>fparser.cc</code> and don't need to be added explicitly to the
-project in most IDEs (such as Visual Studio). Basically, you don't need
-to do anything with these files, other than keep them in the same directory
-as <code>fparser.cc</code>.
+<code>.inc</code> files inside the <code>extrasrc</code> subdirectory
+(these files contain auto-generated C++ code), provided in the library
+package. These files are used by <code>fparser.cc</code> and don't need
+to be added explicitly to the project in most IDEs (such as Visual Studio).
+Basically, you don't need to do anything with these files, other than keep
+them in the <code>extrasrc</code> subdirectory.
 
 <p>Simple usage example of the library:
 
@@ -1030,6 +1040,16 @@ eg. chain user-given functions. For example, ask the user for a function F1,
     function F3, where he can call F1 and F2, etc).
 
 <hr>
+<a name="longdesc_AddFunction3"></a>
+<pre>
+template&lt;typename DerivedWrapper&gt;
+bool AddFunctionWrapper(const std::string& name, const DerivedWrapper&,
+                        unsigned paramsAmount);
+</pre>
+
+<p>See section on <a href="#functionobjects">specialized function objects</a>.
+
+<hr>
 <a name="longdesc_RemoveIdentifier"></a>
 <pre>
 bool RemoveIdentifier(const std::string&amp; name);
@@ -1083,6 +1103,142 @@ parameters are:
 <p>As with <code>Parse()</code>, the return value will be <code>-1</code> if
 the parsing succeeded, else an index to the location of the error. None of
 the specified return values will be modified in case of error.
+
+<!-- -------------------------------------------------------------------- -->
+<a name="functionobjects"></a>
+<h3>Specialized function objects</h3>
+
+<p>The <code>AddFunction()</code> method can be used to add a new user-defined
+function to the parser, its implementation being called through a C++ function
+pointer. Sometimes this might not be enough, though. For example, one might
+want to use <code>boost::function</code> or other similar specialized stateful
+function objects instead of raw function pointers. This library provides a
+mechanism to achieve this.
+
+<h4>Creating and adding a specialized function object</h4>
+
+<p>In order to create a specialized function object, create a class derived
+from the <code>FunctionParser::FunctionWrapper</code> class. This class
+declares a virtual function named <code>callFunction</code> that the derived
+class must implement. For example:
+
+<pre>
+class MyFunctionWrapper:
+    public FunctionParser::FunctionWrapper
+{
+ public:
+    virtual double callFunction(const double* values)
+    {
+        // Perform the actual function call here, like:
+        return someFunctionSomewhere(values);
+
+        // In principle the result could also be
+        // calculated here, like for example:
+        return values[0] * values[0];
+    }
+};
+</pre>
+
+<p>You can then add an instance of this class to <code>FunctionParser</code>
+using the <code>AddFunctionWrapper()</code> method, which works like
+<code>AddFunction()</code>, but takes a wrapper object instead of a function
+pointer as parameter. For example:
+
+<pre>
+MyFunctionWrapper wrapper;
+parser.AddFunctionWrapper("funcName", wrapper, 1);
+</pre>
+
+<p>Note that <code>FunctionParser</code> will internally create a copy of
+the wrapper object, managing the lifetime of this copy, and thus the object
+given as parameter does not need to exist for as long as the
+<code>FunctionParser</code> instance. Hence the above could also be written as:
+
+<pre>
+parser.AddFunctionWrapper("funcName", MyFunctionWrapper(), 1);
+</pre>
+
+<p>Note that this also means that the wrapper class must have a working
+copy constructor.
+
+<p>Also note that if the <code>FunctionParser</code> instance is copied, all
+the copies will share the same function wrapper objects given to the original.
+
+<h4>Retrieving specialized function objects</h4>
+
+<p>As noted, the library will internally make a copy of the wrapper object,
+and thus it will be separate from the one which was given as parameter to
+<code>AddFunctionWrapper()</code>. In some cases it may be necessary to
+retrieve this wrapper object (for example to read or change its state).
+This can be done with the <code>GetFunctionWrapper()</code> method, which
+takes the name of the function and returns a pointer to the wrapper object,
+or null if no such object exists with that name.
+
+<p>Note that the returned pointer will be of type
+<code>FunctionParser::FunctionWrapper</code>. In order to get a pointer to
+the actual derived type, the calling code should perform a
+<code>dynamic_cast</code>, for example like this:
+
+<pre>
+MyFunctionWrapper* wrapper =
+    dynamic_cast&lt;MyFunctionWrapper*&gt;
+    (parser.GetFunctionWrapper("funcName"));
+
+if(!wrapper) { /* oops, the retrieval failed */ }
+else ...
+</pre>
+
+<p>(Using dynamic cast rather than a static cast adds safety because if you
+accidentally try to downcast to the wrong type, the pointer will become null.)
+
+<p>The calling code is free to modify the object in any way it wants, but it
+must not delete it (because <code>FunctionParser</code> itself handles this).
+
+
+<!-- -------------------------------------------------------------------- -->
+<a name="base"></a>
+<h3>FunctionParserBase</h3>
+
+<p>All the different parser types are derived from a templated base class
+named <code>FunctionParserBase</code>. In normal use it's not necessary to
+directly refer to this base class in the calling code. However, if the calling
+code also needs to be templated (with respect to the numerical type), then
+using <code>FunctionParserBase</code> directly is the easiest way to achieve
+this.
+
+<p>For example, if you want to make a function that handles more than one
+type of parser, it can be done like this:
+
+<pre>
+template&lt;typename Value_t&gt;
+void someFunction(FunctionParserBase&lt;Value_t&gt& parser)
+{
+    // do something with 'parser' here
+}
+</pre>
+
+<p>Now it's convenient to call that function with more than one type of
+parser, for example:
+
+<pre>
+FunctionParser realParser;
+FunctionParser_cd complexParser;
+
+someFunction(realParser);
+someFunction(complexParser);
+</pre>
+
+<p>Another example is a class that inherits from <code>FunctionParser</code>
+which also wants to support different numerical types. Such class can be
+declared as:
+
+<pre>
+template&lt;typename Value_t&gt;
+class SpecializedParser: public FunctionParserBase&lt;Value_t&gt;
+{
+    ...
+};
+</pre>
 
 
 <!-- -------------------------------------------------------------------- -->
@@ -1472,7 +1628,6 @@ variable. For example:
  <tr><td>U+205F</td><td>MEDIUM MATHEMATICAL SPACE</td><td>E2 81 9F</td></tr>
  <tr><td>U+3000</td><td>IDEOGRAPHIC SPACE        </td><td>E3 80 80</td></tr>
 </table>
-
 
 <!-- -------------------------------------------------------------------- -->
 <h2>Miscellaneous</h2>
