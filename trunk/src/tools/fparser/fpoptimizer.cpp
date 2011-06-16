@@ -1,5 +1,5 @@
 /***************************************************************************\
-|* Function Parser for C++ v4.4.2                                          *|
+|* Function Parser for C++ v4.4.3                                          *|
 |*-------------------------------------------------------------------------*|
 |* Function optimizer                                                      *|
 |*-------------------------------------------------------------------------*|
@@ -19,8 +19,8 @@
 #include "fpconfig.h"
 #ifdef FP_SUPPORT_OPTIMIZER
 #include "fparser.h"
-#include "fptypes.h"
-#include "fpaux.h"
+#include "extrasrc/fptypes.h"
+#include "extrasrc/fpaux.h"
 #define lN4 if(n6 l24
 #define lM4 .lD1 y3
 #define lL4 Needs
@@ -2494,7 +2494,7 @@ false,false
 l91
 # define FP_FLOAT_VERSION 1
 # define FP_COMPLEX_VERSION 0
-# include "fp_opcode_add.inc"
+# include "extrasrc/fp_opcode_add.inc"
 # undef FP_COMPLEX_VERSION
 # undef FP_FLOAT_VERSION
 }
@@ -2503,7 +2503,7 @@ true,false
 l91
 # define FP_FLOAT_VERSION 0
 # define FP_COMPLEX_VERSION 0
-# include "fp_opcode_add.inc"
+# include "extrasrc/fp_opcode_add.inc"
 # undef FP_COMPLEX_VERSION
 # undef FP_FLOAT_VERSION
 }
@@ -2513,7 +2513,7 @@ false,true
 l91
 # define FP_FLOAT_VERSION 1
 # define FP_COMPLEX_VERSION 1
-# include "fp_opcode_add.inc"
+# include "extrasrc/fp_opcode_add.inc"
 # undef FP_COMPLEX_VERSION
 # undef FP_FLOAT_VERSION
 }
@@ -2522,7 +2522,7 @@ true,true
 l91
 # define FP_FLOAT_VERSION 0
 # define FP_COMPLEX_VERSION 1
-# include "fp_opcode_add.inc"
+# include "extrasrc/fp_opcode_add.inc"
 # undef FP_COMPLEX_VERSION
 # undef FP_FLOAT_VERSION
 }

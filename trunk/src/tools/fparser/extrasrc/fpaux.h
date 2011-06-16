@@ -1,5 +1,5 @@
 /***************************************************************************\
-|* Function Parser for C++ v4.4.2                                          *|
+|* Function Parser for C++ v4.4.3                                          *|
 |*-------------------------------------------------------------------------*|
 |* Copyright: Juha Nieminen, Joel Yliluoma                                 *|
 |*                                                                         *|
@@ -346,24 +346,22 @@ namespace FUNCTIONPARSERTYPES
     }
 
     template<typename Value_t>
-    struct fp_sinCosResult
+    inline void fp_sinCos(Value_t& sinvalue, Value_t& cosvalue,
+                          const Value_t& param)
     {
-        Value_t svalue, cvalue;
-        fp_sinCosResult(const Value_t& s, const Value_t& c)
-            : svalue(s), cvalue(c) { }
-    };
-
-    template<typename Value_t>
-    inline fp_sinCosResult<Value_t> fp_sinCos(const Value_t& param)
-    {
-        return fp_sinCosResult<Value_t>( fp_sin(param), fp_cos(param) );
+        // Assuming that "cosvalue" and "param" do not
+        // overlap, but "sinvalue" and "param" may.
+        cosvalue = fp_cos(param);
+        sinvalue = fp_sin(param);
     }
 
     template<typename Value_t>
-    inline fp_sinCosResult<Value_t> fp_sinhCosh(const Value_t& param)
+    inline void fp_sinhCosh(Value_t& sinhvalue, Value_t& coshvalue,
+                            const Value_t& param)
     {
         const Value_t ex(fp_exp(param)), emx(fp_exp(-param));
-        return fp_sinCosResult<Value_t>( Value_t(0.5)*(ex-emx), Value_t(0.5)*(ex+emx) );
+        sinhvalue = Value_t(0.5)*(ex-emx);
+        coshvalue = Value_t(0.5)*(ex+emx);
     }
 
 #ifdef FP_EPSILON
@@ -376,23 +374,18 @@ namespace FUNCTIONPARSERTYPES
 
 
 #ifdef _GNU_SOURCE
-    inline fp_sinCosResult<double> fp_sinCos(const double& a)
+    inline void fp_sinCos(double& sin, double& cos, const double& a)
     {
-        double sin,cos;
         sincos(a, &sin, &cos);
-        return fp_sinCosResult<double>(sin,cos);
     }
-    inline fp_sinCosResult<float> fp_sinCos(const float& a)
+    inline void fp_sinCos(float& sin, float& cos, const float& a)
     {
-        float sin,cos;
         sincosf(a, &sin, &cos);
-        return fp_sinCosResult<float>(sin,cos);
     }
-    inline fp_sinCosResult<long double> fp_sinCos(const long double& a)
+    inline void fp_sinCos(long double& sin, long double& cos,
+                          const long double& a)
     {
-        long double sin,cos;
         sincosl(a, &sin, &cos);
-        return fp_sinCosResult<long double>(sin,cos);
     }
 #endif
 
@@ -426,8 +419,8 @@ namespace FUNCTIONPARSERTYPES
     inline long fp_acosh(const long&) { return 0; }
     inline long fp_atanh(const long&) { return 0; }
     inline long fp_pow_base(const long&, const long&) { return 0; }
-    inline fp_sinCosResult<long> fp_sinCos(const long&) { return fp_sinCosResult<long>(0l,0l); }
-    inline fp_sinCosResult<long> fp_sinhCosh(const long&) { return fp_sinCosResult<long>(0l,0l); }
+    inline void fp_sinCos(long&, long&, const long&) {}
+    inline void fp_sinhCosh(long&, long&, const long&) {}
 
     template<> inline long fp_epsilon<long>() { return 0; }
 
@@ -469,16 +462,18 @@ namespace FUNCTIONPARSERTYPES
     inline MpfrFloat fp_pow(const MpfrFloat& x, const MpfrFloat& y) { return MpfrFloat::pow(x, y); }
     inline MpfrFloat fp_pow_base(const MpfrFloat& x, const MpfrFloat& y) { return MpfrFloat::pow(x, y); }
 
-    inline fp_sinCosResult<MpfrFloat> fp_sinCos(const MpfrFloat& a)
+
+    inline void fp_sinCos(MpfrFloat& sin, MpfrFloat& cos, const MpfrFloat& a)
     {
-        MpfrFloat sin, cos;
         MpfrFloat::sincos(a, sin, cos);
-        return fp_sinCosResult<MpfrFloat>(sin,cos);
     }
 
-    inline fp_sinCosResult<MpfrFloat> fp_sinhCosh(const MpfrFloat& param)
+    inline void fp_sinhCosh(MpfrFloat& sinhvalue, MpfrFloat& coshvalue,
+                            const MpfrFloat& param)
     {
-        return fp_sinCosResult<MpfrFloat>( fp_sinh(param), fp_cosh(param) );
+        const MpfrFloat paramCopy = param;
+        sinhvalue = fp_sinh(paramCopy);
+        coshvalue = fp_cosh(paramCopy);
     }
 
     template<>
@@ -519,8 +514,8 @@ namespace FUNCTIONPARSERTYPES
     inline GmpInt fp_tanh(const GmpInt&) { return 0; }
     inline GmpInt fp_trunc(const GmpInt& x) { return x; }
     inline GmpInt fp_pow_base(const GmpInt&, const GmpInt&) { return 0; }
-    inline fp_sinCosResult<GmpInt> fp_sinCos(const GmpInt&) { return fp_sinCosResult<GmpInt> (0,0); }
-    inline fp_sinCosResult<GmpInt> fp_sinhCosh(const GmpInt&) { return fp_sinCosResult<GmpInt> (0,0); }
+    inline void fp_sinCos(GmpInt&, GmpInt&, const GmpInt&) {}
+    inline void fp_sinhCosh(GmpInt&, GmpInt&, const GmpInt&) {}
 
     template<>
     inline GmpInt fp_epsilon<GmpInt>() { return 0; }
@@ -534,6 +529,10 @@ namespace FUNCTIONPARSERTYPES
     template<typename Value_t> inline Value_t fp_exp2(const Value_t& x);
     template<typename Value_t> inline Value_t fp_int(const Value_t& x);
     template<typename Value_t> inline Value_t fp_trunc(const Value_t& x);
+    template<typename Value_t>
+    inline void fp_sinCos(Value_t& , Value_t& , const Value_t& );
+    template<typename Value_t>
+    inline void fp_sinhCosh(Value_t& , Value_t& , const Value_t& );
 
 #ifdef FP_SUPPORT_COMPLEX_NUMBERS
     /* NOTE: Complex multiplication of a and b can be done with:
@@ -592,8 +591,8 @@ namespace FUNCTIONPARSERTYPES
     template<typename T, bool>
     inline std::complex<T> fp_polar(const T& x, const T& y)
     {
-        const fp_sinCosResult<T> sc ( fp_sinCos(y) );
-        return std::complex<T> (x * sc.cvalue, x * sc.svalue);
+        T si, co; fp_sinCos(si, co, y);
+        return std::complex<T> (x*co, x*si);
     }
     template<typename T>
     inline std::complex<T> fp_polar(const std::complex<T>& x, const std::complex<T>& y)
@@ -716,24 +715,30 @@ namespace FUNCTIONPARSERTYPES
         //     fp_cos(x.real())*fp_sinh(x.imag()));
     }
     template<typename T>
-    inline fp_sinCosResult< std::complex<T> > fp_sinCos(const std::complex<T>& x)
+    inline void fp_sinCos(
+        std::complex<T>& sinvalue,
+        std::complex<T>& cosvalue,
+        const std::complex<T>& x)
     {
         //const std::complex<T> i (T(), T(1)), expix(fp_exp(i*x)), expmix(fp_exp((-i)*x));
         //cosvalue = (expix + expmix) * T(0.5);
         //sinvalue = (expix - expmix) * (i*T(-0.5));
         // The above expands to the following:
-        const fp_sinCosResult<T> rx(fp_sinCos(x.real())), ix(fp_sinhCosh(x.imag()));
-        return fp_sinCosResult< std::complex<T> >
-            ( std::complex<T>(rx.svalue*ix.cvalue,  rx.cvalue*ix.svalue),
-              std::complex<T>(rx.cvalue*ix.cvalue, -rx.svalue*ix.svalue) );
+        T srx, crx; fp_sinCos(srx, crx, x.real());
+        T six, cix; fp_sinhCosh(six, cix, x.imag());
+        sinvalue = std::complex<T>(srx*cix,  crx*six);
+        cosvalue = std::complex<T>(crx*cix, -srx*six);
     }
     template<typename T>
-    inline fp_sinCosResult< std::complex<T> > fp_sinhCosh(const std::complex<T>& x)
+    inline void fp_sinhCosh(
+        std::complex<T>& sinhvalue,
+        std::complex<T>& coshvalue,
+        const std::complex<T>& x)
     {
-        const fp_sinCosResult<T> rx(fp_sinhCosh(x.real())), ix(fp_sinCos(x.imag()));
-        return fp_sinCosResult< std::complex<T> >
-            ( std::complex<T>(rx.svalue*ix.cvalue,  rx.cvalue*ix.svalue),
-              std::complex<T>(rx.cvalue*ix.cvalue,  rx.svalue*ix.svalue) );
+        T srx, crx; fp_sinhCosh(srx, crx, x.real());
+        T six, cix; fp_sinCos(six, cix, x.imag());
+        sinhvalue = std::complex<T>(srx*cix, crx*six);
+        coshvalue = std::complex<T>(crx*cix, srx*six);
     }
     template<typename T>
     inline std::complex<T> fp_tan(const std::complex<T>& x)
