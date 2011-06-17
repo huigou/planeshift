@@ -44,6 +44,7 @@ SoundSystemManager::SoundSystemManager(iObjectRegistry* objectReg)
     soundSystem = new SoundSystem;
     soundData = new SoundData;
     mainSndCtrl = new SoundControl(-1, iSoundControl::NORMAL);
+    defaultSndCtrl = new SoundControl(-1, iSoundControl::NORMAL);
 
     if(soundSystem->Initialize(objectReg)
        && soundData->Initialize(objectReg))
@@ -85,6 +86,9 @@ SoundSystemManager::~SoundSystemManager()
 
     soundHandles.DeleteAll();
     soundControllers.DeleteAll();
+
+    delete mainSndCtrl;
+    delete defaultSndCtrl;
     delete soundSystem;
     delete soundData;
 
@@ -254,12 +258,12 @@ bool SoundSystemManager::SetSoundSource(const char* fileName, csVector3 position
 void SoundSystemManager::UpdateSound()
 {
     float vol;
-    csHash<SoundHandle*, csString>::GlobalIterator handleIter(soundHandles.GetIterator());
     SoundHandle* sh;
+    csArray<SoundHandle*> handles = soundHandles.GetAll();
 
-    while(handleIter.HasNext())
+    for(size_t i = 0; i < handles.GetSize(); i++)
     {
-        sh = handleIter.Next();
+        sh = handles[i];
 
         if(sh->sndstream->GetPauseState() == CS_SNDSYS_STREAM_PAUSED
            && sh->GetAutoRemove() == true)

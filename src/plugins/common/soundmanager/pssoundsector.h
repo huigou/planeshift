@@ -31,19 +31,28 @@
 class psSoundSector
 {
 public:
-    csString                name;               ///< name of this sector
-    bool                    active;             ///< is this sector active?
-    psMusic*                activeambient;      ///< active ambient music
-    psMusic*                activemusic;        ///< active music
-    csArray<psMusic*>       ambientarray;       ///< array of available ambients
-    csArray<psMusic*>       musicarray;         ///< array of available musics
-    csArray<psEmitter*>     emitterarray;       ///< array of emitters
-    csArray<psEntity*>      entityarray;        ///< array of entitys
+    csString                     name;               ///< name of this sector
+    bool                         active;             ///< is this sector active?
+    psMusic*                     activeambient;      ///< active ambient music
+    psMusic*                     activemusic;        ///< active music
+    csArray<psMusic*>            ambientarray;       ///< array of available ambients
+    csArray<psMusic*>            musicarray;         ///< array of available musics
+    csArray<psEmitter*>          emitterarray;       ///< array of emitters
+    csHash<psEntity*, csString>  factories;          ///< hash of factory entities (i.e. with meshName empty)
+    csHash<psEntity*, csString>  meshes;             ///< hash of mesh entities
+    csHash<psEntity*, uint>      tempEntities;       ///< hash of all the temporary psEntites (i.e. associated to a specific mesh)
 
-    csVector3               playerposition;     ///< current playerposition
-    int                     timeofday;          ///< sector time of day
+    csVector3                    playerposition;     ///< current playerposition
+    int                          timeofday;          ///< sector time of day
 
-    csRandomGen             rng;                ///< random number generator
+    csRandomGen                  rng;                ///< random number generator
+
+    /**
+     * Create an empty psSoundSector with no musics, ambients, emitters and entities.
+     * @param name the psSoundSector's name
+     * @param objReg the object registry
+     */
+    psSoundSector(const char* name, iObjectRegistry* objReg);
 
     /**
      * Constructor
@@ -66,14 +75,31 @@ public:
     void UpdateEmitter(SoundControl* &ctrl);
     void DeleteEmitter(psEmitter* &emitter);
     void AddEntity(csRef<iDocumentNode> Node);
-    void UpdateEntity(SoundControl* &ctrl);
+    void UpdateEntity(SoundControl* &ctrl, psSoundSector* commonSector);
     void DeleteEntity(psEntity* &entity);
+
+    /**
+     * Sets the new state for the entity associated to the given mesh and
+     * plays the start resource (if defined). If it is already playing a
+     * sound, it is stopped.
+     *
+     * @param state the new state > 0 for the entity. For negative value
+     * the function is not defined.
+     * @param ctrl the sound control used to play the start resource.
+     * @param mesh the mesh associated to the entity.
+     * @param forceChange if it is false the entity does not change its
+     * state if the new one is not defined. If it is true the entity stops
+     * play any sound until a new valid state is defined.
+     */
+    void SetEntityState(int state, SoundControl* ctrl, iMeshWrapper* mesh, bool forceChange);
     void Load(csRef<iDocumentNode> sector);
     void Reload(csRef<iDocumentNode> sector);
     void Delete();
 
 private:
     csRef<iObjectRegistry> objectReg;
+
+    void UpdateEntityValues(SoundControl* &ctrl, psEntity* entity, iMeshWrapper* mesh);
 };
 
 #endif /*_PSSOUNDSECTOR_H_*/

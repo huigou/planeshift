@@ -146,6 +146,11 @@ int DummySoundManager::GetWeather() const
     return weather;
 }
 
+void DummySoundManager::SetEntityState(int state, iMeshWrapper* mesh, bool forceChange)
+{
+    return;
+}
+
 void DummySoundManager::SetLoopBGMToggle(bool toggle)
 {
     loopToggle = toggle;

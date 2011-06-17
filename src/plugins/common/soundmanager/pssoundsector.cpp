@@ -25,6 +25,20 @@
 
 #include "pssound.h"
 
+psSoundSector::psSoundSector(const char* sectorName, iObjectRegistry* objReg)
+{
+    name = sectorName;
+    objectReg = objReg;
+
+    playerposition = csVector3(0);
+    timeofday = 12;
+    active = false;
+
+    // initializing pointers to null
+    activeambient = 0;
+    activemusic = 0;
+}
+
 psSoundSector::psSoundSector(csRef<iDocumentNode> sector, iObjectRegistry* objReg)
 {
     name = sector->GetAttributeValue("NAME");
@@ -291,40 +305,95 @@ void psSoundSector::DeleteEmitter(psEmitter* &emitter)
 
 void psSoundSector::AddEntity(csRef<iDocumentNode> Node)
 {
+    const char* factoryName;
+    const char* meshName;
+    int state;
+    const char* resource;
+    const char* startResource;
+    float volume;
+    float minRange;
+    float maxRange;
+    float prob;
+    int timeOfDayStart;
+    int timeOfDayEnd;
+    int delayAfter;
     psEntity* entity;
-    
-    entity = new psEntity;
 
-    entity->resource        = Node->GetAttributeValue("RESOURCE");
-    entity->name            = Node->GetAttributeValue("NAME");
-    entity->minvol          = Node->GetAttributeValueAsFloat("MINVOL");
-    entity->maxvol          = Node->GetAttributeValueAsFloat("MAXVOL");
-    entity->minrange        = Node->GetAttributeValueAsFloat("MIN_RANGE");
-    entity->maxrange        = Node->GetAttributeValueAsFloat("MAX_RANGE");
-    entity->delay_before    = Node->GetAttributeValueAsInt("DELAY_BEFORE");
-    entity->delay_after     = Node->GetAttributeValueAsInt("DELAY_AFTER");
-    entity->probability     = Node->GetAttributeValueAsFloat("PROBABILITY");
-    entity->timeofday       = Node->GetAttributeValueAsInt("TIME");
-    entity->timeofdayrange  = Node->GetAttributeValueAsInt("TIME_RANGE");
-    entity->active = false;
+    factoryName   = Node->GetAttributeValue("FACTORY");
+    meshName      = Node->GetAttributeValue("MESH");
+    state         = Node->GetAttributeValueAsInt("STATE", -1);
+    resource      = Node->GetAttributeValue("RESOURCE");
+    startResource = Node->GetAttributeValue("STARTING_RESOURCE");
+    maxRange      = Node->GetAttributeValueAsFloat("MAX_RANGE", -1.0);
+    prob          = Node->GetAttributeValueAsFloat("PROBABILITY", -1.0);
 
-    if(entity->timeofday == -1)
+    // checking that all mandatory parameters are present
+    if(factoryName == 0 && meshName == 0
+        || factoryName != 0 && meshName != 0)
     {
-        entity->timeofday = 0;
-        entity->timeofdayrange = 24;
+        return;
+    }
+    if(state < 0 || prob < 0.0 || maxRange < 0.0)
+    {
+        return;
+    }
+    if(resource == 0 && startResource == 0)
+    {
+        return;
     }
 
-    entityarray.Push(entity);
+    // check if an entity with the same name is already defined
+    if(meshName == 0)
+    {
+        entity = factories.Get(factoryName, 0);
+    }
+    else
+    {
+        entity = meshes.Get(meshName, 0);
+    }
+
+    // if it doesn't exist create it otherwise check the state
+    if(entity == 0)
+    {
+        entity = new psEntity();
+
+        // handle mesh/factory entities
+        if(meshName == 0)
+        {
+            entity->factoryName = factoryName;
+            factories.Put(factoryName, entity);
+        }
+        else
+        {
+            entity->meshName = meshName;
+            meshes.Put(meshName, entity);
+        }
+    }
+
+    // set all parameters
+    volume          = Node->GetAttributeValueAsFloat("VOLUME", VOLUME_NORM);
+    minRange        = Node->GetAttributeValueAsFloat("MIN_RANGE");
+    delayAfter      = Node->GetAttributeValueAsInt("DELAY_AFTER");
+    timeOfDayStart  = Node->GetAttributeValueAsInt("TIME_START", -1);
+    timeOfDayEnd    = Node->GetAttributeValueAsInt("TIME_END", 25);
+
+    // adjusting the probability/s on the update time
+    prob = prob / 1000 * 50; // TODO make this coherent with the update throttle (now 50)
+
+    entity->DefineState(state, resource, startResource, volume,
+        minRange, maxRange, prob, timeOfDayStart, timeOfDayEnd, delayAfter);
 }
 
-void psSoundSector::UpdateEntity(SoundControl* &ctrl)
+void psSoundSector::UpdateEntity(SoundControl* &ctrl, psSoundSector* commonSector)
 {
     csRef<iEngine> engine;
+    iMeshList* entities;
     psEntity* entity;
     iMeshWrapper* mesh;
-    iMeshList* entities;
-    csVector3 rangeVec;
-    float range;
+    uint meshID;
+    const char* meshName;
+    const char* factoryName = 0;
+    
 
     engine =  csQueryRegistry<iEngine>(objectReg);
     if(!engine)
@@ -335,55 +404,116 @@ void psSoundSector::UpdateEntity(SoundControl* &ctrl)
 
     entities = engine->GetMeshes();
 
-    for(size_t i = 0; i < entityarray.GetSize(); i++)
+    for(int a = 0; a < entities->GetCount(); a++)
     {
-        entity = entityarray[i];
-
-        if(entity->active == true)
+        if((mesh = entities->Get(a)) == 0)
         {
-            if(entity->when <= 0)
-            {
-                // sndSysMgr will pick the dead sound up
-                entity->active = false;
-            }
-            else
-            {
-                entity->when = (entity->when - 50);
-            }
-
             continue;
         }
 
-        for(size_t a = 0; a < entities->GetCount(); a++)
+        // checking if we already have a temporary entity for the mesh
+        // here we don't check the common sector because the common do
+        // not have temporary entities
+        meshID = mesh->QueryObject()->GetID();
+        if((entity = tempEntities.Get(meshID, 0)) != 0)
         {
-            if((mesh = entities->Get(a)) == NULL)
+            UpdateEntityValues(ctrl, entity, mesh);
+            continue;
+        }
+
+
+        // check if the factory is defined for this mesh
+        meshName = mesh->QueryObject()->GetName();  
+        iMeshFactoryWrapper* mfw = mesh->GetFactory();
+        if(mfw != 0)
+        {
+            factoryName = mfw->QueryObject()->GetName();
+        }
+
+        // first it look in the meshes and factories of this sector
+        if((entity = meshes.Get(meshName, 0)) != 0)
+        {
+            UpdateEntityValues(ctrl, entity, mesh);
+            continue;
+        }
+        else if(factoryName != 0)
+        {
+            if((entity = factories.Get(factoryName, 0)) != 0)
             {
+                UpdateEntityValues(ctrl, entity, mesh);
                 continue;
             }
+        }
 
-            rangeVec = entities->Get(a)->GetMovable()->GetFullPosition() - (const csVector3&) playerposition;
-            range = rangeVec.Norm();
-
-            if(range <= entity->maxrange
-               && csStrCaseCmp(entity->name, mesh->QueryObject()->GetName()) == 0
-               && rng.Get() <= entity->probability
-               && entity->CheckTimeOfDay(timeofday) == true)
+        // nothing found here: look in the commonSector
+        if((entity = commonSector->meshes.Get(meshName, 0)) != 0)
+        {
+            UpdateEntityValues(ctrl, entity, mesh);
+        }
+        else if(factoryName != 0)
+        {
+            if((entity = commonSector->factories.Get(factoryName, 0)) != 0)
             {
-                csPrintf("iobject name %s %f %f\n", mesh->QueryObject()->GetName(), range, entity->maxrange);
-                if(!entity->Play(ctrl, entities->Get(a)->GetMovable()->GetFullPosition()))
-                {
-                    DeleteEntity(entity);
-                    break;
-                }
+                UpdateEntityValues(ctrl, entity, mesh);
             }
         }
     }
+
+    // Cleaning up temporary entities (common sector doesn't have them)
+    csArray<psEntity*> tempEnt = tempEntities.GetAll();
+    size_t tempEntSize = tempEnt.GetSize();
+    
+    for(size_t i = 0; i < tempEntSize; i++)
+    {
+        entity = tempEnt[i];
+
+        if(entity->active == true)
+        {
+            entity->active = false;
+        }
+        else
+        {
+            tempEntities.Delete(entity->GetMeshID(), entity);
+            delete entity;
+            continue;
+        }
+
+        if(!(entity->IsPlaying()))
+        {
+            entity->ReduceDelay(50);     // TODO making this consistent with its update's throttle
+        }
+    }
+    
 }
 
 void psSoundSector::DeleteEntity(psEntity* &entity)
 {
-    entityarray.Delete(entity);
+    if(entity->IsTemporary())
+    {
+        tempEntities.Delete(entity->GetMeshID(), entity);
+    }
+    else if(entity->meshName.IsEmpty())
+    {
+        factories.Delete(entity->factoryName, entity);
+    }
+    else
+    {
+        meshes.Delete(entity->meshName, entity);
+    }
+
     delete entity;
+}
+
+void psSoundSector::SetEntityState(int state, SoundControl* ctrl, iMeshWrapper* mesh, bool forceChange)
+{
+    psEntity* entity = tempEntities.Get(mesh->QueryObject()->GetID(), 0);
+
+    if(entity == 0)
+    {
+        return;
+    }
+
+    entity->SetState(state, ctrl, mesh->GetMovable()->GetFullPosition(), forceChange);
 }
 
 void psSoundSector::Load(csRef<iDocumentNode> sector)
@@ -442,8 +572,71 @@ void psSoundSector::Delete()
         DeleteEmitter(emitterarray[i]);
     }
 
-    for(size_t i = 0; i < entityarray.GetSize(); i++)
+    // Deleting factories and meshes entities
+    csHash<psEntity*, csString>::GlobalIterator entityIter(factories.GetIterator());
+    psEntity* entity;
+
+    while(entityIter.HasNext())
     {
-        DeleteEntity(entityarray[i]);
+        entity = entityIter.Next();
+        delete entity;
+    }
+
+    entityIter = meshes.GetIterator();
+    while(entityIter.HasNext())
+    {
+        entity = entityIter.Next();
+        delete entity;
+    }
+
+    factories.DeleteAll();
+    meshes.DeleteAll();
+
+    // Deleting temporary entities
+    csHash<psEntity*, uint>::GlobalIterator tempEntityIter(tempEntities.GetIterator());
+
+    while(tempEntityIter.HasNext())
+    {
+        entity = tempEntityIter.Next();
+        delete entity;
+    }
+
+    tempEntities.DeleteAll();
+}
+
+void psSoundSector::UpdateEntityValues(SoundControl* &ctrl, psEntity* entity, iMeshWrapper* mesh)
+{
+    csVector3 rangeVec;
+    float range;
+
+    if(entity->IsPlaying())
+    {
+        entity->active = true;
+        return;
+    }
+
+    rangeVec = mesh->GetMovable()->GetFullPosition() - playerposition;
+    range = rangeVec.Norm();
+
+    if(active && entity->CheckTimeAndRange(timeofday, range))
+    {
+        // we need to create the entity even if it won't play anything
+        // so that the entity will be ready to play a sound when it change
+        // to a state with an higher maxRange for example
+        if(!(entity->IsTemporary()))
+        {
+            entity = new psEntity(entity);
+            entity->SetMeshID(mesh->QueryObject()->GetID());
+            tempEntities.Put(entity->GetMeshID(), entity);
+        }
+
+        // Check if it can play
+        if(entity->IsReadyToPlay(timeofday, range)
+            && rng.Get() <= entity->GetProbability())
+        {
+            entity->Play(ctrl, mesh->GetMovable()->GetFullPosition());
+        }
+
+        entity->active = true;
     }
 }

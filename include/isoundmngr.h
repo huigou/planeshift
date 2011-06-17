@@ -34,6 +34,7 @@
 //------------------------------------------------------------------------------------
 // Forward Declarations
 //------------------------------------------------------------------------------------
+struct iMeshWrapper;
 struct iView;
 class  csVector3;
 
@@ -254,6 +255,20 @@ struct iSoundManager: public virtual iBase
      * @return the weather's state.
      */
     virtual int GetWeather() const = 0;
+
+    /**
+     * Sets the new state for the entity associated to the given mesh and
+     * plays the start resource (if defined). If it is already playing a
+     * sound, it is stopped.
+     *
+     * @param state the new state > 0 for the entity. For negative value
+     * the function is not defined.
+     * @param mesh the mesh associated to the entity.
+     * @param forceChange if it is false the entity does not change its
+     * state if the new one is not defined. If it is true the entity stops
+     * play any sound until a new valid state is defined.
+     */
+    virtual void SetEntityState(int state, iMeshWrapper* mesh, bool forceChange) = 0;
 
     //------------------//
     // TOGGLES MANAGING //
