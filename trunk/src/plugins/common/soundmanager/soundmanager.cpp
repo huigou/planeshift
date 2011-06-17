@@ -51,6 +51,7 @@ SoundManager::SoundManager(iBase* parent): scfImplementationType(this, parent)
     musicSndCtrl = 0;
 
     activeSector = 0;
+    commonSector = 0;
 
     combat = PEACE;
     weather = 1; // 1 is sunshine
@@ -103,7 +104,7 @@ bool SoundManager::Initialize(iObjectRegistry* objReg)
     }
     else
     {
-        // If we cannot register for the event it's better to
+        // If this cannot be registered for the event it's better to
         // initialize sndSysMgr here to prevent using a null pointer
         Init();
     }
@@ -289,7 +290,7 @@ iSoundControl* SoundManager::AddSndCtrl(int ctrlID, int type)
     {
     case iSoundControl::AMBIENT:
         sc->SetCallback(this, &UpdateAmbientCallback);
-        if(ambientSndCtrl != 0)
+        if(ambientSndCtrl != sndSysMgr->defaultSndCtrl)
         {
             ambientSndCtrl->SetType(iSoundControl::NORMAL);
             ambientSndCtrl->RemoveCallback();
@@ -299,7 +300,7 @@ iSoundControl* SoundManager::AddSndCtrl(int ctrlID, int type)
 
     case iSoundControl::MUSIC:
         sc->SetCallback(this, &UpdateMusicCallback);
-        if(musicSndCtrl != 0)
+        if(musicSndCtrl != sndSysMgr->defaultSndCtrl)
         {
             musicSndCtrl->SetType(iSoundControl::NORMAL);
             musicSndCtrl->RemoveCallback();
@@ -323,11 +324,12 @@ void SoundManager::RemoveSndCtrl(iSoundControl* sndCtrl)
     switch(sndCtrl->GetType())
     {
     case iSoundControl::AMBIENT:
-        ambientSndCtrl = 0;
+        // use default sound control to avoid null pointers
+        ambientSndCtrl = sndSysMgr->defaultSndCtrl;
         break;
 
     case iSoundControl::MUSIC:
-        musicSndCtrl = 0;
+        musicSndCtrl = sndSysMgr->defaultSndCtrl;
         break;
     }
 
@@ -473,6 +475,10 @@ int SoundManager::GetWeather() const
     return weather;
 }
 
+void SoundManager::SetEntityState(int state, iMeshWrapper* mesh, bool forceChange)
+{
+    activeSector->SetEntityState(state, ambientSndCtrl, mesh, forceChange);
+}
 
 void SoundManager::SetLoopBGMToggle(bool toggle)
 {
@@ -589,7 +595,7 @@ void SoundManager::Update()
         if(activeSector != 0)
         {
             activeSector->UpdateEmitter(ambientSndCtrl);
-            activeSector->UpdateEntity(ambientSndCtrl);
+            activeSector->UpdateEntity(ambientSndCtrl, commonSector);
         }
 
         lastUpdateTime = csGetTicks();
@@ -603,6 +609,11 @@ void SoundManager::Update()
 void SoundManager::Init()
 {
     sndSysMgr = new SoundSystemManager(objectReg);
+
+    // initializing ambient and music controller to something different
+    // than null before AddSndCtrl is called
+    ambientSndCtrl = sndSysMgr->defaultSndCtrl;
+    musicSndCtrl = sndSysMgr->defaultSndCtrl;
 
     // Inizializing main SoundControls
     mainSndCtrl = sndSysMgr->mainSndCtrl;
@@ -826,7 +837,7 @@ void SoundManager::UpdateSector(psSoundSector* &sector)
     sector->UpdateMusic(loopBGM.GetToggle(), combat, musicSndCtrl);
     sector->UpdateAmbient(weather, ambientSndCtrl);
     sector->UpdateEmitter(ambientSndCtrl);
-    sector->UpdateEntity(ambientSndCtrl);
+    sector->UpdateEntity(ambientSndCtrl, commonSector);
 }
 
 
@@ -870,10 +881,11 @@ void SoundManager::UpdateListener(iView* view)
 
 
 /*
-* load a all sector xmls and make them usable
-* will overwrite the target sector if it exists 
-* its only parsing the xml most of it is hardcoded
+* Load a all sector xmls and make them usable. Will overwrite the target
+* sector if it exists. It's only parsing the xml most of it is hardcoded.
 *
+* If a common sector it's not found, commonSector will be initialized as
+* an empty psSoundSector.
 */
 
 bool SoundManager::LoadSectors()
@@ -886,6 +898,7 @@ bool SoundManager::LoadSectors()
 
     csRef<iDataBuffer>      xpath;
     const char*             dir;
+    const char*             sectorName;
     csRef<iStringArray>     files;
     psSoundSector*          tmpsector;
     csRef<iVFS>             vfs;
@@ -922,9 +935,15 @@ bool SoundManager::LoadSectors()
             {
                 csRef<iDocumentNode> sector = sectorIter->Next();
 
-                if(FindSector(sector->GetAttributeValue("NAME"), tmpsector) == true)
+                sectorName = sector->GetAttributeValue("NAME");
+
+                if(FindSector(sectorName, tmpsector) == true)
                 {
                     tmpsector->Reload(sector);
+                }
+                else if(csStrCaseCmp(sectorName, "common") == 0) // TODO make this configurable
+                {
+                    commonSector = new psSoundSector(sector, objectReg);
                 }
                 else
                 {
@@ -934,6 +953,13 @@ bool SoundManager::LoadSectors()
             }
         }
     }
+
+    // checking if a common sector could be found
+    if(commonSector == 0)
+    {
+        commonSector = new psSoundSector("common", objectReg); // TODO make configurable as before
+    }
+    commonSector->active = true; // commonSector must always be active
 
     isSectorLoaded = true;
     return true;
@@ -951,6 +977,9 @@ void SoundManager::ReloadAllSectors()
     LoadSectors();
 }
 
+/**
+ * Delete both the sectors in sectorData and commonSector
+ */
 void SoundManager::UnloadSectors()
 {
     // check if the sectors are initialized
@@ -965,6 +994,7 @@ void SoundManager::UnloadSectors()
     }
 
     sectorData.DeleteAll();
+    delete commonSector;
 
     isSectorLoaded = false;
 }

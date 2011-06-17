@@ -89,6 +89,7 @@ public:
     virtual int GetTimeOfDay() const;
     virtual void SetWeather(int newWeather);
     virtual int GetWeather() const;
+    virtual void SetEntityState(int state, iMeshWrapper* mesh, bool forceChange);
 
     //Toggles
     virtual void SetLoopBGMToggle(bool toggle);
@@ -128,6 +129,7 @@ private:
     csTicks                     lastUpdateTime;    ///< csticks when the last update happend
     csArray<psSoundSector*>     sectorData;        ///< array which contains all sector xmls - parsed
     psSoundSector*              activeSector;      ///< points to our active sector
+    psSoundSector*              commonSector;      ///< sector that keeps features common to all sectors
     csVector3                   playerPosition;    ///< current playerposition
     int                         weather;           ///< current weather state from weather.h
     int                         combat;            ///< current stance

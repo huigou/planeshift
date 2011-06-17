@@ -65,6 +65,7 @@ class SoundSystemManager
 public:
     bool          Initialised;                   ///< is initialized ?
     SoundControl* mainSndCtrl;                   ///< sound control for this manager
+    SoundControl* defaultSndCtrl;                ///< sound control always available, used when there is no other
 
     /**
      * Constructor initializes this SoundSystemManager.

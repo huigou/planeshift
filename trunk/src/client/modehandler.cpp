@@ -370,6 +370,10 @@ void ModeHandler::HandleModeMessage(MsgEntry* me)
             }
         }
     }
+    else
+    {
+        psengine->GetSoundManager()->SetEntityState(msg.mode, actor->GetMesh(), false);
+    }
 }
 
 void ModeHandler::SetModeSounds(uint8_t mode)
