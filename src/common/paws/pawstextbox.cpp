@@ -1495,7 +1495,7 @@ void pawsMultiLineTextBox::OrganizeText( const char* newText )
 
     while ( dummy )
     {
-        /// See how many characters can be drawn on a single line.
+        // See how many characters can be drawn on a single line.
         int canDrawLength =  GetFont()->GetLength( dummy, screenFrame.Width()-offSet );
 
         // Check for linebreaks
@@ -1850,6 +1850,7 @@ void pawsDocumentView::Draw()
             if(pi.align == 0) //align left
                 sx += pi.padding[0];
             else
+            {
                 if(pi.align == 1)//align center
                 {
                     unsigned int w = pi.width;
@@ -1858,6 +1859,7 @@ void pawsDocumentView::Draw()
                     sx = screenFrame.xmin + dsx;
                 }
                 else
+                {
                     if(pi.align == 2)//align right
                     {
                         unsigned int w = pi.width;
@@ -1868,6 +1870,8 @@ void pawsDocumentView::Draw()
                         sx += (screenFrame.Width() - dsx);
                     }
                     else sx += pi.padding[0];
+                }
+            }
 
             unsigned int sy = drawY + pi.padding[1];
 
@@ -1882,7 +1886,8 @@ void pawsDocumentView::Draw()
                     PawsManager::GetSingleton().GetTextureManager()->AddPawsImage(drawable);
                 }
                 else
-                {//a resource
+                {
+                    //a resource
                     drawable =  PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(picsInfo[indices[i]].srcString.GetData());
                 }
 
@@ -1907,8 +1912,8 @@ unsigned int pawsDocumentView::ProcessPictureInfo(iDocumentNode *node)
 {
     //process a picture node. If the src attribute of the node contains more than one picture location,
     //this function would fill create more than one PictureInfo structure into picsInfo array.
-
     csString srcs = node->GetAttributeValue("src");
+
     //all the pictures in current node hold the same format
     unsigned int align = node->GetAttributeValueAsInt("align");
     unsigned int width = node->GetAttributeValueAsInt("width");
@@ -1921,7 +1926,8 @@ unsigned int pawsDocumentView::ProcessPictureInfo(iDocumentNode *node)
     for(unsigned int i = 0 ; i < paddingStr.Length() ; i++)
     {
         if(paddingStr[i] != ' ') 
-        {//none numbers of padding parameters are not checked here
+        {
+            //none numbers of padding parameters are not checked here
             padding[index] *= 10;
             padding[index] += paddingStr[i]- '0';
         }
@@ -1931,6 +1937,7 @@ unsigned int pawsDocumentView::ProcessPictureInfo(iDocumentNode *node)
     csString temp = srcs;
     unsigned int pos;
     unsigned int sz = 0;
+
     //process the src attribute and push corresponding PictureInfo into picsInfo array
     while((pos = temp.FindFirst(';')) != -1)
     {
@@ -1973,14 +1980,16 @@ void pawsDocumentView::OrganizeContent(const char * newtext)
         csString type(childNode->GetAttributeValue("type"));
         
         if(type == "text")
-        {//a text node, processed by the based method
+        {
+            //a text node, processed by the based method
             csString textpart = childNode->GetContentsValue();
             OrganizeText(textpart.GetData());
         }
         else
-            if(type == "pic")
-            {//a picture node
-                unsigned int sz = ProcessPictureInfo(childNode);//process the picture node,return how many pictures in the row
+            if(type == "pic") //a picture node
+            {
+                //process the picture node,return how many pictures in the row
+                unsigned int sz = ProcessPictureInfo(childNode);
                 if(sz == 0) 
                     continue;
               
@@ -1994,14 +2003,13 @@ void pawsDocumentView::OrganizeContent(const char * newtext)
                 unsigned int canDrawLength = screenFrame.Width() - offSet;
                 GetFont()->GetMaxSize( maxWidth, maxHeight );
                 if(needLength <= canDrawLength)
-                {//all pictures could be drawn in a row
-                    //char  buf[4];
+                {
+                    //all pictures could be drawn in a row
                     csString infoStr="#pic#";
                     for(; sz > 0; sz--)
                     {
                         unsigned int index = picIndex - sz + 1;
-                        //itoa(index,buf,10);
-                        //csString id(buf);
+
 
                         if(sz != 1)
                             infoStr = infoStr.Append(index) + ",";
@@ -2012,15 +2020,16 @@ void pawsDocumentView::OrganizeContent(const char * newtext)
                         lines.Push(infoStr);
                 }
                 else
-                {//all pictures defined in this node could not be drawn in one row
+                {
+                    //all pictures defined in this node could not be drawn in one row
                     unsigned int howmanycandraw = canDrawLength/widthPerPic;
-                    if(howmanycandraw == 0) continue;//the box could not hold the picture in, then the picture will no show
+                    if(howmanycandraw == 0) //the box could not hold the picture in, then the picture will no show
+                        continue;
                     canDrawLength = howmanycandraw * widthPerPic;
                     unsigned int rows = needLength%canDrawLength ? needLength/canDrawLength + 1 : needLength/canDrawLength;
 
                     for(; rows>0; rows--)
                     {
-                        char  buf[4];
                         csString infoStr="#pic#";
                         unsigned int temp = howmanycandraw;
 
@@ -2029,11 +2038,10 @@ void pawsDocumentView::OrganizeContent(const char * newtext)
                             unsigned int index = picIndex - sz + 1;
                             if(index > picIndex) 
                                 break;
-                            itoa(index,buf,10);
-                            csString id(buf);
+
                             if(temp != 1 && index != picIndex)
-                                infoStr = infoStr + id + ",";
-                            else infoStr += id;
+                                infoStr = infoStr.Append(index) + ",";
+                            else infoStr.Append(index);
                             sz--;
                         }
 
@@ -2068,7 +2076,6 @@ void pawsDocumentView::SetText(const char* newtext)
     if(scrollBar) scrollBar->Hide();
 
     OrganizeContent(str.GetData());
-    //OrganizeText( str.GetData() );
 
     if(canDrawLines >= lines.GetSize())
     {
