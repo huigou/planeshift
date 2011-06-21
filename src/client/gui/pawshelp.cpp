@@ -34,14 +34,16 @@ pawsHelp::pawsHelp()
     xml = psengine->GetXMLParser ();
     helpDoc = xml->CreateDocument();
     csString filename(PawsManager::GetSingleton().GetLocalization()->FindLocalizedFile("data/help.xml"));
+    //This is an example for displaying pictures and texts in the help window.
+    //csString filename(PawsManager::GetSingleton().GetLocalization()->FindLocalizedFile("data/helpviewdocument.xml"));
     csRef<iDataBuffer> buf (vfs->ReadFile (filename));
-    if (!buf || !buf->GetSize ())
+    if(!buf || !buf->GetSize ())
     {
         printf("ERROR: Loading 'data/help.xml'");
         return;
     }
     const char* error = helpDoc->Parse( buf );
-    if ( error )
+    if( error )
     {
         printf("ERROR: Invalid 'data/help.xml': %s\n", error);
         return ;
@@ -50,13 +52,14 @@ pawsHelp::pawsHelp()
 
 bool pawsHelp::PostSetup(void)
 {
-    helpText = dynamic_cast<pawsMultiLineTextBox*>(FindWidget("HelpText"));
+    helpText = dynamic_cast<pawsMultiLineTextBox*>(FindWidget("HelpView"));
     if (!helpText)
         return false;
 
     // creates tree:
     helpTree = dynamic_cast<pawsSimpleTree*>(FindWidget("HelpTree"));
-    if (helpTree == NULL)
+
+    if(helpTree == NULL)
     {
         Error1("Could not create widget pawsSimpleTree");
         return false;
@@ -69,7 +72,7 @@ bool pawsHelp::PostSetup(void)
     LoadHelps(helpDoc->GetRoot()->GetNode("help"), "RootTopic");
 
     pawsTreeNode * child = helpTree->GetRoot()->GetFirstChild();
-    while (child != NULL)
+    while(child != NULL)
     {
         child->CollapseAll();
         child = child->GetNextSibling();
@@ -85,15 +88,15 @@ void pawsHelp::LoadHelps(iDocumentNode *node, csString parent)
     {
         csRef<iDocumentNode> topicName = helpIter->Next();
         csRef<iDocumentAttribute> level = topicName->GetAttribute("level");
-        if (level)
+        if(level)
         {
             int type = psengine->GetCelClient()->GetMainPlayer()->GetType();
-            if (type < level->GetValueAsInt())
+            if(type < level->GetValueAsInt())
                 continue;
         }
-        if (!strcmp(topicName->GetValue(), "branch"))
+        if(!strcmp(topicName->GetValue(), "branch"))
             helpTree->InsertChildL(parent,  topicName->GetAttributeValue("name"), topicName->GetAttributeValue("name"), "");
-        else if (!strcmp(topicName->GetValue(), "topic"))
+        else if(!strcmp(topicName->GetValue(), "topic"))
         {
             helpTree->InsertChildL(parent,  topicName->GetAttributeValue("name"), topicName->GetAttributeValue("name"), "");
             continue;
@@ -117,40 +120,44 @@ bool pawsHelp::OnSelected(pawsWidget *widget)
 
     // xmlnode contains the root
     csRef<iDocumentNode> xmlnode = RetrieveHelp(node,root);
-    if (!xmlnode)
+    if(!xmlnode)
         return false;
-
+    csString nodexml;
+    if(xmlnode->GetNode("Contents"))
+            nodexml = GetNodeXML(xmlnode->GetNode("Contents"),false);
     csString text(xmlnode->GetContentsValue());
-    if (text)
+    if(text.Length())//plain text
         helpText->SetText(text.GetData());
+    else if(nodexml.Length())//xml text
+        dynamic_cast<pawsDocumentView *>(helpText)->SetText(nodexml.GetData());
 
     return true;
 }
 
 csRef<iDocumentNode> pawsHelp::RetrieveHelp(pawsTreeNode* node, csRef<iDocumentNode> helpRoot)
 {
-    if (!strcmp(node->GetName(),"RootTopic"))
+    if(!strcmp(node->GetName(),"RootTopic"))
     {
         return helpRoot;
     }
 
     csRef<iDocumentNode> parentnode = RetrieveHelp(node->GetParent(), helpRoot);
-    if (!parentnode)
+    if(!parentnode)
     {
         Error2("Can not find '%s' in help tree!", node->GetName());
         return NULL;
     }
 
     csRef<iDocumentNodeIterator> iter = parentnode->GetNodes();
-    while (iter->HasNext())
+    while(iter->HasNext())
     {
         csRef<iDocumentNode> xmlnode = iter->Next();
 
         // it is possible to have an empty attribute
         // (no names or values) if text is in the body of the branch
-        if (xmlnode->GetAttributeValue("name"))
+        if(xmlnode->GetAttributeValue("name"))
         {
-            if (!strcmp(node->GetName(), xmlnode->GetAttributeValue("name")))
+            if(!strcmp(node->GetName(), xmlnode->GetAttributeValue("name")))
             {
                 return xmlnode;
             }

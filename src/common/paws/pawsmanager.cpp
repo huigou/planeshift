@@ -794,6 +794,7 @@ bool PawsManager::HandleMouseMove( csMouseEventData &data )
 void PawsManager::Draw()
 {
     // First draw the main gui.
+	//render2texture = true;
     if(!render2texture || true/* TODO: mainWidget->NeedsRender()*/)
     {
         if(render2texture)
@@ -1265,6 +1266,7 @@ void PawsManager::RegisterFactories()
     RegisterFactory (pawsFadingTextBoxFactory);
 
     RegisterFactory (pawsSimpleWindowFactory);
+    RegisterFactory (pawsDocumentViewFactory);
 
 }
 

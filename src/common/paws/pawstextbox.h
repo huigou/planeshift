@@ -707,6 +707,53 @@ private:
 };
 
 CREATE_PAWS_FACTORY( pawsFadingTextBox );
-
+///PictureInfo hold the information of pictures that would be display in the same row with the same format
+struct PictureInfo
+{
+    unsigned int width; ///< Width of pictures
+    unsigned int height;///< Height of pictures
+    csString srcString;///< The file or source info for pictures
+    unsigned int align;///< Align of the picture in
+    unsigned int padding[4];///< The space around pictures
+};
+class pawsDocumentView: public pawsMultiLineTextBox
+{
+public:
+    pawsDocumentView();
+    virtual ~pawsDocumentView();
+    /**
+     * @brief Set the content that would be displayed in the view.
+     * Set the content that would be displayed in the view.
+     * The text should be in form of xml style as following:
+     * <Contents>
+     *	 <Content type="pic" align="0" padding="5 5 5 5" width="32" height="32" src="ButtonSpeak;/paws/real_skin/mouse.png;ButtonOpen;"></Content>
+     *	 <Content type="text">text content</Content>
+     *	 <Content type="pic" align="2" padding="5 5 5 5" width="32" height="32" src="ButtonConstruct;/paws/real_skin/mouse.png;ButtonBanking;"></Content>
+     * </Contents>
+     * @param text The xml content defined what to be display in the view
+     */
+    void SetText(const char* text);
+    /**
+     * @brief Draw the content include text and pictures.
+     */
+    void Draw();
+    void Resize();
+protected:
+    /**
+     * @brief Organize the content to display in the view.
+     * Organize the content to display in the view. Text should be in the form of xml style
+     * @param text The xml content defined what to be display in the view
+     */
+    void OrganizeContent(const char* text);
+    /**
+     * @brief Process the <content type="pic"></content> node in the xml
+     * Process the <content type="pic"></content> node in the xml
+     * @param node A <content type="pic"></content> node
+     * @return How many pictures are defined to be displayed in a row in this node
+     */
+    unsigned int ProcessPictureInfo(iDocumentNode *node);
+    csArray<PictureInfo> picsInfo;///< Hold all the info parse from xml document
+};
+CREATE_PAWS_FACTORY(pawsDocumentView);
 #endif
 

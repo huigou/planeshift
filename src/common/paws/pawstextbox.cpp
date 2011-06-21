@@ -31,6 +31,8 @@
 #include "pawsmanager.h"
 #include "pawsprefmanager.h"
 #include "pawscrollbar.h"
+#include "pawsimagedrawable.h"
+#include "pawstexturemanager.h"
 #include "util/log.h"
 #include "util/strutil.h"
 #include "util/psstring.h"
@@ -1471,7 +1473,7 @@ void pawsMultiLineTextBox::OrganizeText( const char* newText )
         }
 
     }
-
+    text.ReplaceAll("\t","");//remove all the tabs in the string
     startLine = 0;
 
     GetFont()->GetMaxSize( maxWidth, maxHeight );
@@ -1781,4 +1783,314 @@ void pawsFadingTextBox::DrawBorderText(const char* text, iFont* font,int x)
 
     // Draw the letter
     graphics2D->Write(font,x,y,color,-1,text);
+}
+pawsDocumentView::pawsDocumentView()
+{
+
+}
+pawsDocumentView::~pawsDocumentView()
+{
+
+}
+void pawsDocumentView::Draw()
+{
+    pawsWidget::Draw();
+    pawsWidget::ClipToParent(false);
+
+    int drawX = screenFrame.xmin+margin;
+    int drawY = screenFrame.ymin+margin;
+
+    if(!maxHeight && GetFont())
+        GetFont()->GetMaxSize(maxWidth, maxHeight);
+
+    if(!canDrawLines && maxHeight)
+        canDrawLines = (screenFrame.Height()-(margin*2)) / maxHeight;
+
+    int offSet = margin*2;
+    if(usingScrollBar)
+        offSet += 36;
+
+    for(size_t x = startLine; x < (startLine+canDrawLines); x++)
+    {
+        if(x >= lines.GetSize())
+            return;
+
+        csString & currentStr = lines[x];
+        if(!currentStr.StartsWith("#pic#"))
+        {
+            DrawWidgetText((const char*)lines[x], drawX, drawY);
+
+            drawY+=maxHeight;
+        }
+        else
+        {
+            csArray<int> indices;
+            csString sub;
+            currentStr.SubString(sub, 5);
+            int index = 0;
+            
+            for(unsigned int i = 0 ; i < sub.Length() ; i++)
+            {
+                if(sub[i] != ',') 
+                {
+                    index *= 10;
+                    index += sub[i]- '0';
+                }
+                else 
+                {
+                    indices.Push(index);
+                    index = 0;
+                }
+            }
+            indices.Push(index);
+            //draw pictures
+            PictureInfo &pi = picsInfo[indices[0]];
+            unsigned int sz = indices.GetSize();
+            unsigned int sx = drawX;
+            if(pi.align == 0) //align left
+                sx += pi.padding[0];
+            else
+                if(pi.align == 1)//align center
+                {
+                    unsigned int w = pi.width;
+                    unsigned int pad = pi.padding[0]+pi.padding[2];
+                    unsigned int dsx = (screenFrame.Width() - w * sz - pad * (sz - 1) - offSet + margin )/2  ;
+                    sx = screenFrame.xmin + dsx;
+                }
+                else
+                    if(pi.align == 2)//align right
+                    {
+                        unsigned int w = pi.width;
+                        unsigned int pad = pi.padding[0]+pi.padding[2];
+                        unsigned int dsx = w * sz + pad * (sz - 1) + pi.padding[2] + margin;
+                        if(usingScrollBar) 
+                            dsx += 36;
+                        sx += (screenFrame.Width() - dsx);
+                    }
+                    else sx += pi.padding[0];
+
+            unsigned int sy = drawY + pi.padding[1];
+
+            for(unsigned int i = 0 ; i< sz ; i++)
+            {
+                //draw an image at sx sy
+                csRef<iPawsImage> drawable;
+                if(picsInfo[i].srcString.StartsWith("/"))
+                {
+                    drawable.AttachNew(new pawsImageDrawable(picsInfo[indices[i]].srcString.GetData(), picsInfo[indices[i]].srcString.GetData()));
+                    PawsManager::GetSingleton().GetTextureManager()->Remove(picsInfo[i].srcString.GetData());
+                    PawsManager::GetSingleton().GetTextureManager()->AddPawsImage(drawable);
+                }
+                else
+                {//a resource
+                    drawable =  PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(picsInfo[indices[i]].srcString.GetData());
+                }
+
+                drawable->Draw(sx, sy, pi.width, pi.height);
+                sx += pi.padding[0] + pi.padding[2] + pi.width;
+            }
+            drawY += pi.height + pi.padding[3];
+        }
+        
+        for(unsigned i = x+1 ; i < (startLine+canDrawLines) ; i++)
+        {
+            if(i >= lines.GetSize()) break;
+            if(currentStr == lines[i]) 
+                ++x;
+            else break;
+        }
+
+    }
+}
+
+unsigned int pawsDocumentView::ProcessPictureInfo(iDocumentNode *node)
+{
+    //process a picture node. If the src attribute of the node contains more than one picture location,
+    //this function would fill create more than one PictureInfo structure into picsInfo array.
+
+    csString srcs = node->GetAttributeValue("src");
+    //all the pictures in current node hold the same format
+    unsigned int align = node->GetAttributeValueAsInt("align");
+    unsigned int width = node->GetAttributeValueAsInt("width");
+    unsigned int height = node->GetAttributeValueAsInt("height");
+    csString paddingStr = node->GetAttributeValue("padding");
+    paddingStr = paddingStr.Trim();
+    unsigned int padding[4] = {0, 0, 0, 0};
+    unsigned int index = 0;
+
+    for(unsigned int i = 0 ; i < paddingStr.Length() ; i++)
+    {
+        if(paddingStr[i] != ' ') 
+        {//none numbers of padding parameters are not checked here
+            padding[index] *= 10;
+            padding[index] += paddingStr[i]- '0';
+        }
+        else ++index;
+    }
+    
+    csString temp = srcs;
+    unsigned int pos;
+    unsigned int sz = 0;
+    //process the src attribute and push corresponding PictureInfo into picsInfo array
+    while((pos = temp.FindFirst(';')) != -1)
+    {
+        csString sub;
+        temp.SubString(sub,0,pos);
+        PictureInfo pi;
+        pi.align = align;
+        pi.height = height;
+        pi.padding[0] = padding[0];
+        pi.padding[1] = padding[1];
+        pi.padding[2] = padding[2];
+        pi.padding[3] = padding[3];
+        pi.srcString = sub;
+        pi.width = width;
+        picsInfo.Push(pi);
+        temp.SubString(sub, pos+1);
+        temp = sub;
+        sz++;
+    }
+    return sz;
+}
+void pawsDocumentView::OrganizeContent(const char * newtext)
+{
+    csString str(newtext);
+    csRef<iDocumentNode> root = ParseString(str, "Contents");
+    
+    if(root == 0) 
+        return;
+
+    csRef<iDocumentNodeIterator> childIter = root->GetNodes();
+    picsInfo.Empty();
+
+    int offSet = margin*2;
+    if(usingScrollBar)
+        offSet += 36;
+
+    while(childIter->HasNext())
+    {
+        csRef<iDocumentNode> childNode = childIter->Next();
+        csString type(childNode->GetAttributeValue("type"));
+        
+        if(type == "text")
+        {//a text node, processed by the based method
+            csString textpart = childNode->GetContentsValue();
+            OrganizeText(textpart.GetData());
+        }
+        else
+            if(type == "pic")
+            {//a picture node
+                unsigned int sz = ProcessPictureInfo(childNode);//process the picture node,return how many pictures in the row
+                if(sz == 0) 
+                    continue;
+              
+                unsigned int picIndex = picsInfo.GetSize() - 1;
+                unsigned int width = picsInfo[picIndex].width;
+                unsigned int height = picsInfo[picIndex].height;
+                unsigned int * padding = picsInfo[picIndex].padding;
+                unsigned int widthPerPic = padding[0] + padding[2] + width;
+
+                unsigned int needLength = widthPerPic*sz;
+                unsigned int canDrawLength = screenFrame.Width() - offSet;
+                GetFont()->GetMaxSize( maxWidth, maxHeight );
+                if(needLength <= canDrawLength)
+                {//all pictures could be drawn in a row
+                    //char  buf[4];
+                    csString infoStr="#pic#";
+                    for(; sz > 0; sz--)
+                    {
+                        unsigned int index = picIndex - sz + 1;
+                        //itoa(index,buf,10);
+                        //csString id(buf);
+
+                        if(sz != 1)
+                            infoStr = infoStr.Append(index) + ",";
+                        else infoStr.Append(index);
+                    }
+                    unsigned int occupied_lines = (padding[1] + padding[3] + height)/maxHeight + 1;
+                    for(unsigned int i = 0 ; i < occupied_lines ; i++)
+                        lines.Push(infoStr);
+                }
+                else
+                {//all pictures defined in this node could not be drawn in one row
+                    unsigned int howmanycandraw = canDrawLength/widthPerPic;
+                    if(howmanycandraw == 0) continue;//the box could not hold the picture in, then the picture will no show
+                    canDrawLength = howmanycandraw * widthPerPic;
+                    unsigned int rows = needLength%canDrawLength ? needLength/canDrawLength + 1 : needLength/canDrawLength;
+
+                    for(; rows>0; rows--)
+                    {
+                        char  buf[4];
+                        csString infoStr="#pic#";
+                        unsigned int temp = howmanycandraw;
+
+                        for(; temp>0; temp--)
+                        {
+                            unsigned int index = picIndex - sz + 1;
+                            if(index > picIndex) 
+                                break;
+                            itoa(index,buf,10);
+                            csString id(buf);
+                            if(temp != 1 && index != picIndex)
+                                infoStr = infoStr + id + ",";
+                            else infoStr += id;
+                            sz--;
+                        }
+
+                        unsigned int occupied_lines = (padding[1] + padding[3] + height)/maxHeight + 1;
+                        for(unsigned int i = 0 ; i < occupied_lines ; i++)
+                            lines.Push(infoStr);
+                    }
+                }//end else
+            }//end pic type
+    }
+}
+
+void pawsDocumentView::Resize()
+{
+    pawsWidget::Resize();
+    SetText(text);
+}
+void pawsDocumentView::SetText(const char* newtext)
+{
+    lines.Empty();
+
+    psString str(newtext);
+    size_t pos = str.FindSubString("\r");
+    while(pos != (size_t)-1)
+    {
+        str = str.Slice(0, pos) + "\n" + str.Slice(pos+2, str.Length()-pos-2);
+        pos = str.FindSubString("\r");
+    }
+
+
+    usingScrollBar = false;
+    if(scrollBar) scrollBar->Hide();
+
+    OrganizeContent(str.GetData());
+    //OrganizeText( str.GetData() );
+
+    if(canDrawLines >= lines.GetSize())
+    {
+        canDrawLines = lines.GetSize();
+        if(scrollBar) //if there is a scrollbar we must setup it correctly else we will scroll in the void
+        {
+            scrollBar->SetMaxValue(0);
+            scrollBar->SetCurrentValue(0);
+        }
+    }
+    else
+    {
+        usingScrollBar = true;
+        lines.Empty();
+        OrganizeContent(str.GetData());//the scroll bar will show, we should organize the content again
+        if(scrollBar)
+        {
+            scrollBar->ShowBehind();
+            scrollBar->SetMaxValue(lines.GetSize() - canDrawLines);
+            scrollBar->SetCurrentValue(0);
+        }
+    }
+    startLine = 0;
+    text.Replace(str.GetData());
 }
