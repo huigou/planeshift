@@ -1361,9 +1361,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClInclude Include="..\..\src\tools\fparser\fparser.h" />
     <ClInclude Include="..\..\src\tools\fparser\fparser_gmpint.h" />
     <ClInclude Include="..\..\src\tools\fparser\fparser_mpfr.h" />
-    <ClInclude Include="..\..\src\tools\fparser\fpaux.h" />
     <ClInclude Include="..\..\src\tools\fparser\fpconfig.h" />
-    <ClInclude Include="..\..\src\tools\fparser\fptypes.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

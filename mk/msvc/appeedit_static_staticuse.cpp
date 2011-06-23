@@ -15,4 +15,6 @@
 struct _static_use { _static_use (); };
 _static_use::_static_use () {}
 SCF_USE_STATIC_PLUGIN(bgloader)
+SCF_USE_STATIC_PLUGIN(soundmngr)
+SCF_USE_STATIC_PLUGIN(dummysndmngr)
 

@@ -1738,7 +1738,13 @@
 				RelativePath="..\..\mk\msvc\libdbmysql_staticreg.cpp">
 			</File>
 			<File
+				RelativePath="..\..\mk\msvc\libdummysndmngr_staticreg.cpp">
+			</File>
+			<File
 				RelativePath="..\..\mk\msvc\librecast_staticreg.cpp">
+			</File>
+			<File
+				RelativePath="..\..\mk\msvc\libsoundmngr_staticreg.cpp">
 			</File>
 			<File
 				RelativePath="..\..\src\plugins\common\bgloader\loader.cpp">
@@ -1757,6 +1763,12 @@
 			</File>
 			<File
 				RelativePath="..\..\src\plugins\common\celgraph\celgraph.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\dummysndmngr\dummysndctrl.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\dummysndmngr\dummysndmngr.cpp">
 			</File>
 			<File
 				RelativePath="..\..\src\plugins\common\recast\celhpf.cpp">
@@ -1834,6 +1846,39 @@
 				RelativePath="..\..\src\plugins\common\recast\recastnavigation\RecastTimer.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\plugins\common\soundmanager\data.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\soundmanager\handle.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\soundmanager\manager.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\soundmanager\psemitter.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\soundmanager\psentity.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\soundmanager\psmusic.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\soundmanager\pssoundsector.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\soundmanager\queue.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\soundmanager\soundctrl.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\soundmanager\soundmanager.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\soundmanager\system.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\plugins\database\mysql\dal.cpp">
 			</File>
 		</Filter>
@@ -1845,6 +1890,12 @@
 			</File>
 			<File
 				RelativePath="..\..\src\plugins\common\celgraph\celgraph.h">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\dummysndmngr\dummysndctrl.h">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\dummysndmngr\dummysndmngr.h">
 			</File>
 			<File
 				RelativePath="..\..\src\plugins\common\recast\celhpf.h">
@@ -1899,6 +1950,45 @@
 			</File>
 			<File
 				RelativePath="..\..\src\plugins\common\recast\recastnavigation\RecastTimer.h">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\soundmanager\data.h">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\soundmanager\handle.h">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\soundmanager\manager.h">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\soundmanager\psemitter.h">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\soundmanager\psentity.h">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\soundmanager\psmusic.h">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\soundmanager\pssound.h">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\soundmanager\pssoundsector.h">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\soundmanager\queue.h">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\soundmanager\sound.h">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\soundmanager\soundctrl.h">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\soundmanager\soundmanager.h">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\soundmanager\system.h">
 			</File>
 			<File
 				RelativePath="..\..\src\plugins\database\mysql\dal.h">
