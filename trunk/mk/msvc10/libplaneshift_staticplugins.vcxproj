@@ -1356,13 +1356,17 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
   <ItemGroup>
     <ClCompile Include="..\..\mk\msvc\libbgloader_staticreg.cpp" />
     <ClCompile Include="..\..\mk\msvc\libcelgraph_staticreg.cpp" />
+    <ClCompile Include="..\..\mk\msvc\libdummysndmngr_staticreg.cpp" />
     <ClCompile Include="..\..\mk\msvc\librecast_staticreg.cpp" />
+    <ClCompile Include="..\..\mk\msvc\libsoundmngr_staticreg.cpp" />
     <ClCompile Include="..\..\src\plugins\common\bgloader\loader.cpp" />
     <ClCompile Include="..\..\src\plugins\common\bgloader\loader_objects.cpp" />
     <ClCompile Include="..\..\src\plugins\common\bgloader\manipulate.cpp" />
     <ClCompile Include="..\..\src\plugins\common\bgloader\parser.cpp" />
     <ClCompile Include="..\..\src\plugins\common\bgloader\parser_mesh.cpp" />
     <ClCompile Include="..\..\src\plugins\common\celgraph\celgraph.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\dummysndmngr\dummysndctrl.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\dummysndmngr\dummysndmngr.cpp" />
     <ClCompile Include="..\..\src\plugins\common\recast\celhpf.cpp" />
     <ClCompile Include="..\..\src\plugins\common\recast\celnavmesh.cpp" />
     <ClCompile Include="..\..\src\plugins\common\recast\recastnavigation\ChunkyTriMesh.cpp" />
@@ -1388,10 +1392,23 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClCompile Include="..\..\src\plugins\common\recast\recastnavigation\RecastRasterization.cpp" />
     <ClCompile Include="..\..\src\plugins\common\recast\recastnavigation\RecastRegion.cpp" />
     <ClCompile Include="..\..\src\plugins\common\recast\recastnavigation\RecastTimer.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\soundmanager\data.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\soundmanager\handle.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\soundmanager\manager.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\soundmanager\psemitter.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\soundmanager\psentity.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\soundmanager\psmusic.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\soundmanager\pssoundsector.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\soundmanager\queue.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\soundmanager\soundctrl.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\soundmanager\soundmanager.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\soundmanager\system.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\plugins\common\bgloader\loader.h" />
     <ClInclude Include="..\..\src\plugins\common\celgraph\celgraph.h" />
+    <ClInclude Include="..\..\src\plugins\common\dummysndmngr\dummysndctrl.h" />
+    <ClInclude Include="..\..\src\plugins\common\dummysndmngr\dummysndmngr.h" />
     <ClInclude Include="..\..\src\plugins\common\recast\celhpf.h" />
     <ClInclude Include="..\..\src\plugins\common\recast\celnavmesh.h" />
     <ClInclude Include="..\..\src\plugins\common\recast\recastnavigation\ChunkyTriMesh.h" />
@@ -1410,6 +1427,19 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClInclude Include="..\..\src\plugins\common\recast\recastnavigation\RecastDump.h" />
     <ClInclude Include="..\..\src\plugins\common\recast\recastnavigation\RecastLog.h" />
     <ClInclude Include="..\..\src\plugins\common\recast\recastnavigation\RecastTimer.h" />
+    <ClInclude Include="..\..\src\plugins\common\soundmanager\data.h" />
+    <ClInclude Include="..\..\src\plugins\common\soundmanager\handle.h" />
+    <ClInclude Include="..\..\src\plugins\common\soundmanager\manager.h" />
+    <ClInclude Include="..\..\src\plugins\common\soundmanager\psemitter.h" />
+    <ClInclude Include="..\..\src\plugins\common\soundmanager\psentity.h" />
+    <ClInclude Include="..\..\src\plugins\common\soundmanager\psmusic.h" />
+    <ClInclude Include="..\..\src\plugins\common\soundmanager\pssound.h" />
+    <ClInclude Include="..\..\src\plugins\common\soundmanager\pssoundsector.h" />
+    <ClInclude Include="..\..\src\plugins\common\soundmanager\queue.h" />
+    <ClInclude Include="..\..\src\plugins\common\soundmanager\sound.h" />
+    <ClInclude Include="..\..\src\plugins\common\soundmanager\soundctrl.h" />
+    <ClInclude Include="..\..\src\plugins\common\soundmanager\soundmanager.h" />
+    <ClInclude Include="..\..\src\plugins\common\soundmanager\system.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

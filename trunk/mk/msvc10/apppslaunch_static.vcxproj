@@ -1488,6 +1488,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\mk\msvc\apppslaunch_static_static_glue_app.cpp" />
     <ClCompile Include="..\..\mk\msvc\apppslaunch_static_static_glue_app_CRYSTAL.cpp" />
     <ClCompile Include="..\..\mk\msvc\OPENAL.fake_stub.c" />
     <ClCompile Include="..\..\src\pslaunch\binarypatch.cpp" />
@@ -1521,14 +1522,17 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ProjectReference Include="libpsutil.vcxproj">
       <Project>{D9DEA6DD-ED82-1526-6BBF-851FF399854C}</Project>
     </ProjectReference>
-    <ProjectReference Include="libsound.vcxproj">
-      <Project>{1B4A7655-07C5-8C89-4BDB-97E82AD36BB0}</Project>
-    </ProjectReference>
     <ProjectReference Include="libfparser.vcxproj">
       <Project>{56CFA369-1F2F-7609-9E86-069C1B5F5651}</Project>
     </ProjectReference>
     <ProjectReference Include="libpslaunch_static_plugins_CRYSTAL.vcxproj">
       <Project>{0D1526D0-F565-5937-737B-3C3B0A7B6C5A}</Project>
+    </ProjectReference>
+    <ProjectReference Include="libpslaunch_static_plugins.vcxproj">
+      <Project>{C28A2F7B-1CC8-D862-8161-D86961FF0C96}</Project>
+    </ProjectReference>
+    <ProjectReference Include="libplaneshift_database_staticplugins.vcxproj">
+      <Project>{5DFC8F2F-79FD-89B5-6EEC-FDEEB1E3225D}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

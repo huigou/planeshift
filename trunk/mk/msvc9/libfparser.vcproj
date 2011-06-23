@@ -1748,13 +1748,7 @@
 				RelativePath="..\..\src\tools\fparser\fparser_mpfr.h">
 			</File>
 			<File
-				RelativePath="..\..\src\tools\fparser\fpaux.h">
-			</File>
-			<File
 				RelativePath="..\..\src\tools\fparser\fpconfig.h">
-			</File>
-			<File
-				RelativePath="..\..\src\tools\fparser\fptypes.h">
 			</File>
 		</Filter>
 	</Files>

@@ -1565,9 +1565,6 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ProjectReference Include="libpsutil.vcxproj">
       <Project>{D9DEA6DD-ED82-1526-6BBF-851FF399854C}</Project>
     </ProjectReference>
-    <ProjectReference Include="libsound.vcxproj">
-      <Project>{1B4A7655-07C5-8C89-4BDB-97E82AD36BB0}</Project>
-    </ProjectReference>
     <ProjectReference Include="libfparser.vcxproj">
       <Project>{56CFA369-1F2F-7609-9E86-069C1B5F5651}</Project>
     </ProjectReference>
