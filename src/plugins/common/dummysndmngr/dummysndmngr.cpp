@@ -115,7 +115,7 @@ int DummySoundManager::GetCombatStance() const
     return combat;
 }
 
-void DummySoundManager::SetPosition(csVector3 playerPos)
+void DummySoundManager::SetPlayerMovement(csVector3 playerPos, csVector3 playerVelocity)
 {
     position = playerPos;
 }
@@ -191,22 +191,22 @@ bool DummySoundManager::IsChatToggleOn()
     return chatToggle;
 }
 
-void DummySoundManager::PlaySound(const char* fileName, bool loop, iSoundControl* &ctrl)
+uint DummySoundManager::PlaySound(const char* fileName, bool loop, iSoundControl* &ctrl)
 {
-    return;
+    return 1;
 }
 
-void DummySoundManager::PlaySound(const char* fileName, bool loop, iSoundControl* &ctrl, csVector3 pos, csVector3 dir, float minDist, float maxDist)
+uint DummySoundManager::PlaySound(const char* fileName, bool loop, iSoundControl* &ctrl, csVector3 pos, csVector3 dir, float minDist, float maxDist)
 {
-    return;
+    return 1;
 }
 
-bool DummySoundManager::StopSound(const char* fileName)
+bool DummySoundManager::StopSound(uint soundID)
 {
     return true;
 }
 
-bool DummySoundManager::SetSoundSource(const char* fileName, csVector3 position)
+bool DummySoundManager::SetSoundSource(uint soundID, csVector3 position)
 {
     return true;
 }

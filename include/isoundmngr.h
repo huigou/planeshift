@@ -49,7 +49,7 @@ class  csVector3;
  */
 struct iSoundManager: public virtual iBase
 {
-    SCF_INTERFACE(iSoundManager, 1, 0, 0);
+    SCF_INTERFACE(iSoundManager, 1, 1, 2);
 
     /**
      * The sound manager initializes by default the SoundControls with the IDs
@@ -219,10 +219,11 @@ struct iSoundManager: public virtual iBase
     virtual int GetCombatStance() const = 0;
 
     /**
-     * Set the player's position.
+     * Set the player's position and speed.
      * @param playerPosition the player's position.
+     * @param playerVelocity the player's velocity.
      */
-    virtual void SetPosition(csVector3 playerPosition) = 0;
+    virtual void SetPlayerMovement(csVector3 playerPosition, csVector3 playerVelocity) = 0;
 
     /**
      * Get the player's position.
@@ -261,7 +262,7 @@ struct iSoundManager: public virtual iBase
      * plays the start resource (if defined). If it is already playing a
      * sound, it is stopped.
      *
-     * @param state the new state > 0 for the entity. For negative value
+     * @param state the new state >= 0 for the entity. For negative value
      * the function is not defined.
      * @param mesh the mesh associated to the entity.
      * @param forceChange if it is false the entity does not change its
@@ -328,15 +329,16 @@ struct iSoundManager: public virtual iBase
     //------------//
 
     /**
-     * Play a 2D sound.
+     * Play a 2D sound and return the ID of the played sound.
      * @param fileName the name of the file where the sound is stored.
      * @param loop true if the sound have to loop, false otherwise.
      * @param ctrl the SoundControl that handle the sound.
+     * @return 0 if the sound cannot be played, its ID otherwise.
      */
-    virtual void PlaySound(const char* fileName, bool loop, iSoundControl* &ctrl) = 0;
+    virtual uint PlaySound(const char* fileName, bool loop, iSoundControl* &ctrl) = 0;
 
     /**
-     * Play a 3D sound.
+     * Play a 3D sound and return the ID of the played sound.
      * @param fileName the name of the file where the sound is stored.
      * @param loop true if the sound have to loop, false otherwise.
      * @param ctrl the SoundControl that handle the sound.
@@ -344,23 +346,24 @@ struct iSoundManager: public virtual iBase
      * @param dir the direction of the sound.
      * @param minDist the minimum distance at which the player can hear it.
      * @param maxDist the maximum distance at which the player can hear it.
+     * @return 0 if the sound cannot be played, its ID otherwise.
      */
-    virtual void PlaySound(const char* fileName, bool loop, iSoundControl* &ctrl, csVector3 pos, csVector3 dir, float minDist, float maxDist) = 0;
+    virtual uint PlaySound(const char* fileName, bool loop, iSoundControl* &ctrl, csVector3 pos, csVector3 dir, float minDist, float maxDist) = 0;
 
     /**
-     * Stop a sound with the given name.
-     * @param fileName the name of the file where the sound is stored.
+     * Stop a sound with the given ID.
+     * @param soundID the ID of the sound returned by PlaySound.
      * @return true if a sound with that name exists, false otherwise.
      */
-    virtual bool StopSound(const char* fileName) = 0;
+    virtual bool StopSound(uint soundID) = 0;
 
     /**
      * Set the sound source position.
-     * @param fileName the name of the file where the sound is stored.
+     * @param soundID the ID of the sound returned by PlaySound.
      * @param position the new position of the sound source.
-     * @return true if a sound with that name exists, false otherwise.
+     * @return true if a sound with that ID exists, false otherwise.
      */
-    virtual bool SetSoundSource(const char* fileName, csVector3 position) = 0;
+    virtual bool SetSoundSource(uint soundID, csVector3 position) = 0;
 
     //--------//
     // UPDATE //

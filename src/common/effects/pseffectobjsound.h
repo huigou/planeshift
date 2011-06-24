@@ -49,7 +49,7 @@ private:
 
     csRef<iSoundManager> soundManager;
     csString soundName;
-    bool isSoundActive;
+    uint soundID;
 
     float minDistSquared;
     float maxDistSquared;

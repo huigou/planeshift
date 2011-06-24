@@ -55,15 +55,13 @@ psEffectObjSound::psEffectObjSound(iView *parentView, psEffect2DRenderer * rende
         }
     }
 
-    isSoundActive = false;
+    soundID = 0;
 }
 
 psEffectObjSound::~psEffectObjSound()
 {
-    if(isSoundActive)
-    {
-        soundManager->StopSound(soundName);
-    }
+    // if the sound is not active the sound manager does nothing
+    soundManager->StopSound(soundID);
 }
 
 bool psEffectObjSound::Load(iDocumentNode *node, iLoaderContext* ldr_context)
@@ -166,10 +164,8 @@ bool psEffectObjSound::Update(csTicks elapsed)
         isAlive = true;
 
         iSoundControl* effectSndCtrl = soundManager->GetSndCtrl(iSoundManager::EFFECT_SNDCTRL);
-        soundManager->PlaySound(soundName, true, effectSndCtrl,
+        soundID = soundManager->PlaySound(soundName, true, effectSndCtrl,
             csVector3(0,0,0), csVector3(0,0,0), minDistSquared, maxDistSquared);
-        isSoundActive = true;
-
     }
 
     csVector3 soundPos = anchorMesh->GetMovable()->GetPosition();
@@ -183,10 +179,8 @@ bool psEffectObjSound::Update(csTicks elapsed)
         soundPos += LERP_VEC_KEY(KA_POS,LERP_FACTOR);
     }
 
-    if(isSoundActive)
-    {
-        isSoundActive = soundManager->SetSoundSource(soundName, soundPos);
-    }
+    // if the sound is not active the sound manager does nothing
+    soundManager->SetSoundSource(soundID, soundPos);
 
     return true;
 }

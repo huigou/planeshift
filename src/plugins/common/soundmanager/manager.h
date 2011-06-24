@@ -28,7 +28,9 @@
 #include <iutil/objreg.h>
 #include <csgeom/vector3.h>
 #include <csutil/hash.h>
-
+#include <iutil/timer.h>
+#include <csutil/timer.h>
+#include <csutil/randomgen.h>
 
 class SoundSystem;
 class SoundData;
@@ -56,16 +58,15 @@ enum
  * You may discard the Handle or use it the manage your sound.
  * SoundControl and SoundHandle have many Interface functions which help you todo what
  * ever you want. Access to the underlaying sources is also granted. 
- *     
- * TODO merge Play* functions
  */
 
 class SoundSystemManager
 {
 public:
-    bool          Initialised;                   ///< is initialized ?
-    SoundControl* mainSndCtrl;                   ///< sound control for this manager
-    SoundControl* defaultSndCtrl;                ///< sound control always available, used when there is no other
+    bool                   Initialised;       ///< is initialized ?
+    SoundControl*          mainSndCtrl;       ///< sound control for this manager
+    SoundControl*          defaultSndCtrl;    ///< sound control always available, used when there is no other
+    csRef<iEventTimer>     eventTimer;        ///< timer event used by all the sound handle to play after a delay
 
     /**
      * Constructor initializes this SoundSystemManager.
@@ -85,7 +86,8 @@ public:
     ~SoundSystemManager();
 
     /**
-     * Checks all SoundHandles alters Volume, does fading and removes them if Unmanaged (Autoremove true).
+     * Checks all SoundHandles alters Volume, does fading, applies the Doppler effect and removes
+     * them if Unmanaged (Autoremove true).
      */
     void UpdateSound();
 
@@ -116,22 +118,46 @@ public:
      * @param maxdist distance when minvolume is applied
      * @param rad radiation of the directional cone. Set it to 0 if you dont want a directional sound.
      * @param handle a Handle you have to supply. You may discard it if you dont want to manage this sound.
+     * @param dopplerEffect true to apply the doppler effect to this sound, false otherwise.
      * */
     bool Play3DSound(const char* name, bool loop, size_t loopstart,
                      size_t loopend, float volume_preset,
                      SoundControl* &sndCtrl, csVector3 pos, csVector3 dir,
                      float mindist, float maxdist, float rad, int type3d,
-                     SoundHandle* &handle);
+                     SoundHandle* &handle, bool dopplerEffect = true);
 
     /**
      * Pause a sound and set the autoremove. The handle is picked up in the next update.
+     * @param handleID the ID of the handle to stop.
+     * @return true if the handle exists, false otherwise.
      */
-    bool StopSound(const char* fileName);
+    bool StopSound(uint handleID);
 
     /**
-     * Set the position of the sound source of the handle with the given fileName.
+     * Set the position of the sound source of the handle with the given ID.
+     * @param handleID the ID of the handle to stop.
+     * @param position the new position of the sound's source.
+     * @return true if the handle exists, false otherwise.
      */
-    bool SetSoundSource(const char* fileName, csVector3 position);
+    bool SetSoundSource(uint handleID, csVector3 position);
+
+    /**
+     * Sets the current player's position.
+     * @param pos the new player's position.
+     */
+    void SetPlayerPosition(csVector3& pos);
+
+    /**
+     * Gets the current player's position.
+     * @return the player's position.
+     */
+    csVector3& GetPlayerPosition();
+
+    /**
+     * Sets the player velocity.
+     * @param vel the player's velocity.
+     */
+    void SetPlayerVelocity(csVector3 vel);
 
     /**
      * Update listener position.
@@ -163,17 +189,54 @@ public:
 private:
     SoundSystem*                   soundSystem;
     SoundData*                     soundData;
-    csHash<SoundControl*, int>     soundControllers;   ///< hash which contains  all SoundControls by id
-    csHash<SoundHandle*, csString> soundHandles;       ///< hash which contains all SoundHandles by filename
+    csHash<SoundHandle*, uint>     soundHandles;       ///< hash which contains all SoundHandles by id
+    csHash<SoundControl*, int>     soundControllers;   ///< hash which contains all SoundControls by id
     csTicks                        SndTime;            ///< current csticks
     csTicks                        LastUpdateTime;     ///< when the last update happened
 
+    csVector3                      playerPosition;     ///< current player's position
+    csVector3                      playerVelocity;     ///< the main player's speed
+
+    csRandomGen                    randomGen;          ///< random number generator
+
+    /**
+     * Finds a unique ID > 0 for a SoundHandle.
+     * @return the unique ID for the SoundHandle.
+     */
+    uint FindHandleID();
+
     /**
      * Stops and removes a SoundHandle.
-     * Use with caution. It doesnt care if its still in use.
-     * @param fileName
+     * Use with caution. It doesn't care if it's still in use.
+     * @param handleID the id of the handle
      */
-    void RemoveHandle(const char* fileName);
+    void RemoveHandle(uint handleID);
+
+    /**
+     * Changes the play rate percent for the stream of the given handle according to
+     * the Doppler effect. It always considers the source not moving.
+     * @note: always use SoundHandle::Is3D() before calling this method.
+     *
+     * @param handle the SoundHandle with the stream to changes.
+     */
+    void ChangePlayRate(SoundHandle* handle);
+
+    /**
+     * Create a SoundHandle ready to be played with Unpause(). If its creation fails
+     * handle is a null pointer.
+     * @param name name of the resource you want to play @see SoundData for details
+     * @param loop LOOP or DONT_LOOP
+     * @param loopstart startframe when looping
+     * @param loopend when reach it will jump to startframe
+     * @param volume_preset volume for this sound, all volume calculations are based upon this
+     * @param sndCtrl SoundControl to control this sound
+     * @param handle the SoundHandle that will be initialized. After the method's call
+     * it is a null pointer if it could not be created.
+     * @param dopplerEffect true to apply the doppler effect to this sound, false otherwise.
+     */
+    void CreateSoundHandle(const char* name, bool loop, size_t loopstart,
+                     size_t loopend, float volume_preset, int type3d,
+                     SoundControl* &sndCtrl, SoundHandle* &handle, bool dopplerEffect);
 };
 
 #endif /*_SOUND_MANAGER_H_*/

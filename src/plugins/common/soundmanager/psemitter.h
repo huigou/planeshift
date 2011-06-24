@@ -42,11 +42,14 @@ public:
     int            fadedelay;           ///< how long fading should take in milliseconds
     float          minrange;            ///< range when it should reach maxvol
     float          maxrange;            ///< range when it should have minvol
+    float          probability;         ///< probability that this emitter play the sound
     csString       factory;             ///< name of the factory this emitter should attach to
     float          factory_prob;        ///< probability that this emitter attaches to the factory
+    bool           loop;                ///< true if the sound if the sound has to loop
     csVector3      position;            ///< position of the emitter
     csVector3      direction;           ///< direction were emitting to
     bool           active;              ///< is this emitter active?
+    bool           dopplerEffect;       ///< true if the doppler effect must be applied for this emitter
     int            timeofday;           ///< time when this emitter starts playing
     int            timeofdayrange;      ///< time when this emitter stops
     SoundHandle*   handle;              ///< @see SoundHandle if it is active 

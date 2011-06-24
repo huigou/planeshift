@@ -32,10 +32,13 @@ psEmitter::psEmitter()
     fadedelay = 0;
     minrange = 0.0f;
     maxrange = 0.0f;
+    probability = 1.0f;
     factory_prob = 0;
+    loop = LOOP;
     position = csVector3(0);
     direction = csVector3(0);
     active = false;
+    dopplerEffect = true;
     timeofday = -1;
     timeofdayrange = -1;
     handle = NULL;
@@ -49,8 +52,11 @@ psEmitter::psEmitter(psEmitter* const &emitter)
     minvol = emitter->minvol;
     minrange = emitter->minrange;
     maxrange = emitter->maxrange;
+    probability = emitter->probability;
+    dopplerEffect = emitter->dopplerEffect;
     timeofday = emitter->timeofday;
     timeofdayrange = emitter->timeofdayrange;
+    loop = emitter->loop;
 }
 
 psEmitter::~psEmitter()
@@ -93,12 +99,12 @@ bool psEmitter::CheckTimeOfDay(int time)
 bool psEmitter::Play(SoundControl* &ctrl)
 {
     Stop(); // stop any previous play
-    if(sndSysMgr->Play3DSound(resource, LOOP, 0, 0,
+    if(sndSysMgr->Play3DSound(resource, loop, 0, 0,
                               maxvol, ctrl,
                               position, direction,
                               minrange, maxrange,
                               VOLUME_ZERO, CS_SND3D_ABSOLUTE,
-                              handle))
+                              handle, dopplerEffect))
     {
         active = true;
         handle->SetCallback(this, &StopCallback);
@@ -114,7 +120,7 @@ void psEmitter::Stop()
 
     if(handle != NULL)
     {
-        sndSysMgr->StopSound(handle->name);
+        sndSysMgr->StopSound(handle->GetID());
     }
 }
 

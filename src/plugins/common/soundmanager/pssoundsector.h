@@ -83,7 +83,7 @@ public:
      * plays the start resource (if defined). If it is already playing a
      * sound, it is stopped.
      *
-     * @param state the new state > 0 for the entity. For negative value
+     * @param state the new state >= 0 for the entity. For negative value
      * the function is not defined.
      * @param ctrl the sound control used to play the start resource.
      * @param mesh the mesh associated to the entity.
