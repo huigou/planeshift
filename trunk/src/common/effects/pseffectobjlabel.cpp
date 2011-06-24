@@ -411,11 +411,11 @@ bool psEffectObjLabel::SetText(int rows, ...)
                 break;
         }
         int y = elemBuffer[i].y;
-        const char * text = elemBuffer[i].text;
+        csString text = elemBuffer[i].text;
         float scalefactor = labelwidth / (float)maxWidth;
-        for(size_t j=0; j<strlen(text); j++)
+        for(size_t j=0; j<text.Length(); j++)
         {
-            uint c =text[j];
+            uint c = text.GetAt(j);
             float fx1, fy1, fx2, fy2;
 
             fx1 = (float)x * scalefactor - labelwidth/2.0;
