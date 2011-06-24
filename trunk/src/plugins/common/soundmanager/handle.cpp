@@ -34,15 +34,25 @@
  * volumes, fading parameters
  */
 
-SoundHandle::SoundHandle(SoundSystemManager* manager)
+SoundHandle::SoundHandle(SoundSystemManager* manager, uint identifier)
+    : scfImplementationType(this)
 {
+    id = identifier;
     fade = 0;
     fade_stop = false;
-    autoremove = true;
-    sndsource = NULL;
-    sndstream = NULL;
+    
     hasCallback = false;
+
     this->manager = manager;
+    autoremove = true;
+    delayActive = false;
+
+    // initializing pointers to null
+    snddata = 0;
+    sndstream = 0;
+    sndsource = 0;
+    sndsource3d = 0;
+    sndsourcedir = 0;
 }
 
 SoundHandle::~SoundHandle()
@@ -67,6 +77,10 @@ SoundHandle::~SoundHandle()
         manager->GetSoundSystem()->RemoveSource(sndsource);
     }
 
+    if(delayActive)
+    {
+        manager->eventTimer->RemoveTimerEvent(this);
+    }
 }
 
 /*
@@ -80,9 +94,9 @@ SoundHandle::~SoundHandle()
  */
 
 bool SoundHandle::Init(const char* resname, bool loop, float volume_preset,
-                       int type, SoundControl* &ctrl)
+                       int type, SoundControl* &ctrl, bool doppler)
 {
-    csRef<iSndSysData>  snddata; 
+    csRef<iSndSysData> snddata; 
 
     if(!manager->GetSoundData()->LoadSoundFile(resname, snddata))
     {
@@ -100,7 +114,22 @@ bool SoundHandle::Init(const char* resname, bool loop, float volume_preset,
     sndCtrl = ctrl;
     name = csString(resname);
 
+    dopplerEffect = doppler;
+
     return true;
+}
+
+bool SoundHandle::Perform(iTimerEvent* /*ev*/)
+{
+    manager->eventTimer->RemoveTimerEvent(this);
+    delayActive = false;
+
+    if(sndstream.IsValid())
+    {
+        return sndstream->Unpause();
+    }
+
+    return false;
 }
 
  /*
@@ -160,6 +189,31 @@ void SoundHandle::ConvertTo3D(float mindist, float maxdist, csVector3 pos,
     }
 }
 
+bool SoundHandle::Is3D()
+{
+    if(sndsource3d != 0)
+    {
+        return true;
+    }
+
+    return false;
+}
+
+bool SoundHandle::IsDopplerEffectEnabled()
+{
+    return dopplerEffect;
+}
+
+uint SoundHandle::GetID()
+{
+    return id;
+}
+
+csVector3 SoundHandle::GetSourcePosition()
+{
+    return sndsource3d->GetPosition();
+}
+
 void SoundHandle::SetAutoRemove(bool toggle)
 {
     autoremove = toggle;
@@ -167,7 +221,20 @@ void SoundHandle::SetAutoRemove(bool toggle)
 
 bool SoundHandle::GetAutoRemove()
 {
-    return autoremove;
+    return (!delayActive && autoremove);
+}
+
+void SoundHandle::UnpauseAfterDelay(unsigned int delay)
+{
+    if(delay == 0)
+    {
+        sndstream->Unpause();
+    }
+    else
+    {
+        delayActive = true;
+        manager->eventTimer->AddTimerEvent(this, delay);
+    }
 }
 
 void SoundHandle::SetCallback(void (*object), void (*function) (void *))

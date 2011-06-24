@@ -156,7 +156,7 @@ public:
      * change is forced the entity goes in a special "undefined state". In
      * this state psEntity cannot play anything.
      *
-     * @param state the new state > 0 for this entity. For negative value the
+     * @param state the new state >= 0 for this entity. For negative value the
      * function is not defined.
      * @param ctrl the SoundControl for playing the starting sound.
      * @param entityPosition the position of the starting sound to play.
@@ -195,7 +195,7 @@ private:
     SoundHandle*                  handle;       ///< pointer to the SoundHandle if playing
     int                           state;        ///< current state of this entity. A negative value means that this entity is in an undefined state.
     int                           when;         ///< counter to keep track when it has been played - zero means i may play at any time (in ms)
-    uint                          id;           ///< the id of the mesh object whose sound is controlled by this entity .
+    uint                          id;           ///< the id of the mesh object whose sound is controlled by this entity.
 
     float minMinRange;                         ///< minimum minRange between all the defined state of this entity
     float maxMaxRange;                         ///< maximum maxRange between all the defined state of this entity

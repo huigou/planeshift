@@ -108,7 +108,7 @@ void psMusic::Stop()
     
     if(handle != NULL)
     {
-        sndSysMgr->StopSound(handle->name);
+        sndSysMgr->StopSound(handle->GetID());
     }
 }
 

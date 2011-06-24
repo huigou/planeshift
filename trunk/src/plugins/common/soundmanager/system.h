@@ -106,6 +106,12 @@ public:
      */
     void UpdateListener(csVector3 v, csVector3 f, csVector3 t);
 
+    /**
+     * Gets the current listener position.
+     * @return a vector containing the listener position.
+     */
+    const csVector3& GetListenerPosition() const;
+
 private:
     csRef<iSndSysRenderer> sndrenderer; ///< soundrenderer were using
     csRef<iSndSysListener> listener;    ///< our listener object

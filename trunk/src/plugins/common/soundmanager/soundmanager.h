@@ -83,7 +83,7 @@ public:
     //State
     virtual void SetCombatStance(int newCombatStance);
     virtual int GetCombatStance() const;
-    virtual void SetPosition(csVector3 playerPosition);
+    virtual void SetPlayerMovement(csVector3 playerPosition, csVector3 playerVelocity);
     virtual csVector3 GetPosition() const;
     virtual void SetTimeOfDay(int newTimeOfDay);
     virtual int GetTimeOfDay() const;
@@ -102,10 +102,10 @@ public:
     virtual bool IsChatToggleOn();
 
     //Play sounds
-    virtual void PlaySound(const char* fileName, bool loop, iSoundControl* &ctrl);
-    virtual void PlaySound(const char* fileName, bool loop, iSoundControl* &ctrl, csVector3 pos, csVector3 dir, float minDist, float maxDist);
-    virtual bool StopSound(const char* fileName);
-    virtual bool SetSoundSource(const char* fileName, csVector3 position);
+    virtual uint PlaySound(const char* fileName, bool loop, iSoundControl* &ctrl);
+    virtual uint PlaySound(const char* fileName, bool loop, iSoundControl* &ctrl, csVector3 pos, csVector3 dir, float minDist, float maxDist);
+    virtual bool StopSound(uint soundID);
+    virtual bool SetSoundSource(uint soundID, csVector3 position);
 
     //Updating function
     virtual void Update();
@@ -130,7 +130,6 @@ private:
     csArray<psSoundSector*>     sectorData;        ///< array which contains all sector xmls - parsed
     psSoundSector*              activeSector;      ///< points to our active sector
     psSoundSector*              commonSector;      ///< sector that keeps features common to all sectors
-    csVector3                   playerPosition;    ///< current playerposition
     int                         weather;           ///< current weather state from weather.h
     int                         combat;            ///< current stance
 

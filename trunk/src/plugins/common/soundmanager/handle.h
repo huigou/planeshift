@@ -24,8 +24,7 @@
 #ifndef _SOUND_HANDLE_H_
 #define _SOUND_HANDLE_H_
 
-#include <isndsys.h>
-#include <csutil/csstring.h>
+#include <crystalspace.h>
 
 class SoundControl;
 class SoundSystemManager;
@@ -37,7 +36,7 @@ enum
     FADE_STOP   =   -1
 };
 
-class SoundHandle
+class SoundHandle: public scfImplementation1<SoundHandle, iTimerEvent>
 {
 public:
     csString                                name;           ///< name of the resource or the file - not unique
@@ -46,7 +45,6 @@ public:
     int                                     fade;           ///< >0 is number of steps up <0 is number of steps down, 0 is nothing 
     float                                   fade_volume;    ///< volume we add or remove in each step (during fading)
     bool                                    fade_stop;      ///< pause this sound after fading down true / false
-    bool                                    autoremove;     ///< remove this handle when pause?
 
     csRef<iSndSysData>                      snddata;        ///< pointer to sound data
     csRef<iSndSysStream>                    sndstream;      ///< sound stream
@@ -54,8 +52,9 @@ public:
     csRef<iSndSysSource3D>                  sndsource3d;    ///< sndsource if 3D
     csRef<iSndSysSource3DDirectionalSimple> sndsourcedir;   ///< additional source if 3D and directional
 
-    SoundHandle(SoundSystemManager*);                       ///< constructor 
+    SoundHandle(SoundSystemManager*, uint id);              ///< constructor 
     ~SoundHandle();                                         ///< destructor
+
     /**
      * Does fading calculation for this Handle
      * @param volume volume to add / substract
@@ -71,10 +70,16 @@ public:
      * @param volume_preset volume which all calculation are based upon
      * @param type 3d type: can be CS_SND3D_DISABLE=0. CS_SND3D_RELATIVE=1 or CS_SND3D_ABSOLUTE=2
      * @param ctrl SoundControl which controls this Handle
+     * @param dopplerEffect true to apply the doppler effect to this sound, false otherwise.
      */
     bool Init(const char* resname, bool loop,
               float volume_preset, int type,
-              SoundControl* &ctrl);
+              SoundControl* &ctrl, bool dopplerEffect);
+
+    /**
+     * Unpause the sound after the given delay has elapsed.
+     */
+    virtual bool Perform(iTimerEvent* /*ev*/);
 
     /**
      * Converts this Handle to a 3D Handle.
@@ -91,16 +96,49 @@ public:
                      float rad);
 
     /**
+     * Detects if the source of this handle is 3D.
+     * @return true if the source is 3D, false otherwise.
+     */
+    bool Is3D();
+
+    /**
+     * Check if the doppler effect is enabled for this sound.
+     * @return true if the doppler effect is enabled, false otherwise.
+     */
+    bool IsDopplerEffectEnabled();
+
+    /**
+     * Gets the ID of this handle.
+     * @return the ID of this handle.
+     */
+    uint GetID();
+
+    /**
+     * Gets the position of the source.
+     * @note: always call SoundHandle::Is3D() before calling this method.
+     *
+     * @return the position of the source.
+     */
+    csVector3 GetSourcePosition();
+
+    /**
      * Whether to remove this Sound/Handle on pause.
      * True means it will be removed  when Sound is paused (Unamanged Sound).
      * False means it will stay and leak if you dont take care (Managed Sound).
      * @param toggle true or false
      */
     void SetAutoRemove(bool toggle);
+
     /**
      * Returns state of AutoRemove
      */
     bool GetAutoRemove();
+
+    /**
+     * Unpause the sound stream of this header after the given delay.
+     * @param delay the delay in milliseconds.
+     */
+    void UnpauseAfterDelay(unsigned int delay);
 
     /**
      * Sets a Callback to a object function.
@@ -111,13 +149,18 @@ public:
     /**
      * Remove the callback.
      */
-    void RemoveCallback();    
+    void RemoveCallback();
 
 private:
-    SoundSystemManager* manager;
+    uint id;                           ///< id of this handle
+    SoundSystemManager* manager;       ///< sound system manager
     bool hasCallback;                  ///< true of theres a callback set, false of not
     void (*callbackobject);            ///< pointer to the callback object
     void (*callbackfunction) (void *); ///< pointer to the callback function
+
+    bool autoremove;                   ///< remove this handle when pause?
+    bool delayActive;                  ///< true if the handle is waiting for the end of delay to unpause
+    bool dopplerEffect;                ///< true if the doppler effect is enabled for this sound
 
     /**
      * Makes the callback if set.

@@ -167,3 +167,8 @@ void SoundSystem::UpdateListener(csVector3 v, csVector3 f, csVector3 t)
     listener->SetPosition(v);
     listener->SetDirection(f,t);
 }
+
+const csVector3& SoundSystem::GetListenerPosition() const
+{
+    return listener->GetPosition();
+}

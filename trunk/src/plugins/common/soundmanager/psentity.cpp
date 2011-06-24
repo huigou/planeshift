@@ -249,7 +249,7 @@ void psEntity::SetState(int stat, SoundControl* ctrl, csVector3 entityPosition, 
     if(handle != 0)
     {
         handle->RemoveCallback();
-        sndSysMgr->StopSound(handle->name);
+        sndSysMgr->StopSound(handle->GetID());
         handle = 0;
     }
     

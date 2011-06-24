@@ -26,7 +26,10 @@
 #include "soundctrl.h"
 #include "system.h"
 #include "data.h"
-#include "util/log.h"
+
+#include <util/log.h>
+#include <util/psconst.h>
+
 
 /*
  * Initialize the SoundSystem (SndSys) and the Datamanager (SndData)
@@ -39,6 +42,12 @@ SoundSystemManager::SoundSystemManager(iObjectRegistry* objectReg)
 {
     // Initialised to false to make sure it is ..
     Initialised = false;
+
+    // Initializing the event timer
+    eventTimer = csEventTimer::GetStandardTimer(objectReg);
+
+    playerPosition.Set(0.0);
+    playerVelocity.Set(0.0);
 
     // Create a new SoundSystem, SoundData Instance and the main SoundControl
     soundSystem = new SoundSystem;
@@ -62,7 +71,7 @@ SoundSystemManager::~SoundSystemManager()
     Initialised = false;
 
     // pause all sounds and call updatesound to remove them
-    csHash<SoundHandle*, csString>::GlobalIterator handleIter(soundHandles.GetIterator());
+    csHash<SoundHandle*, uint>::GlobalIterator handleIter(soundHandles.GetIterator());
     SoundHandle* sh;
 
     while(handleIter.HasNext())
@@ -131,39 +140,14 @@ bool SoundSystemManager::
 Play2DSound(const char* name, bool loop, size_t loopstart, size_t loopend,
             float volume_preset, SoundControl* &sndCtrl, SoundHandle* &handle)
 {
-    /* FIXME redundant code Play3DSound */
+    CreateSoundHandle(name, loop, loopstart, loopend, volume_preset, CS_SND3D_DISABLE, sndCtrl, handle, false);
 
-    if(Initialised == false)
-    {
-        Debug1(LOG_SOUND,0,"Sound not Initialised\n");
-        return false;
-    }
-
-    if(name == NULL)
-    {
-        Error1("Error: Play2DSound got NULL as soundname\n");
-        return false;
-    }
-
-    if(sndCtrl->GetToggle() == false) /* FIXME */
+    if(handle == 0)
     {
         return false;
     }
-
-    handle = new SoundHandle(this);
-
-    if(!handle->Init(name, loop, volume_preset, CS_SND3D_DISABLE, sndCtrl))
-    {
-      delete handle;
-      handle = NULL;
-      return false;
-    }
-
-    handle->sndstream->SetLoopBoundaries(loopstart, loopend);
-    handle->sndsource->SetVolume((volume_preset * sndCtrl->GetVolume()));
 
     handle->sndstream->Unpause();
-    soundHandles.Put(name, handle);
 
     return true;
 }
@@ -180,49 +164,38 @@ bool SoundSystemManager::
 Play3DSound(const char* name, bool loop, size_t loopstart, size_t loopend,
             float volume_preset, SoundControl* &sndCtrl, csVector3 pos,
             csVector3 dir, float mindist, float maxdist, float rad,
-            int type3d, SoundHandle* &handle)
+            int type3d, SoundHandle* &handle, bool dopplerEffect)
 {
-    // FIXME redundant code Play2DSound
-    if(Initialised == false)
-    {
-        Debug1(LOG_SOUND,0,"Sound not Initialised\n");
-        return false;
-    }
+    CreateSoundHandle(name, loop, loopstart, loopend, volume_preset, type3d, sndCtrl, handle, dopplerEffect);
 
-    if(name == NULL)
-    {
-        Error1("Error: Play2DSound got NULL as soundname\n");
-        return false;
-    }
-
-    if(sndCtrl->GetToggle() == false) /* FIXME */
+    if(handle == 0)
     {
         return false;
     }
-
-    handle = new SoundHandle(this);
-
-    if(!handle->Init(name, loop, volume_preset, type3d, sndCtrl))
-    {
-      delete handle;
-      handle = NULL;
-      return false;
-    }
-
-    handle->sndstream->SetLoopBoundaries(loopstart, loopend);
-    handle->sndsource->SetVolume((volume_preset * sndCtrl->GetVolume()));
 
     /* make it 3d */
     handle->ConvertTo3D(mindist, maxdist, pos, dir, rad);
-    handle->sndstream->Unpause();
 
-    soundHandles.Put(name, handle);
+    if(dopplerEffect)
+    {
+        // computing the delay caused by the speed of sound
+        csVector3 diff = pos - soundSystem->GetListenerPosition();
+        float distance = diff.Norm();
+        unsigned int delay = distance * 1000 / SPEED_OF_SOUND;
+
+        handle->UnpauseAfterDelay(delay);
+    }
+    else
+    {
+        handle->sndstream->Unpause();
+    }
+
     return true;
 }
 
-bool SoundSystemManager::StopSound(const char* fileName)
+bool SoundSystemManager::StopSound(uint handleID)
 {
-    SoundHandle* handle = soundHandles.Get(fileName, 0);
+    SoundHandle* handle = soundHandles.Get(handleID, 0);
     if(handle == 0)
     {
         return false;
@@ -236,9 +209,9 @@ bool SoundSystemManager::StopSound(const char* fileName)
     return true;
 }
 
-bool SoundSystemManager::SetSoundSource(const char* fileName, csVector3 position)
+bool SoundSystemManager::SetSoundSource(uint handleID, csVector3 position)
 {
-    SoundHandle* handle = soundHandles.Get(fileName, 0);
+    SoundHandle* handle = soundHandles.Get(handleID, 0);
     if(handle == 0)
     {
         return false;
@@ -247,6 +220,21 @@ bool SoundSystemManager::SetSoundSource(const char* fileName, csVector3 position
     handle->sndsource3d->SetPosition(position);
 
     return true;
+}
+
+void SoundSystemManager::SetPlayerPosition(csVector3& pos)
+{
+    playerPosition = pos;
+}
+
+csVector3& SoundSystemManager::GetPlayerPosition()
+{
+    return playerPosition;
+}
+
+void SoundSystemManager::SetPlayerVelocity(csVector3 vel)
+{
+    playerVelocity = vel;
 }
 
 /*
@@ -266,10 +254,16 @@ void SoundSystemManager::UpdateSound()
         sh = handles[i];
 
         if(sh->sndstream->GetPauseState() == CS_SNDSYS_STREAM_PAUSED
-           && sh->GetAutoRemove() == true)
+            && sh->GetAutoRemove() == true)
         {
-            RemoveHandle(sh->name);
+            RemoveHandle(sh->GetID());
             continue;
+        }
+
+        // applying Doppler effect
+        if(sh->Is3D() && sh->IsDopplerEffectEnabled())
+        {
+            ChangePlayRate(sh);
         }
 
         // fade in or out
@@ -297,7 +291,7 @@ void SoundSystemManager::UpdateSound()
                && sh->fade_stop == true)
                || sh->sndCtrl->GetToggle() == false)
             {
-                RemoveHandle(sh->name);
+                RemoveHandle(sh->GetID());
                 continue;
             }
             else
@@ -371,14 +365,85 @@ SoundControl* SoundSystemManager::GetSoundControl(int ctrlID) const
     return soundControllers.Get(ctrlID, 0);
 }
 
-void SoundSystemManager::RemoveHandle(const char* fileName)
+
+uint SoundSystemManager::FindHandleID()
 {
-    SoundHandle* handle = soundHandles.Get(fileName, 0);
+    uint handleID;
+
+    do
+    {
+        handleID = randomGen.Get(10000);
+    } while(soundHandles.Get(handleID, 0) != 0
+        || handleID == 0);
+
+    return handleID;
+}
+
+void SoundSystemManager::RemoveHandle(uint handleID)
+{
+    SoundHandle* handle = soundHandles.Get(handleID, 0);
     if(handle == 0)
     {
         return;
     }
 
-    soundHandles.Delete(fileName, handle);
+    soundHandles.Delete(handleID, handle);
     delete handle;
+}
+
+void SoundSystemManager::ChangePlayRate(SoundHandle* handle)
+{
+    int percentRate;
+    float distance;
+    float distanceAfterTimeUnit;
+    float relativeSpeed;
+    csVector3 sourcePosition;
+
+    sourcePosition = handle->GetSourcePosition();
+    distance = (playerPosition - sourcePosition).Norm();
+    distanceAfterTimeUnit = (playerPosition + playerVelocity - sourcePosition).Norm();
+    relativeSpeed = distanceAfterTimeUnit - distance;
+    percentRate = (1 - DOPPLER_FACTOR * relativeSpeed / SPEED_OF_SOUND) * 100;
+
+    handle->sndstream->SetPlayRatePercent(percentRate);
+}
+
+void SoundSystemManager::
+CreateSoundHandle(const char* name, bool loop, size_t loopstart, size_t loopend,
+            float volume_preset, int type3d, SoundControl* &sndCtrl, SoundHandle* &handle, bool dopplerEffect)
+{
+    uint handleID;
+    handle = 0; // make sure that if the handle is not valid it is null
+
+    if(Initialised == false)
+    {
+        Debug1(LOG_SOUND,0,"Sound not Initialised\n");
+        return;
+    }
+
+    if(name == NULL)
+    {
+        Error1("Error: Play2DSound got NULL as soundname\n");
+        return;
+    }
+
+    if(sndCtrl->GetToggle() == false) /* FIXME */
+    {
+        return;
+    }
+
+    handleID = FindHandleID();
+    handle = new SoundHandle(this, handleID);
+
+    if(!handle->Init(name, loop, volume_preset, type3d, sndCtrl, dopplerEffect))
+    {
+      delete handle;
+      handle = 0;
+      return;
+    }
+
+    handle->sndstream->SetLoopBoundaries(loopstart, loopend);
+    handle->sndsource->SetVolume((volume_preset * sndCtrl->GetVolume()));
+
+    soundHandles.Put(handleID, handle);
 }

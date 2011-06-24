@@ -413,20 +413,21 @@ int SoundManager::GetCombatStance() const
 }
 
 
-void SoundManager::SetPosition(csVector3 playerPos)
+void SoundManager::SetPlayerMovement(csVector3 playerPos, csVector3 playerVelocity)
 {
-    playerPosition = playerPos;
-
     if(activeSector != NULL)
     {
         activeSector->playerposition = playerPos;
     }
+
+    sndSysMgr->SetPlayerVelocity(playerVelocity);
+    sndSysMgr->SetPlayerPosition(playerPos);
 }
 
 
 csVector3 SoundManager::GetPosition() const
 {
-    return playerPosition;
+    return sndSysMgr->GetPlayerPosition();
 }
 
 
@@ -477,7 +478,10 @@ int SoundManager::GetWeather() const
 
 void SoundManager::SetEntityState(int state, iMeshWrapper* mesh, bool forceChange)
 {
-    activeSector->SetEntityState(state, ambientSndCtrl, mesh, forceChange);
+    if(activeSector != 0)
+    {
+        activeSector->SetEntityState(state, ambientSndCtrl, mesh, forceChange);
+    }
 }
 
 void SoundManager::SetLoopBGMToggle(bool toggle)
@@ -528,34 +532,60 @@ bool SoundManager::IsChatToggleOn()
 }
 
 
-void SoundManager::PlaySound(const char* fileName, bool loop, iSoundControl* &ctrl)
+uint SoundManager::PlaySound(const char* fileName, bool loop, iSoundControl* &ctrl)
 {
     SoundHandle* handle;
     SoundControl* sndCtrl = static_cast<SoundControl*>(ctrl);
-    sndSysMgr->Play2DSound(fileName, loop, 0, 0, VOLUME_NORM,
-        sndCtrl, handle);
+
+    if(sndSysMgr->Play2DSound(fileName, loop, 0, 0, VOLUME_NORM,
+        sndCtrl, handle))
+    {
+        return handle->GetID();
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 
-void SoundManager::PlaySound(const char* fileName, bool loop, iSoundControl* &ctrl, csVector3 pos, csVector3 dir, float minDist, float maxDist)
+uint SoundManager::PlaySound(const char* fileName, bool loop, iSoundControl* &ctrl, csVector3 pos, csVector3 dir, float minDist, float maxDist)
 {
     SoundHandle* handle;
     SoundControl* sndCtrl = static_cast<SoundControl*>(ctrl);
-    sndSysMgr->Play3DSound(fileName, loop, 0, 0, VOLUME_NORM,
+
+    if(sndSysMgr->Play3DSound(fileName, loop, 0, 0, VOLUME_NORM,
         sndCtrl, pos, dir, minDist, maxDist,
-        0, CS_SND3D_ABSOLUTE, handle);
+        0, CS_SND3D_ABSOLUTE, handle))
+    {
+        return handle->GetID();
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 
-bool SoundManager::StopSound(const char* fileName)
+bool SoundManager::StopSound(uint soundID)
 {
-    return sndSysMgr->StopSound(fileName);
+    if(soundID == 0)
+    {
+        return false;
+    }
+
+    return sndSysMgr->StopSound(soundID);
 }
 
 
-bool SoundManager::SetSoundSource(const char* fileName, csVector3 position)
+bool SoundManager::SetSoundSource(uint soundID, csVector3 position)
 {
-    return sndSysMgr->SetSoundSource(fileName, position);
+    if(soundID == 0)
+    {
+        return false;
+    }
+
+    return sndSysMgr->SetSoundSource(soundID, position);
 }
 
 /*
@@ -862,7 +892,7 @@ void SoundManager::UpdateListener(iView* view)
 
     if(listenerOnCamera.GetToggle() == false)
     {
-        hearpoint = playerPosition;
+        hearpoint = sndSysMgr->GetPlayerPosition();
     }
     else
     {

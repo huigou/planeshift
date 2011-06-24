@@ -240,6 +240,9 @@ void psSoundSector::AddEmitter(csRef<iDocumentNode> Node)
     emitter->maxvol         = Node->GetAttributeValueAsFloat("MAXVOL");
     emitter->maxrange       = Node->GetAttributeValueAsFloat("MAX_RANGE");
     emitter->minrange       = Node->GetAttributeValueAsFloat("MIN_RANGE");
+    emitter->probability    = Node->GetAttributeValueAsFloat("PROBABILITY", 1.0);
+    emitter->loop           = Node->GetAttributeValueAsBool("LOOP", true);
+    emitter->dopplerEffect  = Node->GetAttributeValueAsBool("DOPPLER_ENABLED", true);
     emitter->fadedelay      = Node->GetAttributeValueAsInt("FADEDELAY");
     emitter->factory        = Node->GetAttributeValue("FACTORY");
     emitter->factory_prob   = Node->GetAttributeValueAsFloat("FACTORY_PROBABILITY");
@@ -252,6 +255,9 @@ void psSoundSector::AddEmitter(csRef<iDocumentNode> Node)
     emitter->timeofday      = Node->GetAttributeValueAsInt("TIME");
     emitter->timeofdayrange = Node->GetAttributeValueAsInt("TIME_RANGE");
     emitter->active         = false;
+
+    // adjusting the probability on the update time
+    emitter->probability *= 50.0f / 1000; // TODO make this coherent with the update throttle (now 50)
 
     if(emitter->timeofday == -1)
     {
@@ -282,11 +288,14 @@ void psSoundSector::UpdateEmitter(SoundControl* &ctrl)
                 continue;
             }
 
-            if(!emitter->Play(ctrl))
+            if(rng.Get() <= emitter->probability)
             {
-                // error occured .. emitter cant be played .. remove it
-                DeleteEmitter(emitter);
-                break;
+                if(!emitter->Play(ctrl))
+                {
+                    // error occured .. emitter cant be played .. remove it
+                    DeleteEmitter(emitter);
+                    break;
+                }
             }
 
         }
@@ -328,8 +337,8 @@ void psSoundSector::AddEntity(csRef<iDocumentNode> Node)
     prob          = Node->GetAttributeValueAsFloat("PROBABILITY", -1.0);
 
     // checking that all mandatory parameters are present
-    if(factoryName == 0 && meshName == 0
-        || factoryName != 0 && meshName != 0)
+    if((factoryName == 0 && meshName == 0)
+        || (factoryName != 0 && meshName != 0))
     {
         return;
     }
@@ -377,7 +386,7 @@ void psSoundSector::AddEntity(csRef<iDocumentNode> Node)
     timeOfDayStart  = Node->GetAttributeValueAsInt("TIME_START", -1);
     timeOfDayEnd    = Node->GetAttributeValueAsInt("TIME_END", 25);
 
-    // adjusting the probability/s on the update time
+    // adjusting the probability on the update time
     prob = prob / 1000 * 50; // TODO make this coherent with the update throttle (now 50)
 
     entity->DefineState(state, resource, startResource, volume,

@@ -1177,8 +1177,12 @@ inline void psEngine::UpdatePerFrame()
     if (GetSoundStatus()
         && loadstate == LS_DONE)
     {
+        GEMClientActor* mainPlayer = celclient->GetMainPlayer();
+        csVector3 vel = mainPlayer->GetVelocity();
+        vel = mainPlayer->GetMesh()->GetMovable()->GetTransform().GetT2O() * vel;
+
         SoundManager->UpdateListener(camera->GetView());
-        SoundManager->SetPosition(celclient->GetMainPlayer()->Pos());
+        SoundManager->SetPlayerMovement(mainPlayer->Pos(), vel);
     }
 
     /* sound is updated EVERY FRAME, doesnt matter if 2D or 3D
