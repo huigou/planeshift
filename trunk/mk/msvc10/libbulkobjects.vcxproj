@@ -1362,6 +1362,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClCompile Include="..\..\src\server\bulkobjects\pscharacterlist.cpp" />
     <ClCompile Include="..\..\src\server\bulkobjects\pscharacterloader.cpp" />
     <ClCompile Include="..\..\src\server\bulkobjects\pscharinventory.cpp" />
+    <ClCompile Include="..\..\src\server\bulkobjects\pscharquestmgr.cpp" />
     <ClCompile Include="..\..\src\server\bulkobjects\psglyph.cpp" />
     <ClCompile Include="..\..\src\server\bulkobjects\psguildinfo.cpp" />
     <ClCompile Include="..\..\src\server\bulkobjects\psinventorycachesvr.cpp" />
@@ -1392,6 +1393,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClInclude Include="..\..\src\server\bulkobjects\pscharacterlist.h" />
     <ClInclude Include="..\..\src\server\bulkobjects\pscharacterloader.h" />
     <ClInclude Include="..\..\src\server\bulkobjects\pscharinventory.h" />
+    <ClInclude Include="..\..\src\server\bulkobjects\pscharquestmgr.h" />
     <ClInclude Include="..\..\src\server\bulkobjects\psglyph.h" />
     <ClInclude Include="..\..\src\server\bulkobjects\psguildinfo.h" />
     <ClInclude Include="..\..\src\server\bulkobjects\psinventorycachesvr.h" />
