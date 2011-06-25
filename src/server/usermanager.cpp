@@ -1902,7 +1902,7 @@ void UserManager::Loot(Client *client)
 void UserManager::HandleQuests(Client *client)
 {
     psQuestListMessage quests;
-    size_t count = client->GetActor()->GetCharacterData()->GetAssignedQuests(quests,client->GetClientNum() );
+    size_t count = client->GetActor()->GetCharacterData()->GetQuestMgr().GetAssignedQuests(quests,client->GetClientNum() );
 
     if (count)
     {

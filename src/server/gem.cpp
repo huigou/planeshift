@@ -4289,7 +4289,7 @@ void gemNPC::ShowPopupMenu(Client *client)
     NpcResponse *resp = NULL;
     NpcDialogMenu menu;
 
-    csArray<QuestAssignment*>& quests = client->GetCharacterData()->GetAssignedQuests();
+    csArray<QuestAssignment*>& quests = client->GetCharacterData()->GetQuestMgr().GetAssignedQuests();
 
     // Merge current spot in active quests first
     for (size_t i=0; i < quests.GetSize(); i++)

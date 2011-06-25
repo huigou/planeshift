@@ -350,9 +350,9 @@ NpcResponse *psNPCDialog::FindResponseWithAllPrior(const char *area,const char *
     bool TestedWithoutLastResponse = false;
 
     //first try with last responses of all assigned quests
-    for (size_t q = 0; currentClient && q < currentClient->GetCharacterData()->GetNumAssignedQuests(); q++)
+    for (size_t q = 0; currentClient && q < currentClient->GetCharacterData()->GetQuestMgr().GetNumAssignedQuests(); q++)
     {
-        lastresponse = currentClient->GetCharacterData()->GetAssignedQuestLastResponse(q);
+        lastresponse = currentClient->GetCharacterData()->GetQuestMgr().GetAssignedQuestLastResponse(q);
         if (lastresponse == -1)
         { 
             if (!TestedWithoutLastResponse)
@@ -688,7 +688,7 @@ NpcResponse *psNPCDialog::Respond(const char * text,Client *client)
             currentClient->GetCharacterData()->SetLastResponse(resp->id);
             Debug4(LOG_NPC, currentClient->GetClientNum(),"Setting last response for quest '%s', %d: %s",
                resp->quest ? resp->quest->GetName() : "none", resp->id, resp->GetResponse());
-            currentClient->GetCharacterData()->SetAssignedQuestLastResponse(resp->quest,resp->id, currentClient->GetTargetObject() );
+            currentClient->GetCharacterData()->GetQuestMgr().SetAssignedQuestLastResponse(resp->quest,resp->id, currentClient->GetTargetObject() );
         }
 
         return resp; // Found what we are looking for

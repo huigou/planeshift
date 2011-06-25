@@ -51,7 +51,7 @@
 #include "psitemstats.h"
 #include "servervitals.h"
 #include "psguildinfo.h"
-
+#include "pscharquestmgr.h"
 
 class psServerVitals;
 class MsgEntry;
@@ -125,38 +125,6 @@ enum PSCHARACTER_JOINNOTIFICATION
 };
 
 
-#define PSQUEST_DELETE   'D'
-#define PSQUEST_ASSIGNED 'A'
-#define PSQUEST_COMPLETE 'C'
-
-/**
- * This structure tracks assigned quests.
- */
-struct QuestAssignment
-{
-    /// Character id of player who assigned quest to this player.  This is used to make sure you cannot get two quests from the same guy at the same time.
-    PID assigner_id;
-    /// This status determines whether the quest was assigned, completed, or is marked for deletion.
-    char status;
-    /// Dirty flag determines minimal save on exit
-    bool dirty;
-    /// When a quest is completed, often it cannot immediately be repeated.  This indicate the time when it can be started again.
-    unsigned long lockout_end;
-    /// To avoid losing a chain of responses in a quest, last responses are stored per assigned quest.
-    int last_response;
-    /// To avoid losing a chain of responses in a quest, last responses are stored per assigned quest.
-    PID last_response_from_npc_pid;
-
-    /// Since "quest" member can be nulled without notice, this accessor function attempts to refresh it if NULL
-    csWeakRef<psQuest>& GetQuest();
-    void SetQuest(psQuest *q);
-protected:
-
-    /// Quest ID saved in case quest gets nulled out from us
-    int quest_id;
-    /// Weak pointer to the underlying quest relevant here
-    csWeakRef<psQuest> quest;
-};
 
 /**
  * Structure for assigned GM Events.
@@ -223,6 +191,8 @@ class psTradeProcesses;
 class psTrainerInfo;
 struct psTrait;
 class psWorkGameEvent;
+
+
 
 //-----------------------------------------------------------------------------
 
@@ -771,7 +741,7 @@ public:
      *  It searches for an item with the base stats item having the passed id and returns it
      *  if it was found, removing it from the list of the lootable items.
      *  @param id The base item stats id of the item.
-     *  @return The psItem whch corresponds to the base stats item searched for.
+     *  @return The psItem whch  void DiscardQuest(QuestAssignment *q, bool force = false);corresponds to the base stats item searched for.
      */
     psItem* RemoveLootItem(int id);
 
@@ -788,41 +758,10 @@ public:
     /// Clears the pending loot items array and money
     void ClearLoot();
 
-    QuestAssignment *IsQuestAssigned(int id);
-    QuestAssignment *AssignQuest(psQuest *quest, PID assigner_id);
-    bool CompleteQuest(psQuest *quest);
-    void DiscardQuest(QuestAssignment *q, bool force = false);
-    bool DiscardQuest(psQuest *quest, bool force = false);
-    bool SetAssignedQuestLastResponse(psQuest *quest, int response, gemObject *npc);
-    size_t GetNumAssignedQuests() { return assignedQuests.GetSize(); }
-    int GetAssignedQuestLastResponse(size_t i);
     /// The last_response given by an npc to this player.
     int GetLastResponse() { return lastResponse; }
     void SetLastResponse(int response) { lastResponse=response; }
-
-    /**
-     * @brief Sync dirty Quest Assignemnt to DB
-     *
-     * @param force_update Force every QuestAssignment to be dirty
-     * @return True if succesfully updated DB.
-     */
-    bool UpdateQuestAssignments(bool force_update = false);
-
-    size_t  GetAssignedQuests(psQuestListMessage& quests,int cnum);
-    csArray<QuestAssignment*>& GetAssignedQuests() { return assignedQuests; }
-
-    bool CheckQuestAssigned(psQuest *quest);
-    bool CheckQuestCompleted(psQuest *quest);
-    bool CheckQuestAvailable(psQuest *quest, PID assigner_id);
-    /**
-     * @brief Check if all prerequisites are valid for this response
-     * for this character.
-     *
-     * @param resp The Response to check
-     * @return True if all prerequisites are ok for the response
-     */
     bool CheckResponsePrerequisite(NpcResponse *resp);
-    int NumberOfQuestsCompleted(csString category);
 
     void CombatDrain(int);
 
@@ -1140,6 +1079,7 @@ public:
     void NPC_SetSpawnRuleID(int v) { npcSpawnRuleId=v; }
 
     psBuddyManager& GetBuddyMgr() { return buddyManager; }
+    psCharacterQuestManager& GetQuestMgr() { return questManager; }
 
     ///  The new operator is overriden to call PoolAllocator template functions
     void *operator new(size_t);
@@ -1169,7 +1109,6 @@ protected:
     bool LoadAdvantages(PID use_id);
     bool LoadSkills(PID use_id);
     bool LoadTraits(PID use_id);
-    bool LoadQuestAssignments();
     bool LoadRelationshipInfo(PID pid);
     bool LoadBuddies( Result& myBuddy, Result& buddyOf);
     bool LoadMarriageInfo( Result& result);
@@ -1198,6 +1137,7 @@ protected:
     unsigned int                suicides;
     bool                        loaded;
     psBuddyManager              buddyManager;
+    psCharacterQuestManager     questManager;
 
     csRef<psMerchantInfo>       merchantInfo;           ///< Character's merchant info
     psCharacter*                merchant;               ///< The merchant this charcter trade with
@@ -1278,7 +1218,6 @@ protected:
     psMoney bankMoney;                                      ///< Money stored in the players bank account.
 
     csArray<psSpell*>         spellList;
-    csArray<QuestAssignment*> assignedQuests;
 
     csHash<charVariable, csString> charVariables; ///< Used to store character variables for this character.
     

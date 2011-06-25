@@ -2707,6 +2707,7 @@ bool CacheManager::PreloadScripts(EntityManager* entitymanager)
             if (!s)
             {
                 Error2("Couldn't load script %s\n", result[i]["name"]);
+                Error2("Script Data was:\n%s\n", result[i]["event_script"]);
                 return false;
             }
             scripts.Put(s->Name(), s);
