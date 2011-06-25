@@ -1102,7 +1102,7 @@ bool NpcTrigger::HaveAvailableResponses(Client * client, gemNPC * npc, NPCDialog
             {
                 // Check if all prerequisites are true, and available(no lockout)
                 if ( ((!resp->prerequisite || client->GetCharacterData()->CheckResponsePrerequisite(resp) ) && //checks if prerequisites are in order
-                     (!resp->quest || (resp->quest->Active() && client->GetCharacterData()->CheckQuestAvailable(resp->quest,npc->GetPID()))))  //checks if the player can get the quest
+                     (!resp->quest || (resp->quest->Active() && client->GetCharacterData()->GetQuestMgr().CheckQuestAvailable(resp->quest,npc->GetPID()))))  //checks if the player can get the quest
                      /*overrides the above while mantaining quest consistency in case of questtester */
                    ||(client->GetCharacterData()->GetActor() && client->GetCharacterData()->GetActor()->questtester &&
                      (!resp->quest || !resp->quest->GetParentQuest())))
@@ -1758,7 +1758,7 @@ csString VerifyQuestCompletedResponseOp::GetResponseScript()
 
 bool VerifyQuestCompletedResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber)
 {
-    bool avail = target->GetCharacterData()->CheckQuestCompleted(quest);
+    bool avail = target->GetCharacterData()->GetQuestMgr().CheckQuestCompleted(quest);
     if (!avail)
     {
         who->GetNPCDialogPtr()->SubstituteKeywords(target->GetClient(),error_msg);
@@ -1808,7 +1808,7 @@ csString VerifyQuestAssignedResponseOp::GetResponseScript()
 
 bool VerifyQuestAssignedResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber)
 {
-    bool avail = target->GetCharacterData()->CheckQuestAssigned(quest);
+    bool avail = target->GetCharacterData()->GetQuestMgr().CheckQuestAssigned(quest);
     if (!avail)
     {
         if (error_msg.IsEmpty() || error_msg.Length() == 0)
@@ -1862,7 +1862,7 @@ csString VerifyQuestNotAssignedResponseOp::GetResponseScript()
 
 bool VerifyQuestNotAssignedResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber)
 {
-    bool avail = target->GetCharacterData()->CheckQuestAssigned(quest);
+    bool avail = target->GetCharacterData()->GetQuestMgr().CheckQuestAssigned(quest);
     if (avail)
     {
         if (error_msg.IsEmpty() || error_msg.Length() == 0)
@@ -1936,7 +1936,7 @@ bool AssignQuestResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner
                GetMaxQuests(),target->GetCharacterData()->GetCharName());
     }
 
-    if (target->GetCharacterData()->CheckQuestAssigned(quest[owner->GetActiveQuest()]))
+    if (target->GetCharacterData()->GetQuestMgr().CheckQuestAssigned(quest[owner->GetActiveQuest()]))
     {
         Debug3(LOG_QUESTS, target->GetClient()->GetClientNum(),"Quest(%d) is already assigned for %s",owner->GetActiveQuest()+1,
                target->GetCharacterData()->GetCharName());
@@ -1956,7 +1956,7 @@ bool AssignQuestSelectOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,c
                quest_op->GetMaxQuests(),target->GetCharacterData()->GetCharName());
     }
 
-    if (target->GetCharacterData()->CheckQuestAssigned(quest_op->GetQuest(owner->GetActiveQuest())))
+    if (target->GetCharacterData()->GetQuestMgr().CheckQuestAssigned(quest_op->GetQuest(owner->GetActiveQuest())))
     {
         Debug3(LOG_QUESTS, target->GetClient()->GetClientNum(), "Quest(%d) is already assignd for %s",quest_op->GetQuest(owner->GetActiveQuest())->GetID(),
                target->GetCharacterData()->GetCharName());
@@ -2004,7 +2004,7 @@ bool CheckQuestTimeoutOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,c
                quest_op->GetMaxQuests(),target->GetCharacterData()->GetCharName());
     }
 
-    bool avail = target->GetCharacterData()->CheckQuestAvailable(quest_op->GetQuest(owner->GetActiveQuest()),
+    bool avail = target->GetCharacterData()->GetQuestMgr().CheckQuestAvailable(quest_op->GetQuest(owner->GetActiveQuest()),
                                                                  who->GetPID());
     if (!avail)
     {
@@ -2584,7 +2584,7 @@ void NpcDialogMenu::ShowMenu(Client *client,csTicks delay, gemNPC *npc)
 
         //check availability (as per lockout). Note as gm we show quest even if in lockout as > gm get
         //an error message in system even if they can't get it because testermode is off
-        if(triggers[i].quest && !IsGm && !IsTesting && !client->GetCharacterData()->CheckQuestAvailable(triggers[i].quest, npc->GetPID()))
+        if(triggers[i].quest && !IsGm && !IsTesting && !client->GetCharacterData()->GetQuestMgr().CheckQuestAvailable(triggers[i].quest, npc->GetPID()))
             continue;
 
         // Check to see about inserting a quest heading

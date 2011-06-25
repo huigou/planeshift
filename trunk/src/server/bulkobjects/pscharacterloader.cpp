@@ -430,7 +430,7 @@ bool psCharacterLoader::NewCharacterData(AccountID accountid, psCharacter *chard
 
 bool psCharacterLoader::UpdateQuestAssignments(psCharacter *chr)
 {
-    return chr->UpdateQuestAssignments();
+    return chr->GetQuestMgr().UpdateQuestAssignments();
 }
 
 bool psCharacterLoader::ClearCharacterSpell( psCharacter * character )

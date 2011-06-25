@@ -10564,8 +10564,8 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
 
         if(data->IsOnline())
         {
-            target->GetActor()->GetCharacterData()->AssignQuest(quest, 0);
-            if (target->GetActor()->GetCharacterData()->CompleteQuest(quest))
+            target->GetActor()->GetCharacterData()->GetQuestMgr().AssignQuest(quest, 0);
+            if (target->GetActor()->GetCharacterData()->GetQuestMgr().CompleteQuest(quest))
             {
                 psserver->SendSystemInfo(me->clientnum, "Quest %s completed for %s!", data->questName.GetData(), name.GetData());
             }
@@ -10614,13 +10614,13 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
         if(data->IsOnline()) //the player is online so we don't need to hit the database
         {
 
-            QuestAssignment *questassignment = target->GetActor()->GetCharacterData()->IsQuestAssigned(quest->GetID());
+            QuestAssignment *questassignment = target->GetActor()->GetCharacterData()->GetQuestMgr().IsQuestAssigned(quest->GetID());
             if (!questassignment)
             {
                 psserver->SendSystemError(me->clientnum, "Quest was never started for %s!", name.GetData());
                 return;
             }
-            target->GetActor()->GetCharacterData()->DiscardQuest(questassignment, true);
+            target->GetActor()->GetCharacterData()->GetQuestMgr().DiscardQuest(questassignment, true);
             psserver->SendSystemInfo(me->clientnum, "Quest %s discarded for %s!", data->questName.GetData(), name.GetData());
         }
         else //the player is offline so we have to hit the database
@@ -10647,7 +10647,7 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
 
         if(data->IsOnline()) //check if the player is online
         {
-            if (target->GetActor()->GetCharacterData()->AssignQuest(quest, 0)) //assign the quest to him
+            if (target->GetActor()->GetCharacterData()->GetQuestMgr().AssignQuest(quest, 0)) //assign the quest to him
             {
                 psserver->SendSystemInfo(me->clientnum, "Quest %s assigned to %s!", data->questName.GetData(), name.GetData());
             }
@@ -10671,7 +10671,7 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
         {
 
 
-            csArray<QuestAssignment*>& quests = target->GetCharacterData()->GetAssignedQuests();
+            csArray<QuestAssignment*>& quests = target->GetCharacterData()->GetQuestMgr().GetAssignedQuests();
             for (size_t i = 0; i < quests.GetSize(); i++)
             {
                 QuestAssignment *currassignment = quests.Get(i);

@@ -1282,14 +1282,14 @@ bool QuestManager::AddTrigger(csString& current_npc,const char *trigger,int prio
 void QuestManager::HandleQuestInfo(MsgEntry *me,Client *who)
 {
     psQuestInfoMessage msg(me);
-    QuestAssignment *q = who->GetActor()->GetCharacterData()->IsQuestAssigned(msg.id);
+    QuestAssignment *q = who->GetActor()->GetCharacterData()->GetQuestMgr().IsQuestAssigned(msg.id);
 
     if (q)
     {
         if (msg.command == psQuestInfoMessage::CMD_DISCARD)
         {
             // Discard quest assignment on request
-            who->GetActor()->GetCharacterData()->DiscardQuest(q);
+            who->GetActor()->GetCharacterData()->GetQuestMgr().DiscardQuest(q);
         }
         else
         {
@@ -1426,7 +1426,7 @@ bool QuestManager::GiveRewardToPlayer(Client *who, psItemStats* itemstat)
 
 void QuestManager::Assign(psQuest *quest, Client *who,gemNPC *assigner,csTicks timeDelay)
 {
-    who->GetActor()->GetCharacterData()->AssignQuest(quest, assigner->GetPID());
+    who->GetActor()->GetCharacterData()->GetQuestMgr().AssignQuest(quest, assigner->GetPID());
 
     psSystemMessage okmsg(who->GetClientNum() ,MSG_OK,   "You got a quest!");
     psSystemMessage newmsg(who->GetClientNum(),MSG_INFO, "You now have the %s quest.",quest->GetName() );
@@ -1444,7 +1444,7 @@ bool QuestManager::Complete(psQuest *quest, Client *who, csTicks timeDelay)
 {
     Debug3(LOG_QUESTS, who->GetAccountID().Unbox(), "Completing quest '%s' for character %s.", quest->GetName(), who->GetName());
 
-    bool ret = who->GetActor()->GetCharacterData()->CompleteQuest(quest);
+    bool ret = who->GetActor()->GetCharacterData()->GetQuestMgr().CompleteQuest(quest);
 
     // if it's a substep don't send additional info
     if (quest->GetParentQuest())
@@ -1472,7 +1472,7 @@ bool QuestManager::Uncomplete(psQuest *quest, Client *who, csTicks timeDelay)
 {
     Debug3(LOG_QUESTS, who->GetAccountID().Unbox(), "Uncompleting quest '%s' for character %s.", quest->GetName(), who->GetName());
 
-    bool ret = who->GetActor()->GetCharacterData()->DiscardQuest(quest, true);
+    bool ret = who->GetActor()->GetCharacterData()->GetQuestMgr().DiscardQuest(quest, true);
 
     // if it's a substep don't send additional info
     if (quest->GetParentQuest())

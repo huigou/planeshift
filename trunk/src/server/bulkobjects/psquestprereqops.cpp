@@ -240,7 +240,7 @@ bool psQuestPrereqOpQuestCompleted::Check(psCharacter * character)
 {
     if (quest == NULL)
         quest = psserver->GetCacheManager()->GetQuestByName(name);
-    return character->CheckQuestCompleted(quest);
+    return character->GetQuestMgr().CheckQuestCompleted(quest);
 }
 
 csString psQuestPrereqOpQuestCompleted::GetScriptOp()
@@ -267,7 +267,7 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpQuestCompleted::Copy()
 
 bool psQuestPrereqOpQuestAssigned::Check(psCharacter * character)
 {
-     return character->CheckQuestAssigned(quest);
+     return character->GetQuestMgr().CheckQuestAssigned(quest);
 }
 
 csString psQuestPrereqOpQuestAssigned::GetScriptOp()
@@ -290,7 +290,7 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpQuestAssigned::Copy()
 
 bool psQuestPrereqOpQuestCompletedCategory::Check(psCharacter * character)
 {
-    int count = character->NumberOfQuestsCompleted(category);
+    int count = character->GetQuestMgr().NumberOfQuestsCompleted(category);
 
     Debug5(LOG_QUESTS, character->GetPID().Unbox(), "Check for category %s in range %d <= %d <= %d",
            category.GetDataSafe(),min,count,max);
