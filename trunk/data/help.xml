@@ -469,7 +469,11 @@ Takes a screenshot and saves it in a folder named "screenshots" in your PlaneShi
 Allows to test an animation. No one will be able to see it except you. Name is the name of the animation, fade in and fade out define the fade time for the animation.</topic>
         <topic name="/tip">/tip 
 
-Requests a tip from the server.</topic>
+            Requests a tip from the server.</topic>
+         <topic name="/version">/version
+
+Prints out the current version of the game.</topic>
+
     </branch>
     <branch name="GM Commands" level="1">
 Commands available to game master level characters.  Note that this is a full list of abilities, and not all access groups have everything listed here.
