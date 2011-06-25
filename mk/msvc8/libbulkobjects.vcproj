@@ -1753,6 +1753,9 @@
 				RelativePath="..\..\src\server\bulkobjects\pscharinventory.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\server\bulkobjects\pscharquestmgr.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\server\bulkobjects\psglyph.cpp">
 			</File>
 			<File
@@ -1839,6 +1842,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\server\bulkobjects\pscharinventory.h">
+			</File>
+			<File
+				RelativePath="..\..\src\server\bulkobjects\pscharquestmgr.h">
 			</File>
 			<File
 				RelativePath="..\..\src\server\bulkobjects\psglyph.h">
