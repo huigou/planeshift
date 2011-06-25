@@ -38,6 +38,7 @@
 #include "net/clientmsghandler.h"
 
 #include "util/strutil.h"
+#include "util/pscssetup.h"
 
 #include "gui/psmainwidget.h"
 #include "gui/chatwindow.h"
@@ -73,6 +74,7 @@ psUtilityCommands::psUtilityCommands(ClientMsgHandler *mh,
     cmdsource->Subscribe("/repaintlabels",this);
     //cmdsource->Subscribe("/dumpmovements",this);
     cmdsource->Subscribe("/testanim",this);
+    cmdsource->Subscribe("/version", this);
 }
 
 psUtilityCommands::~psUtilityCommands()
@@ -88,6 +90,7 @@ psUtilityCommands::~psUtilityCommands()
     cmdsource->Unsubscribe("/repaintlabels",this);
     //cmdsource->Unsubscribe("/dumpmovements",this);
     cmdsource->Unsubscribe("/testanim",this);
+    cmdsource->Unsubscribe("/version", this);
 }
 
 const char *psUtilityCommands::HandleCommand(const char *cmd)
@@ -204,7 +207,10 @@ const char *psUtilityCommands::HandleCommand(const char *cmd)
         }
         return "try /reload sound";
     }
-
+    else if (words[0] == "/version" )
+    {
+        return APPNAME;
+    }
     return "Unimplemented command received by psUtilityCommands.";
 }
 
