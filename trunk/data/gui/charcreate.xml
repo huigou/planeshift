@@ -6,6 +6,11 @@
         <bgimage resource="login_background" />
         <font name="cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="15" />
 
+        <form>
+            <enter name="charfirstnametext" />
+            <tab name="charlastnametext" />
+        </form>
+
         <!-- Title -->
         <widget name="label_charcreate" factory="pawsTextBox">
             <frame x="200" y="40" width="400" height="35" />
