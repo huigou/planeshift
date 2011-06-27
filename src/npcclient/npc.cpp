@@ -241,6 +241,14 @@ void NPC::Load(const char* name, PID pid, NPCType* type, const char* region_name
     this->brain = new NPCType(*type, eventmanager);
 }
 
+void NPC::SetBrain(NPCType *type, EventManager* eventmanager)
+{
+    delete this->brain;
+    this->type = type->GetName();
+    this->brain = new NPCType(*type, eventmanager);
+
+}
+
 bool NPC::Load(iResultRow& row, csHash<NPCType*, const char*>& npctypes, EventManager* eventmanager, PID usePID)
 {
     name = row["name"];

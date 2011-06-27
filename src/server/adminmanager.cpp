@@ -1297,6 +1297,54 @@ csString AdminCmdDataKillNPC::GetHelpMessage()
     return "Syntax: \"" + command + " " + GetHelpMessagePartForTarget() + " [reload]\"";
 }
 
+AdminCmdDataChangeNPCType::AdminCmdDataChangeNPCType(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client *client, WordArray &words)
+: AdminCmdDataTarget("/changenpctype", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET), npcType("")
+{
+    size_t index = 1;
+    bool found;
+
+    // when help is requested, return immediate
+    if (IsHelp(words[index]))
+        return;
+
+    // try first word as a target 
+    if ((found = ParseTarget(msgManager, me, msg, client, words[index])))
+    {
+        index++;
+    }
+
+    // if first word a target or client has selected a valid target
+    if (found || IsTargetType(ADMINCMD_TARGET_CLIENTTARGET))
+    {
+        // the npc type name is mandatory
+        if (words.GetCount() == index+1)
+        {
+            npcType = words[index];
+            index++;
+        }
+        else if (words.GetCount() > index) 
+        {
+            ParseError(me, "Too many parameters");
+        }
+        else
+        {
+            ParseError(me, "Missing parameters");
+        }
+    }
+    else
+    {
+        ParseError(me, "No target specified");
+    }
+}
+
+ADMINCMDFACTORY_IMPLEMENT_MSG_FACTORY_CREATE(AdminCmdDataChangeNPCType)
+
+csString AdminCmdDataChangeNPCType::GetHelpMessage()
+{
+    return "Syntax: \"" + command + " " + GetHelpMessagePartForTarget() + " <npc type name>\"";
+}
+
+
 AdminCmdDataSetStackable::AdminCmdDataSetStackable(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client *client, WordArray &words)
 : AdminCmdDataTarget("/setstackable", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_EID |ADMINCMD_TARGET_CLIENTTARGET), subCommandList("info on off reset help")
 {
@@ -3782,7 +3830,6 @@ csString AdminCmdDataTime::GetHelpMessage()
     return "Syntax: \"" + command + " " + subCommandList.GetHelpMessage() + " [options]\"";
 }
 
-
 AdminCmdDataFactory::AdminCmdDataFactory()
 {
     // register all AdminCmdData classes here
@@ -3793,6 +3840,7 @@ AdminCmdDataFactory::AdminCmdDataFactory()
     RegisterMsgFactoryFunction(new AdminCmdDataUpdateRespawn());
     RegisterMsgFactoryFunction(new AdminCmdDataBan());
     RegisterMsgFactoryFunction(new AdminCmdDataKillNPC());
+    RegisterMsgFactoryFunction(new AdminCmdDataChangeNPCType());
     RegisterMsgFactoryFunction(new AdminCmdDataSetStackable());
     RegisterMsgFactoryFunction(new AdminCmdDataLoadQuest());
     RegisterMsgFactoryFunction(new AdminCmdDataItem());
@@ -4006,6 +4054,10 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, Client *client)
     else if (data->command == "/killnpc")
     {
         KillNPC(me, msg, data, client);
+    }
+    else if (data->command == "/changenpctype")
+    {
+        ChangeNPCType(me, msg, data, client);
     }
     else if (data->command == "/rndmsgtest")
     {
@@ -7465,6 +7517,22 @@ void AdminManager::KillNPC (MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData* 
     psserver->SendSystemError(me->clientnum, "No NPC found to kill.");
 }
 
+void AdminManager::ChangeNPCType(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client *client )
+{
+    AdminCmdDataChangeNPCType* data = dynamic_cast<AdminCmdDataChangeNPCType*>(cmddata);
+
+    gemNPC *target = dynamic_cast<gemNPC*>(data->targetObject);
+    if (target && target->GetClientID() == 0)
+    {
+        // Get the pid so we know what to restore.
+        PID npcid = target->GetCharacterData()->GetPID();
+        //send the change command.
+        psserver->GetNPCManager()->ChangeNPCBrain(target, client, data->npcType.GetDataSafe());
+        psserver->SendSystemResult(me->clientnum, "NPC (%s) has been changed type.", npcid.Show().GetData());
+        return;
+    }
+    psserver->SendSystemError(me->clientnum, "No NPC found to change type.");
+}
 
 void AdminManager::Admin(int clientnum, Client *client, int requestedLevel)
 {
@@ -8841,7 +8909,7 @@ void AdminManager::SendSpawnItems (MsgEntry* me, Client *client)
     {
         unsigned id = result[i].GetUInt32(0);
         psItemStats* item = psserver->GetCacheManager()->GetBasicItemStatsByID(id);
-        if(item && !item->IsMoney() && item->IsSpawnable())
+        if(item && !item->IsMoney() /*&& item->IsSpawnable()*/)
         {
             csString name(item->GetName());
             csString mesh(item->GetMeshName());
@@ -8928,8 +8996,8 @@ void AdminManager::SpawnItemInv( MsgEntry* me, psGMSpawnItem& msg, Client *clien
     
     if(!stats->IsSpawnable())
     {
-        psserver->SendSystemError(me->clientnum, "This item cannot be spawned!");
-        return;
+        //psserver->SendSystemError(me->clientnum, "This item cannot be spawned!");
+        //return;
     }
     
     psItem* item = stats->InstantiateBasicItem();

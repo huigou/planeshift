@@ -794,9 +794,21 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
                 // Extract the data
                 EID npc_eid = EID(msg->GetUInt32());
                 uint32_t clientnum = msg->GetUInt32();
-		csString infoRequestSubCmd = msg->GetStr();
+                csString infoRequestSubCmd = msg->GetStr();
                 
                 msgtext.AppendFmt("NPC: %s Client: %ul SubCmd: %s",ShowID(npc_eid),clientnum,infoRequestSubCmd.GetDataSafe());
+                break;
+            }
+            case psNPCCommandsMessage::PCPT_CHANGE_BRAIN:
+            {
+                msgtext.Append("PCPT_CHANGE_BRAIN: ");
+                
+                // Extract the data
+                EID npc_eid = EID(msg->GetUInt32());
+                uint32_t clientnum = msg->GetUInt32();
+                csString brainType = msg->GetStr();
+                
+                msgtext.AppendFmt("NPC: %s Client: %ul braintype: %s", ShowID(npc_eid), clientnum, brainType.GetDataSafe());
                 break;
             }
 

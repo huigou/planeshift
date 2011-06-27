@@ -180,6 +180,13 @@ public:
     Behavior *GetCurrentBehavior() { return brain->GetCurrentBehavior(); }
     NPCType  *GetBrain() { return brain; }
 
+    /**
+     * Sets a new brain (npctype)  to this npc.
+     * @param type The new type to assign to this npc.
+     * @param eventmanager A pointer to the npcclient eventmanager.
+     */
+    void SetBrain(NPCType *type, EventManager* eventmanager);
+
     /** Callback for debug scope timers
      */
     void ScopedTimerCallback(const ScopedTimer* timer);

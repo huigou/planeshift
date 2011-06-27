@@ -124,6 +124,14 @@ public:
     /// Let the superclient know that info where requested for a npc
     void QueueInfoRequestPerception(gemNPC* npc, Client* client, const char* infoRequestSubCmd);
 
+    /**
+     * Requests the npcclient to change the brain of this npc (the type) to another one.
+     * @param npc The npc which will be changed.
+     * @param client The client requesting the action.
+     * @param brainName The name of the new brain (npctype) to associate to the npc.
+     */
+    void ChangeNPCBrain(gemNPC* npc, Client* client, const char* brainName);
+
     /// Send all queued commands and perceptions to active superclients and reset the queues.
     void SendAllCommands(bool createNewTick = true);
 
