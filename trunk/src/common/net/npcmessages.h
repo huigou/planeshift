@@ -233,7 +233,8 @@ public:
         PCPT_TRANSFER,
         PCPT_SPAWNED,
         PCPT_TELEPORT,
-        PCPT_INFO_REQUEST //Command to superclient, not a perception
+        PCPT_INFO_REQUEST, //Command to superclient, not a perception
+        PCPT_CHANGE_BRAIN //Command to superclient used to change the brain of an npc.
     };
 
     enum PerceptionTalkType

@@ -2362,6 +2362,18 @@ void NPCManager::QueueInfoRequestPerception(gemNPC* npc, Client* client, const c
     Debug2(LOG_NPC, npc->GetEID().Unbox(), "Added Info Request perception for %s.\n", ShowID(npc->GetEID()) );    
 }
 
+void NPCManager::ChangeNPCBrain(gemNPC* npc, Client* client, const char* brainName)
+{
+    CheckSendPerceptionQueue(sizeof(int8_t)+sizeof(uint32_t)*2+(strlen(brainName)+1));
+    outbound->msg->Add( (int8_t) psNPCCommandsMessage::PCPT_CHANGE_BRAIN);
+    outbound->msg->Add(npc->GetEID().Unbox());
+    outbound->msg->Add(client->GetClientNum());
+    outbound->msg->Add(brainName);
+    cmd_count++;
+    Debug2(LOG_NPC, npc->GetEID().Unbox(), "Added Brain Change perception for %s.\n", ShowID(npc->GetEID()));
+}
+
+
 
 void NPCManager::SendAllCommands(bool createNewTick)
 {

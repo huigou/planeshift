@@ -921,13 +921,40 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
 
                 npc->Printf("Got info request.");
 
-		csString reply("NPCClent: ");
-		reply.Append(npc->Info());
+                csString reply("NPCClent: ");
+                reply.Append(npc->Info());
 
-		QueueInfoReplyCommand(clientNum,reply);
+                QueueInfoReplyCommand(clientNum,reply);
 
                 break;
 
+            }
+
+            case psNPCCommandsMessage::PCPT_CHANGE_BRAIN:
+            {
+                EID npc_eid = EID(msg->GetUInt32());
+                uint32_t clientNum = msg->GetUInt32();
+                csString brainType = msg->GetStr();
+
+                NPC *npc = npcclient->FindNPC(npc_eid);
+
+                if (!npc)
+                    break;
+
+                npc->Printf("Got change brain request to %s.", brainType.GetDataSafe());
+
+                //search for the requested npc type
+
+                NPCType* type = npcclient->FindNPCType(brainType.GetDataSafe());
+                if (!type)
+                {
+                    Error2("NPC type '%s' is not found",(const char *)brainType);
+                    break;
+                }
+
+                //if found set it
+                npc->SetBrain(type, npcclient->GetEventMgr());
+                break;
             }
 
             default:

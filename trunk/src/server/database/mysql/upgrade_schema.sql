@@ -1612,7 +1612,7 @@ CREATE TABLE  `planeshift`.`sc_npctypes` (
 #1260 - Stefano Angeleri - expanded loot rules functionalities
 
 ALTER TABLE `loot_rule_details` ADD COLUMN `min_item` INTEGER UNSIGNED NOT NULL DEFAULT 1 COMMENT 'The minimum amount of these items which could be created' AFTER `item_stat_id`,
- ADD COLUMN `max_item` INTEGER UNSIGNED NOT NULL DEFAULT 1 COMMENT 'The maximum amount of these items which could be created' AFTER `min_items`,
+ ADD COLUMN `max_item` INTEGER UNSIGNED NOT NULL DEFAULT 1 COMMENT 'The maximum amount of these items which could be created' AFTER `min_item`,
  ADD COLUMN `randomize_probability` FLOAT(5,4)  NOT NULL DEFAULT '0.00000' COMMENT 'The probability this items will be randomized if choosen' AFTER `randomize`;
 UPDATE `server_options` SET `option_value`='1260' WHERE `option_name`='db_version';
 ALTER TABLE `planeshift`.`sc_waypoints` MODIFY COLUMN `radius` DOUBLE(10,2)  NOT NULL DEFAULT '0.00';
