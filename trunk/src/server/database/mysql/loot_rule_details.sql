@@ -19,8 +19,8 @@ CREATE TABLE  `planeshift`.`loot_rule_details` (
   `max_money` int(10) unsigned NOT NULL DEFAULT '0',
   `randomize` tinyint(1) NOT NULL DEFAULT '0',
   `randomize_probability` float(5,4) NOT NULL DEFAULT '1.0000' COMMENT 'The probability this items will be randomized if choosen',
-  PRIMARY KEY (`id`),
-) ENGINE=MyISAM DEFAULT CHARSET=latin1
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 #
 # Dumping data for table 'loot_rule_details'
