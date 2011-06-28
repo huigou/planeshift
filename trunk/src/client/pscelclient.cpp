@@ -1992,7 +1992,7 @@ void GEMClientActor::RefreshCal3d()
         CS::Animation::iSkeletonAnimNode* rootNode = animeshObject->GetSkeleton()->GetAnimationPacket()->GetAnimationRoot();
         speedNode = scfQueryInterface<CS::Animation::iSkeletonSpeedNode> (rootNode->FindNode("speed"));
     }
-    CS_ASSERT(cal3dstate);
+    CS_ASSERT(cal3dstate || animeshObject);
 }
 
 void GEMClientActor::SetChatBubbleID(unsigned int chatBubbleID)
