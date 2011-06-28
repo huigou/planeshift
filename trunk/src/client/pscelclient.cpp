@@ -1971,10 +1971,15 @@ void GEMClientActor::SetAlive( bool newvalue, bool newactor )
 
 void GEMClientActor::SetIdleAnimation(const char* anim)
 {
-    if(!cal3dstate) return;
+    if(!cal3dstate && !speedNode.IsValid()) return;
     cal3dstate->SetDefaultIdleAnim(anim);
     if (lastSentVelocity.IsZero())
-        cal3dstate->SetVelocity(0);
+    {
+        if(cal3dstate)
+            cal3dstate->SetVelocity(0);
+        else
+            speedNode->SetSpeed(0);
+    }
 }
 
 void GEMClientActor::RefreshCal3d()
