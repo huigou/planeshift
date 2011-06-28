@@ -1858,15 +1858,24 @@ void GEMClientActor::SetAnimationVelocity(const csVector3& velocity)
     if (!alive)  // No zombies please
         return;
 
-    if(!cal3dstate)
+    if(!cal3dstate && !speedNode.IsValid())
         return;
 
     // Taking larger of the 2 axis; cal3d axis are the opposite of CEL's
     bool useZ = ABS(velocity.z) > ABS(velocity.x);
     float cal3dvel = useZ ? velocity.z : velocity.x;
     if(cal3dvel == 0.0)
-    	cal3dvel = velocity.y;
-    cal3dstate->SetVelocity(-cal3dvel, &psengine->GetRandomGen());
+    {
+        cal3dvel = velocity.y;
+    }
+    if(cal3dstate)
+    {
+        cal3dstate->SetVelocity(-cal3dvel, &psengine->GetRandomGen());
+    }
+    else
+    {
+        speedNode->SetSpeed(-cal3dvel);
+    }
     if((velocity.x != 0 || velocity.z != 0) && velocity.Norm() < 2)
     {
 
@@ -1972,6 +1981,11 @@ void GEMClientActor::RefreshCal3d()
 {
     cal3dstate =  scfQueryInterface<iSpriteCal3DState > ( pcmesh->GetMeshObject());
     animeshObject = scfQueryInterface<CS::Mesh::iAnimatedMesh>(pcmesh->GetMeshObject());
+    if(animeshObject)
+    {
+        CS::Animation::iSkeletonAnimNode* rootNode = animeshObject->GetSkeleton()->GetAnimationPacket()->GetAnimationRoot();
+        speedNode = scfQueryInterface<CS::Animation::iSkeletonSpeedNode> (rootNode->FindNode("speed"));
+    }
     CS_ASSERT(cal3dstate);
 }
 

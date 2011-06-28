@@ -32,6 +32,7 @@
 #include <iengine/sector.h>
 #include <imesh/animesh.h>
 #include <imesh/animnode/skeleton2anim.h>
+#include <imesh/animnode/speed.h>
 
 //=============================================================================
 // Project Includes
@@ -530,6 +531,7 @@ public:
 
     csRef<iSpriteCal3DState> cal3dstate;
     csRef<CS::Mesh::iAnimatedMesh> animeshObject;
+    csRef<CS::Animation::iSkeletonSpeedNode> speedNode;
 
     /**
      * This optimal routine tries to get the animation index given an
