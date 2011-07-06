@@ -725,7 +725,7 @@ void SpawnManager::KillNPC(gemActor *obj, gemActor* killer)
     {
         psserver->GetNPCManager()->PetHasBeenKilled(obj->GetNPCPtr());
     }
-    
+
 
     // Set timer for when NPC will disappear
     csTicks delay = (respawn)?respawn->GetDeadRemainTime():5000;
@@ -1412,7 +1412,7 @@ void LootEntrySet::CreateMultipleLoot(psCharacter *chr, size_t numModifiers)
             for(int y = 0; y < itemAmount; y++)
             {
                 psItem* loot_item = entries[i]->item->InstantiateBasicItem();
-                
+
                 if (entries[i]->randomize && psserver->rng->Get() <= entries[i]->randomizeProbability)
                     loot_item = lootRandomizer->RandomizeItem( loot_item,
                                                                maxcost,
@@ -1501,7 +1501,3 @@ void psItemSpawnEvent::Trigger()
         CPrintf(CON_ERROR,"Couldn't spawn item %u",schedule->GetItemID());
     }
 }
-
-
-
-
