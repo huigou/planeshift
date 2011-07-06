@@ -1426,7 +1426,7 @@ void LootEntrySet::CreateMultipleLoot(psCharacter *chr, size_t numModifiers)
                     // print out the stats
                     CPrintf(CON_CMDOUTPUT,
                             "Randomized item (%d modifiers) : \'%s\', %s\n"
-                            "  Quality : %.2f  Weight : %.2f  Size : %d  Price : %d\n",
+                            "  Quality : %.2f  Weight : %.2f  Size : %f  Price : %d\n",
                             numModifiers,
                             loot_item->GetName(),
                             loot_item->GetDescription(),

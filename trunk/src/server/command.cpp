@@ -2411,6 +2411,9 @@ int com_randomloot( char* loot )
             testEntry->min_money = 0;       // ignore money
             testEntry->max_money = 0;
             testEntry->randomize = true;
+            testEntry->min_item = 1;
+            testEntry->max_item = 1;
+            testEntry->randomizeProbability = 1.0;
 
             // add loot entry into set
             testLootEntrySet->AddLootEntry(testEntry);
