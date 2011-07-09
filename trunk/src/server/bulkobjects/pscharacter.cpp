@@ -109,8 +109,8 @@ void psCharacter::operator delete(void *releasePtr)
 }
 
 psCharacter::psCharacter() : inventory(this),
-    guildinfo(NULL), attributes(this), modifiers(this),
-    skills(this), acquaintances(101, 10, 101), npcMasterId(0), deaths(0), kills(0), suicides(0), loaded(false),
+    guildinfo(NULL), modifiers(this), skills(this),
+    acquaintances(101, 10, 101), npcMasterId(0), deaths(0), kills(0), suicides(0), loaded(false),
     race(NULL)
 {
     characterType = PSCHARACTER_TYPE_UNKNOWN;
@@ -312,13 +312,6 @@ bool psCharacter::Load(iResultRow& row)
 
     SetLifeDescription(row["description_life"]); //Loads the life events added by players
 
-    attributes[PSITEMSTATS_STAT_STRENGTH] .   SetBase((int) row.GetFloat("base_strength"));
-    attributes[PSITEMSTATS_STAT_AGILITY]   .  SetBase((int) row.GetFloat("base_agility"));
-    attributes[PSITEMSTATS_STAT_ENDURANCE]  . SetBase((int) row.GetFloat("base_endurance"));
-    attributes[PSITEMSTATS_STAT_INTELLIGENCE].SetBase((int) row.GetFloat("base_intelligence"));
-    attributes[PSITEMSTATS_STAT_WILL]       . SetBase((int) row.GetFloat("base_will"));
-    attributes[PSITEMSTATS_STAT_CHARISMA]  .  SetBase((int) row.GetFloat("base_charisma"));
-
     // NPC fields here
     npcSpawnRuleId = row.GetUInt32("npc_spawn_rule");
     npcMasterId    = row.GetUInt32("npc_master_id");
@@ -358,6 +351,11 @@ bool psCharacter::Load(iResultRow& row)
     SetStamina(mod < 0 ? GetMaxPStamina().Base() : mod,true);
     mod = row.GetFloat("stamina_mental");
     SetStamina(mod < 0 ? GetMaxMStamina().Base() : mod,false);
+
+    if( GetHP() <= 0 )
+        SetHitPoints( GetMaxHP().Base() );
+    if( GetMana() <= 0 )
+        SetMana( GetMaxMana().Base() );
 
     vitals->SetOrigVitals(); // This saves them as loaded state for restoring later without hitting db, npc death resurrect.
 
@@ -904,42 +902,12 @@ bool psCharacter::LoadSkills(PID use_id)
                 skills.SetSkillPractice(  skill, skillResult[i].GetInt("skill_Z") );
                 skills.SetSkillKnowledge( skill, skillResult[i].GetInt("skill_Y") );
                 skills.SetSkillRank(      skill, skillResult[i].GetInt("skill_Rank"),false );
-
-                //check if the skill is a stat and set it in case (this overrides the present base ones if present
-                if(skill == PSSKILL_AGI)
-                    attributes[PSITEMSTATS_STAT_AGILITY]     .SetBase(skillResult[i].GetInt("skill_Rank"));
-                else if(skill == PSSKILL_STR)
-                    attributes[PSITEMSTATS_STAT_STRENGTH]    .SetBase(skillResult[i].GetInt("skill_Rank"));
-                else if(skill == PSSKILL_END)
-                    attributes[PSITEMSTATS_STAT_ENDURANCE]   .SetBase(skillResult[i].GetInt("skill_Rank"));
-                else if(skill == PSSKILL_INT)
-                    attributes[PSITEMSTATS_STAT_INTELLIGENCE].SetBase(skillResult[i].GetInt("skill_Rank"));
-                else if(skill == PSSKILL_WILL)
-                    attributes[PSITEMSTATS_STAT_WILL]        .SetBase(skillResult[i].GetInt("skill_Rank"));
-                else if(skill == PSSKILL_CHA)
-                    attributes[PSITEMSTATS_STAT_CHARISMA]    .SetBase(skillResult[i].GetInt("skill_Rank"));
-                skills.Get(skill).dirtyFlag = false;
             }
         }
         skills.Calculate();
     }
     else
         return false;
-
-    // Set stats ranks
-    skills.SetSkillRank(PSSKILL_AGI,  attributes[PSITEMSTATS_STAT_AGILITY].Base()     , false);
-    skills.SetSkillRank(PSSKILL_CHA,  attributes[PSITEMSTATS_STAT_CHARISMA].Base()    , false);
-    skills.SetSkillRank(PSSKILL_END,  attributes[PSITEMSTATS_STAT_ENDURANCE].Base()   , false);
-    skills.SetSkillRank(PSSKILL_INT,  attributes[PSITEMSTATS_STAT_INTELLIGENCE].Base(), false);
-    skills.SetSkillRank(PSSKILL_WILL, attributes[PSITEMSTATS_STAT_WILL].Base()        , false);
-    skills.SetSkillRank(PSSKILL_STR,  attributes[PSITEMSTATS_STAT_STRENGTH].Base()    , false);
-
-    skills.Get(PSSKILL_AGI).dirtyFlag = false;
-    skills.Get(PSSKILL_CHA).dirtyFlag = false;
-    skills.Get(PSSKILL_END).dirtyFlag = false;
-    skills.Get(PSSKILL_INT).dirtyFlag = false;
-    skills.Get(PSSKILL_WILL).dirtyFlag = false;
-    skills.Get(PSSKILL_STR).dirtyFlag = false;
 
     return true;
 }
@@ -1013,12 +981,12 @@ void OverridableRace::OnChange()
     if(!raceInfo)
         return;
 
-    character->Stats()[PSITEMSTATS_STAT_STRENGTH] .   SetBase(int(raceInfo->GetBaseAttribute(PSITEMSTATS_STAT_STRENGTH)));
-    character->Stats()[PSITEMSTATS_STAT_AGILITY]   .  SetBase(int(raceInfo->GetBaseAttribute(PSITEMSTATS_STAT_AGILITY)));
-    character->Stats()[PSITEMSTATS_STAT_ENDURANCE]  . SetBase(int(raceInfo->GetBaseAttribute(PSITEMSTATS_STAT_ENDURANCE)));
-    character->Stats()[PSITEMSTATS_STAT_INTELLIGENCE].SetBase(int(raceInfo->GetBaseAttribute(PSITEMSTATS_STAT_INTELLIGENCE)));
-    character->Stats()[PSITEMSTATS_STAT_WILL]       . SetBase(int(raceInfo->GetBaseAttribute(PSITEMSTATS_STAT_WILL)));
-    character->Stats()[PSITEMSTATS_STAT_CHARISMA]  .  SetBase(int(raceInfo->GetBaseAttribute(PSITEMSTATS_STAT_CHARISMA)));
+    character->Skills().SetSkillRank(PSSKILL_STR, int(raceInfo->GetBaseAttribute(PSITEMSTATS_STAT_STRENGTH)) );
+    character->Skills().SetSkillRank(PSSKILL_AGI, int(raceInfo->GetBaseAttribute(PSITEMSTATS_STAT_AGILITY)) );
+    character->Skills().SetSkillRank(PSSKILL_END, int(raceInfo->GetBaseAttribute(PSITEMSTATS_STAT_ENDURANCE)) );
+    character->Skills().SetSkillRank(PSSKILL_INT, int(raceInfo->GetBaseAttribute(PSITEMSTATS_STAT_INTELLIGENCE)) );
+    character->Skills().SetSkillRank(PSSKILL_WILL, int(raceInfo->GetBaseAttribute(PSITEMSTATS_STAT_WILL)) );
+    character->Skills().SetSkillRank(PSSKILL_CHA, int(raceInfo->GetBaseAttribute(PSITEMSTATS_STAT_CHARISMA)) );
 
     //as we are changing or obtaining for the first time a race set the inventory correctly for this.
     character->Inventory().SetBasicArmor(raceInfo);
@@ -1900,12 +1868,12 @@ void psCharacter::CalculateMaxStamina()
 {
     MathEnvironment env;
     // Set all the skills vars
-    env.Define("STR",  attributes[PSITEMSTATS_STAT_STRENGTH].Current());
-    env.Define("END",  attributes[PSITEMSTATS_STAT_ENDURANCE].Current());
-    env.Define("AGI",  attributes[PSITEMSTATS_STAT_AGILITY].Current());
-    env.Define("INT",  attributes[PSITEMSTATS_STAT_INTELLIGENCE].Current());
-    env.Define("WILL", attributes[PSITEMSTATS_STAT_WILL].Current());
-    env.Define("CHA",  attributes[PSITEMSTATS_STAT_CHARISMA].Current());
+    env.Define("STR",  GetSkillRank(PSSKILL_STR).Current());
+    env.Define("END",  GetSkillRank(PSSKILL_END).Current());
+    env.Define("AGI",  GetSkillRank(PSSKILL_AGI).Current());
+    env.Define("INT",  GetSkillRank(PSSKILL_INT).Current());
+    env.Define("WILL", GetSkillRank(PSSKILL_WILL).Current());
+    env.Define("CHA",  GetSkillRank(PSSKILL_CHA).Current());
 
     // Calculate
     staminaCalc->Evaluate(&env);
@@ -2478,51 +2446,51 @@ double psCharacter::GetProperty(MathEnvironment* env, const char* ptr)
     }
     else if (property == "Strength")
     {
-        return attributes[PSITEMSTATS_STAT_STRENGTH].Current();
+        return GetSkillRank(PSSKILL_STR).Current();
     }
     else if (property == "Agility")
     {
-        return attributes[PSITEMSTATS_STAT_AGILITY].Current();
+        return GetSkillRank(PSSKILL_AGI).Current();
     }
     else if (property == "Endurance")
     {
-        return attributes[PSITEMSTATS_STAT_ENDURANCE].Current();
+        return GetSkillRank(PSSKILL_END).Current();
     }
     else if (property == "Intelligence")
     {
-        return attributes[PSITEMSTATS_STAT_INTELLIGENCE].Current();
+        return GetSkillRank(PSSKILL_INT).Current();
     }
     else if (property == "Will")
     {
-        return attributes[PSITEMSTATS_STAT_WILL].Current();
+        return GetSkillRank(PSSKILL_WILL).Current();
     }
     else if (property == "Charisma")
     {
-        return attributes[PSITEMSTATS_STAT_CHARISMA].Current();
+        return GetSkillRank(PSSKILL_CHA).Current();
     }
     else if (property == "BaseStrength")
     {
-        return attributes[PSITEMSTATS_STAT_STRENGTH].Base();
+        return GetSkillRank(PSSKILL_STR).Base();
     }
     else if (property == "BaseAgility")
     {
-        return attributes[PSITEMSTATS_STAT_AGILITY].Base();
+        return GetSkillRank(PSSKILL_AGI).Base();
     }
     else if (property == "BaseEndurance")
     {
-        return attributes[PSITEMSTATS_STAT_ENDURANCE].Base();
+        return GetSkillRank(PSSKILL_END).Base();
     }
     else if (property == "BaseIntelligence")
     {
-        return attributes[PSITEMSTATS_STAT_INTELLIGENCE].Base();
+        return GetSkillRank(PSSKILL_INT).Base();
     }
     else if (property == "BaseWill")
     {
-        return attributes[PSITEMSTATS_STAT_WILL].Base();
+        return GetSkillRank(PSSKILL_WILL).Base();
     }
     else if (property == "BaseCharisma")
     {
-        return attributes[PSITEMSTATS_STAT_CHARISMA].Base();
+        return GetSkillRank(PSSKILL_CHA).Base();
     }
     else if (property == "AllArmorStrMalus")
     {
@@ -2592,7 +2560,7 @@ double psCharacter::CalcFunction(MathEnvironment* env, const char* functionName,
     {
         PSITEMSTATS_STAT stat = (PSITEMSTATS_STAT)(int)params[0];
 
-        return (double) attributes[stat].Current();
+        return (double) GetSkillRank(statToSkill(stat)).Current();
     }
     else if (function == "GetAverageSkillValue")
     {
@@ -2749,34 +2717,18 @@ void psCharacter::Train( PSSKILL skill, int yIncrease )
             cskill.y = 0;
             cskill.CalculateCosts(this);
 
-            // Insert into the stats
-            attributes[stat].SetBase(cskill.rank.Base());
-
-            // Save stats
-            if(GetActor()->GetClientID() != 0)
+            //TEST IF THIS IS NEEDED. CAMERON.
+            RecalculateStats();
+            
+            if(!psServer::CharacterLoader.UpdateCharacterSkill(
+                pid,
+                skill,
+                skills.GetSkillPractice((PSSKILL)skill),
+                skills.GetSkillKnowledge((PSSKILL)skill),
+                skills.GetSkillRank((PSSKILL)skill).Base()
+                ))
             {
-                const char *fieldnames[]= {
-                   "base_strength",
-                   "base_agility",
-                   "base_endurance",
-                   "base_intelligence",
-                   "base_will",
-                   "base_charisma"
-                    };
-                psStringArray fieldvalues;
-                fieldvalues.FormatPush("%d", attributes[PSITEMSTATS_STAT_STRENGTH].Base());
-                fieldvalues.FormatPush("%d", attributes[PSITEMSTATS_STAT_AGILITY].Base());
-                fieldvalues.FormatPush("%d", attributes[PSITEMSTATS_STAT_ENDURANCE].Base());
-                fieldvalues.FormatPush("%d", attributes[PSITEMSTATS_STAT_INTELLIGENCE].Base());
-                fieldvalues.FormatPush("%d", attributes[PSITEMSTATS_STAT_WILL].Base());
-                fieldvalues.FormatPush("%d", attributes[PSITEMSTATS_STAT_CHARISMA].Base());
-
-                csString id((size_t) pid.Unbox());
-
-                if(!db->GenericUpdateWithID("characters","id",id,fieldnames,fieldvalues))
-                {
-                    Error2("Couldn't save stats for character %u!\n", pid.Unbox());
-                }
+                Error2("Couldn't save skills for character %u!\n", pid.Unbox());
             }
         }
     }
@@ -2908,34 +2860,21 @@ void psCharacter::SetSkillRank(PSSKILL which, unsigned int rank)
     skills.SetSkillRank(which, rank);
     skills.SetSkillKnowledge(which,0);
     skills.SetSkillPractice(which,0);
-
-    if (which == PSSKILL_AGI)
-        attributes[PSITEMSTATS_STAT_AGILITY].SetBase(rank);
-    else if (which == PSSKILL_CHA)
-        attributes[PSITEMSTATS_STAT_CHARISMA].SetBase(rank);
-    else if (which == PSSKILL_END)
-        attributes[PSITEMSTATS_STAT_ENDURANCE].SetBase(rank);
-    else if (which == PSSKILL_INT)
-        attributes[PSITEMSTATS_STAT_INTELLIGENCE].SetBase(rank);
-    else if (which == PSSKILL_STR)
-        attributes[PSITEMSTATS_STAT_STRENGTH].SetBase(rank);
-    else if (which == PSSKILL_WILL)
-        attributes[PSITEMSTATS_STAT_WILL].SetBase(rank);
 }
 
 unsigned int psCharacter::GetCharLevel(bool physical)
 {
     if(physical)
     {
-        return (attributes[PSITEMSTATS_STAT_STRENGTH].Current()     +
-            attributes[PSITEMSTATS_STAT_ENDURANCE].Current()    +
-            attributes[PSITEMSTATS_STAT_AGILITY].Current()) / 3;
+        return (GetSkillRank(PSSKILL_STR).Current()  +
+                GetSkillRank(PSSKILL_END).Current()  +
+                GetSkillRank(PSSKILL_AGI).Current()) / 3;
     }
     else
     {
-        return (attributes[PSITEMSTATS_STAT_INTELLIGENCE].Current() +
-            attributes[PSITEMSTATS_STAT_WILL].Current()         +
-            attributes[PSITEMSTATS_STAT_CHARISMA].Current()) / 3;
+        return (GetSkillRank(PSSKILL_INT).Current()  +
+                GetSkillRank(PSSKILL_WILL).Current() +
+                GetSkillRank(PSSKILL_CHA).Current()) / 3;
     }
 }
 

@@ -1011,7 +1011,7 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
         size_t z;
         for ( z = 0; z < PSITEMSTATS_STAT_COUNT; z++ )
         {
-            int value = chardata->Stats()[(PSITEMSTATS_STAT) z].Current();
+            int value = chardata->GetSkillRank(statToSkill((PSITEMSTATS_STAT) z)).Current();
             if ( value > 0 )
             {
                 mesg.AddStat( value, psserver->GetCacheManager()->Attribute2String((PSITEMSTATS_STAT)z));                

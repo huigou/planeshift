@@ -58,6 +58,20 @@ PSITEMSTATS_STAT skillToStat(PSSKILL skill)
     }
 }
 
+PSSKILL statToSkill(PSITEMSTATS_STAT stat)
+{
+    switch (stat)
+    {
+        case PSITEMSTATS_STAT_AGILITY:      return PSSKILL_AGI;
+        case PSITEMSTATS_STAT_ENDURANCE:    return PSSKILL_END;
+        case PSITEMSTATS_STAT_STRENGTH:     return PSSKILL_STR;
+        case PSITEMSTATS_STAT_CHARISMA:     return PSSKILL_CHA;
+        case PSITEMSTATS_STAT_INTELLIGENCE: return PSSKILL_INT;
+        case PSITEMSTATS_STAT_WILL:         return PSSKILL_WILL;
+        default:                            return PSSKILL_NONE;
+    }
+}
+
 //-----------------------------------------------------------------------------
 
 psItemArmorStats::psItemArmorStats()

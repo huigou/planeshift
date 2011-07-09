@@ -9683,18 +9683,9 @@ bool AdminManager::ApplySkill(int client, Client* target, psSkillInfo* skill, in
     
     if (relative && !value) // +0 or -0: show current status and return
     {
-        int base, current;
-        if (skill->category == PSSKILLS_CATEGORY_STATS) // handle stats explicitly
-        {
-            PSITEMSTATS_STAT stat = skillToStat(skill->id);
-            base = pchar->Stats()[stat].Base();
-            current = pchar->Stats()[stat].Current();
-        } 
-        else
-        {
-            base = pchar->Skills().GetSkillRank(skill->id).Base();
-            current = pchar->Skills().GetSkillRank(skill->id).Current();
-        }
+        int base = pchar->Skills().GetSkillRank(skill->id).Base();
+        int current = pchar->Skills().GetSkillRank(skill->id).Current();
+
         // notify issuer
         if (base == current)
             psserver->SendSystemInfo(client, "Current '%s' of '%s' is %d", skill->name.GetDataSafe(), target->GetName(), base);

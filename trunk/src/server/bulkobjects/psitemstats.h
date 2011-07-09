@@ -93,8 +93,14 @@ enum PSITEMSTATS_STAT
     PSITEMSTATS_STAT_COUNT
 };
 
-// Convenience function to convert between SKILL and STAT.
+//TODO these should supposedly go away...
+
+/// Convenience function to convert between SKILL and STAT.
 PSITEMSTATS_STAT skillToStat(PSSKILL skill);
+
+/// Convenience function to convert between STAT and SKILL
+PSSKILL statToSkill(PSITEMSTATS_STAT stat);
+
 
 enum PSITEMSTATS_DAMAGETYPE {
     PSITEMSTATS_DAMAGETYPE_NONE  = -1,
