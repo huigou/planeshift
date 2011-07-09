@@ -1032,7 +1032,31 @@ void OverridableRace::OnChange()
 
     //this is needed to force an update the mesh in gem. but do it only if the actor is already initialized
     if(character->GetActor())
+    {
         character->GetActor()->SetMesh(raceInfo->GetMeshName());
+
+        //TODO: this is an hack which should be removed and handled more cleanly as an actor property
+        //      when sent to the client, in place of a special message which alters only the player
+        //      with the mod client. (letting alone the convoluted approach to reach the client)
+
+        if(character->GetActor()->GetClientID())
+        {
+            //For now we check if we are near 1. In that case we disable the movement mod, else we send it directly.
+            float movMod = Current()->GetSpeedModifier();
+            if( movMod < 1+EPSILON && movMod > 1-EPSILON)
+            {
+                psMoveModMsg modMsg(character->GetActor()->GetClientID(), psMoveModMsg::NONE,
+                                    csVector3(0), 0);
+                modMsg.SendMessage();
+            }
+            else
+            {
+                psMoveModMsg modMsg(character->GetActor()->GetClientID(), psMoveModMsg::MULTIPLIER,
+                                    csVector3(movMod), movMod);
+                modMsg.SendMessage();
+            }
+        }
+    }
 }
 
 psRaceInfo *psCharacter::GetRaceInfo()
