@@ -408,7 +408,6 @@ csString fmtStatLine(const char *const label, unsigned int value, unsigned int b
 void UserManager::SendCharacterDescription(Client * client, gemActor *actor, bool full, bool simple, const csString & requestor)
 {
     psCharacter *charData = actor->GetCharacterData();
-    //StatSet & playerAttr = client->GetCharacterData()->Stats();
 
     bool isSelf = (charData->GetPID() == client->GetCharacterData()->GetPID());
 
@@ -465,7 +464,6 @@ void UserManager::SendCharacterDescription(Client * client, gemActor *actor, boo
         desc += "\n\n";
         desc.AppendFmt("HP: %d Max HP: %d(%d)", int(charData->GetHP()), int(charData->GetMaxHP().Base()), int(charData->GetMaxHP().Current()));
         SkillSet & sks = charData->Skills();
-        StatSet & sts = charData->Stats();
 
         for (size_t skill = 0; skill < cacheManager->GetSkillAmount(); skill++)
         {
@@ -475,18 +473,9 @@ void UserManager::SendCharacterDescription(Client * client, gemActor *actor, boo
             {
                 psCharacterDetailsMessage::NetworkDetailSkill s;
 
-                s.category = skinfo->category;
-                PSITEMSTATS_STAT stat = skillToStat((PSSKILL) skill);
-                if (stat != PSITEMSTATS_STAT_NONE)
-                {
-                    // handle stats specially in order to pick up buffs/debuffs
-                    s.text = fmtStatLine(skinfo->name, sts[stat].Base(), sts[stat].Current());
-                }
-                else
-                {
-                    SkillRank & rank = sks.GetSkillRank(static_cast<PSSKILL>(skill));
-                    s.text = fmtStatLine(skinfo->name, rank.Base(), rank.Current());
-                }
+                SkillRank & rank = sks.GetSkillRank(static_cast<PSSKILL>(skill));
+                s.text = fmtStatLine(skinfo->name, rank.Base(), rank.Current());
+
                 skills.Push(s);
             }
         }

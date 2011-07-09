@@ -636,7 +636,6 @@ public:
     ///sets the notification bitfield directly: to be used only by the loader functon
     void SetNotifications(int notifications) { joinNotifications = notifications; }
 
-    StatSet  & Stats()  { return attributes; }
     SkillSet & Skills() { return skills;     }
 
     /**
@@ -1128,7 +1127,7 @@ protected:
 
     psCharacterInventory        inventory;                    ///< Character's inventory handler.
     csWeakRef<psGuildInfo>      guildinfo;
-    StatSet                     attributes, modifiers;
+    StatSet                     modifiers;
     SkillSet                    skills;
     csSet<PID>                  acquaintances;
     int                         npcMasterId;

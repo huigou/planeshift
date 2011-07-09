@@ -284,7 +284,7 @@ public:
     void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
         int val = (int) value->Evaluate(env);
-        CharStat& buffable = target->GetCharacterData()->Stats()[stat];
+        SkillRank & buffable = target->GetCharacterData()->GetSkillRank(statToSkill(stat));
         buffable.Buff(asp, val);
 
         const char* strs[] = {"str", "agi", "end", "int", "wil", "cha"};
@@ -1716,7 +1716,7 @@ public:
     {
         psCharacter* c = GetCharacter(env, aim);
         int val = (int) value->Evaluate(env);
-        CharStat& buffable = c->Stats()[stat];
+        SkillRank & buffable = c->GetSkillRank(statToSkill(stat));
         buffable.SetBase(buffable.Base() + val);
     }
 

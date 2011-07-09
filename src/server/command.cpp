@@ -2085,12 +2085,12 @@ int com_liststats(char *line)
 
     CPrintf(CON_CMDOUTPUT ,"Stat        Base        Buffed\n");
     {
-    CPrintf(CON_CMDOUTPUT ,"STR        %7.1f\t%7.1f\n", (float) charData->Stats()[PSITEMSTATS_STAT_STRENGTH].Base(), (float) charData->Stats()[PSITEMSTATS_STAT_STRENGTH].Current());
-    CPrintf(CON_CMDOUTPUT ,"AGI        %7.1f\t%7.1f\n", (float) charData->Stats()[PSITEMSTATS_STAT_AGILITY].Base(), (float) charData->Stats()[PSITEMSTATS_STAT_AGILITY].Current());
-    CPrintf(CON_CMDOUTPUT ,"END        %7.1f\t%7.1f\n", (float) charData->Stats()[PSITEMSTATS_STAT_ENDURANCE].Base(), (float) charData->Stats()[PSITEMSTATS_STAT_ENDURANCE].Current());
-    CPrintf(CON_CMDOUTPUT ,"INT        %7.1f\t%7.1f\n", (float) charData->Stats()[PSITEMSTATS_STAT_INTELLIGENCE].Base(), (float) charData->Stats()[PSITEMSTATS_STAT_INTELLIGENCE].Current());
-    CPrintf(CON_CMDOUTPUT ,"WIL        %7.1f\t%7.1f\n", (float) charData->Stats()[PSITEMSTATS_STAT_WILL].Base(), (float) charData->Stats()[PSITEMSTATS_STAT_WILL].Current());
-    CPrintf(CON_CMDOUTPUT ,"CHA        %7.1f\t%7.1f\n", (float) charData->Stats()[PSITEMSTATS_STAT_CHARISMA].Base(), (float) charData->Stats()[PSITEMSTATS_STAT_CHARISMA].Current());
+        CPrintf(CON_CMDOUTPUT ,"STR        %7.1f\t%7.1f\n", (float) charData->GetSkillRank(PSSKILL_STR).Base(), (float) charData->GetSkillRank(PSSKILL_STR).Current());
+        CPrintf(CON_CMDOUTPUT ,"AGI        %7.1f\t%7.1f\n", (float) charData->GetSkillRank(PSSKILL_AGI).Base(), (float) charData->GetSkillRank(PSSKILL_AGI).Current());
+        CPrintf(CON_CMDOUTPUT ,"END        %7.1f\t%7.1f\n", (float) charData->GetSkillRank(PSSKILL_END).Base(), (float) charData->GetSkillRank(PSSKILL_END).Current());
+        CPrintf(CON_CMDOUTPUT ,"INT        %7.1f\t%7.1f\n", (float) charData->GetSkillRank(PSSKILL_INT).Base(), (float) charData->GetSkillRank(PSSKILL_INT).Current());
+        CPrintf(CON_CMDOUTPUT ,"WIL        %7.1f\t%7.1f\n", (float) charData->GetSkillRank(PSSKILL_WILL).Base(), (float) charData->GetSkillRank(PSSKILL_WILL).Current());
+        CPrintf(CON_CMDOUTPUT ,"CHA        %7.1f\t%7.1f\n", (float) charData->GetSkillRank(PSSKILL_CHA).Base(), (float) charData->GetSkillRank(PSSKILL_CHA).Current());
     }
 
     CPrintf(CON_CMDOUTPUT ,"Experience points(W)  %7u\n",charData->GetExperiencePoints());

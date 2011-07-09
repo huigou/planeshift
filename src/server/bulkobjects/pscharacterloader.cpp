@@ -285,12 +285,6 @@ bool psCharacterLoader::NewNPCCharacterData(AccountID accountid, psCharacter *ch
             "description_ooc",
             "creation_info",
             "description_life",
-            "base_strength",
-            "base_agility",
-            "base_endurance",
-            "base_intelligence",
-            "base_will",
-            "base_charisma",
             "mod_hitpoints",
             "base_hitpoints_max",
             "mod_mana",
@@ -329,12 +323,6 @@ bool psCharacterLoader::NewNPCCharacterData(AccountID accountid, psCharacter *ch
     values.FormatPush("%s",chardata->GetOOCDescription());
     values.FormatPush("%s",chardata->GetCreationInfo());
     values.FormatPush("%s",chardata->GetLifeDescription());
-    values.FormatPush("%d",chardata->Stats()[PSITEMSTATS_STAT_STRENGTH].Base());
-    values.FormatPush("%d",chardata->Stats()[PSITEMSTATS_STAT_AGILITY].Base());
-    values.FormatPush("%d",chardata->Stats()[PSITEMSTATS_STAT_ENDURANCE].Base());
-    values.FormatPush("%d",chardata->Stats()[PSITEMSTATS_STAT_INTELLIGENCE].Base());
-    values.FormatPush("%d",chardata->Stats()[PSITEMSTATS_STAT_WILL].Base());
-    values.FormatPush("%d",chardata->Stats()[PSITEMSTATS_STAT_CHARISMA].Base());
     values.FormatPush("%10.2f",chardata->GetHP());
     values.FormatPush("%10.2f",chardata->GetMaxHP().Base());
     values.FormatPush("%10.2f",chardata->GetMana());
@@ -636,9 +624,9 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
     static iRecord* updatePlayer;
     static iRecord* updateNpc;
     if(playerORpet && updatePlayer == NULL)
-        updatePlayer = db->NewUpdatePreparedStatement("characters", "id", 41, __FILE__, __LINE__); // 41 fields + 1 id field
+        updatePlayer = db->NewUpdatePreparedStatement("characters", "id", 35, __FILE__, __LINE__); // 35 fields + 1 id field
     if(!playerORpet && updateNpc == NULL)
-        updateNpc = db->NewUpdatePreparedStatement("characters", "id", 34, __FILE__, __LINE__); // 34 fields + 1 id field
+        updateNpc = db->NewUpdatePreparedStatement("characters", "id", 28, __FILE__, __LINE__); // 28 fields + 1 id field
 
     // Give 100% hp if the char is dead
     if(!actor->IsAlive())
@@ -653,12 +641,6 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
     targetUpdate->AddField("old_lastname", chardata->GetOldLastName());
     targetUpdate->AddField("racegender_id", chardata->GetOverridableRace().Base()->uid);
     targetUpdate->AddField("character_type", chardata->GetCharType());
-    targetUpdate->AddField("base_strength", chardata->Stats()[PSITEMSTATS_STAT_STRENGTH].Base());
-    targetUpdate->AddField("base_agility", chardata->Stats()[PSITEMSTATS_STAT_AGILITY].Base());
-    targetUpdate->AddField("base_endurance", chardata->Stats()[PSITEMSTATS_STAT_ENDURANCE].Base());
-    targetUpdate->AddField("base_intelligence", chardata->Stats()[PSITEMSTATS_STAT_INTELLIGENCE].Base());
-    targetUpdate->AddField("base_will", chardata->Stats()[PSITEMSTATS_STAT_WILL].Base());
-    targetUpdate->AddField("base_charisma", chardata->Stats()[PSITEMSTATS_STAT_CHARISMA].Base());
     targetUpdate->AddField("mod_hitpoints", (playerORpet)? chardata->GetHP():chardata->GetMaxHP().Base());
     targetUpdate->AddField("mod_mana", (playerORpet)?chardata->GetMana():chardata->GetMaxMana().Base());
     targetUpdate->AddField("stamina_physical", chardata->GetStamina(true));

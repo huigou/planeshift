@@ -441,13 +441,12 @@ void psNPCLoader::ReadStats()
     strength = xmlnode->GetAttributeValueAsFloat("str");
     will = xmlnode->GetAttributeValueAsFloat("wil");
 
-    npc->Stats()[PSITEMSTATS_STAT_AGILITY]  .   SetBase((int) agility);
-    npc->Stats()[PSITEMSTATS_STAT_CHARISMA]  .  SetBase((int) charisma);
-    npc->Stats()[PSITEMSTATS_STAT_ENDURANCE]  . SetBase((int) endurance);
-    npc->Stats()[PSITEMSTATS_STAT_INTELLIGENCE].SetBase((int) intelligence);
-    npc->Stats()[PSITEMSTATS_STAT_STRENGTH]   . SetBase((int) strength);
-    npc->Stats()[PSITEMSTATS_STAT_WILL]      .  SetBase((int) will);
-    npc->RecalculateStats();
+    npc->SetSkillRank(PSSKILL_AGI,  (unsigned int) agility);
+    npc->SetSkillRank(PSSKILL_CHA,  (unsigned int) charisma);
+    npc->SetSkillRank(PSSKILL_END,  (unsigned int) endurance);
+    npc->SetSkillRank(PSSKILL_INT,  (unsigned int) intelligence);
+    npc->SetSkillRank(PSSKILL_STR,  (unsigned int) strength);
+    npc->SetSkillRank(PSSKILL_WILL, (unsigned int) will);
 }
 
 
@@ -1020,12 +1019,12 @@ void psNPCLoader::WriteStats()
     csRef<iDocumentNode> statsNode = npcRoot->CreateNodeBefore(CS_NODE_ELEMENT);
 
     statsNode->SetValue("stats");
-    statsNode->SetAttributeAsInt("agi", (int) npc->Stats()[PSITEMSTATS_STAT_AGILITY].Base());
-    statsNode->SetAttributeAsInt("cha", (int) npc->Stats()[PSITEMSTATS_STAT_CHARISMA].Base());
-    statsNode->SetAttributeAsInt("end", (int) npc->Stats()[PSITEMSTATS_STAT_ENDURANCE].Base());
-    statsNode->SetAttributeAsInt("int", (int) npc->Stats()[PSITEMSTATS_STAT_INTELLIGENCE].Base());
-    statsNode->SetAttributeAsInt("str", (int) npc->Stats()[PSITEMSTATS_STAT_STRENGTH].Base());
-    statsNode->SetAttributeAsInt("wil", (int) npc->Stats()[PSITEMSTATS_STAT_WILL].Base());
+    statsNode->SetAttributeAsInt("agi", (int) npc->GetSkillRank(PSSKILL_AGI).Base());
+    statsNode->SetAttributeAsInt("cha", (int) npc->GetSkillRank(PSSKILL_CHA).Base());
+    statsNode->SetAttributeAsInt("end", (int) npc->GetSkillRank(PSSKILL_END).Base());
+    statsNode->SetAttributeAsInt("int", (int) npc->GetSkillRank(PSSKILL_INT).Base());
+    statsNode->SetAttributeAsInt("str", (int) npc->GetSkillRank(PSSKILL_STR).Base());
+    statsNode->SetAttributeAsInt("wil", (int) npc->GetSkillRank(PSSKILL_WILL).Base());
 }
 
 
