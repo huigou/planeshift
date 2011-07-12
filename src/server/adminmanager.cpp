@@ -9867,7 +9867,7 @@ void AdminManager::RenameGuild(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDat
     while(mIter.HasNext())
     {
         psGuildMember* member = mIter.Next();
-        if(member->character)
+        if(member->character && member->character->GetActor())
         {
             array.Push(member->character->GetActor()->GetEID());
         }
