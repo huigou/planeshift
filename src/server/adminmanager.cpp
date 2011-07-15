@@ -1921,7 +1921,7 @@ AdminCmdDataImpersonate::AdminCmdDataImpersonate(AdminManager* msgManager, MsgEn
     {
         commandMod = words[index];
         commandMod.Downcase();
-        if ( commandMod == "say" || commandMod == "shout" || commandMod == "worldshout")
+        if ( commandMod == "say" || commandMod == "shout" || commandMod == "worldshout" || commandMod == "anim" )
         { // command mode (if supplied)
             index++;
         }
@@ -1941,7 +1941,7 @@ ADMINCMDFACTORY_IMPLEMENT_MSG_FACTORY_CREATE(AdminCmdDataImpersonate)
 
 csString AdminCmdDataImpersonate::GetHelpMessage()
 {
-    return "Syntax: \"" + command + " [" + GetHelpMessagePartForTarget() + "] [say|shout|worldshout] <text>\"\n"
+    return "Syntax: \"" + command + " [" + GetHelpMessagePartForTarget() + "] [say|shout|worldshout|anim] <text/anim name>\"\n"
             "If name is \"text\" the given text is used as it is.";
 }
 
@@ -7652,7 +7652,22 @@ void AdminManager::Impersonate(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDat
     AdminCmdDataImpersonate* data = dynamic_cast<AdminCmdDataImpersonate*>(cmddata);
     if (data->text.IsEmpty())
     {
-        psserver->SendSystemError(me->clientnum, "Missing text");
+        psserver->SendSystemError(me->clientnum, "Missing text or anim name");
+        return;
+    }
+
+
+    //send an animation
+    if(data->commandMod == "anim")
+    {
+        gemActor* target = dynamic_cast<gemActor*>(client->GetTargetObject());
+        csTicks delay = 0;
+        if(!target)
+        {
+            psserver->SendSystemError(me->clientnum, "You can execute animations only on actors");
+            return;
+        }
+        target->SetAction(data->text, delay);
         return;
     }
 
