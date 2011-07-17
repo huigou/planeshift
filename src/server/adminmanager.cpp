@@ -1899,6 +1899,7 @@ AdminCmdDataImpersonate::AdminCmdDataImpersonate(AdminManager* msgManager, MsgEn
 {
     size_t index = 1;
     bool found = false;
+    duration = 0;
 
     // when help is requested, return immediate
     if (IsHelp(words[1]))
@@ -1921,9 +1922,18 @@ AdminCmdDataImpersonate::AdminCmdDataImpersonate(AdminManager* msgManager, MsgEn
     {
         commandMod = words[index];
         commandMod.Downcase();
-        if ( commandMod == "say" || commandMod == "shout" || commandMod == "worldshout" || commandMod == "anim" )
+        if ( commandMod == "say" || commandMod == "shout" || commandMod == "worldshout" )
         { // command mode (if supplied)
             index++;
+        }
+        else if(commandMod == "anim")
+        {
+            index++;
+            //check if a duration is specified
+            if(words.GetCount() > index + 1)
+            {
+                duration = words.GetInt(index++);
+            }
         }
         else
         { // default is to use say
@@ -1941,7 +1951,7 @@ ADMINCMDFACTORY_IMPLEMENT_MSG_FACTORY_CREATE(AdminCmdDataImpersonate)
 
 csString AdminCmdDataImpersonate::GetHelpMessage()
 {
-    return "Syntax: \"" + command + " [" + GetHelpMessagePartForTarget() + "] [say|shout|worldshout|anim] <text/anim name>\"\n"
+    return "Syntax: \"" + command + " [" + GetHelpMessagePartForTarget() + "] [say|shout|worldshout|anim] <text/[anim duration] anim name>\"\n"
             "If name is \"text\" the given text is used as it is.";
 }
 
@@ -7660,14 +7670,17 @@ void AdminManager::Impersonate(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDat
     //send an animation
     if(data->commandMod == "anim")
     {
-        gemActor* target = dynamic_cast<gemActor*>(client->GetTargetObject());
-        csTicks delay = 0;
+        //this is done for error checking (items can't be animated)
+        gemActor* target = client->GetTargetObject()->GetActorPtr();
         if(!target)
         {
             psserver->SendSystemError(me->clientnum, "You can execute animations only on actors");
             return;
         }
-        target->SetAction(data->text, delay);
+
+        //send an action override message which runs the animation
+        psOverrideActionMessage msg(0, target->GetEID(), data->text, data->duration);
+        msg.Multicast(target->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE);
         return;
     }
 
