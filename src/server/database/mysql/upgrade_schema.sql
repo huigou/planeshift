@@ -1617,6 +1617,12 @@ ALTER TABLE `loot_rule_details` ADD COLUMN `min_item` INTEGER UNSIGNED NOT NULL 
 UPDATE `server_options` SET `option_value`='1260' WHERE `option_name`='db_version';
 ALTER TABLE `planeshift`.`sc_waypoints` MODIFY COLUMN `radius` DOUBLE(10,2)  NOT NULL DEFAULT '0.00';
 
+#
+# adds date_created fields to gm_events, alliances and bans
+#
+
+ALTER TABLE `gm_events` ADD `date_created` TIMESTAMP default current_timestamp AFTER `id`;
+ALTER TABLE `alliances` ADD `date_created` TIMESTAMP default current_timestamp AFTER `id`;
 
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.

@@ -10,9 +10,9 @@
 DROP TABLE IF EXISTS `alliances`;
 CREATE TABLE alliances (
   id int(11) NOT NULL auto_increment,
+  `date_created` TIMESTAMP default current_timestamp,
   name varchar(25) NOT NULL,
   leading_guild int(11) NOT NULL,
-
   PRIMARY KEY (id),
   UNIQUE id (id),
   UNIQUE name (name)
