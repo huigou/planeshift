@@ -39,6 +39,7 @@ class pawsButton : public pawsWidget
 {
 public:
     pawsButton();
+    pawsButton(const pawsButton& pb);
     virtual ~pawsButton();
 
     virtual bool Setup( iDocumentNode* node );

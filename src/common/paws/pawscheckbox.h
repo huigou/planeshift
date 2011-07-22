@@ -50,6 +50,7 @@ public:
     */
     pawsCheckBox();
 
+    pawsCheckBox(const pawsCheckBox& origin);
    /**
     * @fn ~pawsCheckBox()
     * @brief This function is not yet documented.

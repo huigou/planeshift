@@ -25,6 +25,7 @@ class pawsProgressBar : public pawsWidget
 {
 public:
     pawsProgressBar();
+    pawsProgressBar(const pawsProgressBar& origin);
     ~pawsProgressBar();
     
     float GetTotalValue() const { return totalValue; }

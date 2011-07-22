@@ -106,7 +106,6 @@ pawsWidget::pawsWidget( ) :
     for(size_t a = 0; a < PW_SCRIPT_EVENT_COUNT; ++a)
         scriptEvents[a] = 0;
 }
-
 pawsWidget::pawsWidget(const pawsWidget &origin) :
         id(origin.id),
         parent(NULL),
@@ -157,6 +156,88 @@ pawsWidget::pawsWidget(const pawsWidget &origin) :
 
     for(size_t a = 0; a < PW_SCRIPT_EVENT_COUNT; ++a)
         scriptEvents[a] = origin.scriptEvents[a];
+
+    //
+    id = origin.id;//id overlapped!!
+    parent = origin.parent;
+    defaultFrame = origin.defaultFrame;
+    screenFrame = origin.screenFrame;
+    clipRect = origin.clipRect;
+    visible = origin.visible;
+    saveWidgetPositions = origin.saveWidgetPositions;
+    configurable = origin.configurable;
+    movable = origin.movable;
+    isResizable = origin.isResizable;
+    showResize = origin.showResize;
+    resizeToScreen = origin.resizeToScreen;
+    keepaspect = origin.keepaspect;
+    alwaysOnTop = origin.alwaysOnTop;
+    min_height = origin.min_height;
+    min_width = origin.min_width;
+    max_height = origin.max_height;
+    max_width = origin.max_width;
+    name = origin.name + "_c";
+    bgColour = origin.bgColour;
+    attachFlags = origin.attachFlags;
+    hasBorderColours = origin.hasBorderColours;
+    hasFocus = origin.hasFocus;
+    hasMouseFocus = origin.hasMouseFocus;
+    fadeVal = origin.fadeVal;
+    alpha = origin.alpha;
+    alphaMin = origin.alphaMin;
+    fade = origin.fade;
+    fadeSpeed = origin.fadeSpeed;
+    defaultFontColour = origin.defaultFontColour;
+    defaultFontShadowColour = origin.defaultFontShadowColour;
+    defaultFontSize = origin.defaultFontSize;
+    fontName = origin.fontName;
+    fontSize = origin.fontSize;
+    scaleFont = origin.scaleFont;
+    fontStyle = origin.fontStyle;
+    ignore = origin.ignore;
+    margin = origin.margin;
+    factory = origin.factory;
+    needsRender = origin.needsRender;
+    parentDraw = origin.parentDraw;
+    toolTip = origin.toolTip;
+    defaultToolTip = origin.defaultToolTip;
+
+    bgImage = origin.bgImage;
+    maskImage = origin.maskImage;
+    myFont = origin.myFont;
+
+    //derived widget could copy other attributes here
+    if(origin.titleBar != 0) 
+    {
+        titleBar = new pawsTitle(*origin.titleBar);
+        titleBar->SetParent(this);
+    }
+   
+    if(origin.border != 0)
+    {
+        border = new pawsBorder(*origin.border);
+        border->SetParent(this);
+    }
+
+    if(origin.contextMenu != 0)
+    {
+        contextMenu = new pawsMenu(*origin.contextMenu);
+        contextMenu->SetNotify(this);
+        PawsManager::GetSingleton().GetMainWidget()->AddChild(contextMenu);
+    }
+
+    //copy all children
+    for (unsigned int i = 0 ; i < origin.children.GetSize();i++)
+    {
+        pawsWidget * pw = PawsManager::GetSingleton().CreateWidget(origin.children[i]->factory, origin.children[i]);//copy constructor is called by factory
+        if(pw) 
+        {
+            if(origin.close_widget == origin.children[i]) close_widget = dynamic_cast<pawsButton*>(pw);
+            if(origin.onEnter == origin.children[i]) onEnter = pw;
+            pw->SetParent(this);
+            children.Push(pw);
+        }
+    }
 }
 
 pawsWidget::~pawsWidget()
@@ -2645,6 +2726,11 @@ void pawsWidgetFactory::Register( const char* name )
 pawsWidget* pawsWidgetFactory::Create()
 {
     return NULL;
+}
+
+pawsWidget* pawsWidgetFactory::Create(const pawsWidget * origin)
+{
+    return new pawsWidget(*origin);
 }
 
 void pawsWidget::SetCloseButtonPos()

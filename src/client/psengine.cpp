@@ -1453,6 +1453,7 @@ void psEngine::LoadGame()
         HideWindow("PetStatWindow");
         HideWindow("WritingWindow");
         HideWindow("CraftCancelWindow");
+        
 
         paws->GetMouse()->ChangeImage("Skins Normal Mouse Pointer");
 

@@ -56,6 +56,8 @@ class EEditParticleListToolbox : public EEditToolbox, public pawsWidget, public 
 {
 public:
     EEditParticleListToolbox();
+    /// TODO: Copy constructor, useless currently. Would be implemented later.
+    EEditParticleListToolbox(const EEditParticleListToolbox& origin);
     virtual ~EEditParticleListToolbox();
 
     /** Fills the particles list with the names of all particle systems in the engine.

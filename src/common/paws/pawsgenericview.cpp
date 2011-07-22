@@ -45,6 +45,20 @@ pawsGenericView::pawsGenericView()
     loadedMap = false;
 }   
 
+pawsGenericView::pawsGenericView(const pawsGenericView& origin)
+                :pawsWidget(origin),
+                col(origin.col),
+                engine(origin.engine),
+                //idName(origin.idName),
+                loadedMap(origin.loadedMap),
+                mapName(origin.mapName),
+                objectPos(origin.objectPos),
+                stage(origin.stage),
+                view(origin.view)
+{
+
+}
+
 pawsGenericView::~pawsGenericView()
 {
     idName--;

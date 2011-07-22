@@ -50,7 +50,10 @@ pawsSketchWindow::pawsSketchWindow()
     mouseDownY = 0;
     frame = 0;
 }
+pawsSketchWindow::pawsSketchWindow(const pawsSketchWindow& origin)
+{
 
+}
 pawsSketchWindow::~pawsSketchWindow()
 {
     psengine->GetMsgHandler()->Unsubscribe(this,MSGTYPE_VIEW_SKETCH);

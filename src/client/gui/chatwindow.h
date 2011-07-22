@@ -269,6 +269,18 @@ public:
     /// Joins the channel and adds the hotkey when the server accepts the join.
     void JoinChannel(csString name);
 
+    /// Reload Chat Window
+    void ReloadChatWindow();
+
+    /**
+     * @brief Save user's configuration 
+     *  This function is used to save user's configuration with chat tabs.
+     * @param configurebits Holds user's configuration information. The param's low 10 bits are used. Each of these 10 bits stands for the state of the corresponding 
+     *  chat tab.
+     * @returns
+     */
+    void SaveTabCongfiguration(unsigned int configurebits);
+
 protected:
 
     void HandleSystemMessage( MsgEntry* message );
@@ -294,6 +306,7 @@ protected:
     void TabCompleteName(const char *cmd);
 
     void DetermineChatTabAndSelect(int chattype);
+
 
     pawsIgnoreWindow*  IgnoredList;
     csString           replyList[4];
@@ -336,6 +349,9 @@ protected:
     csRef<iFile> logFile[CHAT_END];
     ///Stores a reference to all opened log files for easy search.
     csHash<csRef<iFile>, uint> openLogFiles;
+
+    /// Is already in default channel?
+    bool isInChannel;
 
     /** @brief Logs a message coming from the chat.
      *  It handles the book keeping of the log files, opens and closes them on need,

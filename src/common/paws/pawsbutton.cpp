@@ -48,9 +48,35 @@ pawsButton::pawsButton()
     keybinding = 0;
     changeOnMouseOver = false;
     originalFontColour = -1;
+    factory = "pawsButton";
 }
 
-
+pawsButton::pawsButton(const pawsButton& pb) :
+            buttonLabel(pb.buttonLabel),
+            changeOnMouseOver(pb.changeOnMouseOver),
+            down(pb.down),
+            downTextOffsetX(pb.downTextOffsetX),
+            downTextOffsetY(pb.downTextOffsetY),
+            enabled(pb.enabled),
+            flash(pb.flash),
+            flashtype(pb.flashtype),
+            greyDownImage(pb.greyDownImage),
+            greyUpImage(pb.greyUpImage),
+            keybinding(pb.keybinding),
+            notify(pb.notify),
+            originalFontColour(pb.originalFontColour),
+            pressedImage(pb.pressedImage),
+            releasedImage(pb.releasedImage),
+            sound_click(pb.sound_click),
+            specialFlashImage(pb.specialFlashImage),
+            style(pb.style),
+            toggle(pb.toggle),
+            upTextOffsetX(pb.upTextOffsetX),
+            upTextOffsetY(pb.upTextOffsetY),
+            pawsWidget((const pawsWidget&)pb)
+{
+    factory = "pawsButton";
+}
 bool pawsButton::Setup( iDocumentNode* node )
 {    
     // Check for toggle 

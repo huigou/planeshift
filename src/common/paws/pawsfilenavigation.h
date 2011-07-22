@@ -41,6 +41,7 @@ class pawsFileNavigation : public pawsWidget
 public:
     pawsFileNavigation();
     virtual ~pawsFileNavigation();
+    pawsFileNavigation(const pawsFileNavigation& origin);
 
     // implemented virtual functions from pawsWidgets
     virtual bool PostSetup();

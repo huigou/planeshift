@@ -23,6 +23,7 @@
 #include <csutil/list.h>
 #include <iutil/document.h>
 #include "pawspromptwindow.h"
+#include "pawscombo.h"
 
 class pawsButton;
 class ComboWrapper;
@@ -35,6 +36,35 @@ public:
     virtual ~iOnItemChosenAction() {};
 };
 
+
+class ComboWrapper : public pawsWidget
+{
+public:
+    ComboWrapper(int width, int height)
+    {
+        SetRelativeFrameSize(width, height);
+    }
+    ComboWrapper(){};
+    ComboWrapper(const ComboWrapper& origin)
+        :pawsWidget(origin)
+    {
+    }
+    bool PostSetup()
+    {
+        combo = new pawsComboBox();
+        AddChild(combo);
+        combo->SetRelativeFrame(0, 0, 200, 40);
+        combo->UseBorder("line");
+        combo->SetNumRows(6);
+        combo->SetRowHeight(20);
+        combo->PostSetup();
+        combo->SetSorted(false);
+        return true;
+    }
+
+    pawsComboBox * combo;
+};
+CREATE_PAWS_FACTORY(ComboWrapper);
 /** 
  * pawsComboPromptWindow is window that lets the user choose item from combo box 
  */
@@ -42,7 +72,7 @@ class pawsComboPromptWindow : public pawsPromptWindow
 {
 public:
     pawsComboPromptWindow();
-
+    pawsComboPromptWindow(const pawsComboPromptWindow& origin);
     //from pawsWidget:
     virtual bool PostSetup();
     virtual void Close();

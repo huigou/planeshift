@@ -53,6 +53,7 @@ class pawsSpinBox : public pawsWidget
 public:
     pawsSpinBox();
     virtual ~pawsSpinBox();
+    pawsSpinBox(const pawsSpinBox& origin);
     
     virtual bool Setup( iDocumentNode* node );
     virtual bool ManualSetup( csString& value, float Min, float Max, float Inc, csString& pos );

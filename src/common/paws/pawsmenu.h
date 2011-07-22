@@ -121,7 +121,10 @@ class pawsIMenu : public pawsWidget
 {
 public:
     pawsIMenu(){  };
+    pawsIMenu(const pawsIMenu& origin): pawsWidget(origin)
+    {
 
+    }
     /**
      * Sets parent menu of submenu:
      */
@@ -175,6 +178,7 @@ class pawsMenu : public pawsIMenu
 public:
     pawsMenu();
     ~pawsMenu();
+    pawsMenu(const pawsMenu & origin);
     
     //from pawsWidget:
     virtual bool OnButtonPressed(int button, int keyModifier, pawsWidget* widget);
@@ -311,7 +315,11 @@ CREATE_PAWS_FACTORY(pawsMenu);
 class pawsIMenuItem : public pawsWidget
 {
 public:
+    pawsIMenuItem(){}
+    pawsIMenuItem(const pawsIMenuItem& origin):pawsWidget(origin)
+    {
    
+    }
     /**
      * Makes the menu item send its menu event,
      */
@@ -339,7 +347,7 @@ class pawsMenuItem : public pawsIMenuItem
 {
 public:
     pawsMenuItem();
-    
+    pawsMenuItem(const pawsMenuItem & origin);
     //from pawsWidget:
     virtual bool Load(iDocumentNode * node);
     virtual bool Setup(iDocumentNode * node);
@@ -428,7 +436,7 @@ class pawsMenuSeparator : public pawsIMenuItem
 {
 public:
     pawsMenuSeparator();
-    
+    pawsMenuSeparator(const pawsMenuSeparator& origin);
     // from pawsWidget:
     virtual void Draw();
 

@@ -89,8 +89,44 @@ pawsTreeNode::pawsTreeNode()
     nextSibling = NULL;
     collapsable = true;
     collapsed = false;
+    factory = "pawsTreeNode";
 }
+pawsTreeNode::pawsTreeNode(const pawsTreeNode& origin)
+                :pawsWidget(origin),
+                tree(0),
+                collapsed(origin.collapsed),
+                collapsable(origin.collapsable)
+{
+    for (unsigned int i = 0 ; i < origin.attrList.GetSize(); i++)
+        attrList.Push(origin.attrList[i]);
 
+    parent = 0;
+    prevSibling = 0;
+    nextSibling = 0;
+    firstChild = 0;
+
+    /*
+    if(origin.firstChild)
+    {
+        pawsTreeNode * tmp = origin.firstChild;
+        firstChild = dynamic_cast<pawsTreeNode*>(PawsManager::GetSingleton().CreateWidget(tmp->factory,tmp));
+        firstChild->parent = this;
+        firstChild->prevSibling = 0;
+        
+        pawsTreeNode * pr = firstChild;
+
+        while (tmp->nextSibling)//loop through all siblings [Depth First Search]
+        {
+            pawsTreeNode * t = dynamic_cast<pawsTreeNode*>(PawsManager::GetSingleton().CreateWidget(tmp->nextSibling->factory,tmp->nextSibling));
+            pr->nextSibling = t;
+            t->prevSibling = pr;
+            t->parent = this;
+            pr = t;
+            tmp = tmp->nextSibling;
+        }
+        pr->nextSibling = 0;
+    }*/
+}
 pawsTreeNode::~pawsTreeNode()
 {
     Clear();
@@ -182,6 +218,11 @@ void pawsTreeNode::SetPrevSibling(pawsTreeNode *node)
 void pawsTreeNode::SetNextSibling(pawsTreeNode *node)
 {
     nextSibling = node;
+}
+
+void pawsTreeNode::SetFirstChild(pawsTreeNode * child)
+{
+    firstChild = child;
 }
 
 pawsTreeNode * pawsTreeNode::FindLastChild()
@@ -928,6 +969,7 @@ pawsTree::pawsTree()
 {
     selected = NULL;
     notificationTarget = NULL;
+    factory = "pawsTree";
 
     layout = 0;
     SetTreeLayout(new pawsStdTreeLayout(this, 5, 20));
@@ -937,6 +979,71 @@ pawsTree::pawsTree()
     
     horizScrollBar = NULL;
     vertScrollBar = NULL;
+}
+void pawsTree::cloneTreeNodes(const pawsTree & origin)
+{
+    csArray<pawsTreeNode *> oTreeNodes;//original tree nodes
+    csArray<pawsTreeNode *> TreeNodes;//this tree's tree nodes
+    for (unsigned int i = 0 ; i< origin.children.GetSize(); i++)
+    {
+        pawsTreeNode * tmp = dynamic_cast<pawsTreeNode*>(origin.children[i]);
+        if(tmp)
+        {
+            oTreeNodes.Push(tmp);
+            TreeNodes.Push(dynamic_cast<pawsTreeNode*>(children[i]));
+        }
+    }
+    for (unsigned int i = 0 ; i< oTreeNodes.GetSize() ; i++)
+    {
+        pawsTreeNode * ocur = oTreeNodes[i];//original node
+        pawsTreeNode * cur = TreeNodes[i];//current node
+
+        cur->SetTree(this);
+
+        for (unsigned int j = 0 ; j < oTreeNodes.GetSize() ; j++)
+        {
+            if(ocur->GetParent() == oTreeNodes[j])
+                cur->SetParent(TreeNodes[j]);
+            else if(ocur->GetPrevSibling() == oTreeNodes[j])
+                cur->SetPrevSibling(TreeNodes[j]);
+            else if(ocur->GetNextSibling() == oTreeNodes[j])
+                cur->SetNextSibling(TreeNodes[j]);
+            else if(ocur->GetFirstChild() == oTreeNodes[j])
+                cur->SetFirstChild(TreeNodes[j]);
+        }
+
+        if(origin.root == oTreeNodes[i])
+            root = TreeNodes[i];
+    }
+}
+pawsTree::pawsTree(const pawsTree& origin)
+            :pawsWidget(origin)
+{
+    layout = 0;
+    SetTreeLayout(new pawsStdTreeLayout(this, 5, 20));
+
+    decor = 0;
+    SetTreeDecorator(new pawsStdTreeDecorator(this, graphics2D, 0x666666, 0x999999, 13));
+
+    this->root = 0;
+
+    horizScrollBar = NULL;
+    vertScrollBar = NULL;
+    notificationTarget = origin.notificationTarget;
+
+    if(origin.root)
+        cloneTreeNodes(origin);
+
+    for (unsigned int i = 0 ; i < origin.children.GetSize(); i++)
+    {
+        if(origin.horizScrollBar == origin.children[i])
+            horizScrollBar = dynamic_cast<pawsScrollBar *>(children[i]);
+        else if(origin.vertScrollBar == origin.children[i])
+            vertScrollBar = dynamic_cast<pawsScrollBar*>(children[i]);
+
+        if(horizScrollBar != 0 && vertScrollBar!= 0)
+            break;
+    }
 }
 
 pawsTree::~pawsTree()
@@ -1330,6 +1437,30 @@ pawsSeqTreeNode_widget::pawsSeqTreeNode_widget(pawsWidget * _w, int _width)
     width = _width;
 }
 
+pawsSeqTreeNode::pawsSeqTreeNode(const pawsSeqTreeNode& origin)
+                :pawsTreeNode(origin)
+{
+    csList<pawsSeqTreeNode_widget>::Iterator iter(origin.widgets);
+    csArray<pawsSeqTreeNode_widget> arr;
+    while ((iter.HasNext()))
+    {
+        iter.Next();
+        arr.Push(*iter);
+    }
+    for (unsigned int i = 0 ; i < arr.GetSize(); i++)
+    {
+        for (unsigned int j = 0 ; j < origin.children.GetSize(); j++)
+        {
+            if(arr[i].widget == origin.children[j])
+            {
+                arr[i].widget = children[j];
+                break;
+            }
+        }
+    }
+    for (unsigned int i = 0 ; i< arr.GetSize(); i++)
+        widgets.PushBack(arr[i]);
+}
 void pawsSeqTreeNode::AddSeqWidget(pawsWidget * w, int width)
 {
     csRect widgetFrame;
@@ -1420,6 +1551,21 @@ pawsCheckTreeNode::pawsCheckTreeNode()
     widget = NULL;
 //    checkbox = NULL;
 }
+pawsCheckTreeNode::pawsCheckTreeNode(const pawsCheckTreeNode& origin)
+                    :pawsTreeNode(origin)
+{
+    widget = 0;
+    if(origin.widget)
+    {
+        for (unsigned int i = 0 ; i < origin.children.GetSize() ; i++)
+        {
+            if(origin.widget == origin.children[i])
+                widget = children[i];
+
+            if(widget != 0) break;
+        }
+    }
+}
 
 bool pawsCheckTreeNode::GetCheck()
 {
@@ -1459,6 +1605,22 @@ void pawsCheckTreeNode::SetWidget(pawsWidget * _widget)
 pawsWidgetTreeNode::pawsWidgetTreeNode()
 {
     widget = NULL;
+    factory = "pawsWidgetTreeNode";
+}
+pawsWidgetTreeNode::pawsWidgetTreeNode(const pawsWidgetTreeNode& origin)
+                    :pawsTreeNode(origin)
+{
+    widget = 0;
+    if(origin.widget)
+    {
+        for (unsigned int i = 0 ; i < origin.children.GetSize() ; i++)
+        {
+            if(origin.widget == origin.children[i])
+                widget = children[i];
+
+            if(widget != 0) break;
+        }
+    }
 }
 void pawsWidgetTreeNode::SetWidget(pawsWidget * _widget)
 {
@@ -1514,6 +1676,23 @@ pawsSimpleTreeNode::pawsSimpleTreeNode()
     textBox = NULL;
     image = NULL;
     SetWidget(new pawsWidget());
+    factory = "pawsSimpleTreeNode";
+}
+
+pawsSimpleTreeNode::pawsSimpleTreeNode(const pawsSimpleTreeNode& origin)
+                    :pawsCheckTreeNode(origin)
+{
+    image = 0;
+    textBox = 0;
+    for (unsigned int i = 0 ; i < origin.children.GetSize(); i++)
+    {
+        if(origin.image == origin.children[i])
+            image = children[i];
+        else if(origin.textBox == origin.children[i])
+            textBox = dynamic_cast<pawsTextBox*>(children[i]);
+
+        if(image != 0 && textBox != 0) break;
+    }
 }
 
 pawsSimpleTreeNode::~pawsSimpleTreeNode()
@@ -1608,6 +1787,13 @@ bool pawsSimpleTreeNode::Load(iDocumentNode *node)
 }
 
 pawsSimpleTree::pawsSimpleTree()
+{
+    factory = "pawsSimpleTree";
+}
+
+pawsSimpleTree::pawsSimpleTree(const pawsSimpleTree& origin)
+                :pawsTree(origin),
+                defaultColor(origin.defaultColor)
 {
 }
 

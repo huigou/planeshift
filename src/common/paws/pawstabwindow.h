@@ -30,6 +30,8 @@
 class pawsTabWindow : public pawsWidget
 {
 public:
+    pawsTabWindow(){factory = "pawsTabWindow";}
+    pawsTabWindow(const pawsTabWindow& origin);
     virtual bool PostSetup();
      
     virtual bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );

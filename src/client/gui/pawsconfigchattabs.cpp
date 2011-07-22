@@ -224,6 +224,29 @@ bool pawsConfigChatTabs::SaveConfig()
     // Apply settings
     chatWindow->LoadChatSettings();
 
+    chatWindow->SetFilename(settings.chatWidget);
+
+    //ichat could get the state of the configuration checkbox
+
+
+    if(settings.chatWidget == "chat.xml")
+    {
+        unsigned int state = 0x00000000;
+        if(isysbase->GetState()) state += 1;
+        if(ichat->GetState()) state += 2;
+        if(inpc->GetState()) state += 4;
+        if(itells->GetState()) state += 8;
+        if(iguild->GetState()) state += 16;
+        if(igroup->GetState()) state += 32;
+        if(ialliance->GetState()) state += 64;
+        if(iauction->GetState()) state += 128;
+        if(isys->GetState()) state += 256;
+        if(ihelp->GetState()) state += 512;
+        chatWindow->SaveTabCongfiguration(state);
+    }
+
+    chatWindow->ReloadChatWindow();
+
     return true;
 }
 

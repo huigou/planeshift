@@ -345,6 +345,7 @@ public:
     pawsWidget();
     pawsWidget(const pawsWidget &origin);
 
+
     virtual ~pawsWidget();
 
     /** Locate a widget that is at these screen coordindates. 
@@ -1384,7 +1385,6 @@ public:
     bool NeedsRender() const { return needsRender; }
 
 protected:
-
     /** This will check to see if the mouse is over the resize hot spot.
      */
     int ResizeFlags(int mouseX, int mouseY);
@@ -1431,10 +1431,13 @@ public:
 
     virtual pawsWidget* Create();
 
+    virtual pawsWidget* Create(const pawsWidget * origin);
+
     virtual const char* GetName() { return factoryName; }
 
 protected:
     virtual void Register( const char* name );
+
 
     csString factoryName;
 };
@@ -1470,6 +1473,15 @@ public: \
     { \
         return new factoryName( ); \
     } \
+    pawsWidget* Create(const pawsWidget* origin)\
+    {\
+        const factoryName * widget = dynamic_cast<const factoryName *>(origin);\
+        if(widget)\
+        {\
+            return new factoryName(*widget);\
+        }\
+        return NULL;\
+    }\
 }
 
 

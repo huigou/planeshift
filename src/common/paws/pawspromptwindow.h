@@ -38,7 +38,7 @@ class pawsPromptWindow : public pawsWidget
 public:
     /** Basic constructor */
     pawsPromptWindow();
-
+    pawsPromptWindow(const pawsPromptWindow& origin);
     /**
      * Executed after the widget is setup
      * @return true

@@ -28,8 +28,19 @@ pawsProgressBar::pawsProgressBar()
     complete  = false;
     currentValue = 0.0f;
     percent      = 0.0f;
+    factory      = "pawsProgressBar";
 }
+pawsProgressBar::pawsProgressBar(const pawsProgressBar& origin)
+                :pawsWidget(origin),
+                complete(origin.complete),
+                currentValue(origin.currentValue),
+                diff_b(origin.diff_b),diff_g(origin.diff_g),diff_r(origin.diff_r),
+                percent(origin.percent),
+                start_b(origin.start_b),start_g(origin.start_g),start_r(origin.start_r),
+                totalValue(origin.totalValue)
+{
 
+}
 pawsProgressBar::~pawsProgressBar()
 {
 }

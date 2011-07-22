@@ -104,7 +104,24 @@ bool pawsTitle::PostSetup()
 		titleButtons[a].buttonWidget = FindWidget(titleButtons[a].widgetName);
 	return true;
 }
+pawsTitle::pawsTitle(const pawsTitle & origin)
+{
+    pawsWidget::pawsWidget(origin);//copy common attributes and children
 
+    height = origin.height;
+    scaleWidth = origin.scaleWidth;
+    text = origin.text;
+    textAlign = origin.textAlign;
+    textOffsetx = origin.textOffsetx;
+    textOffsety = origin.textOffsety;
+    titleAlign = origin.titleAlign;
+    width = origin.width; 
+
+    for (unsigned int i = 0 ; i < origin.titleButtons.GetSize() ; i++)
+        titleButtons.Push(origin.titleButtons[i]);
+    for (unsigned int i = 0 ; i < titleButtons.GetSize() ; i++)
+        titleButtons[i].buttonWidget = new pawsWidget(*origin.titleButtons[i].buttonWidget);
+}
 void pawsTitle::SetWindowRect(const csRect & windowRect)
 {
 	size_t a;

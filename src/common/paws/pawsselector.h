@@ -59,6 +59,7 @@ class pawsSelectorBox : public pawsWidget
 {
 public:
     pawsSelectorBox();
+    pawsSelectorBox(const pawsSelectorBox& origin);
     ~pawsSelectorBox();
     
     bool Setup( iDocumentNode* node );

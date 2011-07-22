@@ -50,6 +50,7 @@
 #include "paws/pawsbutton.h"
 #include "paws/pawsborder.h"
 #include "paws/pawstabwindow.h"
+#include "paws/pawsmainwidget.h"
 
 #include "gui/pawscontrolwindow.h"
 
@@ -153,6 +154,7 @@ pawsChatWindow::pawsChatWindow()
     //set the autocompletion arraylist
     autoCompleteLists.Push(&autoCompleteNames);
     autoCompleteLists.Push(&settings.completionItems);
+    isInChannel = false;
 }
 
 pawsChatWindow::~pawsChatWindow()
@@ -192,8 +194,11 @@ bool pawsChatWindow::PostSetup()
         return false;
     }
 
-    if(settings.joindefaultchannel)
+    if(settings.joindefaultchannel && !isInChannel)
+    {
         JoinChannel("gossip");
+        isInChannel = true;
+    }
     PawsManager::GetSingleton().Publish(CHAT_TYPES[CHAT_ADVISOR], "This channel is the HELP channel. "
         "Please type in your question and other fellow players or GMs may answer. "
         "If you don't get an answer, you can check also the HELP button in the top toolbar, "
@@ -1006,6 +1011,99 @@ void pawsChatWindow::CreateSettingNode(iDocumentNode* mNode,int color,const char
     cNode->SetAttributeAsInt("r",r);
     cNode->SetAttributeAsInt("g",g);
     cNode->SetAttributeAsInt("b",b);
+}
+
+#define TABVALUE(tabsconfiguration,index) ((tabsconfiguration>>index) & 0x00000001)
+
+void pawsChatWindow::SaveTabCongfiguration(unsigned int configurebits)
+{
+    if(filename != "chat.xml") return;
+
+    csRef<iDocument> doc;
+    csRef<iDocumentNode> root, topNode, widgetNode;
+
+    doc = ParseFile(PawsManager::GetSingleton().GetObjectRegistry(),
+        PawsManager::GetSingleton().GetLocalization()->FindLocalizedFile(filename));
+    if (doc == NULL)
+        return ;
+
+    root = doc->GetRoot();
+    if (root == NULL)
+    {
+        Error1("No root in XML");
+        return ;
+    }
+    topNode = root->GetNode("widget_description");
+    if (topNode == NULL)
+    {
+        Error1("No <widget_description> in XML");
+        return ;
+    }
+    widgetNode = topNode->GetNode("widget");
+    if (widgetNode == NULL)
+    {
+        Error1("No <widget> in <widget_description>");
+        return ;
+    }
+
+    csRef<iDocumentNodeIterator> itr = widgetNode->GetNodes("widget");
+    csRef<iDocumentNode> tabs;
+    while(itr->HasNext())
+    {
+        tabs = itr->Next();
+        csString winname = tabs->GetAttributeValue("name");
+        if(winname == "Chat Tabs")
+            break;
+    }
+
+    csArray<csString> buttonNames;
+    
+
+    buttonNames.Push("Main Button");
+    buttonNames.Push("Chat Button");
+    buttonNames.Push("NPC Button");
+    buttonNames.Push("Tell Button");
+    buttonNames.Push("Guild Button");
+    buttonNames.Push("Group Button");
+    buttonNames.Push("Alliance Button");
+    buttonNames.Push("Auction Button");
+    buttonNames.Push("System Button");
+    buttonNames.Push("Help Button");
+
+    itr = tabs->GetNodes("widget");
+    
+    unsigned int C = 0;
+
+    while(itr->HasNext())
+    {
+        csRef<iDocumentNode> node = itr->Next();
+        csString winname = node->GetAttributeValue("name");
+        
+        for (unsigned i = 0 ; i < buttonNames.GetSize() ; i++)
+        {
+            if(buttonNames[i] == winname)
+            {
+                unsigned int state = TABVALUE(configurebits,i);
+                csRef<iDocumentNode> framenode = node->GetNode("frame");
+                if(state)
+                {
+                    csString ypos;
+
+                    ypos.Append(framenode->GetAttributeValueAsInt("height") * C++);
+
+                    node->SetAttribute("visible","yes");
+                    framenode->SetAttribute("y",ypos);
+                }
+                else node->SetAttribute("visible","no");
+            }
+        }
+    }
+
+
+    csRef<iFile> file;
+    file = psengine->GetVFS()->Open("/this/data/gui/chat.xml",VFS_FILE_WRITE);
+
+    doc->Write(file);
 }
 
 void pawsChatWindow::SaveChatSettings()
@@ -1843,6 +1941,72 @@ void pawsChatWindow::OnLostFocus()
 
 }
 
+void pawsChatWindow::ReloadChatWindow()
+{
+    while ( children.GetSize() > 0 )
+    {
+        pawsWidget* wdg = children.Pop();
+        if (wdg)
+            delete wdg;
+    }
+
+    if (contextMenu != NULL)
+    {
+        PawsManager::GetSingleton().GetMainWidget()->DeleteChild(contextMenu);
+        contextMenu = NULL;
+    }
+
+    if(titleBar) delete titleBar;
+    if(border) delete border;
+    titleBar = 0;
+    border = 0;
+    
+
+    if (extraData)
+        delete extraData;
+    extraData = 0;
+
+    for (size_t i = 0; i < PW_SCRIPT_EVENT_COUNT; i++)
+    {
+        if (scriptEvents[i])
+        {
+            delete scriptEvents[i];
+            scriptEvents[i] = NULL;
+        }
+    }
+
+    LoadFromFile(filename);
+    //////////////////////////////////////////////////////////////////////////
+    /*csRef<iDocument> doc;
+    csRef<iDocumentNode> root, topNode, widgetNode;
+
+    doc = ParseFile(PawsManager::GetSingleton().GetObjectRegistry(),
+        PawsManager::GetSingleton().GetLocalization()->FindLocalizedFile(filename));
+    if (doc == NULL)
+        return;
+
+    root = doc->GetRoot();
+    if (root == NULL)
+    {
+        Error1("No root in XML");
+        return ;
+    }
+    topNode = root->GetNode("widget_description");
+    if (topNode == NULL)
+    {
+        Error1("No <widget_description> in XML");
+        return ;
+    }
+    widgetNode = topNode->GetNode("widget");
+    if (widgetNode == NULL)
+    {
+        Error1("No <widget> in <widget_description>");
+        return ;
+    }
+
+    LoadChildren(widgetNode);*/
+    //////////////////////////////////////////////////////////////////////////
+}
 
 bool pawsChatWindow::OnKeyDown(utf32_char keyCode, utf32_char key, int modifiers )
 {

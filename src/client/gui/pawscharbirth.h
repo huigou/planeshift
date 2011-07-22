@@ -38,6 +38,7 @@ class pawsCharBirth : public pawsWidget
 public:
     pawsCharBirth();
     ~pawsCharBirth(); 
+    pawsCharBirth(const pawsCharBirth& origin){}
     void OnListAction( pawsListBox* widget, int status );
     bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );
     bool PostSetup();

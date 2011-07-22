@@ -27,8 +27,9 @@
 class pawsKeySelectBox : public pawsWidget
 {
 public:
+    pawsKeySelectBox(){factory = "pawsKeySelectBox";}
     virtual ~pawsKeySelectBox();
-
+    pawsKeySelectBox(const pawsKeySelectBox& origin);
     bool Setup(iDocumentNode * node);
 
     void Draw();

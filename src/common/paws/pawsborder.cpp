@@ -36,7 +36,21 @@ pawsBorder::pawsBorder(const char* name )
     justTitle = false;
     shadowFont = true;
 }
-
+pawsBorder::pawsBorder(const pawsBorder& origin) :
+            align(origin.align),
+            draw(origin.draw),
+            frame(origin.frame),
+            justTitle(origin.justTitle),
+            parent(NULL),
+            shadowFont(origin.shadowFont),
+            style(origin.style),
+            title(origin.title),
+            titleImage(origin.titleImage),
+            usingGraphics(origin.usingGraphics)
+{
+    for (unsigned int i = 0 ; i < PAWS_BORDER_MAX ; i++)
+        borderImages[i] = origin.borderImages[i];
+}
 void pawsBorder::UseBorder( const char* name )
 {    
     csString stylestr( name );

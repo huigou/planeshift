@@ -76,7 +76,7 @@ class pawsListBoxRow : public pawsWidget
 {
 public:
     pawsListBoxRow();
-
+    pawsListBoxRow(const pawsListBoxRow& origin);
     /// get a pointer to one of the columns of this row
     pawsWidget* GetColumn( size_t column );
 
@@ -172,6 +172,7 @@ class pawsListBox : public pawsWidget
 {
 public:
     pawsListBox();
+    pawsListBox(const pawsListBox& origin);
     bool Setup( iDocumentNode* node );
     bool PostSetup();
 

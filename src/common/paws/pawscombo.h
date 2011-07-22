@@ -51,6 +51,7 @@ class pawsComboBox : public pawsWidget
 public:
     pawsComboBox();
     ~pawsComboBox();
+    pawsComboBox(const pawsComboBox& origin);
     
     bool Setup( iDocumentNode* node );
     bool PostSetup();

@@ -88,6 +88,8 @@
 #include "pawstabwindow.h"
 #include "pawsspinbox.h"
 #include "pawssimplewindow.h"
+#include "pawscombopromptwindow.h"
+#include "pawscolorpromptwindow.h"
 
 #define TEMP_SKIN_MOUNT "/paws/temp_skin"
 
@@ -1019,6 +1021,23 @@ bool PawsManager::LoadObjectViews()
     return ret;
 }
 
+pawsWidget* PawsManager::CreateWidget( const char* factoryName, const pawsWidget* origin)
+{
+    csString factory(factoryName);
+    for (size_t x = 0; x < factories.GetSize(); x++)
+    {
+        if (factory == factories[x]->GetName())
+        {
+            pawsWidget * newWidget = factories[x]->Create(origin);
+            newWidget->SetFactory(factoryName);
+            return newWidget;
+        }
+    }
+
+    Error2("Could not locate Factory: %s,using default copy constructor to create", factoryName);
+    return new pawsWidget(*origin);
+}
+
 pawsWidget* PawsManager::CreateWidget( const char* factoryName )
 {
 
@@ -1196,6 +1215,8 @@ void PawsManager::RegisterFactories()
     RegisterFactory (pawsMessageTextBoxFactory);
     RegisterFactory (pawsEditTextBoxFactory);
     RegisterFactory (pawsMultilineEditTextBoxFactory);
+    RegisterFactory (pawsColorInputFactory);
+    RegisterFactory (ComboWrapperFactory);
 //    RegisterFactory (pawsInfoWindowFactory);
     RegisterFactory (pawsYesNoBoxFactory);
     RegisterFactory (pawsListBoxFactory);
@@ -1267,7 +1288,7 @@ void PawsManager::RegisterFactories()
 
     RegisterFactory (pawsSimpleWindowFactory);
     RegisterFactory (pawsDocumentViewFactory);
-
+    RegisterFactory (pawsThumbFactory);
 }
 
 bool PawsManager::ApplyStyle(const char * name, iDocumentNode * target)

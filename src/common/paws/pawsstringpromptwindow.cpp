@@ -35,6 +35,17 @@
 pawsStringPromptWindow::pawsStringPromptWindow()
 {
     action = NULL;
+    factory = "pawsStringPromptWindow";
+}
+
+pawsStringPromptWindow::pawsStringPromptWindow(const pawsStringPromptWindow& origin)
+                        :pawsPromptWindow(origin),
+                        action(0),
+                        multiLine(origin.multiLine),
+                        name(origin.name),
+                        param(origin.param)
+{
+
 }
 
 void pawsStringPromptWindow::Initialize(const csString & label, const csString & string, bool multiline, int width, int height,

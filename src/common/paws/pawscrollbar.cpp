@@ -32,24 +32,7 @@
 #define SCROLL_UP_SND        "gui.scrollup"
 #define SCROLL_DOWN_SND      "gui.scrolldown"
 
-class pawsThumb : public pawsWidget
-{
-public:
-    bool OnMouseUp( int button, int modifiers, int x, int y )
-    {
-        if ( parent )
-            return parent->OnMouseUp( button, modifiers, x, y );
-        else
-            return false;
-    }
 
-    void OnLostFocus()
-    {    
-        OnMouseUp(0,0,0,0);
-        pawsWidget::OnLostFocus();
-    }    
-
-};
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -63,6 +46,7 @@ pawsScrollBar::pawsScrollBar()
     horizontal      = false;
     reversed        = false;
     limited         = true;
+    factory         = "pawsScrollBar";
 
     // Used when the mouse button is held down
     clock =  csQueryRegistry<iVirtualClock > ( PawsManager::GetSingleton().GetObjectRegistry());
@@ -95,6 +79,36 @@ pawsScrollBar::pawsScrollBar()
 	thumbMoving = "ScrollBar Thumb Moving";
 }
 
+pawsScrollBar::pawsScrollBar(const pawsScrollBar& origin)
+                :pawsWidget(origin),
+                clock(origin.clock),
+                currentValue(origin.currentValue),
+                downGrey(origin.downGrey),
+                downHeight(origin.downHeight), downOffsetx(origin.downOffsetx), downOffsety(origin.downOffsety),
+                downPressed(origin.downPressed), downUnpressed(origin.downUnpressed), downWidth(origin.downWidth),
+                horizontal(origin.horizontal), lastButton(origin.lastButton), lastModifiers(origin.lastModifiers),
+                limited(origin.limited), maxValue(origin.maxValue), minValue(origin.minValue), mouseDown(origin.mouseDown),
+                mouseIsDraggingThumb(origin.mouseIsDraggingThumb), reversed(origin.reversed), scrollTicks(origin.scrollTicks),
+                thumbMoving(origin.thumbMoving), thumbStopped(origin.thumbStopped), tickValue(origin.tickValue),
+                upHeight(origin.upHeight), upOffsetx(origin.upOffsetx), upOffsety(origin.upOffsety), upUnpressed(origin.upUnpressed), upWidth(origin.upWidth)
+{
+    upButton = downButton = NULL;
+    thumb = NULL;
+    lastWidget = 0;
+
+    for (unsigned int i = 0 ; i < origin.children.GetSize() ; i++)
+    {
+        if(origin.upButton == origin.children[i])
+            upButton = dynamic_cast<pawsButton*>(children[i]);
+        else if(origin.downButton == origin.children[i])
+            downButton = dynamic_cast<pawsButton*>(children[i]);
+        else if(origin.thumb == origin.children[i])
+            thumb = children[i];
+
+        if(upButton!= 0 && downButton != 0 && thumb != 0)
+            break;
+    }
+}
 
 pawsScrollBar::~pawsScrollBar()
 {

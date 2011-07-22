@@ -39,6 +39,7 @@ class pawsYesNoBox : public pawsWidget
 public:
 
     pawsYesNoBox();
+    pawsYesNoBox(const pawsYesNoBox& origin);
     virtual ~pawsYesNoBox();
 
     bool OnButtonReleased( int mouseButton, int keyModifier, pawsWidget* widget );
