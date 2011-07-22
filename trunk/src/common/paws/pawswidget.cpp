@@ -760,6 +760,11 @@ bool pawsWidget::LoadEventScripts(iDocumentNode * node)
     if (mousedownEvent)
         scriptEvents[PW_SCRIPT_EVENT_MOUSEDOWN] = new pawsScript(this, mousedownEvent->GetContentsValue());
 
+    // load mouseup event
+    csRef<iDocumentNode> mouseupEvent = node->GetNode("eventMouseUp");
+    if (mouseupEvent)
+        scriptEvents[PW_SCRIPT_EVENT_MOUSEUP] = new pawsScript(this, mouseupEvent->GetContentsValue());
+
     // load value changed event
     csRef<iDocumentNode> valueChangedEvent = node->GetNode("eventValueChanged");
     if (valueChangedEvent)
