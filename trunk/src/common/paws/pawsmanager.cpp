@@ -641,8 +641,6 @@ bool PawsManager::HandleMouseDown( csMouseEventData &data )
             
             // Distribute the event to the widget
 
-            widget->RunScriptEvent(PW_SCRIPT_EVENT_MOUSEDOWN);
-
             uint32 modifiers = data.Modifiers;
             
             //we don't handle capslock/numlock/scorr block (see PS#4806)
@@ -652,6 +650,9 @@ bool PawsManager::HandleMouseDown( csMouseEventData &data )
                                                      modifiers,
                                                      data.x,
                                                      data.y );
+
+            widget->RunScriptEvent(PW_SCRIPT_EVENT_MOUSEDOWN);
+
             return returnResult;
         }
 
@@ -696,12 +697,14 @@ bool PawsManager::HandleMouseUp( csMouseEventData &data )
             widget->GetParent()->BringToTop( widget );
         }
 
+        bool returnResult = return widget->OnMouseUp(data.Button,
+                                                     data.Modifiers,
+                                                     data.x,
+                                                     data.y);
+
         widget->RunScriptEvent(PW_SCRIPT_EVENT_MOUSEUP);
 
-        return widget->OnMouseUp( data.Button,
-                                  data.Modifiers,
-                                  data.x,
-                                  data.y );
+        return returnResult;
     }
 
     return false;
