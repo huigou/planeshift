@@ -104,10 +104,8 @@ bool pawsTitle::PostSetup()
 		titleButtons[a].buttonWidget = FindWidget(titleButtons[a].widgetName);
 	return true;
 }
-pawsTitle::pawsTitle(const pawsTitle & origin)
+pawsTitle::pawsTitle(const pawsTitle & origin) : pawsWidget(origin) //copy common attributes and children
 {
-    pawsWidget::pawsWidget(origin);//copy common attributes and children
-
     height = origin.height;
     scaleWidth = origin.scaleWidth;
     text = origin.text;
