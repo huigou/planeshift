@@ -86,6 +86,31 @@ pawsFileNavigation::pawsFileNavigation()
     dirlistbox=NULL;
     fullpathandfilename=NULL;
     action=NULL;
+    factory = "pawsFileNavigation";
+}
+
+pawsFileNavigation::pawsFileNavigation(const pawsFileNavigation& origin)
+                    :pawsWidget(origin),
+                    current_path(origin.current_path),
+                    fullpathandfilename(0),
+                    selection_state(origin.selection_state),
+                    vfs(origin.vfs)
+{
+    for (unsigned int i = 0 ; i < origin.zip_mounts.GetSize(); i++)
+        zip_mounts.Push(origin.zip_mounts[i]);
+
+    dirlistbox = 0;
+    filelistbox = 0;
+
+    for (unsigned int i = 0 ; i < origin.children.GetSize(); i++)
+    {
+        if(origin.children[i] == origin.dirlistbox)
+            dirlistbox = dynamic_cast<pawsListBox *>(children[i]);
+        else if(origin.children[i] == origin.filelistbox)
+            filelistbox = dynamic_cast<pawsListBox *>(children[i]);
+       
+        if(filelistbox != 0 && dirlistbox != 0) break;
+    }
 }
 
 pawsFileNavigation::~pawsFileNavigation()

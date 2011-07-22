@@ -53,7 +53,7 @@ class pawsStringPromptWindow : public pawsPromptWindow
 public:
     /** Basic constructor */
     pawsStringPromptWindow();
-
+    pawsStringPromptWindow(const pawsStringPromptWindow& origin);
     /**
      * Called when a button is released inside the window
      * Only relevant if widget is okButton or cancelButton

@@ -70,7 +70,10 @@ pawsSkillWindow::pawsSkillWindow()
     factRequest = false;
     charApp = new psCharAppearance(PawsManager::GetSingleton().GetObjectRegistry());
 }
+pawsSkillWindow::pawsSkillWindow(const pawsSkillWindow& origin)
+{
 
+}
 pawsSkillWindow::~pawsSkillWindow()
 {
     // Delete cached skill description strings

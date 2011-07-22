@@ -56,10 +56,35 @@ pawsSpinBox::pawsSpinBox()
 
     spinState   = SPIN_STOP;
     spinCounter = 0;
+    factory = "pawsSpinBox";
 
     globalTimer = csEventTimer::GetStandardTimer(PawsManager::GetSingleton().GetObjectRegistry());
     timerEvent  = new SpinBoxTimerEvent(this);
 
+}
+
+pawsSpinBox::pawsSpinBox(const pawsSpinBox& origin)
+            :pawsWidget(origin),
+            max(origin.max),min(origin.min),inc(origin.inc),
+            spinState(origin.spinState),spinCounter(origin.spinCounter),
+            globalTimer(origin.globalTimer)
+{
+    downButton = 0;
+    upButton = 0;
+    text = 0;
+    timerEvent = new SpinBoxTimerEvent(this);
+    
+    for (unsigned int i = 0 ; i < origin.children.GetSize() ; i++)
+    {
+        if(origin.downButton == origin.children[i])
+            downButton = dynamic_cast<pawsButton*>(children[i]);
+        else if(origin.upButton == origin.children[i])
+            upButton = dynamic_cast<pawsButton*>(children[i]);
+        else if (origin.text == origin.children[i])
+            text = dynamic_cast<pawsEditTextBox*>(children[i]);
+
+        if(downButton!=0 && upButton != 0 && text != 0) break;
+    }
 }
 
 pawsSpinBox::~pawsSpinBox()

@@ -46,7 +46,7 @@ class pawsGenericView : public pawsWidget
 public:
     pawsGenericView();
     ~pawsGenericView();
-
+    pawsGenericView(const pawsGenericView& origin);
     /** Creates the room ( world ) for the mesh to be placed.
      */
     bool Setup(iDocumentNode* node);    

@@ -43,7 +43,7 @@ class pawsNumberPromptWindow : public pawsPromptWindow
 {
 public:
     pawsNumberPromptWindow();
-    
+    pawsNumberPromptWindow(const pawsNumberPromptWindow & origin);
     //from pawsWidget:
     virtual bool PostSetup();
     bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );

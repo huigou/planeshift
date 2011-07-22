@@ -38,8 +38,22 @@ pawsOkBox::pawsOkBox()
 {
     okButton  = 0;
     notify = 0;
+    factory = "pawsOkBox";
 }
-
+pawsOkBox::pawsOkBox(const pawsOkBox& origin)
+                :pawsWidget(origin),
+                text(origin.text)
+{
+    notify = 0;
+    okButton = 0;
+    for (unsigned int i = 0 ; i < origin.children.GetSize(); i++)
+    {
+        if(origin.okButton == origin.children[i])
+            okButton = origin.children[i];
+        if(okButton != 0)
+            break;
+    }
+}
 pawsOkBox::~pawsOkBox()
 {
 }

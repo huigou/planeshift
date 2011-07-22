@@ -57,6 +57,9 @@ private:
 
 public:
 	pawsTitle(pawsWidget * parent, csRef<iDocumentNode> node);
+
+        pawsTitle(const pawsTitle & origin);
+
 	virtual ~pawsTitle();
 
 	bool Setup(iDocumentNode* node);

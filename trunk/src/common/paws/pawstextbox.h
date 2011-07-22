@@ -28,7 +28,7 @@ struct iVirtualClock;
 #include "pawswidget.h"
 #include <csutil/parray.h>
 #include <ivideo/fontserv.h>
-
+#include <iutil/virtclk.h>
 /**
  * A basic text box widget. Useful for simply displaying text.
  */
@@ -59,6 +59,11 @@ public:
     pawsTextBox();
     /** Basic deconstructor */
     virtual ~pawsTextBox();
+
+    /**
+     * @brief Copy constructor
+     */
+    pawsTextBox(const pawsTextBox& origin);
 
     /**
      * Sets up the text box from a document node<br>
@@ -277,9 +282,15 @@ public:
             colour = 0;
             size = 0;
         }
+        MessageLine(const MessageLine& origin):text(origin.text),colour(origin.colour),size(origin.size)
+        {
+            for (unsigned int i = 0 ; i < origin.segments.GetSize(); i++)
+                segments.Push(origin.segments[i]);
+        }
     };
 
     pawsMessageTextBox( );
+    pawsMessageTextBox(const pawsMessageTextBox& origin);
     virtual ~pawsMessageTextBox();
     virtual bool Setup( iDocumentNode* node );
     virtual bool Setup( void );
@@ -372,6 +383,7 @@ class pawsEditTextBox : public pawsWidget
 public:
     pawsEditTextBox();
     virtual ~pawsEditTextBox();
+    pawsEditTextBox(const pawsEditTextBox& origin);
 
     virtual void Draw();
 
@@ -489,6 +501,7 @@ class pawsMultiLineTextBox : public pawsWidget
 {
 public:
     pawsMultiLineTextBox();
+    pawsMultiLineTextBox(const pawsMultiLineTextBox& origin);
     virtual ~pawsMultiLineTextBox();
 
     bool Setup ( iDocumentNode* node );
@@ -540,7 +553,7 @@ class pawsMultilineEditTextBox : public pawsWidget
 public:
     pawsMultilineEditTextBox();
     virtual ~pawsMultilineEditTextBox();
-
+    pawsMultilineEditTextBox(const pawsMultilineEditTextBox& origin);
     struct MessageLine
     {
         size_t lineLength; //Stores length of the line.
@@ -678,7 +691,7 @@ class pawsFadingTextBox : public pawsWidget
 public:
     pawsFadingTextBox();
     virtual ~pawsFadingTextBox() {};
-
+    pawsFadingTextBox(const pawsFadingTextBox& origin);
     bool Setup(iDocumentNode* /*node*/) { return true;} // Shouldn't be created in XML, only by code
 
     void Draw();
@@ -720,6 +733,7 @@ class pawsDocumentView: public pawsMultiLineTextBox
 {
 public:
     pawsDocumentView();
+    pawsDocumentView(const pawsDocumentView& origin);
     virtual ~pawsDocumentView();
     /**
      * @brief Set the content that would be displayed in the view.

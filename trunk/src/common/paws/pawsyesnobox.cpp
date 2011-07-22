@@ -44,6 +44,31 @@ pawsYesNoBox::pawsYesNoBox()
     noButton  = 0;
 }
 
+pawsYesNoBox::pawsYesNoBox(const pawsYesNoBox& origin)
+                :pawsWidget(origin),
+                handler(origin.handler),
+                owner(origin.owner),
+                useCustomIDs(origin.useCustomIDs)
+
+{
+    notify = 0;
+    yesButton = 0;
+    noButton = 0;
+    text = 0;
+
+    for (unsigned int i = 0 ; i< origin.children.GetSize(); i++)
+    {
+        if(origin.text == origin.children[i])
+            text = dynamic_cast<pawsMultiLineTextBox*>(children[i]);
+        else if(origin.yesButton == origin.children[i])
+            yesButton = origin.children[i];
+        else if(origin.noButton == origin.children[i])
+            noButton = origin.children[i];
+
+        if(text != 0 && yesButton != 0 && noButton != 0) break;
+    }
+}
+
 pawsYesNoBox::~pawsYesNoBox()
 {
 }

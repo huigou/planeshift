@@ -1396,7 +1396,10 @@ EEditParticleListToolbox::EEditParticleListToolbox() : scfImplementationType(thi
 {
     updatingParticleValue = 0;
 }
+EEditParticleListToolbox::EEditParticleListToolbox(const EEditParticleListToolbox& origin):scfImplementationType(this)
+{
 
+}
 EEditParticleListToolbox::~EEditParticleListToolbox()
 {
 }

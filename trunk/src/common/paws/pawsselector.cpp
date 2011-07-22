@@ -26,6 +26,30 @@
 pawsSelectorBox::pawsSelectorBox()
 {
     moved = NULL;
+    factory = "pawsSelectorBox";
+}
+
+pawsSelectorBox::pawsSelectorBox(const pawsSelectorBox& origin)
+                :pawsWidget(origin)
+{
+    add = remove = NULL;
+    available = selected = 0;
+    moved = 0;
+
+    for (unsigned int i = 0 ; i < origin.children.GetSize() ; i++)
+    {
+        if(origin.add == origin.children[i])
+            add = dynamic_cast<pawsButton*>(children[i]);
+        else if(origin.available == origin.children[i])
+            available = dynamic_cast<pawsListBox*>(children[i]);
+        else if(origin.remove == origin.children[i])
+            remove = dynamic_cast<pawsButton*>(children[i]);
+        else if(origin.selected == origin.children[i])
+            selected = dynamic_cast<pawsListBox*>(children[i]);
+
+        if(add != 0 && remove != 0 && available != 0 && selected!= 0)
+            break;
+    }
 }
 
 pawsSelectorBox::~pawsSelectorBox()

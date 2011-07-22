@@ -99,6 +99,7 @@ class pawsTreeNode : public pawsWidget
 {
 public:
     pawsTreeNode();
+    pawsTreeNode(const pawsTreeNode& origin);
     virtual ~pawsTreeNode();
 
     // from pawsWidget:
@@ -107,6 +108,9 @@ public:
 
     // Sets the tree that the node belongs to
     void SetTree(pawsITreeStruct * tree);
+
+    // Set first children. ONLY CALLED BY PAWSTREE'S COPY CONSTRUCTOR!!!
+    void SetFirstChild(pawsTreeNode * child);
 
     // Attributes - you can set and retrieve named string values for each node.
     csString GetAttr(const csString & name);
@@ -254,6 +258,7 @@ class pawsTree : public pawsWidget, public pawsTreeStruct
 {
 public:
     pawsTree();
+    pawsTree(const pawsTree& origin);
     virtual ~pawsTree();
 
     // from pawsWidget:
@@ -293,6 +298,7 @@ public:
 
 protected:
     void SetScrollBarMax();
+    void cloneTreeNodes(const pawsTree & origin);
 
     pawsITreeLayout *layout;
     pawsITreeDecorator *decor;
@@ -403,7 +409,7 @@ class pawsWidgetTreeNode : public pawsTreeNode
 {
 public:
     pawsWidgetTreeNode();
-    
+    pawsWidgetTreeNode(const pawsWidgetTreeNode& origin);
     //from pawsWidget:
     virtual bool Load(iDocumentNode *node);
     
@@ -432,6 +438,7 @@ class pawsCheckTreeNode : public pawsICheckTreeNode, public pawsTreeNode
 {
 public:
     pawsCheckTreeNode();
+    pawsCheckTreeNode(const pawsCheckTreeNode& origin);
     virtual ~pawsCheckTreeNode() {};
     
     //from pawsICheckTreeNode:
@@ -463,6 +470,8 @@ public:
 class pawsSeqTreeNode : public pawsTreeNode
 {
 public:
+    pawsSeqTreeNode(){factory = "pawsSeqTreeNode";}
+    pawsSeqTreeNode(const pawsSeqTreeNode& origin);
     //from pawsWidget:
     virtual bool Load(iDocumentNode *node);
 
@@ -495,6 +504,7 @@ class pawsSimpleTreeNode : public pawsCheckTreeNode
 {
 public:
     pawsSimpleTreeNode();
+    pawsSimpleTreeNode(const pawsSimpleTreeNode& origin);
     virtual ~pawsSimpleTreeNode(); 
 
     // from pawsWidget:
@@ -521,7 +531,7 @@ class pawsSimpleTree : public pawsTree
 {
 public:
     pawsSimpleTree();
-
+    pawsSimpleTree(const pawsSimpleTree& origin);
     // from pawsWidget:
     virtual bool Setup(iDocumentNode *node);
     

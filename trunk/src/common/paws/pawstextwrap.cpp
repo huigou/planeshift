@@ -60,6 +60,7 @@ pawsMultilineEditTextBox::pawsMultilineEditTextBox()
     maxLen = 0;
     vScrollBar = NULL;
     vScrollBarWidth = VSCROLLBAR_WIDTH;
+    factory = "pawsMultilineEditTextBox";
 
     clock = csQueryRegistry<iVirtualClock > (PawsManager::GetSingleton().GetObjectRegistry());
 
@@ -70,7 +71,40 @@ pawsMultilineEditTextBox::pawsMultilineEditTextBox()
     GetFont()->GetMaxSize(dummy, lineHeight);
     OnResize();
 }
+pawsMultilineEditTextBox::pawsMultilineEditTextBox(const pawsMultilineEditTextBox& origin)
+                        :pawsWidget(origin),
+                        blink(origin.blink),
+                        blinkTicks(origin.blinkTicks),
+                        canDrawLines(origin.canDrawLines),
+                        clock(origin.clock),
+                        cursorLine(origin.cursorLine),
+                        cursorLoc(origin.cursorLoc),
+                        cursorPosition(origin.cursorPosition),
+                        lineHeight(origin.lineHeight),
+                        maxHeight(origin.maxHeight),
+                        maxLen(origin.maxLen),
+                        maxWidth(origin.maxWidth),
+                        text(origin.text),
+                        tmp(origin.tmp),
+                        topLine(origin.topLine),
+                        usingScrollBar(origin.usingScrollBar),
+                        vScrollBarWidth(origin.vScrollBarWidth),
+                        yPos(origin.yPos)
 
+
+{
+    for (unsigned int i= 0 ; i < origin.lineInfo.GetSize(); i++)
+        lineInfo.Push(new MessageLine(*origin.lineInfo[i]));
+    vScrollBar = 0;
+    for (unsigned int i = 0 ; i < origin.children.GetSize();i++)
+    {
+        if(origin.vScrollBar == origin.children[i])
+            vScrollBar = dynamic_cast<pawsScrollBar*>(children[i]);
+
+        if(vScrollBar!=0) 
+            break;
+    }
+}
 pawsMultilineEditTextBox::~pawsMultilineEditTextBox()
 {
 

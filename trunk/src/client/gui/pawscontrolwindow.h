@@ -57,7 +57,7 @@ class pawsControlWindow : public pawsWidget
 public:
     pawsControlWindow();
     virtual ~pawsControlWindow();
-
+    pawsControlWindow(const pawsControlWindow& origin){}
     /** Toggle a window and it's children from hidden to visible or back
      * depending on the window state when called.
      */

@@ -30,8 +30,27 @@ pawsRadioButton::pawsRadioButton()
     radioOff ="radiooff";
     radioOn  ="radioon";
     size = 16;
+    factory = "pawsRadioButton";
 }
 
+pawsRadioButton::pawsRadioButton(const pawsRadioButton& origin)
+                :pawsButton(origin),
+                radioOff(origin.radioOff),
+                radioOn(origin.radioOn),
+                size(origin.size)
+{
+    radioButton = 0;
+    text = 0;
+    for (unsigned int i = 0 ; i < origin.children.GetSize() ; i++)
+    {
+        if(origin.radioButton == origin.children[i])
+            radioButton = dynamic_cast<pawsButton*>(children[i]);
+        else if(origin.text == origin.children[i])
+            text = dynamic_cast<pawsTextBox*>(children[i]);
+        if(radioButton != 0 && text != 0) 
+            break;
+    }
+}
 void pawsRadioButton::SetState( bool state )
 {    
     radioButton->SetState( state );
@@ -257,6 +276,7 @@ pawsRadioButtonGroup::pawsRadioButtonGroup()
     radioOff = "radiooff";
     radioOn  = "radioon";
     size     = 16;
+    factory = "pawsRadioButtonGroup";
 }
 
 

@@ -55,6 +55,21 @@ public:
         
     }
 
+    pawsNumberInput(const pawsNumberInput& origin):pawsWidget(origin)
+    {
+        editBox = 0;
+        scrollBar = 0;
+        for (unsigned int i = 0 ; i < origin.children.GetSize(); i++)
+        {
+            if(origin.editBox == origin.children[i])
+                editBox = dynamic_cast<pawsEditTextBox*>(children[i]);
+            else if(origin.scrollBar == origin.children[i])
+                scrollBar = dynamic_cast<pawsScrollBar*>(children[i]);
+
+            if(editBox != 0 && scrollBar!=0) break;
+        }
+    }
+
     pawsEditTextBox * editBox;
     pawsScrollBar * scrollBar;
 };
@@ -69,8 +84,25 @@ pawsNumberPromptWindow::pawsNumberPromptWindow()
     lastValidText.Clear();
     
     SetSpacing(5);
+    factory = "pawsNumberPromptWindow";
 }
-
+pawsNumberPromptWindow::pawsNumberPromptWindow(const pawsNumberPromptWindow & origin)
+                    :pawsPromptWindow(origin),
+                    action(origin.action),
+                    lastValidText(origin.lastValidText),
+                    maxDigits(origin.maxDigits),
+                    maxNumber(origin.maxNumber),
+                    minNumber(origin.minNumber),
+                    name(origin.name),
+                    param(origin.param)
+{
+    pawsNumberInput * input = dynamic_cast<pawsNumberInput*>(inputWidget);
+    if(input)
+    {
+        editBox = input->editBox;
+        scrollBar = input->scrollBar;
+    }
+}
 bool pawsNumberPromptWindow::PostSetup()
 {
     pawsPromptWindow::PostSetup();

@@ -52,6 +52,11 @@ public:
         AddChild(innerWidget);
     }
 
+    pawsListBoxTitle(const pawsListBoxTitle& origin):pawsWidget(origin),colNum(origin.colNum),sortable(origin.sortable)
+    {
+        this->listBox = origin.listBox;
+    }
+
     bool OnMouseDown( int button, int modifiers, int x, int y )
     {
         if(button == csmbWheelUp || button == csmbWheelDown || button == csmbHWheelLeft || button == csmbHWheelRight)
@@ -88,6 +93,7 @@ pawsListBox::pawsListBox()
     horzscrollBar= NULL;
     titleRow     = NULL;
     xMod         = 0;
+    factory      = "pawsListBox";
 
     usingTitleRow = true;
 
@@ -108,6 +114,75 @@ pawsListBox::pawsListBox()
     selectable      = true;
 }
 
+pawsListBox::pawsListBox(const pawsListBox& origin)
+                :pawsWidget(origin),
+                arrowDown(origin.arrowDown),
+                arrowSize(origin.arrowSize),
+                arrowUp(origin.arrowUp),
+                ascOrder(origin.ascOrder),
+                autoID(origin.autoID),
+                autoResize(origin.autoResize),
+                autoUpdateScroll(origin.autoUpdateScroll),
+                columnHeight(origin.columnHeight),
+                highlightAlpha(origin.highlightAlpha),
+                highlightImage(origin.highlightImage),
+                notifyTarget(0),
+                rowWidth(origin.rowWidth),
+                scrollbarHeightMod(origin.scrollbarHeightMod),
+                scrollbarWidth(origin.scrollbarWidth),
+                selectable(origin.selectable),
+                selected(origin.selected),
+                //sort_ascOrder(origin.sort_ascOrder),
+                //sort_sortColNum(origin.sort_sortColNum),
+                //sort_sortFunc(origin.sort_sortFunc),
+                sortColNum(origin.sortColNum),
+                topRow(origin.topRow),
+                totalColumns(origin.totalColumns),
+                totalRows(origin.totalRows),
+                useBorder(origin.useBorder),
+                usingTitleRow(origin.usingTitleRow),
+                xmlbinding_row(origin.xmlbinding_row),
+                xMod(origin.xMod)
+
+{
+    columnDef = new ColumnDef[origin.totalColumns];
+    for (unsigned int i = 0 ; i < origin.totalColumns; i++)
+    {
+        columnDef[i].height = origin.columnDef[i].height;
+        columnDef[i].width = origin.columnDef[i].height;
+        columnDef[i].widgetNode = origin.columnDef[i].widgetNode;
+        columnDef[i].sortFunc = origin.columnDef[i].sortFunc;
+        columnDef[i].xmlbinding = origin.columnDef[i].xmlbinding;
+        columnDef[i].sortable = origin.columnDef[i].sortable;
+    }
+    
+    horzscrollBar = 0;
+    scrollBar = 0;
+    titleRow = 0;
+
+    for (unsigned int i = 0 ; i < origin.rows.GetSize() ; i++)
+    {
+        for (unsigned int j = 0 ; j < origin.children.GetSize(); j++)
+        {
+            if(origin.rows[i] == origin.children[j])
+            {
+                rows.Push(dynamic_cast<pawsListBoxRow*>(children[j]));
+                break;
+            }
+        }
+    }
+    for (unsigned int i = 0 ; i < origin.children.GetSize(); i++)
+    {
+        if(origin.horzscrollBar == origin.children[i])
+            horzscrollBar = dynamic_cast<pawsScrollBar*>(children[i]);
+        else if(origin.scrollBar == origin.children[i])
+            scrollBar = dynamic_cast<pawsScrollBar*>(children[i]);
+        else if(origin.titleRow == origin.children[i])
+            titleRow = dynamic_cast<pawsListBoxRow*>(children[i]);
+
+        if(horzscrollBar != 0 && scrollBar != 0 && titleRow!= 0) break;
+    }
+}
 
 pawsListBox::~pawsListBox()
 {
@@ -1323,6 +1398,23 @@ pawsListBoxRow::pawsListBoxRow()
     lastIndex = -1;
 }
 
+pawsListBoxRow::pawsListBoxRow(const pawsListBoxRow& origin)
+                :pawsWidget(origin),
+                isHeading(origin.isHeading),
+                lastIndex(origin.lastIndex)
+{
+    for (unsigned int i = 0 ; i < origin.columns.GetSize(); i++)
+    {
+        for(unsigned int j = 0 ; j < origin.children.GetSize(); j++)
+        {
+            if(origin.columns[i] == origin.children[j])
+            {
+                columns.Push(children[j]);
+                break;
+            }
+        }
+    }
+}
 
 bool pawsListBoxRow::OnKeyDown(utf32_char keyCode, utf32_char keyChar, int modifiers)
 {

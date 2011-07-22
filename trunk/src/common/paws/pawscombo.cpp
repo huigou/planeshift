@@ -35,6 +35,7 @@ pawsComboBox::pawsComboBox()
     closed = true;  
     fliptotop = false;
     listChoice = NULL;
+    factory = "pawsComboBox";
     
     rows = 0;
     rowHeight = 0;
@@ -43,6 +44,40 @@ pawsComboBox::pawsComboBox()
     downButton = "Down Arrow";
     upButtonPressed = "Up Arrow Highlight";
     downButtonPressed = "Down Arrow Highlight";
+}
+
+pawsComboBox::pawsComboBox(const pawsComboBox& origin)
+                : closed(origin.closed),
+                downButton(origin.downButton),
+                downButtonPressed(origin.downButtonPressed),
+                fliptotop(origin.fliptotop),
+                initalText(origin.initalText),
+                listalpha(origin.listalpha),
+                oldHeight(origin.oldHeight),
+                oldWidth(origin.oldWidth),
+                rowHeight(origin.rowHeight),
+                rows(origin.rows),
+                sorted(origin.sorted),
+                text(origin.text),
+                upButton(origin.upButton),
+                upButtonPressed(origin.upButtonPressed),
+                useScrollBar(origin.useScrollBar),
+                pawsWidget(origin)
+{
+    arrow = 0;
+    itemChoice = 0;
+    listChoice = 0;
+    for (unsigned int i = 0 ; i < origin.children.GetSize(); i++)
+    {
+        if(origin.children[i] == origin.arrow)
+            arrow = dynamic_cast<pawsButton *>(children[i]);
+        else if(origin.children[i] == origin.itemChoice)
+            itemChoice = dynamic_cast<pawsTextBox *>(children[i]);
+        else if(origin.children[i] == origin.listChoice)
+            listChoice = dynamic_cast<pawsListBox *>(children[i]);
+
+        if(arrow != 0 && itemChoice != 0 && listChoice != 0) break;
+    }
 }
 
 pawsComboBox::~pawsComboBox()

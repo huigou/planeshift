@@ -42,8 +42,35 @@ pawsPromptWindow::pawsPromptWindow()
     inputWidget    = NULL;
     helperWidget   = NULL;
     spacing        = DEFAULT_SPACING;
+    factory        = "pawsPromptWindow";
 }
+pawsPromptWindow::pawsPromptWindow(const pawsPromptWindow& origin)
+                    :pawsWidget(origin),
+                    spacing(origin.spacing)
+{
+    inputWidget = 0;
+    helperWidget = 0;
+    label = 0;
+    okButton = 0;
+    cancelButton = 0;
 
+    for (unsigned int i = 0 ; i < origin.children.GetSize() ; i++)
+    {
+        if(origin.inputWidget == origin.children[i])
+            inputWidget = children[i];
+        else if(origin.helperWidget == origin.children[i])
+            helperWidget = children[i];
+        else if(origin.label == origin.children[i])
+            label = dynamic_cast<pawsTextBox*>(children[i]);
+        else if(origin.okButton == origin.children[i])
+            okButton = dynamic_cast<pawsButton*>(children[i]);
+        else if(origin.cancelButton == origin.children[i])
+            cancelButton = dynamic_cast<pawsButton*>(children[i]);
+
+        if(inputWidget!= 0 && helperWidget!= 0 && label!= 0 && okButton !=0 && cancelButton!=0)
+            break;
+    }
+}
 bool pawsPromptWindow::PostSetup()
 {
     SetBackground("Scaling Widget Background");

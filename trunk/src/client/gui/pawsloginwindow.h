@@ -36,7 +36,8 @@ class pawsLoginWindow : public pawsWidget
 {
 public:
     pawsLoginWindow();
-    
+    /// TODO: Copy constructor, useless currently. Would be implemented later.
+    pawsLoginWindow(const pawsLoginWindow& origin){}
     bool PostSetup();
     void UpdateUserPasswdFromConfig();
     void Show();

@@ -27,6 +27,18 @@
 #include "pawstabwindow.h"
 #include "pawsmanager.h"
 
+pawsTabWindow::pawsTabWindow(const pawsTabWindow& origin)
+                :pawsWidget(origin)
+{
+    lastButton = (pawsButton*)FindWidget(1000);
+    if (!lastButton) 
+        lastButton = (pawsButton*)FindWidget(1200);
+    lastButton->SetState(true);
+    activeTab = FindWidget(1100);
+    if (!activeTab) 
+        activeTab = FindWidget(1200);
+}
+
 bool pawsTabWindow::PostSetup()
 {
     lastButton = (pawsButton*)FindWidget(1000);

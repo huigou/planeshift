@@ -26,40 +26,36 @@
 
 // PAWS INCLUDES
 #include "pawscombopromptwindow.h"
-#include "pawscombo.h"
 #include "pawsbutton.h"
 #include "pawslistbox.h"
 #include "pawsmainwidget.h"
 
 
-class ComboWrapper : public pawsWidget
-{
-public:
-    ComboWrapper(int width, int height)
-    {
-        SetRelativeFrameSize(width, height);
-    }
-    
-    bool PostSetup()
-    {
-        combo = new pawsComboBox();
-        AddChild(combo);
-        combo->SetRelativeFrame(0, 0, 200, 40);
-        combo->UseBorder("line");
-        combo->SetNumRows(6);
-        combo->SetRowHeight(20);
-        combo->PostSetup();
-        combo->SetSorted(false);
-        return true;
-    }
 
-    pawsComboBox * combo;
-};
 
 
 pawsComboPromptWindow::pawsComboPromptWindow()
 {
     action = NULL;
+    factory = "pawsComboPromptWindow";
+}
+
+pawsComboPromptWindow::pawsComboPromptWindow(const pawsComboPromptWindow& origin)
+                        :pawsPromptWindow(origin),
+                        action(0),
+                        name(origin.name),
+                        param(origin.param)
+                        
+
+{
+    for (unsigned int i = 0 ; i< origin.children.GetSize(); i++)
+    {
+        if(origin.wrapper == origin.children[i])
+        {
+            wrapper = dynamic_cast<ComboWrapper *>(children[i]);
+            if(wrapper != 0) break;
+        }
+    }
 }
 
 bool pawsComboPromptWindow::PostSetup()

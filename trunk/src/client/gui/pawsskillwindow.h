@@ -79,6 +79,8 @@ class pawsSkillWindow : public pawsControlledWindow, public psClientNetSubscribe
 {
 public:
     pawsSkillWindow();
+    /// TODO: Copy constructor, useless currently. Would be implemented later.
+    pawsSkillWindow(const pawsSkillWindow& origin);
     virtual ~pawsSkillWindow();
 
     bool PostSetup();

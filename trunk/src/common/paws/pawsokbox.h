@@ -37,6 +37,7 @@ class pawsOkBox : public pawsWidget
 public:
 
     pawsOkBox();
+    pawsOkBox(const pawsOkBox& origin);
     virtual ~pawsOkBox();
 
     bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );

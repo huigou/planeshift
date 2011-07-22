@@ -23,6 +23,8 @@
 #include <csutil/list.h>
 #include <iutil/document.h>
 #include "pawspromptwindow.h"
+#include "pawsbutton.h"
+#include "pawscrollbar.h"
 
 class pawsButton;
 class pawsEditTextBox;
@@ -36,6 +38,71 @@ public:
     virtual ~iOnColorEnteredAction() {};
 };
 
+class pawsColorInput : public pawsWidget
+{
+public:
+    pawsColorInput()
+    {
+        SetRelativeFrameSize(140, 80);
+
+        // we have three scroll bars, one for Red, Green and Blue and a button used for "Preview".
+        // The preview works following: As soon as the user scrolls, the buttons background colour
+        // changes to the set colour.
+        scrollBarR = new pawsScrollBar();
+        scrollBarR->SetHorizontal(true);
+        scrollBarR->SetRelativeFrame(1, 1, 110, 20);
+        scrollBarR->SetTickValue(1);
+        scrollBarR->PostSetup();
+
+        scrollBarG = new pawsScrollBar();
+        scrollBarG->SetHorizontal(true);
+        scrollBarG->SetRelativeFrame(1, 31, 110, 20);
+        scrollBarG->SetTickValue(1);
+        scrollBarG->PostSetup();
+
+        scrollBarB = new pawsScrollBar();
+        scrollBarB->SetHorizontal(true);
+        scrollBarB->SetRelativeFrame(1, 61, 110, 20);
+        scrollBarB->SetTickValue(1);
+        scrollBarB->PostSetup();
+
+        buttonPreview = new pawsButton();
+        buttonPreview->SetRelativeFrame(115, 35, 20, 20);
+
+        AddChild(scrollBarR);
+        AddChild(scrollBarG);
+        AddChild(scrollBarB);
+        AddChild(buttonPreview);
+    }
+
+    pawsColorInput(const pawsColorInput & origin):pawsWidget(origin)
+    {
+        buttonPreview = 0;
+        scrollBarB = 0;
+        scrollBarG = 0;
+        scrollBarR = 0;
+        for (unsigned int i = 0 ; i < origin.children.GetSize(); i++)
+        {
+            if(origin.children[i] == origin.buttonPreview)
+                buttonPreview = dynamic_cast<pawsButton *>(children[i]);
+            else if(origin.children[i] == origin.scrollBarB)
+                scrollBarB = dynamic_cast<pawsScrollBar *>(children[i]);
+            else if(origin.children[i] == origin.scrollBarG)
+                scrollBarG = dynamic_cast<pawsScrollBar *>(children[i]);
+            else if(origin.children[i] == origin.scrollBarR)
+                scrollBarR = dynamic_cast<pawsScrollBar *>(children[i]);
+
+            if(buttonPreview != 0 && scrollBarB != 0 && scrollBarG != 0 && scrollBarR != 0) break;
+        }
+    }
+
+    pawsScrollBar * scrollBarR;
+    pawsScrollBar * scrollBarG;
+    pawsScrollBar * scrollBarB;
+    pawsButton * buttonPreview;
+};
+
+CREATE_PAWS_FACTORY(pawsColorInput);
 /**
  * pawsColorPromptWindow is window that lets the user enter a color by the use of three sliders and a color preview.
  */
@@ -43,7 +110,7 @@ class pawsColorPromptWindow : public pawsPromptWindow
 {
 public:
     pawsColorPromptWindow();
-
+    pawsColorPromptWindow(const pawsColorPromptWindow& origin);
     //from pawsWidget:
     virtual bool PostSetup();
     bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );

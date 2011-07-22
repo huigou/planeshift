@@ -34,7 +34,7 @@
 #include <cstool/csview.h>
 #include <csutil/csstring.h>
 #include <csutil/leakguard.h>
-
+#include <ibgloader.h>
 #include "pawswidget.h"
 
 class psCharAppearance;

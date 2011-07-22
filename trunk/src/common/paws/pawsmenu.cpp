@@ -92,10 +92,37 @@ pawsMenuItem::pawsMenuItem()
     
     imageEnabled    = false;
     checkboxEnabled = false;
+    factory = "pawsMenuItem";
 
     graphics2d    = PawsManager::GetSingleton().GetGraphics2D();
 }
+pawsMenuItem::pawsMenuItem(const pawsMenuItem & origin):
+                border(origin.border),
+                checkboxEnabled(origin.checkboxEnabled),
+                graphics2d(origin.graphics2d),
+                imageEnabled(origin.imageEnabled),
+                spacing(origin.spacing),
+                pawsIMenuItem(origin)
+{
+    action.name = origin.action.name;
+    for (unsigned int i = 0 ; i < origin.action.params.GetSize() ; i++)
+        action.params[i] = origin.action.params[i];
 
+    label = 0;
+    checkbox = 0;
+    image = 0;
+    
+    for (unsigned int i = 0 ; i < origin.children.GetSize() ; i++)
+    {
+        if(origin.label == origin.children[i]) label = dynamic_cast<pawsTextBox*>(children[i]);
+        else
+            if(origin.checkbox == origin.children[i]) checkbox = dynamic_cast<pawsButton*>(children[i]);
+            else 
+                if(origin.image == origin.children[i]) image = children[i];
+
+        if(label != 0 && checkbox !=0 && image != 0) break;
+    }
+}
 bool pawsMenuItem::Load(iDocumentNode * node)
 {
     return Setup(node);
@@ -366,7 +393,48 @@ pawsMenu::pawsMenu()
     autosize      = true;
     sticky        = false;
 
+    factory       = "pawsMenu";
+
     graphics2d    = PawsManager::GetSingleton().GetGraphics2D();
+}
+
+pawsMenu::pawsMenu(const pawsMenu & origin):
+            align(origin.align),
+            arrowImage(origin.arrowImage),
+            autosize(origin.autosize),
+            graphics2d(origin.graphics2d),
+            notifyTarget(NULL),
+            parentMenu(NULL),
+            sticky(origin.sticky),
+            pawsIMenu(origin)
+{
+    stickyButton  = NULL;
+    closeButton   = NULL;
+    label         = NULL;
+
+    for (unsigned int i = 0 ; i < origin.children.GetSize() ; i++)
+    {
+        for (unsigned int j = 0 ; j < origin.items.GetSize() ; j++)
+        {
+            if(origin.items[j] == origin.children[i])
+            {
+                pawsMenuItem * pi = dynamic_cast<pawsMenuItem*>(children[i]);
+                if(pi == 0) 
+                    Error1("failed in copying pawsMenu\n")
+                else items.Push(pi);
+                break;
+            }
+        }
+        if(origin.closeButton == origin.children[i])
+            closeButton = dynamic_cast<pawsButton*>(children[i]);
+        else if(origin.label == origin.children[i])
+            label = dynamic_cast<pawsTextBox*>(children[i]);
+        else if(origin.stickyButton == origin.children[i])
+            stickyButton = dynamic_cast<pawsButton*>(children[i]);
+
+        if(closeButton != 0 && label != 0 && stickyButton != 0 && items.GetSize() == origin.items.GetSize())
+            break;
+    }
 }
 
 pawsMenu::~pawsMenu()
@@ -817,9 +885,15 @@ bool pawsMenu::OnMouseDown(int button, int modifiers, int x, int y)
 pawsMenuSeparator::pawsMenuSeparator()
 {
     SetRelativeFrameSize(10, 10);
+    factory = "pawsMenuSeparator";
     graphics2d = PawsManager::GetSingleton().GetGraphics2D();
 }
+pawsMenuSeparator::pawsMenuSeparator(const pawsMenuSeparator & origin)
+                    :pawsIMenuItem(origin),
+                    graphics2d(origin.graphics2d)
+{
 
+}
 void pawsMenuSeparator::Draw()
 {
     csRect parentFrame, sepFrame;

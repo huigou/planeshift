@@ -247,6 +247,8 @@ protected:
 
 public:
     pawsSketchWindow();
+    /// TODO: Copy constructor, useless currently. Would be implemented later.
+    pawsSketchWindow(const pawsSketchWindow& origin);
     virtual ~pawsSketchWindow();
 
     bool PostSetup();

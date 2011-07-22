@@ -28,12 +28,37 @@
 struct iVirtualClock;
 class pawsButton;
 
+class pawsThumb : public pawsWidget
+{
+public:
+    pawsThumb(){factory = "pawsThumb";};
+    pawsThumb(const pawsThumb& origin): pawsWidget(origin)
+    {
+
+    }
+    bool OnMouseUp( int button, int modifiers, int x, int y )
+    {
+        if ( parent )
+            return parent->OnMouseUp( button, modifiers, x, y );
+        else
+            return false;
+    }
+
+    void OnLostFocus()
+    {    
+        OnMouseUp(0,0,0,0);
+        pawsWidget::OnLostFocus();
+    }    
+
+};
+CREATE_PAWS_FACTORY( pawsThumb );
 /** A simple scroll bar widget.
  */
 class pawsScrollBar : public pawsWidget
 {
 public:
     pawsScrollBar();
+    pawsScrollBar(const pawsScrollBar& origin);
     virtual ~pawsScrollBar();
 
     virtual bool Setup( iDocumentNode* node );

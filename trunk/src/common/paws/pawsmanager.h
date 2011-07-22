@@ -180,6 +180,17 @@ public:
      */
     pawsWidget* CreateWidget( const char* factoryName );
 
+     /** @brief Create a new widget using copy constructor.
+     *
+     *  This creates a new widget based on the factory that is passed in.
+     *  @param factoryName The name of the factory that is used to create a
+     *  widget.
+     *  @param origin The original widget that will be used by copy constructor.
+     *  @return A new instance of a widget if the factory was found. NULL
+     *  if the widget could not be found.
+     */
+    pawsWidget* CreateWidget( const char* factoryName, const pawsWidget* origin);
+
     /// Adds an object view to the array.
     void AddObjectView(pawsWidget* widget)
     {

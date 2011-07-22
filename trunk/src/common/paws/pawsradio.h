@@ -74,6 +74,7 @@ class pawsRadioButton: public pawsButton
 {
 public:
     pawsRadioButton();
+    pawsRadioButton(const pawsRadioButton& origin);
     virtual ~pawsRadioButton();
     
     bool Setup( iDocumentNode* node );
@@ -110,6 +111,9 @@ class pawsRadioButtonGroup : public pawsWidget
 {
 public:
     pawsRadioButtonGroup();
+    pawsRadioButtonGroup(const pawsRadioButtonGroup& origin): pawsWidget(origin), radioOn(origin.radioOn), radioOff(origin.radioOff), size(origin.size)
+    {
+    }
     virtual ~pawsRadioButtonGroup();
 
     bool Setup( iDocumentNode* node );

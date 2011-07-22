@@ -22,7 +22,6 @@
 #include <psconfig.h>
 #include <ctype.h>
 #include <ivideo/fontserv.h>
-#include <iutil/virtclk.h>
 #include <iutil/evdefs.h>
 #include <iutil/event.h>
 #include <csutil/csuctransform.h>
@@ -52,8 +51,28 @@ pawsTextBox::pawsTextBox() : textX(0), textY(0)
     vertical = false;
     grayed = false;
     letterSizes = NULL;
+    factory = "pawsTextBox";
 }
-
+pawsTextBox::pawsTextBox(const pawsTextBox& origin):
+            colour(origin.colour),
+            grayed(origin.grayed),
+            horizAdjust(origin.horizAdjust),
+            text(origin.text),
+            textWidth(origin.textWidth),
+            textX(origin.textX),
+            textY(origin.textY),
+            vertAdjust(origin.vertAdjust),
+            vertical(origin.vertical),
+            pawsWidget(origin)
+{
+    letterSizes = 0;
+    if(origin.letterSizes)
+    {
+        letterSizes = new psPoint [text.Length()];
+        for (unsigned int i = 0 ; i < text.Length() ; i++)
+            letterSizes[i] = origin.letterSizes[i];
+    }
+}
 pawsTextBox::~pawsTextBox()
 {
     if (letterSizes != NULL)
@@ -379,8 +398,28 @@ pawsMessageTextBox::pawsMessageTextBox()
     scrollBarWidth = 25;
     CalcLineHeight();
     scrollBar = NULL;
+    factory = "pawsMessageTextBox";
 }
+pawsMessageTextBox::pawsMessageTextBox(const pawsMessageTextBox& origin)
+                    :pawsWidget(origin)
+{
+    maxLines = origin.maxLines;
+    //adjusted = origin.adjusted;
+    lineHeight = origin.lineHeight;
+    topLine = origin.topLine;
+    scrollBarWidth = origin.scrollBarWidth;
+    for (unsigned int x = 0 ; x < origin.children.GetSize(); x++)
+    {
+        if(origin.scrollBar == origin.children[x] && x < children.GetSize())
+            scrollBar = dynamic_cast<pawsScrollBar *>(children[x]);
+    }
 
+    for (unsigned int i = 0 ; i < origin.adjusted.GetSize(); i++)
+        adjusted.Push(new MessageLine(*origin.adjusted[i]));
+    for (unsigned int i = 0 ; i < origin.messages.GetSize(); i++)
+        adjusted.Push(new MessageLine(*origin.messages[i]));
+    
+}
 pawsMessageTextBox::~pawsMessageTextBox()
 {
     Clear();
@@ -984,6 +1023,7 @@ pawsEditTextBox::pawsEditTextBox()
     cursorPosition = 0;
     password = 0;
     maxLen = 0;
+    factory = "pawsEditTextBox";
 
     clock =  csQueryRegistry<iVirtualClock > ( PawsManager::GetSingleton().GetObjectRegistry());
 
@@ -994,7 +1034,34 @@ pawsEditTextBox::pawsEditTextBox()
     GetFont()->GetMaxSize( dummy, lineHeight );
     lineHeight -=2;
 }
+pawsEditTextBox::pawsEditTextBox(const pawsEditTextBox& origin):pawsWidget(origin)
+{
+    
+    clock = origin.clock;
+    blink = origin.blink;
+    blinkTicks = origin.blinkTicks;
+    cursorLine = origin.cursorLine;
+    cursorPosition = origin.cursorPosition;
+    lineHeight = origin.lineHeight;
+    maxLen = origin.maxLen;
+    maxLines = origin.maxLines;
+    multiLine = origin.multiLine;
+    password = origin.password;
+    start = origin.start;
+    text = origin.text;
+    topLine = origin.topLine;
+    usedLines = origin.usedLines;
+    vScrollBar = 0;
 
+    for (unsigned int i = 0 ; i < origin.children.GetSize(); i++)
+    {
+        if(origin.children[i] == origin.vScrollBar)
+        {
+            vScrollBar = dynamic_cast<pawsScrollBar *>(children[i]);
+            break;
+        }
+    }
+}
 pawsEditTextBox::~pawsEditTextBox()
 {
 }
@@ -1395,8 +1462,29 @@ pawsMultiLineTextBox::pawsMultiLineTextBox()
     canDrawLines = 0;
     maxHeight = 0;
     maxWidth = 0;
+    factory = "pawsMultiLineTextBox";
 }
+pawsMultiLineTextBox::pawsMultiLineTextBox(const pawsMultiLineTextBox& origin)
+                    :pawsWidget(origin),
+                    canDrawLines(origin.canDrawLines),
+                    maxHeight(origin.maxHeight),
+                    maxWidth(origin.maxWidth),
+                    startLine(origin.startLine),
+                    text(origin.text),
+                    usingScrollBar(origin.usingScrollBar)
+{
+    for(unsigned int i = 0 ; i < origin.lines.GetSize(); i++)
+        lines.Push(origin.lines[i]);
 
+    scrollBar = 0;
+    for(unsigned int i = 0 ; i < origin.children.GetSize(); i++)
+    {
+        if(origin.scrollBar == origin.children[i])
+            scrollBar = dynamic_cast<pawsScrollBar*>(children[i]);
+        if(scrollBar != 0)
+            break;
+    }
+}
 pawsMultiLineTextBox::~pawsMultiLineTextBox()
 {
 
@@ -1670,8 +1758,24 @@ pawsFadingTextBox::pawsFadingTextBox()
     ymod = 0;
     firstFont = NULL;
     font = NULL;
+    factory = "pawsFadingTextBox";
 }
+pawsFadingTextBox::pawsFadingTextBox(const pawsFadingTextBox& origin)
+                    :color(origin.color),
+                    fadetime(origin.fadetime),
+                    first(origin.first),
+                    firstFont(origin.firstFont),
+                    font(origin.font),
+                    org_color(origin.org_color),
+                    scolor(origin.scolor),
+                    start(origin.start),
+                    text(origin.text),
+                    time(origin.time),
+                    ymod(origin.ymod),
+                    pawsWidget(origin)
+{
 
+}
 void pawsFadingTextBox::SetText(const char* newtext, iFont* font1,iFont* font2, int color,int time,int fadetime)
 {
     // Seperate the first and the rest
@@ -1788,6 +1892,14 @@ pawsDocumentView::pawsDocumentView()
 {
 
 }
+
+pawsDocumentView::pawsDocumentView(const pawsDocumentView& origin)
+                    :pawsMultiLineTextBox(origin)
+{
+    for (unsigned int i = 0 ; i < origin.picsInfo.GetSize() ; i++)
+        picsInfo.Push(origin.picsInfo[i]);
+}
+
 pawsDocumentView::~pawsDocumentView()
 {
 

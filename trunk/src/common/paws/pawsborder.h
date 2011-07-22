@@ -76,6 +76,7 @@ class pawsBorder
 {
 public:    
     pawsBorder( const char* styleName );
+    pawsBorder(const pawsBorder& origin);
     ~pawsBorder();
     
     void SetParent( pawsWidget* parent );

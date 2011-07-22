@@ -32,6 +32,28 @@ pawsCheckBox::pawsCheckBox()
     checkBoxOn  = "Checkbox On";
     checkBoxSize = 16;
     checkBox = 0;
+    factory = "pawsCheckBox";
+}
+
+pawsCheckBox::pawsCheckBox(const pawsCheckBox& origin)
+            : textOffsetX(origin.textOffsetX), textOffsetY(origin.textOffsetY),
+            checkBoxOff(origin.checkBoxOff),
+            checkBoxGrey(origin.checkBoxGrey),
+            checkBoxOn(origin.checkBoxOn),
+            checkBoxSize(origin.checkBoxSize),
+            pawsWidget(origin)
+{
+    text = 0;
+    checkBox = 0;
+    for (unsigned int i = 0 ; i < origin.children.GetSize(); i++)
+    {
+        if(origin.children[i] == origin.checkBox)
+            checkBox = dynamic_cast<pawsButton *>(children[i]);
+        else if(origin.children[i] == origin.text)
+            text = dynamic_cast<pawsTextBox *>(children[i]);
+
+        if(text != 0 && checkBox != 0) break;
+    }
 }
 
 pawsCheckBox::~pawsCheckBox()
