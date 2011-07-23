@@ -1468,6 +1468,7 @@ class AdminCmdDataImpersonate : public AdminCmdDataTarget
 public:
     csString commandMod; ///< whether say,shout,worldshout should be used
     csString text; ///< text to send impersonated
+    int duration; ///< The duration of the anim if any (0 default one run)
 
     /** @brief Creates obj for specified command that impersonates someone.
      */
