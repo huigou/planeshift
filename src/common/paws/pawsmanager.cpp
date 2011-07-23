@@ -697,7 +697,7 @@ bool PawsManager::HandleMouseUp( csMouseEventData &data )
             widget->GetParent()->BringToTop( widget );
         }
 
-        bool returnResult = return widget->OnMouseUp(data.Button,
+        bool returnResult = widget->OnMouseUp(data.Button,
                                                      data.Modifiers,
                                                      data.x,
                                                      data.y);
