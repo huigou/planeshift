@@ -97,6 +97,10 @@
                     <attr name="SectionName" value="tabcompletion"/>
                     <attr name="factory" value="pawsConfigChatTabCompletion"/>
                 </widget>
+		    <widget factory="pawsSimpleTreeNode" label="Chat - Spellchecker">
+                        <attr name="SectionName" value="spellchecker"/>
+                        <attr name="factory" value="pawsConfigSpellChecker"/>
+                    </widget>
                <widget factory="pawsSimpleTreeNode" label="Autoexec">
                     <attr name="SectionName" value="autoexec"/>
                     <attr name="factory" value="pawsConfigAutoexec"/>

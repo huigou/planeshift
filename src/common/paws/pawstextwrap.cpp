@@ -21,6 +21,7 @@
 #include <iutil/virtclk.h>
 #include <iutil/evdefs.h>
 #include <iutil/event.h>
+#include <iutil/plugin.h>
 
 #include "pawstextbox.h"
 #include "pawsmanager.h"
@@ -34,12 +35,12 @@
 
 #define VSCROLLBAR_WIDTH 24
 
-/* 
+/*
    In order for this control to be implemented correctly, it must pass the following tests:
      1. Takes the last word after a space on the line and moves it to the next line. (wordwrap)
      2. Chops the end of the line and continues on the next line if no space is found. (breakline)
      3. The line separator(OS dependant - \n for our purposes) has adjustments made for it. (line separator)
-     4. Combinations of the above must also be considered, such as: 
+     4. Combinations of the above must also be considered, such as:
            a. After a breakline occurs, the text will still wrap to the next line.
            b. Before a breakline occurs, the line starts from being wordwrapped on the previous line.
            c. A newline must work from either a line containing a wordwrap or a breakline.
@@ -47,21 +48,21 @@
      6. An control with no text must be considered.
      7. Cursor positioning must be considered for all of the above tests.
      8. The vertical scrollbar must be considered for all of the above tests.
-     9. Delete, Backspace and insert text must work in the beginning, middle, 
+     9. Delete, Backspace and insert text must work in the beginning, middle,
           and end of the text.
     10. Font support by control
 */
-pawsMultilineEditTextBox::pawsMultilineEditTextBox()
+pawsMultilineEditTextBox::pawsMultilineEditTextBox() : cursorPosition(0),
+                                                       cursorLine(0),
+                                                       blink(true),
+                                                       vScrollBarWidth(VSCROLLBAR_WIDTH),
+                                                       topLine(0),
+                                                       vScrollBar(NULL),
+                                                       maxLen(0),
+                                                       spellChecked(false),
+                                                       typoColour(0xFF0000)
 {
-    blink = true;
-    cursorPosition = 0;
-    cursorLine = 0;
-    topLine = 0;
-    maxLen = 0;
-    vScrollBar = NULL;
-    vScrollBarWidth = VSCROLLBAR_WIDTH;
     factory = "pawsMultilineEditTextBox";
-
     clock = csQueryRegistry<iVirtualClock > (PawsManager::GetSingleton().GetObjectRegistry());
 
     blinkTicks = clock->GetCurrentTicks();
@@ -70,7 +71,11 @@ pawsMultilineEditTextBox::pawsMultilineEditTextBox()
     int dummy;
     GetFont()->GetMaxSize(dummy, lineHeight);
     OnResize();
+
+    // get the spellchecker plugin
+    spellChecker = csQueryRegistryOrLoad<iSpellChecker>(PawsManager::GetSingleton().GetObjectRegistry(), "crystalspace.planeshift.spellchecker");
 }
+
 pawsMultilineEditTextBox::pawsMultilineEditTextBox(const pawsMultilineEditTextBox& origin)
                         :pawsWidget(origin),
                         blink(origin.blink),
@@ -238,7 +243,7 @@ bool pawsMultilineEditTextBox::OnKeyDown(utf32_char code, utf32_char key, int mo
 
         if(repositionCursor)
            GetCursorLocation(position, cursorLine, cursorLoc);
- 
+
         if(subscribedVar)
             PawsManager::GetSingleton().Publish(subscribedVar, text);
         parent->OnChange(this);
@@ -258,12 +263,18 @@ bool pawsMultilineEditTextBox::OnKeyDown(utf32_char code, utf32_char key, int mo
         pawsWidget::OnKeyDown(code, key, modifiers);
     }
 
+    // if spellchecking is enabled do it at every key-press
+    if (spellChecked)
+    {
+        checkSpelling();
+    }
+
     return true;
 }
 
 void pawsMultilineEditTextBox::OnResize()
 {
-    canDrawLines = (screenFrame.Height() / lineHeight); 
+    canDrawLines = (screenFrame.Height() / lineHeight);
     LayoutText();
     UpdateScrollBar();
 }
@@ -305,7 +316,7 @@ void pawsMultilineEditTextBox::SetupScrollBar()
         vScrollBar->SetAttachFlags(ATTACH_TOP | ATTACH_BOTTOM | ATTACH_RIGHT);
         vScrollBar->PostSetup();
         vScrollBar->SetTickValue(1.0);
-        AddChild(vScrollBar); 
+        AddChild(vScrollBar);
     }
 
     UpdateScrollBar();
@@ -328,7 +339,7 @@ bool pawsMultilineEditTextBox::OnMouseDown(int button, int modifiers, int x, int
         if(vScrollBar)
             vScrollBar->SetCurrentValue(vScrollBar->GetCurrentValue() + EDIT_TEXTBOX_MOUSE_SCROLL_AMOUNT);
         return true;
-    } 
+    }
 
 
 
@@ -361,7 +372,7 @@ bool pawsMultilineEditTextBox::OnClipboard( const csString& content )
     {
         text.Insert( position, content );
     }
-    
+
     if(maxLen)
         text.Truncate( maxLen );
     position += content.Length();
@@ -374,7 +385,6 @@ bool pawsMultilineEditTextBox::OnClipboard( const csString& content )
     else if(cursorLine < topLine)
         topLine = cursorLine;
     SetupScrollBar();
-
 
     if (subscribedVar)
     {
@@ -400,14 +410,14 @@ bool pawsMultilineEditTextBox::OnMouseUp(int button, int modifiers, int x, int y
         cursorPosition = GetCursorPosition();
 
         return true;
-    } 
+    }
     return pawsWidget::OnMouseUp(button, modifiers, x ,y);
 }
 
 void pawsMultilineEditTextBox::CalcMouseClick(int x, int y, size_t &cursorLine, size_t &cursorChar)
 {
     // Adjust x to be relative to the text box
-    x -= screenFrame.xmin; 
+    x -= screenFrame.xmin;
 
     //Force the cursor to blink
     blink = true;
@@ -429,16 +439,16 @@ void pawsMultilineEditTextBox::CalcMouseClick(int x, int y, size_t &cursorLine, 
         cursorChar = 0;
         return;
     }
- 
+
     //Get line width
     int width = 0;
     int height = 0;
     csString line = GetLine(cursorLine);
     GetFont()->GetDimensions(line, width, height);
     //Determine if the click was at the end of a line...
-    if(x >= width) 
+    if(x >= width)
     {
-        if(line.GetAt(lineInfo[cursorLine]->lineLength - 1) == '\n') 
+        if(line.GetAt(lineInfo[cursorLine]->lineLength - 1) == '\n')
         {
             //if it was, make sure to ignore the newline character.
             cursorChar = lineInfo[cursorLine]->lineLength-1;
@@ -457,8 +467,13 @@ void pawsMultilineEditTextBox::OnUpdateData(const char* /*dataname*/, PAWSData& 
 }
 
 bool pawsMultilineEditTextBox::OnScroll(int /*direction*/, pawsScrollBar* widget)
-{    
+{
     topLine = (int)widget->GetCurrentValue();
+    // if spellchecking is enabled we need to check now as the visible part of the text might have changed
+    if (spellChecked)
+    {
+        checkSpelling();
+    }
     return true;
 }
 void pawsMultilineEditTextBox::PushLineInfo(size_t lineLength, size_t lineBreak, int lineExtra)
@@ -482,16 +497,16 @@ void pawsMultilineEditTextBox::LayoutText()
     lineInfo.Empty();
     size_t totalCount = 0;
     int tailWidth = 0;
-    
+
     while(srcPos < text.Length())
     {
         //try to grab a word.
         size_t a = text.FindFirst(" \t\n", srcPos);
-        //if a is '-1', the char wasn't found so we grab to end of the line, 
+        //if a is '-1', the char wasn't found so we grab to end of the line,
         //else we grab up to and including the found character
         if(a == (size_t)-1)
             word = text.Slice(srcPos,text.Length() - srcPos);
-        else 
+        else
             word = text.Slice(srcPos, a - srcPos + 1);
 
         //Gets dimensions of current word.
@@ -504,7 +519,7 @@ void pawsMultilineEditTextBox::LayoutText()
             tempString.Append(word);
             font->GetDimensions(tempString, tailWidth, height);
             srcPos += word.Length();
-        } 
+        }
         else if(width > screenWidth)
         {
             //Wordwrap
@@ -516,7 +531,7 @@ void pawsMultilineEditTextBox::LayoutText()
         }
         else if(tempString.FindFirst(" ") != (size_t)-1)
         {
-            //If wordwrap->linebreak on same line, 
+            //If wordwrap->linebreak on same line,
             // push linebreak to next line
             totalCount += tempString.Length();
             PushLineInfo(tempString.Length(), totalCount, 1);
@@ -527,15 +542,15 @@ void pawsMultilineEditTextBox::LayoutText()
         }
         else
         {
-            //breakline - the case where we have a single 
+            //breakline - the case where we have a single
             //unbroken word wider than our page
 
-            int maxChars = font->GetLength(word, screenWidth); 
+            int maxChars = font->GetLength(word, screenWidth);
             word = word.Slice(0, maxChars);             //Get string for the line
             totalCount += word.Length();                //Get absolute char position in text for line break
             PushLineInfo(word.Length(), totalCount, 0); //Push the line information to the stack
             srcPos += word.Length();                    //Set srcPosition for this loop
-            //Note: Tempstring is not set here.    
+            //Note: Tempstring is not set here.
             font->GetDimensions(tempString,tailWidth,height);
         }
         //does our word end in a newline?
@@ -552,6 +567,12 @@ void pawsMultilineEditTextBox::LayoutText()
     //Make sure to add the last line if it exists.
     totalCount += tempString.Length();
     PushLineInfo(tempString.Length(), totalCount, 0);
+
+    // text layout changed...so checking spelling
+    if (spellChecked)
+    {
+        checkSpelling();
+    }
 }
 
 //our draw is based on static, wrapped widget
@@ -576,7 +597,7 @@ void pawsMultilineEditTextBox::Draw()
         if(lineInfo[line]->lineLength > 0)
         {
             tmp = GetLine(line).Slice(0, lineInfo[line]->lineLength - lineInfo[line]->lineExtra);
-            DrawWidgetText(tmp, (int)screenFrame.xmin, (int)(screenFrame.ymin + yPos * lineHeight), -1, GetFontColour());
+            DrawWidgetText(tmp, (int)screenFrame.xmin, (int)(screenFrame.ymin + yPos * lineHeight), -1, GetFontColour(), line-topLine);
             yPos++;
         }
      }
@@ -590,13 +611,13 @@ void pawsMultilineEditTextBox::Draw()
         graphics2D->DrawLine((float)(screenFrame.xmin + width + 1),
             (float)(screenFrame.ymin + realHeight),
             (float)(screenFrame.xmin + width + 1),
-            (float)(screenFrame.ymin + realHeight + lineHeight), 
+            (float)(screenFrame.ymin + realHeight + lineHeight),
             GetFontColour());
     }
 
 }
 
-void pawsMultilineEditTextBox::DrawWidgetText(const char *text, size_t x, size_t y, int style, int fg)
+void pawsMultilineEditTextBox::DrawWidgetText(const char *text, size_t x, size_t y, int style, int fg, int visLine)
 {
     csRef<iFont> font = GetFont();
     if(style == -1)
@@ -613,17 +634,83 @@ void pawsMultilineEditTextBox::DrawWidgetText(const char *text, size_t x, size_t
         if(style & FONT_STYLE_DROPSHADOW)
         {
             graphics2D->GetRGB(GetFontShadowColour(), r, g, b);
-            graphics2D->Write(font, (int) x + 2, (int) y + 2, graphics2D->FindRGB(r, g, b, a), -1, text);
+            if (spellChecked && spellChecker)
+            {
+                drawTextSpellChecked(font, (int) x + 2, (int) y + 2, graphics2D->FindRGB(r, g, b, a), text, visLine);
+            }
+            else
+            {
+                graphics2D->Write(font, (int) x + 2, (int) y + 2, graphics2D->FindRGB(r, g, b, a), -1, text);
+            }
         }
         graphics2D->GetRGB(GetFontColour(), r, g, b);
-        graphics2D->Write(font, (int) x, (int) y, graphics2D->FindRGB(r, g, b, a), -1, text);
+        // if spellchecking is enabled we need to use drawTextSpellChecked for the different colours
+        if (spellChecked && spellChecker)
+        {
+            drawTextSpellChecked(font, (int) x, (int) y, graphics2D->FindRGB(r, g, b, a), text, visLine);
+        }
+        else
+        {
+            graphics2D->Write(font, (int) x, (int) y, graphics2D->FindRGB(r, g, b, a), -1, text);
+        }
     }
     else
     {
         if(style & FONT_STYLE_DROPSHADOW)
-            graphics2D->Write(font, (int) x+2, (int) y+2, GetFontShadowColour(), -1, text);
+        {
+            if (spellChecked && spellChecker)
+            {
+                drawTextSpellChecked(font, (int) x+2, (int) y+2, GetFontShadowColour(), text, visLine);
+            }
+            else
+            {
+                graphics2D->Write(font, (int) x+2, (int) y+2, GetFontShadowColour(), -1, text);
+            }
+        }
+        // if spellchecking is enabled we need to use drawTextSpellChecked for the different colours
+        if (spellChecked && spellChecker)
+        {
+            drawTextSpellChecked(font, (int) x, (int) y, fg, text, visLine);
+        }
+        else
+        {
+            graphics2D->Write(font, (int) x, (int) y, fg, -1, text);
+        }
+    }
+}
 
-        graphics2D->Write(font, (int) x, (int) y, fg, -1, text);
+void pawsMultilineEditTextBox::drawTextSpellChecked(iFont *font, int x, int y, int fg, csString str, int visLine)
+{
+    int wordStart = 0;
+    for (size_t i = 0; i < lineTypos[visLine].GetSize(); i++)
+    {
+        // first we find out what colour we need for this word
+        int color;
+        if (lineTypos[visLine][i].correct)
+        {
+            // no type, just use the colour I got
+            color = fg;
+        }
+        else
+        {
+            //typo...using the alpha of the colour I got with the typoColour
+            int r, g, b, a;
+            graphics2D->GetRGB(fg, r, g, b, a);
+            // overwriting r, g, b with typoColour
+            graphics2D->GetRGB(typoColour, r, g, b);
+            color = graphics2D->FindRGB(r, g, b, a);
+        }
+        // now we need the string representing the word
+        int wordEnd = lineTypos[visLine][i].endPos;
+        csString tmp = str.Slice(wordStart, wordEnd-wordStart);
+        // print the word
+        graphics2D->Write(font, x, y, color, -1, tmp.GetDataSafe());
+        // and advance x to the start of the next word
+        int textWidth, textHeight;
+        font->GetDimensions( tmp.GetDataSafe(), textWidth, textHeight );
+        x += textWidth;
+        // and also advance to the start of the next word
+        wordStart = wordEnd;
     }
 }
 
@@ -662,9 +749,22 @@ bool pawsMultilineEditTextBox::Setup(iDocumentNode* node)
     {
         SetText("");
     }
+    // lets see if we find some options for the spellchecker
+    settingNode = node->GetNode("spellChecker");
+    if(settingNode)
+    {
+        // should the spellchecekr be used for this instance of the widget?
+        spellChecked = settingNode->GetAttributeValueAsBool("enable", false);
+        // What colour should we use for typos?
+        int r = settingNode->GetAttributeValueAsInt( "r", 255 );
+        int g = settingNode->GetAttributeValueAsInt( "g", 0 );
+        int b = settingNode->GetAttributeValueAsInt( "b", 0 );
+        typoColour = graphics2D->FindRGB( r, g, b );
+    }
 
     return true;
 }
+
 
 void pawsMultilineEditTextBox::SetText(const char* newText, bool publish)
 {
@@ -684,10 +784,11 @@ void pawsMultilineEditTextBox::SetText(const char* newText, bool publish)
     SetupScrollBar();
 
     cursorLoc = lineInfo[cursorLine]->lineLength - lineInfo[cursorLine]->lineExtra;
+
 }
 
 
-const char* pawsMultilineEditTextBox::GetText() 
+const char* pawsMultilineEditTextBox::GetText()
 {
     return text;
 }
@@ -785,7 +886,7 @@ void pawsMultilineEditTextBox::GetCursorLocation(size_t pos, size_t &destLine, s
        {
           destLine++;
        }
-       else 
+       else
        {
            destCursor = pos - start;
            return;
@@ -799,4 +900,61 @@ void pawsMultilineEditTextBox::SetMaxLength(unsigned int maxlen)
     maxLen = maxlen;
     if(maxLen)
         text.Truncate(maxlen);
+}
+
+void pawsMultilineEditTextBox::checkSpelling()
+{
+    // of course we only want to do this if the spellchecker plugin exists
+    if (spellChecker)
+    {
+        //clear the array with the boundries of the typos for each text line
+        lineTypos.Empty();
+        // now check the spelling for each visible line
+        for(size_t line = topLine; line <= (topLine + canDrawLines); line++)
+        {
+            // we for sure don't want to check more lines than even exist
+            if(line >= lineInfo.GetSize())
+                break;
+            //chomp newline characters
+            if(lineInfo[line]->lineLength > 0)
+            {
+                // okay, we need the string of the line
+                csString curLine = GetLine(line);
+                // and we remove the newlines (should be only one at the end of a string if this isn't the last text line)
+                curLine.ReplaceAll("\n", "");
+                csArray<Word> tmpLine;
+                // get the postitions of the words by checking for spaces in the textline
+                Word tmpWord;
+                csString tmpString;
+                size_t oldSpace = 0;
+                size_t foundSpace = curLine.Find(" ", oldSpace);
+                while (foundSpace != (size_t)-1)
+                {
+                    curLine.SubString(tmpString, oldSpace, foundSpace-oldSpace);
+                    // now do the spellchecking
+                    tmpWord.correct = spellChecker->correct(tmpString);
+                    tmpWord.endPos = foundSpace;
+                    // and save everything
+                    tmpLine.Push(tmpWord);
+                    oldSpace = foundSpace;
+                    foundSpace = curLine.Find(" ", oldSpace+1);
+                }
+                curLine.SubString(tmpString, oldSpace, curLine.Length()-oldSpace);
+                // now do the spellchecking
+                tmpWord.correct = spellChecker->correct(tmpString);
+                tmpWord.endPos = text.Length();
+                if (tmpWord.endPos > 0)
+                {
+                    // save only if the word contains something
+                    tmpLine.Push(tmpWord);
+                }
+                // and not to forget to save this all in the array for the lines
+                lineTypos.Push(tmpLine);
+            }
+        }
+    }
+    else
+    {
+        lineTypos.Empty();
+    }
 }

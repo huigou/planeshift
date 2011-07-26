@@ -8,17 +8,10 @@ case MACOS_X :                          # MacOS/X
 case * :                                # Posix, Unix, GNU/Linux, etc.
 }
 
-if $(HUNSPELL.AVAILABLE) = "yes"
-{
-HUNSPELLDEF = HUNSPELL ;
-}
-
-
 ApplicationIcon win32 : psclient : [ ConcatDirs $(TOP) support icons icon1.ico ] ;
 ApplicationIcon macosx : psclient : [ ConcatDirs $(TOP) support icons icon1.icns ] ;
 Application psclient : [ Wildcard *.cpp *.h ] ;
-CFlags psclient : [ FDefines $(HUNSPELLDEF) ] ;
-ExternalLibs psclient : CRYSTAL CAL3D BREAKPAD $(HUNSPELLDEF) ;
+ExternalLibs psclient : CRYSTAL CAL3D BREAKPAD ;
 CompileGroups psclient : client ;
 COMMONLIBS = gui psnet psengine psrpgrules psutil paws effects fparser ;
 LinkWith psclient : gui psnet psengine psrpgrules psutil paws effects fparser ;
@@ -37,7 +30,7 @@ SubVariant static ;
 ApplicationIcon win32 : psclient_static : [ ConcatDirs $(TOP) support icons icon1.ico ] ;
 ApplicationIcon macosx : psclient_static : [ ConcatDirs $(TOP) support icons icon1.icns ] ;
 Application psclient_static : [ Wildcard *.cpp *.h ] $(extrafiles) : independent noinstall nohelp ;
-CFlags psclient_static : [ FDefines CS_STATIC_LINKED $(HUNSPELLDEF) ] ;
+CFlags psclient_static : [ FDefines CS_STATIC_LINKED ] ;
 LFlags psclient_static : -lcrystalspace_staticplugins-$(CRYSTAL.VERSION) ;
 MsvcDefine psclient_static : CS_STATIC_LINKED ;
 LinkWith psclient_static : planeshift_staticplugins $(COMMONLIBS) ;
@@ -142,7 +135,7 @@ LinkStaticPlugins psclient_static :
   dummysndmngr
 ;
 
-ExternalLibs psclient_static : CRYSTAL CAL3D BREAKPAD $(HUNSPELLDEF) ;
+ExternalLibs psclient_static : CRYSTAL CAL3D BREAKPAD ;
 CompileGroups psclient_static : client_static ;
 
 SubVariant ;

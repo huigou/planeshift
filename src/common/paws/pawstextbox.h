@@ -29,6 +29,10 @@ struct iVirtualClock;
 #include <csutil/parray.h>
 #include <ivideo/fontserv.h>
 #include <iutil/virtclk.h>
+
+#include <ispellchecker.h>
+
+
 /**
  * A basic text box widget. Useful for simply displaying text.
  */
@@ -243,6 +247,7 @@ protected:
 
     /// Array containing the size of each letter in text (only used when \ref vertical is true)
     psPoint *letterSizes;
+
 };
 
 //--------------------------------------------------------------------------
@@ -454,7 +459,33 @@ public:
             return (unsigned int)(maxLen - text.Length());
         return UINT_MAX;
     }
+    /**
+     * returns if the spellchecker is used in this widget
+     */
+    inline bool getSpellChecked() const {return spellChecked;};
+    /**
+     * set if the spellchecker should be used
+     * @param check true if the spellchecker should be used (the spellchecker will still be only used if the plugin is available)
+     */
+    inline void setSpellChecked(const bool check) {spellChecked = check;};
+    /**
+     * toggels the current setting of the spellchecker
+     */
+    inline void toggleSpellChecked() {spellChecked = !spellChecked;};
+    /** Method the get the current colour used for typos
+     */
+    unsigned int getTypoColour() {return typoColour;};
+    /** Method to set the colour used for typos
+     *  @param col The new colour to be used for typos
+     */
+    void setTypoColour(unsigned int col) {typoColour = col;};
 protected:
+    /** Helper method that does the actual spellchecking. Called from OnKeyDown
+     */
+    void checkSpelling();
+    /** struct to contain the end boundry of a word and it's spellcheck status
+     */
+    struct Word { bool correct; int endPos; };
 
     bool password;
     csRef<iVirtualClock> clock;
@@ -488,6 +519,18 @@ protected:
     unsigned int maxLen;
 
     pawsScrollBar* vScrollBar;
+    /** PS spellChecker plugin
+     */
+    csRef<iSpellChecker> spellChecker;
+    /** Should the text be checked by the spellchecker plugin (if available)
+     */
+    bool spellChecked;
+    /** Colour used for typos
+     */
+    unsigned int typoColour;
+    /** Array that contains the boundries of the words and if the spellchecker recognizes them or not
+     */
+    csArray<Word> words;
 };
 
 CREATE_PAWS_FACTORY( pawsEditTextBox );
@@ -564,7 +607,7 @@ public:
     bool Setup( iDocumentNode* node );
 
     virtual void Draw();
-    void DrawWidgetText(const char *text, size_t x, size_t y, int style, int fg);
+    void DrawWidgetText(const char *text, size_t x, size_t y, int style, int fg, int visLine);
 
     /** Change the text in the edit box.
      * @param text The text that will replace whatever is currently there.
@@ -638,7 +681,43 @@ public:
             return (unsigned int)(maxLen - text.Length());
         return UINT_MAX;
     }
+    /**
+     * returns if the spellchecker is used in this widget
+     */
+    inline bool getSpellChecked() const {return spellChecked;};
+    /**
+     * set if the spellchecker should be used
+     * @param check true if the spellchecker should be used (the spellchecker will still be only used if the plugin is available)
+     */
+    inline void setSpellChecked(const bool check) {spellChecked = check;};
+    /**
+     * toggels the current setting of the spellchecker
+     */
+    inline void toggleSpellChecked() {spellChecked = !spellChecked;};
+    /** Method the get the current colour used for typos
+     */
+    unsigned int getTypoColour() {return typoColour;};
+    /** Method to set the colour used for typos
+     *  @param col The new colour to be used for typos
+     */
+    void setTypoColour(unsigned int col) {typoColour = col;};
 protected:
+    /** Helper method that does the actual spellchecking. Only checks the currently
+     * visible text. Called from OnKeyDown and LayoutText
+     */
+    void checkSpelling();
+    /** Helper method for printing text if the spellchecker is enabled
+     * @param font The font used for the text. Needed to determine the width in pixel of words
+     * @param x X-Position where the text should be printed
+     * @param y Y-Position where the text should be printed
+     * @param fg The color of the text. This is only used for correct words. Typos use the typeColour (but the alpha from this color)
+     * @param str The text
+     * @param visLine the number (counting from top=0) of the current visual line. Needed for the spellchecker to choose the correct word-boundries from lineTypos
+     */
+    void drawTextSpellChecked(iFont *font, int x, int y, int fg, csString str, int visLine);
+    /** struct to contain the end boundry of a word and it's spellcheck status
+     */
+    struct Word { bool correct; int endPos; };
 
     csRef<iVirtualClock> clock;
 
@@ -678,6 +757,17 @@ protected:
 
     /// The maximum length the text is allowed to be
     unsigned int maxLen;
+    /* PS spellChecker plugin
+     */
+    csRef<iSpellChecker> spellChecker;
+    /* Should the text be checked by the spellchecker plugin (if available)
+     */
+    bool spellChecked;
+    /** Colour used for typos
+     */
+    unsigned int typoColour;
+
+    csArray<csArray<Word> > lineTypos;
 };
 
 CREATE_PAWS_FACTORY( pawsMultilineEditTextBox );

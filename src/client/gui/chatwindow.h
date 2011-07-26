@@ -121,63 +121,6 @@ struct ChatSettings
     }
 };
 
-/** subclass for pawsEditTextBox that includes spellchecking support with hunspell
- *  used for the chat window. 
- */
-class pawsSpellCheckedEditBox : public pawsEditTextBox
-{
-public:  
-    pawsSpellCheckedEditBox();
-    virtual ~pawsSpellCheckedEditBox(); 
-    /** overwritten Draw method that handles printing text in two different colours
-     */
-    virtual void Draw();
-    /** overwritten OnKeyDown Method that just adds specllchecking but otherwise relies on pawsEditTextBox::OnKeyDown
-     */
-    virtual bool OnKeyDown( utf32_char code, utf32_char key, int modifiers );
-    /** Method to set the colour used for typos     
-     *  @param col The new colour to be used for typos
-     */
-    void setTypoColour(unsigned int col) {typoColour = col;};
-    /** Method the get the current colour used for typos
-     */
-    unsigned int getTypoColour() {return typoColour;};
-    /** Method to enable/disable spellchecking     
-     *  @param check set true to enable the spellchecker, false to disable
-     */
-    void setUseSpellChecker(bool check) {spellChecking = check;};
-    /** get the current status of the spellchecker (enabled/disabled)
-     */ 
-    bool getUseSpellChecker() {return spellChecking;};        
-protected:
-    /** Helper method that does the actual spellchecking. Called from OnKeyDown
-     */
-    void checkSpelling();
-    /** Helper method that removes cahrs that confuse the spellchecker from a string. Called from checkSpelling
-     */
-    void removeSpecialChars(csString& str);
-    /** struct to contain the end boundry of a word and it's spellcheck status
-     */
-    struct Word { bool correct; int endPos; };
-    /** Array that contains the boundries of the words and if the spellchecker recognizes them or not
-     */
-    csArray<Word> words;
-    /** spellchecker class
-     */
-    #ifdef HUNSPELL
-    csArray<Hunspell*> spellChecker;
-    #endif
-    /** Colour used for typos
-     */
-    unsigned int typoColour;
-    /** status of the spellchecker (enabled/disabled)
-     */
-    bool spellChecking;
-};
-
-//--------------------------------------------------------------------------
-
-CREATE_PAWS_FACTORY( pawsSpellCheckedEditBox );
 
 //--------------------------------------------------------------------------
 
@@ -268,6 +211,12 @@ public:
 
     /// Joins the channel and adds the hotkey when the server accepts the join.
     void JoinChannel(csString name);
+    
+    /* returns the input text box widget
+     */
+    pawsEditTextBox* getInputTextBox() {return inputText;};
+    
+    void writeChatHistory();
 
     /// Reload Chat Window
     void ReloadChatWindow();
@@ -305,7 +254,7 @@ protected:
     void TabCompleteCommand(const char *cmd);
     void TabCompleteName(const char *cmd);
 
-    void DetermineChatTabAndSelect(int chattype);
+    void DetermineChatTabAndSelect(int chattype);        
 
 
     pawsIgnoreWindow*  IgnoredList;
@@ -325,7 +274,7 @@ protected:
     csArray<csString> chatTriggers;
 
     /// Input box for quick access
-    pawsSpellCheckedEditBox* inputText;
+    pawsEditTextBox* inputText;
 
     pawsTabWindow* tabs;
 
@@ -371,7 +320,7 @@ protected:
     /// Subscribed channel name to server channel ID reversible mapping
     csHashReversible<uint32_t, csString> channelIDs;
     /// Hotkeys for server channel IDs
-    csArray<uint16_t> channels;    
+    csArray<uint16_t> channels;        
 };
 
 //--------------------------------------------------------------------------
@@ -408,6 +357,7 @@ public:
     csString* GetPrev();
 
     void SetGetLoc(unsigned int pos) { getLoc = pos; }
+    unsigned int curLoc() { return getLoc; };
 
 private:
     /// The current position we are in the buffer list compared to the end.

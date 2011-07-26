@@ -6,5 +6,11 @@ SubInclude TOP src plugins common celgraph ;
 SubInclude TOP src plugins common soundmanager ;
 SubInclude TOP src plugins common dummysndmngr ;
 
+if $(HUNSPELL.AVAILABLE) = "yes"
+{
+SubInclude TOP src plugins common spellchecker ;
+}
+
+
 StaticPluginLibrary planeshift_staticplugins ;
 

@@ -195,6 +195,7 @@ if (!myref)                                                  \
 #include "gui/pawsconfigshadows.h"
 #include "gui/pawsnpcdialog.h"
 #include "gui/bartender.h"
+#include "gui/pawsconfigspellchecker.h"
 #include "gui/pawsconfigtooltips.h"
 
 
@@ -759,8 +760,7 @@ void psEngine::DeclareExtraFactories()
     RegisterFactory (pawsGlyphSlotFactory);
     RegisterFactory (pawsInfoWindowFactory);
     RegisterFactory (pawsSplashWindowFactory);
-    RegisterFactory (pawsLoadWindowFactory);
-    RegisterFactory (pawsSpellCheckedEditBoxFactory);
+    RegisterFactory (pawsLoadWindowFactory);  
     RegisterFactory (pawsChatWindowFactory);
     RegisterFactory (pawsInventoryWindowFactory);
     RegisterFactory (pawsItemDescriptionWindowFactory);
@@ -839,7 +839,8 @@ void psEngine::DeclareExtraFactories()
     RegisterFactory (pawsConfigShadowsFactory);
     RegisterFactory (pawsNpcDialogWindowFactory);
     RegisterFactory (pawsBartenderWindowFactory);
-    RegisterFactory (pawsCraftCancelWindowFactory);
+    RegisterFactory (pawsCraftCancelWindowFactory);    
+    RegisterFactory (pawsConfigSpellCheckerFactory);        
     RegisterFactory (pawsConfigTooltipsFactory);
 }
 
