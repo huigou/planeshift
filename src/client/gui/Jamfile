@@ -1,15 +1,8 @@
 SubDir TOP src client gui ;
 
-if $(HUNSPELL.AVAILABLE) = "yes"
-{
-HUNSPELLDEF = HUNSPELL ;
-}
-
 Library gui 
 	: [ Wildcard *.cpp *.h ]
 	: noinstall
 ;
 
-CFlags gui : [ FDefines $(HUNSPELLDEF) ] ;
-
-ExternalLibs gui : CRYSTAL $(HUNSPELLDEF) ;
+ExternalLibs gui : CRYSTAL ;
