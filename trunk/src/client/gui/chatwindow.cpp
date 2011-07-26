@@ -39,6 +39,7 @@
 #include <iutil/databuff.h>
 #include <iutil/virtclk.h>
 #include <iutil/stringarray.h>
+#include <iutil/plugin.h>
 
 //=============================================================================
 // Project Includes
@@ -112,7 +113,7 @@ pawsChatWindow::pawsChatWindow()
 
     replyCount = 0;
 
-    chatHistory = new pawsChatHistory();
+    chatHistory = new pawsChatHistory();    
     awayText.Clear();
 
     settings.meFilters = 0;
@@ -182,7 +183,7 @@ bool pawsChatWindow::PostSetup()
 
     tabs = dynamic_cast<pawsTabWindow*>(FindWidget("Chat Tabs"));
 
-    inputText   = dynamic_cast<pawsSpellCheckedEditBox*>   (FindWidget("InputText"));
+    inputText   = dynamic_cast<pawsEditTextBox*>   (FindWidget("InputText"));
 
     // Load the settings
     LoadChatSettings();
@@ -213,7 +214,7 @@ void pawsChatWindow::LoadChatSettings()
     // XML parsing time!
     csRef<iDocument> doc, defaultDoc;
     csRef<iDocumentNode> root,defaultRoot, defaultChatNode, chatNode, colorNode, optionNode, bindingsNode, filtersNode, tabCompletionNode, msgFiltersNode,
-                         mainTabNode, flashingNode, flashingOnCharNode;
+                         mainTabNode, flashingNode, flashingOnCharNode, spellCheckerNode;
     csString option;
 
     bool chatOptionsExist = false;
@@ -290,15 +291,7 @@ void pawsChatWindow::LoadChatSettings()
             else if (nodeName == "joindefaultchannel")
                 settings.joindefaultchannel = option->GetAttributeValueAsBool("value", true);
             else if (nodeName == "defaultlastchat")
-                settings.defaultlastchat = option->GetAttributeValueAsBool("value", true);
-            else if (nodeName == "spellChecker")
-            {
-                inputText->setUseSpellChecker(option->GetAttributeValueAsBool("value", false));
-                int r = option->GetAttributeValueAsInt( "r", 255 );
-                int g = option->GetAttributeValueAsInt( "g", 0 );
-                int b = option->GetAttributeValueAsInt( "b", 0 );
-                inputText->setTypoColour(graphics2D->FindRGB( r, g, b ));
-            }
+                settings.defaultlastchat = option->GetAttributeValueAsBool("value", true);          
             else if (nodeName == "chatWidget")
             {
                 settings.chatWidget = option->GetAttributeValue("value");
@@ -512,6 +505,38 @@ void pawsChatWindow::LoadChatSettings()
             }
         }
     }
+    
+    csRef<iSpellChecker> spellChecker = csQueryRegistryOrLoad<iSpellChecker>(PawsManager::GetSingleton().GetObjectRegistry(), "crystalspace.planeshift.spellchecker");
+    
+    spellCheckerNode = chatNode->GetNode("spellChecker");
+    if(!spellCheckerNode)
+        spellCheckerNode = defaultChatNode->GetNode("spellChecker");
+    if (spellCheckerNode != NULL)
+    {
+	inputText->setSpellChecked(spellCheckerNode->GetAttributeValueAsBool("value", false));
+	int r = spellCheckerNode->GetAttributeValueAsInt( "r", 255 );
+	int g = spellCheckerNode->GetAttributeValueAsInt( "g", 0 );
+	int b = spellCheckerNode->GetAttributeValueAsInt( "b", 0 );
+	inputText->setTypoColour(graphics2D->FindRGB( r, g, b ));
+	csRef<iDocumentNodeIterator> sNodes = spellCheckerNode->GetNodes();
+	// no need to check for customized words as there is no plugin to add them too. This means that customized words are lost
+	// from a config if it's loaded with a verion without the spellchecker plugin. 
+	if (spellChecker)
+	{
+	    while(sNodes->HasNext())
+	    {
+		csRef<iDocumentNode> dictWord = sNodes->Next();
+		if (dictWord->GetType() == CS_NODE_ELEMENT && csString(dictWord->GetValue()) == "personalDictionaryWord")
+		{
+		    csString word = dictWord->GetAttributeValue("value");
+		    if (!word.IsEmpty())
+		    {
+			spellChecker->addWord(word);
+		    }
+		}
+	    }
+	}
+    }    
 }
 
 void pawsChatWindow::DetermineChatTabAndSelect(int chattype)
@@ -1125,7 +1150,7 @@ void pawsChatWindow::SaveChatSettings()
     csRef<iDocumentNode> root,chatNode, colorNode, optionNode,looseNode,filtersNode,
                          badWordsNode, badWordsTextNode, tabCompletionNode, completionItemNode, cNode, logNode, selectTabStyleNode,
                          echoScreenInSystemNode, mainBracketsNode, yourColorMixNode, joindefaultchannelNode,
-                         defaultlastchatNode, spellCheckerNode, chatWidgetNode, mainTabNode, flashingNode, flashingOnCharNode, node;
+                         defaultlastchatNode, spellCheckerNode, spellCheckerWordNode, chatWidgetNode, mainTabNode, flashingNode, flashingOnCharNode, node;
 
     root = doc->CreateRoot();
 
@@ -1157,16 +1182,7 @@ void pawsChatWindow::SaveChatSettings()
 
     defaultlastchatNode = optionNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
     defaultlastchatNode->SetValue("defaultlastchat");
-    defaultlastchatNode->SetAttributeAsInt("value",(int)settings.defaultlastchat);
-
-    spellCheckerNode = optionNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
-    spellCheckerNode->SetValue("spellChecker");
-    spellCheckerNode->SetAttributeAsInt("value",(int)inputText->getUseSpellChecker());
-    int red, green, blue, alpha;
-    graphics2D->GetRGB(inputText->getTypoColour(), red, green, blue, alpha);
-    spellCheckerNode->SetAttributeAsInt("r", red);
-    spellCheckerNode->SetAttributeAsInt("g", green);
-    spellCheckerNode->SetAttributeAsInt("b", blue);
+    defaultlastchatNode->SetAttributeAsInt("value",(int)settings.defaultlastchat);    
 
     chatWidgetNode = optionNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
     chatWidgetNode->SetValue("chatWidget");
@@ -1315,6 +1331,28 @@ void pawsChatWindow::SaveChatSettings()
         c2Node->SetValue("vicinity");
         c2Node->SetAttribute("type",type);
         c2Node->SetAttribute("value",value2?"true":"false");
+    }
+    
+    // and the spellChecker
+    spellCheckerNode = chatNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
+    spellCheckerNode->SetValue("spellChecker");
+    spellCheckerNode->SetAttributeAsInt("value",(int)inputText->getSpellChecked());
+    int red, green, blue, alpha;
+    graphics2D->GetRGB(inputText->getTypoColour(), red, green, blue, alpha);
+    spellCheckerNode->SetAttributeAsInt("r", red);
+    spellCheckerNode->SetAttributeAsInt("g", green);
+    spellCheckerNode->SetAttributeAsInt("b", blue);
+    
+    csRef<iSpellChecker> spellChecker = csQueryRegistryOrLoad<iSpellChecker>(PawsManager::GetSingleton().GetObjectRegistry(), "crystalspace.planeshift.spellchecker");
+    // without a spellchecker plugin we have no wordlist to save...so skipping this
+    if (spellChecker)
+    {    
+	for (size_t i = 0; i < spellChecker->getPersonalDict().GetSize(); i++)
+	{
+	    spellCheckerWordNode = spellCheckerNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
+	    spellCheckerWordNode->SetValue("personalDictionaryWord");
+	    spellCheckerWordNode->SetAttribute("value", spellChecker->getPersonalDict()[i]);
+	}
     }
 
     doc->Write(file);
@@ -2620,7 +2658,6 @@ int pawsChatWindow::mixColours(int colour1, int colour2)
     return graphics2D->FindRGB((r+r2)/2,(g+g2)/2,(b+b2)/2); //does the average of the two colours and returns it back
 }
 
-
 //------------------------------------------------------------------------------
 
 pawsChatHistory::pawsChatHistory()
@@ -2688,294 +2725,4 @@ csString *pawsChatHistory::GetNext()
 csString *pawsChatHistory::GetPrev()
 {
     return GetCommand(getLoc + 1);
-}
-
-
-pawsSpellCheckedEditBox::pawsSpellCheckedEditBox() : pawsEditTextBox(), typoColour(0xFF0000), spellChecking(true)
-{
-    #ifdef HUNSPELL
-    csRef<iStringArray> files;
-    //search for dic files in the dict folder
-    files = psengine->GetVFS()->FindFiles("/planeshift/data/dict/");
-    if(files.IsValid())
-    {
-        for(size_t i = 0; i < files->GetSize(); i++)
-        {
-            csRef<iDataBuffer> AffPath;
-            csRef<iDataBuffer> DicPath;
-            csString file = files->Get(i);
-            csString fileAff;
-
-            if(file.Length() <= 4)
-                continue;
-
-            //check if the file is a dic file
-            if(file.Slice(file.Length()-4) != ".dic")
-                continue;
-
-            //if so generate also the aff file path and add the dictionary to the list.
-            fileAff = file.Slice(0, file.Length()-3) + "aff";
-            // Hunspell needs real file pathes...so get them from the VFS
-            AffPath = psengine->GetVFS()->GetRealPath(fileAff);
-            DicPath = psengine->GetVFS()->GetRealPath(file);
-            // create the spellchecker object
-            spellChecker.Push(new Hunspell(AffPath->GetData(), DicPath->GetData()));
-        }
-    }
-    #endif
-}
-
-pawsSpellCheckedEditBox::~pawsSpellCheckedEditBox()
-{
-    #ifdef HUNSPELL
-    for(size_t i = 0; i < spellChecker.GetSize(); i++)
-    {
-        delete spellChecker.Get(i);
-    }
-    spellChecker.DeleteAll();
-    #endif
-}
-
-void pawsSpellCheckedEditBox::checkSpelling()
-{
-    #ifdef HUNSPELL
-    if (!text.IsEmpty())
-    {
-        // clear the word-list
-        words.Empty();
-        // get the postitions of the words by checking for spaces in the widget's text
-        Word tmpWord;
-        csString tmpString;
-        size_t oldSpace = 0;
-        size_t foundSpace = text.Find(" ", oldSpace);
-        while (foundSpace != (size_t)-1)
-        {
-            text.SubString(tmpString, oldSpace, foundSpace-oldSpace);
-            // before spellchecking remove chars that lead to wrong results
-            removeSpecialChars(tmpString);
-            // now do the spellchecking
-            tmpWord.correct = false;
-            for(size_t i = 0; i < spellChecker.GetSize(); i++)
-            {
-                if(spellChecker.Get(i)->spell(tmpString.GetData()))
-                {
-                    tmpWord.correct = true;
-                    break;
-                }
-            }
-            tmpWord.endPos = foundSpace;
-            // and save everything
-            words.Push(tmpWord);
-            oldSpace = foundSpace;
-            foundSpace = text.Find(" ", oldSpace+1);
-        }
-        text.SubString(tmpString, oldSpace, text.Length()-oldSpace);
-        // before spellchecking remove chars that lead to wrong results
-        removeSpecialChars(tmpString);
-        // now do the spellchecking
-        tmpWord.correct = false;
-        for(size_t i = 0; i < spellChecker.GetSize(); i++)
-        {
-            if(spellChecker.Get(i)->spell(tmpString.GetData()))
-            {
-                tmpWord.correct = true;
-                break;
-            }
-        }
-        tmpWord.endPos = text.Length();
-        if (tmpWord.endPos > 0)
-        {
-            // save only if the word contains something
-            words.Push(tmpWord);
-        }
-    }
-    else
-    {
-        // no text in widget...still clean the array as the last key could have deleted the last char but the array still contains it
-        words.Empty();
-    }
-    #endif
-}
-
-void pawsSpellCheckedEditBox::Draw()
-{
-    #ifdef HUNSPELL
-    if (spellChecking && spellChecker.GetSize())
-    {
-        if ( clock->GetCurrentTicks() - blinkTicks > BLINK_TICKS )
-        {
-            blink = !blink;
-            blinkTicks = clock->GetCurrentTicks();
-        }
-
-        pawsWidget::Draw();
-
-        ClipToParent(false);
-
-        //check if the current widgets text is already spell-checked by comparing the the end of the last word with the length of the text.
-        size_t length = 0;
-        if (words.GetSize() > 0)
-        {
-            length = words[words.GetSize()-1].endPos;
-        }
-        if (length != text.Length())
-        {
-            checkSpelling();
-        }
-
-
-        if (cursorPosition>text.Length())
-            cursorPosition=text.Length();
-
-        if(start>(int)text.Length())
-            start=0;
-
-        if ( text.Length() > 0 )
-        {
-            // Get the number of characters to draw
-            int maxChars;
-            maxChars = GetFont()->GetLength( text.GetData() + start, screenFrame.Width()-margin*2);
-
-            if ( (int)cursorPosition > start + maxChars )
-            start = (int)cursorPosition - maxChars;
-            if ( start < 0 )
-            start = 0;
-
-            // Make the text the correct length
-            csString tmp ( text.GetData() + start );
-            tmp.Truncate( maxChars );
-
-            if (password) //show astrices instead of text
-            for (unsigned int i=0;i<tmp.Length();i++)
-                tmp.SetAt(i,'*');
-
-            // Get size of text
-            int textWidth;
-            int textHeight;
-
-            GetFont()->GetDimensions( tmp.GetData(), textWidth, textHeight );
-
-            // Get the center
-            int textCenterX = 4;
-            int textCenterY = (screenFrame.Height()-(margin*2)) / 2  - textHeight / 2;
-
-            int textXPos = screenFrame.xmin + textCenterX + margin;
-
-            int basicFontColor = GetFontColour();
-
-            // now we need to draw every word separately as the color might change
-            for (size_t i = 0; i < words.GetSize(); i++)
-            {
-                int wordStart;
-                if (i == 0)
-                {
-                    wordStart = 0 - start;
-                }
-                else
-                {
-                    wordStart=words[i-1].endPos - start;
-                }
-                int wordEnd = words[i].endPos - start;
-
-                // is the word or parts of it displayed?
-                if (!(((wordStart < 0) && (wordEnd < 0)) || ((wordStart >= (int) tmp.Length()) && (wordEnd >= (int) tmp.Length()))))
-                {
-                    // set correct word borders according to displayed chars
-                    if (wordStart < 0)
-                    {
-                        wordStart = 0;
-                    }
-                    if (wordEnd >= (int) tmp.Length())
-                    {
-                        wordEnd = tmp.Length();
-                    }
-                    // set different fontcolours for correct/incorrect words
-                    if (words[i].correct)
-                    {
-                       SetColour(basicFontColor);
-                    }
-                    else
-                    {
-                        SetColour(typoColour);
-                    }
-
-                    DrawWidgetText( tmp.Slice(wordStart, wordEnd-wordStart).GetData(),
-                        textXPos,
-                        screenFrame.ymin + textCenterY + margin);
-
-                    // get the x-offest for the next word
-                    int textWidth, textHeight;
-                    GetFont()->GetDimensions( tmp.Slice(wordStart, wordEnd-wordStart).GetData(), textWidth, textHeight );
-                    textXPos += textWidth;
-                }
-            }
-
-            //restore default color
-            SetColour(basicFontColor);
-
-            if ( blink && hasFocus )
-            {
-                int cursor = (int)cursorPosition - start;
-                tmp.Truncate( cursor );
-
-                // Figure out where to put the cursor.
-                int width, height;
-                GetFont()->GetDimensions( tmp, width, height );
-
-                graphics2D->DrawLine( (float)(screenFrame.xmin + margin + textCenterX + width + 1),
-                    (float)(screenFrame.ymin + margin + textCenterY),
-                    (float)(screenFrame.xmin + margin + textCenterX + width + 1),
-                    (float)(screenFrame.ymin + margin + textCenterY+height),
-                    GetFontColour() );
-            }
-        } // End if stored.Length() > 0
-        else if ( blink && hasFocus )
-        {
-            graphics2D->DrawLine( (float)screenFrame.xmin + margin + 5,
-            (float)screenFrame.ymin + margin + 4,
-            (float)screenFrame.xmin + margin + 5,
-            (float)screenFrame.ymax - (margin + 4),
-            GetFontColour() );
-        }
-    }
-    else
-    #endif
-    {
-        // no spellchecking no need for a special draw function...have pawsEditTextBox do it
-        pawsEditTextBox::Draw();
-    }
-}
-
-bool pawsSpellCheckedEditBox::OnKeyDown( utf32_char code, utf32_char key, int modifiers )
-{
-    // let the pawsEditTextBox class handle the input
-    bool ret = pawsEditTextBox::OnKeyDown(code, key, modifiers);
-    // if spellchecking is enabled do it at every key-press
-    if (spellChecking)
-    {
-        checkSpelling();
-    }
-    return ret;
-}
-
-void pawsSpellCheckedEditBox::removeSpecialChars(csString& str)
-{
-    // remove all chars that interfere with spellchecking of a word
-    // ("'" can't be removed so that "don't" is recognized correctly....
-    // this will lead to things like "/me says 'Hello'" being displayed as error
-    str.ReplaceAll("?", "");
-    str.ReplaceAll("!", "");
-    str.ReplaceAll("\"", "");
-    str.ReplaceAll("*", "");
-    str.ReplaceAll(".", "");
-    str.ReplaceAll(",", "");
-    str.ReplaceAll(";", "");
-    str.ReplaceAll("-", "");
-    str.ReplaceAll("(", "");
-    str.ReplaceAll(")", "");
-    str.ReplaceAll("{", "");
-    str.ReplaceAll("}", "");
-    str.ReplaceAll("[", "");
-    str.ReplaceAll("]", "");
-    str.ReplaceAll("/", "");
 }

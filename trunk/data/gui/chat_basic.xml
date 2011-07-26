@@ -7,7 +7,7 @@
         <title resource="Scaling Title Bar" text="Communication" align="left" close_button="yes"/>
         <bgimage resource="Scaling Widget Background" />
 
-         <widget name="InputText" factory="pawsSpellCheckedEditBox" alwaysontop="yes">
+         <widget name="InputText" factory="pawsEditTextBox" alwaysontop="yes">
             <frame x="50" y="125" width="445" height="25" border="no" />
         <attachpoints>
                 <attach point="ATTACH_RIGHT" />
