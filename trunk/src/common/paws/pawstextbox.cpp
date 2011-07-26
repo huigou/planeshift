@@ -24,6 +24,7 @@
 #include <ivideo/fontserv.h>
 #include <iutil/evdefs.h>
 #include <iutil/event.h>
+#include <iutil/plugin.h>
 #include <csutil/csuctransform.h>
 
 #include "pawstextbox.h"
@@ -1016,15 +1017,15 @@ bool pawsMessageTextBox::OnKeyDown(utf32_char keyCode, utf32_char key, int modif
 //---------------------------------------------------------------------------------
 
 
-pawsEditTextBox::pawsEditTextBox()
+pawsEditTextBox::pawsEditTextBox() : password(false),
+                                     start(0),
+                                     cursorPosition(0),
+                                     blink(true),
+                                     maxLen(0),
+                                     spellChecked(false),
+                                     typoColour(0xFF0000)
 {
-    start = 0;
-    blink = true;
-    cursorPosition = 0;
-    password = 0;
-    maxLen = 0;
     factory = "pawsEditTextBox";
-
     clock =  csQueryRegistry<iVirtualClock > ( PawsManager::GetSingleton().GetObjectRegistry());
 
     blinkTicks = clock->GetCurrentTicks();
@@ -1033,6 +1034,9 @@ pawsEditTextBox::pawsEditTextBox()
     int dummy;
     GetFont()->GetMaxSize( dummy, lineHeight );
     lineHeight -=2;
+
+    //get the spellchecker plugin
+    spellChecker = csQueryRegistryOrLoad<iSpellChecker>(PawsManager::GetSingleton().GetObjectRegistry(), "crystalspace.planeshift.spellchecker");
 }
 pawsEditTextBox::pawsEditTextBox(const pawsEditTextBox& origin):pawsWidget(origin)
 {
@@ -1093,6 +1097,17 @@ bool pawsEditTextBox::Setup( iDocumentNode* node )
             SetText( PawsManager::GetSingleton().Translate(stringAttribute->GetValue()) );
         }
     }
+    csRef<iDocumentNode> settingNode = node->GetNode("spellChecker");
+    if(settingNode)
+    {
+        // should the spellchecekr be used for this instance of the widget?
+        spellChecked = settingNode->GetAttributeValueAsBool("enable", false);
+        // What colour should we use for typos?
+        int r = settingNode->GetAttributeValueAsInt( "r", 255 );
+        int g = settingNode->GetAttributeValueAsInt( "g", 0 );
+        int b = settingNode->GetAttributeValueAsInt( "b", 0 );
+        typoColour = graphics2D->FindRGB( r, g, b );
+    }
     // Find the line height
     int dummy;
     GetFont()->GetMaxSize( dummy, lineHeight );
@@ -1146,10 +1161,15 @@ void pawsEditTextBox::Draw()
     ClipToParent(false);
 
     if (cursorPosition>text.Length())
+    {
         cursorPosition=text.Length();
+    }
+
 
     if(start>(int)text.Length())
+    {
         start=0;
+    }
 
     if ( text.Length() > 0 )
     {
@@ -1158,16 +1178,25 @@ void pawsEditTextBox::Draw()
         maxChars = GetFont()->GetLength( text.GetData() + start, screenFrame.Width()-margin*2);
 
         if ( (int)cursorPosition > start + maxChars )
+        {
             start = (int)cursorPosition - maxChars;
+        }
         if ( start < 0 )
+        {
             start = 0;
+        }
 
         // Make the text the correct length
         csString tmp ( text.GetData() + start );
         tmp.Truncate( maxChars );
+
         if (password) //show astrices instead of text
-             for (unsigned int i=0;i<tmp.Length();i++)
-                 tmp.SetAt(i,'*');
+        {
+            for (unsigned int i=0;i<tmp.Length();i++)
+            {
+                tmp.SetAt(i,'*');
+            }
+        }
 
         // Get size of text
         int textWidth;
@@ -1179,10 +1208,84 @@ void pawsEditTextBox::Draw()
         int textCenterX = 4;
         int textCenterY = (screenFrame.Height()-(margin*2)) / 2  - textHeight / 2;
 
+        if (spellChecker && spellChecked && spellChecker->hasDicts())
+        {
+            //check if the current widgets text is already spell-checked by comparing the the end of the last word with the length of the text.
+            size_t length = 0;
+            if (words.GetSize() > 0)
+            {
+                length = words[words.GetSize()-1].endPos;
+            }
+            if (length != text.Length())
+            {
+                checkSpelling();
+            }
 
-        DrawWidgetText( tmp.GetData(),
-                        screenFrame.xmin + textCenterX + margin,
-                        screenFrame.ymin + textCenterY + margin);
+
+            if (cursorPosition>text.Length())
+            cursorPosition=text.Length();
+
+            int textXPos = screenFrame.xmin + textCenterX + margin;
+
+            int basicFontColor = GetFontColour();
+
+            // now we need to draw every word separately as the color might change
+            for (size_t i = 0; i < words.GetSize(); i++)
+            {
+                int wordStart;
+                if (i == 0)
+                {
+                    wordStart = 0 - start;
+                }
+                else
+                {
+                    wordStart=words[i-1].endPos - start;
+                }
+                int wordEnd = words[i].endPos - start;
+
+                // is the word or parts of it displayed?
+                if (!(((wordStart < 0) && (wordEnd < 0)) || ((wordStart >= (int) tmp.Length()) && (wordEnd >= (int) tmp.Length()))))
+                {
+                    // set correct word borders according to displayed chars
+                    if (wordStart < 0)
+                    {
+                        wordStart = 0;
+                    }
+                    if (wordEnd >= (int) tmp.Length())
+                    {
+                        wordEnd = tmp.Length();
+                    }
+                    // set different fontcolours for correct/incorrect words
+                    if (words[i].correct)
+                    {
+                        SetColour(basicFontColor);
+                    }
+                    else
+                    {
+                        SetColour(typoColour);
+                    }
+
+                    DrawWidgetText( tmp.Slice(wordStart, wordEnd-wordStart).GetData(), textXPos, screenFrame.ymin + textCenterY + margin);
+
+                    // get the x-offest for the next word
+                    int textWidth, textHeight;
+                    GetFont()->GetDimensions( tmp.Slice(wordStart, wordEnd-wordStart).GetData(), textWidth, textHeight );
+                    textXPos += textWidth;
+                }
+            }
+            //restore default color
+            SetColour(basicFontColor);
+        }
+        else
+        {
+            // Get the center
+            int textCenterX = 4;
+            int textCenterY = (screenFrame.Height()-(margin*2)) / 2  - textHeight / 2;
+
+            DrawWidgetText( tmp.GetData(),
+                            screenFrame.xmin + textCenterX + margin,
+                            screenFrame.ymin + textCenterY + margin);
+        }
 
         if ( blink && hasFocus )
         {
@@ -1194,22 +1297,21 @@ void pawsEditTextBox::Draw()
             GetFont()->GetDimensions( tmp, width, height );
 
             graphics2D->DrawLine( (float)(screenFrame.xmin + margin + textCenterX + width + 1),
-                (float)(screenFrame.ymin + margin + textCenterY),
-                (float)(screenFrame.xmin + margin + textCenterX + width + 1),
-                (float)(screenFrame.ymin + margin + textCenterY+height),
-                GetFontColour() );
+            (float)(screenFrame.ymin + margin + textCenterY),
+            (float)(screenFrame.xmin + margin + textCenterX + width + 1),
+            (float)(screenFrame.ymin + margin + textCenterY+height),
+            GetFontColour() );
         }
     } // End if stored.Length() > 0
     else if ( blink && hasFocus )
     {
         graphics2D->DrawLine( (float)screenFrame.xmin + margin + 5,
-            (float)screenFrame.ymin + margin + 4,
-            (float)screenFrame.xmin + margin + 5,
-            (float)screenFrame.ymax - (margin + 4),
-            GetFontColour() );
+        (float)screenFrame.ymin + margin + 4,
+        (float)screenFrame.xmin + margin + 5,
+        (float)screenFrame.ymax - (margin + 4),
+        GetFontColour() );
     }
 }
-
 
 bool pawsEditTextBox::OnKeyDown( utf32_char code, utf32_char key, int modifiers )
 {
@@ -1335,6 +1437,12 @@ bool pawsEditTextBox::OnKeyDown( utf32_char code, utf32_char key, int modifiers 
     if ((key < 128 && !isprint(key)) || CSKEY_IS_SPECIAL(key))
         pawsWidget::OnKeyDown( code, key, modifiers );
 
+    // if spellchecking is enabled do it at every key-press
+    if (spellChecked)
+    {
+        checkSpelling();
+    }
+
     return true;
 }
 
@@ -1450,6 +1558,45 @@ void pawsEditTextBox::SetMaxLength( unsigned int maxlen )
     maxLen = maxlen;
     if(maxLen)
         text.Truncate(maxlen);
+}
+
+void pawsEditTextBox::checkSpelling()
+{
+    if (spellChecker && (!text.IsEmpty()))
+    {
+        // clear the word-list
+        words.Empty();
+        // get the postitions of the words by checking for spaces in the widget's text
+        Word tmpWord;
+        csString tmpString;
+        size_t oldSpace = 0;
+        size_t foundSpace = text.Find(" ", oldSpace);
+        while (foundSpace != (size_t)-1)
+        {
+            text.SubString(tmpString, oldSpace, foundSpace-oldSpace);
+            // now do the spellchecking
+            tmpWord.correct = spellChecker->correct(tmpString);
+            tmpWord.endPos = foundSpace;
+            // and save everything
+            words.Push(tmpWord);
+            oldSpace = foundSpace;
+            foundSpace = text.Find(" ", oldSpace+1);
+        }
+        text.SubString(tmpString, oldSpace, text.Length()-oldSpace);
+        // now do the spellchecking
+        tmpWord.correct = spellChecker->correct(tmpString);
+        tmpWord.endPos = text.Length();
+        if (tmpWord.endPos > 0)
+        {
+            // save only if the word contains something
+            words.Push(tmpWord);
+        }
+    }
+    else
+    {
+        // no text in widget...still clean the array as the last key could have deleted the last char but the array still contains it
+        words.Empty();
+    }
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1940,15 +2087,15 @@ void pawsDocumentView::Draw()
             csString sub;
             currentStr.SubString(sub, 5);
             int index = 0;
-            
+
             for(unsigned int i = 0 ; i < sub.Length() ; i++)
             {
-                if(sub[i] != ',') 
+                if(sub[i] != ',')
                 {
                     index *= 10;
                     index += sub[i]- '0';
                 }
-                else 
+                else
                 {
                     indices.Push(index);
                     index = 0;
@@ -1977,7 +2124,7 @@ void pawsDocumentView::Draw()
                         unsigned int w = pi.width;
                         unsigned int pad = pi.padding[0]+pi.padding[2];
                         unsigned int dsx = w * sz + pad * (sz - 1) + pi.padding[2] + margin;
-                        if(usingScrollBar) 
+                        if(usingScrollBar)
                             dsx += 36;
                         sx += (screenFrame.Width() - dsx);
                     }
@@ -2008,11 +2155,11 @@ void pawsDocumentView::Draw()
             }
             drawY += pi.height + pi.padding[3];
         }
-        
+
         for(unsigned i = x+1 ; i < (startLine+canDrawLines) ; i++)
         {
             if(i >= lines.GetSize()) break;
-            if(currentStr == lines[i]) 
+            if(currentStr == lines[i])
                 ++x;
             else break;
         }
@@ -2037,7 +2184,7 @@ unsigned int pawsDocumentView::ProcessPictureInfo(iDocumentNode *node)
 
     for(unsigned int i = 0 ; i < paddingStr.Length() ; i++)
     {
-        if(paddingStr[i] != ' ') 
+        if(paddingStr[i] != ' ')
         {
             //none numbers of padding parameters are not checked here
             padding[index] *= 10;
@@ -2045,7 +2192,7 @@ unsigned int pawsDocumentView::ProcessPictureInfo(iDocumentNode *node)
         }
         else ++index;
     }
-    
+
     csString temp = srcs;
     unsigned int pos;
     unsigned int sz = 0;
@@ -2075,8 +2222,8 @@ void pawsDocumentView::OrganizeContent(const char * newtext)
 {
     csString str(newtext);
     csRef<iDocumentNode> root = ParseString(str, "Contents");
-    
-    if(root == 0) 
+
+    if(root == 0)
         return;
 
     csRef<iDocumentNodeIterator> childIter = root->GetNodes();
@@ -2090,7 +2237,7 @@ void pawsDocumentView::OrganizeContent(const char * newtext)
     {
         csRef<iDocumentNode> childNode = childIter->Next();
         csString type(childNode->GetAttributeValue("type"));
-        
+
         if(type == "text")
         {
             //a text node, processed by the based method
@@ -2102,9 +2249,9 @@ void pawsDocumentView::OrganizeContent(const char * newtext)
             {
                 //process the picture node,return how many pictures in the row
                 unsigned int sz = ProcessPictureInfo(childNode);
-                if(sz == 0) 
+                if(sz == 0)
                     continue;
-              
+
                 unsigned int picIndex = picsInfo.GetSize() - 1;
                 unsigned int width = picsInfo[picIndex].width;
                 unsigned int height = picsInfo[picIndex].height;
@@ -2148,7 +2295,7 @@ void pawsDocumentView::OrganizeContent(const char * newtext)
                         for(; temp>0; temp--)
                         {
                             unsigned int index = picIndex - sz + 1;
-                            if(index > picIndex) 
+                            if(index > picIndex)
                                 break;
 
                             if(temp != 1 && index != picIndex)
