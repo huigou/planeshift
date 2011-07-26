@@ -42,6 +42,7 @@
 #include "paws/pawstextbox.h"
 #include "paws/pawscheckbox.h"
 #include "paws/pawsyesnobox.h"
+#include "paws/pawstabwindow.h"
 #include "pawsgmgui.h"
 #include "paws/pawscrollbar.h"
 #include "pscamera.h"
@@ -127,8 +128,6 @@ bool pawsGmGUIWindow::PostSetup()
     SetSecurity();
 
     QueryServer();
-
-    currentTab = 0;
 
     // get a handle on the widgets in our Attributes tab
     cbInvincible = (pawsCheckBox*)FindWidget("toggleInvincible");
@@ -254,6 +253,12 @@ void pawsGmGUIWindow::HandleMessage ( MsgEntry* me )
     }
 }
 
+int pawsGmGUIWindow::GetCurrentTab()
+{
+    pawsTabWindow *tabs = dynamic_cast<pawsTabWindow*>(FindWidget("GM Tabs"));
+    return tabs ? tabs->GetActiveTab()->GetID()-1100 : 0;
+}
+
 bool pawsGmGUIWindow::OnButtonReleased(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     const char* errorMessage;
@@ -273,8 +278,6 @@ bool pawsGmGUIWindow::OnButtonReleased(int /*mouseButton*/, int /*keyModifier*/,
     case 1000: // Players tab
     case 1002: // Action Tab
     case 1003: // Attributes Tab
-        //SelectTab(widget->GetID());
-        currentTab = widget->GetID() - 1000;
         break;
 
     //////////////////////////////////////////

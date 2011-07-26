@@ -74,7 +74,11 @@ public:
 
     void OnStringEntered(const char *name,int param,const char *value);
 
-    int GetCurrentTab() { return currentTab; };
+    /**
+     * Returns the currently selected tab in this window.
+     * @return the id of the selected tab (0 players, 1 action locations, 2 gm options
+     */
+    int GetCurrentTab();
 
 protected:
     pawsChatWindow* chatWindow;
@@ -109,7 +113,6 @@ protected:
     pawsCheckBox* cbAttackable;
     pawsCheckBox* cbBuddyHide;
 
-    int currentTab;
     csString cmdToExectute;
     csString actionXML;
 };
