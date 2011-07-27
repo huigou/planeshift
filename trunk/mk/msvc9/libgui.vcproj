@@ -1825,6 +1825,9 @@
 				RelativePath="..\..\src\client\gui\pawsconfigsound.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\client\gui\pawsconfigspellchecker.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\client\gui\pawsconfigtooltips.cpp">
 			</File>
 			<File
@@ -2070,6 +2073,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawsconfigsound.h">
+			</File>
+			<File
+				RelativePath="..\..\src\client\gui\pawsconfigspellchecker.h">
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawsconfigtooltips.h">
