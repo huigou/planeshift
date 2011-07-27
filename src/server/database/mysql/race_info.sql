@@ -67,7 +67,6 @@ INSERT INTO `race_info` VALUES (4,'Xacha','stonebm','M',0.8,1.4,0.6,'',100,50,50
 INSERT INTO `race_info` VALUES (5,'Nolthrir','stonebm','M',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,0,'','','','','',5,-1,1);
 INSERT INTO `race_info` VALUES (6,'Dermorian','stonebm','M',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.2,0.8,10,10,0,0,'','','','','',6,-1,1);
 INSERT INTO `race_info` VALUES (7,'Hammerwielder','stonebm','M',0.8,1.2,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,0,'','','','','',7,-1,1);
-INSERT INTO `race_info` VALUES (8,'Diaboli','stonebm','M',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,0,'','','','','',8,-1,1);
 INSERT INTO `race_info` VALUES (9,'Kran','stonebm','N',0.8,1.4,0.6,'',100,50,50,50,50,50,50,2,1.5,10,10,0,0,'','','','','',9,-1,1);
 INSERT INTO `race_info` VALUES (10,'Lemur','stonebm','M',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,0,'','','','','',10,-1,1);
 INSERT INTO `race_info` VALUES (11,'Klyros','stonebm','M',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,0,'ylianm','','','','',11,-1,1);
@@ -79,7 +78,6 @@ INSERT INTO `race_info` VALUES (16,'Xacha','stonebm','F',0.8,1.4,0.6,'',100,50,5
 INSERT INTO `race_info` VALUES (17,'Nolthrir','stonebm','F',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,0,'','','','','',5,-1,1);
 INSERT INTO `race_info` VALUES (18,'Dermorian','stonebm','F',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.2,0.8,10,10,0,0,'','','','','',6,-1,1);
 INSERT INTO `race_info` VALUES (19,'Hammerwielder','stonebm','F',0.8,1.2,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,0,'','','','','',7,-1,1);
-INSERT INTO `race_info` VALUES (20,'Diaboli','stonebm','F',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,0,'','','','','',8,-1,1);
 INSERT INTO `race_info` VALUES (21,'Lemur','stonebm','F',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,0,'','','','','',10,-1,1);
 INSERT INTO `race_info` VALUES (22,'Klyros','stonebm','F',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,0,'','','','','',11,-1,1);
 INSERT INTO `race_info` VALUES (23,'Rogue','stonebm','M',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,0,'','','','','',12,-1,1);
