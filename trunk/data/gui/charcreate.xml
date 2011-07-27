@@ -107,23 +107,18 @@
                 <text string="Nolthrir" position="right"/>
             </widget>
 
-            <widget name="race8" factory="pawsRadioButton" id="8">
-                <frame x="0" y="202" width="175" height="24"/>
-                <text string="Diaboli" position="right"/>
-            </widget>
-
             <widget name="race7" factory="pawsRadioButton" id="7">
-                <frame x="0" y="226" width="175" height="24"/>
+                <frame x="0" y="202" width="175" height="24"/>
                 <text string="Hammerwielder" position="right"/>
             </widget>
 
             <widget name="race4" factory="pawsRadioButton" id="4">
-                <frame x="0" y="250" width="175" height="24"/>
+                <frame x="0" y="226" width="175" height="24"/>
                 <text string="Xacha" position="right"/>
             </widget>
 
             <widget name="race10" factory="pawsRadioButton" id="10">
-                <frame x="0" y="274" width="175" height="24"/>
+                <frame x="0" y="250" width="175" height="24"/>
                 <text string="Lemur" position="right"/>
             </widget>
 
