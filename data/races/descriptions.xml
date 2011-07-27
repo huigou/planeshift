@@ -134,24 +134,7 @@ Rules: Nothing Special for now."
     <FACEPOS x="0.05" y="1.1" z="-1.4" />
 
     </race>     
-    
-    <race   name="Diaboli" 
-            description=
-"THE 3D MODELS FOR THIS RACE ARE NOT YET AVAILABLE IN GAME. YOU CAN CONTINUE ANYWAY USING THE MODELS OF THE YNNWN RACE. Physical traits: The typical Diabolo has shiny oil-black skin, a thin pointed tail and little horns. Apart from that, they have almost the same body proportions as humans, and almost identical internal organs. Both male and female have gorgeous, perfectly shaped bodies.
-Abilities and fields of interest: The Diaboli developed a good resistance to many elemental spells thanks to a deep knowledge in that area of magic. On the other hand, they avoid holy places as they feel uncomfortable in them.   It's quite rare to meet a Diaboli inside a temple. They diligently try to avoid sacred objects: holy weapons are devastating against them. They are famous for their ability to attract and charm people, and therefore the Diaboli have a natural talent for social relations.
-Psychology: A popular tradition tells that their homeland was a burning land that continuously erupted black smoke (this may suggest the presence of a volcano), a dark and perpetually cloudy sky and sulphuric rivers of flowing blood. Some sages believe they originated in a distant, unexplored universe, but opinions are contradictory. Nonetheless, their race is the only one who thinks of Yliakum as a real paradise, and this says a lot about their homeland. They rarely keep a single partner, preferring to have many, and that explains the large number of half-breeds in Yliakum. Diaboli are a happy, bustling, malicious race, quite unreliable.  Humility is a completely foreign concept to them. Their familiarity with some of the semi-intelligent races that dwell in the Stone Labyrinths has raised suspicion with the other races.
-Rules: Nothing Special for now."            
-            basetexture="1.png" 
-            male="ynnwnm" 
-            female="fynnwn" 
-            male_available="yes" 
-            female_available="yes">                
 
-    <FirstPos x="0" y="1.81" z="0" />
-    <FACEPOS x="0" y="1.9" z="-1.0" />
- 
-    </race>     
-    
     <race   name="Kran" 
             description=
 "Physical Traits: They belong more to the mineral kingdom than to the animal one. Their organism is the only one, amongst the known races, to be based on silicon instead of carbon. They appear as humanoids made of rock. The colour of the body is mainly grey or black and slightly wrinkled, with coloured veins different from individual to individual. Some rare Kran have a different coloured skin, like white, azure or pink, which is highly appreciated by Kran. Their head is slightly lengthened at the top, without ears and nose. They are born underground and none of them has ever seen the light of the sun.
