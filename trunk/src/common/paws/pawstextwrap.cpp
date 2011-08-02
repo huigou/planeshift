@@ -94,7 +94,11 @@ pawsMultilineEditTextBox::pawsMultilineEditTextBox(const pawsMultilineEditTextBo
                         topLine(origin.topLine),
                         usingScrollBar(origin.usingScrollBar),
                         vScrollBarWidth(origin.vScrollBarWidth),
-                        yPos(origin.yPos)
+                        yPos(origin.yPos),
+                        spellChecker(origin.spellChecker),
+                        spellChecked(origin.spellChecked),
+                        typoColour(origin.typoColour),
+                        lineTypos(origin.lineTypos)
 
 
 {
@@ -106,7 +110,7 @@ pawsMultilineEditTextBox::pawsMultilineEditTextBox(const pawsMultilineEditTextBo
         if(origin.vScrollBar == origin.children[i])
             vScrollBar = dynamic_cast<pawsScrollBar*>(children[i]);
 
-        if(vScrollBar!=0) 
+        if(vScrollBar!=0)
             break;
     }
 }

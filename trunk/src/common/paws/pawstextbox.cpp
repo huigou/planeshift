@@ -419,7 +419,7 @@ pawsMessageTextBox::pawsMessageTextBox(const pawsMessageTextBox& origin)
         adjusted.Push(new MessageLine(*origin.adjusted[i]));
     for (unsigned int i = 0 ; i < origin.messages.GetSize(); i++)
         adjusted.Push(new MessageLine(*origin.messages[i]));
-    
+
 }
 pawsMessageTextBox::~pawsMessageTextBox()
 {
@@ -1038,9 +1038,13 @@ pawsEditTextBox::pawsEditTextBox() : password(false),
     //get the spellchecker plugin
     spellChecker = csQueryRegistryOrLoad<iSpellChecker>(PawsManager::GetSingleton().GetObjectRegistry(), "crystalspace.planeshift.spellchecker");
 }
-pawsEditTextBox::pawsEditTextBox(const pawsEditTextBox& origin):pawsWidget(origin)
+pawsEditTextBox::pawsEditTextBox(const pawsEditTextBox& origin): pawsWidget(origin),
+                                                                 spellChecker(origin.spellChecker),
+                                                                 spellChecked(origin.spellChecked),
+                                                                 typoColour(origin.typoColour),
+                                                                 words(origin.words)
 {
-    
+
     clock = origin.clock;
     blink = origin.blink;
     blinkTicks = origin.blinkTicks;
