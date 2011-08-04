@@ -190,9 +190,10 @@ void pawsExchangeWindow::StartExchange( csString& player, bool withPlayer )
         textBox->SetText( text );
 
     if (withPlayer)
-        width = 350;
+        width = screenFrame.Width();
     else
-        width = 175;
+        width = screenFrame.Width()/2;
+
     SetRelativeFrameSize(GetActualWidth(width), defaultFrame.Height());
 
     // Autoshow the inventory
