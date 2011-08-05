@@ -211,8 +211,6 @@ UserManager::~UserManager()
 
 void UserManager::HandleMOTDRequest(MsgEntry *me,Client *client)
 {
-
-    Subscribe(&UserManager::HandleClientReady, MSGTYPE_CONNECT_EVENT, REQUIRE_ANY_CLIENT);
     //Sends MOTD and tip
 
     unsigned int guildID =0;
