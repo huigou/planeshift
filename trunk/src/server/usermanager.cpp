@@ -211,6 +211,8 @@ UserManager::~UserManager()
 
 void UserManager::HandleMOTDRequest(MsgEntry *me,Client *client)
 {
+
+    Subscribe(&UserManager::HandleClientReady, MSGTYPE_CONNECT_EVENT, REQUIRE_ANY_CLIENT);
     //Sends MOTD and tip
 
     unsigned int guildID =0;
@@ -472,7 +474,7 @@ void UserManager::SendCharacterDescription(Client * client, gemActor *actor, boo
             if (skinfo != NULL)
             {
                 psCharacterDetailsMessage::NetworkDetailSkill s;
-
+                s.category = skinfo->category;
                 SkillRank & rank = sks.GetSkillRank(static_cast<PSSKILL>(skill));
                 s.text = fmtStatLine(skinfo->name, rank.Base(), rank.Current());
 
