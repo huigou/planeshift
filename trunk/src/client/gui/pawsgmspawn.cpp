@@ -70,6 +70,13 @@ bool pawsGMSpawnWindow::PostSetup()
     itemCount= (pawsEditTextBox*)FindWidget("Count");
     itemQuality = (pawsEditTextBox*)FindWidget("Quality");
     objView  = (pawsObjectView*)FindWidget("ItemView");
+
+    //wait for the view to complete loading
+    while(!objView->ContinueLoad())
+    {
+        csSleep(100);
+    }
+    
     itemImage = FindWidget("ItemImage");
     cbForce  = (pawsCheckBox*)FindWidget("Force");
     cbLockable = (pawsCheckBox*)FindWidget("Lockable");
