@@ -52,6 +52,8 @@
 #include "paws/pawsborder.h"
 #include "paws/pawstabwindow.h"
 #include "paws/pawsmainwidget.h"
+#include "paws/pawstitle.h"
+#include "paws/pawsscript.h"
 
 #include "gui/pawscontrolwindow.h"
 
