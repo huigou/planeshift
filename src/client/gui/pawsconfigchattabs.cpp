@@ -218,14 +218,6 @@ bool pawsConfigChatTabs::SaveConfig()
     //could be made more generic (scan the dir?)
     settings.chatWidget = basicchat->GetState() ? "chat_basic.xml" : "chat.xml";
 
-    // Save to file
-    chatWindow->SaveChatSettings();
-
-    // Apply settings
-    chatWindow->LoadChatSettings();
-
-    chatWindow->SetFilename(settings.chatWidget);
-
     //set the bit state for each tab in the "state" parameter 
     if(settings.chatWidget == "chat.xml")
     {
@@ -240,8 +232,18 @@ bool pawsConfigChatTabs::SaveConfig()
         if(iauction->GetState()) state += 128;
         if(isys->GetState()) state += 256;
         if(ihelp->GetState()) state += 512;
-        chatWindow->SaveTabCongfiguration(state);
+
+        settings.tabSetting = state;
     }
+
+    // Save to file
+    chatWindow->SaveChatSettings();
+
+    // Apply settings
+    chatWindow->LoadChatSettings();
+
+    chatWindow->SetFilename(settings.chatWidget);
+
     //Reload the chat window.
     chatWindow->ReloadChatWindow();
 
