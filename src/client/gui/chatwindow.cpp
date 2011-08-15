@@ -1037,12 +1037,12 @@ void pawsChatWindow::CreateSettingNode(iDocumentNode* mNode,int color,const char
     cNode->SetAttributeAsInt("g",g);
     cNode->SetAttributeAsInt("b",b);
 }
-
+// Get the value of the indexed bit
 #define TABVALUE(tabsconfiguration,index) ((tabsconfiguration>>index) & 0x00000001)
 
 void pawsChatWindow::SaveTabCongfiguration(unsigned int configurebits)
 {
-    if(filename != "chat.xml") return;
+    if(filename != "chat.xml") return;// only change the xml definition of chat.xml
 
     csRef<iDocument> doc;
     csRef<iDocumentNode> root, topNode, widgetNode;
@@ -1081,7 +1081,7 @@ void pawsChatWindow::SaveTabCongfiguration(unsigned int configurebits)
             break;
     }
 
-    csArray<csString> buttonNames;
+    csArray<csString> buttonNames;//tabs' names that will be searched later
     
 
     buttonNames.Push("Main Button");
@@ -1100,7 +1100,7 @@ void pawsChatWindow::SaveTabCongfiguration(unsigned int configurebits)
     unsigned int C = 0;
 
     while(itr->HasNext())
-    {
+    {// Search tabs in the xml document and set their visibility.
         csRef<iDocumentNode> node = itr->Next();
         csString winname = node->GetAttributeValue("name");
         
@@ -1117,7 +1117,7 @@ void pawsChatWindow::SaveTabCongfiguration(unsigned int configurebits)
                     ypos.Append(framenode->GetAttributeValueAsInt("height") * C++);
 
                     node->SetAttribute("visible","yes");
-                    framenode->SetAttribute("y",ypos);
+                    framenode->SetAttribute("y",ypos); // If a tab is visible, its position will be calculated and setted.
                 }
                 else node->SetAttribute("visible","no");
             }
@@ -1128,7 +1128,7 @@ void pawsChatWindow::SaveTabCongfiguration(unsigned int configurebits)
     csRef<iFile> file;
     file = psengine->GetVFS()->Open("/this/data/gui/chat.xml",VFS_FILE_WRITE);
 
-    doc->Write(file);
+    doc->Write(file); // Save all the changes to chat.xml
 }
 
 void pawsChatWindow::SaveChatSettings()
@@ -2014,36 +2014,7 @@ void pawsChatWindow::ReloadChatWindow()
     }
 
     LoadFromFile(filename);
-    //////////////////////////////////////////////////////////////////////////
-    /*csRef<iDocument> doc;
-    csRef<iDocumentNode> root, topNode, widgetNode;
-
-    doc = ParseFile(PawsManager::GetSingleton().GetObjectRegistry(),
-        PawsManager::GetSingleton().GetLocalization()->FindLocalizedFile(filename));
-    if (doc == NULL)
-        return;
-
-    root = doc->GetRoot();
-    if (root == NULL)
-    {
-        Error1("No root in XML");
-        return ;
-    }
-    topNode = root->GetNode("widget_description");
-    if (topNode == NULL)
-    {
-        Error1("No <widget_description> in XML");
-        return ;
-    }
-    widgetNode = topNode->GetNode("widget");
-    if (widgetNode == NULL)
-    {
-        Error1("No <widget> in <widget_description>");
-        return ;
-    }
-
-    LoadChildren(widgetNode);*/
-    //////////////////////////////////////////////////////////////////////////
+    
 }
 
 bool pawsChatWindow::OnKeyDown(utf32_char keyCode, utf32_char key, int modifiers )

@@ -226,9 +226,7 @@ bool pawsConfigChatTabs::SaveConfig()
 
     chatWindow->SetFilename(settings.chatWidget);
 
-    //ichat could get the state of the configuration checkbox
-
-
+    //set the bit state for each tab in the "state" parameter 
     if(settings.chatWidget == "chat.xml")
     {
         unsigned int state = 0x00000000;
@@ -244,7 +242,7 @@ bool pawsConfigChatTabs::SaveConfig()
         if(ihelp->GetState()) state += 512;
         chatWindow->SaveTabCongfiguration(state);
     }
-
+    //Reload the chat window.
     chatWindow->ReloadChatWindow();
 
     return true;
