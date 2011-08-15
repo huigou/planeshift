@@ -74,7 +74,10 @@ void pawsBookReadingWindow::HandleMessage( MsgEntry* me )
         {
             Show();
             psReadBookTextMessage mesg( me );
-            description->SetText( mesg.text );     
+            csRef<iDocumentNode> docnode = ParseString(mesg.text,"Contents");
+            if(docnode)
+                dynamic_cast<pawsDocumentView*>(description)->SetText(mesg.text.GetData());
+            else description->SetText(mesg.text);
             name->SetText( mesg.name );       
             slotID = mesg.slotID;
             containerID = mesg.containerID;
