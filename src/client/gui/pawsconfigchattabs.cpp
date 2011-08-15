@@ -145,6 +145,7 @@ bool pawsConfigChatTabs::SaveConfig()
     settings.bindings.Delete("subMainText", "CHAT_TELL");
     settings.bindings.Delete("subMainText", "CHAT_TELLSELF");
     settings.bindings.Delete("subMainText", "CHAT_GUILD");
+    settings.bindings.Delete("subMainText", "CHAT_ALLIANCE");
     settings.bindings.Delete("subMainText", "CHAT_GROUP");
     settings.bindings.Delete("subMainText", "CHAT_AUCTION");
     settings.bindings.Delete("subMainText", "CHAT_SYSTEM");
