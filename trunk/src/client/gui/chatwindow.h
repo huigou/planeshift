@@ -223,10 +223,9 @@ public:
 
     /**
      * @brief Save user's configuration 
-     *  This function is used to save user's configuration with chat tabs.
+     *  This function is used to save user's configuration to chat tabs.
      * @param configurebits Holds user's configuration information. The param's low 10 bits are used. Each of these 10 bits stands for the state of the corresponding 
      *  chat tab.
-     * @returns
      */
     void SaveTabCongfiguration(unsigned int configurebits);
 
