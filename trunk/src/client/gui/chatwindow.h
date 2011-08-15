@@ -105,7 +105,8 @@ struct ChatSettings
     int selectTabStyle;
     int vicinityFilters; ///< Flags int
     int meFilters; ///< Flags int
-
+    unsigned int tabSetting; ///< The param's low 10 bits are used. Each of these 10 bits stands for the state of the corresponding chat tab.
+    
     /** Helper function to set correctly the @see dirtyLogChannelFile and @see logChannelFile options.
      *  If the filename was changed it will set the dirty flag else nothing will be done.
      *  @param type The chat type of which we are changing the log filename.
@@ -221,13 +222,6 @@ public:
     /// Reload Chat Window
     void ReloadChatWindow();
 
-    /**
-     * @brief Save user's configuration 
-     *  This function is used to save user's configuration to chat tabs.
-     * @param configurebits Holds user's configuration information. The param's low 10 bits are used. Each of these 10 bits stands for the state of the corresponding 
-     *  chat tab.
-     */
-    void SaveTabCongfiguration(unsigned int configurebits);
 
 protected:
 

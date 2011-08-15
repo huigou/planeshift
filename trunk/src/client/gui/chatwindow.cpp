@@ -99,6 +99,10 @@ const char *CHAT_TYPES[] = {
         "CHAT_AWAY"
 };
 
+
+// Get the value of the indexed bit
+#define TABVALUE(tabsconfiguration,index) ((tabsconfiguration>>index) & 0x00000001)
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -188,6 +192,84 @@ bool pawsChatWindow::PostSetup()
     // Load the settings
     LoadChatSettings();
 
+    // Adjust tabs according tabs
+    if(settings.chatWidget != "chat_basic.xml") 
+    {
+        pawsWidget * pw = FindWidget("Chat Tabs");
+
+        csArray<csString> buttonNames;//tabs' names that will be searched later
+        buttonNames.Push("Main Button");
+        buttonNames.Push("Chat Button");
+        buttonNames.Push("NPC Button");
+        buttonNames.Push("Tell Button");
+        buttonNames.Push("Guild Button");
+        buttonNames.Push("Group Button");
+        buttonNames.Push("Alliance Button");
+        buttonNames.Push("Auction Button");
+        buttonNames.Push("System Button");
+        buttonNames.Push("Help Button");
+
+        unsigned int ct = 0, lastX, lastY, increment;
+        bool isVertical = false;
+        pawsWidget * tmp;
+        for (unsigned int i = 0 ; i < buttonNames.GetSize() ; i++)
+        {
+            if(i == 0)
+            {
+                tmp = pw->FindWidget(buttonNames[i]);
+                lastX = tmp->DefaultFrame().xmin;
+                lastY = tmp->DefaultFrame().ymin;
+            }
+            if(TABVALUE(settings.tabSetting,i))
+            {//this tab is visible
+                if(ct == 0) 
+                {
+                    tmp = pw->FindWidget(buttonNames[i]);
+                    if(tmp->DefaultFrame().xmin != lastX || tmp->DefaultFrame().ymin != lastY)
+                    {
+                        tmp->SetRelativeFramePos(lastX,lastY);
+                    }
+                    tabs->OnButtonPressed(0,0,tmp);//activate the first tab
+                    ct++;
+                    continue;
+                }
+                tmp = pw->FindWidget(buttonNames[i]);
+                if(ct == 1)
+                {
+                    unsigned int thisX, thisY;
+                    thisX = tmp->DefaultFrame().xmin;
+                    thisY = tmp->DefaultFrame().ymin;
+
+                    if(thisX == lastX && thisY != lastY)
+                    {
+                        isVertical = true;
+                        increment = tmp->DefaultFrame().Height();
+                    }
+                    else
+                    {
+                        increment = tmp->DefaultFrame().Width();
+                    }
+                }
+                if(isVertical)
+                {
+                    tmp->SetRelativeFramePos(lastX,lastY+increment*ct);
+                    //tmp->MoveDelta(0,increment*ct);
+                }
+                else
+                {
+                    tmp->SetRelativeFramePos(lastX+increment*ct, lastY);
+                }
+                tmp->SetVisibility(true);
+                ct++;
+            }
+            else
+            {
+                tmp = pw->FindWidget(buttonNames[i]);
+                tmp->SetVisibility(false);
+            }
+        }
+    }
+    
     IgnoredList = (pawsIgnoreWindow*)PawsManager::GetSingleton().FindWidget("IgnoreWindow");
     if ( !IgnoredList )
     {
@@ -1037,99 +1119,6 @@ void pawsChatWindow::CreateSettingNode(iDocumentNode* mNode,int color,const char
     cNode->SetAttributeAsInt("g",g);
     cNode->SetAttributeAsInt("b",b);
 }
-// Get the value of the indexed bit
-#define TABVALUE(tabsconfiguration,index) ((tabsconfiguration>>index) & 0x00000001)
-
-void pawsChatWindow::SaveTabCongfiguration(unsigned int configurebits)
-{
-    if(filename != "chat.xml") return;// only change the xml definition of chat.xml
-
-    csRef<iDocument> doc;
-    csRef<iDocumentNode> root, topNode, widgetNode;
-
-    doc = ParseFile(PawsManager::GetSingleton().GetObjectRegistry(),
-        PawsManager::GetSingleton().GetLocalization()->FindLocalizedFile(filename));
-    if (doc == NULL)
-        return ;
-
-    root = doc->GetRoot();
-    if (root == NULL)
-    {
-        Error1("No root in XML");
-        return ;
-    }
-    topNode = root->GetNode("widget_description");
-    if (topNode == NULL)
-    {
-        Error1("No <widget_description> in XML");
-        return ;
-    }
-    widgetNode = topNode->GetNode("widget");
-    if (widgetNode == NULL)
-    {
-        Error1("No <widget> in <widget_description>");
-        return ;
-    }
-
-    csRef<iDocumentNodeIterator> itr = widgetNode->GetNodes("widget");
-    csRef<iDocumentNode> tabs;
-    while(itr->HasNext())
-    {
-        tabs = itr->Next();
-        csString winname = tabs->GetAttributeValue("name");
-        if(winname == "Chat Tabs")
-            break;
-    }
-
-    csArray<csString> buttonNames;//tabs' names that will be searched later
-    
-
-    buttonNames.Push("Main Button");
-    buttonNames.Push("Chat Button");
-    buttonNames.Push("NPC Button");
-    buttonNames.Push("Tell Button");
-    buttonNames.Push("Guild Button");
-    buttonNames.Push("Group Button");
-    buttonNames.Push("Alliance Button");
-    buttonNames.Push("Auction Button");
-    buttonNames.Push("System Button");
-    buttonNames.Push("Help Button");
-
-    itr = tabs->GetNodes("widget");
-    
-    unsigned int C = 0;
-
-    while(itr->HasNext())
-    {// Search tabs in the xml document and set their visibility.
-        csRef<iDocumentNode> node = itr->Next();
-        csString winname = node->GetAttributeValue("name");
-        
-        for (unsigned i = 0 ; i < buttonNames.GetSize() ; i++)
-        {
-            if(buttonNames[i] == winname)
-            {
-                unsigned int state = TABVALUE(configurebits,i);
-                csRef<iDocumentNode> framenode = node->GetNode("frame");
-                if(state)
-                {
-                    csString ypos;
-
-                    ypos.Append(framenode->GetAttributeValueAsInt("height") * C++);
-
-                    node->SetAttribute("visible","yes");
-                    framenode->SetAttribute("y",ypos); // If a tab is visible, its position will be calculated and setted.
-                }
-                else node->SetAttribute("visible","no");
-            }
-        }
-    }
-
-
-    csRef<iFile> file;
-    file = psengine->GetVFS()->Open("/this/data/gui/chat.xml",VFS_FILE_WRITE);
-
-    doc->Write(file); // Save all the changes to chat.xml
-}
 
 void pawsChatWindow::SaveChatSettings()
 {
@@ -1149,7 +1138,7 @@ void pawsChatWindow::SaveChatSettings()
     csRef<iDocument> doc = docsys->CreateDocument();
     csRef<iDocumentNode> root,chatNode, colorNode, optionNode,looseNode,filtersNode,
                          badWordsNode, badWordsTextNode, tabCompletionNode, completionItemNode, cNode, logNode, selectTabStyleNode,
-                         echoScreenInSystemNode, mainBracketsNode, yourColorMixNode, joindefaultchannelNode,
+                         echoScreenInSystemNode, mainBracketsNode, yourColorMixNode, joindefaultchannelNode, tabSettingNode,
                          defaultlastchatNode, spellCheckerNode, spellCheckerWordNode, chatWidgetNode, mainTabNode, flashingNode, flashingOnCharNode, node;
 
     root = doc->CreateRoot();
@@ -1191,6 +1180,10 @@ void pawsChatWindow::SaveChatSettings()
     looseNode = optionNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
     looseNode->SetValue("loose");
     looseNode->SetAttributeAsInt("value",(int)settings.looseFocusOnSend);
+
+    tabSettingNode = optionNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
+    tabSettingNode->SetValue("tabSetting");
+    tabSettingNode->SetAttributeAsInt("value",(int)settings.tabSetting);
 
     for (int i = 0; i < CHAT_END; i++)
     {
@@ -1979,6 +1972,7 @@ void pawsChatWindow::OnLostFocus()
 
 }
 
+
 void pawsChatWindow::ReloadChatWindow()
 {
     while ( children.GetSize() > 0 )
@@ -2014,6 +2008,7 @@ void pawsChatWindow::ReloadChatWindow()
     }
 
     LoadFromFile(filename);
+
     
 }
 
