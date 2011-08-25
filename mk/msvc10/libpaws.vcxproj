@@ -1370,6 +1370,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClCompile Include="..\..\src\common\paws\pawsmainwidget.cpp" />
     <ClCompile Include="..\..\src\common\paws\pawsmanager.cpp" />
     <ClCompile Include="..\..\src\common\paws\pawsmenu.cpp" />
+    <ClCompile Include="..\..\src\common\paws\pawsmeterpromptwindow.cpp" />
     <ClCompile Include="..\..\src\common\paws\pawsmouse.cpp" />
     <ClCompile Include="..\..\src\common\paws\pawsnumberpromptwindow.cpp" />
     <ClCompile Include="..\..\src\common\paws\pawsobjectview.cpp" />
@@ -1412,6 +1413,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClInclude Include="..\..\src\common\paws\pawsmainwidget.h" />
     <ClInclude Include="..\..\src\common\paws\pawsmanager.h" />
     <ClInclude Include="..\..\src\common\paws\pawsmenu.h" />
+    <ClInclude Include="..\..\src\common\paws\pawsmeterpromptwindow.h" />
     <ClInclude Include="..\..\src\common\paws\pawsmouse.h" />
     <ClInclude Include="..\..\src\common\paws\pawsnumberpromptwindow.h" />
     <ClInclude Include="..\..\src\common\paws\pawsobjectview.h" />

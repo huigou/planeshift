@@ -1364,6 +1364,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClCompile Include="..\..\src\common\util\location.cpp" />
     <ClCompile Include="..\..\src\common\util\log.cpp" />
     <ClCompile Include="..\..\src\common\util\mathscript.cpp" />
+    <ClCompile Include="..\..\src\common\util\music.cpp" />
     <ClCompile Include="..\..\src\common\util\namegenerator.cpp" />
     <ClCompile Include="..\..\src\common\util\pscache.cpp" />
     <ClCompile Include="..\..\src\common\util\pscssetup.cpp" />
@@ -1401,6 +1402,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClInclude Include="..\..\src\common\util\log.h" />
     <ClInclude Include="..\..\src\common\util\mathscript.h" />
     <ClInclude Include="..\..\src\common\util\minigame.h" />
+    <ClInclude Include="..\..\src\common\util\music.h" />
     <ClInclude Include="..\..\src\common\util\namegenerator.h" />
     <ClInclude Include="..\..\src\common\util\poolallocator.h" />
     <ClInclude Include="..\..\src\common\util\pscache.h" />

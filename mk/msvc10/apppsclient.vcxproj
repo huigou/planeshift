@@ -1493,6 +1493,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClCompile Include="..\..\src\client\autoexec.cpp" />
     <ClCompile Include="..\..\src\client\charapp.cpp" />
     <ClCompile Include="..\..\src\client\chatbubbles.cpp" />
+    <ClCompile Include="..\..\src\client\clientsongmngr.cpp" />
     <ClCompile Include="..\..\src\client\clientvitals.cpp" />
     <ClCompile Include="..\..\src\client\cmdadmin.cpp" />
     <ClCompile Include="..\..\src\client\cmdgroups.cpp" />
@@ -1527,6 +1528,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClInclude Include="..\..\src\client\autoexec.h" />
     <ClInclude Include="..\..\src\client\charapp.h" />
     <ClInclude Include="..\..\src\client\chatbubbles.h" />
+    <ClInclude Include="..\..\src\client\clientsongmngr.h" />
     <ClInclude Include="..\..\src\client\clientvitals.h" />
     <ClInclude Include="..\..\src\client\cmdadmin.h" />
     <ClInclude Include="..\..\src\client\cmdgroups.h" />
