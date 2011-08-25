@@ -39,6 +39,12 @@
 // Forward Declarations
 //------------------------------------------------------------------------------------
 struct iObjectRegistry;
+class InstrumentManager;
+
+#define DEFAULT_SECTOR_UPDATE_TIME 50
+#define DEFAULT_INSTRUMENTS_PATH "/planeshift/art/instruments.xml"
+#define DEFAULT_AREAS_PATH "/planeshift/soundlib/areas/"
+#define DEFAULT_COMMON_SECTOR_NAME "common"
 
 /**
  * Implement iSoundManager.
@@ -47,6 +53,8 @@ struct iObjectRegistry;
 class SoundManager: public scfImplementation3<SoundManager, iSoundManager, iComponent, iEventHandler>
 {
 public:
+    static uint updateTime;     ///< update throttle in milliseconds
+
     SoundManager(iBase* parent);
     virtual ~SoundManager();
 
@@ -102,8 +110,11 @@ public:
     virtual bool IsChatToggleOn();
 
     //Play sounds
+    virtual bool IsSoundValid(uint soundID) const;
     virtual uint PlaySound(const char* fileName, bool loop, iSoundControl* &ctrl);
     virtual uint PlaySound(const char* fileName, bool loop, iSoundControl* &ctrl, csVector3 pos, csVector3 dir, float minDist, float maxDist);
+    virtual uint PlaySong(csRef<iDocument> musicalSheet, const char* instrument, float errorRate,
+        iSoundControl* ctrl, csVector3 pos, csVector3 dir);
     virtual bool StopSound(uint soundID);
     virtual bool SetSoundSource(uint soundID, csVector3 position);
 
@@ -115,6 +126,8 @@ public:
 private:
     bool                        isSectorLoaded;    ///< true if the sectors are loaded
     csRef<iObjectRegistry>      objectReg;         ///< object registry
+    SoundSystemManager*         sndSysMgr;         ///< the sound system manager used to play sounds
+    InstrumentManager*          instrMgr;          ///< the instruments manager
 
     SoundControl*               mainSndCtrl;       ///< soundcontrol of our soundmanager
     SoundControl*               ambientSndCtrl;    ///< soundcontrol for ambient sounds
@@ -127,6 +140,7 @@ private:
 
     csTicks                     sndTime;           ///< current csticks
     csTicks                     lastUpdateTime;    ///< csticks when the last update happend
+
     csArray<psSoundSector*>     sectorData;        ///< array which contains all sector xmls - parsed
     psSoundSector*              activeSector;      ///< points to our active sector
     psSoundSector*              commonSector;      ///< sector that keeps features common to all sectors
@@ -170,7 +184,7 @@ private:
     * Find sector by name.
     * @param name name of the sector youre searching
     * @param sector your sector pointer
-    * @returns true or false
+    * @return true or false
     */
     bool FindSector(const char* name, psSoundSector* &sector);
 

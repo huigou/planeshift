@@ -698,9 +698,9 @@ bool PawsManager::HandleMouseUp( csMouseEventData &data )
         }
 
         bool returnResult = widget->OnMouseUp(data.Button,
-                                                     data.Modifiers,
-                                                     data.x,
-                                                     data.y);
+                                              data.Modifiers,
+                                              data.x,
+                                              data.y);
 
         widget->RunScriptEvent(PW_SCRIPT_EVENT_MOUSEUP);
 

@@ -169,6 +169,7 @@ psCharacter::psCharacter() : inventory(this),
 
     lastResponse = -1;
 
+    isPlaying = false;
     banker = false;
     isStatue = false;
 

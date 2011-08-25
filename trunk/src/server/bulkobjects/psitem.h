@@ -288,6 +288,8 @@ private:
 
     void SendSketchDefinition(Client *client);
 
+    void SendMusicalSheet(Client* client);
+
     /// The 32 bit Unique Identifier of this item.
     uint32 uid;
 
@@ -948,6 +950,8 @@ public:
     bool SetBookText(const csString& newText);
     /// Sets sketch data
     bool SetSketch(const csString& newSketchData);
+    /// Sets the musical sheet
+    bool SetMusicalSheet(const csString& newMusicalSheet);
 
     bool HasCharges() const;
     bool IsRechargeable() const;
@@ -1001,6 +1005,8 @@ public:
 
     /// return creative contents of sketches.
     const csString& GetSketch(void) { return creativeStats.creativeType == PSITEMSTATS_CREATIVETYPE_NONE ? GetBaseStats()->GetSketch() : creativeStats.content; }
+    /// return creative contents of musical sheets.
+    const csString& GetMusicalSheet(void) { return creativeStats.creativeType == PSITEMSTATS_CREATIVETYPE_NONE ? GetBaseStats()->GetSketch() : creativeStats.content; }
     /// return creative contents of books.
     const csString& GetLiteratureText(void) { return creativeStats.creativeType == PSITEMSTATS_CREATIVETYPE_NONE ? GetBaseStats()->GetSketch() : creativeStats.content; }
     /// return the background image used in this creative.

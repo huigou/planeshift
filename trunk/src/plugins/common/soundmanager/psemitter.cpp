@@ -23,7 +23,6 @@
 
 #include "pssound.h"
 
-extern SoundSystemManager* sndSysMgr;
  
 psEmitter::psEmitter()
 {
@@ -99,12 +98,9 @@ bool psEmitter::CheckTimeOfDay(int time)
 bool psEmitter::Play(SoundControl* &ctrl)
 {
     Stop(); // stop any previous play
-    if(sndSysMgr->Play3DSound(resource, loop, 0, 0,
-                              maxvol, ctrl,
-                              position, direction,
-                              minrange, maxrange,
-                              VOLUME_ZERO, CS_SND3D_ABSOLUTE,
-                              handle, dopplerEffect))
+    if(SoundSystemManager::GetSingleton().Play3DSound(resource, loop, 0, 0,
+                              maxvol, ctrl, position, direction, minrange, maxrange,
+                              VOLUME_ZERO, CS_SND3D_ABSOLUTE, handle, dopplerEffect))
     {
         active = true;
         handle->SetCallback(this, &StopCallback);
@@ -120,8 +116,10 @@ void psEmitter::Stop()
 
     if(handle != NULL)
     {
-        sndSysMgr->StopSound(handle->GetID());
+        SoundSystemManager::GetSingleton().StopSound(handle->GetID());
     }
+
+    handle = 0;
 }
 
 void psEmitter::StopCallback(void* object)

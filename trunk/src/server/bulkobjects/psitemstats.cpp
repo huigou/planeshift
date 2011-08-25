@@ -260,11 +260,13 @@ void psItemCreativeStats::ReadStats()
     if (tagPos >=0 && len > 0)
     {
         creativeTag.GetTagParm("type", creativeTypeStr);
-        // atm, only literature (books, scrolls, etc) and sketches (maps, etc) supported
+        // atm, only literature (books, scrolls, etc), sketches (maps, etc) and musical scores supported
         if (creativeTypeStr.Downcase() == "literature")
             creativeType = PSITEMSTATS_CREATIVETYPE_LITERATURE;
         else if (creativeTypeStr.Downcase() == "sketch")
             creativeType = PSITEMSTATS_CREATIVETYPE_SKETCH;
+        else if(creativeTypeStr.Downcase() == "music")
+            creativeType = PSITEMSTATS_CREATIVETYPE_MUSIC;
 
         // get the creator (author, artist, etc)
         creativeTag.GetTagParm("creator", creatorStr);
@@ -382,6 +384,9 @@ bool psItemCreativeStats::FormatCreativeContent(void)
     }
     else if (creativeType == PSITEMSTATS_CREATIVETYPE_SKETCH)
         creativeDefinitionXML.Append("sketch");
+    else if(creativeType == PSITEMSTATS_CREATIVETYPE_MUSIC)
+        creativeDefinitionXML.Append("music");
+
     creativeDefinitionXML.AppendFmt("\"");
 
     // add author, artist... if necessary
@@ -453,6 +458,17 @@ csString psItemCreativeStats::UpdateDescription(PSITEMSTATS_CREATIVETYPE creativ
             newDescription.Append(". Anyone can draw this map.");
         else
             newDescription.Append(". Unknown artist.");
+    }
+    else if(creativeType == PSITEMSTATS_CREATIVETYPE_MUSIC)
+    {
+        newDescription = "A musical sheet, titled \"" + title + "\"";
+
+        if(creatorIDStatus == PSITEMSTATS_CREATOR_VALID)
+            newDescription.AppendFmt(" written by %s.", author.GetDataSafe());
+        else if (creatorIDStatus == PSITEMSTATS_CREATOR_PUBLIC)
+            newDescription.Append(". Anyone can write in this book.");
+        else
+            newDescription.Append(". Unknown author.");
     }
 
     return newDescription;

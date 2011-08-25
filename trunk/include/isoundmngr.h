@@ -49,7 +49,7 @@ class  csVector3;
  */
 struct iSoundManager: public virtual iBase
 {
-    SCF_INTERFACE(iSoundManager, 1, 1, 2);
+    SCF_INTERFACE(iSoundManager, 1, 2, 0);
 
     /**
      * The sound manager initializes by default the SoundControls with the IDs
@@ -329,6 +329,12 @@ struct iSoundManager: public virtual iBase
     //------------//
 
     /**
+     * Check if the given sound ID exists.
+     * @param soundID the sound ID to check.
+     */
+    virtual bool IsSoundValid(uint soundID) const = 0;
+
+    /**
      * Play a 2D sound and return the ID of the played sound.
      * @param fileName the name of the file where the sound is stored.
      * @param loop true if the sound have to loop, false otherwise.
@@ -349,6 +355,21 @@ struct iSoundManager: public virtual iBase
      * @return 0 if the sound cannot be played, its ID otherwise.
      */
     virtual uint PlaySound(const char* fileName, bool loop, iSoundControl* &ctrl, csVector3 pos, csVector3 dir, float minDist, float maxDist) = 0;
+
+    /**
+     * This method is used to play the song given in the XML musical sheet.
+     *
+     * @param musicalSheet the sheet to play.
+     * @param instrument the name of the instrument the player uses to play.
+     * @param errorRate the probability (0 <= errorRate <= 1) that the player
+     * play wrongly a note.
+     * @param ctrl the SoundControl that handle the sound.
+     * @param pos the position of the sound source.
+     * @param dir the direction of the sound.
+     * @return 0 if the sound cannot be played, its ID otherwise.
+     */
+    virtual uint PlaySong(csRef<iDocument> musicalSheet, const char* instrument, float errorRate,
+        iSoundControl* ctrl, csVector3 pos, csVector3 dir) = 0;
 
     /**
      * Stop a sound with the given ID.

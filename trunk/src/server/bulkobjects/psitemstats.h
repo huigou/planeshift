@@ -131,7 +131,8 @@ enum PSITEMSTATS_CREATIVETYPE
 {
     PSITEMSTATS_CREATIVETYPE_NONE = -1,
     PSITEMSTATS_CREATIVETYPE_LITERATURE,
-    PSITEMSTATS_CREATIVETYPE_SKETCH
+    PSITEMSTATS_CREATIVETYPE_SKETCH,
+    PSITEMSTATS_CREATIVETYPE_MUSIC
 };
 
 enum PSITEMSTATS_CREATORSTATUS
@@ -718,6 +719,7 @@ public:
     bool SetAttribute(const csString & op, const csString & attrName, float modifier);
 
     /// return creative contents
+    const csString& GetMusicalSheet(void) { return creativeStats.content; }
     const csString& GetSketch(void) { return creativeStats.content; }
     const csString& GetLiteratureText(void) { return creativeStats.content; }
 

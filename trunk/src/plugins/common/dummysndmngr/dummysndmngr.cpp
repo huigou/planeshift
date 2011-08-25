@@ -191,12 +191,23 @@ bool DummySoundManager::IsChatToggleOn()
     return chatToggle;
 }
 
+bool DummySoundManager::IsSoundValid(uint soundID) const
+{
+    return false;
+}
+
 uint DummySoundManager::PlaySound(const char* fileName, bool loop, iSoundControl* &ctrl)
 {
     return 1;
 }
 
 uint DummySoundManager::PlaySound(const char* fileName, bool loop, iSoundControl* &ctrl, csVector3 pos, csVector3 dir, float minDist, float maxDist)
+{
+    return 1;
+}
+
+uint DummySoundManager::PlaySong(csRef<iDocument> musicalSheet, const char* instrument, float errorRate,
+        iSoundControl* ctrl, csVector3 pos, csVector3 dir)
 {
     return 1;
 }

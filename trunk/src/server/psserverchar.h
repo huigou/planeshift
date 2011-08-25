@@ -122,6 +122,7 @@ protected:
     void HandleFaction(MsgEntry* me, Client *client);
     void ViewItem( MsgEntry* me, Client *client);
     void UpdateSketch( MsgEntry* me, Client *client);
+    void UpdateMusicalSheet(MsgEntry* me, Client* client);
 
     // -------------------Merchant Handling -------------------------------
     int CalculateMerchantPrice(psItem *item, Client *client, bool sellPrice);

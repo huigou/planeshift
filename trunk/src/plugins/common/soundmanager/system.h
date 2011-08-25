@@ -28,6 +28,8 @@
 #include <iutil/objreg.h>
 #include <isndsys.h>
 
+#define DEFAULT_LISTENER_ROLL_OFF 1.0
+
 /**
  * This is an Interface Class to the Crystalspace Soundrenderer.
  * It works like a Wrapper and has some additional functionalities but

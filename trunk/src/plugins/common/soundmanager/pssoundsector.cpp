@@ -23,7 +23,7 @@
 #include <psconfig.h>
 #include <crystalspace.h>
 
-#include "pssound.h"
+#include "soundmanager.h"
 
 psSoundSector::psSoundSector(const char* sectorName, iObjectRegistry* objReg)
 {
@@ -257,7 +257,7 @@ void psSoundSector::AddEmitter(csRef<iDocumentNode> Node)
     emitter->active         = false;
 
     // adjusting the probability on the update time
-    emitter->probability *= 50.0f / 1000; // TODO make this coherent with the update throttle (now 50)
+    emitter->probability *= SoundManager::updateTime / 1000.0f;
 
     if(emitter->timeofday == -1)
     {
@@ -387,7 +387,7 @@ void psSoundSector::AddEntity(csRef<iDocumentNode> Node)
     timeOfDayEnd    = Node->GetAttributeValueAsInt("TIME_END", 25);
 
     // adjusting the probability on the update time
-    prob = prob / 1000 * 50; // TODO make this coherent with the update throttle (now 50)
+    prob = prob / 1000 * SoundManager::updateTime;
 
     entity->DefineState(state, resource, startResource, volume,
         minRange, maxRange, prob, timeOfDayStart, timeOfDayEnd, delayAfter);
@@ -489,7 +489,7 @@ void psSoundSector::UpdateEntity(SoundControl* &ctrl, psSoundSector* commonSecto
 
         if(!(entity->IsPlaying()))
         {
-            entity->ReduceDelay(50);     // TODO making this consistent with its update's throttle
+            entity->ReduceDelay(SoundManager::updateTime);
         }
     }
     

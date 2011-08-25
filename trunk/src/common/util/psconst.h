@@ -166,8 +166,4 @@ typedef int32_t ContainerID;
 #define INFINITY_DISTANCE 9999999.99f
 #endif
 
-// Physical constants
-#define SPEED_OF_SOUND 331
-#define DOPPLER_FACTOR 2.5
-
 #endif

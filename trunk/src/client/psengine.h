@@ -76,6 +76,7 @@ class Autoexec;
 class ClientMsgHandler;
 class psNetManager;
 class psSlotManager;
+class ClientSongManager;
 
 class GUIHandler;
 
@@ -187,6 +188,7 @@ public:
     ClientMsgHandler *   GetMsgHandler()       { return netmanager->GetMsgHandler(); }
     CmdHandler*            GetCmdHandler()     { return netmanager->GetCmdHandler(); }
     psSlotManager*         GetSlotManager()    { return slotManager;}
+    ClientSongManager*     GetSongManager()    { return songManager; }
     psClientCharManager*   GetCharManager()    { return charmanager; }
     psCelClient*           GetCelClient()      { return celclient; };
     psMainWidget*          GetMainWidget()     { return mainWidget; }
@@ -436,6 +438,7 @@ private:
     psChatBubbles*            chatBubbles;
     psOptions*                options;
     psSlotManager*            slotManager;
+    ClientSongManager*        songManager;
     psQuestionClient*         questionclient;
     PawsManager*              paws;          ///< Hold the ps AWS manager
     psMainWidget*             mainWidget;    ///< Hold the ps overridden version of the desktop

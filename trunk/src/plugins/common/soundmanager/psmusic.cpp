@@ -22,8 +22,7 @@
  */
 
 #include "pssound.h"
- 
-extern SoundSystemManager* sndSysMgr;
+
 
 psMusic::psMusic()
 {
@@ -88,10 +87,8 @@ void psMusic::FadeDownAndStop()
 bool psMusic::Play(bool loopToggle, SoundControl* &ctrl)
 {
     Stop(); // stop any previous sound
-    if(sndSysMgr->Play2DSound(resource, loopToggle,
-                              loopstart, loopend,
-                              minvol, ctrl,
-                              handle))
+    if(SoundSystemManager::GetSingleton().Play2DSound(resource, loopToggle,
+                              loopstart, loopend, minvol, ctrl, handle))
     {
         active = true;
         handle->preset_volume = maxvol;
@@ -108,8 +105,10 @@ void psMusic::Stop()
     
     if(handle != NULL)
     {
-        sndSysMgr->StopSound(handle->GetID());
+        SoundSystemManager::GetSingleton().StopSound(handle->GetID());
     }
+
+    handle = 0;
 }
 
 void psMusic::SetManaged()

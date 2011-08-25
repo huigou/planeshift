@@ -25,7 +25,6 @@
 #include "handle.h"
 #include "manager.h"
 
-extern SoundSystemManager* sndSysMgr;
 
 SoundQueueItem::SoundQueueItem(const char* file)
 {
@@ -94,9 +93,8 @@ void SoundQueue::Work()
         if(item->handle == NULL)
         {
             // item will be played
-            if(sndSysMgr->Play2DSound(item->filename, false, 0, 0,
-                                      volume, sndCtrl,
-                                      item->handle))
+            if(SoundSystemManager::GetSingleton().Play2DSound(item->filename, false, 0, 0,
+                                      volume, sndCtrl, item->handle))
             {
                 item->handle->SetAutoRemove(false);
             }

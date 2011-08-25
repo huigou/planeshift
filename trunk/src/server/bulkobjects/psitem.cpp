@@ -1101,6 +1101,8 @@ csString psItem::GetQuantityName(const char *namePtr, int stack_count, PSITEMSTA
             creativeDesc = "book";
         else if (creativeType == PSITEMSTATS_CREATIVETYPE_SKETCH)
             creativeDesc = "map";
+        else if(creativeType == PSITEMSTATS_CREATIVETYPE_MUSIC)
+            creativeDesc = "sheet";
         else
             creativeDesc = "???";
 
@@ -2767,6 +2769,12 @@ bool psItem::SetSketch(const csString& newSketchData)
                        owning_character ? owning_character->GetCharFullName():"Unknown");
 }
 
+bool psItem::SetMusicalSheet(const csString& newMusicalSheet)
+{
+    return SetCreation(PSITEMSTATS_CREATIVETYPE_MUSIC, newMusicalSheet,
+                       owning_character ? owning_character->GetCharFullName():"Unknown");
+}
+
 void psItem::FillContainerMsg(Client* client, psViewItemDescription& outgoing)
 {
     gemContainer *container = dynamic_cast<gemContainer*> (gItem);
@@ -3232,6 +3240,16 @@ void psItem::SendSketchDefinition(Client *client)
     msg.SendMessage();
 }
 
+void psItem::SendMusicalSheet(Client* client)
+{
+    bool readOnly = !(GetIsWriteable() &&
+          GetOwningCharacter() == client->GetCharacterData() &&
+          (IsThisTheCreator(client->GetCharacterData()->GetPID()) || psserver->CheckAccess(client, "write all")));
+
+    psMusicalSheetMessage msg(client->GetClientNum(), GetUID(), readOnly, false, GetName(), GetMusicalSheet().GetDataSafe());
+    msg.SendMessage();
+}
+
 void psItem::ViewItem(Client* client, int containerID,
         INVENTORY_SLOT_NUMBER slotID)
 {
@@ -3267,6 +3285,11 @@ void psItem::ViewItem(Client* client, int containerID,
                     || !owningCharacter)) // Sketch
     {
         SendSketchDefinition(client);
+    }
+    else if(GetCreative() == PSITEMSTATS_CREATIVETYPE_MUSIC
+        && (client->GetCharacterData() == owningCharacter || !owningCharacter))
+    {
+        SendMusicalSheet(client);
     }
     else // Not a container, show description
     {

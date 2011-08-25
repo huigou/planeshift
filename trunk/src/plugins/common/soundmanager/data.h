@@ -75,7 +75,7 @@
  * Death:
  *
  * SoundData has a Update method that checks if there are expired SoundFiles
- * theres a hardcoded caching time of 300 seconds. After 300 seconds it will
+ * there's a default caching time of 300 seconds. After 300 seconds it will
  * check if there are still references on the snddata our SoundFile provides.
  * If theres only one then its the SoundFile object itself.
  * That means we go ahead and delete that object using DeleteSound.
@@ -89,9 +89,6 @@
  * It will crash your program if you unload data which is still in use ;)
  */
 
-// FIXME i should be an option ;)
-#define SOUNDFILE_CACHETIME     300000  ///<- number of milliseconds a file remains cached
-
 //====================================================================================
 // Crystal Space Includes
 //====================================================================================
@@ -102,6 +99,8 @@
 #include <iutil/vfs.h>
 #include <isndsys/ss_data.h>
 #include <isndsys/ss_loader.h>
+
+#define DEFAULT_SOUNDFILE_CACHETIME 300000
 
 /**
  * Class that contains the most important informations about a soundfile
@@ -202,6 +201,8 @@ private:
     csHash<SoundFile*>   soundfiles;        ///< Hash of loaded SoundFiles
     csHash<SoundFile*>   libsoundfiles;     ///< Hash of Resources soundlib.xml provides
     csRef<iVFS>          vfs;               ///< vfs where were reading from
+
+    uint                 cacheTime;         ///< number of milliseconds a file remains cached
     
     /**
      * Fetches a SoundFile object out of our cache.

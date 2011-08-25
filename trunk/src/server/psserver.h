@@ -78,6 +78,7 @@ class  MathScriptEngine;
 class  AdviceManager;
 class  ActionManager;
 class  IntroductionManager;
+class  ServerSongManager;
 class  MiniGameManager;
 class  LogCSV;
 class  iResultSet;
@@ -359,6 +360,12 @@ public:
      */
     IntroductionManager *GetIntroductionManager() { return intromanager; }
 
+    /**
+     * Returns the Song Manager.
+     * @returns a reference to the song manager of the server.
+     */
+    ServerSongManager* GetSongManager() { return songManager; }
+
     /// Returns a pointer to the AuthenticationServer
     AuthenticationServer* GetAuthServer() { return authserver; }
 
@@ -573,6 +580,7 @@ protected:
     TutorialManager*                tutorialmanager;
     MiniGameManager*                minigamemanager;
     IntroductionManager*            intromanager;
+    ServerSongManager*              songManager;
     MathScriptEngine*               mathscriptengine;
     iObjectRegistry*                objreg;
     csRef<iConfigManager>           configmanager;
