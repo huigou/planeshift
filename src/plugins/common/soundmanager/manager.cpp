@@ -28,20 +28,38 @@
 #include "data.h"
 
 #include <util/log.h>
-#include <util/psconst.h>
 
 
 /*
  * Initialize the SoundSystem (SndSys) and the Datamanager (SndData)
- * Load our soundlib.xml - FIXME HARDCODED
+ * Load our sound library
  *
  * Set Initialized to true if successfull / to false if not
  */
 
 SoundSystemManager::SoundSystemManager(iObjectRegistry* objectReg)
 {
+    const char* soundLib;
+
     // Initialised to false to make sure it is ..
     Initialised = false;
+
+    // Configuration
+    csRef<iConfigManager> configManager = csQueryRegistry<iConfigManager>(objectReg);
+    if(configManager != 0)
+    {
+        speedOfSound = configManager->GetInt("Planeshift.Sound.SpeedOfSound", DEFAULT_SPEED_OF_SOUND);
+        dopplerFactor = configManager->GetFloat("Planeshift.Sound.DopplerFactor", DEFAULT_DOPPLER_FACTOR);
+        updateTime = configManager->GetInt("Planeshift.Sound.SndSysUpdateTime", DEFAULT_SNDSYS_UPDATE_TIME);
+        soundLib = configManager->GetStr("Planeshift.Sound.SoundLib", DEFAULT_SOUNDLIB_PATH);
+    }
+    else
+    {
+        speedOfSound = DEFAULT_SPEED_OF_SOUND;
+        dopplerFactor = DEFAULT_DOPPLER_FACTOR;
+        updateTime = DEFAULT_SNDSYS_UPDATE_TIME;
+        soundLib = DEFAULT_SOUNDLIB_PATH;
+    }
 
     // Initializing the event timer
     eventTimer = csEventTimer::GetStandardTimer(objectReg);
@@ -58,9 +76,8 @@ SoundSystemManager::SoundSystemManager(iObjectRegistry* objectReg)
     if(soundSystem->Initialize(objectReg)
        && soundData->Initialize(objectReg))
     {
-        //  soundLib = cfg->GetStr("PlaneShift.Sound.SoundLib", "/planeshift/art/soundlib.xml"); /* FIXME HARDCODED*/
-        // also FIXME what if soundlib.xml doesnt exist?
-        soundData->LoadSoundLib("/planeshift/art/soundlib.xml", objectReg);
+        // FIXME what if soundlib.xml doesnt exist?
+        soundData->LoadSoundLib(soundLib, objectReg);
         LastUpdateTime = csGetTicks();
         Initialised = true;
     }
@@ -121,7 +138,7 @@ void SoundSystemManager::Update()
     SndTime = csGetTicks();
 
     // call it all 100 Ticks
-    if(Initialised && LastUpdateTime + 100 <= SndTime)
+    if(Initialised && LastUpdateTime + updateTime <= SndTime)
     {
         UpdateSound();
         // make a update on sounddata to check if there are sounds to unload
@@ -140,7 +157,7 @@ bool SoundSystemManager::
 Play2DSound(const char* name, bool loop, size_t loopstart, size_t loopend,
             float volume_preset, SoundControl* &sndCtrl, SoundHandle* &handle)
 {
-    CreateSoundHandle(name, loop, loopstart, loopend, volume_preset, CS_SND3D_DISABLE, sndCtrl, handle, false);
+    InitSoundHandle(name, loop, loopstart, loopend, volume_preset, CS_SND3D_DISABLE, sndCtrl, handle, false);
 
     if(handle == 0)
     {
@@ -166,7 +183,7 @@ Play3DSound(const char* name, bool loop, size_t loopstart, size_t loopend,
             csVector3 dir, float mindist, float maxdist, float rad,
             int type3d, SoundHandle* &handle, bool dopplerEffect)
 {
-    CreateSoundHandle(name, loop, loopstart, loopend, volume_preset, type3d, sndCtrl, handle, dopplerEffect);
+    InitSoundHandle(name, loop, loopstart, loopend, volume_preset, type3d, sndCtrl, handle, dopplerEffect);
 
     if(handle == 0)
     {
@@ -181,7 +198,7 @@ Play3DSound(const char* name, bool loop, size_t loopstart, size_t loopend,
         // computing the delay caused by the speed of sound
         csVector3 diff = pos - soundSystem->GetListenerPosition();
         float distance = diff.Norm();
-        unsigned int delay = distance * 1000 / SPEED_OF_SOUND;
+        unsigned int delay = distance * 1000 / speedOfSound;
 
         handle->UnpauseAfterDelay(delay);
     }
@@ -235,6 +252,11 @@ csVector3& SoundSystemManager::GetPlayerPosition()
 void SoundSystemManager::SetPlayerVelocity(csVector3 vel)
 {
     playerVelocity = vel;
+}
+
+bool SoundSystemManager::IsHandleValid(uint handleID) const
+{
+    return soundHandles.Contains(handleID);
 }
 
 /*
@@ -403,17 +425,16 @@ void SoundSystemManager::ChangePlayRate(SoundHandle* handle)
     distance = (playerPosition - sourcePosition).Norm();
     distanceAfterTimeUnit = (playerPosition + playerVelocity - sourcePosition).Norm();
     relativeSpeed = distanceAfterTimeUnit - distance;
-    percentRate = (1 - DOPPLER_FACTOR * relativeSpeed / SPEED_OF_SOUND) * 100;
+    percentRate = (1 - dopplerFactor * relativeSpeed / speedOfSound) * 100;
 
     handle->sndstream->SetPlayRatePercent(percentRate);
 }
 
 void SoundSystemManager::
-CreateSoundHandle(const char* name, bool loop, size_t loopstart, size_t loopend,
+InitSoundHandle(const char* name, bool loop, size_t loopstart, size_t loopend,
             float volume_preset, int type3d, SoundControl* &sndCtrl, SoundHandle* &handle, bool dopplerEffect)
 {
     uint handleID;
-    handle = 0; // make sure that if the handle is not valid it is null
 
     if(Initialised == false)
     {
@@ -433,7 +454,11 @@ CreateSoundHandle(const char* name, bool loop, size_t loopstart, size_t loopend,
     }
 
     handleID = FindHandleID();
-    handle = new SoundHandle(this, handleID);
+    if(handle == 0)
+    {
+        handle = new SoundHandle();
+    }
+    handle->SetID(handleID);
 
     if(!handle->Init(name, loop, volume_preset, type3d, sndCtrl, dopplerEffect))
     {

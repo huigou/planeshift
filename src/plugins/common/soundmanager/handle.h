@@ -52,8 +52,8 @@ public:
     csRef<iSndSysSource3D>                  sndsource3d;    ///< sndsource if 3D
     csRef<iSndSysSource3DDirectionalSimple> sndsourcedir;   ///< additional source if 3D and directional
 
-    SoundHandle(SoundSystemManager*, uint id);              ///< constructor 
-    ~SoundHandle();                                         ///< destructor
+    SoundHandle();                                          ///< constructor 
+    virtual ~SoundHandle();                                 ///< destructor
 
     /**
      * Does fading calculation for this Handle
@@ -62,6 +62,7 @@ public:
      * @param direction FADE_DOWN / FADE_UP or FADE_STOP
      */
     void Fade(float volume, int time, int direction);
+
     /**
      * Initialize this Handle.
      * Done within this because its not failsave. Returns true or false.
@@ -72,7 +73,7 @@ public:
      * @param ctrl SoundControl which controls this Handle
      * @param dopplerEffect true to apply the doppler effect to this sound, false otherwise.
      */
-    bool Init(const char* resname, bool loop,
+    virtual bool Init(const char* resname, bool loop,
               float volume_preset, int type,
               SoundControl* &ctrl, bool dopplerEffect);
 
@@ -111,7 +112,13 @@ public:
      * Gets the ID of this handle.
      * @return the ID of this handle.
      */
-    uint GetID();
+    uint GetID() const { return id; }
+
+    /**
+     * Sets the ID of this handle.
+     * @param id the new ID of this handle.
+     */
+    void SetID(uint identifier) { id = identifier; }
 
     /**
      * Gets the position of the source.
@@ -151,16 +158,17 @@ public:
      */
     void RemoveCallback();
 
+protected:
+    bool dopplerEffect;                ///< true if the doppler effect is enabled for this sound
+
 private:
     uint id;                           ///< id of this handle
-    SoundSystemManager* manager;       ///< sound system manager
     bool hasCallback;                  ///< true of theres a callback set, false of not
     void (*callbackobject);            ///< pointer to the callback object
     void (*callbackfunction) (void *); ///< pointer to the callback function
 
     bool autoremove;                   ///< remove this handle when pause?
     bool delayActive;                  ///< true if the handle is waiting for the end of delay to unpause
-    bool dopplerEffect;                ///< true if the doppler effect is enabled for this sound
 
     /**
      * Makes the callback if set.

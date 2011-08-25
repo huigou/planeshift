@@ -32,6 +32,8 @@
 #include <csutil/timer.h>
 #include <csutil/randomgen.h>
 
+#include "util/singleton.h"
+
 class SoundSystem;
 class SoundData;
 class SoundHandle;
@@ -49,6 +51,11 @@ enum
 #define VOLUME_NORM 1.0f
 #define VOLUME_MAX  2.0f
 
+#define DEFAULT_SNDSYS_UPDATE_TIME 100
+#define DEFAULT_SPEED_OF_SOUND 331
+#define DEFAULT_DOPPLER_FACTOR 2.5
+#define DEFAULT_SOUNDLIB_PATH "/planeshift/art/soundlib.xml"
+
 /**
  * This Manager Object is used to play all sounds.
  * It keeps track of Data/Sounds and does fading, sets volume and removes
@@ -60,7 +67,7 @@ enum
  * ever you want. Access to the underlaying sources is also granted. 
  */
 
-class SoundSystemManager
+class SoundSystemManager: public Singleton<SoundSystemManager>
 {
 public:
     bool                   Initialised;       ///< is initialized ?
@@ -86,6 +93,12 @@ public:
     ~SoundSystemManager();
 
     /**
+     * Check if the given handle ID exists.
+     * @param handleID the handle ID to check.
+     */
+    bool IsHandleValid(uint handleID) const;
+
+    /**
      * Checks all SoundHandles alters Volume, does fading, applies the Doppler effect and removes
      * them if Unmanaged (Autoremove true).
      */
@@ -99,7 +112,9 @@ public:
      * @param loopend when reach it will jump to startframe
      * @param volume_preset volume for this sound, all volume calculations are based upon this
      * @param sndCtrl SoundControl to control this sound
-     * @param handle a Handle you have to supply. You may discard it if you dont want to manage this sound.
+     * @param handle a Handle you have to supply. If the handle is null a new one is created. You may discard
+     * it if you dont want to manage this sound.
+     * @return true if the handle could be played, false otherwise.
      */
     bool Play2DSound(const char* name, bool loop, size_t loopstart,
                      size_t loopend, float volume_preset,
@@ -117,8 +132,10 @@ public:
      * @param mindist distance when maxvolume should be reached
      * @param maxdist distance when minvolume is applied
      * @param rad radiation of the directional cone. Set it to 0 if you dont want a directional sound.
-     * @param handle a Handle you have to supply. You may discard it if you dont want to manage this sound.
+     * @param handle a Handle you have to supply. If the handle is null a new one is created. You may discard
+     * it if you dont want to manage this sound.
      * @param dopplerEffect true to apply the doppler effect to this sound, false otherwise.
+     * @return true if the handle could be played, false otherwise.
      * */
     bool Play3DSound(const char* name, bool loop, size_t loopstart,
                      size_t loopend, float volume_preset,
@@ -191,11 +208,16 @@ private:
     SoundData*                     soundData;
     csHash<SoundHandle*, uint>     soundHandles;       ///< hash which contains all SoundHandles by id
     csHash<SoundControl*, int>     soundControllers;   ///< hash which contains all SoundControls by id
+
+    uint                           updateTime;         ///< update throttle of the sound system in milliseconds
     csTicks                        SndTime;            ///< current csticks
     csTicks                        LastUpdateTime;     ///< when the last update happened
 
     csVector3                      playerPosition;     ///< current player's position
     csVector3                      playerVelocity;     ///< the main player's speed
+
+    uint                           speedOfSound;       ///< the speed of sound for doppler effect
+    float                          dopplerFactor;      ///< the doppler factor that multiplies the change of frequency
 
     csRandomGen                    randomGen;          ///< random number generator
 
@@ -222,8 +244,8 @@ private:
     void ChangePlayRate(SoundHandle* handle);
 
     /**
-     * Create a SoundHandle ready to be played with Unpause(). If its creation fails
-     * handle is a null pointer.
+     * Create a SoundHandle if the given one is null and it initializes it. If its
+     * creation fails handle is a null pointer.
      * @param name name of the resource you want to play @see SoundData for details
      * @param loop LOOP or DONT_LOOP
      * @param loopstart startframe when looping
@@ -234,7 +256,7 @@ private:
      * it is a null pointer if it could not be created.
      * @param dopplerEffect true to apply the doppler effect to this sound, false otherwise.
      */
-    void CreateSoundHandle(const char* name, bool loop, size_t loopstart,
+    void InitSoundHandle(const char* name, bool loop, size_t loopstart,
                      size_t loopend, float volume_preset, int type3d,
                      SoundControl* &sndCtrl, SoundHandle* &handle, bool dopplerEffect);
 };

@@ -95,6 +95,7 @@ enum MSG_TYPES
     MSGTYPE_VIEW_ITEM,
     MSGTYPE_VIEW_CONTAINER,
     MSGTYPE_VIEW_SKETCH,
+    MSGTYPE_MUSICAL_SHEET,
     MSGTYPE_VIEW_ACTION_LOCATION,
     MSGTYPE_READ_BOOK,
     MSGTYPE_WRITE_BOOK,
@@ -161,6 +162,8 @@ enum MSG_TYPES
     MSGTYPE_QUESTIONCANCEL,
     MSGTYPE_GUILDMOTDSET,
     MSGTYPE_PLAYSOUND,
+    MSGTYPE_PLAY_SONG,
+    MSGTYPE_STOP_SONG,
     MSGTYPE_CHARACTERDETAILS,
     MSGTYPE_CHARDETAILSREQUEST,
     MSGTYPE_CHARDESCUPDATE,
@@ -5044,6 +5047,125 @@ public:
     bool rightToEdit;
     csString name;
     csString backgroundImg;
+};
+
+/**
+ * Message used by to send a musical sheet.
+ */
+class psMusicalSheetMessage: public psMessageCracker
+{
+public:
+    /**
+     * Constructor.
+     * @param client the client's ID.
+     * @param itemID the ID of the item containing the musical sheet.
+     * @param readOnly true if the client cannot edit the score.
+     * @param play true if the client asks to play the score.
+     * @param songTitle the song's title.
+     * @param musicalSheet the score.
+     */
+    psMusicalSheetMessage(uint32_t client, uint32_t itemID, bool readOnly, bool play, const char* songTitle, const char* musicalSheet);
+
+    /**
+     * Constructor from a MsgEntry.
+     * @param me the message entry.
+     */
+    psMusicalSheetMessage(MsgEntry* me);
+
+    // From psMesageCracker
+    //----------------------
+    PSF_DECLARE_MSG_FACTORY();
+
+    virtual csString ToString(NetBase::AccessPointers* /*accessPointers*/)
+    {
+        return csString("not implemented");
+    }
+
+    uint32_t itemID;
+    bool readOnly;
+    bool play;
+    csString songTitle;
+    csString musicalSheet;
+};
+
+/**
+ * This message is used by the server to make clients play a song.
+ */
+class psPlaySongMessage: public psMessageCracker
+{
+public:
+    /**
+     * Constructor.
+     * @param client the client's ID.
+     * @param songID the song's ID.
+     * @param toPlayer true if this message is directed to the player that plays the song.
+     * @param errorRate the error rate of the player's performance.
+     * @param instrName the name of the used instrument.
+     * @param scoreSize the length of the musical score
+     * @param musicalScore the musical sheet to play.
+     */
+    psPlaySongMessage(uint32_t client, uint32_t songID, bool toPlayer,
+        float errorRate, const char* instrName, uint32_t scoreSize, const char* musicalScore);
+
+    /**
+     * Constructor from a MsgEntry.
+     * @param me the message entry.
+     */
+    psPlaySongMessage(MsgEntry* me);
+
+
+    // From psMesageCracker
+    //----------------------
+    PSF_DECLARE_MSG_FACTORY();
+
+    virtual csString ToString(NetBase::AccessPointers* /*accessPointers*/)
+    {
+        return csString("not implemented");
+    }
+
+    uint32_t songID;
+    bool toPlayer;
+    float errorRate;
+    csString instrName;
+    csString musicalScore;
+};
+
+
+/**
+ * This message is used to stop a song.
+ */
+class psStopSongMessage: public psMessageCracker
+{
+public:
+    /**
+     * Constructor.
+     * @param client the client's ID.
+     * @param songID the song's ID.
+     * @param toPlayer true if this message is directed to the player that plays the song.
+     * @param isEnded true if the song is stopped because it is ended, false if it is
+     * interrupted by the player.
+     */
+    psStopSongMessage(uint32_t client, uint32_t songID, bool toPlayer, bool isEnded);
+
+    /**
+     * Constructor from a MsgEntry.
+     * @param me the message entry.
+     */
+    psStopSongMessage(MsgEntry* me);
+
+
+    // From psMesageCracker
+    //----------------------
+    PSF_DECLARE_MSG_FACTORY();
+
+    virtual csString ToString(NetBase::AccessPointers* /*accessPointers*/)
+    {
+        return csString("not implemented");
+    }
+
+    uint32_t songID;
+    bool toPlayer;
+    bool isEnded;
 };
 
 /**

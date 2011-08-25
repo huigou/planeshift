@@ -24,6 +24,7 @@
 #include "data.h"
 #include "util/log.h"
 #include <csutil/xmltiny.h>
+#include <iutil/cfgmgr.h>
 
 
 SoundFile::SoundFile(const char* newname, const char* newfilename)
@@ -91,6 +92,17 @@ bool SoundData::Initialize(iObjectRegistry* objectReg)
     {
         Error1("psSndSourceMngr: Could not initialize. Cannot find iVFS");
         return false;
+    }
+
+    // Configuration
+    csRef<iConfigManager> configManager = csQueryRegistry<iConfigManager>(objectReg);
+    if(configManager != 0)
+    {
+        cacheTime = configManager->GetInt("Planeshift.Sound.DataCacheTime", DEFAULT_SOUNDFILE_CACHETIME);
+    }
+    else
+    {
+        cacheTime = DEFAULT_SOUNDFILE_CACHETIME;
     }
 
     return true;
@@ -227,7 +239,7 @@ void SoundData::Update()
     {
         sound = allsoundfiles[i];
 
-        if((sound->lasttouch + SOUNDFILE_CACHETIME) <= now
+        if((sound->lasttouch + cacheTime) <= now
            && sound->loaded == true
            && sound->snddata->GetRefCount() == 1)
         {

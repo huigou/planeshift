@@ -77,6 +77,7 @@
 #include "weathermanager.h"
 #include "globals.h"
 #include "events.h"
+#include "psproxlist.h"
 
 ///This expresses in seconds how many days the char hasn't logon. 60 days, at the moment.
 #define MAX_DAYS_NO_LOGON 5184000
@@ -109,6 +110,7 @@ bool ServerCharManager::Initialize()
     Subscribe(&ServerCharManager::HandleStorageMessage, MSGTYPE_GUISTORAGE, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);
     Subscribe(&ServerCharManager::ViewItem, MSGTYPE_VIEW_ITEM, REQUIRE_READY_CLIENT);
     Subscribe(&ServerCharManager::UpdateSketch, MSGTYPE_VIEW_SKETCH, REQUIRE_READY_CLIENT);
+    Subscribe(&ServerCharManager::UpdateMusicalSheet, MSGTYPE_MUSICAL_SHEET, REQUIRE_READY_CLIENT);
     Subscribe(&ServerCharManager::HandleBookWrite, MSGTYPE_WRITE_BOOK, REQUIRE_READY_CLIENT);
     Subscribe(&ServerCharManager::HandleFaction, MSGTYPE_FACTION_INFO, REQUIRE_READY_CLIENT);
 
@@ -157,6 +159,40 @@ void ServerCharManager::UpdateSketch(MsgEntry* me, Client *client)
         else
         {
             Error3("Item %u not found in sketch definition message from client %s.",sketchMsg.ItemID, client->GetName() );
+        }
+    }
+}
+
+void ServerCharManager::UpdateMusicalSheet(MsgEntry* me, Client *client)
+{
+    psMusicalSheetMessage musicMsg(me);
+
+    if (musicMsg.valid && !musicMsg.play)
+    {
+        psItem *item = client->GetCharacterData()->Inventory().FindItemID(musicMsg.itemID);
+        if(item != 0)
+        {
+            // saving
+            csString currentTitle = item->GetName();
+            if(musicMsg.songTitle.Length() > 0 && musicMsg.songTitle != currentTitle)
+            {
+                item->SetName(musicMsg.songTitle);
+                //update the inventory. fixes PS#4406. TODO: we really need a way to send only one item update
+                //to clients inventory
+                SendInventory(client->GetClientNum(), true);
+            }
+
+            // TODO validate the xml score
+            item->SetCreator(client->GetCharacterData()->GetPID(), PSITEMSTATS_CREATOR_VALID);
+            if(item->SetMusicalSheet(csString(musicMsg.musicalSheet)))
+            {
+                psserver->SendSystemInfo(me->clientnum, "Your score has been updated.");
+                item->Save(false);
+            }
+        }
+        else
+        {
+            Error3("Item %u not found in musical sheet message from client %s.", musicMsg.itemID, client->GetName());
         }
     }
 }

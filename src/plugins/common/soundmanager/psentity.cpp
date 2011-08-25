@@ -25,7 +25,6 @@
 
 #include "pssound.h"
 
-extern SoundSystemManager* sndSysMgr;
 
 psEntity::psEntity()
 {
@@ -249,7 +248,7 @@ void psEntity::SetState(int stat, SoundControl* ctrl, csVector3 entityPosition, 
     if(handle != 0)
     {
         handle->RemoveCallback();
-        sndSysMgr->StopSound(handle->GetID());
+        SoundSystemManager::GetSingleton().StopSound(handle->GetID());
         handle = 0;
     }
     
@@ -270,7 +269,7 @@ void psEntity::SetState(int stat, SoundControl* ctrl, csVector3 entityPosition, 
     // playing the starting sound
     if(!(sp->startResource.IsEmpty()))
     {
-        if(sndSysMgr->Play3DSound(sp->startResource, DONT_LOOP, 0, 0,
+        if(SoundSystemManager::GetSingleton().Play3DSound(sp->startResource, DONT_LOOP, 0, 0,
             sp->volume, ctrl, entityPosition, 0, sp->minRange, sp->maxRange,
             VOLUME_ZERO, CS_SND3D_ABSOLUTE, handle))
         {
@@ -300,7 +299,7 @@ bool psEntity::Play(SoundControl* &ctrl, csVector3 entityPosition)
 
     if(!(sp->resource.IsEmpty()))
     {
-        if(sndSysMgr->Play3DSound(sp->resource, DONT_LOOP, 0, 0,
+        if(SoundSystemManager::GetSingleton().Play3DSound(sp->resource, DONT_LOOP, 0, 0,
             sp->volume, ctrl, entityPosition, 0, sp->minRange, sp->maxRange,
             VOLUME_ZERO, CS_SND3D_ABSOLUTE, handle))
         {

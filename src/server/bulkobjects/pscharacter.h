@@ -880,6 +880,18 @@ public:
      */
     bool CheckFaction(Faction * faction, int value);
 
+    /**
+     * Checks if the actor is playing an instrument.
+     * @return true if the actor is playing an instrument.
+     */
+    bool IsPlaying() { return isPlaying; }
+
+    /**
+     * Sets if the actor is playing an instrument.
+     * @param isPlaying true if this actor is playing an instrument.
+     */
+    void SetPlaying(bool isPlaying) { this->isPlaying = isPlaying; }
+
     /** Check if the character is a banker */
     bool IsBanker() const { return banker; }
 
@@ -1248,6 +1260,8 @@ private:
     bool ArmorUsesSkill(INVENTORY_SLOT_NUMBER slot, PSITEMSTATS_ARMORTYPE skill);
 
     int FindGlyphSlot(const csArray<glyphSlotInfo>& slots, psItemStats * glyphType, int purifyStatus);
+
+    bool isPlaying;     ///< True if this character is playing an instrument.
 
     /** Some races share helms so this tells which
         group it's in. If empty assume in racial group. */

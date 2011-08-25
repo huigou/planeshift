@@ -509,7 +509,7 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
     if ( fontAttribute )
     {
         fontName = fontAttribute->GetAttributeValue("name");
-        
+
         // Check if it's a short definition
         if(!fontName.StartsWith("/"))
         {

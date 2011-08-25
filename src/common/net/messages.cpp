@@ -7034,9 +7034,94 @@ csString psTutorialMessage::ToString(NetBase::AccessPointers * /*accessPointers*
     return msgtext;
 }
 
+//---------------------------------------------------------------------------
+
 PSF_IMPLEMENT_MSG_FACTORY(psSketchMessage,MSGTYPE_VIEW_SKETCH);
 
 //---------------------------------------------------------------------------
+
+PSF_IMPLEMENT_MSG_FACTORY(psMusicalSheetMessage, MSGTYPE_MUSICAL_SHEET);
+
+psMusicalSheetMessage::psMusicalSheetMessage(uint32_t client, uint32_t itemID, bool readOnly, bool play, const char* songTitle, const char* musicalSheet)
+{
+    msg.AttachNew(new MsgEntry(sizeof(uint32_t) + sizeof(bool) + sizeof(bool) + strlen(songTitle) + 1 + strlen(musicalSheet) + 1));
+
+    msg->SetType(MSGTYPE_MUSICAL_SHEET);
+    msg->clientnum = client;
+
+    msg->Add(itemID);
+    msg->Add(readOnly);
+    msg->Add(play);
+    msg->Add(songTitle);
+    msg->Add(musicalSheet);
+}
+
+psMusicalSheetMessage::psMusicalSheetMessage(MsgEntry* me)
+{
+    itemID = me->GetUInt32();
+    readOnly = me->GetBool();
+    play = me->GetBool();
+    songTitle = me->GetStr();
+    musicalSheet = me->GetStr();
+}
+
+//---------------------------------------------------------------------------
+
+PSF_IMPLEMENT_MSG_FACTORY(psPlaySongMessage, MSGTYPE_PLAY_SONG);
+
+psPlaySongMessage::psPlaySongMessage(uint32_t client, uint32_t songID, bool toPlayer,
+                                     float errorRate, const char* instrName, uint32_t scoreSize, const char* musicalScore)
+{
+    size_t size = sizeof(uint32_t) + sizeof(bool) + sizeof(float) + strlen(instrName) + 1 + sizeof(uint32_t) + scoreSize + 1;
+    msg.AttachNew(new MsgEntry(sizeof(uint32_t) + sizeof(bool) + sizeof(float) + strlen(instrName) + 1 + sizeof(uint32_t) + scoreSize + 1));
+
+    msg->SetType(MSGTYPE_PLAY_SONG);
+    msg->clientnum = client;
+
+    msg->Add(songID);
+    msg->Add(toPlayer);
+    msg->Add(errorRate);
+    msg->Add(instrName);
+    msg->Add(musicalScore, scoreSize);
+}
+
+psPlaySongMessage::psPlaySongMessage(MsgEntry* me)
+{
+    char* scoreBuffer;
+    uint32_t scoreSize = 0;
+
+    songID = me->GetUInt32();
+    toPlayer = me->GetBool();
+    errorRate = me->GetFloat();
+    instrName = me->GetStr();
+
+    scoreBuffer = (char*)me->GetBufferPointerUnsafe(scoreSize);
+    musicalScore.Append(scoreBuffer, scoreSize);
+}
+
+//---------------------------------------------------------------------------
+
+PSF_IMPLEMENT_MSG_FACTORY(psStopSongMessage, MSGTYPE_STOP_SONG);
+
+psStopSongMessage::psStopSongMessage(uint32_t client, uint32_t songID, bool toPlayer, bool isEnded)
+{
+    msg.AttachNew(new MsgEntry(sizeof(uint32_t) + sizeof(bool) + sizeof(bool)));
+
+    msg->SetType(MSGTYPE_STOP_SONG);
+    msg->clientnum = client;
+
+    msg->Add(songID);
+    msg->Add(toPlayer);
+    msg->Add(isEnded);
+}
+
+psStopSongMessage::psStopSongMessage(MsgEntry* me)
+{
+    songID = me->GetUInt32();
+    toPlayer = me->GetBool();
+    isEnded = me->GetBool();
+}
+
 //---------------------------------------------------------------------------
 
 PSF_IMPLEMENT_MSG_FACTORY(psMGStartStopMessage, MSGTYPE_MINIGAME_STARTSTOP);

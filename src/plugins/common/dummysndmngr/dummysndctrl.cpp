@@ -76,7 +76,7 @@ void DummySoundControl::Unmute()
 
 void DummySoundControl::SetVolume(float vol)
 {
-    volume = vol;;
+    volume = vol;
 }
 
 float DummySoundControl::GetVolume() const

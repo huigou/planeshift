@@ -25,12 +25,16 @@
 #include "system.h"
 #include "util/log.h"
 
+#include <iutil/cfgmgr.h>
+
 /*
  * Get a renderer und returns false or true
  */
 
 bool SoundSystem::Initialize(iObjectRegistry* objectReg)
 {
+    float rollOff;
+
     sndrenderer = csQueryRegistry<iSndSysRenderer>(objectReg);
     if(!sndrenderer.IsValid())
     {
@@ -44,9 +48,19 @@ bool SoundSystem::Initialize(iObjectRegistry* objectReg)
         Error1("Failed to get a sound global listener!");
         return false;
     }
-    
-    // TODO make configurable NOTE: dont use VOLUME_* defines here
-    listener->SetRollOffFactor(1.0f);
+
+    // configuring roll off factor
+    csRef<iConfigManager> configManager = csQueryRegistry<iConfigManager>(objectReg);
+    if(configManager != 0)
+    {
+        rollOff = configManager->GetFloat("Planeshift.Sound.ListenerRollOff", DEFAULT_LISTENER_ROLL_OFF);
+    }
+    else
+    {
+        rollOff = DEFAULT_LISTENER_ROLL_OFF;
+    }
+
+    listener->SetRollOffFactor(rollOff);
     return true;
 }
 

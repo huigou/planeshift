@@ -108,6 +108,12 @@ public:
      */
     virtual void SetTickValue( float tick ); 
 
+    /**
+     * Returns the tick value of this scroll bar.
+     * @return the tick value of this scroll bar.
+     */
+    virtual float GetTickValue() { return tickValue; }
+
     virtual void Draw();
 
     virtual void SetHorizontal (bool value);

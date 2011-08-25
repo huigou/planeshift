@@ -34,16 +34,15 @@
  * volumes, fading parameters
  */
 
-SoundHandle::SoundHandle(SoundSystemManager* manager, uint identifier)
+SoundHandle::SoundHandle()
     : scfImplementationType(this)
 {
-    id = identifier;
+    id = 0; // this parameter makes sense only for SoundSystemManager
     fade = 0;
     fade_stop = false;
     
     hasCallback = false;
 
-    this->manager = manager;
     autoremove = true;
     delayActive = false;
 
@@ -69,17 +68,17 @@ SoundHandle::~SoundHandle()
      */
     if(sndstream != NULL)
     {
-        manager->GetSoundSystem()->RemoveStream(sndstream);
+        SoundSystemManager::GetSingleton().GetSoundSystem()->RemoveStream(sndstream);
     }
 
     if(sndsource != NULL)
     {
-        manager->GetSoundSystem()->RemoveSource(sndsource);
+        SoundSystemManager::GetSingleton().GetSoundSystem()->RemoveSource(sndsource);
     }
 
     if(delayActive)
     {
-        manager->eventTimer->RemoveTimerEvent(this);
+        SoundSystemManager::GetSingleton().eventTimer->RemoveTimerEvent(this);
     }
 }
 
@@ -96,20 +95,20 @@ SoundHandle::~SoundHandle()
 bool SoundHandle::Init(const char* resname, bool loop, float volume_preset,
                        int type, SoundControl* &ctrl, bool doppler)
 {
-    csRef<iSndSysData> snddata; 
+    csRef<iSndSysData> snddata;
 
-    if(!manager->GetSoundData()->LoadSoundFile(resname, snddata))
+    if(!SoundSystemManager::GetSingleton().GetSoundData()->LoadSoundFile(resname, snddata))
     {
         return false;
     }
 
-    if(!manager->GetSoundSystem()->CreateStream(snddata, loop, type, sndstream))
+    if(!SoundSystemManager::GetSingleton().GetSoundSystem()->CreateStream(snddata, loop, type, sndstream))
     {
-        manager->GetSoundData()->UnloadSoundFile(resname);
+        SoundSystemManager::GetSingleton().GetSoundData()->UnloadSoundFile(resname);
         return false;
     }
 
-    manager->GetSoundSystem()->CreateSource(sndstream, sndsource);
+    SoundSystemManager::GetSingleton().GetSoundSystem()->CreateSource(sndstream, sndsource);
     preset_volume = volume_preset;
     sndCtrl = ctrl;
     name = csString(resname);
@@ -121,7 +120,7 @@ bool SoundHandle::Init(const char* resname, bool loop, float volume_preset,
 
 bool SoundHandle::Perform(iTimerEvent* /*ev*/)
 {
-    manager->eventTimer->RemoveTimerEvent(this);
+    SoundSystemManager::GetSingleton().eventTimer->RemoveTimerEvent(this);
     delayActive = false;
 
     if(sndstream.IsValid())
@@ -178,13 +177,13 @@ void SoundHandle::Fade(float volume, int time, int direction)
 void SoundHandle::ConvertTo3D(float mindist, float maxdist, csVector3 pos,
                                csVector3 dir, float rad)
 {
-    manager->GetSoundSystem()->Create3dSource(sndsource, sndsource3d, mindist, maxdist,
+    SoundSystemManager::GetSingleton().GetSoundSystem()->Create3dSource(sndsource, sndsource3d, mindist, maxdist,
                                  pos);
 
     /* create a directional source if rad > 0 */
     if(rad > 0)
     {
-        manager->GetSoundSystem()->CreateDirectional3dSource(sndsource3d, sndsourcedir,
+        SoundSystemManager::GetSingleton().GetSoundSystem()->CreateDirectional3dSource(sndsource3d, sndsourcedir,
                                                 dir, rad);
     }
 }
@@ -202,11 +201,6 @@ bool SoundHandle::Is3D()
 bool SoundHandle::IsDopplerEffectEnabled()
 {
     return dopplerEffect;
-}
-
-uint SoundHandle::GetID()
-{
-    return id;
 }
 
 csVector3 SoundHandle::GetSourcePosition()
@@ -233,7 +227,7 @@ void SoundHandle::UnpauseAfterDelay(unsigned int delay)
     else
     {
         delayActive = true;
-        manager->eventTimer->AddTimerEvent(this, delay);
+        SoundSystemManager::GetSingleton().eventTimer->AddTimerEvent(this, delay);
     }
 }
 

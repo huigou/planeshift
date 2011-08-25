@@ -73,6 +73,7 @@ if (!myref)                                                  \
 #include "pscharcontrol.h"
 #include "pscamera.h"
 #include "psslotmgr.h"
+#include "clientsongmngr.h"
 #include "pscelclient.h"
 #include "psnetmanager.h"
 #include "psclientdr.h"
@@ -197,6 +198,8 @@ if (!myref)                                                  \
 #include "gui/bartender.h"
 #include "gui/pawsconfigspellchecker.h"
 #include "gui/pawsconfigtooltips.h"
+#include "gui/pawsmusicwindow.h"
+#include "gui/pawssheetline.h"
 
 
 // Needed for debugging
@@ -243,6 +246,7 @@ psEngine::psEngine (iObjectRegistry *objectreg, psCSSetup *CSSetup)
     mouseBinds = NULL;
     camera = NULL;
     slotManager = NULL;
+    songManager = NULL;
     questionclient = NULL;
     paws = NULL;
     mainWidget = NULL;
@@ -324,6 +328,7 @@ void psEngine::Cleanup()
 
     delete questionclient;
     delete slotManager;
+    delete songManager;
     delete mouseBinds;
     delete guiHandler;
     delete inventoryCache;
@@ -582,6 +587,7 @@ bool psEngine::Initialize (int level)
         guiHandler = new GUIHandler();
         celclient = csPtr<psCelClient> (new psCelClient());
         slotManager = new psSlotManager();
+        songManager = new ClientSongManager();
         modehandler = csPtr<ModeHandler> (new ModeHandler (celclient,netmanager->GetMsgHandler(),object_reg));
         actionhandler = csPtr<ActionHandler> ( new ActionHandler ( netmanager->GetMsgHandler(), object_reg ) );
         zonehandler = csPtr<ZoneHandler> (new ZoneHandler(netmanager->GetMsgHandler(), celclient));
@@ -843,6 +849,8 @@ void psEngine::DeclareExtraFactories()
     RegisterFactory (pawsCraftCancelWindowFactory);    
     RegisterFactory (pawsConfigSpellCheckerFactory);        
     RegisterFactory (pawsConfigTooltipsFactory);
+    RegisterFactory (pawsMusicWindowFactory);
+    RegisterFactory (pawsSheetLineFactory);
 }
 
 //-----------------------------------------------------------------------------
@@ -1174,7 +1182,10 @@ inline void psEngine::UpdatePerFrame()
 
     if (effectManager)
         effectManager->Update();
-  
+
+    if(songManager)
+        songManager->Update();
+
     // Update the sound system
     if (GetSoundStatus()
         && loadstate == LS_DONE)
@@ -1429,6 +1440,7 @@ void psEngine::LoadGame()
         LoadPawsWidget( "NPC dialog window",       "dialog.xml");
         LoadPawsWidget( "QuickSpellBar",            "quick_spell_bar.xml");
         LoadPawsWidget( "Craft status window",     "craftcancelwindow.xml" );
+        LoadPawsWidget( "Music window",            "musicwindow.xml");
 
         LoadCustomPawsWidgets("/data/gui/customwidgetslist.xml");
 

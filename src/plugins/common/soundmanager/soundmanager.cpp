@@ -33,15 +33,12 @@
 // Local Includes
 //====================================================================================
 #include "soundmanager.h"
-
-//------------------------------------------------------------------------------------
-// Forward Declarations
-//------------------------------------------------------------------------------------
-SoundSystemManager* sndSysMgr;
+#include "instrumentmngr.h"
 
 
 SCF_IMPLEMENT_FACTORY(SoundManager)
 
+uint SoundManager::updateTime = DEFAULT_SECTOR_UPDATE_TIME;
 
 SoundManager::SoundManager(iBase* parent): scfImplementationType(this, parent)
 {
@@ -52,6 +49,9 @@ SoundManager::SoundManager(iBase* parent): scfImplementationType(this, parent)
 
     activeSector = 0;
     commonSector = 0;
+
+    sndSysMgr = 0;
+    instrMgr = 0;
 
     combat = PEACE;
     weather = 1; // 1 is sunshine
@@ -66,6 +66,7 @@ SoundManager::~SoundManager()
         UnloadSectors();
     }
 
+    delete instrMgr;
     delete sndSysMgr;
     // Note: sndSysMgr should take care of SoundControls .. we can ignore them
 
@@ -96,11 +97,11 @@ bool SoundManager::Initialize(iObjectRegistry* objReg)
     lastUpdateTime = csGetTicks();
 
     // Registering for event callbacks
-    csRef<iEventQueue> q = csQueryRegistry<iEventQueue>(objectReg);
+    csRef<iEventQueue> queue = csQueryRegistry<iEventQueue>(objectReg);
     evSystemOpen = csevSystemOpen(objectReg);
-    if (q != 0)
+    if (queue != 0)
     {
-        q->RegisterListener(this, evSystemOpen);
+        queue->RegisterListener(this, evSystemOpen);
     }
     else
     {
@@ -531,10 +532,14 @@ bool SoundManager::IsChatToggleOn()
     return chatToggle.GetToggle();
 }
 
+bool SoundManager::IsSoundValid(uint soundID) const
+{
+    return sndSysMgr->IsHandleValid(soundID);
+}
 
 uint SoundManager::PlaySound(const char* fileName, bool loop, iSoundControl* &ctrl)
 {
-    SoundHandle* handle;
+    SoundHandle* handle = 0;
     SoundControl* sndCtrl = static_cast<SoundControl*>(ctrl);
 
     if(sndSysMgr->Play2DSound(fileName, loop, 0, 0, VOLUME_NORM,
@@ -551,12 +556,28 @@ uint SoundManager::PlaySound(const char* fileName, bool loop, iSoundControl* &ct
 
 uint SoundManager::PlaySound(const char* fileName, bool loop, iSoundControl* &ctrl, csVector3 pos, csVector3 dir, float minDist, float maxDist)
 {
-    SoundHandle* handle;
+    SoundHandle* handle = 0;
     SoundControl* sndCtrl = static_cast<SoundControl*>(ctrl);
 
     if(sndSysMgr->Play3DSound(fileName, loop, 0, 0, VOLUME_NORM,
         sndCtrl, pos, dir, minDist, maxDist,
         0, CS_SND3D_ABSOLUTE, handle))
+    {
+        return handle->GetID();
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+uint SoundManager::PlaySong(csRef<iDocument> musicalSheet, const char* instrument, float errorRate,
+              iSoundControl* ctrl, csVector3 pos, csVector3 dir)
+{
+    SoundHandle* handle = 0;
+    SoundControl* sndCtrl = static_cast<SoundControl*>(ctrl);
+
+    if(instrMgr->PlaySong(sndCtrl, pos, dir, handle, musicalSheet, instrument, errorRate))
     {
         return handle->GetID();
     }
@@ -609,7 +630,7 @@ void SoundManager::Update()
     sndTime = csGetTicks();
 
     // twenty times per second
-    if(lastUpdateTime + 50 <= sndTime)
+    if(lastUpdateTime + SoundManager::updateTime <= sndTime)
     {
         // Making queues work
         csHash<SoundQueue*, int>::GlobalIterator queueIter(soundQueues.GetIterator());
@@ -638,7 +659,23 @@ void SoundManager::Update()
 
 void SoundManager::Init()
 {
+    const char* instrumentsPath;
+
+    // configuration
+    csRef<iConfigManager> configManager = csQueryRegistry<iConfigManager>(objectReg);
+    if(configManager != 0)
+    {
+        SoundManager::updateTime = configManager->GetInt("Planeshift.Sound.UpdateTime", DEFAULT_SECTOR_UPDATE_TIME);
+        instrumentsPath = configManager->GetStr("Planeshift.Sound.Intruments", DEFAULT_INSTRUMENTS_PATH);
+    }
+    else
+    {
+        // updateTime is already initialized
+        instrumentsPath = DEFAULT_INSTRUMENTS_PATH;
+    }
+
     sndSysMgr = new SoundSystemManager(objectReg);
+    instrMgr = new InstrumentManager(objectReg, instrumentsPath);
 
     // initializing ambient and music controller to something different
     // than null before AddSndCtrl is called
@@ -920,6 +957,21 @@ void SoundManager::UpdateListener(iView* view)
 
 bool SoundManager::LoadSectors()
 {
+    const char* areasPath;
+    const char* commonName;
+
+    csRef<iConfigManager> configManager = csQueryRegistry<iConfigManager>(objectReg);
+    if(configManager != 0)
+    {
+        areasPath = configManager->GetStr("Planeshift.Sound.AreasPath", DEFAULT_AREAS_PATH);
+        commonName = configManager->GetStr("Planeshift.Sound.CommonSector", DEFAULT_COMMON_SECTOR_NAME);
+    }
+    else
+    {
+        areasPath = DEFAULT_AREAS_PATH;
+        commonName = DEFAULT_COMMON_SECTOR_NAME;
+    }
+
     // check if sectors are already initialized
     if(isSectorLoaded)
     {
@@ -940,7 +992,7 @@ bool SoundManager::LoadSectors()
         return false;
     }
 
-    xpath = vfs->ExpandPath("/planeshift/soundlib/areas/");
+    xpath = vfs->ExpandPath(areasPath);
     dir = **xpath;
     files = vfs->FindFiles(dir);
 
@@ -971,7 +1023,7 @@ bool SoundManager::LoadSectors()
                 {
                     tmpsector->Reload(sector);
                 }
-                else if(csStrCaseCmp(sectorName, "common") == 0) // TODO make this configurable
+                else if(csStrCaseCmp(sectorName, commonName) == 0)
                 {
                     commonSector = new psSoundSector(sector, objectReg);
                 }
@@ -987,7 +1039,7 @@ bool SoundManager::LoadSectors()
     // checking if a common sector could be found
     if(commonSector == 0)
     {
-        commonSector = new psSoundSector("common", objectReg); // TODO make configurable as before
+        commonSector = new psSoundSector(commonName, objectReg);
     }
     commonSector->active = true; // commonSector must always be active
 

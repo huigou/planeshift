@@ -72,6 +72,7 @@
 #include "groupmanager.h"
 #include "guildmanager.h"
 #include "introductionmanager.h"
+#include "serversongmngr.h"
 #include "marriagemanager.h"
 #include "minigamemanager.h"
 #include "netmanager.h"
@@ -129,6 +130,7 @@ psServer::psServer ()
     gmeventManager      = NULL;
     bankmanager         = NULL;
     intromanager        = NULL;
+    songManager         = NULL;
     mathscriptengine    = NULL;
     cachemanager        = NULL;
     logcsv              = NULL;
@@ -194,6 +196,7 @@ psServer::~psServer()
     delete gmeventManager;
     delete bankmanager;
     delete intromanager;
+    delete songManager;
     delete serverconsole;
     /*
     PS_CHECK_REF_COUNT(guildmanager);
@@ -574,6 +577,9 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
 
     intromanager = new IntroductionManager();
     Debug1(LOG_STARTUP,0, "Started Introduction Manager");
+
+    songManager = new ServerSongManager();
+    Debug1(LOG_STARTUP,0, "Started Song Manager");
 
     if (!ServerStatus::Initialize (object_reg))
     {

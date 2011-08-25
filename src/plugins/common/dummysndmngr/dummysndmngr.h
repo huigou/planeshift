@@ -25,6 +25,7 @@
 //====================================================================================
 #include <iutil/comp.h>
 #include <csgeom/vector3.h>
+#include <iutil/document.h>
 
 //====================================================================================
 // Project Includes
@@ -90,8 +91,11 @@ public:
     virtual bool IsChatToggleOn();
 
     //Play sounds
+    virtual bool IsSoundValid(uint soundID) const;
     virtual uint PlaySound(const char* fileName, bool loop, iSoundControl* &ctrl);
     virtual uint PlaySound(const char* fileName, bool loop, iSoundControl* &ctrl, csVector3 pos, csVector3 dir, float minDist, float maxDist);
+    virtual uint PlaySong(csRef<iDocument> musicalSheet, const char* instrument, float errorRate,
+        iSoundControl* ctrl, csVector3 pos, csVector3 dir);
     virtual bool StopSound(uint soundID);
     virtual bool SetSoundSource(uint soundID, csVector3 position);
 
