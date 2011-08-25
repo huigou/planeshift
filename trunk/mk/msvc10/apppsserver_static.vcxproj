@@ -1531,6 +1531,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClCompile Include="..\..\src\server\questionmanager.cpp" />
     <ClCompile Include="..\..\src\server\questmanager.cpp" />
     <ClCompile Include="..\..\src\server\scripting.cpp" />
+    <ClCompile Include="..\..\src\server\serversongmngr.cpp" />
     <ClCompile Include="..\..\src\server\serverstatus.cpp" />
     <ClCompile Include="..\..\src\server\slotmanager.cpp" />
     <ClCompile Include="..\..\src\server\spawnmanager.cpp" />
@@ -1585,6 +1586,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClInclude Include="..\..\src\server\questionmanager.h" />
     <ClInclude Include="..\..\src\server\questmanager.h" />
     <ClInclude Include="..\..\src\server\scripting.h" />
+    <ClInclude Include="..\..\src\server\serversongmngr.h" />
     <ClInclude Include="..\..\src\server\serverstatus.h" />
     <ClInclude Include="..\..\src\server\slotmanager.h" />
     <ClInclude Include="..\..\src\server\spawnmanager.h" />

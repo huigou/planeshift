@@ -1915,6 +1915,9 @@
 				RelativePath="..\..\src\client\gui\pawsmoney.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\client\gui\pawsmusicwindow.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\client\gui\pawsnpcdialog.cpp">
 			</File>
 			<File
@@ -1937,6 +1940,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawsquitinfobox.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\client\gui\pawssheetline.cpp">
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawsskillwindow.cpp">
@@ -2165,6 +2171,9 @@
 				RelativePath="..\..\src\client\gui\pawsmoney.h">
 			</File>
 			<File
+				RelativePath="..\..\src\client\gui\pawsmusicwindow.h">
+			</File>
+			<File
 				RelativePath="..\..\src\client\gui\pawsnpcdialog.h">
 			</File>
 			<File
@@ -2187,6 +2196,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawsquitinfobox.h">
+			</File>
+			<File
+				RelativePath="..\..\src\client\gui\pawssheetline.h">
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawsskillwindow.h">

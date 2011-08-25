@@ -1416,6 +1416,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClCompile Include="..\..\src\client\gui\pawslootwindow.cpp" />
     <ClCompile Include="..\..\src\client\gui\pawsmerchantwindow.cpp" />
     <ClCompile Include="..\..\src\client\gui\pawsmoney.cpp" />
+    <ClCompile Include="..\..\src\client\gui\pawsmusicwindow.cpp" />
     <ClCompile Include="..\..\src\client\gui\pawsnpcdialog.cpp" />
     <ClCompile Include="..\..\src\client\gui\pawspath.cpp" />
     <ClCompile Include="..\..\src\client\gui\pawspetitiongmwindow.cpp" />
@@ -1424,6 +1425,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClCompile Include="..\..\src\client\gui\pawsquestrewardwindow.cpp" />
     <ClCompile Include="..\..\src\client\gui\pawsquestwindow.cpp" />
     <ClCompile Include="..\..\src\client\gui\pawsquitinfobox.cpp" />
+    <ClCompile Include="..\..\src\client\gui\pawssheetline.cpp" />
     <ClCompile Include="..\..\src\client\gui\pawsskillwindow.cpp" />
     <ClCompile Include="..\..\src\client\gui\pawsslot.cpp" />
     <ClCompile Include="..\..\src\client\gui\pawssmallinventory.cpp" />
@@ -1500,6 +1502,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClInclude Include="..\..\src\client\gui\pawslootwindow.h" />
     <ClInclude Include="..\..\src\client\gui\pawsmerchantwindow.h" />
     <ClInclude Include="..\..\src\client\gui\pawsmoney.h" />
+    <ClInclude Include="..\..\src\client\gui\pawsmusicwindow.h" />
     <ClInclude Include="..\..\src\client\gui\pawsnpcdialog.h" />
     <ClInclude Include="..\..\src\client\gui\pawspath.h" />
     <ClInclude Include="..\..\src\client\gui\pawspetitiongmwindow.h" />
@@ -1508,6 +1511,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClInclude Include="..\..\src\client\gui\pawsquestrewardwindow.h" />
     <ClInclude Include="..\..\src\client\gui\pawsquestwindow.h" />
     <ClInclude Include="..\..\src\client\gui\pawsquitinfobox.h" />
+    <ClInclude Include="..\..\src\client\gui\pawssheetline.h" />
     <ClInclude Include="..\..\src\client\gui\pawsskillwindow.h" />
     <ClInclude Include="..\..\src\client\gui\pawsslot.h" />
     <ClInclude Include="..\..\src\client\gui\pawssmallinventory.h" />

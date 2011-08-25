@@ -1849,6 +1849,12 @@
 				RelativePath="..\..\src\plugins\common\soundmanager\handle.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\plugins\common\soundmanager\instrument.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\soundmanager\instrumentmngr.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\plugins\common\soundmanager\manager.cpp">
 			</File>
 			<File
@@ -1865,6 +1871,15 @@
 			</File>
 			<File
 				RelativePath="..\..\src\plugins\common\soundmanager\queue.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\soundmanager\songdata.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\soundmanager\songhandle.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\soundmanager\songstream.cpp">
 			</File>
 			<File
 				RelativePath="..\..\src\plugins\common\soundmanager\soundctrl.cpp">
@@ -1952,6 +1967,12 @@
 				RelativePath="..\..\src\plugins\common\soundmanager\handle.h">
 			</File>
 			<File
+				RelativePath="..\..\src\plugins\common\soundmanager\instrument.h">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\soundmanager\instrumentmngr.h">
+			</File>
+			<File
 				RelativePath="..\..\src\plugins\common\soundmanager\manager.h">
 			</File>
 			<File
@@ -1971,6 +1992,15 @@
 			</File>
 			<File
 				RelativePath="..\..\src\plugins\common\soundmanager\queue.h">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\soundmanager\songdata.h">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\soundmanager\songhandle.h">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\soundmanager\songstream.h">
 			</File>
 			<File
 				RelativePath="..\..\src\plugins\common\soundmanager\sound.h">

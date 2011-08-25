@@ -1759,6 +1759,9 @@
 				RelativePath="..\..\src\common\util\mathscript.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\common\util\music.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\common\util\namegenerator.cpp">
 			</File>
 			<File
@@ -1866,6 +1869,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\common\util\minigame.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\util\music.h">
 			</File>
 			<File
 				RelativePath="..\..\src\common\util\namegenerator.h">

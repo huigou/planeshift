@@ -2030,6 +2030,9 @@
 				RelativePath="..\..\src\server\scripting.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\server\serversongmngr.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\server\serverstatus.cpp">
 			</File>
 			<File
@@ -2188,6 +2191,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\server\scripting.h">
+			</File>
+			<File
+				RelativePath="..\..\src\server\serversongmngr.h">
 			</File>
 			<File
 				RelativePath="..\..\src\server\serverstatus.h">

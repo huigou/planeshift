@@ -1777,6 +1777,9 @@
 				RelativePath="..\..\src\common\paws\pawsmenu.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\common\paws\pawsmeterpromptwindow.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\common\paws\pawsmouse.cpp">
 			</File>
 			<File
@@ -1899,6 +1902,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\common\paws\pawsmenu.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\paws\pawsmeterpromptwindow.h">
 			</File>
 			<File
 				RelativePath="..\..\src\common\paws\pawsmouse.h">

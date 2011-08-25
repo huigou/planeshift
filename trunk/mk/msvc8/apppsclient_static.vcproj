@@ -1925,6 +1925,9 @@
 				RelativePath="..\..\src\client\chatbubbles.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\client\clientsongmngr.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\client\clientvitals.cpp">
 			</File>
 			<File
@@ -2023,6 +2026,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\client\chatbubbles.h">
+			</File>
+			<File
+				RelativePath="..\..\src\client\clientsongmngr.h">
 			</File>
 			<File
 				RelativePath="..\..\src\client\clientvitals.h">
