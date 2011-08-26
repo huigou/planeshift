@@ -260,12 +260,12 @@ enum MSG_TYPES
     MSGTYPE_GENERICCMD,
 
     //Extra value made to new clients
-    MSGTYPE_CRAFT_CANCEL
+    MSGTYPE_CRAFT_CANCEL,
 
     //music playing messages
     MSGTYPE_MUSICAL_SHEET,
     MSGTYPE_PLAY_SONG,
-    MSGTYPE_STOP_SONG,
+    MSGTYPE_STOP_SONG
 };
 
 class psMessageCracker;
