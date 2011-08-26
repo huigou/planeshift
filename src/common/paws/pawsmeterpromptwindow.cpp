@@ -157,14 +157,14 @@ bool pawsMeterPromptWindow::OnButtonPressed(int /* mouseButton */, int /* keyMod
         // checking user input
         if(beats > 0)
         {
-            char newBeats[3];
+            csString newBeats;
             csString newBeatType;
 
             // this conversion cuts eventual whitespaces in the meterInput's text box
-            itoa(beats, newBeats, 10);
+            newBeats = beats;
             newBeatType = meterInput->GetBeatType();
 
-            meterListener->OnMeterEntered(actionName, csString(newBeats), newBeatType);
+            meterListener->OnMeterEntered(actionName, newBeats, newBeatType);
         }
 
         parent->DeleteChild(this);

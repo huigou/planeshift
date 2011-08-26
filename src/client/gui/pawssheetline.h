@@ -175,7 +175,7 @@ public:
     csString ToXML();
 
 private:
-    friend Measure;
+    friend class Measure;
 
     Chord* prev;                ///< The previous chord.
     Chord* next;                ///< The next chord.
@@ -404,7 +404,7 @@ public:
     csString ToXML(uint number, csString attributes = "");
 
 private:
-    friend SheetLine;
+    friend class SheetLine;
 
     Measure* prev;          ///< The previous measure.
     Measure* next;          ///< The next measure.
@@ -686,9 +686,9 @@ public:
     virtual bool PostSetup();
 
 private:
-    friend Chord;
-    friend Measure;
-    friend SheetLine;
+    friend class Chord;
+    friend class Measure;
+    friend class SheetLine;
 
     bool isDouble;              ///< True if it's a double staff, false if single.
     SheetLine* line;            ///< The line to draw.

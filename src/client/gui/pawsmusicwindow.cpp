@@ -693,6 +693,7 @@ bool pawsMusicWindow::LoadXML(csRef<iDocument> sheet)
 
     // adding lines and display
     linesHead = new SheetLine(measuresHead);
+    linesHead->SetCallback(this, &OnSheetLineCallback);
 
     // setting size
     pawsLine1->SetLine(linesHead, false);
@@ -1236,7 +1237,7 @@ void pawsMusicWindow::SwitchDoubleStaff()
 
 void pawsMusicWindow::ChangeTonality()
 {
-    char str[3]; // the longest string is "-7\0"
+    csString strFifths;
 
     if(pendingString)
     {
@@ -1246,7 +1247,8 @@ void pawsMusicWindow::ChangeTonality()
     pendingString = true;
 
     // This window calls OnStringEntered when Ok is pressed.
-    pawsStringPromptWindow::Create("Number of alterations", itoa(fifths, str, 10),
+    strFifths = fifths;
+    pawsStringPromptWindow::Create("Number of alterations", strFifths,
         false, 220, 20, this, "Fifths");
 }
 
@@ -1265,7 +1267,7 @@ void pawsMusicWindow::ChangeMeter()
 
 void pawsMusicWindow::ChangeBPM()
 {
-    char str[4];
+    csString strTempo;
 
     if(pendingString)
     {
@@ -1275,7 +1277,8 @@ void pawsMusicWindow::ChangeBPM()
     pendingString = true;
 
     // This window calls OnStringEntered when Ok is pressed.
-    pawsStringPromptWindow::Create("BPM", itoa(tempo, str, 10),
+    strTempo = tempo;
+    pawsStringPromptWindow::Create("BPM", strTempo,
         false, 220, 20, this, "BPM");
 }
 
@@ -1296,7 +1299,7 @@ void pawsMusicWindow::ChangeChordDuration()
 
 void pawsMusicWindow::SetEndRepeat()
 {
-    char str[4];
+    csString strEndRepeat;
 
     if(pendingString)
     {
@@ -1309,7 +1312,8 @@ void pawsMusicWindow::SetEndRepeat()
     endRepeatButton->SetState(selectedMeasure->GetEndRepeat() > 0);
 
     // This window calls OnStringEntered when Ok is pressed.
-    pawsStringPromptWindow::Create("Number of repetition", itoa(selectedMeasure->GetEndRepeat(), str, 10),
+    strEndRepeat = selectedMeasure->GetEndRepeat();
+    pawsStringPromptWindow::Create("Number of repetition", strEndRepeat,
         false, 220, 20, this, "Repeat");
 }
 

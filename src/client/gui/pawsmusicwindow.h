@@ -132,7 +132,7 @@ public:
     virtual bool OnScroll(int scrollDirection, pawsScrollBar* widget);
 
 private:
-    friend pawsSheetLine;
+    friend class pawsSheetLine;
 
     int fifths;                        ///< The tonality of the song.
     csString beats;                    ///< Numerator of the song's meter.
