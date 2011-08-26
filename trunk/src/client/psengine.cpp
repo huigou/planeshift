@@ -28,6 +28,10 @@
 #undef LoadImage
 #endif
 
+#ifdef WIN32
+#include <ivideo/natwin.h> // CS_ALERT_ERROR definition
+#endif
+
 //////////////////////////////////////////////////////////////////////////////
 
 #define CONFIGFILENAME       "/planeshift/userdata/planeshift.cfg"

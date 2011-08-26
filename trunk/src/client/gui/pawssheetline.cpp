@@ -1263,30 +1263,35 @@ void Measure::Draw(pawsSheetLine* pawsLine, Chord* selectedChord, int startPosit
     // drawing ending line
     if(ending > 0)
     {
-        wchar_t endingNum[4];
-        char endingStr[4];
+        wchar_t* wstrEnding;
+        csString strEnding;
         int vNumPos = pawsLine->screenFrame.ymin + pawsLine->centralCPos - 6 * pawsLine->staffRowHeight;
         int vLinePos = pawsLine->screenFrame.ymin + pawsLine->staffMarginUp;
 
         // setting ending's number string
-        itoa(ending, endingStr, 10);
-        size_t endingStrLength = strlen(endingStr);
-        for(size_t i = 0; i < endingStrLength; i++)
+        strEnding = ending;
+        size_t strEndingLength = strEnding.Length();
+        wstrEnding = new wchar_t[strEndingLength + 1];
+
+        for(size_t i = 0; i < strEndingLength; i++)
         {
-            endingNum[i] = pawsSheetLine::GetSmallNumber(endingStr[i]);
+            wstrEnding[i] = pawsSheetLine::GetSmallNumber(strEnding[i]);
             i++;
         }
-        endingNum[endingStrLength] = '\0';
+        wstrEnding[strEndingLength] = '\0';
 
         // drawing vertical part
         pawsLine->graphics2D->DrawLine(startPosition, vLinePos, startPosition, vLinePos - 2 * pawsLine->staffRowHeight, pawsLine->GetFontColour());
 
         // writing ending number
-        pawsLine->graphics2D->Write(pawsLine->GetFont(), startPosition + 0.5 * pawsLine->noteCharLength, vNumPos, pawsLine->GetFontColour(), -1, endingNum);
+        pawsLine->graphics2D->Write(pawsLine->GetFont(), startPosition + 0.5 * pawsLine->noteCharLength, vNumPos, pawsLine->GetFontColour(), -1, wstrEnding);
 
         // horizontal part
         vLinePos -= 2 * pawsLine->staffRowHeight;
         pawsLine->graphics2D->DrawLine(startPosition, vLinePos, startPosition + GetSize(pawsLine->noteCharLength), vLinePos, pawsLine->GetFontColour());
+
+        //deleting temporary string
+        delete[] wstrEnding;
     }
 
     // drawing start repeat dots
@@ -1920,7 +1925,11 @@ void pawsSheetLine::Draw()
     int yMin = screenFrame.ymin + staffMarginUp;
     int staffLength = screenFrame.xmax - staffMarginLateral;
 
-    wchar_t printSymbol[5];             // longest string is for tempo
+    // creating temporary buffer, the longest string to represent is tempo
+    csString strTempo;
+    strTempo = musicWindow->tempo;
+    size_t tempoLength = strTempo.Length();
+    wchar_t* printSymbol = new wchar_t[tempoLength + 2];
     printSymbol[1] = (wchar_t)'\0';
 
     // drawing staff
@@ -2064,15 +2073,10 @@ void pawsSheetLine::Draw()
         lineStartPos += metricCharLength; 
 
         // drawing tempo
-        char tempo[4];
-        size_t tempoLength;
         printSymbol[0] = TEMPO_SONORA;
-
-        itoa(musicWindow->tempo, tempo, 10);
-        tempoLength = strlen(tempo);
         for(size_t i = 0; i < tempoLength; i++)
         {
-            printSymbol[i+1] = pawsSheetLine::GetSmallNumber(tempo[i]);
+            printSymbol[i+1] = pawsSheetLine::GetSmallNumber(strTempo.GetAt(i));
         }
         printSymbol[tempoLength+1] = (wchar_t)'\0';
 
@@ -2081,6 +2085,9 @@ void pawsSheetLine::Draw()
 
     // drawing notes
     line->Draw(this, musicWindow->selectedChord, lineStartPos, lastRow * staffRowHeight);
+
+    // deleting temporary buffer
+    delete[] printSymbol;
 }
 
 bool pawsSheetLine::OnMouseDown(int button, int modifiers, int x, int y)
