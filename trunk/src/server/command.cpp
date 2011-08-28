@@ -518,7 +518,7 @@ int com_maplist(char *)
     {
         char * name = csStrNew(files->Get(i));
         char * onlyname = name + strlen("/planeshift/world/");
-        onlyname[strlen(onlyname) - 1] = '\0';
+        onlyname[strlen(onlyname)] = '\0';
         CPrintf (CON_CMDOUTPUT ,"%s\n",onlyname);
         delete [] name;
     }
