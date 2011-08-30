@@ -9014,63 +9014,80 @@ void AdminManager::SpawnItemInv( MsgEntry* me, psGMSpawnItem& msg, Client *clien
         return;
     }
 
-    // if the item is 'personalised' by the owner, then the item is in fact just a
-    // template which is best not to instantiate it itself. Eg blank book, map.
-    if (stats->GetBuyPersonalise())
-    {
-        psserver->SendSystemError(me->clientnum, "Cannot spawn personalised item!");
-        return;
-    }
-    
     if(!stats->IsSpawnable())
     {
         psserver->SendSystemError(me->clientnum, "This item cannot be spawned!");
         return;
     }
-    
+
+    // Prepare text for error messages.
+    csString text;
+
     psItem* item = stats->InstantiateBasicItem();
-    
-    // randomize if requested
-    if (msg.random)
-    {
-        LootRandomizer* lootRandomizer = psserver->GetSpawnManager()->GetLootRandomizer();
-        item = lootRandomizer->RandomizeItem(item, msg.quality );
-    }
 
-    item->SetStackCount(msg.count);
-    item->SetIsLockable(msg.lockable);
-    item->SetIsLocked(msg.locked);
-    item->SetIsPickupable(msg.pickupable);
-    item->SetIsCD(msg.collidable);
-    item->SetIsUnpickable(msg.Unpickable);
-    item->SetIsTransient(msg.Transient);
-    
-    //These are setting only flags. When modify gets valid permission update also here accordly
-    if(psserver->GetCacheManager()->GetCommandManager()->Validate(client->GetSecurityLevel(), "/modify"))
+    if (stats->GetBuyPersonalise())
     {
-        item->SetIsSettingItem(msg.SettingItem);
-        item->SetIsNpcOwned(msg.NPCOwned);
-    }
+    	// Spawn personlised item.
 
-    if (msg.quality > 0)
-    {
-        item->SetItemQuality(msg.quality);
-        // Setting craft quality as well if quality given by user
-        item->SetMaxItemQuality(msg.quality);
+        PSITEMSTATS_CREATORSTATUS creatorStatus;
+        item->GetCreator(creatorStatus);
+
+        // Prepare name for personalised item.
+        csString itemName(item->GetName());
+        if (creatorStatus != PSITEMSTATS_CREATOR_PUBLIC)
+            itemName.AppendFmt(" of %s", client->GetName());
+        csString personalisedName(itemName);
+
+        item->SetName(personalisedName);
+
+        // copies the template creative data from the item stats in the item
+        // instances for use by the player
+        item->PrepareCreativeItemInstance();
     }
     else
     {
-        item->SetItemQuality(stats->GetQuality());
-    }
+    	// Spawn normal item.
 
-    if (msg.lockable)
-    {
-        item->SetLockpickSkill(skill);
-        item->SetLockStrength(msg.lstr);
-    }
+    	// randomize if requested
+        if (msg.random)
+        {
+            LootRandomizer* lootRandomizer = psserver->GetSpawnManager()->GetLootRandomizer();
+            item = lootRandomizer->RandomizeItem(item, msg.quality );
+        }
 
-    // Place the new item in the GM's inventory
-    csString text;
+        item->SetStackCount(msg.count);
+        item->SetIsLockable(msg.lockable);
+        item->SetIsLocked(msg.locked);
+        item->SetIsPickupable(msg.pickupable);
+        item->SetIsCD(msg.collidable);
+        item->SetIsUnpickable(msg.Unpickable);
+        item->SetIsTransient(msg.Transient);
+
+        //These are setting only flags. When modify gets valid permission update also here accordly
+        if(psserver->GetCacheManager()->GetCommandManager()->Validate(client->GetSecurityLevel(), "/modify"))
+        {
+            item->SetIsSettingItem(msg.SettingItem);
+            item->SetIsNpcOwned(msg.NPCOwned);
+        }
+
+        if (msg.quality > 0)
+        {
+            item->SetItemQuality(msg.quality);
+            // Setting craft quality as well if quality given by user
+            item->SetMaxItemQuality(msg.quality);
+        }
+        else
+        {
+            item->SetItemQuality(stats->GetQuality());
+        }
+
+        if (msg.lockable)
+        {
+            item->SetLockpickSkill(skill);
+            item->SetLockStrength(msg.lstr);
+        }
+    }
+    
     item->SetLoaded();  // Item is fully created
     if (charData->Inventory().Add(item))
     {
