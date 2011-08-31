@@ -1009,7 +1009,8 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
     {
         psCharVerificationMesg mesg( me->clientnum );
         size_t z;
-        for ( z = 0; z < PSITEMSTATS_STAT_COUNT; z++ )
+        //unfortunately count goes out of valid area so we need to check on charisma
+        for ( z = 0; z <= PSITEMSTATS_STAT_CHARISMA; z++ )
         {
             int value = chardata->GetSkillRank(statToSkill((PSITEMSTATS_STAT) z)).Current();
             if ( value > 0 )
