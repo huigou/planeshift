@@ -659,7 +659,7 @@ bool pawsMusicWindow::LoadXML(csRef<iDocument> sheet)
     if(measures.IsEmpty())
     {
         Unload();
-        true;
+        return true;
     }
 
     // getting attributes. It's necessary to provide temporary attributes because
