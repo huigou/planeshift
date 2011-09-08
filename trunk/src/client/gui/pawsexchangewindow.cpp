@@ -86,7 +86,7 @@ bool pawsExchangeWindow::PostSetup()
     psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_EXCHANGE_STATUS);
     psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_EXCHANGE_MONEY);
 
-    originalWidth = defaultFrame.width;
+    originalWidth = defaultFrame.Width();
      
     // the two backgrounds for the offering/receiving frame
     offeringBG  = FindWidget("Offering Frame");
