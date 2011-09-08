@@ -86,7 +86,7 @@ protected:
     bool wasSmallInventoryOpen;
 
     /// stores width of exchange window
-    int windowWidth;
+    int originalWidth;
     
     psExchangeType type;
     
