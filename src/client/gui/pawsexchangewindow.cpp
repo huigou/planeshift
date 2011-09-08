@@ -85,6 +85,8 @@ bool pawsExchangeWindow::PostSetup()
     psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_EXCHANGE_END);
     psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_EXCHANGE_STATUS);
     psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_EXCHANGE_MONEY);
+
+    originalWidth = defaultFrame.width;
      
     // the two backgrounds for the offering/receiving frame
     offeringBG  = FindWidget("Offering Frame");
@@ -190,9 +192,9 @@ void pawsExchangeWindow::StartExchange( csString& player, bool withPlayer )
         textBox->SetText( text );
 
     if (withPlayer)
-        width = screenFrame.Width();
+        width = originalWidth;
     else
-        width = screenFrame.Width()/2;
+        width = originalWidth/2;
 
     SetRelativeFrameSize(GetActualWidth(width), defaultFrame.Height());
 
