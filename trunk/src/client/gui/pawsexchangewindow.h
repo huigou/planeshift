@@ -84,6 +84,9 @@ protected:
 
     /// retain the state of the inventory window before opening the exchange
     bool wasSmallInventoryOpen;
+
+    /// stores width of exchange window
+    int windowWidth;
     
     psExchangeType type;
     
