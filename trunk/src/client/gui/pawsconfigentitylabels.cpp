@@ -145,6 +145,9 @@ bool pawsConfigEntityLabels::LoadConfig()
         case LABEL_ONMOUSE:
             CreatureRBG->SetActive("mouse");
             break;
+        case LABEL_ONTARGET:
+            CreatureRBG->SetActive("target");
+            break;
         default:
             CreatureRBG->SetActive("never");
     }
@@ -155,6 +158,9 @@ bool pawsConfigEntityLabels::LoadConfig()
             break;
         case LABEL_ONMOUSE:
             ItemRBG->SetActive("mouse");
+            break;
+        case LABEL_ONTARGET:
+            ItemRBG->SetActive("target");
             break;
         default:
             ItemRBG->SetActive("never");
