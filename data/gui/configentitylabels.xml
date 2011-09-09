@@ -27,18 +27,22 @@
 <!--                    </widget>-->
                     <widget name="CreaturesRG" factory="pawsRadioButtonGroup">
                         <radio on="radioon" off="radiooff" size="16"/>
-                        <frame x="0" y="0" width="350" height="25" />
+                        <frame x="0" y="0" width="380" height="25" />
                         <radionode name="always" id="100">
                             <text string="Always" position="right" />
-                            <frame x="90" y="0" width="90" height="25" />
+                            <frame x="50" y="0" width="75" height="25" />
                         </radionode>
                         <radionode name="mouse" id="101">
                             <text string="On Mouse" position="right" />
-                            <frame x="170" y="0" width="110" height="25" />
+                            <frame x="130" y="0" width="95" height="25" />
                         </radionode>
-                        <radionode name="never" id="102">
+                        <radionode name="target" id="102">
+                            <text string="On Target" position="right" />
+                            <frame x="225" y="0" width="95" height="25" />
+                        </radionode>
+                        <radionode name="never" id="103">
                             <text string="Never" position="right" />
-                            <frame x="270" y="0" width="80" height="25" />
+                            <frame x="310" y="0" width="80" height="25" />
                         </radionode>
                     </widget>
                 </nodewidget>
@@ -57,18 +61,22 @@
 
                     <widget name="ItemsRG" factory="pawsRadioButtonGroup">
                         <radio on="radioon" off="radiooff" size="16"/>
-                        <frame x="0" y="0" width="350" height="25" />
+                        <frame x="0" y="0" width="380" height="25" />
                         <radionode name="always" id="103">
                             <text string="Always" position="right" />
-                            <frame x="90" y="0" width="90" height="25" />
+                            <frame x="50" y="0" width="75" height="25" />
                         </radionode>
                         <radionode name="mouse" id="104">
                             <text string="On Mouse" position="right" />
-                            <frame x="170" y="0" width="110" height="25" />
+                            <frame x="130" y="0" width="95" height="25" />
                         </radionode>
-                        <radionode name="never" id="105">
+                        <radionode name="target" id="105">
+                            <text string="On Target" position="right" />
+                            <frame x="225" y="0" width="95" height="25" />
+                        </radionode>
+                        <radionode name="never" id="106">
                             <text string="Never" position="right" />
-                            <frame x="270" y="0" width="80" height="25" />
+                            <frame x="310" y="0" width="80" height="25" />
                         </radionode>
                     </widget>
                 </nodewidget>

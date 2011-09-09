@@ -46,6 +46,7 @@
 
 #include "globals.h"
 #include "entitylabels.h"
+#include "psclientchar.h"
 
 
 #define LABEL_FONT             "/this/data/ttf/LiberationSans-Regular.ttf"
@@ -186,11 +187,16 @@ bool psEntityLabels::HandleEvent(iEvent& /*ev*/)
     {
         UpdateVisibility();
     }
-    
+
     if (visItems == LABEL_ONMOUSE || visCreatures == LABEL_ONMOUSE)
     {
         UpdateMouseover();
     }
+
+    if (visItems == LABEL_ONTARGET || visCreatures == LABEL_ONTARGET)
+    {
+        UpdateTarget();
+    }   
 
     return false;
 }
@@ -402,7 +408,9 @@ void psEntityLabels::OnObjectArrived( GEMClientObject* object )
     else 
     {
         CreateLabelOfObject( object );
-        
+
+        //TODO: check this code it seems it doesn't check precisely the status
+        //      of the label configuration
         if (visCreatures == LABEL_ONMOUSE || visItems == LABEL_ONMOUSE)
         {
             psPoint mouse = PawsManager::GetSingleton().GetMouse()->GetPosition();
@@ -458,6 +466,8 @@ bool psEntityLabels::LoadFromFile()
             visCreatures = LABEL_ALWAYS;
         else if (option == "mouse")
             visCreatures = LABEL_ONMOUSE;
+        else if (option == "target")
+            visCreatures = LABEL_ONTARGET;
         else if (option == "never")
             visCreatures = LABEL_NEVER;
     }
@@ -478,6 +488,8 @@ bool psEntityLabels::LoadFromFile()
             visItems = LABEL_ALWAYS;
         else if (option == "mouse")
             visItems = LABEL_ONMOUSE;
+        else if (option == "target")
+            visItems = LABEL_ONTARGET;
         else if (option == "never")
             visItems = LABEL_NEVER;
     }    
@@ -608,6 +620,45 @@ inline void psEntityLabels::UpdateMouseover()
     }
 }
 
+inline void psEntityLabels::UpdateTarget()
+{
+    GEMClientObject* lastUnderTarget = underTarget;
+
+    // Find out the object
+    underTarget = psengine->GetCharManager()->GetTarget();
+
+    // Is this a new object?
+    if (underTarget != lastUnderTarget)
+    {
+        // Hide old
+        if (lastUnderTarget != NULL && MatchVisibility(lastUnderTarget->GetObjectType(), LABEL_ONTARGET))
+            ShowLabelOfObject(lastUnderTarget,false);
+        
+        if (underTarget != NULL && !MatchVisibility(underTarget->GetObjectType(), LABEL_ONTARGET))
+            return;
+
+        // Show new
+        if (underTarget != NULL)
+        {
+            // Don't show other player names unless introduced.
+            if (underTarget->GetObjectType() == GEM_ACTOR && !(underTarget->Flags() & psPersistActor::NAMEKNOWN))
+                return;
+
+            csRef<iMeshWrapper> mesh = underTarget->GetMesh();
+            if (mesh)
+            {
+                // Only show labels within range
+                csVector3 here = celClient->GetMainPlayer()->Pos();
+                csVector3 there = mesh->GetMovable()->GetPosition();
+                int range = (underTarget->GetObjectType() == GEM_ITEM) ? RANGE_TO_SEE_ITEM_LABELS : RANGE_TO_SEE_ACTOR_LABELS ;
+                bool show = ((here-there).Norm() < range);
+
+                ShowLabelOfObject(underTarget, show);
+            }
+        }
+    }
+}
+
 bool psEntityLabels::SaveToFile()
 {
     csString xml;
@@ -615,16 +666,18 @@ bool psEntityLabels::SaveToFile()
 
     switch (visCreatures)
     {
-        case LABEL_ALWAYS:  visCreaturesStr = "always"; break;
-        case LABEL_ONMOUSE: visCreaturesStr = "mouse"; break;
-        case LABEL_NEVER:   visCreaturesStr = "never"; break;
+        case LABEL_ALWAYS:   visCreaturesStr = "always"; break;
+        case LABEL_ONMOUSE:  visCreaturesStr = "mouse"; break;
+        case LABEL_ONTARGET: visCreaturesStr = "target"; break;
+        case LABEL_NEVER:    visCreaturesStr = "never"; break;
     }
 
     switch (visItems)
     {
-        case LABEL_ALWAYS:  visItemsStr = "always"; break;
-        case LABEL_ONMOUSE: visItemsStr = "mouse"; break;
-        case LABEL_NEVER:   visItemsStr = "never"; break;
+        case LABEL_ALWAYS:   visItemsStr = "always"; break;
+        case LABEL_ONMOUSE:  visItemsStr = "mouse"; break;
+        case LABEL_ONTARGET: visItemsStr = "target"; break;
+        case LABEL_NEVER:    visItemsStr = "never"; break;
     }
     
     showGuildStr = showGuild ? "yes" : "no";
@@ -662,8 +715,10 @@ void psEntityLabels::RemoveObject( GEMClientObject* object )
 {
     DeleteLabelOfObject(object);
 
-    if (underMouse == object)
+    if(underMouse == object)
         underMouse = NULL;
+    if(underTarget == object)
+        underTarget = NULL;
 }
 
 inline void psEntityLabels::ShowLabelOfObject(GEMClientObject* object, bool show)
