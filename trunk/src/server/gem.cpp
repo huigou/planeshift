@@ -546,7 +546,31 @@ csArray<gemObject*> GEMSupervisor::FindNearbyEntities( iSector* sector, const cs
     return list;
 }
 
+csArray<gemObject*> GEMSupervisor::FindSectorEntities( iSector* sector, bool doInvisible )
+{
+    csArray<gemObject*> list;
 
+    csRef<iMeshList> obj_it =  sector->GetMeshes();
+    for(int i = 0; i < obj_it->GetCount(); i++)  
+    {
+        iMeshWrapper* m = obj_it->Get(i);
+        if (!doInvisible)
+        {
+            bool invisible = m->GetFlags().Check(CS_ENTITY_INVISIBLE);
+            if (invisible)
+                continue;
+        }
+
+        gemObject* object = FindAttachedObject(m->QueryObject());
+
+        if (object)
+        {
+            list.Push( object );
+        }
+    }
+
+    return list;
+}
 
 /*****************************************************************/
 
