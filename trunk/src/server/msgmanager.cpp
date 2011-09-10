@@ -21,6 +21,7 @@
 //=============================================================================
 // Crystal Space Includes
 //=============================================================================
+#include <csutil/regexp.h>
 
 //=============================================================================
 // Project Includes
@@ -234,6 +235,8 @@ csArray<csString> MessageManagerBase::DecodeCommandArea(Client *client, csString
     size_t count = nearlist.GetSize();
     csArray<csString *> results;
 
+    csRegExpMatcher nameMatcher(nameFilter);
+
     for (size_t i=0; i<count; i++)
     {
         gemObject *nearobj = nearlist[i];
@@ -246,7 +249,7 @@ csArray<csString> MessageManagerBase::DecodeCommandArea(Client *client, csString
         if (!allNames)
         {
             csString nearobjName = nearobj->GetName();
-            if (!nearobjName.StartsWith(nameFilter.GetData(), true))
+            if (!(nameMatcher.Match(nearobjName, csrxIgnoreCase) == csrxNoError))
                 continue;
         }
 
