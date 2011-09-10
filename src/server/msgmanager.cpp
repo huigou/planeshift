@@ -188,9 +188,12 @@ csArray<csString> MessageManagerBase::DecodeCommandArea(Client *client, csString
         }
     }
     
-    if(sector != NULL && splitSize > 4)
+    if(sector != NULL)
     {
-        nameFilter = splitTarget[4];
+        if(splitSize > 4)
+        {
+            nameFilter = splitTarget[4];
+        }
     }
     else if (splitSize > 3)
     {
