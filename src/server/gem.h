@@ -239,6 +239,15 @@ public:
       */
     csArray<gemObject*> FindNearbyEntities (iSector* sector, const csVector3& pos, float radius, bool doInvisible = false);
 
+    /** @brief Create a list of all gem objects in a sector.
+      *
+      * @param sector The sector to check in.
+      * @param doInvisible If true check invisible meshes otherwise ignore them.
+      *
+      * @return A csArray<> of all the objects in the given radius.
+      */
+    csArray<gemObject*> FindSectorEntities (iSector* sector, bool doInvisible = false);
+
 protected:
     /** @brief Get the next ID for an object.
       *
