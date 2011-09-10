@@ -68,7 +68,7 @@ pawsMusicWindow::~pawsMusicWindow()
 
 void pawsMusicWindow::OnChordSelection(SheetLine* sheetLine, Measure* measure, Chord* chord, int notePosition, bool before)
 {
-    bool done;      // used to return before adding notes to the selected chord
+    bool done = false;      // used to return before adding notes to the selected chord
 
     if(!editMode || pendingString)
     {

@@ -1517,7 +1517,7 @@ bool SheetLine::Contains(Measure* measure)
 
 bool SheetLine::SetSize(uint newSize, pawsSheetLine* pawsLine)
 {
-    bool isChanged;
+    bool isChanged = false;
 
     if(size != newSize)
     {
