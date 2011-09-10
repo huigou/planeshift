@@ -136,22 +136,64 @@ csArray<csString> MessageManagerBase::DecodeCommandArea(Client *client, csString
     csArray<csString> splitTarget = psSplit(target, ':');
     size_t splitSize = splitTarget.GetSize();
 
-    if (splitSize < 3 || splitSize > 4)
+    if (splitSize < 3 || (splitTarget[2] != "map" && splitSize > 4) ||  splitSize > 5)
     {
         psserver->SendSystemError(client->GetClientNum(),
-                "Try /$CMD area:item:range[:name]");
+                "Try /$CMD area:item:range/map:mapname[:name]");
         return result;
     }
 
     csString itemName = splitTarget[1];
-    csString nameFilter = splitSize > 3 ? splitTarget[3] : "all";
+    iSector* sector = NULL;
+    int range = 0;
+    csString nameFilter = "all";
 
-    const int range = atoi(splitTarget[2].GetData());
-    if (range <= 0)
+    gemActor* self = client->GetActor();
+    if (!self)
     {
-        psserver->SendSystemError(client->GetClientNum(),
-                "You must specify a positive integer for the area: range.");
+        psserver->SendSystemError(client->GetClientNum(), "You do not exist...");
         return result;
+    }
+
+    //it was specified a map as range
+    if(splitTarget[2] == "map")
+    {
+        //check which map is wanted
+        //first check if "here" was specified
+        if(splitTarget[3] == "here")
+        {
+            //in this case get the map from the client itself
+            sector = self->GetSector();
+        }
+        else
+        {
+            //search for the specified sector
+            sector = EntityManager::GetSingleton().GetEngine()->FindSector(splitTarget[3]);
+        }
+        if(!sector)
+        {
+            psserver->SendSystemError(client->GetClientNum(), "Cannot find specified sector " + splitTarget[3]);
+            return result;
+        }
+    }
+    else
+    {
+        range = atoi(splitTarget[2].GetData());
+        if (range <= 0)
+        {
+            psserver->SendSystemError(client->GetClientNum(),
+                "You must specify a positive integer for the area: range.");
+            return result;
+        }
+    }
+    
+    if(sector != NULL && splitSize > 4)
+    {
+        nameFilter = splitTarget[4];
+    }
+    else if (splitSize > 3)
+    {
+        nameFilter = splitTarget[3];
     }
 
     bool allNames = true;
@@ -176,19 +218,19 @@ csArray<csString> MessageManagerBase::DecodeCommandArea(Client *client, csString
         return result;
     }
 
-    gemActor* self = client->GetActor();
-    if (!self)
+
+    csArray<gemObject*> nearlist;
+    if(sector)
     {
-        psserver->SendSystemError(client->GetClientNum(), "You do not exist...");
-        return result;
+        nearlist = psserver->entitymanager->GetGEM()->FindSectorEntities(sector);
     }
+    else
+    {
+        csVector3 pos;
+        self->GetPosition(pos, sector);
 
-    csVector3 pos;
-    iSector* sector;
-    self->GetPosition(pos, sector);
-
-    csArray<gemObject*> nearlist = psserver->entitymanager->GetGEM()->FindNearbyEntities(sector, pos,
-            range);
+        nearlist = psserver->entitymanager->GetGEM()->FindNearbyEntities(sector, pos, range);
+    }
     size_t count = nearlist.GetSize();
     csArray<csString *> results;
 
