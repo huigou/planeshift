@@ -703,7 +703,8 @@ void CombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_result
             {
                 weapon->AddDecay(weaponDecay->GetValue());
             }
-            if (blockingWeapon)
+            //TODO: for now we disable decaying for bows (see PS#5181)
+            if (blockingWeapon && !blockingWeapon->GetIsRangeWeapon())
             {
                 blockingWeapon->AddDecay(blockDecay->GetValue());
             }
