@@ -35,6 +35,7 @@ class ServerSongManager: public MessageManager<ServerSongManager>
 {
 public:
     ServerSongManager();
+    bool Initialize();
 
     /**
      * Handles a play song request.
@@ -49,6 +50,9 @@ public:
      * @param client the sender.
      */
     void HandleStopSong(MsgEntry* me, Client* client);
+
+private:
+    unsigned int instrumentsCategory;        ///< Keeps the instruments' category from server_options table.
 };
 
 #endif // SERVER_SONG_MANAGER_H

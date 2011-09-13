@@ -163,13 +163,17 @@ void ClientSongManager::HandleMessage(MsgEntry* message)
             // stopping song, informing server and player
             if(playMsg.toPlayer)
             {
-                // sending message
+                // noticing server
                 psStopSongMessage stopMessage(0, 0, false, false);
                 stopMessage.SendMessage();
+
+                // updating mainSongId that is now PENDING
+                mainSongID = NO_SONG;
 
                 // updating listeners
                 TriggerListeners();
 
+                // noticing user
                 psSystemMessage msg(0, MSG_ERROR, PawsManager::GetSingleton().Translate("You cannot play this song!"));
                 msg.FireEvent();
             }
@@ -200,13 +204,15 @@ void ClientSongManager::HandleMessage(MsgEntry* message)
         }
         else if(mainSongID == PENDING && stopMsg.toPlayer) // no instrument equipped
         {
-            psSystemMessage msg(0, MSG_ERROR, PawsManager::GetSingleton().Translate("You do not have an equipped musical instrument to play."));
-            msg.FireEvent();
-
+            // updating mainSongId
             mainSongID = NO_SONG;
 
             // updating listeners
             TriggerListeners();
+
+            // noticing user
+            psSystemMessage msg(0, MSG_ERROR, PawsManager::GetSingleton().Translate("You do not have an equipped musical instrument to play."));
+            msg.FireEvent();
         }
     }
 }
