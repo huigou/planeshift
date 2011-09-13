@@ -32,6 +32,7 @@ CREATE TABLE `server_options` (
 INSERT INTO `server_options` VALUES ('db_version','1260');
 INSERT INTO `server_options` VALUES ('game_time','15:00');
 INSERT INTO `server_options` VALUES ('game_date','100-1-1');
+INSERT INTO `server_options` VALUES ('instruments_category','27');
 INSERT INTO `server_options` VALUES ('standard_motd','This is the message of the day from server_options table.');
 INSERT INTO `server_options` VALUES('tutorial:sectorname', 'tutorial');
 INSERT INTO `server_options` VALUES('tutorial:sectorx', '-225.37');

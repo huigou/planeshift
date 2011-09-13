@@ -36,12 +36,29 @@
 #include "psproxlist.h"
 
 #include "bulkobjects/pscharacter.h"
+#include "bulkobjects/psmerchantinfo.h"
 
 
 ServerSongManager::ServerSongManager()
 {
     Subscribe(&ServerSongManager::HandlePlaySong, MSGTYPE_MUSICAL_SHEET, REQUIRE_READY_CLIENT);
     Subscribe(&ServerSongManager::HandleStopSong, MSGTYPE_STOP_SONG, REQUIRE_READY_CLIENT);
+}
+
+bool ServerSongManager::Initialize()
+{
+    bool error;
+    csString instrCatStr;
+
+    if(psserver->GetServerOption("instruments_category", instrCatStr))
+    {
+        instrumentsCategory = atoi(instrCatStr.GetData());
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 void ServerSongManager::HandlePlaySong(MsgEntry* me, Client* client)
@@ -71,10 +88,10 @@ void ServerSongManager::HandlePlaySong(MsgEntry* me, Client* client)
 
             // getting equipped instrument
             instrItem = charData->Inventory().GetItem(0, PSCHARACTER_SLOT_RIGHTHAND);
-            if(instrItem == 0 /* || !instrItem->GetIsInstrument() */)     // TODO uncomment when the instruments are added and implemented
+            if(instrItem == 0 || instrItem->GetCategory()->id != instrumentsCategory)
             {
                 instrItem = charData->Inventory().GetItem(0, PSCHARACTER_SLOT_LEFTHAND);
-                if(instrItem == 0 /* || !instrItem->GetIsInstrument() */)     // TODO uncomment when the instruments are added and implemented
+                if(instrItem == 0 || instrItem->GetCategory()->id != instrumentsCategory)
                 {
                     // sending an error message
                     psStopSongMessage stopMsg(client->GetClientNum(), 0, true, false);

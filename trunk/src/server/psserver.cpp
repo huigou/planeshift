@@ -579,6 +579,11 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     Debug1(LOG_STARTUP,0, "Started Introduction Manager");
 
     songManager = new ServerSongManager();
+    if(!songManager->Initialize())
+    {
+        Error1("Failed to load Song Manager");
+        return false;
+    }
     Debug1(LOG_STARTUP,0, "Started Song Manager");
 
     if (!ServerStatus::Initialize (object_reg))
