@@ -162,7 +162,7 @@ private:
     bool editMode;                     ///< True if the edit mode is active.
     bool insertMode;                   ///< True if the insert mode is active.
 
-    pawsWidget* editButton;
+    pawsButton* editButton;
     pawsButton* playButton;
     pawsWidget* loadButton;
     pawsWidget* saveButton;
@@ -288,9 +288,9 @@ private:
 
     /**
      * Toggle the edit mode.
-     * @param showMessage true to show a message to a player about the toggling.
+     * @param toggle true to active the edit mode, false to deactive.
      */
-    void ToggleEditMode(bool showMessage = true);
+    void ToggleEditMode(bool toggle);
 
     /**
      * Plays/stops the song.

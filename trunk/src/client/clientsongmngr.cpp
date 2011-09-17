@@ -173,9 +173,12 @@ void ClientSongManager::HandleMessage(MsgEntry* message)
                 // updating listeners
                 TriggerListeners();
 
-                // noticing user
-                psSystemMessage msg(0, MSG_ERROR, PawsManager::GetSingleton().Translate("You cannot play this song!"));
-                msg.FireEvent();
+                // noticing user but only if he didn't deactivate sounds
+                if(psengine->GetSoundManager()->GetSndCtrl(iSoundManager::MUSIC_SNDCTRL)->GetToggle())
+                {
+                    psSystemMessage msg(0, MSG_ERROR, PawsManager::GetSingleton().Translate("You cannot play this song!"));
+                    msg.FireEvent();
+                }
             }
 
             return;

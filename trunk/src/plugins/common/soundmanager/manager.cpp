@@ -157,9 +157,7 @@ bool SoundSystemManager::
 Play2DSound(const char* name, bool loop, size_t loopstart, size_t loopend,
             float volume_preset, SoundControl* &sndCtrl, SoundHandle* &handle)
 {
-    InitSoundHandle(name, loop, loopstart, loopend, volume_preset, CS_SND3D_DISABLE, sndCtrl, handle, false);
-
-    if(handle == 0)
+    if(!InitSoundHandle(name, loop, loopstart, loopend, volume_preset, CS_SND3D_DISABLE, sndCtrl, handle, false))
     {
         return false;
     }
@@ -183,9 +181,7 @@ Play3DSound(const char* name, bool loop, size_t loopstart, size_t loopend,
             csVector3 dir, float mindist, float maxdist, float rad,
             int type3d, SoundHandle* &handle, bool dopplerEffect)
 {
-    InitSoundHandle(name, loop, loopstart, loopend, volume_preset, type3d, sndCtrl, handle, dopplerEffect);
-
-    if(handle == 0)
+    if(!InitSoundHandle(name, loop, loopstart, loopend, volume_preset, type3d, sndCtrl, handle, dopplerEffect))
     {
         return false;
     }
@@ -430,7 +426,7 @@ void SoundSystemManager::ChangePlayRate(SoundHandle* handle)
     handle->sndstream->SetPlayRatePercent(percentRate);
 }
 
-void SoundSystemManager::
+bool SoundSystemManager::
 InitSoundHandle(const char* name, bool loop, size_t loopstart, size_t loopend,
             float volume_preset, int type3d, SoundControl* &sndCtrl, SoundHandle* &handle, bool dopplerEffect)
 {
@@ -439,18 +435,18 @@ InitSoundHandle(const char* name, bool loop, size_t loopstart, size_t loopend,
     if(Initialised == false)
     {
         Debug1(LOG_SOUND,0,"Sound not Initialised\n");
-        return;
+        return false;
     }
 
     if(name == NULL)
     {
         Error1("Error: Play2DSound got NULL as soundname\n");
-        return;
+        return false;
     }
 
     if(sndCtrl->GetToggle() == false) /* FIXME */
     {
-        return;
+        return false;
     }
 
     handleID = FindHandleID();
@@ -463,12 +459,13 @@ InitSoundHandle(const char* name, bool loop, size_t loopstart, size_t loopend,
     if(!handle->Init(name, loop, volume_preset, type3d, sndCtrl, dopplerEffect))
     {
       delete handle;
-      handle = 0;
-      return;
+      return false;
     }
 
     handle->sndstream->SetLoopBoundaries(loopstart, loopend);
     handle->sndsource->SetVolume((volume_preset * sndCtrl->GetVolume()));
 
     soundHandles.Put(handleID, handle);
+
+    return true;
 }
