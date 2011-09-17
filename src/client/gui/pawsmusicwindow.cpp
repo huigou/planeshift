@@ -70,7 +70,7 @@ void pawsMusicWindow::OnChordSelection(SheetLine* sheetLine, Measure* measure, C
 {
     bool done = false;      // used to return before adding notes to the selected chord
 
-    if(!editMode || pendingString)
+    if(!editButton->GetState() || pendingString)
     {
         return;
     }
@@ -371,7 +371,7 @@ double pawsMusicWindow::CalcFunction(MathEnvironment* env, const char* functionN
 {
     if(csStrCaseCmp(functionName, "ClickEditButton") == 0)
     {
-        ToggleEditMode();
+        ToggleEditMode(editButton->GetState());
         return 0.0;
     }
     else if(csStrCaseCmp(functionName, "ClickPlayButton") == 0)
@@ -459,7 +459,7 @@ void pawsMusicWindow::Hide()
     {
         csString xmlScore;              // uncompressed musical sheet in XML format
 
-        if(editMode) // score is inconsistent
+        if(editButton->GetState()) // score is inconsistent
         {
             ToggleEditMode(false);
         }
@@ -477,7 +477,7 @@ void pawsMusicWindow::Hide()
 bool pawsMusicWindow::PostSetup()
 {
     // retrieving tools
-    editButton = FindWidget("EditButton");
+    editButton = static_cast<pawsButton*>(FindWidget("EditButton"));
     playButton = static_cast<pawsButton*>(FindWidget("PlayButton"));
     loadButton = FindWidget("LoadButton");
     saveButton = FindWidget("SaveButton");
@@ -1009,7 +1009,7 @@ void pawsMusicWindow::SetInsertMode(bool toggle)
     }
 }
 
-void pawsMusicWindow::ToggleEditMode(bool showMessage)
+void pawsMusicWindow::ToggleEditMode(bool toggle)
 {
     SheetLine* lastLine;
     Measure* lastMeasure;
@@ -1021,19 +1021,11 @@ void pawsMusicWindow::ToggleEditMode(bool showMessage)
         return;
     }
 
-    editMode = !editMode;
     SetToolbarButtons();
 
     // toggle on
-    if(editMode)
+    if(toggle)
     {
-        // noticing user
-        if(showMessage)
-        {
-            psSystemMessage sysMsg(0, MSG_ACK, PawsManager::GetSingleton().Translate("You have entered edit mode."));
-            sysMsg.FireEvent();
-        }
-
         // creating input measure
         lastMeasure = new Measure(new Chord());
 
@@ -1063,13 +1055,6 @@ void pawsMusicWindow::ToggleEditMode(bool showMessage)
     // toggle off
     else
     {
-        // noticing users
-        if(showMessage)
-        {
-            psSystemMessage sysMsg(0, MSG_ACK, PawsManager::GetSingleton().Translate("Edit mode has been disabled."));
-            sysMsg.FireEvent();
-        }
-
         if(insertMode)
         {
             SetInsertMode(false);
@@ -1131,11 +1116,11 @@ void pawsMusicWindow::PlayStop()
 {
     if(playButton->GetState()) // play
     {
-        if(editMode) // sheet not consistent
+        if(editButton->GetState()) // sheet not consistent
         {
             ToggleEditMode(false);
             psengine->GetSongManager()->PlayMainPlayerSong(currentItemID, ToXML());
-            ToggleEditMode(false);
+            ToggleEditMode(true);
         }
         else
         {
@@ -1157,11 +1142,11 @@ void pawsMusicWindow::Save()
     csRef<iConfigManager> configMgr = psengine->GetConfig();
 
     // if in edit mode the sheet is not consistent
-    if(editMode)
+    if(editButton->GetState())
     {
         ToggleEditMode(false);
         xml = ToXML();
-        ToggleEditMode(false);
+        ToggleEditMode(true);
     }
     else
     {
@@ -1461,7 +1446,7 @@ void pawsMusicWindow::SelectAlteration(int buttonID)
 
 void pawsMusicWindow::SetToolbarButtons()
 {
-    if(editMode)
+    if(editButton->GetState())
     {
         titleButton->Show();
         doubleStaffButton->Show();
@@ -1534,7 +1519,6 @@ void pawsMusicWindow::ResetState()
     readOnly = false;
     edited = false;
     pendingString = false;
-    editMode = false;
     insertMode = false;
 
     // stopping played song

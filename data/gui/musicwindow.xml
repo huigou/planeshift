@@ -6,9 +6,10 @@
         <bgimage resource="MiddleAreaMap" />
         <font name="scurlock.ttf" r="0" g="0" b="0" size="20" />
 
-        <widget name="EditButton" factory="pawsButton" id="100" tooltip="Edit Mode">
+        <widget name="EditButton" factory="pawsButton" id="100" toggle="yes" tooltip="Edit Mode">
             <frame x="0" y="0" width="16" height="16" />
-            <bgimage resource="FeatherTool" />
+            <buttonup resource="FeatherTool" />
+            <buttondown resource="DeleteTool" />
             <eventMouseDown>Ret = MusicWindow:ClickEditButton()</eventMouseDown>
         </widget>
 

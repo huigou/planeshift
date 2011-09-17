@@ -244,8 +244,8 @@ private:
     void ChangePlayRate(SoundHandle* handle);
 
     /**
-     * Create a SoundHandle if the given one is null and it initializes it. If its
-     * creation fails handle is a null pointer.
+     * Create a SoundHandle if the given one is null and it initializes it.
+     *
      * @param name name of the resource you want to play @see SoundData for details
      * @param loop LOOP or DONT_LOOP
      * @param loopstart startframe when looping
@@ -255,8 +255,9 @@ private:
      * @param handle the SoundHandle that will be initialized. After the method's call
      * it is a null pointer if it could not be created.
      * @param dopplerEffect true to apply the doppler effect to this sound, false otherwise.
+     * @return true if the handle has been initialized, false otherwise.
      */
-    void InitSoundHandle(const char* name, bool loop, size_t loopstart,
+    bool InitSoundHandle(const char* name, bool loop, size_t loopstart,
                      size_t loopend, float volume_preset, int type3d,
                      SoundControl* &sndCtrl, SoundHandle* &handle, bool dopplerEffect);
 };

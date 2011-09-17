@@ -2143,7 +2143,7 @@ bool pawsSheetLine::OnMouseDown(int button, int modifiers, int x, int y)
         }
     }
 
-    return pawsWidget::OnMouseDown(button, modifiers, x, y);
+    return true;
 }
 
 bool pawsSheetLine::PostSetup()
