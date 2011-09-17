@@ -367,6 +367,8 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
         }
     }
 
+    client->SetSecurityLevel(acctinfo->securitylevel);
+
     if(csGetTicks() - start > 500)
     {
         csString status;
@@ -488,7 +490,6 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
     
     client->SetSpamPoints(acctinfo->spamPoints);
     client->SetAdvisorPoints(acctinfo->advisorPoints);
-    client->SetSecurityLevel(acctinfo->securitylevel);
 
     if (acctinfo->securitylevel >= GM_TESTER)
     {
