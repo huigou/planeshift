@@ -675,6 +675,9 @@ void SoundManager::Init()
     }
 
     sndSysMgr = new SoundSystemManager(objectReg);
+
+    // remember that InstrumentManager must be initialized after SoundSystemManager
+    // or it won't define any instrument
     instrMgr = new InstrumentManager(objectReg, instrumentsPath);
 
     // initializing ambient and music controller to something different

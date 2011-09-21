@@ -38,6 +38,13 @@ InstrumentManager::InstrumentManager(iObjectRegistry* objectReg, const char* ins
     csRef<iDocumentNode> root;
     csRef<iDocumentNode> instrRootNode;
 
+    // if SoundSystemManager hasn't been initialized instruments cannot
+    // load notes from resource sounds
+    if(!SoundSystemManager::GetSingleton().Initialised)
+    {
+        return;
+    }
+
     if((doc = ParseFile(objectReg, instrumentsFileName)).IsValid()
         && (root = doc->GetRoot()).IsValid()
         && (instrRootNode = root->GetNode("instruments")).IsValid())
@@ -109,8 +116,13 @@ bool InstrumentManager::PlaySong(SoundControl* sndCtrl, csVector3 pos, csVector3
         return false;
     }
 
+    // checking if the instrument is defined
     instr = instruments.Get(instrName, 0);
     if(instr == 0)
+    {
+        return false;
+    }
+    if(!instr->IsDefined())
     {
         return false;
     }
