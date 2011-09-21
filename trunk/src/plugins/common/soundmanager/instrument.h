@@ -85,6 +85,12 @@ public:
     ~Instrument();
 
     /**
+     * Checks if the instrument has a format and a set of defined notes.
+     * @return true if it is defined, false otherwise.
+     */
+    bool IsDefined();
+
+    /**
      * Gets the number of notes that this instrument can play at the same time.
      * @return the number of notes that this instrument can play at the same time.
      */

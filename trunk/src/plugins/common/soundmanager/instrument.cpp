@@ -77,6 +77,16 @@ Instrument::~Instrument()
     notes.DeleteAll();
 }
 
+bool Instrument::IsDefined()
+{
+    if(format == 0 || notes.IsEmpty())
+    {
+        return false;
+    }
+
+    return true;
+}
+
 size_t Instrument::GetNoteBuffer(char pitch, int alter, uint octave, float duration, char* &buffer, size_t &length)
 {
     length = 0;
@@ -85,7 +95,7 @@ size_t Instrument::GetNoteBuffer(char pitch, int alter, uint octave, float durat
     size_t requestedBytes; // the number of bytes that are needed for the given duration
 
     // check if notes have been loaded
-    if(format == 0)
+    if(!IsDefined())
     {
         return 0;
     }
@@ -150,7 +160,7 @@ void Instrument::AddNoteToChord(char pitch, int alter, uint octave, float durati
     size_t noteLength;
 
     // check if notes have been loaded
-    if(format == 0)
+    if(!IsDefined())
     {
         return;
     }
