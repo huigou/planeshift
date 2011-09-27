@@ -667,7 +667,7 @@ bool pawsListBox::Select( pawsListBoxRow* row, bool notify)
     int offset = 0;
     if ( usingTitleRow )
         offset = 1;
-    int numberOfRows = screenFrame.Height() / columnDef[0].height - offset;
+    int numberOfRows = GetUnborderedHeight() / columnDef[0].height - offset;
 
     if (selected<topRow)
         topRow=selected;
@@ -730,7 +730,7 @@ bool pawsListBox::SelectByIndex(int index, bool notify)
     int offset = 0;
     if ( usingTitleRow )
         offset = 1;
-    int numberOfRows = screenFrame.Height() / columnDef[0].height - offset;
+    int numberOfRows = GetUnborderedHeight() / columnDef[0].height - offset;
 
     if (selected<topRow)
         topRow=selected;
@@ -761,7 +761,7 @@ void pawsListBox::SetScrollBarMaxValue()
     scrollBar->SetMaxValue(
                             int(rows.GetSize()) + (usingTitleRow?1:0) + horiz +
                                 -
-                            screenFrame.Height() / columnDef[0].height
+                            GetUnborderedHeight() / columnDef[0].height
                           );
 
     // Find the longest row
@@ -819,6 +819,11 @@ void pawsListBox::SetScrollBarMaxValue()
     }
 }
 
+int pawsListBox::GetUnborderedHeight()
+{
+    return screenFrame.Height() - ( GetBorder() ? 2* BORDER_SIZE : 0 );
+}
+
 void pawsListBox::CalculateDrawPositions()
 {
     // -1 because of title row.
@@ -832,8 +837,7 @@ void pawsListBox::CalculateDrawPositions()
      if (topRow>totalRows)
          topRow=totalRows;
 
-
-    size_t numberOfRows = screenFrame.Height() / columnDef[0].height - offset;
+    size_t numberOfRows = GetUnborderedHeight() / columnDef[0].height - offset;
 
     size_t row = topRow;
 
@@ -851,8 +855,8 @@ void pawsListBox::CalculateDrawPositions()
             int positionX = 0 + xMod;
             if (GetBorder())
             {
-                positionY+=5;
-                positionX+=5;
+                positionY+=BORDER_SIZE;
+                positionX+=BORDER_SIZE;
             }
             positionY+=margin;
             positionX+=margin;
@@ -1084,8 +1088,7 @@ void pawsListBox::MoveSelectBar(bool direction)
     if ( usingTitleRow )
         offset = 1;
 
-    int numberOfRows = screenFrame.Height() / columnDef[0].height - offset;
-
+    int numberOfRows = GetUnborderedHeight() / columnDef[0].height - offset;
 
      // Adjust the topRow of drawing if the selected row is not visible
      if (selected<topRow)
@@ -1387,6 +1390,40 @@ const char *pawsListBox::GetSelectedText(size_t columnId)
     return box->GetText();
 }
 
+size_t pawsListBox::GetRowCount()
+{
+    return rows.GetSize();
+}
+
+pawsTextBox * pawsListBox::GetTextCell(int rowNum, int colNum)
+{
+    pawsListBoxRow * row = GetRow(rowNum);
+    if (row == NULL)
+        return NULL;
+
+    pawsWidget * cell = row->GetColumn(colNum);
+    if (cell == NULL)
+        return NULL;
+
+    return dynamic_cast <pawsTextBox*> (cell);
+}
+
+csString pawsListBox::GetTextCellValue(int rowNum, int colNum)
+{
+    pawsTextBox * cell = GetTextCell(rowNum, colNum);
+    if (cell != NULL)
+        return cell->GetText();
+    else
+        return (const char*)NULL;
+}
+
+void pawsListBox::SetTextCellValue(int rowNum, int colNum, const csString & value)
+{
+    pawsTextBox * cell = GetTextCell(rowNum, colNum);
+    if (cell != NULL)
+        cell->SetText(value);
+}
+
 //-----------------------------------------------------------------------------
 //                            class pawsListBoxRow
 //-----------------------------------------------------------------------------
@@ -1556,39 +1593,7 @@ void pawsListBoxRow::Hide()
     pawsWidget::Hide();
 }
 
-size_t pawsListBox::GetRowCount()
-{
-    return rows.GetSize();
-}
 
-pawsTextBox * pawsListBox::GetTextCell(int rowNum, int colNum)
-{
-    pawsListBoxRow * row = GetRow(rowNum);
-    if (row == NULL)
-        return NULL;
-
-    pawsWidget * cell = row->GetColumn(colNum);
-    if (cell == NULL)
-        return NULL;
-
-    return dynamic_cast <pawsTextBox*> (cell);
-}
-
-csString pawsListBox::GetTextCellValue(int rowNum, int colNum)
-{
-    pawsTextBox * cell = GetTextCell(rowNum, colNum);
-    if (cell != NULL)
-        return cell->GetText();
-    else
-        return (const char*)NULL;
-}
-
-void pawsListBox::SetTextCellValue(int rowNum, int colNum, const csString & value)
-{
-    pawsTextBox * cell = GetTextCell(rowNum, colNum);
-    if (cell != NULL)
-        cell->SetText(value);
-}
 
 int textBoxSortFunc(pawsWidget * widgetA, pawsWidget * widgetB)
 {

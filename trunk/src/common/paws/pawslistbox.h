@@ -328,6 +328,14 @@ public:
 
 protected:
 
+    /**
+     * Defines border size around child widgets
+     *
+     * If borders are used by this widget, it offsets position of each child widget and
+     * total space designed for child widgets is also increased (by twice size of border)
+     */
+    static const int BORDER_SIZE = 5;
+
     void CreateSortingArrow(int colNum);
     void SetSortingArrow(int colNum, bool ascOrder);
     void CheckSortingArrow(int colNum, bool ascOrder);
@@ -335,6 +343,12 @@ protected:
 
     pawsWidget * GetColumnTitle(int colNum);
 
+    /**
+     * Gets height of widget after vertical borders are being excluded 
+     *
+     * @return Height of widget after subtracting vertical borders height 
+     */
+    int GetUnborderedHeight();
 
     bool usingTitleRow;
 
