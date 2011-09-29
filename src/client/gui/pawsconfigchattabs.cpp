@@ -47,7 +47,7 @@ bool pawsConfigChatTabs::PostSetup()
         Error1("Couldn't find ChatWindow!");
         return false;
     }
-    // Find widgets
+    // Find widgets. These sets the main tab output
     if ((isysbase = FindCheckbox("isysbase")) == NULL)
         return false;
     if ((inpc = FindCheckbox("inpc")) == NULL)
@@ -70,6 +70,29 @@ bool pawsConfigChatTabs::PostSetup()
         return false;
     if ((basicchat = FindCheckbox("basicchat")) == NULL)
         return false;
+
+    //these sets the tabs to actually show
+    if ((issysbase = FindCheckbox("issysbase")) == NULL)
+        return false;
+    if ((isnpc = FindCheckbox("isnpc")) == NULL)
+        return false;
+    if ((ischat = FindCheckbox("ischat")) == NULL)
+        return false;
+    if ((istells = FindCheckbox("istells")) == NULL)
+        return false;
+    if ((isguild = FindCheckbox("isguild")) == NULL)
+        return false;
+    if ((isalliance = FindCheckbox("isalliance")) == NULL)
+        return false;
+    if ((isgroup = FindCheckbox("isgroup")) == NULL)
+        return false;
+    if ((isauction = FindCheckbox("isauction")) == NULL)
+        return false;
+    if ((issys = FindCheckbox("issys")) == NULL)
+        return false;
+    if ((ishelp = FindCheckbox("ishelp")) == NULL)
+        return false;
+
     return true;
 }
 
@@ -89,6 +112,16 @@ bool pawsConfigChatTabs::LoadConfig()
     iauction->SetState(false);
     isys->SetState(false);
     ihelp->SetState(false);
+    issysbase->SetState(false);
+    ischat->SetState(false);
+    isnpc->SetState(false);
+    istells->SetState(false);
+    isguild->SetState(false);
+    isalliance->SetState(false);
+    isgroup->SetState(false);
+    isauction->SetState(false);
+    issys->SetState(false);
+    ishelp->SetState(false);
     basicchat->SetState(settings.chatWidget == "chat_basic.xml");
 
     csArray<csString> allMainBindings = settings.bindings.GetAll("subMainText");
@@ -115,6 +148,37 @@ bool pawsConfigChatTabs::LoadConfig()
         if(allMainBindings[i] == "CHAT_ADVICE")
             ihelp->SetState(true);
     }
+
+    //TODO: these magic numbers must disappear
+    if(settings.chatWidget == "chat.xml")
+    {
+        unsigned int state = settings.tabSetting;
+        issysbase->SetState(state & 1);
+        ischat->SetState(state & 2);
+        isnpc->SetState(state & 4);
+        istells->SetState(state & 8);
+        isguild->SetState(state & 16);
+        isgroup->SetState(state & 32);
+        isalliance->SetState(state & 64);
+        isauction->SetState(state & 128);
+        issys->SetState(state & 256);
+        ishelp->SetState(state & 512);
+    }
+    else
+    {
+        //we disable the settings as they are unusable.
+        issysbase->GetButton()->SetEnabled(false);
+        ischat->GetButton()->SetEnabled(false);
+        isnpc->GetButton()->SetEnabled(false);
+        istells->GetButton()->SetEnabled(false);
+        isguild->GetButton()->SetEnabled(false);
+        isalliance->GetButton()->SetEnabled(false);
+        isgroup->GetButton()->SetEnabled(false);
+        isauction->GetButton()->SetEnabled(false);
+        issys->GetButton()->SetEnabled(false);
+        ishelp->GetButton()->SetEnabled(false);
+    }
+
 
     // Check boxes doesn't send OnChange :(
     dirty = true;
@@ -219,20 +283,21 @@ bool pawsConfigChatTabs::SaveConfig()
     //could be made more generic (scan the dir?)
     settings.chatWidget = basicchat->GetState() ? "chat_basic.xml" : "chat.xml";
 
-    //set the bit state for each tab in the "state" parameter 
+    //set the bit state for each tab in the "state" parameter
+    //TODO: these magic numbers must disappear
     if(settings.chatWidget == "chat.xml")
     {
         unsigned int state = 0x00000000;
-        if(isysbase->GetState()) state += 1;
-        if(ichat->GetState()) state += 2;
-        if(inpc->GetState()) state += 4;
-        if(itells->GetState()) state += 8;
-        if(iguild->GetState()) state += 16;
-        if(igroup->GetState()) state += 32;
-        if(ialliance->GetState()) state += 64;
-        if(iauction->GetState()) state += 128;
-        if(isys->GetState()) state += 256;
-        if(ihelp->GetState()) state += 512;
+        if(issysbase->GetState()) state += 1;
+        if(ischat->GetState()) state += 2;
+        if(isnpc->GetState()) state += 4;
+        if(istells->GetState()) state += 8;
+        if(isguild->GetState()) state += 16;
+        if(isgroup->GetState()) state += 32;
+        if(isalliance->GetState()) state += 64;
+        if(isauction->GetState()) state += 128;
+        if(issys->GetState()) state += 256;
+        if(ishelp->GetState()) state += 512;
 
         settings.tabSetting = state;
     }

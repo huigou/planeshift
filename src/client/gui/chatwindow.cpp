@@ -363,7 +363,8 @@ void pawsChatWindow::LoadChatSettings()
 
             if (nodeName == "loose")
                 settings.looseFocusOnSend = option->GetAttributeValueAsBool("value", false);
-
+            if (nodeName == "tabSetting")
+                settings.tabSetting = option->GetAttributeValueAsInt("value", 1023);
             else if (nodeName == "selecttabstyle")
                 settings.selectTabStyle = (int)option->GetAttributeValueAsInt("value");
             else if (nodeName == "echoscreeninsystem")
@@ -1138,9 +1139,9 @@ void pawsChatWindow::SaveChatSettings()
     csRef<iDocumentSystem> docsys = csPtr<iDocumentSystem> (new csTinyDocumentSystem ());
 
     csRef<iDocument> doc = docsys->CreateDocument();
-    csRef<iDocumentNode> root,chatNode, colorNode, optionNode,looseNode,filtersNode,
+    csRef<iDocumentNode> root, chatNode, colorNode, optionNode,looseNode,filtersNode,
                          badWordsNode, badWordsTextNode, tabCompletionNode, completionItemNode, cNode, logNode, selectTabStyleNode,
-                         echoScreenInSystemNode, mainBracketsNode, yourColorMixNode, joindefaultchannelNode, tabSettingNode,
+                         echoScreenInSystemNode, mainBracketsNode, yourColorMixNode, joindefaultchannelNode, tabSettingNode, 
                          defaultlastchatNode, spellCheckerNode, spellCheckerWordNode, chatWidgetNode, mainTabNode, flashingNode, flashingOnCharNode, node;
 
     root = doc->CreateRoot();
