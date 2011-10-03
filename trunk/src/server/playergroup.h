@@ -85,6 +85,14 @@ public:
     /// Yield to all groups in duel with this.
     void DuelYield();
 
+    /**
+     *  Checks if the group is in duel with any other group.
+     *
+     *  Useful to quickly check if the group might be dangerous to who joins.
+     *  @return True if the group is currently in duel.
+     */
+    bool IsInDuel();
+
     /** Check if we are in duel with another group.
      * 
      *  @param OtherGroup A pointer to the PlayerGroup we are checking if it's in duel with this group.
