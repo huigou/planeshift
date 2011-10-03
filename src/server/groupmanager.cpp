@@ -322,6 +322,11 @@ void PlayerGroup::DuelYield()
     DuelGroups.DeleteAll();
 }
 
+bool PlayerGroup::IsInDuel()
+{
+    return DuelGroups.GetSize() > 0;
+}
+
 bool PlayerGroup::IsInDuelWith(PlayerGroup *OtherGroup)
 {
     return DuelGroups.Find(OtherGroup) != csArrayItemNotFound;
@@ -604,12 +609,13 @@ void GroupManager::Invite(psGroupCmdMessage& msg,Client *inviter)
     psserver->SendSystemInfo(inviter->GetClientNum(),"Confirming group invitation with %s now...",invitee->GetName() );
 
     csString invitation;
-    invitation.Format("%s has invited you to join a group.  Would you like to join it?",inviter->GetName() );
+    invitation.Format("%s has invited you to join a group%s.  Would you like to join it?",
+                       inviter->GetName(), group->IsInDuel() ? " which is currently in a duel" : "" );
     PendingGroupInvite *pnew = new PendingGroupInvite(inviter,
                                                       invitee,
                                                       invitation,
                                                       group);
-    
+
     // Track who is invited where, to verify confirmations
     psserver->questionmanager->SendQuestion(pnew);
 }
