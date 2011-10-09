@@ -38,9 +38,10 @@
             <eventMouseDown>Ret = MusicWindow:ClickTitleButton()</eventMouseDown>
         </widget>
 
-        <widget name="DoubleStaffButton" factory="pawsButton" id="105" tooltip="Double Staff Switch">
+        <widget name="DoubleStaffButton" factory="pawsButton" id="105" toggle="yes" tooltip="Double Staff Switch">
             <frame x="108" y="0" width="16" height="16" />
-            <bgimage resource="SingleStaffButton" />
+            <buttonup resource="SingleStaffButton" />
+            <buttondown resource="DoubleStaffButton" />
             <eventMouseDown>Ret = MusicWindow:ClickDoubleStaffButton()</eventMouseDown>
         </widget>
 

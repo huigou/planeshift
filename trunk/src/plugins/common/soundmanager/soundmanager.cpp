@@ -389,6 +389,17 @@ bool SoundManager::PushQueueItem(int queueID, const char* fileName)
 }
 
 
+bool SoundManager::IsSoundActive(iSoundControl* sndCtrl)
+{
+    if(sndSysMgr == 0)
+    {
+        return false;
+    }
+
+    return sndCtrl->GetToggle() && sndSysMgr->Initialised;
+}
+
+
 void SoundManager::SetCombatStance(int newCombatStance)
 {
     if(combatMusic.GetToggle() == true)
@@ -693,6 +704,7 @@ void SoundManager::Init()
     AddSndCtrl(iSoundManager::EFFECT_SNDCTRL, iSoundControl::NORMAL);
     AddSndCtrl(iSoundManager::GUI_SNDCTRL, iSoundControl::NORMAL);
     AddSndCtrl(iSoundManager::VOICE_SNDCTRL, iSoundControl::NORMAL);
+    AddSndCtrl(iSoundManager::INSTRUMENT_SNDCTRL, iSoundControl::NORMAL);
 
     // Initializing voice queue
     AddSndQueue(iSoundManager::VOICE_QUEUE, GetSndCtrl(iSoundManager::VOICE_SNDCTRL));

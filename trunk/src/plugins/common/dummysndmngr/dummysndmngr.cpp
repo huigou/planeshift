@@ -105,6 +105,11 @@ bool DummySoundManager::PushQueueItem(int queueID, const char* fileName)
     return true;
 }
 
+bool DummySoundManager::IsSoundActive(iSoundControl* sndCtrl)
+{
+    return true;
+}
+
 void DummySoundManager::SetCombatStance(int newCombatStance)
 {
     combat = newCombatStance;

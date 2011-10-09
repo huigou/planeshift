@@ -89,6 +89,7 @@ public:
     virtual bool PushQueueItem(int queueID, const char* fileName);
 
     //State
+    virtual bool IsSoundActive(iSoundControl* sndCtrl);
     virtual void SetCombatStance(int newCombatStance);
     virtual int GetCombatStance() const;
     virtual void SetPlayerMovement(csVector3 playerPosition, csVector3 playerVelocity);

@@ -163,6 +163,8 @@ void ClientSongManager::HandleMessage(MsgEntry* message)
             // stopping song, informing server and player
             if(playMsg.toPlayer)
             {
+                iSoundManager* sndMngr = psengine->GetSoundManager();
+
                 // noticing server
                 psStopSongMessage stopMessage(0, 0, false, false);
                 stopMessage.SendMessage();
@@ -174,7 +176,12 @@ void ClientSongManager::HandleMessage(MsgEntry* message)
                 TriggerListeners();
 
                 // noticing user but only if he didn't deactivate sounds
-                if(psengine->GetSoundManager()->GetSndCtrl(iSoundManager::MUSIC_SNDCTRL)->GetToggle())
+                if(!sndMngr->IsSoundActive(sndMngr->GetSndCtrl(iSoundManager::INSTRUMENT_SNDCTRL)))
+                {
+                    psSystemMessage msg(0, MSG_ERROR, PawsManager::GetSingleton().Translate("Sounds are not active!"));
+                    msg.FireEvent();
+                }
+                else
                 {
                     psSystemMessage msg(0, MSG_ERROR, PawsManager::GetSingleton().Translate("You cannot play this song!"));
                     msg.FireEvent();
@@ -225,7 +232,7 @@ uint ClientSongManager::PlaySong(const char* musicalSheet, const char* instrName
     csRef<iDocument> sheetDoc;
     csRef<iDocumentSystem> docSys;
     iSoundManager* sndMngr = psengine->GetSoundManager();
-    iSoundControl* sndCtrl = sndMngr->GetSndCtrl(iSoundManager::MUSIC_SNDCTRL);
+    iSoundControl* sndCtrl = sndMngr->GetSndCtrl(iSoundManager::INSTRUMENT_SNDCTRL);
 
     // creating document
     docSys = csQueryRegistry<iDocumentSystem>(psengine->GetObjectRegistry());
