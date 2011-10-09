@@ -1721,88 +1721,57 @@ bool psEngine::LoadSoundSettings(bool forceDef)
     if (optionNode != NULL)
     	SoundManager->GetSndCtrl(iSoundManager::VOICE_SNDCTRL)->SetToggle(optionNode->GetAttributeValueAsBool("on",true));
 
-    optionNode = mainNode->GetNode("volume");
-    if (optionNode != NULL)
-    {
-        // Failsafe
-        int volume = optionNode->GetAttributeValueAsInt("value");
-        if(volume == 0)
-        {
-            printf("Invalid sound setting, setting to 100%%\n");
-            volume = 100;
-        }
+    optionNode = mainNode->GetNode("instruments");
+    if(optionNode != NULL)
+        SoundManager->GetSndCtrl(iSoundManager::INSTRUMENT_SNDCTRL)->SetToggle(optionNode->GetAttributeValueAsBool("on", true));
 
-		SoundManager->GetMainSndCtrl()->SetVolume((float) volume/100);
+    optionNode = mainNode->GetNode("volume");
+    if(optionNode != NULL)
+    {
+        int volume = optionNode->GetAttributeValueAsInt("value", 100);
+		SoundManager->GetMainSndCtrl()->SetVolume((float)volume / 100);
     }
 
     optionNode = mainNode->GetNode("musicvolume");
-    if (optionNode != NULL)
+    if(optionNode != NULL)
     {
-        // Failsafe
-        int volume = optionNode->GetAttributeValueAsInt("value");
-        if(volume == 0)
-        {
-            printf("Invalid sound setting, setting to 100%%\n");
-            volume = 100;
-        }
-
-        SoundManager->GetSndCtrl(iSoundManager::MUSIC_SNDCTRL)->SetVolume((float) volume/100);
+        int volume = optionNode->GetAttributeValueAsInt("value", 100);
+        SoundManager->GetSndCtrl(iSoundManager::MUSIC_SNDCTRL)->SetVolume((float)volume / 100);
     }
 
     optionNode = mainNode->GetNode("ambientvolume");
-    if (optionNode != NULL)
+    if(optionNode != NULL)
     {
-        // Failsafe
-        int volume = optionNode->GetAttributeValueAsInt("value");
-        if(volume == 0)
-        {
-            printf("Invalid sound setting, setting to 100%%\n");
-            volume = 100;
-        }
-
-        SoundManager->GetSndCtrl(iSoundManager::AMBIENT_SNDCTRL)->SetVolume((float) volume/100);
+        int volume = optionNode->GetAttributeValueAsInt("value", 100);
+        SoundManager->GetSndCtrl(iSoundManager::AMBIENT_SNDCTRL)->SetVolume((float)volume / 100);
     }
 
     optionNode = mainNode->GetNode("actionsvolume");
-    if (optionNode != NULL)
+    if(optionNode != NULL)
     {
-        // Failsafe
-        int volume = optionNode->GetAttributeValueAsInt("value");
-        if(volume == 0)
-        {
-            printf("Invalid sound setting, setting to 100%%\n");
-            volume = 100;
-        }
-
-		SoundManager->GetSndCtrl(iSoundManager::ACTION_SNDCTRL)->SetVolume((float) volume/100);        
+        int volume = optionNode->GetAttributeValueAsInt("value", 100);
+		SoundManager->GetSndCtrl(iSoundManager::ACTION_SNDCTRL)->SetVolume((float)volume / 100);
     }
 
     optionNode = mainNode->GetNode("guivolume");
-    if (optionNode != NULL)
+    if(optionNode != NULL)
     {
-        // Failsafe
-        int volume = optionNode->GetAttributeValueAsInt("value");
-        if(volume == 0)
-        {
-            printf("Invalid sound setting, setting to 100%%\n");
-            volume = 100;
-        }
-
-        SoundManager->GetSndCtrl(iSoundManager::GUI_SNDCTRL)->SetVolume((float) volume/100);
+        int volume = optionNode->GetAttributeValueAsInt("value", 100);
+        SoundManager->GetSndCtrl(iSoundManager::GUI_SNDCTRL)->SetVolume((float)volume / 100);
     }
 
     optionNode = mainNode->GetNode("voicesvolume");
-    if (optionNode != NULL)
+    if(optionNode != NULL)
     {
-        // Failsafe
-        int volume = optionNode->GetAttributeValueAsInt("value");
-        if(volume == 0)
-        {
-            printf("Invalid sound setting, setting to 100%%\n");
-            volume = 100;
-        }
+        int volume = optionNode->GetAttributeValueAsInt("value", 100);
+		SoundManager->GetSndCtrl(iSoundManager::VOICE_SNDCTRL)->SetVolume((float)volume / 100);
+    }
 
-		SoundManager->GetSndCtrl(iSoundManager::VOICE_SNDCTRL)->SetVolume((float) volume/100);
+    optionNode = mainNode->GetNode("instrumentsvolume");
+    if(optionNode != NULL)
+    {
+        int volume = optionNode->GetAttributeValueAsInt("value", 100);
+		SoundManager->GetSndCtrl(iSoundManager::INSTRUMENT_SNDCTRL)->SetVolume((float)volume / 100);
     }
 
     optionNode = mainNode->GetNode("muteonfocusloss");

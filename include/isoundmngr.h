@@ -58,12 +58,13 @@ struct iSoundManager: public virtual iBase
      */
     enum SndCtrlID
     {
-        AMBIENT_SNDCTRL ,
+        AMBIENT_SNDCTRL,
         MUSIC_SNDCTRL,
         VOICE_SNDCTRL,
         ACTION_SNDCTRL,
         EFFECT_SNDCTRL,
-        GUI_SNDCTRL
+        GUI_SNDCTRL,
+        INSTRUMENT_SNDCTRL
     };
 
     /**
@@ -204,6 +205,14 @@ struct iSoundManager: public virtual iBase
     //----------------//
     // STATE MANAGING //
     //----------------//
+
+    /**
+     * Checks if it is possible to play a sound with the given sound control.
+     * @param sndCtrl the sound control that will be used to play the sound.
+     * @return true if it is possible to play a sound with the given sound control,
+     * false otherwise.
+     */
+    virtual bool IsSoundActive(iSoundControl* sndCtrl) = 0;
 
     /**
      * Set the new combat stance and starts the combat music if the combat toggle

@@ -483,7 +483,7 @@ bool pawsMusicWindow::PostSetup()
     saveButton = FindWidget("SaveButton");
     titleButton = FindWidget("TitleButton");
 
-    doubleStaffButton = FindWidget("DoubleStaffButton");
+    doubleStaffButton = static_cast<pawsButton*>(FindWidget("DoubleStaffButton"));
     tonalityButton = FindWidget("TonalityButton");
     meterButton = FindWidget("MeterButton");
     bpmButton = FindWidget("BPMButton");
@@ -1207,7 +1207,7 @@ void pawsMusicWindow::ChangeSongTitle()
 
 void pawsMusicWindow::SwitchDoubleStaff()
 {
-    bool newStaffStatus = !pawsLine1->GetDoubleStaff();
+    bool newStaffStatus = !doubleStaffButton->GetState();
     pawsLine1->SetDoubleStaff(newStaffStatus);
     pawsLine2->SetDoubleStaff(newStaffStatus);
 

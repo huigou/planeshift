@@ -65,12 +65,14 @@ protected:
     pawsScrollBar* actionsVol;
     pawsScrollBar* guiVol;
     pawsScrollBar* voicesVol;
+    pawsScrollBar* instrumentsVol;
 
     pawsCheckBox* ambient;
     pawsCheckBox* actions;
     pawsCheckBox* music;
     pawsCheckBox* gui;
     pawsCheckBox* voices;
+    pawsCheckBox* instruments;
 
     pawsCheckBox* muteOnFocusLoss;
     pawsCheckBox* loopBGM;
@@ -81,8 +83,8 @@ protected:
 
     bool loaded;
 
-    bool oldambient,oldactions,oldmusic,oldgui,oldvoices,oldlisteneroncamerapos,oldchatsound;
-    float oldvol,oldmusicvol,oldambientvol,oldactionsvol,oldguivol,oldvoicesvol;
+    bool oldambient, oldactions, oldmusic, oldgui, oldvoices, oldInstruments, oldlisteneroncamerapos, oldchatsound;
+    float oldvol, oldmusicvol, oldambientvol, oldactionsvol, oldguivol, oldvoicesvol, oldInstrumentsVol;
 };
 
 

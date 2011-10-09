@@ -168,7 +168,7 @@ private:
     pawsWidget* saveButton;
     pawsWidget* titleButton;
 
-    pawsWidget* doubleStaffButton;
+    pawsButton* doubleStaffButton;
     pawsWidget* tonalityButton;
     pawsWidget* meterButton;
     pawsWidget* bpmButton;
