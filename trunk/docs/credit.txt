@@ -101,3 +101,5 @@ All the former developers for their work and contributions to PlaneShift.
 .... and to all our players, fans and supporters!
 
 @Be sure to read the other credits files in docs directory to have a full list of developers of previous releases.
+
+Sonora font is used with permission of the author: Christian Texier
