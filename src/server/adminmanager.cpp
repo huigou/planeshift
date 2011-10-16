@@ -6771,7 +6771,8 @@ void AdminManager::Slide(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmd
 
     float slideAmount = (data->slideAmount == 0)?1:data->slideAmount; // default to 1
 
-    if (slideAmount > 1000 || slideAmount < -1000 || slideAmount != slideAmount) // Check bounds and NaN
+    if ((slideAmount > 1000 || slideAmount < -1000 || slideAmount != slideAmount) &&
+         toupper(data->direction.GetAt(0)) != 'I') // Check bounds and NaN
     {
         psserver->SendSystemError(me->clientnum, "Invalid slide amount");
         return;
