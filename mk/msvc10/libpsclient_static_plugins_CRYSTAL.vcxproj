@@ -287,7 +287,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;LIBCMT;LIBCMTD;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10.lib libcrystalspace_windows.lib libcrystalspace_opengl.lib opengl32.lib version.lib libcrystalspace_staticplugins.lib libcrystalspace.lib libcrystalspace_directx.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10.lib cg.lib cgGL.lib libcrystalspace_windows.lib libcrystalspace_opengl.lib opengl32.lib version.lib libcrystalspace_staticplugins.lib libcrystalspace.lib libcrystalspace_directx.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace.lib;ws2_32.lib;zlib.lib;cal3d-vc10.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\release10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -338,7 +338,7 @@ copy /y "$(TargetPath)" ..\..\out\release10\bin\
       <OutputFile>..\..\psclient_static_plugins_CRYSTAL-0.5-vc10.dll</OutputFile>
       <ImportLibrary>..\..\out\release10\libs\libpsclient_static_plugins_CRYSTAL.lib</ImportLibrary>
       <ProgramDatabaseFile>..\..\out\release10\build\libpsclient_static_plugins_CRYSTAL\Win32\psclient_static_plugins_CRYSTAL-0.5-vc10.pdb</ProgramDatabaseFile>
-      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10.lib libcrystalspace_windows.lib libcrystalspace_opengl.lib opengl32.lib version.lib libcrystalspace_staticplugins.lib libcrystalspace.lib libcrystalspace_directx.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10.lib cg.lib cgGL.lib libcrystalspace_windows.lib libcrystalspace_opengl.lib opengl32.lib version.lib libcrystalspace_staticplugins.lib libcrystalspace.lib libcrystalspace_directx.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace.lib;ws2_32.lib;zlib.lib;cal3d-vc10.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\release10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -382,7 +382,7 @@ copy /y "$(TargetPath)" ..\..\out\release10\bin\
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;LIBCMT;LIBCMTD;MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib cg.lib cgGL.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;cal3d-vc10_d.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -430,7 +430,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <OutputFile>..\..\psclient_static_plugins_CRYSTAL-0.5-vc10_d.dll</OutputFile>
       <ImportLibrary>..\..\out\debug10\libs\libpsclient_static_plugins_CRYSTAL_d.lib</ImportLibrary>
       <ProgramDatabaseFile>..\..\out\debug10\build\libpsclient_static_plugins_CRYSTAL\Win32\psclient_static_plugins_CRYSTAL-0.5-vc10_d.pdb</ProgramDatabaseFile>
-      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib cg.lib cgGL.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;cal3d-vc10_d.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -474,7 +474,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;LIBCMT;LIBCMTD;MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib cg.lib cgGL.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;cal3d-vc10_d.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -522,7 +522,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <OutputFile>..\..\psclient_static_plugins_CRYSTAL-0.5-vc10_d.dll</OutputFile>
       <ImportLibrary>..\..\out\debug10\libs\libpsclient_static_plugins_CRYSTAL_d.lib</ImportLibrary>
       <ProgramDatabaseFile>..\..\out\debug10\build\libpsclient_static_plugins_CRYSTAL\Win32\psclient_static_plugins_CRYSTAL-0.5-vc10_d.pdb</ProgramDatabaseFile>
-      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib cg.lib cgGL.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;cal3d-vc10_d.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -566,7 +566,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;LIBCMT;LIBCMTD;MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib cg.lib cgGL.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;cal3d-vc10_d.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -614,7 +614,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <OutputFile>..\..\psclient_static_plugins_CRYSTAL-0.5-vc10_d.dll</OutputFile>
       <ImportLibrary>..\..\out\debug10\libs\libpsclient_static_plugins_CRYSTAL_d.lib</ImportLibrary>
       <ProgramDatabaseFile>..\..\out\debug10\build\libpsclient_static_plugins_CRYSTAL\Win32\psclient_static_plugins_CRYSTAL-0.5-vc10_d.pdb</ProgramDatabaseFile>
-      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib cg.lib cgGL.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;cal3d-vc10_d.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -658,7 +658,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;LIBCMT;LIBCMTD;MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib cg.lib cgGL.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;cal3d-vc10_d.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -706,7 +706,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <OutputFile>..\..\psclient_static_plugins_CRYSTAL-0.5-vc10_d.dll</OutputFile>
       <ImportLibrary>..\..\out\debug10\libs\libpsclient_static_plugins_CRYSTAL_d.lib</ImportLibrary>
       <ProgramDatabaseFile>..\..\out\debug10\build\libpsclient_static_plugins_CRYSTAL\Win32\psclient_static_plugins_CRYSTAL-0.5-vc10_d.pdb</ProgramDatabaseFile>
-      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib cg.lib cgGL.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;cal3d-vc10_d.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -750,7 +750,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;LIBCMT;LIBCMTD;MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib cg.lib cgGL.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace.lib;ws2_32.lib;zlib.lib;cal3d-vc10.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\release10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -798,7 +798,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <OutputFile>..\..\psclient_static_plugins_CRYSTAL-0.5-vc10_d.dll</OutputFile>
       <ImportLibrary>..\..\out\debug10\libs\libpsclient_static_plugins_CRYSTAL_d.lib</ImportLibrary>
       <ProgramDatabaseFile>..\..\out\debug10\build\libpsclient_static_plugins_CRYSTAL\Win32\psclient_static_plugins_CRYSTAL-0.5-vc10_d.pdb</ProgramDatabaseFile>
-      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib cg.lib cgGL.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace.lib;ws2_32.lib;zlib.lib;cal3d-vc10.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\release10\libs;..\..\..\CS\winlibs\x86\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release10\libs;$(CRYSTAL)\winlibs\x86\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -845,7 +845,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;LIBCMT;LIBCMTD;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10.lib libcrystalspace_windows.lib libcrystalspace_opengl.lib opengl32.lib version.lib libcrystalspace_staticplugins.lib libcrystalspace.lib libcrystalspace_directx.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10.lib cg.lib cgGL.lib libcrystalspace_windows.lib libcrystalspace_opengl.lib opengl32.lib version.lib libcrystalspace_staticplugins.lib libcrystalspace.lib libcrystalspace_directx.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace.lib;ws2_32.lib;zlib.lib;cal3d-vc10.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\release10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -896,7 +896,7 @@ copy /y "$(TargetPath)" ..\..\out\release10-x64\bin\
       <OutputFile>..\..\psclient_static_plugins_CRYSTAL-0.5-vc10-x64.dll</OutputFile>
       <ImportLibrary>..\..\out\release10-x64\libs\libpsclient_static_plugins_CRYSTAL.lib</ImportLibrary>
       <ProgramDatabaseFile>..\..\out\release10-x64\build\libpsclient_static_plugins_CRYSTAL\x64\psclient_static_plugins_CRYSTAL-0.5-vc10-x64.pdb</ProgramDatabaseFile>
-      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10.lib libcrystalspace_windows.lib libcrystalspace_opengl.lib opengl32.lib version.lib libcrystalspace_staticplugins.lib libcrystalspace.lib libcrystalspace_directx.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10.lib cg.lib cgGL.lib libcrystalspace_windows.lib libcrystalspace_opengl.lib opengl32.lib version.lib libcrystalspace_staticplugins.lib libcrystalspace.lib libcrystalspace_directx.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace.lib;ws2_32.lib;zlib.lib;cal3d-vc10.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\release10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -940,7 +940,7 @@ copy /y "$(TargetPath)" ..\..\out\release10-x64\bin\
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;LIBCMT;LIBCMTD;MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib cg.lib cgGL.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;cal3d-vc10_d.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -988,7 +988,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <OutputFile>..\..\psclient_static_plugins_CRYSTAL-0.5-vc10-x64_d.dll</OutputFile>
       <ImportLibrary>..\..\out\debug10-x64\libs\libpsclient_static_plugins_CRYSTAL_d.lib</ImportLibrary>
       <ProgramDatabaseFile>..\..\out\debug10-x64\build\libpsclient_static_plugins_CRYSTAL\x64\psclient_static_plugins_CRYSTAL-0.5-vc10-x64_d.pdb</ProgramDatabaseFile>
-      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib cg.lib cgGL.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;cal3d-vc10_d.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -1032,7 +1032,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;LIBCMT;LIBCMTD;MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib cg.lib cgGL.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;cal3d-vc10_d.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -1080,7 +1080,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <OutputFile>..\..\psclient_static_plugins_CRYSTAL-0.5-vc10-x64_d.dll</OutputFile>
       <ImportLibrary>..\..\out\debug10-x64\libs\libpsclient_static_plugins_CRYSTAL_d.lib</ImportLibrary>
       <ProgramDatabaseFile>..\..\out\debug10-x64\build\libpsclient_static_plugins_CRYSTAL\x64\psclient_static_plugins_CRYSTAL-0.5-vc10-x64_d.pdb</ProgramDatabaseFile>
-      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib cg.lib cgGL.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;cal3d-vc10_d.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -1124,7 +1124,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;LIBCMT;LIBCMTD;MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib cg.lib cgGL.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;cal3d-vc10_d.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -1172,7 +1172,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <OutputFile>..\..\psclient_static_plugins_CRYSTAL-0.5-vc10-x64_d.dll</OutputFile>
       <ImportLibrary>..\..\out\debug10-x64\libs\libpsclient_static_plugins_CRYSTAL_d.lib</ImportLibrary>
       <ProgramDatabaseFile>..\..\out\debug10-x64\build\libpsclient_static_plugins_CRYSTAL\x64\psclient_static_plugins_CRYSTAL-0.5-vc10-x64_d.pdb</ProgramDatabaseFile>
-      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib cg.lib cgGL.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;cal3d-vc10_d.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -1216,7 +1216,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;LIBCMT;LIBCMTD;MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib cg.lib cgGL.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;cal3d-vc10_d.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -1264,7 +1264,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <OutputFile>..\..\psclient_static_plugins_CRYSTAL-0.5-vc10-x64_d.dll</OutputFile>
       <ImportLibrary>..\..\out\debug10-x64\libs\libpsclient_static_plugins_CRYSTAL_d.lib</ImportLibrary>
       <ProgramDatabaseFile>..\..\out\debug10-x64\build\libpsclient_static_plugins_CRYSTAL\x64\psclient_static_plugins_CRYSTAL-0.5-vc10-x64_d.pdb</ProgramDatabaseFile>
-      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib cg.lib cgGL.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;cal3d-vc10_d.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\debug10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\debug10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -1308,7 +1308,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;LIBCMT;LIBCMTD;MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib cg.lib cgGL.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace.lib;ws2_32.lib;zlib.lib;cal3d-vc10.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\release10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -1356,7 +1356,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <OutputFile>..\..\psclient_static_plugins_CRYSTAL-0.5-vc10-x64_d.dll</OutputFile>
       <ImportLibrary>..\..\out\debug10-x64\libs\libpsclient_static_plugins_CRYSTAL_d.lib</ImportLibrary>
       <ProgramDatabaseFile>..\..\out\debug10-x64\build\libpsclient_static_plugins_CRYSTAL\x64\psclient_static_plugins_CRYSTAL-0.5-vc10-x64_d.pdb</ProgramDatabaseFile>
-      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib cg.lib cgGL.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>libmng.lib libjpeg.lib libpng.lib freetype2.lib vorbisfile.lib vorbis.lib openal32.lib speex.lib ogg.lib cal3d-vc10_d.lib cg.lib cgGL.lib libcrystalspace_windows_d.lib libcrystalspace_opengl_d.lib opengl32.lib version.lib libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib libcrystalspace_directx_d.lib zlib.lib dsound.lib dinput8.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace.lib;ws2_32.lib;zlib.lib;cal3d-vc10.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\CS\out\release10-x64\libs;..\..\..\CS\winlibs\x64\lib;..\..\..\CS\win32libs\lib;$(CRYSTAL)\out\release10-x64\libs;$(CRYSTAL)\winlibs\x64\lib;$(CRYSTAL)\win32libs\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
