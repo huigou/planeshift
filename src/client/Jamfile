@@ -114,6 +114,7 @@ STATIC.PLUGINLIST =
   vfs
   xmlshader
   xmltiny
+  glshader_cg
   ;
 
 STATIC.PlUGINLIST.OPTIONAL =
@@ -129,10 +130,16 @@ LinkStaticPlugins psclient_static : $(STATIC.PLUGINLIST)
 : CRYSTAL
 ;
 
-LinkStaticPlugins psclient_static :
+STATIC.PLUGINLIST.PS =
   bgloader
   soundmngr
   dummysndmngr
+;
+
+if $(TARGET.OS) != "WIN32" { STATIC.PLUGINLIST.PS += spellchecker ; }
+
+LinkStaticPlugins psclient_static :
+  $(STATIC.PLUGINLIST.PS)
 ;
 
 ExternalLibs psclient_static : CRYSTAL CAL3D BREAKPAD ;
