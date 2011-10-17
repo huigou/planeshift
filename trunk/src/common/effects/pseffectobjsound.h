@@ -51,8 +51,8 @@ private:
     csString soundName;
     uint soundID;
 
-    float minDistSquared;
-    float maxDistSquared;
+    float minDist;
+    float maxDist;
 
 	csString effectID;
 
