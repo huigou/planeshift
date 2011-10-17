@@ -72,8 +72,8 @@ bool psEffectObjSound::Load(iDocumentNode *node, iLoaderContext* ldr_context)
     // get the attributes
     name.Clear();
     soundName.Clear();
-    minDistSquared = 25.0f;
-    maxDistSquared = 100000.0f;
+    minDist = 25.0f;
+    maxDist = 100000.0f;
     loop = true;
     csRef<iDocumentAttributeIterator> attribIter = node->GetAttributes();
     while (attribIter->HasNext())
@@ -99,18 +99,16 @@ bool psEffectObjSound::Load(iDocumentNode *node, iLoaderContext* ldr_context)
 
     // min distance
     dataNode = node->GetNode("mindist");
-    if (dataNode)
+    if(dataNode)
     {
-        minDistSquared = dataNode->GetContentsValueAsFloat(); 
-        minDistSquared *= minDistSquared;
+        minDist = dataNode->GetContentsValueAsFloat();
     }
 
     // max distance
     dataNode = node->GetNode("maxdist");
-    if (dataNode)
+    if(dataNode)
     {
-        maxDistSquared = dataNode->GetContentsValueAsFloat(); 
-        maxDistSquared *= maxDistSquared;
+        maxDist = dataNode->GetContentsValueAsFloat();
     }
 
     if (name.IsEmpty())
@@ -165,7 +163,7 @@ bool psEffectObjSound::Update(csTicks elapsed)
 
         iSoundControl* effectSndCtrl = soundManager->GetSndCtrl(iSoundManager::EFFECT_SNDCTRL);
         soundID = soundManager->PlaySound(soundName, true, effectSndCtrl,
-            csVector3(0,0,0), csVector3(0,0,0), minDistSquared, maxDistSquared);
+            csVector3(0,0,0), csVector3(0,0,0), minDist, maxDist);
     }
 
     csVector3 soundPos = anchorMesh->GetMovable()->GetPosition();
@@ -193,8 +191,8 @@ psEffectObj *psEffectObjSound::Clone() const
     // simp mesh specific
     newObj->soundName = soundName;
 
-    newObj->minDistSquared = minDistSquared;
-    newObj->maxDistSquared = maxDistSquared;
+    newObj->minDist = minDist;
+    newObj->maxDist = maxDist;
 
     newObj->loop = loop;
 
