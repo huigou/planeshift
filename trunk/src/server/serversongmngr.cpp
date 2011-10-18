@@ -47,7 +47,6 @@ ServerSongManager::ServerSongManager()
 
 bool ServerSongManager::Initialize()
 {
-    bool error;
     csString instrCatStr;
 
     if(psserver->GetServerOption("instruments_category", instrCatStr))
@@ -73,8 +72,11 @@ void ServerSongManager::HandlePlaySong(MsgEntry* me, Client* client)
         if(item != 0)
         {
             float errorRate;
-            const char* instrName;
             psItem* instrItem;
+            const char* instrName;
+
+            MathEnvironment mathEnv;
+            MathScript* calcSongPar;
             csArray<PublishDestination> proxList;
 
             psCharacter* charData = client->GetCharacterData();
@@ -102,20 +104,20 @@ void ServerSongManager::HandlePlaySong(MsgEntry* me, Client* client)
 
             instrName = instrItem->GetName();
 
-            // getting error rate
-            // TODO the commented one is just an example of implementation
-            /*
-            MathEnvironment env;
-            MathScript* errorRateScript;
-            PSSKILL instrumentSkill;
+            // calculating song parameters
+            calcSongPar  = psserver->GetMathScriptEngine()->FindScript("Calculate Song Parameters");
+            if(calcSongPar == 0)
+            {
+                errorRate = 0;
+            }
+            else
+            {
+                mathEnv.Define("Player", client->GetActor());
+                mathEnv.Define("Instrument", instrItem);
+                calcSongPar->Evaluate(&mathEnv);
 
-            instrumentSkill = instrItem->GetInstrumentSkill()
-            errorRateScript  = psserver->GetMathScriptEngine()->FindScript("Compute Song Error");
-            env.Define("InstrumentSkill", charData->Skills().GetSkillRank(instrumentSkill).Current());
-            errorRateScript->Evaluate(&env);
-            errorRate = env.Lookup("ErrorRate")->GetValue();
-            */
-            errorRate = 0;
+                errorRate = mathEnv.Lookup("ErrorRate")->GetValue();
+            }
 
             // TODO here it should be determined if the actions is a success/failure and manage the player's skill
 
