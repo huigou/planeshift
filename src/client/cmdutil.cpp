@@ -42,6 +42,7 @@
 
 #include "gui/psmainwidget.h"
 #include "gui/chatwindow.h"
+#include "gui/shortcutwindow.h"
 
 #include "paws/pawsmanager.h"
 #include "paws/pawsyesnobox.h"
@@ -204,6 +205,11 @@ const char *psUtilityCommands::HandleCommand(const char *cmd)
         {
             psengine->GetSoundManager()->ReloadSectors();
             return "Soundmanager reloaded";
+        }
+        if(words[1] == "shortcut")
+        {
+            ((pawsShortcutWindow*)PawsManager::GetSingleton().FindWidget("ShortcutWindow"))->LoadCommandsFile();
+            return "Shortcuts reloaded";
         }
         return "try /reload sound";
     }
