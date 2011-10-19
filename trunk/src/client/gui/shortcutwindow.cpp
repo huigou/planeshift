@@ -56,15 +56,7 @@ pawsShortcutWindow::pawsShortcutWindow()
     vfs =  csQueryRegistry<iVFS > ( PawsManager::GetSingleton().GetObjectRegistry());
     xml = psengine->GetXMLParser ();
 
-    // Check if there have been created a custom file
-    // else use the default file.
-    csString fileName = COMMAND_FILE;
-    if (!vfs->Exists(fileName))
-    {
-        fileName = DEFAULT_COMMAND_FILE;
-    }
-
-    LoadCommands(fileName);
+    LoadCommandsFile();
 
     cmdsource = psengine->GetCmdHandler();
     chatWindow = (pawsChatWindow*)PawsManager::GetSingleton().FindWidget("ChatWindow");
@@ -80,6 +72,18 @@ pawsShortcutWindow::~pawsShortcutWindow()
     SaveCommands();
 }
 
+void pawsShortcutWindow::LoadCommandsFile()
+{
+    // Check if there have been created a custom file
+    // else use the default file.
+    csString fileName = COMMAND_FILE;
+    if (!vfs->Exists(fileName))
+    {
+        fileName = DEFAULT_COMMAND_FILE;
+    }
+
+    LoadCommands(fileName);
+}
 
 void pawsShortcutWindow::CalcButtonSize()
 {

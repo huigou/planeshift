@@ -78,6 +78,7 @@ public:
     csString GetTriggerText(int shortcutNum);
 
     void LoadDefaultCommands();
+    void LoadCommandsFile();
     
 protected:
     /// chat window for easy access
