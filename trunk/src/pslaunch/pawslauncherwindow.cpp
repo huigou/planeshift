@@ -486,7 +486,6 @@ void pawsLauncherWindow::LoadSettings()
     // Anistropic
     pawsComboBox* anistopicFiltering = (pawsComboBox*)FindWidget("AnisotropicFiltering");
     anistopicFiltering->Clear();
-    anistopicFiltering->NewOption("0x");
     anistopicFiltering->NewOption("1x");
     anistopicFiltering->NewOption("2x");
     anistopicFiltering->NewOption("4x");
@@ -497,6 +496,10 @@ void pawsLauncherWindow::LoadSettings()
     if(setting.Compare(""))
     {
         setting = configPSC.GetStr("Video.OpenGL.TextureFilterAnisotropy");
+    }
+    if(setting.Compare("0"))
+    {   //compatibility with invalid settings
+        setting = "1";
     }
     setting.Append("x");
     anistopicFiltering->Select(setting);
@@ -827,7 +830,7 @@ void pawsLauncherWindow::SaveSettings()
             shaderSelection = "Low";
             configUser->SetInt("Video.ScreenDepth", 32);
             configUser->SetInt("Video.OpenGL.MultiSamples", 0);
-            configUser->SetInt("Video.OpenGL.TextureFilterAnisotropy", 0);
+            configUser->SetInt("Video.OpenGL.TextureFilterAnisotropy", 1);
             configUser->SetInt("Video.OpenGL.TextureDownsample", 2);
             configUser->SetBool("PlaneShift.Graphics.EnableGrass", false);
             configUser->SetBool("Video.OpenGL.UseExtension.GL_ARB_vertex_buffer_object", true);
@@ -840,7 +843,7 @@ void pawsLauncherWindow::SaveSettings()
             shaderSelection = "Lowest";
             configUser->SetInt("Video.ScreenDepth", 16);
             configUser->SetInt("Video.OpenGL.MultiSamples", 0);
-            configUser->SetInt("Video.OpenGL.TextureFilterAnisotropy", 0);
+            configUser->SetInt("Video.OpenGL.TextureFilterAnisotropy", 1);
             configUser->SetInt("Video.OpenGL.TextureDownsample", 4);
             configUser->SetBool("PlaneShift.Graphics.EnableGrass", false);
             configUser->SetBool("Video.OpenGL.UseExtension.GL_ARB_vertex_buffer_object", true);
