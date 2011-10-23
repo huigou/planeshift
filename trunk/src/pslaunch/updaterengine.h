@@ -34,13 +34,13 @@
 #include "util/singleton.h"
 
 /* To be incremented every time we want to make an update. */
-#define UPDATER_VERSION 2.96
+#define UPDATER_VERSION 2.97
 
 struct iConfigManager;
 struct iVFS;
 
 #define UPDATER_VERSION_MAJOR 2
-#define UPDATER_VERSION_MINOR 96
+#define UPDATER_VERSION_MINOR 97
 
 class InfoShare
 {
