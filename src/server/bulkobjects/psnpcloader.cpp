@@ -434,19 +434,18 @@ void psNPCLoader::ReadStats()
     }
     float agility, charisma, endurance, intelligence, strength, will;
 
-    agility = xmlnode->GetAttributeValueAsFloat("agi");
-    charisma = xmlnode->GetAttributeValueAsFloat("cha");
-    endurance = xmlnode->GetAttributeValueAsFloat("end");
-    intelligence = xmlnode->GetAttributeValueAsFloat("int");
-    strength = xmlnode->GetAttributeValueAsFloat("str");
-    will = xmlnode->GetAttributeValueAsFloat("wil");
+    MathScript *setBaseSkillsScript = psserver->GetMathScriptEngine()->FindScript("SetBaseSkills");
 
-    npc->SetSkillRank(PSSKILL_AGI,  (unsigned int) agility);
-    npc->SetSkillRank(PSSKILL_CHA,  (unsigned int) charisma);
-    npc->SetSkillRank(PSSKILL_END,  (unsigned int) endurance);
-    npc->SetSkillRank(PSSKILL_INT,  (unsigned int) intelligence);
-    npc->SetSkillRank(PSSKILL_STR,  (unsigned int) strength);
-    npc->SetSkillRank(PSSKILL_WILL, (unsigned int) will);
+    MathEnvironment env;
+    env.Define("Actor", npc);
+    env.Define("STR", xmlnode->GetAttributeValueAsFloat("agi"));
+    env.Define("AGI", xmlnode->GetAttributeValueAsFloat("cha"));
+    env.Define("END", xmlnode->GetAttributeValueAsFloat("end"));
+    env.Define("INT", xmlnode->GetAttributeValueAsFloat("int"));
+    env.Define("WILL", xmlnode->GetAttributeValueAsFloat("str"));
+    env.Define("CHA", xmlnode->GetAttributeValueAsFloat("wil"));
+
+    setBaseSkillsScript->Evaluate(&env);
 }
 
 
@@ -1019,12 +1018,16 @@ void psNPCLoader::WriteStats()
     csRef<iDocumentNode> statsNode = npcRoot->CreateNodeBefore(CS_NODE_ELEMENT);
 
     statsNode->SetValue("stats");
-    statsNode->SetAttributeAsInt("agi", (int) npc->GetSkillRank(PSSKILL_AGI).Base());
-    statsNode->SetAttributeAsInt("cha", (int) npc->GetSkillRank(PSSKILL_CHA).Base());
-    statsNode->SetAttributeAsInt("end", (int) npc->GetSkillRank(PSSKILL_END).Base());
-    statsNode->SetAttributeAsInt("int", (int) npc->GetSkillRank(PSSKILL_INT).Base());
-    statsNode->SetAttributeAsInt("str", (int) npc->GetSkillRank(PSSKILL_STR).Base());
-    statsNode->SetAttributeAsInt("wil", (int) npc->GetSkillRank(PSSKILL_WILL).Base());
+
+    MathEnvironment baseSkillVal;
+    npc->GetSkillBaseValues(&baseSkillVal);
+
+    statsNode->SetAttributeAsInt("agi", baseSkillVal.Lookup("AGI")->GetRoundValue());
+    statsNode->SetAttributeAsInt("cha", baseSkillVal.Lookup("CHA")->GetRoundValue());
+    statsNode->SetAttributeAsInt("end", baseSkillVal.Lookup("END")->GetRoundValue());
+    statsNode->SetAttributeAsInt("int", baseSkillVal.Lookup("INT")->GetRoundValue());
+    statsNode->SetAttributeAsInt("str", baseSkillVal.Lookup("STR")->GetRoundValue());
+    statsNode->SetAttributeAsInt("wil", baseSkillVal.Lookup("WIL")->GetRoundValue());
 }
 
 

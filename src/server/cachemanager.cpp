@@ -2620,7 +2620,7 @@ bool CacheManager::PreloadWays()
             way->id =   atoi(ways[i]["id"]);
             way->name = ways[i]["name"];
             way->skill = (PSSKILL)atoi(ways[i]["skill"]);
-            way->related_stat = (PSITEMSTATS_STAT)atoi(ways[i]["related_stat"]);
+            way->related_stat_skill = (PSSKILL)atoi(ways[i]["related_stat"]);
             wayList.Push(way);
         }
     }

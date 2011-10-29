@@ -1010,14 +1010,7 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
         psCharVerificationMesg mesg( me->clientnum );
         size_t z;
         //unfortunately count goes out of valid area so we need to check on charisma
-        for ( z = 0; z <= PSITEMSTATS_STAT_CHARISMA; z++ )
-        {
-            int value = chardata->GetSkillRank(statToSkill((PSITEMSTATS_STAT) z)).Current();
-            if ( value > 0 )
-            {
-                mesg.AddStat( value, psserver->GetCacheManager()->Attribute2String((PSITEMSTATS_STAT)z));                
-            }                                    
-        }
+
         for ( z = 0; z < psserver->GetCacheManager()->GetSkillAmount(); z++ )
         {
             unsigned int rank = chardata->Skills().GetSkillRank((PSSKILL) z).Base();
@@ -1029,7 +1022,7 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
             
             if ( rank > 0 )
             {
-                mesg.AddSkill(rank, name);                
+           		mesg.AddSkill(rank, name);
             }                                            
         }                
         mesg.Construct();

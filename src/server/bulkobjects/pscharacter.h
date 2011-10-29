@@ -463,9 +463,6 @@ public:
 
     int AddSkillPractice(PSSKILL skill, unsigned int val);
 
-    /** Gets a players best skill rank **/
-    unsigned int GetBestSkillValue( bool withBuff );
-
     /** @brief Get the slot that is the best skill in the set.
      *
      *  @param withBuff   Apply any skill buffs?
@@ -642,6 +639,12 @@ public:
      * Returns a pointer to the skill cache for this character
      */
     psSkillCache *GetSkillCache() { return &skillCache; }
+
+    /**
+     * Function to get the base and current skill values.
+     */
+    void GetSkillValues(MathEnvironment* env);
+    void GetSkillBaseValues(MathEnvironment* env);
 
     // iCachedObject Functions below
     virtual void ProcessCacheTimeout() {};  ///< required for iCachedObject but not used here
@@ -1181,6 +1184,11 @@ protected:
     static MathScript *staminaRatioStill;///< The stamina regen ration while standing script
     static MathScript *staminaRatioSit;  ///< The stamina regen ration while sitting script
     static MathScript *staminaRatioWork; ///< The stamina regen ration while working script
+    static MathScript *dodgeValueCalc; ///< Script for calculating dodge value.
+    static MathScript *armorSkillsPractice; ///< Script to set the practice points for armor skills.
+    static MathScript *charLevelGet; ///< Script to get the current char level
+    static MathScript *skillValuesGet; ///< Script to get the current skill values
+    static MathScript *baseSkillValuesGet; ///< Script to get the base skill values
 
     st_location spawnLoc;
 

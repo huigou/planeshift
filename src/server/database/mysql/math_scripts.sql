@@ -173,8 +173,8 @@ INSERT INTO math_scripts VALUES( "StaminaCombat",
 
 INSERT INTO math_scripts VALUES( "StaminaBase",
 "
-        BasePhy = (STR + END + AGI) / 3;
-        BaseMen = (INT + WILL + CHA) / 3;
+        BasePhy = (Actor:GetSkillValue(50) + Actor:GetSkillValue(48) + Actor:GetSkillValue(46)) / 3;
+        BaseMen = (Actor:GetSkillValue(49) + Actor:GetSkillValue(51) + Actor:GetSkillValue(47)) / 3;
 ");
 
 INSERT INTO math_scripts VALUES( "StaminaRatioWalk", 
@@ -193,9 +193,9 @@ INSERT INTO math_scripts VALUES( "StaminaRatioWork",
 "PStaminaRate = BaseRegenPhysical-6.0*(100-SkillMentalFactor)/100;
 MStaminaRate = BaseRegenMental-6.0*(100-SkillMentalFactor)/100;");
 
-INSERT INTO math_scripts VALUES( "CalculateMaxHP", "MaxHP = Actor:Will + Actor:Agility + Actor:Strength;");
+INSERT INTO math_scripts VALUES( "CalculateMaxHP", "MaxHP = Actor:GetSkillValue(51) + Actor:GetSkillValue(46) + Actor:GetSkillValue(50);");
 
-INSERT INTO math_scripts VALUES( "CalculateMaxMana", "MaxMana = Actor:Will + Actor:Intelligence;");
+INSERT INTO math_scripts VALUES( "CalculateMaxMana", "MaxMana = Actor:GetSkillValue(51) + Actor:GetSkillValue(49);");
 
 INSERT INTO math_scripts VALUES( "LootModifierCostCap", "ModCap = MaxHP*10;");
 
@@ -500,5 +500,90 @@ else
 }");
 
 
+INSERT INTO math_scripts VALUES( "CalculateDodgeValue" , "
+	LightRes = (LightPoints * Actor:GetSkillValue(7));
+	MediumRes = (MediumPoints * Actor:GetSkillValue(8));
+	HeavyRes = (HeavyPoints * Actor:GetSkillValue(9));
 
+	Result = LightRes + MediumRes + HeavyRes;
+	 
+	if(Result = 0)
+	{
+		 Result = 0.2;
+	}
+");
 
+INSERT INTO math_scripts VALUES( "PracticeArmorSkills" , "
+	if(LightPoints > 0)
+	{
+		Actor:PracticeSkillID(7,LightPoints);
+	}
+	if(MediumPoints > 0)
+	{
+		Actor:PracticeSkillID(8,MediumPoints);
+	}
+	if(HeavyPoints > 0)
+	{
+		Actor:PracticeSkillID(9,HeavyPoints);
+	}
+");
+
+INSERT INTO math_scripts VALUES( "SetBaseSkills" , "
+	if(AGI > 0)
+	{
+		Actor:SetSkillValue(46,AGI);
+	}
+	if(CHA > 0)
+	{
+		Actor:SetSkillValue(47,CHA);
+	}
+	if(END > 0)
+	{
+		Actor:SetSkillValue(48,END);
+	}
+	if(INT > 0)
+	{
+		Actor:SetSkillValue(49,INT);
+	}
+	if(STR > 0)
+	{
+		Actor:SetSkillValue(50,STR);
+	}
+	if(WILL > 0)
+	{
+		Actor:SetSkillValue(51,WILL);
+	}
+");
+
+INSERT INTO math_scripts VALUES( "GetCharLevel" , "
+    if(Physical > 0)
+    {
+        Result = (Actor:GetSkillValue(50)  +
+                Actor:GetSkillValue(48)  +
+                Actor:GetSkillValue(46)) / 3;
+    }
+    else
+    {
+        Result = (Actor:GetSkillValue(49)  +
+                Actor:GetSkillValue(51) +
+                Actor:GetSkillValue(47)) / 3;
+    }
+");
+
+INSERT INTO math_scripts VALUES( "GetSkillValues" , "
+		AGI = Actor:GetSkillValue(46);
+		CHA = Actor:GetSkillValue(47);
+		END = Actor:GetSkillValue(48);
+		INT = Actor:GetSkillValue(49);
+		STR = Actor:GetSkillValue(50);
+		WIL = Actor:GetSkillValue(51);
+");
+
+INSERT INTO math_scripts VALUES( "GetSkillBaseValues" , "
+		AGI = Actor:GetSkillBaseValue(46);
+		CHA = Actor:GetSkillBaseValue(47);
+		END = Actor:GetSkillBaseValue(48);
+		INT = Actor:GetSkillBaseValue(49);
+		STR = Actor:GetSkillBaseValue(50);
+		WIL = Actor:GetSkillBaseValue(51);
+");

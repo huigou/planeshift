@@ -71,6 +71,9 @@ typedef uint32 InstanceID;
 #define MAX_DROP_DISTANCE 5 ///< Maximum distance at which a player may drop an item
 #define RANGE_TO_GUARD 6 ///< Range in which you can guard an item - should be slightly bigger than drop range
 
+// The defined max value to rank skills.
+#define SKILL_MAX_RANK 5000
+
 // Used to fire item/owner/player sensed
 #define LONG_RANGE_PERCEPTION  30
 // Used to fire item/owner/player nearby
@@ -84,7 +87,7 @@ typedef uint32 InstanceID;
  */
 //@{
 #define GUILD_FEE 20000
-#define GUILD_MIN_MEMBERS 5
+#define GUILD_MIN_MEMBERS 1
 #define GUILD_KICK_GRACE 5 ///< minutes
 
 #define GUILD_NAME_CHANGE_LIMIT 24 * 60 * 60000 ///< Minimum number of ticks between name change of guild

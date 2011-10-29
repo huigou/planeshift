@@ -321,16 +321,21 @@ void ProgressionManager::HandleSkill(MsgEntry *me, Client * client)
                         cathegory);
 
             psCharacter* chr = client->GetCharacterData();
+
+            MathEnvironment skillVal;
+            chr->GetSkillValues(&skillVal);
+
+
             psGUISkillMessage newmsg(client->GetClientNum(),
                             psGUISkillMessage::DESCRIPTION,
                             buff,
                             NULL,
-                            (unsigned int)(chr->GetSkillRank(PSSKILL_STR).Current()),
-                            (unsigned int)(chr->GetSkillRank(PSSKILL_END).Current()),
-                            (unsigned int)(chr->GetSkillRank(PSSKILL_AGI).Current()),
-                            (unsigned int)(chr->GetSkillRank(PSSKILL_INT).Current()),
-                            (unsigned int)(chr->GetSkillRank(PSSKILL_WILL).Current()),
-                            (unsigned int)(chr->GetSkillRank(PSSKILL_CHA).Current()),
+                            (unsigned int)skillVal.Lookup("STR")->GetRoundValue(),
+                            (unsigned int)skillVal.Lookup("END")->GetRoundValue(),
+                            (unsigned int)skillVal.Lookup("AGI")->GetRoundValue(),
+                            (unsigned int)skillVal.Lookup("INT")->GetRoundValue(),
+                            (unsigned int)skillVal.Lookup("WIL")->GetRoundValue(),
+                            (unsigned int)skillVal.Lookup("CHA")->GetRoundValue(),
                             (unsigned int)(chr->GetHP()),
                             (unsigned int)(chr->GetMana()),
                             (unsigned int)(chr->GetStamina(true)),
@@ -518,12 +523,6 @@ void ProgressionManager::SendSkillList(Client * client, bool forceOpen, PSSKILL 
                 trainerInfo->TrainingInSkill((PSSKILL) skillID, character->Skills().GetSkillRank((PSSKILL) skillID).Base(), faction)
              )
         {
-            bool stat = info->id == PSSKILL_AGI ||
-                        info->id == PSSKILL_CHA ||
-                        info->id == PSSKILL_END ||
-                        info->id == PSSKILL_INT ||
-                        info->id == PSSKILL_WILL ||
-                        info->id == PSSKILL_STR;
 
             /* Get the ID value for the skill name string and find the skill
                in the cache. If it can't be found, skip this skill.
@@ -559,7 +558,7 @@ void ProgressionManager::SendSkillList(Client * client, bool forceOpen, PSSKILL 
                                             charSkill.rank.Base(), actualStat,
                                             charSkill.y, charSkill.yCost,
                                             charSkill.z, charSkill.zCost,
-                                            info->category, stat);
+                                            info->category, false);
                 skills->addItem(skillID, item);
             }
         }
@@ -576,16 +575,19 @@ void ProgressionManager::SendSkillList(Client * client, bool forceOpen, PSSKILL 
     if (isTraining)
         training= true;
 
+    MathEnvironment skillVal;
+    character->GetSkillValues(&skillVal);
+
     psGUISkillMessage newmsg(client->GetClientNum(),
                             psGUISkillMessage::SKILL_LIST,
                             "",
                             skills,
-                            (unsigned int)character->GetSkillRank(PSSKILL_STR).Current(),
-                            (unsigned int)character->GetSkillRank(PSSKILL_END).Current(),
-                            (unsigned int)character->GetSkillRank(PSSKILL_AGI).Current(),
-                            (unsigned int)character->GetSkillRank(PSSKILL_INT).Current(),
-                            (unsigned int)character->GetSkillRank(PSSKILL_WILL).Current(),
-                            (unsigned int)character->GetSkillRank(PSSKILL_CHA).Current(),
+                            (unsigned int)skillVal.Lookup("STR")->GetRoundValue(),
+                            (unsigned int)skillVal.Lookup("END")->GetRoundValue(),
+                            (unsigned int)skillVal.Lookup("AGI")->GetRoundValue(),
+                            (unsigned int)skillVal.Lookup("INT")->GetRoundValue(),
+                            (unsigned int)skillVal.Lookup("WIL")->GetRoundValue(),
+                            (unsigned int)skillVal.Lookup("CHA")->GetRoundValue(),
                             (unsigned int)character->GetHP(),
                             (unsigned int)character->GetMana(),
                             (unsigned int)character->GetStamina(true),

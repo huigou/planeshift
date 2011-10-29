@@ -510,12 +510,7 @@ float LootRandomizer::CalcModifierCostCap(psCharacter *chr)
 
     // Use the mob's attributes to calculate modifier cost cap
     MathEnvironment env;
-    env.Define("Str",     chr->GetSkillRank(PSSKILL_STR).Current());
-    env.Define("End",     chr->GetSkillRank(PSSKILL_END).Current());
-    env.Define("Agi",     chr->GetSkillRank(PSSKILL_AGI).Current());
-    env.Define("Int",     chr->GetSkillRank(PSSKILL_INT).Current());
-    env.Define("Will",    chr->GetSkillRank(PSSKILL_WILL).Current());
-    env.Define("Cha",     chr->GetSkillRank(PSSKILL_CHA).Current());
+    env.Define("Actor",   chr);
     env.Define("MaxHP",   chr->GetMaxHP().Current());
     env.Define("MaxMana", chr->GetMaxMana().Current());
 

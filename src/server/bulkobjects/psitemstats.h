@@ -95,9 +95,6 @@ enum PSITEMSTATS_STAT
 
 //TODO these should supposedly go away...
 
-/// Convenience function to convert between SKILL and STAT.
-PSITEMSTATS_STAT skillToStat(PSSKILL skill);
-
 /// Convenience function to convert between STAT and SKILL
 PSSKILL statToSkill(PSITEMSTATS_STAT stat);
 

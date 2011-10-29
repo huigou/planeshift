@@ -163,7 +163,7 @@ float psSpell::PowerLevel(psCharacter *caster, float kFactor) const
     }
 
     MathEnvironment env;
-    env.Define("RelatedStat", caster->GetSkillRank(statToSkill(way->related_stat)).Current());
+    env.Define("RelatedStat", caster->GetSkillRank(way->related_stat_skill).Current());
     env.Define("KFactor", kFactor);
     env.Define("WaySkill", caster->GetSkillRank(way->skill).Current());
     script->Evaluate(&env);
@@ -194,7 +194,7 @@ psSpellCost psSpell::ManaCost(psCharacter *caster, float kFactor) const
     MathEnvironment env;
     env.Define("KFactor",     kFactor);
     env.Define("Realm",       realm);
-    env.Define("RelatedStat", caster->GetSkillRank(statToSkill(way->related_stat)).Current());
+    env.Define("RelatedStat", caster->GetSkillRank(way->related_stat_skill).Current());
     env.Define("WaySkill",    caster->GetSkillRank(way->skill).Current());
     script->Evaluate(&env);
 
@@ -219,7 +219,7 @@ float psSpell::ChanceOfCastSuccess(psCharacter *caster, float kFactor) const
     MathEnvironment env;
     env.Define("KFactor",     kFactor);
     env.Define("Realm",       realm);
-    env.Define("RelatedStat", caster->GetSkillRank(statToSkill(way->related_stat)).Current());
+    env.Define("RelatedStat", caster->GetSkillRank(way->related_stat_skill).Current());
     env.Define("WaySkill",    caster->GetSkillRank(way->skill).Current());
     script->Evaluate(&env);
 
@@ -326,7 +326,7 @@ void psSpell::Cast(Client *client, float kFactor) const
 
     float power = MIN(maxPower, PowerLevel(caster->GetCharacterData(), kFactor));
     float skill = caster->GetCharacterData()->GetSkillRank(way->skill).Current();
-    float stat = caster->GetCharacterData()->GetSkillRank(statToSkill(way->related_stat)).Current();
+    float stat = caster->GetCharacterData()->GetSkillRank(way->related_stat_skill).Current();
     
     MathEnvironment env;
     env.Define("Power",       power);
@@ -425,7 +425,7 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
     MathEnvironment env;
     env.Define("Power",       power);
     env.Define("WaySkill",    caster->GetCharacterData()->GetSkillRank(way->skill).Current());
-    env.Define("RelatedStat", caster->GetCharacterData()->GetSkillRank(statToSkill(way->related_stat)).Current());
+    env.Define("RelatedStat", caster->GetCharacterData()->GetSkillRank(way->related_stat_skill).Current());
     float radius = aoeRadius->Evaluate(&env);
     float angle  = aoeAngle->Evaluate(&env);
 

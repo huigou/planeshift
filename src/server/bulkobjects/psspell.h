@@ -49,7 +49,7 @@ struct psWay
 {
     unsigned int     id;
     PSSKILL          skill;    // for example, Crystal Way
-    PSITEMSTATS_STAT related_stat; // for example, Charisma
+    PSSKILL			 related_stat_skill; // for example, Charisma
     csString         name;
 };
 
