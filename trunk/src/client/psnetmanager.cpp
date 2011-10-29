@@ -122,7 +122,7 @@ void psNetManager::Disconnect()
     connected = false;
 }
 
-void psNetManager::Authenticate(const csString & name, const csString & pwd)
+void psNetManager::Authenticate(const csString & name, const csString & pwd, const  csString & pwd256)
 {
-    authclient->Authenticate(name,pwd);
+    authclient->Authenticate(name, pwd, pwd256);
 }

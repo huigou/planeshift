@@ -85,7 +85,7 @@ public:
      *
      * @return Always true.
      */
-    bool Authenticate (const csString & user, const csString & pwd);
+    bool Authenticate (const csString & user, const csString & pwd, const csString & pwd256);
 
     /** Handle incomming messages based on the subscribed types.
      */
@@ -120,6 +120,7 @@ protected:
     csString          rejectmsg;
     int               iClientApproved;
     csString          password;
+    csString          password256;
     csString          username;    
     
     

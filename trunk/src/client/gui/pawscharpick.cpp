@@ -19,6 +19,7 @@
 #include <psconfig.h>
 #include <imesh/spritecal3d.h>
 #include <csutil/md5.h>
+#include <csutil/sha256.h>
 #include <iutil/cfgmgr.h>
 
 #include "util/log.h"
@@ -206,11 +207,22 @@ void pawsCharacterPickerWindow::OnStringEntered(const char* /*name*/, int /*para
     if (!value)
         return;
 
-    csString passwordhash =  csMD5::Encode(value).HexString();
-
-    if (passHash != passwordhash)
+    csString passwordhash;
+    csString passHashorig;
+    if(passHash256.Length() > 0)
     {
-	PawsManager::GetSingleton().SetModalWidget(NULL);
+        passwordhash = CS::Utility::Checksum::SHA256::Encode(value).HexString();
+        passHashorig = passHash256;
+    }
+    else
+    {
+        passwordhash = csMD5::Encode(value).HexString();
+        passHashorig = passHash;
+    }
+
+    if (passHashorig != passwordhash)
+    {
+        PawsManager::GetSingleton().SetModalWidget(NULL);
         PawsManager::GetSingleton().CreateWarningBox("Wrong password entered!");
     }
     else

@@ -22,6 +22,7 @@
 #include <csutil/sysfunc.h>
 #include <csutil/xmltiny.h>
 #include <csutil/md5.h>
+#include <csutil/sha256.h>
 
 #include "pawsloginwindow.h"
 #include "paws/pawsmanager.h"
@@ -44,8 +45,10 @@
 
 #define CNF_REMEMBER_SERVER       "PlaneShift.Connection.RememberServer"
 #define CNF_REMEMBER_PASS         "PlaneShift.Connection.RememberPass"
+#define CNF_CONVERT_PASS          "PlaneShift.Connection.ConvertPass"
 #define CNF_USER                  "PlaneShift.Connection.%s.User"
 #define CNF_PASSWORD              "PlaneShift.Connection.%s.Password"
+#define CNF_PASSWORDSHA           "PlaneShift.Connection.%s.Password256"
 #define CNF_AUTOLOGIN_SERVER      "PlaneShift.Connection.AutologinServer.Id"
 #define CNF_AUTOLOGIN_SERVER_NAME "PlaneShift.Connection.AutologinServer.Name"
 
@@ -125,6 +128,11 @@ bool pawsLoginWindow::PostSetup()
     checkBox = dynamic_cast<pawsCheckBox*> (FindWidget("option_password"));
     if (checkBox)
         checkBox->SetState(remember);
+
+    convert = cfg->GetBool(CNF_CONVERT_PASS, true);
+    checkBoxC = dynamic_cast<pawsCheckBox*> (FindWidget("convert_password"));
+    if (checkBoxC)
+        checkBoxC->SetState(convert);
 
     // Set the version label
     pawsTextBox* version = dynamic_cast <pawsTextBox*> (FindWidget("version"));
@@ -213,6 +221,13 @@ void pawsLoginWindow::UpdateUserPasswdFromConfig()
         passwd->SetText(ASTERISKS);
     else
         passwd->SetText("");
+
+
+    //try fetching the 256 password for sending to server. This is actually not used
+    //for autentication for now but it's collected in order to allow an easier migration
+    //with the next version. Then this password will be what will be inside the old password field.
+    cfg_name.Format(CNF_PASSWORDSHA,servers[listBox->GetSelectedRowNum()]->GetName().GetData());
+    storedPasswd256 = cfg->GetStr(cfg_name, "");
 }
 
 bool pawsLoginWindow::OnChange(pawsWidget * widget)
@@ -364,18 +379,22 @@ void pawsLoginWindow::ConnectToServer(bool automatic)
     if ( PawsManager::GetSingleton().FindWidget("CharPickerWindow") == 0 )
         PawsManager::GetSingleton().LoadWidget("charpick.xml");
 
+    if (checkBoxC)
+        convert = checkBoxC->GetState();
+
     if (passwdChanged) 
     {
         csString  passwordhash =  csMD5::Encode(passwd->GetText()).HexString();
+        csString  passwordhashSHA =  CS::Utility::Checksum::SHA256::Encode(passwd->GetText()).HexString();
         static_cast<pawsCharacterPickerWindow*>
-            (PawsManager::GetSingleton().FindWidget("CharPickerWindow"))->StoreHashedPassword(passwordhash);
-        psengine->GetNetManager()->Authenticate( login->GetText(), passwordhash.GetData() );
+            (PawsManager::GetSingleton().FindWidget("CharPickerWindow"))->StoreHashedPassword(passwordhash, passwordhashSHA);
+        psengine->GetNetManager()->Authenticate( login->GetText(), passwordhash.GetData(), convert? passwordhashSHA : "");
     }
     else
     {
         static_cast<pawsCharacterPickerWindow*>
-            (PawsManager::GetSingleton().FindWidget("CharPickerWindow"))->StoreHashedPassword(storedPasswd);
-        psengine->GetNetManager()->Authenticate( login->GetText(), storedPasswd );
+            (PawsManager::GetSingleton().FindWidget("CharPickerWindow"))->StoreHashedPassword(storedPasswd, storedPasswd256);
+        psengine->GetNetManager()->Authenticate( login->GetText(), storedPasswd, convert ? storedPasswd256  : "");
     }
 
     //allow the server name to be known from the charpicker to autochose the last server chosen.
@@ -405,6 +424,7 @@ void pawsLoginWindow::SaveLoginInformation()
         remember = checkBox->GetState();
 
     cfg->SetBool(CNF_REMEMBER_PASS, remember);
+    cfg->SetBool(CNF_CONVERT_PASS, convert);
 
     if (remember)
     {
@@ -412,6 +432,10 @@ void pawsLoginWindow::SaveLoginInformation()
             csString  passwordhash =  csMD5::Encode(passwd->GetText()).HexString();
             cnf_name.Format(CNF_PASSWORD,servers[listBox->GetSelectedRowNum()]->GetName().GetData());
             cfg->SetStr(cnf_name, passwordhash.GetData() );
+
+            csString  passwordhashSHA =  CS::Utility::Checksum::SHA256::Encode(passwd->GetText()).HexString();
+            cnf_name.Format(CNF_PASSWORDSHA,servers[listBox->GetSelectedRowNum()]->GetName().GetData());
+            cfg->SetStr(cnf_name, passwordhashSHA.GetData() );
         }
     }
     else
