@@ -1624,6 +1624,8 @@ ALTER TABLE `planeshift`.`sc_waypoints` MODIFY COLUMN `radius` DOUBLE(10,2)  NOT
 ALTER TABLE `gm_events` ADD `date_created` TIMESTAMP default current_timestamp AFTER `id`;
 ALTER TABLE `alliances` ADD `date_created` TIMESTAMP default current_timestamp AFTER `id`;
 
+ALTER TABLE `accounts` ADD COLUMN `password256` VARCHAR(64)  NOT NULL DEFAULT 0 AFTER `password`;
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to
