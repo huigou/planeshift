@@ -85,6 +85,9 @@ public:
     void SetBartenderAction(csString& act) { action = act; }
     csString &GetBartenderAction() { return action; }
     void clearBartenderAction() { action.Empty(); }
+
+    bool GetLock() { return locked; }
+    void SetLock( bool state ) { locked = state; }
 protected:
     psSlotManager*   mgr;
     csString         meshfactName;
@@ -98,6 +101,7 @@ protected:
     bool dragDrop;
     bool drawStackCount;
     bool reserved;      ///< implemented to fix dequip behaviour. Cleared on PlaceItem and Clear
+    bool locked;
 
     csRef<iPawsImage> image;
     pawsWidget* purifySign;

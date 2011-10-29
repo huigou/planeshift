@@ -33,6 +33,8 @@
 #define DEFAULT_BARTENDER_FILE "/planeshift/data/options/bartender_def.xml"
 #define ROOTNODE "bartender"
 #define SLOTNODE "slot"
+#define BTN_LOCK   100
+#define BTN_UNLOCK 101
 
 //=============================================================================
 // Classes
@@ -129,6 +131,43 @@ pawsBartenderWindow::~pawsBartenderWindow()
     csRef<iVFS> vfs =  csQueryRegistry<iVFS > ( PawsManager::GetSingleton().GetObjectRegistry());
     doc->Write(vfs, BARTENDER_FILE);
 }
+
+void pawsBartenderWindow::SetLock(bool state)
+{
+    locked = state;
+    for (size_t i = 0; i < GetChildrenCount(); i++)
+    {
+        pawsSlot * slot = dynamic_cast<pawsSlot*>(GetChild(i));
+        if (slot && slot->IsBartender())
+        {
+            slot->SetLock(locked);
+        }
+    }
+    printf("Hotbar has been %s\n", locked ? "locked." : "unlocked.");
+}
+ 
+bool pawsBartenderWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
+{
+    switch ( widget->GetID() )
+    {
+        case BTN_LOCK:
+        {
+            SetLock( true );
+            widget->Hide();
+            FindWidget( BTN_UNLOCK )->Show();;
+            return true;
+        }
+        case BTN_UNLOCK:
+        {
+            SetLock( false );
+            widget->Hide();
+            FindWidget( BTN_LOCK )->Show();
+            return true;
+        } 
+    }
+    return false;
+}
+
 
 
 

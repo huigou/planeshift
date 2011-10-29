@@ -324,27 +324,28 @@ void psSlotManager::Handle( pawsSlot* slot, bool grabOne, bool grabAll )
             return;
 
         //printf("Starting a drag/drop action\n");
-
-        int stackCount = slot->StackCount();
-        if ( stackCount > 0 )
-        {
-            int tmpID = (int)slotsInUse.Push(slot);
-
-            if ( stackCount == 1 || grabOne )
+        if( !slot->GetLock() ){
+            int stackCount = slot->StackCount();
+            if ( stackCount > 0 )
             {
-                OnNumberEntered("StackCount",tmpID, 1);
-            }
-            else if ( grabAll )
-            {
-                OnNumberEntered("StackCount",tmpID, stackCount);
-            }
-            else // Ask for the number of items to grab
-            {
-                csString max;
-                max.Format("Max %d", stackCount );
+                int tmpID = (int)slotsInUse.Push(slot);
 
-                pawsNumberPromptWindow::Create(max,
-                                               -1, 1, stackCount, this, "StackCount", tmpID);
+                if ( stackCount == 1 || grabOne )
+                {
+                    OnNumberEntered("StackCount",tmpID, 1);
+                }
+                else if ( grabAll )
+                {
+                    OnNumberEntered("StackCount",tmpID, stackCount);
+                }
+                else // Ask for the number of items to grab
+                {
+                    csString max;
+                    max.Format("Max %d", stackCount );
+
+                    pawsNumberPromptWindow::Create(max,
+                                                   -1, 1, stackCount, this, "StackCount", tmpID);
+                }
             }
         }
     }
@@ -360,7 +361,7 @@ void psSlotManager::Handle( pawsSlot* slot, bool grabOne, bool grabAll )
         //printf("Target Slot Information: \n");
         //printf("Bartender Slot: %d\n", slot->IsBartender());
         //printf("Sending slot movement message\n");
-        if ( slot->IsBartender() )
+        if ( slot->IsBartender() && !slot->GetLock() )
         {
             //we cancel dragging because we aren't moving the original item but just taking
             //a reference to it. If it's among bartender slots we will handle them differently
@@ -374,7 +375,7 @@ void psSlotManager::Handle( pawsSlot* slot, bool grabOne, bool grabAll )
                 draggingSlot.slot->Clear();
             }
         }
-        else
+        else if( !slot->GetLock() )
         {
             //printf("Slot->ID: %d\n", slot->ID() );
             //printf("Container: %d\n", slot->ContainerID() );
