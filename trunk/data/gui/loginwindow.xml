@@ -69,14 +69,14 @@
                 <!--<bgcolour r="200" g="200" b="40" />-->
             </widget>
 
-            <widget name="option_password" factory="pawsCheckBox">
+            <widget name="option_password" factory="pawsCheckBox" tooltip="Save the password in configurations files for easier login">
                 <frame x="145" y="90" width="450" height="30" />
                 <font name="LiberationSerif-Regular.ttf" r="255" g="255" b="255" shadow="no" size="12" resizetoscreen="yes" />
                 <text string="Remember password" />
                 <checkbox on="checkon" off="checkoff" size="30"/>
             </widget>
 
-            <widget name="convert_password" factory="pawsCheckBox">
+            <widget name="convert_password" factory="pawsCheckBox" tooltip="Allow the client to send a newly hashed password to the server (check: http://tinyurl.com/5smsz5l )">
                 <frame x="145" y="115" width="450" height="30" />
                 <font name="LiberationSerif-Regular.ttf" r="255" g="255" b="255" shadow="no" size="12" resizetoscreen="yes" />
                 <text string="Convert password" />
