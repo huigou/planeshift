@@ -68,6 +68,8 @@ pawsSlot::pawsSlot()
 
     drawStackCount = true;
     isBartender = false;
+
+    locked = false;
 }
 
 
@@ -89,12 +91,14 @@ bool pawsSlot::Setup( iDocumentNode* node )
     if ( bartender )
     {
        isBartender = bartender->GetContentsValueAsInt() != 0;
+//       isBartender = bartender->GetContentsValueAsBool();
     }
 
     csRef<iDocumentNode> showStackAmount = node->GetNode("show_stack_amount");
     if ( showStackAmount )
     {
        DrawStackCount(showStackAmount->GetContentsValueAsInt() != 0);
+       //DrawStackCount(showStackAmount->GetContentsValueAsBool());
     }
 
     mgr = psengine->GetSlotManager();
@@ -116,7 +120,7 @@ bool pawsSlot::OnMouseDown( int button, int modifiers, int x, int y )
 
     //printf("Is Bartender Slot: %d, Empty %d\n", isBartender ,empty);
     //if it's a bartender slot and we aren't dragging
-    if ( isBartender && (!empty && !psengine->GetSlotManager()->IsDragging()))
+    if ( isBartender && !GetLock() && (!empty && !psengine->GetSlotManager()->IsDragging()))
     {
         //check if ctrl+alt is being held if so delete (probably should use a lock feature and allow
         //to drag them around and out making the "deleted"?)

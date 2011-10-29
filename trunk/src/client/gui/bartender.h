@@ -51,7 +51,12 @@ public:
     ///Destructor. Saves the widget commands
     virtual ~pawsBartenderWindow();
 
+    bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );
+
+    bool GetLock() { return locked; };
+    void SetLock( bool state );
 protected:
+    bool locked;
 };
 CREATE_PAWS_FACTORY( pawsBartenderWindow );
 #endif
