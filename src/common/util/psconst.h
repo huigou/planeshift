@@ -87,7 +87,7 @@ typedef uint32 InstanceID;
  */
 //@{
 #define GUILD_FEE 20000
-#define GUILD_MIN_MEMBERS 1
+#define GUILD_MIN_MEMBERS 5
 #define GUILD_KICK_GRACE 5 ///< minutes
 
 #define GUILD_NAME_CHANGE_LIMIT 24 * 60 * 60000 ///< Minimum number of ticks between name change of guild
