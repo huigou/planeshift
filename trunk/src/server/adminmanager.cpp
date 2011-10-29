@@ -9744,13 +9744,10 @@ bool AdminManager::ApplySkill(int client, Client* target, psSkillInfo* skill, in
     {
         int old_value = pchar->Skills().GetSkillRank(skill->id).Current(); // backup current value
         int new_value = value;
-        int max = MAX_SKILL;
+        int max = SKILL_MAX_RANK;
 
         if (relative)
             new_value += old_value;
-
-        if (skill->category == PSSKILLS_CATEGORY_STATS) // stats have an own maximum
-            max = MAX_STAT;
 
         if (cap && cap < max) // check whether the issuer specified a maximum
             max = cap;

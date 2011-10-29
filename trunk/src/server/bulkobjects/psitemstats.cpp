@@ -44,20 +44,6 @@
 #include "psitem.h"
 #include "psmerchantinfo.h"
 
-PSITEMSTATS_STAT skillToStat(PSSKILL skill)
-{
-    switch (skill)
-    {
-        case PSSKILL_AGI:  return PSITEMSTATS_STAT_AGILITY;
-        case PSSKILL_END:  return PSITEMSTATS_STAT_ENDURANCE;
-        case PSSKILL_STR:  return PSITEMSTATS_STAT_STRENGTH;
-        case PSSKILL_CHA:  return PSITEMSTATS_STAT_CHARISMA;
-        case PSSKILL_INT:  return PSITEMSTATS_STAT_INTELLIGENCE;
-        case PSSKILL_WILL: return PSITEMSTATS_STAT_WILL;
-        default:           return PSITEMSTATS_STAT_NONE;
-    }
-}
-
 PSSKILL statToSkill(PSITEMSTATS_STAT stat)
 {
     switch (stat)

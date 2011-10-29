@@ -188,12 +188,12 @@ INSERT INTO progression_events VALUES('drop_marker','<script><fx target="Target"
 INSERT INTO progression_events VALUES('death_penalty',
     '<script>
        <apply aim="Actor" type="debuff" name="-Death Realm Curse" duration="100000">
-         <agi value="-0.5*Actor:Agility"/>
-         <end value="-0.5*Actor:Endurance"/>
-         <str value="-0.5*Actor:Strength"/>
-         <cha value="-0.5*Actor:Charisma"/>
-         <int value="-0.5*Actor:Intelligence"/>
-         <wil value="-0.5*Actor:Will"/>
+         <agi value="-0.5*Actor:GetSkillValue(46)"/>
+         <end value="-0.5*Actor:GetSkillValue(48)"/>
+         <str value="-0.5*Actor:GetSkillValue(50)"/>
+         <cha value="-0.5*Actor:GetSkillValue(47)"/>
+         <int value="-0.5*Actor:GetSkillValue(49)"/>
+         <wil value="-0.5*Actor:GetSkillValue(51)"/>
          <msg text="You fell the curse of the death realm upon you." undo="You feel the curse of death lift."/>
        </apply>
      </script>');

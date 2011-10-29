@@ -2561,15 +2561,18 @@ void NPCManager::HandlePetSkill(MsgEntry * me,Client *client)
             }
 
             psCharacter* chr = client->GetFamiliar()->GetCharacterData();
+            MathEnvironment skillVal;
+            chr->GetSkillValues(&skillVal);
+
             psPetSkillMessage newmsg(client->GetClientNum(),
                             psPetSkillMessage::DESCRIPTION,
                             buff,
-                            (unsigned int)(chr->GetSkillRank(PSSKILL_STR).Current()),
-                            (unsigned int)(chr->GetSkillRank(PSSKILL_END).Current()),
-                            (unsigned int)(chr->GetSkillRank(PSSKILL_AGI).Current()),
-                            (unsigned int)(chr->GetSkillRank(PSSKILL_INT).Current()),
-                            (unsigned int)(chr->GetSkillRank(PSSKILL_WILL).Current()),
-                            (unsigned int)(chr->GetSkillRank(PSSKILL_CHA).Current()),
+                            (unsigned int)skillVal.Lookup("STR")->GetRoundValue(),
+                            (unsigned int)skillVal.Lookup("END")->GetRoundValue(),
+                            (unsigned int)skillVal.Lookup("AGI")->GetRoundValue(),
+                            (unsigned int)skillVal.Lookup("INT")->GetRoundValue(),
+                            (unsigned int)skillVal.Lookup("WIL")->GetRoundValue(),
+                            (unsigned int)skillVal.Lookup("CHA")->GetRoundValue(),
                             (unsigned int)(chr->GetHP()),
                             (unsigned int)(chr->GetMana()),
                             (unsigned int)(chr->GetStamina(true)),
@@ -2637,15 +2640,19 @@ void NPCManager::SendPetSkillList(Client * client, bool forceOpen, PSSKILL focus
     buff.Append("</L>");
 
     psCharacter* chr = client->GetFamiliar()->GetCharacterData();
+
+    MathEnvironment skillVal;
+    chr->GetSkillValues(&skillVal);
+
     psPetSkillMessage newmsg(client->GetClientNum(),
                             psPetSkillMessage::SKILL_LIST,
                             buff,
-                            (unsigned int)character->GetSkillRank(PSSKILL_STR).Current(),
-                            (unsigned int)character->GetSkillRank(PSSKILL_END).Current(),
-                            (unsigned int)character->GetSkillRank(PSSKILL_AGI).Current(),
-                            (unsigned int)character->GetSkillRank(PSSKILL_INT).Current(),
-                            (unsigned int)character->GetSkillRank(PSSKILL_WILL).Current(),
-                            (unsigned int)character->GetSkillRank(PSSKILL_CHA).Current(),
+                            (unsigned int)skillVal.Lookup("STR")->GetRoundValue(),
+                            (unsigned int)skillVal.Lookup("END")->GetRoundValue(),
+                            (unsigned int)skillVal.Lookup("AGI")->GetRoundValue(),
+                            (unsigned int)skillVal.Lookup("INT")->GetRoundValue(),
+                            (unsigned int)skillVal.Lookup("WIL")->GetRoundValue(),
+                            (unsigned int)skillVal.Lookup("CHA")->GetRoundValue(),
                             (unsigned int)chr->GetHP(),
                             (unsigned int)chr->GetMana(),
                             (unsigned int)chr->GetStamina(true),

@@ -2083,14 +2083,19 @@ int com_liststats(char *line)
         charData->GetMaxMStamina().Base(), charData->GetMaxMStamina().Current(), charData->GetMStaminaRate().Base(), charData->GetMStaminaRate().Current());
     }
 
+    MathEnvironment skillVal;
+    MathEnvironment baseSkillVal;
+    charData->GetSkillValues(&skillVal);
+    charData->GetSkillBaseValues(&baseSkillVal);
+
     CPrintf(CON_CMDOUTPUT ,"Stat        Base        Buffed\n");
     {
-        CPrintf(CON_CMDOUTPUT ,"STR        %7.1f\t%7.1f\n", (float) charData->GetSkillRank(PSSKILL_STR).Base(), (float) charData->GetSkillRank(PSSKILL_STR).Current());
-        CPrintf(CON_CMDOUTPUT ,"AGI        %7.1f\t%7.1f\n", (float) charData->GetSkillRank(PSSKILL_AGI).Base(), (float) charData->GetSkillRank(PSSKILL_AGI).Current());
-        CPrintf(CON_CMDOUTPUT ,"END        %7.1f\t%7.1f\n", (float) charData->GetSkillRank(PSSKILL_END).Base(), (float) charData->GetSkillRank(PSSKILL_END).Current());
-        CPrintf(CON_CMDOUTPUT ,"INT        %7.1f\t%7.1f\n", (float) charData->GetSkillRank(PSSKILL_INT).Base(), (float) charData->GetSkillRank(PSSKILL_INT).Current());
-        CPrintf(CON_CMDOUTPUT ,"WIL        %7.1f\t%7.1f\n", (float) charData->GetSkillRank(PSSKILL_WILL).Base(), (float) charData->GetSkillRank(PSSKILL_WILL).Current());
-        CPrintf(CON_CMDOUTPUT ,"CHA        %7.1f\t%7.1f\n", (float) charData->GetSkillRank(PSSKILL_CHA).Base(), (float) charData->GetSkillRank(PSSKILL_CHA).Current());
+        CPrintf(CON_CMDOUTPUT ,"STR        %7.1f\t%7.1f\n", baseSkillVal.Lookup("STR")->GetValue(), skillVal.Lookup("STR")->GetValue());
+        CPrintf(CON_CMDOUTPUT ,"AGI        %7.1f\t%7.1f\n", baseSkillVal.Lookup("AGI")->GetValue(), skillVal.Lookup("AGI")->GetValue());
+        CPrintf(CON_CMDOUTPUT ,"END        %7.1f\t%7.1f\n", baseSkillVal.Lookup("END")->GetValue(), skillVal.Lookup("END")->GetValue());
+        CPrintf(CON_CMDOUTPUT ,"INT        %7.1f\t%7.1f\n", baseSkillVal.Lookup("INT")->GetValue(), skillVal.Lookup("INT")->GetValue());
+        CPrintf(CON_CMDOUTPUT ,"WIL        %7.1f\t%7.1f\n", baseSkillVal.Lookup("WIL")->GetValue(), skillVal.Lookup("WIL")->GetValue());
+        CPrintf(CON_CMDOUTPUT ,"CHA        %7.1f\t%7.1f\n", baseSkillVal.Lookup("CHA")->GetValue(), skillVal.Lookup("CHA")->GetValue());
     }
 
     CPrintf(CON_CMDOUTPUT ,"Experience points(W)  %7u\n",charData->GetExperiencePoints());

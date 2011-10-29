@@ -81,13 +81,18 @@
 
 const char *psCharacter::characterTypeName[] = { "player", "npc", "pet", "mount", "mountpet" };
 
-MathScript *psCharacter::maxRealmScript    = NULL;
-MathScript *psCharacter::staminaCalc       = NULL;
-MathScript *psCharacter::expSkillCalc      = NULL;
-MathScript *psCharacter::staminaRatioWalk  = NULL;
-MathScript *psCharacter::staminaRatioStill = NULL;
-MathScript *psCharacter::staminaRatioSit   = NULL;
-MathScript *psCharacter::staminaRatioWork  = NULL;
+MathScript *psCharacter::maxRealmScript        = NULL;
+MathScript *psCharacter::staminaCalc           = NULL;
+MathScript *psCharacter::expSkillCalc          = NULL;
+MathScript *psCharacter::staminaRatioWalk      = NULL;
+MathScript *psCharacter::staminaRatioStill     = NULL;
+MathScript *psCharacter::staminaRatioSit       = NULL;
+MathScript *psCharacter::staminaRatioWork  	   = NULL;
+MathScript *psCharacter::dodgeValueCalc  	   = NULL;
+MathScript *psCharacter::armorSkillsPractice   = NULL;
+MathScript *psCharacter::charLevelGet          = NULL;
+MathScript *psCharacter::skillValuesGet        = NULL;
+MathScript *psCharacter::baseSkillValuesGet    = NULL;
 
 //-----------------------------------------------------------------------------
 
@@ -237,6 +242,52 @@ psCharacter::psCharacter() : inventory(this),
         }
     }
 
+    if (!dodgeValueCalc)
+    {
+    	dodgeValueCalc = psserver->GetMathScriptEngine()->FindScript("CalculateDodgeValue");
+        if (!dodgeValueCalc)
+        {
+            Error1("Can't find math script CalculateDodgeValue! Character loading failed.");
+        }
+    }
+
+
+    if (!armorSkillsPractice)
+    {
+    	armorSkillsPractice = psserver->GetMathScriptEngine()->FindScript("PracticeArmorSkills");
+        if (!armorSkillsPractice)
+        {
+            Error1("Can't find math script PracticeArmorSkills! Character loading failed.");
+        }
+    }
+
+    if (!charLevelGet)
+    {
+    	charLevelGet = psserver->GetMathScriptEngine()->FindScript("GetCharLevel");
+        if (!charLevelGet)
+        {
+            Error1("Can't find math script GetCharLevel! Character loading failed.");
+        }
+    }
+
+
+    if (!skillValuesGet)
+    {
+    	skillValuesGet = psserver->GetMathScriptEngine()->FindScript("GetSkillValues");
+        if (!skillValuesGet)
+        {
+            Error1("Can't find math script GetSkillValues! Character loading failed.");
+        }
+    }
+
+    if (!baseSkillValuesGet)
+    {
+    	baseSkillValuesGet = psserver->GetMathScriptEngine()->FindScript("GetSkillBaseValues");
+        if (!baseSkillValuesGet)
+        {
+            Error1("Can't find math script GetSkillBaseValues! Character loading failed.");
+        }
+    }
 }
 
 psCharacter::~psCharacter()
@@ -982,12 +1033,18 @@ void OverridableRace::OnChange()
     if(!raceInfo)
         return;
 
-    character->Skills().SetSkillRank(PSSKILL_STR, int(raceInfo->GetBaseAttribute(PSITEMSTATS_STAT_STRENGTH)) );
-    character->Skills().SetSkillRank(PSSKILL_AGI, int(raceInfo->GetBaseAttribute(PSITEMSTATS_STAT_AGILITY)) );
-    character->Skills().SetSkillRank(PSSKILL_END, int(raceInfo->GetBaseAttribute(PSITEMSTATS_STAT_ENDURANCE)) );
-    character->Skills().SetSkillRank(PSSKILL_INT, int(raceInfo->GetBaseAttribute(PSITEMSTATS_STAT_INTELLIGENCE)) );
-    character->Skills().SetSkillRank(PSSKILL_WILL, int(raceInfo->GetBaseAttribute(PSITEMSTATS_STAT_WILL)) );
-    character->Skills().SetSkillRank(PSSKILL_CHA, int(raceInfo->GetBaseAttribute(PSITEMSTATS_STAT_CHARISMA)) );
+    MathScript *setBaseSkillsScript = psserver->GetMathScriptEngine()->FindScript("SetBaseSkills");
+
+    MathEnvironment env;
+    env.Define("Actor", character);
+    env.Define("STR", raceInfo->GetBaseAttribute(PSITEMSTATS_STAT_STRENGTH));
+    env.Define("AGI", raceInfo->GetBaseAttribute(PSITEMSTATS_STAT_AGILITY));
+    env.Define("END", raceInfo->GetBaseAttribute(PSITEMSTATS_STAT_ENDURANCE));
+    env.Define("INT", raceInfo->GetBaseAttribute(PSITEMSTATS_STAT_INTELLIGENCE));
+    env.Define("WILL", raceInfo->GetBaseAttribute(PSITEMSTATS_STAT_WILL));
+    env.Define("CHA", raceInfo->GetBaseAttribute(PSITEMSTATS_STAT_CHARISMA));
+
+    setBaseSkillsScript->Evaluate(&env);
 
     //as we are changing or obtaining for the first time a race set the inventory correctly for this.
     character->Inventory().SetBasicArmor(raceInfo);
@@ -1868,13 +1925,8 @@ void psCharacter::SetStaminaRegenerationWork(int skill)
 void psCharacter::CalculateMaxStamina()
 {
     MathEnvironment env;
-    // Set all the skills vars
-    env.Define("STR",  GetSkillRank(PSSKILL_STR).Current());
-    env.Define("END",  GetSkillRank(PSSKILL_END).Current());
-    env.Define("AGI",  GetSkillRank(PSSKILL_AGI).Current());
-    env.Define("INT",  GetSkillRank(PSSKILL_INT).Current());
-    env.Define("WILL", GetSkillRank(PSSKILL_WILL).Current());
-    env.Define("CHA",  GetSkillRank(PSSKILL_CHA).Current());
+    // Set the actor to retreive the skill values from
+    env.Define("Actor", this);
 
     // Calculate
     staminaCalc->Evaluate(&env);
@@ -2021,22 +2073,22 @@ float psCharacter::GetDodgeValue()
     CalculateArmorForSlot(PSCHARACTER_SLOT_LEGS, heavy_p, med_p, light_p);
     CalculateArmorForSlot(PSCHARACTER_SLOT_BOOTS, heavy_p, med_p, light_p);
 
-    // multiplies for skill
-    heavy_p *= skills.GetSkillRank(PSSKILL_HEAVYARMOR).Current();
-    med_p   *= skills.GetSkillRank(PSSKILL_MEDIUMARMOR).Current();
-    light_p *= skills.GetSkillRank(PSSKILL_LIGHTARMOR).Current();
+    MathEnvironment env;
+    
+    // Add actor to manipulate and points to calculate.
+    env.Define("Actor", this);
+    env.Define("HeavyPoints", heavy_p);
+    env.Define("MediumPoints", med_p);
+    env.Define("LightPoints", light_p);
 
-    // armor skill defense mod
-    asdm=heavy_p+med_p+light_p;
+    dodgeValueCalc->Evaluate(&env);
 
-    // if total skill is 0, give a little chance anyway to defend himself
-    if (asdm==0)
-        asdm=0.2F;
-
-    // for now return just asdm
-    return asdm;
+    return env.Lookup("Result")->GetValue();
 
     /*
+     *
+     * Should be implemented in the script if needed.
+     *
     // MADM= Martial Arts Defense Mod=martial arts skill-(weight carried+ AGI malus of the armor +DEX malus of the armor) min 0
     // TODO: fix this to use armor agi malus
     madm=GetSkillRank(PSSKILL_MARTIALARTS).Current()-inventory.weight;
@@ -2055,29 +2107,45 @@ float psCharacter::GetDodgeValue()
     */
 }
 
-
+/**
+ * PracticesArmorSkills is never used.
+ */
 void psCharacter::PracticeArmorSkills(unsigned int practice, INVENTORY_SLOT_NUMBER attackLocation)
 {
+	unsigned int heavy_p = 0;
+	unsigned int med_p = 0;
+	unsigned int light_p = 0;
 
     psItem *armor = inventory.GetEffectiveArmorInSlot(attackLocation);
 
     switch (armor->GetArmorType())
     {
         case PSITEMSTATS_ARMORTYPE_LIGHT:
-            skills.AddSkillPractice(PSSKILL_LIGHTARMOR,practice);
+        	light_p = practice;
             break;
         case PSITEMSTATS_ARMORTYPE_MEDIUM:
-            skills.AddSkillPractice(PSSKILL_MEDIUMARMOR,practice);
+        	med_p = practice;
             break;
         case PSITEMSTATS_ARMORTYPE_HEAVY:
-            skills.AddSkillPractice(PSSKILL_HEAVYARMOR,practice);
+        	heavy_p = practice;
             break;
         default:
             break;
     }
 
+    MathEnvironment env;
+    env.Define("Actor", this);
+    env.Define("HeavyPoints", heavy_p);
+    env.Define("MediumPoints", med_p);
+    env.Define("LightPoints", light_p);
+
+    armorSkillsPractice->Evaluate(&env);
+
 }
 
+/**
+ * PracticeWeaponSkills is never used.
+ */
 void psCharacter::PracticeWeaponSkills(unsigned int practice)
 {
     int slot;
@@ -2445,54 +2513,6 @@ double psCharacter::GetProperty(MathEnvironment* env, const char* ptr)
     {
         return GetMaxMStamina().Base();
     }
-    else if (property == "Strength")
-    {
-        return GetSkillRank(PSSKILL_STR).Current();
-    }
-    else if (property == "Agility")
-    {
-        return GetSkillRank(PSSKILL_AGI).Current();
-    }
-    else if (property == "Endurance")
-    {
-        return GetSkillRank(PSSKILL_END).Current();
-    }
-    else if (property == "Intelligence")
-    {
-        return GetSkillRank(PSSKILL_INT).Current();
-    }
-    else if (property == "Will")
-    {
-        return GetSkillRank(PSSKILL_WILL).Current();
-    }
-    else if (property == "Charisma")
-    {
-        return GetSkillRank(PSSKILL_CHA).Current();
-    }
-    else if (property == "BaseStrength")
-    {
-        return GetSkillRank(PSSKILL_STR).Base();
-    }
-    else if (property == "BaseAgility")
-    {
-        return GetSkillRank(PSSKILL_AGI).Base();
-    }
-    else if (property == "BaseEndurance")
-    {
-        return GetSkillRank(PSSKILL_END).Base();
-    }
-    else if (property == "BaseIntelligence")
-    {
-        return GetSkillRank(PSSKILL_INT).Base();
-    }
-    else if (property == "BaseWill")
-    {
-        return GetSkillRank(PSSKILL_WILL).Base();
-    }
-    else if (property == "BaseCharisma")
-    {
-        return GetSkillRank(PSSKILL_CHA).Base();
-    }
     else if (property == "AllArmorStrMalus")
     {
         return modifiers[PSITEMSTATS_STAT_STRENGTH].Current();
@@ -2599,10 +2619,20 @@ double psCharacter::CalcFunction(MathEnvironment* env, const char* functionName,
     else if (function == "GetSkillValue")
     {
         PSSKILL skill = (PSSKILL)(int)params[0];
-
         double value = skills.GetSkillRank(skill).Current();
-
         return value;
+    }
+    else if (function == "GetSkillBaseValue")
+    {
+        PSSKILL skill = (PSSKILL)(int)params[0];
+        double value = skills.GetSkillRank(skill).Base();
+        return value;
+    }
+    else if (function == "SetSkillValue")
+    {
+        PSSKILL skill = (PSSKILL)(int)params[0];
+        skills.SetSkillRank(skill, (int)params[1]);
+        return 0;
     }
     else if (function == "PracticeSkillID")
     {
@@ -2664,6 +2694,9 @@ double psCharacter::CalcFunction(MathEnvironment* env, const char* functionName,
 
         return env->GetValue(item);
     }
+    /**
+     * Seems not to be used and could be replaced by a correct GetSkillValue in scripts instead.
+     */
     else if (function == "GetArmorSkill")
     {
         PSSKILL skill;
@@ -2699,54 +2732,33 @@ bool psCharacter::CanTrain( PSSKILL skill )
     return skills.CanTrain( skill );
 }
 
+void psCharacter::GetSkillValues(MathEnvironment *env)
+{
+	env->Define("Actor", this);
+	skillValuesGet->Evaluate(env);
+}
+
+void psCharacter::GetSkillBaseValues(MathEnvironment *env)
+{
+	env->Define("Actor", this);
+	baseSkillValuesGet->Evaluate(env);
+}
+
+
+
 void psCharacter::Train( PSSKILL skill, int yIncrease )
 {
-    // Did we train stats?
-    PSITEMSTATS_STAT stat = skillToStat(skill);
-    if (stat != PSITEMSTATS_STAT_NONE)
-    {
-        Skill & cskill = skills.Get(skill);
-
-        skills.Train( skill, yIncrease );
-        int know = cskill.y;
-        int cost = cskill.yCost;
-
-        // We ranked up
-        if(know >= cost)
-        {
-            cskill.rank.SetBase(cskill.rank.Base()+1);
-            cskill.y = 0;
-            cskill.CalculateCosts(this);
-
-            //TEST IF THIS IS NEEDED. CAMERON.
-            RecalculateStats();
-            
-            if(!psServer::CharacterLoader.UpdateCharacterSkill(
-                pid,
-                skill,
-                skills.GetSkillPractice((PSSKILL)skill),
-                skills.GetSkillKnowledge((PSSKILL)skill),
-                skills.GetSkillRank((PSSKILL)skill).Base()
-                ))
-            {
-                Error2("Couldn't save skills for character %u!\n", pid.Unbox());
-            }
-        }
-    }
-    else
-    {
-        skills.Train( skill, yIncrease ); // Normal training
-        if(!psServer::CharacterLoader.UpdateCharacterSkill(
-                pid,
-                skill,
-                skills.GetSkillPractice((PSSKILL)skill),
-                skills.GetSkillKnowledge((PSSKILL)skill),
-                skills.GetSkillRank((PSSKILL)skill).Base()
-                ))
-        {
-             Error2("Couldn't save skills for character %u!\n", pid.Unbox());
-        }
-    }
+	skills.Train( skill, yIncrease ); // Normal training
+	if(!psServer::CharacterLoader.UpdateCharacterSkill(
+			pid,
+			skill,
+			skills.GetSkillPractice((PSSKILL)skill),
+			skills.GetSkillKnowledge((PSSKILL)skill),
+			skills.GetSkillRank((PSSKILL)skill).Base()
+			))
+	{
+		 Error2("Couldn't save skills for character %u!\n", pid.Unbox());
+	}
 }
 
 /*-----------------------------------------------------------------*/
@@ -2865,18 +2877,13 @@ void psCharacter::SetSkillRank(PSSKILL which, unsigned int rank)
 
 unsigned int psCharacter::GetCharLevel(bool physical)
 {
-    if(physical)
-    {
-        return (GetSkillRank(PSSKILL_STR).Current()  +
-                GetSkillRank(PSSKILL_END).Current()  +
-                GetSkillRank(PSSKILL_AGI).Current()) / 3;
-    }
-    else
-    {
-        return (GetSkillRank(PSSKILL_INT).Current()  +
-                GetSkillRank(PSSKILL_WILL).Current() +
-                GetSkillRank(PSSKILL_CHA).Current()) / 3;
-    }
+	MathEnvironment env;
+    env.Define("Actor", this);
+
+	env.Define("Physical", (physical ? 1 : 0));
+
+	charLevelGet->Evaluate(&env);
+    return env.Lookup("Result")->GetRoundValue();
 }
 
 //This function recalculates Hp, Mana, and Stamina when needed (char creation, combats, training sessions)
@@ -3306,27 +3313,6 @@ int SkillSet::AddSkillPractice(PSSKILL skill, unsigned int val)
     return added;
 }
 
-unsigned int SkillSet::GetBestSkillValue( bool withBuffer )
-{
-    unsigned int max=0;
-    for (size_t i=0; i<psserver->GetCacheManager()->GetSkillAmount(); i++)
-    {
-        PSSKILL skill = skills[i].info->id;
-        if(     skill == PSSKILL_AGI ||
-                skill == PSSKILL_CHA ||
-                skill == PSSKILL_END ||
-                skill == PSSKILL_INT ||
-                skill == PSSKILL_WILL ||
-                skill == PSSKILL_STR )
-            continue; // Jump past the stats, we only want the skills
-
-        unsigned int rank = withBuffer ? skills[i].rank.Current() : skills[i].rank.Base();
-        if (rank > max)
-            max = rank;
-    }
-    return max;
-}
-
 unsigned int SkillSet::GetBestSkillSlot( bool withBuffer )
 {
     unsigned int max = 0;
@@ -3393,15 +3379,11 @@ void SkillSet::SetSkillRank( PSSKILL which, unsigned int rank, bool recalculates
     if (which < 0 || which >= (PSSKILL)psserver->GetCacheManager()->GetSkillAmount())
         return;
 
-    bool isStat = (which >= PSSKILL_AGI && which <= PSSKILL_WILL);
-
     // Clamp rank to stay within sane values, even if given something totally outrageous.
     if (rank < 0)
         rank = 0;
-    else if (!isStat && rank > MAX_SKILL)
-        rank = MAX_SKILL;
-    else if (isStat && rank > MAX_STAT)
-        rank = MAX_STAT;
+    else if (rank > SKILL_MAX_RANK)
+        rank = SKILL_MAX_RANK;
 
     skills[which].rank.SetBase(rank);
     skills[which].CalculateCosts(self);
