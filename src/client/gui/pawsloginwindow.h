@@ -64,6 +64,7 @@ private:
     pawsListBox* listBox;
     pawsMultiLineTextBox* connectingLabel;
     pawsCheckBox* checkBox;
+    pawsCheckBox* checkBoxC;
 
     /// Used to wait to see if there is a server running. 
     csTicks timeout;
@@ -72,7 +73,9 @@ private:
     bool connecting;
     bool passwdChanged;
     bool remember;
+    bool convert;
     csString storedPasswd;
+    csString storedPasswd256; ///< temporary variable for migration from md5 to sha256
     csPDelArray<psServerPinger> servers;
     
 };

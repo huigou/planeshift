@@ -54,7 +54,7 @@ public:
     void Disconnect();
     
     /** Sends an authentication message to the server */
-    void Authenticate(const csString & name, const csString & pwd);
+    void Authenticate(const csString & name, const csString & pwd, const csString & pwd256);
 
     ClientMsgHandler *GetMsgHandler();
     CmdHandler *GetCmdHandler() { return cmdhandler; }

@@ -48,7 +48,7 @@ public:
     
     void Draw();
     
-    void StoreHashedPassword(csString passwordHash) {passHash = passwordHash;}
+    void StoreHashedPassword(csString passwordHash, csString passwordHash256) {passHash = passwordHash; passHash256 = passwordHash256;}
     void StoreServerName(csString servName) {serverName = servName;}
 
     bool CheckLoadStatus();
@@ -76,6 +76,7 @@ private:
     Model models[MAX_CHARS];
 
     csString passHash;
+    csString passHash256;
     csString serverName;
     psCharAppearance* charApp;
     bool loaded;

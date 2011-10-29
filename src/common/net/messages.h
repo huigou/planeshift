@@ -561,6 +561,7 @@ public:
     uint32_t  netversion;
     csString  sAddr;
     csString  sUser,sPassword;
+    csString  sPassword256;
     csString  os_, gfxcard_, gfxversion_;
 
     /**
@@ -569,7 +570,7 @@ public:
      * creation when a user wants to log in.
      */
     psAuthenticationMessage(uint32_t clientnum,const char *userid,
-        const char *password, const char *os, const char *gfxcard, const char *gfxversion, uint32_t version=PS_NETVERSION);
+        const char *password, const char *os, const char *gfxcard, const char *gfxversion, const char *sPassword256 = "", uint32_t version=PS_NETVERSION);
 
     /**
      * This constructor receives a PS Message struct and cracks it apart

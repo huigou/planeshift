@@ -275,7 +275,13 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
         // delete acctinfo;
         return;
     }
-    
+
+    if(msg.sPassword256.Length() > 0) // save the newly  obtained sha256 password
+    {
+        csString sanitized;
+        db->Escape(sanitized, msg.sPassword256);
+        db->CommandPump("UPDATE accounts set password256=\"%s\" where id=%d", sanitized.GetData(), acctinfo->accountid);
+    }
     /**
      * Check if the client is already logged in
      */
