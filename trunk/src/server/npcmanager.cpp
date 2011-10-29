@@ -19,7 +19,7 @@
 
 #include <psconfig.h>
 #include <ctype.h>
-#include <csutil/md5.h>
+#include <csutil/sha256.h>
 
 //=============================================================================
 // Crystal Space Includes
@@ -626,7 +626,7 @@ void NPCManager::HandleAuthentRequest(MsgEntry *me,Client *notused)
         return;
     }
 
-    csString password = csMD5::Encode(msg.sPassword).HexString();
+    csString password = CS::Utility::Checksum::SHA256::Encode(msg.sPassword).HexString();
 
     if(strcmp(acctinfo->password,(const char *)password))
     {
