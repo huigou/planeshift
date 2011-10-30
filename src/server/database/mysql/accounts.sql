@@ -23,7 +23,7 @@ CREATE TABLE  `accounts` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(50) NOT NULL DEFAULT '0',
   `password` varchar(64) NOT NULL DEFAULT '0',
-  `password` varchar(64) NOT NULL DEFAULT '0',
+  `password256` varchar(64) NOT NULL DEFAULT '0',
   `last_login` datetime DEFAULT NULL,
   `created_date` datetime DEFAULT NULL,
   `last_login_ip` varchar(16) DEFAULT NULL,
