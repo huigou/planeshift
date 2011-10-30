@@ -80,14 +80,7 @@ pawsButton::pawsButton(const pawsButton& pb) :
 bool pawsButton::Setup( iDocumentNode* node )
 {    
     // Check for toggle 
-    csRef<iDocumentAttribute> toggleAttribute = node->GetAttribute("toggle");
-    if ( toggleAttribute )
-    {
-        csString value( toggleAttribute->GetValue() );
-        if ( value == "yes" )  toggle = true;
-        else                   toggle = false;
-
-    }
+    toggle = node->GetAttributeValueAsBool("toggle", true);
 
     // Check for keyboard shortcut for this button
     const char *key = node->GetAttributeValue("key");
