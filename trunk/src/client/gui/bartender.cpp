@@ -24,6 +24,7 @@
 //=============================================================================
 #include "bartender.h"
 #include "pawsslot.h"
+#include "paws/pawsbutton.h"
 
 
 //=============================================================================
@@ -148,22 +149,14 @@ void pawsBartenderWindow::SetLock(bool state)
  
 bool pawsBartenderWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
-    switch ( widget->GetID() )
+    switch(widget->GetID())
     {
         case BTN_LOCK:
         {
-            SetLock( true );
-            widget->Hide();
-            FindWidget( BTN_UNLOCK )->Show();;
+            //must be a button
+            SetLock(dynamic_cast<pawsButton*>(widget)->GetState());
             return true;
         }
-        case BTN_UNLOCK:
-        {
-            SetLock( false );
-            widget->Hide();
-            FindWidget( BTN_LOCK )->Show();
-            return true;
-        } 
     }
     return false;
 }

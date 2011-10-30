@@ -63,12 +63,8 @@
         <show_stack_amount>0</show_stack_amount>
         <frame x="550" y="0" width="48" height="48" />
     </widget>
-    <widget name="LockButton" factory="pawsButton" id="100" tooltip="Lock" visible="no" >
+    <widget name="LockButton" factory="pawsButton" id="100" tooltip="Lock/Unlock" visible="yes" toggle="yes" >
        <frame x="600" y="0" width="32" height="32" />
-       <bgimage resource="FilterSkill" />
-    </widget>
-    <widget name="UnlockButton" factory="pawsButton" id="101" tooltip="Unlock" >
-       <frame x="600" y="32" width="32" height="32" />
        <bgimage resource="FilterSkill" />
     </widget>
 </widget>
