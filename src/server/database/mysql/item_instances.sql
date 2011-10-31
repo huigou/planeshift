@@ -46,7 +46,7 @@ CREATE TABLE `item_instances` (
   `lock_skill` int(2) NOT NULL default '-1',
   `openable_locks` varchar(100) default '0',
   `item_name` varchar(100) default '',
-  `item_description` varchar(255) default '',
+  `item_description` TEXT default '',
   `creative_definition` TEXT  DEFAULT NULL COMMENT 'This is used for books/sketch.',
   `charges` int(3) NOT NULL default '0',
   `prefix` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'Determines the prefix to be used from the loot modifiers table',
