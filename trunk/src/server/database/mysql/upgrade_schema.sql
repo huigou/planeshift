@@ -1627,6 +1627,8 @@ ALTER TABLE `alliances` ADD `date_created` TIMESTAMP default current_timestamp A
 ALTER TABLE `accounts` ADD COLUMN `password256` VARCHAR(64)  NOT NULL DEFAULT 0 AFTER `password`;
 ALTER TABLE `accounts` MODIFY COLUMN `password` VARCHAR(64)  NOT NULL DEFAULT 0;
 
+ALTER TABLE `item_instances` MODIFY COLUMN `item_description` TEXT;
+
 
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
