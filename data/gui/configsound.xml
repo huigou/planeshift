@@ -69,17 +69,17 @@
         </widget>
 
         <widget name="combatMusic" factory="pawsCheckBox">
-            <frame x="10" y="200" width="220" height="20" />
+            <frame x="10" y="200" width="190" height="20" />
             <text string="Combat music"/>
         </widget>
 
         <widget name="loopBGM" factory="pawsCheckBox">
-            <frame x="10" y="225" width="220" height="20" />
+            <frame x="10" y="225" width="190" height="20" />
             <text string="Loop background music"/>
         </widget>
 
         <widget name="muteOnFocusLoss" factory="pawsCheckBox">
-            <frame x="200" y="200" width="220" height="20" />
+            <frame x="200" y="200" width="190" height="20" />
             <text string="Mute on focus loss"/>
         </widget>
 
