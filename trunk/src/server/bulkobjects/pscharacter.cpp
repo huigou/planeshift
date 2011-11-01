@@ -2749,6 +2749,8 @@ void psCharacter::GetSkillBaseValues(MathEnvironment *env)
 void psCharacter::Train( PSSKILL skill, int yIncrease )
 {
 	skills.Train( skill, yIncrease ); // Normal training
+
+	skills.CheckDoRank( skill );
 	if(!psServer::CharacterLoader.UpdateCharacterSkill(
 			pid,
 			skill,
@@ -2834,22 +2836,32 @@ void Skill::Train( int yIncrease )
 }
 
 
-bool Skill::Practice( unsigned int amount, unsigned int& actuallyAdded,psCharacter* user )
+bool Skill::CheckDoRank( psCharacter* user )
+{
+	if ( y >= yCost && z >= zCost)
+    {
+        rank.SetBase(rank.Base()+1);
+        z = 0;
+        y = 0;
+        // Reset the costs for Y/Z
+        CalculateCosts(user);
+    	return true;
+    }
+    return false;
+}
+
+bool Skill::Practice( unsigned int amount, unsigned int& actuallyAdded, psCharacter* user )
 {
     bool rankup = false;
+
     // Practice can take place
     if ( y >= yCost )
     {
-        z+=amount;
-        if ( z >= zCost )
+    	z+=amount;
+    	rankup = CheckDoRank( user );
+    	if ( rankup )
         {
-            rank.SetBase(rank.Base()+1);
-            z = 0;
-            y = 0;
-            actuallyAdded = z - zCost;
-            rankup = true;
-            // Reset the costs for Y/Z
-            CalculateCosts(user);
+            actuallyAdded = -zCost;
         }
         else
         {
@@ -2860,7 +2872,6 @@ bool Skill::Practice( unsigned int amount, unsigned int& actuallyAdded,psCharact
     {
         actuallyAdded = 0;
     }
-
     dirtyFlag = true;
     return rankup;
 }
@@ -3345,6 +3356,17 @@ bool SkillSet::CanTrain( PSSKILL skill )
     else
     {
         return skills[skill].CanTrain();
+    }
+}
+
+void SkillSet::CheckDoRank( PSSKILL skill )
+{
+
+    if (skill<0 ||skill>=(PSSKILL)psserver->GetCacheManager()->GetSkillAmount())
+        return;
+    else
+    {
+        skills[skill].CheckDoRank( self );
     }
 }
 
