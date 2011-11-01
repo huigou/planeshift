@@ -332,6 +332,19 @@ struct Skill
       */
     void Train( int yIncrease );
 
+    /** @brief Check if skill will rank and rank it up.
+      *
+      * This checks a couple of things.
+      * 1) If the player has the required knowledge to allow for training.
+      * 2) If the amount of practice causes a rank change it will increase
+      *    the rank of the skill and reset the knowledge/practice levels.
+	  *
+      * @param user The character this was for.
+      *
+      * @return True if the practice causes a rank change, false if not.
+      */
+    bool CheckDoRank( psCharacter* user );
+
     /** @brief Practice this skill.
       *
       * This checks a couple of things.
@@ -417,6 +430,15 @@ public:
       * @return  True if the skill still requires Y credits before it is fully trained.
       */
     bool CanTrain( PSSKILL skill );
+
+    /** @brief Checks if a skill should rank and ranks it.
+     *
+     *  It checks if practice and knowledge is reached to rank the skill.
+     *
+     *  @param skill The skill we want to check.
+     */
+    void CheckDoRank( PSSKILL skill );
+
 
     /** @brief Trains a skill.
      *
