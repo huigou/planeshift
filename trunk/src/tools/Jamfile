@@ -7,3 +7,4 @@ SubInclude TOP src tools wordnet ;
 SubInclude TOP src tools xdelta3 ;
 SubInclude TOP src tools pawseditor ;
 SubInclude TOP src tools navgen ;
+SubInclude TOP src tools transtool ;
