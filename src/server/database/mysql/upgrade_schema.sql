@@ -1629,6 +1629,11 @@ ALTER TABLE `accounts` MODIFY COLUMN `password` VARCHAR(64)  NOT NULL DEFAULT 0;
 
 ALTER TABLE `item_instances` MODIFY COLUMN `item_description` TEXT;
 
+INSERT INTO command_group_assignment VALUES( "write all creative", 30 );
+INSERT INTO command_group_assignment VALUES( "write all creative", 25 );
+INSERT INTO command_group_assignment VALUES( "write all creative", 24 );
+INSERT INTO command_group_assignment VALUES( "write all creative", 23 );
+INSERT INTO command_group_assignment VALUES( "write all creative", 22 );
 
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.

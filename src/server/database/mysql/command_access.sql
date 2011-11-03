@@ -62,6 +62,7 @@ INSERT INTO command_group_assignment VALUES( "/version", 30 );
 INSERT INTO command_group_assignment VALUES( "/changenpctype", 30 );
 
 
+
 # GM5 and above
 INSERT INTO command_group_assignment VALUES( "/death", 30 );
 INSERT INTO command_group_assignment VALUES( "/death", 25 );
@@ -293,6 +294,11 @@ INSERT INTO command_group_assignment VALUES( "/deputize", 25 );
 INSERT INTO command_group_assignment VALUES( "/deputize", 24 );
 INSERT INTO command_group_assignment VALUES( "/deputize", 23 );
 INSERT INTO command_group_assignment VALUES( "/deputize", 22 );
+INSERT INTO command_group_assignment VALUES( "write all creative", 30 );
+INSERT INTO command_group_assignment VALUES( "write all creative", 25 );
+INSERT INTO command_group_assignment VALUES( "write all creative", 24 );
+INSERT INTO command_group_assignment VALUES( "write all creative", 23 );
+INSERT INTO command_group_assignment VALUES( "write all creative", 22 );
 
 # GM1 and above
 INSERT INTO command_group_assignment VALUES( "view stats", 30 );
