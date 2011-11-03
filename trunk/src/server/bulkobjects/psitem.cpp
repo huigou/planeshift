@@ -3172,7 +3172,7 @@ bool psItem::SendBookText(Client *client, int containerID, int slotID)
     //is it a writable book?  In our inventory? Are we the author?
     bool shouldWrite = (GetIsWriteable() &&
         GetOwningCharacter() == client->GetCharacterData() &&
-        ( IsThisTheCreator(client->GetCharacterData()->GetPID()) || psserver->CheckAccess(client, "write all")) );
+        ( IsThisTheCreator(client->GetCharacterData()->GetPID()) || psserver->CheckAccess(client, "write all creative")) );
 
   //  CPrintf(CON_DEBUG,"Sent text for book %u %u\n",slotID, containerID);
     psReadBookTextMessage outgoing(client->GetClientNum(), name, text, shouldWrite, slotID, containerID,GetCreativeBackgroundImg());
@@ -3219,7 +3219,7 @@ void psItem::SendSketchDefinition(Client *client)
     // writeable sketch? in inventory? author? gm?
     bool sketchReadOnly = !(GetIsWriteable() &&
           GetOwningCharacter() == client->GetCharacterData() &&
-          (IsThisTheCreator(client->GetCharacterData()->GetPID()) || psserver->CheckAccess(client, "write all")) );
+          (IsThisTheCreator(client->GetCharacterData()->GetPID()) || psserver->CheckAccess(client, "write all creative")) );
     if (sketchReadOnly)
         xml.Append("<rdonly/>");
 
@@ -3244,7 +3244,7 @@ void psItem::SendMusicalSheet(Client* client)
 {
     bool readOnly = !(GetIsWriteable() &&
           GetOwningCharacter() == client->GetCharacterData() &&
-          (IsThisTheCreator(client->GetCharacterData()->GetPID()) || psserver->CheckAccess(client, "write all")));
+          (IsThisTheCreator(client->GetCharacterData()->GetPID()) || psserver->CheckAccess(client, "write all creative")));
 
     psMusicalSheetMessage msg(client->GetClientNum(), GetUID(), readOnly, false, GetName(), GetMusicalSheet().GetDataSafe());
     msg.SendMessage();
