@@ -146,6 +146,7 @@ pawsChatWindow::pawsChatWindow()
     settings.yourColorMix = true;
     settings.joindefaultchannel = true;
     settings.defaultlastchat = true;
+    settings.tabSetting = 1023; //enables all tabs
     settings.chatWidget = "chat.xml";
 
     for (int i = 0; i < CHAT_END; i++)
@@ -364,7 +365,7 @@ void pawsChatWindow::LoadChatSettings()
             if (nodeName == "loose")
                 settings.looseFocusOnSend = option->GetAttributeValueAsBool("value", false);
             if (nodeName == "tabSetting")
-                settings.tabSetting = option->GetAttributeValueAsInt("value", 1023);
+                settings.tabSetting = option->GetAttributeValueAsInt("value");
             else if (nodeName == "selecttabstyle")
                 settings.selectTabStyle = (int)option->GetAttributeValueAsInt("value");
             else if (nodeName == "echoscreeninsystem")
