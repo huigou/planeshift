@@ -355,15 +355,15 @@ bool SndSysSongStream::GetNextChord(char* &noteBuffer, size_t &noteBufferSize)
     }
     divisions = note->GetNode("duration")->GetContentsValueAsInt();
 
+    // computing note duration in seconds
+    duration = timePerDivision * divisions;
+
     // adjusting alteration depending on the tonality
     if(step != 'R')
     {
         AdjustAlteration(step, alter);
-        PlayerError(step, alter, octave);
+        PlayerError(step, alter, octave, duration);
     }
-
-    // computing note duration in seconds
-    duration = timePerDivision * divisions;
 
     // getting first note buffer and length
     lastNoteSize = songData->instrument->GetNoteBuffer(step, alter, octave, duration, noteBuffer, noteBufferSize);
@@ -579,15 +579,30 @@ void SndSysSongStream::AdjustAlteration(char pitch, int &alter)
     }
 }
 
-void SndSysSongStream::PlayerError(char &pitch, int &alter, uint &octave)
+void SndSysSongStream::PlayerError(char &pitch, int &alter, uint &octave, float duration)
 {
-    float error = randomGen.Get();
-    float errorDiff = errorRate - error;
+    float randError;
+    float noteErrorRate;
+    float errorDiff;
 
-    if(error < errorRate)
+    // adjusting the error rate for the note's duration
+    if(duration = 0)
+    {
+        noteErrorRate = 1.0;
+    }
+    else
+    {
+        noteErrorRate = errorRate / duration;
+    }
+
+    // handling error
+    randError = randomGen.Get();
+    errorDiff = noteErrorRate - randError;
+
+    if(errorDiff >= 0)
     {
         // error here is low, change alteration
-        if(errorDiff < errorRate / 2)
+        if(errorDiff < noteErrorRate / 2)
         {
             if(alter > 0)
             {
@@ -597,7 +612,7 @@ void SndSysSongStream::PlayerError(char &pitch, int &alter, uint &octave)
             {
                 alter++;
             }
-            else if(errorDiff < errorRate / 4)
+            else if(errorDiff < noteErrorRate / 4)
             {
                 alter--;
             }
@@ -609,7 +624,7 @@ void SndSysSongStream::PlayerError(char &pitch, int &alter, uint &octave)
         //error here is high, change pitch
         else
         {
-            if(errorDiff < errorRate * 3 / 4)
+            if(errorDiff < noteErrorRate * 3 / 4)
             {
                 Music::PreviousPitch(pitch, octave);
             }
