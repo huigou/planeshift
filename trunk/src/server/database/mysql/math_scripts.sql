@@ -587,3 +587,8 @@ INSERT INTO math_scripts VALUES( "GetSkillBaseValues" , "
 		STR = Actor:GetSkillBaseValue(50);
 		WIL = Actor:GetSkillBaseValue(51);
 ");
+
+INSERT INTO math_scripts VALUES( "Calculate Song Parameters" , "
+		InstrumentSkill = Player:GetSkillValue(Instrument:Skill1);
+		ErrorRate = 1 - InstrumentSkill / (50 + InstrumentSkill);
+");

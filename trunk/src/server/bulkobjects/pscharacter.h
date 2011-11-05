@@ -909,13 +909,15 @@ public:
      * Checks if the actor is playing an instrument.
      * @return true if the actor is playing an instrument.
      */
-    bool IsPlaying() { return isPlaying; }
+    bool IsPlaying() const { return isPlaying; }
+
+    csTicks GetPlayingTime() const { return songStarting - csGetTicks(); }
 
     /**
      * Sets if the actor is playing an instrument.
-     * @param isPlaying true if this actor is playing an instrument.
+     * @param playSong true if this actor starts playing an instrument, false if he stops.
      */
-    void SetPlaying(bool isPlaying) { this->isPlaying = isPlaying; }
+    void PlaySong(bool playSong);
 
     /** Check if the character is a banker */
     bool IsBanker() const { return banker; }
@@ -1291,7 +1293,8 @@ private:
 
     int FindGlyphSlot(const csArray<glyphSlotInfo>& slots, psItemStats * glyphType, int purifyStatus);
 
-    bool isPlaying;     ///< True if this character is playing an instrument.
+    bool isPlaying;         ///< True if this character is playing an instrument.
+    csTicks songStarting;   ///< Keeps the execution time of a player's song.
 
     /** Some races share helms so this tells which
         group it's in. If empty assume in racial group. */

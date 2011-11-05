@@ -142,7 +142,7 @@ void ServerSongManager::HandlePlaySong(MsgEntry* me, Client* client)
             }
 
             // updating character status
-            charData->SetPlaying(true);
+            charData->PlaySong(true);
         }
         else
         {
@@ -187,6 +187,6 @@ void ServerSongManager::HandleStopSong(MsgEntry* me, Client* client)
         }
 
         // updating character status
-        charData->SetPlaying(false);
+        charData->PlaySong(false);
     }
 }

@@ -356,7 +356,7 @@ void pawsMusicWindow::HandleMessage(MsgEntry* message)
     // setting client number, readOnly and title
     currentItemID = msg.itemID;
     readOnly = msg.readOnly;
-    border->SetTitle(msg.songTitle);
+    SetTitle(msg.songTitle);
 
     Show();
 }

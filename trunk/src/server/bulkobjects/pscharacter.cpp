@@ -175,6 +175,8 @@ psCharacter::psCharacter() : inventory(this),
     lastResponse = -1;
 
     isPlaying = false;
+    songStarting = 0;
+
     banker = false;
     isStatue = false;
 
@@ -2761,6 +2763,20 @@ void psCharacter::Train( PSSKILL skill, int yIncrease )
 	{
 		 Error2("Couldn't save skills for character %u!\n", pid.Unbox());
 	}
+}
+
+void psCharacter::PlaySong(bool playSong)
+{
+    isPlaying = playSong;
+
+    if(playSong)
+    {
+        songStarting = csGetTicks();
+    }
+    else
+    {
+        songStarting = 0;
+    }
 }
 
 /*-----------------------------------------------------------------*/
