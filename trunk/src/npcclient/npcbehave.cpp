@@ -146,7 +146,7 @@ bool NPCType::Load(iResultRow &row)
     }
 
     collisionPerception   = row.GetString("collision");
-    outOfBoundsPerception = row.GetString("out_of_ounds");
+    outOfBoundsPerception = row.GetString("out_of_bounds");
     inBoundsPerception    = row.GetString("in_bounds");
     fallingPerception     = row.GetString("falling");
 
