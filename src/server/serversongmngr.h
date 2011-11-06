@@ -26,6 +26,13 @@
 //====================================================================================
 #include "msgmanager.h"
 
+//------------------------------------------------------------------------------------
+// Forward Declarations
+//------------------------------------------------------------------------------------
+class psItem;
+class MathScript;
+class psCharacter;
+
 
 /**
  * At the moment this class just handles play and stop messages for musical instruments.
@@ -42,17 +49,39 @@ public:
      * @param me the message from the client.
      * @param client the sender.
      */
-    void HandlePlaySong(MsgEntry* me, Client* client);
+    void HandlePlaySongMessage(MsgEntry* me, Client* client);
 
     /**
      * Handles a stop song request.
      * @param me the message from the client.
      * @param client the sender.
      */
-    void HandleStopSong(MsgEntry* me, Client* client);
+    void HandleStopSongMessage(MsgEntry* me, Client* client);
+
+    /**
+     * Takes care of the skill ranking and of sending the stop song message to the player's
+     * proximity list.
+     *
+     * @param charActor the player that has just stopped to play his instrument.
+     * @note This function is called by a gemActor when it exits from the PLAY mode thus
+     * StopSong does not take care of updating the player's status.
+     */
+    void StopSong(gemActor* charActor);
 
 private:
-    unsigned int instrumentsCategory;        ///< Keeps the instruments' category from server_options table.
+    bool isEnded;                           ///< Flag used to keep track of the last stop request. Remember to reset each time.
+
+    MathScript* calcSongPar;
+    MathScript* calcSongExp;
+    unsigned int instrumentsCategory;       ///< Keeps the instruments' category from server_options table.
+
+    /**
+     * Gets the instrument currently equipped by the player.
+     * @param charData the player's data.
+     * @return the pointer to the instrument or null if no instrument is equipped.
+     */
+    psItem* GetEquippedInstrument(psCharacter* charData) const;
 };
 
 #endif // SERVER_SONG_MANAGER_H
+

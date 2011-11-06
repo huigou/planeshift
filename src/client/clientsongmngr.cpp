@@ -224,6 +224,16 @@ void ClientSongManager::HandleMessage(MsgEntry* message)
             psSystemMessage msg(0, MSG_ERROR, PawsManager::GetSingleton().Translate("You do not have an equipped musical instrument to play."));
             msg.FireEvent();
         }
+        else if(mainSongID != NO_SONG && stopMsg.toPlayer) // player mode has changed
+        {
+            // stopping song
+            StopSong(mainSongID);
+            mainSongID = NO_SONG;
+            sheet.Empty();
+
+            // updating listeners
+            TriggerListeners();
+        }
     }
 }
 
