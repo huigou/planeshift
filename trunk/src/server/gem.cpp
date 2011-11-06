@@ -101,6 +101,7 @@
 #include "adminmanager.h"
 #include "commandmanager.h"
 #include "combatmanager.h"
+#include "serversongmngr.h"
 #include "scripting.h"
 
 // #define PSPROXDEBUG
@@ -3121,7 +3122,7 @@ void gemActor::SetEquipment(const char *equip)
 
 const char* gemActor::GetModeStr()
 {
-    static const char *strs[] = {"unknown","doing nothing","in combat","spell casting","working","dead","sitting","carrying too much","exhausted", "defeated", "statued" };
+    static const char *strs[] = {"unknown","doing nothing","in combat","spell casting","working","dead","sitting","carrying too much","exhausted", "defeated", "statued", "playing an instrument" };
     return strs[player_mode];
 }
 
@@ -3138,6 +3139,7 @@ bool gemActor::CanSwitchMode(PSCHARACTER_MODE from, PSCHARACTER_MODE to)
         case PSCHARACTER_MODE_COMBAT:
         case PSCHARACTER_MODE_SPELL_CASTING:
         case PSCHARACTER_MODE_WORK:
+        case PSCHARACTER_MODE_PLAY:
             return (from != PSCHARACTER_MODE_OVERWEIGHT &&
                     from != PSCHARACTER_MODE_DEAD &&
                     from != PSCHARACTER_MODE_DEFEATED);
@@ -3204,6 +3206,12 @@ void gemActor::SetMode(PSCHARACTER_MODE newmode, uint32_t extraData)
         workEvent = NULL;
     }
 
+    // stop playing current song
+    if(player_mode == PSCHARACTER_MODE_PLAY)
+    {
+        psserver->GetSongManager()->StopSong(this);
+    }
+
     switch (newmode)
     {
         case PSCHARACTER_MODE_EXHAUSTED:
@@ -3225,6 +3233,9 @@ void gemActor::SetMode(PSCHARACTER_MODE newmode, uint32_t extraData)
             psChar->SetStaminaRegenerationNone();
             break;
 
+        case PSCHARACTER_MODE_PLAY:
+            psChar->StartSong();
+            break;
         case PSCHARACTER_MODE_WORK:
             break;  // work manager sets it's own rates
         default:

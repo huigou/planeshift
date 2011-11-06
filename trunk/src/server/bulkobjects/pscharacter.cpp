@@ -174,8 +174,7 @@ psCharacter::psCharacter() : inventory(this),
 
     lastResponse = -1;
 
-    isPlaying = false;
-    songStarting = 0;
+    songStartingTime = 0;
 
     banker = false;
     isStatue = false;
@@ -2765,18 +2764,9 @@ void psCharacter::Train( PSSKILL skill, int yIncrease )
 	}
 }
 
-void psCharacter::PlaySong(bool playSong)
+void psCharacter::StartSong()
 {
-    isPlaying = playSong;
-
-    if(playSong)
-    {
-        songStarting = csGetTicks();
-    }
-    else
-    {
-        songStarting = 0;
-    }
+    songStartingTime = csGetTicks();
 }
 
 /*-----------------------------------------------------------------*/

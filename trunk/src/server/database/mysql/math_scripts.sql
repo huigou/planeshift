@@ -589,6 +589,25 @@ INSERT INTO math_scripts VALUES( "GetSkillBaseValues" , "
 ");
 
 INSERT INTO math_scripts VALUES( "Calculate Song Parameters" , "
-		InstrumentSkill = Player:GetSkillValue(Instrument:Skill1);
-		ErrorRate = 1 - InstrumentSkill / (50 + InstrumentSkill);
+    InstrSkill = 52;
+    InstrSkillRank = Player:GetSkillValue(InstrSkill);
+    ErrorRate = 1 - InstrSkillRank / (50 + InstrSkillRank);
+");
+
+INSERT INTO math_scripts VALUES( "Calculate Song Experience" , "
+    PracticePoints = 0.1 * SongTime;
+
+    AverageError = ErrorRate / AverageDuration * AveragePolyphony;
+    if(AverageError > 1)
+    {
+        AverageError = 1;
+    }
+
+    ErrorShift = AverageError - 0.5;
+    if(ErrorShift < 0)
+    {
+        ErrorShift = -ErrorShift;
+    }
+
+    Modifier = 1 - 2*ErrorShift;
 ");
