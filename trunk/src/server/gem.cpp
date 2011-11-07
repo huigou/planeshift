@@ -3191,6 +3191,7 @@ void gemActor::SetMode(PSCHARACTER_MODE newmode, uint32_t extraData)
                      newmode != PSCHARACTER_MODE_EXHAUSTED &&
                      newmode != PSCHARACTER_MODE_OVERWEIGHT &&
                      newmode != PSCHARACTER_MODE_STATUE &&
+                     newmode != PSCHARACTER_MODE_PLAY &&
                      !isFrozen);
 
     SetAlive(newmode != PSCHARACTER_MODE_DEAD);
@@ -3209,7 +3210,7 @@ void gemActor::SetMode(PSCHARACTER_MODE newmode, uint32_t extraData)
     // stop playing current song
     if(player_mode == PSCHARACTER_MODE_PLAY)
     {
-        psserver->GetSongManager()->StopSong(this);
+        psserver->GetSongManager()->StopSong(this, true);
     }
 
     switch (newmode)

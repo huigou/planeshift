@@ -63,10 +63,11 @@ public:
      * proximity list.
      *
      * @param charActor the player that has just stopped to play his instrument.
+     * @param skillRanking true to make the player gain practice points, false otherwise.
      * @note This function is called by a gemActor when it exits from the PLAY mode thus
      * StopSong does not take care of updating the player's status.
      */
-    void StopSong(gemActor* charActor);
+    void StopSong(gemActor* charActor, bool skillRanking);
 
 private:
     bool isEnded;                           ///< Flag used to keep track of the last stop request. Remember to reset each time.

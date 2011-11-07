@@ -79,6 +79,7 @@
 #include "cachemanager.h"
 #include "playergroup.h"
 #include "chatmanager.h"// included for say_range
+#include "serversongmngr.h"
 #include "globals.h"
 
 EntityManager::EntityManager()
@@ -619,6 +620,13 @@ bool EntityManager::DeletePlayer(Client * client)
             
             //check for alliance members to notify
             usermanager->NotifyAllianceBuddies(client, UserManager::LOGGED_OFF);
+        }
+
+        // If the player is playing an instrument the song is stopped (no skill ranking)
+        // and the proximity list is noticed
+        if(actor->GetMode() == PSCHARACTER_MODE_PLAY)
+        {
+            psserver->GetSongManager()->StopSong(actor, false);
         }
 
         // Any objects wanting to know when the actor is 'gone' are callback'd here.
