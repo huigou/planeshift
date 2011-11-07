@@ -141,8 +141,9 @@ void ServerSongManager::HandlePlaySongMessage(MsgEntry* me, Client* client)
                 sendedPlayMsg.SendMessage();
             }
 
-            // updating character mode
+            // updating character mode and item status
             charActor->SetMode(PSCHARACTER_MODE_PLAY);
+            instrItem->SetInUse(true);
         }
         else
         {
@@ -205,27 +206,33 @@ void ServerSongManager::StopSong(gemActor* charActor)
 
     // handling skill ranking
     instrItem = GetEquippedInstrument(charData);
-    if(instrItem != 0 && calcSongPar != 0 && calcSongExp != 0)
+    if(instrItem != 0)
     {
-        MathEnvironment mathEnv;
-        int practicePoints;
-        float modifier;
-        PSSKILL instrSkill;
+        // unlocking instrument
+        instrItem->SetInUse(false);
 
-        mathEnv.Define("Player", charActor);
-        mathEnv.Define("Instrument", instrItem);
-        mathEnv.Define("SongTime", charData->GetPlayingTime() / 1000);
-        mathEnv.Define("AverageDuration", 1);   // TODO to be implemented
-        mathEnv.Define("AveragePolyphony", 1);  // TODO to be implemented
+        if(calcSongPar != 0 && calcSongExp != 0)
+        {
+            MathEnvironment mathEnv;
+            int practicePoints;
+            float modifier;
+            PSSKILL instrSkill;
 
-        calcSongPar->Evaluate(&mathEnv);
-        calcSongExp->Evaluate(&mathEnv);
+            mathEnv.Define("Player", charActor);
+            mathEnv.Define("Instrument", instrItem);
+            mathEnv.Define("SongTime", charData->GetPlayingTime() / 1000);
+            mathEnv.Define("AverageDuration", 1);   // TODO to be implemented
+            mathEnv.Define("AveragePolyphony", 1);  // TODO to be implemented
 
-        practicePoints = mathEnv.Lookup("PracticePoints")->GetRoundValue();
-        modifier = mathEnv.Lookup("Modifier")->GetValue();
-        instrSkill = (PSSKILL)(mathEnv.Lookup("InstrSkill")->GetRoundValue());
+            calcSongPar->Evaluate(&mathEnv);
+            calcSongExp->Evaluate(&mathEnv);
 
-        charData->CalculateAddExperience(instrSkill, practicePoints, modifier);
+            practicePoints = mathEnv.Lookup("PracticePoints")->GetRoundValue();
+            modifier = mathEnv.Lookup("Modifier")->GetValue();
+            instrSkill = (PSSKILL)(mathEnv.Lookup("InstrSkill")->GetRoundValue());
+
+            charData->CalculateAddExperience(instrSkill, practicePoints, modifier);
+        }
     }
 }
 
