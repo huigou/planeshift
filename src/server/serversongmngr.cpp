@@ -177,7 +177,7 @@ void ServerSongManager::HandleStopSongMessage(MsgEntry* me, Client* client)
     }
 }
 
-void ServerSongManager::StopSong(gemActor* charActor)
+void ServerSongManager::StopSong(gemActor* charActor, bool skillRanking)
 {
     psItem* instrItem;
     psCharacter* charData = charActor->GetCharacterData();
@@ -211,7 +211,7 @@ void ServerSongManager::StopSong(gemActor* charActor)
         // unlocking instrument
         instrItem->SetInUse(false);
 
-        if(calcSongPar != 0 && calcSongExp != 0)
+        if(skillRanking && calcSongPar != 0 && calcSongExp != 0)
         {
             MathEnvironment mathEnv;
             int practicePoints;
