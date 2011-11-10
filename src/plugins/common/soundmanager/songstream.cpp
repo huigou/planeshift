@@ -586,13 +586,18 @@ void SndSysSongStream::PlayerError(char &pitch, int &alter, uint &octave, float 
     float errorDiff;
 
     // adjusting the error rate for the note's duration
-    if(duration = 0)
+    if(duration == 0)
     {
         noteErrorRate = 1.0;
     }
     else
     {
         noteErrorRate = errorRate / duration;
+    }
+
+    if(noteErrorRate > 1)
+    {
+        noteErrorRate = 1.0;
     }
 
     // handling error
