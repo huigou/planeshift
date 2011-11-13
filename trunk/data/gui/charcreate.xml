@@ -79,7 +79,7 @@
 
             <widget name="race0" factory="pawsRadioButton" id="0">
                 <frame x="0" y="58" width="175" height="24"/>
-                <text string="Stonebreaker" position="right"/>
+                <text string="Stonehammer" position="right"/>
             </widget>
 
             <widget name="race1" factory="pawsRadioButton" id="1">
@@ -106,7 +106,11 @@
                 <frame x="0" y="178" width="175" height="24"/>
                 <text string="Nolthrir" position="right"/>
             </widget>
-
+            <widget name="race10" factory="pawsRadioButton" id="10">
+                <frame x="0" y="202" width="175" height="24"/>
+                <text string="Lemur" position="right"/>
+            </widget>
+<!--
             <widget name="race7" factory="pawsRadioButton" id="7">
                 <frame x="0" y="202" width="175" height="24"/>
                 <text string="Hammerwielder" position="right"/>
@@ -116,11 +120,7 @@
                 <frame x="0" y="226" width="175" height="24"/>
                 <text string="Xacha" position="right"/>
             </widget>
-
-            <widget name="race10" factory="pawsRadioButton" id="10">
-                <frame x="0" y="250" width="175" height="24"/>
-                <text string="Lemur" position="right"/>
-            </widget>
+-->
 
         </widget>
 
