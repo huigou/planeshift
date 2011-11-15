@@ -76,7 +76,7 @@
                 <checkbox on="checkon" off="checkoff" size="30"/>
             </widget>
 
-            <widget name="convert_password" factory="pawsCheckBox" tooltip="Allow the client to send a newly hashed password to the server (check: http://tinyurl.com/5smsz5l )">
+            <widget name="convert_password" factory="pawsCheckBox" tooltip="Allow the client to send a newly hashed password to the server (check: http://tinyurl.com/5smsz5l )" visible="false">
                 <frame x="145" y="115" width="450" height="30" />
                 <font name="LiberationSerif-Regular.ttf" r="255" g="255" b="255" shadow="no" size="12" resizetoscreen="yes" />
                 <text string="Convert password" />
