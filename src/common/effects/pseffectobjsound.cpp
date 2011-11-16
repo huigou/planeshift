@@ -162,7 +162,7 @@ bool psEffectObjSound::Update(csTicks elapsed)
         isAlive = true;
 
         iSoundControl* effectSndCtrl = soundManager->GetSndCtrl(iSoundManager::EFFECT_SNDCTRL);
-        soundID = soundManager->PlaySound(soundName, true, effectSndCtrl,
+        soundID = soundManager->PlaySound(soundName, false, effectSndCtrl,
             csVector3(0,0,0), csVector3(0,0,0), minDist, maxDist);
     }
 
