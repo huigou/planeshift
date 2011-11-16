@@ -204,6 +204,8 @@ void pawsMusicWindow::OnMainPlayerSongStop()
 
 void pawsMusicWindow::OnMeterEntered(const char* name, csString newBeats, csString newBeatType)
 {
+    pendingString = false;
+
     if(csStrCaseCmp(name, "Meter") == 0)
     {
         if(newBeats.Length() == 0 || newBeatType.Length() == 0)
