@@ -2062,7 +2062,6 @@ void psCharacter::CalculateArmorForSlot(INVENTORY_SLOT_NUMBER slot, float& heavy
 float psCharacter::GetDodgeValue()
 {
     float heavy_p,med_p,light_p;
-    float asdm;
 
     // hold the % of each type of armor worn
     heavy_p=med_p=light_p=0.0f;
