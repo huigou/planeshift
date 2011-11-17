@@ -74,7 +74,7 @@ bool psEffectObjSound::Load(iDocumentNode *node, iLoaderContext* ldr_context)
     soundName.Clear();
     minDist = 25.0f;
     maxDist = 100000.0f;
-    loop = true;
+    loop = false;
     csRef<iDocumentAttributeIterator> attribIter = node->GetAttributes();
     while (attribIter->HasNext())
     {
@@ -162,7 +162,7 @@ bool psEffectObjSound::Update(csTicks elapsed)
         isAlive = true;
 
         iSoundControl* effectSndCtrl = soundManager->GetSndCtrl(iSoundManager::EFFECT_SNDCTRL);
-        soundID = soundManager->PlaySound(soundName, false, effectSndCtrl,
+        soundID = soundManager->PlaySound(soundName, loop, effectSndCtrl,
             csVector3(0,0,0), csVector3(0,0,0), minDist, maxDist);
     }
 
