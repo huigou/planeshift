@@ -1248,7 +1248,8 @@ bool PlayerToNPCExchange::CheckXMLResponse(Client * client, psNPCDialog *dlg, cs
     NpcResponse *resp = dlg->FindXMLResponse(client, trigger);
     if (resp && resp->type != NpcResponse::ERROR_RESPONSE)
     {
-        if (resp->ExecuteScript(client->GetActor(), (gemNPC *)target) != (csTicks)SIZET_NOT_FOUND)
+        csTicks delay = resp->ExecuteScript(client->GetActor(), (gemNPC *)target);
+        if(delay != (csTicks)SIZET_NOT_FOUND)
         {
             // Give offered items to npc
             starterChar.TransferOffer(target->GetCharacterData());
@@ -1256,6 +1257,8 @@ bool PlayerToNPCExchange::CheckXMLResponse(Client * client, psNPCDialog *dlg, cs
             exchangeSuccess = true;
             client->GetCharacterData()->SetLastResponse(resp->id);
             client->GetCharacterData()->GetQuestMgr().SetAssignedQuestLastResponse(resp->quest,resp->id, target);
+            if(resp->menu)
+                resp->menu->ShowMenu(client, delay, (gemNPC *)target);
             return true;
         }
     }
