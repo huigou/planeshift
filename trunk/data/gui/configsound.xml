@@ -6,7 +6,7 @@
         <bgimage resource="Scaling Widget Background" />
 
         <widget name="" factory="pawsTextBox">
-            <frame x="15" y="10" width="140" height="20" />
+            <frame x="15" y="9" width="140" height="20" />
             <text string="Master Volume"/>
         </widget>
 
@@ -15,7 +15,7 @@
         </widget>
 
         <widget name="music" factory="pawsCheckBox">
-            <frame x="10" y="35" width="190" height="20" />
+            <frame x="10" y="32" width="190" height="20" />
             <text string="Background music"/>
         </widget>
 
@@ -24,7 +24,7 @@
         </widget>
 
         <widget name="ambient" factory="pawsCheckBox">
-            <frame x="10" y="60" width="190" height="20" />
+            <frame x="10" y="57" width="190" height="20" />
             <text string="Ambient sounds"/>
         </widget>
 
@@ -33,7 +33,7 @@
         </widget>
 
         <widget name="actions" factory="pawsCheckBox">
-            <frame x="10" y="85" width="190" height="20" />
+            <frame x="10" y="82" width="190" height="20" />
             <text string="Actions sounds"/>
         </widget>
 
@@ -42,7 +42,7 @@
         </widget>
 
         <widget name="gui" factory="pawsCheckBox">
-            <frame x="10" y="110" width="190" height="20" />
+            <frame x="10" y="107" width="190" height="20" />
             <text string="Interface sounds"/>
         </widget>
 
@@ -51,7 +51,7 @@
         </widget>
 
         <widget name="voices" factory="pawsCheckBox">
-          <frame x="10" y="135" width="190" height="20" />
+          <frame x="10" y="132" width="190" height="20" />
           <text string="Voices"/>
         </widget>
 
@@ -60,7 +60,7 @@
         </widget>
 
         <widget name="instruments" factory="pawsCheckBox">
-          <frame x="10" y="160" width="220" height="20" />
+          <frame x="10" y="157" width="220" height="20" />
           <text string="Instruments"/>
         </widget>
 
@@ -68,34 +68,34 @@
           <frame x="205" y="160" width="100" height="20" border="no" />
         </widget>
 
-        <widget name="combatMusic" factory="pawsCheckBox">
-            <frame x="10" y="200" width="190" height="20" />
-            <text string="Combat music"/>
-        </widget>
-
-        <widget name="loopBGM" factory="pawsCheckBox">
-            <frame x="10" y="225" width="190" height="20" />
-            <text string="Loop background music"/>
-        </widget>
-
-        <widget name="muteOnFocusLoss" factory="pawsCheckBox">
-            <frame x="200" y="200" width="190" height="20" />
-            <text string="Mute on focus loss"/>
-        </widget>
-
-        <widget name="chatSound" factory="pawsCheckBox">
-            <frame x="200" y="225" width="190" height="20" />
-            <text string="Sound on private Tells"/>
-        </widget>
-
         <widget name="soundLocationText" factory="pawsTextBox" id="1765">
-            <frame x="15" y="265" width="140" height="20"/>
+            <frame x="15" y="200" width="140" height="20"/>
             <text string="Sound location"/>
         </widget>
 
         <widget name="soundLocation" factory="pawsComboBox" id="1766" alwaysontop="true">
-            <frame x="205" y="265" width="100" height="20" border="no" />
+            <frame x="205" y="200" width="100" height="20" border="no" />
             <listbox rows="2" height="25" useScrollBar="false" />
+        </widget>
+
+        <widget name="combatMusic" factory="pawsCheckBox">
+            <frame x="10" y="240" width="190" height="20" />
+            <text string="Combat music"/>
+        </widget>
+
+        <widget name="loopBGM" factory="pawsCheckBox">
+            <frame x="10" y="265" width="190" height="20" />
+            <text string="Loop background music"/>
+        </widget>
+
+        <widget name="muteOnFocusLoss" factory="pawsCheckBox">
+            <frame x="200" y="240" width="190" height="20" />
+            <text string="Mute on focus loss"/>
+        </widget>
+
+        <widget name="chatSound" factory="pawsCheckBox">
+            <frame x="200" y="265" width="190" height="20" />
+            <text string="Sound on private Tells"/>
         </widget>
 
     </widget>

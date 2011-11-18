@@ -109,6 +109,13 @@ public:
     bool IsDopplerEffectEnabled();
 
     /**
+     * Check if the listener is within the maximum distance allowed.
+     * @param listenerPos the listener position.
+     * @return true if the listener is within the maximum distance from the object.
+     */
+    bool IsWithinMaximumDistance(csVector3 listenerPos) const;
+
+    /**
      * Gets the ID of this handle.
      * @return the ID of this handle.
      */
@@ -163,6 +170,7 @@ protected:
 
 private:
     uint id;                           ///< id of this handle
+    float maxDistance;                 ///< maximum distance at which this sound is heard (if the sound is 3D)
     bool hasCallback;                  ///< true of theres a callback set, false of not
     void (*callbackobject);            ///< pointer to the callback object
     void (*callbackfunction) (void *); ///< pointer to the callback function

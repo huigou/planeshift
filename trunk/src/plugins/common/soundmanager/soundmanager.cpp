@@ -427,11 +427,6 @@ int SoundManager::GetCombatStance() const
 
 void SoundManager::SetPlayerMovement(csVector3 playerPos, csVector3 playerVelocity)
 {
-    if(activeSector != NULL)
-    {
-        activeSector->playerposition = playerPos;
-    }
-
     sndSysMgr->SetPlayerVelocity(playerVelocity);
     sndSysMgr->SetPlayerPosition(playerPos);
 }
@@ -959,6 +954,11 @@ void SoundManager::UpdateListener(iView* view)
     top   = matrix.Col2();
 
     sndSysMgr->UpdateListener(hearpoint, front, top);
+
+    if(activeSector != NULL)
+    {
+        activeSector->listenerPos = hearpoint;
+    }
 }
 
 

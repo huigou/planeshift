@@ -181,6 +181,17 @@ Play3DSound(const char* name, bool loop, size_t loopstart, size_t loopend,
             csVector3 dir, float mindist, float maxdist, float rad,
             int type3d, SoundHandle* &handle, bool dopplerEffect)
 {
+    // checking if the listener is within the given range
+    // TODO REMOVE THIS WHEN CS WILL MANAGE CORRECTLY MAXDIST
+    csVector3 rangeVec = pos - soundSystem->GetListenerPosition();
+    float range = rangeVec.Norm();
+
+    if(range > maxdist)
+    {
+        return false;
+    }
+
+    // Initializing
     if(!InitSoundHandle(name, loop, loopstart, loopend, volume_preset, type3d, sndCtrl, handle, dopplerEffect))
     {
         return false;
@@ -189,6 +200,7 @@ Play3DSound(const char* name, bool loop, size_t loopstart, size_t loopend,
     /* make it 3d */
     handle->ConvertTo3D(mindist, maxdist, pos, dir, rad);
 
+    /* TODO RIGHT NOW THE DOPPLER EFFECT DOESN'T WORK PROPERLY
     if(dopplerEffect)
     {
         // computing the delay caused by the speed of sound
@@ -199,9 +211,9 @@ Play3DSound(const char* name, bool loop, size_t loopstart, size_t loopend,
         handle->UnpauseAfterDelay(delay);
     }
     else
-    {
+    {*/
         handle->sndstream->Unpause();
-    }
+    //}
 
     return true;
 }
@@ -279,9 +291,18 @@ void SoundSystemManager::UpdateSound()
         }
 
         // applying Doppler effect
-        if(sh->Is3D() && sh->IsDopplerEffectEnabled())
+        if(sh->Is3D())
         {
-            ChangePlayRate(sh);
+            if(!sh->IsWithinMaximumDistance(soundSystem->GetListenerPosition()))
+            {
+                StopSound(sh->GetID());
+                continue;
+            }
+
+            if(sh->IsDopplerEffectEnabled())
+            {
+                ChangePlayRate(sh);
+            }
         }
 
         // fade in or out

@@ -74,9 +74,9 @@ public:
      * Check range to the given position.
      * Calculates the distance to the given position and returns 
      * true if this emitter is in range.
-     * @param playerpos position used for calculation
+     * @param listenerPos position used for calculation
      */
-    bool CheckRange(csVector3 playerpos);
+    bool CheckRange(csVector3 listenerPos);
     /**
      * Check time of day.
      * Checks if time is within this emitters timewindow.
