@@ -30,7 +30,7 @@ psSoundSector::psSoundSector(const char* sectorName, iObjectRegistry* objReg)
     name = sectorName;
     objectReg = objReg;
 
-    playerposition = csVector3(0);
+    listenerPos = csVector3(0);
     timeofday = 12;
     active = false;
 
@@ -42,7 +42,7 @@ psSoundSector::psSoundSector(const char* sectorName, iObjectRegistry* objReg)
 psSoundSector::psSoundSector(csRef<iDocumentNode> sector, iObjectRegistry* objReg)
 {
     name = sector->GetAttributeValue("NAME");
-    playerposition = csVector3(0);
+    listenerPos = csVector3(0);
     timeofday = 12;
     activeambient = NULL;
     activemusic = NULL;
@@ -257,7 +257,10 @@ void psSoundSector::AddEmitter(csRef<iDocumentNode> Node)
     emitter->active         = false;
 
     // adjusting the probability on the update time
-    emitter->probability *= SoundManager::updateTime / 1000.0f;
+    if(emitter->probability < 1.0)
+    {
+        emitter->probability *= SoundManager::updateTime / 1000.0f;
+    }
 
     if(emitter->timeofday == -1)
     {
@@ -278,7 +281,7 @@ void psSoundSector::UpdateEmitter(SoundControl* &ctrl)
     {
         emitter = emitterarray[i];
 
-        if(emitter->CheckRange(playerposition) == true
+        if(emitter->CheckRange(listenerPos) == true
            && active == true
            && ctrl->GetToggle() == true
            && emitter->CheckTimeOfDay(timeofday) == true)
@@ -387,7 +390,10 @@ void psSoundSector::AddEntity(csRef<iDocumentNode> Node)
     timeOfDayEnd    = Node->GetAttributeValueAsInt("TIME_END", 25);
 
     // adjusting the probability on the update time
-    prob = prob / 1000 * SoundManager::updateTime;
+    if(prob < 1.0)
+    {
+        prob = prob / 1000 * SoundManager::updateTime;
+    }
 
     entity->DefineState(state, resource, startResource, volume,
         minRange, maxRange, prob, timeOfDayStart, timeOfDayEnd, delayAfter);
@@ -624,7 +630,7 @@ void psSoundSector::UpdateEntityValues(SoundControl* &ctrl, psEntity* entity, iM
         return;
     }
 
-    rangeVec = mesh->GetMovable()->GetFullPosition() - playerposition;
+    rangeVec = mesh->GetMovable()->GetFullPosition() - listenerPos;
     range = rangeVec.Norm();
 
     if(active && entity->CheckTimeAndRange(timeofday, range))

@@ -64,12 +64,12 @@ psEmitter::~psEmitter()
     Stop();
 }
 
-bool psEmitter::CheckRange(csVector3 playerpos)
+bool psEmitter::CheckRange(csVector3 listenerPos)
 {
     csVector3 rangeVec;
     float range;
     
-    rangeVec = position - playerpos;
+    rangeVec = position - listenerPos;
     range = rangeVec.Norm();
 
     if(!range) /* if range is NAN */

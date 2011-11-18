@@ -53,7 +53,7 @@ enum
 
 #define DEFAULT_SNDSYS_UPDATE_TIME 100
 #define DEFAULT_SPEED_OF_SOUND 331
-#define DEFAULT_DOPPLER_FACTOR 2.5
+#define DEFAULT_DOPPLER_FACTOR 0.0
 #define DEFAULT_SOUNDLIB_PATH "/planeshift/art/soundlib.xml"
 
 /**

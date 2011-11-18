@@ -42,7 +42,7 @@ public:
     csHash<psEntity*, csString>  meshes;             ///< hash of mesh entities
     csHash<psEntity*, uint>      tempEntities;       ///< hash of all the temporary psEntites (i.e. associated to a specific mesh)
 
-    csVector3                    playerposition;     ///< current playerposition
+    csVector3                    listenerPos;        ///< current listener position
     int                          timeofday;          ///< sector time of day
 
     csRandomGen                  rng;                ///< random number generator

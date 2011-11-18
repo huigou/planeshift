@@ -40,6 +40,7 @@ SoundHandle::SoundHandle()
     id = 0; // this parameter makes sense only for SoundSystemManager
     fade = 0;
     fade_stop = false;
+    maxDistance = -1;
     
     hasCallback = false;
 
@@ -177,6 +178,8 @@ void SoundHandle::Fade(float volume, int time, int direction)
 void SoundHandle::ConvertTo3D(float mindist, float maxdist, csVector3 pos,
                                csVector3 dir, float rad)
 {
+    maxDistance = maxdist;
+
     SoundSystemManager::GetSingleton().GetSoundSystem()->Create3dSource(sndsource, sndsource3d, mindist, maxdist,
                                  pos);
 
@@ -201,6 +204,22 @@ bool SoundHandle::Is3D()
 bool SoundHandle::IsDopplerEffectEnabled()
 {
     return dopplerEffect;
+}
+
+bool SoundHandle::IsWithinMaximumDistance(csVector3 listenerPos) const
+{
+    csVector3 rangeVec;
+    float range;
+
+    rangeVec = sndsource3d->GetPosition() - listenerPos;
+    range = rangeVec.Norm();
+
+    if(range <= maxDistance)
+    {
+        return true;
+    }
+
+    return false;
 }
 
 csVector3 SoundHandle::GetSourcePosition()

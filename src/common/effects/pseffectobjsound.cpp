@@ -139,6 +139,12 @@ bool psEffectObjSound::AttachToAnchor(psEffectAnchor * newAnchor)
 
 bool psEffectObjSound::Update(csTicks elapsed)
 {
+    // checking actual state of the sound
+    if(isAlive)
+    {
+        isAlive = soundManager->IsSoundValid(soundID);
+    }
+
     if (!anchor || !anchor->IsReady()) // wait for anchor to be ready
         return true;
 
@@ -157,15 +163,7 @@ bool psEffectObjSound::Update(csTicks elapsed)
             return false;
     }
 
-    if (!isAlive && life >= birth)
-    {
-        isAlive = true;
-
-        iSoundControl* effectSndCtrl = soundManager->GetSndCtrl(iSoundManager::EFFECT_SNDCTRL);
-        soundID = soundManager->PlaySound(soundName, loop, effectSndCtrl,
-            csVector3(0,0,0), csVector3(0,0,0), minDist, maxDist);
-    }
-
+    // getting source position
     csVector3 soundPos = anchorMesh->GetMovable()->GetPosition();
 
     if (keyFrames->GetSize() > 0)
@@ -177,8 +175,18 @@ bool psEffectObjSound::Update(csTicks elapsed)
         soundPos += LERP_VEC_KEY(KA_POS,LERP_FACTOR);
     }
 
-    // if the sound is not active the sound manager does nothing
-    soundManager->SetSoundSource(soundID, soundPos);
+    // playing sound
+    if (!isAlive && life >= birth)
+    {
+        iSoundControl* effectSndCtrl = soundManager->GetSndCtrl(iSoundManager::EFFECT_SNDCTRL);
+        soundID = soundManager->PlaySound(soundName, loop, effectSndCtrl,
+            soundPos, csVector3(0,0,0), minDist, maxDist);
+
+        if(soundID != 0) // sound not played
+        {
+            isAlive = true;
+        }
+    }
 
     return true;
 }
