@@ -903,7 +903,12 @@ public:
     /** Gets if the item has a no pickup flag set.
      *  @return TRUE if the item has a no pickup flag set.
      */
-    bool GetIsNoPickup() { return (((flags & PSITEM_FLAG_NOPICKUP)? true : false) || GetIsNoPickupWeak()); }
+    bool GetIsNoPickup() { return (GetIsNoPickupStrong() || GetIsNoPickupWeak()); }
+
+    /** Checks if the item has a strong no pickup flag set.
+     *  @return TRUE has a strong no pickup flag set.
+     */
+    bool GetIsNoPickupStrong() { return ((flags & PSITEM_FLAG_NOPICKUP)? true : false); }
 
     /** Checks if the item has a weak no pickup flag set.
      *  @return TRUE has a weak no pickup flag set.
