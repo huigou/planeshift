@@ -6868,6 +6868,7 @@ bool AdminManager::MoveObject(Client *client, gemObject *target, csVector3& pos,
                     psserver->SendSystemError(client->GetClientNum(), response);
                     return false;
                 }
+            }
         }
 
         // Move the item
