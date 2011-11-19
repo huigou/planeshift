@@ -6758,7 +6758,14 @@ psGMSpawnItem::psGMSpawnItem(MsgEntry *me)
     NPCOwned = me->GetBool();
     random = me->GetBool();
     quality = me->GetFloat();
-    pickupableWeak = me->GetBool();
+    if (!message->IsEmpty())
+    {
+        pickupableWeak = me->GetBool();
+    }
+    else
+    {
+        pickupableWeak = true;
+    }
 }
 
 csString psGMSpawnItem::ToString(NetBase::AccessPointers * /*accessPointers*/)
