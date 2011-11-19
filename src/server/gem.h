@@ -488,7 +488,8 @@ public:
 
     //@@@ should probably add tests for other actions (usable? examinable?)
     // default "interaction" objects are not pick-uppable and cannot be locked
-    virtual bool IsPickable() { return false; }
+    virtual bool IsPickupable() { return false; }
+    virtual bool IsPickupableWeak() { return false; }
     virtual bool IsLockable() { return false; }
     virtual bool IsLocked() { return false; }
     virtual bool IsConstructible() { return false; }
@@ -565,7 +566,18 @@ public:
      */
     virtual void GetRotation(float& xrotangle, float& yrotangle, float& zrotangle);
 
-    virtual bool IsPickable();
+    /** Gets if the object can be picked up from anyone.
+     *  @return TRUE if the object can be picked up from anyone.
+     */
+    virtual bool IsPickupable();
+
+    /** Gets if the object can be picked up from anyone.
+     *
+     *  This is a weaker version which allows more overriding of the not
+     *  pickupable status.
+     *  @return TRUE if the object can be picked up from anyone.
+     */
+    virtual bool IsPickupableWeak();
     virtual bool IsLockable();
     virtual bool IsLocked();
     virtual bool IsConstructible();

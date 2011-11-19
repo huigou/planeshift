@@ -1148,7 +1148,7 @@ void gemActiveObject::SendBehaviorMessage(const csString & msg_id, gemObject *ac
 
             if (IsConstructible()) options |= psGUIInteractMessage::CONSTRUCT;
             if (IsContainer()) options |= psGUIInteractMessage::COMBINE;
-            if (IsPickable())  options |= psGUIInteractMessage::PICKUP;
+            if (IsPickupable())  options |= psGUIInteractMessage::PICKUP;
             if (IsLockable())
             {
                 if( IsLocked())
@@ -1178,7 +1178,7 @@ void gemActiveObject::SendBehaviorMessage(const csString & msg_id, gemObject *ac
             return;
         }
         // Check if the item is pickupable
-        if (!IsPickable())
+        if (!IsPickupable())
         {
             psserver->SendSystemInfo(clientnum,"You can't pick up %s.", GetName());
             return;
@@ -1239,7 +1239,7 @@ double gemItem::CalcFunction(MathEnvironment* env, const char* f, const double* 
 void gemItem::Broadcast(int clientnum, bool control )
 {
     int flags = 0;
-    if (!IsPickable()) flags |= psPersistItem::NOPICKUP;
+    if (!IsPickupable()) flags |= psPersistItem::NOPICKUP;
     if (IsUsingCD()) flags |= psPersistItem::COLLIDE;
 
     psPersistItem mesg(
@@ -1308,7 +1308,7 @@ float gemItem::GetBaseAdvertiseRange()
 void gemItem::Send( int clientnum, bool , bool to_superclients, psPersistAllEntities *allEntities)
 {
     int flags = 0;
-    if (!IsPickable()) flags |= psPersistItem::NOPICKUP;
+    if (!IsPickupable()) flags |= psPersistItem::NOPICKUP;
     if (IsUsingCD() ||
         GetItem()->GetSector()->GetIsColliding()) flags |= psPersistItem::COLLIDE;
 
@@ -1338,7 +1338,9 @@ void gemItem::Send( int clientnum, bool , bool to_superclients, psPersistAllEnti
 }
 
 //Here we check the flag to see if we can pick up this item
-bool gemItem::IsPickable() { return !(itemdata->GetFlags() & PSITEM_FLAG_NOPICKUP); }
+bool gemItem::IsPickupable() { return !itemdata->GetIsNoPickup(); }
+
+bool gemItem::IsPickupableWeak() { return !itemdata->GetIsNoPickupWeak(); }
 
 bool gemItem::IsLockable() { return itemdata->GetIsLockable();}
 
@@ -1373,7 +1375,7 @@ void gemItem::SendBehaviorMessage(const csString & msg_id, gemObject *actor)
              return;
          }
          // Check if the item is pickupable
-         if (!IsPickable())
+         if (!IsPickupable())
          {
              psserver->SendSystemInfo(clientnum,"You can't pick up %s.", GetName());
              return;

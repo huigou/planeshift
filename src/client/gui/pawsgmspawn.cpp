@@ -46,6 +46,7 @@ pawsGMSpawnWindow::pawsGMSpawnWindow()
     cbLockable = NULL;
     cbLocked = NULL;
     cbPickupable = NULL;
+    cbPickupableWeak = NULL;
     cbCollidable = NULL;
     cbUnpickable = NULL;
     cbTransient = NULL;
@@ -82,6 +83,7 @@ bool pawsGMSpawnWindow::PostSetup()
     cbLockable = (pawsCheckBox*)FindWidget("Lockable");
     cbLocked = (pawsCheckBox*)FindWidget("Locked");
     cbPickupable = (pawsCheckBox*)FindWidget("Pickupable");
+    cbPickupableWeak = (pawsCheckBox*)FindWidget("PickupableWeak");
     cbCollidable = (pawsCheckBox*)FindWidget("Collidable");
     cbUnpickable = (pawsCheckBox*)FindWidget("Unpickable");
     cbTransient = (pawsCheckBox*)FindWidget("Transient");
@@ -199,6 +201,7 @@ bool pawsGMSpawnWindow::OnSelected(pawsWidget* widget)
         cbLockable->SetState(false);
         cbLocked->SetState(false);
         cbPickupable->SetState(true);
+        cbPickupableWeak->SetState(true);
         cbCollidable->SetState(false);
         cbUnpickable->SetState(false);
         cbTransient->SetState(true);
@@ -213,6 +216,7 @@ bool pawsGMSpawnWindow::OnSelected(pawsWidget* widget)
         cbLockable->Show();
         cbLocked->Show();
         cbPickupable->Show();
+        cbPickupableWeak->Show();
         cbCollidable->Show();
         cbUnpickable->Show();
         cbTransient->Show();
@@ -295,6 +299,7 @@ bool pawsGMSpawnWindow::OnButtonPressed(int /*button*/, int /*keyModifier*/, paw
             cbTransient->GetState(),
             cbSettingItem->GetState(),
             cbNPCOwned->GetState(),
+            cbPickupableWeak->GetState(),
             false,
             atof(itemQuality->GetText()));
 

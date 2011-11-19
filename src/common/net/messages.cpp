@@ -6700,6 +6700,7 @@ psGMSpawnItem::psGMSpawnItem(const char* item,
                              bool Transient,
                              bool SettingItem,
                              bool NPCOwned,
+                             bool pickupableWeak,
                              bool random,
                              float quality
                              )
@@ -6719,6 +6720,7 @@ psGMSpawnItem::psGMSpawnItem(const char* item,
                         + sizeof(bool)     // npc owned
                         + sizeof(bool)     // random
                         + sizeof(float)    // quality
+                        + sizeof(bool)     // pickupableWeak
                       ));
 
     msg->SetType(MSGTYPE_GMSPAWNITEM);
@@ -6737,6 +6739,7 @@ psGMSpawnItem::psGMSpawnItem(const char* item,
     msg->Add( NPCOwned );
     msg->Add(random);
     msg->Add(quality);
+    msg->Add(pickupableWeak);
 }
 
 psGMSpawnItem::psGMSpawnItem(MsgEntry *me)
@@ -6755,13 +6758,14 @@ psGMSpawnItem::psGMSpawnItem(MsgEntry *me)
     NPCOwned = me->GetBool();
     random = me->GetBool();
     quality = me->GetFloat();
+    pickupableWeak = me->GetBool();
 }
 
 csString psGMSpawnItem::ToString(NetBase::AccessPointers * /*accessPointers*/)
 {
     csString msgtext;
 
-    msgtext.AppendFmt("Item: '%s' Count: %d Lockable: %s, Is %s, Skill: '%s' Str: %d Pickupable: %s Collidable: %s Random: %s Unpickable: %s SettingItem: %s NPC Owned: %s Transient: %s Quality %f",
+    msgtext.AppendFmt("Item: '%s' Count: %d Lockable: %s, Is %s, Skill: '%s' Str: %d Pickupable: %s Collidable: %s Random: %s Unpickable: %s SettingItem: %s NPC Owned: %s Transient: %s Quality %f pickupable Weak %s",
         item.GetDataSafe(),
         count,
         (lockable ? "True" : "False"),
@@ -6775,7 +6779,8 @@ csString psGMSpawnItem::ToString(NetBase::AccessPointers * /*accessPointers*/)
         (SettingItem ? "True" : "False"),
         (NPCOwned ? "True" : "False"),
         (Transient ? "True" : "False"),
-        quality);
+        quality,
+        (pickupableWeak ? "True" : "False"));
 
     return msgtext;
 }

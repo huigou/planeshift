@@ -4687,6 +4687,7 @@ public:
         bool Transient,
         bool SettingItem,
         bool NPCOwned,
+        bool pickupableWeak,
         bool random = false,
         float quality = 0.0f);
 
@@ -4704,7 +4705,7 @@ public:
 
     csString item;
     unsigned int count;
-    bool lockable,locked,pickupable,collidable,Unpickable,SettingItem,NPCOwned,Transient;
+    bool lockable,locked,pickupable,collidable,Unpickable,SettingItem,NPCOwned,Transient, pickupableWeak;
 
     csString lskill;
     int lstr;

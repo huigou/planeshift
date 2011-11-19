@@ -1067,7 +1067,9 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                 }
 
                 // If the entity is in range of the item AND the item may be picked up, and check for dead user
-                if ( gEntity->IsAlive() && (gItem->RangeTo( gEntity ) < RANGE_TO_SELECT) && gItem->IsPickable())
+                // TODO: add support to handle some items to be pickupable for npcclient even if not for players.
+                //       can use the pickupable weak for this.
+                if ( gEntity->IsAlive() && (gItem->RangeTo( gEntity ) < RANGE_TO_SELECT) && gItem->IsPickupable())
                 {
 
                     // TODO: Include support for splitting of a stack

@@ -2398,7 +2398,7 @@ csString AdminCmdDataFog::GetHelpMessage()
 }
 
 AdminCmdDataModify::AdminCmdDataModify(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client *client, WordArray &words)
-: AdminCmdDataTarget("/modify", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET), attributeList("pickupable unpickable transient npcowned collide settingitem")
+: AdminCmdDataTarget("/modify", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET), attributeList("pickupable unpickable transient npcowned collide settingitem pickupableweak")
 {
     size_t index = 1;
     bool found = false;
@@ -6850,10 +6850,12 @@ bool AdminManager::MoveObject(Client *client, gemObject *target, csVector3& pos,
 
         // Check to see if this client has the admin level to move this particular item
         bool extras = psserver->GetCacheManager()->GetCommandManager()->Validate(client->GetSecurityLevel(), "move unpickupables/spawns", response);
+        bool extrasWeak = psserver->GetCacheManager()->GetCommandManager()->Validate(client->GetSecurityLevel(), "move weak unpickupables", response);
 
-        if ( !item->IsPickable() && !extras )
+        //TODO: refactor this to improve output
+        if((!item->IsPickupable() && !extras) || (!item->IsPickupableWeak() && !extrasWeak))
         {
-            psserver->SendSystemError(client->GetClientNum(),response);
+            psserver->SendSystemError(client->GetClientNum(), response);
             return false;
         }
 
@@ -6997,6 +6999,7 @@ void AdminManager::CreateItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
                       true,
                       false,
                       false,
+                      true,
                       data->random != 0,
                       data->quality
                       );
@@ -7006,6 +7009,7 @@ void AdminManager::CreateItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     spawnMsg.count = stackCount;
     spawnMsg.lockable = spawnMsg.locked = spawnMsg.collidable = false;
     spawnMsg.pickupable = true;
+    spawnMsg.pickupableWeak = true;
     spawnMsg.Transient = true;
     spawnMsg.lskill = "";
     spawnMsg.lstr = 0;
@@ -8934,11 +8938,13 @@ void AdminManager::SendSpawnItems (MsgEntry* me, Client *client)
         return;
     }
 
+    bool spawnAll = psserver->GetCacheManager()->GetCommandManager()->Validate(client->GetSecurityLevel(), "spawn all");
+
     for ( unsigned int i=0; i < result.Count(); i++ )
     {
         unsigned id = result[i].GetUInt32(0);
         psItemStats* item = psserver->GetCacheManager()->GetBasicItemStatsByID(id);
-        if(item && !item->IsMoney() && item->IsSpawnable())
+        if(item && !item->IsMoney() && (item->IsSpawnable() || spawnAll))
         {
             csString name(item->GetName());
             csString mesh(item->GetMeshName());
@@ -9015,7 +9021,7 @@ void AdminManager::SpawnItemInv( MsgEntry* me, psGMSpawnItem& msg, Client *clien
         return;
     }
 
-    if(!stats->IsSpawnable())
+    if(!stats->IsSpawnable() && !psserver->GetCacheManager()->GetCommandManager()->Validate(client->GetSecurityLevel(), "spawn all"))
     {
         psserver->SendSystemError(me->clientnum, "This item cannot be spawned!");
         return;
@@ -9057,18 +9063,24 @@ void AdminManager::SpawnItemInv( MsgEntry* me, psGMSpawnItem& msg, Client *clien
         }
 
         item->SetStackCount(msg.count);
-        item->SetIsLockable(msg.lockable);
-        item->SetIsLocked(msg.locked);
-        item->SetIsPickupable(msg.pickupable);
+        item->SetIsPickupableWeak(msg.pickupableWeak);
         item->SetIsCD(msg.collidable);
-        item->SetIsUnpickable(msg.Unpickable);
         item->SetIsTransient(msg.Transient);
 
         //These are setting only flags. When modify gets valid permission update also here accordly
-        if(psserver->GetCacheManager()->GetCommandManager()->Validate(client->GetSecurityLevel(), "/modify"))
+        if(psserver->GetCacheManager()->GetCommandManager()->Validate(client->GetSecurityLevel(), "full modify"))
         {
             item->SetIsSettingItem(msg.SettingItem);
             item->SetIsNpcOwned(msg.NPCOwned);
+            item->SetIsPickupable(msg.pickupable);
+            item->SetIsLockable(msg.lockable);
+            item->SetIsLocked(msg.locked);
+            item->SetIsUnpickable(msg.Unpickable);
+            if (msg.lockable)
+            {
+                item->SetLockpickSkill(skill);
+                item->SetLockStrength(msg.lstr);
+            }
         }
 
         if (msg.quality > 0)
@@ -9080,12 +9092,6 @@ void AdminManager::SpawnItemInv( MsgEntry* me, psGMSpawnItem& msg, Client *clien
         else
         {
             item->SetItemQuality(stats->GetQuality());
-        }
-
-        if (msg.lockable)
-        {
-            item->SetLockpickSkill(skill);
-            item->SetLockStrength(msg.lstr);
         }
     }
     
@@ -9102,6 +9108,8 @@ void AdminManager::SpawnItemInv( MsgEntry* me, psGMSpawnItem& msg, Client *clien
 
     psserver->SendSystemInfo(me->clientnum,text);
     psserver->GetCharManager()->UpdateItemViews(me->clientnum);
+    //TODO:should augument this more.
+    LogGMCommand(client->GetAccountID(), client->GetPID(), client->GetPID(), text.GetData());
 }
 
 void AdminManager::Award(AdminCmdData* cmddata, Client* client)
@@ -10158,8 +10166,11 @@ void AdminManager::ModifyItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         return;
     }
 
+    bool fullModify = psserver->GetCacheManager()->GetCommandManager()->Validate(client->GetSecurityLevel(), "full modify");
+
+
     // TODO: Update Sibling spawn points
-    if (data->subCommand == "remove")
+    if (data->subCommand == "remove" && fullModify)
     {
         if (item->GetScheduledItem())
         {
@@ -10173,7 +10184,7 @@ void AdminManager::ModifyItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         delete item;
         item = NULL;
     }
-    else if (data->subCommand == "intervals")
+    else if (data->subCommand == "intervals" && fullModify)
     {
         if (data->interval < 0 || data->maxinterval < 0)
         {
@@ -10193,7 +10204,7 @@ void AdminManager::ModifyItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         else
             psserver->SendSystemError(me->clientnum,"This item does not spawn; no intervals");
     }
-    else if (data->subCommand == "amount")
+    else if (data->subCommand == "amount" && fullModify)
     {
         if (data->amount < 1)
         {
@@ -10209,7 +10220,7 @@ void AdminManager::ModifyItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         else
             psserver->SendSystemError(me->clientnum,"This item does not spawn; no amount");
     }
-    else if (data->subCommand == "range")
+    else if (data->subCommand == "range" && fullModify)
     {
         if (data->range < 0)
         {
@@ -10225,7 +10236,7 @@ void AdminManager::ModifyItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         else
             psserver->SendSystemError(me->clientnum,"This item does not spawn; no range");
     }
-    else if (data->subCommand == "move")
+    else if (data->subCommand == "move" && fullModify)
     {
         gemItem* gItem = dynamic_cast<gemItem*>(data->targetObject);
         if (gItem)
@@ -10237,7 +10248,7 @@ void AdminManager::ModifyItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
             gItem->SetPosition(pos, data->rot, sector, instance);
         }
     }
-    else if (data->subCommand == "pickskill") //sets the required skill in order to be able to pick the item
+    else if (data->subCommand == "pickskill" && fullModify) //sets the required skill in order to be able to pick the item
     {
         if(data->skillName != "none") //if the skill name isn't none...
         {
@@ -10259,7 +10270,7 @@ void AdminManager::ModifyItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
             psserver->SendSystemInfo(me->clientnum,"The skill needed to open the lock of %s was removed",item->GetName());
         }
     }
-    else if (data->subCommand == "picklevel") //sets the required level of the already selected skill in order to be able to pick the item
+    else if (data->subCommand == "picklevel" && fullModify) //sets the required level of the already selected skill in order to be able to pick the item
     {
         if(data->level >= 0) //check that we didn't get a negative value
         {
@@ -10280,12 +10291,17 @@ void AdminManager::ModifyItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     }
     else
     {
-        if (data->subCommand == "pickupable")
+        if (data->subCommand == "pickupable" && fullModify)
         {
             item->SetIsPickupable(data->enabled);
             psserver->SendSystemInfo(me->clientnum,"%s is now %s",item->GetName(),(data->enabled)?"pickupable":"un-pickupable");
         }
-        else if (data->subCommand == "unpickable") //sets or unsets the UNPICKABLE flag on the item
+        if (data->subCommand == "pickupableweak")
+        {
+            item->SetIsPickupableWeak(data->enabled);
+            psserver->SendSystemInfo(me->clientnum,"%s is now %s",item->GetName(),(data->enabled)?"weak pickupable":"weak un-pickupable");
+        }
+        else if (data->subCommand == "unpickable" && fullModify) //sets or unsets the UNPICKABLE flag on the item
         {
             item->SetIsUnpickable(data->enabled);
             psserver->SendSystemInfo(me->clientnum,"%s is now %s",item->GetName(),(data->enabled)?"un-pickable":"pickable");
@@ -10295,7 +10311,7 @@ void AdminManager::ModifyItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
             item->SetIsTransient(data->enabled);
             psserver->SendSystemInfo(me->clientnum,"%s is now %s",item->GetName(),(data->enabled)?"transient":"non-transient");
         }
-        else if (data->subCommand == "npcowned")
+        else if (data->subCommand == "npcowned" && fullModify)
         {
             item->SetIsNpcOwned(data->enabled);
             psserver->SendSystemInfo(me->clientnum, "%s is now %s",
@@ -10309,11 +10325,15 @@ void AdminManager::ModifyItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
             item->GetGemObject()->Send(me->clientnum, false, false);
             item->GetGemObject()->Broadcast(me->clientnum, false);
         }
-        else if (data->subCommand == "settingitem")
+        else if (data->subCommand == "settingitem" && fullModify)
         {
             item->SetIsSettingItem(data->enabled);
             psserver->SendSystemInfo(me->clientnum, "%s is now %s",
                                     item->GetName(), data->enabled ? "a setting item" : "not a setting item");
+        }
+        else if(!fullModify)
+        {
+            psserver->SendSystemInfo(me->clientnum, "This command is not available");
         }
         item->Save(false);
     }
