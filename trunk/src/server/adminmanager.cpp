@@ -6852,11 +6852,22 @@ bool AdminManager::MoveObject(Client *client, gemObject *target, csVector3& pos,
         bool extras = psserver->GetCacheManager()->GetCommandManager()->Validate(client->GetSecurityLevel(), "move unpickupables/spawns", response);
         bool extrasWeak = psserver->GetCacheManager()->GetCommandManager()->Validate(client->GetSecurityLevel(), "move weak unpickupables", response);
 
-        //TODO: refactor this to improve output
-        if((!item->IsPickupable() && !extras) || (!item->IsPickupableWeak() && !extrasWeak))
+        if(!item->IsPickupable())
         {
-            psserver->SendSystemError(client->GetClientNum(), response);
-            return false;
+            // Check to see if this client has the admin level to move this particular item
+            if(!psserver->GetCacheManager()->GetCommandManager()->Validate(client->GetSecurityLevel(), "move unpickupables/spawns", response))
+            {
+                if(!item->IsPickupableStrong())
+                {
+                    psserver->SendSystemError(client->GetClientNum(), response);
+                    return false;
+                }
+                // This is a weak unpickupable check to see if this client has the admin level to move this particular item
+                else if(!psserver->GetCacheManager()->GetCommandManager()->Validate(client->GetSecurityLevel(), "move weak unpickupables", response))
+                {
+                    psserver->SendSystemError(client->GetClientNum(), response);
+                    return false;
+                }
         }
 
         // Move the item

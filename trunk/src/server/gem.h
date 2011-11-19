@@ -490,6 +490,7 @@ public:
     // default "interaction" objects are not pick-uppable and cannot be locked
     virtual bool IsPickupable() { return false; }
     virtual bool IsPickupableWeak() { return false; }
+    virtual bool IsPickupableStrong() { return false; }
     virtual bool IsLockable() { return false; }
     virtual bool IsLocked() { return false; }
     virtual bool IsConstructible() { return false; }
@@ -571,13 +572,20 @@ public:
      */
     virtual bool IsPickupable();
 
-    /** Gets if the object can be picked up from anyone.
+    /** Gets if the object can be picked up from anyone according to weak rules.
      *
      *  This is a weaker version which allows more overriding of the not
      *  pickupable status.
-     *  @return TRUE if the object can be picked up from anyone.
+     *  @return TRUE if the object can be picked up from anyone according to weak rules.
      */
     virtual bool IsPickupableWeak();
+
+    /** Gets if the object can be picked up from anyone according to strong rules.
+     *
+     *  This is a stronger version.
+     *  @return TRUE if the object can be picked up from anyone according to strong rules.
+     */
+    virtual bool IsPickupableStrong();
     virtual bool IsLockable();
     virtual bool IsLocked();
     virtual bool IsConstructible();
