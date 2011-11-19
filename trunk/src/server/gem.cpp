@@ -1340,7 +1340,7 @@ void gemItem::Send( int clientnum, bool , bool to_superclients, psPersistAllEnti
 //Here we check the flag to see if we can pick up this item
 bool gemItem::IsPickupable() { return !itemdata->GetIsNoPickup(); }
 
-bool gemItem::IsPickupableStrong() { return !itemdata->GetIsNoPickupStrog(); }
+bool gemItem::IsPickupableStrong() { return !itemdata->GetIsNoPickupStrong(); }
 
 bool gemItem::IsPickupableWeak() { return !itemdata->GetIsNoPickupWeak(); }
 
