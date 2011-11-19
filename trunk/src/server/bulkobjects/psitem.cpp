@@ -330,14 +330,14 @@ bool psItem::Load(iResultRow& row)
        flags |= PSITEM_FLAG_PURIFIED;
     }
     if (flagstr.FindSubString("PURIFYING",0,true)!=-1)
-    {
+    {   
        flags |= PSITEM_FLAG_PURIFIED;
     }
     if (flagstr.FindSubString("NOPICKUP",0,true)!=-1)
     {
        flags |= PSITEM_FLAG_NOPICKUP;
     }
-    if (flagstr.FindSubString("NOPICKUPWEAK",0,true)!=-1)
+    if (flagstr.FindSubString("NOWEAKPICKUP",0,true)!=-1)
     {
        flags |= PSITEM_FLAG_NOPICKUPWEAK;
     }
@@ -718,7 +718,7 @@ void psItem::Commit(bool children)
     if (flags & PSITEM_FLAG_NOPICKUPWEAK)
     {
         if (!flagString.IsEmpty()) flagString.Append(",");
-        flagString.Append("NOPICKUPWEAK");
+        flagString.Append("NOWEAKPICKUP");
     }
     if (flags & PSITEM_FLAG_TRANSIENT)
     {
@@ -1216,7 +1216,7 @@ void psItem::SetBaseStats(psItemStats *statptr)
     SetItemQuality(statptr->GetQuality());
 
     // Set pickupability based on movability, but only if the item is currently pickupable
-    if ((flags & PSITEM_FLAG_NOPICKUP) == 0 || (flags & PSITEM_FLAG_NOPICKUPWEAK) == 0)
+    if (!GetIsNoPickup())
         SetIsPickupable(!statptr->GetUnmovable());
 
     if (current_stats==base_stats)
