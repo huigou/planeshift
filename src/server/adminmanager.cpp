@@ -4595,6 +4595,8 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData* cm
                   info += " 'unpickable'";
               if ( flags & PSITEM_FLAG_NOPICKUP )
                   info += " 'no pickup'";
+              if(flags & PSITEM_FLAG_NOPICKUPWEAK)
+                  info += " 'no pickup weak'";
               if ( flags & PSITEM_FLAG_KEY )
                   info += " 'key'";
               if ( flags & PSITEM_FLAG_MASTERKEY )
