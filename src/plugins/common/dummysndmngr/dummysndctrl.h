@@ -43,6 +43,10 @@ public:
 
     virtual int GetType() const;
 
+    virtual void VolumeDampening(float damp);
+
+    virtual bool IsDampened() const;
+
     virtual float GetVolume() const;
 
     virtual void SetVolume(float vol);

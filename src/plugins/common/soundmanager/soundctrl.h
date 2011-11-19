@@ -89,6 +89,19 @@ public:
     void SetType(int type);
 
     /**
+     * Dampen volume over time to configured value
+     * @param damp This value is used to describe if the function should dampen or open the sound.
+     * @return true when the volume has reached the dampened or full value.
+     */
+    virtual void VolumeDampening(float damp);
+
+    /**
+     * Retrieve if volume is dampened
+     * @return true when the volume has reached the dampened or full value.
+     */
+    virtual bool IsDampened() const;
+
+    /**
     * Returns current Volume as float.
     */
     virtual float GetVolume() const;
@@ -137,8 +150,10 @@ private:
     int     id;                         ///< id of this control
     int     type;                       ///< type of this control
     bool    isEnabled;                  ///< is it enabled? true or false
-    float   volume;                     ///< current volume as float
     bool    isMuted;                    ///< is it muted? true or false
+    bool    isDampened;                 ///< is it enabled? true or false
+    float   volume;                     ///< current volume as float
+    float   volumeDamp;            		///< current dampening of volume as float
 
     void (*callbackObject);             ///< pointer to a callback object (if set)
     void (*callbackFunction) (void *);  ///< pointer to a callback function (if set)

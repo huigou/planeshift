@@ -61,7 +61,7 @@ INSERT INTO `accounts` VALUES (3,'guest','084e0343a0486ff05530df6c705c8bb4','0',
 #password is "andrew"
 INSERT INTO `accounts` VALUES (5,'acraig','d914e3ecf6cc481114a3f534a5faf90b','0','0000-00-00 00:00:00','0000-00-00 00:00:00','',0,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
 
-INSERT INTO `accounts` VALUES (9,'superclient','ea5944cced6c6e9bfa1f289e4f29543c','0','2003-07-17 14:46:08','0000-00-00 00:00:00','127.0.0.1',99,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
+INSERT INTO `accounts` VALUES (9,'superclient','e1047916967c28e68172ef5bfe31ed407b5a6d568def7cb74018704ea25da522','0','2003-07-17 14:46:08','0000-00-00 00:00:00','127.0.0.1',99,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
 INSERT INTO `accounts` VALUES (10,'superclient2','5f4dcc3b5aa765d61d8327deb882cf99','0',NULL,NULL,NULL,99,NULL,NULL,'N',0,NULL,0,0,NULL,NULL,0, '', '', '');
 
 #password is "andrew" for all the following accounts
