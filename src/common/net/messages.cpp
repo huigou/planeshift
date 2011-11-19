@@ -6758,7 +6758,7 @@ psGMSpawnItem::psGMSpawnItem(MsgEntry *me)
     NPCOwned = me->GetBool();
     random = me->GetBool();
     quality = me->GetFloat();
-    if (!message->IsEmpty())
+    if (!me->IsEmpty())
     {
         pickupableWeak = me->GetBool();
     }
