@@ -461,7 +461,7 @@ InitSoundHandle(const char* name, bool loop, size_t loopstart, size_t loopend,
 
     if(name == NULL)
     {
-        Error1("Error: Play2DSound got NULL as soundname\n");
+        Error1("Error: PlaySound got NULL as soundname\n");
         return false;
     }
 

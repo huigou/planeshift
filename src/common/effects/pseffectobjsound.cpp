@@ -139,12 +139,6 @@ bool psEffectObjSound::AttachToAnchor(psEffectAnchor * newAnchor)
 
 bool psEffectObjSound::Update(csTicks elapsed)
 {
-    // checking actual state of the sound
-    if(isAlive)
-    {
-        isAlive = soundManager->IsSoundValid(soundID);
-    }
-
     if (!anchor || !anchor->IsReady()) // wait for anchor to be ready
         return true;
 
@@ -173,6 +167,12 @@ bool psEffectObjSound::Update(csTicks elapsed)
 
         // position
         soundPos += LERP_VEC_KEY(KA_POS,LERP_FACTOR);
+    }
+
+    // checking actual state of the sound and updating sound position
+    if(isAlive)
+    {
+        isAlive = soundManager->SetSoundSource(soundID, soundPos);
     }
 
     // playing sound
