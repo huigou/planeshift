@@ -60,24 +60,24 @@ INSERT INTO command_group_assignment VALUES( "requested death", 30 );
 INSERT INTO command_group_assignment VALUES( "/time", 30 );
 INSERT INTO command_group_assignment VALUES( "/version", 30 );
 INSERT INTO command_group_assignment VALUES( "/changenpctype", 30 );
-
-
+INSERT INTO command_group_assignment VALUES( "move unpickupables/spawns", 30 );
+INSERT INTO command_group_assignment VALUES( "/death", 30 );
+INSERT INTO command_group_assignment VALUES( "/crystal", 30 );
+INSERT INTO command_group_assignment VALUES( "/key", 30 );
+INSERT INTO command_group_assignment VALUES( "full modify", 30 );
+INSERT INTO command_group_assignment VALUES( "spawn all", 30 );
 
 # GM5 and above
-INSERT INTO command_group_assignment VALUES( "/death", 30 );
-INSERT INTO command_group_assignment VALUES( "/death", 25 );
-INSERT INTO command_group_assignment VALUES( "/crystal", 30 );
-INSERT INTO command_group_assignment VALUES( "/crystal", 25 );
-INSERT INTO command_group_assignment VALUES( "/modify", 30 );
-INSERT INTO command_group_assignment VALUES( "/modify", 25 );
-INSERT INTO command_group_assignment VALUES( "/key", 30 );
-INSERT INTO command_group_assignment VALUES( "/key", 25 );
 INSERT INTO command_group_assignment VALUES( "/disablequest", 30 );
 INSERT INTO command_group_assignment VALUES( "/disablequest", 25 );
-INSERT INTO command_group_assignment VALUES( "move unpickupables/spawns", 30 );
-INSERT INTO command_group_assignment VALUES( "move unpickupables/spawns", 25 );
 
 # GM4 and above
+INSERT INTO command_group_assignment VALUES( "/modify", 30 );
+INSERT INTO command_group_assignment VALUES( "/modify", 25 );
+INSERT INTO command_group_assignment VALUES( "/modify", 24 );
+INSERT INTO command_group_assignment VALUES( "move weak unpickupables", 30 );
+INSERT INTO command_group_assignment VALUES( "move weak unpickupables", 25 );
+INSERT INTO command_group_assignment VALUES( "move weak unpickupables", 24 );
 INSERT INTO command_group_assignment VALUES( "long bans", 30 );
 INSERT INTO command_group_assignment VALUES( "long bans", 25 );
 INSERT INTO command_group_assignment VALUES( "long bans", 24 );

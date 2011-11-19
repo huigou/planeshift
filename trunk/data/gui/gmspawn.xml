@@ -53,13 +53,18 @@
         </widget>
 
         <widget name="Pickupable" factory="pawsCheckBox" visible="no">
-                <frame x="450" y="224" width="100" height="20" border="no" />
+                <frame x="450" y="205" width="100" height="20" border="no" />
                 <text string="Pickupable"/>
         </widget>
 
-    <widget name="Collidable" factory="pawsCheckBox" visible="no">
-        <frame x="450" y="245" width="170" height="20" border="no" />
-        <text string="Collision Detection"/>
+        <widget name="PickupableWeak" factory="pawsCheckBox" visible="no">
+            <frame x="450" y="225" width="150" height="20" border="no" />
+            <text string="Weak Pickupable"/>
+        </widget>
+
+        <widget name="Collidable" factory="pawsCheckBox" visible="no">
+            <frame x="450" y="245" width="170" height="20" border="no" />
+            <text string="Collision Detection"/>
         </widget>
 
         <widget name="Locked" factory="pawsCheckBox" visible="no">

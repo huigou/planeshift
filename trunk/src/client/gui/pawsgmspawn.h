@@ -52,6 +52,7 @@ private:
     pawsCheckBox*                   cbLockable;
     pawsCheckBox*                   cbLocked;
     pawsCheckBox*                   cbPickupable;
+    pawsCheckBox*                   cbPickupableWeak;
     pawsCheckBox*                   cbCollidable;
     pawsCheckBox*                   cbUnpickable;
     pawsCheckBox*                   cbTransient;

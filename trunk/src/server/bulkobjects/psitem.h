@@ -130,6 +130,9 @@ class gemActor;
 /// Flag defines if item is done by setting (unused by the server, it's more for ordering in the db)
 #define PSITEM_FLAG_SETTINGITEM         0x00080000
 
+/// Flag for an un-pickupable item (remains fixed) - weak variant
+#define PSITEM_FLAG_NOPICKUPWEAK        0x00100000
+
 #define KEY_SKELETON      ((unsigned int)-2)
 
 #define MAX_STACK_COUNT        65  // This is the most items a player can have in a stack
@@ -897,7 +900,15 @@ public:
     bool GetIsUnpickable() { return ((flags & PSITEM_FLAG_UNPICKABLE)? true : false); }
     void SetIsUnpickable(bool v);
 
-    bool GetIsNoPickup() { return ((flags & PSITEM_FLAG_NOPICKUP)? true : false); }
+    /** Gets if the item has a no pickup flag set.
+     *  @return TRUE if the item has a no pickup flag set.
+     */
+    bool GetIsNoPickup() { return (((flags & PSITEM_FLAG_NOPICKUP)? true : false) || GetIsNoPickupWeak()); }
+
+    /** Checks if the item has a weak no pickup flag set.
+     *  @return TRUE has a weak no pickup flag set.
+     */
+    bool GetIsNoPickupWeak() { return ((flags & PSITEM_FLAG_NOPICKUPWEAK)? true : false); }
 
     bool GetIsCD() const { return ((flags & PSITEM_FLAG_USE_CD)? true : false); }
     void SetIsCD(bool v);
@@ -913,7 +924,16 @@ public:
 
     bool IsTransient() { return ((flags & PSITEM_FLAG_TRANSIENT) ? true : false); }
     void SetIsTransient(bool v);
+
+    /** Sets the pickupable flag in order to not allow/allow the item to be picked up.
+     *  @param v FALSE if the no pickup flag should be set.
+     */
     void SetIsPickupable(bool v);
+
+    /** Sets the weak pickupable flag in order to not allow/allow the item to be picked up.
+     *  @param v FALSE if the weak no pickup flag should be set.
+     */
+    void SetIsPickupableWeak(bool v);
 
     void SetIsItemStackable(bool v);
     void ResetItemStackable();
