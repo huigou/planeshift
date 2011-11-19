@@ -31,12 +31,13 @@
 
 SoundControl::SoundControl(int ID, int t)
 {
-    id        = ID;
-    type      = t;
-    isEnabled = true;
-    isMuted   = false;
-    volume    = VOLUME_NORM;
-
+    id        		= ID;
+    type      		= t;
+    isEnabled 		= true;
+    isMuted   		= false;
+    isDampened		= false;
+    volume    		= VOLUME_NORM;
+    volumeDamp 		= 1.0f;
     hasCallback = false;
 }
 
@@ -102,6 +103,42 @@ bool SoundControl::GetToggle() const
     return isEnabled;
 }
 
+void SoundControl::VolumeDampening(float dampPercent)
+{
+	/**
+	 * If the volume should be dampened we try to lower the volume percent with
+	 * 5% each time until we are at a level of 'dampPercent' volume. When we want
+	 * to restore the volume to full we restore it with 1% change each iteration.
+	 */
+	if(dampPercent < 1.0)
+	{
+		if(volumeDamp > dampPercent)
+		{
+			volumeDamp -= 0.05;
+		}
+		else
+		{
+			isDampened = true;
+		}
+	}
+	else
+	{
+		if(volumeDamp < 1.0)
+		{
+			volumeDamp += 0.01;
+		}
+		else
+		{
+			isDampened = false;
+		}
+	}
+}
+
+bool SoundControl::IsDampened() const
+{
+    return isDampened;
+}
+
 void SoundControl::Mute()
 {
     isMuted = true;
@@ -121,6 +158,6 @@ void SoundControl::SetVolume(float vol)
 
 float SoundControl::GetVolume() const
 {
-    return volume;
+    return volume*volumeDamp;
 }
 

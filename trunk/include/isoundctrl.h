@@ -59,6 +59,18 @@ struct iSoundControl
     virtual int GetType() const = 0;
 
     /**
+     * Dampen volume over time to configured value
+     * @param damp This value is used to describe if the function should dampen or open the sound.
+     */
+    virtual void VolumeDampening(float damp) = 0;
+
+    /**
+     * Retrieve if volume is dampened
+     * @return true when the volume has reached the dampened or full value.
+     */
+    virtual bool IsDampened() const = 0;
+
+    /**
      * Get the current volume of the sounds controlled by this SoundControl.
      * @return the volume as a float.
      */

@@ -45,6 +45,8 @@ class InstrumentManager;
 #define DEFAULT_INSTRUMENTS_PATH "/planeshift/art/instruments.xml"
 #define DEFAULT_AREAS_PATH "/planeshift/soundlib/areas/"
 #define DEFAULT_COMMON_SECTOR_NAME "common"
+#define DEFAULT_DAMPENING_PERCENT 0.1
+#define DEFAULT_DAMPENING_CONTROLS "music"
 
 /**
  * Implement iSoundManager.
@@ -147,6 +149,9 @@ private:
     psSoundSector*              commonSector;      ///< sector that keeps features common to all sectors
     int                         weather;           ///< current weather state from weather.h
     int                         combat;            ///< current stance
+
+    float						volumeDampPercent; ///< configured percent of dampening.
+    csArray<int>				dampenCtrls;	   ///< The controls to dampened.
 
     csRandomGen                 rng;               ///< random generator
 

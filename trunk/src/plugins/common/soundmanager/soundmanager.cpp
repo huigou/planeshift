@@ -638,23 +638,52 @@ void SoundManager::Update()
     // twenty times per second
     if(lastUpdateTime + SoundManager::updateTime <= sndTime)
     {
-        // Making queues work
-        csHash<SoundQueue*, int>::GlobalIterator queueIter(soundQueues.GetIterator());
-        SoundQueue* sq;
+    	/*
+    	 * Prepare an boolean with the value for if we are to dampen the volume or if we
+    	 * want the full volume. This value is true when an voice is loaded or currently
+    	 * playing.
+    	 */
+    	bool voiceLoaded = (soundQueues.Get(iSoundManager::VOICE_QUEUE, 0)->GetSize() > 0);
 
-        while(queueIter.HasNext())
+    	/*
+    	 * Start with a ready value true and check if the volume dampening is in the correct
+    	 * mode. If a voice is loaded the volume should be dampened. If not it should be full.
+    	 * The voice will not play until the change been made and the volume is at a level
+    	 * that we are ready to present the speech to the player.
+    	 * The damp variable will get the percent to dampen to or 100% when we go to full.
+    	 */
+    	bool ready = true;
+        for (size_t i = 0; i< dampenCtrls.GetSize(); i++)
         {
-            sq = queueIter.Next();
-            sq->Work();
-        }
+    		if(GetSndCtrl(dampenCtrls[i])->IsDampened() == !voiceLoaded)
+    		{
+				ready = false;
+				float damp = voiceLoaded ? volumeDampPercent : 1.0f;
+				GetSndCtrl(dampenCtrls[i])->VolumeDampening(damp);
+			}
+		}
 
-        // Updating sectors if needed
-        if(activeSector != 0)
-        {
-            activeSector->UpdateEmitter(ambientSndCtrl);
-            activeSector->UpdateEntity(ambientSndCtrl, commonSector);
-        }
 
+
+    	if(ready)
+    	{
+			// Making queues work
+			csHash<SoundQueue*, int>::GlobalIterator queueIter(soundQueues.GetIterator());
+			SoundQueue* sq;
+
+			while(queueIter.HasNext())
+			{
+				sq = queueIter.Next();
+				sq->Work();
+			}
+
+			// Updating sectors if needed
+			if(activeSector != 0)
+			{
+				activeSector->UpdateEmitter(ambientSndCtrl);
+				activeSector->UpdateEntity(ambientSndCtrl, commonSector);
+			}
+    	}
         lastUpdateTime = csGetTicks();
     }
 
@@ -666,6 +695,7 @@ void SoundManager::Update()
 void SoundManager::Init()
 {
     const char* instrumentsPath;
+    const char* volumeDampControls;
 
     // configuration
     csRef<iConfigManager> configManager = csQueryRegistry<iConfigManager>(objectReg);
@@ -673,11 +703,46 @@ void SoundManager::Init()
     {
         SoundManager::updateTime = configManager->GetInt("Planeshift.Sound.UpdateTime", DEFAULT_SECTOR_UPDATE_TIME);
         instrumentsPath = configManager->GetStr("Planeshift.Sound.Intruments", DEFAULT_INSTRUMENTS_PATH);
+
+        volumeDampPercent = configManager->GetFloat("PlaneShift.Sound.DampeningPercent", DEFAULT_DAMPENING_PERCENT);
+        volumeDampControls = configManager->GetStr("PlaneShift.Sound.DampeningControls", DEFAULT_DAMPENING_CONTROLS);
     }
     else
     {
         // updateTime is already initialized
         instrumentsPath = DEFAULT_INSTRUMENTS_PATH;
+
+        volumeDampPercent = DEFAULT_DAMPENING_PERCENT;
+        volumeDampControls = DEFAULT_DAMPENING_CONTROLS;
+    }
+
+	/*
+	 * Prepare an array of the sound controls to dampened when voice is queued.
+	 * The configuration string is delimited by | and each control get referenced
+	 * by the word lowercase. eg. "music" for the music sound control.
+	 */
+    psString strDampControls(volumeDampControls);
+    csStringArray dampControls;
+
+    strDampControls.Split(dampControls,'|');
+
+    if ( strDampControls.Find("ambient") != csArrayItemNotFound ) {
+        dampenCtrls.Push(iSoundManager::AMBIENT_SNDCTRL);
+    }
+    if ( strDampControls.Find("music") != csArrayItemNotFound ) {
+        dampenCtrls.Push(iSoundManager::MUSIC_SNDCTRL);
+    }
+    if ( strDampControls.Find("action") != csArrayItemNotFound ) {
+        dampenCtrls.Push(iSoundManager::ACTION_SNDCTRL);
+    }
+    if ( strDampControls.Find("effect") != csArrayItemNotFound ) {
+        dampenCtrls.Push(iSoundManager::EFFECT_SNDCTRL);
+    }
+    if ( strDampControls.Find("gui") != csArrayItemNotFound ) {
+        dampenCtrls.Push(iSoundManager::GUI_SNDCTRL);
+    }
+    if ( strDampControls.Find("instrument") != csArrayItemNotFound ) {
+        dampenCtrls.Push(iSoundManager::INSTRUMENT_SNDCTRL);
     }
 
     sndSysMgr = new SoundSystemManager(objectReg);
