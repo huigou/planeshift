@@ -105,7 +105,7 @@ void SndSysSongStream::AdvancePosition(size_t frameDelta)
     const csSndSysSoundFormat* dataFormat = soundData->GetFormat();
 
     // if the stream is in pause or we have already finished to read don't advance
-    if(m_bPaused || m_bPlaybackReadComplete || frameDelta == 0)
+    if(/*m_bPaused || */m_bPlaybackReadComplete || frameDelta == 0)
     {
         return;
     }
