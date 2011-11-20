@@ -84,3 +84,13 @@ float DummySoundControl::GetVolume() const
     return volume;
 }
 
+void DummySoundControl::VolumeDampening(float damp)
+{
+    dampening = (damp < 1.0f);
+    return;
+}
+
+bool DummySoundControl::IsDampened() const
+{
+    return dampening;
+}
