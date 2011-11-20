@@ -68,6 +68,7 @@ private:
     int type;       ///< the SoundControl's type
     float volume;   ///< the SoundControl's volume
     bool isEnabled; ///< the SoundControl's toggle
+    bool dampening; ///< the dampening status
 
 };
 
