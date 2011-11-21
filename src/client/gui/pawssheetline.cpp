@@ -92,11 +92,26 @@ Note::Note(short int position, short int alter)
 csString Note::ToXML()
 {
     csString pitch;
+    int alterXML;
     int octave;
     int iStep;
     char step;
 
-    // computing step and octave
+    // computing alter
+    switch(alter)
+    {
+    case pawsMusicWindow::UNALTERED:
+    case pawsMusicWindow::NATURAL:
+        alterXML = 0;
+        break;
+    case pawsMusicWindow::FLAT:
+        alterXML = -1;
+        break;
+    case pawsMusicWindow::SHARP:
+        alterXML = 1;
+        break;
+    }
+    // computing octave
     octave = 4 + position / 7;
 
     if(position < 0)
@@ -104,6 +119,7 @@ csString Note::ToXML()
         octave--;
     }
 
+    // computing step
     iStep = position % 7;
 
     switch(iStep)
@@ -139,7 +155,7 @@ csString Note::ToXML()
 
     // converting to XML
     pitch = "<pitch>";
-    pitch.AppendFmt("<step>%c</step><octave>%d</octave><alter>%d</alter>", step, octave, alter);
+    pitch.AppendFmt("<step>%c</step><octave>%d</octave><alter>%d</alter>", step, octave, alterXML);
     pitch += "</pitch>";
 
     return pitch;
@@ -244,6 +260,7 @@ void Chord::AddNote(int position, int alter, bool rest)
 
 void Chord::AddNote(csRef<iDocumentNode> pitchNode)
 {
+    int alter;
     int position = 0;
     csRef<iDocumentNode> stepNode;
     csRef<iDocumentNode> octaveNode;
@@ -267,7 +284,7 @@ void Chord::AddNote(csRef<iDocumentNode> pitchNode)
 
     char step = stepNode->GetContentsValue()[0];
     int octave = octaveNode->GetContentsValueAsInt();
-    int alter = alterNode->GetContentsValueAsInt();
+    int alterXML = alterNode->GetContentsValueAsInt();
 
     // converting step
     switch(step)
@@ -297,6 +314,20 @@ void Chord::AddNote(csRef<iDocumentNode> pitchNode)
 
     // converting octave
     position += (octave - 4) * 7;
+
+    // converting alter
+    switch(alterXML)
+    {
+    case 0:
+        alter = pawsMusicWindow::UNALTERED;
+        break;
+    case 1:
+        alter = pawsMusicWindow::SHARP;
+        break;
+    case -1:
+        alter = pawsMusicWindow::FLAT;
+        break;
+    }
 
     // adding note
     AddNote(position, alter, false);
