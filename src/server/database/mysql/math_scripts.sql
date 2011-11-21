@@ -591,7 +591,29 @@ INSERT INTO math_scripts VALUES( "GetSkillBaseValues" , "
 INSERT INTO math_scripts VALUES( "Calculate Song Parameters" , "
     InstrSkill = 52;
     InstrSkillRank = Player:GetSkillValue(InstrSkill);
-    ErrorRate = 0.25 - 0.001245 * InstrSkillRank;
+
+    if(InstrSkillRank < 50)
+    {
+        ErrorRate = 0.25 - 0.004 * InstrSkillRank;
+    }
+    else
+    {
+        if(InstrSkillRank < 100)
+        {
+            ErrorRate = 0.05 - 0.00075 * (InstrSkillRank - 50);
+        }
+        else
+        {
+            if(InstrSkillRank < 150)
+            {
+                ErrorRate = 0.0125 - 0.000175 * (InstrSkillRank - 100);
+            }
+            else
+            {
+                ErrorRate = 0.00375 - 0.000073 * (InstrSkillRank - 150);
+            }
+        }
+    }
 ");
 
 INSERT INTO math_scripts VALUES( "Calculate Song Experience" , "
