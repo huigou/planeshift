@@ -1,5 +1,5 @@
 /*
- * serversongmngr.h, Author: Andrea Rizzi <88whacko@gmail.com>
+ * serversongmngr.cpp, Author: Andrea Rizzi <88whacko@gmail.com>
  *
  * Copyright (C) 2001-2011 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
  *
@@ -227,7 +227,7 @@ void ServerSongManager::StopSong(gemActor* charActor, bool skillRanking)
             calcSongPar->Evaluate(&mathEnv);
             calcSongExp->Evaluate(&mathEnv);
 
-            practicePoints = mathEnv.Lookup("PracticePoints")->GetRoundValue();
+            practicePoints = mathEnv.Lookup("PracticePoints")->GetValue();
             modifier = mathEnv.Lookup("Modifier")->GetValue();
             instrSkill = (PSSKILL)(mathEnv.Lookup("InstrSkill")->GetRoundValue());
 
