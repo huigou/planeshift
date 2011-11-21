@@ -1182,10 +1182,21 @@ private:
             wait = true;
 
             bool ready = true;
-            ready &= ObjectLoader<Trigger>::LoadObjects(wait);
-            ready &= ObjectLoader<Sequence>::LoadObjects(wait);
+            if(ready)
+            {
+                ready = ObjectLoader<Sequence>::LoadObjects(wait);
+            }
 
-            return ready && TrivialLoadable<iSequenceWrapper,ObjectNames::sequence>::LoadObject(wait);
+            if(ready)
+            {
+                ready = TrivialLoadable<iSequenceWrapper,ObjectNames::sequence>::LoadObject(wait);
+            }
+
+            if(ready)
+            {
+                ready = ObjectLoader<Trigger>::LoadObjects(wait);
+            }
+            return ready;
         }
 
         void UnloadObject()
