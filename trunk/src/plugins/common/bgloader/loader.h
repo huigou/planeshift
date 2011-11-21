@@ -816,6 +816,11 @@ private:
         {
             if(!status.IsValid())
             {
+                if(!data.IsValid())
+                {
+                    LOADER_DEBUG_MESSAGE("%s %s was created, but never parsed!\n", TypeName, GetName());
+                    return true;
+                }
                 status = GetParent()->GetLoader()->LoadNode(path, data);
             }
 
