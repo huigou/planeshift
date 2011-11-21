@@ -856,7 +856,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                     else
                     {
                         csString msg;
-                        msg.Format("Invalid sequence reference '%s' in sequence '%s'", name.GetData(), GetName());
+                        msg.Format("Invalid trigger reference '%s' in sequence '%s'", name.GetData(), GetName());
                         CS_ASSERT_MSG(msg.GetData(), false);
                         failed = true;
                     }
