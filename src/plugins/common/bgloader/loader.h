@@ -1149,6 +1149,11 @@ private:
         {
         }
 
+        bool LoadObject(bool wait)
+        {
+            return TrivialLoadable<iSequenceTrigger,ObjectNames::trigger>::LoadObject(true);
+        }
+
         bool Parse(iDocumentNode* node, ParserData& data);
     };
 
@@ -1168,6 +1173,9 @@ private:
 
         bool LoadObject(bool wait)
         {
+            // work around a race condition with engseqmgr
+            wait = true;
+
             bool ready = true;
             ready &= ObjectLoader<Trigger>::LoadObjects(wait);
             ready &= ObjectLoader<Sequence>::LoadObjects(wait);
