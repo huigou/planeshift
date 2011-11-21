@@ -182,7 +182,7 @@ private:
     pawsButton* dotButton;
 
     pawsButton* flatButton;
-    pawsButton* naturalButton;
+    // pawsButton* naturalButton; TODO support natural notes in song stream before use this
     pawsButton* sharpButton;
 
     pawsWidget* deleteChordButton;

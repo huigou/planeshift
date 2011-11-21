@@ -111,59 +111,59 @@
             <buttonup resource="FlatButtonOff" />
             <buttondown resource="FlatButtonOn" />
         </widget>
-
+        <!-- This button's functionality is currently bugged in the engine
         <widget name="NaturalButton" factory="pawsButton" id="301" toggle="yes" tooltip="Natural">
             <frame x="360" y="0" width="16" height="16" />
             <buttonup resource="NaturalButtonOff" />
             <buttondown resource="NaturalButtonOn" />
         </widget>
-
+        -->
         <widget name="SharpButton" factory="pawsButton" id="302" toggle="yes" tooltip="Sharp">
-            <frame x="378" y="0" width="16" height="16" />
+            <frame x="360" y="0" width="16" height="16" />
             <buttonup resource="SharpButtonOff" />
             <buttondown resource="SharpButtonOn" />
         </widget>
 
         <widget name="DeleteChordButton" factory="pawsButton" id="400" tooltip="Delete Chord">
-            <frame x="414" y="0" width="16" height="16" />
+            <frame x="396" y="0" width="16" height="16" />
             <bgimage resource="DeleteChordButton" />
             <eventMouseDown>Ret = MusicWindow:ClickDeleteChordButton()</eventMouseDown>
         </widget>
 
         <widget name="DeleteMeasureButton" factory="pawsButton" id="401" tooltip="Delete Measure">
-            <frame x="432" y="0" width="16" height="16" />
+            <frame x="414" y="0" width="16" height="16" />
             <bgimage resource="DeleteMeasureButton" />
             <eventMouseDown>Ret = MusicWindow:ClickDeleteMeasureButton()</eventMouseDown>
         </widget>
 
         <widget name="InsertNoteButton" factory="pawsButton" id="402" toggle="yes" tooltip="Insert Note">
-            <frame x="450" y="0" width="16" height="16" />
+            <frame x="432" y="0" width="16" height="16" />
             <buttonup resource="InsertNoteButtonOff" />
             <buttondown resource="InsertNoteButtonOn" />
         </widget>
 
         <widget name="InsertMeasureButton" factory="pawsButton" id="403" tooltip="Insert Measure">
-            <frame x="468" y="0" width="16" height="16" />
+            <frame x="450" y="0" width="16" height="16" />
             <bgimage resource="InsertMeasureButton" />
             <eventMouseDown>Ret = MusicWindow:ClickInsertMeasureButton()</eventMouseDown>
         </widget>
 
         <widget name="StartRepeatButton" factory="pawsButton" id="500" toggle="yes" tooltip="Start Repeat">
-            <frame x="504" y="0" width="16" height="16" />
+            <frame x="486" y="0" width="16" height="16" />
             <buttonup resource="StartRepeatButtonOff" />
             <buttondown resource="StartRepeatButtonOn" />
             <eventMouseDown>Ret = MusicWindow:ClickStartRepeatButton()</eventMouseDown>
         </widget>
 
         <widget name="EndRepeatButton" factory="pawsButton" id="501" toggle="yes" tooltip="End Repeat">
-            <frame x="522" y="0" width="16" height="16" />
+            <frame x="504" y="0" width="16" height="16" />
             <buttonup resource="EndRepeatButtonOff" />
             <buttondown resource="EndRepeatButtonOn" />
             <eventMouseDown>Ret = MusicWindow:ClickEndRepeatButton()</eventMouseDown>
         </widget>
 
         <widget name="EndingButton" factory="pawsButton" id="502" toggle="yes" tooltip="Ending">
-            <frame x="540" y="0" width="16" height="16" />
+            <frame x="522" y="0" width="16" height="16" />
             <buttonup resource="EndingButtonOff" />
             <buttondown resource="EndingButtonOn" />
             <eventMouseDown>Ret = MusicWindow:ClickEndingButton()</eventMouseDown>

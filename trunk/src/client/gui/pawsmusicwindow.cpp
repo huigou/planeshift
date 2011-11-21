@@ -499,7 +499,7 @@ bool pawsMusicWindow::PostSetup()
     dotButton = static_cast<pawsButton*>(FindWidget("DotButton"));
 
     flatButton = static_cast<pawsButton*>(FindWidget("FlatButton"));
-    naturalButton = static_cast<pawsButton*>(FindWidget("NaturalButton"));
+    // naturalButton = static_cast<pawsButton*>(FindWidget("NaturalButton"));
     sharpButton = static_cast<pawsButton*>(FindWidget("SharpButton"));
 
     deleteChordButton = FindWidget("DeleteChordButton");
@@ -899,8 +899,8 @@ pawsButton* pawsMusicWindow::GetButton(int buttonID)
         return wholeButton;
     case FLAT_BUTTON:
         return flatButton;
-    case NATURAL_BUTTON:
-        return naturalButton;
+    /* case NATURAL_BUTTON:
+        return naturalButton; */
     case SHARP_BUTTON:
         return sharpButton;
     }
@@ -1463,7 +1463,7 @@ void pawsMusicWindow::SetToolbarButtons()
         wholeButton->Show();
         dotButton->Show();
         flatButton->Show();
-        naturalButton->Show();
+        // naturalButton->Show();
         sharpButton->Show();
         deleteChordButton->Show();
         deleteMeasureButton->Show();
@@ -1488,7 +1488,7 @@ void pawsMusicWindow::SetToolbarButtons()
         wholeButton->Hide();
         dotButton->Hide();
         flatButton->Hide();
-        naturalButton->Hide();
+        // naturalButton->Hide();
         sharpButton->Hide();
         deleteChordButton->Hide();
         deleteMeasureButton->Hide();
