@@ -94,7 +94,10 @@ void pawsActiveMagicWindow::HandleMessage( MsgEntry* me )
                 pawsListBoxRow *row = list->GetRow(i);
                 pawsTextBox *name = dynamic_cast<pawsTextBox*>(row->GetColumn(0));
                 if (incoming.name == name->GetText())
+                {
                     list->Remove(row);
+                    break;
+                }
             }
 
             // If no active magic, hide the window.
