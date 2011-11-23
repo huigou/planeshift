@@ -492,7 +492,7 @@ if(Quality < 10)
 INSERT INTO math_scripts VALUES( "Calculate Transformation Time",
 "if(Transform:ItemQuantity & Transform:ItemID != 0 & Transform:ResultItemID != 0)
 {
-    Time = Transform:TransformPoints + Transform:TransformPoints*(Object:StackCount - 1) * 0.1);
+    Time = Transform:TransformPoints * (0.9 + Object:StackCount * 0.1);
 }
 else
 {
