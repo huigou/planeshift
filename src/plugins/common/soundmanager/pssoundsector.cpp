@@ -199,14 +199,19 @@ void psSoundSector::UpdateMusic(bool loopToggle, int type,
                 }
             }
 
-            if(music->Play(loopToggle, ctrl))
+            //start the music only if not the current one.
+            if(activemusic != music)
             {
-                music->FadeUp();
-                activemusic = music;
-            }
-            else // error occured .. get rid of this music
-            {
-                DeleteMusic(music);
+
+                if(music->Play(loopToggle, ctrl))
+                {
+                    music->FadeUp();
+                    activemusic = music;
+                }
+                else // error occured .. get rid of this music
+                {
+                    DeleteMusic(music);
+                }
             }
         }
         else if(music->active == true)
