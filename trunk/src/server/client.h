@@ -31,12 +31,13 @@
 //=============================================================================
 #include "net/netbase.h"
 #include "util/psconst.h"
+#include "bulkobjects/buffable.h"
 
 //=============================================================================
 // Local Includes
 //=============================================================================
 
-
+class Client;
 class psCharacter;
 class gemObject;
 class gemActor;
@@ -52,6 +53,26 @@ public:
     csString text;
     csString recipient;
     unsigned int ticks;
+};
+
+class MuteBuffable : public ClampedPositiveBuffable<int>
+{
+public:
+    void Initialize(Client *c) { cli = c; }
+
+protected:
+    Client *cli;
+    virtual void OnChange();
+};
+
+class FrozenBuffable : public ClampedPositiveBuffable<int>
+{
+public:
+    void Initialize(Client *c) { cli = c; }
+
+protected:
+    Client *cli;
+    virtual void OnChange();
 };
 
 enum TARGET_TYPES
@@ -109,8 +130,9 @@ public:
     bool ZombieAllowDisconnect();
     
     /// SetMute is the function that toggles the muted flag
-    void SetMute(bool flag) { mute = flag; }
-    bool IsMute() { return mute; }
+    void SetMute(bool flag) { mute.SetBase(flag ? 1 : 0); }
+    bool IsMute() { return (mute.Current() > 0); }
+    MuteBuffable & GetBuffableMute() { return mute; }
 
     void SetName(const char* n) { name = n; }
     const char* GetName() { return name; }
@@ -137,8 +159,9 @@ public:
     bool IsAlive() const;
 
     /// Check whether the client is frozen.
-    bool IsFrozen() const { return isFrozen; }
-    void SetFrozen(bool frozen) { isFrozen = frozen; }
+    void SetFrozen(bool flag) { isFrozen.SetBase(flag ? 1 : 0); }
+    bool IsFrozen() { return (isFrozen.Current() > 0); }
+    FrozenBuffable & GetBuffableFrozen() { return isFrozen; }
 
     /// Check if distance between client and target is within range.
     bool ValidateDistanceToTarget(float range);
@@ -408,7 +431,7 @@ public:
     bool isAdvisor;         ///< Store if this client is acting as an advisor.
 
     /// mute flag
-    bool mute;
+    MuteBuffable mute;
 
     AccountID accountID;
     PID playerID;
@@ -451,7 +474,7 @@ public:
     bool locationIsDisplaying;
     
 private:    
-    bool isFrozen;  ///< Whether the client is frozen or not.
+    FrozenBuffable isFrozen;  ///< Whether the client is frozen or not.
 
     /// Potential number of exploits automatically detected.
     unsigned int detectedCheatCount;

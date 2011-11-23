@@ -391,6 +391,51 @@ protected:
     csString sex;
 };
 
+/**
+ * Apply mute to client
+ */
+class MuteAOp : public AppliedOp
+{
+public:
+	MuteAOp() : AppliedOp() { }
+    virtual ~MuteAOp() { }
+
+    bool Load(iDocumentNode* node)
+    {
+        return true;
+    }
+
+    void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
+    {
+    	MuteBuffable& buffable = target->GetClient()->GetBuffableMute();
+    	buffable.Buff(asp, 1);
+        asp->Add(buffable, "<mute />");
+    }
+};
+
+/**
+ * Action to freeze client in scripts
+ */
+class FreezeAOp : public AppliedOp
+{
+public:
+	FreezeAOp() : AppliedOp() { }
+    virtual ~FreezeAOp() { }
+
+    bool Load(iDocumentNode* node)
+    {
+        return true;
+    }
+
+    void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
+    {
+
+    	FrozenBuffable& buffable = target->GetClient()->GetBuffableFrozen();
+    	buffable.Buff(asp, 1);
+        asp->Add(buffable, "<freeze />");
+    }
+};
+
 //----------------------------------------------------------------------------
 
 class CanSummonFamiliarAOp : public AppliedOp
@@ -843,6 +888,14 @@ ApplicativeScript* ApplicativeScript::Create(EntityManager* entitymanager, Cache
         else if (elem == "race")
         {
             op = new RaceAOp;
+        }
+        else if (elem == "mute")
+        {
+            op = new MuteAOp;
+        }
+        else if (elem == "freeze")
+        {
+            op = new FreezeAOp;
         }
         else if (elem == "pos")
         {

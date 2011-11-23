@@ -53,7 +53,7 @@
 #include "adminmanager.h"
 
 Client::Client ()
-    : accumulatedLag(0), zombie(false), allowedToDisconnect(true), ready(false), mute(false),
+    : accumulatedLag(0), zombie(false), allowedToDisconnect(true), ready(false),
       accountID(0), playerID(0), securityLevel(0), superclient(false),
       name(""), waypointEffectID(0), waypointIsDisplaying(false),
       pathEffectID(0), pathPath(NULL), pathIsDisplaying(false),
@@ -73,12 +73,16 @@ Client::Client ()
     lastGlyphSend = 0;
 
     isAdvisor           = false;
-    isFrozen            = false;
     lastInviteResult    = true;
     hasBeenWarned       = false;
     hasBeenPenalized    = false;
     valid               = false;
     isBuddyListHiding   = false;
+
+    mute.Initialize(this);
+    isFrozen.Initialize(this);
+    SetMute(false);
+    SetFrozen(false);
 
     // pets[0] is a special case for the players familiar.
     pets.Insert(0, PID(0));
@@ -685,3 +689,9 @@ OrderedMessageChannel *Client::GetOrderedMessageChannel(msgtype mtype)
 	return channel;
 }
 
+void MuteBuffable::OnChange() {}
+
+void FrozenBuffable::OnChange()
+{
+	cli->GetCharacterData()->GetActor()->SetAllowedToMove( !(Current() > 0) );
+}
