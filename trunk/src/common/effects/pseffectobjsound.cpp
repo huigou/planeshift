@@ -56,6 +56,7 @@ psEffectObjSound::psEffectObjSound(iView *parentView, psEffect2DRenderer * rende
     }
 
     soundID = 0;
+    playedOnce = false;
 }
 
 psEffectObjSound::~psEffectObjSound()
@@ -178,13 +179,17 @@ bool psEffectObjSound::Update(csTicks elapsed)
     // playing sound
     if (!isAlive && life >= birth)
     {
-        iSoundControl* effectSndCtrl = soundManager->GetSndCtrl(iSoundManager::EFFECT_SNDCTRL);
-        soundID = soundManager->PlaySound(soundName, loop, effectSndCtrl,
-            soundPos, csVector3(0,0,0), minDist, maxDist);
-
-        if(soundID != 0) // sound not played
+        if(loop || !playedOnce)
         {
-            isAlive = true;
+            iSoundControl* effectSndCtrl = soundManager->GetSndCtrl(iSoundManager::EFFECT_SNDCTRL);
+            soundID = soundManager->PlaySound(soundName, loop, effectSndCtrl,
+                soundPos, csVector3(0,0,0), minDist, maxDist);
+
+            if(soundID != 0) // sound not played
+            {
+                isAlive = true;
+                playedOnce = true;
+            }
         }
     }
 

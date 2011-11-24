@@ -58,7 +58,7 @@ private:
 
     float volumeMultiplier;
     bool loop;
-
+    bool playedOnce;
 };
 
 #endif
