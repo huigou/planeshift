@@ -111,13 +111,11 @@
             <buttonup resource="FlatButtonOff" />
             <buttondown resource="FlatButtonOn" />
         </widget>
-        <!-- This button's functionality is currently bugged in the engine
-        <widget name="NaturalButton" factory="pawsButton" id="301" toggle="yes" tooltip="Natural">
+        <widget name="NaturalButton" factory="pawsButton" id="301" toggle="yes" tooltip="Natural" visible="false">
             <frame x="360" y="0" width="16" height="16" />
             <buttonup resource="NaturalButtonOff" />
             <buttondown resource="NaturalButtonOn" />
         </widget>
-        -->
         <widget name="SharpButton" factory="pawsButton" id="302" toggle="yes" tooltip="Sharp">
             <frame x="360" y="0" width="16" height="16" />
             <buttonup resource="SharpButtonOff" />
