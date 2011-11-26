@@ -40,7 +40,7 @@ struct iConfigManager;
 struct iVFS;
 
 #define UPDATER_VERSION_MAJOR 2
-#define UPDATER_VERSION_MINOR 97
+#define UPDATER_VERSION_MINOR 99
 
 class InfoShare
 {
