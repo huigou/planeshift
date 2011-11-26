@@ -233,30 +233,37 @@ bool pawsObjectView::LoadMap( const char* map, const char* sector )
     return true;
 }
 
-bool pawsObjectView::ContinueLoad()
+bool pawsObjectView::ContinueLoad(bool onlyMesh)
 {
     if(!rmTargets.IsValid())
         return true;
 
     if(loader->GetLoadingCount() == 0)
     {
-        // precache stage
-        stage->PrecacheDraw();
-
-        // copy ambient light
-        meshSector->SetDynamicAmbientLight(stage->GetDynamicAmbientLight());
-
-        // copy static and pseudo-dynamic lights
-        iLightList* lightList = meshSector->GetLights();
-        iLightList* stageLightList = stage->GetLights();
-
-        for(int i=0; i<stageLightList->GetCount(); i++)
+        //we requested a loading because of a mesh change but no change
+        //in the sector so no need to do other operations aside from
+        //requesting the loader to complete loading
+        //if, instead we are loading all, prepare also the rest
+        if(!onlyMesh)
         {
-            lightList->Add(stageLightList->Get(i));
-        }
+            // precache stage
+            stage->PrecacheDraw();
 
-        // precache mesh sector
-        meshSector->PrecacheDraw();
+            // copy ambient light
+            meshSector->SetDynamicAmbientLight(stage->GetDynamicAmbientLight());
+
+            // copy static and pseudo-dynamic lights
+            iLightList* lightList = meshSector->GetLights();
+            iLightList* stageLightList = stage->GetLights();
+
+            for(int i=0; i<stageLightList->GetCount(); i++)
+            {
+                lightList->Add(stageLightList->Get(i));
+            }
+
+            // precache mesh sector
+            meshSector->PrecacheDraw();
+        }
         return true;
     }
     else

@@ -250,6 +250,12 @@ void pawsCreationMain::ChangeSkinColour( int currentChoice )
     }
 
     skinColourLabel->SetText( race->location[PSTRAIT_LOCATION_SKIN_TONE][currentGender][currentChoice]->name );
+
+    //wait for the skin to load
+    while(!view->ContinueLoad(true))
+    {
+        csSleep(100);
+    }
 }
 
 void pawsCreationMain::ChangeHairColour( int newHair )
