@@ -1239,10 +1239,14 @@ void UpdaterEngine::CheckIntegrity(bool automatic)
     {
         fileUtil->RemoveFile(SERVERS_CURRENT_FILENAME, true);
         downloader->SetProxy(config->GetProxy().host.GetData(), config->GetProxy().port);
-        if(!downloader->DownloadFile(FALLBACK_SERVER "updateservers.xml", SERVERS_CURRENT_FILENAME, true, true, 1, true))
+        if(!downloader->DownloadFile("updateservers.xml", SERVERS_CURRENT_FILENAME, false, true, 1, true))
         {
-            PrintOutput("\nFailed to download servers info!\n");
-            return;
+            //not in the server let's try the fallback
+            if(!downloader->DownloadFile(FALLBACK_SERVER "updateservers.xml", SERVERS_CURRENT_FILENAME, false, true, 1, true))
+            {
+                PrintOutput("\nFailed to download servers info!\n");
+                return;
+            }
         }
         
     }
