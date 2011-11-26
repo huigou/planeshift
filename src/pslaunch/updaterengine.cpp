@@ -1184,7 +1184,67 @@ void UpdaterEngine::CheckIntegrity(bool automatic)
     if(!downloader->DownloadFile("updaterinfo.xml", UPDATERINFO_CURRENT_FILENAME, false, true, 1, true))
     {
         PrintOutput("\nFailed to download updater info from a mirror!\n");
-        return;
+
+        //try redownloading
+        // Check if we have write permissions.
+        if(!log.IsValid())
+        {
+            PrintOutput("Please run this program with administrator permissions to run the integrity check.\n");
+            return;
+        }
+        printf("Attempting to restore updateservers.xml!\n");
+        fileUtil->RemoveFile(SERVERS_CURRENT_FILENAME, true);
+        downloader = new Downloader(vfs);
+        downloader->SetProxy(config->GetProxy().host.GetData(), config->GetProxy().port);
+        if(!downloader->DownloadFile(FALLBACK_SERVER "updateservers.xml", SERVERS_CURRENT_FILENAME, true, true, 1, true))
+        {
+            PrintOutput("\nFailed to download servers info!\n");
+            return;
+        }
+
+        delete downloader;
+        
+        //retry
+        serversRoot = GetRootNode(SERVERS_CURRENT_FILENAME);
+        success = true;    
+        if(!serversRoot.IsValid())
+        {
+            printf("Unable to get root node!\n");
+            return;
+        }
+        else
+        {
+            if(!config->GetCurrentConfig()->LoadMirrors(serversRoot))
+            {
+                printf("Failed to Initialize mirror config current!\n");
+                printf("Restoring updateservers.xml failed!\n");
+                return;
+            }
+        }
+        // retry Initialise downloader.
+        downloader = new Downloader(vfs, config);
+
+        // Set proxy
+        downloader->SetProxy(config->GetProxy().host.GetData(), config->GetProxy().port);
+
+        // Download new config.
+        fileUtil->RemoveFile(UPDATERINFO_CURRENT_FILENAME, true);
+        if(!downloader->DownloadFile("updaterinfo.xml", UPDATERINFO_CURRENT_FILENAME, false, true, 1, true))
+        {
+            PrintOutput("\nFailed to download updaterinfo!\n");
+            return;
+        }
+    }
+    else //keep ourselves up to date
+    {
+        fileUtil->RemoveFile(SERVERS_CURRENT_FILENAME, true);
+        downloader->SetProxy(config->GetProxy().host.GetData(), config->GetProxy().port);
+        if(!downloader->DownloadFile(FALLBACK_SERVER "updateservers.xml", SERVERS_CURRENT_FILENAME, true, true, 1, true))
+        {
+            PrintOutput("\nFailed to download servers info!\n");
+            return;
+        }
+        
     }
 
     delete downloader;
