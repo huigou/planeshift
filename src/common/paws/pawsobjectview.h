@@ -78,7 +78,7 @@ public:
     /**
      * Continues an existing map load.
      */
-    bool ContinueLoad();
+    bool ContinueLoad(bool onlyMesh = false);
     
     /** Creates a default map. Creates a simple room to place object.
       * 
