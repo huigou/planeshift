@@ -1,18 +1,20 @@
-@PlaneShift Team at Arcane Chrysalis 0.5.7 Release (released June 2011)
+@PlaneShift Team at Arcane Chrysalis 0.5.8 Release (released November 2011)
 
 &Project Leader, Director
 
-Luca "Talad" Pancallo, for building a great team to make a dream come true.
+Luca "Talad" Pancallo, for building a great team to make a dream come true, and continuous leadership for 11 years.
 
 
 &The pillars
 
-Stefano "weltall" Angeleri, for massive amounts of new features and constant improvement of the game, lot of testing and the loan of his personal server for testing.
+Stefano "weltall" Angeleri, for leadership in the engine side, addition of many new features and constant improvement of the game, lot of testing and the loan of his personal hardware as test server.
+
+Jérôme "Tuux" Ornech, for spells effects and textures, environment sounds, spells sounds, creatures sounds, nice videos and good french accent.
 
 
 &Client and Server engine
 
-Stefano "weltall" Angeleri, for massive amounts of bug hunting and bug fixing, feature request implementation, and the loan of his personal server for testing.
+Stefano "weltall" Angeleri, for leadership in the engine side, addition of many new features and constant improvement of the game, lot of testing and the loan of his personal hardware as test server.
 
 Andrew "Acraig" Craig, for client gui foundation, char creation screens, equipment, inventory, overall coordination ...
 
@@ -23,13 +25,18 @@ Anders "Magodra" Reggestad, for magic system implementation, NPC AI, tribes and 
 
 &Settings
 
-Giacomo "drJack" Mariani, for the wizard quests, overall background ideas, and factions.
+Giacomo "drJack" Mariani, for his leadership in the setting department, the wizard quests, overall background ideas, and factions.
+
+Mordaan, for bug fixing many quests, spellchecking and work on quest chains.
+
+Venalan, for bug fixing many quests, spellchecking and work on quest chains.
 
 Jay "Hanix" Glenn, for quest writing, testing, tutorial rewrites, and content review.
 
-Steve "Darkmoon" Scott, for maps, npcs dialogues, quests and knowledge areas, and recovery of older but useful ideas & documents.
 
 &2D Art
+
+Cale, for the textures of new hydlaa plaza and many other items.
 
 Christophe "Nynn" Lehay, for player skins, robes, items, and more.
 
@@ -39,31 +46,17 @@ Jérôme "Tuux" Ornech, for spells effects and textures.
 
 &3D Art
 
+Cale, for the models and coordination of new hydlaa plaza and many other items.
+
 Arco "Arcooo" Mul, for rigging and level modeling.
 
 Christophe "Nynn" Lehay, for player skins, robes, items, and more.
 
 Joel "Xoel" McLeay, for the modeling of Dsar Kore and Ojaveda guild.
 
-&Game Masters
-
-Jay "Hanix" Glenn, for his work as GM Team Leader
-
-Sarva for the constant presence in game, support of our events, and coordination of GM activities
-
-The GM Team: Daxa, Dohmo, Durgrem, Janner, Marathal, Rhumdor, Taulus, Veluriane, Venalan, Zeetra and Zordian for holding events, answering petitions, testing and more ...
-
-
-&Rules
-
-Stefan "Stelanso" Landgraf, for NPC paths, waypoints, progression and more.
-
-G. "Ravna" Hofstee, for rewriting part of the new webconsole and keeping it up to date.
-
-
 &Music and sounds
 
-Jérôme "Tuux" Ornech, for spells sounds and enviromental sounds.
+Jérôme "Tuux" Ornech, for spells effects and textures, environment sounds, spells sounds, creatures sounds, nice videos and good french accent.
 
 Video Symphony team, for the great contributions of sounds and voiceovers.
 
@@ -73,14 +66,28 @@ Jiri "GeorgeD" Ptacek, for death realm song, victory jingles and lot of nice sou
 
 Bruno "CyberMozart" Largarde, for the main theme, intro songs and battle theme.
 
+&Game Masters
+
+Jay "Hanix" Glenn, for his work as GM Team Leader
+
+Sarva for the constant presence in game, support of our events, and coordination of GM activities
+
+The GM Team: Daxa, Dohmo, Durgrem, Janner, Marathal, Norra, Rhumdor, Taulus, Veluriane, Venalan, Zeetra and Zordian for holding events, answering petitions, testing and more ...
+
+&Rules
+
+Stefan "Stelanso" Landgraf, for NPC paths, waypoints, progression and more.
+
+G. "Ravna" Hofstee, for rewriting part of the new webconsole and keeping it up to date.
+
 
 &Testing Team
 
+Mario "LigH" RohkrÃ¤mer, for reporting and testing many art bugs, and work on bug prevention.
+
 Frédéric "f-rd" Delcorso, for testing many bugs and making even weird ones reproducible.
 
-Bas "Lanarel" van den Broek, for leading the testing team, helping out with many issues, and fixing and closing many bugs.
-
-Mario "LigH" RohkrÃ¤mer, for reporting and testing many art bugs, and work on bug prevention.
+Bas "Lanarel" van den Broek, for helping out with many issues, fixing and closing many bugs.
 
 
 @Special Thanks to
