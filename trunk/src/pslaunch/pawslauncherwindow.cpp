@@ -992,10 +992,12 @@ void pawsLauncherWindow::SaveSettings()
         {
             configUser->SetStr("System.PlugIns.iSndSysRenderer", "crystalspace.sndsys.renderer.software");
         }
+        configUser->SetStr("System.Plugins.iSoundManager", "crystalspace.planeshift.sound.soundmngr");
     }
     else
     {
         configUser->SetStr("System.PlugIns.iSndSysRenderer", "crystalspace.sndsys.renderer.null");
+        configUser->SetStr("System.Plugins.iSoundManager", "crystalspace.planeshift.sound.dummy");
     }
 
     pawsComboBox* languages = (pawsComboBox*)FindWidget("Languages");
