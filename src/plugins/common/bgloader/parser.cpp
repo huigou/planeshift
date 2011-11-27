@@ -176,12 +176,6 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                 return false;
             }
         }
-        //remove lightmaps if disabled
-        if(!data.config.useLightmaps)
-        {
-            if(name == "tex lightmap")
-                return false;
-        }
 
         if(typeName == "texture")
         {
