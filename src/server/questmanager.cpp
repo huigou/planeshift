@@ -846,8 +846,9 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
                 return line_number;
             }
 
-            Debug4( LOG_QUESTS, 0,"NPC %s responds with '%s', with the voice file '%s'", current_npc.GetData(),
-                                response_text.GetData(), file_path.GetDataSafe() );
+            Debug6( LOG_QUESTS, 0,"NPC %s responds with '%s'%s%s%s", current_npc.GetData(),
+                                response_text.GetData(), file_path.IsEmpty()? "" : ", with the voice file '",
+                                file_path.GetDataSafe(), file_path.IsEmpty()? "" : "'" );
 
             // Now add this response to the npc dialog dict
             if (which_trigger == 0) // new sequence
