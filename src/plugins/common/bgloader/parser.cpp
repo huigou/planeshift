@@ -176,6 +176,12 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                 return false;
             }
         }
+        //remove lightmaps if disabled
+        if(!data.config.useLightmaps)
+        {
+            if(name == "tex lightmap")
+                return false;
+        }
 
         if(typeName == "texture")
         {
@@ -849,19 +855,17 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                     csString name(node->GetAttributeValue("trigger"));
                     csRef<Trigger> t = parserData.triggers.Get(name);
 
-                    if(!t.IsValid())
+                    if(t.IsValid())
                     {
-                        // not yet loaded, attach a new one
-                        t.AttachNew(new Trigger(GetParent()));
-                        parserData.triggers.Put(t, name);
-
-                        //csString msg;
-                        //msg.Format("Invalid trigger reference '%s' in sequence '%s'", name.GetData(), GetName());
-                        //CS_ASSERT_MSG(msg.GetData(), false);
-                        //failed = true;
+                        AddDependency(t);
                     }
-
-                    AddDependency(t);
+                    else
+                    {
+                        csString msg;
+                        msg.Format("Invalid trigger reference '%s' in sequence '%s'", name.GetData(), GetName());
+                        CS_ASSERT_MSG(msg.GetData(), false);
+                        failed = true;
+                    }
                 }
                 break;
 
