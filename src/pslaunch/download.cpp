@@ -242,6 +242,24 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
                 return false;
             }
 
+            // lets escape the filename in the url
+            // first we try to figure out what part of the URL is the filename
+            csString filename = url.Slice(url.FindLast('/'));
+	    if (!filename.IsEmpty())
+	    {
+		// lets remove the leading "/" from the filename
+		filename.ReplaceAll("/", "");
+		//now let's do the encoding
+		char* encURL = curl_easy_escape(curl, filename.GetData(), strlen(filename.GetData()));
+		if (encURL)
+		{
+		    //nice, the encoding worked. So lets replace the filename part in url with the encoded one.
+		    url = url.Slice(0, url.FindLast('/')).Append("/").Append(encURL);
+		}
+		// and not to forget...free the string provided by curl again
+		curl_free(encURL);
+	    }
+
             progressData data;
             curl_easy_setopt(curl, CURLOPT_URL, url.GetData());
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
