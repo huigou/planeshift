@@ -9,12 +9,14 @@ Luca "Talad" Pancallo, for building a great team to make a dream come true, and 
 
 Stefano "weltall" Angeleri, for leadership in the engine side, addition of many new features and constant improvement of the game, lot of testing and the loan of his personal hardware as test server.
 
-Jérôme "Tuux" Ornech, for spells effects and textures, environment sounds, spells sounds, creatures sounds, nice videos and good french accent.
+Jerome "Tuux" Ornech, for spells effects and textures, environment sounds, spells sounds, creatures sounds, nice videos and good french accent.
 
 
 &Client and Server engine
 
 Stefano "weltall" Angeleri, for leadership in the engine side, addition of many new features and constant improvement of the game, lot of testing and the loan of his personal hardware as test server.
+
+Andrea "Lucubro" Rizzi, for the implementation of musical instruments and score, plus other sound engine fixes.
 
 Andrew "Acraig" Craig, for client gui foundation, char creation screens, equipment, inventory, overall coordination ...
 
@@ -42,7 +44,7 @@ Christophe "Nynn" Lehay, for player skins, robes, items, and more.
 
 Christof "Kinea" Hagedorn, for players and monsters textures.
 
-Jérôme "Tuux" Ornech, for spells effects and textures.
+Jerome "Tuux" Ornech, for spells effects and textures.
 
 &3D Art
 
@@ -56,7 +58,7 @@ Joel "Xoel" McLeay, for the modeling of Dsar Kore and Ojaveda guild.
 
 &Music and sounds
 
-Jérôme "Tuux" Ornech, for spells effects and textures, environment sounds, spells sounds, creatures sounds, nice videos and good french accent.
+Jerome "Tuux" Ornech, for environment sounds, spells sounds, creatures sounds, nice videos and good french accent.
 
 Video Symphony team, for the great contributions of sounds and voiceovers.
 
@@ -109,4 +111,4 @@ All the former developers for their work and contributions to PlaneShift.
 
 @Be sure to read the other credits files in docs directory to have a full list of developers of previous releases.
 
-Sonora font is used with permission of the author: Christian Texier
+Sonora font is used with permission of the author: Christian Texier (christian.texier.pagespro-orange.fr)
