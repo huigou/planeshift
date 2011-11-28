@@ -144,8 +144,8 @@
     <!-- Tabs --->
     <style name="Standard Tab" inherit="Button Font" toggle="yes" >
         <frame border="yes" />
-        <buttonup resource="Standard Tab Highlight" />
-        <buttondown resource="Standard Tab" />
+        <buttonup resource="Standard Tab" />
+        <buttondown resource="Standard Tab Highlight" />
         <buttonspecial resource="Standard Tab Disabled" />
     <attachpoints>
             <attach point="ATTACH_TOP" />
@@ -154,8 +154,8 @@
     </style>
     <style name="Scaling Tab" inherit="Button Font" toggle="yes" >
         <frame border="yes" />
-        <buttonup resource="Scaling Tab Highlight" />
-        <buttondown resource="Scaling Tab" />
+        <buttonup resource="Scaling Tab" />
+        <buttondown resource="Scaling Tab Highlight" />
         <buttonspecial resource="Scaling Tab Disabled" />
     <attachpoints>
             <attach point="ATTACH_TOP" />
