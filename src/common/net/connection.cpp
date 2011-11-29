@@ -68,11 +68,15 @@ psNetConnection::~psNetConnection()
 
 bool psNetConnection::Initialize(iObjectRegistry* object_reg)
 {
-    // Setup the socket
+    /**
+     * The original initialize for the listening socket.
+     * Might not need to be run at this stage, connection will do
+     * this as well to insure fresh buffers.
+     */
     if (!Init())
         return false;
 
-    psNetConnection::object_reg = object_reg;
+	psNetConnection::object_reg = object_reg;
 
     return true;
 }
@@ -101,6 +105,17 @@ bool psNetConnection::Connect(const char *servaddr, int port)
     
     shouldRun = true;
     
+    /**
+     * Reinitialize the socket. If the a socket is already present
+     * this will be closed and a new one will be created to insure
+     * we don't get old messages that will confuse the communication.
+     */
+    if (!Init())
+    {
+        Error1("Couldn't initialize a new socket!");
+        return false;
+    }
+
     thread.AttachNew( new CS::Threading::Thread(this, true) );
     if (!thread->IsRunning())
     {
