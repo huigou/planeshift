@@ -65,7 +65,8 @@
     </widget>
     <widget name="LockButton" factory="pawsButton" id="100" tooltip="Lock/Unlock" visible="yes" toggle="yes" >
        <frame x="600" y="0" width="32" height="32" />
-       <bgimage resource="FilterSkill" />
+       <buttonup resource="lockicon" />
+       <buttondown resource="unlockicon" />
     </widget>
 </widget>
 </widget_description>
