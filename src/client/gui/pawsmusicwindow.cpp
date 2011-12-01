@@ -295,7 +295,7 @@ void pawsMusicWindow::OnStringEntered(const char* name, int param, const char* v
         }
         else
         {
-            psSystemMessage msg(0, MSG_ERROR, PawsManager::GetSingleton().Translate("File not found!"));
+            psSystemMessage msg(0, MSG_ERROR, PawsManager::GetSingleton().Translate("File not found or invalid!"));
             msg.FireEvent();
         }
     }
