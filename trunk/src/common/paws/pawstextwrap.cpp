@@ -266,13 +266,6 @@ bool pawsMultilineEditTextBox::OnKeyDown(utf32_char code, utf32_char key, int mo
     {
         pawsWidget::OnKeyDown(code, key, modifiers);
     }
-
-    // if spellchecking is enabled do it at every key-press
-    if (spellChecked)
-    {
-        checkSpelling();
-    }
-
     return true;
 }
 
@@ -491,22 +484,28 @@ void pawsMultilineEditTextBox::PushLineInfo(size_t lineLength, size_t lineBreak,
 
 void pawsMultilineEditTextBox::LayoutText()
 {
+    // we need to font for calculation the pixel length of words
     csRef<iFont> font = GetFont();
+    // and of course we need the size we have available in the widget
     int screenWidth = screenFrame.Width() - vScrollBarWidth;
-    int width = 0;
-    int height = 0;
-    csString tempString;
-    csString word;
-    size_t  srcPos = 0; //the first char that hasn't yet been grabbed.
+
+    int width = 0;          // will hold the width of the current word
+    int height = 0;         // will hold the height of any examined string...not really needed for anything.
+    csString tempString;    // content of the current line before the currently examined word
+    csString word;          // the word to examine
+    size_t  srcPos = 0;     // the first char that hasn't yet been grabbed.
+
+    // we start with an empty array of lines and build it from scratch from the text
     lineInfo.Empty();
     size_t totalCount = 0;
-    int tailWidth = 0;
+    int tailWidth = 0;      // the length in pixel of everything on the current line before the currenly examined word.
 
+    // lets process the whole text
     while(srcPos < text.Length())
     {
         //try to grab a word.
         size_t a = text.FindFirst(" \t\n", srcPos);
-        //if a is '-1', the char wasn't found so we grab to end of the line,
+        //if a is '-1', the char wasn't found so we grab to end of the text,
         //else we grab up to and including the found character
         if(a == (size_t)-1)
             word = text.Slice(srcPos,text.Length() - srcPos);
@@ -519,41 +518,53 @@ void pawsMultilineEditTextBox::LayoutText()
         //if it'll fit..
         if(width + tailWidth <= screenWidth)
         {
-            //then attach it
+            // seems the end of the current line is not reached yet
+            //so attach the word
             tempString.Append(word);
+            // and set tailWidth to the width of everything we have so far
             font->GetDimensions(tempString, tailWidth, height);
+            // and of course we don't forget to move foreward in the text
             srcPos += word.Length();
         }
-        else if(width > screenWidth)
+        // okay..if we get here we know already the word won't fit in the line anymore
+        else if(tempString.FindFirst(" ") != (size_t)-1)
         {
+            // but great...we have a whitespace in the current line already...so let's just put this word in the next line.
+            //If wordwrap->linebreak on same line,
+            // push linebreak to next line
+            totalCount += tempString.Length();
+            // the line we have so far can be saved
+            PushLineInfo(tempString.Length(), totalCount, 1);
+            // and we start a new line
+            tempString.Clear();
+            word = "a"; //set position holder (never actually drawn) (needed for the newline check later)
+            font->GetDimensions(tempString, tailWidth, height);
+            //Note: srcPos is not set. So next time the currently processed word is either added to the line if it fits
+            //...or breaken into smaller parts...see next else
+        }
+        /*else if(width > screenWidth)
+        {
+            printf("  ----test---- word must go on the next line\n");
             //Wordwrap
             totalCount += tempString.Length();
             PushLineInfo(tempString.Length(), totalCount, 1);
             tempString = word;
             font->GetDimensions(tempString, tailWidth, height);
             srcPos += word.Length();
-        }
-        else if(tempString.FindFirst(" ") != (size_t)-1)
-        {
-            //If wordwrap->linebreak on same line,
-            // push linebreak to next line
-            totalCount += tempString.Length();
-            PushLineInfo(tempString.Length(), totalCount, 1);
-            tempString.Clear();
-            word = "a"; //set position holder (never actually drawn)
-            font->GetDimensions(tempString, tailWidth, height);
-            //Note: srcPos is not set.
-        }
+        }*/ // seriously...I have not the slightest clue what this should do or did in the past...but at the moment it causes problems
         else
         {
             //breakline - the case where we have a single
             //unbroken word wider than our page
 
+            // how many of the chars of this word will fit in one line?
             int maxChars = font->GetLength(word, screenWidth);
             word = word.Slice(0, maxChars);             //Get string for the line
             totalCount += word.Length();                //Get absolute char position in text for line break
             PushLineInfo(word.Length(), totalCount, 0); //Push the line information to the stack
-            srcPos += word.Length();                    //Set srcPosition for this loop
+            //Set srcPosition for this loop, please notice this is the length of the cut word...not the whole word anymore
+            //the rest of the word will be processed in the next while-cyle
+            srcPos += word.Length();
             //Note: Tempstring is not set here.
             font->GetDimensions(tempString,tailWidth,height);
         }
@@ -946,7 +957,7 @@ void pawsMultilineEditTextBox::checkSpelling()
                 curLine.SubString(tmpString, oldSpace, curLine.Length()-oldSpace);
                 // now do the spellchecking
                 tmpWord.correct = spellChecker->correct(tmpString);
-                tmpWord.endPos = text.Length();
+                tmpWord.endPos = curLine.Length();
                 if (tmpWord.endPos > 0)
                 {
                     // save only if the word contains something
