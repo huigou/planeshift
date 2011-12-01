@@ -2153,8 +2153,11 @@ void pawsDocumentView::Draw()
                     //a resource
                     drawable =  PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(picsInfo[indices[i]].srcString.GetData());
                 }
-
-                drawable->Draw(sx, sy, pi.width, pi.height);
+                // only draw if the image was found
+                if (drawable)
+                {
+                    drawable->Draw(sx, sy, pi.width, pi.height);
+                }
                 sx += pi.padding[0] + pi.padding[2] + pi.width;
             }
             drawY += pi.height + pi.padding[3];

@@ -18,7 +18,7 @@
  */
 #ifndef PAWS_HELP_WINDOW_HEADER
 #define PAWS_HELP_WINDOW_HEADER
- 
+
 #include <csutil/xmltiny.h>
 #include <csutil/csstring.h>
 #include <csutil/refcount.h>
@@ -26,7 +26,7 @@
 #include "paws/pawswidget.h"
 #include "paws/pawstree.h"
 #include "gui/pawscontrolwindow.h"
- 
+
 class pawsProgressBar;
 
 class pawsHelp : public pawsControlledWindow
@@ -34,10 +34,10 @@ class pawsHelp : public pawsControlledWindow
 public:
     pawsHelp();
     ~pawsHelp();
-    
-    bool PostSetup(); 
+
+    bool PostSetup();
     bool OnSelected(pawsWidget* widget);
-    
+
 protected:
     void LoadHelps(iDocumentNode* node, csString parent);
     csRef<iDocumentNode> RetrieveHelp(pawsTreeNode* node, csRef<iDocumentNode> helpRoot);
@@ -47,7 +47,7 @@ protected:
     csRef<iDocument> helpDoc;
     //BinaryRBTree<csString> helpIndex;
     pawsSimpleTree* helpTree;
-    pawsMultiLineTextBox* helpText;
+    pawsDocumentView* helpText;
 };
 
 CREATE_PAWS_FACTORY( pawsHelp );

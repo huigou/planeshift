@@ -8,7 +8,7 @@
           <frame x="27" y="29" width="250" height ="224" border="yes" />
        </pawsSimpleTree>
 
-       <pawsMultiLineTextBox name="HelpText">
+       <pawsDocumentView name="HelpText">
             <frame x="294" y="29" width="320" height="224" border="no"/>
             <attachpoints>
                 <attach point="ATTACH_RIGHT"/>
@@ -16,7 +16,7 @@
                 <attach point="ATTACH_LEFT"/>
                 <attach point="ATTACH_BOTTOM"/>
             </attachpoints>
-        </pawsMultiLineTextBox>
+        </pawsDocumentView>
 
     </pawsHelp>
 </widget_description>
