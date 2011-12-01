@@ -134,6 +134,10 @@ psUserCommands::psUserCommands(ClientMsgHandler* mh,CmdHandler *ch,iObjectRegist
     cmdsource->Subscribe("/yield",         this);
     cmdsource->Subscribe("/takeall",       this); // Take all items from a container
     cmdsource->Subscribe("/takestackall",  this); // Take all items from a container and stack not precisely
+    cmdsource->Subscribe("/setdesc",       this); // set the description of a char
+    cmdsource->Subscribe("/setoocdesc",    this); // set the ooc description of a char
+    cmdsource->Subscribe("/loaddesc",      this); // load a description for this char from a file
+    cmdsource->Subscribe("/loadoocdesc",   this); // load a ooc description for this char from a file
 }
 
 psUserCommands::~psUserCommands()
@@ -208,13 +212,17 @@ psUserCommands::~psUserCommands()
     cmdsource->Unsubscribe("/yield",                 this);
     cmdsource->Unsubscribe("/takeall",               this);
     cmdsource->Unsubscribe("/takestackall",          this);
+    cmdsource->Unsubscribe("/setdesc",               this);
+    cmdsource->Unsubscribe("/setoocdesc",            this);
+    cmdsource->Unsubscribe("/loaddesc",              this);
+    cmdsource->Unsubscribe("/loadoocdesc",           this);
 
 
 
     // Unsubscribe emotes.
     for(unsigned int i=0; i < emoteList.GetSize(); i++)
     {
-        // unsubscribe emotes which are subscribed earlier 
+        // unsubscribe emotes which are subscribed earlier
         if(emoteList[i].enabled)
             cmdsource->Unsubscribe(emoteList[i].command, this);
     }
@@ -250,7 +258,7 @@ bool psUserCommands::LoadEmotes()
         emote.general = emoteNode->GetAttributeValue("general");
         emote.specific = emoteNode->GetAttributeValue("specific");
         emote.anim = emoteNode->GetAttributeValue("anim");
-        // take the value of enabled and check whether its 0 or not 
+        // take the value of enabled and check whether its 0 or not
         emote.enabled = emoteNode->GetAttributeValueAsBool("enabled", true);
 
         emoteList.Push(emote);
@@ -260,7 +268,7 @@ bool psUserCommands::LoadEmotes()
     // Subscribe emotes.
     for(unsigned int i=0; i < emoteList.GetSize(); i++)
     {
-        // only subscribe emotes that are enabled 
+        // only subscribe emotes that are enabled
         if(emoteList[i].enabled)
             cmdsource->Subscribe(emoteList[i].command, this);
     }
@@ -332,7 +340,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
             tail++;
         else
             quantity = 1;
-        
+
         pawsInventoryWindow* window = (pawsInventoryWindow*)PawsManager::GetSingleton().FindWidget("InventoryWindow");
 
         int slotID = -1;
@@ -342,7 +350,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
             slotID = toSlot->ID();
             tail++;
         }
-        
+
         csString itemName;
         itemName = words.GetTail(tail);
         window->Equip( itemName, quantity, slotID );
@@ -367,14 +375,14 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         csString itemName( words.GetTail(1) );
         window->Write( itemName );
     }
-    
+
     else if (words[0] == "/rotate")
     {
         if ( words.GetCount() < 2 )
             return "Usage: /rotate [target] [x|reset] [y|reset] [z|reset]  or /rotate [target] [x|y|z] [angle]";
-        
+
         bool targetGiven = false;
-        
+
         csString targetString;
         // if the command's target is not precised, get the object currently targeted
         // isdigit(words[1][0] checks if the first argument is a number
@@ -386,19 +394,19 @@ const char *psUserCommands::HandleCommand(const char *cmd)
             targetString = FormatTarget(words[1]);
             targetGiven = true;
         }
-        
+
         if (!targetString.IsEmpty())
         {
             csString newCmd;
             newCmd.Append("/rotate ");
             newCmd.Append(targetString);
             newCmd.Append(" ");
-            
+
             if(targetGiven)
                 newCmd.Append(words.GetTail(2).GetDataSafe());
             else
                 newCmd.Append(words.GetTail(1).GetDataSafe());
-            
+
             psUserCmdMessage cmdmsg(newCmd);
             cmdmsg.SendMessage();
         }
@@ -451,7 +459,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         psGUIMerchantMessage exchange(psGUIMerchantMessage::REQUEST,buff);
         exchange.SendMessage();
     }
-    
+
     else if (words[0] == "/storage")
     {
     	csString buff;
@@ -766,8 +774,8 @@ const char *psUserCommands::HandleCommand(const char *cmd)
             targetString = FormatTarget(words[1]);
             if(!words[2].IsEmpty())
                 onoff = 2;
-        }        
-        
+        }
+
         if (!targetString.IsEmpty())
         {
             csString newCmd;
@@ -790,7 +798,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
             targetString = FormatTarget();
         else
             targetString = FormatTarget(words[1]);
-            
+
         if (!targetString.IsEmpty())
         {
             csString newCmd;
@@ -809,18 +817,18 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         //printf("cmdusers 801, sending /takestackall to server.\n");
         csString newCmd;
         newCmd.Append("/takestackall");
-        
+
         psUserCmdMessage cmdmsg(newCmd);
         cmdmsg.SendMessage();
     }
-    
+
     // Handle /takeall command
     else if (words[0] == "/takeall")
     {
         //printf("cmdusers 801, sending /takeall to server.\n");
         csString newCmd;
         newCmd.Append("/takeall");
-        
+
         psUserCmdMessage cmdmsg(newCmd);
         cmdmsg.SendMessage();
     }
@@ -866,9 +874,9 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         bool guard = true;
         bool inplace = false;
         int moneySlot = 0;
-        
+
         unsigned int i = 1;
-        
+
         // if the first word is a number, use that for quantity
         quantity = atoi(words[1]);
         if (quantity)
@@ -885,25 +893,25 @@ const char *psUserCommands::HandleCommand(const char *cmd)
             quantity = 1;
         }
 
-        
+
         if(words[i] == "any")
         {
             i++;
             any = true;
         }
-        
+
         if(words[i] == "noguard")
         {
             i++;
             guard = false;
         }
-        
+
         if(words[i] == "inplace")
         {
             i++;
             inplace = true;
         }
-        
+
         if ( words[i] == "tria" || (words[i] == "hexa" && (moneySlot=1)) ||
            (words[i] == "octa" && (moneySlot=2)) || (words[i] == "circle" && (moneySlot=3)) )
         {
@@ -1010,6 +1018,107 @@ const char *psUserCommands::HandleCommand(const char *cmd)
             }
             if(!ChatWindow->LeaveChannel(hotkeyChannel))
                 return "You have not joined that channel.";
+        }
+    }
+    else if (words[0] == "/setdesc")
+    {
+        if (words.GetCount() < 2)
+        {
+            return "Please specify the description for this character.";
+        }
+        else
+        {
+            csString newDesc = words.GetTail(1);
+            // change all "\n" to real linefeeds
+            newDesc.ReplaceAll("\\n", "\n");
+            psCharacterDescriptionUpdateMessage descUpdate(newDesc, DESC_IC);
+            descUpdate.SendMessage();
+            return "Character description set.";
+        }
+    }
+    else if (words[0] == "/setoocdesc")
+    {
+        if (words.GetCount() < 2)
+        {
+            return "Please specify the OOC description for this character.";
+        }
+        else
+        {
+            csString newDesc = words.GetTail(1);
+            // change all "\n" to real linefeeds
+            newDesc.ReplaceAll("\\n", "\n");
+            psCharacterDescriptionUpdateMessage descUpdate(newDesc, DESC_OOC);
+            descUpdate.SendMessage();
+            return "Character OOC description set.";
+        }
+    }
+    else if (words[0] == "/loaddesc")
+    {
+        if (words.GetCount() < 2)
+        {
+            return "Please specify the filename of the description to load.";
+        }
+        else
+        {
+            csRef<iVFS> vfs = psengine->GetVFS();
+            // lets construct the filename from the first argument
+            csString FileName("/planeshift/userdata/descriptions/");
+            FileName.Append(words[1]);
+
+            // check if the file can be found
+            if (!vfs->Exists(FileName))
+            {
+                return "File not found!";
+            }
+            // now read what's in the file
+            csRef<iDataBuffer> data = vfs->ReadFile(FileName); //load the file
+            if (!data)
+            {
+                return "Error while reading the files!";
+            }
+            csString DescriptionData = data->GetData();
+            DescriptionData.ReplaceAll("\r\n", "\n"); //remove linefeeds
+
+            // and finnaly set the loaded desc
+            psCharacterDescriptionUpdateMessage descUpdate(DescriptionData, DESC_IC);
+            descUpdate.SendMessage();
+
+            return "Character description loaded.";
+        }
+    }
+    else if (words[0] == "/loadoocdesc")
+    {
+        if (words.GetCount() < 2)
+        {
+            return "Please specify the filename of the ooc description to load.";
+        }
+        else
+        {
+            csRef<iVFS> vfs = psengine->GetVFS();
+            // lets construct the filename from the first argument
+            csString FileName("/planeshift/userdata/descriptions/");
+            FileName.Append(words[1]);
+
+            // check if the file can be found
+            if (!vfs->Exists(FileName))
+            {
+                return "File not found!";
+            }
+            // now read what's in the file
+            csRef<iDataBuffer> data = vfs->ReadFile(FileName); //load the file
+            if (!data)
+            {
+                return "Error while reading the files!";
+            }
+            csString DescriptionData = data->GetData();
+            DescriptionData.ReplaceAll("\r\n", "\n"); //remove linefeeds
+
+            // and finnaly set the loaded desc
+            psCharacterDescriptionUpdateMessage descUpdate(DescriptionData, DESC_OOC);
+            descUpdate.SendMessage();
+
+            return "Character OOC description loaded.";
+
         }
     }
     else
@@ -1169,7 +1278,7 @@ GEMClientObject* psUserCommands::FindEntityWithName(const char *name)
 csString psUserCommands::FormatTarget(const csString& target)
 {
     GEMClientObject *targetObject = NULL;
-    
+
     if(target == "target" || target.IsEmpty())
         targetObject = psengine->GetCharManager()->GetTarget();
     else if (target.StartsWith("area:",true) ||
@@ -1182,9 +1291,9 @@ csString psUserCommands::FormatTarget(const csString& target)
     {
         targetObject = FindEntityWithName(target);
     }
-    
+
     csString targetString;
-    
+
     if (targetObject)
     {
         psengine->GetCharManager()->SetTarget(targetObject,"select");
