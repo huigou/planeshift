@@ -52,7 +52,7 @@ pawsHelp::pawsHelp()
 
 bool pawsHelp::PostSetup(void)
 {
-    helpText = dynamic_cast<pawsMultiLineTextBox*>(FindWidget("HelpText"));
+    helpText = dynamic_cast<pawsDocumentView*>(FindWidget("HelpText"));
     if (!helpText)
         return false;
 

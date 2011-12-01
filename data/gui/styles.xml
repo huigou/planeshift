@@ -284,6 +284,7 @@
         <defaultstyle widget="pawsButton"           style="Simple Button"/>
         <defaultstyle widget="pawsTextBox"          style="Standard TextBox"/>
         <defaultstyle widget="pawsMultiLineTextBox" style="Standard MLB"/>
+        <defaultstyle widget="pawsDocumentView"     style="Standard MLB"/>
         <defaultstyle widget="pawsEditTextBox"      style="Standard EditTextBox"/>
         <defaultstyle widget="pawsMessageTextBox"   style="Standard MsgText"/>
         <defaultstyle widget="pawsListBox"          style="Standard ListBox"/>

@@ -1,31 +1,42 @@
 <?xml version="1.0"?>
 <help>
-   <branch name="START HERE">Here are a few tips and tricks to help you enjoy the world of PlaneShift.
-   
+  <branch name="START HERE">
+    <Contents>
+      <content type="text">Here are a few tips and tricks to help you enjoy the world of PlaneShift.
+
 PlaneShift is a rich, varied and complex game, while this is a great thing as it allows you to fully immerse yourself in the fantastic world of Yliakum, on the other hand it will also require some time and just a little effort to get used to the client and the gameplay.
-You will learn how to talk with NPC's (Non Player Characters), how to use the various functions of the client and how to interact with the world itself. 
+You will learn how to talk with NPC's (Non Player Characters), how to use the various functions of the client and how to interact with the world itself.
 
 We have a great group of players and GM's (Game Masters) ready to help you whenever you have difficulties.
 First of all look at the chat window, if you write /help [question] and then press enter the players or GM's playing in game may be able to answer your questions. Don't be afraid to use it! Players volunteer for it so please be as clear as possible and wait patiently for an answer.
 
 Another tool you have at your disposal is directly contacting the Game Masters, you can see if any of them are on-line by writing /who game master in the same chat window and pressing enter. You will get a list of Game Masters online and you will be able to contact them by writing /tell [name of the Game Master] [your question] and pressing enter again.
 
-The last tool you might find useful is called petitions. It's a way to leave offline messages for the Game Masters which then they will be able to review and answer back to you later. To use this click on the appropriate icon in the tool-bar (TIP: you can leave the mouse over an icon in order to see what it does) and click new. Then you will be able to write a message for Game Masters, as soon as one sees it he will claim it and you will see the name of the GM handling your petition appear in the Petition Window. When they have had the time to find an answer to your question, the status of your petition will change to closed and by clicking on the petition you will be able to read the Game Masters answer.
-    </branch>
-    <branch name="Files And Folders">File Locations
+ The last tool you might find useful is called petitions. It's a way to leave offline messages for the Game Masters which then they will be able to review and answer back to you later. To use this click on the appropriate icon in the tool-bar (TIP: you can leave the mouse over an icon in order to see what it does) and click new. Then you will be able to write a message for Game Masters, as soon as one sees it he will claim it and you will see the name of the GM handling your petition appear in the Petition Window. When they have had the time to find an answer to your question, the status of your petition will change to closed and by clicking on the petition you will be able to read the Game Masters answer.</content>
+    </Contents>
+  </branch>
+  <branch name="Files And Folders">
+    <Contents>
+      <content type="text">File Locations
 
 Windows: %AppData%\PlaneShift
 Mac: ~/Library/Application Support/PlaneShift
-Linux: $HOME/.PlaneShift
-        <topic name="Files">Files
+Linux: $HOME/.PlaneShift</content>
+    </Contents>
+    <topic name="Files">
+      <Contents>
+        <content type="text">Files
 
 options.cfg: This file contains some camera-settings
 
 planeshift.cfg: This file contains additional settings, like the email seen on the login-screen and options which can be set via the pssetup application.
 
-questnotes_YourCharactersFirstName_YourCharactersLastName.xml: This file contains all the notes you made on the quests you have done.
-        </topic>
-        <topic name="Folders">Folders
+questnotes_YourCharactersFirstName_YourCharactersLastName.xml: This file contains all the notes you made on the quests you have done.</content>
+      </Contents>
+    </topic>
+    <topic name="Folders">
+      <Contents>
+        <content type="text">Folders
 
 books: This folder contains books you have saved from planeshift. It is also used to store texts you have created outside of planeshift and want to load into a book
 
@@ -39,23 +50,33 @@ screenshots: The screenshots you take from within planeshift via the command '/s
 
 sketches: The sketches (maps) you have saved from ingame. These are saved in .xml format.
 
-Description: This folder contains all the descriptions you have saved from ingame [yours only] and any you wish to upload.
-        </topic>
-    </branch>
-    <branch name="Using The Updater">Using The Updater
+Description: This folder contains all the descriptions you have saved from ingame [yours only] and any you wish to upload.</content>
+      </Contents>
+    </topic>
+  </branch>
+  <branch name="Using The Updater">
+    <Contents>
+      <content type="text">Using The Updater
 
-The Updater is a utility to get your installed client files in sync with the lastest version available on the server.
-        <topic name="Updating">Updating
+The Updater is a utility to get your installed client files in sync with the lastest version available on the server.</content>
+    </Contents>
+    <topic name="Updating">
+      <Contents>
+        <content type="text">Updating
 
-To update PlaneShift you just need to launch PSlaunch and it will tell you if you need to update the game or not.
-        </topic>
-
-        <topic name="Repair">Repairing PlaneShift
-If your client is not working as well as it could, you can run the repair updater in PSlaunch. To do this just click "repair" in the launcher and it will tell you if there are any files that are not updated or dont match what it has to offer, then allow you the choice of updating those files or not.
-</topic>
-
-    </branch>
-    <branch name="Web Links">
+To update PlaneShift you just need to launch PSlaunch and it will tell you if you need to update the game or not.</content>
+      </Contents>
+    </topic>
+    <topic name="Repair">
+      <Contents>
+        <content type="text">Repairing PlaneShift
+If your client is not working as well as it could, you can run the repair updater in PSlaunch. To do this just click "repair" in the launcher and it will tell you if there are any files that are not updated or dont match what it has to offer, then allow you the choice of updating those files or not.</content>
+      </Contents>
+    </topic>
+  </branch>
+  <branch name="Web Links">
+    <Contents>
+      <content type="text">
 Web Links
 
 FAQ:
@@ -82,74 +103,155 @@ http://www.hydlaaplaza.com/flyspray
 
 Non-RP Server:
 Register: http://planeshift.ezpcusa.com/register
-Connect: planeshift.ezpcusa.com 7777
-    </branch>
-    <branch name="Chat Commands">
-Commands used to talk.  You can also specify your chat method by simply typing into that method's tab.
-        <topic name="/away">/away message
+Connect: planeshift.ezpcusa.com 7777</content>
+    </Contents>
+  </branch>
+  <branch name="Chat Commands">
+    <Contents>
+      <content type="text">
+Commands used to talk.  You can also specify your chat method by simply typing into that method's tab.</content>
+    </Contents>
+    <topic name="/away">
+      <Contents>
+        <content type="text">/away message
 
-Sets an auto-reply message if people send you tells and you are going to be away from your keyboard but still logged in.  ('/away off' will disable auto-reply).</topic>
-        <topic name="/auction">/auction description
+Sets an auto-reply message if people send you tells and you are going to be away from your keyboard but still logged in.  ('/away off' will disable auto-reply).</content>
+      </Contents>
+    </topic>
+    <topic name="/auction">
+      <Contents>
+        <content type="text">/auction description
 
-Put an item up for sale or offer to buy something.</topic>
-        <topic name="/clear">/clear 
+Put an item up for sale or offer to buy something.</content>
+      </Contents>
+    </topic>
+    <topic name="/clear">
+      <Contents>
+        <content type="text">/clear
 
-Clears the history of the Chat Window.</topic>
-        <topic name="/emote">/emote [emotename|list] 
+Clears the history of the Chat Window.</content>
+      </Contents>
+    </topic>
+    <topic name="/emote">
+      <Contents>
+        <content type="text">/emote [emotename|list]
 
-Returns the emote list with list or sends an emote with name emotename.</topic>
-        <topic name="/greet">/greet 
+Returns the emote list with list or sends an emote with name emotename.</content>
+      </Contents>
+    </topic>
+    <topic name="/greet">
+      <Contents>
+        <content type="text">/greet
 
-Wave hello to your friends.</topic>
-        <topic name="/group">/group message
+Wave hello to your friends.</content>
+      </Contents>
+    </topic>
+    <topic name="/group">
+      <Contents>
+        <content type="text">/group message
 
-Talk to your group privately.  This is good when your group is farther than 10 meters apart and lets you avoid shouting.</topic>
-        <topic name="/guild">/guild message
+Talk to your group privately.  This is good when your group is farther than 10 meters apart and lets you avoid shouting.</content>
+      </Contents>
+    </topic>
+    <topic name="/guild">
+      <Contents>
+        <content type="text">/guild message
 
-Talk to everyone in your guild privately.  Only guild members in the same guild as you can see what you write.</topic>
-        <topic name="/ignore">/ignore [player] [add|remove]
+Talk to everyone in your guild privately.  Only guild members in the same guild as you can see what you write.</content>
+      </Contents>
+    </topic>
+    <topic name="/ignore">
+      <Contents>
+        <content type="text">/ignore [player] [add|remove]
 
 Ignores all communication from the target player in the Chat Window.  Use this if people are rude to you and there is no GM around to kick them.
 You can use the same command to remove a player from your ignore list.
 If you provide an add or remove flag it will try to set the ignore status accordingly and won't toggle it.
-If no player name is provided it will show the ignore window.</topic>
-        <topic name="/introduce">/introduce
+If no player name is provided it will show the ignore window.</content>
+      </Contents>
+    </topic>
+    <topic name="/introduce">
+      <Contents>
+        <content type="text">/introduce
 
-Introduce yourself to the targeted player, or everyone within 10 meters if you haven't targeted anyone.</topic>
-        <topic name="/me">/me action
+Introduce yourself to the targeted player, or everyone within 10 meters if you haven't targeted anyone.</content>
+      </Contents>
+    </topic>
+    <topic name="/me">
+      <Contents>
+        <content type="text">/me action
 
-Perform an action seen by people in your vicinity (within 10 meters).  This is a great roleplaying tool when you want your character to do something not directly supported by the game. 
-You can also use /my to describe yourself. Both these commands work in the tell, group and guild tabs as well.</topic>
-        <topic name="/mypet">/mypet action
+Perform an action seen by people in your vicinity (within 10 meters).  This is a great roleplaying tool when you want your character to do something not directly supported by the game.
+You can also use /my to describe yourself. Both these commands work in the tell, group and guild tabs as well.</content>
+      </Contents>
+    </topic>
+    <topic name="/mypet">
+      <Contents>
+        <content type="text">/mypet action
 
-Have your pet perform an action seen by those in its vicinity (within 10 meters).  This is a great roleplaying tool when you want your pet to do something not directly supported by the game. You can also use "/mypet 's property" to describe your pet, similar to the /my command.</topic>
-        <topic name="/npcmenu">/npcmenu
+Have your pet perform an action seen by those in its vicinity (within 10 meters).  This is a great roleplaying tool when you want your pet to do something not directly supported by the game. You can also use "/mypet 's property" to describe your pet, similar to the /my command.</content>
+      </Contents>
+    </topic>
+    <topic name="/npcmenu">
+      <Contents>
+        <content type="text">/npcmenu
 
-Shows a menu to talk to npcs where available.</topic>
-        <topic name="/report">/report player
+Shows a menu to talk to npcs where available.</content>
+      </Contents>
+    </topic>
+    <topic name="/report">
+      <Contents>
+        <content type="text">/report player
 
-Makes the server log everything the indicated player says for 5 minutes. 
-Use this when a player is rude, cheating or grifting so the GMs and Devs can later review the log and find a proof for the 
-misbehaviour.</topic>
-        <topic name="/say">/say message
+Makes the server log everything the indicated player says for 5 minutes.
+Use this when a player is rude, cheating or grifting so the GMs and Devs can later review the log and find a proof for the
+misbehaviour.</content>
+      </Contents>
+    </topic>
+    <topic name="/say">
+      <Contents>
+        <content type="text">/say message
 
-Talk to the people in your immediate vicinity (within 10 meters).  This should be your normal way of talking most of the time.</topic>
-        <topic name="/shout">/shout message
+Talk to the people in your immediate vicinity (within 10 meters).  This should be your normal way of talking most of the time.</content>
+      </Contents>
+    </topic>
+    <topic name="/shout">
+      <Contents>
+        <content type="text">/shout message
 
-Talk to people within 100 meters of you.  Only use /shout in emergencies.</topic>
-        <topic name="/tell">/tell player message
+Talk to people within 100 meters of you.  Only use /shout in emergencies.</content>
+      </Contents>
+    </topic>
+    <topic name="/tell">
+      <Contents>
+        <content type="text">/tell player message
 
-Talk to someone privately.  With this command you can send text only the person you specify can see.</topic>
-        <topic name="/tellnpc">/tellnpc message
+Talk to someone privately.  With this command you can send text only the person you specify can see.</content>
+      </Contents>
+    </topic>
+    <topic name="/tellnpc">
+      <Contents>
+        <content type="text">/tellnpc message
 
-Talk to the currently targeted npc.</topic>
-    </branch>
-    <branch name="User Commands">
-Commands to control various player actions.  Many of these are also available via windows and context menus.
-        <topic name="/advice">/advice player message
+Talk to the currently targeted npc.</content>
+      </Contents>
+    </topic>
+  </branch>
+  <branch name="User Commands">
+    <Contents>
+      <content type="text">
+Commands to control various player actions.  Many of these are also available via windows and context menus.</content>
+    </Contents>
+    <topic name="/advice">
+      <Contents>
+        <content type="text">/advice player message
 
-Use this command if you are an advisor to send a reply to a player. eg. /advice Eliandrus Middle click on a monster and then press Attack in your Shortcut Window.</topic>
-        <topic name="/advisor">/advisor [list|requests|sessions|on|off]
+Use this command if you are an advisor to send a reply to a player. eg. /advice Eliandrus Middle click on a monster and then press Attack in your Shortcut Window.</content>
+      </Contents>
+    </topic>
+    <topic name="/advisor">
+      <Contents>
+        <content type="text">/advisor [list|requests|sessions|on|off]
 
 This is a command which brings the advisor various tools and has a different behaviour depending of the command argument:
 
@@ -161,55 +263,111 @@ list returns how many advisors are online at the moment.
 
 requests, if you are an advisor, lists all currently unanswered questions.
 
-sessions, if you are an advisor, lists all the advice sessions currently assigned to you.</topic>
-        <topic name="/bank">/bank [personal|guild]
+sessions, if you are an advisor, lists all the advice sessions currently assigned to you.</content>
+      </Contents>
+    </topic>
+    <topic name="/bank">
+      <Contents>
+        <content type="text">/bank [personal|guild]
 
 Select a banker npc and use this command to access your bank account, either personal or guild. The money tab will allow you to deposit, withdraw and exchange your coins.
-Move your mouse over each number to get a tooltip explaining what it means.</topic>
-        <topic name="/buddy">/buddy [player] [add|remove]
+Move your mouse over each number to get a tooltip explaining what it means.</content>
+      </Contents>
+    </topic>
+    <topic name="/buddy">
+      <Contents>
+        <content type="text">/buddy [player] [add|remove]
 
 Adds/remove the named player to/from your buddy list.  You are automatically notified when people from your buddy list go online/offline, and it is easy to send them tells from the Buddy window.
 If you don't provide the add/remove argument the player will be added or removed depending if it's already or it isn't in the buddy list.
-If you don't provide a player name this command will open the buddy window.</topic>
-        <topic name="/buy">/buy merchant
+If you don't provide a player name this command will open the buddy window.</content>
+      </Contents>
+    </topic>
+    <topic name="/buy">
+      <Contents>
+        <content type="text">/buy merchant
 
-Buy from specified merchant.  If no merchant specified, buy from current target.</topic>
-        <topic name="/combine">/combine 
+Buy from specified merchant.  If no merchant specified, buy from current target.</content>
+      </Contents>
+    </topic>
+    <topic name="/combine">
+      <Contents>
+        <content type="text">/combine
 
-Combines items in a container.</topic>
-        <topic name="/dequip">/dequip item_name|slot_name
+Combines items in a container.</content>
+      </Contents>
+    </topic>
+    <topic name="/dequip">
+      <Contents>
+        <content type="text">/dequip item_name|slot_name
 
 Unequips the specified item or slot.  This is equivalent to moving equipped items back into your inventory in your Inventory Window.
-Slot Names: righthand, lefthand, helm, legs, boots, bracers, torso, gloves, neck, rightfinger, leftfinger, belt, arms, back</topic>
-        <topic name="/die">/die
+Slot Names: righthand, lefthand, helm, legs, boots, bracers, torso, gloves, neck, rightfinger, leftfinger, belt, arms, back</content>
+      </Contents>
+    </topic>
+    <topic name="/die">
+      <Contents>
+        <content type="text">/die
 
-Use to commit suicide, for example when /unstick does not get you free.</topic>
-        <topic name="/dig">/dig for resource
+Use to commit suicide, for example when /unstick does not get you free.</content>
+      </Contents>
+    </topic>
+    <topic name="/dig">
+      <Contents>
+        <content type="text">/dig for resource
 
-Mine for natural resources in the ground.  For example: /dig for gold.  Some locations are better than others for digging, and how well you do depends on where you are, your skill and your tools.</topic>
-        <topic name="/drop">/drop [quantity|all] (any) (noguard) (inplace) item_name
+Mine for natural resources in the ground.  For example: /dig for gold.  Some locations are better than others for digging, and how well you do depends on where you are, your skill and your tools.</content>
+      </Contents>
+    </topic>
+    <topic name="/drop">
+      <Contents>
+        <content type="text">/drop [quantity|all] (any) (noguard) (inplace) item_name
 
 Drop the specified quantity of a certain item from your inventory. example : /drop 15 apple
 "all" will try and drop all items of this kind available, in the limit of 65 items.
 The "any" flag allows the function to search for items in containers.
 The "noguard" flag allows you to drop unguarded items.
-The "inplace" flag allows you to drop items at your current position.</topic>
-        <topic name="/equip">/equip quantity item_name
+The "inplace" flag allows you to drop items at your current position.</content>
+      </Contents>
+    </topic>
+    <topic name="/equip">
+      <Contents>
+        <content type="text">/equip quantity item_name
 
-Equips the specified quantity of a certain item.  This is equivalent to equipping items in your Inventory Window.</topic>
-        <topic name="/fish">/fish
+Equips the specified quantity of a certain item.  This is equivalent to equipping items in your Inventory Window.</content>
+      </Contents>
+    </topic>
+    <topic name="/fish">
+      <Contents>
+        <content type="text">/fish
 
-See /dig.</topic>
-        <topic name="/give">/give 
+See /dig.</content>
+      </Contents>
+    </topic>
+    <topic name="/give">
+      <Contents>
+        <content type="text">/give
 
-Give items to current Target NPC.</topic>
-        <topic name="/guard">/guard [target] [off] 
+Give items to current Target NPC.</content>
+      </Contents>
+    </topic>
+    <topic name="/guard">
+      <Contents>
+        <content type="text">/guard [target] [off]
 
-This command allows you to unguard an item actually guarded by you. Most probably you will need to use this command without any parameter after targetting the item you want to unguard.</topic>
-        <topic name="/help">/help message
+This command allows you to unguard an item actually guarded by you. Most probably you will need to use this command without any parameter after targetting the item you want to unguard.</content>
+      </Contents>
+    </topic>
+    <topic name="/help">
+      <Contents>
+        <content type="text">/help message
 
-Ask one of the advisors a question.  eg. /help How do I attack something?. Anything you type in the Help channel of the Chat Window will be sent as an advice request automatically.</topic>
-        <branch name="/pet"> Control your pet(s).
+Ask one of the advisors a question.  eg. /help How do I attack something?. Anything you type in the Help channel of the Chat Window will be sent as an advice request automatically.</content>
+      </Contents>
+    </topic>
+    <branch name="/pet">
+      <Contents>
+        <content type="text">Control your pet(s).
 /pet [petname,] assist
 /pet [petname,] attack
 /pet [petname,] dismiss
@@ -218,355 +376,779 @@ Ask one of the advisors a question.  eg. /help How do I attack something?. Anyth
 /pet [petname,] guard
 /pet [petname,] stay
 /pet [petname,] summon
-/pet [petname,] target
-          <topic name="/pet assist">/pet [petname,] assist
-</topic>
-          <topic name="/pet attack">/pet [petname,] attack
-</topic>
-          <topic name="/pet dismiss">/pet [petname,] dismiss
-</topic>
-          <topic name="/pet follow">/pet [petname,] follow
-</topic>
-          <topic name="/pet name">/pet [petname,] name &lt;newname&gt;
+/pet [petname,] target</content>
+      </Contents>
+      <topic name="/pet assist">
+        <Contents>
+          <content type="text">/pet [petname,] assist</content>
+        </Contents>
+      </topic>
+      <topic name="/pet attack">
+        <Contents>
+          <content type="text">/pet [petname,] attack</content>
+        </Contents>
+      </topic>
+      <topic name="/pet dismiss">
+        <Contents>
+          <content type="text">/pet [petname,] dismiss</content>
+        </Contents>
+      </topic>
+      <topic name="/pet follow">
+        <Contents>
+          <content type="text">/pet [petname,] follow</content>
+        </Contents>
+      </topic>
+      <topic name="/pet name"><Contents><content type="text">/pet [petname,] name &lt;newname&gt;</content></Contents>
 
 Give your pet a new name.</topic>
-          <topic name="/pet guard">/pet [petname,] guard
-</topic>
-          <topic name="/pet stay">/pet [petname,] stay
-</topic>
-          <topic name="/pet summon">/pet [petname,] summon
-</topic>
-          <topic name="/pet target">/pet [petname,] target [&lt;Name&gt;|me|pid:&lt;PID&gt;|eid:&lt;EID&gt;]
+      <topic name="/pet guard">
+        <Contents>
+          <content type="text">/pet [petname,] guard</content>
+        </Contents>
+      </topic>
+      <topic name="/pet stay">
+        <Contents>
+          <content type="text">/pet [petname,] stay</content>
+        </Contents>
+      </topic>
+      <topic name="/pet summon">
+        <Contents>
+          <content type="text">/pet [petname,] summon</content>
+        </Contents>
+      </topic>
+      <topic name="/pet target">
+        <Contents>
+          <content type="text">/pet [petname,] target [&lt;Name&gt;|me|pid:&lt;PID&gt;|eid:&lt;EID&gt;]
 
 Set the target for your pet. If no target is given use your target. You will be the target for option me. pid: will target
-the actor with the given pid.</topic>
-        </branch>
-        <topic name="/petition">/petition request
+the actor with the given pid.</content>
+        </Contents>
+      </topic>
+    </branch>
+    <topic name="/petition">
+      <Contents>
+        <content type="text">/petition request
 
-Submits a petition to the GMs for a feature or bug fix.</topic>
-        <topic name="/picklock">/picklock 
+Submits a petition to the GMs for a feature or bug fix.</content>
+      </Contents>
+    </topic>
+    <topic name="/picklock">
+      <Contents>
+        <content type="text">/picklock
 
-Attempts to pick a lock.</topic>
-        <topic name="/pickup">/pickup
+Attempts to pick a lock.</content>
+      </Contents>
+    </topic>
+    <topic name="/pickup">
+      <Contents>
+        <content type="text">/pickup
 
-Pickup the targeted item.</topic>
-        <topic name="/pos">/pos 
+Pickup the targeted item.</content>
+      </Contents>
+    </topic>
+    <topic name="/pos">
+      <Contents>
+        <content type="text">/pos
 
-Shows your current location in the 3D world.  (Debug purposes only.)</topic>
-				<topic name="/repair">/repair [slot name]
+Shows your current location in the 3D world.  (Debug purposes only.)</content>
+      </Contents>
+    </topic>
+    <topic name="/repair">
+      <Contents>
+        <content type="text">/repair [slot name]
 
 Begins a repair on the item in the specified slot. Default slot is righthand
 
 Slot Names: righthand, lefthand, helm, legs, boots, bracers, torso, gloves, neck, rightfinger, leftfinger, belt, arms, back
-</topic>
-        <topic name="/roll">/roll times sides target
+</content>
+      </Contents>
+    </topic>
+    <topic name="/roll">
+      <Contents>
+        <content type="text">/roll times sides target
 
 Rolls a certain number of dice with the specified sides and gives the answer.
 Example: "/roll 2 6" rolls 2 6-sided dice.  If target is defined it will only announce the number of dice which got a number higher than the specified one.
-Example: "/roll 2 6 3" rolls a 2 6-sided dice and tells how many of them got a 3 or an higher number. Use this to invent your own gambling games.</topic>
-        <topic name="/rotate">/rotate target x y z  or /rotate [axis] [angle]
+Example: "/roll 2 6 3" rolls a 2 6-sided dice and tells how many of them got a 3 or an higher number. Use this to invent your own gambling games.</content>
+      </Contents>
+    </topic>
+    <topic name="/rotate">
+      <Contents>
+        <content type="text">/rotate target x y z  or /rotate [axis] [angle]
 
 Rotate an object along the x, y, and z axis. Values are in degrees. Please note that y is the vertical axis.
-The rotation is added to the item's current rotation. Instead of specifying an angle, you can input "reset" which will reset the rotation to 0.</topic>
-        <topic name="/sell">/sell merchant
+The rotation is added to the item's current rotation. Instead of specifying an angle, you can input "reset" which will reset the rotation to 0.</content>
+      </Contents>
+    </topic>
+    <topic name="/sell">
+      <Contents>
+        <content type="text">/sell merchant
 
-Sell to specified merchant.  If no merchant specified, sell to current target.</topic>
-        <topic name="/show">/show
+Sell to specified merchant.  If no merchant specified, sell to current target.</content>
+      </Contents>
+    </topic>
+    <topic name="/show">
+      <Contents>
+        <content type="text">/show
 
-Opens or closes the named window. Valid targets are: skills, spells, inv, help, buddy, info, petition, quest, shortcut, group, guild, glyph, bag, chat, activemagic</topic>
-        <topic name="/sit">/sit
+Opens or closes the named window. Valid targets are: skills, spells, inv, help, buddy, info, petition, quest, shortcut, group, guild, glyph, bag, chat, activemagic</content>
+      </Contents>
+    </topic>
+    <topic name="/sit">
+      <Contents>
+        <content type="text">/sit
 
-Makes you sit down.</topic>
-        <topic name="/stand">/stand
+Makes you sit down.</content>
+      </Contents>
+    </topic>
+    <topic name="/stand">
+      <Contents>
+        <content type="text">/stand
 
-Makes you stand up.</topic>
-        <topic name="/starttrading">/starttrading 
+Makes you stand up.</content>
+      </Contents>
+    </topic>
+    <topic name="/starttrading">
+      <Contents>
+        <content type="text">/starttrading
 
-You are ready to trade.</topic>
-        <topic name="/stoptrading">/stoptrading 
+You are ready to trade.</content>
+      </Contents>
+    </topic>
+    <topic name="/stoptrading">
+      <Contents>
+        <content type="text">/stoptrading
 
-Prevent anyone from trading with you.</topic>
-    <topic name="/storage">/storage 
+Prevent anyone from trading with you.</content>
+      </Contents>
+    </topic>
+    <topic name="/storage">
+      <Contents>
+        <content type="text">/storage
 
-Opens the storage handling window. You need to have a character flagged as storage manager in order to use your storage.</topic>
-        <topic name="/trade">/trade 
+Opens the storage handling window. You need to have a character flagged as storage manager in order to use your storage.</content>
+      </Contents>
+    </topic>
+    <topic name="/trade">
+      <Contents>
+        <content type="text">/trade
 
-Start a trade with current Target player.</topic>
-        <topic name="/train">/train 
+Start a trade with current Target player.</content>
+      </Contents>
+    </topic>
+    <topic name="/train">
+      <Contents>
+        <content type="text">/train
 
-Start a training session with a trainer target.</topic>
-        <topic name="/unstick">/unstick
+Start a training session with a trainer target.</content>
+      </Contents>
+    </topic>
+    <topic name="/unstick">
+      <Contents>
+        <content type="text">/unstick
 
-Moves you to your last known valid location. Should be used when you are stuck in geometry. If a valid location cannot be found you will be sent to the death realm.</topic>
-        <topic name="/use">/use 
+Moves you to your last known valid location. Should be used when you are stuck in geometry. If a valid location cannot be found you will be sent to the death realm.</content>
+      </Contents>
+    </topic>
+    <topic name="/use">
+      <Contents>
+        <content type="text">/use
 
-Uses the targeted item.</topic>
-        <topic name="/who">/who filter
+Uses the targeted item.</content>
+      </Contents>
+    </topic>
+    <topic name="/who">
+      <Contents>
+        <content type="text">/who filter
 
-Lists players currently online matching filter.  If no filter is specified, then all online players are listed.</topic>
-    </branch>
-    <branch name="Combat &amp; Target Commands">
-Commands used to manually control combat and the targeting system.  Attacking is normally done via the context menu or the info window's stance buttons.  Some commands like /cast and /target are useful for creating shortcuts to more easily perform certain actions.
-        <topic name="/assist">/assist player
+Lists players currently online matching filter.  If no filter is specified, then all online players are listed.</content>
+      </Contents>
+    </topic>
+  </branch>
+  <branch name="Combat &amp; Target Commands">
+    <Contents>
+      <content type="text">
+Commands used to manually control combat and the targeting system.  Attacking is normally done via the context menu or the info window's stance buttons.  Some commands like /cast and /target are useful for creating shortcuts to more easily perform certain actions.</content>
+    </Contents>
+    <topic name="/assist">
+      <Contents>
+        <content type="text">/assist player
 
-Make the specified player's target your own.</topic>
-        <topic name="/attack">/attack [bloody|aggressive|normal|defensive|fullydefensive]
+Make the specified player's target your own.</content>
+      </Contents>
+    </topic>
+    <topic name="/attack">
+      <Contents>
+        <content type="text">/attack [bloody|aggressive|normal|defensive|fullydefensive]
 
-Attack the targeted character. Normal stance will be used if none is specified. Bloody stance will increase the attack damage, but reduce the defense, fullydefensive does the opposite, and the other stances range between.</topic>
-        <topic name="/cast">/cast spell_name
+Attack the targeted character. Normal stance will be used if none is specified. Bloody stance will increase the attack damage, but reduce the defense, fullydefensive does the opposite, and the other stances range between.</content>
+      </Contents>
+    </topic>
+    <topic name="/cast">
+      <Contents>
+        <content type="text">/cast spell_name
 
-Start casting spell.</topic>
-        <topic name="/challenge">/challenge 
+Start casting spell.</content>
+      </Contents>
+    </topic>
+    <topic name="/challenge">
+      <Contents>
+        <content type="text">/challenge
 
-Challenge another player to a duel.</topic>
-        <topic name="/game">/game 
+Challenge another player to a duel.</content>
+      </Contents>
+    </topic>
+    <topic name="/game">
+      <Contents>
+        <content type="text">/game
 
-Starts a minigame session using the targeted game.</topic>
-        <topic name="/loot">/loot 
+Starts a minigame session using the targeted game.</content>
+      </Contents>
+    </topic>
+    <topic name="/loot">
+      <Contents>
+        <content type="text">/loot
 
-Loots an available corpse if you have authority.</topic>
-        <topic name="/stopattack">/stopattack 
+Loots an available corpse if you have authority.</content>
+      </Contents>
+    </topic>
+    <topic name="/stopattack">
+      <Contents>
+        <content type="text">/stopattack
 
-Stops attacking.</topic>
-        <topic name="/target">/target [next|prev] [npc|pc|item|any|clear OR a player name]
+Stops attacking.</content>
+      </Contents>
+    </topic>
+    <topic name="/target">
+      <Contents>
+        <content type="text">/target [next|prev] [npc|pc|item|any|clear OR a player name]
 
 Searches for a target that matches the parameters. With no parameters targets yourself.
 You may search for an NPC, PC (player), or item.  'Any' will find anything to target, and 'clear' will deselect your target.
 You may also specify your target by entering the player's name.  You may optionally specify the direction with 'next' (default) or 'prev', for searching outwards or inwards from your location.
 
-Examples:  "/target Bob" will target the player named Bob.  "/target prev npc" will target the next closest NPC from the one you already have selected.</topic>
-        <topic name="/targetinfo">/targetinfo target
+Examples:  "/target Bob" will target the player named Bob.  "/target prev npc" will target the next closest NPC from the one you already have selected.</content>
+      </Contents>
+    </topic>
+    <topic name="/targetinfo">
+      <Contents>
+        <content type="text">/targetinfo target
 
-Displays more info about the target.</topic>
-        <topic name="/targetcontext">/targetcontext
+Displays more info about the target.</content>
+      </Contents>
+    </topic>
+    <topic name="/targetcontext">
+      <Contents>
+        <content type="text">/targetcontext
 
-Displays the options for interacting with the target item. The same as what is normally the right click menu.</topic>
-        <topic name="/yield">/yield 
+Displays the options for interacting with the target item. The same as what is normally the right click menu.</content>
+      </Contents>
+    </topic>
+    <topic name="/yield">
+      <Contents>
+        <content type="text">/yield
 
-Surrender to a dueling player.</topic>
+Surrender to a dueling player.</content>
+      </Contents>
+    </topic>
+  </branch>
+  <branch name="Group Commands">
+    <Contents>
+      <content type="text">
+Commands used to give additional control over a player group.</content>
+    </Contents>
+    <topic name="/confirmgroupjoin">
+      <Contents>
+        <content type="text">/confirmgroupjoin
+
+Accept an invitation to join a group</content>
+      </Contents>
+    </topic>
+    <topic name="/disband">
+      <Contents>
+        <content type="text">/disband
+
+If specified by group leader, the group is disbanded.</content>
+      </Contents>
+    </topic>
+    <topic name="/groupremove">
+      <Contents>
+        <content type="text">/groupremove player
+
+Allows the group leader to remove a player from the group.</content>
+      </Contents>
+    </topic>
+    <topic name="/groupmembers">
+      <Contents>
+        <content type="text">/groupmembers
+
+Lists all group members.</content>
+      </Contents>
+    </topic>
+    <topic name="/invite">
+      <Contents>
+        <content type="text">/invite player
+
+Invites the named player to join the leader's group.</content>
+      </Contents>
+    </topic>
+    <topic name="/leavegroup">
+      <Contents>
+        <content type="text">/leavegroup
+
+You leave your current group.</content>
+      </Contents>
+    </topic>
+  </branch>
+  <branch name="Guild Commands">
+    <Contents>
+      <content type="text">
+Commands used to perform guild actions, many of which are available via the guild window.</content>
+    </Contents>
+    <branch name="Alliance Commands">
+      <Contents>
+        <content type="text">
+Commands used to create and maintain guild alliances.</content>
+      </Contents>
+      <topic name="/allianceinvite">
+        <Contents>
+          <content type="text">/allianceinvite leader_name
+
+Invites leader of another guild to your guild alliance.</content>
+        </Contents>
+      </topic>
+      <topic name="/allianceleader">
+        <Contents>
+          <content type="text">/allianceleader guild_name
+
+Hands over alliance leadership to another guild.</content>
+        </Contents>
+      </topic>
+      <topic name="/allianceleave">
+        <Contents>
+          <content type="text">/allianceleave
+
+Leave your guild alliance.</content>
+        </Contents>
+      </topic>
+      <topic name="/allianceremove">
+        <Contents>
+          <content type="text">/allianceremove guild_name
+
+Removes a guild from your guild alliance.</content>
+        </Contents>
+      </topic>
+      <topic name="/endalliance">
+        <Contents>
+          <content type="text">/endalliance
+
+Disband your guild alliance.</content>
+        </Contents>
+      </topic>
+      <topic name="/newalliance">
+        <Contents>
+          <content type="text">/newalliance alliance_name
+
+Creates new alliance of guilds.</content>
+        </Contents>
+      </topic>
     </branch>
-    <branch name="Group Commands">
-Commands used to give additional control over a player group.
-        <topic name="/confirmgroupjoin">/confirmgroupjoin 
+    <topic name="/endguild">
+      <Contents>
+        <content type="text">/endguild
 
-Accept an invitation to join a group</topic>
-        <topic name="/disband">/disband 
+Disbands your guild.</content>
+      </Contents>
+    </topic>
+    <topic name="/guildinfo">
+      <Contents>
+        <content type="text">/guildinfo
 
-If specified by group leader, the group is disbanded.</topic>
-        <topic name="/groupremove">/groupremove player
+Opens the Guild Window.</content>
+      </Contents>
+    </topic>
+    <topic name="/guildinvite">
+      <Contents>
+        <content type="text">/guildinvite player
 
-Allows the group leader to remove a player from the group.</topic>
-        <topic name="/groupmembers">/groupmembers 
+Invites the named player to join your guild.</content>
+      </Contents>
+    </topic>
+    <topic name="/guildlevel">
+      <Contents>
+        <content type="text">/guildlevel level name
 
-Lists all group members.</topic>
-        <topic name="/invite">/invite player
+Names the level # as the specified name for your guild.</content>
+      </Contents>
+    </topic>
+    <topic name="/guildmembers">
+      <Contents>
+        <content type="text">/guildmembers level
 
-Invites the named player to join the leader's group.</topic>
-        <topic name="/leavegroup">/leavegroup 
+Lists all guild members, filtered by level if specified.</content>
+      </Contents>
+    </topic>
+    <topic name="/guildmotd">
+      <Contents>
+        <content type="text">/guildmotd message
 
-You leave your current group.</topic>
-    </branch>
-    <branch name="Guild Commands">
-Commands used to perform guild actions, many of which are available via the guild window.
-        <branch name="Alliance Commands">
-Commands used to create and maintain guild alliances.
-            <topic name="/allianceinvite">/allianceinvite leader_name
+Sets/views the guild's MOTD.</content>
+      </Contents>
+    </topic>
+    <topic name="/guildname">
+      <Contents>
+        <content type="text">/guildname guild_name
 
-Invites leader of another guild to your guild alliance.</topic>
-            <topic name="/allianceleader">/allianceleader guild_name
+Changes name of your guild to the new guild name.</content>
+      </Contents>
+    </topic>
+    <topic name="/guildpoints">
+      <Contents>
+        <content type="text">/guildpoints guild_name
 
-Hands over alliance leadership to another guild.</topic>
-            <topic name="/allianceleave">/allianceleave 
+Shows karma points of named guild.</content>
+      </Contents>
+    </topic>
+    <topic name="/guildpromote">
+      <Contents>
+        <content type="text">/guildpromote player level
 
-Leave your guild alliance.</topic>
-            <topic name="/allianceremove">/allianceremove guild_name
+Sets the named player to specified level in your guild.</content>
+      </Contents>
+    </topic>
+    <topic name="/guildremove">
+      <Contents>
+        <content type="text">/guildremove player
 
-Removes a guild from your guild alliance.</topic>
-            <topic name="/endalliance">/endalliance 
+Removes the named player from your guild.</content>
+      </Contents>
+    </topic>
+    <topic name="/guildsecret">
+      <Contents>
+        <content type="text">/guildsecret on|off
 
-Disband your guild alliance.</topic>
-            <topic name="/newalliance">/newalliance alliance_name
+Toggles the guild secrecy flag.  If called without an argument, it shows the current value of the secrecy flag.</content>
+      </Contents>
+    </topic>
+    <topic name="/guildsymbol">
+      <Contents>
+        <content type="text">/guildsymbol symbol_name
 
-Creates new alliance of guilds.</topic>
-        </branch>
-        <topic name="/endguild">/endguild 
+Sets your guild symbol to the named symbol.</content>
+      </Contents>
+    </topic>
+    <topic name="/guildwar">
+      <Contents>
+        <content type="text">/guildwar guild_name
 
-Disbands your guild.</topic>
-        <topic name="/guildinfo">/guildinfo 
+Invites another guild (the target's guild) to start a guild war.</content>
+      </Contents>
+    </topic>
+    <topic name="/guildweb">
+      <Contents>
+        <content type="text">/guildweb URL
 
-Opens the Guild Window.</topic>
-        <topic name="/guildinvite">/guildinvite player
+Sets URL of guild web page.</content>
+      </Contents>
+    </topic>
+    <topic name="/guildyield">
+      <Contents>
+        <content type="text">/guildyield guild_name
 
-Invites the named player to join your guild.</topic>
-        <topic name="/guildlevel">/guildlevel level name
+Surrenders to the target's guild to end a guild war.</content>
+      </Contents>
+    </topic>
+    <topic name="/newguild">
+      <Contents>
+        <content type="text">/newguild guild_name
 
-Names the level # as the specified name for your guild.</topic>
-        <topic name="/guildmembers">/guildmembers level
+This creates a new guild with the specified name and you as leader.</content>
+      </Contents>
+    </topic>
+  </branch>
+  <branch name="Utility Commands">
+    <Contents>
+      <content type="text">
+Additional commands used for other game functions.</content>
+    </Contents>
+    <topic name="/confirm">
+      <Contents>
+        <content type="text">/confirm message yes_command no_command
 
-Lists all guild members, filtered by level if specified.</topic>
-        <topic name="/guildmotd">/guildmotd message
+This shows a confirmation box that displays the message and Yes and No buttons.  On pressing Yes, the yes_command is executed and on pressing No, the no_command is executed.</content>
+      </Contents>
+    </topic>
+    <topic name="/echo">
+      <Contents>
+        <content type="text">/echo message
 
-Sets/views the guild's MOTD.</topic>
-        <topic name="/guildname">/guildname guild_name
+This repeats the message in the Chat Window without sending it to anyone else.</content>
+      </Contents>
+    </topic>
+    <topic name="/graphicbug">
+      <Contents>
+        <content type="text">/graphicbug
 
-Changes name of your guild to the new guild name.</topic>
-        <topic name="/guildpoints">/guildpoints guild_name
+Saves a graphic report that you can mail to a developer.</content>
+      </Contents>
+    </topic>
+    <topic name="/motd">
+      <Contents>
+        <content type="text">/motd
 
-Shows karma points of named guild.</topic>
-        <topic name="/guildpromote">/guildpromote player level
+Requests the MOTD from the server.</content>
+      </Contents>
+    </topic>
+    <topic name="/ping">
+      <Contents>
+        <content type="text">/ping
 
-Sets the named player to specified level in your guild.</topic>
-        <topic name="/guildremove">/guildremove player
+Shows your average ping to the server.</content>
+      </Contents>
+    </topic>
+    <topic name="/repaintlabels">
+      <Contents>
+        <content type="text">/repaintlabels
 
-Removes the named player from your guild.</topic>
-        <topic name="/guildsecret">/guildsecret on|off
+Will redraw corrupted labels.  "/repaintlabels force" can be used if the regular command doesn't work.</content>
+      </Contents>
+    </topic>
+    <topic name="/quit [now]">
+      <Contents>
+        <content type="text">/quit
 
-Toggles the guild secrecy flag.  If called without an argument, it shows the current value of the secrecy flag.</topic>
-        <topic name="/guildsymbol">/guildsymbol symbol_name
+This exits you from the game. With the "now" option exits without asking.</content>
+      </Contents>
+    </topic>
+    <topic name="/screenshot">
+      <Contents>
+        <content type="text">/screenshot [options]
 
-Sets your guild symbol to the named symbol.</topic>
-        <topic name="/guildwar">/guildwar guild_name
+Takes a screenshot and saves it in a folder named "screenshots" in your PlaneShift directory.  The "nogui" option can be used to ignore the onscreen windows and control bar, and the "lossless" option can be used to save without compression to PNG instead of JPG.</content>
+      </Contents>
+    </topic>
+    <topic name="/testanim">
+      <Contents>
+        <content type="text">/testanim [name] [fade in] [fade out]
 
-Invites another guild (the target's guild) to start a guild war.</topic>
-        <topic name="/guildweb">/guildweb URL
+Allows to test an animation. No one will be able to see it except you. Name is the name of the animation, fade in and fade out define the fade time for the animation.</content>
+      </Contents>
+    </topic>
+    <topic name="/tip">
+      <Contents>
+        <content type="text">/tip
 
-Sets URL of guild web page.</topic>
-        <topic name="/guildyield">/guildyield guild_name
+            Requests a tip from the server.</content>
+      </Contents>
+    </topic>
+    <topic name="/version">
+      <Contents>
+        <content type="text">/version
 
-Surrenders to the target's guild to end a guild war.</topic>
-        <topic name="/newguild">/newguild guild_name
-
-This creates a new guild with the specified name and you as leader.</topic>
-    </branch>
-    <branch name="Utility Commands">
-Additional commands used for other game functions.
-        <topic name="/confirm">/confirm message yes_command no_command
-
-This shows a confirmation box that displays the message and Yes and No buttons.  On pressing Yes, the yes_command is executed and on pressing No, the no_command is executed.</topic>
-        <topic name="/echo">/echo message
-
-This repeats the message in the Chat Window without sending it to anyone else.</topic>
-        <topic name="/graphicbug">/graphicbug 
-
-Saves a graphic report that you can mail to a developer.</topic>
-        <topic name="/motd">/motd 
-
-Requests the MOTD from the server.</topic>
-        <topic name="/ping">/ping 
-
-Shows your average ping to the server.</topic>
-       <topic name="/repaintlabels">/repaintlabels
-
-Will redraw corrupted labels.  "/repaintlabels force" can be used if the regular command doesn't work.</topic>
-        <topic name="/quit [now]">/quit 
-
-This exits you from the game. With the "now" option exits without asking.</topic>
-        <topic name="/screenshot">/screenshot [options]
-
-Takes a screenshot and saves it in a folder named "screenshots" in your PlaneShift directory.  The "nogui" option can be used to ignore the onscreen windows and control bar, and the "lossless" option can be used to save without compression to PNG instead of JPG.</topic>
-        <topic name="/testanim">/testanim [name] [fade in] [fade out]
-
-Allows to test an animation. No one will be able to see it except you. Name is the name of the animation, fade in and fade out define the fade time for the animation.</topic>
-        <topic name="/tip">/tip 
-
-            Requests a tip from the server.</topic>
-         <topic name="/version">/version
-
-Prints out the current version of the game.</topic>
-
-    </branch>
-    <branch name="GM Commands" level="1">
-Commands available to game master level characters.  Note that this is a full list of abilities, and not all access groups have everything listed here.
-        <branch name="General Syntax">
-Commands which act on a target all use the same system.  A number of keywords and features are available to make specifying the target easier and more flexible.
-            <topic name="area">area syntax: 'area:[type]:range'
+Prints out the current version of the game.</content>
+      </Contents>
+    </topic>
+  </branch>
+  <branch name="GM Commands" level="1">
+    <Contents>
+      <content type="text">
+Commands available to game master level characters.  Note that this is a full list of abilities, and not all access groups have everything listed here.</content>
+    </Contents>
+    <branch name="General Syntax">
+      <Contents>
+        <content type="text">
+Commands which act on a target all use the same system.  A number of keywords and features are available to make specifying the target easier and more flexible.</content>
+      </Contents>
+      <topic name="area">
+        <Contents>
+          <content type="text">area syntax: 'area:[type]:range'
 
 Used to run a command on all entities of a specific type within a range. (crosses portals; range doesn't include yourself)
-Available types are players (default), actors, npcs, items, and entities. (no spaces before/after colons) Note that this is a very powerful feature; be careful! 
-Examples: "/info area:entities:30" lists info on everything within 30m, 
-"/modify area:items:10 remove" deletes all litter within 10m, 
-"/teleport area:players:5 hydlaa_plaza" teleports you and all players within 5m to the plaza</topic>
-            <topic name="here">keyword 'here'
+Available types are players (default), actors, npcs, items, and entities. (no spaces before/after colons) Note that this is a very powerful feature; be careful!
+Examples: "/info area:entities:30" lists info on everything within 30m,
+"/modify area:items:10 remove" deletes all litter within 10m,
+"/teleport area:players:5 hydlaa_plaza" teleports you and all players within 5m to the plaza</content>
+        </Contents>
+      </topic>
+      <topic name="here">
+        <Contents>
+          <content type="text">keyword 'here'
 
-Used to specify your current sector for sector based commands. Also may be used as a destination for /teleport to indicate your exact location. Examples: "/thunder here", "/teleport target here"</topic>
-            <topic name="IDs">ID syntax: 'pid:#' and 'eid:#'
+Used to specify your current sector for sector based commands. Also may be used as a destination for /teleport to indicate your exact location. Examples: "/thunder here", "/teleport target here"</content>
+        </Contents>
+      </topic>
+      <topic name="IDs">
+        <Contents>
+          <content type="text">ID syntax: 'pid:#' and 'eid:#'
 
-Targets and destinations may be specified by either player/character ID (PID) or entity ID (EID). (no spaces before/after colon) IDs may be obtained via the /info command. Note that while PIDs do not change, EIDs do. Example: "/teleport eid:42 here"</topic>
-            <topic name="names">
+Targets and destinations may be specified by either player/character ID (PID) or entity ID (EID). (no spaces before/after colon) IDs may be obtained via the /info command. Note that while PIDs do not change, EIDs do. Example: "/teleport eid:42 here"</content>
+        </Contents>
+      </topic>
+      <topic name="names">
+        <Contents>
+          <content type="text">
 
-Targets and destinations with more than one word in them must be specified using quotes, for most commands. Full names must be used for NPCs and items; only first names are needed for players. In the case of non-unique names, it will simply use the first it finds. Example: /teleport me "Grok Idon"</topic>
-            <topic name="me">keyword 'me'
+Targets and destinations with more than one word in them must be specified using quotes, for most commands. Full names must be used for NPCs and items; only first names are needed for players. In the case of non-unique names, it will simply use the first it finds. Example: /teleport me "Grok Idon"</content>
+        </Contents>
+      </topic>
+      <topic name="me">
+        <Contents>
+          <content type="text">keyword 'me'
 
-Used to target yourself for a command. Example:  "/slide me F"</topic>
-            <topic name="target">keyword 'target'
+Used to target yourself for a command. Example:  "/slide me F"</content>
+        </Contents>
+      </topic>
+      <topic name="target">
+        <Contents>
+          <content type="text">keyword 'target'
 
-Used to act on your currently selected entity with a command. In commands that only need one parameter, this keyword is implicit. Also supported as a destination for /teleport. Example: "/mute target" or simply "/mute"</topic>
-        </branch>
-        <topic name="/action">Action location commands.
+Used to act on your currently selected entity with a command. In commands that only need one parameter, this keyword is implicit. Also supported as a destination for /teleport. Example: "/mute target" or simply "/mute"</content>
+        </Contents>
+      </topic>
+    </branch>
+    <topic name="/action">
+      <Contents>
+        <content type="text">Action location commands.
 To create a new action location entrance:
-/action create_entrance [sector_name] [description]</topic>
-        <topic name="/admin">/admin
+/action create_entrance [sector_name] [description]</content>
+      </Contents>
+    </topic>
+    <topic name="/admin">
+      <Contents>
+        <content type="text">/admin
 
-Resets your admin level.  Lists and allows you to use various GM/admin commands.</topic>
-        <topic name="/assignfaction"> /assignfaction [me/target/eid/pid/area/name] [factionname] [points]
+Resets your admin level.  Lists and allows you to use various GM/admin commands.</content>
+      </Contents>
+    </topic>
+    <topic name="/assignfaction">
+      <Contents>
+        <content type="text">/assignfaction [me/target/eid/pid/area/name] [factionname] [points]
 
 Awards the player of a positive or negative faction points for a particular faction.
 factionname is the name of the faction of which the player is being changed
-points can be negative or positive and it's relative to the current player faction points</topic>
-        <topic name="/awardexp">/awardexp target value
+points can be negative or positive and it's relative to the current player faction points</content>
+      </Contents>
+    </topic>
+    <topic name="/awardexp">
+      <Contents>
+        <content type="text">/awardexp target value
 
-Awards progression points to a player for the completion of a GM run event. (enter a negative value to take away PP)</topic>
-        <topic name="/badtext">/badtext [first entry] [last entry]
+Awards progression points to a player for the completion of a GM run event. (enter a negative value to take away PP)</content>
+      </Contents>
+    </topic>
+    <topic name="/badtext">
+      <Contents>
+        <content type="text">/badtext [first entry] [last entry]
 
 Shows what was told to the targeted npc and couldn't be understand by it.
 First and last entry must be defined and last entry must be greater than first entry.
-Example: /badtext 1 10 shows the latest 10 entries</topic>
-        <topic name="/ban">/ban name minutes hours days [IP] reason
+Example: /badtext 1 10 shows the latest 10 entries</content>
+      </Contents>
+    </topic>
+    <topic name="/ban">
+      <Contents>
+        <content type="text">/ban name minutes hours days [IP] reason
 OR /ban name [IP] reason
 
-Bans a player from logging into the game for a specified amount of time.  (default is 2 days)  'Name' may be a character name, an account name, or an account number.  A reason must be specified. If IP is specified the ip will be banned as well. Note that the optional switch [IP] above indicates optional inclusion of the letters "ip" in the command to have the IP address also banned.  Do NOT type a full IP Address in the command.</topic>
-        <topic name="/banadvisor">/banadvisor name
-        
-Bans a player from advising until /unbanadvisor is used.</topic>
-        <topic name="/banname">/banname name
+Bans a player from logging into the game for a specified amount of time.  (default is 2 days)  'Name' may be a character name, an account name, or an account number.  A reason must be specified. If IP is specified the ip will be banned as well. Note that the optional switch [IP] above indicates optional inclusion of the letters "ip" in the command to have the IP address also banned.  Do NOT type a full IP Address in the command.</content>
+      </Contents>
+    </topic>
+    <topic name="/banadvisor">
+      <Contents>
+        <content type="text">/banadvisor name
 
-Bans a name from use in character creation</topic>
-        <topic name="/changeguildleader">/changeguildleader [new leader] [guildname]
+Bans a player from advising until /unbanadvisor is used.</content>
+      </Contents>
+    </topic>
+    <topic name="/banname">
+      <Contents>
+        <content type="text">/banname name
 
-Change the guilds leader.</topic>
-        <topic name="/changeguildname">/changeguildname
+Bans a name from use in character creation</content>
+      </Contents>
+    </topic>
+    <topic name="/changeguildleader">
+      <Contents>
+        <content type="text">/changeguildleader [new leader] [guildname]
 
-Change the selected guilds name.</topic>
-        <topic name="/changename">/changename [me/target/eid/pid/area/old name] [force|forceall] new name [new lastname]
+Change the guilds leader.</content>
+      </Contents>
+    </topic>
+    <topic name="/changeguildname">
+      <Contents>
+        <content type="text">/changeguildname
 
-Changes the player's name. If force is given, the lastname doesn't have to be unique. If forceall is given name and lastname doesn't have to be unique. If the lastname is not given the lastname will be preseved. If no is given as lastname, the lastname will be removed.</topic>
-        <topic name="/charlist">/charlist [me/target/eid/pid/area/name]
+Change the selected guilds name.</content>
+      </Contents>
+    </topic>
+    <topic name="/changename">
+      <Contents>
+        <content type="text">/changename [me/target/eid/pid/area/old name] [force|forceall] new name [new lastname]
 
-Informs the GM of the IDs and names of all characters on the same account as the account of the given character.</topic>
-        <topic name="/checkitem">/checkitem [target] [quantity|''] [item|tria]
+Changes the player's name. If force is given, the lastname doesn't have to be unique. If forceall is given name and lastname doesn't have to be unique. If the lastname is not given the lastname will be preseved. If no is given as lastname, the lastname will be removed.</content>
+      </Contents>
+    </topic>
+    <topic name="/charlist">
+      <Contents>
+        <content type="text">/charlist [me/target/eid/pid/area/name]
 
-Commands used to check the presence of an item in another character.  Example: "/checkitem Bob 42 tria"</topic>
-        <topic name="/crystal">/crystal [interval] [max random interval modifier] [amount] [range] [item]
+Informs the GM of the IDs and names of all characters on the same account as the account of the given character.</content>
+      </Contents>
+    </topic>
+    <topic name="/checkitem">
+      <Contents>
+        <content type="text">/checkitem [target] [quantity|''] [item|tria]
+
+Commands used to check the presence of an item in another character.  Example: "/checkitem Bob 42 tria"</content>
+      </Contents>
+    </topic>
+    <topic name="/crystal">
+      <Contents>
+        <content type="text">/crystal [interval] [max random interval modifier] [amount] [range] [item]
 
 Create a new hunt location which spawns an item in interval + random secs up to a max of amount within the range.
-Notice: The intervals are in seconds, not milliseconds</topic>
-        <topic name="/death">/death name
+Notice: The intervals are in seconds, not milliseconds</content>
+      </Contents>
+    </topic>
+    <topic name="/death">
+      <Contents>
+        <content type="text">/death name
 
-Kills something.</topic>
-        <topic name="/deletechar">/deletechar [character name] [petitioner name]
+Kills something.</content>
+      </Contents>
+    </topic>
+    <topic name="/deletechar">
+      <Contents>
+        <content type="text">/deletechar [character name] [petitioner name]
 OR /deletechar pid:#
 
-Deletes a character on the same account as the specified petitioner's.  (petition fraud check)  A player or NPC may also be specified by player ID.  (no checks done for players; unique/master NPCs may not be deleted by this method)</topic>
-        <topic name="/deputize">/deputize player level
+Deletes a character on the same account as the specified petitioner's.  (petition fraud check)  A player or NPC may also be specified by player ID.  (no checks done for players; unique/master NPCs may not be deleted by this method)</content>
+      </Contents>
+    </topic>
+    <topic name="/deputize">
+      <Contents>
+        <content type="text">/deputize player level
 
-Temporarily changes a character's access level.  Used to give GMs abilities needed for special instances, or to temporarily add a player to a testers group.  May also be used to demote yourself to a player's status for testing.  (temp level expires on logout, and may be reset by anyone via "/deputize me reset")</topic>
-        <topic name="/divorce">/divorce name
+Temporarily changes a character's access level.  Used to give GMs abilities needed for special instances, or to temporarily add a player to a testers group.  May also be used to demote yourself to a player's status for testing.  (temp level expires on logout, and may be reset by anyone via "/deputize me reset")</content>
+      </Contents>
+    </topic>
+    <topic name="/divorce">
+      <Contents>
+        <content type="text">/divorce name
 
-Divorce a character from another one if they are married.</topic>
-        <topic name="/disablequest">/disablequest questname [save]
+Divorce a character from another one if they are married.</content>
+      </Contents>
+    </topic>
+    <topic name="/disablequest">
+      <Contents>
+        <content type="text">/disablequest questname [save]
 
-This function will toggle the quest from enabled to disabled status and viceversa, if the save flag is used the new status will also be saved in the database.</topic>
-        <topic name="/event">Administer events.
+This function will toggle the quest from enabled to disabled status and viceversa, if the save flag is used the new status will also be saved in the database.</content>
+      </Contents>
+    </topic>
+    <topic name="/event">
+      <Contents>
+        <content type="text">Administer events.
 To create a new event, a GM should enter:
 /event create [name] [description]
 
@@ -589,36 +1171,72 @@ If a GM wants to assume control of an ongoing event, because the original GM cha
 /event control [name]
 
 A completed event can be totally discarded by a GM; either by using the 'Discard' button in the Quest/Event Notebook, or by the following command. A GM can discard a completed event of another GM as long as that GM is offline at the time. NOTE: the event will be totally erased from the game and cannot be undone.
-/event discard [name]</topic>
-        <topic name="/freeze">/freeze player
+/event discard [name]</content>
+      </Contents>
+    </topic>
+    <topic name="/freeze">
+      <Contents>
+        <content type="text">/freeze player
 
-Prevents a player from moving or using any commands until they quit/relog.</topic>
-        <topic name="/fog"> /fog sector [density [[r g b] fade]|stop]
+Prevents a player from moving or using any commands until they quit/relog.</content>
+      </Contents>
+    </topic>
+    <topic name="/fog">
+      <Contents>
+        <content type="text">/fog sector [density [[r g b] fade]|stop]
 
 It creates fog effect in a specific sector, with a specific density, the rgb values of the effect and its fading
 value (in milliseconds).
 With specified sector, it starts fog with default values: density 200, fade 10 sec, soft white (r 200, g 200, w 200).
-Use /fog sector off or /fog sector -1 for resetting. </topic>
-        <topic name="/giveitem">/giveitem [target] [quantity|'all'|''] [item|tria]
+Use /fog sector off or /fog sector -1 for resetting. </content>
+      </Contents>
+    </topic>
+    <topic name="/giveitem">
+      <Contents>
+        <content type="text">/giveitem [target] [quantity|'all'|''] [item|tria]
 
-Commands used to transfer an item from you to another character.  Example: "/giveitem Bob Apple"</topic>
-        <topic name="/guard">/guard [target] [off] 
+Commands used to transfer an item from you to another character.  Example: "/giveitem Bob Apple"</content>
+      </Contents>
+    </topic>
+    <topic name="/guard">
+      <Contents>
+        <content type="text">/guard [target] [off]
 
 This command allows you to guard or unguard any item in the world. You just have to provide a target (which can be an area, an eid of the currently selected target. If no other parameter is provided it will toggle guard status on the item.
-NOTE: If you make an item guarded you will be the one guarding it.</topic>
-        <topic name="/impersonate">/impersonate name command message
+NOTE: If you make an item guarded you will be the one guarding it.</content>
+      </Contents>
+    </topic>
+    <topic name="/impersonate">
+      <Contents>
+        <content type="text">/impersonate name command message
 
-Talk as if you are 'name'. Command can be say, shout, or worldshout. If you use the keyword 'text' for name it will produce a message similar to /me within the command's range.</topic>
-        <topic name="/info">/info target
+Talk as if you are 'name'. Command can be say, shout, or worldshout. If you use the keyword 'text' for name it will produce a message similar to /me within the command's range.</content>
+      </Contents>
+    </topic>
+    <topic name="/info">
+      <Contents>
+        <content type="text">/info target
 
-Reports available information on an object/NPC/player (may be offline):  player ID from the database, account ID, IP address, total time connected, and item flags/spawn info.  Use this for bug reports about any stuck/glitched item/NPC/player.</topic>
-        <topic name="/inspect">/inspect target
+Reports available information on an object/NPC/player (may be offline):  player ID from the database, account ID, IP address, total time connected, and item flags/spawn info.  Use this for bug reports about any stuck/glitched item/NPC/player.</content>
+      </Contents>
+    </topic>
+    <topic name="/inspect">
+      <Contents>
+        <content type="text">/inspect target
 
-Prints the inventory of the specified NPC or player.</topic>
-        <topic name="/item">/item name [random|quality value]
+Prints the inventory of the specified NPC or player.</content>
+      </Contents>
+    </topic>
+    <topic name="/item">
+      <Contents>
+        <content type="text">/item name [random|quality value]
 
-Creates a new object from the named item at your current location.  With no name specified, it opens the item spawn GUI.</topic>
-        <topic name="/key">Administrator key commands.
+Creates a new object from the named item at your current location.  With no name specified, it opens the item spawn GUI.</content>
+      </Contents>
+    </topic>
+    <topic name="/key">
+      <Contents>
+        <content type="text">Administrator key commands.
 To change the lock on a the targeted item.  This removes ability to unlock target from all keys:
 /key changelock
 
@@ -641,50 +1259,101 @@ Remove from the key in hand the ability to lock targeted item:
 /key removelock
 
 Take the key in hand and make or unmake it into a skeleton key that will open any lock, if you have a security level greater than 'player':
-/key skel</topic>
-        <topic name="/kick">/kick name reason
+/key skel</content>
+      </Contents>
+    </topic>
+    <topic name="/kick">
+      <Contents>
+        <content type="text">/kick name reason
 
-Kicks the named player off of the server.</topic>
-        <topic name="/killnpc">/killnpc name reload
+Kicks the named player off of the server.</content>
+      </Contents>
+    </topic>
+    <topic name="/killnpc">
+      <Contents>
+        <content type="text">/killnpc name reload
 
-Kills the targeted NPC, using the current target if no name is given. The reload option recreates the NPC with stats and triggers from the DB.</topic>
-        <topic name="/listwarnings">/listwarnings [me/target/eid/pid/area/name]
-List all warnings given to the targeted account.</topic>
-        <topic name="/loadquest">/loadquest questname
+Kills the targeted NPC, using the current target if no name is given. The reload option recreates the NPC with stats and triggers from the DB.</content>
+      </Contents>
+    </topic>
+    <topic name="/listwarnings">
+      <Contents>
+        <content type="text">/listwarnings [me/target/eid/pid/area/name]
+List all warnings given to the targeted account.</content>
+      </Contents>
+    </topic>
+    <topic name="/loadquest">
+      <Contents>
+        <content type="text">/loadquest questname
 
 Reloads the given quest.
-Note that you might need to wrap it like this \"quest name\" in case the quest name has spaces</topic>
-        <branch name="/location">Online edit of locations
+Note that you might need to wrap it like this \"quest name\" in case the quest name has spaces</content>
+      </Contents>
+    </topic>
+    <branch name="/location">
+      <Contents>
+        <content type="text">Online edit of locations
 
 /location add
 /location adjust
 /location display
 /location hide
 /location info
+</content>
+      </Contents>
+      <topic name="/location add">
+        <Contents>
+          <content type="text">/location add &lt;type&gt; &lt;name&gt; &lt;radius&gt;
 
-        <topic name="/location add">/location add &lt;type&gt; &lt;name&gt; &lt;radius&gt; 
+Add a new location.</content>
+        </Contents>
+      </topic>
+      <topic name="/location adjust">
+        <Contents>
+          <content type="text">/location adjust
 
-Add a new location.</topic>
-        <topic name="/location adjust">/location adjust
+Addjust the position of the neares location to your position.</content>
+        </Contents>
+      </topic>
+      <topic name="/location adjust">
+        <Contents>
+          <content type="text">/location display
 
-Addjust the position of the neares location to your position.</topic>
-        <topic name="/location adjust">/location display
+Display all locations in current sector.</content>
+        </Contents>
+      </topic>
+      <topic name="/location adjust">
+        <Contents>
+          <content type="text">/location hide
 
-Display all locations in current sector.</topic>
-        <topic name="/location adjust">/location hide
+Hide all locaitons in current sector.</content>
+        </Contents>
+      </topic>
+      <topic name="/location adjust">
+        <Contents>
+          <content type="text">/location info
 
-Hide all locaitons in current sector.</topic>
-        <topic name="/location adjust">/location info
+Display info about nearest location in current sector.</content>
+        </Contents>
+      </topic>
+    </branch>
+    <topic name="/managepetitions">
+      <Contents>
+        <content type="text">/managepetitions
 
-Display info about nearest location in current sector.</topic>
-        </branch>
-        <topic name="/managepetitions">/managepetitions
+Manage petitions to help users.</content>
+      </Contents>
+    </topic>
+    <topic name="/marriageinfo">
+      <Contents>
+        <content type="text">/marriageinfo [me/target/eid/pid/area/name]
 
-Manage petitions to help users.</topic>
-        <topic name="/marriageinfo">/marriageinfo [me/target/eid/pid/area/name]
-
-View the details of a characters marriage.</topic>
-        <topic name="/modify">/modify [target OR eid:#] [action] [setting(s)]
+View the details of a characters marriage.</content>
+      </Contents>
+    </topic>
+    <topic name="/modify">
+      <Contents>
+        <content type="text">/modify [target OR eid:#] [action] [setting(s)]
 
 Alters the settings for an item.  Allowed actions:
 
@@ -710,21 +1379,41 @@ Alters the settings for an item.  Allowed actions:
 
 'move' followed by x, y, z and optionally y-rotation coordinates
 
-'collide' - enable/disable collision detection for that item.</topic>
-       <topic name="/money">/money [circles|hexas|octas|trias] [random|quantity value]
+'collide' - enable/disable collision detection for that item.</content>
+      </Contents>
+    </topic>
+    <topic name="/money">
+      <Contents>
+        <content type="text">/money [circles|hexas|octas|trias] [random|quantity value]
 
-Will spawn the specified amount of money items to your inventory. Use random to spawn a random amount of money. 
-Example: "/money trias 10" will spawn 10 trias to your inventory.</topic>
-        <topic name="/morph">/morph [player] [mesh name]
+Will spawn the specified amount of money items to your inventory. Use random to spawn a random amount of money.
+Example: "/money trias 10" will spawn 10 trias to your inventory.</content>
+      </Contents>
+    </topic>
+    <topic name="/morph">
+      <Contents>
+        <content type="text">/morph [player] [mesh name]
 
-Changes the model used for a player until logout.  Use 'reset' in place of the mesh name to reset the mesh.  Do "/morph list" to see the full list of available meshes.</topic>
-        <topic name="/mute">/mute player
+Changes the model used for a player until logout.  Use 'reset' in place of the mesh name to reset the mesh.  Do "/morph list" to see the full list of available meshes.</content>
+      </Contents>
+    </topic>
+    <topic name="/mute">
+      <Contents>
+        <content type="text">/mute player
 
-Mutes the named player until they log back in to this server.</topic>
-        <topic name="/npc">/npc [master npc name]
+Mutes the named player until they log back in to this server.</content>
+      </Contents>
+    </topic>
+    <topic name="/npc">
+      <Contents>
+        <content type="text">/npc [master npc name]
 
-Creates a clone of the named NPC at your current location.</topic>
-        <branch name="/path">Online edit of paths
+Creates a clone of the named NPC at your current location.</content>
+      </Contents>
+    </topic>
+    <branch name="/path">
+      <Contents>
+        <content type="text">Online edit of paths
 
 /path adjust
 /path alias
@@ -747,17 +1436,32 @@ To create a path you need to do the following commands:
 1) /path format &lt;format&gt;
 2) /path start
 3) /path point (Any number of times)
-4) /path stop
-           <topic name="/path adjust">/path adjust [&lt;radius&gt;]
+4) /path stop</content>
+      </Contents>
+      <topic name="/path adjust">
+        <Contents>
+          <content type="text">/path adjust [&lt;radius&gt;]
 
-Adjust the position of the nearest path point to your current position.</topic>
-           <topic name="/path alias">/path alias [*add|remove] [&lt;alias&gt;]
+Adjust the position of the nearest path point to your current position.</content>
+        </Contents>
+      </topic>
+      <topic name="/path alias">
+        <Contents>
+          <content type="text">/path alias [*add|remove] [&lt;alias&gt;]
 
-Add or remove a alias to/from the nearest waypoint. The default is add if neither add or remove is specified.</topic>
-           <topic name="/path display|show">/path display|show [Points|Waypoints]
+Add or remove a alias to/from the nearest waypoint. The default is add if neither add or remove is specified.</content>
+        </Contents>
+      </topic>
+      <topic name="/path display|show">
+        <Contents>
+          <content type="text">/path display|show [Points|Waypoints]
 
-Display all waypoints and points unless either points or waypoints is specefied. In that case only points or waypoints are displayed.</topic>
-           <topic name="/path flagclear">/path flagclear &lt;flag&gt; [&lt;radius&gt;]
+Display all waypoints and points unless either points or waypoints is specefied. In that case only points or waypoints are displayed.</content>
+        </Contents>
+      </topic>
+      <topic name="/path flagclear">
+        <Contents>
+          <content type="text">/path flagclear &lt;flag&gt; [&lt;radius&gt;]
 
 Clear flags on the nearest waypoint.
 
@@ -773,8 +1477,12 @@ PATH
 ROAD
 GROUND
 
-Use radius to narrow or widen the search for the waypoint. Use /path info to view current set flags.</topic>
-           <topic name="/path flagset">/path flagset [wp|path] &lt;flag&gt; [&lt;radius&gt;]
+Use radius to narrow or widen the search for the waypoint. Use /path info to view current set flags.</content>
+        </Contents>
+      </topic>
+      <topic name="/path flagset">
+        <Contents>
+          <content type="text">/path flagset [wp|path] &lt;flag&gt; [&lt;radius&gt;]
 
 Set flags on the nearest waypoint(wp) or path(path).
 
@@ -787,35 +1495,75 @@ PUBLIC
 CITY
 INDOOR
 
-Use radius to narrow or widen the search for the waypoint. Use /path info to view current set flags.</topic>
-           <topic name="/path format">/path format &lt;format&gt; [first]
+Use radius to narrow or widen the search for the waypoint. Use /path info to view current set flags.</content>
+        </Contents>
+      </topic>
+      <topic name="/path format">
+        <Contents>
+          <content type="text">/path format &lt;format&gt; [first]
 
-Set up the format to be used for waypoint name when creating new waypoints. Use /path format wp%03d 10 to create waypoints with name wp010, wp011,... First waypoint will be added when /path start is used in an location where there are no waypoint from before.</topic>
-           <topic name="/path help">/path help [sub command]
+Set up the format to be used for waypoint name when creating new waypoints. Use /path format wp%03d 10 to create waypoints with name wp010, wp011,... First waypoint will be added when /path start is used in an location where there are no waypoint from before.</content>
+        </Contents>
+      </topic>
+      <topic name="/path help">
+        <Contents>
+          <content type="text">/path help [sub command]
 
-Display a short summary of commands or detailed syntax for a sub command if given.</topic>
-           <topic name="/path hide">/path hide [Points|Waypoints]
+Display a short summary of commands or detailed syntax for a sub command if given.</content>
+        </Contents>
+      </topic>
+      <topic name="/path hide">
+        <Contents>
+          <content type="text">/path hide [Points|Waypoints]
 
-Hide all points. If waypoints or points are specified only either points or waypoints are hidden.</topic>
-           <topic name="/path info">/path info [&lt;radius&gt;]
+Hide all points. If waypoints or points are specified only either points or waypoints are hidden.</content>
+        </Contents>
+      </topic>
+      <topic name="/path info">
+        <Contents>
+          <content type="text">/path info [&lt;radius&gt;]
 
-Show info about the nearest path or waypoint.</topic>
-           <topic name="/path point">/path point
+Show info about the nearest path or waypoint.</content>
+        </Contents>
+      </topic>
+      <topic name="/path point">
+        <Contents>
+          <content type="text">/path point
 
-Add a new point to the current selected path at your position. A path will be automaticaly be selected on the /path start command. You could use the /path select command as well to select a new path.</topic>
-           <topic name="/path remove">/path remove [&lt;radius&gt;]
+Add a new point to the current selected path at your position. A path will be automaticaly be selected on the /path start command. You could use the /path select command as well to select a new path.</content>
+        </Contents>
+      </topic>
+      <topic name="/path remove">
+        <Contents>
+          <content type="text">/path remove [&lt;radius&gt;]
 
-Remove the nearest path. Use /path info to view information about the path that will be deleted.</topic>
-           <topic name="/path rename">/path rename [&lt;radius&gt;] &lt;name&gt;
+Remove the nearest path. Use /path info to view information about the path that will be deleted.</content>
+        </Contents>
+      </topic>
+      <topic name="/path rename">
+        <Contents>
+          <content type="text">/path rename [&lt;radius&gt;] &lt;name&gt;
 
-Rename the nearest waypoint or path. Use /path info to view information about the path that will be renamed. If both a path and a waypoint is inn range the waypoint will be the target.</topic>
-           <topic name="/path select">/path select &lt;radius&gt;
+Rename the nearest waypoint or path. Use /path info to view information about the path that will be renamed. If both a path and a waypoint is inn range the waypoint will be the target.</content>
+        </Contents>
+      </topic>
+      <topic name="/path select">
+        <Contents>
+          <content type="text">/path select &lt;radius&gt;
 
-Select the nearest path to be your current path. You need a select path to use /path point.</topic>
-           <topic name="/path split">/path split &lt;radius&gt; [WP flags]
+Select the nearest path to be your current path. You need a select path to use /path point.</content>
+        </Contents>
+      </topic>
+      <topic name="/path split">
+        <Contents>
+          <content type="text">/path split &lt;radius&gt; [WP flags]
 
-Split a path into two paths inserting a new waypoint with name according to whats set with /path format.</topic>
-           <topic name="/path start">/path start &lt;radius&gt; [WP flags] [Path flags]
+Split a path into two paths inserting a new waypoint with name according to whats set with /path format.</content>
+        </Contents>
+      </topic>
+      <topic name="/path start">
+        <Contents>
+          <content type="text">/path start &lt;radius&gt; [WP flags] [Path flags]
 
 Start a new path. If there are a waypoint nearby the waypoint is used to start the path. Otherwise a new waypoint is created.
 
@@ -835,34 +1583,66 @@ Supported Path flags are:
 ONEWAY
 NO_WANDER
 TELEPORT
-</topic>
-           <topic name="/path stop|end">/path stop|end &lt;radius&gt; [WP flags]
+</content>
+        </Contents>
+      </topic>
+      <topic name="/path stop|end">
+        <Contents>
+          <content type="text">/path stop|end &lt;radius&gt; [WP flags]
 
-Stop the current path. If there are a waypoint nearby the waypoint is used to end the path. Otherwise a new aypoint is created.</topic>
-        </branch>
-        <topic name="/pickup">/pickup [eid/area]
+Stop the current path. If there are a waypoint nearby the waypoint is used to end the path. Otherwise a new aypoint is created.</content>
+        </Contents>
+      </topic>
+    </branch>
+    <topic name="/pickup">
+      <Contents>
+        <content type="text">/pickup [eid/area]
 
-GM have an enhaced version of /pickup which supports also eid and area arguments.</topic>
-        <topic name="/pos">/pos target
+GM have an enhaced version of /pickup which supports also eid and area arguments.</content>
+      </Contents>
+    </topic>
+    <topic name="/pos">
+      <Contents>
+        <content type="text">/pos target
 
-GMs have an enhanced version of the /pos command which shows your current region and the direction you are facing.  It also has an optional parameter to get the position of another entity.  (may specify by name or an ID)</topic>
-        <topic name="/quest">/quest [me/target/eid/pid/area/name] [list|discard|complete|assign]
+GMs have an enhanced version of the /pos command which shows your current region and the direction you are facing.  It also has an optional parameter to get the position of another entity.  (may specify by name or an ID)</content>
+      </Contents>
+    </topic>
+    <topic name="/quest">
+      <Contents>
+        <content type="text">/quest [me/target/eid/pid/area/name] [list|discard|complete|assign]
 
-Manage completion of quests for the targeted player, or your own if you aren't targeting anyone.  Use /quest [target] to list quest completion status, and /quest target assign|discard|complete (quest name) to change it.</topic>
-        <topic name="/rain"> /rain sector [drops [length [fade]]|stop]
+Manage completion of quests for the targeted player, or your own if you aren't targeting anyone.  Use /quest [target] to list quest completion status, and /quest target assign|discard|complete (quest name) to change it.</content>
+      </Contents>
+    </topic>
+    <topic name="/rain">
+      <Contents>
+        <content type="text">/rain sector [drops [length [fade]]|stop]
 
 It creates rain effect in a specific sector, with a specific number of drops, the length of the effect (in milliseconds) and its fading
 value (in milliseconds).
 With specified sector, it starts rain with default values: density 4000 drops, length 10 minutes and 10 seconds of fade.
 The maximum number of drops allowed is 8000.
-Use /rain sector 0 0 0 or /rain sector off for ending the event. </topic>
-<topic name="/reload">/reload item
+Use /rain sector 0 0 0 or /rain sector off for ending the event. </content>
+      </Contents>
+    </topic>
+    <topic name="/reload">
+      <Contents>
+        <content type="text">/reload item
 
-Reloads the currently targeted item from the database.</topic>
-<topic name="/runscript">/runscript [script_name] [me/target/eid/pid/area/name]
+Reloads the currently targeted item from the database.</content>
+      </Contents>
+    </topic>
+    <topic name="/runscript">
+      <Contents>
+        <content type="text">/runscript [script_name] [me/target/eid/pid/area/name]
 
-Runs a progression script on the target.</topic>
-        <topic name="/set">/set target gm|player|attribute [on|off]
+Runs a progression script on the target.</content>
+      </Contents>
+    </topic>
+    <topic name="/set">
+      <Contents>
+        <content type="text">/set target gm|player|attribute [on|off]
 
 Many of these attribute are enabled by default for GMs.
 If you do not specify on or off the current mode will be toggled.
@@ -880,51 +1660,98 @@ Available attributes are:
 - givekillexp (awards experience when a GM is killed, as in an event)
 - buddyhide (hides you from player (not GM/Dev) buddy lists)
 
-To set the default used for players do "/set me player". For the default for GMs do "/set me gm".</topic>
-<topic name="/setlabelcolor">/setlabelcolor [target] [npc|player|tester|gm|gm1|dead|alive|normal]
+To set the default used for players do "/set me player". For the default for GMs do "/set me gm".</content>
+      </Contents>
+    </topic>
+    <topic name="/setlabelcolor">
+      <Contents>
+        <content type="text">/setlabelcolor [target] [npc|player|tester|gm|gm1|dead|alive|normal]
 
-Set the color of the label of target to the given value. The normal setting will again display the targets normal label color.</topic>  
-        <topic name="/setitemname">/setitemname [target/eid/area/original name] [name] [description]
+Set the color of the label of target to the given value. The normal setting will again display the targets normal label color.</content>
+      </Contents>
+    </topic>
+    <topic name="/setitemname">
+      <Contents>
+        <content type="text">/setitemname [target/eid/area/original name] [name] [description]
 
-Allows changing the name and description of the targeted item. Description is optional.</topic>
-        <topic name="/setkillexp">/setkillexp [target] [exp amount]
+Allows changing the name and description of the targeted item. Description is optional.</content>
+      </Contents>
+    </topic>
+    <topic name="/setkillexp">
+      <Contents>
+        <content type="text">/setkillexp [target] [exp amount]
 
 Allows to set the experience (not measured in PP) the target will give to who kills him.
-This command is temporary. Target is optional.</topic>
-        <topic name="/setquality">/setquality [target/eid/area/name] [quality] [max quality]
+This command is temporary. Target is optional.</content>
+      </Contents>
+    </topic>
+    <topic name="/setquality">
+      <Contents>
+        <content type="text">/setquality [target/eid/area/name] [quality] [max quality]
 
-Allows changing the quality of the targeted item. Max quality is optional.</topic>
-      <topic name="/setskill">/setskill [target] [skill|'all'] [value|-1]
+Allows changing the quality of the targeted item. Max quality is optional.</content>
+      </Contents>
+    </topic>
+    <topic name="/setskill">
+      <Contents>
+        <content type="text">/setskill [target] [skill|'all'] [value|-1]
 
-Set one of your or target's skills or stats to a specific value.  Use 'all' as the name to set all skills and stats to the given value. Use -1 for value if you would like to view the current value of a skill or stat. If no value is given 100 will be used as default.</topic>
-      <topic name="/setstackable">/setstackable [on|off|reset|info]
+Set one of your or target's skills or stats to a specific value.  Use 'all' as the name to set all skills and stats to the given value. Use -1 for value if you would like to view the current value of a skill or stat. If no value is given 100 will be used as default.</content>
+      </Contents>
+    </topic>
+    <topic name="/setstackable">
+      <Contents>
+        <content type="text">/setstackable [on|off|reset|info]
 
-Enables or disables the ability to stack the targeted item. Info will give the current status of this flag. Reset returns the item to the default stack mode for the item.</topic>
-      <topic name="/settrait">/settrait [[target] [trait] | list [race] [gender]]
+Enables or disables the ability to stack the targeted item. Info will give the current status of this flag. Reset returns the item to the default stack mode for the item.</content>
+      </Contents>
+    </topic>
+    <topic name="/settrait">
+      <Contents>
+        <content type="text">/settrait [[target] [trait] | list [race] [gender]]
 
-Allows changing the traits of a character. 
+Allows changing the traits of a character.
 Use "/settrait list [race] [gender]" to list all available traits for given race and gender.
-Note: The adequate gender for Krans is "none".</topic>
+Note: The adequate gender for Krans is "none".</content>
+      </Contents>
+    </topic>
+    <topic name="/show gm">
+      <Contents>
+        <content type="text">/show gm
 
-        <topic name="/show gm">/show gm
-
-Shows the GM GUI, a window with a player list and quick access to many commands.</topic>
-        <topic name="/slide">/slide target direction distance
+Shows the GM GUI, a window with a player list and quick access to many commands.</content>
+      </Contents>
+    </topic>
+    <topic name="/slide">
+      <Contents>
+        <content type="text">/slide target direction distance
 
 Slides the target object/NPC/player in the direction specified (L,R,F,B,U,D,T,I). Moves one space or the distance specified.
 The "direction" 'T' turns the target.  (in degrees; default is 90)
-The "direction" 'I' changes target instance. (it's relative to current instance)</topic>
-        <topic name="/snow">/snow sector [flakes [length [fade]]|stop]
+The "direction" 'I' changes target instance. (it's relative to current instance)</content>
+      </Contents>
+    </topic>
+    <topic name="/snow">
+      <Contents>
+        <content type="text">/snow sector [flakes [length [fade]]|stop]
 
 It creates snow effect in a specific sector, with a specific number of flakes, the length of the effect (in milliseconds) and its fading
 value (in milliseconds).
 With specified sector, it starts snow with default values: density 4000 flakes, length 10 minutes and 10 seconds of fade.
 The maximum number of flakes allowed is 8000.
-Use /snow sector 0 or /snow sector off for ending the event.</topic>
-        <topic name="/takeitem">/takeitem [target] [quantity|'all'|''] [item|tria]
+Use /snow sector 0 or /snow sector off for ending the event.</content>
+      </Contents>
+    </topic>
+    <topic name="/takeitem">
+      <Contents>
+        <content type="text">/takeitem [target] [quantity|'all'|''] [item|tria]
 
-Command used to transfer an item to you from another character.  Example: "/takeitem target 3 Sabre"</topic>
-	<topic name="/teleport">/teleport &lt;subject&gt; &lt;destination&gt;
+Command used to transfer an item to you from another character.  Example: "/takeitem target 3 Sabre"</content>
+      </Contents>
+    </topic>
+    <topic name="/teleport">
+      <Contents>
+        <content type="text">/teleport &lt;subject&gt; &lt;destination&gt;
 
 Move the subject to the given destination.
 
@@ -945,81 +1772,270 @@ spawn - Spawn position
 restore - Teleport offline character here
 map [&lt;map name&gt;|here &lt;x&gt; &lt;y&gt; &lt;z&gt; [&lt;instance&gt;] - Map coordinates.
 
-Examples: 
+Examples:
    "/teleport target here"
    "/teleport me Bob"
    "/teleport me map npcroom"
    "/teleport me map hydlaa_plaza 3 -42 10"
-   "/teleport "Ink and Paper" map here -234.11 2.23 832"</topic>
-        <topic name="/thaw">/thaw player
+   "/teleport "Ink and Paper" map here -234.11 2.23 832"</content>
+      </Contents>
+    </topic>
+    <topic name="/thaw">
+      <Contents>
+        <content type="text">/thaw player
 
-Disable the effect of the /freeze command on a player.</topic>
-        <topic name="/thunder">/thunder [sector]
+Disable the effect of the /freeze command on a player.</content>
+      </Contents>
+    </topic>
+    <topic name="/thunder">
+      <Contents>
+        <content type="text">/thunder [sector]
 
 It creates a thunder and a lightning in the specified sector. If you don't specify the sector, it will try to create it in the
-sector where you are, if it supports lightning.</topic>
-        <topic name="/unban">/unban name
+sector where you are, if it supports lightning.</content>
+      </Contents>
+    </topic>
+    <topic name="/unban">
+      <Contents>
+        <content type="text">/unban name
 
-Remove the ban on a player, allowing them to log in again.</topic>
-        <topic name="/unbanadvisor">/unbanadvisor name
-        
-Remove the advisor ban on a player, allowing them to advise again.</topic>
-        <topic name="/unbanname">/unbanname name
+Remove the ban on a player, allowing them to log in again.</content>
+      </Contents>
+    </topic>
+    <topic name="/unbanadvisor">
+      <Contents>
+        <content type="text">/unbanadvisor name
 
-Unban a name and makes it available for use again in character creation</topic>
-        <topic name="/unmute">/unmute player
+Remove the advisor ban on a player, allowing them to advise again.</content>
+      </Contents>
+    </topic>
+    <topic name="/unbanname">
+      <Contents>
+        <content type="text">/unbanname name
 
-Unmute the named player.</topic>
-        <topic name="/updaterespawn"> /updaterespawn [me/target/eid/pid/area/name] [here]
+Unban a name and makes it available for use again in character creation</content>
+      </Contents>
+    </topic>
+    <topic name="/unmute">
+      <Contents>
+        <content type="text">/unmute player
 
-Set the targeted actor's respawn point to thier current location. If 'here' is specified then the GM's current location will be used instead of the NPC's.</topic>
-        <topic name="/warn">/warn target message
+Unmute the named player.</content>
+      </Contents>
+    </topic>
+    <topic name="/updaterespawn">
+      <Contents>
+        <content type="text">/updaterespawn [me/target/eid/pid/area/name] [here]
 
-Send a warning message to a player in big, red, un-ignorable text on their screen and in all chat tabs.</topic>
-        <topic name="/weather"> /weather sector [on|off]
+Set the targeted actor's respawn point to thier current location. If 'here' is specified then the GM's current location will be used instead of the NPC's.</content>
+      </Contents>
+    </topic>
+    <topic name="/warn">
+      <Contents>
+        <content type="text">/warn target message
 
-Turn on or off automatic weather for a sector. </topic>
-        <topic name="/targetname"> /targetname [me/target/eid/pid/area/name]
+Send a warning message to a player in big, red, un-ignorable text on their screen and in all chat tabs.</content>
+      </Contents>
+    </topic>
+    <topic name="/weather">
+      <Contents>
+        <content type="text">/weather sector [on|off]
 
-Get the name of all the targeted objects. </topic>
-    </branch>
-    <branch name="Default Keyboard Controls">
-Default controls.  You may alter your settings to your liking via the options window.
-        <topic name="Alt+Q">Quit</topic>
-        <topic name="B">Buddy List window opens.</topic>
-        <topic name="C">Spell Book window opens.</topic>
-        <topic name="Down or S">Move your character backward.</topic>
-        <topic name="E">Strafe (slide) your character to the right.</topic>
-        <topic name="Enter">Toggle chat.</topic>
-        <topic name="Esc">Close the current window, or toggle the control toolbar.</topic>
-        <topic name="F">Reply to the last person to tell</topic>
-        <topic name="F1">Help window opens.</topic>
-        <topic name="I">Inventory window opens.</topic>
-        <topic name="Left or A">Turn your character to the left.</topic>
-	<topic name="Left Click">Mouse move, your character will go to wherever you click</topic>
-        <topic name="LShift">Hold down to make your character run while moving.</topic>
-	<topic name="LCtrl"> Toggle Run, make automove or "run" either run or walk your character.</topic>
-        <topic name="M">Change point-of-view.  Cycles through five different views: first person, several third person views and free rotation.</topic>
-	<topic name="MiddleClick">Use your Middle Mouse button to look around</topic>
-        <topic name="O">Options window opens.</topic>
-        <topic name="P">Skill window opens.</topic>
-        <topic name="Page Down">Look down.</topic>
-        <topic name="Page Up">Look up.</topic>
-        <topic name="Q">Strafe (slide) your character to the left.</topic>
-        <topic name="R">Auto-move mode.</topic>
-        <topic name="Right or D">Turn your character to the right.</topic>
-        <topic name="RShift">Hold down to make your character creep slowly while moving.</topic>
-	<topic name="ScrollWheel">Use your mouse Scroll Wheel for changing camera distance</topic>
-        <topic name="Space">Make your character jump.</topic>
-        <topic name="Tab">Toggle the ability to look around with the mouse.</topic>
-        <topic name="Up or W">Move your character forward.</topic>
-        <topic name="X">Center the camera.</topic>
-        <topic name="Z">Sit down or stand back up.</topic>
-        <topic name="1 - 0">Shortcuts one through to ten in the Shortcuts Window.</topic>
-    </branch>
+Turn on or off automatic weather for a sector. </content>
+      </Contents>
+    </topic>
+    <topic name="/targetname">
+      <Contents>
+        <content type="text">/targetname [me/target/eid/pid/area/name]
+
+Get the name of all the targeted objects. </content>
+      </Contents>
+    </topic>
+  </branch>
+  <branch name="Default Keyboard Controls">
+    <Contents>
+      <content type="text">
+Default controls.  You may alter your settings to your liking via the options window.</content>
+    </Contents>
+    <topic name="Alt+Q">
+      <Contents>
+        <content type="text">Quit</content>
+      </Contents>
+    </topic>
+    <topic name="B">
+      <Contents>
+        <content type="text">Buddy List window opens.</content>
+      </Contents>
+    </topic>
+    <topic name="C">
+      <Contents>
+        <content type="text">Spell Book window opens.</content>
+      </Contents>
+    </topic>
+    <topic name="Down or S">
+      <Contents>
+        <content type="text">Move your character backward.</content>
+      </Contents>
+    </topic>
+    <topic name="E">
+      <Contents>
+        <content type="text">Strafe (slide) your character to the right.</content>
+      </Contents>
+    </topic>
+    <topic name="Enter">
+      <Contents>
+        <content type="text">Toggle chat.</content>
+      </Contents>
+    </topic>
+    <topic name="Esc">
+      <Contents>
+        <content type="text">Close the current window, or toggle the control toolbar.</content>
+      </Contents>
+    </topic>
+    <topic name="F">
+      <Contents>
+        <content type="text">Reply to the last person to tell</content>
+      </Contents>
+    </topic>
+    <topic name="F1">
+      <Contents>
+        <content type="text">Help window opens.</content>
+      </Contents>
+    </topic>
+    <topic name="I">
+      <Contents>
+        <content type="text">Inventory window opens.</content>
+      </Contents>
+    </topic>
+    <topic name="Left or A">
+      <Contents>
+        <content type="text">Turn your character to the left.</content>
+      </Contents>
+    </topic>
+    <topic name="Left Click">
+      <Contents>
+        <content type="text">Mouse move, your character will go to wherever you click</content>
+      </Contents>
+    </topic>
+    <topic name="LShift">
+      <Contents>
+        <content type="text">Hold down to make your character run while moving.</content>
+      </Contents>
+    </topic>
+    <topic name="LCtrl">
+      <Contents>
+        <content type="text">Toggle Run, make automove or "run" either run or walk your character.</content>
+      </Contents>
+    </topic>
+    <topic name="M">
+      <Contents>
+        <content type="text">Change point-of-view.  Cycles through five different views: first person, several third person views and free rotation.</content>
+      </Contents>
+    </topic>
+    <topic name="MiddleClick">
+      <Contents>
+        <content type="text">Use your Middle Mouse button to look around</content>
+      </Contents>
+    </topic>
+    <topic name="O">
+      <Contents>
+        <content type="text">Options window opens.</content>
+      </Contents>
+    </topic>
+    <topic name="P">
+      <Contents>
+        <content type="text">Skill window opens.</content>
+      </Contents>
+    </topic>
+    <topic name="Page Down">
+      <Contents>
+        <content type="text">Look down.</content>
+      </Contents>
+    </topic>
+    <topic name="Page Up">
+      <Contents>
+        <content type="text">Look up.</content>
+      </Contents>
+    </topic>
+    <topic name="Q">
+      <Contents>
+        <content type="text">Strafe (slide) your character to the left.</content>
+      </Contents>
+    </topic>
+    <topic name="R">
+      <Contents>
+        <content type="text">Auto-move mode.</content>
+      </Contents>
+    </topic>
+    <topic name="Right or D">
+      <Contents>
+        <content type="text">Turn your character to the right.</content>
+      </Contents>
+    </topic>
+    <topic name="RShift">
+      <Contents>
+        <content type="text">Hold down to make your character creep slowly while moving.</content>
+      </Contents>
+    </topic>
+    <topic name="ScrollWheel">
+      <Contents>
+        <content type="text">Use your mouse Scroll Wheel for changing camera distance</content>
+      </Contents>
+    </topic>
+    <topic name="Space">
+      <Contents>
+        <content type="text">Make your character jump.</content>
+      </Contents>
+    </topic>
+    <topic name="Tab">
+      <Contents>
+        <content type="text">Toggle the ability to look around with the mouse.</content>
+      </Contents>
+    </topic>
+    <topic name="Up or W">
+      <Contents>
+        <content type="text">Move your character forward.</content>
+      </Contents>
+    </topic>
+    <topic name="X">
+      <Contents>
+        <content type="text">Center the camera.</content>
+      </Contents>
+    </topic>
+    <topic name="Z">
+      <Contents>
+        <content type="text">Sit down or stand back up.</content>
+      </Contents>
+    </topic>
+    <topic name="1 - 0">
+      <Contents>
+        <content type="text">Shortcuts one through to ten in the Shortcuts Window.</content>
+      </Contents>
+    </topic>
+  </branch>
+  <branch name="Icons">
+    <Contents>
+      <content type="text">A list of icons used in PlaneShift and their meaning.</content>
+    </Contents>
+    <topic name="Context Menu Icons">
+      <Contents>
+        <content type="pic" src="ButtonLook;" padding="100" width="64" height="64" />
+        <content type="text">Use this button to examine objects or characters more closely.</content>
+        <content type="pic" src="ButtonOpen;" padding="100" width="64" height="64" />
+        <content type="text">Use this button to open chest or doors (In case of doors you also enter the buildings with it).</content>
+        <content type="pic" src="ButtonPickup;" padding="100" width="64" height="64" />
+        <content type="text">Use this button to pickup objects.</content>
+        <content type="pic" src="ButtonLoot;" padding="100" width="64" height="64" />
+        <content type="text">Use this button to loot items for fallen enemies.</content>
+        <content type="pic" src="ButtonAttack;" padding="100" width="64" height="64" />
+        <content type="text">Use this button to attack your enemies.</content>
+      </Contents>
+    </topic>
+  </branch>
 </help>
-
 <!-- These commands are missing a topic (updated r2512):
      study
      tellnpcinternal
      write -->
+
+<!--- example to use for icons: <content type="pic" src="ButtonLook;ButtonOpen;ButtonPush" align="0" width="200" height="200" padding="20"/> -->
