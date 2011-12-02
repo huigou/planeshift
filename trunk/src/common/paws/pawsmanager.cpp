@@ -1160,7 +1160,7 @@ void PawsManager::CreateWarningBox( const char* message, pawsWidget* notify, boo
 }
 
 
-void PawsManager::CreateYesNoBox( const char* message, pawsWidget* notify, bool modal )
+void PawsManager::CreateYesNoBox(const char* message, pawsWidget* notify, bool modal, bool translate)
 {
     pawsYesNoBox* yesNoBox = (pawsYesNoBox*)FindWidget("YesNoWindow");
 
@@ -1177,7 +1177,7 @@ void PawsManager::CreateYesNoBox( const char* message, pawsWidget* notify, bool 
 
     yesNoBox->MoveTo( (graphics2D->GetWidth() - yesNoBox->GetActualWidth(512) ) / 2,
                        (graphics2D->GetHeight() - yesNoBox->GetActualHeight(256))/2 );
-    yesNoBox->SetText( Translate(message) );
+    yesNoBox->SetText( translate ? Translate(message).GetData() : message);
     yesNoBox->Show();
 
     if ( modal )

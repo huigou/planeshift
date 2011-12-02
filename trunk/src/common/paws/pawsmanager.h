@@ -305,9 +305,9 @@ public:
     /** @brief Creates a YesNo box with the supplied text.
      *  @param message The warning.
      *  @param notify The Widget which recives event notifications (i.e. Button Pressed).
-     +
+     *  @param translate Whathever the message should be translated or not.
      */
-    void CreateYesNoBox( const char* message, pawsWidget* notify = NULL, bool modal = true );
+    void CreateYesNoBox(const char* message, pawsWidget* notify = NULL, bool modal = true, bool translate = true);
 
     /** @brief Applies PAWS style to XML node.
      *  @see pawsstyles.h
