@@ -1905,6 +1905,7 @@ void GEMClientActor::SetMode(uint8_t mode, bool newactor)
             SetIdleAnimation(psengine->GetCharControl()->GetMovementManager()->GetModeIdleAnim(movementMode));
             break;
         case psModeMessage::SPELL_CASTING:
+        case psModeMessage::PLAY:
             break;
 
         case psModeMessage::COMBAT:

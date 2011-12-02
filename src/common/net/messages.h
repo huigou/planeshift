@@ -1474,7 +1474,8 @@ public:
         OVERWEIGHT,
         EXHAUSTED,
         DEFEATED,
-        STATUE
+        STATUE,
+        PLAY
     };
 
 public:
