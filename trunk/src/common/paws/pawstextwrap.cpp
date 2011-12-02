@@ -491,7 +491,7 @@ void pawsMultilineEditTextBox::LayoutText()
 
     int width = 0;          // will hold the width of the current word
     int height = 0;         // will hold the height of any examined string...not really needed for anything.
-    csString tempString;    // content of the current line before the currently examined word
+    csString tempString = "";    // content of the current line before the currently examined word
     csString word;          // the word to examine
     size_t  srcPos = 0;     // the first char that hasn't yet been grabbed.
 
