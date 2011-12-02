@@ -299,7 +299,9 @@ bool pawsSummaryWindow::OnButtonReleased(int /*mouseButton*/, int /*keyModifier*
                 cpwarning += createManager->GetCurrentCP();
                 cpwarning += PawsManager::GetSingleton().Translate(" CP left.");
             }
-            PawsManager::GetSingleton().CreateYesNoBox( cpwarning, this );
+            //we set this widget as modal and we don't want it to be
+            //translated as we did already our homework
+            PawsManager::GetSingleton().CreateYesNoBox(cpwarning, this, true, false);
             return true;
         }
     }
