@@ -37,7 +37,7 @@
         </pawsButton>
 
 
-	<pawsListBox name="UncompletedQuestList" xmlbinding="quests" id="1100" sortBy="-1">
+	<pawsListBox name="UncompletedQuestList" xmlbinding="quests" id="1100" sortBy="0">
             <frame x="16" y="10" width="250" height="161" />
             <columns height="20" headings="no" xmlbinding="q" >
               <column width="230" xmlbinding="desc" >
@@ -52,7 +52,7 @@
             </columns>
         </pawsListBox>
 
-        <pawsListBox name="CompletedQuestList" xmlbinding="quests" id="1101" sortBy="-1">
+        <pawsListBox name="CompletedQuestList" xmlbinding="quests" id="1101" sortBy="0">
             <frame x="16" y="10" width="250" height="161" />
        <columns height="20" headings="no" xmlbinding="q" >
               <column width="230" xmlbinding="desc" >
@@ -81,7 +81,7 @@
             <label text="Completed" />
         </pawsButton>
 
-       <pawsListBox name="UncompletedEventList" xmlbinding="gmevents" id="1100" sortBy="-1">
+       <pawsListBox name="UncompletedEventList" xmlbinding="gmevents" id="1100" sortBy="0">
             <frame x="16" y="10" width="250" height="161" />
             <columns height="20" headings="no" xmlbinding="event" >
               <column width="230" xmlbinding="name" >
@@ -99,7 +99,7 @@
             </columns>
         </pawsListBox>
 
-       <pawsListBox name="CompletedEventList" xmlbinding="gmevents" id="1101" sortBy="-1">
+       <pawsListBox name="CompletedEventList" xmlbinding="gmevents" id="1101" sortBy="0">
             <frame x="16" y="10" width="250" height="161" />
             <columns height="20" headings="no" xmlbinding="event" >
               <column width="230" xmlbinding="name" >
