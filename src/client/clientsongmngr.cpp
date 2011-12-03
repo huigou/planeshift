@@ -60,14 +60,28 @@ ClientSongManager::~ClientSongManager()
 
 void ClientSongManager::PlayMainPlayerSong(uint32_t itemID, const csString &musicalSheet)
 {
+    iSoundManager* sndMngr;
+
     if(mainSongID != NO_SONG)
     {
         return;
     }
 
+    // checking if sounds are active
+    sndMngr = psengine->GetSoundManager();
+    if(!sndMngr->IsSoundActive(sndMngr->GetSndCtrl(iSoundManager::INSTRUMENT_SNDCTRL)))
+    {
+        psSystemMessage msg(0, MSG_ERROR, PawsManager::GetSingleton().Translate("Sounds are not active!"));
+        msg.FireEvent();
+        TriggerListeners();
+        return;
+    }
+
+    // updating state
     sheet = musicalSheet;
     mainSongID = PENDING;
 
+    // request to server
     psMusicalSheetMessage musicalSheetMessage(0, itemID, true, true, "", sheet);
     musicalSheetMessage.SendMessage();
 }
@@ -175,17 +189,9 @@ void ClientSongManager::HandleMessage(MsgEntry* message)
                 // updating listeners
                 TriggerListeners();
 
-                // noticing user but only if he didn't deactivate sounds
-                if(!sndMngr->IsSoundActive(sndMngr->GetSndCtrl(iSoundManager::INSTRUMENT_SNDCTRL)))
-                {
-                    psSystemMessage msg(0, MSG_ERROR, PawsManager::GetSingleton().Translate("Sounds are not active!"));
-                    msg.FireEvent();
-                }
-                else
-                {
-                    psSystemMessage msg(0, MSG_ERROR, PawsManager::GetSingleton().Translate("You cannot play this song!"));
-                    msg.FireEvent();
-                }
+                // noticing user
+                psSystemMessage msg(0, MSG_ERROR, PawsManager::GetSingleton().Translate("You cannot play this song!"));
+                msg.FireEvent();
             }
 
             return;

@@ -396,7 +396,7 @@ bool SoundManager::IsSoundActive(iSoundControl* sndCtrl)
         return false;
     }
 
-    return sndCtrl->GetToggle() && sndSysMgr->Initialised;
+    return sndCtrl->GetToggle() && mainSndCtrl->GetToggle() && sndSysMgr->Initialised;
 }
 
 
