@@ -106,7 +106,7 @@ AuthenticationServer::AuthenticationServer(ClientConnectionSet *pCCS,
     Subscribe(&AuthenticationServer::HandleStringsRequest, MSGTYPE_MSGSTRINGS, REQUIRE_ANY_CLIENT);
     Subscribe(&AuthenticationServer::HandleDisconnect, MSGTYPE_DISCONNECT, REQUIRE_ANY_CLIENT);
     Subscribe(&AuthenticationServer::HandleAuthCharacter, MSGTYPE_AUTHCHARACTER, REQUIRE_ANY_CLIENT);
-    Subscribe(&AuthenticationServer::HandleStatusUpdate, MSGTYPE_CLIENTSTATUS, REQUIRE_ANY_CLIENT);
+    Subscribe(&AuthenticationServer::HandleStatusUpdate, MSGTYPE_CLIENTSTATUS, REQUIRE_ANY_CLIENT | REQUIRE_ACTOR);
 }
 
 AuthenticationServer::~AuthenticationServer()
