@@ -389,9 +389,16 @@ bool UpdaterEngine::CheckUpdater()
     }
 
     // Compare Versions.
-    return(config->UpdatePlatform() &&
-          (config->GetNewConfig()->GetUpdaterVersionLatestMajor() > UPDATER_VERSION_MAJOR) &&
-          (config->GetNewConfig()->GetUpdaterVersionLatestMinor() > UPDATER_VERSION_MINOR));        
+    if(!config->UpdatePlatform()) return false;
+    if(config->GetNewConfig()->GetUpdaterVersionLatestMajor() > UPDATER_VERSION_MAJOR)
+    {
+    	return true;
+    }
+    else if(config->GetNewConfig()->GetUpdaterVersionLatestMajor() == UPDATER_VERSION_MAJOR)
+    {
+        return (config->GetNewConfig()->GetUpdaterVersionLatestMinor() > UPDATER_VERSION_MINOR);
+    }
+    return false;
 }
 
 bool UpdaterEngine::CheckGeneral()
