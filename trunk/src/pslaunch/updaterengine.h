@@ -34,13 +34,22 @@
 #include "util/singleton.h"
 
 /* To be incremented every time we want to make an update. */
-#define UPDATER_VERSION 2.97
+#define UPDATER_VERSION 3.01
 
 struct iConfigManager;
 struct iVFS;
 
-#define UPDATER_VERSION_MAJOR 2
-#define UPDATER_VERSION_MINOR 99
+#define UPDATER_VERSION_MAJOR 3
+#define UPDATER_VERSION_MINOR 01
+
+#ifdef CS_PLATFORM_WIN32
+	#define SELFUPDATER_TEMPFILE_POSTFIX ".tmp.exe"
+	#define SELFUPDATER_POSTFIX 		 ".exe"
+#else
+	#define SELFUPDATER_TEMPFILE_POSTFIX ".tmp.bin"
+	#define SELFUPDATER_POSTFIX 		 ".bin"
+#endif
+
 
 class InfoShare
 {
