@@ -35,13 +35,6 @@
 #include <shlobj.h>
 #endif
 
-#define CHECK_QUIT \
-    if(CheckQuit()) \
-    { \
-        infoShare->SetCancelUpdater(false); \
-        return; \
-    } \
-
 UpdaterEngine::UpdaterEngine(csStringArray& args, iObjectRegistry* object_reg, const char* appName)
 {
     InfoShare *is = new InfoShare();
@@ -225,9 +218,10 @@ void UpdaterEngine::CheckForUpdates()
         }
 
         return;
+    } else {
+    	printf("No updates needed!\n");
     }
-
-    printf("No updates needed!\nChecking for updates to all files: ");
+    printf("Checking for updates to all files: ");
 
     // Check for normal updates.
     if(CheckGeneral())
@@ -519,93 +513,134 @@ csRef<iDocumentNode> UpdaterEngine::GetRootNode(const char* nodeName, csRef<iDoc
     return root;
 }
 
-#ifdef CS_PLATFORM_WIN32
-
+/**
+ * This function updates the pslaunch application and updater software by
+ * downloading a new version, checking the MD5 sum, unzip the application
+ * to a temporary file, executing the temporary updater and switching in
+ * the new updater and executes the new one in turn.
+ */
 bool UpdaterEngine::SelfUpdate(int selfUpdating)
 {
-    // Info for CreateProcess.
-    STARTUPINFO siStartupInfo;
-    PROCESS_INFORMATION piProcessInfo;
-    memset(&siStartupInfo, 0, sizeof(siStartupInfo));
-    memset(&piProcessInfo, 0, sizeof(piProcessInfo));
-    siStartupInfo.cb = sizeof(siStartupInfo);
+	#ifdef CS_PLATFORM_WIN32
+		// Info for CreateProcess.
+		STARTUPINFO siStartupInfo;
+		PROCESS_INFORMATION piProcessInfo;
+		memset(&siStartupInfo, 0, sizeof(siStartupInfo));
+		memset(&piProcessInfo, 0, sizeof(piProcessInfo));
+		siStartupInfo.cb = sizeof(siStartupInfo);
+	#endif
 
     // Check what stage of the update we're in.
     switch(selfUpdating)
     {
-    case 1: // We've downloaded the new file and executed it.
+    	case 1: // We've downloaded the new file and executed it.
         {
             PrintOutput("Copying new files!\n");
 
-            // Construct executable names.
-            csString realName = appName;
-            csString dupeName = appName;
-            realName.Append(".exe");
-            dupeName.Append("2.exe");
+			// Construct executable names.
+			csString realName = appName;
+			csString tempName = appName;
+			realName.Append(SELFUPDATER_POSTFIX);
+			tempName.Append(SELFUPDATER_TEMPFILE_POSTFIX);
 
-            // Delete the old updater file and copy the new in place.
-            while(!fileUtil->RemoveFile("/this/" + realName))
-            {
-                csSleep(50);
-            }
-            fileUtil->CopyFile("/this/" + dupeName, "/this/" + realName, true, true);
+			#ifdef CS_PLATFORM_MACOSX
+				realName = appName;
+				tempName = appName;
+				realName.AppendFmt(".app/Contents/MacOS/%s_static", appName.GetData());
+				tempName.AppendFmt(".app/Contents/MacOS/%s_tmp_static", tempName.GetData());
+			#endif
+
+			// Delete the old updater file and copy the new in place.
+			while(!fileUtil->RemoveFile("/this/" + realName))
+			{
+				csSleep(50);
+			}
+            fileUtil->CopyFile("/this/" + tempName, "/this/" + realName, true, true);
 
             // Copy any art and data.
-            if(hasGUI)
-            {
-              csString zip = appName;
-              zip.AppendFmt(config->GetCurrentConfig()->GetPlatform());
-              zip.AppendFmt(".zip");
+			csString zip = appName;
+			zip.AppendFmt("%s.zip", config->GetCurrentConfig()->GetPlatform());
 
-              // Mount zip
-              csRef<iDataBuffer> realZipPath = vfs->GetRealPath("/this/" + zip);
-              vfs->Mount("/zip", realZipPath->GetData());
+			// Mount zip
+			csRef<iDataBuffer> realZipPath = vfs->GetRealPath("/this/" + zip);
+			vfs->Mount("/zip", realZipPath->GetData());
 
-              csString artPath = "/art/";
-              artPath.AppendFmt("%s.zip", appName.GetData());
-              fileUtil->CopyFile("/zip" + artPath, "/this/" + artPath, true, false, true);
+			csString artPath = "/art/";
+			artPath.AppendFmt("%s.zip", appName.GetData());
+			fileUtil->CopyFile("/zip" + artPath, "/this/" + artPath, true, false, true);
 
-              csString dataPath = "/data/gui/";
-              dataPath.AppendFmt("%s.xml", appName.GetData());
-              fileUtil->CopyFile("/zip" + dataPath, "/this/" + dataPath, true, false, true);
+			csString dataPath = "/data/gui/";
+			dataPath.AppendFmt("%s.xml", appName.GetData());
+			fileUtil->CopyFile("/zip" + dataPath, "/this/" + dataPath, true, false, true);
 
-              vfs->Unmount("/zip", realZipPath->GetData());
-            }
+			vfs->Unmount("/zip", realZipPath->GetData());
 
-            // Create a new process of the updater.
-            CreateProcess(realName.GetData(), "selfUpdateSecond", 0, 0, false, CREATE_DEFAULT_ERROR_MODE, 0, 0, &siStartupInfo, &piProcessInfo);
+			// Create a process of the new updater.
+			#ifdef CS_PLATFORM_WIN32
+				CreateProcess(realName.GetData(), "selfUpdateSecond", 0, 0, false, CREATE_DEFAULT_ERROR_MODE, 0, 0, &siStartupInfo, &piProcessInfo);
+			#else
+				if(fork() == 0) {
+					#ifdef CS_PLATFORM_MACOSX
+						execl(realName, realName, "selfUpdateSecond", NULL);
+					#else
+						execl("./"+realName, "./"+realName, "selfUpdateSecond", NULL);
+					#endif
+				}
+			#endif
+
             return true;
         }
-    case 2: // We're now running the new updater in the correct location.
+
+    	case 2: // We're now running the new updater in the correct location.
         {
             // Clean up left over files.
             PrintOutput("\nCleaning up!\n\n");
 
-            // Construct zip name.
+			csString tempName = appName;
+			tempName.Append(SELFUPDATER_TEMPFILE_POSTFIX);
+
+			#ifdef CS_PLATFORM_MACOSX
+				tempName = appName;
+				tempName.AppendFmt(".app/Contents/MacOS/%s_tmp_static", tempName.GetData());
+			#endif
+
+			// Construct zip name.
             csString zip = appName;
-            zip.AppendFmt(config->GetCurrentConfig()->GetPlatform());
-            zip.AppendFmt(".zip");
+            zip.AppendFmt("%s.zip", config->GetCurrentConfig()->GetPlatform());
 
             // Remove updater zip.
             fileUtil->RemoveFile("/this/" + zip); 
 
             // Remove temp updater file.
-            while(!fileUtil->RemoveFile("/this/" + appName + "2.exe"))
-            {
-                csSleep(50);
-            }
+			while(!fileUtil->RemoveFile("/this/" + tempName))
+			{
+				csSleep(50);
+			}
 
             GetConfig()->SetSelfUpdating(false);
             return false;
         }
-    default: // We need to extract the new updater and execute it.
+
+    	default: // We need to extract the new updater and execute it.
         {
             PrintOutput("Beginning self update!\n");
 
+			// Construct executable names.
+			csString realName = appName;
+			csString tempName = appName;
+			realName.Append(SELFUPDATER_POSTFIX);
+			tempName.Append(SELFUPDATER_TEMPFILE_POSTFIX);
+
+			#ifdef CS_PLATFORM_MACOSX
+				realName = appName;
+				tempName = appName;
+				realName.AppendFmt(".app/Contents/MacOS/%s_static", appName.GetData());
+				tempName.AppendFmt(".app/Contents/MacOS/%s_tmp_static", tempName.GetData());
+			#endif
+
             // Construct zip name.
             csString zip = appName;
-            zip.AppendFmt(config->GetCurrentConfig()->GetPlatform());
-            zip.AppendFmt(".zip");
+            zip.AppendFmt("%s.zip", config->GetCurrentConfig()->GetPlatform());
 
             if(vfs->Exists("/this/" + zip))
             {
@@ -637,104 +672,48 @@ bool UpdaterEngine::SelfUpdate(int selfUpdating)
             csRef<iDataBuffer> realZipPath = vfs->GetRealPath("/this/" + zip);
             vfs->Mount("/zip", realZipPath->GetData());
 
-            csString from = "/zip/";
-            from.AppendFmt("%s.exe", appName.GetData());
-            appName.AppendFmt("2.exe");
+            // Replace the starter script in the unix environment.
+			#if defined(CS_PLATFORM_UNIX) && !defined(CS_PLATFORM_MACOSX)
+            fileUtil->CopyFile("/zip/" + appName, "/this/" + appName, true, true);
+			#endif
 
-            fileUtil->CopyFile(from, "/this/" + appName, true, true);
+            // Update mac specific files.
+			#ifdef CS_PLATFORM_MACOSX
+            csStringArray macUpdateFiles;
+            macUpdateFiles.Push(".app/Contents/Resources/English.lproj/InfoPlist.strings");
+            macUpdateFiles.Push(".app/Contents/Resources/setup.icns");
+            macUpdateFiles.Push(".app/Contents/Info.plist");
+            macUpdateFiles.Push(".app/Contents/PkgInfo");
+            macUpdateFiles.Push(".app/Contents/version.plist");
+
+            for(int i=0; i<macUpdateFiles.GetSize(); i++)
+            {
+                fileUtil->CopyFile("/zip/" + appName + macUpdateFiles.Get(i), "/this/" + appName + macUpdateFiles.Get(i), true, true);
+            }
+			#endif
+
+
+            fileUtil->CopyFile("/zip/" + realName, "/this/" + tempName, true, true);
             vfs->Unmount("/zip", realZipPath->GetData());
 
-            // Create a new process of the updater.
-            CreateProcess(appName.GetData(), "selfUpdateFirst", 0, 0, false, CREATE_DEFAULT_ERROR_MODE, 0, 0, &siStartupInfo, &piProcessInfo);
-            GetConfig()->SetSelfUpdating(true);
-            return true;
-        }
-    }
-}
+            // Create a new process of the updater temporary instance so we could switch in
+            // the new executable.
+			#ifdef CS_PLATFORM_WIN32
+				CreateProcess(tempName.GetData(), "selfUpdateFirst", 0, 0, false, CREATE_DEFAULT_ERROR_MODE, 0, 0, &siStartupInfo, &piProcessInfo);
+			#else
+	            // Move file permissions to the temp file so it could be copied to the correct
+				// file in next step of the selfUpdater.
+	            csRef<FileStat> fs = fileUtil->StatFile(realName);
+	            fileUtil->SetPermissions(tempName, fs);
 
-#else
-
-bool UpdaterEngine::SelfUpdate(int selfUpdating)
-{
-    // Check what stage of the update we're in.
-    switch(selfUpdating)
-    {
-    case 2: // We're now running the new updater in the correct location.
-        {
-            // Clean up left over files.
-            PrintOutput("\nCleaning up!\n\n");
-
-            // Construct zip name.
-            csString zip = appName;
-            zip.AppendFmt("%s", config->GetCurrentConfig()->GetPlatform());
-            zip.AppendFmt(".zip");
-
-            // Remove updater zip.
-            fileUtil->RemoveFile("/this/" + zip); 
-
-            GetConfig()->SetSelfUpdating(false);
-
-            return false;
-        }
-    default: // We need to extract the new updater and execute it.
-        {
-            PrintOutput("Beginning self update!\n");
-
-            // Construct zip name.
-            csString zip = appName;
-            zip.AppendFmt("%s", config->GetCurrentConfig()->GetPlatform());
-            zip.AppendFmt(".zip");
-
-            if(vfs->Exists("/this/" + zip))
-            {
-                fileUtil->RemoveFile("/this/" + zip);
-            }
-
-            // Download new updater file.
-            downloader->DownloadFile(zip, zip, false, true);         
-
-            // Check md5sum is correct.
-            csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + zip, true);
-            if (!buffer)
-            {
-                PrintOutput("Could not get MD5 of updater zip!!\n");
-                return false;
-            }
-
-            csMD5::Digest md5 = csMD5::Encode(buffer->GetData(), buffer->GetSize());
-
-            csString md5sum = md5.HexString();
-
-            if(!md5sum.Compare(config->GetNewConfig()->GetUpdaterVersionLatestMD5()))
-            {
-                PrintOutput("md5sum of updater zip does not match correct md5sum!!\n");
-                return false;
-            }
-
-            csString path = appName;
-#if defined(CS_PLATFORM_MAXOSX)
-            path.AppendFmt(".app/Contents/MacOS/%s_static", appName.GetData());
-#endif
-            //save previous permissions
-            csRef<FileStat> fs = fileUtil->StatFile("/this/" + path);
-
-            //TODO: make a proper extraction without unzip dependancy (which isn't even assured to be there)
-            //see the windows part above. maybe also merge the two pieces of code.
-            csString cmd;
-            csRef<iDataBuffer> thisPath = vfs->GetRealPath("/this/");
-            cmd.Format("cd %s; unzip -oqq %s", thisPath->GetData(), zip.GetData());
-            int res = system(cmd);
-            if(res == -1)
-            {
-                printf("system(%s) failed!\n", cmd.GetData());
-            }
-
-            //restore previous file permissions
-            fileUtil->SetPermissions("/this/" + path, fs);
-
-            // Create a new process of the updater and exit.
-            if(fork() == 0)
-                execl(path, path, "selfUpdateSecond", NULL);
+				if(fork() == 0) {
+					#ifdef CS_PLATFORM_MACOSX
+						execl(tempName, tempName, "selfUpdateFirst", NULL);
+					#else
+						execl("./"+tempName, "./"+tempName, "selfUpdateFirst", NULL);
+					#endif
+				}
+			#endif
 
             GetConfig()->SetSelfUpdating(true);
             return true;
@@ -742,18 +721,14 @@ bool UpdaterEngine::SelfUpdate(int selfUpdating)
     }
 }
 
-#endif
-
-
+/*
+* This function updates our non-updater files to the latest versions,
+* writes new files and deletes old files.
+* This may take several iterations of patching.
+* After each iteration we need to update updaterinfo.xml.bak as well as the array.
+*/
 void UpdaterEngine::GeneralUpdate()
 {
-    /*
-    * This function updates our non-updater files to the latest versions,
-    * writes new files and deletes old files.
-    * This may take several iterations of patching.
-    * After each iteration we need to update updaterinfo.xml.bak as well as the array.
-    */
-
     // Start by fetching the configs.
     csRefArray<ClientVersion>& oldCvs = config->GetCurrentConfig()->GetClientVersions();
     const csRefArray<ClientVersion>& newCvs = config->GetNewConfig()->GetClientVersions();
@@ -1355,7 +1330,11 @@ void UpdaterEngine::CheckMD5s(iDocumentNode* md5sums, csString& baseurl, bool ac
     csRef<iDocumentNodeIterator> md5nodes = md5sums->GetNodes("md5sum");
     while(md5nodes->HasNext())
     {
-        CHECK_QUIT
+        if(CheckQuit())
+        {
+            infoShare->SetCancelUpdater(false);
+            return;
+        }
         csRef<iDocumentNode> node = md5nodes->Next();
 
         csString platform = node->GetAttributeValue("platform");
@@ -1434,8 +1413,13 @@ void UpdaterEngine::CheckMD5s(iDocumentNode* md5sums, csString& baseurl, bool ac
                 infoShare->SetUpdateNeeded(true);
                 while(infoShare->GetUpdateNeeded())
                 {
-                    CHECK_QUIT
-                        csSleep(100);
+                    if(CheckQuit())
+                    {
+                        infoShare->SetCancelUpdater(false);
+                        return;
+                    }
+
+                    csSleep(100);
                 }
                 c = infoShare->GetPerformUpdate() ? 'y' : 'n';
                 infoShare->SetPerformUpdate(false);
@@ -1455,7 +1439,11 @@ void UpdaterEngine::CheckMD5s(iDocumentNode* md5sums, csString& baseurl, bool ac
         {
             for(size_t i=0; i<failedSize; i++)
             {
-                CHECK_QUIT
+                if(CheckQuit())
+                {
+                    infoShare->SetCancelUpdater(false);
+                    return;
+                }
 
                 if(updateinside.Get(i))
                 {
@@ -1534,7 +1522,13 @@ void UpdaterEngine::CheckMD5s(iDocumentNode* md5sums, csString& baseurl, bool ac
 
             if(selfUpdateNeeded)
             {
-                SelfUpdate(false);
+               SelfUpdate(false);
+               if(hasGUI)
+               {
+                   // If we're going to self-update, close the GUI.
+            	   infoShare->SetExitGUI(true);
+                   infoShare->Sync();
+               }
             }
         }
     }
