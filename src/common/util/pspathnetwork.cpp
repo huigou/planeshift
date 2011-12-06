@@ -358,6 +358,17 @@ int psPathNetwork::FindWaypointGroup(const char * groupName)
     return -1;
 }
 
+psPathPoint* psPathNetwork::FindPathPoint(int id)
+{
+    for (size_t p = 0; p < paths.GetSize()-1; p++)
+    {
+        psPathPoint* point = paths[p]->FindPoint(id);
+        if (point) return point;
+    }
+
+    return NULL;
+}
+
 
 psPath *psPathNetwork::FindNearestPath(csVector3& v,iSector *sector, float range, float * found_range, int * index, float * fraction)
 {

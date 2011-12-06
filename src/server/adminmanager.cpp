@@ -2802,6 +2802,7 @@ AdminCmdDataPath::AdminCmdDataPath(AdminManager* msgManager, MsgEntry* me, psAdm
     subCommandList.Push("help","[sub command]");
     subCommandList.Push("hide","[points|waypoints]");
     subCommandList.Push("info","[<radius>]");
+    subCommandList.Push("move","[wp|path] <id>|<name>");
     subCommandList.Push("radius","<new radius> [<radius>]");
     subCommandList.Push("remove","[<radius>]");
     subCommandList.Push("rename","[<radius>] <name>");
@@ -2900,6 +2901,40 @@ AdminCmdDataPath::AdminCmdDataPath(AdminManager* msgManager, MsgEntry* me, psAdm
         else if (subCmd == "info")
         {
             radius = words.GetFloat(index++);
+        }
+        // move reqire at least one further word
+        else if (subCmd == "move")
+        {
+            csString wpOrPath = words[index++];
+            if (wpOrPath != "wp" && wpOrPath != "path")
+            {
+                ParseError(me,"You have to select either wp or path.");
+            }
+            else
+            {
+                wpOrPathIsWP = (wpOrPath == "wp");
+
+                int id = -1;
+                if (words.GetCount() <= index)
+                {
+                    ParseError(me,"Expected either id or name.");
+                } else if (words.GetInt(index,id)) // Is it an id?
+                {
+                    // We got an id
+                    waypointPathIndex = id;
+                    wpOrPathIsIndex = true;
+                } else
+                {
+                    // We got a name
+                    waypointPathName = words[index];
+                    wpOrPathIsIndex = false;
+ 
+                    if ( !wpOrPathIsWP )
+                    {
+                        ParseError(me,"Name not supported for points.");
+                    }
+                }
+            }
         }
         else if (subCmd == "point")
         {
@@ -6256,7 +6291,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
                                      "Found point(%d) %d of path: %s(%d) at range %.2f\n"
                                      "Start WP: %s(%d) End WP: %s(%d)\n"
                                      "Flags: %s",
-                                     pathPoint->GetID(),indexPoint,pathPoint->GetName(),
+                                     point->GetID(),indexPoint,pathPoint->GetName(),
                                      pathPoint->GetID(),rangePoint,
                                      pathPoint->start->GetName(),pathPoint->start->GetID(),
                                      pathPoint->end->GetName(),pathPoint->end->GetID(),
@@ -6280,6 +6315,86 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
                                      path->GetFlags().GetDataSafe());
         }
 
+    }
+    else if (data->subCmd == "move")
+    {
+        if (data->wpOrPathIsWP) // Request to move a waypoint
+        {
+            Waypoint* wp = NULL; 
+
+            if (data->wpOrPathIsIndex)
+            {
+                wp = pathNetwork->FindWaypoint(data->waypointPathIndex);
+            }
+            else
+            {
+                wp = pathNetwork->FindWaypoint(data->waypointPathName.GetDataSafe());
+            }
+
+            if (wp)
+            {
+                if (wp->Adjust(db,myPos,mySectorName))
+                {
+                    if (client->WaypointIsDisplaying())
+                    {
+                        psEffectMessage msg(me->clientnum,"admin_waypoint",myPos,0,0,client->PathGetEffectID(),wp->GetRadius());
+                        msg.SendMessage();
+                    }
+
+                    psserver->SendSystemInfo(me->clientnum,
+                                             "Moved waypoint %s(%d)",
+                                             wp->GetName(), wp->GetID());
+                }
+            }
+            else
+            {
+                if (data->wpOrPathIsIndex)
+                {
+                    psserver->SendSystemInfo(me->clientnum, "No waypoint found for index: %d", data->waypointPathIndex );
+                }
+                else
+                {
+                    psserver->SendSystemInfo(me->clientnum, "No waypoint found for name: %s", data->waypointPathName.GetData() );
+                }
+                return;
+            }
+        }
+        else  // Request to move a path point
+        {
+            psPathPoint* point = NULL;
+
+            if (data->wpOrPathIsIndex)
+            {
+                point = pathNetwork->FindPathPoint(data->waypointPathIndex);
+            }
+            else
+            {
+                psserver->SendSystemInfo(me->clientnum, "Not supported." );
+                // point = pathNetwork->FindPathPoint(data->waypointPathName.GetDataSafe());
+                return;
+            }
+
+            if (point)
+            {
+                if (point->Adjust(db,myPos,mySectorName))
+                {
+                    if (client->PathIsDisplaying())
+                    {
+                        psEffectMessage msg(me->clientnum,"admin_path_point",myPos,0,0,client->PathGetEffectID(),point->GetRadius());
+                        msg.SendMessage();
+                    }
+
+                    psserver->SendSystemInfo(me->clientnum,
+                                             "Adjusted point(%d)",
+                                             point->GetID());
+                }
+            }
+            else
+            {
+                psserver->SendSystemInfo(me->clientnum, "No point found" );
+                return;
+            }
+        }
     }
     else if (data->subCmd == "select")
     {

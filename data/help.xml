@@ -1424,6 +1424,7 @@ Creates a clone of the named NPC at your current location.</content>
 /path hide
 /path help
 /path info
+/path move
 /path point
 /path remove
 /path rename
@@ -1524,6 +1525,13 @@ Hide all points. If waypoints or points are specified only either points or wayp
           <content type="text">/path info [&lt;radius&gt;]
 
 Show info about the nearest path or waypoint.</content>
+        </Contents>
+      </topic>
+      <topic name="/path move">
+        <Contents>
+          <content type="text">/path move [wp|path] &lt;id&gt;|&lt;name&gt;
+
+Move the waypoint or path point to your current position.</content>
         </Contents>
       </topic>
       <topic name="/path point">
