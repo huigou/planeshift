@@ -115,6 +115,11 @@ public:
      * Find the index for the given group name, return -1 if no group is found.
      */
     int FindWaypointGroup(const char * groupName);
+
+    /**
+     * Find waypoint by id
+     */
+    psPathPoint* FindPathPoint(int id);
     
     /**
      * Find the path nearest to a point in the world.

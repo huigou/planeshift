@@ -2214,6 +2214,8 @@ public:
     csString waypointFlags; ///< waypoint flags
     csString pathFlags; ///< path flags
     csString cmdTarget; ///< 'W' or 'P' as a target for hide/show
+    int waypointPathIndex; ///< Index of the wp or point
+    bool wpOrPathIsIndex; ///< True when an index is used.
 
 
     /** @brief Creates obj for specified command that manipulate paths.

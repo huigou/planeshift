@@ -207,6 +207,9 @@ public:
     /// Get all points in the given sector for this path
     size_t FindPointsInSector(iEngine * engine, iSector *sector, csList<psPathPoint*>& list);
 
+    /// Get Path Point by Index
+    psPathPoint* FindPoint(int id);
+
 protected:
     /// Do the actual precalculate work
     virtual void PrecalculatePath(psWorld * world, iEngine *engine) = 0;

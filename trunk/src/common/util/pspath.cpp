@@ -652,6 +652,22 @@ size_t psPath::FindPointsInSector(iEngine * engine, iSector *sector, csList<psPa
     return count;
 }
 
+psPathPoint* psPath::FindPoint(int id)
+{
+    size_t count = 0;
+    for (size_t i = 0; i < points.GetSize(); i++)
+    {
+        psPathPoint* point = points[i];
+        if (point->GetID() == id)
+        {
+            return point;
+        }
+    }
+    return NULL;
+
+}
+
+
 
 
 //---------------------------------------------------------------------------
