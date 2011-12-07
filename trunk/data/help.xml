@@ -1529,7 +1529,7 @@ Show info about the nearest path or waypoint.</content>
       </topic>
       <topic name="/path move">
         <Contents>
-          <content type="text">/path move [wp|path] &lt;id&gt;|&lt;name&gt;
+          <content type="text">/path move [wp|point] &lt;id&gt;|&lt;name&gt;
 
 Move the waypoint or path point to your current position.</content>
         </Contents>
