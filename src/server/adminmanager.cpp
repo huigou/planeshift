@@ -2802,7 +2802,7 @@ AdminCmdDataPath::AdminCmdDataPath(AdminManager* msgManager, MsgEntry* me, psAdm
     subCommandList.Push("help","[sub command]");
     subCommandList.Push("hide","[points|waypoints]");
     subCommandList.Push("info","[<radius>]");
-    subCommandList.Push("move","[wp|path] <id>|<name>");
+    subCommandList.Push("move","[wp|point] <id>|<name>");
     subCommandList.Push("radius","<new radius> [<radius>]");
     subCommandList.Push("remove","[<radius>]");
     subCommandList.Push("rename","[<radius>] <name>");
@@ -2906,9 +2906,9 @@ AdminCmdDataPath::AdminCmdDataPath(AdminManager* msgManager, MsgEntry* me, psAdm
         else if (subCmd == "move")
         {
             csString wpOrPath = words[index++];
-            if (wpOrPath != "wp" && wpOrPath != "path")
+            if (wpOrPath != "wp" && wpOrPath != "point")
             {
-                ParseError(me,"You have to select either wp or path.");
+                ParseError(me,"You have to select either wp or point.");
             }
             else
             {
