@@ -10941,7 +10941,8 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
                 {
                     //get the quest data from the cache so we can print it's name without accessing the db again
                     psQuest* currQuest = psserver->GetCacheManager()->GetQuestByID(result[currResult].GetUInt32("quest_id"));
-                    csString QuestName = currQuest->GetName();
+                    //check if the quest is valid else show it's id
+                    csString QuestName = currQuest ? csString(currQuest->GetName()) : csString("Missing quest: ") + result[currResult]["quest_id"];
                     if(!data->questName.Length() || QuestName.StartsWith(data->questName,true)) //check if we are searching a particular quest
                         psserver->SendSystemInfo(me->clientnum, "Quest name: %s. Status: %s", QuestName.GetData(), result[currResult]["status"]);
                 }
