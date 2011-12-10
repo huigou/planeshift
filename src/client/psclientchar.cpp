@@ -338,9 +338,10 @@ void psClientCharManager::SetTarget(GEMClientObject *newTarget, const char *acti
         if (gemActor)
             PawsManager::GetSingleton().Publish("sTargetName",gemActor->GetName(false) );
         else
+        {
             PawsManager::GetSingleton().Publish("sTargetName",target?target->GetName():"" );
-        if (!target)
             PawsManager::GetSingleton().Publish("fVitalValue0:Target",0);
+        }
     }
 
     // delete the old target effect
