@@ -151,7 +151,7 @@ void LogMessage (const char* file, int line, const char* function,
             msgid.Format("<%s:%d %s SEVERE>\n",file, line, function);
         }
         else
-			msgid = ""; // File, Line, Function is too much spam on the console for debug output
+            msgid = ""; // File, Line, Function is too much spam on the console for debug output
             //msgid.Format("<%s:%d %s>\n", file, line, function);
 
         csString description;
@@ -165,7 +165,7 @@ void LogMessage (const char* file, int line, const char* function,
         //        csReportV (logger, severity, msgid, msg, arg);
         //        va_end(arg);
         CPrintf(con,msgid.GetDataSafe());
-	// For safety, print to %s:
+    // For safety, print to %s:
         CPrintf(con,"%s",description.GetDataSafe());
 
         /* ERR and BUG will be loged to errorLog by the CPrintf
@@ -362,51 +362,51 @@ LogCSV::LogCSV(iConfigManager* configmanager, iVFS* vfs)
              
 void LogCSV::StartLog(const char* logfile, iVFS* vfs, const char* header, size_t maxSize, csRef<iFile>& csvFile)
 {
-		bool writeHeader = false;
+        bool writeHeader = false;
         if (!vfs->Exists(logfile))
         {
             csvFile = vfs->Open(logfile,VFS_FILE_WRITE);
-			writeHeader = true;            
+            writeHeader = true;            
         }
         else
         {            
             csvFile = vfs->Open(logfile,VFS_FILE_APPEND);
             
-			// Need to rotate log
+            // Need to rotate log
             if (csvFile && csvFile->GetSize() > maxSize)
             {
                 CPrintf(CON_ERROR, "Log File %s is too big! Current size is: %u. Rotating log.", logfile, csvFile->GetSize());
                 
-				csvFile = NULL;
+                csvFile = NULL;
                 
-				// Rolling history
-				for (int index = 10; index > 0; index--)
-				{
+                // Rolling history
+                for (int index = 10; index > 0; index--)
+                {
                     csString src(logfile), dst(logfile);
                     src.Append(index);
                     dst.Append(index + 1);
-					// Rotate the files (move file[index] to file[index+1])
-					if (vfs->Exists(src))
-					{
-						csRef<iDataBuffer> existingData = vfs->ReadFile(src, false);
-						vfs->WriteFile(dst, existingData->GetData(), existingData->GetSize());
-					}
-				}
+                    // Rotate the files (move file[index] to file[index+1])
+                    if (vfs->Exists(src))
+                    {
+                        csRef<iDataBuffer> existingData = vfs->ReadFile(src, false);
+                        vfs->WriteFile(dst, existingData->GetData(), existingData->GetSize());
+                    }
+                }
                 
-				csRef<iDataBuffer> existingData = vfs->ReadFile(logfile, false);
+                csRef<iDataBuffer> existingData = vfs->ReadFile(logfile, false);
                 
                 csString temp(logfile);
-				vfs->WriteFile(temp + "1", existingData->GetData(), existingData->GetSize());
+                vfs->WriteFile(temp + "1", existingData->GetData(), existingData->GetSize());
                 csvFile = vfs->Open(logfile,VFS_FILE_WRITE);
                 
-				writeHeader = true;
+                writeHeader = true;
             }
         }
-		if(csvFile.IsValid() && writeHeader)
-		{
+        if(csvFile.IsValid() && writeHeader)
+        {
             csvFile->Write(header, strlen(header));
             csvFile->Flush();
-		}
+        }
 }
 
 void LogCSV::Write(int type, csString& text)
