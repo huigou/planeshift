@@ -82,10 +82,10 @@
   <item orig="Magic Skills List:" trans="" />
   <item orig="Quest" trans="" />
   <item orig="House:" trans="Casa:" />
+  <item orig="First name must contain more than two letters" trans="" />
   <item orig="System Base" trans="Sistema Base" />
   <item orig="10 Tria" trans="" />
   <item orig="Withdraw" trans="Preleva" />
-  <item orig="%s from %s: %s" trans="%s da %s: %s" />
   <item orig="%s from %s: %s" trans="%s da %s: %s" />
   <item orig="Instant Cast" trans="" />
   <item orig="H:" trans="" />
@@ -128,6 +128,10 @@
   <item orig="set invisible" trans="" />
   <item orig="Please enter a first name" trans="" />
   <item orig="You currently have no petitions." trans="Al momento non hai petizioni." />
+  <item orig="A first and last name are required. You can use any alphabetic (A-Z) in your name, but no numbers. Each name must be between 3 and 27 letters.
+The name should follow the rules here:
+http://www.planeshift.it/naming.html 
+If your name is inappropriate, a Game Master (GM) will change it." trans="" />
   <item orig="Edit Mode (F2)" trans="" />
   <item orig="Lock/Unlock" trans="" />
   <item orig="each values 10 Tria" trans="" />
@@ -139,9 +143,9 @@
   <item orig="M. Stamina" trans="Stamina M." />
   <item orig="Show Result Messages on screen" trans="" />
   <item orig="The server is locked!" trans="Il server è bloccato!" />
+  <item orig="Weak Pickupable" trans="" />
   <item orig="Mount" trans="" />
   <item orig="Quest &amp; Events Notebook" trans="" />
-  <item orig="Are you sure you want to upload?  You have 2 CP left." trans="" />
   <item orig="Remove!" trans="" />
   <item orig="Enable background color" trans="" />
   <item orig="You will now ignore %s." trans="Da ora ignorerai %s." />
@@ -172,6 +176,7 @@
   <item orig="NPC_my Alignment" trans="Allineamento NPC_my" />
   <item orig="Skin Colour" trans="Colore Pelle" />
   <item orig="Master:" trans="" />
+  <item orig="Last name must contain more than two letters" trans="" />
   <item orig="View Stats" trans="" />
   <item orig="NPC_me text colour" trans="Colore testo NPC_me" />
   <item orig="Details" trans="Dettagli" />
@@ -203,6 +208,7 @@
   <item orig="Alliance" trans="Alleanza" />
   <item orig="Are you sure you want to upload?  " trans="" />
   <item orig="Log Filename:" trans="" />
+  <item orig="Sounds are not active!" trans="" />
   <item orig="Dynamic Follow" trans="Inseguimento Dinamico" />
   <item orig="NPC_my text colour" trans="Colore testo NPC_my" />
   <item orig="Full Mesh" trans="Modello completo" />
@@ -424,6 +430,7 @@ chiamato " />
   <item orig="Group Alignment" trans="Allineamento gruppo" />
   <item orig="Tell" trans="" />
   <item orig="Sei sicuro di voler caricare il tuo personaggio?" trans="" />
+  <item orig="Save the password in configurations files for easier login" trans="" />
   <item orig="Exchange" trans="Scambia" />
   <item orig="Combat Skills List:" trans="" />
   <item orig="GM Spawn interface" trans="" />
@@ -578,6 +585,7 @@ chiamato " />
   <item orig="Confirmations" trans="" />
   <item orig="at &quot;http://wiki.services.openoffice.org/wiki/Dictionaries&quot; and" trans="" />
   <item orig="Flat" trans="" />
+  <item orig="Please enter a last name" trans="" />
   <item orig="Unmute Player" trans="" />
   <item orig="Online only" trans="Solo online" />
   <item orig="Pub notes" trans="Note publ" />
@@ -629,7 +637,6 @@ chiamato " />
   <item orig="You tell" trans="" />
   <item orig="Bloody" trans="" />
   <item orig="Octas available to withdraw." trans="" />
-  <item orig="Are you sure you want to upload?  You have 16 CP left." trans="" />
   <item orig="Please select a race" trans="" />
   <item orig="You must be assigned to a petition in order to close it." trans="" />
   <item orig="Helm" trans="" />
@@ -640,6 +647,7 @@ chiamato " />
   <item orig="Birth Event:" trans="Evento alla nascita:" />
   <item orig="Long Phrase Line Count" trans="" />
   <item orig="Describe the petition and how you&apos;ve helped" trans="" />
+  <item orig="You cannot have a negative CP value." trans="" />
   <item orig="Character description:" trans="Descrizione personaggio:" />
   <item orig="No" trans="" />
   <item orig="Combat messages regarding me" trans="Messaggi di combattimento riguardanti me" />
@@ -766,6 +774,7 @@ Per disabilitare questa funzione cancella tutto in questa finestra usando il bot
   <item orig="Mental Stamina" trans="" />
   <item orig="Create a New Character" trans="" />
   <item orig="M" trans="" />
+  <item orig="No more than 2 letters in a row allowed" trans="" />
   <item orig="Petition Text:" trans="Testo Petizione:" />
   <item orig="Me outline colour" trans="" />
   <item orig="Join default chan" trans="" />
@@ -883,6 +892,7 @@ Per disabilitare questa funzione cancella tutto in questa finestra usando il bot
   <item orig="Petitons are waiting." trans="Ci sono delle petizioni in attesa." />
   <item orig="npcinternal text colour" trans="" />
   <item orig="Boots" trans="" />
+  <item orig="Allow the client to send a newly hashed password to the server (check: http://tinyurl.com/5smsz5l )" trans="" />
   <item orig="Completed" trans="completate" />
   <item orig="none" trans="niente" />
   <item orig="Alternates" trans="" />
@@ -940,6 +950,7 @@ Per disabilitare questa funzione cancella tutto in questa finestra usando il bot
   <item orig="set infiniteinventory" trans="" />
   <item orig="Selected Events:" trans="" />
   <item orig="BPM" trans="" />
+  <item orig="Instruments" trans="" />
   <item orig="Greetings" trans="Saluti" />
   <item orig="Select a reward:" trans="Seleziona una ricompensa:" />
   <item orig="Ambient Volume" trans="Volume Ambiente" />
