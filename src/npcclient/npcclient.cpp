@@ -54,6 +54,7 @@
 
 #include "net/connection.h"
 #include "net/clientmsghandler.h"
+#include "net/messages.h"
 
 #include "engine/psworld.h"
 
@@ -162,19 +163,19 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, cons
     database = new psDatabase(object_reg);
 
     csString db_host, db_user, db_pass, db_name;
-	unsigned int db_port;
+    unsigned int db_port;
 
     db_host = configmanager->GetStr("PlaneShift.Database.npchost", "localhost");
     db_user = configmanager->GetStr("PlaneShift.Database.npcuserid", "planeshift");
     db_pass = configmanager->GetStr("PlaneShift.Database.npcpassword", "planeshift");
     db_name = configmanager->GetStr("PlaneShift.Database.npcname", "planeshift");
-	db_port = configmanager->GetInt("PlaneShift.Database.npcport", 0);
+    db_port = configmanager->GetInt("PlaneShift.Database.npcport", 0);
 
     Debug4(LOG_STARTUP,0,COL_BLUE "Database Host: '%s' User: '%s' Databasename: '%s'\n" COL_NORMAL,
       (const char*) db_host, (const char*) db_user, (const char*) db_name);
 
-	if (!database->Initialize(db_host, db_port, db_user, db_pass, db_name))
-	{
+    if (!database->Initialize(db_host, db_port, db_user, db_pass, db_name))
+    {
         Error2("Could not create database or connect to it: %s\n", database->GetLastError());
         delete database;
         return false;
@@ -963,7 +964,7 @@ void psNPCClient::SetEntityPos(EID eid, csVector3& pos, iSector* sector, Instanc
     }
     else
     {
-        CPrintf(CON_DEBUG, "Entity %s not found!\n", ShowID(eid));
+        CPrintf(CON_DEBUG, "SetEntityPos: Entity %s not found!\n", ShowID(eid));
     }
 }
 
@@ -1712,6 +1713,38 @@ void psNPCClient::UpdateTime(int minute, int hour, int day, int month, int year)
     Notify6(LOG_WEATHER,"The time is now %d:%02d %d-%d-%d.",
             gameHour,gameMinute,gameYear,gameMonth,gameDay);
 }
+
+iCelHPath* psNPCClient::ShortestPath(NPC* npc, const csVector3& from, iSector* fromSector, const csVector3& goal, iSector* goalSector)
+{
+    if (npc->IsDebugging(5))
+    {
+        // Seams like the getdebugmeshes destroy the path, so get a separate path for debug...
+        iCelHPath* path = GetNavStruct()->ShortestPath(from,fromSector,goal,goalSector);
+        csList<csSimpleRenderMesh>* list = path->GetDebugMeshes();
+        csList<csSimpleRenderMesh>::Iterator countIter(*list);
+        uint16_t count = 0;
+        while (countIter.HasNext())
+        {
+            count++;
+            countIter.Next();
+        }
+        
+        csList<csSimpleRenderMesh>::Iterator iter(*list);
+        uint16_t index = 0;
+        while (iter.HasNext())
+        {
+            csSimpleRenderMesh& simpleRenderMesh = iter.Next();
+            psSimpleRenderMeshMessage msg(0, connection->GetAccessPointers(), "NPC Path", index, count, fromSector, simpleRenderMesh);
+            msghandler->SendMessage(msg.msg);
+            index++;
+        }
+    }
+    
+    iCelHPath* path = GetNavStruct()->ShortestPath(from,fromSector,goal,goalSector);
+    return path;
+}
+
+
 
 void psNPCClient::CatchCommand(const char *cmd)
 {

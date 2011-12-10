@@ -891,7 +891,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
             case psNPCCommandsMessage::PCPT_TELEPORT:
             {
                 EID npc_eid = EID(msg->GetUInt32());
-                csVector3 pos = msg->GetVector();
+                csVector3 pos = msg->GetVector3();
                 float yrot = msg->GetFloat();
                 iSector* sector = msg->GetSector( 0, GetMsgStrings(), engine );
                 InstanceID instance = msg->GetUInt32();

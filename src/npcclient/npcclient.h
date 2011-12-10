@@ -41,6 +41,8 @@ struct iCollideSystem;
 #include "util/pspath.h"
 #include "util/pspathnetwork.h"
 
+#include "tools/celhpf.h"
+
 class  psDatabase;
 class  MsgHandler;
 class  psNetConnection;
@@ -434,6 +436,8 @@ public:
     //    psPFMaps*  GetMaps() { return PFMaps; }
 
     iCelHNavStruct*  GetNavStruct() { return navStruct; }
+
+    iCelHPath* ShortestPath (NPC* npc, const csVector3& from, iSector* fromSector, const csVector3& goal, iSector* goalSector);
 
     psWorld*  GetWorld() { return world; }
 

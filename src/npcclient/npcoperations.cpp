@@ -697,7 +697,7 @@ ScriptOperation::OperationResult MovementOperation::Run(NPC *npc, EventManager *
     }
 
 
-    path = npcclient->GetNavStruct()->ShortestPath(myPos,mySector,endPos,endSector);
+    path = npcclient->ShortestPath(npc, myPos,mySector,endPos,endSector);
     if(!path || !path->HasNext())
     {
         // failed to find a path between us and the target
@@ -754,7 +754,7 @@ void MovementOperation::Advance(float timedelta, NPC *npc, EventManager *eventmg
                         toString(myPos, mySector).GetData(), 
                         toString(endPos, endSector).GetData());
 
-        path = npcclient->GetNavStruct()->ShortestPath(myPos, mySector, endPos, endSector);
+        path = npcclient->ShortestPath(npc, myPos, mySector, endPos, endSector);
         if(!path || !path->HasNext())
         {
             npc->Printf(5, "Failed to find a path between %s and %s", 
