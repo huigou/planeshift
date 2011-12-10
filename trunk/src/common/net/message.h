@@ -525,6 +525,34 @@ public:
         Add(t);
     }
 
+    /// Add an x,y vector to the buffer
+    void Add(const csVector2& v)
+    {
+        if (bytes == NULL)
+        {
+            Bug1("MsgEntry::Add(const csVector2) bytes=NULL!\n");
+            CS_ASSERT(false);
+            return;
+        }
+
+        // If the message is in overrun state, don't add anymore, it's already invalid
+        if (overrun)
+            return;
+
+        // Not enough space left!  Don't overwrite the buffer.
+        if (current + 2*sizeof(uint32) > bytes->GetSize())
+        {
+            Bug3("MsgEntry::Add(const csVector2) call for msgid=%u would overflow buffer! type = %u\n",msgid, bytes->type);
+            overrun=true;
+            return;
+        }
+
+        uint32 *pf = (uint32 *)(bytes->payload+current);
+        *(pf++) = csLittleEndian::Convert( csIEEEfloat::FromNative(v.x) );
+        *pf = csLittleEndian::Convert( csIEEEfloat::FromNative(v.y) );
+        current += 2*sizeof(uint32);
+    }
+
     /// Add an x,y,z vector to the buffer
     void Add(const csVector3& v)
     {
@@ -554,6 +582,36 @@ public:
         current += 3*sizeof(uint32);
     }
 
+    /// Add an x,y,z,w vector to the buffer
+    void Add(const csVector4& v)
+    {
+        if (bytes == NULL)
+        {
+            Bug1("MsgEntry::Add(const csVector4) bytes=NULL!\n");
+            CS_ASSERT(false);
+            return;
+        }
+
+        // If the message is in overrun state, don't add anymore, it's already invalid
+        if (overrun)
+            return;
+
+        // Not enough space left!  Don't overwrite the buffer.
+        if (current + 4*sizeof(uint32) > bytes->GetSize())
+        {
+            Bug3("MsgEntry::Add(const csVector4) call for msgid=%u would overflow buffer! type = %u\n",msgid, bytes->type);
+            overrun=true;
+            return;
+        }
+
+        uint32 *pf = (uint32 *)(bytes->payload+current);
+        *(pf++) = csLittleEndian::Convert( csIEEEfloat::FromNative(v.x) );
+        *(pf++) = csLittleEndian::Convert( csIEEEfloat::FromNative(v.y) );
+        *(pf++) = csLittleEndian::Convert( csIEEEfloat::FromNative(v.z) );
+        *pf = csLittleEndian::Convert( csIEEEfloat::FromNative(v.w) );
+        current += 4*sizeof(uint32);
+    }
+    
     void Add(const iSector* sector, const csStringSet* msgstrings, const csStringHashReversible* msgstringshash = NULL)
     {
         const char* sectorName = const_cast<iSector*>(sector)->QueryObject()->GetName ();
@@ -826,13 +884,34 @@ public:
         return (GetUInt8() != 0);
     }
 
-    csVector3 GetVector()
+    csVector2 GetVector2()
     {
         // If the message is in overrun state, we know we can't read anymore
         if (overrun)
             return 0;
 
-        if (current+sizeof(csVector3) > bytes->GetSize())
+        if (current+2*sizeof(uint32) > bytes->GetSize())
+        {
+            Debug2(LOG_NET,0,"Message id %u would have read beyond end of buffer.\n",msgid);
+            overrun=true;
+            return 0;
+        }
+
+        uint32 *p = (uint32 *)(bytes->payload+current);
+        csVector2 v;
+        v.x = csIEEEfloat::ToNative( csLittleEndian::Convert(*(p++)) );
+        v.y = csIEEEfloat::ToNative( csLittleEndian::Convert(*(p++)) );
+        current += 2*sizeof(uint32);
+        return v;
+    }
+
+    csVector3 GetVector3()
+    {
+        // If the message is in overrun state, we know we can't read anymore
+        if (overrun)
+            return 0;
+
+        if (current+3*sizeof(uint32) > bytes->GetSize())
         {
             Debug2(LOG_NET,0,"Message id %u would have read beyond end of buffer.\n",msgid);
             overrun=true;
@@ -848,6 +927,29 @@ public:
         return v;
     }
 
+    csVector4 GetVector4()
+    {
+        // If the message is in overrun state, we know we can't read anymore
+        if (overrun)
+            return 0;
+
+        if (current+4*sizeof(uint32) > bytes->GetSize())
+        {
+            Debug2(LOG_NET,0,"Message id %u would have read beyond end of buffer.\n",msgid);
+            overrun=true;
+            return 0;
+        }
+
+        uint32 *p = (uint32 *)(bytes->payload+current);
+        csVector4 v;
+        v.x = csIEEEfloat::ToNative( csLittleEndian::Convert(*(p++)) );
+        v.y = csIEEEfloat::ToNative( csLittleEndian::Convert(*(p++)) );
+        v.z = csIEEEfloat::ToNative( csLittleEndian::Convert(*(p++)) );
+        v.w = csIEEEfloat::ToNative( csLittleEndian::Convert(*(p++)) );
+        current += 4*sizeof(uint32);
+        return v;
+    }
+    
     iSector* GetSector(const csStringSet* msgstrings, const csStringHashReversible* msgstringshash, iEngine *engine)
     {
         csString sectorName;

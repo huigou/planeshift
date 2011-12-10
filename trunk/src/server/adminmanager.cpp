@@ -7090,6 +7090,10 @@ void AdminManager::CreateNPC(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData* 
     npc->GetCharacterData()->SetLocationInWorld(instance, sectorInfo, pos.x, pos.y, pos.z, angle);
     npc->SetPosition(pos, angle, sector);
 
+    // Add NPC to all Super Clients
+    psserver->npcmanager->AddEntity(npc);
+
+    // Check if this NPC is controlled
     psserver->npcmanager->ControlNPC(npc);
 
     npc->UpdateProxList(true);

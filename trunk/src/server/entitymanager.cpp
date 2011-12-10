@@ -265,6 +265,10 @@ gemNPC* EntityManager::CreateFamiliar (gemActor *owner, PID masterPID)
 
     psServer::CharacterLoader.SaveCharacterData( npc->GetCharacterData(), npc, false );
 
+    // Add NPC to all Super Clients
+    psserver->npcmanager->AddEntity( npc );
+
+    // Check if this NPC is controlled
     psserver->npcmanager->ControlNPC( npc );
     psserver->npcmanager->CreatePetOwnerSession( owner, npc->GetCharacterData() );
 
@@ -320,6 +324,10 @@ gemNPC* EntityManager::CloneNPC ( psCharacter *chardata )
 
     psServer::CharacterLoader.SaveCharacterData( npc->GetCharacterData(), npc, false );
 
+    // Add NPC to all Super Clients
+    psserver->npcmanager->AddEntity( npc );
+
+    // Check if this NPC is controlled
     psserver->npcmanager->ControlNPC( npc );
 
     // Add npc to all nearby clients
@@ -518,6 +526,10 @@ gemNPC* EntityManager::CreatePet (Client *client, int masterFamiliarID)
 
     db->Command("INSERT INTO npc_knowledge_areas(player_id, area, priority) VALUES (%d, 'Pet %s 1', '1')", familiarID, npc->GetCharacterData()->GetRaceInfo()->name.GetData() );
 
+    // Add NPC to all Super Clients
+    psserver->npcmanager->AddEntity( npc );
+
+    // Check if this NPC is controlled
     psserver->npcmanager->ControlNPC( npc );
     psserver->npcmanager->CreatePetOwnerSession( client->GetActor(), npc->GetCharacterData() );
 
@@ -749,10 +761,14 @@ EID EntityManager::CreateNPC(psCharacter *chardata, InstanceID instance, csVecto
     if ( updateProxList )
     {
         actor->UpdateProxList( true );
-    
-//        CPrintf(CON_NOTIFY,"------> Entity Manager Setting Imperv\n");
-        psserver->npcmanager->ControlNPC( actor );
     }
+
+    // Add NPC to all Super Clients
+    psserver->npcmanager->AddEntity( actor );
+
+    // Check if this NPC is controlled
+    psserver->npcmanager->ControlNPC( actor );
+
     Debug3(LOG_NPC, 0, "Created NPC actor: <%s>[%s] in world", actor->GetName(), ShowID(actor->GetEID()));
 
     return actor->GetEID();

@@ -518,9 +518,9 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
                 // Extract the data
                 csVector3 where;
 
-                EID character_id = EID(msg->GetUInt32());
+                PID character_id = PID(msg->GetUInt32());
                 float rot = msg->GetFloat();
-                where = msg->GetVector();
+                where = msg->GetVector3();
                 iSector* sector = msg->GetSector(accessPointers->msgstrings, accessPointers->msgstringshash, accessPointers->engine);
 
                 // Make sure we haven't run past the end of the buffer
@@ -779,7 +779,7 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
                 
                 // Extract the data
                 EID npc_eid = EID(msg->GetUInt32());
-                csVector3 pos = msg->GetVector();
+                csVector3 pos = msg->GetVector3();
                 float yrot = msg->GetFloat();
                 iSector* sector = msg->GetSector( accessPointers->msgstrings, accessPointers->msgstringshash, accessPointers->engine );
                 InstanceID instance = msg->GetUInt32();
@@ -813,6 +813,7 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
             }
 
         }
+        msgtext.Append("\n");
         cmd = msg->GetInt8();
     }
     if (msg->overrun)
@@ -857,7 +858,7 @@ EID psAllEntityPosMessage::Get(csVector3& pos, iSector*& sector, InstanceID& ins
                                csStringHashReversible* msgstringshash, iEngine *engine)
 {
     EID eid(msg->GetUInt32());
-    pos = msg->GetVector();
+    pos = msg->GetVector3();
     sector = msg->GetSector(msgstrings, msgstringshash, engine);
     instance = msg->GetUInt32();
     forced = msg->GetBool();

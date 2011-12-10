@@ -32,9 +32,12 @@
 #include "rpgrules/psmoney.h"
 #include "util/psconst.h"
 #include "util/skillcache.h"
+#include <ivideo/graph3d.h>
 
 struct iSpriteCal3DState;
 struct iEngine;
+
+
 class psLinearMovement;
 class csStringHashReversible;
 
@@ -265,7 +268,8 @@ enum MSG_TYPES
     //music playing messages
     MSGTYPE_MUSICAL_SHEET,
     MSGTYPE_PLAY_SONG,
-    MSGTYPE_STOP_SONG
+    MSGTYPE_STOP_SONG,
+    MSGTYPE_SIMPLE_RENDER_MESH
 };
 
 class psMessageCracker;
@@ -3725,7 +3729,7 @@ public:
         toContainer   = me->GetInt32();
         toSlot        = me->GetInt32();
         stackCount    = me->GetInt32();
-        posWorld      = me->GetVector();
+        posWorld      = me->GetVector3();
         rot.y         = me->GetFloat();
         guarded       = me->GetBool();
         inplace       = me->GetBool();
@@ -5634,9 +5638,36 @@ public:
      */
     virtual csString ToString(NetBase::AccessPointers* /*accessPointers*/)
     {
-        return csString("not implemented");
+        return csString("Str: ") + str;
     }
 
+};
+
+/**
+ *  Class to send a csSimpleRenderMesh to the client
+ */
+class psSimpleRenderMeshMessage : public psMessageCracker
+{
+
+public:
+    iSector*           sector;
+    csString           name;  /// Name of this collection of meshes
+    uint16_t            index; /// The index in the collection
+    uint16_t            count; /// The total number of meshes in this collection
+    csSimpleRenderMesh simpleRenderMesh;
+
+    psSimpleRenderMeshMessage( uint32_t client, NetBase::AccessPointers* accessPointers, const char* name, uint16_t index, uint16_t count, const iSector* sector, const csSimpleRenderMesh& simpleRenderMesh );
+    psSimpleRenderMeshMessage( MsgEntry* me, NetBase::AccessPointers* accessPointers );
+
+    PSF_DECLARE_MSG_FACTORY();
+
+    /**
+     * @brief Converts the message into human readable string.
+     *
+     * @param accessPointers A struct to a number of access pointers.
+     * @return Return a human readable string for the message.
+     */
+    virtual csString ToString(NetBase::AccessPointers* accessPointers);
 };
 
 /**
