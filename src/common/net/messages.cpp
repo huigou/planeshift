@@ -7120,23 +7120,21 @@ psPlaySongMessage::psPlaySongMessage(MsgEntry* me)
 
 PSF_IMPLEMENT_MSG_FACTORY(psStopSongMessage, MSGTYPE_STOP_SONG);
 
-psStopSongMessage::psStopSongMessage(uint32_t client, uint32_t songID, bool toPlayer, bool isEnded)
+psStopSongMessage::psStopSongMessage(uint32_t client, uint32_t songID, bool toPlayer)
 {
-    msg.AttachNew(new MsgEntry(sizeof(uint32_t) + sizeof(bool) + sizeof(bool)));
+    msg.AttachNew(new MsgEntry(sizeof(uint32_t) + sizeof(bool)));
 
     msg->SetType(MSGTYPE_STOP_SONG);
     msg->clientnum = client;
 
     msg->Add(songID);
     msg->Add(toPlayer);
-    msg->Add(isEnded);
 }
 
 psStopSongMessage::psStopSongMessage(MsgEntry* me)
 {
     songID = me->GetUInt32();
     toPlayer = me->GetBool();
-    isEnded = me->GetBool();
 }
 
 //---------------------------------------------------------------------------

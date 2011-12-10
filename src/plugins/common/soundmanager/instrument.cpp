@@ -387,14 +387,14 @@ void Instrument::SetEnharmonic(char pitch, int alter, uint octave, char* buffer,
         {
         case 'E':
         case 'B':
-            Music::NextPitch(pitch, octave);
+            psMusic::NextPitch(pitch, octave);
             enharmonicNote = GetNote(pitch, octave);
             enharmonicNote->flatLength = length;
             enharmonicNote->flat = buffer;
             break;
         case 'C':
         case 'F':
-            Music::PreviousPitch(pitch, octave);
+            psMusic::PreviousPitch(pitch, octave);
             enharmonicNote = GetNote(pitch, octave);
             enharmonicNote->sharpLength = length;
             enharmonicNote->sharp = buffer;
@@ -408,13 +408,13 @@ void Instrument::SetEnharmonic(char pitch, int alter, uint octave, char* buffer,
         {
         case 'C':
         case 'F':
-            Music::PreviousPitch(pitch, octave);
+            psMusic::PreviousPitch(pitch, octave);
             enharmonicNote = GetNote(pitch, octave);
             enharmonicNote->normalLength = length;
             enharmonicNote->normal = buffer;
             break;
         default:
-            Music::PreviousPitch(pitch, octave);
+            psMusic::PreviousPitch(pitch, octave);
             enharmonicNote = GetNote(pitch, octave);
             enharmonicNote->sharpLength = length;
             enharmonicNote->sharp = buffer;
@@ -428,13 +428,13 @@ void Instrument::SetEnharmonic(char pitch, int alter, uint octave, char* buffer,
         {
         case 'E':
         case 'B':
-            Music::NextPitch(pitch, octave);
+            psMusic::NextPitch(pitch, octave);
             enharmonicNote = GetNote(pitch, octave);
             enharmonicNote->normalLength = length;
             enharmonicNote->normal = buffer;
             break;
         default:
-            Music::NextPitch(pitch, octave);
+            psMusic::NextPitch(pitch, octave);
             enharmonicNote = GetNote(pitch, octave);
             enharmonicNote->flatLength = length;
             enharmonicNote->flat = buffer;

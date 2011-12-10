@@ -81,9 +81,9 @@ public:
 
     /**
      * Stops the song played by the main player.
-     * @param isEnded true if the song is ended, false if it has been interrupted.
+     * @param notifyServer true if the server must be notified about the stop.
      */
-    void StopMainPlayerSong(bool isEnded);
+    void StopMainPlayerSong(bool notifyServer);
 
     /**
      * This method handle the ended songs.

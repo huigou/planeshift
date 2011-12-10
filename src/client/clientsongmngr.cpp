@@ -60,23 +60,6 @@ ClientSongManager::~ClientSongManager()
 
 void ClientSongManager::PlayMainPlayerSong(uint32_t itemID, const csString &musicalSheet)
 {
-    iSoundManager* sndMngr;
-
-    if(mainSongID != NO_SONG)
-    {
-        return;
-    }
-
-    // checking if sounds are active
-    sndMngr = psengine->GetSoundManager();
-    if(!sndMngr->IsSoundActive(sndMngr->GetSndCtrl(iSoundManager::INSTRUMENT_SNDCTRL)))
-    {
-        psSystemMessage msg(0, MSG_ERROR, PawsManager::GetSingleton().Translate("Sounds are not active!"));
-        msg.FireEvent();
-        TriggerListeners();
-        return;
-    }
-
     // updating state
     sheet = musicalSheet;
     mainSongID = PENDING;
@@ -86,16 +69,14 @@ void ClientSongManager::PlayMainPlayerSong(uint32_t itemID, const csString &musi
     musicalSheetMessage.SendMessage();
 }
 
-void ClientSongManager::StopMainPlayerSong(bool isEnded)
+void ClientSongManager::StopMainPlayerSong(bool notifyServer)
 {
-    if(mainSongID == NO_SONG)
-    {
-        return;
-    }
-
     // sending message
-    psStopSongMessage stopMessage(0, 0, false, isEnded);
-    stopMessage.SendMessage();
+    if(notifyServer)
+    {
+        psStopSongMessage stopMessage(0, 0, false);
+        stopMessage.SendMessage();
+    }
 
     // stopping song
     StopSong(mainSongID);
@@ -108,28 +89,37 @@ void ClientSongManager::StopMainPlayerSong(bool isEnded)
 
 void ClientSongManager::Update()
 {
+    uint soundID;                       // song ID for the sound manager
+    uint32 songID;                      // song ID for the server
+    csArray<uint32> songsToDelete;      // ended songs
+
     iSoundManager* sndMngr = psengine->GetSoundManager();
 
     // checking main player song
-    if(mainSongID != NO_SONG && mainSongID != PENDING)
+    if(mainSongID != NO_SONG
+       && mainSongID != PENDING
+       && !sndMngr->IsSoundValid(mainSongID))
     {
-        if(!sndMngr->IsSoundValid(mainSongID))
-        {
-            StopMainPlayerSong(true);
-        }
+        StopMainPlayerSong(false);
     }
 
-    // handling ended songs
-    uint songID;
+    // detecting ended songs
     csHash<uint, uint32>::GlobalIterator songIter(songMap.GetIterator());
     while(songIter.HasNext())
     {
-        songID = songIter.Next();
+        soundID = songIter.Next(songID);
 
-        if(!sndMngr->IsSoundValid(songID))
+        if(!sndMngr->IsSoundValid(soundID))
         {
-            StopSong(songID);
+            songsToDelete.Push(songID);
+            StopSong(soundID);
         }
+    }
+
+    // deleting ended songs
+    for(size_t i = 0; i < songsToDelete.GetSize(); i++)
+    {
+        songMap.DeleteAll(songsToDelete[i]);
     }
 }
 
@@ -152,59 +142,61 @@ void ClientSongManager::HandleMessage(MsgEntry* message)
     {
         uint songHandleID;
         csVector3 playerPos;
+        iSoundManager* sndMngr;
 
         psPlaySongMessage playMsg(message);
 
         // getting player's position
         playerPos = psengine->GetCelClient()->FindObject(playMsg.songID)->GetMesh()->GetMovable()->GetFullPosition();
 
-        // playing
-        if(playMsg.toPlayer)
+        // if sounds are not active the song will still be heard by players around
+        sndMngr = psengine->GetSoundManager();
+        if(sndMngr->IsSoundActive(sndMngr->GetSndCtrl(iSoundManager::INSTRUMENT_SNDCTRL)))
         {
-            songHandleID = PlaySong(sheet, playMsg.instrName, playMsg.errorRate, playerPos);
-        }
-        else
-        {
-            // decompressing score
-            csString uncompressedScore;
-            Music::ZDecompressSong(playMsg.musicalScore, uncompressedScore);
-
-            songHandleID = PlaySong(uncompressedScore, playMsg.instrName, playMsg.errorRate, playerPos);
-        }
-
-        if(songHandleID == 0)   // instrument not defined or illegal score
-        {
-            // stopping song, informing server and player
+            // playing
             if(playMsg.toPlayer)
             {
-                iSoundManager* sndMngr = psengine->GetSoundManager();
+                songHandleID = PlaySong(sheet, playMsg.instrName, playMsg.errorRate, playerPos);
+            }
+            else
+            {
+                // decompressing score
+                csString uncompressedScore;
+                psMusic::ZDecompressSong(playMsg.musicalScore, uncompressedScore);
 
-                // noticing server
-                psStopSongMessage stopMessage(0, 0, false, false);
-                stopMessage.SendMessage();
-
-                // updating mainSongId that is now PENDING
-                mainSongID = NO_SONG;
-
-                // updating listeners
-                TriggerListeners();
-
-                // noticing user
-                psSystemMessage msg(0, MSG_ERROR, PawsManager::GetSingleton().Translate("You cannot play this song!"));
-                msg.FireEvent();
+                songHandleID = PlaySong(uncompressedScore, playMsg.instrName, playMsg.errorRate, playerPos);
             }
 
-            return;
-        }
+            // handling instrument not defined
+            if(songHandleID == 0)
+            {
+                // stopping song, informing server and player
+                if(playMsg.toPlayer)
+                {
+                    // noticing server
+                    StopMainPlayerSong(true);
 
-        // saving song ID
-        if(playMsg.toPlayer)
-        {
-            mainSongID = songHandleID;
+                    // noticing user
+                    psSystemMessage msg(0, MSG_ERROR, PawsManager::GetSingleton().Translate("You cannot play this song!"));
+                    msg.FireEvent();
+                }
+
+                return;
+            }
+
+            // saving song ID
+            if(playMsg.toPlayer)
+            {
+                mainSongID = songHandleID;
+            }
+            else
+            {
+                songMap.Put(playMsg.songID, songHandleID);
+            }
         }
         else
         {
-            songMap.Put(playMsg.songID, songHandleID);
+            mainSongID = NO_SONG;
         }
     }
 
@@ -213,32 +205,33 @@ void ClientSongManager::HandleMessage(MsgEntry* message)
     {
         psStopSongMessage stopMsg(message);
 
-        if(songMap.Contains(stopMsg.songID))
+        if(stopMsg.toPlayer)
+        {
+            if(mainSongID == PENDING) // no instrument equipped or invalid MusicXML
+            {
+                // updating mainSongId
+                mainSongID = NO_SONG;
+
+                // updating listeners
+                TriggerListeners();
+
+                // noticing user
+                psSystemMessage msg(0, MSG_ERROR, PawsManager::GetSingleton().Translate("You do not have an equipped musical instrument or a valid score."));
+                msg.FireEvent();
+            }
+            else if(mainSongID == NO_SONG) // sound are deactivated or song has ended
+            {
+                TriggerListeners();
+            }
+            else // player's mode has changed
+            {
+                StopMainPlayerSong(false);
+            }
+        }
+        else if(songMap.Contains(stopMsg.songID))
         {
             StopSong(songMap.Get(stopMsg.songID, 0));
             songMap.DeleteAll(stopMsg.songID);
-        }
-        else if(mainSongID == PENDING && stopMsg.toPlayer) // no instrument equipped
-        {
-            // updating mainSongId
-            mainSongID = NO_SONG;
-
-            // updating listeners
-            TriggerListeners();
-
-            // noticing user
-            psSystemMessage msg(0, MSG_ERROR, PawsManager::GetSingleton().Translate("You do not have an equipped musical instrument to play."));
-            msg.FireEvent();
-        }
-        else if(mainSongID != NO_SONG && stopMsg.toPlayer) // player mode has changed
-        {
-            // stopping song
-            StopSong(mainSongID);
-            mainSongID = NO_SONG;
-            sheet.Empty();
-
-            // updating listeners
-            TriggerListeners();
         }
     }
 }

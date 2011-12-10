@@ -32,7 +32,7 @@
 #define SCORE_COMPRESSION_FACTOR 3
 
 
-void Music::NextPitch(char &pitch, uint &octave)
+void psMusic::NextPitch(char &pitch, uint &octave)
 {
     switch(pitch)
     {
@@ -61,7 +61,7 @@ void Music::NextPitch(char &pitch, uint &octave)
     }
 }
 
-void Music::PreviousPitch(char &pitch, uint &octave)
+void psMusic::PreviousPitch(char &pitch, uint &octave)
 {
     switch(pitch)
     {
@@ -90,7 +90,7 @@ void Music::PreviousPitch(char &pitch, uint &octave)
     }
 }
 
-bool Music::GetMeasures(csRef<iDocument> musicalScore, csRefArray<iDocumentNode> &measures)
+bool psMusic::GetMeasures(csRef<iDocument> musicalScore, csRefArray<iDocumentNode> &measures)
 {
     csRef<iDocumentNode> partNode;
     csRef<iDocumentNode> measureNode;
@@ -114,7 +114,32 @@ bool Music::GetMeasures(csRef<iDocument> musicalScore, csRefArray<iDocumentNode>
     return true;
 }
 
-bool Music::GetAttributes(csRef<iDocument> musicalScore, int &quarterDivisions,
+bool psMusic::GetStatistics(csRef<iDocument> musicalScore, int &scoreLength)
+{
+    int quarterDivisions;
+    int fifths;
+    int beats;
+    int beatType;
+    int tempo;
+    float quarterDuration;
+    float nQuarters;
+
+    csRefArray<iDocumentNode> measures;
+
+    if(!psMusic::GetAttributes(musicalScore, quarterDivisions, fifths, beats, beatType, tempo)
+        || !psMusic::GetMeasures(musicalScore, measures))
+    {
+        return false;
+    }
+
+    quarterDuration = 60.0f / tempo * 1000; // in milliseconds
+    nQuarters = 4.0f * beats / beatType;
+    scoreLength = measures.GetSize() * nQuarters * quarterDuration;
+
+    return true;
+}
+
+bool psMusic::GetAttributes(csRef<iDocument> musicalScore, int &quarterDivisions,
                           int &fifths, int &beats, int &beatType, int &tempo)
 {
     csRef<iDocumentNode> partNode;
@@ -196,7 +221,7 @@ bool Music::GetAttributes(csRef<iDocument> musicalScore, int &quarterDivisions,
     return true;
 }
 
-bool Music::ZCompressSong(const csString &inputScore, csString &outputScore)
+bool psMusic::ZCompressSong(const csString &inputScore, csString &outputScore)
 {
     int error;                      // last zlib error
     z_stream zStream;               // z stream used to compress data
@@ -252,7 +277,7 @@ bool Music::ZCompressSong(const csString &inputScore, csString &outputScore)
     return true;
 }
 
-bool Music::ZDecompressSong(const csString &inputScore, csString &outputScore)
+bool psMusic::ZDecompressSong(const csString &inputScore, csString &outputScore)
 {
     int error;                      // last zlib error
     z_stream zStream;               // z stream used to decompress data
@@ -317,7 +342,7 @@ bool Music::ZDecompressSong(const csString &inputScore, csString &outputScore)
     return true;
 }
 
-bool Music::CheckValidity(csRef<iDocument> musicalScore, csRef<iDocumentNode> &partNode)
+bool psMusic::CheckValidity(csRef<iDocument> musicalScore, csRef<iDocumentNode> &partNode)
 {
     csRef<iDocumentNode> documentRoot;
     csRef<iDocumentNode> rootNode;

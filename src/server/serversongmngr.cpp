@@ -21,6 +21,7 @@
 #include <psconfig.h>
 #include "serversongmngr.h"
 
+
 //====================================================================================
 // Project Includes
 //====================================================================================
@@ -39,9 +40,34 @@
 #include "bulkobjects/psmerchantinfo.h"
 
 
+psEndSongEvent::psEndSongEvent(gemActor* actor, int songLength)
+    : psGameEvent(0, songLength, "psEndSongEvent")
+{
+    charActor = actor;
+}
+
+psEndSongEvent::~psEndSongEvent()
+{
+    // obviously charActor must not be deleted :P
+}
+
+bool psEndSongEvent::CheckTrigger()
+{
+    return charActor->GetMode() == PSCHARACTER_MODE_PLAY;
+}
+
+void psEndSongEvent::Trigger()
+{
+    ServerSongManager::GetSingleton().OnStopSong(charActor, true);
+}
+
+
+//----------------------------------------------------------------------------
+
+
 ServerSongManager::ServerSongManager()
 {
-    isEnded = false;
+    isProcessedSongEnded = false;
 
     Subscribe(&ServerSongManager::HandlePlaySongMessage, MSGTYPE_MUSICAL_SHEET, REQUIRE_READY_CLIENT);
     Subscribe(&ServerSongManager::HandleStopSongMessage, MSGTYPE_STOP_SONG, REQUIRE_READY_CLIENT);
@@ -51,6 +77,12 @@ ServerSongManager::ServerSongManager()
 
     CS_ASSERT_MSG("Could not load mathscript 'Calculate Song Parameters'", calcSongPar);
     CS_ASSERT_MSG("Could not load mathscript 'Calculate Song Experience'", calcSongExp);
+}
+
+ServerSongManager::~ServerSongManager()
+{
+    Unsubscribe(MSGTYPE_MUSICAL_SHEET);
+    Unsubscribe(MSGTYPE_STOP_SONG);
 }
 
 bool ServerSongManager::Initialize()
@@ -72,13 +104,15 @@ void ServerSongManager::HandlePlaySongMessage(MsgEntry* me, Client* client)
 {
     psMusicalSheetMessage musicMsg(me);
 
-    if (musicMsg.valid && musicMsg.play)
+    if(musicMsg.valid && musicMsg.play)
     {
         psItem *item = client->GetCharacterData()->Inventory().FindItemID(musicMsg.itemID);
 
         // playing
         if(item != 0)
         {
+            uint32 actorEID;
+            int songLength;
             float errorRate;
             psItem* instrItem;
             const char* instrName;
@@ -95,17 +129,30 @@ void ServerSongManager::HandlePlaySongMessage(MsgEntry* me, Client* client)
                 return;
             }
 
+            // checking if the score is valid
+            csRef<iDocumentSystem> docSys = csQueryRegistry<iDocumentSystem>(psserver->GetObjectReg());;
+            csRef<iDocument> scoreDoc = docSys->CreateDocument();
+            scoreDoc->Parse(musicMsg.musicalSheet, true);
+            if(!psMusic::GetStatistics(scoreDoc, songLength))
+            {
+                // sending an error message
+                psStopSongMessage stopMsg(client->GetClientNum(), 0, true);
+                stopMsg.SendMessage();
+                return;
+            }
+
             // getting equipped instrument
             instrItem = GetEquippedInstrument(charData);
             if(instrItem == 0)
             {
                 // sending an error message
-                psStopSongMessage stopMsg(client->GetClientNum(), 0, true, false);
+                psStopSongMessage stopMsg(client->GetClientNum(), 0, true);
                 stopMsg.SendMessage();
                 return;
             }
 
             instrName = instrItem->GetName();
+            actorEID = charActor->GetEID().Unbox();
 
             // calculating song parameters
             if(calcSongPar == 0)
@@ -122,12 +169,12 @@ void ServerSongManager::HandlePlaySongMessage(MsgEntry* me, Client* client)
             }
 
             // sending message to requester, it's useless to send the musical sheet again
-            psPlaySongMessage sendedPlayMsg(client->GetClientNum(), charActor->GetEID().Unbox(), true, errorRate, instrName, 0, "");
+            psPlaySongMessage sendedPlayMsg(client->GetClientNum(), actorEID, true, errorRate, instrName, 0, "");
             sendedPlayMsg.SendMessage();
 
             // preparing compressed musical sheet
             csString compressedScore;
-            Music::ZCompressSong(musicMsg.musicalSheet, compressedScore);
+            psMusic::ZCompressSong(musicMsg.musicalSheet, compressedScore);
 
             // sending play messages to proximity list
             proxList = charActor->GetProxList()->GetClients();
@@ -137,13 +184,17 @@ void ServerSongManager::HandlePlaySongMessage(MsgEntry* me, Client* client)
                 {
                     continue;
                 }
-                psPlaySongMessage sendedPlayMsg(proxList[i].client, charActor->GetEID().Unbox(), false, errorRate, instrName, compressedScore.Length(), compressedScore);
+                psPlaySongMessage sendedPlayMsg(proxList[i].client, actorEID, false, errorRate, instrName, compressedScore.Length(), compressedScore);
                 sendedPlayMsg.SendMessage();
             }
 
             // updating character mode and item status
             charActor->SetMode(PSCHARACTER_MODE_PLAY);
             instrItem->SetInUse(true);
+
+            // keeping track of the song's time
+            psEndSongEvent* event = new psEndSongEvent(charActor, songLength);
+            psserver->GetEventManager()->Push(event);
         }
         else
         {
@@ -158,50 +209,53 @@ void ServerSongManager::HandleStopSongMessage(MsgEntry* me, Client* client)
 
     if(receivedStopMsg.valid)
     {
-        gemActor* charActor = client->GetActor();
-
-        // checking that the client's player is actually playing
-        if(charActor->GetMode() != PSCHARACTER_MODE_PLAY)
-        {
-            return;
-        }
-
-        // setting isEnded flag for the next StopSong call
-        isEnded = receivedStopMsg.isEnded;
-
-        // updating character mode, this will call StopSong
-        charActor->SetMode(PSCHARACTER_MODE_PEACE);
-
-        // resetting isEnded flag
-        isEnded = false;
+        OnStopSong(client->GetActor(), false);
     }
+}
+
+void ServerSongManager::OnStopSong(gemActor* charActor, bool isEnded)
+{
+    // checking that the client's player is actually playing
+    if(charActor->GetMode() != PSCHARACTER_MODE_PLAY)
+    {
+        return;
+    }
+
+    isProcessedSongEnded = isEnded;
+
+    // updating character mode, this will call StopSong
+    charActor->SetMode(PSCHARACTER_MODE_PEACE);
 }
 
 void ServerSongManager::StopSong(gemActor* charActor, bool skillRanking)
 {
     psItem* instrItem;
+    uint32 actorEID = charActor->GetEID().Unbox();
     psCharacter* charData = charActor->GetCharacterData();
+    int charClientID = charActor->GetProxList()->GetClientID();
 
     // forwarding the message to the whole proximity list
-    // if the song has ended there's no need to send it
-    if(!isEnded)
+    if(!isProcessedSongEnded) // no need to send it
     {
-        int charClientID = charActor->GetProxList()->GetClientID();
         csArray<PublishDestination> proxList = charActor->GetProxList()->GetClients();
 
         for(size_t i = 0; i < proxList.GetSize(); i++)
         {
-            if(charClientID == proxList[i].client)
+            if(charClientID != proxList[i].client)
             {
-                psStopSongMessage sendedStopMsg(proxList[i].client, charActor->GetEID().Unbox(), true, false);
-                sendedStopMsg.SendMessage();
-            }
-            else
-            {
-                psStopSongMessage sendedStopMsg(proxList[i].client, charActor->GetEID().Unbox(), false, false);
+                psStopSongMessage sendedStopMsg(proxList[i].client, actorEID, false);
                 sendedStopMsg.SendMessage();
             }
         }
+    }
+    else // client needs to be notified if sounds are disabled
+    {
+        // resetting flag
+        isProcessedSongEnded = false;
+
+        // notifying the client
+        psStopSongMessage sendedStopMsg(charClientID, actorEID, true);
+        sendedStopMsg.SendMessage();
     }
 
     // handling skill ranking

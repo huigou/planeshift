@@ -631,11 +631,11 @@ void SndSysSongStream::PlayerError(char &pitch, int &alter, uint &octave, float 
         {
             if(errorDiff < noteErrorRate * 3 / 4)
             {
-                Music::PreviousPitch(pitch, octave);
+                psMusic::PreviousPitch(pitch, octave);
             }
             else
             {
-                Music::NextPitch(pitch, octave);
+                psMusic::NextPitch(pitch, octave);
             }
         }
     }

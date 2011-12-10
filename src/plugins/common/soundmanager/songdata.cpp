@@ -57,12 +57,12 @@ bool SndSysSongData::Initialize(csRef<iDocument> musicalScore)
     int iBeatType;
     int iTempo;
 
-    if(!Music::GetMeasures(musicalScore, songData->measures))
+    if(!psMusic::GetMeasures(musicalScore, songData->measures))
     {
         return false;
     }
 
-    if(!Music::GetAttributes(musicalScore, iDivisions,
+    if(!psMusic::GetAttributes(musicalScore, iDivisions,
         songData->fifths, iBeats, iBeatType, iTempo))
     {
         return false;
