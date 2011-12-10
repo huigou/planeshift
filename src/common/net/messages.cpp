@@ -4743,7 +4743,7 @@ psForcePositionMessage::psForcePositionMessage(uint32_t client, uint8_t sequence
 
 psForcePositionMessage::psForcePositionMessage(MsgEntry *me, NetBase::AccessPointers* accessPointers)
 {
-    pos = me->GetVector();
+    pos = me->GetVector3();
     yrot = me->GetFloat();    
 
     csStringID sectorNameStrId = (csStringID) me->GetUInt32();
@@ -5054,9 +5054,9 @@ psPersistActor::psPersistActor( MsgEntry* me, NetBase::AccessPointers* accessPoi
     BeltGroup   = me->GetStr();
     CloakGroup  = me->GetStr();
 
-    top         = me->GetVector();
-    bottom      = me->GetVector();
-    offset      = me->GetVector();
+    top         = me->GetVector3();
+    bottom      = me->GetVector3();
+    offset      = me->GetVector3();
 
     texParts    = me->GetStr();
     equipment   = me->GetStr();
@@ -5174,7 +5174,7 @@ psPersistItem::psPersistItem( MsgEntry* me, NetBase::AccessPointers * accessPoin
     factname    = accessPointers->Request(csStringID(me->GetUInt32()));
     matname     = accessPointers->Request(csStringID(me->GetUInt32()));
     sector      = accessPointers->Request(csStringID(me->GetUInt32()));
-    pos         = me->GetVector();
+    pos         = me->GetVector3();
     xRot        = me->GetFloat();
     yRot        = me->GetFloat();
     zRot        = me->GetFloat();
@@ -6900,7 +6900,7 @@ psMoveModMsg::psMoveModMsg(MsgEntry* me)
 
     if (type != NONE)
     {
-        movementMod = me->GetVector();
+        movementMod = me->GetVector3();
         rotationMod = me->GetFloat();
     }
     else
@@ -6991,8 +6991,8 @@ void psMovementInfoMessage::GetMode(uint32 &id, const char* &name, csVector3 &mo
 {
     id = msg->GetUInt32();
     name = msg->GetStr();
-    move_mod = msg->GetVector();
-    rotate_mod = msg->GetVector();
+    move_mod = msg->GetVector3();
+    rotate_mod = msg->GetVector3();
     idle_anim = msg->GetStr();
 }
 
@@ -7000,8 +7000,8 @@ void psMovementInfoMessage::GetMove(uint32 &id, const char* &name, csVector3 &ba
 {
     id = msg->GetUInt32();
     name = msg->GetStr();
-    base_move = msg->GetVector();
-    base_rotate = msg->GetVector();
+    base_move = msg->GetVector3();
+    base_rotate = msg->GetVector3();
 }
 
 csString psMovementInfoMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
@@ -7956,6 +7956,118 @@ psSimpleStringMessage::psSimpleStringMessage(MsgEntry* me)
 {
     str   = me->GetStr();
     valid = !(me->overrun);
+}
+
+
+PSF_IMPLEMENT_MSG_FACTORY_ACCESS_POINTER(psSimpleRenderMeshMessage, MSGTYPE_SIMPLE_RENDER_MESH);
+
+
+psSimpleRenderMeshMessage::psSimpleRenderMeshMessage( uint32_t client, NetBase::AccessPointers* accessPointers, const char* name, uint16_t index, uint16_t count, const iSector* sector, const csSimpleRenderMesh& simpleRenderMesh )
+{
+    msg.AttachNew(new MsgEntry(MAX_MESSAGE_SIZE));
+    msg->SetType(MSGTYPE_SIMPLE_RENDER_MESH);
+    msg->clientnum = client;
+    
+    msg->Add( sector, accessPointers->msgstrings, accessPointers->msgstringshash );
+    msg->Add( name );
+    msg->Add( index );
+    msg->Add( count );
+    msg->Add( simpleRenderMesh.alphaType.autoAlphaMode );
+    if (simpleRenderMesh.alphaType.autoAlphaMode == false)
+    {
+        msg->Add( (uint32_t)simpleRenderMesh.alphaType.alphaType );
+    }
+    else
+    {
+        // TODO: autoModeTexture
+    }
+    msg->Add( (uint32_t)simpleRenderMesh.indexCount );
+    for (size_t i = 0; i < simpleRenderMesh.indexCount; i++)
+    {
+        msg->Add( (uint32_t)simpleRenderMesh.indices[i] );
+    }
+    msg->Add( (uint32_t)simpleRenderMesh.meshtype );
+    msg->Add( (uint32_t)simpleRenderMesh.mixmode );
+    msg->Add( (uint32_t)simpleRenderMesh.vertexCount );
+    msg->Add( (bool)(simpleRenderMesh.colors != NULL) );
+    for (size_t i = 0; i < simpleRenderMesh.vertexCount; i++)
+    {
+        msg->Add( simpleRenderMesh.vertices[i] );
+        if (simpleRenderMesh.colors)
+        {
+            msg->Add( simpleRenderMesh.colors[i] );
+        }
+    }
+    msg->Add( (uint32_t)simpleRenderMesh.z_buf_mode );
+
+    msg->ClipToCurrentSize();
+
+    valid=!(msg->overrun);
+}
+
+psSimpleRenderMeshMessage::psSimpleRenderMeshMessage(MsgEntry* me, NetBase::AccessPointers* accessPointers)
+{
+    sector = me->GetSector( accessPointers->msgstrings, accessPointers->msgstringshash, accessPointers->engine );
+    name = me->GetStr();
+    index = me->GetUInt16();
+    count = me->GetUInt16();
+    simpleRenderMesh.alphaType.autoAlphaMode = me->GetBool();
+    if (simpleRenderMesh.alphaType.autoAlphaMode == false)
+    {
+        simpleRenderMesh.alphaType.alphaType = (csAlphaMode::AlphaType)me->GetUInt32();
+    }
+    else
+    {
+        // TODO: autoModeTexture
+    }
+    simpleRenderMesh.indexCount = (uint)me->GetUInt32();
+    simpleRenderMesh.indices = new uint[simpleRenderMesh.indexCount];
+    for (size_t i = 0; i < simpleRenderMesh.indexCount; i++)
+    {
+        msg->Add( (uint32_t)simpleRenderMesh.indices[i] );
+    }
+    simpleRenderMesh.meshtype = (csRenderMeshType)me->GetUInt32();
+    simpleRenderMesh.mixmode = (uint)me->GetUInt32();
+    simpleRenderMesh.vertexCount = (uint)me->GetUInt32();
+    bool hasColors = me->GetBool();
+    csVector3* vertices = new csVector3[simpleRenderMesh.vertexCount];
+    simpleRenderMesh.vertices = vertices;
+    csVector4* colors = NULL;
+    if (hasColors)
+    {
+        colors = new csVector4[simpleRenderMesh.vertexCount];
+        simpleRenderMesh.colors = colors;
+    }
+    for (size_t i = 0; i < simpleRenderMesh.vertexCount; i++)
+    {
+        vertices[i] = me->GetVector3();
+        if (hasColors)
+        {
+            colors[i] = me->GetVector4();
+        }
+    }
+    simpleRenderMesh.z_buf_mode = (csZBufMode)me->GetUInt32();
+
+    valid = !(me->overrun);
+}
+
+csString psSimpleRenderMeshMessage::ToString(NetBase::AccessPointers* accessPointers)
+{
+    csString msgtext;
+
+    msgtext.AppendFmt("sector: %s meshtype: %d vertexcount: %d",
+                      sector ? sector->QueryObject()->GetName():"(null)",
+                      simpleRenderMesh.meshtype,simpleRenderMesh.vertexCount);
+    for (size_t i = 0; i < simpleRenderMesh.vertexCount; i++)
+    {
+        msgtext.AppendFmt(" %d: v: %s",i,toString(simpleRenderMesh.vertices[i]).GetData());
+        if (simpleRenderMesh.colors)
+        {
+            msgtext.AppendFmt(" c: %s",toString(simpleRenderMesh.colors[i]).GetData());
+        }
+    }
+
+    return msgtext;
 }
 
 

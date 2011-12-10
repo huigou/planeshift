@@ -174,6 +174,9 @@ protected:
     
     void HandleNPCReady(MsgEntry *me,Client *client);
 
+    /// Handle debug meshes from superclient
+    void HandleSimpleRenderMesh(MsgEntry* me, Client* client);
+    
     /// Send the list of maps for the superclient to load on startup.
     void SendMapList(Client *client);
 

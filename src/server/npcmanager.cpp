@@ -444,6 +444,7 @@ NPCManager::NPCManager(ClientConnectionSet *pCCS,
     Subscribe(&NPCManager::HandleCommandList,MSGTYPE_NPCOMMANDLIST,REQUIRE_ANY_CLIENT);
     Subscribe(&NPCManager::HandleConsoleCommand,MSGTYPE_NPC_COMMAND,REQUIRE_ANY_CLIENT);
     Subscribe(&NPCManager::HandleNPCReady,MSGTYPE_NPCREADY, REQUIRE_ANY_CLIENT);
+    Subscribe(&NPCManager::HandleSimpleRenderMesh,MSGTYPE_SIMPLE_RENDER_MESH,REQUIRE_ANY_CLIENT);
 
     Subscribe(&NPCManager::HandleDamageEvent,MSGTYPE_DAMAGE_EVENT,NO_VALIDATION);
     Subscribe(&NPCManager::HandleDeathEvent,MSGTYPE_DEATH_EVENT,NO_VALIDATION);
@@ -497,6 +498,16 @@ void NPCManager::HandleNPCReady(MsgEntry *me,Client *client)
     client->SetReady(true);
     superclients.Push(PublishDestination(client->GetClientNum(), client, 0, 0));
 }
+
+
+void NPCManager::HandleSimpleRenderMesh(MsgEntry* me, Client* client)
+{
+    Debug1(LOG_SUPERCLIENT, 0,"NPCManager handling Simple Render Mesh\n");
+    //TODO: Only send to clients that have requested this
+    psserver->GetEventManager()->Broadcast(me, NetBase::BC_EVERYONE);
+}
+
+
 
 void NPCManager::HandleDamageEvent(MsgEntry *me,Client *client)
 {
@@ -1361,7 +1372,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                 csVector3 where;
                 PID playerID = PID(list.msg->GetUInt32());
                 float rot = list.msg->GetFloat();
-                where = list.msg->GetVector();
+                where = list.msg->GetVector3();
                 iSector* sector = list.msg->GetSector(psserver->GetCacheManager()->GetMsgStrings(),0,
                                                       entityManager->GetEngine());
 
@@ -2420,7 +2431,6 @@ void NPCManager::ControlNPC( gemNPC* npc )
     Client* superclient = clients->FindAccount( npc->GetSuperclientID() );
     if(superclient)
     {
-        npc->Send(superclient->GetClientNum(), false, true );
         npc->GetCharacterData()->SetImperviousToAttack(npc->GetCharacterData()->GetImperviousToAttack() & ~TEMPORARILY_IMPERVIOUS);  // may switch this to 'hide' later
     }
     else
