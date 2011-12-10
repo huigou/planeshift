@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef MUSIC_H
-#define MUSIC_H
+#ifndef PSMUSIC_H
+#define PSMUSIC_H
 
 
 //====================================================================================
@@ -33,7 +33,7 @@
  * This class contains a set of functions that are usefull for the processing of music
  * and musical scores.
  */
-class Music
+class psMusic
 {
 public:
     /**
@@ -58,6 +58,15 @@ public:
      * @return true if the document is a valid musical score, false otherwise.
      */
     static bool GetMeasures(csRef<iDocument> score, csRefArray<iDocumentNode> &measures);
+
+    /**
+     * Returns the length of the score in milliseconds in the parameter length.
+     *
+     * @param musicalScore the musical score.
+     * @param scoreLength the length of the score in milliseconds.
+     * @return true if the document is a valid musical score, false otherwise.
+     */
+    static bool GetStatistics(csRef<iDocument> musicalScore, int &scoreLength);
 
     /**
      * Gets the attributes in the first measure of the given score. The provided
@@ -107,4 +116,5 @@ private:
     static bool CheckValidity(csRef<iDocument> musicalScore, csRef<iDocumentNode> &partNode);
 };
 
-#endif // MUSIC_H
+#endif // PSMUSIC_H
+

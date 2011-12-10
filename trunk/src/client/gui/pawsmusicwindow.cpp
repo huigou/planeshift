@@ -652,7 +652,7 @@ bool pawsMusicWindow::LoadXML(csRef<iDocument> sheet)
     }
 
     // getting measures
-    if(!Music::GetMeasures(sheet, measures))
+    if(!psMusic::GetMeasures(sheet, measures))
     {
         return false;
     }
@@ -667,7 +667,7 @@ bool pawsMusicWindow::LoadXML(csRef<iDocument> sheet)
     // getting attributes. It's necessary to provide temporary attributes because
     // if GetAttributes is successful the previous sheet will be unloaded and the
     // attributes resetted.
-    if(!Music::GetAttributes(sheet, quarterDivisions, scoreFifths, iBeats, iBeatType, scoreTempo))
+    if(!psMusic::GetAttributes(sheet, quarterDivisions, scoreFifths, iBeats, iBeatType, scoreTempo))
     {
         return false;
     }
@@ -1131,7 +1131,7 @@ void pawsMusicWindow::PlayStop()
     }
     else // stop
     {
-        psengine->GetSongManager()->StopMainPlayerSong(false);
+        psengine->GetSongManager()->StopMainPlayerSong(true);
     }
 }
 

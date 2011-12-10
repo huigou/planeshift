@@ -5151,10 +5151,8 @@ public:
      * @param client the client's ID.
      * @param songID the song's ID.
      * @param toPlayer true if this message is directed to the player that plays the song.
-     * @param isEnded true if the song is stopped because it is ended, false if it is
-     * interrupted by the player.
      */
-    psStopSongMessage(uint32_t client, uint32_t songID, bool toPlayer, bool isEnded);
+    psStopSongMessage(uint32_t client, uint32_t songID, bool toPlayer);
 
     /**
      * Constructor from a MsgEntry.

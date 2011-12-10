@@ -22,6 +22,11 @@
 
 
 //====================================================================================
+// Project Includes
+//====================================================================================
+#include <util/gameevent.h>
+
+//====================================================================================
 // Local Includes
 //====================================================================================
 #include "msgmanager.h"
@@ -35,13 +40,46 @@ class psCharacter;
 
 
 /**
- * At the moment this class just handles play and stop messages for musical instruments.
- * In the future it will also take care of the instruments relating skills management.
+ * This event informs the song manager when the song is over.
  */
-class ServerSongManager: public MessageManager<ServerSongManager>
+class psEndSongEvent: public psGameEvent
 {
 public:
-    ServerSongManager();
+    gemActor* charActor;        ///< The player that plays this song.
+
+    /**
+     * Constructor.
+     * @param charActor the player that plays this song.
+     * @param songLength the length of the song in milliseconds.
+     */
+    psEndSongEvent(gemActor* charActor, int songLength);
+
+    /**
+     * Destructor.
+     */
+    virtual ~psEndSongEvent();
+
+
+    //From psGameEvent
+    //------------------
+    virtual bool CheckTrigger();
+    virtual void Trigger();
+};
+
+
+//--------------------------------------------------
+
+
+/**
+ * This class takes care of played songs and players' ranking for musical instruments
+ * skills.
+ */
+class ServerSongManager: public MessageManager<ServerSongManager>, public Singleton<ServerSongManager>
+{
+public:
+    ServerSongManager();    ///< Constructor.
+    ~ServerSongManager();   ///< Destructor.
+
     bool Initialize();
 
     /**
@@ -59,6 +97,14 @@ public:
     void HandleStopSongMessage(MsgEntry* me, Client* client);
 
     /**
+     * Stop the song and (contrary to StopSong) update the player's mode. This is the
+     * function called when the player stop manually the song or when it ends.
+     * @param charActor the gemActor of the player.
+     * @param isEnded true if the song has is ended, false otherwise.
+     */
+    void OnStopSong(gemActor* charActor, bool isEnded);
+
+    /**
      * Takes care of the skill ranking and of sending the stop song message to the player's
      * proximity list.
      *
@@ -70,10 +116,9 @@ public:
     void StopSong(gemActor* charActor, bool skillRanking);
 
 private:
-    bool isEnded;                           ///< Flag used to keep track of the last stop request. Remember to reset each time.
-
-    MathScript* calcSongPar;
-    MathScript* calcSongExp;
+    bool isProcessedSongEnded;              ///< Flag used to keep track of the last song request. Remember to reset to false each time.
+    MathScript* calcSongPar;                ///< Keeps the script that computes the error rate.
+    MathScript* calcSongExp;                ///< Keeps the script that computes the experience gained.
     unsigned int instrumentsCategory;       ///< Keeps the instruments' category from server_options table.
 
     /**
