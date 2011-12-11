@@ -26,6 +26,7 @@
 #include <csgeom/vector3.h>
 
 #include <idal.h>
+#include <psstdint.h>
 
 class Waypoint;
 class psPathAnchor;
