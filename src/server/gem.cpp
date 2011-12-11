@@ -354,7 +354,6 @@ void GEMSupervisor::ActivateNPCs(AccountID superclientID)
         if (obj->GetSuperclientID() == superclientID)
         {
             // Turn off any npcs about to be managed from being temporarily impervious
-            // CPrintf(CON_NOTIFY,"---------> GemSuperVisor Setting imperv\n");
             obj->GetCharacterData()->SetImperviousToAttack(obj->GetCharacterData()->GetImperviousToAttack() & ~TEMPORARILY_IMPERVIOUS);  // may switch this to 'hide' later
         }
     }
@@ -796,7 +795,6 @@ bool gemObject::InitProximityList(float radius,int clientnum)
     // A client should always subscribe to itself
     if (clientnum)
     {
-        // CPrintf(CON_DEBUG, "Forcing a self-subscription for %s\n",GetName());
         proxlist->StartMutualWatching(clientnum,this,0.0);
     }
     return true;
@@ -4795,7 +4793,7 @@ void gemNPC::Send( int clientnum, bool control, bool to_superclients, psPersistA
         mesg.SetInstance(GetInstance());
         if (clientnum == 0) // Send to all superclients
         {
-            CPrintf(CON_DEBUG, "Sending gemNPC to superclients.\n");
+            Debug1(LOG_SUPERCLIENT, clientnum, "Sending gemNPC to superclients.\n");
             mesg.Multicast(psserver->GetNPCManager()->GetSuperClients(),0,PROX_LIST_ANY_RANGE);
         }
         else
