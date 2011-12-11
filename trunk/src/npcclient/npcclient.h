@@ -293,7 +293,7 @@ public:
                       csVector3* basePos=NULL, iSector* baseSector=NULL,
                       bool sameSector=false);
 
-    EventManager* GetEventMgr()
+    EventManager* GetEventManager()
     { return eventmanager; }
 
     /**

@@ -114,5 +114,5 @@ bool NPCStatus::Initialize (iObjectRegistry* objreg)
 
 void NPCStatus::ScheduleNextRun()
 {
-    npcclient->GetEventMgr()->Push(new psNPCStatusRunEvent(reportRate));
+    npcclient->GetEventManager()->Push(new psNPCStatusRunEvent(reportRate));
 }

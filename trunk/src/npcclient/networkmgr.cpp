@@ -953,7 +953,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 }
 
                 //if found set it
-                npc->SetBrain(type, npcclient->GetEventMgr());
+                npc->SetBrain(type, npcclient->GetEventManager());
                 break;
             }
 
@@ -993,7 +993,7 @@ void NetworkManager::HandleDisconnect(MsgEntry *msg)
         reconnect = true;
         // 60 secs to allow any connections to go linkdead.
         psNPCReconnect *recon = new psNPCReconnect(60000, this, false);
-        npcclient->GetEventMgr()->Push(recon);
+        npcclient->GetEventManager()->Push(recon);
     }
 }
 
@@ -1430,7 +1430,7 @@ void NetworkManager::ReConnect()
     }
     // 2 seconds to allow linkdead messages to be processed
     psNPCReconnect *recon = new psNPCReconnect(2000, this, true);
-    npcclient->GetEventMgr()->Push(recon);
+    npcclient->GetEventManager()->Push(recon);
 }
 
 void NetworkManager::SendConsoleCommand(const char *cmd)
