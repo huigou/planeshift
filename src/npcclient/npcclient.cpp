@@ -981,6 +981,8 @@ void psNPCClient::LoadCompleted()
     psNPCClientTick *tick = new psNPCClientTick(255,this);
     tick->QueueEvent();
 
+    // Notify console user that NPC Client is up and running.
+    CPrintf(CON_NOTIFY, "NPC Client load completed.\n");
 }
 
 void psNPCClient::Tick()

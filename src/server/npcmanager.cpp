@@ -497,6 +497,9 @@ void NPCManager::HandleNPCReady(MsgEntry *me,Client *client)
     // NPC Client is now ready so add onto superclients list
     client->SetReady(true);
     superclients.Push(PublishDestination(client->GetClientNum(), client, 0, 0));
+
+    // Notify console user that NPC Client is up and running.
+    CPrintf(CON_DEBUG, "NPC Client '%s' load completed.\n",client->GetName());
 }
 
 
