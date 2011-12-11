@@ -625,22 +625,6 @@ void Client::SaveAccountData()
                     spamPoints, advisorPoints, accountID.Unbox());
 }
 
-uint32_t Client::WaypointGetEffectID()
-{
-    if (waypointEffectID == 0)
-        waypointEffectID = psserver->GetCacheManager()->NextEffectUID();
-
-    return waypointEffectID;
-}
-
-uint32_t Client::PathGetEffectID()
-{
-    if (pathEffectID == 0)
-        pathEffectID = psserver->GetCacheManager()->NextEffectUID();
-
-    return pathEffectID;
-}
-
 uint32_t Client::LocationGetEffectID()
 {
     if (locationEffectID == 0)

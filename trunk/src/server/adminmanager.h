@@ -29,6 +29,7 @@
 //=============================================================================
 #include "net/messages.h"            // Chat Message definitions
 #include "util/psconst.h"
+#include "util/waypoint.h"
 
 //=============================================================================
 // Local Includes
@@ -2972,7 +2973,7 @@ protected:
 
 /** @brief Admin manager that handles GM commands and general game control.
  */
-class AdminManager : public MessageManager<AdminManager>
+class AdminManager : public MessageManager<AdminManager>, public iEffectIDAllocator
 {
 public:
     AdminManager();
@@ -3412,6 +3413,10 @@ protected:
                   psPath ** path, float *rangePath, int *indexPath, float *fraction,
                   psPath ** pointPath, float *rangePoint, int *indexPoint);
 
+    /** Implement the abstract function from the iEffectIDAllocator
+     */
+    virtual uint32_t GetEffectID();
+    
     /** @brief Handle online path editing.
      * @param me The incoming message from the GM
      * @param msg The cracked command message.

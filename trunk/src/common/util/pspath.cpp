@@ -41,7 +41,7 @@
 #include "engine/psworld.h"
 
 psPathPoint::psPathPoint():
-    id(-1),prevPointId(0),radius(0.0),waypoint(NULL)
+    id(-1),prevPointId(0),radius(0.0),waypoint(NULL),effectID(0)
 {
 }
 
@@ -139,6 +139,11 @@ void psPathPoint::SetWaypoint(Waypoint* waypoint)
     this->waypoint = waypoint;
 }
 
+Waypoint* psPathPoint::GetWaypoint()
+{
+    return waypoint;
+}
+
 csString psPathPoint::GetName()
 {
     csString name("PP"); // Default to just PathPoint (PP).
@@ -149,6 +154,16 @@ csString psPathPoint::GetName()
     }
 
     return name;
+}
+
+uint32_t psPathPoint::GetEffectID(iEffectIDAllocator* allocator)
+{
+    if (effectID <= 0)
+    {
+        effectID = allocator->GetEffectID();
+    }
+    
+    return effectID;
 }
 
 //---------------------------------------------------------------------------
@@ -188,18 +203,20 @@ psPath::~psPath()
     points.DeleteAll();
 }
 
-void psPath::AddPoint(Location * loc, bool first)
+psPathPoint* psPath::AddPoint(Location * loc, bool first)
 {
-    AddPoint(loc->pos,loc->radius,loc->sectorName,first);
+    return AddPoint(loc->pos,loc->radius,loc->sectorName,first);
 }
 
-void psPath::AddPoint(iDataConnection * db, const csVector3& pos, const char * sectorName, bool first)
+psPathPoint* psPath::AddPoint(iDataConnection * db, const csVector3& pos, const char * sectorName, bool first)
 {
     psPathPoint * pp = AddPoint(pos, 0.0, sectorName, first);
     if (id != -1)
     {
         pp->Create(db,id);
     }
+
+    return pp;
 }
 
 psPathPoint* psPath::AddPoint(const csVector3& pos, float radius, const char * sectorName, bool first)

@@ -42,6 +42,7 @@
 
 
 Waypoint::Waypoint()
+    :effectID(0)
 {
     distance = 0.0;
     pi = NULL;
@@ -49,6 +50,7 @@ Waypoint::Waypoint()
 }
 
 Waypoint::Waypoint(const char* name)
+    :effectID(0)
 {
     distance = 0.0;
     pi = NULL;
@@ -59,6 +61,7 @@ Waypoint::Waypoint(const char* name)
 Waypoint::Waypoint(csString& name, 
                    csVector3& pos, csString& sectorName,
                    float radius, csString& flags)
+    :effectID(0)
 {
     distance = 0.0;
     pi = NULL;
@@ -529,5 +532,15 @@ bool Waypoint::CheckWithin(iEngine * engine, const csVector3& pos, const iSector
     }
     
     return false;
+}
+
+uint32_t Waypoint::GetEffectID(iEffectIDAllocator* allocator)
+{
+    if (effectID <= 0)
+    {
+        effectID = allocator->GetEffectID();
+    }
+    
+    return effectID;
 }
 
