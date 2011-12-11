@@ -36,6 +36,20 @@ struct iEngine;
 class Location;
 class psString;
 
+
+/**
+ * Helper interface to allocate effect IDs
+ */
+class iEffectIDAllocator
+{
+public:
+    virtual uint32_t GetEffectID() = 0;
+};
+
+
+/**
+   Represents a point on a path between two waypoints.
+ */
 class psPathPoint
 {
     friend class psPathNetwork;
@@ -66,7 +80,17 @@ public:
 
     void SetWaypoint(Waypoint* waypoint);
 
+    Waypoint* GetWaypoint();
+
+    /** Return the name of this path point.
+     *
+     * Will only have a name if this is a waypoint as well.*/
     csString GetName();
+
+    /** Return the effect ID for this pathpoint or assign a new ID
+        @param allocator 
+     */
+    uint32_t GetEffectID(iEffectIDAllocator* allocator);    
 private:
     int                    id;
     int                    prevPointId;
@@ -81,6 +105,8 @@ private:
     csWeakRef<iSector>     sector;           ///< Cached sector
     float                  startDistance[2]; ///< Start distance for FORWARD and REVERS    
     Waypoint*              waypoint;         ///< Pointer to the waypoint if this point is on a wp.
+
+    uint32_t               effectID;       ///< When displayed in a client this is the effect id
 };
 
 class psPath
@@ -123,10 +149,10 @@ public:
     bool Adjust(iDataConnection * db, int index, csVector3 & pos, csString sector);
 
     /// Add a new point to the path
-    void AddPoint(Location * loc, bool first = false);
+    psPathPoint* AddPoint(Location * loc, bool first = false);
 
     /// Add a new point to the path and update db
-    void AddPoint(iDataConnection *db, const csVector3& pos, const char * sectorName, bool first = false);
+    psPathPoint* AddPoint(iDataConnection *db, const csVector3& pos, const char * sectorName, bool first = false);
     
     /// Add a new point to the path
     psPathPoint* AddPoint(const csVector3& pos, float radius, const char * sectorName, bool first = false);

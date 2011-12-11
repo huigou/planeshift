@@ -361,9 +361,6 @@ public:
     int WaypointGetPathIndex() { return waypointPathIndex; }
     int WaypointGetNewPathIndex() { return waypointPathIndex++; }
 
-    uint32_t PathGetEffectID();
-    uint32_t WaypointGetEffectID();
-
     psPath * PathGetPath() { return pathPath; }
     void PathSetPath(psPath * path) { pathPath = path; }
     

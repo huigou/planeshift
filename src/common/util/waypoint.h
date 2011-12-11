@@ -58,6 +58,8 @@ public:
     bool                       road;           ///< True if this waypoint is a road/street
     bool                       ground;         ///< True if this waypoint is ground
 
+    uint32_t                   effectID;       ///< When displayed in a client this is the effect id
+
     Waypoint();
     Waypoint(const char *name);
     Waypoint(csString& name, csVector3& pos, csString& sectorName, float radius, csString& flags);
@@ -133,6 +135,12 @@ public:
      * @return        True if flags where set.
      */
     bool SetFlag(iDataConnection * db, const csString &flagstr, bool enable);
+
+
+    /** Return the effect ID for this waypoint or assign a new ID
+        @param allocator 
+     */
+    uint32_t GetEffectID(iEffectIDAllocator* allocator);
 
     /// Data used in the dijkstra's algorithm to find waypoint path
     float distance; /// Hold current shortest distance to the start WP.
