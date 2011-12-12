@@ -45,7 +45,7 @@ class InstrumentManager;
 #define DEFAULT_INSTRUMENTS_PATH "/planeshift/art/instruments.xml"
 #define DEFAULT_AREAS_PATH "/planeshift/soundlib/areas/"
 #define DEFAULT_COMMON_SECTOR_NAME "common"
-#define DEFAULT_DAMPENING_PERCENT 0.1
+#define DEFAULT_DAMPENING_PERCENT 0.1f
 #define DEFAULT_DAMPENING_CONTROLS "music"
 
 /**

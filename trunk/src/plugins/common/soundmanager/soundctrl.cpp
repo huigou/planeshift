@@ -114,7 +114,7 @@ void SoundControl::VolumeDampening(float dampPercent)
 	{
 		if(volumeDamp > dampPercent)
 		{
-			volumeDamp -= 0.05;
+			volumeDamp -= 0.05f;
 		}
 		else
 		{
@@ -125,7 +125,7 @@ void SoundControl::VolumeDampening(float dampPercent)
 	{
 		if(volumeDamp < 1.0)
 		{
-			volumeDamp += 0.01;
+			volumeDamp += 0.01f;
 		}
 		else
 		{
