@@ -112,3 +112,4 @@ All the former developers for their work and contributions to PlaneShift.
 @Be sure to read the other credits files in docs directory to have a full list of developers of previous releases.
 
 Sonora font is used with permission of the author: Christian Texier (christian.texier.pagespro-orange.fr)
+Thanks to Kevin Budd for providing the flute sounds.
