@@ -257,7 +257,7 @@ bool Instrument::AddNote(const char* fileName, char pitch, int alter, uint octav
     }
 
     // loading data
-    if(!SoundSystemManager::GetSingleton().GetSoundData()->LoadSoundFile(fileName, noteData))
+    if(!SoundSystemManager::GetSingleton().GetSoundDataCache()->GetSoundData(fileName, noteData))
     {
         return false;
     }

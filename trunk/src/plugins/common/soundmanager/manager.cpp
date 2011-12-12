@@ -67,17 +67,17 @@ SoundSystemManager::SoundSystemManager(iObjectRegistry* objectReg)
     playerPosition.Set(0.0);
     playerVelocity.Set(0.0);
 
-    // Create a new SoundSystem, SoundData Instance and the main SoundControl
+    // Create a new SoundSystem, SoundDataCache Instance and the main SoundControl
     soundSystem = new SoundSystem;
-    soundData = new SoundData;
+    soundDataCache = new SoundDataCache;
     mainSndCtrl = new SoundControl(-1, iSoundControl::NORMAL);
     defaultSndCtrl = new SoundControl(-1, iSoundControl::NORMAL);
 
     if(soundSystem->Initialize(objectReg)
-       && soundData->Initialize(objectReg))
+       && soundDataCache->Initialize(objectReg))
     {
         // FIXME what if soundlib.xml doesnt exist?
-        soundData->LoadSoundLib(soundLib, objectReg);
+        soundDataCache->LoadSoundLib(soundLib, objectReg);
         LastUpdateTime = csGetTicks();
         Initialised = true;
     }
@@ -116,7 +116,7 @@ SoundSystemManager::~SoundSystemManager()
     delete mainSndCtrl;
     delete defaultSndCtrl;
     delete soundSystem;
-    delete soundData;
+    delete soundDataCache;
 
 }
 
@@ -142,7 +142,7 @@ void SoundSystemManager::Update()
     {
         UpdateSound();
         // make a update on sounddata to check if there are sounds to unload
-        soundData->Update();
+        soundDataCache->Update();
     }
 }
 

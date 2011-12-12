@@ -35,7 +35,7 @@
 #include "util/singleton.h"
 
 class SoundSystem;
-class SoundData;
+class SoundDataCache;
 class SoundHandle;
 class SoundControl;
 
@@ -77,7 +77,7 @@ public:
 
     /**
      * Constructor initializes this SoundSystemManager.
-     * Also initializes a @see SoundSystem and a @see SoundData object.
+     * Also initializes a @see SoundSystem and a @see SoundDataCache object.
      * Loads soundlib if presend and set Initialised to true or false (based on success)
      * You can always assume that this Interface works. BUT Play*Sound functions
      * will return false if its not Initialised. Be prepared to handle such Error conditions
@@ -86,7 +86,7 @@ public:
     SoundSystemManager(iObjectRegistry* objectReg);
     /**
      * Destructor will remove everything this SoundManager created.
-     * It will stop and delete all Handles, removes @see SoundData and @see SoundSystem.
+     * It will stop and delete all Handles, removes @see SoundDataCache and @see SoundSystem.
      * All Pointers to objects within this Manager becoming invalid (handles SoundControls etc).
      * Make Sure that you dont use them after destruction.
      */
@@ -106,7 +106,7 @@ public:
 
     /**
      * Plays a 2D sound (Cannot be converted to 3D).
-     * @param name name of the resource you want to play @see SoundData for details
+     * @param name name of the resource you want to play @see SoundDataCache for details
      * @param loop LOOP or DONT_LOOP
      * @param loopstart startframe when looping
      * @param loopend when reach it will jump to startframe
@@ -122,7 +122,7 @@ public:
 
     /**
      * Plays a 3D sound.
-     * @param name name of the resource you want to play @see SoundData for details
+     * @param name name of the resource you want to play @see SoundDataCache for details
      * @param loop LOOP or DONT_LOOP
      * @param loopstart startframe when looping
      * @param loopend when reach it will jump to startframe
@@ -187,7 +187,7 @@ public:
     /**
      * Updates this SoundManager and everything its driving.
      * Consider this as its Mainloop. It does ten updates per second.
-     * It calls UpdateSound and updates SoundData.
+     * It calls UpdateSound and updates SoundDataCache.
      */
     void Update();
     /**
@@ -201,11 +201,11 @@ public:
     SoundControl* GetSoundControl(int ctrlID) const;
 
     SoundSystem* GetSoundSystem() { return soundSystem; }
-    SoundData* GetSoundData() { return soundData; }
+    SoundDataCache* GetSoundDataCache() { return soundDataCache; }
 
 private:
     SoundSystem*                   soundSystem;
-    SoundData*                     soundData;
+    SoundDataCache*                soundDataCache;
     csHash<SoundHandle*, uint>     soundHandles;       ///< hash which contains all SoundHandles by id
     csHash<SoundControl*, int>     soundControllers;   ///< hash which contains all SoundControls by id
 
@@ -246,7 +246,7 @@ private:
     /**
      * Create a SoundHandle if the given one is null and it initializes it.
      *
-     * @param name name of the resource you want to play @see SoundData for details
+     * @param name name of the resource you want to play @see SoundDataCache for details
      * @param loop LOOP or DONT_LOOP
      * @param loopstart startframe when looping
      * @param loopend when reach it will jump to startframe
