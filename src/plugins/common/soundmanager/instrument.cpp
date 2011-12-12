@@ -274,7 +274,7 @@ bool Instrument::AddNote(const char* fileName, char pitch, int alter, uint octav
     }
 
     // creating the decoded stream
-    noteStream = noteData->CreateStream(format, CS_SND3D_ABSOLUTE);
+    noteStream.AttachNew(noteData->CreateStream(format, CS_SND3D_ABSOLUTE));
     noteStream->SetLoopState(CS_SNDSYS_STREAM_DONTLOOP);
     streamSize = noteStream->GetFrameCount() * (format->Bits / 8) * format->Channels;
 
