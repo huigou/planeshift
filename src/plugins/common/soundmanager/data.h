@@ -21,73 +21,9 @@
  *
  */
 
-#ifndef _SOUND_DATA_H_
-#define _SOUND_DATA_H_
+#ifndef _SOUND_DATA_CACHE_H_
+#define _SOUND_DATA_CACHE_H_
 
-/*
- * i still have to make this doxygen compatible .. please dont mock me
- * but i need to get this story out of my head and into this file
- *
- * How SoundData works: (Birth till Death)
- *
- * Birth:
- *
- * On Initialization it aquires references to vfs and a loader.
- * It returns false if it fails and no further checking is done.
- *
- * On succes the very first thing that may happen is that LoadSoundLib is called.
- * It fills libsoundfiles with the data it found in soundlib.xml
- * Even if not called we can still process requests for filenames within our vfs.
- *
- * We assume LoadSoundLib has been called and the library is filled.
- *
- * Now Someone calls LoadSoundFile to load a named resource or file
- * the one that calls expects a pointer to the SoundFile he requested
- * depending on how succesfull this is LoadSoundFile will fill it in and return
- * true or false.
- *
- * GetSound is called and GetSound will search if theres a cached
- * SoundFile or if theres a unloaded resource in our soundlib.
- * if its cached then it will return that one. Thats best case
- * because LoadSoundFile can return a pointer to the cached data.
- * If its in our soundlib, then GetSound will make a copy and put that into our cache
- * (using PutSound) on succes it will return a Pointer to a valid SoundFile
- * on failure it will return NULL.
- *
- * GetSound may return NULL. In that case LoadSoundfile creates a new SoundFile
- * (object) with the given name as filename to check if we got a (dynamic)
- * file as name.
- * That happens if we are playing voicefiles. Those are downloaded from the server
- * and thus do not exist in our libraray. PutSound is used to add it to the cache.
- *
- * However theres always a valid SoundFile (object) for our loader
- * Now LoadSoundFile tries to load that file (finally).
- * There are two cases:
- * 1) file exists and is loadable (succes .. return true)
- * 2) file doesnt exist or ISNT loadable (failure .. return false)
- *
- * case 1) means that loaded (a bool) is set to true and snddata valid
- * case 2) loaded remains false and snddata is invalid / NULL
- *
- * LoadSoundFile has returned and the caller
- * might now do whatever he wanted todo with that snddata.
- *
- * Death:
- *
- * SoundData has a Update method that checks if there are expired SoundFiles
- * there's a default caching time of 300 seconds. After 300 seconds it will
- * check if there are still references on the snddata our SoundFile provides.
- * If theres only one then its the SoundFile object itself.
- * That means we go ahead and delete that object using DeleteSound.
- *
- * Now sometimes it isnt that easy ;) Maybe thats a looping background sound
- * in that case our RefCount is at last higher then one.
- * We set lasttouch to current ticks .. and check again .. in 300 seconds ;)
- *
- * Anyway UnloadSound is a public method and thus someone may call it for any
- * reason. Be aware!
- * It will crash your program if you unload data which is still in use ;)
- */
 
 //====================================================================================
 // Crystal Space Includes
@@ -102,121 +38,148 @@
 
 #define DEFAULT_SOUNDFILE_CACHETIME 300000
 
-/**
- * Class that contains the most important informations about a soundfile
- * It contains the name, filename and if loaded the data.
- * its used by @see SoundData to manage our SoundFile(s). 
- */
 
-class SoundFile
+/**
+ * This struct keeps the information about a sound file.
+ * @see SoundDataCache, the class that uses this struct.
+ */
+struct SoundFile
 {
 public:
-    csString            name;           ///< name of this file/resource MUST be unique
-    csString            filename;       ///< filename in our vfs (maybe not unique)
-    csRef<iSndSysData>  snddata;        ///< data in suitable format
-    bool                loaded;         ///< true if snddata is loaded, false if not
-    csTicks             lasttouch;      ///< last time when this SoundFile was used/touched
+    csString            name;           ///< Identifier of this file/resource. MUST be unique.
+    csString            fileName;       ///< File's name in our vfs. It doesn't need to be unique.
+    csRef<iSndSysData>  sndData;        ///< Data in suitable format.
+    csTicks             lastTouch;      ///< Last time when this SoundFile was used/touched.
 
     /**
      * Constructs a SoundFile.
-     * @param newname name of this SoundFile (must be unique)
-     * @param newfilename filename this SoundFile is using
+     * @param newName identifier of this SoundFile (must be unique).
+     * @param newFileName file's name this SoundFile is using.
      */
-    SoundFile(const char* newname, const char* newfilename);
+    SoundFile(const char* newName, const char* newFileName);
+
     /**
-     * Copy Constructor.
-     * Copys the whole SoundFile.
+     * Copy constructor. It copies the whole SoundFile.
+     * @param copySoundFile SoundFile to copy.
      */
-    SoundFile(SoundFile* const &copythat);
+    SoundFile(SoundFile* const &copySoundFile);
+
     /**
      * Destructor.
      */
     ~SoundFile();
 };
 
-/**
- * SoundData is the datakeeper of @see SoundSystemManager.
- * It loads and unloads all Soundfiles and provides a simple caching
- * mechanism.
- */
 
-class SoundData
+//--------------------------------------------------
+
+
+/**
+ * SoundDataCache is the data-keeper of SoundSystemManager. It loads and unloads all
+ * sound files and provides a simple caching mechanism.
+ *
+ * Birth:
+ * After the object creation, it should be called the method Initialize in order to
+ * aquire references to the virtual file system and the CS sound loader. If a sound
+ * library is present it should be loaded with LoadSoundLib.
+ *
+ * Usage:
+ * Sounds can be retrieved with GetSoundData. The provided iSndSysData should always
+ * be used with a csRef since the reference counting is checked to determine if the
+ * sound is still in use or not. Referencing the sound data with a normal pointer
+ * could cause the application to crash by ending up with pointing to an object that
+ * the cache has destroyed.
+ *
+ * Cache:
+ * The data is cached and unloaded when it is not referenced anymore and the time
+ * given in the configuration option "PlaneShift.Sound.DataCacheTime" has elapsed.
+ * One can force the cache to unload a sound with UnloadSoundFile if it is known
+ * that the sound won't be used again.
+ *
+ * Death:
+ * It is not necessary to call UnloadSoundLib. The destructor takes care of it too.
+ */
+class SoundDataCache
 {
 public:
 
     /**
-     * Constructor .. empty.
-     * Initialization is done via Initialize because its not guaranteed
-     * that its successful.
+     * Constructor. Initialization is done via Initialize because it's not guaranteed
+     * that it's successful.
      */
-    SoundData();
+    SoundDataCache();
+
     /**
-     * Deconstructor.
-     * Unloads everything and destroys all SoundFile object.
+     * Deconstructor. Unloads everything and destroys all SoundFile objects.
      */
-    ~SoundData();
+    ~SoundDataCache();
+
     /**
-     * Initializes Loader and VFS.
-     * Will return true on success and false if not.
-     * @param objectReg objectReg to get references to iVFS and iSndSysLoader 
+     * Initializes CS iSndSysLoader and look for the VFS.
+     * @param objectReg iObjectRegistry to get references to iVFS and iSndSysLoader.
+     * @return true on success, false otherwise.
      */
     bool Initialize(iObjectRegistry* objectReg);
+
     /**
-     * Reads soundlib.xml and creates reference SoundFile objects.
-     * It fills the private hash with unloaded SoundFile objects.
-     * Those will be copied and loaded if needed
-     * @param filename filename to load
-     * @param objectReg ps objectreg because we need iDocumentSystem
+     * Reads information contained in the given sound library XML file.
+     * @param fileName the path to the XML sound library file.
+     * @param objectReg ps iObjectRegistry because we need iDocumentSystem.
+     * @return true on success, false otherwise.
      */ 
-    bool LoadSoundLib(const char* filename, iObjectRegistry* objectReg);
+    bool LoadSoundLib(const char* fileName, iObjectRegistry* objectReg);
+
     /**
-     * Unloads everything LoadSoundLib created.
-     * Will purge the hash and delete all reference SoundFile objects.
+     * Unloads everything LoadSoundLib created and clean the cache.
      */
     void UnloadSoundLib();
+
     /**
-     * Loads a soundfile out of the vfs.
-     * The file given by name will be loaded into a iSndSysData object.
-     * @param name filename to load
-     * @param snddata iSndSysData object to write the data into
+     * Fetches a sound data from the cache and loads it from the VFS if necessary. If
+     * the sound is not in the sound library then it considers the parameter "name" as
+     * a path in the VFS and it tries to load the data from there.
+     * @attention always use the provided iSndSysData with a csRef since the reference
+     * counting is used to determine if the sound is still in use or not. Referencing
+     * the sound data with a normal pointer could cause the application to crash by
+     * ending up with pointing to an object that the cache has destroyed.
+     * @param name the name of the sound to fetch (or its path if it is not in the
+     * library.
+     * @param sndData object that will contain the sound data at the end.
+     * @return true on success, false if the sound data couldn't be retrieved.
      */
-    bool LoadSoundFile(const char* name, csRef<iSndSysData> &snddata);
+    bool GetSoundData(const char* name, csRef<iSndSysData> &sndData);
+
     /**
-     * Unloads a soundfile and deletes its snddata object.
-     * The Soundfile given by name will be unloaded. Be careful with this one!
-     * It doesnt check if its still in use.
-     * @param name SoundFile by name
+     * Forces the cache to unload and delete the data of the given sound from the
+     * memory, no matter if it's still in use or not.
+     * @param namethe name of the sound to unload.
      */
     void UnloadSoundFile(const char* name);
+
     /**
-     * Checks usage of all SoundFile objects and unloads them if appropriate.
-     * Each SoundFile has a Timestamp and a Refcount that help to determine
-     * if it can be freed. Unload happens if its Cachetime is expired if its
-     * RefCount is 1. RefCount 1 means were the one that holds it. 
+     * Checks the reference counting to sounds to determine if they are still in use
+     * or not. Unloads the sound data that has not been used for the time specified
+     * in the configuration option "PlaneShift.Sound.DataCacheTime".
      */
     void Update();
 
 private:
-    csRef<iSndSysLoader> sndloader;         ///< Crystalspace soundloader
-    csHash<SoundFile*>   soundfiles;        ///< Hash of loaded SoundFiles
-    csHash<SoundFile*>   libsoundfiles;     ///< Hash of Resources soundlib.xml provides
-    csRef<iVFS>          vfs;               ///< vfs where were reading from
-
-    uint                 cacheTime;         ///< number of milliseconds a file remains cached
+    uint                         cacheTime;         ///< Number of milliseconds a file remains cached.
+    csRef<iVFS>                  vfs;               ///< VFS used to retrieve the sound library.
+    csRef<iSndSysLoader>         sndLoader;         ///< Crystal Space sound loader.
+    csHash<SoundFile*, csString> libSoundFiles;     ///< Maps the sounds' identifiers with their data.
+    csHash<SoundFile*, csString> loadedSoundFiles;  ///< Hash of loaded SoundFiles.
     
     /**
-     * Fetches a SoundFile object out of our cache.
-     * @param name Name of the SoundFile we are searching.
+     * Load the sound data into a SoundFile from the VFS (if not already loaded). If
+     * the sound is not in libSoundFiles then it considers the parameter "name" as a
+     * path in the VFS and it tries to load the data from there. This is useful for
+     * dynamically generated sounds (downloaded from the server for example).
+     * @param name the name of the sound we are searching (or its path if it is not
+     * in the library.
+     * @return a pointer to the loaded SoundFile or 0 if the data couldn't be loaded.
      */
-    SoundFile* GetSound(const char* name);
-    /**
-     * Adds a SoundFile object to our cache.
-     */
-    void PutSound(SoundFile* &sound);
-    /**
-     * Delete a SoundFile and deletes it from our hash.
-     */
-    void DeleteSound(SoundFile* &sound);
+    SoundFile* LoadSoundFile(const char* name);
 };
 
-#endif /*_SOUND_DATA_H_*/
+#endif // _SOUND_DATA_CACHE_H_

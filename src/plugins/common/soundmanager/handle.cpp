@@ -98,14 +98,14 @@ bool SoundHandle::Init(const char* resname, bool loop, float volume_preset,
 {
     csRef<iSndSysData> snddata;
 
-    if(!SoundSystemManager::GetSingleton().GetSoundData()->LoadSoundFile(resname, snddata))
+    if(!SoundSystemManager::GetSingleton().GetSoundDataCache()->GetSoundData(resname, snddata))
     {
         return false;
     }
 
     if(!SoundSystemManager::GetSingleton().GetSoundSystem()->CreateStream(snddata, loop, type, sndstream))
     {
-        SoundSystemManager::GetSingleton().GetSoundData()->UnloadSoundFile(resname);
+        SoundSystemManager::GetSingleton().GetSoundDataCache()->UnloadSoundFile(resname);
         return false;
     }
 
