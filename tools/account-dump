@@ -188,6 +188,8 @@ while($characterRow = mysql_fetch_row($charactersRows))
     printf(dump_sql("SELECT * FROM character_skills where character_id = '$characterID'", "character_skills", $newStartCharID));
     //dump character traits
     printf(dump_sql("SELECT * FROM character_traits where character_id = '$characterID'", "character_traits", $newStartCharID));
+    //dump character factions
+    printf(dump_sql("SELECT * FROM character_factions where character_id = '$characterID'", "character_factions", $newStartCharID));
     //dump player spells
     printf(dump_sql("SELECT * FROM player_spells where player_id = '$characterID'", "player_spells", $newStartCharID));
     //dump items
