@@ -531,27 +531,27 @@ INSERT INTO math_scripts VALUES( "PracticeArmorSkills" , "
 INSERT INTO math_scripts VALUES( "SetBaseSkills" , "
 	if(AGI > 0)
 	{
-		Actor:SetSkillValue(46,AGI);
+		Actor:SetBaseSkillValue(46,AGI);
 	}
 	if(CHA > 0)
 	{
-		Actor:SetSkillValue(47,CHA);
+		Actor:SetBaseSkillValue(47,CHA);
 	}
 	if(END > 0)
 	{
-		Actor:SetSkillValue(48,END);
+		Actor:SetBaseSkillValue(48,END);
 	}
 	if(INT > 0)
 	{
-		Actor:SetSkillValue(49,INT);
+		Actor:SetBaseSkillValue(49,INT);
 	}
 	if(STR > 0)
 	{
-		Actor:SetSkillValue(50,STR);
+		Actor:SetBaseSkillValue(50,STR);
 	}
 	if(WILL > 0)
 	{
-		Actor:SetSkillValue(51,WILL);
+		Actor:SetBaseSkillValue(51,WILL);
 	}
 ");
 
