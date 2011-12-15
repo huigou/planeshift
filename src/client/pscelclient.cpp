@@ -1876,7 +1876,7 @@ void GEMClientActor::SetAnimationVelocity(const csVector3& velocity)
     {
         speedNode->SetSpeed(-cal3dvel);
     }
-    if((velocity.x != 0 || velocity.z != 0) && velocity.Norm() < 2)
+    if((velocity.x != 0 || velocity.z != 0) && velocity.Norm() < 1.3)
     {
 
         charApp->SetSneak(true);
