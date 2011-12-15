@@ -371,7 +371,10 @@ void psMovementManager::SetupMovements(psMovementInfoMessage& movemsg)
     if (kbdrotL && kbdrotR)
         kbdRotate = (1 << kbdrotL->id) | (1 << kbdrotR->id);
 
-    actormode = defaultmode = walk;
+    //TODO: make this configurable?
+    defaultmode = walk;
+    actormode = run;
+    toggleRun = true;
 
     ready = true;
 }
