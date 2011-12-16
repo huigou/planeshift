@@ -402,20 +402,20 @@ bool psCharacter::Load(iResultRow& row)
     if(row["base_mana_max"] == NULL)
     {
         //it was null so we check the master character
-        Result hpResult(db->Select("SELECT base_mana_max FROM characters WHERE id=%u", use_id));
+        Result manaResult(db->Select("SELECT base_mana_max FROM characters WHERE id=%u", use_id));
 
         //if we got a valid result we will set it. Note that NULL being in the master
         //too will yield to 0 being set. We take the first result even though more than one
         //is impossible anyway (except if there is a problem with the schema.
-        if(hpResult.IsValid() && hpResult.Count() > 0)
+        if(manaResult.IsValid() && manaResult.Count() > 0)
         {
-            GetMaxHP().SetBase(hpResult[0].GetFloat("base_mana_max"));
+            GetMaxMana().SetBase(manaResult[0].GetFloat("base_mana_max"));
         }
         else
         {
             //if the result is invalid we end with the same result of before 0 being set
             //in other words autocalculate
-            GetMaxHP().SetBase(0.0f);
+            GetMaxMana().SetBase(0.0f);
         }
     }
     else //in the other cases just go on and take the value from the current character
