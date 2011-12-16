@@ -8058,7 +8058,7 @@ csString psSimpleRenderMeshMessage::ToString(NetBase::AccessPointers* accessPoin
                       simpleRenderMesh.meshtype,simpleRenderMesh.vertexCount);
     for (size_t i = 0; i < simpleRenderMesh.vertexCount; i++)
     {
-        msgtext.AppendFmt(" %d: v: %s",i,toString(simpleRenderMesh.vertices[i]).GetData());
+        msgtext.AppendFmt(" %zu: v: %s",i,toString(simpleRenderMesh.vertices[i]).GetData());
         if (simpleRenderMesh.colors)
         {
             msgtext.AppendFmt(" c: %s",toString(simpleRenderMesh.colors[i]).GetData());
