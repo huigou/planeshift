@@ -1635,6 +1635,10 @@ INSERT INTO command_group_assignment VALUES( "write all creative", 24 );
 INSERT INTO command_group_assignment VALUES( "write all creative", 23 );
 INSERT INTO command_group_assignment VALUES( "write all creative", 22 );
 
+ALTER TABLE `characters` MODIFY COLUMN `base_hitpoints_max` FLOAT(10,2)  DEFAULT '0.00',
+ MODIFY COLUMN `base_mana_max` FLOAT(10,2)  DEFAULT '0.00';
+
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to
