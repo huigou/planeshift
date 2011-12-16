@@ -377,7 +377,7 @@ bool psCharacter::Load(iResultRow& row)
     if(row["base_hitpoints_max"] == NULL)
     {
         //it was null so we check the master character
-        Result hpResult(db->Select("SELECT base_hitpoints_max FROM characters WHERE id=%u", use_id));
+        Result hpResult(db->Select("SELECT base_hitpoints_max FROM characters WHERE id=%u", ShowID(use_id)));
 
         //if we got a valid result we will set it. Note that NULL being in the master
         //too will yield to 0 being set. We take the first result even though more than one
@@ -402,7 +402,7 @@ bool psCharacter::Load(iResultRow& row)
     if(row["base_mana_max"] == NULL)
     {
         //it was null so we check the master character
-        Result manaResult(db->Select("SELECT base_mana_max FROM characters WHERE id=%u", use_id));
+        Result manaResult(db->Select("SELECT base_mana_max FROM characters WHERE id=%u", ShowID(use_id)));
 
         //if we got a valid result we will set it. Note that NULL being in the master
         //too will yield to 0 being set. We take the first result even though more than one
