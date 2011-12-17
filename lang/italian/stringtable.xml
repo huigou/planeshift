@@ -43,8 +43,8 @@
   <item orig="Creatures" trans="" />
   <item orig="Dismiss" trans="" />
   <item orig="Stack Count" trans="" />
-  <item orig="Torso" trans="" />
   <item orig="Examine" trans="Esamina" />
+  <item orig="Torso" trans="" />
   <item orig=" unanswered petitions." trans=" petizioni non risposte." />
   <item orig="Talk to people in your sector." trans="Parla alle persone nel tuo settore." />
   <item orig="Right Finger" trans="" />
@@ -57,28 +57,28 @@
   <item orig="Cannot connect to server!" trans="" />
   <item orig="male " trans="maschio di " />
   <item orig="Show Info Messages on screen" trans="" />
-  <item orig="Description" trans="Descrizione" />
-  <item orig="alliance text colour" trans="colore testo alleanza" />
   <item orig="Active" trans="Attivo" />
+  <item orig="alliance text colour" trans="colore testo alleanza" />
+  <item orig="Description" trans="Descrizione" />
   <item orig="Creatures:" trans="Creature:" />
   <item orig="says" trans="dice" />
   <item orig="Chose Color (c)" trans="Seleziona Colore (c)" />
   <item orig="View" trans="Vedi" />
   <item orig="PATHS" trans="VIE" />
   <item orig="Wait" trans="" />
-  <item orig="Previous Icon (PgUp)" trans="Icona Precedente (pgUp)" />
   <item orig="Shadows" trans="Ombre" />
+  <item orig="Previous Icon (PgUp)" trans="Icona Precedente (pgUp)" />
   <item orig="Unclaim" trans="Deassegna" />
   <item orig="Server:" trans="Server:" />
-  <item orig="Enable Shadows" trans="Abilita Ombre" />
   <item orig="Exit PlaneShift" trans="Esci da PlaneShift" />
+  <item orig="Enable Shadows" trans="Abilita Ombre" />
   <item orig="Escalation Level:" trans="" />
   <item orig="Edit mode has been disabled." trans="" />
-  <item orig="Insert Note" trans="" />
   <item orig="Notify when members login/logout" trans="Notifica quando i membri entrano/escono" />
+  <item orig="Insert Note" trans="" />
   <item orig="Sorry, no dictionary found. To use the spell checker get one" trans="" />
-  <item orig="Talk to someone privately." trans="Parla a qualcuno privatamente." />
   <item orig="P. stamina" trans="Stamina F." />
+  <item orig="Talk to someone privately." trans="Parla a qualcuno privatamente." />
   <item orig="Magic Skills List:" trans="" />
   <item orig="Quest" trans="" />
   <item orig="House:" trans="Casa:" />
@@ -106,8 +106,8 @@
   <item orig="Coins to exchange:" trans="Monete da cambiare:" />
   <item orig="Natural" trans="" />
   <item orig="Are you sure you want to discard the selected quest?" trans="Sei sicuro di voler cancellare la quest selezionata?" />
-  <item orig="PvP" trans="" />
   <item orig="Personal Dictionary:" trans="" />
+  <item orig="PvP" trans="" />
   <item orig="Enable alliance" trans="Abilita alleanza" />
   <item orig="landscape" trans="landscape" />
   <item orig="Type:" trans="Tipo:" />
@@ -123,8 +123,8 @@
   <item orig="each values 250 Tria" trans="" />
   <item orig="npcinternal outline colour" trans="" />
   <item orig="Merchant" trans="Mercante" />
-  <item orig="Account User Name:" trans="Nome utente Account:" />
   <item orig="Auction" trans="" />
+  <item orig="Account User Name:" trans="Nome utente Account:" />
   <item orig="set invisible" trans="" />
   <item orig="Please enter a first name" trans="" />
   <item orig="You currently have no petitions." trans="Al momento non hai petizioni." />
@@ -155,8 +155,8 @@ If your name is inappropriate, a Game Master (GM) will change it." trans="" />
   <item orig="Tell Alignment" trans="Allineamento Tell" />
   <item orig="Enable NPC" trans="Abilita NPC" />
   <item orig="Change name" trans="Cambia nome" />
-  <item orig="set invincible" trans="" />
   <item orig="Getting Characters" trans="Caricamento Personaggi" />
+  <item orig="set invincible" trans="" />
   <item orig="Introduce yourself" trans="" />
   <item orig="Color of Typos" trans="" />
   <item orig="Main tab" trans="" />
@@ -196,26 +196,26 @@ If your name is inappropriate, a Game Master (GM) will change it." trans="" />
   <item orig="Mesh:" trans="" />
   <item orig="Right Hand" trans="" />
   <item orig="Resolution" trans="Risoluzione" />
-  <item orig="Gender:" trans="Sesso:" />
   <item orig="Refresh MOTD" trans="Aggiorna MOTD" />
+  <item orig="Gender:" trans="Sesso:" />
   <item orig="Login" trans="" />
   <item orig="Z:" trans="" />
+  <item orig="Sounds are not active!" trans="" />
   <item orig="Use basic chat window (need reload)" trans="" />
   <item orig="Spell Description:" trans="Descrizione magia:" />
   <item orig="Petition Info" trans="Informazioni sulla petizione" />
   <item orig="%s has invited you to join a group. Click Yes to accept or No to reject." trans="%s ti ha invitato ad aggregarti a un gruppo. Clicca Sì per accettare e No per rifiutare." />
   <item orig="You must select a petition from the list in order to cancel it." trans="Devi selezionare una petizione della lista per poterla cancellare." />
   <item orig="Alliance" trans="Alleanza" />
-  <item orig="Are you sure you want to upload?  " trans="" />
   <item orig="Log Filename:" trans="" />
-  <item orig="Sounds are not active!" trans="" />
+  <item orig="Are you sure you want to upload?  " trans="" />
   <item orig="Dynamic Follow" trans="Inseguimento Dinamico" />
   <item orig="NPC_my text colour" trans="Colore testo NPC_my" />
   <item orig="Full Mesh" trans="Modello completo" />
   <item orig="Do you really want to reset these settings to default values?" trans="" />
   <item orig="NPC_narrate shadow colour" trans="" />
-  <item orig="alliance outline colour" trans="" />
   <item orig="I am leaving" trans="Sto andando via" />
+  <item orig="alliance outline colour" trans="" />
   <item orig="Command(s) only for this character:" trans="" />
   <item orig="Circles available to deposit." trans="" />
   <item orig="Train" trans="" />
@@ -231,8 +231,8 @@ Do you really wish to leave Yliakum?" trans="
 Vuoi veramente lasciare Yliakum?" />
   <item orig="Count" trans="Conto" />
   <item orig="Enter the command(s):" trans="Inserire i comandi:" />
-  <item orig="Month:" trans="Mese:" />
   <item orig="Chat" trans="" />
+  <item orig="Month:" trans="Mese:" />
   <item orig="NPC_me outline colour" trans="" />
   <item orig="Mute on focus loss" trans="" />
   <item orig="Aggressive" trans="" />
@@ -243,8 +243,8 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="Rank" trans="Rango" />
   <item orig="Spawn item" trans="Crea oggetto" />
   <item orig="Enable guild" trans="Abilita gilda" />
-  <item orig="Group stats" trans="" />
   <item orig="o&amp;clock" trans="in punto" />
+  <item orig="Group stats" trans="" />
   <item orig="Construct" trans="" />
   <item orig="Give Kill Experience" trans="" />
   <item orig="Own combat stance changes" trans="" />
@@ -264,13 +264,13 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="Tria" trans="" />
   <item orig="Group text color" trans="Colore testo Gruppo" />
   <item orig="1 Tria" trans="" />
-  <item orig="The number of trias that you may exchange." trans="" />
   <item orig="No Petitions." trans="Nessuna petizione." />
+  <item orig="The number of trias that you may exchange." trans="" />
   <item orig="Filter" trans="" />
   <item orig="New" trans="Nuovo" />
   <item orig="Mute sounds on focus loss" trans="" />
-  <item orig="Show Error Messages on screen" trans="" />
   <item orig="Firstname:" trans="" />
+  <item orig="Show Error Messages on screen" trans="" />
   <item orig="Exchange all items" trans="" />
   <item orig="Add Linked" trans="Aggiungi collegato" />
   <item orig="keyboard" trans="Tastiera" />
@@ -283,8 +283,8 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="Say Alignment" trans="" />
   <item orig="set viewall" trans="" />
   <item orig="Combat" trans="Combattimento" />
-  <item orig="Default last chat" trans="" />
   <item orig="Say outline colour" trans="" />
+  <item orig="Default last chat" trans="" />
   <item orig="Path" trans="Via" />
   <item orig="each values 1 Tria" trans="" />
   <item orig="Delete Selected Character" trans="" />
@@ -294,11 +294,11 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="Are you sure you want to upload your character?" trans="Sei sicuro di voler caricare il tuo personaggio?" />
   <item orig="Enable Chat Bubbles" trans="" />
   <item orig="Transfer to inventory" trans="" />
-  <item orig="Get Reward" trans="Ottieni ricompensa" />
-  <item orig="Magic" trans="Magia" />
   <item orig="Own attacks that fail to penetrate the armor" trans="" />
-  <item orig="Credits" trans="Crediti" />
+  <item orig="Magic" trans="Magia" />
+  <item orig="Get Reward" trans="Ottieni ricompensa" />
   <item orig="You have " trans="" />
+  <item orig="Credits" trans="Crediti" />
   <item orig="details" trans="Dettagli" />
   <item orig="Buddy with the name" trans="" />
   <item orig="HP" trans="" />
@@ -307,12 +307,12 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="%s shouts: %s" trans="%s urla: %s" />
   <item orig="Quality:" trans="Qualità:" />
   <item orig="No server running at the moment" trans="Non ci sono server attivi in questo momento" />
-  <item orig="Chat - TabCompletion" trans="" />
   <item orig="Log Bracket:" trans="" />
+  <item orig="Chat - TabCompletion" trans="" />
   <item orig=" " trans="" />
   <item orig="CHARACTER CREATION" trans="CREAZIONE PERSONAGGIO" />
-  <item orig="Glyphs" trans="Glyph" />
   <item orig="Alliance:" trans="Alleanza:" />
+  <item orig="Glyphs" trans="Glyph" />
   <item orig="Various Skill description:" trans="" />
   <item orig="Buddy list" trans="" />
   <item orig="100%" trans="" />
@@ -325,6 +325,7 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="Debuffs" trans="" />
   <item orig="Alliance text color" trans="Colore testo Alleanza" />
   <item orig="Words for tab completion:" trans="" />
+  <item orig="Use NPC Dialog" trans="" />
   <item orig="Study Item" trans="" />
   <item orig="Store" trans="" />
   <item orig="You have ignored the following players:" trans="Hai ignorato i seguenti giocatori:" />
