@@ -40,7 +40,6 @@
 // Project Includes
 //=============================================================================
 #include "util/log.h"
-#include "util/mathscript.h"
 #include "util/psstring.h"
 #include "util/psxmlparser.h"
 #include "util/serverconsole.h"
