@@ -3570,7 +3570,7 @@ AdminCmdDataReload::AdminCmdDataReload(AdminManager* msgManager, MsgEntry* me, p
             ParseError(me, "Missing or invalid item id");
         }
     }
-    else if(subCmd != "serveroptions")
+    else if(subCmd != "serveroptions" && subCmd != "mathscript")
     {
         ParseError(me,"Not a valid subcommand: " + subCmd);
     }
@@ -3580,7 +3580,7 @@ ADMINCMDFACTORY_IMPLEMENT_MSG_FACTORY_CREATE(AdminCmdDataReload)
 
 csString AdminCmdDataReload::GetHelpMessage()
 {
-    return "Syntax: \"" + command + " item <itemID>\"";
+    return "Syntax: \"" + command + " item <itemID>/script/serveroptions\"";
 }
 
 AdminCmdDataListWarnings::AdminCmdDataListWarnings(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client *client, WordArray &words)
@@ -11257,9 +11257,14 @@ void AdminManager::HandleReload(psAdminCmdMessage& msg, AdminCmdData* cmddata, C
     else if(data->subCmd == "serveroptions")
     {
         if(psserver->GetCacheManager()->ReloadOptions())
-            psserver->SendSystemOK(client->GetClientNum(), "Reloading server options.");
+            psserver->SendSystemOK(client->GetClientNum(), "Successfully reloaded server options.");
         else
             psserver->SendSystemError(client->GetClientNum(), "Failed to reload server options.");
+    }
+    else if(data->subCmd == "mathscript")
+    {
+        psserver->GetMathScriptEngine()->ReloadScripts();
+        psserver->SendSystemOK(client->GetClientNum(), "Successfully reloaded math scripts.");
     }
 }
 

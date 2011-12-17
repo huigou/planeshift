@@ -91,8 +91,8 @@ ServerCharManager::ServerCharManager(CacheManager* cachemanager, GEMSupervisor* 
     gemSupervisor = gemsupervisor;
     slotManager = NULL;
 
-    calc_item_merchant_price_buy = psserver->GetMathScriptEngine()->FindScript("Calc Item Merchant Price Buy");
-    calc_item_merchant_price_sell = psserver->GetMathScriptEngine()->FindScript("Calc Item Merchant Price Sell");
+    psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_item_merchant_price_buy, "Calc Item Merchant Price Buy");
+    psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_item_merchant_price_sell, "Calc Item Merchant Price Sell");
 }
 
 ServerCharManager::~ServerCharManager()
@@ -1303,6 +1303,14 @@ bool ServerCharManager::SendMerchantItems( Client *client, psCharacter* merchant
 int ServerCharManager::CalculateMerchantPrice(psItem *item, Client *client, bool sellPrice)
 {
     int basePrice = sellPrice?item->GetSellPrice().GetTotal():item->GetPrice().GetTotal();
+
+    //As this is called many times in a limited amount of time check before doing the function call
+    //if we really need to do it
+    if(!calc_item_merchant_price_buy.IsValid())
+        psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_item_merchant_price_buy, "Calc Item Merchant Price Buy");
+    if(!calc_item_merchant_price_sell.IsValid())
+        psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_item_merchant_price_sell, "Calc Item Merchant Price Sell");
+    
     if ((sellPrice && !calc_item_merchant_price_sell) || (!sellPrice && !calc_item_merchant_price_buy))
         return basePrice;
 

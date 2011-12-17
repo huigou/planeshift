@@ -72,11 +72,11 @@ ServerSongManager::ServerSongManager()
     Subscribe(&ServerSongManager::HandlePlaySongMessage, MSGTYPE_MUSICAL_SHEET, REQUIRE_READY_CLIENT);
     Subscribe(&ServerSongManager::HandleStopSongMessage, MSGTYPE_STOP_SONG, REQUIRE_READY_CLIENT);
 
-    calcSongPar  = psserver->GetMathScriptEngine()->FindScript("Calculate Song Parameters");
-    calcSongExp  = psserver->GetMathScriptEngine()->FindScript("Calculate Song Experience");
+    psserver->GetMathScriptEngine()->CheckAndUpdateScript(calcSongPar, "Calculate Song Parameters");
+    psserver->GetMathScriptEngine()->CheckAndUpdateScript(calcSongExp, "Calculate Song Experience");
 
-    CS_ASSERT_MSG("Could not load mathscript 'Calculate Song Parameters'", calcSongPar);
-    CS_ASSERT_MSG("Could not load mathscript 'Calculate Song Experience'", calcSongExp);
+    CS_ASSERT_MSG("Could not load mathscript 'Calculate Song Parameters'", calcSongPar.IsValid());
+    CS_ASSERT_MSG("Could not load mathscript 'Calculate Song Experience'", calcSongExp.IsValid());
 }
 
 ServerSongManager::~ServerSongManager()
@@ -155,7 +155,8 @@ void ServerSongManager::HandlePlaySongMessage(MsgEntry* me, Client* client)
             actorEID = charActor->GetEID().Unbox();
 
             // calculating song parameters
-            if(calcSongPar == 0)
+            
+            if(!psserver->GetMathScriptEngine()->CheckAndUpdateScript(calcSongPar, "Calculate Song Parameters"))
             {
                 errorRate = 0;
             }
@@ -265,7 +266,11 @@ void ServerSongManager::StopSong(gemActor* charActor, bool skillRanking)
         // unlocking instrument
         instrItem->SetInUse(false);
 
-        if(skillRanking && calcSongPar != 0 && calcSongExp != 0)
+        //check and update scripts
+        psserver->GetMathScriptEngine()->CheckAndUpdateScript(calcSongPar, "Calculate Song Parameters");
+        psserver->GetMathScriptEngine()->CheckAndUpdateScript(calcSongExp, "Calculate Song Experience");
+
+        if(skillRanking && calcSongPar.IsValid() && calcSongExp.IsValid())
         {
             MathEnvironment mathEnv;
             int practicePoints;

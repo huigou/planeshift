@@ -155,11 +155,11 @@ bool psSpell::Load(iResultRow& row)
 
 float psSpell::PowerLevel(psCharacter *caster, float kFactor) const
 {
-    static MathScript *script = NULL;
-    if (!script)
+    static csWeakRef<MathScript> script = NULL;
+    if (!script.IsValid())
     {
-        script = psserver->GetMathScriptEngine()->FindScript("CalculatePowerLevel");
-        CS_ASSERT(script);
+        psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "CalculatePowerLevel");
+        CS_ASSERT(script.IsValid());
     }
 
     MathEnvironment env;
@@ -175,11 +175,11 @@ float psSpell::PowerLevel(psCharacter *caster, float kFactor) const
 
 psSpellCost psSpell::ManaCost(psCharacter *caster, float kFactor) const
 {
-    static MathScript *script = NULL;
-    if (!script)
+    static csWeakRef<MathScript> script = NULL;
+    if (!script.IsValid())
     {
-        script = psserver->GetMathScriptEngine()->FindScript("CalculateManaCost");
-        CS_ASSERT(script);
+        psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "CalculateManaCost");
+        CS_ASSERT(script.IsValid());
     }
 
     psSpellCost cost;
@@ -209,11 +209,11 @@ psSpellCost psSpell::ManaCost(psCharacter *caster, float kFactor) const
 
 float psSpell::ChanceOfCastSuccess(psCharacter *caster, float kFactor) const
 {
-    static MathScript *script = NULL;
-    if (!script)
+    static csWeakRef<MathScript> script = NULL;
+    if (!script.IsValid())
     {
-        script = psserver->GetMathScriptEngine()->FindScript("CalculateChanceOfCastSuccess");
-        CS_ASSERT(script);
+        psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "CalculateChanceOfCastSuccess");
+        CS_ASSERT(script.IsValid());
     }
 
     MathEnvironment env;
@@ -233,11 +233,11 @@ float psSpell::ChanceOfResearchSuccess(psCharacter *researcher)
     if (realm > researcher->GetMaxAllowedRealm(way->skill))
         return 0.0;
 
-    static MathScript *script = NULL;
-    if (!script)
+    static csWeakRef<MathScript> script = NULL;
+    if (!script.IsValid())
     {
-        script = psserver->GetMathScriptEngine()->FindScript("CalculateChanceOfResearchSuccess");
-        CS_ASSERT(script);
+        psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "CalculateChanceOfResearchSuccess");
+        CS_ASSERT(script.IsValid());
     }
 
     MathEnvironment env;
@@ -511,8 +511,13 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
     if (affectedCount > 0)
     {
         int practicePoints = 1;
-        static MathScript* script = psserver->GetMathScriptEngine()->FindScript("SpellPractice");
-        if (script)
+        static csWeakRef<MathScript> script;
+        if (!script.IsValid())
+        {
+            psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "SpellPractice");
+            CS_ASSERT(script.IsValid());
+        }
+        else
         {
             MathEnvironment env;
             env.Define("Realm", realm);

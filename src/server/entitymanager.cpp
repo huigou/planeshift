@@ -451,13 +451,13 @@ PID EntityManager::GetMasterFamiliarID(psCharacter *charData)
 
 int EntityManager::CalculateFamiliarAffinity( psCharacter * chardata, size_t type, size_t lifecycle, size_t attacktool, size_t attacktype )
 {
-    static MathScript *msAffinity;
+    static csWeakRef<MathScript> msAffinity;
     int affinityValue = 0;
 
     if (!msAffinity)
     {
-        msAffinity = psserver->GetMathScriptEngine()->FindScript("CalculateFamiliarAffinity");
-        CS_ASSERT(msAffinity != NULL);
+        psserver->GetMathScriptEngine()->CheckAndUpdateScript(msAffinity, "CalculateFamiliarAffinity");
+        CS_ASSERT(msAffinity.IsValid());
     }
 
     // Determine Familiar Type using Affinity Values

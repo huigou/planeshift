@@ -79,10 +79,9 @@ bool psServerDR::Initialize()
 {
     Subscribe(&psServerDR::HandleDeadReckoning, MSGTYPE_DEAD_RECKONING, REQUIRE_READY_CLIENT);
 
-    calc_damage   = psserver->GetMathScriptEngine()->FindScript("Calculate Fall Damage");
-    if(!calc_damage)
+    //load the script
+    if(!psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_damage, "Calculate Fall Damage"))
     {
-        CPrintf(CON_ERROR, "Cannot find script 'Calculate Fall Damage'!\n");
         return false;
     }
 
@@ -106,6 +105,13 @@ void psServerDR::HandleFallDamage(gemActor *actor,int clientnum, const csVector3
     MathEnvironment env;
     env.Define("FallHeight", fallHeight);
     env.Define("Damage", 0.0); // Make sure damage is defined.
+
+    //check if the script is still valid before use.
+    if(!psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_damage, "Calculate Fall Damage"))
+    {
+        return;
+    }
+
     calc_damage->Evaluate(&env);
     MathVar *var_fall_dmg = env.Lookup("Damage");
     Debug4(LOG_LINMOVE,actor->GetClientID(), "%s fell %.2fm for damage %.2f",

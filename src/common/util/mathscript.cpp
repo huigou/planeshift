@@ -720,38 +720,75 @@ double MathScript::Evaluate(MathEnvironment *env) const
 
 MathScriptEngine::MathScriptEngine()
 {
+    LoadScripts();
+}
+
+MathScriptEngine::~MathScriptEngine()
+{
+    UnloadScripts();
+}
+
+bool MathScriptEngine::LoadScripts()
+{
     Result result(db->Select("SELECT * from math_scripts"));
     if (!result.IsValid())
-        return;
+        return false;
 
     for (unsigned long i = 0; i < result.Count(); i++ )
     {
+        csRef<MathScript> script;
         MathScript *scr = MathScript::Create(result[i]["name"], result[i]["math_script"]);
         if (!scr)
         {
             Error2("Failed to load MathScript >%s<.", result[i]["name"]);
             continue;
         }
-        scripts.Put(scr->Name(), scr);
+        script.AttachNew(scr);
+        scripts.Put(scr->Name(), script);
     }
+    return true;
 }
 
-MathScriptEngine::~MathScriptEngine()
+void MathScriptEngine::UnloadScripts()
 {
-    csHash<MathScript*, csString>::GlobalIterator it(scripts.GetIterator());
+    //refcounting should handle this.
+    /*csHash<csRef<MathScript>, csString>::GlobalIterator it(scripts.GetIterator());
     while (it.HasNext())
     {
         delete it.Next();
-    }
+    }*/
     scripts.DeleteAll();
 
     MathScriptEngine::customCompoundFunctions.Empty();
     MathScriptEngine::stringLiterals.Empty();
 }
 
-MathScript *MathScriptEngine::FindScript(const csString & name)
+
+
+csWeakRef<MathScript> MathScriptEngine::FindScript(const csString & name)
 {
     return scripts.Get(name, NULL);
+}
+
+bool MathScriptEngine::CheckAndUpdateScript(csWeakRef<MathScript> &script, const csString &name)
+{
+    //check if we need to reload the script
+    if(!script.IsValid())
+    {
+        script = psserver->GetMathScriptEngine()->FindScript(name);
+        if(!script.IsValid()) //check if loading succeded else act accordly
+        {
+            CPrintf(CON_ERROR,"Couldn't load %s script!", name.GetData());
+            return false;
+        }
+    }
+    return true;
+}
+
+void MathScriptEngine::ReloadScripts()
+{
+    UnloadScripts();
+    LoadScripts();
 }
 
 csRandomGen MathScriptEngine::rng;

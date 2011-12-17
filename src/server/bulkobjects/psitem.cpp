@@ -1922,9 +1922,9 @@ float psItem::GetDecayResistance()
 
 psMoney psItem::GetPrice()
 {
-    static MathScript *script;
-    if (!script)
-        script = psserver->GetMathScriptEngine()->FindScript("Calc Item Price");
+    static csWeakRef<MathScript> script;
+    if (!script.IsValid())
+        psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "Calc Item Price");
     if (!script)
     {
         Error1("Cannot find mathscript: Calc Item Price");
@@ -1949,9 +1949,9 @@ psMoney psItem::GetPrice()
 
 psMoney psItem::GetSellPrice()
 {
-    static MathScript *script;
-    if (!script)
-        script = psserver->GetMathScriptEngine()->FindScript("Calc Item Sell Price");
+    static csWeakRef<MathScript> script;
+    if (!script.IsValid())
+        psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "Calc Item Sell Price");
     if (!script)
     {
         Error1("Cannot find mathscript: Calc Item Sell Price");
@@ -3210,9 +3210,9 @@ bool psItem::SendBookText(Client *client, int containerID, int slotID)
 void psItem::SendSketchDefinition(Client *client)
 {
     // Get character capabilities
-    static MathScript *script;
-    if (!script)
-        script = psserver->GetMathScriptEngine()->FindScript("Calc Player Sketch Limits");
+    static csWeakRef<MathScript> script;
+    if (!script.IsValid())
+        psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "Calc Player Sketch Limits");
     if (!script)
     {
         Error1("Cannot find mathscript: Calc Player Sketch Limits");
