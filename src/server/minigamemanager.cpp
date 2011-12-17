@@ -33,7 +33,6 @@
 #include "util/minigame.h"
 #include "util/psxmlparser.h"
 #include "util/psdatabase.h"
-#include "util/mathscript.h"
 
 #include "bulkobjects/psactionlocationinfo.h"
 
