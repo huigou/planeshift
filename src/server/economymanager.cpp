@@ -38,7 +38,6 @@
 #include "util/eventmanager.h"
 #include "util/serverconsole.h"
 #include "util/psdatabase.h"
-#include "util/mathscript.h"
 
 #include "bulkobjects/pstrade.h"
 #include "bulkobjects/pscharacterloader.h"
