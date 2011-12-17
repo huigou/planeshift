@@ -144,9 +144,12 @@ CombatManager::CombatManager(CacheManager* cachemanager, EntityManager* entityma
     randomgen = psserver->rng;
     cacheManager = cachemanager;
     entityManager = entitymanager;
+
+    psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_damage, "Calculate Damage");
+    psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_decay, "Calculate Decay");
+    psserver->GetMathScriptEngine()->CheckAndUpdateScript(staminacombat, "StaminaCombat");
   
-    calc_damage  = psserver->GetMathScriptEngine()->FindScript("Calculate Damage");
-    calc_decay   = psserver->GetMathScriptEngine()->FindScript("Calculate Decay");
+
     if ( !calc_damage )
     {
         Error1("Calculate Damage Script could not be found.  Check the math_scripts DB table.");
@@ -163,9 +166,7 @@ CombatManager::CombatManager(CacheManager* cachemanager, EntityManager* entityma
         targetLocations.Push(PSCHARACTER_SLOT_GLOVES);
         targetLocations.Push(PSCHARACTER_SLOT_LEGS);
         targetLocations.Push(PSCHARACTER_SLOT_BOOTS);
-    } 
-
-    staminacombat = psserver->GetMathScriptEngine()->FindScript("StaminaCombat");
+    }
 
     Subscribe(&CombatManager::HandleDeathEvent, MSGTYPE_DEATH_EVENT, NO_VALIDATION);
 }
@@ -530,6 +531,14 @@ int CombatManager::CalculateAttack(psCombatGameEvent *event, psItem* subWeapon)
     env.Define("DiffY",                 diff.y ? diff.y : 0.00001F); // force minimal value
     env.Define("DiffZ",                 diff.z ? diff.z : 0.00001F); // force minimal value
 
+    //as this is called frequently we precheck before doing a function
+    //call if we need to reload the script
+    if(!calc_damage.IsValid())
+    {
+        psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_damage, "Calculate Damage");
+    }
+
+    //this is going to crash if the script cannot be found.
     calc_damage->Evaluate(&env);
 
     if (DoLogDebug2(LOG_COMBAT, event->GetAttackerData()->GetPID().Unbox()))
@@ -594,6 +603,14 @@ void CombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_result
         env.Define("Damage", event->FinalDamage);                 // actual damage dealt
         env.Define("Blocked", (attack_result == ATTACK_BLOCKED)); // identifies whether this attack was blocked
 
+        //as this is called frequently we precheck before doing a function
+        //call if we need to reload the script
+        if(!calc_decay.IsValid())
+        {
+            psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_decay, "Calculate Decay");
+        }
+
+        //this is going to crash if the script cannot be found.
         calc_decay->Evaluate(&env);
 
         weaponDecay = env.Lookup("WeaponDecay");
@@ -847,6 +864,14 @@ void CombatManager::HandleCombatEvent(psCombatGameEvent *event)
         MathEnvironment env;
         env.Define("Actor",  event->GetAttacker());
         env.Define("Weapon", weapon);
+
+        //as this is called frequently we precheck before doing a function
+        //call if we need to reload the script
+        if(!staminacombat.IsValid())
+        {
+            psserver->GetMathScriptEngine()->CheckAndUpdateScript(staminacombat, "StaminaCombat");
+        }
+        //this is going to crash if the script was not found in the db.
         staminacombat->Evaluate(&env);
         MathVar *PhyDrain = env.Lookup("PhyDrain");
         MathVar *MntDrain = env.Lookup("MntDrain");

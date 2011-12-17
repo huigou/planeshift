@@ -331,12 +331,12 @@ public:
     /// Uses a MathScript to calculate the maximum amount of time a Pet can remain in world.
     double GetMaxPetTime()
     {
-        static MathScript* maxPetTime = NULL;
+        static csWeakRef<MathScript> maxPetTime = NULL;
         double maxTime = 60 * 5 * 1000;
 
         if (!maxPetTime)
         {
-            maxPetTime = psserver->GetMathScriptEngine()->FindScript("CalculateMaxPetTime");
+            psserver->GetMathScriptEngine()->CheckAndUpdateScript(maxPetTime, "CalculateMaxPetTime");
         }
 
         if (maxPetTime && owner)
@@ -355,12 +355,12 @@ public:
     /// Uses a MathScript to calculate the time/periode an killed pet can't be summoned again.
     double GetDeathLockoutTime()
     {
-        static MathScript* script = NULL;
+        static csWeakRef<MathScript> script = NULL;
         double time = 10 * 1000.0;
 
         if (!script)
         {
-            script = psserver->GetMathScriptEngine()->FindScript("CalculatePetDeathLockoutTime");
+            psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "CalculatePetDeathLockoutTime");
         }
         
 
@@ -380,12 +380,12 @@ public:
     /// Uses a MathScript to calculate the time/periode an npc can't be trained after receving training.
     double GetTrainingLockoutTime()
     {
-        static MathScript* script = NULL;
+        static csWeakRef<MathScript> script = NULL;
         double time = 10 * 1000.0;
 
         if (!script)
         {
-            script = psserver->GetMathScriptEngine()->FindScript("CalculateTrainingLockoutTime");
+            psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "CalculateTrainingLockoutTime");
         }
         
 
@@ -456,8 +456,8 @@ NPCManager::NPCManager(ClientConnectionSet *pCCS,
     psNPCManagerTick *tick = new psNPCManagerTick(NPC_TICK_INTERVAL,this);
     eventmanager->Push(tick);
 
-    petRangeScript = psserver->GetMathScriptEngine()->FindScript("CalculateMaxPetRange");
-    petReactScript = psserver->GetMathScriptEngine()->FindScript("CalculatePetReact");;
+    psserver->GetMathScriptEngine()->CheckAndUpdateScript(petRangeScript, "CalculateMaxPetRange");
+    psserver->GetMathScriptEngine()->CheckAndUpdateScript(petReactScript, "CalculatePetReact");
 
     //for now keep default the first skill
     petSkill = psserver->GetCacheManager()->getOptionSafe("npcmanager:petskill","0");
@@ -1518,6 +1518,16 @@ bool NPCManager::CanPetHearYou(int clientnum, Client *owner, gemNPC *pet, const 
 
     MathEnvironment env;
     env.Define("Skill", owner->GetCharacterData()->GetSkillRank(GetPetSkill()).Current());
+
+    //check if the script is up to date
+    if(psserver->GetMathScriptEngine()->CheckAndUpdateScript(petRangeScript, "CalculateMaxPetRange"))
+    {
+        //default if the script cannot be found.
+        //the server won't init without the script but in this case we lost it
+        //at runtime (eg:bad syntax or deleted)
+        return false;
+    }
+    
     petRangeScript->Evaluate(&env);
     MathVar *varMaxRange = env.Lookup("MaxRange");
     float max_range = varMaxRange->GetValue();
@@ -1543,6 +1553,14 @@ bool NPCManager::WillPetReact(int clientnum, Client * owner, gemNPC * pet, const
     MathEnvironment env;
     env.Define("Skill", owner->GetCharacterData()->GetSkillRank(GetPetSkill()).Current());
     env.Define("Level", level);
+    //check if the script is up to date
+    if(psserver->GetMathScriptEngine()->CheckAndUpdateScript(petReactScript, "CalculatePetReact"))
+    {
+        //default if the script cannot be found.
+        //the server won't init without the script but in this case we lost it
+        //at runtime (eg:bad syntax or deleted)
+        return false;
+    }
     petReactScript->Evaluate(&env);
     MathVar *varReact = env.Lookup("React");
     float react = varReact->GetValue();

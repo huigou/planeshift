@@ -81,18 +81,18 @@
 
 const char *psCharacter::characterTypeName[] = { "player", "npc", "pet", "mount", "mountpet" };
 
-MathScript *psCharacter::maxRealmScript        = NULL;
-MathScript *psCharacter::staminaCalc           = NULL;
-MathScript *psCharacter::expSkillCalc          = NULL;
-MathScript *psCharacter::staminaRatioWalk      = NULL;
-MathScript *psCharacter::staminaRatioStill     = NULL;
-MathScript *psCharacter::staminaRatioSit       = NULL;
-MathScript *psCharacter::staminaRatioWork  	   = NULL;
-MathScript *psCharacter::dodgeValueCalc  	   = NULL;
-MathScript *psCharacter::armorSkillsPractice   = NULL;
-MathScript *psCharacter::charLevelGet          = NULL;
-MathScript *psCharacter::skillValuesGet        = NULL;
-MathScript *psCharacter::baseSkillValuesGet    = NULL;
+csWeakRef<MathScript> psCharacter::maxRealmScript        = NULL;
+csWeakRef<MathScript> psCharacter::staminaCalc           = NULL;
+csWeakRef<MathScript> psCharacter::expSkillCalc          = NULL;
+csWeakRef<MathScript> psCharacter::staminaRatioWalk      = NULL;
+csWeakRef<MathScript> psCharacter::staminaRatioStill     = NULL;
+csWeakRef<MathScript> psCharacter::staminaRatioSit       = NULL;
+csWeakRef<MathScript> psCharacter::staminaRatioWork      = NULL;
+csWeakRef<MathScript> psCharacter::dodgeValueCalc        = NULL;
+csWeakRef<MathScript> psCharacter::armorSkillsPractice   = NULL;
+csWeakRef<MathScript> psCharacter::charLevelGet          = NULL;
+csWeakRef<MathScript> psCharacter::skillValuesGet        = NULL;
+csWeakRef<MathScript> psCharacter::baseSkillValuesGet    = NULL;
 
 //-----------------------------------------------------------------------------
 
@@ -180,111 +180,113 @@ psCharacter::psCharacter() : inventory(this),
     isStatue = false;
 
     // Load the math scripts
-    if (!staminaCalc)
+    if(!staminaCalc.IsValid())
     {
-        staminaCalc = psserver->GetMathScriptEngine()->FindScript("StaminaBase");
-        if (!staminaCalc)
+        psserver->GetMathScriptEngine()->CheckAndUpdateScript(staminaCalc, "StaminaBase");
+        if(!staminaCalc.IsValid())
         {
             Error1("Can't find math script StaminaBase! Character loading failed.");
         }
     }
 
-    if (!staminaRatioWalk)
+    if(!staminaRatioWalk.IsValid())
     {
-        staminaRatioWalk = psserver->GetMathScriptEngine()->FindScript("StaminaRatioWalk");
-        if (!staminaRatioWalk)
+        psserver->GetMathScriptEngine()->CheckAndUpdateScript(staminaRatioWalk, "StaminaRatioWalk");
+        if(!staminaRatioWalk.IsValid())
         {
             Error1("Can't find math script StaminaRatioWalk! Character loading failed.");
         }
     }
 
-    if (!staminaRatioStill)
+    if(!staminaRatioStill.IsValid())
     {
-        staminaRatioStill = psserver->GetMathScriptEngine()->FindScript("StaminaRatioStill");
-        if (!staminaRatioStill)
+        psserver->GetMathScriptEngine()->CheckAndUpdateScript(staminaRatioStill, "StaminaRatioStill");
+        if(!staminaRatioStill.IsValid())
         {
             Error1("Can't find math script StaminaRatioStill! Character loading failed.");
         }
     }
 
-    if (!staminaRatioSit)
+    if(!staminaRatioSit.IsValid())
     {
-        staminaRatioSit = psserver->GetMathScriptEngine()->FindScript("StaminaRatioSit");
-        if (!staminaRatioSit)
+        psserver->GetMathScriptEngine()->CheckAndUpdateScript(staminaRatioSit, "StaminaRatioSit");
+        if(!staminaRatioSit.IsValid())
         {
             Error1("Can't find math script StaminaRatioSit! Character loading failed.");
         }
     }
 
-    if (!staminaRatioWork)
+    if(!staminaRatioWork.IsValid())
     {
-        staminaRatioWork = psserver->GetMathScriptEngine()->FindScript("StaminaRatioWork");
-        if (!staminaRatioWork)
+        psserver->GetMathScriptEngine()->CheckAndUpdateScript(staminaRatioWork, "StaminaRatioWork");
+        if(!staminaRatioWork.IsValid())
         {
             Error1("Can't find math script StaminaRatioWork! Character loading failed.");
         }
     }
 
-    if (!expSkillCalc)
+    if(!expSkillCalc.IsValid())
     {
-        expSkillCalc = psserver->GetMathScriptEngine()->FindScript("Calculate Skill Experience");
-        if (!expSkillCalc)
+        psserver->GetMathScriptEngine()->CheckAndUpdateScript(expSkillCalc, "Calculate Skill Experience");
+        if(!expSkillCalc.IsValid())
         {
             Error1("Can't find 'Calculate Skill Experience' math script. Character loading failed.");
         }
     }
 
-    if (!maxRealmScript)
+    if(!maxRealmScript.IsValid())
     {
-        maxRealmScript = psserver->GetMathScriptEngine()->FindScript("MaxRealm");
-        if (!maxRealmScript)
+        psserver->GetMathScriptEngine()->CheckAndUpdateScript(maxRealmScript, "MaxRealm");
+        if(!maxRealmScript.IsValid())
         {
             Error1("Can't find math script MaxRealm! Character loading failed.");
         }
     }
 
-    if (!dodgeValueCalc)
+    if(!dodgeValueCalc.IsValid())
     {
-    	dodgeValueCalc = psserver->GetMathScriptEngine()->FindScript("CalculateDodgeValue");
-        if (!dodgeValueCalc)
+        psserver->GetMathScriptEngine()->CheckAndUpdateScript(dodgeValueCalc, "CalculateDodgeValue");
+        if(!dodgeValueCalc.IsValid())
         {
             Error1("Can't find math script CalculateDodgeValue! Character loading failed.");
         }
     }
 
 
-    if (!armorSkillsPractice)
+    if(!armorSkillsPractice.IsValid())
     {
-    	armorSkillsPractice = psserver->GetMathScriptEngine()->FindScript("PracticeArmorSkills");
-        if (!armorSkillsPractice)
+        psserver->GetMathScriptEngine()->CheckAndUpdateScript(armorSkillsPractice, "PracticeArmorSkills");
+        if(!armorSkillsPractice.IsValid())
         {
             Error1("Can't find math script PracticeArmorSkills! Character loading failed.");
         }
     }
 
-    if (!charLevelGet)
+    if(!charLevelGet.IsValid())
     {
-    	charLevelGet = psserver->GetMathScriptEngine()->FindScript("GetCharLevel");
-        if (!charLevelGet)
+        psserver->GetMathScriptEngine()->CheckAndUpdateScript(charLevelGet, "GetCharLevel");
+        if(!charLevelGet.IsValid())
         {
             Error1("Can't find math script GetCharLevel! Character loading failed.");
         }
     }
 
 
-    if (!skillValuesGet)
+    if(!skillValuesGet.IsValid())
     {
+        psserver->GetMathScriptEngine()->CheckAndUpdateScript(skillValuesGet, "GetSkillValues");
     	skillValuesGet = psserver->GetMathScriptEngine()->FindScript("GetSkillValues");
-        if (!skillValuesGet)
+        if(!skillValuesGet.IsValid())
         {
             Error1("Can't find math script GetSkillValues! Character loading failed.");
         }
     }
 
-    if (!baseSkillValuesGet)
+    if(!baseSkillValuesGet.IsValid())
     {
+        psserver->GetMathScriptEngine()->CheckAndUpdateScript(baseSkillValuesGet, "GetSkillBaseValues");
     	baseSkillValuesGet = psserver->GetMathScriptEngine()->FindScript("GetSkillBaseValues");
-        if (!baseSkillValuesGet)
+        if(!baseSkillValuesGet.IsValid())
         {
             Error1("Can't find math script GetSkillBaseValues! Character loading failed.");
         }
@@ -377,7 +379,7 @@ bool psCharacter::Load(iResultRow& row)
     if(row["base_hitpoints_max"] == NULL)
     {
         //it was null so we check the master character
-        Result hpResult(db->Select("SELECT base_hitpoints_max FROM characters WHERE id=%u", ShowID(use_id)));
+        Result hpResult(db->Select("SELECT base_hitpoints_max FROM characters WHERE id=%u", use_id.Unbox()));
 
         //if we got a valid result we will set it. Note that NULL being in the master
         //too will yield to 0 being set. We take the first result even though more than one
@@ -402,7 +404,7 @@ bool psCharacter::Load(iResultRow& row)
     if(row["base_mana_max"] == NULL)
     {
         //it was null so we check the master character
-        Result manaResult(db->Select("SELECT base_mana_max FROM characters WHERE id=%u", ShowID(use_id)));
+        Result manaResult(db->Select("SELECT base_mana_max FROM characters WHERE id=%u", use_id.Unbox()));
 
         //if we got a valid result we will set it. Note that NULL being in the master
         //too will yield to 0 being set. We take the first result even though more than one
@@ -1082,7 +1084,8 @@ void OverridableRace::OnChange()
     if(!raceInfo)
         return;
 
-    MathScript *setBaseSkillsScript = psserver->GetMathScriptEngine()->FindScript("SetBaseSkills");
+    csWeakRef<MathScript> setBaseSkillsScript;
+    psserver->GetMathScriptEngine()->CheckAndUpdateScript(setBaseSkillsScript, "SetBaseSkills");
 
     MathEnvironment env;
     env.Define("Actor", character);
@@ -1300,6 +1303,14 @@ unsigned int psCharacter::CalculateAddExperience(PSSKILL skill, unsigned int pra
 {
     if(practicePoints > 0)
     {
+        if(!expSkillCalc.IsValid())
+        {
+            if(!psserver->GetMathScriptEngine()->CheckAndUpdateScript(expSkillCalc, "Calculate Skill Experience"))
+            {
+                return 0;
+            }
+        }
+        
         MathEnvironment env;
         env.Define("ZCost", skills.Get(skill).zCost);
         env.Define("YCost", skills.Get(skill).yCost);
@@ -1386,6 +1397,14 @@ int psCharacter::GetMaxAllowedRealm( PSSKILL skill )
 
     MathEnvironment env;
     env.Define("WaySkill", waySkillRank);
+
+    if(!maxRealmScript.IsValid())
+    {
+        if(!psserver->GetMathScriptEngine()->CheckAndUpdateScript(maxRealmScript, "MaxRealm"))
+        {
+            return 0;
+        }
+    }
 
     maxRealmScript->Evaluate(&env);
 
@@ -1750,11 +1769,16 @@ void psCharacter::ResetStats()
 
 void psCharacter::CombatDrain(int slot)
 {
-    static MathScript *script = NULL;
-    if (!script)
-        script = psserver->GetMathScriptEngine()->FindScript("StaminaCombat");
-    if (!script)
-        return;
+    static csWeakRef<MathScript> script = NULL;
+
+    if(!script.IsValid())
+    {
+        if(!psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "StaminaCombat"))
+        {
+            return;
+        }
+    }
+
     psItem *weapon = inventory.GetEffectiveWeaponInSlot((INVENTORY_SLOT_NUMBER) slot);
     if(!weapon)//shouldn't happen
         return;
@@ -1889,6 +1913,14 @@ void psCharacter::SetStaminaRegenerationWalk(bool physical,bool mental)
     env.Define("BaseRegenPhysical", GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_PHYSICAL_WALK]);
     env.Define("BaseRegenMental",   GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_MENTAL_WALK]);
 
+    //check if the mathscript is still valid else try to reload it
+    if(!staminaRatioWalk.IsValid())
+    {
+        if(!psserver->GetMathScriptEngine()->CheckAndUpdateScript(staminaRatioWalk, "StaminaRatioWalk"))
+        {
+            return;
+        }
+    }
     staminaRatioWalk->Evaluate(&env);
 
     MathVar *ratePhy = env.Lookup("PStaminaRate");
@@ -1907,6 +1939,15 @@ void psCharacter::SetStaminaRegenerationSitting()
     env.Define("Actor", this);
     env.Define("BaseRegenPhysical", GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_PHYSICAL_STILL]);
     env.Define("BaseRegenMental",   GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_MENTAL_STILL]);
+
+    //check if the mathscript is still valid else try to reload it
+    if(!staminaRatioSit.IsValid())
+    {
+        if(!psserver->GetMathScriptEngine()->CheckAndUpdateScript(staminaRatioSit, "StaminaRatioSit"))
+        {
+            return;
+        }
+    }
 
     staminaRatioSit->Evaluate(&env);
 
@@ -1927,6 +1968,15 @@ void psCharacter::SetStaminaRegenerationStill(bool physical,bool mental)
     env.Define("Actor", this);
     env.Define("BaseRegenPhysical", GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_PHYSICAL_STILL]);
     env.Define("BaseRegenMental",   GetRaceInfo()->baseRegen[PSRACEINFO_STAMINA_MENTAL_STILL]);
+
+    //check if the mathscript is still valid else try to reload it
+    if(!staminaRatioStill.IsValid())
+    {
+        if(!psserver->GetMathScriptEngine()->CheckAndUpdateScript(staminaRatioStill, "StaminaRatioStill"))
+        {
+            return;
+        }
+    }
 
     staminaRatioStill->Evaluate(&env);
 
@@ -1959,6 +2009,15 @@ void psCharacter::SetStaminaRegenerationWork(int skill)
 
     env.Define("SkillMentalFactor",  factor);
 
+    //check if the mathscript is still valid else try to reload it
+    if(!staminaRatioWork.IsValid())
+    {
+        if(!psserver->GetMathScriptEngine()->CheckAndUpdateScript(staminaRatioWork, "StaminaRatioWork"))
+        {
+            return;
+        }
+    }
+
     staminaRatioWork->Evaluate(&env);
 
     MathVar *ratePhy = env.Lookup("PStaminaRate");
@@ -1977,7 +2036,15 @@ void psCharacter::CalculateMaxStamina()
     // Set the actor to retreive the skill values from
     env.Define("Actor", this);
 
-    // Calculate
+    // Calculate after checking if the script is valid and restoring validity if possible
+    if(!staminaCalc.IsValid())
+    {
+        if(!psserver->GetMathScriptEngine()->CheckAndUpdateScript(staminaCalc, "StaminaBase"))
+        {
+            return;
+        }
+    }
+
     staminaCalc->Evaluate(&env);
 
     MathVar *basePhy = env.Lookup("BasePhy");
@@ -2129,6 +2196,15 @@ float psCharacter::GetDodgeValue()
     env.Define("MediumPoints", med_p);
     env.Define("LightPoints", light_p);
 
+    //check if mathscript is valid else try to reload it
+    if(!dodgeValueCalc.IsValid())
+    {
+        if(!psserver->GetMathScriptEngine()->CheckAndUpdateScript(dodgeValueCalc, "CalculateDodgeValue"))
+        {
+            return 0;
+        }
+    }
+
     dodgeValueCalc->Evaluate(&env);
 
     return env.Lookup("Result")->GetValue();
@@ -2186,6 +2262,15 @@ void psCharacter::PracticeArmorSkills(unsigned int practice, INVENTORY_SLOT_NUMB
     env.Define("HeavyPoints", heavy_p);
     env.Define("MediumPoints", med_p);
     env.Define("LightPoints", light_p);
+
+    //check if mathscript is valid else try to reload it
+    if(!armorSkillsPractice.IsValid())
+    {
+        if(!psserver->GetMathScriptEngine()->CheckAndUpdateScript(armorSkillsPractice, "PracticeArmorSkills"))
+        {
+            return;
+        }
+    }
 
     armorSkillsPractice->Evaluate(&env);
 
@@ -2782,14 +2867,30 @@ bool psCharacter::CanTrain( PSSKILL skill )
 
 void psCharacter::GetSkillValues(MathEnvironment *env)
 {
-	env->Define("Actor", this);
-	skillValuesGet->Evaluate(env);
+    env->Define("Actor", this);
+    //check if the mathscript is still valid else try to reload it
+    if(!skillValuesGet.IsValid())
+    {
+        if(!psserver->GetMathScriptEngine()->CheckAndUpdateScript(skillValuesGet, "GetSkillValues"))
+        {
+            return;
+        }
+    }
+    skillValuesGet->Evaluate(env);
 }
 
 void psCharacter::GetSkillBaseValues(MathEnvironment *env)
 {
-	env->Define("Actor", this);
-	baseSkillValuesGet->Evaluate(env);
+    env->Define("Actor", this);
+    //check if the mathscript is still valid else try to reload it
+    if(!baseSkillValuesGet.IsValid())
+    {
+        if(!psserver->GetMathScriptEngine()->CheckAndUpdateScript(baseSkillValuesGet, "GetSkillBaseValues"))
+        {
+            return;
+        }
+    }
+    baseSkillValuesGet->Evaluate(env);
 }
 
 
@@ -2825,7 +2926,7 @@ void Skill::CalculateCosts(psCharacter* user)
         return;
 
     // Calc the new Y/Z cost
-    MathScript *script = psserver->GetMathScriptEngine()->FindScript(info->costScript);
+    static csWeakRef<MathScript> script = psserver->GetMathScriptEngine()->FindScript(info->costScript);
     if (!script)
     {
         Error4("Couldn't find script %s to calculate skill cost of %d (%s)!",
@@ -2944,9 +3045,18 @@ unsigned int psCharacter::GetCharLevel(bool physical)
 	MathEnvironment env;
     env.Define("Actor", this);
 
-	env.Define("Physical", (physical ? 1 : 0));
+    env.Define("Physical", (physical ? 1 : 0));
 
-	charLevelGet->Evaluate(&env);
+    //check if the mathscript is still valid else try to reload it
+    if(!charLevelGet.IsValid())
+    {
+        if(!psserver->GetMathScriptEngine()->CheckAndUpdateScript(charLevelGet, "GetCharLevel"))
+        {
+            return 0;
+        }
+    }
+
+    charLevelGet->Evaluate(&env);
     return env.Lookup("Result")->GetRoundValue();
 }
 
@@ -2957,11 +3067,11 @@ void psCharacter::RecalculateStats()
     env.Define("Actor", this);
 
     // Calculate current Max Mana level:
-    static MathScript *maxManaScript;
-    if (!maxManaScript)
+    static csWeakRef<MathScript> maxManaScript;
+    if(!maxManaScript.IsValid())
     {
-        maxManaScript = psserver->GetMathScriptEngine()->FindScript("CalculateMaxMana");
-        CS_ASSERT(maxManaScript != NULL);
+        psserver->GetMathScriptEngine()->CheckAndUpdateScript(maxManaScript, "CalculateMaxMana");
+        CS_ASSERT(maxManaScript.IsValid());
     }
 
 
@@ -2969,7 +3079,7 @@ void psCharacter::RecalculateStats()
     {
         GetMaxMana().SetBase(overrideMaxMana);
     }
-    else if (maxManaScript)
+    else if(maxManaScript.IsValid())
     {
         maxManaScript->Evaluate(&env);
         MathVar* maxMana = env.Lookup("MaxMana");
@@ -2984,19 +3094,19 @@ void psCharacter::RecalculateStats()
     }
 
     // Calculate current Max HP level:
-    static MathScript *maxHPScript;
+    static csWeakRef<MathScript> maxHPScript;
 
     if (!maxHPScript)
     {
-        maxHPScript = psserver->GetMathScriptEngine()->FindScript("CalculateMaxHP");
-        CS_ASSERT(maxHPScript != NULL);
+        psserver->GetMathScriptEngine()->CheckAndUpdateScript(maxHPScript, "CalculateMaxHP");
+        CS_ASSERT(maxHPScript.IsValid());
     }
 
     if (overrideMaxHp)
     {
         GetMaxHP().SetBase(overrideMaxHp);
     }
-    else if (maxHPScript)
+    else if(maxHPScript.IsValid())
     {
         maxHPScript->Evaluate(&env);
         MathVar* maxHP = env.Lookup("MaxHP");

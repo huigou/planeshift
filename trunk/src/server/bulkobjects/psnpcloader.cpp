@@ -434,7 +434,8 @@ void psNPCLoader::ReadStats()
     }
     float agility, charisma, endurance, intelligence, strength, will;
 
-    MathScript *setBaseSkillsScript = psserver->GetMathScriptEngine()->FindScript("SetBaseSkills");
+    csWeakRef<MathScript> setBaseSkillsScript;
+    psserver->GetMathScriptEngine()->CheckAndUpdateScript(setBaseSkillsScript, "SetBaseSkills");
 
     MathEnvironment env;
     env.Define("Actor", npc);

@@ -3467,8 +3467,8 @@ void gemActor::ApplyStaminaCalculations(const csVector3& v, float times)
     lastV=v;
 
     // Script
-    static MathScript* script = psserver->GetMathScriptEngine()->FindScript("StaminaMove");
-    if (!script)
+    static csWeakRef<MathScript> script;
+    if(!psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "StaminaMove"))
     {
         Error1("Missing script \"StaminaMove\"");
         return;

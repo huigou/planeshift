@@ -186,10 +186,8 @@ void psCharacterInventory::CalculateLimits()
     env.Define("Actor", owner);
 
     // The max total weight that a player can carry
-    static MathScript *maxCarryWeight = NULL;
-    if (!maxCarryWeight)
-        maxCarryWeight = psserver->GetMathScriptEngine()->FindScript("CalculateMaxCarryWeight");
-    if (maxCarryWeight)
+    static csWeakRef<MathScript> maxCarryWeight = NULL;
+    if(psserver->GetMathScriptEngine()->CheckAndUpdateScript(maxCarryWeight, "CalculateMaxCarryWeight"))
     {
         maxCarryWeight->Evaluate(&env);
         MathVar *carry = env.Lookup("MaxCarry");
@@ -204,10 +202,8 @@ void psCharacterInventory::CalculateLimits()
     }
 
     // The max total size that a player can carry
-    static MathScript *maxCarryAmount = NULL;
-    if (!maxCarryAmount)
-        maxCarryAmount = psserver->GetMathScriptEngine()->FindScript("CalculateMaxCarryAmount");
-    if (maxCarryAmount)
+    static csWeakRef<MathScript> maxCarryAmount = NULL;
+    if(psserver->GetMathScriptEngine()->CheckAndUpdateScript(maxCarryAmount, "CalculateMaxCarryAmount"))
     {
         maxCarryAmount->Evaluate(&env);
         MathVar *carry = env.Lookup("MaxAmount");

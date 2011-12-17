@@ -54,7 +54,7 @@ LootRandomizer::LootRandomizer(CacheManager* cachemanager)
     cacheManager = cachemanager;
 
     // Find any math scripts that are needed
-    modifierCostCalc = psserver->GetMathScriptEngine()->FindScript("LootModifierCostCap");
+    psserver->GetMathScriptEngine()->CheckAndUpdateScript(modifierCostCalc, "LootModifierCostCap");
 }
 
 LootRandomizer::~LootRandomizer()
@@ -501,13 +501,13 @@ LootModifier *LootRandomizer::GetModifier(uint32_t id)
 
 float LootRandomizer::CalcModifierCostCap(psCharacter *chr)
 {
-    // Use LootCostCap script to calculate loot modifier cost cap
-    if( !modifierCostCalc )
+    //lazy load/update the cost script. If it fails return a default value.
+    //then use LootCostCap script to calculate loot modifier cost cap
+    if(!psserver->GetMathScriptEngine()->CheckAndUpdateScript(modifierCostCalc, "LootModifierCostCap"))
     {
-        CPrintf(CON_ERROR,"Couldn't load loot cost cap script!");
         return 1000.0;
     }
-
+    
     // Use the mob's attributes to calculate modifier cost cap
     MathEnvironment env;
     env.Define("Actor",   chr);

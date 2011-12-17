@@ -83,8 +83,7 @@ ProgressionManager::ProgressionManager(ClientConnectionSet *ccs, CacheManager *c
     clients      = ccs;
     cacheManager = cachemanager;
     
-    calc_dynamic_experience  = psserver->GetMathScriptEngine()->FindScript("Calculate Dynamic Experience");
-    if(!calc_dynamic_experience)
+    if(!psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_dynamic_experience, "Calculate Dynamic Experience"))
     {
         Error1("Could not find mathscript 'Calculate Dynamic Experience'");
     }
@@ -218,14 +217,18 @@ void ProgressionManager::AllocateKillDamage(gemActor *deadActor, int exp)
         if (mod > 1.0)
             mod = 1.0;
 
-        int final;
+        int final = 0;
         if(exp <= 0) //use automatically generated experience if exp doesn't have a valid value
         {
             MathEnvironment env;
             env.Define("Killer",    attacker); 	 
             env.Define("DeadActor", deadActor);
-            calc_dynamic_experience->Evaluate(&env);
-            final = env.Lookup("Exp")->GetValue();
+            //check if the script is valid
+            if(psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_dynamic_experience, "Calculate Dynamic Experience"))
+            {
+                calc_dynamic_experience->Evaluate(&env);
+                final = env.Lookup("Exp")->GetValue();
+            }
         }
         else
         {

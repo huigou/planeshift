@@ -116,10 +116,10 @@ private:
     CacheManager* cacheManager;
     EntityManager* entityManager;
 
-    MathScript *calc_damage; ///< This is the particular calculation for damage.
-    MathScript *calc_decay; ///< This is the particular calculation for decay.
+    csWeakRef<MathScript> calc_damage; ///< This is the particular calculation for damage.
+    csWeakRef<MathScript> calc_decay; ///< This is the particular calculation for decay.
     /// if the player is too tired, stop fighting. We stop if we don't have enough stamina to make an attack with the current stance.
-    MathScript* staminacombat;
+    csWeakRef<MathScript> staminacombat;
 
     void HandleDeathEvent(MsgEntry *me,Client *client);
 

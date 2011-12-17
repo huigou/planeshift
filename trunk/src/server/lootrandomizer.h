@@ -95,7 +95,7 @@ public:
     void ApplyModifier(psItemStats* baseItem, RandomizedOverlay* overlay, csArray<uint32_t>& modifiersIds);
 
 protected:
-    MathScript* modifierCostCalc;
+    csWeakRef<MathScript> modifierCostCalc;
     CacheManager* cacheManager;
 
 private:

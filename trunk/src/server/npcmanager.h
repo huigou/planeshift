@@ -234,10 +234,10 @@ protected:
     csHash<PetOwnerSession*, PID> OwnerPetList;
 
     /// Math script setup for pet range check
-    MathScript *petRangeScript;
+    csWeakRef<MathScript> petRangeScript;
 
     /// Math script setup for pet should react check
-    MathScript *petReactScript;
+    csWeakRef<MathScript> petReactScript;
 };
 
 #endif

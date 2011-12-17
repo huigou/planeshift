@@ -57,7 +57,7 @@ protected:
     void HandleFallDamage(gemActor *actor,int clientnum, const csVector3& pos, iSector* sector);
     void ResetPos(gemActor* actor);
 
-    MathScript *calc_damage;
+    csWeakRef<MathScript> calc_damage;
     PaladinJr *paladin;
     
     CacheManager* cacheManager;

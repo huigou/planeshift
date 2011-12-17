@@ -295,17 +295,17 @@ protected:
      *        array position of the string is extremely important to be mantained
      */
     csStringArray resourcesActions;
-    MathScript *calc_repair_rank;                 ///< This is the calculation for how much skill is required to repair.
-    MathScript *calc_repair_time;                 ///< This is the calculation for how long a repair takes.
-    MathScript *calc_repair_result;               ///< This is the calculation for how many points of quality are added in a repair.
-    MathScript *calc_repair_quality;              ///< This calculates the item ending quality and max quality at the end of repair.
-    MathScript *calc_repair_exp;                  ///< This is the calculation for the experience to assign to player for repairing.
-    MathScript *calc_mining_chance;               ///< This is the calculation for chance of successful mining.
-    MathScript *calc_mining_exp;                  ///< This is the calculation for the experience to assign to player for mining.
-    MathScript *calc_transform_exp;               ///< This is the calculation for the experience to assign to player for trasformations.
-    MathScript *calc_lockpick_time;               ///< This is the calculation for how long it takes to pick a lock.
-    MathScript *calc_transform_apply_skill;       ///< This is the calculation for the quality resulting from the item.
-    MathScript *calc_transform_time;              ///< This is the calculation for the time needed to accomplish a transformation.
+    csWeakRef<MathScript> calc_repair_rank;                 ///< This is the calculation for how much skill is required to repair.
+    csWeakRef<MathScript> calc_repair_time;                 ///< This is the calculation for how long a repair takes.
+    csWeakRef<MathScript> calc_repair_result;               ///< This is the calculation for how many points of quality are added in a repair.
+    csWeakRef<MathScript> calc_repair_quality;              ///< This calculates the item ending quality and max quality at the end of repair.
+    csWeakRef<MathScript> calc_repair_exp;                  ///< This is the calculation for the experience to assign to player for repairing.
+    csWeakRef<MathScript> calc_mining_chance;               ///< This is the calculation for chance of successful mining.
+    csWeakRef<MathScript> calc_mining_exp;                  ///< This is the calculation for the experience to assign to player for mining.
+    csWeakRef<MathScript> calc_transform_exp;               ///< This is the calculation for the experience to assign to player for trasformations.
+    csWeakRef<MathScript> calc_lockpick_time;               ///< This is the calculation for how long it takes to pick a lock.
+    csWeakRef<MathScript> calc_transform_apply_skill;       ///< This is the calculation for the quality resulting from the item.
+    csWeakRef<MathScript> calc_transform_time;              ///< This is the calculation for the time needed to accomplish a transformation.
 
 
     void HandleLockPick(MsgEntry* me,Client *client);

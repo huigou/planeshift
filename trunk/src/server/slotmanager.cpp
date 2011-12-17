@@ -881,12 +881,9 @@ void SlotManager::Consume(psItem* item, psCharacter *charData, int count)
         return;
 
     // Use math function to determine effect of quality
-    static MathScript *qualityScript = NULL;
-    if (!qualityScript)
-        qualityScript = psserver->GetMathScriptEngine()->FindScript("CalculateConsumeQuality");
-    if (!qualityScript)
+    static csWeakRef<MathScript> qualityScript = NULL;
+    if(psserver->GetMathScriptEngine()->CheckAndUpdateScript(qualityScript, "CalculateConsumeQuality"))
     {
-        Error1("Can't find quality script CalculateConsumeQuality");
         return;
     }
 
