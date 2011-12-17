@@ -47,7 +47,6 @@
 #include "rpgrules/vitals.h"
 
 #include "util/eventmanager.h"
-#include "util/mathscript.h"
 #include "util/psconst.h"
 #include "util/psdatabase.h"
 #include "util/psxmlparser.h"
