@@ -49,7 +49,6 @@
 #include "cachemanager.h"
 #include <idal.h>
 #include "tutorialmanager.h"
-#include "util/mathscript.h"
 #include "scripting.h"
 
 
