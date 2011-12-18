@@ -18,6 +18,7 @@
 */
 
 #include <psconfig.h>
+#include <csutil/syspath.h>
 
 #include "updaterconfig.h"
 #include "updaterengine.h"
@@ -50,7 +51,7 @@ psUpdater::psUpdater(int argc, const char* argv[])
     configPath = configManager->GetStr("PlaneShift.UserConfigPath", configPath);
     FileUtil fileUtil(vfs);
     csRef<FileStat> filestat = fileUtil.StatFile(configPath);
-    if (!filestat.IsValid() && CS_MKDIR(configPath) < 0)
+    if (!filestat.IsValid() && CS::Platform::CreateDirectory(configPath) < 0)
     {
         printf("Could not create required %s directory!\n", configPath.GetData());
         exit(1);
