@@ -2304,6 +2304,14 @@ bool MeleeOperation::Load(iDocumentNode *node)
     
     attack_invisible = node->GetAttributeValueAsBool("invisible",false);
     attack_invincible= node->GetAttributeValueAsBool("invincible",false);
+
+    stance = node->GetAttributeValue("stance");
+    // Default to normal stance
+    if (stance.IsEmpty())
+    {
+        stance = "normal";
+    }
+
     return true;
 }
 
@@ -2314,6 +2322,7 @@ ScriptOperation *MeleeOperation::MakeCopy()
     op->melee_range = melee_range;
     op->attack_invisible = attack_invisible;
     op->attack_invincible = attack_invincible;
+    op->stance = stance;
     attacked_ent = NULL;
     return op;
 }
@@ -2329,7 +2338,7 @@ ScriptOperation::OperationResult MeleeOperation::Run(NPC *npc, EventManager *eve
     {
         npc->Printf(5, "Melee starting to attack %s(%s)", attacked_ent->GetName(), ShowID(attacked_ent->GetEID()));
 
-        npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetActor(),attacked_ent);
+        npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetActor(), attacked_ent, stance);
     }
     else
     {
@@ -2389,7 +2398,7 @@ void MeleeOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
         {
             npc->Printf(5, "Melee stop attack");
         }
-        npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetActor(), ent);
+        npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetActor(), ent, stance);
     }
     
     // Make sure our rotation is still correct
@@ -2431,7 +2440,7 @@ void MeleeOperation::InterruptOperation(NPC *npc,EventManager *eventmgr)
 
 bool MeleeOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
 {
-    npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetActor(),NULL);
+    npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetActor(),NULL, stance);
 
     completed = true;
 

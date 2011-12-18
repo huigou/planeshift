@@ -123,8 +123,14 @@ public:
     
     /// Call to remove queued dr updates when entities are removed/deleted.
     void DequeueDRData(NPC * npc );
-    
-    void QueueAttackCommand(gemNPCActor *attacker, gemNPCActor *target);
+
+    /** Queue an Attack Command for an NPC to the server.
+     *
+     * @param attacker The NPC that will attack
+     * @param target   The target for the NPC or NULL to stop attack
+     * @param stance   The stance to be used
+     */
+    void QueueAttackCommand(gemNPCActor *attacker, gemNPCActor *target, const char* stance);
     
     /** Send a sit command to server
      *
@@ -173,7 +179,12 @@ public:
     void SendConsoleCommand(const char *cmd);
 
     csStringHashReversible * GetMsgStrings();
-    const char * GetCommonString(uint32_t id);
+    /** Convert a common string id into the corresponding string
+     */
+    const char * GetCommonString(uint32_t cstr_id);
+    /** Convert a string into a common string id
+     */
+    uint32_t GetCommonStringID(const char* string);
 
     void ReAuthenticate();
     void ReConnect();

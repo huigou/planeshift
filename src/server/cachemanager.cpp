@@ -639,6 +639,7 @@ bool CacheManager::PreloadSkills()
             skillinfo_NameHash.Put(csString(newskill->name).Upcase(), newskill);
             skillinfo_CategoryHash.Put((int)newskill->category, newskill);
 
+            // Register the skill name in the msg_strings 
             msg_strings.Request(newskill->name);
         }
     }
@@ -838,6 +839,7 @@ bool CacheManager::PreloadSectors()
         sectorinfo_by_id.Put(newsector->uid,newsector);
         sectorinfo_by_name.Put(csHashCompute(newsector->name),newsector);
 
+        // Register the sector name in the msg_strings 
         msg_strings.Request(newsector->name);
     }
 
@@ -1017,6 +1019,9 @@ bool CacheManager::PreloadStances()
         temp.defense_absorb_mod = row.GetFloat("defense_absorb_mod");
         stances.Push(temp);
         stanceID.Push(temp.stance_name);
+
+        // Register the sector name in the msg_strings 
+        msg_strings.Request(temp.stance_name);
     }
     Notify2( LOG_STARTUP, "%lu Stances Loaded", result.Count() );
     return true;
