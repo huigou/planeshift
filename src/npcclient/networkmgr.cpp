@@ -77,6 +77,7 @@ NetworkManager::NetworkManager(MsgHandler *mh,psNetConnection* conn, iEngine* en
     msghandler->Subscribe(this,MSGTYPE_NEW_NPC);
     msghandler->Subscribe(this,MSGTYPE_NPC_COMMAND);
     msghandler->Subscribe(this,MSGTYPE_NPCRACELIST);
+    msghandler->Subscribe(this,MSGTYPE_NPC_WORKDONE);
 
     connection= conn;
     connection->SetEngine( engine );
@@ -101,6 +102,7 @@ NetworkManager::~NetworkManager()
         msghandler->Unsubscribe(this,MSGTYPE_MSGSTRINGS);
         msghandler->Unsubscribe(this,MSGTYPE_NPC_COMMAND);
         msghandler->Unsubscribe(this,MSGTYPE_NPCRACELIST);
+        msghandler->Unsubscribe(this,MSGTYPE_NPC_WORKDONE);
     }
 
     delete outbound;
@@ -239,6 +241,10 @@ void NetworkManager::HandleMessage(MsgEntry *message)
             CPrintf(CON_CMDOUTPUT, msg.command.GetData());
             break;
         }
+        case MSGTYPE_NPC_WORKDONE:
+        {
+            HandleNPCWorkDone(message);
+        }
     }
 }
 
@@ -339,7 +345,7 @@ void NetworkManager::HandleItem( MsgEntry* me )
 
     Debug4(LOG_NET, 0, "Got persistItem message, size %zu, eid=%d, name=%s\n", me->GetSize(),mesg.eid.Unbox(),mesg.name.GetDataSafe() );
 
-    if (obj && obj->GetPID().IsValid())
+    if(obj && obj->GetPID().IsValid())
     {
         // We have a player/NPC item mismatch.
         CPrintf(CON_ERROR, "Deleting because we already know gemNPCActor: "
@@ -351,7 +357,7 @@ void NetworkManager::HandleItem( MsgEntry* me )
     }
     
 
-    if (obj)
+    if(obj)
     {
         // We already know this item so just update the position.
         CPrintf(CON_ERROR, "Deleting because we already know "
@@ -362,9 +368,21 @@ void NetworkManager::HandleItem( MsgEntry* me )
         obj = NULL; // Obj isn't valid after remove
     }
 
-    gemNPCItem* item = new gemNPCItem( npcclient, mesg);        
+    if(mesg.tribeID != 0)
+    {
+        csVector3 where;
+        Tribe*    tribe = npcclient->GetTribe(mesg.tribeID);
+
+        // Check just to be sure... it should never happen
+        if(tribe)
+        {
+            tribe->AddBuildingAsset(mesg.name, mesg.pos, ASSET_BUILDING);
+        }
+    }
+
+    gemNPCItem* item = new gemNPCItem(npcclient, mesg);        
     
-    npcclient->Add( item );
+    npcclient->Add(item);
 }
 
 void NetworkManager::HandleObjectRemoval( MsgEntry* me )
@@ -1003,6 +1021,19 @@ void NetworkManager::HandleDisconnect(MsgEntry *msg)
     }
 }
 
+void NetworkManager::HandleNPCWorkDone(MsgEntry *me)
+{
+    psNPCWorkDoneMessage msg(me);
+
+    NPC* npc = npcclient->FindNPC(msg.npcId);
+
+    // If he just prospected a mine and its a tribe member
+    if(npc->GetBuffer() == "new mine" && npc->GetTribe())
+    {
+        npc->GetTribe()->ProspectMine(npc,msg.resource,msg.nick);
+    }
+}
+
 void NetworkManager::HandleNewNpc(MsgEntry *me)
 {
     psNewNPCCreatedMessage msg(me);
@@ -1122,7 +1153,7 @@ void NetworkManager::QueueSitCommand(gemNPCActor *npc, gemNPCObject* target, boo
 
     if ( outbound->msg->overrun )
     {
-        CS_ASSERT(!"NetworkManager::QueueSpawnCommand put message in overrun state!\n");
+        CS_ASSERT(!"NetworkManager::QueueSitCommand put message in overrun state!\n");
     }
     cmd_count++;
 }
@@ -1139,6 +1170,27 @@ void NetworkManager::QueueSpawnCommand(gemNPCActor *mother, gemNPCActor *father,
     if ( outbound->msg->overrun )
     {
         CS_ASSERT(!"NetworkManager::QueueSpawnCommand put message in overrun state!\n");
+    }
+    cmd_count++;
+}
+
+void NetworkManager::QueueSpawnBuildingCommand(csVector3 where, const char* sectorName, const char* buildingName, int tribeID)
+{
+    CheckCommandsOverrun(100);
+
+    outbound->msg->Add((int8_t) psNPCCommandsMessage::CMD_SPAWN_BUILDING);
+    outbound->msg->Add(where[0]);
+    outbound->msg->Add(where[1]);
+    outbound->msg->Add(where[2]);
+
+    outbound->msg->Add(sectorName);
+    outbound->msg->Add(buildingName);
+
+    outbound->msg->Add(tribeID);
+
+    if(outbound->msg->overrun)
+    {
+        CS_ASSERT(!"NetworkManager::QueueSpawnBuildingCommand put message in overrun state!\n");
     }
     cmd_count++;
 }

@@ -246,7 +246,7 @@ void Reaction::React(NPC *who, Perception *pcpt)
     GetTimeOfDay(lastTriggered);
 
 
-    // Adjust the needs for the triggerd behaviors
+    // Adjust the needs for the triggered behaviors
     for (size_t i = 0; i < affected.GetSize(); i++)
     {
 

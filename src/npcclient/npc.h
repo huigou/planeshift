@@ -35,6 +35,7 @@ struct iMovable;
 // Local Includes
 //=============================================================================
 #include "npcbehave.h"
+#include "tribe.h"
 
 struct iCollideSystem;
 
@@ -248,6 +249,14 @@ public:
     void TriggerEvent(Perception *pcpt, float maxRange=-1.0,
                       csVector3* basePos=NULL, iSector* baseSector=NULL,
                       bool sameSector=false);
+
+    /** Send a perception to this NPC
+     *
+     * Uses the above method, but acts as a wrapper.
+     * Receives only the name of the perception and uses default values
+     * for the rest of the arguments
+     */
+    void TriggerEvent(const char* pcpt);
     
     void SetLastPerception(Perception *pcpt);
     Perception *GetLastPerception() { return last_perception; }
@@ -457,12 +466,21 @@ public:
     */
     int GetFallCounter()  { return fallCounter; }
 
+    csString GetBuffer() { return tribeBuffer; }
+    void SetBuffer(csString buffer) { tribeBuffer = buffer; }
+
+    Tribe::Memory* GetBufferMemory() { return &bufferMemory; }
+    void SetBufferMemory(Tribe::Memory* memory);
+
 private:
     psNPCTick*        tick;
     psNPCClient*      npcclient;
     NetworkManager*   networkmanager;
     psWorld*          world;
     iCollideSystem*   cdsys;
+
+    csString          tribeBuffer;      ///< Used to store dynamic data
+    Tribe::Memory     bufferMemory;     ///< Used to store location data
     
     friend class psNPCTick;
 

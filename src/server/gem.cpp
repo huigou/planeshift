@@ -1219,6 +1219,7 @@ gemItem::gemItem(GEMSupervisor* gemsupervisor, CacheManager* cachemanager, Entit
     itemType.Format("Item(%s)",itemdata->GetItemType());
     itemdata->SetGemObject( this );
     cel->AddItemEntity(this);
+    tribeID = 0;
 }
 
 double gemItem::GetProperty(MathEnvironment* env, const char* prop)
@@ -1253,7 +1254,8 @@ void gemItem::Broadcast(int clientnum, bool control )
                          yRot,
                          zRot,
                          flags,
-                         cacheManager->GetMsgStrings()
+                         cacheManager->GetMsgStrings(),
+                         tribeID
                          );
 
     mesg.Multicast(GetMulticastClients(),clientnum,PROX_LIST_ANY_RANGE);
@@ -1322,7 +1324,8 @@ void gemItem::Send( int clientnum, bool , bool to_superclients, psPersistAllEnti
                          yRot,
                          zRot,
                          flags,
-                         cacheManager->GetMsgStrings()
+                         cacheManager->GetMsgStrings(),
+                         GetTribeID()
                          );
 
     if (clientnum)

@@ -44,16 +44,20 @@
 #include "npcclient.h"
 #include "npcbehave.h"
 #include "perceptions.h"
-#include "tribeneed.h"
+#include "recipe.h"
+#include "recipetreenode.h"
+#include "gem.h"
+#include "networkmgr.h"
 
 extern iDataConnection *db;
 
-Tribe::Tribe()
+Tribe::Tribe(EventManager *eventmngr)
     :homeSector(0),accWealthGrowth(0.0),deathRate(0.0),resourceRate(0.0)
 {
-    lastGrowth = csGetTicks();
-    lastDeath = csGetTicks();
+    lastGrowth   = csGetTicks();
+    lastDeath    = csGetTicks();
     lastResource = csGetTicks();
+    eventManager = eventmngr;
 }
 
 Tribe::~Tribe()
@@ -62,122 +66,30 @@ Tribe::~Tribe()
 
 bool Tribe::Load(iResultRow& row)
 {
-    id   = row.GetInt("id");
-    name = row["name"];
+    id                              = row.GetInt("id");
+    name                            = row["name"];
+    // Add tribal recipe
+    tribalRecipe = new RecipeTreeNode(recipeManager->GetRecipe(row.GetInt("tribal_recipe")),0);
 
-    homePos = csVector3(row.GetFloat("home_x"),row.GetFloat("home_y"),row.GetFloat("home_z"));
-    homeRadius = row.GetFloat("home_radius");
-    homeSectorName = row["home_sector_name"];
-    maxSize = row.GetInt("max_size");
-    wealthResourceName = row["wealth_resource_name"];
-    wealthResourceNick = row["wealth_resource_nick"];
-    wealthResourceArea = row["wealth_resource_area"];
+    homePos                         = csVector3(row.GetFloat("home_x"),row.GetFloat("home_y"),row.GetFloat("home_z"));
+    homeRadius                      = row.GetFloat("home_radius");
+    homeSectorName                  = row["home_sector_name"];
+    maxSize                         = row.GetInt("max_size");
+    wealthResourceName              = row["wealth_resource_name"];
+    wealthResourceNick              = row["wealth_resource_nick"];
+    wealthResourceArea              = row["wealth_resource_area"];
 
-    wealthGatherNeed = row["wealth_gather_need"];
+    wealthGatherNeed                = row["wealth_gather_need"];
 
-    wealthResourceGrowth = row.GetFloat("wealth_resource_growth");
-    wealthResourceGrowthActive = row.GetFloat("wealth_resource_growth_active");
+    wealthResourceGrowth            = row.GetFloat("wealth_resource_growth");
+    wealthResourceGrowthActive      = row.GetFloat("wealth_resource_growth_active");
     wealthResourceGrowthActiveLimit = row.GetInt("wealth_resource_growth_active_limit"); 
         
-    reproductionCost = row.GetInt("reproduction_cost");
-    npcIdleBehavior = row["npc_idle_behavior"];
+    reproductionCost                = row.GetInt("reproduction_cost");
+    npcIdleBehavior                 = row["npc_idle_behavior"];
 
     return true;
 }
-
-bool Tribe::LoadNeed(iResultRow& row)
-{
-    unsigned int needSetIndex    = row.GetInt("need_set");
-    int          needId          = row.GetInt("need_id");
-    csString     needType        = row["type"];
-    csString     needName        = row["name"];
-    csString     perception      = row["perception"];
-    csString     dependName      = row["depend"];
-    float        needStartValue  = row.GetFloat("need_start_value");
-    float        needGrowthValue = row.GetFloat("need_growth_value");
-
-    TribeNeedSet* needSet = GetNeedSet(needSetIndex, true);
-    
-    TribeNeed *depend = needSet->Find( dependName );
-    TribeNeed *need = NULL;
-
-    if (needType.CompareNoCase(TribeNeed::TribeNeedTypeName[TribeNeed::GENERIC]))
-    {
-        need = new TribeNeedGeneric(needName,perception,needStartValue,needGrowthValue);
-    }
-    else if (needType.CompareNoCase(TribeNeed::TribeNeedTypeName[TribeNeed::TIME_OF_DAY]))
-    {
-        CS::Utility::StringArray<> arguments;
-        arguments.SplitString(row.GetString("arguments"), ",");
-        if (arguments.GetSize() != 2)
-        {
-            Error3("No start and end time for time of day vent for tribe %d need %d",id,needId);
-            return false;
-        }
-            
-        int startHour = atoi(arguments[0]);
-        int endHour   = atoi(arguments[1]);
-            
-        need = new TribeNeedTimeOfDay(needName,perception,needStartValue,needGrowthValue,startHour,endHour);
-    }
-    else
-    {
-        // The rest of the needs are depened on other needs.
-        // Check that we have the dependend need.
-
-        if (depend == NULL)
-        {
-            Error5("Failed to find dependend need '%s' for the %s need %d for tribe %d",
-                   dependName.GetDataSafe(),needType.GetDataSafe(),needId,id);
-            return false;
-        }
-
-        if (needType.CompareNoCase(TribeNeed::TribeNeedTypeName[TribeNeed::RESOURCE_AREA]))
-        {
-            need = new TribeNeedResourceArea(needName,perception,needStartValue,needGrowthValue,depend);
-        }
-        else if (needType.CompareNoCase(TribeNeed::TribeNeedTypeName[TribeNeed::REPRODUCE]))
-        {
-            need = new TribeNeedReproduce(needName,perception,needStartValue,needGrowthValue,depend);
-        }
-        else if (needType.CompareNoCase(TribeNeed::TribeNeedTypeName[TribeNeed::RESOURCE_RATE]))
-        {
-            float limit = row.GetFloat("arguments");
-            if (limit <= 0.0)
-            {
-                Error3("No limit for RESOURCE_RATE for tribe %d need %d",id,needId);
-                return false;
-            }
-
-            need = new TribeNeedResourceRate(needName,perception,needStartValue,needGrowthValue,depend,limit);
-        }
-        else if (needType.CompareNoCase(TribeNeed::TribeNeedTypeName[TribeNeed::DEATH_RATE]))
-        {
-            float limit = row.GetFloat("arguments");
-            if (limit <= 0.0)
-            {
-                Error3("No limit for DEATH_RATE for tribe %d need %d",id,needId);
-                return false;
-            }
-            
-            need = new TribeNeedDeathRate(needName,perception,needStartValue,needGrowthValue,depend,limit);
-        }
-        else
-        {
-            Error3("Could not mach need '%s' for tribe %d",needName.GetDataSafe(),id);
-            return false;
-        }
-    }
-    
-    if (need)
-    {
-        needSet->AddNeed( need );
-        return true;
-    }
-
-    return false;
-}
-
 
 bool Tribe::LoadMember(iResultRow& row)
 {
@@ -261,9 +173,10 @@ void Tribe::SaveMemory(Memory * memory)
 bool Tribe::LoadResource(iResultRow& row)
 {
     Resource newRes;
-    newRes.id  = row.GetInt("id");
-    newRes.name  = row["name"];
+    newRes.id     = row.GetInt("id");
+    newRes.name   = row["name"];
     newRes.amount = row.GetInt("amount");
+    newRes.nick   = row["nick"];
     resources.Push(newRes);
 
     return true;
@@ -322,20 +235,13 @@ bool Tribe::CheckAttach(NPC * npc)
 bool Tribe::AttachMember(NPC * npc, uint32_t tribeMemberType)
 {
     // Some checks to see if this NPC is fitt for this Tribe
-    if (tribeMemberType >= needSet.GetSize())
-    {
-        Error5("Trying to attach a NPC %s(%u) that have a type %d largert than the supported type %zu",
-	       npc->GetName(),npc->GetPID().Unbox(),tribeMemberType, needSet.GetSize());
-        return false;
-    }
-
     Behavior * idleBehavior = npc->GetBrain()->Find(npcIdleBehavior.GetDataSafe());
     if (!idleBehavior)
     {
         Error4("Trying to attach a NPC %s(%u) to tribe without matching idle behavior of %s",
 	       npc->GetName(),npc->GetPID().Unbox(), npcIdleBehavior.GetDataSafe());
         // Dump the behavior list so that we see what behaviors we have for this npc.
-	npc->DumpBehaviorList();
+	    npc->DumpBehaviorList();
         return false;
     }
 
@@ -385,8 +291,9 @@ void Tribe::HandlePerception(NPC * npc, Perception *perception)
     
     CS::Utility::StringArray<> strarr;
     strarr.SplitString(name, ":");
+    csString pcptName = strarr[0];
     
-    if (strarr[0] == csString("transfer"))
+    if (pcptName == "transfer")
     {
         InventoryPerception *invPcpt = dynamic_cast<InventoryPerception*>(perception);
         if (!invPcpt) return;
@@ -395,13 +302,14 @@ void Tribe::HandlePerception(NPC * npc, Perception *perception)
     }
 }
 
-void Tribe::AddResource(csString resource, int amount)
+void Tribe::AddResource(csString resource, int amount, csString nick)
 {
     for (size_t i=0; i < resources.GetSize(); i++)
     {
         if (resources[i].name == resource)
         {
             resources[i].amount += amount;
+            resources[i].nick = nick;
             SaveResource(&resources[i],false); // Update resource
 
             if (resource == GetNeededResource() && amount > 0)
@@ -439,6 +347,8 @@ int Tribe::CountResource(csString resource) const
 
 void Tribe::Advance(csTicks when, EventManager *eventmgr)
 {
+
+    // Manage Wealth
     if ( when - lastGrowth > 1000)
     {
         float growth;
@@ -467,7 +377,7 @@ void Tribe::Advance(csTicks when, EventManager *eventmgr)
         int amount = int(floor(accWealthGrowth));
         accWealthGrowth -= amount;
 
-        AddResource(wealthResourceName, amount );
+        if(amount != 0) AddResource(wealthResourceName, amount );
         
         lastGrowth = when;
     }
@@ -475,43 +385,93 @@ void Tribe::Advance(csTicks when, EventManager *eventmgr)
     {
         lastGrowth = when;
     }
-    
-	
-    for (size_t i=0; i < members.GetSize(); i++)
+
+    // And manage tribe assignments
+    csString perc;
+    int      decreaseValue = 1; // Set it to change the scale on recipe wait times
+
+    // Manage cyclic recipes
+    for(size_t i=0;i<cyclicRecipes.GetSize();i++)
     {
-        NPC *npc = members[i];
+        cyclicRecipes[i].timeLeft -= decreaseValue;
         
-        Behavior * behavior = npc->GetCurrentBehavior();
-
-        if ((behavior && strcasecmp(behavior->GetName(),npcIdleBehavior.GetDataSafe())==0) ||
-            (!npc->IsAlive()) )
+        if(cyclicRecipes[i].timeLeft <= 0)
         {
-            csString perc;
+            // Add the recipe and reset counter
+            RecipeTreeNode* newNode = new RecipeTreeNode(cyclicRecipes[i].recipe, 0);
+            tribalRecipe->AddChild(newNode);
+            newNode->priority = CYCLIC_RECIPE_PRIORITY;
+            cyclicRecipes[i].timeLeft = cyclicRecipes[i].timeTotal;
+        }
+    } 
+    
+    // Manage standard recipes 
+    for(size_t i=0;i < members.GetSize(); i++)
+    {
+        NPC*       npc = members[i];
+        Behavior*  behavior = npc->GetCurrentBehavior();
 
-            TribeNeed *need = Brain(npc);
-            if (!need || need->GetPerception().IsEmpty())
+        // For dead npcs just resurrect them
+        if(!npc->IsAlive())
+        {
+            // Issue the resurrect perception if we have enough
+            // resources
+            perc = "tribe:resurrect";
+            Perception pcpt(perc);
+            if(AliveCount() == 0 && (CountResource(wealthResourceName) >= 10 * reproductionCost))
             {
-                continue; // Do noting
+                AddResource(wealthResourceName, -10*reproductionCost);
+                npc->TriggerEvent(&pcpt);
             }
-            
-            switch (need->GetNeedType())
+            else if(CanGrow())
             {
-            case TribeNeed::GENERIC:
-            case TribeNeed::RESOURCE_AREA:
-                perc = need->GetPerception();
-                break;
-            case TribeNeed::REPRODUCE:
                 AddResource(wealthResourceName,-reproductionCost);
-                perc = need->GetPerception();
+                npc->TriggerEvent(&pcpt);
+            }
+            continue;
+        }
+
+        // If we have any npcs with no assignments then
+        // we can parse recipes and send them to work
+        if(behavior && strcasecmp(behavior->GetName(),npcIdleBehavior.GetDataSafe())==0)
+        {
+            // Update recipes wait times
+            UpdateRecipeData(decreaseValue);
+
+            // Get best recipe. (highest level, no wait time)
+            RecipeTreeNode* bestRecipe = tribalRecipe->GetNextRecipe();
+
+            if(!bestRecipe) 
+            {
+                // Something went wrong... it should never re-parse the tribal recipe
+                // High chances to be a scripting error
                 break;
-            default:
-                continue; // Do nothing
             }
 
-            npc->Printf("Tribe brain perception '%s'",perc.GetDataSafe());
-            
-            Perception perception(perc);
-            npc->TriggerEvent(&perception);
+            if(bestRecipe->wait <= 0)
+            {
+                bestRecipe->nextStep = recipeManager->ApplyRecipe(
+                    bestRecipe, this, bestRecipe->nextStep);
+            }
+
+            // If nextStep is -1 => Recipe is Completed
+            if(bestRecipe->nextStep == -1)
+            { 
+                // TODO -- Remove TimeStamp
+                csString rName = bestRecipe->recipe->GetName();
+                if(rName != "do nothing")
+                {
+                    CPrintf(CON_CMDOUTPUT, "Recipe %s completed.\n", rName.GetData());
+                }
+
+                tribalRecipe->RemoveChild(bestRecipe);
+            }
+
+            // If nextStep is -2, the recipe has unmet requirements
+            else if(bestRecipe->nextStep == -2)
+            {
+                bestRecipe->nextStep = 0;
+            }
         }
     }
 }
@@ -524,70 +484,6 @@ bool Tribe::ShouldGrow() const
 bool Tribe::CanGrow() const
 {
     return CountResource(wealthResourceName) >= reproductionCost;
-}
-
-void Tribe::DumpNeeds() const
-{
-
-    ConstTribeNeedSetGlobalIterator iter(needSet.GetIterator());
-    while (iter.HasNext())
-    {
-        unsigned int memberType;
-        const TribeNeedSet* tns = iter.Next(memberType);
-        CPrintf(CON_CMDOUTPUT,"%-25s(%3d) %10s %-20s %6s %6s   %s\n",
-                "Need for TribeMemberType",memberType,"Value","Perception","Start","Growth","Depend on");
-
-        TribeNeedSet::ConstNeedIterator it(tns->GetIterator());
-        while (it.HasNext())
-        {
-            const TribeNeed* need = it.Next();
-            CPrintf(CON_CMDOUTPUT,"%-30s %10.2f %-20s %6.2f %6.2f -> %s\n",
-                    need->GetTypeAndName().GetDataSafe(),
-                    need->current_need,
-                    need->GetPerception().GetDataSafe(),
-                    need->GetNeedStartValue(),
-                    need->GetNeedGrowthValue(),
-                    need->GetNeed()->GetTypeAndName().GetDataSafe());
-        }
-    }
-}
-
-
-TribeNeed* Tribe::Brain(NPC * npc)
-{
-    TribeNeedSet* needSet = GetNeedSet(npc); // Get the need set for this npc's
-                                             // member type
-    
-    // Handle special case for dead npc's
-    if (!npc->IsAlive())
-    {
-        if (AliveCount() == 0 && CountResource(wealthResourceName) >= 10 * reproductionCost) // Resurrect with large cost if every member is dead.
-        {
-            AddResource(wealthResourceName,-10*reproductionCost); 
-            return needSet->Find("Resurrect");
-        }
-        else if (CanGrow())
-    	{
-            AddResource(wealthResourceName,-reproductionCost); 
-            return needSet->Find("Resurrect");
-    	}
-        else
-        {
-            needSet->MaxNeed(wealthGatherNeed); // Next live NPC will start gather resources
-        }
-        return NULL;        
-    }
-    
-    // Continue on for live NPCs
-
-    needSet->UpdateNeed(npc);
-    
-    TribeNeed *nextNeed = GetNeedSet(npc)->CalculateNeed(npc);
-
-    // Check if the most needed need has some depenency that needs to be done first.
-    nextNeed = const_cast<TribeNeed*>(nextNeed->GetNeed());
-
-    return nextNeed;
 }
 
 void Tribe::UpdateDeathRate()
@@ -617,29 +513,6 @@ void Tribe::UpdateResourceRate(int amount)
     resourceRate = (1.0-N)*rate + N*resourceRate;
     lastResource = now;
 }
-
-
-TribeNeedSet* Tribe::GetNeedSet(NPC* npc)
-{
-    return GetNeedSet(npc->GetTribeMemberType(), false);
-}
-
-
-TribeNeedSet* Tribe::GetNeedSet(unsigned int memberType, bool create)
-{
-    TribeNeedSet *tns = needSet.Get(memberType, NULL);
-    
-
-    if (tns == NULL && create)
-    {
-        tns = needSet.Put(memberType, new TribeNeedSet(this));
-    }
-    
-
-    return tns;
-}
-
-
 
 int Tribe::GetMaxSize() const
 {
@@ -708,9 +581,9 @@ bool Tribe::CheckWithinBoundsTribeHome(NPC* npc, const csVector3& pos, const iSe
 bool Tribe::GetResource(NPC* npc, csVector3 startPos, iSector * startSector, csVector3& locatedPos, iSector* &locatedSector, float range, bool random)
 {
     float locatedRange=0.0;
-    Tribe::Memory * memory = NULL;
+    Tribe::Memory* memory = NULL;
     
-    if (psGetRandom(100) > 10) // 10% chance for go explor a new resource arae
+    if (psGetRandom(100) > 10) // 10% chance for go explore a new resource arae
     {
         csString neededResource = GetNeededResource();
 
@@ -766,6 +639,26 @@ bool Tribe::GetResource(NPC* npc, csVector3 startPos, iSector * startSector, csV
     return true;
 }
 
+Tribe::Memory* Tribe::GetResource(csString resourceName, NPC* npc)
+{
+    Tribe::Memory* memory = NULL;
+    csVector3      pos;
+    iSector*       sector;
+    float          rot;
+    float          range = -1;
+    float          locatedRange;
+    npc->GetActiveLocate(pos,sector,rot);
+
+    memory = FindNearestMemory(resourceName.GetData(), pos, sector, range, &locatedRange);
+    
+    if(!memory)
+    {
+        memory = FindNearestMemory("mine", pos, sector, range, &locatedRange);
+    }
+
+    return memory;
+}
+
 const char* Tribe::GetNeededResource()
 {
     return wealthResourceName.GetDataSafe();
@@ -804,6 +697,7 @@ void Tribe::Memorize(NPC * npc, Perception * perception)
     float     radius = perception->GetRadius();
     csVector3 pos;
     iSector*  sector = NULL;
+    //printf("ZeeDebug: Storing memory: %s\n", name.GetData());
 
     if (!perception->GetLocation(pos,sector))
     {
@@ -816,7 +710,7 @@ void Tribe::Memorize(NPC * npc, Perception * perception)
     Memory* memory = FindPrivMemory(name,pos,sector,radius,npc);
     if (memory)
     {
-        npc->Printf("Has this in privat knowledge -> do nothing");
+        npc->Printf("Has this in private knowledge -> do nothing");
         return;
     }
     
@@ -827,7 +721,7 @@ void Tribe::Memorize(NPC * npc, Perception * perception)
         return;
     }
     
-    npc->Printf("Store in privat memory: '%s' %.2f %.2f %2f %.2f '%s'",name.GetDataSafe(),pos.x,pos.y,pos.z,radius,npc->GetName());
+    npc->Printf("Store in private memory: '%s' %.2f %.2f %2f %.2f '%s'",name.GetDataSafe(),pos.x,pos.y,pos.z,radius,npc->GetName());
     AddMemory(name,pos,sector,radius,npc);
 }
 
@@ -924,7 +818,6 @@ iSector* Tribe::Memory::GetSector()
     return sector;
 }
 
-
 void Tribe::ForgetMemories(NPC * npc)
 {
     csList<Memory*>::Iterator it(memories);
@@ -1017,6 +910,15 @@ void Tribe::TriggerEvent(Perception *pcpt, float maxRange,
     }
 }
 
+void Tribe::SendPerception(const char* pcpt, csArray<NPC*> npcs)
+{
+    Perception perception(pcpt);
+    for(int i=0;i<npcs.GetSize();i++)
+    {
+        npcs[i]->TriggerEvent(&perception, -1, NULL, NULL, false);
+    }
+}
+
 gemNPCActor* Tribe::GetMostHated(NPC* npc, float range, bool includeInvisible, bool includeInvincible, float* hate)
 {
     float mostHatedAmount = 0.0;
@@ -1055,4 +957,568 @@ void Tribe::ScopedTimerCallback(const ScopedTimer* timer)
     CPrintf(CON_WARNING,"Used %u time to process tick for tribe: %s(ID: %u)\n",
             timer->TimeUsed(),GetName(),GetID());
     npcclient->ListTribes(GetName());
+}
+
+Recipe* Tribe::GetTribalRecipe() 
+{ 
+    return tribalRecipe->recipe; 
+}
+
+void Tribe::UpdateRecipeData(int delta)
+{
+    tribalRecipe->UpdateWaitTimes(delta);
+}
+
+void Tribe::AddRecipe(Recipe* recipe, Recipe* parentRecipe, bool reqType)
+{
+    if(!recipe)
+    {
+        // Avoid a segFault and signal the issue
+        CPrintf(CON_ERROR, "Could not add recipe. Received null pointer for recipe.\n");
+        return;
+    }
+    if(!parentRecipe)
+    {
+        CPrintf(CON_ERROR, "Could not add recipe. Received null pointer for parent recipe.\n");
+        return;
+    }
+
+    RecipeTreeNode* newNode = new RecipeTreeNode(recipe, 0);
+    if(reqType)
+    {
+        // Make it distributed
+        newNode->requirementParseType = REQ_DISTRIBUTED;
+    }
+    tribalRecipe->AddChild(newNode, parentRecipe);
+}
+
+void Tribe::AddCyclicRecipe(Recipe* recipe, int time)
+{
+    Tribe::CyclicRecipe newCycle;
+    newCycle.recipe = recipe;
+    newCycle.timeTotal = newCycle.timeLeft = time;
+
+    cyclicRecipes.Push(newCycle);
+}
+
+void Tribe::DeleteCyclicRecipe(Recipe* recipe)
+{
+    for(int i=0;i<cyclicRecipes.GetSize();i++)
+    {
+        if(cyclicRecipes[i].recipe == recipe)
+        {
+            cyclicRecipes.DeleteIndex(i);
+            return;
+        }
+    }
+}
+
+bool Tribe::CheckKnowledge(csString knowHow)
+{
+    for(int i=0;i<knowledge.GetSize();i++)
+    {
+        if(knowledge[i] == knowHow)
+        {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+void Tribe::SaveKnowledge(csString knowHow)
+{
+    const char * fields[] =
+        { "tribe_id", "knowledge" };
+    psStringArray values;
+    values.FormatPush("%d", GetID());
+    values.FormatPush("%s", knowHow.GetDataSafe());
+
+    int result = db->GenericInsertWithID("sc_tribe_knowledge",fields,values);
+    if (result == 0)
+    {
+        CPrintf(CON_ERROR, "Failed to save knowledge for tribe. Reason: %s.\n",
+                db->GetLastError());
+        return;
+    }
+}
+
+void Tribe::DumpKnowledge()
+{
+    CPrintf(CON_CMDOUTPUT, "Dumping knowledge for tribe %d\n", GetID());
+    if(knowledge.GetSize() == 0)
+    {
+        CPrintf(CON_CMDOUTPUT, "No knowledge.\n");
+    }
+
+    for(int i=0;i<knowledge.GetSize();i++)
+    {
+        CPrintf(CON_CMDOUTPUT, "%s ", knowledge[i].GetData());
+    }
+
+    // TODO -- Change the classic printf with something else
+    // I used this just to make it look nicer on the console. Don't think it's ok.
+    CPrintf(CON_CMDOUTPUT, "\n");
+}
+
+void Tribe::DumpRecipesToConsole()
+{
+    CPrintf(CON_CMDOUTPUT, "Dumping recipe list for tribe %d\n", GetID());
+    CPrintf(CON_CMDOUTPUT, "+-------------------------------------------------+\n");
+    CPrintf(CON_CMDOUTPUT, "| No | ID | Name              |Pers|Prio|Wait|Step|\n");
+    CPrintf(CON_CMDOUTPUT, "+-------------------------------------------------+\n");
+    tribalRecipe->DumpRecipeTree();
+    CPrintf(CON_CMDOUTPUT, "+-------------------------------------------------+\n");
+}
+
+bool Tribe::LoadNPCMemoryBuffer(const char* name, csArray<NPC*> npcs)
+{
+    // Check just to be sure
+    if(npcs.GetSize() == 0) return false;
+
+    Memory* newLocation = FindMemory(csString(name));
+
+    if(!newLocation)
+    {
+        newLocation = FindMemory("mine");
+        // Not even unprospected mine exists... explore.
+        if(!newLocation)
+            return false;
+
+        // Mark an unprospected mine for future correct identification
+        for(int i=0;i<npcs.GetSize();i++)
+        {
+            npcs[i]->SetBuffer("new mine");
+        }
+    }
+
+    for(int i=0;i<npcs.GetSize();i++)
+    {
+        npcs[i]->SetBufferMemory(newLocation);
+    }
+    return true;
+}
+
+void Tribe::LoadNPCMemoryBuffer(Tribe::Memory* memory, csArray<NPC*> npcs)
+{
+    if(!memory) return;
+
+    // Just Assign
+    for(int i=0;i<npcs.GetSize();i++)
+    {
+        npcs[i]->SetBufferMemory(memory);
+    }
+}
+
+void Tribe::ModifyWait(Recipe* recipe, int delta)
+{
+    tribalRecipe->ModifyWait(recipe, delta);
+}
+
+bool Tribe::CheckMembers(csString name, int number)
+{
+    // TODO Filter the search only for a kind of npcs (explorers, warriors, etc)
+
+    if(name == "number")
+    {
+        // Check if total number is correct (we don't care if their idle or not
+        if(number <= members.GetSize())
+        {
+            return true;
+        }
+        
+        return false;
+    }
+
+    for(int i=0;i<members.GetSize();i++)
+    {
+        if(!members[i]->GetCurrentBehavior())
+        {
+            // Discard Members with no Behavior
+            // This shouldn't happen but... ermm just in case
+            continue;
+        }
+        if(strcasecmp(members[i]->GetCurrentBehavior()->GetName(), npcIdleBehavior.GetDataSafe()) == 0)
+        {
+            number--;
+        }
+        if(number == 0)
+            return true;
+    }
+    // We don't have enough members
+    if(number != 0)
+    {
+        return false;
+    }
+}
+
+bool Tribe::CheckResource(csString resource, int number)
+{
+    for(int i=0;i<resources.GetSize();i++)
+    {
+        if(resources[i].name == resource)
+        {
+            if(resources[i].amount >= number)
+                return true;
+        }
+    }
+    return false;
+}
+
+bool Tribe::CheckItems(csString item, int number)
+{
+
+    // TODO - Fix this mess
+    Asset* asset = GetAsset(item);
+    if(!asset)
+    {
+        return false;
+    }
+
+    // If the building exists && is not just a spot for construction
+    if(asset->building && asset->status == ASSET_BUILDING)
+    {
+        //Requirement is met
+        return true;
+    }
+
+    // It's not a building, it's an item
+    if(!asset->building)
+    {
+        if(asset->quantity > number)
+        {
+            // We have enough items
+            return true;
+        } else
+        {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+void Tribe::SpawnBuilding(const char* building)
+{
+    csVector3 where;
+    const char* sectorName = homeSectorName.GetData();
+
+    // TODO -- Put an NPC to measure the ground using DR
+    // -or-
+    // Use the buildingSpot(x,y,z,building) function to reserve a spot
+
+    // For the moment it's just buildingSpot(x,y,z,building) available
+    Asset* newBuild = GetAsset(building);
+    if(newBuild && (!newBuild->status != ASSET_BUILDINGSPOT))
+    {
+        // We don't have a reservedSpot available
+        CPrintf(CON_ERROR, "No reserved spot for building. (%s) Request abandoned.\n", building);
+        return;
+    }
+    where = newBuild->pos;
+
+    npcclient->GetNetworkMgr()->QueueSpawnBuildingCommand(where, sectorName, building, GetID());
+}
+
+csArray<NPC*> Tribe::SelectNPCs(const char* type, const char* number)
+{
+    int           count = atoi(number);
+    csArray<NPC*> npcs;
+    csString      currentBehavior;
+
+    // TODO -- Tribe Member Types
+    // For the moment we don't have tribe member types... but in case
+    // they will be developed soon, this is where you must alter the
+    // code to check for their type when selecting them. (recipe Select function) 
+
+    for(int i=0;i<members.GetSize();i++)
+    {
+        Behavior* behave = members[i]->GetCurrentBehavior();
+        if(!behave)
+        {
+            // Newly created NPC or some malfunction.
+            // Just skip and try this npc next loop.
+            continue;
+        }
+        currentBehavior = members[i]->GetCurrentBehavior()->GetName();
+
+        if(currentBehavior == "do nothing")
+        {
+            count--;
+            npcs.Push(members[i]);
+        }
+        if(count == 0)
+            return npcs;
+    }
+
+    return npcs;
+}
+
+csString Tribe::GetBuffer(csString bufferName)
+{
+    if(bufferName == "Buffer")
+    {
+        return recipeBuffer;
+    }
+    else if(bufferName == "Active Amount")
+    {
+        return recipeAmountBuffer;
+    }
+    else
+    {
+        return "";
+    }
+}
+
+void Tribe::SetBuffer(csString bufferName, csString value)
+{
+    if(bufferName == "Buffer")
+    {
+        recipeBuffer = value;
+    }
+    else if(bufferName == "Active Amount")
+    {
+        recipeAmountBuffer = value;
+    }
+}
+
+void Tribe::LoadAsset(iResultRow &row)
+{
+    csVector3 coords;
+    coords[0] = row.GetFloat("coordX");
+    coords[1] = row.GetFloat("coordY");
+    coords[2] = row.GetFloat("coordZ");
+    if(row.GetInt("status") != ASSET_ITEM)
+    {
+        Asset asset;
+        asset.id = row.GetInt("id");
+        asset.name = row["name"];
+        asset.pos = coords;
+        asset.item = NULL;
+        asset.status = row.GetInt("status");
+        asset.quantity = row.GetInt("quantity");
+        assets.Push(asset);
+    }
+    else
+    {
+        // TODO -- Add support for gemNPCitem
+        // Get the gemItem based on it's name and pass it as 2nd argument
+        // For now they are magically stored.
+        AddItemAsset(row["name"], NULL, row.GetInt("quantity"), row.GetInt("status"));
+    }
+}
+
+void Tribe::SaveAsset(Tribe::Asset* asset, bool deletion)
+{
+    const char * fields[] =
+        {"tribe_id", "name", "coordX", "coordY", "coordZ", "gemItemName", "quantity", "status"};
+    
+    psStringArray values;
+    values.FormatPush("%d",GetID());
+    values.FormatPush("%s",asset->name.GetData());
+    values.FormatPush("%f",asset->pos[0]);
+    values.FormatPush("%f",asset->pos[1]);
+    values.FormatPush("%f",asset->pos[2]);
+    values.FormatPush("%s","N/A"); // Work this out when items will be available
+    values.FormatPush("%d",asset->quantity);
+    values.FormatPush("%d",asset->status);
+
+    if(asset->id == -1)
+    {
+        // It's a new entry
+        asset->id = db->GenericInsertWithID("sc_tribe_assets",fields,values);
+        if(id == 0)
+        {
+            CPrintf(CON_ERROR, "Failed to save asset for tribe: %s.\n", db->GetLastError());
+            return;
+        }
+    }
+    else
+    {
+        // Old entry updated
+        csString id;
+        id.Format("%d",asset->id);
+
+        if(!db->GenericUpdateWithID("sc_tribe_assets","id",id,fields,values))
+        {
+            CPrintf(CON_ERROR, "Failed to save asset for tribe: %s.\n", db->GetLastError());
+            return;
+        }
+    }
+}
+
+void Tribe::AddItemAsset(csString name, gemNPCItem* item, int quantity, int id)
+{
+    for(int i=0;i<assets.GetSize();i++)
+    {
+        if(assets[i].name == name)
+        {
+            assets[i].quantity += quantity;
+            SaveAsset(&assets[i]);
+            return;
+        }
+    }
+
+    // No items like this before in the array
+    Asset asset;
+    asset.id       = id;
+    asset.name     = name;
+    asset.item     = item;
+    asset.quantity = quantity;
+    asset.pos      = csVector3(0,0,0);
+    asset.status   = ASSET_ITEM;
+    assets.Push(asset);
+    SaveAsset(&asset);
+}
+
+void Tribe::AddBuildingAsset(csString name, csVector3 where, int status)
+{
+    if(status == ASSET_BUILDINGSPOT)
+    {
+        // Just Add a new spot asset if it does not exist
+        if(GetAsset(name,where))
+        {
+            // Asset already exists in the same spot. Bail
+            return;
+        }
+        Asset asset;
+        asset.id       = -1;
+        asset.name     = name;
+        asset.item     = NULL;
+        asset.pos      = where;
+        asset.quantity = 1;
+        asset.status   = ASSET_BUILDINGSPOT;
+        assets.Push(asset);
+        SaveAsset(&asset);
+        return;
+    }
+
+    for(int i=0;i<assets.GetSize();i++)
+    {
+        if(assets[i].name == name && assets[i].pos == where)
+        {
+            assets[i].status = ASSET_BUILDING;
+            SaveAsset(&assets[i]);
+            return;
+        }
+    }
+
+    // Something occured... It shouldn't get here
+    return;
+}
+
+Tribe::Asset* Tribe::GetAsset(csString name)
+{
+    for(int i=0;i<assets.GetSize();i++)
+    {
+        if(assets[i].name == name)
+        {
+            return &assets[i];
+        }
+    }
+    
+    // If we get here, the asset does not exist and we return a null one
+    return NULL;
+}
+
+Tribe::Asset* Tribe::GetAsset(csString name, csVector3 where)
+{
+    for(int i=0;i<assets.GetSize();i++)
+    {
+        if(assets[i].name == name && assets[i].pos == where)
+        {
+            return &assets[i];
+        }
+    }
+    
+    return NULL;
+}
+
+Tribe::Asset* Tribe::GetBuildingSpot(csString name)
+{
+    for(int i=0;i<assets.GetSize();i++)
+    {
+        if(assets[i].name == name && (assets[i].status == ASSET_BUILDINGSPOT))
+        {
+            return &assets[i];
+        }
+    }
+    return NULL;
+}
+
+void Tribe::DeleteAsset(csString name, int quantity)
+{
+    for(int i=0;i<assets.GetSize();i++)
+    {
+        if(assets[i].name == name)
+        {
+            assets[i].quantity -= quantity;
+            // Remove entry if nothing remains
+            if(assets[i].quantity <= 0)
+            {
+                assets.DeleteIndex(i);
+                return;
+            }
+            SaveAsset(&assets[i]);
+            return;
+        }
+    }
+}
+
+void Tribe::DeleteAsset(csString name, csVector3 pos)
+{
+    for(int i=0;i<assets.GetSize();i++)
+    {
+        if(assets[i].name == name && assets[i].pos == pos)
+        {
+            assets.DeleteIndex(i);
+            return;
+        }
+    }
+}
+
+void Tribe::DumpAssets()
+{
+    CPrintf(CON_CMDOUTPUT, "Dumping asset list for tribe %d\n", GetID());
+
+    if(assets.GetSize() == 0)
+    {
+        CPrintf(CON_CMDOUTPUT, "No assets.\n");
+        return;
+    }
+
+    CPrintf(CON_CMDOUTPUT, "%-15s %-6s %-20s %-10s %-10s\n",
+        "Name", "Quant.", "Position", "IsBuilding", "Status");
+
+    for(int i=0;i<assets.GetSize();i++)
+    {
+        CPrintf(CON_CMDOUTPUT, "%-15s %-6d (%4.2f,%4.2f,%4.2f) %-10s %-10d\n",
+                assets[i].name.GetData(),
+                assets[i].quantity,
+                assets[i].pos[0], assets[i].pos[1], assets[i].pos[2],
+                (assets[i].building?"Yes":"No"),
+                assets[i].status);
+    }
+}
+
+
+void Tribe::ProspectMine(NPC* npc, csString resource, csString nick)
+{
+    // Get the memory and rename it to fit the mineral deposit we prospected
+    Memory* memory = npc->GetBufferMemory();
+    
+    // Find the tribe memory from which the npc's derived from and rename it
+    Memory* oldMemory = FindMemory("mine", memory->pos, memory->sector, memory->radius);
+    if(oldMemory)
+    {
+        // TODO -- investigate
+        // If the old memory does not exist, then how did we get here? :s 
+        oldMemory->name = resource;
+        SaveMemory(oldMemory);
+    }
+
+    // Update the resource nick
+    AddResource(resource, 0, nick);
+    // Update npc's buffer to the real item... so we know what to unload
+    npc->SetBuffer(resource);
 }

@@ -819,7 +819,7 @@ gemItem *EntityManager::MoveItemToWorld(psItem       *chrItem,
 }
 
 
-gemItem* EntityManager::CreateItem(psItem *& iteminstance, bool transient)
+gemItem* EntityManager::CreateItem(psItem *& iteminstance, bool transient, int tribeID)
 {
     psSectorInfo *sectorinfo;
     csVector3 newpos;
@@ -881,14 +881,20 @@ gemItem* EntityManager::CreateItem(psItem *& iteminstance, bool transient)
         // don't create removal events for items in e.g guildhalls
         iteminstance->ScheduleRemoval();
     }
-        
+
     obj->Move(newpos,yrot,isec);
+
+    if(tribeID != 0)
+    {
+        // If it belongs to a tribe signal it for the npcclient to assign the item to the tribe
+        obj->SetTribeID(tribeID);
+    }
+
+    // Add Object to all Super Clients
+    psserver->npcmanager->AddEntity(obj);
 
     // Add object to all nearby clients
     obj->UpdateProxList( true );
-
-    // Add object to all Super Clients
-    psserver->npcmanager->AddEntity(obj);
 
     return obj;
 }

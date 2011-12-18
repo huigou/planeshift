@@ -41,5 +41,5 @@ INSERT INTO character_skills VALUES("6","2","0","0","2");
 INSERT INTO character_skills VALUES("7","2","0","0","2");
 
 # Tribe skills on mining
-INSERT INTO character_skills VALUES("20","37","200","200","200");
+INSERT INTO character_skills VALUES("20","37","400","400","400");
 

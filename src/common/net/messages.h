@@ -269,7 +269,9 @@ enum MSG_TYPES
     MSGTYPE_MUSICAL_SHEET,
     MSGTYPE_PLAY_SONG,
     MSGTYPE_STOP_SONG,
-    MSGTYPE_SIMPLE_RENDER_MESH
+
+    MSGTYPE_SIMPLE_RENDER_MESH,
+    MSGTYPE_NPC_WORKDONE
 };
 
 class psMessageCracker;
@@ -3287,7 +3289,8 @@ public:
                     float yRot,
                     float zRot,
                     uint32_t flags,
-                    csStringSet* msgstrings
+                    csStringSet* msgstrings,
+                    int tribeid = 0
                  );
 
     psPersistItem( MsgEntry* me, NetBase::AccessPointers* accessPointers );
@@ -3310,6 +3313,7 @@ public:
     float xRot;
     float yRot;
     float zRot;
+    int   tribeID;
     EID eid;
     uint32_t type;
     uint32_t flags;

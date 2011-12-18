@@ -810,7 +810,8 @@ class MoveToOperation : public MovementOperation
 protected:
     csVector3 destPos;
     iSector*  destSector;
-    
+
+    csString  memoryCheck; ///< Used to keep memory name in case coordinates are taken from there
     csString  action;
 public:
     MoveToOperation();

@@ -47,6 +47,7 @@ class  psDatabase;
 class  MsgHandler;
 class  psNetConnection;
 class  EventManager;
+class  RecipeManager;
 class  NetworkManager;
 class  NPCType;
 class  NPC;
@@ -106,6 +107,11 @@ public:
      */
     iObjectRegistry* GetObjectReg()
     { return objreg; }
+
+    /**
+     * Make a tribe pointer available - for the network manager
+     */
+    Tribe* GetTribe(int id);
 
     /**
      * Load and fork off a new thread for the Server Console. Then start
@@ -366,6 +372,11 @@ public:
      * List all tribes matching pattern to console.
      */
     void ListTribes(const char* pattern);
+
+    /**
+     * List all the active recipes in a tribe
+     */
+    void ListTribeRecipes(const char* tribeID);
     
     /**
      * List all waypoints matching pattern to console.
@@ -500,25 +511,42 @@ public:
      */
     csRef<iDocumentNode> GetRootNode(const char* xmlfile);
 
+    /** Add an NPCType
+     *
+     * Upon loading a tribe, the Recipe Manager creates a NPCType and
+     * uses this method to Put the assembled npctype into the npctypes map.
+     *
+     * @param newType String containing the npctype in xml format.
+     * @return        False if any error is encountered, true otherwise.
+     */
+    bool AddNPCType(csString newType);
+
     bool LoadNPCTypes(iDocumentNode* root);
+
     bool LoadNPCTypes();
-    
+
+    /** Fire perception
+     *
+     * Method used by the console command 'fireperc'.
+     * It fires a perception on the given npc.
+     *
+     * @param NPCId      NPC on which to fire perc
+     * @param perception The perception to fire
+     * @return           True if npc is found and perception is sent. False otherwise (doh!)
+     */
+    bool FirePerception(int NPCId, const char* perception);
+
+    // made public for the networkmanager to call it
+    bool LoadPathNetwork();
+   
 protected:
 
     bool ReadNPCsFromDatabase();
-
-public:
-    // has to be public as the networkmanager has to call it
-    bool LoadPathNetwork();
-
-protected:
     bool LoadLocations();
-    
+
     /** Load Tribes from db */
     bool LoadTribes();
 
-
-protected:
     /**
      * Find all items that are close to NPC's and percept the
      * NPC.
@@ -540,6 +568,7 @@ protected:
     csRef<MsgHandler>               msghandler;
     ServerConsole*                  serverconsole;
     EventManager*                   eventmanager;
+    RecipeManager*                  recipemanager;
     NetworkManager*                 network;
     psDatabase*                     database;
     csRef<iVFS>                     vfs;

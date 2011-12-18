@@ -980,6 +980,39 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                 }
                 break;
             }
+            case psNPCCommandsMessage::CMD_SPAWN_BUILDING:
+            {
+                csVector3 where;
+                where[0] = list.msg->GetFloat();
+                where[1] = list.msg->GetFloat();
+                where[2] = list.msg->GetFloat();
+                const char*   sectorName = list.msg->GetStr();
+                const char*   buildingName = list.msg->GetStr();
+                int           tribeID = list.msg->GetInt16();
+                InstanceID    instance = DEFAULT_INSTANCE;
+                psSectorInfo* sector = cacheManager->GetSectorInfoByName(sectorName);
+
+                if(list.msg->overrun)
+                {
+                    Debug2(LOG_SUPERCLIENT,me->clientnum,"Received incomplete CMD_SPAWN_BUILDING from NPC client %u.\n", me->clientnum);
+                    break;
+                }
+               
+                // Now issue the spawn building command
+                // Create the logic of the item
+                psItemStats *itemstats = cacheManager->GetBasicItemStatsByName(buildingName);
+                psItem* requiredItem = new psItem();
+                requiredItem->SetBaseStats(itemstats);
+                requiredItem->SetLocationInWorld(instance, sector, where[0], where[1], where[2], 0);
+                requiredItem->SetLoaded();
+                requiredItem->Save(false);
+
+                // Create the gem entity
+                gemItem* newItem     = entityManager->CreateItem(requiredItem, false, tribeID);
+
+                newItem->UpdateProxList(true);
+                break; 
+            }
             case psNPCCommandsMessage::CMD_TALK:
             {
                 EID speakerId = EID(list.msg->GetUInt32());
@@ -1273,7 +1306,6 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                 }
 
                 psserver->GetWorkManager()->HandleProduction(gEntity,"dig",resource);
-
                 break;
             }
             case psNPCCommandsMessage::CMD_DROP:
@@ -2446,6 +2478,13 @@ void NPCManager::NewNPCNotify(PID player_id, PID master_id, PID owner_id)
            ShowID(player_id), ShowID(master_id), ShowID(owner_id));
 
     psNewNPCCreatedMessage msg(0, player_id, master_id, owner_id);
+    msg.Multicast(superclients,-1,PROX_LIST_ANY_RANGE);
+}
+
+void NPCManager::WorkDoneNotify(EID npcID, csString reward, csString nick)
+{
+    Debug3(LOG_NPC, 0, "NPC(%s) got item %s.\n", ShowID(npcID), reward.GetData());
+    psNPCWorkDoneMessage msg(0, npcID, reward.GetData(), nick.GetData());
     msg.Multicast(superclients,-1,PROX_LIST_ANY_RANGE);
 }
 

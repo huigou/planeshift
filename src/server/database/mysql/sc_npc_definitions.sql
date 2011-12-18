@@ -35,7 +35,7 @@ INSERT INTO sc_npc_definitions VALUES("12","QuestMaster1","Sit","","0.00","0.00"
 INSERT INTO sc_npc_definitions VALUES("13","QuestMaster2","Sit","","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("14","DictMaster1","Answerer","","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("15","DictMaster2","Answerer","","0.00","0.00","0","N","N");
-INSERT INTO sc_npc_definitions VALUES("20","Miner","MineingTribe","","0.00","0.00","0","N","N");
+INSERT INTO sc_npc_definitions VALUES("20","Miner","AbstractTribesman","","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("21","MoveMaster1","MoveTest1","","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("22","MoveMaster2","MoveTest2","","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("23","MoveMaster3","MoveTest3","","0.00","0.00","0","N","N");

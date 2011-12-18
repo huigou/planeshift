@@ -200,8 +200,9 @@ public:
         CMD_TERMINATOR, // cmds go from superclient to server
         CMD_DRDATA,
         CMD_ATTACK,
-	CMD_SIT,
+	    CMD_SIT,
         CMD_SPAWN,
+        CMD_SPAWN_BUILDING, // used for superclient to request a new building
         CMD_TALK,
         CMD_VISIBILITY,
         CMD_PICKUP,
@@ -302,6 +303,26 @@ public:
     /// Get the next entity and position from the buffer
     EID Get(csVector3 & pos, iSector* & sector, InstanceID & instance, bool &forced, csStringSet* msgstrings,
         csStringHashReversible* msgstringshash, iEngine* engine);
+};
+
+/**
+* The message sent from server to superclient upon a successful
+* work done.
+*/
+class psNPCWorkDoneMessage : public psMessageCracker
+{
+public:
+    EID         npcId;
+    const char* resource;
+    const char* nick;
+
+    psNPCWorkDoneMessage(uint32_t clientToken, EID npcId, const char* resource, const char* nick);
+    
+    psNPCWorkDoneMessage(MsgEntry *message);
+    
+    PSF_DECLARE_MSG_FACTORY();
+    
+    virtual csString ToString(NetBase::AccessPointers* accessPointers);
 };
 
 /**

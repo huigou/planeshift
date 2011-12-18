@@ -5140,7 +5140,8 @@ psPersistItem::psPersistItem( uint32_t clientNum,
                               float yRot,
                               float zRot,
                               uint32_t flags,
-                              csStringSet* msgstrings)
+                              csStringSet* msgstrings,
+                              int tribeID)
 {
     msg.AttachNew(new MsgEntry( MAX_MESSAGE_SIZE ));
 
@@ -5148,15 +5149,16 @@ psPersistItem::psPersistItem( uint32_t clientNum,
     msg->clientnum  = clientNum;
 
     msg->Add( eid.Unbox() );
-    msg->Add( (uint32_t) type );
-    msg->Add( name );
-    msg->Add( msgstrings->Request(factname).GetHash() );
-    msg->Add( msgstrings->Request(matname).GetHash() );
-    msg->Add( msgstrings->Request(sector).GetHash() );
-    msg->Add( pos );
-    msg->Add( xRot );
-    msg->Add( yRot );
-    msg->Add( zRot );
+    msg->Add((uint32_t) type);
+    msg->Add(name);
+    msg->Add(msgstrings->Request(factname).GetHash());
+    msg->Add(msgstrings->Request(matname).GetHash());
+    msg->Add(msgstrings->Request(sector).GetHash());
+    msg->Add(pos);
+    msg->Add(xRot);
+    msg->Add(yRot);
+    msg->Add(zRot);
+    msg->Add(tribeID);
     if (flags) // No point sending 0, has to be at the end
     {
         msg->Add( flags );
@@ -5178,6 +5180,7 @@ psPersistItem::psPersistItem( MsgEntry* me, NetBase::AccessPointers * accessPoin
     xRot        = me->GetFloat();
     yRot        = me->GetFloat();
     zRot        = me->GetFloat();
+    tribeID     = me->GetInt16();
     if (!me->IsEmpty())
     {
         flags   = me->GetUInt32();
@@ -5197,7 +5200,8 @@ csString psPersistItem::ToString(NetBase::AccessPointers * /*accessPointers*/)
     msgtext.AppendFmt("Sector: %s ",sector.GetDataSafe());
     msgtext.AppendFmt("Pos(%.2f,%.2f,%.2f) ",pos.x,pos.y,pos.z);
     msgtext.AppendFmt("yrot: %.2f Flags:",yRot);
-    if (flags & NOPICKUP) msgtext.AppendFmt(" NOPICKUP");
+    if(flags & NOPICKUP) msgtext.AppendFmt(" NOPICKUP");
+    if(tribeID) msgtext.AppendFmt("Belongs to tribe(id:%d)\n", tribeID);
 
     return msgtext;
 }

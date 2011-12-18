@@ -1638,6 +1638,21 @@ INSERT INTO command_group_assignment VALUES( "write all creative", 22 );
 ALTER TABLE `characters` MODIFY COLUMN `base_hitpoints_max` FLOAT(10,2)  DEFAULT '0.00',
  MODIFY COLUMN `base_mana_max` FLOAT(10,2)  DEFAULT '0.00';
 
+#
+# Merge brach into trunk. 1261
+#
+UPDATE `server_options` SET `option_value`='1261' WHERE `option_name`='db_version';
+source sc_tribe_assets.sql;
+source sc_tribe_knowledge.sql;
+source tribe_recipes.sql;
+DROP table tribe_needs;
+ALTER TABLE `tribes` ADD COLUMN tribal_recipe int(5) NOT NULL AFTER `npc_idle_behavior`;
+update tribes set tribal_recipe=5;
+INSERT INTO `item_categories` VALUES (28,'Buildings',NULL,NULL,NULL,100,0,0);
+ALTER TABLE 'sc_tribe_resources' ADD COLUMN `nick` varchar(30) NOT NULL default '' AFTER 'name';
+
+
+
 
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.

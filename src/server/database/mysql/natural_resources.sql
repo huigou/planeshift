@@ -47,7 +47,11 @@ CREATE TABLE `natural_resources` (
 
 LOCK TABLES `natural_resources` WRITE;
 /*!40000 ALTER TABLE `natural_resources` DISABLE KEYS */;
-INSERT INTO `natural_resources` VALUES (1,3,-50.00,0.00,-150.00,40.00,50.00,0.200000,37,50,6,0.500000,'greet',10,85,'gold','dig'),(2,3,-50.00,0.00,-150.00,40.00,50.00,0.200000,37,50,6,0.500000,'greet',10,102,'iron','dig'),(3,3,-50.00,0.00,-150.00,40.00,50.00,0.200000,37,50,6,0.500000,'greet',10,103,'coal','dig'),(4,3,-50.00,0.00,-150.00,40.00,50.00,0.200000,37,50,6,0.500000,'greet',10,115,'clay','dig'),(5,3,-50.00,0.00,-150.00,40.00,50.00,0.200000,37,50,6,0.500000,'greet',10,116,'sand','dig'),(6,3,-80.00,0.00,-145.00,40.00,50.00,0.200000,37,50,6,0.500000,'greet',10,85,'gold','dig');
+INSERT INTO `natural_resources` VALUES (1,3,-80.00,0.00,-145.00,40.00,50.00,0.990000,37,50,6,0.500000,'greet',10,85,'gold','dig');
+INSERT INTO `natural_resources` VALUES (2,3,-93.00,0.00,-212.00,40.00,50.00,0.990000,37,50,6,0.500000,'greet',10,103,'coal','dig');
+INSERT INTO `natural_resources` VALUES (3,3,-93.00,0.00,-186.00,40.00,50.00,0.990000,37,50,6,0.500000,'greet',10,9002,'silver','dig');
+INSERT INTO `natural_resources` VALUES (4,3,-37.00,0.00,-212.00,20.00,50.00,0.990000,37,50,6,0.500000,'greet',10,9003,'tin','dig');
+INSERT INTO `natural_resources` VALUES (5,3,-28.00,0.00,-170.00,20.00,50.00,0.990000,37,50,6,0.500000,'greet',10,9004,'platinum','dig');
 /*!40000 ALTER TABLE `natural_resources` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
