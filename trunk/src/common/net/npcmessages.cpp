@@ -334,6 +334,28 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
                 msgtext.AppendFmt("Spawner: %u Spawned: %d TribeMemberType: %u", spawner_id.Unbox(), spawned_id.Unbox(),tribeMemberType);
                 break;
             }
+            case psNPCCommandsMessage::CMD_SPAWN_BUILDING:
+            {
+                msgtext.Append("CMD_SPAWN_BUILDING: ");
+
+                //Extract the data
+                csVector3 pos;
+                pos[0] = msg->GetFloat();
+                pos[1] = msg->GetFloat();
+                pos[2] = msg->GetFloat();
+                const char* sectorName = msg->GetStr();
+                const char* buildingName = msg->GetStr();
+                int tribeID = msg->GetInt16();
+
+                if(msg->overrun)
+                {
+                    Debug2(LOG_SUPERCLIENT, msg->clientnum, "Received incomplete CMD_SPAWN_BUILDING from NPC client %u.\n", msg->clientnum);
+                    break;
+                }
+
+                msgtext.AppendFmt("Pos: (%f;%f;%f) in sectorName %s. TribeID: %d. Building: %s", pos[0], pos[1], pos[2], sectorName, tribeID, buildingName);
+
+            }
             case psNPCCommandsMessage::CMD_TALK:
             {
                 msgtext.Append("CMD_TALK: ");
@@ -883,6 +905,42 @@ csString psAllEntityPosMessage::ToString(NetBase::AccessPointers * accessPointer
     return msgtext;
 }
 
+//---------------------------------------------------------------------------
+PSF_IMPLEMENT_MSG_FACTORY(psNPCWorkDoneMessage,MSGTYPE_NPC_WORKDONE);
+
+psNPCWorkDoneMessage::psNPCWorkDoneMessage(uint32_t clientToken, EID npcId, const char* resource, const char* nick)
+{
+    int size = sizeof(int);
+    size    += (strlen(resource) + 1)*sizeof(char);
+    size    += (strlen(nick) + 1)*sizeof(char);
+    msg.AttachNew(new MsgEntry(size));
+
+    msg->SetType(MSGTYPE_NPC_WORKDONE);
+    msg->clientnum = clientToken;
+    msg->Add(npcId.Unbox());
+    msg->Add(resource);
+    msg->Add(nick);
+}
+
+psNPCWorkDoneMessage::psNPCWorkDoneMessage(MsgEntry* message)
+{
+    if(!message)
+        return;
+    npcId    = EID(message->GetUInt32());
+    resource = message->GetStr();
+    nick     = message->GetStr();
+}
+
+csString psNPCWorkDoneMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
+{
+    csString msgtext;
+
+    msgtext.AppendFmt("NPC EID: %d", npcId.Unbox());
+    msgtext.AppendFmt("Item received: %s", resource);
+    msgtext.AppendFmt("With nick: %s", nick);
+
+    return msgtext;
+}
 
 //---------------------------------------------------------------------------
 

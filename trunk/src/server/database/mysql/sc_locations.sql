@@ -30,9 +30,11 @@ INSERT INTO `sc_locations` VALUES (1,  1, -1, 'Field 1','-80.00', '0.0', '-220.0
 INSERT INTO `sc_locations` VALUES (2,  1, -1, 'Field 2','-50.00', '0.0', '-200.00', 2, 0.0,'', 3);
 INSERT INTO `sc_locations` VALUES (3,  1, -1, 'Field 3','-40.00', '0.0', '-130.00', 5, 0.0,'', 3);
 INSERT INTO `sc_locations` VALUES (4,  1, -1, 'Field 4','30.00', '0.0', '-200.00', 10, 0.0,'', 3);
-INSERT INTO `sc_locations` VALUES (5,  2, -1, 'Noth mine','-30.00', '0.0', '-140.00', 20, 0.0,'', 3);
-INSERT INTO `sc_locations` VALUES (6,  2, -1, 'South mine','-45.00', '0.0', '-240.00', 30, 0.0,'', 3);
 INSERT INTO `sc_locations` VALUES (7,  2, -1, 'Main mine','-80.00', '0.0', '-145.00', 15, 0.0,'', 3);
+INSERT INTO `sc_locations` VALUES (42, 2, -1, 'Coal mine','-93.00', '0.0', '-212.00', 15, 0.0,'', 3);
+INSERT INTO `sc_locations` VALUES (43, 2, -1, 'Silver mine','-93.00', '0.0', '-186.00', 15, 0.0,'', 3);
+INSERT INTO `sc_locations` VALUES (44, 2, -1, 'Tin mine','-37.00', '0.0', '-212.00', 15, 0.0,'', 3);
+INSERT INTO `sc_locations` VALUES (45, 2, -1, 'Platinum','-28.00', '0.0', '-170.00', 15, 0.0,'', 3);
 INSERT INTO `sc_locations` VALUES (8,  3, -1, 'Main market','-30.00', '0.0', '-160.00', 2, 0.0,'', 3);
 INSERT INTO `sc_locations` VALUES (9,  5, 13, 'Wander region 1','33.5', '0.0', '-213.57', 0, 0.0,'', 3);
 INSERT INTO `sc_locations` VALUES (10, 5,  9, 'Wander region 1','27.18', '0.0', '-263.67', 0, 0.0,'', 3);

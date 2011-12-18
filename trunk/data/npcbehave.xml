@@ -388,6 +388,133 @@
      </behavior>
   </npctype>
 
+  <npctype name="AbstractTribesman" vel="2.5">
+    <behavior name="do nothing" initial="80" resume="yes">
+      <wait anim="stand" duration="100" />
+    </behavior>
+    <behavior name="peace_meet" completion_decay="500">
+      <locate obj="perception" />
+      <rotate type="locatedest" anim="walk" ang_vel="120" />
+      <emote cmd="/greet" />
+    </behavior>
+    <behavior name="aggressive_meet" decay="10" completion_decay="150">
+      <locate obj="perception" />
+      <rotate type="locatedest" anim="walk" ang_vel="120" />
+      <melee seek_range="20" melee_range="3" />
+    </behavior>
+    <behavior name="coward_attacked" decay="10">
+      <emote cmd="/flee" />
+      <locate obj="waypoint" static="no" />
+      <navigate anim="walk" />
+      <locate obj="waypoint" static="no" random="yes" range="10" />
+      <wander anim="walk" />
+    </behavior>
+    <behavior name="normal_attacked" decay="10">
+      <locate obj="target" range="20" />
+      <rotate type="locatedest" anim="walk" ang_vel="120" />
+      <melee seek_range="20" melee_range="3" />
+    </behavior>
+    <behavior name="united_attacked" decay="10">
+      <locate obj="enemy" />
+      <percept event="tribesman attacked" target="tribe" />
+      <melee seek_range="20" melee_range="3" />
+    </behavior>
+    <behavior name="Chase" initial="0" growth="0" decay="1" complection_decay="-1" >
+      <chase type="target" chase_range="20" anim="run" vel="5" />
+    </behavior>
+    <behavior name="Explore" completion_decay="100" resume="yes" auto_memorize="all">
+      <locate obj="waypoint" static="no" />
+      <navigate anim="walk" />
+      <locate obj="waypoint" static="no" random="yes" range="80" />
+      <wander anim="walk" />
+      <wait anim="stand" duration="3" />
+      <locate obj="tribe:home" static="no" />
+      <wander anim="walk" />
+      <navigate anim="walk" />
+      <share_memories />
+    </behavior>
+    <behavior name="GatherResource" completion_decay="100" resume="yes">
+      <locate obj="ownbuffer" />
+      <navigate anim="walk" />
+      <equip item="Rock Pick" slot="righthand" />
+      <dig resource="tribe:wealth" />
+      <locate obj="tribe:home"/>
+      <navigate anim="walk" />
+      <transfer item="tribe:wealth" target="tribe" />
+      <share_memories />
+    </behavior>
+    <behavior name="MineResource" completion_decay="100" resume="yes">
+      <locate obj="waypoint" static="no" />
+      <navigate anim="walk" />
+      <locate obj="ownbuffer" static="no" />
+      <wander anim="walk" />
+      <equip item="Rock Pick" slot="righthand" />
+      <loop iterations="3">
+        <dig resource="tribe:buffer" />
+        <wait anim="stand" duration="10" />
+      </loop>
+      <dequip slot="righthand" />
+      <locate obj="waypoint" static="no" />
+      <navigate anim="walk" />
+      <locate obj="tribe:home" static="no" />
+      <wander anim="walk" />
+      <transfer item="ownbuffer" target="tribe" />
+    </behavior>
+    <behavior name="GoToSleep" resume="yes">
+      <locate obj="waypoint" static="no" />
+      <navigate anim="walk" />
+      <locate obj="tribe:home" static="no" />
+      <wander anim="walk" />
+      <wait anim="sit" duration="180" />
+    </behavior>
+    <behavior name="Breed" resume="yes" completion_decay="100">
+      <locate obj="waypoint" static="no" />
+      <navigate anim="walk" />
+      <locate obj="tribe:home" static="no" />
+      <wander anim="walk" />
+      <navigate anim="walk" />
+      <emote cmd="/divide" />
+      <wait duration="30" anim="stand" />
+      <locate obj="self" static="no" />
+      <reproduce />
+    </behavior>
+    <behavior name="Resurrect" when_dead="yes" completion_decay="200">
+      <resurrect />
+    </behavior>
+    <behavior name="GoToWork" completion_decay="100">
+      <locate obj="waypoint" static="no" />
+      <navigate anim="walk" />
+      <locate obj="tribe:memory:work" static="no" />
+      <wander anim="walk" />
+      <locate obj="waypoint" static="no" />
+      <navigate anim="walk" />
+      <emote cmd="/work" />
+      <wait duration="buffer" anim="stand" />
+      <locate obj="tribe:home" static="no" />
+      <wander anim="walk" />
+    </behavior>
+
+    <behavior name="Guard" resume="yes">
+      <locate obj="ownbuffer" />
+      <navigate anim="walk" />
+      <circle anim="walk" radius="2" />
+    </behavior>
+    <behavior name="turn" completion_decay="500">
+        <rotate type="random" min="0" max="360" anim="walk" />
+        <move anim="walk" duration="3" />
+    </behavior>
+
+    <react event="collision" behavior="turn" delta="500" />
+    <react event="tribe:work" behavior="GoToWork" delta="100" />
+    <react event="tribe:resurrect" behavior="Resurrect" delta="200" when_dead="yes" />
+    <react event="tribe:mine" behavior="MineResource" delta="100" />
+    <react event="tribe:gather" behavior="GatherResource" delta="100" />
+    <react event="tribe:breed" behavior="Breed" delta="100" />
+    <react event="tribe:explore" behavior="Explore" delta="100" />
+    <react event="target out of range" behavior="Chase" />
+    <react event="target out of chase" behavior="Chase" absolute="0" only_interrupt="chase" />
+  </npctype>
+
   <npctype name="MineingTribe" vel="2.5">
 			
     <behavior name="do nothing" decay="0" growth="0" initial="10">

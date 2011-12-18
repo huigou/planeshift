@@ -68,8 +68,8 @@
 #include "npc.h"
 #include "perceptions.h"
 #include "gem.h"
+#include "recipe.h"
 #include "tribe.h"
-#include "tribeneed.h"
 #include "status.h"
 
 bool running;
@@ -90,15 +90,16 @@ psNPCClient* psNPCClient::npcclient = NULL;
 
 psNPCClient::psNPCClient () : serverconsole(NULL)
 {
-    npcclient    = this;  // Static pointer to self
-    world        = NULL;
+    npcclient     = this;  // Static pointer to self
+    world         = NULL;
     //    PFMaps       = NULL;
-    pathNetwork  = NULL;
-    eventmanager = NULL;
-    running      = true;
-    database     = NULL;
-    network      = NULL;
-    tick_counter = 0;
+    pathNetwork   = NULL;
+    eventmanager  = NULL;
+    recipemanager = NULL;
+    running       = true;
+    database      = NULL;
+    network       = NULL;
+    tick_counter  = 0;
     current_long_range_perception_index = 0;
     current_long_range_perception_loc_index = 0;
 }
@@ -134,6 +135,10 @@ psNPCClient::~psNPCClient()
     delete pathNetwork;
     //    delete PFMaps;
     delete world;
+
+    // TODO -- Make the recipemanager's destructor
+    // Delete Recipe Manager
+    delete recipemanager;
 }
 
 bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, const char *_user, const char *_pass, int _port)
@@ -198,6 +203,7 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, cons
         return false;
     }
     eventmanager = new EventManager;
+    recipemanager = new RecipeManager(this, eventmanager);
     msghandler   = eventmanager;
     psMessageCracker::msghandler = eventmanager;
 
@@ -229,6 +235,12 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, cons
         exit(1);
     }
     
+    if (!recipemanager->LoadRecipes())
+    {
+        CPrintf(CON_ERROR, "Couldn't load the recipes table\n");
+        exit(1);
+    }
+    
     if (!LoadTribes())
     {
         CPrintf(CON_ERROR, "Couldn't load the tribes table\n");
@@ -245,7 +257,7 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, cons
     {
         CPrintf(CON_ERROR, "Couldn't load the sc_location_type table\n");
         exit(1);
-    }    
+    }
 
     cdsys =  csQueryRegistry<iCollideSystem> (objreg);
 
@@ -402,6 +414,49 @@ csRef<iDocumentNode> psNPCClient::GetRootNode(const char *xmlfile)
     return root;
 }
 
+Tribe* psNPCClient::GetTribe(int id)
+{
+    for(int i=0;i<tribes.GetSize();i++)
+    {
+        if(tribes[i]->GetID() == id)
+        {
+            return tribes[i];
+        }
+    }
+}
+
+bool psNPCClient::AddNPCType(csString newType)
+{
+    csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
+    csRef<iDocument>       doc = xml->CreateDocument();
+    const char*            error = doc->Parse(newType);
+    if(error)
+    {
+        Error2("Error parsing assembled xml: %s.", error);
+        return false;
+    }
+
+    csRef<iDocumentNode> root = doc->GetRoot();
+    csRef<iDocumentNode> node = root->GetNode("npctype");
+    if(!node)
+    {
+        Error1("Error. No root node on xml.");
+        return false;
+    }
+
+    NPCType* npctype = new NPCType(this, eventmanager);
+    if(npctype->Load(node))
+    {
+        npctypes.Put(npctype->GetName(), npctype);
+        return true;
+    }
+    else
+    {
+        delete npctype;
+        return false;
+    }
+}
+
 bool psNPCClient::LoadNPCTypes(iDocumentNode* root)
 {
     csRef<iDocumentNode> topNode = root->GetNode("npctypes");
@@ -498,8 +553,22 @@ bool psNPCClient::LoadNPCTypes()
     //success only if the array is empty at this point, else failure.
     return postponedNPCTypeID.IsEmpty();
 }
-    
 
+bool psNPCClient::FirePerception(int NPCId, const char* perception)
+{
+    for(int i=0;i<npcs.GetSize();i++)
+    {
+        
+        if((int)npcs[i]->GetPID().Unbox() == NPCId)
+        {
+            npcs[i]->TriggerEvent(perception);
+            return true;
+        }
+        
+    }
+    return false;
+}
+    
 void psNPCClient::Add( gemNPCObject* object )
 {
     EID eid = object->GetEID();
@@ -678,7 +747,16 @@ bool psNPCClient::ReadNPCsFromDatabase()
 
             if (!CheckAttachTribes(npc))
             {
-	       return false;
+	            return false;
+            }
+            
+            else if(npc->GetTribe())
+            {
+                // Overwrite brain with tribe brain
+                int id = npc->GetTribe()->GetID();
+                csString typeName = "tribe_";
+                typeName.Append(id);
+                npc->SetBrain(npctypes.Get(typeName.GetData(), NULL), eventmanager);
             }
         }
         else
@@ -759,28 +837,12 @@ bool psNPCClient::LoadTribes()
     }
     for (int i=0; i<(int)rs.Count(); i++)
     {
-        Tribe *tribe = new Tribe;
+        Tribe *tribe = new Tribe(eventmanager);
+        tribe->SetRecipeManager(recipemanager);
+
         if (tribe->Load(rs[i]))
         {
             tribes.Push(tribe);
-
-            { // Start Load Needs scope
-                Result rs2(db->Select("select * from tribe_needs where tribe_id=%d",tribe->GetID()));
-                if (!rs2.IsValid())
-                {
-                    Error2("Could not load tribe needs from db: %s",db->GetLastError() );
-                    return false;
-                }
-                for (int j=0; j<(int)rs2.Count(); j++)
-                {
-                    if (!tribe->LoadNeed(rs2[j]))
-                    {
-                        Error2("Failed to load needs for tribe from db: %s",db->GetLastError());
-                        return false;
-                    }
-                    
-                }
-            } // End Load Needs scope
 
             { // Start Load Members scope
                 Result rs2(db->Select("select * from tribe_members where tribe_id=%d",tribe->GetID()));
@@ -793,7 +855,7 @@ bool psNPCClient::LoadTribes()
                 {
                     tribe->LoadMember(rs2[j]);
                 }
-            } // End Load Memebers scope
+            } // End Load Members scope
 
             { // Start Load Memories scope
                 Result rs2(db->Select("select m.*,s.name AS sector_name from sc_tribe_memories m, sectors s WHERE s.id = m.sector_id and tribe_id=%d",tribe->GetID()));
@@ -806,7 +868,7 @@ bool psNPCClient::LoadTribes()
                 {
                     tribe->LoadMemory(rs2[j]);
                 }
-            } // End Load Memeories scope
+            } // End Load Memories scope
             
             { // Start Load Resources scope
                 Result rs2(db->Select("select * from sc_tribe_resources WHERE tribe_id=%d",tribe->GetID()));
@@ -820,7 +882,35 @@ bool psNPCClient::LoadTribes()
                     tribe->LoadResource(rs2[j]);
                 }
             } // End Load Resources scope
-            
+
+            { // Start Load Knowledge scope
+                Result rs2(db->Select("select * from sc_tribe_knowledge WHERE tribe_id=%d", tribe->GetID()));
+                if(!rs2.IsValid())
+                {
+                    Error2("Could not load tribe knowledge from db: %s", db->GetLastError() );
+                    return false;
+                }
+                for(int i=0;i<rs2.Count(); i++)
+                {
+                    tribe->AddKnowledge(rs2[i]["knowledge"]);
+                }
+            } // End Load Knowledge scope
+
+            { // Start Load Assets scope
+                Result rs2(db->Select("select * from sc_tribe_assets WHERE tribe_id=%d", tribe->GetID()));
+                if(!rs2.IsValid())
+                {
+                    Error2("Could not load tribe assets from db: %s", db->GetLastError() );
+                    return false;
+                }
+                for(int i=0;i<rs2.Count();i++)
+                {
+                    tribe->LoadAsset(rs2[i]);
+                }
+            } // End Load Assets scope
+
+            // Enroll at Recipe Manager
+            recipemanager->AddTribe(tribe);
         }
         else
         {
@@ -1434,62 +1524,81 @@ void psNPCClient::ListTribes(const char * pattern)
         CPrintf(CON_CMDOUTPUT, "No tribes defined\n");
         return;
     }
-    
-    for (size_t i = 0; i < tribes.GetSize(); i++)
+
+
+    csVector3 pos;
+    iSector*  sector;
+    float     radius;
+    // Write basic details about tribes
+    if(strlen(pattern) == 0)
     {
-        if (!pattern || strstr(tribes[i]->GetName(),pattern))
+        CPrintf(CON_CMDOUTPUT, "\n%9s %-30s %-7s %-11s\n",
+                "Tribe id", "Name", "MCount", "Location");
+    
+        for(size_t i=0;i<tribes.GetSize();i++)
         {
-            csVector3 pos;
-            iSector* sector;
-            float radius;
-            CPrintf(CON_CMDOUTPUT, "\n%9s %-30s %-7s %-7s\n",
-                    "Tribe id", "Name", "MCount","NPCs");
-            tribes[i]->GetHome(pos,radius,sector);
-            CPrintf(CON_CMDOUTPUT, "%9d %-30s %-7d %-7d\n" ,
-                    tribes[i]->GetID(),
-                    tribes[i]->GetName(),
-                    tribes[i]->GetMemberIDCount(),
-                    tribes[i]->GetMemberCount());
-            CPrintf(CON_CMDOUTPUT,"Home position: %s Radius: %7.1f\n",toString(pos,sector).GetDataSafe(),radius);
-            CPrintf(CON_CMDOUTPUT,"   ShouldGrow: %s  MaxSize          : %4d  Growth Active Rate: %5.2f Growth Active Limit: %d\n",
-                    (tribes[i]->ShouldGrow()?"Yes":"No "),tribes[i]->GetMaxSize(),
-                    tribes[i]->GetWealthResourceGrowthActive(),tribes[i]->GetWealthResourceGrowthActiveLimit());
-            CPrintf(CON_CMDOUTPUT,"   CanGrow   : %s  Reproduction Cost: %4d  Growth Rate       : %5.2f\n",
-                    (tribes[i]->CanGrow()?"Yes":"No "),tribes[i]->GetReproductionCost(),
-                    tribes[i]->GetWealthResourceGrowth());
-            CPrintf(CON_CMDOUTPUT,"Resource rate         : %f ticks/resource\n",tribes[i]->GetResourceRate());
-            CPrintf(CON_CMDOUTPUT,"Death rate            : %f ticks/death\n",tribes[i]->GetDeathRate());
-            CPrintf(CON_CMDOUTPUT,"Needed resource       : '%s' Nick: '%s'\n",tribes[i]->GetNeededResource(),tribes[i]->GetNeededResourceNick());
-            CPrintf(CON_CMDOUTPUT,"NPC Idle behavior     : '%s'\n",tribes[i]->GetNPCIdleBehavior());
-            
-            CPrintf(CON_CMDOUTPUT,"Members:\n");
-            CPrintf(CON_CMDOUTPUT, "%-6s %-6s %-30s %-6s %-6s %-15s %-15s %-20s %-20s\n", 
-                    "NPC ID", "EID", "Name", "Entity", "Status", "Brain","Behaviour","Owner","TribeMemberType");
-            for (size_t j = 0; j < tribes[i]->GetMemberCount(); j++)
+            tribes[i]->GetHome(pos,radius,sector); 
+            CPrintf(CON_CMDOUTPUT, "%9d %-30s %-7d %3f;%3f;%3f\n",
+                tribes[i]->GetID(),
+                tribes[i]->GetName(),
+                tribes[i]->GetMemberCount(),
+                pos[0],
+                pos[1],
+                pos[2]);
+        }
+    }
+    else
+    {
+        int tribeID = atoi(pattern);
+        printf("%d\n", tribeID);
+        for(size_t i=0;i<tribes.GetSize();i++)
+        {
+            // Find the ID
+            if(tribes[i]->GetID() == tribeID)
             {
-                NPC * npc = tribes[i]->GetMember(j);
-                CPrintf(CON_CMDOUTPUT, "%6u %6d %-30s %-6s %-6s %-15s %-15s %-20s %-20d\n" ,
-                        npc->GetPID().Unbox(),
-                        npc->GetActor() ? npc->GetActor()->GetEID().Unbox() : 0,
-                        npc->GetName(),
-                        (npc->GetActor()?"Entity":"None  "),
-                        (npc->IsAlive()?"Alive":"Dead"),
-                        (npc->GetBrain()?npc->GetBrain()->GetName():""),
-                        (npc->GetCurrentBehavior()?npc->GetCurrentBehavior()->GetName():""),
-                        npc->GetOwnerName(),
-                        npc->GetTribeMemberType()
-                        );
-            }
-            CPrintf(CON_CMDOUTPUT,"Resources:\n");
-            CPrintf(CON_CMDOUTPUT,"%7s %-20s %7s\n","ID","Name","Amount");
-            for (size_t r = 0; r < tribes[i]->GetResourceCount(); r++)
-            {
-                CPrintf(CON_CMDOUTPUT,"%7d %-20s %d\n",
-                        tribes[i]->GetResource(r).id,
-                        tribes[i]->GetResource(r).name.GetData(),
-                        tribes[i]->GetResource(r).amount);
-            }
-            { // Start print Memories scope
+                tribes[i]->GetHome(pos,radius,sector);
+                // Print basic tribe data
+                CPrintf(CON_CMDOUTPUT, "Tribe ID: %d\nTribe Name: %s\nLocation: %s\nMain Resource: %s (nick:%s)\nCanGrow: %s \nShouldGrow: %s \n",
+                                        tribes[i]->GetID(),
+                                        tribes[i]->GetName(),
+                                        toString(pos,sector).GetDataSafe(),
+                                        tribes[i]->GetNeededResource(),
+                                        tribes[i]->GetNeededResourceNick(),
+                                        (tribes[i]->CanGrow()?"Yes":"No"),
+                                        (tribes[i]->ShouldGrow()?"Yes":"No"));
+
+                // Print Tribe Members
+            	CPrintf(CON_CMDOUTPUT,"Members:\n");
+            	CPrintf(CON_CMDOUTPUT, "%-6s %-6s %-30s %-6s %-6s %-15s %-15s %-20s %-20s\n", 
+                	    "NPC ID", "EID", "Name", "Entity", "Status", "Brain","Behaviour","Owner","TribeMemberType");
+            	for (size_t j = 0; j < tribes[i]->GetMemberCount(); j++)
+            	{
+                	NPC * npc = tribes[i]->GetMember(j);
+               		CPrintf(CON_CMDOUTPUT, "%6u %6d %-30s %-6s %-6s %-15s %-15s %-20s %-20d\n" ,
+                	        npc->GetPID().Unbox(),
+                	        npc->GetActor() ? npc->GetActor()->GetEID().Unbox() : 0,
+               	        	npc->GetName(),
+                        	(npc->GetActor()?"Entity":"None  "),
+                        	(npc->IsAlive()?"Alive":"Dead"),
+                        	(npc->GetBrain()?npc->GetBrain()->GetName():""),
+                        	(npc->GetCurrentBehavior()?npc->GetCurrentBehavior()->GetName():""),
+                        	npc->GetOwnerName(),
+                        	npc->GetTribeMemberType()
+                        	);
+            	}
+
+	        	// Print Resources
+            	CPrintf(CON_CMDOUTPUT,"Resources:\n");
+            	CPrintf(CON_CMDOUTPUT,"%7s %-20s %7s\n","ID","Name","Amount");
+            	for (size_t r = 0; r < tribes[i]->GetResourceCount(); r++)
+            	{
+                	CPrintf(CON_CMDOUTPUT,"%7d %-20s %d\n",
+               	        	tribes[i]->GetResource(r).id,
+                        	tribes[i]->GetResource(r).name.GetData(),
+                        	tribes[i]->GetResource(r).amount);
+            	}
+
+            	// Print Memories
                 CPrintf(CON_CMDOUTPUT,"Memories:\n");
                 CPrintf(CON_CMDOUTPUT,"%7s %-20s Position                Radius  %-20s  %-20s\n","ID","Name","Sector","Private to NPC");
                 csList<Tribe::Memory*>::Iterator it = tribes[i]->GetMemoryIterator();
@@ -1508,12 +1617,32 @@ void psNPCClient::ListTribes(const char * pattern)
                             (memory->sector?memory->sector->QueryObject()->GetName():""),
                             name.GetDataSafe());
                 }
-            } // End print Memeories scope
 
-            CPrintf(CON_CMDOUTPUT,"Needs:\n");
-            tribes[i]->DumpNeeds();
+                // Print Recipe List
+                tribes[i]->DumpRecipesToConsole();
+
+                // Print Knowledge
+                tribes[i]->DumpKnowledge();
+
+                // Print Assets
+                tribes[i]->DumpAssets();
+            }
+            return;
         }
     }
+
+}
+
+void psNPCClient::ListTribeRecipes(const char* tribeID)
+{
+    int tribeid = atoi(tribeID);
+    for(int i=0;i<tribes.GetSize();i++)
+    {
+        if(tribeid == tribes[i]->GetID())
+            tribes[i]->DumpRecipesToConsole();
+            return;
+    }
+    CPrintf(CON_CMDOUTPUT, "No Tribe with id '%d' found.\n", tribeID);
 }
 
 void psNPCClient::ListWaypoints(const char * pattern)

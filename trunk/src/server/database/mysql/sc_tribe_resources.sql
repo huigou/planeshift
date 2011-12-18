@@ -8,6 +8,7 @@ CREATE TABLE `sc_tribe_resources`
   `id` int(10) NOT NULL auto_increment,
   `tribe_id` int(10) NOT NULL,
   `name` varchar(30) NOT NULL default '',
+  `nick` varchar(30) NOT NULL default '',
   `amount` int(10) DEFAULT '0' ,
   PRIMARY KEY  (`id`)
 );

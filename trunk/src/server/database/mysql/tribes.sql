@@ -26,6 +26,7 @@ CREATE TABLE `tribes`
   wealth_resource_growth_active_limit int(10) NOT NULL default '0',
   reproduction_cost int(10) signed DEFAULT '0',
   npc_idle_behavior varchar(30) NOT NULL default 'do nothing',
+  tribal_recipe int(5) NOT NULL,
   PRIMARY KEY  (`id`)
 );
 
@@ -33,5 +34,5 @@ CREATE TABLE `tribes`
 # Dumping data for table characters
 #
 
-INSERT INTO `tribes` VALUES (1,'Mineing tribe',3,-75,0,-180,5,15,'Gold Ore','gold','mine','Dig',1.00,0.0,0,60,'do nothing');
-INSERT INTO `tribes` VALUES (2,'Hunting tribe',3,-90,0,-230,5,5,'Flesh','flesh','hunting_ground','Hunt',1.00,0.50,100,60,'do nothing');
+INSERT INTO `tribes` VALUES (1,'Mining tribe',3,-75,0,-180,20,100,'Gold Ore','gold','mine','Dig',1.00,0.0,0,10,'do nothing', 5);
+INSERT INTO `tribes` VALUES (2,'Hunting tribe',3,-90,0,-230,5,5,'Flesh','flesh','hunting_ground','Hunt',1.00,0.50,100,60,'do nothing',5);

@@ -273,8 +273,11 @@ protected:
     float    minLimit;                  ///< The minimum value to limit the need if minLimitValid has been set true.
     bool     maxLimitValid;             ///< True if a maximum limit for the need for this bahavior has been set
     float    maxLimit;                  ///< The maximum value to limit the need if maxLimitValid has been set true.
-    
+    csArray<csString> auto_memorize;    ///< Used to store what types of perceptions to memorize without changing behaviors
+    bool     AMOn;                      ///< Flag to signal if auto_memorize is on/off
+
 public:
+
     Behavior();
     Behavior(const char *n);
     Behavior(Behavior& other);
@@ -336,6 +339,10 @@ public:
      *
      */
     bool IsActive(){ return isActive; }
+
+    /** Get Auto Memorize types */
+    csArray<csString>* GetAMTypes() { return &auto_memorize; }
+    bool IsAMOn() { return AMOn; }
     
     void SetCurrentStep(int step) { current_step = step; }
     size_t GetCurrentStep(){ return current_step; }

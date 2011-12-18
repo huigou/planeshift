@@ -696,6 +696,14 @@ ScriptOperation::OperationResult MovementOperation::Run(NPC *npc, EventManager *
         return OPERATION_FAILED;  // This operation is complete
     }
 
+    /*    
+    printf("ZeeDebug: MoveOp status \n");
+    printf("ZeeDebug: myPos: %f,%f,%f\n", myPos[0], myPos[1], myPos[2]);
+    printf("ZeeDebug: mySector: %s\n", mySector->QueryObject()->GetName());
+    printf("ZeeDebug: endPos: %f,%f,%f\n", endPos[0], endPos[1], endPos[2]);
+    printf("ZeeDebug: endSector: %s\n", endSector->QueryObject()->GetName());
+    */
+    // TODO -- Find reason and fix this mess
 
     path = npcclient->ShortestPath(npc, myPos,mySector,endPos,endSector);
     if(!path || !path->HasNext())
@@ -1423,12 +1431,26 @@ ScriptOperation *DigOperation::MakeCopy()
 
 ScriptOperation::OperationResult DigOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
-    if (resource == "tribe:wealth")
+    if(resource == "tribe:wealth")
     {
         if (npc->GetTribe())
         {
             npcclient->GetNetworkMgr()->QueueDigCommand(npc->GetActor(), npc->GetTribe()->GetNeededResourceNick());
         }
+    }
+    else if(resource == "ownBuffer")
+    {
+        // To get the resource name we first try the npc buffer
+        csString nick = npc->GetBuffer();
+
+        if(nick == "new mine")
+        {
+            // We will prospect this mine
+            // We request no reward and see what we get...
+            npcclient->GetNetworkMgr()->QueueDigCommand(npc->GetActor(), " ");
+        }
+
+        npcclient->GetNetworkMgr()->QueueDigCommand(npc->GetActor(), nick);
     }
     else
     {
@@ -1710,6 +1732,10 @@ bool LocateOperation::Load(iDocumentNode *node)
         return true;
     }
     else if (split_obj[0] == "self")
+    {
+        return true;
+    }
+    else if (split_obj[0] == "ownbuffer")
     {
         return true;
     }
@@ -2029,6 +2055,28 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, EventManager *ev
         located_angle = 0;
         located_sector = sector;
     }
+    else if (split_obj[0] == "ownbuffer")
+    {
+        npc->Printf(5, "LocateOp - Own Buffer");
+        Tribe::Memory* ownBuffer = npc->GetBufferMemory();
+
+        // If npc's buffer was never set just abandon
+        if(!ownBuffer)
+        {
+            return OPERATION_FAILED;
+        }
+
+        // Just copy data
+        
+        located_sector = ownBuffer->GetSector();
+        located_pos    = ownBuffer->pos;
+        located_angle  = 0;
+        located_radius = ownBuffer->radius;
+
+        AddRandomRange(located_pos, located_radius, 0.5);
+
+        located_wp = CalculateWaypoint(npc,located_pos,located_sector,-1);
+    }
     else if (split_obj[0] == "spawn")
     {
         npc->Printf(5,"LocateOp - Spawn");
@@ -2057,7 +2105,6 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, EventManager *ev
             located_pos = pos;
             located_angle = 0;
             located_radius = radius;
-            
         }
         else if (split_obj[1] == "memory")
         {
@@ -2747,9 +2794,52 @@ bool MoveToOperation::Load(iDocumentNode *node)
     LoadVelocity(node);
     LoadCheckMoveOk(node);
 
-    destPos.x = node->GetAttributeValueAsFloat("x");
-    destPos.y = node->GetAttributeValueAsFloat("y");
-    destPos.z = node->GetAttributeValueAsFloat("z");
+    // Check for memories
+    const char * value = node->GetAttributeValue("coords");
+    if(value)
+    {
+        // It means coordinates are passed through tribe memory not through x,y,z
+        csArray<csString> split = psSplit(value, ':');
+        
+        // Check Arguments
+
+        if(split[0] != "tribe")
+        {
+            Error2("Invalid argument passed to operation in xml file: %s", value);
+            return false;
+        }
+        else
+        {
+            if(split[1] == "home")
+            {
+                memoryCheck = "home";
+                return true;
+            }
+            else if(split[1] == "memory")
+            {
+                if(split.GetSize() < 2 || split[2].IsEmpty())
+                {
+                    Error2("Invalid argument passed to operation in xml file: %s", value);
+                    return false;
+                }
+                memoryCheck == split[2];
+                return true;
+            }
+            else
+            {
+               Error2("Invalid argument passed to operation in xml file: %s", value);
+               return false;
+            }
+        }
+    }
+    else
+    {
+        memoryCheck = "";
+        destPos.x = node->GetAttributeValueAsFloat("x");
+        destPos.y = node->GetAttributeValueAsFloat("y");
+        destPos.z = node->GetAttributeValueAsFloat("z");
+    }
+
     const char * sector = node->GetAttributeValue("sector");
     if (sector)
     {
@@ -2760,7 +2850,6 @@ bool MoveToOperation::Load(iDocumentNode *node)
         destSector = NULL; // We will later assume sector current sector
     }
     
-
     action = node->GetAttributeValue("anim");
 
     return true;
@@ -2776,19 +2865,38 @@ ScriptOperation *MoveToOperation::MakeCopy()
 bool MoveToOperation::GetEndPosition(NPC* npc, const csVector3 &myPos, const iSector* mySector,
                                      csVector3 &endPos, iSector* &endSector)
 {
-    endPos = destPos;
-    endSector = destSector;
-
-    if (destSector)
+    if(memoryCheck != "")
     {
-        endSector = destSector;
+        if(memoryCheck == "home")
+        {
+            // Get Home Coords
+            float radius;
+            npc->GetTribe()->GetHome(endPos, radius, endSector);
+        }
+        else {
+            // Get Coords of Memory
+            Tribe::Memory* memory = npc->GetTribe()->FindMemory(memoryCheck);
+            endPos[0] = memory->pos[0];
+            endPos[1] = memory->pos[1];
+            endPos[2] = memory->pos[2];
+            endSector = memory->sector;
+       }
     }
     else
     {
-        // Guess that the sector is current sector if no sector is given
-        endSector = const_cast<iSector*>(mySector);
+        endPos = destPos;
+        endSector = destSector;
+
+        if (destSector)
+        {
+            endSector = destSector;
+        }
+        else
+        {
+            // Guess that the sector is current sector if no sector is given
+            endSector = const_cast<iSector*>(mySector);
+        }
     }
-    
     
     return true;
 }
@@ -3076,7 +3184,9 @@ ScriptOperation *ReproduceOperation::MakeCopy()
 ScriptOperation::OperationResult ReproduceOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     if(!npc->GetTarget())
+    {
         return OPERATION_COMPLETED;  // Nothing more to do for this op.
+    }
 
     NPC * friendNPC = npc->GetTarget()->GetNPC();
     if(friendNPC)
@@ -3779,8 +3889,11 @@ ScriptOperation::OperationResult TransferOperation::Run(NPC *npc, EventManager *
             return OPERATION_COMPLETED; // Nothing more to do for this op.
         }
         
+    } 
+    else if(splitItem[0] == "ownbuffer")
+    {
+        transferItem = npc->GetBuffer();
     }
-    
     npcclient->GetNetworkMgr()->QueueTransferCommand(npc->GetActor(), transferItem, count, target );
 
     return OPERATION_COMPLETED; // Nothing more to do for this op.
@@ -3874,7 +3987,12 @@ ScriptOperation::OperationResult VisibleOperation::Run(NPC *npc, EventManager *e
 
 bool WaitOperation::Load(iDocumentNode *node)
 {
-    duration = node->GetAttributeValueAsFloat("duration");
+    if(node->GetAttributeValue("duration") == "buffer")
+    {
+        duration = atoi(node->GetAttributeValue("duration"));
+    } else {
+        duration = node->GetAttributeValueAsFloat("duration");
+    }
     action = node->GetAttributeValue("anim");
     return true;
 }
@@ -4012,6 +4130,7 @@ ScriptOperation::OperationResult WanderOperation::CalculateEdgeList(NPC *npc)
     Waypoint *start = npcclient->FindNearestWaypoint(npc->GetActor(), 5.0, NULL);
     if (!start)
     {
+        //printf("Not a waypoint nearby!\n");
         npc->Printf(5,"Failed, not at a waypoint nearby.");
         return OPERATION_FAILED;
     }
@@ -4033,6 +4152,7 @@ ScriptOperation::OperationResult WanderOperation::CalculateEdgeList(NPC *npc)
         currentEdge = start->GetRandomEdge( &wanderRouteFilter );
         if (!currentEdge)
         {
+            //printf("Failed to find route\n");
             npc->Printf(5, "Failed, to find route from waypoint %s.",start->GetName());
             return OPERATION_FAILED;
         }
@@ -4045,6 +4165,7 @@ ScriptOperation::OperationResult WanderOperation::CalculateEdgeList(NPC *npc)
         npc->GetActiveLocate(end);
         if (!end)
         {
+            //printf("NO end waypoint!\n");
             npc->Printf(5,"Failed to find active locate waypoint");
             return OPERATION_FAILED;
         }
@@ -4065,6 +4186,7 @@ ScriptOperation::OperationResult WanderOperation::CalculateEdgeList(NPC *npc)
                 edgeList = npcclient->FindEdgeRoute(start, end, &wanderRouteFilter );
                 if (edgeList.IsEmpty())
                 {
+                    //printf("No route\n");
                     npc->Printf(5, "Can't find route...");
                     return OPERATION_FAILED;
                 }
@@ -4236,6 +4358,7 @@ ScriptOperation::OperationResult WanderOperation::Run(NPC *npc, EventManager *ev
 
     if (!destPoint)
     {
+        //printf("No pathpoints\n");
         npc->Printf(5,">>>WanderOp NO pathpoints, %s cannot move.",npc->GetName());
         return OPERATION_FAILED;
     }
@@ -4252,6 +4375,7 @@ ScriptOperation::OperationResult WanderOperation::Run(NPC *npc, EventManager *ev
     }
     else if (!StartMoveTo(npc, destPoint))
     {
+        //printf("Failed to start move to.\n");
         npc->Printf(5,">>>Failed to start move to.");
         return OPERATION_FAILED;
     }

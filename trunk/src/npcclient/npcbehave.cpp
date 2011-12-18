@@ -376,6 +376,32 @@ bool NPCType::Load(iDocumentNode *node)
 
 void NPCType::FirePerception(NPC *npc, Perception *pcpt)
 {
+    Behavior* behavior = npc->GetCurrentBehavior();
+    if(behavior && behavior->IsAMOn() && npc->GetTribe())
+    {
+        csArray<csString>* types = behavior->GetAMTypes();
+        csString type            = pcpt->GetType();
+
+        // Special Cases
+        if(types->Get(0) == "all")
+        {
+            npc->GetTribe()->Memorize(npc,pcpt);
+        }
+        else if(types->Get(0) == "ownbuffer")
+        {
+            if(npc->GetBuffer() == type)
+            {
+                npc->GetTribe()->Memorize(npc,pcpt);
+            }
+        }
+
+        // Normal case
+        if(types->Find(type) != csArrayItemNotFound)
+        {
+            npc->GetTribe()->Memorize(npc,pcpt);
+        }
+    }
+    
     for (size_t x=0; x<reactions.GetSize(); x++)
     {
         reactions[x]->React(npc,pcpt);
@@ -705,6 +731,8 @@ Behavior::Behavior()
     minLimit                = 0.0;
     maxLimitValid           = false;
     maxLimit                = 0.0;
+    auto_memorize.SetSize(0);
+    AMOn                    = false;
 }
 
 Behavior::Behavior(const char *n)
@@ -752,6 +780,8 @@ void Behavior::DeepCopy(Behavior& other)
     minLimit                = other.minLimit;
     maxLimitValid           = other.maxLimitValid;
     maxLimit                = other.maxLimit;
+    auto_memorize           = other.auto_memorize;
+    AMOn                    = other.AMOn;
 
     for (size_t x=0; x<other.sequence.GetSize(); x++)
     {
@@ -797,7 +827,14 @@ bool Behavior::Load(iDocumentNode *node)
     {
         maxLimitValid = false;
     }
-    
+
+    // Load the locations that the npc should memorize without breaking behavior
+    csString tmp            = node->GetAttributeValue("auto_memorize");
+    if(tmp.Length())
+    {
+        auto_memorize = psSplit(tmp,',');
+        AMOn = true;
+    }
 
     current_need            = init_need;
 
@@ -1196,6 +1233,8 @@ bool Behavior::RunScript(NPC *npc, EventManager *eventmgr, bool interrupted)
                 }
                 case ScriptOperation::OPERATION_FAILED:
                 {
+                    //TODO -- Remove printf
+                    //printf("ZeeDebug: Operation %s failed\n", sequence[current_step]->GetName());
                     sequence[current_step]->Failure(npc);
                     current_step = 0; // Restart operation next time
                     DoCompletionDecay(npc);

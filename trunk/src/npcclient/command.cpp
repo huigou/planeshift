@@ -104,6 +104,12 @@ int com_tribelist(char *arg)
     return 0;
 }
 
+int com_triberecipes(char *arg)
+{
+    npcclient->ListTribeRecipes(arg);
+    return 0;
+}
+
 int com_waypointlist(char *arg)
 {
     npcclient->ListWaypoints(arg);
@@ -121,7 +127,6 @@ int com_locationlist(char *arg)
     npcclient->ListLocations(arg);
     return 0;
 }
-
 
 int com_locationtest(char *line)
 {
@@ -373,7 +378,22 @@ int com_filtermsg(char* arg)
     return 0;
 }
 
-int com_dumpwarpspace(char *)
+int com_fireperc(char* arg)
+{
+    csStringArray arguments;
+    arguments.SplitString(arg, " ");
+    if(npcclient->FirePerception(atoi(arguments.Get(0)), arguments.Get(1)))
+    {
+        CPrintf(CON_CMDOUTPUT, "Perception %s fired on NPC %s.\n", arguments.Get(1), arguments.Get(0));
+    }
+    else
+    {
+        CPrintf(CON_CMDOUTPUT, "Could not fire perception. NPC ID: %s does not exist.\n", arguments.Get(0));
+    }
+    return 0;
+}
+
+int com_dumpwarpspace(char*)
 {
     npcclient->GetWorld()->DumpWarpCache();
     return 0;
@@ -415,6 +435,7 @@ const COMMAND commands[] = {
     { "enable",       false, com_enable,       "Enable a disabled NPC. [all | pattern | EID]"},
     { "entlist",      false, com_entlist,      "List all known entities (entlist [pattern | EID]"},
     { "filtermsg",    true,  com_filtermsg,    "Add or remove messages from the LOG_MESSAGE log"},
+    { "fireperc",     false, com_fireperc,     "Fire the given perception on the given npc. (fireperc [npcPID] [perception])"},
     { "help",         false, com_help,         "Show help information" },
     { "loclist",      false, com_locationlist, "List all known locations (loclist [pattern])"},
     { "loctest",      false, com_locationtest, "Test a location (loc sector x y z"},
@@ -430,6 +451,7 @@ const COMMAND commands[] = {
     { "showlogs",     false, com_showlogs,     "Show server logs" },
     { "showtime",     false, com_showtime,     "Show the current game time"},
     { "tribelist",    false, com_tribelist,    "List all known tribes (tribelist [pattern])"},
+    { "triberecipes", false, com_triberecipes, "List all recipes in a tribe. (triberecipes [tribeid])"},
     { "waypointlist", false, com_waypointlist, "List all known waypoints (waypointlist [pattern])"},
     { "status",       false, com_status,       "Give some general statistics on the npcclient"},
     { 0, 0, 0, 0 }

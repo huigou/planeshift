@@ -99,6 +99,7 @@ NPC::NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world,
         debugLog.Push(csString(""));
     }
     nextDebugLogEntry = 0;
+    tribeBuffer = " ";
     
 }
 
@@ -214,6 +215,28 @@ void NPC::Dump()
 
     DumpDebugLog();
     CPrintf(CON_CMDOUTPUT,"\n");
+
+    // Dump it's memory buffer
+    CPrintf(CON_CMDOUTPUT, "Buffers:\n");
+    CPrintf(CON_CMDOUTPUT, "String buffer: %s\n", tribeBuffer.GetData());
+    CPrintf(CON_CMDOUTPUT, "Memory buffer:\n");
+    if(bufferMemory.sector)
+    {
+        CPrintf(CON_CMDOUTPUT, "Name: %s\n", bufferMemory.name.GetData());
+        CPrintf(CON_CMDOUTPUT, "Pos: x:%f y:%f z:%f\n",
+                                bufferMemory.pos[0],
+                                bufferMemory.pos[1],
+                                bufferMemory.pos[2]);
+        CPrintf(CON_CMDOUTPUT, "Has Sector:\n");
+        if(bufferMemory.GetSector())
+            CPrintf(CON_CMDOUTPUT, "Yes\n");
+        else
+            CPrintf(CON_CMDOUTPUT, "No\n");
+    }
+    else
+    {
+        CPrintf(CON_CMDOUTPUT, "Empty\n");
+    }
 }
 
 EID NPC::GetEID()
@@ -415,9 +438,14 @@ void NPC::TriggerEvent(Perception *pcpt, float maxRange,
         }
     }
     
-    
     Printf(15,"Got event %s",pcpt->ToString().GetData() );
     brain->FirePerception(this, pcpt);
+}
+
+void NPC::TriggerEvent(const char* pcpt)
+{
+    Perception perc(pcpt);
+    TriggerEvent(&perc, -1, NULL, NULL, false);
 }
 
 void NPC::SetLastPerception(Perception *pcpt)
@@ -878,7 +906,6 @@ gemNPCActor* NPC::GetNearestDeadActor(float range)
 void NPC::Printf(const char *msg,...)
 {
     va_list args;
-
 	if(!IsDebugging())
 		return;
 
@@ -1100,6 +1127,16 @@ const csVector3& NPC::GetSpawnPosition() const
 iSector* NPC::GetSpawnSector() const
 {
     return spawnSector;
+}
+
+void NPC::SetBufferMemory(Tribe::Memory* memory)
+{
+    // Just copy data
+    bufferMemory.name       = memory->name;
+    bufferMemory.pos        = memory->pos;
+    bufferMemory.sector     = memory->sector;
+    bufferMemory.sectorName = memory->sectorName;
+    bufferMemory.radius     = memory->radius;
 }
 
 

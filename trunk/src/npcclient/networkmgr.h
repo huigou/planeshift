@@ -68,6 +68,7 @@ protected:
     void HandlePerceptions(MsgEntry *msg);
     void HandleDisconnect(MsgEntry *msg);
     void HandleTimeUpdate(MsgEntry *msg);
+    void HandleNPCWorkDone(MsgEntry *msg);
     void HandleNewNpc(MsgEntry *msg);
     // void RemoveEntity(psCelPersistMessage& pmsg);
 
@@ -147,6 +148,15 @@ public:
      * @param tribeMemberType If part of a tribe set to the need set index to be used for this new entity.
      */
     void QueueSpawnCommand(gemNPCActor *mother, gemNPCActor *father, uint32_t tribeMemberType);
+
+    /** Send a spawn building command to server
+     *
+     * @param where        Containing the desired location  
+     * @param sectorName   The name of the sector in which we want a spawn.
+     * @param buildingName The name of the building. Or more exactly... of the mesh for it.
+     * @param tribeID      The owner of this building
+     */
+    void QueueSpawnBuildingCommand(csVector3 where, const char* sectorName, const char* buildingName, int tribeID);
     
     /** Queue a talk command to the server
      *
@@ -174,6 +184,7 @@ public:
     void QueueSequenceCommand(csString name, int cmd, int count);
     void QueueImperviousCommand(gemNPCActor * entity, bool impervious);
     void QueueInfoReplyCommand(uint32_t clientNum,const char* reply);
+
     void SendAllCommands(bool final = false);
 
     void SendConsoleCommand(const char *cmd);

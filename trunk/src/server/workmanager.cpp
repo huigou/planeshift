@@ -61,6 +61,7 @@
 #include "cachemanager.h"
 #include "globals.h"
 #include "adminmanager.h"
+#include "npcmanager.h"
 
 //#define DEBUG_WORKMANAGER         // debugging only
 //#define NO_RANDOM_QUALITY         // do not apply randomness to calculations
@@ -552,6 +553,10 @@ void WorkManager::HandleProduction(gemActor* actor, size_t type, const char *rew
 
     actor->GetPosition(pos, sector);
 
+    // We receive a " " string from the npcclient for unknown mines
+    if(strcmp(reward," "))
+        reward = NULL;
+
     csArray<NearNaturalResource> resources = FindNearestResource(sector,pos,type,(reward == NULL || !strcmp(reward,""))? NULL : reward);
 
     if(resources.IsEmpty())
@@ -825,6 +830,8 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
         if (roll < total)  // successful!
         {
             psItemStats *newitem = cacheManager->GetBasicItemStatsByID(workEvent->nrr.Get(resNum).resource->reward);
+            // Save resourceNick for reporting to the npcclient
+            csString resourceNick = workEvent->nrr.Get(resNum).resource->reward_nickname;
             if (!newitem)
             {
                 Bug2("Natural Resource reward item #%d not found!\n",workEvent->nrr.Get(resNum).resource->reward);
@@ -871,6 +878,9 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
 
                 item->SetLoaded();  // Item is fully created
                 item->Save(false);    // First save
+
+                // Inform the npcclient about the item it's npc just got
+                psserver->GetNPCManager()->WorkDoneNotify(workEvent->worker->GetEID(), newitem->GetName(), resourceNick);
 
                 // No matter if the item could be moved to inventory reset the last position and
                 // give out skills.

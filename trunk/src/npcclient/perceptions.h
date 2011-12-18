@@ -162,7 +162,7 @@ protected:
     /// The name of this perception.
     csString name;
 
-    /// Values used by perseptions. Usally they correspond to the same value in a reaction.  
+    /// Values used by perceptions. Usally they correspond to the same value in a reaction.  
     csString  type;
 
 public:

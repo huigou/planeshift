@@ -24,6 +24,8 @@
 //=============================================================================
 #include <csutil/array.h>
 #include <csutil/list.h>
+#include <csutil/priorityqueue.h>
+
 #include <csgeom/vector3.h>
 #include <iengine/sector.h>
 
@@ -36,29 +38,55 @@
 //=============================================================================
 // Local Includes
 //=============================================================================
-#include "tribeneed.h"
+#include "recipe.h"
+#include "recipetreenode.h"
+#include "npcbehave.h"
+#include "npcclient.h"
 
 class iResultRow;
 class EventManager;
 class NPC;
-class TribeNeedSet;
-class TribeNeed;
+class gemNPCItem;
 class Perception;
 class gemNPCActor;
+class Recipe;
+class RecipeManager;
+class RecipeTreeNode;
+class EventManager;
 
 #define TRIBE_UNLIMITED_SIZE   100
 
+// Defines for assets status.
+#define ASSET_ITEM           0
+#define ASSET_BUILDINGSPOT   1
+#define ASSET_INCONSTRUCTION 2
+#define ASSET_BUILDING       3
+
+/**
+ * Class used to define a Tribal Object
+ */
 class Tribe : public ScopedTimerCB
 {
 public:
-
-    typedef csHash<TribeNeedSet*,unsigned int>::ConstGlobalIterator ConstTribeNeedSetGlobalIterator;
-    
     struct Resource
     {
         int      id;           ///< Database id
         csString name;
+        csString nick;
         int      amount;
+    };
+
+    struct Asset
+    {
+        int         id;
+        csString    name;      ///< Name. Especially used for buildings
+        gemNPCItem* item;      ///< Item representing the asset
+        int         quantity;  ///< Quantity of items of this type
+        csVector3   pos;       ///< Position // Used only for reservations
+        bool        building;  ///< True if it's a building
+        int         status;    ///< Status of this asset. Used for buildings.
+
+        void        Save();
     };
 
     struct Memory
@@ -79,18 +107,22 @@ public:
         PID       pid;
         uint32_t  tribeMemberType; ///< Used to select needSet by index.
     };
-    
+
+    struct CyclicRecipe
+    {
+        Recipe* recipe;     ///< Link to recipe
+        int     timeTotal;  ///< Total number of ticks to cycle
+        int     timeLeft;   ///< Number of ticks left before re-execution
+    };
+   
     /** Construct a new tribe object */
-    Tribe();
+    Tribe(EventManager* eventmngr);
 
     /** Destruct a tribe object */
     virtual ~Tribe();
 
     /** Load the tribe object */
     bool Load(iResultRow& row);
-
-    /** Load and add a new need to the tribe */
-    bool LoadNeed(iResultRow& row);
 
     /** Load and add a new member to the tribe */
     bool LoadMember(iResultRow& row);
@@ -122,7 +154,7 @@ public:
     void HandlePerception(NPC * npc, Perception * perception);
 
     /** Add a new resource to the tribe resource table */
-    void AddResource(csString resource, int amount);
+    void AddResource(csString resource, int amount, csString nick = "");
 
     /**
      * Return the amount of a given resource
@@ -141,25 +173,8 @@ public:
     const Resource& GetResource(size_t n) { return resources[n]; }
     csList<Memory*>::Iterator GetMemoryIterator() { csList<Memory*>::Iterator it(memories); return it; };
     const char* GetNPCIdleBehavior() { return npcIdleBehavior.GetDataSafe(); }
-
-    /** Get need set based on NPC.
-     *
-     * Each NPC can be of different member types with
-     * different need sets. This function find the
-     * need set for the given NPC.
-     *
-     * @param npc The NPC to find member type from.
-     * @return    Need set of the member type of the npc.
-     */
-    TribeNeedSet* GetNeedSet(NPC* npc);
-    
-    /** Get the need set for a member type
-     *
-     * @param memberType The type to return the need set for.
-     * @param create     Create a new NeedSet if needed.
-     * @return           The needset of the memberType given.
-     */
-    TribeNeedSet* GetNeedSet(unsigned int memberType, bool create = false);
+    iSector* GetHomeSector() { return homeSector; }
+    csString GetHomeSectorName() { return homeSectorName; }
 
     /**
      * Calculate the maximum number of members for the tribe.
@@ -196,6 +211,12 @@ public:
      */
     bool GetResource(NPC* npc, csVector3 startPos, iSector * startSector,
                      csVector3& pos, iSector* &sector, float range, bool random);
+
+    /**
+     * Get the closest Memory regarding a resource or the closest
+     * non-prospected mine.
+     */
+    Tribe::Memory* GetResource(csString resourceName, NPC *npc);
 
     /**
      * Get the most needed resource for this tribe.
@@ -288,7 +309,7 @@ public:
     /**
      * Load all stored memories from db.
      */
-    bool LoadMemory(iResultRow& row);
+    bool LoadMemory(iResultRow &row);
 
     /**
      * Forget privat memories. Should be called when npc die.
@@ -319,6 +340,16 @@ public:
      */
     void TriggerEvent(Perception* pcpt, float maxRange=-1.0,
                       csVector3* basePos=NULL, iSector* baseSector=NULL);
+
+    /** Sends the given perception to the given list of npcs
+     *
+     * Used by the recipe manager to send perceptions to tribe members
+     * selected by the active recipe.
+     *
+     * @param pcpt    The perception name to be sent
+     * @param npcs    The list of npcs to send perception to.
+     */
+    void SendPerception(const char* pcpt, csArray<NPC*> npcs);
 
     /** Find the most hated entity for tribe within range 
      *
@@ -351,15 +382,143 @@ public:
      */
     float GetResourceRate() { return resourceRate; }
     
-    /** Dump needs to console
-     */
-    void DumpNeeds() const;
+    /** Sets the tribe's recipe manager */
+    void SetRecipeManager(RecipeManager* rm) { recipeManager = rm; }
     
+    /** Get the main recipe */
+    Recipe* GetTribalRecipe();
+
+    /** Updates recipe wait times */
+    void UpdateRecipeData(int delta);
+
+    /** Add a recipe
+     *
+     * Adds a recipe to activeRecipes array in respect of it's
+     * priority and cost.
+     *
+     * @param recipe       Recipe to add.
+     * @param parentRecipe Recipe that requires the new recipe.
+     * @param reqType      True for meeting requirements distributed-way
+     */
+    void AddRecipe(Recipe* recipe, Recipe* parentRecipe, bool reqType = false);
+
+    /** Add a cyclic recipe
+     *
+     * Cyclic recipes are executed once in a pre-defined quantum of time
+     * and are set with the highest priority.
+     *
+     * @param recipe        Recipe to add
+     * @param time          Tribe advances required to execute this cyclic recipe
+     */
+    void AddCyclicRecipe(Recipe* recipe, int time);
+
+    /** Delete a cyclic recipe */
+    void DeleteCyclicRecipe(Recipe* recipe);
+
+    /** Add a knowledge token */
+    void AddKnowledge(csString knowHow) { knowledge.Push(knowHow); }
+
+    /** Check if knowledge is known */
+    bool CheckKnowledge(csString knowHow);
+
+    /** Save a knowledge piece in the database */
+    void SaveKnowledge(csString knowHow);
+
+    /** Dump knowledge to console */
+    void DumpKnowledge();
+
+    /** Dumps all information about recipes to console */
+    void DumpRecipesToConsole();
+
+    /** Set npcs memory buffers
+     *
+     * Loads locations into the Memory buffers of the npcs.
+     * Useful when assigning tasks to them.
+     *
+     * @param name Name of the memory/resource to load.
+     * @param npcs Link to the npcs on which to load.
+     * @return     False if no desired location exists.
+     */
+    bool LoadNPCMemoryBuffer(const char* name, csArray<NPC*> npcs);
+
+    /** Set npcs memory buffers - Using a memory */
+    void LoadNPCMemoryBuffer(Tribe::Memory* memory, csArray<NPC*> npcs);
+
+    /** Check to see if enough members are idle */
+    bool CheckMembers(csString name, int number);
+
+    /** Check to see if enough resources are available */
+    bool CheckResource(csString resource, int number);
+
+    /** Check to see if enough items are available */
+    bool CheckItems(csString items, int number);
+   
+    /** Spawn a building */
+    void SpawnBuilding(const char* building);
+
+    /** Returns pointers to required npcs for a task */
+    csArray<NPC*> SelectNPCs(const char* type, const char* number);
+    
+    /** Get Buffer
+     *
+     * Function used to get data from buffers containing dynamic
+     * recipe information.
+     *
+     * @param  Buffer name
+     * @return Buffer value
+     */
+    csString GetBuffer(csString bufferName);
+
+    /** Sets a buffer */
+    void SetBuffer(csString bufferName, csString value);
+
+    /** Modify Wait Time for a recipe */
+    void ModifyWait(Recipe* recipe, int delta);
+
+    /** Load an asset from an iResultRow */
+    void LoadAsset(iResultRow &row);
+
+    /** Save an asset to the db - responsable for deleting assets to */
+    void SaveAsset(Tribe::Asset* asset, bool deletion = false);
+
+    /** Add an item asset */
+    void AddItemAsset(csString name, gemNPCItem* item, int quantity, int id = -1);
+
+    /** Add a building asset */
+    void AddBuildingAsset(csString name, csVector3 where, int status);
+
+    /** Get asset */
+    Asset* GetAsset(csString name);
+
+    /** Get an asset based on name and position */
+    Asset* GetAsset(csString name, csVector3 where);
+
+    /** Get a reserved building spot */
+    Asset* GetBuildingSpot(csString name);
+
+    /** Delete item assets */
+    void DeleteAsset(csString name, int quantity);
+
+    /** Delete a building asset */
+    void DeleteAsset(csString name, csVector3 pos);
+
+    /** Dump Assets */
+    void DumpAssets();
+
+    /** Prospect Mine
+     *
+     * Upon 'Explore' behavior, tribe members may find locations
+     * named 'mine'. After mining from an unkown deposit, the npcclient
+     * will receive a psWorkDoneMessage telling it what his npc just
+     * mined. This function renames the former 'mine' Memory with it's
+     * real deposit name.
+     *
+     * @param npc      The npc who prospected it to access his memoryBuffer.
+     * @param resource The resulted resource received from psServer.
+     */
+    void ProspectMine(NPC* npc, csString resource, csString nick);
+
 protected:
-
-    /** Calculate the tribes need from a NPC */
-    TribeNeed* Brain(NPC * npc);
-
     /** Update the deathRate variable.
      */
     void UpdateDeathRate();
@@ -374,23 +533,28 @@ protected:
     csArray<NPC*>             members;
     csArray<NPC*>             deadMembers;
     csArray<Resource>         resources;
+    csArray<csString>         knowledge;       ///< Array of knowledge tokens
+    csArray<Asset>            assets;          ///< Array of items / buildings
+    csArray<CyclicRecipe>     cyclicRecipes;   ///< Array of cycle recipes
+    RecipeTreeNode*           tribalRecipe;    ///< The tribal recipe root of the recipe tree
 
     csVector3                 homePos;
     float                     homeRadius;
     csString                  homeSectorName;
     iSector*                  homeSector;
     int                       maxSize;
+    csString                  recipeBuffer;       ///< Buffer used to hold data for recipe's functions
+    csString                  recipeAmountBuffer; ///< Buffer used to hold quantities for recipe's functions
     csString                  wealthResourceName;
     csString                  wealthResourceNick;
     csString                  wealthResourceArea;
     float                     wealthResourceGrowth;
     float                     wealthResourceGrowthActive;
     int                       wealthResourceGrowthActiveLimit;
-    float                     accWealthGrowth; ///< Accumelated rest of wealth growth.
+    float                     accWealthGrowth; ///< Accumulated rest of wealth growth.
     int                       reproductionCost;
     csString                  npcIdleBehavior; ///< The name of the behavior that indicate that the member is idle
     csString                  wealthGatherNeed;
-    csHash<TribeNeedSet*,unsigned int> needSet;
     csList<Memory*>           memories;
     
     csTicks                   lastGrowth;
@@ -400,7 +564,9 @@ protected:
     float                     resourceRate; ///< The average time in ticks between new resource is found
     csTicks                   lastDeath;    ///< Time when a member was last killed
     csTicks                   lastResource; ///< Time when a resource was last added.
-    
+
+    EventManager*             eventManager;  ///< Link to the event manager
+    RecipeManager*            recipeManager; ///< The Recipe Manager handling this tribe
 };
 
 #endif
