@@ -1364,9 +1364,10 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClCompile Include="..\..\src\npcclient\npcoperations.cpp" />
     <ClCompile Include="..\..\src\npcclient\pathfind.cpp" />
     <ClCompile Include="..\..\src\npcclient\perceptions.cpp" />
+    <ClCompile Include="..\..\src\npcclient\recipe.cpp" />
+    <ClCompile Include="..\..\src\npcclient\recipetreenode.cpp" />
     <ClCompile Include="..\..\src\npcclient\status.cpp" />
     <ClCompile Include="..\..\src\npcclient\tribe.cpp" />
-    <ClCompile Include="..\..\src\npcclient\tribeneed.cpp" />
     <ClCompile Include="..\..\src\npcclient\walkpoly.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -1381,9 +1382,10 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClInclude Include="..\..\src\npcclient\npcoperations.h" />
     <ClInclude Include="..\..\src\npcclient\pathfind.h" />
     <ClInclude Include="..\..\src\npcclient\perceptions.h" />
+    <ClInclude Include="..\..\src\npcclient\recipe.h" />
+    <ClInclude Include="..\..\src\npcclient\recipetreenode.h" />
     <ClInclude Include="..\..\src\npcclient\status.h" />
     <ClInclude Include="..\..\src\npcclient\tribe.h" />
-    <ClInclude Include="..\..\src\npcclient\tribeneed.h" />
     <ClInclude Include="..\..\src\npcclient\walkpoly.h" />
   </ItemGroup>
   <ItemGroup>
