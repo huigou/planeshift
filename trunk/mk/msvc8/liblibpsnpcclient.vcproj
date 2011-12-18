@@ -1759,13 +1759,16 @@
 				RelativePath="..\..\src\npcclient\perceptions.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\npcclient\recipe.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\npcclient\recipetreenode.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\npcclient\status.cpp">
 			</File>
 			<File
 				RelativePath="..\..\src\npcclient\tribe.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\npcclient\tribeneed.cpp">
 			</File>
 			<File
 				RelativePath="..\..\src\npcclient\walkpoly.cpp">
@@ -1808,13 +1811,16 @@
 				RelativePath="..\..\src\npcclient\perceptions.h">
 			</File>
 			<File
+				RelativePath="..\..\src\npcclient\recipe.h">
+			</File>
+			<File
+				RelativePath="..\..\src\npcclient\recipetreenode.h">
+			</File>
+			<File
 				RelativePath="..\..\src\npcclient\status.h">
 			</File>
 			<File
 				RelativePath="..\..\src\npcclient\tribe.h">
-			</File>
-			<File
-				RelativePath="..\..\src\npcclient\tribeneed.h">
 			</File>
 			<File
 				RelativePath="..\..\src\npcclient\walkpoly.h">
