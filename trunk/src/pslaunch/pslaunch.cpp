@@ -26,6 +26,7 @@
 #include <iutil/eventq.h>
 #include <ivideo/graph2d.h>
 #include <ivideo/natwin.h>
+#include <csutil/syspath.h>
 #include <curl/curl.h>
 
 #include "download.h"
@@ -515,7 +516,7 @@ int main(int argc, char* argv[])
             // Check that the path exists, else attempt to create it.
             FileUtil* fileUtil = new FileUtil(vfs);
             csRef<FileStat> filestat = fileUtil->StatFile(configPath);
-            if (!filestat.IsValid() && CS_MKDIR(configPath) < 0)
+            if (!filestat.IsValid() && CS::Platform::CreateDirectory(configPath) < 0)
             {
                 printf("Could not create required %s directory!\n", configPath.GetData());
                 return false;
