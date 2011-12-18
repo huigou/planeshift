@@ -517,7 +517,8 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
             psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "SpellPractice");
             CS_ASSERT(script.IsValid());
         }
-        else
+
+        if(script.IsValid())
         {
             MathEnvironment env;
             env.Define("Realm", realm);
