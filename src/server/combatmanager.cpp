@@ -236,7 +236,10 @@ const Stance & CombatManager::GetStance(CacheManager* cachemanager, csString nam
         id = cachemanager->stanceID.Find(cachemanager->getOption("combat:default_stance")->getValue());
 
         if(id == csArrayItemNotFound)
+        {
             id = cachemanager->stanceID.Find("normal");
+        }
+        
     }
     return cachemanager->stances.Get(id);
 }
