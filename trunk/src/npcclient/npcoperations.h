@@ -731,6 +731,7 @@ protected:
     float seek_range, melee_range;
     gemNPCActor* attacked_ent;
     bool  attack_invisible,attack_invincible;
+    csString stance;
 public:
 
     MeleeOperation(): ScriptOperation("Melee") { attacked_ent=NULL; seek_range=0; melee_range=0; }

@@ -131,10 +131,16 @@ csStringHashReversible * NetworkManager::GetMsgStrings()
     return connection->GetAccessPointers()->msgstringshash;
 }
 
-const char *NetworkManager::GetCommonString(uint32_t id)
+const char *NetworkManager::GetCommonString(uint32_t cstr_id)
 {
-    return connection->GetAccessPointers()->Request(id);
+    return connection->GetAccessPointers()->Request(cstr_id);
 }
+
+uint32_t NetworkManager::GetCommonStringID(const char* string)
+{
+    return connection->GetAccessPointers()->Request(string).GetHash();
+}
+
 
 void NetworkManager::HandleMessage(MsgEntry *message)
 {
@@ -1071,7 +1077,7 @@ void NetworkManager::QueueDRDataCommand(gemNPCActor *entity, psLinearMovement *l
     cmd_count++;
 }
 
-void NetworkManager::QueueAttackCommand(gemNPCActor *attacker, gemNPCActor *target)
+void NetworkManager::QueueAttackCommand(gemNPCActor *attacker, gemNPCActor *target, const char* stance)
 {
 
     CheckCommandsOverrun(100);
@@ -1087,6 +1093,8 @@ void NetworkManager::QueueAttackCommand(gemNPCActor *attacker, gemNPCActor *targ
     {
         outbound->msg->Add( (uint32_t) 0 );  // 0 target means stop attack
     }
+
+    outbound->msg->Add( GetCommonStringID(stance) );
 
     if ( outbound->msg->overrun )
     {

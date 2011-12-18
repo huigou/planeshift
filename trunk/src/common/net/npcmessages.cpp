@@ -283,6 +283,8 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
                 // Extract the data
                 EID attacker_id = EID(msg->GetUInt32());
                 EID target_id = EID(msg->GetUInt32());
+                uint32_t stanceCSID = msg->GetUInt32(); // Common String ID
+                csString stance = accessPointers->Request(stanceCSID);
 
                 // Make sure we haven't run past the end of the buffer
                 if (msg->overrun)
@@ -291,7 +293,7 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
                     break;
                 }
 
-                msgtext.AppendFmt("Attacker: %u Target: %u ", attacker_id.Unbox(), target_id.Unbox());
+                msgtext.AppendFmt("Attacker: %u Target: %u Stance: %s", attacker_id.Unbox(), target_id.Unbox(),stance.GetDataSafe());
                 break;
             }
             case psNPCCommandsMessage::CMD_SIT:
@@ -637,11 +639,7 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
                 EID target = EID(msg->GetUInt32());
                 uint32_t strhash = msg->GetUInt32();
                 float    severity = msg->GetInt8() / 10;
-                csString type;
-                if(accessPointers->msgstrings)
-                    type = accessPointers->msgstrings->Request(strhash);
-                else if(accessPointers->msgstringshash)
-                    type = accessPointers->msgstringshash->Request(strhash);
+                csString type = accessPointers->Request(strhash);
 
                 msgtext.AppendFmt("Caster: %u Target: %u Type: \"%s\"(%u) Severity: %f ", caster.Unbox(), target.Unbox(), type.GetData(), strhash, severity);
                 break;

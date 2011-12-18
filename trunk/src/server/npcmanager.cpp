@@ -858,7 +858,10 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
             {
                 EID attacker_id = EID(list.msg->GetUInt32());
                 EID target_id = EID(list.msg->GetUInt32());
-                Debug3(LOG_SUPERCLIENT, attacker_id.Unbox(), "-->Got attack cmd for entity %s to %s\n", ShowID(attacker_id), ShowID(target_id));
+                uint32_t stanceCSID = list.msg->GetUInt32(); // Common String ID
+                csString stance = cacheManager->FindCommonString(stanceCSID);
+
+                Debug4(LOG_SUPERCLIENT, attacker_id.Unbox(), "-->Got %s attack cmd for entity %s to %s\n", stance.GetDataSafe(), ShowID(attacker_id), ShowID(target_id));
 
                 // Make sure we haven't run past the end of the buffer
                 if (list.msg->overrun)
@@ -898,8 +901,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
 
                         if ( !target->GetClient() || !target->GetActorPtr()->GetInvincibility() )
                         {
-                            // NPCs only use 'Normal' stance for now.
-                            psserver->combatmanager->AttackSomeone(attacker,target,CombatManager::GetStance(cacheManager, "Normal"));
+                            psserver->combatmanager->AttackSomeone(attacker,target,CombatManager::GetStance(cacheManager, stance));
                             Debug3(LOG_SUPERCLIENT, attacker_id.Unbox(), "%s is now attacking %s.\n", attacker->GetName(), target->GetName());
                         }
                         else
