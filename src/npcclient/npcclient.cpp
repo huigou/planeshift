@@ -1626,8 +1626,9 @@ void psNPCClient::ListTribes(const char * pattern)
 
                 // Print Assets
                 tribes[i]->DumpAssets();
+
+                return; // The tribe has been dumped
             }
-            return;
         }
     }
 
