@@ -461,7 +461,7 @@ void Tribe::Advance(csTicks when, EventManager *eventmgr)
                 csString rName = bestRecipe->recipe->GetName();
                 if(rName != "do nothing")
                 {
-                    CPrintf(CON_CMDOUTPUT, "Recipe %s completed.\n", rName.GetData());
+                    Debug2(LOG_TRIBES, id, "Recipe %s completed.", rName.GetData());
                 }
 
                 tribalRecipe->RemoveChild(bestRecipe);
