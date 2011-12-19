@@ -34,7 +34,7 @@ INSERT INTO sc_npctypes VALUES("2","GoHomeOnTeleport","","","","","","","",
 
 <react event="teleported" behavior="Teleported" />');
 
-INSERT INTO sc_npctypes VALUES("3","InRegion","","","","","","","",
+INSERT INTO sc_npctypes VALUES("3","InRegion","","","","","out of bounds","","",
 '<behavior name="GoToRegion" completion_decay="-1" growth="0" initial="1000">
    <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
    <navigate anim="walk" />                  <!-- Local navigation -->
@@ -43,28 +43,13 @@ INSERT INTO sc_npctypes VALUES("3","InRegion","","","","","","","",
    <navigate anim="walk" />      <!-- Local navigation -->
 </behavior>
 
-<behavior name="Evade" completion_decay="-1" growth="0" initial="0">
-   <rotate type="random" min="90" max="270" anim="walk" />
-   <move vel="2" anim="walk" duration="1.0"/>
-</behavior>
-
 <behavior name="MoveBackInRegion" completion_decay="-1" growth="0" initial="0" >
    <!-- Move back into the region -->
-   <rotate type="relative" value="180" />
-   <move anim="walk" /> 
+   <locate obj="region" />
+   <navigate anim="walk" />      <!-- Local navigation -->
 </behavior>
 
-<behavior name="TurnInRegion" completion_decay="-1" growth="0" initial="0">
-   <!-- Move back into the region -->
-   <rotate type="random" min="-80" max="80" anim="walk" />
-   <!-- Enable other scripts to hock into the back in region situation -->
-   <percept event="back in region" />
-</behavior>
-
-<react event="collision"           behavior="Evade" />
-<react event="out of bounds"       behavior="MoveBackInRegion" do_not_interrupt="GoToRegion" />
-<react event="in bounds"           behavior="MoveBackInRegion" absolute="0"/>
-<!--react event="in bounds"           behavior="TurnInRegion" /-->');
+<react event="out of bounds"       behavior="MoveBackInRegion" do_not_interrupt="GoToRegion" />');
 
 INSERT INTO sc_npctypes VALUES("4","Fight","","","","","","","",
 '<behavior name="Fight"   initial="0" growth="0" decay="0" completion_decay="-1" >
@@ -81,6 +66,15 @@ INSERT INTO sc_npctypes VALUES("4","Fight","","","","","","","",
 <react event="target out of range" behavior="Chase" />
 <react event="target out of chase" behavior="Chase" absolute="0" only_interrupt="chase"/>
 <react event="death"               behavior="Fight" absolute="0" />');
+
+INSERT INTO sc_npctypes VALUES("5","TurnToSensedPlayer","","","","","","","",
+'<behavior name="TurnToFacePlayer" completion_decay="-1" growth="0" initial="0">
+   <locate obj="perception" />
+   <rotate type="locatedest" anim="walk" ang_vel="60" />
+</behavior>
+
+<react event="player sensed"       behavior="TurnToFacePlayer" delta="100" inactive_only="yes" />');
+
 
 INSERT INTO sc_npctypes VALUES("100","Smith","GoHomeOnTeleport","","","","","","",
 '<behavior name="do nothing" decay="0" growth="0" initial="10">
@@ -188,7 +182,10 @@ INSERT INTO sc_npctypes VALUES("100","Smith","GoHomeOnTeleport","","","","","","
 <react event="time" value="12,0,,,"  behavior="go_obstacles1" delta="20" /> 
 <react event="time" value="14,0,,,"  behavior="go_climbing1" delta="20" />');
 
-INSERT INTO sc_npctypes VALUES("101","Wanderer","InRegion,Fight","","","","","","",
+INSERT INTO sc_npctypes VALUES("101","Fighter","DoNothing,InRegion,Fight","","","","","","",
+'<empty/>');
+
+INSERT INTO sc_npctypes VALUES("102","Wanderer","Fighter","","","","","","",
 '<behavior name="Walk" decay="0" growth="0" initial="50">
    <loop>
       <locate obj="region" static="no" />                    <!-- Locate random point within region -->
@@ -198,17 +195,9 @@ INSERT INTO sc_npctypes VALUES("101","Wanderer","InRegion,Fight","","","","","",
    </loop>
 </behavior>');
 
-INSERT INTO sc_npctypes VALUES("102","Fighter","DoNothing,InRegion,Fight","","","","","","",
-'<empty/>');
 
-INSERT INTO sc_npctypes VALUES("103","On Sight Fighter","Fighter","","","","","","",
-'<behavior name="TurnToFace" completion_decay="-1" growth="0" initial="0">
-   <locate obj="perception" />
-   <rotate type="locatedest" anim="walk" ang_vel="60" />
-</behavior>
-
-<react event="player sensed"       behavior="TurnToFace" delta="100" inactive_only="yes" />
-<react event="player nearby"       behavior="Fight" delta="100" inactive_only="yes" faction_diff="-200" oper=">"  /> <!-- Nearby(<10) -->
+INSERT INTO sc_npctypes VALUES("103","On Sight Fighter","TurnToSensedPlayer,Fighter","","","","","","",
+'<react event="player nearby"       behavior="Fight" delta="100" inactive_only="yes" faction_diff="-200" oper=">"  /> <!-- Nearby(<10) -->
 <react event="player adjacent"     behavior="Fight" delta="100" inactive_only="yes" faction_diff="-200" oper=">"  />');
 
 INSERT INTO sc_npctypes VALUES("104","Answerer","DoNothing","","","","","","",
@@ -583,12 +572,12 @@ INSERT INTO sc_npctypes VALUES("118","MoveTest6","DoNothing","","$run","","","",
 '<!-- Initial behavior to locate the starting point -->
 <behavior name="Initialize" completion_decay="-1" initial="1000">
    <!--debug level="0" /-->
-   <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
-   <navigate anim="walk" />                  <!-- Local navigation -->
+   <locate obj="waypoint:name:npcr1_014"  static="no" />    <!-- Locate nearest waypoint -->
+   <teleport />                  <!-- Teleport to waypoint -->
 </behavior>
 
 <!-- Advanced movement using waypoints -->
-<behavior name="Move1" decay="0" growth="0" initial="80" loop="yes">
+<behavior name="Move1" decay="0" growth="0" initial="80" loop="yes" failure="Error" >
    <!--debug level="0" /-->
    <talk text="Going to other waypoint not using private" target="false" />
    <locate obj="waypoint:name:npcr1_021"  static="no" />
@@ -601,7 +590,9 @@ INSERT INTO sc_npctypes VALUES("118","MoveTest6","DoNothing","","$run","","","",
    <wander anim="walk" />        <!-- Navigate using waypoints -->
    <rotate type="relative" value="180" ang_vel="45"/>
    <wait anim="stand" duration="5" />
-</behavior>');
+</behavior>
+
+<react event="Error" behavior="Initialize" />');
 
 INSERT INTO sc_npctypes VALUES("119","MoveUnderground","DoNothing","","$walk","","","","",
 '<!-- Testing the wander operation. -->

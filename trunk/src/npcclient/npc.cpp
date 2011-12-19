@@ -1179,8 +1179,12 @@ gemNPCActor *HateList::GetMostHated(csVector3& pos, iSector *sector, float range
             
             if (!mostHated || h->hate_amount > mostHateAmount)
             {
-                // Don't include if a region is defined and not within region.
-                if (region && !region->CheckWithinBounds(engine,pos,sector)) 
+                csVector3 objPos;
+                iSector* objSector;
+                psGameObject::GetPosition(obj, objPos, objSector);
+                
+                // Don't include if a region is defined and obj not within region.
+                if (region && !region->CheckWithinBounds(engine,objPos,objSector)) 
                 {
                     continue;
                 }

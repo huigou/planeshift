@@ -350,9 +350,9 @@ public:
 
     bool ApplicableToNPCState(NPC* npc);
     void DoCompletionDecay(NPC* npc);
-    bool StartScript(NPC* npc, EventManager* eventmgr);
-    bool RunScript(NPC* npc, EventManager* eventmgr, bool interruped);
-    bool ResumeScript(NPC* npc, EventManager* eventmgr);
+    ScriptOperation::OperationResult StartScript(NPC* npc, EventManager* eventmgr);
+    ScriptOperation::OperationResult RunScript(NPC* npc, EventManager* eventmgr, bool interruped);
+    ScriptOperation::OperationResult ResumeScript(NPC* npc, EventManager* eventmgr);
     void InterruptScript(NPC* npc, EventManager* eventmgr);
     bool IsInterrupted(){ return interrupted; }
     void ClearInterrupted() { interrupted = false; }

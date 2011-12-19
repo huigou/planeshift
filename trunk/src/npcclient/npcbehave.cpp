@@ -613,14 +613,25 @@ void BehaviorSet::Advance(csTicks delta,NPC *npc)
             }
 
             // Run the new active behavior
-            if (active->StartScript(npc,eventmgr))
+            ScriptOperation::OperationResult result;
+
+            result = active->StartScript(npc,eventmgr);
+            
+            if (result == ScriptOperation::OPERATION_COMPLETED)
             {
                 // This behavior is done so set it inactive
                 active->SetIsActive(false);
                 active = NULL;
                 // Don't break so that we find a new behavior for this npc.
             }
-            else
+            else if (result == ScriptOperation::OPERATION_FAILED)
+            {
+                // This behavior is done so set it inactive
+                active->SetIsActive(false);
+                active = NULL;
+                break;
+            }
+            else // ScriptOperation::OPERATION_NOT_COMPLETED
             {
                 // This behavior isn't done yet so break and continue later
                 break;
@@ -640,7 +651,7 @@ void BehaviorSet::ResumeScript(NPC *npc, Behavior *which)
 {
     if (which == active && which->ApplicableToNPCState(npc))
     {
-        if (active->ResumeScript(npc,eventmgr))
+        if (active->ResumeScript(npc,eventmgr) != ScriptOperation::OPERATION_NOT_COMPLETED)
         {
             active->SetIsActive(false);
             active = NULL;
@@ -1168,7 +1179,7 @@ void Behavior::DoCompletionDecay(NPC* npc)
     }
 }
 
-bool Behavior::StartScript(NPC *npc, EventManager *eventmgr)
+ScriptOperation::OperationResult Behavior::StartScript(NPC *npc, EventManager *eventmgr)
 {
     if (interrupted && resume_after_interrupt)
     {
@@ -1194,7 +1205,7 @@ bool Behavior::StartScript(NPC *npc, EventManager *eventmgr)
     }
 }
 
-bool Behavior::RunScript(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult Behavior::RunScript(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     size_t start_step = current_step;
 
@@ -1226,7 +1237,7 @@ bool Behavior::RunScript(NPC *npc, EventManager *eventmgr, bool interrupted)
                     // Operation not completed and should relinquish
                     npc->Printf(2, "Behavior %s step %d - %s will complete later...",
                                 name.GetData(),current_step,sequence[current_step]->GetName());
-                    return false; // This behavior isn't done yet
+                    return ScriptOperation::OPERATION_NOT_COMPLETED; // This behavior isn't done yet
                     break;
                 }
                 case ScriptOperation::OPERATION_COMPLETED:
@@ -1242,7 +1253,7 @@ bool Behavior::RunScript(NPC *npc, EventManager *eventmgr, bool interrupted)
                     current_step = 0; // Restart operation next time
                     DoCompletionDecay(npc);
                     npc->Printf(1, "End of behaviour '%s'",GetName());
-                    return true; // This behavior is done
+                    return ScriptOperation::OPERATION_FAILED; // This behavior is done
                     break;
                 }
             }
@@ -1260,7 +1271,7 @@ bool Behavior::RunScript(NPC *npc, EventManager *eventmgr, bool interrupted)
             {
                 DoCompletionDecay(npc);
                 npc->Printf(1, "End of non looping behaviour '%s'",GetName());
-                return true; // This behavior is done
+                return ScriptOperation::OPERATION_COMPLETED; // This behavior is done
             }
         }
 
@@ -1268,11 +1279,11 @@ bool Behavior::RunScript(NPC *npc, EventManager *eventmgr, bool interrupted)
         if (start_step == current_step)
         {
             npc->Printf(3,"Terminating behavior '%s' since it has looped all once.",GetName());
-            return true; // This behavior is done
+            return ScriptOperation::OPERATION_COMPLETED; // This behavior is done
         }
 
     }
-    return true; // This behavior is done
+    return ScriptOperation::OPERATION_COMPLETED; // This behavior is done
 }
 
 void Behavior::InterruptScript(NPC *npc,EventManager *eventmgr)
@@ -1287,7 +1298,7 @@ void Behavior::InterruptScript(NPC *npc,EventManager *eventmgr)
     }
 }
 
-bool Behavior::ResumeScript(NPC *npc,EventManager *eventmgr)
+ScriptOperation::OperationResult Behavior::ResumeScript(NPC *npc,EventManager *eventmgr)
 {
     if (current_step < sequence.GetSize())
     {
@@ -1303,14 +1314,14 @@ bool Behavior::ResumeScript(NPC *npc,EventManager *eventmgr)
         }
         else
         {
-            return false; // This behavior isn't done yet
+            return  ScriptOperation::OPERATION_NOT_COMPLETED; // This behavior isn't done yet
         }
 
     }
     else
     {
         Error2("No script operation to resume for behavior '%s'",GetName());
-        return true;
+        return ScriptOperation::OPERATION_FAILED;
     }
 }
 
