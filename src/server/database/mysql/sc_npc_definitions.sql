@@ -27,7 +27,7 @@ CREATE TABLE sc_npc_definitions (
 #
 
 INSERT INTO sc_npc_definitions VALUES("4","MaleEnki","Wanderer","wander region","0.00","0.00","0","N","N");
-INSERT INTO sc_npc_definitions VALUES("5","Smith","smith","","0.00","0.00","0","N","N");
+INSERT INTO sc_npc_definitions VALUES("5","Smith","Smith","","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("6","Fighter1","Fighter","","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("7","Fighter2","On Sight Fighter","","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("8","Merchant","Wanderer","wander region","0.00","0.00","0","N","N");
