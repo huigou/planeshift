@@ -241,9 +241,15 @@ void ScriptOperation::SendCollitionPerception(NPC* npc)
     csString collision = GetCollisionPerception(npc);
     if (!collision.IsEmpty())
     {
+        npc->Printf(5,"Sending collition perception: " + collision );
+
         Perception perception(collision);
         npc->TriggerEvent(&perception);
     }
+    else
+    {
+        npc->Printf(6,"No collition perception to send.");
+    }    
 }
 
 bool ScriptOperation::CheckMoveOk(NPC *npc, EventManager *eventmgr, csVector3 oldPos, iSector* oldSector, const csVector3 & newPos, iSector* newSector, float timedelta)
@@ -256,8 +262,15 @@ bool ScriptOperation::CheckMoveOk(NPC *npc, EventManager *eventmgr, csVector3 ol
         return false;
     }
 
-    if ((oldPos - newPos).SquaredNorm() < 0.01f) // then stopped dead, presumably by collision
+    float velocity = npc->GetLinMove()->GetVelocity().Norm();
+    float moveLimit = 0.5*velocity*timedelta; // 1/2 the distance that should have been travelled.
+    float movedDistance = (oldPos - newPos).SquaredNorm();
+
+    if (movedDistance < moveLimit) // then stopped dead, presumably by collision
     {
+        npc->Printf(5,"Moved %.3f m at %0.3f m/s in %0.3f s limit:  %.3f m -> presumably collided",
+                    movedDistance, velocity, timedelta, moveLimit);
+
         // We collided. Now stop the movment and inform the server.
         StopMovement(npc);
         
@@ -4435,6 +4448,7 @@ void WanderOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
 
             currentDistance =  npcclient->GetWorld()->Distance(myPos, mySector,
                                                                destPos, destPoint->GetSector(npcclient->GetEngine()));
+            distance = currentDistance; // Update this to the distance to the new point as well.
 
             npc->Printf(6,"New localDest %s at range %.2f",
                         toString(destPos,
