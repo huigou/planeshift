@@ -229,6 +229,9 @@ bool NPCType::Load(iResultRow &row)
 
             reactions.Insert(0,r);  // reactions get inserted at beginning so subclass ones take precedence over superclass.
         }
+        else if(strcmp( node->GetValue(), "empty" ) == 0)
+        {
+        }
         else
         {
             Error1("Node under NPCType is not 'behavior' or 'react'. Error in DB XML");
