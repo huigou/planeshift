@@ -4902,7 +4902,7 @@ bool psPersistAllEntities::AddEntityMessage(MsgEntry *newEnt)
 {
     size_t addSize = newEnt->GetSize();
 
-    if (msg->GetSize() > msg->current + addSize + 1000) // big enough for next msg
+    if (msg->GetSize() > msg->current + addSize + 2*sizeof(uint32_t)) // big enough for next msg
     {
         // we are copying the bytes out of one message into the buffer of another.  handle with care
         msg->Add( newEnt->bytes,(uint32_t)newEnt->bytes->GetTotalSize() );
