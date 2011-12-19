@@ -76,6 +76,7 @@ INSERT INTO `accounts` VALUES (16,'player2','d914e3ecf6cc481114a3f534a5faf90b','
 INSERT INTO `accounts` VALUES (17,'player3','d914e3ecf6cc481114a3f534a5faf90b','0','2006-06-24 00:47:50','0000-00-00 00:00:00','127.0.0.1',0,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
 INSERT INTO `accounts` VALUES (18,'player4','d914e3ecf6cc481114a3f534a5faf90b','0','2006-06-24 00:47:50','0000-00-00 00:00:00','127.0.0.1',0,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
 
+#password is "planeshift" for all the following accounts
 INSERT INTO `accounts` VALUES (19,'admin1','b30ee7d55aa2808cc143418fc1b93b46','0','2006-06-24 00:47:50','0000-00-00 00:00:00','127.0.0.1',50,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
 INSERT INTO `accounts` VALUES (20,'admin2','b30ee7d55aa2808cc143418fc1b93b46','0','2006-06-24 00:47:50','0000-00-00 00:00:00','127.0.0.1',50,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
 
