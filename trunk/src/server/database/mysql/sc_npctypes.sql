@@ -1,4 +1,5 @@
-CREATE TABLE  `planeshift`.`sc_npctypes` (
+DROP TABLE IF EXISTS `sc_npctypes`;
+CREATE TABLE  `sc_npctypes` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'An unique id for this row',
   `name` varchar(200) NOT NULL COMMENT 'The name of this npctype',
   `parents` varchar(200) NOT NULL COMMENT 'The parents of this npctype for inheritance',
