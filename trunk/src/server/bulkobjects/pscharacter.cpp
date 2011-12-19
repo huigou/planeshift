@@ -2926,7 +2926,7 @@ void Skill::CalculateCosts(psCharacter* user)
         return;
 
     // Calc the new Y/Z cost
-    static csWeakRef<MathScript> script = psserver->GetMathScriptEngine()->FindScript(info->costScript);
+    csWeakRef<MathScript> script = psserver->GetMathScriptEngine()->FindScript(info->costScript);
     if (!script)
     {
         Error4("Couldn't find script %s to calculate skill cost of %d (%s)!",
