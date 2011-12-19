@@ -1305,7 +1305,7 @@ float gemItem::GetBaseAdvertiseRange()
     return itemdata->GetVisibleDistance();
 }
 
-void gemItem::Send( int clientnum, bool , bool to_superclients, psPersistAllEntities *allEntities)
+bool gemItem::Send( int clientnum, bool , bool to_superclients, psPersistAllEntities *allEntities)
 {
     int flags = 0;
     if (!IsPickupable()) flags |= psPersistItem::NOPICKUP;
@@ -1335,7 +1335,9 @@ void gemItem::Send( int clientnum, bool , bool to_superclients, psPersistAllEnti
         mesg.Multicast(psserver->GetNPCManager()->GetSuperClients(),0,PROX_LIST_ANY_RANGE);
 
     if (allEntities)
-        allEntities->AddEntityMessage(mesg.msg);
+        return allEntities->AddEntityMessage(mesg.msg);
+
+    return true;
 }
 
 //Here we check the flag to see if we can pick up this item
@@ -1984,7 +1986,7 @@ bool gemActionLocation::SeesObject(gemObject * object, float range)
     }
 }
 
-void gemActionLocation::Send( int clientnum, bool , bool to_superclients, psPersistAllEntities *allEntities )
+bool gemActionLocation::Send( int clientnum, bool , bool to_superclients, psPersistAllEntities *allEntities )
 {
     psPersistActionLocation mesg(
                                     clientnum,
@@ -2018,6 +2020,7 @@ void gemActionLocation::Send( int clientnum, bool , bool to_superclients, psPers
         allEntities->AddEntityMessage(mesg.msg);
 
     */
+    return true;
 }
 
 //--------------------------------------------------------------------------------------
@@ -2752,7 +2755,7 @@ void gemActor::SendGroupStats()
     BroadcastTargetStatDR(entityManager->GetClients());
 }
 
-void gemActor::Send( int clientnum, bool control, bool to_superclients, psPersistAllEntities *allEntities  )
+bool gemActor::Send( int clientnum, bool control, bool to_superclients, psPersistAllEntities *allEntities  )
 {
     csRef<PlayerGroup> group = this->GetGroup();
     csString texparts;
@@ -2849,7 +2852,9 @@ void gemActor::Send( int clientnum, bool control, bool to_superclients, psPersis
         }
     }
     if (allEntities)
-        allEntities->AddEntityMessage(mesg.msg);
+        return allEntities->AddEntityMessage(mesg.msg);
+
+    return true;
 }
 
 void gemActor::Broadcast(int clientnum, bool control)
@@ -4715,7 +4720,7 @@ void gemNPC::GetBadText(size_t first,size_t last, csStringArray& saidArray, csSt
     }
 }
 
-void gemNPC::Send( int clientnum, bool control, bool to_superclients, psPersistAllEntities *allEntities )
+bool gemNPC::Send( int clientnum, bool control, bool to_superclients, psPersistAllEntities *allEntities )
 {
     csString texparts;
     csString equipmentParts;
@@ -4805,7 +4810,9 @@ void gemNPC::Send( int clientnum, bool control, bool to_superclients, psPersistA
         }
     }
     if (allEntities)
-        allEntities->AddEntityMessage(mesg.msg);
+        return allEntities->AddEntityMessage(mesg.msg);
+
+    return true;
 }
 
 void gemNPC::Broadcast(int clientnum, bool control)

@@ -387,7 +387,7 @@ public:
     /**
      * @param control  Set to true when sent to the controlling client.
      */
-    virtual void Send( int clientnum, bool control, bool to_superclients, psPersistAllEntities *allEntities=NULL) {}
+    virtual bool Send( int clientnum, bool control, bool to_superclients, psPersistAllEntities *allEntities=NULL) {}
     virtual void SendGroupMessage(MsgEntry *me) { };
     //@}
 
@@ -481,7 +481,7 @@ public:
     /**
      * @param control  Set to true when sent to the controlling client.
      */
-    virtual void Send( int clientnum, bool control, bool to_superclients, psPersistAllEntities *allEntities=NULL) { }
+    virtual bool Send( int clientnum, bool control, bool to_superclients, psPersistAllEntities *allEntities=NULL) { }
 
     virtual void SendBehaviorMessage(const csString & str, gemObject *obj);
     virtual csString GetDefaultBehavior(const csString & dfltBehaviors);
@@ -545,7 +545,7 @@ public:
     /**
      * @param control  Set to true when sent to the controlling client.
      */
-    virtual void Send( int clientnum, bool control, bool super_clients, psPersistAllEntities *allEntities=NULL);
+    virtual bool Send( int clientnum, bool control, bool super_clients, psPersistAllEntities *allEntities=NULL);
 
     /** @brief Set position of item in world.
       *
@@ -711,7 +711,7 @@ public:
     /**
      * @param control  Set to true when sent to the controlling client.
      */
-    virtual void Send( int clientnum, bool control, bool super_clients, psPersistAllEntities *allEntities=NULL);
+    virtual bool Send( int clientnum, bool control, bool super_clients, psPersistAllEntities *allEntities=NULL);
 
     virtual bool GetVisibility() { return visible; };
     virtual void SetVisibility(bool vis) { visible = vis; };
@@ -1105,7 +1105,7 @@ public:
     /**
      * @param control  Set to true when sent to the controlling client.
      */
-    virtual void Send( int clientnum, bool control, bool to_superclients, psPersistAllEntities *allEntities=NULL);
+    virtual bool Send( int clientnum, bool control, bool to_superclients, psPersistAllEntities *allEntities=NULL);
     virtual void SendGroupMessage(MsgEntry *me);
 
     /// Used by chat manager to identify an npc you are near if you talk to one
@@ -1327,7 +1327,7 @@ public:
     /**
      * @param control  Set to true when sent to the controlling client.
      */
-    virtual void Send(int clientnum, bool control, bool to_superclients, psPersistAllEntities *allEntities=NULL);
+    virtual bool Send(int clientnum, bool control, bool to_superclients, psPersistAllEntities *allEntities=NULL);
 
     /**
      * @param control  Set to true when sent to the controlling client.
