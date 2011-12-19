@@ -264,7 +264,7 @@ bool ScriptOperation::CheckMoveOk(NPC *npc, EventManager *eventmgr, csVector3 ol
 
     float velocity = npc->GetLinMove()->GetVelocity().Norm();
     float moveLimit = 0.5*velocity*timedelta; // 1/2 the distance that should have been travelled.
-    float movedDistance = (oldPos - newPos).SquaredNorm();
+    float movedDistance = (oldPos - newPos).Norm();
 
     if (movedDistance < moveLimit) // then stopped dead, presumably by collision
     {
@@ -4487,12 +4487,14 @@ void WanderOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
     float close = GetVelocity(npc)*timedelta;
     if(distance <= close)
     {
+        npc->Printf(5,"We are close %.3f < %.3f",distance,close);
+        
     	timedelta = distance / GetVelocity(npc);
     }
 
-    npc->Printf(8, "advance: pos=(%f.2,%f.2,%f.2) rot=%.2f %s localDest=%s dist=%f", 
-                myPos.x,myPos.y,myPos.z, myRot, mySector->QueryObject()->GetName(),
-                destPoint->GetPosition().Description().GetData(),distance);
+    npc->Printf(8, "advance: pos=%s rot=%.2f localDest=%s dist=%.3f timedelta=%.3f", 
+                toString(myPos,mySector).GetDataSafe(), myRot,
+                destPoint->GetPosition().Description().GetData(),distance,timedelta);
 
     {
         int ret;
@@ -4511,8 +4513,9 @@ void WanderOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
         iSector* myNewSector;
 
         npc->GetLinMove()->GetDRData(on_ground,speed,myNewPos,myRot,myNewSector,bodyVel,worldVel,ang_vel);
-        npc->Printf(8,"World position bodyVel=%s worldVel=%s",
-                       toString(bodyVel).GetDataSafe(),toString(worldVel).GetDataSafe());
+        npc->Printf(8,"World position bodyVel=%s worldVel=%s newPos=%s",
+                    toString(bodyVel).GetDataSafe(),toString(worldVel).GetDataSafe(),
+                    toString(myNewPos,myNewSector).GetDataSafe());
 
         CheckMoveOk(npc, eventmgr, myPos, mySector, myNewPos, myNewSector, timedelta);
     }

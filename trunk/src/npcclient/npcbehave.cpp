@@ -618,7 +618,7 @@ void BehaviorSet::Advance(csTicks delta,NPC *npc)
                 // This behavior is done so set it inactive
                 active->SetIsActive(false);
                 active = NULL;
-                break;
+                // Don't break so that we find a new behavior for this npc.
             }
             else
             {
