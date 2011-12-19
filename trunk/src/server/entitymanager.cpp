@@ -938,7 +938,11 @@ void EntityManager::HandleAllRequest(MsgEntry* me, Client *client)
         {
             count++;
             obj = i.Next();
-            if (allEntMsg->msg->current > allEntMsg->msg->GetSize() - 1000)
+            // The 0 in param 1 and the false in param 3 suppresses the immediate send to superclient, since we are appending now
+            // this doesn't actually send but just appends to allEntMsg
+            //if it returns false it means that we would overflow the message
+            //so we make a new message and append this to it
+            if(!obj->Send(0, false,  false, allEntMsg))
             {
                 // the current message is full of entities, so send it and make another one
                 allEntMsg->msg->ClipToCurrentSize();
@@ -947,9 +951,10 @@ void EntityManager::HandleAllRequest(MsgEntry* me, Client *client)
                 delete allEntMsg;
                 count = 1;
                 allEntMsg = new psPersistAllEntities(me->clientnum); // here is the new one to continue with
+                //try adding the object to the next message.
+                // The 0 in param 1 and the false in param 3 suppresses the immediate send to superclient, since we are appending now
+                obj->Send(0, false,  false, allEntMsg); // this doesn't actually send but just appends to allEntMsg
             }
-            // The 0 in param 1 and the false in param 3 suppresses the immediate send to superclient, since we are appending now
-            obj->Send(0, false,  false, allEntMsg ); // this doesn't actually send but just appends to allEntMsg
         }
         allEntMsg->msg->ClipToCurrentSize();
         Debug3(LOG_NET, client->GetClientNum(), "Final send is %d entities in %zu bytes.", count, allEntMsg->msg->GetSize() );
