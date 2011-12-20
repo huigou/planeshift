@@ -114,7 +114,7 @@ csString Note::ToXML()
     // computing octave
     octave = 4 + position / 7;
 
-    if(position < 0)
+    if(position < 0 && position % 7 != 0)
     {
         octave--;
     }
