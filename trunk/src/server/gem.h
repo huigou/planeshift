@@ -387,7 +387,7 @@ public:
     /**
      * @param control  Set to true when sent to the controlling client.
      */
-    virtual bool Send( int clientnum, bool control, bool to_superclients, psPersistAllEntities *allEntities=NULL) {}
+    virtual bool Send( int clientnum, bool control, bool to_superclients, psPersistAllEntities *allEntities=NULL) { return true; }
     virtual void SendGroupMessage(MsgEntry *me) { };
     //@}
 
@@ -481,7 +481,7 @@ public:
     /**
      * @param control  Set to true when sent to the controlling client.
      */
-    virtual bool Send( int clientnum, bool control, bool to_superclients, psPersistAllEntities *allEntities=NULL) { }
+    virtual bool Send( int clientnum, bool control, bool to_superclients, psPersistAllEntities *allEntities=NULL) { return true; }
 
     virtual void SendBehaviorMessage(const csString & str, gemObject *obj);
     virtual csString GetDefaultBehavior(const csString & dfltBehaviors);
