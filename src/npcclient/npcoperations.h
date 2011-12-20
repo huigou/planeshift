@@ -302,6 +302,27 @@ public:
 
 //-----------------------------------------------------------------------------
 
+/**
+* Will send an assessment request to the server. Upon return
+* the npc will be percepted based on the assessment.
+*/
+class AssessOperation : public ScriptOperation
+{
+protected:
+    csString physicalAssessmentPerception;
+    csString magicalAssessmentPerception;
+    csString overallAssessmentPerception;
+public:
+
+    AssessOperation(): ScriptOperation("Assess") {};
+    virtual ~AssessOperation() {};
+    virtual OperationResult Run(NPC* npc,EventManager* eventmgr,bool interrupted);
+    virtual bool Load(iDocumentNode* node);
+    virtual ScriptOperation* MakeCopy();
+};
+
+//-----------------------------------------------------------------------------
+
 /** Detect and chase a target until reached o out of bound.
 *   Chase updates periodically and turns, moving towards a certain
 *   location.  This is normally used to chase a targeted player.

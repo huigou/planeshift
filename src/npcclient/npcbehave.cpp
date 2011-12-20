@@ -875,7 +875,11 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         int beginLoopWhere = -1;
 
         // This is a operation so read it's factory to create it.
-        if ( strcmp( node->GetValue(), "chase" ) == 0 )
+        if ( strcmp( node->GetValue(), "assess" ) == 0 )
+        {
+            op = new AssessOperation;
+        }
+        else if ( strcmp( node->GetValue(), "chase" ) == 0 )
         {
             op = new ChaseOperation;
         }

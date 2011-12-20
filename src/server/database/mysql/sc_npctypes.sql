@@ -58,14 +58,19 @@ INSERT INTO sc_npctypes VALUES("4","Fight","","","","","","","",
    <rotate type="locatedest" anim="walk" ang_vel="120" />
    <melee seek_range="20" melee_range="3" />
 </behavior>
+
 <behavior name="Chase" initial="0" growth="0" decay="1" completion_decay="-1" >
    <chase type="target" chase_range="20" anim="run" vel="5" />
 </behavior>
 
+<react event="fight"               behavior="Fight" />
 <react event="attack"              behavior="Fight" />
 <react event="damage"              behavior="Fight" delta="20" weight="1" />
 <react event="target out of range" behavior="Chase" />
+
+<!-- Stop chas if target is out of chase range -->
 <react event="target out of chase" behavior="Chase" absolute="0" only_interrupt="chase"/>
+
 <react event="death"               behavior="Fight" absolute="0" />');
 
 INSERT INTO sc_npctypes VALUES("5","TurnToSensedPlayer","","","","","","","",
@@ -75,6 +80,86 @@ INSERT INTO sc_npctypes VALUES("5","TurnToSensedPlayer","","","","","","","",
 </behavior>
 
 <react event="player sensed"       behavior="TurnToFacePlayer" delta="100" inactive_only="yes" />');
+
+INSERT INTO sc_npctypes VALUES("6","Fighter","DoNothing,InRegion,Fight","","","","","","",
+'<empty/>');
+
+INSERT INTO sc_npctypes VALUES("7","Wanderer","Fighter","","","","","","",
+'<behavior name="Walk" decay="0" growth="0" initial="50">
+   <loop>
+      <locate obj="region" static="no" />                    <!-- Locate random point within region -->
+      <rotate type="locatedest" anim="walk" ang_vel="10" />  <!-- Rotate to fase last located destination -->
+      <navigate anim="walk" />                               <!-- Local navigation -->
+      <wait duration="5" anim="stand" />
+   </loop>
+</behavior>');
+
+
+INSERT INTO sc_npctypes VALUES("8","On Sight Fighter","TurnToSensedPlayer,Fighter","","","","","","",
+'<behavior name="FightDefencive"   initial="0" growth="0" decay="0" completion_decay="-1" >
+   <locate obj="target"  range="20" />
+   <talk text="$race attacked by $target" target="false" /> 
+   <rotate type="locatedest" anim="walk" ang_vel="120" />
+   <melee seek_range="20" melee_range="3" stance="defensive" />
+</behavior>
+
+<!-- Ask server for an assessment. Using target to make sure the assessment match -->
+<behavior name="AssessFighter" completion_decay="-1" >
+   <assess overall="$target" />
+</behavior>
+
+<!-- Handle different assessment in different ways -->
+<behavior name="AssessLame" >
+   <talk text="$target is a lame target" target="false" />
+   <percept event="fight" />
+</behavior>
+<behavior name="AssessWeaker" >
+   <talk text="$target is a weaker target" target="false" />
+   <percept event="fight" />
+</behavior>
+<behavior name="AssessEqual" >
+   <talk text="$target is a equal target" target="false" />
+   <percept event="fight" />
+</behavior>
+<behavior name="AssessStronger" >
+   <talk text="$target is a stronger target" target="false" />
+   <percept event="fight defencive" />
+</behavior>
+<behavior name="AssessPowerfull" >
+   <talk text="$target is a powerfull target" target="false" />
+   <percept event="fight defencive" />
+</behavior>
+
+<!-- Reacting to players nearby(<10) and adjacent -->
+<react event="player nearby"       behavior="AssessFighter" delta="100" inactive_only="yes" faction_diff="-200" oper=">"  />
+<react event="player adjacent"     behavior="AssessFighter" delta="100" inactive_only="yes" faction_diff="-200" oper=">"  />
+
+<react event="fight defencive"     behavior="FightDefencive" />
+
+<!-- Reaction to results of assessments -->
+<react event="$target lame"        behavior="AssessLame" />
+<react event="$target weaker"      behavior="AssessWeaker" />
+<react event="$target equal"       behavior="AssessEqual" />
+<react event="$target stronger"    behavior="AssessStronger" />
+<react event="$target powerfull"   behavior="AssessPowerfull" />');
+
+INSERT INTO sc_npctypes VALUES("9","Answerer","DoNothing","","","","","","",
+'<behavior name="turn to face" completion_decay="-1" growth="0" initial="0" >
+   <locate obj="perception" />
+   <rotate type="locatedest" anim="walk" ang_vel="20" />
+   <emote cmd="/greet" />
+   <wait duration="10" anim="stand" />
+</behavior>
+
+<react event="talk" inactive_only="yes" faction_diff="-100" oper=">" behavior="turn to face" delta="100"  when_invisible="yes" when_invincible="yes" />');
+
+INSERT INTO sc_npctypes VALUES("10","Sit","DoNothing","","","","","","",
+'<behavior name="sit" completion_decay="-1" growth="0" initial="0" >
+   <sit />
+   <wait duration="10" anim="sit_idle" />
+   <standup />
+</behavior>
+<react event="player adjacent" inactive_only="yes" behavior="sit" delta="100"  when_invisible="yes" when_invincible="yes" />');
 
 
 INSERT INTO sc_npctypes VALUES("100","Smith","GoHomeOnTeleport","","","","","","",
@@ -183,41 +268,6 @@ INSERT INTO sc_npctypes VALUES("100","Smith","GoHomeOnTeleport","","","","","","
 <react event="time" value="12,0,,,"  behavior="go_obstacles1" delta="20" /> 
 <react event="time" value="14,0,,,"  behavior="go_climbing1" delta="20" />');
 
-INSERT INTO sc_npctypes VALUES("101","Fighter","DoNothing,InRegion,Fight","","","","","","",
-'<empty/>');
-
-INSERT INTO sc_npctypes VALUES("102","Wanderer","Fighter","","","","","","",
-'<behavior name="Walk" decay="0" growth="0" initial="50">
-   <loop>
-      <locate obj="region" static="no" />                    <!-- Locate random point within region -->
-      <rotate type="locatedest" anim="walk" ang_vel="10" />  <!-- Rotate to fase last located destination -->
-      <navigate anim="walk" />                               <!-- Local navigation -->
-      <wait duration="5" anim="stand" />
-   </loop>
-</behavior>');
-
-
-INSERT INTO sc_npctypes VALUES("103","On Sight Fighter","TurnToSensedPlayer,Fighter","","","","","","",
-'<react event="player nearby"       behavior="Fight" delta="100" inactive_only="yes" faction_diff="-200" oper=">"  /> <!-- Nearby(<10) -->
-<react event="player adjacent"     behavior="Fight" delta="100" inactive_only="yes" faction_diff="-200" oper=">"  />');
-
-INSERT INTO sc_npctypes VALUES("104","Answerer","DoNothing","","","","","","",
-'<behavior name="turn to face" completion_decay="-1" growth="0" initial="0" >
-   <locate obj="perception" />
-   <rotate type="locatedest" anim="walk" ang_vel="20" />
-   <emote cmd="/greet" />
-   <wait duration="10" anim="stand" />
-</behavior>
-
-<react event="talk" inactive_only="yes" faction_diff="-100" oper=">" behavior="turn to face" delta="100"  when_invisible="yes" when_invincible="yes" />');
-
-INSERT INTO sc_npctypes VALUES("105","Sit","DoNothing","","","","","","",
-'<behavior name="sit" completion_decay="-1" growth="0" initial="0" >
-   <sit />
-   <wait duration="10" anim="sit_idle" />
-   <standup />
-</behavior>
-<react event="player adjacent" inactive_only="yes" behavior="sit" delta="100"  when_invisible="yes" when_invincible="yes" />');
 
 INSERT INTO sc_npctypes VALUES("106","ChaseTest1","DoNothing","","","","","","",
 '<behavior name="init" initial="1000" completion_decay="-1" >

@@ -106,6 +106,12 @@ bool Reaction::Load(iDocumentNode *node,BehaviorSet& behaviors)
 
     // Handle hooking up to the perception
     eventType              = node->GetAttributeValue("event");
+    if (eventType.IsEmpty())
+    {
+        Error2("No event type specefied for node: %s",node->GetValue());
+        return false;
+    }
+    
     range                  = node->GetAttributeValueAsFloat("range");
     weight                 = node->GetAttributeValueAsFloat("weight");
     factionDiff            = node->GetAttributeValueAsInt("faction_diff");

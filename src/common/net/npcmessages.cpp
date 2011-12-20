@@ -249,6 +249,28 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
     {
         switch(cmd)
         {
+            case psNPCCommandsMessage::CMD_ASSESS:
+            {
+                msgtext.Append("CMD_ASSESS: ");
+
+                // Extract the data
+                EID actor_id = EID(msg->GetUInt32());
+                EID target_id = EID(msg->GetUInt32());
+                csString physical = msg->GetStr();
+                csString magical = msg->GetStr();
+                csString overall = msg->GetStr();
+
+                // Make sure we haven't run past the end of the buffer
+                if (msg->overrun)
+                {
+                    Debug2(LOG_SUPERCLIENT,msg->clientnum,"Received incomplete CMD_ASSESS from NPC client %u.\n",msg->clientnum);
+                    break;
+                }
+
+                msgtext.AppendFmt("Actor: %u Target: %u Physical: %s Magical: %s Overall: %s", actor_id.Unbox(), target_id.Unbox(),
+                                  physical.GetDataSafe(),magical.GetDataSafe(),overall.GetDataSafe());
+                break;
+            }
             case psNPCCommandsMessage::CMD_DRDATA:
             {
                 msgtext.Append("CMD_DRDATA: ");
@@ -610,6 +632,21 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
 
             // perceptions go from server to superclient
             
+            case psNPCCommandsMessage::PCPT_ASSESS:
+            {
+                msgtext.Append("PCPT_ASSESS: ");
+
+                // Extract the data
+                EID actor_id = EID(msg->GetUInt32());
+                EID target_id = EID(msg->GetUInt32());
+                csString physical = msg->GetStr();
+                csString magical = msg->GetStr();
+                csString overall = msg->GetStr();
+
+                msgtext.AppendFmt("Actor: %u Target: %u Physical: %s Magical: %s Overall: %s", actor_id.Unbox(), target_id.Unbox(),
+                                  physical.GetDataSafe(),magical.GetDataSafe(),overall.GetDataSafe());
+                break;
+            }
             case psNPCCommandsMessage::PCPT_TALK: 
             {
                 msgtext.Append("PCPT_TALK: ");

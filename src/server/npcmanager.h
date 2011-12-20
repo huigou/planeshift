@@ -82,6 +82,10 @@ public:
     /// Build a message with all changed world positions for superclients to get.
     void UpdateWorldPositions();
 
+    /// Let the superclient know the result of an assessment
+    void QueueAssessPerception(EID entityEID, EID targetEID, const csString& physicalAssessmentPerception,
+                               const csString& magicalAssessmentPerception,  const csString& overallAssessmentPerception);
+    
     /// Let the superclient know that a player has said something to one of its npcs.
     void QueueTalkPerception(gemActor *speaker, gemNPC *target);
 

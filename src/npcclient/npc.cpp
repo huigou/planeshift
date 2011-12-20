@@ -956,32 +956,36 @@ void NPC::VPrintf(int debug, const char *msg, va_list args)
     CPrintf(CON_CMDOUTPUT, "%s (%s)> %s\n", GetName(), ShowID(pid), str);
 }
 
-gemNPCObject *NPC::GetTarget()
+gemNPCObject* NPC::GetTarget()
 {
     // If something is targeted, use it.
     if (target_id != 0)
     {
         // Check if visible
         gemNPCObject * obj = npcclient->FindEntityID(target_id);
-        if (obj && obj->IsInvisible()) return NULL;
-
+        if (obj && obj->IsInvisible())
+        {
+            Printf(15, "GetTarget returning nothing, target is invisible");
+            return NULL;
+        }
+        
         return obj;
     }
     else  // if not, try the last perception entity
     {
         if (GetLastPerception())
         {
-            gemNPCObject * target = NULL;
-            gemNPCObject *entity = GetLastPerception()->GetTarget();
+            gemNPCObject* target = NULL;
+            gemNPCObject* entity = GetLastPerception()->GetTarget();
             if (entity)
             {
                 target = npcclient->FindEntityID(entity->GetEID());
             }
-            Printf(5,"GetTarget returning last perception entity: %s",target ? target->GetName() : "None specified");
+            Printf(16,"GetTarget returning last perception entity: %s",target ? target->GetName() : "None specified");
             return target;
         }
-        return NULL;
     }
+    return NULL;
 }
 
 void NPC::SetTarget(gemNPCObject *t)

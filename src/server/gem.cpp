@@ -2075,7 +2075,7 @@ nevertired(false), infinitemana(false), instantcast(false), safefall(false), giv
         player_mode = PSCHARACTER_MODE_STATUE;
     combat_stance = CombatManager::GetStance(cachemanager,"None");
 
-    Debug6(LOG_NPC,0,"Successfully created actor %s at %1.2f,%1.2f,%1.2f in sector %s.\n",
+    Debug6(LOG_NPC,GetEID().Unbox(),"Successfully created actor %s at %1.2f,%1.2f,%1.2f in sector %s.\n",
         factname,pos.x,pos.y,pos.z,GetSectorName());
 
     SetPrevTeleportLocation(pos, rotangle, GetSector(), myInstance);
@@ -4214,7 +4214,7 @@ gemNPC::gemNPC(GEMSupervisor* gemsupervisor, CacheManager* cachemanager,
     {
         this->SetOwner( cel->FindPlayerEntity( chardata->GetOwnerID() ) );
     }
-    Debug3(LOG_NPC,0, "Created npc firstname:%s, lastname:%s\n",chardata->GetCharName(), chardata->GetCharLastName());
+    Debug3(LOG_NPC,GetEID().Unbox(), "Created npc firstname:%s, lastname:%s\n",chardata->GetCharName(), chardata->GetCharLastName());
 }
 
 gemNPC::~gemNPC()

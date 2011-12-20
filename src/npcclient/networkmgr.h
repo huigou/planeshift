@@ -184,7 +184,9 @@ public:
     void QueueSequenceCommand(csString name, int cmd, int count);
     void QueueImperviousCommand(gemNPCActor * entity, bool impervious);
     void QueueInfoReplyCommand(uint32_t clientNum,const char* reply);
-
+    void QueueAssessCommand(gemNPCActor* entity, gemNPCObject* target, const csString& physicalAssessmentPerception,
+                            const csString& magicalAssessmentPerception,  const csString& overallAssessmentPerception);
+    
     void SendAllCommands(bool final = false);
 
     void SendConsoleCommand(const char *cmd);

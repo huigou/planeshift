@@ -769,7 +769,7 @@ EID EntityManager::CreateNPC(psCharacter *chardata, InstanceID instance, csVecto
     // Check if this NPC is controlled
     psserver->npcmanager->ControlNPC( actor );
 
-    Debug3(LOG_NPC, 0, "Created NPC actor: <%s>[%s] in world", actor->GetName(), ShowID(actor->GetEID()));
+    Debug3(LOG_NPC, actor->GetEID().Unbox(), "Created NPC actor: <%s>[%s] in world", actor->GetName(), ShowID(actor->GetEID()));
 
     return actor->GetEID();
 }
