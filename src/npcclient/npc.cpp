@@ -595,6 +595,7 @@ void NPC::DumpState()
     CPrintf(CON_CMDOUTPUT, "Walk velocity:       %.2f\n",walkVelocity);
     CPrintf(CON_CMDOUTPUT, "Run velocity:        %.2f\n",runVelocity);
     CPrintf(CON_CMDOUTPUT, "Owner:               %s\n",GetOwnerName());
+    CPrintf(CON_CMDOUTPUT, "Race:                %s\n",GetRaceInfo()?GetRaceInfo()->GetName():"(None)");
     CPrintf(CON_CMDOUTPUT, "Region:              %s\n",GetRegion()?GetRegion()->GetName():"(None)");
     CPrintf(CON_CMDOUTPUT, "Inside region:       %s\n",insideRegion?"Yes":"No");
     CPrintf(CON_CMDOUTPUT, "Tribe:               %s\n",GetTribe()?GetTribe()->GetName():"(None)");
@@ -1051,7 +1052,7 @@ RaceInfo_t* NPC::GetRaceInfo()
 {
     if (!raceInfo && npcActor)
     {
-        raceInfo = npcclient->GetRaceInfo(npcActor->GetName());
+        raceInfo = npcclient->GetRaceInfo(npcActor->GetRace());
     }
     
     return raceInfo;
