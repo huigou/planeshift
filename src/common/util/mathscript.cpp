@@ -775,7 +775,7 @@ bool MathScriptEngine::CheckAndUpdateScript(csWeakRef<MathScript> &script, const
     //check if we need to reload the script
     if(!script.IsValid())
     {
-        script = psserver->GetMathScriptEngine()->FindScript(name);
+        script = FindScript(name);
         if(!script.IsValid()) //check if loading succeded else act accordly
         {
             CPrintf(CON_ERROR,"Couldn't load %s script!", name.GetData());
