@@ -504,6 +504,47 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
     {
         switch(cmd)
         {
+            case psNPCCommandsMessage::PCPT_ASSESS:
+            {
+                // Extract the data
+                EID actorEID = EID(msg->GetUInt32());
+                EID targetEID = EID(msg->GetUInt32());
+                csString physical = msg->GetStr();
+                csString magical = msg->GetStr();
+                csString overall = msg->GetStr();
+
+                NPC *npc = npcclient->FindNPC(actorEID);
+                if (!npc)
+                {
+                    Debug3(LOG_NPC, actorEID.Unbox(), "Got assess perception for unknown NPC(%s) for %s!\n", ShowID(targetEID), ShowID(targetEID));
+                    break;
+                }
+
+                gemNPCObject *target = npcclient->FindEntityID(targetEID);
+                if (!target)
+                {
+                    npc->Printf("Got access perception from unknown target(%s)!\n", ShowID(targetEID));
+                    break;
+                }
+
+                npc->Printf("Got Assess perception for %s(%s) to %s(%s) with "
+                            "Physical assessment: '%s' "
+                            "Magical assessment: '%s' "
+                            "Overall assessment: '%s'",
+                            npc->GetName(), ShowID(actorEID),
+                            target->GetName(), ShowID(targetEID),
+                            physical.GetDataSafe(),magical.GetDataSafe(),overall.GetDataSafe());
+
+                Perception physicalPerception(physical);
+                npc->TriggerEvent(&physicalPerception);
+
+                Perception magicalPerception(magical);
+                npc->TriggerEvent(&magicalPerception);
+
+                Perception overallPerception(overall);
+                npc->TriggerEvent(&overallPerception);
+                break;
+            }
             case psNPCCommandsMessage::PCPT_TALK:
             {
                 EID speakerEID = EID(list.msg->GetUInt32());
@@ -1429,6 +1470,27 @@ void NetworkManager::QueueInfoReplyCommand(uint32_t clientNum,const char* reply)
     }
 
     cmd_count++;
+}
+
+void NetworkManager::QueueAssessCommand(gemNPCActor* entity, gemNPCObject* target, const csString& physicalAssessmentPerception,
+                                            const csString& magicalAssessmentPerception,  const csString& overallAssessmentPerception)
+{
+    CheckCommandsOverrun(sizeof(int8_t)+2*sizeof(uint32_t)+(physicalAssessmentPerception.Length()+1)+
+                         (magicalAssessmentPerception.Length()+1)+(overallAssessmentPerception.Length()+1));
+
+    outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_ASSESS);
+    outbound->msg->Add( entity->GetEID().Unbox() );
+    outbound->msg->Add( target->GetEID().Unbox() );
+    outbound->msg->Add( physicalAssessmentPerception );
+    outbound->msg->Add( magicalAssessmentPerception );
+    outbound->msg->Add( overallAssessmentPerception );
+
+    if ( outbound->msg->overrun )
+    {
+        CS_ASSERT(!"NetworkManager::QueueAssessCommand put message in overrun state!\n");
+    }
+
+    cmd_count++;    
 }
 
 void NetworkManager::SendAllCommands(bool final)

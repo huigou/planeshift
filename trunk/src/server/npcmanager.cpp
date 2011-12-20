@@ -797,11 +797,90 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
         count[cmd]++;
         switch(cmd)
         {
+            case psNPCCommandsMessage::CMD_ASSESS:
+            {
+                // Extract the data
+                EID actorEID = EID(list.msg->GetUInt32());
+                EID targetEID = EID(list.msg->GetUInt32());
+                csString physical = list.msg->GetStr();
+                csString magical = list.msg->GetStr();
+                csString overall = list.msg->GetStr();
+
+                // Make sure we haven't run past the end of the buffer
+                if (list.msg->overrun)
+                {
+                    Error2("Received incomplete CMD_ATTACK from NPC client %u.\n",me->clientnum);
+                    break;
+                }
+
+                gemNPC *actor = dynamic_cast<gemNPC*>(gemSupervisor->FindObject(actorEID));
+                if (!actor)
+                {
+                    Error2("Illegal %s from superclient!\n", ShowID(actorEID));
+                    break;
+                }
+
+                gemActor *target = dynamic_cast<gemActor*>(gemSupervisor->FindObject(targetEID));
+                if (!target)
+                {
+                    Error2("Illegal %s from superclient!\n", ShowID(actorEID));
+                    break;
+                }
+
+                // Ask user manager about an assessment between the to entities
+                int theirPhysicalLevel,theirMagicalLevel,physicalDiff,magicalDiff,overallDiff;
+                psserver->GetUserManager()->CalculateComparativeDifference(actor->GetCharacterData(), target->GetCharacterData(),
+                                                                           theirPhysicalLevel, theirMagicalLevel,
+                                                                           physicalDiff, magicalDiff, overallDiff );
+            
+                // Character's overall comparison.
+                static const char* const ComparePhrases[] =
+                    {
+                        "lame",
+                        "lame",
+                        "weaker",
+                        "weaker",
+                        "equal",
+                        "stronger",
+                        "stronger",
+                        "powerfull",
+                        "powerfull"
+                    };
+
+                if (physical.IsEmpty())
+                {
+                    physical = ComparePhrases[physicalDiff];
+                }
+                else
+                {
+                    physical += csString(" ") + ComparePhrases[physicalDiff];
+                }
+                if (magical.IsEmpty())
+                {
+                    magical = ComparePhrases[magicalDiff];
+                }
+                else
+                {
+                    magical += csString(" ") + ComparePhrases[magicalDiff];
+                }
+                if (overall.IsEmpty())
+                {
+                    overall = ComparePhrases[overallDiff];
+                }
+                else
+                {
+                    overall += csString(" ") + ComparePhrases[overallDiff];
+                }
+                
+                QueueAssessPerception(actorEID,targetEID,physical,magical,overall);
+
+                break;
+            }
             case psNPCCommandsMessage::CMD_DRDATA:
             {
                 // extract the data
                 uint32_t len = 0;
-				void *data = list.msg->GetBufferPointerUnsafe(len);
+                void *data = list.msg->GetBufferPointerUnsafe(len);
 
                 // Make sure we haven't run past the end of the buffer
                 if (list.msg->overrun)
@@ -1208,14 +1287,11 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     Debug2(LOG_SUPERCLIENT, entity_id.Unbox(), "Couldn't find base for item %s.\n", item.GetData());
                     break;
                 }
-                printf("Searching for item_stats %p (%s)\n", baseStats, baseStats->GetName() );
 
                 // See if the char already has this item
                 size_t index = chardata->Inventory().FindItemStatIndex(baseStats);
                 if (index != SIZET_NOT_FOUND)
                 {
-                    printf("Equipping existing %s on character %s.\n",baseStats->GetName(), chardata->GetCharName() );
-
                     psItem *existingItem = chardata->Inventory().GetInventoryIndexItem(index);
                     if (!chardata->Inventory().EquipItem(existingItem, (INVENTORY_SLOT_NUMBER) slotID))
                         Error3("Could not equip %s in slot %u for npc, but it is in inventory.\n",existingItem->GetName(),slotID);
@@ -1274,7 +1350,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     break;
                 }
 
-                printf("Removing item in slot %d from %s.\n",slotID,chardata->GetCharName() );
+                Debug3(LOG_SUPERCLIENT, entity_id.Unbox(), "Removing item in slot %d from %s.\n",slotID,chardata->GetCharName() );
 
                 psItem * oldItem = chardata->Inventory().RemoveItem(NULL,(INVENTORY_SLOT_NUMBER)slotID);
                 if (oldItem)
@@ -2181,8 +2257,35 @@ void NPCManager::PrepareMessage()
 void NPCManager::CheckSendPerceptionQueue(size_t expectedAddSize)
 {
     if(outbound->msg->GetSize()+expectedAddSize >= MAX_MESSAGE_SIZE)
+    {
         SendAllCommands(false); //as this happens before an npctick we don't create a new one
+    }
 }
+
+/**
+ */
+void NPCManager::QueueAssessPerception(EID entityEID, EID targetEID, const csString& physicalAssessmentPerception,
+                                       const csString& magicalAssessmentPerception,  const csString& overallAssessmentPerception)
+{
+    CheckSendPerceptionQueue(sizeof(int8_t)+2*sizeof(uint32_t)+(physicalAssessmentPerception.Length()+1)+
+                             (magicalAssessmentPerception.Length()+1)+(overallAssessmentPerception.Length()+1));
+
+    outbound->msg->Add( (int8_t) psNPCCommandsMessage::PCPT_ASSESS);
+    outbound->msg->Add( entityEID.Unbox() );
+    outbound->msg->Add( targetEID.Unbox() );
+    outbound->msg->Add( physicalAssessmentPerception );
+    outbound->msg->Add( magicalAssessmentPerception );
+    outbound->msg->Add( overallAssessmentPerception );
+
+    if ( outbound->msg->overrun )
+    {
+        CS_ASSERT(!"NPCManager::QueueAssessPerception put message in overrun state!\n");
+    }
+
+    Debug3(LOG_NPC, entityEID.Unbox(), "Added assess perception: Entity: %s Target. %s\n",
+           ShowID(entityEID),ShowID(targetEID));
+}
+
 
 /**
  * Talking sends the speaker, the target of the speech, and
@@ -2483,7 +2586,7 @@ void NPCManager::NewNPCNotify(PID player_id, PID master_id, PID owner_id)
 
 void NPCManager::WorkDoneNotify(EID npcID, csString reward, csString nick)
 {
-    Debug3(LOG_NPC, 0, "NPC(%s) got item %s.\n", ShowID(npcID), reward.GetData());
+    Debug3(LOG_NPC, npcID.Unbox(), "NPC(%s) got item %s.\n", ShowID(npcID), reward.GetData());
     psNPCWorkDoneMessage msg(0, npcID, reward.GetData(), nick.GetData());
     msg.Multicast(superclients,-1,PROX_LIST_ANY_RANGE);
 }

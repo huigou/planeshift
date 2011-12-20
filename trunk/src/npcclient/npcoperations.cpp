@@ -885,6 +885,44 @@ bool MovementOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
 
 //---------------------------------------------------------------------------
 
+bool AssessOperation::Load(iDocumentNode *node)
+{
+    physicalAssessmentPerception = node->GetAttributeValue("physical");
+    magicalAssessmentPerception = node->GetAttributeValue("magical");
+    overallAssessmentPerception = node->GetAttributeValue("overall");
+    return true;
+}
+
+ScriptOperation *AssessOperation::MakeCopy()
+{
+    AssessOperation *op = new AssessOperation;
+    op->physicalAssessmentPerception = physicalAssessmentPerception;
+    op->magicalAssessmentPerception = magicalAssessmentPerception;
+    op->overallAssessmentPerception = overallAssessmentPerception;
+    return op;
+}
+
+ScriptOperation::OperationResult AssessOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+    if (npc->GetTarget())
+    {
+        npc->Printf(5,"Queing Assement operation to server for %s",npc->GetTarget()->GetName());
+
+        npcclient->GetNetworkMgr()->QueueAssessCommand(npc->GetActor(), npc->GetTarget(), 
+                                                       psGameObject::ReplaceNPCVariables(npc, physicalAssessmentPerception),
+                                                       psGameObject::ReplaceNPCVariables(npc, magicalAssessmentPerception),
+                                                       psGameObject::ReplaceNPCVariables(npc, overallAssessmentPerception) );
+    }
+    else
+    {
+        npc->Printf(5,"No target to Queing Assement operation for.");
+    }
+
+    return OPERATION_COMPLETED;  // Nothing more to do for this op.
+}
+
+//---------------------------------------------------------------------------
+
 const char * ChaseOperation::typeStr[]={"nearest_actor","nearest_npc","nearest_player","owner","target"};
 
 ChaseOperation::ChaseOperation()
@@ -4022,7 +4060,9 @@ void WaitOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
 {
     remaining -= timedelta;
     if(remaining <= 0)
+    {
     	npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
+    }
     npc->Printf(10, "waiting... %.2f",remaining);
 }
 

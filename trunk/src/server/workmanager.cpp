@@ -517,7 +517,7 @@ void WorkManager::HandleProduction(gemActor* actor, size_t type, const char *rew
         }
         else
         {
-            Warning3(LOG_SUPERCLIENT,"%s cannot %s because you are already busy.",actor->GetName(),resourcesActions.Get(type));
+            Debug3(LOG_SUPERCLIENT,actor->GetEID().Unbox(),"%s cannot %s because you are already busy.",actor->GetName(),resourcesActions.Get(type));
         }
         return;
     }
@@ -531,7 +531,7 @@ void WorkManager::HandleProduction(gemActor* actor, size_t type, const char *rew
         }
         else
         {
-            Warning3(LOG_SUPERCLIENT,"%s cannot %s because you are too tired.",actor->GetName(),resourcesActions.Get(type));
+            Debug3(LOG_SUPERCLIENT,actor->GetEID().Unbox(),"%s cannot %s because you are too tired.",actor->GetName(),resourcesActions.Get(type));
         }
         return;
     }
@@ -567,7 +567,7 @@ void WorkManager::HandleProduction(gemActor* actor, size_t type, const char *rew
         }
         else
         {
-            Warning3(LOG_SUPERCLIENT,"%s doesn't see a good place to %s.",actor->GetName(),resourcesActions.Get(type));
+            Debug3(LOG_SUPERCLIENT,actor->GetEID().Unbox(),"%s doesn't see a good place to %s.",actor->GetName(),resourcesActions.Get(type));
         }
         return;
     }
@@ -598,7 +598,7 @@ void WorkManager::HandleProduction(gemActor* actor, size_t type, const char *rew
         }
         else
         {
-            Warning3(LOG_SUPERCLIENT,"%s doesn't see a good place to %s.",actor->GetName(),resourcesActions.Get(type));
+            Debug3(LOG_SUPERCLIENT,actor->GetEID().Unbox(),"%s doesn't see a good place to %s.",actor->GetName(),resourcesActions.Get(type));
         }
         return;
     }
