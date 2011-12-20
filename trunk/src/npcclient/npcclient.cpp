@@ -1852,27 +1852,36 @@ iCelHPath* psNPCClient::ShortestPath(NPC* npc, const csVector3& from, iSector* f
     {
         // Seams like the getdebugmeshes destroy the path, so get a separate path for debug...
         iCelHPath* path = GetNavStruct()->ShortestPath(from,fromSector,goal,goalSector);
-        csList<csSimpleRenderMesh>* list = path->GetDebugMeshes();
-        csList<csSimpleRenderMesh>::Iterator countIter(*list);
-        uint16_t count = 0;
-        while (countIter.HasNext())
+        if (path)
         {
-            count++;
-            countIter.Next();
+            csList<csSimpleRenderMesh>* list = path->GetDebugMeshes();
+            csList<csSimpleRenderMesh>::Iterator countIter(*list);
+            uint16_t count = 0;
+            while (countIter.HasNext())
+            {
+                count++;
+                countIter.Next();
+            }
+            
+            csList<csSimpleRenderMesh>::Iterator iter(*list);
+            uint16_t index = 0;
+            while (iter.HasNext())
+            {
+                csSimpleRenderMesh& simpleRenderMesh = iter.Next();
+                psSimpleRenderMeshMessage msg(0, connection->GetAccessPointers(), "NPC Path", index, count, fromSector, simpleRenderMesh);
+                msghandler->SendMessage(msg.msg);
+                index++;
+            }
         }
         
-        csList<csSimpleRenderMesh>::Iterator iter(*list);
-        uint16_t index = 0;
-        while (iter.HasNext())
-        {
-            csSimpleRenderMesh& simpleRenderMesh = iter.Next();
-            psSimpleRenderMeshMessage msg(0, connection->GetAccessPointers(), "NPC Path", index, count, fromSector, simpleRenderMesh);
-            msghandler->SendMessage(msg.msg);
-            index++;
-        }
     }
     
     iCelHPath* path = GetNavStruct()->ShortestPath(from,fromSector,goal,goalSector);
+    if (!path)
+    {
+        npc->Printf(5,"Failed to find path");
+    }
+    
     return path;
 }
 
