@@ -547,7 +547,12 @@ bool AdminCmdTargetParser::ParseTarget(AdminManager* msgManager, MsgEntry* me, p
             }
             else
             {
-                psserver->SendSystemInfo(me->clientnum,"PID:%s resolved to online client %s", ShowID(targetID), target.GetData());
+                targetActor = targetObject->GetActorPtr();
+                targetClient = targetObject->GetClient();
+                target = (targetClient)?targetClient->GetName():targetObject->GetName();
+                targetID = targetObject->GetPID();
+
+                psserver->SendSystemInfo(me->clientnum,"%s resolved to online client %s", ShowID(targetID), target.GetData());
             }
         }
         else if (IsAllowedTargetType(ADMINCMD_TARGET_AREA) && word.StartsWith("area:",true))
