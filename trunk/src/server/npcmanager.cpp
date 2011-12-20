@@ -1554,7 +1554,7 @@ bool NPCManager::CanPetHearYou(int clientnum, Client *owner, gemNPC *pet, const 
     env.Define("Skill", owner->GetCharacterData()->GetSkillRank(GetPetSkill()).Current());
 
     //check if the script is up to date
-    if(psserver->GetMathScriptEngine()->CheckAndUpdateScript(petRangeScript, "CalculateMaxPetRange"))
+    if(!psserver->GetMathScriptEngine()->CheckAndUpdateScript(petRangeScript, "CalculateMaxPetRange"))
     {
         //default if the script cannot be found.
         //the server won't init without the script but in this case we lost it
@@ -1588,7 +1588,7 @@ bool NPCManager::WillPetReact(int clientnum, Client * owner, gemNPC * pet, const
     env.Define("Skill", owner->GetCharacterData()->GetSkillRank(GetPetSkill()).Current());
     env.Define("Level", level);
     //check if the script is up to date
-    if(psserver->GetMathScriptEngine()->CheckAndUpdateScript(petReactScript, "CalculatePetReact"))
+    if(!psserver->GetMathScriptEngine()->CheckAndUpdateScript(petReactScript, "CalculatePetReact"))
     {
         //default if the script cannot be found.
         //the server won't init without the script but in this case we lost it
