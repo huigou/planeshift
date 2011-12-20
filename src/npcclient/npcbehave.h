@@ -445,6 +445,15 @@ public:
 
     static float Calc2DDistance(const csVector3 & a, const csVector3 & b);
 
+    /** Replace NPC Variables/keywords in the string
+     *
+     * Replace $race,$target,$tribe,$owner,$name.
+     *
+     * @param npc    The npc to take the variables from
+     * @param object The string to replace the keywords from
+     * @return String with replaced keywords.
+     */
+    static csString ReplaceNPCVariables(NPC* npc, const csString& object);
 
 };
 

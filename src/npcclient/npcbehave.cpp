@@ -201,7 +201,7 @@ bool NPCType::Load(iResultRow &row)
             for(size_t i=0; i<reactions.GetSize(); i++)
             {
                 // Same event with same type
-                if(!strcmp(reactions[i]->GetEventType(),r->GetEventType())&&
+                if( (reactions[i]->GetEventType(NULL) == r->GetEventType(NULL))&&
                     (reactions[i]->type == r->type)&&
                     (reactions[i]->values == r->values))
                 {
@@ -216,7 +216,7 @@ bool NPCType::Load(iResultRow &row)
                                 // to allow for overiding of event,affected pairs.
                                 // Though now give error, until needed.
                                 Error4("Reaction of type '%s' already connected to '%s' in '%s'",
-                                       r->GetEventType(),reactions[i]->affected[j]->GetName(), name.GetDataSafe());
+                                       r->GetEventType(NULL).GetDataSafe(),reactions[i]->affected[j]->GetName(), name.GetDataSafe());
                                 return false;
                                 // delete reactions[i];
                                 //reactions.DeleteIndex(i);
@@ -338,7 +338,7 @@ bool NPCType::Load(iDocumentNode *node)
             for (size_t i=0; i<reactions.GetSize(); i++)
             {
                 // Same event with same type
-                if (!strcmp(reactions[i]->GetEventType(),r->GetEventType())&&
+                if ((reactions[i]->GetEventType(NULL) == r->GetEventType(NULL))&&
                     (reactions[i]->type == r->type)&&
                     (reactions[i]->values == r->values))
                 {
@@ -353,7 +353,7 @@ bool NPCType::Load(iDocumentNode *node)
                                 // to allow for overiding of event,affected pairs.
                                 // Though now give error, until needed.
                                 Error4("Reaction of type '%s' already connected to '%s' in '%s'",
-                                       r->GetEventType(),reactions[i]->affected[j]->GetName(), name.GetDataSafe());
+                                       r->GetEventType(NULL).GetDataSafe(),reactions[i]->affected[j]->GetName(), name.GetDataSafe());
                                 return false;
                                 // delete reactions[i];
                                 //reactions.DeleteIndex(i);
@@ -420,7 +420,7 @@ void NPCType::DumpReactionList(NPC *npc)
 
 
         CPrintf(CON_CMDOUTPUT, "%-25s %-25s %5.1f %-10s %-20s %s\n",
-                reactions[i]->GetEventType(),reactions[i]->GetType().GetDataSafe(),
+                reactions[i]->GetEventType(NULL).GetDataSafe(),reactions[i]->GetType().GetDataSafe(),
                 reactions[i]->GetRange(),
                 reactions[i]->GetValue().GetDataSafe(),
                 reactions[i]->GetLastTriggerd().GetDataSafe(),
@@ -1506,6 +1506,32 @@ float psGameObject::Calc2DDistance(const csVector3 & a, const csVector3 & b)
     diff.y = 0;
     return diff.Norm();
 }
+
+csString psGameObject::ReplaceNPCVariables(NPC* npc, const csString& object)
+{
+    csString result(object);
+    
+    result.ReplaceAll("$name",npc->GetName());
+    if (npc->GetRaceInfo())
+    {
+        result.ReplaceAll("$race",npc->GetRaceInfo()->GetName());
+    }
+    if (npc->GetTribe())
+    {
+        result.ReplaceAll("$tribe",npc->GetTribe()->GetName());
+    }
+    if (npc->GetOwner())
+    {
+        result.ReplaceAll("$owner",npc->GetOwnerName());
+    }
+    if (npc->GetTarget())
+    {
+        result.ReplaceAll("$target",npc->GetTarget()->GetName());
+    }
+
+    return result;
+}
+
 
 
 //---------------------------------------------------------------------------

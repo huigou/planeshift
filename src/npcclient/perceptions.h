@@ -131,7 +131,7 @@ public:
      */
     bool OnlyInterrupt(Behavior* behavior);
     
-    const char     *GetEventType()      { return eventType;   }
+    csString        GetEventType(NPC* npc);
     float           GetRange()          { return range;        }
     int             GetFactionDiff()    { return factionDiff; }
     bool            GetValueValid(int i);
