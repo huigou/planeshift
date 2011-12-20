@@ -347,6 +347,9 @@ void pawsMusicWindow::HandleMessage(MsgEntry* message)
     sheet = docSys->CreateDocument();
     sheet->Parse(msg.musicalSheet.GetDataSafe(), true);
 
+    //disable edit mode if we are loading a new sheet.
+    editButton->SetState(false);
+
     if(!LoadXML(sheet))
     {
         psSystemMessage msg(0, MSG_ERROR, PawsManager::GetSingleton().Translate("Cannot load: illegal XML syntax!"));
