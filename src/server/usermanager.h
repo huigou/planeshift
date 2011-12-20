@@ -117,6 +117,13 @@ public:
       */
     void AcceptDuel(PendingDuelInvite *invite);
 
+    /** Calcualte a comarative difference between two characters for physical, magical, and overall level.
+     *
+     */
+    void CalculateComparativeDifference(psCharacter* myCharData, psCharacter* theirCharData,
+                                        int& theirPhysicalLevel, int& theirMagicalLevel,
+                                        int& physicalDiff, int& magicalDiff, int& overallLevelComparison );
+    
     /** @brief Sends detail information about 'charData' to 'client'.
       *
       * If 'full' is true, it contains info about HP and basic stats like Strength.

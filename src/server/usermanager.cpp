@@ -405,6 +405,96 @@ csString fmtStatLine(const char *const label, unsigned int value, unsigned int b
     return s;
 }
 
+void UserManager::CalculateComparativeDifference(psCharacter* myCharData, psCharacter* theirCharData, int& theirPhysicalLevel, int& theirMagicalLevel, int& physicalDiff,int& magicalDiff,int& overallLevelComparison )
+{
+    
+    // Begin by gathering stats. We will get overall strength for physical and magical and also a comparison.
+    int myPhysicalStat = myCharData->GetCharLevel(true);
+    int myMagicalStat = myCharData->GetCharLevel(false);
+    int theirPhysicalStat = theirCharData->GetCharLevel(true);
+    int theirMagicalStat = theirCharData->GetCharLevel(false);
+    
+    /* TODO (needs extra work to determine direction of inaccuracy)
+    // Intellect is weighed against charisma.
+    int myIntellect = playerAttr[PSITEMSTATS_STAT_INTELLIGENCE].Current();
+    int opponentCharisma = theirCharData->Stats().Get(PSITEMSTATS_STAT_CHARISMA).Current();
+    
+    // The difference between the two gives a bonus (or malus) to examination accuracy.
+    int overallModifier = opponentCharisma - myIntellect;
+    overallModifier = (overallModifier < 0) ? 0 : overallModifier;*/
+    
+    // We also take skill into consideration.
+    int theirBestPhysical = 0;
+    int myBestPhysical = 0;
+    int theirBestMagical = 0;
+    int myBestMagical = 0;
+
+    for(size_t i=0; i < cacheManager->GetSkillAmount(); ++i)
+    {
+        int* theirBest = NULL;
+        int* myBest = NULL;
+        Skill& mySkill = myCharData->Skills().Get((PSSKILL)i);
+
+        if(mySkill.info->category == PSSKILLS_CATEGORY_COMBAT)
+        {
+            theirBest = &theirBestPhysical;
+            myBest = &myBestPhysical;
+        }
+        else if(mySkill.info->category == PSSKILLS_CATEGORY_MAGIC)
+        {
+            theirBest = &theirBestMagical;
+            myBest = &myBestMagical;
+        }
+        else
+        {
+            continue;
+        }
+
+        if (*myBest < mySkill.rank.Current())
+        {
+            *myBest = mySkill.rank.Current();
+        }
+        
+        int mod = 0;
+        Skill& theirSkill = theirCharData->Skills().Get((PSSKILL)i);
+        
+        if(mySkill.rank.Current() < theirSkill.rank.Current())
+        {
+            // Reduce accuracy of skill check.
+            mod = int(mySkill.rank.Current() + (theirSkill.rank.Current() - mySkill.rank.Current()) / 1.5);
+        }
+        else
+        {
+            mod = theirSkill.rank.Current();
+        }
+        
+        if(*theirBest < mod)
+        {
+            *theirBest = mod;
+        }
+    }
+
+    // We calculate two 'levels', one physical and one magical.
+    const int maxLevel = 7;
+
+    theirPhysicalLevel = (theirPhysicalStat + theirBestPhysical * 2) / 100;
+    theirPhysicalLevel = (theirPhysicalLevel > maxLevel) ? maxLevel : theirPhysicalLevel;
+    theirMagicalLevel = (theirMagicalStat + theirBestMagical * 2) / 100;
+    theirMagicalLevel = (theirMagicalLevel > maxLevel) ? maxLevel : theirMagicalLevel;
+    
+    int myPhysicalLevel = (myPhysicalStat + myBestPhysical * 2) / 100;
+    myPhysicalLevel = (myPhysicalLevel > maxLevel) ? maxLevel : myPhysicalLevel;
+    int myMagicalLevel = (myMagicalStat + myBestMagical * 2) / 100;
+    myMagicalLevel = (myMagicalLevel > maxLevel) ? maxLevel : myMagicalLevel;
+
+    // And also a comparative difference for each.
+    physicalDiff = theirPhysicalLevel - myPhysicalLevel;
+    magicalDiff = theirMagicalLevel - myMagicalLevel;
+    overallLevelComparison = int ((float)(2 * maxLevel + physicalDiff + magicalDiff) / 3.5f);
+}
+
+
+
 void UserManager::SendCharacterDescription(Client * client, gemActor *actor, bool full, bool simple, const csString & requestor)
 {
     psCharacter *charData = actor->GetCharacterData();
@@ -501,89 +591,12 @@ void UserManager::SendCharacterDescription(Client * client, gemActor *actor, boo
         //  dead or if we are viewing our own description
         if (!charData->GetImperviousToAttack() && actor->GetMode() != PSCHARACTER_MODE_DEAD && !isSelf)
         {
-            // Begin by gathering stats. We will get overall strength for physical and magical and also a comparison.
-            int myPhysicalStat = client->GetCharacterData()->GetCharLevel(true);
-            int myMagicalStat = client->GetCharacterData()->GetCharLevel(false);
-            int theirPhysicalStat = charData->GetCharLevel(true);
-            int theirMagicalStat = charData->GetCharLevel(false);
-
-            /* TODO (needs extra work to determine direction of inaccuracy)
-            // Intellect is weighed against charisma.
-            int myIntellect = playerAttr[PSITEMSTATS_STAT_INTELLIGENCE].Current();
-            int opponentCharisma = charData->Stats().Get(PSITEMSTATS_STAT_CHARISMA).Current();
-
-            // The difference between the two gives a bonus (or malus) to examination accuracy.
-            int overallModifier = opponentCharisma - myIntellect;
-            overallModifier = (overallModifier < 0) ? 0 : overallModifier;*/
-
-            // We also take skill into consideration.
-            int theirBestPhysical = 0;
-            int myBestPhysical = 0;
-            int theirBestMagical = 0;
-            int myBestMagical = 0;
-
-            for(size_t i=0; i < cacheManager->GetSkillAmount(); ++i)
-            {
-                int* theirBest = NULL;
-                int* myBest = NULL;
-                Skill& mySkill = client->GetCharacterData()->Skills().Get((PSSKILL)i);
-
-                if(mySkill.info->category == PSSKILLS_CATEGORY_COMBAT)
-                {
-                    theirBest = &theirBestPhysical;
-                    myBest = &myBestPhysical;
-                }
-                else if(mySkill.info->category == PSSKILLS_CATEGORY_MAGIC)
-                {
-                    theirBest = &theirBestMagical;
-                    myBest = &myBestMagical;
-                }
-                else
-                {
-                    continue;
-                }
-
-                if (*myBest < mySkill.rank.Current())
-                {
-                    *myBest = mySkill.rank.Current();
-                }
-
-                int mod = 0;
-                Skill& theirSkill = charData->Skills().Get((PSSKILL)i);
-
-                if(mySkill.rank.Current() < theirSkill.rank.Current())
-                {
-                    // Reduce accuracy of skill check.
-                    mod = int(mySkill.rank.Current() + (theirSkill.rank.Current() - mySkill.rank.Current()) / 1.5);
-                }
-                else
-                {
-                    mod = theirSkill.rank.Current();
-                }
-
-                if(*theirBest < mod)
-                {
-                    *theirBest = mod;
-                }
-            }
-
-            // We calculate two 'levels', one physical and one magical.
-            const int maxLevel = 7;
-
-            int theirPhysicalLevel = (theirPhysicalStat + theirBestPhysical * 2) / 100;
-            theirPhysicalLevel = (theirPhysicalLevel > maxLevel) ? maxLevel : theirPhysicalLevel;
-            int theirMagicalLevel = (theirMagicalStat + theirBestMagical * 2) / 100;
-            theirMagicalLevel = (theirMagicalLevel > maxLevel) ? maxLevel : theirMagicalLevel;
-
-            int myPhysicalLevel = (myPhysicalStat + myBestPhysical * 2) / 100;
-            myPhysicalLevel = (myPhysicalLevel > maxLevel) ? maxLevel : myPhysicalLevel;
-            int myMagicalLevel = (myMagicalStat + myBestMagical * 2) / 100;
-            myMagicalLevel = (myMagicalLevel > maxLevel) ? maxLevel : myMagicalLevel;
 
             // And also a comparative difference for each.
-            int physicalDiff = theirPhysicalLevel - myPhysicalLevel;
-            int magicalDiff = theirMagicalLevel - myMagicalLevel;
-            int overallLevelComparison = int ((float)(2 * maxLevel + physicalDiff + magicalDiff) / 3.5f);
+            int theirPhysicalLevel, theirMagicalLevel, physicalDiff, magicalDiff, overallLevelComparison;
+            CalculateComparativeDifference(client->GetCharacterData(), charData,
+                                           theirPhysicalLevel,theirMagicalLevel,
+                                           physicalDiff, magicalDiff, overallLevelComparison );
 
             // Character's magical strength assessment.
             static const char* const MagicalStrengthAssessPhrases[] =
