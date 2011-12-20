@@ -2532,16 +2532,20 @@ int WorkManager::CalculateEventDuration(psTradeTransformations* trans, psTradePr
 {
     // Calculate the seconds needed in order to complete this event
     int time = 0;
-    if(calc_transform_time)
+
+    if(!calc_transform_time.IsValid())
+    {
+        //update the script if needed. 
+        psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_transform_time, "Calculate Transformation Time");
+    }
+    
+    if(calc_transform_time.IsValid())
     {
         MathEnvironment env;
         env.Define("Object", transItem);
         env.Define("Worker", worker);
         env.Define("Transform", trans);
         env.Define("Process", process);
-
-        //update the script if needed. Here we don't protect against bad scripts as before for now.
-        psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_transform_time, "Calculate Transformation Time");
 
         calc_transform_time->Evaluate(&env);
         int time = env.Lookup("Time")->GetValue();
