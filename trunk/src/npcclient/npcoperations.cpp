@@ -1848,28 +1848,6 @@ Waypoint* LocateOperation::CalculateWaypoint(NPC *npc, csVector3 located_pos, iS
     return NULL;
 }
 
-void ReplaceVariables(csString & object,NPC *npc)
-{
-    object.ReplaceAll("$name",npc->GetName());
-    if (npc->GetRaceInfo())
-    {
-        object.ReplaceAll("$race",npc->GetRaceInfo()->GetName());
-    }
-    if (npc->GetTribe())
-    {
-        object.ReplaceAll("$tribe",npc->GetTribe()->GetName());
-    }
-    if (npc->GetOwner())
-    {
-        object.ReplaceAll("$owner",npc->GetOwnerName());
-    }
-    if (npc->GetTarget())
-    {
-        object.ReplaceAll("$target",npc->GetTarget()->GetName());
-    }
-}
-
-
 ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     // Reset old target
@@ -1886,9 +1864,9 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, EventManager *ev
     csVector3 start_pos;
     psGameObject::GetPosition(npc->GetActor(),start_pos,start_rot,start_sector);
 
-    ReplaceVariables(object,npc);
+    csString objectReplacedVariables = psGameObject::ReplaceNPCVariables(npc, object);
 
-    csArray<csString> split_obj = psSplit(object,':');
+    csArray<csString> split_obj = psSplit(objectReplacedVariables,':');
  
     if (split_obj[0] == "entity")
     {
@@ -2136,7 +2114,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, EventManager *ev
             if (!memory)
             {
                 npc->Printf(5, "Couldn't locate any <%s> in npc script for <%s>.",
-                            (const char *)object,npc->GetName() );
+                            (const char *)objectReplacedVariables,npc->GetName() );
                 return OPERATION_FAILED; // Nothing more to do for this op.
             }
             located_pos = memory->pos;
@@ -2216,7 +2194,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, EventManager *ev
         if (!located_wp)
         {
             npc->Printf(5, "Couldn't locate any <%s> in npc script for <%s>.",
-                (const char *)object,npc->GetName() );
+                (const char *)objectReplacedVariables,npc->GetName() );
             return OPERATION_FAILED; // Nothing more to do for this op.
         }
         npc->Printf(5, "Located waypoint: %s at %s range %.2f",located_wp->GetName(),
@@ -2251,7 +2229,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, EventManager *ev
         if (!location)
         {
             npc->Printf(5, "Couldn't locate any <%s> in npc script for <%s>.",
-                (const char *)object,npc->GetName() );
+                (const char *)objectReplacedVariables,npc->GetName() );
             return OPERATION_FAILED; // Nothing more to do for this op.
         }
         located_pos = location->pos;
@@ -3049,7 +3027,9 @@ ScriptOperation *PerceptOperation::MakeCopy()
 
 ScriptOperation::OperationResult PerceptOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
-    Perception pcpt(perception);
+    csString perceptionVariablesReplaced = psGameObject::ReplaceNPCVariables(npc, perception);
+
+    Perception pcpt(perceptionVariablesReplaced);
 
     csVector3 basePos;
     iSector*  baseSector = NULL;
@@ -3800,17 +3780,21 @@ ScriptOperation::OperationResult TalkOperation::Run(NPC *npc, EventManager *even
             return OPERATION_COMPLETED;  // Nothing more to do for this op.
         }
     }
+
+    csString talkTextVariablesReplaced = psGameObject::ReplaceNPCVariables(npc, talkText);
             
     // Queue the talk to the server
     npcclient->GetNetworkMgr()->QueueTalkCommand(npc->GetActor(), talkTarget,
-                                                 talkType, talkPublic, talkText);
+                                                 talkType, talkPublic, talkTextVariablesReplaced);
 
     if (talkTarget && !command.IsEmpty())
     {
         NPC* friendNPC = talkTarget->GetNPC(); // Check if we have a NPC for this
         if(friendNPC)
         {
-            Perception perception("friend:" + command);
+            csString commandVariablesReplaced = psGameObject::ReplaceNPCVariables(npc, command);
+
+            Perception perception(commandVariablesReplaced);
             friendNPC->TriggerEvent(&perception);
         }
     }

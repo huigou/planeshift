@@ -54,6 +54,7 @@ INSERT INTO sc_npctypes VALUES("3","InRegion","","","","","out of bounds","","",
 INSERT INTO sc_npctypes VALUES("4","Fight","","","","","","","",
 '<behavior name="Fight"   initial="0" growth="0" decay="0" completion_decay="-1" >
    <locate obj="target"  range="20" />
+   <talk text="$race attacked by $target" target="false" /> 
    <rotate type="locatedest" anim="walk" ang_vel="120" />
    <melee seek_range="20" melee_range="3" />
 </behavior>
