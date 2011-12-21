@@ -868,6 +868,25 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 break;
             }
 
+            case psNPCCommandsMessage::PCPT_FAILED_TO_ATTACK:
+            {
+                EID npcEID = EID(msg->GetUInt32());
+                EID targetEID = EID(msg->GetUInt32());
+
+                NPC *npc = npcclient->FindNPC( npcEID );
+                gemNPCObject *target = npcclient->FindEntityID( targetEID );
+
+                if (!npc || !target)
+                    break;
+
+                npc->Printf("Got Failed to Attack perception");
+
+                Perception failedToAttack("failed to attack");
+                npc->TriggerEvent(&failedToAttack);
+
+                break;
+            }
+
             case psNPCCommandsMessage::PCPT_FLAG:
             {
                 EID owner_id = EID(msg->GetUInt32());

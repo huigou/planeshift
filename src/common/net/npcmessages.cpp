@@ -767,6 +767,15 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
                 msgtext.AppendFmt("OwnerID: %u ItemName: %s Inserted: %s Count: %d ", owner_id.Unbox(), item_name.GetData(), inserted ? "true" : "false", count);
                 break;
             }
+            case psNPCCommandsMessage::PCPT_FAILED_TO_ATTACK:
+            {
+                msgtext.Append("PCPT_FAILED_TO_ATTACK: ");
+                EID npcEID = EID(msg->GetUInt32());
+                EID targetEID = EID(msg->GetUInt32());
+
+                msgtext.AppendFmt("NPC: %s Target: %s ", ShowID(npcEID), ShowID(targetEID));
+                break;
+            }
             case psNPCCommandsMessage::PCPT_FLAG:
             {
                 msgtext.Append("PCPT_FLAG: ");

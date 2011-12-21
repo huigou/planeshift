@@ -61,7 +61,7 @@ public:
     virtual ~CombatManager();
 
     /// This is how you start an attack sequence
-    void AttackSomeone(gemActor *attacker, gemObject *target, Stance stance);
+    bool AttackSomeone(gemActor *attacker, gemObject *target, Stance stance);
 
     /// This is how you break an attack sequence off, through death or user command.
     void StopAttack(gemActor *attacker);

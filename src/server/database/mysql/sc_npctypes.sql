@@ -63,10 +63,15 @@ INSERT INTO sc_npctypes VALUES("4","Fight","","","","","","","",
    <chase type="target" chase_range="20" anim="run" vel="5" />
 </behavior>
 
+<behavior name="FailedToAttack" completion_decay="-1" >
+   <talk text="I can not attack $target" target="false" />
+</behavior> 
+
 <react event="fight"               behavior="Fight" />
 <react event="attack"              behavior="Fight" />
 <react event="damage"              behavior="Fight" delta="20" weight="1" />
 <react event="target out of range" behavior="Chase" />
+<react event="failed to attack"    behavior="FailedToAttack" />
 
 <!-- Stop chas if target is out of chase range -->
 <react event="target out of chase" behavior="Chase" absolute="0" only_interrupt="chase"/>

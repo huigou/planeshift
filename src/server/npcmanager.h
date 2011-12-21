@@ -128,6 +128,9 @@ public:
     /// Let the superclient know that info where requested for a npc
     void QueueInfoRequestPerception(gemNPC* npc, Client* client, const char* infoRequestSubCmd);
 
+    /// Let the superclient know that an attempt to attack failed 
+    void QueueFailedToAttackPerception(gemNPC* attacker, gemObject* target);
+
     /**
      * Requests the npcclient to change the brain of this npc (the type) to another one.
      * @param npc The npc which will be changed.

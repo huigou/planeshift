@@ -980,8 +980,19 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
 
                         if ( !target->GetClient() || !target->GetActorPtr()->GetInvincibility() )
                         {
-                            psserver->combatmanager->AttackSomeone(attacker,target,CombatManager::GetStance(cacheManager, stance));
-                            Debug3(LOG_SUPERCLIENT, attacker_id.Unbox(), "%s is now attacking %s.\n", attacker->GetName(), target->GetName());
+                            if(psserver->combatmanager->AttackSomeone(attacker,target,
+                                                                      CombatManager::GetStance(cacheManager, stance)))
+                            {
+                                Debug3(LOG_SUPERCLIENT, attacker_id.Unbox(), "%s is now attacking %s.\n",
+                                       attacker->GetName(), target->GetName());                            
+                            }
+                            else
+                            {
+                                Debug3(LOG_SUPERCLIENT, attacker_id.Unbox(), "%s failed to start attacking %s.\n",
+                                       attacker->GetName(), target->GetName());                            
+                                
+                                QueueFailedToAttackPerception(attacker, target);
+                            }
                         }
                         else
                         {
@@ -2532,6 +2543,18 @@ void NPCManager::QueueInfoRequestPerception(gemNPC* npc, Client* client, const c
     cmd_count++;
     Debug2(LOG_NPC, npc->GetEID().Unbox(), "Added Info Request perception for %s.\n", ShowID(npc->GetEID()) );    
 }
+
+void NPCManager::QueueFailedToAttackPerception(gemNPC* attacker, gemObject* target)
+{
+    CheckSendPerceptionQueue(sizeof(int8_t)+2*sizeof(uint32_t));
+    outbound->msg->Add( (int8_t) psNPCCommandsMessage::PCPT_FAILED_TO_ATTACK);
+    outbound->msg->Add(attacker->GetEID().Unbox());
+    outbound->msg->Add(target->GetEID().Unbox());
+    cmd_count++;
+    Debug2(LOG_NPC, attacker->GetEID().Unbox(), "Added Failed to Attack perception for %s.\n", ShowID(attacker->GetEID()) );    
+}
+
+
 
 void NPCManager::ChangeNPCBrain(gemNPC* npc, Client* client, const char* brainName)
 {
