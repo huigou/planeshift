@@ -633,7 +633,7 @@ void WorkManager::HandleProduction(gemActor* actor, size_t type, const char *rew
         }
         else
         {
-            Warning3(LOG_SUPERCLIENT,"%s don't have a good tool to %s with, equipped in your hand.",actor->GetName(),resourcesActions.Get(type));
+            Debug3(LOG_SUPERCLIENT,actor->GetEID().Unbox(),"%s don't have a good tool to %s with, equipped in your hand.",actor->GetName(),resourcesActions.Get(type));
         }
         return;
     }
@@ -665,7 +665,7 @@ void WorkManager::HandleProduction(gemActor* actor, size_t type, const char *rew
     }
     else
     {
-        Debug4(LOG_SUPERCLIENT,0,"%s start to %s for %s",actor->GetName(),resourcesActions.Get(type),reward);
+        Debug4(LOG_SUPERCLIENT,actor->GetEID().Unbox(),"%s start to %s for %s",actor->GetName(),resourcesActions.Get(type),reward);
     }
 }
 
@@ -857,7 +857,7 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
                     }
                     else
                     {
-                        Debug5(LOG_SUPERCLIENT,0,"%s(%s) found %s, but dropped it: %s",workEvent->worker->GetName(),
+                        Debug5(LOG_SUPERCLIENT,workEvent->worker->GetEID().Unbox(),"%s(%s) found %s, but dropped it: %s",workEvent->worker->GetName(),
                                ShowID(workEvent->worker->GetEID()), newitem->GetName(), workerchar->Inventory().lastError.GetDataSafe());
                     }
 
@@ -871,7 +871,7 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
                     }
                     else
                     {
-                        Debug4(LOG_SUPERCLIENT,0,"%s(%s) got some %s.",workEvent->worker->GetName(),
+                        Debug4(LOG_SUPERCLIENT,workEvent->worker->GetEID().Unbox(),"%s(%s) got some %s.",workEvent->worker->GetName(),
                                ShowID(workEvent->worker->GetEID()), newitem->GetName());
                     }
                 }
@@ -913,7 +913,7 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
         } 
         else
         {
-            Debug2(LOG_SUPERCLIENT,0,"%s where not successful.",workEvent->worker->GetName());
+            Debug2(LOG_SUPERCLIENT,workEvent->worker->GetEID().Unbox(),"%s where not successful.",workEvent->worker->GetName());
         }
     }
 
@@ -956,7 +956,7 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
     else
     {
         //TODO: Fix the code abow to work without using the client all the time.
-        Debug2(LOG_SUPERCLIENT,0,"%s where not assigned experience for his work. Not implemented yet.",workEvent->worker->GetName());
+        Debug2(LOG_SUPERCLIENT,workEvent->worker->GetEID().Unbox(),"%s where not assigned experience for his work. Not implemented yet.",workEvent->worker->GetName());
     }
 
     workEvent->worker->SetMode(PSCHARACTER_MODE_PEACE); // Actor isn't working anymore
