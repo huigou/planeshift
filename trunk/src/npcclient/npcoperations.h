@@ -953,7 +953,7 @@ public:
 class ReproduceOperation : public ScriptOperation
 {
 protected:
-
+    csString tribeMemberType;
 public:
 
     ReproduceOperation(): ScriptOperation("Reproduce") {};
@@ -1225,7 +1225,7 @@ public:
 class TribeTypeOperation : public ScriptOperation
 {
 protected:
-    int tribeType;
+    csString tribeType;
 public:
 
     TribeTypeOperation(): ScriptOperation("Tribe_Type") {};

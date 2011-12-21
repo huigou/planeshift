@@ -3271,12 +3271,19 @@ ScriptOperation::OperationResult PickupOperation::Run(NPC *npc, EventManager *ev
 
 bool ReproduceOperation::Load(iDocumentNode *node)
 {
+    tribeMemberType = node->GetAttributeValue("type");
+    if (tribeMemberType.IsEmpty())
+    {
+        Error1("Reproduce operation need a type attribute.");
+        return false;
+    }
     return true;
 }
 
 ScriptOperation *ReproduceOperation::MakeCopy()
 {
     ReproduceOperation *op = new ReproduceOperation;
+    op->tribeMemberType = tribeMemberType;
     return op;
 }
 
@@ -3291,7 +3298,7 @@ ScriptOperation::OperationResult ReproduceOperation::Run(NPC *npc, EventManager 
     if(friendNPC)
     {
         npc->Printf(5, "Reproduce");
-        npcclient->GetNetworkMgr()->QueueSpawnCommand(friendNPC->GetActor(), npc->GetActor(), 0);
+        npcclient->GetNetworkMgr()->QueueSpawnCommand(friendNPC->GetActor(), npc->GetActor(), tribeMemberType);
     }
 
     return OPERATION_COMPLETED;  // Nothing more to do for this op.
@@ -4042,7 +4049,13 @@ ScriptOperation::OperationResult TribeHomeOperation::Run(NPC *npc, EventManager 
 
 bool TribeTypeOperation::Load(iDocumentNode *node)
 {
-    tribeType = node->GetAttributeValueAsInt("type");
+    tribeType = node->GetAttributeValue("type");
+    if (tribeType.IsEmpty())
+    {
+        Error1("Tribe type needs a type attribute");
+        return false;
+    }
+    
     return true;
 }
 
@@ -4058,11 +4071,11 @@ ScriptOperation::OperationResult TribeTypeOperation::Run(NPC *npc, EventManager 
     // Check if NPC is part of a tribe
     Tribe * tribe = npc->GetTribe();
     
-    if ( !tribe ) return OPERATION_COMPLETED; // Nothing more to do for this op.
+    if ( !tribe ) return OPERATION_FAILED; // Nothing more to do for this op.
 
   
     npc->SetTribeMemberType(tribeType);  
-    npc->Printf("Change tribe type to : %d", tribeType );
+    npc->Printf("Change tribe type to : %s", tribeType.GetDataSafe() );
 
     return OPERATION_COMPLETED; // Nothing more to do for this op.
 }

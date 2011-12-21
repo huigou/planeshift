@@ -95,14 +95,14 @@ bool Tribe::LoadMember(iResultRow& row)
 {
     MemberID mID;
     mID.pid               = row.GetInt("member_id");
-    mID.tribeMemberType   = row.GetInt("member_type");
+    mID.tribeMemberType   = row["member_type"];
 
     membersId.Push(mID);
     
     return true;
 }
 
-bool Tribe::AddMember(PID pid, uint32_t tribeMemberType)
+bool Tribe::AddMember(PID pid, const char* tribeMemberType)
 {
     MemberID mID;
     mID.pid = pid;
@@ -112,7 +112,7 @@ bool Tribe::AddMember(PID pid, uint32_t tribeMemberType)
 
     // Add to members list in db
     db->Command("INSERT INTO tribe_members (tribe_id,member_id,member_type) "
-                "VALUES (%u,%u,%u)", GetID(), pid.Unbox(),tribeMemberType);
+                "VALUES (%u,%u,%s)", GetID(), pid.Unbox(),tribeMemberType);
 
     return true;
 }
@@ -232,7 +232,7 @@ bool Tribe::CheckAttach(NPC * npc)
     return true; // Not part of tribe but didn't fail either
 }
 
-bool Tribe::AttachMember(NPC * npc, uint32_t tribeMemberType)
+bool Tribe::AttachMember(NPC * npc, const char* tribeMemberType)
 {
     // Some checks to see if this NPC is fitt for this Tribe
     Behavior * idleBehavior = npc->GetBrain()->Find(npcIdleBehavior.GetDataSafe());
@@ -1115,11 +1115,11 @@ void Tribe::ModifyWait(Recipe* recipe, int delta)
     tribalRecipe->ModifyWait(recipe, delta);
 }
 
-bool Tribe::CheckMembers(csString name, int number)
+bool Tribe::CheckMembers(csString type, int number)
 {
-    // TODO Filter the search only for a kind of npcs (explorers, warriors, etc)
 
-    if(name == "number")
+    // Handle special case where name is 'number'
+    if(type == "number")
     {
         // Check if total number is correct (we don't care if their idle or not
         if(number <= members.GetSize())
@@ -1132,13 +1132,23 @@ bool Tribe::CheckMembers(csString name, int number)
 
     for(int i=0;i<members.GetSize();i++)
     {
-        if(!members[i]->GetCurrentBehavior())
+        NPC* member = members[i];
+        
+        if(!member->GetCurrentBehavior())
         {
             // Discard Members with no Behavior
             // This shouldn't happen but... ermm just in case
             continue;
         }
-        if(strcasecmp(members[i]->GetCurrentBehavior()->GetName(), npcIdleBehavior.GetDataSafe()) == 0)
+
+        if ((member->GetTribeMemberType() != type) && (type != "any"))
+        {
+            // Just skip any members of wrong type.
+            continue;
+        }
+
+
+        if(strcasecmp(member->GetCurrentBehavior()->GetName(), npcIdleBehavior.GetDataSafe()) == 0)
         {
             number--;
         }
@@ -1224,33 +1234,39 @@ csArray<NPC*> Tribe::SelectNPCs(const char* type, const char* number)
 {
     int           count = atoi(number);
     csArray<NPC*> npcs;
-    csString      currentBehavior;
 
-    // TODO -- Tribe Member Types
-    // For the moment we don't have tribe member types... but in case
-    // they will be developed soon, this is where you must alter the
-    // code to check for their type when selecting them. (recipe Select function) 
-
+    // Loop all members. Check for type and if they are idle.
     for(int i=0;i<members.GetSize();i++)
     {
-        Behavior* behave = members[i]->GetCurrentBehavior();
-        if(!behave)
+        NPC* member = members[i];
+
+        if ((member->GetTribeMemberType() != type) && (type != "any"))
+        {
+            // Just skip any members of wrong type.
+            continue;
+        }
+
+        Behavior* currentBehavior = member->GetCurrentBehavior();
+        if(!currentBehavior)
         {
             // Newly created NPC or some malfunction.
             // Just skip and try this npc next loop.
             continue;
         }
-        currentBehavior = members[i]->GetCurrentBehavior()->GetName();
 
-        if(currentBehavior == "do nothing")
+        if(strcasecmp(currentBehavior->GetName(),npcIdleBehavior.GetDataSafe())==0)
         {
             count--;
-            npcs.Push(members[i]);
+            npcs.Push(member);
         }
+
+        // Check if we found the number requested
         if(count == 0)
             return npcs;
+
     }
 
+    // Return what we found
     return npcs;
 }
 

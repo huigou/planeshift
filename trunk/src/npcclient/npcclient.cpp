@@ -1574,7 +1574,7 @@ void psNPCClient::ListTribes(const char * pattern)
             	for (size_t j = 0; j < tribes[i]->GetMemberCount(); j++)
             	{
                 	NPC * npc = tribes[i]->GetMember(j);
-               		CPrintf(CON_CMDOUTPUT, "%6u %6d %-30s %-6s %-6s %-15s %-15s %-20s %-20d\n" ,
+               		CPrintf(CON_CMDOUTPUT, "%6u %6d %-30s %-6s %-6s %-15s %-15s %-20s %-20s\n" ,
                 	        npc->GetPID().Unbox(),
                 	        npc->GetActor() ? npc->GetActor()->GetEID().Unbox() : 0,
                	        	npc->GetName(),
@@ -1583,7 +1583,7 @@ void psNPCClient::ListTribes(const char * pattern)
                         	(npc->GetBrain()?npc->GetBrain()->GetName():""),
                         	(npc->GetCurrentBehavior()?npc->GetCurrentBehavior()->GetName():""),
                         	npc->GetOwnerName(),
-                        	npc->GetTribeMemberType()
+                        	npc->GetTribeMemberType().GetDataSafe()
                         	);
             	}
 

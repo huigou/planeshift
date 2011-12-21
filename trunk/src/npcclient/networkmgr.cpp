@@ -954,7 +954,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 PID spawned_pid = PID(msg->GetUInt32());
                 EID spawned_eid = EID(msg->GetUInt32());
                 EID spawner_eid = EID(msg->GetUInt32());
-                uint32_t tribeMemberType = msg->GetUInt32();
+                csString tribeMemberType = msg->GetStr();
 
 
                 NPC *npc = npcclient->FindNPC(spawner_eid);
@@ -1218,7 +1218,7 @@ void NetworkManager::QueueSitCommand(gemNPCActor *npc, gemNPCObject* target, boo
     cmd_count++;
 }
 
-void NetworkManager::QueueSpawnCommand(gemNPCActor *mother, gemNPCActor *father, uint32_t tribeMemberType)
+void NetworkManager::QueueSpawnCommand(gemNPCActor *mother, gemNPCActor *father, const csString& tribeMemberType)
 {
     CheckCommandsOverrun(100);
 

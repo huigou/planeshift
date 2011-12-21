@@ -120,7 +120,7 @@ public:
     void QueueTransferPerception(gemActor *owner, psItem * itemdata, csString target);
     
     /// Let the superclient know the npc was spawned successfully.
-    void QueueSpawnedPerception(gemNPC *spawned, gemNPC *spawner, uint32_t tribeMemberType );
+    void QueueSpawnedPerception(gemNPC *spawned, gemNPC *spawner, const csString& tribeMemberType );
 
     /// Let the superclient know that the npc was teleported
     void QueueTeleportPerception(gemNPC* npc, csVector3& pos, float yrot, iSector* sector, InstanceID instance);

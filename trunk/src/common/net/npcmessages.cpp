@@ -344,7 +344,7 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
                 // Extract the data
                 EID spawner_id = EID(msg->GetUInt32());
                 EID spawned_id = EID(msg->GetUInt32());
-                uint32_t tribeMemberType = msg->GetUInt32();
+                csString tribeMemberType = msg->GetStr();
 
                 // Make sure we haven't run past the end of the buffer
                 if (msg->overrun)
@@ -353,7 +353,7 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
                     break;
                 }
                 
-                msgtext.AppendFmt("Spawner: %u Spawned: %d TribeMemberType: %u", spawner_id.Unbox(), spawned_id.Unbox(),tribeMemberType);
+                msgtext.AppendFmt("Spawner: %u Spawned: %d TribeMemberType: %s", spawner_id.Unbox(), spawned_id.Unbox(),tribeMemberType.GetDataSafe());
                 break;
             }
             case psNPCCommandsMessage::CMD_SPAWN_BUILDING:
@@ -827,7 +827,7 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
                 PID spawned_pid = PID(msg->GetUInt32());
                 EID spawned_eid = EID(msg->GetUInt32());
                 EID spawner_eid = EID(msg->GetUInt32());
-                uint32_t tribeMemberType = msg->GetUInt32();
+                csString tribeMemberType = msg->GetStr();
                 
                 // Make sure we haven't run past the end of the buffer
                 if (msg->overrun)
@@ -836,7 +836,7 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
                     break;
                 }
                 
-                msgtext.AppendFmt("PID: %u EID: %u EID: %u TribeMemberType: %u", spawned_pid.Unbox(), spawned_eid.Unbox(), spawner_eid.Unbox(),tribeMemberType);
+                msgtext.AppendFmt("PID: %u EID: %u EID: %u TribeMemberType: %s", spawned_pid.Unbox(), spawned_eid.Unbox(), spawner_eid.Unbox(),tribeMemberType.GetDataSafe());
                 break;
             }
             case psNPCCommandsMessage::PCPT_TELEPORT:

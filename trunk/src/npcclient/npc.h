@@ -127,7 +127,7 @@ protected:
     EID                target_id;
 
     Tribe*             tribe;
-    uint32_t           tribeMemberType;      ///< What type/class is this NPC in the tribe. 
+    csString           tribeMemberType;      ///< What type/class is this NPC in the tribe. 
     bool               insideTribeHome;      ///< State variable for inside outside tribe home checks.
         
     csVector3          spawnPosition;        ///< The stored position that this NPC where spawned
@@ -414,11 +414,11 @@ public:
 
     /** Set the type/class for this npc in a tribe.
      */
-    void SetTribeMemberType( uint32_t tribeMemberType );
+    void SetTribeMemberType( const char* tribeMemberType );
 
     /** Return the type/class for this NPC's tribe membership if any.
      */
-    uint32_t GetTribeMemberType() const;
+    const csString& GetTribeMemberType() const;
 
     /** Check the inside tribe home state of the npc.
      *
