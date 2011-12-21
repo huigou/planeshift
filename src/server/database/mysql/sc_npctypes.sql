@@ -448,7 +448,7 @@ INSERT INTO sc_npctypes VALUES("109","AbstractTribesman","DoNothing","","","",""
    <emote cmd="/divide" />
    <wait duration="30" anim="stand" />
    <locate obj="self" static="no" />
-   <reproduce />
+   <reproduce type="Worker" />
 </behavior>
 
 <behavior name="Resurrect" when_dead="yes" completion_decay="200">
