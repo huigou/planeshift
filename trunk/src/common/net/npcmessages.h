@@ -223,6 +223,7 @@ public:
         PCPT_CHANGE_BRAIN, //Command to superclient used to change the brain of an npc.
         PCPT_DEATH,
         PCPT_DMG,
+        PCPT_FAILED_TO_ATTACK,
         PCPT_FLAG,
         PCPT_GROUPATTACK,
         PCPT_INFO_REQUEST, //Command to superclient, not a perception

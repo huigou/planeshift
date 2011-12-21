@@ -272,19 +272,19 @@ const Stance & CombatManager::GetRaisedActorStance(CacheManager* cachemanager, g
     return cachemanager->stances.Get(currentStance.stance_id-1);
 }
 
-void CombatManager::AttackSomeone(gemActor *attacker,gemObject *target,Stance stance)
+bool CombatManager::AttackSomeone(gemActor *attacker,gemObject *target,Stance stance)
 {
     psCharacter *attacker_character = attacker->GetCharacterData();
 
     //we don't allow an overweight or defeated char to fight
     if (attacker->GetMode() == PSCHARACTER_MODE_DEFEATED || 
         attacker->GetMode() == PSCHARACTER_MODE_OVERWEIGHT)
-        return;
+        return false;
 
     if (attacker->GetMode() == PSCHARACTER_MODE_COMBAT)  // Already fighting
     {
         SetCombat(attacker,stance);  // switch stance from Bloody to Defensive, etc.
-        return;
+        return true;
     }
     else
     {
@@ -352,14 +352,16 @@ void CombatManager::AttackSomeone(gemActor *attacker,gemObject *target,Stance st
         else
         {
             psserver->SendSystemError(attacker->GetClientID(),"You are too far away to attack!");
-            return;
+            return false;
         }
     }
     else
     {
         psserver->SendSystemError(attacker->GetClientID(),"You have no weapons equipped!");
-        return;
+        return false;
     }
+
+    return true;
 }
 
 void CombatManager::SetCombat(gemActor *combatant, Stance stance)
