@@ -49,6 +49,12 @@ INSERT INTO sc_npctypes VALUES("3","InRegion","","","","","out of bounds","","",
    <navigate anim="walk" />      <!-- Local navigation -->
 </behavior>
 
+<behavior name="FailedEndpoint" completion_decay="-1" >
+   <talk text="I failed to reach $target going away in region" target="false" />
+   <percept event="move back in region" />
+</behavior> 
+
+<react event="move back in region" behavior="MoveBackInRegion" do_not_interrupt="GoToRegion" />
 <react event="out of bounds"       behavior="MoveBackInRegion" do_not_interrupt="GoToRegion" />');
 
 INSERT INTO sc_npctypes VALUES("4","Fight","","","","","","","",
@@ -56,16 +62,23 @@ INSERT INTO sc_npctypes VALUES("4","Fight","","","","","","","",
    <locate obj="target"  range="20" />
    <talk text="$race attacked by $target" target="false" /> 
    <rotate type="locatedest" anim="walk" ang_vel="120" />
-   <melee seek_range="20" melee_range="3" />
+   <melee seek_range="25" melee_range="2" />
 </behavior>
 
 <behavior name="Chase" initial="0" growth="0" decay="1" completion_decay="-1" >
-   <chase type="target" chase_range="20" anim="run" vel="5" />
+   <chase type="target" chase_range="25" offset="0.5" offset_angle="20" anim="run" vel="5" />
 </behavior>
 
 <behavior name="FailedToAttack" completion_decay="-1" >
    <talk text="I can not attack $target" target="false" />
 </behavior> 
+
+<behavior name="FailedEndpoint" completion_decay="-1" >
+   <talk text="I failed to reach $target going away" target="false" />
+   <locate obj="point" range="30" />
+   <navigate anim="walk" />      <!-- Local navigation -->
+</behavior> 
+
 
 <react event="fight"               behavior="Fight" />
 <react event="attack"              behavior="Fight" />
@@ -73,8 +86,10 @@ INSERT INTO sc_npctypes VALUES("4","Fight","","","","","","","",
 <react event="target out of range" behavior="Chase" />
 <react event="failed to attack"    behavior="FailedToAttack" />
 
+<react event="failed endpoint"     behavior="FailedEndpoint" />
+
 <!-- Stop chas if target is out of chase range -->
-<react event="target out of chase" behavior="Chase" absolute="0" only_interrupt="chase"/>
+<react event="target out of chase" behavior="Chase" absolute="0" only_interrupt="Chase"/>
 
 <react event="death"               behavior="Fight" absolute="0" />');
 
@@ -90,7 +105,7 @@ INSERT INTO sc_npctypes VALUES("6","Fighter","DoNothing,InRegion,Fight","","",""
 '<empty/>');
 
 INSERT INTO sc_npctypes VALUES("7","Wanderer","Fighter","","","","","","",
-'<behavior name="Walk" decay="0" growth="0" initial="50">
+'<behavior name="Walk" decay="0" growth="0" initial="75">
    <loop>
       <locate obj="region" static="no" />                    <!-- Locate random point within region -->
       <rotate type="locatedest" anim="walk" ang_vel="10" />  <!-- Rotate to fase last located destination -->

@@ -167,9 +167,18 @@ public:
      * fire perceptions at these events with the names given by \se LoadCheckMoveOk
      *
      */
-    virtual bool CheckMoveOk(NPC* npc, EventManager* eventmgr, csVector3 oldPos, iSector* oldSector,
+    virtual bool CheckMoveOk(NPC* npc, csVector3 oldPos, iSector* oldSector,
                              const csVector3 & newPos, iSector* newSector, float timedelta);
 
+    /** Check if the end point where ok.
+     *
+     * Check if a move operation has collided and not ended in right position.
+     * Fire perceptions if not at end position.
+     *
+     */
+    virtual bool CheckEndPointOk(NPC* npc, const csVector3& myPos, iSector* mySector,
+                                 const csVector3 & endPos, iSector* endSector);
+    
     /** Return the Collision perception event name.
      *
      *  Will use the perception of the operation if defined, or it will
