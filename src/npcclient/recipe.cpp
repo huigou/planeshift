@@ -822,8 +822,13 @@ Recipe* RecipeManager::GetRecipe(int recipeID)
 Recipe* RecipeManager::GetRecipe(csString recipeName)
 {
     for(int i=0;i<recipes.GetSize();i++)
-	    if(recipes[i]->GetName() == recipeName)
-	        return recipes[i];
+    {
+        if(recipes[i]->GetName() == recipeName)
+        {
+            return recipes[i];
+        }
+    }
+    
 
     // Could not find it
     CPrintf(CON_ERROR, "Could not find recipe %s.\n", recipeName.GetData());

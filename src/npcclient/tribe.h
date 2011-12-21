@@ -105,7 +105,7 @@ public:
     struct MemberID
     {
         PID       pid;
-        uint32_t  tribeMemberType; ///< Used to select needSet by index.
+        csString  tribeMemberType; ///< Used to select needSet by index.
     };
 
     struct CyclicRecipe
@@ -131,7 +131,7 @@ public:
     bool LoadResource(iResultRow& row);
     
     /** Adds a new member to the tribe, e.g. from reproduction */
-    bool AddMember(PID pid, uint32_t tribeMemberType);
+    bool AddMember(PID pid, const char* tribeMemberType);
 
     /** Save or update an resource in database */
     void SaveResource(Resource* resource, bool newResource);
@@ -140,7 +140,7 @@ public:
     bool CheckAttach(NPC * npc);
 
     /** Attach a new member to the tribe */
-    bool AttachMember(NPC * npc, uint32_t tribeMemberType);
+    bool AttachMember(NPC * npc, const char* tribeMemberType);
 
     /** Remove members that die */
     bool HandleDeath(NPC * npc);
@@ -445,7 +445,7 @@ public:
     void LoadNPCMemoryBuffer(Tribe::Memory* memory, csArray<NPC*> npcs);
 
     /** Check to see if enough members are idle */
-    bool CheckMembers(csString name, int number);
+    bool CheckMembers(csString type, int number);
 
     /** Check to see if enough resources are available */
     bool CheckResource(csString resource, int number);

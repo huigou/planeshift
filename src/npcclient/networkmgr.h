@@ -145,9 +145,9 @@ public:
      *
      * @param mother          The mother of the spawn
      * @param father          If the father is known point to the father, use mother if unknow.
-     * @param tribeMemberType If part of a tribe set to the need set index to be used for this new entity.
+     * @param tribeMemberType What type of tribe member is this.
      */
-    void QueueSpawnCommand(gemNPCActor *mother, gemNPCActor *father, uint32_t tribeMemberType);
+    void QueueSpawnCommand(gemNPCActor *mother, gemNPCActor *father, const csString& tribeMemberType);
 
     /** Send a spawn building command to server
      *

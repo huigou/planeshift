@@ -1651,7 +1651,14 @@ update tribes set tribal_recipe=5;
 INSERT INTO `item_categories` VALUES (28,'Buildings',NULL,NULL,NULL,100,0,0);
 ALTER TABLE 'sc_tribe_resources' ADD COLUMN `nick` varchar(30) NOT NULL default '' AFTER 'name';
 
-
+#
+# Updated tribe member types to be a string 1262
+#
+UPDATE `server_options` SET `option_value`='1262' WHERE `option_name`='db_version';
+ALTER TABLE tribe_members MODIFY COLUMN member_type varchar(30) NOT NULL default '' AFTER member_id;
+update tribe_members set member_type="Worker"; # where worker;
+#update tribe_members set member_type="Warrior" where warrior;
+#update tribe_members set member_type="Queen" where queen;
 
 
 # Insert your upgrade before this line. Remember when you set a new db_version

@@ -1048,7 +1048,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
             {
                 EID spawner_id = EID(list.msg->GetUInt32()); // Mother
                 EID spawned_id = EID(list.msg->GetUInt32()); // Father
-                uint32_t tribeMemberType = list.msg->GetUInt32();
+                csString tribeMemberType = list.msg->GetStr();
                 Debug3(LOG_SUPERCLIENT, spawner_id.Unbox(), "-->Got spawn cmd for entity %s to %s\n", ShowID(spawner_id), ShowID(spawned_id));
 
                 // Make sure we haven't run past the end of the buffer
@@ -2508,7 +2508,7 @@ void NPCManager::QueueTransferPerception(gemActor *owner, psItem * itemdata, csS
            target.GetDataSafe() );
 }
 
-void NPCManager::QueueSpawnedPerception(gemNPC *spawned, gemNPC *spawner, uint32_t tribeMemberType)
+void NPCManager::QueueSpawnedPerception(gemNPC *spawned, gemNPC *spawner, const csString& tribeMemberType)
 {
     CheckSendPerceptionQueue(sizeof(int8_t)+sizeof(uint32_t)*4);
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::PCPT_SPAWNED);
