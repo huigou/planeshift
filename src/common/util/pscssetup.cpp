@@ -140,6 +140,13 @@ iObjectRegistry* psCSSetup::InitCS(iReporterListener * customReporter)
 
     // Mount user dir.
     MountUserData();
+
+    //disable fullscreen default on linux. It's not well supported
+    #ifndef CS_PLATFORM_WIN32
+    #ifndef CS_PLATFORM_MACOSX
+    configManager->SetBool("Video.FullScreen", false);
+    #endif
+    #endif
   
     if (userConfigfile != NULL)
     {
