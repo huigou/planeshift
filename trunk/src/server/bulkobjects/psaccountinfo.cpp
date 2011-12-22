@@ -48,6 +48,7 @@ bool psAccountInfo::Load(iResultRow& row)
     accountid = row.GetUInt32("id");
     username  = row["username"];
     password  = row["password"];
+    password256  = row["password256"];
     
     createddate = row["created_date"];
     lastlogintime = row["last_login"];

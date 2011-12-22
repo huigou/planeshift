@@ -22,7 +22,7 @@
 //=============================================================================
 #include <iutil/cfgmgr.h>
 #include <csutil/md5.h>
-
+#include <csutil/sha256.h>
 
 //=============================================================================
 // Project Includes
@@ -260,28 +260,38 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
 
     // Add account to cache to optimize repeated login attempts
     psserver->GetCacheManager()->AddToCache(acctinfo,msg.sUser,120);
-    
+
     // Check if password was correct
-    csString passwordhashandclientnum (acctinfo->password);
+    csString passwordhashandclientnum(acctinfo->password256);
     passwordhashandclientnum.Append(":");
     passwordhashandclientnum.Append(me->clientnum);
-    
-    csString encoded_hash = csMD5::Encode(passwordhashandclientnum).HexString();
-    if (strcmp( encoded_hash.GetData() , msg.sPassword.GetData())) // authentication error
+
+    csString encoded_hash = CS::Utility::Checksum::SHA256::Encode(passwordhashandclientnum).HexString();
+    if(encoded_hash != msg.sPassword) // authentication error
     {
-        psserver->RemovePlayer(me->clientnum, "Incorrect password or username.");
-        Notify2(LOG_CONNECTIONS,"User '%s' authentication request rejected (Bad password).",(const char *)msg.sUser);
-        // No delete necessary because AddToCache will auto-delete
-        // delete acctinfo;
-        return;
+        //sha256 autentication failed so we will try with the previous hash support (md5sum)
+        //this is just transition code and should be removed with 0.6.0
+        passwordhashandclientnum = acctinfo->password;
+        passwordhashandclientnum.Append(":");
+        passwordhashandclientnum.Append(me->clientnum);
+
+        encoded_hash = csMD5::Encode(passwordhashandclientnum).HexString();
+        if(strcmp(encoded_hash.GetData(), msg.sPassword.GetData())) // authentication error
+        {
+            psserver->RemovePlayer(me->clientnum, "Incorrect password or username.");
+            Notify2(LOG_CONNECTIONS,"User '%s' authentication request rejected (Bad password).",(const char *)msg.sUser);
+            // No delete necessary because AddToCache will auto-delete
+            // delete acctinfo;
+            return;
+        }
+        if(msg.sPassword256.Length() > 0) // save the newly  obtained sha256 password
+        {
+            csString sanitized;
+            db->Escape(sanitized, msg.sPassword256);
+            db->CommandPump("UPDATE accounts set password256=\"%s\" where id=%d", sanitized.GetData(), acctinfo->accountid);
+        }
     }
 
-    if(msg.sPassword256.Length() > 0) // save the newly  obtained sha256 password
-    {
-        csString sanitized;
-        db->Escape(sanitized, msg.sPassword256);
-        db->CommandPump("UPDATE accounts set password256=\"%s\" where id=%d", sanitized.GetData(), acctinfo->accountid);
-    }
     /**
      * Check if the client is already logged in
      */

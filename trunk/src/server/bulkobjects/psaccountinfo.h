@@ -60,6 +60,11 @@ public:
     csString username;
     /// The password field is plain text now but later may be a public encryption key or something more elaborate
     csString password;
+
+    ///temporary transition variable
+    csString password256;
+
+
     /// String value copied from the database containing the last login time
     csString lastlogintime;
     /// String value copied from the database containing the time of creation of the database entry
