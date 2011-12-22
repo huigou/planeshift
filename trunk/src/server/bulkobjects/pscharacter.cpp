@@ -275,7 +275,6 @@ psCharacter::psCharacter() : inventory(this),
     if(!skillValuesGet.IsValid())
     {
         psserver->GetMathScriptEngine()->CheckAndUpdateScript(skillValuesGet, "GetSkillValues");
-    	skillValuesGet = psserver->GetMathScriptEngine()->FindScript("GetSkillValues");
         if(!skillValuesGet.IsValid())
         {
             Error1("Can't find math script GetSkillValues! Character loading failed.");
@@ -285,7 +284,6 @@ psCharacter::psCharacter() : inventory(this),
     if(!baseSkillValuesGet.IsValid())
     {
         psserver->GetMathScriptEngine()->CheckAndUpdateScript(baseSkillValuesGet, "GetSkillBaseValues");
-    	baseSkillValuesGet = psserver->GetMathScriptEngine()->FindScript("GetSkillBaseValues");
         if(!baseSkillValuesGet.IsValid())
         {
             Error1("Can't find math script GetSkillBaseValues! Character loading failed.");
