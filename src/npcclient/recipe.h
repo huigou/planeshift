@@ -70,6 +70,7 @@ public:
         int      type;          ///< Type. Can be workforce, resource, item, knowledge
         csString name;          ///< Name of the requirement.
         csString quantity;      ///< Number needed.
+        csString recipe;        ///< If requirement isn't meet use this recipe to get it.
     };
 
     /** Construct a Recipe object */
