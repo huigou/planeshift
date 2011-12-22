@@ -177,8 +177,9 @@ public:
      * Required for all tribes we want the manager to hold.
      *
      * @param tribe The tribe to be added.
+     * @return True if the tribe where added successfully
      */
-    void AddTribe(Tribe *tribe);
+    bool AddTribe(Tribe *tribe);
 
     /** Compute global npctype
      *

@@ -910,7 +910,10 @@ bool psNPCClient::LoadTribes()
             } // End Load Assets scope
 
             // Enroll at Recipe Manager
-            recipemanager->AddTribe(tribe);
+            if (!recipemanager->AddTribe(tribe))
+            {
+                return false;
+            }
         }
         else
         {

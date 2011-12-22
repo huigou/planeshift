@@ -56,6 +56,8 @@ RecipeTreeNode::RecipeTreeNode(Recipe* newRecipe, int newCost, RecipeTreeNode* p
 void RecipeTreeNode::AddChild(RecipeTreeNode* child)
 {
     children.Push(child);
+    // Each level in the tree has one higher priority,
+    // all nodes on same level will have same priority.
     child->priority = priority + 1;
 }
 
