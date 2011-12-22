@@ -879,8 +879,11 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
                 item->SetLoaded();  // Item is fully created
                 item->Save(false);    // First save
 
-                // Inform the npcclient about the item it's npc just got
-                psserver->GetNPCManager()->WorkDoneNotify(workEvent->worker->GetEID(), newitem->GetName(), resourceNick);
+                if (!workEvent->client)
+                {
+                    // Inform the npcclient about the item it's npc just got
+                    psserver->GetNPCManager()->WorkDoneNotify(workEvent->worker->GetEID(), newitem->GetName(), resourceNick);
+                }
 
                 // No matter if the item could be moved to inventory reset the last position and
                 // give out skills.

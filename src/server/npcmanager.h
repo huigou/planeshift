@@ -146,7 +146,7 @@ public:
     csArray<PublishDestination>& GetSuperClients() { return superclients; }
 
     /// Inform the npc about the reward granted after a work done
-    void WorkDoneNotify(EID npcID, csString reward, csString nick);
+    void WorkDoneNotify(EID npcEID, csString reward, csString nick);
 
     /// Send a newly spawned npc to a superclient to manage it.
     void NewNPCNotify(PID player_id, PID master_id, PID owner_id);

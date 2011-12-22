@@ -1085,7 +1085,13 @@ void NetworkManager::HandleNPCWorkDone(MsgEntry *me)
 {
     psNPCWorkDoneMessage msg(me);
 
-    NPC* npc = npcclient->FindNPC(msg.npcId);
+    NPC* npc = npcclient->FindNPC(msg.npcEID);
+
+    if (!npc)
+    {
+        Error2("Could not find npc(%s) for Got work done.", ShowID(msg.npcEID));
+        return;
+    }
 
     // If he just prospected a mine and its a tribe member
     if(npc->GetBuffer() == "new mine" && npc->GetTribe())
