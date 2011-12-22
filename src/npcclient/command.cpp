@@ -68,63 +68,15 @@ int com_quit(char *)
     return 0;
 }
 
-int com_npclist(char *arg)
-{
-    npcclient->ListAllNPCs(arg);
-    return 0;
-}
-
 int com_disable(char *arg)
 {
     npcclient->EnableDisableNPCs(arg,false);
     return 0;
 }
 
-int com_entlist(char *arg)
-{
-    npcclient->ListAllEntities(arg,false);
-    return 0;
-}
-
 int com_enable(char *arg)
 {
     npcclient->EnableDisableNPCs(arg,true);
-    return 0;
-}
-
-int com_charlist(char *arg)
-{
-    npcclient->ListAllEntities(arg,true);
-    return 0;
-}
-
-int com_tribelist(char *arg)
-{
-    npcclient->ListTribes(arg);
-    return 0;
-}
-
-int com_triberecipes(char *arg)
-{
-    npcclient->ListTribeRecipes(arg);
-    return 0;
-}
-
-int com_waypointlist(char *arg)
-{
-    npcclient->ListWaypoints(arg);
-    return 0;
-}
-
-int com_pathlist(char *arg)
-{
-    npcclient->ListPaths(arg);
-    return 0;
-}
-
-int com_locationlist(char *arg)
-{
-    npcclient->ListLocations(arg);
     return 0;
 }
 
@@ -214,6 +166,70 @@ int com_help (char *arg)
     return (0);
 }
 
+/* List entity given. */
+int com_list (char *arg)
+{
+    WordArray words(arg,false);
+
+    if (words.GetCount() == 0)
+    {
+        CPrintf(CON_CMDOUTPUT,"Syntax: list [char|ent|loc|npc|path|race|recipe|tribe|warpspace|waypoint] <pattern|EID>\n");
+        return 0;
+    }
+
+    // Compare all strings up to the point that is needed to uniq identify them.
+    if (strncasecmp(words[0],"char",1) == 0)
+    {
+        npcclient->ListAllEntities(words[1],true);
+    }
+    else if (strncasecmp(words[0],"ent",1) == 0)
+    {
+        npcclient->ListAllEntities(words[1],false);
+    }
+    else if (strncasecmp(words[0],"loc",1) == 0)
+    {
+        npcclient->ListLocations(words[1]);
+    }
+    else if (strncasecmp(words[0],"npc",1) == 0)
+    {
+        npcclient->ListAllNPCs(words[1]);
+    }
+    else if (strncasecmp(words[0],"path",1) == 0)
+    {
+        npcclient->ListPaths(words[1]);
+    }
+    else if (strncasecmp(words[0],"race",2) == 0)
+    {
+        if(!npcclient->DumpRace(words[1]))
+        {
+            CPrintf(CON_CMDOUTPUT, "No Race with id '%s' found.\n", words[1].GetDataSafe());
+        }        
+    }
+    else if (strncasecmp(words[0],"recipe",2) == 0)
+    {
+        npcclient->ListTribeRecipes(words[1]);
+    }
+    else if (strncasecmp(words[0],"tribe",1) == 0)
+    {
+        npcclient->ListTribes(words[1]);
+    }
+    else if (strncasecmp(words[0],"warpspace",3) == 0)
+    {
+        npcclient->GetWorld()->DumpWarpCache();
+    }
+    else if ((strncasecmp(words[0],"waypoint",3) == 0) || strncasecmp(words[0],"wp",2) == 0)
+    {
+        npcclient->ListWaypoints(words[1]);
+    }
+    else
+    {
+        CPrintf(CON_CMDOUTPUT,"%s not a know entity\n",words[0].GetDataSafe());
+    }
+
+    return (0);
+}
+
+
 int com_setmaxout(char* arg)
 {
     if (!arg || strlen (arg) == 0)
@@ -282,16 +298,6 @@ int com_info(char *line)
     if(!npcclient->InfoNPC(line))
     {
         CPrintf(CON_CMDOUTPUT, "No NPC with id '%s' found.\n", line);
-    }
-
-    return 0;
-}
-
-int com_race(char *line)
-{
-    if(!npcclient->DumpRace(line))
-    {
-        CPrintf(CON_CMDOUTPUT, "No Race with id '%s' found.\n", line);
     }
 
     return 0;
@@ -393,12 +399,6 @@ int com_fireperc(char* arg)
     return 0;
 }
 
-int com_dumpwarpspace(char*)
-{
-    npcclient->GetWorld()->DumpWarpCache();
-    return 0;
-}
-
 int com_showtime(char *)
 {
     CPrintf(CON_CMDOUTPUT,"Game time is %d:%02d %d-%d-%d\n",
@@ -428,31 +428,21 @@ int com_status(char *)
  * Make sure the last entry contain 0 for all entries to terminate the list.
  */
 const COMMAND commands[] = {
-    { "charlist",     false, com_charlist,     "List all known characters"},
     { "debugnpc",     false, com_debugnpc,     "Switches the debug mode on 1 NPC"},
     { "disable",      false, com_disable,      "Disable a enabled NPC. [all | pattern | EID]"},
-    { "dumpwarpspace",true,  com_dumpwarpspace,"Dump the warp space table"},
     { "enable",       false, com_enable,       "Enable a disabled NPC. [all | pattern | EID]"},
-    { "entlist",      false, com_entlist,      "List all known entities (entlist [pattern | EID]"},
     { "filtermsg",    true,  com_filtermsg,    "Add or remove messages from the LOG_MESSAGE log"},
     { "fireperc",     false, com_fireperc,     "Fire the given perception on the given npc. (fireperc [npcPID] [perception])"},
     { "help",         false, com_help,         "Show help information" },
-    { "loclist",      false, com_locationlist, "List all known locations (loclist [pattern])"},
-    { "loctest",      false, com_locationtest, "Test a location (loc sector x y z"},
-    { "npclist",      false, com_npclist,      "List all NPCs (npclist [{pattern | summary}])"},
-    { "pathlist",     false, com_pathlist,     "List all known paths (pathlist)"},
+    { "list",         false, com_list,         "List entities ( list [char|ent|loc|npc|path|race|recipe|tribe|warpspace|waypoint] <filter> )" },
     { "print",        false, com_print,        "List all behaviors/hate of 1 NPC"},
     { "info",         false, com_info,         "Short print for 1 NPC"},
     { "quit",         false, com_quit,         "Makes the npc client exit"},
-    { "racelist",     false, com_race,         "List all Race Info records"},
     { "setlog",       false, com_setlog,       "Set server log" },
     { "setmaxfile",   false, com_setmaxfile,   "Set maximum message class for output file"},
     { "setmaxout",    false, com_setmaxout,    "Set maximum message class for standard output"},
     { "showlogs",     false, com_showlogs,     "Show server logs" },
     { "showtime",     false, com_showtime,     "Show the current game time"},
-    { "tribelist",    false, com_tribelist,    "List all known tribes (tribelist [pattern])"},
-    { "triberecipes", false, com_triberecipes, "List all recipes in a tribe. (triberecipes [tribeid])"},
-    { "waypointlist", false, com_waypointlist, "List all known waypoints (waypointlist [pattern])"},
     { "status",       false, com_status,       "Give some general statistics on the npcclient"},
     { 0, 0, 0, 0 }
 };
