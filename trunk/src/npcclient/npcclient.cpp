@@ -1640,8 +1640,10 @@ void psNPCClient::ListTribeRecipes(const char* tribeID)
     for(int i=0;i<tribes.GetSize();i++)
     {
         if(tribeid == tribes[i]->GetID())
+        {
             tribes[i]->DumpRecipesToConsole();
             return;
+        }
     }
     CPrintf(CON_CMDOUTPUT, "No Tribe with id '%d' found.\n", tribeID);
 }
