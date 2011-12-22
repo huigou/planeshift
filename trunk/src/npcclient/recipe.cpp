@@ -222,7 +222,7 @@ bool RecipeManager::LoadRecipes()
     return true;
 }
 
-void RecipeManager::AddTribe(Tribe *tribe)
+bool RecipeManager::AddTribe(Tribe *tribe)
 {
     TribeData newTribe;
     newTribe.tribeID = tribe->GetID();
@@ -263,18 +263,26 @@ void RecipeManager::AddTribe(Tribe *tribe)
         else if(keyword == "loadRecipe")
         {
             Recipe* newRecipe = GetRecipe(csString(keywords.Get(1)));
+
+            if (!newRecipe)
+            {
+                Error2("Recipe not found for loadRecipe(%s)",keywords.Get(1));
+                return false;
+            }
+
             if(strncmp(keywords.Get(2), "distributed", 11) == 0)
             {
                 tribe->AddRecipe(newRecipe, newTribe.tribalRecipe, true);
             } 
             else
             {
-                tribe->AddRecipe(newRecipe, newTribe.tribalRecipe);
+                tribe->AddRecipe(newRecipe, newTribe.tribalRecipe, false);
             }
         }
-        else {
+        else 
+        {
             Error2("Unknown tribe stat: '%s'. Abandon ship.", keywords[0]);
-            exit(1);
+            return false;
         }
 
         keywords.DeleteAll();
@@ -288,6 +296,8 @@ void RecipeManager::AddTribe(Tribe *tribe)
 
     // Create Tribal NPCType
     CreateGlobalNPCType(tribe);
+
+    return true;
 }
 
 bool RecipeManager::ParseFunction(csString function, Tribe* tribe, csArray<NPC*>& npcs, Recipe* recipe)
