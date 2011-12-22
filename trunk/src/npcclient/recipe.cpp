@@ -72,6 +72,8 @@ bool Recipe::Load(iResultRow &row)
         }
     }
     unparsedReq.SplitString(row["requirements"], ";");
+    // Assuming that requirements end with ; the last will be
+    // empty. Delete last empty index.
     unparsedReq.DeleteIndex(unparsedReq.GetSize() - 1);
 
     // Parse Requirements
@@ -86,15 +88,20 @@ bool Recipe::Load(iResultRow &row)
         explodedReq.SplitString(unparsedReq.Get(i), "(,)");
         Requirement newReq;
         reqText = explodedReq.Get(0);
+
+        // Flags used to check parameters
+        bool recipeRequired = false;
         
         // And check its contents
         if(reqText == "tribesman")
         {
             newReq.type = REQ_TYPE_TRIBESMAN;
+            recipeRequired = true;
         }
         else if(reqText == "resource")
         {
             newReq.type = REQ_TYPE_RESOURCE;
+            recipeRequired = true;
         }
         else if(reqText == "item")
         {
@@ -115,6 +122,7 @@ bool Recipe::Load(iResultRow &row)
         else if(reqText == "memory")
         {
             newReq.type = REQ_TYPE_MEMORY;
+            recipeRequired = true;
         }
         else
         {
@@ -124,6 +132,17 @@ bool Recipe::Load(iResultRow &row)
 
         newReq.name = explodedReq.Get(1);
         newReq.quantity = explodedReq.Get(2);
+        if (explodedReq.GetSize() > 3)
+        {
+            newReq.recipe = explodedReq.Get(3);
+        }
+        else if (recipeRequired)
+        {
+            // We requried a recipe, but none where given.
+            Error3("Recipe %s requirements require recipe: %s", name.GetDataSafe(), explodedReq.Get(0));
+            return false;
+        }
+        
 
         requirements.Push(newReq);
     }
@@ -370,16 +389,16 @@ bool RecipeManager::ParseFunction(csString function, Tribe* tribe, csArray<NPC*>
     }
     else if(functionBody == "locateMemory" || functionBody == "locateResource")
     {
-        if(argSize != 1)
+        if(argSize != 2)
         {
-            DumpError(recipe->GetName(), functionBody.GetData(), 1, argSize);
+            DumpError(recipe->GetName(), functionBody.GetData(), 2, argSize);
             return false;
         }
         if(!tribe->LoadNPCMemoryBuffer(functionArguments.Get(0), npcs))
         {
             // No such memory, then explore for it.
             tribe->SetBuffer("Buffer", functionArguments.Get(0));
-            tribe->AddRecipe(GetRecipe("Explore"), recipe);
+            tribe->AddRecipe(GetRecipe(functionArguments.Get(1)), recipe);
             return false;
         }
         return true;
@@ -603,8 +622,9 @@ bool RecipeManager::ParseRequirement(Recipe::Requirement requirement, Tribe* tri
         {
             // Start ... erm... cell-dividing :)
             tribe->SetBuffer("Buffer", name);
-            tribe->AddRecipe(GetRecipe("mate"), recipe);
+            tribe->AddRecipe(GetRecipe(requirement.recipe), recipe);
         }
+        /* Shouldn't this be done by the requiements for mate
         else if(tribe->ShouldGrow())
         {
             // Gather more resources
@@ -619,6 +639,7 @@ bool RecipeManager::ParseRequirement(Recipe::Requirement requirement, Tribe* tri
                 tribe->AddRecipe(GetRecipe("Gather Resource"), recipe);
             }
         }
+        */
         return false;
     }
     else if(requirement.type == REQ_TYPE_RESOURCE)
@@ -630,15 +651,7 @@ bool RecipeManager::ParseRequirement(Recipe::Requirement requirement, Tribe* tri
         // TODO -- Check to see if resource is diggable or gatherable
 
         tribe->SetBuffer("Buffer", name);
-        bool digable = true; // Provisional TODO
-        if(digable)
-        {
-            tribe->AddRecipe(GetRecipe("Dig Resource"), recipe);
-        }
-        else
-        {
-            tribe->AddRecipe(GetRecipe("Gather Resource"), recipe);
-        }
+        tribe->AddRecipe(GetRecipe(requirement.recipe), recipe);
 
         return false;
     }
@@ -675,11 +688,11 @@ bool RecipeManager::ParseRequirement(Recipe::Requirement requirement, Tribe* tri
         
         // We'll have to run a pre-check to check for unprospected
         // mines in case we need an ore we don't know
-        if(tribe->FindMemory("mine"))
+        if(tribe->FindMemory(requirement.quantity))
             return true;
 
         // Explore for not found memory
-        tribe->AddRecipe(GetRecipe("Explore"), recipe);
+        tribe->AddRecipe(GetRecipe(requirement.recipe), recipe);
         return false;
     }
     else
@@ -707,13 +720,13 @@ void RecipeManager::CreateGlobalNPCType(Tribe* tribe)
         reaction = "<react event=\"attack\" behavior=\"aggressive_meet\" delta=\"150\" />";
         assembledType += reaction;
     }
-    else if(currentTribe->aggressivity == "pacifist")
+    else if(currentTribe->aggressivity == "neutral")
     {
         reaction = "<react event=\"player nearby\" behavior=\"peace_meet\" delta=\"100\" />\n";
         reaction += "<react event=\"attack\" behavior=\"normal_attacked\" delta=\"150\" />";
         assembledType += reaction;
     }
-    else if(currentTribe->aggressivity == "coward")
+    else if(currentTribe->aggressivity == "peaceful")
     {
         reaction = "<react event=\"player nearby\" behavior=\"peace_meet\" delta=\"100\" />\n";
         reaction += "<react event=\"attack\" behavior=\"coward_attacked\" delta=\"100\" />\n";
