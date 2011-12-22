@@ -2607,10 +2607,10 @@ void NPCManager::NewNPCNotify(PID player_id, PID master_id, PID owner_id)
     msg.Multicast(superclients,-1,PROX_LIST_ANY_RANGE);
 }
 
-void NPCManager::WorkDoneNotify(EID npcID, csString reward, csString nick)
+void NPCManager::WorkDoneNotify(EID npcEID, csString reward, csString nick)
 {
-    Debug3(LOG_NPC, npcID.Unbox(), "NPC(%s) got item %s.\n", ShowID(npcID), reward.GetData());
-    psNPCWorkDoneMessage msg(0, npcID, reward.GetData(), nick.GetData());
+    Debug3(LOG_NPC, npcEID.Unbox(), "NPC(%s) got item %s.\n", ShowID(npcEID), reward.GetData());
+    psNPCWorkDoneMessage msg(0, npcEID, reward.GetData(), nick.GetData());
     msg.Multicast(superclients,-1,PROX_LIST_ANY_RANGE);
 }
 

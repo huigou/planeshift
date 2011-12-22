@@ -420,8 +420,11 @@ INSERT INTO sc_npctypes VALUES("109","AbstractTribesman","DoNothing","","","",""
    <wander anim="walk" />
    <equip item="Rock Pick" slot="righthand" />
    <loop iterations="3">
+      <navigate anim="walk" />
       <dig resource="tribe:buffer" />
       <wait anim="stand" duration="10" />
+      <!-- Must move since dig in same place is not alloved -->
+      <locate obj="ownbuffer" static="no" />
    </loop>
    <dequip slot="righthand" />
    <locate obj="waypoint" static="no" />
