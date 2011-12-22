@@ -60,4 +60,4 @@ INSERT INTO `tribe_recipes` VALUES (91, 'Evolve Hunting Tribe', 'tribesman(numbe
 # Tribal Recipes
 
 INSERT INTO `tribe_recipes` VALUES (100, 'Mining Tribe', ' ', 'brain(civilised);aggressivity(peaceful);growth(conservatory);unity(organised);loadRecipe(Do Nothing);loadRecipe(Evolve Mining Tribe,distributed);loadRecipe(Miners Tribe Spots);', 1, 1);
-INSERT INTO `tribe_recipes` VALUES (101, 'Hunting Tribe', ' ', 'brain(civilised);aggressivity(neutral);growth(conservatory);unity(organised);loadRecipe(Do Nothing);loadRecipe(Evolve Hunting Tribe,distributed);loadRecipe(Miners Tribe Spots);', 1, 1);
+INSERT INTO `tribe_recipes` VALUES (101, 'Hunting Tribe', ' ', 'brain(civilised);aggressivity(neutral);growth(conservatory);unity(organised);loadRecipe(Do Nothing);loadRecipe(Evolve Hunting Tribe,distributed);loadRecipe(Hunting Tribe Spots);', 1, 1);
