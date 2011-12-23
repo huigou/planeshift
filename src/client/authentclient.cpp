@@ -21,6 +21,7 @@
 // Crystal Space Includes
 //=============================================================================
 #include <csutil/md5.h>
+#include <csutil/sha256.h>
 #include <csver.h>
 
 //=============================================================================
@@ -185,24 +186,24 @@ void psAuthenticationClient::ShowError()
 void psAuthenticationClient::HandlePreAuth( MsgEntry* me )
 {
 
-//here we send also the 256 hash. this way is unsafe to man in the middle attacks
-//but this is a tradeoff between easyness and security. After the initial period
-//the password sum will have to be hashed like for the md5sum
+//now we send only the sha256 hash. we don't send the cleartext password256 anymore
+//after the second phase it will be removed.
     
     psPreAuthApprovedMessage msg(me);
             
     //if it's not a new user, encrypt password with clientnum
-    csString passwordhashandclientnum (password);
+    csString passwordhashandclientnum (password256);
     passwordhashandclientnum.Append(":");
     passwordhashandclientnum.Append(msg.ClientNum);
 
-    csString hexstring = csMD5::Encode(passwordhashandclientnum).HexString();
+    csString hexstring = CS::Utility::Checksum::SHA256::Encode(passwordhashandclientnum).HexString();
+
     //TODO: convert this to use csstrings
     // Get os and graphics card info
     iGraphics2D *graphics2D = PawsManager::GetSingleton().GetGraphics3D()->GetDriver2D();
     csString HWRender =  graphics2D->GetHWRenderer();
     csString HWGLVersion =  graphics2D->GetHWGLVersion();
-    psAuthenticationMessage request(0,username.GetData(), hexstring.GetData(), CS_PLATFORM_NAME "-" CS_PROCESSOR_NAME "(" CS_VER_QUOTE(CS_PROCESSOR_SIZE) ")-" CS_COMPILER_NAME, HWRender.GetDataSafe(), HWGLVersion.GetDataSafe(), password256.GetData() );
+    psAuthenticationMessage request(0,username.GetData(), hexstring.GetData(), CS_PLATFORM_NAME "-" CS_PROCESSOR_NAME "(" CS_VER_QUOTE(CS_PROCESSOR_SIZE) ")-" CS_COMPILER_NAME, HWRender.GetDataSafe(), HWGLVersion.GetDataSafe(), "" );
     
     request.SendMessage();                
 }
