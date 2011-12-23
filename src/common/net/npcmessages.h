@@ -315,11 +315,11 @@ public:
 class psNPCWorkDoneMessage : public psMessageCracker
 {
 public:
-    EID         npcId;
+    EID         npcEID;
     const char* resource;
     const char* nick;
 
-    psNPCWorkDoneMessage(uint32_t clientToken, EID npcId, const char* resource, const char* nick);
+    psNPCWorkDoneMessage(uint32_t clientToken, EID npcEID, const char* resource, const char* nick);
     
     psNPCWorkDoneMessage(MsgEntry *message);
     

@@ -954,7 +954,7 @@ csString psAllEntityPosMessage::ToString(NetBase::AccessPointers * accessPointer
 //---------------------------------------------------------------------------
 PSF_IMPLEMENT_MSG_FACTORY(psNPCWorkDoneMessage,MSGTYPE_NPC_WORKDONE);
 
-psNPCWorkDoneMessage::psNPCWorkDoneMessage(uint32_t clientToken, EID npcId, const char* resource, const char* nick)
+psNPCWorkDoneMessage::psNPCWorkDoneMessage(uint32_t clientToken, EID npcEID, const char* resource, const char* nick)
 {
     int size = sizeof(int);
     size    += (strlen(resource) + 1)*sizeof(char);
@@ -963,7 +963,7 @@ psNPCWorkDoneMessage::psNPCWorkDoneMessage(uint32_t clientToken, EID npcId, cons
 
     msg->SetType(MSGTYPE_NPC_WORKDONE);
     msg->clientnum = clientToken;
-    msg->Add(npcId.Unbox());
+    msg->Add(npcEID.Unbox());
     msg->Add(resource);
     msg->Add(nick);
 }
@@ -972,7 +972,7 @@ psNPCWorkDoneMessage::psNPCWorkDoneMessage(MsgEntry* message)
 {
     if(!message)
         return;
-    npcId    = EID(message->GetUInt32());
+    npcEID    = EID(message->GetUInt32());
     resource = message->GetStr();
     nick     = message->GetStr();
 }
@@ -981,7 +981,7 @@ csString psNPCWorkDoneMessage::ToString(NetBase::AccessPointers* /*accessPointer
 {
     csString msgtext;
 
-    msgtext.AppendFmt("NPC EID: %d", npcId.Unbox());
+    msgtext.AppendFmt("NPC : %s", ShowID(npcEID));
     msgtext.AppendFmt("Item received: %s", resource);
     msgtext.AppendFmt("With nick: %s", nick);
 
