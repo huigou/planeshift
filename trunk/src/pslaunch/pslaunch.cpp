@@ -269,7 +269,13 @@ bool psLauncherGUI::HandleEvent (iEvent &ev)
     }
     else if(!updateTold)
     {
-        if(infoShare->GetUpdateAdminNeeded())
+        //if the update was disabled we just don't show the window
+        //so the user cannot update using this.
+        if(!configManager->GetBool("Update.Enable", true))
+        {
+            updateTold = true;
+        }
+        else if(infoShare->GetUpdateAdminNeeded())
         {
             pawsOkBox* notify = (pawsOkBox*)paws->FindWidget("Notify");
             notify->SetText("An update is available but you don't have the correct permissions to continue!\n\n"

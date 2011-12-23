@@ -70,6 +70,15 @@ bool pawsLauncherWindow::PostSetup()
     notify = (pawsOkBox*)FindWidget("Notify");
     notify->SetAlwaysOnTop(true);
 
+    //check if we allow update with this pslaunch. By default we do
+    //but if the setting files say otherwise we don't. Useful
+    //when the system is used through other distribution systems
+    //if we don't allow update hide the repair buttons
+    if(!configFile->GetBool("Update.Enable", true))
+    {
+        FindWidget("RepairButton")->Hide();
+    }
+
     return true;
 }
 
