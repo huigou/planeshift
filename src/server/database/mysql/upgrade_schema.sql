@@ -1649,7 +1649,7 @@ DROP table tribe_needs;
 ALTER TABLE `tribes` ADD COLUMN tribal_recipe int(5) NOT NULL AFTER `npc_idle_behavior`;
 update tribes set tribal_recipe=5;
 INSERT INTO `item_categories` VALUES (28,'Buildings',NULL,NULL,NULL,100,0,0);
-ALTER TABLE 'sc_tribe_resources' ADD COLUMN `nick` varchar(30) NOT NULL default '' AFTER 'name';
+ALTER TABLE `sc_tribe_resources` ADD COLUMN `nick` varchar(30) NOT NULL default '' AFTER `name`;
 
 #
 # Updated tribe member types to be a string 1262
