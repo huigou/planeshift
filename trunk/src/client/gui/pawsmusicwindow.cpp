@@ -363,6 +363,9 @@ void pawsMusicWindow::HandleMessage(MsgEntry* message)
     readOnly = msg.readOnly;
     SetTitle(msg.songTitle);
 
+    //if the sheet is readonly hide also the edit button itself else show it
+    editButton->SetVisibility(!readOnly);
+    
     Show();
 }
 
