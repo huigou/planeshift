@@ -746,6 +746,8 @@ bool psPathNetwork::Delete(psPath * path)
     start->RemoveLink(path);
     end->RemoveLink(path);
 
+    paths.Extract(paths.Find(path));
+
     delete path;
 
     // Now delete any waypoints that dosn't have any links anymore.
