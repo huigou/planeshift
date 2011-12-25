@@ -365,6 +365,9 @@ void pawsMusicWindow::HandleMessage(MsgEntry* message)
 
     //if the sheet is readonly hide also the edit button itself else show it
     editButton->SetVisibility(!readOnly);
+    //disable also save and load if it's the case
+    saveButton->SetVisibility(!readOnly);
+    loadButton->SetVisibility(!readOnly);
     
     Show();
 }
