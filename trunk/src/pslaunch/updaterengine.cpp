@@ -645,8 +645,6 @@ bool UpdaterEngine::SelfUpdate(int selfUpdating)
 
         csString md5sum = GetMD5OfFile("/this/" + zip);
 
-        printf("Updater %s old file %s\n", md5sum.GetData(), config->GetNewConfig()->GetUpdaterVersionLatestMD5());
-
         if(!(config->GetNewConfig() &&
                 config->GetNewConfig()->GetUpdaterVersionLatestMD5() &&
                 md5sum.Compare(config->GetNewConfig()->GetUpdaterVersionLatestMD5())))
