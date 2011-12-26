@@ -148,7 +148,6 @@ bool pawsConfigPopup::SaveConfig()
 {
     magicWindow->showWindow->SetState(!showActiveMagicConfig->GetState());
     npcDialog->SetUseBubbles(useNpcDialogBubbles->GetState());
-    
 
     //we take for granted ids of the widgets correspond to message types id
     csHash<psMainWidget::mesgOption, int>::GlobalIterator iter = mainWidget->GetMesgOptionsIterator();
@@ -170,7 +169,7 @@ bool pawsConfigPopup::SaveConfig()
 
     mainWidget->SaveConfigToFile();
 
-    npcDialog->SaveSettings();
+    npcDialog->SaveSetting();
 
     return true;
 }
