@@ -109,7 +109,11 @@ bool SoundHandle::Init(const char* resname, bool loop, float volume_preset,
         return false;
     }
 
-    SoundSystemManager::GetSingleton().GetSoundSystem()->CreateSource(sndstream, sndsource);
+    if(!SoundSystemManager::GetSingleton().GetSoundSystem()->CreateSource(sndstream, sndsource))
+    {
+        return false;
+    }
+
     preset_volume = volume_preset;
     sndCtrl = ctrl;
     name = csString(resname);
@@ -180,13 +184,13 @@ void SoundHandle::ConvertTo3D(float mindist, float maxdist, csVector3 pos,
 {
     maxDistance = maxdist;
 
-    SoundSystemManager::GetSingleton().GetSoundSystem()->Create3dSource(sndsource, sndsource3d, mindist, maxdist,
+    SoundSystemManager::GetSingleton().GetSoundSystem()->Create3DSource(sndsource, sndsource3d, mindist, maxdist,
                                  pos);
 
     /* create a directional source if rad > 0 */
     if(rad > 0)
     {
-        SoundSystemManager::GetSingleton().GetSoundSystem()->CreateDirectional3dSource(sndsource3d, sndsourcedir,
+        SoundSystemManager::GetSingleton().GetSoundSystem()->CreateDirectional3DSource(sndsource3d, sndsourcedir,
                                                 dir, rad);
     }
 }
