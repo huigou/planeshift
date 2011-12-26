@@ -118,9 +118,14 @@ bool pawsNpcDialogWindow::OnKeyDown(utf32_char keyCode, utf32_char key, int modi
                     }
                 }
 
+                //try checking if there is free text instead
+                if(answer == "")
+                {
+                    answer = text;
+                }
+
                 if(answer != "")
                 {
-                    printf("%s\n", answer.GetData());
                     csString cmd;
                     if (answer.GetAt(0) == '=') // prompt window signal
                     {
@@ -218,14 +223,14 @@ bool pawsNpcDialogWindow::OnMouseDown( int button, int modifiers, int x , int y 
     //it's possible to write on it directly.
     if(useBubbles)
     {
-        //check which widget was pressed
-        //mainWidget->WidgetAt(data.x, data.y);
-        pawsWidget *textBox = FindWidget("InputText");
+        pawsEditTextBox * textBox = dynamic_cast<pawsEditTextBox*>(FindWidget("InputText"));
         //Don't attempt anything if the textbox is missing. Else
         //the main widget will be focused.
         if(textBox)
         {
             PawsManager::GetSingleton().SetCurrentFocusedWidget(textBox);
+            //empty the text when selecting it
+            textBox->SetText("");
         }
         return true;
     }
