@@ -27,22 +27,19 @@
 
 #include <iutil/cfgmgr.h>
 
-/*
- * Get a renderer und returns false or true
- */
 
 bool SoundSystem::Initialize(iObjectRegistry* objectReg)
 {
     float rollOff;
 
-    sndrenderer = csQueryRegistry<iSndSysRenderer>(objectReg);
-    if(!sndrenderer.IsValid())
+    sndRenderer = csQueryRegistry<iSndSysRenderer>(objectReg);
+    if(!sndRenderer.IsValid())
     {
         Error1("Failed to locate Sound renderer!");
         return false;
     }
 
-    listener = sndrenderer->GetListener();
+    listener = sndRenderer->GetListener();
     if(!listener.IsValid())
     {
         Error1("Failed to get a sound global listener!");
@@ -64,125 +61,129 @@ bool SoundSystem::Initialize(iObjectRegistry* objectReg)
     return true;
 }
 
-/*
- * create a _paused_ stream using a iSndSysData handle
- * loop >= 1 .. make it loop
- * type can be one of those:
- *
- * CS_SND3D_DISABLE=0
- * CS_SND3D_RELATIVE=1
- * CS_SND3D_ABSOLUTE=2
- *
- * modifications are done on objects to caller gave is
- * returns false or true
- */
-
-bool SoundSystem::CreateStream(csRef<iSndSysData> &snddata, int loop,
-                                 int type, csRef<iSndSysStream> &sndstream)
+bool SoundSystem::CreateStream(csRef<iSndSysData> &sndData, bool loop,
+                                 int type, csRef<iSndSysStream> &sndStream)
 {
-    if(!(sndstream = sndrenderer->CreateStream(snddata, type)))
+    // checking that SoundSystem has been correctly initialized
+    if(!sndRenderer.IsValid())
     {
-        Error2("Can't create stream for '%s'!",
-               snddata->GetDescription());
+        return false;
+    }
+
+    // the sound renderer must create the stream and keep track of it
+    sndStream = sndRenderer->CreateStream(sndData, type);
+    if(!sndStream.IsValid())
+    {
+        Error2("Can't create stream for '%s'!", sndData->GetDescription());
         return false;
     }
 
     // make it loop if requested
-    if(loop >= 1)
+    if(loop)
     {
-        sndstream->SetLoopState(CS_SNDSYS_STREAM_LOOP);
+        sndStream->SetLoopState(CS_SNDSYS_STREAM_LOOP);
     }
     else
     {
-        sndstream->SetLoopState(CS_SNDSYS_STREAM_DONTLOOP);
+        sndStream->SetLoopState(CS_SNDSYS_STREAM_DONTLOOP);
     }
 
     return true;
 }
 
-/*
- * Removes the given stream
- */
-
-void SoundSystem::RemoveStream(csRef<iSndSysStream> &sndstream)
+void SoundSystem::RemoveStream(csRef<iSndSysStream> &sndStream)
 {
-    sndrenderer->RemoveStream(sndstream);
+    // checking that SoundSystem has been correctly initialized
+    if(!sndRenderer.IsValid())
+    {
+        return;
+    }
+
+    // making sound renderer remove the stream from the system
+    sndRenderer->RemoveStream(sndStream);
 }
 
-/*
- * Creates a source
- * if its 2D or 3D depends on the stream
- * volume is 1 by default - we set it to 0 - ALWAYS
- */
-
-bool SoundSystem::CreateSource(csRef<iSndSysStream> &sndstream,
-                               csRef<iSndSysSource> &sndsource)
+bool SoundSystem::CreateSource(csRef<iSndSysStream> &sndStream,
+                               csRef<iSndSysSource> &sndSource)
 {
-    sndsource = sndrenderer->CreateSource(sndstream);
-    sndsource->SetVolume(0);
+    // checking that SoundSystem has been correctly initialized
+    if(!sndRenderer.IsValid())
+    {
+        return false;
+    }
+
+    // the sound renderer must create the source and keep track of it
+    sndSource = sndRenderer->CreateSource(sndStream);
+    if(!sndSource.IsValid())
+    {
+        Error2("Can't create source for '%s'!", sndStream->GetDescription());
+        return false;
+    }
+
+    // default volume is 1, we set to 0
+    sndSource->SetVolume(0);
+
     return true;
 }
 
-/*
- * removeing the source doesnt remove the stream!
- * this is important!
- */
-
-void SoundSystem::RemoveSource(csRef<iSndSysSource> &sndsource)
+void SoundSystem::RemoveSource(csRef<iSndSysSource> &sndSource)
 {
-    sndrenderer->RemoveSource(sndsource);
+    // checking that SoundSystem has been correctly initialized
+    if(!sndRenderer.IsValid())
+    {
+        return;
+    }
+
+    // making sound renderer remove the source from the system
+    sndRenderer->RemoveSource(sndSource);
 }
 
-
-/*
- * this creates the 3d source out of an normal source
- * we need distance and positional parameters as well as volume
- * this thing doesnt make a sound .. yet .. because the stream is still paused
- * doesnt need a special remove functions because this is within openal
- * use RemoveSource to remove it
- */
-
-void SoundSystem::Create3dSource(csRef<iSndSysSource> &sndsource,
-                                 csRef<iSndSysSource3D> &sndsource3d,
-                                 float mindist, float maxdist, csVector3 pos)
+void SoundSystem::Create3DSource(csRef<iSndSysSource> &sndSource,
+                                 csRef<iSndSysSource3D> &sndSource3D,
+                                 float minDist, float maxDist, csVector3 pos)
 {
-    sndsource3d = scfQueryInterface<iSndSysSource3D>(sndsource);
-    sndsource3d->SetMinimumDistance(mindist);
-    sndsource3d->SetMaximumDistance(maxdist);
-    sndsource3d->SetPosition(pos);
+    // the renderer keep track of only one source; if the 2D source has been
+    // created with type != CS_SND3D_DISABLE the it will have this interface
+    sndSource3D = scfQueryInterface<iSndSysSource3D>(sndSource);
+
+    // setting parameters
+    sndSource3D->SetMinimumDistance(minDist);
+    sndSource3D->SetMaximumDistance(maxDist);
+    sndSource3D->SetPosition(pos);
 }
 
 /*
- * create a directional source out of a 3d source
- * we need the direction its sending to and the radius(?) of the cone it creates into
+ * We need the direction its sending to and the radius(?) of the cone it creates into
  * that direction - experimental
- * doesnt need a special remove functions because this is within openal
- * use RemoveSource to remove it
  */
-
-void SoundSystem::CreateDirectional3dSource
-                     (csRef<iSndSysSource3D>& /*sndsource3d*/,
-                      csRef<iSndSysSource3DDirectionalSimple> &sndsourcedir,
+void SoundSystem::CreateDirectional3DSource
+                     (csRef<iSndSysSource3D>& /*sndSource3D*/,
+                      csRef<iSndSysSource3DDirectionalSimple> &sndSourceDir,
                       csVector3 direction, float rad)
 {
-    sndsourcedir->SetDirection(direction);
-    sndsourcedir->SetDirectionalRadiation(rad);
+    sndSourceDir->SetDirection(direction);
+    sndSourceDir->SetDirectionalRadiation(rad);
 }
-
-/*
- * Updates the listener position
- * v is position
- * f is front
- * t is top
- */
 
 void SoundSystem::UpdateListener(csVector3 v, csVector3 f, csVector3 t)
 {
+    // checking that SoundSystem has been correctly initialized
+    if(!listener.IsValid())
+    {
+        return;
+    }
+
     listener->SetPosition(v);
     listener->SetDirection(f,t);
 }
 
-const csVector3& SoundSystem::GetListenerPosition() const
+csVector3 SoundSystem::GetListenerPosition() const
 {
+    // checking that SoundSystem has been correctly initialized
+    if(!listener.IsValid())
+    {
+        return csVector3(0, 0, 0);
+    }
+
     return listener->GetPosition();
 }

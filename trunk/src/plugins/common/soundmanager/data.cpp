@@ -130,6 +130,12 @@ SoundFile* SoundDataCache::LoadSoundFile(const char* name)
     bool                error = false;
     bool                isDynamic = false;
 
+    // checking if this has been initialized correctly
+    if(!sndLoader.IsValid() || !vfs.IsValid())
+    {
+        return 0;
+    }
+
     // checking the sound library
     soundFile = libSoundFiles.Get(name, 0);
     if(soundFile == 0) // maybe this is a dynamic file
@@ -230,6 +236,12 @@ bool SoundDataCache::LoadSoundLib(const char* fileName, iObjectRegistry* objectR
     csRef<iDocumentNodeIterator>    iter; /* node iterator */
     csRef<iDocumentNode>            node;   /* yet another node .... */
     SoundFile*                      snd;        ///< soundfile
+
+    // checking if this has been initialized correctly
+    if(!vfs.IsValid())
+    {
+        return false;
+    }
 
     if(!(xml = csQueryRegistry<iDocumentSystem>(objectReg)))
       xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);

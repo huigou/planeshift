@@ -30,93 +30,104 @@
 
 #define DEFAULT_LISTENER_ROLL_OFF 1.0
 
-/**
- * This is an Interface Class to the Crystalspace Soundrenderer.
- * It works like a Wrapper and has some additional functionalities but
- * no own data/objects. All it does is simplifying access to the Soundrenderer.  
- */
 
+/**
+ * This is an interface class to the CrystalSpace sound renderer. It works like a
+ * wrapper and has some additional functionalities but at the moment it hasn't own
+ * data/objects. All it does is simplifying access to the sound renderer. In the
+ * future this will be the class that controls the number of active sources.
+ */
 class SoundSystem
 {
 public:
     /**
-     * initializes this object and tries to load the soundrenderer.
-     * returns true or false
-     * @param objectReg ps objectreg where we find our soundrenderer
+     * Initializes this object by loading the CS sound renderer and creating a
+     * global listener.
+     * @param objectReg ps iObjectRegistry used to get the sound renderer.
+     * @return true on success, false otherwise.
      */
     bool Initialize(iObjectRegistry* objectReg);
 
     /**
-     * Creates a stream out of the given snddata.
-     * @param snddata valid iSndSysData object
-     * @param loop LOOP or DONT_LOOP
-     * @param type 3dtype of this sound CS_SND3D_DISABLE=0 CS_SND3D_RELATIVE=1 or CS_SND3D_ABSOLUTE=2
-     * @param sndstream your iSndSysStream object
+     * Creates a stream out of the given sound data.
+     * @param sndData valid iSndSysData object.
+     * @param loop true if the sound must loop, false otherwise.
+     * @param type 3D type of this sound; it can have these values CS_SND3D_DISABLE=0,
+     * CS_SND3D_RELATIVE=1 or CS_SND3D_ABSOLUTE=2.
+     * @param sndStream the iSndSysStream object that will contain the stream.
+     * @return true on success, false if SoundSystem hasn't been initialized correctly.
      */
-    bool CreateStream(csRef<iSndSysData> &snddata, int loop, int type,
-                      csRef<iSndSysStream> &sndstream);
+    bool CreateStream(csRef<iSndSysData> &sndData, bool loop, int type,
+                      csRef<iSndSysStream> &sndStream);
 
     /**
-     * Removes a stream.
-     * @param sndstream iSndSysStream object to remove
+     * Removes a stream from the sound renderer.
+     * @param sndStream iSndSysStream object to remove.
      */
-    void RemoveStream(csRef<iSndSysStream> &sndstream);
+    void RemoveStream(csRef<iSndSysStream> &sndStream);
 
     /**
-     * Create a Source associated to your Stream.
-     * @param sndstream your iSndSysStream object
-     * @param sndsource your iSndSysSource object
+     * Create a source associated to your stream with volume 0.
+     * @param sndStream your iSndSysStream object.
+     * @param sndSource the iSndSysSource object that will contain the source.
+     * @return true on success, false if SoundSystem hasn't been initialized correctly.
      */
-    bool CreateSource(csRef<iSndSysStream> &sndstream,
-                      csRef<iSndSysSource> &sndsource);
+    bool CreateSource(csRef<iSndSysStream> &sndStream,
+                      csRef<iSndSysSource> &sndSource);
 
     /**
-     * Removes a Source.
-     * @param sndsource iSndSysSource object to remove
+     * Removes a source from the sound renderer.
+     * @attention removing the source doesn't remove its stream! Call RemoveStream for
+     * that.
+     * @param sndSource iSndSysSource object to remove.
      */
-    void RemoveSource(csRef<iSndSysSource> &sndsource);
+    void RemoveSource(csRef<iSndSysSource> &sndSource);
 
     /**
-     * Creates a 3d Source on top of a 2d source.
-     * Doesnt work of your stream type is CS_SND3D_DISABLE
-     * @param sndsource your iSndSysSource object
-     * @param sndsource3d your iSndSysSource3D object
-     * @param mindist distance when volume is at max
-     * @param maxdist distance when volume is at min
-     * @param pos 3d position of this source
+     * Creates a 3D source on top of a 2D source. It doesn't work if your stream type
+     * is CS_SND3D_DISABLE. To remove the 3D source it is enough to remove the original
+     * 2D source.
+     * @param sndSource your 2D iSndSysSource object.
+     * @param sndSource3D the iSndSysSource3D that will contain the 3D source.
+     * @param minDist greatest distance at which the sound is played at maximum volume.
+     * @param maxDist maximum distance at which the sound can be heard.
+     * @param pos 3D position of this source.
      */
-    void Create3dSource(csRef<iSndSysSource> &sndsource,
-                        csRef<iSndSysSource3D> &sndsource3d,
-                        float mindist, float maxdist, csVector3 pos);
+    void Create3DSource(csRef<iSndSysSource> &sndSource,
+                        csRef<iSndSysSource3D> &sndSource3D,
+                        float minDist, float maxDist, csVector3 pos);
 
     /**
-     * Creates a directional source on top of a 3d source.
-     * @param sndsource3d your iSndSysSource3D object
-     * @param sndsourcedir your iSndSysSource3DDirectionalSimple object
-     * @param direction direction this source is emitting to
-     * @param rad radiation of the directional cone
+     * Creates a directional source on top of a 3D source. To remove the 3D source it
+     * is enough to remove the original 2D source.
+     * @param sndSource3D your iSndSysSource3D object.
+     * @param sndSourceDir the iSndSysSource3DDirectionalSimple object that will contain
+     * the directional source.
+     * @param direction direction this source emits to.
+     * @param rad radiation of the directional cone.
      */
-    void CreateDirectional3dSource(csRef<iSndSysSource3D> &sndsource3d,
-                                   csRef<iSndSysSource3DDirectionalSimple> &sndsourcedir,
+    void CreateDirectional3DSource(csRef<iSndSysSource3D> &sndSource3D,
+                                   csRef<iSndSysSource3DDirectionalSimple> &sndSourceDir,
                                    csVector3 direction, float rad);
 
     /**
-     * Updates listener position
-     * @param v viewpoint or for that matter hearpoint
-     * @param f front
-     * @param t top
+     * Updates listener's position.
+     * @param v viewpoint or for that matter hearpoint.
+     * @param f front.
+     * @param t top.
      */
     void UpdateListener(csVector3 v, csVector3 f, csVector3 t);
 
     /**
-     * Gets the current listener position.
-     * @return a vector containing the listener position.
+     * Gets the current listener's position.
+     * @return a vector containing the listener position. If SoundSystem has not been
+     * initialized correctly it returns a null vector (0, 0, 0).
      */
-    const csVector3& GetListenerPosition() const;
+    csVector3 GetListenerPosition() const;
 
 private:
-    csRef<iSndSysRenderer> sndrenderer; ///< soundrenderer were using
-    csRef<iSndSysListener> listener;    ///< our listener object
+    csRef<iSndSysRenderer> sndRenderer; ///< CrystalSpace sound renderer
+    csRef<iSndSysListener> listener;    ///< global listener
 };
 
 #endif /*_SOUND_SYSTEM_H_*/

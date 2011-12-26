@@ -68,7 +68,11 @@ bool SongHandle::Init(const char* /* resName */, bool loop, float volumePreset,
     }
     static_cast<SndSysSongStream*>(&(*sndstream))->SetErrorRate(errorRate);
 
-    SoundSystemManager::GetSingleton().GetSoundSystem()->CreateSource(sndstream, sndsource);
+    if(!SoundSystemManager::GetSingleton().GetSoundSystem()->CreateSource(sndstream, sndsource))
+    {
+        return false;
+    }
+
     preset_volume = volumePreset;
     sndCtrl = ctrl;
 
