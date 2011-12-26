@@ -38,10 +38,6 @@ class Recipe;
 
 #define CYCLIC_RECIPE_PRIORITY 100
 
-#define REQ_CONCENTRATED 0
-#define REQ_DISTRIBUTED  1
-
-
 /**
  * This class represents a leaf in a recipe tree.
  * The recipe tree is used by tribes to decide which action to take and in which order.
@@ -51,15 +47,23 @@ class Recipe;
 
 class RecipeTreeNode {
 public:
-    Recipe* recipe;     ///< The recipe this leaf is about
-    int     priority;   ///< The priority of this recipe. (Level in tree, where root = 0)
-    int     wait;       ///< Wait time
-    int     nextStep;   ///< The next step which needs to be executed
-    int     cost;       ///< Computed cost for this recipe. In regard of tribe.
+    typedef enum 
+    {
+        REQ_CONCENTRATED,
+        REQ_DISTRIBUTED
+    } RequirementParseType;
+    static const char * RequirementParseTypeString[];
 
-    int     requirementParseType; ///< Holds the way the Recipe Manager should meet requirements
-    int     nextReq;    ///< Next requirement that should be met
+    
+    Recipe*                  recipe;     ///< The recipe this leaf is about
+    int                      priority;   ///< The priority of this recipe. (Level in tree, where root = 0)
+    int                      wait;       ///< Wait time
+    int                      nextStep;   ///< The next step which needs to be executed
+    int                      cost;       ///< Computed cost for this recipe. In regard of tribe.
 
+    RequirementParseType     requirementParseType; ///< Holds the way the Recipe Manager should meet requirements
+    int                      nextReq;    ///< Next requirement that should be met
+    
     RecipeTreeNode*          parent;   ///< Link to parent node
     csArray<RecipeTreeNode*> children; ///< Link to children nodes
 

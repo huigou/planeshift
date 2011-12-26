@@ -100,6 +100,9 @@ private:
 class NPC : private ScopedTimerCB
 {
 protected:
+
+    typedef csHash<csString,csString> BufferHash;
+
     NPCType           *brain;
     csString           type;
     PID                pid;
@@ -466,11 +469,36 @@ public:
     */
     int GetFallCounter()  { return fallCounter; }
 
-    csString GetBuffer() { return tribeBuffer; }
-    void SetBuffer(csString buffer) { tribeBuffer = buffer; }
+    /** Return a named buffer from the NPC.
+     *
+     * Function used to get data from buffers containing information.
+     *
+     * @param The buffer name.
+     * @return The content of the named buffer.
+     */
+    csString GetBuffer(const csString& bufferName);
+    /** Set/Update the value of a named buffer.
+     *
+     * @param The buffer name.
+     * @param The value to put in the buffer.
+     */
+    void SetBuffer(const csString& bufferName, const csString& value);
+    /** Replace $NBUFFER[x] with values from the NPC buffer.
+     *
+     * @param result String to replace buffers in.
+     */
+    void ReplaceBuffers(csString& result);
 
     Tribe::Memory* GetBufferMemory() { return &bufferMemory; }
     void SetBufferMemory(Tribe::Memory* memory);
+
+    /** Set a building spot for this NPC
+     */
+    void SetBuildingSpot(Tribe::Asset* buildingSpot);
+    
+    /** Get the stored building spot for this NPC
+     */
+    Tribe::Asset* GetBuildingSpot();
 
 private:
     psNPCTick*        tick;
@@ -479,8 +507,9 @@ private:
     psWorld*          world;
     iCollideSystem*   cdsys;
 
-    csString          tribeBuffer;      ///< Used to store dynamic data
+    BufferHash        npcBuffer;        ///< Used to store dynamic data
     Tribe::Memory     bufferMemory;     ///< Used to store location data
+    Tribe::Asset*     buildingSpot;     ///< Used to store current building spot.
     
     friend class psNPCTick;
 

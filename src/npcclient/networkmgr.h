@@ -151,12 +151,13 @@ public:
 
     /** Send a spawn building command to server
      *
+     * @param spawner      The entity that spawned the building
      * @param where        Containing the desired location  
-     * @param sectorName   The name of the sector in which we want a spawn.
+     * @param sector       The sector in which we want a spawn.
      * @param buildingName The name of the building. Or more exactly... of the mesh for it.
      * @param tribeID      The owner of this building
      */
-    void QueueSpawnBuildingCommand(csVector3 where, const char* sectorName, const char* buildingName, int tribeID);
+    void QueueSpawnBuildingCommand(gemNPCActor *spawner, csVector3 where, iSector* sector, const char* buildingName, int tribeID);
     
     /** Queue a talk command to the server
      *

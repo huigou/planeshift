@@ -1572,16 +1572,16 @@ void psNPCClient::ListTribes(const char * pattern)
 
                 // Print Tribe Members
             	CPrintf(CON_CMDOUTPUT,"Members:\n");
-            	CPrintf(CON_CMDOUTPUT, "%-6s %-6s %-30s %-6s %-6s %-15s %-15s %-20s %-20s\n", 
-                	    "NPC ID", "EID", "Name", "Entity", "Status", "Brain","Behaviour","Owner","TribeMemberType");
+            	CPrintf(CON_CMDOUTPUT, "%-6s %-6s %-30s %-3s %-6s %-15s %-15s %-20s %-20s\n", 
+                	    "NPC ID", "EID", "Name", "Ent", "Status", "Brain","Behaviour","Owner","TribeMemberType");
             	for (size_t j = 0; j < tribes[i]->GetMemberCount(); j++)
             	{
                 	NPC * npc = tribes[i]->GetMember(j);
-               		CPrintf(CON_CMDOUTPUT, "%6u %6d %-30s %-6s %-6s %-15s %-15s %-20s %-20s\n" ,
+               		CPrintf(CON_CMDOUTPUT, "%6u %6d %-30s %-3s %-6s %-15s %-15s %-20s %-20s\n" ,
                 	        npc->GetPID().Unbox(),
                 	        npc->GetActor() ? npc->GetActor()->GetEID().Unbox() : 0,
                	        	npc->GetName(),
-                        	(npc->GetActor()?"Entity":"None  "),
+                        	(npc->GetActor()?"Yes":" - "),
                         	(npc->IsAlive()?"Alive":"Dead"),
                         	(npc->GetBrain()?npc->GetBrain()->GetName():""),
                         	(npc->GetCurrentBehavior()?npc->GetCurrentBehavior()->GetName():""),
@@ -1629,6 +1629,9 @@ void psNPCClient::ListTribes(const char * pattern)
 
                 // Print Assets
                 tribes[i]->DumpAssets();
+
+                // Print Recipe Buffers
+                tribes[i]->DumpBuffers();
 
                 return; // The tribe has been dumped
             }

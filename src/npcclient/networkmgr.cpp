@@ -298,7 +298,8 @@ void NetworkManager::HandleActor(MsgEntry *me)
     if(obj && obj->GetPID() == mesg.playerID)
     {
         // We already know this entity so just update the entity.
-        CPrintf(CON_ERROR, "Already know about gemNPCActor: %s (%s), %s.\n", mesg.name.GetData(), obj->GetName(), ShowID(mesg.entityid));
+        CPrintf(CON_ERROR, "Already know about gemNPCActor: %s (%s), %s %s.\n",
+                mesg.name.GetData(), obj->GetName(), ShowID(mesg.playerID), ShowID(mesg.entityid));
 
         obj->Move(mesg.pos, mesg.yrot, mesg.sectorName, mesg.instance );
         obj->SetInvisible( (mesg.flags & psPersistActor::INVISIBLE) ? true : false );
@@ -376,7 +377,7 @@ void NetworkManager::HandleItem( MsgEntry* me )
         // Check just to be sure... it should never happen
         if(tribe)
         {
-            tribe->AddBuildingAsset(mesg.name, mesg.pos, ASSET_BUILDING);
+            tribe->AddAsset(mesg.name, mesg.pos, Tribe::ASSET_BUILDING);
         }
     }
 
@@ -1094,7 +1095,7 @@ void NetworkManager::HandleNPCWorkDone(MsgEntry *me)
     }
 
     // If he just prospected a mine and its a tribe member
-    if(npc->GetBuffer() == "new mine" && npc->GetTribe())
+    if(npc->GetBuffer("Mine") == "new mine" && npc->GetTribe())
     {
         npc->GetTribe()->ProspectMine(npc,msg.resource,msg.nick);
     }
@@ -1240,16 +1241,14 @@ void NetworkManager::QueueSpawnCommand(gemNPCActor *mother, gemNPCActor *father,
     cmd_count++;
 }
 
-void NetworkManager::QueueSpawnBuildingCommand(csVector3 where, const char* sectorName, const char* buildingName, int tribeID)
+void NetworkManager::QueueSpawnBuildingCommand(gemNPCActor *spawner, csVector3 where, iSector* sector, const char* buildingName, int tribeID)
 {
     CheckCommandsOverrun(100);
 
     outbound->msg->Add((int8_t) psNPCCommandsMessage::CMD_SPAWN_BUILDING);
-    outbound->msg->Add(where[0]);
-    outbound->msg->Add(where[1]);
-    outbound->msg->Add(where[2]);
-
-    outbound->msg->Add(sectorName);
+    outbound->msg->Add(spawner->GetEID().Unbox());
+    outbound->msg->Add(where);
+    outbound->msg->Add(sector->QueryObject()->GetName());
     outbound->msg->Add(buildingName);
 
     outbound->msg->Add(tribeID);

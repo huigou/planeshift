@@ -26,38 +26,42 @@ CREATE TABLE `tribe_recipes`
 INSERT INTO `tribe_recipes` VALUES (1, 'Do Nothing', '', 'wait(100);', 1,1);
 
 INSERT INTO `tribe_recipes` VALUES (10, 'Miner Explore', 'tribesman(Miner,1);', 'select(Miner,1);explore();', 0, 0);
-INSERT INTO `tribe_recipes` VALUES (11, 'Hunter Explore', 'tribesman(Hunter,1);', 'select(Hunter,1);explore();', 0, 0);
+INSERT INTO `tribe_recipes` VALUES (11, 'Miner Test Mine', 'tribesman(Miner,1);', 'select(Miner,1);setBuffer(selection,Resource,$TBUFFER[Resource]);percept(selection,tribe:test_mine);', 0, 0);
+INSERT INTO `tribe_recipes` VALUES (12, 'Hunter Explore', 'tribesman(Hunter,1);', 'select(Hunter,1);explore();', 0, 0);
 
-INSERT INTO `tribe_recipes` VALUES (20, 'Dig Resource', 'memory(BUFFER,mine,Miner Explore);tribesman(Miner,1);', 'select(Miner,1);locateResource(BUFFER,Miner Explore);mine();', 0, 0);
-INSERT INTO `tribe_recipes` VALUES (21, 'Hunt Resource', 'memory(BUFFER,hunting_ground,Hunter Explore);tribesman(Hunter,1);', 'select(Hunter,1);locateResource(BUFFER,Hnter Explore);gather();', 0, 0);
+INSERT INTO `tribe_recipes` VALUES (20, 'Miner Dig Resource', 'memory(mine,1,Miner Explore);memory($TBUFFER[Resource],1,Miner Test Mine);tribesman(Miner,1);', 'select(Miner,1);locateResource($TBUFFER[Resource],Miner Explore);setBuffer(selection,Resource,$TBUFFER[Resource]);mine();', 0, 0);
+INSERT INTO `tribe_recipes` VALUES (21, 'Hunter Hunt Resource', 'memory(hunting_ground,1,Hunter Explore);tribesman(Hunter,1);', 'select(Hunter,1);locateResource(hunting_ground,Hunter Explore);setBuffer(selection,Resource,$TBUFFER[Resource]);percept(selection,tribe:hunt);', 0, 0);
+INSERT INTO `tribe_recipes` VALUES (22, 'Miner Buy Coal', 'tribesman(Miner,1);', 'select(Miner,1);setBuffer(selection,Trade,Coal);percept(selection,tribe:buy);', 0, 0);
+INSERT INTO `tribe_recipes` VALUES (23, 'Hunter Buy Skin', 'tribesman(Hunter,1);', 'select(Hunter,1);setBuffer(selection,Trade,Skin);percept(selection,tribe:buy);', 0, 0);
 
 
-INSERT INTO `tribe_recipes` VALUES (30, 'Miner Mate', 'resource(REPRODUCTION_RESOURCE,REPRODUCTION_COST,Dig Resource);tribesman(any,1);', 'select(any,1);mate();alterResource(REPRODUCTION_RESOURCE, -REPRODUCTION_COST);', 0 , 0);
-INSERT INTO `tribe_recipes` VALUES (31, 'Hunter Mate', 'resource(REPRODUCTION_RESOURCE,REPRODUCTION_COST,Hunt Resource);tribesman(any,1);', 'select(any,1);mate();alterResource(REPRODUCTION_RESOURCE, -REPRODUCTION_COST);', 0 , 0);
+
+INSERT INTO `tribe_recipes` VALUES (30, 'Miner Mate', 'resource(REPRODUCTION_RESOURCE,REPRODUCTION_COST,Miner Dig Resource,Resource);tribesman(any,1);', 'select(any,1);setBuffer(selection,Reproduce_Type,$member_type);mate();alterResource(REPRODUCTION_RESOURCE, -REPRODUCTION_COST);', 0 , 0);
+INSERT INTO `tribe_recipes` VALUES (31, 'Hunter Mate', 'resource(REPRODUCTION_RESOURCE,REPRODUCTION_COST,Hunter Hunt Resource,Resource);tribesman(any,1);', 'select(any,1);setBuffer(selection,Reproduce_Type,$member_type);mate();alterResource(REPRODUCTION_RESOURCE, -REPRODUCTION_COST);', 0 , 0);
 
 # Spot Recipe
-INSERT INTO `tribe_recipes` VALUES (40, 'Miners Tribe Spots', '', 'reserveSpot(-77,0,-189,Campfire);reserveSpot(-90,0,-190,Tent);reserveSpot(-77,0,-208,Tent);reserveSpot(-80,0,-205,Tent);', 0, 0);
+INSERT INTO `tribe_recipes` VALUES (40, 'Hunter Tribe Spots', '', 'reserveSpot(0,0,0,Campfire);reserveSpot(-4,0,6,Small Tent);reserveSpot(6,0,4,Small Tent);reserveSpot(4,0,-6,Small Tent);reserveSpot(-8,0,-2,Small Tent);', 0, 0);
 
-INSERT INTO `tribe_recipes` VALUES (41, 'Hunting Tribe Spots', '', 'reserveSpot(-70,0,-205,Campfire);reserveSpot(-70,0,-212,Campfire);reserveSpot(-80,0,-212,Tent);reserveSpot(-49,0,-203,Tent);reserveSpot(-52,0,-174,Tent);reserveSpot(-67,0,-147,Tent);reserveSpot(-47,0,-140,Tent);', 0, 0);
+INSERT INTO `tribe_recipes` VALUES (41, 'Miner Tribe Spots', '', 'reserveSpot(0,0,0,Campfire);reserveSpot(-4,0,6,Small Tent);reserveSpot(6,0,4,Small Tent);reserveSpot(4,0,-6,Small Tent);reserveSpot(-8,0,-2,Small Tent);reserveSpot(-4,0,-4,Campfire);reserveSpot(-8,0,4,Small Tent);reserveSpot(8,0,8,Small Tent);reserveSpot(2,0,4,Small Tent);reserveSpot(-6,0,-8,Small Tent);', 0, 0);
 
 
 # Upkeep
-INSERT INTO `tribe_recipes` VALUES (50, 'Mining Upkeep', 'resource(REPRODUCTION_RESOURCE,10,Dig Resource);', 'alterResource(REPRODUCTION_RESOURCE,-10);', 1, 1);
-INSERT INTO `tribe_recipes` VALUES (51, 'Hunting Upkeep', 'resource(REPRODUCTION_RESOURCE,10,Hunt Resource);', 'alterResource(REPRODUCTION_RESOURCE,-10);', 1, 1);
+INSERT INTO `tribe_recipes` VALUES (50, 'Mining Upkeep', 'resource(REPRODUCTION_RESOURCE,10,Miner Dig Resource,Resource);', 'alterResource(REPRODUCTION_RESOURCE,-10);', 1, 1);
+INSERT INTO `tribe_recipes` VALUES (51, 'Hunting Upkeep', 'resource(REPRODUCTION_RESOURCE,10,Hunter Hunt Resource,Resource);', 'alterResource(REPRODUCTION_RESOURCE,-10);', 1, 1);
 
 # 
-INSERT INTO `tribe_recipes` VALUES (60, 'Mining Campfire', 'tribesman(Miner,1);resource(Coal,10,Dig Resource);', 'select(Miner,1);locateBuildingSpot(Campfire);goWork(100);wait(100);addBuilding(Campfire);alterResource(Coal,10);', 0, 0);
-INSERT INTO `tribe_recipes` VALUES (61, 'Mining Tent', 'tribesman(Miner,1);resource(Skin,15,Buy Skin);', 'select(Miner,1);locateBuildingSpot(Tent);goWork(150);wait(150);addBuilding(Small Tent);alterResource(Skin,15);', 0, 0);
+INSERT INTO `tribe_recipes` VALUES (60, 'Miner Build Campfire', 'tribesman(Miner,1);resource(Coal,10,Miner Dig Resource,Resource);', 'select(Miner,1);locateBuildingSpot(Campfire);percept(selection,tribe:build);alterResource(Coal,10);', 0, 0);
+INSERT INTO `tribe_recipes` VALUES (61, 'Miner Build Tent', 'tribesman(Miner,1);resource(Skin,15,Miner Buy Skin,Resource);', 'select(Miner,1);locateBuildingSpot(Small Tent);percept(selection,tribe:build);alterResource(Skin,15);', 0, 0);
 
-INSERT INTO `tribe_recipes` VALUES (70, 'Hunter Campfire', 'tribesman(Hunter,1);resource(Coal,10,Buy Coal);', 'select(Miner,1);locateBuildingSpot(Campfire);goWork(100);wait(100);addBuilding(Campfire);alterResource(Coal,10);', 0, 0);
-INSERT INTO `tribe_recipes` VALUES (71, 'Hunter Tent', 'tribesman(Hunter,1);resource(Skin,15,Hunt Resource);', 'select(Miner,1);locateBuildingSpot(Tent);goWork(150);wait(150);addBuilding(Small Tent);alterResource(Skin,15);', 0, 0);
+INSERT INTO `tribe_recipes` VALUES (70, 'Hunter Build Campfire', 'tribesman(Hunter,1);resource(Coal,10,Hunter Buy Coal,Resource);', 'select(Hunter,1);locateBuildingSpot(Campfire);percept(selection,tribe:build);alterResource(Coal,10);', 0, 0);
+INSERT INTO `tribe_recipes` VALUES (71, 'Hunter Build Tent', 'tribesman(Hunter,1);resource(Skin,15,Hunter Hunt Resource,Resource);', 'select(Hunter,1);locateBuildingSpot(Small Tent);percept(selection,tribe:build);alterResource(Skin,15);', 0, 0);
 
 
 # Targets ~ Missions
-INSERT INTO `tribe_recipes` VALUES (90, 'Evolve Mining Tribe', 'tribesman(number,16,Miner Mate);resource(Coal,150,Dig Resource);resource(Gold Ore,200,Dig Resource);item(Campfire,2);item(Tent,8);', 'wait(1000);', 0, 0);
-INSERT INTO `tribe_recipes` VALUES (91, 'Evolve Hunting Tribe', 'tribesman(number,4,Hunter Mate);resource(Skin,150,Hunt Resource);resource(Meat,200,Hunt Resource);item(Campfire,1);item(Tent,2);', 'wait(1000);', 0, 0);
+INSERT INTO `tribe_recipes` VALUES (90, 'Miner Evolve Tribe', 'tribesman(number,16,Miner Mate);resource(Coal,150,Miner Dig Resource,Resource);resource(Gold Ore,200,Miner Dig Resource,Resource);item(Campfire,2,Miner Build Campfire);item(Small Tent,8,Miner Build Tent);', 'wait(1000);', 0, 0);
+INSERT INTO `tribe_recipes` VALUES (91, 'Hunter Evolve Tribe', 'tribesman(number,4,Hunter Mate);resource(Skin,150,Hunter Hunt Resource,Resource);resource(Meat,200,Hunter Hunt Resource,Resource);item(Campfire,1,Hunter Build Campfire);item(Small Tent,2,Hunter Build Tent);', 'wait(1000);', 0, 0);
 
 # Tribal Recipes
 
-INSERT INTO `tribe_recipes` VALUES (100, 'Mining Tribe', ' ', 'brain(civilised);aggressivity(peaceful);growth(conservatory);unity(organised);loadRecipe(Do Nothing);loadRecipe(Evolve Mining Tribe,distributed);loadRecipe(Miners Tribe Spots);', 1, 1);
-INSERT INTO `tribe_recipes` VALUES (101, 'Hunting Tribe', ' ', 'brain(civilised);aggressivity(neutral);growth(conservatory);unity(organised);loadRecipe(Do Nothing);loadRecipe(Evolve Hunting Tribe,distributed);loadRecipe(Hunting Tribe Spots);', 1, 1);
+INSERT INTO `tribe_recipes` VALUES (100, 'Mining Tribe', ' ', 'brain(civilised);aggressivity(peaceful);growth(conservatory);unity(organised);loadRecipe(Do Nothing);loadRecipe(Miner Evolve Tribe,distributed);loadRecipe(Miner Tribe Spots);', 1, 1);
+INSERT INTO `tribe_recipes` VALUES (101, 'Hunting Tribe', ' ', 'brain(civilised);aggressivity(neutral);growth(conservatory);unity(organised);loadRecipe(Do Nothing);loadRecipe(Hunter Evolve Tribe,distributed);loadRecipe(Hunter Tribe Spots);', 1, 1);

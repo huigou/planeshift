@@ -58,8 +58,8 @@ INSERT INTO `sc_locations` VALUES (27, 8, -1, 'MoveMaster5B','-40.5', '0.0', '-1
 INSERT INTO `sc_locations` VALUES (28, 9, -1, 'MoveMaster5B','-40.0', '0.0', '-170.0', 0, 0.0,'', 3);
 INSERT INTO `sc_locations` VALUES (29, 8, -1, 'MoveMaster5C','4.5', '0.0', '-239.5', 0, 0.0,'', 3);
 INSERT INTO `sc_locations` VALUES (30, 9, -1, 'MoveMaster5C','-23.0', '0.0', '-125.0', 0, 0.0,'', 3);
-INSERT INTO `sc_locations` VALUES (31,10, -1, 'Tribe home 1','-90.0', '0.0', '-250.0', 10, 0.0,'', 3);
-INSERT INTO `sc_locations` VALUES (32,10, -1, 'Tribe home 2','-90.0', '0.0', '-180.0', 10, 0.0,'', 3);
+INSERT INTO `sc_locations` VALUES (31,10, -1, 'Tribe home 1','-70.0', '0.0', '-175.0', 10, 0.0,'', 3);
+INSERT INTO `sc_locations` VALUES (32,10, -1, 'Tribe home 2','-75.0', '0.0', '-230.0', 10, 0.0,'', 3);
 INSERT INTO `sc_locations` VALUES (33,10, -1, 'Tribe home 3','-90.0', '0.0', '-230.0', 10, 0.0,'', 3);
 INSERT INTO `sc_locations` VALUES (34,10, -1, 'Tribe home 4','-60.0', '0.0', '-180.0', 10, 0.0,'', 3);
 INSERT INTO `sc_locations` VALUES (35,10, -1, 'Tribe home 5','-60.0', '0.0', '-230.0', 10, 0.0,'', 3);

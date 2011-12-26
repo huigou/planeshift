@@ -98,8 +98,6 @@ NPC::NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world,
         debugLog.Push(csString(""));
     }
     nextDebugLogEntry = 0;
-    tribeBuffer = " ";
-    
 }
 
 NPC::~NPC()
@@ -217,7 +215,14 @@ void NPC::Dump()
 
     // Dump it's memory buffer
     CPrintf(CON_CMDOUTPUT, "Buffers:\n");
-    CPrintf(CON_CMDOUTPUT, "String buffer: %s\n", tribeBuffer.GetData());
+    int index = 0;
+    BufferHash::GlobalIterator iter = npcBuffer.GetIterator();
+    while (iter.HasNext())
+    {
+        csString bufferName;
+        csString value = iter.Next(bufferName);
+        CPrintf(CON_CMDOUTPUT, "String buffer(%d): %s = %s\n",index++,bufferName.GetDataSafe(),value.GetDataSafe());
+    }
     CPrintf(CON_CMDOUTPUT, "Memory buffer:\n");
     if(bufferMemory.sector)
     {
@@ -1142,6 +1147,54 @@ void NPC::SetBufferMemory(Tribe::Memory* memory)
     bufferMemory.sectorName = memory->sectorName;
     bufferMemory.radius     = memory->radius;
 }
+
+void NPC::SetBuildingSpot(Tribe::Asset* buildingSpot)
+{
+    this->buildingSpot = buildingSpot;
+}
+
+    
+/** Get the stored building spot for this NPC
+ */
+Tribe::Asset* NPC::GetBuildingSpot()
+{
+    return buildingSpot;
+}
+
+
+
+csString NPC::GetBuffer(const csString& bufferName)
+{
+    csString value = npcBuffer.Get(bufferName,"");
+
+    Printf(6,"Get Buffer(%s) return: '%s'",bufferName.GetDataSafe(),value.GetDataSafe());
+
+    return value;
+}
+
+void NPC::SetBuffer(const csString& bufferName, const csString& value)
+{
+    Printf(6,"Set Buffer(%s,%s)",bufferName.GetDataSafe(),value.GetDataSafe());
+
+    npcBuffer.PutUnique(bufferName,value);
+}
+
+void NPC::ReplaceBuffers(csString& result)
+{
+    int index = 0;
+    BufferHash::GlobalIterator iter = npcBuffer.GetIterator();
+    while (iter.HasNext())
+    {
+        csString bufferName;
+        csString value = iter.Next(bufferName);
+        csString replace("$NBUFFER[");
+        replace += bufferName;
+        replace += "]";
+        
+        result.ReplaceAll(replace,value);
+    }
+}
+
 
 
 //-----------------------------------------------------------------------------

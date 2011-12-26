@@ -361,12 +361,10 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
                 msgtext.Append("CMD_SPAWN_BUILDING: ");
 
                 //Extract the data
-                csVector3 pos;
-                pos[0] = msg->GetFloat();
-                pos[1] = msg->GetFloat();
-                pos[2] = msg->GetFloat();
-                const char* sectorName = msg->GetStr();
-                const char* buildingName = msg->GetStr();
+                EID spawnerEID = EID(msg->GetUInt32());
+                csVector3 pos = msg->GetVector3();
+                csString sectorName = msg->GetStr();
+                csString buildingName = msg->GetStr();
                 int tribeID = msg->GetInt16();
 
                 if(msg->overrun)
@@ -375,7 +373,7 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
                     break;
                 }
 
-                msgtext.AppendFmt("Pos: (%f;%f;%f) in sectorName %s. TribeID: %d. Building: %s", pos[0], pos[1], pos[2], sectorName, tribeID, buildingName);
+                msgtext.AppendFmt("Spawner: %s Pos: %s in sectorName %s. TribeID: %d. Building: %s", ShowID(spawnerEID), toString(pos).GetDataSafe(), sectorName.GetDataSafe(), tribeID, buildingName.GetDataSafe());
 
             }
             case psNPCCommandsMessage::CMD_TALK:

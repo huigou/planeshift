@@ -44,19 +44,6 @@ class psNPCClient;
 class EventManager;
 class RecipeTreeNode;
 
-
-/** Types of requirements */
-enum {
-    REQ_TYPE_TRIBESMAN,
-    REQ_TYPE_RESOURCE,
-    REQ_TYPE_ITEM,
-    REQ_TYPE_KNOWLEDGE,
-    REQ_TYPE_RECIPE,
-    REQ_TYPE_TRADER,
-    REQ_TYPE_MEMORY
-};
-
-
 /**
  * This object represents recipes for the tribe AI.
  */
@@ -64,13 +51,27 @@ enum {
 class Recipe
 {
 public:
+
+    /** Types of requirements */
+    typedef enum {
+        REQ_TYPE_TRIBESMAN,
+        REQ_TYPE_RESOURCE,
+        REQ_TYPE_ITEM,
+        REQ_TYPE_KNOWLEDGE,
+        REQ_TYPE_RECIPE,
+        REQ_TYPE_TRADER,
+        REQ_TYPE_MEMORY
+    } RequirementType;
+    static const char* RequirementTypeString[];
+    
     /** Data structure to keep information about requirements */
     struct Requirement
     {
-        int      type;          ///< Type. Can be workforce, resource, item, knowledge
-        csString name;          ///< Name of the requirement.
-        csString quantity;      ///< Number needed.
-        csString recipe;        ///< If requirement isn't meet use this recipe to get it.
+        RequirementType type;          ///< Type. Can be workforce, resource, item, knowledge
+        csString        name;          ///< Name of the requirement.
+        csString        quantity;      ///< Number needed.
+        csString        recipe;        ///< If requirement isn't meet use this recipe to get it.
+        csString        buffer;        ///< Use this buffer to store name for recipe to use later.
     };
 
     /** Construct a Recipe object */

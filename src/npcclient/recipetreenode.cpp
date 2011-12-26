@@ -31,6 +31,9 @@
 //=============================================================================
 #include "recipetreenode.h"
 
+const char * RecipeTreeNode::RequirementParseTypeString[] = {"REQ_CONCENTRATED","REQ_DISTRIBUTED"};
+
+
 RecipeTreeNode::RecipeTreeNode(Recipe* newRecipe, int newCost, RecipeTreeNode* parent)
 {
     // General inits

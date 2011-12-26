@@ -967,6 +967,34 @@ ScriptOperation::OperationResult AssessOperation::Run(NPC *npc, EventManager *ev
 
 //---------------------------------------------------------------------------
 
+bool BuildOperation::Load(iDocumentNode *node)
+{
+    return true;
+}
+
+ScriptOperation *BuildOperation::MakeCopy()
+{
+    BuildOperation *op = new BuildOperation;
+    return op;
+}
+
+ScriptOperation::OperationResult BuildOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+    if (npc->GetTribe())
+    {
+        npc->GetTribe()->Build(npc);
+    }
+    else
+    {
+        npc->Printf(5,"No tribe for this NPC.");
+        return OPERATION_FAILED;
+    }
+
+    return OPERATION_COMPLETED;  // Nothing more to do for this op.
+}
+
+//---------------------------------------------------------------------------
+
 const char * ChaseOperation::typeStr[]={"nearest_actor","nearest_npc","nearest_player","owner","target"};
 
 ChaseOperation::ChaseOperation()
@@ -1507,12 +1535,6 @@ ScriptOperation::OperationResult DequipOperation::Run(NPC *npc, EventManager *ev
 bool DigOperation::Load(iDocumentNode *node)
 {
     resource = node->GetAttributeValue("resource");
-    if (resource.IsEmpty())
-    {
-        Error1("No resource defined for Dig operation");
-        return false;
-    }
-    
     return true;
 }
 
@@ -1527,7 +1549,9 @@ ScriptOperation *DigOperation::MakeCopy()
 
 ScriptOperation::OperationResult DigOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
-    if(resource == "tribe:wealth")
+    csString resourceVariablesReplaced = psGameObject::ReplaceNPCVariables(npc, resource);
+    
+    if(resourceVariablesReplaced == "tribe:wealth")
     {
         if (npc->GetTribe())
         {
@@ -1537,7 +1561,7 @@ ScriptOperation::OperationResult DigOperation::Run(NPC *npc, EventManager *event
     else if(resource == "ownBuffer")
     {
         // To get the resource name we first try the npc buffer
-        csString nick = npc->GetBuffer();
+        csString nick = npc->GetBuffer("Mine");
 
         if(nick == "new mine")
         {
@@ -1550,7 +1574,7 @@ ScriptOperation::OperationResult DigOperation::Run(NPC *npc, EventManager *event
     }
     else
     {
-        npcclient->GetNetworkMgr()->QueueDigCommand(npc->GetActor(), resource );
+        npcclient->GetNetworkMgr()->QueueDigCommand(npc->GetActor(), resourceVariablesReplaced );
     }
     
 
@@ -1770,7 +1794,11 @@ bool LocateOperation::Load(iDocumentNode *node)
 
     // Some more validation checks on obj.
     csArray<csString> split_obj = psSplit(object,':');   
-    if (split_obj[0] == "entity")
+    if (split_obj[0] == "building_spot")
+    {
+        return true;
+    }
+    else if (split_obj[0] == "entity")
     {
         if (split_obj.GetSize() < 2)
         {
@@ -1803,19 +1831,11 @@ bool LocateOperation::Load(iDocumentNode *node)
         }
         return false;
     }
-    else if (split_obj[0] == "perception")
+    else if (split_obj[0] == "friend")
     {
         return true;
     }
-    else if (split_obj[0] == "target")
-    {
-        if (range <= 0)
-        {
-            range = 10.0;
-        }
-        return true;
-    }
-    else if (split_obj[0] == "tribe_target")
+    else if (split_obj[0] == "point")
     {
         return true;
     }
@@ -1827,7 +1847,7 @@ bool LocateOperation::Load(iDocumentNode *node)
     {
         return true;
     }
-    else if (split_obj[0] == "point")
+    else if (split_obj[0] == "perception")
     {
         return true;
     }
@@ -1841,6 +1861,14 @@ bool LocateOperation::Load(iDocumentNode *node)
     }
     else if (split_obj[0] == "spawn")
     {
+        return true;
+    }
+    else if (split_obj[0] == "target")
+    {
+        if (range <= 0)
+        {
+            range = 10.0;
+        }
         return true;
     }
     else if (split_obj[0] == "tribe")
@@ -1867,15 +1895,15 @@ bool LocateOperation::Load(iDocumentNode *node)
         {
             return true;
         }
+        else if (split_obj[0] == "target")
+        {
+            return true;
+        }
         else
         {
             Error2("Locate operation with wrong obj attribute: %s",object.GetDataSafe());
             return false;
         }
-    }
-    else if (split_obj[0] == "friend")
-    {
-        return true;
     }
     else if (split_obj[0] == "waypoint" )
     {
@@ -1955,7 +1983,30 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, EventManager *ev
 
     csArray<csString> split_obj = psSplit(objectReplacedVariables,':');
  
-    if (split_obj[0] == "entity")
+    if (split_obj[0] == "building_spot")
+    {
+        npc->Printf(5,"LocateOp - Building spot");
+        
+        Tribe::Asset* buildingSpot = npc->GetBuildingSpot();
+        if (buildingSpot)
+        {
+            csVector3 buildingPos = npc->GetTribe()->GetHomePosition();
+            iSector*  buildingSector = npc->GetTribe()->GetHomeSector();
+
+            buildingPos += buildingSpot->pos;
+
+            located_pos = buildingPos;
+            located_angle = 0;
+            located_sector = buildingSector;
+
+            located_wp = CalculateWaypoint(npc,located_pos,located_sector,-1);
+        }
+        else
+        {
+            return OPERATION_FAILED;
+        }
+    }
+    else if (split_obj[0] == "entity")
     {
         npc->Printf(5,"LocateOp - Entity");
 
@@ -2008,36 +2059,6 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, EventManager *ev
 
         // Since we don't have a current enemy targeted, find one!
         gemNPCActor* ent = npc->GetMostHated(range,locate_invisible,locate_invincible);
-
-        if(ent)
-        {
-            npc->SetTarget(ent);
-        }
-        else
-        {
-            return OPERATION_FAILED;  // Nothing more to do for this op.
-        }
-
-        float rot;
-        iSector *sector;
-        csVector3 pos;
-        psGameObject::GetPosition(ent,pos,rot,sector);
-
-        located_pos = pos;
-        located_angle = 0;
-        located_sector = sector;
-    }
-    else if (split_obj[0] == "tribe_target")
-    {
-        npc->Printf(5,"LocateOp - Tribe Target");
-
-        if (!npc->GetTribe())
-        {
-            return OPERATION_FAILED; //  Nothing more to do for this op.
-        }
-
-        // Since we don't have a current enemy targeted, find one!
-        gemNPCActor* ent = npc->GetTribe()->GetMostHated(npc, range, locate_invisible, locate_invincible);
 
         if(ent)
         {
@@ -2233,6 +2254,36 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, EventManager *ev
         {
             npc->GetTribe()->GetResource(npc,start_pos,start_sector,located_pos,located_sector,range,random);
             located_angle = 0.0;
+        }
+        else if (split_obj[0] == "target")
+        {
+            npc->Printf(5,"LocateOp - Tribe Target");
+
+            if (!npc->GetTribe())
+            {
+                return OPERATION_FAILED; //  Nothing more to do for this op.
+            }
+
+            // Since we don't have a current enemy targeted, find one!
+            gemNPCActor* ent = npc->GetTribe()->GetMostHated(npc, range, locate_invisible, locate_invincible);
+
+            if(ent)
+            {
+                npc->SetTarget(ent);
+            }
+            else
+            {
+                return OPERATION_FAILED;  // Nothing more to do for this op.
+            }
+
+            float rot;
+            iSector *sector;
+            csVector3 pos;
+            psGameObject::GetPosition(ent,pos,rot,sector);
+
+            located_pos = pos;
+            located_angle = 0;
+            located_sector = sector;
         }
 
         located_wp = CalculateWaypoint(npc,located_pos,located_sector,-1);
@@ -3298,7 +3349,7 @@ ScriptOperation::OperationResult ReproduceOperation::Run(NPC *npc, EventManager 
     if(friendNPC)
     {
         npc->Printf(5, "Reproduce");
-        npcclient->GetNetworkMgr()->QueueSpawnCommand(friendNPC->GetActor(), npc->GetActor(), tribeMemberType);
+        npcclient->GetNetworkMgr()->QueueSpawnCommand(friendNPC->GetActor(), npc->GetActor(), psGameObject::ReplaceNPCVariables(npc,tribeMemberType));
     }
 
     return OPERATION_COMPLETED;  // Nothing more to do for this op.
@@ -3381,9 +3432,9 @@ ScriptOperation *RewardOperation::MakeCopy()
 
 ScriptOperation::OperationResult RewardOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
-    csString res = resource;
+    csString res = psGameObject::ReplaceNPCVariables(npc, resource);
     
-    if (resource == "tribe:wealth")
+    if (res == "tribe:wealth")
     {
         if (npc->GetTribe())
         {
@@ -3978,7 +4029,8 @@ ScriptOperation *TransferOperation::MakeCopy()
 
 ScriptOperation::OperationResult TransferOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
-    csString transferItem = item;
+    csString transferItem = psGameObject::ReplaceNPCVariables(npc, item);
+item;
 
     csArray<csString> splitItem = psSplit(transferItem,':');
     if (splitItem[0] == "tribe")
@@ -4002,7 +4054,7 @@ ScriptOperation::OperationResult TransferOperation::Run(NPC *npc, EventManager *
     } 
     else if(splitItem[0] == "ownbuffer")
     {
-        transferItem = npc->GetBuffer();
+        transferItem = npc->GetBuffer("Mine");
     }
     npcclient->GetNetworkMgr()->QueueTransferCommand(npc->GetActor(), transferItem, count, target );
 
@@ -4103,12 +4155,13 @@ ScriptOperation::OperationResult VisibleOperation::Run(NPC *npc, EventManager *e
 
 bool WaitOperation::Load(iDocumentNode *node)
 {
-    if(node->GetAttributeValue("duration") == "buffer")
+    duration = node->GetAttributeValue("duration");
+    if (duration.IsEmpty())
     {
-        duration = atoi(node->GetAttributeValue("duration"));
-    } else {
-        duration = node->GetAttributeValueAsFloat("duration");
+        Error1("Wait operation require a duration attribute");
+        return false;
     }
+
     action = node->GetAttributeValue("anim");
     return true;
 }
@@ -4125,7 +4178,13 @@ ScriptOperation::OperationResult WaitOperation::Run(NPC *npc, EventManager *even
 {
     if (!interrupted)
     {
-        remaining = duration;
+        remaining = atof(psGameObject::ReplaceNPCVariables(npc,duration));
+
+        // If there are no time left we are done.
+        if (remaining <= 0.0)
+        {
+            return OPERATION_COMPLETED;
+        }
     }
 
     // SetAction animation for the mesh, so it looks right
