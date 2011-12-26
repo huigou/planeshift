@@ -31,6 +31,8 @@
 //=============================================================================
 #include "net/clientmsghandler.h"
 #include "gui/chatwindow.h"
+#include "gui/pawsnpcdialog.h"
+#include "gui/psmainwidget.h"
 
 #include "effects/pseffectmanager.h"
 #include "effects/pseffect.h"
@@ -374,6 +376,7 @@ void psChatBubbles::HandleMessage(MsgEntry* msg, Client* /*client*/)
     int linePos = 0;
     int maxRowLen = 0;
     int lastSpace = 0;
+    csArray<csString> lines;
     for (a=0; a<textLen; ++a)
     {
         if (text[a] == ' ' && linePos == 0)
@@ -407,6 +410,7 @@ void psChatBubbles::HandleMessage(MsgEntry* msg, Client* /*client*/)
         linePos = 0;
         chat.text = line;
         rowBuffer.Push(chat);
+        lines.Push(line);
     }     
     if (linePos > 0)
     {
@@ -416,6 +420,14 @@ void psChatBubbles::HandleMessage(MsgEntry* msg, Client* /*client*/)
         line[linePos] = 0;
         chat.text = line;
         rowBuffer.Push(chat);
+        lines.Push(line);
+    }
+
+
+    pawsNpcDialogWindow *npcdialog = dynamic_cast<pawsNpcDialogWindow *>(psengine->GetMainWidget()->FindWidget("NPCDialogWindow"));
+    if(npcdialog)
+    {
+        npcdialog->NpcSays(lines, actor);
     }
 
     // decide on good effect size
