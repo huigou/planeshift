@@ -26,25 +26,23 @@
 #ifndef _PSENTITY_H_
 #define _PSENTITY_H_
 
+
 /**
- * This object represents a planeshift entity sound.
+ * This object represents a planeshift entity sound. It can be a mesh entity, if it is
+ * associated to a mesh object, or a factory entity if it is associated to a mesh factory.
  *
  * @see psSoundSector psEntity main user.
  */ 
-
 class psEntity
 {
 public:
-    csString factoryName;      ///< name of this entity's factory
-    csString meshName;         ///< name of this entity's mesh
-
-    bool     active;           ///< is this psEntity active, used for caching purposes
-    
-    
     /**
-     * Create an empty psEntity. The initial state is set to 1.
+     * Create a new psEntity. The initial state is set to 1.
+     * @param isFactoryEntity true if this is associated to a factory, false if this is
+     * associated to a mesh.
+     * @param entityName the name of the factory or the mesh.
      */
-    psEntity();
+    psEntity(bool isFactoryEntity, const char* entityName);
 
     /**
      * Destructor. When destroyed the sounds is not stopped and it is removed
@@ -59,6 +57,44 @@ public:
      * so any change on that data will affect also its clone.
      */
     psEntity(psEntity* const &entity);
+
+    /**
+     * Return true if this is a factory entity.
+     * @return true if this is a factory entity, false otherwise.
+     */
+    bool IsFactoryEntity() const { return isFactoryEntity; }
+
+    /**
+     * Gets the entity name associated to this object. Use IsFactoryEntity() to check
+     * if this name is a mesh name or a factory name.
+     * @return the entity name.
+     */
+    const csString &GetEntityName() const { return entityName; }
+
+    /**
+     * Sets this object as a mesh entity.
+     * @param meshName the name of the mesh associated to this object.
+     */
+    void SetAsMeshEntity(const char* meshName);
+
+    /**
+     * Sets this object as a factory entity.
+     * @param factoryName the name of the factory associated to this object.
+     */
+    void SetAsFactoryEntity(const char* factoryName);
+
+    /**
+     * Gets the maximum distance at which this entity can be heard.
+     * @return the maximum distance at which this entity can be heard.
+     */
+    float GetMaxRange() const { return maxRange; }
+
+    /**
+     * Sets the range for this entity.
+     * @param minRange maximum distance at which this entity is heard at maximum volume.
+     * @param maxRange maximum distance at which this entity can be heard.
+     */
+    void SetRange(float minRange, float maxRange);
 
     /**
      * Gets the probability to play a sound in the current state.
@@ -79,27 +115,9 @@ public:
     void SetMeshID(uint id);
 
     /**
-     * Define a new state and its parameters. If the same state has already been
-     * defined the method do nothing and returns false.
      *
-     * @param state the state id.
-     * @param resource the sound to be played when in this state.
-     * @param startResource the sound to be played when the entity change its
-     * state into this one.
-     * @param volume the volume at which this sound is played.
-     * @param minRange minimum distance at which the sound is heard.
-     * @param maxRange maximum distance at which the sound is heard
-     * @param probability the probability that resource is played when in this
-     * state.
-     * @param timeOfDayStart time when this entity starts playing in hours.
-     * @param timeOfDayEnd timewhen this entity stops playing in hours.
-     * @param delayAfter how much time this entity waits before playing again
-     * from the moment the sound ends in seconds.
-     * @return true if the state has been defined, false if already exists.
      */
-    bool DefineState(int state, const char* resource, const char* startResource,
-        float volume, float minRange, float maxRange, float probability,
-        int timeOfDayStart, int timeOfDayEnd, int delayAfter);
+    bool DefineState(csRef<iDocumentNode> stateNode);
 
     /**
      * Decrease by the given interval the time that this entity have to wait
@@ -107,6 +125,18 @@ public:
      * @param interval the time elapsed in milliseconds.
      */
     void ReduceDelay(int interval);
+
+    /**
+     * Check if this entity is active.
+     * @return true if this is active, false otherwise.
+     */
+    bool IsActive() const { return isActive; }
+
+    /**
+     * Activate or deactivate this entity.
+     * @param toggle true to activate this entity, false to deactivate it.
+     */
+    void SetActive(bool toggle) { isActive = toggle; }
 
     /**
      * Used to determine if this is a temporary entity associated to a specific mesh
@@ -176,31 +206,39 @@ public:
     bool Play(SoundControl* &ctrl, csVector3 entityPosition);
 
 private:
-    struct StateParameters
+    /**
+     * Keeps all the parameters of an entity state.
+     */
+    struct EntityState
     {
-        csString resource;                      ///< resource name of the sound associated to the state
-        csString startResource;                 ///< resource to be played when the entity state chage
-        float volume;                           ///< volume of the sound
-        float minRange;                         ///< minimum distance at which the sound is heard
-        float maxRange;                         ///< maximum distance at which the sound is heard
-        float probability;                      ///< how high is the probability that this entity makes this sound
-        int timeOfDayStart;                     ///< time when this entity starts playing
-        int timeOfDayEnd;                       ///< time when this entity stops.
-        int delayAfter;                         ///< number of seconds till played again
+        csStringArray resources;    ///< resource names of the sounds associated to the state.
+        float volume;               ///< volume of the sound.
+        float probability;          ///< how high is the probability that this entity makes this sound.
+        int delay;                  ///< number of seconds till played again.
+        int timeOfDayStart;         ///< time when this entity starts playing.
+        int timeOfDayEnd;           ///< time when this entity stops.
 
-        int references;                         ///< how many psEntity point to this StateParameters
+        int fallbackState;          ///< the stateID that is activated after this one.
+        float fallbackProbability;  ///< the probability per second that the fallbackState is activated.
+
+        int references;             ///< how many psEntity point to this EntityState.
     };
 
-    csHash<StateParameters*, int> statePar;     ///< all the parameters associated to their state
-    SoundHandle*                  handle;       ///< pointer to the SoundHandle if playing
-    int                           state;        ///< current state of this entity. A negative value means that this entity is in an undefined state.
-    int                           when;         ///< counter to keep track when it has been played - zero means i may play at any time (in ms)
-    uint                          id;           ///< the id of the mesh object whose sound is controlled by this entity.
+    bool isActive;                      ///< true if this psEntity is active
 
-    float minMinRange;                         ///< minimum minRange between all the defined state of this entity
-    float maxMaxRange;                         ///< maximum maxRange between all the defined state of this entity
-    int minTimeOfDayStart;                     ///< minimum timeOfDayStart between all the defined state of this entity
-    int maxTimeOfDayEnd;                       ///< maximum timeOfDayEnd between all the defined state of this entity
+    bool isFactoryEntity;               ///< true if this is a factory entity, false if it's a mesh entity.
+    csString entityName;                ///< name of the entity associated to this object.
+
+    int state;                          ///< current state of this entity. A negative value means that this entity is in an undefined state.
+    int when;                           ///< counter to keep track when it has been played - zero means i may play at any time (in ms)
+    uint id;                            ///< the id of the mesh object whose sound is controlled by this entity.
+    float minRange;                     ///< minimum distance at which this entity can be heard
+    float maxRange;                     ///< maximum distance at which this entity can be heard
+    int minTimeOfDayStart;              ///< minimum timeOfDayStart between all the defined state of this entity
+    int maxTimeOfDayEnd;                ///< maximum timeOfDayEnd between all the defined state of this entity
+
+    SoundHandle* handle;                ///< pointer to the SoundHandle if playing
+    csHash<EntityState*, int> states;   ///< entity states hash mapped by their ID.
 
     /**
      * The Callback gets called if the SoundHandle is destroyed.
