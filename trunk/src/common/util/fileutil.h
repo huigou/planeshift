@@ -73,7 +73,7 @@ public:
     void MakeDirectory(const char* directory);
 
     /* Copies a file. */
-    bool CopyFile(csString from, csString to, bool vfsPath, bool executable, bool silent = false);
+    bool CopyFile(csString from, csString to, bool vfsPath, bool executable, bool silent = false, bool copyPermissions = true);
 
     /* Moves a file */
     inline void MoveFile(csString from, csString to, bool vfsPath, bool executable, bool silent = false)

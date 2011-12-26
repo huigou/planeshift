@@ -1,21 +1,21 @@
 /*
-* updaterconfig.cpp - Author: Mike Gist
-*
-* Copyright (C) 2007 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
-*
-*
-* This program is free software; you can redistribute it and/or
-* modify it under the terms of the GNU General Public License
-* as published by the Free Software Foundation (version 2 of the License)
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-*
-*/
+ * updaterconfig.cpp - Author: Mike Gist
+ *
+ * Copyright (C) 2007 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
+ *
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation (version 2 of the License)
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ */
 
 #include <cssysdef.h>
 #include <csutil/stringarray.h>
@@ -36,8 +36,8 @@ UpdaterConfig::UpdaterConfig(csStringArray& args, iObjectRegistry* _object_reg, 
     if (!csInitializer::SetupConfigManager(object_reg, CONFIG_FILENAME))
     {
         csReport(object_reg, CS_REPORTER_SEVERITY_ERROR, "updater2",
-            "csInitializer::SetupConfigManager failed!\n"
-            "Is your CRYSTAL environment variable set?");
+                "csInitializer::SetupConfigManager failed!\n"
+                "Is your CRYSTAL environment variable set?");
         exit(1);
     }
     configManager = csQueryRegistry<iConfigManager> (object_reg);
@@ -97,9 +97,11 @@ UpdaterConfig::~UpdaterConfig()
 
 const char* Config::GetPlatform() const
 {
-    if(!UpdaterConfig::GetSingletonPtr()->UpdatePlatform())
-    {
-        return GetGeneric();
+    if(UpdaterConfig::GetSingletonPtr()) {
+        if(!UpdaterConfig::GetSingletonPtr()->UpdatePlatform())
+        {
+            return GetGeneric();
+        }
     }
 #if defined(CS_PLATFORM_WIN32) && CS_PROCESSOR_SIZE == 32
     return "win32";
@@ -171,7 +173,7 @@ bool Config::Initialize(csRef<iDocumentNode> node)
         //we take for granted we always have 2 numbers and convert to unsigned ints
         updaterVersionLatestMajor = strtoul(versionArray.Get(0),NULL,0);
         updaterVersionLatestMinor = strtoul(versionArray.Get(1),NULL,0);
-        
+
         csString md5 = "md5";
         csRef<iDocumentNode> md5Node;
         md5.Append(GetPlatform());
@@ -236,6 +238,6 @@ Mirror* Config::GetMirror(uint x)
     {
         mirror = mirrors[x];
     }
-    
+
     return mirror;
 }

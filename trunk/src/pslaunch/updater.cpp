@@ -20,13 +20,14 @@
 #include <psconfig.h>
 #include <csutil/syspath.h>
 
+#include <csutil/syspath.h>
 #include "updaterconfig.h"
 #include "updaterengine.h"
 #include "updater.h"
 
 iObjectRegistry* psUpdater::object_reg = NULL;
 
-psUpdater::psUpdater(int argc, const char* argv[])
+psUpdater::psUpdater(int argc, char* argv[])
 {
     object_reg = csInitializer::CreateEnvironment (argc, argv);
     if(!object_reg)
@@ -96,7 +97,6 @@ void psUpdater::RunUpdate(UpdaterEngine* engine) const
     }
 
     // Begin update checking!
-    printf("Checking for updates:\n");
     engine->CheckForUpdates();
     return;
 }

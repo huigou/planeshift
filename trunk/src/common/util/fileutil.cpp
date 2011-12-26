@@ -140,7 +140,7 @@ void FileUtil::MakeDirectory (const char* directory)
     }
 }
 
-bool FileUtil::CopyFile(csString from, csString to, bool vfsPath, bool executable, bool silent)
+bool FileUtil::CopyFile(csString from, csString to, bool vfsPath, bool executable, bool silent, bool copyPermissions)
 {
     csString n1;
     csString n2;
@@ -214,7 +214,10 @@ bool FileUtil::CopyFile(csString from, csString to, bool vfsPath, bool executabl
         csRef<iDataBuffer> db = vfs->GetRealPath(n2);
         fromStat = StatFile(db->GetData());
     }
-    SetPermissions(buff->GetData(), fromStat);
+
+    if(copyPermissions)
+        SetPermissions(buff->GetData(), fromStat);
+
     if(executable)
     {
         if(chmod(buff->GetData(), fromStat->mode | S_IXUSR | S_IXGRP) == -1)
