@@ -181,9 +181,9 @@ bool pawsNpcDialogWindow::OnButtonPressed( int button, int keyModifier, pawsWidg
                 csString text = questInfo.Get(displayIndex+widget->GetID()-100).text;
                 if(trigger.GetAt(0) == '=') // prompt window signal
                 {
-                    pawsStringPromptWindow::Create(csString(answer.GetData()+1),
+                    pawsStringPromptWindow::Create(csString(trigger.GetData()+1),
                         csString(""),
-                        false, 320, 30, this, answer.GetData()+1 );
+                        false, 320, 30, this, trigger.GetData()+1 );
                 }
                 if(trigger.GetAt(0) != '<')
                 {
