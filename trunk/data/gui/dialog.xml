@@ -43,22 +43,22 @@
         <widget name="Bubble1" factory="pawsButton" visible="yes" id="100">
             <frame x="230" y="10" width="298" height="135" border="no" />
             <bgimage resource="QuestBubble" />
-            
+
             <widget name="QuestName" factory="pawsTextBox" style="textinput">
                     <frame x="20" y="25" width="250" height="15" border="yes"/>
                     <font  r="209" g="205" b="158" size="12" bold="yes"/>
             </widget>
-     
+
             <widget name="QuestText" factory="pawsMultiLineTextBox" style="textinput">
                    <frame x="20" y="40" width="250" height="60" border="no"/>
                    <font  r="168" g="183" b="206" size="12" bold="yes"/>
             </widget>
         </widget>
-        
+
         <widget name="Bubble2" factory="pawsButton" visible="yes" id="101">
             <frame x="580" y="15" width="298" height="135" border="no" />
             <bgimage resource="QuestBubble" />
-            
+
             <widget name="QuestName" factory="pawsTextBox" style="textinput">
                     <frame x="20" y="25" width="250" height="15" border="yes"/>
                     <font  r="209" g="205" b="158" size="12" bold="yes"/>
@@ -103,7 +103,7 @@
                     <font  r="209" g="205" b="158" size="12" bold="yes"/>
             </widget>
         </widget>
-        
+
         <widget name="FreeBubble" factory="pawsWidget" visible="yes">
             <frame x="630" y="160" width="292" height="93" border="no" />
             <bgimage resource="InputBubble" />

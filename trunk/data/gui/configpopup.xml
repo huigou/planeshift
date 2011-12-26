@@ -34,7 +34,7 @@
             <text string="Show ACK Messages on screen" />
         </widget>
 
-        <widget name="UseNpcDialogBubbles" id="2" factory="pawsCheckBox" visible="no">
+        <widget name="UseNpcDialogBubbles" id="2" factory="pawsCheckBox">
             <frame x="10" y="140" width="300" height="20" border="no" />
             <text string="Use NPC Dialog" />
         </widget>

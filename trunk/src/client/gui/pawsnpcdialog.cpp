@@ -52,8 +52,8 @@ pawsNpcDialogWindow::pawsNpcDialogWindow()
 
 bool pawsNpcDialogWindow::PostSetup()
 {
-	psengine->GetMsgHandler()->Subscribe( this, MSGTYPE_DIALOG_MENU );
-                
+    psengine->GetMsgHandler()->Subscribe( this, MSGTYPE_DIALOG_MENU );
+
     responseList = (pawsListBox*)FindWidget("ResponseList");
 
     //loads the options regarding this window
@@ -102,7 +102,7 @@ bool pawsNpcDialogWindow::OnKeyDown(utf32_char keyCode, utf32_char key, int modi
         {
             case CSKEY_ENTER:
             {
-               
+
                 csString text = textBox->GetText();
                 csString answer = "";
                 //
@@ -150,7 +150,7 @@ bool pawsNpcDialogWindow::OnKeyDown(utf32_char keyCode, utf32_char key, int modi
                     psengine->GetPSCamera()->SetCameraMode(cameraMode);
                 break;
             }
-       
+
         }
         BringToTop(textBox);
     }
@@ -188,9 +188,9 @@ bool pawsNpcDialogWindow::OnButtonPressed( int button, int keyModifier, pawsWidg
                     if(displayIndex < questInfo.GetSize() - 3) displayIndex += 3;
                     else displayIndex = questInfo.GetSize() - 3;
                 }
-                
+
                 DisplayQuest(displayIndex);
-                
+
                 pawsWidget * pw1 = FindWidget("LeftArrow");
                 pawsWidget * pw2 = FindWidget("RightArrow");
 
@@ -206,7 +206,7 @@ bool pawsNpcDialogWindow::OnButtonPressed( int button, int keyModifier, pawsWidg
             PawsManager::GetSingleton().SetCurrentFocusedWidget(textBox);
         return true;
     }
-    
+
     return OnButtonPressed(button, keyModifier, widget);
 }
 
@@ -273,11 +273,11 @@ void pawsNpcDialogWindow::LoadQuest(csString xmlstr)
     }
     csRef<iDocumentNode> root = doc->GetRoot();
     csRef<iDocumentNode> topNode = root->GetNode(xmlbinding!=""?xmlbinding:name);
-    
+
     csRef<iDocumentNode> options = topNode->GetNode("options");
 
     csRef<iDocumentNodeIterator> it  = options->GetNodes("row");
-    
+
     while(it != 0 && it->HasNext())
     {
         csRef<iDocumentNode> cur = it->Next();
@@ -312,61 +312,61 @@ void pawsNpcDialogWindow::OnListAction( pawsListBox* widget, int status )
 {
     if (status == LISTBOX_HIGHLIGHTED)
     {
-		pawsTextBox *fld = dynamic_cast<pawsTextBox *>(widget->GetSelectedRow()->FindWidgetXMLBinding("text"));
-		Debug2(LOG_QUESTS, 0, "Pressed: %s\n",fld->GetText() );
+        pawsTextBox *fld = dynamic_cast<pawsTextBox *>(widget->GetSelectedRow()->FindWidgetXMLBinding("text"));
+        Debug2(LOG_QUESTS, 0, "Pressed: %s\n",fld->GetText() );
     }
-	else if (status == LISTBOX_SELECTED)
-	{
+    else if (status == LISTBOX_SELECTED)
+    {
         //if no row is selected
         if(!widget->GetSelectedRow())
             return;
 
-		pawsTextBox *fld  = dynamic_cast<pawsTextBox *>(widget->GetSelectedRow()->FindWidgetXMLBinding("text"));
-		Debug2(LOG_QUESTS, 0,"Player chose '%s'.\n", fld->GetText() );
-		pawsTextBox *trig = dynamic_cast<pawsTextBox *>(widget->GetSelectedRow()->FindWidgetXMLBinding("trig"));
-		Debug2(LOG_QUESTS, 0,"Player says '%s'.\n", trig->GetText() );
+        pawsTextBox *fld  = dynamic_cast<pawsTextBox *>(widget->GetSelectedRow()->FindWidgetXMLBinding("text"));
+        Debug2(LOG_QUESTS, 0,"Player chose '%s'.\n", fld->GetText() );
+        pawsTextBox *trig = dynamic_cast<pawsTextBox *>(widget->GetSelectedRow()->FindWidgetXMLBinding("trig"));
+        Debug2(LOG_QUESTS, 0,"Player says '%s'.\n", trig->GetText() );
 
         csString trigger(trig->GetText());
 
         // Send the server the original trigger
-    	csString cmd;
+        csString cmd;
         if (trigger.GetAt(0) == '=') // prompt window signal
-		{
-			pawsStringPromptWindow::Create(csString(trigger.GetData()+1),
-				                           csString(""),
-				                           false, 320, 30, this, trigger.GetData()+1 );
-		}
-		else
-		{
-			if (trigger.GetAt(0) != '<')
-			{
-	    		cmd.Format("/tellnpc %s", trigger.GetData() );
-				psengine->GetCmdHandler()->Publish(cmd);
-			}
-			else
-			{
-				psSimpleStringMessage gift(0,MSGTYPE_EXCHANGE_AUTOGIVE,trigger);
-				gift.SendMessage();
-			}
-			DisplayTextBubbles(fld->GetText());
-		}
-		Hide();
-	}
+        {
+            pawsStringPromptWindow::Create(csString(trigger.GetData()+1),
+                                           csString(""),
+                                           false, 320, 30, this, trigger.GetData()+1 );
+        }
+        else
+        {
+            if (trigger.GetAt(0) != '<')
+            {
+                cmd.Format("/tellnpc %s", trigger.GetData() );
+                psengine->GetCmdHandler()->Publish(cmd);
+            }
+            else
+            {
+                psSimpleStringMessage gift(0,MSGTYPE_EXCHANGE_AUTOGIVE,trigger);
+                gift.SendMessage();
+            }
+            DisplayTextBubbles(fld->GetText());
+        }
+        Hide();
+    }
 }
 
 void pawsNpcDialogWindow::DisplayTextBubbles(const char *sayWhat)
 {
-	// Now send the chat window and chat bubbles the nice menu text
-	csString text(sayWhat);
-	size_t dot = text.FindFirst('.'); // Take out the numbering to display
-	if (dot != SIZET_NOT_FOUND)
-	{
-		text.DeleteAt(0,dot+1);
-	}
-	csString cmd;
-	cmd.Format("/tellnpcinternal %s", text.GetData() );
-	psengine->GetCmdHandler()->Publish(cmd);
-	responseList->Clear();
+    // Now send the chat window and chat bubbles the nice menu text
+    csString text(sayWhat);
+    size_t dot = text.FindFirst('.'); // Take out the numbering to display
+    if (dot != SIZET_NOT_FOUND)
+    {
+        text.DeleteAt(0,dot+1);
+    }
+    csString cmd;
+    cmd.Format("/tellnpcinternal %s", text.GetData() );
+    psengine->GetCmdHandler()->Publish(cmd);
+    responseList->Clear();
 }
 
 void pawsNpcDialogWindow::HandleMessage( MsgEntry* me )
@@ -375,10 +375,10 @@ void pawsNpcDialogWindow::HandleMessage( MsgEntry* me )
     {
         psDialogMenuMessage mesg(me);
 
-		Debug2(LOG_QUESTS, 0,"Got psDialogMenuMessage: %s\n", mesg.xml.GetDataSafe() );
-		responseList->Clear();
+        Debug2(LOG_QUESTS, 0,"Got psDialogMenuMessage: %s\n", mesg.xml.GetDataSafe() );
+        responseList->Clear();
 
-		SelfPopulateXML(mesg.xml);
+        SelfPopulateXML(mesg.xml);
 
         if(useBubbles)
         {
@@ -388,9 +388,9 @@ void pawsNpcDialogWindow::HandleMessage( MsgEntry* me )
             FindWidget("FreeBubble")->SetVisibility(true);
         }
 
-		AdjustForPromptWindow();
+        AdjustForPromptWindow();
 
-		Show();
+        Show();
     }
 }
 
@@ -423,7 +423,7 @@ void pawsNpcDialogWindow::NpcSays(csArray<csString>& lines,GEMClientActor *actor
         Show();//show the npc dialog
     }
 
-    
+
 }
 
 
@@ -475,18 +475,18 @@ void pawsNpcDialogWindow::AdjustForPromptWindow()
 void pawsNpcDialogWindow::OnStringEntered(const char* name, int /*param*/, const char* value)
 {
     //The user cancelled the operation. So show again the last window and do nothing else.
-    if(value == NULL) 
-    { 
-        Show(); 
-        return; 
+    if(value == NULL)
+    {
+        Show();
+        return;
     }
 
-	Debug3(LOG_QUESTS, 0,"Got name=%s, value=%s\n", name, value);
+    Debug3(LOG_QUESTS, 0,"Got name=%s, value=%s\n", name, value);
 
-	csString cmd;
-	cmd.Format("/tellnpc %s", value );
-	psengine->GetCmdHandler()->Publish(cmd);
-	DisplayTextBubbles(value);
+    csString cmd;
+    cmd.Format("/tellnpc %s", value );
+    psengine->GetCmdHandler()->Publish(cmd);
+    DisplayTextBubbles(value);
 }
 
 void pawsNpcDialogWindow::SetupWindowWidgets()
@@ -546,13 +546,13 @@ void pawsNpcDialogWindow::Show()
             psengine->GetPSCamera()->SetCameraMode(0);//set the camera to the first person mode
         }
 
-    }   
+    }
 
-    
+
 }
 
 bool pawsNpcDialogWindow::LoadSetting()
-{    
+{
     csRef<iDocument> doc;
     csRef<iDocumentNode> root,npcDialogNode, npcDialogOptionsNode;
     csString option;
@@ -561,21 +561,21 @@ bool pawsNpcDialogWindow::LoadSetting()
     if(doc == NULL)
     {
         //load the default configuration file in case the user one fails (missing or damaged)
-        doc = ParseFile(psengine->GetObjectRegistry(), CONFIG_NPCDIALOG_FILE_NAME_DEF);    
+        doc = ParseFile(psengine->GetObjectRegistry(), CONFIG_NPCDIALOG_FILE_NAME_DEF);
         if(doc == NULL)
         {
             Error2("Failed to parse file %s", CONFIG_NPCDIALOG_FILE_NAME_DEF);
             return false;
-        }    
+        }
     }
-   
+
     root = doc->GetRoot();
     if(root == NULL)
     {
         Error1("npcdialog_def.xml or npcdialog.xml has no XML root");
         return false;
     }
-    
+
     npcDialogNode = root->GetNode("npcdialog");
     if(npcDialogNode == NULL)
     {
@@ -613,7 +613,7 @@ void pawsNpcDialogWindow::SaveSetting()
 
     csRef<iDocumentSystem> docsys = csPtr<iDocumentSystem> (new csTinyDocumentSystem ());
 
-    csRef<iDocument> doc = docsys->CreateDocument();        
+    csRef<iDocument> doc = docsys->CreateDocument();
     csRef<iDocumentNode> root,defaultRoot, npcDialogNode, npcDialogOptionsNode, useNpcDialogNode;
 
     root = doc->CreateRoot();
