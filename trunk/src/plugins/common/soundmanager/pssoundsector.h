@@ -74,7 +74,7 @@ public:
     void AddEmitter(csRef<iDocumentNode> Node);
     void UpdateEmitter(SoundControl* &ctrl);
     void DeleteEmitter(psEmitter* &emitter);
-    void AddEntity(csRef<iDocumentNode> Node);
+    void AddEntity(csRef<iDocumentNode> entityNode);
     void UpdateEntity(SoundControl* &ctrl, psSoundSector* commonSector);
     void DeleteEntity(psEntity* &entity);
 

@@ -319,46 +319,38 @@ void psSoundSector::DeleteEmitter(psEmitter* &emitter)
     delete emitter;
 }
 
-void psSoundSector::AddEntity(csRef<iDocumentNode> Node)
+void psSoundSector::AddEntity(csRef<iDocumentNode> entityNode)
 {
-    const char* factoryName;
-    const char* meshName;
-    int state;
-    const char* resource;
-    const char* startResource;
-    float volume;
     float minRange;
     float maxRange;
-    float prob;
-    int timeOfDayStart;
-    int timeOfDayEnd;
-    int delayAfter;
+    const char* meshName;
+    const char* factoryName;
+
     psEntity* entity;
+    csRef<iDocumentNodeIterator> stateItr;
 
-    factoryName   = Node->GetAttributeValue("FACTORY");
-    meshName      = Node->GetAttributeValue("MESH");
-    state         = Node->GetAttributeValueAsInt("STATE", -1);
-    resource      = Node->GetAttributeValue("RESOURCE");
-    startResource = Node->GetAttributeValue("STARTING_RESOURCE");
-    maxRange      = Node->GetAttributeValueAsFloat("MAX_RANGE", -1.0);
-    prob          = Node->GetAttributeValueAsFloat("PROBABILITY", -1.0);
+    // determining if this is a mesh entity or a factory entity
+    meshName = entityNode->GetAttributeValue("MESH", 0);
+    if(meshName == 0) // this isn't a mesh entity we need the factory
+    {
+        factoryName = entityNode->GetAttributeValue("FACTORY", 0);
 
-    // checking that all mandatory parameters are present
-    if((factoryName == 0 && meshName == 0)
-        || (factoryName != 0 && meshName != 0))
+        // this is nor a factory entity
+        if(factoryName == 0)
+        {
+            return;
+        }
+    }
+
+    // getting range parameters
+    maxRange = entityNode->GetAttributeValueAsFloat("MAX_RANGE", 0);
+    if(maxRange <= 0) // the entity will never play a sound
     {
         return;
     }
-    if(state < 0 || prob < 0.0 || maxRange < 0.0)
-    {
-        return;
-    }
-    if(resource == 0 && startResource == 0)
-    {
-        return;
-    }
+    minRange = entityNode->GetAttributeValueAsFloat("MIN_RANGE", 0);
 
-    // check if an entity with the same name is already defined
+    // checking if an entity with the same name is already defined
     if(meshName == 0)
     {
         entity = factories.Get(factoryName, 0);
@@ -371,36 +363,27 @@ void psSoundSector::AddEntity(csRef<iDocumentNode> Node)
     // if it doesn't exist create it otherwise check the state
     if(entity == 0)
     {
-        entity = new psEntity();
-
-        // handle mesh/factory entities
-        if(meshName == 0)
+        if(meshName == 0) // factory entity
         {
-            entity->factoryName = factoryName;
+            entity = new psEntity(true, factoryName);
             factories.Put(factoryName, entity);
         }
-        else
+        else // mesh entity
         {
-            entity->meshName = meshName;
+            entity = new psEntity(false, meshName);
             meshes.Put(meshName, entity);
         }
     }
 
-    // set all parameters
-    volume          = Node->GetAttributeValueAsFloat("VOLUME", VOLUME_NORM);
-    minRange        = Node->GetAttributeValueAsFloat("MIN_RANGE");
-    delayAfter      = Node->GetAttributeValueAsInt("DELAY_AFTER");
-    timeOfDayStart  = Node->GetAttributeValueAsInt("TIME_START", -1);
-    timeOfDayEnd    = Node->GetAttributeValueAsInt("TIME_END", 25);
+    // setting range
+    entity->SetRange(minRange, maxRange);
 
-    // adjusting the probability on the update time
-    if(prob < 1.0)
+    // creating all the states for this entity
+    stateItr = entityNode->GetNodes("STATE");
+    while(stateItr->HasNext())
     {
-        prob = prob / 1000 * SoundManager::updateTime;
+        entity->DefineState(stateItr->Next());
     }
-
-    entity->DefineState(state, resource, startResource, volume,
-        minRange, maxRange, prob, timeOfDayStart, timeOfDayEnd, delayAfter);
 }
 
 void psSoundSector::UpdateEntity(SoundControl* &ctrl, psSoundSector* commonSector)
@@ -486,9 +469,9 @@ void psSoundSector::UpdateEntity(SoundControl* &ctrl, psSoundSector* commonSecto
     {
         entity = tempEnt[i];
 
-        if(entity->active == true)
+        if(entity->IsActive())
         {
-            entity->active = false;
+            entity->SetActive(false);
         }
         else
         {
@@ -511,13 +494,13 @@ void psSoundSector::DeleteEntity(psEntity* &entity)
     {
         tempEntities.Delete(entity->GetMeshID(), entity);
     }
-    else if(entity->meshName.IsEmpty())
+    else if(entity->IsFactoryEntity())
     {
-        factories.Delete(entity->factoryName, entity);
+        factories.Delete(entity->GetEntityName(), entity);
     }
     else
     {
-        meshes.Delete(entity->meshName, entity);
+        meshes.Delete(entity->GetEntityName(), entity);
     }
 
     delete entity;
@@ -630,7 +613,7 @@ void psSoundSector::UpdateEntityValues(SoundControl* &ctrl, psEntity* entity, iM
 
     if(entity->IsPlaying())
     {
-        entity->active = true;
+        entity->SetActive(true);
         return;
     }
 
@@ -656,6 +639,6 @@ void psSoundSector::UpdateEntityValues(SoundControl* &ctrl, psEntity* entity, iM
             entity->Play(ctrl, mesh->GetMovable()->GetFullPosition());
         }
 
-        entity->active = true;
+        entity->SetActive(true);
     }
 }
