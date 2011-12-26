@@ -35,6 +35,7 @@
 
 class pawsCheckBox;
 class pawsActiveMagicWindow;
+class pawsNpcDialogWindow;
 
 class pawsConfigPopup : public pawsConfigSectionWindow
 {
@@ -52,9 +53,14 @@ public:
      *  not to show the Active Magic Window
      */
     pawsCheckBox* showActiveMagicConfig;
+    /** Check-box which gives the user a opportunity to use or
+     *  not the bubble based npcdialog interface
+     */
+    pawsCheckBox* useNpcDialogBubbles;
 
 protected:
     pawsActiveMagicWindow* magicWindow; ///< This is used to point to a instance of magic window
+    pawsNpcDialogWindow* npcDialog; ///< This is used to point to a instance of npcdialog
     psMainWidget* mainWidget; ///< This is used to point to the main widget
 };
 

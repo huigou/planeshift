@@ -40,6 +40,7 @@
 // PAWS INCLUDES
 //==============================================================================
 #include "gui/pawsactivemagicwindow.h"
+#include "gui/pawsnpcdialog.h"
 #include "pawsconfigpopup.h"
 #include "gui/psmainwidget.h"
 #include "paws/pawsmanager.h"
@@ -68,6 +69,13 @@ bool pawsConfigPopup::PostSetup()
         Error1("Couldn't find ActiveMagicWindow!");
         return false;
     }
+    //check if we can get the pawsnpcdialog else fail.
+    npcDialog = (pawsNpcDialogWindow*)PawsManager::GetSingleton().FindWidget("NPCDialogWindow");
+    if(!npcDialog)
+    {
+        Error1("Couldn't find NPCDialogWindow!");
+        return false;
+    }
     //check if we can get the psmainwidget else fail.
     mainWidget = psengine->GetMainWidget();
     if(!mainWidget)
@@ -78,6 +86,10 @@ bool pawsConfigPopup::PostSetup()
 
     showActiveMagicConfig = (pawsCheckBox*)FindWidget("ShowActiveMagicWindowConfig");
     if (!showActiveMagicConfig)
+        return false;
+
+    useNpcDialogBubbles = (pawsCheckBox*)FindWidget("UseNpcDialogBubbles");
+    if (!useNpcDialogBubbles)
         return false;
 
     //we set all checkboxes as true by default
@@ -101,7 +113,11 @@ bool pawsConfigPopup::LoadConfig()
     if(!mainWidget->LoadConfigFromFile())
         return false;
 
+    if(!npcDialog->LoadSetting())
+        return false;
+
     showActiveMagicConfig->SetState(!magicWindow->showWindow->GetState());
+    useNpcDialogBubbles->SetState(npcDialog->GetUseBubbles());
 
     //we take for granted ids of the widgets correspond to message types id
     csHash<psMainWidget::mesgOption, int>::GlobalIterator iter = mainWidget->GetMesgOptionsIterator();
@@ -131,6 +147,8 @@ bool pawsConfigPopup::LoadConfig()
 bool pawsConfigPopup::SaveConfig()
 {
     magicWindow->showWindow->SetState(!showActiveMagicConfig->GetState());
+    npcDialog->SetUseBubbles(useNpcDialogBubbles->GetState());
+    
 
     //we take for granted ids of the widgets correspond to message types id
     csHash<psMainWidget::mesgOption, int>::GlobalIterator iter = mainWidget->GetMesgOptionsIterator();
@@ -152,6 +170,8 @@ bool pawsConfigPopup::SaveConfig()
 
     mainWidget->SaveConfigToFile();
 
+    npcDialog->SaveSettings();
+
     return true;
 }
 
@@ -160,5 +180,6 @@ void pawsConfigPopup::SetDefault()
 {
     psengine->GetVFS()->DeleteFile(CONFIG_ACTIVEMAGIC_FILE_NAME);
     psengine->GetVFS()->DeleteFile(MSGCONFIG_FILE_NAME);
+    psengine->GetVFS()->DeleteFile(CONFIG_NPCDIALOG_FILE_NAME);
     LoadConfig();
 }
