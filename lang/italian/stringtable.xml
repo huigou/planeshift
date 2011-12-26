@@ -198,6 +198,7 @@ If your name is inappropriate, a Game Master (GM) will change it." trans="" />
   <item orig="Resolution" trans="Risoluzione" />
   <item orig="Refresh MOTD" trans="Aggiorna MOTD" />
   <item orig="Gender:" trans="Sesso:" />
+  <item orig="[Free Text]" trans="" />
   <item orig="Login" trans="" />
   <item orig="Z:" trans="" />
   <item orig="Sounds are not active!" trans="" />
@@ -324,8 +325,8 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="Capacity:" trans="Capacità" />
   <item orig="Debuffs" trans="" />
   <item orig="Alliance text color" trans="Colore testo Alleanza" />
-  <item orig="Words for tab completion:" trans="" />
   <item orig="Use NPC Dialog" trans="" />
+  <item orig="Words for tab completion:" trans="" />
   <item orig="Study Item" trans="" />
   <item orig="Store" trans="" />
   <item orig="You have ignored the following players:" trans="Hai ignorato i seguenti giocatori:" />
@@ -620,6 +621,7 @@ chiamato " />
   <item orig="Time" trans="" />
   <item orig="The number of circles you wish to withdraw." trans="" />
   <item orig="Available Events:" trans="" />
+  <item orig="&gt;" trans="" />
   <item orig="OK" trans="" />
   <item orig="First Person" trans="Prima Persona" />
   <item orig="Selection" trans="Selezione" />
@@ -962,4 +964,5 @@ Per disabilitare questa funzione cancella tutto in questa finestra usando il bot
   <item orig="set nofalldamage" trans="" />
   <item orig="Enable logging" trans="" />
   <item orig="Meter" trans="" />
+  <item orig="File not found or invalid!" trans="" />
 </StringTable>
