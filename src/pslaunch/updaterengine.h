@@ -189,8 +189,12 @@ private:
     void Init(csStringArray& args, iObjectRegistry* _object_reg, const char* _appName,
               InfoShare *infoshare);
 
-    void CheckMD5s(iDocumentNode* md5sums, csString& baseurl, bool accepted = false);
-    
+    void CheckAndUpdate(iDocumentNode* md5sums, csString baseurl, bool accepted = false);
+    void CheckMD5s(iDocumentNode* md5sums, csString baseurl, bool accepted, csRefArray<iDocumentNode> *failed);
+    bool UpdateFile(csString baseurl, csString mountPath, csString filePath, bool failedEx = false, bool inZipFile = false);
+
+    csString GetMD5OfFile(csString filePath);
+
 public:
     UpdaterEngine(csStringArray& args, iObjectRegistry* _object_reg, const char* _appName);
     UpdaterEngine(csStringArray& args, iObjectRegistry* _object_reg, const char* _appName,

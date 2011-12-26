@@ -1,21 +1,21 @@
 /*
-* updaterconfig.h - Author: Mike Gist
-*
-* Copyright (C) 2007 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
-*
-*
-* This program is free software; you can redistribute it and/or
-* modify it under the terms of the GNU General Public License
-* as published by the Free Software Foundation (version 2 of the License)
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-*
-*/
+ * updaterconfig.h - Author: Mike Gist
+ *
+ * Copyright (C) 2007 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
+ *
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation (version 2 of the License)
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ */
 
 #ifndef __UPDATERCONFIG_H__
 #define __UPDATERCONFIG_H__
@@ -31,8 +31,10 @@
 #define CONFIG_FILENAME "/this/pslaunch.cfg"
 #define UPDATERINFO_FILENAME "/planeshift/userdata/updaterinfo.xml"
 #define UPDATERINFO_CURRENT_FILENAME "/this/updaterinfo.xml"
+#define INTEGRITY_ZIPNAME "/this/integrity.zip"
 #define SERVERS_FILENAME "/planeshift/userdata/updateservers.xml"
 #define SERVERS_CURRENT_FILENAME "/this/updateservers.xml"
+#define UPDATE_CACHE_DIR "/planeshift/userdata/updatecache"
 #define FALLBACK_SERVER "http://www.planeshift.it/"
 
 
@@ -50,7 +52,7 @@ public:
 
     /* Return mirror URL */
     const char* GetBaseURL() const { return baseURL; }
-    
+
     /** Returns if the server is a server supporting repair. So that can be used for it.
      *  @return TRUE if the server supports repair
      */
@@ -62,7 +64,7 @@ public:
     void SetID(uint id) { this->id = id; }
     void SetName(const char* name) { this->name = name; }
     void SetBaseURL(const char* baseURL) { this->baseURL = baseURL; }
-    
+
     /** Sets if the current server supports repair.
      *  @param repair Set this as true if this is a server supporting repair.
      */
@@ -77,7 +79,7 @@ protected:
 
     /* URL of the mirror (including update dir) */
     csString baseURL;
-    
+
     ///Holds if this is a repair server
     bool repair;
 };
@@ -243,6 +245,7 @@ public:
     const char* GetNewMirrorAddress() const { return newMirror; }
 
 private:
+
     /* Holds stage of self updating. */
     int selfUpdating;
 

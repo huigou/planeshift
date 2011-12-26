@@ -148,13 +148,8 @@ int ProgressCallback(void *clientp, double finalSize, double dlnow, double /*ult
 
 Downloader::Downloader(csRef<iVFS> _vfs, UpdaterConfig* _config)
 {
-    curl = curl_easy_init();
-    curlerror = new char[CURL_ERROR_SIZE];
-    curl_easy_setopt (curl, CURLOPT_ERRORBUFFER, curlerror);
-    curl_easy_setopt(curl, CURLOPT_HEADER, 0);
-    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
+    this->Init(_vfs);
 
-    vfs = _vfs;
     config = _config;
     csRandomGen random = csRandomGen();
     startingMirrorID = random.Get((uint32)config->GetCurrentConfig()->GetMirrors().GetSize());
@@ -163,19 +158,31 @@ Downloader::Downloader(csRef<iVFS> _vfs, UpdaterConfig* _config)
 
 Downloader::Downloader(csRef<iVFS> _vfs)
 {
-    curl = curl_easy_init();
-    curlerror = new char[CURL_ERROR_SIZE];
-    curl_easy_setopt (curl, CURLOPT_ERRORBUFFER, curlerror);
-    curl_easy_setopt(curl, CURLOPT_HEADER, 0);
-    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
-    vfs = _vfs;
+    this->Init(_vfs);
 }
 
 Downloader::~Downloader()
 {
     delete[] curlerror;
     curl_easy_cleanup(curl);
+
+    fileUtil->RemoveFile(UPDATE_CACHE_DIR, true);
+    delete fileUtil;
 }
+
+void Downloader::Init(csRef<iVFS> _vfs)
+{
+    curl = curl_easy_init();
+    curlerror = new char[CURL_ERROR_SIZE];
+    curl_easy_setopt (curl, CURLOPT_ERRORBUFFER, curlerror);
+    curl_easy_setopt(curl, CURLOPT_HEADER, 0);
+    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
+    vfs = _vfs;
+    // Rename completed download back to real name
+    fileUtil = new FileUtil(vfs);
+    fileUtil->MakeDirectory(UPDATE_CACHE_DIR);
+}
+
 
 void Downloader::SetProxy(const char* /*host*/, int /*port*/)
 {
@@ -209,17 +216,11 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
 
         if (vfs)
         {
-            csRef<iDataBuffer> path;
-            if(vfsPath)
+            if(!vfsPath)
             {
-                path = vfs->GetRealPath(destpath);
+                destpath = "/this/";
+                destpath.Append(dest);
             }
-            else
-            {
-                path = vfs->GetRealPath("/this/" + destpath);
-            }
-
-            destpath = path->GetData();
         }
         else
         {
@@ -230,35 +231,60 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
         long curlhttpcode = 200;
         csString error;
 
+        /**
+         * Create paths for both the "real" temp filename used during download
+         * and the vfs filename used during copy and update of the actual
+         * files.
+         */
+        csString fileName;
+        csString realFilePath;
+
+        /**
+         * Might seem wierd to use time and rand to get a random file but it was
+         * an easy solution to an small problem. Please change if you know a better
+         * random function for filenames.
+         */
+        fileName.Append("/");
+        fileName.Append(time(NULL));
+        fileName.Append(rand());
+        fileName.Append(".download");
+
+        csRef<iDataBuffer> cachepath;
+        cachepath = vfs->GetRealPath(UPDATE_CACHE_DIR);
+        realFilePath = cachepath->GetData();
+
+        realFilePath.Append(fileName);
+
         for(uint i=0; i<=retries; i++)
         {
             FILE* file;
-            // Download to temp file
-            file = fopen (destpath + ".download", "wb");
 
+            // Download to temp file
+            file = fopen(realFilePath.GetData(), "wb");
             if (!file)
             {
-                UpdaterEngine::GetSingletonPtr()->PrintOutput("Couldn't write to file! (%s.download)\n", destpath.GetData());
+                UpdaterEngine::GetSingletonPtr()->PrintOutput("Couldn't write to file! (%s)\n", realFilePath.GetData());
                 return false;
             }
 
             // lets escape the filename in the url
             // first we try to figure out what part of the URL is the filename
             csString filename = url.Slice(url.FindLast('/'));
-	    if (!filename.IsEmpty())
-	    {
-		// lets remove the leading "/" from the filename
-		filename.ReplaceAll("/", "");
-		//now let's do the encoding
-		char* encURL = curl_easy_escape(curl, filename.GetData(), strlen(filename.GetData()));
-		if (encURL)
-		{
-		    //nice, the encoding worked. So lets replace the filename part in url with the encoded one.
-		    url = url.Slice(0, url.FindLast('/')).Append("/").Append(encURL);
-		}
-		// and not to forget...free the string provided by curl again
-		curl_free(encURL);
-	    }
+
+            if (!filename.IsEmpty())
+            {
+                // lets remove the leading "/" from the filename
+                filename.ReplaceAll("/", "");
+                //now let's do the encoding
+                char* encURL = curl_easy_escape(curl, filename.GetData(), strlen(filename.GetData()));
+                if (encURL)
+                {
+                    //nice, the encoding worked. So lets replace the filename part in url with the encoded one.
+                    url = url.Slice(0, url.FindLast('/')).Append("/").Append(encURL);
+                }
+                // and not to forget...free the string provided by curl again
+                curl_free(encURL);
+            }
 
             progressData data;
             curl_easy_setopt(curl, CURLOPT_URL, url.GetData());
@@ -296,7 +322,6 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
                 break;
             }
         }
-
         // Tell the user that we failed
         if(curlhttpcode != 200 || !error.IsEmpty())
         {
@@ -324,14 +349,20 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
             mirror = NULL;
         }
 
-        // Rename completed download back to real name
-        remove(destpath);
-        if(rename(destpath + ".download", destpath) != 0)
+        if(vfs->Exists(destpath))
+            fileUtil->RemoveFile(destpath);
+
+        if(!fileUtil->CopyFile(UPDATE_CACHE_DIR+fileName, destpath, true, false, true, false))
         {
-            UpdaterEngine::GetSingletonPtr()->PrintOutput("Error renaming file %s.download to %s.\n", (const char*) destpath, (const char*) destpath);
-            remove(destpath + ".download");
+            UpdaterEngine::GetSingletonPtr()->PrintOutput("Error renaming file %s to %s.\n", fileName.GetData(), destpath.GetData());
+            fileUtil->RemoveFile(UPDATE_CACHE_DIR+fileName, true);
             break;
         }
+        else
+        {
+            fileUtil->RemoveFile(UPDATE_CACHE_DIR+fileName, true);
+        }
+
         return true;
     }
 

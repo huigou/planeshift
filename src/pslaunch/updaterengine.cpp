@@ -1,23 +1,23 @@
 /*
-* updaterengine.cpp - Author: Mike Gist
-*
-* Copyright (C) 2007 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
-*
-*
-* This program is free software; you can redistribute it and/or
-* modify it under the terms of the GNU General Public License
-* as published by the Free Software Foundation (version 2 of the License)
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-*
-*/
+ * updaterengine.cpp - Author: Mike Gist
+ *
+ * Copyright (C) 2007 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
+ *
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation (version 2 of the License)
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ */
 
-#include <csutil/csmd5.h>
+#include <csutil/md5.h>
 #include <csutil/hash.h>
 #include <csutil/stringarray.h>
 #include <csutil/xmltiny.h>
@@ -43,14 +43,14 @@ UpdaterEngine::UpdaterEngine(csStringArray& args, iObjectRegistry* object_reg, c
 }
 
 UpdaterEngine::UpdaterEngine(csStringArray& args, iObjectRegistry* object_reg, const char* appName,
-                             InfoShare *infoshare)
+        InfoShare *infoshare)
 {
     hasGUI = true;
     Init(args, object_reg, appName, infoshare);
 }
 
 void UpdaterEngine::Init(csStringArray& args, iObjectRegistry* _object_reg, const char* _appName,
-                         InfoShare* _infoShare)
+        InfoShare* _infoShare)
 {
     object_reg = _object_reg;
     vfs = csQueryRegistry<iVFS> (object_reg);
@@ -103,18 +103,18 @@ void UpdaterEngine::PrintOutput(const char *string, ...)
 
 void UpdaterEngine::Run()
 {
-  CheckForUpdates();
-  infoShare->SetUpdateChecked(true);
+    CheckForUpdates();
+    infoShare->SetUpdateChecked(true);
 
-  while(!infoShare->GetExitGUI())
-  {
-      csSleep(100);
-      if(infoShare->GetCheckIntegrity())
-      {
-          CheckIntegrity();
-          infoShare->SetCheckIntegrity(false);
-      }
-  }
+    while(!infoShare->GetExitGUI())
+    {
+        csSleep(100);
+        if(infoShare->GetCheckIntegrity())
+        {
+            CheckIntegrity();
+            infoShare->SetCheckIntegrity(false);
+        }
+    }
 }
 
 void UpdaterEngine::CheckForUpdates()
@@ -144,19 +144,19 @@ void UpdaterEngine::CheckForUpdates()
         PrintOutput("Failed to Initialize mirror config current!\n");
         return;
     }
-    
+
     //load current mirrors (precedence to updateservers.xml this way)
     //we don't fail for now here
     csRef<iDocumentNode> serversRoot = GetRootNode(SERVERS_CURRENT_FILENAME);
     if(!serversRoot.IsValid())
     {
-        printf("Unable to get root node!\n");
+        PrintOutput("Unable to get root node!\n");
     }
     else
     {
         if(!config->GetCurrentConfig()->LoadMirrors(serversRoot))
         {
-            printf("Failed to Initialize mirror config current!\n");
+            PrintOutput("Failed to Initialize mirror config current!\n");
         }
     }
 
@@ -165,13 +165,13 @@ void UpdaterEngine::CheckForUpdates()
 
     // Set proxy
     downloader->SetProxy(GetConfig()->GetProxy().host.GetData(),
-        GetConfig()->GetProxy().port);
+            GetConfig()->GetProxy().port);
 
-    printf("Checking for updates to the updater: ");
+    PrintOutput("Checking for updates to the updater: ");
 
     if(CheckUpdater())
     {
-        printf("Update Available!\n");
+        PrintOutput("Update Available!\n");
 
         // Check if we have write permissions.
 #ifdef _WIN32
@@ -181,7 +181,7 @@ void UpdaterEngine::CheckForUpdates()
         if(!log.IsValid())
 #endif
         {
-            printf("Please run this program with write permissions on your PlaneShift directory to continue updating.\n");
+            PrintOutput("Please run this program with write permissions on your PlaneShift directory to continue updating.\n");
             infoShare->SetUpdateAdminNeeded(true);
             return;
         }
@@ -219,14 +219,14 @@ void UpdaterEngine::CheckForUpdates()
 
         return;
     } else {
-    	printf("No updates needed!\n");
+        PrintOutput("No updates needed!\n");
     }
-    printf("Checking for updates to all files: ");
+    PrintOutput("Checking for updates to all files: ");
 
     // Check for normal updates.
     if(CheckGeneral())
     {
-        printf("Updates Available!\n");
+        PrintOutput("Updates Available!\n");
 
         // Check if we have write permissions.
 #ifdef _WIN32
@@ -236,7 +236,7 @@ void UpdaterEngine::CheckForUpdates()
         if(!log.IsValid())
 #endif
         {
-            printf("Please run this program with write permissions on your PlaneShift directory to continue updating.\n");
+            PrintOutput("Please run this program with write permissions on your PlaneShift directory to continue updating.\n");
             infoShare->SetUpdateAdminNeeded(true);
             return;
         }
@@ -277,7 +277,7 @@ void UpdaterEngine::CheckForUpdates()
     else
     {
         // Mark no updates needed.
-        printf("No updates needed!\n");
+        PrintOutput("No updates needed!\n");
         if(hasGUI)
         {
             infoShare->SetUpdateNeeded(false);
@@ -292,9 +292,7 @@ void UpdaterEngine::CheckForUpdates()
 bool UpdaterEngine::CheckUpdater()
 {
     // Download the latest updaterinfo and updateservers.xml
-    fileUtil->RemoveFile(UPDATERINFO_FILENAME, true);
     bool infosuccess = downloader->DownloadFile("updaterinfo.xml", UPDATERINFO_FILENAME, false, true, 1, true);
-    fileUtil->RemoveFile(SERVERS_FILENAME, true);
     bool serversuccess = downloader->DownloadFile("updateservers.xml", SERVERS_FILENAME, false, true, 1, true);
     if(!infosuccess && !serversuccess) //try getting new servers from the default server
     {
@@ -307,30 +305,30 @@ bool UpdaterEngine::CheckUpdater()
             PrintOutput("\nFailed to download servers info!\n");
             success = false;
         }
-        
+
         //retry
         csRef<iDocumentNode> serversRoot = GetRootNode(SERVERS_FILENAME);
         if(!serversRoot.IsValid())
         {
-            printf("Unable to get root node!\n");
+            PrintOutput("Unable to get servers root node!\n");
             success = false;
         }
         else
         {
             if(!config->GetCurrentConfig()->LoadMirrors(serversRoot))
             {
-                printf("Failed to Initialize mirror config current!\n");
+                PrintOutput("Failed to Initialize mirror config current!\n");
                 success = false;
             }
         }
-        
+
         delete downloader;
         downloader = new Downloader(vfs, config);
-        
+
         //if it was successfull call this function again to try again
         if(success)
             return CheckUpdater();
-            
+
         //in any case we are done here
         return false;        
     }
@@ -339,7 +337,7 @@ bool UpdaterEngine::CheckUpdater()
     csRef<iDocumentNode> root = GetRootNode(UPDATERINFO_FILENAME);
     if(!root)
     {
-        PrintOutput("Unable to get root node!\n");
+        PrintOutput("Unable to get updaterinfo root node!\n");
         return false;
     }
 
@@ -365,13 +363,13 @@ bool UpdaterEngine::CheckUpdater()
     csRef<iDocumentNode> serversRoot = GetRootNode(SERVERS_FILENAME);
     if(!serversRoot.IsValid())
     {
-        printf("Unable to get root node!\n");
+        PrintOutput("Unable to get servers root node!\n");
     }
     else
     {
         if(!config->GetCurrentConfig()->LoadMirrors(serversRoot))
         {
-            printf("Failed to Initialize mirror config current!\n");
+            PrintOutput("Failed to Initialize mirror config current!\n");
         }
     }
 
@@ -386,7 +384,7 @@ bool UpdaterEngine::CheckUpdater()
     if(!config->UpdatePlatform()) return false;
     if(config->GetNewConfig()->GetUpdaterVersionLatestMajor() > UPDATER_VERSION_MAJOR)
     {
-    	return true;
+        return true;
     }
     else if(config->GetNewConfig()->GetUpdaterVersionLatestMajor() == UPDATER_VERSION_MAJOR)
     {
@@ -400,14 +398,14 @@ bool UpdaterEngine::CheckGeneral()
     // Check if general updating is enabled.
     if(!config->GetCurrentConfig()->IsActive())
     {
-      return false;
+        return false;
     }
 
     /*
-    * Compare length of both old and new client version lists.
-    * If they're the same, then compare the last lines to be extra sure.
-    * If they're not, then we know there's some updates.
-    */
+     * Compare length of both old and new client version lists.
+     * If they're the same, then compare the last lines to be extra sure.
+     * If they're not, then we know there's some updates.
+     */
 
     // Start by fetching the configs.
     const csRefArray<ClientVersion>& oldCvs = config->GetCurrentConfig()->GetClientVersions();
@@ -459,7 +457,7 @@ bool UpdaterEngine::CheckGeneral()
         if(strcmp(cv->GetMD5Sum(), "") || strcmp(cv->GetGenericMD5Sum(), ""))
             return true;
     }
-    
+
     // No updates related to this platform are available.
     return false;
 }
@@ -470,7 +468,7 @@ csRef<iDocumentNode> UpdaterEngine::GetRootNode(const char* nodeName, csRef<iDoc
     csRef<iDocumentSystem> xml = csPtr<iDocumentSystem> (new csTinyDocumentSystem);
     if (!xml)
     {
-        printf("Could not load the XML Document System\n");
+        PrintOutput("Could not load the XML Document System\n");
         return NULL;
     }
 
@@ -478,7 +476,7 @@ csRef<iDocumentNode> UpdaterEngine::GetRootNode(const char* nodeName, csRef<iDoc
     csRef<iDataBuffer> buf = vfs->ReadFile(nodeName);
     if (!buf || !buf->GetSize())
     {
-        printf("Couldn't open xml file '%s'!\n", nodeName);
+        PrintOutput("Couldn't open xml file '%s'!\n", nodeName);
         return NULL;
     }
 
@@ -498,7 +496,7 @@ csRef<iDocumentNode> UpdaterEngine::GetRootNode(const char* nodeName, csRef<iDoc
     const char* error = configdoc->Parse(buf);
     if (error)
     {
-        printf("XML Parsing error in file '%s': %s.\n", nodeName, error);
+        PrintOutput("XML Parsing error in file '%s': %s.\n", nodeName, error);
         return NULL;
     }
 
@@ -506,7 +504,7 @@ csRef<iDocumentNode> UpdaterEngine::GetRootNode(const char* nodeName, csRef<iDoc
     csRef<iDocumentNode> root = configdoc->GetRoot ();
     if (!root)
     {
-        printf("Couldn't get config file rootnode!");
+        PrintOutput("Couldn't get config file rootnode!");
         return NULL;
     }
 
@@ -521,212 +519,204 @@ csRef<iDocumentNode> UpdaterEngine::GetRootNode(const char* nodeName, csRef<iDoc
  */
 bool UpdaterEngine::SelfUpdate(int selfUpdating)
 {
-	#ifdef CS_PLATFORM_WIN32
-		// Info for CreateProcess.
-		STARTUPINFO siStartupInfo;
-		PROCESS_INFORMATION piProcessInfo;
-		memset(&siStartupInfo, 0, sizeof(siStartupInfo));
-		memset(&piProcessInfo, 0, sizeof(piProcessInfo));
-		siStartupInfo.cb = sizeof(siStartupInfo);
-	#endif
+#ifdef CS_PLATFORM_WIN32
+    // Info for CreateProcess.
+    STARTUPINFO siStartupInfo;
+    PROCESS_INFORMATION piProcessInfo;
+    memset(&siStartupInfo, 0, sizeof(siStartupInfo));
+    memset(&piProcessInfo, 0, sizeof(piProcessInfo));
+    siStartupInfo.cb = sizeof(siStartupInfo);
+#endif
 
     // Check what stage of the update we're in.
     switch(selfUpdating)
     {
-    	case 1: // We've downloaded the new file and executed it.
+    case 1: // We've downloaded the new file and executed it.
+    {
+        PrintOutput("Copying new files!\n");
+
+        // Construct executable names.
+        csString realName = appName;
+        csString tempName = appName;
+        realName.Append(SELFUPDATER_POSTFIX);
+        tempName.Append(SELFUPDATER_TEMPFILE_POSTFIX);
+
+#ifdef CS_PLATFORM_MACOSX
+        realName = appName;
+        tempName = appName;
+        realName.AppendFmt(".app/Contents/MacOS/%s_static", appName.GetData());
+        tempName.AppendFmt(".app/Contents/MacOS/%s_tmp_static", tempName.GetData());
+#endif
+
+        // Delete the old updater file and copy the new in place.
+        while(!fileUtil->RemoveFile("/this/" + realName))
         {
-            PrintOutput("Copying new files!\n");
+            csSleep(50);
+        }
+        fileUtil->CopyFile("/this/" + tempName, "/this/" + realName, true, true);
 
-			// Construct executable names.
-			csString realName = appName;
-			csString tempName = appName;
-			realName.Append(SELFUPDATER_POSTFIX);
-			tempName.Append(SELFUPDATER_TEMPFILE_POSTFIX);
+        // Copy any art and data.
+        csString zip = appName;
+        zip.AppendFmt("%s.zip", config->GetCurrentConfig()->GetPlatform());
 
-			#ifdef CS_PLATFORM_MACOSX
-				realName = appName;
-				tempName = appName;
-				realName.AppendFmt(".app/Contents/MacOS/%s_static", appName.GetData());
-				tempName.AppendFmt(".app/Contents/MacOS/%s_tmp_static", tempName.GetData());
-			#endif
+        // Mount zip
+        csRef<iDataBuffer> realZipPath = vfs->GetRealPath("/this/" + zip);
+        vfs->Mount("/selfzip/", realZipPath->GetData());
 
-			// Delete the old updater file and copy the new in place.
-			while(!fileUtil->RemoveFile("/this/" + realName))
-			{
-				csSleep(50);
-			}
-            fileUtil->CopyFile("/this/" + tempName, "/this/" + realName, true, true);
+        csString artPath = "/art/";
+        artPath.AppendFmt("%s.zip", appName.GetData());
+        fileUtil->CopyFile("/selfzip/" + artPath, "/this/" + artPath, true, false, true);
 
-            // Copy any art and data.
-			csString zip = appName;
-			zip.AppendFmt("%s.zip", config->GetCurrentConfig()->GetPlatform());
+        csString dataPath = "/data/gui/";
+        dataPath.AppendFmt("%s.xml", appName.GetData());
+        fileUtil->CopyFile("/selfzip/" + dataPath, "/this/" + dataPath, true, false, true);
 
-			// Mount zip
-			csRef<iDataBuffer> realZipPath = vfs->GetRealPath("/this/" + zip);
-			vfs->Mount("/zip", realZipPath->GetData());
+        vfs->Unmount("/selfzip/", realZipPath->GetData());
 
-			csString artPath = "/art/";
-			artPath.AppendFmt("%s.zip", appName.GetData());
-			fileUtil->CopyFile("/zip" + artPath, "/this/" + artPath, true, false, true);
+        // Create a process of the new updater.
+#ifdef CS_PLATFORM_WIN32
+        CreateProcess(realName.GetData(), "selfUpdateSecond", 0, 0, false, CREATE_DEFAULT_ERROR_MODE, 0, 0, &siStartupInfo, &piProcessInfo);
+#else
+        if(fork() == 0) {
+#ifdef CS_PLATFORM_MACOSX
+            execl(realName, realName, "selfUpdateSecond", NULL);
+#else
+            execl("./"+realName, "./"+realName, "selfUpdateSecond", NULL);
+#endif
+        }
+#endif
 
-			csString dataPath = "/data/gui/";
-			dataPath.AppendFmt("%s.xml", appName.GetData());
-			fileUtil->CopyFile("/zip" + dataPath, "/this/" + dataPath, true, false, true);
+        return true;
+    }
 
-			vfs->Unmount("/zip", realZipPath->GetData());
+    case 2: // We're now running the new updater in the correct location.
+    {
+        // Clean up left over files.
+        PrintOutput("\nCleaning up!\n\n");
 
-			// Create a process of the new updater.
-			#ifdef CS_PLATFORM_WIN32
-				CreateProcess(realName.GetData(), "selfUpdateSecond", 0, 0, false, CREATE_DEFAULT_ERROR_MODE, 0, 0, &siStartupInfo, &piProcessInfo);
-			#else
-				if(fork() == 0) {
-					#ifdef CS_PLATFORM_MACOSX
-						execl(realName, realName, "selfUpdateSecond", NULL);
-					#else
-						execl("./"+realName, "./"+realName, "selfUpdateSecond", NULL);
-					#endif
-				}
-			#endif
+        csString tempName = appName;
+        tempName.Append(SELFUPDATER_TEMPFILE_POSTFIX);
 
-            return true;
+#ifdef CS_PLATFORM_MACOSX
+        tempName = appName;
+        tempName.AppendFmt(".app/Contents/MacOS/%s_tmp_static", tempName.GetData());
+#endif
+
+        // Construct zip name.
+        csString zip = appName;
+        zip.AppendFmt("%s.zip", config->GetCurrentConfig()->GetPlatform());
+
+        // Remove updater zip.
+        fileUtil->RemoveFile("/this/" + zip);
+
+        // Remove temp updater file.
+        while(!fileUtil->RemoveFile("/this/" + tempName))
+        {
+            csSleep(50);
         }
 
-    	case 2: // We're now running the new updater in the correct location.
+        GetConfig()->SetSelfUpdating(false);
+        return false;
+    }
+
+    default: // We need to extract the new updater and execute it.
+    {
+        PrintOutput("Beginning self update!\n");
+
+        // Construct executable names.
+        csString realName = appName;
+        csString tempName = appName;
+        realName.Append(SELFUPDATER_POSTFIX);
+        tempName.Append(SELFUPDATER_TEMPFILE_POSTFIX);
+
+#ifdef CS_PLATFORM_MACOSX
+        realName = appName;
+        tempName = appName;
+        realName.AppendFmt(".app/Contents/MacOS/%s_static", appName.GetData());
+        tempName.AppendFmt(".app/Contents/MacOS/%s_tmp_static", tempName.GetData());
+#endif
+
+        // Construct zip name.
+        csString zip = appName;
+        zip.AppendFmt("%s.zip", config->GetCurrentConfig()->GetPlatform());
+
+        // Download new updater file.
+        downloader->DownloadFile(zip, zip, false, true);
+
+        csString md5sum = GetMD5OfFile("/this/" + zip);
+
+        printf("Updater %s old file %s\n", md5sum.GetData(), config->GetNewConfig()->GetUpdaterVersionLatestMD5());
+
+        if(!(config->GetNewConfig() &&
+                config->GetNewConfig()->GetUpdaterVersionLatestMD5() &&
+                md5sum.Compare(config->GetNewConfig()->GetUpdaterVersionLatestMD5())))
         {
-            // Clean up left over files.
-            PrintOutput("\nCleaning up!\n\n");
-
-			csString tempName = appName;
-			tempName.Append(SELFUPDATER_TEMPFILE_POSTFIX);
-
-			#ifdef CS_PLATFORM_MACOSX
-				tempName = appName;
-				tempName.AppendFmt(".app/Contents/MacOS/%s_tmp_static", tempName.GetData());
-			#endif
-
-			// Construct zip name.
-            csString zip = appName;
-            zip.AppendFmt("%s.zip", config->GetCurrentConfig()->GetPlatform());
-
-            // Remove updater zip.
-            fileUtil->RemoveFile("/this/" + zip); 
-
-            // Remove temp updater file.
-			while(!fileUtil->RemoveFile("/this/" + tempName))
-			{
-				csSleep(50);
-			}
-
-            GetConfig()->SetSelfUpdating(false);
+            PrintOutput("md5sum of updater zip does not match correct md5sum!!\n");
+            fileUtil->RemoveFile("/this/" + zip);
             return false;
         }
 
-    	default: // We need to extract the new updater and execute it.
+        // md5sum is correct, mount zip and copy file.
+        csRef<iDataBuffer> realZipPath = vfs->GetRealPath("/this/" + zip);
+        vfs->Mount("/selfzip/", realZipPath->GetData());
+
+        // Replace the starter script in the unix environment.
+#if defined(CS_PLATFORM_UNIX) && !defined(CS_PLATFORM_MACOSX)
+        fileUtil->CopyFile("/selfzip/" + appName, "/this/" + appName, true, true);
+#endif
+
+        // Update mac specific files.
+#ifdef CS_PLATFORM_MACOSX
+        csStringArray macUpdateFiles;
+        macUpdateFiles.Push(".app/Contents/Resources/English.lproj/InfoPlist.strings");
+        macUpdateFiles.Push(".app/Contents/Resources/setup.icns");
+        macUpdateFiles.Push(".app/Contents/Info.plist");
+        macUpdateFiles.Push(".app/Contents/PkgInfo");
+        macUpdateFiles.Push(".app/Contents/version.plist");
+
+        for(int i=0; i<macUpdateFiles.GetSize(); i++)
         {
-            PrintOutput("Beginning self update!\n");
-
-			// Construct executable names.
-			csString realName = appName;
-			csString tempName = appName;
-			realName.Append(SELFUPDATER_POSTFIX);
-			tempName.Append(SELFUPDATER_TEMPFILE_POSTFIX);
-
-			#ifdef CS_PLATFORM_MACOSX
-				realName = appName;
-				tempName = appName;
-				realName.AppendFmt(".app/Contents/MacOS/%s_static", appName.GetData());
-				tempName.AppendFmt(".app/Contents/MacOS/%s_tmp_static", tempName.GetData());
-			#endif
-
-            // Construct zip name.
-            csString zip = appName;
-            zip.AppendFmt("%s.zip", config->GetCurrentConfig()->GetPlatform());
-
-            if(vfs->Exists("/this/" + zip))
-            {
-                fileUtil->RemoveFile("/this/" + zip);
-            }
-
-            // Download new updater file.
-            downloader->DownloadFile(zip, zip, false, true);         
-
-            // Check md5sum is correct.
-            csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + zip, true);
-            if (!buffer)
-            {
-                PrintOutput("Could not get MD5 of updater zip!!\n");
-                return false;
-            }
-
-            csMD5::Digest md5 = csMD5::Encode(buffer->GetData(), buffer->GetSize());
-            csString md5sum = md5.HexString();
-
-            if(!md5sum.Compare(config->GetNewConfig()->GetUpdaterVersionLatestMD5()))
-            {
-                PrintOutput("md5sum of updater zip does not match correct md5sum!!\n");
-                fileUtil->RemoveFile("/this/" + zip);
-                return false;
-            }
-
-            // md5sum is correct, mount zip and copy file.
-            csRef<iDataBuffer> realZipPath = vfs->GetRealPath("/this/" + zip);
-            vfs->Mount("/zip", realZipPath->GetData());
-
-            // Replace the starter script in the unix environment.
-			#if defined(CS_PLATFORM_UNIX) && !defined(CS_PLATFORM_MACOSX)
-            fileUtil->CopyFile("/zip/" + appName, "/this/" + appName, true, true);
-			#endif
-
-            // Update mac specific files.
-			#ifdef CS_PLATFORM_MACOSX
-            csStringArray macUpdateFiles;
-            macUpdateFiles.Push(".app/Contents/Resources/English.lproj/InfoPlist.strings");
-            macUpdateFiles.Push(".app/Contents/Resources/setup.icns");
-            macUpdateFiles.Push(".app/Contents/Info.plist");
-            macUpdateFiles.Push(".app/Contents/PkgInfo");
-            macUpdateFiles.Push(".app/Contents/version.plist");
-
-            for(int i=0; i<macUpdateFiles.GetSize(); i++)
-            {
-                fileUtil->CopyFile("/zip/" + appName + macUpdateFiles.Get(i), "/this/" + appName + macUpdateFiles.Get(i), true, true);
-            }
-			#endif
-
-
-            fileUtil->CopyFile("/zip/" + realName, "/this/" + tempName, true, true);
-            vfs->Unmount("/zip", realZipPath->GetData());
-
-            // Create a new process of the updater temporary instance so we could switch in
-            // the new executable.
-			#ifdef CS_PLATFORM_WIN32
-				CreateProcess(tempName.GetData(), "selfUpdateFirst", 0, 0, false, CREATE_DEFAULT_ERROR_MODE, 0, 0, &siStartupInfo, &piProcessInfo);
-			#else
-	            // Move file permissions to the temp file so it could be copied to the correct
-				// file in next step of the selfUpdater.
-	            csRef<FileStat> fs = fileUtil->StatFile(realName);
-	            fileUtil->SetPermissions(tempName, fs);
-
-				if(fork() == 0) {
-					#ifdef CS_PLATFORM_MACOSX
-						execl(tempName, tempName, "selfUpdateFirst", NULL);
-					#else
-						execl("./"+tempName, "./"+tempName, "selfUpdateFirst", NULL);
-					#endif
-				}
-			#endif
-
-            GetConfig()->SetSelfUpdating(true);
-            return true;
+            fileUtil->CopyFile("/selfzip/" + appName + macUpdateFiles.Get(i), "/this/" + appName + macUpdateFiles.Get(i), true, true);
         }
+#endif
+
+
+        fileUtil->CopyFile("/selfzip/" + realName, "/this/" + tempName, true, true);
+        vfs->Unmount("/selfzip/", realZipPath->GetData());
+
+        // Create a new process of the updater temporary instance so we could switch in
+        // the new executable.
+#ifdef CS_PLATFORM_WIN32
+        CreateProcess(tempName.GetData(), "selfUpdateFirst", 0, 0, false, CREATE_DEFAULT_ERROR_MODE, 0, 0, &siStartupInfo, &piProcessInfo);
+#else
+        // Move file permissions to the temp file so it could be copied to the correct
+        // file in next step of the selfUpdater.
+        csRef<FileStat> fs = fileUtil->StatFile(realName);
+        fileUtil->SetPermissions(tempName, fs);
+
+        vfs->Sync();
+
+        if(fork() == 0) {
+#ifdef CS_PLATFORM_MACOSX
+            execl(tempName, tempName, "selfUpdateFirst", NULL);
+#else
+            execl("./"+tempName, "./"+tempName, "selfUpdateFirst", NULL);
+#endif
+        }
+#endif
+
+        GetConfig()->SetSelfUpdating(true);
+        return true;
+    }
     }
 }
 
 /*
-* This function updates our non-updater files to the latest versions,
-* writes new files and deletes old files.
-* This may take several iterations of patching.
-* After each iteration we need to update updaterinfo.xml.bak as well as the array.
-*/
+ * This function updates our non-updater files to the latest versions,
+ * writes new files and deletes old files.
+ * This may take several iterations of patching.
+ * After each iteration we need to update updaterinfo.xml.bak as well as the array.
+ */
 void UpdaterEngine::GeneralUpdate()
 {
     // Start by fetching the configs.
@@ -744,7 +734,7 @@ void UpdaterEngine::GeneralUpdate()
 
     // True if the platform is 'generic' (data only).
     bool genericPlatform = !strcmp(config->GetCurrentConfig()->GetPlatform(),
-        config->GetCurrentConfig()->GetGeneric());
+            config->GetCurrentConfig()->GetGeneric());
 
     // True if we're going to check the integrity of the game after update.
     bool repairAfterUpdate = false;
@@ -786,11 +776,6 @@ void UpdaterEngine::GeneralUpdate()
 
             zip.AppendFmt("-%s.zip", newCv->GetName());
 
-            if(vfs->Exists("/this/" + zip))
-            {
-                fileUtil->RemoveFile("/this/" + zip);
-            }
-
             // Download update zip.
             if(pass == 1 && !genericPlatform)
             {
@@ -810,16 +795,7 @@ void UpdaterEngine::GeneralUpdate()
             }
 
             // Check md5sum is correct.
-            csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + zip, true);
-            if (!buffer)
-            {
-                PrintOutput("Could not get MD5 of updater zip!!\n");
-                return;
-            }
-
-            csMD5::Digest md5 = csMD5::Encode(buffer->GetData(), buffer->GetSize());
-
-            csString md5sum = md5.HexString();
+            csString md5sum = GetMD5OfFile("/this/" + zip);
             csString correctMD5Sum;
             if(pass == 1)
             {
@@ -829,8 +805,8 @@ void UpdaterEngine::GeneralUpdate()
             {
                 correctMD5Sum = newCv->GetGenericMD5Sum();
             }
-            
-            if(md5sum != correctMD5Sum)
+
+            if(!md5sum.Compare(correctMD5Sum))
             {
                 PrintOutput("md5sum of client zip does not match correct md5sum!!\n");
                 return;
@@ -838,7 +814,7 @@ void UpdaterEngine::GeneralUpdate()
 
             // Mount zip
             csRef<iDataBuffer> realZipPath = vfs->GetRealPath("/this/" + zip);
-            vfs->Mount("/zip", realZipPath->GetData());
+            vfs->Mount("/zip/", realZipPath->GetData());
 
             // Parse deleted files xml, make a list.
             csRef<iDocumentNode> deletedrootnode = GetRootNode("/zip/deletedfiles.xml");
@@ -885,25 +861,20 @@ void UpdaterEngine::GeneralUpdate()
                     oldFilePath.AppendFmt(".old");
 
                     // Start by checking whether the existing file is already up to date.
-                    csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + newFilePath);
-                    if(buffer)
+                    csString md5sum = GetMD5OfFile("/this/" + newFilePath);
+
+                    csString fileMD5 = next->GetAttributeValue("md5sum");
+                    csString oldMD5 = next->GetAttributeValue("oldmd5sum");
+
+                    // If it's up to date then skip this file.
+                    if(md5sum.Compare(fileMD5))
                     {
-                        csMD5::Digest md5 = csMD5::Encode(buffer->GetData(), buffer->GetSize());
-                        csString md5sum = md5.HexString();
-
-                        csString fileMD5 = next->GetAttributeValue("md5sum");
-                        csString oldMD5 = next->GetAttributeValue("oldmd5sum");
-
-                        // If it's up to date then skip this file.
-                        if(md5sum.Compare(fileMD5))
-                        {
-                            continue;
-                        }
-                        else if(!oldMD5.IsEmpty() && !md5sum.Compare(oldMD5))
-                        {
-                            PrintOutput("Skipping file %s because it has been modified - you may want to repair.\n", newFilePath.GetData());
-                            continue;
-                        }
+                        continue;
+                    }
+                    else if(!oldMD5.IsEmpty() && !md5sum.Compare(oldMD5))
+                    {
+                        PrintOutput("Skipping file %s because it has been modified - you may want to repair.\n", newFilePath.GetData());
+                        continue;
                     }
 
                     // Move old file to a temp location ready for input.
@@ -947,18 +918,9 @@ void UpdaterEngine::GeneralUpdate()
 
                         // Check md5sum is correct.
                         PrintOutput("Checking for correct md5sum: ");
-                        csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + newFilePath);
-                        if(!buffer)
+                        csString md5sum = GetMD5OfFile("/this/" + newFilePath);
+                        if(!md5sum.IsEmpty())
                         {
-                            PrintOutput("\nCould not get MD5 of patched file %s! Reverting file!\n", newFilePath.GetData());
-                            fileUtil->RemoveFile("/this/" + newFilePath);
-                            fileUtil->CopyFile("/this/" + oldFilePath, "/this/" + newFilePath, true, false);
-                        }
-                        else
-                        {
-                            csMD5::Digest md5 = csMD5::Encode(buffer->GetData(), buffer->GetSize());
-                            csString md5sum = md5.HexString();
-
                             csString fileMD5 = next->GetAttributeValue("md5sum");
 
                             if(!md5sum.Compare(fileMD5))
@@ -971,6 +933,12 @@ void UpdaterEngine::GeneralUpdate()
                             {
                                 PrintOutput("Success!\n");
                             }
+                        }
+                        else
+                        {
+                            PrintOutput("\nCould not get MD5 of patched file %s! Reverting file!\n", newFilePath.GetData());
+                            fileUtil->RemoveFile("/this/" + newFilePath);
+                            fileUtil->CopyFile("/this/" + oldFilePath, "/this/" + newFilePath, true, false);
                         }
                     }
                     // Clean up temp files.
@@ -986,14 +954,13 @@ void UpdaterEngine::GeneralUpdate()
             }
 
             // Unmount zip and delete.
-            if(vfs->Unmount("/zip", realZipPath->GetData()))
+            if(vfs->Unmount("/zip/", realZipPath->GetData()))
             {
-                vfs->Sync();
                 fileUtil->RemoveFile("/this/" + zip);
             }
             else
             {
-                printf("Failed to unmount file %s\n", zip.GetData());
+                PrintOutput("Failed to unmount file %s\n", zip.GetData());
             }
 
             PrintOutput("\n");
@@ -1005,54 +972,40 @@ void UpdaterEngine::GeneralUpdate()
         newNode->SetAttribute("name", newCv->GetName());
         updaterinfo->Write(vfs, UPDATERINFO_CURRENT_FILENAME);
         oldCvs.PushSmart(newCv);
-     }
+    }
 
-     if(repairAfterUpdate)
-     {
-         CheckIntegrity(true);
-     }
+    if(repairAfterUpdate)
+    {
+        CheckIntegrity(true);
+    }
 }
 
 void UpdaterEngine::CheckIntegrity(bool automatic)
 {
     if(automatic)
-    {
         PrintOutput("Fixing files which failed to update...\n");
-    }
-    else
-    {
-        PrintOutput("Beginning integrity check!\n\n");
-    }
+    PrintOutput("Beginning integrity check!\n\n");
 
 
     //first try to load servers data.
     csRef<iDocumentNode> serversRoot = GetRootNode(SERVERS_CURRENT_FILENAME);
-    bool success = true;    
-    if(!serversRoot.IsValid())
-    {
-        printf("Unable to get root node!\n");
-        success = false;
-    }
-    else
-    {
-        if(!config->GetCurrentConfig()->LoadMirrors(serversRoot))
-        {
-            printf("Failed to Initialize mirror config current!\n");
-            success = false;
-        }
-    }
-    
-    
+    bool success = false;
+    if(serversRoot.IsValid() && config->GetCurrentConfig()->LoadMirrors(serversRoot))
+        success = true;
+
+
     if(!success) //try getting the master server list first
     {
+        PrintOutput("Failed to Initialize mirror config current!\n");
+
         // Check if we have write permissions.
         if(!log.IsValid())
         {
             PrintOutput("Please run this program with administrator permissions to run the integrity check.\n");
             return;
         }
-        printf("Attempting to restore updateservers.xml!\n");
-        fileUtil->RemoveFile(SERVERS_CURRENT_FILENAME, true);
+        PrintOutput("Attempting to restore updateservers.xml!\n");
+
         downloader = new Downloader(vfs);
         downloader->SetProxy(config->GetProxy().host.GetData(), config->GetProxy().port);
         if(!downloader->DownloadFile(FALLBACK_SERVER "updateservers.xml", SERVERS_CURRENT_FILENAME, true, true, 1, true))
@@ -1061,26 +1014,26 @@ void UpdaterEngine::CheckIntegrity(bool automatic)
         }
 
         delete downloader;
-        
+
         //retry
         serversRoot = GetRootNode(SERVERS_CURRENT_FILENAME);
         success = true;    
         if(!serversRoot.IsValid())
         {
-            printf("Unable to get root node!\n");
+            PrintOutput("Unable to get root node!\n");
             success = false;
         }
         else
         {
             if(!config->GetCurrentConfig()->LoadMirrors(serversRoot))
             {
-                printf("Failed to Initialize mirror config current!\n");
-                printf("Restoring updateservers.xml failed!\n");
+                PrintOutput("Failed to Initialize mirror config current!\n");
+                PrintOutput("Restoring updateservers.xml failed!\n");
                 success = false;
             }
         }
     }
-    
+
     //fallback on old system
     if(!success)
     {
@@ -1090,23 +1043,23 @@ void UpdaterEngine::CheckIntegrity(bool automatic)
         csRef<iDocumentNode> root = GetRootNode(UPDATERINFO_CURRENT_FILENAME);
         if(!root.IsValid())
         {
-            printf("Unable to get root node!\n");
+            PrintOutput("Unable to get root node!\n");
             success = false;
         }
         else
         {
-          confignode = root->GetNode("config");
-          if (!confignode.IsValid())
-          {
-            printf("Couldn't find config node in configfile!\n");
-            success = false;
-          }
+            confignode = root->GetNode("config");
+            if (!confignode.IsValid())
+            {
+                PrintOutput("Couldn't find config node in configfile!\n");
+                success = false;
+            }
         }
 
         // Load updater config
         if (!config->GetCurrentConfig()->Initialize(confignode))
         {
-            printf("Failed to Initialize mirror config current!\n");
+            PrintOutput("Failed to Initialize mirror config current!\n");
             success = false;
         }
     }
@@ -1120,8 +1073,8 @@ void UpdaterEngine::CheckIntegrity(bool automatic)
             return;
         }
 
-        printf("Attempting to restore updaterinfo.xml!\n");
-        fileUtil->RemoveFile(UPDATERINFO_CURRENT_FILENAME, true);
+        PrintOutput("Attempting to restore updaterinfo.xml!\n");
+
         downloader = new Downloader(vfs);
         downloader->SetProxy(config->GetProxy().host.GetData(), config->GetProxy().port);
         if(!downloader->DownloadFile(FALLBACK_SERVER "updaterinfo.xml", UPDATERINFO_CURRENT_FILENAME, true, true, 1, true))
@@ -1136,21 +1089,21 @@ void UpdaterEngine::CheckIntegrity(bool automatic)
         csRef<iDocumentNode> root = GetRootNode(UPDATERINFO_CURRENT_FILENAME);
         if(!root)
         {
-            printf("Unable to get root node!\n");
+            PrintOutput("Unable to get root node!\n");
             return;
         }
-       
+
         confignode = root->GetNode("config");
         if (!confignode)
         {
-            printf("Couldn't find config node in configfile!\n");
+            PrintOutput("Couldn't find config node in configfile!\n");
             return;
         }
 
         // Load updater config
         if (!config->GetCurrentConfig()->Initialize(confignode))
         {
-            printf("Failed to Initialize mirror config current!\n");
+            PrintOutput("Failed to Initialize mirror config current!\n");
             return;
         }
     }
@@ -1162,7 +1115,6 @@ void UpdaterEngine::CheckIntegrity(bool automatic)
     downloader->SetProxy(config->GetProxy().host.GetData(), config->GetProxy().port);
 
     // Download new config.
-    fileUtil->RemoveFile(UPDATERINFO_CURRENT_FILENAME, true);
     if(!downloader->DownloadFile("updaterinfo.xml", UPDATERINFO_CURRENT_FILENAME, false, true, 1, true))
     {
         PrintOutput("\nFailed to download updater info from a mirror!\n");
@@ -1174,8 +1126,8 @@ void UpdaterEngine::CheckIntegrity(bool automatic)
             PrintOutput("Please run this program with administrator permissions to run the integrity check.\n");
             return;
         }
-        printf("Attempting to restore updateservers.xml!\n");
-        fileUtil->RemoveFile(SERVERS_CURRENT_FILENAME, true);
+        PrintOutput("Attempting to restore updateservers.xml!\n");
+
         downloader = new Downloader(vfs);
         downloader->SetProxy(config->GetProxy().host.GetData(), config->GetProxy().port);
         if(!downloader->DownloadFile(FALLBACK_SERVER "updateservers.xml", SERVERS_CURRENT_FILENAME, true, true, 1, true))
@@ -1185,21 +1137,21 @@ void UpdaterEngine::CheckIntegrity(bool automatic)
         }
 
         delete downloader;
-        
+
         //retry
         serversRoot = GetRootNode(SERVERS_CURRENT_FILENAME);
         success = true;    
         if(!serversRoot.IsValid())
         {
-            printf("Unable to get root node!\n");
+            PrintOutput("Unable to get root node!\n");
             return;
         }
         else
         {
             if(!config->GetCurrentConfig()->LoadMirrors(serversRoot))
             {
-                printf("Failed to Initialize mirror config current!\n");
-                printf("Restoring updateservers.xml failed!\n");
+                PrintOutput("Failed to Initialize mirror config current!\n");
+                PrintOutput("Restoring updateservers.xml failed!\n");
                 return;
             }
         }
@@ -1210,7 +1162,6 @@ void UpdaterEngine::CheckIntegrity(bool automatic)
         downloader->SetProxy(config->GetProxy().host.GetData(), config->GetProxy().port);
 
         // Download new config.
-        fileUtil->RemoveFile(UPDATERINFO_CURRENT_FILENAME, true);
         if(!downloader->DownloadFile("updaterinfo.xml", UPDATERINFO_CURRENT_FILENAME, false, true, 1, true))
         {
             PrintOutput("\nFailed to download updaterinfo!\n");
@@ -1219,7 +1170,6 @@ void UpdaterEngine::CheckIntegrity(bool automatic)
     }
     else //keep ourselves up to date
     {
-        fileUtil->RemoveFile(SERVERS_CURRENT_FILENAME, true);
         downloader->SetProxy(config->GetProxy().host.GetData(), config->GetProxy().port);
         if(!downloader->DownloadFile("updateservers.xml", SERVERS_CURRENT_FILENAME, false, true, 1, true))
         {
@@ -1230,7 +1180,7 @@ void UpdaterEngine::CheckIntegrity(bool automatic)
                 return;
             }
         }
-        
+
     }
 
     delete downloader;
@@ -1239,14 +1189,13 @@ void UpdaterEngine::CheckIntegrity(bool automatic)
     csRef<iDocumentNode> root = GetRootNode(UPDATERINFO_CURRENT_FILENAME);
     if(!root)
     {
-        printf("Unable to get root node!\n");
+        PrintOutput("Unable to get root node!\n");
     }
 
-    
     confignode = root->GetNode("config");
     if (!confignode)
     {
-        printf("Couldn't find config node in configfile!\n");
+        PrintOutput("Couldn't find config node in configfile!\n");
     }
 
     // Load updater config
@@ -1264,7 +1213,6 @@ void UpdaterEngine::CheckIntegrity(bool automatic)
     downloader->SetProxy(config->GetProxy().host.GetData(), config->GetProxy().port);
 
     // Get the zip with md5sums.
-    fileUtil->RemoveFile("integrity.zip", true);
     csString baseurl;
     csArray<Mirror> mirrors = config->GetCurrentConfig()->GetRepairMirrors();
     if(mirrors.GetSize() > 0)
@@ -1277,21 +1225,21 @@ void UpdaterEngine::CheckIntegrity(bool automatic)
         baseurl = config->GetCurrentConfig()->GetMirror(0)->GetBaseURL();
     }
     baseurl.Append("backup/");
-    if(!downloader->DownloadFile(baseurl + "integrity.zip", "integrity.zip", true, true))
+    if(!downloader->DownloadFile(baseurl + "integrity.zip", INTEGRITY_ZIPNAME, true, true, 1, true))
     {
         PrintOutput("\nFailed to download integrity.zip!\n");
         return;
     }
 
     // Process the list of md5sums.
-    csRef<iDataBuffer> realZipPath = vfs->GetRealPath("/this/integrity.zip");
+    csRef<iDataBuffer> realZipPath = vfs->GetRealPath(INTEGRITY_ZIPNAME);
     vfs->Mount("/zip/", realZipPath->GetData());
 
     bool failed = false;
     csRef<iDocumentNode> r = GetRootNode("/zip/integrity.xml");
     if(!r)
     {
-        printf("Unable to get root node!\n");
+        PrintOutput("Unable to get root node!\n");
         failed = true;
     }
 
@@ -1300,85 +1248,100 @@ void UpdaterEngine::CheckIntegrity(bool automatic)
         csRef<iDocumentNode> md5sums = r->GetNode("md5sums");
         if (!md5sums)
         {
-            printf("Couldn't find md5sums node!\n");
+            PrintOutput("Couldn't find md5sums node!\n");
             failed = true;
         }
 
         if(!failed)
         {
-            CheckMD5s(md5sums, baseurl, automatic);
+            CheckAndUpdate(md5sums, baseurl, automatic);
         }
     }
 
     vfs->Unmount("/zip/", realZipPath->GetData());
 
-    fileUtil->RemoveFile("integrity.zip", true);
+    if(vfs->Exists(INTEGRITY_ZIPNAME))
+        fileUtil->RemoveFile(INTEGRITY_ZIPNAME, true);
 
     return;
 }
 
-void UpdaterEngine::CheckMD5s(iDocumentNode* md5sums, csString& baseurl, bool accepted)
+bool UpdaterEngine::UpdateFile(csString baseurl, csString mountPath, csString filePath, bool failedEx, bool inZipFile)
 {
-    PrintOutput("Checking file integrity:\n");
-    PrintOutput("Using mirror %s\n\n", baseurl.GetData());
-    csRefArray<iDocumentNode> failed;
-    csArray<bool> updateinside;
-    bool selfUpdateNeeded = false;
-#ifdef CS_PLATFORM_UNIX
-    csHash<bool, csRef<iDocumentNode> > failedExec;
-#endif
-    csRef<iDocumentNodeIterator> md5nodes = md5sums->GetNodes("md5sum");
-    while(md5nodes->HasNext())
+    PrintOutput("\nDownloading file: %s\n", filePath.GetData());
+
+    csString downloadpath(mountPath);
+    downloadpath.Append(filePath);
+
+    csRef<iDataBuffer> rp;
+    csRef<FileStat> fs;
+
+    if(!inZipFile)
     {
-        if(CheckQuit())
+        // Save permissions.
+        #ifdef CS_PLATFORM_UNIX
+            rp = vfs->GetRealPath(downloadpath);
+            fs = fileUtil->StatFile(rp->GetData());
+        #endif
+
+        fileUtil->CopyFile(downloadpath, downloadpath + ".bak", true, false, true);
+    }
+
+    // Make parent dir if needed.
+    csString parent = mountPath;
+    fileUtil->MakeDirectory(parent.Truncate(parent.FindLast('/')));
+
+    // Download file.
+    if(!downloader->DownloadFile(baseurl + filePath, downloadpath, true, true, 1, true))
+    {
+        // Maybe it's in a platform specific subdirectory. Try that next.
+        csString url = baseurl + config->GetCurrentConfig()->GetPlatform() + "/";
+        if(!downloader->DownloadFile(url + filePath, downloadpath, true, true, 1, true))
         {
-            infoShare->SetCancelUpdater(false);
-            return;
-        }
-        csRef<iDocumentNode> node = md5nodes->Next();
-
-        csString platform = node->GetAttributeValue("platform");
-
-        if(!config->UpdatePlatform() && !platform.Compare("all"))
-            continue;
-
-        csString path = node->GetAttributeValue("path");
-        csString md5sum = node->GetAttributeValue("md5sum");
-
-        csRef<iDataBuffer> buffer = vfs->ReadFile("/this/" + path);
-        if(!buffer)
-        {
-            // File is genuinely missing.
-            if(platform.Compare(config->GetCurrentConfig()->GetPlatform()) ||
-                platform.Compare("cfg") || platform.Compare("all"))
+            if(!inZipFile)
             {
-                updateinside.Push(false);
-                failed.Push(node);
-#ifdef CS_PLATFORM_UNIX
-                failedExec.Put(node, node->GetAttributeValueAsBool("exec"));
-#endif
+                // Restore file.
+                if(vfs->Exists(downloadpath))
+                    fileUtil->RemoveFile(downloadpath, true);
+                fileUtil->MoveFile(downloadpath + ".bak", downloadpath, true, false, true);
             }
-            continue;
-        }
-
-        csMD5::Digest md5 = csMD5::Encode(buffer->GetData(), buffer->GetSize());
-        csString md5s = md5.HexString();
-
-        if((platform.Compare(config->GetCurrentConfig()->GetPlatform()) ||
-            platform.Compare("cfg") || platform.Compare("all")) && !md5s.Compare(md5sum))
-        {
-            if(path.StartsWith(appName, true))
-            {
-                // schedule a SelfUpdate at the end
-                selfUpdateNeeded = true;
-            }
-            else
-            {
-                failed.Push(node);
-                updateinside.Push(config->RepairingInZip() && node->GetAttributeValueAsBool("checkonly"));
-            }
+            PrintOutput(" Failed!\n");
+            return false;
         }
     }
+
+    if(!inZipFile)
+    {
+        #ifdef CS_PLATFORM_UNIX
+            // Restore permissions.
+            if(fs.IsValid())
+            {
+                if(failedEx)
+                {
+                    fs->mode = fs->mode | S_IXUSR | S_IXGRP;
+                }
+                fileUtil->SetPermissions(rp->GetData(), fs);
+            }
+        #endif
+
+        if(!config->KeepingRepaired())
+        {
+            if(vfs->Exists(downloadpath + ".bak"))
+                fileUtil->RemoveFile(downloadpath + ".bak", true);
+        }
+    }
+    PrintOutput(" Success!\n");
+}
+
+void UpdaterEngine::CheckAndUpdate(iDocumentNode* md5sums, csString baseurl, bool accepted)
+{
+
+    PrintOutput("Checking file integrity:\n");
+    PrintOutput("Using mirror %s\n\n", baseurl.GetData());
+
+    csRefArray<iDocumentNode> failed;
+
+    CheckMD5s(md5sums, "/this/", accepted, &failed);
 
     size_t failedSize = failed.GetSize();
     if(failedSize == 0)
@@ -1445,7 +1408,7 @@ void UpdaterEngine::CheckMD5s(iDocumentNode* md5sums, csString& baseurl, bool ac
                     return;
                 }
 
-                if(updateinside.Get(i))
+                if(config->RepairingInZip() && failed.Get(i)->GetAttributeValueAsBool("checkonly"))
                 {
                     csRef<iDocumentNode> zipmd5sums;
                     csRef<iDocumentNodeIterator> zips = md5sums->GetNodes("zip");
@@ -1459,9 +1422,29 @@ void UpdaterEngine::CheckMD5s(iDocumentNode* md5sums, csString& baseurl, bool ac
                             realPath = rpdb->GetData();
                             csString path = zipmd5sums->GetAttributeValue("path");
                             path = path.Truncate(path.Length()-4);
-                            vfs->Mount("/this/" + path, realPath);
-                            CheckMD5s(zipmd5sums, baseurl, true);
-                            vfs->Unmount("/this/" + path, realPath);
+                            vfs->Mount("/updatezip/", realPath);
+
+                            csRefArray<iDocumentNode> failedInZip;
+                            CheckMD5s(zipmd5sums, "/updatezip/", true, &failedInZip);
+
+                            csString zipDownloadUrl = baseurl;
+                            csString zipFilePath = failed.Get(i)->GetAttributeValue("path");
+                            zipFilePath.Truncate(zipFilePath.Length()-4);
+                            zipDownloadUrl.Append(zipFilePath);
+                            zipDownloadUrl.Append("/");
+
+                            for(size_t j=0; j<failedInZip.GetSize(); j++)
+                            {
+                                UpdateFile(
+                                        zipDownloadUrl,
+                                        "/updatezip/",
+                                        failedInZip.Get(j)->GetAttributeValue("path"),
+                                        failedInZip.Get(j)->GetAttributeValueAsBool("exec"),
+                                        true
+                                );
+                            }
+
+                            vfs->Unmount("/updatezip/", realPath);
                             break;
                         }
                     }
@@ -1469,67 +1452,73 @@ void UpdaterEngine::CheckMD5s(iDocumentNode* md5sums, csString& baseurl, bool ac
                     continue;
                 }
 
-                PrintOutput("\nDownloading file: %s\n", failed.Get(i)->GetAttributeValue("path"));
+                UpdateFile(
+                        baseurl,
+                        "/this/",
+                        failed.Get(i)->GetAttributeValue("path"),
+                        failed.Get(i)->GetAttributeValueAsBool("exec")
+                );
 
-                csString downloadpath("/this/");
-                downloadpath.Append(failed.Get(i)->GetAttributeValue("path"));
-
-                // Save permissions.
-                csRef<iDataBuffer> rp = vfs->GetRealPath(downloadpath);
-                csRef<FileStat> fs = fileUtil->StatFile(rp->GetData());
-                fileUtil->CopyFile(downloadpath, downloadpath + ".bak", true, false, true);
-
-                // Make parent dir if needed.
-                csString parent = downloadpath;
-                fileUtil->MakeDirectory(parent.Truncate(parent.FindLast('/')));
-
-                // Download file.
-                if(!downloader->DownloadFile(baseurl + failed.Get(i)->GetAttributeValue("path"),
-                    failed.Get(i)->GetAttributeValue("path"), true, true))
-                {
-                    // Maybe it's in a platform specific subdirectory. Try that next.
-                    csString url = baseurl + config->GetCurrentConfig()->GetPlatform() + "/";
-                    if(!downloader->DownloadFile(url + failed.Get(i)->GetAttributeValue("path"),
-                        failed.Get(i)->GetAttributeValue("path"), true, true))
-                    {
-                        // Restore file.
-                        fileUtil->RemoveFile(downloadpath, true);
-                        fileUtil->MoveFile(downloadpath + ".bak", downloadpath, true, false, true);
-                        PrintOutput(" Failed!\n");
-                        continue;
-                    }
-                }
-#ifdef CS_PLATFORM_UNIX
-                // Restore permissions.
-                if(fs.IsValid())
-                {
-                    bool failedEx = failedExec.Get(failed.Get(i), false);
-                    if(failedEx)
-                    {
-                        fs->mode = fs->mode | S_IXUSR | S_IXGRP;
-                    }
-                    fileUtil->SetPermissions(rp->GetData(), fs);
-                }
-#endif
-                if(!config->KeepingRepaired())
-                {
-                    fileUtil->RemoveFile(downloadpath + ".bak", true);
-                }
-                PrintOutput(" Success!\n");
             }
-            fileUtil->RemoveFile("/this/updaterinfo.xml.bak", true);
+
+            if(vfs->Exists("/this/updaterinfo.xml.bak"))
+                fileUtil->RemoveFile("/this/updaterinfo.xml.bak", true);
             PrintOutput("\nDone!\n");
 
-            if(selfUpdateNeeded)
+            if(CheckUpdater())
             {
-               SelfUpdate(false);
-               if(hasGUI)
-               {
-                   // If we're going to self-update, close the GUI.
-            	   infoShare->SetExitGUI(true);
-                   infoShare->Sync();
-               }
+                SelfUpdate(false);
+                if(hasGUI)
+                {
+                    // If we're going to self-update, close the GUI.
+                    infoShare->SetExitGUI(true);
+                    infoShare->Sync();
+                }
             }
+        }
+    }
+}
+
+void UpdaterEngine::CheckMD5s(iDocumentNode* md5sums, csString mountPath, bool accepted, csRefArray<iDocumentNode> *failed)
+{
+    csRef<iDocumentNodeIterator> md5nodes = md5sums->GetNodes("md5sum");
+    while(md5nodes->HasNext())
+    {
+        if(CheckQuit())
+        {
+            infoShare->SetCancelUpdater(false);
+            return;
+        }
+        csRef<iDocumentNode> node = md5nodes->Next();
+
+        csString platform = node->GetAttributeValue("platform");
+
+        if(!config->UpdatePlatform() && !platform.Compare("all"))
+            continue;
+
+        if(!(platform.Compare(config->GetCurrentConfig()->GetPlatform())
+                || platform.Compare("cfg") || platform.Compare("all")))
+            continue;
+
+        csString path = node->GetAttributeValue("path");
+        csString md5sum = node->GetAttributeValue("md5sum");
+
+        csString md5s = GetMD5OfFile(mountPath + path);
+        if(md5s.IsEmpty())
+        {
+            // File is genuinely missing.
+            failed->Push(node);
+            continue;
+        }
+
+        if(!md5s.Compare(md5sum))
+        {
+            if(path.StartsWith(appName, true))
+            {
+                // schedule a SelfUpdate at the end
+                continue;
+            }
+            failed->Push(node);
         }
     }
 }
@@ -1544,7 +1533,7 @@ bool UpdaterEngine::SwitchMirror()
     if(!log.IsValid())
 #endif
     {
-        printf("Please run this program with write permissions on your PlaneShift directory to continue updating.\n");
+        PrintOutput("Please run this program with write permissions on your PlaneShift directory to continue updating.\n");
         return false;
     }
 
@@ -1553,7 +1542,7 @@ bool UpdaterEngine::SwitchMirror()
     xmlBakPath.Format("%s_bak", xmlPath.GetData());
 
     fileUtil->CopyFile(xmlPath, xmlBakPath, true, false, true);
-    
+
     // Initialise downloader.
     downloader = new Downloader(vfs);
 
@@ -1565,12 +1554,25 @@ bool UpdaterEngine::SwitchMirror()
     xmlAddress.Format("%s/updaterinfo.xml", config->GetNewMirrorAddress());
     if(!downloader->DownloadFile(xmlAddress, xmlPath, true, true, 1, true))
     {
-        printf("Failed to download updaterinfo from new mirror.\n");
+        PrintOutput("Failed to download updaterinfo from new mirror.\n");
         fileUtil->MoveFile(xmlBakPath, xmlPath, true, false, true);
         return false;
     }
 
-    fileUtil->RemoveFile(xmlBakPath, true);
+    if(vfs->Exists(xmlBakPath))
+        fileUtil->RemoveFile(xmlBakPath, true);
     return true;
 }
 
+csString UpdaterEngine::GetMD5OfFile(csString filePath)
+{
+    // Check md5sum is correct.
+    csRef<iDataBuffer> buffer = vfs->ReadFile(filePath, true);
+    if (!buffer)
+    {
+        PrintOutput("Could not get MD5 of %s!!\n", filePath.GetData());
+        return "";
+    }
+
+    return CS::Utility::Checksum::MD5::Encode(buffer->GetData(), buffer->GetSize()).HexString();
+}

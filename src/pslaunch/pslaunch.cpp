@@ -1,21 +1,21 @@
 /*
-* pslaunch.cpp - Author: Mike Gist
-*
-* Copyright (C) 2007 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
-*
-*
-* This program is free software; you can redistribute it and/or
-* modify it under the terms of the GNU General Public License
-* as published by the Free Software Foundation (version 2 of the License)
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-*
-*/
+ * pslaunch.cpp - Author: Mike Gist
+ *
+ * Copyright (C) 2007 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
+ *
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation (version 2 of the License)
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ */
 
 #include <psconfig.h>
 
@@ -23,6 +23,7 @@
 #include <sys/wait.h>
 #endif
 
+#include <csutil/syspath.h>
 #include <iutil/eventq.h>
 #include <ivideo/graph2d.h>
 #include <ivideo/natwin.h>
@@ -48,13 +49,13 @@ CS_IMPLEMENT_APPLICATION
 psLauncherGUI* psLaunchGUI;
 
 using namespace CS::Threading;
-    
+
 psLauncherGUI::psLauncherGUI(iObjectRegistry* _object_reg, InfoShare *_infoShare, bool *_execPSClient)
 {
     object_reg = _object_reg;
     infoShare = _infoShare;
     execPSClient = _execPSClient;
-    
+
     drawScreen = true;
     elapsed = 0;
     psLaunchGUI = this;
@@ -119,7 +120,7 @@ bool psLauncherGUI::InitApp()
     }
 
     // Initialise Sound
-	soundManager = csQueryRegistryOrLoad<iSoundManager>(object_reg, "iSoundManager");
+    soundManager = csQueryRegistryOrLoad<iSoundManager>(object_reg, "iSoundManager");
     if(!soundManager)
     {
         // if the main sound manager is not found load the dummy plugin
@@ -145,7 +146,7 @@ bool psLauncherGUI::InitApp()
 
     iNativeWindow *nw = g2d->GetNativeWindow();
     if (nw)
-      nw->SetTitle(APPNAME);
+        nw->SetTitle(APPNAME);
 
     g2d->AllowResize(false);
 
@@ -181,11 +182,11 @@ bool psLauncherGUI::InitApp()
     event_handler = csPtr<EventHandler> (new EventHandler (this));
     csEventID esub[] = 
     {
-        csevFrame (object_reg),
-        csevMouseEvent (object_reg),
-        csevKeyboardEvent (object_reg),
-        csevQuit (object_reg),
-        CS_EVENTLIST_END
+            csevFrame (object_reg),
+            csevMouseEvent (object_reg),
+            csevKeyboardEvent (object_reg),
+            csevQuit (object_reg),
+            CS_EVENTLIST_END
     };
     queue->RegisterListener(event_handler, esub);
 
@@ -196,11 +197,11 @@ bool psLauncherGUI::HandleEvent (iEvent &ev)
 {
     if (ev.Name == csevQuit (object_reg))
     {
-      if(!infoShare->GetExitGUI())
-      {
-        infoShare->SetCancelUpdater(true);
-      }
-      return false;
+        if(!infoShare->GetExitGUI())
+        {
+            infoShare->SetCancelUpdater(true);
+        }
+        return false;
     }
 
     if(infoShare->GetExitGUI())
@@ -208,7 +209,7 @@ bool psLauncherGUI::HandleEvent (iEvent &ev)
         Quit();
         return false;
     }
-    
+
     if(infoShare->GetCheckIntegrity())
     {
         pawsMessageTextBox* updateProgressOutput = (pawsMessageTextBox*)paws->FindWidget("UpdaterOutput");
@@ -221,7 +222,7 @@ bool psLauncherGUI::HandleEvent (iEvent &ev)
             }
             else if(message.FindFirst("\r") != (size_t) -1)
             {
-                    updateProgressOutput->ReplaceLastMessage(message);
+                updateProgressOutput->ReplaceLastMessage(message);
             }
             else
             {
@@ -253,10 +254,10 @@ bool psLauncherGUI::HandleEvent (iEvent &ev)
                 updateProgressOutput->AddMessage(message);
             }
             else if(message.FindFirst("\r") != (size_t)-1)
-	    {
-		    updateProgressOutput->ReplaceLastMessage(message);
-	    }
-	    else
+            {
+                updateProgressOutput->ReplaceLastMessage(message);
+            }
+            else
             {
                 updateProgressOutput->AppendLastMessage(message);
             }
@@ -279,7 +280,7 @@ bool psLauncherGUI::HandleEvent (iEvent &ev)
         {
             pawsOkBox* notify = (pawsOkBox*)paws->FindWidget("Notify");
             notify->SetText("An update is available but you don't have the correct permissions to continue!\n\n"
-                            "Please restart the program as an admin.");
+                    "Please restart the program as an admin.");
             notify->Show();
             updateTold = true;
         }
@@ -352,10 +353,10 @@ void psLauncherGUI::PerformUpdate(bool update, bool integrity)
 
     if(update && !infoShare->GetExitGUI())
     {
-      paws->FindWidget("LauncherMain")->Hide();
-      paws->FindWidget("LauncherUpdater")->Show();
-      paws->FindWidget("LauncherUpdater")->OnGainFocus();
-      paws->FindWidget("UpdaterCancelButton")->Show();
+        paws->FindWidget("LauncherMain")->Hide();
+        paws->FindWidget("LauncherUpdater")->Show();
+        paws->FindWidget("LauncherUpdater")->OnGainFocus();
+        paws->FindWidget("UpdaterCancelButton")->Show();
     }
 }
 
@@ -378,8 +379,8 @@ int main(int argc, char* argv[])
     {
         csString s(argv[i]);
         if(s.CompareNoCase("--console") || s.CompareNoCase("-console") ||
-           s.CompareNoCase("--switch") || s.CompareNoCase("-switch") ||
-           s.CompareNoCase("--repair") || s.CompareNoCase("-repair"))
+                s.CompareNoCase("--switch") || s.CompareNoCase("-switch") ||
+                s.CompareNoCase("--repair") || s.CompareNoCase("-repair"))
         {
             console = true;
         }
@@ -393,64 +394,28 @@ int main(int argc, char* argv[])
     curl_global_init(CURL_GLOBAL_ALL);
 
 
+    // Convert args to an array of csString.
+    csStringArray args;
+    for(int i=0; i<argc; i++)
+    {
+        args.Push(argv[i]);
+    }
+
     if(help)
     {
-        // Create new string array to make sure --help is there.
-        const char** argvs = new const char*[argc+1];
-        for(int i=0; i<argc; i++)
-        {
-            argvs[i] = argv[i];
-        }
-        argvs[argc] = "--help";
-
-        // Set up CS
-        psUpdater* updater = new psUpdater(argc+1, argvs);
-
-        // Convert args to an array of csString.
-        csStringArray args;
-        for(int i=0; i<argc+1; i++)
-        {
-            args.Push(argvs[i]);
-        }
-
-        // Initialize updater engine.
-        UpdaterEngine* engine = new UpdaterEngine(args, updater->GetObjectRegistry(), "pslaunch");
-
         printf("PlaneShift Updater Version %d.%d for %s.\n"
-               "Launcher and updater for Planeshift\n\n"
-               "pslaunch [--help] [--console] [--repair] [--switch]\n\n"
-               "--help      Displays this help dialog\n"
-               "--console   Run updater without the GUI\n"
-               "--switch    Switch active updater mirror\n"
-               "--repair    Check for any problems and prompt to repair them\n", 
-               UPDATER_VERSION_MAJOR, UPDATER_VERSION_MINOR, engine->GetConfig()->GetCurrentConfig()->GetPlatform());
-
-        // Terminate updater!
-        delete argvs;
-        delete engine;
-        delete updater;
-        engine = NULL;
-        updater = NULL;
+                "Launcher and updater for Planeshift\n\n"
+                "pslaunch [--help] [--console] [--repair] [--switch]\n\n"
+                "--help      Displays this help dialog\n"
+                "--console   Run updater without the GUI\n"
+                "--switch    Switch active updater mirror\n"
+                "--repair    Check for any problems and prompt to repair them\n",
+                UPDATER_VERSION_MAJOR, UPDATER_VERSION_MINOR, (new Config())->GetPlatform());
     }
     else if(console)
     {
-        // Create new string array to make sure --console is there.
-        const char** argvs = new const char*[argc+1];
-        for(int i=0; i<argc; i++)
-        {
-            argvs[i] = argv[i];
-        }
-        argvs[argc] = "--console";
-
         // Set up CS
-        psUpdater* updater = new psUpdater(argc+1, argvs);
-
-        // Convert args to an array of csString.
-        csStringArray args;
-        for(int i=0; i<argc+1; i++)
-        {
-            args.Push(argvs[i]);
-        }
+        psUpdater* updater = new psUpdater(argc, argv);
 
         // Initialize updater engine.
         UpdaterEngine* engine = new UpdaterEngine(args, updater->GetObjectRegistry(), "pslaunch");
@@ -474,7 +439,6 @@ int main(int argc, char* argv[])
         }
 
         // Terminate updater!
-        delete argvs;
         delete engine;
         delete updater;
         engine = NULL;
@@ -497,13 +461,6 @@ int main(int argc, char* argv[])
             // Request needed plugins for updater.
             csInitializer::SetupConfigManager(object_reg, LAUNCHER_CONFIG_FILENAME);
             csInitializer::RequestPlugins(object_reg, CS_REQUEST_VFS, CS_REQUEST_END);
-
-            // Convert args to an array of csString.
-            csStringArray args;
-            for(int i=0; i<argc; i++)
-            {
-                args.Push(argv[i]);
-            }
 
             // Mount the VFS paths.
             csRef<iVFS> vfs = csQueryRegistry<iVFS>(object_reg);
@@ -566,7 +523,7 @@ int main(int argc, char* argv[])
 
                 // Request needed plugins for GUI.
                 csInitializer::RequestPlugins(object_reg, CS_REQUEST_FONTSERVER, CS_REQUEST_IMAGELOADER,
-                    CS_REQUEST_OPENGL3D, CS_REQUEST_END);
+                        CS_REQUEST_OPENGL3D, CS_REQUEST_END);
 
                 // Start GUI.
                 psLauncherGUI* gui = new psLauncherGUI(object_reg, infoShare, &execPSClient);
@@ -575,9 +532,6 @@ int main(int argc, char* argv[])
                 // Free GUI.
                 delete gui;
             }
-
-            // Set to exit app.
-            exitApp = true;
 
             // Clean up everything else.
             engine.Invalidate();
@@ -588,75 +542,75 @@ int main(int argc, char* argv[])
 
             if (execPSClient)
             {
-              // Execute psclient process.
+                // Execute psclient process.
 
 #ifdef CS_PLATFORM_WIN32
 
-              // Info for CreateProcess.
-              STARTUPINFO siStartupInfo;
-              DWORD dwExitCode;
-              PROCESS_INFORMATION piProcessInfo;
-              memset(&siStartupInfo, 0, sizeof(siStartupInfo));
-              memset(&piProcessInfo, 0, sizeof(piProcessInfo));
-              siStartupInfo.cb = sizeof(siStartupInfo);
+                // Info for CreateProcess.
+                STARTUPINFO siStartupInfo;
+                DWORD dwExitCode;
+                PROCESS_INFORMATION piProcessInfo;
+                memset(&siStartupInfo, 0, sizeof(siStartupInfo));
+                memset(&piProcessInfo, 0, sizeof(piProcessInfo));
+                siStartupInfo.cb = sizeof(siStartupInfo);
 
-              csString commandLine = "psclient.exe";
+                csString commandLine = "psclient.exe";
 
-              for(int i=1; i<argc; ++i)
-              {
-                  commandLine.AppendFmt(" %s", argv[i]);
-              }
+                for(int i=1; i<argc; ++i)
+                {
+                    commandLine.AppendFmt(" %s", argv[i]);
+                }
 
-	      if(CreateProcess(NULL, (LPSTR)commandLine.GetData(), 0, 0, false,
-                CREATE_DEFAULT_ERROR_MODE, 0, 0, &siStartupInfo, &piProcessInfo))
-	      {
-                  GetExitCodeProcess(piProcessInfo.hProcess, &dwExitCode);
-                  while (dwExitCode == STILL_ACTIVE)
-                  {
-                      csSleep(1000);
-                      GetExitCodeProcess(piProcessInfo.hProcess, &dwExitCode);
-                  }
-                  exitApp = dwExitCode ? 0 : !0;
-                  CloseHandle(piProcessInfo.hProcess);
-                  CloseHandle(piProcessInfo.hThread);
-	      }
-	      else
-		  printf("Failed to launch psclient!\n");
+                if(CreateProcess(NULL, (LPSTR)commandLine.GetData(), 0, 0, false,
+                        CREATE_DEFAULT_ERROR_MODE, 0, 0, &siStartupInfo, &piProcessInfo))
+                {
+                    GetExitCodeProcess(piProcessInfo.hProcess, &dwExitCode);
+                    while (dwExitCode == STILL_ACTIVE)
+                    {
+                        csSleep(1000);
+                        GetExitCodeProcess(piProcessInfo.hProcess, &dwExitCode);
+                    }
+                    exitApp = dwExitCode ? 0 : !0;
+                    CloseHandle(piProcessInfo.hProcess);
+                    CloseHandle(piProcessInfo.hThread);
+                }
+                else
+                    printf("Failed to launch psclient!\n");
 #else
-              if(fork() == 0)
-              {
+                if(fork() == 0)
+                {
 #ifdef CS_PLATFORM_MACOSX
-                  char** nargv = new char*[argc+2];
-                  char* name = "/usr/bin/open";
-                  char* psc = "psclient.app";
-                  nargv[0] = name;
-                  nargv[1] = psc;
-                  for(int i=2; i<argc+1; ++i)
-                  {
-                      nargv[i] = argv[i-1];
-                  }
-                  nargv[argc+1] = (char*)0;
-                  execv("/usr/bin/open", nargv);
-                  delete nargv;
+                    char** nargv = new char*[argc+2];
+                    char* name = "/usr/bin/open";
+                    char* psc = "psclient.app";
+                    nargv[0] = name;
+                    nargv[1] = psc;
+                    for(int i=2; i<argc+1; ++i)
+                    {
+                        nargv[i] = argv[i-1];
+                    }
+                    nargv[argc+1] = (char*)0;
+                    execv("/usr/bin/open", nargv);
+                    delete nargv;
 #else
-                  char** nargv = new char*[argc+1];
-                  char* name = const_cast<char*>("./psclient");
-                  nargv[0] = name;
-                  for(int i=1; i<argc; ++i)
-                  {
-                      nargv[i] = argv[i];
-                  }
-                  nargv[argc] = (char*)0;
-                  execv("./psclient", nargv);
-                  delete nargv;
+                    char** nargv = new char*[argc+1];
+                    char* name = const_cast<char*>("./psclient");
+                    nargv[0] = name;
+                    for(int i=1; i<argc; ++i)
+                    {
+                        nargv[i] = argv[i];
+                    }
+                    nargv[argc] = (char*)0;
+                    execv("./psclient", nargv);
+                    delete nargv;
 #endif
-              }                
-              else
-              {
-                  int status;
-                  wait(&status);
-                  exitApp = (status == 0);
-              }                
+                }
+                else
+                {
+                    int status;
+                    wait(&status);
+                    exitApp = (status == 0);
+                }
 #endif
             }
             else

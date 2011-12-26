@@ -22,6 +22,8 @@
 #define __DOWNLOAD_H__
 
 #include <iutil/vfs.h>
+#include <csutil/csstring.h>
+#include <util/fileutil.h>
 
 class UpdaterEngine;
 class UpdaterConfig;
@@ -34,6 +36,8 @@ public:
     Downloader(csRef<iVFS> _vfs, UpdaterConfig* _config);
     Downloader(csRef<iVFS> _vfs);
     ~Downloader();
+
+    void Init(csRef<iVFS> _vfs);
 
     /*
      * If URL is false; download a file from 'file' and save to 'dest'.
@@ -64,6 +68,9 @@ private:
 
     /* VFS */
     csRef<iVFS> vfs;
+
+    /* FileUtil pointer */
+    FileUtil* fileUtil;
 
     /* Config pointer */
     UpdaterConfig* config;
