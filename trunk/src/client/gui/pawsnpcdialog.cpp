@@ -45,7 +45,7 @@
 pawsNpcDialogWindow::pawsNpcDialogWindow()
 {
     responseList = NULL;
-    useBubbles = true;
+    useBubbles = false;
     ticks = 0;
     cameraMode = 0;
 }
