@@ -332,6 +332,23 @@ public:
 
 //-----------------------------------------------------------------------------
 
+/**
+* Will build a tribe building.
+*/
+class BuildOperation : public ScriptOperation
+{
+protected:
+public:
+
+    BuildOperation(): ScriptOperation("Build") {};
+    virtual ~BuildOperation() {};
+    virtual OperationResult Run(NPC* npc,EventManager* eventmgr,bool interrupted);
+    virtual bool Load(iDocumentNode* node);
+    virtual ScriptOperation* MakeCopy();
+};
+
+//-----------------------------------------------------------------------------
+
 /** Detect and chase a target until reached o out of bound.
 *   Chase updates periodically and turns, moving towards a certain
 *   location.  This is normally used to chase a targeted player.
@@ -1261,7 +1278,7 @@ public:
 class WaitOperation : public ScriptOperation
 {
 protected:
-    float duration;
+    csString duration;
     csString action;
 
     // Instance temp variables. These dosn't need to be copied.

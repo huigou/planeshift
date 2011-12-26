@@ -51,6 +51,8 @@
 
 extern iDataConnection *db;
 
+const char* Tribe::AssetStatusStr[] = {"ASSET_ITEM","ASSET_BUILDINGSPOT","ASSET_INCONSTRUCTION","ASSET_BUILDING"};
+
 Tribe::Tribe(EventManager *eventmngr)
     :homeSector(0),accWealthGrowth(0.0),deathRate(0.0),resourceRate(0.0)
 {
@@ -112,7 +114,7 @@ bool Tribe::AddMember(PID pid, const char* tribeMemberType)
 
     // Add to members list in db
     db->Command("INSERT INTO tribe_members (tribe_id,member_id,member_type) "
-                "VALUES (%u,%u,%s)", GetID(), pid.Unbox(),tribeMemberType);
+                "VALUES (%u,%u,'%s')", GetID(), pid.Unbox(),tribeMemberType);
 
     return true;
 }
@@ -435,6 +437,8 @@ void Tribe::Advance(csTicks when, EventManager *eventmgr)
         // we can parse recipes and send them to work
         if(behavior && strcasecmp(behavior->GetName(),npcIdleBehavior.GetDataSafe())==0)
         {
+            Debug3(LOG_TRIBES, id, "*** Found Idle NPC %s(%s) checking recipes ***", npc->GetName(),ShowID(npc->GetEID()));
+
             // Update recipes wait times
             UpdateRecipeData(decreaseValue);
 
@@ -450,6 +454,8 @@ void Tribe::Advance(csTicks when, EventManager *eventmgr)
 
             if(bestRecipe->wait <= 0)
             {
+                Debug2(LOG_TRIBES, id, "Applying recipe %s.", bestRecipe->recipe->GetName().GetDataSafe());
+                
                 bestRecipe->nextStep = recipeManager->ApplyRecipe(
                     bestRecipe, this, bestRecipe->nextStep);
             }
@@ -513,6 +519,16 @@ void Tribe::UpdateResourceRate(int amount)
     resourceRate = (1.0-N)*rate + N*resourceRate;
     lastResource = now;
 }
+
+iSector* Tribe::GetHomeSector()
+{
+    if (!homeSector)
+    {
+        homeSector = npcclient->GetEngine()->GetSectors()->FindByName(homeSectorName);
+    }
+    return homeSector;
+}
+
 
 int Tribe::GetMaxSize() const
 {
@@ -915,8 +931,17 @@ void Tribe::SendPerception(const char* pcpt, csArray<NPC*> npcs)
     Perception perception(pcpt);
     for(int i=0;i<npcs.GetSize();i++)
     {
-        npcs[i]->TriggerEvent(&perception, -1, NULL, NULL, false);
+        NPC* npc = npcs[i];
+        Debug4(LOG_TRIBES,GetID(),"--> Percept npc %s(%s): %s",npc->GetName(),ShowID(npc->GetEID()),perception.ToString().GetDataSafe());
+
+        npc->TriggerEvent(&perception);
     }
+}
+
+void Tribe::SendPerception(const char* pcpt)
+{
+    Perception perception(pcpt);
+    TriggerEvent(&perception);
 }
 
 gemNPCActor* Tribe::GetMostHated(NPC* npc, float range, bool includeInvisible, bool includeInvincible, float* hate)
@@ -987,7 +1012,7 @@ void Tribe::AddRecipe(Recipe* recipe, Recipe* parentRecipe, bool reqType)
     if(reqType)
     {
         // Make it distributed
-        newNode->requirementParseType = REQ_DISTRIBUTED;
+        newNode->requirementParseType = RecipeTreeNode::REQ_DISTRIBUTED;
     }
     tribalRecipe->AddChild(newNode, parentRecipe);
 }
@@ -1088,7 +1113,7 @@ bool Tribe::LoadNPCMemoryBuffer(const char* name, csArray<NPC*> npcs)
         // Mark an unprospected mine for future correct identification
         for(int i=0;i<npcs.GetSize();i++)
         {
-            npcs[i]->SetBuffer("new mine");
+            npcs[i]->SetBuffer("Mine","new mine");
         }
     }
 
@@ -1115,7 +1140,7 @@ void Tribe::ModifyWait(Recipe* recipe, int delta)
     tribalRecipe->ModifyWait(recipe, delta);
 }
 
-bool Tribe::CheckMembers(csString type, int number)
+bool Tribe::CheckMembers(const csString& type, int number)
 {
 
     // Handle special case where name is 'number'
@@ -1186,7 +1211,7 @@ bool Tribe::CheckItems(csString item, int number)
     }
 
     // If the building exists && is not just a spot for construction
-    if(asset->building && asset->status == ASSET_BUILDING)
+    if(asset->building && asset->status == Tribe::ASSET_BUILDING)
     {
         //Requirement is met
         return true;
@@ -1205,32 +1230,27 @@ bool Tribe::CheckItems(csString item, int number)
         }
     }
     
-    return true;
+    return false;
 }
 
-void Tribe::SpawnBuilding(const char* building)
+void Tribe::Build(NPC* npc)
 {
-    csVector3 where;
-    const char* sectorName = homeSectorName.GetData();
+    Asset* buildingSpot = npc->GetBuildingSpot();
 
-    // TODO -- Put an NPC to measure the ground using DR
-    // -or-
-    // Use the buildingSpot(x,y,z,building) function to reserve a spot
-
-    // For the moment it's just buildingSpot(x,y,z,building) available
-    Asset* newBuild = GetAsset(building);
-    if(newBuild && (!newBuild->status != ASSET_BUILDINGSPOT))
+    if (buildingSpot->status == ASSET_INCONSTRUCTION)
     {
-        // We don't have a reservedSpot available
-        CPrintf(CON_ERROR, "No reserved spot for building. (%s) Request abandoned.\n", building);
-        return;
-    }
-    where = newBuild->pos;
+        csVector3 buildingPos = npc->GetTribe()->GetHomePosition();
+        iSector*  buildingSector = npc->GetTribe()->GetHomeSector();
 
-    npcclient->GetNetworkMgr()->QueueSpawnBuildingCommand(where, sectorName, building, GetID());
+        buildingPos += buildingSpot->pos;
+
+        buildingSpot->status = ASSET_BUILDING;
+
+        npcclient->GetNetworkMgr()->QueueSpawnBuildingCommand(npc->GetActor(),buildingPos, buildingSector, buildingSpot->name, GetID());
+    }
 }
 
-csArray<NPC*> Tribe::SelectNPCs(const char* type, const char* number)
+csArray<NPC*> Tribe::SelectNPCs(const csString& type, const char* number)
 {
     int           count = atoi(number);
     csArray<NPC*> npcs;
@@ -1270,31 +1290,35 @@ csArray<NPC*> Tribe::SelectNPCs(const char* type, const char* number)
     return npcs;
 }
 
-csString Tribe::GetBuffer(csString bufferName)
+csString Tribe::GetBuffer(const csString& bufferName)
 {
-    if(bufferName == "Buffer")
-    {
-        return recipeBuffer;
-    }
-    else if(bufferName == "Active Amount")
-    {
-        return recipeAmountBuffer;
-    }
-    else
-    {
-        return "";
-    }
+    csString value = tribeBuffer.Get(bufferName,"");
+
+    Debug3(LOG_TRIBES,GetID(),"Get Buffer(%s) return: '%s'",bufferName.GetDataSafe(),value.GetDataSafe());
+
+    return value;
 }
 
-void Tribe::SetBuffer(csString bufferName, csString value)
+void Tribe::SetBuffer(const csString& bufferName, const csString& value)
 {
-    if(bufferName == "Buffer")
+    Debug3(LOG_TRIBES,GetID(),"Set Buffer(%s,%s)",bufferName.GetDataSafe(),value.GetDataSafe());
+
+    tribeBuffer.PutUnique(bufferName,value);
+}
+
+void Tribe::ReplaceBuffers(csString& result)
+{
+    int index = 0;
+    BufferHash::GlobalIterator iter = tribeBuffer.GetIterator();
+    while (iter.HasNext())
     {
-        recipeBuffer = value;
-    }
-    else if(bufferName == "Active Amount")
-    {
-        recipeAmountBuffer = value;
+        csString bufferName;
+        csString value = iter.Next(bufferName);
+        csString replace("$TBUFFER[");
+        replace += bufferName;
+        replace += "]";
+        
+        result.ReplaceAll(replace,value);
     }
 }
 
@@ -1304,14 +1328,14 @@ void Tribe::LoadAsset(iResultRow &row)
     coords[0] = row.GetFloat("coordX");
     coords[1] = row.GetFloat("coordY");
     coords[2] = row.GetFloat("coordZ");
-    if(row.GetInt("status") != ASSET_ITEM)
+    if(row.GetInt("status") != Tribe::ASSET_ITEM)
     {
         Asset asset;
         asset.id = row.GetInt("id");
         asset.name = row["name"];
         asset.pos = coords;
         asset.item = NULL;
-        asset.status = row.GetInt("status");
+        asset.status = (AssetStatus)(row.GetInt("status"));
         asset.quantity = row.GetInt("quantity");
         assets.Push(asset);
     }
@@ -1320,7 +1344,7 @@ void Tribe::LoadAsset(iResultRow &row)
         // TODO -- Add support for gemNPCitem
         // Get the gemItem based on it's name and pass it as 2nd argument
         // For now they are magically stored.
-        AddItemAsset(row["name"], NULL, row.GetInt("quantity"), row.GetInt("status"));
+        AddAsset(row["name"], NULL, row.GetInt("quantity"), row.GetInt("status"));
     }
 }
 
@@ -1363,7 +1387,7 @@ void Tribe::SaveAsset(Tribe::Asset* asset, bool deletion)
     }
 }
 
-void Tribe::AddItemAsset(csString name, gemNPCItem* item, int quantity, int id)
+void Tribe::AddAsset(csString name, gemNPCItem* item, int quantity, int id)
 {
     for(int i=0;i<assets.GetSize();i++)
     {
@@ -1382,44 +1406,29 @@ void Tribe::AddItemAsset(csString name, gemNPCItem* item, int quantity, int id)
     asset.item     = item;
     asset.quantity = quantity;
     asset.pos      = csVector3(0,0,0);
-    asset.status   = ASSET_ITEM;
+    asset.status   = Tribe::ASSET_ITEM;
     assets.Push(asset);
     SaveAsset(&asset);
 }
 
-void Tribe::AddBuildingAsset(csString name, csVector3 where, int status)
+void Tribe::AddAsset(csString name, csVector3 where, int status)
 {
-    if(status == ASSET_BUILDINGSPOT)
+    // Just Add a new spot asset if it does not exist
+    if(GetAsset(name, where))
     {
-        // Just Add a new spot asset if it does not exist
-        if(GetAsset(name,where))
-        {
-            // Asset already exists in the same spot. Bail
-            return;
-        }
-        Asset asset;
-        asset.id       = -1;
-        asset.name     = name;
-        asset.item     = NULL;
-        asset.pos      = where;
-        asset.quantity = 1;
-        asset.status   = ASSET_BUILDINGSPOT;
-        assets.Push(asset);
-        SaveAsset(&asset);
+        // Asset already exists in the same spot. Bail
         return;
     }
 
-    for(int i=0;i<assets.GetSize();i++)
-    {
-        if(assets[i].name == name && assets[i].pos == where)
-        {
-            assets[i].status = ASSET_BUILDING;
-            SaveAsset(&assets[i]);
-            return;
-        }
-    }
-
-    // Something occured... It shouldn't get here
+    Asset asset;
+    asset.id       = -1;
+    asset.name     = name;
+    asset.item     = NULL;
+    asset.pos      = where;
+    asset.quantity = 1;
+    asset.status   = Tribe::ASSET_BUILDINGSPOT;
+    assets.Push(asset);
+    SaveAsset(&asset);
     return;
 }
 
@@ -1428,6 +1437,20 @@ Tribe::Asset* Tribe::GetAsset(csString name)
     for(int i=0;i<assets.GetSize();i++)
     {
         if(assets[i].name == name)
+        {
+            return &assets[i];
+        }
+    }
+    
+    // If we get here, the asset does not exist and we return a null one
+    return NULL;
+}
+
+Tribe::Asset* Tribe::GetAsset(csString name, Tribe::AssetStatus status)
+{
+    for(int i=0;i<assets.GetSize();i++)
+    {
+        if(assets[i].name == name && assets[i].status == status)
         {
             return &assets[i];
         }
@@ -1447,18 +1470,6 @@ Tribe::Asset* Tribe::GetAsset(csString name, csVector3 where)
         }
     }
     
-    return NULL;
-}
-
-Tribe::Asset* Tribe::GetBuildingSpot(csString name)
-{
-    for(int i=0;i<assets.GetSize();i++)
-    {
-        if(assets[i].name == name && (assets[i].status == ASSET_BUILDINGSPOT))
-        {
-            return &assets[i];
-        }
-    }
     return NULL;
 }
 
@@ -1503,17 +1514,42 @@ void Tribe::DumpAssets()
         return;
     }
 
-    CPrintf(CON_CMDOUTPUT, "%-15s %-6s %-20s %-10s %-10s\n",
-        "Name", "Quant.", "Position", "IsBuilding", "Status");
+    CPrintf(CON_CMDOUTPUT, "%-15s %-6s %-20s %-10s %-15s\n",
+        "Name", "Quant", "Position", "IsBuilding", "Status");
 
     for(int i=0;i<assets.GetSize();i++)
     {
-        CPrintf(CON_CMDOUTPUT, "%-15s %-6d (%4.2f,%4.2f,%4.2f) %-10s %-10d\n",
+        CPrintf(CON_CMDOUTPUT, "%-15s %-6d %-20s %-10s %-15s\n",
                 assets[i].name.GetData(),
                 assets[i].quantity,
-                assets[i].pos[0], assets[i].pos[1], assets[i].pos[2],
+                toString(assets[i].pos).GetDataSafe(),
                 (assets[i].building?"Yes":"No"),
-                assets[i].status);
+                AssetStatusStr[assets[i].status]);
+    }
+}
+
+void Tribe::DumpBuffers()
+{
+    CPrintf(CON_CMDOUTPUT, "Dumping tribe buffer list for tribe %d\n", GetID());
+
+    if(tribeBuffer.IsEmpty())
+    {
+        CPrintf(CON_CMDOUTPUT, "No buffers.\n");
+        return;
+    }
+
+    CPrintf(CON_CMDOUTPUT, "%-15s %-15s\n",
+            "Name", "Value");
+
+    csHash<csString,csString>::GlobalIterator iter = tribeBuffer.GetIterator();
+    while (iter.HasNext())
+    {
+        csString bufferName;
+        csString value = iter.Next(bufferName);
+
+        CPrintf(CON_CMDOUTPUT, "%-15s %-15s\n",
+                bufferName.GetDataSafe(),
+                value.GetDataSafe());
     }
 }
 
@@ -1536,5 +1572,5 @@ void Tribe::ProspectMine(NPC* npc, csString resource, csString nick)
     // Update the resource nick
     AddResource(resource, 0, nick);
     // Update npc's buffer to the real item... so we know what to unload
-    npc->SetBuffer(resource);
+    npc->SetBuffer("Mine",resource);
 }

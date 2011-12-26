@@ -56,18 +56,23 @@ class EventManager;
 
 #define TRIBE_UNLIMITED_SIZE   100
 
-// Defines for assets status.
-#define ASSET_ITEM           0
-#define ASSET_BUILDINGSPOT   1
-#define ASSET_INCONSTRUCTION 2
-#define ASSET_BUILDING       3
-
 /**
  * Class used to define a Tribal Object
  */
 class Tribe : public ScopedTimerCB
 {
 public:
+    typedef csHash<csString,csString> BufferHash;
+
+    typedef enum
+    {
+        ASSET_ITEM,
+        ASSET_BUILDINGSPOT,
+        ASSET_INCONSTRUCTION,
+        ASSET_BUILDING
+    } AssetStatus;
+    static const char* AssetStatusStr[];
+
     struct Resource
     {
         int      id;           ///< Database id
@@ -84,7 +89,7 @@ public:
         int         quantity;  ///< Quantity of items of this type
         csVector3   pos;       ///< Position // Used only for reservations
         bool        building;  ///< True if it's a building
-        int         status;    ///< Status of this asset. Used for buildings.
+        AssetStatus status;    ///< Status of this asset. Used for buildings.
 
         void        Save();
     };
@@ -173,7 +178,8 @@ public:
     const Resource& GetResource(size_t n) { return resources[n]; }
     csList<Memory*>::Iterator GetMemoryIterator() { csList<Memory*>::Iterator it(memories); return it; };
     const char* GetNPCIdleBehavior() { return npcIdleBehavior.GetDataSafe(); }
-    iSector* GetHomeSector() { return homeSector; }
+    csVector3 GetHomePosition() { return homePos; }
+    iSector* GetHomeSector();
     csString GetHomeSectorName() { return homeSectorName; }
 
     /**
@@ -351,6 +357,14 @@ public:
      */
     void SendPerception(const char* pcpt, csArray<NPC*> npcs);
 
+    /** Sends the given perception to the tribe.
+     *
+     * Used to send perceptions to all tribe members.
+     *
+     * @param pcpt    The perception name to be sent
+     */
+    void SendPerception(const char* pcpt);
+    
     /** Find the most hated entity for tribe within range 
      *
      *  Check the hate list and retrive most hated entity within range
@@ -445,7 +459,7 @@ public:
     void LoadNPCMemoryBuffer(Tribe::Memory* memory, csArray<NPC*> npcs);
 
     /** Check to see if enough members are idle */
-    bool CheckMembers(csString type, int number);
+    bool CheckMembers(const csString& type, int number);
 
     /** Check to see if enough resources are available */
     bool CheckResource(csString resource, int number);
@@ -453,24 +467,31 @@ public:
     /** Check to see if enough items are available */
     bool CheckItems(csString items, int number);
    
-    /** Spawn a building */
-    void SpawnBuilding(const char* building);
+    /** Build a building on the current NPC building spot */
+    void Build(NPC* npc);
 
     /** Returns pointers to required npcs for a task */
-    csArray<NPC*> SelectNPCs(const char* type, const char* number);
+    csArray<NPC*> SelectNPCs(const csString& type, const char* number);
     
-    /** Get Buffer
+    /** Return a named buffer from the NPC.
      *
-     * Function used to get data from buffers containing dynamic
-     * recipe information.
+     * Function used to get data from buffers containing information.
      *
      * @param  Buffer name
      * @return Buffer value
      */
-    csString GetBuffer(csString bufferName);
-
-    /** Sets a buffer */
-    void SetBuffer(csString bufferName, csString value);
+    csString GetBuffer(const csString& bufferName);
+    /** Set/Update the value of a named buffer.
+     *
+     * @param The buffer name.
+     * @param The value to put in the buffer.
+     */
+    void SetBuffer(const csString& bufferName, const csString& value);
+    /** Replace $TBUFFER[x] with values from the NPC buffer.
+     *
+     * @param result String to replace buffers in.
+     */
+    void ReplaceBuffers(csString& result);
 
     /** Modify Wait Time for a recipe */
     void ModifyWait(Recipe* recipe, int delta);
@@ -482,19 +503,19 @@ public:
     void SaveAsset(Tribe::Asset* asset, bool deletion = false);
 
     /** Add an item asset */
-    void AddItemAsset(csString name, gemNPCItem* item, int quantity, int id = -1);
+    void AddAsset(csString name, gemNPCItem* item, int quantity, int id = -1);
 
-    /** Add a building asset */
-    void AddBuildingAsset(csString name, csVector3 where, int status);
+    /** Add an asset to the tribe */
+    void AddAsset(csString name, csVector3 where, int status);
 
     /** Get asset */
     Asset* GetAsset(csString name);
 
+    /** Get asset */
+    Asset* GetAsset(csString name, Tribe::AssetStatus status);
+    
     /** Get an asset based on name and position */
     Asset* GetAsset(csString name, csVector3 where);
-
-    /** Get a reserved building spot */
-    Asset* GetBuildingSpot(csString name);
 
     /** Delete item assets */
     void DeleteAsset(csString name, int quantity);
@@ -504,6 +525,9 @@ public:
 
     /** Dump Assets */
     void DumpAssets();
+
+    /** Dump Buffers */
+    void DumpBuffers();
 
     /** Prospect Mine
      *
@@ -543,8 +567,7 @@ protected:
     csString                  homeSectorName;
     iSector*                  homeSector;
     int                       maxSize;
-    csString                  recipeBuffer;       ///< Buffer used to hold data for recipe's functions
-    csString                  recipeAmountBuffer; ///< Buffer used to hold quantities for recipe's functions
+    BufferHash                tribeBuffer;       ///< Buffer used to hold data for recipe's functions
     csString                  wealthResourceName;
     csString                  wealthResourceNick;
     csString                  wealthResourceArea;

@@ -392,7 +392,7 @@ void NPCType::FirePerception(NPC *npc, Perception *pcpt)
         }
         else if(types->Get(0) == "ownbuffer")
         {
-            if(npc->GetBuffer() == type)
+            if(npc->GetBuffer("Mine") == type)
             {
                 npc->GetTribe()->Memorize(npc,pcpt);
             }
@@ -878,6 +878,10 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         if ( strcmp( node->GetValue(), "assess" ) == 0 )
         {
             op = new AssessOperation;
+        }
+        else if ( strcmp( node->GetValue(), "build" ) == 0 )
+        {
+            op = new BuildOperation;
         }
         else if ( strcmp( node->GetValue(), "chase" ) == 0 )
         {
@@ -1514,15 +1518,23 @@ float psGameObject::Calc2DDistance(const csVector3 & a, const csVector3 & b)
 csString psGameObject::ReplaceNPCVariables(NPC* npc, const csString& object)
 {
     csString result(object);
+
+    // First replace buffers, this so that keywords can be put into buffers as well.
+    npc->ReplaceBuffers(result);
+    if (npc->GetTribe())
+    {
+        npc->GetTribe()->ReplaceBuffers(result);
+
+        // Now that we are done with buffers, replace keywords
+
+        result.ReplaceAll("$tribe",npc->GetTribe()->GetName());
+        result.ReplaceAll("$member_type",npc->GetTribeMemberType());
+    }
     
     result.ReplaceAll("$name",npc->GetName());
     if (npc->GetRaceInfo())
     {
         result.ReplaceAll("$race",npc->GetRaceInfo()->GetName());
-    }
-    if (npc->GetTribe())
-    {
-        result.ReplaceAll("$tribe",npc->GetTribe()->GetName());
     }
     if (npc->GetOwner())
     {
@@ -1532,6 +1544,7 @@ csString psGameObject::ReplaceNPCVariables(NPC* npc, const csString& object)
     {
         result.ReplaceAll("$target",npc->GetTarget()->GetName());
     }
+
 
     return result;
 }

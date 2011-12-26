@@ -62,7 +62,7 @@ INSERT INTO `item_categories` VALUES (24,'Quest Items',NULL,'Y',NULL,100,0,0);
 INSERT INTO `item_categories` VALUES (25,'Furniture',NULL,'Y',NULL,100,0,0);
 INSERT INTO `item_categories` VALUES (26,'Traps',NULL,'Y',NULL,100,0,0);
 INSERT INTO `item_categories` VALUES (27,'Instruments',NULL,'Y',NULL,100,0,0);
-INSERT INTO `item_categories` VALUES (28,'Buildings',NULL,NULL,NULL,100,0,0);
+INSERT INTO `item_categories` VALUES (51,'Structures',NULL,'Y',NULL,100,0,0);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

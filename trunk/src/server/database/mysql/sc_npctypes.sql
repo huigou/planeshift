@@ -391,6 +391,7 @@ INSERT INTO sc_npctypes VALUES("109","AbstractTribesman","DoNothing","","","",""
 </behavior>
 
 <behavior name="Explore" completion_decay="100" resume="yes" auto_memorize="all">
+   <talk text="Going Exploring" target="false" />
    <locate obj="waypoint" static="no" />
    <navigate anim="walk" />
    <locate obj="waypoint" static="no" random="yes" range="80" />
@@ -402,18 +403,28 @@ INSERT INTO sc_npctypes VALUES("109","AbstractTribesman","DoNothing","","","",""
    <share_memories />
 </behavior>
 
-<behavior name="GatherResource" completion_decay="100" resume="yes">
-   <locate obj="ownbuffer" />
+<behavior name="HuntResource" completion_decay="100" resume="yes">
+   <talk text="Going hunting $NBUFFER[Resource]" target="false" />
+   <locate obj="waypoint" static="no" />
    <navigate anim="walk" />
-   <equip item="Rock Pick" slot="righthand" />
-   <dig resource="tribe:wealth" />
+   <locate obj="tribe:memory:hunting_ground"  random="yes" />
+   <wander anim="walk" />
+   <navigate anim="walk" />
+   <talk text="Hunting $NBUFFER[Resource]..." target="false" />
+   <wait duration="10" />
+   <reward resource="$NBUFFER[Resource]" count="1" />
+   <talk text="...done hunting $NBUFFER[Resource]" target="false" />
+   <locate obj="waypoint" static="no" />
+   <navigate anim="walk" />
    <locate obj="tribe:home"/>
+   <wander anim="walk" />
    <navigate anim="walk" />
-   <transfer item="tribe:wealth" target="tribe" />
+   <transfer item="$NBUFFER[Resource]" target="tribe" />
    <share_memories />
 </behavior>
 
 <behavior name="MineResource" completion_decay="100" resume="yes">
+   <talk text="Going MineResource $NBUFFER[Resource]" target="false" />
    <locate obj="waypoint" static="no" />
    <navigate anim="walk" />
    <locate obj="ownbuffer" static="no" />
@@ -421,7 +432,7 @@ INSERT INTO sc_npctypes VALUES("109","AbstractTribesman","DoNothing","","","",""
    <equip item="Rock Pick" slot="righthand" />
    <loop iterations="3">
       <navigate anim="walk" />
-      <dig resource="tribe:buffer" />
+      <dig resource="$NBUFFER[Resource]" />
       <wait anim="stand" duration="10" />
       <!-- Must move since dig in same place is not alloved -->
       <locate obj="ownbuffer" static="no" />
@@ -431,10 +442,37 @@ INSERT INTO sc_npctypes VALUES("109","AbstractTribesman","DoNothing","","","",""
    <navigate anim="walk" />
    <locate obj="tribe:home" static="no" />
    <wander anim="walk" />
-   <transfer item="ownbuffer" target="tribe" />
+   <navigate anim="walk" />
+   <transfer item="$NBUFFER[Resource]" target="tribe" />
+</behavior>
+
+<!-- Will test a mine to see what resource there are there. -->
+<behavior name="TestMineResource" completion_decay="100" resume="yes">
+   <talk text="Going TestMineResource" target="false" />
+   <locate obj="waypoint" static="no" />
+   <navigate anim="walk" />
+   <locate obj="tribe:memory:mine" random="yes" static="no" />
+   <wander anim="walk" />
+   <equip item="Rock Pick" slot="righthand" />
+   <loop iterations="3">
+      <navigate anim="walk" />
+      <dig />
+      <wait anim="stand" duration="10" />
+      <!-- Must move since dig in same place is not alloved -->
+      <locate obj="tribe:memory:mine" static="no" />
+   </loop>
+   <dequip slot="righthand" />
+   <locate obj="waypoint" static="no" />
+   <navigate anim="walk" />
+   <locate obj="tribe:home" static="no" />
+   <wander anim="walk" />
+   <navigate anim="walk" />
+   <!-- TODO transfer item="How to find the item!" target="tribe" /-->
+   <share_memories />
 </behavior>
 
 <behavior name="GoToSleep" resume="yes">
+   <talk text="Going to sleep" target="false" />
    <locate obj="waypoint" static="no" />
    <navigate anim="walk" />
    <locate obj="tribe:home" static="no" />
@@ -443,6 +481,8 @@ INSERT INTO sc_npctypes VALUES("109","AbstractTribesman","DoNothing","","","",""
 </behavior>
 
 <behavior name="Breed" resume="yes" completion_decay="100">
+   <talk text="Going Breed" target="false" />
+   <!--debug level="15" /-->
    <locate obj="waypoint" static="no" />
    <navigate anim="walk" />
    <locate obj="tribe:home" static="no" />
@@ -451,7 +491,26 @@ INSERT INTO sc_npctypes VALUES("109","AbstractTribesman","DoNothing","","","",""
    <emote cmd="/divide" />
    <wait duration="30" anim="stand" />
    <locate obj="self" static="no" />
-   <reproduce type="Worker" />
+   <reproduce type="$NBUFFER[Reproduce_Type]" />
+   <wait duration="30" anim="stand" />
+   <!--debug level="0" /-->
+</behavior>
+
+<behavior name="Buy" resume="yes" completion_decay="100">
+   <!--debug level="15" /-->
+   <talk text="Going Buying $NBUFFER[Trade]" target="false" />
+   <locate obj="waypoint" static="no" />
+   <navigate anim="walk" />
+
+   <talk text="Trading $NBUFFER[Trade]" target="false" />
+   <wait duration="30" anim="stand" />
+   <reward resource="$NBUFFER[Trade]" count="1" />
+
+   <locate obj="tribe:home" static="no" />
+   <wander anim="walk" />
+   <navigate anim="walk" />
+   <talk text="Done Buying $NBUFFER[Trade]" target="false" />
+   <!--debug level="0" /-->
 </behavior>
 
 <behavior name="Resurrect" when_dead="yes" completion_decay="200">
@@ -459,19 +518,50 @@ INSERT INTO sc_npctypes VALUES("109","AbstractTribesman","DoNothing","","","",""
 </behavior>
 
 <behavior name="GoToWork" completion_decay="100">
+   <talk text="Going to work for $NBUFFER[Work_Duration]" target="false" />
+   <!-- Go to work position -->
    <locate obj="waypoint" static="no" />
    <navigate anim="walk" />
    <locate obj="tribe:memory:work" static="no" />
    <wander anim="walk" />
+   <navigate anim="walk" />
+
+   <emote cmd="/work" />
+   <wait duration="$NBUFFER[Work_Duration]" anim="stand" />
+
+   <!-- Go home -->
    <locate obj="waypoint" static="no" />
    <navigate anim="walk" />
-   <emote cmd="/work" />
-   <wait duration="buffer" anim="stand" />
    <locate obj="tribe:home" static="no" />
    <wander anim="walk" />
+   <navigate anim="walk" />
+</behavior>
+
+<behavior name="GoBuild" completion_decay="100">
+   <debug level="5" />
+   <talk text="Going to build $NBUFFER[Building] for $NBUFFER[Work_Duration]" target="false" />
+   <!-- Go to work position -->
+   <locate obj="waypoint" static="no" />
+   <navigate anim="walk" />
+   <locate obj="building_spot" static="no" />
+   <wander anim="walk" />
+   <navigate anim="walk" />
+
+   <wait duration="$NBUFFER[Work_Duration]" anim="stand" />
+   <build />
+   <talk text="Nice work building this $NBUFFER[Building]" target="false" />
+
+   <!-- Go home -->
+   <locate obj="waypoint" static="no" />
+   <navigate anim="walk" />
+   <locate obj="tribe:home" static="no" />
+   <wander anim="walk" />
+   <navigate anim="walk" />
+   <debug level="0" />
 </behavior>
 
 <behavior name="Guard" resume="yes">
+   <talk text="Going guarding" target="false" />
    <locate obj="ownbuffer" />
    <navigate anim="walk" />
    <circle anim="walk" radius="2" />
@@ -482,13 +572,16 @@ INSERT INTO sc_npctypes VALUES("109","AbstractTribesman","DoNothing","","","",""
    <move anim="walk" duration="3" />
 </behavior>
 
-<react event="collision" behavior="Turn" delta="500" />
-<react event="tribe:work" behavior="GoToWork" delta="100" />
-<react event="tribe:resurrect" behavior="Resurrect" delta="200" when_dead="yes" />
-<react event="tribe:mine" behavior="MineResource" delta="100" />
-<react event="tribe:gather" behavior="GatherResource" delta="100" />
-<react event="tribe:breed" behavior="Breed" delta="100" />
-<react event="tribe:explore" behavior="Explore" delta="100" />
+<react event="collision"           behavior="Turn" delta="500" />
+<react event="tribe:work"          behavior="GoToWork" delta="100" />
+<react event="tribe:build"         behavior="GoBuild" delta="100" />
+<react event="tribe:resurrect"     behavior="Resurrect" delta="200" when_dead="yes" />
+<react event="tribe:mine"          behavior="MineResource" delta="100" />
+<react event="tribe:test_mine"     behavior="TestMineResource" delta="100" />
+<react event="tribe:hunt"          behavior="HuntResource" delta="100" />
+<react event="tribe:breed"         behavior="Breed" delta="100" />
+<react event="tribe:buy"           behavior="Buy" delta="100" />
+<react event="tribe:explore"       behavior="Explore" delta="100" />
 <react event="target out of range" behavior="Chase" />
 <react event="target out of chase" behavior="Chase" absolute="0" only_interrupt="chase" />');
 

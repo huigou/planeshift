@@ -1072,15 +1072,16 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
             }
             case psNPCCommandsMessage::CMD_SPAWN_BUILDING:
             {
-                csVector3 where;
-                where[0] = list.msg->GetFloat();
-                where[1] = list.msg->GetFloat();
-                where[2] = list.msg->GetFloat();
-                const char*   sectorName = list.msg->GetStr();
-                const char*   buildingName = list.msg->GetStr();
+                EID           spawner_id = EID(list.msg->GetUInt32()); // Mother
+                csVector3     where = list.msg->GetVector3();
+                csString      sectorName = list.msg->GetStr();
+                csString      buildingName = list.msg->GetStr();
                 int           tribeID = list.msg->GetInt16();
+
                 InstanceID    instance = DEFAULT_INSTANCE;
                 psSectorInfo* sector = cacheManager->GetSectorInfoByName(sectorName);
+
+                Debug4(LOG_SUPERCLIENT, spawner_id.Unbox(), "-->Got spawn building cmd at %s in %s for %s\n", toString(where).GetDataSafe(), sectorName.GetDataSafe(), buildingName.GetDataSafe());
 
                 if(list.msg->overrun)
                 {
@@ -1442,7 +1443,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                 int count = list.msg->GetInt8();
                 csString target = list.msg->GetStr();
 
-                Debug4(LOG_SUPERCLIENT, entity_id.Unbox(), "-->Got transfer cmd: Entity %s to transfer %s to %s\n",
+                Debug4(LOG_SUPERCLIENT, entity_id.Unbox(), "-->Got transfer cmd: Entity %s to transfer '%s' to %s\n",
                        ShowID(entity_id), item.GetDataSafe(), target.GetDataSafe());
 
                 // Make sure we haven't run past the end of the buffer
@@ -1460,6 +1461,13 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     Debug1(LOG_SUPERCLIENT, entity_id.Unbox(), "Couldn't find character data.\n");
                     break;
                 }
+                
+                if (item.IsEmpty())
+                {
+                    Debug1(LOG_SUPERCLIENT, entity_id.Unbox(), "Transfere with empty item not possible.\n");
+                    break;
+                }
+                
 
                 psItemStats* itemstats = cacheManager->GetBasicItemStatsByName(item);
                 if (!itemstats)
@@ -1509,6 +1517,13 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                 if (list.msg->overrun)
                 {
                     Debug2(LOG_SUPERCLIENT, playerID.Unbox(), "Received incomplete CMD_RESURRECT from NPC client %u.\n", me->clientnum);
+                    break;
+                }
+
+                gemActor* actor = gemSupervisor->FindPlayerEntity(playerID);
+                if (actor && actor->IsAlive ())
+                {
+                    Debug2(LOG_SUPERCLIENT, playerID.Unbox(), "Ignoring received CMD_RESURRECT from NPC %s.\n", ShowID(playerID));
                     break;
                 }
 
