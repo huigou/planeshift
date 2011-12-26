@@ -179,6 +179,12 @@ bool pawsNpcDialogWindow::OnButtonPressed( int button, int keyModifier, pawsWidg
                 //if the system works well
                 csString trigger = questInfo.Get(displayIndex+widget->GetID()-100).trig;
                 csString text = questInfo.Get(displayIndex+widget->GetID()-100).text;
+                if(trigger.GetAt(0) == '=') // prompt window signal
+                {
+                    pawsStringPromptWindow::Create(csString(answer.GetData()+1),
+                        csString(""),
+                        false, 320, 30, this, answer.GetData()+1 );
+                }
                 if(trigger.GetAt(0) != '<')
                 {
                     csString cmd;
