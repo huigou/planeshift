@@ -175,11 +175,22 @@ bool pawsNpcDialogWindow::OnButtonPressed( int button, int keyModifier, pawsWidg
             csString name = widget->GetName();
             if(name.StartsWith("Bubble"))
             {
-                int entryNumber = widget->GetID()-100; //subtract 100 as ids start with 100
-                csString cmd;
-                cmd.Format("/tellnpc %s", questInfo.Get(displayIndex+entryNumber).trig.GetData());
-                psengine->GetCmdHandler()->Publish(cmd);
-                DisplayTextBubbles(questInfo.Get(displayIndex+entryNumber).text.GetData());
+                //get the trigger which was selected. we should never get out of bounds
+                //if the system works well
+                csString trigger = questInfo.Get(displayIndex+widget->GetID()-100).trig;
+                csString text = questInfo.Get(displayIndex+widget->GetID()-100).text;
+                if(trigger.GetAt(0) != '<')
+                {
+                    csString cmd;
+                    cmd.Format("/tellnpc %s", trigger.GetData());
+                    psengine->GetCmdHandler()->Publish(cmd);
+                }
+                else
+                {
+                    psSimpleStringMessage gift(0, MSGTYPE_EXCHANGE_AUTOGIVE, trigger);
+                    gift.SendMessage();
+                }
+                DisplayTextBubbles(text.GetData());
             }
             else
             {
@@ -241,8 +252,9 @@ void pawsNpcDialogWindow::DisplayQuest(unsigned int index)
 {
     unsigned int c = 1;
     csString bname = "";
-    for (unsigned int i = index; i < questInfo.GetSize() && c < 3; i++, c++)
-    {//set visible bubbles
+    for(unsigned int i = index; i < questInfo.GetSize() && c < 3; i++, c++)
+    {
+        //set visible bubbles
         bname = "Bubble";
         bname.Append(c);
         pawsWidget * pw = FindWidget(bname);
@@ -253,8 +265,9 @@ void pawsNpcDialogWindow::DisplayQuest(unsigned int index)
         qt->SetText(questInfo[i].text);
         pw->SetVisibility(true);
     }
-    for (;c <= 3 ; c++)
-    {//set invisible bubbles
+    for(;c <= 3 ; c++)
+    {
+        //set invisible bubbles
         bname = "Bubble";
         bname.Append(c);
         pawsWidget * pw = FindWidget(bname);
@@ -315,12 +328,12 @@ void pawsNpcDialogWindow::LoadQuest(csString xmlstr)
 
 void pawsNpcDialogWindow::OnListAction( pawsListBox* widget, int status )
 {
-    if (status == LISTBOX_HIGHLIGHTED)
+    if(status == LISTBOX_HIGHLIGHTED)
     {
         pawsTextBox *fld = dynamic_cast<pawsTextBox *>(widget->GetSelectedRow()->FindWidgetXMLBinding("text"));
         Debug2(LOG_QUESTS, 0, "Pressed: %s\n",fld->GetText() );
     }
-    else if (status == LISTBOX_SELECTED)
+    else if(status == LISTBOX_SELECTED)
     {
         //if no row is selected
         if(!widget->GetSelectedRow())
@@ -335,7 +348,7 @@ void pawsNpcDialogWindow::OnListAction( pawsListBox* widget, int status )
 
         // Send the server the original trigger
         csString cmd;
-        if (trigger.GetAt(0) == '=') // prompt window signal
+        if(trigger.GetAt(0) == '=') // prompt window signal
         {
             pawsStringPromptWindow::Create(csString(trigger.GetData()+1),
                                            csString(""),
@@ -343,7 +356,7 @@ void pawsNpcDialogWindow::OnListAction( pawsListBox* widget, int status )
         }
         else
         {
-            if (trigger.GetAt(0) != '<')
+            if(trigger.GetAt(0) != '<')
             {
                 cmd.Format("/tellnpc %s", trigger.GetData() );
                 psengine->GetCmdHandler()->Publish(cmd);
@@ -364,7 +377,7 @@ void pawsNpcDialogWindow::DisplayTextBubbles(const char *sayWhat)
     // Now send the chat window and chat bubbles the nice menu text
     csString text(sayWhat);
     size_t dot = text.FindFirst('.'); // Take out the numbering to display
-    if (dot != SIZET_NOT_FOUND)
+    if(dot != SIZET_NOT_FOUND)
     {
         text.DeleteAt(0,dot+1);
     }
@@ -376,7 +389,7 @@ void pawsNpcDialogWindow::DisplayTextBubbles(const char *sayWhat)
 
 void pawsNpcDialogWindow::HandleMessage( MsgEntry* me )
 {
-    if ( me->GetType() == MSGTYPE_DIALOG_MENU )
+    if(me->GetType() == MSGTYPE_DIALOG_MENU)
     {
         psDialogMenuMessage mesg(me);
 
@@ -436,14 +449,14 @@ void pawsNpcDialogWindow::AdjustForPromptWindow()
 {
     csString str;
 
-    for (size_t i=0; i<responseList->GetRowCount(); i++)
+    for(size_t i=0; i<responseList->GetRowCount(); i++)
     {
         str = responseList->GetTextCellValue(i,0);
         size_t where = str.Find("?=");
-        if (where != SIZET_NOT_FOUND) // we have a prompt choice
+        if(where != SIZET_NOT_FOUND) // we have a prompt choice
         {
             pawsTextBox *hidden = (pawsTextBox *)responseList->GetRow(i)->GetColumn(1);
-            if (where != SIZET_NOT_FOUND)
+            if(where != SIZET_NOT_FOUND)
             {
                 str.DeleteAt(where,1); // take out the ?
                 // Save the question prompt, starting with the =, in the hidden column
@@ -461,7 +474,7 @@ void pawsNpcDialogWindow::AdjustForPromptWindow()
         }
     }
 
-    for (size_t i = 0 ; i < questInfo.GetSize(); i++)
+    for(size_t i = 0 ; i < questInfo.GetSize(); i++)
     {
         QuestInfo & qi = questInfo[i];
         str = qi.text;
@@ -530,7 +543,8 @@ void pawsNpcDialogWindow::Show()
     {
         GEMClientObject* cobj = psengine->GetCharManager()->GetTarget();
         if(cobj)
-        {//let the camera focus upon the target npc
+        {
+            //let the camera focus upon the target npc
             csRef<psCelClient> celclient = psengine->GetCelClient();
             GEMClientObject * mobj = celclient->GetMainPlayer();
             csVector3 p1 = cobj->GetPosition();
