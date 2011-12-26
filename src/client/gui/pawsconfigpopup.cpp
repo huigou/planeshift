@@ -57,7 +57,7 @@ bool pawsConfigPopup::Initialize()
 {
     if (!LoadFromFile("configpopup.xml"))
         return false;
-    
+
     return true;
 }
 
@@ -101,7 +101,7 @@ bool pawsConfigPopup::PostSetup()
             check->SetState(true);
         }
     }
-                
+
     return true;
 }
 
@@ -137,7 +137,7 @@ bool pawsConfigPopup::LoadConfig()
             }
         }
     }
-        
+
 
     dirty = true;
 

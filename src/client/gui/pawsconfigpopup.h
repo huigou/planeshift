@@ -43,7 +43,7 @@ public:
     pawsConfigPopup(void); ///< Constructor
 
     virtual bool PostSetup(); ///< @see pawsWidget
-    
+
     virtual bool Initialize(); ///< @see pawsWidget
     virtual bool LoadConfig(); ///< @see pawsWidget
     virtual bool SaveConfig(); ///< @see pawsWidget

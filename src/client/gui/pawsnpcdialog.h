@@ -37,7 +37,7 @@ class pawsListBox;
 class pawsNpcDialogWindow: public pawsWidget, public psClientNetSubscriber, public iOnStringEnteredAction
 {
 public:
-    struct QuestInfo 
+    struct QuestInfo
     {
         csString    title;
         csString    text;
@@ -50,7 +50,7 @@ public:
 
     void OnListAction( pawsListBox* widget, int status );
 
-	void OnStringEntered(const char *name,int param,const char *value);
+    void OnStringEntered(const char *name,int param,const char *value);
 
     /**
      * Loads the settings from the config files and sets the window
@@ -74,7 +74,7 @@ public:
      * @brief Load quest info from xmlbinding message
      *
      * @param xmlbinding An xml string which contains quest info
-     * 
+     *
      */
     void LoadQuest(csString xmlstr);
 
@@ -82,7 +82,7 @@ public:
      * @brief Display quests in bubbles.
      *
      * @param index From which index in questInfo array the quest info will be displayed in bubbles.
-     * 
+     *
      */
     void DisplayQuest(unsigned int index);
 
@@ -133,21 +133,21 @@ public:
 
 
 private:
-	void AdjustForPromptWindow();
+    void AdjustForPromptWindow();
     /**
      * Handles the inner display of text bubbles from the player
      */
-	void DisplayTextBubbles(const char *sayWhat);
+    void DisplayTextBubbles(const char *sayWhat);
     bool useBubbles; ///< Stores which modality should be used for the npcdialog (bubbles/menus)
 
     csArray<QuestInfo> questInfo;///< Stores all the quest info and triggers parsed from xml binding.
     unsigned int    displayIndex;///< Index to display which quests
     int             cameraMode;///< Stores the camera mode
 
-	pawsListBox* responseList;
+    pawsListBox* responseList;
     csTicks         ticks;
 };
 
 
 CREATE_PAWS_FACTORY( pawsNpcDialogWindow );
-#endif    
+#endif
