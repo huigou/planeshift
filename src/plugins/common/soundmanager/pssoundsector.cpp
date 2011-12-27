@@ -295,7 +295,7 @@ void psSoundSector::UpdateEmitter(SoundControl* &ctrl)
                 continue;
             }
 
-            if(rng.Get() <= emitter->probability)
+            if(SoundSystemManager::GetSingleton().GetRandomGen().Get() <= emitter->probability)
             {
                 if(!emitter->Play(ctrl))
                 {
@@ -634,7 +634,7 @@ void psSoundSector::UpdateEntityValues(SoundControl* &ctrl, psEntity* entity, iM
 
         // Check if it can play
         if(entity->IsReadyToPlay(timeofday, range)
-            && rng.Get() <= entity->GetProbability())
+            && SoundSystemManager::GetSingleton().GetRandomGen().Get() <= entity->GetProbability())
         {
             entity->Play(ctrl, mesh->GetMovable()->GetFullPosition());
         }
