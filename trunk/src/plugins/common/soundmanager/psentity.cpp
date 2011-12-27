@@ -161,7 +161,7 @@ bool psEntity::DefineState(csRef<iDocumentNode> stateNode)
     csRef<iDocumentNodeIterator> resourceItr;
 
     // checking if the state ID is legal
-    stateID = stateNode->GetAttributeValueAsInt("STATE", -1);
+    stateID = stateNode->GetAttributeValueAsInt("ID", -1);
     if(stateID < 0)
     {
         return false;
@@ -211,6 +211,9 @@ bool psEntity::DefineState(csRef<iDocumentNode> stateNode)
     {
         entityState->probability = entityState->probability / 1000 * SoundManager::updateTime;
     }
+
+    // in XML delay is given in seconds, converting delay into milliseconds
+    entityState->delay = entityState->delay * 1000;
 
     states.Put(stateID, entityState);
 
@@ -340,13 +343,16 @@ bool psEntity::Play(SoundControl* &ctrl, csVector3 entityPosition)
 
     entityState = states.Get(state, 0);
 
+    // picking up randomly among resources
     if(!(entityState->resources.IsEmpty()))
     {
-        if(SoundSystemManager::GetSingleton().Play3DSound(entityState->resources[0], DONT_LOOP, 0, 0,
+        int resourceNumber = SoundSystemManager::GetSingleton().GetRandomGen().Get() * entityState->resources.GetSize();
+
+        if(SoundSystemManager::GetSingleton().Play3DSound(entityState->resources[resourceNumber], DONT_LOOP, 0, 0,
             entityState->volume, ctrl, entityPosition, 0, minRange, maxRange,
             VOLUME_ZERO, CS_SND3D_ABSOLUTE, handle))
         {
-            when = entityState->delay * 1000;
+            when = entityState->delay;
             handle->SetCallback(this, &StopCallback);
             return true;
         }

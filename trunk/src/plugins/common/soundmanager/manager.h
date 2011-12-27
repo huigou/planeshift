@@ -200,8 +200,9 @@ public:
     void RemoveSoundControl(SoundControl* sndCtrl);
     SoundControl* GetSoundControl(int ctrlID) const;
 
-    SoundSystem* GetSoundSystem() { return soundSystem; }
-    SoundDataCache* GetSoundDataCache() { return soundDataCache; }
+    csRandomGen &GetRandomGen() { return randomGen; }
+    SoundSystem* GetSoundSystem() const { return soundSystem; }
+    SoundDataCache* GetSoundDataCache() const { return soundDataCache; }
 
 private:
     SoundSystem*                   soundSystem;

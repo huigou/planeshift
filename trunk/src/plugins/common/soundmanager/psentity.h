@@ -214,7 +214,7 @@ private:
         csStringArray resources;    ///< resource names of the sounds associated to the state.
         float volume;               ///< volume of the sound.
         float probability;          ///< how high is the probability that this entity makes this sound.
-        int delay;                  ///< number of seconds till played again.
+        int delay;                  ///< number of milliseconds till played again.
         int timeOfDayStart;         ///< time when this entity starts playing.
         int timeOfDayEnd;           ///< time when this entity stops.
 

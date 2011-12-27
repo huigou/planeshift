@@ -45,8 +45,6 @@ public:
     csVector3                    listenerPos;        ///< current listener position
     int                          timeofday;          ///< sector time of day
 
-    csRandomGen                  rng;                ///< random number generator
-
     /**
      * Create an empty psSoundSector with no musics, ambients, emitters and entities.
      * @param name the psSoundSector's name
