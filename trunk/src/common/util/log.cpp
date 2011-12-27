@@ -138,11 +138,6 @@ void LogMessage (const char* file, int line, const char* function,
         case CS_REPORTER_SEVERITY_DEBUG: con = CON_DEBUG; break;
     }
 
-    // Log to file
-    va_start(arg, msg);
-    CVPrintfLog (con, msg, arg);
-    va_end(arg);
-
     if(con <= ConsoleOut::GetMaximumOutputClassStdout())
     {
         csString msgid;
@@ -184,6 +179,13 @@ void LogMessage (const char* file, int line, const char* function,
             fflush(errorLog);
         }
         */
+    }
+    else
+    {
+        // Log to file
+        va_start(arg, msg);
+        CVPrintfLog (con, msg, arg);
+        va_end(arg);
     }
 }
 
