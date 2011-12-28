@@ -2197,6 +2197,11 @@ double gemActor::CalcFunction(MathEnvironment* env, const char* f, const double*
 
         return 1;
     }
+    else if(func == "InterruptSpellCasting")
+    {
+        InterruptSpellCasting();
+        return 1;
+    }
     CS_ASSERT(psChar);
     return psChar->CalcFunction(env, f, params);
 }
@@ -2550,6 +2555,8 @@ void gemActor::InvokeMovementScripts()
 
 void gemActor::DoDamage(gemActor* attacker, float damage)
 {
+    static csWeakRef<MathScript> doDamageScript = NULL;
+
     // Handle trivial "already dead" case
     if ( !IsAlive())
     {
@@ -2558,9 +2565,24 @@ void gemActor::DoDamage(gemActor* attacker, float damage)
         return;
     }
 
-    // Successful attack, if >30% max hp then interrupt spell
-    if (damage > psChar->GetMaxHP().Current() * 0.3F)
-        InterruptSpellCasting();
+    if (!doDamageScript)
+    {
+        psserver->GetMathScriptEngine()->CheckAndUpdateScript(doDamageScript, "DoDamageScript");
+    }
+
+    if(doDamageScript)
+    {
+        MathEnvironment env;
+        env.Define("Actor", this);
+        env.Define("Damage", damage);
+        doDamageScript->Evaluate(&env);
+    }
+    else
+    {
+        // Successful attack, if >30% max hp then interrupt spell
+        if (damage > psChar->GetMaxHP().Current() * 0.3F)
+            InterruptSpellCasting();
+    }
 
     if (GetCharacterData()->GetHP() - damage < 0)
         damage = GetCharacterData()->GetHP();
