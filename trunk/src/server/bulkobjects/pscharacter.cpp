@@ -1231,10 +1231,10 @@ void psCharacter::SetVariable(const csString &name, const csString &value)
     }
     else //update variables
     {
-        charVariable & var = charVariables.Get(name, charVariable());
-        var.value = value;
-        var.dirty = true;
-        var.intBuff.SetBase(strtoul(value.GetDataSafe(),NULL,0));
+        charVariable* var = charVariables.GetElementPointer(name);
+        var->value = value;
+        var->dirty = true;
+        var->intBuff.SetBase(strtoul(value.GetDataSafe(),NULL,0));
     }
 }
 
