@@ -6358,10 +6358,13 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         {
             psserver->SendSystemInfo(me->clientnum,
                                      "Found point(%d) %d of path: %s(%d) at range %.2f\n"
+                                     "Prev point ID: %d Next point ID: %d\n" 
                                      "Start WP: %s(%d) End WP: %s(%d)\n"
                                      "Flags: %s",
                                      point->GetID(),indexPoint,pathPoint->GetName(),
                                      pathPoint->GetID(),rangePoint,
+                                     indexPoint-1>=0?pathPoint->points[indexPoint-1]->GetID():-1,
+                                     indexPoint+1<pathPoint->points.GetSize()?pathPoint->points[indexPoint+1]->GetID():-1,
                                      pathPoint->start->GetName(),pathPoint->start->GetID(),
                                      pathPoint->end->GetName(),pathPoint->end->GetID(),
                                      pathPoint->GetFlags().GetDataSafe());
