@@ -1198,7 +1198,7 @@ void psCharacter::UpdateRespawn(csVector3 pos, float yrot, psSectorInfo *sector,
     }
 }
 
-bool psCharacter::HasVariableDefined(csString &name)
+bool psCharacter::HasVariableDefined(const csString &name)
 {
     return charVariables.Contains(name);
 }
@@ -1208,20 +1208,43 @@ csString psCharacter::GetVariableValue(csString &name)
     return charVariables.Get(name, charVariable()).value;
 }
 
-void psCharacter::SetVariable(csString &name, csString &value)
+Buffable<int>& psCharacter::GetBuffableVariable(const csString& name, const csString& value)
+{
+    if(!HasVariableDefined(name))
+    {
+        //if we didn't find the variable we add it but we don't set it as dirty
+        //so it doesn't get written to database
+        //TODO: add an additional flag for temporary variables?
+        charVariables.PutUnique(name, charVariable(name,value, false));
+    }
+    return charVariables.GetElementPointer(name)->GetBuffable();
+}
+
+void psCharacter::SetVariable(const csString &name, const csString &value)
 {
     //we set the variable dirty so this should be used only for variables.
     //not already in the db (aka don't use this to load from the db)
-    charVariables.PutUnique(name, charVariable(name,value, true));
+    //right now this must not overwrite temporary variables or there could be issues.
+    if(!HasVariableDefined(name))
+    {    
+        charVariables.PutUnique(name, charVariable(name,value, true));
+    }
+    else //update variables
+    {
+        charVariable & var = charVariables.Get(name, charVariable());
+        var.value = value;
+        var.dirty = true;
+        var.intBuff.SetBase(strtoul(value.GetDataSafe(),NULL,0));
+    }
 }
 
-void psCharacter::SetVariable(csString &name)
+void psCharacter::SetVariable(const csString &name)
 {
     csString value("");
     SetVariable(name, value);
 }
 
-void psCharacter::UnSetVariable(csString &name)
+void psCharacter::UnSetVariable(const csString &name)
 {
     charVariables.DeleteAll(name);
     //update the database
@@ -2770,6 +2793,12 @@ double psCharacter::CalcFunction(MathEnvironment* env, const char* functionName,
         PSSKILL skill = (PSSKILL)(int)params[0];
 
         return skills.AddSkillPractice(skill, params[1]);
+    }
+    else if (function == "GetVariableValueInt")
+    {
+        const char *variableName = env->GetString(params[0]);
+        double value = charVariables.Get(name, charVariable()).intBuff.Current();
+        return value;
     }
     else if (function == "PracticeSkill")
     {

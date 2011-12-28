@@ -528,13 +528,24 @@ struct Stance
  */
 class charVariable
 {
-    public:
-    csString name;    ///< The name of the variable.
-    csString value;   ///< The value assigned to this variable.
-    bool dirty;       ///< Says if the variable was modified
+    public:    
+    csString name;          ///< The name of the variable.
+    csString value;         ///< The value assigned to this variable.
+    bool dirty;             ///< Says if the variable was modified.
+    Buffable<int> intBuff;  ///< A buffable interpretation of the variable
+
+    
+    Buffable<int>& GetBuffable() { return intBuff; }
+    
     charVariable() : dirty(false) {}
-    charVariable(csString name, csString value) : name(name), value(value), dirty(false) {}
-    charVariable(csString name, csString value, bool dirty) : name(name), value(value), dirty(dirty) {}
+    charVariable(csString name, csString value) : name(name), value(value), dirty(false)
+    {
+        intBuff.SetBase(strtoul(value.GetDataSafe(),NULL,0));
+    }
+    charVariable(csString name, csString value, bool dirty) : name(name), value(value), dirty(dirty)
+    {
+        intBuff.SetBase(strtoul(value.GetDataSafe(),NULL,0));
+    }
 };
 
 class OverridableRace : public Overridable<psRaceInfo*>
@@ -794,7 +805,7 @@ public:
      *  @param name The name of the variable to search for.
      *  @return TRUE if the variable was found.
      */
-    bool HasVariableDefined(csString &name);
+    bool HasVariableDefined(const csString &name);
 
     /** Returns the value of a variable.
      *  @param name The name of the variable to search for.
@@ -802,22 +813,29 @@ public:
      */
     csString GetVariableValue(csString &name);
 
+    /** Returns the reference to a buffable variable. If not existant a temporary
+     *  one is created with the passed value.
+     *  @param name The name of the variable to search for.
+     *  @return A buffable<int> with the value of the variable.
+     */
+    Buffable<int>& GetBuffableVariable(const csString& name, const csString& value = "0");
+
     /** Sets a new variable for this character.
      *  @param name The name of the new variable.
      *  @param value The value of the new variable.
      */
-    void SetVariable(csString &name, csString &value);
+    void SetVariable(const csString &name, const csString &value);
 
     /** Sets a new variable for this character.
      *  The value will be set to a default empty string.
      *  @param name The name of the new variable.
      */
-    void SetVariable(csString &name);
+    void SetVariable(const csString &name);
 
     /** Remove a variable from this character.
      *  @param name The name of the variable to remove.
      */
-    void UnSetVariable(csString &name);
+    void UnSetVariable(const csString &name);
 
     unsigned int GetExperiencePoints(); // W
     void SetExperiencePoints(unsigned int W);
