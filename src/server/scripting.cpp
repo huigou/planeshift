@@ -343,7 +343,7 @@ public:
 
     bool Load(iDocumentNode* node)
     {
-        return Applied1::Load(node);
+        return Applied2::Load(node);
     }
 
     void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
