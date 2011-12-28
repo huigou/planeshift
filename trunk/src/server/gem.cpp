@@ -2279,6 +2279,165 @@ void gemActor::SetAllowedToMove(bool newvalue)
     msg.SendMessage();
 }
 
+int gemActor::GetTargetType(gemObject* target)
+{
+    if (!target)
+    {
+        return TARGET_NONE; /* No Target */
+    }
+
+    gemActor* targetActor = target->GetActorPtr();
+
+    if (targetActor == NULL)
+    {
+        return TARGET_ITEM; /* Item */
+    }
+
+    if (!target->IsAlive())
+    {
+        return TARGET_DEAD;
+    }
+
+    Client* attackerClient = GetClient();
+
+    if (attackerClient && attackerClient->IsGM())
+    {
+        // GMs can interpret targets as either friends or foe...even self.
+        // This allows them to attack or cast spells on anyone.
+        return TARGET_SELF | TARGET_FRIEND | TARGET_FOE;
+    }
+
+    if (this == target)
+    {
+        return TARGET_SELF; /* Self */
+    }
+
+    if (target->GetCharacterData()->GetImperviousToAttack())
+    {
+        return TARGET_FRIEND; /* Impervious NPC */
+    }
+
+    // Is target a NPC?
+    Client* targetclient = psserver->GetNetManager()->GetAnyClient(GetClientID());
+    if (!targetclient)
+    {
+        if (target->GetCharacterData()->IsPet())
+        {
+            csString msg;
+
+            // Pet's target type depends on its owner's (enable when they can defend themselves)
+            gemObject* owner = psserver->entitymanager->GetGEM()->FindPlayerEntity( target->GetCharacterData()->GetOwnerID() );
+            if ( !owner || !IsAllowedToAttack(owner,msg) )
+                return TARGET_FRIEND;
+        }
+        return TARGET_FOE; /* Foe */
+    }
+
+    if (targetActor->GetInvincibility())
+        return TARGET_FRIEND; /* Invincible GM */
+
+    if (targetActor->attackable)
+        return TARGET_FOE; /* attackable GM */
+
+    // Only clients are in duels
+    Client* targetClient = target->GetClient();
+    if (attackerClient && targetClient)
+    {
+        // Challenged to a duel?
+        if (attackerClient->IsDuelClient(target->GetClientID())
+            || targetclient->IsDuelClient(GetClientID()))
+        {
+            return TARGET_FOE; /* Attackable player */
+        }
+    }
+    
+
+    // In PvP region?
+    csVector3 attackerpos, targetpos;
+    float yrot;
+    iSector* attackersector, *targetsector;
+    GetPosition(attackerpos, yrot, attackersector);
+    target->GetPosition(targetpos, yrot, targetsector);
+
+    if (psserver->GetCombatManager()->InPVPRegion(attackerpos,attackersector)
+        && psserver->GetCombatManager()->InPVPRegion(targetpos,targetsector))
+    {
+        return TARGET_FOE; /* Attackable player */
+    }
+
+    // Is this a player who has hit you and run out of a PVP area?
+    for (size_t i=0; i< GetDamageHistoryCount(); i++)
+    {
+        gemActor* attacker = GetDamageHistory((int) i)->Attacker();
+        // If the target has ever hit you, you can attack them back.  Logging out clears this.
+        if (attacker && attacker == target)
+            return TARGET_FOE;
+    }
+
+    // Declared war?
+    psGuildInfo* attackguild = GetGuild();
+    psGuildInfo* targetguild = target->GetGuild();
+    if (attackguild && targetguild &&
+        targetguild->IsGuildWarActive(attackguild))
+    {
+        return TARGET_FOE; /* Attackable player */
+    }
+    
+    if(InGroup() && targetActor->InGroup())
+    {
+        csRef<PlayerGroup> AttackerGroup = GetGroup();
+        csRef<PlayerGroup> TargetGroup = targetActor->GetGroup();
+        if(AttackerGroup->IsInDuelWith(TargetGroup))
+            return TARGET_FOE;
+    }
+
+    return TARGET_FRIEND; /* Friend */
+}
+
+
+bool gemActor::IsAllowedToAttack(gemObject * target, csString& msg)
+{
+    msg = "";
+
+    int type = GetTargetType(target);
+
+    if (type == TARGET_NONE)
+        msg = "You must select a target to attack.";
+    else if (type & TARGET_ITEM)
+        msg = "You can't attack an inanimate object.";
+    else if (type & TARGET_DEAD)
+        msg.Format("%s is already dead.",target->GetName());
+    else if (type & TARGET_FOE)
+    {
+        gemActor* foe = target->GetActorPtr();
+        CS_ASSERT(foe != NULL); // Since this is a foe it should have a actor.
+
+        gemActor* lastAttacker = NULL;
+        if (target->HasKillStealProtection() && !foe->CanBeAttackedBy(this, lastAttacker))
+        {
+            if (lastAttacker)
+            {
+                msg.Format("You must be grouped with %s to attack %s.",
+                           lastAttacker->GetName(), foe->GetName());
+            }
+            else
+            {
+                msg = "You are not allowed to attack right now.";
+            }
+        }
+    }
+    else if (type & TARGET_FRIEND)
+        msg.Format("You cannot attack %s.",target->GetName());
+    else if (type & TARGET_SELF)
+        msg = "You cannot attack yourself.";
+
+    if (!msg.IsEmpty())
+    {
+        return false;
+    }
+    return true;
+}
+
 void gemActor::Sit()
 {
     if (GetMode() == PSCHARACTER_MODE_PEACE 
@@ -3942,9 +4101,8 @@ void gemActor::SendBehaviorMessage(const csString & msg_id, gemObject *actor)
                     options |= psGUIInteractMessage::EXCHANGE;
 
                 // Can we attack this player?
-
-                Client* attackerClient = psserver->GetNetManager()->GetClient(activeActor->GetClientID());
-                if (IsAlive() && activeActor->IsAlive() && attackerClient && attackerClient->IsAllowedToAttack(this,false))
+                csString msg; // Not used
+                if (IsAlive() && activeActor->IsAlive() && activeActor->IsAllowedToAttack(this,msg))
                     options |= psGUIInteractMessage::ATTACK;
 
                 /*Options for a wedding or a divorce, in order to show the proper button.
@@ -4533,7 +4691,8 @@ void gemNPC::SendBehaviorMessage(const csString & msg_id, gemObject *obj)
                     options |= psGUIInteractMessage::NPCTALK;
 
                 // Can we attack this NPC?
-                if (IsAlive() && clientC && clientC->IsAllowedToAttack(this,false))
+                csString msg; // Not used
+                if (IsAlive() && clientC && clientC->GetActor()-IsAllowedToAttack(this,msg))
                     options |= psGUIInteractMessage::ATTACK;
                     
                 if(IsAlive() && psChar->IsStorage())
