@@ -553,6 +553,7 @@ void UserManager::SendCharacterDescription(Client * client, gemActor *actor, boo
     {
         desc += "\n\n";
         desc.AppendFmt("HP: %d Max HP: %d(%d)", int(charData->GetHP()), int(charData->GetMaxHP().Base()), int(charData->GetMaxHP().Current()));
+        desc.AppendFmt("\nMANA: %d Max MANA: %d(%d)", int(charData->GetMana()), int(charData->GetMana().Base()), int(charData->GetMana().Current()));
         SkillSet & sks = charData->Skills();
 
         for (size_t skill = 0; skill < cacheManager->GetSkillAmount(); skill++)
