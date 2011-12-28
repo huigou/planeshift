@@ -897,7 +897,7 @@ bool psNPCClient::LoadTribes()
             } // End Load Knowledge scope
 
             { // Start Load Assets scope
-                Result rs2(db->Select("select * from sc_tribe_assets WHERE tribe_id=%d", tribe->GetID()));
+                Result rs2(db->Select("select a.*,s.name AS sector_name from sc_tribe_assets a, sectors s WHERE tribe_id=%d and s.id = a.sector_id", tribe->GetID()));
                 if(!rs2.IsValid())
                 {
                     Error2("Could not load tribe assets from db: %s", db->GetLastError() );

@@ -32,6 +32,7 @@
 #include "util/psdatabase.h"
 #include "util/strutil.h"
 #include "util/psutil.h"
+#include "util/location.h"
 
 #include "engine/psworld.h"
 
@@ -51,7 +52,8 @@
 
 extern iDataConnection *db;
 
-const char* Tribe::AssetStatusStr[] = {"ASSET_ITEM","ASSET_BUILDINGSPOT","ASSET_INCONSTRUCTION","ASSET_BUILDING"};
+const char* Tribe::AssetTypeStr[] = {"ASSET_TYPE_ITEM","ASSET_TYPE_BUILDING","ASSET_TYPE_BUILDINGSPOT"};
+const char* Tribe::AssetStatusStr[] = {"ASSET_STATUS_NOT_APPLICABLE","ASSET_STATUS_NOT_USED","ASSET_STATUS_INCONSTRUCTION","ASSET_STATUS_CONSTRUCTED"};
 
 Tribe::Tribe(EventManager *eventmngr)
     :homeSector(0),accWealthGrowth(0.0),deathRate(0.0),resourceRate(0.0)
@@ -713,7 +715,6 @@ void Tribe::Memorize(NPC * npc, Perception * perception)
     float     radius = perception->GetRadius();
     csVector3 pos;
     iSector*  sector = NULL;
-    //printf("ZeeDebug: Storing memory: %s\n", name.GetData());
 
     if (!perception->GetLocation(pos,sector))
     {
@@ -1105,16 +1106,7 @@ bool Tribe::LoadNPCMemoryBuffer(const char* name, csArray<NPC*> npcs)
 
     if(!newLocation)
     {
-        newLocation = FindMemory("mine");
-        // Not even unprospected mine exists... explore.
-        if(!newLocation)
-            return false;
-
-        // Mark an unprospected mine for future correct identification
-        for(int i=0;i<npcs.GetSize();i++)
-        {
-            npcs[i]->SetBuffer("Mine","new mine");
-        }
+        return false;
     }
 
     for(int i=0;i<npcs.GetSize();i++)
@@ -1200,29 +1192,28 @@ bool Tribe::CheckResource(csString resource, int number)
     return false;
 }
 
-bool Tribe::CheckItems(csString item, int number)
+bool Tribe::CheckAsset(Tribe::AssetType type, csString item, int number)
 {
-
-    // TODO - Fix this mess
-    Asset* asset = GetAsset(item);
+    Asset* asset = GetAsset(type, item);
     if(!asset)
     {
         return false;
     }
 
     // If the building exists && is not just a spot for construction
-    if(asset->building && asset->status == Tribe::ASSET_BUILDING)
+    if(asset->type == Tribe::ASSET_TYPE_BUILDING)
     {
-        //Requirement is met
-        return true;
+        if (asset->status == Tribe::ASSET_STATUS_CONSTRUCTED)
+        {
+            //Requirement is met
+            return true;
+        }
     }
-
-    // It's not a building, it's an item
-    if(!asset->building)
+    else if (asset->type == Tribe::ASSET_TYPE_ITEM)
     {
         if(asset->quantity > number)
         {
-            // We have enough items
+            // We have enough items, requirement is met
             return true;
         } else
         {
@@ -1237,18 +1228,33 @@ void Tribe::Build(NPC* npc)
 {
     Asset* buildingSpot = npc->GetBuildingSpot();
 
-    if (buildingSpot->status == ASSET_INCONSTRUCTION)
+    if (buildingSpot->status == ASSET_STATUS_INCONSTRUCTION)
     {
         csVector3 buildingPos = npc->GetTribe()->GetHomePosition();
         iSector*  buildingSector = npc->GetTribe()->GetHomeSector();
 
         buildingPos += buildingSpot->pos;
 
-        buildingSpot->status = ASSET_BUILDING;
+        buildingSpot->status = ASSET_STATUS_CONSTRUCTED;
 
+        // Now ask the server to spawn the building. Upon spawn a persit item will be sent to the client.
+        // The new building will be added to assets as part of the HandlePersitItem prosessing.
         npcclient->GetNetworkMgr()->QueueSpawnBuildingCommand(npc->GetActor(),buildingPos, buildingSector, buildingSpot->name, GetID());
     }
 }
+
+void Tribe::HandlePersitItem(gemNPCItem* item)
+{
+    csVector3 position;
+    iSector*  sector;
+
+    psGameObject::GetPosition(item,position,sector);
+    
+    // Add the new tribe item as an asset.
+    // TODO: Find buildings and items and add them seperate, for now add as BUILDING.
+    AddAsset(Tribe::ASSET_TYPE_BUILDING, item->GetName(), position, sector, Tribe::ASSET_STATUS_CONSTRUCTED);
+}
+
 
 csArray<NPC*> Tribe::SelectNPCs(const csString& type, const char* number)
 {
@@ -1324,41 +1330,37 @@ void Tribe::ReplaceBuffers(csString& result)
 
 void Tribe::LoadAsset(iResultRow &row)
 {
+
+    Asset asset;
+    asset.id = row.GetInt("id");
+    asset.name = row["name"];
+    asset.type = (AssetType)(row.GetInt("type"));
     csVector3 coords;
     coords[0] = row.GetFloat("coordX");
     coords[1] = row.GetFloat("coordY");
     coords[2] = row.GetFloat("coordZ");
-    if(row.GetInt("status") != Tribe::ASSET_ITEM)
-    {
-        Asset asset;
-        asset.id = row.GetInt("id");
-        asset.name = row["name"];
-        asset.pos = coords;
-        asset.item = NULL;
-        asset.status = (AssetStatus)(row.GetInt("status"));
-        asset.quantity = row.GetInt("quantity");
-        assets.Push(asset);
-    }
-    else
-    {
-        // TODO -- Add support for gemNPCitem
-        // Get the gemItem based on it's name and pass it as 2nd argument
-        // For now they are magically stored.
-        AddAsset(row["name"], NULL, row.GetInt("quantity"), row.GetInt("status"));
-    }
+    asset.pos = coords;
+    asset.item = NULL;
+    asset.sector = npcclient->GetEngine()->GetSectors ()->FindByName(row["sector_name"]);
+    asset.status = (AssetStatus)(row.GetInt("status"));
+    asset.quantity = row.GetInt("quantity");
+
+    assets.Push(asset);
 }
 
 void Tribe::SaveAsset(Tribe::Asset* asset, bool deletion)
 {
     const char * fields[] =
-        {"tribe_id", "name", "coordX", "coordY", "coordZ", "gemItemName", "quantity", "status"};
+        {"tribe_id", "name", "type","coordX", "coordY", "coordZ", "sector_id", "gemItemName", "quantity", "status"};
     
     psStringArray values;
     values.FormatPush("%d",GetID());
     values.FormatPush("%s",asset->name.GetData());
+    values.FormatPush("%d",asset->type);
     values.FormatPush("%f",asset->pos[0]);
     values.FormatPush("%f",asset->pos[1]);
     values.FormatPush("%f",asset->pos[2]);
+    values.FormatPush("%d",asset->sector?Location::GetSectorID(db,asset->sector->QueryObject()->GetName()):-1);
     values.FormatPush("%s","N/A"); // Work this out when items will be available
     values.FormatPush("%d",asset->quantity);
     values.FormatPush("%d",asset->status);
@@ -1387,7 +1389,7 @@ void Tribe::SaveAsset(Tribe::Asset* asset, bool deletion)
     }
 }
 
-void Tribe::AddAsset(csString name, gemNPCItem* item, int quantity, int id)
+void Tribe::AddAsset(Tribe::AssetType type, csString name, gemNPCItem* item, int quantity, int id)
 {
     for(int i=0;i<assets.GetSize();i++)
     {
@@ -1402,19 +1404,20 @@ void Tribe::AddAsset(csString name, gemNPCItem* item, int quantity, int id)
     // No items like this before in the array
     Asset asset;
     asset.id       = id;
+    asset.type     = type;
     asset.name     = name;
     asset.item     = item;
     asset.quantity = quantity;
     asset.pos      = csVector3(0,0,0);
-    asset.status   = Tribe::ASSET_ITEM;
+    asset.status   = Tribe::ASSET_STATUS_NOT_APPLICABLE;
     assets.Push(asset);
     SaveAsset(&asset);
 }
 
-void Tribe::AddAsset(csString name, csVector3 where, int status)
+void Tribe::AddAsset(Tribe::AssetType type, csString name, csVector3 position, iSector* sector, Tribe::AssetStatus status)
 {
     // Just Add a new spot asset if it does not exist
-    if(GetAsset(name, where))
+    if(GetAsset(type, name, position, sector))
     {
         // Asset already exists in the same spot. Bail
         return;
@@ -1422,21 +1425,24 @@ void Tribe::AddAsset(csString name, csVector3 where, int status)
 
     Asset asset;
     asset.id       = -1;
+    asset.type     = type;
     asset.name     = name;
     asset.item     = NULL;
-    asset.pos      = where;
+    asset.pos      = position;
+    asset.sector   = sector;
     asset.quantity = 1;
-    asset.status   = Tribe::ASSET_BUILDINGSPOT;
+    asset.status   = status;
+
     assets.Push(asset);
     SaveAsset(&asset);
     return;
 }
 
-Tribe::Asset* Tribe::GetAsset(csString name)
+Tribe::Asset* Tribe::GetAsset(Tribe::AssetType type, csString name)
 {
     for(int i=0;i<assets.GetSize();i++)
     {
-        if(assets[i].name == name)
+        if(assets[i].type == type && assets[i].name == name)
         {
             return &assets[i];
         }
@@ -1446,11 +1452,11 @@ Tribe::Asset* Tribe::GetAsset(csString name)
     return NULL;
 }
 
-Tribe::Asset* Tribe::GetAsset(csString name, Tribe::AssetStatus status)
+Tribe::Asset* Tribe::GetAsset(Tribe::AssetType type, csString name, Tribe::AssetStatus status)
 {
     for(int i=0;i<assets.GetSize();i++)
     {
-        if(assets[i].name == name && assets[i].status == status)
+        if(assets[i].type == type && assets[i].name == name && assets[i].status == status)
         {
             return &assets[i];
         }
@@ -1460,11 +1466,11 @@ Tribe::Asset* Tribe::GetAsset(csString name, Tribe::AssetStatus status)
     return NULL;
 }
 
-Tribe::Asset* Tribe::GetAsset(csString name, csVector3 where)
+Tribe::Asset* Tribe::GetAsset(Tribe::AssetType type, csString name, csVector3 where, iSector* sector)
 {
     for(int i=0;i<assets.GetSize();i++)
     {
-        if(assets[i].name == name && assets[i].pos == where)
+        if(assets[i].type == type && assets[i].name == name && assets[i].pos == where && assets[i].sector == sector)
         {
             return &assets[i];
         }
@@ -1514,16 +1520,16 @@ void Tribe::DumpAssets()
         return;
     }
 
-    CPrintf(CON_CMDOUTPUT, "%-15s %-6s %-20s %-10s %-15s\n",
-        "Name", "Quant", "Position", "IsBuilding", "Status");
+    CPrintf(CON_CMDOUTPUT, "%-15s %-25s %-6s %-25s %-15s\n",
+            "Name", "Type","Quant", "Position", "Status");
 
     for(int i=0;i<assets.GetSize();i++)
     {
-        CPrintf(CON_CMDOUTPUT, "%-15s %-6d %-20s %-10s %-15s\n",
+        CPrintf(CON_CMDOUTPUT, "%-15s %-25s %-6d %-25s %-15s\n",
                 assets[i].name.GetData(),
+                AssetTypeStr[assets[i].type],
                 assets[i].quantity,
-                toString(assets[i].pos).GetDataSafe(),
-                (assets[i].building?"Yes":"No"),
+                toString(assets[i].pos,assets[i].sector).GetDataSafe(),
                 AssetStatusStr[assets[i].status]);
     }
 }
@@ -1556,21 +1562,19 @@ void Tribe::DumpBuffers()
 
 void Tribe::ProspectMine(NPC* npc, csString resource, csString nick)
 {
-    // Get the memory and rename it to fit the mineral deposit we prospected
-    Memory* memory = npc->GetBufferMemory();
-    
-    // Find the tribe memory from which the npc's derived from and rename it
-    Memory* oldMemory = FindMemory("mine", memory->pos, memory->sector, memory->radius);
-    if(oldMemory)
+    if (!npc->GetActor())
     {
-        // TODO -- investigate
-        // If the old memory does not exist, then how did we get here? :s 
-        oldMemory->name = resource;
-        SaveMemory(oldMemory);
+        return;
     }
+
+    csVector3  pos;
+    iSector*   sector;
+    
+    psGameObject::GetPosition(npc->GetActor(), pos, sector );
+
+    // Add this mine to the npcs memory
+    AddMemory(resource,pos,sector,5,npc);
 
     // Update the resource nick
     AddResource(resource, 0, nick);
-    // Update npc's buffer to the real item... so we know what to unload
-    npc->SetBuffer("Mine",resource);
 }

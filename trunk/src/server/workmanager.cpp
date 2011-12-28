@@ -553,10 +553,6 @@ void WorkManager::HandleProduction(gemActor* actor, size_t type, const char *rew
 
     actor->GetPosition(pos, sector);
 
-    // We receive a " " string from the npcclient for unknown mines
-    if(strcmp(reward," "))
-        reward = NULL;
-
     csArray<NearNaturalResource> resources = FindNearestResource(sector,pos,type,(reward == NULL || !strcmp(reward,""))? NULL : reward);
 
     if(resources.IsEmpty())

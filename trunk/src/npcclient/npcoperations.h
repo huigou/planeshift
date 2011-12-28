@@ -51,6 +51,7 @@ class gemNPCObject;
 class gemNPCActor;
 class MoveOperation;
 class Waypoint;
+class Behavior;
 
 /**
 * This is the base class for all operations in action scripts.
@@ -92,6 +93,8 @@ protected:
     float                interrupted_angle;
 
     int                  consecCollisions; ///< Shared by move functions. Used by CheckMoveOk to detect collisions
+
+    Behavior*            parent;
     // End of instance temp variables.
     ////////////////////////////////////////////////////////////
 
@@ -251,6 +254,9 @@ public:
      * Default implementation will percept with the failure perception
      */
     virtual void Failure(NPC* npc);
+
+    /** Set the parent behavior for this operation */
+    void SetParent(Behavior* behavior);
 };
 
 //-----------------------------------------------------------------------------
@@ -459,6 +465,25 @@ public:
     virtual ScriptOperation* MakeCopy();
 };
 
+
+//-----------------------------------------------------------------------------
+
+/**
+* Will copy a locate.
+*/
+class CopyLocateOperation : public ScriptOperation
+{
+protected:
+    csString source;
+    csString destination;
+public:
+
+    CopyLocateOperation(): ScriptOperation("CopyLocate") {};
+    virtual ~CopyLocateOperation() {};
+    virtual OperationResult Run(NPC* npc,EventManager* eventmgr,bool interrupted);
+    virtual bool Load(iDocumentNode* node);
+    virtual ScriptOperation* MakeCopy();
+};
 
 //-----------------------------------------------------------------------------
 
@@ -693,13 +718,8 @@ class LocateOperation : public ScriptOperation
 {
 protected:
     // Instance variables
-    bool      located;
-    csVector3 located_pos;
-    float     located_angle;
-    iSector*  located_sector;
-    Waypoint* located_wp;
-    float     located_radius;
-
+    bool      staticLocated;
+    
     // Operation parameters
     csString  object;
     float     range;
@@ -707,6 +727,7 @@ protected:
     bool      random;
     bool      locate_invisible;
     bool      locate_invincible;
+    csString  destination;       ///< Alternate destination instead of "Active" locate.
 
     
 public:

@@ -67,11 +67,17 @@ NPC::NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world,
     last_update=0; 
     npcActor=NULL;
     movable=NULL;
-    DRcounter=0; 
-    active_locate_sector=NULL;
-    active_locate_angle=0.0;
-    active_locate_wp = NULL;
-    active_locate_radius = 0.0;
+    DRcounter=0;
+
+    // Set up the locates
+    activeLocate = new Locate();
+    activeLocate->sector=NULL;
+    activeLocate->angle=0.0;
+    activeLocate->wp = NULL;
+    activeLocate->radius = 0.0;
+    // Store the active locate in the stored locates structure.
+    storedLocates.PutUnique("Active", activeLocate);
+
     ang_vel=vel=999; 
     walkVelocity=runVelocity=0.0; // Will be cached
     region=NULL; 
@@ -116,8 +122,8 @@ NPC::~NPC()
 
     // Cleare some cached values 
     region = NULL;
-    active_locate_sector = NULL;
-    active_locate_wp = NULL;
+    activeLocate->sector = NULL;
+    activeLocate->wp = NULL;
     raceInfo = NULL;
 }
 
@@ -167,9 +173,9 @@ csString NPC::Info()
     reply.AppendFmt("%s",disabled?"Disabled ":"");
 
     reply.AppendFmt("Active locate( Pos: %s Angle: %.2f Radius: %.2f WP: %s ) ",
-		    toString(active_locate_pos,active_locate_sector).GetDataSafe(),
-		    active_locate_angle,active_locate_radius,
-		    active_locate_wp?active_locate_wp->GetName():"(None)");
+		    toString(activeLocate->pos,activeLocate->sector).GetDataSafe(),
+		    activeLocate->angle,activeLocate->radius,
+		    activeLocate->wp?activeLocate->wp->GetName():"(None)");
     reply.AppendFmt("Spawn pos: %s ", toString(spawnPosition,spawnSector).GetDataSafe());
     if (GetOwner())
     {
@@ -371,7 +377,7 @@ void NPC::SetActor(gemNPCActor * actor)
     {
         
         iSector *sector;
-        psGameObject::GetPosition(actor,active_locate_pos,active_locate_angle,sector);
+        psGameObject::GetPosition(actor,activeLocate->pos,activeLocate->angle,sector);
         movable = actor->pcmesh->GetMesh()->GetMovable();
     }
     else
@@ -499,6 +505,12 @@ void NPC::AddToHateList(gemNPCActor *attacker, float delta)
     }
 }
 
+
+float NPC::GetEntityHate(gemNPCActor *ent)
+{
+    return hatelist.GetHate(ent->GetEID());
+}
+
 void NPC::RemoveFromHateList(EID who)
 {
     if (hatelist.Remove(who))
@@ -507,10 +519,65 @@ void NPC::RemoveFromHateList(EID who)
     }
 }
 
-float NPC::GetEntityHate(gemNPCActor *ent)
+void NPC::SetLocate(const csString& destination, const NPC::Locate& locate )
 {
-    return hatelist.GetHate(ent->GetEID());
+    // Find or create locate
+    Locate* current = storedLocates.Get(destination,NULL);
+    if (!current)
+    {
+        current = new Locate;
+        storedLocates.PutUnique(destination,current);
+    }
+    
+    // Copy content
+    *current = locate;
 }
+
+void NPC::GetActiveLocate(csVector3& pos, iSector*& sector, float& rot)
+{
+    pos=activeLocate->pos;
+    sector = activeLocate->sector;
+    rot=activeLocate->angle;
+}
+
+void NPC::GetActiveLocate(Waypoint*& wp)
+{
+    wp = activeLocate->wp;
+}
+
+float NPC::GetActiveLocateRadius() const
+{
+    return activeLocate->radius;
+}
+
+bool NPC::CopyLocate(csString source, csString destination)
+{
+    Printf(5,"Copy locate from %s to %s",source.GetDataSafe(),destination.GetDataSafe());
+
+    Locate* sourceLocate = storedLocates.Get(source,NULL);
+    if (!sourceLocate)
+    {
+        Printf(5,"Failed to copy, no source found!");
+        return false;
+    }
+
+    Locate* destinationLocation = storedLocates.Get(destination,NULL);
+    if (!destinationLocation)
+    {
+        destinationLocation = new Locate;
+        storedLocates.PutUnique(destination,destinationLocation);
+    }
+    
+    destinationLocation->pos    = sourceLocate->pos;
+    destinationLocation->sector = sourceLocate->sector;
+    destinationLocation->angle  = sourceLocate->angle;
+    destinationLocation->wp     = sourceLocate->wp;
+    destinationLocation->radius = sourceLocate->radius;
+
+    return true;
+}
+
+
 
 float NPC::GetWalkVelocity()
 {
@@ -589,10 +656,6 @@ void NPC::DumpState()
     CPrintf(CON_CMDOUTPUT, "Alive:               %s\n",alive?"True":"False");
     CPrintf(CON_CMDOUTPUT, "Disabled:            %s\n",disabled?"True":"False");
     CPrintf(CON_CMDOUTPUT, "Checked:             %s\n",checked?"True":"False");
-    CPrintf(CON_CMDOUTPUT, "Active locate:       %s\n",toString(active_locate_pos,active_locate_sector).GetDataSafe());
-    CPrintf(CON_CMDOUTPUT, "Active locate angle: %.2f\n",active_locate_angle);
-    CPrintf(CON_CMDOUTPUT, "Active locate radius:%.2f\n",active_locate_radius);
-    CPrintf(CON_CMDOUTPUT, "Active locate WP:    %s\n",active_locate_wp?active_locate_wp->GetName():"");
     CPrintf(CON_CMDOUTPUT, "Spawn position:      %s\n",toString(spawnPosition,spawnSector).GetDataSafe());
     CPrintf(CON_CMDOUTPUT, "Ang vel:             %.2f\n",ang_vel);
     CPrintf(CON_CMDOUTPUT, "Vel:                 %.2f\n",vel);
@@ -608,7 +671,22 @@ void NPC::DumpState()
     CPrintf(CON_CMDOUTPUT, "Target:              %s\n",GetTarget()?GetTarget()->GetName():"");
     CPrintf(CON_CMDOUTPUT, "Last perception:     %s\n",last_perception?last_perception->GetName():"(None)");
     CPrintf(CON_CMDOUTPUT, "Fall counter:        %d\n", GetFallCounter());
-    CPrintf(CON_CMDOUTPUT, "Brain:               %s\n", brain->GetName());
+    CPrintf(CON_CMDOUTPUT, "Brain:               %s\n\n", brain->GetName());
+
+    CPrintf(CON_CMDOUTPUT, "Locates for %s (%s)\n", name.GetData(), ShowID(pid));
+    CPrintf(CON_CMDOUTPUT, "---------------------------------------------\n");
+    LocateHash::GlobalIterator iter = storedLocates.GetIterator();
+    while (iter.HasNext())
+    {
+        csString name;
+        Locate* value = iter.Next(name);
+        CPrintf(CON_CMDOUTPUT, "%-15s Position: %s\n",name.GetDataSafe(),toString(activeLocate->pos,activeLocate->sector).GetDataSafe());
+        CPrintf(CON_CMDOUTPUT, "%-15s Angle:    %.2f\n","",activeLocate->angle);
+        CPrintf(CON_CMDOUTPUT, "%-15s Radius:   %.2f\n","",activeLocate->radius);
+        CPrintf(CON_CMDOUTPUT, "%-15s WP:       %s\n","",activeLocate->wp?activeLocate->wp->GetName():"");
+        
+    }
+    
 }
 
 

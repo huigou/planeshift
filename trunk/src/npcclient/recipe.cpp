@@ -444,7 +444,7 @@ bool RecipeManager::ParseFunction(csString function, Tribe* tribe, csArray<NPC*>
             return false;
         }
         
-        Tribe::Asset* spot = tribe->GetAsset(functionArguments.Get(0), Tribe::ASSET_BUILDINGSPOT);
+        Tribe::Asset* spot = tribe->GetAsset(Tribe::ASSET_TYPE_BUILDINGSPOT, functionArguments.Get(0), Tribe::ASSET_STATUS_NOT_USED);
 
         if(!spot)
         {
@@ -452,13 +452,13 @@ bool RecipeManager::ParseFunction(csString function, Tribe* tribe, csArray<NPC*>
             return false;
         }
 
-        spot->status = Tribe::ASSET_INCONSTRUCTION;
+        spot->status = Tribe::ASSET_STATUS_INCONSTRUCTION;
 
         for(int i=0;i<npcs.GetSize();i++)
         {
             npcs[i]->SetBuildingSpot(spot);
             npcs[i]->SetBuffer("Building",functionArguments.Get(0));
-            npcs[i]->SetBuffer("Work_Duration","100");
+            npcs[i]->SetBuffer("Work_Duration","10");
         }
 
         return true;
@@ -485,7 +485,8 @@ bool RecipeManager::ParseFunction(csString function, Tribe* tribe, csArray<NPC*>
         where[0] = atoi(functionArguments.Get(0));
         where[1] = atoi(functionArguments.Get(1));
         where[2] = atoi(functionArguments.Get(2));
-        tribe->AddAsset(buildingName, where, Tribe::ASSET_BUILDINGSPOT);
+        iSector* sector = NULL; // Position for spots are delta values from tribe home so sector dosn't apply.
+        tribe->AddAsset(Tribe::ASSET_TYPE_BUILDINGSPOT, buildingName, where, sector, Tribe::ASSET_STATUS_NOT_USED);
 
         return true;
     }
@@ -702,7 +703,7 @@ bool RecipeManager::ParseRequirement(Recipe::Requirement requirement, Tribe* tri
     }
     else if(requirement.type == Recipe::REQ_TYPE_ITEM)
     {
-        if(tribe->CheckItems(name, quantity))
+        if(tribe->CheckAsset(Tribe::ASSET_TYPE_ITEM, name, quantity))
             return true;
         
         for(int i=0;i<quantity;i++)
@@ -837,7 +838,7 @@ int RecipeManager::ApplyRecipe(RecipeTreeNode* bestRecipe, Tribe* tribe, int ste
         if(ParseRequirement(requirements[i], tribe, recipe))
         {
             // Requirement met
-            bestRecipe->nextReq = (i = requirements.GetSize() - 1) ? 0 : i + 1;
+            bestRecipe->nextReq = (i == (requirements.GetSize() - 1)) ? 0 : i + 1;
 
             Debug1(LOG_TRIBES, tribe->GetID(), "Requirement met");
         }

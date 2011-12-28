@@ -275,6 +275,7 @@ protected:
     float    maxLimit;                  ///< The maximum value to limit the need if maxLimitValid has been set true.
     csArray<csString> auto_memorize;    ///< Used to store what types of perceptions to memorize without changing behaviors
     bool     AMOn;                      ///< Flag to signal if auto_memorize is on/off
+    csString failurePerception;         ///< Perception to fire if any operation fails without own failure perception.
 
 public:
 
@@ -377,6 +378,12 @@ public:
     Behavior* SetDecay(float need_decay_rate) { this->need_decay_rate = need_decay_rate; return this; }
     Behavior* SetGrowth(float need_growth_rate) { this->need_growth_rate = need_growth_rate; return this; }
     Behavior* SetInitial(float init_need) { this->init_need = init_need; return this; }
+
+    /** Called when a operation with no failure perception fails.
+     *
+     *  Will call the global failure perception for this operation if it exists.
+     */
+    void Failure(NPC* npc, ScriptOperation* op);
 };
 
 
