@@ -2797,7 +2797,7 @@ double psCharacter::CalcFunction(MathEnvironment* env, const char* functionName,
     else if (function == "GetVariableValueInt")
     {
         const char *variableName = env->GetString(params[0]);
-        double value = charVariables.Get(name, charVariable()).intBuff.Current();
+        double value = charVariables.Get(variableName, charVariable()).intBuff.Current();
         return value;
     }
     else if (function == "PracticeSkill")
