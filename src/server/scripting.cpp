@@ -208,6 +208,8 @@ protected:
     csString vital;
 };
 
+//----------------------------------------------------------------------------
+
 /**
  * HPRateAOp - alter HP regeneration rate over time
  *
@@ -328,6 +330,30 @@ public:
 protected:
     PSSKILL skill;
     CacheManager* cachemanager;
+};
+
+//----------------------------------------------------------------------------
+
+/// Applied variable integers.
+class VariableIntAOp : public Applied2
+{
+public:
+    VariableIntAOp() : Applied2() { }
+    virtual ~VariableIntAOp() { }
+
+    bool Load(iDocumentNode* node)
+    {
+        return Applied1::Load(node);
+    }
+
+    void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
+    {
+        int val = (int) value->Evaluate(env);
+        Buffable<int>& buffable = target->GetCharacterData()->GetBuffableVariable(name);
+        buffable.Buff(asp, val);
+
+        asp->Add(buffable, "<variable name=\"%s\" value=\"%d\"/>", name.GetData(), val);
+    }
 };
 
 //----------------------------------------------------------------------------
@@ -883,6 +909,10 @@ ApplicativeScript* ApplicativeScript::Create(EntityManager* entitymanager, Cache
         else if (elem == "animal-affinity")
         {
             continue;
+        }
+        else if (elem == "variable-int")
+        {
+            op = new VariableIntAOp();
         }
         // overridables
         else if (elem == "race")
