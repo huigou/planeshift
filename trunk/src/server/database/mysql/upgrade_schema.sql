@@ -1667,6 +1667,12 @@ UPDATE `server_options` SET `option_value`='1263' WHERE `option_name`='db_versio
 ALTER TABLE sc_tribe_assets ADD COLUMN `type` int(2) NOT NULL default '0' AFTER name;
 ALTER TABLE sc_tribe_assets ADD COLUMN `sector_id` int(10) NOT NULL default '3' AFTER coordZ;
 
+INSERT INTO math_scripts VALUES( "DoDamageScript", "
+if(Damage > Actor:MaxHP*0.3)
+{
+    Actor:InterruptSpellCasting()
+}" );
+
 
 
 # Insert your upgrade before this line. Remember when you set a new db_version

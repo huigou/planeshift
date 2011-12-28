@@ -620,3 +620,9 @@ INSERT INTO math_scripts VALUES( "Calculate Song Experience" , "
     PracticePoints = 0.1 * SongTime;
     Modifier = 1;
 ");
+
+INSERT INTO math_scripts VALUES( "DoDamageScript", "
+if(Damage > Actor:MaxHP*0.3)
+{
+    Actor:InterruptSpellCasting()
+}" );
