@@ -369,21 +369,21 @@ void NetworkManager::HandleItem( MsgEntry* me )
         obj = NULL; // Obj isn't valid after remove
     }
 
+    // Add the new item to the world
+    gemNPCItem* item = new gemNPCItem(npcclient, mesg);        
+    npcclient->Add(item);
+
+    // Is this a tribe Item?
     if(mesg.tribeID != 0)
     {
         csVector3 where;
         Tribe*    tribe = npcclient->GetTribe(mesg.tribeID);
-
-        // Check just to be sure... it should never happen
         if(tribe)
         {
-            tribe->AddAsset(mesg.name, mesg.pos, Tribe::ASSET_BUILDING);
+            tribe->HandlePersitItem(item);
         }
     }
 
-    gemNPCItem* item = new gemNPCItem(npcclient, mesg);        
-    
-    npcclient->Add(item);
 }
 
 void NetworkManager::HandleObjectRemoval( MsgEntry* me )
@@ -1095,7 +1095,7 @@ void NetworkManager::HandleNPCWorkDone(MsgEntry *me)
     }
 
     // If he just prospected a mine and its a tribe member
-    if(npc->GetBuffer("Mine") == "new mine" && npc->GetTribe())
+    if(npc->GetTribe())
     {
         npc->GetTribe()->ProspectMine(npc,msg.resource,msg.nick);
     }

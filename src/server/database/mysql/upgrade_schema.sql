@@ -1660,6 +1660,14 @@ update tribe_members set member_type="Worker"; # where worker;
 #update tribe_members set member_type="Warrior" where warrior;
 #update tribe_members set member_type="Queen" where queen;
 
+#
+# Updated tribe assets 1263
+#
+UPDATE `server_options` SET `option_value`='1263' WHERE `option_name`='db_version';
+ALTER TABLE sc_tribe_assets ADD COLUMN `type` int(2) NOT NULL default '0' AFTER name;
+ALTER TABLE sc_tribe_assets ADD COLUMN `sector_id` int(10) NOT NULL default '3' AFTER coordZ;
+
+
 
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.

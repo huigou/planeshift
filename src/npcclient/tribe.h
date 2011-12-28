@@ -66,10 +66,18 @@ public:
 
     typedef enum
     {
-        ASSET_ITEM,
-        ASSET_BUILDINGSPOT,
-        ASSET_INCONSTRUCTION,
-        ASSET_BUILDING
+        ASSET_TYPE_ITEM,
+        ASSET_TYPE_BUILDING,
+        ASSET_TYPE_BUILDINGSPOT
+    } AssetType;
+    static const char* AssetTypeStr[];
+
+    typedef enum
+    {
+        ASSET_STATUS_NOT_APPLICABLE,
+        ASSET_STATUS_NOT_USED,
+        ASSET_STATUS_INCONSTRUCTION,
+        ASSET_STATUS_CONSTRUCTED
     } AssetStatus;
     static const char* AssetStatusStr[];
 
@@ -84,11 +92,12 @@ public:
     struct Asset
     {
         int         id;
+        AssetType   type;      ///< Type of this asset.
         csString    name;      ///< Name. Especially used for buildings
         gemNPCItem* item;      ///< Item representing the asset
         int         quantity;  ///< Quantity of items of this type
         csVector3   pos;       ///< Position // Used only for reservations
-        bool        building;  ///< True if it's a building
+        iSector*    sector;    ///< The Sector
         AssetStatus status;    ///< Status of this asset. Used for buildings.
 
         void        Save();
@@ -464,12 +473,15 @@ public:
     /** Check to see if enough resources are available */
     bool CheckResource(csString resource, int number);
 
-    /** Check to see if enough items are available */
-    bool CheckItems(csString items, int number);
+    /** Check to see if enough assets are available */
+    bool CheckAsset(Tribe::AssetType type, csString items, int number);
    
     /** Build a building on the current NPC building spot */
     void Build(NPC* npc);
 
+    /** Handle percist items that should be assets. */
+    void HandlePersitItem(gemNPCItem* item);
+    
     /** Returns pointers to required npcs for a task */
     csArray<NPC*> SelectNPCs(const csString& type, const char* number);
     
@@ -503,19 +515,19 @@ public:
     void SaveAsset(Tribe::Asset* asset, bool deletion = false);
 
     /** Add an item asset */
-    void AddAsset(csString name, gemNPCItem* item, int quantity, int id = -1);
+    void AddAsset(Tribe::AssetType type, csString name, gemNPCItem* item, int quantity, int id = -1);
 
     /** Add an asset to the tribe */
-    void AddAsset(csString name, csVector3 where, int status);
+    void AddAsset(Tribe::AssetType type, csString name, csVector3 position, iSector* sector, Tribe::AssetStatus status);
 
     /** Get asset */
-    Asset* GetAsset(csString name);
+    Asset* GetAsset(Tribe::AssetType type, csString name);
 
     /** Get asset */
-    Asset* GetAsset(csString name, Tribe::AssetStatus status);
+    Asset* GetAsset(Tribe::AssetType type, csString name, Tribe::AssetStatus status);
     
     /** Get an asset based on name and position */
-    Asset* GetAsset(csString name, csVector3 where);
+    Asset* GetAsset(Tribe::AssetType type, csString name, csVector3 where, iSector* sector);
 
     /** Delete item assets */
     void DeleteAsset(csString name, int quantity);

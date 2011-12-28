@@ -99,6 +99,18 @@ private:
 */
 class NPC : private ScopedTimerCB
 {
+public:
+    /** Structure to hold located positions */
+    typedef struct
+    {
+        csVector3          pos;        ///< The position of the located object
+        iSector*           sector;     ///< The sector for the located object
+        float              angle;      ///< The angle of the located object
+        Waypoint*          wp;         ///< The nearest waypoint to the located object
+        float              radius;     ///< The radius of the located object
+    } Locate;
+    typedef csHash<Locate*,csString> LocateHash;
+
 protected:
 
     typedef csHash<csString,csString> BufferHash;
@@ -112,11 +124,9 @@ protected:
     iMovable          *movable;
     uint8_t            DRcounter;
 
-    csVector3          active_locate_pos;
-    iSector*           active_locate_sector;
-    float              active_locate_angle;
-    Waypoint*          active_locate_wp;
-    float              active_locate_radius;
+    Locate*            activeLocate;   ///< The current "Active" locate
+    LocateHash         storedLocates;  ///< List of stored locate locations
+    
     float              ang_vel,vel;
     float              walkVelocity;
     float              runVelocity;
@@ -291,29 +301,36 @@ public:
     gemNPCActor* GetMostHated(csVector3& pos, iSector *sector, float range, LocationType * region, bool includeInvisible, bool includeInvincible, float* hate);
 
     
-    float       GetEntityHate(gemNPCActor *ent);
+    float GetEntityHate(gemNPCActor *ent);
     void AddToHateList(gemNPCActor *attacker,float delta);
     void RemoveFromHateList(EID who);
 
-    void SetActiveLocate(csVector3& pos, iSector* sector, float rot, Waypoint * wp)
-    { active_locate_pos=pos; active_locate_sector = sector;
-      active_locate_angle=rot; active_locate_wp = wp; }
-
-    void GetActiveLocate(csVector3& pos,iSector*& sector, float& rot)
-    { pos=active_locate_pos; sector = active_locate_sector; rot=active_locate_angle; }
-
-    void GetActiveLocate(Waypoint*& wp) { wp = active_locate_wp; }
-    /** Set the radius of the active locate operation
-     *
-     * @param radius  The radius of the last locate operation.
+    /** Set the NPCs locate.
      */
-    void SetActiveLocateRadius(float radius){active_locate_radius = radius; }
+    void SetLocate(const csString& destination, const NPC::Locate& locate );
 
+    /** Get the NPCs current active locate.
+     */
+    void GetActiveLocate(csVector3& pos, iSector*& sector, float& rot);
+
+    /** Return the wp of the current active locate.
+     *
+     * @param wp will be set with the wp currently in the active locate.
+     */
+    void GetActiveLocate(Waypoint*& wp);
+    
     /** Get the radius of the last locate operatoins
      *
      * @return The radius of the last locate
      */
-    float GetActiveLocateRadius() const { return active_locate_radius; }
+    float GetActiveLocateRadius() const;
+
+    /** Copy locates
+     *
+     * Typically used to take backups of "Active" locate.
+     */
+    bool CopyLocate(csString source, csString destination);
+    
     
     bool SwitchDebugging()
     {

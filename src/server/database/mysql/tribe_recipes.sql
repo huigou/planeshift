@@ -29,10 +29,10 @@ INSERT INTO `tribe_recipes` VALUES (10, 'Miner Explore', 'tribesman(Miner,1);', 
 INSERT INTO `tribe_recipes` VALUES (11, 'Miner Test Mine', 'tribesman(Miner,1);', 'select(Miner,1);setBuffer(selection,Resource,$TBUFFER[Resource]);percept(selection,tribe:test_mine);', 0, 0);
 INSERT INTO `tribe_recipes` VALUES (12, 'Hunter Explore', 'tribesman(Hunter,1);', 'select(Hunter,1);explore();', 0, 0);
 
-INSERT INTO `tribe_recipes` VALUES (20, 'Miner Dig Resource', 'memory(mine,1,Miner Explore);memory($TBUFFER[Resource],1,Miner Test Mine);tribesman(Miner,1);', 'select(Miner,1);locateResource($TBUFFER[Resource],Miner Explore);setBuffer(selection,Resource,$TBUFFER[Resource]);mine();', 0, 0);
+INSERT INTO `tribe_recipes` VALUES (20, 'Miner Dig Resource', 'memory(mine,1,Miner Explore);memory($TBUFFER[Resource],1,Miner Test Mine);tribesman(Miner,1);', 'select(Miner,1);locateResource($TBUFFER[Resource],Miner Test Mine);setBuffer(selection,Resource,$TBUFFER[Resource]);mine();', 0, 0);
 INSERT INTO `tribe_recipes` VALUES (21, 'Hunter Hunt Resource', 'memory(hunting_ground,1,Hunter Explore);tribesman(Hunter,1);', 'select(Hunter,1);locateResource(hunting_ground,Hunter Explore);setBuffer(selection,Resource,$TBUFFER[Resource]);percept(selection,tribe:hunt);', 0, 0);
-INSERT INTO `tribe_recipes` VALUES (22, 'Miner Buy Coal', 'tribesman(Miner,1);', 'select(Miner,1);setBuffer(selection,Trade,Coal);percept(selection,tribe:buy);', 0, 0);
-INSERT INTO `tribe_recipes` VALUES (23, 'Hunter Buy Skin', 'tribesman(Hunter,1);', 'select(Hunter,1);setBuffer(selection,Trade,Skin);percept(selection,tribe:buy);', 0, 0);
+INSERT INTO `tribe_recipes` VALUES (22, 'Miner Buy Skin', 'tribesman(Miner,1);', 'select(Miner,1);setBuffer(selection,Trade,Skin);percept(selection,tribe:buy);', 0, 0);
+INSERT INTO `tribe_recipes` VALUES (23, 'Hunter Buy Coal', 'tribesman(Hunter,1);', 'select(Hunter,1);setBuffer(selection,Trade,Coal);percept(selection,tribe:buy);', 0, 0);
 
 
 
@@ -50,11 +50,11 @@ INSERT INTO `tribe_recipes` VALUES (50, 'Mining Upkeep', 'resource(REPRODUCTION_
 INSERT INTO `tribe_recipes` VALUES (51, 'Hunting Upkeep', 'resource(REPRODUCTION_RESOURCE,10,Hunter Hunt Resource,Resource);', 'alterResource(REPRODUCTION_RESOURCE,-10);', 1, 1);
 
 # 
-INSERT INTO `tribe_recipes` VALUES (60, 'Miner Build Campfire', 'tribesman(Miner,1);resource(Coal,10,Miner Dig Resource,Resource);', 'select(Miner,1);locateBuildingSpot(Campfire);percept(selection,tribe:build);alterResource(Coal,10);', 0, 0);
-INSERT INTO `tribe_recipes` VALUES (61, 'Miner Build Tent', 'tribesman(Miner,1);resource(Skin,15,Miner Buy Skin,Resource);', 'select(Miner,1);locateBuildingSpot(Small Tent);percept(selection,tribe:build);alterResource(Skin,15);', 0, 0);
+INSERT INTO `tribe_recipes` VALUES (60, 'Miner Build Campfire', 'tribesman(Miner,1);resource(Coal,10,Miner Dig Resource,Resource);', 'select(Miner,1);locateBuildingSpot(Campfire);percept(selection,tribe:build);alterResource(Coal,-10);', 0, 0);
+INSERT INTO `tribe_recipes` VALUES (61, 'Miner Build Tent', 'tribesman(Miner,1);resource(Skin,15,Miner Buy Skin,Resource);', 'select(Miner,1);locateBuildingSpot(Small Tent);percept(selection,tribe:build);alterResource(Skin,-15);', 0, 0);
 
-INSERT INTO `tribe_recipes` VALUES (70, 'Hunter Build Campfire', 'tribesman(Hunter,1);resource(Coal,10,Hunter Buy Coal,Resource);', 'select(Hunter,1);locateBuildingSpot(Campfire);percept(selection,tribe:build);alterResource(Coal,10);', 0, 0);
-INSERT INTO `tribe_recipes` VALUES (71, 'Hunter Build Tent', 'tribesman(Hunter,1);resource(Skin,15,Hunter Hunt Resource,Resource);', 'select(Hunter,1);locateBuildingSpot(Small Tent);percept(selection,tribe:build);alterResource(Skin,15);', 0, 0);
+INSERT INTO `tribe_recipes` VALUES (70, 'Hunter Build Campfire', 'tribesman(Hunter,1);resource(Coal,10,Hunter Buy Coal,Resource);', 'select(Hunter,1);locateBuildingSpot(Campfire);percept(selection,tribe:build);alterResource(Coal,-10);', 0, 0);
+INSERT INTO `tribe_recipes` VALUES (71, 'Hunter Build Tent', 'tribesman(Hunter,1);resource(Skin,15,Hunter Hunt Resource,Resource);', 'select(Hunter,1);locateBuildingSpot(Small Tent);percept(selection,tribe:build);alterResource(Skin,-15);', 0, 0);
 
 
 # Targets ~ Missions

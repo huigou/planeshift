@@ -181,6 +181,50 @@ INSERT INTO sc_npctypes VALUES("10","Sit","DoNothing","","","","","","",
 </behavior>
 <react event="player adjacent" inactive_only="yes" behavior="sit" delta="100"  when_invisible="yes" when_invincible="yes" />');
 
+INSERT INTO sc_npctypes VALUES("11","Move","","","","","","","",
+'<!-- Fail safe move operation. Target position taken from the "Move" locate.  -->
+<!-- Will move to the nearest waypoint. Than to the waypoint next to          -->
+<!-- destination. Than local navigation will be used to the destination.      -->
+<!-- If enything goes wrong the NPC will be teleported to the destination and -->
+<!-- the calling operation will not be terminated, allowing that to complete  -->
+
+<!-- Example usage of this:                                                   -->
+
+<!--      <locate obj="something" destination="Move" />                       -->
+<!--      <percept event="move" />                                            -->
+
+<!-- The operation that clean up everyting if something goes wrong -->
+<behavior name="MoveFailed" complection_decay="-1" >
+   <!-- Something went wrong. Now just make sure we get to the intended location. -->
+   <copy_locate source="Move" destination="Active" />
+   <teleport />
+</behavior>
+
+<!-- Normal execution of this operation -->
+<behavior name="Move" complection_decay="-1" resume="yes" failure="move_failed" >
+   <!-- First locate nearest waypoint and go there-->
+   <locate obj="waypoint" static="no" failure="move_failed" />
+   <navigate anim="walk" failure="move_failed" />
+   
+   <!-- Now find the final target and move there -->
+   <copy_locate source="Move" destination="Active" />
+   <wander anim="walk"  failure="move_failed" />
+   <navigate anim="walk" failure="move_failed" />   
+</behavior>
+
+<!-- Local movement without the waypoint navigation -->
+<behavior name="LocalMove" complection_decay="-1" resume="yes" failure="move_failed" >
+   <!-- Find the final target and move there -->
+   <copy_locate source="Move" destination="Active" />
+   <navigate anim="walk" failure="move_failed" />   
+</behavior>
+
+<react event="move"        behavior="Move" />
+<react event="local_move"  behavior="LocalMove" />
+
+<react event="move_failed" behavior="MoveFailed" />');
+
+
 
 INSERT INTO sc_npctypes VALUES("100","Smith","GoHomeOnTeleport","","","","","","",
 '<behavior name="do nothing" decay="0" growth="0" initial="10">
@@ -351,8 +395,18 @@ INSERT INTO sc_npctypes VALUES("108","Minion","DoNothing","","","","","","",
 <react event="damage"               behavior="attack"       delta=  "200"  inactive_only="true" weight="1" />
 <react event="target out of range"  behavior="attack_chase"  />');
 
-INSERT INTO sc_npctypes VALUES("109","AbstractTribesman","DoNothing","","","","","","",
+INSERT INTO sc_npctypes VALUES("109","AbstractTribesman","DoNothing,Move","","","","","","",
 '<!-- Abstract base npc type for tribes -->
+
+<behavior name="InitTribeMember" completion_decay="-1" initial="1000" resume="yes" >
+   <talk text="Initialize new tribe member" target="false" />
+
+   <!-- Go home -->
+   <locate obj="tribe:home" static="no" destination="Move" />
+   <percept event="move" />
+
+   <talk text="Ready for work" target="false" />
+</behavior>
 
 <behavior name="peace_meet" completion_decay="500">
    <locate obj="perception" />
@@ -390,125 +444,155 @@ INSERT INTO sc_npctypes VALUES("109","AbstractTribesman","DoNothing","","","",""
    <chase type="target" chase_range="20" anim="run" vel="5" />
 </behavior>
 
+
+
 <behavior name="Explore" completion_decay="100" resume="yes" auto_memorize="all">
    <talk text="Going Exploring" target="false" />
-   <locate obj="waypoint" static="no" />
-   <navigate anim="walk" />
+
+   <!-- Only use the move to get to the nearest waypoint. Need the -->
+   <!-- wander to be part of this behavior in order to memorize -->
+   <locate obj="waypoint" static="no" destination="Move" />
+   <percept event="move" />
+
    <locate obj="waypoint" static="no" random="yes" range="80" />
    <wander anim="walk" />
+
+   <!-- We are at the end of this exploration -->
    <wait anim="stand" duration="3" />
-   <locate obj="tribe:home" static="no" />
-   <wander anim="walk" />
-   <navigate anim="walk" />
+
+   <!-- Go home -->
+   <locate obj="tribe:home" static="no" destination="Move" />
+   <percept event="move" />
+
+   <!-- Share the memories we have discoved during this exploration with the tribe -->
    <share_memories />
 </behavior>
 
 <behavior name="HuntResource" completion_decay="100" resume="yes">
    <talk text="Going hunting $NBUFFER[Resource]" target="false" />
-   <locate obj="waypoint" static="no" />
-   <navigate anim="walk" />
-   <locate obj="tribe:memory:hunting_ground"  random="yes" />
-   <wander anim="walk" />
-   <navigate anim="walk" />
+
+   <!-- Go to work -->
+   <locate obj="tribe:memory:hunting_ground"  random="yes"  destination="Move" />
+   <percept event="move" />
+
+   <!-- Do some Hunting -->
    <talk text="Hunting $NBUFFER[Resource]..." target="false" />
    <wait duration="10" />
    <reward resource="$NBUFFER[Resource]" count="1" />
    <talk text="...done hunting $NBUFFER[Resource]" target="false" />
-   <locate obj="waypoint" static="no" />
-   <navigate anim="walk" />
-   <locate obj="tribe:home"/>
-   <wander anim="walk" />
-   <navigate anim="walk" />
+
+   <!-- Go home -->
+   <locate obj="tribe:home" static="no" destination="Move" />
+   <percept event="move" />
+
+   <!-- Give resource to tribe, and inform where it where found -->
    <transfer item="$NBUFFER[Resource]" target="tribe" />
    <share_memories />
 </behavior>
 
 <behavior name="MineResource" completion_decay="100" resume="yes">
    <talk text="Going MineResource $NBUFFER[Resource]" target="false" />
-   <locate obj="waypoint" static="no" />
-   <navigate anim="walk" />
-   <locate obj="ownbuffer" static="no" />
-   <wander anim="walk" />
+
+   <!-- Go to work -->
+   <locate obj="ownbuffer" static="no"  destination="Move" />
+   <percept event="move" />
+
    <equip item="Rock Pick" slot="righthand" />
    <loop iterations="3">
-      <navigate anim="walk" />
+      <percept event="local_move" />
+
       <dig resource="$NBUFFER[Resource]" />
       <wait anim="stand" duration="10" />
+
       <!-- Must move since dig in same place is not alloved -->
-      <locate obj="ownbuffer" static="no" />
+      <locate obj="ownbuffer" static="no" destination="Move" />
    </loop>
    <dequip slot="righthand" />
-   <locate obj="waypoint" static="no" />
-   <navigate anim="walk" />
-   <locate obj="tribe:home" static="no" />
-   <wander anim="walk" />
-   <navigate anim="walk" />
+
+   <!-- Go home -->
+   <locate obj="tribe:home" static="no" destination="Move" />
+   <percept event="move" />
+
+   <!-- Give resource to tribe, and inform where it where found -->
    <transfer item="$NBUFFER[Resource]" target="tribe" />
+   <share_memories />
 </behavior>
 
 <!-- Will test a mine to see what resource there are there. -->
 <behavior name="TestMineResource" completion_decay="100" resume="yes">
    <talk text="Going TestMineResource" target="false" />
-   <locate obj="waypoint" static="no" />
-   <navigate anim="walk" />
-   <locate obj="tribe:memory:mine" random="yes" static="no" />
-   <wander anim="walk" />
+
+   <!-- Go to work -->
+   <locate obj="tribe:memory:mine" random="yes" static="no" destination="Move" />
+   <percept event="move" />
+
    <equip item="Rock Pick" slot="righthand" />
    <loop iterations="3">
-      <navigate anim="walk" />
+      <percept event="local_move" />
+
       <dig />
       <wait anim="stand" duration="10" />
+
       <!-- Must move since dig in same place is not alloved -->
-      <locate obj="tribe:memory:mine" static="no" />
+      <locate obj="tribe:memory:mine" static="no" destination="Move" />
    </loop>
    <dequip slot="righthand" />
-   <locate obj="waypoint" static="no" />
-   <navigate anim="walk" />
-   <locate obj="tribe:home" static="no" />
-   <wander anim="walk" />
-   <navigate anim="walk" />
+
+   <!-- Go home -->
+   <locate obj="tribe:home" static="no" destination="Move" />
+   <percept event="move" />
+
    <!-- TODO transfer item="How to find the item!" target="tribe" /-->
    <share_memories />
 </behavior>
 
 <behavior name="GoToSleep" resume="yes">
    <talk text="Going to sleep" target="false" />
-   <locate obj="waypoint" static="no" />
-   <navigate anim="walk" />
-   <locate obj="tribe:home" static="no" />
-   <wander anim="walk" />
-   <wait anim="sit" duration="180" />
+
+   <!-- Go home -->
+   <locate obj="tribe:home" static="no" destination="Move" />
+   <percept event="move" />
+
+   <sit />
+   <wait anim="sit_idle" duration="180" />
+   <standup />
 </behavior>
 
 <behavior name="Breed" resume="yes" completion_decay="100">
    <talk text="Going Breed" target="false" />
    <!--debug level="15" /-->
-   <locate obj="waypoint" static="no" />
-   <navigate anim="walk" />
-   <locate obj="tribe:home" static="no" />
-   <wander anim="walk" />
-   <navigate anim="walk" />
+
+   <!-- Go home -->
+   <locate obj="tribe:home" static="no" destination="Move" />
+   <percept event="move" />
+
+   <!-- Breed -->
    <emote cmd="/divide" />
-   <wait duration="30" anim="stand" />
+   <wait duration="10" anim="stand" />
    <locate obj="self" static="no" />
    <reproduce type="$NBUFFER[Reproduce_Type]" />
-   <wait duration="30" anim="stand" />
+   <wait duration="5" anim="stand" />
+
+
    <!--debug level="0" /-->
 </behavior>
 
 <behavior name="Buy" resume="yes" completion_decay="100">
    <!--debug level="15" /-->
    <talk text="Going Buying $NBUFFER[Trade]" target="false" />
-   <locate obj="waypoint" static="no" />
-   <navigate anim="walk" />
+
+   <!-- Go to work -->
+   <locate obj="waypoint" static="no"  destination="Move" />
+   <percept event="move" />
 
    <talk text="Trading $NBUFFER[Trade]" target="false" />
-   <wait duration="30" anim="stand" />
+   <wait duration="5" anim="stand" />
    <reward resource="$NBUFFER[Trade]" count="1" />
 
-   <locate obj="tribe:home" static="no" />
-   <wander anim="walk" />
-   <navigate anim="walk" />
+   <!-- Go home -->
+   <locate obj="tribe:home" static="no" destination="Move" />
+   <percept event="move" />
+
    <talk text="Done Buying $NBUFFER[Trade]" target="false" />
    <!--debug level="0" /-->
 </behavior>
@@ -517,57 +601,51 @@ INSERT INTO sc_npctypes VALUES("109","AbstractTribesman","DoNothing","","","",""
    <resurrect />
 </behavior>
 
-<behavior name="GoToWork" completion_decay="100">
+<behavior name="GoToWork" completion_decay="100" resume="yes" >
    <talk text="Going to work for $NBUFFER[Work_Duration]" target="false" />
-   <!-- Go to work position -->
-   <locate obj="waypoint" static="no" />
-   <navigate anim="walk" />
-   <locate obj="tribe:memory:work" static="no" />
-   <wander anim="walk" />
-   <navigate anim="walk" />
+
+   <!-- Go to work -->
+   <locate obj="tribe:memory:work" static="no"  destination="Move" />
+   <percept event="move" />
 
    <emote cmd="/work" />
    <wait duration="$NBUFFER[Work_Duration]" anim="stand" />
 
    <!-- Go home -->
-   <locate obj="waypoint" static="no" />
-   <navigate anim="walk" />
-   <locate obj="tribe:home" static="no" />
-   <wander anim="walk" />
-   <navigate anim="walk" />
+   <locate obj="tribe:home" static="no" destination="Move" />
+   <percept event="move" />
 </behavior>
 
-<behavior name="GoBuild" completion_decay="100">
-   <debug level="5" />
+<behavior name="GoBuild" completion_decay="100" resume="yes" >
+   <!--debug level="15" /-->
    <talk text="Going to build $NBUFFER[Building] for $NBUFFER[Work_Duration]" target="false" />
-   <!-- Go to work position -->
-   <locate obj="waypoint" static="no" />
-   <navigate anim="walk" />
-   <locate obj="building_spot" static="no" />
-   <wander anim="walk" />
-   <navigate anim="walk" />
+
+   <!-- Go to work -->
+   <locate obj="building_spot" static="no"  destination="Move" />
+   <percept event="move" />
 
    <wait duration="$NBUFFER[Work_Duration]" anim="stand" />
    <build />
    <talk text="Nice work building this $NBUFFER[Building]" target="false" />
 
    <!-- Go home -->
-   <locate obj="waypoint" static="no" />
-   <navigate anim="walk" />
-   <locate obj="tribe:home" static="no" />
-   <wander anim="walk" />
-   <navigate anim="walk" />
-   <debug level="0" />
+   <locate obj="tribe:home" static="no" destination="Move" />
+   <percept event="move" />
+
+   <!--debug level="0" /-->
 </behavior>
 
-<behavior name="Guard" resume="yes">
+<behavior name="Guard" resume="yes" >
    <talk text="Going guarding" target="false" />
-   <locate obj="ownbuffer" />
-   <navigate anim="walk" />
+
+   <!-- Go to work -->
+   <locate obj="ownbuffer" destination="Move" />
+   <percept event="local_move" />
+
    <circle anim="walk" radius="2" />
 </behavior>
 
-<behavior name="Turn" completion_decay="500">
+<behavior name="Turn" completion_decay="500" >
    <rotate type="random" min="0" max="360" anim="walk" />
    <move anim="walk" duration="3" />
 </behavior>

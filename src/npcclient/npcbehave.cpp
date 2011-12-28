@@ -382,26 +382,18 @@ void NPCType::FirePerception(NPC *npc, Perception *pcpt)
     Behavior* behavior = npc->GetCurrentBehavior();
     if(behavior && behavior->IsAMOn() && npc->GetTribe())
     {
-        csArray<csString>* types = behavior->GetAMTypes();
         csString type            = pcpt->GetType();
 
-        // Special Cases
-        if(types->Get(0) == "all")
+        // No point in memorizing a perception with no type, since the memory would be (null).
+        if (type.Length())
         {
-            npc->GetTribe()->Memorize(npc,pcpt);
-        }
-        else if(types->Get(0) == "ownbuffer")
-        {
-            if(npc->GetBuffer("Mine") == type)
+            csArray<csString>* types = behavior->GetAMTypes();
+
+            // Check if all should be memorized or check for specefic.
+            if(types->Get(0) == "all" || (types->Find(type) != csArrayItemNotFound))
             {
                 npc->GetTribe()->Memorize(npc,pcpt);
             }
-        }
-
-        // Normal case
-        if(types->Find(type) != csArrayItemNotFound)
-        {
-            npc->GetTribe()->Memorize(npc,pcpt);
         }
     }
     
@@ -796,10 +788,13 @@ void Behavior::DeepCopy(Behavior& other)
     maxLimit                = other.maxLimit;
     auto_memorize           = other.auto_memorize;
     AMOn                    = other.AMOn;
+    failurePerception       = other.failurePerception;
 
     for (size_t x=0; x<other.sequence.GetSize(); x++)
     {
-        sequence.Push( other.sequence[x]->MakeCopy() );
+        ScriptOperation* copy = other.sequence[x]->MakeCopy();
+        copy->SetParent(this);
+        sequence.Push(copy);
     }
 
     // Instance local variables. No need to copy.
@@ -823,6 +818,8 @@ bool Behavior::Load(iDocumentNode *node)
     init_need               = node->GetAttributeValueAsFloat("initial");
     is_applicable_when_dead = node->GetAttributeValueAsBool("when_dead");
     resume_after_interrupt  = node->GetAttributeValueAsBool("resume",false);
+    failurePerception       = node->GetAttributeValue("failure");
+
     if (node->GetAttributeValue("min"))
     {
         minLimitValid = true;
@@ -886,6 +883,10 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         else if ( strcmp( node->GetValue(), "chase" ) == 0 )
         {
             op = new ChaseOperation;
+        }
+        else if ( strcmp( node->GetValue(), "copy_locate" ) == 0 )
+        {
+            op = new CopyLocateOperation;
         }
         else if ( strcmp( node->GetValue(), "circle" ) == 0 )
         {
@@ -1046,6 +1047,7 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
             delete op;
             return false;
         }
+        op->SetParent(this);
         sequence.Push(op);
 
         // Execute any outstanding post load operations.
@@ -1059,6 +1061,7 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
             }
 
             LoopEndOperation *op2 = new LoopEndOperation(beginLoopWhere,blop->iterations);
+            op2->SetParent(this);
             sequence.Push(op2);
         }
     }
@@ -1332,6 +1335,23 @@ ScriptOperation::OperationResult Behavior::ResumeScript(NPC *npc,EventManager *e
         return ScriptOperation::OPERATION_FAILED;
     }
 }
+
+void Behavior::Failure(NPC* npc, ScriptOperation* op)
+{
+    if (failurePerception.IsEmpty())
+    {
+        npc->Printf(5,"Operation %s failed with no failure perception",op->GetName());
+    }
+    else
+    {
+        npc->Printf(5,"Operation %s failed tigger failure perception: %s",
+                    op->GetName(),failurePerception.GetData());
+
+        Perception perception(failurePerception);
+        npc->TriggerEvent(&perception);
+    }
+}
+
 
 //---------------------------------------------------------------------------
 

@@ -67,6 +67,7 @@ ScriptOperation::ScriptOperation(const char* scriptName)
       interrupted_sector(NULL),
       interrupted_angle(0.0f),
       consecCollisions(0),
+      parent(NULL),
       // Shared parameters between operations
       velSource(VEL_DEFAULT),
       vel(0.0),
@@ -86,6 +87,7 @@ ScriptOperation::ScriptOperation(const ScriptOperation* other)
       interrupted_sector(NULL),
       interrupted_angle(0.0f),
       consecCollisions(0),
+      parent(NULL),
       // Shared parameters between operations
       failurePerception(other->failurePerception),
       velSource(other->velSource),
@@ -670,17 +672,31 @@ void ScriptOperation::Failure(NPC* npc)
 {
     if (failurePerception.IsEmpty())
     {
-        npc->Printf(5,"Operation failed with no failure perception");
+        if (parent)
+        {
+            parent->Failure(npc, this);
+        }
+        else
+        {
+            npc->Printf(5,"Operation %s failed with no failure perception",GetName());
+        }
     }
     else
     {
-        npc->Printf(5,"Operation failed tigger failure perception: %s",
-                    failurePerception.GetData());
+        npc->Printf(5,"Operation %s failed tigger failure perception: %s",
+                    GetName(),failurePerception.GetData());
 
         Perception perception(failurePerception);
         npc->TriggerEvent(&perception);
     }
 }
+
+void ScriptOperation::SetParent(Behavior* behavior)
+{
+    parent = behavior;
+}
+
+
 
 
 //---------------------------------------------------------------------------
@@ -753,12 +769,23 @@ ScriptOperation::OperationResult MovementOperation::Run(NPC *npc, EventManager *
     path = npcclient->ShortestPath(npc, myPos,mySector,endPos,endSector);
     if(!path || !path->HasNext())
     {
-        // failed to find a path between us and the target
-        npc->Printf(5, "Failed to find a path between %s and %s", 
-                    toString(myPos, mySector).GetData(), 
-                    toString(endPos, endSector).GetData());
-        
-        return OPERATION_FAILED;  // This operation is complete
+        // Lets check if we are at the end position. The ShortestPath dosn't
+        // seams to work to well if the start and end is the same.
+        float distance = npcclient->GetWorld()->Distance(myPos, mySector, endPos, endSector);
+        if (distance < 0.5)
+        {
+            npc->Printf(5, "We are done..");
+            return OPERATION_COMPLETED;
+        }
+        else
+        {
+            // We really failed to find a path between us and the target
+            npc->Printf(5, "Failed to find a path between %s and %s", 
+                        toString(myPos, mySector).GetData(), 
+                        toString(endPos, endSector).GetData());
+            
+            return OPERATION_FAILED;  // This operation is complete
+        }
     }
     else if (!PathReachedEndPoint(npc, path, endPos, endSector))
     {
@@ -766,7 +793,7 @@ ScriptOperation::OperationResult MovementOperation::Run(NPC *npc, EventManager *
     }
     else if ( path->GetDistance() < 0.5 )  // Distance allready adjusted for offset
     {
-        npc->Printf(5, "We are done..");
+        npc->Printf(5, "We are done...");
 
         return OPERATION_COMPLETED; // This operation is complete
     }
@@ -814,11 +841,24 @@ void MovementOperation::Advance(float timedelta, NPC *npc, EventManager *eventmg
         path = npcclient->ShortestPath(npc, myPos, mySector, endPos, endSector);
         if(!path || !path->HasNext())
         {
-            npc->Printf(5, "Failed to find a path between %s and %s", 
-                        toString(myPos, mySector).GetData(), 
-                        toString(endPos, endSector).GetData());
-            npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior());
-            return;
+            // Lets check if we are at the end position. The ShortestPath dosn't
+            // seams to work to well if the start and end is the same.
+            float distance = npcclient->GetWorld()->Distance(myPos, mySector, endPos, endSector);
+            if (distance < 0.5)
+            {
+                npc->Printf(5, "We are done....");
+                npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior());
+                return;
+            }
+            else
+            {
+                // We really failed to find a path between us and the target
+                npc->Printf(5, "Failed to find a path between %s and %s", 
+                            toString(myPos, mySector).GetData(), 
+                            toString(endPos, endSector).GetData());
+                npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior());
+                return;
+            }
         }
 
         if (!PathReachedEndPoint(npc, path, endPos, endSector))
@@ -856,7 +896,7 @@ void MovementOperation::Advance(float timedelta, NPC *npc, EventManager *eventmg
 
         if (!path->HasNext())
         {
-            npc->Printf(5, "We are done..");
+            npc->Printf(5, "We are done.....");
             CheckEndPointOk(npc, myPos, mySector, endPos, endSector );
             npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior());
             return;
@@ -1383,6 +1423,48 @@ bool ChaseOperation::UpdateEndPosition(NPC* npc, const csVector3 &myPos, const i
 
 //---------------------------------------------------------------------------
 
+bool CopyLocateOperation::Load(iDocumentNode *node)
+{
+    source = node->GetAttributeValue("source");
+    if (source.IsEmpty())
+    {
+        Error1("No source given for CopyLocate operation");
+        return false;
+    }
+    
+    destination = node->GetAttributeValue("destination");
+    if (destination.IsEmpty())
+    {
+        Error1("No destination given for CopyLocate operation");
+        return false;
+    }
+
+    return true;
+}
+
+ScriptOperation *CopyLocateOperation::MakeCopy()
+{
+    CopyLocateOperation *op = new CopyLocateOperation;
+    op->source      = source;
+    op->destination = destination;
+    return op;
+}
+
+ScriptOperation::OperationResult CopyLocateOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+    csString sourceVariablesReplaced = psGameObject::ReplaceNPCVariables(npc,source);
+    csString destinationVariablesReplaced = psGameObject::ReplaceNPCVariables(npc, destination);
+
+    if (!npc->CopyLocate(sourceVariablesReplaced, destinationVariablesReplaced))
+    {
+        return OPERATION_FAILED;
+    }
+
+    return OPERATION_COMPLETED;  // Nothing more to do for this op.
+}
+
+//---------------------------------------------------------------------------
+
 bool CircleOperation::Load(iDocumentNode *node)
 {
     radius = node->GetAttributeValueAsFloat("radius");
@@ -1558,20 +1640,6 @@ ScriptOperation::OperationResult DigOperation::Run(NPC *npc, EventManager *event
             npcclient->GetNetworkMgr()->QueueDigCommand(npc->GetActor(), npc->GetTribe()->GetNeededResourceNick());
         }
     }
-    else if(resource == "ownBuffer")
-    {
-        // To get the resource name we first try the npc buffer
-        csString nick = npc->GetBuffer("Mine");
-
-        if(nick == "new mine")
-        {
-            // We will prospect this mine
-            // We request no reward and see what we get...
-            npcclient->GetNetworkMgr()->QueueDigCommand(npc->GetActor(), " ");
-        }
-
-        npcclient->GetNetworkMgr()->QueueDigCommand(npc->GetActor(), nick);
-    }
     else
     {
         npcclient->GetNetworkMgr()->QueueDigCommand(npc->GetActor(), resourceVariablesReplaced );
@@ -1743,7 +1811,7 @@ ScriptOperation::OperationResult InvisibleOperation::Run(NPC *npc, EventManager 
 LocateOperation::LocateOperation()
     : ScriptOperation("Locate"),
       // Instance variables
-      located(false)
+      staticLocated(false)
       // Operation parameters
       // Initialized in the load function
 {
@@ -1752,14 +1820,15 @@ LocateOperation::LocateOperation()
 LocateOperation::LocateOperation(const LocateOperation* other)
     : ScriptOperation(other),
       // Instance variables
-      located(false),
+      staticLocated(false),
       // Operation parameters
       object(other->object),
       range(other->range),
       static_loc(other->static_loc),
       random(other->random),
       locate_invisible(other->locate_invisible),
-      locate_invincible(other->locate_invincible)
+      locate_invincible(other->locate_invincible),
+      destination(other->destination)
 {
 }
 
@@ -1791,6 +1860,14 @@ bool LocateOperation::Load(iDocumentNode *node)
     random = node->GetAttributeValueAsBool("random",false);
     locate_invisible = node->GetAttributeValueAsBool("invisible",false);
     locate_invincible = node->GetAttributeValueAsBool("invincible",false);
+
+    destination = node->GetAttributeValue("destination");
+    // If no destination is given, set default destination
+    if (destination.IsEmpty())
+    {
+        destination = "Active";
+    }
+    
 
     // Some more validation checks on obj.
     csArray<csString> split_obj = psSplit(object,':');   
@@ -1968,11 +2045,13 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, EventManager *ev
     // Reset old target
     npc->SetTarget(NULL);
 
-    located_pos = csVector3(0.0f,0.0f,0.0f);
-    located_angle = 0.0f;
-    located_sector = NULL;
-    located_wp = NULL;
-    located_radius = 0.0f;
+    NPC::Locate located;
+
+    located.pos = csVector3(0.0f,0.0f,0.0f);
+    located.angle = 0.0f;
+    located.sector = NULL;
+    located.wp = NULL;
+    located.radius = 0.0f;
 
     float start_rot;
     iSector *start_sector;
@@ -1980,6 +2059,8 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, EventManager *ev
     psGameObject::GetPosition(npc->GetActor(),start_pos,start_rot,start_sector);
 
     csString objectReplacedVariables = psGameObject::ReplaceNPCVariables(npc, object);
+    csString destinationVariablesReplaced = psGameObject::ReplaceNPCVariables(npc, destination);
+
 
     csArray<csString> split_obj = psSplit(objectReplacedVariables,':');
  
@@ -1995,11 +2076,11 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, EventManager *ev
 
             buildingPos += buildingSpot->pos;
 
-            located_pos = buildingPos;
-            located_angle = 0;
-            located_sector = buildingSector;
+            located.pos = buildingPos;
+            located.angle = 0;
+            located.sector = buildingSector;
 
-            located_wp = CalculateWaypoint(npc,located_pos,located_sector,-1);
+            located.wp = CalculateWaypoint(npc,located.pos,located.sector,-1);
         }
         else
         {
@@ -2035,9 +2116,9 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, EventManager *ev
         csVector3 pos;
         psGameObject::GetPosition(entity,pos,rot,sector);
 
-        located_pos = pos;
-        located_angle = 0;
-        located_sector = sector;
+        located.pos = pos;
+        located.angle = 0;
+        located.sector = sector;
     }
     else if (split_obj[0] == "perception")
     {
@@ -2047,11 +2128,11 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, EventManager *ev
         {
             return OPERATION_FAILED;  // Nothing more to do for this op.
         }
-        if (!npc->GetLastPerception()->GetLocation(located_pos,located_sector))
+        if (!npc->GetLastPerception()->GetLocation(located.pos,located.sector))
         {
             return OPERATION_FAILED;  // Nothing more to do for this op.
         }
-        located_angle = 0; // not used in perceptions
+        located.angle = 0; // not used in perceptions
     }
     else if (split_obj[0] == "target")
     {
@@ -2074,9 +2155,9 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, EventManager *ev
         csVector3 pos;
         psGameObject::GetPosition(ent,pos,rot,sector);
 
-        located_pos = pos;
-        located_angle = 0;
-        located_sector = sector;
+        located.pos = pos;
+        located.angle = 0;
+        located.sector = sector;
     }
     else if (split_obj[0] == "owner")
     {
@@ -2101,9 +2182,9 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, EventManager *ev
         csVector3 pos;
         psGameObject::GetPosition(owner,pos,rot,sector);
 
-        located_pos = pos;
-        located_angle = 0;
-        located_sector = sector;
+        located.pos = pos;
+        located.angle = 0;
+        located.sector = sector;
     }
     else if (split_obj[0] == "point")
     {
@@ -2117,12 +2198,12 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, EventManager *ev
         AddRandomRange(offset,range,0.5);
         pos += offset;
         
-        located_pos = pos;
-        located_angle = 0;
-        located_sector = sector;
+        located.pos = pos;
+        located.angle = 0;
+        located.sector = sector;
 
         // Find closest waypoint to the random location in the region
-        located_wp = CalculateWaypoint(npc,located_pos,located_sector,-1);
+        located.wp = CalculateWaypoint(npc,located.pos,located.sector,-1);
     }
     else if (split_obj[0] == "region")
     {
@@ -2139,12 +2220,12 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, EventManager *ev
 
         if (region->GetRandomPosition(npcclient->GetEngine(),pos,sector))
         {
-            located_pos = pos;
-            located_angle = 0;
-            located_sector = sector;
+            located.pos = pos;
+            located.angle = 0;
+            located.sector = sector;
 
             // Find closest waypoint to the random location in the region
-            located_wp = CalculateWaypoint(npc,located_pos,located_sector,-1);
+            located.wp = CalculateWaypoint(npc,located.pos,located.sector,-1);
         }
     }
     else if (split_obj[0] == "self")
@@ -2169,9 +2250,9 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, EventManager *ev
         csVector3 pos;
         psGameObject::GetPosition(ent,pos,rot,sector);
 
-        located_pos = pos;
-        located_angle = 0;
-        located_sector = sector;
+        located.pos = pos;
+        located.angle = 0;
+        located.sector = sector;
     }
     else if (split_obj[0] == "ownbuffer")
     {
@@ -2186,22 +2267,22 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, EventManager *ev
 
         // Just copy data
         
-        located_sector = ownBuffer->GetSector();
-        located_pos    = ownBuffer->pos;
-        located_angle  = 0;
-        located_radius = ownBuffer->radius;
+        located.sector = ownBuffer->GetSector();
+        located.pos    = ownBuffer->pos;
+        located.angle  = 0;
+        located.radius = ownBuffer->radius;
 
-        AddRandomRange(located_pos, located_radius, 0.5);
+        AddRandomRange(located.pos, located.radius, 0.5);
 
-        located_wp = CalculateWaypoint(npc,located_pos,located_sector,-1);
+        located.wp = CalculateWaypoint(npc,located.pos,located.sector,-1);
     }
     else if (split_obj[0] == "spawn")
     {
         npc->Printf(5,"LocateOp - Spawn");
 
-        located_pos = npc->GetSpawnPosition();
-        located_angle = 0;
-        located_sector = npc->GetSpawnSector();
+        located.pos = npc->GetSpawnPosition();
+        located.angle = 0;
+        located.sector = npc->GetSpawnSector();
     }
     else if (split_obj[0] == "tribe")
     {
@@ -2216,13 +2297,13 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, EventManager *ev
         {
             float radius;
             csVector3 pos;
-            npc->GetTribe()->GetHome(pos,radius,located_sector);
+            npc->GetTribe()->GetHome(pos,radius,located.sector);
             
             AddRandomRange(pos, radius, 0.5);
             
-            located_pos = pos;
-            located_angle = 0;
-            located_radius = radius;
+            located.pos = pos;
+            located.angle = 0;
+            located.radius = radius;
         }
         else if (split_obj[1] == "memory")
         {
@@ -2244,16 +2325,16 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, EventManager *ev
                             (const char *)objectReplacedVariables,npc->GetName() );
                 return OPERATION_FAILED; // Nothing more to do for this op.
             }
-            located_pos = memory->pos;
-            located_sector = memory->sector;
-            located_radius = memory->radius;
+            located.pos = memory->pos;
+            located.sector = memory->sector;
+            located.radius = memory->radius;
             
-            AddRandomRange(located_pos, memory->radius, 0.5);
+            AddRandomRange(located.pos, memory->radius, 0.5);
         }
         else if (split_obj[1] == "resource")
         {
-            npc->GetTribe()->GetResource(npc,start_pos,start_sector,located_pos,located_sector,range,random);
-            located_angle = 0.0;
+            npc->GetTribe()->GetResource(npc,start_pos,start_sector,located.pos,located.sector,range,random);
+            located.angle = 0.0;
         }
         else if (split_obj[0] == "target")
         {
@@ -2281,12 +2362,12 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, EventManager *ev
             csVector3 pos;
             psGameObject::GetPosition(ent,pos,rot,sector);
 
-            located_pos = pos;
-            located_angle = 0;
-            located_sector = sector;
+            located.pos = pos;
+            located.angle = 0;
+            located.sector = sector;
         }
 
-        located_wp = CalculateWaypoint(npc,located_pos,located_sector,-1);
+        located.wp = CalculateWaypoint(npc,located.pos,located.sector,-1);
     }
     else if(split_obj[0] == "friend")
     {
@@ -2307,9 +2388,9 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, EventManager *ev
         csVector3 pos;
         psGameObject::GetPosition(ent,pos,rot,sector);
 
-        located_pos = pos;
-        located_angle = 0;
-        located_sector = sector;
+        located.pos = pos;
+        located.angle = 0;
+        located.sector = sector;
     }
     else if (split_obj[0] == "waypoint" )
     {
@@ -2323,47 +2404,47 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, EventManager *ev
             {
                 if (random)
                 {
-                    located_wp = npcclient->FindRandomWaypoint(split_obj[2],start_pos,start_sector,range,&located_range);
+                    located.wp = npcclient->FindRandomWaypoint(split_obj[2],start_pos,start_sector,range,&located_range);
                 }
                 else
                 {
-                    located_wp = npcclient->FindNearestWaypoint(split_obj[2],start_pos,start_sector,range,&located_range);
+                    located.wp = npcclient->FindNearestWaypoint(split_obj[2],start_pos,start_sector,range,&located_range);
                 }
             }
             else if (split_obj[1] == "name")
             {
-                located_wp = npcclient->FindWaypoint(split_obj[2]);
-                if (located_wp)
+                located.wp = npcclient->FindWaypoint(split_obj[2]);
+                if (located.wp)
                 {
-                    located_range = npcclient->GetWorld()->Distance(start_pos,start_sector,located_wp->loc.pos,located_wp->GetSector(npcclient->GetEngine()));
+                    located_range = npcclient->GetWorld()->Distance(start_pos,start_sector,located.wp->loc.pos,located.wp->GetSector(npcclient->GetEngine()));
                 }
             }
         }
         else if (random)
         {
-            located_wp = npcclient->FindRandomWaypoint(start_pos,start_sector,range,&located_range);
+            located.wp = npcclient->FindRandomWaypoint(start_pos,start_sector,range,&located_range);
         }
         else
         {
-            located_wp = npcclient->FindNearestWaypoint(start_pos,start_sector,range,&located_range);
+            located.wp = npcclient->FindNearestWaypoint(start_pos,start_sector,range,&located_range);
         }
 
-        if (!located_wp)
+        if (!located.wp)
         {
             npc->Printf(5, "Couldn't locate any <%s> in npc script for <%s>.",
                 (const char *)objectReplacedVariables,npc->GetName() );
             return OPERATION_FAILED; // Nothing more to do for this op.
         }
-        npc->Printf(5, "Located waypoint: %s at %s range %.2f",located_wp->GetName(),
-                    toString(located_wp->loc.pos,located_wp->loc.GetSector(npcclient->GetEngine())).GetData(),located_range);
+        npc->Printf(5, "Located waypoint: %s at %s range %.2f",located.wp->GetName(),
+                    toString(located.wp->loc.pos,located.wp->loc.GetSector(npcclient->GetEngine())).GetData(),located_range);
 
-        located_pos = located_wp->loc.pos;
-        located_angle = located_wp->loc.rot_angle;
-        located_sector = located_wp->loc.GetSector(npcclient->GetEngine());
+        located.pos = located.wp->loc.pos;
+        located.angle = located.wp->loc.rot_angle;
+        located.sector = located.wp->loc.GetSector(npcclient->GetEngine());
 
-        located_wp = CalculateWaypoint(npc,located_pos,located_sector,-1);
+        located.wp = CalculateWaypoint(npc,located.pos,located.sector,-1);
     }
-    else if (!static_loc || !located)
+    else if (!static_loc || !staticLocated)
     {
         npc->Printf(5, "LocateOp - Location");
 
@@ -2389,17 +2470,19 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, EventManager *ev
                 (const char *)objectReplacedVariables,npc->GetName() );
             return OPERATION_FAILED; // Nothing more to do for this op.
         }
-        located_pos = location->pos;
-        located_angle = location->rot_angle;
-        located_sector = location->GetSector(npcclient->GetEngine());
-        located_radius = location->radius;
+        located.pos = location->pos;
+        located.angle = location->rot_angle;
+        located.sector = location->GetSector(npcclient->GetEngine());
+        located.radius = location->radius;
 
-        AddRandomRange(located_pos, location->radius, 0.5);
+        AddRandomRange(located.pos, location->radius, 0.5);
         
         if (static_loc)
-            located = true;  // if it is a static location, we only have to do this locate once, and save the answer
+        {
+            staticLocated = true;  // if it is a static location, we only have to do this locate once, and save the answer
+        }
 
-        located_wp = CalculateWaypoint(npc,located_pos,located_sector,located_range);
+        located.wp = CalculateWaypoint(npc,located.pos,located.sector,located_range);
 
     }
     else
@@ -2407,13 +2490,11 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, EventManager *ev
         npc->Printf(5, "remembered location from last time");
     }
 
-    // Save on npc so other operations can refer to value
-    npc->SetActiveLocate(located_pos,located_sector,located_angle,located_wp);
-    npc->SetActiveLocateRadius(located_radius);
+    npc->SetLocate(destinationVariablesReplaced,located);
 
     npc->Printf(5, "LocateOp - Active location: pos %s rot %.2f wp %s",
-                toString(located_pos,located_sector).GetData(),located_angle,
-                (located_wp?located_wp->GetName():"(NULL)"));
+                toString(located.pos,located.sector).GetData(),located.angle,
+                (located.wp?located.wp->GetName():"(NULL)"));
 
     return OPERATION_COMPLETED; // Nothing more to do for this op.
 }
@@ -4052,10 +4133,6 @@ item;
         }
         
     } 
-    else if(splitItem[0] == "ownbuffer")
-    {
-        transferItem = npc->GetBuffer("Mine");
-    }
     npcclient->GetNetworkMgr()->QueueTransferCommand(npc->GetActor(), transferItem, count, target );
 
     return OPERATION_COMPLETED; // Nothing more to do for this op.
@@ -4178,7 +4255,7 @@ ScriptOperation::OperationResult WaitOperation::Run(NPC *npc, EventManager *even
 {
     if (!interrupted)
     {
-        remaining = atof(psGameObject::ReplaceNPCVariables(npc,duration));
+        remaining = atof(psGameObject::ReplaceNPCVariables(npc, duration));
 
         // If there are no time left we are done.
         if (remaining <= 0.0)
