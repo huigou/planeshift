@@ -1517,6 +1517,25 @@ void NetworkManager::QueueAssessCommand(gemNPCActor* entity, gemNPCObject* targe
     cmd_count++;    
 }
 
+void NetworkManager::QueueCastCommand(gemNPCActor* entity, gemNPCObject* target, const csString& spell, float kFactor)
+{
+    CheckCommandsOverrun(sizeof(int8_t)+2*sizeof(uint32_t)+(spell.Length()+1)+sizeof(float));
+
+    outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_CAST);
+    outbound->msg->Add( entity->GetEID().Unbox() );
+    outbound->msg->Add( target->GetEID().Unbox() );
+    outbound->msg->Add( spell );
+    outbound->msg->Add( kFactor );
+
+    if ( outbound->msg->overrun )
+    {
+        CS_ASSERT(!"NetworkManager::QueueCastCommand put message in overrun state!\n");
+    }
+
+    cmd_count++;    
+}
+
+
 void NetworkManager::SendAllCommands(bool final)
 {
     // If this is the final send all for a tick we need to check if any NPCs has been queued for sending of DR data.

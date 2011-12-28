@@ -880,6 +880,10 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         {
             op = new BuildOperation;
         }
+        else if ( strcmp( node->GetValue(), "cast" ) == 0 )
+        {
+            op = new CastOperation;
+        }
         else if ( strcmp( node->GetValue(), "chase" ) == 0 )
         {
             op = new ChaseOperation;

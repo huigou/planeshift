@@ -355,6 +355,33 @@ public:
 
 //-----------------------------------------------------------------------------
 
+/**
+* Let the NPC cast a spell.
+*/
+class CastOperation : public ScriptOperation
+{
+protected:
+    csString spell;
+    csString kFactor;
+
+    /** Constructor for this operation, used by the MakeCopy.
+     *
+     *  This constructor will copy all the Operation Parameters
+     *  from the other operation and initialize all Instance Variables
+     *  to default values.
+     */
+    CastOperation(const CastOperation* other);
+
+ public:
+    CastOperation();
+    virtual ~CastOperation() {};
+    virtual OperationResult Run(NPC* npc,EventManager* eventmgr,bool interrupted);
+    virtual bool Load(iDocumentNode* node);
+    virtual ScriptOperation* MakeCopy();
+};
+
+//-----------------------------------------------------------------------------
+
 /** Detect and chase a target until reached o out of bound.
 *   Chase updates periodically and turns, moving towards a certain
 *   location.  This is normally used to chase a targeted player.

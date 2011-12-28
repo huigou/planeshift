@@ -206,12 +206,29 @@ void SpellManager::Cast(MsgEntry *me, Client *client)
 {
     psSpellCastMessage msg(me);
 
-    psSpell *spell = NULL;
     csString spellName = msg.spell;
     float kFactor = msg.kFactor;
 
+    Cast(client->GetActor(), spellName, kFactor, client);
+}
+
+void SpellManager::Cast(gemActor* caster, const csString& spellName, float kFactor, Client *client)
+{
+    psSpell *spell = NULL;
+
+    // Allow developers to cast any spell
+    bool canCastAllSpells;
+    if (client)
+    {
+        canCastAllSpells = cacheManager->GetCommandManager()->Validate(client->GetSecurityLevel(), "cast all spells");
+    }
+    else
+    {
+        canCastAllSpells = true; // For now grant the NPC client the same priveledge as game masters and developers.
+    }
+
     // Allow developers to cast any spell, even if unknown to the character.
-    if (cacheManager->GetCommandManager()->Validate(client->GetSecurityLevel(), "cast all spells"))
+    if (canCastAllSpells)
     {
         spell = cacheManager->GetSpellByName(spellName);
     }        
@@ -223,24 +240,43 @@ void SpellManager::Cast(MsgEntry *me, Client *client)
     //spells with empty glyphlists are not enabled
     if (!spell || spell->GetGlyphList().IsEmpty())
     {
-        psserver->SendSystemInfo(client->GetClientNum(), "You don't know a spell called %s.",spellName.GetData());
+        if (client)
+        {
+            psserver->SendSystemInfo(client->GetClientNum(), "You don't know a spell called %s.",spellName.GetData());
+        }
+        else
+        {
+            Debug3(LOG_SUPERCLIENT,caster->GetEID().Unbox(),"%s don't know a spell called %s.",caster->GetName(),spellName.GetDataSafe());
+        }
         return;
     }
 
     // Clamp kFactor to sane values.
     if (kFactor < 0.0)
+    {
         kFactor = 0.0;
+    }
     if (kFactor > 100.0)
+    {
         kFactor = 100.0;
+    }
 
     csString reason;
-    if (!spell->CanCast(client, kFactor, reason))
+    if (!spell->CanCast(caster, kFactor, reason, canCastAllSpells))
     {
-        psserver->SendSystemInfo(client->GetClientNum(), reason.GetData());
+        if (client)
+        {
+            psserver->SendSystemInfo(client->GetClientNum(), reason.GetData());
+        }
+        else
+        {
+            Debug3(LOG_SUPERCLIENT,caster->GetEID().Unbox(),"%s: %s.",caster->GetName(),reason.GetDataSafe());
+        }
+        
         return;
     }
 
-    spell->Cast(client, kFactor);
+    spell->Cast(caster, kFactor, client);
 }
 
 void SpellManager::SendSpellBook(MsgEntry *notused, Client * client)

@@ -265,9 +265,8 @@ bool psSpell::MatchGlyphs(const csArray<psItemStats*> & assembler)
     return true;
 }
 
-bool psSpell::CanCast(Client *client, float kFactor, csString & reason)
+bool psSpell::CanCast(gemActor* caster, float kFactor, csString & reason, bool canCastAllSpells)
 {
-    gemActor *caster = client->GetActor();
     psCharacter *casterChar = caster->GetCharacterData();
 
     const int mode = caster->GetMode();
@@ -298,7 +297,7 @@ bool psSpell::CanCast(Client *client, float kFactor, csString & reason)
     }
 
     // Skip testing some conditions for developers and game masters
-    if (!psserver->GetCacheManager()->GetCommandManager()->Validate(client->GetSecurityLevel(), "cast all spells"))
+    if (!canCastAllSpells)
     {
         if (realm > casterChar->GetMaxAllowedRealm(way->skill))
         {
@@ -316,13 +315,20 @@ bool psSpell::CanCast(Client *client, float kFactor, csString & reason)
     return true;
 }
 
-void psSpell::Cast(Client *client, float kFactor) const
+void psSpell::Cast(gemActor *caster, float kFactor, Client *client) const
 {
-    gemActor *caster = client->GetActor();
-    gemObject *target = client->GetTargetObject();
+    gemObject *target = caster->GetTargetObject();
 
-    if (offensive && !client->IsAllowedToAttack(target,true))  // this function sends sys error msg
-        return;
+    if (client)
+    {
+        if (offensive && !client->IsAllowedToAttack(target,true))  // this function sends sys error msg
+            return;
+    }
+    else
+    {
+        // Superclients are allowed to attack everything. (TODO: Fix this?)
+    }
+    
 
     float power = MIN(maxPower, PowerLevel(caster->GetCharacterData(), kFactor));
     float skill = caster->GetCharacterData()->GetSkillRank(way->skill).Current();
@@ -348,45 +354,77 @@ void psSpell::Cast(Client *client, float kFactor) const
         }
         else
         {
-            psserver->SendSystemInfo(client->GetClientNum(), "You must select a target for %s", name.GetData());
+            if (client)
+            {
+                psserver->SendSystemInfo(client->GetClientNum(), "You must select a target for %s", name.GetData());
+            }
+            else
+            {
+                Debug3(LOG_SUPERCLIENT,caster->GetEID().Unbox(),"%s must select a target for %s.",caster->GetName(),name.GetData());
+            }
+            
             return;
         }
     }
 
-    // Check for the right kind of target
-    const int targetType = client->GetTargetType(target);
-    if (!(targetTypes & targetType))
+    if (client)
     {
-        csString allowedTypes;
-        client->GetTargetTypeName(targetTypes, allowedTypes);
-        psserver->SendSystemInfo(client->GetClientNum(), "You cannot cast %s on %s. You can only cast it on %s.", 
-                                 name.GetData(), target ? target->GetName() : "that", allowedTypes.GetData());
-        return;
+        // Check for the right kind of target
+        const int targetType = client->GetTargetType(target);
+        if (!(targetTypes & targetType))
+        {
+            csString allowedTypes;
+            client->GetTargetTypeName(targetTypes, allowedTypes);
+            psserver->SendSystemInfo(client->GetClientNum(), "You cannot cast %s on %s. You can only cast it on %s.", 
+                                     name.GetData(), target ? target->GetName() : "that", allowedTypes.GetData());
+            return;
+        }
     }
+    else
+    {
+        // Allow superclient to target everyone. (TODO: Fix this?)
+    }
+    
 
     if (max_range > 0 && caster->RangeTo(target) > max_range)
     {
-        psserver->SendSystemInfo(client->GetClientNum(), "%s is too far away to cast %s.", target->GetName(), name.GetData());
+        if (client)
+        {
+            psserver->SendSystemInfo(client->GetClientNum(), "%s is too far away to cast %s.", target->GetName(), name.GetData());
+        }
+        else
+        {
+            Debug4(LOG_SUPERCLIENT,caster->GetEID().Unbox(),"%s: %s is too far away to cast %s.",caster->GetName(),target->GetName(), name.GetData());
+        }
+        
         return;
     }
 
     // All conditions for casting this spell are met!
     caster->SetMode(PSCHARACTER_MODE_SPELL_CASTING, castingDuration);
-    psserver->SendSystemInfo(client->GetClientNum(), "You start casting the spell %s", name.GetData());
+    if (client)
+    {
+        psserver->SendSystemInfo(client->GetClientNum(), "You start casting the spell %s", name.GetData());
+    }
+    else
+    {
+        Debug3(LOG_SUPERCLIENT,caster->GetEID().Unbox(),"%s start casting the spell %s.",caster->GetName(), name.GetData());
+    }
+    
 
     // Allow developers and game masters to cast a spell immediately
-    if (client->GetActor()->instantcast)
+    if (caster->instantcast)
     {
         castingDuration = 0;
     }
 
-    if (!castingEffect.IsEmpty() && (castingDuration > 0 || client->GetActor()->instantcast))
+    if (!castingEffect.IsEmpty() && (castingDuration > 0 || caster->instantcast))
     {
         psEffectMessage fx(0, castingEffect, csVector3(0,0,0), caster->GetEID(), target->GetEID(), castingDuration, 0, 0.0);
         fx.Multicast(caster->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE);
     }
 
-    psSpellCastGameEvent *evt = new psSpellCastGameEvent(this, client, target, castingDuration, max_range, kFactor, power);
+    psSpellCastGameEvent *evt = new psSpellCastGameEvent(this, caster, target, castingDuration, max_range, kFactor, power, client);
     evt->QueueEvent();
 }
 
@@ -609,13 +647,14 @@ double psSpell::CalcFunction(MathEnvironment* env, const char* functionName, con
 
 //-----------------------------------------------------------------------------
 
-psSpellCastGameEvent::psSpellCastGameEvent(const psSpell *spell,
-                                           Client *caster,
-                                           gemObject *target,
+psSpellCastGameEvent::psSpellCastGameEvent(const psSpell* spell,
+                                           gemActor* caster,
+                                           gemObject* target,
                                            csTicks castingDuration,
                                            float max_range,
                                            float kFactor,
-                                           float powerLevel)
+                                           float powerLevel,
+                                           Client* client)
     : psGameEvent(0, castingDuration, "psSpellCastGameEvent")
 {
     this->spell      = spell;
@@ -625,10 +664,11 @@ psSpellCastGameEvent::psSpellCastGameEvent(const psSpell *spell,
     this->max_range  = max_range;
     this->kFactor    = kFactor;
     this->powerLevel = powerLevel;
+    this->client     = client;
 
     target->RegisterCallback(this);
-    caster->GetActor()->RegisterCallback(this);
-    caster->GetActor()->SetSpellCasting(this);
+    caster->RegisterCallback(this);
+    caster->SetSpellCasting(this);
 }
 
 psSpellCastGameEvent::~psSpellCastGameEvent()
@@ -639,7 +679,7 @@ psSpellCastGameEvent::~psSpellCastGameEvent()
     }
     if (caster)
     {
-        caster->GetActor()->UnregisterCallback(this);
+        caster->UnregisterCallback(this);
     }
 }
 
@@ -651,7 +691,7 @@ void psSpellCastGameEvent::DeleteObjectCallback(iDeleteNotificationObject * obje
     }
     if (caster)
     {
-        caster->GetActor()->UnregisterCallback(this);
+        caster->UnregisterCallback(this);
     }
 
     Interrupt();
@@ -667,15 +707,29 @@ void psSpellCastGameEvent::Interrupt()
 
     if (target && !target->IsAlive())
     {
-        psserver->SendSystemError(caster->GetClientNum(), "%s is already dead.", (const char*) target->GetName());
+        if (client)
+        {
+            psserver->SendSystemError(client->GetClientNum(), "%s is already dead.", (const char*) target->GetName());
+        }
+        else
+        {
+            Debug3(LOG_SUPERCLIENT,caster->GetEID().Unbox(),"%s: %s is already dead.",caster->GetName(), (const char*) target->GetName());
+        }
     }
     else
     {
-        psserver->SendSystemInfo(caster->GetClientNum(), "Your spell (%s) has been interrupted!", spell->GetName().GetData());
+        if (client)
+        {
+            psserver->SendSystemInfo(client->GetClientNum(), "Your spell (%s) has been interrupted!", spell->GetName().GetData());
+        }
+        else
+        {
+            Debug3(LOG_SUPERCLIENT,caster->GetEID().Unbox(),"%s spell (%s) has been interrupted!",caster->GetName(), spell->GetName().GetData());
+        }
     }
 
-    caster->GetActor()->SetMode(PSCHARACTER_MODE_PEACE);
-    caster->GetActor()->SetSpellCasting(NULL);
+    caster->SetMode(PSCHARACTER_MODE_PEACE);
+    caster->SetSpellCasting(NULL);
 
     // Stop event from beeing executed when trigged.
     SetValid(false);
@@ -685,10 +739,12 @@ void psSpellCastGameEvent::Trigger()
 {
     // Make sure caster is alive...there might be UDP jitter problems (PS#2728).
     if (caster->IsAlive())
-        spell->Affect(caster->GetActor(), target, max_range, kFactor, powerLevel);
+    {
+        spell->Affect(caster, target, max_range, kFactor, powerLevel);
+    }
 
     // Spell casting complete, we are now in PEACE mode again.
-    caster->GetActor()->SetMode(PSCHARACTER_MODE_PEACE);
-    caster->GetActor()->SetSpellCasting(NULL);
+    caster->SetMode(PSCHARACTER_MODE_PEACE);
+    caster->SetSpellCasting(NULL);
 }
 

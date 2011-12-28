@@ -1035,6 +1035,56 @@ ScriptOperation::OperationResult BuildOperation::Run(NPC *npc, EventManager *eve
 
 //---------------------------------------------------------------------------
 
+CastOperation::CastOperation(const CastOperation* other)
+    : ScriptOperation("Cast"),
+      spell(other->spell),
+      kFactor(other->kFactor)
+{
+}
+
+CastOperation::CastOperation()
+    : ScriptOperation("Cast")
+{
+}
+
+bool CastOperation::Load(iDocumentNode *node)
+{
+    spell = node->GetAttributeValue("spell");
+    if (spell.IsEmpty())
+    {
+        Error1("No spell given for Cast operation");
+        return false;
+    }
+
+    kFactor = node->GetAttributeValue("k");
+    if (kFactor.IsEmpty())
+    {
+        kFactor = "1.0"; // Default kFactor
+    }
+
+    return true;
+}
+
+ScriptOperation *CastOperation::MakeCopy()
+{
+    CastOperation *op = new CastOperation(this);
+    return op;
+}
+
+ScriptOperation::OperationResult CastOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+    csString spellVariablesReplaced = psGameObject::ReplaceNPCVariables(npc, spell);
+    csString kFactorVariablesReplaced = psGameObject::ReplaceNPCVariables(npc, kFactor);
+    npc->Printf(5, "Casting %s", spellVariablesReplaced.GetDataSafe());
+
+    npcclient->GetNetworkMgr()->QueueCastCommand(npc->GetActor(), npc->GetTarget(), spellVariablesReplaced,
+                                                 atof(kFactorVariablesReplaced.GetDataSafe()));
+
+    return OPERATION_COMPLETED;  // Nothing more to do for this op.
+}
+
+//---------------------------------------------------------------------------
+
 const char * ChaseOperation::typeStr[]={"nearest_actor","nearest_npc","nearest_player","owner","target"};
 
 ChaseOperation::ChaseOperation()

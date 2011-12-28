@@ -187,6 +187,7 @@ public:
     void QueueInfoReplyCommand(uint32_t clientNum,const char* reply);
     void QueueAssessCommand(gemNPCActor* entity, gemNPCObject* target, const csString& physicalAssessmentPerception,
                             const csString& magicalAssessmentPerception,  const csString& overallAssessmentPerception);
+    void QueueCastCommand(gemNPCActor* entity, gemNPCObject* target, const csString& spell, float kFactor);
     
     void SendAllCommands(bool final = false);
 
