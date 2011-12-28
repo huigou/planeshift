@@ -701,8 +701,8 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
 
                 if (npc)
                 {
-                    npc->Printf("Got Spell Perception for %s",
-                                (caster_ent)?caster_ent->GetName():"(unknown entity)");
+                    npc->Printf("Got Spell Perception %s is casting %s on me.",
+                                (caster_ent)?caster_ent->GetName():"(unknown entity)",type.GetDataSafe());
                 }
 
                 if (!caster_ent || !target_ent)
@@ -710,11 +710,12 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
 
                 iSector *sector;
                 csVector3 pos;
-                psGameObject::GetPosition((caster_ent)?caster_ent:target_ent, pos, sector);
-
+                psGameObject::GetPosition(target_ent, pos, sector);
+                
+                // This will result in spell:self, spell:target, spell:unknown perceptions
                 SpellPerception pcpt("spell",caster_ent,target_ent,type,severity);
 
-                npcclient->TriggerEvent(&pcpt, 20, &pos, sector); // Broadcast
+                npcclient->TriggerEvent(&pcpt, 30, &pos, sector, true); // Broadcast to same sector
                 break;
             }
             case psNPCCommandsMessage::PCPT_ANYRANGEPLAYER:

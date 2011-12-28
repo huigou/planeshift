@@ -177,13 +177,13 @@ public:
   
     virtual gemNPCObject *GetTarget() { return NULL; }
 
-    const char* GetName() { return name; }
+    virtual csString GetName(NPC* npc);
     const char* GetType() { return type; }
     void SetType(const char* type) { this->type = type; }
     virtual bool GetLocation(csVector3& pos, iSector*& sector) { return false; }
     virtual float GetRadius() const { return 0.0; }
 
-    virtual csString ToString();
+    virtual csString ToString(NPC* npc);
 };
 
 //-----------------------------------------------------------------------------
@@ -200,7 +200,7 @@ public:
 
     virtual bool ShouldReact(Reaction *reaction,NPC *npc);
     virtual Perception *MakeCopy();
-    virtual csString ToString();
+    virtual csString ToString(NPC* npc);
 };
 
 //-----------------------------------------------------------------------------
@@ -223,7 +223,7 @@ public:
 
     virtual bool ShouldReact(Reaction *reaction,NPC *npc);
     virtual Perception *MakeCopy();
-    virtual csString ToString();
+    virtual csString ToString(NPC* npc);
 };
 
 //-----------------------------------------------------------------------------
@@ -407,8 +407,12 @@ protected:
 public:
     SpellPerception(const char *name,gemNPCObject *caster,gemNPCObject *target, const char *spell_type, float severity);
 
+    virtual csString GetName(NPC* npc);
+
     virtual bool ShouldReact(Reaction *reaction,NPC *npc);
     virtual Perception *MakeCopy();
+    virtual bool GetLocation(csVector3& pos, iSector*& sector);
+    virtual gemNPCObject* GetTarget() { return caster; } 
     virtual void ExecutePerception(NPC *npc,float weight);
 };
 

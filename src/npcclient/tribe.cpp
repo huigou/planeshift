@@ -291,7 +291,7 @@ int Tribe::AliveCount() const
 
 void Tribe::HandlePerception(NPC * npc, Perception *perception)
 {
-    csString name = perception->GetName();
+    csString name = perception->GetName(npc);
     
     CS::Utility::StringArray<> strarr;
     strarr.SplitString(name, ":");
@@ -933,7 +933,7 @@ void Tribe::SendPerception(const char* pcpt, csArray<NPC*> npcs)
     for(int i=0;i<npcs.GetSize();i++)
     {
         NPC* npc = npcs[i];
-        Debug4(LOG_TRIBES,GetID(),"--> Percept npc %s(%s): %s",npc->GetName(),ShowID(npc->GetEID()),perception.ToString().GetDataSafe());
+        Debug4(LOG_TRIBES,GetID(),"--> Percept npc %s(%s): %s",npc->GetName(),ShowID(npc->GetEID()),perception.ToString(npc).GetDataSafe());
 
         npc->TriggerEvent(&perception);
     }

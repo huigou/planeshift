@@ -216,7 +216,7 @@ void Reaction::React(NPC *who, Perception *pcpt)
     {
         if (who->IsDebugging(20))
         {
-            who->Printf(20, "Reaction '%s' skipping perception %s", GetEventType(who).GetDataSafe(), pcpt->ToString().GetDataSafe());
+            who->Printf(20, "Reaction '%s' skipping perception %s", GetEventType(who).GetDataSafe(), pcpt->ToString(who).GetDataSafe());
         }
         return;
     }
@@ -267,7 +267,7 @@ void Reaction::React(NPC *who, Perception *pcpt)
             break;
 
 
-        who->Printf(2, "Reaction '%s' reacting to perception %s", GetEventType(who).GetDataSafe(), pcpt->ToString().GetDataSafe());
+        who->Printf(2, "Reaction '%s' reacting to perception %s", GetEventType(who).GetDataSafe(), pcpt->ToString(who).GetDataSafe());
         switch (desireType)
         {
         case DESIRE_NONE:
@@ -484,7 +484,7 @@ csString Reaction::GetAffectedBehaviors()
 
 bool Perception::ShouldReact(Reaction *reaction, NPC *npc)
 {
-    if (name == reaction->GetEventType(npc))
+    if (GetName(npc) == reaction->GetEventType(npc))
     {
         return true;
     }
@@ -497,10 +497,16 @@ Perception *Perception::MakeCopy()
     return p;
 }
 
-csString Perception::ToString()
+csString Perception::GetName(NPC* /* npc */)
+{
+    return name;
+}
+
+
+csString Perception::ToString(NPC* npc)
 {
     csString result;
-    result.Format("Name: '%s' Type: '%s'",name.GetDataSafe(), type.GetDataSafe());
+    result.Format("Name: '%s' Type: '%s'",GetName(npc).GetDataSafe(), type.GetDataSafe());
     return result;
 }
 
@@ -525,10 +531,10 @@ Perception *RangePerception::MakeCopy()
     return p;
 }
 
-csString RangePerception::ToString()
+csString RangePerception::ToString(NPC* npc)
 {
     csString result;
-    result.Format("Name: '%s' Range: '%.2f'",name.GetDataSafe(), range );
+    result.Format("Name: '%s' Range: '%.2f'",GetName(npc).GetDataSafe(), range );
     return result;
 }
 
@@ -737,9 +743,9 @@ SpellPerception::SpellPerception(const char *name,
     this->type = type;
 }
 
-bool SpellPerception::ShouldReact(Reaction *reaction, NPC *npc)
+csString SpellPerception::GetName(NPC* npc)
 {
-    csString event(type);
+    csString event(name);
     event.Append(':');
 
     if (npc->GetEntityHate((gemNPCActor*)caster) || npc->GetEntityHate((gemNPCActor*)target))
@@ -755,10 +761,35 @@ bool SpellPerception::ShouldReact(Reaction *reaction, NPC *npc)
         event.Append("unknown");
     }
 
-    if (event == reaction->GetEventType(npc))
+    return event;
+}
+
+bool SpellPerception::ShouldReact(Reaction *reaction, NPC *npc)
+{
+    csString event(name);
+    event.Append(':');
+
+    if (npc->GetEntityHate((gemNPCActor*)caster) || npc->GetEntityHate((gemNPCActor*)target))
+    {
+        event.Append("target");
+    }
+    else if (target == npc->GetActor())
+    {
+        event.Append("self");
+    }
+    else
+    {
+        event.Append("unknown");
+    }
+
+    csString eventName = GetName(npc);
+
+    npc->Printf(20,"Spell percpetion checking for match beween %s and %s", eventName.GetData(), reaction->GetEventType(npc).GetDataSafe());
+
+    if (eventName == reaction->GetEventType(npc))
     {
         npc->Printf(15, "%s spell cast by %s on %s, severity %1.1f.",
-            event.GetData(), (caster)?caster->GetName():"(Null caster)", (target)?target->GetName():"(Null target)", spell_severity);
+            eventName.GetData(), (caster)?caster->GetName():"(Null caster)", (target)?target->GetName():"(Null target)", spell_severity);
 
         return true;
     }
@@ -769,6 +800,16 @@ Perception *SpellPerception::MakeCopy()
 {
     SpellPerception *p = new SpellPerception(name,caster,target,type,spell_severity);
     return p;
+}
+
+bool SpellPerception::GetLocation(csVector3& pos, iSector*& sector)
+{
+    if (caster)
+    {
+        psGameObject::GetPosition(caster,pos,sector);
+        return true;
+    }
+    return false;
 }
 
 void SpellPerception::ExecutePerception(NPC *npc,float weight)
@@ -858,10 +899,10 @@ Perception *TimePerception::MakeCopy()
     return p;
 }
 
-csString TimePerception::ToString()
+csString TimePerception::ToString(NPC* npc)
 {
     csString result;
-    result.Format("Name: '%s' : '%d:%02d %d-%d-%d'",name.GetDataSafe(),
+    result.Format("Name: '%s' : '%d:%02d %d-%d-%d'",GetName(npc).GetDataSafe(),
                   gameHour, gameMinute, gameYear, gameMonth, gameDay );
     return result;
 }
