@@ -20,10 +20,40 @@ CREATE TABLE player_spells (
 # Dumping data for table 'player_spells'
 #
 
-#INSERT INTO player_spells VALUES("2","1","0");
-#INSERT INTO player_spells VALUES("2","2","1");
 #INSERT INTO player_spells VALUES("1","1","0");
 #INSERT INTO player_spells VALUES("1","2","1");
 #INSERT INTO player_spells VALUES("1","3","2");
 #INSERT INTO player_spells VALUES("1","4","3");
 #INSERT INTO player_spells VALUES("1","5","4");
+
+# Vengeance spells
+INSERT INTO player_spells VALUES("2","1","0");
+INSERT INTO player_spells VALUES("2","2","1");
+INSERT INTO player_spells VALUES("2","3","2");
+INSERT INTO player_spells VALUES("2","4","3");
+INSERT INTO player_spells VALUES("2","5","4");
+INSERT INTO player_spells VALUES("2","6","5");
+INSERT INTO player_spells VALUES("2","7","6");
+INSERT INTO player_spells VALUES("2","8","7");
+
+
+# NPC SpellMaster spells
+INSERT INTO player_spells VALUES("82","1","0");
+INSERT INTO player_spells VALUES("82","2","1");
+INSERT INTO player_spells VALUES("82","3","2");
+INSERT INTO player_spells VALUES("82","4","3");
+INSERT INTO player_spells VALUES("82","5","4");
+INSERT INTO player_spells VALUES("82","6","5");
+INSERT INTO player_spells VALUES("82","7","6");
+INSERT INTO player_spells VALUES("82","8","7");
+
+# NPC SpellFighter spells
+INSERT INTO player_spells VALUES("83","1","0");
+INSERT INTO player_spells VALUES("83","2","1");
+INSERT INTO player_spells VALUES("83","3","2");
+INSERT INTO player_spells VALUES("83","4","3");
+INSERT INTO player_spells VALUES("83","5","4");
+INSERT INTO player_spells VALUES("83","6","5");
+INSERT INTO player_spells VALUES("83","7","6");
+INSERT INTO player_spells VALUES("83","8","7");
+

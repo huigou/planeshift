@@ -944,3 +944,41 @@ INSERT INTO sc_npctypes VALUES("122","LocateTest1","DoNothing","","$run","","","
 <react event="LocateFailed" behavior="LocateFailureTest" only_interrupt="LocateFailureTest" absolute="0" />
 <react event="LocateFailed" behavior="LocateFailureFailed" />');
 
+
+INSERT INTO sc_npctypes VALUES("123","SpellMaster","DoNothing","","$run","","","","",
+'<!-- Test various spell abilities -->
+
+<behavior name="InitSpellMaster" initial="1000" completion_decay="-1">
+   <talk text="$name is initializing" target="false" />
+   <wait duration="15" />
+   <locate obj="self" />
+   <cast spell="Swiftness" k="1.0" />
+</behavior>
+');
+
+INSERT INTO sc_npctypes VALUES("124","SpellFighter","DoNothing","","$run","","","","",
+'<!--   -->
+
+<behavior name="Prepare" completion_decay="-1">
+   <locate obj="self" />
+   <cast spell="Swiftness" k="1.0" />
+</behavior>
+
+<behavior name="ReturnFire" completion_decay="-1">
+   <locate obj="perception" />
+   <cast spell="Summon Missile" k="1.0" />
+</behavior>
+
+<behavior name="Drain" completion_decay="-1">
+   <locate obj="perception" />
+   <cast spell="Drain" k="1.0" />
+</behavior>
+
+<react event="player nearby" behavior="Prepare" delta="100" /> <!-- Nearby(<10) -->
+
+<!-- If I am hit by a direct damage spell I will return the fire -->
+<react event="spell:self"    type="direct damage" behavior="ReturnFire" delta="100" />
+
+<!-- If my target is healed I will drain -->
+<react event="spell:target"    type="direct heal" behavior="Drain" delta="100" />
+');
