@@ -1077,6 +1077,12 @@ ScriptOperation::OperationResult CastOperation::Run(NPC *npc, EventManager *even
     csString kFactorVariablesReplaced = psGameObject::ReplaceNPCVariables(npc, kFactor);
     npc->Printf(5, "Casting %s", spellVariablesReplaced.GetDataSafe());
 
+    if (!npc->GetTarget())
+    {
+        npc->Printf(5,"Cast operation failed with no target given");
+        return OPERATION_FAILED;
+    }
+
     npcclient->GetNetworkMgr()->QueueCastCommand(npc->GetActor(), npc->GetTarget(), spellVariablesReplaced,
                                                  atof(kFactorVariablesReplaced.GetDataSafe()));
 
@@ -2182,7 +2188,11 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, EventManager *ev
         {
             return OPERATION_FAILED;  // Nothing more to do for this op.
         }
+
+        npc->SetTarget( npc->GetLastPerception()->GetTarget() );
+
         located.angle = 0; // not used in perceptions
+        located.wp = CalculateWaypoint(npc,located.pos,located.sector,-1);
     }
     else if (split_obj[0] == "target")
     {
@@ -2795,7 +2805,7 @@ ScriptOperation::OperationResult MemorizeOperation::Run(NPC *npc, EventManager *
         return OPERATION_COMPLETED; // Nothing more to do for this op.
     }
     
-    npc->Printf(5, ">>> Memorize '%s' '%s'.",percept->GetType(),percept->GetName());
+    npc->Printf(5, ">>> Memorize '%s' '%s'.",percept->GetType(),percept->GetName(npc).GetDataSafe());
 
     Tribe * tribe = npc->GetTribe();
     

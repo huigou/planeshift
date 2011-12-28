@@ -194,7 +194,7 @@ csString NPC::Info()
     {
         reply.AppendFmt("Target: %s ",GetTarget()->GetName());
     }
-    reply.AppendFmt("Last perception: '%s' ",last_perception?last_perception->GetName():"(None)");
+    reply.AppendFmt("Last perception: '%s' ",last_perception?last_perception->GetName(this).GetDataSafe():"(None)");
     reply.AppendFmt("Fall counter: %d ", GetFallCounter());
     reply.AppendFmt("Brain: %s ",GetBrain()->GetName());
     reply.AppendFmt("Behaviors: %s",GetBrain()->InfoBehaviors(this).GetDataSafe());
@@ -415,7 +415,7 @@ void NPC::TriggerEvent(Perception *pcpt, float maxRange,
     if (disabled)
     {
         Printf(15,"Disabled so rejecting perception #s"
-               ,pcpt->ToString().GetData() );
+               ,pcpt->ToString(this).GetData() );
         return;
     }
 
@@ -443,12 +443,12 @@ void NPC::TriggerEvent(Perception *pcpt, float maxRange,
         if (distance > maxRange)
         {
             Printf(15,"The distance %.2f is outside range %.2f of perception %s",
-                   distance, maxRange, pcpt->ToString().GetData() );
+                   distance, maxRange, pcpt->ToString(this).GetData() );
             return;
         }
     }
     
-    Printf(15,"Got event %s",pcpt->ToString().GetData() );
+    Printf(10,"Got event %s",pcpt->ToString(this).GetData() );
     brain->FirePerception(this, pcpt);
 }
 
@@ -669,7 +669,7 @@ void NPC::DumpState()
     CPrintf(CON_CMDOUTPUT, "TribeMemberType:     %s\n",GetTribeMemberType().GetDataSafe());
     CPrintf(CON_CMDOUTPUT, "Inside tribe home:   %s\n",insideTribeHome?"Yes":"No");
     CPrintf(CON_CMDOUTPUT, "Target:              %s\n",GetTarget()?GetTarget()->GetName():"");
-    CPrintf(CON_CMDOUTPUT, "Last perception:     %s\n",last_perception?last_perception->GetName():"(None)");
+    CPrintf(CON_CMDOUTPUT, "Last perception:     %s\n",last_perception?last_perception->GetName(this).GetDataSafe():"(None)");
     CPrintf(CON_CMDOUTPUT, "Fall counter:        %d\n", GetFallCounter());
     CPrintf(CON_CMDOUTPUT, "Brain:               %s\n\n", brain->GetName());
 
@@ -1079,7 +1079,7 @@ void NPC::SetTarget(gemNPCObject *t)
     }
     else
     {
-        Printf(10,"Setting target to: %s",t->GetName());
+        Printf(10,"Setting target to: %s (%s)",t->GetName(),ShowID(t->GetEID()));
         target_id = t->GetEID();
     }
 }
