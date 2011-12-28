@@ -765,8 +765,16 @@ void UserManager::HandleTargetEvent(MsgEntry *me, Client *notused)
         && dynamic_cast<gemNPC*>(targetevent.target)
         && targetevent.character->GetMode() == PSCHARACTER_MODE_COMBAT) // NPC?
     {
-        if (targeter->IsAllowedToAttack(targetevent.target))
+        csString msg;
+        
+        if (targeter->GetActor()->IsAllowedToAttack(targetevent.target, msg))
+        {
             SwitchAttackTarget( targeter, targeted );
+        }
+        else
+        {
+            psserver->SendSystemError(targeter->GetClientNum(), msg );
+        }
 
         return;
     }
@@ -1592,11 +1600,18 @@ void UserManager::Attack(Stance stance, Client *client)
         return;
     }
 
+    csString msg;
+    
     gemObject *target = client->GetTargetObject();
-    if (client->IsAllowedToAttack(target))
+    if (client->GetActor()->IsAllowedToAttack(target, msg))
     {
         psserver->combatmanager->AttackSomeone(client->GetActor(), target, stance );
     }
+    else
+    {
+        psserver->SendSystemError(client->GetClientNum(), msg );
+    }
+    
 }
 
 void UserManager::Assist(psUserCmdMessage& msg, Client* client)

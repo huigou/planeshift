@@ -321,8 +321,15 @@ void psSpell::Cast(gemActor *caster, float kFactor, Client *client) const
 
     if (client)
     {
-        if (offensive && !client->IsAllowedToAttack(target,true))  // this function sends sys error msg
-            return;
+        if (offensive)
+        {
+            csString msg;
+            if (!caster->IsAllowedToAttack(target,msg))  // this function sends sys error msg
+            {
+                psserver->SendSystemError(client->GetClientNum(), msg );
+                return;
+            }
+        }
     }
     else
     {
@@ -367,24 +374,25 @@ void psSpell::Cast(gemActor *caster, float kFactor, Client *client) const
         }
     }
 
-    if (client)
+    // Check for the right kind of target
+    const int targetType = caster->GetTargetType(target);
+    if (!(targetTypes & targetType))
     {
-        // Check for the right kind of target
-        const int targetType = client->GetTargetType(target);
-        if (!(targetTypes & targetType))
+        csString allowedTypes;
+        Client::GetTargetTypeName(targetTypes, allowedTypes);
+        if (client)
         {
-            csString allowedTypes;
-            client->GetTargetTypeName(targetTypes, allowedTypes);
             psserver->SendSystemInfo(client->GetClientNum(), "You cannot cast %s on %s. You can only cast it on %s.", 
                                      name.GetData(), target ? target->GetName() : "that", allowedTypes.GetData());
-            return;
         }
+        else
+        {
+            Debug5(LOG_SUPERCLIENT,caster->GetEID().Unbox(),"%s  cannot cast %s on %s. You can only cast it on %s.", 
+                   caster->GetName(),name.GetData(), target ? target->GetName() : "that", allowedTypes.GetData());
+        }
+        
+        return;
     }
-    else
-    {
-        // Allow superclient to target everyone. (TODO: Fix this?)
-    }
-    
 
     if (max_range > 0 && caster->RangeTo(target) > max_range)
     {
@@ -428,18 +436,26 @@ void psSpell::Cast(gemActor *caster, float kFactor, Client *client) const
     evt->QueueEvent();
 }
 
-void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFactor, float power) const
+void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFactor, float power, Client* client) const
 {
     const float chanceOfSuccess = ChanceOfCastSuccess(caster->GetCharacterData(), kFactor);
     float roll = psserver->GetRandom() * 100.f;
-    Notify5(LOG_SPELLS, "%s casting %s with a chance of success = %.2f and roll = %.2f\n", caster->GetName(), name.GetData(), chanceOfSuccess, roll);
+    Notify5(LOG_SPELLS, "%s casting %s with a chance of success = %.2f and roll = %.2f", caster->GetName(), name.GetData(), chanceOfSuccess, roll);
 
     psSpellCost cost = ManaCost(caster->GetCharacterData(), kFactor);
 
     if (chanceOfSuccess < 100.f && roll > chanceOfSuccess)
     {
         // Spell casting failed
-        psserver->SendSystemInfo(caster->GetClientID(), "You failed to cast the spell %s." , name.GetData());
+        if (client)
+        {
+            psserver->SendSystemInfo(caster->GetClientID(), "You failed to cast the spell %s." , name.GetData());
+        }
+        else
+        {
+            Debug3(LOG_SUPERCLIENT,caster->GetEID().Unbox(),"%s faild to cast the spell %s.", caster->GetName(), name.GetData());
+        }
+        
 
         ProgressionScript* failure = psserver->GetProgressionManager()->FindScript("SpellFailure");
         MathEnvironment env;
@@ -472,12 +488,23 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
     {
         if (target && caster->RangeTo(target) <= range)
         {
-            if (AffectTarget(caster, target, target, power))
+            if (AffectTarget(caster, target, target, power, client))
+            {
                 affectedCount = 1;
+            }
         }
         else
         {
-            psserver->SendSystemInfo(caster->GetClientID(), "%s is too far away for your spell to reach.", target ? target->GetName() : "Your target");
+            if (client)
+            {
+                psserver->SendSystemInfo(caster->GetClientID(), "%s is too far away for your spell to reach.", target ? target->GetName() : "Your target");
+            }
+            else
+            {
+                Debug3(LOG_SUPERCLIENT,caster->GetEID().Unbox(), "%s is too far away for %s to reach.",target ? target->GetName() : "Your target",caster->GetName());
+            }
+            
+
         }
     }
     else // AOE (Area of Effect)
@@ -504,7 +531,7 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
         csArray<gemObject*> nearby = psserver->entitymanager->GetGEM()->FindNearbyEntities(sector, targetPos, radius);
         for (size_t i = 0; i < nearby.GetSize(); i++)
         {
-            if (!(targetTypes & caster->GetClient()->GetTargetType(nearby[i])))
+            if (!(targetTypes & caster->GetTargetType(nearby[i])))
                 continue;
 
             if (angle < PI)
@@ -532,17 +559,32 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
                     continue;
             }
 
-            if (AffectTarget(caster, target, nearby[i], power))
+            if (AffectTarget(caster, target, nearby[i], power, client))
                 affectedCount++;
         }
 
         if (affectedCount > 0)
         {
-            psserver->SendSystemInfo(caster->GetClientID(), "%s affected %d %s.", name.GetData(), affectedCount, (affectedCount == 1) ? "target" : "targets");
+            if (client)
+            {
+                psserver->SendSystemInfo(caster->GetClientID(), "%s affected %d %s.", name.GetData(), affectedCount, (affectedCount == 1) ? "target" : "targets");
+            }
+            else
+            {
+                Debug4(LOG_SUPERCLIENT,caster->GetEID().Unbox(),"%s affected %d %s.",name.GetData(), affectedCount, (affectedCount == 1) ? "target" : "targets");
+            }
+            
         }
         else
         {
-            psserver->SendSystemInfo(caster->GetClientID(), "%s has no effect.", name.GetData());
+            if (client)
+            {
+                psserver->SendSystemInfo(caster->GetClientID(), "%s has no effect.", name.GetData());
+            }
+            else
+            {
+                 Debug2(LOG_SUPERCLIENT,caster->GetEID().Unbox(),"%s has no effect.", name.GetData());
+            }
         }
     }
 
@@ -571,19 +613,33 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
     }
 }
 
-bool psSpell::AffectTarget(gemActor* caster, gemObject* origTarget, gemObject* target, float power) const
+bool psSpell::AffectTarget(gemActor* caster, gemObject* origTarget, gemObject* target, float power, Client* client) const
 {
     if (offensive)
     {
-        if (!caster->GetClient()->IsAllowedToAttack(target,true))
+        csString msg;
+        if (!caster->IsAllowedToAttack(target,msg))
+        {
+            if (client)
+            {
+                psserver->SendSystemError(client->GetClientNum(), msg );
+            }
+            else
+            {
+                Debug2(LOG_SUPERCLIENT,caster->GetEID().Unbox(), "%s", msg.GetDataSafe()); 
+            }
+            
             return false;
-
+        }
+        
         gemActor *attackee = dynamic_cast<gemActor*>(target);
         if (attackee)
         {
             gemNPC *targetNPC = dynamic_cast<gemNPC*>(target);
             if (targetNPC)
+            {
                 psserver->GetNPCManager()->QueueAttackPerception(caster, targetNPC);
+            }
         }
     }
 
@@ -740,7 +796,7 @@ void psSpellCastGameEvent::Trigger()
     // Make sure caster is alive...there might be UDP jitter problems (PS#2728).
     if (caster->IsAlive())
     {
-        spell->Affect(caster, target, max_range, kFactor, powerLevel);
+        spell->Affect(caster, target, max_range, kFactor, powerLevel, client);
     }
 
     // Spell casting complete, we are now in PEACE mode again.

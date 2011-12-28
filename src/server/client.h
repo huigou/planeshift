@@ -216,18 +216,6 @@ public:
     void SetReady(bool rdy) { ready = rdy; }
     bool IsReady() { return ready; }
 
-    /** Checks if out client can attack given target
-     *  If not, it sends him some informative text message
-     */
-    bool IsAllowedToAttack(gemObject* target, bool inform = true);
-
-    /** Returns the type of the target, from TARGET_TYPES.
-     *
-     * @param target The target to check.
-     * @return The type of the target.
-     */
-    int GetTargetType(gemObject* target);
-
     /** Builds a list of target type names associated with a target type
      *  bitmap (formed by OR-ing TARGET_TYPES).
      *
@@ -235,7 +223,7 @@ public:
      * @param targetDesc [CHANGES] Gets filled in with a comma-separated list
      *                   of target names.
      */
-    void GetTargetTypeName(int32_t targetType, csString& targetDesc) const;
+    static void GetTargetTypeName(int32_t targetType, csString& targetDesc);
 
     //    void SetExchange(csRef<ExchangeManager> exch);
 

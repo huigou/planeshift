@@ -105,7 +105,7 @@ class psSpell : public iScriptableVar
      *  @param targetID [CHANGES] Filled in with the ID of the target.
      */
     void Cast(gemActor *caster, float kFactor, Client *client) const;
-    void Affect(gemActor *caster, gemObject *target, float range, float kFactor, float power) const;
+    void Affect(gemActor *caster, gemObject *target, float range, float kFactor, float power, Client* client) const;
 
     int GetRealm() { return realm; }
     psWay* GetWay() { return way; }
@@ -118,7 +118,7 @@ class psSpell : public iScriptableVar
     const char* ToString() { return name.GetDataSafe(); }
 
 protected:
-    bool AffectTarget(gemActor* caster, gemObject* origTarget, gemObject* target, float power) const;
+    bool AffectTarget(gemActor* caster, gemObject* origTarget, gemObject* target, float power, Client* client) const;
 
     int id;
     csString name;

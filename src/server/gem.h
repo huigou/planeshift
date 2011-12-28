@@ -371,10 +371,12 @@ public:
 
     virtual void SendBehaviorMessage(const csString & str, gemObject *obj);
     virtual csString GetDefaultBehavior(const csString & dfltBehaviors);
+
     /** Dump debug information. Used in the com_print function
      */
     virtual void Dump();
-
+    
+    
     /** @name Networking functions
      */
     //@{
@@ -949,6 +951,16 @@ public:
 
     bool IsAllowedToMove() { return isAllowedToMove; }  ///< Covers sitting, death, and out-of-stamina
     void SetAllowedToMove(bool newvalue);
+
+    /** Get the target type in regards to attacks
+     */
+    int GetTargetType(gemObject* target);
+        
+    /** Checks if our actor can attack given target.
+     *  If not, the msg is filled out.
+     */
+    bool IsAllowedToAttack(gemObject* target, csString& msg);
+
 
     /**
      * @brief Make the character sit

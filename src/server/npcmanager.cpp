@@ -2048,7 +2048,8 @@ void NPCManager::HandlePetCommand(MsgEntry * me,Client *client)
                      * when in pvp. We allow gm to do anything they want (can attack everything including
                      * their own pet just like how it happens with players
                      */
-                    if( targetActor == NULL || !owner->IsAllowedToAttack(trg, false) ||
+                    csString msg; // Not used
+                    if( targetActor == NULL || !owner->GetActor()->IsAllowedToAttack(trg, msg) ||
                       ( trg == pet && !owner->IsGM()) )
 
                     {

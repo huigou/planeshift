@@ -889,9 +889,11 @@ void CombatManager::HandleCombatEvent(psCombatGameEvent *event)
            return;
         }
 
+        csString msg;
         // If the target has become impervious, abort and give up attacking
-        if (!attacker_client->IsAllowedToAttack(gemTarget))
+        if (!gemAttacker->IsAllowedToAttack(gemTarget,msg))
         {
+           psserver->SendSystemError(attacker_client->GetClientNum(), msg );
            StopAttack(attacker_data->GetActor());
            return;
         }
