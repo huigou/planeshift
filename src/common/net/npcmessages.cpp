@@ -318,6 +318,26 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
                 msgtext.AppendFmt("Attacker: %u Target: %u Stance: %s", attacker_id.Unbox(), target_id.Unbox(),stance.GetDataSafe());
                 break;
             }
+            case psNPCCommandsMessage::CMD_CAST:
+            {
+                msgtext.Append("CMD_CAST: ");
+
+                // Extract the data
+                EID attackerEID = EID(msg->GetUInt32());
+                EID targetEID = EID(msg->GetUInt32());
+                csString spell = msg->GetStr();
+                float kFactor = msg->GetFloat();
+
+                // Make sure we haven't run past the end of the buffer
+                if (msg->overrun)
+                {
+                    Debug2(LOG_SUPERCLIENT,msg->clientnum,"Received incomplete CMD_CAST from NPC client %u.\n",msg->clientnum);
+                    break;
+                }
+
+                msgtext.AppendFmt("Attacker: %s Target: %s Spell: %s kFactor: %.1f", ShowID(attackerEID), ShowID(targetEID),spell.GetDataSafe(),kFactor);
+                break;
+            }
             case psNPCCommandsMessage::CMD_SIT:
             {
                 msgtext.Append("CMD_SIT: ");

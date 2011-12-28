@@ -94,7 +94,7 @@ class psSpell : public iScriptableVar
      *  2) The player has the required glyphs (or "cast all spells" privs)
      *  3) The player has the required mana (or infinitemana set).
      */
-    bool CanCast(Client *client, float kFactor, csString & reason);
+    bool CanCast(gemActor* caster, float kFactor, csString & reason, bool canCastAllSpells);
 
     /** Creates a new instance of this spell.
      *  @param mgr The main PS Spell Manager.
@@ -104,7 +104,7 @@ class psSpell : public iScriptableVar
      *  @param anchorID [CHANGES] The entity that the spell should be attached to ( in case of movement )
      *  @param targetID [CHANGES] Filled in with the ID of the target.
      */
-    void Cast(Client *client, float kFactor) const;
+    void Cast(gemActor *caster, float kFactor, Client *client) const;
     void Affect(gemActor *caster, gemObject *target, float range, float kFactor, float power) const;
 
     int GetRealm() { return realm; }
@@ -168,22 +168,24 @@ protected:
 class psSpellCastGameEvent : public psGameEvent, public iDeleteObjectCallback
 {
 public:
-    Client        *caster; ///< Entity who casting this spell
-    gemObject     *target; ///< Entity who is target of this spell
-    const psSpell *spell;  ///< The spell that is casted
+    gemActor*      caster; ///< Entity who casting this spell
+    gemObject*     target; ///< Entity who is target of this spell
+    Client*        client; ///< The client that casted the spell, NULL if superclient
+    const psSpell* spell;  ///< The spell that is casted
 
     float max_range;
     float kFactor;
     float powerLevel;
     csTicks duration;
 
-    psSpellCastGameEvent(const psSpell *spell,
-                         Client *caster,
-                         gemObject *target,
+    psSpellCastGameEvent(const psSpell* spell,
+                         gemActor* caster,
+                         gemObject* target,
                          csTicks castingDuration,
                          float max_range,
                          float kFactor,
-                         float power);
+                         float power,
+                         Client* client);
 
     ~psSpellCastGameEvent();
 

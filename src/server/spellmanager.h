@@ -86,11 +86,21 @@ protected:
     
     /** Case a particular spell.
       * 
+      * @param me message entry for the client spell caster message.
+      * @param client the clien that cast the spell.
+      */
+    void Cast(MsgEntry *me, Client *client);
+
+public:
+    /** Case a particular spell.
+      * 
       * @param client The client that is casting the spell.
       * @param spellName The name of the spell to cast.
       * @param kFactor The power factor that the spell is cast with.
       */
-    void Cast(MsgEntry *me, Client *client);
+    void Cast(gemActor* caster, const csString& spellName, float kFactor, Client *client);
+
+protected:    
 
     void HandleCancelSpell(MsgEntry* notused, Client* client);
 

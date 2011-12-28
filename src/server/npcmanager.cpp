@@ -73,6 +73,7 @@
 #include "weathermanager.h"
 #include "adminmanager.h"
 #include "netmanager.h"
+#include "spellmanager.h"
 
 
 class psNPCManagerTick : public psGameEvent
@@ -809,7 +810,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                 // Make sure we haven't run past the end of the buffer
                 if (list.msg->overrun)
                 {
-                    Error2("Received incomplete CMD_ATTACK from NPC client %u.\n",me->clientnum);
+                    Error2("Received incomplete CMD_ASSESS from NPC client %u.\n",me->clientnum);
                     break;
                 }
 
@@ -1005,6 +1006,36 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                 {
                     Debug2(LOG_SUPERCLIENT, attacker_id.Unbox(), "No entity %s or not alive", ShowID(attacker_id));
                 }
+                break;
+            }
+            case psNPCCommandsMessage::CMD_CAST:
+            {
+                EID attackerEID = EID(list.msg->GetUInt32());
+                EID targetEID = EID(list.msg->GetUInt32());
+                csString spell = list.msg->GetStr();
+                float kFactor = list.msg->GetFloat();
+
+                Debug5(LOG_SUPERCLIENT, attackerEID.Unbox(), "-->Got cast %s with k %.1f from entity %s to %s\n", spell.GetDataSafe(), kFactor, ShowID(attackerEID), ShowID(targetEID));
+
+                // Make sure we haven't run past the end of the buffer
+                if (list.msg->overrun)
+                {
+                    Debug2(LOG_SUPERCLIENT, attackerEID.Unbox(), "Received incomplete CMD_CAST from NPC client %u.\n", me->clientnum);
+                    break;
+                }
+
+                gemNPC *attacker = dynamic_cast<gemNPC *> (gemSupervisor->FindObject(attackerEID));
+                if (!attacker || !attacker->IsAlive())
+                {
+                    Debug2(LOG_SUPERCLIENT, attackerEID.Unbox(), "No entity %s or not alive", ShowID(attackerEID));
+                    break;
+                }
+
+                gemObject *target   = (gemObject *)gemSupervisor->FindObject(targetEID);
+                attacker->SetTargetObject( target );
+
+                psserver->GetSpellManager()->Cast(attacker, spell, kFactor, NULL);
+
                 break;
             }
             case psNPCCommandsMessage::CMD_SIT:
