@@ -106,6 +106,8 @@ public:
     /** Dump tree to console */
     void DumpRecipeTree() { DumpRecipeTree(1); }
     void DumpRecipeTree(int index);
+    void DumpRecipeTreeRecipes() { DumpRecipeTreeRecipes(1); }
+    void DumpRecipeTreeRecipes(int index);
 };
 
 #endif

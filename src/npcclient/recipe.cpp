@@ -58,6 +58,41 @@ Recipe::Recipe()
     unique      = false;
 }
 
+csStringArray SplitFunctions(csString buffer)
+{
+    csStringArray result;
+    csStringArray lines;
+    lines.SplitString(buffer, "\n");
+    for(int i=0; i< lines.GetSize();i++)
+    {
+        csString line = lines.Get(i);
+        
+        if(line.IsEmpty())
+        {
+            continue; // Skip blank lines
+        }
+        if(line.GetAt(0) == '#')
+        {
+            continue; // Skip lines starting with a comment
+        }
+
+        csStringArray functions;
+        functions.SplitString(line, ";");
+        for (int j=0;j<functions.GetSize();j++)
+        {
+            csString function = functions.Get(j);
+            function.Trim();
+            if (function.IsEmpty())
+            {
+                continue; // Skip empty functions
+            }
+            result.Push(function);
+        }
+    }
+    return result;
+}
+
+
 bool Recipe::Load(iResultRow &row) 
 {
     csStringArray unparsedReq;
@@ -73,31 +108,21 @@ bool Recipe::Load(iResultRow &row)
     // Set unique
     if(isUnique == 1) unique = true;
 
-    // Fetch the data
-    algorithm.SplitString(row["algorithm"], ";");
-    for(int i=0;i<algorithm.GetSize();i++)
-    {
-        if(strlen(algorithm.Get(i)) == 0)
-        {
-            algorithm.DeleteIndex(i);
-        }
-    }
-    unparsedReq.SplitString(row["requirements"], ";");
-    // Assuming that requirements end with ; the last will be
-    // empty. Delete last empty index.
-    unparsedReq.DeleteIndex(unparsedReq.GetSize() - 1);
+    // Load algorithm
+    algorithm = SplitFunctions(row["algorithm"]);
+
+    // Load requirements
+    unparsedReq = SplitFunctions(row["requirements"]);
 
     // Parse Requirements
     for(int i=0;i<unparsedReq.GetSize();i++)
     {
-        if(unparsedReq.Get(i) == "" ||
-           unparsedReq.Get(i) == " ")
-            continue; // Shouldn't happen ... but hell ?!
+        Requirement newReq;
+        newReq.reqText = unparsedReq.Get(i);
         
         // Split into function & argument 1 & argument 2
         csStringArray explodedReq;
-        explodedReq.SplitString(unparsedReq.Get(i), "(,)");
-        Requirement newReq;
+        explodedReq.SplitString(newReq.reqText, "(,)");
         int index = 0;
         reqText = explodedReq.Get(index++);
 
@@ -181,27 +206,46 @@ bool Recipe::Load(iResultRow &row)
     return true;
 }
 
-void Recipe::Dump() {
+void Recipe::Dump()
+{
     CPrintf(CON_NOTIFY, "Dumping recipe %d.\n", id);
     CPrintf(CON_NOTIFY, "Name: %s \n", name.GetData());
-    DumpAlgorithm();
     DumpRequirements();
+    DumpAlgorithm();
     CPrintf(CON_NOTIFY, "Persistent: %d \n", persistence);
     CPrintf(CON_NOTIFY, "Unique: %d \n", unique);
 }
 
 void Recipe::DumpAlgorithm() 
 {
-    CPrintf(CON_NOTIFY, "Algorithm %d.\n", id);
-    for(int i=0;i<algorithm.GetSize();i++)
-        CPrintf(CON_NOTIFY, "%d) %s\n", (i+1), algorithm.Get(i));
+    CPrintf(CON_NOTIFY, "Algorithms:\n");
+    if (algorithm.GetSize())
+    {
+        for(int i=0;i<algorithm.GetSize();i++)
+        {
+            CPrintf(CON_NOTIFY, "%d) %s\n", (i+1), algorithm.Get(i));
+        }
+    }
+    else
+    {
+        CPrintf(CON_NOTIFY, "None.");
+    }
 }
 
 void Recipe::DumpRequirements() 
 {
-    CPrintf(CON_NOTIFY, "Requirement %d.\n", id);
-    for(int i=0;i<requirements.GetSize();i++)
-        CPrintf(CON_NOTIFY, "%d) %s\n", (i+1), requirements[i].name.GetData());
+    CPrintf(CON_NOTIFY, "Requirements:\n");
+    if (requirements.GetSize())
+    {
+        for(int i=0;i<requirements.GetSize();i++)
+        {
+            CPrintf(CON_NOTIFY, "%d) %s\n", (i+1), requirements[i].reqText.GetData());
+        }
+    }
+    else
+    {
+        CPrintf(CON_NOTIFY, "None.");
+    }
 }
 
 
