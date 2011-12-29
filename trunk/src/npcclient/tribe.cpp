@@ -1095,6 +1095,8 @@ void Tribe::DumpRecipesToConsole()
     CPrintf(CON_CMDOUTPUT, "+-------------------------------------------------+\n");
     tribalRecipe->DumpRecipeTree();
     CPrintf(CON_CMDOUTPUT, "+-------------------------------------------------+\n");
+    tribalRecipe->DumpRecipeTreeRecipes();
+
 }
 
 bool Tribe::LoadNPCMemoryBuffer(const char* name, csArray<NPC*> npcs)

@@ -213,3 +213,14 @@ void RecipeTreeNode::DumpRecipeTree(int index)
         children[i]->DumpRecipeTree(index);
     }
 }
+
+void RecipeTreeNode::DumpRecipeTreeRecipes(int index)
+{
+    recipe->Dump();
+    CPrintf(CON_NOTIFY, "\n");
+    for(int i=0;i<children.GetSize();i++)
+    {
+        index++;
+        children[i]->DumpRecipeTreeRecipes(index);
+    }
+}

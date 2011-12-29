@@ -72,6 +72,7 @@ public:
         csString        quantity;      ///< Number needed.
         csString        recipe;        ///< If requirement isn't meet use this recipe to get it.
         csString        buffer;        ///< Use this buffer to store name for recipe to use later.
+        csString        reqText;       ///< The unparsed requirment function for this.
     };
 
     /** Construct a Recipe object */
