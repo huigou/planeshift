@@ -61,6 +61,7 @@ Tribe::Tribe(EventManager *eventmngr)
     lastGrowth   = csGetTicks();
     lastDeath    = csGetTicks();
     lastResource = csGetTicks();
+    lastAdvance  = csGetTicks();
     eventManager = eventmngr;
 }
 
@@ -351,6 +352,12 @@ int Tribe::CountResource(csString resource) const
 
 void Tribe::Advance(csTicks when, EventManager *eventmgr)
 {
+    int delta = when - lastAdvance;
+    if (delta < 0) // Handle wrappover of tick
+    {
+        delta = 250; // We just set it to the event timer.
+    }
+    lastAdvance = when;
 
     // Manage Wealth
     if ( when - lastGrowth > 1000)
@@ -392,7 +399,7 @@ void Tribe::Advance(csTicks when, EventManager *eventmgr)
 
     // And manage tribe assignments
     csString perc;
-    int      decreaseValue = 1; // Set it to change the scale on recipe wait times
+    int      decreaseValue = delta; // Set it to change the scale on recipe wait times
 
     // Manage cyclic recipes
     for(size_t i=0;i<cyclicRecipes.GetSize();i++)

@@ -397,10 +397,35 @@ void NPCType::FirePerception(NPC *npc, Perception *pcpt)
         }
     }
     
+    // Check all reactions
     for (size_t x=0; x<reactions.GetSize(); x++)
     {
         reactions[x]->React(npc,pcpt);
     }
+}
+
+csString NPCType::InfoReactions(NPC *npc)
+{
+    csString reply;
+    const char* delim = ", ";
+
+    for (size_t i=0; i<reactions.GetSize(); i++)
+    {
+        if (i == (reactions.GetSize()-1))
+        {
+            delim = ".";
+        }
+        
+        if (reactions[i]->GetType().IsEmpty())
+        {
+            reply.AppendFmt("%s%s",reactions[i]->GetEventType(npc).GetDataSafe(),delim);
+        }
+        else
+        {
+            reply.AppendFmt("%s[%s]%s",reactions[i]->GetEventType(npc).GetDataSafe(),reactions[i]->GetType().GetDataSafe(),delim);
+        }
+    }
+    return reply;
 }
 
 void NPCType::DumpReactionList(NPC *npc)
@@ -408,9 +433,6 @@ void NPCType::DumpReactionList(NPC *npc)
     CPrintf(CON_CMDOUTPUT, "%-25s %-25s %-5s %-10s %-20s %s\n","Reaction","Type","Range","Value","Last","Affects");
     for (size_t i=0; i<reactions.GetSize(); i++)
     {
-        
-
-
         CPrintf(CON_CMDOUTPUT, "%-25s %-25s %5.1f %-10s %-20s %s\n",
                 reactions[i]->GetEventType(NULL).GetDataSafe(),reactions[i]->GetType().GetDataSafe(),
                 reactions[i]->GetRange(),
@@ -486,6 +508,7 @@ const csString& NPCType::GetFallingPerception() const
 {
     return fallingPerception;
 }
+
 
 //---------------------------------------------------------------------------
 BehaviorSet::BehaviorSet(EventManager *eventmanager)
@@ -715,6 +738,7 @@ csString BehaviorSet::InfoBehaviors(NPC *npc)
     }
     return reply;
 }
+
 
 //---------------------------------------------------------------------------
 

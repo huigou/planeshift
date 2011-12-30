@@ -822,6 +822,23 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 npc->TriggerEvent(&pcpt);
                 break;
             }
+            case psNPCCommandsMessage::PCPT_PERCEPT:
+            {
+                EID npcEID          = EID(list.msg->GetUInt32());
+                csString perception = list.msg->GetStr();
+                csString type       = list.msg->GetStr();
+
+                NPC *npc = npcclient->FindNPC(npcEID);
+                if (npc)
+                {
+                    npc->Printf("%s got Perception: %s Type: %s ", ShowID(npcEID), perception.GetDataSafe(), type.GetDataSafe());
+
+
+                    Perception pcpt( perception, type );
+                    npc->TriggerEvent(&pcpt);
+                }
+                break;
+            }
             case psNPCCommandsMessage::PCPT_INVENTORY:
             {
                 EID owner_id = EID(msg->GetUInt32());

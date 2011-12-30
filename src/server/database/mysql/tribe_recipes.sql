@@ -23,7 +23,7 @@ CREATE TABLE `tribe_recipes`
 # the sources. 
 #
 
-INSERT INTO `tribe_recipes` VALUES (1, 'Do Nothing', '', 'wait(100);', 1,1);
+INSERT INTO `tribe_recipes` VALUES (1, 'Do Nothing', '', 'wait(10.0);', 1,1);
 
 INSERT INTO `tribe_recipes` VALUES (10, 'Miner Explore', 'tribesman(Miner,1);', 'select(Miner,1);explore();', 0, 0);
 INSERT INTO `tribe_recipes` VALUES (11, 'Miner Test Mine', 'tribesman(Miner,1);', 'select(Miner,1);setBuffer(selection,Resource,$TBUFFER[Resource]);percept(selection,tribe:test_mine);', 0, 0);
@@ -58,14 +58,14 @@ INSERT INTO `tribe_recipes` VALUES (71, 'Hunter Build Tent', 'tribesman(Hunter,1
 
 
 # Targets ~ Missions
-INSERT INTO `tribe_recipes` VALUES (90, 'Miner Evolve Tribe', 'tribesman(number,16,Miner Mate);resource(Coal,150,Miner Dig Resource,Resource);resource(Gold Ore,200,Miner Dig Resource,Resource);item(Campfire,2,Miner Build Campfire);item(Small Tent,8,Miner Build Tent);', 'wait(1000);', 0, 0);
+INSERT INTO `tribe_recipes` VALUES (90, 'Miner Evolve Tribe', 'tribesman(number,16,Miner Mate);resource(Coal,150,Miner Dig Resource,Resource);resource(Gold Ore,200,Miner Dig Resource,Resource);item(Campfire,2,Miner Build Campfire);item(Small Tent,8,Miner Build Tent);', 'wait(10.0);', 0, 0);
 INSERT INTO `tribe_recipes` VALUES (91, 'Hunter Evolve Tribe',
 'tribesman(number,4,Hunter Mate);
 resource(Skin,150,Hunter Hunt Resource,Resource);
 resource(Meat,200,Hunter Hunt Resource,Resource);
 item(Campfire,1,Hunter Build Campfire);
 item(Small Tent,2,Hunter Build Tent);',
-'wait(1000);', 0, 0);
+'wait(10.0);', 0, 0);
 
 # Tribal Recipes
 
@@ -76,8 +76,8 @@ brain(civilised);aggressivity(peaceful);growth(conservatory);unity(organised);
 
 # Load recipes
 loadRecipe(Do Nothing);
-loadRecipe(Miner Evolve Tribe,distributed);
 loadRecipe(Miner Tribe Spots);
+loadRecipe(Miner Evolve Tribe,distributed);
 ', 1, 1);
 
 INSERT INTO `tribe_recipes` VALUES (101, 'Hunting Tribe',
@@ -87,6 +87,6 @@ brain(civilised);aggressivity(neutral);growth(conservatory);unity(organised);
 
 # Load Recipes
 loadRecipe(Do Nothing);
-loadRecipe(Hunter Evolve Tribe,distributed);
 loadRecipe(Hunter Tribe Spots);
+loadRecipe(Hunter Evolve Tribe,distributed);
 ', 1, 1);

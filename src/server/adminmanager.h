@@ -893,6 +893,48 @@ public:
     virtual csString GetHelpMessage();
 };
 
+/** @brief Class for percepting a npc.
+ */
+class AdminCmdDataPercept : public AdminCmdDataTarget
+{
+public:
+    csString perception; ///< the perception to fire.
+    csString type;       ///< the type data for the perception.
+
+    /** @brief Creates obj for specified command that kills/reloads a npc.
+     */
+    AdminCmdDataPercept()
+    : AdminCmdDataTarget("/percept", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET )
+    {};
+    
+    /** @brief Parses the given message for percepting a npc.
+     * @param msgManager message manager that handles this command
+     * @param me The incoming message from the GM
+     * @param msg psAdminCmdMessage containing the message
+     * @param client client of the network communication
+     * @param words command message to parse
+     */
+    AdminCmdDataPercept(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+
+    virtual ~AdminCmdDataPercept()
+    {};
+
+     /** @brief Creates a command data object of the current class containing the parsed data.
+     * @param msgManager message manager that handles this command
+     * @param me The incoming message from the GM
+     * @param msg psAdminCmdMessage containing the message
+     * @param client client of the network communication
+     * @param words command message to parse
+     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+     */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+
+    /** @brief Returns a helpmessage that fits to the parser of the class.
+     * @return csString: a help message to send back to the client
+     */
+    virtual csString GetHelpMessage();
+};
+
 /** @brief Class for changing npc types.
  */
 class AdminCmdDataChangeNPCType : public AdminCmdDataTarget
@@ -3124,6 +3166,14 @@ protected:
      */
     void KillNPC(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
 
+    /** @brief Percept a NPC
+     *  @param me The incoming message from the GM
+     *  @param msg The cracked command message.
+     *  @param data A pointer to the command parser object with target datat
+     *  @param client The GM client the command came from.
+     */
+    void Percept(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    
     /** @brief Change the npctype (brain) of the npc.
      *  @param me The incoming message from the GM
      *  @param msg The cracked command message.

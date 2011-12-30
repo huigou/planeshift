@@ -228,7 +228,7 @@ void Recipe::DumpAlgorithm()
     }
     else
     {
-        CPrintf(CON_NOTIFY, "None.");
+        CPrintf(CON_NOTIFY, "None.\n");
     }
 }
 
@@ -244,7 +244,7 @@ void Recipe::DumpRequirements()
     }
     else
     {
-        CPrintf(CON_NOTIFY, "None.");
+        CPrintf(CON_NOTIFY, "None.\n");
     }
 }
 
@@ -398,7 +398,18 @@ bool RecipeManager::ParseFunction(csString function, Tribe* tribe, csArray<NPC*>
     // On each of the following conditions we check function number and arguments 
     // and then apply the function effect
 
-    if(functionBody == "alterResource")
+    if(functionBody == "aggressivity")
+    {
+        if(argSize != 1)
+        {
+            DumpError(recipe->GetName(), functionBody.GetData(), 1, argSize);
+            return false;
+        }
+        TribeData* data = GetTribeData(tribe);
+        data->aggressivity = functionArguments.Get(0);
+        return true;
+    }
+    else if(functionBody == "alterResource")
     {
         if(argSize != 2)
         {
@@ -406,6 +417,50 @@ bool RecipeManager::ParseFunction(csString function, Tribe* tribe, csArray<NPC*>
             return false;
         }
         tribe->AddResource(functionArguments.Get(0), atoi(functionArguments.Get(1)));
+        return true;
+    }
+    else if(functionBody == "brain")
+    {
+        if(argSize != 1)
+        {
+            DumpError(recipe->GetName(), functionBody.GetData(), 1, argSize);
+            return false;
+        }
+        TribeData* data = GetTribeData(tribe);
+        data->brain = functionArguments.Get(0);
+        return true;
+    }
+    else if(functionBody == "growth")
+    {
+        if(argSize != 1)
+        {
+            DumpError(recipe->GetName(), functionBody.GetData(), 1, argSize);
+            return false;
+        }
+        TribeData* data = GetTribeData(tribe);
+        data->growth = functionArguments.Get(0);
+        return true;
+    }
+    else if(functionBody == "unity")
+    {
+        if(argSize != 1)
+        {
+            DumpError(recipe->GetName(), functionBody.GetData(), 1, argSize);
+            return false;
+        }
+        TribeData* data = GetTribeData(tribe);
+        data->unity = functionArguments.Get(0);
+        return true;
+    }
+    else if(functionBody == "sleepPeriode")
+    {
+        if(argSize != 1)
+        {
+            DumpError(recipe->GetName(), functionBody.GetData(), 1, argSize);
+            return false;
+        }
+        TribeData* data = GetTribeData(tribe);
+        data->sleepPeriod = functionArguments.Get(0);
         return true;
     }
     else if(functionBody == "loadLocation")
@@ -653,7 +708,9 @@ bool RecipeManager::ParseFunction(csString function, Tribe* tribe, csArray<NPC*>
             DumpError(recipe->GetName(), functionBody.GetData(), 1, argSize);
             return false;
         }
-        tribe->ModifyWait(recipe, atoi(functionArguments.Get(0)));
+        // Wait a number of seconds. Convert to ticks
+        float time = atof(functionArguments.Get(0));
+        tribe->ModifyWait(recipe, (int)(time*1000.0));
 
         // We return false to stop the execution
         return false;

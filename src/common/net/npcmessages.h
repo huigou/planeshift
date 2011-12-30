@@ -233,6 +233,7 @@ public:
         PCPT_NPCCMD,
         PCPT_OWNER_ACTION,
         PCPT_OWNER_CMD,
+        PCPT_PERCEPT,
         PCPT_SHORTRANGEPLAYER,
         PCPT_SPAWNED,
         PCPT_SPELL,

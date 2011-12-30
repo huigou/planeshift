@@ -148,17 +148,21 @@ RecipeTreeNode* RecipeTreeNode::GetNextRecipe()
 
     while(!queue.IsEmpty())
     {
+        // Investigate next children
+        node = queue.Pop();
+
         // Select best recipe
         if(node->IsLeaf())
         {
             if(node->wait < bestNode->wait)
+            {
                 bestNode = node;
+            }
             else if(node->wait == bestNode->wait && node->priority > bestNode->priority)
+            {
                 bestNode = node;
+            }
         }
-
-        // Investigate next children
-        node = queue.Pop();
 
         for(int i=0;i<node->children.GetSize();i++)
         {
@@ -171,9 +175,11 @@ RecipeTreeNode* RecipeTreeNode::GetNextRecipe()
 
 void RecipeTreeNode::UpdateWaitTimes(int delta)
 {
-    if(wait > 0)
+    // Substract the delta from the wait
+    wait -= delta;
+    if (wait < 0)
     {
-        wait = ( (wait - delta > 0) ? (wait-delta) : 0);
+        wait = 0;
     }
 
     for(int i=0;i<children.GetSize();i++)
@@ -186,13 +192,20 @@ bool RecipeTreeNode::ModifyWait(Recipe* theRecipe, int delta)
 {
     if(recipe == theRecipe)
     {
-        wait = ( (wait - delta > 0) ? (wait-delta) : 0);
+        // Add the delta to the waiting time.
+        wait += delta;
+        if (wait < 0)
+        {
+            wait = 0;
+        }
         return true;
     }
     for(int i=0;i<children.GetSize();i++)
     {
         if(children[i]->ModifyWait(theRecipe,delta))
+        {
             return true;
+        }
     }
     return false;
 }
@@ -216,6 +229,8 @@ void RecipeTreeNode::DumpRecipeTree(int index)
 
 void RecipeTreeNode::DumpRecipeTreeRecipes(int index)
 {
+    CPrintf(CON_NOTIFY,"TreeNode at %d\n",index);
+    CPrintf(CON_NOTIFY,"RequirementParseType: %s\n", RequirementParseTypeString[requirementParseType]);
     recipe->Dump();
     CPrintf(CON_NOTIFY, "\n");
     for(int i=0;i<children.GetSize();i++)

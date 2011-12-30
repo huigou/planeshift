@@ -1602,6 +1602,13 @@ Stop the current path. If there are a waypoint nearby the waypoint is used to en
         </Contents>
       </topic>
     </branch>
+    <topic name="/percept">
+      <Contents>
+        <content type="text">/percept [target|pid:&lt;PID&gt;|&lt;npc name&gt;|eid:&lt;EID&gt;] [perception] [type]
+
+Send a perception to the selected NPC. Use /info to gain information about available reactions.</content>
+      </Contents>
+    </topic>
     <topic name="/pickup">
       <Contents>
         <content type="text">/pickup [eid/area]

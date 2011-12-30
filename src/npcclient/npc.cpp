@@ -198,6 +198,7 @@ csString NPC::Info()
     reply.AppendFmt("Fall counter: %d ", GetFallCounter());
     reply.AppendFmt("Brain: %s ",GetBrain()->GetName());
     reply.AppendFmt("Behaviors: %s",GetBrain()->InfoBehaviors(this).GetDataSafe());
+    reply.AppendFmt("Reactions: %s",GetBrain()->InfoReactions(this).GetDataSafe());
 
     return reply;
 }
