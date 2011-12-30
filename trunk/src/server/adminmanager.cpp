@@ -1302,6 +1302,51 @@ csString AdminCmdDataKillNPC::GetHelpMessage()
     return "Syntax: \"" + command + " " + GetHelpMessagePartForTarget() + " [reload]\"";
 }
 
+AdminCmdDataPercept::AdminCmdDataPercept(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client *client, WordArray &words)
+: AdminCmdDataTarget("/percept", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET )
+{
+    size_t index = 1;
+    bool found;
+
+    // when help is requested, return immediate
+    if (IsHelp(words[index]))
+        return;
+
+    // try first word as a target 
+    if ((found = ParseTarget(msgManager, me, msg, client, words[index])))
+    {
+        index++;
+    }
+
+    // if first word a target or client has selected a valid target
+    if (found || IsTargetType(ADMINCMD_TARGET_CLIENTTARGET))
+    {
+        perception = words[index++];
+        if (perception.IsEmpty())
+        {
+            ParseError(me, "Missing perception");
+        }
+        
+        type = words[index++];
+
+        if (words.GetCount() > index) 
+        {
+            ParseError(me, "Too many parameters");
+        }
+    }
+    else
+    {
+        ParseError(me, "No target specified");
+    }
+}
+
+ADMINCMDFACTORY_IMPLEMENT_MSG_FACTORY_CREATE(AdminCmdDataPercept)
+
+csString AdminCmdDataPercept::GetHelpMessage()
+{
+    return "Syntax: \"" + command + " " + GetHelpMessagePartForTarget() + " [percept] [type]\"";
+}
+
 AdminCmdDataChangeNPCType::AdminCmdDataChangeNPCType(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client *client, WordArray &words)
 : AdminCmdDataTarget("/changenpctype", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET), npcType("")
 {
@@ -3902,6 +3947,7 @@ AdminCmdDataFactory::AdminCmdDataFactory()
     RegisterMsgFactoryFunction(new AdminCmdDataUpdateRespawn());
     RegisterMsgFactoryFunction(new AdminCmdDataBan());
     RegisterMsgFactoryFunction(new AdminCmdDataKillNPC());
+    RegisterMsgFactoryFunction(new AdminCmdDataPercept());
     RegisterMsgFactoryFunction(new AdminCmdDataChangeNPCType());
     RegisterMsgFactoryFunction(new AdminCmdDataSetStackable());
     RegisterMsgFactoryFunction(new AdminCmdDataLoadQuest());
@@ -4116,6 +4162,10 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, Client *client)
     else if (data->command == "/killnpc")
     {
         KillNPC(me, msg, data, client);
+    }
+    else if (data->command == "/percept")
+    {
+        Percept(me, msg, data, client);
     }
     else if (data->command == "/changenpctype")
     {
@@ -4754,7 +4804,7 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData* cm
 
             if (client->GetSecurityLevel() >= GM_LEVEL_0)
             {
-                // Queue info request percepton (Perception as command to superclient)
+                // Queue info request perception (Perception as command to superclient)
                 psserver->GetNPCManager()->QueueInfoRequestPerception(npc, client, "");
             }
             return; // Done
@@ -7743,6 +7793,24 @@ void AdminManager::KillNPC (MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData* 
         }
     }
     psserver->SendSystemError(me->clientnum, "No NPC found to kill.");
+}
+
+void AdminManager::Percept(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client *client )
+{
+    AdminCmdDataPercept* data = dynamic_cast<AdminCmdDataPercept*>(cmddata);
+
+    gemNPC *target = dynamic_cast<gemNPC*>(data->targetObject);
+    if (target && target->GetClientID() == 0)
+    {
+
+        psserver->SendSystemResult(me->clientnum, "NPC %s(%s) has been percepted '%s' type '%s'.", target->GetName(),ShowID(target->GetEID()),
+                                   data->perception.GetDataSafe(),data->type.GetDataSafe());
+
+        psserver->GetNPCManager()->QueuePerceptPerception(target,data->perception,data->type);
+        return;
+    }
+
+    psserver->SendSystemError(me->clientnum, "No NPC found to percept.");
 }
 
 void AdminManager::ChangeNPCType(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client *client )

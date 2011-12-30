@@ -774,6 +774,17 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
                 msgtext.AppendFmt("Action: %u OwnerID: %u PetID: %u ", action, owner_id.Unbox(), pet_id.Unbox());
                 break;
             }
+            case psNPCCommandsMessage::PCPT_PERCEPT:
+            {
+                msgtext.Append("PCPT_PERCEPT: ");
+                EID npcEID          = EID(msg->GetUInt32());
+                csString perception = msg->GetStr();
+                csString type       = msg->GetStr();
+
+                msgtext.AppendFmt("NPC: %s Perception: %s Type: %s ",
+                                  ShowID(npcEID),perception.GetDataSafe(),type.GetDataSafe());
+                break;
+            }
             case psNPCCommandsMessage::PCPT_INVENTORY:
             {
                 msgtext.Append("PCPT_INVENTORY: ");

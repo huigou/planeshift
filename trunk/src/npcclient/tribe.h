@@ -593,6 +593,7 @@ protected:
     csList<Memory*>           memories;
     
     csTicks                   lastGrowth;
+    csTicks                   lastAdvance;
 
 
     float                     deathRate;    ///< The average time in ticks between deaths

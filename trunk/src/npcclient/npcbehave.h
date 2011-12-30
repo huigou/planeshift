@@ -160,6 +160,7 @@ public:
      */
     csString InfoBehaviors(NPC *npc);
 
+
 };
 
 
@@ -220,6 +221,12 @@ public:
 
     void DumpBehaviorList(NPC *npc) { behaviors.DumpBehaviorList(npc); }
     csString InfoBehaviors(NPC *npc) { return behaviors.InfoBehaviors(npc); }
+    /** Info about the reaction list for debug.
+     *
+     * @param npc   The NPC that own this BehaviorSet.
+     */
+    csString InfoReactions(NPC *npc);
+
     void DumpReactionList(NPC *npc);
 
     Behavior *GetCurrentBehavior()
@@ -234,6 +241,7 @@ public:
     const csString& GetOutOfBoundsPerception() const;
     const csString& GetInBoundsPerception() const;
     const csString& GetFallingPerception() const;
+
     
 private:
     static psNPCClient* npcclient;

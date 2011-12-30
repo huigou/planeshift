@@ -197,7 +197,11 @@ INSERT INTO sc_npctypes VALUES("11","Move","","","","","","","",
 <behavior name="MoveFailed" complection_decay="-1" >
    <!-- Something went wrong. Now just make sure we get to the intended location. -->
    <copy_locate source="Move" destination="Active" />
+   <talk text="I failed to move, will teleport in 5 sec." target="false" />
+   <wait anim="idle" duration="5" />
    <teleport />
+   <talk text="I was teleported here, waiting 5 sec." target="false" />
+   <wait anim="idle" duration="5" />
 </behavior>
 
 <!-- Normal execution of this operation -->

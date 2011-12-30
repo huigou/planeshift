@@ -131,6 +131,9 @@ public:
     /// Let the superclient know that an attempt to attack failed 
     void QueueFailedToAttackPerception(gemNPC* attacker, gemObject* target);
 
+    /// Send a perception to the super client for the npc.
+    void QueuePerceptPerception(gemNPC* npc, csString perception, csString type);
+    
     /**
      * Requests the npcclient to change the brain of this npc (the type) to another one.
      * @param npc The npc which will be changed.

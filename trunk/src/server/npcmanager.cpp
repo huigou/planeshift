@@ -2601,6 +2601,18 @@ void NPCManager::QueueFailedToAttackPerception(gemNPC* attacker, gemObject* targ
     Debug2(LOG_NPC, attacker->GetEID().Unbox(), "Added Failed to Attack perception for %s.\n", ShowID(attacker->GetEID()) );    
 }
 
+void NPCManager::QueuePerceptPerception(gemNPC* npc, csString perception, csString type)
+{
+    CheckSendPerceptionQueue(sizeof(int8_t)+sizeof(uint32_t)+(perception.Length()+1)+(type.Length()+1));
+    outbound->msg->Add( (int8_t) psNPCCommandsMessage::PCPT_PERCEPT);
+    outbound->msg->Add(npc->GetEID().Unbox());
+    outbound->msg->Add(perception);
+    outbound->msg->Add(type);
+    cmd_count++;
+    Debug2(LOG_NPC, npc->GetEID().Unbox(), "Added Percept perception for %s.\n", ShowID(npc->GetEID()) );    
+}
+
+
 
 
 void NPCManager::ChangeNPCBrain(gemNPC* npc, Client* client, const char* brainName)
