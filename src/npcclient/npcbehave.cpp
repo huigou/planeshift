@@ -584,7 +584,7 @@ void BehaviorSet::Advance(csTicks delta,NPC *npc)
                     }
                     max_need = b->NewNeed();
                 }
-                b->CommitAdvance();   // Update key to correct value
+                b->CommitAdvance();   // Set current need to new need.
             }
         }
 
@@ -630,6 +630,13 @@ void BehaviorSet::Advance(csTicks delta,NPC *npc)
             if (npc->IsDebugging(3))
             {
                 npc->DumpBehaviorList();
+            }
+
+            // If the interrupt has change the needs, try once
+            if (GetHighestNeed() > active->CurrentNeed())
+            {
+                npc->Printf(3,"Need to rechedule since a new need is higest");
+                continue; // Start the check once more.
             }
 
             // Run the new active behavior

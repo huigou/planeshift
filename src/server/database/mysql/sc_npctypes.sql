@@ -795,11 +795,12 @@ INSERT INTO sc_npctypes VALUES("117","MoveTest5","Answerer,Move","","$walk","","
 
 <behavior name="GoHome"  resume="yes" completion_decay="-1" >
    <locate obj="waypoint:name:$name_home"  static="no" destination="Move" />
-   <percept event="local_move" />
+   <percept event="global_move" />
 
    <!-- Simulate going inside by setting invisbile -->
-   <wait duration="10" anim="stand" />
+   <wait duration="5" anim="stand" />
    <invisible/>
+   <wait duration="5" anim="stand" />
    <rotate type="relative" value="180" ang_vel="45"/>
    <percept event="at_sleep" />
 </behavior>
