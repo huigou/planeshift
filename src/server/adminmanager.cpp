@@ -3647,7 +3647,7 @@ ADMINCMDFACTORY_IMPLEMENT_MSG_FACTORY_CREATE(AdminCmdDataReload)
 
 csString AdminCmdDataReload::GetHelpMessage()
 {
-    return "Syntax: \"" + command + " item <itemID>/script/serveroptions\"";
+    return "Syntax: \"" + command + " item <itemID>/script/serveroptions/mathscript/path\"";
 }
 
 AdminCmdDataListWarnings::AdminCmdDataListWarnings(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client *client, WordArray &words)
@@ -11451,7 +11451,7 @@ void AdminManager::HandleReload(psAdminCmdMessage& msg, AdminCmdData* cmddata, C
         pathNetwork = new psPathNetwork();
         pathNetwork->Load(EntityManager::GetSingleton().GetEngine(),db,
                   EntityManager::GetSingleton().GetWorld());
-        psserver->SendSystemOK(client->GetClientNum(), "Successfully reloaded math scripts.");
+        psserver->SendSystemOK(client->GetClientNum(), "Successfully reloaded path network.");
 
     }
 }
