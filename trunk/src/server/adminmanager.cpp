@@ -11447,10 +11447,12 @@ void AdminManager::HandleReload(psAdminCmdMessage& msg, AdminCmdData* cmddata, C
     }
     else if(data->subCmd == "path")
     {
-            delete pathNetwork;
-            pathNetwork = new psPathNetwork();
-            pathNetwork->Load(EntityManager::GetSingleton().GetEngine(),db,
-                      EntityManager::GetSingleton().GetWorld());
+        delete pathNetwork;
+        pathNetwork = new psPathNetwork();
+        pathNetwork->Load(EntityManager::GetSingleton().GetEngine(),db,
+                  EntityManager::GetSingleton().GetWorld());
+        psserver->SendSystemOK(client->GetClientNum(), "Successfully reloaded math scripts.");
+
     }
 }
 
