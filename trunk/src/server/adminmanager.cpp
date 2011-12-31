@@ -3657,7 +3657,7 @@ ADMINCMDFACTORY_IMPLEMENT_MSG_FACTORY_CREATE(AdminCmdDataReload)
 
 csString AdminCmdDataReload::GetHelpMessage()
 {
-    return "Syntax: \"" + command + " " + subCommandList.GetHelpMessage() "\"";
+    return "Syntax: \"" + command + " " + subCommandList.GetHelpMessage() + "\"";
 }
 
 AdminCmdDataListWarnings::AdminCmdDataListWarnings(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client *client, WordArray &words)
