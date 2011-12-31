@@ -558,7 +558,6 @@ void BehaviorSet::Advance(csTicks delta,NPC *npc)
     while (true)
     {
         float max_need = -999.0;
-        bool behaviours_changed = false;
 
         // Go through and update needs based on time
         for (size_t i=0; i<behaviors.GetSize(); i++)
@@ -582,7 +581,6 @@ void BehaviorSet::Advance(csTicks delta,NPC *npc)
                     {
                         behaviors[i] = behaviors[0];
                         behaviors[0] = b;  // now highest need is elem 0
-                        behaviours_changed = true;
                     }
                     max_need = b->NewNeed();
                 }
