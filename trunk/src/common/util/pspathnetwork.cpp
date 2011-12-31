@@ -481,7 +481,8 @@ csList<Waypoint*> psPathNetwork::FindWaypointRoute(Waypoint * start, Waypoint * 
     {
         wp = iter.Next();
 
-        if (routeFilter->Filter(wp))
+        // Filter the waypoints with exception of the start and end point.
+        if ((wp != start) && (wp != end) && routeFilter->Filter(wp))
         {
             wp->excluded = true;
             continue; // No need to think more about this waypoint
