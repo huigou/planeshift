@@ -56,6 +56,7 @@ INSERT INTO command_group_assignment VALUES( "/rndmsgtest", 30 );
 INSERT INTO command_group_assignment VALUES( "setattrib others", 30 );
 INSERT INTO command_group_assignment VALUES( "setkillexp others", 30 );
 INSERT INTO command_group_assignment VALUES( "/serverquit", 30 );
+INSERT INTO command_group_assignment VALUES( "/npcclientquit", 30 );
 INSERT INTO command_group_assignment VALUES( "requested death", 30 );
 INSERT INTO command_group_assignment VALUES( "/time", 30 );
 INSERT INTO command_group_assignment VALUES( "/version", 30 );
@@ -66,6 +67,7 @@ INSERT INTO command_group_assignment VALUES( "/crystal", 30 );
 INSERT INTO command_group_assignment VALUES( "/key", 30 );
 INSERT INTO command_group_assignment VALUES( "full modify", 30 );
 INSERT INTO command_group_assignment VALUES( "spawn all", 30 );
+INSERT INTO command_group_assignment VALUES( "/percept", 30 );
 
 # GM5 and above
 INSERT INTO command_group_assignment VALUES( "/disablequest", 30 );
