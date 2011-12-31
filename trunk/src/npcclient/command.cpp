@@ -437,7 +437,7 @@ const COMMAND commands[] = {
     { "list",         false, com_list,         "List entities ( list [char|ent|loc|npc|path|race|recipe|tribe|warpspace|waypoint] <filter> )" },
     { "print",        false, com_print,        "List all behaviors/hate of 1 NPC"},
     { "info",         false, com_info,         "Short print for 1 NPC"},
-    { "quit",         false, com_quit,         "Makes the npc client exit"},
+    { "quit",         true,  com_quit,         "Makes the npc client exit"},
     { "setlog",       false, com_setlog,       "Set server log" },
     { "setmaxfile",   false, com_setmaxfile,   "Set maximum message class for output file"},
     { "setmaxout",    false, com_setmaxout,    "Set maximum message class for standard output"},
