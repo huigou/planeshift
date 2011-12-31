@@ -66,6 +66,12 @@ public:
     /// Establish this path point in the db
     bool Create(iDataConnection * db, int pathID);
 
+    /// Remove this path point in the db
+    bool Remove(iDataConnection * db);
+
+    /// Update this path point in the db
+    bool UpdatePrevPointId(iDataConnection * db, int prevPointId);
+    
     /// Adjust the point position
     bool Adjust(iDataConnection * db, csVector3 & pos, csString sector);
     bool Adjust(csVector3 & pos, csString sector);
@@ -158,6 +164,18 @@ public:
     /// Add a new point to the path
     psPathPoint* AddPoint(const csVector3& pos, float radius, const char * sectorName, bool first = false);
 
+    /// Insert a new point to the path and update db
+    psPathPoint* InsertPoint(iDataConnection *db, int index, const csVector3& pos, const char * sectorName);
+
+    /// Remova a point from the path and update db
+    bool RemovePoint(iDataConnection *db, int index);
+
+    /// Remova a point from the path and update db
+    bool RemovePoint(iDataConnection *db, psPathPoint* point);
+
+    /// Update the indexes, after insert and removal of points.
+    bool UpdatePrevPointIndexes(iDataConnection* db);
+    
     /// Set the start of the path
     void SetStart(Waypoint * wp);
 
@@ -168,10 +186,10 @@ public:
     virtual void Precalculate(psWorld * world, iEngine *engine, bool forceUpdate = false);
 
     /// Calculate distance from point to path
-    virtual float Distance(psWorld * world, iEngine *engine,csVector3& pos, iSector * sector, int * index = NULL, float * fraction = NULL);
+    virtual float Distance(psWorld * world, iEngine *engine,const csVector3& pos, const iSector* sector, int * index = NULL, float * fraction = NULL) const;
 
     /// Calculate distance from point to path points
-    virtual float DistancePoint(psWorld * world, iEngine *engine,csVector3& pos, iSector * sector, int * index = NULL, bool include_ends = false);
+    virtual float DistancePoint(psWorld * world, iEngine *engine,const csVector3& pos, const iSector* sector, int * index = NULL, bool include_ends = false) const;
 
     /// Get the start point
     psPathPoint* GetStartPoint(Direction direction);

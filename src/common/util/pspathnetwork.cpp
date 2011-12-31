@@ -360,13 +360,26 @@ int psPathNetwork::FindWaypointGroup(const char * groupName)
 
 psPathPoint* psPathNetwork::FindPathPoint(int id)
 {
-    for (size_t p = 0; p < paths.GetSize()-1; p++)
+    for (size_t p = 0; p < paths.GetSize(); p++)
     {
         psPathPoint* point = paths[p]->FindPoint(id);
         if (point) return point;
     }
 
     return NULL;
+}
+
+psPathPoint* psPathNetwork::FindPoint(const psPath* path, const csVector3& pos, iSector* sector, float range, int& index)
+{
+    float dist,tmpFract;
+
+    dist = path->Distance(world,engine,pos,sector,&index,&tmpFract);
+    if (dist < 0.0)
+    {
+        return NULL;
+    }
+    
+    return path->points[index];
 }
 
 
@@ -377,7 +390,7 @@ psPath *psPathNetwork::FindNearestPath(csVector3& v,iSector *sector, float range
     int tmpIdx;
     float fract = 0.0, tmpFract;
  
-    for (size_t p = 0; p < paths.GetSize()-1; p++)
+    for (size_t p = 0; p < paths.GetSize(); p++)
     {
         float dist2 = paths[p]->Distance(world,engine,v,sector,&tmpIdx,&tmpFract);
                     
@@ -408,13 +421,28 @@ psPath *psPathNetwork::FindNearestPath(csVector3& v,iSector *sector, float range
 }
 
 
+psPathPoint* psPathNetwork::FindNearestPoint(const psPath* path, const csVector3& v, const iSector *sector, float range)
+{
+    int tmpIdx;
+    
+    float dist2 = path->DistancePoint(world,engine,v,sector,&tmpIdx);
+
+    if (dist2 >= 0.0)
+    {
+        return path->points[tmpIdx];
+    }
+    
+    return NULL;
+}
+
+
 psPath *psPathNetwork::FindNearestPoint(csVector3& v,iSector *sector, float range, float * found_range, int * index)
 {
     psPath * found = NULL;
     int idx = -1;
     int tmpIdx;
  
-    for (size_t p = 0; p < paths.GetSize()-1; p++)
+    for (size_t p = 0; p < paths.GetSize(); p++)
     {
         float dist2 = paths[p]->DistancePoint(world,engine,v,sector,&tmpIdx);
                     
@@ -599,7 +627,7 @@ void psPathNetwork::ListWaypoints(const char * pattern)
 size_t psPathNetwork::FindPointsInSector(iSector *sector, csList<psPathPoint*>& list)
 {
     size_t count = 0;
-    for (size_t p = 0; p < paths.GetSize()-1; p++)
+    for (size_t p = 0; p < paths.GetSize(); p++)
     {
        count += paths[p]->FindPointsInSector( engine, sector, list );
     }

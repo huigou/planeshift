@@ -17,7 +17,7 @@ CREATE TABLE  `sc_npctypes` (
 # Dumping data for table 'sc_npctypes'
 #
 INSERT INTO sc_npctypes VALUES("1","DoNothing","","","","","","","",
-'<behavior name="do nothing" decay="0" growth="0" initial="50">
+'<behavior name="DoNothing" decay="0" growth="0" initial="50">
    <wait duration="1" anim="stand" />
 </behavior>');
 
@@ -230,11 +230,8 @@ INSERT INTO sc_npctypes VALUES("11","Move","","","","","","","",
 
 
 
-INSERT INTO sc_npctypes VALUES("100","Smith","GoHomeOnTeleport","","","","","","",
-'<behavior name="do nothing" decay="0" growth="0" initial="10">
-   <wait duration="1" anim="stand" />
-</behavior>
-<behavior name="go_climbing1" initial="0" completion_decay="20" loop="no"> 
+INSERT INTO sc_npctypes VALUES("100","Smith","GoHomeOnTeleport,DoNothing","","","","","","",
+'<behavior name="go_climbing1" initial="0" completion_decay="20" loop="no"> 
    <moveto x="-53.6003" y="0.0" z="-155.041" anim="walk" />
    <moveto x="-8.89576" y="0.0" z="-162.498" anim="walk" />
    <moveto x="18.4303" y="21.9941" z="-163.082" anim="walk" />
@@ -871,10 +868,6 @@ INSERT INTO sc_npctypes VALUES("120","WinchMover","DoNothing","","","","","","",
    <rotate type="absolute" value="180" ang_vel="20"/>
 </behavior>
 
-<behavior name="do nothing" decay="0" growth="0" initial="1">
-   <wait duration="1" anim="stand" />
-</behavior>
-
 <behavior name="turn to face" completion_decay="-1" growth="0" initial="0" >
    <locate obj="perception" />
    <rotate type="locatedest" anim="walk" ang_vel="20" />
@@ -896,10 +889,6 @@ INSERT INTO sc_npctypes VALUES("121","WinchBeast","DoNothing","","","","","","",
    <wander anim="walk" />        <!-- Navigate using waypoints -->
    <navigate anim="walk" />      <!-- Local navigation -->
    <rotate type="absolute" value="90" ang_vel="20"/>
-</behavior>
-
-<behavior name="do nothing" decay="0" growth="0" initial="1">
-   <wait duration="1" anim="stand" />
 </behavior>
 
 <!-- Running the wheel -->

@@ -111,6 +111,31 @@ bool psPathPoint::Create(iDataConnection * db, int pathID)
     
 }
 
+bool psPathPoint::Remove(iDataConnection * db)
+{
+    int result = db->CommandPump("DELETE from sc_path_points WHERE id=%d",id);
+
+    return (result == 1);
+}
+
+
+bool psPathPoint::UpdatePrevPointId(iDataConnection * db, int prevPointId)
+{
+    if (this->prevPointId != prevPointId)
+    {
+        SetPrevious(prevPointId);
+        
+        int result = db->CommandPump("UPDATE sc_path_points SET prev_point=%d WHERE id=%d",
+                                 this->prevPointId,id);
+
+        return (result == 1);
+    }
+
+    return true;
+}
+
+
+
 bool psPathPoint::Adjust(iDataConnection * db, csVector3 & pos, csString sector)
 {
     int result = db->CommandPump("UPDATE sc_path_points SET x=%.2f,y=%.2f,z=%.2f,"
@@ -255,9 +280,81 @@ psPathPoint* psPath::AddPoint(const csVector3& pos, float radius, const char * s
     {
         points[i]->prevPointId = points[i-1]->GetID();
     }
+
+    // Path isn't valid anymore
+    precalculationValid = false;
     
     return pp;
 }
+
+psPathPoint* psPath::InsertPoint(iDataConnection *db, int index, const csVector3& pos, const char * sectorName)
+{
+    psPathPoint * pp = new psPathPoint();
+
+    pp->id = -1;
+    pp->pos = pos;
+    pp->radius = 0.0;
+    pp->sectorName = sectorName;
+
+    if (!pp->Create(db,id))
+    {
+        return NULL;
+    }
+
+    points.Insert(index,pp);
+
+    if (!UpdatePrevPointIndexes(db))
+    {        
+        return NULL;
+    }
+    
+
+    // Path isn't valid anymore
+    precalculationValid = false;
+    
+    return pp;
+}
+
+bool psPath::RemovePoint(iDataConnection *db, psPathPoint* point)
+{
+    size_t pos = points.Find(point);
+    if (pos == ((size_t)(-1)))
+    {
+        return false;
+    }
+
+    return RemovePoint(db, pos);
+}
+
+
+bool psPath::RemovePoint(iDataConnection *db, int index)
+{
+    psPathPoint* point = points.Extract(index);
+    point->Remove(db);
+    delete point;
+
+    if (!UpdatePrevPointIndexes(db))
+    {
+        return false;
+    }
+    
+    return true;
+}
+
+    
+bool psPath::UpdatePrevPointIndexes(iDataConnection* db)
+{
+    // Update points prev ids
+    for (size_t i = 1; i < points.GetSize()-1; i++)
+    {
+        if (!points[i]->UpdatePrevPointId(db, i > 1 ? points[i-1]->GetID():0))
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 
 void psPath::SetStart(Waypoint * wp)
 {
@@ -289,7 +386,7 @@ float DistancePointLine(const csVector3 &p, const csVector3 &l1, const csVector3
     return sqrt(csSquaredDist::PointLine(p,l1,l2));
 }
 
-float psPath::Distance(psWorld * world, iEngine *engine,csVector3& pos, iSector * sector, int * index, float * fraction)
+float psPath::Distance(psWorld * world, iEngine *engine,const csVector3& pos, const iSector* sector, int * index, float * fraction) const
 {
     float dist = -1.0;
     int idx = -1;
@@ -331,7 +428,7 @@ float psPath::Distance(psWorld * world, iEngine *engine,csVector3& pos, iSector 
     return dist;
 }
 
-float psPath::DistancePoint(psWorld * world, iEngine *engine,csVector3& pos, iSector * sector, int * index, bool include_ends)
+float psPath::DistancePoint(psWorld * world, iEngine *engine,const csVector3& pos,const iSector* sector, int * index, bool include_ends) const
 {
     float dist = -1.0;
     int idx = -1;
