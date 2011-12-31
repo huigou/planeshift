@@ -3633,7 +3633,7 @@ AdminCmdDataReload::AdminCmdDataReload(AdminManager* msgManager, MsgEntry* me, p
     if(IsHelp(words[1]))
         return;
 
-    if(words.GetCount() >= index && subCommandList.IsSubCommand(words[index]))
+    if(words.GetCount() > index && subCommandList.IsSubCommand(words[index]))
     {
         subCmd = words[index++];
     }
@@ -3647,7 +3647,7 @@ AdminCmdDataReload::AdminCmdDataReload(AdminManager* msgManager, MsgEntry* me, p
         }
     }
 
-    if(words.GetCount() >= index)
+    if(words.GetCount() > index)
     {
         ParseError(me, "Too many arguments");
     }
@@ -5910,7 +5910,229 @@ uint32_t AdminManager::GetEffectID()
     return psserver->GetCacheManager()->NextEffectUID();
 }
 
+void AdminManager::HideAllPaths(bool clearSelected)
+{
+    ClientIterator i(*clients);
+    while(i.HasNext())
+    {
+        Client *client = i.Next();
 
+        // Cleare selected while we are iterating over the clients.
+        if (clearSelected)
+        {
+            client->PathSetPath(NULL);
+        }
+
+        if (client->PathIsDisplaying())
+        {
+            HidePaths(client);
+        }
+        if (client->WaypointIsDisplaying())
+        {
+            HideWaypoints(client);
+        }
+    }
+}
+
+void AdminManager::HidePaths(Client* client)
+{
+    if (client->PathIsDisplaying())
+    {
+        csList<iSector*>::Iterator iter = client->GetPathDisplaying();
+        while (iter.HasNext())
+        {
+            iSector* sector = iter.Next();
+            HidePaths(client, sector);
+        }
+    }
+}
+
+void AdminManager::HideWaypoints(Client* client)
+{
+    if (client->WaypointIsDisplaying())
+    {
+        csList<iSector*>::Iterator iter = client->GetWaypointDisplaying();
+        while (iter.HasNext())
+        {
+            iSector* sector = iter.Next();
+            HideWaypoints(client, sector);
+        }
+    }    
+}
+
+void AdminManager::HidePaths(Client* client, iSector* sector)
+{
+    csList<psPathPoint*> list;
+    if (pathNetwork->FindPointsInSector(sector,list))
+    {
+        csList<psPathPoint*>::Iterator iter(list);
+        while (iter.HasNext())
+        {
+            psPathPoint* point = iter.Next();
+            
+            // Don't send enpoints of paths
+            if (!point->GetWaypoint())
+            {
+                psStopEffectMessage msg(client->GetClientNum(), point->GetEffectID(this));
+                msg.SendMessage();
+            }
+            
+        }
+    }
+}
+
+void AdminManager::HideWaypoints(Client* client, iSector* sector)
+{
+    csList<Waypoint*> list;
+    if (pathNetwork->FindWaypointsInSector(sector,list))
+    {
+        csList<Waypoint*>::Iterator iter(list);
+        while (iter.HasNext())
+        {
+            Waypoint* waypoint = iter.Next();
+            psStopEffectMessage msg(client->GetClientNum(), waypoint->GetEffectID(this));
+            msg.SendMessage();
+        }
+    }
+}
+
+
+void AdminManager::RedisplayAllPaths()
+{
+    ClientIterator i(*clients);
+    while(i.HasNext())
+    {
+        Client* client = i.Next();
+
+        if (client->PathIsDisplaying())
+        {
+            ShowPaths(client);
+        }
+        if (client->WaypointIsDisplaying())
+        {
+            ShowWaypoints(client);
+        }
+        
+    }
+}
+
+void AdminManager::ShowPaths(Client* client)
+{
+    if (client->PathIsDisplaying())
+    {
+        csList<iSector*>::Iterator iter = client->GetPathDisplaying();
+        while (iter.HasNext())
+        {
+            iSector* sector = iter.Next();
+            ShowPaths(client, sector);
+        }
+    }
+}
+
+void AdminManager::ShowWaypoints(Client* client)
+{
+    if (client->WaypointIsDisplaying())
+    {
+        csList<iSector*>::Iterator iter = client->GetWaypointDisplaying();
+        while (iter.HasNext())
+        {
+            iSector* sector = iter.Next();
+            ShowWaypoints(client, sector);
+        }
+    }    
+}
+
+void AdminManager::ShowPaths(Client* client, iSector* sector)
+{
+    csList<psPathPoint*> list;
+    if (pathNetwork->FindPointsInSector(sector,list))
+    {
+        csList<psPathPoint*>::Iterator iter(list);
+        while (iter.HasNext())
+        {
+            psPathPoint* point = iter.Next();
+            
+            // Don't send enpoints of paths
+            if (!point->GetWaypoint())
+            {
+                psEffectMessage msg(client->GetClientNum(),"admin_path_point",
+                                    point->GetPosition(),0,0,point->GetEffectID(this),point->GetRadius());
+                msg.SendMessage();
+            }
+            
+        }
+
+    }
+}
+
+void AdminManager::ShowWaypoints(Client* client, iSector* sector)
+{
+    csList<Waypoint*> list;
+    if (pathNetwork->FindWaypointsInSector(sector,list))
+    {
+        csList<Waypoint*>::Iterator iter(list);
+        while (iter.HasNext())
+        {
+            Waypoint* waypoint = iter.Next();
+            
+            psEffectMessage msg(client->GetClientNum(),"admin_waypoint",
+                                waypoint->GetPosition(),0,0,waypoint->GetEffectID(this),waypoint->GetRadius());
+            msg.SendMessage();
+        }
+    }
+}
+
+void AdminManager::UpdateDisplayPath(psPathPoint* point)
+{
+    ClientIterator i(*clients);
+    while(i.HasNext())
+    {
+        Client* client = i.Next();
+
+        if (client->PathIsDisplaying())
+        {
+            csList<iSector*>::Iterator iter = client->GetPathDisplaying();
+            while (iter.HasNext())
+            {
+                iSector* sector = iter.Next();
+
+                // Hide
+                psStopEffectMessage hide(client->GetClientNum(), point->GetEffectID(this));
+                hide.SendMessage();
+                // Display
+                psEffectMessage show(client->GetClientNum(),"admin_path_point",point->GetPosition(),0,0,point->GetEffectID(this),point->GetRadius());
+                show.SendMessage();
+            }
+        }
+    }
+}
+
+void AdminManager::UpdateDisplayWaypoint(Waypoint* wp)
+{
+    ClientIterator i(*clients);
+    while(i.HasNext())
+    {
+        Client* client = i.Next();
+
+        if (client->WaypointIsDisplaying())
+        {
+            csList<iSector*>::Iterator iter = client->GetWaypointDisplaying();
+            while (iter.HasNext())
+            {
+                iSector* sector = iter.Next();
+
+                // Hide
+                psStopEffectMessage hide(client->GetClientNum(), wp->GetEffectID(this));
+                hide.SendMessage();
+                // Display
+                // TODO: Include sector in psEffectMessage
+                psEffectMessage show(client->GetClientNum(),"admin_waypoint",wp->GetPosition(),0,0,
+                                     wp->GetEffectID(this),wp->GetRadius());
+                show.SendMessage();
+            }
+        }
+    }
+}
 
 void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client *client)
 {
@@ -5955,18 +6177,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         {
             if (wp->Adjust(db,myPos,mySectorName))
             {
-                if (client->WaypointIsDisplaying())
-                {
-                    // Move the displayed waypoint
-
-                    // Hide
-                    psStopEffectMessage hide(me->clientnum, wp->GetEffectID(this));
-                    hide.SendMessage();
-                    // Display
-                    psEffectMessage show(me->clientnum,"admin_waypoint",myPos,0,0,wp->GetEffectID(this),wp->GetRadius());
-                    show.SendMessage();
-                }
-
+                UpdateDisplayWaypoint(wp);
                 psserver->SendSystemInfo(me->clientnum,
                                          "Adjusted waypoint %s(%d) at range %.2f",
                                          wp->GetName(), wp->GetID(), rangeWP);
@@ -5976,16 +6187,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         {
             if (pathPoint->Adjust(db,indexPoint,myPos,mySectorName))
             {
-                if (client->PathIsDisplaying())
-                {
-                    // Hide
-                    psStopEffectMessage hide(me->clientnum, point->GetEffectID(this));
-                    hide.SendMessage();
-                    // Display
-                    psEffectMessage show(me->clientnum,"admin_path_point",myPos,0,0,point->GetEffectID(this),point->GetRadius());
-                    show.SendMessage();
-                }
-
+                UpdateDisplayPath(point);
                 psserver->SendSystemInfo(me->clientnum,
                                          "Adjusted point(%d) %d of path %s(%d) at range %.2f",
                                          point->GetID(),indexPoint,path->GetName(),path->GetID(),rangePoint);
@@ -6130,18 +6332,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         {
             wp->RecalculateEdges(EntityManager::GetSingleton().GetWorld(),EntityManager::GetSingleton().GetEngine());
             
-
-            if (client->WaypointIsDisplaying())
-            {
-                // Hide
-                psStopEffectMessage hide(me->clientnum, wp->GetEffectID(this));
-                hide.SendMessage();
-                // Display
-                psEffectMessage show(me->clientnum,"admin_waypoint",wp->GetPosition(),0,0,
-                                     wp->GetEffectID(this),wp->GetRadius());
-                show.SendMessage();
-            }
-
+            UpdateDisplayWaypoint(wp);
             psserver->SendSystemInfo(me->clientnum, "Waypoint %s updated with new radius %.3f.",
                                      wp->GetName(),wp->GetRadius());
             return;
@@ -6171,12 +6362,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
 
         psPathPoint* point = path->AddPoint(db, myPos, mySectorName);
 
-        if (client->PathIsDisplaying())
-        {
-            psEffectMessage msg(me->clientnum,"admin_path_point",myPos,0,0,point->GetEffectID(this));
-            msg.SendMessage();
-        }
-
+        UpdateDisplayPath(point);
         psserver->SendSystemInfo( me->clientnum, "Added point.");
 
     }
@@ -6234,12 +6420,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         }
     
 
-        if (client->PathIsDisplaying())
-        {
-            psEffectMessage msg(me->clientnum,"admin_path_point",myPos,0,0,newPoint->GetEffectID(this));
-            msg.SendMessage();
-        }
-
+        UpdateDisplayPath(newPoint);
         psserver->SendSystemInfo( me->clientnum, "Inserted point.");
     }
     else if (data->subCmd == "start")
@@ -6288,17 +6469,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
 
             wp = pathNetwork->CreateWaypoint(wpName,myPos,mySectorName,data->radius,data->flagName);
 
-            if (client->WaypointIsDisplaying())
-            {
-                // Move the displayed waypoint
-
-                // Hide
-                psStopEffectMessage hide(me->clientnum, wp->GetEffectID(this));
-                hide.SendMessage();
-                // Display
-                psEffectMessage show(me->clientnum,"admin_waypoint",myPos,0,0,wp->GetEffectID(this),wp->GetRadius());
-                show.SendMessage();
-            }
+            UpdateDisplayWaypoint(wp);
             psserver->SendSystemInfo( me->clientnum, "Starting path, using new waypoint %s(%d)",
                                       wp->GetName(), wp->GetID());
         }
@@ -6356,11 +6527,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
 
             wp = pathNetwork->CreateWaypoint(wpName,myPos,mySectorName,data->radius,data->waypointFlags);
 
-            if (client->WaypointIsDisplaying())
-            {
-                psEffectMessage msg(me->clientnum,"admin_waypoint",myPos,0,0,wp->GetEffectID(this),wp->GetRadius());
-                msg.SendMessage();
-            }
+            UpdateDisplayWaypoint(wp);
         }
 
         client->PathSetPath(NULL);
@@ -6381,46 +6548,16 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     {
         if (data->cmdTarget.IsEmpty() || data->cmdTarget == 'P')
         {
-            csList<psPathPoint*> list;
-            if (pathNetwork->FindPointsInSector(mySector,list))
-            {
-                csList<psPathPoint*>::Iterator iter(list);
-                while (iter.HasNext())
-                {
-                    psPathPoint* point = iter.Next();
+            ShowPaths(client,mySector);
 
-                    // Don't send enpoints of paths
-                    if (!point->GetWaypoint())
-                    {
-                        psEffectMessage msg(me->clientnum,"admin_path_point",
-                                            point->GetPosition(),0,0,point->GetEffectID(this),point->GetRadius());
-                        msg.SendMessage();
-                    }
-                    
-                }
-
-            }
-
-            client->PathSetIsDisplaying(true);
+            client->PathSetIsDisplaying(mySector);
             psserver->SendSystemInfo(me->clientnum, "Displaying all path points in sector %s",mySectorName.GetDataSafe());
         }
         if (data->cmdTarget.IsEmpty() || data->cmdTarget == 'W')
         {
-            csList<Waypoint*> list;
-            if (pathNetwork->FindWaypointsInSector(mySector,list))
-            {
-                csList<Waypoint*>::Iterator iter(list);
-                while (iter.HasNext())
-                {
-                    Waypoint* waypoint = iter.Next();
-                    
-                    psEffectMessage msg(me->clientnum,"admin_waypoint",
-                                        waypoint->GetPosition(),0,0,waypoint->GetEffectID(this),waypoint->GetRadius());
-                    msg.SendMessage();
-                }
-            }
+            ShowWaypoints(client, mySector);
 
-            client->WaypointSetIsDisplaying(true);
+            client->WaypointSetIsDisplaying(mySector);
             psserver->SendSystemInfo(me->clientnum, "Displaying all waypoints in sector %s",mySectorName.GetDataSafe());
         }
     }
@@ -6428,41 +6565,16 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     {
         if (data->cmdTarget.IsEmpty() || data->cmdTarget == 'P')
         {
-            csList<psPathPoint*> list;
-            if (pathNetwork->FindPointsInSector(mySector,list))
-            {
-                csList<psPathPoint*>::Iterator iter(list);
-                while (iter.HasNext())
-                {
-                    psPathPoint* point = iter.Next();
+            HidePaths(client);
 
-                    // Don't send enpoints of paths
-                    if (!point->GetWaypoint())
-                    {
-                        psStopEffectMessage msg(me->clientnum, point->GetEffectID(this));
-                        msg.SendMessage();
-                    }
-                    
-                }
-            }
-            client->PathSetIsDisplaying(false);
+            client->PathClearDisplaying();
             psserver->SendSystemInfo(me->clientnum, "All path points hidden");
         }
         if (data->cmdTarget.IsEmpty() || data->cmdTarget == "W")
         {
-            csList<Waypoint*> list;
-            if (pathNetwork->FindWaypointsInSector(mySector,list))
-            {
-                csList<Waypoint*>::Iterator iter(list);
-                while (iter.HasNext())
-                {
-                    Waypoint* waypoint = iter.Next();
-                    psStopEffectMessage msg(me->clientnum, waypoint->GetEffectID(this));
-                    msg.SendMessage();
-                }
-                
-            }
-            client->WaypointSetIsDisplaying(false);
+            HideWaypoints(client);
+
+            client->WaypointClearDisplaying();
             psserver->SendSystemInfo(me->clientnum, "All waypoints hidden");
         }
     }
@@ -6570,16 +6682,8 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
             {
                 if (wp->Adjust(db,myPos,mySectorName))
                 {
-                    if (client->WaypointIsDisplaying())
-                    {
-                        // Hide
-                        psStopEffectMessage hide(me->clientnum, wp->GetEffectID(this));
-                        hide.SendMessage();
-                        // Display
-                        psEffectMessage show(me->clientnum,"admin_waypoint",myPos,0,0,wp->GetEffectID(this),wp->GetRadius());
-                        show.SendMessage();
-                    }
 
+                    UpdateDisplayWaypoint(wp);
                     psserver->SendSystemInfo(me->clientnum,
                                              "Moved waypoint %s(%d)",
                                              wp->GetName(), wp->GetID());
@@ -6617,16 +6721,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
             {
                 if (point->Adjust(db,myPos,mySectorName))
                 {
-                    if (client->PathIsDisplaying())
-                    {
-                        // Hide
-                        psStopEffectMessage hide(me->clientnum, point->GetEffectID(this));
-                        hide.SendMessage();
-                        // Show
-                        psEffectMessage show(me->clientnum,"admin_path_point",myPos,0,0,point->GetEffectID(this),point->GetRadius());
-                        show.SendMessage();
-                    }
-
+                    UpdateDisplayPath(point);
                     psserver->SendSystemInfo(me->clientnum,
                                              "Adjusted point(%d)",
                                              point->GetID());
@@ -6687,11 +6782,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         {
             return;
         }
-        if (client->WaypointIsDisplaying())
-        {
-            psEffectMessage msg(me->clientnum,"admin_waypoint",myPos,0,0,wp->GetEffectID(this),wp->GetRadius());
-            msg.SendMessage();
-        }
+        UpdateDisplayWaypoint(wp);
 
         psPath * path1 = pathNetwork->CreatePath("",path->start,wp, "" );
         psPath * path2 = pathNetwork->CreatePath("",wp,path->end, "" );
@@ -11457,10 +11548,15 @@ void AdminManager::HandleReload(psAdminCmdMessage& msg, AdminCmdData* cmddata, C
     }
     else if(data->subCmd == "path")
     {
+        HideAllPaths(true); // And cleare Selected Paths
+
         delete pathNetwork;
         pathNetwork = new psPathNetwork();
         pathNetwork->Load(EntityManager::GetSingleton().GetEngine(),db,
                   EntityManager::GetSingleton().GetWorld());
+
+        RedisplayAllPaths();
+        
         psserver->SendSystemOK(client->GetClientNum(), "Successfully reloaded path network.");
 
     }
