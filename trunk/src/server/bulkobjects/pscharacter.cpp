@@ -590,7 +590,7 @@ bool psCharacter::Load(iResultRow& row)
         return false;
     }
 
-    if(!LoadVariables(pid))
+    if(!LoadVariables(use_id))
     {
         return false;
     }
