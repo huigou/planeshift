@@ -3637,7 +3637,7 @@ AdminCmdDataReload::AdminCmdDataReload(AdminManager* msgManager, MsgEntry* me, p
             ParseError(me, "Missing or invalid item id");
         }
     }
-    else if(subCmd != "serveroptions" && subCmd != "mathscript")
+    else if(subCmd != "serveroptions" && subCmd != "mathscript" && subCmd != "path")
     {
         ParseError(me,"Not a valid subcommand: " + subCmd);
     }
@@ -3828,6 +3828,21 @@ csString AdminCmdDataServerQuit::GetHelpMessage()
     return "Syntax: \"" + command + " [-1/time] <reason>\"";
 }
 
+AdminCmdDataNPCClientQuit::AdminCmdDataNPCClientQuit(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client *client, WordArray &words)
+: AdminCmdData("/npcclientquit")
+{
+    // when help is requested, return immediate
+    if (IsHelp(words[1]))
+        return;
+}
+
+ADMINCMDFACTORY_IMPLEMENT_MSG_FACTORY_CREATE(AdminCmdDataNPCClientQuit)
+
+csString AdminCmdDataNPCClientQuit::GetHelpMessage()
+{
+    return "Syntax: \"" + command + "\"";
+}
+
 AdminCmdDataSimple::AdminCmdDataSimple(csString commandName, AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client *client, WordArray &words)
     : AdminCmdData(commandName)
 {
@@ -4013,6 +4028,7 @@ AdminCmdDataFactory::AdminCmdDataFactory()
     RegisterMsgFactoryFunction(new AdminCmdDataSetKillExp());
     RegisterMsgFactoryFunction(new AdminCmdDataAssignFaction());
     RegisterMsgFactoryFunction(new AdminCmdDataServerQuit());
+    RegisterMsgFactoryFunction(new AdminCmdDataNPCClientQuit());
     RegisterMsgFactoryFunction(new AdminCmdDataRndMsgTest());
 
     RegisterMsgFactoryFunction(new AdminCmdDataList());
@@ -4447,6 +4463,10 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry *me, Client *client)
     else if (data->command == "/serverquit")
     {
         HandleServerQuit(me, msg, data, client);
+    }
+    else if (data->command == "/npcclientquit")
+    {
+        HandleNPCClientQuit(me, msg, data, client);
     }
     else if (data->command == "/version")
     {
@@ -11425,6 +11445,13 @@ void AdminManager::HandleReload(psAdminCmdMessage& msg, AdminCmdData* cmddata, C
         psserver->GetMathScriptEngine()->ReloadScripts();
         psserver->SendSystemOK(client->GetClientNum(), "Successfully reloaded math scripts.");
     }
+    else if(data->subCmd == "path")
+    {
+            delete pathNetwork;
+            pathNetwork = new psPathNetwork();
+            pathNetwork->Load(EntityManager::GetSingleton().GetEngine(),db,
+                      EntityManager::GetSingleton().GetWorld());
+    }
 }
 
 void AdminManager::HandleListWarnings(psAdminCmdMessage& msg, AdminCmdData* cmddata, Client *client)
@@ -11575,6 +11602,16 @@ void AdminManager::HandleServerQuit(MsgEntry* me, psAdminCmdMessage& msg, AdminC
 
     psserver->QuitServer(data->time, client);
 }
+
+void AdminManager::HandleNPCClientQuit(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client *client )
+{
+    //AdminCmdDataNPCClientQuit* data = dynamic_cast<AdminCmdDataNPCClientQuit*>(cmddata);
+
+    psServerCommandMessage message(0, "quit");
+    message.Multicast(psserver->GetNPCManager()->GetSuperClients(), -1, PROX_LIST_ANY_RANGE);
+    
+}
+
 
 void AdminManager::HandleVersion(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client *client )
 {

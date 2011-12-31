@@ -34,6 +34,7 @@
 #include <ibgloader.h>
 #include "util/log.h"
 #include "util/serverconsole.h"
+#include "util/command.h"
 #include "util/eventmanager.h"
 
 #include "net/connection.h"
@@ -236,9 +237,7 @@ void NetworkManager::HandleMessage(MsgEntry *message)
         }
         case MSGTYPE_NPC_COMMAND:
         {
-            psServerCommandMessage msg(message);
-            // TODO: Do something more with this than printing it.
-            CPrintf(CON_CMDOUTPUT, msg.command.GetData());
+            HandleConsoleCommand(message);
             break;
         }
         case MSGTYPE_NPC_WORKDONE:
@@ -246,6 +245,35 @@ void NetworkManager::HandleMessage(MsgEntry *message)
             HandleNPCWorkDone(message);
         }
     }
+}
+
+void NetworkManager::HandleConsoleCommand(MsgEntry *me)
+{
+    csString buffer;
+
+    psServerCommandMessage msg(me);
+    printf("Got command: %s\n", msg.command.GetDataSafe() );
+
+    size_t i = msg.command.FindFirst(' ');
+    csString word;
+    msg.command.SubString(word,0,i);
+    const COMMAND *cmd = find_command(word.GetDataSafe());
+
+    if (cmd && cmd->allowRemote)
+    {
+        int ret = execute_line(msg.command, &buffer);
+        if (ret == -1)
+            buffer = "Error executing command on the server.";
+    }
+    else
+    {
+        buffer = cmd ? "That command is not allowed to be executed remotely"
+                     : "No command by that name.  Please try again.";
+    }
+    printf("%s\n", buffer.GetData());
+
+    /*psServerCommandMessage retn(me->clientnum, buffer);
+    retn.SendMessage();*/
 }
 
 void NetworkManager::HandleRaceList( MsgEntry* me)

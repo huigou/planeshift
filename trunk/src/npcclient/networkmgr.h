@@ -73,7 +73,8 @@ protected:
     // void RemoveEntity(psCelPersistMessage& pmsg);
 
     void PrepareCommandMessage();
-    
+
+    void HandleConsoleCommand(MsgEntry *me);
     void HandleRaceList( MsgEntry* me );
     void HandleAllEntities(MsgEntry *message);
     void HandleActor( MsgEntry* me );
