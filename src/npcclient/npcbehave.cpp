@@ -1462,6 +1462,8 @@ void psGameObject::GetPosition(gemNPCObject* object, csVector3& pos, float& yrot
     
     iMovable* npcMovable = pcmesh->GetMesh()->GetMovable();
 
+    iSectorList *npcSectors = npcMovable->GetSectors();
+
     pos = npcMovable->GetPosition();
 
     // rotation
@@ -1473,9 +1475,9 @@ void psGameObject::GetPosition(gemNPCObject* object, csVector3& pos, float& yrot
     }
 
     // Sector
-    if (npcMovable->GetSectors()->GetCount())
+    if (npcSectors->GetCount())
     {
-        sector = npcMovable->GetSectors()->Get(0);
+        sector = npcSectors->Get(0);
     }
     else
     {
