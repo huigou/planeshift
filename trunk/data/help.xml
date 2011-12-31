@@ -1435,9 +1435,9 @@ Creates a clone of the named NPC at your current location.</content>
 
 To create a path you need to do the following commands:
 1) /path format &lt;format&gt;
-2) /path start
-3) /path point (Any number of times)
-4) /path stop</content>
+2) /path start &lt;radius&gt;
+3) /path point add (Any number of times)
+4) /path stop &lt;radius&gt;</content>
       </Contents>
       <topic name="/path adjust">
         <Contents>
@@ -1536,9 +1536,11 @@ Move the waypoint or path point to your current position.</content>
       </topic>
       <topic name="/path point">
         <Contents>
-          <content type="text">/path point
+          <content type="text">/path point [add|insert|remove]
 
-Add a new point to the current selected path at your position. A path will be automaticaly be selected on the /path start command. You could use the /path select command as well to select a new path.</content>
+Add, insert or remove a point to or from the current selected path at your position. 
+
+A path will be automaticaly be selected on the /path start command. You could use the /path select command as well to select a new path.</content>
         </Contents>
       </topic>
       <topic name="/path remove">

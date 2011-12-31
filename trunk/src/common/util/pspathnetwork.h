@@ -120,7 +120,19 @@ public:
      * Find waypoint by id
      */
     psPathPoint* FindPathPoint(int id);
+
+    /**
+     * Find the point nearest to the path.
+     * @param index return the index of the path point at the start of this segment.
+     */
+    psPathPoint* FindPoint(const psPath* path, const csVector3& pos, iSector* sector, float range, int& index);
     
+    /**
+     * Find the path nearest to a point in the world.
+     * @ param Set an maximum range for points to considere.
+     */
+    psPathPoint* FindNearestPoint(const psPath* path, const csVector3& v, const iSector *sector, float range);
+
     /**
      * Find the path nearest to a point in the world.
      * @ param Set an maximum range for points to considere.

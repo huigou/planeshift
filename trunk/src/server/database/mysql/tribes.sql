@@ -34,5 +34,5 @@ CREATE TABLE `tribes`
 # Dumping data for table characters
 #
 
-INSERT INTO `tribes` VALUES (1,'Mining tribe',3,-70,0,-175,20,100,'Gold Ore','gold','mine','Dig',1.00,0.0,0,10,'do nothing', 100);
-INSERT INTO `tribes` VALUES (2,'Hunting tribe',3,-75,0,-230,5,5,'Meat','meat','hunting_ground','Hunt',1.00,0.50,100,60,'do nothing', 101);
+INSERT INTO `tribes` VALUES (1,'Mining tribe',3,-70,0,-175,20,100,'Gold Ore','gold','mine','Dig',1.00,0.0,0,10,'DoNothing', 100);
+INSERT INTO `tribes` VALUES (2,'Hunting tribe',3,-75,0,-230,5,5,'Meat','meat','hunting_ground','Hunt',1.00,0.50,100,60,'DoNothing', 101);

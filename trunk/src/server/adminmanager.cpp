@@ -2853,6 +2853,7 @@ AdminCmdDataPath::AdminCmdDataPath(AdminManager* msgManager, MsgEntry* me, psAdm
     subCommandList.Push("hide","[points|waypoints]");
     subCommandList.Push("info","[<radius>]");
     subCommandList.Push("move","[wp|point] <id>|<name>");
+    subCommandList.Push("point","add|remove|insert");
     subCommandList.Push("radius","<new radius> [<radius>]");
     subCommandList.Push("remove","[<radius>]");
     subCommandList.Push("rename","[<radius>] <name>");
@@ -3000,7 +3001,23 @@ AdminCmdDataPath::AdminCmdDataPath(AdminManager* msgManager, MsgEntry* me, psAdm
         }
         else if (subCmd == "point")
         {
-            // No params
+            csString subSubCmd = words[index++];
+            if (subSubCmd.IsEmpty())
+            {
+                ParseError(me,"No sub command; add, remove, or insert given.");
+            }
+            else if (subSubCmd == "add")
+            {
+                subCmd = "point add";
+            } 
+            else if (subSubCmd == "remove")
+            {
+                subCmd = "point remove";
+            }
+            else if (subSubCmd == "insert")
+            {
+                subCmd = "point insert";
+            }
         }
         else if (subCmd == "radius")
         {
@@ -6086,9 +6103,13 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
 
             if (client->WaypointIsDisplaying())
             {
-                psEffectMessage msg(me->clientnum,"admin_waypoint",wp->GetPosition(),0,0,
-                                    wp->GetEffectID(this),wp->GetRadius());
-                msg.SendMessage();
+                // Hide
+                psStopEffectMessage hide(me->clientnum, wp->GetEffectID(this));
+                hide.SendMessage();
+                // Display
+                psEffectMessage show(me->clientnum,"admin_waypoint",wp->GetPosition(),0,0,
+                                     wp->GetEffectID(this),wp->GetRadius());
+                show.SendMessage();
             }
 
             psserver->SendSystemInfo(me->clientnum, "Waypoint %s updated with new radius %.3f.",
@@ -6109,7 +6130,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         wp.Format(client->WaypointGetPathName(),client->WaypointGetPathIndex());
         psserver->SendSystemInfo( me->clientnum, "New path format, first new WP will be: '%s'",wp.GetDataSafe());
     }
-    else if (data->subCmd == "point")
+    else if (data->subCmd == "point add")
     {
         psPath * path = client->PathGetPath();
         if (!path)
@@ -6128,6 +6149,68 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
 
         psserver->SendSystemInfo( me->clientnum, "Added point.");
 
+    }
+    else if (data->subCmd == "point remove")
+    {
+        psPath * path = client->PathGetPath();
+        if (!path)
+        {
+            psserver->SendSystemError(me->clientnum, "You have no path. Please start/select one.");
+            return;
+        }
+
+        int index;
+        psPathPoint * point = NULL;
+
+        if ((point = pathNetwork->FindNearestPoint(path, myPos, mySector, data->radius)) == NULL)
+        {
+            psserver->SendSystemError(me->clientnum, "Found no path point near you at selected path %s.",path->GetName());
+        }
+        
+        path->RemovePoint(db, point);
+
+        if (client->PathIsDisplaying())
+        {
+            psStopEffectMessage msg(me->clientnum, point->GetEffectID(this));
+            msg.SendMessage();
+        }
+
+        psserver->SendSystemInfo( me->clientnum, "Removed point.");
+
+    }
+    else if (data->subCmd == "point insert")
+    {
+        psPath * path = client->PathGetPath();
+        if (!path)
+        {
+            psserver->SendSystemError(me->clientnum, "You have no path. Please start/select one.");
+            return;
+        }
+
+        int index;
+        psPathPoint * point = NULL;
+
+        if ((point = pathNetwork->FindPoint(path, myPos, mySector, data->radius, index)) == NULL)
+        {
+            psserver->SendSystemError(me->clientnum, "Found no path point near you at selected path %s.",path->GetName());
+            return;
+        }
+        
+        psPathPoint* newPoint = path->InsertPoint(db, index+1, myPos, mySectorName);
+        if (!newPoint)
+        {
+            psserver->SendSystemError(me->clientnum, "Failed to insert point.");
+            return;
+        }
+    
+
+        if (client->PathIsDisplaying())
+        {
+            psEffectMessage msg(me->clientnum,"admin_path_point",myPos,0,0,newPoint->GetEffectID(this));
+            msg.SendMessage();
+        }
+
+        psserver->SendSystemInfo( me->clientnum, "Inserted point.");
     }
     else if (data->subCmd == "start")
     {
