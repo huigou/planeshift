@@ -2566,8 +2566,9 @@ public:
 class AdminCmdDataReload : public AdminCmdData
 {
 public:
-    csString subCmd; ///< sub command (item)
+    csString subCmd; ///< sub command
     int itemID; ///< item id
+    AdminCmdSubCommandParser subCommandList; ///< list of subcommands
 
     /** @brief Creates obj for specified command that reloads item stats.
      */
