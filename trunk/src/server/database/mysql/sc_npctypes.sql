@@ -216,6 +216,13 @@ INSERT INTO sc_npctypes VALUES("11","Move","","","","","","","",
    <navigate anim="walk" failure="move_failed" />   
 </behavior>
 
+<!-- Global movement with use of waypoint navigation -->
+<behavior name="GlobalMove" complection_decay="-1" resume="yes" failure="move_failed" >
+   <!-- Find the target and move there -->
+   <copy_locate source="Move" destination="Active" />
+   <wander anim="walk" private="false" failure="move_failed" />
+</behavior>
+
 <!-- Local movement without the waypoint navigation -->
 <behavior name="LocalMove" complection_decay="-1" resume="yes" failure="move_failed" >
    <!-- Find the final target and move there -->
@@ -225,6 +232,7 @@ INSERT INTO sc_npctypes VALUES("11","Move","","","","","","","",
 
 <react event="move"        behavior="Move" />
 <react event="local_move"  behavior="LocalMove" />
+<react event="global_move" behavior="GlobalMove" />
 
 <react event="move_failed" behavior="MoveFailed" />');
 
@@ -765,29 +773,48 @@ INSERT INTO sc_npctypes VALUES("116","MoveTest4","DoNothing","","","","","","",
 
 </behavior>');
 
-INSERT INTO sc_npctypes VALUES("117","MoveTest5","Answerer","","$walk","","","","",
+INSERT INTO sc_npctypes VALUES("117","MoveTest5","Answerer,Move","","$walk","","","","",
 '<!-- Example Citizen behaviour -->
 
-<behavior name="GoHome" decay="0" growth="0" initial="0">
-   <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
-   <navigate anim="walk" />                  <!-- Local navigation -->
+<!-- Go find nearest waypoint at startup -->
+<behavior name="Initialize" resume="yes" completion_decay="-1" initial="1000">
+   <locate obj="waypoint"  static="no" destination="Move" /> 
+   <percept event="local_move" />
+</behavior>
 
-   <locate obj="waypoint:name:$name_home"  static="no" />
-   <wander anim="walk" />        <!-- Navigate using waypoints -->
-   <!-- Simulate going inside by setting invisbile -->
-   <wait duration="10" anim="stand" />
-   <invisible/>
-   <wait duration="30" anim="stand" />
+<!-- Create a behavior that cause the npc to go visible when going from home -->
+<behavior name="WokenFromSleep" completion_decay="-1" >
    <visible/>
 </behavior>
 
-<behavior name="GoWork" decay="0" growth="0" initial="0">
-   <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
-   <navigate anim="walk" />                  <!-- Local navigation -->
-
-   <locate obj="waypoint:name:$name_work"  static="no" />
-   <wander anim="walk" />        <!-- Navigate using waypoints -->
+<behavior name="AtSleep" loop="yes" completion_decay="-1" interrupt="woken_from_sleep" >
+   <loop>
+      <wait duration="10.0" />
+  </loop>
 </behavior>
+
+<behavior name="GoHome"  resume="yes" completion_decay="-1" >
+   <locate obj="waypoint:name:$name_home"  static="no" destination="Move" />
+   <percept event="local_move" />
+
+   <!-- Simulate going inside by setting invisbile -->
+   <wait duration="10" anim="stand" />
+   <invisible/>
+   <rotate type="relative" value="180" ang_vel="45"/>
+   <percept event="at_sleep" />
+</behavior>
+<react event="GoHome" behavior="GoHome" />
+
+<react event="at_sleep" behavior="AtSleep" />
+<react event="woken_from_sleep" behavior="AtSleep" absolute="0" />
+<react event="woken_from_sleep" behavior="WokenFromSleep" />
+
+<behavior name="GoWork"  resume="yes" completion_decay="-1" >
+   <locate obj="waypoint:name:$name_work"  static="no" destination="Move" />
+   <percept event="global_move" /> 
+   <rotate type="relative" value="180" ang_vel="45"/>
+</behavior>
+<react event="GoWork" behavior="GoWork" />
 
 <react event="time" value="0,0,,," random=",5,,," behavior="GoWork" /> 
 <react event="time" value="1,0,,," random=",5,,,"  behavior="GoHome" /> 

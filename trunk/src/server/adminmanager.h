@@ -3506,6 +3506,67 @@ protected:
     /** Implement the abstract function from the iEffectIDAllocator
      */
     virtual uint32_t GetEffectID();
+
+    /** @brif Hide all paths for all clients
+     * @param clearSelected Clear selected path when iterating.
+     */
+    void HideAllPaths(bool clearSelected);
+    
+    /** @brif Hide all paths for a client
+     * @param client The client to hide paths for.
+     */
+    void HidePaths(Client* client);
+    
+    /** @brif Hide all waypoints for a client
+     * @param client The client to hide waypoints for.
+     */
+    void HideWaypoints(Client* client);
+    
+    /** @brif Hide all paths for a client in a sector
+     * @param client The client to hide paths for.
+     * @param sector The sector to hide paths in.
+     */
+    void HidePaths(Client* client, iSector* sector);
+    
+    /** @brif Hide all waypoints for a client in a sector.
+     * @param client The client ot hide waypoints for.
+     * @param sector The sector to hide paths in.
+     */
+    void HideWaypoints(Client* client, iSector* sector);
+    
+    /** @brif Show paths and waypoints for all clients that have enabled display.
+     */
+    void RedisplayAllPaths();
+    
+    /** @brif Show paths for client in all sectors that has been enabled.
+     * @param client The client to show paths for.
+     */
+    void ShowPaths(Client* client);
+    
+    /** @brif Show waypoint for client in all sectors that has been enabled.
+     * @param client The client to show waypoints for.
+     */
+    void ShowWaypoints(Client* client);
+    
+    /** @brif Show path for a client in a given sector.
+     * @param client The client to show paths for.
+     * @param sector The sector to show paths in.
+     */
+    void ShowPaths(Client* client, iSector* sector);
+
+    /** @brif Show waypoints for a client in a given sector.
+     * @param client The client to show waypoints for.
+     * @param sector The sector to show paths in. 
+     */
+    void ShowWaypoints(Client* client, iSector* sector);
+
+    /** @brif Update the display of paths in clients.
+     */
+    void UpdateDisplayPath(psPathPoint* point);
+
+    /** @brif Update the display of waypoints in clients.
+     */
+    void UpdateDisplayWaypoint(Waypoint* wp);
     
     /** @brief Handle online path editing.
      * @param me The incoming message from the GM

@@ -352,11 +352,15 @@ public:
     psPath * PathGetPath() { return pathPath; }
     void PathSetPath(psPath * path) { pathPath = path; }
     
-    void PathSetIsDisplaying( bool displaying ) { pathIsDisplaying = displaying; }
-    bool PathIsDisplaying() { return pathIsDisplaying; }
+    void PathSetIsDisplaying( iSector* sector );
+    void PathClearDisplaying();
+    csList<iSector*>::Iterator GetPathDisplaying();
+    bool PathIsDisplaying();
 
-    void WaypointSetIsDisplaying( bool displaying ) { waypointIsDisplaying = displaying; }
-    bool WaypointIsDisplaying() { return waypointIsDisplaying; }
+    void WaypointSetIsDisplaying( iSector* sector );
+    void WaypointClearDisplaying();
+    csList<iSector*>::Iterator GetWaypointDisplaying();
+    bool WaypointIsDisplaying();
 
     
     /// Online edit of location
@@ -448,11 +452,15 @@ public:
     // Path edit global vars for client
     csString waypointPathName;
     int waypointPathIndex;
+
     uint32_t waypointEffectID;
-    bool waypointIsDisplaying;
     uint32_t pathEffectID;
+
     psPath *pathPath;
-    bool pathIsDisplaying;
+
+    csList<iSector*> waypointDisplaySectors;
+    csList<iSector*> pathDisplaySectors;
+    
     
     // Location edit global vars for client
     uint32_t locationEffectID;
