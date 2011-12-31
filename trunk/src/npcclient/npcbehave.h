@@ -160,6 +160,9 @@ public:
      */
     csString InfoBehaviors(NPC *npc);
 
+    /** Return hight current or new need.
+     */
+    float GetHighestNeed();
 
 };
 
@@ -233,6 +236,10 @@ public:
     {
         return behaviors.GetCurrentBehavior();
     }
+
+    /** Return hight current or new need.
+     */
+    float GetHighestNeed();
     
     float GetAngularVelocity(NPC *npc);
     float GetVelocity(NPC *npc);
@@ -271,6 +278,7 @@ protected:
     float    completion_decay;          ///< need lessens AFTER behavior script is complete. Use -1 to remove all need
     float    init_need;                 ///< starting need, also used in ClearState resets
     bool     resume_after_interrupt;    ///< Resume at active step after interrupt.
+    csString interruptPerception;       ///< Perception to fire if interrupted.
         
     float    current_need;              ///< The current need of this behavior after last advance
     float    new_need;                  ///< The accumulated change to the need after last advance

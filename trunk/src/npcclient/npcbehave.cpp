@@ -462,6 +462,13 @@ void NPCType::Interrupt(NPC *npc)
     behaviors.Interrupt(npc);
 }
 
+float NPCType::GetHighestNeed()
+{
+    return behaviors.GetHighestNeed();
+}
+
+
+
 float NPCType::GetAngularVelocity(NPC * /*npc*/)
 {
     if (ang_vel != 999)
@@ -739,6 +746,28 @@ csString BehaviorSet::InfoBehaviors(NPC *npc)
     return reply;
 }
 
+float BehaviorSet::GetHighestNeed()
+{
+    float highest = 0.0;
+    float temp;
+
+    for (size_t i=0; i<behaviors.GetSize(); i++)
+    {
+        if ((temp = behaviors[i]->CurrentNeed()) > highest)
+        {
+            highest = temp;
+        }
+        if ((temp = behaviors[i]->NewNeed()) > highest)
+        {
+            highest = temp;
+        }
+    }
+
+    return highest;
+}
+
+
+
 
 //---------------------------------------------------------------------------
 
@@ -803,6 +832,7 @@ void Behavior::DeepCopy(Behavior& other)
     completion_decay        = other.completion_decay;
     init_need               = other.init_need;
     resume_after_interrupt  = other.resume_after_interrupt;
+    interruptPerception     = other.interruptPerception;
     current_need            = other.current_need;
     new_need                = -999;
     interrupted             = false;
@@ -842,6 +872,7 @@ bool Behavior::Load(iDocumentNode *node)
     init_need               = node->GetAttributeValueAsFloat("initial");
     is_applicable_when_dead = node->GetAttributeValueAsBool("when_dead");
     resume_after_interrupt  = node->GetAttributeValueAsBool("resume",false);
+    interruptPerception     = node->GetAttributeValue("interrupt");
     failurePerception       = node->GetAttributeValue("failure");
 
     if (node->GetAttributeValue("min"))
@@ -1331,6 +1362,12 @@ void Behavior::InterruptScript(NPC *npc,EventManager *eventmgr)
     {
         npc->Printf(2,"Interrupting behaviour %s at step %d - %s",
                     name.GetData(),current_step,sequence[current_step]->GetName());
+
+        if (interruptPerception.Length())
+        {
+            Perception perception(interruptPerception);
+            npc->TriggerEvent(&perception);
+        }
 
         sequence[current_step]->InterruptOperation(npc,eventmgr);
         interrupted = true;
