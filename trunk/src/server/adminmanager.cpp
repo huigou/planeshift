@@ -3622,14 +3622,23 @@ csString AdminCmdDataSetItem::GetHelpMessage()
 AdminCmdDataReload::AdminCmdDataReload(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client *client, WordArray &words)
 : AdminCmdData("/reload"), itemID(0)
 {
+    subCommandList.Push("item","<itemID> - reloads the specified item");
+    subCommandList.Push("serveroptions","#Reload all the server options");
+    subCommandList.Push("mathscript","#Reload all the mathscripts");
+    subCommandList.Push("path","#Reload all the path data");
+
     size_t index = 1;
 
     // when help is requested, return immediate
-    if (IsHelp(words[1]))
+    if(IsHelp(words[1]))
         return;
 
-    subCmd = words[index++];
-    if (subCmd == "item")
+    if(words.GetCount() >= index && subCommandList.IsSubCommand(words[index]))
+    {
+        subCmd = words[index++];
+    }
+
+    if(subCmd == "item")
     {
         itemID = words.GetInt(index++);
         if (itemID == 0)
@@ -3637,9 +3646,10 @@ AdminCmdDataReload::AdminCmdDataReload(AdminManager* msgManager, MsgEntry* me, p
             ParseError(me, "Missing or invalid item id");
         }
     }
-    else if(subCmd != "serveroptions" && subCmd != "mathscript" && subCmd != "path")
+
+    if(words.GetCount() >= index)
     {
-        ParseError(me,"Not a valid subcommand: " + subCmd);
+        ParseError(me, "Too many arguments");
     }
 }
 
@@ -3647,7 +3657,7 @@ ADMINCMDFACTORY_IMPLEMENT_MSG_FACTORY_CREATE(AdminCmdDataReload)
 
 csString AdminCmdDataReload::GetHelpMessage()
 {
-    return "Syntax: \"" + command + " item <itemID>/script/serveroptions/mathscript/path\"";
+    return "Syntax: \"" + command + " " + subCommandList.GetHelpMessage() "\"";
 }
 
 AdminCmdDataListWarnings::AdminCmdDataListWarnings(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client *client, WordArray &words)
