@@ -516,22 +516,23 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
                 break;
             }
 
-            case psNPCCommandsMessage::CMD_DIG:
+            case psNPCCommandsMessage::CMD_WORK:
             {
-                msgtext.Append("CMD_DIG: ");
+                msgtext.Append("CMD_WORK: ");
 
                 // Extract the data
                 EID entity_id = EID(msg->GetUInt32());
+                csString type = msg->GetStr();
                 csString resource = msg->GetStr();
 
                 // Make sure we haven't run past the end of the buffer
                 if (msg->overrun)
                 {
-                    Debug2(LOG_SUPERCLIENT,msg->clientnum,"Received incomplete CMD_DIG from NPC client %u.\n",msg->clientnum);
+                    Debug2(LOG_SUPERCLIENT,msg->clientnum,"Received incomplete CMD_WORK from NPC client %u.\n",msg->clientnum);
                     break;
                 }
 
-                msgtext.AppendFmt("EID: %u Resource: %s ", entity_id.Unbox(), resource.GetData());
+                msgtext.AppendFmt("EID: %u Type: %s Resource: %s ", entity_id.Unbox(), type.GetData(), resource.GetData());
                 break;
             }
 

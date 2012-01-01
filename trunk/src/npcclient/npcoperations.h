@@ -603,24 +603,25 @@ public:
 
 //-----------------------------------------------------------------------------
 
-/** Dig will make the NPC dig for a resource.
+/** Work will make the NPC work for a resource.
  *
- *  This class is the implementation of the dig operations
+ *  This class is the implementation of the work operations
  *  used in behavior scripts for NPCS.
  *
  *  Examples:
- *  <dig resource="tribe:wealth" />
- *  <dig resource="Gold Ore" />
+ *  <work type="dig" resource="tribe:wealth" />
+ *  <work type="dig" resource="Gold Ore" />
  */
-class DigOperation : public ScriptOperation
+class WorkOperation : public ScriptOperation
 {
 protected:
-    csString resource; ///< The name of the resource to dig for.
+    csString type;
+    csString resource; ///< The name of the resource to work for.
 
 public:
 
-    DigOperation(): ScriptOperation("Dig") {};
-    virtual ~DigOperation() {};
+    WorkOperation(): ScriptOperation("Work") {};
+    virtual ~WorkOperation() {};
     virtual OperationResult Run(NPC* npc,EventManager* eventmgr,bool interrupted);
     virtual bool Load(iDocumentNode* node);
     virtual ScriptOperation* MakeCopy();

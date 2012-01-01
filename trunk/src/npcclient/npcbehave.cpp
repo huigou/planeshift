@@ -968,10 +968,6 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         {
             op = new DequipOperation;
         }
-        else if ( strcmp( node->GetValue(), "dig" ) == 0 )
-        {
-            op = new DigOperation;
-        }
         else if ( strcmp( node->GetValue(), "drop" ) == 0 )
         {
             op = new DropOperation;
@@ -1101,6 +1097,10 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         else if ( strcmp( node->GetValue(), "watch" ) == 0 )
         {
             op = new WatchOperation;
+        }
+        else if ( strcmp( node->GetValue(), "work" ) == 0 )
+        {
+            op = new WorkOperation;
         }
         else
         {

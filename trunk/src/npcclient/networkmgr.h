@@ -179,7 +179,7 @@ public:
 
     void QueueEquipCommand(gemNPCActor *entity, csString item, csString slot, int count);
     void QueueDequipCommand(gemNPCActor *entity, csString slot);
-    void QueueDigCommand(gemNPCActor *entity, csString resource);
+    void QueueWorkCommand(gemNPCActor *entity, const csString& type, const csString& resource);
     void QueueTransferCommand(gemNPCActor *entity, csString item, int count, csString target);
     void QueueDropCommand(gemNPCActor *entity, csString slot);
     void QueueResurrectCommand(csVector3 where, float rot, iSector* sector, PID character_id);
