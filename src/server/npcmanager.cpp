@@ -1401,17 +1401,18 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
 
                 break;
             }
-            case psNPCCommandsMessage::CMD_DIG:
+            case psNPCCommandsMessage::CMD_WORK:
             {
                 EID entity_id = EID(list.msg->GetUInt32());
+                csString type = list.msg->GetStr();
                 csString resource = list.msg->GetStr();
-                Debug3(LOG_SUPERCLIENT, entity_id.Unbox(), "-->Got dig cmd: Entity %s to dig for %s\n",
-                       ShowID(entity_id), resource.GetData());
+                Debug4(LOG_SUPERCLIENT, entity_id.Unbox(), "-->Got work cmd: Entity %s to %s for %s\n",
+                       ShowID(entity_id), type.GetData(), resource.GetData());
 
                 // Make sure we haven't run past the end of the buffer
                 if (list.msg->overrun)
                 {
-                    Debug2(LOG_SUPERCLIENT, entity_id.Unbox(), "Received incomplete CMD_DIG from NPC client %u.\n", me->clientnum);
+                    Debug2(LOG_SUPERCLIENT, entity_id.Unbox(), "Received incomplete CMD_WORK from NPC client %u.\n", me->clientnum);
                     break;
                 }
 
@@ -1424,7 +1425,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     break;
                 }
 
-                psserver->GetWorkManager()->HandleProduction(gEntity,"dig",resource);
+                psserver->GetWorkManager()->HandleProduction(gEntity,type,resource);
                 break;
             }
             case psNPCCommandsMessage::CMD_DROP:
