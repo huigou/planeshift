@@ -233,9 +233,13 @@ void WorkManager::HandleWorkCommand(MsgEntry* me,Client *client)
     {
         size_t result = resourcesActions.FindCaseInsensitive(msg.command);
         if(result != csArrayItemNotFound)
+        {
             HandleProduction(client->GetActor(),result,msg.filter,client);
+        }
         else
+        {
             psserver->SendSystemError(me->clientnum,"Invalid work command.");
+        }
     }
 }
 

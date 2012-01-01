@@ -510,7 +510,7 @@ INSERT INTO sc_npctypes VALUES("109","AbstractTribesman","DoNothing,Move","","",
    <loop iterations="3">
       <percept event="local_move" />
 
-      <dig resource="$NBUFFER[Resource]" />
+      <work type="dig" resource="$NBUFFER[Resource]" />
       <wait anim="stand" duration="10" />
 
       <!-- Must move since dig in same place is not alloved -->
@@ -539,7 +539,7 @@ INSERT INTO sc_npctypes VALUES("109","AbstractTribesman","DoNothing,Move","","",
    <loop iterations="3">
       <percept event="local_move" />
 
-      <dig />
+      <work type="dig" />
       <wait anim="stand" duration="10" />
 
       <!-- Must move since dig in same place is not alloved -->
@@ -659,18 +659,18 @@ INSERT INTO sc_npctypes VALUES("109","AbstractTribesman","DoNothing,Move","","",
    <move anim="walk" duration="3" />
 </behavior>
 
-<react event="collision"           behavior="Turn" delta="500" />
-<react event="tribe:work"          behavior="GoToWork" delta="100" />
-<react event="tribe:build"         behavior="GoBuild" delta="100" />
-<react event="tribe:resurrect"     behavior="Resurrect" delta="200" when_dead="yes" />
-<react event="tribe:mine"          behavior="MineResource" delta="100" />
-<react event="tribe:test_mine"     behavior="TestMineResource" delta="100" />
-<react event="tribe:hunt"          behavior="HuntResource" delta="100" />
-<react event="tribe:breed"         behavior="Breed" delta="100" />
-<react event="tribe:buy"           behavior="Buy" delta="100" />
-<react event="tribe:explore"       behavior="Explore" delta="100" />
+<react event="collision"           behavior="Turn" />
+<react event="tribe:work"          behavior="GoToWork" />
+<react event="tribe:build"         behavior="GoBuild" />
+<react event="tribe:resurrect"     behavior="Resurrect" when_dead="yes" />
+<react event="tribe:mine"          behavior="MineResource" />
+<react event="tribe:test_mine"     behavior="TestMineResource"  />
+<react event="tribe:hunt"          behavior="HuntResource"  />
+<react event="tribe:breed"         behavior="Breed" />
+<react event="tribe:buy"           behavior="Buy" />
+<react event="tribe:explore"       behavior="Explore" />
 <react event="target out of range" behavior="Chase" />
-<react event="target out of chase" behavior="Chase" absolute="0" only_interrupt="chase" />');
+<react event="target out of chase" behavior="Chase" absolute="0" only_interrupt="Chase" />');
 
 INSERT INTO sc_npctypes VALUES("111","MineingTribe","AbstractTribesman","","","","","","",
 '<empty/>');
