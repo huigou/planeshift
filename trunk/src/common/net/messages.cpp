@@ -4695,6 +4695,7 @@ csString psDRMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
     else
         msgtext.Append("Flying ");
     msgtext.AppendFmt("yrot: %.2f ",yrot);
+    msgtext.AppendFmt("ang_vel: %.2f ",ang_vel);
     msgtext.AppendFmt("sector: %s ",sectorName.GetData());
 #endif
 
