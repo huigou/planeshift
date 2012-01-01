@@ -162,7 +162,7 @@ public:
 
     /** Return hight current or new need.
      */
-    float GetHighestNeed();
+    float GetHighestNeed(NPC* npc);
 
 };
 
@@ -239,7 +239,7 @@ public:
 
     /** Return hight current or new need.
      */
-    float GetHighestNeed();
+    float GetHighestNeed(NPC *npc);
     
     float GetAngularVelocity(NPC *npc);
     float GetVelocity(NPC *npc);

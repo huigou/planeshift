@@ -284,7 +284,7 @@ void Reaction::React(NPC *who, Perception *pcpt)
         case DESIRE_GUARANTIED:
             who->Printf(10, "Guarantied need to behavior %s", affected[i]->GetName());
             
-            float highest = who->GetBrain()->GetHighestNeed();
+            float highest = who->GetBrain()->GetHighestNeed(who);
             if (who->GetCurrentBehavior() != affected[i])
             {
                 affected[i]->ApplyNeedAbsolute(who, highest + 25);
