@@ -202,7 +202,6 @@ public:
         CMD_ATTACK,
         CMD_CAST,
         CMD_DEQUIP,
-        CMD_DIG,
         CMD_DRDATA,
         CMD_DROP,
         CMD_EMOTE,
@@ -218,6 +217,7 @@ public:
         CMD_TALK,
         CMD_TRANSFER,
         CMD_VISIBILITY,
+        CMD_WORK,
         PCPT_ANYRANGEPLAYER, // perceptions go from server to superclient
         PCPT_ASSESS, 
         PCPT_ATTACK,

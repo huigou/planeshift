@@ -1424,17 +1424,18 @@ void NetworkManager::QueueDequipCommand(gemNPCActor *entity, csString slot)
     cmd_count++;
 }
 
-void NetworkManager::QueueDigCommand(gemNPCActor *entity, csString resource)
+void NetworkManager::QueueWorkCommand(gemNPCActor *entity, const csString& type, const csString& resource)
 {
-    CheckCommandsOverrun(100);
+    CheckCommandsOverrun( sizeof(uint8_t) + sizeof(uint32_t) + (type.Length()+1) + (resource.Length()+1));
 
-    outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_DIG);
+    outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_WORK);
     outbound->msg->Add(entity->GetEID().Unbox());
+    outbound->msg->Add( type );
     outbound->msg->Add( resource );
 
     if ( outbound->msg->overrun )
     {
-        CS_ASSERT(!"NetworkManager::QueueDigCommand put message in overrun state!\n");
+        CS_ASSERT(!"NetworkManager::QueueWorkCommand put message in overrun state!\n");
     }
 
     cmd_count++;

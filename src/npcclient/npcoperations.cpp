@@ -1670,22 +1670,29 @@ ScriptOperation::OperationResult DequipOperation::Run(NPC *npc, EventManager *ev
 
 //---------------------------------------------------------------------------
 
-bool DigOperation::Load(iDocumentNode *node)
+bool WorkOperation::Load(iDocumentNode *node)
 {
+    type = node->GetAttributeValue("type");
+    if (type.IsEmpty())
+    {
+        Error1("Can't do work operation with a type");
+        return false;
+    }
     resource = node->GetAttributeValue("resource");
     return true;
 }
 
-ScriptOperation *DigOperation::MakeCopy()
+ScriptOperation *WorkOperation::MakeCopy()
 {
-    DigOperation *op = new DigOperation;
+    WorkOperation *op = new WorkOperation;
 
+    op->type = type;
     op->resource = resource;
 
     return op;
 }
 
-ScriptOperation::OperationResult DigOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult WorkOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
     csString resourceVariablesReplaced = psGameObject::ReplaceNPCVariables(npc, resource);
     
@@ -1693,12 +1700,12 @@ ScriptOperation::OperationResult DigOperation::Run(NPC *npc, EventManager *event
     {
         if (npc->GetTribe())
         {
-            npcclient->GetNetworkMgr()->QueueDigCommand(npc->GetActor(), npc->GetTribe()->GetNeededResourceNick());
+            npcclient->GetNetworkMgr()->QueueWorkCommand(npc->GetActor(), type, npc->GetTribe()->GetNeededResourceNick());
         }
     }
     else
     {
-        npcclient->GetNetworkMgr()->QueueDigCommand(npc->GetActor(), resourceVariablesReplaced );
+        npcclient->GetNetworkMgr()->QueueWorkCommand(npc->GetActor(), type, resourceVariablesReplaced );
     }
     
 
