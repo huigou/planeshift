@@ -462,9 +462,9 @@ void NPCType::Interrupt(NPC *npc)
     behaviors.Interrupt(npc);
 }
 
-float NPCType::GetHighestNeed()
+float NPCType::GetHighestNeed(NPC* npc)
 {
-    return behaviors.GetHighestNeed();
+    return behaviors.GetHighestNeed(npc);
 }
 
 
@@ -633,7 +633,7 @@ void BehaviorSet::Advance(csTicks delta,NPC *npc)
             }
 
             // If the interrupt has change the needs, try once
-            if (GetHighestNeed() > active->CurrentNeed())
+            if (GetHighestNeed(npc) > active->CurrentNeed())
             {
                 npc->Printf(3,"Need to rechedule since a new need is higest");
                 continue; // Start the check once more.
@@ -751,20 +751,24 @@ csString BehaviorSet::InfoBehaviors(NPC *npc)
     return reply;
 }
 
-float BehaviorSet::GetHighestNeed()
+float BehaviorSet::GetHighestNeed(NPC* npc)
 {
     float highest = 0.0;
     float temp;
 
     for (size_t i=0; i<behaviors.GetSize(); i++)
     {
-        if ((temp = behaviors[i]->CurrentNeed()) > highest)
+        Behavior * b = behaviors[i];
+        if (b->ApplicableToNPCState(npc))
         {
-            highest = temp;
-        }
-        if ((temp = behaviors[i]->NewNeed()) > highest)
-        {
-            highest = temp;
+            if ((temp = b->CurrentNeed()) > highest)
+            {
+                highest = temp;
+            }
+            if ((temp = b->NewNeed()) > highest)
+            {
+                highest = temp;
+            }
         }
     }
 
