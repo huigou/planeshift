@@ -107,8 +107,8 @@ bool NPCType::Load(iResultRow &row)
             }
             else
             {
-                Error2("Specified parent npctype '%s' could not be found.",
-                       parent[i].GetDataSafe());
+                Error3("NPCType(%s) specified parent npctype '%s' could not be found.",
+                       row["id"],parent[i].GetDataSafe());
                 return false;
             }
         }
@@ -117,7 +117,7 @@ bool NPCType::Load(iResultRow &row)
     name = row.GetString("name");
     if(name.Length() == 0)
     {
-        Error1("NPCType has no name attribute. Error in DB");
+        Error2("NPCType(%s) has no name attribute. Error in DB",row["id"]);
         return false;
     }
 
@@ -155,13 +155,13 @@ bool NPCType::Load(iResultRow &row)
     const char* error = doc->Parse(row.GetString("script"));
     if(error)
     {
-        Error3("NPCType script parsing error:%s in %s", error, name.GetData());
+        Error4("NPCType(%s) script parsing error:%s in %s", row["id"], error, name.GetData());
         return false;
     }
     csRef<iDocumentNode> node = doc->GetRoot();
     if(!node)
     {
-        Error2("No XML root in npc type script of %s", name.GetData());
+        Error3("NPCType(%s) no XML root in npc type script of %s", row["id"], name.GetData());
         return false;
     }
     
@@ -180,7 +180,7 @@ bool NPCType::Load(iResultRow &row)
             Behavior *b = new Behavior;
             if(!b->Load(node))
             {
-                Error3("Could not load behavior '%s'. Error in DB XML in node '%s'.",
+                Error4("NPCType(%s) could not load behavior '%s'. Error in DB XML in node '%s'.", row["id"],
                        b->GetName(),node->GetValue());
                 delete b;
                 return false;
@@ -193,7 +193,7 @@ bool NPCType::Load(iResultRow &row)
             Reaction *r = new Reaction;
             if(!r->Load(node,behaviors))
             {
-                Error1("Could not load reaction. Error in DB XML");
+                Error2("NPCType(%s) could not load reaction. Error in DB XML", row["id"]);
                 delete r;
                 return false;
             }
@@ -215,7 +215,7 @@ bool NPCType::Load(iResultRow &row)
                                 // Should probably delete and clear out here
                                 // to allow for overiding of event,affected pairs.
                                 // Though now give error, until needed.
-                                Error4("Reaction of type '%s' already connected to '%s' in '%s'",
+                                Error5("NPCType(%s) reaction of type '%s' already connected to '%s' in '%s'", row["id"],
                                        r->GetEventType(NULL).GetDataSafe(),reactions[i]->affected[j]->GetName(), name.GetDataSafe());
                                 return false;
                                 // delete reactions[i];
@@ -234,7 +234,7 @@ bool NPCType::Load(iResultRow &row)
         }
         else
         {
-            Error1("Node under NPCType is not 'behavior' or 'react'. Error in DB XML");
+            Error2("NPCType(%s) node is not 'behavior', 'react', or 'empty'. Error in DB XML", row["id"]);
             return false;
         }
     }
