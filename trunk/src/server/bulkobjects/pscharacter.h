@@ -945,6 +945,12 @@ public:
 
     bool IsNPC() { return characterType == PSCHARACTER_TYPE_NPC; };
 
+    /**
+     * Used to determine if this character is a player.
+     * @return TRUE if the character is a player.
+     */
+    bool IsPlayer() { return characterType == PSCHARACTER_TYPE_PLAYER; };
+
     /// Used to determine if this NPC is a pet
     bool IsPet() { return (characterType == PSCHARACTER_TYPE_PET || characterType == PSCHARACTER_TYPE_MOUNTPET); };
     /// Used to determine if this NPC is a mount
