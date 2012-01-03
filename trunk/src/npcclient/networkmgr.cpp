@@ -1052,7 +1052,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
 
                 npc->Printf("Got info request.");
 
-                csString reply("NPCClent: ");
+                csString reply("NPCClient: ");
                 reply.Append(npc->Info());
 
                 QueueInfoReplyCommand(clientNum,reply);
