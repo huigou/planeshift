@@ -341,18 +341,18 @@ int com_status(char *)
                 client->GetName(),
                 client->GetClientNum(),
                 (const char*) PS_GetClientStatus(client));
-        if (client->GetCharacterData())
-        {
-            psCharacter * character = client->GetCharacterData();
-            unsigned int time = character->GetOnlineTimeThisSession();
-            unsigned int hour,min,sec;
-            sec = time%60;
-            time = time/60;
-            min = time%60;
-            hour = time/60;
-            clientStatus.AppendFmt(" %3u:%02u:%02u",hour,min,sec);
-            
-        }
+
+        psCharacter * character = client->GetCharacterData();
+        //if the client lacks a character (eg: npcclient) show for now 0:0:0 as time
+        //so the table doesn't get screwed up
+        unsigned int time = character? character->GetOnlineTimeThisSession() : 0;
+        unsigned int hour,min,sec;
+        sec = time%60;
+        time = time/60;
+        min = time%60;
+        hour = time/60;
+        clientStatus.AppendFmt(" %3u:%02u:%02u",hour,min,sec);
+
         if(client->GetConnection())
         {
         	clientStatus.AppendFmt(" %4u %4u %4.2f %4u", client->GetConnection()->RTO,
