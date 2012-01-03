@@ -829,8 +829,12 @@ bool psCharAppearance::ChangeMaterial(const char* part, const char* materialName
     {
         // failed
     }
-    else if(!material->IsFinished())
+    else if(!material->IsFinished() || !delayedAttach.IsEmpty())
     {
+        //if either the material could not be entirely loaded or we have
+        //something in the delayed attach we need to postpose the applying
+        //because else the order might be skewed resulting in skin being
+        //applied above armor, for example
         Attachment attach(false);
         attach.materialName = materialNameParsed;
         attach.partName = part;
