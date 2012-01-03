@@ -2318,7 +2318,7 @@ int gemActor::GetTargetType(gemObject* target)
     }
 
     // Is target a NPC?
-    Client* targetclient = psserver->GetNetManager()->GetAnyClient(GetClientID());
+    Client* targetclient = target->GetClient();
     if (!targetclient)
     {
         if (target->GetCharacterData()->IsPet())
@@ -2340,8 +2340,7 @@ int gemActor::GetTargetType(gemObject* target)
         return TARGET_FOE; /* attackable GM */
 
     // Only clients are in duels
-    Client* targetClient = target->GetClient();
-    if (attackerClient && targetClient)
+    if (attackerClient && targetclient)
     {
         // Challenged to a duel?
         if (attackerClient->IsDuelClient(target->GetClientID())
