@@ -5181,7 +5181,7 @@ psPersistItem::psPersistItem( MsgEntry* me, NetBase::AccessPointers * accessPoin
     xRot        = me->GetFloat();
     yRot        = me->GetFloat();
     zRot        = me->GetFloat();
-    tribeID     = me->GetInt16();
+    tribeID     = me->GetInt32();
     if (!me->IsEmpty())
     {
         flags   = me->GetUInt32();
