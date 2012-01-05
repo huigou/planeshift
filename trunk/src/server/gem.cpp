@@ -4610,8 +4610,6 @@ void gemNPC::SendBehaviorMessage(const csString & msg_id, gemObject *obj)
         // If the player is in range of the item.
         if ( RangeTo(actor) < RANGE_TO_SELECT && actor->IsAlive() )
         {
-            Client* clientC = psserver->GetNetManager()->GetClient(client);
-
             int options = 0;
 
             // Pet?
@@ -4691,7 +4689,7 @@ void gemNPC::SendBehaviorMessage(const csString & msg_id, gemObject *obj)
 
                 // Can we attack this NPC?
                 csString msg; // Not used
-                if (IsAlive() && clientC && clientC->GetActor()-IsAllowedToAttack(this,msg))
+                if (IsAlive() && actor && actor->IsAllowedToAttack(this,msg))
                     options |= psGUIInteractMessage::ATTACK;
                     
                 if(IsAlive() && psChar->IsStorage())
