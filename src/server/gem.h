@@ -510,7 +510,7 @@ protected:
     float xRot;
     float yRot;
     float zRot;
-    int tribeID; ///< Holds the id of the tribe owning this item (0 if is not tribe-owned)
+    uint32_t tribeID; ///< Holds the id of the tribe owning this item (0 if is not tribe-owned)
 
 public:
     gemItem(GEMSupervisor* gemsupervisor,
@@ -526,8 +526,8 @@ public:
         float zrotangle,
         int clientnum);
 
-    void SetTribeID(int id) { tribeID = id; }
-    int  GetTribeID() { return tribeID; }
+    void SetTribeID(uint32_t id) { tribeID = id; }
+    uint32_t  GetTribeID() { return tribeID; }
 
     virtual const char* GetObjectType() { return itemType.GetData(); }
     psItem* GetItemData() { return itemdata; }
