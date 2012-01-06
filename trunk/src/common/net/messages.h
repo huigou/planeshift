@@ -3274,7 +3274,8 @@ public:
     {
         NONE            = 0,
         NOPICKUP        = 1 << 0,
-        COLLIDE         = 1 << 1
+        COLLIDE         = 1 << 1,
+        TRIBEID         = 1 << 2
     };
 
     psPersistItem(  uint32_t clientnum,
@@ -3290,7 +3291,7 @@ public:
                     float zRot,
                     uint32_t flags,
                     csStringSet* msgstrings,
-                    int tribeid = 0
+                    uint32_t tribeid = 0
                  );
 
     psPersistItem( MsgEntry* me, NetBase::AccessPointers* accessPointers );
@@ -3313,7 +3314,7 @@ public:
     float xRot;
     float yRot;
     float zRot;
-    int   tribeID;
+    uint32_t tribeID;
     EID eid;
     uint32_t type;
     uint32_t flags;

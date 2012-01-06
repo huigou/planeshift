@@ -5142,7 +5142,7 @@ psPersistItem::psPersistItem( uint32_t clientNum,
                               float zRot,
                               uint32_t flags,
                               csStringSet* msgstrings,
-                              int tribeID)
+                              uint32_t tribeID)
 {
     msg.AttachNew(new MsgEntry( MAX_MESSAGE_SIZE ));
 
@@ -5159,10 +5159,18 @@ psPersistItem::psPersistItem( uint32_t clientNum,
     msg->Add(xRot);
     msg->Add(yRot);
     msg->Add(zRot);
-    msg->Add(tribeID);
-    if (flags) // No point sending 0, has to be at the end
+    if (tribeID != 0 )
+    {
+        flags |= TRIBEID;
+    }
+    if (flags) // No point sending 0, only enties called out by flags can follow
     {
         msg->Add( flags );
+    }
+    // Only entities called out by flags can follow flags
+    if (flags & TRIBEID)
+    {
+        msg->Add(tribeID);
     }
 
     msg->ClipToCurrentSize();
@@ -5170,6 +5178,7 @@ psPersistItem::psPersistItem( uint32_t clientNum,
 
 
 psPersistItem::psPersistItem( MsgEntry* me, NetBase::AccessPointers * accessPointers )
+    :flags(0),tribeID(0)
 {
     eid         = EID(me->GetUInt32());
     type        = me->GetUInt32();
@@ -5181,14 +5190,13 @@ psPersistItem::psPersistItem( MsgEntry* me, NetBase::AccessPointers * accessPoin
     xRot        = me->GetFloat();
     yRot        = me->GetFloat();
     zRot        = me->GetFloat();
-    tribeID     = me->GetInt32();
     if (!me->IsEmpty())
     {
         flags   = me->GetUInt32();
-    }
-    else
-    {
-        flags   = 0;
+        if (flags & TRIBEID)
+        {
+            tribeID     = me->GetInt32();
+        }
     }
 }
 
@@ -5202,7 +5210,12 @@ csString psPersistItem::ToString(NetBase::AccessPointers * /*accessPointers*/)
     msgtext.AppendFmt("Pos(%.2f,%.2f,%.2f) ",pos.x,pos.y,pos.z);
     msgtext.AppendFmt("yrot: %.2f Flags:",yRot);
     if(flags & NOPICKUP) msgtext.AppendFmt(" NOPICKUP");
-    if(tribeID) msgtext.AppendFmt("Belongs to tribe(id:%d)\n", tribeID);
+    if(flags & COLLIDE)  msgtext.AppendFmt(" COLLIDE");
+    if(flags & TRIBEID)
+    {
+        msgtext.AppendFmt(" TRIBEID");
+        msgtext.AppendFmt(" Belongs to tribe: (id:%d)\n", tribeID);
+    }
 
     return msgtext;
 }
