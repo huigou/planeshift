@@ -1239,7 +1239,7 @@ void gemItem::Broadcast(int clientnum, bool control )
 {
     int flags = 0;
     if (!IsPickupable()) flags |= psPersistItem::NOPICKUP;
-    if (IsUsingCD()) flags |= psPersistItem::COLLIDE;
+    if (IsUsingCD() || GetItem()->GetSector()->GetIsColliding()) flags |= psPersistItem::COLLIDE;
 
     psPersistItem mesg(
                          clientnum,
@@ -1309,8 +1309,7 @@ bool gemItem::Send( int clientnum, bool , bool to_superclients, psPersistAllEnti
 {
     int flags = 0;
     if (!IsPickupable()) flags |= psPersistItem::NOPICKUP;
-    if (IsUsingCD() ||
-        GetItem()->GetSector()->GetIsColliding()) flags |= psPersistItem::COLLIDE;
+    if (IsUsingCD() || GetItem()->GetSector()->GetIsColliding()) flags |= psPersistItem::COLLIDE;
 
     psPersistItem mesg(  clientnum,
                          eid,
