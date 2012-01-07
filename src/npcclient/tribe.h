@@ -186,7 +186,7 @@ public:
     size_t GetResourceCount() { return resources.GetSize(); }
     const Resource& GetResource(size_t n) { return resources[n]; }
     csList<Memory*>::Iterator GetMemoryIterator() { csList<Memory*>::Iterator it(memories); return it; };
-    const char* GetNPCIdleBehavior() { return npcIdleBehavior.GetDataSafe(); }
+    csString GetNPCIdleBehavior() { return npcIdleBehavior; }
     csVector3 GetHomePosition() { return homePos; }
     iSector* GetHomeSector();
     csString GetHomeSectorName() { return homeSectorName; }

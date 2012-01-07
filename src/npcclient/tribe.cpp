@@ -479,7 +479,7 @@ void Tribe::Advance(csTicks when, EventManager *eventmgr)
                     Debug2(LOG_TRIBES, id, "Recipe %s completed.", rName.GetData());
                 }
 
-                tribalRecipe->RemoveChild(bestRecipe);
+                tribalRecipe->RemoveChild(bestRecipe->recipe);
             }
 
             // If nextStep is -2, the recipe has unmet requirements
@@ -1270,12 +1270,14 @@ csArray<NPC*> Tribe::SelectNPCs(const csString& type, const char* number)
     int           count = atoi(number);
     csArray<NPC*> npcs;
 
+    bool selectAny = type.CompareNoCase("any");
+
     // Loop all members. Check for type and if they are idle.
     for(int i=0;i<members.GetSize();i++)
     {
         NPC* member = members[i];
 
-        if ((member->GetTribeMemberType() != type) && (type != "any"))
+        if ((member->GetTribeMemberType() != type) && !selectAny)
         {
             // Just skip any members of wrong type.
             continue;

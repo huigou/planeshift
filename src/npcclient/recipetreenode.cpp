@@ -106,6 +106,7 @@ bool RecipeTreeNode::RemoveChild(Recipe* child)
             if(children[i]->recipe->IsPersistent())
             {
                 children[i]->nextStep = 0;
+                children[i]->nextReq = 0;
                 return true;
             }
             RemoveChild(children[i]);
