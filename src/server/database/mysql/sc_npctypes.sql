@@ -555,17 +555,35 @@ INSERT INTO sc_npctypes VALUES("109","AbstractTribesman","DoNothing,Move","","",
    <share_memories />
 </behavior>
 
-<behavior name="GoToSleep" resume="yes">
+
+<!-- Tribes will react to time events triggering GoToSleep and WakeUp -->
+<behavior name="GoToSleep" resume="yes" completion_decay="-1" >
    <talk text="Going to sleep" target="false" />
 
    <!-- Go home -->
    <locate obj="tribe:home" static="no" destination="Move" />
    <percept event="move" />
 
+   <wait anim="idle" duration="5" />
    <sit />
-   <wait anim="sit_idle" duration="180" />
+   <percept event="sleep" />
+
+   <wait anim="sit_idle" duration="5" />
    <standup />
 </behavior>
+<behavior name="Sleep" resume="yes">
+   <talk text="zZz" target="false" />
+
+   <wait anim="sit_idle" duration="24:00" /> <!-- 24 hours game time, will be interrupted upon wakeup -->
+</behavior>
+<behavior name="WakeUp" resume="yes">
+   <talk text="aaahhh" target="false" />
+   <wait anim="sit_idle" duration="5" />
+   <percept event="wake_up" />
+</behavior>
+<react event="sleep" behavior="Sleep" />
+<react event="wake_up" behavior="Sleep" absolute="0" />
+
 
 <behavior name="Breed" resume="yes" completion_decay="100">
    <talk text="Going Breed" target="false" />
@@ -654,21 +672,35 @@ INSERT INTO sc_npctypes VALUES("109","AbstractTribesman","DoNothing,Move","","",
    <circle anim="walk" radius="2" />
 </behavior>
 
+<behavior name="Wait" resume="yes" >
+   <talk text="Going waiting" target="false" />
+
+   <!-- Go home -->
+   <locate obj="tribe:home" static="no" destination="Move" />
+   <percept event="move" />
+
+   <sit/>
+   <wait duration="$NBUFFER[Wait_Duration]" anim="sit_idle" />
+   <standup/>
+
+</behavior>
+
 <behavior name="Turn" completion_decay="500" >
    <rotate type="random" min="0" max="360" anim="walk" />
    <move anim="walk" duration="3" />
 </behavior>
 
 <react event="collision"           behavior="Turn" />
-<react event="tribe:work"          behavior="GoToWork" />
-<react event="tribe:build"         behavior="GoBuild" />
-<react event="tribe:resurrect"     behavior="Resurrect" when_dead="yes" />
-<react event="tribe:mine"          behavior="MineResource" />
-<react event="tribe:test_mine"     behavior="TestMineResource"  />
-<react event="tribe:hunt"          behavior="HuntResource"  />
 <react event="tribe:breed"         behavior="Breed" />
+<react event="tribe:build"         behavior="GoBuild" />
 <react event="tribe:buy"           behavior="Buy" />
 <react event="tribe:explore"       behavior="Explore" />
+<react event="tribe:hunt"          behavior="HuntResource"  />
+<react event="tribe:mine"          behavior="MineResource" />
+<react event="tribe:resurrect"     behavior="Resurrect" when_dead="yes" />
+<react event="tribe:test_mine"     behavior="TestMineResource"  />
+<react event="tribe:wait"          behavior="Wait" />
+<react event="tribe:work"          behavior="GoToWork" />
 <react event="target out of range" behavior="Chase" />
 <react event="target out of chase" behavior="Chase" absolute="0" only_interrupt="Chase" />');
 

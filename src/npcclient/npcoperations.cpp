@@ -4306,6 +4306,17 @@ bool WaitOperation::Load(iDocumentNode *node)
         return false;
     }
 
+    // Check for <hours>:<minutes> and convert to duration
+    if (duration.FindFirst(':') != ((size_t)-1))
+    {
+        csStringArray params;
+        params.SplitString(duration,":");
+        int hours = atoi(params.Get(0));
+        int minutes = atoi(params.Get(1));
+        uint32_t time = (hours*60.0+minutes)*GAME_MINUTE_IN_SECONDS;
+        duration.Format("%d",time);
+    }
+
     action = node->GetAttributeValue("anim");
     return true;
 }

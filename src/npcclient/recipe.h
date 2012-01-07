@@ -54,13 +54,14 @@ public:
 
     /** Types of requirements */
     typedef enum {
-        REQ_TYPE_TRIBESMAN,
-        REQ_TYPE_RESOURCE,
+        REQ_TYPE_BUILDING,
         REQ_TYPE_ITEM,
         REQ_TYPE_KNOWLEDGE,
+        REQ_TYPE_MEMORY,
         REQ_TYPE_RECIPE,
+        REQ_TYPE_RESOURCE,
         REQ_TYPE_TRADER,
-        REQ_TYPE_MEMORY
+        REQ_TYPE_TRIBESMAN
     } RequirementType;
     static const char* RequirementTypeString[];
     

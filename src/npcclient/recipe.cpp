@@ -40,14 +40,14 @@
 #include "npc.h"
 
 const char* Recipe::RequirementTypeString[] = 
-    {"REQ_TYPE_TRIBESMAN",
-     "REQ_TYPE_RESOURCE",
+    {"REQ_TYPE_BUILDING",
      "REQ_TYPE_ITEM",
      "REQ_TYPE_KNOWLEDGE",
+     "REQ_TYPE_MEMORY",
      "REQ_TYPE_RECIPE",
+     "REQ_TYPE_RESOURCE",
      "REQ_TYPE_TRADER",
-     "REQ_TYPE_MEMORY"};
-    
+     "REQ_TYPE_TRIBESMAN"};    
 
 
 Recipe::Recipe()
@@ -131,7 +131,12 @@ bool Recipe::Load(iResultRow &row)
         bool bufferRequired = false;
         
         // And check its contents
-        if(reqText == "tribesman")
+        if(reqText == "building")
+        {
+            newReq.type = Recipe::REQ_TYPE_BUILDING;
+            recipeRequired = true;
+        }
+        else if(reqText == "tribesman")
         {
             newReq.type = Recipe::REQ_TYPE_TRIBESMAN;
             recipeRequired = true;
@@ -329,6 +334,14 @@ bool RecipeManager::AddTribe(Tribe *tribe)
         else if(keyword == "sleepPeriod")
         {
             newTribe.sleepPeriod = keywords.Get(1);
+            if ((newTribe.sleepPeriod != "diurnal") &&
+                (newTribe.sleepPeriod != "nocturnal") &&
+                (newTribe.sleepPeriod != "nosleep"))
+            {
+                Error2("Recipe sleepPeriod(%s) with unkown period. Use: diurnal|nocturnal|nosleep",keywords.Get(1));
+                return false;
+            }
+            
         }
         else if(keyword == "loadRecipe")
         {
@@ -452,7 +465,7 @@ bool RecipeManager::ParseFunction(csString function, Tribe* tribe, csArray<NPC*>
         data->unity = functionArguments.Get(0);
         return true;
     }
-    else if(functionBody == "sleepPeriode")
+    else if(functionBody == "sleepPeriod")
     {
         if(argSize != 1)
         {
@@ -762,7 +775,20 @@ bool RecipeManager::ParseRequirement(Recipe::Requirement requirement, Tribe* tri
            requirement.quantity.GetDataSafe(),quantity,requirement.recipe.GetDataSafe());
 
     // Check type of requirement and do something for each
-    if(requirement.type == Recipe::REQ_TYPE_TRIBESMAN)
+    if(requirement.type == Recipe::REQ_TYPE_BUILDING)
+    {
+        if(tribe->CheckAsset(Tribe::ASSET_TYPE_BUILDING, name, quantity))
+        {
+            return true;
+        }
+        
+        for(int i=0;i<quantity;i++)
+        {
+            tribe->AddRecipe(GetRecipe(requirement.recipe), recipe);
+        }
+        return false;
+    }
+    else if(requirement.type == Recipe::REQ_TYPE_TRIBESMAN)
     {
         if(tribe->CheckMembers(name, quantity))
             return true;
@@ -805,7 +831,9 @@ bool RecipeManager::ParseRequirement(Recipe::Requirement requirement, Tribe* tri
     else if(requirement.type == Recipe::REQ_TYPE_ITEM)
     {
         if(tribe->CheckAsset(Tribe::ASSET_TYPE_ITEM, name, quantity))
+        {
             return true;
+        }
         
         for(int i=0;i<quantity;i++)
         {
@@ -897,14 +925,14 @@ void RecipeManager::CreateGlobalNPCType(Tribe* tribe)
     // Active period of the day trait
     if(currentTribe->sleepPeriod == "diurnal")
     {
-        reaction = "<react event=\"time\" value=\"22,0,,,\" behavior=\"GoToSleep\" />\n";
-        reaction += "<react event=\"time\" value=\"6,0,,,\" behavior=\"do nothing\" />";
+        reaction = "<react event=\"time\" value=\"22,0,,,\" random=\",15,,,\" behavior=\"GoToSleep\" absolute=\"55\" />\n";
+        reaction += "<react event=\"time\" value=\"6,0,,,\" random=\",15,,,\" behavior=\"WakeUp\" />";
         assembledType += reaction;
     }
     else if(currentTribe->sleepPeriod == "nocturnal")
     {
-        reaction = "<react event=\"time\" value=\"8,0,,,\" behavior=\"GoToSleep\" />\n";
-        reaction += "<react event=\"time\" value=\"18,0,,,\" behavior=\"do nothing\" />";
+        reaction = "<react event=\"time\" value=\"8,0,,,\" random=\",15,,,\" behavior=\"GoToSleep\" absolute=\"55\"/>\n";
+        reaction += "<react event=\"time\" value=\"18,0,,,\" random=\",15,,,\" behavior=\"WakeUp\" />";
         assembledType += reaction;
     }
 
