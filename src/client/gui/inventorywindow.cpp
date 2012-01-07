@@ -107,7 +107,6 @@ bool pawsInventoryWindow::SetupSlot( const char* slotName )
     }
     slot->SetContainer(  CONTAINER_INVENTORY_EQUIPMENT );
     slot->SetSlotID( slotID );
-    slot->DrawStackCount(true);
 
     equipmentSlots[slotID] = slot;
     return true;
