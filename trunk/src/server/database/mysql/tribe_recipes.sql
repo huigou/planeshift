@@ -23,7 +23,7 @@ CREATE TABLE `tribe_recipes`
 # the sources. 
 #
 
-INSERT INTO `tribe_recipes` VALUES (1, 'Do Nothing', '', 'wait(10.0);', 1,1);
+INSERT INTO `tribe_recipes` VALUES (1, 'Do Nothing', '', 'select(Any,1);setBuffer(selection,Wait_Duration,10.0);percept(selection,tribe:wait);wait(10.0);', 1,1);
 
 INSERT INTO `tribe_recipes` VALUES (10, 'Miner Explore', 'tribesman(Miner,1);', 'select(Miner,1);explore();', 0, 0);
 INSERT INTO `tribe_recipes` VALUES (11, 'Miner Test Mine', 'tribesman(Miner,1);', 'select(Miner,1);setBuffer(selection,Resource,$TBUFFER[Resource]);percept(selection,tribe:test_mine);', 0, 0);
@@ -58,21 +58,28 @@ INSERT INTO `tribe_recipes` VALUES (71, 'Hunter Build Tent', 'tribesman(Hunter,1
 
 
 # Targets ~ Missions
-INSERT INTO `tribe_recipes` VALUES (90, 'Miner Evolve Tribe', 'tribesman(number,16,Miner Mate);resource(Coal,150,Miner Dig Resource,Resource);resource(Gold Ore,200,Miner Dig Resource,Resource);item(Campfire,2,Miner Build Campfire);item(Small Tent,8,Miner Build Tent);', 'wait(10.0);', 0, 0);
+INSERT INTO `tribe_recipes` VALUES (90, 'Miner Evolve Tribe', 
+'tribesman(number,16,Miner Mate);
+resource(Coal,150,Miner Dig Resource,Resource);
+resource(Gold Ore,200,Miner Dig Resource,Resource);
+building(Campfire,2,Miner Build Campfire);
+building(Small Tent,8,Miner Build Tent);',
+'wait(10.0);', 1, 0);
+
 INSERT INTO `tribe_recipes` VALUES (91, 'Hunter Evolve Tribe',
 'tribesman(number,4,Hunter Mate);
 resource(Skin,150,Hunter Hunt Resource,Resource);
 resource(Meat,200,Hunter Hunt Resource,Resource);
-item(Campfire,1,Hunter Build Campfire);
-item(Small Tent,2,Hunter Build Tent);',
-'wait(10.0);', 0, 0);
+building(Campfire,1,Hunter Build Campfire);
+building(Small Tent,2,Hunter Build Tent);',
+'wait(10.0);', 1, 0);
 
 # Tribal Recipes
 
 INSERT INTO `tribe_recipes` VALUES (100, 'Mining Tribe',
 '# No requirements', 
 '# The Mining tribe
-brain(civilised);aggressivity(peaceful);growth(conservatory);unity(organised);
+brain(civilised);aggressivity(peaceful);growth(conservatory);unity(organised);sleepPeriod(diurnal);
 
 # Load recipes
 loadRecipe(Do Nothing);
@@ -83,7 +90,7 @@ loadRecipe(Miner Evolve Tribe,distributed);
 INSERT INTO `tribe_recipes` VALUES (101, 'Hunting Tribe',
 '# No requirements',
 '# The Hunter tribe
-brain(civilised);aggressivity(neutral);growth(conservatory);unity(organised);
+brain(civilised);aggressivity(neutral);growth(conservatory);unity(organised);sleepPeriod(diurnal);
 
 # Load Recipes
 loadRecipe(Do Nothing);
