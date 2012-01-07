@@ -1241,8 +1241,7 @@ void gemItem::Broadcast(int clientnum, bool control )
     if (!IsPickupable()) flags |= psPersistItem::NOPICKUP;
     if (IsUsingCD() || GetItem()->GetSector()->GetIsColliding()) flags |= psPersistItem::COLLIDE;
 
-    psPersistItem mesg(
-                         clientnum,
+    psPersistItem mesg(  clientnum,
                          eid,
                          -2,
                          name,
@@ -1255,11 +1254,10 @@ void gemItem::Broadcast(int clientnum, bool control )
                          zRot,
                          flags,
                          cacheManager->GetMsgStrings(),
-                         tribeID
+                         0  // Don't send tribeID to clients
                          );
 
     mesg.Multicast(GetMulticastClients(),clientnum,PROX_LIST_ANY_RANGE);
-    cel->RemoveItemEntity(this);
 }
 
 void gemItem::SetPosition(const csVector3& pos,float angle, iSector* sector, InstanceID instance)
@@ -1324,17 +1322,32 @@ bool gemItem::Send( int clientnum, bool , bool to_superclients, psPersistAllEnti
                          zRot,
                          flags,
                          cacheManager->GetMsgStrings(),
-                         GetTribeID()
+                         (to_superclients || allEntities)?GetTribeID():0 // Don't send tribe ids to clients
                          );
 
-    if (clientnum)
+    if (clientnum && !to_superclients)
+    {
         mesg.SendMessage();
+    }
 
     if (to_superclients)
-        mesg.Multicast(psserver->GetNPCManager()->GetSuperClients(),0,PROX_LIST_ANY_RANGE);
+    {
+        Debug1(LOG_SUPERCLIENT, clientnum, "Sending gemItem to superclients.\n");
+
+        if (clientnum == 0) // Send to all superclients
+        {
+            mesg.Multicast(psserver->GetNPCManager()->GetSuperClients(),0,PROX_LIST_ANY_RANGE);
+        }
+        else
+        {
+            mesg.SendMessage();
+        }
+    }
 
     if (allEntities)
+    {
         return allEntities->AddEntityMessage(mesg.msg);
+    }
 
     return true;
 }
@@ -3019,10 +3032,11 @@ bool gemActor::Send( int clientnum, bool control, bool to_superclients, psPersis
 
     if (to_superclients)
     {
+        Debug1(LOG_SUPERCLIENT, clientnum, "Sending gemActor to superclients.\n");
+
         mesg.SetInstance(GetInstance());
         if (clientnum == 0) // Send to all superclients
         {
-            Debug1(LOG_SUPERCLIENT, clientnum, "Sending gemActor to superclients.\n");
             mesg.Multicast(psserver->GetNPCManager()->GetSuperClients(),0,PROX_LIST_ANY_RANGE);
         }
         else
@@ -3030,8 +3044,11 @@ bool gemActor::Send( int clientnum, bool control, bool to_superclients, psPersis
             mesg.SendMessage();
         }
     }
+
     if (allEntities)
+    {
         return allEntities->AddEntityMessage(mesg.msg);
+    }
 
     return true;
 }
