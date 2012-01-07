@@ -84,13 +84,13 @@ typedef uint32 InstanceID;
 #define IS_CONTAINER true
 
 #define GAME_MINUTE_IN_SECONDS 10 ///< Number of seconds for each game minute, 10sec real time for 1 minute game time
-#define GAME_MINUTE_IN_TICKS (10*1000) ///< Number of ticks for each game minute, 10sec real time for 1 minute game time
+#define GAME_MINUTE_IN_TICKS (GAME_MINUTE_IN_SECONDS*1000) ///< Number of ticks for each game minute, 10sec real time for 1 minute game time
 
 /** @name Minimum guild requirements
  */
 //@{
 #define GUILD_FEE 20000
-#define GUILD_MIN_MEMBERS 5
+#define GUILD_MIN_MEMBERS 1
 #define GUILD_KICK_GRACE 5 ///< minutes
 
 #define GUILD_NAME_CHANGE_LIMIT 24 * 60 * 60000 ///< Minimum number of ticks between name change of guild
