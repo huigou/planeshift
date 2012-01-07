@@ -177,6 +177,16 @@ protected:
     void AllianceLeave(psGuildCmdMessage &msg, Client *client);
     void AllianceLeader(psGuildCmdMessage &msg, Client *client);
     void EndAlliance(psGuildCmdMessage &msg, Client *client);
+    /**
+     * This is the function which actually end the alliance. This is
+     * needed as the alliance could be removed also for the lack of the
+     * prerequisites automatically on guild removal, which itself can
+     * happen automatically.
+     * @param psAllianceInfo A pointer to the alliance being removed.
+     * @param clientnum The number of the client who issued the command,
+     *                  if any.
+     */
+    void EndAlliance(psGuildAlliance *alliance, int clientNum);
     void RemoveMemberFromAlliance(Client * client, psGuildInfo * guild, psGuildAlliance * alliance,
                                   psGuildInfo * removedGuild);
 

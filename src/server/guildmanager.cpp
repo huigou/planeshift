@@ -1290,7 +1290,41 @@ void GuildManager::EndGuild(psGuildInfo *guild, int clientnum)
     //if this guild is in an alliance, it must be removed from it
     psGuildAlliance * alliance = psserver->GetCacheManager()->FindAlliance(guild->GetAllianceID());
     if(alliance)
-        alliance->RemoveMember(guild);
+    {
+        //if the guild is in an alliance we need to do some consistency checks.
+        //first of all check if the alliance would remain with less than 2 members
+        //after disbanding this guild
+        if(alliance->GetMemberCount() <= 2)
+        {
+            //if that's the case we end first of all the alliance
+            //notice that after this call the pointer to alliance
+            //becomes a dangling pointer till this function exits.
+            EndAlliance(alliance, clientnum);
+        }
+        else
+        {
+            //Then, if there is still an alliance, we need to check if
+            //this guild was the leader and reassign leadership
+            if(alliance->GetLeader() == guild)
+            {
+                //search a member different than this.
+                //probably a for is a bit overkill here
+                for(size_t i = 0; i < alliance->GetMemberCount(); i++)
+                {
+                    //we set the first guild we find as leader
+                    //and bail out from the for
+                    if(alliance->GetMember(i) != guild)
+                    {
+                        alliance->SetLeader(alliance->GetMember(i));
+                        break;
+                    }
+                }
+            }
+            //finally remove the guild from the alliance, as the alliance
+            //outlived the guild
+            alliance->RemoveMember(guild);
+        }
+    }
 
     if (!guild->RemoveGuild() )
     {
@@ -2705,19 +2739,24 @@ void GuildManager::EndAlliance(psGuildCmdMessage &msg, Client *client)
     if ( ! CheckAllianceOperation(client, true, guild, alliance))
         return;
 
-    SendNoAllianceNotifications(alliance);
     
     if(client->GetActor())
     {
         csString text = "The alliance is being disbanded!";
-        psChatMessage guildmsg(client->GetClientNum(),0,"System",0,text,CHAT_ALLIANCE, false);
+        psChatMessage guildmsg(clientnum,0,"System",0,text,CHAT_ALLIANCE, false);
         chatserver->SendAlliance(client->GetName(), client->GetActor()->GetEID(), alliance, guildmsg);
     } 
+    EndAlliance(alliance, clientnum);
+}
 
+void GuildManager::EndAlliance(psGuildAlliance *alliance, int clientNum)
+{
+    SendNoAllianceNotifications(alliance);
     if (psserver->GetCacheManager()->RemoveAlliance(alliance))
-        psserver->SendSystemInfo(clientnum,"Alliance was disbanded.");
+        psserver->SendSystemInfo(clientNum,"Alliance was disbanded.");
     else
-        psserver->SendSystemInfo(clientnum,"Failed to disband alliance: %s.", psGuildAlliance::lastError.GetData());
+        psserver->SendSystemInfo(clientNum,"Failed to disband alliance: %s.", psGuildAlliance::lastError.GetData());
+
 }
 
 bool GuildManager::FilterGuildName(const char* name)
