@@ -393,14 +393,15 @@ bool psGuildInfo::RemoveMember(psGuildMember *target)
 
 bool psGuildInfo::RemoveGuild()
 {
-    if(alliance != 0)
+    //this is handled in guildmanager.cpp
+    /*if(alliance != 0)
     {
         psGuildAlliance * allianceObj = psserver->GetCacheManager()->FindAlliance(alliance);
         if (allianceObj != NULL)
             allianceObj->RemoveMember(this);
         else
             Error2("Couldn't find guild alliance in cachemanager %i", alliance);
-    }
+    }*/
 
     // No check - Might not delete anything
     db->Command("delete from guild_wars where guild_a=%d or guild_b=%d",id,id);
