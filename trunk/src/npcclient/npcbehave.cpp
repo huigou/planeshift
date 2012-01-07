@@ -407,23 +407,30 @@ void NPCType::FirePerception(NPC *npc, Perception *pcpt)
 csString NPCType::InfoReactions(NPC *npc)
 {
     csString reply;
-    const char* delim = ", ";
 
     for (size_t i=0; i<reactions.GetSize(); i++)
     {
+        
+        reply.AppendFmt("%s",reactions[i]->GetEventType(npc).GetDataSafe());
+
+        if (!reactions[i]->GetType().IsEmpty())
+        {
+            reply.AppendFmt("[%s]",reactions[i]->GetType().GetDataSafe());
+        }
+        if (!reactions[i]->GetValue().IsEmpty())
+        {
+            reply.AppendFmt("(%s)",reactions[i]->GetValue().GetDataSafe());
+        }
+
         if (i == (reactions.GetSize()-1))
         {
-            delim = ".";
-        }
-        
-        if (reactions[i]->GetType().IsEmpty())
-        {
-            reply.AppendFmt("%s%s",reactions[i]->GetEventType(npc).GetDataSafe(),delim);
+            reply.Append(".");
         }
         else
         {
-            reply.AppendFmt("%s[%s]%s",reactions[i]->GetEventType(npc).GetDataSafe(),reactions[i]->GetType().GetDataSafe(),delim);
+            reply.Append(", ");
         }
+        
     }
     return reply;
 }
