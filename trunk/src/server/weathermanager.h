@@ -37,8 +37,6 @@
 
 
 
-#define GAME_MINUTE (10*1000)
-
 class psWeatherGameEvent;
 class psSectorInfo;
 class CacheManager;

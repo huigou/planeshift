@@ -26,6 +26,7 @@
 //=============================================================================
 // Project Includes
 //=============================================================================
+#include "util/psconst.h"
 #include "bulkobjects/pssectorinfo.h"
 
 #include "util/eventmanager.h"
@@ -591,7 +592,7 @@ void WeatherManager::HandleWeatherEvent(psWeatherGameEvent *event)
         }
     case psWeatherMessage::DAYNIGHT:
         {
-            QueueNextEvent(GAME_MINUTE,
+            QueueNextEvent(GAME_MINUTE_IN_TICKS,
                            psWeatherMessage::DAYNIGHT,
                            0,
                            0,
