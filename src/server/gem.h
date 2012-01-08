@@ -403,8 +403,8 @@ public:
     virtual void BroadcastTargetStatDR(ClientConnectionSet *clients) { }
     virtual void SendTargetStatDR(Client *client) { }
     virtual psNPCDialog *GetNPCDialogPtr() { return 0; }
-    virtual void GetLastSuperclientPos(csVector3& pos, InstanceID& instance) const { }
-    virtual void SetLastSuperclientPos(const csVector3& pos, InstanceID instance) { }
+    virtual void GetLastSuperclientPos(csVector3& pos, InstanceID& instance, csTicks& last) const { }
+    virtual void SetLastSuperclientPos(const csVector3& pos, InstanceID instance, const csTicks& now) { }
     virtual void AddLootableClient(int cnum) { }
     virtual void RemoveLootableClient(int cnum) { }
     virtual bool IsLootableClient(int cnum) { return false; }
@@ -800,6 +800,7 @@ protected:
 
     csVector3 lastSentSuperclientPos;
     unsigned int lastSentSuperclientInstance;
+    csTicks      lastSentSuperclientTick;
 
     csArray<iDeathCallback*> deathReceivers;  ///< List of objects which are to be notified when this actor dies.
 
@@ -1104,8 +1105,8 @@ public:
     void Resurrect();
 
     virtual bool UpdateDR();
-    virtual void GetLastSuperclientPos(csVector3& pos, InstanceID& instance) const;
-    virtual void SetLastSuperclientPos(const csVector3& pos, InstanceID instance);
+    virtual void GetLastSuperclientPos(csVector3& pos, InstanceID& instance, csTicks& last) const;
+    virtual void SetLastSuperclientPos(const csVector3& pos, InstanceID instance, const csTicks& now);
 
     virtual void BroadcastTargetStatDR(ClientConnectionSet *clients);
     virtual void SendTargetStatDR(Client *client);

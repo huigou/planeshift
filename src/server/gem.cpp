@@ -436,6 +436,8 @@ void GEMSupervisor::GetAllEntityPos(csArray<psAllEntityPosMessage>& update)
 {
     csHash<gemObject*, EID>::GlobalIterator iter(entities_by_eid.GetIterator());
     
+    csTicks now = csGetTicks();
+
     // Loop as long as we need to send more messages.
     while (iter.HasNext())
     {
@@ -450,26 +452,33 @@ void GEMSupervisor::GetAllEntityPos(csArray<psAllEntityPosMessage>& update)
             if (obj->GetPID().IsValid())
             {
                 gemActor *actor = dynamic_cast<gemActor *>(obj);
-                if (actor)
+                // FIXME: Now only distribute players, this should
+                //        be modify to send all actors exepct
+                //        NPCs controlled by the receving superclient. 
+                if (actor && actor->GetClient())
                 {
                     csVector3 pos,pos2;
                     float yrot;
                     InstanceID instance,oldInstance;
                     iSector *sector;
+                    csTicks last;
                     obj->GetPosition(pos,yrot,sector);
                     instance = obj->GetInstance();
-                    obj->GetLastSuperclientPos(pos2,oldInstance);
+                    obj->GetLastSuperclientPos(pos2,oldInstance,last);
 
                     float dist2 = (pos.x - pos2.x) * (pos.x - pos2.x) +
                         (pos.y - pos2.y) * (pos.y - pos2.y) +
                         (pos.z - pos2.z) * (pos.z - pos2.z);
 
-                    if (dist2 > .04 || instance != oldInstance)
+                    csTicks time = now - last;
+
+                    // We need to filter some to prevent overloading the network
+                    if ((dist2 > 1.0) || (dist2 > .04 && time > 2000) || (instance != oldInstance))
                     {
                         count_actual++;
                         msg.Add(obj->GetEID(), pos, sector, obj->GetInstance(),
                                    cacheManager->GetMsgStrings());
-                        obj->SetLastSuperclientPos(pos,instance);
+                        obj->SetLastSuperclientPos(pos,instance,now);
                     }
                 }
             }
@@ -2457,6 +2466,11 @@ void gemActor::Sit()
         SetMode(PSCHARACTER_MODE_SIT);
         psserver->GetUserManager()->Emote("%s takes a seat.", "%s takes a seat by %s.", "sit", this );
     }
+    else
+    {
+        Debug2(LOG_SUPERCLIENT, 0, "%s Failed to sit.\n",ShowID(GetEID()));
+    }
+    
 }
 
 void gemActor::Stand()
@@ -3917,16 +3931,18 @@ bool gemActor::UpdateDR()
     return true;
 }
 
-void gemActor::GetLastSuperclientPos(csVector3& pos, InstanceID& instance) const
+void gemActor::GetLastSuperclientPos(csVector3& pos, InstanceID& instance, csTicks& last) const
 {
     pos = lastSentSuperclientPos;
     instance = lastSentSuperclientInstance;
+    last = lastSentSuperclientTick;
 }
 
-void gemActor::SetLastSuperclientPos(const csVector3& pos, InstanceID instance)
+void gemActor::SetLastSuperclientPos(const csVector3& pos, InstanceID instance, const csTicks& now)
 {
     lastSentSuperclientPos = pos;
     lastSentSuperclientInstance = instance;
+    lastSentSuperclientTick = now;
 }
 
 
@@ -5048,10 +5064,11 @@ void gemNPC::ForcePositionUpdate()
     msg.SetLength(1,0);
     iSector *sector = GetSector();
     csVector3 position = GetPosition();
+    csTicks now = csGetTicks();
     //we add the data and flag this position update as forced
     msg.Add(GetEID(), position, sector, GetInstance(),
             cacheManager->GetMsgStrings(),true);
-    SetLastSuperclientPos(GetPosition(),GetInstance());
+    SetLastSuperclientPos(GetPosition(),GetInstance(),now);
     //send this to all npcclients
     msg.Multicast(psserver->GetNPCManager()->GetSuperClients(),-1,PROX_LIST_ANY_RANGE);
 }
