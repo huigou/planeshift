@@ -4025,12 +4025,31 @@ ScriptOperation *SitOperation::MakeCopy()
 
 ScriptOperation::OperationResult SitOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
 {
+    if (!interrupted)
+    {
+        remaining = 3.0;
+    }
+
     npc->Printf(5, "   Who: %s %s", npc->GetName(), sit?"sit":"stand" );
 
     npcclient->GetNetworkMgr()->QueueSitCommand(npc->GetActor(), npc->GetTarget(), sit);
 
-    return OPERATION_COMPLETED;
+    return OPERATION_NOT_COMPLETED;
 }
+
+void SitOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
+{
+    remaining -= timedelta;
+    if(remaining <= 0)
+    {
+    	npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
+    }
+    else
+    {
+        npc->Printf(10, "waiting to be %... %.2f",sit?"seated":"standing",remaining);
+    }
+}
+
 
 //---------------------------------------------------------------------------
 
@@ -4674,7 +4693,14 @@ ScriptOperation::OperationResult WanderOperation::Run(NPC *npc, EventManager *ev
     if (interrupted && AtInterruptedPosition(npc))
     {
         // Restart current behavior
-        StartMoveTo(npc, GetCurrentPathPoint(npc));
+        psPathPoint* destPoint = GetCurrentPathPoint(npc);
+        if (!destPoint)
+        {
+            npc->Printf(5,">>>WanderOp NO pathpoints, %s cannot move.",npc->GetName());
+            return OPERATION_FAILED;
+        }
+        
+        StartMoveTo(npc, destPoint);
 
         return OPERATION_NOT_COMPLETED; // This behavior isn't done yet
     }
