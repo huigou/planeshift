@@ -1190,12 +1190,16 @@ class SitOperation : public ScriptOperation
 protected:
     bool sit; ///< True if sit false for stand
 
+    // Instance temp variables. These dosn't need to be copied.
+    float remaining;
+
 public:
 
     SitOperation(bool sit): ScriptOperation("Sit"), sit(sit) {};
     virtual ~SitOperation() {};
     virtual OperationResult Run(NPC* npc,EventManager* eventmgr,bool interrupted);
     virtual bool Load(iDocumentNode* node);
+    virtual void Advance(float timedelta,NPC* npc,EventManager* eventmgr);
     virtual ScriptOperation* MakeCopy();
 };
 
