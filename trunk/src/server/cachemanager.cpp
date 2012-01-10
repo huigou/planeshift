@@ -1415,9 +1415,9 @@ bool CacheManager::PreloadTradePatterns()
     return true;
 }
 
-psTradePatterns *CacheManager::GetTradePatternByItemID(uint32 id)
+csArray<psTradePatterns*> CacheManager::GetTradePatternByItemID(uint32 id)
 {
-    return tradePatterns_IDHash.Get(id,NULL);
+    return tradePatterns_IDHash.GetAll(id);
 }
 
 psTradePatterns *CacheManager::GetTradePatternByName(csString name)

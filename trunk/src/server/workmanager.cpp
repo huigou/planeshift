@@ -1170,7 +1170,7 @@ void WorkManager::StartUseWork(Client* client)
             int count = itemArray[0]->GetStackCount();
 
             // Verify there is a valid transformation for the item that was dropped
-            unsigned int transMatch = AnyTransform( patternId, groupPatternId, itemID, count );
+            unsigned int transMatch = (patterns, itemID, count );
             if (( transMatch == TRANSFORM_MATCH ) || (transMatch == TRANSFORM_GARBAGE ))
             {
                 // Set up event for transformation
@@ -1206,7 +1206,7 @@ void WorkManager::StartUseWork(Client* client)
             int handCount = rhand->GetStackCount();
 
             // Verify there is a valid transformation for the item that was dropped
-            unsigned int rhandMatch = AnyTransform( patternId, groupPatternId, handId, handCount );
+            unsigned int rhandMatch = AnyTransform(patterns, patternKFactor, handId, handCount);
             if (( rhandMatch == TRANSFORM_MATCH ) || (rhandMatch == TRANSFORM_GARBAGE ))
             {
                 // Set up event for transformation
@@ -1235,7 +1235,7 @@ void WorkManager::StartUseWork(Client* client)
             int handCount = lhand->GetStackCount();
 
             // Verify there is a valid transformation for the item that was dropped
-            unsigned int lhandMatch = AnyTransform( patternId, groupPatternId, handId, handCount );
+            unsigned int lhandMatch = AnyTransform(patterns, patternKFactor, handId, handCount);
             if (( lhandMatch == TRANSFORM_MATCH ) || (lhandMatch == TRANSFORM_GARBAGE ))
             {
                 // Set up event for transformation
@@ -1342,8 +1342,9 @@ bool WorkManager::CombineWork()
         psItem* newItem = CombineContainedItem( combinationId, combinationQty, currentQuality, workItem );
         if (newItem)
         {
+            ValidateMind(); //unfortunately the bad loadlocalvariables is damaging this data
             // Find out if we can do a combination transformation
-            unsigned int transMatch = AnyTransform( patternId, groupPatternId, combinationId, combinationQty );
+            unsigned int transMatch = AnyTransform(patterns, patternKFactor, combinationId, combinationQty );
             if (( transMatch == TRANSFORM_MATCH ) || (transMatch == TRANSFORM_GARBAGE ))
             {
                 // Set up event for transformation
@@ -1458,7 +1459,7 @@ void WorkManager::StartConstructWork(Client* client)
             {
                 // Check to see if item can be transformed
                 uint32 itemID = workItem->GetBaseStats()->GetUID();
-                unsigned int transMatch = AnyTransform( patternId, groupPatternId, itemID, 1 );
+                unsigned int transMatch = AnyTransform(patterns, patternKFactor, itemID, 1 );
                 if (transMatch == TRANSFORM_MATCH)
                 {
                     // Set up event for transformation
@@ -1542,7 +1543,7 @@ void WorkManager::StartAutoWork(Client* client, gemContainer* container, psItem*
         if (ValidateMind())
         {
             // Verify there is a valid transformation for the item that was dropped
-            unsigned int transMatch = AnyTransform( patternId, groupPatternId, autoID, count );
+            unsigned int transMatch = AnyTransform(patterns, patternKFactor, autoID, count );
             switch( transMatch )
             {
                 case TRANSFORM_MATCH:
@@ -1662,15 +1663,33 @@ bool WorkManager::ValidateCombination(csArray<psItem*> itemArray, uint32 &result
     size_t itemCount = itemArray.GetSize();
     if (itemCount != 0)
     {
-        // Get all possible combinations for that pattern
-        csPDelArray<CombinationConstruction>* combArray = cacheManager->FindCombinationsList(patternId);
-        csPDelArray<CombinationConstruction>* combGroupArray = cacheManager->FindCombinationsList(groupPatternId);
-        if (combArray == NULL)
+        // Get all possible combinations for those patterns and group
+        csArray<csPDelArray<CombinationConstruction>*> combArray;
+        csArray<csPDelArray<CombinationConstruction>*> combGroupArray;
+
+        
+        for(size_t i = 0; i < patterns.GetSize(); i++)
+        {
+            //get the combinations for the pattern
+            csPDelArray<CombinationConstruction>* result = cacheManager->FindCombinationsList(patterns.Get(i)->GetId());
+            if(result) //if it's not null we add it to the valid results
+            {
+                combArray.Push(result);
+            }
+            //get the combinations for the group id
+            result = cacheManager->FindCombinationsList(patterns.Get(i)->GetGroupPatternId());
+            if(result) //if it's not null we add it to the valid results
+            {
+                combGroupArray.Push(result);
+            }
+        }
+
+        if(combArray.IsEmpty())
         {
             // Check for group pattern combinations
-            if (combGroupArray == NULL)
+            if(combGroupArray.IsEmpty())
             {
-                if (secure) psserver->SendSystemInfo(clientNum,"Failed to find any combinations in patterns %d and group %d.", patternId, groupPatternId );
+                if(secure) psserver->SendSystemInfo(clientNum,"Failed to find any combinations in patterns and groups.");
                 return false;
             }
         }
@@ -1680,13 +1699,13 @@ bool WorkManager::ValidateCombination(csArray<psItem*> itemArray, uint32 &result
         resultQty = 0;
 
         // Check all the possible combination in this data set
-        if (combArray != NULL)
+        for(size_t u = 0; u < combArray.GetSize(); u++)
         {
-            if (secure) psserver->SendSystemInfo(clientNum,"Checking combinations for patterns %d.", patternId );
-            for (size_t i=0; i<combArray->GetSize(); i++)
+            if(secure) psserver->SendSystemInfo(clientNum,"Checking combinations for patterns.");
+            for (size_t i=0; i<combArray.Get(u)->GetSize(); i++)
             {
                 // Check for matching lists
-                CombinationConstruction* current = combArray->Get(i);
+                CombinationConstruction* current = combArray.Get(u)->Get(i);
                 if (secure) psserver->SendSystemInfo(clientNum,"Checking combinations for result id %u quantity %d.", current->resultItem, current->resultQuantity);
                 if( MatchCombinations(itemArray,current) )
                 {
@@ -1699,13 +1718,13 @@ bool WorkManager::ValidateCombination(csArray<psItem*> itemArray, uint32 &result
         }
 
         // Check all the possible combination in this data set
-        if (combGroupArray != NULL)
+        for(size_t u = 0; u < combGroupArray.GetSize(); u++)
         {
-            if (secure) psserver->SendSystemInfo(clientNum,"Checking combinations for group pattern %d.", groupPatternId );
-            for (size_t i=0; i<combGroupArray->GetSize(); i++)
+            if (secure) psserver->SendSystemInfo(clientNum,"Checking combinations for group patterns.");
+            for (size_t i=0; i<combGroupArray.Get(u)->GetSize(); i++)
             {
                 // Check for matching lists
-                CombinationConstruction* current = combGroupArray->Get(i);
+                CombinationConstruction* current = combGroupArray.Get(u)->Get(i);
                 if (secure) psserver->SendSystemInfo(clientNum,"Checking combinations for result id %u quantity %d.", current->resultItem, current->resultQuantity);
                 if( MatchCombinations(itemArray,current) )
                 {
@@ -1733,52 +1752,55 @@ bool WorkManager::AnyCombination(csArray<psItem*> itemArray, uint32 &resultId, i
     size_t itemCount = itemArray.GetSize();
     if (itemCount != 0)
     {
-        // Get list of unique ingredients for this pattern
-        uint32 activePattern = patternId;
-        csArray<uint32>* uniqueArray = cacheManager->GetTradeTransUniqueByID(activePattern);
-        if (uniqueArray == NULL)
+        //This is a bit weird but looked more elegant. Essentially we want to first
+        //do one run where we only check the patterns then we do a second run
+        //where we only check for the groups.
+        for(bool groupCheck = false; groupCheck == false; groupCheck = true)
         {
-            // Try the group pattern
-            activePattern = groupPatternId;
-            csArray<uint32>* uniqueArray = cacheManager->GetTradeTransUniqueByID(activePattern);
-            if (uniqueArray == NULL)
+            for(size_t i = 0; i < patterns.GetSize(); i++)
             {
-                return false;
-            }
-        }
+                uint32 activePattern = groupCheck? patterns.Get(i)->GetGroupPatternId() : patterns.Get(i)->GetId();
+                // Get list of unique ingredients for this pattern
+                csArray<uint32>* uniqueArray = cacheManager->GetTradeTransUniqueByID(activePattern);
+                if (uniqueArray == NULL)
+                {
+                    continue;
+                }
 
-        // Go through all of the items making sure they are ingredients
-        for (size_t i=0; i<itemArray.GetSize(); i++)
-        {
-            psItem* item = itemArray.Get(i);
-            if ( uniqueArray->Find(item->GetBaseStats()->GetUID()) == csArrayItemNotFound)
-            {
-                return false;
-            }
-        }
+                // Go through all of the items making sure they are ingredients
+                for (size_t i=0; i<itemArray.GetSize(); i++)
+                {
+                    psItem* item = itemArray.Get(i);
+                    if ( uniqueArray->Find(item->GetBaseStats()->GetUID()) == csArrayItemNotFound)
+                    {
+                        return false;
+                    }
+                }
 
-        // Now find the patternless transform to get results
-        resultId = 0;
-        resultQty = 0;
+                // Now find the patternless transform to get results
+                resultId = 0;
+                resultQty = 0;
 
-        // Get all unknow item transforms for this pattern
-        csPDelArray<psTradeTransformations>* transArray =
-            cacheManager->FindTransformationsList(activePattern, 0);
-        if (transArray == NULL)
-        {
-            return false;
-        }
+                // Get all unknow item transforms for this pattern
+                csPDelArray<psTradeTransformations>* transArray =
+                    cacheManager->FindTransformationsList(activePattern, 0);
+                if (transArray == NULL)
+                {
+                    return false;
+                }
 
-        // Go thru list of transforms
-        for (size_t j=0; j<transArray->GetSize(); j++)
-        {
-            // Get first transform with a 0 process ID this indicates processless any ingredient transform
-            psTradeTransformations* trans = transArray->Get(j);
-            if( trans->GetProcessId() == 0)
-            {
-                resultId = trans->GetResultId();
-                resultQty = trans->GetResultQty();
-                return true;
+                // Go thru list of transforms
+                for (size_t j=0; j<transArray->GetSize(); j++)
+                {
+                    // Get first transform with a 0 process ID this indicates processless any ingredient transform
+                    psTradeTransformations* trans = transArray->Get(j);
+                    if( trans->GetProcessId() == 0)
+                    {
+                        resultId = trans->GetResultId();
+                        resultQty = trans->GetResultQty();
+                        return true;
+                    }
+                }
             }
         }
     }
@@ -1844,27 +1866,36 @@ bool WorkManager::MatchCombinations(csArray<psItem*> itemArray, CombinationConst
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Checks if any transformation is possible
 //   We check the more specific transforms for matches first
-unsigned int WorkManager::AnyTransform(uint32 singlePatternId, uint32 groupPatternId, uint32 targetId, int targetQty)
+unsigned int WorkManager::AnyTransform(csArray<psTradePatterns*>& patterns, float& KFactor, uint32 targetId, int targetQty)
 {
     unsigned int singleMatch = TRANSFORM_GARBAGE;
     unsigned int groupMatch  = TRANSFORM_GARBAGE;
+    KFactor = 0;
     
     // First check for specific single transform match
-    if(singlePatternId != 0)
+    for(size_t i = 0; i < patterns.GetSize(); i++)
     {
+        uint32 singlePatternId = patterns.Get(i)->GetId();
         if (secure) psserver->SendSystemInfo(clientNum,"Checking single transforms for pattern id %u, target id %u, and target qty %u.", singlePatternId,targetId,targetQty );
         singleMatch =  IsTransformable( singlePatternId, targetId, targetQty );
         if (singleMatch == TRANSFORM_MATCH)
+        {
+            KFactor = patterns.Get(i)->GetKFactor();
             return TRANSFORM_MATCH;
+        }
     }
 
     // Then check for a group transform match
-    if(groupPatternId != 0)
+    for(size_t i = 0; i < patterns.GetSize(); i++)
     {
+        uint32 groupPatternId = patterns.Get(i)->GetGroupPatternId();
         if (secure) psserver->SendSystemInfo(clientNum,"Checking group transforms for pattern id %u, target id %u, and target qty %u.",groupPatternId, targetId, targetQty);
         groupMatch = IsTransformable( groupPatternId, targetId, targetQty );
         if (groupMatch == TRANSFORM_MATCH)
+        {
+            KFactor = patterns.Get(i)->GetKFactor();
             return TRANSFORM_MATCH;
+        }
     }
 
     // Check for patternless transforms
@@ -1873,33 +1904,58 @@ unsigned int WorkManager::AnyTransform(uint32 singlePatternId, uint32 groupPatte
     if (lessMatch == TRANSFORM_MATCH)
         return TRANSFORM_MATCH;
 
-    // Check for transforms of any ingredients
-    if (secure) psserver->SendSystemInfo(clientNum,"Checking for any ingredient transforms for single pattern id %u  group pattern id %u, and target id %u.", singlePatternId, groupPatternId, targetId );
-    if (IsIngredient( singlePatternId, groupPatternId, targetId ))
-        return TRANSFORM_MATCH;
+    //This is a bit weird but looked more elegant. Essentially we want to first
+    //do one run where we only check the patterns then we do a second run
+    //where we only check for the groups.
+    for(bool groupCheck = false; groupCheck == false; groupCheck = true)
+    {
+        for(size_t i = 0; i < patterns.GetSize(); i++)
+        {
+            uint32 singlePatternId = groupCheck? patterns.Get(i)->GetGroupPatternId() : patterns.Get(i)->GetId();
+            // Check for transforms of any ingredients
+            if(secure) psserver->SendSystemInfo(clientNum,"Checking for any ingredient transforms for single pattern id %u, and target id %u.", singlePatternId, targetId);
+            if(IsIngredient(singlePatternId, targetId))
+            {
+                KFactor = patterns.Get(i)->GetKFactor();
+                return TRANSFORM_MATCH;
+            }
+        }
+    }
 
     // Check for specific single any item transform match
-    if (secure) psserver->SendSystemInfo(clientNum,"Checking single any item transforms for pattern id %u, target id %u, and target qty %u.",singlePatternId, 0, targetQty);
-    unsigned int singleGarbMatch = IsTransformable( singlePatternId, 0, targetQty );
-    if (singleGarbMatch == TRANSFORM_MATCH)
-        return TRANSFORM_GARBAGE;
+    unsigned int singleGarbMatch = TRANSFORM_GARBAGE;
+    for(size_t i = 0; i < patterns.GetSize(); i++)
+    {
+        uint32 singlePatternId = patterns.Get(i)->GetId();
+        if (secure) psserver->SendSystemInfo(clientNum,"Checking single any item transforms for pattern id %u, target id %u, and target qty %u.",singlePatternId, 0, targetQty);
+        singleGarbMatch = IsTransformable( singlePatternId, 0, targetQty );
+        if (singleGarbMatch == TRANSFORM_MATCH)
+        {
+            KFactor = patterns.Get(i)->GetKFactor();
+            return TRANSFORM_GARBAGE;
+        }
+    }
 
     // Then check for a group any item transform match
-    if(groupPatternId != 0)
+    for(size_t i = 0; i < patterns.GetSize(); i++)
     {
+        uint32 groupPatternId = patterns.Get(i)->GetGroupPatternId();
         if (secure) psserver->SendSystemInfo(clientNum,"Checking group any item transforms for pattern id %u, target id %u, and target qty %u.", groupPatternId, 0, targetQty);
         unsigned int groupGarbMatch = IsTransformable( groupPatternId, 0, targetQty );
         if (groupGarbMatch == TRANSFORM_MATCH)
+        {
+            KFactor = patterns.Get(i)->GetKFactor();
             return TRANSFORM_GARBAGE;
+        }
     }
 
     // Check patternless for transforms of any ingredients
-    if (secure) psserver->SendSystemInfo(clientNum,"Checking for pattern-less any ingredient transforms for target id %u.", singlePatternId, groupPatternId, targetId );
-    if (IsIngredient( 0, 0, targetId ))
+    if(secure) psserver->SendSystemInfo(clientNum,"Checking for pattern-less any ingredient transforms for target id %u.", targetId);
+    if(IsIngredient(0, targetId))
         return TRANSFORM_MATCH;
         
     // Check for patternless specific single any item transform match
-    if (secure) psserver->SendSystemInfo(clientNum,"Checking pattern-less single any item transforms for target qty %u.",singlePatternId, 0, targetQty);
+    if (secure) psserver->SendSystemInfo(clientNum,"Checking pattern-less single any item transforms for target qty %u.", targetQty);
     singleGarbMatch = IsTransformable( 0, 0, targetQty );
     if (singleGarbMatch == TRANSFORM_MATCH)
         return TRANSFORM_GARBAGE;
@@ -2032,18 +2088,14 @@ unsigned int WorkManager::IsTransformable(uint32 patternId, uint32 targetId, int
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Checks if any ingredient transformation is possible
-bool WorkManager::IsIngredient(uint32 patternId, uint32 groupPatternId, uint32 targetId)
+bool WorkManager::IsIngredient(uint32 patternId, uint32 targetId)
 {
     // Check if ingredient is on list of unique ingredients for this pattern
     csArray<uint32>* itemArray = cacheManager->GetTradeTransUniqueByID(patternId);
     if (itemArray == NULL)
     {
-        csArray<uint32>* itemArray = cacheManager->GetTradeTransUniqueByID(groupPatternId);
-        if (itemArray == NULL)
-        {
-            if (secure) psserver->SendSystemInfo(clientNum,"No items for this pattern or group pattern.");
-            return false;
-        }
+        if (secure) psserver->SendSystemInfo(clientNum,"No items for this pattern or group pattern.");
+        return false;
     }
 
     // Go thru list
@@ -2205,9 +2257,7 @@ bool WorkManager::LoadLocalVars(Client* client, gemObject *target)
     // Null out everything else
     gemTarget = target;
     workItem = NULL;
-    patternId = 0;
-    groupPatternId = 0;
-    patternKFactor = 0.0;
+    patterns.Empty();
     currentQuality = 0.0;
     trans = NULL;
     process = NULL;
@@ -2245,27 +2295,19 @@ bool WorkManager::ValidateMind()
     psItem* designitem = owner->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_MIND);
     if ( !designitem )
     {
-        patternId = 0;
-        groupPatternId = 0;
-        patternKFactor = 1.0;
+        patterns.Empty();
         return true;
     }
 
     // Check if there is a pattern for that design item
     psItemStats* itemStats = designitem->GetCurrentStats();
-    psTradePatterns* pattern = cacheManager->GetTradePatternByItemID( itemStats->GetUID() );
-    if ( pattern == NULL )
+    patterns = cacheManager->GetTradePatternByItemID( itemStats->GetUID() );
+    if (patterns.GetSize() == 0)
     {
         Error3("ValidateWork() could not find pattern ID for item %u (%s) in mind slot",
             itemStats->GetUID(),itemStats->GetName());
         return false;
     }
-
-    // Setup patterns
-    patternId = pattern->GetId();
-    groupPatternId = pattern->GetGroupPatternId();
-    patternKFactor = pattern->GetKFactor();
-
     return true;
 }
 
@@ -2652,7 +2694,9 @@ psItem* WorkManager::CombineContainedItem(uint32 newId, int newQty, float itemQu
         return NULL;
     }
     newItem->Save(true);
-
+    //load local variables which gets triggered when the call it.RemoveCurrent(owner->GetClient());
+    //is done zeroes out workitem we restore it instead.
+    workItem = containerItem;
     return newItem;
 }
 
@@ -3560,7 +3604,7 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
             {
                 //TODO: Maybe all those function like this which seems copy & paste should be put in an unique one?
                 // Check if there is another transformation possible for the item just created
-                unsigned int transMatch = AnyTransform( patternId, groupPatternId, result, resultQty );
+                unsigned int transMatch = AnyTransform(patterns, patternKFactor, result, resultQty);
                 if ( (transMatch == TRANSFORM_MATCH ) || (transMatch == TRANSFORM_GARBAGE ) )
                 {
                     // Set up event for new transformation with the same setting as the old
