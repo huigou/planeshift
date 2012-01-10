@@ -414,7 +414,7 @@ public:
     bool PreloadTradeProcesses();
     csArray<psTradeProcesses*>* GetTradeProcessesByID(uint32 id);
     bool PreloadTradePatterns();
-    psTradePatterns* GetTradePatternByItemID(uint32 id);
+    csArray<psTradePatterns*> GetTradePatternByItemID(uint32 id);
     psTradePatterns* GetTradePatternByName(csString name);
     csString CreateTransCraftDescription(psTradeTransformations* tran, psTradeProcesses* proc);
     csString CreateComboCraftDescription(CombinationConstruction* combArray);

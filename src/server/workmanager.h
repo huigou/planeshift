@@ -430,14 +430,14 @@ protected:
     bool MatchCombinations(csArray<psItem*> itemArray, CombinationConstruction* current);
 
     /** Check to see if there is a possible trasnform available.
-      * @param singlePatternID The current single pattern to use
-      * @param groupPatternID The current group pattern to use
+      * @param patterns The list of all applicable patters to apply
+      *                 (including group patterns)
       * @param targetID the id of the item trying to transform.
       * @param targetQty The stack count of the item to transform.
       *
       * @return An indicator of pattern match status.
       */
-    unsigned int AnyTransform(uint32 singlePatternId, uint32 groupPatternId, uint32 targetId, int targetQty);
+    unsigned int AnyTransform(csArray<psTradePatterns*>& patterns, float& KFactor, uint32 targetId, int targetQty);
 
     /** Check to see if there is a possible trasnform available.
       * @param patternId The current pattern to use
@@ -454,7 +454,7 @@ protected:
     bool ScriptAction(gemActionLocation* gemAction);
 
     bool CombineWork();
-    bool IsIngredient(uint32 patternId, uint32 groupPatternId, uint32 targetId);
+    bool IsIngredient(uint32 patternId, uint32 targetId);
 
     psItem* TransformSelfContainerItem(psItem* oldItem, uint32 newId, int newQty, float itemQuality);
     psItem* TransformContainedItem(psItem* oldItem, uint32 newId, int newQty, float itemQuality);
@@ -545,8 +545,8 @@ private:
     psItem* autoItem;               ///< The current item that is being transformed by auto-transformation container
     gemActor *owner;                ///< The character pointer of the current character being used.
     gemObject *gemTarget;           ///< The object being targeted by the player.
-    uint32 patternId;               ///< Current pattern ID
-    uint32 groupPatternId;          ///< Current group pattern ID
+    csArray<psTradePatterns*> patterns;              /* ///< Current pattern ID
+    uint32 groupPatternId;          ///< Current group pattern ID*/
     float patternKFactor;           ///< Pattern factor that's part of quality calculation
     float currentQuality;           ///< Current result item quality
     psTradeTransformations* trans;  ///< Current work transformation
