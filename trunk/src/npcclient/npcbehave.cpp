@@ -560,41 +560,70 @@ bool BehaviorSet::Add(Behavior *behavior)
     return true;
 }
 
-void BehaviorSet::Advance(csTicks delta,NPC *npc)
+void BehaviorSet::UpdateNeeds(float delta, NPC* npc)
 {
-    while (true)
+    // Go through and update needs based on time
+    for (size_t i=0; i<behaviors.GetSize(); i++)
     {
-        float max_need = -999.0;
-
-        // Go through and update needs based on time
-        for (size_t i=0; i<behaviors.GetSize(); i++)
+        Behavior * b = behaviors[i];
+        if (b->ApplicableToNPCState(npc))
         {
-            Behavior * b = behaviors[i];
-            if (b->ApplicableToNPCState(npc))
+            b->UpdateNeed(delta,npc);
+            
+            if (behaviors[i]->CurrentNeed() != behaviors[i]->NewNeed())
             {
-                b->Advance(delta,npc,eventmgr);
-
-                if (behaviors[i]->CurrentNeed() != behaviors[i]->NewNeed())
-                {
-                    npc->Printf(4, "Advancing %-30s:\t%1.1f ->%1.1f",
-                                behaviors[i]->GetName(),
-                                behaviors[i]->CurrentNeed(),
-                                behaviors[i]->NewNeed() );
-                }
-
-                if (b->NewNeed() > max_need) // the advance causes re-ordering
-                {
-                    if (i!=0)  // trivial swap if same element
-                    {
-                        behaviors[i] = behaviors[0];
-                        behaviors[0] = b;  // now highest need is elem 0
-                    }
-                    max_need = b->NewNeed();
-                }
-                b->CommitAdvance();   // Set current need to new need.
+                npc->Printf(4, "Advancing %-30s:\t%1.1f ->%1.1f",
+                            behaviors[i]->GetName(),
+                            behaviors[i]->CurrentNeed(),
+                            behaviors[i]->NewNeed() );
             }
         }
+    }
+}
 
+void BehaviorSet::Schedule(NPC* npc)
+{
+    float max_need = -999.0;
+
+    // Move the behavior with higest need on top of list.
+    for (size_t i=0; i<behaviors.GetSize(); i++)
+    {
+        Behavior * b = behaviors[i];
+        if (b->ApplicableToNPCState(npc))
+        {
+            if (b->NewNeed() > max_need) // the advance causes re-ordering
+            {
+                if (i!=0)  // trivial swap if same element
+                {
+                    behaviors[i] = behaviors[0];
+                    behaviors[0] = b;  // now highest need is elem 0
+                }
+                max_need = b->NewNeed();
+            }
+            b->CommitAdvance();   // Set current need to new need.
+        }
+    }
+}
+
+
+void BehaviorSet::Advance(csTicks delta, NPC* npc)
+{
+    float d = .001 * delta;
+
+    UpdateNeeds(d, npc);
+
+    if (active)
+    {
+        active->Advance(d, npc, eventmgr);
+    }
+    
+    // Now loop through the behaviors. If they complete on Run than
+    // multiple behaviors might be executed.
+    while (true)
+    {
+        // Sort the behaviors according to need
+        Schedule(npc);
+        
         // now that behaviours are correctly sorted, select the first one
         Behavior *new_behaviour = behaviors[0];
 
@@ -1144,7 +1173,7 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
     return true; // success
 }
 
-void Behavior::Advance(csTicks delta, NPC *npc, EventManager *eventmgr)
+void Behavior::UpdateNeed(float delta, NPC* npc)
 {
     // Initialize new_need if not updated before.
     if (new_need == -999)
@@ -1152,31 +1181,43 @@ void Behavior::Advance(csTicks delta, NPC *npc, EventManager *eventmgr)
         new_need = current_need;
     }
 
-    float d = .001 * delta;
-
     if (isActive)
     {
         // Apply delta to need, will check for limits as well
-        ApplyNeedDelta(npc, -d * need_decay_rate );
+        ApplyNeedDelta(npc, -delta * need_decay_rate );
 
-        if (current_step < sequence.GetSize())
-        {
-            npc->Printf(10,"%s - Advance active delta: %.3f Need: %.2f Decay Rate: %.2f",
-                        name.GetData(),d,new_need,need_decay_rate);
-
-            if (!sequence[current_step]->HasCompleted())
-            {
-                sequence[current_step]->Advance(d,npc,eventmgr);
-            }
-        }
+        npc->Printf(11,"%s - Advance active delta: %.3f Need: %.2f Decay Rate: %.2f",
+                    name.GetData(),delta,new_need,need_decay_rate);
     }
     else
     {
         // Apply delta to need, will check for limits as well
-        ApplyNeedDelta(npc, d * need_growth_rate );
+        ApplyNeedDelta(npc, delta * need_growth_rate );
 
         npc->Printf(11,"%s - Advance none active delta: %.3f Need: %.2f Growth Rate: %.2f",
-                    name.GetData(),d,new_need,need_growth_rate);
+                    name.GetData(),delta,new_need,need_growth_rate);
+    }
+    
+}
+
+
+void Behavior::Advance(float delta, NPC *npc, EventManager *eventmgr)
+{
+    if (!isActive)
+    {
+        Error1("Trying to advance not active behavior!!");
+        return;
+    }
+
+    if (current_step < sequence.GetSize())
+    {
+        npc->Printf(10,"%s - Advance active delta: %.3f Need: %.2f Decay Rate: %.2f",
+                    name.GetData(),delta,new_need,need_decay_rate);
+        
+        if (!sequence[current_step]->HasCompleted())
+        {
+            sequence[current_step]->Advance(delta,npc,eventmgr);
+        }
     }
 }
 
@@ -1303,6 +1344,8 @@ ScriptOperation::OperationResult Behavior::RunScript(NPC *npc, EventManager *eve
 
     while (true)
     {
+        ScriptOperation::OperationResult result = ScriptOperation::OPERATION_FAILED;
+
         if (current_step < sequence.GetSize() )
         {
             npc->Printf(2, "Running %s step %d - %s operation%s",
@@ -1311,7 +1354,6 @@ ScriptOperation::OperationResult Behavior::RunScript(NPC *npc, EventManager *eve
             sequence[current_step]->SetCompleted(false);
 
             // Run the script
-            ScriptOperation::OperationResult result;
             result = sequence[current_step]->Run(npc, eventmgr, interrupted);
             interrupted = false; // Reset the interrupted flag after operation has run
             
@@ -1324,7 +1366,6 @@ ScriptOperation::OperationResult Behavior::RunScript(NPC *npc, EventManager *eve
                     npc->Printf(2, "Behavior %s step %d - %s will complete later...",
                                 name.GetData(),current_step,sequence[current_step]->GetName());
                     return ScriptOperation::OPERATION_NOT_COMPLETED; // This behavior isn't done yet
-                    break;
                 }
                 case ScriptOperation::OPERATION_COMPLETED:
                 {
@@ -1333,14 +1374,11 @@ ScriptOperation::OperationResult Behavior::RunScript(NPC *npc, EventManager *eve
                 }
                 case ScriptOperation::OPERATION_FAILED:
                 {
-                    //TODO -- Remove printf
-                    //printf("ZeeDebug: Operation %s failed\n", sequence[current_step]->GetName());
                     sequence[current_step]->Failure(npc);
                     current_step = 0; // Restart operation next time
                     DoCompletionDecay(npc);
                     npc->Printf(1, "End of behaviour '%s'",GetName());
                     return ScriptOperation::OPERATION_FAILED; // This behavior is done
-                    break;
                 }
             }
         }
