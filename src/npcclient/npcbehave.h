@@ -114,7 +114,19 @@ public:
      */
     void ClearState(NPC *npc);
 
-    /** Advances the behaviors
+    /** Update needs for all behaviors
+     *
+     * Increase or decrease needs depended on the behaviors
+     * active state.
+     *
+     */
+    void UpdateNeeds(float delta, NPC* npc);
+
+    /** Rearrange the behavior set based on need.
+     */
+    void Schedule(NPC* npc);
+    
+     /** Advances the behaviors
      *
      * Will calculate the need and select the active behavior.
      *
@@ -217,7 +229,7 @@ public:
      */
     Behavior *Find(const char *name) { return behaviors.Find(name); }
 
-    void Advance(csTicks delta,NPC *npc);
+    void Advance(csTicks delta, NPC* npc);
     void Interrupt(NPC *npc);
     void ResumeScript(NPC *npc,Behavior *which);
     void FirePerception(NPC *npc,Perception *pcpt);
@@ -308,7 +320,8 @@ public:
 
     bool LoadScript(iDocumentNode *node,bool top_level=true);
 
-    void  Advance(csTicks delta,NPC *npc,EventManager *eventmgr);
+    void UpdateNeed(float delta, NPC* npc);
+    void Advance(float delta, NPC* npc, EventManager* eventmgr);
     float CurrentNeed() { return current_need; }
     float NewNeed() { return new_need; }
 
