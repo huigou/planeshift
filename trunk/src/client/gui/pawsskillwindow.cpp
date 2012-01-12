@@ -93,8 +93,6 @@ bool pawsSkillWindow::PostSetup()
     {
         return false;
     }
-    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_GUISKILL);
-    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_FACTION_INFO);
 
     xml =  csQueryRegistry<iDocumentSystem > ( PawsManager::GetSingleton().GetObjectRegistry());
 
@@ -142,6 +140,9 @@ bool pawsSkillWindow::PostSetup()
 
     currentTab =0;
     previousTab =0;
+
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_GUISKILL);
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_FACTION_INFO);
 
     return true;
 }
