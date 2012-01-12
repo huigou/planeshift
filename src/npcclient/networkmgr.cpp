@@ -574,6 +574,26 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 npc->TriggerEvent(&overallPerception);
                 break;
             }
+            case psNPCCommandsMessage::PCPT_SPOKEN_TO:
+            {
+                EID npcEID    = EID(list.msg->GetUInt32());
+                bool spokenTo = list.msg->GetBool();
+
+                NPC *npc = npcclient->FindNPC(npcEID);
+                if (!npc)
+                {
+                    Debug2(LOG_NPC, npcEID.Unbox(), "Got spoken_to perception for unknown NPC(%s)!\n", ShowID(npcEID));
+                    break;
+                }
+
+
+                Perception perception("spoken_to",spokenTo?"true":"false");
+                npc->Printf("Got spoken_to perception for actor %s(%s) with spoken_to=%s.\n",
+                            npc->GetName(), ShowID(npcEID), spokenTo?"true":"false");
+
+                npc->TriggerEvent(&perception);
+                break;
+            }
             case psNPCCommandsMessage::PCPT_TALK:
             {
                 EID speakerEID = EID(list.msg->GetUInt32());

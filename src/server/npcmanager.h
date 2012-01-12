@@ -133,6 +133,9 @@ public:
 
     /// Send a perception to the super client for the npc.
     void QueuePerceptPerception(gemNPC* npc, csString perception, csString type);
+
+    /// Send a spoken to perception to the super client for the npc
+    void QueueSpokenToPerception(gemNPC* npc, bool spokenTo);
     
     /**
      * Requests the npcclient to change the brain of this npc (the type) to another one.

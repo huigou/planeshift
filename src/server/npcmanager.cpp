@@ -2613,6 +2613,16 @@ void NPCManager::QueuePerceptPerception(gemNPC* npc, csString perception, csStri
     Debug2(LOG_NPC, npc->GetEID().Unbox(), "Added Percept perception for %s.\n", ShowID(npc->GetEID()) );    
 }
 
+void NPCManager::QueueSpokenToPerception(gemNPC* npc, bool spokenTo)
+{
+    CheckSendPerceptionQueue(sizeof(int8_t)+sizeof(uint32_t)+sizeof(bool));
+    outbound->msg->Add( (int8_t) psNPCCommandsMessage::PCPT_SPOKEN_TO);
+    outbound->msg->Add(npc->GetEID().Unbox());
+    outbound->msg->Add(spokenTo);
+    cmd_count++;
+    Debug2(LOG_NPC, npc->GetEID().Unbox(), "Added SpokenTo perception for %s.\n", ShowID(npc->GetEID()) );    
+}
+
 
 
 
