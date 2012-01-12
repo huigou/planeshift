@@ -55,6 +55,10 @@ bool pawsNpcDialogWindow::PostSetup()
     psengine->GetMsgHandler()->Subscribe( this, MSGTYPE_DIALOG_MENU );
 
     responseList = (pawsListBox*)FindWidget("ResponseList");
+    if(!responseList || !FindWidget("Lists") || !FindWidget("Bubbles"))
+    {
+        return false;
+    }
 
     //loads the options regarding this window
     if(!LoadSetting())
@@ -521,8 +525,8 @@ void pawsNpcDialogWindow::SetupWindowWidgets()
     {
         if(border)  border->Hide();
         //if(close_widget) close_widget->Hide();
-        if(lists)   lists->Hide();
-        if(bubbles) bubbles->Show();
+        lists->Hide();
+        bubbles->Show();
         defaultFrame = bubbles->DefaultFrame();
         Resize();
         SetSize(defaultFrame.Width(), defaultFrame.Height());
@@ -532,8 +536,8 @@ void pawsNpcDialogWindow::SetupWindowWidgets()
     {
         if(border)  border->Show();
         if(close_widget) close_widget->Show();
-        if(lists)   lists->Show();
-        if(bubbles) bubbles->Hide();
+        lists->Show();
+        bubbles->Hide();
         defaultFrame = lists->DefaultFrame();
         Resize();
     }
