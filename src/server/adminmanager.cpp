@@ -11464,6 +11464,8 @@ void AdminManager::HandleSetTrait(psAdminCmdMessage& msg, AdminCmdData* cmddata,
 
             psTraitChangeMessage message(client->GetClientNum(), target->GetActor()->GetEID(), str);
             message.Multicast( target->GetActor()->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE );
+            //update everything needed for bgloader to pick changes correctly.
+            data->targetObject->UpdateProxList(true);
 
             psserver->SendSystemOK(client->GetClientNum(), "Trait successfully changed");
             return;
