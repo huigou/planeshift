@@ -1277,6 +1277,8 @@ protected:
     csPDelArray<DialogCounter> badText;
 
     int speakers;
+    
+    bool busy; ///< Indicator from the NPC client to state the if the NPC is busy
 
     NpcDialogMenu *initial_triggers;
 
@@ -1383,6 +1385,19 @@ public:
     /** Check speakers to see if not spoken to anymore.
      */
     void CheckSpeakers();
+
+    /** To set the busy state of the NPC
+     *
+     * NPC operation <busy /> and <idle /> set and cleare this flag.
+     */
+    void SetBusy(bool busy);
+
+    /** True if the NPC client sent the busy command.
+     *
+     * NPC operation <busy /> and <idle /> set and cleare this flag.
+     *
+     */
+    bool IsBusy() const;
 };
 
 //-----------------------------------------------------------------------------

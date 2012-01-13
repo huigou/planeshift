@@ -224,15 +224,22 @@ void ChatManager::HandleChatMessage(MsgEntry *me, Client *client)
               gemNPC *targetnpc = dynamic_cast<gemNPC*>(target);
               if (targetnpc)
               {
-                  // The NPC is spoken to so register this client as a speaker
-                  targetnpc->RegisterSpeaker(client);
-
-                  NpcResponse *resp = CheckNPCResponse(msg,client,targetnpc);
-                  if (resp)
+                  if (targetnpc->IsBusy())
                   {
-                      csTicks delay = resp->ExecuteScript(client->GetActor(), targetnpc);
-                      if (delay != (csTicks)-1 && resp->menu )
-                          resp->menu->ShowMenu(client, delay, targetnpc);
+                      psserver->SendSystemInfo(me->clientnum, "%s doesn't pay attention to you.",targetnpc->GetName());
+                  }
+                  else
+                  {
+                      // The NPC is spoken to so register this client as a speaker
+                      targetnpc->RegisterSpeaker(client);
+                      
+                      NpcResponse *resp = CheckNPCResponse(msg,client,targetnpc);
+                      if (resp)
+                      {
+                          csTicks delay = resp->ExecuteScript(client->GetActor(), targetnpc);
+                          if (delay != (csTicks)-1 && resp->menu )
+                              resp->menu->ShowMenu(client, delay, targetnpc);
+                      }
                   }
               }
               break;

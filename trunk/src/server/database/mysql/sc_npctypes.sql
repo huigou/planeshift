@@ -242,7 +242,7 @@ INSERT INTO sc_npctypes VALUES("11","Move","","","","","","","",
 <react event="move_failed" behavior="MoveFailed" />');
 
 
-INSERT INTO sc_npctypes VALUES("12","QuestBlock","","","","","","","",
+INSERT INTO sc_npctypes VALUES("12","SpokenTo","","","","","","","",
 '<behavior name="SpokenTo" loop="Yes" interrupt="spoken_to_interrupted">
    <wait duration="10" />
  </behavior>
@@ -359,10 +359,23 @@ INSERT INTO sc_npctypes VALUES("100","Smith","GoHomeOnTeleport,DoNothing","","",
 <react event="time" value="12,0,,,"  behavior="go_obstacles1" delta="20" /> 
 <react event="time" value="14,0,,,"  behavior="go_climbing1" delta="20" />');
 
-INSERT INTO sc_npctypes VALUES("101","QuestMaster1","DoNothing,QuestBlock,PoliteSitting","","","","","","",
+INSERT INTO sc_npctypes VALUES("101","QuestMaster1","DoNothing,SpokenTo,PoliteSitting","","","","","","",
 '<empty/>');
 
-INSERT INTO sc_npctypes VALUES("102","QuestMaster2","DoNothing,QuestBlock,PoliteSitting","","","","","","",
+INSERT INTO sc_npctypes VALUES("102","QuestMaster2","DoNothing,SpokenTo,PoliteSitting","","","","","","",
+'<empty/>');
+
+INSERT INTO sc_npctypes VALUES("103","DictMaster1","DoNothing,Answerer","","","","","","",
+'<behavior name="Sit" >
+   <busy/>
+   <sit/>
+   <wait duration="15" />
+   <standup />
+   <idle/>
+</behavior>
+<react event="sit" behavior="Sit" />');
+
+INSERT INTO sc_npctypes VALUES("104","DictMaster2","DoNothing,Answerer","","","","","","",
 '<empty/>');
 
 INSERT INTO sc_npctypes VALUES("106","ChaseTest1","DoNothing","","","","","","",

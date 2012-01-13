@@ -4416,6 +4416,7 @@ gemNPC::gemNPC(GEMSupervisor* gemsupervisor, CacheManager* cachemanager,
     nextShortRangeAvail = 0;     /// When can npc respond to short range prox trigger again
     nextLongRangeAvail = 0;      /// When can npc respond to long range prox trigger again
     speakers = 0;
+    busy = false;
 
     //if( !GetEntity() )
     //{
@@ -5137,3 +5138,15 @@ void gemNPC::CheckSpeakers()
         psserver->GetNPCManager()->QueueSpokenToPerception(this, false);
     }
 }
+
+void gemNPC::SetBusy(bool busy)
+{
+    this->busy = busy;
+}
+
+bool gemNPC::IsBusy() const
+{
+    return busy;
+}
+
+

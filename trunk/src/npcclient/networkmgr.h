@@ -189,6 +189,7 @@ public:
     void QueueAssessCommand(gemNPCActor* entity, gemNPCObject* target, const csString& physicalAssessmentPerception,
                             const csString& magicalAssessmentPerception,  const csString& overallAssessmentPerception);
     void QueueCastCommand(gemNPCActor* entity, gemNPCObject* target, const csString& spell, float kFactor);
+    void QueueBusyCommand(gemNPCActor* entity, bool busy );
     
     void SendAllCommands(bool final = false);
 
