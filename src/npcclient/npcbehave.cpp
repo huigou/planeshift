@@ -980,6 +980,10 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         {
             op = new BuildOperation;
         }
+        else if ( strcmp( node->GetValue(), "busy" ) == 0 )
+        {
+            op = new BusyOperation(true);
+        }
         else if ( strcmp( node->GetValue(), "cast" ) == 0 )
         {
             op = new CastOperation;
@@ -1019,6 +1023,10 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         else if ( strcmp( node->GetValue(), "equip" ) == 0 )
         {
             op = new EquipOperation;
+        }
+        else if ( strcmp( node->GetValue(), "idle" ) == 0 )
+        {
+            op = new BusyOperation(false);
         }
         else if ( strcmp( node->GetValue(), "invisible" ) == 0 )
         {

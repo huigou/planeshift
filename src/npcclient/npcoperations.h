@@ -356,6 +356,24 @@ public:
 //-----------------------------------------------------------------------------
 
 /**
+* Will Set the busy indicator for an NPC.
+*/
+class BusyOperation : public ScriptOperation
+{
+protected:
+    bool busy;
+public:
+
+    BusyOperation(bool busy): ScriptOperation(busy?"Busy":"Idle"),busy(busy) {};
+    virtual ~BusyOperation() {};
+    virtual OperationResult Run(NPC* npc,EventManager* eventmgr,bool interrupted);
+    virtual bool Load(iDocumentNode* node);
+    virtual ScriptOperation* MakeCopy();
+};
+
+//-----------------------------------------------------------------------------
+
+/**
 * Let the NPC cast a spell.
 */
 class CastOperation : public ScriptOperation

@@ -33,8 +33,8 @@ INSERT INTO sc_npc_definitions VALUES("7","Fighter2","On Sight Fighter","","0.00
 INSERT INTO sc_npc_definitions VALUES("8","Merchant","Wanderer","wander region","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("12","QuestMaster1","QuestMaster1","","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("13","QuestMaster2","QuestMaster2","","0.00","0.00","0","N","N");
-INSERT INTO sc_npc_definitions VALUES("14","DictMaster1","Answerer","","0.00","0.00","0","N","N");
-INSERT INTO sc_npc_definitions VALUES("15","DictMaster2","Answerer","","0.00","0.00","0","N","N");
+INSERT INTO sc_npc_definitions VALUES("14","DictMaster1","DictMaster1","","0.00","0.00","0","N","N");
+INSERT INTO sc_npc_definitions VALUES("15","DictMaster2","DictMaster2","","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("20","Miner","AbstractTribesman","","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("21","MoveMaster1","MoveTest1","","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("22","MoveMaster2","MoveTest2","","0.00","0.00","0","N","N");

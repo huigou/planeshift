@@ -200,6 +200,7 @@ public:
         CMD_TERMINATOR, // cmds go from superclient to server
         CMD_ASSESS,
         CMD_ATTACK,
+        CMD_BUSY,
         CMD_CAST,
         CMD_DEQUIP,
         CMD_DRDATA,

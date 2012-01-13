@@ -1602,6 +1602,22 @@ void NetworkManager::QueueCastCommand(gemNPCActor* entity, gemNPCObject* target,
     cmd_count++;    
 }
 
+void NetworkManager::QueueBusyCommand(gemNPCActor* entity, bool busy )
+{
+    CheckCommandsOverrun(sizeof(int8_t)+sizeof(uint32_t)+sizeof(bool));
+
+    outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_BUSY);
+    outbound->msg->Add( entity->GetEID().Unbox() );
+    outbound->msg->Add( busy );
+
+    if ( outbound->msg->overrun )
+    {
+        CS_ASSERT(!"NetworkManager::QueueBusyCommand put message in overrun state!\n");
+    }
+
+    cmd_count++;    
+}
+
 
 void NetworkManager::SendAllCommands(bool final)
 {

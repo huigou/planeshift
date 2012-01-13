@@ -1135,6 +1135,31 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                 newItem->UpdateProxList(true);
                 break; 
             }
+            case psNPCCommandsMessage::CMD_BUSY:
+            {
+                EID entityEID = EID(list.msg->GetUInt32());
+                bool busy = list.msg->GetBool();
+                
+                Debug2(LOG_SUPERCLIENT,me->clientnum,"-->Got busy cmd: for entity %s\n", ShowID(entityEID));
+
+                // Make sure we haven't run past the end of the buffer
+                if (list.msg->overrun)
+                {
+                    Debug2(LOG_SUPERCLIENT,me->clientnum,"Received incomplete CMD_BUSY from NPC client %u.\n",me->clientnum);
+                    break;
+                }
+
+                gemNPC *entity = dynamic_cast<gemNPC *> (gemSupervisor->FindObject(entityEID));
+                if (!entity)
+                {
+                    Error1("Couldn't find entity for CMD_BUSY.");
+                    break;
+                }
+                
+                entity->SetBusy(busy);
+                
+                break;
+            }
             case psNPCCommandsMessage::CMD_TALK:
             {
                 EID speakerId = EID(list.msg->GetUInt32());

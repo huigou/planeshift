@@ -1035,6 +1035,26 @@ ScriptOperation::OperationResult BuildOperation::Run(NPC *npc, EventManager *eve
 
 //---------------------------------------------------------------------------
 
+bool BusyOperation::Load(iDocumentNode *node)
+{
+    return true;
+}
+
+ScriptOperation* BusyOperation::MakeCopy()
+{
+    BusyOperation* op = new BusyOperation(busy);
+    return op;
+}
+
+ScriptOperation::OperationResult BusyOperation::Run(NPC *npc, EventManager *eventmgr, bool interrupted)
+{
+    npcclient->GetNetworkMgr()->QueueBusyCommand(npc->GetActor(), busy);
+
+    return OPERATION_COMPLETED;  // Nothing more to do for this op.
+}
+
+//---------------------------------------------------------------------------
+
 CastOperation::CastOperation(const CastOperation* other)
     : ScriptOperation("Cast"),
       spell(other->spell),
