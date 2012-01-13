@@ -267,7 +267,7 @@ void Reaction::React(NPC *who, Perception *pcpt)
             break;
 
 
-        who->Printf(2, "Reaction '%s' reacting to perception %s", GetEventType(who).GetDataSafe(), pcpt->ToString(who).GetDataSafe());
+        who->Printf(2, "Reaction '%s[%s]' reacting to perception: %s", GetEventType(who).GetDataSafe(), type.GetDataSafe(), pcpt->ToString(who).GetDataSafe());
         switch (desireType)
         {
         case DESIRE_NONE:
@@ -480,7 +480,8 @@ csString Reaction::GetAffectedBehaviors()
 
 bool Perception::ShouldReact(Reaction *reaction, NPC *npc)
 {
-    if (GetName(npc) == reaction->GetEventType(npc))
+    if ((GetName(npc) == reaction->GetEventType(npc)) &&
+        (reaction->GetType().IsEmpty() || type == reaction->GetType()))
     {
         return true;
     }
