@@ -218,16 +218,22 @@ void ChatManager::HandleChatMessage(MsgEntry *me, Client *client)
               //psChatMessage newMsg(client->GetClientNum(), client->GetName(), 0,
             //    msg.sText, msg.iChatType, msg.translate);
               //newMsg.SendMessage();
-              saveFlood = false;
+              saveFlood = false;              
 
               gemObject *target = client->GetTargetObject();
               gemNPC *targetnpc = dynamic_cast<gemNPC*>(target);
-              NpcResponse *resp = CheckNPCResponse(msg,client,targetnpc);
-              if (resp)
+              if (targetnpc)
               {
-                  csTicks delay = resp->ExecuteScript(client->GetActor(), targetnpc);
-                  if (delay != (csTicks)-1 && resp->menu )
-                      resp->menu->ShowMenu(client, delay, targetnpc);
+                  // The NPC is spoken to so register this client as a speaker
+                  targetnpc->RegisterSpeaker(client);
+
+                  NpcResponse *resp = CheckNPCResponse(msg,client,targetnpc);
+                  if (resp)
+                  {
+                      csTicks delay = resp->ExecuteScript(client->GetActor(), targetnpc);
+                      if (delay != (csTicks)-1 && resp->menu )
+                          resp->menu->ShowMenu(client, delay, targetnpc);
+                  }
               }
               break;
           }
