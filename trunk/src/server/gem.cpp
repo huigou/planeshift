@@ -308,6 +308,11 @@ gemNPC *GEMSupervisor::FindNPCEntity(PID npc_id)
     return dynamic_cast<gemNPC*>(actors_by_pid.Get(npc_id, NULL));
 }
 
+gemNPC *GEMSupervisor::FindNPCEntity(EID eid)
+{
+    return dynamic_cast<gemNPC*>(entities_by_eid.Get(eid, NULL));
+}
+
 gemItem *GEMSupervisor::FindItemEntity(uint32 item_id)
 {
     return items_by_uid.Get(item_id, NULL);
@@ -4410,6 +4415,7 @@ gemNPC::gemNPC(GEMSupervisor* gemsupervisor, CacheManager* cachemanager,
     nextVeryShortRangeAvail = 0; /// When can npc respond to very short range prox trigger again
     nextShortRangeAvail = 0;     /// When can npc respond to short range prox trigger again
     nextLongRangeAvail = 0;      /// When can npc respond to long range prox trigger again
+    speakers = 0;
 
     //if( !GetEntity() )
     //{
@@ -4543,6 +4549,8 @@ void gemNPC::ReactToPlayerApproach(psNPCCommandsMessage::PerceptionType type,gem
 
 void gemNPC::ShowPopupMenu(Client *client)
 {
+    RegisterSpeaker(client);
+
     NpcResponse *resp = NULL;
     NpcDialogMenu menu;
 
@@ -5071,4 +5079,61 @@ void gemNPC::ForcePositionUpdate()
     SetLastSuperclientPos(GetPosition(),GetInstance(),now);
     //send this to all npcclients
     msg.Multicast(psserver->GetNPCManager()->GetSuperClients(),-1,PROX_LIST_ANY_RANGE);
+}
+
+
+class psCheckSpeakerEvent : public psGameEvent
+{
+public:
+    psCheckSpeakerEvent(EID eid)
+        : psGameEvent(0, 65000,"psCheckSpeakerEvent"), eid(eid)
+    {
+        
+    }
+
+    virtual void Trigger()
+    {
+        gemNPC* npc = psserver->entitymanager->GetGEM()->FindNPCEntity(eid);
+        if (npc)
+        {
+            npc->CheckSpeakers();
+        }
+    }
+    
+private:
+
+    EID eid;
+};    
+
+void gemNPC::RegisterSpeaker(Client* client)
+{
+    bool first = speakers <= 0;
+
+    speakers++;
+
+    if (first)
+    {
+        psserver->GetNPCManager()->QueueSpokenToPerception(this, true);
+    }
+
+    psCheckSpeakerEvent* event = new psCheckSpeakerEvent(GetEID());
+    event->QueueEvent();
+}
+
+
+void gemNPC::CheckSpeakers()
+{
+    bool last = (speakers == 1);
+
+    speakers--;
+    
+    if (speakers <= 0)
+    {
+        speakers = 0;
+    }
+    
+    if (last)
+    {
+        psserver->GetNPCManager()->QueueSpokenToPerception(this, false);
+    }
 }

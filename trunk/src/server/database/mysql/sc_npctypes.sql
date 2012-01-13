@@ -173,13 +173,18 @@ INSERT INTO sc_npctypes VALUES("9","Answerer","DoNothing","","","","","","",
 
 <react event="talk" inactive_only="yes" faction_diff="-100" oper=">" behavior="turn to face" delta="100"  when_invisible="yes" when_invincible="yes" />');
 
-INSERT INTO sc_npctypes VALUES("10","Sit","DoNothing","","","","","","",
-'<behavior name="sit" completion_decay="-1" growth="0" initial="0" >
-   <sit />
-   <wait duration="10" anim="sit_idle" />
-   <standup />
+INSERT INTO sc_npctypes VALUES("10","PoliteSitting","","","","","","","",
+'<behavior name="Init" completion_decay="-1" initial="1000" >
+  <sit />
 </behavior>
-<react event="player adjacent" inactive_only="yes" behavior="sit" delta="100"  when_invisible="yes" when_invincible="yes" />');
+
+<behavior name="Stand" completion_decay="-1" growth="0" initial="0" >
+   <standup />
+   <wait duration="10" />
+   <sit />
+</behavior>
+<react event="stand" behavior="Stand" />
+<react event="player adjacent" inactive_only="yes" behavior="Stand"  when_invisible="yes" when_invincible="yes" />');
 
 INSERT INTO sc_npctypes VALUES("11","Move","","","","","","","",
 '<!-- Fail safe move operation. Target position taken from the "Move" locate.  -->
@@ -236,6 +241,19 @@ INSERT INTO sc_npctypes VALUES("11","Move","","","","","","","",
 
 <react event="move_failed" behavior="MoveFailed" />');
 
+
+INSERT INTO sc_npctypes VALUES("12","QuestBlock","","","","","","","",
+'<behavior name="SpokenTo" loop="Yes" interrupt="spoken_to_interrupted">
+   <wait duration="10" />
+ </behavior>
+
+ <!-- Make sure we just keep doing this while SpokenTo -->
+ <react event="spoken_to_interrupted" behavior="SpokenTo" />
+
+ <!-- Perception from server to block NPC while spoken to -->
+ <react event="spoken_to" type="true" behavior="SpokenTo" />
+ <react event="spoken_to" type="false" behavior="SpokenTo" absolute="0" />
+');
 
 
 INSERT INTO sc_npctypes VALUES("100","Smith","GoHomeOnTeleport,DoNothing","","","","","","",
@@ -341,6 +359,11 @@ INSERT INTO sc_npctypes VALUES("100","Smith","GoHomeOnTeleport,DoNothing","","",
 <react event="time" value="12,0,,,"  behavior="go_obstacles1" delta="20" /> 
 <react event="time" value="14,0,,,"  behavior="go_climbing1" delta="20" />');
 
+INSERT INTO sc_npctypes VALUES("101","QuestMaster1","DoNothing,QuestBlock,PoliteSitting","","","","","","",
+'<empty/>');
+
+INSERT INTO sc_npctypes VALUES("102","QuestMaster2","DoNothing,QuestBlock,PoliteSitting","","","","","","",
+'<empty/>');
 
 INSERT INTO sc_npctypes VALUES("106","ChaseTest1","DoNothing","","","","","","",
 '<behavior name="init" initial="1000" completion_decay="-1" >

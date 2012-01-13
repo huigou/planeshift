@@ -155,7 +155,8 @@ public:
 
     gemActor  *FindPlayerEntity(PID player_id);
     gemNPC    *FindNPCEntity(PID npc_id);
-    gemItem   *FindItemEntity(uint32 item_id);
+    gemNPC    *FindNPCEntity(EID eid);
+	    gemItem   *FindItemEntity(uint32 item_id);
     //@}
 
     EID  CreateEntity(gemObject *obj);
@@ -1275,6 +1276,8 @@ protected:
 
     csPDelArray<DialogCounter> badText;
 
+    int speakers;
+
     NpcDialogMenu *initial_triggers;
 
 public:
@@ -1372,6 +1375,14 @@ public:
 
     virtual void SendGroupStats();
     virtual void ForcePositionUpdate();
+
+    /** Register clients that speak to a npc
+     */
+    void RegisterSpeaker(Client* client);
+
+    /** Check speakers to see if not spoken to anymore.
+     */
+    void CheckSpeakers();
 };
 
 //-----------------------------------------------------------------------------
