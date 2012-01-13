@@ -302,27 +302,22 @@ void psClientCharManager::ChangeTrait( MsgEntry* me )
     {
         if (dolls[i] == NULL)
             continue;
-
         pawsObjectView* doll = dynamic_cast<pawsObjectView*>(dolls[i]);
 
         if (doll == NULL)
             continue;
-
         if (doll->GetID() == objectID.Unbox()) // This is a doll of the updated object
         {
             iMeshWrapper* dollObject = doll->GetObject();
-            psCharAppearance p(psengine->GetObjectRegistry());
-            p.Clone(actor->CharAppearance());
-            p.SetMesh(dollObject);
-            p.ApplyTraits(mesg.string);
-
             if (dollObject == NULL)
             {
                 Error2("Cannot update registered doll view with ID %d because it has no object", doll->GetID());
                 continue;
             }
-
-            //psengine->BuildAppearance( dollObject, mesg.string );
+            psCharAppearance* p = doll->GetCharApp();
+            p->Clone(actor->CharAppearance());
+            p->SetMesh(dollObject);
+            p->ApplyTraits(mesg.string);
         }
     }
 }
@@ -429,65 +424,45 @@ void psClientCharManager::HandleEquipment(MsgEntry* me)
     equip.mesh.ReplaceAll("$E",object->BeltGroup);
     equip.mesh.ReplaceAll("$C",object->CloakGroup);
 
-    if (equip.type == psEquipmentMessage::EQUIP)
+    // Update any doll views registered for changes
+    csArray<iPAWSSubscriber*> dolls = PawsManager::GetSingleton().ListSubscribers("sigActorUpdate");
+    for (size_t i=0; i<dolls.GetSize(); i++)
     {
-        // Update the actor
-        object->CharAppearance()->Equip(slotname,equip.mesh,equip.part,equip.partMesh,equip.texture,equip.removedMesh);
+        if (dolls[i] == NULL)
+            continue;
+        pawsObjectView* doll = dynamic_cast<pawsObjectView*>(dolls[i]);
 
-        // Update any doll views registered for changes
-        csArray<iPAWSSubscriber*> dolls = PawsManager::GetSingleton().ListSubscribers("sigActorUpdate");
-        for (size_t i=0; i<dolls.GetSize(); i++)
+        if (doll == NULL)
+            continue;
+        if (doll->GetID() == playerID) // This is a doll of the updated object
         {
-            if (dolls[i] == NULL)
-                continue;
-            pawsObjectView* doll = dynamic_cast<pawsObjectView*>(dolls[i]);
-
-            if (doll == NULL)
-                continue;
-            if (doll->GetID() == playerID) // This is a doll of the updated object
+            iMeshWrapper* dollObject = doll->GetObject();
+            if (dollObject == NULL)
             {
-                iMeshWrapper* dollObject = doll->GetObject();
-                if (dollObject == NULL)
-                {
-                    Error2("Cannot update registered doll view with ID %d because it has no object", doll->GetID());
-                    continue;
-                }
-                psCharAppearance* p = doll->GetCharApp();
-                p->Clone(object->CharAppearance());
-                p->SetMesh(dollObject);
+                Error2("Cannot update registered doll view with ID %d because it has no object", doll->GetID());
+                continue;
+            }
+            psCharAppearance* p = doll->GetCharApp();
+            p->Clone(object->CharAppearance());
+            p->SetMesh(dollObject);
+            if (equip.type == psEquipmentMessage::EQUIP)
+            {
                 p->Equip(slotname,equip.mesh,equip.part,equip.partMesh,equip.texture,equip.removedMesh);
             }
-        }
-    }
-    else
-    {
-        // Update any doll views registered for changes
-        csArray<iPAWSSubscriber*> dolls = PawsManager::GetSingleton().ListSubscribers("sigActorUpdate");
-        for (size_t i=0; i<dolls.GetSize(); i++)
-        {
-            if (dolls[i] == NULL)
-                continue;
-            pawsObjectView* doll = dynamic_cast<pawsObjectView*>(dolls[i]);
-
-            if (doll == NULL)
-                continue;
-
-            if (doll->GetID() == playerID) // This is a doll of the updated object
+            else
             {
-                iMeshWrapper* dollObject = doll->GetObject();
-                if (dollObject == NULL)
-                {
-                    Error2("Cannot update registered doll view with ID %d because it has no object", doll->GetID());
-                    continue;
-                }
-
-                psCharAppearance* p = doll->GetCharApp();
-                p->SetMesh(dollObject);
-                p->Clone(object->CharAppearance());
                 p->Dequip(slotname,equip.mesh,equip.part,equip.partMesh,equip.texture,equip.removedMesh);
             }
         }
+    }
 
+    // Update the actor
+    if (equip.type == psEquipmentMessage::EQUIP)
+    {
+        object->CharAppearance()->Equip(slotname,equip.mesh,equip.part,equip.partMesh,equip.texture,equip.removedMesh);
+    }
+    else
+    {
         object->CharAppearance()->Dequip(slotname,equip.mesh,equip.part,equip.partMesh,equip.texture,equip.removedMesh);
     }
 }

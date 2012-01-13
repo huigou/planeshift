@@ -71,6 +71,7 @@
 #include "gui/pawslootwindow.h"
 
 #include "paws/pawsmanager.h"
+#include "paws/pawsobjectview.h"
 
 
 //=============================================================================
@@ -1776,6 +1777,32 @@ void GEMClientActor::InitCharData(const char* traits, const char* equipment)
 
     charApp->ApplyTraits(this->traits);
     charApp->ApplyEquipment(this->equipment);
+
+    // Update any doll views registered for changes
+    csArray<iPAWSSubscriber*> dolls = PawsManager::GetSingleton().ListSubscribers("sigActorUpdate");
+    for (size_t i=0; i<dolls.GetSize(); i++)
+    {
+        if (dolls[i] == NULL)
+            continue;
+
+        pawsObjectView* doll = dynamic_cast<pawsObjectView*>(dolls[i]);
+
+        if (doll == NULL)
+            continue;
+
+        if (doll->GetID() == GetEID().Unbox()) // This is a doll of the updated object
+        {
+            iMeshWrapper* dollObject = doll->GetObject();
+            if (dollObject == NULL)
+            {
+                Error2("Cannot update registered doll view with ID %d because it has no object", doll->GetID());
+                continue;
+            }
+            psCharAppearance* pp = doll->GetCharApp();
+            pp->ApplyTraits(this->traits);
+            pp->ApplyEquipment(this->equipment);
+        }
+    }
 }
 
 psLinearMovement& GEMClientActor::Movement()
