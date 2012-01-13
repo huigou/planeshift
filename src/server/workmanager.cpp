@@ -3581,7 +3581,7 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
         psItemStats* resultStats = cacheManager->GetBasicItemStatsByID( result );
         if (resultStats)
         {
-            psserver->SendSystemOK(clientNum,"You made %i %s.", resultQty, resultStats->GetName() );
+            psserver->SendSystemOK(clientNum,"You made %i %s with quality %i.", resultQty, resultStats->GetName(), currentQuality );
         }
         else
         {
