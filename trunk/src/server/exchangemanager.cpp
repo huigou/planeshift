@@ -1522,7 +1522,7 @@ void ExchangeManager::HandleAutoGive(MsgEntry *me,Client *client)
 {
     psSimpleStringMessage give(me);
 
-    printf("Got autogive of '%s'\n", give.str.GetDataSafe() );
+    Notify2(LOG_TRADE, "Got autogive of '%s'\n", give.str.GetDataSafe());
 
     // Expecting xml string like: <l money="0,0,0,0"><item n="Steel Falchion" c="1"/></l>
 
