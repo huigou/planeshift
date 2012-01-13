@@ -666,6 +666,15 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
                                   physical.GetDataSafe(),magical.GetDataSafe(),overall.GetDataSafe());
                 break;
             }
+            case psNPCCommandsMessage::PCPT_SPOKEN_TO: 
+            {
+                msgtext.Append("PCPT_SPOKEN_TO: ");
+                EID npc       = EID(msg->GetUInt32());
+                bool spokenTo = msg->GetBool();
+
+                msgtext.AppendFmt("NPC: %u SpokenTo: %s ", npc.Unbox(), spokenTo?"true":"false");
+                break;
+            }
             case psNPCCommandsMessage::PCPT_TALK: 
             {
                 msgtext.Append("PCPT_TALK: ");

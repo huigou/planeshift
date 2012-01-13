@@ -237,6 +237,7 @@ public:
         PCPT_SHORTRANGEPLAYER,
         PCPT_SPAWNED,
         PCPT_SPELL,
+        PCPT_SPOKEN_TO,
         PCPT_TALK,   
         PCPT_TELEPORT,
         PCPT_TRANSFER,
