@@ -69,12 +69,10 @@ protected:
     csPDelArray<Behavior>  behaviors; ///< The set of behavoirs for this NPCType.
     Behavior*              active;    ///< Points to the current active behavior.
         
-    EventManager*          eventmgr;  ///< Cached pointer to the event manger.
-
 public:
     /** Constructor
      */
-    BehaviorSet(EventManager *eventmanager);
+    BehaviorSet();
 
     /** Add a behavior to the brain
      *
@@ -212,8 +210,8 @@ protected:
     csString              fallingPerception;     ///< Global perception value for falling
 
 public:
-    NPCType(psNPCClient* npcclient, EventManager* eventmanager);
-    NPCType(NPCType& other, EventManager* eventmanager): behaviors(eventmanager) { DeepCopy(other); }
+    NPCType();
+    NPCType(NPCType& other) { DeepCopy(other); }
 
     ~NPCType();
     void DeepCopy(NPCType& other);
@@ -263,7 +261,6 @@ public:
 
     
 private:
-    static psNPCClient* npcclient;
 };
 
 
@@ -321,7 +318,7 @@ public:
     bool LoadScript(iDocumentNode *node,bool top_level=true);
 
     void UpdateNeed(float delta, NPC* npc);
-    void Advance(float delta, NPC* npc, EventManager* eventmgr);
+    void Advance(float delta, NPC* npc);
     float CurrentNeed() { return current_need; }
     float NewNeed() { return new_need; }
 
@@ -380,10 +377,10 @@ public:
 
     bool ApplicableToNPCState(NPC* npc);
     void DoCompletionDecay(NPC* npc);
-    ScriptOperation::OperationResult StartScript(NPC* npc, EventManager* eventmgr);
-    ScriptOperation::OperationResult RunScript(NPC* npc, EventManager* eventmgr, bool interruped);
-    ScriptOperation::OperationResult ResumeScript(NPC* npc, EventManager* eventmgr);
-    void InterruptScript(NPC* npc, EventManager* eventmgr);
+    ScriptOperation::OperationResult StartScript(NPC* npc);
+    ScriptOperation::OperationResult RunScript(NPC* npc, bool interruped);
+    ScriptOperation::OperationResult ResumeScript(NPC* npc);
+    void InterruptScript(NPC* npc);
     bool IsInterrupted(){ return interrupted; }
     void ClearInterrupted() { interrupted = false; }
     Behavior* SetCompletionDecay(float completion_decay) { this->completion_decay = completion_decay; return this; }
@@ -422,12 +419,11 @@ class psResumeScriptEvent : public psGameEvent
 {
 protected:
     NPC *npc;
-    EventManager    *eventmgr;
     Behavior        *behavior;
     ScriptOperation *scriptOp;
 
 public:
-    psResumeScriptEvent(int offsetticks, NPC *c,EventManager *mgr,Behavior *which,ScriptOperation * script);
+    psResumeScriptEvent(int offsetticks, NPC* c, Behavior* which, ScriptOperation* script);
     virtual void Trigger();  // Abstract event processing function
     virtual csString ToString() const;
 };

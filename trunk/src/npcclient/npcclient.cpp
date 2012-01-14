@@ -444,7 +444,7 @@ bool psNPCClient::AddNPCType(csString newType)
         return false;
     }
 
-    NPCType* npctype = new NPCType(this, eventmanager);
+    NPCType* npctype = new NPCType();
     if(npctype->Load(node))
     {
         npctypes.Put(npctype->GetName(), npctype);
@@ -477,7 +477,7 @@ bool psNPCClient::LoadNPCTypes(iDocumentNode* root)
         // This is a NPC so load it.
         if ( strcmp( node->GetValue(), "npctype" ) == 0 )
         {
-            NPCType *npctype = new NPCType(this, eventmanager);
+            NPCType *npctype = new NPCType();
             if (npctype->Load(node))
             {
                 npctypes.Put(npctype->GetName(), npctype);
@@ -514,7 +514,7 @@ bool psNPCClient::LoadNPCTypes()
 
     for (unsigned long i = 0; i < rs.Count(); i++)
     {
-        NPCType *npctype = new NPCType(this, eventmanager);
+        NPCType *npctype = new NPCType();
         if (npctype->Load(rs[i]))
         {
             npctypes.Put(npctype->GetName(), npctype);
@@ -537,7 +537,7 @@ bool psNPCClient::LoadNPCTypes()
         {
             //maybe we should reorder them by dependency? the issue with that is that
             //we would need to know more about the items inner working.
-            NPCType *npctype = new NPCType(this, eventmanager);
+            NPCType *npctype = new NPCType();
             if(npctype->Load(rs[postponedNPCTypeID.Get(y)]))
             {
                 npctypes.Put(npctype->GetName(), npctype);
