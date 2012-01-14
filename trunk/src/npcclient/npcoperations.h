@@ -145,7 +145,7 @@ public:
     virtual ~ScriptOperation() {}
 
     virtual OperationResult Run(NPC* npc,EventManager* eventmgr,bool interrupted)=0;
-    virtual void Advance(float timedelta,NPC* npc,EventManager* eventmgr);
+    virtual OperationResult Advance(float timedelta,NPC* npc,EventManager* eventmgr);
 
     virtual void InterruptOperation(NPC* npc,EventManager* eventmgr);
     virtual bool AtInterruptedPosition(const csVector3& pos, const iSector* sector);
@@ -301,7 +301,7 @@ public:
 
     virtual OperationResult Run(NPC* npc,EventManager* eventmgr,bool interrupted);
 
-    virtual void Advance(float timedelta,NPC* npc,EventManager* eventmgr);
+    virtual OperationResult Advance(float timedelta,NPC* npc,EventManager* eventmgr);
 
     virtual void InterruptOperation(NPC* npc,EventManager* eventmgr);
 
@@ -555,7 +555,7 @@ public:
     virtual ScriptOperation* MakeCopy();
 
     virtual OperationResult Run(NPC* npc,EventManager* eventmgr,bool interrupted);
-    virtual void Advance(float timedelta,NPC* npc,EventManager* eventmgr);
+    virtual OperationResult Advance(float timedelta,NPC* npc,EventManager* eventmgr);
     virtual void InterruptOperation(NPC* npc,EventManager* eventmgr);
     virtual bool CompleteOperation(NPC* npc,EventManager* eventmgr);
 
@@ -855,7 +855,7 @@ public:
     virtual ScriptOperation* MakeCopy();
 
     virtual OperationResult Run(NPC* npc,EventManager* eventmgr,bool interrupted);
-    virtual void Advance(float timedelta,NPC* npc,EventManager* eventmgr);
+    virtual OperationResult Advance(float timedelta,NPC* npc,EventManager* eventmgr);
     virtual void InterruptOperation(NPC* npc,EventManager* eventmgr);
     virtual bool CompleteOperation(NPC* npc,EventManager* eventmgr);
 };
@@ -908,7 +908,7 @@ public:
     virtual ScriptOperation* MakeCopy();
 
     virtual OperationResult Run(NPC* npc,EventManager* eventmgr,bool interrupted);
-    virtual void Advance(float timedelta,NPC* npc,EventManager* eventmgr);
+    virtual OperationResult Advance(float timedelta,NPC* npc,EventManager* eventmgr);
     virtual void InterruptOperation(NPC* npc,EventManager* eventmgr);
     virtual bool CompleteOperation(NPC* npc,EventManager* eventmgr);
 };
@@ -1138,7 +1138,7 @@ public:
     virtual ScriptOperation* MakeCopy();
 
     virtual OperationResult Run(NPC* npc,EventManager* eventmgr,bool interrupted);
-    virtual void Advance(float timedelta,NPC* npc,EventManager* eventmgr);
+    virtual OperationResult Advance(float timedelta,NPC* npc,EventManager* eventmgr);
     virtual void InterruptOperation(NPC* npc,EventManager* eventmgr);
     virtual bool CompleteOperation(NPC* npc,EventManager* eventmgr);
     
@@ -1217,7 +1217,7 @@ public:
     virtual ~SitOperation() {};
     virtual OperationResult Run(NPC* npc,EventManager* eventmgr,bool interrupted);
     virtual bool Load(iDocumentNode* node);
-    virtual void Advance(float timedelta,NPC* npc,EventManager* eventmgr);
+    virtual OperationResult Advance(float timedelta,NPC* npc,EventManager* eventmgr);
     virtual ScriptOperation* MakeCopy();
 };
 
@@ -1362,7 +1362,7 @@ public:
 
     virtual OperationResult Run(NPC* npc,EventManager* eventmgr,bool interrupted);
     virtual bool Load(iDocumentNode* node);
-    virtual void Advance(float timedelta,NPC* npc,EventManager* eventmgr);
+    virtual OperationResult Advance(float timedelta,NPC* npc,EventManager* eventmgr);
     virtual ScriptOperation* MakeCopy();
 };
 
@@ -1483,7 +1483,7 @@ public:
 
 
     virtual OperationResult Run(NPC* npc,EventManager* eventmgr,bool interrupted);
-    virtual void Advance(float timedelta,NPC* npc,EventManager* eventmgr);
+    virtual OperationResult Advance(float timedelta,NPC* npc,EventManager* eventmgr);
     virtual void InterruptOperation(NPC* npc,EventManager* eventmgr);
     virtual bool Load(iDocumentNode* node);
     virtual bool CompleteOperation(NPC* npc,EventManager* eventmgr);
@@ -1526,7 +1526,7 @@ public:
     virtual ScriptOperation* MakeCopy();
 
     virtual OperationResult Run(NPC* npc,EventManager* eventmgr,bool interrupted);
-    virtual void Advance(float timedelta,NPC* npc,EventManager* eventmgr);
+    virtual OperationResult Advance(float timedelta,NPC* npc,EventManager* eventmgr);
     virtual void InterruptOperation(NPC* npc,EventManager* eventmgr);
     virtual bool CompleteOperation(NPC* npc,EventManager* eventmgr);
 
