@@ -192,8 +192,9 @@ bool ScriptOperation::Load(iDocumentNode *node)
     return true;
 }
 
-void ScriptOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr) 
+ScriptOperation::OperationResult ScriptOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr) 
 {
+    return OPERATION_NOT_COMPLETED;
 }
 
 void ScriptOperation::InterruptOperation(NPC *npc,EventManager *eventmgr)      
@@ -495,7 +496,7 @@ void ScriptOperation::Resume(csTicks delay, NPC *npc, EventManager *eventmgr)
     CS_ASSERT(resumeScriptEvent == NULL);
     
     resumeScriptEvent = new psResumeScriptEvent(delay, npc, eventmgr, npc->GetCurrentBehavior(), this);
-    eventmgr->Push(resumeScriptEvent);
+    resumeScriptEvent->QueueEvent();
 }
 
 void ScriptOperation::ResumeTrigger(psResumeScriptEvent * event)
@@ -814,7 +815,7 @@ ScriptOperation::OperationResult MovementOperation::Run(NPC *npc, EventManager *
     return OPERATION_COMPLETED; // This operation is complete
 }
 
-void MovementOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
+ScriptOperation::OperationResult MovementOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
 {
 
     csVector3    myPos;
@@ -827,8 +828,7 @@ void MovementOperation::Advance(float timedelta, NPC *npc, EventManager *eventmg
 
     if (!UpdateEndPosition(npc, myPos, mySector, endPos, endSector ))
     {
-        npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
-        return;
+        return OPERATION_FAILED;
     }
 
     // Check if path endpoint has changed and needs to be updated
@@ -847,8 +847,7 @@ void MovementOperation::Advance(float timedelta, NPC *npc, EventManager *eventmg
             if (distance < 0.5)
             {
                 npc->Printf(5, "We are done....");
-                npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior());
-                return;
+                return OPERATION_COMPLETED;
             }
             else
             {
@@ -856,15 +855,13 @@ void MovementOperation::Advance(float timedelta, NPC *npc, EventManager *eventmg
                 npc->Printf(5, "Failed to find a path between %s and %s", 
                             toString(myPos, mySector).GetData(), 
                             toString(endPos, endSector).GetData());
-                npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior());
-                return;
+                return OPERATION_FAILED;
             }
         }
 
         if (!PathReachedEndPoint(npc, path, endPos, endSector))
         {
-            npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior());
-            return;
+            return OPERATION_FAILED;
         }
 
         // Start moving toward new dest
@@ -880,8 +877,7 @@ void MovementOperation::Advance(float timedelta, NPC *npc, EventManager *eventmg
     if (distance >= INFINITY_DISTANCE)
     {
         npc->Printf(5, "No connection found..");
-        npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior());
-        return;
+        return OPERATION_FAILED;
     }
     else if (distance <= 0.5f || distance > (currentDistance+0.1))
     {
@@ -898,8 +894,7 @@ void MovementOperation::Advance(float timedelta, NPC *npc, EventManager *eventmg
         {
             npc->Printf(5, "We are done.....");
             CheckEndPointOk(npc, myPos, mySector, endPos, endSector );
-            npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior());
-            return;
+            return OPERATION_COMPLETED;
         }
         else
         {
@@ -944,6 +939,8 @@ void MovementOperation::Advance(float timedelta, NPC *npc, EventManager *eventmg
 
         CheckMoveOk(npc, myPos, mySector, myNewPos, myNewSector, timedelta);
     }
+
+    return OPERATION_NOT_COMPLETED;
 }
 
 void MovementOperation::InterruptOperation(NPC *npc,EventManager *eventmgr)
@@ -2712,7 +2709,7 @@ ScriptOperation::OperationResult MeleeOperation::Run(NPC *npc, EventManager *eve
     return OPERATION_NOT_COMPLETED; // This behavior isn't done yet
 }
 
-void MeleeOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
+ScriptOperation::OperationResult MeleeOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
 {
     // Check hate list to make sure we are still attacking the right person
     gemNPCActor *ent = npc->GetMostHated(melee_range, attack_invisible, attack_invincible);
@@ -2748,7 +2745,7 @@ void MeleeOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
             npc->Printf(8, "No hated target in seek range (%2.2f)!", seek_range);
             npc->GetCurrentBehavior()->ApplyNeedDelta(npc, -5); // don't want to fight as badly
         }
-        return;
+        return OPERATION_NOT_COMPLETED;
     }
     if (ent != attacked_ent)
     {
@@ -2794,6 +2791,7 @@ void MeleeOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
             npcclient->GetNetworkMgr()->QueueDRData(npc);
         }
     }
+    return OPERATION_NOT_COMPLETED;
 }
 
 void MeleeOperation::InterruptOperation(NPC *npc,EventManager *eventmgr)
@@ -2919,7 +2917,7 @@ bool MoveOperation::CompleteOperation(NPC *npc,EventManager *eventmgr)
     return true;  // Script can keep going
 }
 
-void MoveOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
+ScriptOperation::OperationResult MoveOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
 {
     remaining -= timedelta;
 
@@ -2942,6 +2940,8 @@ void MoveOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
     CheckMoveOk(npc, oldPos, oldSector, newPos, newSector, timedelta);
 
     npc->Printf(10,"New position: %s",toString(newPos,newSector).GetDataSafe());
+
+    return OPERATION_NOT_COMPLETED;
 }
 
 
@@ -3013,7 +3013,7 @@ ScriptOperation::OperationResult MovePathOperation::Run(NPC *npc, EventManager *
     return OPERATION_NOT_COMPLETED;
 }
 
-void MovePathOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
+ScriptOperation::OperationResult MovePathOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
 {
     int ret;
     ret = npc->GetLinMove()->ExtrapolatePosition(timedelta);
@@ -3028,9 +3028,7 @@ void MovePathOperation::Advance(float timedelta, NPC *npc, EventManager *eventmg
         // None linear movement so we have to queue DRData updates.
         npcclient->GetNetworkMgr()->QueueDRData(npc);
 
-        npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
-
-        return;
+        return OPERATION_COMPLETED;
     }
     
     if (npc->IsDebugging())
@@ -3056,6 +3054,8 @@ void MovePathOperation::Advance(float timedelta, NPC *npc, EventManager *eventmg
 
     // None linear movement so we have to queue DRData updates.
     npcclient->GetNetworkMgr()->QueueDRData(npc);
+
+    return OPERATION_NOT_COMPLETED;
 }
 
 void MovePathOperation::InterruptOperation(NPC *npc,EventManager *eventmgr)
@@ -3839,10 +3839,12 @@ ScriptOperation::OperationResult RotateOperation::Run(NPC *npc, EventManager *ev
     return OPERATION_NOT_COMPLETED;
 }
 
-void RotateOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr) 
+ScriptOperation::OperationResult RotateOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr) 
 {
     int ret;
     ret = npc->GetLinMove()->ExtrapolatePosition(timedelta);
+
+    return OPERATION_NOT_COMPLETED;
 }
 
 float RotateOperation::SeekAngle(NPC* npc, float targetYRot)
@@ -4057,17 +4059,19 @@ ScriptOperation::OperationResult SitOperation::Run(NPC *npc, EventManager *event
     return OPERATION_NOT_COMPLETED;
 }
 
-void SitOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
+ScriptOperation::OperationResult SitOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
 {
     remaining -= timedelta;
     if(remaining <= 0)
     {
-    	npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
+        return OPERATION_COMPLETED;
     }
     else
     {
         npc->Printf(10, "waiting to be %... %.2f",sit?"seated":"standing",remaining);
     }
+
+    return OPERATION_NOT_COMPLETED;
 }
 
 
@@ -4390,14 +4394,15 @@ ScriptOperation::OperationResult WaitOperation::Run(NPC *npc, EventManager *even
     return OPERATION_NOT_COMPLETED;
 }
 
-void WaitOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
+ScriptOperation::OperationResult WaitOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
 {
     remaining -= timedelta;
     if(remaining <= 0)
     {
-    	npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
+        return OPERATION_COMPLETED;
     }
     npc->Printf(10, "waiting... %.2f",remaining);
+    return OPERATION_NOT_COMPLETED;
 }
 
 //---------------------------------------------------------------------------
@@ -4761,7 +4766,7 @@ ScriptOperation::OperationResult WanderOperation::Run(NPC *npc, EventManager *ev
     return OPERATION_NOT_COMPLETED;
 }
 
-void WanderOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
+ScriptOperation::OperationResult WanderOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
 {
     csVector3    myPos;
     float        myRot;
@@ -4787,8 +4792,7 @@ void WanderOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
     if (distance >= INFINITY_DISTANCE)
     {
         npc->Printf(5, "No connection found..");
-        npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior());
-        return;
+        return OPERATION_FAILED;
     }
     else if (distance <= 0.5f || distance > currentDistance )
     {
@@ -4828,15 +4832,13 @@ void WanderOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
             else if (!StartMoveTo(npc, destPoint))
             {
                 npc->Printf(5, "We are done..Failed to start to next localDest.");
-                npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior());
-                return;
+                return OPERATION_FAILED;
             }
         }
         else
         {
             npc->Printf(5, "We are done..");
-            npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior());
-            return;
+            return OPERATION_COMPLETED;
         }
     }
     else
@@ -4884,6 +4886,7 @@ void WanderOperation::Advance(float timedelta,NPC *npc,EventManager *eventmgr)
 
         CheckMoveOk(npc, myPos, mySector, myNewPos, myNewSector, timedelta);
     }
+    return OPERATION_NOT_COMPLETED;
 }
 
 void WanderOperation::InterruptOperation(NPC *npc,EventManager *eventmgr)
@@ -5128,13 +5131,12 @@ bool WatchOperation::OutOfRange(NPC *npc)
 }
 
 
-void WatchOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
+ScriptOperation::OperationResult WatchOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
 {
     if (!watchedEnt)
     {
         npc->Printf(5,"No entity to watch");
-        npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
-        return; // Nothing to do for this behavior.
+        return OPERATION_FAILED;
     }
 
     if (OutOfRange(npc))
@@ -5144,9 +5146,10 @@ void WatchOperation::Advance(float timedelta, NPC *npc, EventManager *eventmgr)
         str.Append(" out of range");
         Perception range(str);
         npc->TriggerEvent(&range);
-        npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
-        return; // Lost track of the watched entity.
+        return OPERATION_FAILED;
     }
+
+    return OPERATION_NOT_COMPLETED;
 }
 
 void WatchOperation::InterruptOperation(NPC *npc,EventManager *eventmgr)

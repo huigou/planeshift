@@ -1224,7 +1224,18 @@ void Behavior::Advance(float delta, NPC *npc, EventManager *eventmgr)
         
         if (!sequence[current_step]->HasCompleted())
         {
-            sequence[current_step]->Advance(delta,npc,eventmgr);
+            ScriptOperation::OperationResult result = sequence[current_step]->Advance(delta,npc,eventmgr);
+            switch (result)
+            {
+            case ScriptOperation::OPERATION_COMPLETED:
+                npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
+                break;
+            case ScriptOperation::OPERATION_NOT_COMPLETED:
+                break;
+            case ScriptOperation::OPERATION_FAILED:
+                npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
+                break;
+            }
         }
     }
 }
