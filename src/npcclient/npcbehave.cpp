@@ -57,15 +57,13 @@
 #include "networkmgr.h"
 #include "npcmesh.h"
 #include "gem.h"
+#include "globals.h"
 
 extern bool running;
 
-psNPCClient* NPCType::npcclient = NULL;
-
-NPCType::NPCType(psNPCClient* npcclient, EventManager* eventmanager)
-    :behaviors(eventmanager),ang_vel(999),vel(999),velSource(VEL_DEFAULT)
+NPCType::NPCType()
+    :ang_vel(999),vel(999),velSource(VEL_DEFAULT)
 {
-    this->npcclient = npcclient;
 }
 
 NPCType::~NPCType()
@@ -74,7 +72,6 @@ NPCType::~NPCType()
 
 void NPCType::DeepCopy(NPCType& other)
 {
-    npcclient             = other.npcclient;
     name                  = other.name;
     ang_vel               = other.ang_vel;
     velSource             = other.velSource;
@@ -525,10 +522,9 @@ const csString& NPCType::GetFallingPerception() const
 
 
 //---------------------------------------------------------------------------
-BehaviorSet::BehaviorSet(EventManager *eventmanager)
+BehaviorSet::BehaviorSet()
 {
     active=NULL;
-    eventmgr = eventmanager;
 }
 
 void BehaviorSet::ClearState(NPC *npc)
@@ -614,7 +610,7 @@ void BehaviorSet::Advance(csTicks delta, NPC* npc)
 
     if (active)
     {
-        active->Advance(d, npc, eventmgr);
+        active->Advance(d, npc);
     }
     
     // Now loop through the behaviors. If they complete on Run than
@@ -647,7 +643,7 @@ void BehaviorSet::Advance(csTicks delta, NPC* npc)
                             new_behaviour->GetName() );
 
                 // Interrupt and stop current behaviour
-                active->InterruptScript(npc,eventmgr);
+                active->InterruptScript(npc);
                 active->SetIsActive(false);
             }
             else
@@ -678,7 +674,7 @@ void BehaviorSet::Advance(csTicks delta, NPC* npc)
             // Run the new active behavior
             ScriptOperation::OperationResult result;
 
-            result = active->StartScript(npc,eventmgr);
+            result = active->StartScript(npc);
             
             if (result == ScriptOperation::OPERATION_COMPLETED)
             {
@@ -714,7 +710,7 @@ void BehaviorSet::ResumeScript(NPC *npc, Behavior *which)
 {
     if (which == active && which->ApplicableToNPCState(npc))
     {
-        if (active->ResumeScript(npc,eventmgr) != ScriptOperation::OPERATION_NOT_COMPLETED)
+        if (active->ResumeScript(npc) != ScriptOperation::OPERATION_NOT_COMPLETED)
         {
             active->SetIsActive(false);
             active = NULL;
@@ -727,7 +723,7 @@ void BehaviorSet::Interrupt(NPC *npc)
 {
     if (active)
     {
-        active->InterruptScript(npc,eventmgr);
+        active->InterruptScript(npc);
     }
 }
 
@@ -1209,7 +1205,7 @@ void Behavior::UpdateNeed(float delta, NPC* npc)
 }
 
 
-void Behavior::Advance(float delta, NPC *npc, EventManager *eventmgr)
+void Behavior::Advance(float delta, NPC *npc)
 {
     if (!isActive)
     {
@@ -1224,7 +1220,7 @@ void Behavior::Advance(float delta, NPC *npc, EventManager *eventmgr)
         
         if (!sequence[current_step]->HasCompleted())
         {
-            ScriptOperation::OperationResult result = sequence[current_step]->Advance(delta,npc,eventmgr);
+            ScriptOperation::OperationResult result = sequence[current_step]->Advance(delta,npc);
             switch (result)
             {
             case ScriptOperation::OPERATION_COMPLETED:
@@ -1325,14 +1321,14 @@ void Behavior::DoCompletionDecay(NPC* npc)
     }
 }
 
-ScriptOperation::OperationResult Behavior::StartScript(NPC *npc, EventManager *eventmgr)
+ScriptOperation::OperationResult Behavior::StartScript(NPC *npc)
 {
     if (interrupted && resume_after_interrupt)
     {
         npc->Printf(3,"Resuming behavior %s after interrupt at step %d - %s.",
                     name.GetData(), current_step, sequence[current_step]->GetName());
         interrupted = false;
-        return RunScript(npc,eventmgr,true);
+        return RunScript(npc,true);
     }
     else
     {
@@ -1347,11 +1343,11 @@ ScriptOperation::OperationResult Behavior::StartScript(NPC *npc, EventManager *e
             interrupted = false;
         }
 
-        return RunScript(npc,eventmgr,false);
+        return RunScript(npc,false);
     }
 }
 
-ScriptOperation::OperationResult Behavior::RunScript(NPC *npc, EventManager *eventmgr, bool interrupted)
+ScriptOperation::OperationResult Behavior::RunScript(NPC *npc, bool interrupted)
 {
     size_t start_step = current_step;
 
@@ -1373,7 +1369,7 @@ ScriptOperation::OperationResult Behavior::RunScript(NPC *npc, EventManager *eve
             sequence[current_step]->SetCompleted(false);
 
             // Run the script
-            result = sequence[current_step]->Run(npc, eventmgr, interrupted);
+            result = sequence[current_step]->Run(npc, interrupted);
             interrupted = false; // Reset the interrupted flag after operation has run
             
             // Check the result from the script run operation
@@ -1429,7 +1425,7 @@ ScriptOperation::OperationResult Behavior::RunScript(NPC *npc, EventManager *eve
     return ScriptOperation::OPERATION_COMPLETED; // This behavior is done
 }
 
-void Behavior::InterruptScript(NPC *npc,EventManager *eventmgr)
+void Behavior::InterruptScript(NPC *npc)
 {
     if (current_step < sequence.GetSize() )
     {
@@ -1442,24 +1438,24 @@ void Behavior::InterruptScript(NPC *npc,EventManager *eventmgr)
             npc->TriggerEvent(&perception);
         }
 
-        sequence[current_step]->InterruptOperation(npc,eventmgr);
+        sequence[current_step]->InterruptOperation(npc);
         interrupted = true;
     }
 }
 
-ScriptOperation::OperationResult Behavior::ResumeScript(NPC *npc,EventManager *eventmgr)
+ScriptOperation::OperationResult Behavior::ResumeScript(NPC *npc)
 {
     if (current_step < sequence.GetSize())
     {
         npc->Printf(3, "Resuming behavior %s at step %d - %s.",
                     name.GetData(),current_step,sequence[current_step]->GetName());
 
-        if (sequence[current_step]->CompleteOperation(npc,eventmgr))
+        if (sequence[current_step]->CompleteOperation(npc))
         {
             npc->Printf(2,"Completed step %d - %s of behavior %s",
                         current_step,sequence[current_step]->GetName(),name.GetData());
             current_step++;
-            return RunScript(npc, eventmgr, false);
+            return RunScript(npc, false);
         }
         else
         {
@@ -1493,11 +1489,10 @@ void Behavior::Failure(NPC* npc, ScriptOperation* op)
 
 //---------------------------------------------------------------------------
 
-psResumeScriptEvent::psResumeScriptEvent(int offsetticks, NPC *which,EventManager *mgr,Behavior *behave,ScriptOperation * script)
+psResumeScriptEvent::psResumeScriptEvent(int offsetticks, NPC *which,Behavior *behave,ScriptOperation * script)
 : psGameEvent(0,offsetticks,"psResumeScriptEvent")
 {
     npc = which;
-    eventmgr = mgr;
     behavior = behave;
     scriptOp = script;
 }
