@@ -236,6 +236,11 @@ public:
     /* Returns true if we want to perform a repair when files fail after an update. */
     bool RepairFailed() const { return repairFailed; }
 
+    /* True if we want to use the updater. This could be turned of when third-party
+     * updater is used
+     */
+    bool IsUpdateEnabled() const { return updateEnabled; }
+
     /* Returns the configfile for the app */
     csRef<iConfigFile> GetConfigFile() const { return configFile; }
 
@@ -269,6 +274,11 @@ private:
 
     /* True if we want to perform a repair when files fail after an update. */
     bool repairFailed;
+
+    /* True if we want to use the updater. This could be turned of when third-party
+     * updater is used
+     */
+    bool updateEnabled;
 
     /* Address of new mirror. */
     csString newMirror;

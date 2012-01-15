@@ -72,6 +72,10 @@ psUpdater::~psUpdater()
 
 void psUpdater::RunUpdate(UpdaterEngine* engine) const
 {
+    // Check if the updater is disabled because of third-party support.
+    if(!engine->GetConfig()->IsUpdateEnabled())
+        return;
+
     // Check if we're already in the middle of a self-update.
     if(engine->GetConfig()->IsSelfUpdating())
     {

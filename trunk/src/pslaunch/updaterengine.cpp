@@ -119,6 +119,10 @@ void UpdaterEngine::Run()
 
 void UpdaterEngine::CheckForUpdates()
 {
+    // Check if the updater is disabled because of third-party support.
+    if(!config->IsUpdateEnabled())
+        return;
+
     // Make sure the old instance had time to terminate (self-update).
     if(config->IsSelfUpdating())
         csSleep(1000);
