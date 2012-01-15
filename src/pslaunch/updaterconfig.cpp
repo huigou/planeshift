@@ -76,6 +76,7 @@ UpdaterConfig::UpdaterConfig(csStringArray& args, iObjectRegistry* _object_reg, 
     configFile = new csConfigFile(CONFIG_FILENAME, vfs);
     cleanUpdate = configFile->GetBool("Update.Clean", true);
     updatePlatform = configFile->GetBool("Update.Platform", true);
+    updateEnabled = configFile->GetBool("Update.Enable", true);
     repairInZip = configFile->GetBool("Update.RepairInZip");
     keepRepaired = configFile->GetBool("Update.KeepRepairedFiles");
     repairFailed = configFile->GetBool("Update.RepairFailed", true);
