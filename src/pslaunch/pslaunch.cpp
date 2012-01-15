@@ -210,6 +210,16 @@ bool psLauncherGUI::HandleEvent (iEvent &ev)
         return false;
     }
 
+    if(infoShare->GetOutOfSync())
+    {
+        pawsOkBox* notify = (pawsOkBox*)paws->FindWidget("Notify");
+        notify->SetText(
+                "Local config and server config are incompatible!\n\n"
+                "To resolve this, run a repair.");
+        notify->Show();
+        infoShare->SetOutOfSync(false);
+    }
+
     if(infoShare->GetCheckIntegrity())
     {
         pawsMessageTextBox* updateProgressOutput = (pawsMessageTextBox*)paws->FindWidget("UpdaterOutput");

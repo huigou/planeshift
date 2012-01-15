@@ -444,6 +444,11 @@ bool UpdaterEngine::CheckGeneral()
                 PrintOutput("\nLocal config and server config are incompatible!\n");
                 PrintOutput("This is caused when your local version becomes out of sync with the update mirrors.\n");
                 PrintOutput("To resolve this, run a repair.\n");
+                if(hasGUI)
+                {
+                    infoShare->SetOutOfSync(true);
+                    infoShare->Sync();
+                }
             }
         }
 
@@ -966,8 +971,11 @@ void UpdaterEngine::GeneralUpdate()
 
         // Add version info to updaterinfo.xml and oldCvs.
         csRef<iDocumentNode> newNode = confignode->GetNode("client")->CreateNodeBefore(CS_NODE_ELEMENT);
+        csString md5 = "md5";
         newNode->SetValue("version");
         newNode->SetAttribute("name", newCv->GetName());
+        newNode->SetAttribute(md5 + config->GetCurrentConfig()->GetPlatform(), newCv->GetMD5Sum());
+        newNode->SetAttribute(md5 + config->GetCurrentConfig()->GetGeneric(), newCv->GetGenericMD5Sum());
         updaterinfo->Write(vfs, UPDATERINFO_CURRENT_FILENAME);
         oldCvs.PushSmart(newCv);
     }
