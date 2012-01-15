@@ -75,6 +75,9 @@ private:
     /* Set to true once we have checked for an update. */
     volatile bool updateChecked;
 
+    /* Set to true if the updaterinfo.xml gets out of sync. */
+    volatile bool outOfSync;
+
     /* Safety. */
     CS::Threading::Mutex mutex;
 
@@ -95,6 +98,7 @@ public:
         checkIntegrity = false;
         updateChecked = false;
         cancelUpdater = false;
+        outOfSync = false;
         synching = false;
         mutex.Initialize();
     }
@@ -105,6 +109,7 @@ public:
     inline void SetPerformUpdate(bool v) { performUpdate = v; }
     inline void SetCheckIntegrity(bool v) { checkIntegrity = v; }
     inline void SetCancelUpdater(bool v) { cancelUpdater = v; }
+    inline void SetOutOfSync(bool v) { outOfSync = v; }
     inline void SetUpdateChecked(bool v) { updateChecked = v; }
     inline void Sync()
     {
@@ -127,6 +132,7 @@ public:
     inline bool GetPerformUpdate() { return performUpdate; }
     inline bool GetCheckIntegrity() { return checkIntegrity; }
     inline bool GetCancelUpdater() { return cancelUpdater; }
+    inline bool GetOutOfSync() { return outOfSync; }
     inline bool GetUpdateChecked() { return updateChecked; }
 
     inline void EmptyConsole()
