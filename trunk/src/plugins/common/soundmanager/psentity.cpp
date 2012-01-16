@@ -34,14 +34,12 @@ psEntity::psEntity(bool isFactory, const char* name)
 
     isActive = false;
     when = 0;
-    state = 1;
+    state = DEFAULT_ENTITY_STATE;
     id = 0;
     handle = 0;
 
     minRange = 0.0f;
     maxRange = 0.0f;
-    minTimeOfDayStart = 25;
-    maxTimeOfDayEnd = -1;
 }
 
 psEntity::psEntity(psEntity* const& entity)
@@ -69,13 +67,11 @@ psEntity::psEntity(psEntity* const& entity)
 
     minRange = entity->minRange;
     maxRange = entity->maxRange;
-    minTimeOfDayStart = entity->minTimeOfDayStart;
-    maxTimeOfDayEnd = entity->maxTimeOfDayEnd;
 }
 
 psEntity::~psEntity()
 {
-    if(handle != 0)
+    if(IsPlaying())
     {
         handle->RemoveCallback();
     }
@@ -129,20 +125,6 @@ void psEntity::SetRange(float minDistance, float maxDistance)
     maxRange = maxDistance;
 }
 
-float psEntity::GetProbability() const
-{
-    EntityState* entityState;
-
-    if(state < 0)
-    {
-        return 0.0f;
-    }
-
-    entityState = states.Get(state, 0);
-
-    return entityState->probability;
-}
-
 uint psEntity::GetMeshID() const
 {
     return id;
@@ -168,7 +150,7 @@ bool psEntity::DefineState(csRef<iDocumentNode> stateNode)
     }
 
     // initializing the EntityState
-    entityState = states.Get(state, 0);
+    entityState = states.Get(stateID, 0);
 
     if(entityState != 0) // already defined
     {
@@ -203,13 +185,17 @@ bool psEntity::DefineState(csRef<iDocumentNode> stateNode)
     entityState->timeOfDayStart = stateNode->GetAttributeValueAsInt("TIME_START", 0);
     entityState->timeOfDayEnd = stateNode->GetAttributeValueAsInt("TIME_END", 24);
     entityState->fallbackState = stateNode->GetAttributeValueAsInt("FALLBACK_STATE", -1);
-    entityState->fallbackProbability = stateNode->GetAttributeValueAsFloat("FALLBACK_PROBABILITY", 1.0);
+    entityState->fallbackProbability = stateNode->GetAttributeValueAsFloat("FALLBACK_PROBABILITY", 0.0);
     entityState->references = 1;
 
-    // adjusting the probability on the update time
+    // adjusting the probabilities on the update time
     if(entityState->probability < 1.0)
     {
-        entityState->probability = entityState->probability / 1000 * SoundManager::updateTime;
+        entityState->probability *= SoundManager::updateTime / 1000.0;
+    }
+    if(entityState->fallbackProbability < 1.0)
+    {
+        entityState->fallbackProbability *= SoundManager::updateTime / 1000.0;
     }
 
     // in XML delay is given in seconds, converting delay into milliseconds
@@ -217,25 +203,7 @@ bool psEntity::DefineState(csRef<iDocumentNode> stateNode)
 
     states.Put(stateID, entityState);
 
-    // updating variables that keep track of the extremes values
-    if(entityState->timeOfDayStart < minTimeOfDayStart)
-    {
-        minTimeOfDayStart = entityState->timeOfDayStart;
-    }
-    if(entityState->timeOfDayEnd > maxTimeOfDayEnd)
-    {
-        maxTimeOfDayEnd = entityState->timeOfDayEnd;
-    }
-
     return true;
-}
-
-void psEntity::ReduceDelay(int interval)
-{
-    if(when > 0)
-    {
-        when -= 50;
-    }
 }
 
 bool psEntity::IsTemporary() const
@@ -248,17 +216,16 @@ bool psEntity::IsPlaying() const
     return (handle != 0);
 }
 
-bool psEntity::IsReadyToPlay(int time, float range) const
+bool psEntity::CanPlay(int time, float range) const
 {
     EntityState* entityState;
 
     // checking if it is in the undefined state
-    if(state < 0)
-    {
-        return true;
-    }
-
     entityState = states.Get(state, 0);
+    if(entityState == 0)
+    {
+        return false;
+    }
 
     // checking time, range and delay
     if(range < minRange || range > maxRange)
@@ -277,22 +244,7 @@ bool psEntity::IsReadyToPlay(int time, float range) const
     return false;
 }
 
-bool psEntity::CheckTimeAndRange(int time, float range) const
-{
-
-    if(range < minRange || range > maxRange)
-    {
-        return false;
-    }
-    if(minTimeOfDayStart <= time && time <= maxTimeOfDayEnd)
-    {
-        return true;
-    }
-    
-    return false;
-}
-
-void psEntity::SetState(int stat, SoundControl* ctrl, csVector3 entityPosition, bool forceChange)
+void psEntity::SetState(int stat, bool forceChange)
 {
     EntityState* entityState;
 
@@ -303,7 +255,7 @@ void psEntity::SetState(int stat, SoundControl* ctrl, csVector3 entityPosition, 
     }
 
     // stopping previous sound if any
-    if(handle != 0)
+    if(IsPlaying())
     {
         handle->RemoveCallback();
         SoundSystemManager::GetSingleton().StopSound(handle->GetID());
@@ -346,7 +298,7 @@ bool psEntity::Play(SoundControl* &ctrl, csVector3 entityPosition)
     // picking up randomly among resources
     if(!(entityState->resources.IsEmpty()))
     {
-        int resourceNumber = SoundSystemManager::GetSingleton().GetRandomGen().Get() * entityState->resources.GetSize();
+        int resourceNumber = SoundManager::randomGen.Get() * entityState->resources.GetSize();
 
         if(SoundSystemManager::GetSingleton().Play3DSound(entityState->resources[resourceNumber], DONT_LOOP, 0, 0,
             entityState->volume, ctrl, entityPosition, 0, minRange, maxRange,
@@ -361,6 +313,54 @@ bool psEntity::Play(SoundControl* &ctrl, csVector3 entityPosition)
     return false;
 }
 
+void psEntity::Update(int time, float distance, int interval, SoundControl* &ctrl,
+                      csVector3 entityPosition)
+{
+    EntityState* currentState = states.Get(state, 0);
+
+    if(IsPlaying())
+    {
+        isActive = true;
+    }
+    else if(when > 0)   // surely !IsPlaying() is true
+    {
+        // reducing delay time
+        isActive = true;
+        when -= interval;
+    }
+    else if(currentState != 0 && CanPlay(time, distance))
+    {
+        float prob;
+
+        isActive = true;
+        prob = SoundManager::randomGen.Get();
+        if(prob <= currentState->probability)
+        {
+            Play(ctrl, entityPosition);
+        }
+    }
+    else if(state != DEFAULT_ENTITY_STATE)
+    {
+        // if the state is different than DEFAULT_ENTITY_STATE this information
+        // should be kept
+        isActive = true;
+    }
+    else
+    {
+        isActive = false;
+    }
+
+    // the state goes to fallback even if the sound is still playing otherwise
+    // it will never fallback when entity->probability == 1
+    if(currentState != 0)
+    {
+        float prob = SoundManager::randomGen.Get();
+        if(prob <= currentState->fallbackProbability)
+        {
+            SetState(currentState->fallbackState, true);
+        }
+    }
+}
 
 void psEntity::StopCallback(void* object)
 {

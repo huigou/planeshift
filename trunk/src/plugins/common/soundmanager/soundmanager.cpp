@@ -17,12 +17,19 @@
 *
 */
 
+
 //====================================================================================
 // Crystal Space Includes
 //====================================================================================
 #include <cssysdef.h>
+
 #include <iutil/objreg.h>
 #include <iutil/plugin.h>
+#include <iutil/cfgmgr.h>
+#include <iutil/eventq.h>
+#include <iutil/event.h>
+
+#include <csutil/eventnames.h>
 
 //====================================================================================
 // Project Includes
@@ -33,10 +40,22 @@
 // Local Includes
 //====================================================================================
 #include "soundmanager.h"
+
+#include "queue.h"
+#include "handle.h"
+#include "manager.h"
+#include "psmusic.h"
+#include "psemitter.h"
+#include "soundctrl.h"
+#include "pssoundsector.h"
 #include "instrumentmngr.h"
 
 
 SCF_IMPLEMENT_FACTORY(SoundManager)
+
+csRandomGen SoundManager::randomGen;
+
+psSoundSector* SoundManager::commonSector = 0;
 
 uint SoundManager::updateTime = DEFAULT_SECTOR_UPDATE_TIME;
 
@@ -46,9 +65,7 @@ SoundManager::SoundManager(iBase* parent): scfImplementationType(this, parent)
     mainSndCtrl = 0;
     ambientSndCtrl = 0;
     musicSndCtrl = 0;
-
     activeSector = 0;
-    commonSector = 0;
 
     sndSysMgr = 0;
     instrMgr = 0;
@@ -487,7 +504,7 @@ void SoundManager::SetEntityState(int state, iMeshWrapper* mesh, bool forceChang
 {
     if(activeSector != 0)
     {
-        activeSector->SetEntityState(state, ambientSndCtrl, mesh, forceChange);
+        activeSector->SetEntityState(state, mesh, forceChange);
     }
 }
 
@@ -681,7 +698,7 @@ void SoundManager::Update()
 			if(activeSector != 0)
 			{
 				activeSector->UpdateEmitter(ambientSndCtrl);
-				activeSector->UpdateEntity(ambientSndCtrl, commonSector);
+                activeSector->UpdateEntity(ambientSndCtrl);
 			}
     	}
         lastUpdateTime = csGetTicks();
@@ -918,7 +935,7 @@ void SoundManager::ConvertFactoriesToEmitter(psSoundSector* &sector)
 
             if(mesh->GetFactory() == factory)
             {
-                if(rng.Get() <= factoryemitter->factory_prob)
+                if(SoundManager::randomGen.Get() <= factoryemitter->factory_prob)
                 {
                     emitter = new psEmitter;
 
@@ -979,7 +996,7 @@ void SoundManager::UpdateSector(psSoundSector* &sector)
     sector->UpdateMusic(loopBGM.GetToggle(), combat, musicSndCtrl);
     sector->UpdateAmbient(weather, ambientSndCtrl);
     sector->UpdateEmitter(ambientSndCtrl);
-    sector->UpdateEntity(ambientSndCtrl, commonSector);
+    sector->UpdateEntity(ambientSndCtrl);
 }
 
 
@@ -1105,7 +1122,7 @@ bool SoundManager::LoadSectors()
                 }
                 else if(csStrCaseCmp(sectorName, commonName) == 0)
                 {
-                    commonSector = new psSoundSector(sector, objectReg);
+                    SoundManager::commonSector = new psSoundSector(sector, objectReg);
                 }
                 else
                 {
@@ -1117,11 +1134,11 @@ bool SoundManager::LoadSectors()
     }
 
     // checking if a common sector could be found
-    if(commonSector == 0)
+    if(SoundManager::commonSector == 0)
     {
-        commonSector = new psSoundSector(commonName, objectReg);
+        SoundManager::commonSector = new psSoundSector(commonName, objectReg);
     }
-    commonSector->active = true; // commonSector must always be active
+    SoundManager::commonSector->active = true; // commonSector must always be active
 
     isSectorLoaded = true;
     return true;
@@ -1156,7 +1173,7 @@ void SoundManager::UnloadSectors()
     }
 
     sectorData.DeleteAll();
-    delete commonSector;
+    delete SoundManager::commonSector;
 
     isSectorLoaded = false;
 }

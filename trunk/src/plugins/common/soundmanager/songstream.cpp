@@ -27,6 +27,7 @@
 //====================================================================================
 // Local Includes
 //====================================================================================
+#include "soundmanager.h"
 #include "songdata.h"
 #include "instrument.h"
 
@@ -601,7 +602,7 @@ void SndSysSongStream::PlayerError(char &pitch, int &alter, uint &octave, float 
     }
 
     // handling error
-    randError = randomGen.Get();
+    randError = SoundManager::randomGen.Get();
     errorDiff = noteErrorRate - randError;
 
     if(errorDiff >= 0)

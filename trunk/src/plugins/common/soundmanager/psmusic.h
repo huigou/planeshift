@@ -24,6 +24,12 @@
 #ifndef _PSMUSIC_H_
 #define _PSMUSIC_H_
 
+//------------------------------------------------------------------------------------
+// Forward Declarations
+//------------------------------------------------------------------------------------
+class SoundHandle;
+
+
 /**
  * This object represents a planeshift Soundtrack.
  * It maybe an ambient or a real soundtrack they are very similiar.

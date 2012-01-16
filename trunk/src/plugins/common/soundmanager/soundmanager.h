@@ -24,22 +24,25 @@
 // Crystal Space Includes
 //====================================================================================
 #include <iutil/comp.h>
+#include <iutil/eventh.h>
 
 //====================================================================================
 // Project Includes
 //====================================================================================
 #include <isoundmngr.h>
-
-//====================================================================================
-// Local Includes
-//====================================================================================
-#include "pssound.h"
+#include <util/pstoggle.h>
 
 //------------------------------------------------------------------------------------
 // Forward Declarations
 //------------------------------------------------------------------------------------
 struct iObjectRegistry;
+class SoundQueue;
+class csRandomGen;
+class SoundControl;
+class psSoundSector;
 class InstrumentManager;
+class SoundSystemManager;
+
 
 #define DEFAULT_SECTOR_UPDATE_TIME 50
 #define DEFAULT_INSTRUMENTS_PATH "/planeshift/art/instruments.xml"
@@ -55,7 +58,10 @@ class InstrumentManager;
 class SoundManager: public scfImplementation3<SoundManager, iSoundManager, iComponent, iEventHandler>
 {
 public:
-    static uint updateTime;     ///< update throttle in milliseconds
+    // TODO this should be moved inside a ConfigManager
+    static uint updateTime;                 ///< update throttle in milliseconds.
+    static csRandomGen randomGen;           ///< random number generator.
+    static psSoundSector* commonSector;     ///< sector that keeps features common to all sectors.
 
     SoundManager(iBase* parent);
     virtual ~SoundManager();
@@ -146,14 +152,11 @@ private:
 
     csArray<psSoundSector*>     sectorData;        ///< array which contains all sector xmls - parsed
     psSoundSector*              activeSector;      ///< points to our active sector
-    psSoundSector*              commonSector;      ///< sector that keeps features common to all sectors
     int                         weather;           ///< current weather state from weather.h
     int                         combat;            ///< current stance
 
     float						volumeDampPercent; ///< configured percent of dampening.
     csArray<int>				dampenCtrls;	   ///< The controls to dampened.
-
-    csRandomGen                 rng;               ///< random generator
 
     csEventID                   evSystemOpen;      ///< ID of the 'Open' event fired on system startup
 

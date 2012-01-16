@@ -23,6 +23,13 @@
 #include <psconfig.h>
 #include <crystalspace.h>
 
+#include "pssoundsector.h"
+
+#include "manager.h"
+#include "psmusic.h"
+#include "psentity.h"
+#include "psemitter.h"
+#include "soundctrl.h"
 #include "soundmanager.h"
 
 psSoundSector::psSoundSector(const char* sectorName, iObjectRegistry* objReg)
@@ -295,7 +302,7 @@ void psSoundSector::UpdateEmitter(SoundControl* &ctrl)
                 continue;
             }
 
-            if(SoundSystemManager::GetSingleton().GetRandomGen().Get() <= emitter->probability)
+            if(SoundManager::randomGen.Get() <= emitter->probability)
             {
                 if(!emitter->Play(ctrl))
                 {
@@ -386,15 +393,11 @@ void psSoundSector::AddEntity(csRef<iDocumentNode> entityNode)
     }
 }
 
-void psSoundSector::UpdateEntity(SoundControl* &ctrl, psSoundSector* commonSector)
+void psSoundSector::UpdateEntity(SoundControl* &ctrl)
 {
     csRef<iEngine> engine;
     iMeshList* entities;
     psEntity* entity;
-    iMeshWrapper* mesh;
-    uint meshID;
-    const char* meshName;
-    const char* factoryName = 0;
     
 
     engine =  csQueryRegistry<iEngine>(objectReg);
@@ -408,56 +411,43 @@ void psSoundSector::UpdateEntity(SoundControl* &ctrl, psSoundSector* commonSecto
 
     for(int a = 0; a < entities->GetCount(); a++)
     {
-        if((mesh = entities->Get(a)) == 0)
+        uint meshID;
+        float range;
+        csVector3 rangeVec;
+        iMeshWrapper* mesh;
+
+        mesh = entities->Get(a);
+        if(mesh == 0)
         {
             continue;
         }
 
-        // checking if we already have a temporary entity for the mesh
-        // here we don't check the common sector because the common do
-        // not have temporary entities
-        meshID = mesh->QueryObject()->GetID();
-        if((entity = tempEntities.Get(meshID, 0)) != 0)
+        // retrieving the entity associated to the mesh (if any)
+        entity = GetAssociatedEntity(mesh);
+        if(entity == 0)
         {
-            UpdateEntityValues(ctrl, entity, mesh);
             continue;
         }
 
+        // if this isn't a temporary entity, create one only if it can
+        // actually play something
+        rangeVec = mesh->GetMovable()->GetFullPosition() - listenerPos;
+        range = rangeVec.Norm();
 
-        // check if the factory is defined for this mesh
-        meshName = mesh->QueryObject()->GetName();  
-        iMeshFactoryWrapper* mfw = mesh->GetFactory();
-        if(mfw != 0)
+        if(!entity->IsTemporary() && entity->CanPlay(timeofday, range))
         {
-            factoryName = mfw->QueryObject()->GetName();
-        }
-
-        // first it look in the meshes and factories of this sector
-        if((entity = meshes.Get(meshName, 0)) != 0)
-        {
-            UpdateEntityValues(ctrl, entity, mesh);
-            continue;
-        }
-        else if(factoryName != 0)
-        {
-            if((entity = factories.Get(factoryName, 0)) != 0)
-            {
-                UpdateEntityValues(ctrl, entity, mesh);
-                continue;
-            }
+            entity = new psEntity(entity);
+            entity->SetMeshID(mesh->QueryObject()->GetID());
+            tempEntities.Put(entity->GetMeshID(), entity);
         }
 
-        // nothing found here: look in the commonSector
-        if((entity = commonSector->meshes.Get(meshName, 0)) != 0)
+        // this update the delay and fallback state, play if it can and
+        // set itself as active when appropriate. Only temporary entities
+        // should be updated
+        if(entity->IsTemporary())
         {
-            UpdateEntityValues(ctrl, entity, mesh);
-        }
-        else if(factoryName != 0)
-        {
-            if((entity = commonSector->factories.Get(factoryName, 0)) != 0)
-            {
-                UpdateEntityValues(ctrl, entity, mesh);
-            }
+            csVector3 entityPosition = mesh->GetMovable()->GetFullPosition();
+            entity->Update(timeofday, range, SoundManager::updateTime, ctrl, entityPosition);
         }
     }
 
@@ -471,6 +461,8 @@ void psSoundSector::UpdateEntity(SoundControl* &ctrl, psSoundSector* commonSecto
 
         if(entity->IsActive())
         {
+            // by setting here the entity as unactive we can check if the
+            // entity has been touched or not in the next update
             entity->SetActive(false);
         }
         else
@@ -479,13 +471,7 @@ void psSoundSector::UpdateEntity(SoundControl* &ctrl, psSoundSector* commonSecto
             delete entity;
             continue;
         }
-
-        if(!(entity->IsPlaying()))
-        {
-            entity->ReduceDelay(SoundManager::updateTime);
-        }
     }
-    
 }
 
 void psSoundSector::DeleteEntity(psEntity* &entity)
@@ -506,16 +492,39 @@ void psSoundSector::DeleteEntity(psEntity* &entity)
     delete entity;
 }
 
-void psSoundSector::SetEntityState(int state, SoundControl* ctrl, iMeshWrapper* mesh, bool forceChange)
+void psSoundSector::SetEntityState(int state, iMeshWrapper* mesh, bool forceChange)
 {
-    psEntity* entity = tempEntities.Get(mesh->QueryObject()->GetID(), 0);
+    uint meshID;
+    bool isTemporary;
+    psEntity* entity;
 
+    entity = GetAssociatedEntity(mesh);
     if(entity == 0)
     {
         return;
     }
 
-    entity->SetState(state, ctrl, mesh->GetMovable()->GetFullPosition(), forceChange);
+    meshID = mesh->QueryObject()->GetID();
+    isTemporary = entity->IsTemporary();
+
+    // if the new state isn't DEFAULT_ENTITY_STATE, a new entity must be created so that
+    // when it will satisfies the conditions to play (for example when the distance from
+    // the player gets enough short), the entity's state will be the correct one. If the
+    // new state is DEFAULT_ENTITY_STATE, the entity will be created only when conditions
+    // will be satisfied.
+    if(!isTemporary && state != DEFAULT_ENTITY_STATE)
+    {
+        entity = new psEntity(entity);
+        entity->SetMeshID(meshID);
+        tempEntities.Put(meshID, entity);
+    }
+
+    // applying state change only if it's a temporary entity
+    if(isTemporary)
+    {
+        entity->SetState(state, forceChange);
+        return;
+    }
 }
 
 void psSoundSector::Load(csRef<iDocumentNode> sector)
@@ -606,39 +615,56 @@ void psSoundSector::Delete()
     tempEntities.DeleteAll();
 }
 
-void psSoundSector::UpdateEntityValues(SoundControl* &ctrl, psEntity* entity, iMeshWrapper* mesh)
+psEntity* psSoundSector::GetAssociatedEntity(iMeshWrapper* mesh) const
 {
-    csVector3 rangeVec;
-    float range;
+    uint meshID;
+    psEntity* entity;
 
-    if(entity->IsPlaying())
+    // checking if there is have a temporary entity for the mesh
+    // here the common sector is not checked because it don't have temporary entities
+    meshID = mesh->QueryObject()->GetID();
+    entity = tempEntities.Get(meshID, 0);
+
+    if(entity == 0)
     {
-        entity->SetActive(true);
-        return;
-    }
+        const char* meshName;
+        const char* factoryName;
 
-    rangeVec = mesh->GetMovable()->GetFullPosition() - listenerPos;
-    range = rangeVec.Norm();
+        // getting mesh name
+        meshName = mesh->QueryObject()->GetName();
 
-    if(active && entity->CheckTimeAndRange(timeofday, range))
-    {
-        // we need to create the entity even if it won't play anything
-        // so that the entity will be ready to play a sound when it change
-        // to a state with an higher maxRange for example
-        if(!(entity->IsTemporary()))
+        // checking mesh entities
+        entity = meshes.Get(meshName, 0);
+        if(entity == 0)
         {
-            entity = new psEntity(entity);
-            entity->SetMeshID(mesh->QueryObject()->GetID());
-            tempEntities.Put(entity->GetMeshID(), entity);
+            // getting factory name
+            iMeshFactoryWrapper* factory = mesh->GetFactory();
+            if(factory != 0)
+            {
+                factoryName = factory->QueryObject()->GetName();
+            }
+            else
+            {
+                factoryName = 0;
+            }
+
+            // checking factory entities
+            if(factoryName != 0)
+            {
+                entity = factories.Get(factoryName, 0);
+            }
         }
 
-        // Check if it can play
-        if(entity->IsReadyToPlay(timeofday, range)
-            && SoundSystemManager::GetSingleton().GetRandomGen().Get() <= entity->GetProbability())
+        // if nothing has been found check in common sector
+        if(entity == 0)
         {
-            entity->Play(ctrl, mesh->GetMovable()->GetFullPosition());
+            entity = SoundManager::commonSector->meshes.Get(meshName, 0);
+            if(entity == 0 && factoryName != 0)
+            {
+                entity = SoundManager::commonSector->factories.Get(factoryName, 0);
+            }
         }
-
-        entity->SetActive(true);
     }
+
+    return entity;
 }

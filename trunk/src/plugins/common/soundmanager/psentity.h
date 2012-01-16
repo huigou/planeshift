@@ -27,6 +27,8 @@
 #define _PSENTITY_H_
 
 
+#define DEFAULT_ENTITY_STATE 0
+
 /**
  * This object represents a planeshift entity sound. It can be a mesh entity, if it is
  * associated to a mesh object, or a factory entity if it is associated to a mesh factory.
@@ -37,7 +39,7 @@ class psEntity
 {
 public:
     /**
-     * Create a new psEntity. The initial state is set to 1.
+     * Create a new psEntity. The initial state is set to DEFAULT_ENTITY_STATE.
      * @param isFactoryEntity true if this is associated to a factory, false if this is
      * associated to a mesh.
      * @param entityName the name of the factory or the mesh.
@@ -97,12 +99,6 @@ public:
     void SetRange(float minRange, float maxRange);
 
     /**
-     * Gets the probability to play a sound in the current state.
-     * return the probability to play a sound.
-     */
-    float GetProbability() const;
-
-    /**
      * Get the ID of the mesh associated to this entity.
      * @return the ID of the mesh.
      */
@@ -115,16 +111,11 @@ public:
     void SetMeshID(uint id);
 
     /**
-     *
+     * Create a new state from an XML <state> node.
+     * @param stateNode the state node.
+     * @return true if the state could be created, false otherwise.
      */
     bool DefineState(csRef<iDocumentNode> stateNode);
-
-    /**
-     * Decrease by the given interval the time that this entity have to wait
-     * before play again.
-     * @param interval the time elapsed in milliseconds.
-     */
-    void ReduceDelay(int interval);
 
     /**
      * Check if this entity is active.
@@ -162,24 +153,11 @@ public:
      * window and if the distance is between the minimum and maximum
      * range. False otherwise.
      */
-    bool IsReadyToPlay(int time, float range) const;
-
-    /**
-     * Check if time is within this entity's timewindow and if the distance
-     * is between the minimum and maximum range in any defined state. This
-     * control for only the current state is performed by IsReadyToPlay().
-     * 
-     * @param time <24 && >0 is resonable but can be any valid int.
-     * @param range the distance to test.
-     * @return true if conditions are satisfied for at least one defined
-     * state, false otherwise.
-     */
-    bool CheckTimeAndRange(int time, float range) const;
+    bool CanPlay(int time, float range) const;
     
     /**
-     * Set the new state for the entity and play the start resource (if any)
-     * with the given SoundControl. If it is already playing a sound, it is
-     * stopped.
+     * Set the new state for the entity. If it is already playing a sound,
+     * it is stopped.
      *
      * If the given state is undefined for this entity the change of state
      * is not forced, the state does not change. On the other hand if the
@@ -188,14 +166,12 @@ public:
      *
      * @param state the new state >= 0 for this entity. For negative value the
      * function is not defined.
-     * @param ctrl the SoundControl for playing the starting sound.
-     * @param entityPosition the position of the starting sound to play.
      * @param forceChange true to force the state change, false otherwise.
      */
-    void SetState(int state, SoundControl* ctrl, csVector3 entityPostion, bool forceChange);
+    void SetState(int state, bool forceChange);
 
     /**
-     * Play this entity sound.
+     * Force this entity to play the sound associated to its current state.
      * You need to supply a SoundControl and the position for this sound.
      *
      * @param ctrl the SoundControl to control this sound.
@@ -204,6 +180,19 @@ public:
      * entity is already playing a sound.
      */
     bool Play(SoundControl* &ctrl, csVector3 entityPosition);
+
+    /**
+     * Update the entity's activation status, play the sound associated with
+     * the current state if all condition are satisfied, update the delay
+     * and fallback in the new state if necessary.
+     * @param time the time of the day, <24 && >0 is resonable but can be any
+     * valid int.
+     * @param distance the distance from the listener.
+     * @param ctrl the SoundControl to play the sound with.
+     * @param entityPosition the position of the player.
+     */
+    void Update(int time, float distance, int interval, SoundControl* &ctrl,
+                csVector3 entityPosition);
 
 private:
     /**
@@ -234,8 +223,6 @@ private:
     uint id;                            ///< the id of the mesh object whose sound is controlled by this entity.
     float minRange;                     ///< minimum distance at which this entity can be heard
     float maxRange;                     ///< maximum distance at which this entity can be heard
-    int minTimeOfDayStart;              ///< minimum timeOfDayStart between all the defined state of this entity
-    int maxTimeOfDayEnd;                ///< maximum timeOfDayEnd between all the defined state of this entity
 
     SoundHandle* handle;                ///< pointer to the SoundHandle if playing
     csHash<EntityState*, int> states;   ///< entity states hash mapped by their ID.

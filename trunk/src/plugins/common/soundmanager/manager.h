@@ -200,7 +200,6 @@ public:
     void RemoveSoundControl(SoundControl* sndCtrl);
     SoundControl* GetSoundControl(int ctrlID) const;
 
-    csRandomGen &GetRandomGen() { return randomGen; }
     SoundSystem* GetSoundSystem() const { return soundSystem; }
     SoundDataCache* GetSoundDataCache() const { return soundDataCache; }
 
@@ -219,8 +218,6 @@ private:
 
     uint                           speedOfSound;       ///< the speed of sound for doppler effect
     float                          dopplerFactor;      ///< the doppler factor that multiplies the change of frequency
-
-    csRandomGen                    randomGen;          ///< random number generator
 
     /**
      * Finds a unique ID > 0 for a SoundHandle.

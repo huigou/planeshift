@@ -22,6 +22,8 @@
  */
 
 #include "manager.h"
+
+#include "soundmanager.h"
 #include "handle.h"
 #include "soundctrl.h"
 #include "system.h"
@@ -416,7 +418,7 @@ uint SoundSystemManager::FindHandleID()
 
     do
     {
-        handleID = randomGen.Get(10000);
+        handleID = SoundManager::randomGen.Get(10000);
     } while(soundHandles.Get(handleID, 0) != 0
         || handleID == 0);
 
