@@ -28,6 +28,7 @@
 
 
 #define DEFAULT_ENTITY_STATE 0
+#define UNDEFINED_ENTITY_STATE -1
 
 /**
  * This object represents a planeshift entity sound. It can be a mesh entity, if it is
@@ -156,19 +157,15 @@ public:
     bool CanPlay(int time, float range) const;
     
     /**
-     * Set the new state for the entity. If it is already playing a sound,
-     * it is stopped.
+     * Set the new state for the entity. If the given state is undefined for
+     * this entity the change of state is not forced, the state does not change.
+     * On the other hand if the change is forced the entity's state becomes
+     * UNDEFINED_ENTITY_STATE. In this state psEntity cannot play anything.
      *
-     * If the given state is undefined for this entity the change of state
-     * is not forced, the state does not change. On the other hand if the
-     * change is forced the entity goes in a special "undefined state". In
-     * this state psEntity cannot play anything.
-     *
-     * @param state the new state >= 0 for this entity. For negative value the
-     * function is not defined.
+     * @param state the new state for this entity.
      * @param forceChange true to force the state change, false otherwise.
      */
-    void SetState(int state, bool forceChange);
+    void SetState(uint state, bool forceChange);
 
     /**
      * Force this entity to play the sound associated to its current state.
@@ -218,14 +215,14 @@ private:
     bool isFactoryEntity;               ///< true if this is a factory entity, false if it's a mesh entity.
     csString entityName;                ///< name of the entity associated to this object.
 
-    int state;                          ///< current state of this entity. A negative value means that this entity is in an undefined state.
+    uint state;                         ///< current state of this entity. A negative value means that this entity is in an undefined state.
     int when;                           ///< counter to keep track when it has been played - zero means i may play at any time (in ms)
     uint id;                            ///< the id of the mesh object whose sound is controlled by this entity.
     float minRange;                     ///< minimum distance at which this entity can be heard
     float maxRange;                     ///< maximum distance at which this entity can be heard
 
     SoundHandle* handle;                ///< pointer to the SoundHandle if playing
-    csHash<EntityState*, int> states;   ///< entity states hash mapped by their ID.
+    csHash<EntityState*, uint> states;  ///< entity states hash mapped by their ID.
 
     /**
      * The Callback gets called if the SoundHandle is destroyed.

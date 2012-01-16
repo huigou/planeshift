@@ -47,10 +47,10 @@ psEntity::psEntity(psEntity* const& entity)
     isFactoryEntity = entity->isFactoryEntity;
     entityName = entity->entityName;
 
-    states = csHash<EntityState*, int>(entity->states);
+    states = csHash<EntityState*, uint>(entity->states);
 
     // updating states references
-    csHash<EntityState*, int>::GlobalIterator statIter(states.GetIterator());
+    csHash<EntityState*, uint>::GlobalIterator statIter(states.GetIterator());
     EntityState* entityState;
 
     while(statIter.HasNext())
@@ -77,7 +77,7 @@ psEntity::~psEntity()
     }
 
     // removing state parameters but only if there are no more references
-    csHash<EntityState*, int>::GlobalIterator statIter(states.GetIterator());
+    csHash<EntityState*, uint>::GlobalIterator statIter(states.GetIterator());
     EntityState* entityState;
 
     while(statIter.HasNext())
@@ -244,37 +244,34 @@ bool psEntity::CanPlay(int time, float range) const
     return false;
 }
 
-void psEntity::SetState(int stat, bool forceChange)
+/*
+ * If the entity is still playing the sound is not stopped so that states that change
+ * to a fallback state with probability 1.0 won't play a new sound until the previous
+ * one has been done.
+ */
+void psEntity::SetState(uint newState, bool forceChange)
 {
     EntityState* entityState;
 
     // check if it's already in this state or if it's defined
-    if(state == stat)
+    if(state == newState)
     {
         return;
     }
-
-    // stopping previous sound if any
-    if(IsPlaying())
-    {
-        handle->RemoveCallback();
-        SoundSystemManager::GetSingleton().StopSound(handle->GetID());
-        handle = 0;
-    }
     
     // setting state
-    entityState = states.Get(stat, 0);
+    entityState = states.Get(newState, 0);
     if(entityState == 0)
     {
         if(forceChange)
         {
-            state = -1; // undefined state
+            state = UNDEFINED_ENTITY_STATE;
         }
 
         return;
     }
 
-    state = stat;
+    state = newState;
 }
 
 bool psEntity::Play(SoundControl* &ctrl, csVector3 entityPosition)
@@ -282,21 +279,20 @@ bool psEntity::Play(SoundControl* &ctrl, csVector3 entityPosition)
     EntityState* entityState;
 
     // checking if a sound is still playing
-    if(handle != NULL)
+    if(IsPlaying())
     {
         return false;
     }
 
     // checking if the state is defined
-    if(state < 0)
+    entityState = states.Get(state, 0);
+    if(entityState == 0)
     {
         return false;
     }
 
-    entityState = states.Get(state, 0);
-
     // picking up randomly among resources
-    if(!(entityState->resources.IsEmpty()))
+    if(!entityState->resources.IsEmpty())
     {
         int resourceNumber = SoundManager::randomGen.Get() * entityState->resources.GetSize();
 
