@@ -85,8 +85,6 @@ private:
     int conversionFactor;               ///< the multiplier used to get the data size from the data's format to the stream's one.
     bool conversionNeeded;              ///< true if the data from the instrument must be converted into the stream's format.
 
-    csRandomGen randomGen;              ///< random number generator
-
     /**
      * Check if m_bPlaybackReadComplete must be set to true and if it must it does
      * it. This function should be called everytime CopyBufferBytes() is used.

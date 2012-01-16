@@ -23,6 +23,13 @@
 #ifndef _PSSOUNDSECTOR_H_
 #define _PSSOUNDSECTOR_H_
 
+//------------------------------------------------------------------------------------
+// Forward Declarations
+//------------------------------------------------------------------------------------
+class psMusic;
+class psEntity;
+class psEmitter;
+class SoundControl;
 
 /**
  * work in progress - Looks like a mishap. I hope find a object where i
@@ -38,7 +45,7 @@ public:
     csArray<psMusic*>            ambientarray;       ///< array of available ambients
     csArray<psMusic*>            musicarray;         ///< array of available musics
     csArray<psEmitter*>          emitterarray;       ///< array of emitters
-    csHash<psEntity*, csString>  factories;          ///< hash of factory entities (i.e. with meshName empty)
+    csHash<psEntity*, csString>  factories;          ///< hash of factory entities
     csHash<psEntity*, csString>  meshes;             ///< hash of mesh entities
     csHash<psEntity*, uint>      tempEntities;       ///< hash of all the temporary psEntites (i.e. associated to a specific mesh)
 
@@ -73,23 +80,21 @@ public:
     void UpdateEmitter(SoundControl* &ctrl);
     void DeleteEmitter(psEmitter* &emitter);
     void AddEntity(csRef<iDocumentNode> entityNode);
-    void UpdateEntity(SoundControl* &ctrl, psSoundSector* commonSector);
+    void UpdateEntity(SoundControl* &ctrl);
     void DeleteEntity(psEntity* &entity);
 
     /**
-     * Sets the new state for the entity associated to the given mesh and
-     * plays the start resource (if defined). If it is already playing a
-     * sound, it is stopped.
+     * Sets the new state for the entity associated to the given mesh. If
+     * it is already playing a sound, it is stopped.
      *
      * @param state the new state >= 0 for the entity. For negative value
      * the function is not defined.
-     * @param ctrl the sound control used to play the start resource.
      * @param mesh the mesh associated to the entity.
      * @param forceChange if it is false the entity does not change its
      * state if the new one is not defined. If it is true the entity stops
      * play any sound until a new valid state is defined.
      */
-    void SetEntityState(int state, SoundControl* ctrl, iMeshWrapper* mesh, bool forceChange);
+    void SetEntityState(int state, iMeshWrapper* mesh, bool forceChange);
     void Load(csRef<iDocumentNode> sector);
     void Reload(csRef<iDocumentNode> sector);
     void Delete();
@@ -97,7 +102,15 @@ public:
 private:
     csRef<iObjectRegistry> objectReg;
 
-    void UpdateEntityValues(SoundControl* &ctrl, psEntity* entity, iMeshWrapper* mesh);
+    /**
+     * Helper function that retrieve the entity associated to a mesh. It checks
+     * in temporary, mesh and factory entities in both this and common sector
+     * with the priority temporary > this->meshes > this->factories > common->meshes >
+     * > common->factories.
+     * @param mesh the mesh associated to the entity.
+     * @return the entity associated to the mesh or 0 if it cannot be found.
+     */
+    psEntity* GetAssociatedEntity(iMeshWrapper* mesh) const;
 };
 
 #endif /*_PSSOUNDSECTOR_H_*/
