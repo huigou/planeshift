@@ -503,7 +503,7 @@ csString Perception::GetName(NPC* /* npc */)
 csString Perception::ToString(NPC* npc)
 {
     csString result;
-    result.Format("Name: '%s' Type: '%s'",GetName(npc).GetDataSafe(), type.GetDataSafe());
+    result.Format("Name: '%s[%s]'",GetName(npc).GetDataSafe(), type.GetDataSafe());
     return result;
 }
 
