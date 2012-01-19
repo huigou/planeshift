@@ -231,6 +231,7 @@ void ServerSongManager::OnStopSong(gemActor* charActor, bool isEnded)
 void ServerSongManager::StopSong(gemActor* charActor, bool skillRanking)
 {
     psItem* instrItem;
+    csTicks bonusTime = 0;
     uint32 actorEID = charActor->GetEID().Unbox();
     psCharacter* charData = charActor->GetCharacterData();
     int charClientID = charActor->GetProxList()->GetClientID();
@@ -277,22 +278,32 @@ void ServerSongManager::StopSong(gemActor* charActor, bool skillRanking)
             float modifier;
             PSSKILL instrSkill;
 
+            // input variables
             mathEnv.Define("Player", charActor);
             mathEnv.Define("Instrument", instrItem);
             mathEnv.Define("SongTime", charData->GetPlayingTime() / 1000);
             mathEnv.Define("AverageDuration", 1);   // TODO to be implemented
             mathEnv.Define("AveragePolyphony", 1);  // TODO to be implemented
 
+            // scripts evaluation
+            // remember that calcSongPar must be executed before calcSongExp
             calcSongPar->Evaluate(&mathEnv);
             calcSongExp->Evaluate(&mathEnv);
 
+            // output variables
+            // practicePoints is always truncated (not rounded) since the remaining
+            // time is taken into account by bonusTime
             practicePoints = mathEnv.Lookup("PracticePoints")->GetValue();
             modifier = mathEnv.Lookup("Modifier")->GetValue();
             instrSkill = (PSSKILL)(mathEnv.Lookup("InstrSkill")->GetRoundValue());
+            bonusTime = mathEnv.Lookup("TimeLeft")->GetRoundValue() * 1000; // in milliseconds
 
             charData->CalculateAddExperience(instrSkill, practicePoints, modifier);
         }
     }
+
+    // resetting psCharacter's song information
+    charData->EndSong(bonusTime);
 }
 
 psItem* ServerSongManager::GetEquippedInstrument(psCharacter* charData) const

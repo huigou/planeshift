@@ -925,14 +925,21 @@ public:
     bool CheckFaction(Faction * faction, int value);
 
     /**
-     * Sets the saved song starting time to the current time.
+     * Takes care of setting correctly all the data needed to keep track of the song.
      */
     void StartSong();
 
     /**
+     * Resets the song's execution data. This must always be called when a song ends.
+     * @param bonusTime when the next song starts, bonusTime will be summed to the
+     * actual execution time.
+     */
+    void EndSong(csTicks bonusTime);
+
+    /**
      * Gets the execution time of the song that the player is currently playing.
      */
-    csTicks GetPlayingTime() const { return csGetTicks() - songStartingTime; }
+    csTicks GetPlayingTime() const { return csGetTicks() - songExecutionTime; }
 
     /** Check if the character is a banker */
     bool IsBanker() const { return banker; }
@@ -1314,7 +1321,7 @@ private:
 
     int FindGlyphSlot(const csArray<glyphSlotInfo>& slots, psItemStats * glyphType, int purifyStatus);
 
-    csTicks songStartingTime;   ///< Keeps track of the execution time of a player's song.
+    csTicks songExecutionTime;   ///< Keeps track of the execution time of a player's song.
 
     /** Some races share helms so this tells which
         group it's in. If empty assume in racial group. */
