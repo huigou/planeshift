@@ -402,14 +402,6 @@ void NPC::Advance(csTicks when)
     last_update = when;
 }
 
-void NPC::ResumeScript(Behavior *which)
-{
-    if (!disabled)
-    {
-        brain->ResumeScript(this, which);
-    }
-}
-
 void NPC::TriggerEvent(Perception *pcpt, float maxRange,
                        csVector3 *basePos, iSector *baseSector, bool sameSector)
 {
@@ -694,7 +686,7 @@ void NPC::DumpState()
 void NPC::DumpBehaviorList()
 {
     CPrintf(CON_CMDOUTPUT, "Behaviors for %s (%s)\n", name.GetData(), ShowID(pid));
-    CPrintf(CON_CMDOUTPUT, "---------------------------------------------\n");
+    CPrintf(CON_CMDOUTPUT, "---------------------------------------------------------\n");
     
     brain->DumpBehaviorList(this);
 }
@@ -702,7 +694,7 @@ void NPC::DumpBehaviorList()
 void NPC::DumpReactionList()
 {
     CPrintf(CON_CMDOUTPUT, "Reactions for %s (%s)\n", name.GetData(), ShowID(pid));
-    CPrintf(CON_CMDOUTPUT, "---------------------------------------------\n");
+    CPrintf(CON_CMDOUTPUT, "---------------------------------------------------------\n");
     
     brain->DumpReactionList(this);
 }

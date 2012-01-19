@@ -54,7 +54,6 @@ class NPC;
 class EventManager;
 class BehaviorSet;
 class Waypoint;
-class psResumeScriptEvent;
 
 /** This is the set of Behaviors available for an NPC
  *
@@ -122,7 +121,7 @@ public:
 
     /** Rearrange the behavior set based on need.
      */
-    void Schedule(NPC* npc);
+    Behavior* Schedule(NPC* npc);
     
      /** Advances the behaviors
      *
@@ -134,6 +133,14 @@ public:
      */
     void Advance(csTicks delta,NPC *npc);
 
+    /** Execute script operations
+     *
+     * Will run script operations until they loop, fail, or need more time.
+     *
+     * @param npc   The NPC that own this BehaviorSet.
+     */
+    void Execute(NPC* npc, bool forceRunScript);
+
     /** Interrupt the current active behavior.
      *
      * If there is an active behavior in this set that
@@ -143,17 +150,6 @@ public:
      */
     void Interrupt(NPC *npc);
 
-    /** Resume the current active behavior.
-     *
-     * Resume the given behavior. This is witch is equal to
-     * the current active behavior and witch is
-     * applicable to the current npc state.
-     *
-     * @param npc   The NPC that own this BehaviorSet.
-     * @param witch The behavior to resume.
-     */
-    void ResumeScript(NPC *npc, Behavior *which);
-    
     /** Return current active behavior
      */
     Behavior *GetCurrentBehavior() { return active; }
@@ -229,7 +225,6 @@ public:
 
     void Advance(csTicks delta, NPC* npc);
     void Interrupt(NPC *npc);
-    void ResumeScript(NPC *npc,Behavior *which);
     void FirePerception(NPC *npc,Perception *pcpt);
 
     void DumpBehaviorList(NPC *npc) { behaviors.DumpBehaviorList(npc); }
@@ -274,11 +269,20 @@ private:
  */
 class Behavior
 {
+public:
+    // Used to indicate the result of the RunScript operation of a behavior.
+    enum BehaviorResult {
+        BEHAVIOR_NOT_COMPLETED,       ///< Used to indicate that an behavior has more steps.
+        BEHAVIOR_COMPLETED,           ///< This behavior completed.
+        BEHAVIOR_WILL_COMPLETE_LATER, ///< This behavior will complete at a later stage.
+        BEHAVIOR_FAILED               ///< The behavior failed.
+    };    
 protected:
     csString name;                      ///< The name of this behavior
 
     csPDelArray<ScriptOperation> sequence; ///< Sequence of ScriptOperations.
     size_t   current_step;              ///< The ScriptOperation in the sequence that is currently executed.
+    size_t   stepCount;                 ///< The number of script operation done in this periode.
     bool     loop;                      ///< True if this behavior should start over when completed all operations.
     bool     isActive;                  ///< Set to true when this behavior is active
     bool     is_applicable_when_dead;
@@ -318,7 +322,7 @@ public:
     bool LoadScript(iDocumentNode *node,bool top_level=true);
 
     void UpdateNeed(float delta, NPC* npc);
-    void Advance(float delta, NPC* npc);
+    BehaviorResult Advance(float delta, NPC* npc);
     float CurrentNeed() { return current_need; }
     float NewNeed() { return new_need; }
 
@@ -371,15 +375,24 @@ public:
     csArray<csString>* GetAMTypes() { return &auto_memorize; }
     bool IsAMOn() { return AMOn; }
     
-    void SetCurrentStep(int step) { current_step = step; }
+    void SetCurrentStep(int step);
     size_t GetCurrentStep(){ return current_step; }
+    size_t GetLastStep() { return sequence.GetSize(); }
     void ResetNeed() { current_need = new_need = init_need; }
 
     bool ApplicableToNPCState(NPC* npc);
     void DoCompletionDecay(NPC* npc);
-    ScriptOperation::OperationResult StartScript(NPC* npc);
-    ScriptOperation::OperationResult RunScript(NPC* npc, bool interruped);
-    ScriptOperation::OperationResult ResumeScript(NPC* npc);
+    /** Prepare a script to be run
+     */
+    void StartScript(NPC* npc);
+    /** Handle stuff to do when an operation has completed
+     */
+    void OperationCompleted(NPC* npc);
+    /** Handle stuff to do when an operation has failed
+     */
+    void OperationFailed(NPC* npc);
+    void SetStartStep();
+    BehaviorResult RunScript(NPC* npc);
     void InterruptScript(NPC* npc);
     bool IsInterrupted(){ return interrupted; }
     void ClearInterrupted() { interrupted = false; }
@@ -411,23 +424,6 @@ public:
      */
     void Failure(NPC* npc, ScriptOperation* op);
 };
-
-
-
-
-class psResumeScriptEvent : public psGameEvent
-{
-protected:
-    NPC *npc;
-    Behavior        *behavior;
-    ScriptOperation *scriptOp;
-
-public:
-    psResumeScriptEvent(int offsetticks, NPC* c, Behavior* which, ScriptOperation* script);
-    virtual void Trigger();  // Abstract event processing function
-    virtual csString ToString() const;
-};
-
 
 class psGameObject
 {
