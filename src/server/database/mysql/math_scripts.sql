@@ -617,7 +617,9 @@ INSERT INTO math_scripts VALUES( "Calculate Song Parameters" , "
 ");
 
 INSERT INTO math_scripts VALUES( "Calculate Song Experience" , "
-    PracticePoints = 0.1 * SongTime;
+    SecondsPerPracticePoint = 10;
+    PracticePoints = SongTime / SecondsPerPracticePoint;
+    TimeLeft = SongTime % SecondsPerPracticePoint;
     Modifier = 1;
 ");
 
