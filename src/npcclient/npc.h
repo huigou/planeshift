@@ -243,8 +243,6 @@ public:
 
     void ClearState();
 
-    void ResumeScript(Behavior *which);
-
     /** Send a perception to this NPC
      *
      * This will send the perception to this npc.

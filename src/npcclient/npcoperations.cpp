@@ -62,8 +62,6 @@
 ScriptOperation::ScriptOperation(const char* scriptName)
     : // Instance parameters
       name(scriptName),
-      completed(true), 
-      resumeScriptEvent(NULL),
       interrupted_sector(NULL),
       interrupted_angle(0.0f),
       consecCollisions(0),
@@ -82,8 +80,6 @@ ScriptOperation::ScriptOperation(const char* scriptName)
 ScriptOperation::ScriptOperation(const ScriptOperation* other)
     : // Instance parameters
       name(other->name),
-      completed(true), 
-      resumeScriptEvent(NULL),
       interrupted_sector(NULL),
       interrupted_angle(0.0f),
       consecCollisions(0),
@@ -199,8 +195,6 @@ ScriptOperation::OperationResult ScriptOperation::Advance(float timedelta,NPC *n
 
 void ScriptOperation::InterruptOperation(NPC *npc)      
 {
-    StopResume();
-
     gemNPCObject * entity = npc->GetActor();
     if (entity)
     {
@@ -491,33 +485,6 @@ const csString& ScriptOperation::GetFallingPerception(NPC* npc)
     return falling;
 }
 
-void ScriptOperation::Resume(csTicks delay, NPC *npc)
-{
-    CS_ASSERT(resumeScriptEvent == NULL);
-    
-    resumeScriptEvent = new psResumeScriptEvent(delay, npc, npc->GetCurrentBehavior(), this);
-    resumeScriptEvent->QueueEvent();
-}
-
-void ScriptOperation::ResumeTrigger(psResumeScriptEvent * event)
-{
-    // If we end out getting a trigger from a another event than we currently have
-    // registerd something went wrong somewhere.
-    CS_ASSERT(event == resumeScriptEvent);
- 
-    resumeScriptEvent = NULL;
-}
-
-void ScriptOperation::StopResume()
-{
-    if (resumeScriptEvent)
-    {
-        resumeScriptEvent->SetValid(false);
-        resumeScriptEvent = NULL;
-    }
-}
-
-
 void ScriptOperation::TurnTo(NPC *npc, const csVector3& dest, iSector* destsect, csVector3& forward, float &angle)
 {
     npc->Printf(6,"TurnTo localDest=%s",toString(dest,destsect).GetData());
@@ -575,7 +542,7 @@ void ScriptOperation::StopMovement(NPC *npc)
 }
 
 
-int ScriptOperation::StartMoveTo(NPC *npc, const csVector3& dest, iSector* sector, float vel, const char *action, bool autoresume, float &angle)
+int ScriptOperation::StartMoveTo(NPC *npc, const csVector3& dest, iSector* sector, float vel, const char *action, float &angle)
 {
     csVector3 forward;
     
@@ -591,60 +558,6 @@ int ScriptOperation::StartMoveTo(NPC *npc, const csVector3& dest, iSector* secto
     int msec = (int)(1000.0 * dist / GetVelocity(npc)); // Move will take this many msecs.
     
     npc->Printf(6,"MoveTo op should take approx %d msec.  ", msec);
-    if (autoresume)
-    {
-        // wake me up when it's over
-        Resume(msec,npc);
-        npc->Printf(7,"Waking up in %d msec.", msec);
-    }
-    else
-    {
-        npc->Printf(7,"NO autoresume here.", msec);
-    }
-
-    return msec;
-}
-
-int ScriptOperation::StartTurnTo(NPC *npc, float turn_end_angle, float angle_vel,const char *action, bool autoresume)
-{
-    csVector3 pos, up;
-    float rot;
-    iSector *sector;
-
-    psGameObject::GetPosition(npc->GetActor(),pos,rot,sector);
-
-
-    // Get Going at the right velocity
-    csVector3 velvec(0,0,-GetVelocity(npc) );
-    npc->GetLinMove()->SetVelocity(velvec);
-    npc->GetLinMove()->SetAngularVelocity(angle_vel);
-    
-    // SetAction animation for the mesh also, so it looks right
-    SetAnimation(npc, action);
-
-    //now persist
-    npcclient->GetNetworkMgr()->QueueDRData(npc);
-
-    float delta_rot = rot-turn_end_angle;
-    psGameObject::NormalizeRadians(delta_rot); // -PI to PI
-
-    float time = fabs(delta_rot/angle_vel);
-
-    int msec = (int)(time*1000.0);
-
-    npc->Printf(6,"TurnTo op should take approx %d msec for a turn of %.2f deg in %.2f deg/s.  ",
-                msec,delta_rot*180.0/PI,angle_vel*180.0/PI);
-    if (autoresume)
-    {
-        // wake me up when it's over
-        Resume(msec,npc);
-        npc->Printf(7,"Waking up in %d msec.", msec);
-    }
-    else
-    {
-        npc->Printf(7,"NO autoresume here.", msec);
-    }
-    
     return msec;
 }
 
@@ -730,6 +643,12 @@ bool MovementOperation::Load(iDocumentNode *node)
 
 bool MovementOperation::EndPointChanged(const csVector3 &endPos, const iSector* endSector) const
 {
+    if (!path)
+    {
+        Error1("EndPointChanged called with no path");
+        return true;
+    }
+    
     iMapNode* pathEndDest = path->GetLast();
     return ((pathEndDest->GetSector() != endSector) ||
             (psGameObject::Calc2DDistance(pathEndDest->GetPosition(), endPos) > EPSILON) );
@@ -805,7 +724,7 @@ ScriptOperation::OperationResult MovementOperation::Run(NPC *npc, bool interrupt
         // Find next local destination and start moving towords local destination
         iMapNode* dest = path->Next();
         StartMoveTo(npc, dest->GetPosition(), dest->GetSector(), GetVelocity(npc),
-                    action, false, dummyAngle);
+                    action, dummyAngle);
         currentDistance =  npcclient->GetWorld()->Distance(myPos, mySector,
                                                            dest->GetPosition(), dest->GetSector());
 
@@ -828,6 +747,7 @@ ScriptOperation::OperationResult MovementOperation::Advance(float timedelta, NPC
 
     if (!UpdateEndPosition(npc, myPos, mySector, endPos, endSector ))
     {
+        StopMovement(npc);
         return OPERATION_FAILED;
     }
 
@@ -847,6 +767,7 @@ ScriptOperation::OperationResult MovementOperation::Advance(float timedelta, NPC
             if (distance < 0.5)
             {
                 npc->Printf(5, "We are done....");
+                StopMovement(npc);
                 return OPERATION_COMPLETED;
             }
             else
@@ -855,19 +776,21 @@ ScriptOperation::OperationResult MovementOperation::Advance(float timedelta, NPC
                 npc->Printf(5, "Failed to find a path between %s and %s", 
                             toString(myPos, mySector).GetData(), 
                             toString(endPos, endSector).GetData());
+                StopMovement(npc);
                 return OPERATION_FAILED;
             }
         }
 
         if (!PathReachedEndPoint(npc, path, endPos, endSector))
         {
+            StopMovement(npc);
             return OPERATION_FAILED;
         }
 
         // Start moving toward new dest
         iMapNode* dest = path->Next();
         StartMoveTo(npc, dest->GetPosition(), dest->GetSector(), GetVelocity(npc),
-                    action, false, angle);
+                    action, angle);
         currentDistance =  npcclient->GetWorld()->Distance(myPos, mySector,
                                                            dest->GetPosition(), dest->GetSector());
     }
@@ -877,30 +800,38 @@ ScriptOperation::OperationResult MovementOperation::Advance(float timedelta, NPC
     if (distance >= INFINITY_DISTANCE)
     {
         npc->Printf(5, "No connection found..");
+        StopMovement(npc);
         return OPERATION_FAILED;
     }
-    else if (distance <= 0.5f || distance > (currentDistance+0.1))
+    else if (distance <= 0.5f || distance > (currentDistance+0.001))
     {
-        if (distance > (currentDistance+0.1) )
+        if (distance > (currentDistance+0.001) )
         {
-            npc->Printf(6, "We passed localDest(dist=%.2f > curr=%.2f)...",distance,currentDistance);
+            npc->Printf(6, "We passed localDest(dist=%.4f > curr=%.4f)...", distance, currentDistance);
         }
         else
         {
-            npc->Printf(6, "We are at localDest(dist=%.2f)...",distance);
+            npc->Printf(6, "We are at localDest(dist=%.4f)...", distance);
         }
 
         if (!path->HasNext())
         {
             npc->Printf(5, "We are done.....");
-            CheckEndPointOk(npc, myPos, mySector, endPos, endSector );
-            return OPERATION_COMPLETED;
+            StopMovement(npc);
+            if (CheckEndPointOk(npc, myPos, mySector, endPos, endSector ))
+            {
+                return OPERATION_COMPLETED;
+            }
+            else
+            {
+                return OPERATION_FAILED;
+            }
         }
         else
         {
             dest = path->Next();
             StartMoveTo(npc, dest->GetPosition(), dest->GetSector(), GetVelocity(npc),
-                        action, false, angle);
+                        action, angle);
             currentDistance =  npcclient->GetWorld()->Distance(myPos, mySector,
                                                                dest->GetPosition(), dest->GetSector());
         }
@@ -917,9 +848,9 @@ ScriptOperation::OperationResult MovementOperation::Advance(float timedelta, NPC
     	timedelta = distance / GetVelocity(npc);
     }
 
-    npc->Printf(8, "advance: pos=(%f.2,%f.2,%f.2) rot=%.2f %s localDest=%s dist=%f", 
-                myPos.x,myPos.y,myPos.z, myRot, mySector->QueryObject()->GetName(),
-                dest->GetPosition().Description().GetData(),distance);
+    npc->Printf(8, "advance: pos=%s rot=%.2f dest=%s dist=%.3f timedelta=%.3f", 
+                toString(myPos,mySector).GetDataSafe(), myRot,
+                dest->GetPosition().Description().GetData(),distance,timedelta);
 
     {
         int ret;
@@ -948,15 +879,6 @@ void MovementOperation::InterruptOperation(NPC *npc)
     ScriptOperation::InterruptOperation(npc);
 
     StopMovement(npc);
-}
-
-bool MovementOperation::CompleteOperation(NPC *npc)
-{
-    StopMovement(npc);
-
-    completed = true;
-
-    return true;  // Script can keep going
 }
 
 //---------------------------------------------------------------------------
@@ -2587,7 +2509,8 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
 
 bool LoopBeginOperation::Load(iDocumentNode *node)
 {
-    iterations = node->GetAttributeValueAsInt("iterations");
+    // If No iterations are given loop forever
+    iterations = node->GetAttributeValueAsInt("iterations",-1);
     return true;
 }
 
@@ -2622,10 +2545,10 @@ ScriptOperation::OperationResult LoopEndOperation::Run(NPC *npc, bool interrupte
 
     current++;
 
-    if (current < iterations)
+    if (current < iterations || iterations < 0)  // -1 iterations mean forever
     {
-        behavior->SetCurrentStep(loopback_op-1);
-        npc->Printf(5, "LoopEnd - Loop %d of %d",current,iterations);
+        npc->Printf(5, "LoopEnd - Loop %d of %d back to %d",current,iterations,loopback_op);
+        behavior->SetCurrentStep(loopback_op);
         return OPERATION_COMPLETED;
     }
 
@@ -2799,15 +2722,6 @@ void MeleeOperation::InterruptOperation(NPC *npc)
     ScriptOperation::InterruptOperation(npc);
 }
 
-bool MeleeOperation::CompleteOperation(NPC *npc)
-{
-    npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetActor(),NULL, stance);
-
-    completed = true;
-
-    return true;
-}
-
 //---------------------------------------------------------------------------
 
 bool MemorizeOperation::Load(iDocumentNode *node)
@@ -2893,11 +2807,6 @@ ScriptOperation::OperationResult MoveOperation::Run(NPC *npc, bool interrupted)
         remaining = duration;
     }
 
-    if(remaining > 0)
-    {
-        Resume((int)(remaining*1000.0),npc);
-    }
-
     return OPERATION_NOT_COMPLETED;
 }
 
@@ -2908,18 +2817,14 @@ void MoveOperation::InterruptOperation(NPC *npc)
     StopMovement(npc);
 }
 
-bool MoveOperation::CompleteOperation(NPC *npc)
-{
-    StopMovement(npc);
-
-    completed = true;
-
-    return true;  // Script can keep going
-}
-
 ScriptOperation::OperationResult MoveOperation::Advance(float timedelta, NPC *npc)
 {
     remaining -= timedelta;
+    if (remaining <= 0.0)
+    {
+        StopMovement(npc);
+        return OPERATION_COMPLETED;
+    }
 
     // This updates the position of the entity every 1/2 second so that 
     // range and distance calculations will work when interrupted.
@@ -2943,7 +2848,6 @@ ScriptOperation::OperationResult MoveOperation::Advance(float timedelta, NPC *np
 
     return OPERATION_NOT_COMPLETED;
 }
-
 
 //---------------------------------------------------------------------------
 
@@ -3025,6 +2929,18 @@ ScriptOperation::OperationResult MovePathOperation::Advance(float timedelta, NPC
         // At end of path
         npc->Printf(5, "We are done..");
 
+        // Set position to where it is supposed to go
+        npc->GetLinMove()->SetPosition(path->GetEndPos(direction),path->GetEndRot(direction),
+                                       path->GetEndSector(npcclient->GetEngine(),direction));
+
+        if (anchor)
+        {
+            delete anchor;
+            anchor = NULL;
+        }
+
+        StopMovement(npc);
+
         // None linear movement so we have to queue DRData updates.
         npcclient->GetNetworkMgr()->QueueDRData(npc);
 
@@ -3063,24 +2979,6 @@ void MovePathOperation::InterruptOperation(NPC *npc)
     ScriptOperation::InterruptOperation(npc);
 
     StopMovement(npc);
-}
-
-bool MovePathOperation::CompleteOperation(NPC *npc)
-{
-    // Set position to where it is supposed to go
-    npc->GetLinMove()->SetPosition(path->GetEndPos(direction),path->GetEndRot(direction),path->GetEndSector(npcclient->GetEngine(),direction));
-
-    if (anchor)
-    {
-        delete anchor;
-        anchor = NULL;
-    }
-
-    StopMovement(npc);
-
-    completed = true;
-
-    return true; // Script can keep going
 }
 
 //---------------------------------------------------------------------------
@@ -3286,16 +3184,22 @@ bool NavigateOperation::UpdateEndPosition(NPC* npc, const csVector3 &myPos, cons
     return true;
 }
 
+//---------------------------------------------------------------------------
 
-bool NavigateOperation::CompleteOperation(NPC *npc)
+bool NOPOperation::Load(iDocumentNode *node)
 {
-    if (forceEndPosition)
-    {
-        // Set position to where it is supposed to go
-        npc->GetLinMove()->SetPosition(endPos,endAngle,endSector);
-    }
+    return true;
+}
 
-    return MovementOperation::CompleteOperation(npc);
+ScriptOperation *NOPOperation::MakeCopy()
+{
+    NOPOperation *op = new NOPOperation;
+    return op;
+}
+
+ScriptOperation::OperationResult NOPOperation::Run(NPC *npc, bool interrupted)
+{
+    return OPERATION_COMPLETED; // Nothing more to do for this op.
 }
 
 //---------------------------------------------------------------------------
@@ -3830,19 +3734,34 @@ ScriptOperation::OperationResult RotateOperation::Run(NPC *npc, bool interrupted
     npcclient->GetNetworkMgr()->QueueDRData(npc);
 
     // wake me up when it's over
-    int msec = (int)fabs(1000.0*angle_delta/ang_vel);
-    Resume(msec,npc);
+    remaining = fabs(angle_delta/ang_vel);
 
     npc->Printf(5,"Rotating %1.2f deg from %1.2f to %1.2f at %1.2f deg/sec in %.3f sec.",
-                angle_delta*180/PI,rot*180.0f/PI,target_angle*180.0f/PI,ang_vel*180.0f/PI,msec/1000.0f);
+                angle_delta*180/PI,rot*180.0f/PI,target_angle*180.0f/PI,ang_vel*180.0f/PI,remaining);
 
     return OPERATION_NOT_COMPLETED;
 }
 
 ScriptOperation::OperationResult RotateOperation::Advance(float timedelta, NPC *npc) 
 {
+    remaining -= timedelta;
+    if (remaining <= 0.0)
+    {
+        psGameObject::SetRotationAngle(npc->GetActor(),target_angle);
+        StopMovement(npc);
+
+        return OPERATION_COMPLETED;
+    }
+    
     int ret;
     ret = npc->GetLinMove()->ExtrapolatePosition(timedelta);
+
+    float rot;
+    csVector3 pos;
+    iSector* sector;
+    psGameObject::GetPosition(npc->GetActor(),pos,rot,sector);
+
+    npc->Printf(6,"Rotated to %.2f deg, remaining %.2f",rot*180.0f/PI,remaining);
 
     return OPERATION_NOT_COMPLETED;
 }
@@ -3938,17 +3857,6 @@ void RotateOperation::InterruptOperation(NPC *npc)
     ScriptOperation::InterruptOperation(npc);
 
     StopMovement(npc);
-}
-
-bool RotateOperation::CompleteOperation(NPC *npc)
-{
-    // Set target angle and stop the turn
-    psGameObject::SetRotationAngle(npc->GetActor(),target_angle);
-    StopMovement(npc);
-
-    completed = true;
-    
-    return true;  // Script can keep going
 }
 
 //---------------------------------------------------------------------------
@@ -4479,7 +4387,7 @@ bool WanderOperation::StartMoveTo(NPC *npc, psPathPoint* point)
 
     ScriptOperation::StartMoveTo(npc, destPos,
                                  point->GetSector(npcclient->GetEngine()),
-                                 GetVelocity(npc), action.GetDataSafe(), false, dummyAngle);
+                                 GetVelocity(npc), action.GetDataSafe(), dummyAngle);
 
     return true;
 }
@@ -4838,6 +4746,7 @@ ScriptOperation::OperationResult WanderOperation::Advance(float timedelta,NPC *n
         else
         {
             npc->Printf(5, "We are done..");
+            StopMovement(npc);
             return OPERATION_COMPLETED;
         }
     }
@@ -4869,7 +4778,7 @@ ScriptOperation::OperationResult WanderOperation::Advance(float timedelta,NPC *n
         ret = npc->GetLinMove()->ExtrapolatePosition(timedelta);
         if (ret != PS_MOVE_SUCCEED)
         {
-            npc->Printf("Extrapolated didn't success: %d",ret);
+            npc->Printf("Extrapolate didn't success: %d",ret);
         }
     }
 
@@ -4896,15 +4805,6 @@ void WanderOperation::InterruptOperation(NPC *npc)
     StopMovement(npc);
 }
 
-bool WanderOperation::CompleteOperation(NPC *npc)
-{
-    // Stop the movement
-    StopMovement(npc);
-
-    completed = true;
-
-    return true; // Script can keep going, no more waypoints.
-}
 
 bool LoadAttributeBool(iDocumentNode *node, const char * attribute, bool defaultValue, bool * valid = NULL)
 {
@@ -5084,7 +4984,8 @@ ScriptOperation::OperationResult WatchOperation::Run(NPC *npc, bool interrupted)
     
     npc->SetTarget( watchedEnt );
 
-    /*
+    // Now check if the target is within range, if not 
+    // the precondition was wrong and the operation fails.
     if (OutOfRange(npc))
     {
         csString str;
@@ -5092,9 +4993,8 @@ ScriptOperation::OperationResult WatchOperation::Run(NPC *npc, bool interrupted)
         str.Append(" out of range");
         Perception range(str);
         npc->TriggerEvent(&range);
-        return OPERATION_COMPLETED; // Nothing to do for this behavior.
+        return OPERATION_FAILED; // Nothing to do for this behavior.
     }
-    */
     
     return OPERATION_NOT_COMPLETED; // This behavior isn't done yet
 }
@@ -5146,7 +5046,7 @@ ScriptOperation::OperationResult WatchOperation::Advance(float timedelta, NPC *n
         str.Append(" out of range");
         Perception range(str);
         npc->TriggerEvent(&range);
-        return OPERATION_FAILED;
+        return OPERATION_COMPLETED;
     }
 
     return OPERATION_NOT_COMPLETED;
@@ -5155,13 +5055,6 @@ ScriptOperation::OperationResult WatchOperation::Advance(float timedelta, NPC *n
 void WatchOperation::InterruptOperation(NPC *npc)
 {
     ScriptOperation::InterruptOperation(npc);
-}
-
-bool WatchOperation::CompleteOperation(NPC *npc)
-{
-    completed = true;
-
-    return true;
 }
 
 //---------------------------------------------------------------------------

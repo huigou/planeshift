@@ -44,7 +44,6 @@ struct iSector;
 // Project Includes
 //=============================================================================
 
-class psResumeScriptEvent;
 class NPC;
 class gemNPCObject;
 class gemNPCActor;
@@ -61,8 +60,6 @@ class Behavior;
 */
 class ScriptOperation
 {
-    friend class psResumeScriptEvent;
-
     enum VelSource {
         VEL_DEFAULT,
         VEL_USER,
@@ -82,10 +79,6 @@ protected:
     ////////////////////////////////////////////////////////////
     // Start of instance temp variables. These dosn't need to be copied.
     csString             name;
-
-    bool                 completed; /// This flag is set to false by Run(), and set to true by CompleteOperation(), in case of multiple Complete's being called.
-
-    psResumeScriptEvent* resumeScriptEvent;
 
     csVector3            interrupted_position;
     iSector             *interrupted_sector;
@@ -121,17 +114,9 @@ protected:
     // End of shared values between operations
     ////////////////////////////////////////////////////////////
 
-    
-    void Resume(csTicks delay, NPC* npc);
-    void ResumeTrigger(psResumeScriptEvent*  event);
-    void StopResume();
-
     /// This function is used by MoveTo AND Navigate operations
-    int StartMoveTo(NPC* npc, const csVector3& dest, iSector* sector, float vel,const char* action, bool autoresume, float &angle);
+    int StartMoveTo(NPC* npc, const csVector3& dest, iSector* sector, float vel,const char* action, float &angle);
     
-    /// This function is used by MoveTo AND Navigate operations
-    int StartTurnTo(NPC* npc,float turn_end_angle, float ang_vel,const char* action, bool autoresume=true);
-
     void TurnTo(NPC* npc,const csVector3& dest, iSector* destsect, csVector3& forward, float &angle);
 
     /// Utility function used by many operation to stop movement of an NPC.
@@ -209,7 +194,6 @@ public:
      */
     virtual const csString& GetFallingPerception(NPC* npc); 
 
-    virtual bool CompleteOperation(NPC* npc) { completed = true; return completed; }
     virtual bool Load(iDocumentNode* node);
     virtual ScriptOperation* MakeCopy()=0;
 
@@ -245,8 +229,6 @@ public:
     void SetAnimation(NPC* npc, const char* name);
 
     virtual const char* GetName() const { return name.GetDataSafe(); };
-    bool HasCompleted() { return completed; }
-    void SetCompleted(bool c) { completed = c; }
 
     /**
      * Called when the run operation return OPERATION_FAILED.
@@ -304,7 +286,6 @@ public:
 
     virtual void InterruptOperation(NPC* npc);
 
-    virtual bool CompleteOperation(NPC* npc);
 };
 
 //---------------------------------------------------------------------------
@@ -556,7 +537,6 @@ public:
     virtual OperationResult Run(NPC* npc,bool interrupted);
     virtual OperationResult Advance(float timedelta,NPC* npc);
     virtual void InterruptOperation(NPC* npc);
-    virtual bool CompleteOperation(NPC* npc);
 
 };
 
@@ -856,7 +836,6 @@ public:
     virtual OperationResult Run(NPC* npc,bool interrupted);
     virtual OperationResult Advance(float timedelta,NPC* npc);
     virtual void InterruptOperation(NPC* npc);
-    virtual bool CompleteOperation(NPC* npc);
 };
 
 //-----------------------------------------------------------------------------
@@ -909,7 +888,6 @@ public:
     virtual OperationResult Run(NPC* npc,bool interrupted);
     virtual OperationResult Advance(float timedelta,NPC* npc);
     virtual void InterruptOperation(NPC* npc);
-    virtual bool CompleteOperation(NPC* npc);
 };
 
 //-----------------------------------------------------------------------------
@@ -974,7 +952,23 @@ public:
                                    csVector3 &endPos, iSector* &endSector);
 
     virtual bool Load(iDocumentNode* node);
-    virtual bool CompleteOperation(NPC* npc);
+};
+
+//-----------------------------------------------------------------------------
+
+/** No Operation(NOP) Operation
+ * 
+ */
+class NOPOperation : public ScriptOperation
+{
+protected:
+public:
+
+    NOPOperation(): ScriptOperation("NOPE") {};
+    virtual ~NOPOperation() {};
+    virtual OperationResult Run(NPC* npc,bool interrupted);
+    virtual bool Load(iDocumentNode* node);
+    virtual ScriptOperation* MakeCopy();
 };
 
 //-----------------------------------------------------------------------------
@@ -1120,7 +1114,8 @@ protected:
     
     csString  action;               // Animation to use in the rotation
 
-
+    // Instance temp variables. These dosn't need to be copied.
+    float remaining;
 public:
 
     RotateOperation(): ScriptOperation("Rotate")
@@ -1131,6 +1126,7 @@ public:
         delta_angle=0;
         target_angle=0;
         angle_delta=0;
+        remaining = 0.0;
     }
     virtual ~RotateOperation() { }
     virtual bool Load(iDocumentNode* node);
@@ -1139,7 +1135,6 @@ public:
     virtual OperationResult Run(NPC* npc,bool interrupted);
     virtual OperationResult Advance(float timedelta,NPC* npc);
     virtual void InterruptOperation(NPC* npc);
-    virtual bool CompleteOperation(NPC* npc);
     
     float SeekAngle(NPC* npc, float targetYRot);           // Finds an angle which won't lead to a collision
 };
@@ -1485,9 +1480,6 @@ public:
     virtual OperationResult Advance(float timedelta,NPC* npc);
     virtual void InterruptOperation(NPC* npc);
     virtual bool Load(iDocumentNode* node);
-    virtual bool CompleteOperation(NPC* npc);
-
-
 };
 
 //-----------------------------------------------------------------------------
@@ -1527,7 +1519,6 @@ public:
     virtual OperationResult Run(NPC* npc,bool interrupted);
     virtual OperationResult Advance(float timedelta,NPC* npc);
     virtual void InterruptOperation(NPC* npc);
-    virtual bool CompleteOperation(NPC* npc);
 
  private:
     bool OutOfRange(NPC* npc);

@@ -381,6 +381,7 @@ INSERT INTO sc_npctypes VALUES("104","DictMaster2","DoNothing,Answerer","","",""
 INSERT INTO sc_npctypes VALUES("106","ChaseTest1","DoNothing","","","","","","",
 '<behavior name="init" initial="1000" completion_decay="-1" >
    <!--debug level="0" /-->
+   <nop/>
 </behavior>
 <behavior name="chase" decay="1" completion_decay="-1" growth="0" initial="0">
    <talk text="Start chaseing actor" target="false" />
@@ -394,6 +395,7 @@ INSERT INTO sc_npctypes VALUES("106","ChaseTest1","DoNothing","","","","","","",
 INSERT INTO sc_npctypes VALUES("107","ChaseTest2","DoNothing","","","","","","",
 '<behavior name="init" initial="1000" completion_decay="-1" >
    <!--debug level="0" /-->
+   <nop/>
 </behavior>
 <behavior name="chase" initial="100" >
    <locate obj="entity:pid:22" />  <!-- Locate MoveMaster2 -->
@@ -604,17 +606,17 @@ INSERT INTO sc_npctypes VALUES("109","AbstractTribesman","DoNothing,Move","","",
    <sit />
    <percept event="sleep" />
 
-   <wait anim="sit_idle" duration="5" />
+   <wait duration="5" />
    <standup />
 </behavior>
 <behavior name="Sleep" resume="yes">
    <talk text="zZz" target="false" />
 
-   <wait anim="sit_idle" duration="24:00" /> <!-- 24 hours game time, will be interrupted upon wakeup -->
+   <wait duration="24:00" /> <!-- 24 hours game time, will be interrupted upon wakeup -->
 </behavior>
-<behavior name="WakeUp" resume="yes">
+<behavior name="WakeUp" resume="yes" completion_decay="-1" >
    <talk text="aaahhh" target="false" />
-   <wait anim="sit_idle" duration="5" />
+   <wait duration="5" />
    <percept event="wake_up" />
 </behavior>
 <react event="sleep" behavior="Sleep" />

@@ -456,11 +456,6 @@ void NPCType::Advance(csTicks delta, NPC *npc)
     behaviors.Advance(delta,npc);
 }
 
-void NPCType::ResumeScript(NPC *npc, Behavior *which)
-{
-    behaviors.ResumeScript(npc, which);
-}
-
 void NPCType::Interrupt(NPC *npc)
 {
     behaviors.Interrupt(npc);
@@ -574,10 +569,13 @@ void BehaviorSet::UpdateNeeds(float delta, NPC* npc)
                             behaviors[i]->NewNeed() );
             }
         }
+
+        // Reset the start step so that looping behaviors could be detected in RunScript
+        b->SetStartStep();
     }
 }
 
-void BehaviorSet::Schedule(NPC* npc)
+Behavior* BehaviorSet::Schedule(NPC* npc)
 {
     float max_need = -999.0;
 
@@ -599,6 +597,22 @@ void BehaviorSet::Schedule(NPC* npc)
             b->CommitAdvance();   // Set current need to new need.
         }
     }
+
+    // now that behaviours are correctly sorted, select the first one
+    Behavior *new_behaviour = behaviors[0];
+
+    // use it only if need > 0
+    if (new_behaviour->CurrentNeed()<=0 || !new_behaviour->ApplicableToNPCState(npc))
+    {
+        if (npc->IsDebugging(3))
+        {
+            npc->DumpBehaviorList();
+        }
+        npc->Printf(15,"NO Active or no applicable behavior." );
+        return NULL;
+    }
+
+    return new_behaviour;
 }
 
 
@@ -608,39 +622,61 @@ void BehaviorSet::Advance(csTicks delta, NPC* npc)
 
     UpdateNeeds(d, npc);
 
+    Behavior::BehaviorResult result = Behavior::BEHAVIOR_FAILED;
+    
+    bool forceRunScript = false;
+
     if (active)
     {
-        active->Advance(d, npc);
+        result = active->Advance(d, npc);
+
+        if (result == Behavior::BEHAVIOR_COMPLETED ||
+            result == Behavior::BEHAVIOR_FAILED )
+        {
+            // This behavior is done so set it inactive
+            active->SetIsActive(false);
+            active = NULL;
+        }
+        else if (result == Behavior::BEHAVIOR_WILL_COMPLETE_LATER)
+        {
+        }
+        else // Behavior::BEHAVIOR_NOT_COMPLETED
+        {
+            forceRunScript = true;
+        }
     }
-    
-    // Now loop through the behaviors. If they complete on Run than
+
+    Execute(npc, forceRunScript);
+}
+
+void BehaviorSet::Execute(NPC* npc, bool forceRunScript)
+{
+    Behavior::BehaviorResult result = Behavior::BEHAVIOR_FAILED;
+
+    Behavior* lastActiveBehavior = NULL;
+    int behaviorCount = 0;
+
+    // Loop through the behaviors. If they complete on Run than
     // multiple behaviors might be executed.
     while (true)
     {
         // Sort the behaviors according to need
-        Schedule(npc);
-        
-        // now that behaviours are correctly sorted, select the first one
-        Behavior *new_behaviour = behaviors[0];
-
-        // use it only if need > 0
-        if (new_behaviour->CurrentNeed()<=0 || !new_behaviour->ApplicableToNPCState(npc))
+        Behavior* newBehavior = Schedule(npc);
+        if( !newBehavior )
         {
-            if (npc->IsDebugging(3))
-            {
-                npc->DumpBehaviorList();
-            }
-            npc->Printf(15,"NO Active or no applicable behavior." );
             return;
         }
 
-        if (new_behaviour != active)
+        // Flag to mark if script operations should be run.
+        bool runScript = false;
+
+        if (newBehavior != active)
         {
             if (active)  // if there is a behavior allready assigned to this npc
             {
                 npc->Printf(1,"Switching behavior from '%s' to '%s'",
                             active->GetName(),
-                            new_behaviour->GetName() );
+                            newBehavior->GetName() );
 
                 // Interrupt and stop current behaviour
                 active->InterruptScript(npc);
@@ -648,15 +684,25 @@ void BehaviorSet::Advance(csTicks delta, NPC* npc)
             }
             else
             {
-                npc->Printf(1,"Activating behavior '%s'",
-                            new_behaviour->GetName() );
+                // Check if this behavior has allready looped once
+                if (newBehavior != lastActiveBehavior)
+                {
+                    npc->Printf(1,"Activating behavior '%s'",
+                                newBehavior->GetName() );
+                }
+                else
+                {
+                    break;
+                }
             }
             
 
             // Set the new active behaviour
-            active = new_behaviour;
+            active = newBehavior;
             // Activate the new behaviour
             active->SetIsActive(true);
+            // Store the active behavior
+            lastActiveBehavior = active;
 
             // Dump bahaviour list if changed
             if (npc->IsDebugging(3))
@@ -671,52 +717,64 @@ void BehaviorSet::Advance(csTicks delta, NPC* npc)
                 continue; // Start the check once more.
             }
 
-            // Run the new active behavior
-            ScriptOperation::OperationResult result;
+            active->StartScript(npc);
 
-            result = active->StartScript(npc);
-            
-            if (result == ScriptOperation::OPERATION_COMPLETED)
-            {
-                // This behavior is done so set it inactive
-                active->SetIsActive(false);
-                active = NULL;
-                // Don't break so that we find a new behavior for this npc.
-            }
-            else if (result == ScriptOperation::OPERATION_FAILED)
-            {
-                // This behavior is done so set it inactive
-                active->SetIsActive(false);
-                active = NULL;
-                break;
-            }
-            else // ScriptOperation::OPERATION_NOT_COMPLETED
-            {
-                // This behavior isn't done yet so break and continue later
-                break;
-            }
+            // Run script operations when a new operation become active
+            runScript = true;
         }
         else
         {
-            break;
+            if (active && (result == Behavior::BEHAVIOR_NOT_COMPLETED || forceRunScript))
+            {
+                // Run script operations when last run script operations completed
+                runScript = true;
+            }
+            else
+            {
+                break;
+            }
+        }
+        
+        if (runScript)
+        {
+            // Increment behavior count so that we can detect infinit loops
+            behaviorCount++;
+            if (behaviorCount > 100)
+            {
+                Error2("Behavior count limit reached for %s",npc->GetName());
+                break;
+            }
+
+
+            forceRunScript = false;
+
+            result = active->RunScript(npc);
+            if (result == Behavior::BEHAVIOR_COMPLETED)
+            {
+                // This behavior is done so set it inactive
+                active->SetIsActive(false);
+                active = NULL;
+            }
+            else if (result == Behavior::BEHAVIOR_FAILED)
+            {
+                // This behavior is done so set it inactive
+                active->SetIsActive(false);
+                active = NULL;
+                break; // Breake the loop
+            }
+            else if (result == Behavior::BEHAVIOR_WILL_COMPLETE_LATER)
+            {
+                break; // Breake the loop
+            }
+            else // Behavior::BEHAVIOR_NOT_COMPLETED
+            {
+                // This behavior isn't done yet
+            }
         }
     }
 
     npc->Printf(15,"Active behavior is '%s'", (active?active->GetName():"(null)") );
     return;
-}
-
-void BehaviorSet::ResumeScript(NPC *npc, Behavior *which)
-{
-    if (which == active && which->ApplicableToNPCState(npc))
-    {
-        if (active->ResumeScript(npc) != ScriptOperation::OPERATION_NOT_COMPLETED)
-        {
-            active->SetIsActive(false);
-            active = NULL;
-        }
-        
-    }
 }
 
 void BehaviorSet::Interrupt(NPC *npc)
@@ -750,7 +808,7 @@ Behavior *BehaviorSet::Find(const char *name)
 
 void BehaviorSet::DumpBehaviorList(NPC *npc)
 {
-    CPrintf(CON_CMDOUTPUT, "Appl. IA %-30s %5s %5s\n","Behavior","Curr","New");
+    CPrintf(CON_CMDOUTPUT, "Appl. IA %-30s %6s %6s %5s\n","Behavior","Curr","New","Step");
 
     for (size_t i=0; i<behaviors.GetSize(); i++)
     {
@@ -760,11 +818,13 @@ void BehaviorSet::DumpBehaviorList(NPC *npc)
             applicable = 'Y';
         }
 
-        CPrintf(CON_CMDOUTPUT, "%c     %s%s %-30s %5.1f %5.1f\n",applicable,
+        CPrintf(CON_CMDOUTPUT, "%c     %s%s %-30s %6.1f %6.1f %2d/%-2d\n",applicable,
                 (behaviors[i]->IsInterrupted()?"!":" "),
                 (behaviors[i]->IsActive()?"*":" "),
                 behaviors[i]->GetName(),behaviors[i]->CurrentNeed(),
-                behaviors[i]->NewNeed());
+                behaviors[i]->NewNeed(),
+                behaviors[i]->GetCurrentStep(),
+                behaviors[i]->GetLastStep());
     }
 }
 
@@ -945,7 +1005,17 @@ bool Behavior::Load(iDocumentNode *node)
 
     current_need            = init_need;
 
-    return LoadScript(node,true);
+    bool result = LoadScript(node,true);
+    if (result)
+    {
+        // Check if we have a sequence
+        if (sequence.IsEmpty())
+        {
+            Error2("No script operations for behavior %s",name.GetDataSafe());
+            return false;
+        }
+    }
+    return result;
 }
 
 bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
@@ -1061,6 +1131,10 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         else if ( strcmp( node->GetValue(), "navigate" ) == 0 )
         {
             op = new NavigateOperation;
+        }
+        else if ( strcmp( node->GetValue(), "nop" ) == 0 )
+        {
+            op = new NOPOperation;
         }
         else if ( strcmp( node->GetValue(), "percept" ) == 0 )
         {
@@ -1205,35 +1279,62 @@ void Behavior::UpdateNeed(float delta, NPC* npc)
 }
 
 
-void Behavior::Advance(float delta, NPC *npc)
+Behavior::BehaviorResult Behavior::Advance(float delta, NPC *npc)
 {
     if (!isActive)
     {
         Error1("Trying to advance not active behavior!!");
-        return;
+        return BEHAVIOR_FAILED;
     }
+
+    Behavior::BehaviorResult behaviorResult = BEHAVIOR_FAILED;
 
     if (current_step < sequence.GetSize())
     {
         npc->Printf(10,"%s - Advance active delta: %.3f Need: %.2f Decay Rate: %.2f",
                     name.GetData(),delta,new_need,need_decay_rate);
         
-        if (!sequence[current_step]->HasCompleted())
+        ScriptOperation::OperationResult result = sequence[current_step]->Advance(delta,npc);
+        switch (result)
         {
-            ScriptOperation::OperationResult result = sequence[current_step]->Advance(delta,npc);
-            switch (result)
+        case ScriptOperation::OPERATION_NOT_COMPLETED:
             {
-            case ScriptOperation::OPERATION_COMPLETED:
-                npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
+                // Operation not completed and should relinquish
+                npc->Printf(2, "Behavior %s step %d - %s will complete later...",
+                            name.GetData(),current_step,sequence[current_step]->GetName());
+                
+                behaviorResult = Behavior::BEHAVIOR_WILL_COMPLETE_LATER; // This behavior is done for now.
                 break;
-            case ScriptOperation::OPERATION_NOT_COMPLETED:
+            }
+        case ScriptOperation::OPERATION_COMPLETED:
+            {
+                OperationCompleted(npc);
+                if (stepCount >= sequence.GetSize() || (current_step == 0 && !loop) )
+                {
+                    npc->Printf(3,"Terminating behavior '%s' since it has looped all once.",GetName());
+                    behaviorResult = Behavior::BEHAVIOR_COMPLETED; // This behavior is done
+                }
+                else
+                {
+                    behaviorResult = Behavior::BEHAVIOR_NOT_COMPLETED; // More to do for this behavior
+                }
                 break;
-            case ScriptOperation::OPERATION_FAILED:
-                npc->ResumeScript(npc->GetBrain()->GetCurrentBehavior() );
+            }
+        case ScriptOperation::OPERATION_FAILED:
+            {
+                OperationFailed(npc);
+                behaviorResult = Behavior::BEHAVIOR_FAILED; // This behavior is done
                 break;
             }
         }
+        
     }
+    else
+    {
+        Error1("Advancing operation past end of sequence");
+        return BEHAVIOR_FAILED;
+    }
+    return behaviorResult;
 }
 
 
@@ -1299,6 +1400,18 @@ void Behavior::ApplyNeedAbsolute(NPC *npc, float absoluteDesire)
     }
 }
 
+void Behavior::SetCurrentStep(int step)
+{
+    if (step < 0 || step >= sequence.GetSize())
+    {
+        Error3("Behavior trying to set current step to value %d that is outside sequence 0..%d",
+               step,sequence.GetSize());
+        return;
+    }
+    
+    current_step = step;
+}
+
 
 bool Behavior::ApplicableToNPCState(NPC* npc)
 {
@@ -1321,14 +1434,12 @@ void Behavior::DoCompletionDecay(NPC* npc)
     }
 }
 
-ScriptOperation::OperationResult Behavior::StartScript(NPC *npc)
+void Behavior::StartScript(NPC *npc)
 {
     if (interrupted && resume_after_interrupt)
     {
         npc->Printf(3,"Resuming behavior %s after interrupt at step %d - %s.",
                     name.GetData(), current_step, sequence[current_step]->GetName());
-        interrupted = false;
-        return RunScript(npc,true);
     }
     else
     {
@@ -1342,87 +1453,97 @@ ScriptOperation::OperationResult Behavior::StartScript(NPC *npc)
                         name.GetData(), current_step, sequence[current_step]->GetName());
             interrupted = false;
         }
+    }
+    
+}
 
-        return RunScript(npc,false);
+void Behavior::OperationCompleted(NPC* npc)
+{
+    npc->Printf(2,"Completed step %d - %s of behavior %s",
+                current_step,sequence[current_step]->GetName(),name.GetData());
+
+    // Increate the couter to tell how many operation has been run this periode.
+    stepCount++; 
+
+    // Increment the current step pointer
+    current_step++;
+    if (current_step >= sequence.GetSize())
+    {
+        current_step = 0; // behaviors automatically loop around to the top
+
+        if (loop)
+        {
+            npc->Printf(1, "Loop back to start of behaviour '%s'",GetName());
+        }
+        else
+        {
+            DoCompletionDecay(npc);
+            npc->Printf(1, "End of non looping behaviour '%s'",GetName());
+        }
     }
 }
 
-ScriptOperation::OperationResult Behavior::RunScript(NPC *npc, bool interrupted)
+void Behavior::OperationFailed(NPC* npc)
 {
-    size_t start_step = current_step;
+    sequence[current_step]->Failure(npc);
+    current_step = 0; // Restart operation next time
+    DoCompletionDecay(npc);
+    npc->Printf(1, "End of behaviour '%s'",GetName());
+}
 
-    // Without this, we will get an infinite loop.
-    if (start_step >= sequence.GetSize())
-    {
-        start_step = 0;
-    }
+void Behavior::SetStartStep()
+{
+    stepCount = 0;
+}
 
-    while (true)
-    {
-        ScriptOperation::OperationResult result = ScriptOperation::OPERATION_FAILED;
 
-        if (current_step < sequence.GetSize() )
-        {
-            npc->Printf(2, "Running %s step %d - %s operation%s",
-                        name.GetData(),current_step,sequence[current_step]->GetName(),
-                        (interrupted?" Interrupted":""));
-            sequence[current_step]->SetCompleted(false);
-
-            // Run the script
-            result = sequence[current_step]->Run(npc, interrupted);
-            interrupted = false; // Reset the interrupted flag after operation has run
+Behavior::BehaviorResult Behavior::RunScript(NPC *npc)
+{ 
+    Behavior::BehaviorResult behaviorResult = BEHAVIOR_FAILED;
+    
+    npc->Printf(2, "Running %s step %d - %s operation%s",
+                name.GetData(),current_step,sequence[current_step]->GetName(),
+                (interrupted?" Interrupted":""));
+    
+    // Run the script
+    ScriptOperation::OperationResult result = sequence[current_step]->Run(npc, interrupted);
+    interrupted = false; // Reset the interrupted flag after operation has run
             
-            // Check the result from the script run operation
-            switch (result)
-            {
-                case ScriptOperation::OPERATION_NOT_COMPLETED:
-                {
-                    // Operation not completed and should relinquish
-                    npc->Printf(2, "Behavior %s step %d - %s will complete later...",
-                                name.GetData(),current_step,sequence[current_step]->GetName());
-                    return ScriptOperation::OPERATION_NOT_COMPLETED; // This behavior isn't done yet
-                }
-                case ScriptOperation::OPERATION_COMPLETED:
-                {
-                    current_step++;  // Continue to the next script operation
-                    break;
-                }
-                case ScriptOperation::OPERATION_FAILED:
-                {
-                    sequence[current_step]->Failure(npc);
-                    current_step = 0; // Restart operation next time
-                    DoCompletionDecay(npc);
-                    npc->Printf(1, "End of behaviour '%s'",GetName());
-                    return ScriptOperation::OPERATION_FAILED; // This behavior is done
-                }
-            }
-        }
-
-        if (current_step >= sequence.GetSize())
+    // Check the result from the script run operation
+    switch (result)
+    {
+    case ScriptOperation::OPERATION_NOT_COMPLETED:
         {
-            current_step = 0; // behaviors automatically loop around to the top
+            // Operation not completed and should relinquish
+            npc->Printf(2, "Behavior %s step %d - %s will complete later...",
+                        name.GetData(),current_step,sequence[current_step]->GetName());
 
-            if (loop)
+            behaviorResult = Behavior::BEHAVIOR_WILL_COMPLETE_LATER; // This behavior is done for now.
+            break;
+        }
+    case ScriptOperation::OPERATION_COMPLETED:
+        {
+            OperationCompleted(npc);
+            if (stepCount >= sequence.GetSize() || (current_step == 0 && !loop) )
             {
-                npc->Printf(1, "Loop back to start of behaviour '%s'",GetName());
+                npc->Printf(3,"Terminating behavior '%s' since it has looped all once.",GetName());
+                behaviorResult = Behavior::BEHAVIOR_COMPLETED; // This behavior is done
             }
             else
             {
-                DoCompletionDecay(npc);
-                npc->Printf(1, "End of non looping behaviour '%s'",GetName());
-                return ScriptOperation::OPERATION_COMPLETED; // This behavior is done
+                behaviorResult = Behavior::BEHAVIOR_NOT_COMPLETED; // More to do for this behavior
             }
+            break;
         }
-
-        // Only loop once per run
-        if (start_step == current_step)
+    case ScriptOperation::OPERATION_FAILED:
         {
-            npc->Printf(3,"Terminating behavior '%s' since it has looped all once.",GetName());
-            return ScriptOperation::OPERATION_COMPLETED; // This behavior is done
+            OperationFailed(npc);
+            behaviorResult = Behavior::BEHAVIOR_FAILED; // This behavior is done
+            break;
         }
-
     }
-    return ScriptOperation::OPERATION_COMPLETED; // This behavior is done
+
+    return behaviorResult;
 }
 
 void Behavior::InterruptScript(NPC *npc)
@@ -1443,33 +1564,6 @@ void Behavior::InterruptScript(NPC *npc)
     }
 }
 
-ScriptOperation::OperationResult Behavior::ResumeScript(NPC *npc)
-{
-    if (current_step < sequence.GetSize())
-    {
-        npc->Printf(3, "Resuming behavior %s at step %d - %s.",
-                    name.GetData(),current_step,sequence[current_step]->GetName());
-
-        if (sequence[current_step]->CompleteOperation(npc))
-        {
-            npc->Printf(2,"Completed step %d - %s of behavior %s",
-                        current_step,sequence[current_step]->GetName(),name.GetData());
-            current_step++;
-            return RunScript(npc, false);
-        }
-        else
-        {
-            return  ScriptOperation::OPERATION_NOT_COMPLETED; // This behavior isn't done yet
-        }
-
-    }
-    else
-    {
-        Error2("No script operation to resume for behavior '%s'",GetName());
-        return ScriptOperation::OPERATION_FAILED;
-    }
-}
-
 void Behavior::Failure(NPC* npc, ScriptOperation* op)
 {
     if (failurePerception.IsEmpty())
@@ -1486,36 +1580,6 @@ void Behavior::Failure(NPC* npc, ScriptOperation* op)
     }
 }
 
-
-//---------------------------------------------------------------------------
-
-psResumeScriptEvent::psResumeScriptEvent(int offsetticks, NPC *which,Behavior *behave,ScriptOperation * script)
-: psGameEvent(0,offsetticks,"psResumeScriptEvent")
-{
-    npc = which;
-    behavior = behave;
-    scriptOp = script;
-}
-
-void psResumeScriptEvent::Trigger()
-{
-    if (running)
-    {
-        scriptOp->ResumeTrigger(this);
-        npc->ResumeScript(behavior);
-    }
-}
-
-csString psResumeScriptEvent::ToString() const
-{
-    csString result;
-    result.Format("Resuming script operation %s",scriptOp->GetName());
-    if (npc)
-    {
-        result.AppendFmt("for %s (%s)", npc->GetName(), ShowID(npc->GetEID()));
-    }
-    return result;
-}
 
 //---------------------------------------------------------------------------
 
