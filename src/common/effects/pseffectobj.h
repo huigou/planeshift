@@ -60,7 +60,7 @@ public:
      *  property set with this scale. 
      *  @return True if if any params where scaled
      */
-    bool SetParamScalings(float scale);
+    bool SetParamScalings(const float* scale);
 
 
     /// this is the time of the keyframe animation (in milliseconds)
@@ -101,7 +101,7 @@ public:
 
     float     actions[KA_COUNT];
     csVector3 vecActions[KA_VEC_COUNT - KA_COUNT];
-    bool      useScale[KA_VEC_COUNT];  // If set to true upon load the actions are scaled after cloning.
+    int       useScale[KA_VEC_COUNT];  // If set upon load the actions are scaled after cloning. 0 no scaling, 1=scale1, 2=scale2, 3=scale3
 
     /// keep track of which actions were specified for which 
     csBitArray specAction;
@@ -164,7 +164,7 @@ public:
      *  property set with this scale. 
      *  @return True if if any params where scaled
      */
-    bool SetFrameParamScalings(float scale);
+    bool SetFrameParamScalings(const float* scale);
 
 };
 
@@ -199,7 +199,7 @@ public:
      *  property set with this scale. 
      *  @return True if if any params where scaled
      */
-    virtual bool SetFrameParamScalings(float scale);
+    virtual bool SetFrameParamScalings(const float* scale);
 
     /** Updates the spell effect -- called every frame.
      *   @param elapsed the ticks elapsed since last update

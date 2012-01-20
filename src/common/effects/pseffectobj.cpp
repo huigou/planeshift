@@ -114,7 +114,7 @@ psEffectObjKeyFrame::psEffectObjKeyFrame(iDocumentNode *node, const psEffectObjK
 
     for (int a=0; a<KA_VEC_COUNT; ++a)
     {
-        useScale[a] = false;
+        useScale[a] = 0;
     }
 
     while (xmlbinds->HasNext())
@@ -129,13 +129,13 @@ psEffectObjKeyFrame::psEffectObjKeyFrame(iDocumentNode *node, const psEffectObjK
             actions[KA_SCALE] = keyNode->GetAttributeValueAsFloat("value");
             if (actions[KA_SCALE] == 0.0f)
                 actions[KA_SCALE] = 0.001f;
-            useScale[KA_SCALE] = keyNode->GetAttributeValueAsBool("use_scale",false);
+            useScale[KA_SCALE] = keyNode->GetAttributeValueAsInt("use_scale",0);
         }
         else if (action == "volume")
         {
             specAction.SetBit(KA_SCALE);
             actions[KA_SCALE] = keyNode->GetAttributeValueAsFloat("value");
-            useScale[KA_SCALE] = keyNode->GetAttributeValueAsBool("use_scale",false);
+            useScale[KA_SCALE] = keyNode->GetAttributeValueAsInt("use_scale",0);
         }
         else if (action == "topscale")
         {
@@ -143,7 +143,7 @@ psEffectObjKeyFrame::psEffectObjKeyFrame(iDocumentNode *node, const psEffectObjK
             actions[KA_TOPSCALE] = keyNode->GetAttributeValueAsFloat("value");
             if (actions[KA_TOPSCALE] == 0.0f)
                 actions[KA_TOPSCALE] = 0.001f;
-            useScale[KA_TOPSCALE] = keyNode->GetAttributeValueAsBool("use_scale",false);
+            useScale[KA_TOPSCALE] = keyNode->GetAttributeValueAsInt("use_scale",0);
         }
         else if (action == "position")
         {
@@ -164,7 +164,7 @@ psEffectObjKeyFrame::psEffectObjKeyFrame(iDocumentNode *node, const psEffectObjK
             {
                 vec.z = attr->GetValueAsFloat();
             }
-            useScale[KA_POS] = keyNode->GetAttributeValueAsBool("use_scale",false);
+            useScale[KA_POS] = keyNode->GetAttributeValueAsInt("use_scale",0);
         }
         else if (action == "rotate")
         {
@@ -186,7 +186,7 @@ psEffectObjKeyFrame::psEffectObjKeyFrame(iDocumentNode *node, const psEffectObjK
                 vec.z = attr->GetValueAsFloat();
             }
             vec *= PI/180.f;
-            useScale[KA_ROT] = keyNode->GetAttributeValueAsBool("use_scale",false);
+            useScale[KA_ROT] = keyNode->GetAttributeValueAsInt("use_scale",0);
         }
         else if (action == "spin")
         {
@@ -208,13 +208,13 @@ psEffectObjKeyFrame::psEffectObjKeyFrame(iDocumentNode *node, const psEffectObjK
                 vec.z = attr->GetValueAsFloat();
             }
             vec *= PI/180.f;
-            useScale[KA_SPIN] = keyNode->GetAttributeValueAsBool("use_scale",false);
+            useScale[KA_SPIN] = keyNode->GetAttributeValueAsInt("use_scale",0);
         }
         else if (action == "cell")
         {
             specAction.SetBit(KA_CELL);
             actions[KA_CELL] = keyNode->GetAttributeValueAsInt("value") + 0.1f;
-            useScale[KA_CELL] = keyNode->GetAttributeValueAsBool("use_scale",false);
+            useScale[KA_CELL] = keyNode->GetAttributeValueAsInt("use_scale",0);
         }
         else if (action == "colour")
         {
@@ -236,21 +236,21 @@ psEffectObjKeyFrame::psEffectObjKeyFrame(iDocumentNode *node, const psEffectObjK
                 vec.z = attr->GetValueAsFloat();
             }
             vec /= 255.0f;
-            useScale[KA_COLOUR] = keyNode->GetAttributeValueAsBool("use_scale",false);
+            useScale[KA_COLOUR] = keyNode->GetAttributeValueAsInt("use_scale",0);
 
             attr = keyNode->GetAttribute("a");
             if (attr)
             {
                 specAction.SetBit(KA_ALPHA);
                 actions[KA_ALPHA] = attr->GetValueAsFloat() / 255.0f;
-                useScale[KA_ALPHA] = keyNode->GetAttributeValueAsBool("use_scale_alpha",false);
+                useScale[KA_ALPHA] = keyNode->GetAttributeValueAsInt("use_scale_alpha",0);
             }
         }
         else if (action == "alpha")
         {
             specAction.SetBit(KA_ALPHA);
             actions[KA_ALPHA] = keyNode->GetAttributeValueAsFloat("value") / 255.0f;
-            useScale[KA_ALPHA] = keyNode->GetAttributeValueAsBool("use_scale",false);
+            useScale[KA_ALPHA] = keyNode->GetAttributeValueAsInt("use_scale",0);
         }
         else if (action == "height")
         {
@@ -258,13 +258,13 @@ psEffectObjKeyFrame::psEffectObjKeyFrame(iDocumentNode *node, const psEffectObjK
             actions[KA_HEIGHT] = keyNode->GetAttributeValueAsFloat("value");
             if (actions[KA_HEIGHT] == 0.0f)
                 actions[KA_HEIGHT] = 0.001f;
-            useScale[KA_HEIGHT] = keyNode->GetAttributeValueAsBool("use_scale",false);
+            useScale[KA_HEIGHT] = keyNode->GetAttributeValueAsInt("use_scale",0);
         }
         else if (action == "padding")
         {
             specAction.SetBit(KA_PADDING);
             actions[KA_PADDING] = keyNode->GetAttributeValueAsFloat("value");
-            useScale[KA_PADDING] = keyNode->GetAttributeValueAsBool("use_scale",false);
+            useScale[KA_PADDING] = keyNode->GetAttributeValueAsInt("use_scale",0);
         }
         else if (action == "animate")
         {
@@ -276,7 +276,7 @@ psEffectObjKeyFrame::psEffectObjKeyFrame(iDocumentNode *node, const psEffectObjK
             else
                 actions[KA_ANIMATE] = -1;
 
-            useScale[KA_ANIMATE] = keyNode->GetAttributeValueAsBool("use_scale",false);
+            useScale[KA_ANIMATE] = keyNode->GetAttributeValueAsInt("use_scale",0);
         }
     }
 }
@@ -285,7 +285,7 @@ psEffectObjKeyFrame::~psEffectObjKeyFrame()
 {
 }
 
-bool psEffectObjKeyFrame::SetParamScalings(float scale)
+bool psEffectObjKeyFrame::SetParamScalings(const float* scale)
 {
     bool result = false;
     for (size_t i = 0; i < KA_VEC_COUNT; i++)
@@ -294,11 +294,11 @@ bool psEffectObjKeyFrame::SetParamScalings(float scale)
         {
             if (i < KA_COUNT)
             {
-                actions[i] = actions[i]*scale;
+                actions[i] = actions[i]*scale[useScale[i]-1];
             }
             if (i > KA_COUNT)
             {
-                vecActions[i-KA_COUNT] =  vecActions[i-KA_COUNT]*scale;
+                vecActions[i-KA_COUNT] =  vecActions[i-KA_COUNT]*scale[useScale[i]-1];
             }
             result = true; // At least one param where adjusted
         }
@@ -325,7 +325,7 @@ psEffectObjKeyFrameGroup* psEffectObjKeyFrameGroup::Clone() const
     return clone;
 }
 
-bool psEffectObjKeyFrameGroup::SetFrameParamScalings(float scale)
+bool psEffectObjKeyFrameGroup::SetFrameParamScalings(const float* scale)
 {
     bool result = false;
     for (size_t i = 0; i < keyFrames.GetSize(); i++)
@@ -542,7 +542,7 @@ bool psEffectObj::SetScaling(float scale, float aspect)
     return true;
 }
 
-bool psEffectObj::SetFrameParamScalings(float scale)
+bool psEffectObj::SetFrameParamScalings(const float* scale)
 {
     return keyFrames->SetFrameParamScalings(scale);
 }

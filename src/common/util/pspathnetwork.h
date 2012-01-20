@@ -117,7 +117,7 @@ public:
     int FindWaypointGroup(const char * groupName);
 
     /**
-     * Find waypoint by id
+     * Find path point by id
      */
     psPathPoint* FindPathPoint(int id);
 

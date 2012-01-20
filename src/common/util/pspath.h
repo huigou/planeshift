@@ -79,6 +79,9 @@ public:
     /// Set the previous point id
     void SetPrevious(int previous) { prevPointId = previous; }
 
+    /// Get the previous point id
+    int GetPreviousPointId() { return prevPointId; }
+
     int GetID() { return id; }
 
     const csVector3& GetPosition() { return pos; }

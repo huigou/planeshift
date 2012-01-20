@@ -428,7 +428,7 @@ void psSpell::Cast(gemActor *caster, float kFactor, Client *client) const
 
     if (!castingEffect.IsEmpty() && (castingDuration > 0 || caster->instantcast))
     {
-        psEffectMessage fx(0, castingEffect, csVector3(0,0,0), caster->GetEID(), target->GetEID(), castingDuration, 0, 0.0);
+        psEffectMessage fx(0, castingEffect, csVector3(0,0,0), caster->GetEID(), target->GetEID(), castingDuration, 0, 0.0f, 0.0f, 0.0f, 0.0f);
         fx.Multicast(caster->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE);
     }
 

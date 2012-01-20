@@ -3270,11 +3270,12 @@ PSF_IMPLEMENT_MSG_FACTORY(psEffectMessage,MSGTYPE_EFFECT);
 
 psEffectMessage::psEffectMessage(uint32_t clientNum, const csString &effectName,
                                  const csVector3 &effectOffset, EID anchorID,
-                                 EID targetID, uint32_t uid, float scale)
+                                 EID targetID, uint32_t uid, float scale1, float scale2, float scale3, float scale4)
 {
     msg.AttachNew(new MsgEntry(effectName.Length() + 1 + sizeof(csVector3)
-                  + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t)
-                  + (scale==0.0?0:sizeof(float)) ));
+                               + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t)
+                               + (scale4!=0.0?4*sizeof(float):(scale3!=0.0?3*sizeof(float):(scale2!=0.0?2*sizeof(float):(scale1!=0.0?sizeof(float):0))))));
+    
 
     msg->SetType(MSGTYPE_EFFECT);
     msg->clientnum = clientNum;
@@ -3287,9 +3288,21 @@ psEffectMessage::psEffectMessage(uint32_t clientNum, const csString &effectName,
     msg->Add(targetID.Unbox());
     msg->Add((uint32_t)0);
     msg->Add((uint32_t)uid);
-    if (scale != 0.0)
+    if (scale1 != 0.0 || scale2 != 0.0 || scale3 != 0.0 || scale4 != 0.0)
     {
-       msg->Add(scale);
+       msg->Add(scale1);
+    }
+    if (scale2 != 0.0 || scale3 != 0.0 || scale4 != 0.0)
+    {
+       msg->Add(scale2);
+    }
+    if (scale3 != 0.0 || scale4 != 0.0)
+    {
+       msg->Add(scale3);
+    }
+    if (scale4 != 0.0)
+    {
+       msg->Add(scale4);
     }
     valid = !(msg->overrun);
 }
@@ -3297,11 +3310,11 @@ psEffectMessage::psEffectMessage(uint32_t clientNum, const csString &effectName,
 psEffectMessage::psEffectMessage(uint32_t clientNum, const csString &effectName,
                                  const csVector3 &effectOffset, EID anchorID,
                                  EID targetID, uint32_t duration, uint32_t uid,
-                                 float scale)
+                                 float scale1, float scale2, float scale3, float scale4)
 {
     msg.AttachNew(new MsgEntry(effectName.Length() + 1 + sizeof(csVector3)
-                  + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t)
-                  + (scale==0.0?0:sizeof(float)) ));
+                               + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t)
+                               + (scale4!=0.0?4*sizeof(float):(scale3!=0.0?3*sizeof(float):(scale2!=0.0?2*sizeof(float):(scale1!=0.0?sizeof(float):0))))));
 
     msg->SetType(MSGTYPE_EFFECT);
     msg->clientnum = clientNum;
@@ -3314,9 +3327,21 @@ psEffectMessage::psEffectMessage(uint32_t clientNum, const csString &effectName,
     msg->Add(targetID.Unbox());
     msg->Add(duration);
     msg->Add(uid);
-    if (scale != 0.0)
+    if (scale1 != 0.0 || scale2 != 0.0 || scale3 != 0.0 || scale4 != 0.0)
     {
-       msg->Add(scale);
+       msg->Add(scale1);
+    }
+    if (scale2 != 0.0 || scale3 != 0.0 || scale4 != 0.0)
+    {
+       msg->Add(scale2);
+    }
+    if (scale3 != 0.0 || scale4 != 0.0)
+    {
+       msg->Add(scale3);
+    }
+    if (scale4 != 0.0)
+    {
+       msg->Add(scale4);
     }
 
     valid = !(msg->overrun);
@@ -3337,11 +3362,35 @@ psEffectMessage::psEffectMessage(MsgEntry* message)
     uid = message->GetUInt32();
     if (message->HasMore(sizeof(float)))
     {
-        scale = message->GetFloat();
+        scale[0] = message->GetFloat();
     }
     else
     {
-        scale = 0.0;
+        scale[0] = 0.0;
+    }
+    if (message->HasMore(sizeof(float)))
+    {
+        scale[1] = message->GetFloat();
+    }
+    else
+    {
+        scale[1] = 0.0;
+    }
+    if (message->HasMore(sizeof(float)))
+    {
+        scale[2] = message->GetFloat();
+    }
+    else
+    {
+        scale[2] = 0.0;
+    }
+    if (message->HasMore(sizeof(float)))
+    {
+        scale[3] = message->GetFloat();
+    }
+    else
+    {
+        scale[3] = 0.0;
     }
     valid = !(message->overrun);
 }
@@ -3350,13 +3399,13 @@ csString psEffectMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
 {
     csString msgtext;
 
-    msgtext.AppendFmt("Name: '%s' Offset: (%.3f, %.3f, %.3f) Anchor: %d Target: %d Duration: %d UID: %d Scale: %.3f",
-            name.GetDataSafe(),
-            offset.x, offset.y, offset.z,
-            anchorID.Unbox(),
-            targetID.Unbox(),
-            duration,
-            uid, scale);
+    msgtext.AppendFmt("Name: '%s' Offset: (%.3f, %.3f, %.3f) Anchor: %d Target: %d Duration: %d UID: %d Scale1: %.3f Scale2: %.3f Scale3: %.3f Scale4: %.3f",
+                      name.GetDataSafe(),
+                      offset.x, offset.y, offset.z,
+                      anchorID.Unbox(),
+                      targetID.Unbox(),
+                      duration,
+                      uid, scale[0],scale[1],scale[2],scale[3]);
 
     return msgtext;
 }

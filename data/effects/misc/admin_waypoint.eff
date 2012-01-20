@@ -29,11 +29,11 @@
                     <action name="rotate" x="0" y="0" z="0" />
                     <action name="scale" value="1" />
                     <action name="height" value="0.5" />
-                    <action name="topscale" value="1" use_scale="true" />
+                    <action name="topscale" value="1" use_scale="1" />
                     <action name="colour" r="10" g="200" b="10" />
                 </keyFrame>
                 <keyFrame time="1000">
-                    <action name="topscale" value="1.0" use_scale="true" />
+                    <action name="topscale" value="1.0" use_scale="1" />
                 </keyFrame>
             </obj>
         </effect>

@@ -2368,11 +2368,14 @@ public:
      *   @param anchorID the ID of the entity to anchor the effect to (0 for absolute anchor)
      *   @param targetID the ID of the entity that will be the target of the effect (0 for a target the same as the anchor)
      *   @param uid Optional ID that server can use to stop a particular Effect.
-     *   @param scale Used for scalable effects.
+     *   @param scale1 Used for scalable effects.
+     *   @param scale2 Used for scalable effects.
+     *   @param scale3 Used for scalable effects.
+     *   @param scale4 Used for scalable effects.
      */
     psEffectMessage(uint32_t clientNum, const csString &effectName,
                     const csVector3 &effectOffset, EID anchorID,
-                    EID targetID, uint32_t uid, float scale = 0.0);
+                    EID targetID, uint32_t uid, float scale1 = 0.0, float scale2 = 0.0, float scale3 = 0.0, float scale4 = 0.0);
 
     /**  @brief Constructs a new message that will tell the client to render a spell effect - not just a normal effect
      *   @param clientNum the client to send the effect message to
@@ -2382,11 +2385,14 @@ public:
      *   @param targetID the ID of the entity that will be the target of the effect (0 for a target the same as the anchor)
      *   @param duration the duration of the effect
      *   @param uid Optional ID that server can use to stop a particular Effect.
-     *   @param scale Used for scalable effects.
+     *   @param scale1 Used for scalable effects.
+     *   @param scale2 Used for scalable effects.
+     *   @param scale3 Used for scalable effects.
+     *   @param scale4 Used for scalable effects.
      */
     psEffectMessage(uint32_t clientNum, const csString &effectName,
                     const csVector3 &effectOffset, EID anchorID,
-                    EID targetID, uint32_t duration, uint32_t uid, float scale = 0.0);
+                    EID targetID, uint32_t duration, uint32_t uid, float scale1 = 0.0, float scale2 = 0.0, float scale3 = 0.0, float scale4 = 0.0);
 
     /**  @brief Translates a generic message to a psEffectMessage
      *   @param message the generic message to translate
@@ -2409,7 +2415,7 @@ public:
     EID       targetID;
     uint32_t  duration;
     uint32_t  uid;
-    float     scale; // Scale of the effect, not sent on network if 0.
+    float     scale[4]; // Scales of the effect, not sent on network if 0.
 };
 
 //--------------------------------------------------------------------------

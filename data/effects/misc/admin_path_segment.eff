@@ -26,15 +26,16 @@
                 <dir>none</dir>
                 <death>none</death>
                 <keyFrame time="0">
-                    <action name="position" x="0" y="0.01" z="0" />
-                    <action name="rotate" x="0" y="0" z="0" />
+                    <action name="position" x="0" y="0.00" z="0" />
+                    <action name="rotate" x="0" y="1" z="0" use_scale="1" />
                     <action name="scale" value="1" />
                     <action name="height" value="0.5" />
-                    <action name="topscale" value="1.0" use_scale="1" />
+                    <action name="topscale" value="1.0" use_scale="3" />
                     <action name="colour" r="10" g="200" b="10" />
                 </keyFrame>
                 <keyFrame time="1000">
-                    <action name="topscale" value="1.0" use_scale="1" />
+                    <action name="position" x="1" y="0.00" z="0" use_scale="2" />
+                    <action name="topscale" value="1.0" use_scale="4" />
                 </keyFrame>
             </obj>
         </effect>
