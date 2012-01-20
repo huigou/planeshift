@@ -3581,7 +3581,8 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
         psItemStats* resultStats = cacheManager->GetBasicItemStatsByID( result );
         if (resultStats)
         {
-            psserver->SendSystemOK(clientNum,"You made %i %s with quality %f.", resultQty, resultStats->GetName(), currentQuality );
+            //we clamp the quality to the maximum allowed by the system
+            psserver->SendSystemOK(clientNum,"You made %i %s with quality %.0f.", resultQty, resultStats->GetName(), currentQuality > 300 ? 300.0f : currentQuality );
         }
         else
         {
