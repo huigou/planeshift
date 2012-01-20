@@ -1675,7 +1675,7 @@ if(Damage > Actor:MaxHP*0.3)
 
 INSERT INTO command_group_assignment VALUES( "/npcclientquit", 30 );
 INSERT INTO command_group_assignment VALUES( "/percept", 30 );
-
+ALTER TABLE `quest_scripts` MODIFY COLUMN `script` TEXT  NOT NULL;
 
 
 # Insert your upgrade before this line. Remember when you set a new db_version
