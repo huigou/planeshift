@@ -124,7 +124,7 @@ public:
      */
     unsigned int RenderEffect(const csString & effectName, const csVector3 & offset, iMeshWrapper * attachPos, 
                               iMeshWrapper * attachTarget=0, const csVector3 & up=csVector3(0,1,0), 
-                              const unsigned int uniqueIDOverride = 0, bool rotateWithMesh = false, const float scale = 0.0);
+                              const unsigned int uniqueIDOverride = 0, bool rotateWithMesh = false, const float* scale = NULL);
 
     /** begins rendering an effect that isn't attached to anything
      *   @param effectName the name of the effect to render
@@ -138,7 +138,7 @@ public:
      */
     unsigned int RenderEffect(const csString & effectName, iSector * sector, const csVector3 & pos, 
                               iMeshWrapper * attachTarget, const csVector3 & up=csVector3(0,1,0), 
-                              const unsigned int uniqueIDOverride = 0, const float scale = 0.0);
+                              const unsigned int uniqueIDOverride = 0, const float* scale = NULL);
 
     /** begins rendering an effect that isn't attached to anything
      *   @param effectName the name of the effect to render
@@ -152,7 +152,7 @@ public:
      */
     unsigned int RenderEffect(const csString & effectName, iSectorList * sectors, const csVector3 & pos, 
                               iMeshWrapper * attachTarget=0, const csVector3 & up=csVector3(0,1,0), 
-                              const unsigned int uniqueIDOverride = 0, const float scale = 0.0);
+                              const unsigned int uniqueIDOverride = 0, const float* scale = NULL);
 
     unsigned int AttachLight(const char* name, const csVector3& pos,
   	float radius, const csColor& colour, csRef<iMeshWrapper> mw);

@@ -291,7 +291,7 @@ bool psEffectManager::DeleteEffect(unsigned int effectID)
 
 unsigned int psEffectManager::RenderEffect(const csString & effectName, const csVector3 & offset, 
                                            iMeshWrapper * attachPos, iMeshWrapper * attachTarget, const csVector3 & up, 
-                                           const unsigned int uniqueIDOverride, bool rotateWithMesh, const float scale)
+                                           const unsigned int uniqueIDOverride, bool rotateWithMesh, const float* scale)
 {
 #ifndef DONT_DO_EFFECTS
     if (!attachPos)
@@ -302,7 +302,7 @@ unsigned int psEffectManager::RenderEffect(const csString & effectName, const cs
     if (currEffect != 0)
     {
         currEffect = currEffect->Clone();
-        if (scale != 0.0f)
+        if (scale != NULL)
         {
             if (!currEffect->SetFrameParamScalings(scale))
             {
@@ -322,7 +322,7 @@ unsigned int psEffectManager::RenderEffect(const csString & effectName, const cs
 
 unsigned int psEffectManager::RenderEffect(const csString & effectName, iSector * sector, const csVector3 & pos, 
                                            iMeshWrapper * attachTarget, const csVector3 & up, 
-                                           const unsigned int uniqueIDOverride, const float scale)
+                                           const unsigned int uniqueIDOverride, const float* scale)
 {
 #ifndef DONT_DO_EFFECTS
     // check if it's a single effect
@@ -330,7 +330,7 @@ unsigned int psEffectManager::RenderEffect(const csString & effectName, iSector 
     if (currEffect != 0)
     {
         currEffect = currEffect->Clone();
-        if (scale != 0.0f)
+        if (scale != NULL)
         {
             if (!currEffect->SetFrameParamScalings(scale))
             {
@@ -349,7 +349,7 @@ unsigned int psEffectManager::RenderEffect(const csString & effectName, iSector 
 
 unsigned int psEffectManager::RenderEffect(const csString & effectName, iSectorList * sectors, const csVector3 & pos, 
                                            iMeshWrapper * attachTarget, const csVector3 & up, 
-                                           const unsigned int uniqueIDOverride, const float scale)
+                                           const unsigned int uniqueIDOverride, const float* scale)
 {
 #ifndef DONT_DO_EFFECTS
     // check if it's a single effect
@@ -358,7 +358,7 @@ unsigned int psEffectManager::RenderEffect(const csString & effectName, iSectorL
     {
         currEffect = currEffect->Clone();
 
-		if (scale != 0.0f)
+        if (scale != NULL)
         {
             if (!currEffect->SetFrameParamScalings(scale))
             {

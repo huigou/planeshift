@@ -128,7 +128,7 @@ public:
 
     /** Set the scalings for each frame parameter.
      */
-    bool SetFrameParamScalings(float scale);
+    bool SetFrameParamScalings(const float* scale);
 
     /** returns the animation length of the effect.
      *   @return the animation length (max anim length of effect objs)
