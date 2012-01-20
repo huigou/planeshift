@@ -23,7 +23,7 @@ DROP TABLE IF EXISTS `quest_scripts`;
 CREATE TABLE `quest_scripts` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `quest_id` int(10) NOT NULL default '0' COMMENT 'FK to quests table, or -1 for KA scripts.',
-  `script` blob COMMENT 'The script for the quest, parsed by questmanager.cpp',
+  `script` TEXT COMMENT 'The script for the quest, parsed by questmanager.cpp',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=212 /*!40100 DEFAULT CHARSET=utf8*/;
 
