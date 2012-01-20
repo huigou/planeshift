@@ -66,7 +66,7 @@ int main(int argc, char **argv)
     
     if (!psserver->Initialize(object_reg))
     {
-        CPrintf (CON_ERROR, COL_RED "error while initializing server!\n" COL_NORMAL);
+        CPrintf (CON_ERROR, COL_RED "Error while initializing server!\n" COL_NORMAL);
 
         // Cleanup before exit
         delete psserver;
