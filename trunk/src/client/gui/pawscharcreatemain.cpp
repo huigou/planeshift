@@ -909,7 +909,7 @@ bool pawsCreationMain::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/,
             if ( csfirstname.Length() < 3 || !FilterName(firstname->GetText()) )
             {
                 psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate(
-                                      "First name must contain more than two letters"));
+                                      "First name must contain more than two letters and contain only alphabet letters"));
                 error.FireEvent();
                 return true;
             }
@@ -918,7 +918,7 @@ bool pawsCreationMain::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/,
             if ( cslastname.Length() < 3 || !FilterName(lastname->GetText()) )
             {
                 psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate(
-                                      "Last name must contain more than two letters"));
+                                      "Last name must contain more than two letters and contain only alphabet letters"));
                 error.FireEvent();
                 return true;
             }
