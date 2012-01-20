@@ -1404,7 +1404,7 @@ void Behavior::SetCurrentStep(int step)
 {
     if (step < 0 || step >= sequence.GetSize())
     {
-        Error3("Behavior trying to set current step to value %d that is outside sequence 0..%d",
+        Error3("Behavior trying to set current step to value %d that is outside sequence 0..%zu",
                step,sequence.GetSize());
         return;
     }
