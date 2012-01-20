@@ -236,6 +236,41 @@ rule MsvcGenName1 { }
 rule MsvcUsePCH { MsvcUsePCH1 $(1) : $(2) ; }
 rule MsvcUsePCH1 { }
 
+## MsvcParallelCompile target
+##   Enable MSVC parallel compilation for a specific target. Useful for targets
+##   that are usually build without any concurrency (e.g. because they are a
+##   dependency of many other targets).
+##   Takes care of only enabling the feature when supported by compiler and
+##   build mode.
+rule MsvcParallelCompile 
+{
+# Pad the given VC version with zeroes for comparison purposes.
+  local padded_vcver ;
+  if "$(MSVC_VERSION)" = "71"
+  {
+    padded_vcver = "071" ;
+  }
+  else if [ Match ^([0-9][0-9])$ : $(MSVC_VERSION) ]
+  {
+    padded_vcver = "$(MSVC_VERSION)0" ;
+  }
+  else if [ Match ^([0-9])$ : $(MSVC_VERSION) ]
+  {
+    padded_vcver = "0$(MSVC_VERSION)0" ;
+  }
+  else
+    padded_vcver = "$(MSVC_VERSION)" ;
+
+  if $(padded_vcver) >= 090
+  {
+    # Enable compiler-provided multithreading.
+    # Only enable in release build as the feature is incompatible with certain
+    # flags used in debug mode.
+    # Also, feature is only available on VC 9.0 and later.
+    MsvcCFlags $(1) : /MP : release ;
+  }
+}
+
 ## "Properties" system
 ## Properties are values attached to msvcgen project types or targets. Some
 ## properties have a special meaning to the msvcgen process, but otherwise
