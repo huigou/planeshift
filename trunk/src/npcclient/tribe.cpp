@@ -366,7 +366,7 @@ void Tribe::Advance(csTicks when, EventManager *eventmgr)
         
         // We need to help tribes that have no members with some resources
         // so that they can spawn the first entity
-        if (AliveCount() <= 0)
+        if (AliveCount() <= 0 && CountResource(wealthResourceName) < reproductionCost)
         {
             growth = wealthResourceGrowth;
         }
