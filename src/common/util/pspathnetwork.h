@@ -193,20 +193,30 @@ public:
 
 
     /**
+     * Create a new waypoint and insert in db.
+     */
+    Waypoint* CreateWaypoint( iDataConnection *db, csString& name, csVector3& pos, csString& sectorName, float radius, csString& flags);
+
+    /**
      * Create a new waypoint
      */
-    Waypoint* CreateWaypoint(csString& name, csVector3& pos, csString& sectorName, float radius, csString& flags);
-
+    Waypoint* CreateWaypoint( csString& name, csVector3& pos, csString& sectorName, float radius, csString& flags);
+    
     /**
      * Create a new path/connection/link between two waypoints
      */
-    psPath* CreatePath(const csString& name, Waypoint* wp1, Waypoint* wp2, const csString& flags);
+    psPath* CreatePath(iDataConnection *db, const csString& name, Waypoint* wp1, Waypoint* wp2, const csString& flags);
+
+    /**
+     * Create a new path/connection/link between two waypoints from an external created path object
+     */
+    psPath* CreatePath(iDataConnection *db, psPath * path);
 
     /**
      * Create a new path/connection/link between two waypoints from an external created path object
      */
     psPath* CreatePath(psPath * path);
-
+    
     /**
      * Get next unique number for waypoint checking.
      */

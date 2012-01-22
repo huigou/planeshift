@@ -442,11 +442,13 @@ public:
 
     typedef enum 
     {
+        PATH_CREATE,
         PATH_RENAME,
         PATH_SET_FLAG,
         POINT_ADJUSTED,
         WAYPOINT_ADD_ALIAS,
         WAYPOINT_ADJUSTED,
+        WAYPOINT_CREATE,
         WAYPOINT_RADIUS,
         WAYPOINT_RENAME,
         WAYPOINT_REMOVE_ALIAS,
@@ -460,10 +462,16 @@ public:
     csString  string;     ///< The string for add alias/flag set
     bool      enable;     ///< Enable or disable flags
     float     radius;     ///< The radius
-
+    csString  flags;      ///< String with flags
+    uint32_t  startId;
+    uint32_t  stopId;
     
     // Create psMessageBytes struct for outbound use
     
+    /** Generic message to do a command where input is a path.
+     */
+    psPathNetworkMessage(Command command, const psPath* path);
+
     /** Generic message to do a command where input is a string and a bool for a path.
      */
     psPathNetworkMessage(Command command, const psPath* path, const csString& string);

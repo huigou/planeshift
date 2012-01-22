@@ -87,7 +87,7 @@ public:
     void SetPrevious(int previous) { prevPointId = previous; }
 
     /// Get the previous point id
-    int GetPreviousPointId() { return prevPointId; }
+    int GetPreviousPointId() const { return prevPointId; }
 
     int GetID() const { return id; }
 
@@ -116,6 +116,8 @@ private:
     csString               sectorName;       /**< Should really only be the pointer, but
                                                   since sector might not be available
                                                   when loaded we use the name for now.**/
+
+    
     float                  radius;           ///< The radious of ths path point. Extrapolated
                                              ///< from start to end waypoint radiuses.
 
@@ -231,7 +233,7 @@ public:
     virtual int GetNumPoints () { return (int)points.GetSize(); }
 
     /// Get name of the path
-    virtual const char* GetName() { return name.GetDataSafe(); }
+    virtual const char* GetName() const { return name.GetDataSafe(); }
 
     /// Get ID of the path
     int GetID() const { return id; }

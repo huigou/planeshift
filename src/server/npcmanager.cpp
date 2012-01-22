@@ -2850,6 +2850,26 @@ void NPCManager::PathRename(const psPath* path, const csString& name)
     msg.Multicast(superclients, -1, PROX_LIST_ANY_RANGE);
 }
 
+void NPCManager::WaypointCreate(const Waypoint* wp)
+{
+    Debug2(LOG_SUPERCLIENT, 0, "NPCManager create waypoint %d\n",
+           wp->GetID());
+    
+    psPathNetworkMessage msg(psPathNetworkMessage::WAYPOINT_CREATE, wp);
+    
+    msg.Multicast(superclients, -1, PROX_LIST_ANY_RANGE);
+}
+
+void NPCManager::PathCreate(const psPath* path)
+{
+    Debug2(LOG_SUPERCLIENT, 0, "NPCManager create path %d\n",
+           path->GetID());
+    
+    psPathNetworkMessage msg(psPathNetworkMessage::PATH_CREATE, path);
+    
+    msg.Multicast(superclients, -1, PROX_LIST_ANY_RANGE);
+}
+
 /*------------------------------------------------------------------*/
 
 psNPCManagerTick::psNPCManagerTick(int offsetticks, NPCManager *c)

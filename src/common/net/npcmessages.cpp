@@ -1177,6 +1177,27 @@ psPathNetworkMessage::psPathNetworkMessage( Command command, const psPath* path,
     msg->ClipToCurrentSize();
 }
 
+psPathNetworkMessage::psPathNetworkMessage( Command command, const psPath* path)
+{
+    msg.AttachNew(new MsgEntry( sizeof(uint8_t) + 1000 , PRIORITY_HIGH ));
+    msg->clientnum = 0;
+    msg->SetType(MSGTYPE_PATH_NETWORK);
+
+    msg->Add( (uint8_t)command );
+    msg->Add( (uint32_t)path->GetID() );
+
+    if (command == PATH_CREATE)
+    {
+        msg->Add( path->GetName() );
+        msg->Add( path->GetFlags() );
+        msg->Add( (uint32_t)path->start->GetID() );
+        msg->Add( (uint32_t)path->end->GetID() );
+        // Points are added in separate messages
+    }
+
+    msg->ClipToCurrentSize();
+}
+
 psPathNetworkMessage::psPathNetworkMessage( Command command, const psPath* path, const csString& string, bool enable )
 {
     msg.AttachNew(new MsgEntry( sizeof(uint8_t) + 1000 , PRIORITY_HIGH ));
@@ -1216,6 +1237,13 @@ psPathNetworkMessage::psPathNetworkMessage( Command command, const Waypoint* way
     msg->Add( waypoint->GetPosition() );
     msg->Add( waypoint->GetSector(NetBase::GetAccessPointers()->engine) );
 
+    // Some more stuff to set when created
+    if (command == WAYPOINT_CREATE)
+    {
+        msg->Add( waypoint->GetName() );
+        msg->Add( waypoint->GetRadius() );
+        msg->Add( waypoint->GetFlags() );
+    }
     msg->ClipToCurrentSize();
 }
 
@@ -1260,7 +1288,8 @@ psPathNetworkMessage::psPathNetworkMessage( Command command, const Waypoint* way
 }
 
 
-psPathNetworkMessage::psPathNetworkMessage( MsgEntry* msgEntry ) 
+psPathNetworkMessage::psPathNetworkMessage( MsgEntry* msgEntry )
+    : id(0), sector(NULL), enable(false), radius(0.0), startId(0), stopId(0)
 {
    if ( !msgEntry )
        return;
@@ -1269,6 +1298,13 @@ psPathNetworkMessage::psPathNetworkMessage( MsgEntry* msgEntry )
 
    switch (command)
    {
+   case PATH_CREATE:
+       id = msgEntry->GetUInt32();
+       string = msgEntry->GetStr(); // Name
+       flags = msgEntry->GetStr();
+       startId = msgEntry->GetUInt32();
+       stopId = msgEntry->GetUInt32();
+       break;
    case PATH_SET_FLAG:
    case WAYPOINT_SET_FLAG:
        id = msgEntry->GetUInt32();
@@ -1287,6 +1323,14 @@ psPathNetworkMessage::psPathNetworkMessage( MsgEntry* msgEntry )
        id = msgEntry->GetUInt32();
        string = msgEntry->GetStr();
        break;
+   case WAYPOINT_CREATE:
+       id = msgEntry->GetUInt32();
+       position = msgEntry->GetVector3();
+       sector = msgEntry->GetSector();
+       string = msgEntry->GetStr(); // Name
+       radius = msgEntry->GetFloat();
+       flags = msgEntry->GetStr();
+       break;
    case WAYPOINT_ADJUSTED:
        id = msgEntry->GetUInt32();
        position = msgEntry->GetVector3();
@@ -1304,6 +1348,10 @@ csString psPathNetworkMessage::ToString(NetBase::AccessPointers* /*accessPointer
     csString str;
     switch (command)
     {
+    case PATH_CREATE:
+        str.AppendFmt("Cmd: PATH_CREATE ID: %d String: %s Flags: %s StartID: %d StopID: %d",
+                      id, string.GetDataSafe(), flags.GetDataSafe(), startId, stopId);
+        break;
     case PATH_RENAME:
         str.AppendFmt("Cmd: PATH_RENAME ID: %d String: %s", id, string.GetDataSafe());
         break;
@@ -1318,6 +1366,9 @@ csString psPathNetworkMessage::ToString(NetBase::AccessPointers* /*accessPointer
         break;
     case WAYPOINT_ADJUSTED:
         str.AppendFmt("Cmd: WAYPOINT_ADJUSTED ID: %d Position: %s", id, toString(position,sector).GetDataSafe());
+        break;
+    case WAYPOINT_CREATE:
+        str.AppendFmt("Cmd: WAYPOINT_CREATE ID: %d Position: %s Name: %s Radius: %.2f Flags: %s", id, toString(position, sector).GetDataSafe(), string.GetDataSafe(), radius, flags.GetDataSafe());
         break;
     case WAYPOINT_RADIUS:
         str.AppendFmt("Cmd: WAYPOINT_RADIUS ID: %d Radius: %.2f", id, radius);

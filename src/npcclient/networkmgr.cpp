@@ -452,6 +452,40 @@ void NetworkManager::HandlePathNetwork(MsgEntry *me)
     
     switch (msg.command)
     {
+    case psPathNetworkMessage::PATH_CREATE:
+        {
+            psPath* path = new psLinearPath(msg.id,msg.string,msg.flags);
+            if (path)
+            {
+                Waypoint* startWaypoint = pathNetwork->FindWaypoint(msg.startId);
+                if (!startWaypoint)
+                {
+                    Error2("Failed to find start waypoint %d\n",msg.startId);
+                    return;
+                }
+                
+                Waypoint* stopWaypoint = pathNetwork->FindWaypoint(msg.stopId);
+                if (!stopWaypoint)
+                {
+                    Error2("Failed to find stop waypoint %d\n",msg.stopId);
+                    return;
+                }
+
+                path->SetStart(startWaypoint);
+                path->SetEnd(stopWaypoint);
+
+                if (pathNetwork->CreatePath(path) != NULL)
+                {
+                    Debug2(LOG_NET, 0, "Created path %d.\n", msg.id);
+                }
+            }
+            else
+            {
+                Error2("Failed to create path %d.\n", msg.id);
+            }
+            
+        }
+        break;
     case psPathNetworkMessage::PATH_RENAME:
         {
             psPath* path = pathNetwork->FindPath(msg.id);
@@ -527,6 +561,24 @@ void NetworkManager::HandlePathNetwork(MsgEntry *me)
                 wp->Adjust(msg.position, msg.sector);
                 
                 Debug3(LOG_NET, 0, "Adjusted waypoint %d to %s.\n",
+                       msg.id, toString(msg.position, msg.sector).GetDataSafe());
+            }
+            else
+            {
+                Error2("Failed to find waypoint %d for adjust\n", msg.id);
+            }
+            
+        }
+        break;
+    case psPathNetworkMessage::WAYPOINT_CREATE:
+        {
+            csString sectorName = msg.sector->QueryObject()->GetName();
+            Waypoint* wp = pathNetwork->CreateWaypoint(msg.string, msg.position, sectorName, msg.radius, msg.flags);
+            wp->SetID(msg.id);
+            
+            if (wp)
+            {
+                Debug3(LOG_NET, 0, "Created waypoint %d at %s.\n",
                        msg.id, toString(msg.position, msg.sector).GetDataSafe());
             }
             else

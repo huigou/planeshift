@@ -313,7 +313,7 @@ bool Waypoint::SetFlag(const csString &flagstr, bool enable)
     return true;
 }
 
-csString Waypoint::GetFlags()
+csString Waypoint::GetFlags() const
 {
     csString flagStr;
     bool added = false;
@@ -509,6 +509,12 @@ bool Waypoint::RemoveAlias(iDataConnection * db, csString alias)
     RemoveAlias(alias);
     return true;
 }
+
+void Waypoint::SetID(int id)
+{
+    loc.id = id;
+}
+
 
 bool Waypoint::Adjust(iDataConnection * db, csVector3 & pos, csString sector)
 {
