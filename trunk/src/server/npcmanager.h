@@ -53,6 +53,7 @@ class gemNPC;
 class PetOwnerSession;
 class psPathPoint;
 class Waypoint;
+class psPath;
 
 class NPCManager : public MessageManager<NPCManager>
 {
@@ -178,15 +179,59 @@ public:
 
 
     /** Notify superclients that a waypoint where  adjusted.
-     * @param wp The waypoint that has been adjusted
+     * @param wp The waypoint that has been adjusted.
      */
     void WaypointAdjusted(Waypoint* wp);
 
     /** Notify superclients that a pathpoint where adjusted. 
-     * @param point The pathpoint that has been adjusted
+     * @param point The pathpoint that has been adjusted.
      */
     void PathPointAdjusted(psPathPoint* point);
 
+    /** Notify superclients that a alias has been added to a waypoint.
+     * @param wp The waypoint that got a new alias.
+     * @param alias The alias that was added.
+     */
+    void WaypointAddAlias(const Waypoint* wp, const csString& alias);
+
+    /** Notify superclients that a alias has been removed from a waypoint.
+     * @param wp The waypoint that a alias where removed.
+     * @param alias The alias that was removed.
+     */
+    void WaypointRemoveAlias(const Waypoint* wp, const csString& alias);
+
+    /** Notify superclients that a flag has been changed for waypoint.
+     * @param wp The waypoint that where changed.
+     * @param flag The flag that where changed.
+     * @param enable True if the flag where enabled.
+     */
+    void WaypointSetFlag(const Waypoint* wp, const csString& flag, bool enable);
+
+    /** Notify superclients that a flag has been changed for a path.
+     * @param path The path that where changed.
+     * @param flag The flag that where changed.
+     * @param enable True if the flag where enabled.
+     */
+    void PathSetFlag(const psPath* path, const csString& flag, bool enable);
+
+    /** Notify superclients that a waypoint has changed radius.
+     * @param waypoint The waypoint that where changed.
+     * @param radius  The new radius.
+     */
+    void WaypointRadius(const Waypoint* waypoint, float radius);
+
+    /** Notify superclients that a waypoint has been renamed.
+     * @param waypoint The waypoint that where changed.
+     * @param name  The new name.
+     */
+    void WaypointRename(const Waypoint* waypoint, const csString& name);
+
+    /** Notify superclients that a path has been renamed.
+     * @param path The path that where changed.
+     * @param name The new name.
+     */
+    void PathRename(const psPath* path, const csString& name);
+    
 protected:
 
     /// Handle a login message from a superclient.

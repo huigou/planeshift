@@ -46,10 +46,21 @@ Location::~Location()
 
 iSector* Location::GetSector(iEngine * engine)
 {
+    // Return cached value
     if (sector) return sector;
     
+    // Store cache value
     sector = engine->FindSector(sectorName.GetDataSafe());
     return sector;
+}
+
+iSector* Location::GetSector(iEngine * engine) const
+{
+    // Return cached value
+    if (sector) return sector;
+
+    // Just return the looked up value
+    return engine->FindSector(sectorName.GetDataSafe());
 }
 
 const csBox2& Location::GetBoundingBox() const

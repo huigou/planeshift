@@ -452,18 +452,36 @@ void NetworkManager::HandlePathNetwork(MsgEntry *me)
     
     switch (msg.command)
     {
-    case psPathNetworkMessage::WAYPOINT_ADJUSTED:
+    case psPathNetworkMessage::PATH_RENAME:
         {
-            Waypoint* wp = pathNetwork->FindWaypoint(msg.id);
-            if (wp)
+            psPath* path = pathNetwork->FindPath(msg.id);
+            if (path)
             {
-                wp->Adjust(msg.position,msg.sector);
+                path->Rename(msg.string);
                 
-                Debug3(LOG_NET,0,"Adjusted waypoint %d to %s.\n",msg.id,toString(msg.position,msg.sector).GetDataSafe());
+                Debug3(LOG_NET, 0, "Set name %s for path %d.\n",
+                       msg.string.GetDataSafe(), msg.id);
             }
             else
             {
-                Error2("Failed to find waypoint %d for adjust\n",msg.id);
+                Error2("Failed to find path %d for rename\n", msg.id);
+            }
+            
+        }
+        break;
+    case psPathNetworkMessage::PATH_SET_FLAG:
+        {
+            psPath* path = pathNetwork->FindPath(msg.id);
+            if (path)
+            {
+                path->SetFlag(msg.string, msg.enable);
+                
+                Debug4(LOG_NET, 0, "Set flag %s for path %d to %s.\n",
+                       msg.string.GetDataSafe(), msg.id, msg.enable?"TRUE":"FALSE");
+            }
+            else
+            {
+                Error2("Failed to find path %d for set flag\n", msg.id);
             }
             
         }
@@ -473,14 +491,118 @@ void NetworkManager::HandlePathNetwork(MsgEntry *me)
             psPathPoint* point = pathNetwork->FindPathPoint(msg.id);
             if (point)
             {
-                point->Adjust(msg.position,msg.sector);
+                point->Adjust(msg.position, msg.sector);
                 
-                Debug3(LOG_NET,0,"Adjusted pathpoint %d to %s.\n",msg.id,toString(msg.position,msg.sector).GetDataSafe());
+                Debug3(LOG_NET, 0, "Adjusted pathpoint %d to %s.\n",
+                       msg.id, toString(msg.position, msg.sector).GetDataSafe());
             }
             else
             {
-                Error2("Failed to find pathpoint %d for adjust\n",msg.id);
+                Error2("Failed to find pathpoint %d for adjust\n", msg.id);
             }
+        }
+        break;
+    case psPathNetworkMessage::WAYPOINT_ADD_ALIAS:
+        {
+            Waypoint* wp = pathNetwork->FindWaypoint(msg.id);
+            if (wp)
+            {
+                wp->AddAlias(msg.string);
+                
+                Debug3(LOG_NET, 0, "Added alias %s to waypoint %d.\n",
+                       msg.string.GetDataSafe(), msg.id);
+            }
+            else
+            {
+                Error2("Failed to find waypoint %d for add alias\n", msg.id);
+            }
+            
+        }
+        break;
+    case psPathNetworkMessage::WAYPOINT_ADJUSTED:
+        {
+            Waypoint* wp = pathNetwork->FindWaypoint(msg.id);
+            if (wp)
+            {
+                wp->Adjust(msg.position, msg.sector);
+                
+                Debug3(LOG_NET, 0, "Adjusted waypoint %d to %s.\n",
+                       msg.id, toString(msg.position, msg.sector).GetDataSafe());
+            }
+            else
+            {
+                Error2("Failed to find waypoint %d for adjust\n", msg.id);
+            }
+            
+        }
+        break;
+    case psPathNetworkMessage::WAYPOINT_RADIUS:
+        {
+            Waypoint* wp = pathNetwork->FindWaypoint(msg.id);
+            if (wp)
+            {
+                wp->SetRadius(msg.radius);
+                wp->RecalculateEdges(npcclient->GetWorld(), npcclient->GetEngine());
+                
+                Debug3(LOG_NET, 0, "Set radius %.2f for waypoint %d.\n",
+                       msg.radius, msg.id);
+            }
+            else
+            {
+                Error2("Failed to find waypoint %d for radius\n", msg.id);
+            }
+            
+        }
+        break;
+    case psPathNetworkMessage::WAYPOINT_RENAME:
+        {
+            Waypoint* waypoint = pathNetwork->FindWaypoint(msg.id);
+            if (waypoint)
+            {
+                waypoint->Rename(msg.string);
+                
+                Debug3(LOG_NET, 0, "Set name %s for waypoint %d.\n",
+                       msg.string.GetDataSafe(), msg.id);
+            }
+            else
+            {
+                Error2("Failed to find waypoint %d for rename\n", msg.id);
+            }
+            
+        }
+        break;
+    case psPathNetworkMessage::WAYPOINT_REMOVE_ALIAS:
+        {
+            Waypoint* wp = pathNetwork->FindWaypoint(msg.id);
+            if (wp)
+            {
+                wp->RemoveAlias(msg.string);
+                
+                Debug3(LOG_NET, 0, "Removed alias %s from waypoint %d.\n",
+                       msg.string.GetDataSafe(), msg.id);
+            }
+            else
+            {
+                Error2("Failed to find waypoint %d for remove alias\n", msg.id);
+            }
+            
+        }
+        break;
+    case psPathNetworkMessage::WAYPOINT_SET_FLAG:
+        {
+            Waypoint* wp = pathNetwork->FindWaypoint(msg.id);
+            if (wp)
+            {
+                wp->SetFlag(msg.string, msg.enable);
+                
+                Debug4(LOG_NET, 0, "Set flag %s for waypoint %d to %s.\n",
+                       msg.string.GetDataSafe(), msg.id, msg.enable?"TRUE":"FALSE");
+            }
+            else
+            {
+                Error2("Failed to find waypoint %d for set flag.\n", msg.id);
+            }
+            
         }
         break;
     }

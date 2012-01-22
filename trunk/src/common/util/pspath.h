@@ -89,10 +89,11 @@ public:
     /// Get the previous point id
     int GetPreviousPointId() { return prevPointId; }
 
-    int GetID() { return id; }
+    int GetID() const { return id; }
 
-    const csVector3& GetPosition() { return pos; }
+    const csVector3& GetPosition() const { return pos; }
     iSector * GetSector(iEngine *engine);
+    iSector * GetSector(iEngine *engine) const;
     float GetRadius();
 
     void SetWaypoint(Waypoint* waypoint);
@@ -233,7 +234,7 @@ public:
     virtual const char* GetName() { return name.GetDataSafe(); }
 
     /// Get ID of the path
-    int GetID() { return id; }
+    int GetID() const { return id; }
 
     /// Rename the path and update the db
     bool Rename(iDataConnection * db,const char* name);
@@ -258,6 +259,9 @@ public:
 
     /// Set the flags from a string and update the db.
     bool SetFlag(iDataConnection * db, const csString &flagstr, bool enable);
+
+    /// Set the flags from a string
+    bool SetFlag(const csString &flagstr, bool enable);
 
     /// Get all points in the given sector for this path
     size_t FindPointsInSector(iEngine * engine, iSector *sector, csList<psPathPoint*>& list);

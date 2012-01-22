@@ -6248,9 +6248,13 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
             }
 
             // Create the alias in db
-            wp->CreateAlias(db, data->waypoint);
-            psserver->SendSystemInfo( me->clientnum, "Added alias %s to waypoint %s(%d)",
-                                      data->waypoint.GetDataSafe(),wp->GetName(),wp->GetID());
+            if (wp->CreateAlias(db, data->waypoint))
+            {
+                psserver->npcmanager->WaypointAddAlias(wp,data->waypoint);
+            
+                psserver->SendSystemInfo( me->clientnum, "Added alias %s to waypoint %s(%d)",
+                                          data->waypoint.GetDataSafe(),wp->GetName(),wp->GetID());
+            }
         }
         else
         {
@@ -6270,9 +6274,13 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
 
 
             // Remove the alias from db
-            wp->RemoveAlias(db, data->waypoint);
-            psserver->SendSystemInfo( me->clientnum, "Removed alias %s from waypoint %s(%d)",
-                                      data->waypoint.GetDataSafe(),wp->GetName(),wp->GetID());
+            if (wp->RemoveAlias(db, data->waypoint))
+            {
+                psserver->npcmanager->WaypointRemoveAlias(wp,data->waypoint);
+                
+                psserver->SendSystemInfo( me->clientnum, "Removed alias %s from waypoint %s(%d)",
+                                          data->waypoint.GetDataSafe(),wp->GetName(),wp->GetID());
+            }
         }
     }
     else if (data->subCmd == "flagset" || data->subCmd == "flagclear")
@@ -6299,6 +6307,8 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
 
             if (wp->SetFlag(db, data->flagName, enable ))
             {
+                psserver->npcmanager->WaypointSetFlag(wp,data->flagName,enable);
+
                 psserver->SendSystemInfo(me->clientnum, "Flag %s %s for %s.",
                                          data->flagName.GetDataSafe(),enable?"updated":"cleared",wp->GetName());
                 return;
@@ -6320,6 +6330,8 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
 
             if (path->SetFlag(db, data->flagName, enable ))
             {
+                psserver->npcmanager->PathSetFlag(path,data->flagName,enable);
+
                 psserver->SendSystemInfo(me->clientnum, "Flag %s %s for %s.",
                                          data->flagName.GetDataSafe(),enable?"updated":"cleared",path->GetName());
                 return;
@@ -6353,6 +6365,8 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
 
         if (wp->SetRadius(db, data->newRadius))
         {
+            psserver->npcmanager->WaypointRadius(wp,data->newRadius);
+            
             wp->RecalculateEdges(EntityManager::GetSingleton().GetWorld(),EntityManager::GetSingleton().GetEngine());
             
             UpdateDisplayWaypoint(wp);
@@ -6705,8 +6719,10 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
             {
                 if (wp->Adjust(db,myPos,mySectorName))
                 {
+                    psserver->npcmanager->WaypointAdjusted(wp);
 
                     UpdateDisplayWaypoint(wp);
+
                     psserver->SendSystemInfo(me->clientnum,
                                              "Moved waypoint %s(%d)",
                                              wp->GetName(), wp->GetID());
@@ -6744,7 +6760,10 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
             {
                 if (point->Adjust(db,myPos,mySectorName))
                 {
+                    psserver->npcmanager->PathPointAdjusted(point);
+
                     UpdateDisplayPath(point);
+
                     psserver->SendSystemInfo(me->clientnum,
                                              "Adjusted point(%d)",
                                              point->GetID());
@@ -6867,9 +6886,13 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
             }
 
             csString oldName = wp->GetName();
-            wp->Rename(db, data->waypoint);
-            psserver->SendSystemInfo( me->clientnum, "Renamed waypoint %s(%d) to %s",
-                                      oldName.GetDataSafe(),wp->GetID(),wp->GetName());
+            if (wp->Rename(db, data->waypoint))
+            {
+                psserver->npcmanager->WaypointRename(wp, data->waypoint);
+
+                psserver->SendSystemInfo( me->clientnum, "Renamed waypoint %s(%d) to %s",
+                                          oldName.GetDataSafe(),wp->GetID(),wp->GetName());
+            }
         }
         else if (path)
         {
@@ -6881,9 +6904,13 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
             }
 
             csString oldName = path->GetName();
-            path->Rename(db, data->waypoint);
-            psserver->SendSystemInfo( me->clientnum, "Renamed path %s(%d) to %s",
-                                      oldName.GetDataSafe(),path->GetID(),path->GetName());
+            if (path->Rename(db, data->waypoint))
+            {
+                psserver->npcmanager->PathRename(path, data->waypoint);
+                
+                psserver->SendSystemInfo( me->clientnum, "Renamed path %s(%d) to %s",
+                                          oldName.GetDataSafe(),path->GetID(),path->GetName());
+            }
         }
     }
 }

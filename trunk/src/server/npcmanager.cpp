@@ -2764,22 +2764,91 @@ void NPCManager::UpdatePetTime()
 
 void NPCManager::WaypointAdjusted(Waypoint* wp)
 {
-    Debug1(LOG_SUPERCLIENT,0,"NPCManager ajusting waypoint\n");
+    Debug2(LOG_SUPERCLIENT, 0, "NPCManager ajusting waypoint %d\n", wp->GetID());
     
-    psPathNetworkMessage msg(psPathNetworkMessage::WAYPOINT_ADJUSTED,wp);
+    psPathNetworkMessage msg(psPathNetworkMessage::WAYPOINT_ADJUSTED, wp);
     
     msg.Multicast(superclients, -1, PROX_LIST_ANY_RANGE);
 }
 
 void NPCManager::PathPointAdjusted(psPathPoint* point)
 {
-    Debug1(LOG_SUPERCLIENT,0,"NPCManager ajusting pathpoint\n");
+    Debug2(LOG_SUPERCLIENT, 0, "NPCManager ajusting pathpoint %d\n", point->GetID());
 
-    psPathNetworkMessage msg(psPathNetworkMessage::POINT_ADJUSTED,point);
+    psPathNetworkMessage msg(psPathNetworkMessage::POINT_ADJUSTED, point);
 
     msg.Multicast(superclients, -1, PROX_LIST_ANY_RANGE);
 }
 
+void NPCManager::WaypointAddAlias(const Waypoint* wp, const csString& alias)
+{
+    Debug3(LOG_SUPERCLIENT, 0, "NPCManager added alias %s to waypoint %d\n",
+           alias.GetDataSafe(), wp->GetID());
+    
+    psPathNetworkMessage msg(psPathNetworkMessage::WAYPOINT_ADD_ALIAS, wp, alias);
+    
+    msg.Multicast(superclients, -1, PROX_LIST_ANY_RANGE);
+}
+
+void NPCManager::WaypointRemoveAlias(const Waypoint* wp, const csString& alias)
+{
+    Debug3(LOG_SUPERCLIENT, 0, "NPCManager removed alias %s from waypoint %d\n",
+           alias.GetDataSafe(), wp->GetID());
+    
+    psPathNetworkMessage msg(psPathNetworkMessage::WAYPOINT_REMOVE_ALIAS, wp, alias);
+    
+    msg.Multicast(superclients, -1, PROX_LIST_ANY_RANGE);
+}
+
+void NPCManager::WaypointSetFlag(const Waypoint* wp, const csString& flag, bool enable)
+{
+    Debug3(LOG_SUPERCLIENT, 0, "NPCManager Set flag %s from waypoint %d\n",
+           flag.GetDataSafe(), wp->GetID());
+    
+    psPathNetworkMessage msg(psPathNetworkMessage::WAYPOINT_SET_FLAG, wp, flag, enable);
+    
+    msg.Multicast(superclients, -1, PROX_LIST_ANY_RANGE);
+}
+
+void NPCManager::PathSetFlag(const psPath* path, const csString& flag, bool enable)
+{
+    Debug3(LOG_SUPERCLIENT, 0, "NPCManager Set flag %s from path %d\n",
+           flag.GetDataSafe(), path->GetID());
+    
+    psPathNetworkMessage msg(psPathNetworkMessage::PATH_SET_FLAG, path, flag, enable);
+    
+    msg.Multicast(superclients, -1, PROX_LIST_ANY_RANGE);
+}
+
+void NPCManager::WaypointRadius(const Waypoint* wp, float radius)
+{
+    Debug3(LOG_SUPERCLIENT, 0, "NPCManager Set radius %.2f on waypoint %d\n",
+           radius, wp->GetID());
+    
+    psPathNetworkMessage msg(psPathNetworkMessage::WAYPOINT_RADIUS, wp, radius);
+    
+    msg.Multicast(superclients, -1, PROX_LIST_ANY_RANGE);
+}
+
+void NPCManager::WaypointRename(const Waypoint* wp, const csString& name)
+{
+    Debug3(LOG_SUPERCLIENT, 0, "NPCManager Set new name %s on waypoint %d\n",
+           name.GetDataSafe(), wp->GetID());
+    
+    psPathNetworkMessage msg(psPathNetworkMessage::WAYPOINT_RENAME, wp, name);
+    
+    msg.Multicast(superclients, -1, PROX_LIST_ANY_RANGE);
+}
+
+void NPCManager::PathRename(const psPath* path, const csString& name)
+{
+    Debug3(LOG_SUPERCLIENT, 0, "NPCManager Set new name %s on path %d\n",
+           name.GetDataSafe(), path->GetID());
+    
+    psPathNetworkMessage msg(psPathNetworkMessage::PATH_RENAME, path, name);
+    
+    msg.Multicast(superclients, -1, PROX_LIST_ANY_RANGE);
+}
 
 /*------------------------------------------------------------------*/
 

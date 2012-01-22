@@ -248,6 +248,24 @@ void Waypoint::SetFlags(const csString & flagstr)
 
 bool Waypoint::SetFlag(iDataConnection * db, const csString &flagstr, bool enable)
 {
+    if (!SetFlag(flagstr, enable))
+    {
+        return false;
+    }
+
+    int result = db->CommandPump("UPDATE sc_waypoints SET flags='%s' WHERE id=%d",
+                                 GetFlags().GetDataSafe(), loc.id);
+    if (result != 1)
+    {
+        Error2("Sql failed: %s\n",db->GetLastError());
+        return false;
+    }
+    
+    return true;
+}
+
+bool Waypoint::SetFlag(const csString &flagstr, bool enable)
+{
     if (isFlagSet(flagstr,"ALLOW_RETURN"))
     {
         allowReturn = enable;
@@ -292,15 +310,6 @@ bool Waypoint::SetFlag(iDataConnection * db, const csString &flagstr, bool enabl
     {
         return false;
     }
-
-    int result = db->CommandPump("UPDATE sc_waypoints SET flags='%s' WHERE id=%d",
-                                 GetFlags().GetDataSafe(), loc.id);
-    if (result != 1)
-    {
-        Error2("Sql failed: %s\n",db->GetLastError());
-        return false;
-    }
-    
     return true;
 }
 
