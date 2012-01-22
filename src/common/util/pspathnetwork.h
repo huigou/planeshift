@@ -180,6 +180,11 @@ public:
      * Find the named path.
      */
     psPath* FindPath(const char *name);
+
+    /**
+     * Find the path.
+     */
+    psPath* FindPath(int id);
     
     /**
      * Find a given edge from starting waypoint wp1 to end waypoint wp2.

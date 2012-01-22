@@ -695,6 +695,23 @@ psPath   *psPathNetwork::FindPath(const char *name)
     return NULL;
 }
 
+psPath* psPathNetwork::FindPath(int id)
+{
+    csPDelArray<psPath>::Iterator iter(paths.GetIterator());
+    psPath *path;
+
+    while (iter.HasNext())
+    {
+        path = iter.Next();
+        if ( path->GetID() == id )
+        {
+            return path;
+        }
+    }
+
+    return NULL;
+}
+
 Edge* psPathNetwork::FindEdge(const Waypoint * wp1, const Waypoint * wp2)
 {
     // Is there a link between wp1 and wp2?

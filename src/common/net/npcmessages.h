@@ -31,6 +31,7 @@ struct iSector;
 //PathNetwork types
 class Waypoint;
 class psPathPoint;
+class psPath;
 
 
 /**
@@ -441,19 +442,56 @@ public:
 
     typedef enum 
     {
+        PATH_RENAME,
+        PATH_SET_FLAG,
         POINT_ADJUSTED,
-        WAYPOINT_ADJUSTED
+        WAYPOINT_ADD_ALIAS,
+        WAYPOINT_ADJUSTED,
+        WAYPOINT_RADIUS,
+        WAYPOINT_RENAME,
+        WAYPOINT_REMOVE_ALIAS,
+        WAYPOINT_SET_FLAG
     } Command;
 
     Command   command;    ///< 
     uint32_t  id;         ///< ID of waypoint/point/segment
     csVector3 position;   ///< The position for new or adjusted elements
     iSector*  sector;     ///< The sector for new or adjusted elements
+    csString  string;     ///< The string for add alias/flag set
+    bool      enable;     ///< Enable or disable flags
+    float     radius;     ///< The radius
 
     
-    /// Create psMessageBytes struct for outbound use
-    psPathNetworkMessage(Command command, Waypoint* waypoint);
-    psPathNetworkMessage(Command command, psPathPoint* point);
+    // Create psMessageBytes struct for outbound use
+    
+    /** Generic message to do a command where input is a string and a bool for a path.
+     */
+    psPathNetworkMessage(Command command, const psPath* path, const csString& string);
+
+    /** Generic message to do a command where input is a string and a bool for a path.
+     */
+    psPathNetworkMessage(Command command, const psPath* path, const csString& string, bool enable);
+
+    /** Generic message to do a command where input is a path point.
+     */
+    psPathNetworkMessage(Command command, const psPathPoint* point);
+
+    /** Generic message to do a command wher einput is a waypoint.
+     */
+    psPathNetworkMessage(Command command, const Waypoint* waypoint);
+
+    /** Generic message to do a command wher einput is a waypoint.
+     */
+    psPathNetworkMessage(Command command, const Waypoint* waypoint, float radius);
+    
+    /** Generic message to do a command where input is a string for a waypoint.
+     */
+    psPathNetworkMessage(Command command, const Waypoint* waypoint, const csString& string);
+
+    /** Generic message to do a command where input is a string for a waypoint.
+     */
+    psPathNetworkMessage(Command command, const Waypoint* waypoint, const csString& string, bool enable);
+
 
     /// Crack incoming psMessageBytes struct for inbound use
     psPathNetworkMessage(MsgEntry *message);

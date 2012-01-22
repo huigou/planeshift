@@ -86,10 +86,10 @@ public:
     void RemoveAlias(csString alias);
 
     /// Get the id of this waypoint
-    int          GetID(){ return loc.id; }
+    int          GetID() const { return loc.id; }
     
     /// Get the name of this waypoint
-    const char * GetName(){ return loc.name.GetDataSafe(); }
+    const char * GetName() const { return loc.name.GetDataSafe(); }
 
     /// Rename the waypoint and update the db
     bool Rename(iDataConnection * db,const char* name);
@@ -104,6 +104,7 @@ public:
     
     /// Get the sector from the location.
     iSector*     GetSector(iEngine * engine) { return loc.GetSector(engine); }
+    iSector*     GetSector(iEngine * engine) const { return loc.GetSector(engine); }
     
     csString     GetFlags();
 
@@ -112,7 +113,7 @@ public:
     bool SetRadius(iDataConnection * db, float radius);
     void RecalculateEdges(psWorld * world, iEngine *engine);
 
-    const csVector3& GetPosition() { return loc.pos; }
+    const csVector3& GetPosition() const { return loc.pos; }
 
     bool CheckWithin(iEngine * engine, const csVector3& pos, const iSector* sector);
 
@@ -138,6 +139,16 @@ public:
      */
     bool SetFlag(iDataConnection * db, const csString &flagstr, bool enable);
 
+    /** Enable/Disable the listed flags
+     *
+     * Will search the flagstr input to find the flag
+     * to enable or disable.
+     *
+     * @param flagstr The flag to modify.
+     * @param enable  Set to true to enable the flag.
+     * @return        True if flags where set.
+     */
+    bool SetFlag(const csString &flagstr, bool enable);    
 
     /** Return the effect ID for this waypoint or assign a new ID
         @param allocator 

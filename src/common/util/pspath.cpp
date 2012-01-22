@@ -61,10 +61,21 @@ bool psPathPoint::Load(iResultRow& row, iEngine *engine)
 
 iSector* psPathPoint::GetSector(iEngine * engine)
 {
+    // Return cached value
     if (sector) return sector;
     
+    // Update cached value
     sector = engine->FindSector(sectorName.GetDataSafe());
     return sector;
+}
+
+iSector* psPathPoint::GetSector(iEngine * engine) const
+{
+    // Return cached value
+    if (sector) return sector;
+
+    // Just return the looked up value
+    return engine->FindSector(sectorName.GetDataSafe());
 }
 
 float psPathPoint::GetRadius()
@@ -728,6 +739,24 @@ void psPath::SetFlags(const psString& flagStr)
 
 bool psPath::SetFlag(iDataConnection * db, const csString &flagstr, bool enable)
 {
+    if (!SetFlag(flagstr,enable))
+    {
+        return false;
+    }
+
+    int result = db->CommandPump("UPDATE sc_waypoint_links SET flags='%s' WHERE id=%d",
+                                 GetFlags().GetDataSafe(), id);
+    if (result != 1)
+    {
+        Error2("Sql failed: %s\n",db->GetLastError());
+        return false;
+    }
+    
+    return true;
+}
+
+bool psPath::SetFlag(const csString &flagstr, bool enable)
+{
     if (isFlagSet(flagstr,"ONEWAY"))
     {
         oneWay = enable;
@@ -745,16 +774,9 @@ bool psPath::SetFlag(iDataConnection * db, const csString &flagstr, bool enable)
         return false;
     }
 
-    int result = db->CommandPump("UPDATE sc_waypoint_links SET flags='%s' WHERE id=%d",
-                                 GetFlags().GetDataSafe(), id);
-    if (result != 1)
-    {
-        Error2("Sql failed: %s\n",db->GetLastError());
-        return false;
-    }
-    
     return true;
 }
+
 
 size_t psPath::FindPointsInSector(iEngine * engine, iSector *sector, csList<psPathPoint*>& list)
 {

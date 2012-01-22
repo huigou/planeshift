@@ -63,6 +63,7 @@ public:
     
     /// Return cached sector or find the sector and cache it from engine.
     iSector*            GetSector(iEngine * engine);
+    iSector*            GetSector(iEngine * engine) const;
 
     /** Return the bounding box for this location
      *
@@ -94,7 +95,7 @@ public:
     bool GetRandomPosition(iEngine * engine,csVector3& pos,iSector* &sector);
 
     static int GetSectorID(iDataConnection *db,const char* name);
-    const char* GetName() { return name.GetDataSafe(); }
+    const char* GetName() const { return name.GetDataSafe(); }
 };
 
 /**
