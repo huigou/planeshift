@@ -374,7 +374,8 @@ csString GetNodeXML(csRef<iDocumentNode> node, bool childrenOnly)
             csRef<iDocumentNode> child = nodes->Next();
             if (child->GetType() == CS_NODE_TEXT)
             {
-                xml += child->GetContentsValue();
+                // add the node-content to the string..but escape special XML chars in it
+                xml += EscpXML(child->GetContentsValue());
             }
             else
             {
@@ -384,7 +385,8 @@ csString GetNodeXML(csRef<iDocumentNode> node, bool childrenOnly)
     }
     if (!childrenOnly)
     {
-        xml += node->GetContentsValue();
+        // add the node-content to the string..but escape special XML chars in it
+        xml += EscpXML(node->GetContentsValue());
         xml.AppendFmt("</%s>", node->GetValue());
     }
     return xml;
