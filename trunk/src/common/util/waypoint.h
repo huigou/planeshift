@@ -120,6 +120,8 @@ public:
     bool CreateAlias(iDataConnection * db, csString alias);
     bool RemoveAlias(iDataConnection * db, csString alias);
     bool Adjust(iDataConnection * db, csVector3 & pos, csString sector);
+    void Adjust(csVector3 & pos, csString sector);
+    void Adjust(csVector3 & pos, iSector* sector);
     
     /// Set all flags based on the string.
     void SetFlags(const csString& flagStr);

@@ -1,3 +1,4 @@
+
 /*
 * pspath.cpp
 *
@@ -142,22 +143,25 @@ bool psPathPoint::Adjust(iDataConnection * db, csVector3 & pos, csString sector)
                                  "loc_sector_id=(select id from sectors where name='%s') WHERE id=%d",
                                  pos.x,pos.y,pos.z,sector.GetDataSafe(),id);
 
-    this->pos = pos;
-    this->sectorName = sector;
-    this->sector = NULL;
+    Adjust(pos,sector);
 
     return (result == 1);
 
 }
 
-bool psPathPoint::Adjust(csVector3 & pos, csString sector)
+void psPathPoint::Adjust(csVector3 & pos, csString sector)
 {
     this->pos = pos;
     this->sectorName = sector;
     this->sector = NULL;
-
-    return true;
 }
+
+void psPathPoint::Adjust(csVector3 & pos, iSector* sector)
+{
+    Adjust(pos, sector->QueryObject()->GetName());
+    this->sector = sector;
+}
+
 
 void psPathPoint::SetWaypoint(Waypoint* waypoint)
 {
@@ -669,7 +673,8 @@ bool psPath::Adjust(iDataConnection * db, int index, csVector3 & pos, csString s
     // First and last point is a placeholder for the waypoint only update the position.
     if (index == 0 || index == ((int)points.GetSize()-1))
     {
-        return points[index]->Adjust(pos,sector);
+        points[index]->Adjust(pos,sector);
+        return true;
     }
     
     return points[index]->Adjust(db,pos,sector);

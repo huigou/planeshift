@@ -507,6 +507,12 @@ bool Waypoint::Adjust(iDataConnection * db, csVector3 & pos, csString sector)
                                  "loc_sector_id=(select id from sectors where name='%s') WHERE id=%d",
                                  pos.x,pos.y,pos.z,sector.GetDataSafe(),loc.id);
 
+    Adjust(pos, sector);
+    return (result == 1);
+}
+
+void Waypoint::Adjust(csVector3 & pos, csString sector)
+{
     loc.pos = pos;
     loc.sectorName = sector;
     loc.sector = NULL;
@@ -516,9 +522,15 @@ bool Waypoint::Adjust(iDataConnection * db, csVector3 & pos, csString sector)
         psPathPoint * pp = edges[i]->GetStartPoint();
         pp->Adjust(pos,sector);
     }
-
-    return (result == 1);
 }
+
+
+void Waypoint::Adjust(csVector3 & pos, iSector* sector)
+{
+    Adjust(pos, sector->QueryObject()->GetName());
+    loc.sector = sector;
+}
+
 
 bool Waypoint::CheckWithin(iEngine * engine, const csVector3& pos, const iSector* sector)
 {

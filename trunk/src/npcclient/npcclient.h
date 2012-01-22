@@ -538,6 +538,10 @@ public:
 
     // made public for the networkmanager to call it
     bool LoadPathNetwork();
+
+    /** Return the path network of the npcclient
+     */
+    psPathNetwork* GetPathNetwork(){ return pathNetwork; }
    
 protected:
 

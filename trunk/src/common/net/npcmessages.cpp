@@ -25,6 +25,8 @@
 #include <iutil/object.h>
 #include <csutil/strhashr.h>
 #include "util/strutil.h"
+#include "util/waypoint.h"
+#include "util/pspath.h"
 
 //---------------------------------------------------------------------------
 
@@ -1158,6 +1160,76 @@ psServerCommandMessage::psServerCommandMessage( MsgEntry* msgEntry )
    command = msgEntry->GetStr();
 }
 
+//--------------------------------------------------------------------------
+
+PSF_IMPLEMENT_MSG_FACTORY(psPathNetworkMessage,MSGTYPE_PATH_NETWORK);
+
+psPathNetworkMessage::psPathNetworkMessage( Command command, Waypoint* waypoint )
+{
+    msg.AttachNew(new MsgEntry( sizeof(uint8_t) + 1000 , PRIORITY_HIGH ));
+    msg->clientnum = 0;
+    msg->SetType(MSGTYPE_PATH_NETWORK);
+
+    msg->Add( (uint8_t)command );
+    msg->Add( (uint32_t)waypoint->GetID() );
+    msg->Add( waypoint->GetPosition() );
+    msg->Add( waypoint->GetSector(NetBase::GetAccessPointers()->engine) );
+
+    msg->ClipToCurrentSize();
+}
+
+psPathNetworkMessage::psPathNetworkMessage( Command command, psPathPoint* point )
+{
+    msg.AttachNew(new MsgEntry( sizeof(uint8_t) + 1000 , PRIORITY_HIGH ));
+    msg->clientnum = 0;
+    msg->SetType(MSGTYPE_PATH_NETWORK);
+
+    msg->Add( (uint8_t)command );
+    msg->Add( (uint32_t)point->GetID() );
+    msg->Add( point->GetPosition() );
+    msg->Add( point->GetSector(NetBase::GetAccessPointers()->engine) );
+
+    msg->ClipToCurrentSize();
+}
+
+
+psPathNetworkMessage::psPathNetworkMessage( MsgEntry* msgEntry ) 
+{
+   if ( !msgEntry )
+       return;
+
+   command = (Command)msgEntry->GetUInt8();
+
+   switch (command)
+   {
+   case POINT_ADJUSTED:
+       id = msgEntry->GetUInt32();
+       position = msgEntry->GetVector3();
+       sector = msgEntry->GetSector();
+       break;
+   case WAYPOINT_ADJUSTED:
+       id = msgEntry->GetUInt32();
+       position = msgEntry->GetVector3();
+       sector = msgEntry->GetSector();
+       break;
+   }
+}
+
+csString psPathNetworkMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
+{
+    csString str;
+    switch (command)
+    {
+    case WAYPOINT_ADJUSTED:
+        str.AppendFmt("Cmd: WAYPOINT_ADJUSTED ID: %d Position: %s",id,toString(position,sector).GetDataSafe());
+        break;
+    case POINT_ADJUSTED:
+        str.AppendFmt("Cmd: POINT_ADJUSTED ID: %d Position: %s",id,toString(position,sector).GetDataSafe());
+        break;
+    }
+    
+    return str;
+}
 
 //---------------------------------------------------------------------------
 

@@ -249,7 +249,7 @@ public:
     iEngine* GetEngine() { return accessPointers.engine; }
 
     /// Get the access pointers
-    AccessPointers* GetAccessPointers() { return &accessPointers; }
+    static AccessPointers* GetAccessPointers() { return &accessPointers; }
     
     /**
      * Log the message to LOG_MESSAGE.
@@ -630,7 +630,7 @@ private:
     psNetInfos netInfos;
 
     /** Access Pointers for MessageCrackers */
-    AccessPointers accessPointers;
+    static AccessPointers accessPointers;
 
     /** LogMessage filter setting */
     csArray<int> logmessagefilter;

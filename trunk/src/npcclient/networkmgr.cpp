@@ -43,6 +43,7 @@
 #include "net/npcmessages.h"
 #include "engine/linmove.h"
 #include "util/strutil.h"
+#include "util/waypoint.h"
 
 //=============================================================================
 // Local Space Includes
@@ -79,6 +80,7 @@ NetworkManager::NetworkManager(MsgHandler *mh,psNetConnection* conn, iEngine* en
     msghandler->Subscribe(this,MSGTYPE_NPC_COMMAND);
     msghandler->Subscribe(this,MSGTYPE_NPCRACELIST);
     msghandler->Subscribe(this,MSGTYPE_NPC_WORKDONE);
+    msghandler->Subscribe(this,MSGTYPE_PATH_NETWORK);
 
     connection= conn;
     connection->SetEngine( engine );
@@ -104,6 +106,7 @@ NetworkManager::~NetworkManager()
         msghandler->Unsubscribe(this,MSGTYPE_NPC_COMMAND);
         msghandler->Unsubscribe(this,MSGTYPE_NPCRACELIST);
         msghandler->Unsubscribe(this,MSGTYPE_NPC_WORKDONE);
+        msghandler->Unsubscribe(this,MSGTYPE_PATH_NETWORK);
     }
 
     delete outbound;
@@ -243,6 +246,12 @@ void NetworkManager::HandleMessage(MsgEntry *message)
         case MSGTYPE_NPC_WORKDONE:
         {
             HandleNPCWorkDone(message);
+            break;
+        }
+        case MSGTYPE_PATH_NETWORK:
+        {
+            HandlePathNetwork(message);
+            break;
         }
     }
 }
@@ -434,6 +443,50 @@ void NetworkManager::HandleObjectRemoval( MsgEntry* me )
 
     npcclient->Remove( object ); // Object isn't valid after remove
 }
+
+void NetworkManager::HandlePathNetwork(MsgEntry *me)
+{
+    psPathNetworkMessage msg(me);
+
+    psPathNetwork* pathNetwork = npcclient->GetPathNetwork();
+    
+    switch (msg.command)
+    {
+    case psPathNetworkMessage::WAYPOINT_ADJUSTED:
+        {
+            Waypoint* wp = pathNetwork->FindWaypoint(msg.id);
+            if (wp)
+            {
+                wp->Adjust(msg.position,msg.sector);
+                
+                Debug3(LOG_NET,0,"Adjusted waypoint %d to %s.\n",msg.id,toString(msg.position,msg.sector).GetDataSafe());
+            }
+            else
+            {
+                Error2("Failed to find waypoint %d for adjust\n",msg.id);
+            }
+            
+        }
+        break;
+    case psPathNetworkMessage::POINT_ADJUSTED:
+        {
+            psPathPoint* point = pathNetwork->FindPathPoint(msg.id);
+            if (point)
+            {
+                point->Adjust(msg.position,msg.sector);
+                
+                Debug3(LOG_NET,0,"Adjusted pathpoint %d to %s.\n",msg.id,toString(msg.position,msg.sector).GetDataSafe());
+            }
+            else
+            {
+                Error2("Failed to find pathpoint %d for adjust\n",msg.id);
+            }
+        }
+        break;
+    }
+}
+
+
 
 void NetworkManager::HandleTimeUpdate( MsgEntry* me )
 {
