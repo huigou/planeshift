@@ -2073,6 +2073,35 @@ void pawsDocumentView::Draw()
     if(usingScrollBar)
         offSet += 36;
 
+    //lets check if the first visibe line is actually a line for a image:
+    if ((lines.GetSize()>startLine) && (lines[startLine].StartsWith("#pic#")))
+    {
+        // nice...this means that the first line might not actually be the first line defining the image but one of the lines "coverd" by the image
+        // so lets find out where the picture really starts
+        if (startLine > 0) // okay...if we really start at the first line it's fine to assume that this is the first line of the image as well ;)
+        {
+          int picStart = startLine - 1;
+          while ((picStart >= 0) && (lines[picStart]==lines[startLine]))
+          {
+             picStart--;
+          }
+          // how many lines are invisble?
+          int invisibleLines;
+          if (picStart == 0)
+          {
+              // all lines before are from this image
+              invisibleLines = startLine;
+          }
+          else
+          {
+              // oh..and yes...we are one line before the first picture line...so lets add the one again.
+              invisibleLines = startLine - picStart + 1;
+          }
+          // of course we don't really want to know how many lines we have to move the image but how many pixels
+          drawY-= (invisibleLines * maxHeight);
+        }
+    }
+
     for(size_t x = startLine; x < (startLine+canDrawLines); x++)
     {
         if(x >= lines.GetSize())
