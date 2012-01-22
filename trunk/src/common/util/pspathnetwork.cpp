@@ -725,12 +725,12 @@ Edge* psPathNetwork::FindEdge(const Waypoint * wp1, const Waypoint * wp2)
     return NULL;
 }
 
-Waypoint* psPathNetwork::CreateWaypoint(csString& name, 
+Waypoint* psPathNetwork::CreateWaypoint(iDataConnection *db, csString& name, 
                                         csVector3& pos, csString& sectorName,
                                         float radius, csString& flags)
 {
 
-    Waypoint *wp = new Waypoint(name,pos,sectorName,radius,flags);
+    Waypoint *wp = CreateWaypoint(name,pos,sectorName,radius,flags);
 
     if (!wp->Create(db))
     {
@@ -738,27 +738,31 @@ Waypoint* psPathNetwork::CreateWaypoint(csString& name,
         return NULL;
     }
 
+    return wp;
+}
+
+Waypoint* psPathNetwork::CreateWaypoint(csString& name, 
+                                        csVector3& pos, csString& sectorName,
+                                        float radius, csString& flags)
+{
+
+    Waypoint *wp = new Waypoint(name,pos,sectorName,radius,flags);
+
     waypoints.Push(wp);
 
     return wp;
 }
 
-psPath* psPathNetwork::CreatePath(const csString& name, Waypoint* wp1, Waypoint* wp2,
+psPath* psPathNetwork::CreatePath(iDataConnection *db, const csString& name, Waypoint* wp1, Waypoint* wp2,
                                   const csString& flags)
 {
     psPath * path = new psLinearPath(name,wp1,wp2,flags);
 
-    return CreatePath(path);
+    return CreatePath(db, path);
 }
 
 psPath* psPathNetwork::CreatePath(psPath * path)
 {
-    if (!path->Create(db))
-    {
-        delete path;
-        return NULL;
-    }
-    
     paths.Push(path);
 
     float dist = path->GetLength(world,engine); 
@@ -770,6 +774,17 @@ psPath* psPathNetwork::CreatePath(psPath * path)
     }
 
     return path;
+}
+
+psPath* psPathNetwork::CreatePath(iDataConnection *db, psPath * path)
+{
+    if (!path->Create(db))
+    {
+        delete path;
+        return NULL;
+    }
+
+    return CreatePath( path );
 }
 
 
@@ -790,7 +805,10 @@ bool psPathNetwork::Delete(psPath * path)
     Waypoint * end = path->end;
 
     start->RemoveLink(path);
+    path->start = NULL;
+
     end->RemoveLink(path);
+    path->end = NULL;
 
     paths.Extract(paths.Find(path));
 
@@ -805,9 +823,10 @@ bool psPathNetwork::Delete(psPath * path)
         size_t index = waypoints.Find(start);
         if (index != csArrayItemNotFound)
         {
+            // This will delete the start
             waypoints.DeleteIndexFast(index);
+            start = NULL;
         }
-        delete start;
     }
 
     if (end->links.GetSize() == 0)
@@ -818,9 +837,10 @@ bool psPathNetwork::Delete(psPath * path)
         size_t index = waypoints.Find(end);
         if (index != csArrayItemNotFound)
         {
+            // This will delete the end
             waypoints.DeleteIndexFast(index);
+            end = NULL;
         }
-        delete end;
     }
     
 

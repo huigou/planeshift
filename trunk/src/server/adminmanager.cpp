@@ -6504,11 +6504,14 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
                 return;
             }
 
-            wp = pathNetwork->CreateWaypoint(wpName,myPos,mySectorName,data->radius,data->flagName);
-
-            UpdateDisplayWaypoint(wp);
-            psserver->SendSystemInfo( me->clientnum, "Starting path, using new waypoint %s(%d)",
-                                      wp->GetName(), wp->GetID());
+            if ((wp = pathNetwork->CreateWaypoint(db, wpName,myPos,mySectorName,data->radius,data->flagName))!=NULL)
+            {
+                psserver->npcmanager->WaypointCreate(wp);
+                
+                UpdateDisplayWaypoint(wp);
+                psserver->SendSystemInfo( me->clientnum, "Starting path, using new waypoint %s(%d)",
+                                          wp->GetName(), wp->GetID());
+            }
         }
         path = new psLinearPath(-1,"",data->pathFlags);
         path->SetStart(wp);
@@ -6562,20 +6565,25 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
                 return;
             }
 
-            wp = pathNetwork->CreateWaypoint(wpName,myPos,mySectorName,data->radius,data->waypointFlags);
+            if ((wp = pathNetwork->CreateWaypoint(db, wpName,myPos,mySectorName,data->radius,data->waypointFlags)) != NULL)
+            {
+                psserver->npcmanager->WaypointCreate(wp);
 
-            UpdateDisplayWaypoint(wp);
+                UpdateDisplayWaypoint(wp);
+            }
         }
 
         client->PathSetPath(NULL);
         path->SetEnd(wp);
-        path = pathNetwork->CreatePath(path);
+        path = pathNetwork->CreatePath(db, path);
         if (!path)
         {
             psserver->SendSystemError( me->clientnum, "Failed to create path");
         }
         else
         {
+            psserver->npcmanager->PathCreate(path);
+
             psserver->SendSystemInfo( me->clientnum, "New path %s(%d) created between %s(%d) and %s(%d)",
                                       path->GetName(),path->GetID(),path->start->GetName(),path->start->GetID(),
                                       path->end->GetName(),path->end->GetID());
@@ -6819,15 +6827,15 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
             return;
         }
 
-        Waypoint * wp = pathNetwork->CreateWaypoint(wpName,myPos,mySectorName,data->radius,data->waypointFlags);
+        Waypoint * wp = pathNetwork->CreateWaypoint(db, wpName,myPos,mySectorName,data->radius,data->waypointFlags);
         if (!wp)
         {
             return;
         }
         UpdateDisplayWaypoint(wp);
 
-        psPath * path1 = pathNetwork->CreatePath("",path->start,wp, "" );
-        psPath * path2 = pathNetwork->CreatePath("",wp,path->end, "" );
+        psPath * path1 = pathNetwork->CreatePath(db, "",path->start,wp, "" );
+        psPath * path2 = pathNetwork->CreatePath(db, "",wp,path->end, "" );
 
         psserver->SendSystemInfo( me->clientnum, "Splitted %s(%d) into %s(%d) and %s(%d)",
                                   path->GetName(),path->GetID(),

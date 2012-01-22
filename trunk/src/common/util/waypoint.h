@@ -87,6 +87,7 @@ public:
 
     /// Get the id of this waypoint
     int          GetID() const { return loc.id; }
+    void SetID(int id);
     
     /// Get the name of this waypoint
     const char * GetName() const { return loc.name.GetDataSafe(); }
@@ -106,9 +107,9 @@ public:
     iSector*     GetSector(iEngine * engine) { return loc.GetSector(engine); }
     iSector*     GetSector(iEngine * engine) const { return loc.GetSector(engine); }
     
-    csString     GetFlags();
+    csString     GetFlags() const;
 
-    float GetRadius() { return loc.radius; }
+    float GetRadius() const  { return loc.radius; }
     bool SetRadius(float radius);
     bool SetRadius(iDataConnection * db, float radius);
     void RecalculateEdges(psWorld * world, iEngine *engine);

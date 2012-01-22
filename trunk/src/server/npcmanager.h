@@ -231,6 +231,16 @@ public:
      * @param name The new name.
      */
     void PathRename(const psPath* path, const csString& name);
+
+    /** Notify superclients that a waypoint has been created.
+     * @param waypoint The waypoint that where created.
+     */
+    void WaypointCreate(const Waypoint* waypoint);
+
+    /** Notify superclients that a path has been renamed.
+     * @param path The path that where created.
+     */
+    void PathCreate(const psPath* path);
     
 protected:
 
