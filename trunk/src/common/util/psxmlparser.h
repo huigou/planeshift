@@ -30,10 +30,10 @@
 csRef<iDocument> ParseFile(iObjectRegistry* object_reg, const csString & name);
 
 /** Parses a XML string, then returns the parsed document  */
-csRef<iDocument> ParseString(const csString & str);
+csRef<iDocument> ParseString(const csString & str, bool notify = true);
 
 /** Parses a XML string, then returns the top node with name 'topNodeName' */
-csRef<iDocumentNode> ParseString(const csString & str, const csString & topNodeName);
+csRef<iDocumentNode> ParseStringGetNode(const csString & str, const csString & topNodeName, bool notify = true);
 
 /** Escapes special XML characters in 'str' */
 csString EscpXML(const char * str);

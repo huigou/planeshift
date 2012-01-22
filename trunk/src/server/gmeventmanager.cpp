@@ -420,7 +420,7 @@ bool GMEventManager::RewardPlayersInGMEvent (Client* client,
                                              RangeSpecifier rewardRecipient,
                                              float range,
                                              Client* target,
-					     psRewardData* rewardData)
+                         psRewardData* rewardData)
 {
     GMEvent* gmEvent;
     int clientnum = client->GetClientNum(), zero = 0;
@@ -476,8 +476,8 @@ bool GMEventManager::RewardPlayersInGMEvent (Client* client,
             if ((target = clientConnections->FindPlayer(gmEvent->Player[p].PlayerID)))
             {
                 if (rewardRecipient == ALL || clientActor->RangeTo(target->GetActor()) <= range)
-		{
-		    psserver->GetAdminManager()->AwardToTarget(clientnum, target, rewardData);
+        {
+            psserver->GetAdminManager()->AwardToTarget(clientnum, target, rewardData);
                 }
             }
         }
@@ -822,7 +822,7 @@ void GMEventManager::WriteGMEventEvaluation(Client* client, GMEvent* Event, csSt
 {
     //NOTE: The xml format is <GMEventEvaluation vote=# comments="*" />
     csRef<iDocumentNode> Node;
-    if ((Node = ParseString(XmlStr, "GMEventEvaluation")))
+    if ((Node = ParseStringGetNode(XmlStr, "GMEventEvaluation")))
     {    
         csString EscpComment;
         db->Escape(EscpComment, Node->GetAttributeValue("comments"));

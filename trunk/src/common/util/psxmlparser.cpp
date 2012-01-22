@@ -297,24 +297,27 @@ csRef<iDocument> ParseFile(iObjectRegistry* object_reg, const csString & name)
     return doc;    
 }
 
-csRef<iDocument> ParseString(const csString & str)
+csRef<iDocument> ParseString(const csString & str, bool notify)
 {
     csRef<iDocumentSystem> xml;
     xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
     CS_ASSERT(xml != NULL);
     csRef<iDocument> doc  = xml->CreateDocument();
     const char* error = doc->Parse(str);
-    if ( error )
+    if (error)
     {
-        Error3("Error in XML: %s\nString was: %s", error, str.GetDataSafe() );
+        if (notify)
+        {
+            Error3("Error in XML: %s\nString was: %s", error, str.GetDataSafe());
+        }
         return NULL;
     }
     return doc;
 }
 
-csRef<iDocumentNode> ParseString(const csString & str, const csString & topNodeName)
+csRef<iDocumentNode> ParseStringGetNode(const csString & str, const csString & topNodeName, bool notify)
 {
-    csRef<iDocument> doc = ParseString(str);
+    csRef<iDocument> doc = ParseString(str, notify);
     if (doc == NULL) return NULL;
     csRef<iDocumentNode> root = doc->GetRoot();
     if (root == NULL) return NULL;

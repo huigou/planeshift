@@ -665,7 +665,7 @@ void ServerCharManager::BeginTrading(Client * client, gemObject * target, const 
 
 void ServerCharManager::HandleMerchantRequest(psGUIMerchantMessage& msg, Client *client)
 {
-    csRef<iDocumentNode> exchangeNode = ParseString(msg.commandData, "R");
+    csRef<iDocumentNode> exchangeNode = ParseStringGetNode(msg.commandData, "R");
     if (!exchangeNode)
         return;
 
@@ -700,7 +700,7 @@ void ServerCharManager::HandleMerchantCategory(psGUIMerchantMessage& msg, Client
 {
     psCharacter* character = client->GetCharacterData();
 
-    csRef<iDocumentNode> merchantNode = ParseString (msg.commandData, "C");
+    csRef<iDocumentNode> merchantNode = ParseStringGetNode (msg.commandData, "C");
     if (!merchantNode)
         return;
 
@@ -739,7 +739,7 @@ void ServerCharManager::HandleMerchantCategory(psGUIMerchantMessage& msg, Client
 void ServerCharManager::HandleMerchantBuy(psGUIMerchantMessage& msg, Client *client)
 {
     psCharacter* character = client->GetCharacterData();
-    csRef <iDocumentNode> merchantNode = ParseString(msg.commandData, "T");
+    csRef <iDocumentNode> merchantNode = ParseStringGetNode(msg.commandData, "T");
     if (!merchantNode)
         return;
 
@@ -949,7 +949,7 @@ void ServerCharManager::HandleMerchantBuy(psGUIMerchantMessage& msg, Client *cli
 void ServerCharManager::HandleMerchantSell(psGUIMerchantMessage& msg, Client *client)
 {
     psCharacter* character = client->GetCharacterData();
-    csRef <iDocumentNode> merchantNode = ParseString(msg.commandData, "T");
+    csRef <iDocumentNode> merchantNode = ParseStringGetNode(msg.commandData, "T");
     if (!merchantNode)
         return;
 
@@ -1041,7 +1041,7 @@ void ServerCharManager::HandleMerchantSell(psGUIMerchantMessage& msg, Client *cl
 void ServerCharManager::HandleMerchantView(psGUIMerchantMessage& msg, Client *client)
 {
     psCharacter* character = client->GetCharacterData();
-    csRef <iDocumentNode> merchantNode = ParseString(msg.commandData, "V");
+    csRef <iDocumentNode> merchantNode = ParseStringGetNode(msg.commandData, "V");
     if (!merchantNode)
         return;
 
@@ -1665,7 +1665,7 @@ void ServerCharManager::BeginStoring(Client * client, gemObject * target, const 
 
 void ServerCharManager::HandleStorageRequest(psGUIStorageMessage& msg, Client *client)
 {
-    csRef<iDocumentNode> exchangeNode = ParseString(msg.commandData, "R");
+    csRef<iDocumentNode> exchangeNode = ParseStringGetNode(msg.commandData, "R");
     if (!exchangeNode)
         return;
 
@@ -1700,7 +1700,7 @@ void ServerCharManager::HandleStorageCategory(psGUIStorageMessage& msg, Client *
 {
     psCharacter* character = client->GetCharacterData();
 
-    csRef<iDocumentNode> storageNode = ParseString (msg.commandData, "C");
+    csRef<iDocumentNode> storageNode = ParseStringGetNode (msg.commandData, "C");
     if (!storageNode)
         return;
 
@@ -1737,7 +1737,7 @@ void ServerCharManager::HandleStorageCategory(psGUIStorageMessage& msg, Client *
 void ServerCharManager::HandleStorageWithdraw(psGUIStorageMessage& msg, Client *client)
 {
     psCharacter* character = client->GetCharacterData();
-    csRef <iDocumentNode> storageNode = ParseString(msg.commandData, "T");
+    csRef <iDocumentNode> storageNode = ParseStringGetNode(msg.commandData, "T");
     if (!storageNode)
         return;
 
@@ -1838,7 +1838,7 @@ void ServerCharManager::HandleStorageWithdraw(psGUIStorageMessage& msg, Client *
 void ServerCharManager::HandleStorageStore(psGUIStorageMessage& msg, Client *client)
 {
     psCharacter* character = client->GetCharacterData();
-    csRef <iDocumentNode> storageNode = ParseString(msg.commandData, "T");
+    csRef <iDocumentNode> storageNode = ParseStringGetNode(msg.commandData, "T");
     if (!storageNode)
         return;
 
@@ -1901,7 +1901,7 @@ void ServerCharManager::HandleStorageStore(psGUIStorageMessage& msg, Client *cli
 void ServerCharManager::HandleStorageView(psGUIStorageMessage& msg, Client *client)
 {
     psCharacter* character = client->GetCharacterData();
-    csRef <iDocumentNode> storageNode = ParseString(msg.commandData, "V");
+    csRef <iDocumentNode> storageNode = ParseStringGetNode(msg.commandData, "V");
     if (!storageNode)
         return;
 

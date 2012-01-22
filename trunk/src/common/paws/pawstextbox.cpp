@@ -2257,7 +2257,7 @@ unsigned int pawsDocumentView::ProcessPictureInfo(iDocumentNode *node)
 void pawsDocumentView::OrganizeContent(const char * newtext)
 {
     csString str(newtext);
-    csRef<iDocumentNode> root = ParseString(str, "Contents");
+    csRef<iDocumentNode> root = ParseStringGetNode(str, "Contents");
 
     if(root == 0)
         return;
