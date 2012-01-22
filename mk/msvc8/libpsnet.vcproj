@@ -1744,6 +1744,9 @@
 				RelativePath="..\..\src\common\net\connection.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\common\net\message.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\common\net\messages.cpp">
 			</File>
 			<File

@@ -1359,6 +1359,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClCompile Include="..\..\src\common\net\cmdbase.cpp" />
     <ClCompile Include="..\..\src\common\net\cmdhandler.cpp" />
     <ClCompile Include="..\..\src\common\net\connection.cpp" />
+    <ClCompile Include="..\..\src\common\net\message.cpp" />
     <ClCompile Include="..\..\src\common\net\messages.cpp" />
     <ClCompile Include="..\..\src\common\net\msghandler.cpp" />
     <ClCompile Include="..\..\src\common\net\netbase.cpp" />
