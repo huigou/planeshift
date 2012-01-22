@@ -641,6 +641,7 @@ public:
         }
     }
 
+    void Add(const iSector* sector);
 
     /// Add a processed buffer of some kind; should only be used by files and the like.
     // NOTE THIS IS NOT ENDIAN-CONVERTED:  YOUR DATA MUST ALREADY BE ENDIAN SAFE.
@@ -979,6 +980,9 @@ public:
         return NULL;
     }
     
+
+    iSector* GetSector();
+
     
     // Get a pre-converted data buffer with recorded length from the current psMessageBytes buffer.
     void * GetBufferPointerUnsafe(uint32_t& length)

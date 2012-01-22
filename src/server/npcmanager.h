@@ -51,6 +51,8 @@ class gemObject;
 class gemActor;
 class gemNPC;
 class PetOwnerSession;
+class psPathPoint;
+class Waypoint;
 
 class NPCManager : public MessageManager<NPCManager>
 {
@@ -173,6 +175,17 @@ public:
      *  @return A PSSKILL which is the skill choosen to handle pet operations.
      */
     PSSKILL GetPetSkill() { return (PSSKILL)petSkill->getValueAsInt(); }
+
+
+    /** Notify superclients that a waypoint where  adjusted.
+     * @param wp The waypoint that has been adjusted
+     */
+    void WaypointAdjusted(Waypoint* wp);
+
+    /** Notify superclients that a pathpoint where adjusted. 
+     * @param point The pathpoint that has been adjusted
+     */
+    void PathPointAdjusted(psPathPoint* point);
 
 protected:
 

@@ -2762,6 +2762,25 @@ void NPCManager::UpdatePetTime()
     }
 }
 
+void NPCManager::WaypointAdjusted(Waypoint* wp)
+{
+    Debug1(LOG_SUPERCLIENT,0,"NPCManager ajusting waypoint\n");
+    
+    psPathNetworkMessage msg(psPathNetworkMessage::WAYPOINT_ADJUSTED,wp);
+    
+    msg.Multicast(superclients, -1, PROX_LIST_ANY_RANGE);
+}
+
+void NPCManager::PathPointAdjusted(psPathPoint* point)
+{
+    Debug1(LOG_SUPERCLIENT,0,"NPCManager ajusting pathpoint\n");
+
+    psPathNetworkMessage msg(psPathNetworkMessage::POINT_ADJUSTED,point);
+
+    msg.Multicast(superclients, -1, PROX_LIST_ANY_RANGE);
+}
+
+
 /*------------------------------------------------------------------*/
 
 psNPCManagerTick::psNPCManagerTick(int offsetticks, NPCManager *c)

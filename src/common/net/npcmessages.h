@@ -28,6 +28,9 @@
 
 struct iSector;
 
+//PathNetwork types
+class Waypoint;
+class psPathPoint;
 
 
 /**
@@ -428,6 +431,42 @@ public:
      * @return Return a human readable string for the message.
      */
     virtual csString ToString(NetBase::AccessPointers* /*accessPointers*/) { return command; }
+};
+
+/** Handle PathNetwork changes from server to superclient.
+*/
+class psPathNetworkMessage : public psMessageCracker
+{
+public:
+
+    typedef enum 
+    {
+        POINT_ADJUSTED,
+        WAYPOINT_ADJUSTED
+    } Command;
+
+    Command   command;    ///< 
+    uint32_t  id;         ///< ID of waypoint/point/segment
+    csVector3 position;   ///< The position for new or adjusted elements
+    iSector*  sector;     ///< The sector for new or adjusted elements
+
+    
+    /// Create psMessageBytes struct for outbound use
+    psPathNetworkMessage(Command command, Waypoint* waypoint);
+    psPathNetworkMessage(Command command, psPathPoint* point);
+
+    /// Crack incoming psMessageBytes struct for inbound use
+    psPathNetworkMessage(MsgEntry *message);
+    
+    PSF_DECLARE_MSG_FACTORY();
+
+    /**
+     * Convert the message into human readable string.
+     *
+     * @param accessPointers A struct to a number of access pointers.
+     * @return Return a human readable string for the message.
+     */
+    virtual csString ToString(NetBase::AccessPointers* /*accessPointers*/);
 };
 
 

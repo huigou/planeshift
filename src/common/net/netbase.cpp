@@ -52,7 +52,9 @@
 #define INET_ADDRSTRLEN 16
 #endif
 
+// Static members
 int NetBase::socklibrefcount=0;
+NetBase::AccessPointers NetBase::accessPointers = {NULL,NULL,NULL};
 
 // warning: this messes your logs with much data
 //#define PACKETDEBUG
@@ -76,7 +78,16 @@ csStringID NetBase::AccessPointers::Request( const char* string) const
 {
     if (msgstrings)
     {
-        return msgstrings->Request(string);
+        /// TODO: Should not need to call Contains, but as long as the request function
+        //        assign new IDs we have to check first.
+        if (msgstrings->Contains(string))
+        {
+            return msgstrings->Request(string);
+        }
+        else
+        {
+            return csInvalidStringID;
+        }        
     }
     else if(msgstringshash)
     {

@@ -6194,7 +6194,10 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         {
             if (wp->Adjust(db,myPos,mySectorName))
             {
+                psserver->npcmanager->WaypointAdjusted(wp);
+
                 UpdateDisplayWaypoint(wp);
+
                 psserver->SendSystemInfo(me->clientnum,
                                          "Adjusted waypoint %s(%d) at range %.2f",
                                          wp->GetName(), wp->GetID(), rangeWP);
@@ -6204,7 +6207,10 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         {
             if (pathPoint->Adjust(db,indexPoint,myPos,mySectorName))
             {
+                psserver->npcmanager->PathPointAdjusted(point);
+
                 UpdateDisplayPath(point);
+
                 psserver->SendSystemInfo(me->clientnum,
                                          "Adjusted point(%d) %d of path %s(%d) at range %.2f",
                                          point->GetID(),indexPoint,path->GetName(),path->GetID(),rangePoint);

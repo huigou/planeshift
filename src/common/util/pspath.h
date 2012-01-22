@@ -74,7 +74,14 @@ public:
     
     /// Adjust the point position
     bool Adjust(iDataConnection * db, csVector3 & pos, csString sector);
-    bool Adjust(csVector3 & pos, csString sector);
+    
+    /** Adjust the point position
+     */
+    void Adjust(csVector3 & pos, csString sector);
+    
+    /** Adjust the point position
+     */
+    void Adjust(csVector3 & pos, iSector* sector);
 
     /// Set the previous point id
     void SetPrevious(int previous) { prevPointId = previous; }
