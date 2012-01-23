@@ -1336,13 +1336,19 @@ bool WorkManager::CombineWork()
     // Find out if anything can be combined in container
     uint32 combinationId = 0;
     int combinationQty = 0;
+    int resultQuality = 0;
     if ( IsContainerCombinable( combinationId, combinationQty ) )
     {
+        //now we know the result quality as this function is going to destroy it we take a copy
+        //TODO: loadlocalvariables is a big nuinseance which should it does unexpected effect to the environment.
+        resultQuality = currentQuality;        
         // Transform all items in container into the combination item
         psItem* newItem = CombineContainedItem( combinationId, combinationQty, currentQuality, workItem );
         if (newItem)
         {
-            ValidateMind(); //unfortunately the bad loadlocalvariables is damaging this data
+            //restore the valid current quality
+            currentQuality = resultQuality;
+            ValidateMind(); //unfortunately the bad loadlocalvariables is damaging this data so we restore it
             // Find out if we can do a combination transformation
             unsigned int transMatch = AnyTransform(patterns, patternKFactor, combinationId, combinationQty );
             if (( transMatch == TRANSFORM_MATCH ) || (transMatch == TRANSFORM_GARBAGE ))
