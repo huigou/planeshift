@@ -111,7 +111,7 @@
 
     <block location="glsl:fragmentMain">
       <?if vars."snow density" ?>
-        vec4 snowColor = texture2D (texSnow1, texCoord/2);
+        vec4 snowColor = texture2D (texSnow1, texCoord/2.0f);
         vec3 normals = normalize(normal);
 
         vec2 snow = vec2(clamp(normals.y, 0.0f, 1.0f));
@@ -120,7 +120,7 @@
         snow.y = step(0.4f, snow.y) * 0.3f;
 
         //the place for the snow coverage.
-        float snowplace  = clamp(dot(snow, float2(2.0f)), 0.0f, 1.0f);
+        float snowplace  = clamp(dot(snow, vec2(2.0f)), 0.0f, 1.0f);
 
         result.rgb = mix(diffuse.rgb, snowColor.rgb, snowplace*snowDensity);
         result.a = diffuse.a;
