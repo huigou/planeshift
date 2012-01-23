@@ -111,10 +111,10 @@
 
     <block location="glsl:fragmentMain">
       <?if vars."snow density" ?>
-        float4 snowColor = texture2D (texSnow1, texCoord/2);
-        float3 normals = normalize(normal);
+        vec4 snowColor = texture2D (texSnow1, texCoord/2);
+        vec3 normals = normalize(normal);
 
-        float2 snow = float2(clamp(normals.y, 0.0f, 1.0f));
+        vec2 snow = vec2(clamp(normals.y, 0.0f, 1.0f));
 
         //Limit the coverage of thick snow.
         snow.y = step(0.4f, snow.y) * 0.3f;
@@ -122,7 +122,7 @@
         //the place for the snow coverage.
         float snowplace  = clamp(dot(snow, float2(2.0f)), 0.0f, 1.0f);
 
-        result.rgb = lerp(diffuse.rgb, snowColor.rgb, snowplace*snowDensity);
+        result.rgb = mix(diffuse.rgb, snowColor.rgb, snowplace*snowDensity);
         result.a = diffuse.a;
         result_attr_perfragment = true;
       <?else?>
