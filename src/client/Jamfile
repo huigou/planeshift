@@ -69,6 +69,7 @@ STATIC.PLUGINLIST =
   glshader_cg
   glshader_fixed
   glshader_ps1
+  glshader_glsl
   gmeshanim
   gmeshanimpdl
   gmeshldr
