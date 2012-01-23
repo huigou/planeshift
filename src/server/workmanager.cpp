@@ -1170,7 +1170,7 @@ void WorkManager::StartUseWork(Client* client)
             int count = itemArray[0]->GetStackCount();
 
             // Verify there is a valid transformation for the item that was dropped
-            unsigned int transMatch = (patterns, itemID, count );
+            unsigned int transMatch = AnyTransform(patterns, patternKFactor, itemID, count);
             if (( transMatch == TRANSFORM_MATCH ) || (transMatch == TRANSFORM_GARBAGE ))
             {
                 // Set up event for transformation
