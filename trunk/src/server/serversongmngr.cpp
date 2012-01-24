@@ -112,7 +112,7 @@ void ServerSongManager::HandlePlaySongMessage(MsgEntry* me, Client* client)
         if(item != 0)
         {
             uint32 actorEID;
-            int songLength;
+            ScoreStatistics scoreStats;
             float errorRate;
             psItem* instrItem;
             const char* instrName;
@@ -133,7 +133,7 @@ void ServerSongManager::HandlePlaySongMessage(MsgEntry* me, Client* client)
             csRef<iDocumentSystem> docSys = csQueryRegistry<iDocumentSystem>(psserver->GetObjectReg());;
             csRef<iDocument> scoreDoc = docSys->CreateDocument();
             scoreDoc->Parse(musicMsg.musicalSheet, true);
-            if(!psMusic::GetStatistics(scoreDoc, songLength))
+            if(!psMusic::GetStatistics(scoreDoc, scoreStats))
             {
                 // sending an error message
                 psStopSongMessage stopMsg(client->GetClientNum(), 0, true);
@@ -194,7 +194,7 @@ void ServerSongManager::HandlePlaySongMessage(MsgEntry* me, Client* client)
             instrItem->SetInUse(true);
 
             // keeping track of the song's time
-            psEndSongEvent* event = new psEndSongEvent(charActor, songLength);
+            psEndSongEvent* event = new psEndSongEvent(charActor, scoreStats.totalLength);
             psserver->GetEventManager()->Push(event);
         }
         else

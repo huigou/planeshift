@@ -30,6 +30,34 @@
 
 
 /**
+ * This struct keeps general information about a score.
+ */
+struct ScoreStatistics
+{
+    ScoreStatistics()
+    {
+        totalLength = 0.0;
+        minimumDuration = 0;
+        maximumPolyphony = 0;
+        averageDuration = 0.0;
+        averagePolyphony = 0.0;
+
+        beatType = 0;
+        fifths = 0;
+    }
+
+    float totalLength;          ///< total duration of the score in milliseconds.
+    int minimumDuration;        ///< duration of the shortest note in the score in ms.
+    int maximumPolyphony;       ///< maximum number of notes played at the same time.
+    float averageDuration;      ///< average duration of the score's notes in ms.
+    float averagePolyphony;     ///< average number of notes played at the same time.
+
+    int beatType;               ///< beat type of the score.
+    int fifths;                 ///< tonality as number of sharps (if > 0) or flats (if < 0).
+};
+
+
+/**
  * This class contains a set of functions that are usefull for the processing of music
  * and musical scores.
  */
@@ -60,13 +88,16 @@ public:
     static bool GetMeasures(csRef<iDocument> score, csRefArray<iDocumentNode> &measures);
 
     /**
-     * Returns the length of the score in milliseconds in the parameter length.
+     * Returns the length of the score in milliseconds in the parameter length. Rests
+     * are counted only for determining the song's total length but they are excluded
+     * from other statistics. If the score is empty, the average polyphony and duration
+     * are set to 0.
      *
      * @param musicalScore the musical score.
-     * @param scoreLength the length of the score in milliseconds.
+     * @param stats the retrieved statistics of the given score.
      * @return true if the document is a valid musical score, false otherwise.
      */
-    static bool GetStatistics(csRef<iDocument> musicalScore, int &scoreLength);
+    static bool GetStatistics(csRef<iDocument> musicalScore, ScoreStatistics &stats);
 
     /**
      * Gets the attributes in the first measure of the given score. The provided

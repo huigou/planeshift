@@ -114,27 +114,225 @@ bool psMusic::GetMeasures(csRef<iDocument> musicalScore, csRefArray<iDocumentNod
     return true;
 }
 
-bool psMusic::GetStatistics(csRef<iDocument> musicalScore, int &scoreLength)
+bool psMusic::GetStatistics(csRef<iDocument> musicalScore, ScoreStatistics &stats)
 {
-    int quarterDivisions;
-    int fifths;
     int beats;
-    int beatType;
     int tempo;
-    float quarterDuration;
-    float nQuarters;
+    int quarterDivisions;
+    float timePerMeasure;
+    float timePerDivision;
+
+    uint nNotes;                            // number of notes in the score
+    uint nChords;                           // number of chords in the score
+    float totalLengthNoRests;               // total length of the song excluding rests
+
+    uint endingNNotes;                      // number of notes in the previous endings
+    uint endingNChords;                     // number of chords in the previous endings
+    float endingTotalLengthNoRests;         // total length of the previous endings excluding rests
+
+    uint lastRepeatNNotes;                  // number of notes from the last start repeat
+    uint lastRepeatNChords;                 // number of chords from the last start repeat
+    float lastRepeatTotalLength;            // total length from the last start repeat
+    float lastRepeatTotalLengthNoRests;     // total length from the last start repeat excluding rests
 
     csRefArray<iDocumentNode> measures;
 
-    if(!psMusic::GetAttributes(musicalScore, quarterDivisions, fifths, beats, beatType, tempo)
+    // this retrieves the general attributes of the score and checks some syntax
+    if(!psMusic::GetAttributes(musicalScore, quarterDivisions, stats.fifths, beats, stats.beatType, tempo)
         || !psMusic::GetMeasures(musicalScore, measures))
     {
         return false;
     }
 
-    quarterDuration = 60.0f / tempo * 1000; // in milliseconds
-    nQuarters = 4.0f * beats / beatType;
-    scoreLength = measures.GetSize() * nQuarters * quarterDuration;
+    timePerDivision = 60.0f / tempo / quarterDivisions * 1000; // (ms)
+    timePerMeasure = 60.0f / tempo * beats / stats.beatType * 4 * 1000; // (ms)
+
+    // initializing variables
+    nNotes = 0;
+    nChords = 0;
+    totalLengthNoRests = 0.0;
+
+    endingNNotes = 0;
+    endingNChords = 0;
+    endingTotalLengthNoRests = 0.0;
+
+    lastRepeatNNotes = 0;
+    lastRepeatNChords = 0;
+    lastRepeatTotalLength = 0.0;
+    lastRepeatTotalLengthNoRests = 0.0;
+
+    stats.totalLength = 0.0;
+    stats.maximumPolyphony = 0;
+    stats.minimumDuration = 500000; // (ms) this is more than a 8/4 note at bpm = 1
+
+    // parsing the score
+    for(size_t i = 0; i < measures.GetSize(); i++)
+    {
+        int noteDuration;
+        uint measureNNotes = 0;
+        uint measureNChords = 0;
+        float measureDurationNoRests = 0.0;
+        int currentChordPolyphony = 0;
+        csRef<iDocumentNode> noteNode;
+        csRef<iDocumentNode> barlineNode;
+        csRef<iDocumentNode> durationNode;
+        csRef<iDocumentNodeIterator> notesIter;
+
+        // handling repeats
+        barlineNode = measures.Get(i)->GetNode("barline");
+        if(barlineNode.IsValid())
+        {
+            csRef<iDocumentNode> repeatNode = barlineNode->GetNode("repeat");
+            if(repeatNode.IsValid())
+            {
+                const char* direction = repeatNode->GetAttributeValue("direction");
+                
+                if(direction == 0) // wrong syntax
+                {
+                    return false;
+                }
+
+                // resetting lastRepeat variables data
+                if(csStrCaseCmp(direction, "forward") == 0)
+                {
+                    lastRepeatNNotes = 0;
+                    lastRepeatNChords = 0;
+                    lastRepeatTotalLength = 0.0;
+                    lastRepeatTotalLengthNoRests = 0.0;
+                }
+            }
+        }
+
+        // parsing notes
+        notesIter = measures.Get(i)->GetNodes("note");
+        while(notesIter->HasNext())
+        {
+            noteNode = notesIter->Next();
+            durationNode = noteNode->GetNode("duration");
+
+            // if there's no durationNode syntax is incorrect
+            if(!durationNode.IsValid())
+            {
+                return false;
+            }
+
+            noteDuration = durationNode->GetContentsValueAsInt() * timePerDivision;
+
+            // if this is a rest only the total length must be modified (done later)
+            if(!noteNode->GetNode("rest").IsValid()) // this is a note
+            {
+                measureNNotes++;
+
+                // if the note is part of a chord neither the chords count nor the total
+                // length have to be updated. The first notes in a chord doesn't have the
+                // tag <chord> so the condition is true for them.
+                if(noteNode->GetNode("chord").IsValid())
+                {
+                    currentChordPolyphony++;
+                }
+                else // this is a new chord
+                {
+                    // updating maximum polyphony and minimum duration
+                    if(stats.maximumPolyphony < currentChordPolyphony)
+                    {
+                        stats.maximumPolyphony = currentChordPolyphony;
+                    }
+
+                    if(stats.minimumDuration > noteDuration)
+                    {
+                        stats.minimumDuration = noteDuration;
+                    }
+
+                    currentChordPolyphony = 1;
+                    measureNChords++;
+                    measureDurationNoRests += noteDuration;
+                }
+            }
+        }
+
+        // updating maximum polyphony and minimum duration with the last chord data
+        if(stats.maximumPolyphony < currentChordPolyphony)
+        {
+            stats.maximumPolyphony = currentChordPolyphony;
+        }
+        if(stats.minimumDuration > noteDuration)
+        {
+            stats.minimumDuration = noteDuration;
+        }
+
+        nNotes += measureNNotes;
+        nChords += measureNChords;
+        stats.totalLength += timePerMeasure;
+        totalLengthNoRests += measureDurationNoRests;
+
+        lastRepeatNNotes +=  measureNNotes;
+        lastRepeatNChords += measureNChords;
+        lastRepeatTotalLength += timePerMeasure;
+        lastRepeatTotalLengthNoRests += measureDurationNoRests;
+
+        // checking if this measure is the end of a repeat
+        if(barlineNode.IsValid())
+        {
+            csRef<iDocumentNode> repeatNode = barlineNode->GetNode("repeat");
+            csRef<iDocumentNode> endingNode = barlineNode->GetNode("ending");
+
+            if(repeatNode.IsValid())
+            {
+                const char* direction = repeatNode->GetAttributeValue("direction");
+                if(direction == 0) // syntax is wrong
+                {
+                    return false;
+                }
+
+                if(csStrCaseCmp(direction, "backward") == 0)
+                {
+                    int repeatCounter = repeatNode->GetAttributeValueAsInt("times");
+
+                    nNotes += lastRepeatNNotes * repeatCounter;
+                    nChords += lastRepeatNChords * repeatCounter;
+                    stats.totalLength += lastRepeatTotalLength * repeatCounter;
+                    totalLengthNoRests += lastRepeatTotalLengthNoRests * repeatCounter;
+                }
+            }
+
+            // handling endings
+            if(endingNode.IsValid())
+            {
+                int endingNumber = endingNode->GetAttributeValueAsInt("number");
+
+                if(endingNumber == 1) // reset ending data
+                {
+                    endingNNotes = 0;
+                    endingNChords = 0;
+                    endingTotalLengthNoRests = 0.0;
+                }
+                else
+                {
+                    // previous endings are not played so they aren't taken into account
+                    nNotes -= endingNNotes;
+                    nChords -= endingNChords;
+                    stats.totalLength -= (endingNumber - 1) * timePerMeasure;
+                    totalLengthNoRests -= endingTotalLengthNoRests;
+
+                    endingNNotes += measureNNotes;
+                    endingNChords += measureNChords;
+                    endingTotalLengthNoRests += measureDurationNoRests;
+                }
+            }
+        }
+    }
+
+    // preventing division by zero if the score has no notes
+    if(nChords == 0)
+    {
+        stats.averageDuration = 0.0;
+        stats.averagePolyphony = 0.0;
+    }
+    else
+    {
+        stats.averageDuration = totalLengthNoRests / nChords;
+        stats.averagePolyphony = (float)nNotes / nChords;
+    }
 
     return true;
 }
