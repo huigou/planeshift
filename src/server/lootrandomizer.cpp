@@ -1,7 +1,7 @@
 /*
  * lootrandomizer.cpp by Stefano Angeleri
  *
- * Copyright (C) 2010 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
+ * Copyright (C) 2012 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -120,6 +120,7 @@ psItem* LootRandomizer::RandomizeItem( psItem* item, float maxcost, bool lootTes
     int modifierTypePos;
     csArray< csString > selectedModifierTypes;
     float totalCost = item->GetBaseStats()->GetPrice().GetTrias();
+    uint32 itemID = item->GetBaseStats()->GetUID();
 
     // Set up ModifierTypes
     // The Order of the modifiers is significant. It determines the priority of the modifiers, currently this is
@@ -199,6 +200,34 @@ psItem* LootRandomizer::RandomizeItem( psItem* item, float maxcost, bool lootTes
         probability = psserver->rng->Get( max_probability );
         for ( newModifier = (int)modifierList->GetSize() - 1; newModifier >= 0 ; newModifier-- )
         {
+            //first of all check if the item is allowed to get this modifier
+            //first check if the item is among the restrains
+            if((*modifierList)[newModifier]->itemRestrain.Contains(itemID))
+            {
+                //if it was found we get it's result.
+                if(!(*modifierList)[newModifier]->itemRestrain.Get(itemID, false))
+                {
+                    //if it was false it means the item was disallowed so we just skip over
+                    //to the next modifier
+                    continue;
+                }
+            }
+            //the second check is for the generic restrain (issued as itemID = 0)
+            //which says what is the default for this modifier when an itemID specific
+            //restrain is not found. If this isn't found either the default will be
+            //to allow the modifier for the current item. Mantaining, so, the previous
+            //behaviour.
+            else if((*modifierList)[newModifier]->itemRestrain.Contains(0))
+            {
+                //if it was found we get it's result.
+                if(!(*modifierList)[newModifier]->itemRestrain.Get(0, false))
+                {
+                    //if it was false it means unspecified items were disallowed so we just skip over
+                    //to the next modifier
+                    continue;
+                }
+            }
+            
             float item_prob = ((*modifierList)[newModifier]->probability);
             if ( probability >=  item_prob)
             {

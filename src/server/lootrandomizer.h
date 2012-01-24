@@ -27,17 +27,18 @@ class RandomizedOverlay;
  */
 struct LootModifier
 {
-    uint32_t id;                ///< The id assigned to this modifier in the db. It's referenced by psitem.
-    csString modifier_type;     ///< The type of modifier (suffix, prefix, adjective)
-    csString name;              ///< The part of name which this modifier will add when used. The position is determined by modifier_type
-    csString effect;            ///< Declares modifiers to some stats like weight, weapon speed, resistance/attack types.
-    csString equip_script;      ///< The part of equip_script to add to the item when this modifier is used.
-    float    probability;       ///< The probability for this loot modifier to happen when generating a random item.
-    csString stat_req_modifier; ///< The additional requirements to stats when this modifier is used.
-    float    cost_modifier;     ///< The cost of this modifier @see CalcModifierCostCap
-    csString mesh;              ///< The mesh this modifier will use for the random item generated.
-    csString icon;              ///< The icon this modifier will use for the random item generated.
-    csString not_usable_with;   ///< Defines which modifiers this isn't usable with.
+    uint32_t id;                       ///< The id assigned to this modifier in the db. It's referenced by psitem.
+    csString modifier_type;            ///< The type of modifier (suffix, prefix, adjective)
+    csString name;                     ///< The part of name which this modifier will add when used. The position is determined by modifier_type
+    csString effect;                   ///< Declares modifiers to some stats like weight, weapon speed, resistance/attack types.
+    csString equip_script;             ///< The part of equip_script to add to the item when this modifier is used.
+    float    probability;              ///< The probability for this loot modifier to happen when generating a random item.
+    csString stat_req_modifier;        ///< The additional requirements to stats when this modifier is used.
+    float    cost_modifier;            ///< The cost of this modifier @see CalcModifierCostCap
+    csString mesh;                     ///< The mesh this modifier will use for the random item generated.
+    csString icon;                     ///< The icon this modifier will use for the random item generated.
+    csString not_usable_with;          ///< Defines which modifiers this isn't usable with.
+    csHash<bool, uint32> itemRestrain; ///< Contains if the itemid is allowed or not. item id 0 means all items, false means disallowed.
 };
 
 class MathScript;

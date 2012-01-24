@@ -438,7 +438,6 @@ void CacheManager::RemoveItemStats (psItemStats *&itemStats)
 
 bool CacheManager::PreloadLootModifiers()
 {
-
     // Order by's are a little slower but it guarentees order
     Result result( db->Select( "SELECT * FROM loot_modifiers ORDER BY modifier_type, probability" ) );
     if ( !result.IsValid() )
@@ -463,6 +462,19 @@ bool CacheManager::PreloadLootModifiers()
         entry->mesh = result[i][ "mesh" ];
         entry->icon = result[i][ "icon" ];
         entry->not_usable_with = result[i][ "not_usable_with" ];
+
+        Result restrainResult(db->Select("SELECT * FROM loot_modifiers_restrains where loot_modifier_id=%i", entry->id));
+        if (!restrainResult.IsValid())
+        {
+            Error2( "Could not load loot modifiers restrains due to database error: %s\n", db->GetLastError() );
+            return false;
+        }
+
+        for(size_t j = 0; j < restrainResult.Count(); j++)
+        {
+            entry->itemRestrain.PutUnique(restrainResult[j].GetUInt32("item_id"),
+                                         *restrainResult[j]["allowed"] == 'Y');
+        }
 
         lootRandomizer->AddLootModifier(entry);
     }
