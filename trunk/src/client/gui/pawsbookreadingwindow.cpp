@@ -74,7 +74,7 @@ void pawsBookReadingWindow::HandleMessage( MsgEntry* me )
         {
             Show();
             psReadBookTextMessage mesg( me );
-            csRef<iDocumentNode> docnode = ParseString(mesg.text,"Contents");
+            csRef<iDocumentNode> docnode = ParseStringGetNode(mesg.text, "Contents");
             if(docnode)
                 dynamic_cast<pawsDocumentView*>(description)->SetText(mesg.text.GetData());
             else description->SetText(mesg.text);
