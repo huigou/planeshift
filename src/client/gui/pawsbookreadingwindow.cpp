@@ -74,7 +74,7 @@ void pawsBookReadingWindow::HandleMessage( MsgEntry* me )
         {
             Show();
             psReadBookTextMessage mesg( me );
-            csRef<iDocumentNode> docnode = ParseStringGetNode(mesg.text, "Contents");
+            csRef<iDocumentNode> docnode = ParseStringGetNode(mesg.text, "Contents", false);
             if(docnode)
                 dynamic_cast<pawsDocumentView*>(description)->SetText(mesg.text.GetData());
             else description->SetText(mesg.text);
@@ -144,25 +144,25 @@ bool pawsBookReadingWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifi
         csRef<iVFS> vfs = psengine->GetVFS();
         csString tempFileNameTemplate = "/planeshift/userdata/books/%s.txt", tempFileName;
         csString bookFormat;
-		if (filenameSafe(name->GetText()).Length()) {
-			tempFileName.Format(tempFileNameTemplate, filenameSafe(name->GetText()).GetData());
-		}
-		else { //The title is made up of Only special chars :-(
-			tempFileNameTemplate = "/planeshift/userdata/books/book%d.txt";
-			unsigned int tempNumber = 0;
-			do
-	        {
-	           tempFileName.Format(tempFileNameTemplate, tempNumber);
-	           tempNumber++;
-	        } while (vfs->Exists(tempFileName));
-		}
+        if (filenameSafe(name->GetText()).Length()) {
+            tempFileName.Format(tempFileNameTemplate, filenameSafe(name->GetText()).GetData());
+        }
+        else { //The title is made up of Only special chars :-(
+            tempFileNameTemplate = "/planeshift/userdata/books/book%d.txt";
+            unsigned int tempNumber = 0;
+            do
+            {
+               tempFileName.Format(tempFileNameTemplate, tempNumber);
+               tempNumber++;
+            } while (vfs->Exists(tempFileName));
+        }
         
         bookFormat = description->GetText();
 #ifdef _WIN32
-		bookFormat.ReplaceAll("\n", "\r\n");
+        bookFormat.ReplaceAll("\n", "\r\n");
 #endif
         vfs->WriteFile(tempFileName, bookFormat, bookFormat.Length());
-		
+        
         psSystemMessage msg(0, MSG_ACK, "Book saved to %s", tempFileName.GetData()+27 );
         msg.FireEvent();
         return true;
@@ -176,11 +176,11 @@ bool pawsBookReadingWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifi
 
 bool pawsBookReadingWindow::isBadChar(char c)
 {
-	csString badChars = "/\\?%*:|\"<>";
-	if (badChars.FindFirst(c) == (size_t) -1)
-		return false;
-	else
-		return true;
+    csString badChars = "/\\?%*:|\"<>";
+    if (badChars.FindFirst(c) == (size_t) -1)
+        return false;
+    else
+        return true;
 }
 
 void pawsBookReadingWindow::Draw()
@@ -196,12 +196,12 @@ void pawsBookReadingWindow::Draw()
 
 csString pawsBookReadingWindow::filenameSafe(const csString &original)
 {
-	csString safe;
-	size_t len = original.Length();
-	for (size_t c = 0; c < len; ++c) {
-		if (!isBadChar(original[c]))
-			safe += original[c];
-	}
-	return safe;
+    csString safe;
+    size_t len = original.Length();
+    for (size_t c = 0; c < len; ++c) {
+        if (!isBadChar(original[c]))
+            safe += original[c];
+    }
+    return safe;
 }
 
