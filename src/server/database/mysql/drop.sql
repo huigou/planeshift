@@ -35,6 +35,7 @@ DROP TABLE `item_categories`;
 DROP TABLE `item_instances`;
 DROP TABLE `item_stats`;
 DROP TABLE loot_modifiers;
+DROP TABLE loot_modifiers_restrains;
 DROP TABLE loot_rule_details;
 DROP TABLE loot_rules;
 DROP TABLE math_scripts;
