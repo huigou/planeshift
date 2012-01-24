@@ -69,6 +69,7 @@ psEntityLabels::psEntityLabels()
     showGuild = true;
     
     underMouse = NULL;
+    underTarget = NULL;
     
     //set default values for entity label colors
     entityColors[ENTITY_DEFAULT] = 0xff0000;
