@@ -578,7 +578,7 @@ NpcResponse *psNPCDialog::FindOrGeneralizeTrigger(Client *client,NpcTriggerSente
                 generalized_copy.Append(generalized[i]);
             }
      
-			printf("Searching for generalized trigger: %s'\n", generalized_copy.GetDataSafe());
+            Debug2(LOG_NPC, 0, "Searching for generalized trigger: %s'\n", generalized_copy.GetDataSafe());
 
             dict->CheckForTriggerGroup(generalized_copy);  // substitute master trigger if this is child trigger in group
 
