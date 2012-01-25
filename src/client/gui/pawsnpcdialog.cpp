@@ -306,23 +306,23 @@ void pawsNpcDialogWindow::LoadQuest(csString xmlstr)
 
     csRef<iDocumentNodeIterator> it  = options->GetNodes("row");
 
+    QuestInfo qi;
+
     while(it != 0 && it->HasNext())
     {
         csRef<iDocumentNode> cur = it->Next();
         if(cur->GetAttributeValueAsInt("heading"))
         {
-            QuestInfo qi;
             csRef<iDocumentNode> txt = cur->GetNode("text");
             qi.title = txt->GetContentsValue();
-            questInfo.Push(qi);
         }
         else
         {
             csRef<iDocumentNode> txt = cur->GetNode("text");
             csRef<iDocumentNode> trg = cur->GetNode("trig");
-            QuestInfo& qi = questInfo[questInfo.GetSize()-1];
             qi.text = txt->GetContentsValue();
             qi.trig = trg->GetContentsValue();
+            questInfo.Push(qi);
         }
     }
     displayIndex = 0;
