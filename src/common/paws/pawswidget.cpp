@@ -2858,7 +2858,7 @@ double pawsWidget::GetProperty(MathEnvironment* /*env*/, const char* ptr)
     return 0.0;
 }
 
-double pawsWidget::CalcFunction(MathEnvironment* /*env*/, const char* functionName, const double* params)
+double pawsWidget::CalcFunction(MathEnvironment* env, const char* functionName, const double* params)
 {
     if (!strcasecmp(functionName, "closeparent"))
     {
@@ -2868,6 +2868,20 @@ double pawsWidget::CalcFunction(MathEnvironment* /*env*/, const char* functionNa
         w->Close();
         return 0.0;
     }
+    else if (!strcasecmp(functionName, "Show"))
+    {
+        Show();
+        return 0.0;
+    }
+    else if (!strcasecmp(functionName, "Hide"))
+    {
+        Hide();
+        return 0.0;
+    }
+    /*else if(parent)
+    {
+        return parent->CalcFunction(env, functionName, params);
+    }*/
 
     Error2("pawsWidget::CalcFunction(%s) failed\n", functionName);
     return 0.0;
