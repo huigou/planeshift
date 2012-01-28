@@ -7196,7 +7196,7 @@ psStopSongMessage::psStopSongMessage()
 
     msg->Add((uint32_t)0);
     msg->Add(false);
-    msg->Add((int8_t)NO_ERROR);
+    msg->Add((int8_t)NO_SONG_ERROR);
 }
 
 psStopSongMessage::psStopSongMessage(uint32_t client, uint32_t songID, bool toPlayer, int8_t errorCode)
