@@ -668,16 +668,17 @@ INSERT INTO math_scripts VALUES( "Calculate Song Experience" , "
     else
     {
         InstrSkillRank = Player:GetSkillValue(InstrSkill);
-        PracticePoints = SongTime / SecondsPerPracticePoint;
 
         // No practice points if the score's rank differ from the player's skill by more than 50
-        Modifier = 1 - abs(InstrSkillRank - ScoreRank) / 50;
-        if(Modifier < 0)
+        RelativeDifficulty = 1 - abs(InstrSkillRank - ScoreRank) / 50;
+        if(RelativeDifficulty < 0)
         {
-            Modifier = 0;
+            RelativeDifficulty = 0;
         }
 
-        TimeLeft = SongTime % SecondsPerPracticePoint * Modifier;
+        PracticePoints = SongTime / SecondsPerPracticePoint * RelativeDifficulty;
+        TimeLeft = SongTime % SecondsPerPracticePoint * RelativeDifficulty;
+        Modifier = 1;
     }
 ");
 
