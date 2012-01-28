@@ -268,11 +268,6 @@ bool psMusic::GetStatistics(csRef<iDocument> musicalScore, ScoreStatistics &stat
                 stats.minimumDuration = noteDuration;
             }
         }
-        else if(totalLengthNoRests == 0.0)
-        {
-            // here stats.minimumDuration is still 500000
-            stats.minimumDuration = 0;
-        }
 
         nNotes += measureNNotes;
         nChords += measureNChords;
@@ -336,9 +331,11 @@ bool psMusic::GetStatistics(csRef<iDocument> musicalScore, ScoreStatistics &stat
         }
     }
 
-    // preventing division by zero if the score has no notes
+    // setting average values
     if(nChords == 0)
     {
+        // here stats.minimumDuration is still 500000
+        stats.minimumDuration = 0;
         stats.averageDuration = 0.0;
         stats.averagePolyphony = 0.0;
     }
