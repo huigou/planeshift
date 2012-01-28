@@ -25,11 +25,6 @@
 #include <isndsys/ss_structs.h>
 
 //====================================================================================
-// Project Includes
-//====================================================================================
-#include <util/music.h>
-
-//====================================================================================
 // Local Includes
 //====================================================================================
 #include "instrument.h"
@@ -68,6 +63,11 @@ bool SndSysSongData::Initialize(csRef<iDocument> musicalScore)
         return false;
     }
 
+    if(!psMusic::GetStatistics(musicalScore, songData->scoreStats))
+    {
+        return false;
+    }
+
     // setting songData's variables
     songData->divisions = (uint)iDivisions;
     songData->beats = (uint)iBeats;
@@ -86,9 +86,7 @@ size_t SndSysSongData::GetDataSize()
 
 size_t SndSysSongData::GetFrameCount()
 {
-    float quarterDuration = 60.0f / songData->tempo;
-    float numberOfQuarter = 4.0f * (songData->beats / songData->beatType) * songData->measures.GetSize();
-    size_t numberOfSamples = quarterDuration * numberOfQuarter * songData->instrument->GetFormat()->Freq;
+    size_t numberOfSamples = songData->scoreStats.totalLength / 1000 * songData->instrument->GetFormat()->Freq;
 
     return numberOfSamples;
 }

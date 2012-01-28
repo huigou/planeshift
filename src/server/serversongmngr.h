@@ -37,6 +37,7 @@
 class psItem;
 class MathScript;
 class psCharacter;
+struct ScoreStatistics;
 
 
 /**
@@ -116,10 +117,11 @@ public:
     void StopSong(gemActor* charActor, bool skillRanking);
 
 private:
-    bool isProcessedSongEnded;              ///< Flag used to keep track of the last song request. Remember to reset to false each time.
-    csWeakRef<MathScript> calcSongPar;                ///< Keeps the script that computes the error rate.
-    csWeakRef<MathScript> calcSongExp;                ///< Keeps the script that computes the experience gained.
-    unsigned int instrumentsCategory;       ///< Keeps the instruments' category from server_options table.
+    bool isProcessedSongEnded;                         ///< Flag used to keep track of the last song request. Remember to reset to false each time.
+    csWeakRef<MathScript> calcSongPar;                 ///< Keeps the script that computes the song parameters.
+    csWeakRef<MathScript> calcSongExp;                 ///< Keeps the script that computes the experience gained.
+    unsigned int instrumentsCategory;                  ///< Keeps the instruments' category from server_options table.
+    csHash<int, unsigned int> scoreRanks;              ///< Keeps the scores' ranks that are being played.
 
     /**
      * Gets the instrument currently equipped by the player.

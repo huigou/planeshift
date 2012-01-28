@@ -90,8 +90,8 @@ public:
     /**
      * Returns the length of the score in milliseconds in the parameter length. Rests
      * are counted only for determining the song's total length but they are excluded
-     * from other statistics. If the score is empty, the average polyphony and duration
-     * are set to 0.
+     * from other statistics. If the score is empty (or has only rests), the average
+     * polyphony and duration are set to 0.
      *
      * @param musicalScore the musical score.
      * @param stats the retrieved statistics of the given score.

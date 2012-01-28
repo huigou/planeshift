@@ -592,35 +592,92 @@ INSERT INTO math_scripts VALUES( "Calculate Song Parameters" , "
     InstrSkill = 52;
     InstrSkillRank = Player:GetSkillValue(InstrSkill);
 
-    if(InstrSkillRank < 50)
+    // The player unlocks 2 tonalities every 10 ranks
+    Fifths = abs(Fifths);
+    ScoreRank = Fifths * 10;
+
+    // The player unlocks the beat type 8 (16) at rank 30 (60)
+    if(BeatType = 8)
     {
-        ErrorRate = 0.25 - 0.004 * InstrSkillRank;
+        ScoreRank = ScoreRank + 30;
+    }
+    if(BeatType = 16)
+    {
+        ScoreRank = ScoreRank + 60;
+    }
+
+    // Players at rank 130 can play a score with beat type = 16 and in C#maj
+    // CanPlay is positive if the player can play it, negative otherwise
+    CanPlay = InstrSkillRank - ScoreRank;
+
+    // Meter and tonality add a maximum of 65 to the final rank
+    ScoreRank = ScoreRank / 2;
+
+    // The minimum duration of the note the player can play gets half every 50 ranks
+    PlayerMinimumDuration = 1000 / exp2(InstrSkillRank / 50);  // in milliseconds
+
+    if(AverageDuration = 0)  // the score is empty or has only rests
+    {
+        ScoreRank = -1;
+        DurationFactor = 1;
     }
     else
     {
-        if(InstrSkillRank < 100)
+        // Here the actual average duration of the song's execution is computed
+        if(PlayerMinimumDuration > MinimumDuration)
         {
-            ErrorRate = 0.05 - 0.00075 * (InstrSkillRank - 50);
+            DurationFactor = PlayerMinimumDuration / MinimumDuration;
         }
         else
         {
-            if(InstrSkillRank < 150)
-            {
-                ErrorRate = 0.0125 - 0.000175 * (InstrSkillRank - 100);
-            }
-            else
-            {
-                ErrorRate = 0.00375 - 0.000073 * (InstrSkillRank - 150);
-            }
+            DurationFactor = 1;
+        }
+        AverageDuration = AverageDuration * DurationFactor;
+
+        // The bonus (malus) due to the song's speed is in (-InstrSkillRank, +InstrSkillRank]
+        // It gets 0 when AverageDuration / PlayerMinimumDuration = 5
+        // TODO this formula should take into account also AveragePolyphony and MaximumPolyphony
+        DurationRatio = PlayerMinimumDuration / AverageDuration;
+        if(DurationRatio >= 0.2)
+        {
+            ScoreRank = ScoreRank + InstrSkillRank * (1.25 * DurationRatio - 0.25);
+        }
+        else
+        {
+            ScoreRank = ScoreRank + InstrSkillRank * (5 * DurationRatio - 1);
+        }
+
+        // The minimum score rank is 0
+        if(ScoreRank < 0)
+        {
+            ScoreRank = 0;
         }
     }
 ");
 
 INSERT INTO math_scripts VALUES( "Calculate Song Experience" , "
+    InstrSkill = 52; // needed by the server
     SecondsPerPracticePoint = 10;
-    PracticePoints = SongTime / SecondsPerPracticePoint;
-    TimeLeft = SongTime % SecondsPerPracticePoint;
-    Modifier = 1;
+
+    if(ScoreRank < 0)  // the score is empty or has only rests
+    {
+        PracticePoints = 0;
+        Modifier = 1;
+        TimeLeft = 0;
+    }
+    else
+    {
+        InstrSkillRank = Player:GetSkillValue(InstrSkill);
+        PracticePoints = SongTime / SecondsPerPracticePoint;
+        TimeLeft = SongTime % SecondsPerPracticePoint;
+
+        // No practice points if the score's rank differ from the player's skill by more than 50
+        Modifier = 1 - abs(InstrSkillRank - ScoreRank) / 50;
+        if(Modifier < 0)
+        {
+            Modifier = 0;
+        }
+    }
 ");
 
 INSERT INTO math_scripts VALUES( "DoDamageScript", "

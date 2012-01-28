@@ -47,10 +47,10 @@ public:
     virtual ~SongHandle();
 
     /**
-     * Sets the error probability of this song.
-     * @param errorProb the new error probability.
+     * Sets the minimum duration played of this song.
+     * @param minimumDuration the new minimum duration.
      */
-    void SetErrorRate(float errorProb);
+    void SetMinimumDuration(float minimumDuration);
 
 
     // From SoundHandle
@@ -60,7 +60,7 @@ public:
               int type, SoundControl* &ctrl, bool dopplerEffect);
 
 private:
-    float errorRate;                ///< the probability (0 <= errorRate <= 1) that the player play wrongly a note.
+    float minDuration;              ///< the minimum duration that the player is able to play.
     Instrument* instrument;         ///< instrument of the song
     csRef<iDocument> sheet;         ///< musical sheet of the song
 };

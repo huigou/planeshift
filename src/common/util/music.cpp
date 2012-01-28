@@ -124,7 +124,7 @@ bool psMusic::GetStatistics(csRef<iDocument> musicalScore, ScoreStatistics &stat
 
     uint nNotes;                            // number of notes in the score
     uint nChords;                           // number of chords in the score
-    float totalLengthNoRests;               // total length of the song excluding rests
+    float totalLengthNoRests;               // total duration of the score in ms excluding rests.
 
     uint endingNNotes;                      // number of notes in the previous endings
     uint endingNChords;                     // number of chords in the previous endings
@@ -219,7 +219,13 @@ bool psMusic::GetStatistics(csRef<iDocument> musicalScore, ScoreStatistics &stat
             noteDuration = durationNode->GetContentsValueAsInt() * timePerDivision;
 
             // if this is a rest only the total length must be modified (done later)
-            if(!noteNode->GetNode("rest").IsValid()) // this is a note
+            if(noteNode->GetNode("rest").IsValid())
+            {
+                // resetting this value is needed to not update minimumDuration
+                // when the last notes of the score is a rests
+                currentChordPolyphony = 0;
+            }
+            else // this is a note
             {
                 measureNNotes++;
 
@@ -250,14 +256,22 @@ bool psMusic::GetStatistics(csRef<iDocument> musicalScore, ScoreStatistics &stat
             }
         }
 
-        // updating maximum polyphony and minimum duration with the last chord data
-        if(stats.maximumPolyphony < currentChordPolyphony)
+        // updating maximum polyphony and minimum duration if the last note was part of a chord
+        if(currentChordPolyphony > 1)
         {
-            stats.maximumPolyphony = currentChordPolyphony;
+            if(stats.maximumPolyphony < currentChordPolyphony)
+            {
+                stats.maximumPolyphony = currentChordPolyphony;
+            }
+            if(stats.minimumDuration > noteDuration)
+            {
+                stats.minimumDuration = noteDuration;
+            }
         }
-        if(stats.minimumDuration > noteDuration)
+        else if(totalLengthNoRests == 0.0)
         {
-            stats.minimumDuration = noteDuration;
+            // here stats.minimumDuration is still 500000
+            stats.minimumDuration = 0;
         }
 
         nNotes += measureNNotes;

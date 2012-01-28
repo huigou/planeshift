@@ -107,7 +107,7 @@ InstrumentManager::~InstrumentManager()
 }
 
 bool InstrumentManager::PlaySong(SoundControl* sndCtrl, csVector3 pos, csVector3 dir, SoundHandle* &songHandle,
-                                 csRef<iDocument> musicalSheet, const char* instrName, float errorRate)
+                                 csRef<iDocument> musicalSheet, const char* instrName, float minimumDuration)
 {
     Instrument* instr;
 
@@ -128,7 +128,7 @@ bool InstrumentManager::PlaySong(SoundControl* sndCtrl, csVector3 pos, csVector3
     }
 
     songHandle = new SongHandle(musicalSheet, instr);
-    static_cast<SongHandle*>(songHandle)->SetErrorRate(errorRate);
+    static_cast<SongHandle*>(songHandle)->SetMinimumDuration(minimumDuration);
 
     return SoundSystemManager::GetSingleton().Play3DSound("song", DONT_LOOP, 0, 0, instr->volume,
                      sndCtrl, pos, dir, instr->minDist, instr->maxDist, 0, CS_SND3D_ABSOLUTE, songHandle, false);

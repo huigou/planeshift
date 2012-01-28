@@ -74,7 +74,7 @@ void ClientSongManager::StopMainPlayerSong(bool notifyServer)
     // sending message
     if(notifyServer)
     {
-        psStopSongMessage stopMessage(0, 0, false);
+        psStopSongMessage stopMessage;
         stopMessage.SendMessage();
     }
 
@@ -156,7 +156,7 @@ void ClientSongManager::HandleMessage(MsgEntry* message)
             // playing
             if(playMsg.toPlayer)
             {
-                songHandleID = PlaySong(sheet, playMsg.instrName, playMsg.errorRate, playerPos);
+                songHandleID = PlaySong(sheet, playMsg.instrName, playMsg.minimumDuration, playerPos);
             }
             else
             {
@@ -164,7 +164,7 @@ void ClientSongManager::HandleMessage(MsgEntry* message)
                 csString uncompressedScore;
                 psMusic::ZDecompressSong(playMsg.musicalScore, uncompressedScore);
 
-                songHandleID = PlaySong(uncompressedScore, playMsg.instrName, playMsg.errorRate, playerPos);
+                songHandleID = PlaySong(uncompressedScore, playMsg.instrName, playMsg.minimumDuration, playerPos);
             }
 
             // handling instrument not defined
@@ -207,17 +207,15 @@ void ClientSongManager::HandleMessage(MsgEntry* message)
 
         if(stopMsg.toPlayer)
         {
-            if(mainSongID == PENDING) // no instrument equipped or invalid MusicXML
+            csString errorStr;
+
+            if(mainSongID == PENDING) // no instrument equipped, invalid MusicXML or low skill
             {
                 // updating mainSongId
                 mainSongID = NO_SONG;
 
                 // updating listeners
                 TriggerListeners();
-
-                // noticing user
-                psSystemMessage msg(0, MSG_ERROR, PawsManager::GetSingleton().Translate("You do not have an equipped musical instrument or a valid score."));
-                msg.FireEvent();
             }
             else if(mainSongID == NO_SONG) // sound are deactivated or song has ended
             {
@@ -226,6 +224,26 @@ void ClientSongManager::HandleMessage(MsgEntry* message)
             else // player's mode has changed
             {
                 StopMainPlayerSong(false);
+            }
+
+            // noticing user
+            switch(stopMsg.errorCode)
+            {
+            case psStopSongMessage::ILLEGAL_SCORE:
+                errorStr = "Illegal musical score!";
+                break;
+            case psStopSongMessage::NO_INSTRUMENT:
+                errorStr = "You do not have an equipped musical instrument!";
+                break;
+            case psStopSongMessage::LOW_SKILL:
+                errorStr = "You do not have enough musical skill to play this score.";
+                break;
+            }
+
+            if(!errorStr.IsEmpty())
+            {
+                psSystemMessage msg(0, MSG_ERROR, PawsManager::GetSingleton().Translate(errorStr));
+                msg.FireEvent();
             }
         }
         else if(songMap.Contains(stopMsg.songID))
@@ -236,7 +254,7 @@ void ClientSongManager::HandleMessage(MsgEntry* message)
     }
 }
 
-uint ClientSongManager::PlaySong(const char* musicalSheet, const char* instrName, float errorRate, csVector3 playerPos)
+uint ClientSongManager::PlaySong(const char* musicalSheet, const char* instrName, float minimumDuration, csVector3 playerPos)
 {
     csRef<iDocument> sheetDoc;
     csRef<iDocumentSystem> docSys;
@@ -248,7 +266,7 @@ uint ClientSongManager::PlaySong(const char* musicalSheet, const char* instrName
     sheetDoc = docSys->CreateDocument();
     sheetDoc->Parse(musicalSheet, true);
 
-    return sndMngr->PlaySong(sheetDoc, instrName, errorRate, sndCtrl, playerPos, 0);
+    return sndMngr->PlaySong(sheetDoc, instrName, minimumDuration, sndCtrl, playerPos, 0);
 }
 
 void ClientSongManager::StopSong(uint songID)

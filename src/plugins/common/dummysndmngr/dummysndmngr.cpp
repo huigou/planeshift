@@ -211,7 +211,7 @@ uint DummySoundManager::PlaySound(const char* fileName, bool loop, iSoundControl
     return 0;
 }
 
-uint DummySoundManager::PlaySong(csRef<iDocument> musicalSheet, const char* instrument, float errorRate,
+uint DummySoundManager::PlaySong(csRef<iDocument> musicalSheet, const char* instrument, float minimumDuration,
         iSoundControl* ctrl, csVector3 pos, csVector3 dir)
 {
     return 0;
