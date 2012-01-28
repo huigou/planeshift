@@ -594,13 +594,13 @@ uint SoundManager::PlaySound(const char* fileName, bool loop, iSoundControl* &ct
     }
 }
 
-uint SoundManager::PlaySong(csRef<iDocument> musicalSheet, const char* instrument, float errorRate,
+uint SoundManager::PlaySong(csRef<iDocument> musicalSheet, const char* instrument, float minimumDuration,
               iSoundControl* ctrl, csVector3 pos, csVector3 dir)
 {
     SoundHandle* handle = 0;
     SoundControl* sndCtrl = static_cast<SoundControl*>(ctrl);
 
-    if(instrMgr->PlaySong(sndCtrl, pos, dir, handle, musicalSheet, instrument, errorRate))
+    if(instrMgr->PlaySong(sndCtrl, pos, dir, handle, musicalSheet, instrument, minimumDuration))
     {
         return handle->GetID();
     }

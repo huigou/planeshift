@@ -46,10 +46,10 @@ public:
     virtual ~SndSysSongStream();
 
     /**
-     * Sets the error rate of this song.
-     * @param errorRate the new error rate.
+     * Sets the minimum duration played of this song.
+     * @param minimumDuration the new minimum duration.
      */
-    void SetErrorRate(float errorRate) { this->errorRate = errorRate; }
+    void SetMinimumDuration(float minimumDuration) { minDuration = minimumDuration; }
 
 
     // From iSndSysStream
@@ -78,7 +78,7 @@ private:
     size_t lastNoteSize;                ///< duration of the last chord read by GetNextChord() in bytes.
 
     SongData* songData;                 ///< the song's data.
-    float errorRate;                    ///< the probability (0 <= errorRate <= 1) that the player play wrongly a note that lasts one second.
+    float minDuration;                  ///< the minimum duration that the player is able to play.
     float timePerDivision;              ///< the time per divisionin seconds of this song.
     csRef<SndSysSongData> soundData;    ///< the sound data object.
 
@@ -114,17 +114,6 @@ private:
      * @param alter the alteration variable that must be adjusted.
      */
     void AdjustAlteration(char pitch, int &alter);
-
-    /**
-     * Modifies the given pitch and alter of the note based on the error rate of
-     * this song.
-     *
-     * @param pitch the note that the player can play wrongly.
-     * @param alter the alteration of the note.
-     * @param octave the octave of the note.
-     * @param duration the duration in seconds of the note. 
-     */
-    void PlayerError(char &pitch, int &alter, uint &octave, float duration);
 
     /**
      * Copies the note in noteBuffer into m_pPreparedDataBuffer and add 0 at its

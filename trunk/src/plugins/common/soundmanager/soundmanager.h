@@ -122,7 +122,7 @@ public:
     virtual bool IsSoundValid(uint soundID) const;
     virtual uint PlaySound(const char* fileName, bool loop, iSoundControl* &ctrl);
     virtual uint PlaySound(const char* fileName, bool loop, iSoundControl* &ctrl, csVector3 pos, csVector3 dir, float minDist, float maxDist);
-    virtual uint PlaySong(csRef<iDocument> musicalSheet, const char* instrument, float errorRate,
+    virtual uint PlaySong(csRef<iDocument> musicalSheet, const char* instrument, float minimumDuration,
         iSoundControl* ctrl, csVector3 pos, csVector3 dir);
     virtual bool StopSound(uint soundID);
     virtual bool SetSoundSource(uint soundID, csVector3 position);

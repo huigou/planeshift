@@ -5120,13 +5120,13 @@ public:
      * @param client the client's ID.
      * @param songID the song's ID.
      * @param toPlayer true if this message is directed to the player that plays the song.
-     * @param errorRate the error rate of the player's performance.
+     * @param minimumDuration the minimum duration that the player is able to play.
      * @param instrName the name of the used instrument.
      * @param scoreSize the length of the musical score
      * @param musicalScore the musical sheet to play.
      */
     psPlaySongMessage(uint32_t client, uint32_t songID, bool toPlayer,
-        float errorRate, const char* instrName, uint32_t scoreSize, const char* musicalScore);
+        float minimumDuration, const char* instrName, uint32_t scoreSize, const char* musicalScore);
 
     /**
      * Constructor from a MsgEntry.
@@ -5146,7 +5146,7 @@ public:
 
     uint32_t songID;
     bool toPlayer;
-    float errorRate;
+    float minimumDuration;
     csString instrName;
     csString musicalScore;
 };
@@ -5158,13 +5158,28 @@ public:
 class psStopSongMessage: public psMessageCracker
 {
 public:
+
+    enum
+    {
+        NO_SONG_ERROR = 1,
+        ILLEGAL_SCORE,
+        NO_INSTRUMENT,
+        LOW_SKILL
+    };
+
     /**
-     * Constructor.
-     * @param client the client's ID.
-     * @param songID the song's ID.
-     * @param toPlayer true if this message is directed to the player that plays the song.
+     * Constructor used by the client to notice the song's interruption to the server.
      */
-    psStopSongMessage(uint32_t client, uint32_t songID, bool toPlayer);
+    psStopSongMessage();
+
+    /**
+     * Constructor used by the server to notice clients about stopped songs.
+     * @param client the client's ID that will receive the message.
+     * @param songID the song's ID to stop.
+     * @param toPlayer true if this message is directed to the player that plays the song.
+     * @param errorCode code used to comunicate failure to the client.
+     */
+    psStopSongMessage(uint32_t client, uint32_t songID, bool toPlayer, int8_t errorCode);
 
     /**
      * Constructor from a MsgEntry.
@@ -5184,7 +5199,7 @@ public:
 
     uint32_t songID;
     bool toPlayer;
-    bool isEnded;
+    int8_t errorCode;
 };
 
 /**

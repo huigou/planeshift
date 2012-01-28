@@ -31,7 +31,7 @@
 SongHandle::SongHandle(csRef<iDocument> musicalSheet, Instrument* instr)
     : sheet(musicalSheet)
 {
-    errorRate = 0.0;
+    minDuration = 0.0;
     instrument = instr;
 }
 
@@ -40,12 +40,12 @@ SongHandle::~SongHandle()
     // instrument is deleted by InstrumentsManager
 }
 
-void SongHandle::SetErrorRate(float errorProb)
+void SongHandle::SetMinimumDuration(float minimumDuration)
 {
-    errorRate = errorProb;
+    minDuration = minimumDuration;
     if(sndstream != 0)
     {
-        static_cast<SndSysSongStream*>(&(*sndstream))->SetErrorRate(errorProb);
+        static_cast<SndSysSongStream*>(&(*sndstream))->SetMinimumDuration(minDuration);
     }
 }
 
@@ -66,7 +66,7 @@ bool SongHandle::Init(const char* /* resName */, bool loop, float volumePreset,
     {
         return false;
     }
-    static_cast<SndSysSongStream*>(&(*sndstream))->SetErrorRate(errorRate);
+    static_cast<SndSysSongStream*>(&(*sndstream))->SetMinimumDuration(minDuration);
 
     if(!SoundSystemManager::GetSingleton().GetSoundSystem()->CreateSource(sndstream, sndsource))
     {

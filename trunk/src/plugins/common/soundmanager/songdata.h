@@ -30,10 +30,16 @@
 #include <csutil/csstring.h>
 #include <csutil/scf_implementation.h>
 
+//====================================================================================
+// Project Includes
+//====================================================================================
+#include <util/music.h>
+
 //------------------------------------------------------------------------------------
 // Forward Declarations
 //------------------------------------------------------------------------------------
 class Instrument;
+struct ScoreStatistics;
 
 
 /**
@@ -47,6 +53,7 @@ struct SongData
     uint beats;                         ///< numerator of the time signature.
     uint beatType;                      ///< denumerator of the time signature.
     uint tempo;                         ///< suggested tempo in quarter notes per minute.
+    ScoreStatistics scoreStats;         ///< keep the statistics of the score.
     csRefArray<iDocumentNode> measures; ///< the measures of the musical sheet.
 
     /**
@@ -93,16 +100,12 @@ public:
     //------------------
 
     /**
-     * Return the size of the song in bytes. This is just an estimation of the data size
-     * since the data is generated dinamically by SndSysSongStream depending on the sheet.
-     * For example this does not take into account repeats.
+     * Return the size of the song in bytes.
      */
     virtual size_t GetDataSize();
 
     /**
-     * Return the size of the song in frames. This is just an estimation of the data size
-     * since the data is generated dinamically by SndSysSongStream depending on the sheet.
-     * For example this does not take into account repeats.
+     * Return the size of the song in frames.
      */
     virtual size_t GetFrameCount();
     virtual const char* GetDescription();

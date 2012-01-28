@@ -66,12 +66,11 @@ public:
      * @param songHandle an null SongHandle that will handle the song.
      * @param musicalSheet the XML musical sheet to play.
      * @param instrName the name of the instruments.
-     * @param errorRate the probability (0 <= errorRate <= 1) that the player 
-     * play wrongly a note.
+     * @param minimumDuration the minimum duration that the player is able to play.
      * @return true if the song could be played, false otherwise.
      */
     bool PlaySong(SoundControl* sndCtrl, csVector3 pos, csVector3 dir, SoundHandle* &songHandle,
-                csRef<iDocument> musicalSheet, const char* instrName, float errorRate);
+                csRef<iDocument> musicalSheet, const char* instrName, float minimumDuration);
 
 private:
     csHash<Instrument*, csString> instruments;

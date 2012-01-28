@@ -7154,7 +7154,7 @@ psMusicalSheetMessage::psMusicalSheetMessage(MsgEntry* me)
 PSF_IMPLEMENT_MSG_FACTORY(psPlaySongMessage, MSGTYPE_PLAY_SONG);
 
 psPlaySongMessage::psPlaySongMessage(uint32_t client, uint32_t songID, bool toPlayer,
-                                     float errorRate, const char* instrName, uint32_t scoreSize, const char* musicalScore)
+                                     float minimumDuration, const char* instrName, uint32_t scoreSize, const char* musicalScore)
 {
     size_t size = sizeof(uint32_t) + sizeof(bool) + sizeof(float) + strlen(instrName) + 1 + sizeof(uint32_t) + scoreSize + 1;
     msg.AttachNew(new MsgEntry(sizeof(uint32_t) + sizeof(bool) + sizeof(float) + strlen(instrName) + 1 + sizeof(uint32_t) + scoreSize + 1));
@@ -7164,7 +7164,7 @@ psPlaySongMessage::psPlaySongMessage(uint32_t client, uint32_t songID, bool toPl
 
     msg->Add(songID);
     msg->Add(toPlayer);
-    msg->Add(errorRate);
+    msg->Add(minimumDuration);
     msg->Add(instrName);
     msg->Add(musicalScore, scoreSize);
 }
@@ -7176,7 +7176,7 @@ psPlaySongMessage::psPlaySongMessage(MsgEntry* me)
 
     songID = me->GetUInt32();
     toPlayer = me->GetBool();
-    errorRate = me->GetFloat();
+    minimumDuration = me->GetFloat();
     instrName = me->GetStr();
 
     scoreBuffer = (char*)me->GetBufferPointerUnsafe(scoreSize);
@@ -7187,21 +7187,35 @@ psPlaySongMessage::psPlaySongMessage(MsgEntry* me)
 
 PSF_IMPLEMENT_MSG_FACTORY(psStopSongMessage, MSGTYPE_STOP_SONG);
 
-psStopSongMessage::psStopSongMessage(uint32_t client, uint32_t songID, bool toPlayer)
+psStopSongMessage::psStopSongMessage()
 {
-    msg.AttachNew(new MsgEntry(sizeof(uint32_t) + sizeof(bool)));
+    msg.AttachNew(new MsgEntry(sizeof(uint32_t) + sizeof(bool) + sizeof(int8_t)));
+
+    msg->SetType(MSGTYPE_STOP_SONG);
+    msg->clientnum = 0;
+
+    msg->Add((uint32_t)0);
+    msg->Add(false);
+    msg->Add((int8_t)NO_ERROR);
+}
+
+psStopSongMessage::psStopSongMessage(uint32_t client, uint32_t songID, bool toPlayer, int8_t errorCode)
+{
+    msg.AttachNew(new MsgEntry(sizeof(uint32_t) + sizeof(bool) + sizeof(int8_t)));
 
     msg->SetType(MSGTYPE_STOP_SONG);
     msg->clientnum = client;
 
     msg->Add(songID);
     msg->Add(toPlayer);
+    msg->Add(errorCode);
 }
 
 psStopSongMessage::psStopSongMessage(MsgEntry* me)
 {
     songID = me->GetUInt32();
     toPlayer = me->GetBool();
+    errorCode = me->GetInt8();
 }
 
 //---------------------------------------------------------------------------
