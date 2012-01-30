@@ -435,7 +435,7 @@ void pawsNpcDialogWindow::NpcSays(csArray<csString>& lines,GEMClientActor *actor
         csString all = "";
         for (size_t i = 0 ; i < lines.GetSize() ; i++)
         {
-            all += lines[i];
+            all += lines[i] + " ";
         }
         dynamic_cast<pawsMultiLineTextBox*>(FindWidget("SpeckBubble")->FindWidget("BubbleText"))->SetText(all);
         FindWidget("SpeckBubble")->SetVisibility(true);
