@@ -525,23 +525,26 @@ bool AdminCmdTargetParser::ParseTarget(AdminManager* msgManager, MsgEntry* me, p
             // because the target* may not be online
             targetObject = msgManager->FindObjectByString(word, NULL);
             
-            if (!targetObject && GetPlayerAccountIDByPID(me->clientnum, word)) 
+            if(!targetObject)
             {
-                // try to find an online player for the name resolved
-                // from the pid
-                // (GetPlayerClient sets targetClient accordingly)
-                /*if (!GetPlayerClient(msgManager, me->clientnum, target, false))
-                {
-                    // error duplicate or not found at all
-                    if (duplicateActor)
+                //if(GetPlayerAccountIDByPID(me->clientnum, word))
+                //{
+                    // try to find an online player for the name resolved
+                    // from the pid
+                    // (GetPlayerClient sets targetClient accordingly)
+                    /*if (!GetPlayerClient(msgManager, me->clientnum, target, false))
                     {
-                        psserver->SendSystemError(me->clientnum,"PID resolves to multiple online clients!");
-                        return false;
-                    }
-                    else
-                    {*/
-                        // player is offline
-                psserver->SendSystemInfo(me->clientnum,"PID:%s no online client", ShowID(targetID));
+                        // error duplicate or not found at all
+                        if (duplicateActor)
+                        {
+                            psserver->SendSystemError(me->clientnum,"PID resolves to multiple online clients!");
+                            return false;
+                        }
+                        else
+                        {*/
+                            // player is offline
+                    psserver->SendSystemInfo(me->clientnum,"PID:%s no online client", ShowID(targetID));
+                        //}
                     //}
                 //}
             }
