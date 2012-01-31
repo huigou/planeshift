@@ -593,7 +593,7 @@ int pawsMenu::GetContentWidth()
     int contWidth = 0;
     for ( size_t x = 0; x < items.GetSize(); x++ )
     {
-        contWidth = MAX(contWidth, items[x]->DefaultFrame().Width());
+        contWidth = csMax(contWidth, items[x]->DefaultFrame().Width());
     }
     return contWidth;
 }
@@ -614,7 +614,7 @@ void pawsMenu::Autosize()
 {
     SetRelativeFrameSize
            (
-            MAX(
+            csMax(
                  GetContentWidth() + GetActualWidth(2*BORDER_SIZE),
                  label->DefaultFrame().Width() + GetActualWidth(2*BUTTON_SIZE + 5*BORDER_SIZE)
                 ),
