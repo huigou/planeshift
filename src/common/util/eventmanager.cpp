@@ -156,7 +156,7 @@ csTicks EventManager::ProcessEventQueue()
     {
         // We have a event so report when we would like to be
         // called again
-        return MIN(event->triggerticks, PROCESS_EVENT + now);
+        return csMin(event->triggerticks, PROCESS_EVENT + now);
     }
 
     return PROCESS_EVENT; // Process events at least every PROCESS_EVENT ticks
