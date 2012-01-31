@@ -399,9 +399,9 @@ void psWalkPoly::CalcConts(psWalkPolyMap & map)
                       >
                     Calc2DDistance(vert2.pos, endVert2.pos)
                    )
-                    dist = MAX(vert.line.CalcDist(vert2.pos), vert.line.CalcDist(endVert2.pos));
+                    dist = csMax(vert.line.CalcDist(vert2.pos), vert.line.CalcDist(endVert2.pos));
                 else
-                    dist = MAX(vert2.line.CalcDist(vert.pos), vert2.line.CalcDist(endVert.pos));
+                    dist = csMax(vert2.line.CalcDist(vert.pos), vert2.line.CalcDist(endVert.pos));
                 
                 float angle1 = CalcAngle(vert.pos, endVert.pos);
                 float angle2 = CalcAngle(endVert2.pos, vert2.pos);

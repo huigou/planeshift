@@ -766,7 +766,7 @@ public:
     virtual float Damage() const
     {
         csTicks elapsed = csGetTicks() - timeOfAttack;
-        return -hpRate * MIN(duration, elapsed);
+        return -hpRate * csMin(duration, elapsed);
     }
 protected:
     float hpRate;

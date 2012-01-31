@@ -1367,7 +1367,7 @@ void pawsTree::SetScrollBarMax()
         {
             if( width > screenFrame.Width())
             {
-                horizScrollBar  -> SetMaxValue(MAX(0, width  - screenFrame.Width()));
+                horizScrollBar  -> SetMaxValue(csMax(0, width  - screenFrame.Width()));
                 if(!horizScrollBar->IsVisible()) //as this function is called continually we have to check if
                     horizScrollBar->Show(); //the widget is already shown to avoid flickering
             }
@@ -1382,7 +1382,7 @@ void pawsTree::SetScrollBarMax()
         {
             if(height > screenFrame.Height())
             {
-                vertScrollBar   -> SetMaxValue(MAX(0, height - screenFrame.Height()));
+                vertScrollBar   -> SetMaxValue(csMax(0, height - screenFrame.Height()));
                 if(!vertScrollBar->IsVisible())
                     vertScrollBar->Show();
             }
@@ -1472,7 +1472,7 @@ void pawsSeqTreeNode::AddSeqWidget(pawsWidget * w, int width)
     w->Show();
 
     int newWidth = width + defaultFrame.Width();
-    int newHeight = MAX(w->DefaultFrame().Height(),defaultFrame.Height());
+    int newHeight = csMax(w->DefaultFrame().Height(), defaultFrame.Height());
 
     SetRelativeFrameSize(newWidth, newHeight);
 }

@@ -117,9 +117,9 @@ void pawsPromptWindow::LayoutWindow()
 
     assert(label && okButton && cancelButton && inputWidget);
 
-    windowWidth = MAX(
+    windowWidth = csMax(
                         2 * spacing + label->DefaultFrame().Width(),
-                        MAX(
+                        csMax(
                              4 * spacing + inputWidget->DefaultFrame().Width(),
                              3 * spacing + okButton->DefaultFrame().Width() + cancelButton->DefaultFrame().Width()
                            )

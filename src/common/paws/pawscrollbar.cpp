@@ -566,8 +566,8 @@ void pawsScrollBar::MoveThumbToMouse()
         thumbPos = relMouseCoord - thumbDragPoint;
     else
         thumbPos = relMouseCoord - (scrollBarSize - 2*THUMB_MARGIN) / 2;
-    thumbPos = MAX(thumbPos, 0);
-    thumbPos = MIN(thumbPos, rectSize);
+    thumbPos = csMax(thumbPos, 0);
+    thumbPos = csMax(thumbPos, rectSize);
 
     if (horizontal)
         thumb->MoveTo(rectBegin+thumbPos, thumb->ScreenFrame().ymin);

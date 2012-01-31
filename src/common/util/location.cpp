@@ -396,11 +396,11 @@ bool Location::CheckWithinBounds(iEngine * engine,const csVector3& p,const iSect
     for (i=1; i<=N; i++)
     {
         p2 = locs[i % N]->pos;
-        if (p.z > MIN(p1.z,p2.z))
+        if (p.z > csMin(p1.z,p2.z))
         {
-            if (p.z <= MAX(p1.z,p2.z))
+            if (p.z <= csMax(p1.z,p2.z))
             {
-                if (p.x <= MAX(p1.x,p2.x))
+                if (p.x <= csMax(p1.x,p2.x))
                 {
                     if (p1.z != p2.z)
                     {

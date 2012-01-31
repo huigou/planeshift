@@ -130,7 +130,7 @@ protected:
     bool offensive;
 
     /// The Power (P) cap.
-    int maxPower;
+    float maxPower;
 
     /// Bit field if valid target types for this spell
     int targetTypes;

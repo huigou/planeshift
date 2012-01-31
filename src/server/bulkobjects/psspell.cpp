@@ -95,7 +95,7 @@ bool psSpell::Load(iResultRow& row)
     description   = row["spell_description"];
     castingEffect = row["casting_effect"];
     realm         = row.GetInt("realm");
-    maxPower      = row.GetInt("max_power");
+    maxPower      = row.GetFloat("max_power");
     offensive     = row.GetInt("offensive")!=0;
     targetTypes   = row.GetInt("target_type");
 
@@ -337,7 +337,7 @@ void psSpell::Cast(gemActor *caster, float kFactor, Client *client) const
     }
     
 
-    float power = MIN(maxPower, PowerLevel(caster->GetCharacterData(), kFactor));
+    float power = csMin(maxPower, PowerLevel(caster->GetCharacterData(), kFactor));
     float skill = caster->GetCharacterData()->GetSkillRank(way->skill).Current();
     float stat = caster->GetCharacterData()->GetSkillRank(way->related_stat_skill).Current();
     
@@ -348,7 +348,7 @@ void psSpell::Cast(gemActor *caster, float kFactor, Client *client) const
     env.Define("KFactor",     kFactor);
     float max_range = range->Evaluate(&env);
     float castDurationFloat = castDuration->Evaluate(&env);
-    csTicks castingDuration = (csTicks) MAX(castDurationFloat, 0);
+    csTicks castingDuration = (csTicks) csMax(castDurationFloat, 0.0f);
 
     if (max_range <= 0)
         target = caster;

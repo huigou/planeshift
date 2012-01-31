@@ -187,7 +187,7 @@ void psNetConnection::Run ()
     csTicks laststatdisplay = currentticks;
 
     // Maximum time to spend in ProcessNetwork
-    csTicks maxTime = MIN(MIN(LINKCHECK, RESENDCHECK), STATDISPLAYCHECK);
+    csTicks maxTime = csMin(csMin(LINKCHECK, RESENDCHECK), STATDISPLAYCHECK);
     csTicks timeout;
 
     long    lasttotaltransferin=0;

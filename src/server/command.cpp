@@ -1771,7 +1771,7 @@ int com_factions(char *)
     CPrintf(CON_CMDOUTPUT ,"                     ");
     for (i = 0; i < num; i++)
     {
-        CPrintf(CON_CMDOUTPUT ,"%*s ",MAX(7,strlen(actors[i]->GetName())),actors[i]->GetName());
+        CPrintf(CON_CMDOUTPUT ,"%*s ", csMax((size_t)7, strlen(actors[i]->GetName())), actors[i]->GetName());
     }
     CPrintf(CON_CMDOUTPUT ,"\n");
     for (i = 0; i < num; i++)
@@ -1779,7 +1779,7 @@ int com_factions(char *)
         CPrintf(CON_CMDOUTPUT ,"%20s ",actors[i]->GetName());
         for (j = 0; j < num; j++)
         {
-            CPrintf(CON_CMDOUTPUT ,"%*.2f ",MAX(7,strlen(actors[j]->GetName())),actors[i]->GetRelativeFaction(actors[j]));
+            CPrintf(CON_CMDOUTPUT ,"%*.2f ", csMax((size_t)7, strlen(actors[j]->GetName())), actors[i]->GetRelativeFaction(actors[j]));
         }
         CPrintf(CON_CMDOUTPUT ,"\n");
     }

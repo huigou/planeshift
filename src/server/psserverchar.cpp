@@ -988,7 +988,7 @@ void ServerCharManager::HandleMerchantSell(psGUIMerchantMessage& msg, Client *cl
         psMoney price = CalculateMerchantPrice(item, client, true);
         psMoney money = character->Money();
 
-        count = MIN(count, item->GetStackCount());
+        count = csMin(count, (int)item->GetStackCount());
         csString name(item->GetName());
 
         item = character->Inventory().RemoveItem(NULL,item->GetLocInParent(true), count);
@@ -1872,7 +1872,7 @@ void ServerCharManager::HandleStorageStore(psGUIStorageMessage& msg, Client *cli
             return;
         }
 
-        count = MIN(count, item->GetStackCount());
+        count = csMin(count, (int)item->GetStackCount());
         csString name(item->GetName());
 
         item = character->Inventory().RemoveItem(NULL,item->GetLocInParent(true), count);

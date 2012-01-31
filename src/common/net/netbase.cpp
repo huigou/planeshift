@@ -529,7 +529,7 @@ void NetBase::CheckResendPkts()
     {
         pkt = it.Next();
         // Check the connection packet timeout
-        if (pkt->timestamp + csMin(PKTMAXRTO, pkt->RTO) < currenttime)
+        if (pkt->timestamp + csMin((csTicks)PKTMAXRTO, pkt->RTO) < currenttime)
             pkts.Push(pkt);
     }
     for (size_t i = 0; i < pkts.GetSize(); i++)
@@ -586,7 +586,7 @@ void NetBase::CheckResendPkts()
         csTicks timeTaken = csGetTicks() - currenttime;
         if(resentCount > 300 || resendIndex == 1 || timeTaken > 50)
         {
-            unsigned int peakResend = 0;
+            size_t peakResend = 0;
             float resendAvg = 0.0f;
             // Calculate averages data here
             for(int i = 0; i < RESENDAVGCOUNT; i++)
@@ -601,7 +601,7 @@ void NetBase::CheckResendPkts()
                 status.Format("Resending high priority packets has taken %u time to process, for %u packets.", timeTaken, resentCount);
                 CPrintf(CON_WARNING, "%s\n", (const char *) status.GetData());
             }
-            status.AppendFmt("Resending non-acked packet statistics: %g average resends, peak of %u resent packets", resendAvg, peakResend);
+            status.AppendFmt("Resending non-acked packet statistics: %g average resends, peak of %zu resent packets", resendAvg, peakResend);
  
             if(LogCSV::GetSingletonPtr())
                 LogCSV::GetSingleton().Write(CSV_STATUS, status);
