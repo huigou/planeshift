@@ -381,7 +381,7 @@ int psLinearMovement::MoveSprite (float delta)
       bodyVel = fulltransf.Other2ThisRelative(velWorld) + velBody;
 
       delta -= local_max_interval;
-      local_max_interval = MIN (MIN ((bodyVel.y==0.0f)
+      local_max_interval = csMin(csMin((bodyVel.y==0.0f)
       	? MAX_CD_INTERVAL
       	: ABS (intervalSize.y/bodyVel.y), (bodyVel.x==0.0f)
       	? MAX_CD_INTERVAL
