@@ -1031,7 +1031,7 @@ bool pawsListBox::SelfPopulate( iDocumentNode *topNode )
         }
     }
 
-    scrollBar->SetCurrentValue(MIN(oldScroll, scrollBar->GetMaxValue()));
+    scrollBar->SetCurrentValue(csMin(oldScroll, scrollBar->GetMaxValue()));
     return true;
 }
 
