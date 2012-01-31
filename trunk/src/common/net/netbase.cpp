@@ -529,7 +529,7 @@ void NetBase::CheckResendPkts()
     {
         pkt = it.Next();
         // Check the connection packet timeout
-        if (pkt->timestamp + MIN(PKTMAXRTO, pkt->RTO) < currenttime)
+        if (pkt->timestamp + csMin(PKTMAXRTO, pkt->RTO) < currenttime)
             pkts.Push(pkt);
     }
     for (size_t i = 0; i < pkts.GetSize(); i++)
@@ -592,7 +592,7 @@ void NetBase::CheckResendPkts()
             for(int i = 0; i < RESENDAVGCOUNT; i++)
             {
                 resendAvg += resends[i];
-                peakResend = MAX(peakResend, resends[i]);
+                peakResend = csMax(peakResend, resends[i]);
             }
             resendAvg /= RESENDAVGCOUNT;
             csString status;
@@ -805,12 +805,12 @@ bool NetBase::SendOut()
         // Calculate averages/peak data here
         for(int i = 0; i < NETAVGCOUNT; i++)
         {
-            peakSenders = MAX(peakSenders, sendStats[i].senders);
+            peakSenders = csMax(peakSenders, sendStats[i].senders);
             sendAvg += sendStats[i].senders;
-            peakMessagesPerSender = MAX(peakMessagesPerSender, (float) sendStats[i].messages / (float) sendStats[i].senders);
+            peakMessagesPerSender = csMax(peakMessagesPerSender, (float) sendStats[i].messages / (float) sendStats[i].senders);
             messagesAvg += sendStats[i].messages;
             timeAvg += sendStats[i].time;
-            peakTime = MAX(peakTime, sendStats[i].time);
+            peakTime = csMax(peakTime, sendStats[i].time);
         }
 
         sendAvg /= NETAVGCOUNT;
@@ -1129,7 +1129,7 @@ bool NetBase::SendMessage(MsgEntry* me,NetPacketQueueRefCount *queue)
     while (bytesleft > 0)
     {
         // The pktlen does not include the length of the headers, but the MAXPACKETSIZE does
-        size_t pktlen = MIN(MAXPACKETSIZE-sizeof(struct psNetPacket), bytesleft);
+        size_t pktlen = csMin(MAXPACKETSIZE-sizeof(struct psNetPacket), bytesleft);
         
         csRef<psNetPacketEntry> pNewPkt;
         pNewPkt.AttachNew(new psNetPacketEntry(me->priority, me->clientnum, id, (uint16_t)offset,

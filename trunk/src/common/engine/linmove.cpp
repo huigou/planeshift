@@ -285,7 +285,7 @@ int psLinearMovement::MoveSprite (float delta)
   csVector3 bodyVel (fulltransf.Other2ThisRelative (velWorld) + velBody);
 
   float local_max_interval =
-  	MIN (MIN ( (bodyVel.y==0.0f) ? MAX_CD_INTERVAL : ABS (intervalSize.y/bodyVel.y),
+     csMin(csMin((bodyVel.y==0.0f) ? MAX_CD_INTERVAL : ABS (intervalSize.y/bodyVel.y),
                (bodyVel.x==0.0f) ? MAX_CD_INTERVAL : ABS (intervalSize.x/bodyVel.x)
              ),(bodyVel.z==0.0f) ? MAX_CD_INTERVAL : ABS (intervalSize.z/bodyVel.z)
         );
@@ -300,7 +300,7 @@ int psLinearMovement::MoveSprite (float delta)
   //printf("velBody is %1.2f, %1.2f, %1.2f\n", velBody.x, velBody.y, velBody.z);
 
   // Sanity check on time interval here.  Something is messing it up. -KWF
-  //local_max_interval = MAX(local_max_interval,0.1F);
+  //local_max_interval = csMax(local_max_interval, 0.1F);
 
   if (colldet)
   {
@@ -394,7 +394,7 @@ int psLinearMovement::MoveSprite (float delta)
       local_max_interval *= 0.95f;
 
       // Sanity check on time interval here.  Something is messing it up. -KWF
-      // local_max_interval = MAX(local_max_interval,0.1F);
+      // local_max_interval = csMax(local_max_interval, 0.1F);
     }
   }
 
@@ -589,8 +589,8 @@ void psLinearMovement::HugGround (const csVector3& pos, iSector* sector)
   bool hit[4];
 
   // Set minimum base dimensions of 0.5x0.5 for good aesthetics
-  float legsXlimit = MAX(bottomSize.x / 2, 0.5);
-  float legsZlimit = MAX(bottomSize.z / 2, 0.5);
+  float legsXlimit = csMax(bottomSize.x / 2, 0.5);
+  float legsZlimit = csMax(bottomSize.z / 2, 0.5);
 
   start.y = pos.y + shift.y + 0.01;
 
@@ -773,7 +773,7 @@ void psLinearMovement::TickEveryFrame ()
   // Compensate for offset
   OffsetSprite (delta);
   if (fabsf (deltaLimit) > SMALL_EPSILON)
-    delta = MIN(delta, deltaLimit);
+    delta = csMin(delta, deltaLimit);
 
   // Adjust the properties.
   ExtrapolatePosition (delta);
@@ -801,12 +801,12 @@ bool psLinearMovement::InitCD (const csVector3& body, const csVector3& legs,
     if (bottomSize.x * bottomSize.y > (0.8f * 1.4f + 0.1f))
         hugGround = true;
     
-    intervalSize.x = MIN(topSize.x, bottomSize.x);
-    intervalSize.y = MIN(topSize.y, bottomSize.y);
-    intervalSize.z = MIN(topSize.z, bottomSize.z);
+    intervalSize.x = csMin(topSize.x, bottomSize.x);
+    intervalSize.y = csMin(topSize.y, bottomSize.y);
+    intervalSize.z = csMin(topSize.z, bottomSize.z);
     
-    float maxX = MAX(body.x, legs.x)+shift.x;
-    float maxZ = MAX(body.z, legs.z)+shift.z;
+    float maxX = csMax(body.x, legs.x)+shift.x;
+    float maxZ = csMax(body.z, legs.z)+shift.z;
     
 
     float bX2 = body.x / 2.0f;

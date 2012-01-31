@@ -1414,7 +1414,7 @@ void pawsChatWindow::HandleSystemMessage(MsgEntry *me)
             start= header.GetData();//We copy to start, so it can be displayed like everything else in the chat.
 
         }
-        char* currentLine = new char[MAX(msg.msgline.Length()+1, header.Length() + 1)];
+        char* currentLine = new char[csMax(msg.msgline.Length()+1, header.Length() + 1)];
 
         const char* workingString = start;
         while(workingString)
