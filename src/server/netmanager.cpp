@@ -249,7 +249,7 @@ void NetManager::CheckResendPkts()
     {
         pkt = it.Next();
         // Check the connection packet timeout
-        if (pkt->timestamp + MIN(PKTMAXRTO, pkt->RTO) < currenttime)
+        if (pkt->timestamp + csMin((csTicks)PKTMAXRTO, pkt->RTO) < currenttime)
             pkts.Push(pkt);
     }
     for (size_t i = 0; i < pkts.GetSize(); i++)
@@ -341,13 +341,13 @@ void NetManager::CheckResendPkts()
         csTicks timeTaken = csGetTicks() - currenttime;
         if(resendIndex == 1 || timeTaken > 50)
         {
-        	unsigned int peakResend = 0;
+            size_t peakResend = 0;
             float resendAvg = 0.0f;
             // Calculate averages data here
             for(int i = 0; i < RESENDAVGCOUNT; i++)
             {
                 resendAvg += resends[i];
-                peakResend = MAX(peakResend, resends[i]);
+                peakResend = csMax(peakResend, resends[i]);
             }
             resendAvg /= RESENDAVGCOUNT;
             csString status;
@@ -356,7 +356,7 @@ void NetManager::CheckResendPkts()
                 status.Format("Resending high priority packets has taken %u time to process, for %u packets on %zu unique connections %zu full connections (Sample clientnum %u/RTO %u. ", timeTaken, resentCount, resentConnections.GetSize(),fullConnections.GetSize(), resentConnections[0]->clientnum, resentConnections[0]->RTO);
                 CPrintf(CON_WARNING, "%s\n", (const char *) status.GetData());
             }
-            status.AppendFmt("Resending non-acked packet statistics: %g average resends, peak of %u resent packets", resendAvg, peakResend);
+            status.AppendFmt("Resending non-acked packet statistics: %g average resends, peak of %zu resent packets", resendAvg, peakResend);
 
             if(LogCSV::GetSingletonPtr())
                 LogCSV::GetSingleton().Write(CSV_STATUS, status);
@@ -445,7 +445,7 @@ void NetManager::Run ()
     csTicks laststatdisplay = currentticks;
 
     // Maximum time to spend in ProcessNetwork
-    csTicks maxTime = MIN(MIN(LINKCHECK, RESENDCHECK), STATDISPLAYCHECK);
+    csTicks maxTime = csMin(csMin(LINKCHECK, RESENDCHECK), STATDISPLAYCHECK);
     csTicks timeout;
 
     long    lasttotaltransferin=0;
