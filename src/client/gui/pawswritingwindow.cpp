@@ -174,7 +174,7 @@ void pawsWritingWindow::OnStringEntered(const char* /*name*/, int /*param*/, con
         psSystemMessage msg(0, MSG_ERROR, "File too big, data trimmed to %d chars.", MAX_BOOK_FILE_SIZE );
         msg.FireEvent();
     }        
-    csString book(data->GetData(), MIN(data->GetSize(), MAX_BOOK_FILE_SIZE));
+    csString book(data->GetData(), csMin(data->GetSize(), (size_t)MAX_BOOK_FILE_SIZE));
 	book.ReplaceAll("\r\n", "\n");
     lefttext->SetText(book, true);
     
