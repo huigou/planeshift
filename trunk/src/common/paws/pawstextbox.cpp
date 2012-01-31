@@ -185,7 +185,7 @@ void pawsTextBox::CalcLetterSizes()
 
         GetFont()->GetDimensions(letterStr, letterSizes[i].x, letterSizes[i].y);
 
-        textWidth = MAX(textWidth, letterSizes[i].x);
+        textWidth = csMax(textWidth, letterSizes[i].x);
     }
 }
 
@@ -233,7 +233,7 @@ void pawsTextBox::CalcTextSize(int& width, int& height)
 
         for (i=0; i < text.Length(); i++)
         {
-            width   = MAX(width, letterSizes[i].x);
+            width   = csMax(width, letterSizes[i].x);
             height  += letterSizes[i].y;
         }
     }

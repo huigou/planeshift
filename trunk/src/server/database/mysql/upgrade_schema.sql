@@ -1686,6 +1686,8 @@ CREATE TABLE `planeshift`.`loot_modifiers_restrains` (
 ENGINE = MyISAM
 COMMENT = 'Allows to define some restrain to the loot_modifiers';
 
+ALTER TABLE `spells` MODIFY COLUMN `max_power` FLOAT(4,2)  DEFAULT 1;
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to

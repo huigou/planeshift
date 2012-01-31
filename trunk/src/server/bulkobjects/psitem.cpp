@@ -2525,7 +2525,7 @@ bool psItem::CheckRequirements( psCharacter* charData, csString& resp )
             {
                 // Stat buffs may be negative; don't use those here
                 SkillRank & cs = charData->GetSkillRank(statToSkill(stat));
-                val = MAX(cs.Base(), cs.Current());
+                val = csMax(cs.Base(), cs.Current());
 
                 // TODO: This should just use the buff always when a move from equipment to bulk can't fail
             }

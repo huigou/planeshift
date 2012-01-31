@@ -77,15 +77,15 @@ void PaladinJr::Initialize(EntityManager* celbase, CacheManager* cachemanager)
     
     for(size_t i = 0;i < moves.GetSize(); i++)
     {
-        maxVelocity.x = MAX(maxVelocity.x, moves[i]->base_move.x);
-        maxVelocity.y = MAX(maxVelocity.y, moves[i]->base_move.y);
-        maxVelocity.z = MAX(maxVelocity.z, moves[i]->base_move.z);
+        maxVelocity.x = csMax(maxVelocity.x, moves[i]->base_move.x);
+        maxVelocity.y = csMax(maxVelocity.y, moves[i]->base_move.y);
+        maxVelocity.z = csMax(maxVelocity.z, moves[i]->base_move.z);
     }
     for(size_t i = 0;i < modes.GetSize(); i++)
     {
-        maxMod.x *= MAX(1, modes[i]->move_mod.x);
-        maxMod.y *= MAX(1, modes[i]->move_mod.y);
-        maxMod.z *= MAX(1, modes[i]->move_mod.z);
+        maxMod.x *= csMax(1.0f, modes[i]->move_mod.x);
+        maxMod.y *= csMax(1.0f, modes[i]->move_mod.y);
+        maxMod.z *= csMax(1.0f, modes[i]->move_mod.z);
     }
     maxVelocity.x *= maxMod.x;
     maxVelocity.y *= maxMod.y;

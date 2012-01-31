@@ -12,7 +12,7 @@ CREATE TABLE spells (
   `image_name` varchar(100),
   `spell_description` text,
   `offensive` boolean DEFAULT true,
-  `max_power` int(4) DEFAULT '1',
+  `max_power` FLOAT(4,2) DEFAULT '1',
   `target_type` int(4) DEFAULT 0x20,
   `cast_duration` text NOT NULL, /* (power, wayskill, relatedstat) -> seconds */
   `range` text,                  /* (power, wayskill, relatedstat) -> meters  */

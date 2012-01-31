@@ -311,18 +311,18 @@ void pawsMenuItem::SetLayout()
     
     if (imageEnabled)
     {
-        maxHeight = MAX(maxHeight, image->DefaultFrame().Height());
+        maxHeight = csMax(maxHeight, image->DefaultFrame().Height());
         image->SetRelativeFramePos(x, y);
         x += image->DefaultFrame().Width() + spacing;
     }
 
-    maxHeight = MAX(maxHeight, label->DefaultFrame().Height());
+    maxHeight = csMax(maxHeight, label->DefaultFrame().Height());
     label->SetRelativeFramePos(x, y);
     x += label->DefaultFrame().Width() + spacing;
 
     if (checkboxEnabled)
     {
-        maxHeight = MAX(maxHeight, checkbox->DefaultFrame().Height());
+        maxHeight = csMax(maxHeight, checkbox->DefaultFrame().Height());
         checkbox->SetRelativeFramePos(x, y);
         x += checkbox->DefaultFrame().Width();
     }

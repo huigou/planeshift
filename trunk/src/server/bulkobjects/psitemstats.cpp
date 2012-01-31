@@ -1515,7 +1515,7 @@ bool psItemStats::SetRequirement(const csString & statName, float statValue)
     {
         if (statName.CompareNoCase(reqs[i].name))
         {
-            reqs[i].min_value = MAX(reqs[i].min_value, statValue);
+            reqs[i].min_value = csMax(reqs[i].min_value, statValue);
             return true;
         }
     }

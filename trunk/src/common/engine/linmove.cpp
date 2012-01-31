@@ -589,8 +589,8 @@ void psLinearMovement::HugGround (const csVector3& pos, iSector* sector)
   bool hit[4];
 
   // Set minimum base dimensions of 0.5x0.5 for good aesthetics
-  float legsXlimit = csMax(bottomSize.x / 2, 0.5);
-  float legsZlimit = csMax(bottomSize.z / 2, 0.5);
+  float legsXlimit = csMax(bottomSize.x / 2, 0.5f);
+  float legsZlimit = csMax(bottomSize.z / 2, 0.5f);
 
   start.y = pos.y + shift.y + 0.01;
 

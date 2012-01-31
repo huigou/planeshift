@@ -96,8 +96,8 @@ void pawsShortcutWindow::CalcButtonSize()
     for (shortcutNum = 0; shortcutNum < NUM_SHORTCUTS; shortcutNum++)
     {
         GetFont()->GetDimensions( names[shortcutNum].GetDataSafe(), width, height );
-        maxWidth   = MAX(width,  maxWidth);
-        maxHeight  = MAX(height, maxHeight);
+        maxWidth   = csMax(width,   maxWidth);
+        maxHeight  = csMax(height, maxHeight);
     }
     
     buttonWidth   = maxWidth  + 2*BUTTON_PADDING + 8;
@@ -117,8 +117,8 @@ void pawsShortcutWindow::CalcMatrixSize(size_t & matrixWidth, size_t & matrixHei
     matrixWidth   = (screenFrame.Width()   - 2*WINDOW_PADDING - SCROLLBAR_SIZE/2) / (buttonWidth  + BUTTON_SPACING);
     matrixHeight  = (screenFrame.Height()  - 2*WINDOW_PADDING)                  / (buttonHeight + BUTTON_SPACING);
 
-    matrixWidth   = MAX(matrixWidth,  1);
-    matrixHeight  = MIN(MAX(matrixHeight, 1), CalcTotalRowsNeeded(matrixWidth));
+    matrixWidth   = csMax(matrixWidth,  (size_t)1);
+    matrixHeight  = csMin(csMax(matrixHeight, (size_t)1), CalcTotalRowsNeeded(matrixWidth));
 }
 
 
