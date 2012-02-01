@@ -91,7 +91,6 @@ bool psMusic::Play(bool loopToggle, SoundControl* &ctrl)
                               loopstart, loopend, minvol, ctrl, handle))
     {
         active = true;
-        handle->preset_volume = maxvol;
         UpdateHandleCallback();
         return true;
     }

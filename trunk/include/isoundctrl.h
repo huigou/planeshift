@@ -33,30 +33,10 @@
 struct iSoundControl
 {
     /**
-     * Every SoundControl has a type as defined in this enum. There are two
-     * special types: AMBIENT and MUSIC that control the ambient and the music
-     * sounds respectively. There can be only one SoundControl of these two
-     * types at the same time while there can be an unlimited number of sound
-     * controllers with type NORMAL.
-     */
-    enum SndCtrlType
-    {
-        NORMAL,
-        AMBIENT,
-        MUSIC
-    };
-
-    /**
      * Get the SoundControl's ID.
      * @return the Soundcontrol's ID.
      */
     virtual int GetID() const = 0;
-
-    /**
-     * Get the SoundControl's type.
-     * @return the SoundControl's type.
-     */
-    virtual int GetType() const = 0;
 
     /**
      * Dampen volume over time to configured value

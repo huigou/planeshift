@@ -374,8 +374,7 @@ bool pawsButton::OnMouseDown( int button, int modifiers, int x, int y )
     }
 
     // Play a sound
-    iSoundControl* guiSndCtrl = PawsManager::GetSingleton().GetSoundManager()->GetSndCtrl(iSoundManager::GUI_SNDCTRL);
-    PawsManager::GetSingleton().GetSoundManager()->PlaySound(sound_click, false, guiSndCtrl);
+    PawsManager::GetSingleton().GetSoundManager()->PlaySound(sound_click, false, iSoundManager::GUI_SNDCTRL);
 
     if ( toggle )
     {

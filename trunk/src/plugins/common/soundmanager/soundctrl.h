@@ -25,10 +25,35 @@
 #ifndef _SOUND_CONTROL_H_
 #define _SOUND_CONTROL_H_
 
+
+//====================================================================================
+// Crystal Space Includes
+//====================================================================================
+#include <cssysdef.h>
+#include <csutil/set.h>
+
 //====================================================================================
 // Project Includes
 //====================================================================================
 #include <isoundctrl.h>
+
+//------------------------------------------------------------------------------------
+// Forward Declarations
+//------------------------------------------------------------------------------------
+class SoundControl;
+
+
+/**
+ * Interface to implement to handle SoundControl's events.
+ */
+struct iSoundControlListener
+{
+    /**
+     * This function is called everytime the volume or the toggle change.
+     * @param sndCtrl the SoundControl that has been changed.
+     */
+    virtual void OnSoundChange(SoundControl* sndCtrl) = 0;
+};
 
 
 /**
@@ -51,7 +76,7 @@ public:
     * Constructor.
     * Defaults are unmuted, enabled and volume is set to 1.0f.
     */ 
-    SoundControl(int ID, int type);
+    SoundControl(int ID);
 
     /**
     * Destructor
@@ -59,34 +84,21 @@ public:
     virtual ~SoundControl();
 
     /**
-    * Sets internal callbackpointers.
-    * Those Callbacks are called whenever a control changes.
-    * E.g. someone changes Volume or pushes a Toggle
-    * @param object pointer to a instance
-    * @param function pointer to a static void function within that instance
+    * Subscribe to SoundControl's events.
+    * @param listener the subscriber.
     */ 
-    void SetCallback(void (*object), void (*function) (void *));
+    void Subscribe(iSoundControlListener* listener);
 
     /**
-    * Removes Callback
+    * Unsubscribe the listener.
+    * @param listener the object to remove.
     */
-    void RemoveCallback();
+    void Unsubscribe(iSoundControlListener* listener);
 
     /**
     * Returns this Volume ID.
     */
     virtual int GetID() const;
-
-    /**
-     * Get the SoundControl's type.
-     */
-    virtual int GetType() const;
-
-    /**
-     * Set the SoundControl's type. Note that it does not affect
-     * the callback. The callback must be managed separately.
-     */
-    void SetType(int type);
 
     /**
      * Dampen volume over time to configured value
@@ -148,22 +160,18 @@ public:
 
 private:
     int     id;                         ///< id of this control
-    int     type;                       ///< type of this control
     bool    isEnabled;                  ///< is it enabled? true or false
     bool    isMuted;                    ///< is it muted? true or false
     bool    isDampened;                 ///< is it enabled? true or false
     float   volume;                     ///< current volume as float
     float   volumeDamp;            		///< current dampening of volume as float
 
-    void (*callbackObject);             ///< pointer to a callback object (if set)
-    void (*callbackFunction) (void *);  ///< pointer to a callback function (if set)
-    bool hasCallback;                   ///< true if theres a Callback set, false if not
+    csSet<iSoundControlListener*> listeners;   ///< listeners to SoundControl events.
 
     /**
-    * Will call the Callback if set.
-    * Checks @see hasCallback and call the Callback if true. 
+    * Call OnSoundChange() on listeners.
     */
-    void Callback();
+    void CallListeners();
 
 };
 

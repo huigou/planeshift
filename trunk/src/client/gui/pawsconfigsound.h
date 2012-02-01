@@ -63,12 +63,14 @@ protected:
     pawsScrollBar* musicVol;
     pawsScrollBar* ambientVol;
     pawsScrollBar* actionsVol;
+    pawsScrollBar* effectsVol;
     pawsScrollBar* guiVol;
     pawsScrollBar* voicesVol;
     pawsScrollBar* instrumentsVol;
 
     pawsCheckBox* ambient;
     pawsCheckBox* actions;
+    pawsCheckBox* effects;
     pawsCheckBox* music;
     pawsCheckBox* gui;
     pawsCheckBox* voices;
@@ -83,8 +85,8 @@ protected:
 
     bool loaded;
 
-    bool oldambient, oldactions, oldmusic, oldgui, oldvoices, oldInstruments, oldlisteneroncamerapos, oldchatsound;
-    float oldvol, oldmusicvol, oldambientvol, oldactionsvol, oldguivol, oldvoicesvol, oldInstrumentsVol;
+    bool oldambient, oldactions, oldeffects, oldmusic, oldgui, oldvoices, oldInstruments, oldlisteneroncamerapos, oldchatsound;
+    float oldvol, oldmusicvol, oldambientvol, oldactionsvol, oldeffectsvol, oldguivol, oldvoicesvol, oldInstrumentsVol;
 };
 
 

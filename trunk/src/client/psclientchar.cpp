@@ -380,8 +380,7 @@ void psClientCharManager::HandleAction( MsgEntry* me )
 
 void psClientCharManager::HandlePlaySound( MsgEntry* me )
 {
-    iSoundControl* sc = psengine->GetSoundManager()->GetSndCtrl(iSoundManager::ACTION_SNDCTRL);
-    psengine->GetSoundManager()->PlaySound(me->GetStr(), false, sc);
+    psengine->GetSoundManager()->PlaySound(me->GetStr(), false, iSoundManager::ACTION_SNDCTRL);
 }
 
 void psClientCharManager::HandleTargetUpdate( MsgEntry* me )

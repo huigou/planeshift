@@ -66,6 +66,10 @@ bool pawsConfigSound::PostSetup()
     if(!actionsVol)
         return false;
 
+    effectsVol = (pawsScrollBar*)FindWidget("effectsVol");
+    if(!effectsVol)
+        return false;
+
     guiVol = (pawsScrollBar*)FindWidget("guiVol");
     if(!guiVol)
         return false;
@@ -96,6 +100,10 @@ bool pawsConfigSound::PostSetup()
 
     actions = (pawsCheckBox*)FindWidget("actions");
     if(!actions)
+        return false;
+
+    effects = (pawsCheckBox*)FindWidget("effects");
+    if(!effects)
         return false;
 
     music = (pawsCheckBox*)FindWidget("music");
@@ -138,6 +146,10 @@ bool pawsConfigSound::PostSetup()
     actionsVol->SetTickValue(10);
     actionsVol->EnableValueLimit(true);
 
+    effectsVol->SetMaxValue(100);
+    effectsVol->SetTickValue(10);
+    effectsVol->EnableValueLimit(true);
+
     guiVol->SetMaxValue(100);
     guiVol->SetTickValue(10);
     guiVol->EnableValueLimit(true);
@@ -154,16 +166,18 @@ bool pawsConfigSound::PostSetup()
 }
 bool pawsConfigSound::LoadConfig()
 {
-    generalVol->SetCurrentValue(psengine->GetSoundManager()->GetMainSndCtrl()->GetVolume()*100,false);
+    generalVol->SetCurrentValue(psengine->GetSoundManager()->GetSndCtrl(iSoundManager::MAIN_SNDCTRL)->GetVolume()*100,false);
     musicVol->SetCurrentValue(psengine->GetSoundManager()->GetSndCtrl(iSoundManager::MUSIC_SNDCTRL)->GetVolume()*100,false);
     ambientVol->SetCurrentValue(psengine->GetSoundManager()->GetSndCtrl(iSoundManager::AMBIENT_SNDCTRL)->GetVolume()*100,false);
     guiVol->SetCurrentValue(psengine->GetSoundManager()->GetSndCtrl(iSoundManager::GUI_SNDCTRL)->GetVolume()*100,false);
     voicesVol->SetCurrentValue(psengine->GetSoundManager()->GetSndCtrl(iSoundManager::VOICE_SNDCTRL)->GetVolume()*100,false);
     actionsVol->SetCurrentValue(psengine->GetSoundManager()->GetSndCtrl(iSoundManager::ACTION_SNDCTRL)->GetVolume()*100,false);
+    effectsVol->SetCurrentValue(psengine->GetSoundManager()->GetSndCtrl(iSoundManager::EFFECT_SNDCTRL)->GetVolume()*100,false);
     instrumentsVol->SetCurrentValue(psengine->GetSoundManager()->GetSndCtrl(iSoundManager::INSTRUMENT_SNDCTRL)->GetVolume() * 100, false);
 
     ambient->SetState(psengine->GetSoundManager()->GetSndCtrl(iSoundManager::AMBIENT_SNDCTRL)->GetToggle());
     actions->SetState(psengine->GetSoundManager()->GetSndCtrl(iSoundManager::ACTION_SNDCTRL)->GetToggle());
+    effects->SetState(psengine->GetSoundManager()->GetSndCtrl(iSoundManager::EFFECT_SNDCTRL)->GetToggle());
     music->SetState(psengine->GetSoundManager()->GetSndCtrl(iSoundManager::MUSIC_SNDCTRL)->GetToggle());
     gui->SetState(psengine->GetSoundManager()->GetSndCtrl(iSoundManager::GUI_SNDCTRL)->GetToggle());
     voices->SetState(psengine->GetSoundManager()->GetSndCtrl(iSoundManager::VOICE_SNDCTRL)->GetToggle());
@@ -196,6 +210,8 @@ bool pawsConfigSound::SaveConfig()
                      ambient->GetState() ? "yes" : "no");
     xml.AppendFmt("<actions on=\"%s\" />\n",
                      actions->GetState() ? "yes" : "no");
+    xml.AppendFmt("<effects on=\"%s\" />\n",
+                     effects->GetState() ? "yes" : "no");
     xml.AppendFmt("<music on=\"%s\" />\n",
                      music->GetState() ? "yes" : "no");
     xml.AppendFmt("<gui on=\"%s\" />\n",
@@ -212,6 +228,8 @@ bool pawsConfigSound::SaveConfig()
                      int(ambientVol->GetCurrentValue()));
     xml.AppendFmt("<actionsvolume value=\"%d\" />\n",
                      int(actionsVol->GetCurrentValue()));
+    xml.AppendFmt("<effectsvolume value=\"%d\" />\n",
+                     int(effectsVol->GetCurrentValue()));
     xml.AppendFmt("<guivolume value=\"%d\" />\n",
                      int(guiVol->GetCurrentValue()));
     xml.AppendFmt("<voicesvolume value=\"%d\" />\n",
@@ -257,7 +275,7 @@ bool pawsConfigSound::OnScroll(int /*scrollDir*/, pawsScrollBar* wdg)
         if(generalVol->GetCurrentValue() < 1)
             generalVol->SetCurrentValue(1,false);
 
-        psengine->GetSoundManager()->GetMainSndCtrl()->SetVolume(generalVol->GetCurrentValue()/100);
+        psengine->GetSoundManager()->GetSndCtrl(iSoundManager::MAIN_SNDCTRL)->SetVolume(generalVol->GetCurrentValue()/100);
     }
     else if(wdg == musicVol && loaded)
     {
@@ -279,6 +297,13 @@ bool pawsConfigSound::OnScroll(int /*scrollDir*/, pawsScrollBar* wdg)
             actionsVol->SetCurrentValue(1,false);
 
         psengine->GetSoundManager()->GetSndCtrl(iSoundManager::ACTION_SNDCTRL)->SetVolume(actionsVol->GetCurrentValue()/100);
+    }
+    else if(wdg == effectsVol && loaded)
+    {
+        if(effectsVol->GetCurrentValue() < 1)
+            effectsVol->SetCurrentValue(1,false);
+
+        psengine->GetSoundManager()->GetSndCtrl(iSoundManager::EFFECT_SNDCTRL)->SetVolume(effectsVol->GetCurrentValue()/100);
     }
     else if(wdg == guiVol && loaded)
     {
@@ -321,6 +346,10 @@ bool pawsConfigSound::OnButtonPressed(int /*button*/, int /*mod*/, pawsWidget* w
     else if(wdg == actions)
     {
         psengine->GetSoundManager()->GetSndCtrl(iSoundManager::ACTION_SNDCTRL)->SetToggle(actions->GetState());
+    }
+    else if(wdg == effects)
+    {
+        psengine->GetSoundManager()->GetSndCtrl(iSoundManager::EFFECT_SNDCTRL)->SetToggle(effects->GetState());
     }
     else if(wdg == music)
     {
@@ -385,16 +414,18 @@ void pawsConfigSound::Show()
     oldambient = psengine->GetSoundManager()->GetSndCtrl(iSoundManager::AMBIENT_SNDCTRL)->GetToggle();
     oldmusic = psengine->GetSoundManager()->GetSndCtrl(iSoundManager::MUSIC_SNDCTRL)->GetToggle();
     oldactions = psengine->GetSoundManager()->GetSndCtrl(iSoundManager::ACTION_SNDCTRL)->GetToggle();
+    oldeffects = psengine->GetSoundManager()->GetSndCtrl(iSoundManager::EFFECT_SNDCTRL)->GetToggle();
     oldgui = psengine->GetSoundManager()->GetSndCtrl(iSoundManager::GUI_SNDCTRL)->GetToggle();
     oldvoices = psengine->GetSoundManager()->GetSndCtrl(iSoundManager::VOICE_SNDCTRL)->GetToggle();
     oldInstruments = psengine->GetSoundManager()->GetSndCtrl(iSoundManager::INSTRUMENT_SNDCTRL)->GetToggle();
     oldchatsound = psengine->GetSoundManager()->IsChatToggleOn();
     oldlisteneroncamerapos = psengine->GetSoundManager()->IsListenerOnCameraToggleOn();
 
-    oldvol = psengine->GetSoundManager()->GetMainSndCtrl()->GetVolume();
+    oldvol = psengine->GetSoundManager()->GetSndCtrl(iSoundManager::MAIN_SNDCTRL)->GetVolume();
     oldmusicvol = psengine->GetSoundManager()->GetSndCtrl(iSoundManager::MUSIC_SNDCTRL)->GetVolume();
     oldambientvol = psengine->GetSoundManager()->GetSndCtrl(iSoundManager::AMBIENT_SNDCTRL)->GetVolume();
     oldactionsvol = psengine->GetSoundManager()->GetSndCtrl(iSoundManager::ACTION_SNDCTRL)->GetVolume();
+    oldeffectsvol = psengine->GetSoundManager()->GetSndCtrl(iSoundManager::EFFECT_SNDCTRL)->GetVolume();
     oldguivol = psengine->GetSoundManager()->GetSndCtrl(iSoundManager::GUI_SNDCTRL)->GetVolume();
     oldvoicesvol = psengine->GetSoundManager()->GetSndCtrl(iSoundManager::VOICE_SNDCTRL)->GetVolume();
     oldInstrumentsVol = psengine->GetSoundManager()->GetSndCtrl(iSoundManager::INSTRUMENT_SNDCTRL)->GetVolume();
@@ -408,6 +439,7 @@ void pawsConfigSound::Hide()
     {
         psengine->GetSoundManager()->GetSndCtrl(iSoundManager::AMBIENT_SNDCTRL)->SetToggle(oldambient);
         psengine->GetSoundManager()->GetSndCtrl(iSoundManager::ACTION_SNDCTRL)->SetToggle(oldactions);
+        psengine->GetSoundManager()->GetSndCtrl(iSoundManager::EFFECT_SNDCTRL)->SetToggle(oldeffects);
         psengine->GetSoundManager()->GetSndCtrl(iSoundManager::MUSIC_SNDCTRL)->SetToggle(oldmusic);
         psengine->GetSoundManager()->GetSndCtrl(iSoundManager::GUI_SNDCTRL)->SetToggle(oldgui);
         psengine->GetSoundManager()->GetSndCtrl(iSoundManager::VOICE_SNDCTRL)->SetToggle(oldvoices);
@@ -415,10 +447,11 @@ void pawsConfigSound::Hide()
         psengine->GetSoundManager()->SetChatToggle(oldchatsound);
         psengine->GetSoundManager()->SetListenerOnCameraToggle(oldlisteneroncamerapos);
 
-        psengine->GetSoundManager()->GetMainSndCtrl()->SetVolume(oldvol);
+        psengine->GetSoundManager()->GetSndCtrl(iSoundManager::MAIN_SNDCTRL)->SetVolume(oldvol);
         psengine->GetSoundManager()->GetSndCtrl(iSoundManager::MUSIC_SNDCTRL)->SetVolume(oldmusicvol);
         psengine->GetSoundManager()->GetSndCtrl(iSoundManager::AMBIENT_SNDCTRL)->SetVolume(oldambientvol);
         psengine->GetSoundManager()->GetSndCtrl(iSoundManager::ACTION_SNDCTRL)->SetVolume(oldactionsvol);
+        psengine->GetSoundManager()->GetSndCtrl(iSoundManager::EFFECT_SNDCTRL)->SetVolume(oldeffectsvol);
         psengine->GetSoundManager()->GetSndCtrl(iSoundManager::GUI_SNDCTRL)->SetVolume(oldguivol);
         psengine->GetSoundManager()->GetSndCtrl(iSoundManager::VOICE_SNDCTRL)->SetVolume(oldvoicesvol);
         psengine->GetSoundManager()->GetSndCtrl(iSoundManager::INSTRUMENT_SNDCTRL)->SetVolume(oldInstrumentsVol);

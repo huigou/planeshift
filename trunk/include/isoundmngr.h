@@ -49,22 +49,24 @@ class  csVector3;
  */
 struct iSoundManager: public virtual iBase
 {
-    SCF_INTERFACE(iSoundManager, 1, 2, 0);
+    SCF_INTERFACE(iSoundManager, 1, 3, 0);
 
     /**
      * The sound manager initializes by default the SoundControls with the IDs
-     * in this enum. AMBIENT_SNDCTRL and MUSIC_SNDCTRL have type AMBIENT and
-     * MUSIC respectively.
+     * in this enum. MAIN_SNDCTRL affects the overall volume and the sound's
+     * general state.
      */
     enum SndCtrlID
     {
+        MAIN_SNDCTRL,
         AMBIENT_SNDCTRL,
         MUSIC_SNDCTRL,
         VOICE_SNDCTRL,
         ACTION_SNDCTRL,
         EFFECT_SNDCTRL,
         GUI_SNDCTRL,
-        INSTRUMENT_SNDCTRL
+        INSTRUMENT_SNDCTRL,
+        COUNT_SNDCTRL
     };
 
     /**
@@ -123,52 +125,16 @@ struct iSoundManager: public virtual iBase
      */
     virtual void ReloadSectors() = 0;
 
-    //-------------------------//
-    // SOUND CONTROLS MANAGING //
-    //-------------------------//
-
-    /**
-     * Create and return a new SoundControl with the indicated ID and type. If a
-     * SoundControl with the same ID already exists nothing happens. To use a
-     * SoundControl with the same ID of an existing one, it must be first removed
-     * with RemoveSndCtrl(iSoundControl* sndCtrl).
-     *
-     * Only one SoundControl of type AMBIENT or MUSIC can exist at the same time.
-     * If an ambient(music) sound control already exists and the user tries to
-     * create a new SoundControl with the same type, the previous ambient(music)
-     * SoundControl's type becomes NORMAL.
-     * 
-     * @see iSoundControl::SndCtrl_Type for more information about types.
-     * @param ctrlID the new SoundControl's identifier.
-     * @param type the new SoundControl's type.
-     * @return a pointer to the new SoundControl or a null pointer if a sound
-     * controller with the same ID already exists.
-     */
-    virtual iSoundControl* AddSndCtrl(int ctrlID, int type) = 0;
-
-    /**
-     * Remove a SoundControl.
-     * @param sndCtrl the SoundControl to be removed.
-     */
-    virtual void RemoveSndCtrl(iSoundControl* sndCtrl) = 0;
+    //------------------------------------//
+    // SOUND CONTROLS AND QUEUES MANAGING //
+    //------------------------------------//
 
     /**
      * Get the SoundControl with the given ID.
      * @param ctrlID the SoundControl's ID.
      * @return the sound controller with that ID.
      */
-    virtual iSoundControl* GetSndCtrl(int ctrlID) = 0;
-
-    /**
-     * Get the main SoundControl that affects the overall volume and the sound's
-     * general state.
-     * @return the main SoundControl.
-     */
-    virtual iSoundControl* GetMainSndCtrl() = 0;
-
-    //-----------------//
-    // QUEUES MANAGING //
-    //-----------------//
+    virtual iSoundControl* GetSndCtrl(SndCtrlID sndCtrlID) = 0;
 
     /**
      * Create a new sound queue with the given ID. The sounds of the queue are
@@ -180,11 +146,11 @@ struct iSoundManager: public virtual iBase
      * RemoveSndQueue(int queueID).
      *
      * @param queueID the queue's ID.
-     * @param sndCtrl the SoundControl of the queue's sounds.
+     * @param sndCtrlID the ID of the SoundControl that controls the queue's sounds.
      * @return true if the queue is created, false if another one with the same
-     * ID already exists.
+     * ID already exists or if the SoundControl's ID does not exist.
      */
-    virtual bool AddSndQueue(int queueID, iSoundControl* sndCtrl) = 0;
+    virtual bool AddSndQueue(int queueID, SndCtrlID sndCtrlID) = 0;
 
     /**
      * Remove the queue with the given ID.
@@ -208,11 +174,11 @@ struct iSoundManager: public virtual iBase
 
     /**
      * Checks if it is possible to play a sound with the given sound control.
-     * @param sndCtrl the sound control that will be used to play the sound.
+     * @param sndCtrlID the ID of the sound control that will be used to play the sound.
      * @return true if it is possible to play a sound with the given sound control,
      * false otherwise.
      */
-    virtual bool IsSoundActive(iSoundControl* sndCtrl) = 0;
+    virtual bool IsSoundActive(SndCtrlID sndCtrlID) = 0;
 
     /**
      * Set the new combat stance and starts the combat music if the combat toggle
@@ -347,23 +313,23 @@ struct iSoundManager: public virtual iBase
      * Play a 2D sound and return the ID of the played sound.
      * @param fileName the name of the file where the sound is stored.
      * @param loop true if the sound have to loop, false otherwise.
-     * @param ctrl the SoundControl that handle the sound.
+     * @param sndCtrlID the ID of the SoundControl that handles the sound.
      * @return 0 if the sound cannot be played, its ID otherwise.
      */
-    virtual uint PlaySound(const char* fileName, bool loop, iSoundControl* &ctrl) = 0;
+    virtual uint PlaySound(const char* fileName, bool loop, SndCtrlID sndCtrlID) = 0;
 
     /**
      * Play a 3D sound and return the ID of the played sound.
      * @param fileName the name of the file where the sound is stored.
      * @param loop true if the sound have to loop, false otherwise.
-     * @param ctrl the SoundControl that handle the sound.
+     * @param sndCtrlID the ID of the SoundControl that handles the sound.
      * @param pos the position of the sound source.
      * @param dir the direction of the sound.
      * @param minDist the minimum distance at which the player can hear it.
      * @param maxDist the maximum distance at which the player can hear it.
      * @return 0 if the sound cannot be played, its ID otherwise.
      */
-    virtual uint PlaySound(const char* fileName, bool loop, iSoundControl* &ctrl, csVector3 pos, csVector3 dir, float minDist, float maxDist) = 0;
+    virtual uint PlaySound(const char* fileName, bool loop, SndCtrlID sndCtrlID, csVector3 pos, csVector3 dir, float minDist, float maxDist) = 0;
 
     /**
      * This method is used to play the song given in the XML musical sheet.
@@ -371,13 +337,13 @@ struct iSoundManager: public virtual iBase
      * @param musicalSheet the sheet to play.
      * @param instrument the name of the instrument the player uses to play.
      * @param minimumDuration the minimum duration that the player is able to play.
-     * @param ctrl the SoundControl that handle the sound.
+     * @param sndCtrlID the ID of the SoundControl that handles the sound.
      * @param pos the position of the sound source.
      * @param dir the direction of the sound.
      * @return 0 if the sound cannot be played, its ID otherwise.
      */
     virtual uint PlaySong(csRef<iDocument> musicalSheet, const char* instrument, float minimumDuration,
-        iSoundControl* ctrl, csVector3 pos, csVector3 dir) = 0;
+        SndCtrlID sndCtrlID, csVector3 pos, csVector3 dir) = 0;
 
     /**
      * Stop a sound with the given ID.

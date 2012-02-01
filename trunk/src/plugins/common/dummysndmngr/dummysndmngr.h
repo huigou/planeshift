@@ -58,19 +58,14 @@ public:
     virtual void UnloadActiveSector();
     virtual void ReloadSectors();
 
-    //SoundControls managing
-    virtual iSoundControl* AddSndCtrl(int ctrlID, int type);
-    virtual void RemoveSndCtrl(iSoundControl* sndCtrl);
-    virtual iSoundControl* GetSndCtrl(int ctrlID);
-    virtual iSoundControl* GetMainSndCtrl();
-
-    //SoundQueue managing
-    virtual bool AddSndQueue(int queueID, iSoundControl* sndCtrl);
+    //SoundControls and SoundQueue managing
+    virtual iSoundControl* GetSndCtrl(SndCtrlID sndCtrlID);
+    virtual bool AddSndQueue(int queueID, SndCtrlID sndCtrlID);
     virtual void RemoveSndQueue(int queueID);
     virtual bool PushQueueItem(int queueID, const char* fileName);
 
     //State
-    virtual bool IsSoundActive(iSoundControl* sndCtrl);
+    virtual bool IsSoundActive(SndCtrlID sndCtrlID);
     virtual void SetCombatStance(int newCombatStance);
     virtual int GetCombatStance() const;
     virtual void SetPlayerMovement(csVector3 playerPosition, csVector3 playerVelocity);
@@ -93,10 +88,10 @@ public:
 
     //Play sounds
     virtual bool IsSoundValid(uint soundID) const;
-    virtual uint PlaySound(const char* fileName, bool loop, iSoundControl* &ctrl);
-    virtual uint PlaySound(const char* fileName, bool loop, iSoundControl* &ctrl, csVector3 pos, csVector3 dir, float minDist, float maxDist);
+    virtual uint PlaySound(const char* fileName, bool loop, SndCtrlID sndCtrlID);
+    virtual uint PlaySound(const char* fileName, bool loop, SndCtrlID sndCtrlID, csVector3 pos, csVector3 dir, float minDist, float maxDist);
     virtual uint PlaySong(csRef<iDocument> musicalSheet, const char* instrument, float minimumDuration,
-        iSoundControl* ctrl, csVector3 pos, csVector3 dir);
+        SndCtrlID sndCtrlID, csVector3 pos, csVector3 dir);
     virtual bool StopSound(uint soundID);
     virtual bool SetSoundSource(uint soundID, csVector3 position);
 

@@ -35,13 +35,11 @@ class DummySoundControl: public iSoundControl
 {
 public:
 
-    DummySoundControl(int ID, int type);
+    DummySoundControl(int ID);
 
     virtual ~DummySoundControl();
 
     virtual int GetID() const;
-
-    virtual int GetType() const;
 
     virtual void VolumeDampening(float damp);
 
@@ -65,7 +63,6 @@ public:
 
 private:
     int id;         ///< the SoundControl's id
-    int type;       ///< the SoundControl's type
     float volume;   ///< the SoundControl's volume
     bool isEnabled; ///< the SoundControl's toggle
     bool dampening; ///< the dampening status

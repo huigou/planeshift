@@ -1548,8 +1548,7 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
             if (psengine->GetSoundManager()->IsChatToggleOn() == true)
             {
                  // Hardcoded Resource considered as FIXME
-                iSoundControl* guiSndCtrl = psengine->GetSoundManager()->GetSndCtrl(iSoundManager::GUI_SNDCTRL);
-                psengine->GetSoundManager()->PlaySound("sound.standardButtonClick", false, guiSndCtrl);
+                psengine->GetSoundManager()->PlaySound("sound.standardButtonClick", false, iSoundManager::GUI_SNDCTRL);
             }
         case CHAT_AWAY:
         case CHAT_ADVICE:

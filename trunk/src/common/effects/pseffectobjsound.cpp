@@ -181,8 +181,7 @@ bool psEffectObjSound::Update(csTicks elapsed)
     {
         if(loop || !playedOnce)
         {
-            iSoundControl* effectSndCtrl = soundManager->GetSndCtrl(iSoundManager::EFFECT_SNDCTRL);
-            soundID = soundManager->PlaySound(soundName, loop, effectSndCtrl,
+            soundID = soundManager->PlaySound(soundName, loop, iSoundManager::EFFECT_SNDCTRL,
                 soundPos, csVector3(0,0,0), minDist, maxDist);
 
             if(soundID != 0) // sound not played

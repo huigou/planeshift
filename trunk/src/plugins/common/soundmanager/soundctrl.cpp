@@ -29,40 +29,40 @@
 #include "manager.h"
 
 
-SoundControl::SoundControl(int ID, int t)
+SoundControl::SoundControl(int ID)
 {
     id        		= ID;
-    type      		= t;
     isEnabled 		= true;
     isMuted   		= false;
     isDampened		= false;
     volume    		= VOLUME_NORM;
     volumeDamp 		= 1.0f;
-    hasCallback = false;
 }
 
 SoundControl::~SoundControl()
 {
+    // of course we don't delete SoundControlListeners here
+    listeners.DeleteAll();
 }
 
-void SoundControl::SetCallback(void (*object), void (*function) (void *))
+void SoundControl::Subscribe(iSoundControlListener* listener)
 {
-    callbackObject = object;
-    callbackFunction = function;
-    hasCallback = true; 
+    listeners.Add(listener);
 }
 
-void SoundControl::Callback()
+void SoundControl::Unsubscribe(iSoundControlListener* listener)
 {
-    if(hasCallback == true)
+    listeners.Delete(listener);
+}
+
+void SoundControl::CallListeners()
+{
+    csSet<iSoundControlListener*>::GlobalIterator listenerIter(listeners.GetIterator());
+
+    while(listenerIter.HasNext())
     {
-        callbackFunction(callbackObject);
+        listenerIter.Next()->OnSoundChange(this);
     }
-}
-
-void SoundControl::RemoveCallback()
-{
-    hasCallback = false;
 }
 
 int SoundControl::GetID() const
@@ -70,32 +70,23 @@ int SoundControl::GetID() const
     return id;
 }
 
-int SoundControl::GetType() const
-{
-    return type;
-}
-
-void SoundControl::SetType(int t)
-{
-    type = t;
-}
-
 void SoundControl::ActivateToggle()
 {
-    isEnabled = true;
-    Callback();
+    SetToggle(true);
 }
 
 void SoundControl::DeactivateToggle()
 {
-    isEnabled = false;
-    Callback();
+    SetToggle(false);
 }
 
-void SoundControl::SetToggle(bool toogle)
+void SoundControl::SetToggle(bool toggle)
 {
-    isEnabled = toogle;
-    Callback();
+    if(isEnabled != toggle)
+    {
+        isEnabled = toggle;
+        CallListeners();
+    }
 }
 
 bool SoundControl::GetToggle() const
@@ -142,22 +133,30 @@ bool SoundControl::IsDampened() const
 void SoundControl::Mute()
 {
     isMuted = true;
-    Callback();
+    CallListeners();
 }
 
 void SoundControl::Unmute()
 {
     isMuted = false;
+    CallListeners();
 }
 
 void SoundControl::SetVolume(float vol)
 {
     volume = vol;
-    Callback();
+    CallListeners();
 }
 
 float SoundControl::GetVolume() const
 {
-    return volume*volumeDamp;
+    if(isMuted)
+    {
+        return 0.0;
+    }
+    else
+    {
+        return volume * volumeDamp;
+    }
 }
 
