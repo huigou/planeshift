@@ -25,7 +25,8 @@
 #include "manager.h"
 #include "system.h"
 #include "data.h"
-#include "soundctrl.h"
+
+#define FADE_TIMESTEP 100
 
 /*
  * A Soundhandle contains all informations we have about a sound
@@ -38,8 +39,8 @@ SoundHandle::SoundHandle()
     : scfImplementationType(this)
 {
     id = 0; // this parameter makes sense only for SoundSystemManager
-    fade = 0;
-    fade_stop = false;
+    fadeSteps = 0;
+    fadeStop = false;
     maxDistance = -1;
     
     hasCallback = false;
@@ -81,6 +82,10 @@ SoundHandle::~SoundHandle()
     {
         SoundSystemManager::GetSingleton().eventTimer->RemoveTimerEvent(this);
     }
+
+    // unsubscribing to SoundControls' events
+    sndCtrl->Unsubscribe(this);
+    SoundSystemManager::GetSingleton().mainSndCtrl->Unsubscribe(this);
 }
 
 /*
@@ -93,7 +98,7 @@ SoundHandle::~SoundHandle()
  * Thats done within the Play*D functions before the sounds are unpaused
  */
 
-bool SoundHandle::Init(const char* resname, bool loop, float volume_preset,
+bool SoundHandle::Init(const char* resname, bool loop, float volumePreset,
                        int type, SoundControl* &ctrl, bool doppler)
 {
     csRef<iSndSysData> snddata;
@@ -114,11 +119,14 @@ bool SoundHandle::Init(const char* resname, bool loop, float volume_preset,
         return false;
     }
 
-    preset_volume = volume_preset;
+    currentVolume = volumePreset;
     sndCtrl = ctrl;
     name = csString(resname);
-
     dopplerEffect = doppler;
+
+    // subscribe to SoundControls' events
+    sndCtrl->Subscribe(this);
+    SoundSystemManager::GetSingleton().mainSndCtrl->Subscribe(this);
 
     return true;
 }
@@ -151,26 +159,85 @@ bool SoundHandle::Perform(iTimerEvent* /*ev*/)
 
 void SoundHandle::Fade(float volume, int time, int direction)
 {
-    volume = volume*sndCtrl->GetVolume();
+    volume = volume * sndCtrl->GetVolume() * SoundSystemManager::GetSingleton().mainSndCtrl->GetVolume();
 
+    // setting new steady state volume
     if(direction == FADE_UP)
     {
-      fade = (0 + (time / 100));
+        currentVolume += volume;
+        fadeSteps = time / FADE_TIMESTEP;
     }
     else /* FADE_DOWN + FADE_STOP */
     {
-      fade = (0 - (time / 100));
+        currentVolume -= volume;
+        fadeSteps = -time / FADE_TIMESTEP;
     }
 
-    fade_volume = (volume / (time / 100));
+    // there must be at least one step or the volume don't change
+    if(fadeSteps == 0)
+    {
+        fadeSteps = 1;
+    }
 
     if(direction == FADE_STOP)
     {
-      fade_stop = true;
+        fadeStop = true;
     }
     else /* sanity */
     {
-      fade_stop = false;
+        fadeStop = false;
+    }
+}
+
+
+/*
+ * This implementation is robust to changes of currentVolume and
+ * SoundControls' volume while still fading.
+ */
+void SoundHandle::FadeStep()
+{
+    float volumeDiff;
+    float steadyStateVol;
+    float currentSourceVol;
+
+    // do nothing if there is no fading ongoing
+    if(fadeSteps == 0)
+    {
+        return;
+    }
+
+    steadyStateVol = SoundSystemManager::GetSingleton().mainSndCtrl->GetVolume()
+                     * sndCtrl->GetVolume() * currentVolume;
+    currentSourceVol = sndsource->GetVolume();
+
+    // if the sound control's volume has changed so much that the steady state
+    // volume has been already passed, volumeDiff is < 0
+    volumeDiff = (steadyStateVol - currentSourceVol) / fadeSteps;
+
+    // if volumeDiff is 0 there is no need for fading anymore
+    if(volumeDiff <= 0 || fadeSteps == 1)
+    {
+        sndsource->SetVolume(steadyStateVol);
+        fadeSteps = 0;
+    }
+    else
+    {
+        if(fadeSteps > 0)
+        {
+            sndsource->SetVolume(currentSourceVol + volumeDiff);
+            fadeSteps--;
+        }
+        else // fadeSteps < 0
+        {
+            sndsource->SetVolume(currentSourceVol - volumeDiff);
+            fadeSteps++;
+        }
+    }
+
+    // stop if needed
+    if(fadeSteps == 0 && fadeStop)
+    {
+        sndstream->Pause();
     }
 }
 
@@ -272,4 +339,32 @@ void SoundHandle::Callback()
 void SoundHandle::RemoveCallback()
 {
     hasCallback = false;
+}
+
+void SoundHandle::OnSoundChange(SoundControl* /*ctrl*/)
+{
+    SoundControl* mainSndCtrl = SoundSystemManager::GetSingleton().mainSndCtrl;
+
+    // if sound are disabled we remove the sound
+    if(!sndCtrl->GetToggle() || !mainSndCtrl->GetToggle())
+    {
+        sndstream->Pause();
+        SetAutoRemove(true);
+        return;
+    }
+
+    // if the handle is fading it will fade to the new volume
+    if(fadeSteps == 0)
+    {
+        float newVolume = currentVolume * sndCtrl->GetVolume() * mainSndCtrl->GetVolume();
+
+        if(newVolume >= VOLUME_MAX)
+        {
+            sndsource->SetVolume(VOLUME_MAX);
+        }
+        else
+        {
+            sndsource->SetVolume(newVolume);
+        }
+    }
 }

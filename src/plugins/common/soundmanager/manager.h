@@ -24,6 +24,10 @@
 #ifndef _SOUND_MANAGER_H_
 #define _SOUND_MANAGER_H_
 
+
+//====================================================================================
+// Crystal Space Includes
+//====================================================================================
 #include <cssysdef.h>
 #include <iutil/objreg.h>
 #include <csgeom/vector3.h>
@@ -32,8 +36,14 @@
 #include <csutil/timer.h>
 #include <csutil/randomgen.h>
 
+//====================================================================================
+// Project Includes
+//====================================================================================
 #include "util/singleton.h"
 
+//------------------------------------------------------------------------------------
+// Forward Declarations
+//------------------------------------------------------------------------------------
 class SoundSystem;
 class SoundDataCache;
 class SoundHandle;
@@ -71,8 +81,7 @@ class SoundSystemManager: public Singleton<SoundSystemManager>
 {
 public:
     bool                   Initialised;       ///< is initialized ?
-    SoundControl*          mainSndCtrl;       ///< sound control for this manager
-    SoundControl*          defaultSndCtrl;    ///< sound control always available, used when there is no other
+    SoundControl*          mainSndCtrl;
     csRef<iEventTimer>     eventTimer;        ///< timer event used by all the sound handle to play after a delay
 
     /**
@@ -190,15 +199,16 @@ public:
      * It calls UpdateSound and updates SoundDataCache.
      */
     void Update();
+
     /**
      * Returns a NEW SoundControl.
      * It creates a new SoundControl and returns it. Also keeps
      * a internal list of all existing SoundControls. But atm there
      * is no way to recover a lost SoundControl. 
      */
-    SoundControl* AddSoundControl(int ctrlID, int type);
-    void RemoveSoundControl(SoundControl* sndCtrl);
-    SoundControl* GetSoundControl(int ctrlID) const;
+    SoundControl* AddSoundControl(uint sndCtrlID);
+    void RemoveSoundControl(uint sndCtrlID);
+    SoundControl* GetSoundControl(uint sndCtrlID) const;
 
     SoundSystem* GetSoundSystem() const { return soundSystem; }
     SoundDataCache* GetSoundDataCache() const { return soundDataCache; }
@@ -207,7 +217,7 @@ private:
     SoundSystem*                   soundSystem;
     SoundDataCache*                soundDataCache;
     csHash<SoundHandle*, uint>     soundHandles;       ///< hash which contains all SoundHandles by id
-    csHash<SoundControl*, int>     soundControllers;   ///< hash which contains all SoundControls by id
+    csHash<SoundControl*, uint>    soundControllers;   ///< hash which contains all SoundControls by id
 
     uint                           updateTime;         ///< update throttle of the sound system in milliseconds
     csTicks                        SndTime;            ///< current csticks

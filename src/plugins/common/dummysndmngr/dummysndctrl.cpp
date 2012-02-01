@@ -24,10 +24,9 @@
 #include "dummysndctrl.h"
 
 
-DummySoundControl::DummySoundControl(int ID, int t)
+DummySoundControl::DummySoundControl(int ID)
 {
     id = ID;
-    type = t;
 }
 
 DummySoundControl::~DummySoundControl()
@@ -37,11 +36,6 @@ DummySoundControl::~DummySoundControl()
 int DummySoundControl::GetID() const
 {
     return id;
-}
-
-int DummySoundControl::GetType() const
-{
-    return type;
 }
 
 void DummySoundControl::ActivateToggle()

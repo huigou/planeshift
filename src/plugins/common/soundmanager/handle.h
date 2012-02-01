@@ -24,10 +24,22 @@
 #ifndef _SOUND_HANDLE_H_
 #define _SOUND_HANDLE_H_
 
+
+//====================================================================================
+// Crystal Space Includes
+//====================================================================================
 #include <crystalspace.h>
 
-class SoundControl;
+//====================================================================================
+// Local Includes
+//====================================================================================
+#include "soundctrl.h"
+
+//------------------------------------------------------------------------------------
+// Forward Declarations
+//------------------------------------------------------------------------------------
 class SoundSystemManager;
+
 
 enum
 {
@@ -36,15 +48,11 @@ enum
     FADE_STOP   =   -1
 };
 
-class SoundHandle: public scfImplementation1<SoundHandle, iTimerEvent>
+class SoundHandle: public scfImplementation1<SoundHandle, iTimerEvent>, public iSoundControlListener
 {
 public:
     csString                                name;           ///< name of the resource or the file - not unique
     SoundControl*                           sndCtrl;        ///< @see SoundControl
-    float                                   preset_volume;  ///< the volume all calculations are based upon
-    int                                     fade;           ///< >0 is number of steps up <0 is number of steps down, 0 is nothing 
-    float                                   fade_volume;    ///< volume we add or remove in each step (during fading)
-    bool                                    fade_stop;      ///< pause this sound after fading down true / false
 
     csRef<iSndSysData>                      snddata;        ///< pointer to sound data
     csRef<iSndSysStream>                    sndstream;      ///< sound stream
@@ -62,6 +70,11 @@ public:
      * @param direction FADE_DOWN / FADE_UP or FADE_STOP
      */
     void Fade(float volume, int time, int direction);
+
+    /**
+     * Perform a fading step if it is needed.
+     */
+    void FadeStep();
 
     /**
      * Initialize this Handle.
@@ -165,11 +178,18 @@ public:
      */
     void RemoveCallback();
 
+    // From iSoundControlListener
+    //----------------------------
+    virtual void OnSoundChange(SoundControl* sndCtrl);
+
 protected:
     bool dopplerEffect;                ///< true if the doppler effect is enabled for this sound
+    float currentVolume;               ///< the volume all calculations are based upon.
 
 private:
     uint id;                           ///< id of this handle
+    int  fadeSteps;                    ///< number of steps to complete the fade, >0 if fading up, <0 if fading down.
+    bool fadeStop;                     ///< true if the sound must be paused after fading down.
     float maxDistance;                 ///< maximum distance at which this sound is heard (if the sound is 3D)
     bool hasCallback;                  ///< true of theres a callback set, false of not
     void (*callbackobject);            ///< pointer to the callback object

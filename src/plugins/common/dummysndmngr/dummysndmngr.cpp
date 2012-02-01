@@ -35,7 +35,7 @@ SCF_IMPLEMENT_FACTORY(DummySoundManager)
 
 DummySoundManager::DummySoundManager(iBase* parent): scfImplementationType(this, parent)
 {
-    defaultSndCtrl = new DummySoundControl(0, iSoundControl::NORMAL);
+    defaultSndCtrl = new DummySoundControl(0);
     return;
 }
 
@@ -70,27 +70,12 @@ void DummySoundManager::UnloadActiveSector()
     return;
 }
 
-iSoundControl* DummySoundManager::AddSndCtrl(int ctrlID, int type)
+iSoundControl* DummySoundManager::GetSndCtrl(SndCtrlID sndCtrlID)
 {
     return defaultSndCtrl;
 }
 
-void DummySoundManager::RemoveSndCtrl(iSoundControl* sndCtrl)
-{
-    return;
-}
-
-iSoundControl* DummySoundManager::GetSndCtrl(int ctrlID)
-{
-    return defaultSndCtrl;
-}
-
-iSoundControl* DummySoundManager::GetMainSndCtrl()
-{
-    return defaultSndCtrl;
-}
-
-bool DummySoundManager::AddSndQueue(int queueID, iSoundControl* sndCtrl)
+bool DummySoundManager::AddSndQueue(int queueID, SndCtrlID sndCtrlID)
 {
     return true;
 }
@@ -105,7 +90,7 @@ bool DummySoundManager::PushQueueItem(int queueID, const char* fileName)
     return true;
 }
 
-bool DummySoundManager::IsSoundActive(iSoundControl* sndCtrl)
+bool DummySoundManager::IsSoundActive(SndCtrlID sndCtrlID)
 {
     return false;
 }
@@ -201,18 +186,18 @@ bool DummySoundManager::IsSoundValid(uint soundID) const
     return false;
 }
 
-uint DummySoundManager::PlaySound(const char* fileName, bool loop, iSoundControl* &ctrl)
+uint DummySoundManager::PlaySound(const char* fileName, bool loop, SndCtrlID sndCtrlID)
 {
     return 0;
 }
 
-uint DummySoundManager::PlaySound(const char* fileName, bool loop, iSoundControl* &ctrl, csVector3 pos, csVector3 dir, float minDist, float maxDist)
+uint DummySoundManager::PlaySound(const char* fileName, bool loop, SndCtrlID sndCtrlID, csVector3 pos, csVector3 dir, float minDist, float maxDist)
 {
     return 0;
 }
 
 uint DummySoundManager::PlaySong(csRef<iDocument> musicalSheet, const char* instrument, float minimumDuration,
-        iSoundControl* ctrl, csVector3 pos, csVector3 dir)
+        SndCtrlID sndCtrlID, csVector3 pos, csVector3 dir)
 {
     return 0;
 }

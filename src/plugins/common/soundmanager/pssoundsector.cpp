@@ -411,7 +411,6 @@ void psSoundSector::UpdateEntity(SoundControl* &ctrl)
 
     for(int a = 0; a < entities->GetCount(); a++)
     {
-        uint meshID;
         float range;
         csVector3 rangeVec;
         iMeshWrapper* mesh;

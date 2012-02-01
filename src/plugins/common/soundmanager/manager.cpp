@@ -25,7 +25,6 @@
 
 #include "soundmanager.h"
 #include "handle.h"
-#include "soundctrl.h"
 #include "system.h"
 #include "data.h"
 
@@ -72,8 +71,7 @@ SoundSystemManager::SoundSystemManager(iObjectRegistry* objectReg)
     // Create a new SoundSystem, SoundDataCache Instance and the main SoundControl
     soundSystem = new SoundSystem;
     soundDataCache = new SoundDataCache;
-    mainSndCtrl = new SoundControl(-1, iSoundControl::NORMAL);
-    defaultSndCtrl = new SoundControl(-1, iSoundControl::NORMAL);
+    mainSndCtrl = new SoundControl(-1);
 
     if(soundSystem->Initialize(objectReg)
        && soundDataCache->Initialize(objectReg))
@@ -103,7 +101,7 @@ SoundSystemManager::~SoundSystemManager()
     UpdateSound();
 
     // Deleting SoundControls
-    csHash<SoundControl*, int>::GlobalIterator controlIter(soundControllers.GetIterator());
+    csHash<SoundControl*, uint>::GlobalIterator controlIter(soundControllers.GetIterator());
     SoundControl* sc;
 
     while(controlIter.HasNext())
@@ -116,7 +114,6 @@ SoundSystemManager::~SoundSystemManager()
     soundControllers.DeleteAll();
 
     delete mainSndCtrl;
-    delete defaultSndCtrl;
     delete soundSystem;
     delete soundDataCache;
 
@@ -282,7 +279,6 @@ bool SoundSystemManager::IsHandleValid(uint handleID) const
 
 void SoundSystemManager::UpdateSound()
 {
-    float vol;
     SoundHandle* sh;
     csArray<SoundHandle*> handles = soundHandles.GetAll();
 
@@ -312,66 +308,10 @@ void SoundSystemManager::UpdateSound()
             }
         }
 
-        // fade in or out
-        // fade >0 is number of steps up <0 is number of steps down, 0 is nothing
-        if(sh->fade > 0)
-        {
-            sh->sndsource->SetVolume(sh->sndsource->GetVolume()
-                                      + ((sh->fade_volume
-                                          * sh->sndCtrl->GetVolume())
-                                         * mainSndCtrl->GetVolume()));
-            sh->fade--;
-        }
-        else if(sh->fade < 0)
-        {
-            /*
-             *  fading down means we might want to stop the sound
-             * if fade_stop is set do that (instead of the last step)
-             * dont delete it here it would ruin the Array
-             * our "garbage collector (UpdateSounds)" will pick it up
-             *
-             * also check the toggle just pause if its false
-             */
+        // fading if needed
+        sh->FadeStep();
 
-            if((sh->fade == -1
-               && sh->fade_stop == true)
-               || sh->sndCtrl->GetToggle() == false)
-            {
-                RemoveHandle(sh->GetID());
-                continue;
-            }
-            else
-            {
-                sh->sndsource->SetVolume(sh->sndsource->GetVolume()
-                                          - ((sh->fade_volume
-                                              * sh->sndCtrl->GetVolume())
-                                             * mainSndCtrl->GetVolume()));
-                sh->fade++;
-            }
-        }
-        else if(sh->sndCtrl->GetToggle() == true)
-        {
-            if(mainSndCtrl->GetToggle() == false)
-            {
-                vol = VOLUME_ZERO;
-            }
-            else
-            {
-                vol = ((sh->preset_volume * sh->sndCtrl->GetVolume())
-                       * mainSndCtrl->GetVolume());
-            }
-
-            // limit volume to 2.0f (VOLUME_MAX defined in manager.h)
-            if(vol >= VOLUME_MAX)
-            {
-                sh->sndsource->SetVolume(VOLUME_MAX);
-            }
-            else
-            {
-                sh->sndsource->SetVolume(vol);
-            }
-        }
-      LastUpdateTime = csGetTicks();
+        LastUpdateTime = csGetTicks();
     }
 }
 
@@ -385,32 +325,33 @@ void SoundSystemManager::UpdateListener(csVector3 v, csVector3 f, csVector3 t)
     soundSystem->UpdateListener(v, f, t);
 }
 
-SoundControl* SoundSystemManager::AddSoundControl(int ctrlID, int type)
+SoundControl* SoundSystemManager::AddSoundControl(uint sndCtrlID)
 {
     SoundControl* newControl;
 
-    if(soundControllers.Get(ctrlID, 0) != 0)
+    if(soundControllers.Get(sndCtrlID, 0) != 0)
     {
         return 0;
     }
 
-    newControl = new SoundControl(ctrlID, type);
-    soundControllers.Put(ctrlID, newControl);
+    newControl = new SoundControl(sndCtrlID);
+    soundControllers.Put(sndCtrlID, newControl);
 
     return newControl;
 }
 
-void SoundSystemManager::RemoveSoundControl(SoundControl* sndCtrl)
+void SoundSystemManager::RemoveSoundControl(uint sndCtrlID)
 {
-    soundControllers.Delete(sndCtrl->GetID(), sndCtrl);
+    SoundControl* sndCtrl = soundControllers.Get(sndCtrlID, 0);
+
+    soundControllers.Delete(sndCtrlID, sndCtrl);
     delete sndCtrl;
 }
 
-SoundControl* SoundSystemManager::GetSoundControl(int ctrlID) const
+SoundControl* SoundSystemManager::GetSoundControl(uint sndCtrlID) const
 {
-    return soundControllers.Get(ctrlID, 0);
+    return soundControllers.Get(sndCtrlID, 0);
 }
-
 
 uint SoundSystemManager::FindHandleID()
 {
@@ -472,6 +413,11 @@ InitSoundHandle(const char* name, bool loop, size_t loopstart, size_t loopend,
         return false;
     }
 
+    if(sndCtrl == 0)
+    {
+        return false;
+    }
+
     if(sndCtrl->GetToggle() == false) /* FIXME */
     {
         return false;
@@ -491,7 +437,7 @@ InitSoundHandle(const char* name, bool loop, size_t loopstart, size_t loopend,
     }
 
     handle->sndstream->SetLoopBoundaries(loopstart, loopend);
-    handle->sndsource->SetVolume((volume_preset * sndCtrl->GetVolume()));
+    handle->sndsource->SetVolume((volume_preset * mainSndCtrl->GetVolume() * sndCtrl->GetVolume()));
 
     soundHandles.Put(handleID, handle);
 

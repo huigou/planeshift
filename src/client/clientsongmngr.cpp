@@ -151,7 +151,7 @@ void ClientSongManager::HandleMessage(MsgEntry* message)
 
         // if sounds are not active the song will still be heard by players around
         sndMngr = psengine->GetSoundManager();
-        if(sndMngr->IsSoundActive(sndMngr->GetSndCtrl(iSoundManager::INSTRUMENT_SNDCTRL)))
+        if(sndMngr->IsSoundActive(iSoundManager::INSTRUMENT_SNDCTRL))
         {
             // playing
             if(playMsg.toPlayer)
@@ -259,14 +259,13 @@ uint ClientSongManager::PlaySong(const char* musicalSheet, const char* instrName
     csRef<iDocument> sheetDoc;
     csRef<iDocumentSystem> docSys;
     iSoundManager* sndMngr = psengine->GetSoundManager();
-    iSoundControl* sndCtrl = sndMngr->GetSndCtrl(iSoundManager::INSTRUMENT_SNDCTRL);
 
     // creating document
     docSys = csQueryRegistry<iDocumentSystem>(psengine->GetObjectRegistry());
     sheetDoc = docSys->CreateDocument();
     sheetDoc->Parse(musicalSheet, true);
 
-    return sndMngr->PlaySong(sheetDoc, instrName, minimumDuration, sndCtrl, playerPos, 0);
+    return sndMngr->PlaySong(sheetDoc, instrName, minimumDuration, iSoundManager::INSTRUMENT_SNDCTRL, playerPos, 0);
 }
 
 void ClientSongManager::StopSong(uint songID)

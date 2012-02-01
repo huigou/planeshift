@@ -73,7 +73,7 @@ bool SongHandle::Init(const char* /* resName */, bool loop, float volumePreset,
         return false;
     }
 
-    preset_volume = volumePreset;
+    currentVolume = volumePreset;
     sndCtrl = ctrl;
 
     // name is not important here

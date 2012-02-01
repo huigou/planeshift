@@ -1116,12 +1116,12 @@ inline void psEngine::FrameLimit()
 
 void psEngine::MuteAllSounds(void)
 {
-    SoundManager->GetMainSndCtrl()->SetToggle(false);
+    SoundManager->GetSndCtrl(iSoundManager::MAIN_SNDCTRL)->Mute();
 }
 
 void psEngine::UnmuteAllSounds(void)
 {
-    SoundManager->GetMainSndCtrl()->SetToggle(true);
+    SoundManager->GetSndCtrl(iSoundManager::MAIN_SNDCTRL)->Unmute();
 }
 
 // ----------------------------------------------------------------------------
@@ -1709,6 +1709,10 @@ bool psEngine::LoadSoundSettings(bool forceDef)
     if (optionNode != NULL)
     	SoundManager->GetSndCtrl(iSoundManager::ACTION_SNDCTRL)->SetToggle(optionNode->GetAttributeValueAsBool("on",true));
 
+    optionNode = mainNode->GetNode("effects");
+    if (optionNode != NULL)
+    	SoundManager->GetSndCtrl(iSoundManager::EFFECT_SNDCTRL)->SetToggle(optionNode->GetAttributeValueAsBool("on",true));
+
     optionNode = mainNode->GetNode("music");
     if (optionNode != NULL)
     	SoundManager->GetSndCtrl(iSoundManager::MUSIC_SNDCTRL)->SetToggle(optionNode->GetAttributeValueAsBool("on",true));
@@ -1729,7 +1733,7 @@ bool psEngine::LoadSoundSettings(bool forceDef)
     if(optionNode != NULL)
     {
         int volume = optionNode->GetAttributeValueAsInt("value", 100);
-		SoundManager->GetMainSndCtrl()->SetVolume((float)volume / 100);
+		SoundManager->GetSndCtrl(iSoundManager::MAIN_SNDCTRL)->SetVolume((float)volume / 100);
     }
 
     optionNode = mainNode->GetNode("musicvolume");
@@ -1751,6 +1755,13 @@ bool psEngine::LoadSoundSettings(bool forceDef)
     {
         int volume = optionNode->GetAttributeValueAsInt("value", 100);
 		SoundManager->GetSndCtrl(iSoundManager::ACTION_SNDCTRL)->SetVolume((float)volume / 100);
+    }
+
+    optionNode = mainNode->GetNode("effectsvolume");
+    if(optionNode != NULL)
+    {
+        int volume = optionNode->GetAttributeValueAsInt("value", 100);
+		SoundManager->GetSndCtrl(iSoundManager::EFFECT_SNDCTRL)->SetVolume((float)volume / 100);
     }
 
     optionNode = mainNode->GetNode("guivolume");

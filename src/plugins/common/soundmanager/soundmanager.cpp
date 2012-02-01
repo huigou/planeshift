@@ -62,7 +62,6 @@ uint SoundManager::updateTime = DEFAULT_SECTOR_UPDATE_TIME;
 SoundManager::SoundManager(iBase* parent): scfImplementationType(this, parent)
 {
     // initializing pointers to null
-    mainSndCtrl = 0;
     ambientSndCtrl = 0;
     musicSndCtrl = 0;
     activeSector = 0;
@@ -163,6 +162,28 @@ const csHandlerID* SoundManager::GenericPrec(csRef<iEventHandlerRegistry> &ehr,
     }
 
     return 0;
+}
+
+//----------------------------
+// FROM iSoundControlListener
+//----------------------------
+
+void SoundManager::OnSoundChange(SoundControl* sndCtrl)
+{
+    if(activeSector == 0)
+    {
+        return;
+    }
+
+    if(sndCtrl == musicSndCtrl)
+    {
+        activeSector->UpdateMusic(loopBGM.GetToggle(), combat, musicSndCtrl);
+    }
+    else if(sndCtrl == ambientSndCtrl)
+    {
+        activeSector->UpdateAmbient(weather, ambientSndCtrl);
+    }
+    
 }
 
 //--------------------
@@ -294,92 +315,38 @@ void SoundManager::UnloadActiveSector()
     activeSector = NULL;
 }
 
-iSoundControl* SoundManager::AddSndCtrl(int ctrlID, int type)
+iSoundControl* SoundManager::GetSndCtrl(SndCtrlID sndCtrlID)
 {
-    SoundControl* sc = sndSysMgr->AddSoundControl(ctrlID, type);
-
-    if(sc == 0)
+    if(sndCtrlID == MAIN_SNDCTRL)
     {
-        return 0;
+        return sndSysMgr->mainSndCtrl;
     }
-
-    // Handle Ambient and Music SoundControls.
-    switch(type)
+    else
     {
-    case iSoundControl::AMBIENT:
-        sc->SetCallback(this, &UpdateAmbientCallback);
-        if(ambientSndCtrl != sndSysMgr->defaultSndCtrl)
-        {
-            ambientSndCtrl->SetType(iSoundControl::NORMAL);
-            ambientSndCtrl->RemoveCallback();
-        }
-        ambientSndCtrl = sc;
-        break;
-
-    case iSoundControl::MUSIC:
-        sc->SetCallback(this, &UpdateMusicCallback);
-        if(musicSndCtrl != sndSysMgr->defaultSndCtrl)
-        {
-            musicSndCtrl->SetType(iSoundControl::NORMAL);
-            musicSndCtrl->RemoveCallback();
-        }
-        musicSndCtrl = sc;
-        break;
+        return sndSysMgr->GetSoundControl(sndCtrlID);
     }
-
-    return sc;
 }
 
-
-void SoundManager::RemoveSndCtrl(iSoundControl* sndCtrl)
+bool SoundManager::AddSndQueue(int queueID, SndCtrlID sndCtrlID)
 {
-    if(sndCtrl == 0)
-    {
-        return;
-    }
+    SoundQueue* sndQueue;
+    SoundControl* sndCtrl;
 
-    // check if it is the ambientSndCtrl or the musicSndCtrl
-    switch(sndCtrl->GetType())
-    {
-    case iSoundControl::AMBIENT:
-        // use default sound control to avoid null pointers
-        ambientSndCtrl = sndSysMgr->defaultSndCtrl;
-        break;
-
-    case iSoundControl::MUSIC:
-        musicSndCtrl = sndSysMgr->defaultSndCtrl;
-        break;
-    }
-
-    SoundControl* sndControl = static_cast<SoundControl*>(sndCtrl);
-    sndSysMgr->RemoveSoundControl(sndControl);
-
-}
-
-
-iSoundControl* SoundManager::GetSndCtrl(int ctrlID)
-{
-    return sndSysMgr->GetSoundControl(ctrlID);
-}
-
-
-iSoundControl* SoundManager::GetMainSndCtrl()
-{
-    return mainSndCtrl;
-}
-
-
-bool SoundManager::AddSndQueue(int queueID, iSoundControl* sndCtrl)
-{
-
-    if(soundQueues.Get(queueID, 0) != 0 || sndCtrl == 0)
+    // checking if a queue with the same ID already exists
+    if(soundQueues.Get(queueID, 0) != 0)
     {
         return false;
     }
 
-    SoundControl* sndControl = static_cast<SoundControl*>(sndCtrl);
-    SoundQueue* sq = new SoundQueue(sndControl, VOLUME_NORM);
-    soundQueues.Put(queueID, sq);
+    // we don't want to play a sound with the main sound control
+    sndCtrl = sndSysMgr->GetSoundControl(sndCtrlID);
+    if(sndCtrl == 0)
+    {
+        return false;
+    }
+
+    sndQueue = new SoundQueue(sndCtrl, VOLUME_NORM);
+    soundQueues.Put(queueID, sndQueue);
 
     return true;
 }
@@ -406,14 +373,22 @@ bool SoundManager::PushQueueItem(int queueID, const char* fileName)
 }
 
 
-bool SoundManager::IsSoundActive(iSoundControl* sndCtrl)
+bool SoundManager::IsSoundActive(SndCtrlID sndCtrlID)
 {
+    SoundControl* sndCtrl;
+
     if(sndSysMgr == 0)
     {
         return false;
     }
 
-    return sndCtrl->GetToggle() && mainSndCtrl->GetToggle() && sndSysMgr->Initialised;
+    sndCtrl = static_cast<SoundControl*>(GetSndCtrl(sndCtrlID));
+    if(sndCtrl == 0)
+    {
+        return false;
+    }
+
+    return sndCtrl->GetToggle() && sndSysMgr->mainSndCtrl->GetToggle() && sndSysMgr->Initialised;
 }
 
 
@@ -429,7 +404,9 @@ void SoundManager::SetCombatStance(int newCombatStance)
     }
 
     if(activeSector != 0)
+    {
         activeSector->UpdateMusic(loopBGM.GetToggle(), combat, musicSndCtrl);
+    }
 }
 
 /*
@@ -560,10 +537,12 @@ bool SoundManager::IsSoundValid(uint soundID) const
     return sndSysMgr->IsHandleValid(soundID);
 }
 
-uint SoundManager::PlaySound(const char* fileName, bool loop, iSoundControl* &ctrl)
+uint SoundManager::PlaySound(const char* fileName, bool loop, SndCtrlID sndCtrlID)
 {
     SoundHandle* handle = 0;
-    SoundControl* sndCtrl = static_cast<SoundControl*>(ctrl);
+
+    // we don't want to play a sound with the main sound control
+    SoundControl* sndCtrl = sndSysMgr->GetSoundControl(sndCtrlID);
 
     if(sndSysMgr->Play2DSound(fileName, loop, 0, 0, VOLUME_NORM,
         sndCtrl, handle))
@@ -577,10 +556,12 @@ uint SoundManager::PlaySound(const char* fileName, bool loop, iSoundControl* &ct
 }
 
 
-uint SoundManager::PlaySound(const char* fileName, bool loop, iSoundControl* &ctrl, csVector3 pos, csVector3 dir, float minDist, float maxDist)
+uint SoundManager::PlaySound(const char* fileName, bool loop, SndCtrlID sndCtrlID, csVector3 pos, csVector3 dir, float minDist, float maxDist)
 {
     SoundHandle* handle = 0;
-    SoundControl* sndCtrl = static_cast<SoundControl*>(ctrl);
+
+    // we don't want to play a sound with the main sound control
+    SoundControl* sndCtrl = sndSysMgr->GetSoundControl(sndCtrlID);
 
     if(sndSysMgr->Play3DSound(fileName, loop, 0, 0, VOLUME_NORM,
         sndCtrl, pos, dir, minDist, maxDist,
@@ -595,10 +576,12 @@ uint SoundManager::PlaySound(const char* fileName, bool loop, iSoundControl* &ct
 }
 
 uint SoundManager::PlaySong(csRef<iDocument> musicalSheet, const char* instrument, float minimumDuration,
-              iSoundControl* ctrl, csVector3 pos, csVector3 dir)
+              SndCtrlID sndCtrlID, csVector3 pos, csVector3 dir)
 {
     SoundHandle* handle = 0;
-    SoundControl* sndCtrl = static_cast<SoundControl*>(ctrl);
+
+    // we don't want to play a sound with the main sound control
+    SoundControl* sndCtrl = sndSysMgr->GetSoundControl(sndCtrlID);
 
     if(instrMgr->PlaySong(sndCtrl, pos, dir, handle, musicalSheet, instrument, minimumDuration))
     {
@@ -660,7 +643,7 @@ void SoundManager::Update()
     	 * want the full volume. This value is true when an voice is loaded or currently
     	 * playing.
     	 */
-    	bool voiceLoaded = (soundQueues.Get(iSoundManager::VOICE_QUEUE, 0)->GetSize() > 0);
+    	bool voiceLoaded = (soundQueues.Get(VOICE_QUEUE, 0)->GetSize() > 0);
 
     	/*
     	 * Start with a ready value true and check if the volume dampening is in the correct
@@ -743,49 +726,52 @@ void SoundManager::Init()
 
     strDampControls.Split(dampControls,'|');
 
-    if ( strDampControls.Find("ambient") != csArrayItemNotFound ) {
-        dampenCtrls.Push(iSoundManager::AMBIENT_SNDCTRL);
+    if(strDampControls.Find("ambient") != csArrayItemNotFound)
+    {
+        dampenCtrls.Push(AMBIENT_SNDCTRL);
     }
-    if ( strDampControls.Find("music") != csArrayItemNotFound ) {
-        dampenCtrls.Push(iSoundManager::MUSIC_SNDCTRL);
+    if(strDampControls.Find("music") != csArrayItemNotFound)
+    {
+        dampenCtrls.Push(MUSIC_SNDCTRL);
     }
-    if ( strDampControls.Find("action") != csArrayItemNotFound ) {
-        dampenCtrls.Push(iSoundManager::ACTION_SNDCTRL);
+    if(strDampControls.Find("action") != csArrayItemNotFound)
+    {
+        dampenCtrls.Push(ACTION_SNDCTRL);
     }
-    if ( strDampControls.Find("effect") != csArrayItemNotFound ) {
-        dampenCtrls.Push(iSoundManager::EFFECT_SNDCTRL);
+    if(strDampControls.Find("effect") != csArrayItemNotFound)
+    {
+        dampenCtrls.Push(EFFECT_SNDCTRL);
     }
-    if ( strDampControls.Find("gui") != csArrayItemNotFound ) {
-        dampenCtrls.Push(iSoundManager::GUI_SNDCTRL);
+    if(strDampControls.Find("gui") != csArrayItemNotFound)
+    {
+        dampenCtrls.Push(GUI_SNDCTRL);
     }
-    if ( strDampControls.Find("instrument") != csArrayItemNotFound ) {
-        dampenCtrls.Push(iSoundManager::INSTRUMENT_SNDCTRL);
+    if(strDampControls.Find("instrument") != csArrayItemNotFound)
+    {
+        dampenCtrls.Push(INSTRUMENT_SNDCTRL);
     }
 
+    // Inizializing SoundSystemManager and SoundControls
+    // remember that the main SoundControl is initialized automatically
     sndSysMgr = new SoundSystemManager(objectReg);
+    for(uint id = MAIN_SNDCTRL + 1; id < COUNT_SNDCTRL; id++)
+    {
+        sndSysMgr->AddSoundControl(id);
+    }
+
+    musicSndCtrl = sndSysMgr->GetSoundControl(MUSIC_SNDCTRL);
+    ambientSndCtrl = sndSysMgr->GetSoundControl(AMBIENT_SNDCTRL);
+    musicSndCtrl->Subscribe(this);
+    ambientSndCtrl->Subscribe(this);
 
     // remember that InstrumentManager must be initialized after SoundSystemManager
     // or it won't define any instrument
     instrMgr = new InstrumentManager(objectReg, instrumentsPath);
 
-    // initializing ambient and music controller to something different
-    // than null before AddSndCtrl is called
-    ambientSndCtrl = sndSysMgr->defaultSndCtrl;
-    musicSndCtrl = sndSysMgr->defaultSndCtrl;
-
-    // Inizializing main SoundControls
-    mainSndCtrl = sndSysMgr->mainSndCtrl;
-    AddSndCtrl(iSoundManager::AMBIENT_SNDCTRL, iSoundControl::AMBIENT);
-    AddSndCtrl(iSoundManager::MUSIC_SNDCTRL, iSoundControl::MUSIC);
-    AddSndCtrl(iSoundManager::ACTION_SNDCTRL, iSoundControl::NORMAL);
-    AddSndCtrl(iSoundManager::EFFECT_SNDCTRL, iSoundControl::NORMAL);
-    AddSndCtrl(iSoundManager::GUI_SNDCTRL, iSoundControl::NORMAL);
-    AddSndCtrl(iSoundManager::VOICE_SNDCTRL, iSoundControl::NORMAL);
-    AddSndCtrl(iSoundManager::INSTRUMENT_SNDCTRL, iSoundControl::NORMAL);
-
     // Initializing voice queue
-    AddSndQueue(iSoundManager::VOICE_QUEUE, GetSndCtrl(iSoundManager::VOICE_SNDCTRL));
+    AddSndQueue(VOICE_QUEUE, VOICE_SNDCTRL);
 }
+
 void SoundManager::UpdateMusicCallback(void* object)
 {
     SoundManager* which = (SoundManager*) object;
