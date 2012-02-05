@@ -90,6 +90,7 @@ public:
     int GetPreviousPointId() const { return prevPointId; }
 
     int GetID() const { return id; }
+    void SetID(int id) { this->id = id; }
 
     const csVector3& GetPosition() const { return pos; }
     iSector * GetSector(iEngine *engine);
@@ -99,6 +100,10 @@ public:
     void SetWaypoint(Waypoint* waypoint);
 
     Waypoint* GetWaypoint();
+
+    /** Return the db id of the point
+    */
+    int GetID();
 
     /** Return the name of this path point.
      *
@@ -183,6 +188,9 @@ public:
     /// Remova a point from the path and update db
     bool RemovePoint(iDataConnection *db, int index);
 
+    /// Remova a point from the path
+    bool RemovePoint(int index);
+    
     /// Remova a point from the path and update db
     bool RemovePoint(iDataConnection *db, psPathPoint* point);
 
@@ -230,7 +238,7 @@ public:
     virtual psPathAnchor* CreatePathAnchor();
 
     /// Get number of points in path
-    virtual int GetNumPoints () { return (int)points.GetSize(); }
+    virtual int GetNumPoints () const { return (int)points.GetSize(); }
 
     /// Get name of the path
     virtual const char* GetName() const { return name.GetDataSafe(); }
@@ -268,8 +276,14 @@ public:
     /// Get all points in the given sector for this path
     size_t FindPointsInSector(iEngine * engine, iSector *sector, csList<psPathPoint*>& list);
 
-    /// Get Path Point by Index
+    /// Get Path Point by id
     psPathPoint* FindPoint(int id);
+
+    /// Get Path Point index by id
+    int FindPointIndex(int id);
+
+    // Get Path Point by index
+    const psPathPoint* GetPoint(int index) const;
 
 protected:
     /// Do the actual precalculate work

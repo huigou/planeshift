@@ -685,7 +685,7 @@ void psServer::UnmutePlayer (uint32_t clientnum,const char *reason)
     psserver->SendSystemInfo(client->GetClientNum(),reason);
 }
 
-bool psServer::LoadMap(char* mapname)
+bool psServer::LoadMap(const char* mapname)
 {
     if (entitymanager->LoadMap(mapname))
     {

@@ -59,7 +59,7 @@
 
 
 /* shut down the server and exit program */
-int com_quit(char *)
+int com_quit(const char*)
 {
     npcclient->Disconnect();
 
@@ -68,19 +68,19 @@ int com_quit(char *)
     return 0;
 }
 
-int com_disable(char *arg)
+int com_disable(const char* arg)
 {
     npcclient->EnableDisableNPCs(arg,false);
     return 0;
 }
 
-int com_enable(char *arg)
+int com_enable(const char* arg)
 {
     npcclient->EnableDisableNPCs(arg,true);
     return 0;
 }
 
-int com_locationtest(char *line)
+int com_locationtest(const char* line)
 {
     WordArray words(line,false);
 
@@ -125,7 +125,7 @@ int com_locationtest(char *line)
 
 /* Print out help for ARG, or for all of the commands if ARG is
    not present. */
-int com_help (char *arg)
+int com_help (const char* arg)
 {
     register int i;
     int printed = 0;
@@ -167,7 +167,7 @@ int com_help (char *arg)
 }
 
 /* List entity given. */
-int com_list (char *arg)
+int com_list (const char* arg)
 {
     WordArray words(arg,false);
 
@@ -230,7 +230,7 @@ int com_list (char *arg)
 }
 
 
-int com_setmaxout(char* arg)
+int com_setmaxout(const char* arg)
 {
     if (!arg || strlen (arg) == 0)
     {
@@ -253,7 +253,7 @@ int com_setmaxout(char* arg)
     return 0;
 }
 
-int com_setmaxfile(char* arg)
+int com_setmaxfile(const char* arg)
 {
     if (!arg || strlen (arg) == 0)
     {
@@ -277,13 +277,13 @@ int com_setmaxfile(char* arg)
     return 0;
 }
 
-int com_showlogs(char *line)
+int com_showlogs(const char* line)
 {
     pslog::DisplayFlags(*line?line:NULL);
     return 0;
 }
 
-int com_print(char *line)
+int com_print(const char* line)
 {
     if(!npcclient->DumpNPC(line))
     {
@@ -293,7 +293,7 @@ int com_print(char *line)
     return 0;
 }
 
-int com_info(char *line)
+int com_info(const char* line)
 {
     if(!npcclient->InfoNPC(line))
     {
@@ -303,7 +303,7 @@ int com_info(char *line)
     return 0;
 }
 
-int com_debugnpc(char*line)
+int com_debugnpc(const char*line)
 {
     WordArray words(line);
 
@@ -339,7 +339,7 @@ int com_debugnpc(char*line)
     return 0;
 }
 
-int com_setlog(char *line)
+int com_setlog(const char* line)
 {
     if (!*line)
     {
@@ -376,7 +376,7 @@ int com_setlog(char *line)
     return 0;
 }
 
-int com_filtermsg(char* arg)
+int com_filtermsg(const char* arg)
 {
     
     CPrintf(CON_CMDOUTPUT ,"%s\n",npcclient->GetNetConnection()->LogMessageFilter(arg).GetDataSafe());
@@ -384,7 +384,7 @@ int com_filtermsg(char* arg)
     return 0;
 }
 
-int com_fireperc(char* arg)
+int com_fireperc(const char* arg)
 {
     csStringArray arguments;
     arguments.SplitString(arg, " ");
@@ -399,7 +399,7 @@ int com_fireperc(char* arg)
     return 0;
 }
 
-int com_showtime(char *)
+int com_showtime(const char*)
 {
     CPrintf(CON_CMDOUTPUT,"Game time is %d:%02d %d-%d-%d\n",
             npcclient->GetGameTODHour(),npcclient->GetGameTODMinute(),
@@ -408,7 +408,7 @@ int com_showtime(char *)
 }
 
 
-int com_status(char *)
+int com_status(const char*)
 {
     CPrintf(CON_CMDOUTPUT,"Amount of loaded npcs: %d\n", npcclient->GetNpcListAmount());
     CPrintf(CON_CMDOUTPUT,"Tick counter         : %d\n", npcclient->GetTickCounter());

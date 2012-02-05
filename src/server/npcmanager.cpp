@@ -2866,6 +2866,35 @@ void NPCManager::PathCreate(const psPath* path)
            path->GetID());
     
     psPathNetworkMessage msg(psPathNetworkMessage::PATH_CREATE, path);
+    msg.Multicast(superclients, -1, PROX_LIST_ANY_RANGE);
+
+    // Add all the points
+    // First and last is waypoints
+    for (int i = 1; i < path->GetNumPoints()-1; i++)
+    {
+        psPathNetworkMessage msg(psPathNetworkMessage::PATH_ADD_POINT, path, path->GetPoint(i));
+
+        msg.Multicast(superclients, -1, PROX_LIST_ANY_RANGE);
+    }
+    
+}
+
+void NPCManager::AddPoint(const psPath* path, const psPathPoint* point )
+{
+    Debug2(LOG_SUPERCLIENT, 0, "NPCManager add point to path %d\n",
+           path->GetID());
+    
+    psPathNetworkMessage msg(psPathNetworkMessage::PATH_ADD_POINT, path, point);
+    
+    msg.Multicast(superclients, -1, PROX_LIST_ANY_RANGE);
+}
+
+void NPCManager::RemovePoint(const psPath* path, int pointId)
+{
+    Debug2(LOG_SUPERCLIENT, 0, "NPCManager remove point from path %d\n",
+           path->GetID());
+    
+    psPathNetworkMessage msg(psPathNetworkMessage::PATH_REMOVE_POINT, path, pointId);
     
     msg.Multicast(superclients, -1, PROX_LIST_ANY_RANGE);
 }

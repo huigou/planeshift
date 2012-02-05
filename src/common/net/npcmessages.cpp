@@ -1212,6 +1212,41 @@ psPathNetworkMessage::psPathNetworkMessage( Command command, const psPath* path,
     msg->ClipToCurrentSize();
 }
 
+psPathNetworkMessage::psPathNetworkMessage( Command command, const psPath* path, const psPathPoint* point )
+{
+    msg.AttachNew(new MsgEntry( sizeof(uint8_t) + 1000 , PRIORITY_HIGH ));
+    msg->clientnum = 0;
+    msg->SetType(MSGTYPE_PATH_NETWORK);
+
+    msg->Add( (uint8_t)command );
+    msg->Add( (uint32_t)path->GetID() );
+    if (command == PATH_ADD_POINT)
+    {
+        msg->Add( (uint32_t)point->GetID() );
+        msg->Add( point->GetPosition() );
+        msg->Add( point->GetSector( NetBase::GetAccessPointers()->engine ) );
+    }
+    
+    msg->ClipToCurrentSize();
+}
+
+psPathNetworkMessage::psPathNetworkMessage( Command command, const psPath* path, int secondId )
+{
+    msg.AttachNew(new MsgEntry( sizeof(uint8_t) + 1000 , PRIORITY_HIGH ));
+    msg->clientnum = 0;
+    msg->SetType(MSGTYPE_PATH_NETWORK);
+
+    msg->Add( (uint8_t)command );
+    msg->Add( (uint32_t)path->GetID() );
+    if (command == PATH_REMOVE_POINT)
+    {
+        msg->Add( (uint32_t)secondId );
+    }
+    
+    msg->ClipToCurrentSize();
+}
+
+
 psPathNetworkMessage::psPathNetworkMessage( Command command, const psPathPoint* point )
 {
     msg.AttachNew(new MsgEntry( sizeof(uint8_t) + 1000 , PRIORITY_HIGH ));
@@ -1298,12 +1333,22 @@ psPathNetworkMessage::psPathNetworkMessage( MsgEntry* msgEntry )
 
    switch (command)
    {
+   case PATH_ADD_POINT:
+       id = msgEntry->GetUInt32();
+       secondId = msgEntry->GetUInt32();
+       position = msgEntry->GetVector3();
+       sector = msgEntry->GetSector();
+       break;
    case PATH_CREATE:
        id = msgEntry->GetUInt32();
        string = msgEntry->GetStr(); // Name
        flags = msgEntry->GetStr();
        startId = msgEntry->GetUInt32();
        stopId = msgEntry->GetUInt32();
+       break;
+   case PATH_REMOVE_POINT:
+       id = msgEntry->GetUInt32();
+       secondId = msgEntry->GetUInt32();
        break;
    case PATH_SET_FLAG:
    case WAYPOINT_SET_FLAG:
@@ -1348,9 +1393,17 @@ csString psPathNetworkMessage::ToString(NetBase::AccessPointers* /*accessPointer
     csString str;
     switch (command)
     {
+    case PATH_ADD_POINT:
+        str.AppendFmt("Cmd: PATH_ADD_POINT ID: %d Position: %s SecondId: %d",
+                      id, toString(position,sector).GetDataSafe(), secondId);
+        break;
     case PATH_CREATE:
         str.AppendFmt("Cmd: PATH_CREATE ID: %d String: %s Flags: %s StartID: %d StopID: %d",
                       id, string.GetDataSafe(), flags.GetDataSafe(), startId, stopId);
+        break;
+    case PATH_REMOVE_POINT:
+        str.AppendFmt("Cmd: PATH_REMOVE_POINT ID: %d SecondId: %d",
+                      id, secondId);
         break;
     case PATH_RENAME:
         str.AppendFmt("Cmd: PATH_RENAME ID: %d String: %s", id, string.GetDataSafe());

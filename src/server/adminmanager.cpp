@@ -6401,10 +6401,17 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         }
 
         psPathPoint* point = path->AddPoint(db, myPos, mySectorName);
-
-        UpdateDisplayPath(point);
-        psserver->SendSystemInfo( me->clientnum, "Added point.");
-
+        if (point)
+        {
+            // If path hasn't been created yet, don't push to superclients
+            if (path->GetID() > 0)
+            {
+                psserver->npcmanager->AddPoint(path, point);
+            }
+            
+            UpdateDisplayPath(point);
+            psserver->SendSystemInfo( me->clientnum, "Added point.");
+        }
     }
     else if (data->subCmd == "point remove")
     {
@@ -6421,18 +6428,23 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         if ((point = pathNetwork->FindNearestPoint(path, myPos, mySector, data->radius)) == NULL)
         {
             psserver->SendSystemError(me->clientnum, "Found no path point near you at selected path %s.",path->GetName());
+            return;
         }
         
-        path->RemovePoint(db, point);
+        int pointId = point->GetID();
 
-        if (client->PathIsDisplaying())
+        if (path->RemovePoint(db, point))
         {
-            psStopEffectMessage msg(me->clientnum, point->GetEffectID(this));
-            msg.SendMessage();
+            psserver->npcmanager->RemovePoint(path, pointId);
+            
+            if (client->PathIsDisplaying())
+            {
+                psStopEffectMessage msg(me->clientnum, point->GetEffectID(this));
+                msg.SendMessage();
+            }
+
+            psserver->SendSystemInfo( me->clientnum, "Removed point.");
         }
-
-        psserver->SendSystemInfo( me->clientnum, "Removed point.");
-
     }
     else if (data->subCmd == "point insert")
     {

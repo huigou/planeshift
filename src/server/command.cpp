@@ -77,13 +77,13 @@
 #include "bulkobjects/psitem.h"
 #include "bulkobjects/pssectorinfo.h"
 
-int com_lock (char *)
+int com_lock (const char*)
 {
     EntityManager::GetSingleton().SetReady(false);
     return 0;
 }
 
-int com_ready (char *)
+int com_ready (const char*)
 {
     if (psserver->IsMapLoaded())
     {
@@ -99,7 +99,7 @@ int com_ready (char *)
 }
 
 /// Shuts down the server and exit program
-int com_quit(char *arg)
+int com_quit(const char*  arg)
 {
     if(strncasecmp(arg,"stop", 4) == 0) //if the user passed 'stop' we will abort the shut down process
     {
@@ -114,7 +114,7 @@ int com_quit(char *arg)
 
 /* Print out help for ARG, or for all of the commands if ARG is
 not present. */
-int com_help (char *arg)
+int com_help (const char* arg)
 {
     register int i;
     int printed = 0;
@@ -188,7 +188,7 @@ static inline csString PS_GetClientStatus(Client* client)
     return status;
 }
 
-int com_settime( char* arg )
+int com_settime( const char* arg )
 {
     if (!arg || strlen (arg) == 0)
     {
@@ -211,7 +211,7 @@ int com_settime( char* arg )
     return 0;
 }
 
-int com_showtime(char *)
+int com_showtime(const char*)
 {
     CPrintf(CON_CMDOUTPUT,"Game time is %d:%02d %d-%d-%d\n",
             psserver->GetWeatherManager()->GetGameTODHour(),
@@ -223,7 +223,7 @@ int com_showtime(char *)
 }
 
 
-int com_setmaxout(char* arg)
+int com_setmaxout(const char* arg)
 {
     if (!arg || strlen (arg) == 0)
     {
@@ -243,7 +243,7 @@ int com_setmaxout(char* arg)
     return 0;
 }
 
-int com_setmaxfile(char* arg)
+int com_setmaxfile(const char* arg)
 {
     if (!arg || strlen (arg) == 0)
     {
@@ -263,7 +263,7 @@ int com_setmaxfile(char* arg)
     return 0;
 }
 
-int com_netprofile(char *)
+int com_netprofile(const char*)
 {
     psNetMsgProfiles * profs = psserver->GetNetManager()->GetProfs();
     csString dumpstr = profs->Dump ();
@@ -274,7 +274,7 @@ int com_netprofile(char *)
     return 0;
 }
 
-int com_dbprofile(char *)
+int com_dbprofile(const char*)
 {
     csString dumpstr = db->DumpProfile();
     csRef<iFile> file = psserver->vfs->Open("/this/dbprofile.txt",VFS_FILE_WRITE);
@@ -284,7 +284,7 @@ int com_dbprofile(char *)
     return 0;
 }
 
-int com_queue(char *player)
+int com_queue(const char* player)
 {
     int playernum = atoi(player);
     if (playernum<=0)
@@ -310,7 +310,7 @@ int com_queue(char *player)
 }
 
 /** print out server status */
-int com_status(char *)
+int com_status(const char*)
 {
     bool ready = psserver->IsReady();
     bool hasBeenReady = psserver->HasBeenReady();
@@ -365,7 +365,7 @@ int com_status(char *)
     return 0;
 }
 
-int com_say(char* text)
+int com_say(const char* text)
 {
     csString outtext = "Server Admin: ";
     outtext += text;
@@ -377,7 +377,7 @@ int com_say(char* text)
     return 0;
 }
 
-int com_sayGossip(char* text)
+int com_sayGossip(const char* text)
 {
     psChatMessage newMsg(0, 0, "Server Admin", 0, text, CHAT_CHANNEL, false, 1);
     psserver->GetChatManager()->SendServerChannelMessage(newMsg, 1);
@@ -387,7 +387,7 @@ int com_sayGossip(char* text)
     return 0;
 }
 
-int com_kick(char* player)
+int com_kick(const char* player)
 {
     int playernum = atoi(player);
     if (playernum<=0)
@@ -411,7 +411,7 @@ int com_kick(char* player)
     return 0;
 }
 
-int com_delete( char* name )
+int com_delete( const char* name )
 {
     if ( strlen(name) == 0 )
     {
@@ -450,7 +450,7 @@ int com_delete( char* name )
 }
 
 
-int com_set(char *args)
+int com_set(const char* args)
 {
     iConfigManager* cfgmgr = psserver->GetConfig();
 
@@ -502,7 +502,7 @@ int com_set(char *args)
     return 0;
 }
 
-int com_maplist(char *)
+int com_maplist(const char*)
 {
     csRef<iVFS> vfs =  csQueryRegistry<iVFS> (psserver->GetObjectReg());
     if (!vfs)
@@ -525,14 +525,14 @@ int com_maplist(char *)
     return 0;
 }
 
-int com_dumpwarpspace(char *)
+int com_dumpwarpspace(const char*)
 {
     EntityManager::GetSingleton().GetWorld()->DumpWarpCache();
     return 0;
 }
 
 
-int com_loadmap(char *mapname)
+int com_loadmap(const char* mapname)
 {
     if (!strcmp(mapname, ""))
     {
@@ -551,7 +551,7 @@ int com_loadmap(char *mapname)
     return 0;
 }
 
-int com_spawn(char* sector = 0)
+int com_spawn(const char* sector = 0)
 {
     // After world is loaded, repop NPCs--only the first time.
     static bool already_spawned = false;
@@ -574,9 +574,9 @@ int com_spawn(char* sector = 0)
     return 0;
 }
 
-int com_rain(char* arg)
+int com_rain(const char* arg)
 {
-    const char * syntax = "rain <sector> <drops> <fade> <duration>";
+    const char*  syntax = "rain <sector> <drops> <fade> <duration>";
     if (strlen(arg) == 0)
     {
         CPrintf(CON_CMDOUTPUT ,"Please specify sector and number of drops (minimum 2000 drops for lightning, 0 drops to stop rain) and duration (0 for default duration).\nSyntax: %s\n",syntax);
@@ -613,7 +613,7 @@ int com_rain(char* arg)
     return 0;
 }
 
-int com_dict(char* arg)
+int com_dict(const char* arg)
 {
     WordArray words(arg);
     if (words.GetCount()>1)
@@ -626,14 +626,14 @@ int com_dict(char* arg)
     return 0;
 }
 
-int com_filtermsg(char* arg)
+int com_filtermsg(const char* arg)
 {
     CPrintf(CON_CMDOUTPUT ,"%s\n",psserver->GetNetManager()->LogMessageFilter(arg).GetDataSafe());
 
     return 0;
 }
 
-int com_loadnpc(char* npcName)
+int com_loadnpc(const char* npcName)
 {
 
     //TODO Rewrite
@@ -651,7 +651,7 @@ int com_loadnpc(char* npcName)
     return 0;
 }
 
-int com_loadquest(char* stringId)
+int com_loadquest(const char* stringId)
 {
     int id = atoi(stringId);
     CPrintf(CON_CMDOUTPUT, "Reloading quest id %d\n", id);
@@ -669,7 +669,7 @@ int com_loadquest(char* stringId)
 }
 
 
-int com_importnpc(char* filename)
+int com_importnpc(const char* filename)
 {
     psNPCLoader npcloader;
 
@@ -723,7 +723,7 @@ int com_importnpc(char* filename)
 }
 
 
-int com_exportnpc(char *args)
+int com_exportnpc(const char* args)
 {
     WordArray words(args);
     csArray<int> npcids;
@@ -790,7 +790,7 @@ int com_exportnpc(char *args)
 }
 
 
-int com_importdialogs(char *filename)
+int com_importdialogs(const char* filename)
 {
     csString file;
 
@@ -854,7 +854,7 @@ int com_importdialogs(char *filename)
 }
 
 
-int com_exportdialogs(char *args)
+int com_exportdialogs(const char* args)
 {
     bool allquests = false;
     WordArray words(args);
@@ -947,33 +947,24 @@ int com_exportdialogs(char *args)
 }
 
 
-int com_newacct(char *userpass)
+int com_newacct(const char* arg)
 {
-    char *password;
-    unsigned long int level = 0;
-    if (!userpass)
+    csStringArray words(arg,"/");
+    if (words.GetSize() < 2)
     {
         CPrintf(CON_CMDOUTPUT ,"Please specify username/password[/securitylevel].\n");
         return 0;
     }
-    char *slash = strchr(userpass,'/');
-    if (!slash)
-    {
-        CPrintf(CON_CMDOUTPUT ,"Please specify username/password with slashes (/) between them.\n");
-        return 0;
-    }
-    *slash = 0;  // term the user str
-    password=slash+1;
-    slash = strchr(password,'/'); //used for the level
-    if(slash != NULL)
-    {
-        *slash = 0; // term the pass str
-        level = strtoul(slash+1, NULL, 0); //aquires the level
-    }
+    
+    csString username = words[0];
+    csString password = words[1];
+    csString levelStr = words[2];
+
+    int level = strtoul(levelStr.GetDataSafe(), NULL, 0); //aquires the level
 
     psAccountInfo accountinfo;
 
-    accountinfo.username = userpass;
+    accountinfo.username = username;
     accountinfo.password = csMD5::Encode(password).HexString();
     accountinfo.securitylevel = level;
 
@@ -1104,7 +1095,7 @@ int com_quitguild(char *name)
 }
 ******************************/
 
-int com_addinv(char *line)
+int com_addinv(const char* line)
 {
     bool temploaded=false;
 
@@ -1382,7 +1373,7 @@ csString com_showinv_itemextra(bool moreiteminfo, psItem *currentitem)
         return csString("");
 }
 
-void com_showinv_item(bool moreiteminfo, psItem *currentitem, const char *slotname, unsigned int slotnumber)
+void com_showinv_item(bool moreiteminfo, psItem *currentitem, const char* slotname, unsigned int slotnumber)
 {
 //    psItem *workingset[5];
 //    unsigned int positionset[5];
@@ -1467,7 +1458,7 @@ void com_showinv_item(bool moreiteminfo, psItem *currentitem, const char *slotna
     }
 }
 
-int com_showinv(char *line, bool moreiteminfo)
+int com_showinv(const char *line, bool moreiteminfo)
 {
     bool temploaded=false;
 
@@ -1533,7 +1524,7 @@ int com_showinv(char *line, bool moreiteminfo)
     for (charslot=1;charslot<chardata->Inventory().GetInventoryIndexCount(); charslot++)
     {
         currentitem=chardata->Inventory().GetInventoryIndexItem(charslot);
-        const char *name = psserver->GetCacheManager()->slotNameHash.GetName( currentitem->GetLocInParent() );
+        const char* name = psserver->GetCacheManager()->slotNameHash.GetName( currentitem->GetLocInParent() );
         char buff[20];
         if (!name)
         {
@@ -1548,17 +1539,17 @@ int com_showinv(char *line, bool moreiteminfo)
     return 0;
 }
 
-int com_showinv(char *line)
+int com_showinv(const char* line)
 {
     return com_showinv(line, false);
 }
 
-int com_showinvf(char *line)
+int com_showinvf(const char* line)
 {
     return com_showinv(line, true);
 }
 
-int com_bulkdelete(char *line)
+int com_bulkdelete(const char* line)
 {
     if (!line)
     {
@@ -1619,7 +1610,7 @@ int com_bulkdelete(char *line)
     return 0;
 }
 
-int com_exec(char *line)
+int com_exec(const char* line)
 {
     if (!line)
     {
@@ -1645,7 +1636,7 @@ int com_exec(char *line)
     return 0;
 }
 
-int com_print(char *line)
+int com_print(const char* line)
 {
     if (!line || !atoi(line) )
     {
@@ -1683,7 +1674,8 @@ int com_print(char *line)
     return 0;
 }
 
-int com_entlist(char * pattern)
+
+int com_entlist(const char* pattern)
 {
     csHash<gemObject*, EID> & gems = psserver->entitymanager->GetGEM()->GetAllGEMS();
     csHash<gemObject*, EID>::GlobalIterator i(gems.GetIterator());
@@ -1704,7 +1696,7 @@ int com_entlist(char * pattern)
             float     rot;
             iSector  *sector;
             obj->GetPosition(pos,rot,sector);
-            const char *sector_name =
+            const char* sector_name =
                 (sector) ? sector->QueryObject()->GetName():"(null)";
 
             CPrintf(CON_CMDOUTPUT ,"%5d %7d %-15s %-20s (%9.3f,%9.3f,%9.3f, %s)\n",
@@ -1719,7 +1711,7 @@ int com_entlist(char * pattern)
     return 0;
 }
 
-int com_charlist(char *)
+int com_charlist(const char*)
 {
     csHash<gemObject*, EID> & gems = psserver->entitymanager->GetGEM()->GetAllGEMS();
     csHash<gemObject*, EID>::GlobalIterator i(gems.GetIterator());
@@ -1745,7 +1737,7 @@ int com_charlist(char *)
     return 0;
 }
 
-int com_factions(char *)
+int com_factions(const char*)
 {
 
     csHash<gemObject*, EID> & gems = psserver->entitymanager->GetGEM()->GetAllGEMS();
@@ -1815,7 +1807,7 @@ int com_factions(char *)
 }
 
 
-int com_sectors(char *)
+int com_sectors(const char*)
 {
     csRef<iEngine> engine = csQueryRegistry<iEngine> (psserver->GetObjectReg());
     csRef<iSectorList> sectorList = engine->GetSectors();
@@ -1843,13 +1835,13 @@ int com_sectors(char *)
     return 0;
 }
 
-int com_showlogs(char *line)
+int com_showlogs(const char* line)
 {
     pslog::DisplayFlags(*line?line:NULL);
     return 0;
 }
 
-int com_setlog(char *line)
+int com_setlog(const char* line)
 {
     if (!*line)
     {
@@ -1884,7 +1876,7 @@ int com_setlog(char *line)
     return 0;
 }
 
-int com_adjuststat(char *line)
+int com_adjuststat(const char* line)
 {
     CPrintf(CON_CMDOUTPUT, "No longer implemented, sorry.");
 #if 0
@@ -2017,7 +2009,7 @@ int com_adjuststat(char *line)
     return 0;
 }
 
-int com_liststats(char *line)
+int com_liststats(const char* line)
 {
     if (!line)
     {
@@ -2125,25 +2117,24 @@ int com_liststats(char *line)
 }
 
 
-int com_progress(char * line)
+int com_progress(const char* line)
 {
-    if (!line)
+    csStringArray words(line,",");
+    
+    if (words.GetSize() < 2)
     {
         CPrintf(CON_CMDOUTPUT ,"Please specify: <player>, <event>\n");
 
         return 0;
     }
 
-    char * event = strchr(line,',');
+    const char * event = words[1];
     if (!event)
     {
         CPrintf(CON_CMDOUTPUT ,"Please specify: <player>, <event>\n");
         return 0;
     }
-
-    *event = '\0';
-    event++;
-    char * charname = line;
+    const char * charname = words[0];
 
     // Convert to int, if possible
     int clientnum = atoi(charname);
@@ -2222,7 +2213,7 @@ int com_progress(char * line)
 
 /** Kills a player right away
  */
-int com_kill(char* player)
+int com_kill(const char* player)
 {
     int clientNum = atoi(player);
     Client* client = psserver->GetNetManager()->GetConnections()->Find(clientNum);
@@ -2239,7 +2230,7 @@ int com_kill(char* player)
 
 /** Kills a npc right away
  */
-int com_killnpc(char* input)
+int com_killnpc(const char* input)
 {
     EID eid = atoi(input);
     gemActor* object = dynamic_cast<gemActor*>(psserver->entitymanager->GetGEM()->FindObject(eid));
@@ -2252,7 +2243,7 @@ int com_killnpc(char* input)
     return 0;
 }
 
-int com_motd(char* str)
+int com_motd(const char* str)
 {
     if (!strcmp(str,""))
     {
@@ -2265,7 +2256,7 @@ int com_motd(char* str)
     return 0;
 }
 
-int com_questreward( char* str )
+int com_questreward( const char* str )
 {
     csString cmd(str);
     WordArray words(cmd);
@@ -2322,7 +2313,7 @@ int com_questreward( char* str )
 }
 
 
-int com_transactions(char* str)
+int com_transactions(const char* str)
 {
     csString cmd(str);
 
@@ -2371,7 +2362,7 @@ int com_transactions(char* str)
     return 0;
 }
 
-int com_allocations(char* str)
+int com_allocations(const char* str)
 {
     CS::Debug::DumpAllocateMemoryBlocks();
     CPrintf(CON_CMDOUTPUT,"Dumped.\n");
@@ -2379,14 +2370,14 @@ int com_allocations(char* str)
     return 0;
 }
 
-int com_lschannel(char*)
+int com_lschannel(const char*)
 {
     CPrintf(CON_CMDOUTPUT, "%s", psserver->GetChatManager()->channelsToString().GetDataSafe());
 
     return 0;
 }
 
-int com_randomloot( char* loot )
+int com_randomloot( const char* loot )
 {
     if (strlen(loot) == 0)
     {
@@ -2438,6 +2429,41 @@ int com_randomloot( char* loot )
 
     return 0;
 }
+
+int com_list(const char* arg)
+{
+    WordArray words(arg,false);
+
+    if (words.GetCount() == 0)
+    {
+        CPrintf(CON_CMDOUTPUT,"Syntax: list [char|ent|loc|npc|path|race|recipe|tribe|warpspace|waypoint] <pattern|EID>\n");
+        return 0;
+    }
+
+    // Compare all strings up to the point that is needed to uniq identify them.
+    if (strncasecmp(words[0],"char",1) == 0)
+    {
+        com_charlist(words[1]);
+    }
+    else if (strncasecmp(words[0],"ent",1) == 0)
+    {
+        com_entlist(words[1]);
+    }
+    else if (strncasecmp(words[0],"path",1) == 0)
+    {
+        psserver->GetAdminManager()->GetPathNetwork()->ListPaths(words[1]);
+    }
+    else if (strncasecmp(words[0],"warpspace",3) == 0)
+    {
+        EntityManager::GetSingleton().GetWorld()->DumpWarpCache();
+    }
+    else if ((strncasecmp(words[0],"waypoint",3) == 0) || strncasecmp(words[0],"wp",2) == 0)
+    {
+        psserver->GetAdminManager()->GetPathNetwork()->ListWaypoints(words[1]);
+    }    
+
+}
+
 
 /** List of commands available at the console.
  *
@@ -2513,6 +2539,7 @@ const COMMAND commands[] = {
 
     // various commands
     { "-- Various commands",  true, NULL, "------------------------------------------------" },
+    { "list",      true, com_list,      "List entites ( list [char|ent|path|waypoint] <filter> )" },
     { "entlist",   true, com_entlist,   "List all known entities" },
     { "factions",  true, com_factions,  "Display factions" },
     { "filtermsg", true, com_filtermsg, "Add or remove messages from the LOG_MESSAGE log"},

@@ -263,7 +263,7 @@ public:
      *
      * @param arg User command argumets
      */
-    csString LogMessageFilter(char *arg);
+    csString LogMessageFilter(const char *arg);
 
     /**
      * Add a new message type to the LogMessage message filter list

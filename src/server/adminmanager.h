@@ -3120,6 +3120,10 @@ public:
      */
     void HandleNpcCommand(MsgEntry *pMsg, Client *client);
 
+    /** @brief return the path network
+     */
+    psPathNetwork* GetPathNetwork() { return pathNetwork; }
+
 protected:
     /** Data object factory for parsing command data
      */
