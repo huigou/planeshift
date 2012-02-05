@@ -442,8 +442,10 @@ public:
 
     typedef enum 
     {
+        PATH_ADD_POINT,
         PATH_CREATE,
         PATH_RENAME,
+        PATH_REMOVE_POINT,
         PATH_SET_FLAG,
         POINT_ADJUSTED,
         WAYPOINT_ADD_ALIAS,
@@ -465,6 +467,7 @@ public:
     csString  flags;      ///< String with flags
     uint32_t  startId;
     uint32_t  stopId;
+    uint32_t  secondId;
     
     // Create psMessageBytes struct for outbound use
     
@@ -476,6 +479,15 @@ public:
      */
     psPathNetworkMessage(Command command, const psPath* path, const csString& string);
 
+    /** Generic message to do a command where input is a point for a path.
+     */
+    psPathNetworkMessage(Command command, const psPath* path, const psPathPoint* point);
+
+    /** Generic message to do a command where input is a point for a path.
+     */
+    psPathNetworkMessage(Command command, const psPath* path, int secondId);
+    
+    
     /** Generic message to do a command where input is a string and a bool for a path.
      */
     psPathNetworkMessage(Command command, const psPath* path, const csString& string, bool enable);

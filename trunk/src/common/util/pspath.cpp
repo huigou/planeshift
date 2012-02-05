@@ -184,6 +184,11 @@ Waypoint* psPathPoint::GetWaypoint()
     return waypoint;
 }
 
+int psPathPoint::GetID()
+{
+    return id;
+}
+
 csString psPathPoint::GetName()
 {
     csString name("PP"); // Default to just PathPoint (PP).
@@ -353,6 +358,14 @@ bool psPath::RemovePoint(iDataConnection *db, int index)
         return false;
     }
     
+    return true;
+}
+
+bool psPath::RemovePoint(int index)
+{
+    psPathPoint* point = points.Extract(index);
+    delete point;
+
     return true;
 }
 
@@ -805,8 +818,28 @@ psPathPoint* psPath::FindPoint(int id)
         }
     }
     return NULL;
-
 }
+
+int psPath::FindPointIndex(int id)
+{
+    size_t count = 0;
+    for (size_t i = 0; i < points.GetSize(); i++)
+    {
+        psPathPoint* point = points[i];
+        if (point->GetID() == id)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
+const psPathPoint* psPath::GetPoint(int index) const
+{
+    return points[index];
+}
+
+
 
 
 

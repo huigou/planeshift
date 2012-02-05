@@ -939,7 +939,7 @@ void NetBase::LogMessages(char dir,MsgEntry* me)
 }
 
 
-csString NetBase::LogMessageFilter(char *arg)
+csString NetBase::LogMessageFilter(const char *arg)
 {
     if (strlen(arg) == 0)
     {

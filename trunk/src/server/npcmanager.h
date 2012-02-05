@@ -237,10 +237,22 @@ public:
      */
     void WaypointCreate(const Waypoint* waypoint);
 
-    /** Notify superclients that a path has been renamed.
+    /** Notify superclients that a path has been created.
      * @param path The path that where created.
      */
     void PathCreate(const psPath* path);
+
+    /** Notify superclients that a point has been added to a path.
+     * @param path The path where the point where added.
+     * @param point The point that where added.
+     */
+    void AddPoint(const psPath* path, const psPathPoint* point);
+
+    /** Notify superclients that a point has been removed from a path.
+     * @param path The path where the point where removed.
+     * @param pointId The point that where removed.
+     */
+    void RemovePoint(const psPath* path, int pointId );
     
 protected:
 

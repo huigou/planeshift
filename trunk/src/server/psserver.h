@@ -153,7 +153,7 @@ public:
      *
      * @return Returns a true if the world loaded.
      */
-    bool LoadMap(char* mapname);
+    bool LoadMap(const char* mapname);
 
     /** Checks to see if a world is loaded ready to go.
      *

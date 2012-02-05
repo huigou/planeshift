@@ -24,7 +24,7 @@
 #ifndef __COMMANDS_H__
 #define __COMMANDS_H__
 
-typedef int cmdfuncptr(char *);
+typedef int cmdfuncptr(const char *);
 
 /**
  *  This is a little class to store an array of commands and functions to

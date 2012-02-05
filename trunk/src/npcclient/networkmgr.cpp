@@ -452,6 +452,23 @@ void NetworkManager::HandlePathNetwork(MsgEntry *me)
     
     switch (msg.command)
     {
+    case psPathNetworkMessage::PATH_ADD_POINT:
+        {
+            psPath* path = pathNetwork->FindPath(msg.id);
+            if (path)
+            {
+                psPathPoint* point = path->AddPoint(msg.position, 0.0, msg.sector->QueryObject()->GetName());
+                point->SetID(msg.secondId);
+                
+                Debug4(LOG_NET, 0, "Added point %d to path %d at %s.\n", 
+                       msg.secondId, msg.id, toString(msg.position,msg.sector).GetDataSafe());
+            }
+            else
+            {
+                Error3("Failed to add point %d to path %d.\n", msg.secondId, msg.id);
+            }
+        }
+        break;
     case psPathNetworkMessage::PATH_CREATE:
         {
             psPath* path = new psLinearPath(msg.id,msg.string,msg.flags);
@@ -482,6 +499,30 @@ void NetworkManager::HandlePathNetwork(MsgEntry *me)
             else
             {
                 Error2("Failed to create path %d.\n", msg.id);
+            }
+            
+        }
+        break;
+    case psPathNetworkMessage::PATH_REMOVE_POINT:
+        {
+            psPath* path = pathNetwork->FindPath(msg.id);
+            if (path)
+            {
+                int index = path->FindPointIndex(msg.secondId);
+                if (index >= 0)
+                {
+                    path->RemovePoint(index);
+                    Debug3(LOG_NET, 0, "Removed point %d from path %d.\n", msg.secondId, msg.id);
+                }
+                else
+                {
+                    Error3( "Removed point %d from path %d failed.\n", msg.secondId, msg.id);
+                }
+                
+            }
+            else
+            {
+                Error3("Failed to remove point %d from path %d.\n", msg.secondId, msg.id);
             }
             
         }
