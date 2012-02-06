@@ -897,7 +897,6 @@ void pawsLauncherWindow::SaveSettings()
 
             configUser->SetFloat("Video.OpenGL.TextureLODBias", texlodbias);
             configUser->SetInt("Video.OpenGL.TextureDownsample", downsample);
-            printf("%d %f\n",downsample,texlodbias);
 
             pawsCheckBox* enableGrass = (pawsCheckBox*)FindWidget("EnableGrass");
             configUser->SetBool("PlaneShift.Graphics.EnableGrass", enableGrass->GetState());
