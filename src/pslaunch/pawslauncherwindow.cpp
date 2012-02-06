@@ -85,7 +85,7 @@ bool pawsLauncherWindow::PostSetup()
 void pawsLauncherWindow::UpdateNews()
 {
     pawsMessageTextBox* serverNews = (pawsMessageTextBox*)FindWidget("ServerNews");
-    psLaunchGUI->GetDownloader()->DownloadFile(configFile->GetStr("Launcher.News.URL", "http://www.xordan.com/servernews"),
+    psLaunchGUI->GetDownloader()->DownloadFile(configFile->GetStr("Launcher.News.URL", "http://planeshift.ezpcusa.com/servernews"),
       "/planeshift/userdata/servernews", true, true, 3, true);
     
     csRef<iDataBuffer> newsPath = psLaunchGUI->GetVFS()->GetRealPath("/planeshift/userdata/servernews");
