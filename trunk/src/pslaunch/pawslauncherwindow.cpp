@@ -890,13 +890,14 @@ void pawsLauncherWindow::SaveSettings()
             {
                 downsample = 2;
             }
-            else if(textureQuality->GetSelectedRowString().Compare("Lowest"))
+            else if(textureQuality->GetSelectedRowString().Compare("Very Low"))
             {
                 downsample = 4;
             }
 
             configUser->SetFloat("Video.OpenGL.TextureLODBias", texlodbias);
             configUser->SetInt("Video.OpenGL.TextureDownsample", downsample);
+            printf("%d %f\n",downsample,texlodbias);
 
             pawsCheckBox* enableGrass = (pawsCheckBox*)FindWidget("EnableGrass");
             configUser->SetBool("PlaneShift.Graphics.EnableGrass", enableGrass->GetState());
