@@ -171,15 +171,15 @@ void SoundHandle::Fade(float volume, int time, int direction)
         fadeSteps = -time / FADE_TIMESTEP;
     }
 
-	// checking boundaries
-	if(currentVolume < VOLUME_ZERO)
-	{
-		currentVolume = VOLUME_ZERO;
-	}
-	else if(currentVolume > VOLUME_MAX)
-	{
-		currentVolume = VOLUME_MAX;
-	}
+    // checking boundaries
+    if(currentVolume < VOLUME_ZERO)
+    {
+        currentVolume = VOLUME_ZERO;
+    }
+    else if(currentVolume > VOLUME_MAX)
+    {
+        currentVolume = VOLUME_MAX;
+    }
 
     // there must be at least one step or the volume don't change
     if(fadeSteps == 0)

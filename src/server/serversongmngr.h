@@ -46,8 +46,6 @@ struct ScoreStatistics;
 class psEndSongEvent: public psGameEvent
 {
 public:
-    gemActor* charActor;        ///< The player that plays this song.
-
     /**
      * Constructor.
      * @param charActor the player that plays this song.
@@ -65,6 +63,10 @@ public:
     //------------------
     virtual bool CheckTrigger();
     virtual void Trigger();
+
+private:
+    gemActor* charActor;        ///< The player that plays this song.
+    csTicks startingTime;       ///< The time when the song started.
 };
 
 
