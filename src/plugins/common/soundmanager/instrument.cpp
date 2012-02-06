@@ -105,6 +105,12 @@ size_t Instrument::GetNoteBuffer(char pitch, int alter, uint octave, float durat
     // * number of bytes per sample * number of channels
     requestedBytes = format->Freq * duration * (format->Bits / 8) * format->Channels;
 
+	// if the frame has 16 bits we must return an even number of bytes
+	if(requestedBytes % 2 != 0 && format->Bits / 8 == 2)
+	{
+		requestedBytes--;
+	}
+
     // checking if this note is defined or if it's a rest
     if((oct = notes.Get(octave, 0)) != 0)
     {
@@ -180,7 +186,20 @@ void Instrument::AddNoteToChord(char pitch, int alter, uint octave, float durati
     // #bytes = sample frequency * duration of the note *
     // * number of bytes per sample * number of channels
     requestedBytes = format->Freq * duration * (format->Bits / 8) * format->Channels;
-    phaseShift = format->Freq * 0.3 * (format->Bits / 8) * format->Channels;
+	phaseShift = format->Freq * 0.3 * (format->Bits / 8) * format->Channels;
+
+	// if the frame has 16 bits we must return an even number of bytes
+	if(format->Bits / 8 == 2)
+	{
+		if(requestedBytes % 2 != 0)
+		{
+			requestedBytes--;
+		}
+		if(phaseShift % 2 != 0)
+		{
+			phaseShift--;
+		}
+	}
 
     // selecting the note
     switch(alter)

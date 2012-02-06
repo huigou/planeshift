@@ -159,8 +159,6 @@ bool SoundHandle::Perform(iTimerEvent* /*ev*/)
 
 void SoundHandle::Fade(float volume, int time, int direction)
 {
-    volume = volume * sndCtrl->GetVolume() * SoundSystemManager::GetSingleton().mainSndCtrl->GetVolume();
-
     // setting new steady state volume
     if(direction == FADE_UP)
     {
@@ -172,6 +170,16 @@ void SoundHandle::Fade(float volume, int time, int direction)
         currentVolume -= volume;
         fadeSteps = -time / FADE_TIMESTEP;
     }
+
+	// checking boundaries
+	if(currentVolume < VOLUME_ZERO)
+	{
+		currentVolume = VOLUME_ZERO;
+	}
+	else if(currentVolume > VOLUME_MAX)
+	{
+		currentVolume = VOLUME_MAX;
+	}
 
     // there must be at least one step or the volume don't change
     if(fadeSteps == 0)
