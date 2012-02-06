@@ -44,6 +44,16 @@ psEndSongEvent::psEndSongEvent(gemActor* actor, int songLength)
     : psGameEvent(0, songLength, "psEndSongEvent")
 {
     charActor = actor;
+
+    if(charActor->GetMode() == PSCHARACTER_MODE_PLAY)
+    {
+        valid = true;
+        startingTime = charActor->GetCharacterData()->GetSongStartTime();
+    }
+    else
+    {
+        valid = false;
+    }
 }
 
 psEndSongEvent::~psEndSongEvent()
@@ -53,7 +63,16 @@ psEndSongEvent::~psEndSongEvent()
 
 bool psEndSongEvent::CheckTrigger()
 {
-    return charActor->GetMode() == PSCHARACTER_MODE_PLAY;
+    // if the starting time is not the same it means that the player
+    // stopped the song and now he's playing another one
+    if(valid
+        && charActor->GetMode() == PSCHARACTER_MODE_PLAY
+        && charActor->GetCharacterData()->GetSongStartTime() == startingTime)
+    {
+        return true;;
+    }
+
+    return false;
 }
 
 void psEndSongEvent::Trigger()
@@ -319,7 +338,7 @@ void ServerSongManager::StopSong(gemActor* charActor, bool skillRanking)
             // input variables
             mathEnv.Define("Player", charActor);
             mathEnv.Define("Instrument", instrItem);
-            mathEnv.Define("SongTime", charData->GetPlayingTime() / 1000);
+            mathEnv.Define("SongTime", (csGetTicks() - charData->GetSongStartTime()) / 1000);
             mathEnv.Define("ScoreRank", scoreRank);
 
             // scripts evaluation

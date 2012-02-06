@@ -937,9 +937,9 @@ public:
     void EndSong(csTicks bonusTime);
 
     /**
-     * Gets the execution time of the song that the player is currently playing.
+     * Gets the starting time of the song that the player is currently playing.
      */
-    csTicks GetPlayingTime() const { return csGetTicks() - songExecutionTime; }
+    csTicks GetSongStartTime() const { return songExecutionTime; }
 
     /** Check if the character is a banker */
     bool IsBanker() const { return banker; }
