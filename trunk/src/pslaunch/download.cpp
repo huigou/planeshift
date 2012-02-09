@@ -236,7 +236,7 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
          * and the vfs filename used during copy and update of the actual
          * files.
          */
-        csString fileName;
+        csString fileName = UPDATE_CACHE_DIR;
         csString realFilePath;
 
         /**
@@ -250,10 +250,8 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
         fileName.Append(".download");
 
         csRef<iDataBuffer> cachepath;
-        cachepath = vfs->GetRealPath(UPDATE_CACHE_DIR);
+        cachepath = vfs->GetRealPath(fileName);
         realFilePath = cachepath->GetData();
-
-        realFilePath.Append(fileName);
 
         for(uint i=0; i<=retries; i++)
         {
