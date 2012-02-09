@@ -198,6 +198,9 @@ psItem::~psItem()
 {
     // printf("In item %s:%u dtor...\n", GetName(), uid);
 
+    //remove the itemModifiers class as it's no more needed
+    delete itemModifiers;
+
     if (!current_stats)
         return;
 
@@ -230,9 +233,6 @@ psItem::~psItem()
     if (gItem)
         gItem->UnregisterCallback(this);
     gItem = NULL;
-
-    //remove the itemModifiers class as it's no more needed
-    delete itemModifiers;
 }
 
 void psItem::UpdateItemQuality(uint32 id, float qual)
