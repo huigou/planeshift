@@ -1536,7 +1536,7 @@ protected:
 class TeleportOp : public Imperative1
 {
 public:
-    TeleportOp(EntityManager* entitymanager) : Imperative1() { entityManager = entitymanager; loadDelay = NULL; background = ""; point1X = NULL; point1X = NULL; point2X = NULL; point2Y = NULL; }
+    TeleportOp(EntityManager* entitymanager) : Imperative1() { entityManager = entitymanager; loadDelay = NULL; background = ""; point1X = NULL; point1X = NULL; point1Y = NULL; point2X = NULL; point2Y = NULL; }
     virtual ~TeleportOp()
     {
         if(loadDelay)
