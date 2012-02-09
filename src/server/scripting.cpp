@@ -1537,7 +1537,29 @@ class TeleportOp : public Imperative1
 {
 public:
     TeleportOp(EntityManager* entitymanager) : Imperative1() { entityManager = entitymanager; loadDelay = NULL; background = ""; point1X = NULL; point1X = NULL; point2X = NULL; point2Y = NULL; }
-    virtual ~TeleportOp() { }
+    virtual ~TeleportOp()
+    {
+        if(loadDelay)
+        {
+            delete loadDelay;
+        }
+        if(point1X)
+        {
+            delete point1X;
+        }
+        if(point1Y)
+        {
+            delete point1Y;
+        }
+        if(point2X)
+        {
+            delete point2X;
+        }
+        if(point2Y)
+        {
+            delete point2Y;
+        }
+    }
 
     bool Load(iDocumentNode* node)
     {
