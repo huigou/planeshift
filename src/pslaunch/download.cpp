@@ -250,7 +250,7 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
         fileName.Append(".download");
 
         csRef<iDataBuffer> cachepath;
-        cachepath = vfs->GetRealPath(fileName);
+        cachepath = vfs->GetRealPath(UPDATE_CACHE_DIR+fileName);
         realFilePath = cachepath->GetData();
 
         for(uint i=0; i<=retries; i++)
