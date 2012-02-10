@@ -123,8 +123,7 @@ psNPCDialog::~psNPCDialog()
         csArray<KnowledgeArea*>::Iterator it(knowareas.GetIterator());
         while(it.HasNext())
         {
-            KnowledgeArea* area = it.Next();
-            delete area;
+            delete it.Next();
         }
         knowareas.Empty();
     }
