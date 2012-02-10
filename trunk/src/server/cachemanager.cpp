@@ -347,15 +347,7 @@ void CacheManager::UnloadAll()
         alliance_by_id.Empty();
     }
 
-    {
-        csHash<csRef<psGuildInfo> >::GlobalIterator it (guildinfo_by_id.GetIterator ());
-        while (it.HasNext ())
-        {
-            psGuildInfo* guildinfo = it.Next ();
-            delete guildinfo;
-        }
-        guildinfo_by_id.Empty();
-    }
+    guildinfo_by_id.Empty();
 
     {
         csHash<psItemStats *, csString>::GlobalIterator it (itemStats_NameHash.GetIterator ());
@@ -3206,7 +3198,6 @@ bool CacheManager::CreateGuild(const char *guildname, Client *client)
 void CacheManager::RemoveGuild(psGuildInfo *which)
 {
     guildinfo_by_id.Delete(which->GetID(),which);
-    delete which;
 }
 
 
