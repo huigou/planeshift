@@ -221,7 +221,7 @@
           <text string="Language:"/>
         </widget>
 
-        <widget name="Languages" factory="pawsComboBox" id="1401" alwaysontop="true">
+        <widget name="Languages" factory="pawsComboBox" id="1401" alwaysontop="true" sorted="true">
           <frame x="100" y="100" width="90" height="20" border="no" />
           <listbox rows="4" height="25" useScrollBar="true" />
         </widget>
