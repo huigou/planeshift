@@ -119,6 +119,15 @@ psNPCDialog::psNPCDialog(gemNPC *npc)
 
 psNPCDialog::~psNPCDialog()
 {
+    {
+        csArray<KnowledgeArea*>::Iterator it(knowareas.GetIterator());
+        while(it.HasNext())
+        {
+            KnowledgeArea* area = it.Next();
+            delete area;
+        }
+        knowareas.Empty();
+    }
 }
 
 bool psNPCDialog::Initialize( iDataConnection *db )
