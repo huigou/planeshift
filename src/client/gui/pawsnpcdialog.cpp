@@ -41,6 +41,8 @@
  * -fix the graphics of the chat bubbles generically
  * -add support for numkey/enter action on the list version
  * -fix the spelling of the widget name
+ * -need to move the catch of npc text from chatbubbles to an inner implementation here
+ *  so the two classes aren't interwingled
  */
 
 pawsNpcDialogWindow::pawsNpcDialogWindow()
