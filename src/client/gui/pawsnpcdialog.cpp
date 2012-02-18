@@ -40,6 +40,7 @@
  * -fix handling of free text and questions
  * -fix the graphics of the chat bubbles generically
  * -add support for numkey/enter action on the list version
+ * -fix the spelling of the widget name
  */
 
 pawsNpcDialogWindow::pawsNpcDialogWindow()
@@ -71,8 +72,9 @@ bool pawsNpcDialogWindow::PostSetup()
 
 void pawsNpcDialogWindow::Draw()
 {
-    if(useBubbles && ticks != 0 && csGetTicks()-ticks > 5000)
-    {//let this dialog invisible after 5 secs when npc finishes his speech
+    if(useBubbles && ticks != 0 && csGetTicks()-ticks > 12000)
+    {//let this dialog invisible after 12 secs when npc finishes his speech
+     //equal to the long chatbubble longphrase lenght for now.  
         SetVisibility(false);
         FindWidget("SpeckBubble")->SetVisibility(false);
         ticks = 0;
