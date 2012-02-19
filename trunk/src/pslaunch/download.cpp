@@ -250,7 +250,7 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
         fileName.Append(".download");
 
         csRef<iDataBuffer> cachepath;
-        cachepath = vfs->GetRealPath(UPDATE_CACHE_DIR+fileName);
+        cachepath = vfs->GetRealPath(fileName);
         realFilePath = cachepath->GetData();
 
         for(uint i=0; i<=retries; i++)
@@ -350,15 +350,15 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
         if(vfs->Exists(destpath))
             fileUtil->RemoveFile(destpath);
 
-        if(!fileUtil->CopyFile(UPDATE_CACHE_DIR+fileName, destpath, true, false, true, false))
+        if(!fileUtil->CopyFile(fileName, destpath, true, false, true, false))
         {
             UpdaterEngine::GetSingletonPtr()->PrintOutput("Error renaming file %s to %s.\n", fileName.GetData(), destpath.GetData());
-            fileUtil->RemoveFile(UPDATE_CACHE_DIR+fileName, true);
+            fileUtil->RemoveFile(fileName, true);
             break;
         }
         else
         {
-            fileUtil->RemoveFile(UPDATE_CACHE_DIR+fileName, true);
+            fileUtil->RemoveFile(fileName, true);
         }
 
         return true;
