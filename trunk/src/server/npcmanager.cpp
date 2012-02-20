@@ -1227,7 +1227,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                     break;
                 }
                 gemNPC *entity = dynamic_cast<gemNPC *> (gemSupervisor->FindObject(entity_id));
-                entity->SetVisibility(status);
+                if(entity) entity->SetVisibility(status);
                 break;
             }
             case psNPCCommandsMessage::CMD_PICKUP:
