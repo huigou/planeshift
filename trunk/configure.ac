@@ -1,5 +1,5 @@
 #----------------------------------------------------------------------------
-# Copyright (C)2001-2011 by Atomic Blue.
+# Copyright (C)2001-2012 by Atomic Blue.
 #
 # Script taken from the Crystal Space SDK project.
 #
@@ -13,7 +13,7 @@ AC_PREREQ([2.56])
 #----------------------------------------------------------------------------
 AC_INIT([PlaneShift], [0.5.9], [http://www.hydlaaplaza.com/flyspray/])
 CS_PACKAGEINFO([PlaneShift a 3d MMORPG],
-	[Copyright (C)2001-2011 Atomic Blue],
+	[Copyright (C)2001-2012 Atomic Blue],
 	[http://www.planeshift.it/])
 AC_CONFIG_SRCDIR([mk/jam/build.jam])
 AC_CONFIG_AUX_DIR([mk/autoconf])
