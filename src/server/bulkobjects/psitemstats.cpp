@@ -1707,13 +1707,26 @@ double psItemStats::GetProperty(MathEnvironment* env, const char *ptr)
         return (double) GetQuality();
     }
 
+    //returns the id of the item
+    if(property == "Id")
+    {
+        return (double) GetUID();
+    }
+
     CPrintf(CON_ERROR, "psItemStats::GetProperty(%s) failed\n",ptr);
     return 0;
 }
 
 double psItemStats::CalcFunction(MathEnvironment* env, const char * functionName, const double * params)
 {
-    //we have no functions here yet.
+    csString function(functionName);
+
+    //Checks if the name of the item is the given one.
+    if(function == "IsNamed")
+    {
+        return (double) (GetName() ==  env->GetString(params[0]))? 1.0f : 0.0f;
+    }
+
     CPrintf(CON_ERROR, "psItemStats::CalcFunction(%s) failed\n", functionName);
     return 0;
 }

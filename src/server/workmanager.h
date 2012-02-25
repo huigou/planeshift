@@ -456,13 +456,48 @@ protected:
     bool CombineWork();
     bool IsIngredient(uint32 patternId, uint32 targetId);
 
-    psItem* TransformSelfContainerItem(psItem* oldItem, uint32 newId, int newQty, float itemQuality);
-    psItem* TransformContainedItem(psItem* oldItem, uint32 newId, int newQty, float itemQuality);
+    /**
+     *  @param process The process which was applied in order to generate this item, if any, else NULL.
+     */
+    psItem* TransformSelfContainerItem(psItem* oldItem, uint32 newId, int newQty, float itemQuality, psTradeProcesses* process);
+
+    /**
+     *  @param process The process which was applied in order to generate this item, if any, else NULL.
+     */
+    psItem* TransformContainedItem(psItem* oldItem, uint32 newId, int newQty, float itemQuality, psTradeProcesses* process);
     psItem* CombineContainedItem(uint32 newId, int newQty, float itemQuality, psItem* containerItem);
-    psItem* TransformSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newId, int newQty, float itemQuality);
-    psItem* TransformTargetSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newId, int newQty, float itemQuality);
-    psItem* TransformTargetItem(psItem* oldItem, uint32 newId, int newQty, float itemQuality);
+
+    /**
+     *  @param process The process which was applied in order to generate this item, if any, else NULL.
+     */
+    psItem* TransformSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newId, int newQty, float itemQuality, psTradeProcesses* process);
+
+    /**
+     *  @param process The process which was applied in order to generate this item, if any, else NULL.
+     */
+    psItem* TransformTargetSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newId, int newQty, float itemQuality, psTradeProcesses* process);
+
+    /**
+     *  @param process The process which was applied in order to generate this item, if any, else NULL.
+     */
+    psItem* TransformTargetItem(psItem* oldItem, uint32 newId, int newQty, float itemQuality, psTradeProcesses* process);
     void TransformTargetItemToNpc(psItem* workItem, Client* client);
+
+    /**
+     * Applies the mathscript defined for the process over items being produced.
+     *
+     * It checks if there is a mathscript defined (empty string to disable),
+     * if it's defined it will try to recover the mathscript if available,
+     * if it succeeds it sets NewItem OldItem Worker and Process in the math environment
+     * and runs the script. The function has no return as the mathscript is supposed to apply the effects
+     * directly on the targets passed in the environmnent.
+     *
+     * @param oldItem The item which is going to be destructed (the old item).
+     * @param newItem The newly created item.
+     * @param worker  The actor which is working on the item.
+     * @param process The process applied to create the new item by the worker.
+     */
+    void ApplyProcessScript(psItem* oldItem, psItem* newItem, gemActor* worker, psTradeProcesses* process);
 //    bool TransformHandItem(uint32 newId, int newQty, float itemQuality);
     //bool SendItemUpdate( INVENTORY_SLOT_NUMBER slotID, psItem *newItem );
 

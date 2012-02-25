@@ -172,6 +172,24 @@ class psTradeProcesses : public iScriptableVar
     int GetSecondaryQualFactor() const { return secQualFactor; }
     csString& GetRenderEffect() { return renderEffect; }
 
+    /**
+     * Gets the script associated to this process. This can be set from
+     * the users of the class and it's a cache for the mathscript.
+     *
+     * @return A weak reference to the associated mathscript, if any.
+     */
+    csWeakRef<MathScript> &GetScript() { return script; }
+
+    /**
+     * Gets the name of the script associated to this process.
+     * It will be run after the process is done during the generation of
+     * the new item.
+     *
+     * @return A csString with the name of the script as taken from the
+     *         database.
+     */
+    csString GetScriptName() const { return scriptName; }
+
     /** Returns the name of the current process.
      *  @note Needed for iScriptableVar. 
      *  @return the name of the process.
@@ -208,7 +226,9 @@ class psTradeProcesses : public iScriptableVar
     int maxSecSkill;
     int secPracticePts;
     int secQualFactor;
-    csString renderEffect;    
+    csString renderEffect;
+    csString scriptName;
+    csWeakRef<MathScript> script;
 };
 
 /**

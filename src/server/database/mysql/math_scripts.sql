@@ -687,3 +687,9 @@ if(Damage > Actor:MaxHP*0.3)
 {
     Actor:InterruptSpellCasting()
 }" );
+
+INSERT INTO math_scripts VALUES( "Apply Post Trade Process",
+"NewItem:SetItemModifier(0, OldItem:GetItemModifier(0));
+NewItem:SetItemModifier(1, OldItem:GetItemModifier(1));
+NewItem:SetItemModifier(2, OldItem:GetItemModifier(2));
+" );
