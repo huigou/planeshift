@@ -12,7 +12,7 @@
     </materials>
     <library path="/planeshift/weapons/" file="wand01a.meshfact"/>
     <addon plugin="PSEffects">
-        <effect name="admin_path_point">
+        <effect name="admin_path_segment">
             <anchor type="basic" name="pos">
                 <dir>none</dir>
             </anchor>
