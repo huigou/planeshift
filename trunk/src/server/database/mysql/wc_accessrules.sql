@@ -47,9 +47,10 @@ INSERT INTO wc_accessrules values (380,44,'npcs',3),(381,44,'quests',3),(382,44,
 
 /*!40000 ALTER TABLE `wc_accessrules` ENABLE KEYS */;
 
-INSERT INTO wc_accessrules values (100,30,'npcs',1),(101,30,'quests',1),(102,30,'items',1),(103,30,'als',1),(104,30,'natres',1),(105,30,'crafting',1),(106,30,'spells',1),(107,30,'other',1),(108,30,'statistics',1),(109,30,'assets',1),(110,30,'admin',1);
-INSERT INTO wc_accessrules values (200,31,'npcs',),(201,31,'quests',),(202,31,'items',),(203,31,'als',),(204,31,'natres',),(205,31,'crafting',),(206,31,'spells',),(207,31,'other',),(208,31,'statistics',),(209,31,'assets',),(210,31,'admin',);
-INSERT INTO wc_accessrules values (300,31,'npcs',),(301,31,'quests',),(302,31,'items',),(303,31,'als',),(304,31,'natres',),(305,31,'crafting',),(306,31,'spells',),(307,31,'other',),(308,31,'statistics',),(309,31,'assets',),(310,31,'admin',);
+-- Obsolete data
+--INSERT INTO wc_accessrules values (100,30,'npcs',1),(101,30,'quests',1),(102,30,'items',1),(103,30,'als',1),(104,30,'natres',1),(105,30,'crafting',1),(106,30,'spells',1),(107,30,'other',1),(108,30,'statistics',1),(109,30,'assets',1),(110,30,'admin',1);
+--INSERT INTO wc_accessrules values (200,31,'npcs',),(201,31,'quests',),(202,31,'items',),(203,31,'als',),(204,31,'natres',),(205,31,'crafting',),(206,31,'spells',),(207,31,'other',),(208,31,'statistics',),(209,31,'assets',),(210,31,'admin',);
+--INSERT INTO wc_accessrules values (300,31,'npcs',),(301,31,'quests',),(302,31,'items',),(303,31,'als',),(304,31,'natres',),(305,31,'crafting',),(306,31,'spells',),(307,31,'other',),(308,31,'statistics',),(309,31,'assets',),(310,31,'admin',);
 
 UNLOCK TABLES;
 
