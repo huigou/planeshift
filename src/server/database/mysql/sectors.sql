@@ -69,7 +69,7 @@ CREATE TABLE  `sectors` (
   `DeathRestoreHP` char(1) NOT NULL DEFAULT 'Y' COMMENT 'When not N the sector will restore HP when the player dies in it, else it just sets the minimum to keep him alive and not death loop.',
   `god_name` varchar(45) NOT NULL DEFAULT 'Laanx' COMMENT 'Sets a name of an entity associated to the sector as overseer.',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `name` (`name`),
+  UNIQUE KEY `name` (`name`)
   --KEY `indx_sector_name` (`name`)
 ) ENGINE=MyISAM AUTO_INCREMENT=84 DEFAULT CHARSET=latin1 COMMENT='Stores data about sectors available in game.';
 
