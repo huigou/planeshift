@@ -1688,6 +1688,14 @@ COMMENT = 'Allows to define some restrain to the loot_modifiers';
 
 ALTER TABLE `spells` MODIFY COLUMN `max_power` FLOAT(4,2)  DEFAULT 1;
 
+INSERT INTO math_scripts VALUES( "Apply Post Trade Process",
+"NewItem:SetItemModifier(0, OldItem:GetItemModifier(0));
+NewItem:SetItemModifier(1, OldItem:GetItemModifier(1));
+NewItem:SetItemModifier(2, OldItem:GetItemModifier(2));
+" );
+
+ALTER TABLE `planeshift`.`trade_processes` ADD COLUMN `script` VARCHAR(255)  NOT NULL DEFAULT 'Apply Post Trade Process' COMMENT 'A script to run after a process has completed. In order to apply custom effects to the result.' AFTER `secondary_quality_factor`;
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to

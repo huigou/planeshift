@@ -186,7 +186,8 @@ psTradeProcesses::psTradeProcesses()
     maxSecSkill     = 0;
     secPracticePts  = 0;
     secQualFactor   = 0;
-    renderEffect.Clear();
+    renderEffect   .Clear();
+    scriptName     .Clear();
 }
 
 psTradeProcesses::~psTradeProcesses()
@@ -275,6 +276,7 @@ bool psTradeProcesses::Load(iResultRow& row)
     secPracticePts  = row.GetInt("secondary_practice_points");
     secQualFactor   = row.GetInt("secondary_quality_factor");
     renderEffect    = row["render_effect"];
+    scriptName      = row["script"];
     return true;
 }
 

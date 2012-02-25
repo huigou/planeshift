@@ -2854,6 +2854,27 @@ double psCharacter::CalcFunction(MathEnvironment* env, const char* functionName,
 
         return env->GetValue(item);
     }
+
+    // deletes an item by its index in the inventory. DeleteItem(position, stackamount (-1 for whole stack))
+    else if(function == "DeleteItem")
+    {
+        psItem *item = inventory.RemoveItemIndex((INVENTORY_SLOT_NUMBER)int(params[0]), int(params[1]));
+
+        //Item not found
+        if(!item)
+        {
+            return 0.0f;
+        }
+
+        //Delete the item
+        if(!item->Destroy())
+        {
+            Error2("Could not remove old item ID #%u from database", item->GetUID());
+            return 0.0f;
+        }
+
+        return 1.0f;
+    }
     /**
      * Seems not to be used and could be replaced by a correct GetSkillValue in scripts instead.
      */

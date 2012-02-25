@@ -2267,6 +2267,30 @@ double psItem::CalcFunction(MathEnvironment* env, const char * functionName, con
         return env->GetValue(GetBaseStats());
     }
 
+    //Sets a modifier on the item. SetItemModifier(position, modifierId)
+    //The position reference is available in psItem::Load()
+    if(function == "SetItemModifier")
+    {
+        if(modifierIds.GetSize() <= int(params[0]))
+        {
+            return (double) 0.0f;
+        }
+        modifierIds[int(params[0])] = params[1];
+        UpdateModifiers();
+        return (double) 1.0f;
+    }
+
+    //Gets a modifier on the item. SetItemModifier(position, modifierId)
+    //The position reference is available in psItem::Load()
+    if(function == "GetItemModifier")
+    {
+        if(modifierIds.GetSize() <= int(params[0]))
+        {
+            return (double) 0.0f;
+        }
+        return (double) modifierIds[int(params[0])];
+    }
+
     CPrintf(CON_ERROR, "psItem::CalcFunction(%s) failed\n", functionName);
     return 0;
 }

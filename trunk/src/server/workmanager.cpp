@@ -2614,6 +2614,27 @@ int WorkManager::CalculateEventDuration(psTradeTransformations* trans, psTradePr
     return time;
 }
 
+void WorkManager::ApplyProcessScript(psItem* oldItem, psItem* newItem, gemActor* worker, psTradeProcesses* process)
+{
+    //Check if the process is valid (not null) and that the scriptname contains something and
+    //it's not an empty string
+    if(process && process->GetScriptName().Length())
+    {
+        //Checks if there is need to load the script
+        psserver->GetMathScriptEngine()->CheckAndUpdateScript(process->GetScript(), process->GetScriptName());
+        //If it could be loaded run it.
+        if(process->GetScript().IsValid())
+        {
+            MathEnvironment env;
+            env.Define("OldItem", oldItem);
+            env.Define("NewItem", newItem);
+            env.Define("Worker",  worker);
+            env.Define("Process", process);
+            process->GetScript()->Evaluate(&env);
+        }
+    }
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Combine transform all items in container into a new item
 psItem* WorkManager::CombineContainedItem(uint32 newId, int newQty, float itemQuality, psItem* containerItem)
@@ -2708,14 +2729,14 @@ psItem* WorkManager::CombineContainedItem(uint32 newId, int newQty, float itemQu
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Transform the container into a new item
-psItem* WorkManager::TransformSelfContainerItem(psItem* oldItem, uint32 newId, int newQty, float itemQuality)
+psItem* WorkManager::TransformSelfContainerItem(psItem* oldItem, uint32 newId, int newQty, float itemQuality, psTradeProcesses* process)
 {
     return NULL;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Transform the one items in container into a new item
-psItem* WorkManager::TransformContainedItem(psItem* oldItem, uint32 newId, int newQty, float itemQuality)
+psItem* WorkManager::TransformContainedItem(psItem* oldItem, uint32 newId, int newQty, float itemQuality, psTradeProcesses* process)
 {
     if (!oldItem)
     {
@@ -2736,24 +2757,37 @@ psItem* WorkManager::TransformContainedItem(psItem* oldItem, uint32 newId, int n
 
     INVENTORY_SLOT_NUMBER oldslot = oldItem->GetLocInParent(false);
 
-    // Remove items from container and destroy it
+    // Remove items from container
     container->RemoveFromContainer(oldItem, owner->GetClient());
+
+    //Destroy the old item
     if (!oldItem->Destroy())
     {
         Error2("TransformContainedItem() could not remove old item ID #%u from database", oldItem->GetUID());
         return NULL;
     }
+
+    psItem* newItem = NULL;
+    if(newId > 0)
+    {
+        //Create item and save it to item instances
+        psItem* newItem = CreateTradeItem(newId, newQty, itemQuality);
+        //As the item wasn't consumed apply the process script on it
+        if(newItem) //just a slight integrity check.
+        {
+            ApplyProcessScript(oldItem, newItem, owner, process);
+        }
+    }
+
     delete oldItem;
 
-    // Check for consumed item
-    if (newId <= 0)
-        return NULL;
-
-    // Create item and save it to item instances
-    psItem* newItem = CreateTradeItem(newId, newQty, itemQuality);
     if(!newItem)
     {
-        Error2("CreateTradeItem() could not create new item ID #%u", newId);
+        // Check for consumed item
+        if(newId > 0)
+        {
+            Error2("CreateTradeItem() could not create new item ID #%u", newId);
+        }
         return NULL;
     }
 
@@ -2797,7 +2831,7 @@ psItem* WorkManager::TransformContainedItem(psItem* oldItem, uint32 newId, int n
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Transform all items in equipment into a new item
-psItem* WorkManager::TransformSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newId, int newQty, float itemQuality)
+psItem* WorkManager::TransformSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newId, int newQty, float itemQuality, psTradeProcesses* process)
 {
     // Remove items from slot and destroy it
     psItem *oldItem = owner->GetCharacterData()->Inventory().RemoveItem(NULL,slot);
@@ -2813,17 +2847,28 @@ psItem* WorkManager::TransformSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newId,
         Error2("TransformSlotItem() could not remove old item ID #%u from database", oldItem->GetUID());
         return NULL;
     }
+
+    psItem* newItem = NULL;
+    if(newId > 0)
+    {
+        //Create item and save it to item instances
+        newItem = CreateTradeItem(newId, newQty, itemQuality);
+        //As the item wasn't consumed apply the process script on it
+        if(newItem) //just a slight integrity check.
+        {
+            ApplyProcessScript(oldItem, newItem, owner, process);
+        }
+    }
+
     delete oldItem;
-
-    // Check for consumed item
-    if (newId <= 0)
-        return NULL;
-
-    // Create item
-    psItem* newItem = CreateTradeItem(newId, newQty, itemQuality);
+    
     if(!newItem)
     {
-        Error2("CreateTradeItem() could not create new item ID #%u", newId);
+        // Check for consumed item
+        if(newId > 0)
+        {
+            Error2("CreateTradeItem() could not create new item ID #%u", newId);
+        }
         return NULL;
     }
 
@@ -2867,7 +2912,7 @@ psItem* WorkManager::TransformSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newId,
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Transform all items in equipment into a new item
-psItem* WorkManager::TransformTargetSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newId, int newQty, float itemQuality)
+psItem* WorkManager::TransformTargetSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newId, int newQty, float itemQuality, psTradeProcesses* process)
 {
     // Remove items from targeted slot and destroy it
     psItem *oldItem = gemTarget->GetCharacterData()->Inventory().RemoveItem(NULL,slot);
@@ -2883,17 +2928,28 @@ psItem* WorkManager::TransformTargetSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 
         Error2("TransformSlotItem() could not remove old item ID #%u from database", oldItem->GetUID());
         return NULL;
     }
+
+    psItem* newItem = NULL;
+    if(newId > 0)
+    {
+        //Create item and save it to item instances
+        newItem = CreateTradeItem(newId, newQty, itemQuality);
+        //As the item wasn't consumed apply the process script on it
+        if(newItem) //just a slight integrity check.
+        {
+            ApplyProcessScript(oldItem, newItem, owner, process);
+        }
+    }
+
     delete oldItem;
 
-    // Check for consumed item
-    if (newId <= 0)
-        return NULL;
-
-    // Create item
-    psItem* newItem = CreateTradeItem(newId, newQty, itemQuality);
     if(!newItem)
     {
-        Error2("CreateTradeItem() could not create new item ID #%u", newId);
+        // Check for consumed item
+        if(newId > 0)
+        {
+            Error2("CreateTradeItem() could not create new item ID #%u", newId);
+        }
         return NULL;
     }
 
@@ -2948,7 +3004,7 @@ psItem* WorkManager::TransformTargetSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Transforms the targeted item into a new item
-psItem* WorkManager::TransformTargetItem(psItem* oldItem, uint32 newId, int newQty, float itemQuality)
+psItem* WorkManager::TransformTargetItem(psItem* oldItem, uint32 newId, int newQty, float itemQuality, psTradeProcesses* process)
 {
     if (!oldItem)
     {
@@ -2973,19 +3029,28 @@ psItem* WorkManager::TransformTargetItem(psItem* oldItem, uint32 newId, int newQ
         Error2("TransformTargetItem() could not destroy old item ID #%u from database", oldItem->GetUID());
         return NULL;
     }
+
+    psItem* newItem = NULL;
+    if(newId > 0)
+    {
+        //Create item and save it to item instances
+        newItem = CreateTradeItem(newId, newQty, itemQuality, true);
+        //As the item wasn't consumed apply the process script on it
+        if(newItem) //just a slight integrity check.
+        {
+            ApplyProcessScript(oldItem, newItem, owner, process);
+        }
+    }
+
     delete oldItem;
 
-
-
-    // Check for consumed item
-    if (newId <= 0)
-        return NULL;
-
-    // Create item
-    psItem* newItem = CreateTradeItem(newId, newQty, itemQuality, true);
     if(!newItem)
     {
-        Error2("CreateTradeItem() could not create new item ID #%u", newId);
+        // Check for consumed item
+        if(newId > 0)
+        {
+            Error2("CreateTradeItem() could not create new item ID #%u", newId);
+        }
         return NULL;
     }
 
@@ -3443,7 +3508,7 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
         case TRANSFORMTYPE_SLOT:
         {
             INVENTORY_SLOT_NUMBER slot = workEvent->GetTransformationSlot();
-            psItem* newItem = TransformSlotItem(slot, result, resultQty, currentQuality );
+            psItem* newItem = TransformSlotItem(slot, result, resultQty, currentQuality, workEvent->GetProcess());
             if (!newItem && (result != 0))
             {
                 Error1("TransformSlotItem did not create new item in HandleWorkEvent().\n");
@@ -3459,7 +3524,7 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
         case TRANSFORMTYPE_TARGETSLOT:
         {
             INVENTORY_SLOT_NUMBER slot = workEvent->GetTransformationSlot();
-            psItem* newItem = TransformTargetSlotItem(slot, result, resultQty, currentQuality );
+            psItem* newItem = TransformTargetSlotItem(slot, result, resultQty, currentQuality, workEvent->GetProcess());
             if (!newItem && (result != 0))
             {
                 Error1("TransformTargetSlotItem did not create new item in HandleWorkEvent().\n");
@@ -3474,7 +3539,7 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
 
         case TRANSFORMTYPE_TARGET:
         {
-            psItem* newItem = TransformTargetItem(workEvent->GetTranformationItem(), result, resultQty, currentQuality );
+            psItem* newItem = TransformTargetItem(workEvent->GetTranformationItem(), result, resultQty, currentQuality, workEvent->GetProcess());
             if (!newItem && (result != 0))
             {
                 Error1("TransformTargetItem did not create new item in HandleWorkEvent().\n");
@@ -3504,7 +3569,7 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
 
         case TRANSFORMTYPE_SELF_CONTAINER:
         {
-            psItem* newItem = TransformSelfContainerItem(workEvent->GetTranformationItem(), result, resultQty, currentQuality );
+            psItem* newItem = TransformSelfContainerItem(workEvent->GetTranformationItem(), result, resultQty, currentQuality, workEvent->GetProcess());
             if (!newItem  && (result != 0))
             {
                 Error1("TransformSelfContainerItem did not create new item in HandleWorkEvent().\n");
@@ -3521,7 +3586,7 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
         case TRANSFORMTYPE_SLOT_CONTAINER:
         case TRANSFORMTYPE_CONTAINER:
         {
-            psItem* newItem = TransformContainedItem(workEvent->GetTranformationItem(), result, resultQty, currentQuality );
+            psItem* newItem = TransformContainedItem(workEvent->GetTranformationItem(), result, resultQty, currentQuality, workEvent->GetProcess());
             if (!newItem  && (result != 0))
             {
                 Error1("TransformContainedItem did not create new item in HandleWorkEvent().\n");
