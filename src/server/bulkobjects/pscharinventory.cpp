@@ -604,7 +604,10 @@ csArray<size_t> psCharacterInventory::FindCompatibleStackedItems(psItem *item, b
     csArray<size_t> compatibleItems;
     for (size_t i=1; i<inventory.GetSize(); i++)
     {
-        if(inventory[i].item->CheckStackableWith(item, precise, checkStackCount))
+        //world stacking compatibility is not checked as it doesn't make sense
+        //to check if an item can be stacked with another in the world when it's being
+        //stacked in the inventory of a character. (so the ending false in the method)
+        if(inventory[i].item->CheckStackableWith(item, precise, checkStackCount, false))
         {
             compatibleItems.Push(i);
         }
