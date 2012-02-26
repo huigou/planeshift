@@ -2771,7 +2771,7 @@ psItem* WorkManager::TransformContainedItem(psItem* oldItem, uint32 newId, int n
     if(newId > 0)
     {
         //Create item and save it to item instances
-        psItem* newItem = CreateTradeItem(newId, newQty, itemQuality);
+        newItem = CreateTradeItem(newId, newQty, itemQuality);
         //As the item wasn't consumed apply the process script on it
         if(newItem) //just a slight integrity check.
         {
