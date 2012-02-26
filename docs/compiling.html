@@ -301,7 +301,7 @@ function Onload(){
 <select id="Compilers" onchange="ShowSet('Compiler',this.options[this.selectedIndex].value)" name="Compilers">
     <option value="GCC" selected="selected">GCC</option>
     <option value="MSVC">MSVC</option>
-  <option value="MINGW">MINGW</option>
+    <option value="MINGW">MINGW</option>
 </select>
 <select id="UserDevelopers" onchange="ShowSet('UserDeveloper',this.options[this.selectedIndex].value)" name="UserDevelopers">
     <option value="User" selected="selected">User</option>
@@ -1544,12 +1544,14 @@ psclient.exe -cfgset=PlaneShift.UserConfigPath=C:\development\pssettings</div>
         If you have MSVC 7.1 open C:\development\CS\mk\msvc71\wkstypical.sln<br />
         If you have MSVC 8.0 open C:\development\CS\mk\msvc8\wkstypical.sln<br />
         If you have MSVC 9.0 open C:\development\CS\mk\msvc9\wkstypical.sln
+        If you have MSVC 10.0 open C:\development\CS\mk\msvc10\wkstypical.sln
         </span>
         <span class="Static">
         If you have MSVC 7.0 open C:\development\CS\mk\msvc7\wksstatic.sln<br />
         If you have MSVC 7.1 open C:\development\CS\mk\msvc71\wksstatic.sln<br />
         If you have MSVC 8.0 open C:\development\CS\mk\msvc8\wksstatic.sln<br />
         If you have MSVC 9.0 open C:\development\CS\mk\msvc9\wksstatic.sln
+        If you have MSVC 10.0 open C:\development\CS\mk\msvc10\wksstatic.sln
         </span>
     </p>
     <p>Make sure that your specific 'msvc' folder has the 'read only' box unchecked (right click on the folder
@@ -1571,10 +1573,10 @@ and select Properties, 'read only' is one of the attributes in the General tab) 
     <div>Execute the following commands :
         <div class="commandBox">
             <div class="User">
-            xcopy "C:\Development\CS\crystalspace-1.4-vc9_d.dll" "C:\Development\PlaneShift" /D /Y<br />
+            xcopy "C:\Development\CS\crystalspace-2.1-vc9_d.dll" "C:\Development\PlaneShift" /D /Y<br />
             </div>
             <div class="Developer">
-            xcopy "C:\Development\CS\crystalspace-1.9-vc9_d.dll" "C:\Development\PlaneShift" /D /Y<br />
+            xcopy "C:\Development\CS\crystalspace-2.1-vc9_d.dll" "C:\Development\PlaneShift" /D /Y<br />
             </div>
             xcopy "C:\Development\CS\libcal3d-csvc9_d.dll" "C:\Development\PlaneShift" /D /Y<br />
             xcopy "C:\Development\CS\libz-cs.dll" "C:\Development\PlaneShift" /D /Y</div><br />
@@ -1599,6 +1601,7 @@ and select Properties, 'read only' is one of the attributes in the General tab) 
         71 for Visual Studio .NET 2003/MSVC 7.1<br />
         8 for Visual Studio .NET 2005/MSVC 8<br />
         9 for Visual Studio .NET 2005/MSVC 9
+        10 for Visual Studio .NET 2010/MSVC 10
     </p>
 
     <div>
@@ -1606,13 +1609,15 @@ and select Properties, 'read only' is one of the attributes in the General tab) 
         If you have MSVC.NET 7.0 open C:\development\planeshift\mk\msvc7\wkspstypical.sln<br />
         If you have MSVC.NET 2003/VC 7.1 open C:\development\planeshift\mk\msvc71\wkspstypical.sln<br />
         If you have MSVC.NET 2005/VC 8.0 open c:\development\PlaneShift\mk\msvc8\wkspstypical.sln<br />
-        If you have MSVC.NET 2008/VC 9.0 open c:\development\PlaneShift\mk\msvc9\wkspstypical.sln
+        If you have MSVC.NET 2008/VC 9.0 open c:\development\PlaneShift\mk\msvc9\wkspstypical.sln<br />
+        If you have MSVC.NET 2010/VC 10.0 open c:\development\PlaneShift\mk\msvc10\wkspstypical.sln
         </div>
         <div class="Static">
         If you have MSVC.NET 7.0 open C:\development\planeshift\mk\msvc7\wkspsstatic.sln<br />
         If you have MSVC.NET 2003/VC 7.1 open C:\development\planeshift\mk\msvc71\wkspsstatic.sln<br />
         If you have MSVC.NET 2005/VC 8.0 open c:\development\planeshift\mk\msvc8\wkspsstatic.sln<br />
-        If you have MSVC.NET 2008/VC 9.0 open c:\development\planeshift\mk\msvc9\wkspsstatic.sln
+        If you have MSVC.NET 2008/VC 9.0 open c:\development\planeshift\mk\msvc9\wkspsstatic.sln<br />
+        If you have MSVC.NET 2010/VC 10.0 open c:\development\PlaneShift\mk\msvc10\wkspsstatic.sln
         </div>
     </div>
 
