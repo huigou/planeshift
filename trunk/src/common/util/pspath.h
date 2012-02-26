@@ -36,6 +36,7 @@ struct iSector;
 struct iEngine;
 class Location;
 class psString;
+class psPath;
 
 
 /**
@@ -58,7 +59,7 @@ class psPathPoint
     friend class psLinearPath;
     friend class psPathAnchor;
 public:
-    psPathPoint();
+    psPathPoint(psPath* parentPath);
 
     /// Load the point from the db row
     bool Load(iResultRow& row, iEngine *engine);
@@ -96,6 +97,7 @@ public:
     iSector * GetSector(iEngine *engine);
     iSector * GetSector(iEngine *engine) const;
     float GetRadius();
+    float GetRadius() const;
 
     void SetWaypoint(Waypoint* waypoint);
 
@@ -113,8 +115,19 @@ public:
     /** Return the effect ID for this pathpoint or assign a new ID
         @param allocator 
      */
-    uint32_t GetEffectID(iEffectIDAllocator* allocator);    
+    uint32_t GetEffectID(iEffectIDAllocator* allocator);
+
+    /** Return the parent path for this path point
+     */
+    psPath* GetPath() const;
+
+    /** Return the index of this point in the path
+     */
+    int GetPathIndex() const;
+    
 private:
+    ///////////////////
+    // Database data
     int                    id;
     int                    prevPointId;
     csVector3              pos;
@@ -122,16 +135,15 @@ private:
                                                   since sector might not be available
                                                   when loaded we use the name for now.**/
 
-    
+    ///////////////////
+    // Internal data
     float                  radius;           ///< The radious of ths path point. Extrapolated
                                              ///< from start to end waypoint radiuses.
-
-    // Internal data
     csWeakRef<iSector>     sector;           ///< Cached sector
     float                  startDistance[2]; ///< Start distance for FORWARD and REVERS    
     Waypoint*              waypoint;         ///< Pointer to the waypoint if this point is on a wp.
-
-    uint32_t               effectID;       ///< When displayed in a client this is the effect id
+    uint32_t               effectID;         ///< When displayed in a client this is the effect id.
+    psPath*                path;             ///< Pointer to the path that this point is a part of.
 };
 
 class psPath
@@ -280,8 +292,11 @@ public:
     psPathPoint* FindPoint(int id);
 
     /// Get Path Point index by id
-    int FindPointIndex(int id);
+    int FindPointIndex(int id) const;
 
+    /// Get Path Point index by point
+    int FindPointIndex(const psPathPoint* point) const;
+    
     // Get Path Point by index
     const psPathPoint* GetPoint(int index) const;
 
