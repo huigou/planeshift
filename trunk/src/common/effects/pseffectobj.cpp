@@ -296,7 +296,7 @@ bool psEffectObjKeyFrame::SetParamScalings(const float* scale)
             {
                 actions[i] = actions[i]*scale[useScale[i]-1];
             }
-            if (i > KA_COUNT)
+            if (i >= KA_COUNT)
             {
                 vecActions[i-KA_COUNT] =  vecActions[i-KA_COUNT]*scale[useScale[i]-1];
             }
