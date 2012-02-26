@@ -2779,6 +2779,7 @@ psItem* WorkManager::TransformContainedItem(psItem* oldItem, uint32 newId, int n
         }
     }
 
+    //As the old item is no more needed delete it
     delete oldItem;
 
     if(!newItem)
@@ -2841,7 +2842,7 @@ psItem* WorkManager::TransformSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newId,
         return NULL;
     }
 
-    // Delete the old item
+    //Destroy the old item
     if (!oldItem->Destroy())
     {
         Error2("TransformSlotItem() could not remove old item ID #%u from database", oldItem->GetUID());
@@ -2860,6 +2861,7 @@ psItem* WorkManager::TransformSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newId,
         }
     }
 
+    //As the old item is no more needed delete it
     delete oldItem;
     
     if(!newItem)
@@ -2922,7 +2924,7 @@ psItem* WorkManager::TransformTargetSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 
         return NULL;
     }
 
-    // Delete the old item
+    //Destroy the old item
     if (!oldItem->Destroy())
     {
         Error2("TransformSlotItem() could not remove old item ID #%u from database", oldItem->GetUID());
@@ -2941,6 +2943,7 @@ psItem* WorkManager::TransformTargetSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 
         }
     }
 
+    //As the old item is no more needed delete it
     delete oldItem;
 
     if(!newItem)
@@ -3022,7 +3025,7 @@ psItem* WorkManager::TransformTargetItem(psItem* oldItem, uint32 newId, int newQ
     float xpos,ypos,zpos,yrot;
     oldItem->GetLocationInWorld(instance, &sectorinfo, xpos, ypos, zpos, yrot );
 
-    // Destroy gem and item
+    //Destroy gem and item
     entityManager->RemoveActor(oldItem->GetGemObject());
     if (!oldItem->Destroy())
     {
@@ -3042,6 +3045,7 @@ psItem* WorkManager::TransformTargetItem(psItem* oldItem, uint32 newId, int newQ
         }
     }
 
+    //As the old item is no more needed delete it
     delete oldItem;
 
     if(!newItem)
