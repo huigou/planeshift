@@ -865,6 +865,11 @@ int psPath::FindPointIndex(const psPathPoint* point) const
     return -1;
 }
 
+psPathPoint* psPath::GetPoint(int index)
+{
+    return points[index];
+}
+
 const psPathPoint* psPath::GetPoint(int index) const
 {
     return points[index];

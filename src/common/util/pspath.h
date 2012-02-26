@@ -298,8 +298,11 @@ public:
     int FindPointIndex(const psPathPoint* point) const;
     
     // Get Path Point by index
-    const psPathPoint* GetPoint(int index) const;
+    psPathPoint* GetPoint(int index);
 
+    // Get Path Point by index
+    const psPathPoint* GetPoint(int index) const;
+    
 protected:
     /// Do the actual precalculate work
     virtual void PrecalculatePath(psWorld * world, iEngine *engine) = 0;
