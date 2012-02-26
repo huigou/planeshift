@@ -1398,7 +1398,7 @@ void psItem::CancelEquipScript()
     }
 }
 
-bool psItem::CheckStackableWith(const psItem *otheritem, bool precise, bool checkStackCount) const
+bool psItem::CheckStackableWith(const psItem *otheritem, bool precise, bool checkStackCount, bool checkWorld) const
 {
     int i;
 
@@ -1424,6 +1424,7 @@ bool psItem::CheckStackableWith(const psItem *otheritem, bool precise, bool chec
     int purifyStatus = GetPurifyStatus();
     if (purifyStatus == 1)                      // purifying glyphs cannot be stacked
         return false;
+
     int otherPurifyStatus = otheritem->GetPurifyStatus();
     if (purifyStatus != otherPurifyStatus)      // glyphs with different purification status cannot be stacked
         return false;
@@ -1457,7 +1458,7 @@ bool psItem::CheckStackableWith(const psItem *otheritem, bool precise, bool chec
     }
 
     // Check same instance of world
-    if (location.worldInstance != otheritem->location.worldInstance)
+    if(checkWorld && location.worldInstance != otheritem->location.worldInstance)
         return false;
 
     // Check for keys
@@ -1485,7 +1486,7 @@ bool psItem::CheckStackableWith(const psItem *otheritem, bool precise, bool chec
     }
 
     // This checks to make sure that if the quality is different that these
-    // items can still be stacked and use an average qualiy system.
+    // items can still be stacked and use an average quality system.
     if (item_quality != otheritem->item_quality || GetMaxItemQuality() != otheritem->GetMaxItemQuality())
     {
         if ( GetCurrentStats()->GetFlags() & PSITEMSTATS_FLAG_AVERAGEQUALITY )

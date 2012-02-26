@@ -879,7 +879,10 @@ public:
     void RunEquipScript(gemActor *actor);
     void CancelEquipScript();
 
-    bool CheckStackableWith(const psItem *otheritem, bool precise, bool checkStackCount = true) const;
+    /**
+     * @param checkWorld Checks if stackability is possible in the world (eg: instances comparing)
+     */
+    bool CheckStackableWith(const psItem *otheritem, bool precise, bool checkStackCount = true, bool checkWorld = true) const;
 
     const char *GetSound();
 
