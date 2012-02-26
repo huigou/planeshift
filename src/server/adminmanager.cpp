@@ -5973,13 +5973,8 @@ void AdminManager::HidePaths(Client* client, iSector* sector)
         {
             psPathPoint* point = iter.Next();
             
-            // Don't send enpoints of paths
-            if (!point->GetWaypoint())
-            {
-                psStopEffectMessage msg(client->GetClientNum(), point->GetEffectID(this));
-                msg.SendMessage();
-            }
-            
+            psStopEffectMessage msg(client->GetClientNum(), point->GetEffectID(this));
+            msg.SendMessage();
         }
     }
 }
@@ -6064,7 +6059,6 @@ void AdminManager::ShowPaths(Client* client, iSector* sector)
             }
 
             int index = point->GetPathIndex();
-
             if (index > 0)
             {
                 const psPathPoint* prev = point->GetPath()->GetPoint(index-1);
@@ -6124,6 +6118,32 @@ void AdminManager::UpdateDisplayPath(psPathPoint* point)
                 // Display
                 psEffectMessage show(client->GetClientNum(),"admin_path_point",point->GetPosition(),0,0,point->GetEffectID(this),point->GetRadius());
                 show.SendMessage();
+
+                int index = point->GetPathIndex();
+                if (index > 0)
+                {
+                    const psPathPoint* prev = point->GetPath()->GetPoint(index-1);
+
+                    // Check that the point is in same sector.
+                    // TODO fix for other sectors
+                    if (prev->GetSector(EntityManager::GetSingleton().GetEngine()) == sector)
+                    {
+                        csVector3 delta = point->GetPosition() - prev->GetPosition();
+                        
+                        float angle = atan2(delta.x,delta.z);
+                        float length = delta.Norm();
+                        
+                        psEffectMessage msg(client->GetClientNum(),"admin_path_segment",
+                                            point->GetPosition(),0,0,point->GetEffectID(this),angle,length,point->GetRadius(),prev->GetRadius());
+                        msg.SendMessage();
+                    }
+                }
+
+                if (index < (point->GetPath()->GetNumPoints()-1))
+                {
+                    UpdateDisplayPath(point->GetPath()->GetPoint(index+1));
+                }
+                
             }
         }
     }
@@ -6151,6 +6171,14 @@ void AdminManager::UpdateDisplayWaypoint(Waypoint* wp)
                 psEffectMessage show(client->GetClientNum(),"admin_waypoint",wp->GetPosition(),0,0,
                                      wp->GetEffectID(this),wp->GetRadius());
                 show.SendMessage();
+
+                csPDelArray<Edge>::Iterator iter = wp->edges.GetIterator();
+                while (iter.HasNext())
+                {
+                    Edge* edge = iter.Next();
+
+                    UpdateDisplayPath(edge->GetStartPoint());
+                }
             }
         }
     }
