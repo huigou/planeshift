@@ -41,8 +41,8 @@
 #include "util/psstring.h"
 #include "engine/psworld.h"
 
-psPathPoint::psPathPoint():
-    id(-1),prevPointId(0),radius(0.0),waypoint(NULL),effectID(0)
+psPathPoint::psPathPoint(psPath* parentPath):
+    id(-1),prevPointId(0),radius(0.0),waypoint(NULL),effectID(0),path(parentPath)
 {
 }
 
@@ -86,6 +86,13 @@ float psPathPoint::GetRadius()
     }
 
     return radius;
+}
+
+
+float psPathPoint::GetRadius() const
+{
+    psPathPoint* noneConst = const_cast<psPathPoint*>(this);
+    return noneConst->GetRadius();
 }
 
 
@@ -211,6 +218,17 @@ uint32_t psPathPoint::GetEffectID(iEffectIDAllocator* allocator)
     return effectID;
 }
 
+psPath* psPathPoint::GetPath() const
+{
+    return path;
+}
+
+int psPathPoint::GetPathIndex() const
+{
+    return path->FindPointIndex(this);
+}
+
+
 //---------------------------------------------------------------------------
 
 psPath::psPath(csString name, Waypoint * wp1, Waypoint * wp2, psString flagStr)
@@ -266,7 +284,7 @@ psPathPoint* psPath::AddPoint(iDataConnection * db, const csVector3& pos, const 
 
 psPathPoint* psPath::AddPoint(const csVector3& pos, float radius, const char * sectorName, bool first)
 {
-    psPathPoint * pp = new psPathPoint();
+    psPathPoint * pp = new psPathPoint(this);
 
     pp->id = -1;
     pp->pos = pos;
@@ -309,7 +327,7 @@ psPathPoint* psPath::AddPoint(const csVector3& pos, float radius, const char * s
 
 psPathPoint* psPath::InsertPoint(iDataConnection *db, int index, const csVector3& pos, const char * sectorName)
 {
-    psPathPoint * pp = new psPathPoint();
+    psPathPoint * pp = new psPathPoint(this);
 
     pp->id = -1;
     pp->pos = pos;
@@ -614,7 +632,7 @@ bool psPath::Load(iDataConnection * db, iEngine *engine)
     csArray<psPathPoint*>  tempPoints;
     for (int i=0; i<(int)rs1.Count(); i++)
     {
-        psPathPoint * pp = new psPathPoint();
+        psPathPoint * pp = new psPathPoint(this);
         
         pp->Load(rs1[i],engine);
 
@@ -820,13 +838,26 @@ psPathPoint* psPath::FindPoint(int id)
     return NULL;
 }
 
-int psPath::FindPointIndex(int id)
+int psPath::FindPointIndex(int id) const
 {
     size_t count = 0;
     for (size_t i = 0; i < points.GetSize(); i++)
     {
-        psPathPoint* point = points[i];
+        const psPathPoint* point = points[i];
         if (point->GetID() == id)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int psPath::FindPointIndex(const psPathPoint* point) const
+{
+    size_t count = 0;
+    for (size_t i = 0; i < points.GetSize(); i++)
+    {
+        if (points[i] == point)
         {
             return i;
         }

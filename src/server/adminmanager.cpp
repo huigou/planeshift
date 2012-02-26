@@ -6063,17 +6063,19 @@ void AdminManager::ShowPaths(Client* client, iSector* sector)
                 msg.SendMessage();
             }
 
-            if (point->GetPreviousPointId())
+            int index = point->GetPathIndex();
+
+            if (index > 0)
             {
-                psPathPoint* prev = pathNetwork->FindPathPoint(point->GetPreviousPointId());
+                const psPathPoint* prev = point->GetPath()->GetPoint(index-1);
 
                 // Check that the point is in same sector.
                 // TODO fix for other sectors
                 if (prev->GetSector(EntityManager::GetSingleton().GetEngine()) == sector)
                 {
-                    csVector3 delta = prev->GetPosition() - point->GetPosition();
+                    csVector3 delta = point->GetPosition() - prev->GetPosition();
 
-                    float angle = atan2(-delta.x,-delta.z);
+                    float angle = atan2(delta.x,delta.z);
                     float length = delta.Norm();
 
                     psEffectMessage msg(client->GetClientNum(),"admin_path_segment",
