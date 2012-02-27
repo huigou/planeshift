@@ -1626,6 +1626,9 @@ and select Properties, 'read only' is one of the attributes in the General tab) 
     <p>Do the following if you put mysql somewhere else than C:\mysql:<br />
     Right-click plgdbmysql, under properties->linker->general, change the "C:\mysql\lib\opt"
     in Additional Library Directories to whatever your location of mysql is.</p>
+    
+    <p>If you get linker errors of projects which require psutils (example dbmysql or plgsoundmngr )<br />
+     right-click>Properties>Configuration Properties>Linker>Input>Additional Dependencies> add zlib.lib and libpsutil.lib</p>
 
     <div class="User">
     Go into the 'Build' menu, and select 'configuration manager'. Change the 'Active Solution Configuration' to 'Release(with DLLs)'.<br />
