@@ -1584,6 +1584,10 @@ rule StaticPluginLibrary
   Depends msvcgen : $(STATICPLUGINS.DEPENDENCIES) ;
   
   STATICPLUGINS.LIBRARY = $(name) ;
+  # Enable compiler-provided multithreading.
+  # This makes sense here since static plugin libs are typically
+  # very low in the dependency hierarchy.
+  MsvcParallelCompile $(name) ;
 }
 
 # Write out CFLAGS, LFLAGS needed by a plugin
