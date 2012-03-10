@@ -70,7 +70,7 @@ CREATE TABLE  `sectors` (
   `god_name` varchar(45) NOT NULL DEFAULT 'Laanx' COMMENT 'Sets a name of an entity associated to the sector as overseer.',
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-  --KEY `indx_sector_name` (`name`)
+  -- KEY `indx_sector_name` (`name`)
 ) ENGINE=MyISAM AUTO_INCREMENT=84 DEFAULT CHARSET=latin1 COMMENT='Stores data about sectors available in game.';
 
 
