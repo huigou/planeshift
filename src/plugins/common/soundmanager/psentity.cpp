@@ -184,7 +184,7 @@ bool psEntity::DefineState(csRef<iDocumentNode> stateNode)
     entityState->delay = stateNode->GetAttributeValueAsInt("DELAY", 0);
     entityState->timeOfDayStart = stateNode->GetAttributeValueAsInt("TIME_START", 0);
     entityState->timeOfDayEnd = stateNode->GetAttributeValueAsInt("TIME_END", 24);
-    entityState->fallbackState = stateNode->GetAttributeValueAsInt("FALLBACK_STATE", -1);
+    entityState->fallbackState = stateNode->GetAttributeValueAsInt("FALLBACK_STATE", UNDEFINED_ENTITY_STATE);
     entityState->fallbackProbability = stateNode->GetAttributeValueAsFloat("FALLBACK_PROBABILITY", 0.0);
     entityState->references = 1;
 

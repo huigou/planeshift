@@ -85,14 +85,10 @@ public:
     csRef<iEventTimer>     eventTimer;        ///< timer event used by all the sound handle to play after a delay
 
     /**
-     * Constructor initializes this SoundSystemManager.
-     * Also initializes a @see SoundSystem and a @see SoundDataCache object.
-     * Loads soundlib if presend and set Initialised to true or false (based on success)
-     * You can always assume that this Interface works. BUT Play*Sound functions
-     * will return false if its not Initialised. Be prepared to handle such Error conditions
-     * because they may do that at any time (when something goes wrong).
+     * Constructor.
      */
-    SoundSystemManager(iObjectRegistry* objectReg);
+    SoundSystemManager();
+
     /**
      * Destructor will remove everything this SoundManager created.
      * It will stop and delete all Handles, removes @see SoundDataCache and @see SoundSystem.
@@ -100,6 +96,15 @@ public:
      * Make Sure that you dont use them after destruction.
      */
     ~SoundSystemManager();
+
+    /**
+     * Initializes this SoundSystemManager.
+     * Also initializes a @see SoundSystem and a @see SoundDataCache object.
+     * Loads soundlib if presend and set Initialised to true or false (based on success)
+     * @param objectReg the object registry.
+     * @return true if initialization is successful, false otherwise.
+     */
+    bool Initialize(iObjectRegistry* objectReg);
 
     /**
      * Check if the given handle ID exists.
@@ -192,6 +197,12 @@ public:
      * @param t top 
      */
     void UpdateListener(csVector3 v, csVector3 f, csVector3 t);
+
+    /**
+     * Gets the listener position.
+     * @return the listener position.
+     */
+    csVector3 GetListenerPos() const;
 
     /**
      * Updates this SoundManager and everything its driving.

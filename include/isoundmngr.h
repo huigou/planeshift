@@ -49,7 +49,7 @@ class  csVector3;
  */
 struct iSoundManager: public virtual iBase
 {
-    SCF_INTERFACE(iSoundManager, 1, 3, 0);
+    SCF_INTERFACE(iSoundManager, 1, 4, 0);
 
     /**
      * The sound manager initializes by default the SoundControls with the IDs
@@ -110,20 +110,17 @@ struct iSoundManager: public virtual iBase
      * the ambient's sounds. If the sector has not been loaded properly with
      * InitializeSectors(), the method does nothing.
      *
-     * @param sector the sector's name.
+     * @param sectorName the sector's name.
+     * @return true if a sector with the given name is defined, false otherwise.
      */
-    virtual void LoadActiveSector(const char* sector) = 0;
+    virtual bool LoadActiveSector(const char* sectorName) = 0;
 
     /**
-     * Unload the current active sector. The method stops both the music and all
-     * the ambient's sounds.
+     * Reload all the sectors information in the memory. Sectors must have been
+     * initialized for this action to be successful.
+     * @return true if sectors could be loaded again, false otherwise.
      */
-    virtual void UnloadActiveSector() = 0;
-
-    /**
-     * Reload all the sectors information in the memory.
-     */
-    virtual void ReloadSectors() = 0;
+    virtual bool ReloadSectors() = 0;
 
     //------------------------------------//
     // SOUND CONTROLS AND QUEUES MANAGING //
@@ -214,23 +211,10 @@ struct iSoundManager: public virtual iBase
     virtual void SetTimeOfDay(int newTimeOfDay) = 0;
 
     /**
-     * Get the current time of the day. The method works only if sectors have
-     * been initialized.
-     * @return the time of the day or -1 if the sectors are not initialized.
-     */
-    virtual int GetTimeOfDay() const = 0;
-
-    /**
      * Set the weather's state.
      * @param newWeather the weather to be set.
      */
     virtual void SetWeather(int newWeather) = 0;
-
-    /**
-     * Get the weather's state.
-     * @return the weather's state.
-     */
-    virtual int GetWeather() const = 0;
 
     /**
      * Sets the new state for the entity associated to the given mesh and

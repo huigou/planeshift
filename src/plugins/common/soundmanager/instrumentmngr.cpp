@@ -31,65 +31,12 @@
 #include "instrument.h"
 #include "songhandle.h"
 
+#define DEFAULT_INSTRUMENTS_PATH "/planeshift/art/instruments.xml"
 
-InstrumentManager::InstrumentManager(iObjectRegistry* objectReg, const char* instrumentsFileName)
+
+InstrumentManager::InstrumentManager()
 {
-    csRef<iDocument> doc;
-    csRef<iDocumentNode> root;
-    csRef<iDocumentNode> instrRootNode;
-
-    // if SoundSystemManager hasn't been initialized instruments cannot
-    // load notes from resource sounds
-    if(!SoundSystemManager::GetSingleton().Initialised)
-    {
-        return;
-    }
-
-    if((doc = ParseFile(objectReg, instrumentsFileName)).IsValid()
-        && (root = doc->GetRoot()).IsValid()
-        && (instrRootNode = root->GetNode("instruments")).IsValid())
-    {
-        csRef<iDocumentNode> instrumentNode;
-        csRef<iDocumentNodeIterator> instrIter;
-
-        instrIter = instrRootNode->GetNodes("instrument");
-        while(instrIter->HasNext())
-        {
-            uint polyphony;
-            const char* name;
-            Instrument* instr;
-            csRef<iDocumentNode> note;
-            csRef<iDocumentNodeIterator> notesIter;
-
-            instrumentNode = instrIter->Next();
-            name = instrumentNode->GetAttributeValue("name");
-            polyphony = instrumentNode->GetAttributeValueAsInt("polyphony", 1);
-            instr = new Instrument(polyphony);
-
-            // adding instrument
-            instruments.Put(name, instr);
-
-            instr->volume = instrumentNode->GetAttributeValueAsFloat("volume", VOLUME_NORM);
-            instr->minDist = instrumentNode->GetAttributeValueAsFloat("min_dist");
-            instr->maxDist = instrumentNode->GetAttributeValueAsFloat("max_dist");
-            
-            notesIter = instrumentNode->GetNodes("note");
-            while(notesIter->HasNext())
-            {
-                int alter;
-                uint octave;
-                const char* step;
-                const char* resource;
-
-                note = notesIter->Next();
-                resource = note->GetAttributeValue("resource");
-                step = note->GetAttributeValue("step");
-                alter = note->GetAttributeValueAsInt("alter");
-                octave = note->GetAttributeValueAsInt("octave");
-                instr->AddNote(resource, *step, alter, octave);
-            }
-        }
-    }
+    // empty
 }
 
 InstrumentManager::~InstrumentManager()
@@ -104,6 +51,93 @@ InstrumentManager::~InstrumentManager()
     }
 
     instruments.DeleteAll();
+}
+
+bool InstrumentManager::Initialize(iObjectRegistry* objectReg)
+{
+    const char* instrumentsPath;
+    csRef<iDocument> doc;
+    csRef<iDocumentNode> root;
+    csRef<iDocumentNode> instrRootNode;
+    csRef<iDocumentNode> instrumentNode;
+    csRef<iDocumentNodeIterator> instrIter;
+
+    // retrieving path to instruments definitions
+    csRef<iConfigManager> configManager = csQueryRegistry<iConfigManager>(objectReg);
+    if(configManager != 0)
+    {
+        instrumentsPath = configManager->GetStr("Planeshift.Sound.Intruments", DEFAULT_INSTRUMENTS_PATH);
+    }
+    else
+    {
+        instrumentsPath = DEFAULT_INSTRUMENTS_PATH;
+    }
+
+    // if SoundSystemManager hasn't been initialized instruments cannot
+    // load notes from resource sounds
+    if(!SoundSystemManager::GetSingleton().Initialised)
+    {
+        return false;
+    }
+
+    doc = ParseFile(objectReg, instrumentsPath);
+    if(!doc.IsValid())
+    {
+        return false;
+    }
+
+    root = doc->GetRoot();
+    if(!root.IsValid())
+    {
+        return false;
+    }
+
+    instrRootNode = root->GetNode("instruments");
+    if(!instrRootNode.IsValid())
+    {
+        return false;
+    }
+
+    // parsing the file
+    instrIter = instrRootNode->GetNodes("instrument");
+    while(instrIter->HasNext())
+    {
+        uint polyphony;
+        const char* name;
+        Instrument* instr;
+        csRef<iDocumentNode> note;
+        csRef<iDocumentNodeIterator> notesIter;
+
+        instrumentNode = instrIter->Next();
+        name = instrumentNode->GetAttributeValue("name");
+        polyphony = instrumentNode->GetAttributeValueAsInt("polyphony", 1);
+        instr = new Instrument(polyphony);
+
+        // adding instrument
+        instruments.Put(name, instr);
+
+        instr->volume = instrumentNode->GetAttributeValueAsFloat("volume", VOLUME_NORM);
+        instr->minDist = instrumentNode->GetAttributeValueAsFloat("min_dist");
+        instr->maxDist = instrumentNode->GetAttributeValueAsFloat("max_dist");
+
+        notesIter = instrumentNode->GetNodes("note");
+        while(notesIter->HasNext())
+        {
+            int alter;
+            uint octave;
+            const char* step;
+            const char* resource;
+
+            note = notesIter->Next();
+            resource = note->GetAttributeValue("resource");
+            step = note->GetAttributeValue("step");
+            alter = note->GetAttributeValueAsInt("alter");
+            octave = note->GetAttributeValueAsInt("octave");
+            instr->AddNote(resource, *step, alter, octave);
+        }
+    }
+
+    return true;
 }
 
 bool InstrumentManager::PlaySong(SoundControl* sndCtrl, csVector3 pos, csVector3 dir, SoundHandle* &songHandle,

@@ -44,18 +44,24 @@ struct iObjectRegistry;
 class InstrumentManager
 {
 public:
-    /**
-     * Constructor. It reads the instruments definitions from the given file.
-     * @param objectReg the object registry.
-     * @param instrumentsFileName the name of the file that contains the
-     * instruments definitions.
-     */
-    InstrumentManager(iObjectRegistry* objectReg, const char* instrumentsFileName);
 
     /**
-     * Destructor.
+     * Constructor. Creates an empty InstrumentManager.
+     */
+    InstrumentManager();
+
+    /**
+     * Destructor. Destroys all instruments.
      */
     ~InstrumentManager();
+
+    /**
+     * Reads the instruments definitions.
+     * @param objectReg the object registry.
+     * @return false if SoundSystemManager has not been correctly initialized or
+     * if the instruments definitions are not syntactically correct.
+     */
+    bool Initialize(iObjectRegistry* objectReg);
 
     /**
      * Play the song in the given musical sheet with the given instruments.

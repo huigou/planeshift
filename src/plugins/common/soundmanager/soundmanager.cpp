@@ -34,7 +34,7 @@
 //====================================================================================
 // Project Includes
 //====================================================================================
-#include "util/psxmlparser.h"
+#include "util/psstring.h"
 
 //====================================================================================
 // Local Includes
@@ -44,44 +44,43 @@
 #include "queue.h"
 #include "handle.h"
 #include "manager.h"
-#include "psmusic.h"
-#include "psemitter.h"
 #include "soundctrl.h"
-#include "pssoundsector.h"
+#include "sectormngr.h"
 #include "instrumentmngr.h"
+
+#define DEFAULT_SECTOR_UPDATE_TIME 50
+#define DEFAULT_DAMPENING_PERCENT 0.1f
+#define DEFAULT_DAMPENING_CONTROLS "music"
 
 
 SCF_IMPLEMENT_FACTORY(SoundManager)
 
 csRandomGen SoundManager::randomGen;
 
-psSoundSector* SoundManager::commonSector = 0;
-
 uint SoundManager::updateTime = DEFAULT_SECTOR_UPDATE_TIME;
 
 SoundManager::SoundManager(iBase* parent): scfImplementationType(this, parent)
 {
-    // initializing pointers to null
-    ambientSndCtrl = 0;
-    musicSndCtrl = 0;
-    activeSector = 0;
+    // sound system manager and sound controls can be initialized here
+    // remember that the main SoundControl is initialized automatically
+    sndSysMgr = new SoundSystemManager();
+    for(uint id = MAIN_SNDCTRL + 1; id < COUNT_SNDCTRL; id++)
+    {
+        sndSysMgr->AddSoundControl(id);
+    }
+    AddSndQueue(VOICE_QUEUE, VOICE_SNDCTRL);
 
-    sndSysMgr = 0;
-    instrMgr = 0;
-
-    combat = PEACE;
-    weather = 1; // 1 is sunshine
-    isSectorLoaded = false;
+    // create managers so we don't have to deal with null pointers
+    // remember that SoundSectorManager needs music and ambient sound
+    // controls to be already initialized when created
+    instrMgr = new InstrumentManager();
+    sectorMgr = new SoundSectorManager();
 }
 
 
 SoundManager::~SoundManager()
 {
-    if(isSectorLoaded)
-    {
-        UnloadSectors();
-    }
-
+    delete sectorMgr;
     delete instrMgr;
     delete sndSysMgr;
     // Note: sndSysMgr should take care of SoundControls .. we can ignore them
@@ -105,12 +104,61 @@ SoundManager::~SoundManager()
 
 bool SoundManager::Initialize(iObjectRegistry* objReg)
 {
+    const char* volumeDampControls;
+
     objectReg = objReg;
-    
-    loopBGM.SetCallback(this, &UpdateMusicCallback);
-    combatMusic.SetCallback(this, &UpdateMusicCallback);
 
     lastUpdateTime = csGetTicks();
+
+    // configuration
+    csRef<iConfigManager> configManager = csQueryRegistry<iConfigManager>(objectReg);
+    if(configManager != 0)
+    {
+        SoundManager::updateTime = configManager->GetInt("Planeshift.Sound.UpdateTime", DEFAULT_SECTOR_UPDATE_TIME);
+
+        volumeDampPercent = configManager->GetFloat("PlaneShift.Sound.DampeningPercent", DEFAULT_DAMPENING_PERCENT);
+        volumeDampControls = configManager->GetStr("PlaneShift.Sound.DampeningControls", DEFAULT_DAMPENING_CONTROLS);
+    }
+    else
+    {
+        volumeDampPercent = DEFAULT_DAMPENING_PERCENT;
+        volumeDampControls = DEFAULT_DAMPENING_CONTROLS;
+    }
+
+	/*
+	 * Prepare an array of the sound controls to dampened when voice is queued.
+	 * The configuration string is delimited by | and each control get referenced
+	 * by the word lowercase. eg. "music" for the music sound control.
+	 */
+    psString strDampControls(volumeDampControls);
+    csStringArray dampControls;
+
+    strDampControls.Split(dampControls,'|');
+
+    if(strDampControls.Find("ambient") != csArrayItemNotFound)
+    {
+        dampenCtrls.Push(AMBIENT_SNDCTRL);
+    }
+    if(strDampControls.Find("music") != csArrayItemNotFound)
+    {
+        dampenCtrls.Push(MUSIC_SNDCTRL);
+    }
+    if(strDampControls.Find("action") != csArrayItemNotFound)
+    {
+        dampenCtrls.Push(ACTION_SNDCTRL);
+    }
+    if(strDampControls.Find("effect") != csArrayItemNotFound)
+    {
+        dampenCtrls.Push(EFFECT_SNDCTRL);
+    }
+    if(strDampControls.Find("gui") != csArrayItemNotFound)
+    {
+        dampenCtrls.Push(GUI_SNDCTRL);
+    }
+    if(strDampControls.Find("instrument") != csArrayItemNotFound)
+    {
+        dampenCtrls.Push(INSTRUMENT_SNDCTRL);
+    }
 
     // Registering for event callbacks
     csRef<iEventQueue> queue = csQueryRegistry<iEventQueue>(objectReg);
@@ -118,12 +166,6 @@ bool SoundManager::Initialize(iObjectRegistry* objReg)
     if (queue != 0)
     {
         queue->RegisterListener(this, evSystemOpen);
-    }
-    else
-    {
-        // If this cannot be registered for the event it's better to
-        // initialize sndSysMgr here to prevent using a null pointer
-        Init();
     }
 
     //TODO: NEED TO INITIALIZE ALL VARIABLES!
@@ -136,14 +178,13 @@ bool SoundManager::Initialize(iObjectRegistry* objReg)
 
 /*
  * To get the listener (and so to initialize SoundSystemManager and
- * SoundSystem) iSndSysRenderer must receive the evSystemOpen event,
- * then we can initialize everything.
+ * SoundSystem) iSndSysRenderer must receive the evSystemOpen.
  */
 bool SoundManager::HandleEvent(iEvent &e)
 {
     if (e.Name == evSystemOpen) 
     {
-        Init();
+        InitSoundSystem();
     }
 
     return false;
@@ -164,155 +205,30 @@ const csHandlerID* SoundManager::GenericPrec(csRef<iEventHandlerRegistry> &ehr,
     return 0;
 }
 
-//----------------------------
-// FROM iSoundControlListener
-//----------------------------
-
-void SoundManager::OnSoundChange(SoundControl* sndCtrl)
-{
-    if(activeSector == 0)
-    {
-        return;
-    }
-
-    if(sndCtrl == musicSndCtrl)
-    {
-        activeSector->UpdateMusic(loopBGM.GetToggle(), combat, musicSndCtrl);
-    }
-    else if(sndCtrl == ambientSndCtrl)
-    {
-        activeSector->UpdateAmbient(weather, ambientSndCtrl);
-    }
-    
-}
-
 //--------------------
 // FROM iSoundManager 
 //--------------------
 
 bool SoundManager::InitializeSectors()
 {
-    LoadSectors();
-
-    return isSectorLoaded;
-}
-
-/*
-* LoadActiveSector is called when when the player enters a sector (modehandler.cpp)
-*
-* It loads the new sector and unloads the old one
-* FACTORY Emitters are converted to real EMITTERS (if not already done)
-* \ this is only done ONCE per sector
-*
-* it also moves background and ambient music into the new sector
-* if they are not changing and are already playing
-*
-* Old sector will be cleaned at the end of this function
-* unused music and sounds will be unloaded
-*
-* NOTE: has nothing todo with updates on OpenAL .. those are done by CS
-*
-*/
-void SoundManager::LoadActiveSector(const char* sector)
-{
-    // check if the sectors are initialized
-    if(!isSectorLoaded)
-    {
-        return;
-    }
-
-    psSoundSector* oldSector;
-    psSoundSector* newSector;
-
-    /* TODO wrong way todo this */
+    // there's no reason to initialize sectors if the sound system
+    // has not been initialized
     if(sndSysMgr->Initialised == false)
     {
-        return;
+        return false;
     }
 
-    /*
-    * i dont want this function called if were doing nasty stuff like that
-    * FIXME
-    */
-
-    if(strcmp(sector, "SectorWhereWeKeepEntitiesResidingInUnloadedMaps") == 0)
-    {
-        return;
-    }
-
-    /*
-    * set the wanted sector to our active sector (if found)
-    */
-
-    if(FindSector(sector, newSector) == true)
-    {
-        /* FIXME - hack for #4268 */
-        if(activeSector != NULL)
-        {
-            if(csStrCaseCmp(activeSector->name, sector) == 0)
-            {
-                return;
-            }
-        }
-
-        oldSector = activeSector;
-        activeSector = newSector;
-        activeSector->active = true;
-
-        /* works only on loaded sectors! */
-        ConvertFactoriesToEmitter(activeSector);
-
-        if(oldSector != NULL)
-        {
-            /*
-            * hijack active ambient and music if they are played in the new sector
-            * in the old sector there MUST be only ONE of each
-            */
-
-            TransferHandles(oldSector, activeSector);
-
-            /* set old sector to inactive and make a update (will stop all sounds) */
-            oldSector->active = false;
-            UpdateSector(oldSector);
-
-        }
-
-        /*
-        * Call Update start sound in the new sector
-        */
-
-        UpdateSector(activeSector);
-        return;
-    }
+    return sectorMgr->Initialize(objectReg);
 }
 
-
-void SoundManager::ReloadSectors()
+bool SoundManager::LoadActiveSector(const char* sectorName)
 {
-    // check if the sectors are initialized
-    if(!isSectorLoaded)
-    {
-        return;
-    }
-
-    csString currentSector = csString(activeSector->name);
-    UnloadActiveSector();
-    ReloadAllSectors();
-    LoadActiveSector(currentSector);
+    return sectorMgr->SetActiveSector(sectorName);
 }
 
-
-void SoundManager::UnloadActiveSector()
+bool SoundManager::ReloadSectors()
 {
-    // check if the sectors are initialized
-    if(!isSectorLoaded)
-    {
-        return;
-    }
-
-    activeSector->active = false;
-    UpdateSector(activeSector);
-    activeSector = NULL;
+    return sectorMgr->ReloadSectors();
 }
 
 iSoundControl* SoundManager::GetSndCtrl(SndCtrlID sndCtrlID)
@@ -394,28 +310,15 @@ bool SoundManager::IsSoundActive(SndCtrlID sndCtrlID)
 
 void SoundManager::SetCombatStance(int newCombatStance)
 {
-    if(combatMusic.GetToggle() == true)
-    {
-        combat = newCombatStance;
-    }
-    else
-    {
-        combat = iSoundManager::PEACE;
-    }
-
-    if(activeSector != 0)
-    {
-        activeSector->UpdateMusic(loopBGM.GetToggle(), combat, musicSndCtrl);
-    }
+    sectorMgr->SetCombatStance(newCombatStance);
 }
 
 /*
 * FIXME Remove GetCombatStance when you fix the victory effect
 */
-
 int SoundManager::GetCombatStance() const
 {
-    return combat;
+    return sectorMgr->GetCombatStance();
 }
 
 
@@ -431,105 +334,66 @@ csVector3 SoundManager::GetPosition() const
     return sndSysMgr->GetPlayerPosition();
 }
 
-
 /*
-* Set functions which trigger updates
+* TODO Set functions which trigger updates
 */
 void SoundManager::SetTimeOfDay(int newTimeOfDay)
 {
-    if(activeSector != NULL)
-    {
-        activeSector->timeofday = newTimeOfDay;
-
-        activeSector->UpdateAmbient(weather, ambientSndCtrl);
-        activeSector->UpdateMusic(loopBGM.GetToggle(), combat, musicSndCtrl);
-
-    }
+    sectorMgr->SetTimeOfDay(newTimeOfDay);
 }
 
-int SoundManager::GetTimeOfDay() const
-{
-    if(activeSector == 0)
-    {
-        return -1;
-    }
-
-    return activeSector->timeofday;
-}
-
-
-/*
-* Engine calls SetWeather every frame or so
-* update is only called if weather is changing
-*/
 void SoundManager::SetWeather(int newWeather)
 {
-    if(weather != newWeather && activeSector)
-    {
-        weather = newWeather;
-        activeSector->UpdateAmbient(weather, ambientSndCtrl);
-    }
-}
-
-
-int SoundManager::GetWeather() const
-{
-    return weather;
+    sectorMgr->SetWeather(newWeather);
 }
 
 void SoundManager::SetEntityState(int state, iMeshWrapper* mesh, bool forceChange)
 {
-    if(activeSector != 0)
-    {
-        activeSector->SetEntityState(state, mesh, forceChange);
-    }
+    sectorMgr->SetEntityState(state, mesh, forceChange);
 }
 
 void SoundManager::SetLoopBGMToggle(bool toggle)
 {
-    loopBGM.SetToggle(toggle);
+    sectorMgr->SetLoopBGMToggle(toggle);
 }
-
 
 bool SoundManager::IsLoopBGMToggleOn()
 {
-    return loopBGM.GetToggle();
+    return sectorMgr->IsLoopBGMOn();
 }
-
 
 void SoundManager::SetCombatMusicToggle(bool toggle)
 {
-    combatMusic.SetToggle(toggle);
+    sectorMgr->SetCombatMusicToggle(toggle);
 }
-
 
 bool SoundManager::IsCombatMusicToggleOn()
 {
-    return combatMusic.GetToggle();
+    return sectorMgr->IsCombatMusicOn();
 }
 
 
 void SoundManager::SetListenerOnCameraToggle(bool toggle)
 {
-    listenerOnCamera.SetToggle(toggle);
+    listenerOnCamera = toggle;
 }
 
 
 bool SoundManager::IsListenerOnCameraToggleOn()
 {
-    return listenerOnCamera.GetToggle();
+    return listenerOnCamera;
 }
 
 
 void SoundManager::SetChatToggle(bool toggle)
 {
-    chatToggle.SetToggle(toggle);
+    chatToggle = toggle;
 }
 
 
 bool SoundManager::IsChatToggleOn()
 {
-    return chatToggle.GetToggle();
+    return chatToggle;
 }
 
 bool SoundManager::IsSoundValid(uint soundID) const
@@ -678,11 +542,7 @@ void SoundManager::Update()
 			}
 
 			// Updating sectors if needed
-			if(activeSector != 0)
-			{
-				activeSector->UpdateEmitter(ambientSndCtrl);
-                activeSector->UpdateEntity(ambientSndCtrl);
-			}
+            sectorMgr->Update();
     	}
         lastUpdateTime = csGetTicks();
     }
@@ -692,306 +552,21 @@ void SoundManager::Update()
     sndSysMgr->Update();
 }
 
-void SoundManager::Init()
+void SoundManager::InitSoundSystem()
 {
-    const char* instrumentsPath;
-    const char* volumeDampControls;
-
-    // configuration
-    csRef<iConfigManager> configManager = csQueryRegistry<iConfigManager>(objectReg);
-    if(configManager != 0)
-    {
-        SoundManager::updateTime = configManager->GetInt("Planeshift.Sound.UpdateTime", DEFAULT_SECTOR_UPDATE_TIME);
-        instrumentsPath = configManager->GetStr("Planeshift.Sound.Intruments", DEFAULT_INSTRUMENTS_PATH);
-
-        volumeDampPercent = configManager->GetFloat("PlaneShift.Sound.DampeningPercent", DEFAULT_DAMPENING_PERCENT);
-        volumeDampControls = configManager->GetStr("PlaneShift.Sound.DampeningControls", DEFAULT_DAMPENING_CONTROLS);
-    }
-    else
-    {
-        // updateTime is already initialized
-        instrumentsPath = DEFAULT_INSTRUMENTS_PATH;
-
-        volumeDampPercent = DEFAULT_DAMPENING_PERCENT;
-        volumeDampControls = DEFAULT_DAMPENING_CONTROLS;
-    }
-
-	/*
-	 * Prepare an array of the sound controls to dampened when voice is queued.
-	 * The configuration string is delimited by | and each control get referenced
-	 * by the word lowercase. eg. "music" for the music sound control.
-	 */
-    psString strDampControls(volumeDampControls);
-    csStringArray dampControls;
-
-    strDampControls.Split(dampControls,'|');
-
-    if(strDampControls.Find("ambient") != csArrayItemNotFound)
-    {
-        dampenCtrls.Push(AMBIENT_SNDCTRL);
-    }
-    if(strDampControls.Find("music") != csArrayItemNotFound)
-    {
-        dampenCtrls.Push(MUSIC_SNDCTRL);
-    }
-    if(strDampControls.Find("action") != csArrayItemNotFound)
-    {
-        dampenCtrls.Push(ACTION_SNDCTRL);
-    }
-    if(strDampControls.Find("effect") != csArrayItemNotFound)
-    {
-        dampenCtrls.Push(EFFECT_SNDCTRL);
-    }
-    if(strDampControls.Find("gui") != csArrayItemNotFound)
-    {
-        dampenCtrls.Push(GUI_SNDCTRL);
-    }
-    if(strDampControls.Find("instrument") != csArrayItemNotFound)
-    {
-        dampenCtrls.Push(INSTRUMENT_SNDCTRL);
-    }
-
-    // Inizializing SoundSystemManager and SoundControls
-    // remember that the main SoundControl is initialized automatically
-    sndSysMgr = new SoundSystemManager(objectReg);
-    for(uint id = MAIN_SNDCTRL + 1; id < COUNT_SNDCTRL; id++)
-    {
-        sndSysMgr->AddSoundControl(id);
-    }
-
-    musicSndCtrl = sndSysMgr->GetSoundControl(MUSIC_SNDCTRL);
-    ambientSndCtrl = sndSysMgr->GetSoundControl(AMBIENT_SNDCTRL);
-    musicSndCtrl->Subscribe(this);
-    ambientSndCtrl->Subscribe(this);
-
-    // remember that InstrumentManager must be initialized after SoundSystemManager
-    // or it won't define any instrument
-    instrMgr = new InstrumentManager(objectReg, instrumentsPath);
-
-    // Initializing voice queue
-    AddSndQueue(VOICE_QUEUE, VOICE_SNDCTRL);
+    // Initializing sound system. Remember that InstrumentManager must be
+    // initialized after SoundSystemManager or it won't define any instrument.
+    // SoundSectorManager's initialization is optional and it's done by
+    // InitializeSectors()
+    sndSysMgr->Initialize(objectReg);
+    instrMgr->Initialize(objectReg);
 }
-
-void SoundManager::UpdateMusicCallback(void* object)
-{
-    SoundManager* which = (SoundManager*) object;
-    if(which->activeSector != NULL)
-    {
-        which->activeSector->UpdateMusic(which->loopBGM.GetToggle(), which->combat, which->musicSndCtrl);
-    }
-}
-
-void SoundManager::UpdateAmbientCallback(void* object)
-{
-    SoundManager* which = (SoundManager*) object;
-    if(which->activeSector != NULL)
-    {
-        which->activeSector->UpdateAmbient(which->weather, which->ambientSndCtrl);
-    }
-}
-
-
-/*
-* Transfer ambient/music Handles from oldsector to newsector if needed
-* if loopBGM is false then the handle might be invalid
-* this is no problem because we dont touch it
-* all we do is copy the address
-*/
-
-void SoundManager::TransferHandles(psSoundSector* &oldsector,
-                                   psSoundSector* &newsector)
-{
-    // check if the sectors are initialized
-    if(!isSectorLoaded)
-    {
-        return;
-    }
-
-    for(size_t j = 0; j< newsector->musicarray.GetSize(); j++)
-    {
-        if(oldsector->activemusic == NULL)
-        {
-            break;
-        }
-
-        if(csStrCaseCmp(newsector->musicarray[j]->resource,
-           oldsector->activemusic->resource) == 0)
-        {
-            /* yay active resource with the same name - steal the handle*/
-            newsector->musicarray[j]->handle = oldsector->activemusic->handle;
-            /* set handle to NULL */
-            oldsector->activemusic->handle = NULL;
-            newsector->activemusic = newsector->musicarray[j];
-            /* set the sound to active */
-            newsector->musicarray[j]->active = true;
-            /* set it to inactive to prevent damage on the handle */
-            oldsector->activemusic->active = false;
-            /* set it to NULL to avoid problems */
-            oldsector->activemusic = NULL;
-            /* update callback */
-            newsector->activemusic->UpdateHandleCallback();
-        }
-    }
-
-    for(size_t j = 0; j< activeSector->ambientarray.GetSize(); j++)
-    {
-        if(oldsector->activeambient == NULL)
-        {
-            break;
-        }
-
-        if(csStrCaseCmp(newsector->ambientarray[j]->resource,
-           oldsector->activeambient->resource) == 0)
-        {
-            /* yay active resource with the same name - steal the handle*/
-            newsector->ambientarray[j]->handle = oldsector->activeambient->handle;
-            /* set handle to NULL */
-            oldsector->activeambient->handle = NULL;
-            newsector->activeambient = newsector->ambientarray[j];
-            /* set the sound to active */
-            newsector->ambientarray[j]->active = true;
-            /* set it to inactive to prevent damage on the handle */
-            oldsector->activeambient->active = false;
-            /* set it to NULL to avoid problems */
-            oldsector->activeambient = NULL;
-            /* update callback */
-            newsector->activeambient->UpdateHandleCallback();
-        }
-    }
-}
-
-
-
-
-void SoundManager::ConvertFactoriesToEmitter(psSoundSector* &sector)
-{
-    iSector*             searchSector;
-    iMeshFactoryWrapper* factory;
-    iMeshWrapper*        mesh;
-    iMeshList*           meshes;
-    csRef<iEngine>       engine;
-    psEmitter*           emitter;
-    psEmitter*           factoryemitter;
-
-    // check if the sectors are initialized
-    if(!isSectorLoaded)
-    {
-        return;
-    }
-
-    engine = csQueryRegistry<iEngine>(objectReg);
-    if(!engine)
-    {
-        Error1("No iEngine plugin!");
-        return;
-    }
-
-    /*
-    * convert emitters with factory attributes to real emitters
-    * positions are random but are only generated once
-    */
-
-    for(size_t j = 0; j< sector->emitterarray.GetSize(); j++)
-    {
-        if(!sector->emitterarray[j]->factory)
-        {
-            continue;
-        }
-
-        factoryemitter = sector->emitterarray[j];
-
-        if(!(searchSector = engine->FindSector(sector->name, NULL)))
-        {
-            Error2("sector %s not found\n", (const char*) sector);
-            continue;
-        }
-
-        if(!(factory = engine->GetMeshFactories()
-           ->FindByName(factoryemitter->factory)))
-        {
-            Error2("Could not find factory name %s", (const char*) factoryemitter->factory);
-            continue;
-        }
-
-        meshes = searchSector->GetMeshes();
-
-        for(int k = 0; k < meshes->GetCount(); k++)
-        {
-            mesh = meshes->Get(k);
-
-            if(mesh->GetFactory() == factory)
-            {
-                if(SoundManager::randomGen.Get() <= factoryemitter->factory_prob)
-                {
-                    emitter = new psEmitter;
-
-                    emitter->resource = csString(factoryemitter->resource);
-                    emitter->minvol   = factoryemitter->minvol;
-                    emitter->maxvol   = factoryemitter->maxvol;
-                    emitter->maxrange = factoryemitter->maxrange;
-                    emitter->position = mesh->GetMovable()->GetPosition();
-                    emitter->active   = false;
-
-                    sector->emitterarray.Push(emitter);
-                }
-            }
-        }
-        /* delete the factory node */
-        sector->DeleteEmitter(factoryemitter);
-    }
-}
-
-
-bool SoundManager::FindSector(const char* name, psSoundSector* &sector)
-{
-    // check if the sectors are initialized
-    if(!isSectorLoaded)
-    {
-        return false;
-    }
-
-    for(size_t i = 0; i< sectorData.GetSize(); i++)
-    {
-        if(strcmp(name, sectorData[i]->name) != 0)
-        {
-            continue;
-        }
-        else
-        {
-            sector = sectorData[i];
-            return true;
-        }
-    }
-
-    sector = NULL;
-    return false;
-}
-
-/*
-* Update everything in the given sector
-*/
-
-void SoundManager::UpdateSector(psSoundSector* &sector)
-{
-    // check if the sectors are initialized
-    if(!isSectorLoaded)
-    {
-        return;
-    }
-
-    sector->UpdateMusic(loopBGM.GetToggle(), combat, musicSndCtrl);
-    sector->UpdateAmbient(weather, ambientSndCtrl);
-    sector->UpdateEmitter(ambientSndCtrl);
-    sector->UpdateEntity(ambientSndCtrl);
-}
-
 
 /*
 * were always using camera height and rotation
 * position can be players position or cameras position
 * updated every frame? ..
 */
-
 void SoundManager::UpdateListener(iView* view)
 {
     csVector3 hearpoint;
@@ -1005,7 +580,7 @@ void SoundManager::UpdateListener(iView* view)
         return;
     }
 
-    if(listenerOnCamera.GetToggle() == false)
+    if(!listenerOnCamera)
     {
         hearpoint = sndSysMgr->GetPlayerPosition();
     }
@@ -1023,143 +598,5 @@ void SoundManager::UpdateListener(iView* view)
 
     sndSysMgr->UpdateListener(hearpoint, front, top);
 
-    if(activeSector != NULL)
-    {
-        activeSector->listenerPos = hearpoint;
-    }
 }
 
-
-/*
-* Load a all sector xmls and make them usable. Will overwrite the target
-* sector if it exists. It's only parsing the xml most of it is hardcoded.
-*
-* If a common sector it's not found, commonSector will be initialized as
-* an empty psSoundSector.
-*/
-
-bool SoundManager::LoadSectors()
-{
-    const char* areasPath;
-    const char* commonName;
-
-    csRef<iConfigManager> configManager = csQueryRegistry<iConfigManager>(objectReg);
-    if(configManager != 0)
-    {
-        areasPath = configManager->GetStr("Planeshift.Sound.AreasPath", DEFAULT_AREAS_PATH);
-        commonName = configManager->GetStr("Planeshift.Sound.CommonSector", DEFAULT_COMMON_SECTOR_NAME);
-    }
-    else
-    {
-        areasPath = DEFAULT_AREAS_PATH;
-        commonName = DEFAULT_COMMON_SECTOR_NAME;
-    }
-
-    // check if sectors are already initialized
-    if(isSectorLoaded)
-    {
-        return true;
-    }
-
-    csRef<iDataBuffer>      xpath;
-    const char*             dir;
-    const char*             sectorName;
-    csRef<iStringArray>     files;
-    psSoundSector*          tmpsector;
-    csRef<iVFS>             vfs;
-
-    csRef<iDocumentNodeIterator> sectorIter;
-
-    if(!(vfs = csQueryRegistry<iVFS>(objectReg)))
-    {
-        return false;
-    }
-
-    xpath = vfs->ExpandPath(areasPath);
-    dir = **xpath;
-    files = vfs->FindFiles(dir);
-
-    if(!files)
-    {
-        return false;
-    }
-
-    for(size_t i=0; i < files->GetSize(); i++)
-    {
-        csString name(files->Get(i));
-        csRef<iDocument> doc;
-        csRef<iDocumentNode> root, mapNode;
-
-        if((doc=ParseFile(objectReg, name))
-           && (root=doc->GetRoot())
-           && (mapNode=root->GetNode("MAP_SOUNDS")))
-        {
-            sectorIter = mapNode->GetNodes("SECTOR");
-
-            while(sectorIter->HasNext())
-            {
-                csRef<iDocumentNode> sector = sectorIter->Next();
-
-                sectorName = sector->GetAttributeValue("NAME");
-
-                if(FindSector(sectorName, tmpsector) == true)
-                {
-                    tmpsector->Reload(sector);
-                }
-                else if(csStrCaseCmp(sectorName, commonName) == 0)
-                {
-                    SoundManager::commonSector = new psSoundSector(sector, objectReg);
-                }
-                else
-                {
-                    tmpsector = new psSoundSector(sector, objectReg);
-                    sectorData.Push(tmpsector);
-                }
-            }
-        }
-    }
-
-    // checking if a common sector could be found
-    if(SoundManager::commonSector == 0)
-    {
-        SoundManager::commonSector = new psSoundSector(commonName, objectReg);
-    }
-    SoundManager::commonSector->active = true; // commonSector must always be active
-
-    isSectorLoaded = true;
-    return true;
-}
-
-void SoundManager::ReloadAllSectors()
-{
-    // check if the sectors are initialized
-    if(!isSectorLoaded)
-    {
-        return;
-    }
-
-    UnloadSectors();
-    LoadSectors();
-}
-
-/**
- * Delete both the sectors in sectorData and commonSector
- */
-void SoundManager::UnloadSectors()
-{
-    // check if the sectors are initialized
-    if(!isSectorLoaded)
-    {
-        return;
-    }
-
-    for(size_t i = 0; i < sectorData.GetSize(); i++)
-    {
-        delete sectorData[i];
-    }
-
-    sectorData.DeleteAll();
-    delete SoundManager::commonSector;
-
-    isSectorLoaded = false;
-}

@@ -23,6 +23,13 @@
 #ifndef _PSSOUNDSECTOR_H_
 #define _PSSOUNDSECTOR_H_
 
+//====================================================================================
+// Crystal Space Includes
+//====================================================================================
+#include <csutil/hash.h>
+#include <csutil/csstring.h>
+#include <csgeom/vector3.h>
+
 //------------------------------------------------------------------------------------
 // Forward Declarations
 //------------------------------------------------------------------------------------
@@ -30,6 +37,8 @@ class psMusic;
 class psEntity;
 class psEmitter;
 class SoundControl;
+struct iMeshWrapper;
+struct iDocumentNode;
 
 /**
  * work in progress - Looks like a mishap. I hope find a object where i
@@ -49,21 +58,19 @@ public:
     csHash<psEntity*, csString>  meshes;             ///< hash of mesh entities
     csHash<psEntity*, uint>      tempEntities;       ///< hash of all the temporary psEntites (i.e. associated to a specific mesh)
 
-    csVector3                    listenerPos;        ///< current listener position
-    int                          timeofday;          ///< sector time of day
-
     /**
      * Create an empty psSoundSector with no musics, ambients, emitters and entities.
-     * @param name the psSoundSector's name
-     * @param objReg the object registry
+     * @param objectReg the object registry.
      */
-    psSoundSector(const char* name, iObjectRegistry* objReg);
+    psSoundSector(iObjectRegistry* objectReg);
 
     /**
-     * Constructor
-     * @param sector documentnode that contains all sector data
+     * Creates a sound sector and loads its definition. This is exactly identical to
+     * calling the normal constructor and then Load().
+     * @param objectReg the object registry.
+     * @param sectorNode iDocumentNode that contains the sector's definition.
      */
-    psSoundSector(csRef<iDocumentNode> sector, iObjectRegistry* objReg);
+    psSoundSector(csRef<iDocumentNode> sectorNode, iObjectRegistry* objectReg);
 
     /**
      * Destructor.
@@ -95,7 +102,14 @@ public:
      * play any sound until a new valid state is defined.
      */
     void SetEntityState(int state, iMeshWrapper* mesh, bool forceChange);
-    void Load(csRef<iDocumentNode> sector);
+
+    /**
+     * Loads the sector's definition from the given node. This does not delete
+     * the previous data so, if called twice, the new definition is "appended"
+     * to the old one.
+     * @param sectorNode the node containing the sector's definition.
+     */
+    void Load(csRef<iDocumentNode> sectorNode);
     void Reload(csRef<iDocumentNode> sector);
     void Delete();
 

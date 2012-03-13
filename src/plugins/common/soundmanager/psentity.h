@@ -204,7 +204,7 @@ private:
         int timeOfDayStart;         ///< time when this entity starts playing.
         int timeOfDayEnd;           ///< time when this entity stops.
 
-        int fallbackState;          ///< the stateID that is activated after this one.
+        uint fallbackState;         ///< the stateID that is activated after this one.
         float fallbackProbability;  ///< the probability per second that the fallbackState is activated.
 
         int references;             ///< how many psEntity point to this EntityState.

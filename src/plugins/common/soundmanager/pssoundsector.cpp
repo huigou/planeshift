@@ -30,15 +30,13 @@
 #include "psentity.h"
 #include "psemitter.h"
 #include "soundctrl.h"
+#include "sectormngr.h"
 #include "soundmanager.h"
 
-psSoundSector::psSoundSector(const char* sectorName, iObjectRegistry* objReg)
+psSoundSector::psSoundSector(iObjectRegistry* objReg)
 {
-    name = sectorName;
     objectReg = objReg;
 
-    listenerPos = csVector3(0);
-    timeofday = 12;
     active = false;
 
     // initializing pointers to null
@@ -46,18 +44,17 @@ psSoundSector::psSoundSector(const char* sectorName, iObjectRegistry* objReg)
     activemusic = 0;
 }
 
-psSoundSector::psSoundSector(csRef<iDocumentNode> sector, iObjectRegistry* objReg)
+psSoundSector::psSoundSector(csRef<iDocumentNode> sectorNode, iObjectRegistry* objReg)
 {
-    name = sector->GetAttributeValue("NAME");
-    listenerPos = csVector3(0);
-    timeofday = 12;
-    activeambient = NULL;
-    activemusic = NULL;
-    active = false;
-
     objectReg = objReg;
 
-    Load(sector);
+    active = false;
+
+    // initializing pointers to null
+    activeambient = 0;
+    activemusic = 0;
+
+    Load(sectorNode);
 }
 
 psSoundSector::~psSoundSector()
@@ -95,6 +92,7 @@ void psSoundSector::AddAmbient(csRef<iDocumentNode> Node)
 void psSoundSector::UpdateAmbient(int type, SoundControl* &ctrl)
 {
     psMusic* ambient;
+    int timeOfDay = SoundSectorManager::GetSingleton().GetTimeOfDay();
 
     for(size_t i = 0; i< ambientarray.GetSize(); i++)
     {
@@ -104,7 +102,7 @@ void psSoundSector::UpdateAmbient(int type, SoundControl* &ctrl)
         if(ambient->CheckType(type) == true
             && active == true
             && ctrl->GetToggle() == true
-            && ambient->CheckTimeOfDay(timeofday) == true)
+            && ambient->CheckTimeOfDay(timeOfDay) == true)
         {
             if(ambient->active == true)
             {
@@ -172,6 +170,7 @@ void psSoundSector::UpdateMusic(bool loopToggle, int type,
                                  SoundControl* &ctrl)
 {
     psMusic* music;
+    int timeOfDay = SoundSectorManager::GetSingleton().GetTimeOfDay();
 
     for(size_t i = 0; i< musicarray.GetSize(); i++)
     {
@@ -181,7 +180,7 @@ void psSoundSector::UpdateMusic(bool loopToggle, int type,
         if(music->CheckType(type) == true
             && active == true
             && ctrl->GetToggle() == true
-            && music->CheckTimeOfDay(timeofday) == true)
+            && music->CheckTimeOfDay(timeOfDay) == true)
         {
             if(music->active == true)
             {
@@ -286,6 +285,8 @@ void psSoundSector::AddEmitter(csRef<iDocumentNode> Node)
 void psSoundSector::UpdateEmitter(SoundControl* &ctrl)
 {
     psEmitter* emitter;
+    int timeOfDay = SoundSectorManager::GetSingleton().GetTimeOfDay();
+    csVector3 listenerPos = SoundSystemManager::GetSingleton().GetListenerPos();
 
     // start/stop all emitters in range
     for(size_t i = 0; i< emitterarray.GetSize(); i++)
@@ -295,7 +296,7 @@ void psSoundSector::UpdateEmitter(SoundControl* &ctrl)
         if(emitter->CheckRange(listenerPos) == true
            && active == true
            && ctrl->GetToggle() == true
-           && emitter->CheckTimeOfDay(timeofday) == true)
+           && emitter->CheckTimeOfDay(timeOfDay) == true)
         {
             if(emitter->active == true)
             {
@@ -395,10 +396,12 @@ void psSoundSector::AddEntity(csRef<iDocumentNode> entityNode)
 
 void psSoundSector::UpdateEntity(SoundControl* &ctrl)
 {
-    csRef<iEngine> engine;
-    iMeshList* entities;
+    int timeOfDay;
+    csVector3 listenerPos;
+
     psEntity* entity;
-    
+    iMeshList* entities;
+    csRef<iEngine> engine;
 
     engine =  csQueryRegistry<iEngine>(objectReg);
     if(!engine)
@@ -408,6 +411,8 @@ void psSoundSector::UpdateEntity(SoundControl* &ctrl)
     }
 
     entities = engine->GetMeshes();
+    listenerPos = SoundSystemManager::GetSingleton().GetListenerPos();
+    timeOfDay = SoundSectorManager::GetSingleton().GetTimeOfDay();
 
     for(int a = 0; a < entities->GetCount(); a++)
     {
@@ -433,7 +438,7 @@ void psSoundSector::UpdateEntity(SoundControl* &ctrl)
         rangeVec = mesh->GetMovable()->GetFullPosition() - listenerPos;
         range = rangeVec.Norm();
 
-        if(!entity->IsTemporary() && entity->CanPlay(timeofday, range))
+        if(!entity->IsTemporary() && entity->CanPlay(timeOfDay, range))
         {
             entity = new psEntity(entity);
             entity->SetMeshID(mesh->QueryObject()->GetID());
@@ -446,7 +451,7 @@ void psSoundSector::UpdateEntity(SoundControl* &ctrl)
         if(entity->IsTemporary())
         {
             csVector3 entityPosition = mesh->GetMovable()->GetFullPosition();
-            entity->Update(timeofday, range, SoundManager::updateTime, ctrl, entityPosition);
+            entity->Update(timeOfDay, range, SoundManager::updateTime, ctrl, entityPosition);
         }
     }
 
@@ -526,36 +531,35 @@ void psSoundSector::SetEntityState(int state, iMeshWrapper* mesh, bool forceChan
     }
 }
 
-void psSoundSector::Load(csRef<iDocumentNode> sector)
+void psSoundSector::Load(csRef<iDocumentNode> sectorNode)
 {
-    csRef<iDocumentNodeIterator> Itr;
-    
-    Itr = sector->GetNodes("AMBIENT");
-    
-    while(Itr->HasNext())
+    csRef<iDocumentNodeIterator> nodeIter;
+ 
+    // if the sector is already defined the name is overwritten
+    name = sectorNode->GetAttributeValue("NAME");
+
+    nodeIter = sectorNode->GetNodes("AMBIENT");
+    while(nodeIter->HasNext())
     {
-        AddAmbient(Itr->Next());
+        AddAmbient(nodeIter->Next());
     }
 
-    Itr = sector->GetNodes("BACKGROUND");
-
-    while(Itr->HasNext())
+    nodeIter = sectorNode->GetNodes("BACKGROUND");
+    while(nodeIter->HasNext())
     {
-        AddMusic(Itr->Next());
+        AddMusic(nodeIter->Next());
     }
     
-    Itr = sector->GetNodes("EMITTER");
-    
-    while(Itr->HasNext())
+    nodeIter = sectorNode->GetNodes("EMITTER");
+    while(nodeIter->HasNext())
     {
-        AddEmitter(Itr->Next());
+        AddEmitter(nodeIter->Next());
     }                
 
-    Itr = sector->GetNodes("ENTITY");
-
-    while(Itr->HasNext())
+    nodeIter = sectorNode->GetNodes("ENTITY");
+    while(nodeIter->HasNext())
     {
-        AddEntity(Itr->Next());
+        AddEntity(nodeIter->Next());
     }
 }
 
@@ -657,10 +661,14 @@ psEntity* psSoundSector::GetAssociatedEntity(iMeshWrapper* mesh) const
         // if nothing has been found check in common sector
         if(entity == 0)
         {
-            entity = SoundManager::commonSector->meshes.Get(meshName, 0);
+            psSoundSector* commonSector;
+
+            commonSector = SoundSectorManager::GetSingleton().GetCommonSector();
+            entity = commonSector->meshes.Get(meshName, 0);
+
             if(entity == 0 && factoryName != 0)
             {
-                entity = SoundManager::commonSector->factories.Get(factoryName, 0);
+                entity = commonSector->factories.Get(factoryName, 0);
             }
         }
     }

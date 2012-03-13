@@ -54,9 +54,8 @@ public:
     //From iSoundManager
     //Sectors managing
     virtual bool InitializeSectors();
-    virtual void LoadActiveSector(const char* sector);
-    virtual void UnloadActiveSector();
-    virtual void ReloadSectors();
+    virtual bool LoadActiveSector(const char* sectorName);
+    virtual bool ReloadSectors();
 
     //SoundControls and SoundQueue managing
     virtual iSoundControl* GetSndCtrl(SndCtrlID sndCtrlID);
@@ -71,9 +70,7 @@ public:
     virtual void SetPlayerMovement(csVector3 playerPosition, csVector3 playerVelocity);
     virtual csVector3 GetPosition() const;
     virtual void SetTimeOfDay(int newTimeOfDay);
-    virtual int GetTimeOfDay() const;
     virtual void SetWeather(int newWeather);
-    virtual int GetWeather() const;
     virtual void SetEntityState(int state, iMeshWrapper* mesh, bool forceChange);
 
     //Toggles
@@ -104,8 +101,6 @@ private:
     DummySoundControl* defaultSndCtrl;    ///< default sound control to return
     csVector3          position;          ///< current playerposition
     int                combat;            ///< current stance
-    int                time;              ///< current time
-    int                weather;           ///< current weather state
     bool               loopToggle;        ///< loobBGM toggle
     bool               combatToggle;      ///< toggle for combatmusic
     bool               listenerToggle;    ///< toggle for listener switch between player and camera position
