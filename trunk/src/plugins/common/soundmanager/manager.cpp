@@ -31,56 +31,17 @@
 #include <util/log.h>
 
 
-/*
- * Initialize the SoundSystem (SndSys) and the Datamanager (SndData)
- * Load our sound library
- *
- * Set Initialized to true if successfull / to false if not
- */
-
-SoundSystemManager::SoundSystemManager(iObjectRegistry* objectReg)
+SoundSystemManager::SoundSystemManager()
 {
-    const char* soundLib;
-
     // Initialised to false to make sure it is ..
     Initialised = false;
-
-    // Configuration
-    csRef<iConfigManager> configManager = csQueryRegistry<iConfigManager>(objectReg);
-    if(configManager != 0)
-    {
-        speedOfSound = configManager->GetInt("Planeshift.Sound.SpeedOfSound", DEFAULT_SPEED_OF_SOUND);
-        dopplerFactor = configManager->GetFloat("Planeshift.Sound.DopplerFactor", DEFAULT_DOPPLER_FACTOR);
-        updateTime = configManager->GetInt("Planeshift.Sound.SndSysUpdateTime", DEFAULT_SNDSYS_UPDATE_TIME);
-        soundLib = configManager->GetStr("Planeshift.Sound.SoundLib", DEFAULT_SOUNDLIB_PATH);
-    }
-    else
-    {
-        speedOfSound = DEFAULT_SPEED_OF_SOUND;
-        dopplerFactor = DEFAULT_DOPPLER_FACTOR;
-        updateTime = DEFAULT_SNDSYS_UPDATE_TIME;
-        soundLib = DEFAULT_SOUNDLIB_PATH;
-    }
-
-    // Initializing the event timer
-    eventTimer = csEventTimer::GetStandardTimer(objectReg);
 
     playerPosition.Set(0.0);
     playerVelocity.Set(0.0);
 
-    // Create a new SoundSystem, SoundDataCache Instance and the main SoundControl
     soundSystem = new SoundSystem;
     soundDataCache = new SoundDataCache;
     mainSndCtrl = new SoundControl(-1);
-
-    if(soundSystem->Initialize(objectReg)
-       && soundDataCache->Initialize(objectReg))
-    {
-        // FIXME what if soundlib.xml doesnt exist?
-        soundDataCache->LoadSoundLib(soundLib, objectReg);
-        LastUpdateTime = csGetTicks();
-        Initialised = true;
-    }
 }
 
 SoundSystemManager::~SoundSystemManager()
@@ -117,6 +78,48 @@ SoundSystemManager::~SoundSystemManager()
     delete soundSystem;
     delete soundDataCache;
 
+}
+
+/*
+ * Initialize the SoundSystem (SndSys) and the Datamanager (SndData)
+ * Load our sound library
+ *
+ * Set Initialized to true if successfull / to false if not
+ */
+bool SoundSystemManager::Initialize(iObjectRegistry* objectReg)
+{
+    const char* soundLib;
+
+    // Configuration
+    csRef<iConfigManager> configManager = csQueryRegistry<iConfigManager>(objectReg);
+    if(configManager != 0)
+    {
+        speedOfSound = configManager->GetInt("Planeshift.Sound.SpeedOfSound", DEFAULT_SPEED_OF_SOUND);
+        dopplerFactor = configManager->GetFloat("Planeshift.Sound.DopplerFactor", DEFAULT_DOPPLER_FACTOR);
+        updateTime = configManager->GetInt("Planeshift.Sound.SndSysUpdateTime", DEFAULT_SNDSYS_UPDATE_TIME);
+        soundLib = configManager->GetStr("Planeshift.Sound.SoundLib", DEFAULT_SOUNDLIB_PATH);
+    }
+    else
+    {
+        speedOfSound = DEFAULT_SPEED_OF_SOUND;
+        dopplerFactor = DEFAULT_DOPPLER_FACTOR;
+        updateTime = DEFAULT_SNDSYS_UPDATE_TIME;
+        soundLib = DEFAULT_SOUNDLIB_PATH;
+    }
+
+    // Initializing the event timer
+    eventTimer = csEventTimer::GetStandardTimer(objectReg);
+
+    if(soundSystem->Initialize(objectReg)
+       && soundDataCache->Initialize(objectReg))
+    {
+        // FIXME what if soundlib.xml doesnt exist?
+        soundDataCache->LoadSoundLib(soundLib, objectReg);
+        LastUpdateTime = csGetTicks();
+        Initialised = true;
+    }
+
+    return Initialised;
 }
 
 /*
@@ -315,14 +318,14 @@ void SoundSystemManager::UpdateSound()
     }
 }
 
-
-/*
- * Update Listener position
- */
-
 void SoundSystemManager::UpdateListener(csVector3 v, csVector3 f, csVector3 t)
 {
     soundSystem->UpdateListener(v, f, t);
+}
+
+csVector3 SoundSystemManager::GetListenerPos() const
+{
+    return soundSystem->GetListenerPosition();
 }
 
 SoundControl* SoundSystemManager::AddSoundControl(uint sndCtrlID)

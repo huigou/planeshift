@@ -55,19 +55,14 @@ bool DummySoundManager::InitializeSectors()
     return true;
 }
 
-void DummySoundManager::LoadActiveSector(const char* sector)
+bool DummySoundManager::LoadActiveSector(const char* sectorName)
 {
-    return;
+    return true;
 }
 
-void DummySoundManager::ReloadSectors()
+bool DummySoundManager::ReloadSectors()
 {
-    return;
-}
-
-void DummySoundManager::UnloadActiveSector()
-{
-    return;
+    return true;
 }
 
 iSoundControl* DummySoundManager::GetSndCtrl(SndCtrlID sndCtrlID)
@@ -118,22 +113,12 @@ csVector3 DummySoundManager::GetPosition() const
 
 void DummySoundManager::SetTimeOfDay(int newTimeOfDay)
 {
-    time = newTimeOfDay;
-}
-
-int DummySoundManager::GetTimeOfDay() const
-{
-    return time;
+    return;
 }
 
 void DummySoundManager::SetWeather(int newWeather)
 {
-    weather = newWeather;
-}
-
-int DummySoundManager::GetWeather() const
-{
-    return weather;
+    return;
 }
 
 void DummySoundManager::SetEntityState(int state, iMeshWrapper* mesh, bool forceChange)

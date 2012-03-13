@@ -30,7 +30,6 @@
 // Project Includes
 //====================================================================================
 #include <isoundmngr.h>
-#include <util/pstoggle.h>
 
 //====================================================================================
 // Local Includes
@@ -40,32 +39,23 @@
 //------------------------------------------------------------------------------------
 // Forward Declarations
 //------------------------------------------------------------------------------------
-struct iObjectRegistry;
 class SoundQueue;
 class csRandomGen;
-class psSoundSector;
 class InstrumentManager;
+class SoundSectorManager;
 class SoundSystemManager;
 
-
-#define DEFAULT_SECTOR_UPDATE_TIME 50
-#define DEFAULT_INSTRUMENTS_PATH "/planeshift/art/instruments.xml"
-#define DEFAULT_AREAS_PATH "/planeshift/soundlib/areas/"
-#define DEFAULT_COMMON_SECTOR_NAME "common"
-#define DEFAULT_DAMPENING_PERCENT 0.1f
-#define DEFAULT_DAMPENING_CONTROLS "music"
 
 /**
  * Implement iSoundManager.
  * @see iSoundManager
  */
-class SoundManager: public scfImplementation3<SoundManager, iSoundManager, iComponent, iEventHandler>, public iSoundControlListener
+class SoundManager: public scfImplementation3<SoundManager, iSoundManager, iComponent, iEventHandler>
 {
 public:
     // TODO this should be moved inside a ConfigManager
     static uint updateTime;                 ///< update throttle in milliseconds.
     static csRandomGen randomGen;           ///< random number generator.
-    static psSoundSector* commonSector;     ///< sector that keeps features common to all sectors.
 
     SoundManager(iBase* parent);
     virtual ~SoundManager();
@@ -82,15 +72,11 @@ public:
             csRef<iEventNameRegistry> &enr, csEventID id) const { return 0; }
     CS_EVENTHANDLER_DEFAULT_INSTANCE_CONSTRAINTS
 
-    //From iSoundControlListener
-    virtual void OnSoundChange(SoundControl* sndCtrl);
-
     //From iSoundManager
     //Sectors managing
     virtual bool InitializeSectors();
-    virtual void LoadActiveSector(const char* sector);
-    virtual void UnloadActiveSector();
-    virtual void ReloadSectors();
+    virtual bool LoadActiveSector(const char* sectorName);
+    virtual bool ReloadSectors();
 
     //SoundControls and SoundQueue managing
     virtual iSoundControl* GetSndCtrl(SndCtrlID sndCtrlID);
@@ -105,9 +91,7 @@ public:
     virtual void SetPlayerMovement(csVector3 playerPosition, csVector3 playerVelocity);
     virtual csVector3 GetPosition() const;
     virtual void SetTimeOfDay(int newTimeOfDay);
-    virtual int GetTimeOfDay() const;
     virtual void SetWeather(int newWeather);
-    virtual int GetWeather() const;
     virtual void SetEntityState(int state, iMeshWrapper* mesh, bool forceChange);
 
     //Toggles
@@ -135,26 +119,17 @@ public:
     
 
 private:
-    bool                        isSectorLoaded;    ///< true if the sectors are loaded
     csRef<iObjectRegistry>      objectReg;         ///< object registry
     SoundSystemManager*         sndSysMgr;         ///< the sound system manager used to play sounds
     InstrumentManager*          instrMgr;          ///< the instruments manager
+    SoundSectorManager*         sectorMgr;         ///< the sound sectors manager.
 
-    SoundControl*               ambientSndCtrl;    ///< soundcontrol for ambient sounds
-    SoundControl*               musicSndCtrl;      ///< soundcontrol for music
     csHash<SoundQueue*, int>    soundQueues;       ///< all the SoundQueues created by ID
-    psToggle                    loopBGM;           ///< loobBGM toggle
-    psToggle                    combatMusic;       ///< toggle for combatmusic
-    psToggle                    listenerOnCamera;  ///< toggle for listener switch between player and camera position
-    psToggle                    chatToggle;        ///< toggle for chatsounds
+    bool                        listenerOnCamera;  ///< toggle for listener switch between player and camera position.
+    bool                        chatToggle;        ///< toggle for chat sounds.
 
     csTicks                     sndTime;           ///< current csticks
     csTicks                     lastUpdateTime;    ///< csticks when the last update happend
-
-    csArray<psSoundSector*>     sectorData;        ///< array which contains all sector xmls - parsed
-    psSoundSector*              activeSector;      ///< points to our active sector
-    int                         weather;           ///< current weather state from weather.h
-    int                         combat;            ///< current stance
 
     float						volumeDampPercent; ///< configured percent of dampening.
     csArray<SndCtrlID>          dampenCtrls;       ///< The controls to dampened.
@@ -162,63 +137,11 @@ private:
     csEventID                   evSystemOpen;      ///< ID of the 'Open' event fired on system startup
 
     /**
-     * Initialize the SoundSystemManager and the default SoundControls and queues.
+     * Initialize the SoundSystemManager and components that depends on its initialization.
+     * Since the sound system listener is initialized on system open event, this function
+     * must be called after that.
      */
-    void Init();
-
-    /**
-     * Callback function that makes a music update. 
-     */
-    static void UpdateMusicCallback(void* object);
-
-    /**
-     * Callback function that makes a ambient music update. 
-     */
-    static void UpdateAmbientCallback(void* object);
-
-    /**
-    * Converts factory emitters to real emitters
-    */
-    void ConvertFactoriesToEmitter(psSoundSector* &sector);
-    
-    /**
-    * Transfers handle from a psSoundSector to a another psSoundSector
-    * Moves SoundHandle and takes care that everything remains valid.
-    * Good example on what is possible with all those interfaces.
-    * @param oldsector sector to move from
-    * @param newsector sector to move to
-    */
-    void TransferHandles(psSoundSector* &oldsector, psSoundSector* &newsector);
-
-    /**
-    * Find sector by name.
-    * @param name name of the sector youre searching
-    * @param sector your sector pointer
-    * @return true or false
-    */
-    bool FindSector(const char* name, psSoundSector* &sector);
-
-    /**
-    * Update a whole sector
-    * @param sector Sector to update
-    */
-    void UpdateSector(psSoundSector* &sector);
-
-    /**
-    * Load all sectors
-    * Loads all sound sector xmls and creates psSoundSector objects
-    */
-    bool LoadSectors();
-
-    /**
-    * Reload all sector xmls (DANGEROUS!)
-    */
-    void ReloadAllSectors();
-
-    /**
-    * Unload all sector xmls (DANGEROUS!)
-    */
-    void UnloadSectors();
+    void InitSoundSystem();
 
 };    
 
