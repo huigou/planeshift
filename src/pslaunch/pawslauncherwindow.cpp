@@ -748,15 +748,17 @@ void pawsLauncherWindow::LoadSettings()
     csString skin = configUser->GetStr("PlaneShift.GUI.Skin.Selected");	
     if(!strcmp(skin,""))
     {
+        printf("---------------------------------------->a\n");
         // Try loading the default skin.
         skin = configPSC.GetStr("PlaneShift.GUI.Skin.Selected");
         if(!strcmp(skin,""))
         {
+            printf("---------------------------------------->b\n");
             // No skin selected.. shouldn't happen but it's not fatal.
             return;
         }
     }
-
+printf("---------------------------------------->c %s\n", skin.GetData());
     LoadSkin(skin);
 
     // Graphics Preset
@@ -1058,7 +1060,7 @@ void pawsLauncherWindow::LoadSkin(const char* name)
     {
         if(!skins->Select(name))
         {
-            if(!skins->Select(csString(name).Slice(0, csString(name).FindFirst('.'))))
+            if(!skins->Select(csString(name).Slice(0, csString(name).FindLast('.'))))
             {
                 return;
             }
