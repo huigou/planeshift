@@ -1876,6 +1876,9 @@
 				RelativePath="..\..\src\plugins\common\soundmanager\queue.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\plugins\common\soundmanager\sectormngr.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\plugins\common\soundmanager\songdata.cpp">
 			</File>
 			<File
@@ -1998,6 +2001,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\plugins\common\soundmanager\queue.h">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\soundmanager\sectormngr.h">
 			</File>
 			<File
 				RelativePath="..\..\src\plugins\common\soundmanager\songdata.h">
