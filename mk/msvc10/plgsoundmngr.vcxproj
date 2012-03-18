@@ -1463,6 +1463,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClCompile Include="..\..\src\plugins\common\soundmanager\psmusic.cpp" />
     <ClCompile Include="..\..\src\plugins\common\soundmanager\pssoundsector.cpp" />
     <ClCompile Include="..\..\src\plugins\common\soundmanager\queue.cpp" />
+    <ClCompile Include="..\..\src\plugins\common\soundmanager\sectormngr.cpp" />
     <ClCompile Include="..\..\src\plugins\common\soundmanager\songdata.cpp" />
     <ClCompile Include="..\..\src\plugins\common\soundmanager\songhandle.cpp" />
     <ClCompile Include="..\..\src\plugins\common\soundmanager\songstream.cpp" />
@@ -1482,6 +1483,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClInclude Include="..\..\src\plugins\common\soundmanager\pssound.h" />
     <ClInclude Include="..\..\src\plugins\common\soundmanager\pssoundsector.h" />
     <ClInclude Include="..\..\src\plugins\common\soundmanager\queue.h" />
+    <ClInclude Include="..\..\src\plugins\common\soundmanager\sectormngr.h" />
     <ClInclude Include="..\..\src\plugins\common\soundmanager\songdata.h" />
     <ClInclude Include="..\..\src\plugins\common\soundmanager\songhandle.h" />
     <ClInclude Include="..\..\src\plugins\common\soundmanager\songstream.h" />
