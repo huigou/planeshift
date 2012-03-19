@@ -36,6 +36,7 @@
     <alias name="normalmap" weak="yes" file="/shader-snippets/surface/normalmap.xml" />
     <alias name="surface" weak="yes" file="/shader-snippets/surface/surface-classic.xml" />
     <alias name="specular" weak="yes" file="/shader-snippets/surface/specular-weirdold.xml" />
+    <alias name="shininess" weak="yes" file="/shader-snippets/surface/shininess-default.xml" />
     <alias name="staticspecular" weak="yes" file="/shader-snippets/lighting/staticspec-default.xml" />
     <alias name="glow" weak="yes" file="/shader-snippets/lighting/glow.xml" />
     <alias name="lightmaptc" weak="yes" file="/shader-snippets/texcoord-lightmap.xml" />
@@ -53,6 +54,7 @@
     <snippet id="position" filealias="position" />
     <snippet id="texcoord" filealias="texcoord" />
     <snippet id="specular" filealias="specular" />
+    <snippet id="shininess" filealias="shininess" />
     <snippet id="normalmap" filealias="normalmap" />
     <snippet id="ambient_lightmaptc" filealias="lightmaptc" />
     <snippet id="ambient" filealias="ambient" />
@@ -72,13 +74,13 @@
     <!-- "connections" describe what snippets take input from what other
 	  snippets (ie the "data flow" is modeled). The exact resolution of
 	  what output is linked to what input is done automatically. -->
-
     <connection from="position" to="parallax" />
     <connection from="position" to="lighting" />
     <connection from="texcoord" to="parallax" />
     <connection from="parallax" to="surface" />
     <connection from="parallax" to="normalmap" />
     <connection from="parallax" to="specular" />
+    <connection from="parallax" to="shininess" />
     <connection from="parallax" to="glow" />
     <connection from="ambient_lightmaptc" to="ambient">
       <explicit from="result" to="texCoordLM" />
@@ -87,7 +89,9 @@
     <connection from="normalmap" to="lighting" />
     <connection from="normalmap" to="staticspecular" />
     <connection from="normalmap" to="snow" />
+    <connection from="shininess" to="staticspecular" />
     <connection from="surface" to="apply_mixmode_alpha" />
+    <connection from="shininess" to="lighting" />
     <connection from="apply_mixmode_alpha" to="snow" />
     <connection from="snow" to="specular" />
     <connection from="snow" to="apply_alpha" />
