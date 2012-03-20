@@ -133,6 +133,10 @@ ModeHandler::ModeHandler(psCelClient *cc,
     lightningreset->SetColor(csColor(0.0f));
     engine->GetVariableList()->Add(lightningreset);
 
+    csRef<iShaderVarStringSet> svStrings = csQueryRegistryTagInterface<iShaderVarStringSet>(
+                                          obj_reg, "crystalspace.shader.variablenameset");
+    ambientId = svStrings->Request("ambient");
+
     processWeather = psengine->GetConfig()->GetBool("PlaneShift.Weather.Enabled", true);
 }
 
@@ -254,9 +258,7 @@ bool ModeHandler::LoadLightingLevels()
         LightingList *set = lights[newlight->value];
         set->colors.Push(newlight);
 
-        if (newlight->type == "ambient")
-            newlight->sector = newlight->object;
-        else if (newlight->type == "light")
+        if (newlight->type == "light")
         {
             iLight* light = psengine->GetEngine()->FindLight(newlight->object);
             if (light && light->GetMovable()->GetSectors()->GetCount() > 0)
@@ -1261,18 +1263,40 @@ bool ModeHandler::ProcessLighting(LightingSetting *setting, float pct)
     }
     else if (setting->type == "ambient")
     {
-        iSector* sector = setting->sector_cache;
-        if (!sector)
+        csShaderVariable* ambient = setting->ambient_cache;
+        if (!ambient)
         {
-            // Sector is not in the cache. Try to find it and update cache.
-            setting->sector_cache = psengine->GetEngine()->FindSector(setting->object);
-            sector = setting->sector_cache;
+            // variable not cached, yet, obtain SV context and get variable
+            iShaderVariableContext* context = nullptr;
+            if (!setting->object.IsEmpty())
+            {
+              // find the mesh object and get the context
+                iMeshWrapper* mesh = psengine->GetEngine()->FindMeshObject(setting->object);
+                if(mesh)
+                {
+                    context = mesh->GetSVContext();
+                }
+            }
+            else if (!setting->sector.IsEmpty())
+            {
+                // find the sector and get the context
+                iSector* sector = psengine->GetEngine()->FindSector(setting->object);
+                if (sector)
+                {
+                    context = sector->GetSVContext();
+                }
+            }
+            if (context)
+            {
+                // we got a context, get and cache shader var now
+                ambient = context->GetVariableAdd(ambientId);
+            }
         }
-        if (sector)
+        if (ambient)
         {
             if (pct == 0)
             {
-                setting->start_color = sector->GetDynamicAmbientLight();
+                ambient->GetValue(setting->start_color);
 
                 // precalculate diff to target color so only percentages have to be applied later
                 setting->diff.red   = target_color.red   - setting->start_color.red;
@@ -1284,7 +1308,7 @@ bool ModeHandler::ProcessLighting(LightingSetting *setting, float pct)
             interpolate_color.green = setting->start_color.green + (setting->diff.green*pct);
             interpolate_color.blue  = setting->start_color.blue  + (setting->diff.blue*pct);
 
-            sector->SetDynamicAmbientLight(interpolate_color);
+            ambient->SetValue(interpolate_color);
             return true;
         }
         else

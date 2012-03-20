@@ -172,6 +172,7 @@ protected:
 
     // Lighting variable.
     csRef<iSharedVariable> lightningreset;
+    CS::ShaderVarStringID ambientId;
 
     // Weather intepolation stuff
     csTicks                 last_weather_update;
@@ -294,6 +295,7 @@ struct LightingSetting
     // as soon as the light or sector is removed (this can happen in case the region is unloaded).
     csWeakRef<iLight> light_cache;      // Optimization: pointer to light so we don't have to search it again.
     csWeakRef<iSector> sector_cache;    // Optimization: pointer to sector so we don't have to search it again.
+    csRef<csShaderVariable> ambient_cache; // Optimization: pointer to ambient so we don't have to search it again.
 };
 
 #endif
