@@ -221,6 +221,7 @@ bool ModeHandler::LoadLightingLevels()
         newlight->error = false;
         newlight->value = node->GetAttributeValueAsInt("value");
         newlight->object = node->GetAttributeValue("object");
+        newlight->sector= node->GetAttributeValue("sector");
         newlight->type = node->GetAttributeValue("type");
         newlight->density = node->GetAttributeValueAsFloat("density");  // only for fog
         r = node->GetAttributeValueAsFloat("r");
