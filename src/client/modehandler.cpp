@@ -1281,7 +1281,7 @@ bool ModeHandler::ProcessLighting(LightingSetting *setting, float pct)
             else if (!setting->sector.IsEmpty())
             {
                 // find the sector and get the context
-                iSector* sector = psengine->GetEngine()->FindSector(setting->object);
+                iSector* sector = psengine->GetEngine()->FindSector(setting->sector);
                 if (sector)
                 {
                     context = sector->GetSVContext();
