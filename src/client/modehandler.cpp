@@ -1289,7 +1289,8 @@ bool ModeHandler::ProcessLighting(LightingSetting *setting, float pct)
             if (context)
             {
                 // we got a context, get and cache shader var now
-                ambient = context->GetVariableAdd(ambientId);
+                setting->ambient_cache = context->GetVariableAdd(ambientId);
+                ambient = setting->ambient_cache;
             }
         }
         if (ambient)
@@ -1313,7 +1314,8 @@ bool ModeHandler::ProcessLighting(LightingSetting *setting, float pct)
         }
         else
         {
-            // Warning3( LOG_WEATHER, "Sector '%s' for ambient light was not found in lighting setup %d.\n", (const char *)setting->object, setting->value);
+            // Warning3( LOG_WEATHER, "Object '%s'/Sector '%s' for ambient light was not found in lighting setup %d.\n",
+            //           setting->object.GetData(), setting->sector.GetData(), setting->value);
             setting->error = true;
 
             return false;
