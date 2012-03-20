@@ -135,7 +135,7 @@ ModeHandler::ModeHandler(psCelClient *cc,
 
     csRef<iShaderVarStringSet> svStrings = csQueryRegistryTagInterface<iShaderVarStringSet>(
                                           obj_reg, "crystalspace.shader.variablenameset");
-    ambientId = svStrings->Request("ambient");
+    ambientId = svStrings->Request("dynamic ambient");
 
     processWeather = psengine->GetConfig()->GetBool("PlaneShift.Weather.Enabled", true);
 }
