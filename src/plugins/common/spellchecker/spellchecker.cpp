@@ -87,7 +87,7 @@ void SpellChecker::addWord(csString newWord)
     if (hunspellChecker.GetSize() != 0)
     {
 	// remove special chars from the words...not really nice to do this but otherwise a user could add words that by no way could be recognized
-	// as those chars will never be presented to the specllchecker
+	// as those chars will never be presented to the spellchecker
 	removeSpecialChars(newWord);
 	// now add it to the dictionary...happens only in memory and is not persistant
 	if (!(hunspellChecker[0]->add(newWord.GetData())))

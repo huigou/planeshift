@@ -191,7 +191,7 @@ bool pawsConfigSpellChecker::SaveConfig()
     
     if (spellChecker)
     {    
-	// remove die perviously defined words from the list and hunspell        
+	// remove die previously defined words from the list and hunspell
 	spellChecker->clearPersonalDict();
 	  
 	// then refill it with the values from the text box
@@ -208,16 +208,16 @@ bool pawsConfigSpellChecker::SaveConfig()
 	{
 	    words.SubString(tmpWord, oldNewLine, foundNewLine-oldNewLine);
 	    tmpWord.Collapse();
-	    if (!tmpWord.IsEmpty())
+	    if((!tmpWord.IsEmpty()) && (!WordExists(spellChecker, tmpWord)))
 	    {
-		spellChecker->addWord(tmpWord);
+            spellChecker->addWord(tmpWord);
 	    }
 	    oldNewLine = foundNewLine;
 	    foundNewLine = words.Find("\n", oldNewLine+1);
 	}
 	words.SubString(tmpWord, oldNewLine, words.Length()-oldNewLine);
 	tmpWord.Collapse();
-	if (!tmpWord.IsEmpty())
+    if((!tmpWord.IsEmpty()) && (!WordExists(spellChecker, tmpWord)))
 	{
 	    spellChecker->addWord(tmpWord);
 	}
@@ -228,6 +228,21 @@ bool pawsConfigSpellChecker::SaveConfig()
     // and reload the config again so that difference made by the save function are displayed (for example the removed special chars from the words)
     LoadConfig();
     return true;
+}
+
+bool pawsConfigSpellChecker::WordExists(csRef<iSpellChecker> spellChecker, csString word)
+{
+  if (spellChecker)
+  {
+      for (size_t i = 0; i < spellChecker->getPersonalDict().GetSize(); i++)
+      {
+	  if (word == spellChecker->getPersonalDict()[i])
+	  {
+	    return true;
+	  }
+      }
+  }
+  return false;
 }
 
 void pawsConfigSpellChecker::SetDefault()

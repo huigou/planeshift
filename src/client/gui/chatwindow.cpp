@@ -609,6 +609,8 @@ void pawsChatWindow::LoadChatSettings()
 	// from a config if it's loaded with a verion without the spellchecker plugin. 
 	if (spellChecker)
 	{
+	    //first we clear the personal dictionary of the spellchecker. Otherwise the words are added twice in case the chat configuration is reloaded
+	    spellChecker->clearPersonalDict();
 	    while(sNodes->HasNext())
 	    {
 		csRef<iDocumentNode> dictWord = sNodes->Next();
