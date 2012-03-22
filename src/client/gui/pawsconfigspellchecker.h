@@ -53,11 +53,11 @@ public:
 
 private:
        /**
-        * Helper function which checks if a word already exists in the personal dictionary
+        * Helper function which checks if a word already exists in the personal dictionary.
         * 
         * @param spellChecker. Reference to the object handling the spell checking.
-        * @param word Thr word to search for in the personal dictionary
-        * @return TRUE if the word was found
+        * @param word Thr word to search for in the personal dictionary.
+        * @return TRUE if the word was found.
         */
        bool WordExists(csRef<iSpellChecker> spellChecker, csString word);
        pawsChatWindow* chatWindow;
