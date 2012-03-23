@@ -173,6 +173,7 @@ protected:
     // Lighting variable.
     csRef<iSharedVariable> lightningreset;
     CS::ShaderVarStringID ambientId;
+    CS::ShaderVarStringID combinedAmbientId;
 
     // Weather intepolation stuff
     csTicks                 last_weather_update;
@@ -289,6 +290,7 @@ struct LightingSetting
     csColor  color;       /// color when it is clear skies
     csColor  raincolor;   /// color when it is 100% downpour
     csColor  start_color; /// last color at start of interpolation
+    csColor  base_color; /// base ambient light
     csColor  diff;        /// diff between last color and target color in interpolation
     csString sector;      /// sector of light is stored to make searching for rain faster
     // The two cache values below use csWeakRef to make sure that the cache is cleared automatically
@@ -296,6 +298,7 @@ struct LightingSetting
     csWeakRef<iLight> light_cache;      // Optimization: pointer to light so we don't have to search it again.
     csWeakRef<iSector> sector_cache;    // Optimization: pointer to sector so we don't have to search it again.
     csRef<csShaderVariable> ambient_cache; // Optimization: pointer to ambient so we don't have to search it again.
+    csRef<csShaderVariable> combined_ambient_cache; // Optimization: pointer to combined ambient so we don't have to search it again.
 };
 
 #endif

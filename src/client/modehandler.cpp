@@ -136,6 +136,7 @@ ModeHandler::ModeHandler(psCelClient *cc,
     csRef<iShaderVarStringSet> svStrings = csQueryRegistryTagInterface<iShaderVarStringSet>(
                                           obj_reg, "crystalspace.shader.variablenameset");
     ambientId = svStrings->Request("dynamic ambient");
+    combinedAmbientId = svStrings->Request("light ambient");
 
     processWeather = psengine->GetConfig()->GetBool("PlaneShift.Weather.Enabled", true);
 }
@@ -1265,6 +1266,7 @@ bool ModeHandler::ProcessLighting(LightingSetting *setting, float pct)
     else if (setting->type == "ambient")
     {
         csShaderVariable* ambient = setting->ambient_cache;
+        csShaderVariable* combinedAmbient = setting->combined_ambient_cache;
         if (!ambient)
         {
             // variable not cached, yet, obtain SV context and get variable
@@ -1289,16 +1291,21 @@ bool ModeHandler::ProcessLighting(LightingSetting *setting, float pct)
             }
             if (context)
             {
-                // we got a context, get and cache shader var now
+                // we got a context, get and cache shader vars now
                 setting->ambient_cache = context->GetVariableAdd(ambientId);
                 ambient = setting->ambient_cache;
+
+                setting->combined_ambient_cache = context->GetVariableAdd(combinedAmbientId);
+                combinedAmbient = setting->combined_ambient_cache;
             }
         }
-        if (ambient)
+        if (ambient && combinedAmbient)
         {
             if (pct == 0)
             {
                 ambient->GetValue(setting->start_color);
+                combinedAmbient->GetValue(setting->base_color);
+                setting->base_color -= setting->start_color;
 
                 // precalculate diff to target color so only percentages have to be applied later
                 setting->diff.red   = target_color.red   - setting->start_color.red;
@@ -1311,6 +1318,7 @@ bool ModeHandler::ProcessLighting(LightingSetting *setting, float pct)
             interpolate_color.blue  = setting->start_color.blue  + (setting->diff.blue*pct);
 
             ambient->SetValue(interpolate_color);
+            combinedAmbient->SetValue(interpolate_color + setting->base_color);
             return true;
         }
         else
