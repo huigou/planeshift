@@ -409,6 +409,11 @@ bool BgLoader::Portal::LoadObject(bool /*wait*/)
     mObject = GetParent()->GetEngine()->CreatePortal(GetName(), source, csVector3(0),
                      target, poly.GetVertices(), (int)poly.GetVertexCount(), pObject);
 
+    if(renderDist > 0.f)
+    {
+      mObject->SetMaximumRenderDistance(renderDist);
+    }
+
     // set name on portal object for debugging purposes
     pObject->SetName(GetName());
 

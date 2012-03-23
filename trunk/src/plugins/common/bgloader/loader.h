@@ -1446,8 +1446,8 @@ private:
     public:
         typedef iMeshWrapper ObjectType;
 
-        Portal(BgLoader* parent) : Loadable(parent), flags(0), warp(false), ww_given(false),
-                                                     wv(0.f), ww(0.f),
+        Portal(BgLoader* parent, float renderDist) : Loadable(parent), flags(0), renderDist(renderDist),
+                                                     warp(false), ww_given(false), wv(0.f), ww(0.f),
                                                      autoresolve(0), targetSector(0), sector(0)
         {
         }
@@ -1466,6 +1466,7 @@ private:
     private:
         // parser results
         uint32 flags;
+        float renderDist;
         
         // transformation data
         bool warp;
