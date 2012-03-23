@@ -1271,6 +1271,7 @@ bool ModeHandler::ProcessLighting(LightingSetting *setting, float pct)
         {
             // variable not cached, yet, obtain SV context and get variable
             iShaderVariableContext* context = nullptr;
+            iSector* sector = nullptr;
             if (!setting->object.IsEmpty())
             {
               // find the mesh object and get the context
@@ -1278,12 +1279,14 @@ bool ModeHandler::ProcessLighting(LightingSetting *setting, float pct)
                 if(mesh)
                 {
                     context = mesh->GetSVContext();
+                    iMovable* movable = mesh->GetMovable();
+                    sector = movable->GetSectors()->Get(0);
                 }
             }
             else if (!setting->sector.IsEmpty())
             {
                 // find the sector and get the context
-                iSector* sector = psengine->GetEngine()->FindSector(setting->sector);
+                sector = psengine->GetEngine()->FindSector(setting->sector);
                 if (sector)
                 {
                     context = sector->GetSVContext();
@@ -1295,7 +1298,29 @@ bool ModeHandler::ProcessLighting(LightingSetting *setting, float pct)
                 setting->ambient_cache = context->GetVariableAdd(ambientId);
                 ambient = setting->ambient_cache;
 
-                setting->combined_ambient_cache = context->GetVariableAdd(combinedAmbientId);
+                setting->combined_ambient_cache = context->GetVariable(combinedAmbientId);
+                if (!setting->combined_ambient_cache.IsValid())
+                {
+                    // there's no combined ambient SV, yet, create it and initialize it
+                    setting->combined_ambient_cache = context->GetVariableAdd(combinedAmbientId);
+                    context = sector->GetSVContext();
+                    if (context)
+                    {
+                        // initialize it to the static ambient part of the sector + our dynamic ambient part
+                        csColor ambientStaticSector;
+                        csColor ambientDynamicSector;
+                        csColor ambientDynamic;
+
+                        csShaderVariable* combinedAmbientSector = context->GetVariableAdd(combinedAmbientId);
+                        csShaderVariable* ambientSector = context->GetVariableAdd(ambientId);
+
+                        combinedAmbientSector->GetValue(ambientStaticSector);
+                        ambientSector->GetValue(ambientDynamicSector);
+                        setting->ambient_cache->GetValue(ambientDynamic);
+
+                        setting->combined_ambient_cache->SetValue(ambientStaticSector - ambientDynamicSector + ambientDynamic);
+                    }
+                }
                 combinedAmbient = setting->combined_ambient_cache;
             }
         }
