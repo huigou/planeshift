@@ -1306,19 +1306,16 @@ bool ModeHandler::ProcessLighting(LightingSetting *setting, float pct)
                     context = sector->GetSVContext();
                     if (context)
                     {
-                        // initialize it to the static ambient part of the sector + our dynamic ambient part
-                        csColor ambientStaticSector;
+                        // initialize it to the ambient of the sector + our dynamic ambient part
                         csColor ambientDynamicSector;
                         csColor ambientDynamic;
 
-                        csShaderVariable* combinedAmbientSector = context->GetVariableAdd(combinedAmbientId);
                         csShaderVariable* ambientSector = context->GetVariableAdd(ambientId);
 
-                        combinedAmbientSector->GetValue(ambientStaticSector);
                         ambientSector->GetValue(ambientDynamicSector);
                         setting->ambient_cache->GetValue(ambientDynamic);
 
-                        setting->combined_ambient_cache->SetValue(ambientStaticSector - ambientDynamicSector + ambientDynamic);
+                        setting->combined_ambient_cache->SetValue(ambientDynamicSector + ambientDynamic);
                     }
                 }
                 combinedAmbient = setting->combined_ambient_cache;
