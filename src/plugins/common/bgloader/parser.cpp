@@ -617,12 +617,19 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
 
                 case PARSERTOKEN_PORTALS:
                 {
+                    csRef<iDocumentNode> renderDistNode = node->GetNode("maxrenderdist");
+                    float renderDist = 0.f;
+                    if(renderDistNode.IsValid())
+                    {
+                        renderDist = renderDistNode->GetAttributeValueAsFloat("value");
+                    }
+                    
                     csRef<iDocumentNodeIterator> it(node->GetNodes("portal"));
                     while(it->HasNext())
                     {
                         csRef<iDocumentNode> portalNode(it->Next());
                         csRef<Portal> p;
-                        p.AttachNew(new Portal(GetParent()));
+                        p.AttachNew(new Portal(GetParent(), renderDist));
                         if(p->Parse(portalNode, parserData))
                         {
                             AddDependency(p);
