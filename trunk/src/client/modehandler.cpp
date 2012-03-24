@@ -1267,80 +1267,93 @@ bool ModeHandler::ProcessLighting(LightingSetting *setting, float pct)
     {
         csShaderVariable* ambient = setting->ambient_cache;
         csShaderVariable* combinedAmbient = setting->combined_ambient_cache;
-        if (!ambient)
+        iSector* sector = setting->sector_cache;
+        if(!setting->object.IsEmpty())
         {
-            // variable not cached, yet, obtain SV context and get variable
-            iShaderVariableContext* context = nullptr;
-            iSector* sector = nullptr;
-            if (!setting->object.IsEmpty())
+            if (!ambient)
             {
-              // find the mesh object and get the context
-                iMeshWrapper* mesh = psengine->GetEngine()->FindMeshObject(setting->object);
-                if(mesh)
+                // variable not cached, yet, obtain SV context and get variable
+                iShaderVariableContext* context = nullptr;
+                iSector* sectorMesh = nullptr;
+                if (!setting->object.IsEmpty())
                 {
-                    context = mesh->GetSVContext();
-                    iMovable* movable = mesh->GetMovable();
-                    sector = movable->GetSectors()->Get(0);
-                }
-            }
-            else if (!setting->sector.IsEmpty())
-            {
-                // find the sector and get the context
-                sector = psengine->GetEngine()->FindSector(setting->sector);
-                if (sector)
-                {
-                    context = sector->GetSVContext();
-                }
-            }
-            if (context)
-            {
-                // we got a context, get and cache shader vars now
-                setting->ambient_cache = context->GetVariableAdd(ambientId);
-                ambient = setting->ambient_cache;
-
-                setting->combined_ambient_cache = context->GetVariable(combinedAmbientId);
-                if (!setting->combined_ambient_cache.IsValid())
-                {
-                    // there's no combined ambient SV, yet, create it and initialize it
-                    setting->combined_ambient_cache = context->GetVariableAdd(combinedAmbientId);
-                    context = sector->GetSVContext();
-                    if (context)
+                    // find the mesh object and get the context
+                    iMeshWrapper* mesh = psengine->GetEngine()->FindMeshObject(setting->object);
+                    if(mesh)
                     {
-                        // initialize it to the ambient of the sector + our dynamic ambient part
-                        csColor ambientDynamicSector;
-                        csColor ambientDynamic;
-
-                        csShaderVariable* ambientSector = context->GetVariableAdd(ambientId);
-
-                        ambientSector->GetValue(ambientDynamicSector);
-                        setting->ambient_cache->GetValue(ambientDynamic);
-
-                        setting->combined_ambient_cache->SetValue(ambientDynamicSector + ambientDynamic);
+                        context = mesh->GetSVContext();
+                        iMovable* movable = mesh->GetMovable();
+                        sectorMesh = movable->GetSectors()->Get(0);
                     }
                 }
-                combinedAmbient = setting->combined_ambient_cache;
+                if (context)
+                {
+                    // we got a context, get and cache shader vars now
+                    setting->ambient_cache = context->GetVariableAdd(ambientId);
+                    ambient = setting->ambient_cache;
+
+                    setting->combined_ambient_cache = context->GetVariable(combinedAmbientId);
+                    if (!setting->combined_ambient_cache.IsValid())
+                    {
+                        // there's no combined ambient SV, yet, create it and initialize it
+                        setting->combined_ambient_cache = context->GetVariableAdd(combinedAmbientId);
+                        context = sectorMesh->GetSVContext();
+                        if (context)
+                        {
+                            // initialize it to the ambient of the sector + our dynamic ambient part
+                            csColor ambientDynamicSector;
+                            csColor ambientDynamic;
+
+                            csShaderVariable* ambientSector = context->GetVariableAdd(ambientId);
+
+                            ambientSector->GetValue(ambientDynamicSector);
+                            setting->ambient_cache->GetValue(ambientDynamic);
+
+                            setting->combined_ambient_cache->SetValue(ambientDynamicSector + ambientDynamic);
+                        }
+                    }
+                    combinedAmbient = setting->combined_ambient_cache;
+                }
             }
         }
-        if (ambient && combinedAmbient)
+        else if(!setting->sector.IsEmpty())
+        {
+            if(!sector)
+            {
+                setting->sector_cache = psengine->GetEngine()->FindSector(setting->sector);
+                sector = setting->sector_cache;
+            }
+        }
+        if((ambient && combinedAmbient) || sector)
         {
             if (pct == 0)
             {
-                ambient->GetValue(setting->start_color);
-                combinedAmbient->GetValue(setting->base_color);
-                setting->base_color -= setting->start_color;
+                if(ambient)
+                {
+                    ambient->GetValue(setting->start_color);
+                    combinedAmbient->GetValue(setting->base_color);
+                    setting->base_color -= setting->start_color;
+                }
+                else
+                {
+                    setting->start_color = sector->GetDynamicAmbientLight();
+                }
 
                 // precalculate diff to target color so only percentages have to be applied later
-                setting->diff.red   = target_color.red   - setting->start_color.red;
-                setting->diff.green = target_color.green - setting->start_color.green;
-                setting->diff.blue  = target_color.blue  - setting->start_color.blue;
+                setting->diff = target_color - setting->start_color;
             }
 
-            interpolate_color.red   = setting->start_color.red   + (setting->diff.red*pct);
-            interpolate_color.green = setting->start_color.green + (setting->diff.green*pct);
-            interpolate_color.blue  = setting->start_color.blue  + (setting->diff.blue*pct);
+            interpolate_color = setting->start_color + pct * setting->diff;
 
-            ambient->SetValue(interpolate_color);
-            combinedAmbient->SetValue(interpolate_color + setting->base_color);
+            if(ambient)
+            {
+                ambient->SetValue(interpolate_color);
+                combinedAmbient->SetValue(interpolate_color + setting->base_color);
+            }
+            else
+            {
+                sector->SetDynamicAmbientLight(interpolate_color);
+            }
             return true;
         }
         else
