@@ -2020,6 +2020,10 @@ void GEMClientActor::RefreshCal3d()
         CS::Animation::iSkeletonAnimNode* rootNode = animeshObject->GetSkeleton()->GetAnimationPacket()->GetAnimationRoot();
         speedNode = scfQueryInterface<CS::Animation::iSkeletonSpeedNode> (rootNode->FindNode("speed"));
     }
+    if(cal3dstate)
+    {
+        cal3dstate->SetCyclicBlendFactor(0.25);
+    }
     CS_ASSERT(cal3dstate || animeshObject);
 }
 
