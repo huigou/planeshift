@@ -263,7 +263,7 @@ bool pawsLauncherWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*
     else if(ID == DELETE_CACHE)
     {
         pawsYesNoBox *shadercacherequest = (pawsYesNoBox*)FindWidget("ShaderCacheRequest");
-        shadercacherequest->SetCallBack(HandleCacheButton, this, "Do you want to delete the shadercache? This is usually helpful if you are experiencing crashes.");
+        shadercacherequest->SetCallBack(HandleCacheButton, this, "Do you want to delete the shadercache? This is usually helpful if you are experiencing crashes after an update.");
         shadercacherequest->SetAlwaysOnTop(true);
         shadercacherequest->Show();
     }
