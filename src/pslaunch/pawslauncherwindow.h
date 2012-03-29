@@ -47,7 +47,8 @@ private:
     csString mountedPath;
     csString currentSkin;
 
-    static void HandleUpdateButton(bool choice, void *thisptr);   
+    static void HandleUpdateButton(bool choice, void *thisptr);
+    static void HandleCacheButton(bool choice, void* thisptr);
     void HandleAspectRatio(csString ratio);
     void UpdateNews();
     void LoadSettings();

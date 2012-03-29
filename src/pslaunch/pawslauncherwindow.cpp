@@ -262,18 +262,10 @@ bool pawsLauncherWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*
     }
     else if(ID == DELETE_CACHE)
     {
-        pawsOkBox* notify = (pawsOkBox*)FindWidget("Notify");
-        if(DeleteShaderCache())
-        {
-            notify->SetText("Shadercache deleted successfully");
-        }
-        else
-        {
-            notify->SetText("The shadercache couldn't be removed.\n"
-                            "This is usually caused by the cache not"
-                            " being present");
-        }
-        notify->Show();
+        pawsYesNoBox *shadercacherequest = (pawsYesNoBox*)FindWidget("ShaderCacheRequest");
+        shadercacherequest->SetCallBack(HandleCacheButton, this, "Do you want to delete the shadercache? This is usually helpful if you are experiencing crashes.");
+        shadercacherequest->SetAlwaysOnTop(true);
+        shadercacherequest->Show();
     }
     else if(13100 < widget->GetID() && widget->GetID() < 13200)
     {
@@ -289,6 +281,27 @@ void pawsLauncherWindow::HandleUpdateButton(bool choice, void *updatewindow)
     pawsWidget* updateWindow = (pawsWidget*)updatewindow;
     psLaunchGUI->PerformUpdate(choice, false);
     updateWindow->Hide();
+}
+
+void pawsLauncherWindow::HandleCacheButton(bool choice, void* launcher)
+{
+    pawsLauncherWindow* launcherWindow = (pawsLauncherWindow*)launcher;
+    if(choice)
+    {
+        pawsOkBox* notify = (pawsOkBox*)launcherWindow->FindWidget("Notify");
+        if(launcherWindow->DeleteShaderCache())
+        {
+            notify->SetText("Shadercache deleted successfully");
+        }
+        else
+        {
+            notify->SetText("The shadercache couldn't be removed.\n"
+                            "This is usually caused by the cache not"
+                            " being present");
+        }
+        launcherWindow->FindWidget("ShaderCacheRequest")->Hide();
+        notify->Show();
+    }
 }
 
 void pawsLauncherWindow::HandleAspectRatio(csString ratio)
