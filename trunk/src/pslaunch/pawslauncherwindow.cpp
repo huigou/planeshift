@@ -270,8 +270,8 @@ bool pawsLauncherWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*
         else
         {
             notify->SetText("The shadercache couldn't be removed.\n"
-                            "This is usually caused if the file is not "
-                            "present already");
+                            "This is usually caused by the file not "
+                            "being present already");
         }
         notify->Show();
     }
