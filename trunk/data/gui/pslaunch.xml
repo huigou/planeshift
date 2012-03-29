@@ -255,8 +255,8 @@
         </widget>
 
         <widget name="DeleteCacheButton" factory="pawsButton" id="1402" changeonmouseover="true">
-            <buttonup resource="General Button"/>
-            <buttondown resource="General Button MO"/>
+            <buttonup resource="ClearCache Button"/>
+            <buttondown resource="ClearCache Button MO"/>
             <frame x="300" y="0" width="100" height="30" border="no"/>
         </widget>
       </widget>
