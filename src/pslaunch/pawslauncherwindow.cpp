@@ -260,6 +260,21 @@ bool pawsLauncherWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*
     {
         notify->Hide();
     }
+    else if(ID == DELETE_CACHE)
+    {
+        pawsOkBox* notify = (pawsOkBox*)FindWidget("Notify");
+        if(DeleteShaderCache())
+        {
+            notify->SetText("Shadercache deleted successfully");
+        }
+        else
+        {
+            notify->SetText("The shadercache couldn't be removed.\n"
+                            "This is usually caused if the file is not "
+                            "present already");
+        }
+        notify->Show();
+    }
     else if(13100 < widget->GetID() && widget->GetID() < 13200)
     {
         pawsComboBox* graphicsPreset = (pawsComboBox*)FindWidget("GraphicsPreset");
@@ -358,6 +373,11 @@ void pawsLauncherWindow::HandleAspectRatio(csString ratio)
             resolution->Select("1280x854");
         }
     }
+}
+
+bool pawsLauncherWindow::DeleteShaderCache()
+{
+    return psLaunchGUI->GetFileUtil()->RemoveFile("/planeshift/userdata/shadercache");
 }
 
 void pawsLauncherWindow::LoadSettings()
