@@ -52,6 +52,7 @@ private:
     void UpdateNews();
     void LoadSettings();
     void SaveSettings();
+    bool DeleteShaderCache();
     void LoadSkin(const char* name);
     bool LoadResource(const char* resource,const char* resname, const char* mountPath);
     void OnListAction(pawsListBox* widget, int status);
@@ -97,6 +98,7 @@ private:
         SETTINGS_GRAPHICS_BUTTON,
         ASPECT_RATIO = 1394,
         SKINS = 1399,
+        DELETE_CACHE = 1402,
         UPDATE_MESSAGE_BOX = 141,
         UPDATE_YES_BUTTON,
         UPDATE_NO_BUTTON,

@@ -251,7 +251,13 @@
           <widget name="PreviewBox" factory="pawsCheckBox" id="139922">
             <frame x="250" y="230" width="190" height="30" />
             <text string="Test checkbox"/>
-          </widget>
+          </widget>          
+        </widget>
+
+        <widget name="DeleteCacheButton" factory="pawsButton" id="1402" changeonmouseover="true">
+            <buttonup resource="General Button"/>
+            <buttondown resource="General Button MO"/>
+            <frame x="300" y="0" width="100" height="30" border="no"/>
         </widget>
       </widget>
 
