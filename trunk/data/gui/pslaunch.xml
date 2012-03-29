@@ -401,6 +401,28 @@
       </widget>
     </widget>
 
+    <!-- shadercache request window -->
+    <widget name="ShaderCacheRequest" factory="pawsYesNoBox" visible="no" savepositions="no" movable="no" resizable="no" id="16">
+      <frame x="250" y="150" width="300" height="200" border="no" />
+      <bgimage resource="YesNo" alpha="0" />
+
+      <widget name="Message Box" factory="pawsMultiLineTextBox" id="141">
+        <frame x="65" y="50" width="180" height="50" border="no" />
+      </widget>
+
+      <widget name="YesButton" factory="pawsButton" key="Y" id="142" changeonmouseover="true">
+        <frame x="65" y="100" width="80" height="40" border="no" />
+        <buttonup resource="Yes"/>
+        <buttondown resource="Yes MO"/>
+      </widget>
+
+      <widget name="NoButton" factory="pawsButton" key="N" id="143" changeonmouseover="true">
+        <frame x="165" y="100" width="80" height="40" border="no" />
+        <buttonup resource="No"/>
+        <buttondown resource="No MO"/>
+      </widget>
+    </widget>
+
     <!-- Notify window -->
     <widget name="Notify" factory="pawsOkBox" visible="no" savepositions="no" movable="no" resizable="no" id="15">
       <frame x="250" y="150" width="300" height="200" border="no" />
