@@ -180,6 +180,8 @@ psCamera::psCamera()
 
     cameraInitialized = false;
 
+    lockedCameraMode = false;
+
     cmdsource->Subscribe("/tellnpc", this);
     cmdsource->Subscribe("/npcmenu", this);
 
@@ -811,6 +813,10 @@ bool psCamera::Draw()
     view->GetCamera()->GetTransform().LookAt(GetTarget(CAMERA_ACTUAL_DATA) - GetPosition(CAMERA_ACTUAL_DATA), GetUp(CAMERA_ACTUAL_DATA));
     view->GetCamera()->MoveWorld(GetPosition(CAMERA_ACTUAL_DATA) - view->GetCamera()->GetTransform().GetOrigin());
 
+            GetView()->GetCamera()->SetViewportSize (psengine->GetG2D()->GetWidth(),
+                                                            psengine->GetG2D()->GetHeight());
+            GetView()->SetRectangle(0, 0, psengine->GetG2D()->GetWidth(), psengine->GetG2D()->GetHeight());
+
     // Draw the world.
     view->Draw();
 
@@ -873,11 +879,18 @@ void psCamera::NextCameraMode()
     mode.FireEvent();
 }
 
+void psCamera::LockCameraMode(bool state)
+{
+    lockedCameraMode = state;
+}
+
 void psCamera::SetCameraMode(int mode)
 {
 //  if (lastCameraMode == currCameraMode)
 //      return;
 
+if(!lockedCameraMode)
+{
     if (mode < 0)
     {
         return;
@@ -939,6 +952,7 @@ void psCamera::SetCameraMode(int mode)
     // enable transition phase
     inTransitionPhase = true;
     actor->GetMesh()->SetFlagsRecursive(CS_ENTITY_INVISIBLE, 0);
+}
 }
 
 int psCamera::GetCameraMode() const

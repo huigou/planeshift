@@ -37,6 +37,7 @@
 #include <imesh/emit.h>
 #include <iutil/plugin.h>
 #include <csutil/xmltiny.h>
+#include <iutil/cfgmgr.h>
 
 //=============================================================================
 // Project Includes
@@ -181,7 +182,7 @@ psClientCharManager::psClientCharManager(iObjectRegistry *objectreg)
 
     target = 0;
     targetEffect = 0;
-
+    lockedTarget = false;
 }
 
 psClientCharManager::~psClientCharManager()
@@ -323,7 +324,15 @@ void psClientCharManager::ChangeTrait( MsgEntry* me )
 }
 
 
+void psClientCharManager::LockTarget(bool state)
+{
+    lockedTarget = state;
+}
+
 void psClientCharManager::SetTarget(GEMClientObject *newTarget, const char *action, bool notifyServer)
+{
+
+if(!lockedTarget)
 {
     if (target != newTarget)
     {
@@ -363,6 +372,7 @@ void psClientCharManager::SetTarget(GEMClientObject *newTarget, const char *acti
         psUserActionMessage userAction(0, mappedID, action);
         userAction.SendMessage();
     }
+}
 }
 
 void psClientCharManager::HandleAction( MsgEntry* me )

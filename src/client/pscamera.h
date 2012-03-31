@@ -166,6 +166,11 @@ public:
      */
     csVector3 GetUp(int mode = -1) const;
 
+    /** locks the current camera mode so it cannot be changed
+     *   @param state the desired state
+     */
+    void LockCameraMode(bool state);
+
     /** sets the current camera mode
      *   @param mode the desired camera mode
      */
@@ -675,6 +680,9 @@ private:
 
     /// Have the settings been loaded from file and the camera mode been initialized?
     bool cameraInitialized;
+
+    /// stores if camera mode is locked
+    bool lockedCameraMode;
 
     csWeakRef<iSector> lastTargetSector;
 

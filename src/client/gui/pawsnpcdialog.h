@@ -22,6 +22,7 @@
 #include "net/subscriber.h"
 #include "pscelclient.h"
 
+#include "paws/pawslistbox.h"
 #include "paws/pawswidget.h"
 #include "paws/pawsstringpromptwindow.h"
 
@@ -65,6 +66,7 @@ public:
      * or the bubble menu
      */
     virtual void Show();
+    virtual void Hide();
     bool OnKeyDown(utf32_char keyCode, utf32_char key, int modifiers );
     bool OnMouseDown( int button, int modifiers, int x , int y );
     bool OnButtonPressed( int button, int keyModifier, pawsWidget* widget );
@@ -140,11 +142,15 @@ private:
     void DisplayTextBubbles(const char *sayWhat);
     bool useBubbles; ///< Stores which modality should be used for the npcdialog (bubbles/menus)
 
-    csArray<QuestInfo> questInfo;///< Stores all the quest info and triggers parsed from xml binding.
-    unsigned int    displayIndex;///< Index to display which quests
-    int             cameraMode;///< Stores the camera mode
+    csArray<QuestInfo> questInfo; ///< Stores all the quest info and triggers parsed from xml binding.
+    unsigned int    displayIndex; ///< Index to display which quests
+    int             cameraMode;   ///< Stores the camera mode
+    int             loadOnce;     ///< Stores if bubbles has been loaded
 
     pawsListBox* responseList;
+    pawsWidget* speechBubble;
+    pawsEditTextBox* textBox;
+    pawsButton* closeBubble;
     csTicks         ticks;
 };
 

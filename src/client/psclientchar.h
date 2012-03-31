@@ -104,6 +104,11 @@ public:
      */
     void SetTarget(GEMClientObject *newTarget, const char *action, bool notifyServer=true);
 
+    /** locks the current target so it cannot be changed
+     *   @param state the desired state
+     */
+    void LockTarget(bool state);
+
     /**Gets the target of the character.
      *  @return the target.
      */
@@ -112,7 +117,7 @@ public:
 protected:
     /// Change a trait on a character.
     void ChangeTrait(MsgEntry* me);
-    
+
     /// Handle animation changes for things from the server.
     void HandleAction(MsgEntry* me);
 
@@ -121,33 +126,36 @@ protected:
 
     /// Handle the effect message comming from the server.
     void HandleEffect(MsgEntry* me);
-    
+
     void HandleEffectStop(MsgEntry* me);
-    
+
     /// Handle a rejection of a character
     void HandleRejectCharMessage(MsgEntry* me);
 
     /// Handle the play sound message from the server
     void HandlePlaySound(MsgEntry* me);
- 
+
     /// Handle update target message from the server
     void HandleTargetUpdate(MsgEntry* me);
-    
+
     csRef<MsgHandler>         msghandler;
     iObjectRegistry*          objectReg;
     csRef<iVFS>               vfs;
-    
+
     psCreationManager* charCreation;
-   
+
     /// keeps track of the target effect ID
     unsigned int targetEffect;
-    
+
     /// keeps track of what object you have targetted
     GEMClientObject * target;
-    
+
     psCelClient *cel;
     bool ready;
-    
+
+    /// stores if target is locked
+    bool lockedTarget;
+
     csHash<unsigned int, uint32_t> effectMapper;
 };
 
