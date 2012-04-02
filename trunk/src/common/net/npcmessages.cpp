@@ -83,7 +83,19 @@ csString psNPCListMessage::ToString(NetBase::AccessPointers * /*accessPointers*/
 {
     csString msgtext;
     
-    msgtext.AppendFmt("TODO");
+    uint32_t length, pid, eid;
+
+    length = msg->GetUInt32();
+    msgtext.AppendFmt("Length: %u",length);
+    
+    for (unsigned int x=0; x<length; x++)
+    {
+        if (x != 0) msgtext.AppendFmt(";");
+        pid = msg->GetUInt32();
+        eid = msg->GetUInt32();
+        msgtext.AppendFmt(" Player: PID:%u Entity: EID:%u",pid,eid);
+    }
+
 
     return msgtext;
 }
@@ -112,7 +124,7 @@ csString psNPCReadyMessage::ToString(NetBase::AccessPointers * /*accessPointers*
 {
     csString msgtext;
     
-    msgtext.AppendFmt("TODO");
+    msgtext.AppendFmt("NPC Client Ready");
 
     return msgtext;
 }
