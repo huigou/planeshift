@@ -110,8 +110,6 @@ public:
     virtual InstanceID GetInstance(){ return instance; };
 
 protected:
-    psNPCClient *npcclient;
-    
     static csRef<iMeshFactoryWrapper> nullfact;
 
     csString name;
@@ -123,8 +121,6 @@ protected:
     
     InstanceID  instance;
     
-    csRef<iEngine> engine;
-
     csRef<iThreadReturn> factory;
 };
 
