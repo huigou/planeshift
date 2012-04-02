@@ -59,8 +59,6 @@ psNpcMeshAttach::psNpcMeshAttach(gemNPCObject* objectToAttach) : scfImplementati
 gemNPCObject::gemNPCObject(psNPCClient* npcclient, EID id)
     :eid(id), visible(true), invincible(false), instance(DEFAULT_INSTANCE)
 {
-    this->npcclient = npcclient;
-    engine =  csQueryRegistry<iEngine> (npcclient->GetObjectReg());
 }    
 
 gemNPCObject::~gemNPCObject()
@@ -78,7 +76,7 @@ void gemNPCObject::Move(const csVector3& pos, float rotangle,  const char* room,
 void gemNPCObject::Move(const csVector3& pos, float rotangle,  const char* room)
 {
     // Position and sector
-    iSector* sector = engine->FindSector(room);
+    iSector* sector = psNPCClient::npcclient->GetEngine()->FindSector(room);
     if ( sector == NULL )
     {
         CPrintf(CON_DEBUG, "Can't move npc object %s. Sector %s not found!\n", ShowID(eid), room);
@@ -99,9 +97,9 @@ bool gemNPCObject::InitMesh(    const char *factname,
                                 const char* room
                              )
 {
-    pcmesh = new npcMesh(npcclient->GetObjectReg(), this, npcclient);
+    pcmesh = new npcMesh(psNPCClient::npcclient->GetObjectReg(), this, psNPCClient::npcclient);
 
-    csRef<iEngine> engine = csQueryRegistry<iEngine> (npcclient->GetObjectReg());    
+    csRef<iEngine> engine = csQueryRegistry<iEngine> (psNPCClient::npcclient->GetObjectReg());    
     csRef<iMeshWrapper> mesh;
 
     if(csString("").Compare(filename) || csString("nullmesh").Compare(factname))
@@ -127,7 +125,7 @@ bool gemNPCObject::InitMesh(    const char *factname,
         fact_name.ReplaceAll("$C", "stonebm");
         factname = fact_name;
 
-        csRef<iBgLoader> loader = csQueryRegistry<iBgLoader> (npcclient->GetObjectReg());
+        csRef<iBgLoader> loader = csQueryRegistry<iBgLoader> (psNPCClient::npcclient->GetObjectReg());
         factory = loader->LoadFactory(factname, true);
 
         if(!(factory.IsValid() && factory->IsFinished() && factory->WasSuccessful()))
@@ -192,7 +190,7 @@ gemNPCActor::gemNPCActor( psNPCClient* npcclient, psPersistActor& mesg)
 
     csString filename;
     filename.Format("/planeshift/models/%s/%s.cal3d", mesg.factname.GetData(), mesg.factname.GetData());
-    InitMesh(  mesg.factname, filename, mesg.pos, mesg.yrot, mesg.sectorName );
+    InitMesh( mesg.factname, filename, mesg.pos, mesg.yrot, mesg.sectorName );
     InitLinMove( mesg.pos, mesg.yrot, mesg.sectorName, mesg.top, mesg.bottom, mesg.offset );
     InitCharData( mesg.texParts, mesg.equipment );  
 }
@@ -228,9 +226,9 @@ bool gemNPCActor::InitCharData( const char* textParts, const char* equipment )
 bool gemNPCActor::InitLinMove(const csVector3& pos, float angle, const char* sector,
                               csVector3 top, csVector3 bottom, csVector3 offset )
 {
-    pcmove =  new psLinearMovement(npcclient->GetObjectReg());
+    pcmove =  new psLinearMovement(psNPCClient::npcclient->GetObjectReg());
 
-    csRef<iEngine> engine =  csQueryRegistry<iEngine> (npcclient->GetObjectReg());
+    csRef<iEngine> engine =  csQueryRegistry<iEngine> (psNPCClient::npcclient->GetObjectReg());
 
     pcmove->InitCD(top, bottom, offset, GetMeshWrapper()); 
     pcmove->SetPosition(pos,angle,engine->FindSector(sector));
@@ -251,7 +249,7 @@ gemNPCItem::gemNPCItem( psNPCClient* npcclient, psPersistItem& mesg)
         Error2("Item %s has bad data! Check cstr_gfx_mesh for this item!\n", mesg.name.GetData());
     }
 
-    InitMesh(  mesg.factname.GetDataSafe(), "", mesg.pos, mesg.yRot, mesg.sector );
+    InitMesh( mesg.factname.GetDataSafe(), "", mesg.pos, mesg.yRot, mesg.sector );
     if (mesg.flags & psPersistItem::NOPICKUP) flags |= NOPICKUP;
 }
 

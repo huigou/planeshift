@@ -81,7 +81,7 @@ protected:
     static psNPCClient *client;
 
 public:
-	psNPCClientTick(int offsetticks, psNPCClient *c);
+    psNPCClientTick(int offsetticks, psNPCClient *c);
     virtual void Trigger();  // Abstract event processing function
     virtual csString ToString() const;
 };
