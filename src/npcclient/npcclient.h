@@ -562,6 +562,11 @@ protected:
      * NPC.
      */
     void PerceptProximityLocations();
+
+    /**
+     * Find all actors that are in a tribe home and percept tribe and actor if it is an NPC.
+     */
+    void PerceptProximityTribeHome();
 public:
     static psNPCClient*             npcclient;
 protected:    
@@ -588,6 +593,7 @@ protected:
     csHash<gemNPCObject*, PID>      all_gem_objects_by_pid;
     csArray<gemNPCObject*>          all_gem_objects;
     csArray<gemNPCItem*>            all_gem_items;
+    csArray<gemNPCActor*>           all_gem_actors;
     csArray<Location*>              all_locations;
     csHash<RaceInfo_t,csString>     raceInfos;
 
@@ -600,9 +606,10 @@ protected:
     /// Counter used to start events at every nth client tick
     unsigned int                    tick_counter;
 
+    /// Counters used to distribute load regarding perception generation
     int                             current_long_range_perception_index;
-
     int                             current_long_range_perception_loc_index;
+    int                             current_tribe_home_perception_index;
 
     // Game Time
     int                             gameMinute;
