@@ -277,7 +277,7 @@ void CCheck::ParseFile(const char* filePath, const char* fileName, bool processi
                 csRef<iDocumentNode> newShaders = texmat->GetNode("shaders");
                 if(!newShaders.IsValid())
                 {
-                    newShaders = texmat->CreateNodeBefore(CS_NODE_ELEMENT);
+                    newShaders = texmat->CreateNodeBefore(CS_NODE_ELEMENT, texmat->GetNode("materials"));
                     newShaders->SetValue("shaders");
                 }
                 csRef<iDocumentNodeIterator> itr = root->GetNode("shaders")->GetNodes("shader");
