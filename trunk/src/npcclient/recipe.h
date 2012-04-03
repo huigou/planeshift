@@ -156,7 +156,7 @@ public:
     RecipeManager(psNPCClient* NPCClient, EventManager* eventManager);
 
     /** Destruct the Recipe Manager */
-    virtual ~RecipeManager() { };
+    virtual ~RecipeManager();
 
     /** Preparser
      *

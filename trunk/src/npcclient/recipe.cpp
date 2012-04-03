@@ -260,6 +260,15 @@ RecipeManager::RecipeManager(psNPCClient* NPCClient, EventManager* eventManager)
     eventmanager = eventManager;
 }
 
+RecipeManager::~RecipeManager()
+{
+    while (!recipes.IsEmpty())
+    {
+        Recipe* recipe = recipes.Pop();
+        delete recipe;
+    }
+}
+
 csString RecipeManager::Preparse(csString function, Tribe* tribe)
 {
     csString container;
