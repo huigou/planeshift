@@ -1760,35 +1760,45 @@ int com_factions(const char*)
     }
 
     size_t num = actors.GetSize();
-    CPrintf(CON_CMDOUTPUT ,"                     ");
-    for (i = 0; i < num; i++)
     {
-        CPrintf(CON_CMDOUTPUT ,"%*s ", csMax((size_t)7, strlen(actors[i]->GetName())), actors[i]->GetName());
+        csString output;
+        output.AppendFmt("                     ");
+        for (i = 0; i < num; i++)
+        {
+            output.AppendFmt("%*s ", csMax((size_t)7, strlen(actors[i]->GetName())), actors[i]->GetName());
+        }
+        CPrintf(CON_CMDOUTPUT ,"%s\n",output.GetDataSafe());
     }
-    CPrintf(CON_CMDOUTPUT ,"\n");
+    
     for (i = 0; i < num; i++)
     {
-        CPrintf(CON_CMDOUTPUT ,"%20s ",actors[i]->GetName());
+        csString output;
+        
+        output.AppendFmt("%20s ",actors[i]->GetName());
         for (j = 0; j < num; j++)
         {
-            CPrintf(CON_CMDOUTPUT ,"%*.2f ", csMax((size_t)7, strlen(actors[j]->GetName())), actors[i]->GetRelativeFaction(actors[j]));
+            output.AppendFmt("%*.2f ", csMax((size_t)7, strlen(actors[j]->GetName())), actors[i]->GetRelativeFaction(actors[j]));
         }
-        CPrintf(CON_CMDOUTPUT ,"\n");
+        CPrintf(CON_CMDOUTPUT ,"%s\n",output.GetDataSafe());
     }
 
     csHash<Faction*,int> factions_by_id = psserver->GetCacheManager()->GetFactionHash();
-    CPrintf(CON_CMDOUTPUT ,"                     ");
     csHash<Faction*, int>::GlobalIterator iter = factions_by_id.GetIterator();
-    while (iter.HasNext())
     {
-        Faction * faction = iter.Next();
-        CPrintf(CON_CMDOUTPUT ,"%15s ",faction->name.GetData());
+        csString output;
+        output.AppendFmt("                     ");
+        while (iter.HasNext())
+        {
+            Faction * faction = iter.Next();
+            output.AppendFmt("%15s ",faction->name.GetData());
+        }
+        CPrintf(CON_CMDOUTPUT ,"%s\n",output.GetDataSafe());
     }
-    CPrintf(CON_CMDOUTPUT ,"\n");
-
+    
     for (j = 0; j < num; j++)
     {
-        CPrintf(CON_CMDOUTPUT ,"%20s",actors[j]->GetName());
+        csString output;
+        output.AppendFmt("%20s",actors[j]->GetName());
         csHash<Faction*, int>::GlobalIterator iter = factions_by_id.GetIterator();
         while (iter.HasNext())
         {
@@ -1797,9 +1807,9 @@ int com_factions(const char*)
             int standing = 0;
             float weight = 0.0;
             factionSet->GetFactionStanding(faction->id,standing,weight);
-            CPrintf(CON_CMDOUTPUT ," %7d %7.2f",standing,weight);
+            output.AppendFmt(" %7d %7.2f",standing,weight);
         }
-        CPrintf(CON_CMDOUTPUT ,"\n");
+        CPrintf(CON_CMDOUTPUT ,"%s\n",output.GetDataSafe());
     }
 
 
