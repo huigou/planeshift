@@ -174,7 +174,7 @@ iMeshWrapper *gemNPCObject::GetMeshWrapper()
  
 
 gemNPCActor::gemNPCActor( psNPCClient* npcclient, psPersistActor& mesg) 
-    : gemNPCObject( npcclient, mesg.entityid ), pcmove(NULL), npc(NULL)
+    : gemNPCObject( npcclient, mesg.entityid ), pcmove(NULL), npc(NULL), withinTribe(NULL)
 {
     name = mesg.name;
     type = mesg.type;
@@ -215,6 +215,22 @@ void gemNPCActor::AttachNPC(NPC * newNPC)
     npc = newNPC;
     npc->SetActor(this);
     npc->SetAlive(true);
+}
+
+bool gemNPCActor::SetWithinTribe(Tribe* tribe, Tribe** oldTribe)
+{
+    // Check if this is a new tribe
+    bool result = (tribe != withinTribe);
+
+    if (oldTribe)
+    {
+        *oldTribe = withinTribe;
+    }
+
+    // Update the within tribe
+    withinTribe = tribe;
+    
+    return result;
 }
 
 

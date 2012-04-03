@@ -728,19 +728,42 @@ INSERT INTO sc_npctypes VALUES("109","AbstractTribesman","DoNothing,Move","","",
    <move anim="walk" duration="3" />
 </behavior>
 
-<react event="collision"           behavior="Turn" />
-<react event="tribe:breed"         behavior="Breed" />
-<react event="tribe:build"         behavior="GoBuild" />
-<react event="tribe:buy"           behavior="Buy" />
-<react event="tribe:explore"       behavior="Explore" />
-<react event="tribe:hunt"          behavior="HuntResource"  />
-<react event="tribe:mine"          behavior="MineResource" />
-<react event="tribe:resurrect"     behavior="Resurrect" when_dead="yes" />
-<react event="tribe:test_mine"     behavior="TestMineResource"  />
-<react event="tribe:wait"          behavior="Wait" />
-<react event="tribe:work"          behavior="GoToWork" />
-<react event="target out of range" behavior="Chase" />
-<react event="target out of chase" behavior="Chase" absolute="0" only_interrupt="Chase" />');
+<behavior name="TribeHomeActorEntered" resume="yes" >
+   <talk text="Someone has entered my tribe." target="false" />
+</behavior>
+
+<behavior name="TribeHomeActorLeft" resume="yes" >
+   <talk text="Someone has left my tribe." target="false" />
+</behavior>
+
+<behavior name="TribeHomeEntering" resume="yes" >
+   <talk text="I am entering a tribe." target="false" />
+</behavior>
+
+<behavior name="TribeHomeLiving" resume="yes" >
+   <talk text="I am living a tribe." target="false" />
+</behavior>
+
+<react event="collision"                behavior="Turn" />
+<react event="tribe:breed"              behavior="Breed" />
+<react event="tribe:build"              behavior="GoBuild" />
+<react event="tribe:buy"                behavior="Buy" />
+<react event="tribe:explore"            behavior="Explore" />
+<react event="tribe:hunt"               behavior="HuntResource"  />
+<react event="tribe:mine"               behavior="MineResource" />
+<react event="tribe:resurrect"          behavior="Resurrect" when_dead="yes" />
+<react event="tribe:test_mine"          behavior="TestMineResource"  />
+<react event="tribe:wait"               behavior="Wait" />
+<react event="tribe:work"               behavior="GoToWork" />
+<react event="target out of range"      behavior="Chase" />
+<react event="target out of chase"      behavior="Chase" absolute="0" only_interrupt="Chase" />
+
+<!-- Perceptions that fire when an actor cross the tribe home boundary -->
+<react event="tribe_home:actor_entered" behavior="TribeHomeActorEntered" />
+<react event="tribe_home:actor_left"    behavior="TribeHomeActorLeft" />
+<react event="tribe_home:entering"      behavior="TribeHomeEntering" />
+<react event="tribe_home:living"        behavior="TribeHomeLiving" />
+');
 
 INSERT INTO sc_npctypes VALUES("111","MineingTribe","AbstractTribesman","","","","","","",
 '<empty/>');

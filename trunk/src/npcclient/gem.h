@@ -145,6 +145,11 @@ public:
     virtual void AttachNPC(NPC * newNPC);
     virtual NPC *GetNPC() { return npc; }
 
+    /** Set the within tribe.
+     * @return true if a new within tribe is set
+     */
+    virtual bool SetWithinTribe(Tribe* tribe,Tribe** oldTribe = NULL);
+
 protected:
 
     bool InitLinMove(const csVector3& pos,float angle, const char* sector,
@@ -157,6 +162,8 @@ protected:
     csString race;
     
     NPC *npc;
+
+    Tribe* withinTribe; /// Points to the tribe home where this tribe is inside.
 };
 
 

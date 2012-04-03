@@ -136,7 +136,6 @@ psNPCClient::~psNPCClient()
     //    delete PFMaps;
     delete world;
 
-    // TODO -- Make the recipemanager's destructor
     // Delete Recipe Manager
     delete recipemanager;
 }
@@ -575,10 +574,16 @@ void psNPCClient::Add( gemNPCObject* object )
 
     all_gem_objects.Push( object );
 
-    gemNPCItem * item = dynamic_cast<gemNPCItem*>(object);
+    gemNPCItem* item = dynamic_cast<gemNPCItem*>(object);
     if (item)
     {
         all_gem_items.Push( item );
+    }
+
+    gemNPCActor* actor = dynamic_cast<gemNPCActor*>(object);
+    if (actor)
+    {
+        all_gem_actors.Push( actor );
     }
 
     all_gem_objects_by_eid.Put(eid, object);
@@ -622,6 +627,16 @@ void psNPCClient::Remove ( gemNPCObject * object )
         }
     }
 
+    gemNPCActor* actor = dynamic_cast<gemNPCActor*>(object);
+    if (actor)
+    {
+        size_t n = all_gem_actors.Find ( actor );
+        if (n != csArrayItemNotFound)
+        {
+            all_gem_actors.DeleteIndexFast( n );
+        }
+    }
+
     size_t n = all_gem_objects.Find( object );
     if (n != csArrayItemNotFound)
     {
@@ -643,6 +658,7 @@ void psNPCClient::RemoveAll()
 
     all_gem_objects.DeleteAll();
     all_gem_items.DeleteAll();
+    all_gem_actors.DeleteAll();
     all_gem_objects_by_eid.DeleteAll();
     all_gem_objects_by_pid.DeleteAll();    
 }
@@ -1115,6 +1131,15 @@ void psNPCClient::Tick()
         
         PerceptProximityLocations();
     }
+
+    // Percept proximity tribe homes
+    // Tribes use this event to attack stranger in their camp
+    if (tick_counter % 4 == 3)
+    {
+        ScopedTimer st(200, "tick for percept proximity tribe homes");
+        
+        PerceptProximityTribeHome();
+    }
  
 
     // Send all queued npc commands to the server
@@ -1535,19 +1560,18 @@ void psNPCClient::ListTribes(const char * pattern)
     // Write basic details about tribes
     if(strlen(pattern) == 0)
     {
-        CPrintf(CON_CMDOUTPUT, "\n%9s %-30s %-7s %-11s\n",
-                "Tribe id", "Name", "MCount", "Location");
+        CPrintf(CON_CMDOUTPUT, "\n%9s %-30s %-7s %-11s %5s\n",
+                "Tribe id", "Name", "MCount", "Location","Radius");
     
         for(size_t i=0;i<tribes.GetSize();i++)
         {
             tribes[i]->GetHome(pos,radius,sector); 
-            CPrintf(CON_CMDOUTPUT, "%9d %-30s %-7d %3f;%3f;%3f\n",
-                tribes[i]->GetID(),
-                tribes[i]->GetName(),
-                tribes[i]->GetMemberCount(),
-                pos[0],
-                pos[1],
-                pos[2]);
+            CPrintf(CON_CMDOUTPUT, "%9d %-30s %-7d %15s %5f\n",
+                    tribes[i]->GetID(),
+                    tribes[i]->GetName(),
+                    tribes[i]->GetMemberCount(),
+                    toString(pos,sector).GetDatSafe(),
+                    radius);
         }
     }
     else
@@ -1836,6 +1860,84 @@ void psNPCClient::PerceptProximityLocations()
                      &location->pos, location->GetSector(engine),true); // Broadcast only in sector
     }
 }
+
+void psNPCClient::PerceptProximityTribeHome()
+{
+    int size = (int)all_gem_actors.GetSize();
+
+    if (!size) return; // Nothing to do if no items
+        
+    int check_count = 50; // We only check 50 items each time. This number has to be tuned
+    if (check_count > size)
+    {
+        // If not more than check_count items don't check them more than once :)
+        check_count = size;
+    }
+        
+    while (check_count--)
+    {
+        current_tribe_home_perception_index++;
+        if (current_tribe_home_perception_index >= size)
+        {
+            current_tribe_home_perception_index = 0;
+        }
+
+        gemNPCActor* actor = all_gem_actors[current_tribe_home_perception_index];
+        bool within = false;
+
+        // Now we have an actor, check that actor for each tribe.
+        for(int i=0;i<tribes.GetSize();i++)
+        {
+            Tribe* tribe = tribes[i];
+
+            csVector3 position;
+            iSector* sector;
+            psGameObject::GetPosition(actor, position, sector );
+
+            if (tribe->CheckWithinBoundsTribeHome(NULL, position, sector))
+            {
+                within = true;
+                if (actor->SetWithinTribe(tribe))
+                {
+                    NPC* npc = actor->GetNPC();
+                    if (npc)
+                    {
+                        // Percept the NPC that it has entered a tribe home
+                        Perception pcpt_entering("tribe_home:entering");
+                        npc->TriggerEvent(&pcpt_entering);
+                    }
+                    
+                    // Percept all members of the tribe that an actor has entered the tribe home
+                    Perception pcpt_entered("tribe_home:actor_entered");
+                    tribe->TriggerEvent(&pcpt_entered);
+                }
+            }
+        }
+        if (!within)
+        {
+            Tribe* oldTribe = NULL;
+            
+            if (actor->SetWithinTribe(NULL,&oldTribe))
+            {
+                NPC* npc = actor->GetNPC();
+                if (npc)
+                {
+                    // Percept the NPC that it has entered a tribe home
+                    Perception pcpt_living("tribe_home:living");
+                    npc->TriggerEvent(&pcpt_living);
+                }
+                
+                // Percept all members of the tribe that an actor has entered the tribe home
+                Perception pcpt_left("tribe_home:actor_left");
+                oldTribe->TriggerEvent(&pcpt_left);
+            }
+        }
+        
+    }
+
+}
+
+
 
 void psNPCClient::UpdateTime(int minute, int hour, int day, int month, int year)
 {

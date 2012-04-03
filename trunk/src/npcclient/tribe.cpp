@@ -589,8 +589,10 @@ bool Tribe::CheckWithinBoundsTribeHome(NPC* npc, const csVector3& pos, const iSe
 {
     float dist = npcclient->GetWorld()->Distance(homePos, homeSector, pos, sector);
 
-    npc->Printf(5,"Range to tribe with radius %.2f is %.2f",homeRadius,dist);
-    
+    if (npc)
+    {
+        npc->Printf(5,"Range to tribe with radius %.2f is %.2f",homeRadius,dist);
+    }
 
     if (dist > homeRadius)
     {
