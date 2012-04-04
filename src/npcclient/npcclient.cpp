@@ -1560,17 +1560,17 @@ void psNPCClient::ListTribes(const char * pattern)
     // Write basic details about tribes
     if(strlen(pattern) == 0)
     {
-        CPrintf(CON_CMDOUTPUT, "\n%9s %-30s %-7s %-11s %5s\n",
+        CPrintf(CON_CMDOUTPUT, "\n%9s %-30s %-7s %-35s %5s\n",
                 "Tribe id", "Name", "MCount", "Location","Radius");
     
         for(size_t i=0;i<tribes.GetSize();i++)
         {
             tribes[i]->GetHome(pos,radius,sector); 
-            CPrintf(CON_CMDOUTPUT, "%9d %-30s %-7d %15s %5f\n",
+            CPrintf(CON_CMDOUTPUT, "%9d %-30s %-7d %35s %5f\n",
                     tribes[i]->GetID(),
                     tribes[i]->GetName(),
                     tribes[i]->GetMemberCount(),
-                    toString(pos,sector).GetDatSafe(),
+                    toString(pos,sector).GetDataSafe(),
                     radius);
         }
     }
