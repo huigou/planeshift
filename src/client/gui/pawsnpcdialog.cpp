@@ -406,6 +406,7 @@ void pawsNpcDialogWindow::HandleMessage( MsgEntry* me )
 {
     if(me->GetType() == MSGTYPE_DIALOG_MENU)
     {
+        printf("OH!\n");
         psDialogMenuMessage mesg(me);
 
         Debug2(LOG_QUESTS, 0,"Got psDialogMenuMessage: %s\n", mesg.xml.GetDataSafe() );
@@ -435,7 +436,7 @@ void pawsNpcDialogWindow::NpcSays(csArray<csString>& lines,GEMClientActor *actor
         return;
     }
     //display npc response
-    if(actor && psengine->GetCharManager()->GetTarget() == actor)
+    if(IsVisible() && actor && psengine->GetCharManager()->GetTarget() == actor)
     {
         csString all = "";
         for (size_t i = 0 ; i < lines.GetSize() ; i++)

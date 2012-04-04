@@ -424,6 +424,7 @@ void psChatBubbles::HandleMessage(MsgEntry* msg, Client* /*client*/)
     }
 
 
+    //TODO: THIS NEEDS TO BE MIGRATED IN THE NPCDIALOG AND HANDLED CORRECTLY
     pawsNpcDialogWindow *npcdialog = dynamic_cast<pawsNpcDialogWindow *>(psengine->GetMainWidget()->FindWidget("NPCDialogWindow"));
     if(npcdialog)
     {
