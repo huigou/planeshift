@@ -352,6 +352,12 @@ bool pawsInteractWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*
         {
             psengine->GetCmdHandler()->Execute("/npcmenu");
 			Hide();
+            pawsNpcDialogWindow* npcDialogWindow = dynamic_cast<npcDialogWindow*>PawsManager::GetSingleton().FindWidget("NPCDialogWindow")
+
+            if(npcDialogWindow)
+            {
+                npcDialogWindow->ShowIfBubbles();
+            }
             return true;
         }
         case INTERACT_VIEWSTATS: //Request Viewing of Stats of PET
