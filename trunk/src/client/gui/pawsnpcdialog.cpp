@@ -201,12 +201,15 @@ bool pawsNpcDialogWindow::OnButtonPressed( int button, int keyModifier, pawsWidg
                     gift.SendMessage();
                 }
                 DisplayTextBubbles(text.GetData());
+                textBox->Clear();
+                PawsManager::GetSingleton().SetCurrentFocusedWidget(textBox);
             }
             else if(name == "CloseBubble")
             {
                 Hide();
             }
-            else {
+            else
+            {
                 if(name == "LeftArrow")
                 {
                     if(displayIndex >= 3) displayIndex -= 3;
@@ -232,10 +235,10 @@ bool pawsNpcDialogWindow::OnButtonPressed( int button, int keyModifier, pawsWidg
                    pw2->Hide();
                 else
                    pw2->Show();
+
+                PawsManager::GetSingleton().SetCurrentFocusedWidget(textBox);
             }
         }
-        textBox->Clear();
-        PawsManager::GetSingleton().SetCurrentFocusedWidget(textBox);
 
         return true;
 
@@ -595,8 +598,6 @@ void pawsNpcDialogWindow::Hide()
 {
     loadOnce = 0;
 
-    pawsWidget::Hide();
-
     if(useBubbles)
     {
        textBox->Clear();
@@ -605,6 +606,8 @@ void pawsNpcDialogWindow::Hide()
        if(psengine->GetPSCamera()->GetCameraMode() == 0)
           psengine->GetPSCamera()->SetCameraMode(cameraMode); // restore camera mode
     }
+    
+    pawsWidget::Hide();
 }
 
 bool pawsNpcDialogWindow::LoadSetting()
