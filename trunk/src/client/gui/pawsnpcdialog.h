@@ -61,6 +61,11 @@ public:
     bool LoadSetting();
 
     /**
+     * Shows the window only if it's in bubbles mode, else does nothing.
+     */
+    void ShowIfBubbles();
+
+    /**
      * Shows the window and applies some special handling to fix up the window
      * Behaviour and graphics correctly depending if we use the classic menu
      * or the bubble menu
