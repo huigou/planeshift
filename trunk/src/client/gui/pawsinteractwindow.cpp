@@ -353,7 +353,7 @@ bool pawsInteractWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*
         {
             psengine->GetCmdHandler()->Execute("/npcmenu");
 			Hide();
-            pawsNpcDialogWindow* npcDialogWindow = dynamic_cast<npcDialogWindow*>PawsManager::GetSingleton().FindWidget("NPCDialogWindow")
+            pawsNpcDialogWindow* npcDialogWindow = dynamic_cast<npcDialogWindow*>PawsManager::GetSingleton().FindWidget("NPCDialogWindow");
 
             if(npcDialogWindow)
             {
