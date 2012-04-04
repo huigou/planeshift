@@ -44,6 +44,7 @@
 #include "util/log.h"
 #include "pawsinfowindow.h"
 #include "pawspetstatwindow.h"
+#include "pawsnpcdialog.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
