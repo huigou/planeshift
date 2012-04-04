@@ -609,11 +609,15 @@ void pawsNpcDialogWindow::Hide()
 
     if(useBubbles)
     {
-       textBox->Clear();
-       psengine->GetPSCamera()->LockCameraMode(false);
-       psengine->GetCharManager()->LockTarget(false);
-       if(psengine->GetPSCamera()->GetCameraMode() == 0)
-          psengine->GetPSCamera()->SetCameraMode(cameraMode); // restore camera mode
+        textBox->Clear();
+        questInfo.DeleteAll();
+        displayIndex = 0;
+        psengine->GetPSCamera()->LockCameraMode(false);
+        psengine->GetCharManager()->LockTarget(false);
+        if(psengine->GetPSCamera()->GetCameraMode() == 0)
+        {
+            psengine->GetPSCamera()->SetCameraMode(cameraMode); // restore camera mode
+        }
     }
     
     pawsWidget::Hide();
