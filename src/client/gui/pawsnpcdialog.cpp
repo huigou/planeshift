@@ -406,7 +406,6 @@ void pawsNpcDialogWindow::HandleMessage( MsgEntry* me )
 {
     if(me->GetType() == MSGTYPE_DIALOG_MENU)
     {
-        printf("OH!\n");
         psDialogMenuMessage mesg(me);
 
         Debug2(LOG_QUESTS, 0,"Got psDialogMenuMessage: %s\n", mesg.xml.GetDataSafe() );
@@ -418,9 +417,6 @@ void pawsNpcDialogWindow::HandleMessage( MsgEntry* me )
         {
            LoadQuest(mesg.xml);
            DisplayQuest(displayIndex);
-
-           FindWidget("FreeBubble")->Show();
-           textBox->Clear();
         }
 
         AdjustForPromptWindow();
@@ -538,6 +534,8 @@ void pawsNpcDialogWindow::SetupWindowWidgets()
         defaultFrame = bubbles->ScreenFrame();
         SetSize(defaultFrame.Width(), defaultFrame.Height());
         CenterTo(graphics2D->GetWidth() / 2, graphics2D->GetHeight() / 2);
+        FindWidget("FreeBubble")->Show();
+        textBox->Clear();
     }
     else
     {
@@ -553,6 +551,14 @@ void pawsNpcDialogWindow::SetupWindowWidgets()
         SetSize(defaultFrame.Width(), defaultFrame.Height());
         CenterTo(graphics2D->GetWidth() / 2, graphics2D->GetHeight() / 2);
         PawsManager::GetSingleton().SetCurrentFocusedWidget(responseList);
+    }
+}
+
+void pawsNpcDialogWindow::ShowIfBubbles()
+{
+    if(useBubbles)
+    {
+        Show();
     }
 }
 
