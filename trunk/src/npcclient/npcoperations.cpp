@@ -730,6 +730,11 @@ ScriptOperation::OperationResult MovementOperation::Run(NPC *npc, bool interrupt
 
         return OPERATION_NOT_COMPLETED; // This behavior isn't done yet
     }
+    else
+    {
+        // Have no velocity to compleate any movement
+        return OPERATION_FAILED;
+    }
 
     return OPERATION_COMPLETED; // This operation is complete
 }
