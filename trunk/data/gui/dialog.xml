@@ -104,8 +104,8 @@
         </widget>
 
         <widget name="SpeechBubble" factory="pawsWidget" visible="no">
-            <frame x="30" y="100" width="331" height="117" border="no" />
-            <bgimage resource="NPCSpeechBubble" />
+            <frame x="30" y="80" width="331" height="207" border="no" />
+            <bgimage resource="NPCSpeekBubble" />
 
             <widget name="BubbleText" factory="pawsMultiLineTextBox" style="textinput">
                 <frame x="20" y="25" width="260" height="95" border="no" />
