@@ -66,6 +66,11 @@ public:
     void ShowIfBubbles();
 
     /**
+     * empties all bubbles structures and hides them.
+     */
+    void CleanBubbles();
+
+    /**
      * Shows the window and applies some special handling to fix up the window
      * Behaviour and graphics correctly depending if we use the classic menu
      * or the bubble menu
