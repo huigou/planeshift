@@ -748,9 +748,11 @@ bool RecipeManager::ParseFunction(csString function, Tribe* tribe, csArray<NPC*>
         {
             // We have a distributed requirements recipe
             tribe->AddRecipe(GetRecipe(functionArguments.Get(0)), recipe, true);
-            return false;
+        } else
+        {
+            // We have a non distributed requirements recipe
+            tribe->AddRecipe(GetRecipe(functionArguments.Get(0)), recipe, false);
         }
-        tribe->AddRecipe(GetRecipe(functionArguments.Get(0)), recipe);
         // We return false because we want the loaded recipe to execute next, not the following steps
         return false;
     }
