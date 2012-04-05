@@ -568,6 +568,7 @@ void pawsNpcDialogWindow::ShowIfBubbles()
 {
     if(useBubbles)
     {
+        CleanBubbles();
         Show();
     }
 }
