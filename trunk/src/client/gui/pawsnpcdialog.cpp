@@ -611,6 +611,7 @@ void pawsNpcDialogWindow::Hide()
     {
         textBox->Clear();
         questInfo.DeleteAll();
+		DisplayQuest(0);
         displayIndex = 0;
         psengine->GetPSCamera()->LockCameraMode(false);
         psengine->GetCharManager()->LockTarget(false);
