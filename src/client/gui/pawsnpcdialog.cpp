@@ -72,6 +72,7 @@ bool pawsNpcDialogWindow::PostSetup()
     {
         //setup the window with defaults.
         SetupWindowWidgets();
+        CleanBubbles();       
     }
     return true;
 }
@@ -554,6 +555,15 @@ void pawsNpcDialogWindow::SetupWindowWidgets()
     }
 }
 
+void pawsNpcDialogWindow::CleanBubbles()
+{
+    FindWidget("LeftArrow")->Hide();
+    FindWidget("RightArrow")->Hide();
+    displayIndex = 0;
+    questInfo.DeleteAll();
+    DisplayQuest(0);
+}
+
 void pawsNpcDialogWindow::ShowIfBubbles()
 {
     if(useBubbles)
@@ -610,9 +620,7 @@ void pawsNpcDialogWindow::Hide()
     if(useBubbles)
     {
         textBox->Clear();
-        questInfo.DeleteAll();
-		DisplayQuest(0);
-        displayIndex = 0;
+        CleanBubbles();
         psengine->GetPSCamera()->LockCameraMode(false);
         psengine->GetCharManager()->LockTarget(false);
         if(psengine->GetPSCamera()->GetCameraMode() == 0)
