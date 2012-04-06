@@ -94,7 +94,7 @@ INSERT INTO sc_npctypes VALUES("4","Fight","","","","","","","","1",
 
 <react event="death"               behavior="Fight" absolute="0" />');
 
-INSERT INTO sc_npctypes VALUES("5","TurnToSensedPlayer","","","","","","","",
+INSERT INTO sc_npctypes VALUES("5","TurnToSensedPlayer","","","","","","","","0",
 '<behavior name="TurnToFacePlayer" completion_decay="-1" growth="0" initial="0">
    <locate obj="perception" />
    <rotate type="locatedest" anim="walk" ang_vel="60" />
@@ -895,7 +895,7 @@ INSERT INTO sc_npctypes VALUES("117","MoveTest5","Answerer,Move","","$walk","","
    <wait duration="5" anim="stand" />
    <invisible/>
    <wait duration="5" anim="stand" />
-   <rotate type="relative" value="180" ang_vel="45"/>
+   <rotate type="locaterotation" ang_vel="45"/>
    <percept event="at_sleep" />
 </behavior>
 <react event="GoHome" behavior="GoHome" />
@@ -907,7 +907,7 @@ INSERT INTO sc_npctypes VALUES("117","MoveTest5","Answerer,Move","","$walk","","
 <behavior name="GoWork"  resume="yes" completion_decay="-1" >
    <locate obj="waypoint:name:$name_work"  static="no" destination="Move" />
    <percept event="global_move" /> 
-   <rotate type="relative" value="180" ang_vel="45"/>
+   <rotate type="locaterotation" ang_vel="45"/>
 </behavior>
 <react event="GoWork" behavior="GoWork" />
 

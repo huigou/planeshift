@@ -29,6 +29,46 @@
 #include "util/edge.h"
 
 /**
+ * Class to hold information regarding aliases for waypoints.
+ */
+class WaypointAlias
+{
+public:
+    /** Constructor
+     */
+    WaypointAlias(Waypoint* wp, int id, const csString& alias, float rotationAngle);
+
+    /** Get the DB id for this alias.
+     */
+    int GetID() const { return id; }
+    
+    /** Get the Name of this alias.
+     */
+    const char* GetName() const { return alias.GetDataSafe(); }
+
+    /** Get the Rotation Angle of this alias.
+     */
+    float GetRotationAngle() const { return rotationAngle; }
+
+    /** Crate or update a waypoint alias.
+     */
+    bool CreateUpdate(iDataConnection* db);
+        
+    /** Set a new rotation angle for this waypoint.
+     */
+    bool SetRotationAngle(iDataConnection* db, float rotationAngle);
+
+    /** Set a new rotation angle for this waypoint.
+     */
+    void SetRotationAngle(float rotationAngle) { this->rotationAngle = rotationAngle; }
+
+    Waypoint* wp;              ///< The waypoint this alias is a part of
+    int       id;              ///< The ID of this waypoint alias in DB.
+    csString  alias;           ///< An alias for an waypoint
+    float     rotationAngle;   ///< The direction the NPC should face when placed on this waypoint.
+};
+
+/**
  * A waypoint is a specified circle on the map with a name,
  * location, and a list of waypoints it is connected to.  With
  * this class, a network of nodes can be created which will
@@ -39,7 +79,7 @@ class Waypoint
 public:
     Location                   loc;            ///< Id and position
     csString                   group;          ///< Hold group name for this waypoint if any.
-    csArray<csString>          aliases;        ///< Hold aliases for this waypoint
+    csArray<WaypointAlias*>    aliases;        ///< Hold aliases for this waypoint
 
     csArray<Waypoint*>         links;          ///< Links to other waypoinst connected with paths from this node.
     csArray<float>             dists;          ///< Distances of each link.
@@ -81,9 +121,10 @@ public:
 
 
     /// Add a new alias to this waypoint
-    void AddAlias(csString alias);
+    WaypointAlias* AddAlias(int id, csString aliasName, float rotationAngle);
+    
     /// Remove a alias from this waypoint
-    void RemoveAlias(csString alias);
+    void RemoveAlias(csString aliasName);
 
     /// Get the id of this waypoint
     int          GetID() const { return loc.id; }
@@ -102,6 +143,20 @@ public:
     
     /// Get a string with aliases for this waypoint
     csString GetAliases();
+
+    /** Locate the WaypointAlias struct for a alias by alias name.
+     */
+    const WaypointAlias* FindAlias(const csString& aliasName) const;
+
+    /** Locate the WaypointAlias struct for a alias by alias name.
+     */
+    WaypointAlias* FindAlias(const csString& aliasName);
+
+    
+    /** Set the rotation angle for an alias.
+     */
+    bool SetRotationAngle(const csString& aliasName, float rotationAngle);
+    
     
     /// Get the sector from the location.
     iSector*     GetSector(iEngine * engine) { return loc.GetSector(engine); }
@@ -119,7 +174,7 @@ public:
     bool CheckWithin(iEngine * engine, const csVector3& pos, const iSector* sector);
 
     int Create(iDataConnection * db);
-    bool CreateAlias(iDataConnection * db, csString alias);
+    WaypointAlias* CreateAlias(iDataConnection * db, csString alias, float rotationAngle);
     bool RemoveAlias(iDataConnection * db, csString alias);
     bool Adjust(iDataConnection * db, csVector3 & pos, csString sector);
     void Adjust(csVector3 & pos, csString sector);

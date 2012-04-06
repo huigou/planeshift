@@ -26,10 +26,11 @@
 
 #include "util/pspath.h"
 
-class Waypoint;
-class psWorld;
-class psPath;
 class Edge;
+class Waypoint;
+class WaypointAlias;
+class psPath;
+class psWorld;
 
 class psPathNetwork
 {
@@ -76,8 +77,11 @@ public:
 
     /**
      * Find waypoint by name
+     *
+     * @param name The name of the waypoint to find
+     * @param alias If not null pointer wil be set if the name is of one of the aliases for the WP found.
      */
-    Waypoint *FindWaypoint(const char * name);
+    Waypoint *FindWaypoint(const char * name, WaypointAlias** alias = NULL);
     
     /**
      * Find waypoint at a given point in the world.

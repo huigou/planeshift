@@ -73,6 +73,17 @@ public:
         return Get(wordNum);
     }
 
+    bool GetString(size_t wordNum, csString &retValue) const
+    {
+        if(wordNum >= GetSize())
+        {
+            return false;
+        }
+
+        retValue = csStringArray::Get(wordNum);
+        return true;
+    }
+
     int GetInt(size_t wordNum) const 
     {
         return atoi(Get(wordNum).GetData());

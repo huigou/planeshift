@@ -63,10 +63,10 @@ bool psPathNetwork::Load(iEngine *engine, iDataConnection *db,psWorld * world)
 
         if (wp->Load(rs[i],engine))
         {
-            Result rs2(db->Select("select alias from sc_waypoint_aliases where wp_id=%d",wp->GetID()));
+            Result rs2(db->Select("select id,alias,rotation_angle from sc_waypoint_aliases where wp_id=%d",wp->GetID()));
             for (int j=0; j<(int)rs2.Count(); j++)
             {
-                wp->AddAlias(rs2[j][0]);
+                wp->AddAlias(rs2[j].GetInt(0),rs2[j][1],rs2[j].GetFloat(2)*PI/180.0);
             }
 
             waypoints.Push(wp);
@@ -179,7 +179,7 @@ Waypoint *psPathNetwork::FindWaypoint(int id)
     return NULL;
 }
 
-Waypoint *psPathNetwork::FindWaypoint(const char * name)
+Waypoint *psPathNetwork::FindWaypoint(const char * name, WaypointAlias** alias)
 {
     csPDelArray<Waypoint>::Iterator iter(waypoints.GetIterator());
     Waypoint *wp;
@@ -191,13 +191,23 @@ Waypoint *psPathNetwork::FindWaypoint(const char * name)
         // Check name
         if (strcasecmp(wp->GetName(),name)==0)
         {
+            if (alias)
+            {
+                *alias = NULL;
+            }
+            
             return wp;
         }
         // Check for aliases
         for (size_t i = 0; i < wp->aliases.GetSize(); i++)
         {
-            if (strcasecmp(wp->aliases[i],name)==0)
+            if (strcasecmp(wp->aliases[i]->alias,name)==0)
             {
+                if (alias)
+                {
+                    *alias = wp->aliases[i];
+                }
+
                 return wp; // Found name in aliases
             }
         }

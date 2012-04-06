@@ -2843,24 +2843,24 @@ csString AdminCmdDataAction::GetHelpMessage()
 }
 
 AdminCmdDataPath::AdminCmdDataPath(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client *client, WordArray &words)
-: AdminCmdData("/path"), aliasSubCommandList("add remove"), wpList("waypoints points"), subCmd(), defaultRadius(2.0)
+    : AdminCmdData("/path"), aliasSubCommandList("add remove rotation"), wpList("waypoints points"), subCmd(), defaultRadius(2.0),radius(0.0)
 {
     // register sub commands with their extended help message 
     subCommandList.Push("adjust","[<radius>]");
-    subCommandList.Push("alias", "[add|remove]<alias>");
+    subCommandList.Push("alias", "[add|remove|rotation]<alias> [<rotation angle>] [<search radius>]");
     subCommandList.Push("display","[points|waypoints]");
-    subCommandList.Push("flagclear","[wp|path] <flag> [<radius>]");
-    subCommandList.Push("flagset","[wp|path] <flag> [<radius>]");
+    subCommandList.Push("flagclear","[wp|path] <flag> [<search radius>]");
+    subCommandList.Push("flagset","[wp|path] <flag> [<search radius>]");
     subCommandList.Push("format","<format> [first]");
     subCommandList.Push("help","[sub command]");
     subCommandList.Push("hide","[points|waypoints]");
-    subCommandList.Push("info","[<radius>]");
+    subCommandList.Push("info","[<search radius>]");
     subCommandList.Push("move","[wp|point] <id>|<name>");
     subCommandList.Push("point","add|remove|insert");
-    subCommandList.Push("radius","<new radius> [<radius>]");
-    subCommandList.Push("remove","[<radius>]");
-    subCommandList.Push("rename","[<radius>] <name>");
-    subCommandList.Push("select","<radius>");
+    subCommandList.Push("radius","<new radius> [<search radius>]");
+    subCommandList.Push("remove","[<search radius>]");
+    subCommandList.Push("rename","<name> [<search radius>]");
+    subCommandList.Push("select","<search radius>");
     subCommandList.Push("split","<radius> [wp flags]");
     subCommandList.Push("start","<radius> [wp flags] [path flags]");
     subCommandList.Push("stop","<radius> [wp flags]");
@@ -2886,20 +2886,50 @@ AdminCmdDataPath::AdminCmdDataPath(AdminManager* msgManager, MsgEntry* me, psAdm
         }
         else if (subCmd == "alias")
         {
-            addAlias = true;
-            if (aliasSubCommandList.IsSubCommand(words[index++]) && words.GetCount() == index+2)
+            aliasSubCmd = words[index++];
+            
+            if (aliasSubCommandList.IsSubCommand(aliasSubCmd))
             {
-                if (words[index-1] == "remove")
+                if (aliasSubCmd == "add")
                 {
-                    addAlias = false;
+                    if (!words.GetString(index++,alias))
+                    {
+                        ParseError(me,"Missing argument <alias>");
+                        return;
+                    }
+
+                    rotationAngle = words.GetFloat(index++)*PI/180.0;  // Convert from degree to radians
+
+                    radius = words.GetFloat(index++);
+                }
+                else if (aliasSubCmd == "remove")
+                {
+                    if (!words.GetString(index++,alias))
+                    {
+                        ParseError(me,"Missing argument <alias>");
+                        return;
+                    }
+                }
+                else if (aliasSubCmd == "rotation")
+                {
+                    if (!words.GetString(index++,alias))
+                    {
+                        ParseError(me,"Missing argument <alias>");
+                        return;
+                    }
+                    
+                    if (!words.GetFloat(index++,rotationAngle))
+                    {
+                        ParseError(me,"Missing argument <rotation angle> or isn't a float value.");
+                        return;
+                    }
+                    rotationAngle = rotationAngle*PI/180.0;  // Convert from degree to radians
                 }
             }
             else
             {
-            }
-            if (words.GetCount() == index+1)
-            {
-                waypoint = words[index];
+                ParseError(me,"Unkown subcommand "+ aliasSubCmd +" for alias.");
+                return;
             }
         }
         else if (subCmd == "display" || subCmd == "show")
@@ -3038,21 +3068,13 @@ AdminCmdDataPath::AdminCmdDataPath(AdminManager* msgManager, MsgEntry* me, psAdm
         }
         else if (subCmd == "rename")
         {
-            radius = words.GetFloat(index++);
-            if (radius == 0)
-            {
-                // Assumre no radius if 0, so the rest is the new name
-                waypoint = words[index++];
-            }
-            else
-            {
-                waypoint = words[index++];
-            }
-
+            waypoint = words[index++];
             if (waypoint.IsEmpty())
             {
                 ParseError(me, "Missing waypoint");
             }
+
+            radius = words.GetFloat(index++);
         }
         else if (subCmd == "select")
         {
@@ -6309,7 +6331,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
                  &pathPoint,&rangePoint,&indexPoint);
 
         // adding an alias
-        if (data->addAlias)
+        if (data->aliasSubCmd == "add")
         {
             if (!wp)
             {
@@ -6318,33 +6340,34 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
             }
 
             // Check if alias is used before
-            Waypoint * existing = pathNetwork->FindWaypoint(data->waypoint.GetDataSafe());
+            Waypoint * existing = pathNetwork->FindWaypoint(data->alias.GetDataSafe());
             if (existing)
             {
-                psserver->SendSystemError( me->clientnum, "Waypoint already exists with the name %s", data->waypoint.GetDataSafe());
+                psserver->SendSystemError( me->clientnum, "Waypoint already exists with the name %s", data->alias.GetDataSafe());
                 return;
             }
 
             // Create the alias in db
-            if (wp->CreateAlias(db, data->waypoint))
+            WaypointAlias* alias = wp->CreateAlias(db, data->alias, data->rotationAngle);
+            if (alias)
             {
-                psserver->npcmanager->WaypointAddAlias(wp,data->waypoint);
+                psserver->npcmanager->WaypointAddAlias(wp,alias);
             
                 psserver->SendSystemInfo( me->clientnum, "Added alias %s to waypoint %s(%d)",
-                                          data->waypoint.GetDataSafe(),wp->GetName(),wp->GetID());
+                                          alias->GetName(),wp->GetName(),wp->GetID());
             }
         }
-        else
+        else if (data->aliasSubCmd == "remove")
         {
             // Check if alias is used before
-            Waypoint * wp = pathNetwork->FindWaypoint(data->waypoint.GetDataSafe());
+            Waypoint * wp = pathNetwork->FindWaypoint(data->alias.GetDataSafe());
             if (!wp)
             {
                 psserver->SendSystemError( me->clientnum, "No waypoint with %s as alias", data->waypoint.GetDataSafe());
                 return;
             }
 
-            if (strcasecmp(wp->GetName(), data->waypoint.GetDataSafe())==0)
+            if (strcasecmp(wp->GetName(), data->alias.GetDataSafe())==0)
             {
                 psserver->SendSystemError( me->clientnum, "Can't remove the name of the waypoint", data->waypoint.GetDataSafe());
                 return;
@@ -6352,12 +6375,37 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
 
 
             // Remove the alias from db
-            if (wp->RemoveAlias(db, data->waypoint))
+            if (wp->RemoveAlias(db, data->alias))
             {
-                psserver->npcmanager->WaypointRemoveAlias(wp,data->waypoint);
+                psserver->npcmanager->WaypointRemoveAlias(wp,data->alias);
                 
                 psserver->SendSystemInfo( me->clientnum, "Removed alias %s from waypoint %s(%d)",
-                                          data->waypoint.GetDataSafe(),wp->GetName(),wp->GetID());
+                                          data->alias.GetDataSafe(),wp->GetName(),wp->GetID());
+            }
+        }
+        else if (data->aliasSubCmd == "rotation")
+        {
+            // Check if alias is used before
+            WaypointAlias* alias;
+            Waypoint* wp = pathNetwork->FindWaypoint(data->alias.GetDataSafe(),&alias);
+            if (!wp)
+            {
+                psserver->SendSystemError( me->clientnum, "No waypoint with %s as alias", data->alias.GetDataSafe());
+                return;
+            }
+
+            if (!alias)
+            {
+                psserver->SendSystemError( me->clientnum, "%s isn't a alias of waypoint %s(%d)", data->alias.GetDataSafe(), wp->GetName(),wp->GetID());
+                return;
+            }
+
+            if (alias->SetRotationAngle(db, data->rotationAngle))
+            {
+                psserver->npcmanager->WaypointAliasRotation(wp,alias);
+                
+                psserver->SendSystemInfo( me->clientnum, "Changed rotation angle for alias %s of waypoint %s(%d) to %.1f",
+                                          alias->GetName(),wp->GetName(),wp->GetID(),alias->GetRotationAngle()*180.0/PI);
             }
         }
     }
@@ -6443,7 +6491,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
 
         if (wp->SetRadius(db, data->newRadius))
         {
-            psserver->npcmanager->WaypointRadius(wp,data->newRadius);
+            psserver->npcmanager->WaypointRadius(wp);
             
             wp->RecalculateEdges(EntityManager::GetSingleton().GetWorld(),EntityManager::GetSingleton().GetEngine());
             
@@ -6986,7 +7034,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
             csString oldName = wp->GetName();
             if (wp->Rename(db, data->waypoint))
             {
-                psserver->npcmanager->WaypointRename(wp, data->waypoint);
+                psserver->npcmanager->WaypointRename(wp);
 
                 psserver->SendSystemInfo( me->clientnum, "Renamed waypoint %s(%d) to %s",
                                           oldName.GetDataSafe(),wp->GetID(),wp->GetName());
@@ -7004,7 +7052,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
             csString oldName = path->GetName();
             if (path->Rename(db, data->waypoint))
             {
-                psserver->npcmanager->PathRename(path, data->waypoint);
+                psserver->npcmanager->PathRename(path);
                 
                 psserver->SendSystemInfo( me->clientnum, "Renamed path %s(%d) to %s",
                                           oldName.GetDataSafe(),path->GetID(),path->GetName());
