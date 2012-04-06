@@ -228,7 +228,7 @@ public:
      * This iterates over all waypoints and finds the one with the given name.
      * There is probably a more efficient structure to accomplish this.
      */
-    Waypoint* FindWaypoint(const char* name);
+    Waypoint* FindWaypoint(const char* name, WaypointAlias** alias);
     
     /**
      * Find the shortest route between waypoint start and stop.

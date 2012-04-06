@@ -172,9 +172,9 @@ csString NPC::Info()
     reply.AppendFmt(" DR Counter: %d ", DRcounter);
     reply.AppendFmt("%s\n",disabled?"Disabled ":"");
 
-    reply.AppendFmt(" Active locate: ( Pos: %s Angle: %.2f Radius: %.2f WP: %s )\n",
+    reply.AppendFmt(" Active locate: ( Pos: %s Angle: %.1f deg Radius: %.2f WP: %s )\n",
 		    toString(activeLocate->pos,activeLocate->sector).GetDataSafe(),
-		    activeLocate->angle,activeLocate->radius,
+		    activeLocate->angle*180/PI,activeLocate->radius,
 		    activeLocate->wp?activeLocate->wp->GetName():"(None)");
     reply.AppendFmt(" Spawn pos: %s\n", toString(spawnPosition,spawnSector).GetDataSafe());
     if (GetOwner())

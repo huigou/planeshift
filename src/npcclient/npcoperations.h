@@ -1096,13 +1096,14 @@ protected:
     enum
     {   
         ROT_UNKNOWN,
-        ROT_ABSOLUTE,     // Rotate to this world angle
-        ROT_RELATIVE,     // Rotate delta angle from current npd heading
-        ROT_TARGET,       // Rotate to face target
-        ROT_LOCATEDEST,   // Rotate to face located destination
-        ROT_RANDOM,       // Rotate a random angle
-        ROT_REGION,       // Rotate to an angle within the region
-        ROT_TRIBE_HOME    // Rotate to an angle within tribe home
+        ROT_ABSOLUTE,               // Rotate to this world angle
+        ROT_RELATIVE,               // Rotate delta angle from current npd heading
+        ROT_TARGET,                 // Rotate to face target
+        ROT_LOCATE_DESTINATION,     // Rotate to face located destination
+        ROT_LOCATE_ROTATION,        // Rotate to face located rotatation
+        ROT_RANDOM,                 // Rotate a random angle
+        ROT_REGION,                 // Rotate to an angle within the region
+        ROT_TRIBE_HOME              // Rotate to an angle within tribe home
     };
     int       op_type;              // Type of rotation. See enum above.
     float     min_range, max_range; // Min,Max values for random and region rotation

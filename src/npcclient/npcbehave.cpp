@@ -1289,51 +1289,43 @@ Behavior::BehaviorResult Behavior::Advance(float delta, NPC *npc)
 
     Behavior::BehaviorResult behaviorResult = BEHAVIOR_FAILED;
 
-    if (current_step < sequence.GetSize())
-    {
-        npc->Printf(10,"%s - Advance active delta: %.3f Need: %.2f Decay Rate: %.2f",
-                    name.GetData(),delta,new_need,need_decay_rate);
+    npc->Printf(10,"%s - Advance active delta: %.3f Need: %.2f Decay Rate: %.2f",
+                name.GetData(),delta,new_need,need_decay_rate);
         
-        ScriptOperation::OperationResult result = sequence[current_step]->Advance(delta,npc);
-        switch (result)
+    ScriptOperation::OperationResult result = sequence[current_step]->Advance(delta,npc);
+    switch (result)
+    {
+    case ScriptOperation::OPERATION_NOT_COMPLETED:
         {
-        case ScriptOperation::OPERATION_NOT_COMPLETED:
-            {
-                // Operation not completed and should relinquish
-                npc->Printf(2, "Behavior %s step %d - %s will complete later...",
-                            name.GetData(),current_step,sequence[current_step]->GetName());
-                
-                behaviorResult = Behavior::BEHAVIOR_WILL_COMPLETE_LATER; // This behavior is done for now.
-                break;
-            }
-        case ScriptOperation::OPERATION_COMPLETED:
-            {
-                OperationCompleted(npc);
-                if (stepCount >= sequence.GetSize() || (current_step == 0 && !loop) )
-                {
-                    npc->Printf(3,"Terminating behavior '%s' since it has looped all once.",GetName());
-                    behaviorResult = Behavior::BEHAVIOR_COMPLETED; // This behavior is done
-                }
-                else
-                {
-                    behaviorResult = Behavior::BEHAVIOR_NOT_COMPLETED; // More to do for this behavior
-                }
-                break;
-            }
-        case ScriptOperation::OPERATION_FAILED:
-            {
-                OperationFailed(npc);
-                behaviorResult = Behavior::BEHAVIOR_FAILED; // This behavior is done
-                break;
-            }
+            // Operation not completed and should relinquish
+            npc->Printf(2, "Behavior %s step %d - %s will complete later...",
+                        name.GetData(),current_step,sequence[current_step]->GetName());
+            
+            behaviorResult = Behavior::BEHAVIOR_WILL_COMPLETE_LATER; // This behavior is done for now.
+            break;
         }
-        
+    case ScriptOperation::OPERATION_COMPLETED:
+        {
+            OperationCompleted(npc);
+            if (stepCount >= sequence.GetSize() || (current_step == 0 && !loop) )
+            {
+                npc->Printf(3,"Terminating behavior '%s' since it has looped all once.",GetName());
+                behaviorResult = Behavior::BEHAVIOR_COMPLETED; // This behavior is done
+            }
+            else
+            {
+                behaviorResult = Behavior::BEHAVIOR_NOT_COMPLETED; // More to do for this behavior
+            }
+            break;
+        }
+    case ScriptOperation::OPERATION_FAILED:
+        {
+            OperationFailed(npc);
+            behaviorResult = Behavior::BEHAVIOR_FAILED; // This behavior is done
+            break;
+        }
     }
-    else
-    {
-        Error1("Advancing operation past end of sequence");
-        return BEHAVIOR_FAILED;
-    }
+    
     return behaviorResult;
 }
 
@@ -1548,20 +1540,17 @@ Behavior::BehaviorResult Behavior::RunScript(NPC *npc)
 
 void Behavior::InterruptScript(NPC *npc)
 {
-    if (current_step < sequence.GetSize() )
+    npc->Printf(2,"Interrupting behaviour %s at step %d - %s",
+                name.GetData(),current_step,sequence[current_step]->GetName());
+
+    if (interruptPerception.Length())
     {
-        npc->Printf(2,"Interrupting behaviour %s at step %d - %s",
-                    name.GetData(),current_step,sequence[current_step]->GetName());
-
-        if (interruptPerception.Length())
-        {
-            Perception perception(interruptPerception);
-            npc->TriggerEvent(&perception);
-        }
-
-        sequence[current_step]->InterruptOperation(npc);
-        interrupted = true;
+        Perception perception(interruptPerception);
+        npc->TriggerEvent(&perception);
     }
+    
+    sequence[current_step]->InterruptOperation(npc);
+    interrupted = true;
 }
 
 void Behavior::Failure(NPC* npc, ScriptOperation* op)

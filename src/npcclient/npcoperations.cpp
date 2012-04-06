@@ -2409,6 +2409,8 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
 
         float located_range=0.0;
 
+        located.angle = 0.0;
+
         if (split_obj.GetSize() >= 2)
         {
             if (split_obj[1] == "group")
@@ -2424,10 +2426,15 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
             }
             else if (split_obj[1] == "name")
             {
-                located.wp = npcclient->FindWaypoint(split_obj[2]);
+                WaypointAlias* alias = NULL;
+                located.wp = npcclient->FindWaypoint(split_obj[2], &alias);
                 if (located.wp)
                 {
                     located_range = npcclient->GetWorld()->Distance(start_pos,start_sector,located.wp->loc.pos,located.wp->GetSector(npcclient->GetEngine()));
+                    if (alias)
+                    {
+                        located.angle = alias->GetRotationAngle();
+                    }
                 }
             }
         }
@@ -2450,7 +2457,6 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
                     toString(located.wp->loc.pos,located.wp->loc.GetSector(npcclient->GetEngine())).GetData(),located_range);
 
         located.pos = located.wp->loc.pos;
-        located.angle = located.wp->loc.rot_angle;
         located.sector = located.wp->loc.GetSector(npcclient->GetEngine());
 
         located.wp = CalculateWaypoint(npc,located.pos,located.sector,-1);
@@ -3570,7 +3576,12 @@ bool RotateOperation::Load(iDocumentNode *node)
     }
     else if (type == "locatedest")
     {
-        op_type = this->ROT_LOCATEDEST;
+        op_type = this->ROT_LOCATE_DESTINATION;
+        return true;
+    }
+    else if (type == "locaterotation")
+    {
+        op_type = this->ROT_LOCATE_ROTATION;
         return true;
     }
     else if (type == "target")
@@ -3581,7 +3592,7 @@ bool RotateOperation::Load(iDocumentNode *node)
     else
     {
         Error2("Rotate Op type '%s' must be 'inregion', 'random', 'absolute', 'relative', "
-               "'target', 'tribe_home' or 'locatedest' right now.",type.GetDataSafe());
+               "'target', 'tribe_home', 'locatedest', or 'locaterotate' right now.",type.GetDataSafe());
     }
     return false;
 }
@@ -3685,7 +3696,7 @@ ScriptOperation::OperationResult RotateOperation::Run(NPC *npc, bool interrupted
         }
         
     }
-    else if (op_type == ROT_LOCATEDEST)
+    else if (op_type == ROT_LOCATE_DESTINATION)
     {
         csVector3 dest;
         float     dest_rot;
@@ -3693,13 +3704,41 @@ ScriptOperation::OperationResult RotateOperation::Run(NPC *npc, bool interrupted
 
         npc->GetActiveLocate(dest,dest_sector,dest_rot);
 
-        if(pos == dest && sector == dest_sector && rot == dest_rot)
+        target_angle = psGameObject::CalculateIncidentAngle(pos,dest);
+
+        npc->Printf(5, "Rotate to located destinaion of %.2f deg",target_angle*180.0f/PI);
+
+        if(pos == dest && sector == dest_sector && (fabs(rot-target_angle)<PI/30.0))
         {
             npc->Printf(5,"At located destination, end rotation.");
             return OPERATION_COMPLETED;  // Nothing more to do for this op.
         }
         
-        target_angle = psGameObject::CalculateIncidentAngle(pos,dest);
+        angle_delta = target_angle-rot;
+
+        // If the angle is close enough don't worry about it and just go to next command.
+        if (fabs(angle_delta) < PI/30.0)
+        {
+            npc->Printf(5, "Rotation at destination angle. Ending rotation.");
+            return OPERATION_COMPLETED;  // Nothing more to do for this op.
+        }
+    }
+    else if (op_type == ROT_LOCATE_ROTATION)
+    {
+        csVector3 dest;
+        float     dest_rot;
+        iSector  *dest_sector;
+
+        npc->GetActiveLocate(dest,dest_sector,dest_rot);
+
+        target_angle = dest_rot;
+        npc->Printf(5, "Rotate to located rotaion of %.2f deg",target_angle*180.0f/PI);
+
+        if(pos == dest && sector == dest_sector && (fabs(rot-dest_rot)<PI/30.0))
+        {
+            npc->Printf(5,"At located destination, end rotation.");
+            return OPERATION_COMPLETED;  // Nothing more to do for this op.
+        }
 
         angle_delta = target_angle-rot;
 

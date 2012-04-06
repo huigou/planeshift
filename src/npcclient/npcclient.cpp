@@ -1246,9 +1246,9 @@ Waypoint *psNPCClient::FindWaypoint(int id)
 }
 
 
-Waypoint *psNPCClient::FindWaypoint(const char * name)
+Waypoint *psNPCClient::FindWaypoint(const char * name, WaypointAlias** alias)
 {
-    return pathNetwork->FindWaypoint(name);
+    return pathNetwork->FindWaypoint(name, alias);
 }
 
 csList<Waypoint*> psNPCClient::FindWaypointRoute(Waypoint * start, Waypoint * end, const psPathNetwork::RouteFilter* filter)
