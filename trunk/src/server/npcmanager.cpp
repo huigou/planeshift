@@ -2762,6 +2762,42 @@ void NPCManager::UpdatePetTime()
     }
 }
 
+void NPCManager::LocationAdjusted(Location* location)
+{
+    Debug3(LOG_SUPERCLIENT, 0, "NPCManager ajusting location (%s)%d\n", location->GetName(), location->GetID());
+    
+    psLocationMessage msg(psLocationMessage::LOCATION_ADJUSTED, location);
+    
+    msg.Multicast(superclients, -1, PROX_LIST_ANY_RANGE);
+}
+
+void NPCManager::LocationCreated(Location* location)
+{
+    Debug3(LOG_SUPERCLIENT, 0, "NPCManager created location (%s)%d\n", location->GetName(), location->GetID());
+    
+    psLocationMessage msg(psLocationMessage::LOCATION_CREATED, location);
+    
+    msg.Multicast(superclients, -1, PROX_LIST_ANY_RANGE);
+}
+
+void NPCManager::LocationInserted(Location* location)
+{
+    Debug3(LOG_SUPERCLIENT, 0, "NPCManager inserted location (%s)%d\n", location->GetName(), location->GetID());
+    
+    psLocationMessage msg(psLocationMessage::LOCATION_INSERTED, location);
+    
+    msg.Multicast(superclients, -1, PROX_LIST_ANY_RANGE);
+}
+
+void NPCManager::LocationRadius(Location* location)
+{
+    Debug3(LOG_SUPERCLIENT, 0, "NPCManager chaned radius of location (%s)%d\n", location->GetName(), location->GetID());
+    
+    psLocationMessage msg(psLocationMessage::LOCATION_RADIUS, location);
+    
+    msg.Multicast(superclients, -1, PROX_LIST_ANY_RANGE);
+}
+
 void NPCManager::WaypointAdjusted(Waypoint* wp)
 {
     Debug2(LOG_SUPERCLIENT, 0, "NPCManager ajusting waypoint %d\n", wp->GetID());

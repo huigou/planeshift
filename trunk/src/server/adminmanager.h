@@ -57,6 +57,7 @@ struct Result;
 class iResultSet;
 class Client;
 class psPathNetwork;
+class LocationManager;
 class psPath;
 class Waypoint;
 class WordArray;
@@ -2200,7 +2201,9 @@ public:
     csString subCommand; ///< subcommand storage
     csString locationType; ///< type of the location
     csString locationName; ///< name of the location
-    int radius; ///< radius of the location
+    float radius; ///< radius of the location
+    float searchRadius; ///< The radius to search for the location.
+    float rotAngle; ///< rotation angle for this location
 
     /** @brief Creates obj for specified command that needs a reason
      */
@@ -3589,6 +3592,22 @@ protected:
      */
     int LocationCreate(int typeID, csVector3& pos, csString& sectorName, csString& name, int radius);
 
+    /** @brif Handle display of locations
+     */
+    void ShowLocations(Client* client, iSector* sector);
+
+    /** Hide all locations for one client.
+     */
+    void HideLocations(Client* client);
+
+    /** Hide all locations in one sector for one client.
+     */
+    void HideLocations(Client* client, iSector* sector);
+
+    /** Update location to all clients displaying locations.
+     */
+    void UpdateDisplayLocation(Location* location);
+    
     /** @brief Handle online path editing.
      * @param me The incoming message from the GM
      * @param msg The cracked command message.
@@ -4226,11 +4245,15 @@ protected:
      * problems with the dictionary getting deleted just after the
      * initial npc was added. This prevents that
      */
-    psNPCDialog *npcdlg;
+    psNPCDialog* npcdlg;
 
     /** Holds the entire PathNetwork for editing of paths.
      */
-    psPathNetwork * pathNetwork;
+    psPathNetwork* pathNetwork;
+
+    /** Hold every location in the world for editing of locations.
+     */
+    LocationManager* locations;
 };
 
 #endif

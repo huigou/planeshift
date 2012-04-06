@@ -1452,6 +1452,126 @@ csString psPathNetworkMessage::ToString(NetBase::AccessPointers* /*accessPointer
     return str;
 }
 
+//--------------------------------------------------------------------------
+
+PSF_IMPLEMENT_MSG_FACTORY(psLocationMessage,MSGTYPE_LOCATION);
+
+psLocationMessage::psLocationMessage( Command command, const Location* location )
+{
+    msg.AttachNew(new MsgEntry( sizeof(uint8_t) + 1000 , PRIORITY_HIGH ));
+    msg->clientnum = 0;
+    msg->SetType(MSGTYPE_LOCATION);
+
+    msg->Add( (uint8_t)command );
+    msg->Add( (uint32_t)location->GetID() );
+
+    if (command == LOCATION_ADJUSTED)
+    {
+        msg->Add( location->GetPosition() );
+        msg->Add( location->GetSector(NetBase::GetAccessPointers()->engine) );
+    }
+    else if (command == LOCATION_CREATED)
+    {
+        msg->Add( location->GetTypeName() );
+        msg->Add( location->GetName() );
+        msg->Add( location->GetPosition() );
+        msg->Add( location->GetSector(NetBase::GetAccessPointers()->engine) );
+        msg->Add( location->GetRadius() );
+        msg->Add( location->GetRotationAngle() );
+        msg->Add( location->GetFlags() );
+    }
+    else if (command == LOCATION_DELETED)
+    {
+    }
+    else if (command == LOCATION_INSERTED)
+    {
+        msg->Add( (uint32_t)location->id_prev_loc_in_region );
+        msg->Add( location->GetPosition() );
+        msg->Add( location->GetSector(NetBase::GetAccessPointers()->engine) );
+    }
+    else if (command == LOCATION_RADIUS)
+    {
+        msg->Add( location->GetRadius() );
+    }
+    else if (command == LOCATION_RENAME)
+    {
+        msg->Add( location->GetName() );
+    }
+    msg->ClipToCurrentSize();
+}
+
+psLocationMessage::psLocationMessage( MsgEntry* msgEntry )
+    : id(0), sector(NULL), enable(false), radius(0.0), rotationAngle(0.0)
+{
+   if ( !msgEntry )
+       return;
+
+   command = (Command)msgEntry->GetUInt8();
+   id = msgEntry->GetUInt32();
+
+   switch (command)
+   {
+   case LOCATION_ADJUSTED:
+       position      = msgEntry->GetVector3();
+       sector        = msgEntry->GetSector();
+       break;
+   case LOCATION_CREATED:
+       typeName      = msgEntry->GetStr();
+       name          = msgEntry->GetStr();
+       position      = msgEntry->GetVector3();
+       sector        = msgEntry->GetSector();
+       radius        = msgEntry->GetFloat();
+       rotationAngle = msgEntry->GetFloat();
+       flags         = msgEntry->GetStr();
+       break;
+   case LOCATION_DELETED:
+       break;
+   case LOCATION_INSERTED:
+       prevID        = msgEntry->GetUInt32();
+       position      = msgEntry->GetVector3();
+       sector        = msgEntry->GetSector();
+       break;
+   case LOCATION_RADIUS:
+       radius        = msgEntry->GetFloat();
+       break;
+   case LOCATION_RENAME:
+       name          = msgEntry->GetStr();
+       break;
+   }
+}
+
+csString psLocationMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
+{
+    csString str;
+    switch (command)
+    {
+    case LOCATION_ADJUSTED:
+        str.AppendFmt("Cmd: LOCATION_ADJUSTED ID: %d Position: %s", id, toString(position,sector).GetDataSafe());
+        break;
+    case LOCATION_CREATED:
+        str.AppendFmt("Cmd: LOCATION_CREATE ID: %d Type: %s Name: %s Position: %s Radius: %.2f RotAngle: %.2f Flags: %s",
+                      id, typeName.GetDataSafe(), name.GetDataSafe(), toString(position, sector).GetDataSafe(),
+                      radius, rotationAngle, flags.GetDataSafe());
+        break;
+    case LOCATION_DELETED:
+        str.AppendFmt("Cmd: LOCATION_DELETED ID: %d", id);
+        break;
+    case LOCATION_INSERTED:
+        str.AppendFmt("Cmd: LOCATION_INSERTED ID: %d PrevID: %d Position: %s", id, prevID, toString(position, sector).GetDataSafe());
+        break;
+    case LOCATION_RADIUS:
+        str.AppendFmt("Cmd: LOCATION_RADIUS ID: %d Radius: %.2f", id, radius);
+        break;
+    case LOCATION_RENAME:
+        str.AppendFmt("Cmd: LOCATION_RENAME ID: %d String: %s", id, name.GetDataSafe());
+        break;
+    }
+    
+    return str;
+}
+
+
 //---------------------------------------------------------------------------
+
 
 

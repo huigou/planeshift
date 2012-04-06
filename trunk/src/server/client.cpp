@@ -55,8 +55,7 @@
 Client::Client ()
     : accumulatedLag(0), zombie(false), allowedToDisconnect(true), ready(false),
       accountID(0), playerID(0), securityLevel(0), superclient(false),
-      name(""), waypointEffectID(0), pathEffectID(0), pathPath(NULL),
-      locationEffectID(0), locationIsDisplaying(false),cheatMask(NO_CHEAT)
+      name(""), pathPath(NULL), cheatMask(NO_CHEAT)
 {
     actor           = 0;
     exchangeID      = 0;
@@ -509,20 +508,29 @@ csList<iSector*>::Iterator Client::GetWaypointDisplaying()
     return csList<iSector*>::Iterator(waypointDisplaySectors);
 }
 
-
 bool Client::WaypointIsDisplaying()
 {
     return !waypointDisplaySectors.IsEmpty();
 }
 
-
-
-uint32_t Client::LocationGetEffectID()
+void Client::LocationSetIsDisplaying( iSector* sector )
 {
-    if (locationEffectID == 0)
-        locationEffectID = psserver->GetCacheManager()->NextEffectUID();
+    locationDisplaySectors.PushBack(sector);
+}
 
-    return locationEffectID;
+void Client::LocationClearDisplaying()
+{
+    locationDisplaySectors.DeleteAll();
+}
+
+csList<iSector*>::Iterator Client::GetLocationDisplaying()
+{
+    return csList<iSector*>::Iterator(locationDisplaySectors);
+}
+
+bool Client::LocationIsDisplaying()
+{
+    return !locationDisplaySectors.IsEmpty();
 }
 
 void Client::SetAdvisorBan(bool ban)

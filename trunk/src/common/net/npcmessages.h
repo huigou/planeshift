@@ -26,13 +26,12 @@
 #include <csgeom/vector3.h>
 #include "util/psstring.h"
 
-struct iSector;
-
-//PathNetwork types
+// Forward declarations
+class Location;
 class Waypoint;
-class psPathPoint;
 class psPath;
-
+class psPathPoint;
+struct iSector;
 
 /**
 * The message sent from superclient to server on login.
@@ -515,6 +514,55 @@ public:
 
     /// Crack incoming psMessageBytes struct for inbound use
     psPathNetworkMessage(MsgEntry *message);
+    
+    PSF_DECLARE_MSG_FACTORY();
+
+    /**
+     * Convert the message into human readable string.
+     *
+     * @param accessPointers A struct to a number of access pointers.
+     * @return Return a human readable string for the message.
+     */
+    virtual csString ToString(NetBase::AccessPointers* /*accessPointers*/);
+};
+
+/** Handle Location changes from server to superclient.
+*/
+class psLocationMessage : public psMessageCracker
+{
+public:
+
+    typedef enum 
+    {
+        LOCATION_ADJUSTED,
+        LOCATION_CREATED,
+        LOCATION_DELETED,
+        LOCATION_INSERTED,
+        LOCATION_RADIUS,
+        LOCATION_RENAME,
+        LOCATION_SET_FLAG
+    } Command;
+
+    Command   command;       ///< 
+    uint32_t  id;            ///< ID of the location/location type
+    csVector3 position;      ///< The position for new or adjusted elements
+    iSector*  sector;        ///< The sector for new or adjusted elements
+    bool      enable;        ///< Enable or disable flags
+    float     radius;        ///< The radius
+    float     rotationAngle; ///< The rotation angle for this element.
+    csString  flags;         ///< String with flags
+    csString  typeName;      ///< Type name
+    csString  name;          ///< Name
+    uint32_t  prevID;        ///< ID of previous point in a region.
+    
+    // Create psMessageBytes struct for outbound use
+    
+    /** Generic message to do a command where input is a Location.
+     */
+    psLocationMessage(Command command, const Location* location);
+
+    /// Crack incoming psMessageBytes struct for inbound use
+    psLocationMessage(MsgEntry *message);
     
     PSF_DECLARE_MSG_FACTORY();
 

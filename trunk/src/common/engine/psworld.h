@@ -146,6 +146,12 @@ public:
      */
     static csVector3 Matrix2Rot(const csMatrix3& mat);
 
+    /**
+     * obtain the engine.
+     * @return returns the engine.
+     */
+    iEngine* GetEngine() { return engine; }
+
     void DumpWarpCache();
     void BuildWarpCache();
 };

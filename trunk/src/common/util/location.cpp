@@ -31,17 +31,56 @@
 #include "util/log.h"
 #include "util/psstring.h"
 #include "util/psutil.h"
+#include "util/pspath.h"
+#include "engine/psworld.h"
 
 
 /*------------------------------------------------------------------*/
 
+Location::Location()
+    :effectID(0)
+{
+    
+}
+
+Location::Location(LocationType* locationType, const char* locationName, csVector3& pos, iSector* sector, float radius, float rot_angle, const csString& flags)
+    :id(-1),name(locationName),pos(pos),rot_angle(rot_angle),radius(radius),
+     id_prev_loc_in_region(-1),sector(sector),
+     type(locationType),effectID(0),region(NULL)
+{
+    sectorName = sector->QueryObject()->GetName();
+    type->AddLocation(this);
+}
+
+
 Location::~Location()
 {
+    type->RemoveLocation(this);
+    
     while (locs.GetSize())
     {
         Location * loc = locs.Pop();
         delete loc;
     }
+}
+
+bool Location::SetRadius(iDataConnection* db, float radius)
+{
+    SetRadius(radius);
+    
+    return CreateUpdate(db);
+}
+
+void Location::SetRadius(float radius)
+{
+    this->radius = radius;
+
+    CalculateBoundingBox();
+}
+
+const char* Location::GetTypeName() const
+{
+    return type->GetName();
 }
 
 iSector* Location::GetSector(iEngine * engine)
@@ -99,6 +138,70 @@ int Location::GetSectorID(iDataConnection *db,const char* name)
     return rs[0].GetInt("id");
 }
 
+uint32_t Location::GetEffectID(iEffectIDAllocator* allocator)
+{
+    if (effectID <= 0)
+    {
+        effectID = allocator->GetEffectID();
+    }
+    
+    return effectID;
+}
+
+bool Location::Adjust(iDataConnection* db, csVector3 &pos, iSector* sector)
+{
+    if (!Adjust(pos,sector))
+    {
+        return false;   
+    }
+
+    db->CommandPump("UPDATE sc_locations SET x=%.2f,y=%.2f,z=%.2f WHERE id=%d",
+                    pos.x,pos.y,pos.z,id);
+
+    return true;
+}
+
+bool Location::Adjust(csVector3 &pos, iSector* sector)
+{
+    this->pos = pos;
+    this->sector = sector;
+
+    return true;
+}
+
+Location* Location::Insert(iDataConnection* db, csVector3 &pos, iSector* sector)
+{
+    Location* location = new Location(type, name, pos, sector, radius, rot_angle, GetFlags());
+    location->id_prev_loc_in_region = id;
+
+    // Create DB entry
+    location->CreateUpdate(db);
+
+    // Update all the pointers and stuff.
+    location->region = region;
+    size_t index = region->locs.Find(this);
+    Location* next = region->locs[(index+1)%region->locs.GetSize()];
+    next->id_prev_loc_in_region = location->GetID();
+    next->CreateUpdate(db);
+
+    region->locs.Insert((index+1)%region->locs.GetSize(),location);
+}
+
+Location* Location::Insert(int id, csVector3 &pos, iSector* sector)
+{
+    Location* location = new Location(type, name, pos, sector, radius, rot_angle, GetFlags());
+    location->SetID(id);
+    location->id_prev_loc_in_region = GetID();
+    
+    // Update all the pointers and stuff.
+    location->region = region;
+    size_t index = region->locs.Find(this);
+    Location* next = region->locs[(index+1)%region->locs.GetSize()];
+    next->id_prev_loc_in_region = location->GetID();
+
+    region->locs.Insert((index+1)%region->locs.GetSize(),location);
+}
+
 
 bool Location::Load(iResultRow& row, iEngine* engine, iDataConnection* /*db*/)
 {
@@ -125,6 +228,50 @@ bool Location::Load(iResultRow& row, iEngine* engine, iDataConnection* /*db*/)
     return true;
 }
 
+bool Location::CreateUpdate(iDataConnection* db)
+{
+    const char * fields[] = 
+        {
+            "type_id",
+            "id_prev_loc_in_region",
+            "name",
+            "x",
+            "y",
+            "z",
+            "angle",
+            "radius",
+            "flags",
+            "loc_sector_id"};
+
+    psStringArray values;
+    values.FormatPush("%d",type->GetID());
+    values.FormatPush("%d",id_prev_loc_in_region);
+    values.Push(name);
+    values.FormatPush("%.2f",pos.x);
+    values.FormatPush("%.2f",pos.y);
+    values.FormatPush("%.2f",pos.z);
+    values.FormatPush("%.2f",rot_angle);
+    values.FormatPush("%.2f",radius);
+    csString flagStr;
+    values.Push(flagStr);
+    values.FormatPush("%d",GetSectorID(db,sectorName));
+
+    if (id == -1)
+    {
+        id = db->GenericInsertWithID("sc_locations",fields,values);
+        if (id == 0)
+        {
+            id = -1;
+            return false;
+        }
+    }
+    else
+    {
+        csString idStr;
+        idStr.Format("%d",id);
+        return db->GenericUpdateWithID("sc_locations","id",idStr,fields,values);    
+    }
+}
 
 bool Location::Import(iDocumentNode *node, iDataConnection *db,int typeID)
 {
@@ -222,6 +369,18 @@ bool LocationType::Load(iDocumentNode *node)
     return true;
 }
 
+void LocationType::AddLocation(Location* location)
+{
+    locs.Push(location);
+}
+
+void LocationType::RemoveLocation(Location* location)
+{
+    locs.Delete(location);
+}
+
+
+
 bool LocationType::Import(iDocumentNode *node, iDataConnection *db)
 {
     name = node->GetAttributeValue("name");
@@ -307,6 +466,7 @@ bool LocationType::Load(iResultRow& row, iEngine * engine, iDataConnection *db)
         bool   found;
         first->type = this;
         first->locs.Push(first);
+        first->region = first;
         do
         {
             found = false;
@@ -318,6 +478,7 @@ bool LocationType::Load(iResultRow& row, iEngine * engine, iDataConnection *db)
                     tmpLocs.DeleteIndex(i);
                     curr->type = this;
                     first->locs.Push(curr);
+                    curr->region = first;
                     found = true;
                     break;
                 }
@@ -437,6 +598,269 @@ bool Location::GetRandomPosition(iEngine * engine,csVector3& pos,iSector* &secto
     sector = randomSector;
 
     return true;
+}
+
+
+
+/*------------------------------------------------------------------*/
+
+LocationManager::LocationManager()
+{
+    
+}
+
+LocationManager::~LocationManager()
+{
+    csHash<LocationType*, csString>::GlobalIterator iter(loctypes.GetIterator());
+    while(iter.HasNext())
+        delete iter.Next();
+    loctypes.Empty();
+}
+
+bool LocationManager::Load(iEngine* engine, iDataConnection* db)
+{
+    
+
+    Result rs(db->Select("select * from sc_location_type"));
+
+    if (!rs.IsValid())
+    {
+        Error2("Could not load locations from db: %s",db->GetLastError() );
+        return false;
+    }
+    for (int i=0; i<(int)rs.Count(); i++)
+    {
+        LocationType *loctype = new LocationType();
+
+        if (loctype->Load(rs[i],engine,db))
+        {
+           loctypes.Put(loctype->name, loctype);
+           CPrintf(CON_DEBUG, "Added location type '%s'(%d)\n",loctype->name.GetDataSafe(),loctype->id);
+        }
+        else
+        {
+            Error2("Could not load location: %s",db->GetLastError() );            
+            delete loctype;
+            return false;
+        }
+        
+    }
+
+    // Create a cache of all the locations.
+    csHash<LocationType*, csString>::GlobalIterator iter(loctypes.GetIterator());
+    LocationType *loc;
+    while(iter.HasNext())
+    {
+    	loc = iter.Next();
+        for (size_t i = 0; i < loc->locs.GetSize(); i++)
+        {
+            all_locations.Push(loc->locs[i]);
+        }
+    }
+
+    return true;
+}
+
+int LocationManager::GetNumberOfLocations() const
+{
+    return all_locations.GetSize();
+}
+
+Location* LocationManager::GetLocation(int index)
+{
+    return all_locations[index];
+}
+
+LocationType* LocationManager::FindRegion(const char* regname)
+{
+    if (!regname)
+        return NULL;
+
+    LocationType *found = loctypes.Get(regname, NULL);
+    if (found && found->locs[0] && found->locs[0]->IsRegion())
+    {
+        return found;
+    }
+    return NULL;
+}
+
+LocationType* LocationManager::FindLocation(const char* locname)
+{
+    if (!locname)
+        return NULL;
+
+    LocationType *found = loctypes.Get(locname, NULL);
+    return found;
+}
+
+Location* LocationManager::FindLocation(const char* loctype, const char* name)
+{
+    LocationType *found = loctypes.Get(loctype, NULL);
+    if (found)
+    {
+        for (size_t i=0; i<found->locs.GetSize(); i++)
+        {
+            if (strcasecmp(found->locs[i]->name,name) == 0)
+            {
+                return found->locs[i];
+            }
+        }
+    }
+    return NULL;
+}
+
+Location* LocationManager::FindLocation(int id)
+{
+    for (size_t i=0; i<all_locations.GetSize(); i++)
+    {
+        Location* location = all_locations[i];
+
+        if (location->GetID() == id)
+        {
+            return location;
+        }
+        
+    }
+    return NULL;
+}
+
+
+
+Location* LocationManager::FindNearestLocation(psWorld* world, csVector3 &pos, iSector* sector, float range, float* found_range)
+{
+    float min_range = range;    
+
+    Location* min_location = NULL;
+
+    for (size_t i=0; i<all_locations.GetSize(); i++)
+    {
+        Location* location = all_locations[i];
+
+        float dist2 = world->Distance(pos,sector,location->pos,location->GetSector(world->GetEngine()));
+
+        if (min_range < 0 || dist2 < min_range)
+        {
+            min_range = dist2;
+            min_location = location;
+        }
+    }
+    if (min_location && found_range) *found_range = min_range;
+    
+    return min_location;
+}
+
+size_t LocationManager::FindLocationsInSector(iEngine* engine, iSector *sector, csList<Location*>& list)
+{
+    size_t count = 0;
+    for (size_t i=0; i<all_locations.GetSize(); i++)
+    {
+        Location* location = all_locations[i];
+
+        if (location->GetSector(engine) == sector)
+        {
+            list.PushBack(location);
+            count++;
+        }
+    }
+    return count;
+}
+
+Location* LocationManager::FindNearestLocation(psWorld* world, const char* loctype, csVector3 &pos, iSector* sector, float range, float* found_range)
+{
+    LocationType* found = loctypes.Get(loctype, NULL);
+    if (found)
+    {
+        float min_range = range;    
+
+        int   min_i = -1;
+
+        for (size_t i=0; i<found->locs.GetSize(); i++)
+        {
+            float dist2 = world->Distance(pos,sector,found->locs[i]->pos,found->locs[i]->GetSector(world->GetEngine()));
+
+            if (min_range < 0 || dist2 < min_range)
+            {
+                min_range = dist2;
+                min_i = (int)i;
+            }
+        }
+        if (min_i > -1)  // found closest one
+        {
+            if (found_range) *found_range = min_range;
+
+            return found->locs[(size_t)min_i];
+        }
+    }
+    return NULL;
+}
+
+Location* LocationManager::FindRandomLocation(psWorld* world, const char* loctype, csVector3 &pos, iSector* sector, float range, float* found_range)
+{
+    csArray<Location*> nearby;
+    csArray<float> dist;
+
+    LocationType* found = loctypes.Get(loctype, NULL);
+    if (found)
+    {
+        for (size_t i=0; i<found->locs.GetSize(); i++)
+        {
+            float dist2 = world->Distance(pos,sector,found->locs[i]->pos,found->locs[i]->GetSector(world->GetEngine()));
+
+            if (range < 0 || dist2 < range)
+            {
+                nearby.Push(found->locs[i]);
+                dist.Push(dist2);
+            }
+        }
+
+        if (nearby.GetSize()>0)  // found one or more closer than range
+        {
+            size_t pick = psGetRandom((uint32)nearby.GetSize());
+            
+            if (found_range) *found_range = sqrt(dist[pick]);
+
+            return nearby[pick];
+        }
+    }
+    return NULL;
+}
+
+csHash<LocationType*, csString>::GlobalIterator LocationManager::GetIterator()
+{
+    return loctypes.GetIterator();
+}
+
+Location* LocationManager::CreateLocation(iDataConnection* db, const char* locationTypeName, const char* locationName, csVector3& pos, iSector* sector, float radius, float rot_angle, const csString& flags)
+{
+    Location* location = CreateLocation(locationTypeName, locationName, pos, sector, radius, rot_angle, flags);
+
+    if (!location->CreateUpdate(db))
+    {
+        delete location;
+        return NULL;
+    }
+
+    return location;
+}
+
+Location* LocationManager::CreateLocation(const char* locationTypeName, const char* locationName, csVector3& pos, iSector* sector, float radius, float rot_angle, const csString& flags)
+{
+    LocationType* locationType = FindLocation(locationTypeName);
+    if (!locationType)
+    {
+        return NULL;
+    }
+
+    return CreateLocation(locationType, locationName, pos, sector, radius, rot_angle, flags);
+}
+
+Location* LocationManager::CreateLocation(LocationType* locationType, const char* locationName, csVector3& pos, iSector* sector, float radius, float rot_angle, const csString& flags)
+{
+    Location* location = new Location(locationType, locationName, pos, sector, radius, rot_angle, flags);
+
+    all_locations.Push(location);
+    
+    return location;
 }
 
 
