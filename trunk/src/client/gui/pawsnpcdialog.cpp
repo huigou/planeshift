@@ -27,6 +27,7 @@
 #include "../globals.h"
 #include "paws/pawsborder.h"
 #include "gui/pawscontrolwindow.h"
+#include "chatbubbles.h"
 #include "pscelclient.h"
 #include "pscamera.h"
 
@@ -609,8 +610,8 @@ void pawsNpcDialogWindow::Show()
              dynamic_cast<GEMClientActor *>(cobj)->SetPosition(p2,nyaw+3.1415f,isect);
              psengine->GetPSCamera()->SetCameraMode(0); //set the camera to the first person mode
           }
-          enabledChatBubbles = psengine->GetChatBubbles->isEnabled();
-          psengine->GetChatBubbles->setEnabled(false);
+          enabledChatBubbles = psengine->GetChatBubbles()->isEnabled();
+          psengine->GetChatBubbles()->setEnabled(false);
        }
 
        SetupWindowWidgets();
@@ -627,7 +628,7 @@ void pawsNpcDialogWindow::Hide()
         CleanBubbles();
         psengine->GetPSCamera()->LockCameraMode(false);
         psengine->GetCharManager()->LockTarget(false);
-        psengine->GetChatBubbles->setEnabled(enabledChatBubbles);
+        psengine->GetChatBubbles()->setEnabled(enabledChatBubbles);
         if(psengine->GetPSCamera()->GetCameraMode() == 0)
         {
             psengine->GetPSCamera()->SetCameraMode(cameraMode); // restore camera mode
