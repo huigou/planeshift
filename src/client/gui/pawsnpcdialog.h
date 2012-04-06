@@ -156,6 +156,7 @@ private:
     unsigned int    displayIndex; ///< Index to display which quests
     int             cameraMode;   ///< Stores the camera mode
     int             loadOnce;     ///< Stores if bubbles has been loaded
+    bool enabledChatBubbles;      ///< Stores the state of chat bubbles.
 
     pawsListBox* responseList;
     pawsWidget* speechBubble;
