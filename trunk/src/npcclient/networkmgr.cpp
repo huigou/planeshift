@@ -584,12 +584,12 @@ void NetworkManager::HandlePathNetwork(MsgEntry *me)
             }
         }
         break;
-    case psPathNetworkMessage::WAYPOINT_ADD_ALIAS:
+    case psPathNetworkMessage::WAYPOINT_ALIAS_ADD:
         {
             Waypoint* wp = pathNetwork->FindWaypoint(msg.id);
             if (wp)
             {
-                wp->AddAlias(msg.string);
+                wp->AddAlias(msg.aliasID,msg.string,msg.rotationAngle);
                 
                 Debug3(LOG_NET, 0, "Added alias %s to waypoint %d.\n",
                        msg.string.GetDataSafe(), msg.id);
@@ -597,6 +597,23 @@ void NetworkManager::HandlePathNetwork(MsgEntry *me)
             else
             {
                 Error2("Failed to find waypoint %d for add alias\n", msg.id);
+            }
+            
+        }
+        break;
+    case psPathNetworkMessage::WAYPOINT_ALIAS_ROTATION_ANGLE:
+        {
+            Waypoint* wp = pathNetwork->FindWaypoint(msg.id);
+            if (wp)
+            {
+                wp->SetRotationAngle(msg.string,msg.rotationAngle);
+                
+                Debug4(LOG_NET, 0, "Sett rotation angle %.3f for alias %s to waypoint %d.\n",
+                       msg.rotationAngle,msg.string.GetDataSafe(), msg.id);
+            }
+            else
+            {
+                Error2("Failed to find waypoint %d for alias set rotation angle\n", msg.id);
             }
             
         }
@@ -671,7 +688,7 @@ void NetworkManager::HandlePathNetwork(MsgEntry *me)
             
         }
         break;
-    case psPathNetworkMessage::WAYPOINT_REMOVE_ALIAS:
+    case psPathNetworkMessage::WAYPOINT_ALIAS_REMOVE:
         {
             Waypoint* wp = pathNetwork->FindWaypoint(msg.id);
             if (wp)
