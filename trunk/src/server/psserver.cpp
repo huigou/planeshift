@@ -93,7 +93,7 @@
 #include "workmanager.h"
 
 // Remember to bump this in server_options.sql and add to upgrade_schema.sql!
-#define DATABASE_VERSION_STR "1264"
+#define DATABASE_VERSION_STR "1265"
 
 
 psCharacterLoader psServer::CharacterLoader;

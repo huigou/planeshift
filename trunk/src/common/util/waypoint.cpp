@@ -40,6 +40,50 @@
 #include "util/strutil.h"
 #include "util/psutil.h"
 
+//-----------------------------------------------------------------------------
+WaypointAlias::WaypointAlias(Waypoint* wp, int id, const csString& alias, float rotationAngle)
+    :wp(wp),id(id),alias(alias),rotationAngle(rotationAngle)
+{
+}
+
+bool WaypointAlias::CreateUpdate(iDataConnection* db)
+{
+    const char * fields[] = 
+        {
+            "wp_id",
+            "alias",
+            "rotation_angle"};
+
+    psStringArray values;
+    values.FormatPush("%d",wp->GetID());
+    values.FormatPush("%s",alias.GetDataSafe());
+    values.FormatPush("%.1f",rotationAngle*180.0/PI);
+
+    if (id == -1)
+    {
+        id = db->GenericInsertWithID("sc_waypoint_aliases",fields,values);
+        if (id == 0)
+        {
+            id = -1;
+            return false;
+        }
+    }
+    else
+    {
+        csString idStr;
+        idStr.Format("%d",id);
+        return db->GenericUpdateWithID("sc_waypoint_aliases","id",idStr,fields,values);    
+    }
+}
+
+bool WaypointAlias::SetRotationAngle(iDataConnection* db, float rotationAngle)
+{
+    SetRotationAngle(rotationAngle);
+
+    return CreateUpdate(db);
+}
+
+//-----------------------------------------------------------------------------
 
 Waypoint::Waypoint()
     :effectID(0)
@@ -214,19 +258,23 @@ Edge* Waypoint::GetRandomEdge(const psPathNetwork::RouteFilter* routeFilter)
 }
 
 
-void Waypoint::AddAlias(csString alias)
+WaypointAlias* Waypoint::AddAlias(int id, csString aliasName, float rotationAngle)
 {
-    aliases.Push(alias);
+    WaypointAlias* alias = new WaypointAlias(this, id, aliasName, rotationAngle);
+    aliases.Push( alias );
+    return alias;
 }
 
-void Waypoint::RemoveAlias(csString alias)
+void Waypoint::RemoveAlias(csString aliasName)
 {
     // Check for aliases
     for (size_t i = 0; i < aliases.GetSize(); i++)
     {
-        if (strcasecmp(aliases[i],alias)==0)
+        if (aliasName.CompareNoCase(aliases[i]->alias))
         {
+            WaypointAlias* alias = aliases[i];
             aliases.DeleteIndexFast(i);
+            delete alias;
             return;
         }
     }
@@ -438,10 +486,52 @@ csString Waypoint::GetAliases()
     for (size_t i = 0; i < aliases.GetSize(); i++)
     {
         if (i != 0) str.Append(", ");
-        str.Append(aliases[i]);
+        str.AppendFmt("%s(%.1f)",aliases[i]->GetName(),aliases[i]->GetRotationAngle()*180.0/PI);
     }
     return str;
 }
+
+const WaypointAlias* Waypoint::FindAlias(const csString& aliasName) const
+{
+    // Check for aliases
+    for (size_t i = 0; i < aliases.GetSize(); i++)
+    {
+        if (aliasName.CompareNoCase(aliases[i]->alias))
+        {
+            return aliases[i];
+        }
+    }
+    return NULL;
+}
+
+WaypointAlias* Waypoint::FindAlias(const csString& aliasName)
+{
+    // Check for aliases
+    for (size_t i = 0; i < aliases.GetSize(); i++)
+    {
+        if (aliasName.CompareNoCase(aliases[i]->alias))
+        {
+            return aliases[i];
+        }
+    }
+    return NULL;
+}
+
+    
+bool Waypoint::SetRotationAngle(const csString& aliasName, float rotationAngle)
+{
+    WaypointAlias* alias = FindAlias(aliasName);
+    if (alias)
+    {
+        alias->SetRotationAngle(rotationAngle);
+    }
+    else
+    {
+        return false;
+    }
+    return true;
+}
+
 
 
 int Waypoint::Create(iDataConnection *db)
@@ -484,17 +574,18 @@ int Waypoint::Create(iDataConnection *db)
     return loc.id;
 }
 
-bool Waypoint::CreateAlias(iDataConnection * db, csString alias)
+WaypointAlias* Waypoint::CreateAlias(iDataConnection * db, csString aliasName, float rotationAngle)
 {
-    int res =db->Command("insert into sc_waypoint_aliases(wp_id,alias) values(%d,'%s')",
-                         GetID(),alias.GetDataSafe());
-    if (res != 1)
+    WaypointAlias* alias = AddAlias(-1, aliasName, rotationAngle);
+
+    if (alias->CreateUpdate(db))
     {
-        return false;
+        return alias;
     }
     
-    AddAlias(alias);
-    return true;
+    RemoveAlias(aliasName);
+
+    return NULL;
 }
 
 bool Waypoint::RemoveAlias(iDataConnection * db, csString alias)

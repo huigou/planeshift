@@ -2248,12 +2248,13 @@ public:
     AdminCmdSubCommandParser aliasSubCommandList; ///< subsubcmds of alias
     AdminCmdSubCommandParser wpList; ///< targetnames of hide/show
     csString subCmd;    ///< storage for subcommand
+    csString aliasSubCmd; ///< storage for alias subcommand
     bool wpOrPathIsWP; ///< Is it the path or the wp that should be updated.
     float defaultRadius; ///< default radius for the case radius == 0.0
     float radius; ///< radius for waypoint/path operations
     float newRadius; ///< The radius to set for new radius for wps.
     csString waypoint; ///< waypoint name
-    bool addAlias; ///< alias subsubcommand add/remove flag
+    csString alias; ///< waypoint alias name
     csString flagName; ///< single flag name
     csString waypointPathName; ///< pathname for waypoints
     int firstIndex; ///< index for waypoint paths
@@ -2262,6 +2263,7 @@ public:
     csString cmdTarget; ///< 'W' or 'P' as a target for hide/show
     int waypointPathIndex; ///< Index of the wp or point
     bool wpOrPathIsIndex; ///< True when an index is used.
+    float rotationAngle; ///< The rotation angle of a alias
 
 
     /** @brief Creates obj for specified command that manipulate paths.

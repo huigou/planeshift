@@ -1176,19 +1176,6 @@ psServerCommandMessage::psServerCommandMessage( MsgEntry* msgEntry )
 
 PSF_IMPLEMENT_MSG_FACTORY(psPathNetworkMessage,MSGTYPE_PATH_NETWORK);
 
-psPathNetworkMessage::psPathNetworkMessage( Command command, const psPath* path, const csString& string)
-{
-    msg.AttachNew(new MsgEntry( sizeof(uint8_t) + 1000 , PRIORITY_HIGH ));
-    msg->clientnum = 0;
-    msg->SetType(MSGTYPE_PATH_NETWORK);
-
-    msg->Add( (uint8_t)command );
-    msg->Add( (uint32_t)path->GetID() );
-    msg->Add( string );
-
-    msg->ClipToCurrentSize();
-}
-
 psPathNetworkMessage::psPathNetworkMessage( Command command, const psPath* path)
 {
     msg.AttachNew(new MsgEntry( sizeof(uint8_t) + 1000 , PRIORITY_HIGH ));
@@ -1206,7 +1193,16 @@ psPathNetworkMessage::psPathNetworkMessage( Command command, const psPath* path)
         msg->Add( (uint32_t)path->end->GetID() );
         // Points are added in separate messages
     }
-
+    else if (command == PATH_RENAME)
+    {
+        msg->Add( path->GetName() );
+    }
+    else
+    {
+        Error2("Unkonwn psPathNetworkMessage command: %d",command);
+    }
+    
+    
     msg->ClipToCurrentSize();
 }
 
@@ -1281,20 +1277,38 @@ psPathNetworkMessage::psPathNetworkMessage( Command command, const Waypoint* way
 
     msg->Add( (uint8_t)command );
     msg->Add( (uint32_t)waypoint->GetID() );
-    msg->Add( waypoint->GetPosition() );
-    msg->Add( waypoint->GetSector(NetBase::GetAccessPointers()->engine) );
 
     // Some more stuff to set when created
-    if (command == WAYPOINT_CREATE)
+    if (command == WAYPOINT_ADJUSTED)
     {
+        msg->Add( waypoint->GetPosition() );
+        msg->Add( waypoint->GetSector(NetBase::GetAccessPointers()->engine) );
+    }
+    else if (command == WAYPOINT_CREATE)
+    {
+        msg->Add( waypoint->GetPosition() );
+        msg->Add( waypoint->GetSector(NetBase::GetAccessPointers()->engine) );
         msg->Add( waypoint->GetName() );
         msg->Add( waypoint->GetRadius() );
         msg->Add( waypoint->GetFlags() );
     }
+    else if (command == WAYPOINT_RADIUS)
+    {
+        msg->Add( waypoint->GetRadius() );
+    }
+    else if (command == WAYPOINT_RENAME)
+    {
+        msg->Add( waypoint->GetName() );
+    }
+    else
+    {
+        Error2("Unkonwn psPathNetworkMessage command: %d",command);
+    }
+    
     msg->ClipToCurrentSize();
 }
 
-psPathNetworkMessage::psPathNetworkMessage( Command command, const Waypoint* waypoint, float radius )
+psPathNetworkMessage::psPathNetworkMessage( Command command, const Waypoint* waypoint, const WaypointAlias* alias )
 {
     msg.AttachNew(new MsgEntry( sizeof(uint8_t) + 1000 , PRIORITY_HIGH ));
     msg->clientnum = 0;
@@ -1302,8 +1316,28 @@ psPathNetworkMessage::psPathNetworkMessage( Command command, const Waypoint* way
 
     msg->Add( (uint8_t)command );
     msg->Add( (uint32_t)waypoint->GetID() );
-    msg->Add( radius );
 
+    // Some more stuff to set when created
+    if (command == WAYPOINT_ALIAS_ADD)
+    {
+        msg->Add( (uint32_t)alias->GetID() );
+        msg->Add( alias->GetName() );
+        msg->Add( alias->GetRotationAngle() );
+    }
+    else if (command == WAYPOINT_ALIAS_REMOVE)
+    {
+        msg->Add( alias->GetName() );
+    }
+    else if (command == WAYPOINT_ALIAS_ROTATION_ANGLE)
+    {
+        msg->Add( alias->GetName() );
+        msg->Add( alias->GetRotationAngle() );
+    }
+    else
+    {
+        Error2("Unkonwn psPathNetworkMessage command: %d",command);
+    }
+    
     msg->ClipToCurrentSize();
 }
 
@@ -1315,8 +1349,17 @@ psPathNetworkMessage::psPathNetworkMessage( Command command, const Waypoint* way
 
     msg->Add( (uint8_t)command );
     msg->Add( (uint32_t)waypoint->GetID() );
-    msg->Add( string );
 
+    // Some more stuff to set when created
+    if (command == WAYPOINT_ALIAS_REMOVE)
+    {
+        msg->Add( string );
+    }
+    else
+    {
+        Error2("Unkonwn psPathNetworkMessage command: %d",command);
+    }
+    
     msg->ClipToCurrentSize();
 }
 
@@ -1373,9 +1416,22 @@ psPathNetworkMessage::psPathNetworkMessage( MsgEntry* msgEntry )
        position = msgEntry->GetVector3();
        sector = msgEntry->GetSector();
        break;
+   case WAYPOINT_ALIAS_ADD:
+       id = msgEntry->GetUInt32();
+       aliasID = msgEntry->GetUInt32();
+       string = msgEntry->GetStr();
+       rotationAngle = msgEntry->GetFloat();
+       break;
+   case WAYPOINT_ALIAS_REMOVE:
+       id = msgEntry->GetUInt32();
+       string = msgEntry->GetStr();
+       break;
+   case WAYPOINT_ALIAS_ROTATION_ANGLE:
+       id = msgEntry->GetUInt32();
+       string = msgEntry->GetStr();
+       rotationAngle = msgEntry->GetFloat();
+       break;
    case PATH_RENAME:
-   case WAYPOINT_ADD_ALIAS:
-   case WAYPOINT_REMOVE_ALIAS:
    case WAYPOINT_RENAME:
        id = msgEntry->GetUInt32();
        string = msgEntry->GetStr();
@@ -1426,11 +1482,17 @@ csString psPathNetworkMessage::ToString(NetBase::AccessPointers* /*accessPointer
     case POINT_ADJUSTED:
         str.AppendFmt("Cmd: POINT_ADJUSTED ID: %d Position: %s", id, toString(position,sector).GetDataSafe());
         break;
-    case WAYPOINT_ADD_ALIAS:
-        str.AppendFmt("Cmd: WAYPOINT_ADD_ALIAS ID: %d String: %s", id, string.GetDataSafe());
-        break;
     case WAYPOINT_ADJUSTED:
         str.AppendFmt("Cmd: WAYPOINT_ADJUSTED ID: %d Position: %s", id, toString(position,sector).GetDataSafe());
+        break;
+    case WAYPOINT_ALIAS_ADD:
+        str.AppendFmt("Cmd: WAYPOINT_ALIAS_ADD ID: %d AliasID: %d String: %s RotationAngle: %.3f", id, aliasID, string.GetDataSafe(),rotationAngle);
+        break;
+    case WAYPOINT_ALIAS_REMOVE:
+        str.AppendFmt("Cmd: WAYPOINT_ALIAS_REMOVE ID: %d String: %s", id, string.GetDataSafe());
+        break;
+    case WAYPOINT_ALIAS_ROTATION_ANGLE:
+        str.AppendFmt("Cmd: WAYPOINT_ALIAS_ROTATION_ANGLE ID: %d String: %s RotationAngle: %.3f", id, string.GetDataSafe(),rotationAngle);
         break;
     case WAYPOINT_CREATE:
         str.AppendFmt("Cmd: WAYPOINT_CREATE ID: %d Position: %s Name: %s Radius: %.2f Flags: %s", id, toString(position, sector).GetDataSafe(), string.GetDataSafe(), radius, flags.GetDataSafe());
@@ -1440,9 +1502,6 @@ csString psPathNetworkMessage::ToString(NetBase::AccessPointers* /*accessPointer
         break;
     case WAYPOINT_RENAME:
         str.AppendFmt("Cmd: WAYPOINT_RENAME ID: %d String: %s", id, string.GetDataSafe());
-        break;
-    case WAYPOINT_REMOVE_ALIAS:
-        str.AppendFmt("Cmd: WAYPOINT_REMOVE_ALIAS ID: %d String: %s", id, string.GetDataSafe());
         break;
     case WAYPOINT_SET_FLAG:
         str.AppendFmt("Cmd: WAYPOINT_SET_FLAG ID: %d String: %s Enable: %s", id, string.GetDataSafe(),enable?"TRUE":"FALSE");

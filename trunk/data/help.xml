@@ -1464,16 +1464,19 @@ To create a path you need to do the following commands:
       </Contents>
       <topic name="/path adjust">
         <Contents>
-          <content type="text">/path adjust [&lt;radius&gt;]
+          <content type="text">/path adjust [&lt;search radius&gt;]
 
 Adjust the position of the nearest path point to your current position.</content>
         </Contents>
       </topic>
       <topic name="/path alias">
         <Contents>
-          <content type="text">/path alias [*add|remove] [&lt;alias&gt;]
+          <content type="text">/path alias [add|remove|rotation] &lt;alias&gt; [&lt;rotation angle&gt;]
 
-Add or remove a alias to/from the nearest waypoint. The default is add if neither add or remove is specified.</content>
+Add or remove a alias to/from the nearest waypoint. When adding you can specify a rotation angle in degrees for the alias. NPC client can use that to direct the NPC in the given direction when a NPC stop at the Waypoint.
+
+Examples: /path alias remove "my alias"
+          /path alias add "my new alias" 90</content>
         </Contents>
       </topic>
       <topic name="/path display|show">
@@ -1485,7 +1488,7 @@ Display all waypoints and points unless either points or waypoints is specefied.
       </topic>
       <topic name="/path flagclear">
         <Contents>
-          <content type="text">/path flagclear &lt;flag&gt; [&lt;radius&gt;]
+          <content type="text">/path flagclear &lt;flag&gt; [&lt;search radius&gt;]
 
 Clear flags on the nearest waypoint.
 
@@ -1506,7 +1509,7 @@ Use radius to narrow or widen the search for the waypoint. Use /path info to vie
       </topic>
       <topic name="/path flagset">
         <Contents>
-          <content type="text">/path flagset [wp|path] &lt;flag&gt; [&lt;radius&gt;]
+          <content type="text">/path flagset [wp|path] &lt;flag&gt; [&lt;search radius&gt;]
 
 Set flags on the nearest waypoint(wp) or path(path).
 
@@ -1545,7 +1548,7 @@ Hide all points. If waypoints or points are specified only either points or wayp
       </topic>
       <topic name="/path info">
         <Contents>
-          <content type="text">/path info [&lt;radius&gt;]
+          <content type="text">/path info [&lt;search radius&gt;]
 
 Show info about the nearest path or waypoint.</content>
         </Contents>
@@ -1568,21 +1571,21 @@ A path will be automaticaly be selected on the /path start command. You could us
       </topic>
       <topic name="/path remove">
         <Contents>
-          <content type="text">/path remove [&lt;radius&gt;]
+          <content type="text">/path remove [&lt;search radius&gt;]
 
 Remove the nearest path. Use /path info to view information about the path that will be deleted.</content>
         </Contents>
       </topic>
       <topic name="/path rename">
         <Contents>
-          <content type="text">/path rename [&lt;radius&gt;] &lt;name&gt;
+          <content type="text">/path rename &lt;name&gt; [&lt;search radius&gt;]
 
 Rename the nearest waypoint or path. Use /path info to view information about the path that will be renamed. If both a path and a waypoint is inn range the waypoint will be the target.</content>
         </Contents>
       </topic>
       <topic name="/path select">
         <Contents>
-          <content type="text">/path select &lt;radius&gt;
+          <content type="text">/path select &lt;search radius&gt;
 
 Select the nearest path to be your current path. You need a select path to use /path point.</content>
         </Contents>
