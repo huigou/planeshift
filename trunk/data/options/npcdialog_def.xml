@@ -1,6 +1,6 @@
 <npcdialog>
     <npcdialogoptions>
-        <usenpcdialog value="0"/>
+        <usenpcdialog value="1"/>
     </npcdialogoptions>
 </npcdialog>
 
