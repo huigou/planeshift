@@ -27,6 +27,7 @@
 #include <iengine/sector.h>
 #include <csutil/weakref.h>
 
+#include "util/psconst.h"
 #include "util/psdatabase.h"
 
 struct iEngine;
