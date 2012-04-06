@@ -185,6 +185,8 @@ Location* Location::Insert(iDataConnection* db, csVector3 &pos, iSector* sector)
     next->CreateUpdate(db);
 
     region->locs.Insert((index+1)%region->locs.GetSize(),location);
+
+    return location;
 }
 
 Location* Location::Insert(int id, csVector3 &pos, iSector* sector)
@@ -200,6 +202,8 @@ Location* Location::Insert(int id, csVector3 &pos, iSector* sector)
     next->id_prev_loc_in_region = location->GetID();
 
     region->locs.Insert((index+1)%region->locs.GetSize(),location);
+
+    return location;
 }
 
 
