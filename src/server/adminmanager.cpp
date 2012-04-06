@@ -3106,12 +3106,17 @@ AdminCmdDataLocation::AdminCmdDataLocation(AdminManager* msgManager, MsgEntry* m
 : AdminCmdData("/location")
 {
 
-    subCommandList.Push("add","<type> <name> <radius>");
+    subCommandList.Push("add","<type> <name> <radius> [<rotation angle>]");
     subCommandList.Push("adjust","");
     subCommandList.Push("display","");
     subCommandList.Push("help","[sub command]");
     subCommandList.Push("hide","");
     subCommandList.Push("info","");
+    subCommandList.Push("insert","");
+    subCommandList.Push("radius","<radius> [<search radius>]");
+    subCommandList.Push("select","[<search radius>]");
+
+    subCommandList.Push("show","See /path help display");
 
     // when help is requested, return immediate
     if (IsHelp(words[1]))
@@ -3147,11 +3152,47 @@ AdminCmdDataLocation::AdminCmdDataLocation(AdminManager* msgManager, MsgEntry* m
                 ParseError(me, "Locationname is a required argument");
             }
 
-            if (!words.GetInt(index++,radius))
+            if (!words.GetFloat(index++,radius))
             {
-                ParseError(me, "Required radius not given or not an integer value.");
+                ParseError(me, "Required radius not given or not an float value.");
+            }
+            
+            // Get optional rotation angle for this location.
+            if (!words.GetFloat(index++,rotAngle))
+            {
+                rotAngle = 0.0;
+            }
+            
+        }
+        else if (subCommand == "display" || subCommand == "show")
+        {
+            // Show is only an alias so make sure subCmd is display
+            subCommand = "display";
+        }
+        else if (subCommand == "radius")
+        {
+            // New Radius is mandatory
+            if (!words.GetFloat(index++,radius))
+            {
+                ParseError(me, "Radius not given or not a float value.");
+            }
+            // Search radius is optional
+            searchRadius = words.GetFloat(index++); // Will return 0.0 if not pressent
+            if (searchRadius <= 0.0)
+            {
+                searchRadius = 10.0;
             }
         }
+        else if (subCommand == "select")
+        {
+            // Search radius is optional
+            searchRadius = words.GetFloat(index++); // Will return 0.0 if not pressent
+            if (searchRadius <= 0.0)
+            {
+                searchRadius = 10.0;
+            }
+        }
+        
     }
     // first wird is not a valid subcommand
     else
@@ -4114,6 +4155,9 @@ AdminManager::AdminManager()
     npcdlg = new psNPCDialog(NULL);
     npcdlg->Initialize( db );
 
+    locations = new LocationManager();
+    locations->Load(EntityManager::GetSingleton().GetEngine(),db);
+
     pathNetwork = new psPathNetwork();
     pathNetwork->Load(EntityManager::GetSingleton().GetEngine(),db,
                       EntityManager::GetSingleton().GetWorld());
@@ -4132,6 +4176,7 @@ AdminManager::~AdminManager()
     delete dataFactory;
     delete npcdlg;
     delete pathNetwork;
+    delete locations;
 }
 
 
@@ -6708,11 +6753,11 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
 
             psserver->SendSystemInfo(me->clientnum,
                                      "Found waypoint %s(%d) at range %.2f\n"
-                                     "Radius: %.2f\n"
-                                     "Flags: %s\n"
-                                     "Aliases: %s\n"
-                                     "Group: %s\n"
-                                     "Links: %s",
+                                     " Radius: %.2f\n"
+                                     " Flags: %s\n"
+                                     " Aliases: %s\n"
+                                     " Group: %s\n"
+                                     " Links: %s",
                                      wp->GetName(),wp->GetID(),rangeWP,
                                      wp->loc.radius,wp->GetFlags().GetDataSafe(),
                                      wp->GetAliases().GetDataSafe(),
@@ -6723,9 +6768,9 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         {
             psserver->SendSystemInfo(me->clientnum,
                                      "Found point(%d) %d of path: %s(%d) at range %.2f\n"
-                                     "Prev point ID: %d Next point ID: %d\n" 
-                                     "Start WP: %s(%d) End WP: %s(%d)\n"
-                                     "Flags: %s",
+                                     " Prev point ID: %d Next point ID: %d\n" 
+                                     " Start WP: %s(%d) End WP: %s(%d)\n"
+                                     " Flags: %s",
                                      point->GetID(),indexPoint,pathPoint->GetName(),
                                      pathPoint->GetID(),rangePoint,
                                      indexPoint-1>=0?pathPoint->points[indexPoint-1]->GetID():-1,
@@ -6741,9 +6786,9 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
 
             psserver->SendSystemInfo(me->clientnum,
                                      "Found path: %s(%d) at range %.2f\n"
-                                     "%.2f from point %d%s and %.2f from point %d%s\n"
-                                     "Start WP: %s(%d) End WP: %s(%d)\n"
-                                     "Flags: %s",
+                                     " %.2f from point %d%s and %.2f from point %d%s\n"
+                                     " Start WP: %s(%d) End WP: %s(%d)\n"
+                                     " Flags: %s",
                                      path->GetName(),path->GetID(),rangePath,
                                      fraction*length,index,(fraction < 0.5?"*":""),
                                      (1.0-fraction)*length,index+1,(fraction >= 0.5?"*":""),
@@ -7010,69 +7055,157 @@ int AdminManager::LocationCreate(int typeID, csVector3& pos, csString& sectorNam
     return id;
 }
 
+void AdminManager::ShowLocations(Client* client, iSector* sector)
+{
+    csList<Location*> list;
+    if (locations->FindLocationsInSector(EntityManager::GetSingleton().GetEngine(), sector, list))
+    {
+        csList<Location*>::Iterator iter(list);
+        while (iter.HasNext())
+        {
+            Location* location = iter.Next();
+            
+            psEffectMessage msg(client->GetClientNum(),"admin_location",
+                                location->GetPosition(),0,0,location->GetEffectID(this),location->GetRadius());
+            msg.SendMessage();
+
+            if (location->IsRegion())
+            {
+                for (int i = 0; i < location->locs.GetSize(); i++)
+                {
+                    Location* loc = location->locs[i];
+                    psEffectMessage msg(client->GetClientNum(),"admin_location",
+                                        loc->GetPosition(),0,0,loc->GetEffectID(this),loc->GetRadius());
+                    msg.SendMessage();
+                }
+            }
+        }
+    }
+}
+
+void AdminManager::HideLocations(Client* client)
+{
+    if (client->LocationIsDisplaying())
+    {
+        csList<iSector*>::Iterator iter = client->GetLocationDisplaying();
+        while (iter.HasNext())
+        {
+            iSector* sector = iter.Next();
+            HideLocations(client, sector);
+        }
+    }    
+}
+
+void AdminManager::HideLocations(Client* client, iSector* sector)
+{
+    csList<Location*> list;
+    if (locations->FindLocationsInSector(EntityManager::GetSingleton().GetEngine(), sector, list))
+    {
+        csList<Location*>::Iterator iter(list);
+        while (iter.HasNext())
+        {
+            Location* location = iter.Next();
+            psStopEffectMessage msg(client->GetClientNum(), location->GetEffectID(this));
+            msg.SendMessage();
+
+            if (location->IsRegion())
+            {
+                for (int i = 0; i < location->locs.GetSize(); i++)
+                {
+                    Location* loc = location->locs[i];
+                    psStopEffectMessage msg(client->GetClientNum(), loc->GetEffectID(this));
+                    msg.SendMessage();
+                }
+            }
+        }
+    }
+}
+
+void AdminManager::UpdateDisplayLocation(Location* location)
+{
+    ClientIterator i(*clients);
+    while(i.HasNext())
+    {
+        Client* client = i.Next();
+
+        if (client->LocationIsDisplaying())
+        {
+            csList<iSector*>::Iterator iter = client->GetLocationDisplaying();
+            while (iter.HasNext())
+            {
+                iSector* sector = iter.Next();
+
+                // Hide
+                psStopEffectMessage hide(client->GetClientNum(), location->GetEffectID(this));
+                hide.SendMessage();
+                if (location->IsRegion())
+                {
+                    for (int i = 0; i < location->locs.GetSize(); i++)
+                    {
+                        Location* loc = location->locs[i];
+                        psStopEffectMessage msg(client->GetClientNum(), loc->GetEffectID(this));
+                        msg.SendMessage();
+                    }
+                }
+                // Display
+                // TODO: Include sector in psEffectMessage
+                psEffectMessage show(client->GetClientNum(),"admin_location",location->GetPosition(),0,0,
+                                     location->GetEffectID(this),location->GetRadius());
+                show.SendMessage();
+                if (location->IsRegion())
+                {
+                    for (int i = 0; i < location->locs.GetSize(); i++)
+                    {
+                        Location* loc = location->locs[i];
+                        psEffectMessage msg(client->GetClientNum(),"admin_location",
+                                            loc->GetPosition(),0,0,loc->GetEffectID(this),loc->GetRadius());
+                        msg.SendMessage();
+                    }
+                }
+            }
+        }
+    }
+}
+
 void AdminManager::HandleLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client *client)
 {
     AdminCmdDataLocation* data = dynamic_cast<AdminCmdDataLocation*>(cmddata);
 
+    // Some variables needed by most functions
+    csVector3 myPos;
+    float myRotY;
+    iSector* mySector = 0;
+    csString mySectorName;
+    
+    client->GetActor()->GetPosition(myPos, myRotY, mySector);
+    mySectorName = mySector->QueryObject()->GetName();
+
     if (data->subCommand == "add")
     {
-        csVector3 myPos;
-        float myRotY;
-        iSector* mySector = 0;
-        int loc_id;
-        int typeID = 0;
-
-        Result rs(db->Select("SELECT id from sc_location_type where name = '%s'",data->locationType.GetDataSafe()));
-        if (!rs.IsValid())
+        Location* location = locations->CreateLocation(db, data->locationType, data->locationName, myPos, mySector, data->radius, data->rotAngle, "");
+        
+        if (location)
         {
-            Error2("Could not load location type from db: %s",db->GetLastError() );
-            return ;
+            // Setting the current created location as the selected location
+            client->SetSelectedLocationID(location->GetID()); // Use ID to prevent pointer problems.
+
+            psserver->npcmanager->LocationCreated(location);
+
+            UpdateDisplayLocation(location);
+            psserver->SendSystemInfo(me->clientnum, "Created new Location %s(%d)",location->GetName(),location->GetID());
         }
-        if (rs.Count() != 1)
-        {
-            psserver->SendSystemInfo( me->clientnum, "Location type not found");
-            return;
-        }
-
-        typeID = rs[0].GetInt("id");
-
-        client->GetActor()->GetPosition(myPos, myRotY, mySector);
-        csString sectorName = mySector->QueryObject()->GetName();
-
-        loc_id = LocationCreate(typeID,myPos,sectorName,data->locationName,data->radius);
-
-        psserver->SendSystemInfo( me->clientnum, "Created new Location %u",loc_id);
     }
     else if (data->subCommand == "adjust")
     {
-        csVector3 myPos;
-        float myRotY,distance=10000.0;
-        iSector* mySector = 0;
-        int loc_id = -1;
 
-        client->GetActor()->GetPosition(myPos, myRotY, mySector);
-        csString sectorName = mySector->QueryObject()->GetName();
+        float distance=0.0;
 
-        Result rs(db->Select("select loc.* from sc_locations loc, sectors s where loc.loc_sector_id = s.id and s.name ='%s'",sectorName.GetDataSafe()));
+        Location* location = locations->FindNearestLocation(EntityManager::GetSingleton().GetWorld(),myPos,mySector,10000,&distance);
 
-        if (!rs.IsValid())
+        if (!location)
         {
-            Error2("Could not load location from db: %s",db->GetLastError() );
-            return ;
-        }
-
-        int radius;
-
-        for (int i=0; i<(int)rs.Count(); i++)
-        {
-
-            csVector3 pos(rs[i].GetFloat("x"),rs[i].GetFloat("y"),rs[i].GetFloat("z"));
-            if ((pos-myPos).SquaredNorm() < distance)
-            {
-                distance = (pos-myPos).SquaredNorm();
-                loc_id = rs[i].GetInt("id");
-                radius = rs[i].GetInt("radius");
-            }
+            psserver->SendSystemInfo(me->clientnum, "Failed to find any locations.");
+            return;
         }
 
         if (distance >= 10.0)
@@ -7081,82 +7214,41 @@ void AdminManager::HandleLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmd
             return;
         }
 
-        db->CommandPump("UPDATE sc_locations SET x=%.2f,y=%.2f,z=%.2f WHERE id=%d",
-                    myPos.x,myPos.y,myPos.z,loc_id);
-
-        if (client->LocationIsDisplaying())
+        if (location->Adjust(db, myPos, mySector ))
         {
-            psEffectMessage msg(me->clientnum, "admin_location", myPos, 0, 0,
-                                client->LocationGetEffectID(), (float)radius);
-            msg.SendMessage();
+            psserver->npcmanager->LocationAdjusted(location);
+            
+            UpdateDisplayLocation(location);
+            
+            psserver->SendSystemInfo(me->clientnum,
+                                     "Adjusted location %s(%d) at range %.2f",
+                                     location->GetName(), location->GetID(), distance);
         }
-
-        psserver->SendSystemInfo(me->clientnum, "Adjusted location %d",loc_id);
     }
     else if (data->subCommand == "display")
     {
-        csVector3 myPos;
-        float myRotY;
-        iSector* mySector = 0;
+        ShowLocations(client,mySector);
 
-        client->GetActor()->GetPosition(myPos, myRotY, mySector);
-        csString sectorName = mySector->QueryObject()->GetName();
-
-        Result rs(db->Select("select loc.* from sc_locations loc, sectors s where loc.loc_sector_id = s.id and s.name ='%s'",sectorName.GetDataSafe()));
-
-        if (!rs.IsValid())
-        {
-            Error2("Could not load locations from db: %s",db->GetLastError() );
-            return ;
-        }
-
-        for (int i=0; i<(int)rs.Count(); i++)
-        {
-
-            csVector3 pos(rs[i].GetFloat("x"),rs[i].GetFloat("y"),rs[i].GetFloat("z"));
-            psEffectMessage msg(me->clientnum,"admin_location",pos,0,0,
-                                client->LocationGetEffectID(),(float)(rs[i].GetFloat("radius")));
-            msg.SendMessage();
-        }
-
-        client->LocationSetIsDisplaying(true);
-        psserver->SendSystemInfo(me->clientnum, "Displaying all Locations in sector");
+        client->LocationSetIsDisplaying(mySector);
+        psserver->SendSystemInfo(me->clientnum, "Displaying all locations in sector %s",mySectorName.GetDataSafe());
     }
     else if (data->subCommand == "hide")
     {
-        psStopEffectMessage msg(me->clientnum,client->LocationGetEffectID());
-        msg.SendMessage();
-        client->LocationSetIsDisplaying(false);
-        psserver->SendSystemInfo(me->clientnum, "All Locations hidden");
+        HideLocations(client);
+
+        client->LocationClearDisplaying();
+        psserver->SendSystemInfo(me->clientnum, "All locations hidden");
     }
     else if (data->subCommand == "info")
     {
-        csVector3 myPos;
-        float myRotY,distance=10000.0;
-        iSector* mySector = 0;
+        float distance=0.0;
 
-        client->GetActor()->GetPosition(myPos, myRotY, mySector);
-        csString sectorName = mySector->QueryObject()->GetName();
+        Location* location = locations->FindNearestLocation(EntityManager::GetSingleton().GetWorld(),myPos,mySector,10000,&distance);
 
-        Result rs(db->Select("select loc.*,t.name as type_name from sc_locations loc, sectors s, sc_location_type t where loc.loc_sector_id = s.id and s.name ='%s' and t.id = loc.type_id",sectorName.GetDataSafe()));
-
-        if (!rs.IsValid())
+        if (!location)
         {
-            Error2("Could not load location from db: %s",db->GetLastError() );
-            return ;
-        }
-
-        int index;
-
-        for (int i=0; i<(int)rs.Count(); i++)
-        {
-
-            csVector3 pos(rs[i].GetFloat("x"),rs[i].GetFloat("y"),rs[i].GetFloat("z"));
-            if ((pos-myPos).SquaredNorm() < distance)
-            {
-                distance = (pos-myPos).SquaredNorm();
-                index = i;
-            }
+            psserver->SendSystemInfo(me->clientnum, "Failed to find any locations.");
+            return;
         }
 
         if (distance >= 10.0)
@@ -7164,14 +7256,79 @@ void AdminManager::HandleLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmd
             psserver->SendSystemInfo(me->clientnum, "To far from any locations.");
             return;
         }
-
+        
+        // Send info to server. Use a space infront to make it visible that this all
+        // belong to the location. 
         psserver->SendSystemInfo(me->clientnum, "Found Location %s(%d) at range %.2f\n"
-                                                "Radius: %d\n"
-                                                "Type: %s",
-                                                rs[index].GetString("name"),rs[index].GetInt("id"),distance,
-                                                rs[index].GetInt("radius"),
-                                                rs[index].GetString("type_name"));
+                                                " Radius: %.2f\n"
+                                                " Type: %s\n"
+                                                " RotAngle: %.2f",
+                                 location->GetName(),location->GetID(),distance,
+                                 location->GetRadius(),
+                                 location->GetTypeName(),
+                                 location->GetRotationAngle());
     }
+    else if (data->subCommand == "insert")
+    {
+        Location* selectedLocation = locations->FindLocation(client->GetSelectedLocationID());
+        if (!selectedLocation)
+        {
+            psserver->SendSystemInfo(me->clientnum, "No location selected.");
+            return;
+        }
+
+        Location* location = selectedLocation->Insert(db, myPos, mySector);
+        if (location)
+        {
+            psserver->npcmanager->LocationInserted(location);
+
+            UpdateDisplayLocation(location);
+            
+            psserver->SendSystemInfo(me->clientnum,"Inserted new location %s(%d)",location->GetName(),location->GetID());
+        }
+    }
+    else if (data->subCommand == "radius")
+    {
+        float distance=0.0;
+
+        Location* location = locations->FindNearestLocation(EntityManager::GetSingleton().GetWorld(),myPos,mySector,data->searchRadius,&distance);
+
+        if (!location)
+        {
+            psserver->SendSystemInfo(me->clientnum, "Failed to find any locations within %.2fm.",data->searchRadius);
+            return;
+        }
+
+        if (location->SetRadius(db, data->radius))
+        {
+            psserver->npcmanager->LocationRadius(location);
+            
+            UpdateDisplayLocation(location);
+            
+            psserver->SendSystemInfo(me->clientnum,
+                                     "Set new radius %.2f for location %s(%d) at range %.2f",
+                                     location->GetRadius(), location->GetName(), location->GetID(), distance);
+        }
+    }
+    else if (data->subCommand == "select")
+    {
+        float distance=0.0;
+
+        Location* location = locations->FindNearestLocation(EntityManager::GetSingleton().GetWorld(),myPos,mySector,data->searchRadius,&distance);
+
+        if (!location)
+        {
+            psserver->SendSystemInfo(me->clientnum, "Failed to find any locations within %.2fm.",data->searchRadius);
+            return;
+        }
+        
+        client->SetSelectedLocationID(location->GetID()); // Use ID to prevent pointer problems.
+        
+        psserver->SendSystemInfo(me->clientnum,
+                                     "Selected location %s(%d) at range %.2f.",
+                                     location->GetName(), location->GetID(), distance);
+    }
+    
 }
 
 

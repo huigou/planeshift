@@ -1292,18 +1292,20 @@ Note that you might need to wrap it like this \"quest name\" in case the quest n
     </topic>
     <branch name="/location">
       <Contents>
-        <content type="text">Online edit of locations
+        <content type="text">Online edit of locations. Location is used by the NPCClient to locate areas needed for their behaviors.
 
 /location add
 /location adjust
 /location display
 /location hide
 /location info
+/location radius
+/location show
 </content>
       </Contents>
       <topic name="/location add">
         <Contents>
-          <content type="text">/location add &lt;type&gt; &lt;name&gt; &lt;radius&gt;
+          <content type="text">/location add &lt;type&gt; &lt;name&gt; &lt;radius&gt; [&lt;rotation angle&gt;]
 
 Add a new location.</content>
         </Contents>
@@ -1315,25 +1317,46 @@ Add a new location.</content>
 Addjust the position of the neares location to your position.</content>
         </Contents>
       </topic>
-      <topic name="/location adjust">
+      <topic name="/location display|show">
         <Contents>
-          <content type="text">/location display
+          <content type="text">/location display|show
 
 Display all locations in current sector.</content>
         </Contents>
       </topic>
-      <topic name="/location adjust">
+      <topic name="/location hide">
         <Contents>
           <content type="text">/location hide
 
 Hide all locaitons in current sector.</content>
         </Contents>
       </topic>
-      <topic name="/location adjust">
+      <topic name="/location info">
         <Contents>
           <content type="text">/location info
 
 Display info about nearest location in current sector.</content>
+        </Contents>
+      </topic>
+      <topic name="/location insert">
+        <Contents>
+          <content type="text">/location insert
+
+Insert a new point after current selected point region.</content>
+        </Contents>
+      </topic>
+      <topic name="/location radius">
+        <Contents>
+          <content type="text">/location  &lt;radius&gt; &lt;search radius&gt;
+
+Adjust the radius of the location nearest current position.</content>
+        </Contents>
+      </topic>
+      <topic name="/location select">
+        <Contents>
+          <content type="text">/location select &lt;search radius&gt;
+
+Select a point in a region.</content>
         </Contents>
       </topic>
     </branch>

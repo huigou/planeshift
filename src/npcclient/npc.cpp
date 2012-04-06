@@ -166,39 +166,37 @@ csString NPC::Info()
             psGameObject::GetPosition(npcActor,pos,rot,sector);
             instance = npcActor->GetInstance();
         }
-	reply.AppendFmt("Pos: %s Rot: %.2f Inst: %d ",
+	reply.AppendFmt(" Pos: %s Rot: %.2f Inst: %d\n",
                         npcActor?toString(pos,sector).GetDataSafe():"(none)", rot, instance);
     }
-    reply.AppendFmt("DR Counter: %d ", DRcounter);
-    reply.AppendFmt("%s",disabled?"Disabled ":"");
+    reply.AppendFmt(" DR Counter: %d ", DRcounter);
+    reply.AppendFmt("%s\n",disabled?"Disabled ":"");
 
-    reply.AppendFmt("Active locate( Pos: %s Angle: %.2f Radius: %.2f WP: %s ) ",
+    reply.AppendFmt(" Active locate: ( Pos: %s Angle: %.2f Radius: %.2f WP: %s )\n",
 		    toString(activeLocate->pos,activeLocate->sector).GetDataSafe(),
 		    activeLocate->angle,activeLocate->radius,
 		    activeLocate->wp?activeLocate->wp->GetName():"(None)");
-    reply.AppendFmt("Spawn pos: %s ", toString(spawnPosition,spawnSector).GetDataSafe());
+    reply.AppendFmt(" Spawn pos: %s\n", toString(spawnPosition,spawnSector).GetDataSafe());
     if (GetOwner())
     {
-        reply.AppendFmt("Owner: %s ",GetOwnerName());
+        reply.AppendFmt(" Owner: %s\n",GetOwnerName());
     }
     if (GetRegion())
     {
-        reply.AppendFmt("Region( Name: %s Inside: %s ) ", GetRegion()->GetName(), insideRegion?"Yes":"No");
+        reply.AppendFmt(" Region( Name: %s Inside: %s )\n", GetRegion()->GetName(), insideRegion?"Yes":"No");
     }
     if (GetTribe())
     {
-	reply.AppendFmt("Tribe( Name: %s Type: %s Inside home: %s ) ",
+	reply.AppendFmt(" Tribe( Name: %s Type: %s Inside home: %s )\n",
 			GetTribe()->GetName(),GetTribeMemberType().GetDataSafe(),insideTribeHome?"Yes":"No");
     }
     if (GetTarget())
     {
-        reply.AppendFmt("Target: %s ",GetTarget()->GetName());
+        reply.AppendFmt(" Target: %s\n",GetTarget()->GetName());
     }
-    reply.AppendFmt("Last perception: '%s' ",last_perception?last_perception->GetName(this).GetDataSafe():"(None)");
-    reply.AppendFmt("Fall counter: %d ", GetFallCounter());
-    reply.AppendFmt("Brain: %s ",GetBrain()->GetName());
-    reply.AppendFmt("Behaviors: %s",GetBrain()->InfoBehaviors(this).GetDataSafe());
-    reply.AppendFmt("Reactions: %s",GetBrain()->InfoReactions(this).GetDataSafe());
+    reply.AppendFmt(" Last perception: '%s'\n",last_perception?last_perception->GetName(this).GetDataSafe():"(None)");
+    reply.AppendFmt(" Fall counter: %d\n", GetFallCounter());
+    reply.AppendFmt(" Brain: %s",GetBrain()->GetName());
 
     return reply;
 }

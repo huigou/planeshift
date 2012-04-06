@@ -54,6 +54,7 @@ class PetOwnerSession;
 class psPathPoint;
 class Waypoint;
 class psPath;
+class Location;
 
 class NPCManager : public MessageManager<NPCManager>
 {
@@ -177,8 +178,27 @@ public:
      */
     PSSKILL GetPetSkill() { return (PSSKILL)petSkill->getValueAsInt(); }
 
+    /** Notify superclients that a location where adjusted.
+     * @param wp The location that has been adjusted.
+     */
+    void LocationAdjusted(Location* location);
 
-    /** Notify superclients that a waypoint where  adjusted.
+    /** Notify superclients that a location where created.
+     * @param location The location that has been created.
+     */
+    void LocationCreated(Location* location);
+
+    /** Notify superclients that a location where inserted into a region.
+     * @param location The location that has been inserted.
+     */
+    void LocationInserted(Location* location);
+
+    /** Notify superclients that a location radius where chaned.
+     * @param location The location that has been chaned.
+     */
+    void LocationRadius(Location* location);
+
+    /** Notify superclients that a waypoint where adjusted.
      * @param wp The waypoint that has been adjusted.
      */
     void WaypointAdjusted(Waypoint* wp);

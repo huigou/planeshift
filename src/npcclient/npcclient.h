@@ -59,6 +59,7 @@ class  Perception;
 class  psWorld;
 class  Location;
 class  LocationType;
+class  LocationManager;
 class  Waypoint;
 //class  psPFMaps;
 class  Tribe;
@@ -542,6 +543,10 @@ public:
     /** Return the path network of the npcclient
      */
     psPathNetwork* GetPathNetwork(){ return pathNetwork; }
+
+    /** Return the location manager of the npcclient
+     */
+    LocationManager* GetLocationManager() { return locationManager; }
    
 protected:
 
@@ -583,7 +588,7 @@ protected:
     csRef<iVFS>                     vfs;
 
     csHash<NPCType*, const char*>   npctypes;
-    csHash<LocationType*, csString> loctypes;
+    LocationManager*                locationManager;         ///< The manager for location.
     psPathNetwork*                  pathNetwork;
     csRef<iCelHNavStruct>           navStruct;
     csArray<NPC*>                   npcs;
@@ -594,7 +599,6 @@ protected:
     csArray<gemNPCObject*>          all_gem_objects;
     csArray<gemNPCItem*>            all_gem_items;
     csArray<gemNPCActor*>           all_gem_actors;
-    csArray<Location*>              all_locations;
     csHash<RaceInfo_t,csString>     raceInfos;
 
     csRef<iCollideSystem>           cdsys;

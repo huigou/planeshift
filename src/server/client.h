@@ -357,6 +357,7 @@ public:
     csList<iSector*>::Iterator GetPathDisplaying();
     bool PathIsDisplaying();
 
+    // Online edit of waypoints
     void WaypointSetIsDisplaying( iSector* sector );
     void WaypointClearDisplaying();
     csList<iSector*>::Iterator GetWaypointDisplaying();
@@ -364,9 +365,14 @@ public:
 
     
     /// Online edit of location
-    uint32_t LocationGetEffectID();    
-    void LocationSetIsDisplaying( bool displaying ) { locationIsDisplaying = displaying; }
-    bool LocationIsDisplaying() { return locationIsDisplaying; }
+    void LocationSetIsDisplaying( iSector* sector );
+    void LocationClearDisplaying();
+    csList<iSector*>::Iterator GetLocationDisplaying();
+    bool LocationIsDisplaying();
+
+    void SetSelectedLocationID(int id) { selectedLocationID = id; }
+    int GetSelectedLocationID() { return selectedLocationID; }
+    
 
     /// Give a warning to the client silently. Capped at 10000.
     void CountDetectedCheat() {if (detectedCheatCount < 10000) detectedCheatCount++; }
@@ -453,18 +459,14 @@ public:
     csString waypointPathName;
     int waypointPathIndex;
 
-    uint32_t waypointEffectID;
-    uint32_t pathEffectID;
-
     psPath *pathPath;
 
+    int selectedLocationID;
+
+    /// Sectors where client is doing online editing
     csList<iSector*> waypointDisplaySectors;
     csList<iSector*> pathDisplaySectors;
-    
-    
-    // Location edit global vars for client
-    uint32_t locationEffectID;
-    bool locationIsDisplaying;
+    csList<iSector*> locationDisplaySectors;
     
 private:    
     FrozenBuffable isFrozen;  ///< Whether the client is frozen or not.

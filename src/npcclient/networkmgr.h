@@ -81,6 +81,7 @@ protected:
     void HandleItem( MsgEntry* me );
     void HandleObjectRemoval( MsgEntry* me );
     void HandlePathNetwork(MsgEntry *me);
+    void HandleLocation(MsgEntry *me);
 
     csString host,password,user;
     int port;

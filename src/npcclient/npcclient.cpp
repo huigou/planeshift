@@ -120,11 +120,7 @@ psNPCClient::~psNPCClient()
         delete npcTypeIter.Next();
     npctypes.Empty();
 
-
-    csHash<LocationType*, csString>::GlobalIterator iter(loctypes.GetIterator());
-    while(iter.HasNext())
-        delete iter.Next();
-    loctypes.Empty();
+    delete locationManager;
 
     running = false;
     delete network;
@@ -796,46 +792,17 @@ bool psNPCClient::LoadPathNetwork()
     navStruct = builder->LoadHNavStruct(vfs, navmesh);
 
     pathNetwork = new psPathNetwork();
-    return pathNetwork->Load(engine,db,world) && navStruct.IsValid();
+    return pathNetwork->Load(engine, db, world) && navStruct.IsValid();
 }
 
 bool psNPCClient::LoadLocations()
 {
-    Result rs(db->Select("select * from sc_location_type"));
-
-    if (!rs.IsValid())
+    locationManager = new LocationManager;
+    
+    if (!locationManager->Load(engine, db))
     {
-        Error2("Could not load locations from db: %s",db->GetLastError() );
+        Error1("Could not load locations.");
         return false;
-    }
-    for (int i=0; i<(int)rs.Count(); i++)
-    {
-        LocationType *loctype = new LocationType();
-
-        if (loctype->Load(rs[i],engine,db))
-        {
-           loctypes.Put(loctype->name, loctype);
-           CPrintf(CON_DEBUG, "Added location type '%s'(%d)\n",loctype->name.GetDataSafe(),loctype->id);
-        }
-        else
-        {
-            Error2("Could not load location: %s",db->GetLastError() );            
-            delete loctype;
-            return false;
-        }
-        
-    }
-
-    // Create a cache of all the locations.
-    csHash<LocationType*, csString>::GlobalIterator iter(loctypes.GetIterator());
-    LocationType *loc;
-    while(iter.HasNext())
-    {
-    	loc = iter.Next();
-        for (size_t i = 0; i < loc->locs.GetSize(); i++)
-        {
-            all_locations.Push(loc->locs[i]);
-        }
     }
 
     return true;
@@ -1156,24 +1123,12 @@ bool psNPCClient::LoadMap(const char* mapfile)
 
 LocationType *psNPCClient::FindRegion(const char *regname)
 {
-    if (!regname)
-        return NULL;
-
-    LocationType *found = loctypes.Get(regname, NULL);
-    if (found && found->locs[0] && found->locs[0]->IsRegion())
-    {
-        return found;
-    }
-    return NULL;
+    return locationManager->FindRegion(regname);
 }
 
 LocationType *psNPCClient::FindLocation(const char *locname)
 {
-    if (!locname)
-        return NULL;
-
-    LocationType *found = loctypes.Get(locname, NULL);
-    return found;
+    return locationManager->FindLocation(locname);
 }
 
 
@@ -1220,81 +1175,19 @@ float psNPCClient::GetRunVelocity(csString &race)
     return 0.0;
 }
 
-Location *psNPCClient::FindLocation(const char *loctype, const char *name)
+Location* psNPCClient::FindLocation(const char *loctype, const char *name)
 {
-
-    LocationType *found = loctypes.Get(loctype, NULL);
-    if (found)
-    {
-        for (size_t i=0; i<found->locs.GetSize(); i++)
-        {
-            if (strcasecmp(found->locs[i]->name,name) == 0)
-            {
-                return found->locs[i];
-            }
-        }
-    }
-    return NULL;
+    return locationManager->FindLocation(loctype, name);
 }
 
 Location *psNPCClient::FindNearestLocation(const char *loctype, csVector3& pos, iSector* sector, float range, float *found_range)
 {
-    LocationType *found = loctypes.Get(loctype, NULL);
-    if (found)
-    {
-        float min_range = range;    
-
-        int   min_i = -1;
-
-        for (size_t i=0; i<found->locs.GetSize(); i++)
-        {
-            float dist2 = world->Distance(pos,sector,found->locs[i]->pos,found->locs[i]->GetSector(engine));
-
-            if (min_range < 0 || dist2 < min_range)
-            {
-                min_range = dist2;
-                min_i = (int)i;
-            }
-        }
-        if (min_i > -1)  // found closest one
-        {
-            if (found_range) *found_range = min_range;
-
-            return found->locs[(size_t)min_i];
-        }
-    }
-    return NULL;
+    return locationManager->FindNearestLocation(world, loctype, pos, sector, range, found_range);
 }
 
 Location *psNPCClient::FindRandomLocation(const char *loctype, csVector3& pos, iSector* sector, float range, float *found_range)
 {
-    csArray<Location*> nearby;
-    csArray<float> dist;
-
-    LocationType *found = loctypes.Get(loctype, NULL);
-    if (found)
-    {
-        for (size_t i=0; i<found->locs.GetSize(); i++)
-        {
-            float dist2 = world->Distance(pos,sector,found->locs[i]->pos,found->locs[i]->GetSector(engine));
-
-            if (range < 0 || dist2 < range)
-            {
-                nearby.Push(found->locs[i]);
-                dist.Push(dist2);
-            }
-        }
-
-        if (nearby.GetSize()>0)  // found one or more closer than range
-        {
-            size_t pick = psGetRandom((uint32)nearby.GetSize());
-            
-            if (found_range) *found_range = sqrt(dist[pick]);
-
-            return nearby[pick];
-        }
-    }
-    return NULL;
+    return locationManager->FindRandomLocation(world, loctype, pos, sector, range, found_range);
 }
 
 Waypoint *psNPCClient::FindNearestWaypoint(csVector3& v,iSector *sector, float range, float * found_range)
@@ -1690,7 +1583,7 @@ void psNPCClient::ListPaths(const char * pattern)
 
 void psNPCClient::ListLocations(const char * pattern)
 {
-    csHash<LocationType*, csString>::GlobalIterator iter(loctypes.GetIterator());
+    csHash<LocationType*, csString>::GlobalIterator iter(locationManager->GetIterator());
     LocationType *loc;
 
     CPrintf(CON_CMDOUTPUT, "%9s %9s %-30s %-10s %10s\n", "Type id", "Loc id", "Name", "Region","");
@@ -1832,7 +1725,7 @@ void psNPCClient::PerceptProximityItems()
 void psNPCClient::PerceptProximityLocations()
 {
 
-    int size = (int)all_locations.GetSize();
+    int size = locationManager->GetNumberOfLocations();
 
     if (!size) return; // Nothing to do if no items
         
@@ -1851,7 +1744,7 @@ void psNPCClient::PerceptProximityLocations()
             current_long_range_perception_loc_index = 0;
         }
 
-        Location* location = all_locations[current_long_range_perception_loc_index];
+        Location* location = locationManager->GetLocation(current_long_range_perception_loc_index);
         
         LocationPerception pcpt_sensed("location sensed", location->type->name, location, engine);  
 

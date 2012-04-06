@@ -81,6 +81,7 @@ NetworkManager::NetworkManager(MsgHandler *mh,psNetConnection* conn, iEngine* en
     msghandler->Subscribe(this,MSGTYPE_NPCRACELIST);
     msghandler->Subscribe(this,MSGTYPE_NPC_WORKDONE);
     msghandler->Subscribe(this,MSGTYPE_PATH_NETWORK);
+    msghandler->Subscribe(this,MSGTYPE_LOCATION);
 
     connection= conn;
     connection->SetEngine( engine );
@@ -107,6 +108,7 @@ NetworkManager::~NetworkManager()
         msghandler->Unsubscribe(this,MSGTYPE_NPCRACELIST);
         msghandler->Unsubscribe(this,MSGTYPE_NPC_WORKDONE);
         msghandler->Unsubscribe(this,MSGTYPE_PATH_NETWORK);
+        msghandler->Unsubscribe(this,MSGTYPE_LOCATION);
     }
 
     delete outbound;
@@ -251,6 +253,11 @@ void NetworkManager::HandleMessage(MsgEntry *message)
         case MSGTYPE_PATH_NETWORK:
         {
             HandlePathNetwork(message);
+            break;
+        }
+        case MSGTYPE_LOCATION:
+        {
+            HandleLocation(message);
             break;
         }
     }
@@ -701,6 +708,129 @@ void NetworkManager::HandlePathNetwork(MsgEntry *me)
     }
 }
 
+void NetworkManager::HandleLocation(MsgEntry *me)
+{
+    psLocationMessage msg(me);
+
+    LocationManager* locations = npcclient->GetLocationManager();
+    
+    switch (msg.command)
+    {
+    case psLocationMessage::LOCATION_ADJUSTED:
+        {
+            Location* location = locations->FindLocation(msg.id);
+            if (location)
+            {
+                location->Adjust(msg.position, msg.sector);
+                
+                Debug4(LOG_NET, 0, "Adjusted location %s(%d) to %s.\n",
+                       location->GetName(), msg.id, toString(msg.position, msg.sector).GetDataSafe());
+            }
+            else
+            {
+                Error2("Failed to find location %d for adjust\n", msg.id);
+            }
+            
+        }
+        break;
+    case psLocationMessage::LOCATION_CREATED:
+        {
+            Location* location = locations->CreateLocation(msg.typeName, msg.name, msg.position, msg.sector, msg.radius, msg.rotationAngle, msg.flags);
+            location->SetID(msg.id);
+            
+            if (location)
+            {
+                Debug3(LOG_NET, 0, "Created location %d at %s.\n",
+                       msg.id, toString(msg.position, msg.sector).GetDataSafe());
+            }
+            else
+            {
+                Error2("Failed to find location %d for adjust\n", msg.id);
+            }
+            
+        }
+        break;
+    case psLocationMessage::LOCATION_INSERTED:
+        {
+            Location* location = locations->FindLocation(msg.prevID);
+            if (!location)
+            {
+                Error2("Failed to find location %d",msg.prevID);
+                return;
+            }
+            
+            Location* newLocation = location->Insert(msg.id, msg.position, msg.sector);
+            if (newLocation)
+            {
+                Debug3(LOG_NET, 0, "Insert new location %d after location %d\n", msg.id, msg.prevID);
+            }
+            else
+            {
+                Error3("Failed to insert new location %d after location %d\n", msg.id, msg.prevID);
+            }
+            
+        }
+        break;
+    case psLocationMessage::LOCATION_RADIUS:
+        {
+            Location* location = locations->FindLocation(msg.id);
+            if (location)
+            {
+                location->SetRadius(msg.radius);
+                
+                Debug3(LOG_NET, 0, "Set radius %.2f for location %d.\n",
+                       msg.radius, msg.id);
+            }
+            else
+            {
+                Error2("Failed to find location %d for radius\n", msg.id);
+            }
+            
+        }
+        break;
+    case psLocationMessage::LOCATION_RENAME:
+        {
+            Location* location = locations->FindLocation(msg.id);
+            if (location)
+            {
+                location->SetName(msg.name);
+                
+                Debug3(LOG_NET, 0, "Set name %s for location %d.\n",
+                       location->GetName(), msg.id);
+            }
+            else
+            {
+                Error2("Failed to find location %d for rename\n", msg.id);
+            }
+            
+        }
+        break;
+    case psLocationMessage::LOCATION_SET_FLAG:
+        {
+            Location* location = locations->FindLocation(msg.id);
+            if (location)
+            {
+                if (!location->SetFlag(msg.flags, msg.enable))
+                {
+                    Error3("Failed to set flag %s for location %d\n",msg.flags.GetDataSafe(),msg.id);
+                }
+                
+                Debug4(LOG_NET, 0, "Set flag %s for location %d to %s.\n",
+                       msg.flags.GetDataSafe(), msg.id, msg.enable?"TRUE":"FALSE");
+            }
+            else
+            {
+                Error2("Failed to find location %d for set flag.\n", msg.id);
+            }
+            
+        }
+        break;
+    default:
+        {
+            Error2("Command %d for Location Handling not implemented\n",msg.command);
+        }
+    }
+}
 
 
 void NetworkManager::HandleTimeUpdate( MsgEntry* me )
@@ -1340,9 +1470,18 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
 
                 npc->Printf("Got info request.");
 
+                // Send reply back in 3 parts. Since they only can hold a limited chars per message.
+
                 csString reply("NPCClient: ");
                 reply.Append(npc->Info());
+                QueueInfoReplyCommand(clientNum,reply);
 
+                reply = "";
+                reply.AppendFmt(" Behaviors: %s",npc->GetBrain()->InfoBehaviors(npc).GetDataSafe());
+                QueueInfoReplyCommand(clientNum,reply);
+                
+                reply = "";
+                reply.AppendFmt(" Reactions: %s",npc->GetBrain()->InfoReactions(npc).GetDataSafe());
                 QueueInfoReplyCommand(clientNum,reply);
 
                 break;
