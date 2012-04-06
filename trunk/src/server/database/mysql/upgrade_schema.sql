@@ -1696,6 +1696,13 @@ NewItem:SetItemModifier(2, OldItem:GetItemModifier(2));
 
 ALTER TABLE `planeshift`.`trade_processes` ADD COLUMN `script` VARCHAR(255)  NOT NULL DEFAULT 'Apply Post Trade Process' COMMENT 'A script to run after a process has completed. In order to apply custom effects to the result.' AFTER `secondary_quality_factor`;
 
+#
+# Updated tribe assets 1264
+#
+UPDATE `server_options` SET `option_value`='1264' WHERE `option_name`='db_version';
+ALTER TABLE sc_npctypes ADD COLUMN `template` int(1) unsigned NOT NULL default '0' COMMENT 'true if this is a base behavior for other behaviors. Used by WC.' AFTER `falling`;
+
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to
