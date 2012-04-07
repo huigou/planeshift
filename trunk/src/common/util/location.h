@@ -49,7 +49,7 @@ public:
     csVector3           pos;                    ///< The positon of this location
     float               rot_angle;              ///< Some location has an angle.
     float               radius;                 ///< The radius of this locaiton.
-    csArray<Location*>  locs;                   ///< A number of points for regions.
+    csArray<Location*>  locs;                   ///< A number of points for regions. Including self for first location in region.
     int                 id_prev_loc_in_region;  ///< Prev database ID for a region.
     csString            sectorName;             ///< The sector where this location is located.
 
@@ -341,7 +341,7 @@ public:
 
     /** Create a new location. And add it to the DB.
      */
-    Location* CreateLocation(iDataConnection* db, const char* locationTypeName, const char* locationName, csVector3& pos, iSector* sector, float radius, float rot_angle, const csString& flags);
+    Location* CreateLocation(iDataConnection* db, LocationType* locationType, const char* locationName, csVector3& pos, iSector* sector, float radius, float rot_angle, const csString& flags);
 
     /** Create a new location
      */

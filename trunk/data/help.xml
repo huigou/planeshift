@@ -1299,6 +1299,8 @@ Note that you might need to wrap it like this \"quest name\" in case the quest n
 /location display
 /location hide
 /location info
+/location insert
+/location list
 /location radius
 /location show
 </content>
@@ -1307,7 +1309,7 @@ Note that you might need to wrap it like this \"quest name\" in case the quest n
         <Contents>
           <content type="text">/location add &lt;type&gt; &lt;name&gt; &lt;radius&gt; [&lt;rotation angle&gt;]
 
-Add a new location.</content>
+Add a new location. For a list of types use the /location list command.</content>
         </Contents>
       </topic>
       <topic name="/location adjust">
@@ -1345,9 +1347,16 @@ Display info about nearest location in current sector.</content>
 Insert a new point after current selected point region.</content>
         </Contents>
       </topic>
+      <topic name="/location list">
+        <Contents>
+          <content type="text">/location list
+
+List all location types.</content>
+        </Contents>
+      </topic>
       <topic name="/location radius">
         <Contents>
-          <content type="text">/location  &lt;radius&gt; &lt;search radius&gt;
+          <content type="text">/location radius &lt;radius&gt; &lt;search radius&gt;
 
 Adjust the radius of the location nearest current position.</content>
         </Contents>

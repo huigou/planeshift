@@ -3135,6 +3135,7 @@ AdminCmdDataLocation::AdminCmdDataLocation(AdminManager* msgManager, MsgEntry* m
     subCommandList.Push("hide","");
     subCommandList.Push("info","");
     subCommandList.Push("insert","");
+    subCommandList.Push("list","");
     subCommandList.Push("radius","<radius> [<search radius>]");
     subCommandList.Push("select","[<search radius>]");
 
@@ -7122,8 +7123,15 @@ void AdminManager::ShowLocations(Client* client, iSector* sector)
                 for (int i = 0; i < location->locs.GetSize(); i++)
                 {
                     Location* loc = location->locs[i];
+                    Location* next = location->locs[(i+1)%location->locs.GetSize()];
+                    
+                    csVector3 delta = next->GetPosition() - loc->GetPosition();
+                        
+                    float angle = atan2(delta.x,delta.z);
+                    float length = delta.Norm();
+
                     psEffectMessage msg(client->GetClientNum(),"admin_location",
-                                        loc->GetPosition(),0,0,loc->GetEffectID(this),loc->GetRadius());
+                                        next->GetPosition(),0,0,next->GetEffectID(this),0.1f,length,angle);
                     msg.SendMessage();
                 }
             }
@@ -7230,7 +7238,14 @@ void AdminManager::HandleLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmd
 
     if (data->subCommand == "add")
     {
-        Location* location = locations->CreateLocation(db, data->locationType, data->locationName, myPos, mySector, data->radius, data->rotAngle, "");
+        LocationType* locationType = locations->FindLocation(data->locationType);
+        if (!locationType)
+        {
+            psserver->SendSystemInfo(me->clientnum, "Failed to find locations type %s.",data->locationType.GetDataSafe());
+            return;
+        }
+
+        Location* location = locations->CreateLocation(db, locationType, data->locationName, myPos, mySector, data->radius, data->rotAngle, "");
         
         if (location)
         {
@@ -7330,10 +7345,26 @@ void AdminManager::HandleLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmd
         {
             psserver->npcmanager->LocationInserted(location);
 
+            // Update the selected location to the new created location
+            client->SetSelectedLocationID(location->GetID()); // Use ID to prevent pointer problems.
+            
             UpdateDisplayLocation(location);
             
             psserver->SendSystemInfo(me->clientnum,"Inserted new location %s(%d)",location->GetName(),location->GetID());
         }
+    }
+    else if (data->subCommand == "list")
+    {
+        csString types;
+        types += "Locations:\n";
+        csHash<LocationType*, csString>::GlobalIterator iter(locations->GetIterator());
+        while (iter.HasNext())
+        {
+            LocationType* type = iter.Next();
+            types.AppendFmt(" %s\n",type->GetName());
+        }
+
+        psserver->SendSystemInfo(me->clientnum,types);
     }
     else if (data->subCommand == "radius")
     {
