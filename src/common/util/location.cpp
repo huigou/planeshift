@@ -60,7 +60,12 @@ Location::~Location()
     while (locs.GetSize())
     {
         Location * loc = locs.Pop();
-        delete loc;
+        // First location in a region is the location that holds the locs array.
+        // The first location is in the locs as well so don't delete self yet.
+        if (loc != this)
+        {
+            delete loc;
+        }
     }
 }
 
@@ -172,8 +177,15 @@ bool Location::Adjust(csVector3 &pos, iSector* sector)
 Location* Location::Insert(iDataConnection* db, csVector3 &pos, iSector* sector)
 {
     Location* location = new Location(type, name, pos, sector, radius, rot_angle, GetFlags());
-    location->id_prev_loc_in_region = id;
+    location->id_prev_loc_in_region = GetID();
 
+    // Check if this location is in a region, if not convert this locaiton into a region.
+    if (!region)
+    {
+        locs.Push( this ); // First location is in the locs as well.
+        region = this;
+    }
+    
     // Create DB entry
     location->CreateUpdate(db);
 
@@ -184,8 +196,15 @@ Location* Location::Insert(iDataConnection* db, csVector3 &pos, iSector* sector)
     next->id_prev_loc_in_region = location->GetID();
     next->CreateUpdate(db);
 
-    region->locs.Insert((index+1)%region->locs.GetSize(),location);
-
+    if (index+1 >= region->locs.GetSize())
+    {
+        region->locs.Push(location);
+    }
+    else
+    {
+        region->locs.Insert((index+1)%region->locs.GetSize(),location);
+    }
+    
     return location;
 }
 
@@ -195,13 +214,27 @@ Location* Location::Insert(int id, csVector3 &pos, iSector* sector)
     location->SetID(id);
     location->id_prev_loc_in_region = GetID();
     
+    // Check if this location is in a region, if not convert this locaiton into a region.
+    if (!region)
+    {
+        locs.Push( this ); // First location is in the locs as well.
+        region = this;
+    }
+
     // Update all the pointers and stuff.
     location->region = region;
     size_t index = region->locs.Find(this);
     Location* next = region->locs[(index+1)%region->locs.GetSize()];
     next->id_prev_loc_in_region = location->GetID();
 
-    region->locs.Insert((index+1)%region->locs.GetSize(),location);
+    if (index+1 >= region->locs.GetSize())
+    {
+        region->locs.Push(location);
+    }
+    else
+    {
+        region->locs.Insert((index+1)%region->locs.GetSize(),location);
+    }
 
     return location;
 }
@@ -257,7 +290,7 @@ bool Location::CreateUpdate(iDataConnection* db)
     values.FormatPush("%.2f",rot_angle);
     values.FormatPush("%.2f",radius);
     csString flagStr;
-    values.Push(flagStr);
+    values.Push(flagStr.GetDataSafe());
     values.FormatPush("%d",GetSectorID(db,sectorName));
 
     if (id == -1)
@@ -724,6 +757,20 @@ Location* LocationManager::FindLocation(int id)
             return location;
         }
         
+        if (location->IsRegion())
+        {
+            for (size_t j=0; j<location->locs.GetSize(); j++)
+            {
+                Location* location2 = location->locs[j];
+                
+                if (location2->GetID() == id)
+                {
+                    return location2;
+                }
+            }
+        }
+        
+
     }
     return NULL;
 }
@@ -834,9 +881,9 @@ csHash<LocationType*, csString>::GlobalIterator LocationManager::GetIterator()
     return loctypes.GetIterator();
 }
 
-Location* LocationManager::CreateLocation(iDataConnection* db, const char* locationTypeName, const char* locationName, csVector3& pos, iSector* sector, float radius, float rot_angle, const csString& flags)
+Location* LocationManager::CreateLocation(iDataConnection* db, LocationType* locationType, const char* locationName, csVector3& pos, iSector* sector, float radius, float rot_angle, const csString& flags)
 {
-    Location* location = CreateLocation(locationTypeName, locationName, pos, sector, radius, rot_angle, flags);
+    Location* location = CreateLocation(locationType, locationName, pos, sector, radius, rot_angle, flags);
 
     if (!location->CreateUpdate(db))
     {

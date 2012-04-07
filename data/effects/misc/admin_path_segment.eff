@@ -16,17 +16,12 @@
             <anchor type="basic" name="pos">
                 <dir>none</dir>
             </anchor>
-          <!--obj type="mesh" name="weapons#wand01a" fact="weapons#wand01a">
-                <attach>pos</attach>
-                <death>none</death>
-                <mixmode><add /></mixmode>
-            </obj-->
             <obj type="spire" shape="cylinder" name="spark" material="myknife" segments="4">
                 <attach>pos</attach>
                 <dir>none</dir>
                 <death>none</death>
                 <keyFrame time="0">
-                   <action name="position" x="0" y="0.00" z="1" use_scale="2" />
+                    <action name="position" x="0" y="0.00" z="1" use_scale="2" />
                     <action name="rotate" x="0" y="-57.295779513082320876798154814105" z="0" use_scale="1" />
                     <action name="scale" value="1" />
                     <action name="height" value="0.5" />
