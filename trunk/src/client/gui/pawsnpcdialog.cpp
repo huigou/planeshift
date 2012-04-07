@@ -611,7 +611,7 @@ void pawsNpcDialogWindow::Show()
              psengine->GetPSCamera()->SetCameraMode(0); //set the camera to the first person mode
           }
           enabledChatBubbles = psengine->GetChatBubbles()->isEnabled();
-          psengine->GetChatBubbles()->setEnabled(false);
+          //psengine->GetChatBubbles()->setEnabled(false);
        }
 
        SetupWindowWidgets();
@@ -628,7 +628,7 @@ void pawsNpcDialogWindow::Hide()
         CleanBubbles();
         psengine->GetPSCamera()->LockCameraMode(false);
         psengine->GetCharManager()->LockTarget(false);
-        psengine->GetChatBubbles()->setEnabled(enabledChatBubbles);
+        //psengine->GetChatBubbles()->setEnabled(enabledChatBubbles);
         if(psengine->GetPSCamera()->GetCameraMode() == 0)
         {
             psengine->GetPSCamera()->SetCameraMode(cameraMode); // restore camera mode
