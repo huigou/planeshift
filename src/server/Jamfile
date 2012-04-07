@@ -27,6 +27,7 @@ LinkStaticPlugins psserver_static :
   csopcode
   csparser
   cssynldr
+  docpreproc
   dsplex
   dynavis
   engine
