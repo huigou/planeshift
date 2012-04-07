@@ -33,6 +33,7 @@ if $(HAVE_STATIC_PLUGINS) = "yes"
   cssynldr
   cstgaimg
   decal
+  docpreproc 
   dsplex
   dynavis
   emit
