@@ -55,6 +55,7 @@ STATIC.PLUGINLIST =
   cssynldr
   cstgaimg
   decal
+  docpreproc
   dsplex
   dynavis
   emit
