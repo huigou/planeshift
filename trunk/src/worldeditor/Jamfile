@@ -31,6 +31,7 @@ STATIC.PLUGINLIST =
   cspngimg
   cssynldr
   cstgaimg
+  docpreproc
   dsplex
   engine
   fontplex

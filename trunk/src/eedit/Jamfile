@@ -36,6 +36,7 @@ STATIC.PLUGINLIST =
   cssynldr
   cstgaimg
   decal
+  docpreproc
   dsplex
   engine
   fontplex
