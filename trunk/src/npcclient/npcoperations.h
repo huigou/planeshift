@@ -74,6 +74,14 @@ public:
         OPERATION_COMPLETED,     ///< All parts of this operation has been completed
         OPERATION_FAILED         ///< The operation failed
     };
+
+    enum State
+    {
+        READY_TO_RUN,
+        RUNNING,
+        INTERRUPTED,
+        COMPLETED
+    };
     
 protected:
     ////////////////////////////////////////////////////////////
@@ -87,6 +95,8 @@ protected:
     int                  consecCollisions; ///< Shared by move functions. Used by CheckMoveOk to detect collisions
 
     Behavior*            parent;
+
+    State                state;
     // End of instance temp variables.
     ////////////////////////////////////////////////////////////
 
@@ -136,6 +146,10 @@ public:
     virtual bool AtInterruptedAngle(const csVector3& pos, const iSector* sector, float angle);
     virtual bool AtInterruptedPosition(NPC* npc);
     virtual bool AtInterruptedAngle(NPC* npc);
+
+    virtual void SetState(State state) { this->state = state; }
+    virtual State GetState() const  { return state; }
+    
 
  private:
     /** Send a collition perception to the npc.

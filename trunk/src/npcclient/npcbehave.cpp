@@ -748,7 +748,7 @@ void BehaviorSet::Execute(NPC* npc, bool forceRunScript)
 
             forceRunScript = false;
 
-            result = active->RunScript(npc);
+            result = active->Advance(0.0, npc);
             if (result == Behavior::BEHAVIOR_COMPLETED)
             {
                 // This behavior is done so set it inactive
@@ -1288,11 +1288,36 @@ Behavior::BehaviorResult Behavior::Advance(float delta, NPC *npc)
     }
 
     Behavior::BehaviorResult behaviorResult = BEHAVIOR_FAILED;
+    ScriptOperation::OperationResult result;
 
-    npc->Printf(10,"%s - Advance active delta: %.3f Need: %.2f Decay Rate: %.2f",
-                name.GetData(),delta,new_need,need_decay_rate);
-        
-    ScriptOperation::OperationResult result = sequence[current_step]->Advance(delta,npc);
+    if (sequence[current_step]->GetState() == ScriptOperation::READY_TO_RUN ||
+        sequence[current_step]->GetState() == ScriptOperation::INTERRUPTED)
+    {
+        npc->Printf(2, "Running %s step %d - %s operation%s",
+                    name.GetData(),current_step,sequence[current_step]->GetName(),
+                    (interrupted?" Interrupted":""));
+    
+        interrupted = (sequence[current_step]->GetState() == ScriptOperation::INTERRUPTED);
+
+        // Run the script
+        sequence[current_step]->SetState(ScriptOperation::RUNNING);
+        result = sequence[current_step]->Run(npc, interrupted);
+        interrupted = false; // Reset the interrupted flag after operation has run
+    }
+    else if (sequence[current_step]->GetState() == ScriptOperation::RUNNING)
+    {
+        npc->Printf(10,"%s - Advance active delta: %.3f Need: %.2f Decay Rate: %.2f",
+                    name.GetData(),delta,new_need,need_decay_rate);
+        result = sequence[current_step]->Advance(delta,npc);
+    }
+    else
+    {
+        Error5("Don't know how to advance sequence in behavior %s for %s(%s) in state %d",
+               GetName(),npc->GetName(),ShowID(npc->GetEID()),sequence[current_step]->GetState());
+        return BEHAVIOR_FAILED;
+    }
+    
+
     switch (result)
     {
     case ScriptOperation::OPERATION_NOT_COMPLETED:
@@ -1401,7 +1426,12 @@ void Behavior::SetCurrentStep(int step)
         return;
     }
     
+    sequence[current_step]->SetState(ScriptOperation::COMPLETED);
+
     current_step = step;
+
+    // Now that current_step has ben advanced, mark the next sequence as ready to run.
+    sequence[current_step]->SetState(ScriptOperation::READY_TO_RUN);
 }
 
 
@@ -1437,6 +1467,7 @@ void Behavior::StartScript(NPC *npc)
     {
         // Start at the first step of the script.
         current_step = 0;
+        sequence[current_step]->SetState(ScriptOperation::READY_TO_RUN);
 
         if (interrupted)
         {
@@ -1453,6 +1484,8 @@ void Behavior::OperationCompleted(NPC* npc)
 {
     npc->Printf(2,"Completed step %d - %s of behavior %s",
                 current_step,sequence[current_step]->GetName(),name.GetData());
+
+    sequence[current_step]->SetState(ScriptOperation::COMPLETED);
 
     // Increate the couter to tell how many operation has been run this periode.
     stepCount++; 
@@ -1473,6 +1506,9 @@ void Behavior::OperationCompleted(NPC* npc)
             npc->Printf(1, "End of non looping behaviour '%s'",GetName());
         }
     }
+
+    // Now that current_step has ben advanced, mark the next sequence as ready to run.
+    sequence[current_step]->SetState(ScriptOperation::READY_TO_RUN);
 }
 
 void Behavior::OperationFailed(NPC* npc)
@@ -1488,56 +1524,6 @@ void Behavior::SetStartStep()
     stepCount = 0;
 }
 
-
-Behavior::BehaviorResult Behavior::RunScript(NPC *npc)
-{ 
-    Behavior::BehaviorResult behaviorResult = BEHAVIOR_FAILED;
-    
-    npc->Printf(2, "Running %s step %d - %s operation%s",
-                name.GetData(),current_step,sequence[current_step]->GetName(),
-                (interrupted?" Interrupted":""));
-    
-    // Run the script
-    ScriptOperation::OperationResult result = sequence[current_step]->Run(npc, interrupted);
-    interrupted = false; // Reset the interrupted flag after operation has run
-            
-    // Check the result from the script run operation
-    switch (result)
-    {
-    case ScriptOperation::OPERATION_NOT_COMPLETED:
-        {
-            // Operation not completed and should relinquish
-            npc->Printf(2, "Behavior %s step %d - %s will complete later...",
-                        name.GetData(),current_step,sequence[current_step]->GetName());
-
-            behaviorResult = Behavior::BEHAVIOR_WILL_COMPLETE_LATER; // This behavior is done for now.
-            break;
-        }
-    case ScriptOperation::OPERATION_COMPLETED:
-        {
-            OperationCompleted(npc);
-            if (stepCount >= sequence.GetSize() || (current_step == 0 && !loop) )
-            {
-                npc->Printf(3,"Terminating behavior '%s' since it has looped all once.",GetName());
-                behaviorResult = Behavior::BEHAVIOR_COMPLETED; // This behavior is done
-            }
-            else
-            {
-                behaviorResult = Behavior::BEHAVIOR_NOT_COMPLETED; // More to do for this behavior
-            }
-            break;
-        }
-    case ScriptOperation::OPERATION_FAILED:
-        {
-            OperationFailed(npc);
-            behaviorResult = Behavior::BEHAVIOR_FAILED; // This behavior is done
-            break;
-        }
-    }
-
-    return behaviorResult;
-}
-
 void Behavior::InterruptScript(NPC *npc)
 {
     npc->Printf(2,"Interrupting behaviour %s at step %d - %s",
@@ -1551,6 +1537,12 @@ void Behavior::InterruptScript(NPC *npc)
     
     sequence[current_step]->InterruptOperation(npc);
     interrupted = true;
+
+    if (sequence[current_step]->GetState() == ScriptOperation::RUNNING)
+    {
+        sequence[current_step]->SetState(ScriptOperation::INTERRUPTED);
+    }
+    
 }
 
 void Behavior::Failure(NPC* npc, ScriptOperation* op)

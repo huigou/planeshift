@@ -392,7 +392,6 @@ public:
      */
     void OperationFailed(NPC* npc);
     void SetStartStep();
-    BehaviorResult RunScript(NPC* npc);
     void InterruptScript(NPC* npc);
     bool IsInterrupted(){ return interrupted; }
     void ClearInterrupted() { interrupted = false; }
