@@ -879,11 +879,12 @@ INSERT INTO sc_npctypes VALUES("117","MoveTest5","Answerer,Move","","$walk","","
 <!-- Create a behavior that cause the npc to go visible when going from home -->
 <behavior name="WokenFromSleep" completion_decay="-1" >
    <visible/>
+   <wait duration="1" anim="stand" />
 </behavior>
 
-<behavior name="AtSleep" loop="yes" completion_decay="-1" interrupt="woken_from_sleep" >
+<behavior name="AtSleep" loop="yes" completion_decay="0" interrupt="woken_from_sleep" >
    <loop>
-      <wait duration="10.0" />
+      <wait duration="2.0" />
   </loop>
 </behavior>
 
@@ -892,9 +893,9 @@ INSERT INTO sc_npctypes VALUES("117","MoveTest5","Answerer,Move","","$walk","","
    <percept event="global_move" />
 
    <!-- Simulate going inside by setting invisbile -->
-   <wait duration="5" anim="stand" />
+   <wait duration="2" anim="stand" />
    <invisible/>
-   <wait duration="5" anim="stand" />
+   <wait duration="1" anim="stand" />
    <rotate type="locaterotation" ang_vel="45"/>
    <percept event="at_sleep" />
 </behavior>

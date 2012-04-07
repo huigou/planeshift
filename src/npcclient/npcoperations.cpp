@@ -66,6 +66,7 @@ ScriptOperation::ScriptOperation(const char* scriptName)
       interrupted_angle(0.0f),
       consecCollisions(0),
       parent(NULL),
+      state(READY_TO_RUN),
       // Shared parameters between operations
       velSource(VEL_DEFAULT),
       vel(0.0),
@@ -84,6 +85,7 @@ ScriptOperation::ScriptOperation(const ScriptOperation* other)
       interrupted_angle(0.0f),
       consecCollisions(0),
       parent(NULL),
+      state(READY_TO_RUN),
       // Shared parameters between operations
       failurePerception(other->failurePerception),
       velSource(other->velSource),
