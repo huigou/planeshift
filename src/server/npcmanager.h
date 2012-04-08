@@ -55,6 +55,7 @@ class psPathPoint;
 class Waypoint;
 class psPath;
 class Location;
+class LocationType;
 
 class NPCManager : public MessageManager<NPCManager>
 {
@@ -198,6 +199,16 @@ public:
      */
     void LocationRadius(Location* location);
 
+    /** Notify superclients that a location type has been added.
+     * @param locationType The location type that has been created.
+     */
+    void LocationTypeAdd(LocationType* locationType);
+
+    /** Notify superclients that a location type has been deleted.
+     * @param locationTypeName The name of the location type that has been deleted.
+     */
+    void LocationTypeRemove(const csString& locationTypeName);
+    
     /** Notify superclients that a waypoint where adjusted.
      * @param wp The waypoint that has been adjusted.
      */

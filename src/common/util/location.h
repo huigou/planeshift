@@ -213,7 +213,6 @@ public:
      */
     Location* Insert(int id, csVector3 &pos, iSector* sector);
     
-    
 };
 
 /**
@@ -229,10 +228,23 @@ public:
     csString              name; ///< The name of this location type.
     csArray<Location*>    locs; ///< All the location of this location type.
 
+    /** Constructor
+     */
+    LocationType();
+
+    /** Constructor
+     */
+    LocationType(int id, const csString& name);
+    
     /** Destructor
      */
     ~LocationType();
 
+    /** Create or update an entry for this location type in the DB.
+     * @note Will update if there is a id different from -1.
+     */
+    bool CreateUpdate(iDataConnection* db);
+    
     /** Load a location type from an XML file.
      */
     bool Load(iDocumentNode *node);
@@ -350,6 +362,22 @@ public:
     /** Create a new location
      */
     Location* CreateLocation(LocationType* locationType, const char* locationName, csVector3& pos, iSector* sector, float radius, float rot_angle, const csString& flags);
+    
+    /** Create a new location type
+     */
+    LocationType* CreateLocationType(iDataConnection* db, const csString& locationName);
+
+    /** Create a new location type
+     */
+    LocationType* CreateLocationType(int id, const csString& locationName);
+
+    /** Remove a location type
+     */
+    bool RemoveLocationType(iDataConnection* db, const csString& locationName);
+
+    /** Remove a location type
+     */
+    bool RemoveLocationType(const csString& locationName);
     
 private:
     csHash<LocationType*, csString> loctypes;          ///< Hash on all location types, hashed on the type.

@@ -832,6 +832,7 @@ void NetworkManager::HandleLocation(MsgEntry *me)
                 if (!location->SetFlag(msg.flags, msg.enable))
                 {
                     Error3("Failed to set flag %s for location %d\n",msg.flags.GetDataSafe(),msg.id);
+                    return;
                 }
                 
                 Debug4(LOG_NET, 0, "Set flag %s for location %d to %s.\n",
@@ -841,6 +842,30 @@ void NetworkManager::HandleLocation(MsgEntry *me)
             {
                 Error2("Failed to find location %d for set flag.\n", msg.id);
             }
+            
+        }
+        break;
+    case psLocationMessage::LOCATION_TYPE_ADD:
+        {
+            LocationType* locationType = locations->CreateLocationType(msg.id,msg.typeName);
+            if (!locationType)
+            {
+                Error1("Failed to create location type");
+                return;
+            }
+            Debug3(LOG_NET, 0, "Created location type %s(%d).\n",
+                   locationType->GetName(),locationType->GetID());
+                
+        }
+        break;
+    case psLocationMessage::LOCATION_TYPE_REMOVE:
+        {
+            if (!locations->RemoveLocationType(msg.typeName))
+            {
+                return;
+            }
+            Debug2(LOG_NET, 0, "Removed location type %s.\n",
+                   msg.typeName.GetDataSafe());
             
         }
         break;

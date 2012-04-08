@@ -54,7 +54,7 @@ INSERT INTO sc_npctypes VALUES("3","InRegion","","","","","out of bounds","","",
 </behavior>
 
 <behavior name="RandomMoveInRegion" completion_decay="0" loop="yes" resume="yes">
-    <wait duration="5" random="5" />
+    <wait duration="15" random="5" />
     <locate obj="region" range="20" random="yes" destination="Move" />
     <percept event="local_move" />      <!-- Local navigation -->
 </behavior> 
@@ -65,23 +65,22 @@ INSERT INTO sc_npctypes VALUES("3","InRegion","","","","","out of bounds","","",
 INSERT INTO sc_npctypes VALUES("4","Fight","","","","","","","","1",
 '<behavior name="Fight"   initial="0" growth="0" decay="0" completion_decay="-1" >
    <locate obj="target"  range="20" />
-   <talk text="$race attacked by $target" target="false" /> 
    <rotate type="locatedest" anim="walk" ang_vel="120" />
    <melee seek_range="25" melee_range="2" />
 </behavior>
 
 <behavior name="Chase" initial="0" growth="0" decay="1" completion_decay="-1" >
-   <chase type="target" chase_range="25" offset="0.5" offset_angle="20" anim="run" vel="5" />
+   <chase type="target" chase_range="25" offset="0.5" offset_angle="20" anim="run" vel="$run" />
 </behavior>
 
-<behavior name="FailedToAttack" completion_decay="-1" >
-   <talk text="I can not attack $target" target="false" />
+<behavior name="FailedToAttack" completion_decay="-1" resume="yes" >
+   <locate obj="point" range="30" destination="Move" />
+   <percept event="local_move" />      <!-- Local navigation -->
 </behavior> 
 
-<behavior name="FailedEndpoint" completion_decay="-1" >
-   <talk text="I failed to reach $target going away" target="false" />
-   <locate obj="point" range="30" />
-   <navigate anim="walk" />      <!-- Local navigation -->
+<behavior name="FailedEndpoint" completion_decay="-1" resume="yes" >
+   <locate obj="point" range="30" destination="Move" />
+   <percept event="local_move" />      <!-- Local navigation -->
 </behavior> 
 
 
@@ -1168,15 +1167,15 @@ INSERT INTO sc_npctypes VALUES("124","SpellFighter","DoNothing","","$run","","",
 <react event="spell:target"    type="direct heal" behavior="Drain" delta="100" />
 ');
 
-INSERT INTO sc_npctypes VALUES("125","Fighter5","DoNothing,Move,Diurnal","","$walk","","","","","0",
+INSERT INTO sc_npctypes VALUES("125","Fighter5","DoNothing,Move,Diurnal,Fight","","$walk","","","","","0",
 '<empty/>
 ');
-INSERT INTO sc_npctypes VALUES("126","Fighter6","DoNothing,Move,Diurnal","","$walk","","","","","0",
+INSERT INTO sc_npctypes VALUES("126","Fighter6","DoNothing,Move,Diurnal,Fight","","$walk","","","","","0",
 '<empty/>
 ');
-INSERT INTO sc_npctypes VALUES("127","Fighter7","DoNothing,Move,Nocturnal","","$walk","","","","","0",
+INSERT INTO sc_npctypes VALUES("127","Fighter7","DoNothing,Move,Nocturnal,Fight","","$walk","","","","","0",
 '<empty/>
 ');
-INSERT INTO sc_npctypes VALUES("128","Fighter8","DoNothing,Move,Nocturnal","","$walk","","","","","0",
+INSERT INTO sc_npctypes VALUES("128","Fighter8","DoNothing,Move,Nocturnal,Fight","","$walk","","","","","0",
 '<empty/>
 ');
