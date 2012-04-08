@@ -421,6 +421,16 @@ bool Location::GetRandomPosition(iEngine * engine,csVector3& pos,iSector* &secto
 }
 
 /*------------------------------------------------------------------*/
+LocationType::LocationType()
+    :id(-1)
+{
+}
+
+LocationType::LocationType(int id, const csString& name)
+    :id(id),name(name)
+{
+}
+
 
 LocationType::~LocationType()
 {
@@ -435,6 +445,33 @@ LocationType::~LocationType()
         delete loc;
     }
 }
+
+bool LocationType::CreateUpdate(iDataConnection* db)
+{
+    const char * fields[] = 
+        {
+            "name"};
+
+    psStringArray values;
+    values.Push(name);
+
+    if (id == -1)
+    {
+        id = db->GenericInsertWithID("sc_location_type",fields,values);
+        if (id == 0)
+        {
+            id = -1;
+            return false;
+        }
+    }
+    else
+    {
+        csString idStr;
+        idStr.Format("%d",id);
+        return db->GenericUpdateWithID("sc_location_type","id",idStr,fields,values);    
+    }
+}
+
 
 
 bool LocationType::Load(iDocumentNode *node)
@@ -912,6 +949,40 @@ Location* LocationManager::CreateLocation(LocationType* locationType, const char
     all_locations.Push(location);
     
     return location;
+}
+
+LocationType* LocationManager::CreateLocationType(iDataConnection* db, const csString& locationName)
+{
+    LocationType* locationType = new LocationType(-1,locationName);
+    
+    if (locationType->CreateUpdate(db))
+    {
+        loctypes.Put(locationName, locationType);
+        return locationType;
+    }
+
+    delete locationType;
+    return NULL;
+}
+
+
+LocationType* LocationManager::CreateLocationType(int id, const csString& locationName)
+{
+    LocationType* locationType = new LocationType(id,locationName);
+    loctypes.Put(locationName, locationType);
+    return locationType;
+}
+
+
+bool LocationManager::RemoveLocationType(iDataConnection* db, const csString& locationName)
+{
+    return false;
+}
+
+
+bool LocationManager::RemoveLocationType(const csString& locationName)
+{
+    return false;
 }
 
 

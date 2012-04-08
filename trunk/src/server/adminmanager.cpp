@@ -3138,6 +3138,7 @@ AdminCmdDataLocation::AdminCmdDataLocation(AdminManager* msgManager, MsgEntry* m
     subCommandList.Push("list","");
     subCommandList.Push("radius","<radius> [<search radius>]");
     subCommandList.Push("select","[<search radius>]");
+    subCommandList.Push("type","add|delete [<type>]");
 
     subCommandList.Push("show","See /path help display");
 
@@ -3213,6 +3214,26 @@ AdminCmdDataLocation::AdminCmdDataLocation(AdminManager* msgManager, MsgEntry* m
             if (searchRadius <= 0.0)
             {
                 searchRadius = 10.0;
+            }
+        }
+        else if (subCommand == "type")
+        {
+            csString subSubCmd = words[index++];
+            if (subSubCmd.IsEmpty())
+            {
+                ParseError(me,"No sub command; add or delete given.");
+            }
+            else if (subSubCmd == "add")
+            {
+                subCommand = "type add";
+            } 
+            else if (subSubCmd == "delete" || subSubCmd == "remove")
+            {
+                subCommand = "type delete";
+            }
+            if (!words.GetString(index++,locationType))
+            {
+                ParseError(me,"No type given.");
             }
         }
         
@@ -7407,6 +7428,43 @@ void AdminManager::HandleLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmd
                                      "Selected location %s(%d) at range %.2f.",
                                      location->GetName(), location->GetID(), distance);
     }
+    else if (data->subCommand == "type add")
+    {
+        LocationType* locationType = locations->FindLocation(data->locationType);
+        if (locationType)
+        {
+            psserver->SendSystemInfo(me->clientnum, "Location type %s already exists.",data->locationType.GetDataSafe());
+            return;
+        }
+
+        locationType = locations->CreateLocationType(db,data->locationType);
+        
+        if (locationType)
+        {
+            psserver->SendSystemInfo(me->clientnum, "New Location type %s(%d) created.",locationType->GetName(),locationType->GetID());
+            psserver->npcmanager->LocationTypeAdd(locationType);
+        }
+    }
+    else if (data->subCommand == "type delete")
+    {
+        LocationType* locationType = locations->FindLocation(data->locationType);
+        if (!locationType)
+        {
+            psserver->SendSystemInfo(me->clientnum, "Found no location type named %s.",data->locationType.GetDataSafe());
+            return;
+        }
+
+        if (locations->RemoveLocationType(db,data->locationType))
+        {
+            psserver->SendSystemInfo(me->clientnum, "Deleted Location type %s.",data->locationType.GetDataSafe());
+            psserver->npcmanager->LocationTypeRemove(data->locationType);
+        }
+    }
+    else
+    {
+        Error2("Unknown type of location subCommand %s",data->subCommand.GetDataSafe());
+    }
+    
     
 }
 

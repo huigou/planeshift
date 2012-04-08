@@ -28,6 +28,7 @@
 
 // Forward declarations
 class Location;
+class LocationType;
 class Waypoint;
 class WaypointAlias;
 class psPath;
@@ -540,7 +541,9 @@ public:
         LOCATION_INSERTED,
         LOCATION_RADIUS,
         LOCATION_RENAME,
-        LOCATION_SET_FLAG
+        LOCATION_SET_FLAG,
+        LOCATION_TYPE_ADD,
+        LOCATION_TYPE_REMOVE
     } Command;
 
     Command   command;       ///< 
@@ -560,6 +563,14 @@ public:
     /** Generic message to do a command where input is a Location.
      */
     psLocationMessage(Command command, const Location* location);
+
+    /** Generic message to do a command where input is a Location type.
+     */
+    psLocationMessage(Command command, const LocationType* locationType);
+    
+    /** Generic message to do a command where input is a string.
+     */
+    psLocationMessage(Command command, const csString& name);
 
     /// Crack incoming psMessageBytes struct for inbound use
     psLocationMessage(MsgEntry *message);

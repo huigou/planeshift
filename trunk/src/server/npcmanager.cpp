@@ -2791,9 +2791,27 @@ void NPCManager::LocationInserted(Location* location)
 
 void NPCManager::LocationRadius(Location* location)
 {
-    Debug3(LOG_SUPERCLIENT, 0, "NPCManager chaned radius of location (%s)%d\n", location->GetName(), location->GetID());
+    Debug3(LOG_SUPERCLIENT, 0, "NPCManager changed radius of location (%s)%d\n", location->GetName(), location->GetID());
     
     psLocationMessage msg(psLocationMessage::LOCATION_RADIUS, location);
+    
+    msg.Multicast(superclients, -1, PROX_LIST_ANY_RANGE);
+}
+
+void NPCManager::LocationTypeAdd(LocationType* locationType)
+{
+    Debug3(LOG_SUPERCLIENT, 0, "NPCManager added new location type (%s)%d\n", locationType->GetName(), locationType->GetID());
+    
+    psLocationMessage msg(psLocationMessage::LOCATION_TYPE_ADD, locationType);
+    
+    msg.Multicast(superclients, -1, PROX_LIST_ANY_RANGE);
+}
+
+void NPCManager::LocationTypeRemove(const csString& locationTypeName)
+{
+    Debug2(LOG_SUPERCLIENT, 0, "NPCManager removed location type (%s)\n", locationTypeName.GetDataSafe());
+    
+    psLocationMessage msg(psLocationMessage::LOCATION_TYPE_REMOVE, locationTypeName);
     
     msg.Multicast(superclients, -1, PROX_LIST_ANY_RANGE);
 }

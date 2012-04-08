@@ -1559,6 +1559,37 @@ psLocationMessage::psLocationMessage( Command command, const Location* location 
     msg->ClipToCurrentSize();
 }
 
+psLocationMessage::psLocationMessage( Command command, const LocationType* locationType )
+{
+    msg.AttachNew(new MsgEntry( sizeof(uint8_t) + 1000 , PRIORITY_HIGH ));
+    msg->clientnum = 0;
+    msg->SetType(MSGTYPE_LOCATION);
+
+    msg->Add( (uint8_t)command );
+    msg->Add( (uint32_t)locationType->GetID() );
+
+    if (command == LOCATION_TYPE_ADD)
+    {
+        msg->Add( locationType->GetName() );
+    }
+}
+
+psLocationMessage::psLocationMessage( Command command, const csString& name )
+{
+    msg.AttachNew(new MsgEntry( sizeof(uint8_t) + 1000 , PRIORITY_HIGH ));
+    msg->clientnum = 0;
+    msg->SetType(MSGTYPE_LOCATION);
+
+    msg->Add( (uint8_t)command );
+    msg->Add( (uint32_t)(-1) ); // Read for all messages so we need to set it.
+
+    if (command == LOCATION_TYPE_REMOVE)
+    {
+        msg->Add( name );
+    }
+}
+
+
 psLocationMessage::psLocationMessage( MsgEntry* msgEntry )
     : id(0), sector(NULL), enable(false), radius(0.0), rotationAngle(0.0)
 {
@@ -1596,6 +1627,12 @@ psLocationMessage::psLocationMessage( MsgEntry* msgEntry )
    case LOCATION_RENAME:
        name          = msgEntry->GetStr();
        break;
+   case LOCATION_TYPE_ADD:
+       typeName      = msgEntry->GetStr();
+       break;
+   case LOCATION_TYPE_REMOVE:
+       typeName      = msgEntry->GetStr();
+       break;
    }
 }
 
@@ -1622,7 +1659,13 @@ csString psLocationMessage::ToString(NetBase::AccessPointers* /*accessPointers*/
         str.AppendFmt("Cmd: LOCATION_RADIUS ID: %d Radius: %.2f", id, radius);
         break;
     case LOCATION_RENAME:
-        str.AppendFmt("Cmd: LOCATION_RENAME ID: %d String: %s", id, name.GetDataSafe());
+        str.AppendFmt("Cmd: LOCATION_RENAME ID: %d Name: %s", id, name.GetDataSafe());
+        break;
+    case LOCATION_TYPE_ADD:
+        str.AppendFmt("Cmd: LOCATION_TYPE_ADD ID: %d Name: %s", id, typeName.GetDataSafe());
+        break;
+    case LOCATION_TYPE_REMOVE:
+        str.AppendFmt("Cmd: LOCATION_TYPE_REMOVE ID: %d Name: %s", id, typeName.GetDataSafe());
         break;
     }
     
