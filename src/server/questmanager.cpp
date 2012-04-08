@@ -755,6 +755,8 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
             return errorline;
     }
 
+    if(scr.Length() == 0)
+        return 1;
 
     while (start < scr.Length())
     {
