@@ -221,7 +221,7 @@ void CCheck::ParseFile(const char* filePath, const char* fileName, bool processi
             futil.CopyFile(filePath, outpath+"/meshes/"+csString(filePath).Slice(csString(filePath).FindLast('/')), true, false);
         }
 
-        if(csString(filePath).Find(".params") != (size_t)-1 || csString(filePath).Find("_heightmap.png") != (size_t)-1)
+        if(csString(filePath).Find(".params") != (size_t)-1 || csString(filePath).Find("_heightmap.png") != (size_t)-1 || csString(filePath).Find("_density.png") != (size_t)-1)
         {
             csString paramsPath = outpath+"/world/"+csString(filePath).Slice(csString(filePath).FindLast('/'));
             if(vfs->Exists(paramsPath))
