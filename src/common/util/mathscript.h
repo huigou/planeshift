@@ -53,6 +53,9 @@ protected:
     static csStringSet stringLiterals;
     static csStringSet customCompoundFunctions;
 
+
+    csString mathScriptTable;
+    
 public:
     union IDConverter
     {
@@ -72,7 +75,7 @@ public:
         uintptr_t p; // packed pointer
     };
 
-    MathScriptEngine(iDataConnection* db);
+    MathScriptEngine(iDataConnection* db, const csString& mathScriptTable);
     ~MathScriptEngine();
 
     /// retrieve a MathScript given it's name.

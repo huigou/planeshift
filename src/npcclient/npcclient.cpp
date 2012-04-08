@@ -256,7 +256,7 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, cons
         exit(1);
     }
 
-    mathScriptEngine = new MathScriptEngine(db);
+    mathScriptEngine = new MathScriptEngine(db,"math_script");
 
     cdsys =  csQueryRegistry<iCollideSystem> (objreg);
 
