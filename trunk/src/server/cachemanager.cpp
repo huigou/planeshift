@@ -2153,12 +2153,24 @@ bool CacheManager::PreloadRaceInfo()
 
         if (newraceinfo->Load(result[currentrow]))
         {
-            newraceinfo->LoadBaseSpeeds(psserver->GetObjectReg());
+            // Do not load the BaseSpeeds for the Special raceinfo
+            // that allow imaginary NPCs without race to be created.
+            if (strcmp(newraceinfo->GetName(),"Special")!=0)
+            {
+                if (!newraceinfo->LoadBaseSpeeds(psserver->GetObjectReg()))
+                {
+                    Error2("Could not load base speeds for raceinfo %s.",newraceinfo->GetName());
+                    return false;
+                }
+            }
+            
             raceinfolist.Push(newraceinfo);
         }
         else
         {
+            Error1("Could not load raceinfo. Check >race_info<");
             delete newraceinfo;
+            return false;
         }
     }
 
