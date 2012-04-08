@@ -38,7 +38,7 @@
 /*------------------------------------------------------------------*/
 
 Location::Location()
-    :effectID(0)
+    :type(NULL),effectID(0),region(NULL)
 {
     
 }
@@ -55,7 +55,10 @@ Location::Location(LocationType* locationType, const char* locationName, csVecto
 
 Location::~Location()
 {
-    type->RemoveLocation(this);
+    if (type)
+    {
+        type->RemoveLocation(this);
+    }
     
     while (locs.GetSize())
     {
@@ -355,6 +358,68 @@ bool Location::Import(iDocumentNode *node, iDataConnection *db,int typeID)
     return true;
 }
 
+bool Location::CheckWithinBounds(iEngine * engine,const csVector3& p,const iSector* sector)
+{
+    if (!IsRegion())
+        return false;
+
+    if (GetSector(engine) != sector)
+        return false;
+    
+    // Thanks to http://astronomy.swin.edu.au/~pbourke/geometry/insidepoly/
+    // for this example code.
+    int counter = 0;
+    size_t i,N=locs.GetSize();
+    float xinters;
+    csVector3 p1,p2;
+
+    p1 = locs[0]->pos;
+    for (i=1; i<=N; i++)
+    {
+        p2 = locs[i % N]->pos;
+        if (p.z > csMin(p1.z,p2.z))
+        {
+            if (p.z <= csMax(p1.z,p2.z))
+            {
+                if (p.x <= csMax(p1.x,p2.x))
+                {
+                    if (p1.z != p2.z)
+                    {
+                        xinters = (p.z-p1.z)*(p2.x-p1.x)/(p2.z-p1.z)+p1.x;
+                        if (p1.x == p2.x || p.x <= xinters)
+                            counter++;
+                    }
+                }
+            }
+        }
+        p1 = p2;
+    }
+
+    return (counter % 2 != 0);
+}
+
+bool Location::GetRandomPosition(iEngine * engine,csVector3& pos,iSector* &sector)
+{
+    csVector3 randomPos;
+    iSector*  randomSector;
+    
+    // TODO: Hack, for now just get the y value and sector from the first point.
+    randomPos.y = pos.y;
+    randomSector = GetSector(engine);
+
+    do 
+    {
+        randomPos.x = boundingBox.MinX() + psGetRandom()*(boundingBox.MaxX() - boundingBox.MinX());
+        randomPos.z = boundingBox.MinY() + psGetRandom()*(boundingBox.MaxY() - boundingBox.MinY());
+        
+    } while (!CheckWithinBounds(engine,randomPos,randomSector));
+
+    pos = randomPos;
+    sector = randomSector;
+
+    return true;
+}
+
 /*------------------------------------------------------------------*/
 
 LocationType::~LocationType()
@@ -573,71 +638,6 @@ bool LocationType::GetRandomPosition(iEngine * engine,csVector3& pos,iSector* &s
     
     return false;
 }
-
-
-bool Location::CheckWithinBounds(iEngine * engine,const csVector3& p,const iSector* sector)
-{
-    if (!IsRegion())
-        return false;
-
-    if (GetSector(engine) != sector)
-        return false;
-    
-    // Thanks to http://astronomy.swin.edu.au/~pbourke/geometry/insidepoly/
-    // for this example code.
-    int counter = 0;
-    size_t i,N=locs.GetSize();
-    float xinters;
-    csVector3 p1,p2;
-
-    p1 = locs[0]->pos;
-    for (i=1; i<=N; i++)
-    {
-        p2 = locs[i % N]->pos;
-        if (p.z > csMin(p1.z,p2.z))
-        {
-            if (p.z <= csMax(p1.z,p2.z))
-            {
-                if (p.x <= csMax(p1.x,p2.x))
-                {
-                    if (p1.z != p2.z)
-                    {
-                        xinters = (p.z-p1.z)*(p2.x-p1.x)/(p2.z-p1.z)+p1.x;
-                        if (p1.x == p2.x || p.x <= xinters)
-                            counter++;
-                    }
-                }
-            }
-        }
-        p1 = p2;
-    }
-
-    return (counter % 2 != 0);
-}
-
-bool Location::GetRandomPosition(iEngine * engine,csVector3& pos,iSector* &sector)
-{
-    csVector3 randomPos;
-    iSector*  randomSector;
-    
-    // TODO: Hack, for now just get the y value and sector from the first point.
-    randomPos.y = pos.y;
-    randomSector = GetSector(engine);
-
-    do 
-    {
-        randomPos.x = boundingBox.MinX() + psGetRandom()*(boundingBox.MaxX() - boundingBox.MinX());
-        randomPos.z = boundingBox.MinY() + psGetRandom()*(boundingBox.MaxY() - boundingBox.MinY());
-        
-    } while (!CheckWithinBounds(engine,randomPos,randomSector));
-
-    pos = randomPos;
-    sector = randomSector;
-
-    return true;
-}
-
-
 
 /*------------------------------------------------------------------*/
 
