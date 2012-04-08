@@ -39,10 +39,12 @@ struct iSector;
 #include <tools/celhpf.h>
 #include "net/npcmessages.h"
 #include "util/edge.h"
+#include "util/mathscript.h"
 
 //=============================================================================
 // Project Includes
 //=============================================================================
+#include "npc.h"
 
 class NPC;
 class gemNPCObject;
@@ -757,7 +759,8 @@ class LocateOperation : public ScriptOperation
 {
 protected:
     // Instance variables
-    bool      staticLocated;
+    bool        staticLocated;
+    NPC::Locate storedStaticLocated;
     
     // Operation parameters
     csString  object;
@@ -1004,7 +1007,10 @@ protected:
     csString   perception; ///< The perception name to send
     TargetType target;     ///< Hold the target for the perception, default SELF
     float      maxRange;   ///< Is there a max range for this, 0.0 is without limit
-        
+    csString   condition;  ///< A condition for when the perception should be fired
+    csString   failedPerception; ///< A perception to fire if the condition fails
+
+    csWeakRef<MathScript> calc_condition; ///< This is the particular calculation for condition.
 public:
 
     PerceptOperation(): ScriptOperation("Percept") {};
@@ -1012,6 +1018,7 @@ public:
     virtual OperationResult Run(NPC* npc,bool interrupted);
     virtual bool Load(iDocumentNode* node);
     virtual ScriptOperation* MakeCopy();
+    virtual bool CheckCondition();
 };
 
 //-----------------------------------------------------------------------------

@@ -34,7 +34,6 @@
 #include <csutil/randomgen.h>
 #include <csutil/xmltiny.h>
 
-#include "../server/globals.h"
 #include "psdatabase.h"
 
 #include "util/mathscript.h"
@@ -718,9 +717,9 @@ double MathScript::Evaluate(MathEnvironment *env) const
 
 //----------------------------------------------------------------------------
 
-MathScriptEngine::MathScriptEngine()
+MathScriptEngine::MathScriptEngine(iDataConnection* db)
 {
-    LoadScripts();
+    LoadScripts(db);
 }
 
 MathScriptEngine::~MathScriptEngine()
@@ -728,7 +727,7 @@ MathScriptEngine::~MathScriptEngine()
     UnloadScripts();
 }
 
-bool MathScriptEngine::LoadScripts()
+bool MathScriptEngine::LoadScripts(iDataConnection* db)
 {
     Result result(db->Select("SELECT * from math_scripts"));
     if (!result.IsValid())
@@ -785,10 +784,10 @@ bool MathScriptEngine::CheckAndUpdateScript(csWeakRef<MathScript> &script, const
     return true;
 }
 
-void MathScriptEngine::ReloadScripts()
+void MathScriptEngine::ReloadScripts(iDataConnection* db)
 {
     UnloadScripts();
-    LoadScripts();
+    LoadScripts(db);
 }
 
 csRandomGen MathScriptEngine::rng;

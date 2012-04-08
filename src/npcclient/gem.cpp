@@ -43,6 +43,7 @@
 #include "npc.h"
 #include "npcmesh.h"
 #include "networkmgr.h"
+#include "npcbehave.h"
 
 //-----------------------------------------------------------------------------
 

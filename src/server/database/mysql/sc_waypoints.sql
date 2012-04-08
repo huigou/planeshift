@@ -90,7 +90,7 @@ INSERT INTO `sc_waypoints` VALUES (62,'npcr1_013','',6.45,0.01,-230.46, 2, 'ALLO
 INSERT INTO `sc_waypoints` VALUES (63,'npcr1_014','',-6.83,0.01,-230.10, 2, 'ALLOW_RETURN, PUBLIC', 3);
 INSERT INTO `sc_waypoints` VALUES (64,'npcr1_015','',-7.50,0.01,-239.00, 1, 'ALLOW_RETURN, PUBLIC', 3);
 INSERT INTO `sc_waypoints` VALUES (65,'npcr1_016','',-7.50,0.01,-244.70, 1, 'ALLOW_RETURN, PUBLIC', 3);
-INSERT INTO `sc_waypoints` VALUES (66,'npcr1_017','',-8.00,0.01,-254.00, 2, 'ALLOW_RETURN, PUBLIC', 3);
+INSERT INTO `sc_waypoints` VALUES (66,'npcr1_017','',-8.00,0.01,-250.00, 2, 'ALLOW_RETURN, PUBLIC', 3);
 INSERT INTO `sc_waypoints` VALUES (67,'npcr1_018','',-15.00,0.00,-230.00, 2, 'ALLOW_RETURN, PUBLIC', 3);
 INSERT INTO `sc_waypoints` VALUES (68,'npcr1_019','',-30.00,0.00,-230.00, 2, 'ALLOW_RETURN, PRIVATE', 3);
 INSERT INTO `sc_waypoints` VALUES (69,'npcr1_020','',-45.00,0.00,-230.00, 2, 'ALLOW_RETURN, PUBLIC', 3);
@@ -98,3 +98,10 @@ INSERT INTO `sc_waypoints` VALUES (70,'npcr1_021','',-60.00,0.00,-230.00, 2, 'AL
 INSERT INTO `sc_waypoints` VALUES (71,'npcr1_022','',-30.00,0.00,-235.00, 2, 'ALLOW_RETURN, PUBLIC', 3);
 INSERT INTO `sc_waypoints` VALUES (72,'p36','',-16.00,0.00,-196.00, 2, 'ALLOW_RETURN, PUBLIC', 3);
 INSERT INTO `sc_waypoints` VALUES (73,'p37','',4.00,0.00,-196.00, 2, 'ALLOW_RETURN, PUBLIC', 3);
+INSERT INTO `sc_waypoints` VALUES (74,'npcr1_p74','',-16.00,0.00,-250.00, 2, 'ALLOW_RETURN, PUBLIC', 3);
+INSERT INTO `sc_waypoints` VALUES (75,'npcr1_p75','',-24.00,0.00,-250.00, 2, 'ALLOW_RETURN, PUBLIC', 3);
+INSERT INTO `sc_waypoints` VALUES (76,'npcr1_p76','',-32.00,0.00,-250.00, 2, 'ALLOW_RETURN, PUBLIC', 3);
+INSERT INTO `sc_waypoints` VALUES (77,'npcr1_p77','',-40.00,0.00,-250.00, 2, 'ALLOW_RETURN, PUBLIC', 3);
+INSERT INTO `sc_waypoints` VALUES (78,'npcr1_p78','',-48.00,0.00,-250.00, 2, 'ALLOW_RETURN, PUBLIC', 3);
+INSERT INTO `sc_waypoints` VALUES (79,'npcr1_p79','',10.00,0.00,-260.00, 2, 'ALLOW_RETURN, PUBLIC', 3);
+INSERT INTO `sc_waypoints` VALUES (80,'npcr1_p80','',-40.00,0.00,-266.00, 2, 'ALLOW_RETURN, PUBLIC', 3);

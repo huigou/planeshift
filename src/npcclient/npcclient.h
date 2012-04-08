@@ -25,6 +25,7 @@
 #include <csutil/hash.h>
 #include <csutil/ref.h>
 #include <csutil/list.h>
+#include <iutil/vfs.h>
 
 struct iObjectRegistry;
 struct iDocumentNode;
@@ -40,6 +41,7 @@ struct iCollideSystem;
 #include "util/serverconsole.h"
 #include "util/pspath.h"
 #include "util/pspathnetwork.h"
+#include "util/mathscript.h"
 
 #include "tools/celhpf.h"
 
@@ -79,7 +81,7 @@ struct RaceInfo_t
 /**
  * The main NPC Client class holding references to important superclient objects
  */
-class psNPCClient : public iCommandCatcher
+class psNPCClient : public iCommandCatcher, public iScriptableVar
 {
 public:
 
@@ -300,8 +302,17 @@ public:
                       csVector3* basePos=NULL, iSector* baseSector=NULL,
                       bool sameSector=false);
 
-    EventManager* GetEventManager()
-    { return eventmanager; }
+    /** Returns the Event Manger.
+     *
+     * @return Returns a ptr to the event manager.
+     */
+    EventManager* GetEventManager() { return eventmanager; }
+
+    /** Returns the Math Scripting Engine.
+     *
+     * @return Returns a ptr to the math script engine.
+     */
+    MathScriptEngine*  GetMathScriptEngine() { return mathScriptEngine; }
 
     /**
      * Disconnect from server nicely, before quitting.
@@ -547,7 +558,12 @@ public:
     /** Return the location manager of the npcclient
      */
     LocationManager* GetLocationManager() { return locationManager; }
-   
+
+    /// iScriptableVar implementation
+    virtual double GetProperty(MathEnvironment* env, const char* ptr);
+    virtual double CalcFunction(MathEnvironment* env, const char* functionName, const double* params);    
+    virtual const char* ToString();
+    
 protected:
 
     bool ReadNPCsFromDatabase();
@@ -589,6 +605,7 @@ protected:
 
     csHash<NPCType*, const char*>   npctypes;
     LocationManager*                locationManager;         ///< The manager for location.
+    MathScriptEngine*               mathScriptEngine;
     psPathNetwork*                  pathNetwork;
     csRef<iCelHNavStruct>           navStruct;
     csArray<NPC*>                   npcs;

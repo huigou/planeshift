@@ -57,6 +57,7 @@
 #include "gem.h"
 #include "npcmesh.h"
 #include "tribe.h"
+#include "npcbehave.h"
 
 extern iDataConnection *db;
 
@@ -271,6 +272,16 @@ void NPC::Load(const char* name, PID pid, NPCType* type, const char* region_name
     this->debugging = debugging;
     this->disabled = disabled;
     this->brain = new NPCType(*type);
+}
+
+Behavior* NPC::GetCurrentBehavior()
+{
+    return brain->GetCurrentBehavior();
+}
+
+NPCType* NPC::GetBrain()
+{
+    return brain;
 }
 
 void NPC::SetBrain(NPCType *type, EventManager* eventmanager)
@@ -568,7 +579,21 @@ bool NPC::CopyLocate(csString source, csString destination)
     return true;
 }
 
+float NPC::GetAngularVelocity()
+{
+    if (ang_vel == 999)
+        return brain->GetAngularVelocity(this);
+    else
+        return ang_vel;
+}
 
+float NPC::GetVelocity()
+{
+    if (vel == 999)
+        return brain->GetVelocity(this);
+    else
+        return vel;
+}
 
 float NPC::GetWalkVelocity()
 {

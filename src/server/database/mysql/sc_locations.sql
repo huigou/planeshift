@@ -69,6 +69,12 @@ INSERT INTO `sc_locations` VALUES (38,11, -1, 'Hunting ground 3','-20.0', '0.0',
 INSERT INTO `sc_locations` VALUES (39,11, -1, 'Hunting ground 4','-20.0', '0.0', '-160.0', 10, 0.0,'', 3);
 INSERT INTO `sc_locations` VALUES (40,11, -1, 'Hunting ground 5','-20.0', '0.0', '-220.0', 10, 0.0,'', 3);
 INSERT INTO `sc_locations` VALUES (41, 8, -1, 'Smith','-53.54', '0.01', '-155.11', 0, 0.5,'', 3);
+INSERT INTO `sc_locations` VALUES (46,13, 49, 'Meadow','0.0', '0.0', '-245.0', 0, 0.0,'', 3);
+INSERT INTO `sc_locations` VALUES (47,13, 46, 'Meadow','0.0', '0.0', '-265.0', 0, 0.0,'', 3);
+INSERT INTO `sc_locations` VALUES (48,13, 47, 'Meadow','-40.0', '0.0', '-265.0', 0, 0.0,'', 3);
+INSERT INTO `sc_locations` VALUES (49,13, 48, 'Meadow','-40.0', '0.0', '-245.0', 0, 0.0,'', 3);
+INSERT INTO `sc_locations` VALUES (50,12, -1, 'Sleep','10.0', '0.0', '-260.0', 5, 0.0,'', 3);
+INSERT INTO `sc_locations` VALUES (51,12, -1, 'Sleep','-40.0', '0.0', '-265.0', 5, 0.0,'', 3);
 
 
 

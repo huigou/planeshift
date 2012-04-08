@@ -108,5 +108,12 @@ INSERT INTO `sc_waypoint_links` VALUES (83,'','LINEAR',71,69,'');
 INSERT INTO `sc_waypoint_links` VALUES (84,'','LINEAR',72,73,'');
 INSERT INTO `sc_waypoint_links` VALUES (85,'','LINEAR',72,10,'');
 INSERT INTO `sc_waypoint_links` VALUES (86,'','LINEAR',9,70,'');
+INSERT INTO `sc_waypoint_links` VALUES (87,'','LINEAR',66,74,'');
+INSERT INTO `sc_waypoint_links` VALUES (88,'','LINEAR',74,75,'');
+INSERT INTO `sc_waypoint_links` VALUES (89,'','LINEAR',75,76,'');
+INSERT INTO `sc_waypoint_links` VALUES (90,'','LINEAR',76,77,'');
+INSERT INTO `sc_waypoint_links` VALUES (91,'','LINEAR',77,78,'');
+INSERT INTO `sc_waypoint_links` VALUES (92,'','LINEAR',66,79,'');
+INSERT INTO `sc_waypoint_links` VALUES (93,'','LINEAR',76,80,'');
 
 

@@ -47,6 +47,7 @@
 #include "util/log.h"
 #include "util/location.h"
 #include "util/strutil.h"
+#include "util/eventmanager.h"
 
 #include "engine/psworld.h"
 

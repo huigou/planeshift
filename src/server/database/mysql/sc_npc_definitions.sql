@@ -58,3 +58,7 @@ INSERT INTO sc_npc_definitions VALUES("80","Chaser1","ChaseTest1","","0.00","0.0
 INSERT INTO sc_npc_definitions VALUES("81","Chaser2","ChaseTest2","","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("82","SpellMaster","SpellMaster","","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("83","SpellFighter","SpellFighter","NPC Room Fighter region 1","0.00","0.00","0","N","N");
+INSERT INTO sc_npc_definitions VALUES("84","Fighter5","Fighter5","NPC Room South Meadow","0.00","0.00","0","N","N");
+INSERT INTO sc_npc_definitions VALUES("85","Fighter6","Fighter6","NPC Room South Meadow","0.00","0.00","0","N","N");
+INSERT INTO sc_npc_definitions VALUES("86","Fighter7","Fighter7","NPC Room South Meadow","0.00","0.00","0","N","N");
+INSERT INTO sc_npc_definitions VALUES("87","Fighter8","Fighter8","NPC Room South Meadow","0.00","0.00","0","N","N");

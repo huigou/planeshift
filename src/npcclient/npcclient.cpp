@@ -51,6 +51,7 @@
 #include "util/psutil.h"
 #include "util/pspathnetwork.h"
 #include <tools/celhpf.h>
+#include "util/mathscript.h"
 
 #include "net/connection.h"
 #include "net/clientmsghandler.h"
@@ -121,6 +122,7 @@ psNPCClient::~psNPCClient()
     npctypes.Empty();
 
     delete locationManager;
+    delete mathScriptEngine;
 
     running = false;
     delete network;
@@ -253,6 +255,8 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char *_host, cons
         CPrintf(CON_ERROR, "Couldn't load the sc_location_type table\n");
         exit(1);
     }
+
+    mathScriptEngine = new MathScriptEngine(db);
 
     cdsys =  csQueryRegistry<iCollideSystem> (objreg);
 
@@ -728,6 +732,45 @@ NPC* psNPCClient::ReadMasteredNPC(PID char_id, PID master_id)
     npcs.Push(newnpc);
     return newnpc;
 }
+
+// iScriptableVar interface for MathScripts
+double psNPCClient::GetProperty(MathEnvironment* env, const char* ptr)
+{
+    csString property(ptr);
+    if (property == "gameYear")
+    {
+        return gameYear;
+    }
+    if (property == "gameMonth")
+    {
+        return gameMonth;
+    }
+    if (property == "gameHour")
+    {
+        return gameHour;
+    }
+    if (property == "gameMinute")
+    {
+        return gameMinute;
+    }
+    Error2("Requested psNPCClient property not found '%s'", ptr);
+    return 0.0;
+}
+
+// iScriptableVar interface for MathScripts
+double psNPCClient::CalcFunction(MathEnvironment* env, const char* functionName, const double* params)
+{
+    csString function(functionName);
+
+    Error2("Requested psNPCClient function not found '%s'", functionName);
+    return 0.0;
+}
+
+const char* psNPCClient::ToString()
+{
+    return "NPCClient";
+}
+
 
 bool psNPCClient::ReadNPCsFromDatabase()
 {

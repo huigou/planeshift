@@ -54,6 +54,8 @@
 #include "npc.h"
 #include "gem.h"
 #include "tribe.h"
+#include "perceptions.h"
+#include "npcbehave.h"
 
 extern bool running;
 

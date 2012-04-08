@@ -11884,7 +11884,7 @@ void AdminManager::HandleReload(psAdminCmdMessage& msg, AdminCmdData* cmddata, C
     }
     else if(data->subCmd == "mathscript")
     {
-        psserver->GetMathScriptEngine()->ReloadScripts();
+        psserver->GetMathScriptEngine()->ReloadScripts(db);
         psserver->SendSystemOK(client->GetClientNum(), "Successfully reloaded math scripts.");
     }
     else if(data->subCmd == "path")
