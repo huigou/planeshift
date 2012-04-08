@@ -1365,7 +1365,8 @@ public:
 class WaitOperation : public ScriptOperation
 {
 protected:
-    csString duration;
+    csString duration;  ///< The duration to wait before continue
+    csString random;    ///< A random duration to add to the duration
     csString action;
 
     // Instance temp variables. These dosn't need to be copied.

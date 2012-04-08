@@ -51,6 +51,12 @@ INSERT INTO sc_npctypes VALUES("3","InRegion","","","","","out of bounds","","",
 <behavior name="FailedEndpoint" completion_decay="-1" >
    <talk text="I failed to reach $target going away in region" target="false" />
    <percept event="move back in region" />
+</behavior>
+
+<behavior name="RandomMoveInRegion" completion_decay="0" loop="yes" resume="yes">
+    <wait duration="5" random="5" />
+    <locate obj="region" range="20" random="yes" destination="Move" />
+    <percept event="local_move" />      <!-- Local navigation -->
 </behavior> 
 
 <react event="move back in region" behavior="MoveBackInRegion" do_not_interrupt="GoToRegion,Move" />
@@ -282,7 +288,7 @@ INSERT INTO sc_npctypes VALUES("13","Sleep","","","","","","","","1",
 <react event="sleep" behavior="AtSleep" />
 ');
 
-INSERT INTO sc_npctypes VALUES("14","Diurnal","Sleep,InRegion","","","","","","","1",
+INSERT INTO sc_npctypes VALUES("14","Diurnal","Sleep,InRegion","","","$run","","","","1",
 '<!-- Active by day. Sleeping/Hiding during night 22:00-06:00 -->
 <!--  Require Idle behavior when composed into a complete behavior -->
 
@@ -296,17 +302,20 @@ INSERT INTO sc_npctypes VALUES("14","Diurnal","Sleep,InRegion","","","","","",""
 </behavior>
 <react event="GoToSleep" behavior="GoToSleep" />
 
-<behavior name="Init_Diurnal" completion_decay="-1" initial="1000">
+<behavior name="Init_Diurnal" resume="yes" completion_decay="-1" initial="1000">
    <visible />
    <wait duration="1" />
    <percept condition="DiurnalNight" event="GoToSleep" failed_event="GoToRegion" />
+   <percept event="StartRandomMove" />
 </behavior>
+<react event="StartRandomMove" behavior="RandomMoveInRegion" absolute="60" />
+
 
 <react event="time" value="22,0,,," random=",5,,," behavior="GoToSleep" /> 
 <react event="time" value="6,0,,," random=",5,,,"  behavior="GoToRegion" /> 
 ');
 
-INSERT INTO sc_npctypes VALUES("15","Nocturnal","Sleep,InRegion","","","","","","","1",
+INSERT INTO sc_npctypes VALUES("15","Nocturnal","Sleep,InRegion","","$walk","","","","","1",
 '<!-- Moving about during night. Sleeping/Hiding during day 08:00-18:00 -->
 <!--  Require Idle behavior when composed into a complete behavior -->
 
@@ -319,11 +328,14 @@ INSERT INTO sc_npctypes VALUES("15","Nocturnal","Sleep,InRegion","","","","","",
 </behavior>
 <react event="GoToSleep" behavior="GoToSleep" />
 
-<behavior name="Init_Nocturnal" completion_decay="-1" initial="1000">
+<behavior name="Init_Nocturnal" resume="yes" completion_decay="-1" initial="1000">
    <visible />
    <wait duration="1" />
    <percept condition="NocturnalNight" event="GoToSleep" failed_event="GoToRegion" />
+   <percept event="StartRandomMove" />
 </behavior>
+<react event="StartRandomMove" behavior="RandomMoveInRegion" absolute="60" />
+
 
 <react event="time" value="8,0,,," random=",5,,," behavior="GoToSleep" /> 
 <react event="time" value="18,0,,," random=",5,,,"  behavior="GoToRegion" /> 

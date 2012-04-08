@@ -4362,6 +4362,8 @@ bool WaitOperation::Load(iDocumentNode *node)
         return false;
     }
 
+    random = node->GetAttributeValue("random");
+
     // Check for <hours>:<minutes> and convert to duration
     if (duration.FindFirst(':') != ((size_t)-1))
     {
@@ -4381,6 +4383,7 @@ ScriptOperation *WaitOperation::MakeCopy()
 {
     WaitOperation *op = new WaitOperation;
     op->duration = duration;
+    op->random = random;
     op->action   = action;
     return op;
 }
@@ -4390,6 +4393,10 @@ ScriptOperation::OperationResult WaitOperation::Run(NPC *npc, bool interrupted)
     if (!interrupted)
     {
         remaining = atof(psGameObject::ReplaceNPCVariables(npc, duration));
+        if (!random.IsEmpty())
+        {
+            remaining += psGetRandom()*atof(psGameObject::ReplaceNPCVariables(npc, random));
+        }
 
         // If there are no time left we are done.
         if (remaining <= 0.0)
