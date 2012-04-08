@@ -354,7 +354,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     Debug1(LOG_STARTUP,0,"Loader cache filled");
 
     // MathScript Engine
-    mathscriptengine = new MathScriptEngine(db);
+    mathscriptengine = new MathScriptEngine(db,"math_script");
 
     cachemanager = new CacheManager();
 

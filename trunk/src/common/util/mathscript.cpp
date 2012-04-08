@@ -717,7 +717,8 @@ double MathScript::Evaluate(MathEnvironment *env) const
 
 //----------------------------------------------------------------------------
 
-MathScriptEngine::MathScriptEngine(iDataConnection* db)
+MathScriptEngine::MathScriptEngine(iDataConnection* db, const csString& mathScriptTable)
+    :mathScriptTable(mathScriptTable)
 {
     LoadScripts(db);
 }
@@ -736,7 +737,7 @@ bool MathScriptEngine::LoadScripts(iDataConnection* db)
     for (unsigned long i = 0; i < result.Count(); i++ )
     {
         csRef<MathScript> script;
-        MathScript *scr = MathScript::Create(result[i]["name"], result[i]["math_script"]);
+        MathScript *scr = MathScript::Create(result[i]["name"], result[i][mathScriptTable]);
         if (!scr)
         {
             Error2("Failed to load MathScript >%s<.", result[i]["name"]);
