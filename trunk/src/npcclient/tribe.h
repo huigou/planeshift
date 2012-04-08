@@ -38,10 +38,6 @@
 //=============================================================================
 // Local Includes
 //=============================================================================
-#include "recipe.h"
-#include "recipetreenode.h"
-#include "npcbehave.h"
-#include "npcclient.h"
 
 class iResultRow;
 class EventManager;

@@ -56,6 +56,7 @@
 #include "perceptions.h"
 #include "gem.h"
 #include "npcmesh.h"
+#include "npcbehave.h"
 
 //---------------------------------------------------------------------------
 
@@ -2496,17 +2497,19 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
 
         AddRandomRange(located.pos, location->radius, 0.5);
         
+        located.wp = CalculateWaypoint(npc,located.pos,located.sector,located_range);
+
         if (static_loc)
         {
             staticLocated = true;  // if it is a static location, we only have to do this locate once, and save the answer
+            storedStaticLocated = located;
         }
-
-        located.wp = CalculateWaypoint(npc,located.pos,located.sector,located_range);
 
     }
     else
     {
         npc->Printf(5, "remembered location from last time");
+        located = storedStaticLocated;
     }
 
     npc->SetLocate(destinationVariablesReplaced,located);
@@ -3219,6 +3222,11 @@ ScriptOperation::OperationResult NOPOperation::Run(NPC *npc, bool interrupted)
 
 bool PerceptOperation::Load(iDocumentNode *node)
 {
+    if (!ScriptOperation::Load(node))
+    {
+        return false;
+    }
+
     perception = node->GetAttributeValue("event");
     if (perception.IsEmpty())
     {
@@ -3252,6 +3260,9 @@ bool PerceptOperation::Load(iDocumentNode *node)
                targetStr.GetDataSafe());
         return false;
     }
+    
+    condition = node->GetAttributeValue("condition");
+    failedPerception = node->GetAttributeValue("failed_event");
 
     return true;
 }
@@ -3260,16 +3271,64 @@ ScriptOperation *PerceptOperation::MakeCopy()
 {
     PerceptOperation *op = new PerceptOperation;
 
-    op->perception = perception;
-    op->target     = target;
-    op->maxRange   = maxRange;
+    op->perception       = perception;
+    op->target           = target;
+    op->maxRange         = maxRange;
+    op->condition        = condition;
+    op->failedPerception = failedPerception;
 
     return op;
 }
 
+bool PerceptOperation::CheckCondition()
+{
+    if(!calc_condition.IsValid())
+    {
+        if (!npcclient->GetMathScriptEngine()->CheckAndUpdateScript(calc_condition, condition))
+        {
+            Error2("Failed to load math script for PerceptionOperation condition '%s'",condition.GetDataSafe());
+            return false;
+        }
+    }
+
+    MathEnvironment env;
+
+    env.Define("NPCClient",                npcclient);
+    env.Define("Result",                   0.0);
+
+    //this is going to crash if the script cannot be found.
+    calc_condition->Evaluate(&env);
+
+    MathVar* result   = env.Lookup("Result");
+
+    return (result->GetValue() != 0.0);
+}
+
+
 ScriptOperation::OperationResult PerceptOperation::Run(NPC *npc, bool interrupted)
 {
-    csString perceptionVariablesReplaced = psGameObject::ReplaceNPCVariables(npc, perception);
+    csString perceptionVariablesReplaced;
+
+    if (!condition.IsEmpty())
+    {
+        if (CheckCondition())
+        {
+            perceptionVariablesReplaced = psGameObject::ReplaceNPCVariables(npc, perception);
+        }
+        else if (!failedPerception.IsEmpty())
+        {
+            perceptionVariablesReplaced = psGameObject::ReplaceNPCVariables(npc, failedPerception);
+        }
+        else
+        {
+            return OPERATION_FAILED;
+        }
+    }
+    else
+    {
+        perceptionVariablesReplaced = psGameObject::ReplaceNPCVariables(npc, perception);
+    }
+    
 
     Perception pcpt(perceptionVariablesReplaced);
 

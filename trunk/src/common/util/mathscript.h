@@ -35,6 +35,7 @@ double round(double value);
 
 class MathScript;
 class MathVar;
+class iDataConnection;
 
 /**
  * This holds all the formulas loaded from the MathScript table
@@ -71,7 +72,7 @@ public:
         uintptr_t p; // packed pointer
     };
 
-    MathScriptEngine();
+    MathScriptEngine(iDataConnection* db);
     ~MathScriptEngine();
 
     /// retrieve a MathScript given it's name.
@@ -92,14 +93,14 @@ public:
     /**
      * Triggers a cleanup and reload of all the scripts.
      */
-    void ReloadScripts();
+    void ReloadScripts(iDataConnection* db);
 
 
     /**
      * Loads all the scripts from the database.
      * @return TRUE if it was possible to retrieve successfully the data.
      */
-    bool LoadScripts();
+    bool LoadScripts(iDataConnection* db);
 
     /**
      * Cleans up all the script and data loaded.

@@ -36,18 +36,16 @@ INSERT INTO sc_npctypes VALUES("2","GoHomeOnTeleport","","","","","","","","1",
 <react event="teleported" behavior="Teleported" />');
 
 INSERT INTO sc_npctypes VALUES("3","InRegion","","","","","out of bounds","","","1",
-'<behavior name="GoToRegion" completion_decay="-1" growth="0" initial="1000">
-   <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
-   <navigate anim="walk" />                  <!-- Local navigation -->
-   <locate obj="region" />
-   <wander anim="walk" />        <!-- Navigate using waypoints -->
-   <navigate anim="walk" />      <!-- Local navigation -->
+'<behavior name="GoToRegion" completion_decay="-1" resume="yes" initial="0">
+   <locate obj="region" destination="Move"/>
+   <percept event="move" />      <!-- navigate, wander, navigate -->
 </behavior>
+<react event="GoToRegion" behavior="GoToRegion" />
 
-<behavior name="MoveBackInRegion" completion_decay="-1" growth="0" initial="0" >
+<behavior name="MoveBackInRegion" completion_decay="-1" >
    <!-- Move back into the region -->
-   <locate obj="region" />
-   <navigate anim="walk" />      <!-- Local navigation -->
+   <locate obj="region" destination="Move" />
+   <percept event="local_move" />      <!-- Local navigation -->
 </behavior>
 
 <behavior name="FailedEndpoint" completion_decay="-1" >
@@ -55,8 +53,8 @@ INSERT INTO sc_npctypes VALUES("3","InRegion","","","","","out of bounds","","",
    <percept event="move back in region" />
 </behavior> 
 
-<react event="move back in region" behavior="MoveBackInRegion" do_not_interrupt="GoToRegion" />
-<react event="out of bounds"       behavior="MoveBackInRegion" do_not_interrupt="GoToRegion" />');
+<react event="move back in region" behavior="MoveBackInRegion" do_not_interrupt="GoToRegion,Move" />
+<react event="out of bounds"       behavior="MoveBackInRegion" do_not_interrupt="GoToRegion,Move" />');
 
 INSERT INTO sc_npctypes VALUES("4","Fight","","","","","","","","1",
 '<behavior name="Fight"   initial="0" growth="0" decay="0" completion_decay="-1" >
@@ -87,7 +85,7 @@ INSERT INTO sc_npctypes VALUES("4","Fight","","","","","","","","1",
 <react event="target out of range" behavior="Chase" />
 <react event="failed to attack"    behavior="FailedToAttack" />
 
-<react event="failed endpoint"     behavior="FailedEndpoint" />
+<react event="failed endpoint"     behavior="FailedEndpoint" /> <!-- When move do not reach endpoint. -->
 
 <!-- Stop chas if target is out of chase range -->
 <react event="target out of chase" behavior="Chase" absolute="0" only_interrupt="Chase"/>
@@ -103,7 +101,9 @@ INSERT INTO sc_npctypes VALUES("5","TurnToSensedPlayer","","","","","","","","0"
 <react event="player sensed"       behavior="TurnToFacePlayer" delta="100" inactive_only="yes" />');
 
 INSERT INTO sc_npctypes VALUES("6","Fighter","DoNothing,InRegion,Fight","","","","","","","0",
-'<empty/>');
+'<behavior name="Init" completion_decay="-1" initial="1000" >
+  <percept event="GoToRegion" />
+</behavior>');
 
 INSERT INTO sc_npctypes VALUES("7","Wanderer","Fighter","","","","","","","0",
 '<behavior name="Walk" decay="0" growth="0" initial="75">
@@ -256,6 +256,78 @@ INSERT INTO sc_npctypes VALUES("12","SpokenTo","","","","","","","","1",
  <react event="spoken_to" type="false" behavior="SpokenTo" absolute="0" />
 ');
 
+INSERT INTO sc_npctypes VALUES("13","Sleep","","","","","","","","1",
+'<!-- Require Idle behavior when composed into a complete behavior -->
+<!--  Activate this behavior by <percept event="sleep" />
+
+<!-- Create a behavior that cause the npc to go visible when going from Sleep -->
+<behavior name="WokenFromSleep" completion_decay="-1" >
+   <visible/>
+   <wait duration="1" anim="stand" />
+</behavior>
+
+<!-- While this behavior is not interrupted the NPC will keep sleeping. 
+     Just start another behavior when done sleeping, and the NPC will
+     automatically become visible and perform the task. -->
+<behavior name="AtSleep" loop="yes" completion_decay="0" interrupt="woken_from_sleep" >
+   <invisible/>
+   <loop>
+      <wait duration="2.0" />
+  </loop>
+</behavior>
+<react event="woken_from_sleep" behavior="AtSleep" absolute="0" />
+<react event="woken_from_sleep" behavior="WokenFromSleep" />
+
+<!-- External reactions. Use <percept event="sleep" to go to sleep. -->
+<react event="sleep" behavior="AtSleep" />
+');
+
+INSERT INTO sc_npctypes VALUES("14","Diurnal","Sleep,InRegion","","","","","","","1",
+'<!-- Active by day. Sleeping/Hiding during night 22:00-06:00 -->
+<!--  Require Idle behavior when composed into a complete behavior -->
+
+<behavior name="GoToSleep" resume="yes" interrupt="wakeup">
+   <!-- Locate a location of type sleeping_area and move there  -->
+   <locate obj="sleeping_area" range="60" random="yes" static="yes" destination="Move" />
+   <percept event="move" />
+   <invisible/>
+   <wait duration="1" />
+   <percept event="sleep" />
+</behavior>
+<react event="GoToSleep" behavior="GoToSleep" />
+
+<behavior name="Init_Diurnal" completion_decay="-1" initial="1000">
+   <visible />
+   <wait duration="1" />
+   <percept condition="DiurnalNight" event="GoToSleep" failed_event="GoToRegion" />
+</behavior>
+
+<react event="time" value="22,0,,," random=",5,,," behavior="GoToSleep" /> 
+<react event="time" value="6,0,,," random=",5,,,"  behavior="GoToRegion" /> 
+');
+
+INSERT INTO sc_npctypes VALUES("15","Nocturnal","Sleep,InRegion","","","","","","","1",
+'<!-- Moving about during night. Sleeping/Hiding during day 08:00-18:00 -->
+<!--  Require Idle behavior when composed into a complete behavior -->
+
+<behavior name="GoToSleep" resume="yes" interrupt="wakeup">
+   <locate obj="sleeping_area" range="60" random="yes" static="yes" destination="Move" />
+   <percept event="move" />
+   <invisible/>
+   <wait duration="1" />
+   <percept event="sleep" />
+</behavior>
+<react event="GoToSleep" behavior="GoToSleep" />
+
+<behavior name="Init_Nocturnal" completion_decay="-1" initial="1000">
+   <visible />
+   <wait duration="1" />
+   <percept condition="NocturnalNight" event="GoToSleep" failed_event="GoToRegion" />
+</behavior>
+
+<react event="time" value="8,0,,," random=",5,,," behavior="GoToSleep" /> 
+<react event="time" value="18,0,,," random=",5,,,"  behavior="GoToRegion" /> 
+');
 
 INSERT INTO sc_npctypes VALUES("100","Smith","GoHomeOnTeleport,DoNothing","","","","","","","0",
 '<behavior name="go_climbing1" initial="0" completion_decay="20" loop="no"> 
@@ -867,7 +939,7 @@ INSERT INTO sc_npctypes VALUES("116","MoveTest4","DoNothing","","","","","","","
 
 </behavior>');
 
-INSERT INTO sc_npctypes VALUES("117","MoveTest5","Answerer,Move","","$walk","","","","","0",
+INSERT INTO sc_npctypes VALUES("117","MoveTest5","Answerer,Move,Sleep","","$walk","","","","","0",
 '<!-- Example Citizen behaviour -->
 
 <!-- Go find nearest waypoint at startup -->
@@ -876,34 +948,19 @@ INSERT INTO sc_npctypes VALUES("117","MoveTest5","Answerer,Move","","$walk","","
    <percept event="local_move" />
 </behavior>
 
-<!-- Create a behavior that cause the npc to go visible when going from home -->
-<behavior name="WokenFromSleep" completion_decay="-1" >
-   <visible/>
-   <wait duration="1" anim="stand" />
-</behavior>
-
-<behavior name="AtSleep" loop="yes" completion_decay="0" interrupt="woken_from_sleep" >
-   <loop>
-      <wait duration="2.0" />
-  </loop>
-</behavior>
-
 <behavior name="GoHome"  resume="yes" completion_decay="-1" >
    <locate obj="waypoint:name:$name_home"  static="no" destination="Move" />
    <percept event="global_move" />
 
-   <!-- Simulate going inside by setting invisbile -->
+   <!-- Simulate going inside by setting invisible -->
    <wait duration="2" anim="stand" />
    <invisible/>
    <wait duration="1" anim="stand" />
    <rotate type="locaterotation" ang_vel="45"/>
-   <percept event="at_sleep" />
+
+   <percept event="sleep" />
 </behavior>
 <react event="GoHome" behavior="GoHome" />
-
-<react event="at_sleep" behavior="AtSleep" />
-<react event="woken_from_sleep" behavior="AtSleep" absolute="0" />
-<react event="woken_from_sleep" behavior="WokenFromSleep" />
 
 <behavior name="GoWork"  resume="yes" completion_decay="-1" >
    <locate obj="waypoint:name:$name_work"  static="no" destination="Move" />
@@ -1097,4 +1154,17 @@ INSERT INTO sc_npctypes VALUES("124","SpellFighter","DoNothing","","$run","","",
 
 <!-- If my target is healed I will drain -->
 <react event="spell:target"    type="direct heal" behavior="Drain" delta="100" />
+');
+
+INSERT INTO sc_npctypes VALUES("125","Fighter5","DoNothing,Move,Diurnal","","$walk","","","","","0",
+'<empty/>
+');
+INSERT INTO sc_npctypes VALUES("126","Fighter6","DoNothing,Move,Diurnal","","$walk","","","","","0",
+'<empty/>
+');
+INSERT INTO sc_npctypes VALUES("127","Fighter7","DoNothing,Move,Nocturnal","","$walk","","","","","0",
+'<empty/>
+');
+INSERT INTO sc_npctypes VALUES("128","Fighter8","DoNothing,Move,Nocturnal","","$walk","","","","","0",
+'<empty/>
 ');

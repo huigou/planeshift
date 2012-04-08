@@ -30,28 +30,31 @@
 struct iMovable;
 
 #include "util/psutil.h"
+#include "util/gameevent.h"
 
 //=============================================================================
 // Local Includes
 //=============================================================================
-#include "npcbehave.h"
+//#include "npcbehave.h"
 #include "tribe.h"
 
-struct iCollideSystem;
-
-class EventManager;
-class NetworkManager;
+class  Behavior;
+class  EventManager;
 class  HateList;
+class  LocationType;
+class  NPCType;
+class  NetworkManager;
+class  Tribe;
+class  Waypoint;
+class  gemNPCActor;
+class  gemNPCObject;
+class  iResultRow;
+class  psLinearMovement;
+class  psNPCClient;
+class  psNPCTick;
+struct iCollideSystem;
 struct HateListEntry;
-class iResultRow;
-class Tribe;
-class Waypoint;
-class gemNPCObject;
-class gemNPCActor;
 struct RaceInfo_t;
-class LocationType;
-class psNPCTick;
-class psLinearMovement;
 
 #define NPC_BRAIN_TICK 200
 
@@ -191,8 +194,8 @@ public:
     void Disable(bool disable = true);
     bool IsDisabled() { return disabled; }
 
-    Behavior *GetCurrentBehavior() { return brain->GetCurrentBehavior(); }
-    NPCType  *GetBrain() { return brain; }
+    Behavior *GetCurrentBehavior();
+    NPCType  *GetBrain();
 
     /**
      * Sets a new brain (npctype)  to this npc.
@@ -341,22 +344,8 @@ public:
         debugging = debug;
     }
     
-    float GetAngularVelocity()
-    {
-        if (ang_vel == 999)
-            return brain->GetAngularVelocity(this);
-        else
-            return ang_vel;
-    }
-
-    float GetVelocity()
-    {
-        if (vel == 999)
-            return brain->GetVelocity(this);
-        else
-            return vel;
-    }
-
+    float GetAngularVelocity();
+    float GetVelocity();
     float GetWalkVelocity();
     float GetRunVelocity();
 

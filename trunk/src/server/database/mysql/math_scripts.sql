@@ -693,3 +693,21 @@ INSERT INTO math_scripts VALUES( "Apply Post Trade Process",
 NewItem:SetItemModifier(1, OldItem:GetItemModifier(1));
 NewItem:SetItemModifier(2, OldItem:GetItemModifier(2));
 " );
+
+INSERT INTO math_scripts VALUES( "DiurnalNight",
+"if (NPCClient:gameHour > 22 | NPCClient:gameHour < 6)
+{
+   Result = 1.0;
+} else
+{
+   Result = 0.0;
+}" );
+
+INSERT INTO math_scripts VALUES( "NocturnalNight",
+"if (NPCClient:gameHour > 8 & NPCClient:gameHour < 18)
+{
+   Result = 1.0;
+} else
+{
+   Result = 0.0;
+}" );
