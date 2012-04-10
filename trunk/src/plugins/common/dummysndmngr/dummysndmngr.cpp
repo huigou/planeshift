@@ -121,7 +121,7 @@ void DummySoundManager::SetWeather(int newWeather)
     return;
 }
 
-void DummySoundManager::SetEntityState(int state, iMeshWrapper* mesh, bool forceChange)
+void DummySoundManager::SetEntityState(int state, GEMClientActor* actor, bool forceChange)
 {
     return;
 }

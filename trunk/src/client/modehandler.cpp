@@ -347,7 +347,7 @@ void ModeHandler::HandleModeMessage(MsgEntry* me)
     GEMClientActor* actor = dynamic_cast<GEMClientActor*>(celclient->FindObject(msg.actorID));
     if (!actor)
     {
-        Error2("Received psModeMessage for unknown object %s", ShowID(msg.actorID));
+        Error2("Received psModeMessage for unknown object %s\n", ShowID(msg.actorID));
         return;
     }
 
@@ -376,7 +376,7 @@ void ModeHandler::HandleModeMessage(MsgEntry* me)
     }
     else
     {
-        psengine->GetSoundManager()->SetEntityState(msg.mode, actor->GetMesh(), false);
+        psengine->GetSoundManager()->SetEntityState(msg.mode, actor, false);
     }
 }
 

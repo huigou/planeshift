@@ -21,7 +21,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
- 
 
 #include "pssound.h"
 #include "soundmanager.h"
@@ -46,6 +45,8 @@ psEntity::psEntity(psEntity* const& entity)
 {
     isFactoryEntity = entity->isFactoryEntity;
     entityName = entity->entityName;
+
+	Debug2(LOG_SOUND, 0, "psEntity::psEntity %s \n",entityName.GetData());
 
     states = csHash<EntityState*, uint>(entity->states);
 
@@ -137,6 +138,7 @@ void psEntity::SetMeshID(uint identifier)
 
 bool psEntity::DefineState(csRef<iDocumentNode> stateNode)
 {
+
     int stateID;
 
     EntityState* entityState;
@@ -144,6 +146,7 @@ bool psEntity::DefineState(csRef<iDocumentNode> stateNode)
 
     // checking if the state ID is legal
     stateID = stateNode->GetAttributeValueAsInt("ID", -1);
+	Debug4(LOG_SOUND, 0, "psEntity::DefineState %s state %d meshid %u \n",entityName.GetData(),stateID,id);
     if(stateID < 0)
     {
         return false;
@@ -253,6 +256,8 @@ void psEntity::SetState(uint newState, bool forceChange)
 {
     EntityState* entityState;
 
+	Debug3(LOG_SOUND, 0, "psEntity::SetState entity: %s state: %u\n",entityName.GetData(),newState);
+
     // check if it's already in this state or if it's defined
     if(state == newState)
     {
@@ -295,6 +300,8 @@ bool psEntity::Play(SoundControl* &ctrl, csVector3 entityPosition)
     if(!entityState->resources.IsEmpty())
     {
         int resourceNumber = SoundManager::randomGen.Get() * entityState->resources.GetSize();
+
+		Debug2(LOG_SOUND, 0, "psEntity::Play() PLAYS! %s \n",entityState->resources[resourceNumber]);
 
         if(SoundSystemManager::GetSingleton().Play3DSound(entityState->resources[resourceNumber], DONT_LOOP, 0, 0,
             entityState->volume, ctrl, entityPosition, 0, minRange, maxRange,
