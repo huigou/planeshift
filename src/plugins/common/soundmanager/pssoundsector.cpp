@@ -22,6 +22,8 @@
 
 #include <psconfig.h>
 #include <crystalspace.h>
+#include "pscelclient.h"
+#include "globals.h"
 
 #include "pssoundsector.h"
 
@@ -337,6 +339,8 @@ void psSoundSector::AddEntity(csRef<iDocumentNode> entityNode)
     psEntity* entity;
     csRef<iDocumentNodeIterator> stateItr;
 
+	Debug1(LOG_SOUND, 0, "psSoundSector::AddEntity START \n");
+
     // determining if this is a mesh entity or a factory entity
     meshName = entityNode->GetAttributeValue("MESH", 0);
     if(meshName == 0) // this isn't a mesh entity we need the factory
@@ -375,13 +379,16 @@ void psSoundSector::AddEntity(csRef<iDocumentNode> entityNode)
         {
             entity = new psEntity(true, factoryName);
             factories.Put(factoryName, entity);
+			Debug2(LOG_SOUND, 0, "psSoundSector::AddEntity FACTORY %s \n",entity->GetEntityName().GetData());
         }
         else // mesh entity
         {
             entity = new psEntity(false, meshName);
             meshes.Put(meshName, entity);
+			Debug2(LOG_SOUND, 0, "psSoundSector::AddEntity MESH %s \n",entity->GetEntityName().GetData());
         }
     }
+
 
     // setting range
     entity->SetRange(minRange, maxRange);
@@ -400,7 +407,7 @@ void psSoundSector::UpdateEntity(SoundControl* &ctrl)
     csVector3 listenerPos;
 
     psEntity* entity;
-    iMeshList* entities;
+    //iMeshList* entities;
     csRef<iEngine> engine;
 
     engine =  csQueryRegistry<iEngine>(objectReg);
@@ -409,25 +416,32 @@ void psSoundSector::UpdateEntity(SoundControl* &ctrl)
         csPrintf("Error: no iEngine plugin!");
         return;
     }
-
-    entities = engine->GetMeshes();
+	
     listenerPos = SoundSystemManager::GetSingleton().GetListenerPos();
     timeOfDay = SoundSectorManager::GetSingleton().GetTimeOfDay();
 
-    for(int a = 0; a < entities->GetCount(); a++)
+    const csPDelArray<GEMClientObject>& entities = psengine->GetCelClient()->GetEntities();
+
+    for(int a = 0; a < entities.GetSize(); a++)
     {
+		// filter actors only
+        GEMClientObject* object = entities[a];
+        GEMClientActor* act = dynamic_cast<GEMClientActor*>(object);
+        if(!act)
+            continue;
+
         float range;
         csVector3 rangeVec;
         iMeshWrapper* mesh;
 
-        mesh = entities->Get(a);
+        mesh = act->GetMesh();
         if(mesh == 0)
         {
             continue;
         }
 
         // retrieving the entity associated to the mesh (if any)
-        entity = GetAssociatedEntity(mesh);
+        entity = GetAssociatedEntity(act);
         if(entity == 0)
         {
             continue;
@@ -496,19 +510,20 @@ void psSoundSector::DeleteEntity(psEntity* &entity)
     delete entity;
 }
 
-void psSoundSector::SetEntityState(int state, iMeshWrapper* mesh, bool forceChange)
+void psSoundSector::SetEntityState(int state, GEMClientActor* actor, bool forceChange)
 {
     uint meshID;
     bool isTemporary;
     psEntity* entity;
 
-    entity = GetAssociatedEntity(mesh);
+	Debug3(LOG_SOUND, 0, "psSoundSector::SetEntityState START state: %d meshid: %u\n",state, actor->GetMesh()->QueryObject()->GetID());
+    entity = GetAssociatedEntity(actor);
     if(entity == 0)
     {
         return;
     }
 
-    meshID = mesh->QueryObject()->GetID();
+    meshID = actor->GetMesh()->QueryObject()->GetID();
     isTemporary = entity->IsTemporary();
 
     // if the new state isn't DEFAULT_ENTITY_STATE, a new entity must be created so that
@@ -523,12 +538,15 @@ void psSoundSector::SetEntityState(int state, iMeshWrapper* mesh, bool forceChan
         tempEntities.Put(meshID, entity);
     }
 
+	// Talad: I commented out this piece as I don't understand it and
+	// was preventing monsters to play anything. To be discussed with Lucubro.
+
     // applying state change only if it's a temporary entity
-    if(isTemporary)
-    {
+    //if(isTemporary)
+    //{
         entity->SetState(state, forceChange);
         return;
-    }
+    //}
 }
 
 void psSoundSector::Load(csRef<iDocumentNode> sectorNode)
@@ -618,14 +636,14 @@ void psSoundSector::Delete()
     tempEntities.DeleteAll();
 }
 
-psEntity* psSoundSector::GetAssociatedEntity(iMeshWrapper* mesh) const
+psEntity* psSoundSector::GetAssociatedEntity(GEMClientActor* actor) const
 {
     uint meshID;
     psEntity* entity;
 
     // checking if there is have a temporary entity for the mesh
     // here the common sector is not checked because it don't have temporary entities
-    meshID = mesh->QueryObject()->GetID();
+    meshID = actor->GetMesh()->QueryObject()->GetID();
     entity = tempEntities.Get(meshID, 0);
 
     if(entity == 0)
@@ -633,15 +651,15 @@ psEntity* psSoundSector::GetAssociatedEntity(iMeshWrapper* mesh) const
         const char* meshName;
         const char* factoryName;
 
-        // getting mesh name
-        meshName = mesh->QueryObject()->GetName();
+        // gets actor mesh name
+        meshName = actor->race;
 
         // checking mesh entities
         entity = meshes.Get(meshName, 0);
         if(entity == 0)
         {
             // getting factory name
-            iMeshFactoryWrapper* factory = mesh->GetFactory();
+            iMeshFactoryWrapper* factory = actor->GetMesh()->GetFactory();
             if(factory != 0)
             {
                 factoryName = factory->QueryObject()->GetName();

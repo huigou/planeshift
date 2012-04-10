@@ -26,6 +26,7 @@
 #ifndef _PSENTITY_H_
 #define _PSENTITY_H_
 
+#include "util/log.h"
 
 #define DEFAULT_ENTITY_STATE 0
 #define UNDEFINED_ENTITY_STATE -1

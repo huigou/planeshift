@@ -37,6 +37,7 @@ class psMusic;
 class psEntity;
 class psEmitter;
 class SoundControl;
+class GEMClientActor;
 struct iMeshWrapper;
 struct iDocumentNode;
 
@@ -96,12 +97,12 @@ public:
      *
      * @param state the new state >= 0 for the entity. For negative value
      * the function is not defined.
-     * @param mesh the mesh associated to the entity.
+     * @param actor the actor associated to the entity.
      * @param forceChange if it is false the entity does not change its
      * state if the new one is not defined. If it is true the entity stops
      * play any sound until a new valid state is defined.
      */
-    void SetEntityState(int state, iMeshWrapper* mesh, bool forceChange);
+    void SetEntityState(int state, GEMClientActor* actor, bool forceChange);
 
     /**
      * Loads the sector's definition from the given node. This does not delete
@@ -121,10 +122,10 @@ private:
      * in temporary, mesh and factory entities in both this and common sector
      * with the priority temporary > this->meshes > this->factories > common->meshes >
      * > common->factories.
-     * @param mesh the mesh associated to the entity.
+     * @param actor the actor associated to the entity.
      * @return the entity associated to the mesh or 0 if it cannot be found.
      */
-    psEntity* GetAssociatedEntity(iMeshWrapper* mesh) const;
+    psEntity* GetAssociatedEntity(GEMClientActor* actor) const;
 };
 
 #endif /*_PSSOUNDSECTOR_H_*/

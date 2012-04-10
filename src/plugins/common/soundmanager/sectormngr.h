@@ -42,6 +42,7 @@
 class csString;
 class SoundControl;
 class psSoundSector;
+class GEMClientActor;
 struct iMeshWrapper;
 struct iObjectRegistry;
 
@@ -163,12 +164,12 @@ public:
      *
      * @param state the new state >= 0 for the entity. For negative value
      * the function is not defined.
-     * @param mesh the mesh associated to the entity.
+     * @param actor the actor associated to the entity.
      * @param forceChange if it is false the entity does not change its
      * state if the new one is not defined. If it is true the entity stops
      * play any sound until a new valid state is defined.
      */
-    void SetEntityState(int state, iMeshWrapper* mesh, bool forceChange);
+    void SetEntityState(int state, GEMClientActor* actor, bool forceChange);
 
 
     // From iSoundControlListener
