@@ -1183,11 +1183,11 @@ Prevents a player from moving or using any commands until they quit/relog.</cont
     </topic>
     <topic name="/fog">
       <Contents>
-        <content type="text">/fog sector [density [[r g b] fade]|stop]
+        <content type="text">/fog sector [density [[r g b] length fade]|stop]
 
-It creates fog effect in a specific sector, with a specific density, the rgb values of the effect and its fading
-value (in milliseconds).
-With specified sector, it starts fog with default values: density 200, fade 10 sec, soft white (r 200, g 200, w 200).
+It creates fog effect in a specific sector, with a specific density (0-255), the rgb values of the effect (0-255), its fading
+value (in milliseconds) used for fading in and fading out, and the overall length of the effect in msec. If length is 0, the effect is permanent.
+With specified sector, it starts fog with default values: density 200, fade 10000 msec, length 0, soft white color(r 200, g 200, w 200).
 Use /fog sector off or /fog sector -1 for resetting. </content>
       </Contents>
     </topic>
