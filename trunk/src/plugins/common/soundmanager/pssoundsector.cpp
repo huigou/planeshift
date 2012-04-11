@@ -339,7 +339,7 @@ void psSoundSector::AddEntity(csRef<iDocumentNode> entityNode)
     psEntity* entity;
     csRef<iDocumentNodeIterator> stateItr;
 
-	Debug1(LOG_SOUND, 0, "psSoundSector::AddEntity START \n");
+	Debug1(LOG_SOUND, 0, "psSoundSector::AddEntity START");
 
     // determining if this is a mesh entity or a factory entity
     meshName = entityNode->GetAttributeValue("MESH", 0);
@@ -379,13 +379,13 @@ void psSoundSector::AddEntity(csRef<iDocumentNode> entityNode)
         {
             entity = new psEntity(true, factoryName);
             factories.Put(factoryName, entity);
-			Debug2(LOG_SOUND, 0, "psSoundSector::AddEntity FACTORY %s \n",entity->GetEntityName().GetData());
+			Debug2(LOG_SOUND, 0, "psSoundSector::AddEntity FACTORY %s",entity->GetEntityName().GetData());
         }
         else // mesh entity
         {
             entity = new psEntity(false, meshName);
             meshes.Put(meshName, entity);
-			Debug2(LOG_SOUND, 0, "psSoundSector::AddEntity MESH %s \n",entity->GetEntityName().GetData());
+			Debug2(LOG_SOUND, 0, "psSoundSector::AddEntity MESH %s",entity->GetEntityName().GetData());
         }
     }
 
@@ -516,7 +516,7 @@ void psSoundSector::SetEntityState(int state, GEMClientActor* actor, bool forceC
     bool isTemporary;
     psEntity* entity;
 
-	Debug3(LOG_SOUND, 0, "psSoundSector::SetEntityState START state: %d meshid: %u\n",state, actor->GetMesh()->QueryObject()->GetID());
+	Debug3(LOG_SOUND, 0, "psSoundSector::SetEntityState START state: %d meshid: %u",state, actor->GetMesh()->QueryObject()->GetID());
     entity = GetAssociatedEntity(actor);
     if(entity == 0)
     {

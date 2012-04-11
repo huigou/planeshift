@@ -46,7 +46,7 @@ psEntity::psEntity(psEntity* const& entity)
     isFactoryEntity = entity->isFactoryEntity;
     entityName = entity->entityName;
 
-	Debug2(LOG_SOUND, 0, "psEntity::psEntity %s \n",entityName.GetData());
+	Debug2(LOG_SOUND, 0, "psEntity::psEntity %s",entityName.GetData());
 
     states = csHash<EntityState*, uint>(entity->states);
 
@@ -146,7 +146,7 @@ bool psEntity::DefineState(csRef<iDocumentNode> stateNode)
 
     // checking if the state ID is legal
     stateID = stateNode->GetAttributeValueAsInt("ID", -1);
-	Debug4(LOG_SOUND, 0, "psEntity::DefineState %s state %d meshid %u \n",entityName.GetData(),stateID,id);
+	Debug4(LOG_SOUND, 0, "psEntity::DefineState %s state %d meshid %u",entityName.GetData(),stateID,id);
     if(stateID < 0)
     {
         return false;
@@ -256,7 +256,7 @@ void psEntity::SetState(uint newState, bool forceChange)
 {
     EntityState* entityState;
 
-	Debug3(LOG_SOUND, 0, "psEntity::SetState entity: %s state: %u\n",entityName.GetData(),newState);
+	Debug3(LOG_SOUND, 0, "psEntity::SetState entity: %s state: %u",entityName.GetData(),newState);
 
     // check if it's already in this state or if it's defined
     if(state == newState)
@@ -301,7 +301,7 @@ bool psEntity::Play(SoundControl* &ctrl, csVector3 entityPosition)
     {
         int resourceNumber = SoundManager::randomGen.Get() * entityState->resources.GetSize();
 
-		Debug2(LOG_SOUND, 0, "psEntity::Play() PLAYS! %s \n",entityState->resources[resourceNumber]);
+		Debug2(LOG_SOUND, 0, "psEntity::Play() PLAYS! %s",entityState->resources[resourceNumber]);
 
         if(SoundSystemManager::GetSingleton().Play3DSound(entityState->resources[resourceNumber], DONT_LOOP, 0, 0,
             entityState->volume, ctrl, entityPosition, 0, minRange, maxRange,
