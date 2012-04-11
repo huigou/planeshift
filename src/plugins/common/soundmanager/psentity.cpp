@@ -25,6 +25,8 @@
 #include "pssound.h"
 #include "soundmanager.h"
 
+#include "util/log.h"
+
 
 psEntity::psEntity(bool isFactory, const char* name)
 {

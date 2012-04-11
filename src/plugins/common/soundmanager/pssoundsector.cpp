@@ -422,7 +422,7 @@ void psSoundSector::UpdateEntity(SoundControl* &ctrl)
 
     const csPDelArray<GEMClientObject>& entities = psengine->GetCelClient()->GetEntities();
 
-    for(int a = 0; a < entities.GetSize(); a++)
+    for(size_t a = 0; a < entities.GetSize(); a++)
     {
 		// filter actors only
         GEMClientObject* object = entities[a];
@@ -513,7 +513,6 @@ void psSoundSector::DeleteEntity(psEntity* &entity)
 void psSoundSector::SetEntityState(int state, GEMClientActor* actor, bool forceChange)
 {
     uint meshID;
-    bool isTemporary;
     psEntity* entity;
 
 	Debug3(LOG_SOUND, 0, "psSoundSector::SetEntityState START state: %d meshid: %u",state, actor->GetMesh()->QueryObject()->GetID());
@@ -524,29 +523,25 @@ void psSoundSector::SetEntityState(int state, GEMClientActor* actor, bool forceC
     }
 
     meshID = actor->GetMesh()->QueryObject()->GetID();
-    isTemporary = entity->IsTemporary();
 
     // if the new state isn't DEFAULT_ENTITY_STATE, a new entity must be created so that
     // when it will satisfies the conditions to play (for example when the distance from
     // the player gets enough short), the entity's state will be the correct one. If the
     // new state is DEFAULT_ENTITY_STATE, the entity will be created only when conditions
     // will be satisfied.
-    if(!isTemporary && state != DEFAULT_ENTITY_STATE)
+    if(!entity->IsTemporary() && state != DEFAULT_ENTITY_STATE)
     {
         entity = new psEntity(entity);
         entity->SetMeshID(meshID);
         tempEntities.Put(meshID, entity);
     }
 
-	// Talad: I commented out this piece as I don't understand it and
-	// was preventing monsters to play anything. To be discussed with Lucubro.
-
     // applying state change only if it's a temporary entity
-    //if(isTemporary)
-    //{
+    if(entity->IsTemporary())
+    {
         entity->SetState(state, forceChange);
         return;
-    //}
+    }
 }
 
 void psSoundSector::Load(csRef<iDocumentNode> sectorNode)
