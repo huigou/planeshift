@@ -961,7 +961,7 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
     else if (quest_id>0) // negative numbers mean generic KA dialog
     {
         Error2("Quest script <%s> never assigned a quest or had any responses.",mainQuest->GetName());
-        return line_number;
+        return 0;
     }
     return 0;  // 0 is success!
 }
