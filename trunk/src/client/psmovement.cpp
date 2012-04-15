@@ -34,7 +34,7 @@
 #include "effects/pseffectmanager.h"
 
 
-#define MOVE_DEBUG
+//#define MOVE_DEBUG
 
 #define RUNTO_EPSILON   0.75f
 #define USE_EXPERIMENTAL_AUTOMOVE 0
@@ -555,10 +555,11 @@ void psMovementManager::UpdateVelocity()
      *  and to give the limited ability to turn or glide mid-flight.
      */
     onGround = actor->Movement().IsOnGround();
+
+	// Apply mode's modifier
+    vel *= actormode->modifier;
     if (onGround)  // Normal
     {
-        // Apply mode's modifier
-        vel *= actormode->modifier;
 
         #ifdef MOVE_DEBUG
 		    printf("On Ground: Applying velocity modifier (%.2f,%.2f,%.2f),(%.2f,%.2f,%.2f)\n",
@@ -590,10 +591,9 @@ void psMovementManager::UpdateVelocity()
                     vel.rotate.x,vel.rotate.y,vel.rotate.z);
         #endif
 
-        // Talad : commented out to fix the jump stopping mid-air (forward inertia)
 		// Add to existing velocity
-		//if (vel.move.y <= 0 && (vel.move.x != 0 || vel.move.z != 0))
-		//	actor->Movement().SetVelocity(csVector3(vel.move.x,0,vel.move.z));
+		if (vel.move.y <= 0 && (vel.move.x != 0 || vel.move.z != 0))
+			actor->Movement().SetVelocity(csVector3(vel.move.x,0,vel.move.z));
 
         // Set rotation
         actor->Movement().SetAngularVelocity( vel.rotate );
