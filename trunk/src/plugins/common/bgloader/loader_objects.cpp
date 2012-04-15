@@ -361,7 +361,7 @@ bool BgLoader::MeshGen::LoadObject(bool wait)
     bool ready = ObjectLoader<MeshFact>::LoadObjects(wait);
     ready &= ObjectLoader<Material>::LoadObjects(wait);
 
-    if(ready)
+    if(ready && !status.IsValid())
     {
       ready = mesh->Load(wait);
     }
@@ -591,13 +591,13 @@ int BgLoader::Sector::UpdateObjects(const csBox3& loadBox, const csBox3& keepBox
 
 void BgLoader::Sector::UnloadObject()
 {
+    alwaysLoaded.UnloadObjects();
     ObjectLoader<Trigger>::UnloadObjects();
     ObjectLoader<Sequence>::UnloadObjects();
     ObjectLoader<MeshGen>::UnloadObjects();
     ObjectLoader<MeshObj>::UnloadObjects();
     ObjectLoader<Light>::UnloadObjects();
     ObjectLoader<Portal>::UnloadObjects();
-    alwaysLoaded.UnloadObjects();
 
     ForceUpdateObjectCount();
 
@@ -606,6 +606,9 @@ void BgLoader::Sector::UnloadObject()
         // could not unload all items, some may still be loading
         // note that this shall never occur with blocked loading,
         // because in that case this would mean there's a memleak
+        csString msg;
+        msg.Format("Error cleaning sectors. Sector is not empty! %d objects remaining!",objectCount);
+        CS_ASSERT_MSG(msg.GetData(),false);
         return;
     }
 
