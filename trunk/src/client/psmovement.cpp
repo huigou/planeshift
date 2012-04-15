@@ -34,7 +34,7 @@
 #include "effects/pseffectmanager.h"
 
 
-//#define MOVE_DEBUG
+#define MOVE_DEBUG
 
 #define RUNTO_EPSILON   0.75f
 #define USE_EXPERIMENTAL_AUTOMOVE 0
@@ -561,7 +561,10 @@ void psMovementManager::UpdateVelocity()
         vel *= actormode->modifier;
 
         #ifdef MOVE_DEBUG
-            printf("Changing velocity to (%.2f,%.2f,%.2f),(%.2f,%.2f,%.2f)\n",
+		    printf("On Ground: Applying velocity modifier (%.2f,%.2f,%.2f),(%.2f,%.2f,%.2f)\n",
+                    actormode->modifier.move.x,actormode->modifier.move.y,actormode->modifier.move.z,
+                    actormode->modifier.rotate.x,actormode->modifier.rotate.y,actormode->modifier.rotate.z);
+            printf("On Ground: Changing velocity to (%.2f,%.2f,%.2f),(%.2f,%.2f,%.2f)\n",
                     vel.move.x,vel.move.y,vel.move.z,
                     vel.rotate.x,vel.rotate.y,vel.rotate.z);
         #endif
@@ -582,14 +585,15 @@ void psMovementManager::UpdateVelocity()
     else  // Airborne
     {
         #ifdef MOVE_DEBUG
-            printf("Adding velocity (%.2f,%.2f,%.2f),(%.2f,%.2f,%.2f)\n",
+            printf("In Air: Adding velocity (%.2f,%.2f,%.2f),(%.2f,%.2f,%.2f)\n",
                     vel.move.x,vel.move.y,vel.move.z,
                     vel.rotate.x,vel.rotate.y,vel.rotate.z);
         #endif
 
-        // Add to existing velocity
-		if (vel.move.y <= 0 && (vel.move.x != 0 || vel.move.z != 0))
-			actor->Movement().SetVelocity(csVector3(vel.move.x,0,vel.move.z));
+        // Talad : commented out to fix the jump stopping mid-air (forward inertia)
+		// Add to existing velocity
+		//if (vel.move.y <= 0 && (vel.move.x != 0 || vel.move.z != 0))
+		//	actor->Movement().SetVelocity(csVector3(vel.move.x,0,vel.move.z));
 
         // Set rotation
         actor->Movement().SetAngularVelocity( vel.rotate );
