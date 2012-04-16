@@ -71,7 +71,10 @@ public:
     virtual csVector3 GetPosition() const;
     virtual void SetTimeOfDay(int newTimeOfDay);
     virtual void SetWeather(int newWeather);
-    virtual void SetEntityState(int state, iMeshWrapper* mesh, const char* actorName, bool forceChange);
+    virtual void SetEntityState(int state, iMeshWrapper* mesh, const char* meshName, bool forceChange);
+    virtual void AddObjectEntity(iMeshWrapper* mesh, const char* meshName);
+    virtual void RemoveObjectEntity(iMeshWrapper* mesh, const char* meshName);
+    virtual void UpdateObjectEntity(iMeshWrapper* mesh, const char* meshName);
 
     //Toggles
     virtual void SetLoopBGMToggle(bool toggle);

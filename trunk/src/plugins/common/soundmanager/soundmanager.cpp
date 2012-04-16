@@ -347,9 +347,24 @@ void SoundManager::SetWeather(int newWeather)
     sectorMgr->SetWeather(newWeather);
 }
 
-void SoundManager::SetEntityState(int state, iMeshWrapper* mesh, const char* actorName, bool forceChange)
+void SoundManager::SetEntityState(int state, iMeshWrapper* mesh, const char* meshName, bool forceChange)
 {
-    sectorMgr->SetEntityState(state, mesh, actorName, forceChange);
+    sectorMgr->SetEntityState(state, mesh, meshName, forceChange);
+}
+
+void SoundManager::AddObjectEntity(iMeshWrapper* mesh, const char* meshName)
+{
+    sectorMgr->AddObjectEntity(mesh, meshName);
+}
+
+void SoundManager::RemoveObjectEntity(iMeshWrapper* mesh, const char* meshName)
+{
+    sectorMgr->RemoveObjectEntity(mesh, meshName);
+}
+
+void SoundManager::UpdateObjectEntity(iMeshWrapper* mesh, const char* meshName)
+{
+    sectorMgr->UpdateObjectEntity(mesh, meshName);
 }
 
 void SoundManager::SetLoopBGMToggle(bool toggle)

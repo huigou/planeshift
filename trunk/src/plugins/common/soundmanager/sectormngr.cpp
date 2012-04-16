@@ -242,7 +242,6 @@ void SoundSectorManager::Update()
     }
 
     activeSector->UpdateEmitter(ambientSndCtrl);
-    activeSector->UpdateEntity(ambientSndCtrl);
 }
 
 void SoundSectorManager::SetLoopBGMToggle(bool toggle)
@@ -344,7 +343,6 @@ void SoundSectorManager::UpdateSector(psSoundSector* sector)
     sector->UpdateMusic(loopBGM, combatStance, musicSndCtrl);
     sector->UpdateAmbient(weather, ambientSndCtrl);
     sector->UpdateEmitter(ambientSndCtrl);
-    sector->UpdateEntity(ambientSndCtrl);
 }
 
 void SoundSectorManager::ConvertFactoriesToEmitter(psSoundSector* sndSector)
@@ -484,6 +482,7 @@ void SoundSectorManager::TransferHandles(psSoundSector* oldSector,
             newSector->activeambient->UpdateHandleCallback();
         }
     }
+    //TODO: we should transfer also entities to the new sector.
 }
 
 void SoundSectorManager::SetCombatStance(int newCombatStance)
@@ -530,11 +529,36 @@ void SoundSectorManager::SetWeather(int newWeather)
     }
 }
 
-void SoundSectorManager::SetEntityState(int state, iMeshWrapper* mesh, const char* actorName, bool forceChange)
+void SoundSectorManager::SetEntityState(int state, iMeshWrapper* mesh, const char* meshName, bool forceChange)
 {
     if(activeSector != 0)
     {
-        activeSector->SetEntityState(state, mesh, actorName, forceChange);
+        activeSector->SetEntityState(state, mesh, meshName, forceChange);
+    }
+}
+
+void SoundSectorManager::AddObjectEntity(iMeshWrapper* mesh, const char* meshName)
+{
+    if(activeSector != 0)
+    {
+        activeSector->AddObjectEntity(mesh, meshName);
+        activeSector->UpdateEntity(mesh, meshName, ambientSndCtrl);
+    }
+}
+
+void SoundSectorManager::RemoveObjectEntity(iMeshWrapper* mesh, const char* meshName)
+{
+    if(activeSector != 0)
+    {
+        activeSector->RemoveObjectEntity(mesh, meshName);
+    }
+}
+
+void SoundSectorManager::UpdateObjectEntity(iMeshWrapper* mesh, const char* meshName)
+{
+    if(activeSector != 0)
+    {
+        activeSector->UpdateEntity(mesh, meshName, ambientSndCtrl);
     }
 }
 

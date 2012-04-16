@@ -164,12 +164,33 @@ public:
      * @param state the new state >= 0 for the entity. For negative value
      * the function is not defined.
      * @param mesh the mesh associated to the entity.
-	 * @param actorName the name associated to the entity.
+     * @param meshName the name associated to the entity.
      * @param forceChange if it is false the entity does not change its
      * state if the new one is not defined. If it is true the entity stops
      * play any sound until a new valid state is defined.
      */
-    void SetEntityState(int state, iMeshWrapper* mesh, const char* actorName, bool forceChange);
+    void SetEntityState(int state, iMeshWrapper* mesh, const char* meshName, bool forceChange);
+
+    /**
+     * Adds an object entity to be managed from the current sector.
+     * @param mesh The mesh associated to the entity.
+     * @param meshName the name associated to the entity.
+     */
+    void AddObjectEntity(iMeshWrapper* mesh, const char* meshName);
+
+    /**
+     * Removes an object entity managed from the current sector.
+     * @param mesh The mesh associated to the entity.
+     * @param meshName the name associated to the entity.
+     */
+    void RemoveObjectEntity(iMeshWrapper* mesh, const char* meshName);
+
+    /**
+     * Updates an object entity managed from the current sector.
+     * @param mesh The mesh associated to the entity.
+     * @param meshName the name associated to the entity.
+     */
+    void UpdateObjectEntity(iMeshWrapper* mesh, const char* meshName);
 
 
     // From iSoundControlListener

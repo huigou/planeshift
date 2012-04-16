@@ -22,8 +22,8 @@
 
 #include <psconfig.h>
 #include <crystalspace.h>
-#include "pscelclient.h"
 #include "globals.h"
+#include "util/log.h"
 
 #include "pssoundsector.h"
 
@@ -339,7 +339,7 @@ void psSoundSector::AddEntity(csRef<iDocumentNode> entityNode)
     psEntity* entity;
     csRef<iDocumentNodeIterator> stateItr;
 
-	Debug1(LOG_SOUND, 0, "psSoundSector::AddEntity START");
+    Debug1(LOG_SOUND, 0, "psSoundSector::AddEntity START");
 
     // determining if this is a mesh entity or a factory entity
     meshName = entityNode->GetAttributeValue("MESH", 0);
@@ -379,13 +379,13 @@ void psSoundSector::AddEntity(csRef<iDocumentNode> entityNode)
         {
             entity = new psEntity(true, factoryName);
             factories.Put(factoryName, entity);
-			Debug2(LOG_SOUND, 0, "psSoundSector::AddEntity FACTORY %s",entity->GetEntityName().GetData());
+            Debug2(LOG_SOUND, 0, "psSoundSector::AddEntity FACTORY %s",entity->GetEntityName().GetData());
         }
         else // mesh entity
         {
             entity = new psEntity(false, meshName);
             meshes.Put(meshName, entity);
-			Debug2(LOG_SOUND, 0, "psSoundSector::AddEntity MESH %s",entity->GetEntityName().GetData());
+            Debug2(LOG_SOUND, 0, "psSoundSector::AddEntity MESH %s",entity->GetEntityName().GetData());
         }
     }
 
@@ -401,22 +401,98 @@ void psSoundSector::AddEntity(csRef<iDocumentNode> entityNode)
     }
 }
 
-void psSoundSector::UpdateEntity(SoundControl* &ctrl)
+void psSoundSector::AddObjectEntity(iMeshWrapper* mesh, const char* meshName)
 {
+    float range;
+    csVector3 rangeVec;
+    psEntity* entity;
+    int timeOfDay;
+    csVector3 listenerPos;
+    
+    if(mesh == 0 || meshName == 0)
+    {
+        return;
+    }
+    // retrieving the entity associated to the mesh (if any)
+    entity = GetAssociatedEntity(mesh, meshName);
+    if(entity == 0)
+    {
+        return;
+    }
+
+    listenerPos = SoundSystemManager::GetSingleton().GetListenerPos();
+    timeOfDay = SoundSectorManager::GetSingleton().GetTimeOfDay();
+
+    // if this isn't a temporary entity, create one only if it can
+    // actually play something
+    rangeVec = mesh->GetMovable()->GetFullPosition() - listenerPos;
+    range = rangeVec.Norm();
+
+    if(!entity->IsTemporary() && entity->CanPlay(timeOfDay, range))
+    {
+        entity = new psEntity(entity);
+        entity->SetMeshID(mesh->QueryObject()->GetID());
+        tempEntities.Put(entity->GetMeshID(), entity);
+    }
+}
+
+void psSoundSector::RemoveObjectEntity(iMeshWrapper* mesh, const char* meshName)
+{
+    if(mesh == 0 || meshName == 0)
+    {
+        return;
+    }
+    psEntity* entity = GetAssociatedEntity(mesh, meshName);
+    if(entity == 0)
+    {
+        return;
+    }
+    if(entity->IsTemporary())
+    {
+        DeleteEntity(entity);
+    }
+}
+
+void psSoundSector::UpdateEntity(iMeshWrapper* mesh, const char* meshName, SoundControl* &ctrl)
+{
+    float range;
+    csVector3 rangeVec;
+    psEntity* entity;
     int timeOfDay;
     csVector3 listenerPos;
 
-    psEntity* entity;
-    //iMeshList* entities;
-    csRef<iEngine> engine;
-
-    engine =  csQueryRegistry<iEngine>(objectReg);
-    if(!engine)
+    if(mesh == 0 || meshName == 0)
     {
-        csPrintf("Error: no iEngine plugin!");
         return;
     }
-	
+    // retrieving the entity associated to the mesh (if any)
+    entity = GetAssociatedEntity(mesh, meshName);
+    if(entity == 0)
+    {
+        return;
+    }
+
+    listenerPos = SoundSystemManager::GetSingleton().GetListenerPos();
+    timeOfDay = SoundSectorManager::GetSingleton().GetTimeOfDay();
+
+    rangeVec = mesh->GetMovable()->GetFullPosition() - listenerPos;
+    range = rangeVec.Norm();
+
+    // this update the delay and fallback state, play if it can and
+    // set itself as active when appropriate. Only temporary entities
+    // should be updated
+    if(entity->IsTemporary())
+    {
+        csVector3 entityPosition = mesh->GetMovable()->GetFullPosition();
+        entity->Update(timeOfDay, range, SoundManager::updateTime, ctrl, entityPosition);
+    }
+
+    
+    /*int timeOfDay;
+    csVector3 listenerPos;
+
+    psEntity* entity;
+
     listenerPos = SoundSystemManager::GetSingleton().GetListenerPos();
     timeOfDay = SoundSectorManager::GetSingleton().GetTimeOfDay();
 
@@ -485,11 +561,10 @@ void psSoundSector::UpdateEntity(SoundControl* &ctrl)
         }
         else
         {
-            tempEntities.Delete(entity->GetMeshID(), entity);
-            delete entity;
+            DeleteEntity(entity);
             continue;
         }
-    }
+    }*/
 }
 
 void psSoundSector::DeleteEntity(psEntity* &entity)
