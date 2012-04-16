@@ -44,7 +44,6 @@ class csRandomGen;
 class InstrumentManager;
 class SoundSectorManager;
 class SoundSystemManager;
-class GEMClientActor;
 
 
 /**
@@ -93,7 +92,7 @@ public:
     virtual csVector3 GetPosition() const;
     virtual void SetTimeOfDay(int newTimeOfDay);
     virtual void SetWeather(int newWeather);
-    virtual void SetEntityState(int state, GEMClientActor* actor, bool forceChange);
+    virtual void SetEntityState(int state, iMeshWrapper* mesh, const char* actorName, bool forceChange);
 
     //Toggles
     virtual void SetLoopBGMToggle(bool toggle);

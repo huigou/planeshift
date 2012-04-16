@@ -441,7 +441,7 @@ void psSoundSector::UpdateEntity(SoundControl* &ctrl)
         }
 
         // retrieving the entity associated to the mesh (if any)
-        entity = GetAssociatedEntity(act);
+        entity = GetAssociatedEntity(mesh, act->race);
         if(entity == 0)
         {
             continue;
@@ -510,19 +510,19 @@ void psSoundSector::DeleteEntity(psEntity* &entity)
     delete entity;
 }
 
-void psSoundSector::SetEntityState(int state, GEMClientActor* actor, bool forceChange)
+void psSoundSector::SetEntityState(int state, iMeshWrapper* mesh, const char* actorName, bool forceChange)
 {
     uint meshID;
     psEntity* entity;
 
-	Debug3(LOG_SOUND, 0, "psSoundSector::SetEntityState START state: %d meshid: %u",state, actor->GetMesh()->QueryObject()->GetID());
-    entity = GetAssociatedEntity(actor);
+	Debug3(LOG_SOUND, 0, "psSoundSector::SetEntityState START state: %d meshid: %u",state, mesh->QueryObject()->GetID());
+    entity = GetAssociatedEntity(mesh, actorName);
     if(entity == 0)
     {
         return;
     }
 
-    meshID = actor->GetMesh()->QueryObject()->GetID();
+    meshID = mesh->QueryObject()->GetID();
 
     // if the new state isn't DEFAULT_ENTITY_STATE, a new entity must be created so that
     // when it will satisfies the conditions to play (for example when the distance from
@@ -631,30 +631,26 @@ void psSoundSector::Delete()
     tempEntities.DeleteAll();
 }
 
-psEntity* psSoundSector::GetAssociatedEntity(GEMClientActor* actor) const
+psEntity* psSoundSector::GetAssociatedEntity(iMeshWrapper* mesh, const char* meshName) const
 {
     uint meshID;
     psEntity* entity;
 
     // checking if there is have a temporary entity for the mesh
     // here the common sector is not checked because it don't have temporary entities
-    meshID = actor->GetMesh()->QueryObject()->GetID();
+    meshID = mesh->QueryObject()->GetID();
     entity = tempEntities.Get(meshID, 0);
 
     if(entity == 0)
     {
-        const char* meshName;
         const char* factoryName;
-
-        // gets actor mesh name
-        meshName = actor->race;
 
         // checking mesh entities
         entity = meshes.Get(meshName, 0);
         if(entity == 0)
         {
             // getting factory name
-            iMeshFactoryWrapper* factory = actor->GetMesh()->GetFactory();
+            iMeshFactoryWrapper* factory = mesh->GetFactory();
             if(factory != 0)
             {
                 factoryName = factory->QueryObject()->GetName();

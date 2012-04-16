@@ -376,7 +376,7 @@ void ModeHandler::HandleModeMessage(MsgEntry* me)
     }
     else
     {
-        psengine->GetSoundManager()->SetEntityState(msg.mode, actor, false);
+        psengine->GetSoundManager()->SetEntityState(msg.mode, actor->GetMesh(), actor->race, false);
     }
 }
 
