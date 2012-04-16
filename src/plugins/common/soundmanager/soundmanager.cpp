@@ -347,9 +347,9 @@ void SoundManager::SetWeather(int newWeather)
     sectorMgr->SetWeather(newWeather);
 }
 
-void SoundManager::SetEntityState(int state, GEMClientActor* actor, bool forceChange)
+void SoundManager::SetEntityState(int state, iMeshWrapper* mesh, const char* actorName, bool forceChange)
 {
-    sectorMgr->SetEntityState(state, actor, forceChange);
+    sectorMgr->SetEntityState(state, mesh, actorName, forceChange);
 }
 
 void SoundManager::SetLoopBGMToggle(bool toggle)

@@ -97,12 +97,13 @@ public:
      *
      * @param state the new state >= 0 for the entity. For negative value
      * the function is not defined.
-     * @param actor the actor associated to the entity.
+     * @param mesh the mesh associated to the entity.
+	 * @param actorName the name associated to the entity.
      * @param forceChange if it is false the entity does not change its
      * state if the new one is not defined. If it is true the entity stops
      * play any sound until a new valid state is defined.
      */
-    void SetEntityState(int state, GEMClientActor* actor, bool forceChange);
+    void SetEntityState(int state, iMeshWrapper* mesh, const char* actorName, bool forceChange);
 
     /**
      * Loads the sector's definition from the given node. This does not delete
@@ -122,10 +123,11 @@ private:
      * in temporary, mesh and factory entities in both this and common sector
      * with the priority temporary > this->meshes > this->factories > common->meshes >
      * > common->factories.
-     * @param actor the actor associated to the entity.
+     * @param mesh the mesh associated to the entity.
+	 * @param meshName the name associated to the entity.
      * @return the entity associated to the mesh or 0 if it cannot be found.
      */
-    psEntity* GetAssociatedEntity(GEMClientActor* actor) const;
+    psEntity* GetAssociatedEntity(iMeshWrapper* mesh, const char* meshName) const;
 };
 
 #endif /*_PSSOUNDSECTOR_H_*/

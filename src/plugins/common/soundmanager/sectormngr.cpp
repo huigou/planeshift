@@ -530,11 +530,11 @@ void SoundSectorManager::SetWeather(int newWeather)
     }
 }
 
-void SoundSectorManager::SetEntityState(int state, GEMClientActor* actor, bool forceChange)
+void SoundSectorManager::SetEntityState(int state, iMeshWrapper* mesh, const char* actorName, bool forceChange)
 {
     if(activeSector != 0)
     {
-        activeSector->SetEntityState(state, actor, forceChange);
+        activeSector->SetEntityState(state, mesh, actorName, forceChange);
     }
 }
 
