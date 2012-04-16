@@ -607,7 +607,7 @@ void BgLoader::Sector::UnloadObject()
         // note that this shall never occur with blocked loading,
         // because in that case this would mean there's a memleak
         csString msg;
-        msg.Format("Error cleaning sectors. Sector is not empty! %d objects remaining!",objectCount);
+        msg.Format("Error cleaning sectors. Sector is not empty! %zu objects remaining!", objectCount);
         CS_ASSERT_MSG(msg.GetData(),false);
         return;
     }
