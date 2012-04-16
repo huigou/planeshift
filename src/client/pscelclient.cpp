@@ -1400,7 +1400,7 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
     // This is needed when we have to scale.
     if(scale > 0.0f)
     {
-       /* bool failed = false;
+        bool failed = false;
         csString newFactName = factName;
         newFactName.AppendFmt("%f", scale);
 
@@ -1414,7 +1414,7 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
         else
         {
             factName = newFactName;
-        }*/
+        }
         
     }
 
@@ -2129,7 +2129,7 @@ bool GEMClientActor::CheckLoadStatus()
     else
     {
         SwitchToRealMesh(mesh);
-        if(scale >= 0)
+        /*if(scale >= 0)
         {
             csRef<iMovable> movable = mesh->GetMovable();
             csReversibleTransform & trans = movable->GetTransform();
@@ -2137,12 +2137,12 @@ bool GEMClientActor::CheckLoadStatus()
             //scale = scale/sprite->GetScaleFactor();
             trans.SetO2T(trans.GetO2T() / scale);
             movable->UpdateMove();
-        }
-        /*if(scale >= 0)
+        }*/
+        if(scale >= 0)
         {
             csRef<iSpriteCal3DFactoryState> sprite = scfQueryInterface<iSpriteCal3DFactoryState> (mesh->GetFactory()->GetMeshObjectFactory());
             sprite->AbsoluteRescaleFactory(1);
-        }*/
+        }
     }
 
     pcmesh->GetFlags().Set(CS_ENTITY_NODECAL);
