@@ -1,4 +1,4 @@
-@PlaneShift Team at Arcane Chrysalis 0.5.8 Release (released November 2011)
+@PlaneShift Team at Arcane Chrysalis 0.5.9 Release (released April 2012)
 
 &Project Leader, Director
 
@@ -24,6 +24,9 @@ Michael "Xordan" Gist, for a new updater system and game launcher, a background 
 
 Anders "Magodra" Reggestad, for magic system implementation, NPC AI, tribes and a lot more.
 
+Matthieu "RlyDontKnow" Kraus, for NPC navigation mesh, particle effects, shaders knowledge, and light improvements
+
+Daniel "Kalaspuffar" Persson, for the 0.5.9 updater.
 
 &Settings
 
@@ -38,7 +41,7 @@ Jay "Hanix" Glenn, for quest writing, testing, tutorial rewrites, and content re
 
 &2D Art
 
-Sergios "Cale" Daskarolis, for the textures of new hydlaa plaza and many other items.
+Sergios "Cale" Daskarolis, for the models and textures of new hydlaa plaza and new items.
 
 Christophe "Nynn" Lehay, for player skins, robes, items, and more.
 
@@ -55,6 +58,8 @@ Arco "Arcooo" Mul, for rigging and level modeling.
 Christophe "Nynn" Lehay, for player skins, robes, items, and more.
 
 Joel "Xoel" McLeay, for the modeling of Dsar Kore and Ojaveda guild.
+
+Jerome "Tuux" Ornech, for new wands geometry and textures.
 
 &Music and sounds
 
@@ -85,7 +90,7 @@ G. "Ravna" Hofstee, for rewriting part of the new webconsole and keeping it up t
 
 &Testing Team
 
-Mario "LigH" RohkrÃ¤mer, for reporting and testing many art bugs, and work on bug prevention.
+Mario "LigH" Rohkrämer, for reporting and testing many art bugs, and work on bug prevention.
 
 Frédéric "f-rd" Delcorso, for testing many bugs and making even weird ones reproducible.
 
@@ -103,7 +108,7 @@ Jorrit Tyberghein, for his great 3D engine (Crystal Space), for the continuous a
 
 Frank "res" Richter, from Crystal Space team, for continuous support on lighting, performances and stability.
 
-Zeroping Team (www.zeroping.it) and ezpcusa (www.ezpcusa.com) for providing the necessary hardware and bandwidth.
+Caronet (www.caro.net), Subhosting (www.subhosting.net) and ezpcusa (www.ezpcusa.com) for providing the necessary hardware and bandwidth.
 
 All the former developers for their work and contributions to PlaneShift.
 
