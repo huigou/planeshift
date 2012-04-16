@@ -121,7 +121,22 @@ void DummySoundManager::SetWeather(int newWeather)
     return;
 }
 
-void DummySoundManager::SetEntityState(int state, iMeshWrapper* mesh, const char* actorName, bool forceChange)
+void DummySoundManager::SetEntityState(int state, iMeshWrapper* mesh, const char* meshName, bool forceChange)
+{
+    return;
+}
+
+void DummySoundManager::AddObjectEntity(iMeshWrapper* mesh, const char* meshName)
+{
+    return;
+}
+
+void DummySoundManager::RemoveObjectEntity(iMeshWrapper* mesh, const char* meshName)
+{
+    return;
+}
+
+void DummySoundManager::UpdateObjectEntity(iMeshWrapper* mesh, const char* meshName)
 {
     return;
 }

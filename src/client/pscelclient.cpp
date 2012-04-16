@@ -1400,7 +1400,7 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
     // This is needed when we have to scale.
     if(scale > 0.0f)
     {
-        bool failed = false;
+       /* bool failed = false;
         csString newFactName = factName;
         newFactName.AppendFmt("%f", scale);
 
@@ -1414,7 +1414,8 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
         else
         {
             factName = newFactName;
-        }
+        }*/
+        
     }
 
     if(!mountFactname.IsEmpty() && mountFactname != "null" && mountScale > 0.0f)
@@ -1446,6 +1447,7 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
 
 GEMClientActor::~GEMClientActor()
 {
+    psengine->GetSoundManager()->RemoveObjectEntity(pcmesh, race);
     delete vitalManager;
     delete linmove;
     delete post_load;
@@ -1752,6 +1754,9 @@ void GEMClientActor::SetDRData(psDRMessage& drmsg)
 
     // Update the animations to match velocity
     SetAnimationVelocity(drmsg.vel);
+
+    //update sound manager to the new position
+    psengine->GetSoundManager()->UpdateObjectEntity(pcmesh, race);
 }
 
 void GEMClientActor::StopMoving(bool worldVel)
@@ -2124,17 +2129,20 @@ bool GEMClientActor::CheckLoadStatus()
     else
     {
         SwitchToRealMesh(mesh);
-        /*if(scale >= 0)
+        if(scale >= 0)
         {
             csRef<iMovable> movable = mesh->GetMovable();
             csReversibleTransform & trans = movable->GetTransform();
-            trans.SetO2T(trans.GetO2T() * scale);
-        }*/
-        if(scale >= 0)
+            csRef<iSpriteCal3DFactoryState> sprite = scfQueryInterface<iSpriteCal3DFactoryState> (mesh->GetFactory()->GetMeshObjectFactory());
+            //scale = scale/sprite->GetScaleFactor();
+            trans.SetO2T(trans.GetO2T() / scale);
+            movable->UpdateMove();
+        }
+        /*if(scale >= 0)
         {
             csRef<iSpriteCal3DFactoryState> sprite = scfQueryInterface<iSpriteCal3DFactoryState> (mesh->GetFactory()->GetMeshObjectFactory());
-            sprite->AbsoluteRescaleFactory(scale);
-        }
+            sprite->AbsoluteRescaleFactory(1);
+        }*/
     }
 
     pcmesh->GetFlags().Set(CS_ENTITY_NODECAL);
@@ -2146,6 +2154,8 @@ bool GEMClientActor::CheckLoadStatus()
     cel->AttachObject(pcmesh->QueryObject(), this);
 
     psengine->UnregisterDelayedLoader(this);
+
+    psengine->GetSoundManager()->AddObjectEntity(pcmesh, race);
 
     return true;
 }
