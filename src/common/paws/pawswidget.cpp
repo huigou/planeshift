@@ -511,7 +511,7 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
         fontName = fontAttribute->GetAttributeValue("name");
 
         // Check if it's a short definition
-        if(!fontName.StartsWith("/"))
+        if(!fontName.StartsWith("/") && fontName.Length())
         {
             fontName = PawsManager::GetSingleton().GetLocalization()->FindLocalizedFile("data/ttf/" + fontName);
         }
@@ -523,11 +523,14 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
         if ( this->resizeToScreen && scaleToScreen )
             fontSize *= PawsManager::GetSingleton().GetFontFactor();
 
-        myFont = graphics2D->GetFontServer()->LoadFont(fontName, (fontSize)?fontSize:10);
-        if ( !myFont )
+        if(fontName.Length())
         {
-            Error2("Could not load font: >%s<", (const char*)fontName );
-            return false;
+            myFont = graphics2D->GetFontServer()->LoadFont(fontName, (fontSize)?fontSize:10);
+            if (!myFont)
+            {
+                Error2("Could not load font: >%s<", (const char*)fontName );
+                return false;
+            }
         }
         int r = fontAttribute->GetAttributeValueAsInt( "r" );
         int g = fontAttribute->GetAttributeValueAsInt( "g" );
@@ -549,7 +552,7 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
         if (fontAttribute->GetAttributeValueAsBool("bold"))
             fontStyle |= FONT_STYLE_BOLD;
     }
-
+out:
     // Get the frame for this widget.
     csRef<iDocumentNode> frameNode = node->GetNode("frame");
     if ( frameNode )
