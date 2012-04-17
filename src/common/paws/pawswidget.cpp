@@ -552,7 +552,7 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
         if (fontAttribute->GetAttributeValueAsBool("bold"))
             fontStyle |= FONT_STYLE_BOLD;
     }
-out:
+
     // Get the frame for this widget.
     csRef<iDocumentNode> frameNode = node->GetNode("frame");
     if ( frameNode )
