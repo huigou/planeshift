@@ -46,7 +46,7 @@ CREATE TABLE `item_instances` (
   `lock_skill` int(2) NOT NULL default '-1',
   `openable_locks` varchar(100) default '0',
   `item_name` varchar(100) default '',
-  `item_description` TEXT default '',
+  `item_description` TEXT default NULL,
   `creative_definition` TEXT  DEFAULT NULL COMMENT 'This is used for books/sketch.',
   `charges` int(3) NOT NULL default '0',
   `prefix` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'Determines the prefix to be used from the loot modifiers table',
@@ -114,8 +114,8 @@ INSERT INTO `item_instances` VALUES (47,8,0,0,21,1,8,0,0,0,0,0,0,0,0,0,0,50,-1,4
 INSERT INTO `item_instances` VALUES (48,8,0,0,22,1,8,0,0,0,0,0,0,0,0,0,0,50,-1,47,0,'',0,-1,'','','',NULL,'0',0,0,0);
 INSERT INTO `item_instances` VALUES (49,8,0,0,35,1,0,0,0,0,0,0,0,0,0,0,0,50,-1,421,0,'',0,-1,'','','',NULL,'0',0,0,0);
 INSERT INTO `item_instances` VALUES (172,8,0,0,35,1,0,0,0,0,0,0,0,0,0,0,0,50,-1,423,0,'',0,-1,'','','',NULL,'0',0,0,0);
-INSERT INTO `item_instances` VALUES (185,8,0,0,35,1,8,0,0,0,0,0,0,0,0,0,0,50,-1,232,0,'',0,-1,'','','',NULL,'0',0,0,0);
-INSERT INTO `item_instances` VALUES (186,8,0,0,35,1,8,0,0,0,0,0,0,0,0,0,0,50,-1,233,0,'',0,-1,'','','',NULL,'0',0,0,0);
+INSERT INTO `item_instances` VALUES (173,8,0,0,35,1,8,0,0,0,0,0,0,0,0,0,0,50,-1,232,0,'',0,-1,'','','',NULL,'0',0,0,0);
+INSERT INTO `item_instances` VALUES (174,8,0,0,35,1,8,0,0,0,0,0,0,0,0,0,0,50,-1,233,0,'',0,-1,'','','',NULL,'0',0,0,0);
 
 # acraig items
 INSERT INTO `item_instances` VALUES (50,3,0,0,16,1,5,0,0,0,0,0,0,0,0,0,0,50,-1,71,0,'',0,-1,'','','',NULL,'0',0,0,0);
@@ -182,25 +182,25 @@ INSERT INTO `item_instances` VALUES (171,0,0,0,0,17,0,0,0,3,-16.6,-0.01,-171.9,0
 
 # SpellMasters items
 INSERT INTO `item_instances` VALUES (180,82,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,50,50,13,0,'PURIFIED,TRANSIENT',0,-1,'','','',NULL,'0',0,0,0);
-INSERT INTO `item_instances` VALUES (180,82,0,0,2,1,0,0,0,0,0,0,0,0,0,0,0,50,50,14,0,'PURIFIED,TRANSIENT',0,-1,'','','',NULL,'0',0,0,0);
-INSERT INTO `item_instances` VALUES (180,82,0,0,3,1,0,0,0,0,0,0,0,0,0,0,0,50,50,15,0,'PURIFIED,TRANSIENT',0,-1,'','','',NULL,'0',0,0,0);
-INSERT INTO `item_instances` VALUES (180,82,0,0,4,1,0,0,0,0,0,0,0,0,0,0,0,50,50,17,0,'PURIFIED,TRANSIENT',0,-1,'','','',NULL,'0',0,0,0);
-INSERT INTO `item_instances` VALUES (180,82,0,0,5,1,0,0,0,0,0,0,0,0,0,0,0,50,50,19,0,'PURIFIED,TRANSIENT',0,-1,'','','',NULL,'0',0,0,0);
-INSERT INTO `item_instances` VALUES (180,82,0,0,6,1,0,0,0,0,0,0,0,0,0,0,0,50,50,20,0,'PURIFIED,TRANSIENT',0,-1,'','','',NULL,'0',0,0,0);
-INSERT INTO `item_instances` VALUES (180,82,0,0,7,1,0,0,0,0,0,0,0,0,0,0,0,50,50,29,0,'PURIFIED,TRANSIENT',0,-1,'','','',NULL,'0',0,0,0);
-INSERT INTO `item_instances` VALUES (180,82,0,0,8,1,0,0,0,0,0,0,0,0,0,0,0,50,50,44,0,'PURIFIED,TRANSIENT',0,-1,'','','',NULL,'0',0,0,0);
-INSERT INTO `item_instances` VALUES (180,82,0,0,9,1,0,0,0,0,0,0,0,0,0,0,0,50,50,47,0,'PURIFIED,TRANSIENT',0,-1,'','','',NULL,'0',0,0,0);
+INSERT INTO `item_instances` VALUES (181,82,0,0,2,1,0,0,0,0,0,0,0,0,0,0,0,50,50,14,0,'PURIFIED,TRANSIENT',0,-1,'','','',NULL,'0',0,0,0);
+INSERT INTO `item_instances` VALUES (182,82,0,0,3,1,0,0,0,0,0,0,0,0,0,0,0,50,50,15,0,'PURIFIED,TRANSIENT',0,-1,'','','',NULL,'0',0,0,0);
+INSERT INTO `item_instances` VALUES (183,82,0,0,4,1,0,0,0,0,0,0,0,0,0,0,0,50,50,17,0,'PURIFIED,TRANSIENT',0,-1,'','','',NULL,'0',0,0,0);
+INSERT INTO `item_instances` VALUES (184,82,0,0,5,1,0,0,0,0,0,0,0,0,0,0,0,50,50,19,0,'PURIFIED,TRANSIENT',0,-1,'','','',NULL,'0',0,0,0);
+INSERT INTO `item_instances` VALUES (185,82,0,0,6,1,0,0,0,0,0,0,0,0,0,0,0,50,50,20,0,'PURIFIED,TRANSIENT',0,-1,'','','',NULL,'0',0,0,0);
+INSERT INTO `item_instances` VALUES (186,82,0,0,7,1,0,0,0,0,0,0,0,0,0,0,0,50,50,29,0,'PURIFIED,TRANSIENT',0,-1,'','','',NULL,'0',0,0,0);
+INSERT INTO `item_instances` VALUES (187,82,0,0,8,1,0,0,0,0,0,0,0,0,0,0,0,50,50,44,0,'PURIFIED,TRANSIENT',0,-1,'','','',NULL,'0',0,0,0);
+INSERT INTO `item_instances` VALUES (188,82,0,0,9,1,0,0,0,0,0,0,0,0,0,0,0,50,50,47,0,'PURIFIED,TRANSIENT',0,-1,'','','',NULL,'0',0,0,0);
 
 # SpellFighters items
-INSERT INTO `item_instances` VALUES (180,83,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,50,50,13,0,'PURIFIED,TRANSIENT',0,-1,'','','',NULL,'0',0,0,0);
-INSERT INTO `item_instances` VALUES (180,83,0,0,2,1,0,0,0,0,0,0,0,0,0,0,0,50,50,14,0,'PURIFIED,TRANSIENT',0,-1,'','','',NULL,'0',0,0,0);
-INSERT INTO `item_instances` VALUES (180,83,0,0,3,1,0,0,0,0,0,0,0,0,0,0,0,50,50,15,0,'PURIFIED,TRANSIENT',0,-1,'','','',NULL,'0',0,0,0);
-INSERT INTO `item_instances` VALUES (180,83,0,0,4,1,0,0,0,0,0,0,0,0,0,0,0,50,50,17,0,'PURIFIED,TRANSIENT',0,-1,'','','',NULL,'0',0,0,0);
-INSERT INTO `item_instances` VALUES (180,83,0,0,5,1,0,0,0,0,0,0,0,0,0,0,0,50,50,19,0,'PURIFIED,TRANSIENT',0,-1,'','','',NULL,'0',0,0,0);
-INSERT INTO `item_instances` VALUES (180,83,0,0,6,1,0,0,0,0,0,0,0,0,0,0,0,50,50,20,0,'PURIFIED,TRANSIENT',0,-1,'','','',NULL,'0',0,0,0);
-INSERT INTO `item_instances` VALUES (180,83,0,0,7,1,0,0,0,0,0,0,0,0,0,0,0,50,50,29,0,'PURIFIED,TRANSIENT',0,-1,'','','',NULL,'0',0,0,0);
-INSERT INTO `item_instances` VALUES (180,83,0,0,8,1,0,0,0,0,0,0,0,0,0,0,0,50,50,44,0,'PURIFIED,TRANSIENT',0,-1,'','','',NULL,'0',0,0,0);
-INSERT INTO `item_instances` VALUES (180,83,0,0,9,1,0,0,0,0,0,0,0,0,0,0,0,50,50,47,0,'PURIFIED,TRANSIENT',0,-1,'','','',NULL,'0',0,0,0);
+INSERT INTO `item_instances` VALUES (189,83,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,50,50,13,0,'PURIFIED,TRANSIENT',0,-1,'','','',NULL,'0',0,0,0);
+INSERT INTO `item_instances` VALUES (190,83,0,0,2,1,0,0,0,0,0,0,0,0,0,0,0,50,50,14,0,'PURIFIED,TRANSIENT',0,-1,'','','',NULL,'0',0,0,0);
+INSERT INTO `item_instances` VALUES (191,83,0,0,3,1,0,0,0,0,0,0,0,0,0,0,0,50,50,15,0,'PURIFIED,TRANSIENT',0,-1,'','','',NULL,'0',0,0,0);
+INSERT INTO `item_instances` VALUES (192,83,0,0,4,1,0,0,0,0,0,0,0,0,0,0,0,50,50,17,0,'PURIFIED,TRANSIENT',0,-1,'','','',NULL,'0',0,0,0);
+INSERT INTO `item_instances` VALUES (193,83,0,0,5,1,0,0,0,0,0,0,0,0,0,0,0,50,50,19,0,'PURIFIED,TRANSIENT',0,-1,'','','',NULL,'0',0,0,0);
+INSERT INTO `item_instances` VALUES (194,83,0,0,6,1,0,0,0,0,0,0,0,0,0,0,0,50,50,20,0,'PURIFIED,TRANSIENT',0,-1,'','','',NULL,'0',0,0,0);
+INSERT INTO `item_instances` VALUES (195,83,0,0,7,1,0,0,0,0,0,0,0,0,0,0,0,50,50,29,0,'PURIFIED,TRANSIENT',0,-1,'','','',NULL,'0',0,0,0);
+INSERT INTO `item_instances` VALUES (196,83,0,0,8,1,0,0,0,0,0,0,0,0,0,0,0,50,50,44,0,'PURIFIED,TRANSIENT',0,-1,'','','',NULL,'0',0,0,0);
+INSERT INTO `item_instances` VALUES (197,83,0,0,9,1,0,0,0,0,0,0,0,0,0,0,0,50,50,47,0,'PURIFIED,TRANSIENT',0,-1,'','','',NULL,'0',0,0,0);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
