@@ -2,10 +2,74 @@
 <help>
   <branch name="START HERE">
     <Contents>
+      <content type="text">Welcome! Here you  may find all the tips provided in the first tutorial area, teaching you how to move, change the camera settings, sounds, and more.</content>
+    </Contents>
+    <topic name="Menu and Windows">
+    <Contents>
+      <content type="text">
+MENUS AND WINDOWS
+At the top of the screen you have a series of icons you can use to access various functions of the game.
+
+All icons can be active or inactive. Click on one to make it active. Click it again to deactivate it.
+
+The first icon from the left is the CHAT icon. This will allow you to interact with other players and with computer controlled characters (NPCs). If it's active means the chat window is already displayed on screen. The chat window is divided in tabs. If you want your character to speak to other characters, just select the Main tab, click in the middle of the window, type 'Hello' and hit the enter key. If you want to speak with an NPC, you use the NPC tab the same way. If you need help from our staff or volunteers, use the Help tab.
+
+The second icon is the skills and stats window. Here you can find all the traits of your character, like HP (Health Points), Mana (Magic Points), your values in agility, strength, and other skills. Please open the skill window, review your skills, then close it by clicking on the small red x on the top right of the skill window.
+
+The third icon is the inventory, which lists the objects you own and carry. At the moment you don't have any. The money (Tria) you own is displayed in the same window, on the right, where you have the coins icon. There are different type of coins, you have already some money to get you started. Be sure to check it often, the NPCs in this tutorial will give you items.
+
+The other icons will be explained to you later on.
+</content>
+    </Contents>
+    </topic>
+
+    <topic name="Movement">
+    <Contents>
+      <content type="text">
+MOVEMENT
+You can move around by pressing the keys W (forward), S (backward), A (rotate left), D (rotate right).
+
+Move this window a bit to the side of the screen, so you will be able to better see your character. Without closing this window, practice moving by using AWSD keys.
+
+You have now practiced basic movements. Here are a few more: press the space bar and you will see your character JUMPING. Now hold down the left shift key while moving and you will see your character RUNNING forward or backward.
+
+If you want to LOOK AROUND press the middle mouse button (or alternatively press the TAB key. Press Tab again to exit mouse look mode). In this mode you can move your mouse to have your character rotate left or right.
+
+You can change the POINT OF VIEW by pressing 'm'. Try to press it few times and move your character, then go back to 'third person follow' mode. This is probably the best one to use for the tutorial.
+
+</content>
+    </Contents>
+    </topic>
+
+    <topic name="Interacting with NPCs">
+    <Contents>
+      <content type="text">
+When you right-click or left-click an NPC or player, that is called 'targeting' and a red marker will appear under the selected entity. Left-clicking just selects the character, while right-clicking opens up a new menu with actions you can choose.
+
+Without closing this window, try to right-click the character you just approached. A set of icons will appear, such as Attack, Trade/Give, Examine and Talk. The red X icon just cancels your right-click selection, doing nothing more, so no actions will be performed on the character. You can also select yourself and choose Examine.
+
+</content>
+    </Contents>
+    </topic>
+
+        <topic name="Speaking with NPCs">
+    <Contents>
+      <content type="text">
+To talk to any NPC, target them, and then right click and select the MOUTH icon. The NPC will display rounded bubbles on top of their head. First they will display the available options you have to speak with them, plus a free text bubble. The rounded bubbles are the ones you can use to speak. You can click one bubble or type any text in the empty bubble. The NPC will then answer with another bubble with straight borders. All text is also recorded on the chat window, in the NPC tab. You can review it there at any time.
+
+You can also ask common questions to NPCs like, Hello, How are you?, and Who are you? While speaking to NPCs you should try to use natural language, as if you were speaking to a player, while keeping your phrases simple. So a question like: "quest" doesn't mean anything. If you want to ask for a quest you should say: "Give me a quest, please" or something similar.
+
+To proceed, speak to Abelia a start to learn about this area.
+
+</content>
+    </Contents>
+    </topic>
+
+    <topic name="More tips">
+    <Contents>
       <content type="text">Here are a few tips and tricks to help you enjoy the world of PlaneShift.
 
-PlaneShift is a rich, varied and complex game, while this is a great thing as it allows you to fully immerse yourself in the fantastic world of Yliakum, on the other hand it will also require some time and just a little effort to get used to the client and the gameplay.
-You will learn how to talk with NPC's (Non Player Characters), how to use the various functions of the client and how to interact with the world itself.
+PlaneShift is a rich, varied and complex game, while this is a great thing as it allows you to fully immerse yourself in the world of Yliakum, on the other hand it will also require some time and just a little effort to get used to the client and the gameplay.
 
 We have a great group of players and GM's (Game Masters) ready to help you whenever you have difficulties.
 First of all look at the chat window, if you write /help [question] and then press enter the players or GM's playing in game may be able to answer your questions. Don't be afraid to use it! Players volunteer for it so please be as clear as possible and wait patiently for an answer.
@@ -14,6 +78,7 @@ Another tool you have at your disposal is directly contacting the Game Masters, 
 
  The last tool you might find useful is called petitions. It's a way to leave offline messages for the Game Masters which then they will be able to review and answer back to you later. To use this click on the appropriate icon in the tool-bar (TIP: you can leave the mouse over an icon in order to see what it does) and click new. Then you will be able to write a message for Game Masters, as soon as one sees it he will claim it and you will see the name of the GM handling your petition appear in the Petition Window. When they have had the time to find an answer to your question, the status of your petition will change to closed and by clicking on the petition you will be able to read the Game Masters answer.</content>
     </Contents>
+    </topic>
   </branch>
   <branch name="Files And Folders">
     <Contents>
