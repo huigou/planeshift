@@ -2557,10 +2557,10 @@ public:
 /**
  * TutorialMsgOp
  * Activates a tutorial window on the client with the specified message
- * The message is taken from tips table in the database
+ * The message is taken from tips table in the database.
  *
  * Syntax:
- *    <tutorialmsg aim="Actor" num="TutorialTipNumber"/>
+ *    <tutorialmsg aim="Actor" num="TutorialTipID"/>
  */
 class TutorialMsgOp : public Imperative1
 {
@@ -2578,17 +2578,17 @@ public:
     virtual void Run(MathEnvironment* env)
     {
         gemActor* actor = GetActor(env, aim);
-        if (!actor->GetClientID())
+        if (!actor || !actor->GetClientID())
         {
             Error2("Error: <tutorialmsg/> needs a valid client for actor '%s'.\n", actor->GetName());
             return;
         }
 
-        psserver->GetTutorialManager()->HandleScriptMessage(actor->GetClientID(),num);
+        psserver->GetTutorialManager()->HandleScriptMessage(actor->GetClientID(), num);
     }
 
 protected:
-    int num;               ///< the ID of the tutorial tip
+    int num;               ///< The database ID (subtracted of 1001) of the tutorial tip
 };
 
 //============================================================================
