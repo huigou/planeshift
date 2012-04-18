@@ -368,7 +368,7 @@ public:
 
     /**
      * Returns the Tutorial Manager.
-     * @returns a reference to the tutorial manager of the server.
+     * @return A reference to the tutorial manager of the server.
      */
     TutorialManager* GetTutorialManager() { return tutorialmanager; }
 

@@ -45,6 +45,7 @@
 #include "netmanager.h"
 #include "globals.h"
 
+#define TIPSAMOUNT 33
 
 TutorialManager::TutorialManager(ClientConnectionSet *pCCS)
 {
@@ -81,9 +82,9 @@ bool TutorialManager::LoadTutorialStrings()
     return true;
 }
 
-void TutorialManager::SendTutorialMessage(int which,Client *client,const char *instrs)
+void TutorialManager::SendTutorialMessage(int which, Client *client, const char *instrs)
 {
-    SendTutorialMessage(which,client->GetClientNum(),instrs);
+    SendTutorialMessage(which, client->GetClientNum(), instrs);
 }
 
 void TutorialManager::SendTutorialMessage(int which,uint32_t clientnum,const char *instrs)
@@ -95,7 +96,7 @@ void TutorialManager::SendTutorialMessage(int which,uint32_t clientnum,const cha
         error.Format("TutorialEventMessage %d is missing instructions.  Please file a bug.", which);
         instrs = error;
     }
-    psTutorialMessage msg(clientnum,which,instrs);
+    psTutorialMessage msg(clientnum, which, instrs);
     msg.SendMessage();
 }
 
@@ -188,7 +189,10 @@ void TutorialManager::HandleDamage(MsgEntry *me,Client *client)
 /// Specifically handle the message sent by a script
 void TutorialManager::HandleScriptMessage(uint32_t client, int which)
 {
-    SendTutorialMessage(which,client,tutorialMsg[which]);
+    if(which < TIPSAMOUNT)
+    {
+        SendTutorialMessage(which, client, tutorialMsg[which]);
+    }
 }
 
 /// Specifically handle the Damage event in the tutorial
