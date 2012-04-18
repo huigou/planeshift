@@ -62,6 +62,9 @@ public:
     TutorialManager(ClientConnectionSet *pCCS);
     virtual ~TutorialManager();
 
+    /// Specifically handle the message sent by a script
+    void HandleScriptMessage(uint32_t client, int which);
+
 protected:
     /// Specifically handle the Connect event in the tutorial
     void HandleConnect(MsgEntry *pMsg,Client *client);
@@ -86,6 +89,7 @@ protected:
 
     /// Package up the current event string for the client receiving the tutorial.
     void SendTutorialMessage(int which,Client *client,const char *instrs);
+    void SendTutorialMessage(int which,uint32_t clientnum,const char *instrs);
 
     ClientConnectionSet* clients;
     csString tutorialMsg[32];  // can hardcode for now because 32 bitflags is most possible
