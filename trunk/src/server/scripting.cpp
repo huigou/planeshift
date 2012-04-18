@@ -46,6 +46,7 @@
 #include "cachemanager.h"
 #include "entitymanager.h"
 #include "progressionmanager.h"
+#include "tutorialmanager.h"
 #include "clients.h"
 #include "events.h"
 #include "gem.h"
@@ -2553,6 +2554,43 @@ public:
     EntityManager* entityManager;
 };
 
+/**
+ * TutorialMsgOp
+ * Activates a tutorial window on the client with the specified message
+ * The message is taken from tips table in the database
+ *
+ * Syntax:
+ *    <tutorialmsg aim="Actor" num="TutorialTipNumber"/>
+ */
+class TutorialMsgOp : public Imperative1
+{
+public:
+    TutorialMsgOp() : Imperative1() { }
+    virtual ~TutorialMsgOp() { }
+
+    bool Load(iDocumentNode* top)
+    {
+        num = top->GetAttributeValueAsInt("num");
+
+        return num && Imperative1::Load(top);
+    }
+
+    virtual void Run(MathEnvironment* env)
+    {
+        gemActor* actor = GetActor(env, aim);
+        if (!actor->GetClientID())
+        {
+            Error2("Error: <tutorialmsg/> needs a valid client for actor '%s'.\n", actor->GetName());
+            return;
+        }
+
+        psserver->GetTutorialManager()->HandleScriptMessage(actor->GetClientID(),num);
+    }
+
+protected:
+    int num;               ///< the ID of the tutorial tip
+};
+
 //============================================================================
 // Progression script implementation (imperative mode)
 //============================================================================
@@ -2699,6 +2737,10 @@ ProgressionScript* ProgressionScript::Create(EntityManager* entitymanager, Cache
         else if (elem == "create-familiar")
         {
             op = new CreateFamiliarOp(entitymanager);
+        }
+        else if (elem == "tutorialmsg")
+        {
+            op = new TutorialMsgOp();
         }
         else
         {

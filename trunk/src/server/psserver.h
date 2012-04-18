@@ -366,6 +366,12 @@ public:
      */
     ServerSongManager* GetSongManager() { return songManager; }
 
+    /**
+     * Returns the Tutorial Manager.
+     * @returns a reference to the tutorial manager of the server.
+     */
+    TutorialManager* GetTutorialManager() { return tutorialmanager; }
+
     /// Returns a pointer to the AuthenticationServer
     AuthenticationServer* GetAuthServer() { return authserver; }
 

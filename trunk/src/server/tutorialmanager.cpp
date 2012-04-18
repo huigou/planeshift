@@ -83,6 +83,11 @@ bool TutorialManager::LoadTutorialStrings()
 
 void TutorialManager::SendTutorialMessage(int which,Client *client,const char *instrs)
 {
+    SendTutorialMessage(which,client->GetClientNum(),instrs);
+}
+
+void TutorialManager::SendTutorialMessage(int which,uint32_t clientnum,const char *instrs)
+{
 //    printf("Send tutorial msg %d\n",which);
     if (!instrs)
     {
@@ -90,10 +95,9 @@ void TutorialManager::SendTutorialMessage(int which,Client *client,const char *i
         error.Format("TutorialEventMessage %d is missing instructions.  Please file a bug.", which);
         instrs = error;
     }
-    psTutorialMessage msg(client->GetClientNum(),which,instrs);
+    psTutorialMessage msg(clientnum,which,instrs);
     msg.SendMessage();
 }
-
 
 void TutorialManager::HandleConnect(MsgEntry *me,Client *client)
 {
@@ -179,6 +183,12 @@ void TutorialManager::HandleDamage(MsgEntry *me,Client *client)
             }
         }
     }
+}
+
+/// Specifically handle the message sent by a script
+void TutorialManager::HandleScriptMessage(uint32_t client, int which)
+{
+    SendTutorialMessage(which,client,tutorialMsg[which]);
 }
 
 /// Specifically handle the Damage event in the tutorial
