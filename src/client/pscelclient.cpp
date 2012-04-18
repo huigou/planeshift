@@ -2141,7 +2141,7 @@ bool GEMClientActor::CheckLoadStatus()
         if(scale >= 0)
         {
             csRef<iSpriteCal3DFactoryState> sprite = scfQueryInterface<iSpriteCal3DFactoryState> (mesh->GetFactory()->GetMeshObjectFactory());
-            sprite->AbsoluteRescaleFactory(1);
+            sprite->AbsoluteRescaleFactory(scale);
         }
     }
 
