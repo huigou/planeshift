@@ -2581,7 +2581,7 @@ public:
         gemActor* actor = GetActor(env, aim);
         if (!actor || !actor->GetClientID())
         {
-            Error2("Error: <tutorialmsg/> needs a valid client for actor '%s'.\n", actor->GetName());
+            Error2("Error: <tutorialmsg/> needs a valid client for actor '%s'.\n", actor? "null" : actor->GetName());
             return;
         }
 
