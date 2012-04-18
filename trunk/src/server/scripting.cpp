@@ -2570,13 +2570,14 @@ public:
 
     bool Load(iDocumentNode* top)
     {
-        num = top->GetAttributeValueAsInt("num");
-
-        return num && Imperative1::Load(top);
+        expr = MathExpression::Create(top->GetAttributeValue("num"));
+        return Imperative1::Load(top) && expr!=NULL;
     }
 
     virtual void Run(MathEnvironment* env)
     {
+        int num = (int) expr->Evaluate(env);
+
         gemActor* actor = GetActor(env, aim);
         if (!actor || !actor->GetClientID())
         {
@@ -2588,7 +2589,7 @@ public:
     }
 
 protected:
-    int num;               ///< The database ID (subtracted of 1001) of the tutorial tip
+    MathExpression* expr;               ///< The database ID (subtracted of 1001) of the tutorial tip
 };
 
 //============================================================================
