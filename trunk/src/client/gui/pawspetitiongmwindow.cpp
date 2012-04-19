@@ -127,13 +127,13 @@ void pawsPetitionGMWindow::Show()
 
 void pawsPetitionGMWindow::HandleMessage ( MsgEntry* me )
 {
-    Debug1(LOG_PAWS,0,"Incomming Petition GM Petition Message\n");
+    Debug1(LOG_PAWS, 0, "Incoming Petition GM Petition Message");
     // Get the petition message data from the server
     psPetitionMessage message(me);
 
     if (!message.isGM)
     {
-        Debug1(LOG_PAWS,0,"Bailing out because of message.isGM");
+        Debug1(LOG_PAWS, 0, "Bailing out because of message.isGM");
         return;
     }
 
@@ -141,7 +141,7 @@ void pawsPetitionGMWindow::HandleMessage ( MsgEntry* me )
     {
         if (hasPetInterest)
         {
-            Debug1(LOG_PAWS,0,"Looking for pet interest and bailing out\n");
+            Debug1(LOG_PAWS, 0, "Looking for pet interest and bailing out");
             QueryServer();
         }
         return;
@@ -179,7 +179,7 @@ void pawsPetitionGMWindow::HandleMessage ( MsgEntry* me )
         // Check if server reported errors on the query
         if (!message.success)
         {
-            Debug1(LOG_PAWS,0,"!message.success\n");
+            Debug1(LOG_PAWS, 0, "!message.success");
             psSystemMessage error(0,MSG_INFO,message.error);
             msgqueue->Publish(error.msg);
             return;
@@ -270,7 +270,6 @@ void pawsPetitionGMWindow::HandleMessage ( MsgEntry* me )
 
     if (message.msgType == PETITION_ESCALATE)
     {
-        Debug1(LOG_PAWS,0,"Escalate\n");
         // Check if server reported errors on the query
         if (!message.success)
         {
@@ -299,7 +298,6 @@ void pawsPetitionGMWindow::HandleMessage ( MsgEntry* me )
     }
     if (message.msgType == PETITION_DESCALATE)
     {
-        Debug1(LOG_PAWS,0,"Descalate\n");
         // Check if server reported errors on the query
         if (!message.success)
         {

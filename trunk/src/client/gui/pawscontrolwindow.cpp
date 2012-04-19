@@ -193,7 +193,7 @@ bool pawsControlWindow::OnButtonReleased(int mouseButton, int /*keyModifier*/, p
         }
         else if (mouseButton == csmbMiddle)
         {
-            Debug3(LOG_PAWS,0,"Resetting toolbar to orginal size (%d,%d)\n",orgw,orgh);
+            Debug3(LOG_PAWS, 0, "Resetting toolbar to orginal size (%d,%d)", orgw, orgh);
             SetRelativeFrameSize(orgw,orgh);
             return true;
         }
@@ -274,7 +274,7 @@ bool pawsControlWindow::HandleWindow(csString widgetStr)
     pawsWidget* widget = PawsManager::GetSingleton().FindWidget(widgetStr.GetData());
     if (!widget)
     {
-        Error2("%s isn't loaded\n",widgetStr.GetData());
+        Error2("%s isn't loaded", widgetStr.GetData());
         return false;
     }
 
@@ -434,7 +434,7 @@ void pawsControlWindow::AddWindow(csString wndName, csString btnName)
 
     if (!btn)
     {
-        Error2("Couldn't find button %s!\n",btnName.GetData());
+        Error2("Couldn't find button %s!", btnName.GetData());
         return;
     }
 
@@ -453,7 +453,7 @@ pawsControlledWindow* pawsControlWindow::FindWindowFromButton(csString btnName)
             pawsWidget* wdg = PawsManager::GetSingleton().FindWidget(wbs[x].windowName.GetData());
             if (!wdg)
             {
-                Error2("Found %s but FindWidget returned null!\n",btnName.GetData());
+                Error2("Found %s but FindWidget returned null!", btnName.GetData());
                 return NULL;
             }
 
@@ -473,7 +473,7 @@ pawsButton* pawsControlWindow::FindButtonFromWindow(csString wndName)
             pawsWidget* wdg = FindWidget(wbs[x].buttonName.GetData());
             if (!wdg)
             {
-                Error2("Couldn't find window %s!\n",wndName.GetData());
+                Error2("Couldn't find window %s!", wndName.GetData());
                 return NULL;
             }
             return (pawsButton*)wdg;
@@ -527,7 +527,7 @@ void pawsControlWindow::NextStyle()
     filename = PawsManager::GetSingleton().GetLocalization()->FindLocalizedFile("control_styles.xml");
     if (!psengine->GetVFS()->Exists(filename.GetData()))
     {
-        Error2( "Could not find XML: %s",filename.GetData());
+        Error2( "Could not find XML: %s", filename.GetData());
         return;
     }
 
@@ -583,7 +583,7 @@ void pawsControlWindow::NextStyle()
             pawsWidget* wdg = FindWidget(name.GetData());
             if (!wdg)
             {
-                Error2("No such widget as %s!",name.GetData());
+                Error2("No such widget as %s!", name.GetData());
                 continue;
             }
             wdg->SetSize(bwidth, bheight);

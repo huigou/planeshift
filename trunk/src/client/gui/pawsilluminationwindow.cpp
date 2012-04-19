@@ -216,7 +216,7 @@ void pawsSketchWindow::Hide()
     if (dirty)
     {
         csString xml = toXML();
-        Debug2(LOG_PAWS,0,"Saving sketch as: %s\n",xml.GetDataSafe());
+        Debug2(LOG_PAWS, 0, "Saving sketch as: %s", xml.GetDataSafe());
         psSketchMessage sketch(0, currentItemID,0,"", xml, true, sketchName,"");
         sketch.SendMessage();
     }
@@ -574,7 +574,7 @@ void pawsSketchWindow::OnStringEntered(const char* name, int /*param*/, const ch
         tempFileName.Format("/planeshift/userdata/sketches/%s", value);
         if (!vfs->Exists(tempFileName))
         {
-            psSystemMessage msg(0, MSG_ERROR, "File not found!" );
+            psSystemMessage msg(0, MSG_ERROR, "File not found!");
             msg.FireEvent();
             return;
         }
@@ -834,7 +834,7 @@ bool pawsSketchWindow::ParseLimits(const char *xmlstr)
     const char* error = doc->Parse( xmlstr );
     if ( error )
     {
-        Error2( "Error parsing Sketch string: %s", error );
+        Error2("Error parsing Sketch string: %s", error);
         return false;
     }
     csRef<iDocumentNode> root = doc->GetRoot();
@@ -939,7 +939,7 @@ bool pawsSketchWindow::ParseSketch(const char *xmlstr, bool checklimits)
                 obj = new SketchBezier;
             else
             {
-                Error2("Illegal sketch op <%s>.  Sketch cannot display.",type.GetDataSafe() );
+                Error2("Illegal sketch op <%s>.  Sketch cannot display.", type.GetDataSafe() );
                 // The user has to be aware of that without looking into the "Error log".
                 psSystemMessage sysMsg( 0, MSG_ERROR, PawsManager::GetSingleton().Translate("Illegal sketch op. Sketch cannot display.") );
                 sysMsg.FireEvent();

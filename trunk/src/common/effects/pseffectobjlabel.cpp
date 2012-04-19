@@ -128,7 +128,7 @@ void psEffectObjLabel::LoadGlyphs(csString filename)
     const char* error = doc->Parse( buf );
     if ( error )
     {
-        Error2("Error loading glyphs file: %s\n", error);
+        Error2("Error loading glyphs file: %s", error);
         return ;
     }
 
@@ -141,7 +141,7 @@ void psEffectObjLabel::LoadGlyphs(csString filename)
             continue;
         if (strcmp(child->GetValue(),"glyph"))
         {
-            printf("unknown child %s encountered\n", child->GetValue());
+            Error2("Unknown child %s encountered", child->GetValue());
             continue;
         }
         number = child->GetAttributeValueAsInt("id");
@@ -316,13 +316,13 @@ psEffectObj * psEffectObjLabel::Clone() const
 
 bool psEffectObjLabel::SetText(const csArray<psEffectTextElement>& /*elements*/)
 {
-   printf("settext <array> not supported\n");
+   Error1("settext <array> not supported");
    return false;
 }
 
 bool psEffectObjLabel::SetText(const csArray<psEffectTextRow>& /*rows*/)
 {
-   printf("settext <textrow> not supported\n");
+   Error1("settext <textrow> not supported");
    return false;
 }
 

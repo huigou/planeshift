@@ -418,9 +418,6 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
 
     atr = node->GetAttribute("style");
 
-    if (name=="ChatWindow")
-        Debug1(LOG_PAWS,0,"In chat window...\n");
-
     if (atr)
         PawsManager::GetSingleton().ApplyStyle(atr->GetValue(), node);
     else
@@ -511,7 +508,7 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
         fontName = fontAttribute->GetAttributeValue("name");
 
         // Check if it's a short definition
-        if(!fontName.StartsWith("/") && fontName.Length())
+        if(!fontName.StartsWith("/") /*&& fontName.Length()*/)
         {
             fontName = PawsManager::GetSingleton().GetLocalization()->FindLocalizedFile("data/ttf/" + fontName);
         }
@@ -522,7 +519,7 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
 
         if ( this->resizeToScreen && scaleToScreen )
             fontSize *= PawsManager::GetSingleton().GetFontFactor();
-
+graphics2D->GetFontServer()->LoadFont(fontName,(fontSize)?fontSize:10);
         if(fontName.Length())
         {
             myFont = graphics2D->GetFontServer()->LoadFont(fontName, (fontSize)?fontSize:10);

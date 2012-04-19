@@ -104,7 +104,7 @@ bool pawsObjectView::Setup(iDocumentNode* node )
     rmTargets = scfQueryInterface<iRenderManagerTargets>(engine->GetRenderManager());
     if(!rmTargets.IsValid())
     {
-        Error1("pawsObjectView: RenderManager doesn't support targets! object views will be disabled");
+        Error1("pawsObjectView: RenderManager doesn't support targets! Object views will be disabled");
         return true;
     }
 
@@ -136,7 +136,7 @@ bool pawsObjectView::Setup(iDocumentNode* node )
     }
     else
     {
-        Error1("pawsObjectView map failed to load because the mapNode doesn't exist!\n");
+        Error1("pawsObjectView map failed to load because the mapNode doesn't exist!");
         return false;
     }
     
@@ -207,7 +207,7 @@ bool pawsObjectView::LoadMap( const char* map, const char* sector )
     zone->Push(map);
     if(!loader->LoadPriorityZones(zone))
     {
-        Error2("Failed to load priority zone '%s'\n", map);
+        Error2("Failed to load priority zone '%s'", map);
     }
 
     stage = engine->FindSector( sector );

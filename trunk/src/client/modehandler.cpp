@@ -709,7 +709,7 @@ void ModeHandler::HandleNewSectorMessage(MsgEntry* me)
 
     Debug3(LOG_ANY, 0, "Crossed from sector %s to sector %s.",
                msg.oldSector.GetData(),
-               msg.newSector.GetData() );
+               msg.newSector.GetData());
 
     RemovePortalWeather();
     RemoveWeather();
@@ -793,7 +793,7 @@ void ModeHandler::FinishLightFade()
 
 void ModeHandler::PublishTime( int newTime )
 {
-    Debug2(LOG_WEATHER,0, "*New time of the Day: %d\n", newTime );
+    Debug2(LOG_WEATHER, 0, "*New time of the Day: %d", newTime);
     
     psengine->GetSoundManager()->SetTimeOfDay(newTime);
     
@@ -912,7 +912,7 @@ float ModeHandler::GetDensity(WeatherInfo* wi)
 
 void ModeHandler::ProcessLighting(const psWeatherMessage::NetWeatherInfo& info)
 {
-    Debug2( LOG_WEATHER, 0, "Lightning in sector %s",info.sector.GetData());
+    Debug2(LOG_WEATHER, 0, "Lightning in sector %s",info.sector.GetData());
     // Get the sequence manager
     csRef<iEngineSequenceManager> seqmgr =  csQueryRegistry<iEngineSequenceManager> (object_reg);
     if(!seqmgr)
@@ -1258,7 +1258,7 @@ bool ModeHandler::ProcessLighting(LightingSetting *setting, float pct)
         }
         else
         {
-            // Warning3( LOG_WEATHER, "Light '%s' was not found in lighting setup %d.",(const char*)setting->object, setting->value);
+            // Warning3(LOG_WEATHER, "Light '%s' was not found in lighting setup %d.",(const char*)setting->object, setting->value);
             setting->error = true;
             return false;
         }
@@ -1358,7 +1358,7 @@ bool ModeHandler::ProcessLighting(LightingSetting *setting, float pct)
         }
         else
         {
-            // Warning3( LOG_WEATHER, "Object '%s'/Sector '%s' for ambient light was not found in lighting setup %d.\n",
+            // Warning3(LOG_WEATHER, "Object '%s'/Sector '%s' for ambient light was not found in lighting setup %d.",
             //           setting->object.GetData(), setting->sector.GetData(), setting->value);
             setting->error = true;
 
@@ -1409,7 +1409,7 @@ bool ModeHandler::ProcessLighting(LightingSetting *setting, float pct)
         }
         else
         {
-            Warning3( LOG_WEATHER, "Sector '%s' for fog was not found in lighting setup %i.\n",(const char *)setting->object, (int)setting->value);
+            Warning3(LOG_WEATHER, "Sector '%s' for fog was not found in lighting setup %i.",(const char *)setting->object, (int)setting->value);
             setting->error = true;
 
             return false;

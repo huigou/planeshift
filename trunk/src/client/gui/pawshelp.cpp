@@ -45,7 +45,7 @@ pawsHelp::pawsHelp()
     const char* error = helpDoc->Parse( buf );
     if( error )
     {
-        Error2("ERROR: Invalid 'data/help.xml': %s\n", error);
+        Error2("ERROR: Invalid 'data/help.xml': %s", error);
         return ;
     }
 }

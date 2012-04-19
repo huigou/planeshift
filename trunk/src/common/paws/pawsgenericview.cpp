@@ -100,7 +100,7 @@ bool pawsGenericView::LoadMap( const char* map, const char* sector )
         const char* error = doc->Parse(buf);
         if(error)
         {
-            Error2("pawsObjectView world parse error: %s\n", error);
+            Error2("pawsObjectView world parse error: %s", error);
         }
 
         csRef<iDocumentNode> worldNode = doc->GetRoot()->GetNode("world");
