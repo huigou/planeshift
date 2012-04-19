@@ -2560,7 +2560,7 @@ public:
  * The message is taken from tips table in the database.
  *
  * Syntax:
- *    <tutorialmsg aim="Actor" num="TutorialTipID"/>
+ *    <tutorialmsg aim="Target" num="TutorialTipID"/>
  */
 class TutorialMsgOp : public Imperative1
 {
