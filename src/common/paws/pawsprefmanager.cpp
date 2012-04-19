@@ -70,7 +70,7 @@ bool pawsPrefManager::LoadPrefFile( const char* fileName )
     csRef<iDocument> doc = xml->CreateDocument();
     const char* error = doc->Parse( buf );
     if ( error )
-        printf("ERROR: %s\n", error);
+        Error2("ERROR: %s\n", error);
 
     csRef<iDocumentNode> root = doc->GetRoot();
     if(!root)
@@ -150,7 +150,7 @@ bool pawsPrefManager::LoadBorderFile( const char* file )
     csRef<iDocument> doc = xml->CreateDocument();
     const char* error = doc->Parse( buf );
     if ( error )
-        printf("ERROR: %s\n", error);
+        Error2("ERROR: %s\n", error);
     csRef<iDocumentNode> root = doc->GetRoot();
     if (!root)
     {

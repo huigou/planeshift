@@ -419,7 +419,7 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
     atr = node->GetAttribute("style");
 
     if (name=="ChatWindow")
-        printf("In chat window...\n");
+        Debug1(LOG_PAWS,0,"In chat window...\n");
 
     if (atr)
         PawsManager::GetSingleton().ApplyStyle(atr->GetValue(), node);

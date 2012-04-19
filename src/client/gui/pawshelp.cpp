@@ -39,13 +39,13 @@ pawsHelp::pawsHelp()
     csRef<iDataBuffer> buf (vfs->ReadFile (filename));
     if(!buf || !buf->GetSize ())
     {
-        printf("ERROR: Loading 'data/help.xml'");
+        Error1("ERROR: Loading 'data/help.xml'");
         return;
     }
     const char* error = helpDoc->Parse( buf );
     if( error )
     {
-        printf("ERROR: Invalid 'data/help.xml': %s\n", error);
+        Error2("ERROR: Invalid 'data/help.xml': %s\n", error);
         return ;
     }
 }

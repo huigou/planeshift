@@ -97,7 +97,7 @@ void pawsTutorialNotifyWindow::HandleMessage ( MsgEntry* me )
         // Get the tutorial message data from the server
         psTutorialMessage message(me);
 
-        //printf("Got tutorial message: %s\n", message.instrs.GetData());
+        Debug2(LOG_PAWS,0,"Got tutorial message: %s\n", message.instrs.GetData());
 
         // Put these instructions in queue.
         instrArray.Push(message.instrs);

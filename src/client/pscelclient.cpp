@@ -382,7 +382,7 @@ void psCelClient::LoadEffectItems()
     }
     else
     {
-        printf("Could not load itemeffects.xml!\n");
+        Error1("Could not load itemeffects.xml!\n");
     }
 }
 
@@ -414,7 +414,7 @@ void psCelClient::HandleItemEffect( const char* factName, csRef<iMeshWrapper> mw
 
                 if(!id)
                 {
-                    printf("Failed to create light on item %s!\n", factName);
+                    Error2("Failed to create light on item %s!\n", factName);
                 }
                 else if(slot && lightids)
                 {
@@ -433,7 +433,7 @@ void psCelClient::HandleItemEffect( const char* factName, csRef<iMeshWrapper> mw
                     csVector3(0,1,0), 0, e->rotateWithMesh);
                 if(!id)
                 {
-                    printf("Failed to load effect %s on item %s!\n", e->effectname.GetData(), factName);
+                    Error3("Failed to load effect %s on item %s!\n", e->effectname.GetData(), factName);
                 }
                 else if(slot && effectids)
                 {
@@ -545,7 +545,7 @@ void psCelClient::HandleNameChange( MsgEntry* me )
 
     if(!object)
     {
-        printf("Warning: Got rename message, but couldn't find actor %s!\n", ShowID(msg.objectID));
+        Error2("Warning: Got rename message, but couldn't find actor %s!\n", ShowID(msg.objectID));
         return;
     }
 
@@ -616,7 +616,7 @@ void psCelClient::HandleGroupChange(MsgEntry* me)
         Error2("Couldn't find %s, ignoring group change.", ShowID(msg.objectID));
         return;
     }
-    printf("Got group update for actor %s (%s) to group %d\n", actor->GetName(), ShowID(actor->GetEID()), msg.groupID);
+    Debug4(LOG_GROUP,0,"Got group update for actor %s (%s) to group %d\n", actor->GetName(), ShowID(actor->GetEID()), msg.groupID);
     unsigned int oldGroup = actor->GetGroupID();
     actor->SetGroupID(msg.groupID);
 

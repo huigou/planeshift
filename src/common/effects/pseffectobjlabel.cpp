@@ -128,7 +128,7 @@ void psEffectObjLabel::LoadGlyphs(csString filename)
     const char* error = doc->Parse( buf );
     if ( error )
     {
-        printf("Error loading glyphs file: %s\n", error);
+        Error2("Error loading glyphs file: %s\n", error);
         return ;
     }
 

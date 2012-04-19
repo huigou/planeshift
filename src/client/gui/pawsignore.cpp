@@ -114,7 +114,7 @@ bool pawsIgnoreWindow::LoadIgnoreList()
             const char* error = doc->Parse(file);
             if (error)
             {
-                printf("Error Loading Ignorelist: %s\n", error);
+                Error2("Error Loading Ignorelist: %s\n", error);
                 return false;
             }
 

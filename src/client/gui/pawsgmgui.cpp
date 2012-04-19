@@ -57,7 +57,7 @@
 button = (pawsButton*)FindWidget(x);\
 if (!button)\
 {\
-    printf("Couldn't find button '%s'!\n",x);\
+    Error2(LOG_PAWS,"Couldn't find button '%s'!\n",x);\
     return;\
 }\
 button->SetState(tab == y);
@@ -957,7 +957,7 @@ void pawsGmGUIWindow::HideWidget(const char* name)
     pawsWidget* widget = FindWidget(name);
     if (!widget)
     {
-        printf("Couldn't find widget %s!\n",name);
+        Error2("Couldn't find widget %s!\n",name);
         return;
     }
 
@@ -969,7 +969,7 @@ void pawsGmGUIWindow::ShowWidget(const char* name)
     pawsWidget* widget = FindWidget(name);
     if (!widget)
     {
-        printf("Couldn't find widget %s!\n",name);
+        Error2("Couldn't find widget %s!\n",name);
         return;
     }
 
