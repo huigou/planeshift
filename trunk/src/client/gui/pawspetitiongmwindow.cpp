@@ -127,13 +127,13 @@ void pawsPetitionGMWindow::Show()
 
 void pawsPetitionGMWindow::HandleMessage ( MsgEntry* me )
 {
-    //printf("Incomming Petition GM Petition Message\n");
+    Debug1(LOG_PAWS,0,"Incomming Petition GM Petition Message\n");
     // Get the petition message data from the server
     psPetitionMessage message(me);
 
     if (!message.isGM)
     {
-        //printf("Bailing out because of message.isGM");
+        Debug1(LOG_PAWS,0,"Bailing out because of message.isGM");
         return;
     }
 
@@ -141,7 +141,7 @@ void pawsPetitionGMWindow::HandleMessage ( MsgEntry* me )
     {
         if (hasPetInterest)
         {
-            //printf("Looking for pet interest and bailing out\n");
+            Debug1(LOG_PAWS,0,"Looking for pet interest and bailing out\n");
             QueryServer();
         }
         return;
@@ -179,7 +179,7 @@ void pawsPetitionGMWindow::HandleMessage ( MsgEntry* me )
         // Check if server reported errors on the query
         if (!message.success)
         {
-            printf("!message.succss\n");
+            Debug1(LOG_PAWS,0,"!message.success\n");
             psSystemMessage error(0,MSG_INFO,message.error);
             msgqueue->Publish(error.msg);
             return;
@@ -190,7 +190,6 @@ void pawsPetitionGMWindow::HandleMessage ( MsgEntry* me )
         {
             // This should NEVER happen (it means the server gave a bogus message)
             Error1("PetitionGMWindow reports invalid currentRow!");
-            printf("Invalid currentRow\n");
             return;
         }
 
@@ -217,7 +216,7 @@ void pawsPetitionGMWindow::HandleMessage ( MsgEntry* me )
         // Check if server reported errors on the query
         if (!message.success)
         {
-            printf("Assign fail\n");
+            Error1("Assign fail\n");
             psSystemMessage error(0,MSG_INFO,message.error);
             msgqueue->Publish(error.msg);
             return;
@@ -226,7 +225,6 @@ void pawsPetitionGMWindow::HandleMessage ( MsgEntry* me )
         // Change the status of the position we wanted to assign:
         if (currentRow < 0)
         {
-            printf("Bad row\n");
             // This should NEVER happen (it means the server gave a bogus message)
             Error1("PetitionGMWindow reports invalid currentRow!");
             return;
@@ -247,7 +245,7 @@ void pawsPetitionGMWindow::HandleMessage ( MsgEntry* me )
         // Check if server reported errors on the query
         if (!message.success)
         {
-            printf("dessign fail\n");
+            Error1("deassign fail\n");
             psSystemMessage error(0,MSG_INFO,message.error);
             msgqueue->Publish(error.msg);
             return;
@@ -256,7 +254,6 @@ void pawsPetitionGMWindow::HandleMessage ( MsgEntry* me )
         // Change the status of the position we wanted to assign:
         if (currentRow < 0)
         {
-            printf("Bad row\n");
             // This should NEVER happen (it means the server gave a bogus message)
             Error1("PetitionGMWindow reports invalid currentRow!");
             return;
@@ -273,7 +270,7 @@ void pawsPetitionGMWindow::HandleMessage ( MsgEntry* me )
 
     if (message.msgType == PETITION_ESCALATE)
     {
-        //printf("Escalate\n");
+        Debug1(LOG_PAWS,0,"Escalate\n");
         // Check if server reported errors on the query
         if (!message.success)
         {
@@ -302,7 +299,7 @@ void pawsPetitionGMWindow::HandleMessage ( MsgEntry* me )
     }
     if (message.msgType == PETITION_DESCALATE)
     {
-        //printf("Descalate\n");
+        Debug1(LOG_PAWS,0,"Descalate\n");
         // Check if server reported errors on the query
         if (!message.success)
         {

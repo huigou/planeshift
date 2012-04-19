@@ -193,7 +193,7 @@ void pawsContainerDescWindow::HandleViewItem( MsgEntry* me )
                 mesg.contents[i].materialName.GetData(),
                 mesg.contents[i].name.GetData() );
 
-            printf("Publishing slot data %s -> %s\n", sigData.GetData(), data.GetData() );
+            Debug3(LOG_PAWS,0,"Publishing slot data %s -> %s\n", sigData.GetData(), data.GetData() );
             PawsManager::GetSingleton().Publish(sigData, data );
         }
         contents->Show();
@@ -244,15 +244,13 @@ bool pawsContainerDescWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModi
              oldID = oldtarget->GetEID();
         }
         
-        //printf("selecting containerID %d, oldID %d\n", containerID, oldID);
+        Debug3(LOG_PAWS,0,"selecting containerID %d, oldID %d\n", containerID, oldID);
         psUserActionMessage setnewtarget(0, containerID, "select");
         setnewtarget.SendMessage();
-        //printf("taking all\n");
         
         // Attempt to grab all items in the container.
         psengine->GetCmdHandler()->Execute("/takestackall");
 
-        //printf("selecting oldID %d\n", oldID);
         psUserActionMessage setoldtarget(0, oldID, "select");
         setoldtarget.SendMessage();
     }
@@ -267,15 +265,13 @@ bool pawsContainerDescWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModi
              oldID = oldtarget->GetEID();
         }
         
-        //printf("selecting containerID %d, oldID %d\n", containerID, oldID);
+        Debug3(LOG_PAWS,0,"selecting containerID %d, oldID %d\n", containerID, oldID);
         psUserActionMessage setnewtarget(0, containerID, "select");
         setnewtarget.SendMessage();
-        //printf("taking all\n");
         
         // Attempt to grab all items in the container.
         psengine->GetCmdHandler()->Execute("/takeall");
 
-        //printf("selecting oldID %d\n", oldID);
         psUserActionMessage setoldtarget(0, oldID, "select");
         setoldtarget.SendMessage();
     }
@@ -321,15 +317,15 @@ bool pawsContainerDescWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModi
         {
              oldID = oldtarget->GetEID();
         }
-        //printf("selecting containerID %d, oldID %d\n", containerID, oldID);
+        Debug3(LOG_PAWS,0,"selecting containerID %d, oldID %d\n", containerID, oldID);
         psUserActionMessage setnewtarget(0, containerID, "select");
         setnewtarget.SendMessage();
-        //printf("combining\n");
+
         if(widget->GetID() == COMBINE_BUTTON)
             psengine->GetCmdHandler()->Execute("/combine");
         else
             psengine->GetCmdHandler()->Execute("/uncombine");
-        //printf("selecting oldID %d\n", oldID);
+
         psUserActionMessage setoldtarget(0, oldID, "select");
         setoldtarget.SendMessage();
     }

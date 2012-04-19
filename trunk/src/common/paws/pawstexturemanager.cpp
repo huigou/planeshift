@@ -58,7 +58,7 @@ pawsTextureManager::~pawsTextureManager()
     
 bool pawsTextureManager::LoadImageList( const char* listName )
 { 
-    printf("Texture Manager parsing %s\n", listName);
+    Debug2(LOG_PAWS,0,"Texture Manager parsing %s\n", listName);
     csRef<iDataBuffer> buff = vfs->ReadFile( listName );
 
     if ( !buff || !buff->GetSize() )

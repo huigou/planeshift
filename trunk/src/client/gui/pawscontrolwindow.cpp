@@ -193,7 +193,7 @@ bool pawsControlWindow::OnButtonReleased(int mouseButton, int /*keyModifier*/, p
         }
         else if (mouseButton == csmbMiddle)
         {
-            printf("Resetting toolbar to orginal size (%d,%d)\n",orgw,orgh);
+            Debug3(LOG_PAWS,0,"Resetting toolbar to orginal size (%d,%d)\n",orgw,orgh);
             SetRelativeFrameSize(orgw,orgh);
             return true;
         }
@@ -274,7 +274,7 @@ bool pawsControlWindow::HandleWindow(csString widgetStr)
     pawsWidget* widget = PawsManager::GetSingleton().FindWidget(widgetStr.GetData());
     if (!widget)
     {
-        printf("%s isn't loaded\n",widgetStr.GetData());
+        Error2("%s isn't loaded\n",widgetStr.GetData());
         return false;
     }
 
@@ -434,7 +434,7 @@ void pawsControlWindow::AddWindow(csString wndName, csString btnName)
 
     if (!btn)
     {
-        printf("Couldn't find button %s!\n",btnName.GetData());
+        Error2("Couldn't find button %s!\n",btnName.GetData());
         return;
     }
 
@@ -453,7 +453,7 @@ pawsControlledWindow* pawsControlWindow::FindWindowFromButton(csString btnName)
             pawsWidget* wdg = PawsManager::GetSingleton().FindWidget(wbs[x].windowName.GetData());
             if (!wdg)
             {
-                printf("Found %s but FindWidget returned null!\n",btnName.GetData());
+                Error2("Found %s but FindWidget returned null!\n",btnName.GetData());
                 return NULL;
             }
 
@@ -473,7 +473,7 @@ pawsButton* pawsControlWindow::FindButtonFromWindow(csString wndName)
             pawsWidget* wdg = FindWidget(wbs[x].buttonName.GetData());
             if (!wdg)
             {
-                printf("Couldn't find window %s!\n",wndName.GetData());
+                Error2("Couldn't find window %s!\n",wndName.GetData());
                 return NULL;
             }
             return (pawsButton*)wdg;

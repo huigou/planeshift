@@ -653,7 +653,7 @@ void pawsQuestListWindow::LoadNotes(const char * fileName)
     const char* error = doc->Parse( buf );
     if (error)
     {
-        printf("Error loading quest notes: %s\n", error);
+        Error2("Error loading quest notes: %s\n", error);
         return;
     }
 

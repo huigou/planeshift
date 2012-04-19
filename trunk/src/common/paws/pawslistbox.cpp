@@ -1175,7 +1175,7 @@ void pawsListBox::CreateSortingArrow(int colNum)
     pawsWidget * title = GetColumnTitle(colNum);
     if (title == NULL)
         return;
-        printf("creating sorting arrow\n");
+    Debug1(LOG_PAWS,0,"creating sorting arrow\n");
     pawsWidget * arrow = new pawsWidget();
     title->AddChild(arrow);
     arrow->SetRelativeFrame(title->ScreenFrame().Width()-arrowSize, 4, arrowSize, arrowSize);

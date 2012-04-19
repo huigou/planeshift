@@ -216,7 +216,7 @@ void pawsSketchWindow::Hide()
     if (dirty)
     {
         csString xml = toXML();
-        // printf("Saving sketch as: %s\n",xml.GetDataSafe());
+        Debug2(LOG_PAWS,0,"Saving sketch as: %s\n",xml.GetDataSafe());
         psSketchMessage sketch(0, currentItemID,0,"", xml, true, sketchName,"");
         sketch.SendMessage();
     }

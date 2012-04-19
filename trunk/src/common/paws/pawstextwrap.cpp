@@ -358,7 +358,7 @@ bool pawsMultilineEditTextBox::OnMouseDown(int button, int modifiers, int x, int
 
 bool pawsMultilineEditTextBox::OnClipboard( const csString& content )
 {
-    printf("Received from clipboard: %s\n", content.GetDataSafe());
+    Debug2(LOG_PAWS,0,"Received from clipboard: %s\n", content.GetDataSafe());
 
     size_t position = GetCursorPosition(cursorLine, cursorLoc);
     if ( position >= text.Length() )
