@@ -110,7 +110,7 @@ void pawsContainerDescWindow::HandleUpdateItem( MsgEntry* me )
         data.Format("%s %d %d %s %s %s", mesg.icon.GetData(), mesg.stackCount, 0, mesg.meshName.GetData(), mesg.materialName.GetData(), mesg.name.GetData());
     }
 
-    Debug3(LOG_CHARACTER, 0, "Got item update for %s: %s\n", sigData.GetDataSafe(), data.GetDataSafe() );
+    Debug3(LOG_CHARACTER, 0, "Got item update for %s: %s", sigData.GetDataSafe(), data.GetDataSafe() );
 
     // FIXME: psViewItemMessages should probably send out purification status
 
@@ -139,7 +139,7 @@ void pawsContainerDescWindow::HandleViewItem( MsgEntry* me )
     {
         if (newContainer)
         {
-            Debug2(LOG_CHARACTER, 0, "Setting up container %d.\n", mesg.containerID);
+            Debug2(LOG_CHARACTER, 0, "Setting up container %d.", mesg.containerID);
 
             contents->Clear();
             containerSlots = mesg.ContainerSlots;
@@ -167,7 +167,7 @@ void pawsContainerDescWindow::HandleViewItem( MsgEntry* me )
                     csString slotName;
                     slotName.Format("invslot_%d", mesg.containerID * 100 + i*cols+j + 16); // container slot + next two digit slot number
                     slot->SetSlotName(slotName);
-                    Debug3(LOG_CHARACTER, 0, "Container slot %d subscribing to %s.\n", i*cols+j, slotName.GetData());
+                    Debug3(LOG_CHARACTER, 0, "Container slot %d subscribing to %s.", i*cols+j, slotName.GetData());
                     // New slots must subscribe to sigClear* -before-
                     // invslot_n, or else the cached clear signal will override
                     // the signal with the cached slot data, resulting in an
@@ -193,7 +193,7 @@ void pawsContainerDescWindow::HandleViewItem( MsgEntry* me )
                 mesg.contents[i].materialName.GetData(),
                 mesg.contents[i].name.GetData() );
 
-            Debug3(LOG_PAWS,0,"Publishing slot data %s -> %s\n", sigData.GetData(), data.GetData() );
+            Debug3(LOG_PAWS, 0, "Publishing slot data %s -> %s", sigData.GetData(), data.GetData() );
             PawsManager::GetSingleton().Publish(sigData, data );
         }
         contents->Show();
@@ -244,7 +244,7 @@ bool pawsContainerDescWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModi
              oldID = oldtarget->GetEID();
         }
         
-        Debug3(LOG_PAWS,0,"selecting containerID %d, oldID %d\n", containerID, oldID);
+        Debug3(LOG_PAWS, 0, "selecting containerID %d, oldID %d", containerID, oldID);
         psUserActionMessage setnewtarget(0, containerID, "select");
         setnewtarget.SendMessage();
         
@@ -265,7 +265,7 @@ bool pawsContainerDescWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModi
              oldID = oldtarget->GetEID();
         }
         
-        Debug3(LOG_PAWS,0,"selecting containerID %d, oldID %d\n", containerID, oldID);
+        Debug3(LOG_PAWS, 0, "selecting containerID %d, oldID %d", containerID, oldID);
         psUserActionMessage setnewtarget(0, containerID, "select");
         setnewtarget.SendMessage();
         
@@ -317,7 +317,7 @@ bool pawsContainerDescWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModi
         {
              oldID = oldtarget->GetEID();
         }
-        Debug3(LOG_PAWS,0,"selecting containerID %d, oldID %d\n", containerID, oldID);
+        Debug3(LOG_PAWS, 0, "selecting containerID %d, oldID %d", containerID, oldID);
         psUserActionMessage setnewtarget(0, containerID, "select");
         setnewtarget.SendMessage();
 

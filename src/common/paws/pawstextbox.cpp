@@ -1533,7 +1533,7 @@ bool pawsEditTextBox::OnMouseDown( int button, int modifiers, int x, int y )
 
 bool pawsEditTextBox::OnClipboard( const csString& content )
 {
-    Debug2(LOG_PAWS,0,"Received from clipboard: %s\n", content.GetDataSafe());
+    Debug2(LOG_PAWS, 0, "Received from clipboard: %s", content.GetDataSafe());
 
     if ( cursorPosition >= text.Length() )
     {

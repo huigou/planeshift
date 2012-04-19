@@ -241,8 +241,8 @@ void psCelClient::HandleActor( MsgEntry* me )
     // Check for loading errors first
     if (psengine->LoadingError() || !GetClientDR()->GetMsgStrings() )
     {
-        Error1("Ignoring Actor message.  LoadingError or missing strings table!\n");
-        psengine->FatalError("Cannot load main actor. Error during loading.\n");
+        Error1("Ignoring Actor message.  LoadingError or missing strings table!");
+        psengine->FatalError("Cannot load main actor. Error during loading.");
         return;
     }
     psPersistActor msg(me, ((psNetManager*)psengine->GetNetManager())->GetConnection()->GetAccessPointers());
@@ -297,7 +297,7 @@ void psCelClient::AddEntity(GEMClientObject* obj)
             psengine->GetPSCamera()->npcTargetReplaceIfEqual(existing, obj);
         }
 
-        Debug3(LOG_CELPERSIST, 0, "Found existing entity >%s< with %s - removing.\n", existing->GetName(), ShowID(existing->GetEID()));
+        Debug3(LOG_CELPERSIST, 0, "Found existing entity >%s< with %s - removing.", existing->GetName(), ShowID(existing->GetEID()));
         RemoveObject(existing);
 
     }
@@ -382,7 +382,7 @@ void psCelClient::LoadEffectItems()
     }
     else
     {
-        Error1("Could not load itemeffects.xml!\n");
+        Error1("Could not load itemeffects.xml!");
     }
 }
 
@@ -399,7 +399,7 @@ void psCelClient::HandleItemEffect( const char* factName, csRef<iMeshWrapper> mw
 
         if(!mw)
         {
-            Error2("Error loading effect for item %s. iMeshWrapper is null.\n", factName);
+            Error2("Error loading effect for item %s. iMeshWrapper is null.", factName);
             return;
         }
 
@@ -414,7 +414,7 @@ void psCelClient::HandleItemEffect( const char* factName, csRef<iMeshWrapper> mw
 
                 if(!id)
                 {
-                    Error2("Failed to create light on item %s!\n", factName);
+                    Error2("Failed to create light on item %s!", factName);
                 }
                 else if(slot && lightids)
                 {
@@ -433,7 +433,7 @@ void psCelClient::HandleItemEffect( const char* factName, csRef<iMeshWrapper> mw
                     csVector3(0,1,0), 0, e->rotateWithMesh);
                 if(!id)
                 {
-                    Error3("Failed to load effect %s on item %s!\n", e->effectname.GetData(), factName);
+                    Error3("Failed to load effect %s on item %s!", e->effectname.GetData(), factName);
                 }
                 else if(slot && effectids)
                 {
@@ -545,7 +545,7 @@ void psCelClient::HandleNameChange( MsgEntry* me )
 
     if(!object)
     {
-        Error2("Warning: Got rename message, but couldn't find actor %s!\n", ShowID(msg.objectID));
+        Error2("Warning: Got rename message, but couldn't find actor %s!", ShowID(msg.objectID));
         return;
     }
 
@@ -803,7 +803,7 @@ void psCelClient::HandleMessage(MsgEntry *me)
 
         default:
         {
-            Error1("CEL UNKNOWN MESSAGE!!!\n");
+            Error1("CEL UNKNOWN MESSAGE!!!");
             break;
         }
     }
@@ -1408,7 +1408,7 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
 
         if(failed)
         {
-            Error2("Failed to clone mesh factory: %s\n", factName.GetData());
+            Error2("Failed to clone mesh factory: %s", factName.GetData());
             scale = 0.0f;
         }
         else
@@ -1428,7 +1428,7 @@ GEMClientActor::GEMClientActor( psCelClient* cel, psPersistActor& mesg )
 
         if(failed)
         {
-            Error2("Failed to clone mesh factory: %s\n", mountFactname.GetData());
+            Error2("Failed to clone mesh factory: %s", mountFactname.GetData());
             mountScale = 0.0f;
         }
         else
@@ -1525,7 +1525,7 @@ int GEMClientActor::GetAnimIndex (csStringHashReversible* msgstrings, csStringID
 
     if(animName.IsEmpty()) //check if we have an hit else bug the user for the bad data
     {
-        Error2("Missing animName from common strings for animid %lu!\n", (unsigned long int)animid);
+        Error2("Missing animName from common strings for animid %lu!", (unsigned long int)animid);
     }
     else //no need to call this with an empty string in case of bad data so let's skip it in that case
     {
@@ -1740,7 +1740,7 @@ void GEMClientActor::SetDRData(psDRMessage& drmsg)
         }
         else
         {
-            Error4("Ignoring DR pkt version %d for entity %s with version %d.", drmsg.counter, GetName(), DRcounter );
+            Error4("Ignoring DR pkt version %d for entity %s with version %d.", drmsg.counter, GetName(), DRcounter);
             return;
         }
     }
@@ -1863,7 +1863,7 @@ bool GEMClientActor::SetAnimation(const char* anim, int duration)
         callback->callbackanimation = anim;
         if (!sprite->RegisterAnimCallback(anim,callback,99999999999.9F)) // Make time huge as we do want only the end here
         {
-            Error2("Failed to register callback for animation %s",anim);
+            Error2("Failed to register callback for animation %s", anim);
             delete callback;
         }
 
@@ -2064,7 +2064,7 @@ bool GEMClientActor::CheckLoadStatus()
 
         if(!factory.IsValid())
         {
-            Error2("Failed to find factory: '%s'\n", factName.GetData());
+            Error2("Failed to find factory: '%s'", factName.GetData());
             psengine->UnregisterDelayedLoader(this);
             return false;
         }
@@ -2076,7 +2076,7 @@ bool GEMClientActor::CheckLoadStatus()
     }
     else if(!factory->WasSuccessful())
     {
-        Error2("Failed to load factory: '%s'\n", factName.GetData());
+        Error2("Failed to load factory: '%s'", factName.GetData());
         psengine->UnregisterDelayedLoader(this);
         return false;
     }
@@ -2260,7 +2260,7 @@ csPtr<iMaterialWrapper> GEMClientItem::CloneMaterial(iMaterialWrapper* mw)
     }
     else
     {
-        Error3("Unhandled shader %s for mesh %s!\n", shader->QueryObject()->GetName(), factName.GetData());
+        Error3("Unhandled shader %s for mesh %s!", shader->QueryObject()->GetName(), factName.GetData());
     }
 
     // Construct a new material using the selected shaders.
@@ -2302,7 +2302,7 @@ bool GEMClientItem::CheckLoadStatus()
 
             if(!factory.IsValid())
             {
-                Error3("Unable to find factory %s for item %s!\n", factName.GetData(), name.GetData());
+                Error3("Unable to find factory %s for item %s!", factName.GetData(), name.GetData());
                 psengine->UnregisterDelayedLoader(this);
                 return false;
             }
@@ -2314,7 +2314,7 @@ bool GEMClientItem::CheckLoadStatus()
         }
         else if(!factory->WasSuccessful())
         {
-            Error3("Unable to load item %s with factory %s!\n", name.GetData(), factName.GetData());
+            Error3("Unable to load item %s with factory %s!", name.GetData(), factName.GetData());
             psengine->UnregisterDelayedLoader(this);
             return false;
         }
@@ -2327,7 +2327,7 @@ bool GEMClientItem::CheckLoadStatus()
 
                 if(!material.IsValid())
                 {
-                    Error4("Unable to find material %s for item %s (factory %s)!\n",
+                    Error4("Unable to find material %s for item %s (factory %s)!",
                            matName.GetData(), name.GetData(), factName.GetData());
                     psengine->UnregisterDelayedLoader(this);
                     return false;
@@ -2340,7 +2340,7 @@ bool GEMClientItem::CheckLoadStatus()
             }
             else if(!factory->WasSuccessful())
             {
-                Error4("Unable to load item %s with material %s (factory %s)!\n",
+                Error4("Unable to load item %s with material %s (factory %s)!",
                        name.GetData(), matName.GetData(), factName.GetData());
                 psengine->UnregisterDelayedLoader(this);
                 return false;

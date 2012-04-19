@@ -114,7 +114,7 @@ bool pawsIgnoreWindow::LoadIgnoreList()
             const char* error = doc->Parse(file);
             if (error)
             {
-                Error2("Error Loading Ignorelist: %s\n", error);
+                Error2("Error Loading Ignorelist: %s", error);
                 return false;
             }
 
@@ -128,7 +128,7 @@ bool pawsIgnoreWindow::LoadIgnoreList()
         }
         else
         {
-            Warning1( LOG_PAWS, "No ignore.xml file found. Assuming empty\n");
+            Warning1(LOG_PAWS, "No ignore.xml file found. Assuming empty");
             return true;
         }
     }

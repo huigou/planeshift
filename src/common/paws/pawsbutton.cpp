@@ -422,7 +422,7 @@ bool pawsButton::OnMouseUp( int button, int modifiers, int x, int y )
         // Check to make sure mouse is still in this button
         if (!Contains(x,y))
         {
-            Debug1(LOG_PAWS,0,"Not still in button so not pressed.\n");
+            Debug1(LOG_PAWS, 0, "Not still in button so not pressed.");
             return true;
         }
     }

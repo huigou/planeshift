@@ -70,18 +70,18 @@ bool pawsPrefManager::LoadPrefFile( const char* fileName )
     csRef<iDocument> doc = xml->CreateDocument();
     const char* error = doc->Parse( buf );
     if ( error )
-        Error2("ERROR: %s\n", error);
+        Error2("ERROR: %s", error);
 
     csRef<iDocumentNode> root = doc->GetRoot();
     if(!root)
     {
-        Error2("Bad XML file %s",fileName);
+        Error2("Bad XML file %s", fileName);
         return false;
     }
     csRef<iDocumentNode> topNode = root->GetNode("prefs");
     if(!topNode)
     {
-        Error2("Missing <prefs> tag in %s",fileName);
+        Error2("Missing <prefs> tag in %s", fileName);
         return false;
     }
     csRef<iDocumentNodeIterator> iter = topNode->GetNodes();
@@ -102,7 +102,7 @@ bool pawsPrefManager::LoadPrefFile( const char* fileName )
             defaultScaledFont = graphics2D->GetFontServer()->LoadFont( defaultFontName, (size)?size:(float)DEFAULT_FONT_SIZE );
             if ( !defaultFont )
             {
-                Error2("Could not load font: >%s<", (const char*)defaultFontName );
+                Error2("Could not load font: >%s<", (const char*)defaultFontName);
                 return false;
             }
 

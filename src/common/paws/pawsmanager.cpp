@@ -521,22 +521,20 @@ bool PawsManager::HandleKeyDown( iEvent& event )
 bool PawsManager::HandleSelectionNotify( iEvent &/*ev*/ )
 {
     int result = false;
-    
-    Debug1(LOG_PAWS,0,"HandleSelectionNotify\n");
-    
+
     if ( currentFocusedWidget )
     {
         Display * dpy = xwin->GetDisplay();
         if (dpy == NULL)
         {
-            Error1("Failed to find display\n");
+            Error1("Failed to find display");
             return false;
         }
         
         Window w = xwin->GetWindow();
         if (w == 0)
         {
-            Error1("Failed to find window\n");    
+            Error1("Failed to find window");    
             return false;
         }
 
@@ -544,7 +542,7 @@ bool PawsManager::HandleSelectionNotify( iEvent &/*ev*/ )
 
         if (event.xselection.property == None)
         {
-            Error1("Asked format was denied\n");
+            Error1("Asked format was denied");
             return false;
         }
         else
@@ -559,8 +557,8 @@ bool PawsManager::HandleSelectionNotify( iEvent &/*ev*/ )
                                               &actualType, &actualFormat, &nitems, &bytesLeft,
                                               &clipData)) == Success)
             {
-                Debug6 (LOG_PAWS,0,"type:%i len:%lu format:%i byte_left:%lu %s\n", 
-                        (int)actualType, nitems, actualFormat, bytesLeft,clipData);
+                Debug6 (LOG_PAWS, 0, "Clipboard data: type: %i len: %lu format: %i byte_left: %lu %s", 
+                        (int)actualType, nitems, actualFormat, bytesLeft, clipData);
                 /*
                   if (actualType == atom_UTF8_STRING && actualFormat == 8)
                   {
