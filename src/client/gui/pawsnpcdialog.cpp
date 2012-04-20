@@ -188,12 +188,12 @@ bool pawsNpcDialogWindow::OnButtonPressed( int button, int keyModifier, pawsWidg
                 //if the system works well
                 csString trigger = questInfo.Get(displayIndex+widget->GetID()-100).trig;
                 csString text = questInfo.Get(displayIndex+widget->GetID()-100).text;
-                if(trigger.GetAt(0) == '=') // prompt window signal
+                /*if(trigger.GetAt(0) == '=') // prompt window signal
                 {
                     pawsStringPromptWindow::Create(csString(trigger.GetData()+1),
                         csString(""),
                         false, 320, 30, this, trigger.GetData()+1 );
-                }
+                }*/
                 if(trigger.GetAt(0) != '<')
                 {
                     csString cmd;
@@ -206,7 +206,7 @@ bool pawsNpcDialogWindow::OnButtonPressed( int button, int keyModifier, pawsWidg
                     gift.SendMessage();
                 }
                 DisplayTextBubbles(text.GetData());
-                textBox->Clear();
+                CleanBubbles();
                 PawsManager::GetSingleton().SetCurrentFocusedWidget(textBox);
             }
             else if(name == "CloseBubble")
@@ -329,7 +329,10 @@ void pawsNpcDialogWindow::LoadQuest(csString xmlstr)
             csRef<iDocumentNode> trg = cur->GetNode("trig");
             qi.text = txt->GetContentsValue();
             qi.trig = trg->GetContentsValue();
-            questInfo.Push(qi);
+            if(!qi.text.StartsWith("?="))
+            {
+                questInfo.Push(qi);
+            }
         }
     }
 
