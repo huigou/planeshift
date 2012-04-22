@@ -519,7 +519,7 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
 
         if ( this->resizeToScreen && scaleToScreen )
             fontSize *= PawsManager::GetSingleton().GetFontFactor();
-graphics2D->GetFontServer()->LoadFont(fontName,(fontSize)?fontSize:10);
+
         if(fontName.Length())
         {
             myFont = graphics2D->GetFontServer()->LoadFont(fontName, (fontSize)?fontSize:10);
