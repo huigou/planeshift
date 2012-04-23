@@ -244,7 +244,7 @@ bool pawsContainerDescWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModi
              oldID = oldtarget->GetEID();
         }
         
-        Debug3(LOG_PAWS, 0, "selecting containerID %d, oldID %d", containerID, oldID);
+        Debug3(LOG_PAWS, 0, "selecting containerID %d, oldID %u", containerID, oldID.Unbox());
         psUserActionMessage setnewtarget(0, containerID, "select");
         setnewtarget.SendMessage();
         
@@ -265,7 +265,7 @@ bool pawsContainerDescWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModi
              oldID = oldtarget->GetEID();
         }
         
-        Debug3(LOG_PAWS, 0, "selecting containerID %d, oldID %d", containerID, oldID);
+        Debug3(LOG_PAWS, 0, "selecting containerID %d, oldID %u", containerID, oldID.Unbox());
         psUserActionMessage setnewtarget(0, containerID, "select");
         setnewtarget.SendMessage();
         
@@ -317,7 +317,7 @@ bool pawsContainerDescWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModi
         {
              oldID = oldtarget->GetEID();
         }
-        Debug3(LOG_PAWS, 0, "selecting containerID %d, oldID %d", containerID, oldID);
+        Debug3(LOG_PAWS, 0, "selecting containerID %d, oldID %u", containerID, oldID.Unbox());
         psUserActionMessage setnewtarget(0, containerID, "select");
         setnewtarget.SendMessage();
 
