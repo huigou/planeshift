@@ -103,7 +103,7 @@
             </widget>
         </widget>
 
-        <widget name="SpeechBubble" factory="pawsWidget" visible="no">
+        <widget name="SpeechBubble" factory="pawsButton" visible="no">
             <frame x="30" y="80" width="331" height="207" border="no" />
             <bgimage resource="NPCSpeechBubble" />
 
