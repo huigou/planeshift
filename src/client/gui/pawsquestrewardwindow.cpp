@@ -62,7 +62,7 @@ bool pawsQuestRewardWindow::PostSetup()
     msgqueue->Subscribe(this, MSGTYPE_QUESTREWARD);
 
     rewardList  = (pawsListBox*)FindWidget("QuestRewardList");
-    
+
     return true;
 }
 
@@ -70,6 +70,14 @@ bool pawsQuestRewardWindow::PostSetup()
 const char* pawsQuestRewardWindow::HandleCommand(const char* /*cmd*/)
 {
     return NULL;
+}
+
+void pawsQuestRewardWindow::Show()
+{
+    pawsWidget::Show();
+
+    //we would like this window to stay always on top of others
+    SetModalState(true);
 }
 
 void pawsQuestRewardWindow::HandleMessage ( MsgEntry* me )
@@ -121,6 +129,7 @@ bool pawsQuestRewardWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifi
                 csString item = rewardList->GetTextCell(row, COLUMN_ID)->GetText();
                 psQuestRewardMessage message(0, item, psQuestRewardMessage::selectReward);
                 msgqueue->SendMessage(message.msg);
+                SetModalState(false);
                 Hide();
             }
             break;
