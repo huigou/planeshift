@@ -157,6 +157,7 @@ private:
     int             cameraMode;   ///< Stores the camera mode
     int             loadOnce;     ///< Stores if bubbles has been loaded
     bool enabledChatBubbles;      ///< Stores the state of chat bubbles.
+    bool clickedOnResponseBubble;  ///< flag when player clicks on the response bubble
 
     pawsListBox* responseList;
     pawsWidget* speechBubble;

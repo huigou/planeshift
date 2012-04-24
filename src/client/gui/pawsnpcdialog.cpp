@@ -53,6 +53,7 @@ pawsNpcDialogWindow::pawsNpcDialogWindow()
     cameraMode = 0;
     loadOnce = 0;
     enabledChatBubbles = true;
+    clickedOnResponseBubble = false;
 }
 
 bool pawsNpcDialogWindow::PostSetup()
@@ -81,13 +82,14 @@ bool pawsNpcDialogWindow::PostSetup()
 
 void pawsNpcDialogWindow::Draw()
 {
-    if(useBubbles && ticks != 0 && csGetTicks()-ticks > 12000)
-    {//let this dialog invisible after 12 secs when npc finishes his speech
-     //equal to the long chatbubble longphrase lenght for now.
+    // hide the response on click, then reload next set of answers.
+    if(useBubbles && clickedOnResponseBubble)
+    {
         speechBubble->Hide();
         FindWidget("FreeBubble")->Show();
         psengine->GetCmdHandler()->Execute("/npcmenu");
         ticks = 0;
+        clickedOnResponseBubble = false;
     }
 
     pawsWidget::Draw();
@@ -212,6 +214,9 @@ bool pawsNpcDialogWindow::OnButtonPressed( int button, int keyModifier, pawsWidg
             else if(name == "CloseBubble")
             {
                 Hide();
+            }
+            else if (name == "SpeechBubble") {
+                clickedOnResponseBubble = true;
             }
             else
             {
@@ -437,6 +442,9 @@ void pawsNpcDialogWindow::NpcSays(csArray<csString>& lines,GEMClientActor *actor
     {
         return;
     }
+
+    clickedOnResponseBubble = false;
+
     //display npc response
     if(IsVisible() && actor && psengine->GetCharManager()->GetTarget() == actor)
     {
@@ -564,6 +572,8 @@ void pawsNpcDialogWindow::CleanBubbles()
 {
     FindWidget("LeftArrow")->Hide();
     FindWidget("RightArrow")->Hide();
+    dynamic_cast<pawsMultiLineTextBox*>(speechBubble->FindWidget("BubbleText"))->SetText("");
+    FindWidget("SpeechBubble")->Hide();
     displayIndex = 0;
     questInfo.DeleteAll();
     DisplayQuest(0);
