@@ -1444,7 +1444,6 @@ csTicks NpcResponse::ExecuteScript(gemActor *player, gemNPC* target)
 
     for (size_t i=0; i<script.GetSize(); i++)
     {
-        printf("DEBUG: NpcResponse::ExecuteScript name: %s script: %s \n",script[i]->GetName(),script[i]->GetResponseScript().GetData());
         if (!script[i]->Run(target,player,this,timeDelay,voiceNumber))
         {
             csString resp = script[i]->GetResponseScript();
