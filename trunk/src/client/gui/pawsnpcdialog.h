@@ -101,10 +101,10 @@ public:
     /**
      * @brief Display NPC's chat text
      *
-     * @param lines Content that the NPC's chat text
+     * @param inText Content that the NPC's chat text
      * @param npcname The target NPC name
      */
-    void NpcSays(csArray<csString>& lines, GEMClientActor *actor);
+    void NpcSays(csString& inText, GEMClientActor *actor);
 
     /**
      * Handles timing to make bubbles disappear in the bubbles npc dialog mode.

@@ -36,6 +36,7 @@
 
 #include "effects/pseffectmanager.h"
 #include "effects/pseffect.h"
+#include "util/strutil.h"
 
 //=============================================================================
 // Local Includes
@@ -358,81 +359,28 @@ void psChatBubbles::HandleMessage(MsgEntry* msg, Client* /*client*/)
             type = subType;
     }
 
-    static csArray<psEffectTextRow> rowBuffer;
-    rowBuffer.Empty();
-
     // build the text rows
     csString inText = chatMsg.sText;
     if (chatWindow->GetSettings().enableBadWordsFilterIncoming) //check for badwords filtering
         chatWindow->BadWordsFilter(inText); //if enabled apply it
 
-    const size_t textLen = inText.Length();
-    const char * text = inText.GetData();  
-
-    psEffectTextRow chat = type->textSettings;
-
-    // create a row character by character while calculating word wrap
-    char line[256];
-    int linePos = 0;
+    // split text into lines with preferred max size
     int maxRowLen = 0;
-    int lastSpace = 0;
-    csArray<csString> lines;
-    for (a=0; a<textLen; ++a)
-    {
-        if (text[a] == ' ' && linePos == 0)
-            continue;
-      
-        if (text[a] == ' ')
-            lastSpace = linePos;
+    csArray<csString> lines = splitTextInLines(inText, bubbleMaxLineLen, maxRowLen);
 
-        line[linePos] = text[a];
-        ++linePos;
-
-        if (linePos < (int)bubbleMaxLineLen)
-            continue;
-      
-        if (lastSpace == 0)
-        {
-            line[linePos-1] = '-';
-            --a;
-        }
-        else if (text[a] != ' ')
-        {
-            a -= linePos - lastSpace;
-            linePos = lastSpace;
-        }
-
-        if (linePos > maxRowLen)
-            maxRowLen = linePos;
-
-        lastSpace = 0;
-        line[linePos] = 0;
-        linePos = 0;
-        chat.text = line;
+    // populates rowBuffer effect with lines
+    static csArray<psEffectTextRow> rowBuffer;
+    rowBuffer.Empty();
+    psEffectTextRow chat = type->textSettings;
+    for (size_t i = 0; i < lines.GetSize(); i++) {
+        chat.text = lines[i];
         rowBuffer.Push(chat);
-        lines.Push(line);
-    }     
-    if (linePos > 0)
-    {
-        if (linePos > maxRowLen)
-            maxRowLen = linePos;
-
-        line[linePos] = 0;
-        chat.text = line;
-        rowBuffer.Push(chat);
-        lines.Push(line);
     }
 
-
-    //TODO: THIS NEEDS TO BE MIGRATED IN THE NPCDIALOG AND HANDLED CORRECTLY
+    //checks if the NPC Dialogue is displayed, in this case don't show the normal overhead bubble
     pawsNpcDialogWindow *npcdialog = dynamic_cast<pawsNpcDialogWindow *>(psengine->GetMainWidget()->FindWidget("NPCDialogWindow"));
-    if(npcdialog)
-    {
-        npcdialog->NpcSays(lines, actor);
-        //checks if the NPC Dialogue is displayed, in this case don't show the normal overhead bubble
-        if (npcdialog->IsVisible())
-            return;
-    }
+    if (npcdialog->IsVisible())
+        return;
 
     // decide on good effect size
     csString effectName = type->effectPrefix;
