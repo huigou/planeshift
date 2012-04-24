@@ -83,14 +83,13 @@ bool pawsNpcDialogWindow::PostSetup()
 
 void pawsNpcDialogWindow::Draw()
 {
-    // hide the response on click, then reload next set of answers.
-    if(useBubbles && clickedOnResponseBubble)
-    {
+    if(useBubbles && ticks != 0 && csGetTicks()-ticks > 12000)
+    {//let this dialog invisible after 12 secs when npc finishes his speech
+     //equal to the long chatbubble longphrase lenght for now.
         speechBubble->Hide();
         FindWidget("FreeBubble")->Show();
         psengine->GetCmdHandler()->Execute("/npcmenu");
         ticks = 0;
-        clickedOnResponseBubble = false;
     }
 
     pawsWidget::Draw();
