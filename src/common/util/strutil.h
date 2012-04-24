@@ -173,5 +173,8 @@ csString toString(const csVector3& pos, iSector* sector);
 csString toString(const csMatrix3& mat);
 csString toString(const csTransform& trans);
 
+// split text into multiple lines. Used by chat bubbles
+csArray<csString> splitTextInLines(csString inText, size_t maxLineLength, int& maxRowLen);
+
 #endif
 

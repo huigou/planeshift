@@ -59,6 +59,7 @@ pawsNpcDialogWindow::pawsNpcDialogWindow()
 bool pawsNpcDialogWindow::PostSetup()
 {
     psengine->GetMsgHandler()->Subscribe( this, MSGTYPE_DIALOG_MENU );
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_CHAT);
 
     responseList = dynamic_cast<pawsListBox*>(FindWidget("ResponseList"));
     speechBubble = FindWidget("SpeechBubble");
@@ -432,10 +433,24 @@ void pawsNpcDialogWindow::HandleMessage( MsgEntry* me )
 
         AdjustForPromptWindow();
         Show();
+    } else if(me->GetType() == MSGTYPE_CHAT) {
+
+        psChatMessage chatMsg(me);
+
+        GEMClientActor* actor = dynamic_cast<GEMClientActor*> (psengine->GetCelClient()->FindObject(chatMsg.actor));
+        if (!actor)
+            return;
+
+        csString inText = chatMsg.sText;
+        NpcSays(inText, actor);
+
+        //checks if the NPC Dialogue is displayed, in this case don't show the normal overhead bubble
+        if (IsVisible())
+            return;
     }
 }
 
-void pawsNpcDialogWindow::NpcSays(csArray<csString>& lines,GEMClientActor *actor)
+void pawsNpcDialogWindow::NpcSays(csString& inText,GEMClientActor *actor)
 {
     //this is used only when using the chat bubbles interface
     if(!useBubbles)
@@ -448,12 +463,7 @@ void pawsNpcDialogWindow::NpcSays(csArray<csString>& lines,GEMClientActor *actor
     //display npc response
     if(IsVisible() && actor && psengine->GetCharManager()->GetTarget() == actor)
     {
-        csString all = "";
-        for (size_t i = 0 ; i < lines.GetSize() ; i++)
-        {
-            all += lines[i] + " ";
-        }
-        dynamic_cast<pawsMultiLineTextBox*>(speechBubble->FindWidget("BubbleText"))->SetText(all);
+        dynamic_cast<pawsMultiLineTextBox*>(speechBubble->FindWidget("BubbleText"))->SetText(inText.GetData());
         speechBubble->Show();
         FindWidget("Bubble1")->Hide();
         FindWidget("Bubble2")->Hide();

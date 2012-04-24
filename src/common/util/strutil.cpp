@@ -306,3 +306,58 @@ csString toString(const csTransform& trans)
     return toString(trans.GetO2T()) + " " + toString(trans.GetO2TTranslation());
 }
 
+csArray<csString> splitTextInLines(csString inText, size_t maxLineLength, int& maxRowLen) {
+
+    const size_t textLen = inText.Length();
+    const char * text = inText.GetData();
+
+    // create a row character by character while calculating word wrap
+    char line[256];
+    int linePos = 0;
+    int lastSpace = 0;
+    size_t a = 0;
+    csArray<csString> lines;
+    for (a=0; a<textLen; ++a)
+    {
+        if (text[a] == ' ' && linePos == 0)
+            continue;
+      
+        if (text[a] == ' ')
+            lastSpace = linePos;
+
+        line[linePos] = text[a];
+        ++linePos;
+
+        if (linePos < (int)maxLineLength)
+            continue;
+      
+        if (lastSpace == 0)
+        {
+            line[linePos-1] = '-';
+            --a;
+        }
+        else if (text[a] != ' ')
+        {
+            a -= linePos - lastSpace;
+            linePos = lastSpace;
+        }
+
+        if (linePos > maxRowLen)
+            maxRowLen = linePos;
+
+        lastSpace = 0;
+        line[linePos] = 0;
+        linePos = 0;
+        lines.Push(line);
+    }    
+    if (linePos > 0)
+    {
+        if (linePos > maxRowLen)
+            maxRowLen = linePos;
+
+        line[linePos] = 0;
+        lines.Push(line);
+    }
+
+    return lines;
+}
