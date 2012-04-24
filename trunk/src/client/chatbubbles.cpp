@@ -429,6 +429,9 @@ void psChatBubbles::HandleMessage(MsgEntry* msg, Client* /*client*/)
     if(npcdialog)
     {
         npcdialog->NpcSays(lines, actor);
+        //checks if the NPC Dialogue is displayed, in this case don't show the normal overhead bubble
+        if (npcdialog->IsVisible())
+            return;
     }
 
     // decide on good effect size
