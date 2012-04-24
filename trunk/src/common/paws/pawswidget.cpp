@@ -508,7 +508,7 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
         fontName = fontAttribute->GetAttributeValue("name");
 
         // Check if it's a short definition
-        if(!fontName.StartsWith("/") /*&& fontName.Length()*/)
+        if(!fontName.StartsWith("/") && fontName.Length())
         {
             fontName = PawsManager::GetSingleton().GetLocalization()->FindLocalizedFile("data/ttf/" + fontName);
         }
