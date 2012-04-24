@@ -2615,7 +2615,7 @@ void NpcDialogMenu::ShowMenu(Client *client,csTicks delay, gemNPC *npc)
     }
     else
     {
-        psserver->SendSystemError(client->GetClientNum(), "This NPC has no quest information for you.");
+        psserver->SendSystemError(client->GetClientNum(), "This NPC has no quests for you. Use free text to speak with him");
     }
 }
 
