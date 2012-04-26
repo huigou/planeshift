@@ -294,6 +294,8 @@ public:
 
     /**
      * Used by LoadHuntLocations() to spawn the hunt locations in game.
+     * @param result the result set to use for the spawm
+     * @param sectorinfo The sector to load in. NULL means all sectors.
      */
     void SpawnHuntLocations(Result &result, psSectorInfo *sectorinfo);
 
