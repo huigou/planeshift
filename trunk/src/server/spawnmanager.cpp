@@ -374,14 +374,19 @@ bool SpawnManager::LoadWaypointsAsSpawnRanges()
 void SpawnManager::LoadHuntLocations(psSectorInfo *sectorinfo)
 {
     csString query;
+    csString query_natres;
 
+    query = "SELECT h.*,i.name, s.name sectorname FROM sectors s, hunt_locations h JOIN item_stats i ON i.id = h.itemid WHERE s.id=h.sector";
+    query_natres = "SELECT s.name sectorname,loc_x x, loc_y y, loc_z z, item_id_reward itemid, \
+            'interval', max_random, n.id, amount, radius 'range', i.name \
+            FROM sectors s, natural_resources n JOIN item_stats i ON i.id = n.item_id_reward \
+            WHERE s.id=n.loc_sector_id and amount is not NULL";
+    
     if ( sectorinfo )
     {
-        query.Format("SELECT h.*,i.name FROM hunt_locations h JOIN item_stats i ON i.id = h.itemid WHERE sector='%s'",
-            sectorinfo->name.GetData());
+        query.AppendFmt(" and sector='%s'",sectorinfo->name.GetData());
+        query_natres.AppendFmt(" and n.loc_sector_id='%s'",sectorinfo->name.GetData());
     }
-    else
-        query = "SELECT h.*,i.name FROM hunt_locations h JOIN item_stats i ON i.id = h.itemid";
 
     Result result(db->Select(query));
 
@@ -391,10 +396,27 @@ void SpawnManager::LoadHuntLocations(psSectorInfo *sectorinfo)
         return;
     }
 
+    // Spawn hunt locations
+    SpawnHuntLocations(result, sectorinfo);
+
+    Result result_natres(db->Select(query_natres));
+    if (!result_natres.IsValid() )
+    {
+        Error2("Could not load hunt_locations from natural_resources table due to database error: %s\n", db->GetLastError());
+        return;
+    }
+
+    // Spawn hunt locations from natural res table
+    SpawnHuntLocations(result_natres, sectorinfo);
+
+}
+
+void SpawnManager::SpawnHuntLocations(Result &result, psSectorInfo *sectorinfo)
+{
     for (unsigned int i=0; i<result.Count(); i++)
     {
         // Get some vars to work with
-        csString sector = result[i]["sector"];
+        csString sector = result[i]["sectorname"];
         csVector3 pos(result[i].GetFloat("x"),result[i].GetFloat("y"),result[i].GetFloat("z"));
         uint32 itemid = result[i].GetUInt32("itemid");
         int interval = result[i].GetInt("interval");
@@ -404,7 +426,9 @@ void SpawnManager::LoadHuntLocations(psSectorInfo *sectorinfo)
         float range = result[i].GetFloat("range");
         csString name = result[i]["name"];
 
-        // Schdule the item spawn
+        Debug4(LOG_SPAWN,0,"Adding hunt location in sector %s %s %s.\n",sector.GetData(),toString(pos).GetData(),name.GetData() );
+
+        // Schedule the item spawn
         psSectorInfo *spawnsector=cacheManager->GetSectorInfoByName(sector);
 
         if (spawnsector==NULL)
@@ -1481,9 +1505,9 @@ psItemSpawnEvent::psItemSpawnEvent(psScheduledItem* item)
         return;
 
     schedule = item;
-    Notify3(LOG_SPAWN,"Spawning item (%u) in %d",item->GetItemID(),triggerticks -csGetTicks());
+    Notify4(LOG_SPAWN,"Spawning item (%u) in %d , sector: %s",item->GetItemID(),triggerticks -csGetTicks(), item->GetSector()->ToString());
 }
-
+    
 psItemSpawnEvent::~psItemSpawnEvent()
 {
     delete schedule;

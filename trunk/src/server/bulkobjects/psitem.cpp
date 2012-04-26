@@ -2630,7 +2630,7 @@ psItem* psScheduledItem::CreateItem() // Spawns the item
     if(wantToDie)
         return NULL;
 
-    Notify3(LOG_SPAWN,"Spawning item (%u) in instance %u.\n",itemID,worldInstance);
+    Notify4(LOG_SPAWN,"Spawning item (%u) in instance %u, sector: %s.\n",itemID,worldInstance, GetSector()->ToString());
 
     psItemStats *stats = psserver->GetCacheManager()->GetBasicItemStatsByID(itemID);
     if (stats==NULL)
