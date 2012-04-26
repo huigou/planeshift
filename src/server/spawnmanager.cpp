@@ -125,7 +125,7 @@ public:
 
         if ( dynamic_cast<psItem*>(item) == NULL )
         {
-            Error2("Item held in PendingLootPrompt with id %u has been lost",id);
+            Error2("Item held in PendingLootPrompt with id %u has been lost", id);
             return;
         }
 
@@ -224,7 +224,7 @@ void SpawnManager::PreloadLootRules()
     Result result(db->Select("select * from loot_rule_details where loot_rule_id>0"));
     if (!result.IsValid() )
     {
-        Error2("Could not load loot rule details due to database error: %s\n",
+        Error2("Could not load loot rule details due to database error: %s",
                db->GetLastError());
         return;
     }
@@ -254,7 +254,7 @@ void SpawnManager::PreloadLootRules()
 
         if (!entry->item && item_id != 0)
         {
-            Error2("Could not find specified loot item stat: %d\n",item_id );
+            Error2("Could not find specified loot item stat: %d", item_id );
             delete entry;
             continue;
         }
@@ -392,7 +392,7 @@ void SpawnManager::LoadHuntLocations(psSectorInfo *sectorinfo)
 
     if (!result.IsValid() )
     {
-        Error2("Could not load hunt_locations due to database error: %s\n", db->GetLastError());
+        Error2("Could not load hunt_locations due to database error: %s", db->GetLastError());
         return;
     }
 
@@ -433,7 +433,7 @@ void SpawnManager::SpawnHuntLocations(Result &result, psSectorInfo *sectorinfo)
 
         if (spawnsector==NULL)
         {
-            Error2("hunt_location failed to load, wrong sector: %s\n", sector.GetData() );
+            Error2("hunt_location failed to load, wrong sector: %s", sector.GetData() );
             continue;
         }
 
@@ -489,7 +489,7 @@ void SpawnManager::LoadSpawnRanges(SpawnRule *rule)
 
     if (!result.IsValid() )
     {
-        Error2("Could not load NPC spawn ranges due to database error: %s\n",
+        Error2("Could not load NPC spawn ranges due to database error: %s",
                db->GetLastError());
         return;
     }
@@ -527,7 +527,7 @@ void SpawnManager::PreloadDatabase()
                  "  from npc_spawn_rules"));
     if (!result.IsValid() )
     {
-        Error2("Could not load NPC spawn rules due to database error: %s\n",
+        Error2("Could not load NPC spawn rules due to database error: %s",
                db->GetLastError());
         return;
     }
@@ -567,7 +567,7 @@ void SpawnManager::RepopulateLive(psSectorInfo *sectorinfo)
     chardatalist = psServer::CharacterLoader.LoadAllNPCCharacterData(sectorinfo,count);
     if (chardatalist==NULL)
     {
-        Error1("No NPCs found to repopulate.\n");
+        Error1("No NPCs found to repopulate.");
         return;
     }
 
@@ -625,7 +625,7 @@ void SpawnManager::RepopulateItems(psSectorInfo *sectorinfo)
             {
                 if (!container->AddToContainer(item,NULL,item->GetLocInParent()))
                 {
-                    Error2("Cannot add item into container slot %i.\n",item->GetLocInParent());
+                    Error2("Cannot add item into container slot %i.\n", item->GetLocInParent());
                     delete item;
                 }
                 item->SetLoaded();
@@ -770,7 +770,7 @@ void SpawnManager::RemoveNPC(gemObject *obj)
 
     if (obj->GetCharacterData()==NULL)
     {
-        Error2("Character data for npc character %s was not found! Entity stays dead.\n", ShowID(pid));
+        Error2("Character data for npc character %s was not found! Entity stays dead.", ShowID(pid));
         return;
     }
 
@@ -787,11 +787,11 @@ void SpawnManager::RemoveNPC(gemObject *obj)
     {
         if (spawnruleid == 0) // spawnruleid 0 is for non-respawning NPCs
         {
-            Notify2(LOG_SPAWN,"Temporary NPC based on player ID %s has died. Entity stays dead.\n", ShowID(pid));
+            Notify2(LOG_SPAWN,"Temporary NPC based on player ID %s has died. Entity stays dead.", ShowID(pid));
         }
         else
         {
-            Error3("Respawn rule for player %s, rule %d was not found! Entity stays dead.\n", ShowID(pid), spawnruleid);
+            Error3("Respawn rule for player %s, rule %d was not found! Entity stays dead.", ShowID(pid), spawnruleid);
         }
 
         // Remove mesh, etc from engine
@@ -820,7 +820,7 @@ void SpawnManager::Respawn(PID playerID, SpawnRule* spawnRule)
     psCharacter *chardata=psServer::CharacterLoader.LoadCharacterData(playerID,false);
     if (chardata==NULL)
     {
-        Error2("Character %s to be respawned does not have character data to be loaded!\n", ShowID(playerID));
+        Error2("Character %s to be respawned does not have character data to be loaded!", ShowID(playerID));
         return;
     }
 
@@ -861,7 +861,7 @@ void SpawnManager::Respawn(psCharacter* chardata, InstanceID instance, csVector3
     psSectorInfo* spawnsector = cacheManager->GetSectorInfoByName(sector);
     if (spawnsector==NULL)
     {
-        Error2("Spawn message indicated unresolvable sector '%s'\n",sector);
+        Error2("Spawn message indicated unresolvable sector '%s'", sector);
         return;
     }
 
@@ -889,20 +889,20 @@ void SpawnManager::HandleLootItem(MsgEntry *me,Client *client)
     gemObject *object = gem->FindObject(msg.entity);
     if (!object)
     {
-        Error3("LootItem Message from %s specified an erroneous entity id: %s.\n", client->GetName(), ShowID(msg.entity));
+        Error3("LootItem Message from %s specified an erroneous entity id: %s.", client->GetName(), ShowID(msg.entity));
         return;
     }
 
     gemActor *obj = object->GetActorPtr();
     if (!obj)
     {
-        Error3("LootItem Message from %s specified a non-actor entity id: %s.\n", client->GetName(), ShowID(msg.entity));
+        Error3("LootItem Message from %s specified a non-actor entity id: %s.", client->GetName(), ShowID(msg.entity));
         return;
     }
     psCharacter *chr = obj->GetCharacterData();
     if (!chr)
     {
-        Error3("LootItem Message from %s specified a non-character entity id: %s.\n", client->GetName(), ShowID(msg.entity));
+        Error3("LootItem Message from %s specified a non-character entity id: %s.", client->GetName(), ShowID(msg.entity));
         return;
     }
 
@@ -917,7 +917,7 @@ void SpawnManager::HandleLootItem(MsgEntry *me,Client *client)
     if (!item)
     {
         // Take this out because it is just the result of duplicate loot commands due to lag
-        //Warning3(LOG_COMBAT,"LootItem Message from %s specified bad item id of %d.\n",client->GetName(), msg.lootitem);
+        //Warning3(LOG_COMBAT,"LootItem Message from %s specified bad item id of %d.",client->GetName(), msg.lootitem);
         return;
     }
 
@@ -930,7 +930,7 @@ void SpawnManager::HandleLootItem(MsgEntry *me,Client *client)
         randfriendclient = obj->GetRandomLootClient(RANGE_TO_LOOT*10);
         if (!randfriendclient)
         {
-            Error3("GetRandomLootClient failed for loot msg from %s, object %s.\n", client->GetName(), item->GetName() );
+            Error3("GetRandomLootClient failed for loot msg from %s, object %s.", client->GetName(), item->GetName() );
             return;
         }
     }

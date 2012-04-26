@@ -206,7 +206,7 @@ psItem::~psItem()
 
     if (item_in_use)
     {
-        Error2("Item %s is being deleted while in use!\n", GetName() );
+        Error2("Item %s is being deleted while in use!", GetName() );
     }
 
     if (schedule)
@@ -1532,7 +1532,7 @@ psItem *psItem::Copy(unsigned short newstackcount)
 
 void psItem::Copy(psItem * target)
 {
-    Notify3(LOG_USER,"Copying item '%s' clone it.  Owner is %s.\n", GetName(),
+    Notify3(LOG_USER,"Copying item '%s' clone it.  Owner is %s.", GetName(),
            owning_character ? owning_character->GetCharName() : "None" );
 
     // The location in world is the same
@@ -1605,7 +1605,7 @@ psItem *psItem::SplitStack(unsigned short newstackcount)
     // Adjust stack count of source
     SetStackCount(stack_count-newstackcount);
 
-    Notify2(LOG_USER,"Split Stack to make a new stack of %d items.\n", newstackcount);
+    Notify2(LOG_USER,"Split Stack to make a new stack of %d items.", newstackcount);
 
     return newitem;
 }
@@ -2460,7 +2460,7 @@ csString psItem::GetOpenableLockNames()
             gemItem* lockItem = psserver->entitymanager->GetGEM()->FindItemEntity( idNum );
             if (!lockItem)
             {
-                Error2("Can not find genItem for lock instance ID %u.\n", idNum);
+                Error2("Can not find genItem for lock instance ID %u.", idNum);
                 return openableLocksString;
             }
 
@@ -2468,7 +2468,7 @@ csString psItem::GetOpenableLockNames()
             psItem* item = lockItem->GetItem();
             if ( !item )
             {
-                Error2("Invalid ItemID from gemItem for instance ID %u.\n", idNum);
+                Error2("Invalid ItemID from gemItem for instance ID %u.", idNum);
                 return openableLocksString;
             }
             openableLocksString.Append(item->GetName());
@@ -2630,12 +2630,12 @@ psItem* psScheduledItem::CreateItem() // Spawns the item
     if(wantToDie)
         return NULL;
 
-    Notify4(LOG_SPAWN,"Spawning item (%u) in instance %u, sector: %s.\n",itemID,worldInstance, GetSector()->ToString());
+    Notify4(LOG_SPAWN,"Spawning item (%u) in instance %u, sector: %s.",itemID,worldInstance, GetSector()->ToString());
 
     psItemStats *stats = psserver->GetCacheManager()->GetBasicItemStatsByID(itemID);
     if (stats==NULL)
     {
-        Error2("Could not find basic stats with ID %u for item spawn.\n",itemID);
+        Error2("Could not find basic stats with ID %u for item spawn.",itemID);
     }
     else
     {
@@ -2753,7 +2753,7 @@ void psItem::ScheduleRemoval()
     psItemRemovalEvent *event = new psItemRemovalEvent(REMOVAL_INTERVAL_MINIMUM + randomized_interval, this->uid );
     psserver->GetEventManager()->Push(event);
 
-    Notify2(LOG_USER,"Scheduling removal of object for %d ticks from now.\n",
+    Notify2(LOG_USER,"Scheduling removal of object for %d ticks from now.",
      REMOVAL_INTERVAL_MINIMUM + randomized_interval);
 }
 
