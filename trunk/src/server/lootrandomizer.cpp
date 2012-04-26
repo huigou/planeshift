@@ -290,7 +290,29 @@ void LootRandomizer::AddModifier( LootModifier *oper1, LootModifier *oper2 )
     oper1->equip_script.Append(oper2->equip_script);
 }
 
-bool LootRandomizer::SetAttribute(const csString & op, const csString & attrName, float modifier, RandomizedOverlay* overlay, psItemStats* baseItem)
+bool LootRandomizer::SetAttributeApplyOP(float* value[], float modifier, size_t amount,  const csString &op)
+{
+    // Operations  = ADD, MUL, SET
+    for (int i = 0; i < amount; i++)
+    {
+        if (op.CompareNoCase("ADD"))
+        {
+            if (value[i]) *value[i] += modifier;
+        }
+
+        else if (op.CompareNoCase("MUL"))
+        {
+            if (value[i]) *value[i] *= modifier;
+        }
+
+        else if (op.CompareNoCase("VAL"))
+        {
+            if (value[i]) *value[i] = modifier;
+        }
+    }
+}
+
+bool LootRandomizer::SetAttribute(const csString & op, const csString & attrName, float modifier, RandomizedOverlay* overlay, psItemStats* baseItem, csArray<ValueModifier> &values)
 {
     float* value[3] = { NULL, NULL, NULL };
     // Attribute Names:
@@ -310,6 +332,22 @@ bool LootRandomizer::SetAttribute(const csString & op, const csString & attrName
 
     csString AttributeName(attrName);
     AttributeName.Downcase();
+    if(AttributeName.StartsWith("var."))
+    {
+        //if var. was found we have a script variable
+        //parse it and place it in the array which will be used later
+        //to handle those variables.
+        ValueModifier val;
+
+        //start the name of the variable after var.
+        val.name = attrName.Slice(4);
+        val.value = modifier;
+        val.op = op;
+        
+        //add the variable to the array
+        values.Push(val);
+        return true;
+    }
     if ( AttributeName.Compare( "item.weight" ) )
     {
         overlay->weight = baseItem->GetWeight();
@@ -367,28 +405,10 @@ bool LootRandomizer::SetAttribute(const csString & op, const csString & attrName
         value[0] = &overlay->damageStats[PSITEMSTATS_DAMAGETYPE_BLUNT];
     }
 
-    // Operations  = ADD, MUL, SET
-    for (int i = 0; i < 3; i++)
-    {
-        if (op.CompareNoCase("ADD"))
-        {
-            if (value[i]) *value[i] += modifier;
-        }
-
-        if (op.CompareNoCase("MUL"))
-        {
-            if (value[i]) *value[i] *= modifier;
-        }
-
-        if (op.CompareNoCase("VAL"))
-        {
-            if (value[i]) *value[i] = modifier;
-        }
-    }
+    SetAttributeApplyOP(value, modifier, 3, op);
 
     return true;
 }
-
 
 void LootRandomizer::ApplyModifier(psItemStats* baseItem, RandomizedOverlay* overlay, csArray<uint32_t>& modifierIds)
 {
@@ -397,6 +417,7 @@ void LootRandomizer::ApplyModifier(psItemStats* baseItem, RandomizedOverlay* ove
     //set up default mod data
     mod.cost_modifier = 1;
     mod.name = baseItem->GetName();
+    csArray<ValueModifier> variableValues;
 
     //creates the full lootmodifier from the ids being applied.
     //0 should be left empty in the database as it acts as NO HIT.
@@ -409,7 +430,7 @@ void LootRandomizer::ApplyModifier(psItemStats* baseItem, RandomizedOverlay* ove
             if(partialModifier)
             {
                 overlay->active = true;
-                AddModifier(&mod,partialModifier);
+                AddModifier(&mod, partialModifier);
             }
         }
     }
@@ -463,7 +484,7 @@ void LootRandomizer::ApplyModifier(psItemStats* baseItem, RandomizedOverlay* ove
         csString EffectName = node->GetAttribute("name")->GetValue();
         float EffectValue = node->GetAttribute("value")->GetValueAsFloat();
         //Add to the Attributes
-        if (!SetAttribute(EffectOp, EffectName, EffectValue, overlay, baseItem))
+        if (!SetAttribute(EffectOp, EffectName, EffectValue, overlay, baseItem, variableValues))
         {
             // display error and continue
             Error2("Unable to set attribute %s on new loot item.",EffectName.GetData());
@@ -513,8 +534,7 @@ void LootRandomizer::ApplyModifier(psItemStats* baseItem, RandomizedOverlay* ove
     // Apply equip script
     if (!mod.equip_script.IsEmpty())
     {
-        csString scriptXML;
-        scriptXML.Format("<apply aim=\"Actor\" name=\"%s\" type=\"buff\">%s</apply>", mod.name.GetData(), mod.equip_script.GetData());
+        csString scriptXML = GenerateScriptXML(mod.name, mod.equip_script, variableValues);
         overlay->equip_script = ApplicativeScript::Create(psserver->entitymanager, psserver->GetCacheManager(), scriptXML);
     }
     
@@ -522,6 +542,72 @@ void LootRandomizer::ApplyModifier(psItemStats* baseItem, RandomizedOverlay* ove
     if(!CS::IsNaN(overlay->latency) && overlay->latency < 1.5F)
         overlay->latency = 1.5F;
 }
+
+csString LootRandomizer::GenerateScriptXML(csString &name, csString &equip_script, csArray<ValueModifier> &values)
+{
+    csString scriptXML = "";
+    csHash<float, csString> results;
+    //parse the values and try to find the default values for all variables
+    //and put them in the hash in order to simplify access.
+    for(size_t i = 0; i < values.GetSize(); ++i)
+    {
+        //Do it only for the VAL references which identify a default value.
+        if(values[i].op.CompareNoCase("VAL"))
+        {
+            results.PutUnique(values[i].name, values[i].value);
+            //delete the entry as we don't need it anymore, in order to reduce the
+            //amount of items to check later
+            values.DeleteIndex(i);
+            //reduce the index as we have removed an item
+            i--;
+        }
+    }
+    //then do all the others operation entries, in order of definition.
+    for(size_t i = 0; i < values.GetSize(); ++i)
+    {
+        //first of all check if the item is available in its default value
+        //if it's not we are ignoring the operation as the variable is not
+        //defined.
+        if(results.Contains(values[i].name))
+        {
+            //we don't check for null as at this point it's safe the presence
+            //of the variable in the hash (due to the check of contains).
+            float* value[1] = {results.GetElementPointer(values[i].name)};
+            SetAttributeApplyOP(value, values[i].value, 1, values[i].op);
+        }
+        else
+        {
+            Error2("Unable to find base value for variable %s", values[i].name.GetData());
+        }
+    }
+
+    //if we have any variable defined we add their definition on top of the script.
+    //By defining each variable in a <let> entry for the script. It will be skipped
+    //if no variables are defined.
+    if(!results.IsEmpty())
+    {
+        scriptXML.Format("<let vars=\"");
+        csHash<float, csString>::GlobalIterator it = results.GetIterator();
+        while(it.HasNext())
+        {
+            csTuple2<float, csString> entry = it.NextTuple();
+            scriptXML.AppendFmt("%s = %f;", entry.second.GetData(), entry.first);
+        }
+        scriptXML.AppendFmt("\">");
+    }
+
+    //now copy the body of the script containing the equip script from the random loot entries.
+    scriptXML.AppendFmt("<apply aim=\"Actor\" name=\"%s\" type=\"buff\">%s</apply>", name.GetData(), equip_script.GetData());
+
+    //if we added the <let> we need to close it.
+    if(!results.IsEmpty())
+    {
+        scriptXML.AppendFmt("</let>");
+    }
+
+    return scriptXML;
+}
+
 
 LootModifier *LootRandomizer::GetModifier(uint32_t id)
 {

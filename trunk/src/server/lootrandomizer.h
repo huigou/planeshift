@@ -41,6 +41,17 @@ struct LootModifier
     csHash<bool, uint32> itemRestrain; ///< Contains if the itemid is allowed or not. item id 0 means all items, false means disallowed.
 };
 
+/**
+ * This structure contains the parsed data from Attributes
+ * recarding script variables.
+ */
+struct ValueModifier
+{
+    csString name;  ///< The name of the variable.
+    csString op;    ///< The operation parsed for this reference to the variable ADD, MUL, VAL (VAL is the default value, at least one is needed).
+    float value;    ///< The value to apply to the variable through the requested operation in op.
+};
+
 class MathScript;
 /**
  * This class stores an array of LootModifiers and randomizes
@@ -107,8 +118,28 @@ private:
      *  @param modifier The amount to change of the attribute (right operand, left operand is the basic attribute)
      *  @param overlay The randomization overlay where we are applying these attributes.
      *  @param baseItem The base item of the item we are applying these attributes to
+     *  @param values An array which will be filled with the variables defined as attribute (var.Name). It's important the name
+     *                starts with an Uppercase letter because of mathscript restrains.
      */
-    bool SetAttribute(const csString & op, const csString & attrName, float modifier, RandomizedOverlay* overlay, psItemStats* baseItem);
+    bool SetAttribute(const csString & op, const csString & attrName, float modifier, RandomizedOverlay* overlay, psItemStats* baseItem, csArray<ValueModifier> &values);
+
+    /**
+     * Sets the attributes in the passed float array according to the passed parameters.
+     * @param value An array of pointers to floats containing the value to be modified.
+     * @param modifier The amount to apply through all the array values.
+     * @param amount The size of the passed array of pointers.
+     * @param op The specifier of the operation to fullfill: ADD, MUL, VAL.
+     */
+    bool SetAttributeApplyOP(float* value[], float modifier, size_t amount, const csString &op);
+
+    /**
+     * Generates the equip script amended with the defined variables.
+     * @param name The name of the item.
+     * @param equip_script The inner equip script defined in the equip_script column of the database.
+     * @param values An array of values parsed from the set attributes which will be used to add in the
+     *               equip_script environment those variables.
+     */
+    csString GenerateScriptXML(csString &name, csString &equip_script, csArray<ValueModifier> &values);
 };
 
 #endif
