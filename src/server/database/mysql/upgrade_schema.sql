@@ -1708,6 +1708,31 @@ ALTER TABLE sc_npctypes ADD COLUMN `template` int(1) unsigned NOT NULL default '
 UPDATE `server_options` SET `option_value`='1265' WHERE `option_name`='db_version';
 ALTER TABLE sc_waypoint_aliases ADD COLUMN `rotation_angle` float NOT NULL default '0.0' COMMENT 'The direction to face when stopping at WP for NPCs.' AFTER `alias`;
 
+#
+# Changed hunt_locations.sector to hold the id instead of the name 1266
+#
+UPDATE `server_options` SET `option_value`='1266' WHERE `option_name`='db_version';
+
+# Changing the data with the sector ID (based only on the locations we have in the db now)
+UPDATE hunt_locations set sector=77 where sector='gugrontid';
+UPDATE hunt_locations set sector=22 where sector='ojaroad1';
+UPDATE hunt_locations set sector=15 where sector='hydlaa_plaza';
+UPDATE hunt_locations set sector=20 where sector='hybdr1';
+UPDATE hunt_locations set sector=60 where sector='bdroad1';
+UPDATE hunt_locations set sector=39 where sector='magicshopout';
+UPDATE hunt_locations set sector=21 where sector='hybdr2';
+UPDATE hunt_locations set sector=67 where sector='bdoorsout';
+UPDATE hunt_locations set sector=59 where sector='ojaroad2';
+UPDATE hunt_locations set sector=61 where sector='bdroad2';
+UPDATE hunt_locations set sector=72 where sector='hydlaa_winch';
+UPDATE hunt_locations set sector=3 where sector='NPCroom';
+
+ALTER TABLE hunt_locations MODIFY COLUMN `sector` int(10) unsigned NOT NULL default '0';
+ALTER TABLE natural_resources ADD COLUMN `amount` int(10) unsigned default NULL COMMENT 'if not null, items will be spawned as hunt_location';
+ALTER TABLE natural_resources ADD COLUMN `interval` int(11) NOT NULL default '0' COMMENT 'if amount not null, msec interval for spawning item when picked up';
+ALTER TABLE natural_resources ADD COLUMN `max_random` int(11) NOT NULL default '0' COMMENT 'Maximum random interval modifier in msecs';
+
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to

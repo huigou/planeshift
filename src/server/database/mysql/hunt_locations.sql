@@ -16,7 +16,7 @@ CREATE TABLE `hunt_locations` (
   `itemid` int(10) NOT NULL default '0',
   `interval` int(11) NOT NULL default '0',
   `max_random` int(11) NOT NULL default '0',
-  `sector` varchar(30) NOT NULL default '',
+  `sector` int(10) unsigned NOT NULL default '0',
   `amount` int(10) unsigned NOT NULL default '1',
   `range` double(10,2) unsigned NOT NULL default '0.00',
   PRIMARY KEY  (`id`)
@@ -26,7 +26,7 @@ COMMENT = 'Areas to spawn items, like apples or mushrooms';
 #
 # Dumping data for table 'hunt_locations'
 #
-INSERT INTO `hunt_locations` VALUES (1, '-16.60', '-0.01', '-171.90', 91, 4000, 0, 'NPCroom', 1, '0.00');
+INSERT INTO `hunt_locations` VALUES (1, '27.60', '-0.01', '-190', 91, 4000, 0, 3, 2, '5.00');
 
 
 

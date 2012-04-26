@@ -293,6 +293,11 @@ public:
     void LoadHuntLocations(psSectorInfo *sectorinfo = 0);
 
     /**
+     * Used by LoadHuntLocations() to spawn the hunt locations in game.
+     */
+    void SpawnHuntLocations(Result &result, psSectorInfo *sectorinfo);
+
+    /**
      * Called at server startup to create all creatures currently marked as
      * "living" in the database.  This will restore the server to its last
      * known NPC population if it crashes.
