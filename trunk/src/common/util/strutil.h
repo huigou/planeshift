@@ -173,7 +173,12 @@ csString toString(const csVector3& pos, iSector* sector);
 csString toString(const csMatrix3& mat);
 csString toString(const csTransform& trans);
 
-// split text into multiple lines. Used by chat bubbles
+/**
+ * Split text into multiple lines. Used by chat bubbles
+ * @param inText text to split
+ * @param maxLineLength max length you want the rows to be created
+ * @param maxRowLen the resulting max length after the split
+ */ 
 csArray<csString> splitTextInLines(csString inText, size_t maxLineLength, int& maxRowLen);
 
 #endif
