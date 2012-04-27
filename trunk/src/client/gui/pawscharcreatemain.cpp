@@ -395,6 +395,11 @@ void pawsCreationMain::ChangeFace( int newFace )
     else
         faceLabel->SetText(PawsManager::GetSingleton().Translate("Face"));
 
+    //wait for the face to load
+    while(!view->ContinueLoad(true))
+    {
+        csSleep(100);
+    }
 }
 
 
