@@ -310,6 +310,8 @@ bool LootRandomizer::SetAttributeApplyOP(float* value[], float modifier, size_t 
             if (value[i]) *value[i] = modifier;
         }
     }
+
+    return true;
 }
 
 bool LootRandomizer::SetAttribute(const csString & op, const csString & attrName, float modifier, RandomizedOverlay* overlay, psItemStats* baseItem, csArray<ValueModifier> &values)
