@@ -167,7 +167,7 @@ INSERT INTO progression_events VALUES ('charcreate_224','<script><cha aim="Actor
 
 
 
-INSERT INTO progression_events VALUES("drink_potion",'<script><hp aim="Actor" value="10"/><msg aim="Actor" text="You drink an healing potion and feel better."/></script>');
+INSERT INTO progression_events VALUES("drink_potion",'<script><mstamina aim="Actor" value="10+(Quality/20)"/><apply aim="Actor" type="buff" name="potion Buff" duration="240000"><end value="-6"/><skill name="Brown Way" value="2+(Quality/20)"/><msg text="You drink the potion and feel weird."/></apply></script>');
 INSERT INTO progression_events VALUES("drink_poison",'<script><hp aim="Actor" value="-20"/><msg aim="Actor" text="You drink some poison and feel bad."/></script>');
 INSERT INTO progression_events VALUES("BuffPotionWILL",'<script><apply aim="Actor" type="buff" name="Will Potion" duration="120000"><wil value="5"/><msg text="You drink a will potion." undo="The will potion wears off."/></apply></script>');
 INSERT INTO progression_events VALUES('drink_speed_potion','<script><msg aim="Actor" text="drink_speed_potion not implemented. I know, it makes me sad too."/></script>');
