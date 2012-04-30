@@ -545,8 +545,12 @@ void LootRandomizer::ApplyModifier(psItemStats* baseItem, RandomizedOverlay* ove
 
 csString LootRandomizer::GenerateScriptXML(csString &name, csString &equip_script, csArray<ValueModifier> &values)
 {
-    csString scriptXML = "";
+    csString scriptXML;
     csHash<float, csString> results;
+
+    //prepare the heading of the apply script
+    scriptXML.Format("<apply aim=\"Actor\" name=\"%s\" type=\"buff\">", name.GetData());
+    
     //parse the values and try to find the default values for all variables
     //and put them in the hash in order to simplify access.
     for(size_t i = 0; i < values.GetSize(); ++i)
@@ -586,24 +590,18 @@ csString LootRandomizer::GenerateScriptXML(csString &name, csString &equip_scrip
     //if no variables are defined.
     if(!results.IsEmpty())
     {
-        scriptXML.Format("<let vars=\"");
+        scriptXML.AppendFmt("<let vars=\"");
         csHash<float, csString>::GlobalIterator it = results.GetIterator();
         while(it.HasNext())
         {
             csTuple2<float, csString> entry = it.NextTuple();
             scriptXML.AppendFmt("%s = %f;", entry.second.GetData(), entry.first);
         }
-        scriptXML.AppendFmt("\">");
+        scriptXML.AppendFmt("\" />");
     }
 
     //now copy the body of the script containing the equip script from the random loot entries.
-    scriptXML.AppendFmt("<apply aim=\"Actor\" name=\"%s\" type=\"buff\">%s</apply>", name.GetData(), equip_script.GetData());
-
-    //if we added the <let> we need to close it.
-    if(!results.IsEmpty())
-    {
-        scriptXML.AppendFmt("</let>");
-    }
+    scriptXML.AppendFmt("%s</apply>", equip_script.GetData());
 
     return scriptXML;
 }

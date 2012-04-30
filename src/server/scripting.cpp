@@ -791,6 +791,39 @@ protected:
     CacheManager* cachemanager;
 };
 
+/**
+ * LetAOp - a way to evaluate MathScript stuff and create new bindings:
+ *
+ * <let vars="Roll = 300;" />
+ *   (Roll will be defined here, till the end of the apply block.)
+ * 
+ * @note this works by modifying the environment of the applicative script.
+ */
+class LetAOp : public AppliedOp
+{
+public:
+    LetAOp() : AppliedOp(), bindings(NULL) { }
+    virtual ~LetAOp()
+    {
+        if (bindings)
+            delete bindings;
+    }
+
+    bool Load(iDocumentNode* node)
+    {
+        bindings = MathScript::Create("<let> bindings", node->GetAttributeValue("vars"));
+        return bindings;
+    }
+
+    virtual void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
+    {
+        bindings->Evaluate(env);
+    }
+
+protected:
+    MathScript* bindings; /// an embedded MathScript containing new bindings
+};
+
 //============================================================================
 // Applicative script implementation (progression script applied mode)
 //============================================================================
@@ -948,6 +981,10 @@ ApplicativeScript* ApplicativeScript::Create(EntityManager* entitymanager, Cache
         else if (elem == "on")
         {
             op = new OnAOp(entitymanager, cachemanager);
+        }
+        else if (elem == "let")
+        {
+            op = new LetAOp;
         }
         else
         {
