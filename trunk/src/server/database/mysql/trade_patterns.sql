@@ -30,3 +30,6 @@ INSERT INTO trade_patterns VALUES(4,'hammer head',0,125,4.00,'Casting a Hammer H
 INSERT INTO trade_patterns VALUES(5,'avil',0,127,4.00,'Casting an Anvil');
 INSERT INTO trade_patterns VALUES(6,'wayoutbread',0,0,8.00,'Baking Wayoutbread');
 INSERT INTO trade_patterns VALUES(7,'flame weapon',0,0,8.00,'Flaming weapon');
+
+-- Advanced crafting
+INSERT INTO `trade_patterns` VALUES (458,'Enchant Gem',99999,3034,4,'Enchant Gem Pattern');

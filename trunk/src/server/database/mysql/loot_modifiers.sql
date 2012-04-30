@@ -35,3 +35,6 @@ INSERT INTO loot_modifiers VALUES (9,'adjective','Scratched','<ModiferEffect ope
 INSERT INTO loot_modifiers VALUES (10,'suffix','of Purity','<ModiferEffect operation="mul" name="item.damage" value="1.30" />',10,'<StatReq name="STR" value="130" /><StatReq name="END" value="130" />',1.7,'','','','<str value="10"/><hp-max value="10"/>');
 INSERT INTO loot_modifiers VALUES (11,'suffix','of Steel','<ModiferEffect operation="mul" name="item.damage" value="1.80" />',45,'<StatReq name="END" value="150" />',2,'','','','<str value="10"/><hp-max value="10"/>');
 
+-- Advanced crafting
+INSERT INTO loot_modifiers VALUES (12,'prefix','Greater','<ModiferEffect operation="MUL" name="var.Myvar" value="2" />',0,'',1,'','','','');
+INSERT INTO loot_modifiers VALUES (13,'adjective','Luminous','<ModiferEffect operation="VAL" name="var.Myvar" value="1" />',0,'',1,'','','','<str value="10*Myvar"/><hp-max value="10*Myvar"/>');

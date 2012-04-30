@@ -276,218 +276,29 @@ INSERT INTO math_scripts VALUES( "Calc Item Merchant Price Sell", "Result = Item
 INSERT INTO math_scripts VALUES( "Calculate Dynamic Experience", "Exp = 0;");
 
 INSERT INTO math_scripts VALUES( "Calculate Transformation Apply Skill",
-"// just return for processless transforms
-if(Process:IsNull())
+"
+// just return for processless transforms
+if(!Process:IsValid())
 {
     if(Secure)
     {
-        Worker:SendSystemInfo(''Processless transforms give no practice points or quality change.'',0);
+        Worker:SendSystemInfo('Processless transforms give no practice points or quality change.',0);
     }
     exit = 1;
 }
 
-// Check for a primary skill
-StartingQuality = Quality;
-if(Secure)
-{
-   Worker:SendSystemInfo(''Starting quality calculation with quality %f.'', 1, StartingQuality);
-}
+Time = 10;
+Quality = 100;
 PriSkill = Process:PrimarySkillId;
+PriPoints = Process:PrimarySkillPracticePoints;
 
-// Increase quality for crafted item based on if the starting quality was less then the normal quality
-BaseObject = Object:GetBaseItem();
-BaseQuality = BaseObject:Quality;
-
-//should be >=
-if(PriSkill > 0)
-{
-    if(Quality > BaseQuality)
-    {
-        // Add the transfromation items base quality to the current quality as a crafting bonus
-        if(Secure)
-        {
-            Worker:SendSystemInfo(''Primary skill add crafting bonus of item base quality %f.'', 1, BaseQuality);
-        }
-        Quality = Quality + BaseQuality;
-    }
-    else
-    {
-        // Double the current quality as a crafting bonus
-        if(Secure)
-        {
-            Worker:SendSystemInfo(''Primary skill double current quality.'');
-        }
-        Quality = Quality * 2;
-    }
-
-    // Get the players skill level using the transformations primary skill
-    BasePriSkill = Worker:GetSkillValue(PriSkill);
-    MaxPriSkill = Process:MaxPrimarySkill;
-
-    // Get the quality factor for this primary skill
-    //  and only use it if in range.
-    // This value represents what percentage of the effect of skills should be
-    //  applied to the quality calculation for this transformation
-    PriQualFactor = Process:PrimarySkillQualityFactor/100.00;
-    if((PriQualFactor > 0.00) & (PriQualFactor < 1.00))
-    {
-        // For quality considerations cap the base skill
-        //  at the max skill for this transformation.
-        CapPriSkill =  min(MaxPriSkill, BasePriSkill);
-
-        // Calculate the lack of skill as a percentage of the capped skill over the skill range.
-        // Since this is a lack of skill percentage subtract it from 1.
-        MinPriSkill = Process:MinPrimarySkill();
-        PriSkillLessPercent = 0;
-        if((MaxPriSkill-MinPriSkill)>0)
-        {
-            PriSkillLessPercent = 1 - ((CapPriSkill-MinPriSkill)/(MaxPriSkill-MinPriSkill));
-            if(Secure)
-            {
-                Worker:SendSystemInfo(''Primary skill base level %d and max process level %d gives capped skill level %d.'', 3, BasePriSkill, MaxPriSkill, CapPriSkill);
-                Worker:SendSystemInfo(''Min process level %d gives skill percent %f.'', 2, MinPriSkill, PriSkillLessPercent);
-            }
-        }
-
-        // Calculate the effect of the quality factor for this skill by the skill level
-        // Subtract it as a percentage from the current ingredient quality
-        Quality = Quality-(StartingQuality * PriSkillLessPercent * PriQualFactor);
-        if(Secure)
-        {
-            Worker:SendSystemInfo(''Current quality reduced to %f by starting quality %f times skill percent %f times process quality factor %f.'', 4, Quality, StartingQuality, PriSkillLessPercent, PriQualFactor);
-        }
-    }
-
-    // Only give primary experience to those under the max
-    if( BasePriSkill < MaxPriSkill )
-    {
-        // Get some practice in
-        PriPoints = Process:PrimarySkillPracticePoints;
-        if(AmountModifier)
-        {
-            PriPoints = PriPoints*(1+(Object:StackCount-1)*0.1);
-        }
-        Worker:CalculateAddExperience(PriSkill, PriPoints, 1);
-        if(Secure)
-        {
-            Worker:SendSystemInfo(''Giving practice points %d to skill %d.'', 2, PriPoints, PriSkill);
-        }
-    }
-
-    // Apply the secondary skill if any
-    SecSkill = Process:SecondarySkillId;
-    //should be >=
-    if(SecSkill > 0)
-    {
-        if(Quality > BaseQuality)
-        {
-            // Add the transfromation items base quality to the current quality as a crafting bonus
-            if(Secure)
-            {
-                Worker:SendSystemInfo(''Secondary skill add crafting bonus of item base quality %f.'', 1, BaseQuality);
-            }
-            Quality = Quality + BaseQuality;
-        }
-        else
-        {
-            // Double the current quality as a crafting bonus
-            if(Secure)
-            {
-                Worker:SendSystemInfo(''Secondary skill double current quality.'');
-            }
-            Quality = Quality * 2;
-        }
-
-        BaseSecSkill = Worker:GetSkillValue(SecSkill);
-        MaxSecSkill = Process:MaxSecondarySkill;
-
-        // Get the quality factor for this secmary skill
-        //  and only use it if in range.
-        SecQualFactor = Process:SecondarySkillQualityFactor/100.00;
-        if((SecQualFactor > 0.00) & (SecQualFactor < 1.00))
-        {
-            // For quality considerations cap the base skill
-            //  at the max skill for this transformation.
-            CapSecSkill = min(MaxSecSkill, BaseSecSkill);
-
-            // Calculate the lack of skill as a percentage of the capped skill over the skill range.
-            // Since this is a lack of skill percentage subtract it from 1.
-            MinSecSkill = Process:MinSecondarySkill();
-            SecSkillLessPercent = 0;
-            if((MaxSecSkill-MinSecSkill) > 0)
-            {
-                SecSkillLessPercent = 1 - ((CapSecSkill-MinSecSkill)/(MaxSecSkill-MinSecSkill));
-                if(Secure)
-                {
-                    Worker:SendSystemInfo(''Secondary skill base level %d and max process level %d gives capped skill level %d.'', 3, BaseSecSkill, MaxSecSkill, CapSecSkill);
-                    Worker:SendSystemInfo(''Min process level %d gives skill percent %f.'', 2, MinSecSkill, SecSkillLessPercent);
-                }
-            }
-
-            // Calculate the effect of the quality factor for this skill by the skill level
-            Quality = Quality - (StartingQuality * SecSkillLessPercent * SecQualFactor);
-            if(Secure)
-            {
-                Worker:SendSystemInfo(''Current quality reduced to %f by starting quality %f times skill percent %f times process quality factor %f.'', 4, Quality, StartingQuality, SecSkillLessPercent, SecQualFactor);
-            }
-        }
-
-        // Only give secondary experience to those under the max
-        if( BaseSecSkill < MaxSecSkill )
-        {
-            // Get some practice in
-            SecPoints = Process:SecondarySkillPracticePoints();
-            if(AmountModifier)
-            {
-                SecPoints = SecPoints*(1+(Object:GetStackCount-1)*0.1);
-            }
-            Worker:CalculateAddExperience(SecSkill, SecPoints, 1);
-            if(Secure)
-            {
-                Worker:SendSystemInfo(''Giving practice points %d to skill %d.'',2, SecPoints, SecSkill);
-            }
-        }
-    }
-
-    // Randomize the final quality results
-    // We are using a logrithmic calculation so that normally there is little quality change
-    //  except at the edges of the random distribution.
-    // Use a pattern specific factor to determine the curve at the edges
-    Roll = rnd(1);
-    ExpFactor = Factor*log((1/Roll)-1);
-    Quality = Quality -((Quality*ExpFactor)/100);
-    if(Secure) 
-    {
-        Worker:SendSystemInfo(''Applying random effect changes quality to %f using factor %f on roll %f.'', 3, Quality, ExpFactor, Roll);
-    }
-}
-else
-{
-    if(Secure)
-    {
-        Worker:SendSystemInfo(''This transform gives no practice points or quality change.'', 0);
-    }
-}
-
-// Adjust the final quality with the transformation quality factor
-Quality = Quality * Transform:ItemQualityPenaltyPercent;
+Worker:CalculateAddExperience(PriSkill, PriPoints, 1);
 if(Secure)
 {
-    Worker:SendSystemInfo(''Applying transformation penalty %f changes quality to %f.'', 2, Transform:ItemQualityPenaltyPercent,Quality);
+    Worker:SendSystemInfo(''Giving practice points %d to skill %d.'', 2, PriPoints, PriSkill);
 }
 
-// Check for range
-Quality = min(999, Quality);
-
-// Fail if it''s worst then worse
-if(Quality < 10)
-{
-    Quality = 0;
-    if(Secure)
-    {
-        Worker:SendSystemInfo(''Failed quality check.  Creating garbage item.'', 0);
-    }
-}");
+" );
 
 INSERT INTO math_scripts VALUES( "Calculate Transformation Time",
 "if(Transform:ItemQuantity & Transform:ItemID != 0 & Transform:ResultItemID != 0)
@@ -710,4 +521,15 @@ INSERT INTO math_scripts VALUES( "NocturnalNight",
 } else
 {
    Result = 0.0;
+}" );
+
+INSERT INTO math_scripts VALUES( "trade_enchant_gem",
+"// arrow glyph
+CurrentGlyph = Worker:GetItem(0);
+CurrentGlyphItem = CurrentGlyph:GetBaseItem();
+CurrentGlyphId = CurrentGlyphItem:Id;
+Worker:SendSystemInfo('GLYPH ID %f.', 1, CurrentGlyphId);
+if (CurrentGlyphId=13) {
+NewItem:SetItemModifier(0,12);
+NewItem:SetItemModifier(1,13);
 }" );
