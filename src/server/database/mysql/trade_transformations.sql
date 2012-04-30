@@ -58,3 +58,6 @@ INSERT INTO trade_transformations VALUES(28,6,10,69,1,76,1,1,0.400000,'You mix w
 INSERT INTO trade_transformations VALUES(29,6,11,134,1,69,1,1,0.400000,'You kneed wayoutbread batter into dough.');
 INSERT INTO trade_transformations VALUES(30,6,11,80,1,134,1,1,0.400000,'You bake wayoutbread dough into wayoutbread.');
 INSERT INTO trade_transformations VALUES(31,7,12,73,1,0,0,1,1.000000,'You bake anything and it turns into dust.');
+
+-- Advanced crafting
+INSERT INTO `trade_transformations` VALUES (9739,458,652,673,1,673,1,30,1,'Enchant Ruby Crystal');
