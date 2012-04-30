@@ -92,13 +92,22 @@ public:
      *  @param cost The maximum "cost" of the randomization we can apply @see CalcModifierCostCap
      *  @param lootTesting Says if we really are applying the modifiers.
      *  @param numModifiers Forces the amount of modifiers to apply.
+     *  @return A pointer to the resulting item (it's the same pointer which was passed to the function).
      */
     psItem* RandomizeItem( psItem* item,
                                 float cost,
                                 bool lootTesting = false,
                                 size_t numModifiers = 0 );
 
+    /**
+     * Runs the LootModifierCap mathscript and returns the result, used
+     * by other function to determine if a modifier can be added.
+     * 
+     * @param chr The psCharacter which is being analyzed.
+     * @return A number determining the cost cap for the random modifiers.
+     */
     float CalcModifierCostCap(psCharacter *chr);
+
     /** Applies modifications to a randomized overlay depending on the requested ids.
      *  @param baseItem The basic item which will have the overlay generated for.
      *  @param overlay A pointer to the overlay where we will save the modifications to apply to this item.
@@ -107,8 +116,8 @@ public:
     void ApplyModifier(psItemStats* baseItem, RandomizedOverlay* overlay, csArray<uint32_t>& modifiersIds);
 
 protected:
-    csWeakRef<MathScript> modifierCostCalc;
-    CacheManager* cacheManager;
+    csWeakRef<MathScript> modifierCostCalc; ///<A cached reference to the LootModifierCap math script.
+    CacheManager* cacheManager; ///<A reference to the cachemanager.
 
 private:
     void AddModifier( LootModifier *oper1, LootModifier *oper2 );
@@ -120,6 +129,7 @@ private:
      *  @param baseItem The base item of the item we are applying these attributes to
      *  @param values An array which will be filled with the variables defined as attribute (var.Name). It's important the name
      *                starts with an Uppercase letter because of mathscript restrains.
+     *  @return TRUE if the operation succeded.
      */
     bool SetAttribute(const csString & op, const csString & attrName, float modifier, RandomizedOverlay* overlay, psItemStats* baseItem, csArray<ValueModifier> &values);
 
@@ -130,7 +140,7 @@ private:
      * @param amount The size of the passed array of pointers.
      * @param op The specifier of the operation to fullfill: ADD, MUL, VAL.
      */
-    bool SetAttributeApplyOP(float* value[], float modifier, size_t amount, const csString &op);
+    void SetAttributeApplyOP(float* value[], float modifier, size_t amount, const csString &op);
 
     /**
      * Generates the equip script amended with the defined variables.
@@ -138,6 +148,7 @@ private:
      * @param equip_script The inner equip script defined in the equip_script column of the database.
      * @param values An array of values parsed from the set attributes which will be used to add in the
      *               equip_script environment those variables.
+     * @return The generated script to be used as equip_script.
      */
     csString GenerateScriptXML(csString &name, csString &equip_script, csArray<ValueModifier> &values);
 };
