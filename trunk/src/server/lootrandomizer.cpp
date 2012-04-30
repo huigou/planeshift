@@ -290,7 +290,7 @@ void LootRandomizer::AddModifier( LootModifier *oper1, LootModifier *oper2 )
     oper1->equip_script.Append(oper2->equip_script);
 }
 
-bool LootRandomizer::SetAttributeApplyOP(float* value[], float modifier, size_t amount,  const csString &op)
+void LootRandomizer::SetAttributeApplyOP(float* value[], float modifier, size_t amount,  const csString &op)
 {
     // Operations  = ADD, MUL, SET
     for (int i = 0; i < amount; i++)
@@ -310,8 +310,6 @@ bool LootRandomizer::SetAttributeApplyOP(float* value[], float modifier, size_t 
             if (value[i]) *value[i] = modifier;
         }
     }
-
-    return true;
 }
 
 bool LootRandomizer::SetAttribute(const csString & op, const csString & attrName, float modifier, RandomizedOverlay* overlay, psItemStats* baseItem, csArray<ValueModifier> &values)
