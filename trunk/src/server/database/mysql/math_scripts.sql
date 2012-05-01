@@ -235,7 +235,7 @@ ResultPractice = if(Success, 1, 0);
 ResultModifier = if(Success, 25, 2);
 ");
 
-INSERT INTO math_scripts VALUES( "Calculate Trasformation Experience",
+INSERT INTO math_scripts VALUES( "Calculate Transformation Experience",
 "
 Exp = if(StartQuality < CurrentQuality, 2*(CurrentQuality-StartQuality), 0);
 ");
@@ -295,7 +295,7 @@ PriPoints = Process:PrimarySkillPracticePoints;
 Worker:CalculateAddExperience(PriSkill, PriPoints, 1);
 if(Secure)
 {
-    Worker:SendSystemInfo(''Giving practice points %d to skill %d.'', 2, PriPoints, PriSkill);
+    Worker:SendSystemInfo('Giving practice points %d to skill %d.', 2, PriPoints, PriSkill);
 }
 
 " );
@@ -528,7 +528,9 @@ INSERT INTO math_scripts VALUES( "trade_enchant_gem",
 CurrentGlyph = Worker:GetItem(0);
 CurrentGlyphItem = CurrentGlyph:GetBaseItem();
 CurrentGlyphId = CurrentGlyphItem:Id;
-Worker:SendSystemInfo('GLYPH ID %f.', 1, CurrentGlyphId);
+WorkItem=OldItem:GetBaseItem();
+WorkItemId=WorkItem:Id;
+Worker:SendSystemInfo('GLYPH ID %f. Object ID: %f', 1, CurrentGlyphId, WorkItemId);
 if (CurrentGlyphId=13) {
 NewItem:SetItemModifier(0,12);
 NewItem:SetItemModifier(1,14);
