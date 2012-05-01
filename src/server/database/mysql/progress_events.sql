@@ -176,7 +176,7 @@ INSERT INTO progression_events VALUES('create_familiar','<script><create-familia
 INSERT INTO progression_events VALUES('fire_damage','<script><hp aim="Actor" value="-6"/><msg aim="Actor" text="You touch the ingots and your hand is burned!"/></script>');
 INSERT INTO progression_events VALUES('healing_tree','<script><hp aim="Actor" value="6"/><msg aim="Actor" text="Walking near the tree you feel refreshed!"/></script>');
 INSERT INTO progression_events VALUES('morph_ulbernaut','<script><apply aim="Actor" type="buff" name="Ulberform" duration="60000"><race value="ulbernaut" sex="n"/><msg text="You turn into a lumbering giant!" undo="Your ulbernaut form wears off."/></apply></script>');
-INSERT INTO progression_events VALUES('stronglegs','<script><msg aim="Actor" text="stronglegs not implemented."/></script>');
+INSERT INTO progression_events VALUES('usevariables','<script><let vars="Dmg = Actor:GetVariableValueInt(\'Myvariable\')"><hp aim="Actor" value="Dmg"/><msg aim="Actor" text="You have been healed ${Dmg} points as the variable says. If zero, equip a sword of variables!"/></let></script>');
 INSERT INTO progression_events VALUES('rain','<script><msg aim="Actor" text="rain not implemented."/></script>');
 -- I don't think we can do the original Nitroglycerin effect anymore. :(
 -- We'd need to have consume scripts list an AOE spell rather than a script directly.
@@ -243,3 +243,4 @@ INSERT INTO progression_events VALUES("vegeta",
          </then>
        </if>
      </script>');
+

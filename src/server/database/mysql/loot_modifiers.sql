@@ -38,3 +38,4 @@ INSERT INTO loot_modifiers VALUES (11,'suffix','of Steel','<ModiferEffect operat
 -- Advanced crafting
 INSERT INTO loot_modifiers VALUES (12,'prefix','Greater','<ModiferEffect operation="MUL" name="var.Myvar" value="2" />',0,'',1,'','','','');
 INSERT INTO loot_modifiers VALUES (13,'adjective','Luminous','<ModiferEffect operation="VAL" name="var.Myvar" value="1" />',0,'',1,'','','','<str value="10*Myvar"/><hp-max value="10*Myvar"/>');
+INSERT INTO loot_modifiers VALUES (14,'suffix','of Raistlin','<ModiferEffect operation="VAL" name="var.Myvar" value="1" />',0,'',1,'','','','<agi value="10*Myvar"/>');

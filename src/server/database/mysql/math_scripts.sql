@@ -531,5 +531,6 @@ CurrentGlyphId = CurrentGlyphItem:Id;
 Worker:SendSystemInfo('GLYPH ID %f.', 1, CurrentGlyphId);
 if (CurrentGlyphId=13) {
 NewItem:SetItemModifier(0,12);
-NewItem:SetItemModifier(1,13);
+NewItem:SetItemModifier(1,14);
+NewItem:SetItemModifier(2,13);
 }" );
