@@ -530,7 +530,7 @@ CurrentGlyphItem = CurrentGlyph:GetBaseItem();
 CurrentGlyphId = CurrentGlyphItem:Id;
 WorkItem=OldItem:GetBaseItem();
 WorkItemId=WorkItem:Id;
-Worker:SendSystemInfo('GLYPH ID %f. Object ID: %f', 1, CurrentGlyphId, WorkItemId);
+Worker:SendSystemInfo('GLYPH ID %f. Object ID: %f', 2, CurrentGlyphId, WorkItemId);
 if (CurrentGlyphId=13) {
 NewItem:SetItemModifier(0,12);
 NewItem:SetItemModifier(1,14);
