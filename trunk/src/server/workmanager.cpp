@@ -137,7 +137,7 @@ WorkManager::WorkManager(CacheManager* cachemanager, EntityManager* entitymanage
     psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_repair_exp, "Calculate Repair Experience");
     psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_mining_chance, "Calculate Mining Odds");
     psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_mining_exp, "Calculate Mining Experience");
-    psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_transform_exp, "Calculate Trasformation Experience");
+    psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_transform_exp, "Calculate Transformation Experience");
     psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_lockpick_time, "Lockpicking Time");
     psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_transform_apply_skill, "Calculate Transformation Apply Skill");
     psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_transform_time, "Calculate Transformation Time");
@@ -149,7 +149,7 @@ WorkManager::WorkManager(CacheManager* cachemanager, EntityManager* entitymanage
     CS_ASSERT_MSG("Could not load mathscript 'Calculate Repair Experience'", calc_repair_exp.IsValid());
     CS_ASSERT_MSG("Could not load mathscript 'Calculate Mining Odds'", calc_mining_chance.IsValid());
     CS_ASSERT_MSG("Could not load mathscript 'Calculate Mining Experience'", calc_mining_exp.IsValid());
-    CS_ASSERT_MSG("Could not load mathscript 'Calculate Trasformation Experience'", calc_transform_exp.IsValid());
+    CS_ASSERT_MSG("Could not load mathscript 'Calculate Transformation Experience'", calc_transform_exp.IsValid());
     CS_ASSERT_MSG("Could not load mathscript 'Lockpicking Time'", calc_lockpick_time);
     //optional for now
     //CS_ASSERT_MSG("Could not load mathscript 'Calculate Transformation Apply Skill'", calc_transform_apply_skill);
