@@ -6,17 +6,15 @@
         <bgimage resource="Loading Background" />
 
         <widget name="loadtext" factory="pawsMessageTextBox" >
-            <frame x="30" y="160" width="295" height="80" border="no" />
+            <frame x="350" y="575" width="295" height="80" border="no" />
             <font name="cupandtalon.ttf" r="180" g="180" b="180" size="10" shadow="yes" resizetoscreen="yes" />
         </widget>
         <widget name="motd" factory="pawsMultiLineTextBox" >
-            <frame x="30" y="240" width="295" height="100" />
-        </widget>
-        <widget name="guildmotd" factory="pawsMultiLineTextBox" >
-            <frame x="30" y="350" width="295" height="100" border="no" />
+            <frame x="100" y="10" width="600" height="20" />
+            <bgimage resource="Scaling Field Background" />
         </widget>
         <widget name="tip" factory="pawsMultiLineTextBox" >
-            <frame x="460" y="450" width="310" height="100" border="no" />
+            <frame x="100" y="525" width="600" height="30" border="no" />
         <bgimage resource="Scaling Field Background" />
         </widget>
         <widget name="Progress" factory="pawsProgressBar" style="Scaling Progressbar">

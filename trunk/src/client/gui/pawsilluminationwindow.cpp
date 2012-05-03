@@ -555,8 +555,8 @@ void pawsSketchWindow::OnStringEntered(const char* name, int /*param*/, const ch
             objlist[selectedIndex]->Select(false);
         }
 
-        int x = (ScreenFrame().xmax - ScreenFrame().xmin)/2;
-        int y = (ScreenFrame().ymax - ScreenFrame().ymin)/2;
+        int x = (GetScreenFrame().xmax - GetScreenFrame().xmin)/2;
+        int y = (GetScreenFrame().ymax - GetScreenFrame().ymin)/2;
         SketchText *text = new SketchText(x,y,value,this);
         selectedIndex = objlist.Push(text);
         objlist[selectedIndex]->Select(true);
@@ -614,8 +614,8 @@ void pawsSketchWindow::AddSketchLine()
         return;
     }
 
-    int x = (ScreenFrame().xmax - ScreenFrame().xmin)/2;
-    int y = (ScreenFrame().ymax - ScreenFrame().ymin)/2;
+    int x = (GetScreenFrame().xmax - GetScreenFrame().xmin)/2;
+    int y = (GetScreenFrame().ymax - GetScreenFrame().ymin)/2;
     int x2 = x + 50;
     int y2 = y + 50;
 
@@ -631,8 +631,8 @@ void pawsSketchWindow::AddSketchBezier()
         sysMsg.FireEvent();
         return;
     }
-    int x = (ScreenFrame().xmax - ScreenFrame().xmin)/2 -50;
-    int y = (ScreenFrame().ymax - ScreenFrame().ymin)/2 -50;
+    int x = (GetScreenFrame().xmax - GetScreenFrame().xmin)/2 -50;
+    int y = (GetScreenFrame().ymax - GetScreenFrame().ymin)/2 -50;
 
     // deselect the previous object, if any
     if (selectedIndex != SIZET_NOT_FOUND)
@@ -659,8 +659,8 @@ void pawsSketchWindow::AddSketchIcon()
 
     // printf("Adding sketch icon now.\n");
 
-    int x = (ScreenFrame().xmax - ScreenFrame().xmin)/2;
-    int y = (ScreenFrame().ymax - ScreenFrame().ymin)/2;
+    int x = (GetScreenFrame().xmax - GetScreenFrame().xmin)/2;
+    int y = (GetScreenFrame().ymax - GetScreenFrame().ymin)/2;
 
     // deselect the previous object, if any
     if (selectedIndex != SIZET_NOT_FOUND)
@@ -1017,8 +1017,8 @@ void pawsSketchWindow::SketchIcon::Draw()
     {
         // replacing the mouse cursor with the icon flickers and makes the icon jump.
         //if (!parent->IsMouseDown() || !selected)
-            iconImage->Draw(parent->GetActualWidth(x) + parent->ScreenFrame().xmin,
-                            parent->GetActualHeight(y) + parent->ScreenFrame().ymin,
+            iconImage->Draw(parent->GetActualWidth(x) + parent->GetScreenFrame().xmin,
+                            parent->GetActualHeight(y) + parent->GetScreenFrame().ymin,
                             parent->GetActualWidth(iconImage->GetWidth()),
                             parent->GetActualHeight(iconImage->GetHeight()));
     }
@@ -1029,7 +1029,7 @@ void pawsSketchWindow::SketchIcon::Draw()
 
 bool pawsSketchWindow::SketchIcon::IsHit(int mouseX, int mouseY)
 {
-    csRect rect = parent->ScreenFrame();
+    csRect rect = parent->GetScreenFrame();
     rect.xmin += parent->GetActualWidth(x);
     rect.ymin += parent->GetActualHeight(y);
     rect.xmax = rect.xmin + iconImage->GetWidth();
@@ -1091,14 +1091,14 @@ void pawsSketchWindow::SketchText::Draw()
         if(color == -1)
         {
             parent->DrawWidgetText(str,
-                               parent->GetActualWidth(x)+parent->ScreenFrame().xmin,
-                               parent->GetActualHeight(y)+parent->ScreenFrame().ymin);
+                               parent->GetActualWidth(x)+parent->GetScreenFrame().xmin,
+                               parent->GetActualHeight(y)+parent->GetScreenFrame().ymin);
         }
         else
         {
             parent->DrawColorWidgetText(str,
-                               parent->GetActualWidth(x)+parent->ScreenFrame().xmin,
-                               parent->GetActualHeight(y)+parent->ScreenFrame().ymin,
+                               parent->GetActualWidth(x)+parent->GetScreenFrame().xmin,
+                               parent->GetActualHeight(y)+parent->GetScreenFrame().ymin,
                                color);
 
         }
@@ -1109,7 +1109,7 @@ void pawsSketchWindow::SketchText::Draw()
 
 bool pawsSketchWindow::SketchText::IsHit(int mouseX, int mouseY)
 {
-    csRect rect = parent->ScreenFrame();
+    csRect rect = parent->GetScreenFrame();
     rect.xmin += parent->GetActualWidth(x);
     rect.ymin += parent->GetActualHeight(y);
 
@@ -1191,23 +1191,23 @@ void pawsSketchWindow::SketchLine::Draw()
     showSecondBox = (showBoxes || dragMode == 1);
 
 
-    graphics2D->DrawLine( parent->GetActualWidth(x)+parent->ScreenFrame().xmin,
-                          parent->GetActualHeight(y)+parent->ScreenFrame().ymin,
-                          parent->GetActualWidth(x2)+parent->ScreenFrame().xmin,
-                          parent->GetActualHeight(y2)+parent->ScreenFrame().ymin,
+    graphics2D->DrawLine( parent->GetActualWidth(x)+parent->GetScreenFrame().xmin,
+                          parent->GetActualHeight(y)+parent->GetScreenFrame().ymin,
+                          parent->GetActualWidth(x2)+parent->GetScreenFrame().xmin,
+                          parent->GetActualHeight(y2)+parent->GetScreenFrame().ymin,
                           _color );
 
     //if (parent->IsMouseDown() || !selected || frame > 15)
     //{
     if(showFirstBox)
     {
-        parent->DrawBlackBox(parent->GetActualWidth(x)+parent->ScreenFrame().xmin-3,
-                             parent->GetActualHeight(y)+parent->ScreenFrame().ymin-3);
+        parent->DrawBlackBox(parent->GetActualWidth(x)+parent->GetScreenFrame().xmin-3,
+                             parent->GetActualHeight(y)+parent->GetScreenFrame().ymin-3);
     }
     if(showSecondBox)
     {
-        parent->DrawBlackBox(parent->GetActualWidth(x2)+parent->ScreenFrame().xmin-3,
-                             parent->GetActualHeight(y2)+parent->ScreenFrame().ymin-3);
+        parent->DrawBlackBox(parent->GetActualWidth(x2)+parent->GetScreenFrame().xmin-3,
+                             parent->GetActualHeight(y2)+parent->GetScreenFrame().ymin-3);
     }
     //}
     if (selected)
@@ -1216,7 +1216,7 @@ void pawsSketchWindow::SketchLine::Draw()
 
 bool pawsSketchWindow::SketchLine::IsHit(int mouseX, int mouseY)
 {
-    csRect rect = parent->ScreenFrame();
+    csRect rect = parent->GetScreenFrame();
     mouseX -= rect.xmin;
     mouseY -= rect.ymin;
 
@@ -1414,30 +1414,30 @@ void pawsSketchWindow::SketchBezier::Draw()
         // main line: blue
         if(!p0p3.selected)
         {
-             graphics2D->DrawLine( parent->GetActualWidth(p0p3.x)+parent->ScreenFrame().xmin,
-                              parent->GetActualHeight(p0p3.y)+parent->ScreenFrame().ymin,
-                              parent->GetActualWidth(p0p3.x2)+parent->ScreenFrame().xmin,
-                              parent->GetActualHeight(p0p3.y2)+parent->ScreenFrame().ymin,
+             graphics2D->DrawLine( parent->GetActualWidth(p0p3.x)+parent->GetScreenFrame().xmin,
+                              parent->GetActualHeight(p0p3.y)+parent->GetScreenFrame().ymin,
+                              parent->GetActualWidth(p0p3.x2)+parent->GetScreenFrame().xmin,
+                              parent->GetActualHeight(p0p3.y2)+parent->GetScreenFrame().ymin,
                               blue );
         }
 
         // Handle 1: green
         if(!p0p1.selected)
         {
-             graphics2D->DrawLine( parent->GetActualWidth(p0p1.x)+parent->ScreenFrame().xmin,
-                              parent->GetActualHeight(p0p1.y)+parent->ScreenFrame().ymin,
-                              parent->GetActualWidth(p0p1.x2)+parent->ScreenFrame().xmin,
-                              parent->GetActualHeight(p0p1.y2)+parent->ScreenFrame().ymin,
+             graphics2D->DrawLine( parent->GetActualWidth(p0p1.x)+parent->GetScreenFrame().xmin,
+                              parent->GetActualHeight(p0p1.y)+parent->GetScreenFrame().ymin,
+                              parent->GetActualWidth(p0p1.x2)+parent->GetScreenFrame().xmin,
+                              parent->GetActualHeight(p0p1.y2)+parent->GetScreenFrame().ymin,
                               green );
         }
 
         // Handle 2: green
         if(!p3p2.selected)
         {
-             graphics2D->DrawLine( parent->GetActualWidth(p3p2.x)+parent->ScreenFrame().xmin,
-                              parent->GetActualHeight(p3p2.y)+parent->ScreenFrame().ymin,
-                              parent->GetActualWidth(p3p2.x2)+parent->ScreenFrame().xmin,
-                              parent->GetActualHeight(p3p2.y2)+parent->ScreenFrame().ymin,
+             graphics2D->DrawLine( parent->GetActualWidth(p3p2.x)+parent->GetScreenFrame().xmin,
+                              parent->GetActualHeight(p3p2.y)+parent->GetScreenFrame().ymin,
+                              parent->GetActualWidth(p3p2.x2)+parent->GetScreenFrame().xmin,
+                              parent->GetActualHeight(p3p2.y2)+parent->GetScreenFrame().ymin,
                               green );
         }
     }
@@ -1485,10 +1485,10 @@ void pawsSketchWindow::SketchBezier::Draw()
             segY = (int)(fsegY + 0.5);
         }
 
-        graphics2D->DrawLine( parent->GetActualWidth(segX)+parent->ScreenFrame().xmin,
-                          parent->GetActualHeight(segY)+parent->ScreenFrame().ymin,
-                          parent->GetActualWidth(segX1)+parent->ScreenFrame().xmin,
-                          parent->GetActualHeight(segY1)+parent->ScreenFrame().ymin,
+        graphics2D->DrawLine( parent->GetActualWidth(segX)+parent->GetScreenFrame().xmin,
+                          parent->GetActualHeight(segY)+parent->GetScreenFrame().ymin,
+                          parent->GetActualWidth(segX1)+parent->GetScreenFrame().xmin,
+                          parent->GetActualHeight(segY1)+parent->GetScreenFrame().ymin,
                           _color );
     }
 
@@ -1503,10 +1503,10 @@ void pawsSketchWindow::SketchBezier::Draw()
         segX = p3p2.x;
         segY = p3p2.y;
     }
-    graphics2D->DrawLine( parent->GetActualWidth(segX)+parent->ScreenFrame().xmin,
-                          parent->GetActualHeight(segY)+parent->ScreenFrame().ymin,
-                          parent->GetActualWidth(segX1)+parent->ScreenFrame().xmin,
-                          parent->GetActualHeight(segY1)+parent->ScreenFrame().ymin,
+    graphics2D->DrawLine( parent->GetActualWidth(segX)+parent->GetScreenFrame().xmin,
+                          parent->GetActualHeight(segY)+parent->GetScreenFrame().ymin,
+                          parent->GetActualWidth(segX1)+parent->GetScreenFrame().xmin,
+                          parent->GetActualHeight(segY1)+parent->GetScreenFrame().ymin,
                           _color );
 }
 
@@ -1551,7 +1551,7 @@ bool pawsSketchWindow::SketchBezier::IsHit(int mouseX, int mouseY)
 void pawsSketchWindow::SketchLine::UpdatePosition(int _x, int _y)
 {
     int dx, dy, newX, newY, newX2, newY2;
-    csRect rect = parent->ScreenFrame();
+    csRect rect = parent->GetScreenFrame();
 
     rect.xmax -= rect.xmin;
     rect.ymax -= rect.ymin;
@@ -1656,7 +1656,7 @@ void pawsSketchWindow::SketchBezier::UpdatePosition(int _x, int _y)
 
 void pawsSketchWindow::SketchIcon::UpdatePosition (int _x, int _y){
     int dx, dy, newX, newY, newX2, newY2, x2Updated, y2Updated;
-    csRect rect = parent->ScreenFrame();
+    csRect rect = parent->GetScreenFrame();
     rect.xmax -= rect.xmin;
     rect.ymax -= rect.ymin;
     rect.xmin = 0;
@@ -1691,8 +1691,8 @@ void pawsSketchWindow::SketchIcon::UpdatePosition (int _x, int _y){
 void pawsSketchWindow::SketchText::UpdatePosition (int _x, int _y){
 
     int dx, dy, newX, newY, newX2, newY2, x2Updated, y2Updated;
-    csRect rect = parent->ScreenFrame();
-    csRect rectText = parent->ScreenFrame();
+    csRect rect = parent->GetScreenFrame();
+    csRect rectText = parent->GetScreenFrame();
 
     rect.xmax -= rect.xmin;
     rect.ymax -= rect.ymin;

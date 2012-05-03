@@ -99,7 +99,7 @@ bool pawsConfigCamera::CreateTree()
         return false;
 
     tree = dynamic_cast<pawsTree *>(children[0]);
-    tree->SetRelativeFrameSize(parent->ScreenFrame().Width()-20, parent->ScreenFrame().Height()-20);
+    tree->SetRelativeFrameSize(parent->GetScreenFrame().Width()-20, parent->GetScreenFrame().Height()-20);
 
     root = tree->GetRoot();
     if (root != NULL)

@@ -302,7 +302,7 @@ void pawsGMActionWindow::LoadAction( csRef<iDocumentNode> topNode )
 
         //confirm->SetNotify( this );
         //confirm->SetText( text );
-        //confirm->CenterTo( this->ScreenFrame().Width() / 2, this->ScreenFrame().Height() / 2 );
+        //confirm->CenterTo( this->GetScreenFrame().Width() / 2, this->GetScreenFrame().Height() / 2 );
         //confirm->SetModalState( true );
         //confirm->Show();
     }

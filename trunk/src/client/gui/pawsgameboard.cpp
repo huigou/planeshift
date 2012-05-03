@@ -189,7 +189,7 @@ void pawsGameBoard::SetupBoard(psMGBoardMessage &msg)
     gameID = msg.msgGameID;
 
     // Calculate width and height for one game tile
-    csRect frame = ScreenFrame();
+    csRect frame = GetScreenFrame();
     int x = GetActualWidth(32);
     int y = GetActualHeight(32);
     int w = (frame.xmax-frame.xmin - 2*x) / msg.msgCols;
@@ -452,7 +452,7 @@ void pawsGameBoard::StartDragging(pawsGameTile *tile)
     pawsGameTile *widget = new pawsGameTile;
     widget->SetGameBoard(this);
     widget->SetParent(NULL);
-    widget->SetRelativeFrame(0, 0, tile->DefaultFrame().Width(), tile->DefaultFrame().Height());
+    widget->SetRelativeFrame(0, 0, tile->GetDefaultFrame().Width(), tile->GetDefaultFrame().Height());
     widget->SetState(tile->GetState());
     PawsManager::GetSingleton().SetDragDropWidget(widget);
 }

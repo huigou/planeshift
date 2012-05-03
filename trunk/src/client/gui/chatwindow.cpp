@@ -220,15 +220,15 @@ bool pawsChatWindow::PostSetup()
             if(i == 0)
             {
                 tmp = pw->FindWidget(buttonNames[i]);
-                lastX = tmp->DefaultFrame().xmin;
-                lastY = tmp->DefaultFrame().ymin;
+                lastX = tmp->GetDefaultFrame().xmin;
+                lastY = tmp->GetDefaultFrame().ymin;
             }
             if(TABVALUE(settings.tabSetting,i))
             {//this tab is visible
                 if(ct == 0) 
                 {
                     tmp = pw->FindWidget(buttonNames[i]);
-                    if(tmp->DefaultFrame().xmin != lastX || tmp->DefaultFrame().ymin != lastY)
+                    if(tmp->GetDefaultFrame().xmin != lastX || tmp->GetDefaultFrame().ymin != lastY)
                     {
                         tmp->SetRelativeFramePos(lastX,lastY);
                     }
@@ -240,17 +240,17 @@ bool pawsChatWindow::PostSetup()
                 if(ct == 1)
                 {
                     unsigned int thisX, thisY;
-                    thisX = tmp->DefaultFrame().xmin;
-                    thisY = tmp->DefaultFrame().ymin;
+                    thisX = tmp->GetDefaultFrame().xmin;
+                    thisY = tmp->GetDefaultFrame().ymin;
 
                     if(thisX == lastX && thisY != lastY)
                     {
                         isVertical = true;
-                        increment = tmp->DefaultFrame().Height();
+                        increment = tmp->GetDefaultFrame().Height();
                     }
                     else
                     {
-                        increment = tmp->DefaultFrame().Width();
+                        increment = tmp->GetDefaultFrame().Width();
                     }
                 }
                 if(isVertical)
