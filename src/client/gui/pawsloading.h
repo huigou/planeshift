@@ -83,6 +83,9 @@ private:
     csString guildName; ///< The name of the guild the user is associated to.
     csString guildMOTD; ///< The MOTD of the guild the user is associated to.
 
+    // Default tip position (used for switch loading/travel screens)
+    csRect tipDefaultRect;
+
     /** 
      *  Render the dot animation.
      *  Called only if renderAnim == true

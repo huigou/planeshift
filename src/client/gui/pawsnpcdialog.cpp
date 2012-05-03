@@ -554,7 +554,7 @@ void pawsNpcDialogWindow::SetupWindowWidgets()
         SetMovable(false);
         psengine->GetPSCamera()->LockCameraMode(true);
         psengine->GetCharManager()->LockTarget(true);
-        defaultFrame = bubbles->ScreenFrame();
+        defaultFrame = bubbles->GetScreenFrame();
         SetSize(defaultFrame.Width(), defaultFrame.Height());
         CenterTo(graphics2D->GetWidth() / 2, graphics2D->GetHeight() / 2);
         FindWidget("FreeBubble")->Show();
@@ -570,7 +570,7 @@ void pawsNpcDialogWindow::SetupWindowWidgets()
         SetMovable(true);
         psengine->GetPSCamera()->LockCameraMode(false);
         psengine->GetCharManager()->LockTarget(false);
-        defaultFrame = lists->DefaultFrame();
+        defaultFrame = lists->GetDefaultFrame();
         SetSize(defaultFrame.Width(), defaultFrame.Height());
         CenterTo(graphics2D->GetWidth() / 2, graphics2D->GetHeight() / 2);
         PawsManager::GetSingleton().SetCurrentFocusedWidget(responseList);

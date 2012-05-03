@@ -102,7 +102,7 @@ bool pawsConfigKeys::CreateTree()
     /****************
     CS_ASSERT(tree == NULL);
     tree = new pawsTree();
-    tree->SetRelativeFrame(0, 0,parent->DefaultFrame().Width(),parent->DefaultFrame().Height());
+    tree->SetRelativeFrame(0, 0,parent->GetDefaultFrame().Width(),parent->GetDefaultFrame().Height());
     tree->SetScrollBars(false, true);
     tree->SetTreeLayout(new pawsStdTreeLayout(tree, 5, 20));
     tree->SetTreeDecorator(new pawsStdTreeDecorator(tree, graphics2D, 0x0000ff, 0x00ffff, 13));
@@ -116,7 +116,7 @@ bool pawsConfigKeys::CreateTree()
 		return false;
 
     tree = dynamic_cast<pawsTree *>(children[0]);
-    tree->SetRelativeFrameSize(parent->ScreenFrame().Width()-20, parent->ScreenFrame().Height()-20);
+    tree->SetRelativeFrameSize(parent->GetScreenFrame().Width()-20, parent->GetScreenFrame().Height()-20);
 
     root = tree->GetRoot();
     if (root != NULL)

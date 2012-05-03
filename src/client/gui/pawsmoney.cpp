@@ -84,7 +84,7 @@ bool pawsMoney::CreateGUI()
     
     // This is a weird case because we need to remember the left,top from the original widget spec
     // but the width and height from this one
-    csRect rect=this->DefaultFrame(); // save them here
+    csRect rect=this->GetDefaultFrame(); // save them here
     if (!LoadAttributes(widgetNode))
         return false;
     this->SetRelativeFramePos(rect.xmin,rect.ymin); // restore them here

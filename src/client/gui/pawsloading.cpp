@@ -39,7 +39,7 @@ pawsLoadWindow::~pawsLoadWindow()
 void pawsLoadWindow::AddText( const char* newText )
 {
     if(loadingText)
-        loadingText->AddMessage( newText );
+        loadingText->ReplaceLastMessage( newText );
 }
 
 void pawsLoadWindow::Clear()
@@ -55,7 +55,10 @@ bool pawsLoadWindow::PostSetup()
     loadingText = (pawsMessageTextBox*)FindWidget("loadtext");
 
     dot = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage("MapDot");
-        
+
+    pawsMultiLineTextBox* tipBox = (pawsMultiLineTextBox*)FindWidget( "tip" );
+    tipDefaultRect = tipBox->GetScreenFrame();
+
     return true;
 }
 
@@ -67,27 +70,27 @@ void pawsLoadWindow::HandleMessage(MsgEntry *me)
 
         pawsMultiLineTextBox* tipBox = (pawsMultiLineTextBox*)FindWidget( "tip" );
         pawsMultiLineTextBox* motdBox = (pawsMultiLineTextBox*)FindWidget( "motd" );
-        pawsMultiLineTextBox* guildmotdBox = (pawsMultiLineTextBox*)FindWidget( "guildmotd" );
+        //pawsMultiLineTextBox* guildmotdBox = (pawsMultiLineTextBox*)FindWidget( "guildmotd" );
 
         //Format the guild motd
-        csString guildmotdMsg;
+        //csString guildmotdMsg;
 
         if(tipmsg.guild.Length())
             guildName = tipmsg.guild;
 
-        if(tipmsg.guildmotd.Length())
-            guildMOTD = tipmsg.guildmotd;
+        //if(tipmsg.guildmotd.Length())
+        //    guildMOTD = tipmsg.guildmotd;
         
-        if (!guildMOTD.IsEmpty())
-            guildmotdMsg.Format("%s's info: %s", guildName.GetData(), guildMOTD.GetData());
+        //if (!guildMOTD.IsEmpty())
+        //    guildmotdMsg.Format("%s's info: %s", guildName.GetData(), guildMOTD.GetData());
 
         //Set the text
         if(tipBox && tipmsg.tip.Length())
             tipBox->SetText(tipmsg.tip.GetData());
         if(motdBox && tipmsg.motd.Length())
             motdBox->SetText(tipmsg.motd.GetData());
-        if(guildmotdBox && guildmotdMsg.Length())
-            guildmotdBox->SetText(guildmotdMsg.GetData());
+        //if(guildmotdBox && guildmotdMsg.Length())
+        //    guildmotdBox->SetText(guildmotdMsg.GetData());
 
     }
 }
@@ -113,6 +116,15 @@ void pawsLoadWindow::Hide()
     PawsManager::GetSingleton().GetMouse()->Hide(false);
     pawsWidget::Hide();
     renderAnim = false;
+
+    // restore default position and reset text wrapping
+    pawsMultiLineTextBox* tipBox = (pawsMultiLineTextBox*)FindWidget( "tip" );
+    tipBox->SetRelativeFrame(tipDefaultRect.xmin,tipDefaultRect.ymin,tipDefaultRect.Width(),tipDefaultRect.Height());
+    tipBox->SetText(tipBox->GetText());
+
+    // show server motd
+    pawsMultiLineTextBox* motdBox = (pawsMultiLineTextBox*)FindWidget( "motd" );
+    motdBox->Show();
 }
 
 void pawsLoadWindow::Draw()
@@ -156,7 +168,17 @@ void pawsLoadWindow::InitAnim(csVector2 start, csVector2 dest, csTicks delay)
 
     //we make the dots complete a bit before the end of the delay so it's
     //possible to see the last dot
-    delayBetDot = ((delay * 1000)*0.9) / numberDot; 
+    delayBetDot = ((delay * 1000)*0.9) / numberDot;
+
+    // move tip and reset text wrapping
+    pawsMultiLineTextBox* tipBox = (pawsMultiLineTextBox*)FindWidget( "tip" );
+    tipBox->SetRelativeFrame(GetActualWidth(490),GetActualHeight(340),GetActualWidth(270),GetActualHeight(170));
+    tipBox->SetText(tipBox->GetText());
+
+    // hide server motd
+    pawsMultiLineTextBox* motdBox = (pawsMultiLineTextBox*)FindWidget( "motd" );
+    motdBox->Hide();
+
 }
 
 void pawsLoadWindow::DrawAnim()

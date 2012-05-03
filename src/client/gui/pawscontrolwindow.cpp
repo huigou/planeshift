@@ -143,12 +143,12 @@ void pawsControlWindow::Toggle()
     }
     else
     {
-        oldW = this->ScreenFrame().Width();
-        oldH = this->ScreenFrame().Height();
+        oldW = this->GetScreenFrame().Width();
+        oldH = this->GetScreenFrame().Height();
         this->GetMinSize(oldMinW,oldMinH);
 
-        int w = buttonUp->ScreenFrame().Width();
-        int h = buttonUp->ScreenFrame().Height();
+        int w = buttonUp->GetScreenFrame().Width();
+        int h = buttonUp->GetScreenFrame().Height();
 
         this->SetForceSize(w,h);
         this->SetMinSize(w,h);

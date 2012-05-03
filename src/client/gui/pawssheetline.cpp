@@ -394,7 +394,7 @@ void Chord::Draw(pawsSheetLine* pawsLine, Chord* selectedChord, int horizontalPo
     {
         isNoteDown = false;
     }
-    vCPos = pawsLine->ScreenFrame().ymin + pawsLine->centralCPos;
+    vCPos = pawsLine->GetScreenFrame().ymin + pawsLine->centralCPos;
     
     prevNotePos = 1000;     // very high value so that the first note is not a circle
 

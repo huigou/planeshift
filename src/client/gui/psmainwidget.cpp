@@ -655,10 +655,10 @@ void psMainWidget::PrintOnScreen( const char* text, int color, float ymod )
     txtBox->Resize(w,h,0);
 
     int x,y;
-    x = (ScreenFrame().Width() / 2) - (w / 2);
+    x = (GetScreenFrame().Width() / 2) - (w / 2);
 
-    y = (int)(ScreenFrame().Height() * ymod) - (h / 2);
-    y = y - ScreenFrame().Height() / 8;
+    y = (int)(GetScreenFrame().Height() * ymod) - (h / 2);
+    y = y - GetScreenFrame().Height() / 8;
 
     txtBox->MoveTo(x,y);
 
