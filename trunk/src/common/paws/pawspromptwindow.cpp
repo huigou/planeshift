@@ -118,36 +118,36 @@ void pawsPromptWindow::LayoutWindow()
     assert(label && okButton && cancelButton && inputWidget);
 
     windowWidth = csMax(
-                        2 * spacing + label->DefaultFrame().Width(),
+                        2 * spacing + label->GetDefaultFrame().Width(),
                         csMax(
-                             4 * spacing + inputWidget->DefaultFrame().Width(),
-                             3 * spacing + okButton->DefaultFrame().Width() + cancelButton->DefaultFrame().Width()
+                             4 * spacing + inputWidget->GetDefaultFrame().Width(),
+                             3 * spacing + okButton->GetDefaultFrame().Width() + cancelButton->GetDefaultFrame().Width()
                            )
                      );
-    windowHeight = 4 * spacing + label->DefaultFrame().Height() + inputWidget->DefaultFrame().Height() 
-                               + okButton->DefaultFrame().Height();
+    windowHeight = 4 * spacing + label->GetDefaultFrame().Height() + inputWidget->GetDefaultFrame().Height() 
+                               + okButton->GetDefaultFrame().Height();
     if(helperWidget != NULL)
-        windowHeight += spacing + helperWidget->DefaultFrame().Height();
+        windowHeight += spacing + helperWidget->GetDefaultFrame().Height();
     SetRelativeFrameSize(windowWidth, windowHeight);
 
-    label->SetRelativeFramePos((windowWidth-label->DefaultFrame().Width()) / 2, spacing);
+    label->SetRelativeFramePos((windowWidth-label->GetDefaultFrame().Width()) / 2, spacing);
 
-    inputWidget->SetRelativeFramePos((windowWidth-inputWidget->DefaultFrame().Width()) / 2,
-                                     label->DefaultFrame().ymax + spacing);
+    inputWidget->SetRelativeFramePos((windowWidth-inputWidget->GetDefaultFrame().Width()) / 2,
+                                     label->GetDefaultFrame().ymax + spacing);
 
     if(helperWidget != NULL)
     {
-        helperWidget->SetRelativeFramePos((windowWidth-inputWidget->DefaultFrame().Width()) / 2,
-                                          inputWidget->DefaultFrame().ymax + spacing);
-        buttony = helperWidget->DefaultFrame().ymax + spacing;
+        helperWidget->SetRelativeFramePos((windowWidth-inputWidget->GetDefaultFrame().Width()) / 2,
+                                          inputWidget->GetDefaultFrame().ymax + spacing);
+        buttony = helperWidget->GetDefaultFrame().ymax + spacing;
     }
     else
-        buttony = inputWidget->DefaultFrame().ymax + spacing;
+        buttony = inputWidget->GetDefaultFrame().ymax + spacing;
 
-    okButton->SetRelativeFramePos((windowWidth-okButton->DefaultFrame().Width()-cancelButton->DefaultFrame().Width()-spacing) / 2,
+    okButton->SetRelativeFramePos((windowWidth-okButton->GetDefaultFrame().Width()-cancelButton->GetDefaultFrame().Width()-spacing) / 2,
                                   buttony);
 
-    cancelButton->SetRelativeFramePos(okButton->DefaultFrame().xmax + spacing,
+    cancelButton->SetRelativeFramePos(okButton->GetDefaultFrame().xmax + spacing,
                                       buttony);
 
     SetAppropriatePos();

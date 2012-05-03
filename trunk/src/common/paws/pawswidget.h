@@ -370,12 +370,12 @@ public:
     /** Returns the csRect that defines widget area.
     * @return screenFrame
     */
-    virtual csRect ScreenFrame();
+    virtual csRect GetScreenFrame();
 
     /** Returns the default csRect.
      * @return defaultFrame 
      */
-    virtual csRect DefaultFrame() { return defaultFrame; }
+    virtual csRect GetDefaultFrame() { return defaultFrame; }
 
     /** Is the widget currently set visible?
      * @return bool
@@ -663,6 +663,10 @@ public:
      * @param height Value to be used for default height.
      */
     virtual void SetRelativeFrame( int x, int y, int width, int height );
+    
+    /** Resets the position, width and height to the default position
+     */
+    virtual void ResetToDefaultFrame( ) { screenFrame = defaultFrame; }
 
     /** Set the position of this widget relative to the parent.
      * @param x The offset from the parent's minimum x value.

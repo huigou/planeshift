@@ -201,7 +201,7 @@ void psSlotManager::OnNumberEntered(const char* /*name*/, int param, int count)
     int newStack = parent->StackCount() - count;
 
     pawsSlot* widget = new pawsSlot();
-    widget->SetRelativeFrame( 0,0, parent->DefaultFrame().Width(), parent->DefaultFrame().Height() );
+    widget->SetRelativeFrame( 0,0, parent->GetDefaultFrame().Width(), parent->GetDefaultFrame().Height() );
 
     if (parent->Image())
         widget->PlaceItem( parent->Image()->GetName(), parent->GetMeshFactName(), parent->GetMaterialName(), count );

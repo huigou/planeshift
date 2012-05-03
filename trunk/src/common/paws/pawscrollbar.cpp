@@ -430,9 +430,9 @@ bool pawsScrollBar::OnMouseDown(int button, int /*modifiers*/, int x, int y)
     else if (WidgetAt(x, y) == thumb)
     {
         if (horizontal)
-            thumbDragPoint = x - thumb->ScreenFrame().xmin;
+            thumbDragPoint = x - thumb->GetScreenFrame().xmin;
         else
-            thumbDragPoint = y - thumb->ScreenFrame().ymin;
+            thumbDragPoint = y - thumb->GetScreenFrame().ymin;
             
         mouseIsDraggingThumb = true;
         thumb->SetBackground(thumbMoving);
@@ -570,9 +570,9 @@ void pawsScrollBar::MoveThumbToMouse()
     thumbPos = csMin(thumbPos, rectSize);
 
     if (horizontal)
-        thumb->MoveTo(rectBegin+thumbPos, thumb->ScreenFrame().ymin);
+        thumb->MoveTo(rectBegin+thumbPos, thumb->GetScreenFrame().ymin);
     else
-        thumb->MoveTo(thumb->ScreenFrame().xmin, rectBegin+thumbPos);
+        thumb->MoveTo(thumb->GetScreenFrame().xmin, rectBegin+thumbPos);
 
     currentValue = minValue + (float(thumbPos) / rectSize * (maxValue-minValue));
     if ( limited )

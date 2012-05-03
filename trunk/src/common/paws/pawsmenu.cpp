@@ -293,7 +293,7 @@ void pawsMenuItem::SetSizes(int labelWidth, int _spacing, int _border)
     if (labelWidth == -1)
         label->SetSizeByText(5,5);
     else
-        label->SetRelativeFrameSize(labelWidth, label->DefaultFrame().Height());
+        label->SetRelativeFrameSize(labelWidth, label->GetDefaultFrame().Height());
     spacing = _spacing;
     border  = _border;
     
@@ -311,20 +311,20 @@ void pawsMenuItem::SetLayout()
     
     if (imageEnabled)
     {
-        maxHeight = csMax(maxHeight, image->DefaultFrame().Height());
+        maxHeight = csMax(maxHeight, image->GetDefaultFrame().Height());
         image->SetRelativeFramePos(x, y);
-        x += image->DefaultFrame().Width() + spacing;
+        x += image->GetDefaultFrame().Width() + spacing;
     }
 
-    maxHeight = csMax(maxHeight, label->DefaultFrame().Height());
+    maxHeight = csMax(maxHeight, label->GetDefaultFrame().Height());
     label->SetRelativeFramePos(x, y);
-    x += label->DefaultFrame().Width() + spacing;
+    x += label->GetDefaultFrame().Width() + spacing;
 
     if (checkboxEnabled)
     {
-        maxHeight = csMax(maxHeight, checkbox->DefaultFrame().Height());
+        maxHeight = csMax(maxHeight, checkbox->GetDefaultFrame().Height());
         checkbox->SetRelativeFramePos(x, y);
-        x += checkbox->DefaultFrame().Width();
+        x += checkbox->GetDefaultFrame().Width();
     }
 
     x += SUBMENU_ARROW_SIZE;
@@ -349,8 +349,8 @@ void pawsMenuItem::Draw()
     mousePos = PawsManager::GetSingleton().GetMouse()->GetPosition();
     
     rect = screenFrame;
-    rect.xmin = parent->ScreenFrame().xmin + BORDER_SIZE-2;
-    rect.xmax = parent->ScreenFrame().xmax - BORDER_SIZE+2;
+    rect.xmin = parent->GetScreenFrame().xmin + BORDER_SIZE-2;
+    rect.xmax = parent->GetScreenFrame().xmax - BORDER_SIZE+2;
     if (rect.Contains(mousePos.x, mousePos.y))
     {
         /*
@@ -475,12 +475,12 @@ void pawsMenu::SetPositionsOfItems()
 
     contHeight = GetContentHeight();
 
-    itemY = label->ScreenFrame().Height() + GetActualHeight(2*BORDER_SIZE + ITEM_SPACING)
-          + (screenFrame.Height() - GetActualHeight(label->DefaultFrame().Height()+2*BORDER_SIZE+2*ITEM_SPACING) - contHeight) / 2;
+    itemY = label->GetScreenFrame().Height() + GetActualHeight(2*BORDER_SIZE + ITEM_SPACING)
+          + (screenFrame.Height() - GetActualHeight(label->GetDefaultFrame().Height()+2*BORDER_SIZE+2*ITEM_SPACING) - contHeight) / 2;
 
     for ( size_t x = 0; x < items.GetSize(); x++ )
     {
-        rect = items[x]->DefaultFrame();
+        rect = items[x]->GetDefaultFrame();
         if (align == alignLeft)
             itemX = GetActualWidth(BORDER_SIZE);
         else
@@ -593,7 +593,7 @@ int pawsMenu::GetContentWidth()
     int contWidth = 0;
     for ( size_t x = 0; x < items.GetSize(); x++ )
     {
-        contWidth = csMax(contWidth, items[x]->DefaultFrame().Width());
+        contWidth = csMax(contWidth, items[x]->GetDefaultFrame().Width());
     }
     return contWidth;
 }
@@ -605,7 +605,7 @@ int pawsMenu::GetContentHeight()
     {
         if (x > 0)
             contHeight += GetActualHeight(ITEM_SPACING);
-        contHeight += items[x]->DefaultFrame().Height();
+        contHeight += items[x]->GetDefaultFrame().Height();
     }
     return contHeight;
 }
@@ -616,9 +616,9 @@ void pawsMenu::Autosize()
            (
             csMax(
                  GetContentWidth() + GetActualWidth(2*BORDER_SIZE),
-                 label->DefaultFrame().Width() + GetActualWidth(2*BUTTON_SIZE + 5*BORDER_SIZE)
+                 label->GetDefaultFrame().Width() + GetActualWidth(2*BUTTON_SIZE + 5*BORDER_SIZE)
                 ),
-            GetContentHeight() + GetActualHeight(label->DefaultFrame().Height() + 2*BORDER_SIZE + 2*ITEM_SPACING)
+            GetContentHeight() + GetActualHeight(label->GetDefaultFrame().Height() + 2*BORDER_SIZE + 2*ITEM_SPACING)
            );
     SetButtonPositions();
 }
@@ -716,7 +716,7 @@ void pawsMenu::DoAction(pawsIMenuItem * item)
             return;
         }
         PawsManager::GetSingleton().GetMainWidget()->AddChild(newMenu);
-        SetSubmenuPos(newMenu, item->ScreenFrame().ymin);
+        SetSubmenuPos(newMenu, item->GetScreenFrame().ymin);
         newMenu->SetAlwaysOnTop(true);
         newMenu->Show();
         newMenu->SetParentMenu(this);
@@ -807,7 +807,7 @@ void pawsMenu::SetSubmenuPos(pawsMenu * submenu, int recommY)
 
     screenWidth   = graphics2d->GetWidth();
     screenHeight  = graphics2d->GetHeight();
-    submenuRect   = submenu->ScreenFrame();
+    submenuRect   = submenu->GetScreenFrame();
 
     if (recommY < 0)
         y = 0;
@@ -839,7 +839,7 @@ void pawsMenu::Draw()
         {
             if (items[x]->GetAction().name == SUBMENU_ACTION_NAME)
             {
-                itemFrame = items[x]->ScreenFrame();
+                itemFrame = items[x]->GetScreenFrame();
                 arrowFrame.SetPos(screenFrame.xmax - BORDER_SIZE - 4 - SUBMENU_ARROW_SIZE,
                                   itemFrame.ymin + itemFrame.Height()/2 - SUBMENU_ARROW_SIZE/2 + 1);
                 arrowFrame.SetSize(SUBMENU_ARROW_SIZE, SUBMENU_ARROW_SIZE);
@@ -851,10 +851,10 @@ void pawsMenu::Draw()
     rect.xmin = screenFrame.xmin+2;
     rect.ymin = screenFrame.ymin+2;
     rect.xmax = screenFrame.xmax-2;
-    rect.ymax = screenFrame.ymin + GetActualHeight(2*BORDER_SIZE + label->DefaultFrame().Height())-2;
+    rect.ymax = screenFrame.ymin + GetActualHeight(2*BORDER_SIZE + label->GetDefaultFrame().Height())-2;
     DrawBumpFrame(graphics2d, this, rect, GetBorderStyle() );
 
-    rect.ymin = screenFrame.ymin + GetActualHeight(2*BORDER_SIZE + label->DefaultFrame().Height());
+    rect.ymin = screenFrame.ymin + GetActualHeight(2*BORDER_SIZE + label->GetDefaultFrame().Height());
     rect.ymax = screenFrame.ymax-2;
     DrawBumpFrame(graphics2d, this, rect, GetBorderStyle() );
 }
@@ -865,7 +865,7 @@ bool pawsMenu::OnMouseDown(int button, int modifiers, int x, int y)
     
     for ( size_t i = 0; i < items.GetSize(); i++ )        
     {
-        rowRect = items[i]->ScreenFrame();
+        rowRect = items[i]->GetScreenFrame();
         rowRect.xmin = screenFrame.xmin + BORDER_SIZE;
         rowRect.xmax = screenFrame.xmax - BORDER_SIZE;
         if (rowRect.Contains(x, y))
@@ -900,7 +900,7 @@ void pawsMenuSeparator::Draw()
 
     graphics2D->SetClipRect( 0,0, graphics2D->GetWidth(), graphics2D->GetHeight());
     
-    parentFrame = parent->ScreenFrame();
+    parentFrame = parent->GetScreenFrame();
     sepFrame.xmin = parentFrame.xmin + BORDER_SIZE;
     sepFrame.xmax = parentFrame.xmax - BORDER_SIZE;
     sepFrame.ymin = screenFrame.ymin + 6;

@@ -76,7 +76,7 @@ void pawsMouse::UpdateDragPosition()
     pawsWidget *widget = PawsManager::GetSingleton().GetDragDropWidget();
     if(widget)
     {
-        csRect frame = widget->ScreenFrame();
+        csRect frame = widget->GetScreenFrame();
         widget->MoveTo(currentPosition.x - frame.Width()/2, currentPosition.y - frame.Height()/2);
     }
 }

@@ -569,8 +569,8 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
         // If this widget has a parent then move it to it's correct relative position.
         if ( parent )
         {
-            MoveTo(parent->ScreenFrame().xmin + defaultFrame.xmin,
-                   parent->ScreenFrame().ymin + defaultFrame.ymin);
+            MoveTo(parent->GetScreenFrame().xmin + defaultFrame.xmin,
+                   parent->GetScreenFrame().ymin + defaultFrame.ymin);
             screenFrame.SetSize( width, height );
         }
         else
@@ -977,7 +977,7 @@ void pawsWidget::SetRelativeFramePos( int x, int y )
 {
     MoveRect(defaultFrame, x, y);
     if (parent != NULL)
-        MoveRect(screenFrame, parent->ScreenFrame().xmin + x, parent->ScreenFrame().ymin + y);
+        MoveRect(screenFrame, parent->GetScreenFrame().xmin + x, parent->GetScreenFrame().ymin + y);
     else
         MoveRect(screenFrame, x, y);
 
@@ -1000,8 +1000,8 @@ void pawsWidget::RecalcScreenPositions()
 {
     if ( parent )
     {
-        screenFrame.xmin  = parent->ScreenFrame().xmin + defaultFrame.xmin;
-        screenFrame.ymin  = parent->ScreenFrame().ymin + defaultFrame.ymin;
+        screenFrame.xmin  = parent->GetScreenFrame().xmin + defaultFrame.xmin;
+        screenFrame.ymin  = parent->GetScreenFrame().ymin + defaultFrame.ymin;
         screenFrame.SetSize( defaultFrame.Width(), defaultFrame.Height() );
 
         for ( size_t x = 0; x < children.GetSize(); x++ )
@@ -1172,7 +1172,7 @@ void pawsWidget::DrawBackground()
     {
         csRef<iPawsImage> resize = PawsManager::GetSingleton().GetResizeImage();
         if (resize)
-        resize->Draw( ScreenFrame().xmax-8, ScreenFrame().ymax-8,8,8 );
+        resize->Draw( GetScreenFrame().xmax-8, GetScreenFrame().ymax-8,8,8 );
     }
 }
 
@@ -1544,7 +1544,7 @@ bool pawsWidget::CreateContextMenu()
 
 int pawsWidget::ResizeFlags( int x, int y )
 {
-    csRect frame = ScreenFrame();
+    csRect frame = GetScreenFrame();
     csRect hotButton( 0,0,0,0 );
     int flag = 0;
 
@@ -1598,8 +1598,8 @@ bool pawsWidget::OnMouseDown( int button, int modifiers, int x, int y )
     if ( modifiers == 2 )
     {
         printf("-----------WIDGET %s DUMP---------\n", name.GetData() );
-        printf("Position: (%d,%d)\n", ScreenFrame().xmin-parent->ScreenFrame().xmin, ScreenFrame().ymin-parent->ScreenFrame().ymin);
-        printf("Size    : (%d,%d)\n", ScreenFrame().Width(), ScreenFrame().Height());
+        printf("Position: (%d,%d)\n", GetScreenFrame().xmin-parent->GetScreenFrame().xmin, ScreenFrame().ymin-parent->GetScreenFrame().ymin);
+        printf("Size    : (%d,%d)\n", GetScreenFrame().Width(), ScreenFrame().Height());
     }
     if ( modifiers == 3 )
     {
@@ -1676,7 +1676,7 @@ bool pawsWidget::OnMenuAction ( pawsWidget * widget, const pawsMenuAction & acti
     return false;
 }
 
-csRect pawsWidget::ScreenFrame()
+csRect pawsWidget::GetScreenFrame()
 {
     return screenFrame;
 }
@@ -2161,23 +2161,23 @@ void pawsWidget::Resize()
     {
         int width = screenFrame.Width();
 
-        screenFrame.xmin = parent->ScreenFrame().xmin + defaultFrame.xmin;
+        screenFrame.xmin = parent->GetScreenFrame().xmin + defaultFrame.xmin;
         screenFrame.SetSize( width, screenFrame.Height() );
 
         // Left-Right Attachment
         if ( attachFlags & ATTACH_RIGHT )
         {
-            int newX = parent->DefaultFrame().Width() - (defaultFrame.xmin + defaultFrame.Width());
-            screenFrame.xmax = parent->ScreenFrame().xmax - newX;
+            int newX = parent->GetDefaultFrame().Width() - (defaultFrame.xmin + defaultFrame.Width());
+            screenFrame.xmax = parent->GetScreenFrame().xmax - newX;
         }
 
         // Left-Right Proportional Attachment
         if ( attachFlags & PROPORTIONAL_RIGHT )
         {
-            int z = (parent->ScreenFrame().Width() * ( parent->DefaultFrame().Width() - defaultFrame.xmax ) ) /
-                parent->DefaultFrame().Width();
+            int z = (parent->GetScreenFrame().Width() * ( parent->GetDefaultFrame().Width() - defaultFrame.xmax ) ) /
+                parent->GetDefaultFrame().Width();
 
-            int newMax = parent->ScreenFrame().xmax - z;
+            int newMax = parent->GetScreenFrame().xmax - z;
             screenFrame.xmax = newMax;
         }
     }
@@ -2188,17 +2188,17 @@ void pawsWidget::Resize()
         if ( !(attachFlags & ATTACH_LEFT) )
         {
             int width = screenFrame.Width();
-            screenFrame.xmin = parent->ScreenFrame().xmax - ( parent->DefaultFrame().Width() - defaultFrame.xmax + width );
+            screenFrame.xmin = parent->GetScreenFrame().xmax - ( parent->GetDefaultFrame().Width() - defaultFrame.xmax + width );
             screenFrame.SetSize( width, screenFrame.Height() );
         }
 
         //Attach Right-Left Proportional
         if ( attachFlags & PROPORTIONAL_LEFT )
         {
-            int z = (parent->ScreenFrame().Width() *  defaultFrame.xmin ) /
-                parent->DefaultFrame().Width();
+            int z = (parent->GetScreenFrame().Width() *  defaultFrame.xmin ) /
+                parent->GetDefaultFrame().Width();
 
-            int newMin = parent->ScreenFrame().xmin + z;
+            int newMin = parent->GetScreenFrame().xmin + z;
             screenFrame.xmin = newMin;
         }
     }
@@ -2209,10 +2209,10 @@ void pawsWidget::Resize()
         if ( ! (attachFlags & ATTACH_LEFT) && !(attachFlags & PROPORTIONAL_LEFT) )
         {
 
-            int z = (parent->ScreenFrame().Width() * ( parent->DefaultFrame().Width() - defaultFrame.xmax ) ) /
-                parent->DefaultFrame().Width();
+            int z = (parent->GetScreenFrame().Width() * ( parent->GetDefaultFrame().Width() - defaultFrame.xmax ) ) /
+                parent->GetDefaultFrame().Width();
 
-            int newMin = parent->ScreenFrame().xmax - z - defaultFrame.Width();
+            int newMin = parent->GetScreenFrame().xmax - z - defaultFrame.Width();
             int width = screenFrame.Width();
             screenFrame.xmin = newMin;
             screenFrame.SetSize( width, screenFrame.Height() );
@@ -2220,16 +2220,16 @@ void pawsWidget::Resize()
         //Attach PropLeft-PropRight
         if ( attachFlags & PROPORTIONAL_LEFT )
         {
-            int z = (parent->ScreenFrame().Width() * ( parent->DefaultFrame().Width() - defaultFrame.xmax ) ) /
-                parent->DefaultFrame().Width();
+            int z = (parent->GetScreenFrame().Width() * ( parent->GetDefaultFrame().Width() - defaultFrame.xmax ) ) /
+                parent->GetDefaultFrame().Width();
 
-            int newMax = parent->ScreenFrame().xmax - z;
+            int newMax = parent->GetScreenFrame().xmax - z;
             screenFrame.xmax = newMax;
 
-            z = (parent->ScreenFrame().Width() *  defaultFrame.xmin ) /
-                parent->DefaultFrame().Width();
+            z = (parent->GetScreenFrame().Width() *  defaultFrame.xmin ) /
+                parent->GetDefaultFrame().Width();
 
-            int newMin = parent->ScreenFrame().xmin + z;
+            int newMin = parent->GetScreenFrame().xmin + z;
             screenFrame.xmin = newMin;
         }
     }
@@ -2239,10 +2239,10 @@ void pawsWidget::Resize()
         //Attach Proportional Left Only
         if ( ! (attachFlags & ATTACH_RIGHT) && !(attachFlags & PROPORTIONAL_RIGHT) )
         {
-            int z = (parent->ScreenFrame().Width() * defaultFrame.xmin ) /
-                parent->DefaultFrame().Width();
+            int z = (parent->GetScreenFrame().Width() * defaultFrame.xmin ) /
+                parent->GetDefaultFrame().Width();
 
-            int newMin = parent->ScreenFrame().xmin + z;
+            int newMin = parent->GetScreenFrame().xmin + z;
             int width = screenFrame.Width();
             screenFrame.xmin = newMin;
             screenFrame.SetSize( width, screenFrame.Height() );
@@ -2255,23 +2255,23 @@ void pawsWidget::Resize()
         int height = defaultFrame.Height();
         //printf("Height: %i\n", height);
 
-        screenFrame.ymin = parent->ScreenFrame().ymin + defaultFrame.ymin;
+        screenFrame.ymin = parent->GetScreenFrame().ymin + defaultFrame.ymin;
         screenFrame.SetSize( screenFrame.Width(), height );
 
         //Attach TOP-BOTTOM
         if ( attachFlags & ATTACH_BOTTOM )
         {
-            int newY = parent->DefaultFrame().Height() - (defaultFrame.ymin + defaultFrame.Height());
-            screenFrame.ymax = parent->ScreenFrame().ymax - newY;
+            int newY = parent->GetDefaultFrame().Height() - (defaultFrame.ymin + defaultFrame.Height());
+            screenFrame.ymax = parent->GetScreenFrame().ymax - newY;
         }
 
         //Attach TOP-BOTTOM Proportional
         if ( attachFlags & PROPORTIONAL_BOTTOM )
         {
-            int z = (parent->ScreenFrame().Height() * ( parent->DefaultFrame().Height() - defaultFrame.ymax ) ) /
-                parent->DefaultFrame().Height();
+            int z = (parent->GetScreenFrame().Height() * ( parent->GetDefaultFrame().Height() - defaultFrame.ymax ) ) /
+                parent->GetDefaultFrame().Height();
 
-            int newMax = parent->ScreenFrame().ymax - z;
+            int newMax = parent->GetScreenFrame().ymax - z;
             screenFrame.ymax = newMax;
         }
     }
@@ -2283,17 +2283,17 @@ void pawsWidget::Resize()
         {
 
             int height = screenFrame.Height();
-            screenFrame.ymin = parent->ScreenFrame().ymax - ( parent->DefaultFrame().Height() - defaultFrame.ymax + height );
+            screenFrame.ymin = parent->GetScreenFrame().ymax - ( parent->GetDefaultFrame().Height() - defaultFrame.ymax + height );
             screenFrame.SetSize( screenFrame.Width(), height );
         }
 
         //Attach BOTTOM-TOP Proportional
         if ( attachFlags & PROPORTIONAL_TOP )
         {
-            int z = (parent->ScreenFrame().Height() *  defaultFrame.ymin ) /
-                parent->DefaultFrame().Height();
+            int z = (parent->GetScreenFrame().Height() *  defaultFrame.ymin ) /
+                parent->GetDefaultFrame().Height();
 
-            int newMin = parent->ScreenFrame().ymin + z;
+            int newMin = parent->GetScreenFrame().ymin + z;
             screenFrame.ymin = newMin;
         }
     }
@@ -2303,10 +2303,10 @@ void pawsWidget::Resize()
     {
         if ( ! (attachFlags & ATTACH_BOTTOM) && !(attachFlags & PROPORTIONAL_BOTTOM) )
         {
-            int z = (parent->ScreenFrame().Height() * defaultFrame.ymin ) /
-                parent->DefaultFrame().Height();
+            int z = (parent->GetScreenFrame().Height() * defaultFrame.ymin ) /
+                parent->GetDefaultFrame().Height();
 
-            int newMin = parent->ScreenFrame().ymin + z;
+            int newMin = parent->GetScreenFrame().ymin + z;
             int height = screenFrame.Height();
             screenFrame.ymin = newMin;
             screenFrame.SetSize( screenFrame.Width(), height );
@@ -2318,10 +2318,10 @@ void pawsWidget::Resize()
         // Attach Proportional BOTTOM Only
         if ( ! (attachFlags & ATTACH_TOP) && !(attachFlags & PROPORTIONAL_TOP) )
         {
-            int z = (parent->ScreenFrame().Height() * ( parent->DefaultFrame().Height() - defaultFrame.ymax ) ) /
-                parent->DefaultFrame().Height();
+            int z = (parent->GetScreenFrame().Height() * ( parent->GetDefaultFrame().Height() - defaultFrame.ymax ) ) /
+                parent->GetDefaultFrame().Height();
 
-            int newMin = parent->ScreenFrame().ymax - z - defaultFrame.Height();
+            int newMin = parent->GetScreenFrame().ymax - z - defaultFrame.Height();
             int height = screenFrame.Height();
             screenFrame.ymin = newMin;
             screenFrame.SetSize( screenFrame.Width(), height );
@@ -2330,16 +2330,16 @@ void pawsWidget::Resize()
         // Attach PropTOP-PropBOTTOM
         if ( attachFlags & PROPORTIONAL_TOP )
         {
-            int z = (parent->ScreenFrame().Height() * ( parent->DefaultFrame().Height() - defaultFrame.ymax ) ) /
-                parent->DefaultFrame().Height();
+            int z = (parent->GetScreenFrame().Height() * ( parent->GetDefaultFrame().Height() - defaultFrame.ymax ) ) /
+                parent->GetDefaultFrame().Height();
 
-            int newMax = parent->ScreenFrame().ymax - z;
+            int newMax = parent->GetScreenFrame().ymax - z;
             screenFrame.ymax = newMax;
 
-            z = (parent->ScreenFrame().Height() *  defaultFrame.ymin ) /
-                parent->DefaultFrame().Height();
+            z = (parent->GetScreenFrame().Height() *  defaultFrame.ymin ) /
+                parent->GetDefaultFrame().Height();
 
-            int newMin = parent->ScreenFrame().ymin + z;
+            int newMin = parent->GetScreenFrame().ymin + z;
             screenFrame.ymin = newMin;
         }
     }
@@ -2444,7 +2444,7 @@ void pawsWidget::MakeFullyVisible()
     if (parent == NULL)
         return;
 
-    parentFrame = parent->ScreenFrame();
+    parentFrame = parent->GetScreenFrame();
 
     if (screenFrame.xmin < parentFrame.xmin)
         targetX = parentFrame.xmin;

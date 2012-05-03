@@ -147,10 +147,10 @@ void pawsTitle::SetWindowRect(const csRect & windowRect)
 			titleButtons[a].buttonWidget->MoveTo(screenFrame.xmin + titleButtons[a].offsetx, screenFrame.ymin + titleButtons[a].offsety);
 			break;
 		case PTA_CENTER:
-			titleButtons[a].buttonWidget->MoveTo(screenFrame.xmin + (screenFrame.Width() - titleButtons[a].buttonWidget->ScreenFrame().Width())/2 + titleButtons[a].offsetx, screenFrame.ymin + titleButtons[a].offsety);
+			titleButtons[a].buttonWidget->MoveTo(screenFrame.xmin + (screenFrame.Width() - titleButtons[a].buttonWidget->GetScreenFrame().Width())/2 + titleButtons[a].offsetx, screenFrame.ymin + titleButtons[a].offsety);
 			break;
 		case PTA_RIGHT:
-			titleButtons[a].buttonWidget->MoveTo(screenFrame.xmax - titleButtons[a].buttonWidget->ScreenFrame().Width() + titleButtons[a].offsetx, screenFrame.ymin + titleButtons[a].offsety);
+			titleButtons[a].buttonWidget->MoveTo(screenFrame.xmax - titleButtons[a].buttonWidget->GetScreenFrame().Width() + titleButtons[a].offsetx, screenFrame.ymin + titleButtons[a].offsety);
 			break;
         case PTA_COUNT:
             break;
