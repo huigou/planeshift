@@ -221,9 +221,9 @@ bool pawsComboBox::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, paw
             {
                 arrow->SetUpImage(upButton);
                 arrow->SetDownImage(upButtonPressed);
-                oldHeight = ScreenFrame().Height();    
-                oldWidth  = ScreenFrame().Width();    
-                SetSize( ScreenFrame().Width(), defaultFrame.Height()+rows*GetActualHeight(rowHeight)+15 );
+                oldHeight = GetScreenFrame().Height();    
+                oldWidth  = GetScreenFrame().Width();    
+                SetSize( GetScreenFrame().Width(), defaultFrame.Height()+rows*GetActualHeight(rowHeight)+15 );
                 if (fliptotop)
                 {
                     MoveDelta(0,-1*(rows*GetActualHeight(rowHeight)+15));

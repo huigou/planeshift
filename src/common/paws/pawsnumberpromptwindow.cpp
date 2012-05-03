@@ -132,7 +132,7 @@ void pawsNumberPromptWindow::Close()
 void pawsNumberPromptWindow::LayoutWindow()
 {
     pawsPromptWindow::LayoutWindow();
-    inputWidget->SetRelativeFramePos(inputWidget->DefaultFrame().xmin, inputWidget->DefaultFrame().ymin-3);
+    inputWidget->SetRelativeFramePos(inputWidget->GetDefaultFrame().xmin, inputWidget->GetDefaultFrame().ymin-3);
 }
 
 bool pawsNumberPromptWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)

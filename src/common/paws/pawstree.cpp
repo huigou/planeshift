@@ -681,7 +681,7 @@ pawsTreeNode * pawsTreeStruct::FindNodeAt(pawsTreeNode *parent, int x, int y)
     child = parent->GetFirstChild();
     while (child != NULL)
     {
-        frame = child->ScreenFrame();
+        frame = child->GetScreenFrame();
         if (frame.Contains(x, y))
             return child;
         foundIndirect = FindNodeAt(child, x, y);
@@ -735,7 +735,7 @@ void pawsStdTreeLayout::SetLayout()
     if (root == NULL)
         return;
 
-    treeFrame = tree->ScreenFrame();
+    treeFrame = tree->GetScreenFrame();
     treeX = treeFrame.xmin - horizScroll;
     treeY = treeFrame.ymin - vertScroll;
     maxX  = treeX;
@@ -754,7 +754,7 @@ void pawsStdTreeLayout::SetSubtreeLayout(pawsTreeNode * subtreeRoot, int x, int 
     csRect frame;
 
     subtreeRoot->MoveTo(x, y);
-    frame = subtreeRoot->ScreenFrame();
+    frame = subtreeRoot->GetScreenFrame();
     if (frame.xmax > maxX)
         maxX = frame.xmax;
     maxY = frame.ymax;
@@ -831,7 +831,7 @@ void pawsStdTreeDecorator::DecorateSubtree(pawsTreeNode * node)
     bool hasCollSign;    // has the currently processed node collapse/expand sign ?
 
 
-    nodeFrame = node->ScreenFrame();
+    nodeFrame = node->GetScreenFrame();
 
     if (node != tree->GetRoot())
     {
@@ -861,14 +861,14 @@ void pawsStdTreeDecorator::DecorateSubtree(pawsTreeNode * node)
     child = node->GetFirstChild();
     if (child != NULL)
     {
-        childFrame = child->ScreenFrame();
+        childFrame = child->GetScreenFrame();
         vertLineX = (nodeFrame.xmin + childFrame.xmin) / 2;
         vertLineYMin = childFrame.ymin;
 
         do
         {
             hasCollSign = child->IsCollapsable() && (child->GetFirstChild() != NULL);
-            childFrame = child->ScreenFrame();
+            childFrame = child->GetScreenFrame();
             GetCollapseSignFrame(child, collSignFrame);
         
             horizLineY = (childFrame.ymin + childFrame.ymax) / 2;
@@ -925,7 +925,7 @@ bool pawsStdTreeDecorator::OnMouseDown(int /*button*/, int /*modifiers*/, int x,
 
 void pawsStdTreeDecorator::GetCollapseSignFrame(pawsTreeNode * node, csRect & rect)
 {
-    csRect nodeFrame = node->ScreenFrame();
+    csRect nodeFrame = node->GetScreenFrame();
     rect.SetPos(nodeFrame.xmin - collSpacing - 2,
                 nodeFrame.ymin + nodeFrame.Height()/2 - 4);
     rect.SetSize(10, 10);
@@ -1132,15 +1132,15 @@ void pawsTree::Select(pawsTreeNode *node)
     //we have to check if the selected element is outside sight. If so move the scrollbar
     //correctly in order to have it on screen.
     
-    if(selected->ScreenFrame().ymin < ScreenFrame().ymin) //the element is hidden in the top
+    if(selected->GetScreenFrame().ymin < GetScreenFrame().ymin) //the element is hidden in the top
     {   //get the current position and move it relatively of the part which is hidden
         if(vertScrollBar) //just to be safe
-            vertScrollBar->SetCurrentValue(vertScrollBar->GetCurrentValue()-(ScreenFrame().ymin-selected->ScreenFrame().ymin));
+            vertScrollBar->SetCurrentValue(vertScrollBar->GetCurrentValue()-(GetScreenFrame().ymin-selected->GetScreenFrame().ymin));
     }
-    else if(selected->ScreenFrame().ymax > ScreenFrame().ymax) //the element is hidden in the bottom
+    else if(selected->GetScreenFrame().ymax > GetScreenFrame().ymax) //the element is hidden in the bottom
     {   //get the current position and move it relatively of the part which is hidden
         if(vertScrollBar) //just to be safe
-            vertScrollBar->SetCurrentValue(vertScrollBar->GetCurrentValue()+(selected->ScreenFrame().ymax-ScreenFrame().ymax));
+            vertScrollBar->SetCurrentValue(vertScrollBar->GetCurrentValue()+(selected->GetScreenFrame().ymax-GetScreenFrame().ymax));
     }
     
     if (notificationTarget != NULL)
@@ -1472,14 +1472,14 @@ void pawsSeqTreeNode::AddSeqWidget(pawsWidget * w, int width)
     w->Show();
 
     int newWidth = width + defaultFrame.Width();
-    int newHeight = csMax(w->DefaultFrame().Height(), defaultFrame.Height());
+    int newHeight = csMax(w->GetDefaultFrame().Height(), defaultFrame.Height());
 
     SetRelativeFrameSize(newWidth, newHeight);
 }
 
 void pawsSeqTreeNode::AddSeqWidget(pawsWidget * widget)
 {
-    int width = widget->ScreenFrame().Width();
+    int width = widget->GetScreenFrame().Width();
     AddSeqWidget(widget, width);
 }
 
@@ -1588,7 +1588,7 @@ void pawsCheckTreeNode::SetWidget(pawsWidget * _widget)
     }
     
     widget = _widget;
-    widgetFrame = widget->ScreenFrame();
+    widgetFrame = widget->GetScreenFrame();
     AddChild(widget);
     widget->MoveTo(screenFrame.xmin, screenFrame.ymin);
     widget->Show();
@@ -1630,7 +1630,7 @@ void pawsWidgetTreeNode::SetWidget(pawsWidget * _widget)
 
     widget = _widget;
     widget->MoveTo(screenFrame.xmin, screenFrame.ymin);
-    widgetFrame = widget->ScreenFrame();
+    widgetFrame = widget->GetScreenFrame();
     SetRelativeFrameSize(widgetFrame.Width(), widgetFrame.Height());
     AddChild(widget);
 }
@@ -1741,7 +1741,7 @@ void pawsSimpleTreeNode::Set(int mode, bool /*checked*/, const csString& imageNa
         textBox->MoveTo(lastX+1,0);
         
         widget->AddChild(textBox);
-        lastX += textBox->ScreenFrame().Width();
+        lastX += textBox->GetScreenFrame().Width();
     }
     widget->SetRelativeFrame(0,0,lastX-screenFrame.xmin,20);
     widget->SetSize(lastX-screenFrame.xmin, 20);

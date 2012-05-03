@@ -351,9 +351,9 @@ bool pawsListBox::PostSetup()
     scrollBar = new pawsScrollBar();
     scrollBar->SetParent( this );
     scrollBar->SetRelativeFrame( defaultFrame.Width() - GetActualWidth(scrollbarWidth),
-                                 titleRow ? titleRow->DefaultFrame().ymax : 6,
+                                 titleRow ? titleRow->GetDefaultFrame().ymax : 6,
                                  GetActualWidth(scrollbarWidth),
-                                 defaultFrame.Height() - 6 - (titleRow ? titleRow->DefaultFrame().Height() : 6) -GetActualHeight(scrollbarHeightMod) );
+                                 defaultFrame.Height() - 6 - (titleRow ? titleRow->GetDefaultFrame().Height() : 6) -GetActualHeight(scrollbarHeightMod) );
 
     int attach = ATTACH_TOP | ATTACH_BOTTOM | ATTACH_RIGHT;
     scrollBar->SetAttachFlags( attach );
@@ -398,7 +398,7 @@ void pawsListBox::CreateTitleRow()
     titleRow->SetParent( this );
 
     titleRow->SetRelativeFrame( 0, 0,
-                                ScreenFrame().Width() ,  GetActualHeight(columnHeight) );
+                                GetScreenFrame().Width() ,  GetActualHeight(columnHeight) );
 
     for ( int x = 0; x < totalColumns; x++ )
     {
@@ -786,20 +786,20 @@ void pawsListBox::SetScrollBarMaxValue()
             int height = 0; // Can be used for anything?
 
             wdg->GetFont()->GetDimensions(text,width,height);
-            if (rowWidth+width > rows[i]->ScreenFrame().Width())
-                width = rows[i]->ScreenFrame().Width() - rowWidth;
+            if (rowWidth+width > rows[i]->GetScreenFrame().Width())
+                width = rows[i]->GetScreenFrame().Width() - rowWidth;
 
             rowWidth += width;
 
-            if( autoResize && width > wdg->ScreenFrame().Width() )
+            if( autoResize && width > wdg->GetScreenFrame().Width() )
             {
-                wdg->SetRelativeFrameSize(width,wdg->ScreenFrame().Height());
+                wdg->SetRelativeFrameSize(width,wdg->GetScreenFrame().Height());
             }
         }
 
-        if(autoResize && rowWidth > rows[i]->ScreenFrame().Width())
+        if(autoResize && rowWidth > rows[i]->GetScreenFrame().Width())
         {
-            rows[i]->SetRelativeFrameSize(rowWidth,rows[i]->ScreenFrame().Height());
+            rows[i]->SetRelativeFrameSize(rowWidth,rows[i]->GetScreenFrame().Height());
         }
 
         // Compare
@@ -1177,7 +1177,7 @@ void pawsListBox::CreateSortingArrow(int colNum)
         return;
     pawsWidget * arrow = new pawsWidget();
     title->AddChild(arrow);
-    arrow->SetRelativeFrame(title->ScreenFrame().Width()-arrowSize, 4, arrowSize, arrowSize);
+    arrow->SetRelativeFrame(title->GetScreenFrame().Width()-arrowSize, 4, arrowSize, arrowSize);
     arrow->SetName("SortingArrow");
 }
 
@@ -1533,7 +1533,7 @@ void pawsListBoxRow::AddColumn( int column, ColumnDef* def )
     float w = this->screenFrame.Width();
     w /= GetLogicalWidth(screenFrame.Width());
     int myWidth = int(def[column].width * w);
-    widget->SetRelativeFrame( offset+borderW+widget->DefaultFrame().xmin, borderH+widget->DefaultFrame().ymin,
+    widget->SetRelativeFrame( offset+borderW+widget->GetDefaultFrame().xmin, borderH+widget->GetDefaultFrame().ymin,
                               GetActualWidth(myWidth), GetActualHeight(def[column].height) );
 
     columns.Push( widget );

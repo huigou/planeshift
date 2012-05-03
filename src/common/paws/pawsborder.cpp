@@ -98,7 +98,7 @@ void pawsBorder::SetParent( pawsWidget* newParent )
 
 csRect pawsBorder::GetRect()
 {
-    csRect frame = parent->ScreenFrame();
+    csRect frame = parent->GetScreenFrame();
 
     if ( usingGraphics )
     {
@@ -122,7 +122,7 @@ void pawsBorder::Draw()
     if ( !draw )
         return;
         
-    frame = parent->ScreenFrame();
+    frame = parent->GetScreenFrame();
     
     if (title.Length())
         DrawTitle(frame);  // This adjusts the frame to preserve the title bar if present.
