@@ -2240,6 +2240,10 @@ double psItem::GetProperty(MathEnvironment* env, const char *ptr)
     {
         return (double)GetStackCount();
     }
+    else if(property == "Id")
+    {
+        return (double)GetUID();
+    }
     else
     {
         CPrintf(CON_ERROR, "psItem::GetProperty(%s) failed\n",ptr);
