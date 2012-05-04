@@ -282,6 +282,15 @@ public:
     */
     psItem *RemoveItemID(uint32 itemID,int count = -1, bool storage = false);
 
+    /**
+     * Removes an item that is in the equipment inventory.    
+     * @param bulkSlot The slot we want to remove the item from.
+     * @param count The number we want to take. -1 Means the entire stack.
+     * @return pointer to the item that was removed. 
+     */
+    psItem *RemoveInventoryItem(INVENTORY_SLOT_NUMBER slot, int count = -1);
+
+
     /** Find the total stack count in inventory for a particular type of item.
       * @param item The base stats of the item we want to count.
       * @return the count of the total items matching the stats description.

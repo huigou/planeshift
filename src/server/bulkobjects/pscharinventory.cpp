@@ -929,6 +929,20 @@ psItem *psCharacterInventory::GetInventoryItem(INVENTORY_SLOT_NUMBER slot)
     return NULL;
 }
 
+psItem *psCharacterInventory::RemoveInventoryItem(INVENTORY_SLOT_NUMBER slot, int count)
+{
+    if (slot<0 || slot>=PSCHARACTER_SLOT_BULK_END)
+        return NULL;
+
+    // Inventory indexes start at 1.  0 is reserved for the "NULL" item.
+    for (size_t i=1; i < inventory.GetSize(); i++)
+    {
+        if (inventory[i].item && inventory[i].item->GetLocInParent(true) == slot)
+            return RemoveItemIndex(i, count, false);
+    }
+    return NULL;
+}
+
 void psCharacterInventory::RestoreAllInventoryQuality()
 {
     // Inventory indexes start at 1.  0 is reserved for the "NULL" item.
