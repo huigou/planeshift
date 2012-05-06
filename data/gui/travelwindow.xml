@@ -5,14 +5,14 @@
         <font name="cupandtalon.ttf" r="180" g="180" b="180" size="12" shadow="yes" resizetoscreen="yes" />
         <bgimage resource="Loading Background" />
 
-        <widget name="motd" factory="pawsMultiLineTextBox" >
+        <widget name="motd" factory="pawsMultiLineTextBox" visible="no">
             <frame x="460" y="80" width="295" height="100" />
         </widget>
-        <widget name="guildmotd" factory="pawsMultiLineTextBox" >
+        <widget name="guildmotd" factory="pawsMultiLineTextBox" visible="no">
             <frame x="460" y="180" width="295" height="100" border="no" />
         </widget>
         <widget name="tip" factory="pawsMultiLineTextBox" >
-            <frame x="460" y="400" width="310" height="100" border="no" />
+            <frame x="490" y="340" width="270" height="170" border="no" />
         <bgimage resource="Scaling Field Background" />
         </widget>
         <widget name="Progress" factory="pawsProgressBar" style="Scaling Progressbar">

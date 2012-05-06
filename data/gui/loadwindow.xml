@@ -13,8 +13,12 @@
             <frame x="100" y="10" width="600" height="20" />
             <bgimage resource="Scaling Field Background" />
         </widget>
+        <widget name="guildmotd" factory="pawsMultiLineTextBox" visible="no" >
+	             <frame x="30" y="350" width="295" height="100" border="no"/>
+                 <bgimage resource="Scaling Field Background" />
+        </widget>
         <widget name="tip" factory="pawsMultiLineTextBox" >
-            <frame x="100" y="525" width="600" height="30" border="no" />
+            <frame x="100" y="495" width="600" height="60" border="no" />
         <bgimage resource="Scaling Field Background" />
         </widget>
         <widget name="Progress" factory="pawsProgressBar" style="Scaling Progressbar">
