@@ -15,9 +15,6 @@
                         <text string="General"/>
                     </widget>
                 </nodewidget>
-            <widget factory="pawsSeqTreeNode" name="Use NPC Chat Camera">
-             <attr name="type" value="onoff"/>
-            </widget>
             <widget factory="pawsSeqTreeNode" name="Transition Threshold">
             <attr name="type" value="real"/>
             <attr name="min" value="0.1"/>
