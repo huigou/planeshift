@@ -298,7 +298,7 @@ void psCamera::LoadOptions()
 {
     psOptions * options = psengine->GetOptions();
     useCameraCD = options->GetOption("camera", "usecd", true);
-    useNPCCam = options->GetOption("camera", "useNPCam", false);
+    //useNPCCam = options->GetOption("camera", "useNPCam", false);
 
     float springyness = options->GetOption("camera", "springyness", true);
     for (size_t a=0; a<CAMERA_MODES_COUNT; ++a)
@@ -312,7 +312,7 @@ void psCamera::SaveOptions()
 {
     psOptions * options = psengine->GetOptions();
     options->SetOption("camera", "usecd", useCameraCD);
-    options->SetOption("camera", "usenpccam", useNPCCam);
+    //options->SetOption("camera", "usenpccam", useNPCCam);
     options->SetOption("camera", "springyness", EstimateSpringyness(0));
 }
 
@@ -452,8 +452,8 @@ bool psCamera::LoadFromFile(bool useDefault, bool overrideCurrent)
             csString settingValue = settingNode->GetAttributeValue("value");
             if (settingName == "UseCollisionDetection")
                 useCameraCD = (settingValue.Upcase() == "ON");
-            if (settingName == "UseNPCCam")
-                useNPCCam = (settingValue.Upcase() == "ON");
+            //if (settingName == "UseNPCCam")
+            //    useNPCCam = (settingValue.Upcase() == "ON");
             else if (settingName == "TransitionThreshold")
             {
                 transitionThresholdSquared = atof(settingValue.GetData());
@@ -596,7 +596,7 @@ bool psCamera::SaveToFile()
     xml += "<General>\n";
     xml += "    <camsetting name=\"StartingCameraMode\" value=\"";      xml += GetCameraMode();                             xml += "\" />\n";
     xml += "    <camsetting name=\"UseCollisionDetection\" value=\"";   xml += (CheckCameraCD() ? "on" : "off");            xml += "\" />\n";
-    xml += "    <camsetting name=\"UseNPCCam\" value=\"";               xml += (GetUseNPCCam() ? "on" : "off");            xml += "\" />\n";
+    //xml += "    <camsetting name=\"UseNPCCam\" value=\"";               xml += (GetUseNPCCam() ? "on" : "off");            xml += "\" />\n";
     xml += "    <camsetting name=\"TransitionThreshold\" value=\"";     xml += GetTransitionThreshold();                    xml += "\" />\n";
     xml += "</General>\n";
 
@@ -1356,7 +1356,7 @@ void psCamera::SetUseNPCCam(bool useNPCCam)
 
 bool psCamera::GetUseNPCCam()
 {
-    return useNPCCam;
+    return false; // disabled by default, we should remove this obsolete code.
 }
 
 float psCamera::GetTransitionThreshold() const
