@@ -1058,7 +1058,7 @@ public:
 
     bool SetDRData(psDRMessage& drmsg);
     void MulticastDRUpdate();
-    virtual void ForcePositionUpdate(int32_t loadDelay = 0, csString background = "", csVector2 point1 = 0, csVector2 point2 = 0);
+    virtual void ForcePositionUpdate(int32_t loadDelay = 0, csString background = "", csVector2 point1 = 0, csVector2 point2 = 0, csString widget = "");
 
     using gemObject::RegisterCallback;
     using gemObject::UnregisterCallback;

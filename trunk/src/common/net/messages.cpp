@@ -4764,7 +4764,7 @@ psForcePositionMessage::psForcePositionMessage(uint32_t client, uint8_t sequence
     csString sectorName = sector->QueryObject()->GetName();
     csStringID sectorNameStrId = msgstrings ? msgstrings->Request(sectorName) : csInvalidStringID;
 
-    msg.AttachNew(new MsgEntry(sizeof(float)*8 + sizeof(uint8_t) + sizeof(uint32_t) + (sectorNameStrId == csInvalidStringID ? sectorName.Length() + 1 : 0) + sizeof(uint32_t) + loadBackground.Length() + 1, PRIORITY_HIGH, sequenceNumber));
+    msg.AttachNew(new MsgEntry(sizeof(float)*8 + sizeof(uint8_t) + sizeof(uint32_t) + (sectorNameStrId == csInvalidStringID ? sectorName.Length() + 1 : 0) + sizeof(uint32_t) + loadBackground.Length() + 1 + loadWidget.Length() + 1, PRIORITY_HIGH, sequenceNumber));
 
     msg->SetType(MSGTYPE_FORCE_POSITION);
     msg->clientnum = client;
