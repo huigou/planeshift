@@ -438,17 +438,31 @@ void pawsLauncherWindow::LoadSettings()
 
     // Full screen
     pawsCheckBox* fullscreen = (pawsCheckBox*)FindWidget("Fullscreen");
-    fullscreen->SetState(configUser->GetBool("Video.FullScreen"));
+    if(configUser->KeyExists("PlaneShift.Video.FullScreen"))
+    {
+        fullscreen->SetState(configUser->GetBool("Video.FullScreen"));
+    }
+    else
+    {
+        fullscreen->SetState(configPSC.GetBool("Video.FullScreen"));
+    }
 
     // Sound
     pawsCheckBox* enableSound = (pawsCheckBox*)FindWidget("EnableSound");
-    enableSound->SetState(configUser->KeyExists("System.PlugIns.iSndSysRenderer") &&
-        strcmp(configUser->GetStr("System.PlugIns.iSndSysRenderer"), "crystalspace.sndsys.renderer.null"));
+    if(configUser->KeyExists("System.PlugIns.iSndSysRenderer"))
+    {
+        enableSound->SetState(strcmp(configUser->GetStr("System.PlugIns.iSndSysRenderer"), "crystalspace.sndsys.renderer.null"));
+    }
+    else
+    {
+        enableSound->SetState(strcmp(configPSC.GetStr("System.PlugIns.iSndSysRenderer"), "crystalspace.sndsys.renderer.null"));
+    }
+
     bool openALAvailable;
     {
       // Try to load OpenAL plugin to see if it's supported
       csRef<iSndSysRenderer> oal = csQueryRegistryOrLoad<iSndSysRenderer> (
-	PawsManager::GetSingleton().GetObjectRegistry(), "crystalspace.sndsys.renderer.openal", false);
+         PawsManager::GetSingleton().GetObjectRegistry(), "crystalspace.sndsys.renderer.openal", false);
       openALAvailable = oal.IsValid();
     }
 
@@ -555,6 +569,7 @@ void pawsLauncherWindow::LoadSettings()
     textureQuality->NewOption("Low");
     textureQuality->NewOption("Very Low");
 
+    // TextureDownsample
     int ds = 0;
     if(configUser->KeyExists("Video.OpenGL.TextureDownsample"))
     {
@@ -565,6 +580,7 @@ void pawsLauncherWindow::LoadSettings()
       ds = configPSC.GetInt("Video.OpenGL.TextureDownsample", ds);
     }
 
+    // TextureLODBias
     float tlb = 0.0f;
     if(configUser->KeyExists("Video.OpenGL.TextureLODBias"))
     {
@@ -607,6 +623,7 @@ void pawsLauncherWindow::LoadSettings()
     }
     textureQuality->Select(setting);
 
+    // Shaders
     pawsComboBox* shaders = (pawsComboBox*)FindWidget("Shaders");
     shaders->Clear();
     shaders->NewOption("Highest");
@@ -622,6 +639,7 @@ void pawsLauncherWindow::LoadSettings()
     }
     shaders->Select(setting);
 
+    // Real time Shadows (not used for now)
     pawsCheckBox* enableShadows = (pawsCheckBox*)FindWidget("EnableShadows");
     if(configUser->KeyExists("PlaneShift.Graphics.Shadows"))
     {
@@ -632,6 +650,7 @@ void pawsLauncherWindow::LoadSettings()
         enableShadows->SetState(configPSC.GetBool("PlaneShift.Graphics.Shadows"));
     }
 
+    // Enable Bloom and HDR
     pawsCheckBox* enableBloom = (pawsCheckBox*)FindWidget("EnableBloom");
     pawsCheckBox* enableHDR = (pawsCheckBox*)FindWidget("EnableHDR");
     if(enableShadows->GetState())
@@ -647,6 +666,7 @@ void pawsLauncherWindow::LoadSettings()
             configUser->GetBool("RenderManager.ShadowPSSM.HDR.Enabled"));
     }
 
+    // Grass
     pawsCheckBox* enableGrass = (pawsCheckBox*)FindWidget("EnableGrass");
     if(configUser->KeyExists("PlaneShift.Graphics.EnableGrass"))
     {
@@ -657,6 +677,7 @@ void pawsLauncherWindow::LoadSettings()
         enableGrass->SetState(configPSC.GetBool("PlaneShift.Graphics.EnableGrass"));
     }
 
+    // Weather
     pawsCheckBox* enableWeather = (pawsCheckBox*)FindWidget("EnableWeather");
     if(configUser->KeyExists("PlaneShift.Weather.Enabled"))
     {
@@ -667,6 +688,7 @@ void pawsLauncherWindow::LoadSettings()
         enableWeather->SetState(configPSC.GetBool("PlaneShift.Weather.Enabled"));
     }
 
+    // VBO
     pawsCheckBox* VBO = (pawsCheckBox*)FindWidget("VBO");
     if(configUser->KeyExists("Video.OpenGL.UseExtension.GL_ARB_vertex_buffer_object"))
     {
@@ -677,6 +699,7 @@ void pawsLauncherWindow::LoadSettings()
         VBO->SetState(configPSC.GetBool("Video.OpenGL.UseExtension.GL_ARB_vertex_buffer_object"));
     }
 
+    // Loader Cache
     pawsCheckBox* loaderCache = (pawsCheckBox*)FindWidget("LoaderCache");
     if(configUser->KeyExists("Planeshift.Loading.Cache"))
     {
@@ -687,13 +710,23 @@ void pawsLauncherWindow::LoadSettings()
         loaderCache->SetState(configPSC.GetBool("Planeshift.Loading.Cache"));
     }
 
+    // Background Loading
+    bool alwaysRunNow = true;
     pawsComboBox* backgroundLoading = (pawsComboBox*)FindWidget("BackgroundLoading");
     backgroundLoading->Clear();
     backgroundLoading->NewOption("World");
     backgroundLoading->NewOption("Models");
     backgroundLoading->NewOption("Off");
-    if(configUser->KeyExists("ThreadManager.AlwaysRunNow") && configUser->GetBool("ThreadManager.AlwaysRunNow"))
+    if(configUser->KeyExists("ThreadManager.AlwaysRunNow"))
     {
+        alwaysRunNow = configUser->GetBool("ThreadManager.AlwaysRunNow");
+    }
+    else
+    {
+        alwaysRunNow = configPSC.GetBool("ThreadManager.AlwaysRunNow");
+    }
+
+    if (alwaysRunNow) {
         backgroundLoading->Select("Off");
     }
     else if(configUser->KeyExists("PlaneShift.Loading.BackgroundWorldLoading"))
@@ -719,11 +752,19 @@ void pawsLauncherWindow::LoadSettings()
         }
     }
 
+    // Particles
     pawsComboBox* particles = (pawsComboBox*)FindWidget("Particles");
     particles->Clear();
     particles->NewOption("High");
     particles->NewOption("Medium");
-    particles->Select(configUser->GetStr("PlaneShift.Graphics.Particles", "High"));
+    if(configUser->KeyExists("PlaneShift.Graphics.Particles"))
+    {
+        particles->Select(configUser->GetStr("PlaneShift.Graphics.Particles", "High"));
+    }
+    else
+    {
+        particles->Select(configPSC.GetStr("PlaneShift.Graphics.Particles", "High"));
+    }
 
     // Fill the languages
     pawsComboBox* languages = (pawsComboBox*)FindWidget("Languages");
@@ -781,17 +822,15 @@ void pawsLauncherWindow::LoadSettings()
     csString skin = configUser->GetStr("PlaneShift.GUI.Skin.Selected");	
     if(!strcmp(skin,""))
     {
-        printf("---------------------------------------->a\n");
         // Try loading the default skin.
         skin = configPSC.GetStr("PlaneShift.GUI.Skin.Selected");
         if(!strcmp(skin,""))
         {
-            printf("---------------------------------------->b\n");
             // No skin selected.. shouldn't happen but it's not fatal.
             return;
         }
     }
-printf("---------------------------------------->c %s\n", skin.GetData());
+    printf("Skin loaded: %s\n", skin.GetData());
     LoadSkin(skin);
 
     // Graphics Preset
@@ -1021,7 +1060,7 @@ void pawsLauncherWindow::SaveSettings()
 
     // Full screen
     pawsCheckBox* fullscreen = (pawsCheckBox*)FindWidget("Fullscreen");
-    configUser->SetBool("Video.FullScreen", fullscreen->GetState());
+    configUser->SetBool("PlaneShift.Video.FullScreen", fullscreen->GetState());
 
     // Sound
     pawsCheckBox* enableSound = (pawsCheckBox*)FindWidget("EnableSound");
