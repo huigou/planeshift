@@ -44,7 +44,10 @@
   </zone>
 
 
-
+  <!-- podium -->
+  <zone sector="podium" loadimage="Loading Background">
+    <region map="podium" />
+  </zone>
 
   <!-- death-realm -->
   <zone sector="DR01" loadimage="Loading Death Realm Background">
