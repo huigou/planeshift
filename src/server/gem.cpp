@@ -3615,7 +3615,7 @@ void gemActor::Teleport(iSector *sector, const csVector3 & pos, float yrot, int3
 
     UpdateProxList();
     MulticastDRUpdate();
-    ForcePositionUpdate(loadDelay, background, point1, point2);
+    ForcePositionUpdate(loadDelay, background, point1, point2, widget);
     BroadcastTargetStatDR(entityManager->GetClients()); //we need to update the stats too
 }
 
@@ -3916,13 +3916,13 @@ void gemActor::MulticastDRUpdate()
     drmsg.Multicast(GetMulticastClients(),0,PROX_LIST_ANY_RANGE);
 }
 
-void gemActor::ForcePositionUpdate(int32_t loadDelay, csString background, csVector2 point1, csVector2 point2)
+void gemActor::ForcePositionUpdate(int32_t loadDelay, csString background, csVector2 point1, csVector2 point2, csString widget)
 {
     uint32_t clientnum = GetClientID();
     forcedSector = GetSector();
 
     psForcePositionMessage msg(clientnum, ++forceDRcounter, GetPosition(), GetAngle(), GetSector(),
-                               cacheManager->GetMsgStrings(), loadDelay, background, point1, point2);
+                               cacheManager->GetMsgStrings(), loadDelay, background, point1, point2, widget);
     msg.SendMessage();
 }
 
