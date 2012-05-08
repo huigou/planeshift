@@ -44,9 +44,6 @@ You can also change the commands sent by each mouse button."/>
 
 We suggest you to try different settings and see what's best for your hardware."/>
 
-                <widget factory="pawsSimpleTreeNode" label="General1">
-                    <attr name="Description" value="gfxgeneral"/>
-                </widget>
                 <widget factory="pawsSimpleTreeNode" label="Camera">
                     <attr name="SectionName" value="camera"/>
                     <attr name="factory" value="pawsConfigCamera"/>
@@ -99,6 +96,13 @@ If you change the PvP setting, you may be attacked at any time."/>
                     <attr name="SectionName" value="InterfaceGeneral"/>
                     <attr name="factory" value="pawsConfigGeneric"/>
                     <attr name="TextName" value="In this section you can configure various options for the User Interface. Once you have learned the basic commands and controls, we suggest you to de-select 'Basic Chat Window' from 'Chat Tabs' and enable the Tabs you want to see."/>
+                <widget factory="pawsSimpleTreeNode" label="Language">
+                    <attr name="SectionName" value="LanguageGeneral"/>
+                    <attr name="factory" value="pawsConfigGeneric"/>
+                    <attr name="TextName" value="You can change the language of PlaneShift to have the user interface displayed in your language. We support Cesky, Dutch, French, Italian, German, Romanian, Russian, Swedish, and more. Please note pubic dialogues in game between players should  be in English.
+
+Changing the language can be done ONLY in the PlaneShift Launcher. To do this you should close this client, and relaunch PlaneShift. In the Launcher you should change the 'Language' dropdown."/>
+                </widget>
                 <widget factory="pawsSimpleTreeNode" label="Chat - Tabs">
                     <attr name="SectionName" value="chattabs" />
                     <attr name="factory" value="pawsConfigChatTabs" />
